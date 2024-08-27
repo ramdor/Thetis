@@ -240,7 +240,7 @@ namespace Thetis
             "%qso_time%" + System.Environment.NewLine +
             "%qso_time_short%" + System.Environment.NewLine +
             "%qso_time_int%" + System.Environment.NewLine +
-            "%tb_qso_time" + System.Environment.NewLine +
+            "%tb_qso_time%" + System.Environment.NewLine +
             "%tb_qso_time_short%" + System.Environment.NewLine +
             "%tb_qso_time_int%" + System.Environment.NewLine +
             "%volts%" + System.Environment.NewLine +
@@ -250,7 +250,9 @@ namespace Thetis
             "%comp%" + System.Environment.NewLine +
             "%lev%" + System.Environment.NewLine +
             "%rx2%" + System.Environment.NewLine +
-            "%tx_eq%";// + System.Environment.NewLine +
+            "%tx_eq%" + System.Environment.NewLine +
+            "%bandtext_vfoa%" + System.Environment.NewLine +
+            "%bandtext_vfob%";// + System.Environment.NewLine +
 
             toolTip1.SetToolTip(pbTextOverlay_variables, sTip);
 
@@ -2646,6 +2648,10 @@ namespace Thetis
             chkLegacyItems_mode_CheckedChanged(this, e);
             chkLegacyItems_filter_CheckedChanged(this, e);
             chkLegacyItems_expand_spectral_CheckedChanged(this, e);
+            chkLegacyItems_vfoa_CheckedChanged(this, e);
+            chkLegacyItems_vfob_CheckedChanged(this, e);
+            chkLegacyItems_expand_spectral_top_CheckedChanged(this, e);
+            chkLegacyItems_vfosync_CheckedChanged(this, e);
         }
 
         public string[] GetTXProfileStrings()
@@ -24441,6 +24447,9 @@ namespace Thetis
                 igs.SegmentedSolidLowColour = clrbtnMMVfoDisplayBand.Color;
                 igs.PowerScaleColour = clrbtnMMVfoDigitHighlight.Color;
 
+                igs.SetSetting<bool>("vfo_showbandtext", chkMultiMeter_vfo_show_bandtext.Checked);
+                igs.SetSetting<System.Drawing.Color>("vfo_showbandtext_colour", clrbtnMultiMeter_vfo_show_bandtext.Color);
+
                 if (radMultiMeter_vfo_display_both.Checked)
                     igs.HistoryDuration = (int)MeterManager.clsVfoDisplay.VFODisplayMode.VFO_BOTH;
                 else if (radMultiMeter_vfo_display_vfoa.Checked)
@@ -24889,6 +24898,9 @@ namespace Thetis
                 clrbtnMMVfoDisplayBand.Color = igs.SegmentedSolidLowColour;
                 clrbtnMMVfoDigitHighlight.Color = igs.PowerScaleColour;
 
+                chkMultiMeter_vfo_show_bandtext.Checked = igs.GetSetting<bool>("vfo_showbandtext", false, false, false, false);
+                clrbtnMultiMeter_vfo_show_bandtext.Color = igs.GetSetting<System.Drawing.Color>("vfo_showbandtext_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
+
                 switch ((MeterManager.clsVfoDisplay.VFODisplayMode)igs.HistoryDuration)
                 {
                     case MeterManager.clsVfoDisplay.VFODisplayMode.VFO_BOTH:
@@ -24901,6 +24913,8 @@ namespace Thetis
                         radMultiMeter_vfo_display_vfob.Checked = true;
                         break;
                 }
+
+                updateVfoShowBandtextColour();
             }
             else if (mt == MeterType.CLOCK)
             {
@@ -30473,6 +30487,46 @@ namespace Thetis
             if (enable_count == 0) enable_count = 1;
 
             return enable_count;
+        }
+
+        private void chkMultiMeter_vfo_show_bandtext_CheckedChanged(object sender, EventArgs e)
+        {
+            updateVfoShowBandtextColour();
+            updateMeterType();
+        }
+
+        private void clrbtnMultiMeter_vfo_show_bandtext_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void updateVfoShowBandtextColour()
+        {
+            clrbtnMultiMeter_vfo_show_bandtext.Enabled = chkMultiMeter_vfo_show_bandtext.Checked;
+        }
+
+        private void chkLegacyItems_vfoa_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            LegacyItemController.HideVFOA = chkLegacyItems_vfoa.Checked;
+        }
+
+        private void chkLegacyItems_vfob_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            LegacyItemController.HideVFOB = chkLegacyItems_vfob.Checked;
+        }
+
+        private void chkLegacyItems_expand_spectral_top_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            LegacyItemController.ExpandSpectrumToTop = chkLegacyItems_expand_spectral_top.Checked;
+        }
+
+        private void chkLegacyItems_vfosync_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            LegacyItemController.HideVFOSync = chkLegacyItems_vfosync.Checked;
         }
     }
 

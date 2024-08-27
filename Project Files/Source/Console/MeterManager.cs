@@ -62,6 +62,7 @@ using RawInput_dll;
 using System.Drawing.Text;
 using System.Security.Policy;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Runtime.CompilerServices;
 
 namespace Thetis
 {
@@ -408,6 +409,8 @@ namespace Thetis
                     case "lev":
                     case "rx2":
                     case "tx_eq":
+                    case "bandtext_vfoa":
+                    case "bandtext_vfob":
                         bRet = true;
                         break;
                 }
@@ -581,6 +584,12 @@ namespace Thetis
                     case "tx_eq":
                         _readings_text_objects[key] = owningMeter.TXEQEnabled ? "TXEQ" : "";
                         break;
+                    case "bandtext_vfoa":
+                        _readings_text_objects[key] = owningMeter.VFOABandText;
+                        break;
+                    case "bandtext_vfob":
+                        _readings_text_objects[key] = owningMeter.VFOBBandText;
+                        break;
                 }
 
                 if (_readings_text_objects.ContainsKey(key))
@@ -661,6 +670,8 @@ namespace Thetis
                 addReadingText("lev", text);
                 addReadingText("rx2", text);
                 addReadingText("tx_eq", text);
+                addReadingText("bandtext_vfoa", text);
+                addReadingText("bandtext_vfob", text);
             }
             private void addReading(Reading reading, string text)
             {
@@ -2670,7 +2681,7 @@ namespace Thetis
                 }
             }
         }
-        private static void bandUpdate(int rx, Band old_band, Band new_band, bool update_button_boxes = false, bool update_band = true)
+        private static void bandChange(int rx, Band old_band, Band new_band, bool update_button_boxes = false, bool update_band = true)
         {
             lock (_metersLock)
             {
@@ -2704,11 +2715,11 @@ namespace Thetis
         }
         private static void OnBandChange(int rx, Band oldBand, Band newBand)
         {
-            bandUpdate(rx, oldBand, newBand);
+            bandChange(rx, oldBand, newBand);
         }
         private static void OnPreBandChange(int rx, Band currentBand)
         {
-            bandUpdate(rx, currentBand, currentBand);
+            bandChange(rx, currentBand, currentBand);
         }
         private static void OnTransverterIndexChanged(int oldIndex, int newIndex)
         {
@@ -2754,7 +2765,7 @@ namespace Thetis
                     }
                 }
             }
-            bandUpdate(rx, oldBand, newBand, true, false);
+            bandChange(rx, oldBand, newBand, true, false);
         }
         private static void OnVFOB(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
@@ -2772,7 +2783,7 @@ namespace Thetis
                     m.BandVfoB = newBand;
                 }
             }
-            bandUpdate(rx, oldBand, newBand, true, false);
+            bandChange(rx, oldBand, newBand, true, false);
         }
         public static void OnVFOASub(Band oldBand, Band newBand, DSPMode newMode, Filter newFilter, double oldFreq, double newFreq, double newCentreF, bool newCTUN, int newZoomSlider, double offset, int rx)
         {
@@ -6191,6 +6202,9 @@ namespace Thetis
             private int _button_grid_index_vfoA;
             private int _button_grid_index_vfoB;
 
+            private bool _band_text;
+            private System.Drawing.Color _band_text_colour;
+
             public clsVfoDisplay(clsMeter owningmeter)
             {
                 _fontFamily = "Trebuchet MS";
@@ -6227,6 +6241,19 @@ namespace Thetis
                 _button_grid_index_vfoB = -1;
 
                 _vfo_display_mode = VFODisplayMode.VFO_BOTH;
+
+                _band_text = false;
+                _band_text_colour = System.Drawing.Color.LimeGreen;
+            }
+            public bool ShowBandText
+            {
+                get { return _band_text; }
+                set { _band_text = value; }
+            }
+            public System.Drawing.Color BandTextColour
+            {
+                get { return _band_text_colour; }
+                set { _band_text_colour = value; }
             }
             public VFODisplayMode VFODispMode
             {
@@ -8349,6 +8376,8 @@ namespace Thetis
             private float _fontSize_2;
             private float _padding;
 
+            private string _band_text;
+
             private clsMeter _owningMeter;
             private bool _ignore_measure_cache_1;
             private bool _ignore_measure_cache_2;
@@ -8391,6 +8420,8 @@ namespace Thetis
                 _fontSize_2 = 18f;
 
                 _padding = 0.1f;
+
+                _band_text = "";
 
                 _ignore_measure_cache_1 = false;
                 _ignore_measure_cache_2 = false;
@@ -10742,6 +10773,9 @@ namespace Thetis
             private int _quickestTXUpdate;
 
             private BandGroups _band_group;
+
+            private string _vfoA_band_text;
+            private string _vfoB_band_text;
 
             internal readonly object _meterItemsLock = new object();
 
@@ -13653,6 +13687,9 @@ namespace Thetis
                 _displayGroup = 0;
 
                 _band_group = BandGroups.GEN;
+
+                _vfoA_band_text = "";
+                _vfoB_band_text = "";
             }
             public BandGroups GetBandGroupFromBand(Band b)
             {
@@ -14865,8 +14902,10 @@ namespace Thetis
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
                                         bRebuild = true;
                                         bool both = false;
+                                        float padding = 0;
                                         foreach (KeyValuePair<string, clsMeterItem> vfos in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY))
                                         {
+                                            float pad = 0;
                                             clsVfoDisplay vfo = vfos.Value as clsVfoDisplay;
                                             if (vfo == null) continue;
 
@@ -14885,13 +14924,25 @@ namespace Thetis
                                             vfo.BandColour = igs.SegmentedSolidLowColour;
                                             vfo.DigitHighlightColour = igs.PowerScaleColour;
 
+                                            vfo.ShowBandText = igs.GetSetting<bool>("vfo_showbandtext", false, false, false, false);
+                                            vfo.BandTextColour = igs.GetSetting<System.Drawing.Color>("vfo_showbandtext_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
+
+                                            if (vfo.ShowBandText) pad = 0.03f;
+
                                             vfo.VFODispMode = (clsVfoDisplay.VFODisplayMode)igs.HistoryDuration;
                                             if (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH) both = true;
 
-                                            if(both)
-                                                vfo.Size = new SizeF(1f - _fPadX * 2f, (_fHeight + _fHeight * 0.75f));
+                                            if (both)
+                                            {
+                                                vfo.Size = new SizeF(1f - _fPadX * 2f, pad + (_fHeight + _fHeight * 0.75f));
+                                                padding += pad;
+
+                                            }
                                             else
-                                                vfo.Size = new SizeF(1f - _fPadX * 2f, (_fHeight + _fHeight * 0.75f) * 2f);                                            
+                                            {
+                                                vfo.Size = new SizeF(1f - _fPadX * 2f, pad * 2f + (_fHeight + _fHeight * 0.75f) * 2f);
+                                                padding += pad * 2f;
+                                            }
                                         }
                                         
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
@@ -14914,9 +14965,9 @@ namespace Thetis
                                             }
 
                                             if (both)
-                                                solidColor.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), _fHeight + _fHeight * 0.75f);
+                                                solidColor.Size = new SizeF(0.5f - _fPadX - (_fPadX * 0.5f), padding + _fHeight + _fHeight * 0.75f);
                                             else
-                                                solidColor.Size = new SizeF(1f - _fPadX * 2f, (_fHeight + _fHeight * 0.75f) * 2f);
+                                                solidColor.Size = new SizeF(1f - _fPadX * 2f, padding + (_fHeight + _fHeight * 0.75f) * 2f);
 
                                             if (solidColor.Primary)
                                                 ig.Size = new SizeF(solidColor.Size.Width + (both ? solidColor.Size.Width : 0f) + _fPadX, solidColor.TopLeft.Y + solidColor.Size.Height);
@@ -15603,6 +15654,9 @@ namespace Thetis
                                             igs.PowerScaleColour = vfo.DigitHighlightColour;
 
                                             igs.HistoryDuration = (int)vfo.VFODispMode;
+
+                                            igs.SetSetting<bool>("vfo_showbandtext", vfo.ShowBandText);
+                                            igs.SetSetting<System.Drawing.Color>("vfo_showbandtext_colour", vfo.BandTextColour);
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
                                         {
@@ -16155,12 +16209,20 @@ namespace Thetis
             public Band BandVfoA
             {
                 get { return _bandVfoA; }
-                set { _bandVfoA = value; }
+                set 
+                { 
+                    _bandVfoA = value;
+                    updateBandText(true);
+                }
             }
             public Band BandVfoB
             {
                 get { return _bandVfoB; }
-                set { _bandVfoB = value; }
+                set 
+                { 
+                    _bandVfoB = value;
+                    updateBandText(false);
+                }
             }
             public Band BandVfoASub
             {
@@ -16201,6 +16263,30 @@ namespace Thetis
             {
                 get { return _txeqEnabled; }
                 set { _txeqEnabled = value; }
+            }
+            private void updateBandText(bool is_vfoA)
+            {
+                bool ok;
+                if(_rx == 1)
+                {
+                    if (is_vfoA)
+                        ok = DB.BandText(_vfoA, out _vfoA_band_text);
+                    else
+                        ok = DB.BandText(_vfoB, out _vfoB_band_text);
+                }
+                else
+                {
+                    if(!is_vfoA)
+                        ok = DB.BandText(_vfoB, out _vfoB_band_text);
+                }
+            }
+            public string VFOABandText
+            {
+                get { return _vfoA_band_text; }
+            }
+            public string VFOBBandText
+            {
+                get { return _vfoB_band_text; }
             }
             public bool LevelerEnabled
             {
@@ -17848,7 +17934,7 @@ namespace Thetis
                                     //float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
                                     float w = rect.Width * (mi.Size.Width / m.XRatio);
 
-                                    float pad = ((0.05f - (0.05f * 0.75f)) * 2f) * w;
+                                    float pad = ((0.05f - (0.05f * 0.78f)) * 2f) * w;
                                     int hh = (int)(y + h + pad);
                                     if (hh > height) height = hh;
 
@@ -21245,6 +21331,10 @@ namespace Thetis
                     if (m.RX2Enabled) nVfoAFade = 24; // vfoA is 'disabled' on rx2 if rx2 in use always
                 }
 
+                //subtract 0.03f from h if showing text, as the vfo expands, but everything below is based on non expanded
+                if (vfo.ShowBandText)
+                    h = rect.Height * ((mi.Size.Height - (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH ? 0.03f : 0.03f * 2f)) / m.YRatio);
+
                 //mouse wheel boxes
                 bool draw_box = false;
                 bool button_back_box = false;
@@ -21667,6 +21757,25 @@ namespace Thetis
                     rct = new SharpDX.RectangleF(x + (w * 0.25f) * x_multy + (w * (0.51f - x_shift + x_shift_offset)) * x_multy, y + (h * 0.54f), w * 0.048f * x_multy, h * 0.4f);
                     plotText(tmpVfoBFilterName, rct.X + (w * 0.005f) * x_multy, rct.Y, h, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoBFade, vfo.FontFamily, vfo.Style);
                 }
+
+                //
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && vfo.ShowBandText)
+                {
+                    float bt_h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                    if (disp_a)
+                    {
+                        rct = new SharpDX.RectangleF(x + (w * 0.250f) * x_multy, y + (bt_h * 0.85f), w * 0.08f, bt_h * 0.03f);
+                        plotText(m.VFOABandText, rct.X, rct.Y, bt_h, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoAFade, vfo.FontFamily, vfo.Style, false, true);
+                    }
+                    if (disp_b)
+                    {
+                        rct = new SharpDX.RectangleF(x + (w * 0.250f) * x_multy + (w * (0.51f - x_shift + x_shift_offset)) * x_multy, y + (bt_h * 0.85f), w * 0.08f, bt_h * 0.03f);
+                        plotText(m.VFOBBandText, rct.X, rct.Y, bt_h, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoAFade, vfo.FontFamily, vfo.Style, false, true);
+                    }
+                }
+                //
+
 
                 //if (vfo.MouseEntered)
                 //{

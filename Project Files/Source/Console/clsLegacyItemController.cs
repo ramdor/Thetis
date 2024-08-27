@@ -42,6 +42,10 @@ namespace Thetis
         private static bool _hide_filters;
         private static bool _hide_meters;
         private static bool _expand_spectrum_to_right;
+        private static bool _hide_vfoA;
+        private static bool _hide_vfoB;
+        private static bool _hide_vfo_sync;
+        private static bool _expand_spectrum_to_top;
         static LegacyItemController()
         {
             _c = null;
@@ -51,7 +55,11 @@ namespace Thetis
             _hide_meters = false;
             _expand_spectrum_to_right = false;
             _update_on_property_change = false;
-        }
+            _hide_vfoA = false;
+            _hide_vfoB = false;
+            _hide_vfo_sync = false;
+            _expand_spectrum_to_right = false;
+    }
         public static void Init(Console c)
         {
             _c = c;
@@ -121,12 +129,57 @@ namespace Thetis
                 if (_update_on_property_change) Update();
             }
         }
+        public static bool HideVFOA
+        {
+            get
+            {
+                return _hide_vfoA;
+            }
+            set
+            {
+                _hide_vfoA = value;
+                if (_update_on_property_change) Update();
+            }
+        }
+        public static bool HideVFOB
+        {
+            get
+            {
+                return _hide_vfoB;
+            }
+            set
+            {
+                _hide_vfoB = value;
+                if (_update_on_property_change) Update();
+            }
+        }
+        public static bool HideVFOSync
+        {
+            get
+            {
+                return _hide_vfo_sync;
+            }
+            set
+            {
+                _hide_vfo_sync = value;
+                if (_update_on_property_change) Update();
+            }
+        }
         public static bool ExpandSpectrumToRight
         {
             get { return _expand_spectrum_to_right && _hide_bands && _hide_filters && _hide_modes & _hide_meters; }
             set 
             { 
                 _expand_spectrum_to_right = value;
+                if (_update_on_property_change) Update();
+            }
+        }
+        public static bool ExpandSpectrumToTop
+        {
+            get { return _expand_spectrum_to_top && _hide_vfoA && _hide_vfoB && _hide_vfo_sync & _hide_meters; }
+            set
+            {
+                _expand_spectrum_to_top = value;
                 if (_update_on_property_change) Update();
             }
         }
@@ -141,7 +194,10 @@ namespace Thetis
                 _c.ModePanelVisible(true);
                 _c.FilterPanelVisible(true);
 
-                _c.ExtendPanelDisplaySize(false);
+                _c.ExtendPanelDisplaySizeRight(false);
+
+                _c.VFOAVisible(true);
+                _c.VFOBVisible(true);
             }
             else if(_c.IsExpandedView && !_c.IsCollapsedView)
             {
@@ -151,9 +207,18 @@ namespace Thetis
                 _c.FilterPanelVisible(!_hide_filters);
 
                 if (_expand_spectrum_to_right && _hide_bands && _hide_filters && _hide_modes & _hide_meters)
-                    _c.ExtendPanelDisplaySize(true);
+                    _c.ExtendPanelDisplaySizeRight(true);
                 else
-                    _c.ExtendPanelDisplaySize(false);
+                    _c.ExtendPanelDisplaySizeRight(false);
+
+                if (_expand_spectrum_to_top && _hide_vfoA && _hide_vfoB && _hide_vfo_sync & _hide_meters)
+                    _c.ExtendPanelDisplaySizeTop(true);
+                else
+                    _c.ExtendPanelDisplaySizeTop(false);
+
+                _c.VFOAVisible(!_hide_vfoA);
+                _c.VFOBVisible(!_hide_vfoB);
+                _c.VFOSyncVisible(!_hide_vfo_sync);
             }
         }
     }

@@ -747,9 +747,7 @@ namespace Thetis
             }
 
             Splash.SetStatus("Initializing Hardware");			// Set progress point
-            InitCTCSS();
-
-            LegacyItemController.Init(this);
+            InitCTCSS();            
 
             //TODO !!!!!!!!!!!!!!
             bool RX2Enabled = false;
@@ -799,8 +797,6 @@ namespace Thetis
 
             InitConsole();                                      // Initialize all forms and main variables  INIT_SLOW
 
-            LegacyItemController.Update();
-
             //[2.10.3.4]MW0LGE shutdown log remove
             removeShutdownLog();
 
@@ -808,12 +804,13 @@ namespace Thetis
 
             CWFWKeyer = true;
 
-            // Activates double buffering
-            this.SetStyle(ControlStyles.UserPaint |
-               ControlStyles.AllPaintingInWmPaint |
-               ControlStyles.OptimizedDoubleBuffer, true);
+            //// Activates double buffering
+            //this.SetStyle(ControlStyles.UserPaint |
+            //   ControlStyles.AllPaintingInWmPaint |
+            //   ControlStyles.OptimizedDoubleBuffer, true);
+            //this.UpdateStyles();
 
-            this.UpdateStyles();
+            Common.DoubleBufferAll(this, true);
 
             // update titlebar
             this.Text = BasicTitleBar;//TitleBar.GetString(); //MW0LGE_21b
@@ -956,6 +953,9 @@ namespace Thetis
             handleLaunchOnStartUp();
             //
 
+            LegacyItemController.Init(this);
+            LegacyItemController.Update();
+
             //display render thread
 #if SNOWFALL
             Display.SetSantaGif(Properties.Resources.santa);
@@ -1073,18 +1073,18 @@ namespace Thetis
         //helper functions to suspend drawing/painting
         //of controls. This is to help limit flicker during
         //resize of console window
-        private void SuspendDrawing(Control parent)
+        private void SuspendDrawing(Control control)
         {
             if (initializing) return;
-            parent.SuspendLayout();
-            SendMessage(parent.Handle, WM_SETREDRAW, false, 0);
+            control.SuspendLayout();
+            SendMessage(control.Handle, WM_SETREDRAW, false, 0);
         }
-        private void ResumeDrawing(Control parent, bool refresh = true)
+        private void ResumeDrawing(Control control, bool refresh = true)
         {
             if (initializing) return;
-            parent.ResumeLayout();
-            SendMessage(parent.Handle, WM_SETREDRAW, true, 0);
-            if (refresh) parent.Refresh();
+            control.ResumeLayout();
+            SendMessage(control.Handle, WM_SETREDRAW, true, 0);
+            if (refresh) control.Refresh();
         }
         //--
         private void OnAutoStartTimerEvent(Object source, ElapsedEventArgs e)
@@ -11565,7 +11565,6 @@ namespace Thetis
 
             }
         }
-
         private int rx2_xvtr_index = -1;				// index of current xvtr in use
         public int RX2XVTRIndex
         {
@@ -29146,6 +29145,18 @@ namespace Thetis
         {
             panelMode.Visible = visible;
         }
+        public void VFOAVisible(bool visible)
+        {
+            grpVFOA.Visible = visible;
+        }
+        public void VFOBVisible(bool visible)
+        {
+            grpVFOB.Visible = visible;
+        }
+        public void VFOSyncVisible(bool visible)
+        {
+            grpVFOBetween.Visible = visible;
+        }
         public void FilterPanelVisible(bool visible)
         {
             // at the moment, can only hide controls, as have not implemented the sliders in the meter control
@@ -29162,7 +29173,7 @@ namespace Thetis
             radFilterVar1.Visible = visible;
             radFilterVar2.Visible = visible;
         }
-        public void ExtendPanelDisplaySize(bool expand)
+        public void ExtendPanelDisplaySizeRight(bool expand)
         {
             if (IsCollapsedView && !IsExpandedView) // to be sure to be sure
             {
@@ -29171,9 +29182,39 @@ namespace Thetis
             else if (IsExpandedView && !IsCollapsedView)
             {
                 if (expand)
-                    panelDisplay.Size = new Size(this.ClientSize.Width - gr_display_basis.X - 8, gr_display_size_basis.Height + v_delta);
+                {
+                    int h = panelDisplay.Size.Height;
+                    int w = this.ClientSize.Width - gr_display_basis.X - 8;
+
+                    panelDisplay.Size = new Size(w, h);
+                }
                 else
-                    panelDisplay.Size = new Size(gr_display_size_basis.Width + h_delta, gr_display_size_basis.Height + v_delta);
+                    panelDisplay.Size = new Size(gr_display_size_basis.Width + h_delta, panelDisplay.Size.Height);
+            }
+        }
+        public void ExtendPanelDisplaySizeTop(bool expand)
+        {
+            if (IsCollapsedView && !IsExpandedView) // to be sure to be sure
+            {
+                //do nothing
+            }
+            else if (IsExpandedView && !IsCollapsedView)
+            {
+                if (expand)
+                {
+                    Point old_loc = new Point(panelDisplay.Location.X, panelDisplay.Location.Y);
+                    panelDisplay.Location = new Point(gr_display_basis.X, menuStrip1.Height);
+
+                    int h = panelDisplay.Size.Height + (old_loc.Y - panelDisplay.Location.Y);
+                    int w = panelDisplay.Size.Width;
+
+                    panelDisplay.Size = new Size(w, h);
+                }
+                else
+                {
+                    panelDisplay.Location = gr_display_basis;
+                    panelDisplay.Size = new Size(panelDisplay.Size.Width, gr_display_size_basis.Height + v_delta);
+                }
             }
         }
         private void setBandPanelVisible(bool gen, bool hf, bool vhf, bool force = false)
@@ -37838,7 +37879,7 @@ namespace Thetis
                     grpVFOB.Location = new Point(gr_VFOB_basis_location.X + h_delta - (h_delta / 4), gr_VFOB_basis_location.Y);
                     grpVFOA.Location = new Point(gr_VFOA_basis_location.X + (h_delta / 4), gr_VFOA_basis_location.Y);
 
-                    setupHiddenButton(grpVFOA);
+                    setupHiddenButton();//grpVFOA);
 
                     //MW0LGE -- uses pad radio between meter and vfoB
                     grpMultimeterMenus.Location = new Point(gr_multi_meter_menus_basis.X + h_delta, gr_multi_meter_menus_basis.Y);
@@ -41935,7 +41976,7 @@ namespace Thetis
             lblRX1APF.Location = lbl_RX1_APF_VFOA_basis;
             lblRX2APF.Location = lbl_RX2_APF_VFOB_basis;
 
-            setupHiddenButton(grpVFOA); //MW0LGE_21a
+            setupHiddenButton();//grpVFOA); //MW0LGE_21a
 
             //[2.10.3.6]MW0LGE now down below after the expanded flag change, as updateAttNudsCombos
             //if (rx1_step_att_present)
@@ -42714,7 +42755,7 @@ namespace Thetis
                     picMultiMeterDigital.Size = pic_rx2meter_size_basis;
                     // for Andromeda mode both types of meter should have the same size!                  
 
-                    setupHiddenButton(grpVFOA); //MW0LGE_21a
+                    setupHiddenButton();// grpVFOA); //MW0LGE_21a
                 }
                 else if (show_rx2)
                 {
@@ -42732,7 +42773,7 @@ namespace Thetis
                     comboMeterTXMode.Location = new Point(txtRX2Meter.Location.X + txtRX2Meter.Width + 5,
                         txtRX2Meter.Location.Y + 2);
                     // G8NJJ
-                    setupHiddenButton(grpVFOA); //MW0LGE_21a
+                    setupHiddenButton();// grpVFOA); //MW0LGE_21a
                 }
             }
             //            else if (m_bShowModeControls)         /// changed G8NJJ - wrong variable used?
@@ -42801,7 +42842,7 @@ namespace Thetis
                     chkRIT.Location = new Point(udRIT.Location.X, udRIT.Location.Y - chkRIT.Height);
                     btnRITReset.Location = new Point(chkRIT.Location.X + chkRIT.Width, chkRIT.Location.Y);
 
-                    setupHiddenButton(grpVFOA); //MW0LGE_21a
+                    setupHiddenButton();// grpVFOA); //MW0LGE_21a
                 }
                 else if (show_rx2)
                 {
@@ -42856,7 +42897,7 @@ namespace Thetis
                     comboRX2Preamp.Location = new Point(comboRX2AGC.Location.X + comboRX2Preamp.Width + 2, comboRX2AGC.Location.Y);
                     udRX2StepAttData.Location = new Point(comboRX2AGC.Location.X + udRX2StepAttData.Width + 2, comboRX2AGC.Location.Y);
 
-                    setupHiddenButton(grpVFOB); //MW0LGE_21a
+                    setupHiddenButton();// grpVFOB); //MW0LGE_21a
 
                     if (rx2_preamp_present)
                     {
@@ -43363,13 +43404,15 @@ namespace Thetis
             btnHidden.Focus();
         }
 
-        private void setupHiddenButton(Control c)
+        private void setupHiddenButton()
         {
             // MW0LGE_21a
             // hidden button is now put behind either vfoa or vfob group box
             // to fix issue where it was hidden when in collapsed mode when on rx2 only
-            btnHidden.Location = c.Location;
-            btnHidden.SendToBack();
+            //btnHidden.Location = c.Location;
+
+            btnHidden.Location = new Point(-1000, -1000); // [2.10.3.6]MW0LGE off screen
+            //btnHidden.SendToBack();
         }
         private void mnuMode_Click(object sender, EventArgs e)
         {

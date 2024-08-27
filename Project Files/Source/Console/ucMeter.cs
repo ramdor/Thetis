@@ -59,6 +59,8 @@ namespace Thetis
         {
             InitializeComponent();
 
+            Common.DoubleBufferAll(this, true);
+
             picContainer.Location = new Point(0, 0);
             picContainer.Size = new Size(Size.Width, Size.Height);
 

@@ -978,21 +978,46 @@ namespace Thetis
 				return System.IntPtr.Size == 8 ? true : false;
 			}
         }
-		public static void DoubleBuffered(Control c, bool bEnabled)
+		public static void DoubleBuffered(Control control, bool enabled)
         {
-			// MW0LGE_[2.9.0.6]
-			// not all controls (such as panels) have double buffered property
-			// try to use reflection, so we can keep the base panel
-			try
-			{
-				c.GetType().InvokeMember("DoubleBuffered",
-								System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
-								null, c, new object[] { bEnabled });
-			}
-			catch 
-			{ 
-			}
-		}
+            // MW0LGE_[2.9.0.6]
+            // not all controls (such as panels) have double buffered property
+            // try to use reflection, so we can keep the base panel
+            //try
+            //{
+            //    control.GetType().InvokeMember("DoubleBuffered",
+            //                    System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+            //                    null, control, new object[] { enabled });
+            //}
+            //catch
+            //{
+            //}
+
+            //[2.10.3.6]MW0LGE
+            // Use reflection to set the protected property DoubleBuffered
+            PropertyInfo doubleBufferPropertyInfo = control.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (doubleBufferPropertyInfo != null)
+            {
+                doubleBufferPropertyInfo.SetValue(control, enabled, null);
+            }
+
+            // Use reflection to call the protected method SetStyle
+            MethodInfo setStyleMethod = control.GetType().GetMethod("SetStyle", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (setStyleMethod != null)
+            {
+                setStyleMethod.Invoke(control, new object[] { ControlStyles.OptimizedDoubleBuffer, enabled });
+                setStyleMethod.Invoke(control, new object[] { ControlStyles.AllPaintingInWmPaint, enabled });
+                //setStyleMethod.Invoke(control, new object[] { ControlStyles.UserPaint, enabled });
+                setStyleMethod.Invoke(control, new object[] { ControlStyles.ResizeRedraw, enabled });
+            }
+
+            // Apply the style settings to the control
+            MethodInfo updateStylesMethod = control.GetType().GetMethod("UpdateStyles", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (updateStylesMethod != null)
+            {
+                updateStylesMethod.Invoke(control, null);
+            }
+        }
 
 		public static int FiveDigitHash(string str)
 		{
@@ -1413,6 +1438,15 @@ namespace Thetis
             else
             {
                 return (int)(Math.Pow(((colorChannel + 0.055) / 1.055), 2.4) * 255f);
+            }
+        }
+        public static void DoubleBufferAll(Control control, bool enabled)
+        {
+            DoubleBuffered(control, enabled);
+
+            foreach (Control child in control.Controls)
+            {
+                DoubleBufferAll(child, enabled);
             }
         }
     }
