@@ -54,6 +54,8 @@ namespace Thetis
             _console = c;
             _rx = rx;
 
+            Common.DoubleBufferAll(this, true);
+
             _console.WindowStateChangedHandlers += OnWindowStateChanged;
 
             setTitle();
