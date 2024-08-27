@@ -14232,7 +14232,7 @@ namespace Thetis
                                             }
 
                                             bb.Columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 15, 3);
-                                            bb.Border = igs.GetSetting<float>("buttonbox_border", true, 0.01f, 1f, 0.05f) / 10f;
+                                            bb.Border = igs.GetSetting<float>("buttonbox_border", true, 0f, 1f, 0.05f) / 10f;
                                             bb.Margin = igs.GetSetting<float>("buttonbox_margin", true, 0f, 1f, 0f) / 10f;
                                             bb.Radius = igs.GetSetting<float>("buttonbox_radius", true, 0f, 2f, 0f) / 10f;
                                             bb.HeightRatio = igs.GetSetting<float>("buttonbox_height_ratio", true, 0.01f, 2f, 0.5f);
