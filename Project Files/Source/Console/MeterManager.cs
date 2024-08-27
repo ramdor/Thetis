@@ -3528,7 +3528,7 @@ namespace Thetis
             frm.Floating = true;
             m.Floating = true;
 
-            if (m.RX == 2 && !_console.RX2Enabled) return;
+            //if (m.RX == 2 && !_console.RX2Enabled) return;
 
             if (!_finishedSetup) return;
 
@@ -17960,7 +17960,7 @@ namespace Thetis
                                     //float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
                                     float w = rect.Width * (mi.Size.Width / m.XRatio);
 
-                                    float pad = ((0.05f - (0.05f * 0.78f)) * 2f) * w;
+                                    float pad = ((0.05f - (0.05f * 0.8f)) * 2f) * w;
                                     int hh = (int)(y + h + pad);
                                     if (hh > height) height = hh;
 

@@ -239,6 +239,7 @@ namespace Thetis
         }
         private void forceResize(bool shrink = false)
         {
+            _resizing = true;
             if (_autoHeight)
             {
                 if(_floating)
@@ -269,6 +270,7 @@ namespace Thetis
                 else
                     resize(this.Size.Width, this.Size.Height);
             }
+            _resizing = false;
         }
         public void ChangeHeight(int height)
         {
