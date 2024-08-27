@@ -37895,10 +37895,13 @@ namespace Thetis
                     //
 
                     //panelDisplay.Size = new Size(gr_display_size_basis.Width + h_delta, gr_display_size_basis.Height + v_delta);
+                    int w = gr_display_size_basis.Width + h_delta;
+                    int h = gr_display_size_basis.Height + v_delta;
                     if (LegacyItemController.ExpandSpectrumToRight)
-                        panelDisplay.Size = new Size(this.ClientSize.Width - gr_display_basis.X - 8, gr_display_size_basis.Height + v_delta);
-                    else
-                        panelDisplay.Size = new Size(gr_display_size_basis.Width + h_delta, gr_display_size_basis.Height + v_delta);
+                        w = this.ClientSize.Width - gr_display_basis.X - 8;
+                    if (LegacyItemController.ExpandSpectrumToTop)
+                        h = gr_display_size_basis.Height + v_delta + (gr_display_basis.Y - menuStrip1.Height);
+                    panelDisplay.Size = new Size(w, h);
 
                     panelDisplay2.Location = new Point(gr_display2_basis.X + (h_delta / 2), gr_display2_basis.Y + v_delta);
                     panelDSP.Location = new Point(gr_dsp_basis.X + (h_delta / 2), gr_dsp_basis.Y + v_delta);
