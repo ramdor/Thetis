@@ -26,6 +26,7 @@ mw0lge@grange-lane.co.uk
 */
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -57,6 +58,8 @@ namespace Thetis
         public ucMeter()
         {
             InitializeComponent();
+
+            Common.DoubleBufferAll(this, true);
 
             picContainer.Location = new Point(0, 0);
             picContainer.Size = new Size(Size.Width, Size.Height);
@@ -124,7 +127,7 @@ namespace Thetis
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Console Console
         {
-            set 
+            set
             {
                 _console = value;
                 if (_console == null) return;
@@ -138,7 +141,7 @@ namespace Thetis
         public string ID
         {
             get { return _id; }
-            set { _id = value.Replace("|",""); }
+            set { _id = value.Replace("|", ""); }
         }
         private void addDelegates()
         {
@@ -234,21 +237,77 @@ namespace Thetis
 
             forceResize();
         }
-        private void forceResize()
+        private void forceResize(bool shrink = false)
         {
-            if (_autoHeight && this.Size.Height != _height)
-                resize(this.Size.Width, _height);
+            _resizing = true;
+            if (_autoHeight)
+            {
+                if(_floating)
+                {
+                    if (this.Parent != null)
+                    {
+                        if (this.Parent.ClientSize.Height != _height)
+                        {
+                            resize(this.Parent.ClientSize.Width, _height, shrink);
+                        }
+                    }
+                }
+                else
+                {
+                    if (this.Size.Height != _height)
+                        resize(this.Size.Width, _height);
+                }
+            }
             else
-                resize(this.Size.Width, this.Size.Height);
+            {
+                if (_floating)
+                {
+                    if (this.Parent != null)
+                    {
+                        resize(this.Parent.ClientSize.Width, this.Parent.ClientSize.Height, shrink);
+                    }
+                }
+                else
+                    resize(this.Size.Width, this.Size.Height);
+            }
+            _resizing = false;
         }
         public void ChangeHeight(int height)
         {
-            if (_resizing) return;
             if (!_autoHeight) return;
-            if(_height == height) return;
-
             _height = height;
-            forceResize();
+            if (_resizing) return;
+            if (_dragging) return;
+
+            if (_floating)
+            {
+                if (this.Parent != null && this.Parent.IsHandleCreated)
+                {
+                    bool shrink = false;
+                    int screenHeight = Screen.FromControl(this.Parent).WorkingArea.Height;
+                    if (screenHeight < height)
+                    {
+                        this.Parent.Location = new Point(this.Parent.Location.X, 0);
+                        shrink = true;
+                    }
+
+                    height = Math.Min(height, screenHeight);
+
+                    if (this.Parent.ClientSize.Height != height)
+                    {
+                        _height = height;
+                        forceResize(shrink);
+                    }
+                }
+            }
+            else
+            {
+                if (this.Size.Height != height)
+                {
+                    //_height = height;
+                    forceResize();
+                }
+            }
         }
         private void pbGrab_MouseMove(object sender, MouseEventArgs e)
         {
@@ -264,7 +323,7 @@ namespace Thetis
                 resize(x, y);
             }
         }
-        private void resize(int x, int y)
+        private void resize(int x, int y, bool shrink = false)
         {
             if(Parent == null) return;
 
@@ -273,7 +332,9 @@ namespace Thetis
 
             if (_floating)
             {
-                Parent.Size = new Size(x, y);
+                Parent.ClientSize = new Size(x, y);
+                Parent.PerformLayout();
+                (bool was_relocated, bool was_shrunk) = Common.ForceFormOnScreen((Form)this.Parent, shrink);
             }
             else
             {
@@ -281,6 +342,7 @@ namespace Thetis
                 if (this.Top + y > Parent.ClientSize.Height) y = Parent.ClientSize.Height - this.Top;
 
                 this.Size = new Size(x, y);
+                this.PerformLayout();
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
@@ -312,6 +374,7 @@ namespace Thetis
             this.Location = _dockedLocation;
             //this.Location = new Point(_dockedLocation.X + _delta.X, _dockedLocation.Y + _delta.Y);
             this.Size = _dockedSize;
+            this.PerformLayout();
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public bool Floating
@@ -671,6 +734,19 @@ namespace Thetis
                 {
                     md.TopMost = _pinOnTop;
                 }
+            }
+        }
+        public bool IsTopMost
+        {
+            get
+            {
+                frmMeterDisplay md = this.Parent as frmMeterDisplay;
+                if (md != null)
+                {
+                    return md.TopMost;
+                }
+                else
+                    return false;
             }
         }
         public override string ToString()

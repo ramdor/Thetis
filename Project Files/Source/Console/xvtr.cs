@@ -5337,7 +5337,6 @@ namespace Thetis
 			return freq;
 		}
         private bool _ignore_combo_events = false;
-
         private void SetupControlArrays()
 		{
 			begin = new NumericUpDownTS[16];

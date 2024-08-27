@@ -574,102 +574,199 @@ namespace Thetis
 			ForceFormOnScreen(form);
 		}
 
-		public static void ForceFormOnScreen(Form f)
-		{
+        public static (bool resized, bool relocated) ForceFormOnScreen(Form f, bool shrink_to_fit = false, bool keep_on_screen = false)
+        {
+            bool resized = false;
+            bool relocated = false;
             Screen[] screens = Screen.AllScreens;
 
             if (screens.Length == 0)
             {
                 f.Location = new Point(0, 0);
-                return;
+                return (false, false);
             }
 
-            int left = int.MaxValue, top = int.MaxValue;
-            int right = int.MinValue, bottom = int.MinValue;
-
-            foreach (Screen screen in screens)
+            if (keep_on_screen)
             {
-                if (screen.Bounds.Left < left)
-                    left = screen.Bounds.Left;
-                if (screen.Bounds.Top < top)
-                    top = screen.Bounds.Top;
-                if (screen.Bounds.Right > right)
-                    right = screen.Bounds.Right;
-                if (screen.Bounds.Bottom > bottom)
-                    bottom = screen.Bounds.Bottom;
+                // Find the screen where the mouse cursor is currently located
+                Screen screen = Screen.FromPoint(Cursor.Position);
+                Rectangle screenBounds = screen.WorkingArea;
+
+                // Ensure the form is within the screen's bounds
+                if (f.Left < screenBounds.Left)
+                {
+                    f.Left = screenBounds.Left;
+                    relocated = true;
+                }
+                if (f.Top < screenBounds.Top)
+                {
+                    f.Top = screenBounds.Top;
+                    relocated = true;
+                }
+                if (f.Right > screenBounds.Right)
+                {
+                    f.Left = screenBounds.Right - f.Width;
+                    relocated = true;
+                }
+                if (f.Bottom > screenBounds.Bottom)
+                {
+                    f.Top = screenBounds.Bottom - f.Height;
+                    relocated = true;
+                }
+
+                // Shrink the form to fit within the screen's bounds
+                if (shrink_to_fit)
+                {
+                    int formWidth = f.Width;
+                    int formHeight = f.Height;
+
+                    if (f.Width > screenBounds.Width)
+                    {
+                        formWidth = screenBounds.Width;
+                        resized = true;
+                    }
+
+                    if (f.Height > screenBounds.Height)
+                    {
+                        formHeight = screenBounds.Height;
+                        resized = true;
+                    }
+
+                    f.Size = new Size(formWidth, formHeight);
+                }
             }
-
-            bool onScreen = f.Left >= left &&
-                            f.Top >= top &&
-                            f.Right <= right &&
-                            f.Bottom <= bottom;
-
-            if (!onScreen)
+            else
             {
-                if (f.Left < left)
-                    f.Left = left;
-                if (f.Top < top)
-                    f.Top = top;
-                if (f.Right > right)
-                    f.Left = right - f.Width;
-                if (f.Bottom > bottom)
-                    f.Top = bottom - f.Height;
+                // Calculate the full virtual screen area
+                int left = int.MaxValue, top = int.MaxValue;
+                int right = int.MinValue, bottom = int.MinValue;
+
+                foreach (Screen screen in screens)
+                {
+                    if (screen.Bounds.Left < left)
+                        left = screen.Bounds.Left;
+                    if (screen.Bounds.Top < top)
+                        top = screen.Bounds.Top;
+                    if (screen.Bounds.Right > right)
+                        right = screen.Bounds.Right;
+                    if (screen.Bounds.Bottom > bottom)
+                        bottom = screen.Bounds.Bottom;
+                }
+
+                bool onScreen = f.Left >= left &&
+                                f.Top >= top &&
+                                f.Right <= right &&
+                                f.Bottom <= bottom;
+
+                if (!onScreen)
+                {
+                    if (f.Left < left)
+                        f.Left = left;
+                    if (f.Top < top)
+                        f.Top = top;
+                    if (f.Right > right)
+                        f.Left = right - f.Width;
+                    if (f.Bottom > bottom)
+                        f.Top = bottom - f.Height;
+
+                    relocated = true;
+                }
+
+                if (shrink_to_fit)
+                {
+                    int formWidth = f.Width;
+                    int formHeight = f.Height;
+
+                    if (f.Width > right - left)
+                    {
+                        formWidth = right - left;
+                        resized = true;
+                    }
+
+                    if (f.Height > bottom - top)
+                    {
+                        formHeight = bottom - top;
+                        resized = true;
+                    }
+
+                    f.Size = new Size(formWidth, formHeight);
+                }
             }
 
-            //         Screen[] screens = Screen.AllScreens;
-            //bool on_screen = false;
-
-            //int left = 0, right = 0, top = 0, bottom = 0;
-
-            //for(int i=0; i<screens.Length; i++)
-            //{
-            //	if(screens[i].Bounds.Left < left)
-            //		left = screens[i].Bounds.Left;
-
-            //	if(screens[i].Bounds.Top < top)
-            //		top = screens[i].Bounds.Top;
-
-            //	if(screens[i].Bounds.Bottom > bottom)
-            //		bottom = screens[i].Bounds.Bottom;
-
-            //	if(screens[i].Bounds.Right > right)
-            //		right = screens[i].Bounds.Right;
-            //}
-
-            ////MW0LGE_21d >= and <= all over
-            //if(f.Left >= left &&
-            //	f.Top >= top &&
-            //	f.Right <= right &&
-            //	f.Bottom <= bottom)
-            //         	on_screen = true;				
-
-            //if(!on_screen)
-            //{
-            //	//f.Location = new Point(0, 0);
-
-            //	if(f.Left < left)
-            //		f.Left = left;
-
-            //	if(f.Top < top)
-            //		f.Top = top;
-
-            //	if(f.Bottom > bottom)
-            //	{
-            //		if((f.Top - (f.Bottom-bottom)) >= top)
-            //			f.Top -= (f.Bottom-bottom);
-            //		else f.Top = 0;
-            //	}
-
-            //	if(f.Right > right)
-            //	{
-            //		if((f.Left - (f.Right-right)) >= left)
-            //			f.Left -= (f.Right-right);
-            //		else f.Left = 0;
-            //	}
-            //}
+            return (relocated, resized);
         }
 
-		public static void TabControlInsert(TabControl tc, TabPage tp, int index)
+
+        //public static (bool resized, bool shrunk) ForceFormOnScreen(Form f, bool shrink_to_fit = false)
+        //{
+        //          bool resized = false;
+        //          bool relocated = false;
+        //          Screen[] screens = Screen.AllScreens;
+
+        //          if (screens.Length == 0)
+        //          {
+        //              f.Location = new Point(0, 0);
+        //              return (false, false);
+        //          }
+
+        //          int left = int.MaxValue, top = int.MaxValue;
+        //          int right = int.MinValue, bottom = int.MinValue;
+
+        //          foreach (Screen screen in screens)
+        //          {
+        //              if (screen.Bounds.Left < left)
+        //                  left = screen.Bounds.Left;
+        //              if (screen.Bounds.Top < top)
+        //                  top = screen.Bounds.Top;
+        //              if (screen.Bounds.Right > right)
+        //                  right = screen.Bounds.Right;
+        //              if (screen.Bounds.Bottom > bottom)
+        //                  bottom = screen.Bounds.Bottom;
+        //          }
+
+        //          bool onScreen = f.Left >= left &&
+        //                          f.Top >= top &&
+        //                          f.Right <= right &&
+        //                          f.Bottom <= bottom;
+
+        //          if (!onScreen)
+        //          {
+        //              if (f.Left < left)
+        //                  f.Left = left;
+        //              if (f.Top < top)
+        //                  f.Top = top;
+        //              if (f.Right > right)
+        //                  f.Left = right - f.Width;
+        //              if (f.Bottom > bottom)
+        //                  f.Top = bottom - f.Height;
+
+        //              relocated = true;
+        //          }
+
+        //          if (shrink_to_fit)
+        //          {
+        //              int formWidth = f.Width;
+        //              int formHeight = f.Height;
+
+        //              if (f.Width > right - left)
+        //              {
+        //                  formWidth = right - left;
+        //                  resized = true;
+        //              }
+
+        //              if (f.Height > bottom - top)
+        //              {
+        //                  formHeight = bottom - top;
+        //                  resized = true;
+        //              }
+
+        //              f.Size = new Size(formWidth, formHeight);
+        //          }
+
+        //          return (relocated, resized);
+        //      }
+
+        public static void TabControlInsert(TabControl tc, TabPage tp, int index)
 		{
 			tc.SuspendLayout();
 			// temp storage to rearrange tabs
@@ -881,21 +978,46 @@ namespace Thetis
 				return System.IntPtr.Size == 8 ? true : false;
 			}
         }
-		public static void DoubleBuffered(Control c, bool bEnabled)
+		public static void DoubleBuffered(Control control, bool enabled)
         {
-			// MW0LGE_[2.9.0.6]
-			// not all controls (such as panels) have double buffered property
-			// try to use reflection, so we can keep the base panel
-			try
-			{
-				c.GetType().InvokeMember("DoubleBuffered",
-								System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
-								null, c, new object[] { bEnabled });
-			}
-			catch 
-			{ 
-			}
-		}
+            // MW0LGE_[2.9.0.6]
+            // not all controls (such as panels) have double buffered property
+            // try to use reflection, so we can keep the base panel
+            //try
+            //{
+            //    control.GetType().InvokeMember("DoubleBuffered",
+            //                    System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+            //                    null, control, new object[] { enabled });
+            //}
+            //catch
+            //{
+            //}
+
+            //[2.10.3.6]MW0LGE
+            // Use reflection to set the protected property DoubleBuffered
+            PropertyInfo doubleBufferPropertyInfo = control.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (doubleBufferPropertyInfo != null)
+            {
+                doubleBufferPropertyInfo.SetValue(control, enabled, null);
+            }
+
+            // Use reflection to call the protected method SetStyle
+            MethodInfo setStyleMethod = control.GetType().GetMethod("SetStyle", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (setStyleMethod != null)
+            {
+                setStyleMethod.Invoke(control, new object[] { ControlStyles.OptimizedDoubleBuffer, enabled });
+                setStyleMethod.Invoke(control, new object[] { ControlStyles.AllPaintingInWmPaint, enabled });
+                //setStyleMethod.Invoke(control, new object[] { ControlStyles.UserPaint, enabled });
+                setStyleMethod.Invoke(control, new object[] { ControlStyles.ResizeRedraw, enabled });
+            }
+
+            // Apply the style settings to the control
+            MethodInfo updateStylesMethod = control.GetType().GetMethod("UpdateStyles", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (updateStylesMethod != null)
+            {
+                updateStylesMethod.Invoke(control, null);
+            }
+        }
 
 		public static int FiveDigitHash(string str)
 		{
@@ -1316,6 +1438,15 @@ namespace Thetis
             else
             {
                 return (int)(Math.Pow(((colorChannel + 0.055) / 1.055), 2.4) * 255f);
+            }
+        }
+        public static void DoubleBufferAll(Control control, bool enabled)
+        {
+            DoubleBuffered(control, enabled);
+
+            foreach (Control child in control.Controls)
+            {
+                DoubleBufferAll(child, enabled);
             }
         }
     }

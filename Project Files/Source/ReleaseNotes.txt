@@ -9,14 +9,22 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 ## v2.10.3.6 Change Log - WIP dev_9
 - [add] total re-work of database management. There is now a database manager. See video : https://youtu.be/pwe3bd-tkGY
 - [add] rotator can now be stopped. Hover mouse over arrow pivot point to see red circle. Click in circle and STOP will be sent. Note: reset the pstRotator commands if you are already using before this update
-- [add] cache bypass option to web image meter item
+- [add] cache bypass option added to web image meter item
 - [add] you can now select VFOA, VFOB or BOTH in the multimeter vfo control
 - [add] auto height options for multimeter containers
 - [add] cwx form does now not need focus to act on F1-F12 etc. Uncheck focus to enable this in the cwx form
 - [add] rotator can now have a map. Check out OE3IDE's skin server pages.
 - [add] new button box meter controls for bands, modes and filters
 - [add] rotator can now have the beam width alpha adjusted
+- [add] right click a band in a band button box, and it will bandstack for that band
+- [add] antenna switch box meter item
+- [add] %precis=N% can be used on text overlay so specify precision for any floating point variable on that line. %precis=2%%signal_strength%  will show -73.49 for example
+- [add] small digits colour for vfo item
+- [add] new legacy items tab in setup->Appearance->Legacy Items
+- [add] vfo meter item can now show band text
+- [add] some new variables added to text overlay, including band text for vfoa/b
 - [change] importing a db with meter containers will no longer clear existing ones, they will be added if possible
+- [change] filter setup form now stores/recalls location
 - [fix] import of container locations now works when importing a database
 - [fix] fixed issue where a meter container would re-appear if console was minimised and then restored and that container had been docked at some point
 - [fix] exporting a tx profile no longer exports schema for non tx profile tables

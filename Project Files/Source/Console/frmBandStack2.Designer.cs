@@ -58,6 +58,7 @@ namespace Thetis
             this.btnHideSelected.Image = null;
             this.btnHideSelected.Location = new System.Drawing.Point(246, 318);
             this.btnHideSelected.Name = "btnHideSelected";
+            this.btnHideSelected.Selectable = true;
             this.btnHideSelected.Size = new System.Drawing.Size(117, 31);
             this.btnHideSelected.TabIndex = 13;
             this.btnHideSelected.Text = "Hide Selected (wip)";
@@ -84,6 +85,7 @@ namespace Thetis
             this.btnAddStackEntry.Image = null;
             this.btnAddStackEntry.Location = new System.Drawing.Point(246, 157);
             this.btnAddStackEntry.Name = "btnAddStackEntry";
+            this.btnAddStackEntry.Selectable = true;
             this.btnAddStackEntry.Size = new System.Drawing.Size(117, 64);
             this.btnAddStackEntry.TabIndex = 11;
             this.btnAddStackEntry.Text = "Add New Entry";
@@ -108,6 +110,7 @@ namespace Thetis
             this.btnShowBandStackFilterManager.Image = null;
             this.btnShowBandStackFilterManager.Location = new System.Drawing.Point(369, 355);
             this.btnShowBandStackFilterManager.Name = "btnShowBandStackFilterManager";
+            this.btnShowBandStackFilterManager.Selectable = true;
             this.btnShowBandStackFilterManager.Size = new System.Drawing.Size(117, 31);
             this.btnShowBandStackFilterManager.TabIndex = 9;
             this.btnShowBandStackFilterManager.Text = "Filter Manager (wip)";
@@ -120,6 +123,7 @@ namespace Thetis
             this.btnDeleteSelected.Image = null;
             this.btnDeleteSelected.Location = new System.Drawing.Point(246, 355);
             this.btnDeleteSelected.Name = "btnDeleteSelected";
+            this.btnDeleteSelected.Selectable = true;
             this.btnDeleteSelected.Size = new System.Drawing.Size(117, 31);
             this.btnDeleteSelected.TabIndex = 8;
             this.btnDeleteSelected.Text = "Delete Selected";
@@ -132,6 +136,7 @@ namespace Thetis
             this.btnLockSelected.Image = null;
             this.btnLockSelected.Location = new System.Drawing.Point(246, 120);
             this.btnLockSelected.Name = "btnLockSelected";
+            this.btnLockSelected.Selectable = true;
             this.btnLockSelected.Size = new System.Drawing.Size(117, 31);
             this.btnLockSelected.TabIndex = 7;
             this.btnLockSelected.Text = "Lock Selected";
@@ -144,6 +149,7 @@ namespace Thetis
             this.btnOptions.Image = null;
             this.btnOptions.Location = new System.Drawing.Point(153, 5);
             this.btnOptions.Name = "btnOptions";
+            this.btnOptions.Selectable = true;
             this.btnOptions.Size = new System.Drawing.Size(75, 31);
             this.btnOptions.TabIndex = 6;
             this.btnOptions.Text = "Options >>";
@@ -170,6 +176,7 @@ namespace Thetis
             this.btnSetSpecific.Image = null;
             this.btnSetSpecific.Location = new System.Drawing.Point(386, 61);
             this.btnSetSpecific.Name = "btnSetSpecific";
+            this.btnSetSpecific.Selectable = true;
             this.btnSetSpecific.Size = new System.Drawing.Size(45, 24);
             this.btnSetSpecific.TabIndex = 4;
             this.btnSetSpecific.Text = "Set";
@@ -212,6 +219,7 @@ namespace Thetis
             this.btnUpdateEntry.Image = null;
             this.btnUpdateEntry.Location = new System.Drawing.Point(369, 157);
             this.btnUpdateEntry.Name = "btnUpdateEntry";
+            this.btnUpdateEntry.Selectable = true;
             this.btnUpdateEntry.Size = new System.Drawing.Size(62, 64);
             this.btnUpdateEntry.TabIndex = 15;
             this.btnUpdateEntry.Text = "Update Entry";
@@ -279,7 +287,7 @@ namespace Thetis
             this.lblFilterNameCaption.Image = null;
             this.lblFilterNameCaption.Location = new System.Drawing.Point(12, 15);
             this.lblFilterNameCaption.Name = "lblFilterNameCaption";
-            this.lblFilterNameCaption.Size = new System.Drawing.Size(43, 16);
+            this.lblFilterNameCaption.Size = new System.Drawing.Size(42, 16);
             this.lblFilterNameCaption.TabIndex = 1;
             this.lblFilterNameCaption.Text = "Filter :";
             this.lblFilterNameCaption.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -336,6 +344,7 @@ namespace Thetis
             this.ShowInTaskbar = false;
             this.Text = "Band Stack 2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmBandStack2_FormClosing);
+            this.LocationChanged += new System.EventHandler(this.frmBandStack2_LocationChanged);
             this.ResumeLayout(false);
             this.PerformLayout();
 

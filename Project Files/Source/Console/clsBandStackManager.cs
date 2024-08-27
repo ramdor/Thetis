@@ -1176,6 +1176,70 @@ namespace Thetis
                 default:
                     return BandType.GEN;
             }
+        }        
+        public static Band GetNearestBandForFrequency(double freq, bool ignoreGen, bool ignoreWWV)
+        {
+            Band nearestBand = default(Band);
+            double smallestDifference = double.MaxValue;
+
+            foreach (BandFrequencyData data in m_frequencyData)
+            {
+                if (ignoreGen && data.bandType == BandType.GEN)
+                {
+                    continue;
+                }
+                if (ignoreGen && data.band == Band.WWV)
+                {
+                    continue;
+                }
+
+                double low = data.low;
+                double high = data.high;
+
+                if (data.lowOnly)
+                {
+                    double difference = Math.Abs(freq - low);
+                    if (difference < smallestDifference)
+                    {
+                        smallestDifference = difference;
+                        nearestBand = data.band;
+                    }
+                }
+                else
+                {
+                    if (freq >= low && freq <= high)
+                    {
+                        return data.band;
+                    }
+                    else
+                    {
+                        double differenceToLow = Math.Abs(freq - low);
+                        double differenceToHigh = Math.Abs(freq - high);
+                        double difference = Math.Min(differenceToLow, differenceToHigh);
+
+                        if (difference < smallestDifference)
+                        {
+                            smallestDifference = difference;
+                            nearestBand = data.band;
+                        }
+                    }
+                }
+            }
+
+            return nearestBand;
+        }
+
+        public static BandType GetBandTypeForFrequency(double frequency)
+        {
+            BandType ret = BandType.GEN;
+            if (m_frequencyData == null || m_frequencyData.Count == 0) return ret;
+
+            List<BandFrequencyData> bfd_for_freq = m_frequencyData.Where(bfd => (bfd.lowOnly == true && bfd.low == frequency) 
+                                    || (bfd.lowOnly == false && (frequency >= bfd.low && frequency < bfd.high))).ToList();
+
+            if (bfd_for_freq.Count > 0) return bfd_for_freq.First().bandType;
+
+            return ret;
         }
         private static List<BandFrequencyData> frequencyData(FRSRegion region)
         {

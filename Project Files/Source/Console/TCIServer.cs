@@ -1906,13 +1906,13 @@ namespace Thetis
 					byte[] bytes = Encoding.UTF8.GetBytes(sAdditional);
 					byte[] converted = Encoding.Convert(Encoding.UTF8, Encoding.Unicode, bytes);
 
-					string sAdditionalConverted = Encoding.Unicode.GetString(converted, 0, converted.Length);
+					string sAdditionalConvertedText = Encoding.Unicode.GetString(converted, 0, converted.Length);
 
-					if (sAdditionalConverted.ToLower() == "nil") sAdditionalConverted = ""; //[2.10.3.6]MW0LGE rumlog fills arg5 with Nil - spotted buy GW3JVB
-																						  //downside is that any additional text that is the string 'nil'
-																						  //will be removed, not that it is too much of an issue
-
-                    SpotManager2.AddSpot(args[0], mode, freq, Color.FromArgb((int)argb), sAdditionalConverted);
+					if (sAdditionalConvertedText.ToLower() == "nil") sAdditionalConvertedText = ""; //[2.10.3.6]MW0LGE rumlog fills arg5 with Nil - spotted buy GW3JVB
+																							//downside is that any additional text that is the string 'nil'
+																							//will be removed, not that it is too much of an issue
+					string callsign = args[0];
+                    SpotManager2.AddSpot(callsign, mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText);
 				}
 			}
 		}
