@@ -24692,7 +24692,7 @@ namespace Thetis
                         break;
                     case MeterType.ANTENNA_BUTTONS:
                         max_buttons = getTotalColumnsNeededForAntennaButtons();
-                        columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 10, 10);
+                        columns = igs.GetSetting<int>("buttonbox_columns", true, 1, max_buttons, max_buttons);
                         if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
                         if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
                         break;
