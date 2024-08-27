@@ -48,6 +48,7 @@ namespace Thetis
         public PSForm(Console c)
         {
             InitializeComponent();
+            Common.DoubleBufferAll(this, true);
 
             txtPSpeak.Text = "";
 

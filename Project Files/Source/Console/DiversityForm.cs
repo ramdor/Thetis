@@ -144,6 +144,8 @@ namespace Thetis
             // Required for Windows Form Designer support
             //
             InitializeComponent();
+            Common.DoubleBufferAll(this, true);
+
             console = c;
 
             udR1.Maximum = udGainMulti.Maximum; //[2.10.3.6]MW0LGE these need to be high so that restore form can recover values

@@ -59,6 +59,8 @@ namespace Thetis
         {
             InitializeComponent();
 
+            Common.DoubleBufferAll(this, true);
+
             picContainer.Location = new Point(0, 0);
             picContainer.Size = new Size(Size.Width, Size.Height);
 
@@ -235,8 +237,9 @@ namespace Thetis
 
             forceResize();
         }
-        private void forceResize()
+        private void forceResize(bool shrink = false)
         {
+            _resizing = true;
             if (_autoHeight)
             {
                 if(_floating)
@@ -245,7 +248,7 @@ namespace Thetis
                     {
                         if (this.Parent.ClientSize.Height != _height)
                         {
-                            resize(this.Parent.ClientSize.Width, _height);
+                            resize(this.Parent.ClientSize.Width, _height, shrink);
                         }
                     }
                 }
@@ -261,32 +264,39 @@ namespace Thetis
                 {
                     if (this.Parent != null)
                     {
-                        resize(this.Parent.ClientSize.Width, this.Parent.ClientSize.Height);
+                        resize(this.Parent.ClientSize.Width, this.Parent.ClientSize.Height, shrink);
                     }
                 }
                 else
                     resize(this.Size.Width, this.Size.Height);
             }
+            _resizing = false;
         }
         public void ChangeHeight(int height)
         {
             if (!_autoHeight) return;
+            _height = height;
             if (_resizing) return;
+            if (_dragging) return;
 
             if (_floating)
             {
-                if (this.Parent != null)
+                if (this.Parent != null && this.Parent.IsHandleCreated)
                 {
+                    bool shrink = false;
                     int screenHeight = Screen.FromControl(this.Parent).WorkingArea.Height;
-                    if(screenHeight < height)
+                    if (screenHeight < height)
+                    {
                         this.Parent.Location = new Point(this.Parent.Location.X, 0);
+                        shrink = true;
+                    }
 
                     height = Math.Min(height, screenHeight);
 
                     if (this.Parent.ClientSize.Height != height)
                     {
                         _height = height;
-                        forceResize();
+                        forceResize(shrink);
                     }
                 }
             }
@@ -294,7 +304,7 @@ namespace Thetis
             {
                 if (this.Size.Height != height)
                 {
-                    _height = height;
+                    //_height = height;
                     forceResize();
                 }
             }
@@ -313,7 +323,7 @@ namespace Thetis
                 resize(x, y);
             }
         }
-        private void resize(int x, int y)
+        private void resize(int x, int y, bool shrink = false)
         {
             if(Parent == null) return;
 
@@ -324,7 +334,7 @@ namespace Thetis
             {
                 Parent.ClientSize = new Size(x, y);
                 Parent.PerformLayout();
-                (bool was_relocated, bool was_shrunk) = Common.ForceFormOnScreen((Form)this.Parent, true);
+                (bool was_relocated, bool was_shrunk) = Common.ForceFormOnScreen((Form)this.Parent, shrink);
             }
             else
             {

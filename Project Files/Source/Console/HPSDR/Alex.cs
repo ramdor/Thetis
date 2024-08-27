@@ -106,9 +106,56 @@ namespace Thetis
 
 
 		private bool AlexEnableIsStateSaved = false; 
-		private bool AlexEnableSavedState; 
-		
-		public static Band AntBandFromFreq(bool tx) 
+		private bool AlexEnableSavedState;
+        public static Band AntBandFromFreq(double freq)
+        {
+            Band result;
+            if (freq >= 12.075)
+            {
+                if (freq >= 23.17)
+                {
+                    if (freq >= 26.465)
+                    {
+                        result = freq >= 39.85 ? Band.B6M : Band.B10M;
+                    }
+                    else /* >23.17  <26.465 */
+                    {
+                        result = Band.B12M;
+                    }
+                }
+                else  /* >12.075  <23.17 */
+                {
+                    if (freq >= 16.209)
+                    {
+                        result = freq >= 19.584 ? Band.B15M : Band.B17M;
+                    }
+                    else
+                    {
+                        result = Band.B20M;
+                    }
+                }
+            }
+            else  /* < 12.075 */
+            {
+                if (freq >= 6.20175)
+                {
+                    result = freq >= 8.7 ? Band.B30M : Band.B40M;
+                }
+                else
+                {
+                    if (freq >= 4.66525)
+                    {
+                        result = Band.B60M;
+                    }
+                    else
+                    {
+                        result = freq >= 2.75 ? Band.B80M : Band.B160M;
+                    }
+                }
+            }
+            return result;
+        }
+        public static Band AntBandFromFreq(bool tx) 
 		{
 			Band result;
  
@@ -137,49 +184,50 @@ namespace Thetis
 
             System.Console.WriteLine("Freq is: " + freq); 
 
-			if ( freq >= 12.075 ) 
-			{ 
-				if ( freq >= 23.17 ) 
-				{
-					if ( freq >= 26.465 ) 
-					{ 
-						result = freq >= 39.85 ? Band.B6M : Band.B10M; 
-					}
-					else /* >23.17  <26.465 */
-					{
-						result = Band.B12M;
-					}
-				}
-				else  /* >12.075  <23.17 */ 
-				{ 
-					if ( freq >= 16.209 ) 
-					{ 
-						result = freq >= 19.584 ? Band.B15M : Band.B17M;
-					}
-					else 
-					{ 
-						result = Band.B20M; 
-					} 
-				}
-			} 
-			else  /* < 12.075 */ 
-			{
-				if ( freq  >= 6.20175 ) 
-				{
-					result = freq >= 8.7 ? Band.B30M : Band.B40M; 
-				}
-				else 
-				{ 
-					if ( freq >= 4.66525 ) 
-					{
-						result = Band.B60M;
-					}
-					else 
-					{
-						result = freq >= 2.75 ? Band.B80M : Band.B160M;
-					}
-				} 
-			}
+			result = AntBandFromFreq(freq);
+            //if ( freq >= 12.075 ) 
+            //{ 
+            //	if ( freq >= 23.17 ) 
+            //	{
+            //		if ( freq >= 26.465 ) 
+            //		{ 
+            //			result = freq >= 39.85 ? Band.B6M : Band.B10M; 
+            //		}
+            //		else /* >23.17  <26.465 */
+            //		{
+            //			result = Band.B12M;
+            //		}
+            //	}
+            //	else  /* >12.075  <23.17 */ 
+            //	{ 
+            //		if ( freq >= 16.209 ) 
+            //		{ 
+            //			result = freq >= 19.584 ? Band.B15M : Band.B17M;
+            //		}
+            //		else 
+            //		{ 
+            //			result = Band.B20M; 
+            //		} 
+            //	}
+            //} 
+            //else  /* < 12.075 */ 
+            //{
+            //	if ( freq  >= 6.20175 ) 
+            //	{
+            //		result = freq >= 8.7 ? Band.B30M : Band.B40M; 
+            //	}
+            //	else 
+            //	{ 
+            //		if ( freq >= 4.66525 ) 
+            //		{
+            //			result = Band.B60M;
+            //		}
+            //		else 
+            //		{
+            //			result = freq >= 2.75 ? Band.B80M : Band.B160M;
+            //		}
+            //	} 
+            //}
 
             System.Console.WriteLine("Band is: " + result);
             return result; 

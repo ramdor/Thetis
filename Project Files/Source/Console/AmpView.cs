@@ -18,6 +18,8 @@ namespace Thetis
         public AmpView(PSForm ps)
         {
             InitializeComponent();
+            Common.DoubleBufferAll(this, true);
+
             psform = ps;
         }
 
