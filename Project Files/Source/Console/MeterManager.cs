@@ -21785,7 +21785,7 @@ namespace Thetis
                 }
 
                 //
-                if (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && vfo.ShowBandText)
+                if (vfo.ShowBandText && (vfo.VFOARenderState == clsVfoDisplay.renderState.VFO || vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO))
                 {
                     float bt_h = rect.Height * (mi.Size.Height / m.YRatio);
 
