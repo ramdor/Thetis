@@ -63,6 +63,7 @@ using System.Drawing.Text;
 using System.Security.Policy;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Runtime.CompilerServices;
+using System.Security.Permissions;
 
 namespace Thetis
 {
@@ -119,6 +120,7 @@ namespace Thetis
         // volts/amps
         VOLTS,
         AMPS,
+
         AZ,
         ELE,
 
@@ -203,6 +205,7 @@ namespace Thetis
         MODE_BUTTONS,
         FILTER_BUTTONS,
         ANTENNA_BUTTONS,
+        HISTORY,
         //SPECTRUM,
         LAST
     }
@@ -1469,6 +1472,7 @@ namespace Thetis
                 case MeterType.MODE_BUTTONS: return 2;
                 case MeterType.FILTER_BUTTONS: return 2;
                 case MeterType.ANTENNA_BUTTONS: return 2;
+                case MeterType.HISTORY: return 2;
                     //case MeterType.SPECTRUM: return 2;
             }
 
@@ -1514,6 +1518,7 @@ namespace Thetis
                 case MeterType.ROTATOR: return "Rotator";
                 case MeterType.VFO_DISPLAY: return "Vfo Display";
                 case MeterType.CLOCK: return "Clock";
+                case MeterType.HISTORY: return "History Graph";
             }
 
             return meter.ToString();
@@ -1532,28 +1537,28 @@ namespace Thetis
                 case Reading.ALC_G: return "ALC Compression";
                 case Reading.ALC_GROUP: return "ALC Group";
                 case Reading.ESTIMATED_PBSNR: return "Estimated PBSNR";
-                case Reading.ALC_PK: return "ALC (av/pk)";// Peak";
+                case Reading.ALC_PK: return "ALC (pk)";// Peak";
                 case Reading.AMPS: return "Amps";
                 case Reading.AVG_SIGNAL_STRENGTH: return "Signal Average";
                 case Reading.CAL_FWD_PWR: return "Calibrated FWD Power";
                 case Reading.CFC_G: return "CFC Compression";
-                case Reading.CFC_PK: return "CFC Compression (av/pk)";// Peak";
+                case Reading.CFC_PK: return "CFC Compression (pk)";// Peak";
                 case Reading.CFC_AV: return "CFC Compression Average";
                 case Reading.COMP: return "Compression";
-                case Reading.COMP_PK: return "Compression (av/pk)";// Peak";
+                case Reading.COMP_PK: return "Compression (pk)";// Peak";
                 //case Reading.CPDR: return "Compander"; //CPDR is the same as comp
                 //case Reading.CPDR_PK: return "Compander Peak"; //CPDR is the same as comp
                 case Reading.DRIVE_FWD_ADC: return "Drive Forward ADC";
                 case Reading.DRIVE_PWR: return "Drive Power";
                 case Reading.EQ: return "EQ";
-                case Reading.EQ_PK: return "EQ (av/pk)";// Peak";
+                case Reading.EQ_PK: return "EQ (pk)";// Peak";
                 case Reading.FWD_ADC: return "Forward ADC";
                 case Reading.FWD_VOLT: return "Forward Volt";
                 case Reading.LEVELER: return "Leveler";
-                case Reading.LEVELER_PK: return "Leveler (av/pk)";// Peak";
+                case Reading.LEVELER_PK: return "Leveler (pk)";// Peak";
                 case Reading.LVL_G: return "Leveler Gain";
                 case Reading.MIC: return "MIC";
-                case Reading.MIC_PK: return "MIC (av/pk)";// Peak";
+                case Reading.MIC_PK: return "MIC (pk)";// Peak";
                 case Reading.PA_FWD_PWR: return "PA Forward Power";
                 case Reading.PA_REV_PWR: return "PA Reverse Power";
                 case Reading.PWR: return "Power";
@@ -1565,6 +1570,10 @@ namespace Thetis
                 case Reading.VOLTS: return "Volts";
                 case Reading.AZ: return "Azimuth";
                 case Reading.ELE: return "Elevation";
+
+                // not used
+                case (Reading)(int)22:return "";
+                case (Reading)(int)23: return "";
             }
 
             return reading.ToString();
@@ -4711,7 +4720,7 @@ namespace Thetis
                     {
                         _console.BeginInvoke(new MethodInvoker(() =>
                         {
-                            _console.PopupFilterContextMenu(e);
+                            _console.PopupFilterContextMenu(_owningmeter.RX ,e);
                         }));
                     }                        
                     return;
@@ -8372,6 +8381,486 @@ namespace Thetis
                 set { _padding = value; }
             }
         }
+        internal class clsHistoryItem : clsMeterItem
+        {
+            internal class HistoryData
+            {
+                public float value;
+                public DateTime time;
+                public ShowTime;
+            }
+
+            private float _padding;
+            private float _vertical_ratio;
+            private System.Drawing.Color _back_colour;
+            private int _keep_for;
+
+            // convert to arrays at some point
+            private Reading _reading_0;
+            private Reading _reading_1;
+            private float _min_0;
+            private float _min_1;
+            private float _max_0;
+            private float _max_1;
+
+            private float _min_0_manual;
+            private float _min_1_manual;
+            private float _max_0_manual;
+            private float _max_1_manual;
+
+            private List<HistoryData> _history_data_list_0;
+            private List<HistoryData> _history_data_list_1;
+            private readonly object _history_data_list_lock_0 = new object();
+            private readonly object _history_data_list_lock_1 = new object();
+
+            private int _index_tracker_offset;
+            private int _removed;
+
+            private clsMeter _owningmeter;
+            private clsItemGroup _ig;
+
+            private bool _auto_scale_0;
+            private bool _auto_scale_1;
+
+            public clsHistoryItem(clsMeter owning_meter, clsItemGroup item_group)
+            {
+                _owningmeter = owning_meter;
+                _ig = item_group;
+
+                _padding = 0.1f;
+                _vertical_ratio = 0.5f;
+                _back_colour = System.Drawing.Color.Black;
+                _history_data_list_0 = new List<HistoryData>();
+                _history_data_list_1 = new List<HistoryData>();
+                _reading_0 = Reading.SIGNAL_STRENGTH;
+                _reading_1 = Reading.SIGNAL_STRENGTH;
+                _keep_for = 60; // seconds
+
+                _min_0 = float.MaxValue;
+                _max_0 = float.MinValue;
+                _min_1 = float.MaxValue;
+                _max_1 = float.MinValue;
+
+                _min_0_manual = -150f;
+                _max_0_manual = 0f;
+                _min_1_manual = -150f;
+                _max_1_manual = 0f;
+
+                _removed = 0;
+                _index_tracker_offset = 0;
+
+                _auto_scale_0 = true;
+                _auto_scale_1 = true;
+
+                ItemType = MeterItemType.HISTORY;
+
+                ReadingSource = Reading.SIGNAL_STRENGTH;
+
+                UpdateInterval = 100;
+            }
+            public override bool ZeroOut(out float value, int rx)
+            {
+                //return base.ZeroOut(out value, rx);
+                ZeroReading(out value, rx, _reading_0);
+                return true;
+            }
+            public bool AutoScale0
+            {
+                get { return _auto_scale_0; }
+                set 
+                { 
+                    _auto_scale_0 = value;
+                    if (_auto_scale_0)
+                    {
+                        lock (_history_data_list_lock_0)
+                        {
+                            if (_history_data_list_0.Count > 0)
+                            {
+                                _min_0 = _history_data_list_0.Min(obj => obj.value);
+                                _max_0 = _history_data_list_0.Max(obj => obj.value);
+                            }
+                        }
+                    }
+                }
+            }
+            public bool AutoScale1
+            {
+                get { return _auto_scale_1; }
+                set 
+                { 
+                    _auto_scale_1 = value;
+                    if (_auto_scale_1)
+                    {
+                        lock (_history_data_list_lock_0)
+                        {
+                            if (_history_data_list_1.Count > 0)
+                            {
+                                _min_1 = _history_data_list_1.Min(obj => obj.value);
+                                _max_1 = _history_data_list_1.Max(obj => obj.value);
+                            }
+                        }
+                    }
+                }
+            }
+            public int KeepFor
+            {
+                get { return _keep_for; }
+                set { _keep_for = value; }
+            }
+            public Reading Reading0
+            {
+                get { return _reading_0; }
+                set 
+                {
+                    if(_reading_0 != value)
+                    {
+                        lock (_history_data_list_lock_0)
+                        {
+                            _history_data_list_0.Clear();
+                            _min_0 = float.MaxValue;
+                            _max_0 = float.MinValue;
+                        }
+                        ZeroReading(out float val, _owningmeter.RX, value);
+                    }
+                    _reading_0 = value;                    
+                }
+            }
+            public Reading Reading1
+            {
+                get { return _reading_1; }
+                set 
+                {
+                    if (_reading_1 != value)
+                    {
+                        lock (_history_data_list_lock_1)
+                        {
+                            _history_data_list_1.Clear();
+                            _min_1 = float.MaxValue;
+                            _max_1 = float.MinValue;
+                        }
+                        ZeroReading(out float val, _owningmeter.RX, value);
+                    }
+                    _reading_1 = value;
+                }
+            }
+            public int IndexTracker
+            {
+                get { return _index_tracker_offset; }
+                set { _index_tracker_offset = value; }
+            }
+            public int ReadingsRemoved
+            {
+                get { return _removed; }
+            }
+            private void addReading(int axis, float value)
+            {
+                DateTime now = DateTime.Now;
+                //strip front of queue, as they will be oldest, for any that are too old
+                if (axis == 0)
+                {
+                    HistoryData hd;
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_history_data_list_0.Count > 0)
+                        {
+                            int count = 0;
+                            hd = _history_data_list_0[0];
+                            while((now - hd.time).TotalSeconds > _keep_for)
+                            {
+                                _history_data_list_0.RemoveAt(0);
+
+                                if (_history_data_list_0.Count > 0)
+                                {
+                                    hd = _history_data_list_0[0];
+                                    count++;
+                                }
+                                else
+                                    break;
+                            }
+                            _removed = count;
+                            if (count > 0 && _history_data_list_0.Count > 0)
+                            {
+                                _min_0 = _history_data_list_0.Min(obj => obj.value);
+                                _max_0 = _history_data_list_0.Max(obj => obj.value);
+                            }
+                        }
+                        hd = new HistoryData
+                        {
+                            value = value,
+                            time = now
+                        };
+                        _history_data_list_0.Add(hd);
+                        if (value < _min_0) _min_0 = value;
+                        if (value > _max_0) _max_0 = value;
+
+                        // time
+                        double seconds = (_history_data_list_0[_history_data_list_0.Count - 1].time - _history_data_list_0[0].time).TotalSeconds;
+                    }
+                }
+
+                if (axis == 1)
+                {
+                    HistoryData hd;
+                    lock (_history_data_list_lock_1)
+                    {
+                        if (_history_data_list_1.Count > 0)
+                        {
+                            int count = 0;
+                            hd = _history_data_list_1[0];
+                            while ((now - hd.time).TotalSeconds > _keep_for)
+                            {
+                                _history_data_list_1.RemoveAt(0);
+
+                                if (_history_data_list_1.Count > 0)
+                                {
+                                    hd = _history_data_list_1[0];
+                                    count++;
+                                }
+                                else
+                                    break;
+                            }
+                            _removed = count;
+                            if (count > 0 && _history_data_list_1.Count > 0)
+                            {
+                                _min_1 = _history_data_list_1.Min(obj => obj.value);
+                                _max_1 = _history_data_list_1.Max(obj => obj.value);
+                            }
+                        }
+                        hd = new HistoryData
+                        {
+                            value = value,
+                            time = now
+                        };
+                        _history_data_list_1.Add(hd);
+                        if (value < _min_1) _min_1 = value;
+                        if (value > _max_1) _max_1 = value;
+                    }
+                }
+            }
+            public float Range0
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_auto_scale_0)
+                            return _max_0 - _min_0;
+                        else
+                            return _max_0_manual - _min_0_manual;
+                    }
+                }
+            }
+            public float Range1
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_1)
+                    {
+                        if (_auto_scale_1)
+                            return _max_1 - _min_1;
+                        else
+                            return _max_1_manual - _min_1_manual;
+                    }
+                }
+            }
+            public float Min0
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_auto_scale_0)
+                            return _min_0;
+                        else
+                            return _min_0_manual;
+                    }
+                }
+                set 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        _min_0 = value;
+                    }
+                }
+            }
+            public float Max0
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_auto_scale_0)
+                            return _max_0;
+                        else
+                            return _max_0_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        _max_0 = value;
+                    }
+                }
+            }
+            public float Min1
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_auto_scale_1)
+                            return _min_1;
+                        else
+                            return _min_1_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_1)
+                    {
+                        _min_1 = value;
+                    }
+                }
+            }
+            public float Max1
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_auto_scale_1)
+                            return _max_1;
+                        else
+                            return _max_1_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_1)
+                    {
+                        _max_1 = value;
+                    }
+                }
+            }
+            //
+            public float Min0Manual
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        return _min_0_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        _min_0_manual = value;
+                    }
+                }
+            }
+            public float Max0Manual
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        return _max_0_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        _max_0_manual = value;
+                    }
+                }
+            }
+            public float Min1Manual
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        return _min_1_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_1)
+                    {
+                        _min_1_manual = value;
+                    }
+                }
+            }
+            public float Max1Manual
+            {
+                get
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        return _max_1_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_1)
+                    {
+                        _max_1_manual = value;
+                    }
+                }
+            }
+            //
+            public float VerticalRatio
+            {
+                get { return _vertical_ratio; }
+                set { _vertical_ratio = value; }
+            }
+            public System.Drawing.Color BackColour
+            {
+                get { return _back_colour; }
+                set { _back_colour = value; }
+            }
+            public List<HistoryData> History0
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        return _history_data_list_0;
+                    }
+                }
+            }
+            public List<HistoryData> History1
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_1)
+                    {
+                        return _history_data_list_1;
+                    }
+                }
+            }
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
+            {
+                // get latest reading
+                float reading_0;
+                bool use_0;
+                reading_0 = MeterManager.getReading(rx, _reading_0);
+                use_0 = true;
+
+                addReading(0, reading_0);
+
+                if (use_0)
+                {
+                    // this reading has been used
+                    if (!readingsUsed.Contains(_reading_0))
+                        readingsUsed.Add(_reading_0);
+                }
+            }
+        }
         internal class clsTextOverlay : clsMeterItem
         {
             private System.Drawing.Color _text_colour1;
@@ -10625,6 +11114,7 @@ namespace Thetis
                     case MeterType.ANTENNA_BUTTONS: return Reading.NONE;
                     case MeterType.DATA_OUT: return Reading.NONE;
                     case MeterType.ROTATOR: return variable_index == 0 ? Reading.AZ : Reading.ELE;
+                    case MeterType.HISTORY: return Reading.NONE;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return Reading.NONE;
@@ -10669,6 +11159,7 @@ namespace Thetis
                     case MeterType.MODE_BUTTONS: return 0;
                     case MeterType.FILTER_BUTTONS: return 0;
                     case MeterType.ANTENNA_BUTTONS: return 0;
+                    case MeterType.HISTORY: return 0;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return 0;
@@ -10718,6 +11209,7 @@ namespace Thetis
                     case MeterType.MODE_BUTTONS: AddModeButtons(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.FILTER_BUTTONS: AddFilterButtons(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.ANTENNA_BUTTONS: AddAntennaButtons(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
@@ -13203,6 +13695,35 @@ namespace Thetis
 
                 return bb.ID;
             }
+            public string AddHistory(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsHistoryItem bb = new clsHistoryItem(this, ig);
+                bb.ParentID = ig.ID;
+
+                bb.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
+                bb.Size = new SizeF(1f - _fPadX * 2f, 0.5f);
+
+                bb.ZOrder = 1;
+                addMeterItem(bb);
+
+                fBottom = bb.TopLeft.Y + bb.Size.Height;
+
+                ig.TopLeft = bb.TopLeft;
+                ig.Size = new SizeF(bb.Size.Width, fBottom);
+                ig.MeterType = MeterType.HISTORY;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return bb.ID;
+            }
             public string AddAntennaButtons(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
@@ -13903,6 +14424,60 @@ namespace Thetis
                         {
                             switch (mt)
                             {
+                                case MeterType.HISTORY:
+                                    {
+                                        bRebuild = true;
+                                        float padding = 0f;
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY))
+                                        {
+                                            clsHistoryItem his = me.Value as clsHistoryItem;
+                                            if (his == null) continue;
+
+                                            his.VerticalRatio = igs.GetSetting<float>("history_vertical_ratio", true, 0.05f, 1f, 0.5f);
+                                            his.BackColour = igs.GetSetting("history_background_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
+                                            his.UpdateInterval = (int)igs.GetSetting<float>("history_update", true, 50f, 10000f, 0.5f);
+                                            his.KeepFor = (int)igs.GetSetting<float>("history_keep_for", true, 1f, 86400f, 20f);
+
+                                            his.Reading0 = igs.GetSetting<Reading>("history_reading_0", false, Reading.NONE, Reading.NONE, Reading.SIGNAL_STRENGTH);
+                                            his.Reading1 = igs.GetSetting<Reading>("history_reading_0", false, Reading.NONE, Reading.NONE, Reading.SIGNAL_STRENGTH);
+
+                                            his.AutoScale0 = igs.GetSetting<bool>("history_auto_scale_0", false, false, false, true); // needs to be before the min0 manuals
+                                            his.Min0Manual = igs.GetSetting<float>("history_min_0", true, -200f, 200f, -150f);
+                                            his.Max0Manual = igs.GetSetting<float>("history_max_0", true, -200f, 200f, 0f);
+
+                                            his.AutoScale1 = igs.GetSetting<bool>("history_auto_scale_1", false, false, false, true); // needs to be before the min0 manuals
+                                            his.Min1Manual = igs.GetSetting<float>("history_min_1", true, -200f, 200f, -150f);
+                                            his.Max1Manual = igs.GetSetting<float>("history_max_1", true, -200f, 200f, 0f);
+
+                                            his.FadeOnRx = igs.FadeOnRx;
+                                            his.FadeOnTx = igs.FadeOnTx;
+
+                                            his.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                            his.Size = new SizeF(ig.Size.Width, his.VerticalRatio);
+
+                                            padding += his.Size.Height;
+                                        }
+                                        ig.Size = new SizeF(ig.Size.Width, padding + (_fPadY - (_fHeight * 0.75f)));
+
+                                        // recalc bounds for fade overlay cover as these will change
+                                        System.Drawing.RectangleF eyeBounds = getBounds(ig.ID);
+                                        if (!eyeBounds.IsEmpty)
+                                        {
+                                            foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                            {
+                                                clsFadeCover fc = fcs.Value as clsFadeCover;
+                                                if (fc == null) continue;
+
+                                                fc.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                fc.Size = new SizeF(ig.Size.Width, padding);
+
+                                                fc.FadeOnRx = igs.FadeOnRx;
+                                                fc.FadeOnTx = igs.FadeOnTx;
+                                            }
+                                        }
+                                    }
+                                    break;
                                 case MeterType.ANTENNA_BUTTONS:
                                 case MeterType.FILTER_BUTTONS:
                                 case MeterType.MODE_BUTTONS:
@@ -13937,7 +14512,7 @@ namespace Thetis
                                             bb.RebuildButtons = false;
 
                                             bool use_indicator = igs.GetSetting<bool>("buttonbox_use_indicator", false, false, false, false);
-                                            float indicator_width = igs.GetSetting<float>("buttonbox_indicator_border", true, 0, 1f, 05f) / 10f;
+                                            float indicator_width = igs.GetSetting<float>("buttonbox_indicator_border", true, 0, 1f, 0.5f) / 10f;
                                             System.Drawing.Color on_colour = igs.GetSetting("buttonbox_on_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
                                             System.Drawing.Color off_colour = igs.GetSetting("buttonbox_off_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
 
@@ -14914,6 +15489,44 @@ namespace Thetis
                             clsIGSettings igs = new clsIGSettings();
                             switch (mt)
                             {
+                                case MeterType.HISTORY:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY))
+                                        {
+                                            clsHistoryItem his = me.Value as clsHistoryItem;
+                                            if (his == null) continue; // skip
+
+                                            igs.SetSetting<float>("history_vertical_ratio", his.VerticalRatio);
+                                            igs.SetSetting<System.Drawing.Color>("history_background_colour", his.BackColour);
+                                            igs.SetSetting<float>("history_update", (float)his.UpdateInterval);
+                                            igs.SetSetting<float>("history_keep_for", (float)his.KeepFor);
+
+                                            igs.SetSetting<Reading>("history_reading_0", his.Reading0);
+                                            igs.SetSetting<Reading>("history_reading_1", his.Reading1);
+
+                                            igs.SetSetting<bool>("history_auto_scale_0", his.AutoScale0);
+                                            igs.SetSetting<float>("history_min_0", his.Min0Manual);
+                                            igs.SetSetting<float>("history_max_0", his.Max0Manual);
+
+                                            igs.SetSetting<bool>("history_auto_scale_1", his.AutoScale1);
+                                            igs.SetSetting<float>("history_min_1", his.Min1Manual);
+                                            igs.SetSetting<float>("history_max_1", his.Max1Manual);
+
+                                            igs.FadeOnRx = his.FadeOnRx;
+                                            igs.FadeOnTx = his.FadeOnTx;
+                                        }
+
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue; // skip
+
+                                            igs.FadeOnRx = fc.FadeOnRx;
+                                            igs.FadeOnTx = fc.FadeOnTx;
+                                        }
+                                    }
+                                    break;
                                 case MeterType.ANTENNA_BUTTONS:
                                 case MeterType.FILTER_BUTTONS:
                                 case MeterType.MODE_BUTTONS:
@@ -16040,7 +16653,8 @@ namespace Thetis
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.MODE_BUTTONS ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.ANTENNA_BUTTONS ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY
                                                                 ) && ( ((mox && o.Value.OnlyWhenTX) || (!mox && o.Value.OnlyWhenRX)) || (!o.Value.OnlyWhenTX && !o.Value.OnlyWhenRX) ) ))
                     {
                         clsMeterItem mi = kvp.Value;
@@ -17340,7 +17954,7 @@ namespace Thetis
                     {
                         if (m.SortedMeterItemsForZOrder != null)
                         {
-                            float tw = targetWidth - 1f;// 0.5f;
+                            float tw = targetWidth - 1f;
                             float rw = m.XRatio;
                             float rh = m.YRatio;
 
@@ -17487,31 +18101,6 @@ namespace Thetis
                     }
                 }
             }
-            //private void OnKeyPressed(object sender, RawInputEventArg e)
-            //{
-            //    if (e.KeyPressEvent.KeyPressState == "BREAK") return;
-
-            //    Debug.Print(e.KeyPressEvent.VKey.ToString() + " -- " + e.KeyPressEvent.ID);
-
-            //    lock (_metersLock)
-            //    {
-            //        string sId = e.KeyPressEvent.ID;
-            //        if (!_meters.ContainsKey(sId)) return;
-
-            //        clsMeter m = _meters[sId];
-
-            //        lock (m._meterItemsLock)
-            //        {
-            //            if (m.SortedMeterItemsForZOrder != null)
-            //            {
-            //                foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
-            //                {
-            //                    mi.KeyDown((Keys)e.KeyPressEvent.VKey);
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
             private void OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
             {
                 lock (_metersLock)
@@ -17687,9 +18276,6 @@ namespace Thetis
                                     case clsMeterItem.MeterItemType.ROTATOR:
                                         renderRotator(rect, mi, m);
                                         break;
-                                    //case clsMeterItem.MeterItemType.HISTORY:
-                                    //    renderHistory(rect, mi, m);
-                                    //    break;
                                     //case clsMeterItem.MeterItemType.ITEM_GROUP:
                                     //    renderGroup(rect, mi, m);
                                     //    break;
@@ -17713,6 +18299,9 @@ namespace Thetis
                                     //    break;
                                     case clsMeterItem.MeterItemType.FADE_COVER:
                                         renderFadeCover(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.HISTORY:
+                                        renderHistory(rect, mi, m);
                                         break;
                                 }
                             }
@@ -18791,6 +19380,139 @@ namespace Thetis
                     (float tw, float th) = plotText(displayText, textX, textY, h, rect.Width, fontSize, m.MOX ? text_overlay.TextColour2 : text_overlay.TextColour1, 255, fontFamily, fontStyle, false);
                 }
             }
+            private void renderHistory(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsHistoryItem his = (clsHistoryItem)mi;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
+                if (!do_cover_fade)
+                {
+                    if (m.MOX != mi.MOX)
+                    {
+                        mi.FadeValue = 48;
+                        mi.MOX = m.MOX;
+                    }
+                    else
+                    {
+                        int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                        updateInterval = Math.Min(updateInterval, 500);
+                        // fade to take half a second
+                        int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
+                        int stepSize = (int)Math.Ceiling(207 / (float)steps_needed); // 255-48 = 207
+
+                        mi.FadeValue += stepSize;
+                        if (mi.FadeValue > 255) mi.FadeValue = 255;
+                    }
+                }
+
+                SharpDX.RectangleF rectHis = new SharpDX.RectangleF(x, y, w, h);
+
+                _renderTarget.FillRectangle(rectHis, getDXBrushForColour(his.BackColour));
+
+                float spacer = w * 0.075f;
+                float half_spacer = spacer / 2f;
+                float quarter_spacer = spacer / 4f;
+                float axis_line_width = Math.Max(1f, w * 0.002f);
+                float data_line_width = Math.Max(1f, w * 0.002f);
+
+                //x axis
+                _renderTarget.DrawLine(new RawVector2(x + half_spacer + quarter_spacer, y + h - spacer), new RawVector2(x + w - half_spacer - quarter_spacer, y + h - spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
+
+                //left y axis
+                _renderTarget.DrawLine(new RawVector2(x + spacer, y + half_spacer), new RawVector2(x + spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
+
+                //right y axis
+                _renderTarget.DrawLine(new RawVector2(x + w - spacer, y + half_spacer), new RawVector2(x + w - spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
+
+                //render axis 0 data
+                int total = his.History0.Count;
+                if (total > 1)
+                {
+                    float range = his.Range0;
+                    range = Math.Max(2, range);
+
+                    //y-axis numbers + lines
+                    float pix_space = (y + h - spacer) - (y + half_spacer);
+                    float text_height = (w * 0.05f);
+                    int text_labels = (int)(pix_space / text_height) + 2;
+                    text_labels = Math.Max(2, text_labels);
+                    float text_y_step = pix_space / (float)(text_labels - 1);
+                    float min = his.Min0;
+                    float number_step = range / (float)(text_labels - 1);
+                    for (int i = 0; i < text_labels; i++)
+                    {
+                        float t_y = y + h - spacer - (i * text_y_step) - (text_height / 4f);
+                        float val = min + (i * number_step);
+                        plotText(val.ToString("f1"), x + spacer - quarter_spacer, t_y, h, rect.Width, 12f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular, true, false, spacer);
+
+                        if (i > 0)
+                        {
+                            t_y += (text_height / 4f);
+                            _renderTarget.DrawLine(new RawVector2(x + spacer - quarter_spacer, t_y), new RawVector2(x + w - spacer, t_y), getDXBrushForColour(System.Drawing.Color.Gray), data_line_width);
+                        }
+                    }
+
+                    // Calculate step size for drawing based on the width and the number of pixels available
+                    //float step = (w - spacer * 2f) / (float)(Math.Min(total, (int)(w - spacer * 2f)));                   
+                    float start_x = x + spacer;
+                    float base_y = y + h - spacer;
+                    float y_scale = (h - spacer - half_spacer) / range;
+
+                    // Calculate sampling rate
+                    int pixelWidth = (int)(w - spacer * 2f);
+                    int sampleRate = Math.Max(1, total / pixelWidth);
+
+                    if (his.IndexTracker > sampleRate) his.IndexTracker = his.ReadingsRemoved;
+
+                    // Use the first data point for starting the line
+                    float last_y = (his.History0[0].value - min) * y_scale;
+
+                    // start clip rectangle
+                    SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(x + spacer, y + half_spacer, w - spacer * 2f, h - half_spacer - spacer);
+                    _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
+                    for (int i = sampleRate - his.IndexTracker; i < total; i += sampleRate)
+                    {
+                        // window average
+                        int side = sampleRate / 2;
+                        side = Math.Min(10, sampleRate);
+                        int start = Math.Max(0, i - side / 2);
+                        int end = Math.Min(total - 1, i + side / 2);
+                        float sum = 0;
+                        int count = 0;
+                        for (int j = start; j <= end; j++)
+                        {
+                            sum += ((his.History0[j].value - min) * y_scale);
+                            count++;
+                        }
+
+                        float this_y = sum / count;
+
+                        // Draw line segment
+                        _renderTarget.DrawLine(
+                            new RawVector2(start_x + ((i - sampleRate) / (float)(total - 1)) * (w - spacer * 2f), base_y - last_y),
+                            new RawVector2(start_x + (i / (float)(total - 1)) * (w - spacer * 2f), base_y - this_y),
+                            getDXBrushForColour(System.Drawing.Color.Red), data_line_width);
+
+                        last_y = this_y;
+                    }
+                    _renderTarget.PopAxisAlignedClip();
+
+                    //time axis
+                    
+
+
+                    //plotText(his.IndexTracker.ToString(), x , y, h, rect.Width, 12f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular);
+                    //plotText(sampleRate.ToString(), x, y + 30, h, rect.Width, 12f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular);
+
+                    if (sampleRate > 1 && his.ReadingsRemoved > 0) his.IndexTracker++;
+                    else if (his.IndexTracker > 0) his.IndexTracker = 0;
+                }                
+            }
             private void renderSpacer(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsSpacerItem spacer = (clsSpacerItem)mi;
@@ -19619,66 +20341,6 @@ namespace Thetis
                 eyeElipse.RadiusY = w / 6f;
                 _renderTarget.FillEllipse(eyeElipse, getDXBrushForColour(System.Drawing.Color.FromArgb(32, 32, 32)));
             }
-            //private void renderHistory(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
-            //{
-            //    clsHistoryItem hi = (clsHistoryItem)mi;
-
-            //    float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
-            //    float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-            //    float w = rect.Width * (mi.Size.Width / m.XRatio);
-            //    float h = rect.Height * (mi.Size.Height / m.YRatio);
-
-            //    int nFade = 255;
-
-            //    SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
-            //    _renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Green));
-
-            //    List<float> history = hi.GetHistory();
-            //    if (history.Count == 0) return;
-
-            //    float fMax = history.Max();
-            //    float fMin = history.Min();
-            //    float fSpan = fMax - fMin;
-            //    //mi.UpdateInterval
-
-            //    Vector2 start = new Vector2();
-            //    Vector2 end = new Vector2();
-
-            //    if (history.Count > 1) 
-            //    {
-            //        float fScale = 1f;
-            //        if (true)//hi.ScaleStrokeWidth)
-            //        {
-            //            //float fSmallestDimension = w < h ? w : h;
-            //            //fScale = fSmallestDimension / 200f;
-            //            float fDiag = (float)Math.Sqrt((w * w) + (h * h));
-            //            fScale = fDiag / 450f;
-            //        }
-            //        float fStrokeWidth = hi.StrokeWidth * fScale;
-
-            //        int i = history.Count - 1;
-            //        getPerc(hi, history[i], out float percX, out float percY, out PointF min, out PointF max);
-
-            //        start.X = x;
-            //        start.Y = y + (h - (h * percY));
-            //        float fStep = w / (float)history.Count;
-
-            //        for (int n = 1; n < i; n++)
-            //        {
-            //            float val = history[i - n];
-            //            getPerc(hi, val, out percX, out percY, out min, out max);
-
-            //            end.X = x + (n * fStep);
-            //            end.Y = y + (h - (h * percY));
-
-            //            System.Drawing.Color c = val >= -73 ? System.Drawing.Color.Red : System.Drawing.Color.White;
-            //            _renderTarget.DrawLine(start, end, getDXBrushForColour(c), fStrokeWidth);
-
-            //            start.X = end.X;
-            //            start.Y = end.Y;
-            //        }
-            //    }
-            //}
             private void renderText(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsText txt = (clsText)mi;
@@ -21294,9 +21956,11 @@ namespace Thetis
                         vfo.VFOAButtonState = button_state_vfoA;
                 }
 
-                // nothing to do down below unless we are in VFO mode
-                if ((vfo.VFOARenderState != clsVfoDisplay.renderState.VFO && disp_a) ||
-                    (vfo.VFOBRenderState != clsVfoDisplay.renderState.VFO && disp_b)) return;
+                // nothing to do down below unless we are in VFO mode                
+                //if ((vfo.VFOARenderState != clsVfoDisplay.renderState.VFO && disp_a) ||
+                //    (vfo.VFOBRenderState != clsVfoDisplay.renderState.VFO && disp_b)) return;
+                disp_a = vfo.VFOARenderState == clsVfoDisplay.renderState.VFO;
+                disp_b = vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO;
 
                 // plotting the normal display
                 rect.Width *= x_multy;

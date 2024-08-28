@@ -48786,9 +48786,12 @@ namespace Thetis
         {
             chkRxAnt.Checked = !chkRxAnt.Checked;
         }
-        public void PopupFilterContextMenu(MouseEventArgs e)
+        public void PopupFilterContextMenu(int rx, MouseEventArgs e)
         {
-            contextMenuStripFilterRX1.Show(MousePosition);
+            if (rx == 1)
+                contextMenuStripFilterRX1.Show(MousePosition);
+            else if(rx == 2)
+                contextMenuStripFilterRX2.Show(MousePosition);
         }
         public void PopupBandstack(int rx, Band b, bool is_on_top)
         {

@@ -153,6 +153,8 @@ namespace Thetis
 
             InitAudioTab();
 
+            initComboHistoryReadings0();
+
             //MW0LGE_21d some defaults
             chkShowZeroLine.Checked = true;
             chkGridControl.Checked = true;
@@ -24298,7 +24300,26 @@ namespace Thetis
             MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (igs == null) return null;
 
-            if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS)
+            if (mt == MeterType.HISTORY)
+            {
+                igs.SetSetting<float>("history_vertical_ratio", (float)nudHistory_vertical_ratio.Value);
+                igs.SetSetting<System.Drawing.Color>("history_background_colour", clrbtnHistory_background.Color);
+                igs.SetSetting<float>("history_update", (float)nudHistory_update.Value);
+                igs.SetSetting<float>("history_keep_for", (float)nudHistory_keep_for.Value);
+                clsComboHistoryItem chi = comboHistory_reading_0.SelectedItem as clsComboHistoryItem;
+                if(chi != null)
+                    igs.SetSetting<Reading>("history_reading_0", chi.Reading);
+                else
+                    igs.SetSetting<Reading>("history_reading_0", Reading.SIGNAL_STRENGTH);
+
+                igs.SetSetting<bool>("history_auto_scale_0", chkHistory_auto_0_scale.Checked);
+                igs.SetSetting<float>("history_min_0", (float)nudHistory_axis0_min.Value);
+                igs.SetSetting<float>("history_max_0", (float)nudHistory_axis0_max.Value);
+
+                igs.FadeOnRx = chkHistory_fade_rx.Checked;
+                igs.FadeOnTx = chkHistory_fade_tx.Checked;
+            }
+            else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS)
             {
                 if (mt == MeterType.ANTENNA_BUTTONS)
                 {
@@ -24673,7 +24694,29 @@ namespace Thetis
                 }
             }
 
-            if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS)
+            if(mt == MeterType.HISTORY)
+            {
+                nudHistory_vertical_ratio.Value = (decimal)igs.GetSetting<float>("history_vertical_ratio", true, 0.05f, 1f, 0.5f);
+                clrbtnHistory_background.Color = igs.GetSetting<System.Drawing.Color>("history_background_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Black);
+                nudHistory_update.Value = (decimal)igs.GetSetting<float>("history_update", true, 50f, 10000f, 0.5f);
+                nudHistory_keep_for.Value = (decimal)igs.GetSetting<float>("history_keep_for", true, 1f, 86400f, 20f);
+                Reading r = igs.GetSetting<Reading>("history_reading_0", false, Reading.NONE, Reading.NONE, Reading.SIGNAL_STRENGTH);
+                foreach(clsComboHistoryItem chi in comboHistory_reading_0.Items)
+                {
+                    if (chi.Reading == r)
+                    {
+                        comboHistory_reading_0.SelectedItem = chi;
+                        break;
+                    }
+                }
+                chkHistory_auto_0_scale.Checked = igs.GetSetting<bool>("history_auto_scale_0", false, false, false, true);
+                nudHistory_axis0_min.Value = (decimal)igs.GetSetting<float>("history_min_0", true, -200f, 200f, -150f);
+                nudHistory_axis0_max.Value = (decimal)igs.GetSetting<float>("history_max_0", true, -200f, 200f, 0f);
+
+                chkHistory_fade_rx.Checked = igs.FadeOnRx;
+                chkHistory_fade_tx.Checked = igs.FadeOnTx;
+            }
+            else if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS)
             {
                 int columns = 1;
                 int max_buttons = 1;
@@ -25359,6 +25402,7 @@ namespace Thetis
             grpWebImage.Visible = false;
             grpBandButtons.Visible = false;
             pnlButtonBox_antenna_toggles.Visible = false;
+            grpHistoryItem.Visible = false;
 
             switch (mt)
             {
@@ -25422,6 +25466,11 @@ namespace Thetis
                         else
                             pnlButtonBox_antenna_toggles.Visible = false;
                     }
+                    break;
+                case MeterType.HISTORY:
+                    grpHistoryItem.Parent = grpMultiMeterHolder;
+                    grpHistoryItem.Location = loc;
+                    grpHistoryItem.Visible = true;
                     break;
                 default:
                     grpMeterItemSettings.Parent = grpMultiMeterHolder;
@@ -30543,6 +30592,90 @@ namespace Thetis
         private void btnVFOCopyColourFromMainNumbers_Click(object sender, EventArgs e)
         {
             clrbtnMMVfoDisplayFrequency_small.Color = clrbtnMMVfoDisplayFrequency.Color;
+        }
+
+        private void nudHistory_vertical_ratio_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnHistory_background_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkHistory_fade_rx_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkHistory_fade_tx_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudHistory_update_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudHistory_keep_for_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void comboHistory_reading_0_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            clsComboHistoryItem chi = comboHistory_reading_0.SelectedItem as clsComboHistoryItem;
+            if (chi == null) return;
+
+            updateMeterType();
+        }
+        private class clsComboHistoryItem
+        {
+            private string _reading_name;
+            private Reading _reading;
+            public clsComboHistoryItem(Reading r)
+            {
+                _reading = r;
+                _reading_name = MeterManager.ReadingName(r);
+            }
+            public Reading Reading
+            {
+                get { return _reading; }
+            }
+            public override string ToString()
+            {
+                return _reading_name;
+            }
+        }
+        private void initComboHistoryReadings0()
+        {
+            comboHistory_reading_0.Items.Clear();
+            for(int i = (int)Reading.SIGNAL_STRENGTH; i <= (int)Reading.SWR; i++)
+            {
+                if (i == 22 || i == 23) continue; // skip these as not used
+
+                Reading r = (Reading)i;
+                clsComboHistoryItem chi = new clsComboHistoryItem(r);
+
+                int index = comboHistory_reading_0.Items.Add(chi);
+            }
+        }
+
+        private void nudHistory_axis0_min_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudHistory_axis0_max_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkHistory_auto_0_scale_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 
