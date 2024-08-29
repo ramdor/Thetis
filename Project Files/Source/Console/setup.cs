@@ -24312,9 +24312,19 @@ namespace Thetis
                 else
                     igs.SetSetting<Reading>("history_reading_0", Reading.SIGNAL_STRENGTH);
 
+                chi = comboHistory_reading_1.SelectedItem as clsComboHistoryItem;
+                if (chi != null)
+                    igs.SetSetting<Reading>("history_reading_1", chi.Reading);
+                else
+                    igs.SetSetting<Reading>("history_reading_1", Reading.SIGNAL_STRENGTH);
+
                 igs.SetSetting<bool>("history_auto_scale_0", chkHistory_auto_0_scale.Checked);
                 igs.SetSetting<float>("history_min_0", (float)nudHistory_axis0_min.Value);
                 igs.SetSetting<float>("history_max_0", (float)nudHistory_axis0_max.Value);
+
+                igs.SetSetting<bool>("history_auto_scale_1", chkHistory_auto_1_scale.Checked);
+                igs.SetSetting<float>("history_min_1", (float)nudHistory_axis1_min.Value);
+                igs.SetSetting<float>("history_max_1", (float)nudHistory_axis1_max.Value);
 
                 igs.FadeOnRx = chkHistory_fade_rx.Checked;
                 igs.FadeOnTx = chkHistory_fade_tx.Checked;
@@ -24709,9 +24719,23 @@ namespace Thetis
                         break;
                     }
                 }
+                r = igs.GetSetting<Reading>("history_reading_1", false, Reading.NONE, Reading.NONE, Reading.SIGNAL_STRENGTH);
+                foreach (clsComboHistoryItem chi in comboHistory_reading_1.Items)
+                {
+                    if (chi.Reading == r)
+                    {
+                        comboHistory_reading_1.SelectedItem = chi;
+                        break;
+                    }
+                }
+
                 chkHistory_auto_0_scale.Checked = igs.GetSetting<bool>("history_auto_scale_0", false, false, false, true);
                 nudHistory_axis0_min.Value = (decimal)igs.GetSetting<float>("history_min_0", true, -200f, 200f, -150f);
                 nudHistory_axis0_max.Value = (decimal)igs.GetSetting<float>("history_max_0", true, -200f, 200f, 0f);
+
+                chkHistory_auto_1_scale.Checked = igs.GetSetting<bool>("history_auto_scale_1", false, false, false, true);
+                nudHistory_axis1_min.Value = (decimal)igs.GetSetting<float>("history_min_1", true, -200f, 200f, -150f);
+                nudHistory_axis1_max.Value = (decimal)igs.GetSetting<float>("history_max_1", true, -200f, 200f, 0f);
 
                 chkHistory_fade_rx.Checked = igs.FadeOnRx;
                 chkHistory_fade_tx.Checked = igs.FadeOnTx;
@@ -30652,7 +30676,8 @@ namespace Thetis
         private void initComboHistoryReadings0()
         {
             comboHistory_reading_0.Items.Clear();
-            for(int i = (int)Reading.SIGNAL_STRENGTH; i <= (int)Reading.SWR; i++)
+            comboHistory_reading_1.Items.Clear();
+            for (int i = (int)Reading.SIGNAL_STRENGTH; i <= (int)Reading.SWR; i++)
             {
                 if (i == 22 || i == 23) continue; // skip these as not used
 
@@ -30660,21 +30685,54 @@ namespace Thetis
                 clsComboHistoryItem chi = new clsComboHistoryItem(r);
 
                 int index = comboHistory_reading_0.Items.Add(chi);
+                index = comboHistory_reading_1.Items.Add(chi);
             }
         }
 
         private void nudHistory_axis0_min_ValueChanged(object sender, EventArgs e)
         {
+            if (nudHistory_axis0_min.Value > nudHistory_axis0_max.Value) nudHistory_axis0_max.Value = nudHistory_axis0_min.Value;
             updateMeterType();
         }
 
         private void nudHistory_axis0_max_ValueChanged(object sender, EventArgs e)
         {
+            if (nudHistory_axis0_max.Value < nudHistory_axis0_min.Value) nudHistory_axis0_min.Value = nudHistory_axis0_max.Value;
             updateMeterType();
         }
 
         private void chkHistory_auto_0_scale_CheckedChanged(object sender, EventArgs e)
         {
+            updateMeterType();
+        }
+
+        private void comboHistory_reading_1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            clsComboHistoryItem chi = comboHistory_reading_1.SelectedItem as clsComboHistoryItem;
+            if (chi == null) return;
+
+            updateMeterType();
+        }
+
+        private void chkHistory_right_axis_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkHistory_auto_1_scale_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudHistory_axis1_min_ValueChanged(object sender, EventArgs e)
+        {
+            if (nudHistory_axis1_min.Value > nudHistory_axis1_max.Value) nudHistory_axis1_max.Value = nudHistory_axis1_min.Value;
+            updateMeterType();
+        }
+
+        private void nudHistory_axis1_max_ValueChanged(object sender, EventArgs e)
+        {
+            if (nudHistory_axis1_max.Value < nudHistory_axis1_min.Value) nudHistory_axis1_min.Value = nudHistory_axis1_max.Value;
             updateMeterType();
         }
     }

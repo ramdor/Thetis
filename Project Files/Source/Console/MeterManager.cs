@@ -8387,7 +8387,7 @@ namespace Thetis
             {
                 public float value;
                 public DateTime time;
-                public ShowTime;
+                public bool show_time;
             }
 
             private float _padding;
@@ -8413,7 +8413,6 @@ namespace Thetis
             private readonly object _history_data_list_lock_0 = new object();
             private readonly object _history_data_list_lock_1 = new object();
 
-            private int _index_tracker_offset;
             private int _removed;
 
             private clsMeter _owningmeter;
@@ -8421,6 +8420,11 @@ namespace Thetis
 
             private bool _auto_scale_0;
             private bool _auto_scale_1;
+
+            private int _time_labels_max;
+            private int _active_time_labels;
+            private DateTime _last_time_label_add_time;
+            private bool _next_add_make_time_label;
 
             public clsHistoryItem(clsMeter owning_meter, clsItemGroup item_group)
             {
@@ -8447,10 +8451,14 @@ namespace Thetis
                 _max_1_manual = 0f;
 
                 _removed = 0;
-                _index_tracker_offset = 0;
 
                 _auto_scale_0 = true;
                 _auto_scale_1 = true;
+
+                _time_labels_max = 2; // same as minimum in renderer
+                _active_time_labels = 0;
+                _last_time_label_add_time = DateTime.UtcNow;
+                _next_add_make_time_label = true;
 
                 ItemType = MeterItemType.HISTORY;
 
@@ -8460,9 +8468,50 @@ namespace Thetis
             }
             public override bool ZeroOut(out float value, int rx)
             {
-                //return base.ZeroOut(out value, rx);
                 ZeroReading(out value, rx, _reading_0);
+                ZeroReading(out value, rx, _reading_1);
                 return true;
+            }
+            public TimeSpan TimeSpanForLables
+            {
+                get
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_history_data_list_0.Count > 1)
+                        {
+                            return _history_data_list_0.Last().time - _history_data_list_0.First().time;
+                        }
+                        else
+                            return new TimeSpan(0);
+                    }
+                }
+            }
+            public DateTime LastTimeLabelAddTime
+            {
+                get { return _last_time_label_add_time; }
+            }
+            public int ActiveTimeLabels
+            {
+                get { return _active_time_labels; }
+                set { _active_time_labels = value; }
+            }
+            public int MaxTimeLables
+            {
+                get
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        return _time_labels_max;
+                    }
+                }
+                set
+                {
+                    if(value != _time_labels_max)
+                    {
+                        _time_labels_max = value;
+                    }
+                }
             }
             public bool AutoScale0
             {
@@ -8543,18 +8592,13 @@ namespace Thetis
                     _reading_1 = value;
                 }
             }
-            public int IndexTracker
-            {
-                get { return _index_tracker_offset; }
-                set { _index_tracker_offset = value; }
-            }
             public int ReadingsRemoved
             {
                 get { return _removed; }
             }
             private void addReading(int axis, float value)
             {
-                DateTime now = DateTime.Now;
+                DateTime now = DateTime.UtcNow;
                 //strip front of queue, as they will be oldest, for any that are too old
                 if (axis == 0)
                 {
@@ -8567,6 +8611,11 @@ namespace Thetis
                             hd = _history_data_list_0[0];
                             while((now - hd.time).TotalSeconds > _keep_for)
                             {
+                                if (hd.show_time)
+                                {
+                                    _active_time_labels--;
+                                    if (_active_time_labels < 0) _active_time_labels = 0;
+                                }
                                 _history_data_list_0.RemoveAt(0);
 
                                 if (_history_data_list_0.Count > 0)
@@ -8584,11 +8633,22 @@ namespace Thetis
                                 _max_0 = _history_data_list_0.Max(obj => obj.value);
                             }
                         }
+                        bool show_time = false;
+                        if(_next_add_make_time_label && now.Second % 5 == 0) show_time = true;
+
                         hd = new HistoryData
                         {
                             value = value,
-                            time = now
+                            time = now,
+                            show_time = show_time
                         };
+                        if (show_time)
+                        {
+                            _active_time_labels++;
+                            _next_add_make_time_label = false;
+                            _last_time_label_add_time = DateTime.UtcNow;
+                        }
+
                         _history_data_list_0.Add(hd);
                         if (value < _min_0) _min_0 = value;
                         if (value > _max_0) _max_0 = value;
@@ -8636,6 +8696,11 @@ namespace Thetis
                         if (value > _max_1) _max_1 = value;
                     }
                 }
+            }
+            public bool NextAddMakeTimeLabel
+            {
+                get { return _next_add_make_time_label; }
+                set { _next_add_make_time_label = value; }
             }
             public float Range0
             {
@@ -8846,19 +8911,17 @@ namespace Thetis
             public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
             {
                 // get latest reading
-                float reading_0;
-                bool use_0;
-                reading_0 = MeterManager.getReading(rx, _reading_0);
-                use_0 = true;
+                float reading_0 = MeterManager.getReading(rx, _reading_0);
+                float reading_1 = MeterManager.getReading(rx, _reading_1);
 
                 addReading(0, reading_0);
+                addReading(1, reading_1);
 
-                if (use_0)
-                {
-                    // this reading has been used
-                    if (!readingsUsed.Contains(_reading_0))
-                        readingsUsed.Add(_reading_0);
-                }
+                // this reading has been used
+                if (!readingsUsed.Contains(_reading_0))
+                    readingsUsed.Add(_reading_0);
+                if (!readingsUsed.Contains(_reading_1))
+                    readingsUsed.Add(_reading_1);
             }
         }
         internal class clsTextOverlay : clsMeterItem
@@ -14440,7 +14503,7 @@ namespace Thetis
                                             his.KeepFor = (int)igs.GetSetting<float>("history_keep_for", true, 1f, 86400f, 20f);
 
                                             his.Reading0 = igs.GetSetting<Reading>("history_reading_0", false, Reading.NONE, Reading.NONE, Reading.SIGNAL_STRENGTH);
-                                            his.Reading1 = igs.GetSetting<Reading>("history_reading_0", false, Reading.NONE, Reading.NONE, Reading.SIGNAL_STRENGTH);
+                                            his.Reading1 = igs.GetSetting<Reading>("history_reading_1", false, Reading.NONE, Reading.NONE, Reading.SIGNAL_STRENGTH);
 
                                             his.AutoScale0 = igs.GetSetting<bool>("history_auto_scale_0", false, false, false, true); // needs to be before the min0 manuals
                                             his.Min0Manual = igs.GetSetting<float>("history_min_0", true, -200f, 200f, -150f);
@@ -19433,84 +19496,139 @@ namespace Thetis
                 int total = his.History0.Count;
                 if (total > 1)
                 {
-                    float range = his.Range0;
-                    range = Math.Max(2, range);
+                    float range0 = his.Range0;
+                    range0 = Math.Max(1, range0);
+                    float range1 = his.Range1;
+                    range1 = Math.Max(1, range1);
 
                     //y-axis numbers + lines
-                    float pix_space = (y + h - spacer) - (y + half_spacer);
+                    float pix_space_vertical = (y + h - spacer) - (y + half_spacer);
                     float text_height = (w * 0.05f);
-                    int text_labels = (int)(pix_space / text_height) + 2;
+                    int text_labels = (int)(pix_space_vertical / text_height) + 2; // +2 a couple extra
                     text_labels = Math.Max(2, text_labels);
-                    float text_y_step = pix_space / (float)(text_labels - 1);
-                    float min = his.Min0;
-                    float number_step = range / (float)(text_labels - 1);
+                    float text_y_step = pix_space_vertical / (float)(text_labels - 1);
+                    float min0 = his.Min0;
+                    float min1 = his.Min1;
+                    float number_step0 = range0 / (float)(text_labels - 1);
+                    float number_step1 = range1 / (float)(text_labels - 1);
                     for (int i = 0; i < text_labels; i++)
                     {
                         float t_y = y + h - spacer - (i * text_y_step) - (text_height / 4f);
-                        float val = min + (i * number_step);
-                        plotText(val.ToString("f1"), x + spacer - quarter_spacer, t_y, h, rect.Width, 12f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular, true, false, spacer);
 
+                        //left numbers
+                        float val = min0 + (i * number_step0);
+                        plotText(val.ToString("f1"), x + spacer - quarter_spacer, t_y, h, rect.Width, 11f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular, true, false, spacer);
+
+                        //right numbers
+                        val = min1 + (i * number_step1);
+                        plotText(val.ToString("f1"), x + w - spacer + quarter_spacer, t_y, h, rect.Width, 11f, System.Drawing.Color.Yellow, 255, "Trebuchet MS", FontStyle.Regular, false, false, spacer);
+
+                        //ticks/grid line
                         if (i > 0)
                         {
                             t_y += (text_height / 4f);
+                            // full grid line
                             _renderTarget.DrawLine(new RawVector2(x + spacer - quarter_spacer, t_y), new RawVector2(x + w - spacer, t_y), getDXBrushForColour(System.Drawing.Color.Gray), data_line_width);
+                            // right tick
+                            _renderTarget.DrawLine(new RawVector2(x + w - spacer, t_y), new RawVector2(x + w - half_spacer - quarter_spacer, t_y), getDXBrushForColour(System.Drawing.Color.Gray), data_line_width);
                         }
                     }
-
-                    // Calculate step size for drawing based on the width and the number of pixels available
-                    //float step = (w - spacer * 2f) / (float)(Math.Min(total, (int)(w - spacer * 2f)));                   
+                    
                     float start_x = x + spacer;
                     float base_y = y + h - spacer;
-                    float y_scale = (h - spacer - half_spacer) / range;
+                    float y_scale0 = (h - spacer - half_spacer) / range0;
+                    float y_scale1 = (h - spacer - half_spacer) / range1;
 
-                    // Calculate sampling rate
-                    int pixelWidth = (int)(w - spacer * 2f);
-                    int sampleRate = Math.Max(1, total / pixelWidth);
+                    // calculate sampling rate, because pointless plotting 1000000 points if only 300 pixels on screen
+                    int pixel_width = (int)(w - spacer * 2f);
+                    int sample_rate = Math.Max(1, total / pixel_width);
+                    if (sample_rate > 1 && sample_rate % 2 > 0) sample_rate++; //make /2
 
-                    if (his.IndexTracker > sampleRate) his.IndexTracker = his.ReadingsRemoved;
-
-                    // Use the first data point for starting the line
-                    float last_y = (his.History0[0].value - min) * y_scale;
+                    // use the first data point for starting the line
+                    float last_y0 = (his.History0[0].value - min0) * y_scale0;
+                    float last_y1 = (his.History1[0].value - min1) * y_scale1;
 
                     // start clip rectangle
                     SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(x + spacer, y + half_spacer, w - spacer * 2f, h - half_spacer - spacer);
+
                     _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
-                    for (int i = sampleRate - his.IndexTracker; i < total; i += sampleRate)
+                    List<int> time_index = new List<int>();
+                    int pixel = 0;
+                    for (int i = 1; i < total - sample_rate; i += sample_rate)
                     {
-                        // window average
-                        int side = sampleRate / 2;
-                        side = Math.Min(10, sampleRate);
-                        int start = Math.Max(0, i - side / 2);
-                        int end = Math.Min(total - 1, i + side / 2);
-                        float sum = 0;
+                        float sub_sum0 = 0;
+                        float sub_sum1 = 0;
                         int count = 0;
-                        for (int j = start; j <= end; j++)
+                        for (int j = i; j < i + sample_rate; j++)
                         {
-                            sum += ((his.History0[j].value - min) * y_scale);
+                            if (his.History0[j].show_time) time_index.Add(j);
+
+                            sub_sum0 += his.History0[j].value;
+                            sub_sum1 += his.History1[j].value;
+
                             count++;
                         }
+                        sub_sum0 /= (float)count;
+                        sub_sum0 = (sub_sum0 - min0) * y_scale0;
 
-                        float this_y = sum / count;
+                        sub_sum1 /= (float)count;
+                        sub_sum1 = (sub_sum1 - min1) * y_scale1;
 
-                        // Draw line segment
+                        float s_x = start_x + (pixel / (float)(total - 1)) * (w - spacer * 2f);
+
                         _renderTarget.DrawLine(
-                            new RawVector2(start_x + ((i - sampleRate) / (float)(total - 1)) * (w - spacer * 2f), base_y - last_y),
-                            new RawVector2(start_x + (i / (float)(total - 1)) * (w - spacer * 2f), base_y - this_y),
+                            new RawVector2(start_x + ((pixel - sample_rate) / (float)(total - 1)) * (w - spacer * 2f), base_y - last_y1),
+                            new RawVector2(s_x, base_y - sub_sum1),
+                            getDXBrushForColour(System.Drawing.Color.Yellow), data_line_width);
+
+                        _renderTarget.DrawLine(
+                            new RawVector2(start_x + ((pixel - sample_rate) / (float)(total - 1)) * (w - spacer * 2f), base_y - last_y0),
+                            new RawVector2(s_x, base_y - sub_sum0),
                             getDXBrushForColour(System.Drawing.Color.Red), data_line_width);
 
-                        last_y = this_y;
+                        last_y0 = sub_sum0;
+                        last_y1 = sub_sum1;
+
+                        pixel += sample_rate;
                     }
                     _renderTarget.PopAxisAlignedClip();
 
-                    //time axis
+                    // time labels
+                    foreach(int i in time_index)
+                    {
+                        float s_x = start_x + (i / (float)(total - 1)) * (w - spacer * 2f);
+                        float s_y = y + h - half_spacer;
+                        _renderTarget.DrawLine(new RawVector2(s_x, s_y - half_spacer), new RawVector2(s_x, s_y - half_spacer + quarter_spacer), getDXBrushForColour(System.Drawing.Color.Gray), data_line_width);
+                        plotText(his.History0[i].time.ToString("HH:mm:ss"), s_x, s_y, h, rect.Width, 10f, System.Drawing.Color.Gray, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, true, 0, 45);
+                    }
                     
+                    //time axis
+                    float pix_space_horiz = (x + w - spacer) - (x + spacer);
+                    float text_height_time = (w * 0.05f);
+                    int can_fit = (int)(pix_space_horiz / text_height_time);
+                    can_fit = Math.Max(2, can_fit);
+                    his.MaxTimeLables = can_fit;
 
+                    if (his.ActiveTimeLabels < his.MaxTimeLables)
+                    {
+                        int labels_left = his.MaxTimeLables - his.ActiveTimeLabels;
+
+                        if (labels_left > 0)
+                        {
+                            // we can add one                        
+                            int interval_seconds = his.KeepFor / labels_left;
+                            interval_seconds = Math.Max(5, interval_seconds);
+
+                            if (DateTime.UtcNow >= his.LastTimeLabelAddTime.AddSeconds(interval_seconds))
+                            {
+                                // time for another
+                                his.NextAddMakeTimeLabel = true;
+                            }
+                        }
+                    }
 
                     //plotText(his.IndexTracker.ToString(), x , y, h, rect.Width, 12f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular);
                     //plotText(sampleRate.ToString(), x, y + 30, h, rect.Width, 12f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular);
-
-                    if (sampleRate > 1 && his.ReadingsRemoved > 0) his.IndexTracker++;
-                    else if (his.IndexTracker > 0) his.IndexTracker = 0;
                 }                
             }
             private void renderSpacer(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
@@ -20835,7 +20953,7 @@ namespace Thetis
                 kHz = vfo.Substring(index + 1, 3);
                 hz = vfo.Substring(index + 4, 3);
             }
-            private (float, float) plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fit_size_width = 0, bool ignore_cache = false, float fit_size_height = 0)
+            private (float, float) plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fit_size_width = 0, bool ignore_cache = false, float fit_size_height = 0, float rotate_deg = 0)
             {
                 if (string.IsNullOrEmpty(sText)) return (0, 0);
 
@@ -20896,7 +21014,19 @@ namespace Thetis
                     // use x is now right edge
                     txtrect = new SharpDX.RectangleF(x - szTextSize.Width, y, szTextSize.Width, szTextSize.Height);
                 }
+
+                Matrix3x2 originalTransform = Matrix3x2.Identity;
+                if (rotate_deg != 0) 
+                {
+                    Vector2 textCenter = new Vector2(txtrect.Width / 2, txtrect.Height / 2);
+                    originalTransform = _renderTarget.Transform;
+                    _renderTarget.Transform = originalTransform * Matrix3x2.Rotation(MathUtil.DegreesToRadians(rotate_deg), new Vector2(txtrect.Left, txtrect.Top) + textCenter);
+                }
                 _renderTarget.DrawText(sText, getDXTextFormatForFont(sFontFamily, fontSizeEmScaled, style), txtrect, getDXBrushForColour(c, nFade));
+                if(rotate_deg != 0)
+                {
+                    _renderTarget.Transform = originalTransform;
+                }
                 //_renderTarget.DrawRectangle(txtrect, getDXBrushForColour(System.Drawing.Color.Red));
 
                 return (szTextSize.Width, szTextSize.Height);

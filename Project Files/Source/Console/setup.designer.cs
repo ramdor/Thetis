@@ -3932,6 +3932,15 @@
             this.labelTS258 = new System.Windows.Forms.LabelTS();
             this.chkHistory_fade_tx = new System.Windows.Forms.CheckBoxTS();
             this.chkHistory_fade_rx = new System.Windows.Forms.CheckBoxTS();
+            this.groupBoxTS46 = new System.Windows.Forms.GroupBoxTS();
+            this.nudHistory_axis1_max = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS263 = new System.Windows.Forms.LabelTS();
+            this.nudHistory_axis1_min = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS264 = new System.Windows.Forms.LabelTS();
+            this.chkHistory_auto_1_scale = new System.Windows.Forms.CheckBoxTS();
+            this.comboHistory_reading_1 = new System.Windows.Forms.ComboBoxTS();
+            this.labelTS265 = new System.Windows.Forms.LabelTS();
+            this.chkHistory_right_axis = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4937,6 +4946,9 @@
             this.pnlButtonBox_antenna_toggles.SuspendLayout();
             this.grpHistoryItem.SuspendLayout();
             this.groupBoxTS45.SuspendLayout();
+            this.groupBoxTS46.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHistory_axis1_max)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHistory_axis1_min)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -62304,6 +62316,7 @@
             // 
             // grpHistoryItem
             // 
+            this.grpHistoryItem.Controls.Add(this.groupBoxTS46);
             this.grpHistoryItem.Controls.Add(this.groupBoxTS45);
             this.grpHistoryItem.Controls.Add(this.panelTS10);
             this.grpHistoryItem.Controls.Add(this.buttonTS4);
@@ -62338,7 +62351,7 @@
             this.groupBoxTS45.Controls.Add(this.labelTS260);
             this.groupBoxTS45.Location = new System.Drawing.Point(14, 143);
             this.groupBoxTS45.Name = "groupBoxTS45";
-            this.groupBoxTS45.Size = new System.Drawing.Size(297, 127);
+            this.groupBoxTS45.Size = new System.Drawing.Size(297, 102);
             this.groupBoxTS45.TabIndex = 143;
             this.groupBoxTS45.TabStop = false;
             this.groupBoxTS45.Text = "Left Axis";
@@ -62515,6 +62528,161 @@
             this.chkHistory_fade_rx.Text = "Fade on RX";
             this.chkHistory_fade_rx.UseVisualStyleBackColor = true;
             this.chkHistory_fade_rx.CheckedChanged += new System.EventHandler(this.chkHistory_fade_rx_CheckedChanged);
+            // 
+            // groupBoxTS46
+            // 
+            this.groupBoxTS46.Controls.Add(this.chkHistory_right_axis);
+            this.groupBoxTS46.Controls.Add(this.nudHistory_axis1_max);
+            this.groupBoxTS46.Controls.Add(this.labelTS263);
+            this.groupBoxTS46.Controls.Add(this.nudHistory_axis1_min);
+            this.groupBoxTS46.Controls.Add(this.labelTS264);
+            this.groupBoxTS46.Controls.Add(this.chkHistory_auto_1_scale);
+            this.groupBoxTS46.Controls.Add(this.comboHistory_reading_1);
+            this.groupBoxTS46.Controls.Add(this.labelTS265);
+            this.groupBoxTS46.Location = new System.Drawing.Point(14, 252);
+            this.groupBoxTS46.Name = "groupBoxTS46";
+            this.groupBoxTS46.Size = new System.Drawing.Size(297, 102);
+            this.groupBoxTS46.TabIndex = 144;
+            this.groupBoxTS46.TabStop = false;
+            this.groupBoxTS46.Text = "Right Axis";
+            // 
+            // nudHistory_axis1_max
+            // 
+            this.nudHistory_axis1_max.DecimalPlaces = 1;
+            this.nudHistory_axis1_max.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudHistory_axis1_max.Location = new System.Drawing.Point(187, 73);
+            this.nudHistory_axis1_max.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.nudHistory_axis1_max.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            -2147483648});
+            this.nudHistory_axis1_max.Name = "nudHistory_axis1_max";
+            this.nudHistory_axis1_max.Size = new System.Drawing.Size(56, 20);
+            this.nudHistory_axis1_max.TabIndex = 143;
+            this.nudHistory_axis1_max.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudHistory_axis1_max, "Reading update and is related to screen update");
+            this.nudHistory_axis1_max.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudHistory_axis1_max.ValueChanged += new System.EventHandler(this.nudHistory_axis1_max_ValueChanged);
+            // 
+            // labelTS263
+            // 
+            this.labelTS263.Image = null;
+            this.labelTS263.Location = new System.Drawing.Point(138, 73);
+            this.labelTS263.Name = "labelTS263";
+            this.labelTS263.Size = new System.Drawing.Size(43, 16);
+            this.labelTS263.TabIndex = 142;
+            this.labelTS263.Text = "Max:";
+            this.labelTS263.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nudHistory_axis1_min
+            // 
+            this.nudHistory_axis1_min.DecimalPlaces = 1;
+            this.nudHistory_axis1_min.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudHistory_axis1_min.Location = new System.Drawing.Point(73, 73);
+            this.nudHistory_axis1_min.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.nudHistory_axis1_min.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            -2147483648});
+            this.nudHistory_axis1_min.Name = "nudHistory_axis1_min";
+            this.nudHistory_axis1_min.Size = new System.Drawing.Size(56, 20);
+            this.nudHistory_axis1_min.TabIndex = 141;
+            this.nudHistory_axis1_min.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudHistory_axis1_min, "Reading update and is related to screen update");
+            this.nudHistory_axis1_min.Value = new decimal(new int[] {
+            150,
+            0,
+            0,
+            -2147483648});
+            this.nudHistory_axis1_min.ValueChanged += new System.EventHandler(this.nudHistory_axis1_min_ValueChanged);
+            // 
+            // labelTS264
+            // 
+            this.labelTS264.Image = null;
+            this.labelTS264.Location = new System.Drawing.Point(24, 73);
+            this.labelTS264.Name = "labelTS264";
+            this.labelTS264.Size = new System.Drawing.Size(43, 16);
+            this.labelTS264.TabIndex = 140;
+            this.labelTS264.Text = "Min:";
+            this.labelTS264.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // chkHistory_auto_1_scale
+            // 
+            this.chkHistory_auto_1_scale.AutoSize = true;
+            this.chkHistory_auto_1_scale.Image = null;
+            this.chkHistory_auto_1_scale.Location = new System.Drawing.Point(73, 52);
+            this.chkHistory_auto_1_scale.Name = "chkHistory_auto_1_scale";
+            this.chkHistory_auto_1_scale.Size = new System.Drawing.Size(78, 17);
+            this.chkHistory_auto_1_scale.TabIndex = 139;
+            this.chkHistory_auto_1_scale.Text = "Auto Scale";
+            this.chkHistory_auto_1_scale.UseVisualStyleBackColor = true;
+            this.chkHistory_auto_1_scale.CheckedChanged += new System.EventHandler(this.chkHistory_auto_1_scale_CheckedChanged);
+            // 
+            // comboHistory_reading_1
+            // 
+            this.comboHistory_reading_1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboHistory_reading_1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboHistory_reading_1.FormattingEnabled = true;
+            this.comboHistory_reading_1.Items.AddRange(new object[] {
+            "HERMES",
+            "ANAN-10",
+            "ANAN-10E",
+            "ANAN-100",
+            "ANAN-100B",
+            "ANAN-100D",
+            "ANAN-200D",
+            "ANAN-7000DLE",
+            "ANAN-8000DLE",
+            "ANAN-G2",
+            "ANAN-G2-1K"});
+            this.comboHistory_reading_1.Location = new System.Drawing.Point(73, 21);
+            this.comboHistory_reading_1.Name = "comboHistory_reading_1";
+            this.comboHistory_reading_1.Size = new System.Drawing.Size(136, 23);
+            this.comboHistory_reading_1.TabIndex = 137;
+            this.comboHistory_reading_1.SelectedIndexChanged += new System.EventHandler(this.comboHistory_reading_1_SelectedIndexChanged);
+            // 
+            // labelTS265
+            // 
+            this.labelTS265.Image = null;
+            this.labelTS265.Location = new System.Drawing.Point(9, 23);
+            this.labelTS265.Name = "labelTS265";
+            this.labelTS265.Size = new System.Drawing.Size(58, 16);
+            this.labelTS265.TabIndex = 138;
+            this.labelTS265.Text = "Reading:";
+            this.labelTS265.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // chkHistory_right_axis
+            // 
+            this.chkHistory_right_axis.AutoSize = true;
+            this.chkHistory_right_axis.Image = null;
+            this.chkHistory_right_axis.Location = new System.Drawing.Point(62, 0);
+            this.chkHistory_right_axis.Name = "chkHistory_right_axis";
+            this.chkHistory_right_axis.Size = new System.Drawing.Size(15, 14);
+            this.chkHistory_right_axis.TabIndex = 145;
+            this.chkHistory_right_axis.UseVisualStyleBackColor = true;
+            this.chkHistory_right_axis.CheckedChanged += new System.EventHandler(this.chkHistory_right_axis_CheckedChanged);
             // 
             // Setup
             // 
@@ -63767,6 +63935,10 @@
             this.grpHistoryItem.PerformLayout();
             this.groupBoxTS45.ResumeLayout(false);
             this.groupBoxTS45.PerformLayout();
+            this.groupBoxTS46.ResumeLayout(false);
+            this.groupBoxTS46.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHistory_axis1_max)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHistory_axis1_min)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -67702,5 +67874,14 @@
         private CheckBoxTS chkHistory_auto_0_scale;
         private NumericUpDownTS nudHistory_axis0_max;
         private LabelTS labelTS262;
+        private GroupBoxTS groupBoxTS46;
+        private CheckBoxTS chkHistory_right_axis;
+        private NumericUpDownTS nudHistory_axis1_max;
+        private LabelTS labelTS263;
+        private NumericUpDownTS nudHistory_axis1_min;
+        private LabelTS labelTS264;
+        private CheckBoxTS chkHistory_auto_1_scale;
+        private ComboBoxTS comboHistory_reading_1;
+        private LabelTS labelTS265;
     }
 }
