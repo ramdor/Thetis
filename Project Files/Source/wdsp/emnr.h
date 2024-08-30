@@ -185,6 +185,7 @@ typedef struct _emnr
 		double zetaThresh;
 		double psi;
 		double* nmask;
+		double t2;
 	} ae;
 }emnr, *EMNR;
 

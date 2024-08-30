@@ -8388,6 +8388,7 @@ namespace Thetis
                 public float value;
                 public DateTime time;
                 public bool show_time;
+                public int pixel;
             }
 
             private float _padding;
@@ -8466,6 +8467,7 @@ namespace Thetis
 
                 UpdateInterval = 100;
             }
+            //
             public override bool ZeroOut(out float value, int rx)
             {
                 ZeroReading(out value, rx, _reading_0);
@@ -8596,6 +8598,8 @@ namespace Thetis
             {
                 get { return _removed; }
             }
+            //private float test = -140;
+            //private bool testadd = true;
             private void addReading(int axis, float value)
             {
                 DateTime now = DateTime.UtcNow;
@@ -8638,10 +8642,19 @@ namespace Thetis
 
                         hd = new HistoryData
                         {
-                            value = value,
+                            value = /*test,*/value,
                             time = now,
                             show_time = show_time
                         };
+                        //if (test > 0)
+                        //    testadd = false;
+                        //else if (test < -140)
+                        //    testadd = true;
+                        //if (testadd)
+                        //    test+=10;
+                        //else
+                        //    test-=10;
+
                         if (show_time)
                         {
                             _active_time_labels++;
@@ -19492,8 +19505,10 @@ namespace Thetis
                 //right y axis
                 _renderTarget.DrawLine(new RawVector2(x + w - spacer, y + half_spacer), new RawVector2(x + w - spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
 
+                int pixel_width = (int)(w - spacer * 2f);
+
                 //render axis 0 data
-                int total = his.History0.Count;
+                int total = his.History0.Count;// his.History0.Count;
                 if (total > 1)
                 {
                     float range0 = his.Range0;
@@ -19539,69 +19554,50 @@ namespace Thetis
                     float y_scale0 = (h - spacer - half_spacer) / range0;
                     float y_scale1 = (h - spacer - half_spacer) / range1;
 
-                    // calculate sampling rate, because pointless plotting 1000000 points if only 300 pixels on screen
-                    int pixel_width = (int)(w - spacer * 2f);
-                    int sample_rate = Math.Max(1, total / pixel_width);
-                    if (sample_rate > 1 && sample_rate % 2 > 0) sample_rate++; //make /2
-
                     // use the first data point for starting the line
                     float last_y0 = (his.History0[0].value - min0) * y_scale0;
                     float last_y1 = (his.History1[0].value - min1) * y_scale1;
+                    float last_x = start_x;
 
                     // start clip rectangle
                     SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(x + spacer, y + half_spacer, w - spacer * 2f, h - half_spacer - spacer);
 
                     _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
-                    List<int> time_index = new List<int>();
-                    int pixel = 0;
-                    for (int i = 1; i < total - sample_rate; i += sample_rate)
+                    float pix_spacing = pixel_width / (float)total;
+                    int pixel = 1;
+                    List<clsHistoryItem.HistoryData> time_tags = new List<clsHistoryItem.HistoryData>();
+                    foreach (clsHistoryItem.HistoryData hd in his.History0)
                     {
-                        float sub_sum0 = 0;
-                        float sub_sum1 = 0;
-                        int count = 0;
-                        for (int j = i; j < i + sample_rate; j++)
-                        {
-                            if (his.History0[j].show_time) time_index.Add(j);
-
-                            sub_sum0 += his.History0[j].value;
-                            sub_sum1 += his.History1[j].value;
-
-                            count++;
-                        }
-                        sub_sum0 /= (float)count;
-                        sub_sum0 = (sub_sum0 - min0) * y_scale0;
-
-                        sub_sum1 /= (float)count;
-                        sub_sum1 = (sub_sum1 - min1) * y_scale1;
-
-                        float s_x = start_x + (pixel / (float)(total - 1)) * (w - spacer * 2f);
+                        float end_x = start_x + (pixel * pix_spacing);
+                        float end_y0 = (hd.value - min0) * y_scale0;
 
                         _renderTarget.DrawLine(
-                            new RawVector2(start_x + ((pixel - sample_rate) / (float)(total - 1)) * (w - spacer * 2f), base_y - last_y1),
-                            new RawVector2(s_x, base_y - sub_sum1),
-                            getDXBrushForColour(System.Drawing.Color.Yellow), data_line_width);
-
-                        _renderTarget.DrawLine(
-                            new RawVector2(start_x + ((pixel - sample_rate) / (float)(total - 1)) * (w - spacer * 2f), base_y - last_y0),
-                            new RawVector2(s_x, base_y - sub_sum0),
+                            new RawVector2(last_x, base_y - last_y0),
+                            new RawVector2(end_x, base_y - end_y0),
                             getDXBrushForColour(System.Drawing.Color.Red), data_line_width);
 
-                        last_y0 = sub_sum0;
-                        last_y1 = sub_sum1;
+                        if (hd.show_time)
+                        {
+                            hd.pixel = pixel;
+                            time_tags.Add(hd);
+                        }
 
-                        pixel += sample_rate;
+                        last_x = end_x;
+                        last_y0 = end_y0;
+
+                        pixel++;
                     }
                     _renderTarget.PopAxisAlignedClip();
 
-                    // time labels
-                    foreach(int i in time_index)
+                    // time tags
+                    foreach(clsHistoryItem.HistoryData hd in time_tags)
                     {
-                        float s_x = start_x + (i / (float)(total - 1)) * (w - spacer * 2f);
+                        float s_x = start_x + (hd.pixel / (float)(total - 1)) * (w - spacer * 2f);
                         float s_y = y + h - half_spacer;
                         _renderTarget.DrawLine(new RawVector2(s_x, s_y - half_spacer), new RawVector2(s_x, s_y - half_spacer + quarter_spacer), getDXBrushForColour(System.Drawing.Color.Gray), data_line_width);
-                        plotText(his.History0[i].time.ToString("HH:mm:ss"), s_x, s_y, h, rect.Width, 10f, System.Drawing.Color.Gray, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, true, 0, 45);
+                        plotText(hd.time.ToString("HH:mm:ss"), s_x, s_y, h, rect.Width, 10f, System.Drawing.Color.Gray, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, true, 0, 45);
                     }
-                    
+
                     //time axis
                     float pix_space_horiz = (x + w - spacer) - (x + spacer);
                     float text_height_time = (w * 0.05f);

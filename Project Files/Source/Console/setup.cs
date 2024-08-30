@@ -2338,7 +2338,12 @@ namespace Thetis
             radDSPNR2Linear_CheckedChanged(this, e);
             radDSPNR2Log_CheckedChanged(this, e);
             radDSPNR2TRND_CheckedChanged(this, e);
+
             udDSPNR2trainThresh_ValueChanged(this, e);
+            udDSPNR2trainThreshRX2_ValueChanged(this, e);
+            udDSPNR2trainT2_ValueChanged(this, e);
+            udDSPNR2trainT2RX2_ValueChanged(this, e);
+
             radDSPNR2OSMS_CheckedChanged(this, e);
             radDSPNR2MMSE_CheckedChanged(this, e);
             radDSPNR2NSTAT_CheckedChanged(this, e);
@@ -2346,7 +2351,6 @@ namespace Thetis
             radDSPNR2LinearRX2_CheckedChanged(this, e);
             radDSPNR2LogRX2_CheckedChanged(this, e);
             radDSPNR2TRNDRX2_CheckedChanged(this, e);
-            udDSPNR2trainThreshRX2_ValueChanged(this, e);
             radDSPNR2OSMSRX2_CheckedChanged(this, e);
             radDSPNR2MMSERX2_CheckedChanged(this, e);
             radDSPNR2NSTATRX2_CheckedChanged(this, e);
@@ -30734,6 +30738,20 @@ namespace Thetis
         {
             if (nudHistory_axis1_max.Value < nudHistory_axis1_min.Value) nudHistory_axis1_min.Value = nudHistory_axis1_max.Value;
             updateMeterType();
+        }
+
+        private void udDSPNR2trainT2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            WDSP.SetRXAEMNRtrainT2(WDSP.id(0, 0), (double)udDSPNR2trainT2.Value);
+            WDSP.SetRXAEMNRtrainT2(WDSP.id(0, 1), (double)udDSPNR2trainT2.Value);
+        }
+
+        private void udDSPNR2trainT2RX2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            WDSP.SetRXAEMNRtrainT2(WDSP.id(2, 0), (double)udDSPNR2trainT2RX2.Value);
+            WDSP.SetRXAEMNRtrainT2(WDSP.id(2, 1), (double)udDSPNR2trainT2RX2.Value);
         }
     }
 

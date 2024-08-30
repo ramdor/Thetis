@@ -241,6 +241,9 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "SetRXAEMNRtrainZetaThresh", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXAEMNRtrainZetaThresh(int channel, double thresh);
 
+        [DllImport("wdsp.dll", EntryPoint = "SetRXAEMNRtrainT2", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXAEMNRtrainT2(int channel, double t2);
+
         [DllImport("wdsp.dll", EntryPoint = "SetRXAEQRun", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXAEQRun(int channel, bool run);
 
