@@ -46442,6 +46442,14 @@ namespace Thetis
         }
         private bool _lastRX1NoiseFloorGood = false;
         private bool _lastRX2NoiseFloorGood = false;
+        public float LastNFRX1
+        {
+            get { return _lastRX1NoiseFloor; }
+        }
+        public float LastNFRX2
+        {
+            get { return _lastRX2NoiseFloor; }
+        }
         private void tmrAutoAGC_Tick(object sender, EventArgs e)
         {
             if (!chkPower.Checked || _mox) return;

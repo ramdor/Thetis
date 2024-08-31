@@ -3925,7 +3925,8 @@
             this.chkBandButtons_fade_rx = new System.Windows.Forms.CheckBoxTS();
             this.grpHistoryItem = new System.Windows.Forms.GroupBoxTS();
             this.groupBoxTS46 = new System.Windows.Forms.GroupBoxTS();
-            this.chkHistory_right_axis = new System.Windows.Forms.CheckBoxTS();
+            this.btnHistory_copy_minmax_from_0 = new System.Windows.Forms.ButtonTS();
+            this.chkHistory_1_show_axis = new System.Windows.Forms.CheckBoxTS();
             this.labelTS263 = new System.Windows.Forms.LabelTS();
             this.labelTS264 = new System.Windows.Forms.LabelTS();
             this.chkHistory_auto_1_scale = new System.Windows.Forms.CheckBoxTS();
@@ -3937,10 +3938,10 @@
             this.chkHistory_auto_0_scale = new System.Windows.Forms.CheckBoxTS();
             this.comboHistory_reading_0 = new System.Windows.Forms.ComboBoxTS();
             this.labelTS260 = new System.Windows.Forms.LabelTS();
-            this.panelTS10 = new System.Windows.Forms.PanelTS();
-            this.buttonTS4 = new System.Windows.Forms.ButtonTS();
-            this.buttonTS5 = new System.Windows.Forms.ButtonTS();
-            this.panelTS11 = new System.Windows.Forms.PanelTS();
+            this.pnlVariableInUse_2_history = new System.Windows.Forms.PanelTS();
+            this.btnMMIO_variable_2_history = new System.Windows.Forms.ButtonTS();
+            this.btnMMIO_variable_history = new System.Windows.Forms.ButtonTS();
+            this.pnlVariableInUse_1_history = new System.Windows.Forms.PanelTS();
             this.labelTS259 = new System.Windows.Forms.LabelTS();
             this.labelTS252 = new System.Windows.Forms.LabelTS();
             this.labelTS253 = new System.Windows.Forms.LabelTS();
@@ -59702,7 +59703,7 @@
             0,
             0});
             this.nudHistory_axis0_min.Minimum = new decimal(new int[] {
-            200,
+            10000,
             0,
             0,
             -2147483648});
@@ -59728,7 +59729,7 @@
             65536});
             this.nudHistory_axis0_max.Location = new System.Drawing.Point(187, 73);
             this.nudHistory_axis0_max.Maximum = new decimal(new int[] {
-            200,
+            10000,
             0,
             0,
             0});
@@ -59759,7 +59760,7 @@
             65536});
             this.nudHistory_axis1_max.Location = new System.Drawing.Point(187, 73);
             this.nudHistory_axis1_max.Maximum = new decimal(new int[] {
-            200,
+            10000,
             0,
             0,
             0});
@@ -59795,7 +59796,7 @@
             0,
             0});
             this.nudHistory_axis1_min.Minimum = new decimal(new int[] {
-            200,
+            10000,
             0,
             0,
             -2147483648});
@@ -62496,10 +62497,10 @@
             // 
             this.grpHistoryItem.Controls.Add(this.groupBoxTS46);
             this.grpHistoryItem.Controls.Add(this.groupBoxTS45);
-            this.grpHistoryItem.Controls.Add(this.panelTS10);
-            this.grpHistoryItem.Controls.Add(this.buttonTS4);
-            this.grpHistoryItem.Controls.Add(this.buttonTS5);
-            this.grpHistoryItem.Controls.Add(this.panelTS11);
+            this.grpHistoryItem.Controls.Add(this.pnlVariableInUse_2_history);
+            this.grpHistoryItem.Controls.Add(this.btnMMIO_variable_2_history);
+            this.grpHistoryItem.Controls.Add(this.btnMMIO_variable_history);
+            this.grpHistoryItem.Controls.Add(this.pnlVariableInUse_1_history);
             this.grpHistoryItem.Controls.Add(this.nudHistory_keep_for);
             this.grpHistoryItem.Controls.Add(this.labelTS259);
             this.grpHistoryItem.Controls.Add(this.nudHistory_update);
@@ -62520,7 +62521,8 @@
             // 
             // groupBoxTS46
             // 
-            this.groupBoxTS46.Controls.Add(this.chkHistory_right_axis);
+            this.groupBoxTS46.Controls.Add(this.btnHistory_copy_minmax_from_0);
+            this.groupBoxTS46.Controls.Add(this.chkHistory_1_show_axis);
             this.groupBoxTS46.Controls.Add(this.nudHistory_axis1_max);
             this.groupBoxTS46.Controls.Add(this.labelTS263);
             this.groupBoxTS46.Controls.Add(this.nudHistory_axis1_min);
@@ -62535,16 +62537,28 @@
             this.groupBoxTS46.TabStop = false;
             this.groupBoxTS46.Text = "Right Axis";
             // 
-            // chkHistory_right_axis
+            // btnHistory_copy_minmax_from_0
             // 
-            this.chkHistory_right_axis.AutoSize = true;
-            this.chkHistory_right_axis.Image = null;
-            this.chkHistory_right_axis.Location = new System.Drawing.Point(62, 0);
-            this.chkHistory_right_axis.Name = "chkHistory_right_axis";
-            this.chkHistory_right_axis.Size = new System.Drawing.Size(15, 14);
-            this.chkHistory_right_axis.TabIndex = 145;
-            this.chkHistory_right_axis.UseVisualStyleBackColor = true;
-            this.chkHistory_right_axis.CheckedChanged += new System.EventHandler(this.chkHistory_right_axis_CheckedChanged);
+            this.btnHistory_copy_minmax_from_0.Image = null;
+            this.btnHistory_copy_minmax_from_0.Location = new System.Drawing.Point(249, 72);
+            this.btnHistory_copy_minmax_from_0.Name = "btnHistory_copy_minmax_from_0";
+            this.btnHistory_copy_minmax_from_0.Selectable = true;
+            this.btnHistory_copy_minmax_from_0.Size = new System.Drawing.Size(32, 24);
+            this.btnHistory_copy_minmax_from_0.TabIndex = 146;
+            this.btnHistory_copy_minmax_from_0.Text = "=";
+            this.btnHistory_copy_minmax_from_0.UseVisualStyleBackColor = true;
+            this.btnHistory_copy_minmax_from_0.Click += new System.EventHandler(this.btnHistory_copy_minmax_from_0_Click);
+            // 
+            // chkHistory_1_show_axis
+            // 
+            this.chkHistory_1_show_axis.AutoSize = true;
+            this.chkHistory_1_show_axis.Image = null;
+            this.chkHistory_1_show_axis.Location = new System.Drawing.Point(62, 0);
+            this.chkHistory_1_show_axis.Name = "chkHistory_1_show_axis";
+            this.chkHistory_1_show_axis.Size = new System.Drawing.Size(15, 14);
+            this.chkHistory_1_show_axis.TabIndex = 145;
+            this.chkHistory_1_show_axis.UseVisualStyleBackColor = true;
+            this.chkHistory_1_show_axis.CheckedChanged += new System.EventHandler(this.chkHistory_1_show_axis_CheckedChanged);
             // 
             // labelTS263
             // 
@@ -62692,49 +62706,51 @@
             this.labelTS260.Text = "Reading:";
             this.labelTS260.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // panelTS10
+            // pnlVariableInUse_2_history
             // 
-            this.panelTS10.AutoScrollMargin = new System.Drawing.Size(0, 0);
-            this.panelTS10.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.panelTS10.BackColor = System.Drawing.Color.Lime;
-            this.panelTS10.Location = new System.Drawing.Point(284, 79);
-            this.panelTS10.Name = "panelTS10";
-            this.panelTS10.Size = new System.Drawing.Size(28, 6);
-            this.panelTS10.TabIndex = 142;
+            this.pnlVariableInUse_2_history.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlVariableInUse_2_history.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlVariableInUse_2_history.BackColor = System.Drawing.Color.Lime;
+            this.pnlVariableInUse_2_history.Location = new System.Drawing.Point(284, 79);
+            this.pnlVariableInUse_2_history.Name = "pnlVariableInUse_2_history";
+            this.pnlVariableInUse_2_history.Size = new System.Drawing.Size(28, 6);
+            this.pnlVariableInUse_2_history.TabIndex = 142;
             // 
-            // buttonTS4
+            // btnMMIO_variable_2_history
             // 
-            this.buttonTS4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonTS4.Image = null;
-            this.buttonTS4.Location = new System.Drawing.Point(284, 52);
-            this.buttonTS4.Name = "buttonTS4";
-            this.buttonTS4.Selectable = true;
-            this.buttonTS4.Size = new System.Drawing.Size(28, 28);
-            this.buttonTS4.TabIndex = 140;
-            this.buttonTS4.Text = "%";
-            this.buttonTS4.UseVisualStyleBackColor = true;
+            this.btnMMIO_variable_2_history.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMMIO_variable_2_history.Image = null;
+            this.btnMMIO_variable_2_history.Location = new System.Drawing.Point(284, 52);
+            this.btnMMIO_variable_2_history.Name = "btnMMIO_variable_2_history";
+            this.btnMMIO_variable_2_history.Selectable = true;
+            this.btnMMIO_variable_2_history.Size = new System.Drawing.Size(28, 28);
+            this.btnMMIO_variable_2_history.TabIndex = 140;
+            this.btnMMIO_variable_2_history.Text = "%";
+            this.btnMMIO_variable_2_history.UseVisualStyleBackColor = true;
+            this.btnMMIO_variable_2_history.Click += new System.EventHandler(this.btnMMIO_variable_2_history_Click);
             // 
-            // buttonTS5
+            // btnMMIO_variable_history
             // 
-            this.buttonTS5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonTS5.Image = null;
-            this.buttonTS5.Location = new System.Drawing.Point(252, 52);
-            this.buttonTS5.Name = "buttonTS5";
-            this.buttonTS5.Selectable = true;
-            this.buttonTS5.Size = new System.Drawing.Size(28, 28);
-            this.buttonTS5.TabIndex = 139;
-            this.buttonTS5.Text = "%";
-            this.buttonTS5.UseVisualStyleBackColor = true;
+            this.btnMMIO_variable_history.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMMIO_variable_history.Image = null;
+            this.btnMMIO_variable_history.Location = new System.Drawing.Point(252, 52);
+            this.btnMMIO_variable_history.Name = "btnMMIO_variable_history";
+            this.btnMMIO_variable_history.Selectable = true;
+            this.btnMMIO_variable_history.Size = new System.Drawing.Size(28, 28);
+            this.btnMMIO_variable_history.TabIndex = 139;
+            this.btnMMIO_variable_history.Text = "%";
+            this.btnMMIO_variable_history.UseVisualStyleBackColor = true;
+            this.btnMMIO_variable_history.Click += new System.EventHandler(this.btnMMIO_variable_history_Click);
             // 
-            // panelTS11
+            // pnlVariableInUse_1_history
             // 
-            this.panelTS11.AutoScrollMargin = new System.Drawing.Size(0, 0);
-            this.panelTS11.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.panelTS11.BackColor = System.Drawing.Color.Lime;
-            this.panelTS11.Location = new System.Drawing.Point(252, 79);
-            this.panelTS11.Name = "panelTS11";
-            this.panelTS11.Size = new System.Drawing.Size(28, 6);
-            this.panelTS11.TabIndex = 141;
+            this.pnlVariableInUse_1_history.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlVariableInUse_1_history.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlVariableInUse_1_history.BackColor = System.Drawing.Color.Lime;
+            this.pnlVariableInUse_1_history.Location = new System.Drawing.Point(252, 79);
+            this.pnlVariableInUse_1_history.Name = "pnlVariableInUse_1_history";
+            this.pnlVariableInUse_1_history.Size = new System.Drawing.Size(28, 6);
+            this.pnlVariableInUse_1_history.TabIndex = 141;
             // 
             // labelTS259
             // 
@@ -67980,10 +67996,10 @@
         private LabelTS labelTS259;
         private NumericUpDownTS nudHistory_update;
         private LabelTS labelTS252;
-        private PanelTS panelTS10;
-        private ButtonTS buttonTS4;
-        private ButtonTS buttonTS5;
-        private PanelTS panelTS11;
+        private PanelTS pnlVariableInUse_2_history;
+        private ButtonTS btnMMIO_variable_2_history;
+        private ButtonTS btnMMIO_variable_history;
+        private PanelTS pnlVariableInUse_1_history;
         private LabelTS labelTS260;
         private ComboBoxTS comboHistory_reading_0;
         private GroupBoxTS groupBoxTS45;
@@ -67993,7 +68009,7 @@
         private NumericUpDownTS nudHistory_axis0_max;
         private LabelTS labelTS262;
         private GroupBoxTS groupBoxTS46;
-        private CheckBoxTS chkHistory_right_axis;
+        private CheckBoxTS chkHistory_1_show_axis;
         private NumericUpDownTS nudHistory_axis1_max;
         private LabelTS labelTS263;
         private NumericUpDownTS nudHistory_axis1_min;
@@ -68007,5 +68023,6 @@
         private LabelTS labelTS268;
         private LabelTS labelTS277;
         private NumericUpDownTS udDSPNR2trainT2;
+        private ButtonTS btnHistory_copy_minmax_from_0;
     }
 }
