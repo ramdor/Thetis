@@ -14141,10 +14141,8 @@ namespace Thetis
 
                 _quickSplitEnabled = false;
 
-                //_fPadX = 0.02f;
-                //_fPadY = 0.05f;
-                _fPadX = 0.015f;
-                _fPadY = 0.04f;
+                _fPadX = 0.02f;
+                _fPadY = 0.05f;
 
                 _fHeight = 0.05f;
 
@@ -14435,10 +14433,8 @@ namespace Thetis
                         if (bOk) bOk = float.TryParse(tmp[8], out fHeight);
                         if (bOk)
                         {
-                            _fPadX = 0.015f;
-                            _fPadY = 0.045f;
-                            //_fPadX = fPadX;
-                            //_fPadY = fPadY;
+                            _fPadX = fPadX;
+                            _fPadY = fPadY;
                             _fHeight = fHeight;
                         }
 
