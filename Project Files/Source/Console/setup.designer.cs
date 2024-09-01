@@ -3612,6 +3612,10 @@
             this.grpTestAudioBalance = new System.Windows.Forms.GroupBoxTS();
             this.btnTestAudioBalStart = new System.Windows.Forms.ButtonTS();
             this.grpMeterItemVfoDisplaySettings = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS278 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMultiMeter_vfo_sync = new Thetis.ColorButton();
+            this.labelTS279 = new System.Windows.Forms.LabelTS();
+            this.clrbtnMultiMeter_vfo_lock = new Thetis.ColorButton();
             this.btnVFOCopyColourFromMainNumbers = new System.Windows.Forms.ButtonTS();
             this.labelTS251 = new System.Windows.Forms.LabelTS();
             this.clrbtnMMVfoDisplayFrequency_small = new Thetis.ColorButton();
@@ -57468,6 +57472,10 @@
             // 
             // grpMeterItemVfoDisplaySettings
             // 
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS278);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMultiMeter_vfo_sync);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS279);
+            this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMultiMeter_vfo_lock);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.btnVFOCopyColourFromMainNumbers);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS251);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayFrequency_small);
@@ -57498,13 +57506,63 @@
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS166);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayMode);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTitle);
-            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(1604, 232);
+            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(783, 462);
             this.grpMeterItemVfoDisplaySettings.Name = "grpMeterItemVfoDisplaySettings";
             this.grpMeterItemVfoDisplaySettings.Size = new System.Drawing.Size(323, 376);
             this.grpMeterItemVfoDisplaySettings.TabIndex = 101;
             this.grpMeterItemVfoDisplaySettings.TabStop = false;
             this.grpMeterItemVfoDisplaySettings.Text = "VFO Display Settings";
             this.grpMeterItemVfoDisplaySettings.Visible = false;
+            // 
+            // labelTS278
+            // 
+            this.labelTS278.AutoSize = true;
+            this.labelTS278.Image = null;
+            this.labelTS278.Location = new System.Drawing.Point(163, 287);
+            this.labelTS278.Name = "labelTS278";
+            this.labelTS278.Size = new System.Drawing.Size(34, 13);
+            this.labelTS278.TabIndex = 143;
+            this.labelTS278.Text = "Sync:";
+            // 
+            // clrbtnMultiMeter_vfo_sync
+            // 
+            this.clrbtnMultiMeter_vfo_sync.Automatic = "Automatic";
+            this.clrbtnMultiMeter_vfo_sync.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMultiMeter_vfo_sync.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMultiMeter_vfo_sync.Image = null;
+            this.clrbtnMultiMeter_vfo_sync.Location = new System.Drawing.Point(203, 282);
+            this.clrbtnMultiMeter_vfo_sync.MoreColors = "More Colors...";
+            this.clrbtnMultiMeter_vfo_sync.Name = "clrbtnMultiMeter_vfo_sync";
+            this.clrbtnMultiMeter_vfo_sync.Selectable = true;
+            this.clrbtnMultiMeter_vfo_sync.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMultiMeter_vfo_sync.TabIndex = 142;
+            this.toolTip1.SetToolTip(this.clrbtnMultiMeter_vfo_sync, "Filter colour");
+            this.clrbtnMultiMeter_vfo_sync.Changed += new System.EventHandler(this.clrbtnMultiMeter_vfo_sync_Changed);
+            // 
+            // labelTS279
+            // 
+            this.labelTS279.AutoSize = true;
+            this.labelTS279.Image = null;
+            this.labelTS279.Location = new System.Drawing.Point(163, 258);
+            this.labelTS279.Name = "labelTS279";
+            this.labelTS279.Size = new System.Drawing.Size(34, 13);
+            this.labelTS279.TabIndex = 141;
+            this.labelTS279.Text = "Lock:";
+            // 
+            // clrbtnMultiMeter_vfo_lock
+            // 
+            this.clrbtnMultiMeter_vfo_lock.Automatic = "Automatic";
+            this.clrbtnMultiMeter_vfo_lock.Color = System.Drawing.Color.Yellow;
+            this.clrbtnMultiMeter_vfo_lock.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnMultiMeter_vfo_lock.Image = null;
+            this.clrbtnMultiMeter_vfo_lock.Location = new System.Drawing.Point(203, 253);
+            this.clrbtnMultiMeter_vfo_lock.MoreColors = "More Colors...";
+            this.clrbtnMultiMeter_vfo_lock.Name = "clrbtnMultiMeter_vfo_lock";
+            this.clrbtnMultiMeter_vfo_lock.Selectable = true;
+            this.clrbtnMultiMeter_vfo_lock.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnMultiMeter_vfo_lock.TabIndex = 140;
+            this.toolTip1.SetToolTip(this.clrbtnMultiMeter_vfo_lock, "TX box colour");
+            this.clrbtnMultiMeter_vfo_lock.Changed += new System.EventHandler(this.clrbtnMultiMeter_vfo_lock_Changed);
             // 
             // btnVFOCopyColourFromMainNumbers
             // 
@@ -57550,7 +57608,7 @@
             this.clrbtnMultiMeter_vfo_show_bandtext.Color = System.Drawing.Color.Yellow;
             this.clrbtnMultiMeter_vfo_show_bandtext.ForeColor = System.Drawing.Color.Black;
             this.clrbtnMultiMeter_vfo_show_bandtext.Image = null;
-            this.clrbtnMultiMeter_vfo_show_bandtext.Location = new System.Drawing.Point(205, 220);
+            this.clrbtnMultiMeter_vfo_show_bandtext.Location = new System.Drawing.Point(203, 203);
             this.clrbtnMultiMeter_vfo_show_bandtext.MoreColors = "More Colors...";
             this.clrbtnMultiMeter_vfo_show_bandtext.Name = "clrbtnMultiMeter_vfo_show_bandtext";
             this.clrbtnMultiMeter_vfo_show_bandtext.Selectable = true;
@@ -57563,7 +57621,7 @@
             // 
             this.chkMultiMeter_vfo_show_bandtext.AutoSize = true;
             this.chkMultiMeter_vfo_show_bandtext.Image = null;
-            this.chkMultiMeter_vfo_show_bandtext.Location = new System.Drawing.Point(186, 200);
+            this.chkMultiMeter_vfo_show_bandtext.Location = new System.Drawing.Point(184, 183);
             this.chkMultiMeter_vfo_show_bandtext.Name = "chkMultiMeter_vfo_show_bandtext";
             this.chkMultiMeter_vfo_show_bandtext.Size = new System.Drawing.Size(105, 17);
             this.chkMultiMeter_vfo_show_bandtext.TabIndex = 135;
@@ -62511,7 +62569,7 @@
             this.grpHistoryItem.Controls.Add(this.clrbtnHistory_background);
             this.grpHistoryItem.Controls.Add(this.chkHistory_fade_tx);
             this.grpHistoryItem.Controls.Add(this.chkHistory_fade_rx);
-            this.grpHistoryItem.Location = new System.Drawing.Point(790, 481);
+            this.grpHistoryItem.Location = new System.Drawing.Point(1648, 439);
             this.grpHistoryItem.Name = "grpHistoryItem";
             this.grpHistoryItem.Size = new System.Drawing.Size(323, 376);
             this.grpHistoryItem.TabIndex = 110;
@@ -68024,5 +68082,9 @@
         private LabelTS labelTS277;
         private NumericUpDownTS udDSPNR2trainT2;
         private ButtonTS btnHistory_copy_minmax_from_0;
+        private LabelTS labelTS278;
+        private ColorButton clrbtnMultiMeter_vfo_sync;
+        private LabelTS labelTS279;
+        private ColorButton clrbtnMultiMeter_vfo_lock;
     }
 }

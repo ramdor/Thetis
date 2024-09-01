@@ -24494,6 +24494,9 @@ namespace Thetis
                 igs.SetSetting<System.Drawing.Color>("vfo_showbandtext_colour", clrbtnMultiMeter_vfo_show_bandtext.Color);
                 igs.SetSetting<System.Drawing.Color>("vfo_frequency_small_numbers_colour", clrbtnMMVfoDisplayFrequency_small.Color);
 
+                igs.SetSetting<System.Drawing.Color>("vfo_lock_colour", clrbtnMultiMeter_vfo_lock.Color);
+                igs.SetSetting<System.Drawing.Color>("vfo_sync_colour", clrbtnMultiMeter_vfo_sync.Color);
+
                 if (radMultiMeter_vfo_display_both.Checked)
                     igs.HistoryDuration = (int)MeterManager.clsVfoDisplay.VFODisplayMode.VFO_BOTH;
                 else if (radMultiMeter_vfo_display_vfoa.Checked)
@@ -24998,6 +25001,10 @@ namespace Thetis
                 chkMultiMeter_vfo_show_bandtext.Checked = igs.GetSetting<bool>("vfo_showbandtext", false, false, false, false);
                 clrbtnMultiMeter_vfo_show_bandtext.Color = igs.GetSetting<System.Drawing.Color>("vfo_showbandtext_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
                 clrbtnMMVfoDisplayFrequency_small.Color = igs.GetSetting<System.Drawing.Color>("vfo_frequency_small_numbers_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Orange);
+
+                clrbtnMultiMeter_vfo_lock.Color = igs.GetSetting<System.Drawing.Color>("vfo_lock_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
+                clrbtnMultiMeter_vfo_sync.Color = igs.GetSetting<System.Drawing.Color>("vfo_sync_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
+
 
                 switch ((MeterManager.clsVfoDisplay.VFODisplayMode)igs.HistoryDuration)
                 {
@@ -30818,6 +30825,16 @@ namespace Thetis
         private void btnMMIO_variable_2_history_Click(object sender, EventArgs e)
         {
             mmioSetupVariable(1);
+        }
+
+        private void clrbtnMultiMeter_vfo_lock_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMultiMeter_vfo_sync_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 

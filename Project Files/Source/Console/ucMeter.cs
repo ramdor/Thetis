@@ -62,7 +62,7 @@ namespace Thetis
             Common.DoubleBufferAll(this, true);
 
             picContainer.Location = new Point(0, 0);
-            picContainer.Size = new Size(Size.Width, Size.Height);
+            picContainer.Size = new Size(ClientSize.Width, ClientSize.Height);
 
             _height = 32;
             _autoHeight = false;
@@ -898,6 +898,7 @@ namespace Thetis
             if (!(_dragging || _resizing) && !picContainer.ClientRectangle.Contains(this.PointToClient(Control.MousePosition)))
                 mouseLeave();
         }
+
     }
 }
 

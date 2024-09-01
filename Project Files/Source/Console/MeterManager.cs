@@ -2190,6 +2190,9 @@ namespace Thetis
             DXRenderer r = _DXrenderers[sId];
             r.RunDisplay();
             r.LoadDXImages(_openHPSDR_appdatapath, _current_skin_path);
+
+            // now the images from resources
+            r.LoadResouceImages();
         }
         public static void RunAllRendererDisplays()
         {
@@ -2317,6 +2320,11 @@ namespace Thetis
 
             _console.TXFrequncyChangedHandlers += OnTXFrequencyChanged;
 
+            _console.VfoALockChangedHandlers += OnVFOaLockChanged;
+            _console.VfoBLockChangedHandlers += OnVFObLockChanged;
+
+            _console.VFOSyncChangedHandlers += OnVFOSyncChanged;
+
             _delegatesAdded = true;
         }
         private static void removeDelegates()
@@ -2367,12 +2375,53 @@ namespace Thetis
 
             _console.TXFrequncyChangedHandlers -= OnTXFrequencyChanged;
 
+            _console.VfoALockChangedHandlers += OnVFOaLockChanged;
+            _console.VfoBLockChangedHandlers += OnVFObLockChanged;
+
+            _console.VFOSyncChangedHandlers -= OnVFOSyncChanged;
+
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
                 kvp.Value.RemoveDelegates();
             }
 
             _delegatesAdded = false;
+        }
+        private static void OnVFOSyncChanged(int rx, bool old_state, bool new_state)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters) //.Where(o => o.Value.RX == rx)) //not used right now, apply to all vfos
+                {
+                    clsMeter m = ms.Value;
+
+                    m.VFOSync = new_state;
+                }
+            }
+        }
+        private static void OnVFOaLockChanged(int rx, bool old_state, bool new_state)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
+
+                    m.VFOALock = new_state;
+                }
+            }
+        }
+        private static void OnVFObLockChanged(int rx, bool old_state, bool new_state)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
+
+                    m.VFOBLock = new_state;
+                }
+            }
         }
         private static readonly object _antenna_lock = new object();
         private static void updateAntennaMeters()
@@ -2870,6 +2919,12 @@ namespace Thetis
                 m.FilterVfoB = _console.RX2Filter;
                 m.FilterVfoBName = getFilterName(2);//_console.rx2_filters[(int)_console.RX2DSPMode].GetName(_console.RX2Filter);
             }
+
+            // vfo b is locked anyway, whatever the rx is, and a wont matter for rx2
+            m.VFOALock = _console.VFOALock;
+            m.VFOBLock = _console.VFOBLock;
+
+            m.VFOSync = _console.VFOSync;
 
             m.TXEQEnabled = _console.TXEQ;
             m.LevelerEnabled = !_console.IsSetupFormNull && _console.SetupForm.TXLevelerOn;
@@ -5694,6 +5749,7 @@ namespace Thetis
             }
             private void setBand(Band b)
             {
+                if(abortForLockedVFO()) return;
                 if (b == Band.FIRST) return;
 
                 if (_owningmeter.RX == 1)
@@ -5711,7 +5767,19 @@ namespace Thetis
                     }));
                 }
             }
-
+            private bool abortForLockedVFO()
+            {
+                bool abort = false;
+                if (_owningmeter.RX == 1)
+                {
+                    return _owningmeter.VFOALock;
+                }
+                else if (_owningmeter.RX == 2)
+                {
+                    return _owningmeter.VFOBLock;
+                }
+                return abort;
+            }
             public override int Columns
             {
                 get { return base.Columns; }
@@ -6178,7 +6246,9 @@ namespace Thetis
                 MODE,
                 FILTER,
                 SPLIT,
-                TX
+                TX,
+                LOCK,
+                VFO_SYNC
             }
             public enum DSPModeForModeDisplay
             {
@@ -6239,6 +6309,9 @@ namespace Thetis
             private bool _band_text;
             private System.Drawing.Color _band_text_colour;
 
+            private System.Drawing.Color _lock_colour;
+            private System.Drawing.Color _sync_colour;
+
             public clsVfoDisplay(clsMeter owningmeter)
             {
                 _fontFamily = "Trebuchet MS";
@@ -6279,6 +6352,19 @@ namespace Thetis
 
                 _band_text = false;
                 _band_text_colour = System.Drawing.Color.LimeGreen;
+
+                _lock_colour = System.Drawing.Color.LimeGreen;
+                _sync_colour = System.Drawing.Color.LimeGreen;
+            }
+            public System.Drawing.Color LockColour
+            {
+                get { return _lock_colour; }
+                set { _lock_colour = value; }
+            }
+            public System.Drawing.Color SyncColour
+            {
+                get { return _sync_colour; }
+                set { _sync_colour = value; }
             }
             public bool ShowBandText
             {
@@ -6346,6 +6432,7 @@ namespace Thetis
             }
             private void setVfo(double value)
             {
+                if (abortForLockedVFO()) return;
                 if (_owningmeter.RX == 1 && !_owningmeter.RX2Enabled)
                 {
                     //vfoA
@@ -6375,8 +6462,42 @@ namespace Thetis
                         _console.VFOBFreq = value;
                 }
             }
+            private bool abortForLockedVFO()
+            {
+                bool abort = false;
+                if (_owningmeter.RX == 1 && !_owningmeter.RX2Enabled)
+                {
+                    //vfoA
+                    //vfoB
+                    if (!_mouse_over_vfoB)
+                        return _owningmeter.VFOALock;
+                    else
+                        return _owningmeter.VFOBLock;
+                }
+                else if (_owningmeter.RX == 1 && _owningmeter.RX2Enabled)
+                {
+                    //vfoA
+                    //no vfoB   if split / subrx then it becomes subvfo
+                    if (!_mouse_over_vfoB)
+                        return _owningmeter.VFOALock;
+                    else
+                    {
+                        if (_owningmeter.MultiRxEnabled || _owningmeter.Split)
+                            return _owningmeter.VFOALock;
+                    }
+                }
+                else if (_owningmeter.RX == 2 && _owningmeter.RX2Enabled)
+                {
+                    //no vfoA
+                    //vfoB
+                    if (_mouse_over_vfoB)
+                        return _owningmeter.VFOBLock;
+                }
+                return abort;
+            }
             private void adjustVfo(double adjustment)
             {
+                if (abortForLockedVFO()) return;
                 if (_owningmeter.RX == 1 && !_owningmeter.RX2Enabled)
                 {
                     //vfoA
@@ -6527,7 +6648,8 @@ namespace Thetis
                 switch (_mouse_over_vfoB ? _render_button_vfoB : _render_button_vfoA)
                 {
                     case buttonState.BAND_SCREEN:
-                        if(_mouse_over_vfoB)
+                        if (abortForLockedVFO()) break;
+                        if (_mouse_over_vfoB)
                             VFOBRenderState = renderState.BAND;
                         else
                             VFOARenderState = renderState.BAND;
@@ -6545,6 +6667,7 @@ namespace Thetis
                             VFOARenderState = renderState.FILTER;
                         break;
                     case buttonState.MODE_SCREEN:
+                        if (abortForLockedVFO()) break;
                         if (_mouse_over_vfoB)
                             VFOBRenderState = renderState.MODE;
                         else
@@ -6552,6 +6675,7 @@ namespace Thetis
                         break;
                     //////////
                     case buttonState.BAND:
+                        if (abortForLockedVFO()) break;
                         if (_mouse_over_vfoB) 
                         {
                             if (setBand(true))
@@ -6567,7 +6691,7 @@ namespace Thetis
                                 _render_state_vfoA_change_time = DateTime.Now;
                         }
                         break;
-                    case buttonState.MODE:
+                    case buttonState.MODE:                        
                         if (_mouse_over_vfoB)
                         {
                             if (setMode(true))
@@ -6615,9 +6739,48 @@ namespace Thetis
                             setTX(false); //vfoA
                         }
                         break;
+                    case buttonState.LOCK:
+                        if (_mouse_over_vfoB)
+                        {
+                            setLock(true); //vfoB
+                        }
+                        else
+                        {
+                            setLock(false); //vfoA
+                        }
+                        break;
+                    case buttonState.VFO_SYNC:
+                        setVfoSync();
+                        break;
                 }
 
                 //base.MouseClick(e);
+            }
+            private void setLock(bool vfoB)
+            {
+                if (_console == null) return;
+                if (vfoB)
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.VFOBLock = !_console.VFOBLock;
+                    }));
+                }
+                else
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.VFOALock = !_console.VFOALock;
+                    }));
+                }
+            }
+            private void setVfoSync()
+            {
+                if (_console == null) return;
+                _console.BeginInvoke(new MethodInvoker(() =>
+                {
+                    _console.VFOSync = !_console.VFOSync;
+                }));
             }
             private void setTX(bool vfoB)
             {
@@ -6690,6 +6853,7 @@ namespace Thetis
             }
             private bool setMode(bool vfoB)
             {
+                if (abortForLockedVFO()) return false;
                 if (vfoB)
                 {
                     int m = _button_grid_index_vfoB;
@@ -6728,6 +6892,7 @@ namespace Thetis
             }
             private bool setBand(bool vfoB)
             {
+                if (abortForLockedVFO()) return false;
                 if (vfoB)
                 {
                     int b = _button_grid_index_vfoB;
@@ -11252,6 +11417,10 @@ namespace Thetis
             private string _vfoA_band_text;
             private string _vfoB_band_text;
 
+            private bool _vfoA_lock;
+            private bool _vfoB_lock;
+            private bool _vfoA_sync;
+
             internal readonly object _meterItemsLock = new object();
 
             private void addMeterItem(clsMeterItem mi)
@@ -14141,8 +14310,10 @@ namespace Thetis
 
                 _quickSplitEnabled = false;
 
-                _fPadX = 0.02f;
-                _fPadY = 0.05f;
+                //_fPadX = 0.02f;
+                //_fPadY = 0.05f;
+                _fPadX = 0.004f;
+                _fPadY = 0.041f;
 
                 _fHeight = 0.05f;
 
@@ -14433,8 +14604,11 @@ namespace Thetis
                         if (bOk) bOk = float.TryParse(tmp[8], out fHeight);
                         if (bOk)
                         {
-                            _fPadX = fPadX;
-                            _fPadY = fPadY;
+                            //_fPadX = fPadX;
+                            //_fPadY = fPadY;
+                            _fPadX = 0.004f;
+                            _fPadY = 0.041f;
+
                             _fHeight = fHeight;
                         }
 
@@ -15421,10 +15595,13 @@ namespace Thetis
                                             vfo.DigitHighlightColour = igs.PowerScaleColour;
 
                                             vfo.ShowBandText = igs.GetSetting<bool>("vfo_showbandtext", false, false, false, false);
+                                            if (vfo.ShowBandText) pad = 0.03f;
+
                                             vfo.BandTextColour = igs.GetSetting<System.Drawing.Color>("vfo_showbandtext_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
                                             vfo.FrequencyColourSmall = igs.GetSetting<System.Drawing.Color>("vfo_frequency_small_numbers_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Orange);
 
-                                            if (vfo.ShowBandText) pad = 0.03f;
+                                            vfo.LockColour = igs.GetSetting<System.Drawing.Color>("vfo_lock_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
+                                            vfo.SyncColour = igs.GetSetting<System.Drawing.Color>("vfo_sync_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
 
                                             vfo.VFODispMode = (clsVfoDisplay.VFODisplayMode)igs.HistoryDuration;
                                             if (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH) both = true;
@@ -15433,7 +15610,6 @@ namespace Thetis
                                             {
                                                 vfo.Size = new SizeF(1f - _fPadX * 2f, pad + (_fHeight + _fHeight * 0.75f));
                                                 padding += pad;
-
                                             }
                                             else
                                             {
@@ -16199,6 +16375,9 @@ namespace Thetis
                                             igs.SetSetting<bool>("vfo_showbandtext", vfo.ShowBandText);
                                             igs.SetSetting<System.Drawing.Color>("vfo_showbandtext_colour", vfo.BandTextColour);
                                             igs.SetSetting<System.Drawing.Color>("vfo_frequency_small_numbers_colour", vfo.FrequencyColourSmall);
+
+                                            igs.SetSetting<System.Drawing.Color>("vfo_lock_colour", vfo.LockColour);
+                                            igs.SetSetting<System.Drawing.Color>("vfo_sync_colour", vfo.SyncColour);
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
                                         {
@@ -16672,6 +16851,21 @@ namespace Thetis
                     if (_mox) _qso_end = DateTime.Now;
                     return (long)(_qso_end - _qso_start).TotalSeconds; 
                 }
+            }
+            public bool VFOSync
+            {
+                get { return _vfoA_sync; }
+                set { _vfoA_sync = value; }
+            }
+            public bool VFOALock
+            {
+                get { return _vfoA_lock; }
+                set { _vfoA_lock = value; }
+            }
+            public bool VFOBLock
+            {
+                get { return _vfoB_lock; }
+                set { _vfoB_lock = value; }
             }
             public bool Split
             {
@@ -17164,6 +17358,7 @@ namespace Thetis
             private Color4 _backColour;
             private System.Drawing.Color _backgroundColour;
             private Dictionary<string, SharpDX.Direct2D1.Bitmap> _images;
+            private Dictionary<string, BitmapBrush> _bitmap_brushes;
             //
             private Dictionary<string, SharpDX.DirectWrite.TextFormat> _textFormats; // fonts
             private SharpDX.DirectWrite.Factory _fontFactory;
@@ -17214,8 +17409,8 @@ namespace Thetis
                 _bAntiAlias = true;
                 _bDXSetup = false;
                 _NoVSYNCpresentFlag = PresentFlags.None;
-                //_pixelShift = new Vector2(0.5f, 0.5f);
-                _pixelShift = new Vector2(0f, 0f);
+                _pixelShift = new Vector2(0.5f, 0.5f);
+                //_pixelShift = new Vector2(0f, 0f);
                 _nVBlanks = 0;
                 _oldRedrawDelay = -1;
                 _displayTarget = target;
@@ -17233,6 +17428,8 @@ namespace Thetis
                 _backColour = convertColour(_backgroundColour);
                 
                 _images = new Dictionary<string, SharpDX.Direct2D1.Bitmap>();
+                _bitmap_brushes = new Dictionary<string, BitmapBrush>();
+
 
                 //fps
                 //_fLastTime = _objFrameStartTimer.ElapsedMsec;
@@ -17300,6 +17497,39 @@ namespace Thetis
                     foreach (string sKey in keysWithBoolTag)
                     {
                         RemoveDXImage(sKey);
+                    }
+                }
+            }
+            internal void LoadResouceImages()
+            {
+                if (!_bDXSetup) return;
+
+                lock (_DXlock)
+                {
+                    Dictionary<string, System.Drawing.Bitmap> resource_bitmaps = new Dictionary<string, System.Drawing.Bitmap>();
+
+                    // the resource images to use
+                    resource_bitmaps.Add("vfo_lock", Properties.Resources.Lock_64);
+                    resource_bitmaps.Add("vfo_sync", Properties.Resources.Link_64);
+
+                    foreach (KeyValuePair<string, System.Drawing.Bitmap> kvp in resource_bitmaps)
+                    {
+                        System.Drawing.Bitmap b = kvp.Value;
+                        if (!_images.ContainsKey(kvp.Key))
+                        {
+                            SharpDX.Direct2D1.Bitmap dxB = bitmapFromSystemBitmap(_renderTarget, b, kvp.Key);
+                            _images.Add(kvp.Key, dxB);
+
+                            // also add the bitmap brush
+                            BitmapBrush bb = new BitmapBrush(_renderTarget, dxB, new BitmapBrushProperties()
+                            {
+                                ExtendModeX = ExtendMode.Clamp,
+                                ExtendModeY = ExtendMode.Clamp,
+                                InterpolationMode = BitmapInterpolationMode.Linear
+                            });
+
+                            _bitmap_brushes.Add(kvp.Key, bb);
+                        }
                     }
                 }
             }
@@ -17700,7 +17930,13 @@ namespace Thetis
                         SharpDX.Direct2D1.Bitmap b = kvp.Value;
                         Utilities.Dispose(ref b);
                     }
+                    foreach (KeyValuePair<string, BitmapBrush> kvp in _bitmap_brushes)
+                    {
+                        SharpDX.Direct2D1.BitmapBrush b = kvp.Value;
+                        Utilities.Dispose(ref b);
+                    }
                     _images.Clear();
+                    _bitmap_brushes.Clear();
                 }
             }
             internal void RemoveDXImage(string sKey)
@@ -17714,6 +17950,12 @@ namespace Thetis
                         SharpDX.Direct2D1.Bitmap b = _images[sKey];
                         Utilities.Dispose(ref b);
                         _images.Remove(sKey);
+                    }
+                    if (_bitmap_brushes.ContainsKey(sKey))
+                    {
+                        BitmapBrush b = _bitmap_brushes[sKey];
+                        Utilities.Dispose(ref b);
+                        _bitmap_brushes.Remove(sKey);
                     }
                 }
             }
@@ -18027,6 +18269,12 @@ namespace Thetis
                         _renderTarget = new RenderTarget(_factory, _surface, rtp);
 
                         setupAliasing();
+
+                        // clear measure string cache
+                        _stringMeasure.Clear();
+                        _stringMeasureKeys.Clear();
+                        //
+
                         return true;
                     }
                     catch (Exception e)
@@ -18419,8 +18667,8 @@ namespace Thetis
                                     float w = rect.Width * (mi.Size.Width / m.XRatio);
 
                                     //bb.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
-                                    float padY = ((m.PadY - (m.PadY * 0.75f)) * w);
-                                    int hh = (int)Math.Ceiling((y + h + padY)) + 2; // + 2 pixels
+                                    float padY = ((m.PadY - (m.Height * 0.75f)) * w);
+                                    int hh = (int)Math.Ceiling((y + h + padY)) + 1; // 1 extra
                                     if (hh > height) height = hh;
                                 }
 
@@ -22126,6 +22374,48 @@ namespace Thetis
                             right = false;
                         }
                     }
+                    //lock
+                    if (my >= 0.520 && my <= 0.920 && (((mx >= 0.200 && mx <= 0.223) & left) || ((mx >= 0.200 + shift && mx <= 0.223 + shift) & right)))
+                    {
+                        xB = 0.200f + shift;
+                        yB = 0.520f;
+                        wB = 0.223f - 0.200f;
+                        hB = 0.920f - 0.520f;
+
+                        button_back_box = true;
+
+                        if (left)
+                        {
+                            button_state_vfoA = clsVfoDisplay.buttonState.LOCK;
+                            left = false;
+                        }
+                        if (right)
+                        {
+                            button_state_vfoB = clsVfoDisplay.buttonState.LOCK;
+                            right = false;
+                        }
+                    }
+                    //sync
+                    if (my >= 0.520 && my <= 0.920 && (((mx >= 0.224 && mx <= 0.250) & left) || ((mx >= 0.224 + shift && mx <= 0.250 + shift) & right)))
+                    {
+                        xB = 0.224f + shift;
+                        yB = 0.520f;
+                        wB = 0.250f - 0.224f;
+                        hB = 0.920f - 0.520f;
+
+                        button_back_box = true;
+
+                        if (left)
+                        {
+                            button_state_vfoA = clsVfoDisplay.buttonState.VFO_SYNC;
+                            left = false;
+                        }
+                        if (right)
+                        {
+                            button_state_vfoB = clsVfoDisplay.buttonState.VFO_SYNC;
+                            right = false;
+                        }
+                    }
                     // large numbers
                     if (my >= 0.100 && my <= 0.530)
                     {
@@ -22142,7 +22432,7 @@ namespace Thetis
                             wB = box_size;
                             step = 1000000 * (int)Math.Pow(10, ((boxes - 1) - box));
 
-                            string t = (shift >= 0.5f ? m.VfoB : m.VfoA).ToString("F6", CultureInfo.InvariantCulture);
+                            string t = (shift >= 0.5f || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B ? m.VfoB : m.VfoA).ToString("F6", CultureInfo.InvariantCulture);
                             string[] parts = t.Split('.');
                             draw_box = ((boxes - 1) - box) <= parts[0].Length - 1;
                         }
@@ -22186,6 +22476,7 @@ namespace Thetis
                     //plotText($"{mx.ToString("f3")},{my.ToString("f3")} -- boxes:{boxes} box:{box}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
                 }
 
+                float old_h = h;
                 if ((vfo.VFOARenderState != clsVfoDisplay.renderState.VFO && disp_a) ||
                     (vfo.VFOBRenderState != clsVfoDisplay.renderState.VFO && disp_b))
                 {
@@ -22219,6 +22510,9 @@ namespace Thetis
                     button_state_vfoB = drawFilter(x, y, w, h, rect, vfo, m, render_state_shift_vfo_b, x_multy);
                 }
 
+                //recover old h
+                h = old_h;
+
                 if (draw_box && mouse_over_good)
                 {
                     vfo.AdjustStep = step;
@@ -22248,10 +22542,8 @@ namespace Thetis
                 }
 
                 // nothing to do down below unless we are in VFO mode                
-                //if ((vfo.VFOARenderState != clsVfoDisplay.renderState.VFO && disp_a) ||
-                //    (vfo.VFOBRenderState != clsVfoDisplay.renderState.VFO && disp_b)) return;
-                disp_a = vfo.VFOARenderState == clsVfoDisplay.renderState.VFO;
-                disp_b = vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO;
+                disp_a = disp_a && vfo.VFOARenderState == clsVfoDisplay.renderState.VFO;
+                disp_b = disp_b && vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO;
 
                 // plotting the normal display
                 rect.Width *= x_multy;
@@ -22435,7 +22727,47 @@ namespace Thetis
                     }
                 }
 
-
+                //vfo lock / vfo sync icons
+                Matrix3x2 originalTransform = _renderTarget.Transform;
+                AntialiasMode originalAM = _renderTarget.AntialiasMode;
+                _renderTarget.AntialiasMode = AntialiasMode.Aliased;
+                _renderTarget.Transform = Matrix3x2.Identity;
+                if (disp_a)
+                {                    
+                    if (_images.ContainsKey("vfo_lock") && _bitmap_brushes.ContainsKey("vfo_lock"))
+                    {
+                        rct = new SharpDX.RectangleF(x + (w * 0.199f) * x_multy, y + (h * 0.58f), w * 0.026f * x_multy, w * 0.026f * x_multy);
+                        SharpDX.Direct2D1.Bitmap b = _images["vfo_lock"];
+                        _renderTarget.FillRectangle(rct, _bitmap_brushes["vfo_lock"]);
+                        _renderTarget.FillOpacityMask(b, getDXBrushForColour(vfo.LockColour, m.VFOALock ? nVfoAFade : Math.Min(64, nVfoAFade)), OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+                    }
+                    if (_images.ContainsKey("vfo_sync") && _bitmap_brushes.ContainsKey("vfo_sync"))
+                    {
+                        rct = new SharpDX.RectangleF(x + (w * 0.224f) * x_multy, y + (h * 0.58f), w * 0.026f * x_multy, w * 0.026f * x_multy);
+                        SharpDX.Direct2D1.Bitmap b = _images["vfo_sync"];
+                        _renderTarget.FillRectangle(rct, _bitmap_brushes["vfo_sync"]);
+                        _renderTarget.FillOpacityMask(b, getDXBrushForColour(vfo.SyncColour, m.VFOSync ? nVfoAFade : Math.Min(64, nVfoAFade)), OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+                    }
+                }
+                if (disp_b)
+                {
+                    if (_images.ContainsKey("vfo_lock") && _bitmap_brushes.ContainsKey("vfo_lock"))
+                    {
+                        rct = new SharpDX.RectangleF(x + (w * 0.199f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.58f), w * 0.026f * x_multy, w * 0.026f * x_multy);
+                        SharpDX.Direct2D1.Bitmap b = _images["vfo_lock"];
+                        _renderTarget.FillRectangle(rct, _bitmap_brushes["vfo_lock"]);
+                        _renderTarget.FillOpacityMask(b, getDXBrushForColour(vfo.LockColour, m.VFOBLock ? nVfoBFade : Math.Min(64, nVfoBFade)), OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+                    }
+                    if (_images.ContainsKey("vfo_sync") && _bitmap_brushes.ContainsKey("vfo_sync"))
+                    {
+                        rct = new SharpDX.RectangleF(x + (w * 0.224f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.58f), w * 0.026f * x_multy, w * 0.026f * x_multy);
+                        SharpDX.Direct2D1.Bitmap b = _images["vfo_sync"];
+                        _renderTarget.FillRectangle(rct, _bitmap_brushes["vfo_sync"]);
+                        _renderTarget.FillOpacityMask(b, getDXBrushForColour(vfo.SyncColour, m.VFOSync ? nVfoBFade : Math.Min(64, nVfoBFade)), OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+                    }
+                }
+                _renderTarget.AntialiasMode = originalAM;
+                _renderTarget.Transform = originalTransform;
 
                 //if (vfo.MouseEntered)
                 //{
@@ -23157,21 +23489,30 @@ namespace Thetis
 
                     // bitmaps need to be built per render target, which use their own factory
                     // these can not be shared
-                    dxBitmap = new SharpDX.Direct2D1.Bitmap(rt, size, tempStream, stride, bitmapProperties);
+                    //dxBitmap = new SharpDX.Direct2D1.Bitmap(rt, size, tempStream, stride, bitmapProperties);
+
+                    using (SharpDX.WIC.ImagingFactory factory = new SharpDX.WIC.ImagingFactory())
+                    using (SharpDX.WIC.BitmapDecoder decoder = new SharpDX.WIC.BitmapDecoder(factory, tempStream, SharpDX.WIC.DecodeOptions.CacheOnDemand))
+                    using (SharpDX.WIC.BitmapFrameDecode frame = decoder.GetFrame(0))
+                    using (SharpDX.WIC.FormatConverter converter = new SharpDX.WIC.FormatConverter(factory))
+                    {
+                        converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPRGBA);
+                        dxBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(rt, converter);
+                    }
                 }
                 else
                 {
                     System.Drawing.Rectangle sourceArea = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
 
-                    // Transform pixels from ARGB to RGBA
-                    DataStream tempStream = new DataStream(bitmap.Height * stride, true, true);
+                    //// Transform pixels from ARGB to RGBA
+                    //DataStream tempStream = new DataStream(bitmap.Height * stride, true, true);
 
-                    // Lock System.Drawing.Bitmap
-                    System.Drawing.Imaging.BitmapData bitmapData = bitmap.LockBits(sourceArea, System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                    //// Lock System.Drawing.Bitmap
+                    //System.Drawing.Imaging.BitmapData bitmapData = bitmap.LockBits(sourceArea, System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
 
-                    // Convert all pixels 
-                    IntPtr first_pixel = bitmapData.Scan0;
-                    int bitmapData_stride = bitmapData.Stride;
+                    //// Convert all pixels 
+                    //IntPtr first_pixel = bitmapData.Scan0;
+                    //int bitmapData_stride = bitmapData.Stride;
 
                     //for (int y = 0; y < bitmap.Height; y++)
                     //{
@@ -23189,38 +23530,53 @@ namespace Thetis
                     //    }
                     //}
 
-                    // --
-                    // Parallel conversion of rows
-                    int h = bitmap.Height;
-                    int w = bitmap.Width;
-                    int[] data = new int[h * w];
-
-                    Parallel.For(0, h, y =>
+                    //
+                    DataStream memoryStream = new DataStream(bitmap.Height * stride, true, true);
+                    bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                    memoryStream.Position = 0;
+                    using (SharpDX.WIC.ImagingFactory factory = new SharpDX.WIC.ImagingFactory())
+                    using (SharpDX.WIC.BitmapDecoder decoder = new SharpDX.WIC.BitmapDecoder(factory, memoryStream, SharpDX.WIC.DecodeOptions.CacheOnDemand))
+                    using (SharpDX.WIC.BitmapFrameDecode frame = decoder.GetFrame(0))
+                    using (SharpDX.WIC.FormatConverter converter = new SharpDX.WIC.FormatConverter(factory))
                     {
-                        int offset = bitmapData_stride * y;
-                        for (int x = 0; x < w; x++)
-                        {
-                            byte B = Marshal.ReadByte(first_pixel, offset++);
-                            byte G = Marshal.ReadByte(first_pixel, offset++);
-                            byte R = Marshal.ReadByte(first_pixel, offset++);
-                            byte A = Marshal.ReadByte(first_pixel, offset++);
-                            data[(y * w) + x] = B | (G << 8) | (R << 16) | (A << 24);
-                        }
-                    });
+                        converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPRGBA);
+                        dxBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(rt, converter);
+                    }
+                    MeterManager.AddStreamData(sId, memoryStream);
+                    //
 
-                    tempStream.WriteRange<int>(data);
-                    // --
+                    //// --
+                    //// Parallel conversion of rows
+                    //int h = bitmap.Height;
+                    //int w = bitmap.Width;
+                    //int[] data = new int[h * w];
 
-                    bitmap.UnlockBits(bitmapData);
+                    //Parallel.For(0, h, y =>
+                    //{
+                    //    int offset = bitmapData_stride * y;
+                    //    for (int x = 0; x < w; x++)
+                    //    {
+                    //        byte B = Marshal.ReadByte(first_pixel, offset++);
+                    //        byte G = Marshal.ReadByte(first_pixel, offset++);
+                    //        byte R = Marshal.ReadByte(first_pixel, offset++);
+                    //        byte A = Marshal.ReadByte(first_pixel, offset++);
+                    //        data[(y * w) + x] = B | (G << 8) | (R << 16) | (A << 24);
+                    //    }
+                    //});
 
-                    tempStream.Position = 0;
+                    //tempStream.WriteRange<int>(data);
+                    //// --
 
-                    dxBitmap = new SharpDX.Direct2D1.Bitmap(rt, size, tempStream, stride, bitmapProperties);
+                    //bitmap.UnlockBits(bitmapData);
 
-                    //Utilities.Dispose(ref tempStream);
-                    //tempStream = null;
+                    //tempStream.Position = 0;
 
-                    MeterManager.AddStreamData(sId, tempStream);
+                    //dxBitmap = new SharpDX.Direct2D1.Bitmap(rt, size, tempStream, stride, bitmapProperties);
+
+                    ////Utilities.Dispose(ref tempStream);
+                    ////tempStream = null;
+
+                    //MeterManager.AddStreamData(sId, tempStream);
                 }
                 return dxBitmap;
             }

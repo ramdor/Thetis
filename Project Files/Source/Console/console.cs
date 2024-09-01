@@ -14701,20 +14701,25 @@ namespace Thetis
             get { return vfoA_lock; }
             set
             {
-                bool enabled = true;
+                bool old_state = vfoA_lock;
+                //bool enabled = true;
                 vfoA_lock = value;
-                switch (vfoA_lock)
-                {
-                    case false:
-                        txtVFOAFreq.Enabled = true;
-                        break;
-                    case true:
-                        enabled = false;
-                        txtVFOAFreq.Enabled = false;
-                        break;
-                }
+                //switch (vfoA_lock)
+                //{
+                //    case false:
+                //        txtVFOAFreq.Enabled = true;
+                //        break;
+                //    case true:
+                //        enabled = false;
+                //        txtVFOAFreq.Enabled = false;
+                //        break;
+                //}
+                //[2.3.10.6]MW0LGE whoever did the commented code above needs to step away from the computer
+                bool enabled = !vfoA_lock;
+                txtVFOAFreq.Enabled = enabled;
+                if (vfoA_lock) chkVFOSync.Checked = false;
 
-                if (value)
+                if (vfoA_lock)
                 {
                     DisableAllBands();
                     DisableAllModes();
@@ -14729,6 +14734,22 @@ namespace Thetis
                 btnVFOSwap.Enabled = enabled;
 
                 btnMemoryQuickRestore.Enabled = enabled;
+
+                if (vfoA_lock)
+                    lblLockLabel.BackColor = System.Drawing.Color.Blue;
+                else
+                    lblLockLabel.BackColor = System.Drawing.Color.Transparent;
+                lblLockLabel.Invalidate();
+
+                AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, true, vfoA_lock);
+
+                chkVFOLock.Checked = vfoA_lock;
+
+                if (vfoA_lock != old_state)
+                {
+                    VfoALockChangedHandlers?.Invoke(1, old_state, vfoA_lock);
+                    old_state = vfoA_lock;
+                }
             }
         }
 
@@ -14738,19 +14759,24 @@ namespace Thetis
             get { return vfoB_lock; }
             set
             {
-                bool enabled = true;
+                bool old_state = vfoB_lock;
+                //bool enabled = true;
                 vfoB_lock = value;
-                switch (vfoB_lock)
-                {
-                    case false:
-                        txtVFOBFreq.Enabled = true;
-                        break;
-                    case true:
-                        enabled = false;
-                        txtVFOBFreq.Enabled = false;
-                        chkVFOSync.Checked = false;
-                        break;
-                }
+                //switch (vfoB_lock)
+                //{
+                //    case false:
+                //        txtVFOBFreq.Enabled = true;
+                //        break;
+                //    case true:
+                //        enabled = false;
+                //        txtVFOBFreq.Enabled = false;
+                //        chkVFOSync.Checked = false;
+                //        break;
+                //}
+                //[2.3.10.6]MW0LGE whoever did the commented code above needs to step away from the computer
+                bool enabled = !vfoB_lock;
+                txtVFOBFreq.Enabled = enabled;
+                if(vfoB_lock) chkVFOSync.Checked = false;
 
                 comboRX2Band.Enabled = enabled;
                 btnVFOAtoB.Enabled = enabled;
@@ -14770,8 +14796,22 @@ namespace Thetis
                 radRX2ModeDIGU.Enabled = enabled;
                 radRX2ModeDRM.Enabled = enabled;
 
-            }
+                if (vfoB_lock)
+                    lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
+                else
+                    lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;                
 
+                AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, false, vfoB_lock); // <- this use of false is totally wrong, because if RX2 is in use, then lock B is RX2.
+                                                                                         // I just cba to fix it, as this sort of thing keeps being done. -LGE
+
+                chkVFOBLock.Checked = vfoB_lock;
+
+                if (vfoB_lock != old_state)
+                {
+                    VfoBLockChangedHandlers?.Invoke(RX2Enabled ? 2 : 1, old_state, vfoB_lock);
+                    old_state = vfoB_lock;
+                }
+            }
         }
 
         private double wave_freq = 0.0;
@@ -16994,11 +17034,14 @@ namespace Thetis
             get { return chkVFOLock.Checked; }
             set
             {
-                chkVFOLock.Checked = value;
-                if (value == true)
-                    lblLockLabel.BackColor = System.Drawing.Color.Blue;
-                else
-                    lblLockLabel.BackColor = System.Drawing.Color.Transparent;
+                //[2.10.3.5]MW0LGE has to be a joke, just dupe code why not
+                VFOALock = value;
+
+                //chkVFOLock.Checked = value;
+                //if (value == true)
+                //    lblLockLabel.BackColor = System.Drawing.Color.Blue;
+                //else
+                //    lblLockLabel.BackColor = System.Drawing.Color.Transparent;
             }
         }
 
@@ -17007,11 +17050,14 @@ namespace Thetis
             get { return chkVFOBLock.Checked; }
             set
             {
-                chkVFOBLock.Checked = value;
-                if (value == true)
-                    lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
-                else
-                    lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;
+                //[2.10.3.5]MW0LGE has to be a joke, just dupe code why not
+                VFOBLock = value;
+
+                //chkVFOBLock.Checked = value;
+                //if (value == true)
+                //    lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
+                //else
+                //    lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;
             }
         }
 
@@ -29113,23 +29159,24 @@ namespace Thetis
 
         private void chkVFOLock_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (chkVFOLock.Checked == VFOALock) return;
             VFOALock = chkVFOLock.Checked;
-            if (chkVFOLock.Checked == true)
-                lblLockLabel.BackColor = System.Drawing.Color.Blue;
-            else
-                lblLockLabel.BackColor = System.Drawing.Color.Transparent;
-            AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, true, chkVFOLock.Checked);
-
+            //if (chkVFOLock.Checked == true)//[2.10.3.6]MW0LGE moved this to vfoalock property
+            //    lblLockLabel.BackColor = System.Drawing.Color.Blue;
+            //else
+            //    lblLockLabel.BackColor = System.Drawing.Color.Transparent;
+            //AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, true, chkVFOLock.Checked); 
         }
 
         private void chkVFOBLock_CheckedChanged(object sender, EventArgs e)
         {
+            if (chkVFOBLock.Checked == VFOBLock) return;
             VFOBLock = chkVFOBLock.Checked;
-            if (chkVFOBLock.Checked == true)
-                lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
-            else
-                lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;
-            AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, false, chkVFOBLock.Checked);
+            //if (chkVFOBLock.Checked == true)//[2.10.3.6]MW0LGE moved this to vfoblock property
+            //    lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
+            //else
+            //    lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;
+            //AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, false, chkVFOBLock.Checked);
         }
         private void repopulateForms()
         {
@@ -40352,6 +40399,7 @@ namespace Thetis
             }
         }
 
+        private bool _old_vfo_sync_state = false;
         private void chkVFOSync_CheckedChanged(object sender, System.EventArgs e)
         {
             if (chkVFOSync.Checked)
@@ -40376,6 +40424,12 @@ namespace Thetis
                 diversityForm.VFOSync = chkVFOSync.Checked;
 
             AndromedaIndicatorCheck(EIndicatorActions.eINVFOSync, false, chkVFOSync.Checked);
+
+            if(chkVFOSync.Checked != _old_vfo_sync_state)
+            {
+                VFOSyncChangedHandlers?.Invoke(1, _old_vfo_sync_state, chkVFOSync.Checked); // will always be rx1, but may change some day
+                _old_vfo_sync_state = chkVFOSync.Checked;
+            }
         }
 
         private bool mute_rx1_on_vfob_tx = true;
@@ -45505,6 +45559,11 @@ namespace Thetis
 
         public delegate void TXFrequncyChanged(double old_frequency, double new_frequency, Band old_band, Band new_band);
 
+        public delegate void VfoALockChanged(int rx, bool old_state, bool new_state);
+        public delegate void VfoBLockChanged(int rx, bool old_state, bool new_state);
+
+        public delegate void VFOSyncChanged(int rx, bool old_state, bool new_state);
+
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
@@ -45573,6 +45632,11 @@ namespace Thetis
         public AntennaRxTxChanged AntennaRxTxHandlers;
 
         public TXFrequncyChanged TXFrequncyChangedHandlers;
+
+        public VfoALockChanged VfoALockChangedHandlers;
+        public VfoBLockChanged VfoBLockChangedHandlers;
+
+        public VFOSyncChanged VFOSyncChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
