@@ -29186,11 +29186,19 @@ namespace Thetis
         }
         public void BandPanelVisible()
         {
+            //rx1 done by this
             setBandPanelVisible(_bands_GEN_selected, _bands_HF_selected, _bands_VHF_selected, true);
+
+            //rx2
+            lblRX2Band.Visible = !LegacyItemController.HideBands;
+            comboRX2Band.Visible = !LegacyItemController.HideBands;
         }
         public void ModePanelVisible(bool visible)
         {
             panelMode.Visible = visible;
+
+            //rx2
+            panelRX2Mode.Visible = visible;
         }
         public void VFOAVisible(bool visible)
         {
@@ -29219,6 +29227,17 @@ namespace Thetis
             radFilter10.Visible = visible;
             radFilterVar1.Visible = visible;
             radFilterVar2.Visible = visible;
+
+            //rx2
+            radRX2Filter1.Visible = visible;
+            radRX2Filter2.Visible = visible;
+            radRX2Filter3.Visible = visible;
+            radRX2Filter4.Visible = visible;
+            radRX2Filter5.Visible = visible;
+            radRX2Filter6.Visible = visible;
+            radRX2Filter7.Visible = visible;
+            radRX2FilterVar1.Visible = visible;
+            radRX2FilterVar2.Visible = visible;
         }
         public void ExtendPanelDisplaySizeRight(bool expand)
         {

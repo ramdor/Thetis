@@ -75,6 +75,13 @@ namespace Thetis
             _container_minimises = true;
             _notes = "";
 
+            _tool_tip = new ToolTip();
+            _tool_tip_owner = null;
+            _tool_tip.InitialDelay = 0;
+            _tool_tip.ReshowDelay = 0;
+            _tool_tip.UseFading = true;
+            _tool_tip.ShowAlways = true;
+
             this.Name = "UCMeter_" + _id;
 
             btnFloat.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
@@ -123,6 +130,8 @@ namespace Thetis
         private string _notes;
         private int _height;
         private bool _autoHeight;
+        private ToolTip _tool_tip;
+        private IWin32Window _tool_tip_owner;
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Console Console
@@ -186,6 +195,7 @@ namespace Thetis
         {
             _point = Point.Empty;
             _dragging = false;
+            hideToolTip();
             DockedMoved?.Invoke(this, e);
         }
 
@@ -201,10 +211,25 @@ namespace Thetis
                 if (_floating)
                 {
                     Point newPos = new Point(Parent.Left + x, Parent.Top + y);
+
+                    if (Common.CtrlKeyDown)
+                    {
+                        newPos.X = roundToNearestTen(newPos.X);
+                        newPos.Y = roundToNearestTen(newPos.Y);
+                    }
+
                     Parent.Location = newPos;
+
+                    showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
                 }
                 else
                 {
+                    if (Common.CtrlKeyDown)
+                    {
+                        x = roundToNearestTen(x);
+                        y = roundToNearestTen(y);
+                    }
+
                     if (x < 0) x = 0;
                     if (y < 0) y = 0;
                     if (x > Parent.ClientSize.Width - this.Width) x = Parent.ClientSize.Width - this.Width;
@@ -212,8 +237,28 @@ namespace Thetis
 
                     Point newPos = new Point(x, y);
                     this.Location = newPos;
+
+                    showToolTip($"{newPos.X}, {newPos.Y}", this);
                 }
             }
+        }
+        private void showToolTip(string msg, Control window, bool is_resize = false)
+        {
+            _tool_tip_owner = window;
+            if(is_resize)
+                _tool_tip.Show(msg + "\nctrl to lock", _tool_tip_owner, new Point(window.Size.Width, window.Size.Height - (pnlBar.Height * 2)));
+            else
+                _tool_tip.Show(msg + "\nctrl to lock", _tool_tip_owner, new Point(0, pnlBar.Height));
+        }
+        private void hideToolTip()
+        {
+            if (_tool_tip == null || _tool_tip_owner == null) return;
+            _tool_tip.Hide(_tool_tip_owner);
+            _tool_tip_owner = null;
+        }
+        private int roundToNearestTen(int number)
+        {
+            return ((number + 5) / 10) * 10;
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public PictureBox DisplayContainer
@@ -234,7 +279,7 @@ namespace Thetis
         {
             _clientPos = Point.Empty;
             _resizing = false;
-
+            hideToolTip();
             forceResize();
         }
         private void forceResize(bool shrink = false)
@@ -320,7 +365,19 @@ namespace Thetis
 
                 int x = _size.Width + dX;
                 int y = _size.Height + dY;
+
+                if (Common.CtrlKeyDown)
+                {
+                    x = roundToNearestTen(x);
+                    y = roundToNearestTen(y);
+                }
+
                 resize(x, y);
+
+                if (_floating)
+                    showToolTip($"{this.Parent.Size.Width}, {this.Parent.Size.Height}", this.Parent, true);
+                else
+                    showToolTip($"{this.Size.Width}, {this.Size.Height}", this, true);
             }
         }
         private void resize(int x, int y, bool shrink = false)
@@ -525,6 +582,7 @@ namespace Thetis
         {
             _point = Point.Empty;
             _dragging = false;
+            hideToolTip();
             DockedMoved?.Invoke(this, e);
         }
 
@@ -540,10 +598,25 @@ namespace Thetis
                 if (_floating)
                 {
                     Point newPos = new Point(Parent.Left + x, Parent.Top + y);
+
+                    if (Common.CtrlKeyDown)
+                    {
+                        newPos.X = roundToNearestTen(newPos.X);
+                        newPos.Y = roundToNearestTen(newPos.Y);
+                    }
+
                     Parent.Location = newPos;
+
+                    showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
                 }
                 else
                 {
+                    if (Common.CtrlKeyDown)
+                    {
+                        x = roundToNearestTen(x);
+                        y = roundToNearestTen(y);
+                    }
+
                     if (x < 0) x = 0;
                     if (y < 0) y = 0;
                     if (x > Parent.ClientSize.Width - this.Width) x = Parent.ClientSize.Width - this.Width;
@@ -551,6 +624,8 @@ namespace Thetis
 
                     Point newPos = new Point(x, y);
                     this.Location = newPos;
+
+                    showToolTip($"{newPos.X}, {newPos.Y}", this);
                 }
             }
         }

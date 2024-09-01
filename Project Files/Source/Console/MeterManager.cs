@@ -264,9 +264,53 @@ namespace Thetis
         private static bool[] _ant_no_tx;
         private static string[] _ant_aux_names;
 
+        private static Dictionary<string, frmMeterDisplay> _lstMeterDisplayForms = new Dictionary<string, frmMeterDisplay>();
+        private static Dictionary<string, ucMeter> _lstUCMeters = new Dictionary<string, ucMeter>();
+
         //public static float[] _newSpectrumPassband;
         //public static float[] _currentSpectrumPassband;
         //private static bool _spectrumReady;
+        static MeterManager()
+        {
+            // readings used by varius meter items such as Text Overlay
+            _custom_readings = new CustomReadings();
+
+            // image fetcher
+            _image_fetcher = new ImageFetcher();
+
+            // static constructor
+            _rx1VHForAbove = false;
+            _rx2VHForAbove = false;
+            _delegatesAdded = false;
+            _console = null;
+            _finishedSetup = false;
+            _readings = new Dictionary<int, clsReadings>();
+            _meters = new Dictionary<string, clsMeter>();
+            _readingIgnore = new Dictionary<int, bool>();
+
+            //_power = false;
+            _currentHPSDRmodel = HPSDRModel.HERMES;
+            _alexPresent = false;
+            _paPresent = false;
+            _apolloPresent = false;
+            _transverterIndex = -1; // no transverter
+            //_spectrumReady = false;
+
+            _pooledImages = new Dictionary<string, System.Drawing.Bitmap>();
+            _pooledStreamData = new Dictionary<string, DataStream>();
+
+            // two sets of readings, for each trx
+            _readings.Add(1, new clsReadings());
+            _readings.Add(2, new clsReadings());
+
+            // two trx reading ignore flags
+            _readingIgnore.Add(1, false);
+            _readingIgnore.Add(2, false);
+
+            _meterThreadRunning = false;
+
+            _openHPSDR_appdatapath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
+        }
 
         internal class CustomReadings
         {
@@ -1265,47 +1309,7 @@ namespace Thetis
             //    _mmio_variable[index] = variable;
             //}
         }
-        static MeterManager()
-        {
-            // readings used by varius meter items such as Text Overlay
-            _custom_readings = new CustomReadings();
-
-            // image fetcher
-            _image_fetcher = new ImageFetcher();
-
-            // static constructor
-            _rx1VHForAbove = false;
-            _rx2VHForAbove = false;
-            _delegatesAdded = false;
-            _console = null;
-            _finishedSetup = false;
-            _readings = new Dictionary<int, clsReadings>();
-            _meters = new Dictionary<string, clsMeter>();
-            _readingIgnore = new Dictionary<int, bool>();
-
-            //_power = false;
-            _currentHPSDRmodel = HPSDRModel.HERMES;
-            _alexPresent = false;
-            _paPresent = false;
-            _apolloPresent = false;
-            _transverterIndex = -1; // no transverter
-            //_spectrumReady = false;
-
-            _pooledImages = new Dictionary<string, System.Drawing.Bitmap>();
-            _pooledStreamData = new Dictionary<string, DataStream>();
-
-            // two sets of readings, for each trx
-            _readings.Add(1, new clsReadings());
-            _readings.Add(2, new clsReadings());
-
-            // two trx reading ignore flags
-            _readingIgnore.Add(1, false);
-            _readingIgnore.Add(2, false);
-
-            _meterThreadRunning = false;
-
-            _openHPSDR_appdatapath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
-        }
+        
         public static ImageFetcher ImgFetch
         {
             get { return _image_fetcher; }
@@ -3315,8 +3319,6 @@ namespace Thetis
             return updateRate;
         }
 
-        private static Dictionary<string, frmMeterDisplay> _lstMeterDisplayForms = new Dictionary<string, frmMeterDisplay>();
-        private static Dictionary<string, ucMeter> _lstUCMeters = new Dictionary<string, ucMeter>();
         public static clsMeter MeterFromId(string sId)
         {
             lock (_metersLock)
@@ -14798,7 +14800,7 @@ namespace Thetis
                                             clsHistoryItem his = me.Value as clsHistoryItem;
                                             if (his == null) continue;
 
-                                            his.VerticalRatio = igs.GetSetting<float>("history_vertical_ratio", true, 0.05f, 1f, 0.5f);
+                                            his.VerticalRatio = igs.GetSetting<float>("history_vertical_ratio", true, 0.130f, 1f, 0.5f);
                                             his.BackColour = igs.GetSetting("history_background_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
                                             his.UpdateInterval = (int)igs.GetSetting<float>("history_update", true, 50f, 10000f, 0.5f);
                                             his.KeepFor = (int)igs.GetSetting<float>("history_keep_for", true, 1f, 86400f, 20f);
@@ -17429,8 +17431,7 @@ namespace Thetis
                 
                 _images = new Dictionary<string, SharpDX.Direct2D1.Bitmap>();
                 _bitmap_brushes = new Dictionary<string, BitmapBrush>();
-
-
+                
                 //fps
                 //_fLastTime = _objFrameStartTimer.ElapsedMsec;
                 //_dElapsedFrameStart = _objFrameStartTimer.ElapsedMsec;
@@ -19873,23 +19874,23 @@ namespace Thetis
                 _renderTarget.DrawLine(new RawVector2(x + half_spacer + quarter_spacer, y + h - spacer), new RawVector2(x + w - half_spacer - quarter_spacer, y + h - spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
 
                 //left y axis
-                _renderTarget.DrawLine(new RawVector2(x + spacer, y + half_spacer), new RawVector2(x + spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
+                _renderTarget.DrawLine(new RawVector2(x + spacer, y + quarter_spacer), new RawVector2(x + spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
 
                 //right y axis
-                _renderTarget.DrawLine(new RawVector2(x + w - spacer, y + half_spacer), new RawVector2(x + w - spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
+                _renderTarget.DrawLine(new RawVector2(x + w - spacer, y + quarter_spacer), new RawVector2(x + w - spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
 
                 int pixel_width = (int)(w - spacer * 2f);
 
                 //render axis 0 data
                 float text_height = (w * 0.05f);
-                float pix_space_vertical = (y + h - spacer) - (y + half_spacer);
+                float pix_space_vertical = (y + h - spacer) - (y + quarter_spacer);
                 int text_labels = (int)(pix_space_vertical / text_height) + 2; // +2 a couple extra
                 text_labels = Math.Max(2, text_labels);
                 float text_y_step = pix_space_vertical / (float)(text_labels - 1);
                 float start_x = x + spacer;
                 float base_y = y + h - spacer;
                 float last_x;
-                SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(x + spacer, y + half_spacer, w - spacer * 2f, h - half_spacer - spacer);
+                SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(x + spacer, y + quarter_spacer, w - spacer * 2f, h - quarter_spacer - spacer);
 
                 lock (his.DataLock1)
                 {
@@ -21362,7 +21363,7 @@ namespace Thetis
                 kHz = vfo.Substring(index + 1, 3);
                 hz = vfo.Substring(index + 4, 3);
             }
-            private (float, float) plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fit_size_width = 0, bool ignore_cache = false, float fit_size_height = 0, float rotate_deg = 0)
+            private (float, float) plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fit_size_width = 0, bool ignore_cache = false, float fit_size_height = 0, float rotate_deg = 0, bool fill_background = false, object back_colour = null)
             {
                 if (string.IsNullOrEmpty(sText)) return (0, 0);
 
@@ -21431,6 +21432,9 @@ namespace Thetis
                     originalTransform = _renderTarget.Transform;
                     _renderTarget.Transform = originalTransform * Matrix3x2.Rotation(MathUtil.DegreesToRadians(rotate_deg), new Vector2(txtrect.Left, txtrect.Top) + textCenter);
                 }
+                if (fill_background)
+                    _renderTarget.FillRectangle(txtrect, getDXBrushForColour((System.Drawing.Color)back_colour));
+
                 _renderTarget.DrawText(sText, getDXTextFormatForFont(sFontFamily, fontSizeEmScaled, style), txtrect, getDXBrushForColour(c, nFade));
                 if(rotate_deg != 0)
                 {

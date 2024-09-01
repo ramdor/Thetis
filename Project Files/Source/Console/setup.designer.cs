@@ -3952,6 +3952,21 @@
             this.labelTS258 = new System.Windows.Forms.LabelTS();
             this.chkHistory_fade_tx = new System.Windows.Forms.CheckBoxTS();
             this.chkHistory_fade_rx = new System.Windows.Forms.CheckBoxTS();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.tabPage9 = new System.Windows.Forms.TabPage();
+            this.tabPage10 = new System.Windows.Forms.TabPage();
+            this.tabPage11 = new System.Windows.Forms.TabPage();
+            this.tabPage12 = new System.Windows.Forms.TabPage();
+            this.tabPage13 = new System.Windows.Forms.TabPage();
+            this.tabPage14 = new System.Windows.Forms.TabPage();
+            this.tabPage15 = new System.Windows.Forms.TabPage();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4962,6 +4977,17 @@
             this.grpHistoryItem.SuspendLayout();
             this.groupBoxTS46.SuspendLayout();
             this.groupBoxTS45.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.tabPage5.SuspendLayout();
+            this.tabPage6.SuspendLayout();
+            this.tabPage7.SuspendLayout();
+            this.tabPage8.SuspendLayout();
+            this.tabPage9.SuspendLayout();
+            this.tabPage10.SuspendLayout();
+            this.tabPage11.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -39975,7 +40001,7 @@
             // 
             this.radDSPNR2NSTATRX2.AutoSize = true;
             this.radDSPNR2NSTATRX2.Image = null;
-            this.radDSPNR2NSTATRX2.Location = new System.Drawing.Point(7, 78);
+            this.radDSPNR2NSTATRX2.Location = new System.Drawing.Point(6, 78);
             this.radDSPNR2NSTATRX2.Margin = new System.Windows.Forms.Padding(2);
             this.radDSPNR2NSTATRX2.Name = "radDSPNR2NSTATRX2";
             this.radDSPNR2NSTATRX2.Size = new System.Drawing.Size(61, 17);
@@ -39989,7 +40015,7 @@
             // 
             this.radDSPNR2MMSERX2.AutoSize = true;
             this.radDSPNR2MMSERX2.Image = null;
-            this.radDSPNR2MMSERX2.Location = new System.Drawing.Point(7, 54);
+            this.radDSPNR2MMSERX2.Location = new System.Drawing.Point(6, 54);
             this.radDSPNR2MMSERX2.Name = "radDSPNR2MMSERX2";
             this.radDSPNR2MMSERX2.Size = new System.Drawing.Size(57, 17);
             this.radDSPNR2MMSERX2.TabIndex = 1;
@@ -40002,7 +40028,7 @@
             this.radDSPNR2OSMSRX2.AutoSize = true;
             this.radDSPNR2OSMSRX2.Checked = true;
             this.radDSPNR2OSMSRX2.Image = null;
-            this.radDSPNR2OSMSRX2.Location = new System.Drawing.Point(7, 31);
+            this.radDSPNR2OSMSRX2.Location = new System.Drawing.Point(6, 31);
             this.radDSPNR2OSMSRX2.Name = "radDSPNR2OSMSRX2";
             this.radDSPNR2OSMSRX2.Size = new System.Drawing.Size(56, 17);
             this.radDSPNR2OSMSRX2.TabIndex = 0;
@@ -57506,7 +57532,7 @@
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.labelTS166);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayMode);
             this.grpMeterItemVfoDisplaySettings.Controls.Add(this.clrbtnMMVfoDisplayTitle);
-            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(783, 462);
+            this.grpMeterItemVfoDisplaySettings.Location = new System.Drawing.Point(15, 24);
             this.grpMeterItemVfoDisplaySettings.Name = "grpMeterItemVfoDisplaySettings";
             this.grpMeterItemVfoDisplaySettings.Size = new System.Drawing.Size(323, 376);
             this.grpMeterItemVfoDisplaySettings.TabIndex = 101;
@@ -57955,7 +57981,7 @@
             this.grpMeterItemClockSettings.Controls.Add(this.chkMMClockTitle);
             this.grpMeterItemClockSettings.Controls.Add(this.radMM24Clock);
             this.grpMeterItemClockSettings.Controls.Add(this.radMM12Clock);
-            this.grpMeterItemClockSettings.Location = new System.Drawing.Point(1264, 102);
+            this.grpMeterItemClockSettings.Location = new System.Drawing.Point(12, 14);
             this.grpMeterItemClockSettings.Name = "grpMeterItemClockSettings";
             this.grpMeterItemClockSettings.Size = new System.Drawing.Size(323, 376);
             this.grpMeterItemClockSettings.TabIndex = 100;
@@ -58825,7 +58851,7 @@
             this.pbLedIndicator_condition_tips.Size = new System.Drawing.Size(20, 20);
             this.pbLedIndicator_condition_tips.TabIndex = 164;
             this.pbLedIndicator_condition_tips.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbLedIndicator_condition_tips, "You can create code based conditions.\r\neg.\r\n%swr% > 1.5\r\n%varibale% == 2\r\n%variab" +
+            this.toolTip1.SetToolTip(this.pbLedIndicator_condition_tips, "You can create code based conditions.\r\neg.\r\n%swr% > 1.5\r\n%variable% == 2\r\n%variab" +
         "le% == \"Hello\"\r\n%pwr% > 15\r\n%variable1% == %variable2%\r\n%pwr% <= 10");
             // 
             // clrbtnLedIndicator_PanelBackgroundTX
@@ -59655,10 +59681,10 @@
             0,
             0});
             this.nudHistory_vertical_ratio.Minimum = new decimal(new int[] {
-            5,
+            130,
             0,
             0,
-            131072});
+            196608});
             this.nudHistory_vertical_ratio.Name = "nudHistory_vertical_ratio";
             this.nudHistory_vertical_ratio.Size = new System.Drawing.Size(56, 20);
             this.nudHistory_vertical_ratio.TabIndex = 132;
@@ -60966,7 +60992,7 @@
             this.grpMeterItemSpacerSettings.Controls.Add(this.clrbtnMeterItemHBackgroundSpacerRX);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnTxSpacer);
             this.grpMeterItemSpacerSettings.Controls.Add(this.chkMeterItemFadeOnRxSpacer);
-            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(1468, 17);
+            this.grpMeterItemSpacerSettings.Location = new System.Drawing.Point(12, 14);
             this.grpMeterItemSpacerSettings.Name = "grpMeterItemSpacerSettings";
             this.grpMeterItemSpacerSettings.Size = new System.Drawing.Size(323, 376);
             this.grpMeterItemSpacerSettings.TabIndex = 102;
@@ -61078,7 +61104,7 @@
             this.grpTextOverlay.Controls.Add(this.clrbtnTextOverlay_PanelBackground);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnTX);
             this.grpTextOverlay.Controls.Add(this.chkTextOverlay_FadeOnRX);
-            this.grpTextOverlay.Location = new System.Drawing.Point(1137, 166);
+            this.grpTextOverlay.Location = new System.Drawing.Point(12, 16);
             this.grpTextOverlay.Name = "grpTextOverlay";
             this.grpTextOverlay.Size = new System.Drawing.Size(323, 376);
             this.grpTextOverlay.TabIndex = 104;
@@ -61323,7 +61349,7 @@
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS217);
             this.grpMeterItemDataOutNode.Controls.Add(this.nudDataOutNode_sendinterval);
             this.grpMeterItemDataOutNode.Controls.Add(this.labelTS215);
-            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(1062, 201);
+            this.grpMeterItemDataOutNode.Location = new System.Drawing.Point(12, 15);
             this.grpMeterItemDataOutNode.Name = "grpMeterItemDataOutNode";
             this.grpMeterItemDataOutNode.Size = new System.Drawing.Size(323, 376);
             this.grpMeterItemDataOutNode.TabIndex = 105;
@@ -61406,7 +61432,7 @@
             this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnTxRotator);
             this.grpMeterItemRotator.Controls.Add(this.chkMeterItemFadeOnRxRotator);
             this.grpMeterItemRotator.Controls.Add(this.pnlVariableInUse_1_rotator);
-            this.grpMeterItemRotator.Location = new System.Drawing.Point(417, 564);
+            this.grpMeterItemRotator.Location = new System.Drawing.Point(17, 24);
             this.grpMeterItemRotator.Name = "grpMeterItemRotator";
             this.grpMeterItemRotator.Size = new System.Drawing.Size(323, 376);
             this.grpMeterItemRotator.TabIndex = 106;
@@ -61664,7 +61690,7 @@
             this.grpLedIndicator.Controls.Add(this.clrbtnLedIndicator_PanelBackground);
             this.grpLedIndicator.Controls.Add(this.chkLedIndicator_FadeOnTX);
             this.grpLedIndicator.Controls.Add(this.chkLedIndicator_FadeOnRX);
-            this.grpLedIndicator.Location = new System.Drawing.Point(1262, 585);
+            this.grpLedIndicator.Location = new System.Drawing.Point(12, 23);
             this.grpLedIndicator.Name = "grpLedIndicator";
             this.grpLedIndicator.Size = new System.Drawing.Size(323, 376);
             this.grpLedIndicator.TabIndex = 107;
@@ -61937,7 +61963,7 @@
             this.grpWebImage.Controls.Add(this.labelTS235);
             this.grpWebImage.Controls.Add(this.chkWebImage_fade_tx);
             this.grpWebImage.Controls.Add(this.chkWebImage_fade_rx);
-            this.grpWebImage.Location = new System.Drawing.Point(1198, 138);
+            this.grpWebImage.Location = new System.Drawing.Point(12, 16);
             this.grpWebImage.Name = "grpWebImage";
             this.grpWebImage.Size = new System.Drawing.Size(323, 376);
             this.grpWebImage.TabIndex = 108;
@@ -62191,7 +62217,7 @@
             this.grpBandButtons.Controls.Add(this.clrbtnBandButtons_indicator_on);
             this.grpBandButtons.Controls.Add(this.chkBandButtons_fade_tx);
             this.grpBandButtons.Controls.Add(this.chkBandButtons_fade_rx);
-            this.grpBandButtons.Location = new System.Drawing.Point(1220, 545);
+            this.grpBandButtons.Location = new System.Drawing.Point(12, 23);
             this.grpBandButtons.Name = "grpBandButtons";
             this.grpBandButtons.Size = new System.Drawing.Size(323, 376);
             this.grpBandButtons.TabIndex = 109;
@@ -62569,7 +62595,7 @@
             this.grpHistoryItem.Controls.Add(this.clrbtnHistory_background);
             this.grpHistoryItem.Controls.Add(this.chkHistory_fade_tx);
             this.grpHistoryItem.Controls.Add(this.chkHistory_fade_rx);
-            this.grpHistoryItem.Location = new System.Drawing.Point(1648, 439);
+            this.grpHistoryItem.Location = new System.Drawing.Point(12, 14);
             this.grpHistoryItem.Name = "grpHistoryItem";
             this.grpHistoryItem.Size = new System.Drawing.Size(323, 376);
             this.grpHistoryItem.TabIndex = 110;
@@ -62874,26 +62900,177 @@
             this.chkHistory_fade_rx.UseVisualStyleBackColor = true;
             this.chkHistory_fade_rx.CheckedChanged += new System.EventHandler(this.chkHistory_fade_rx_CheckedChanged);
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.tabPage5);
+            this.tabControl1.Controls.Add(this.tabPage6);
+            this.tabControl1.Controls.Add(this.tabPage7);
+            this.tabControl1.Controls.Add(this.tabPage8);
+            this.tabControl1.Controls.Add(this.tabPage9);
+            this.tabControl1.Controls.Add(this.tabPage10);
+            this.tabControl1.Controls.Add(this.tabPage11);
+            this.tabControl1.Controls.Add(this.tabPage12);
+            this.tabControl1.Controls.Add(this.tabPage13);
+            this.tabControl1.Controls.Add(this.tabPage14);
+            this.tabControl1.Controls.Add(this.tabPage15);
+            this.tabControl1.Location = new System.Drawing.Point(814, 206);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(734, 489);
+            this.tabControl1.TabIndex = 111;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.grpHistoryItem);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(726, 463);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "history";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.grpWebImage);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(726, 463);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "web";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.grpTextOverlay);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(726, 463);
+            this.tabPage4.TabIndex = 2;
+            this.tabPage4.Text = "textoverlay";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // tabPage5
+            // 
+            this.tabPage5.Controls.Add(this.grpMeterItemClockSettings);
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Size = new System.Drawing.Size(726, 463);
+            this.tabPage5.TabIndex = 3;
+            this.tabPage5.Text = "clock";
+            this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // tabPage6
+            // 
+            this.tabPage6.Controls.Add(this.grpMeterItemSpacerSettings);
+            this.tabPage6.Location = new System.Drawing.Point(4, 22);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Size = new System.Drawing.Size(726, 463);
+            this.tabPage6.TabIndex = 4;
+            this.tabPage6.Text = "spacer";
+            this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // tabPage7
+            // 
+            this.tabPage7.Controls.Add(this.grpBandButtons);
+            this.tabPage7.Location = new System.Drawing.Point(4, 22);
+            this.tabPage7.Name = "tabPage7";
+            this.tabPage7.Size = new System.Drawing.Size(726, 463);
+            this.tabPage7.TabIndex = 5;
+            this.tabPage7.Text = "buttonbox";
+            this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // tabPage8
+            // 
+            this.tabPage8.Controls.Add(this.grpLedIndicator);
+            this.tabPage8.Location = new System.Drawing.Point(4, 22);
+            this.tabPage8.Name = "tabPage8";
+            this.tabPage8.Size = new System.Drawing.Size(726, 463);
+            this.tabPage8.TabIndex = 6;
+            this.tabPage8.Text = "led";
+            this.tabPage8.UseVisualStyleBackColor = true;
+            // 
+            // tabPage9
+            // 
+            this.tabPage9.Controls.Add(this.grpMeterItemDataOutNode);
+            this.tabPage9.Location = new System.Drawing.Point(4, 22);
+            this.tabPage9.Name = "tabPage9";
+            this.tabPage9.Size = new System.Drawing.Size(726, 463);
+            this.tabPage9.TabIndex = 7;
+            this.tabPage9.Text = "dataout";
+            this.tabPage9.UseVisualStyleBackColor = true;
+            // 
+            // tabPage10
+            // 
+            this.tabPage10.Controls.Add(this.grpMeterItemVfoDisplaySettings);
+            this.tabPage10.Location = new System.Drawing.Point(4, 22);
+            this.tabPage10.Name = "tabPage10";
+            this.tabPage10.Size = new System.Drawing.Size(726, 463);
+            this.tabPage10.TabIndex = 8;
+            this.tabPage10.Text = "vfo";
+            this.tabPage10.UseVisualStyleBackColor = true;
+            // 
+            // tabPage11
+            // 
+            this.tabPage11.Controls.Add(this.grpMeterItemRotator);
+            this.tabPage11.Location = new System.Drawing.Point(4, 22);
+            this.tabPage11.Name = "tabPage11";
+            this.tabPage11.Size = new System.Drawing.Size(726, 463);
+            this.tabPage11.TabIndex = 9;
+            this.tabPage11.Text = "rotator";
+            this.tabPage11.UseVisualStyleBackColor = true;
+            // 
+            // tabPage12
+            // 
+            this.tabPage12.Location = new System.Drawing.Point(4, 22);
+            this.tabPage12.Name = "tabPage12";
+            this.tabPage12.Size = new System.Drawing.Size(726, 463);
+            this.tabPage12.TabIndex = 10;
+            this.tabPage12.Text = "blank";
+            this.tabPage12.UseVisualStyleBackColor = true;
+            // 
+            // tabPage13
+            // 
+            this.tabPage13.Location = new System.Drawing.Point(4, 22);
+            this.tabPage13.Name = "tabPage13";
+            this.tabPage13.Size = new System.Drawing.Size(726, 463);
+            this.tabPage13.TabIndex = 11;
+            this.tabPage13.Text = "blank";
+            this.tabPage13.UseVisualStyleBackColor = true;
+            // 
+            // tabPage14
+            // 
+            this.tabPage14.Location = new System.Drawing.Point(4, 22);
+            this.tabPage14.Name = "tabPage14";
+            this.tabPage14.Size = new System.Drawing.Size(726, 463);
+            this.tabPage14.TabIndex = 12;
+            this.tabPage14.Text = "blank";
+            this.tabPage14.UseVisualStyleBackColor = true;
+            // 
+            // tabPage15
+            // 
+            this.tabPage15.Location = new System.Drawing.Point(4, 22);
+            this.tabPage15.Name = "tabPage15";
+            this.tabPage15.Size = new System.Drawing.Size(726, 463);
+            this.tabPage15.TabIndex = 13;
+            this.tabPage15.Text = "blank";
+            this.tabPage15.UseVisualStyleBackColor = true;
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1884, 1581);
-            this.Controls.Add(this.grpHistoryItem);
-            this.Controls.Add(this.grpBandButtons);
-            this.Controls.Add(this.grpWebImage);
+            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.labelTS198);
-            this.Controls.Add(this.grpLedIndicator);
-            this.Controls.Add(this.grpTextOverlay);
-            this.Controls.Add(this.grpMeterItemRotator);
-            this.Controls.Add(this.grpMeterItemDataOutNode);
-            this.Controls.Add(this.grpMeterItemSpacerSettings);
             this.Controls.Add(this.txtboxTXProfileChangedReport);
             this.Controls.Add(this.lblTXProfileWarning);
             this.Controls.Add(this.labelSavingLoading);
-            this.Controls.Add(this.grpMeterItemVfoDisplaySettings);
             this.Controls.Add(this.btnApply);
-            this.Controls.Add(this.grpMeterItemClockSettings);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.tcSetup);
@@ -64131,6 +64308,17 @@
             this.groupBoxTS46.PerformLayout();
             this.groupBoxTS45.ResumeLayout(false);
             this.groupBoxTS45.PerformLayout();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage5.ResumeLayout(false);
+            this.tabPage6.ResumeLayout(false);
+            this.tabPage7.ResumeLayout(false);
+            this.tabPage8.ResumeLayout(false);
+            this.tabPage9.ResumeLayout(false);
+            this.tabPage10.ResumeLayout(false);
+            this.tabPage11.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -68086,5 +68274,20 @@
         private ColorButton clrbtnMultiMeter_vfo_sync;
         private LabelTS labelTS279;
         private ColorButton clrbtnMultiMeter_vfo_lock;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private TabPage tabPage4;
+        private TabPage tabPage5;
+        private TabPage tabPage6;
+        private TabPage tabPage7;
+        private TabPage tabPage8;
+        private TabPage tabPage9;
+        private TabPage tabPage10;
+        private TabPage tabPage11;
+        private TabPage tabPage12;
+        private TabPage tabPage13;
+        private TabPage tabPage14;
+        private TabPage tabPage15;
     }
 }
