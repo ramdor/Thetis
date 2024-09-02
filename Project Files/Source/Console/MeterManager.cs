@@ -21464,7 +21464,13 @@ namespace Thetis
                 SharpDX.RectangleF rct;
                 float xB = 0;
                 float yB = y;
-                float wB = x + w * 0.47f * x_multy;
+
+                float wB;
+                if(vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH)
+                    wB = x + w * (0.5f - m.PadX - (m.PadX * 0.5f));
+                else
+                    wB = x + w * (1f - m.PadX);
+
                 float hB = h;
                 float gap = wB / 8f;
                 int nx = 0;
@@ -21604,7 +21610,14 @@ namespace Thetis
                 SharpDX.RectangleF rct;
                 float xB = 0;
                 float yB = y;
-                float wB = x + w * 0.47f * x_multy;
+
+                //float wB = x + w * 0.47f * x_multy;
+                float wB;
+                if (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH)
+                    wB = x + w * (0.5f - m.PadX - (m.PadX * 0.5f));
+                else
+                    wB = x + w * (1f - m.PadX);
+
                 float hB = h;
                 float gap = wB / 6f;
                 int nx = 0;
@@ -21692,7 +21705,14 @@ namespace Thetis
                 SharpDX.RectangleF rct;
                 float xB = 0;
                 float yB = y;
-                float wB = x + w * 0.47f * x_multy;
+
+                //float wB = x + w * 0.47f * x_multy;
+                float wB;
+                if (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH)
+                    wB = x + w * (0.5f - m.PadX - (m.PadX * 0.5f));
+                else
+                    wB = x + w * (1f - m.PadX);
+
                 float hB = h;
                 float gap = wB / 6f;
                 int nx = 0;
@@ -22488,7 +22508,7 @@ namespace Thetis
                     h = rect.Height * (mi.Size.Height / m.YRatio);
                 }
 
-                float render_state_shift_vfo_b = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH ? 0.510f : 0f;
+                float render_state_shift_vfo_b = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH ? /*0.510*/0.5f + m.PadX / 2f : 0f;
                 if (vfo.VFOARenderState == clsVfoDisplay.renderState.BAND)
                 {
                     button_state_vfoA = drawBand(x, y, w, h, rect, vfo, m, 0, x_multy);
