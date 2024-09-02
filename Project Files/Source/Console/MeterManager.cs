@@ -1821,7 +1821,7 @@ namespace Thetis
                 if (!_lstUCMeters.ContainsKey(sId)) return;
 
                 ucMeter uc = _lstUCMeters[sId];
-                uc.NoTitle = noTitle;
+                uc.NoControls = noTitle;
             }
         }
         public static void AutoContainerHeight(string sId, bool auto_height)
@@ -1934,7 +1934,7 @@ namespace Thetis
                 if (!_lstUCMeters.ContainsKey(sId)) return false;
 
                 ucMeter uc = _lstUCMeters[sId];
-                return uc.NoTitle;
+                return uc.NoControls;
             }
         }
         public static bool ContainerAutoHeight(string sId)
@@ -22444,15 +22444,15 @@ namespace Thetis
                     if (my >= 0.100 && my <= 0.530)
                     {
                         //mhz
-                        if (((mx >= 0.206 && mx <= 0.328) && left) || ((mx >= 0.206 + shift && mx <= 0.328 + shift) && right))
+                        if (((mx >= 0.216 && mx <= 0.330) && left) || ((mx >= 0.216 + shift && mx <= 0.330 + shift) && right))
                         {
                             yB = 0.100f;
                             hB = 0.530f - 0.100f;
                             boxes = 5;
-                            box_size = (0.328f - 0.206f) / (float)boxes;
-                            tx = mx - shift - 0.206f;
+                            box_size = (0.330f - 0.216f) / (float)boxes;
+                            tx = mx - shift - 0.216f;
                             box = (int)(tx / box_size);
-                            xB = 0.206f + (box_size * box) + shift;
+                            xB = 0.216f + (box_size * box) + shift;
                             wB = box_size;
                             step = 1000000 * (int)Math.Pow(10, ((boxes - 1) - box));
 
@@ -22461,15 +22461,15 @@ namespace Thetis
                             draw_box = ((boxes - 1) - box) <= parts[0].Length - 1;
                         }
                         //khz
-                        if (((mx >= 0.343 && mx <= 0.414) && left) || ((mx >= 0.343 + shift && mx <= 0.414 + shift) && right))
+                        if (((mx >= 0.346 && mx <= 0.416) && left) || ((mx >= 0.346 + shift && mx <= 0.416 + shift) && right))
                         {
                             yB = 0.100f;
                             hB = 0.530f - 0.100f;
                             boxes = 3;
-                            box_size = (0.414f - 0.343f) / (float)boxes;
-                            tx = mx - shift - 0.343f;
+                            box_size = (0.416f - 0.346f) / (float)boxes;
+                            tx = mx - shift - 0.346f;
                             box = (int)(tx / box_size);
-                            xB = 0.343f + (box_size * box) + shift;
+                            xB = 0.346f + (box_size * box) + shift;
                             wB = box_size;
                             step = 1000 * (int)Math.Pow(10, ((boxes - 1) - box));
                             draw_box = true;
@@ -22479,16 +22479,16 @@ namespace Thetis
                     if (my >= 0.170 && my <= 0.530)
                     {
                         //hz
-                        if (((mx >= 0.421 && mx <= 0.480) && left) || ((mx >= 0.421 + shift && mx <= 0.480 + shift) && right))
+                        if (((mx >= 0.425 && mx <= 0.480) && left) || ((mx >= 0.425 + shift && mx <= 0.480 + shift) && right))
                         {
                             yB = 0.170f;
                             hB = 0.530f - 0.170f;
 
                             boxes = 3;
-                            box_size = (0.480f - 0.421f) / (float)boxes;
-                            tx = mx - shift - 0.421f;
+                            box_size = (0.480f - 0.425f) / (float)boxes;
+                            tx = mx - shift - 0.425f;
                             box = (int)(tx / box_size);
-                            xB = 0.421f + (box_size * box) + shift;
+                            xB = 0.425f + (box_size * box) + shift;
                             wB = box_size;
                             step = (int)Math.Pow(10, ((boxes - 1) - box));
                             draw_box = true;
@@ -22793,10 +22793,10 @@ namespace Thetis
                 _renderTarget.AntialiasMode = originalAM;
                 _renderTarget.Transform = originalTransform;
 
-                //if (vfo.MouseEntered)
-                //{
-                //    plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
-                //}
+                if (vfo.MouseEntered)
+                {
+                    plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                }
 
                 //plotText($"a render state = {vfo.VFOARenderState}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
                 //plotText($"b render state = {vfo.VFOBRenderState}", x, y + 20, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);

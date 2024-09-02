@@ -50486,8 +50486,9 @@
             this.chkContainerNoTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkContainerNoTitle.Size = new System.Drawing.Size(129, 17);
             this.chkContainerNoTitle.TabIndex = 104;
-            this.chkContainerNoTitle.Text = "No container title bar";
-            this.toolTip1.SetToolTip(this.chkContainerNoTitle, "Prevents the display of the mouse over title bar. Hold shift to bypass this.");
+            this.chkContainerNoTitle.Text = "No container controls";
+            this.toolTip1.SetToolTip(this.chkContainerNoTitle, "Prevents the display of the mouse over title bar and the resize grabber in the co" +
+        "rner. Hold shift to bypass this.");
             this.chkContainerNoTitle.UseVisualStyleBackColor = true;
             this.chkContainerNoTitle.CheckedChanged += new System.EventHandler(this.chkContainerNoTitle_CheckedChanged);
             // 

@@ -70,7 +70,7 @@ namespace Thetis
             _console = null;
             _id = System.Guid.NewGuid().ToString();
             _border = true;
-            _noTitleBar = false;
+            _no_controls = false;
             _enabled = true;
             _container_minimises = true;
             _notes = "";
@@ -124,7 +124,7 @@ namespace Thetis
         private bool _mox;
         private string _id;
         private bool _border;
-        private bool _noTitleBar;
+        private bool _no_controls;
         private bool _enabled;
         private bool _container_minimises;
         private string _notes;
@@ -505,10 +505,11 @@ namespace Thetis
 
         private void picContainer_MouseMove(object sender, MouseEventArgs e)
         {
+            bool no_controls = _no_controls && !Common.ShiftKeyDown; //[2.10.3.6]MW0LGE no title or resize grabber, override by holding shift
+
             if (!_dragging)
             {
-                bool noBar = _noTitleBar && !Common.ShiftKeyDown; //[2.10.3.4]MW0LGE no title, override by holding shift
-                bool bContains = !noBar && pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition));
+                bool bContains = !no_controls && pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition));
                 if (bContains && !pnlBar.Visible)
                 {
                     pnlBar.BringToFront();
@@ -522,7 +523,7 @@ namespace Thetis
 
             if (!_resizing)
             {
-                bool bContains = pbGrab.ClientRectangle.Contains(pbGrab.PointToClient(Control.MousePosition));
+                bool bContains = !no_controls && pbGrab.ClientRectangle.Contains(pbGrab.PointToClient(Control.MousePosition));
                 if (bContains && !pbGrab.Visible)
                 {
                     pbGrab.BringToFront();
@@ -714,12 +715,12 @@ namespace Thetis
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public bool NoTitle
+        public bool NoControls
         {
-            get { return _noTitleBar; }
+            get { return _no_controls; }
             set
             {
-                _noTitleBar = value;
+                _no_controls = value;
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
@@ -840,7 +841,7 @@ namespace Thetis
                 PinOnTop.ToString() + "|" +
                 UCBorder.ToString() + "|" +
                 Common.ColourToString(this.BackColor) + "|" +
-                NoTitle.ToString() + "|" +
+                NoControls.ToString() + "|" +
                 MeterEnabled.ToString() + "|" +
                 Notes + "|" +
                 ContainerMinimises.ToString().ToLower() + "|" +
@@ -907,7 +908,7 @@ namespace Thetis
                     if(bOk && tmp.Length > 13) // we also have the new for [2.10.1.0] the notitleifpined option
                     {
                         bOk = bool.TryParse(tmp[13], out noTitleBar);
-                        if (bOk) NoTitle = noTitleBar;
+                        if (bOk) NoControls = noTitleBar;
                     }
 
                     if (bOk && tmp.Length > 14) // we also have the new for [2.10.3.5] the show option
