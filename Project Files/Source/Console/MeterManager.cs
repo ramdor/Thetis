@@ -9181,38 +9181,41 @@ namespace Thetis
                 }
                 addReading(0, reading_0);
                 //
-                if (_axis_1_MMIOGuid == Guid.Empty)
+                if (_show_scale_1)
                 {
-                    reading_1 = MeterManager.getReading(rx, _reading_1);
-                    if (!readingsUsed.Contains(_reading_1))
-                        readingsUsed.Add(_reading_1);
-                }
-                else
-                {
-                    reading_1 = 0;
-                    if (MultiMeterIO.Data.ContainsKey(_axis_1_MMIOGuid))
+                    if (_axis_1_MMIOGuid == Guid.Empty)
                     {
-                        MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[_axis_1_MMIOGuid];
-                        if (mmio == null) return;
+                        reading_1 = MeterManager.getReading(rx, _reading_1);
+                        if (!readingsUsed.Contains(_reading_1))
+                            readingsUsed.Add(_reading_1);
+                    }
+                    else
+                    {
+                        reading_1 = 0;
+                        if (MultiMeterIO.Data.ContainsKey(_axis_1_MMIOGuid))
+                        {
+                            MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[_axis_1_MMIOGuid];
+                            if (mmio == null) return;
 
-                        object val = mmio.GetVariable(_axis_1_MMIOVariable);
-                        if (val is int)
-                        {
-                            int intVal = (int)val;
-                            reading_1 = (float)intVal;
-                        }
-                        else if (val is float)
-                        {
-                            reading_1 = (float)val;
-                        }
-                        else if (val is double)
-                        {
-                            double doubleVal = (double)val;
-                            reading_1 = (float)doubleVal;
+                            object val = mmio.GetVariable(_axis_1_MMIOVariable);
+                            if (val is int)
+                            {
+                                int intVal = (int)val;
+                                reading_1 = (float)intVal;
+                            }
+                            else if (val is float)
+                            {
+                                reading_1 = (float)val;
+                            }
+                            else if (val is double)
+                            {
+                                double doubleVal = (double)val;
+                                reading_1 = (float)doubleVal;
+                            }
                         }
                     }
+                    addReading(1, reading_1);
                 }
-                addReading(1, reading_1);
                 //
             }
         }
@@ -14813,6 +14816,7 @@ namespace Thetis
                                             his.Max0Manual = igs.GetSetting<float>("history_max_0", true, -10000f, 10000f, 0f);
 
                                             his.ShowScale1 = igs.GetSetting<bool>("history_show_scale_1", false, false, false, true);
+
                                             his.AutoScale1 = igs.GetSetting<bool>("history_auto_scale_1", false, false, false, true); // needs to be before the min0 manuals
                                             his.Min1Manual = igs.GetSetting<float>("history_min_1", true, -10000f, 10000f, -150f);
                                             his.Max1Manual = igs.GetSetting<float>("history_max_1", true, -10000f, 10000f, 0f);

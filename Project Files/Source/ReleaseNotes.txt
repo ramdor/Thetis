@@ -13,20 +13,23 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] you can now select VFOA, VFOB or BOTH in the multimeter vfo control
 - [add] auto height options for multimeter containers
 - [add] cwx form does now not need focus to act on F1-F12 etc. Uncheck focus to enable this in the cwx form
-- [add] rotator can now have a map. Check out OE3IDE's skin server pages.
+- [add] rotator can now have a map. Check out OE3IDE's skin server pages
 - [add] new button box meter controls for bands, modes and filters
 - [add] rotator can now have the beam width alpha adjusted
-- [add] right click a band in a band button box, and it will bandstack for that band
+- [add] right click a band in a band button box, and it will popup bandstack for that band
 - [add] antenna switch box meter item
 - [add] %precis=N% can be used on text overlay so specify precision for any floating point variable on that line. %precis=2%%signal_strength%  will show -73.49 for example
 - [add] small digits colour for vfo item
-- [add] new legacy items tab in setup->Appearance->Legacy Items
-- [add] vfo meter item can now show band text
+- [add] new legacy items tab in setup->Appearance->Legacy Items to hide old legacy items
+- [add] vfo meter item option can ne used to show band text
 - [add] some new variables added to text overlay, including band text for vfoa/b
-- [add] NR2. Additional setting T2 that will aid with weaker signal clarity when using Trained model. Lower setting of T2 will prevent blocking of very weak signals at the cost of a slight increase in noise.
-- [add] added lock+vfo sync to vfo meter items
+- [add] NR2. Additional setting T2 that will aid with weaker signal clarity when using Trained model. Lower setting of T2 will prevent blocking of very weak signals at the cost of a slight increase in noise. -NR0V
+- [add] added lock+vfo sync to vfo meter items. Colour can be changed for these in options
+- [add] cords are displayed on meter container drag/resize. Use ctrl to lock to 10 pixel steps when moving/resizing
+- [change] meter container borders have been reduced
 - [change] importing a db with meter containers will no longer clear existing ones, they will be added if possible
 - [change] filter setup form now stores/recalls location
+- [fix] fix issue where you could not remove tx profile entries if they only had case changes in their name, such as ABc and abc
 - [fix] import of container locations now works when importing a database
 - [fix] fixed issue where a meter container would re-appear if console was minimised and then restored and that container had been docked at some point
 - [fix] exporting a tx profile no longer exports schema for non tx profile tables
