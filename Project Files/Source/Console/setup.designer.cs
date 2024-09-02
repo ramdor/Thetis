@@ -52405,9 +52405,9 @@
             this.chkLegacyItems_expand_spectral_top.Image = null;
             this.chkLegacyItems_expand_spectral_top.Location = new System.Drawing.Point(19, 159);
             this.chkLegacyItems_expand_spectral_top.Name = "chkLegacyItems_expand_spectral_top";
-            this.chkLegacyItems_expand_spectral_top.Size = new System.Drawing.Size(158, 17);
+            this.chkLegacyItems_expand_spectral_top.Size = new System.Drawing.Size(156, 17);
             this.chkLegacyItems_expand_spectral_top.TabIndex = 94;
-            this.chkLegacyItems_expand_spectral_top.Text = "Expamd spectral area to top";
+            this.chkLegacyItems_expand_spectral_top.Text = "Expand spectral area to top";
             this.chkLegacyItems_expand_spectral_top.UseVisualStyleBackColor = true;
             this.chkLegacyItems_expand_spectral_top.CheckedChanged += new System.EventHandler(this.chkLegacyItems_expand_spectral_top_CheckedChanged);
             // 
@@ -52453,9 +52453,9 @@
             this.chkLegacyItems_expand_spectral.Image = null;
             this.chkLegacyItems_expand_spectral.Location = new System.Drawing.Point(19, 136);
             this.chkLegacyItems_expand_spectral.Name = "chkLegacyItems_expand_spectral";
-            this.chkLegacyItems_expand_spectral.Size = new System.Drawing.Size(185, 17);
+            this.chkLegacyItems_expand_spectral.Size = new System.Drawing.Size(183, 17);
             this.chkLegacyItems_expand_spectral.TabIndex = 90;
-            this.chkLegacyItems_expand_spectral.Text = "Expamd spectral area to right side";
+            this.chkLegacyItems_expand_spectral.Text = "Expand spectral area to right side";
             this.chkLegacyItems_expand_spectral.UseVisualStyleBackColor = true;
             this.chkLegacyItems_expand_spectral.CheckedChanged += new System.EventHandler(this.chkLegacyItems_expand_spectral_CheckedChanged);
             // 
