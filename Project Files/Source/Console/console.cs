@@ -14715,6 +14715,7 @@ namespace Thetis
                 //        break;
                 //}
                 //[2.3.10.6]MW0LGE whoever did the commented code above needs to step away from the computer
+                //
                 bool enabled = !vfoA_lock;
                 txtVFOAFreq.Enabled = enabled;
                 if (vfoA_lock) chkVFOSync.Checked = false;
@@ -42092,10 +42093,13 @@ namespace Thetis
             panelDSP.Location = new Point(gr_dsp_basis.X + (h_delta / 2), gr_dsp_basis.Y + v_delta);
 
             // replace the zoom/pan controls, MW0LGE_21k9rc6
-            lblDisplayZoom.Location = new Point(lbl_display_zoom_basis.X + h_delta, lbl_display_zoom_basis.Y + v_delta);
-
-            ptbDisplayZoom.Location = new Point(tb_display_zoom_basis.X + h_delta, tb_display_zoom_basis.Y + v_delta);
+            //lblDisplayZoom.Location = new Point(lbl_display_zoom_basis.X + h_delta, lbl_display_zoom_basis.Y + v_delta);
+            //ptbDisplayZoom.Location = new Point(tb_display_zoom_basis.X + h_delta, tb_display_zoom_basis.Y + v_delta);
+            
+            //[2.10.3.6]MW0LGE changed the above to cope with legacy control dynamic removal, now based off left of the ztb button
+            ptbDisplayZoom.Location = new Point(btnDisplayZTB.Left - tb_display_zoom_size_basis.Width - 4, tb_display_zoom_basis.Y + v_delta);
             ptbDisplayZoom.Size = tb_display_zoom_size_basis;
+            lblDisplayZoom.Location = new Point(ptbDisplayZoom.Location.X - lbl_display_zoom_size_basis.Width, lbl_display_zoom_basis.Y + v_delta);
 
             lblDisplayPan.Location = new Point(lbl_displaypan_basis.X, lbl_displaypan_basis.Y + v_delta);
             ptbDisplayPan.Location = new Point(tb_displaypan_basis.X, tb_displaypan_basis.Y + v_delta);

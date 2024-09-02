@@ -1006,7 +1006,7 @@ namespace Thetis
             if (setStyleMethod != null)
             {
                 setStyleMethod.Invoke(control, new object[] { ControlStyles.OptimizedDoubleBuffer, enabled });
-                //setStyleMethod.Invoke(control, new object[] { ControlStyles.AllPaintingInWmPaint, enabled });
+                setStyleMethod.Invoke(control, new object[] { ControlStyles.AllPaintingInWmPaint, enabled });
                 //setStyleMethod.Invoke(control, new object[] { ControlStyles.UserPaint, enabled });
                 setStyleMethod.Invoke(control, new object[] { ControlStyles.ResizeRedraw, enabled });
             }
