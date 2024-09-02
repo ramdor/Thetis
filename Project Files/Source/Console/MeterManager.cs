@@ -1327,57 +1327,85 @@ namespace Thetis
             {
                 case Reading.SIGNAL_STRENGTH:
                 case Reading.AVG_SIGNAL_STRENGTH:
-                    if (IsAboveS9Frequency(rx))
-                        value = -153; //S0
-                    else
-                        value = -133; //S0
+                    {
+                        if (IsAboveS9Frequency(rx))
+                            value = -153; //S0
+                        else
+                            value = -133; //S0
+                    }
                     break;
                 case Reading.ADC_PK:
                 case Reading.ADC_AV:
-                    value = -120.0f;
+                    {
+                        value = -120.0f;
+                    }
                     break;
                 case Reading.AGC_AV:
                 case Reading.AGC_PK:
-                    value = -125.0f;
+                    {
+                        value = -125.0f;
+                    }
                     break;
                 case Reading.AGC_GAIN:
-                    value = -50.0f;
+                    {
+                        value = -50.0f;
+                    }
                     break;
                 case Reading.MIC:
                 case Reading.MIC_PK:
-                    value = -120.0f;
+                    {
+                        value = -120.0f;
+                    }
                     break;
                 case Reading.LEVELER:
                 case Reading.LEVELER_PK:
-                    value = -30.0f;
+                    {
+                        value = -30.0f;
+                    }
                     break;
                 case Reading.EQ:
                 case Reading.EQ_PK:
-                    value = -30.0f;
+                    {
+                        value = -30.0f;
+                    }
                     break;
                 case Reading.LVL_G:
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
                 case Reading.ALC:
                 case Reading.ALC_PK:
-                    value = -120.0f;
+                    {
+                        value = -120.0f;
+                    }
                     break;
                 case Reading.ALC_G: //alc comp
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
                 case Reading.ALC_GROUP:
-                    value = -30.0f;
+                    {
+                        value = -30.0f;
+                    }
                     break;
                 case Reading.CFC_AV:
                 case Reading.CFC_PK:
-                    value = -30.0f;
+                    {
+                        value = -30.0f;
+                    }
                     break;
                 case Reading.CFC_G:
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
                 case Reading.COMP:
                 case Reading.COMP_PK:
-                    value = -30.0f;
+                    {
+                        value = -30.0f;
+                    }
                     break;
                 //case Reading.CPDR: //CPDR is the same as comp
                 //case Reading.CPDR_PK:
@@ -1385,19 +1413,29 @@ namespace Thetis
                     //break;
                 case Reading.PWR:
                 case Reading.REVERSE_PWR:
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
                 case Reading.SWR:
-                    value = 1.0f;
+                    {
+                        value = 1.0f;
+                    }
                     break;
                 case Reading.ESTIMATED_PBSNR:
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
                 case Reading.VOLTS:
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
                 case Reading.AMPS:
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
             }
             setReadingForced(rx, reading, value);
@@ -4371,9 +4409,8 @@ namespace Thetis
             public virtual void HandleDecrement()
             {
             }
-            public virtual bool ZeroOut(out float value, int rx)
+            public virtual bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
-                value = 0;
                 return false;
             }
 
@@ -8238,10 +8275,9 @@ namespace Thetis
                 get { return _fontSize; }
                 set { _fontSize = value; }
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
-                value = 0;
-                return true;
+                return false;
             }
         }
         internal class clsMagicEyeItem : clsMeterItem
@@ -8423,27 +8459,19 @@ namespace Thetis
                 get { return _scaleCalibration; }
                 set { }
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
-                    value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
-                    //switch (ReadingSource)
-                    //{
-                    //    case Reading.SIGNAL_STRENGTH:
-                    //    case Reading.AVG_SIGNAL_STRENGTH:
-                            ZeroReading(out value, rx, ReadingSource);
-                    //        {
-                    //            if (IsAboveS9Frequency(rx))
-                    //                value = -153; //S0
-                    //            else
-                    //               value = -133; //S0
-                    //        }
-                    //        break;
-                    //}
+                    float value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
+
+                    if (!values.ContainsKey(ReadingSource))
+                        values.Add(ReadingSource, value);
+                    else
+                        values[ReadingSource] = value;
+
                     return true;
                 }
-                value = 0;
                 return false;
             }
         }
@@ -8677,10 +8705,26 @@ namespace Thetis
                 get { return _axis_1_MMIOVariable; }
                 set { _axis_1_MMIOVariable = value; }
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
+                //we dont want to zero anything
+                //
+                //ZeroReading(out value, rx, _reading_1);
+                //value = 0;
+
+                float value = 0;
                 ZeroReading(out value, rx, _reading_0);
+                if (!values.ContainsKey(_reading_0))
+                    values.Add(_reading_0, value);
+                else
+                    values[_reading_0] = value;
+
                 ZeroReading(out value, rx, _reading_1);
+                if (!values.ContainsKey(_reading_1))
+                    values.Add(_reading_1, value);
+                else
+                    values[_reading_1] = value;
+
                 return true;
             }
             public object DataLock0
@@ -9654,26 +9698,54 @@ namespace Thetis
 
                 return sTmp;
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
-                value = 0;
                 lock (_list_placeholders_1_lock)
                 {
-                    foreach(Reading reading in _list_placeholders_readings_1)
+                    foreach (Reading reading in _list_placeholders_readings_1)
                     {
+                        float value = 0;
                         ZeroReading(out value, rx, reading);
-                        MeterManager.setReadingForced(rx, reading, value);
+
+                        if (!values.ContainsKey(reading))
+                            values.Add(reading, value);
+                        else
+                            values[reading] = value;
                     }
                 }
                 lock (_list_placeholders_2_lock)
                 {
                     foreach (Reading reading in _list_placeholders_readings_2)
                     {
+                        float value = 0;
                         ZeroReading(out value, rx, reading);
-                        MeterManager.setReadingForced(rx, reading, value);
+
+                        if (!values.ContainsKey(reading))
+                            values.Add(reading, value);
+                        else
+                            values[reading] = value;
                     }
                 }
-                return false; // false as we do our own setReadingForced just above
+                return true;
+
+                //value = 0;
+                //lock (_list_placeholders_1_lock)
+                //{
+                //    foreach(Reading reading in _list_placeholders_readings_1)
+                //    {
+                //        ZeroReading(out value, rx, reading);
+                //        MeterManager.setReadingForced(rx, reading, value);
+                //    }
+                //}
+                //lock (_list_placeholders_2_lock)
+                //{
+                //    foreach (Reading reading in _list_placeholders_readings_2)
+                //    {
+                //        ZeroReading(out value, rx, reading);
+                //        MeterManager.setReadingForced(rx, reading, value);
+                //    }
+                //}
+                //return false; // false as we do our own setReadingForced just above
             }
         }
         internal class clsLed : clsMeterItem
@@ -10155,18 +10227,32 @@ namespace Thetis
                     }
                 }
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
-                value = 0;
                 lock (_list_placeholders_lock)
                 {
                     foreach (Reading reading in _list_placeholders_readings)
                     {
+                        float value = 0;
                         ZeroReading(out value, rx, reading);
-                        MeterManager.setReadingForced(rx, reading, value);
+
+                        if (!values.ContainsKey(reading))
+                            values.Add(reading, value);
+                        else
+                            values[reading] = value;
                     }
                 }
-                return false; // false as we do our own setReadingForced just above
+                return true;
+                //value = 0;
+                //lock (_list_placeholders_lock)
+                //{
+                //    foreach (Reading reading in _list_placeholders_readings)
+                //    {
+                //        ZeroReading(out value, rx, reading);
+                //        MeterManager.setReadingForced(rx, reading, value);
+                //    }
+                //}
+                //return false; // false as we do our own setReadingForced just above
             }
         }
         internal class clsBarItem : clsMeterItem
@@ -10519,109 +10605,118 @@ namespace Thetis
                     _units = value;
                 }
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
-                    value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
+                    float value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
                     ZeroReading(out value, rx, ReadingSource);
-                    //switch (ReadingSource)
-                    //{
-                    //    case Reading.SIGNAL_STRENGTH:
-                    //    case Reading.AVG_SIGNAL_STRENGTH:
-                    //        {
-                    //            if (IsAboveS9Frequency(rx))
-                    //                value = -153; //S0
-                    //            else
-                    //                value = -133; //S0
-                    //        }
-                    //        break;
-                    //    case Reading.ADC_PK:
-                    //    case Reading.ADC_AV:
-                    //        {
-                    //            value = -120.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.AGC_AV:
-                    //    case Reading.AGC_PK:
-                    //        value = -125.0f;
-                    //        break;
-                    //    case Reading.AGC_GAIN:
-                    //        {
-                    //            value = -50.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.MIC:
-                    //    case Reading.MIC_PK:
-                    //        {
-                    //            value = -120.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.LEVELER:
-                    //    case Reading.LEVELER_PK:
-                    //        {
-                    //            value = -30.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.LVL_G:
-                    //        {
-                    //            value = 0f;
-                    //        }
-                    //        break;
-                    //    case Reading.ALC:
-                    //    case Reading.ALC_PK:
-                    //        {
-                    //            value = -120.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.ALC_G: //alc comp
-                    //        {
-                    //            value = 0f;
-                    //        }
-                    //        break;
-                    //    case Reading.ALC_GROUP:
-                    //        {
-                    //            value = -30.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.CFC_AV:
-                    //    case Reading.CFC_PK:
-                    //        {
-                    //            value = -30.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.CFC_G:
-                    //        {
-                    //            value = 0f;
-                    //        }
-                    //        break;
-                    //    case Reading.COMP:
-                    //    case Reading.COMP_PK:
-                    //        {
-                    //            value = -30.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.PWR:
-                    //    case Reading.REVERSE_PWR:
-                    //        {
-                    //            value = 0f;
-                    //        }
-                    //        break;
-                    //    case Reading.SWR:
-                    //        {
-                    //            value = 1.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.ESTIMATED_PBSNR:
-                    //        {
-                    //            value = 0f;
-                    //        }
-                    //        break;
-                    //}                    
+
+                    if (!values.ContainsKey(ReadingSource))
+                        values.Add(ReadingSource, value);
+                    else
+                        values[ReadingSource] = value;
+
                     return true;
                 }
-                value = 0;
                 return false;
+                //    //switch (ReadingSource)
+                //    //{
+                //    //    case Reading.SIGNAL_STRENGTH:
+                //    //    case Reading.AVG_SIGNAL_STRENGTH:
+                //    //        {
+                //    //            if (IsAboveS9Frequency(rx))
+                //    //                value = -153; //S0
+                //    //            else
+                //    //                value = -133; //S0
+                //    //        }
+                //    //        break;
+                //    //    case Reading.ADC_PK:
+                //    //    case Reading.ADC_AV:
+                //    //        {
+                //    //            value = -120.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.AGC_AV:
+                //    //    case Reading.AGC_PK:
+                //    //        value = -125.0f;
+                //    //        break;
+                //    //    case Reading.AGC_GAIN:
+                //    //        {
+                //    //            value = -50.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.MIC:
+                //    //    case Reading.MIC_PK:
+                //    //        {
+                //    //            value = -120.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.LEVELER:
+                //    //    case Reading.LEVELER_PK:
+                //    //        {
+                //    //            value = -30.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.LVL_G:
+                //    //        {
+                //    //            value = 0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.ALC:
+                //    //    case Reading.ALC_PK:
+                //    //        {
+                //    //            value = -120.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.ALC_G: //alc comp
+                //    //        {
+                //    //            value = 0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.ALC_GROUP:
+                //    //        {
+                //    //            value = -30.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.CFC_AV:
+                //    //    case Reading.CFC_PK:
+                //    //        {
+                //    //            value = -30.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.CFC_G:
+                //    //        {
+                //    //            value = 0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.COMP:
+                //    //    case Reading.COMP_PK:
+                //    //        {
+                //    //            value = -30.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.PWR:
+                //    //    case Reading.REVERSE_PWR:
+                //    //        {
+                //    //            value = 0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.SWR:
+                //    //        {
+                //    //            value = 1.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.ESTIMATED_PBSNR:
+                //    //        {
+                //    //            value = 0f;
+                //    //        }
+                //    //        break;
+                //    //}                    
+                //    return true;
+                //}
+                //value = 0;
+                //return false;
             }
             public PointF HighPoint
             {
@@ -10878,7 +10973,7 @@ namespace Thetis
                     _units = value;
                 }
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
                 //switch (ReadingSource)
                 //{
@@ -10895,10 +10990,16 @@ namespace Thetis
                 //}
                 if (ReadingSource == Reading.SIGNAL_STRENGTH || ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
                 {
+                    float value = 0;
                     ZeroReading(out value, rx, ReadingSource);
+
+                    if (!values.ContainsKey(ReadingSource))
+                        values.Add(ReadingSource, value);
+                    else
+                        values[ReadingSource] = value;
+
                     return true;
                 }
-                value = 0;
                 return false;
             }
         }
@@ -11190,12 +11291,22 @@ namespace Thetis
                     if (_peakNeedleFadeIn < 0) _peakNeedleFadeIn = 0;
                 }
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
-                if(_scaleCalibration != null || _scaleCalibration.Count > 0)
+                if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
-                    value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
+                    float value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
                     ZeroReading(out value, rx, ReadingSource);
+
+                    if (!values.ContainsKey(ReadingSource))
+                        values.Add(ReadingSource, value);
+                    else
+                        values[ReadingSource] = value;
+
+                    return true;
+                }
+                return false;
+
                     //switch (ReadingSource)
                     //{
                     //    case Reading.SIGNAL_STRENGTH:
@@ -11240,10 +11351,10 @@ namespace Thetis
                     //        }
                     //        break;
                     //}
-                    return true;
-                }
-                value = 0;
-                return false;
+                //    return true;
+                //}
+                //value = 0;
+                //return false;
             }
         }
         internal class clsText : clsMeterItem
@@ -14542,17 +14653,15 @@ namespace Thetis
 
                         mi.ClearHistory();
 
-                        bool bOk = mi.ZeroOut(out float value, _rx); // get value to zero out the meter, returns false if no scale
+                        Dictionary<Reading, float> values = new Dictionary<Reading, float>();
+                        bool bOk = mi.ZeroOut(ref values, _rx); // get value to zero out the meter, returns false if no scale
 
                         if (bOk)
                         {
-                            // //[2.10.1.0] MW0LGE only want to do this if value is lower than current reading
-                            //float reading = getReading(RX, mi.ReadingSource);
-                            //bool bUpdate = (value < reading) || (reading == -200f); // -200f is init or no value state
-                            //if (bUpdate)
-                            //{
-                                if(bRxReadings || bTxReadings) setReadingForced(RX, mi.ReadingSource, value);
-                            //}
+                            foreach (KeyValuePair<Reading, float> kvp in values)
+                            {
+                                if (bRxReadings || bTxReadings) setReadingForced(RX, kvp.Key, kvp.Value);
+                            }
                         }
                     }
                 }
