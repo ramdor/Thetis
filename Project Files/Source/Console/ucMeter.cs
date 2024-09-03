@@ -62,7 +62,7 @@ namespace Thetis
             Common.DoubleBufferAll(this, true);
 
             picContainer.Location = new Point(0, 0);
-            picContainer.Size = new Size(Size.Width, Size.Height);
+            picContainer.Size = new Size(ClientSize.Width, ClientSize.Height);
 
             _height = 32;
             _autoHeight = false;
@@ -70,10 +70,17 @@ namespace Thetis
             _console = null;
             _id = System.Guid.NewGuid().ToString();
             _border = true;
-            _noTitleBar = false;
+            _no_controls = false;
             _enabled = true;
             _container_minimises = true;
             _notes = "";
+
+            _tool_tip = new ToolTip();
+            _tool_tip_owner = null;
+            _tool_tip.InitialDelay = 0;
+            _tool_tip.ReshowDelay = 0;
+            _tool_tip.UseFading = true;
+            _tool_tip.ShowAlways = true;
 
             this.Name = "UCMeter_" + _id;
 
@@ -117,12 +124,14 @@ namespace Thetis
         private bool _mox;
         private string _id;
         private bool _border;
-        private bool _noTitleBar;
+        private bool _no_controls;
         private bool _enabled;
         private bool _container_minimises;
         private string _notes;
         private int _height;
         private bool _autoHeight;
+        private ToolTip _tool_tip;
+        private IWin32Window _tool_tip_owner;
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Console Console
@@ -186,6 +195,7 @@ namespace Thetis
         {
             _point = Point.Empty;
             _dragging = false;
+            hideToolTip();
             DockedMoved?.Invoke(this, e);
         }
 
@@ -201,10 +211,25 @@ namespace Thetis
                 if (_floating)
                 {
                     Point newPos = new Point(Parent.Left + x, Parent.Top + y);
+
+                    if (Common.CtrlKeyDown)
+                    {
+                        newPos.X = roundToNearestTen(newPos.X);
+                        newPos.Y = roundToNearestTen(newPos.Y);
+                    }
+
                     Parent.Location = newPos;
+
+                    showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
                 }
                 else
                 {
+                    if (Common.CtrlKeyDown)
+                    {
+                        x = roundToNearestTen(x);
+                        y = roundToNearestTen(y);
+                    }
+
                     if (x < 0) x = 0;
                     if (y < 0) y = 0;
                     if (x > Parent.ClientSize.Width - this.Width) x = Parent.ClientSize.Width - this.Width;
@@ -212,8 +237,28 @@ namespace Thetis
 
                     Point newPos = new Point(x, y);
                     this.Location = newPos;
+
+                    showToolTip($"{newPos.X}, {newPos.Y}", this);
                 }
             }
+        }
+        private void showToolTip(string msg, Control window, bool is_resize = false)
+        {
+            _tool_tip_owner = window;
+            if(is_resize)
+                _tool_tip.Show(msg + "\nctrl to lock", _tool_tip_owner, new Point(window.Size.Width, window.Size.Height - (pnlBar.Height * 2)));
+            else
+                _tool_tip.Show(msg + "\nctrl to lock", _tool_tip_owner, new Point(0, pnlBar.Height));
+        }
+        private void hideToolTip()
+        {
+            if (_tool_tip == null || _tool_tip_owner == null) return;
+            _tool_tip.Hide(_tool_tip_owner);
+            _tool_tip_owner = null;
+        }
+        private int roundToNearestTen(int number)
+        {
+            return ((number + 5) / 10) * 10;
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public PictureBox DisplayContainer
@@ -234,7 +279,7 @@ namespace Thetis
         {
             _clientPos = Point.Empty;
             _resizing = false;
-
+            hideToolTip();
             forceResize();
         }
         private void forceResize(bool shrink = false)
@@ -320,7 +365,19 @@ namespace Thetis
 
                 int x = _size.Width + dX;
                 int y = _size.Height + dY;
+
+                if (Common.CtrlKeyDown)
+                {
+                    x = roundToNearestTen(x);
+                    y = roundToNearestTen(y);
+                }
+
                 resize(x, y);
+
+                if (_floating)
+                    showToolTip($"{this.Parent.Size.Width}, {this.Parent.Size.Height}", this.Parent, true);
+                else
+                    showToolTip($"{this.Size.Width}, {this.Size.Height}", this, true);
             }
         }
         private void resize(int x, int y, bool shrink = false)
@@ -448,10 +505,11 @@ namespace Thetis
 
         private void picContainer_MouseMove(object sender, MouseEventArgs e)
         {
+            bool no_controls = _no_controls && !Common.ShiftKeyDown; //[2.10.3.6]MW0LGE no title or resize grabber, override by holding shift
+
             if (!_dragging)
             {
-                bool noBar = _noTitleBar && !Common.ShiftKeyDown; //[2.10.3.4]MW0LGE no title, override by holding shift
-                bool bContains = !noBar && pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition));
+                bool bContains = !no_controls && pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition));
                 if (bContains && !pnlBar.Visible)
                 {
                     pnlBar.BringToFront();
@@ -465,7 +523,7 @@ namespace Thetis
 
             if (!_resizing)
             {
-                bool bContains = pbGrab.ClientRectangle.Contains(pbGrab.PointToClient(Control.MousePosition));
+                bool bContains = !no_controls && pbGrab.ClientRectangle.Contains(pbGrab.PointToClient(Control.MousePosition));
                 if (bContains && !pbGrab.Visible)
                 {
                     pbGrab.BringToFront();
@@ -525,6 +583,7 @@ namespace Thetis
         {
             _point = Point.Empty;
             _dragging = false;
+            hideToolTip();
             DockedMoved?.Invoke(this, e);
         }
 
@@ -540,10 +599,25 @@ namespace Thetis
                 if (_floating)
                 {
                     Point newPos = new Point(Parent.Left + x, Parent.Top + y);
+
+                    if (Common.CtrlKeyDown)
+                    {
+                        newPos.X = roundToNearestTen(newPos.X);
+                        newPos.Y = roundToNearestTen(newPos.Y);
+                    }
+
                     Parent.Location = newPos;
+
+                    showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
                 }
                 else
                 {
+                    if (Common.CtrlKeyDown)
+                    {
+                        x = roundToNearestTen(x);
+                        y = roundToNearestTen(y);
+                    }
+
                     if (x < 0) x = 0;
                     if (y < 0) y = 0;
                     if (x > Parent.ClientSize.Width - this.Width) x = Parent.ClientSize.Width - this.Width;
@@ -551,6 +625,8 @@ namespace Thetis
 
                     Point newPos = new Point(x, y);
                     this.Location = newPos;
+
+                    showToolTip($"{newPos.X}, {newPos.Y}", this);
                 }
             }
         }
@@ -639,12 +715,12 @@ namespace Thetis
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public bool NoTitle
+        public bool NoControls
         {
-            get { return _noTitleBar; }
+            get { return _no_controls; }
             set
             {
-                _noTitleBar = value;
+                _no_controls = value;
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
@@ -765,7 +841,7 @@ namespace Thetis
                 PinOnTop.ToString() + "|" +
                 UCBorder.ToString() + "|" +
                 Common.ColourToString(this.BackColor) + "|" +
-                NoTitle.ToString() + "|" +
+                NoControls.ToString() + "|" +
                 MeterEnabled.ToString() + "|" +
                 Notes + "|" +
                 ContainerMinimises.ToString().ToLower() + "|" +
@@ -832,7 +908,7 @@ namespace Thetis
                     if(bOk && tmp.Length > 13) // we also have the new for [2.10.1.0] the notitleifpined option
                     {
                         bOk = bool.TryParse(tmp[13], out noTitleBar);
-                        if (bOk) NoTitle = noTitleBar;
+                        if (bOk) NoControls = noTitleBar;
                     }
 
                     if (bOk && tmp.Length > 14) // we also have the new for [2.10.3.5] the show option
@@ -898,6 +974,7 @@ namespace Thetis
             if (!(_dragging || _resizing) && !picContainer.ClientRectangle.Contains(this.PointToClient(Control.MousePosition)))
                 mouseLeave();
         }
+
     }
 }
 

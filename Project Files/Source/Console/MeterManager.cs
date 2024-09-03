@@ -63,6 +63,7 @@ using System.Drawing.Text;
 using System.Security.Policy;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Runtime.CompilerServices;
+using System.Security.Permissions;
 
 namespace Thetis
 {
@@ -119,6 +120,7 @@ namespace Thetis
         // volts/amps
         VOLTS,
         AMPS,
+
         AZ,
         ELE,
 
@@ -203,6 +205,7 @@ namespace Thetis
         MODE_BUTTONS,
         FILTER_BUTTONS,
         ANTENNA_BUTTONS,
+        HISTORY,
         //SPECTRUM,
         LAST
     }
@@ -261,9 +264,53 @@ namespace Thetis
         private static bool[] _ant_no_tx;
         private static string[] _ant_aux_names;
 
+        private static Dictionary<string, frmMeterDisplay> _lstMeterDisplayForms = new Dictionary<string, frmMeterDisplay>();
+        private static Dictionary<string, ucMeter> _lstUCMeters = new Dictionary<string, ucMeter>();
+
         //public static float[] _newSpectrumPassband;
         //public static float[] _currentSpectrumPassband;
         //private static bool _spectrumReady;
+        static MeterManager()
+        {
+            // readings used by varius meter items such as Text Overlay
+            _custom_readings = new CustomReadings();
+
+            // image fetcher
+            _image_fetcher = new ImageFetcher();
+
+            // static constructor
+            _rx1VHForAbove = false;
+            _rx2VHForAbove = false;
+            _delegatesAdded = false;
+            _console = null;
+            _finishedSetup = false;
+            _readings = new Dictionary<int, clsReadings>();
+            _meters = new Dictionary<string, clsMeter>();
+            _readingIgnore = new Dictionary<int, bool>();
+
+            //_power = false;
+            _currentHPSDRmodel = HPSDRModel.HERMES;
+            _alexPresent = false;
+            _paPresent = false;
+            _apolloPresent = false;
+            _transverterIndex = -1; // no transverter
+            //_spectrumReady = false;
+
+            _pooledImages = new Dictionary<string, System.Drawing.Bitmap>();
+            _pooledStreamData = new Dictionary<string, DataStream>();
+
+            // two sets of readings, for each trx
+            _readings.Add(1, new clsReadings());
+            _readings.Add(2, new clsReadings());
+
+            // two trx reading ignore flags
+            _readingIgnore.Add(1, false);
+            _readingIgnore.Add(2, false);
+
+            _meterThreadRunning = false;
+
+            _openHPSDR_appdatapath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
+        }
 
         internal class CustomReadings
         {
@@ -410,6 +457,8 @@ namespace Thetis
                     case "tx_eq":
                     case "bandtext_vfoa":
                     case "bandtext_vfob":
+                    case "nf_1":
+                    case "nf_2":
                         bRet = true;
                         break;
                 }
@@ -589,6 +638,12 @@ namespace Thetis
                     case "bandtext_vfob":
                         _readings_text_objects[key] = owningMeter.VFOBBandText;
                         break;
+                    case "nf_1":
+                        _readings_text_objects[key] = _console.LastNFRX1;
+                        break;
+                    case "nf_2":
+                        _readings_text_objects[key] = _console.LastNFRX2;
+                        break;
                 }
 
                 if (_readings_text_objects.ContainsKey(key))
@@ -671,6 +726,8 @@ namespace Thetis
                 addReadingText("tx_eq", text);
                 addReadingText("bandtext_vfoa", text);
                 addReadingText("bandtext_vfob", text);
+                addReadingText("nf_1", text);
+                addReadingText("nf_2", text);
             }
             private void addReading(Reading reading, string text)
             {
@@ -1252,47 +1309,7 @@ namespace Thetis
             //    _mmio_variable[index] = variable;
             //}
         }
-        static MeterManager()
-        {
-            // readings used by varius meter items such as Text Overlay
-            _custom_readings = new CustomReadings();
-
-            // image fetcher
-            _image_fetcher = new ImageFetcher();
-
-            // static constructor
-            _rx1VHForAbove = false;
-            _rx2VHForAbove = false;
-            _delegatesAdded = false;
-            _console = null;
-            _finishedSetup = false;
-            _readings = new Dictionary<int, clsReadings>();
-            _meters = new Dictionary<string, clsMeter>();
-            _readingIgnore = new Dictionary<int, bool>();
-
-            //_power = false;
-            _currentHPSDRmodel = HPSDRModel.HERMES;
-            _alexPresent = false;
-            _paPresent = false;
-            _apolloPresent = false;
-            _transverterIndex = -1; // no transverter
-            //_spectrumReady = false;
-
-            _pooledImages = new Dictionary<string, System.Drawing.Bitmap>();
-            _pooledStreamData = new Dictionary<string, DataStream>();
-
-            // two sets of readings, for each trx
-            _readings.Add(1, new clsReadings());
-            _readings.Add(2, new clsReadings());
-
-            // two trx reading ignore flags
-            _readingIgnore.Add(1, false);
-            _readingIgnore.Add(2, false);
-
-            _meterThreadRunning = false;
-
-            _openHPSDR_appdatapath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
-        }
+        
         public static ImageFetcher ImgFetch
         {
             get { return _image_fetcher; }
@@ -1310,57 +1327,85 @@ namespace Thetis
             {
                 case Reading.SIGNAL_STRENGTH:
                 case Reading.AVG_SIGNAL_STRENGTH:
-                    if (IsAboveS9Frequency(rx))
-                        value = -153; //S0
-                    else
-                        value = -133; //S0
+                    {
+                        if (IsAboveS9Frequency(rx))
+                            value = -153; //S0
+                        else
+                            value = -133; //S0
+                    }
                     break;
                 case Reading.ADC_PK:
                 case Reading.ADC_AV:
-                    value = -120.0f;
+                    {
+                        value = -120.0f;
+                    }
                     break;
                 case Reading.AGC_AV:
                 case Reading.AGC_PK:
-                    value = -125.0f;
+                    {
+                        value = -125.0f;
+                    }
                     break;
                 case Reading.AGC_GAIN:
-                    value = -50.0f;
+                    {
+                        value = -50.0f;
+                    }
                     break;
                 case Reading.MIC:
                 case Reading.MIC_PK:
-                    value = -120.0f;
+                    {
+                        value = -120.0f;
+                    }
                     break;
                 case Reading.LEVELER:
                 case Reading.LEVELER_PK:
-                    value = -30.0f;
+                    {
+                        value = -30.0f;
+                    }
                     break;
                 case Reading.EQ:
                 case Reading.EQ_PK:
-                    value = -30.0f;
+                    {
+                        value = -30.0f;
+                    }
                     break;
                 case Reading.LVL_G:
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
                 case Reading.ALC:
                 case Reading.ALC_PK:
-                    value = -120.0f;
+                    {
+                        value = -120.0f;
+                    }
                     break;
                 case Reading.ALC_G: //alc comp
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
                 case Reading.ALC_GROUP:
-                    value = -30.0f;
+                    {
+                        value = -30.0f;
+                    }
                     break;
                 case Reading.CFC_AV:
                 case Reading.CFC_PK:
-                    value = -30.0f;
+                    {
+                        value = -30.0f;
+                    }
                     break;
                 case Reading.CFC_G:
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
                 case Reading.COMP:
                 case Reading.COMP_PK:
-                    value = -30.0f;
+                    {
+                        value = -30.0f;
+                    }
                     break;
                 //case Reading.CPDR: //CPDR is the same as comp
                 //case Reading.CPDR_PK:
@@ -1368,19 +1413,29 @@ namespace Thetis
                     //break;
                 case Reading.PWR:
                 case Reading.REVERSE_PWR:
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
                 case Reading.SWR:
-                    value = 1.0f;
+                    {
+                        value = 1.0f;
+                    }
                     break;
                 case Reading.ESTIMATED_PBSNR:
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
                 case Reading.VOLTS:
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
                 case Reading.AMPS:
-                    value = 0f;
+                    {
+                        value = 0f;
+                    }
                     break;
             }
             setReadingForced(rx, reading, value);
@@ -1469,6 +1524,7 @@ namespace Thetis
                 case MeterType.MODE_BUTTONS: return 2;
                 case MeterType.FILTER_BUTTONS: return 2;
                 case MeterType.ANTENNA_BUTTONS: return 2;
+                case MeterType.HISTORY: return 2;
                     //case MeterType.SPECTRUM: return 2;
             }
 
@@ -1514,6 +1570,7 @@ namespace Thetis
                 case MeterType.ROTATOR: return "Rotator";
                 case MeterType.VFO_DISPLAY: return "Vfo Display";
                 case MeterType.CLOCK: return "Clock";
+                case MeterType.HISTORY: return "History Graph";
             }
 
             return meter.ToString();
@@ -1532,28 +1589,28 @@ namespace Thetis
                 case Reading.ALC_G: return "ALC Compression";
                 case Reading.ALC_GROUP: return "ALC Group";
                 case Reading.ESTIMATED_PBSNR: return "Estimated PBSNR";
-                case Reading.ALC_PK: return "ALC (av/pk)";// Peak";
+                case Reading.ALC_PK: return "ALC (pk)";// Peak";
                 case Reading.AMPS: return "Amps";
                 case Reading.AVG_SIGNAL_STRENGTH: return "Signal Average";
                 case Reading.CAL_FWD_PWR: return "Calibrated FWD Power";
                 case Reading.CFC_G: return "CFC Compression";
-                case Reading.CFC_PK: return "CFC Compression (av/pk)";// Peak";
+                case Reading.CFC_PK: return "CFC Compression (pk)";// Peak";
                 case Reading.CFC_AV: return "CFC Compression Average";
                 case Reading.COMP: return "Compression";
-                case Reading.COMP_PK: return "Compression (av/pk)";// Peak";
+                case Reading.COMP_PK: return "Compression (pk)";// Peak";
                 //case Reading.CPDR: return "Compander"; //CPDR is the same as comp
                 //case Reading.CPDR_PK: return "Compander Peak"; //CPDR is the same as comp
                 case Reading.DRIVE_FWD_ADC: return "Drive Forward ADC";
                 case Reading.DRIVE_PWR: return "Drive Power";
                 case Reading.EQ: return "EQ";
-                case Reading.EQ_PK: return "EQ (av/pk)";// Peak";
+                case Reading.EQ_PK: return "EQ (pk)";// Peak";
                 case Reading.FWD_ADC: return "Forward ADC";
                 case Reading.FWD_VOLT: return "Forward Volt";
                 case Reading.LEVELER: return "Leveler";
-                case Reading.LEVELER_PK: return "Leveler (av/pk)";// Peak";
+                case Reading.LEVELER_PK: return "Leveler (pk)";// Peak";
                 case Reading.LVL_G: return "Leveler Gain";
                 case Reading.MIC: return "MIC";
-                case Reading.MIC_PK: return "MIC (av/pk)";// Peak";
+                case Reading.MIC_PK: return "MIC (pk)";// Peak";
                 case Reading.PA_FWD_PWR: return "PA Forward Power";
                 case Reading.PA_REV_PWR: return "PA Reverse Power";
                 case Reading.PWR: return "Power";
@@ -1565,6 +1622,10 @@ namespace Thetis
                 case Reading.VOLTS: return "Volts";
                 case Reading.AZ: return "Azimuth";
                 case Reading.ELE: return "Elevation";
+
+                // not used
+                case (Reading)(int)22:return "";
+                case (Reading)(int)23: return "";
             }
 
             return reading.ToString();
@@ -1798,7 +1859,7 @@ namespace Thetis
                 if (!_lstUCMeters.ContainsKey(sId)) return;
 
                 ucMeter uc = _lstUCMeters[sId];
-                uc.NoTitle = noTitle;
+                uc.NoControls = noTitle;
             }
         }
         public static void AutoContainerHeight(string sId, bool auto_height)
@@ -1911,7 +1972,7 @@ namespace Thetis
                 if (!_lstUCMeters.ContainsKey(sId)) return false;
 
                 ucMeter uc = _lstUCMeters[sId];
-                return uc.NoTitle;
+                return uc.NoControls;
             }
         }
         public static bool ContainerAutoHeight(string sId)
@@ -2171,6 +2232,9 @@ namespace Thetis
             DXRenderer r = _DXrenderers[sId];
             r.RunDisplay();
             r.LoadDXImages(_openHPSDR_appdatapath, _current_skin_path);
+
+            // now the images from resources
+            r.LoadResouceImages();
         }
         public static void RunAllRendererDisplays()
         {
@@ -2298,6 +2362,11 @@ namespace Thetis
 
             _console.TXFrequncyChangedHandlers += OnTXFrequencyChanged;
 
+            _console.VfoALockChangedHandlers += OnVFOaLockChanged;
+            _console.VfoBLockChangedHandlers += OnVFObLockChanged;
+
+            _console.VFOSyncChangedHandlers += OnVFOSyncChanged;
+
             _delegatesAdded = true;
         }
         private static void removeDelegates()
@@ -2348,12 +2417,53 @@ namespace Thetis
 
             _console.TXFrequncyChangedHandlers -= OnTXFrequencyChanged;
 
+            _console.VfoALockChangedHandlers += OnVFOaLockChanged;
+            _console.VfoBLockChangedHandlers += OnVFObLockChanged;
+
+            _console.VFOSyncChangedHandlers -= OnVFOSyncChanged;
+
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
                 kvp.Value.RemoveDelegates();
             }
 
             _delegatesAdded = false;
+        }
+        private static void OnVFOSyncChanged(int rx, bool old_state, bool new_state)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters) //.Where(o => o.Value.RX == rx)) //not used right now, apply to all vfos
+                {
+                    clsMeter m = ms.Value;
+
+                    m.VFOSync = new_state;
+                }
+            }
+        }
+        private static void OnVFOaLockChanged(int rx, bool old_state, bool new_state)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
+
+                    m.VFOALock = new_state;
+                }
+            }
+        }
+        private static void OnVFObLockChanged(int rx, bool old_state, bool new_state)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
+
+                    m.VFOBLock = new_state;
+                }
+            }
         }
         private static readonly object _antenna_lock = new object();
         private static void updateAntennaMeters()
@@ -2852,6 +2962,12 @@ namespace Thetis
                 m.FilterVfoBName = getFilterName(2);//_console.rx2_filters[(int)_console.RX2DSPMode].GetName(_console.RX2Filter);
             }
 
+            // vfo b is locked anyway, whatever the rx is, and a wont matter for rx2
+            m.VFOALock = _console.VFOALock;
+            m.VFOBLock = _console.VFOBLock;
+
+            m.VFOSync = _console.VFOSync;
+
             m.TXEQEnabled = _console.TXEQ;
             m.LevelerEnabled = !_console.IsSetupFormNull && _console.SetupForm.TXLevelerOn;
             m.CFCEnabled = _console.CFCEnabled;
@@ -3241,8 +3357,6 @@ namespace Thetis
             return updateRate;
         }
 
-        private static Dictionary<string, frmMeterDisplay> _lstMeterDisplayForms = new Dictionary<string, frmMeterDisplay>();
-        private static Dictionary<string, ucMeter> _lstUCMeters = new Dictionary<string, ucMeter>();
         public static clsMeter MeterFromId(string sId)
         {
             lock (_metersLock)
@@ -4295,9 +4409,8 @@ namespace Thetis
             public virtual void HandleDecrement()
             {
             }
-            public virtual bool ZeroOut(out float value, int rx)
+            public virtual bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
-                value = 0;
                 return false;
             }
 
@@ -4711,7 +4824,7 @@ namespace Thetis
                     {
                         _console.BeginInvoke(new MethodInvoker(() =>
                         {
-                            _console.PopupFilterContextMenu(e);
+                            _console.PopupFilterContextMenu(_owningmeter.RX ,e);
                         }));
                     }                        
                     return;
@@ -5675,6 +5788,7 @@ namespace Thetis
             }
             private void setBand(Band b)
             {
+                if(abortForLockedVFO()) return;
                 if (b == Band.FIRST) return;
 
                 if (_owningmeter.RX == 1)
@@ -5692,7 +5806,19 @@ namespace Thetis
                     }));
                 }
             }
-
+            private bool abortForLockedVFO()
+            {
+                bool abort = false;
+                if (_owningmeter.RX == 1)
+                {
+                    return _owningmeter.VFOALock;
+                }
+                else if (_owningmeter.RX == 2)
+                {
+                    return _owningmeter.VFOBLock;
+                }
+                return abort;
+            }
             public override int Columns
             {
                 get { return base.Columns; }
@@ -6159,7 +6285,9 @@ namespace Thetis
                 MODE,
                 FILTER,
                 SPLIT,
-                TX
+                TX,
+                LOCK,
+                VFO_SYNC
             }
             public enum DSPModeForModeDisplay
             {
@@ -6220,6 +6348,9 @@ namespace Thetis
             private bool _band_text;
             private System.Drawing.Color _band_text_colour;
 
+            private System.Drawing.Color _lock_colour;
+            private System.Drawing.Color _sync_colour;
+
             public clsVfoDisplay(clsMeter owningmeter)
             {
                 _fontFamily = "Trebuchet MS";
@@ -6260,6 +6391,19 @@ namespace Thetis
 
                 _band_text = false;
                 _band_text_colour = System.Drawing.Color.LimeGreen;
+
+                _lock_colour = System.Drawing.Color.LimeGreen;
+                _sync_colour = System.Drawing.Color.LimeGreen;
+            }
+            public System.Drawing.Color LockColour
+            {
+                get { return _lock_colour; }
+                set { _lock_colour = value; }
+            }
+            public System.Drawing.Color SyncColour
+            {
+                get { return _sync_colour; }
+                set { _sync_colour = value; }
             }
             public bool ShowBandText
             {
@@ -6327,6 +6471,7 @@ namespace Thetis
             }
             private void setVfo(double value)
             {
+                if (abortForLockedVFO()) return;
                 if (_owningmeter.RX == 1 && !_owningmeter.RX2Enabled)
                 {
                     //vfoA
@@ -6356,8 +6501,42 @@ namespace Thetis
                         _console.VFOBFreq = value;
                 }
             }
+            private bool abortForLockedVFO()
+            {
+                bool abort = false;
+                if (_owningmeter.RX == 1 && !_owningmeter.RX2Enabled)
+                {
+                    //vfoA
+                    //vfoB
+                    if (!_mouse_over_vfoB)
+                        return _owningmeter.VFOALock;
+                    else
+                        return _owningmeter.VFOBLock;
+                }
+                else if (_owningmeter.RX == 1 && _owningmeter.RX2Enabled)
+                {
+                    //vfoA
+                    //no vfoB   if split / subrx then it becomes subvfo
+                    if (!_mouse_over_vfoB)
+                        return _owningmeter.VFOALock;
+                    else
+                    {
+                        if (_owningmeter.MultiRxEnabled || _owningmeter.Split)
+                            return _owningmeter.VFOALock;
+                    }
+                }
+                else if (_owningmeter.RX == 2 && _owningmeter.RX2Enabled)
+                {
+                    //no vfoA
+                    //vfoB
+                    if (_mouse_over_vfoB)
+                        return _owningmeter.VFOBLock;
+                }
+                return abort;
+            }
             private void adjustVfo(double adjustment)
             {
+                if (abortForLockedVFO()) return;
                 if (_owningmeter.RX == 1 && !_owningmeter.RX2Enabled)
                 {
                     //vfoA
@@ -6508,7 +6687,8 @@ namespace Thetis
                 switch (_mouse_over_vfoB ? _render_button_vfoB : _render_button_vfoA)
                 {
                     case buttonState.BAND_SCREEN:
-                        if(_mouse_over_vfoB)
+                        if (abortForLockedVFO()) break;
+                        if (_mouse_over_vfoB)
                             VFOBRenderState = renderState.BAND;
                         else
                             VFOARenderState = renderState.BAND;
@@ -6526,6 +6706,7 @@ namespace Thetis
                             VFOARenderState = renderState.FILTER;
                         break;
                     case buttonState.MODE_SCREEN:
+                        if (abortForLockedVFO()) break;
                         if (_mouse_over_vfoB)
                             VFOBRenderState = renderState.MODE;
                         else
@@ -6533,6 +6714,7 @@ namespace Thetis
                         break;
                     //////////
                     case buttonState.BAND:
+                        if (abortForLockedVFO()) break;
                         if (_mouse_over_vfoB) 
                         {
                             if (setBand(true))
@@ -6548,7 +6730,7 @@ namespace Thetis
                                 _render_state_vfoA_change_time = DateTime.Now;
                         }
                         break;
-                    case buttonState.MODE:
+                    case buttonState.MODE:                        
                         if (_mouse_over_vfoB)
                         {
                             if (setMode(true))
@@ -6596,9 +6778,48 @@ namespace Thetis
                             setTX(false); //vfoA
                         }
                         break;
+                    case buttonState.LOCK:
+                        if (_mouse_over_vfoB)
+                        {
+                            setLock(true); //vfoB
+                        }
+                        else
+                        {
+                            setLock(false); //vfoA
+                        }
+                        break;
+                    case buttonState.VFO_SYNC:
+                        setVfoSync();
+                        break;
                 }
 
                 //base.MouseClick(e);
+            }
+            private void setLock(bool vfoB)
+            {
+                if (_console == null) return;
+                if (vfoB)
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.VFOBLock = !_console.VFOBLock;
+                    }));
+                }
+                else
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.VFOALock = !_console.VFOALock;
+                    }));
+                }
+            }
+            private void setVfoSync()
+            {
+                if (_console == null) return;
+                _console.BeginInvoke(new MethodInvoker(() =>
+                {
+                    _console.VFOSync = !_console.VFOSync;
+                }));
             }
             private void setTX(bool vfoB)
             {
@@ -6671,6 +6892,7 @@ namespace Thetis
             }
             private bool setMode(bool vfoB)
             {
+                if (abortForLockedVFO()) return false;
                 if (vfoB)
                 {
                     int m = _button_grid_index_vfoB;
@@ -6709,6 +6931,7 @@ namespace Thetis
             }
             private bool setBand(bool vfoB)
             {
+                if (abortForLockedVFO()) return false;
                 if (vfoB)
                 {
                     int b = _button_grid_index_vfoB;
@@ -7925,7 +8148,7 @@ namespace Thetis
                 // get latest reading
                 float reading;
                 bool use;
-                //if (GetMMIOGuid(0) == Guid.Empty)// && GetMMIOVariable(0) == "-- DEFAULT --") 
+                
                 if (MMIOGuid == Guid.Empty)
                 {
                     reading = MeterManager.getReading(rx, ReadingSource);
@@ -8052,10 +8275,9 @@ namespace Thetis
                 get { return _fontSize; }
                 set { _fontSize = value; }
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
-                value = 0;
-                return true;
+                return false;
             }
         }
         internal class clsMagicEyeItem : clsMeterItem
@@ -8237,27 +8459,19 @@ namespace Thetis
                 get { return _scaleCalibration; }
                 set { }
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
-                    value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
-                    //switch (ReadingSource)
-                    //{
-                    //    case Reading.SIGNAL_STRENGTH:
-                    //    case Reading.AVG_SIGNAL_STRENGTH:
-                            ZeroReading(out value, rx, ReadingSource);
-                    //        {
-                    //            if (IsAboveS9Frequency(rx))
-                    //                value = -153; //S0
-                    //            else
-                    //               value = -133; //S0
-                    //        }
-                    //        break;
-                    //}
+                    float value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
+
+                    if (!values.ContainsKey(ReadingSource))
+                        values.Add(ReadingSource, value);
+                    else
+                        values[ReadingSource] = value;
+
                     return true;
                 }
-                value = 0;
                 return false;
             }
         }
@@ -8370,6 +8584,683 @@ namespace Thetis
             {
                 get { return _padding; }
                 set { _padding = value; }
+            }
+        }
+        internal class clsHistoryItem : clsMeterItem
+        {
+            internal class HistoryData
+            {
+                public float value;
+                public DateTime time;
+                public bool show_time;
+                public int index;
+            }
+
+            private float _padding;
+            private float _vertical_ratio;
+            private System.Drawing.Color _back_colour;
+            private int _keep_for;
+
+            // convert to arrays at some point
+            private Reading _reading_0;
+            private Reading _reading_1;
+            private float _min_0;
+            private float _min_1;
+            private float _max_0;
+            private float _max_1;
+
+            private float _min_0_manual;
+            private float _min_1_manual;
+            private float _max_0_manual;
+            private float _max_1_manual;
+
+            private List<HistoryData> _history_data_list_0;
+            private List<HistoryData> _history_data_list_1;
+            private readonly object _history_data_list_lock_0 = new object();
+            private readonly object _history_data_list_lock_1 = new object();
+
+            private int _removed;
+
+            private clsMeter _owningmeter;
+            private clsItemGroup _ig;
+
+            private bool _auto_scale_0;
+            private bool _auto_scale_1;
+            private bool _show_scale_1;
+
+            private int _time_labels_max;
+            private int _active_time_labels;
+            private DateTime _last_time_label_add_time;
+            private bool _next_add_make_time_label;
+
+            private Guid _axis_0_MMIOGuid;
+            private string _axis_0_MMIOVariable;
+            private Guid _axis_1_MMIOGuid;
+            private string _axis_1_MMIOVariable;
+            public clsHistoryItem(clsMeter owning_meter, clsItemGroup item_group)
+            {
+                _owningmeter = owning_meter;
+                _ig = item_group;
+
+                _padding = 0.1f;
+                _vertical_ratio = 0.5f;
+                _back_colour = System.Drawing.Color.Black;
+                _history_data_list_0 = new List<HistoryData>();
+                _history_data_list_1 = new List<HistoryData>();
+                _reading_0 = Reading.SIGNAL_STRENGTH;
+                _reading_1 = Reading.SIGNAL_STRENGTH;
+                _keep_for = 60; // seconds
+
+                _min_0 = float.MaxValue;
+                _max_0 = float.MinValue;
+                _min_1 = float.MaxValue;
+                _max_1 = float.MinValue;
+
+                _min_0_manual = -150f;
+                _max_0_manual = 0f;
+                _min_1_manual = -150f;
+                _max_1_manual = 0f;
+
+                _removed = 0;
+
+                _auto_scale_0 = true;
+                _auto_scale_1 = true;
+
+                _show_scale_1 = false;
+
+                _time_labels_max = 2; // same as minimum in renderer
+                _active_time_labels = 0;
+                _last_time_label_add_time = DateTime.UtcNow;
+                _next_add_make_time_label = true;
+
+                _axis_0_MMIOGuid = Guid.Empty;
+                _axis_0_MMIOVariable = "--DEFAULT--";
+                _axis_1_MMIOGuid = Guid.Empty;
+                _axis_1_MMIOVariable = "--DEFAULT--";
+
+                ItemType = MeterItemType.HISTORY;
+
+                ReadingSource = Reading.SIGNAL_STRENGTH;
+
+                UpdateInterval = 100;
+            }
+            //
+            public Guid Axis0MMIOGuid
+            {
+                get { return _axis_0_MMIOGuid; }
+                set { _axis_0_MMIOGuid = value; }
+            }
+            public Guid Axis1MMIOGuid
+            {
+                get { return _axis_1_MMIOGuid; }
+                set { _axis_1_MMIOGuid = value; }
+            }
+            public string Axis0MMIOVariable
+            {
+                get { return _axis_0_MMIOVariable; }
+                set { _axis_0_MMIOVariable = value; }
+            }
+            public string Axis1MMIOVariable
+            {
+                get { return _axis_1_MMIOVariable; }
+                set { _axis_1_MMIOVariable = value; }
+            }
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
+            {
+                //we dont want to zero anything
+                //
+                //ZeroReading(out value, rx, _reading_1);
+                //value = 0;
+
+                float value = 0;
+                ZeroReading(out value, rx, _reading_0);
+                if (!values.ContainsKey(_reading_0))
+                    values.Add(_reading_0, value);
+                else
+                    values[_reading_0] = value;
+
+                ZeroReading(out value, rx, _reading_1);
+                if (!values.ContainsKey(_reading_1))
+                    values.Add(_reading_1, value);
+                else
+                    values[_reading_1] = value;
+
+                return true;
+            }
+            public object DataLock0
+            {
+                get { return _history_data_list_lock_0; }
+            }
+            public object DataLock1
+            {
+                get { return _history_data_list_lock_1; }
+            }
+            public TimeSpan TimeSpanForLables
+            {
+                get
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_history_data_list_0.Count > 1)
+                        {
+                            return _history_data_list_0.Last().time - _history_data_list_0.First().time;
+                        }
+                        else
+                            return new TimeSpan(0);
+                    }
+                }
+            }
+            public DateTime LastTimeLabelAddTime
+            {
+                get { return _last_time_label_add_time; }
+            }
+            public int ActiveTimeLabels
+            {
+                get { return _active_time_labels; }
+                set { _active_time_labels = value; }
+            }
+            public int MaxTimeLables
+            {
+                get
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        return _time_labels_max;
+                    }
+                }
+                set
+                {
+                    if(value != _time_labels_max)
+                    {
+                        _time_labels_max = value;
+                    }
+                }
+            }
+            public bool AutoScale0
+            {
+                get { return _auto_scale_0; }
+                set 
+                { 
+                    _auto_scale_0 = value;
+                    if (_auto_scale_0)
+                    {
+                        lock (_history_data_list_lock_0)
+                        {
+                            if (_history_data_list_0.Count > 0)
+                            {
+                                _min_0 = _history_data_list_0.Min(obj => obj.value);
+                                _max_0 = _history_data_list_0.Max(obj => obj.value);
+                            }
+                        }
+                    }
+                }
+            }
+            public bool AutoScale1
+            {
+                get { return _auto_scale_1; }
+                set 
+                { 
+                    _auto_scale_1 = value;
+                    if (_auto_scale_1)
+                    {
+                        lock (_history_data_list_lock_0)
+                        {
+                            if (_history_data_list_1.Count > 0)
+                            {
+                                _min_1 = _history_data_list_1.Min(obj => obj.value);
+                                _max_1 = _history_data_list_1.Max(obj => obj.value);
+                            }
+                        }
+                    }
+                }
+            }
+            public bool ShowScale1
+            {
+                get { return _show_scale_1; }
+                set { _show_scale_1 = value; }
+            }
+            public int KeepFor
+            {
+                get { return _keep_for; }
+                set { _keep_for = value; }
+            }
+            public Reading Reading0
+            {
+                get { return _reading_0; }
+                set 
+                {
+                    if(_reading_0 != value)
+                    {
+                        lock (_history_data_list_lock_0)
+                        {
+                            _history_data_list_0.Clear();
+                            _min_0 = float.MaxValue;
+                            _max_0 = float.MinValue;
+                        }
+                        ZeroReading(out float val, _owningmeter.RX, value);
+                    }
+                    _reading_0 = value;                    
+                }
+            }
+            public Reading Reading1
+            {
+                get { return _reading_1; }
+                set 
+                {
+                    if (_reading_1 != value)
+                    {
+                        lock (_history_data_list_lock_1)
+                        {
+                            _history_data_list_1.Clear();
+                            _min_1 = float.MaxValue;
+                            _max_1 = float.MinValue;
+                        }
+                        ZeroReading(out float val, _owningmeter.RX, value);
+                    }
+                    _reading_1 = value;
+                }
+            }
+            public int ReadingsRemoved
+            {
+                get { return _removed; }
+            }
+            //private float test = -140;
+            //private bool testadd = true;
+            private void addReading(int axis, float value)
+            {
+                DateTime now = DateTime.UtcNow;
+                //strip front of queue, as they will be oldest, for any that are too old
+                if (axis == 0)
+                {
+                    HistoryData hd;
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_history_data_list_0.Count > 0)
+                        {
+                            int count = 0;
+                            hd = _history_data_list_0[0];
+                            while((now - hd.time).TotalSeconds > _keep_for)
+                            {
+                                if (hd.show_time)
+                                {
+                                    _active_time_labels--;
+                                    if (_active_time_labels < 0) _active_time_labels = 0;
+                                }
+                                _history_data_list_0.RemoveAt(0);
+
+                                if (_history_data_list_0.Count > 0)
+                                {
+                                    hd = _history_data_list_0[0];
+                                    count++;
+                                }
+                                else
+                                    break;
+                            }
+                            _removed = count;
+                            if (count > 0 && _history_data_list_0.Count > 0)
+                            {
+                                _min_0 = _history_data_list_0.Min(obj => obj.value);
+                                _max_0 = _history_data_list_0.Max(obj => obj.value);
+                            }
+                        }
+                        bool show_time = false;
+                        if(_next_add_make_time_label && now.Second % 5 == 0) show_time = true;
+
+                        hd = new HistoryData
+                        {
+                            value = /*test,*/value,
+                            time = now,
+                            show_time = show_time
+                        };
+                        //if (test > 0)
+                        //    testadd = false;
+                        //else if (test < -140)
+                        //    testadd = true;
+                        //if (testadd)
+                        //    test+=10;
+                        //else
+                        //    test-=10;
+
+                        if (show_time)
+                        {
+                            _active_time_labels++;
+                            _next_add_make_time_label = false;
+                            _last_time_label_add_time = DateTime.UtcNow;
+                        }
+
+                        _history_data_list_0.Add(hd);
+                        if (value < _min_0) _min_0 = value;
+                        if (value > _max_0) _max_0 = value;
+
+                        // time
+                        double seconds = (_history_data_list_0[_history_data_list_0.Count - 1].time - _history_data_list_0[0].time).TotalSeconds;
+                    }
+                }
+
+                if (axis == 1)
+                {
+                    HistoryData hd;
+                    lock (_history_data_list_lock_1)
+                    {
+                        if (_history_data_list_1.Count > 0)
+                        {
+                            int count = 0;
+                            hd = _history_data_list_1[0];
+                            while ((now - hd.time).TotalSeconds > _keep_for)
+                            {
+                                _history_data_list_1.RemoveAt(0);
+
+                                if (_history_data_list_1.Count > 0)
+                                {
+                                    hd = _history_data_list_1[0];
+                                    count++;
+                                }
+                                else
+                                    break;
+                            }
+                            _removed = count;
+                            if (count > 0 && _history_data_list_1.Count > 0)
+                            {
+                                _min_1 = _history_data_list_1.Min(obj => obj.value);
+                                _max_1 = _history_data_list_1.Max(obj => obj.value);
+                            }
+                        }
+                        hd = new HistoryData
+                        {
+                            value = value,
+                            time = now
+                        };
+                        _history_data_list_1.Add(hd);
+                        if (value < _min_1) _min_1 = value;
+                        if (value > _max_1) _max_1 = value;
+                    }
+                }
+            }
+            public bool NextAddMakeTimeLabel
+            {
+                get { return _next_add_make_time_label; }
+                set { _next_add_make_time_label = value; }
+            }
+            public float Range0
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_auto_scale_0)
+                            return _max_0 - _min_0;
+                        else
+                            return _max_0_manual - _min_0_manual;
+                    }
+                }
+            }
+            public float Range1
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_1)
+                    {
+                        if (_auto_scale_1)
+                            return _max_1 - _min_1;
+                        else
+                            return _max_1_manual - _min_1_manual;
+                    }
+                }
+            }
+            public float Min0
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_auto_scale_0)
+                            return _min_0;
+                        else
+                            return _min_0_manual;
+                    }
+                }
+                set 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        _min_0 = value;
+                    }
+                }
+            }
+            public float Max0
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_auto_scale_0)
+                            return _max_0;
+                        else
+                            return _max_0_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        _max_0 = value;
+                    }
+                }
+            }
+            public float Min1
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_auto_scale_1)
+                            return _min_1;
+                        else
+                            return _min_1_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_1)
+                    {
+                        _min_1 = value;
+                    }
+                }
+            }
+            public float Max1
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        if (_auto_scale_1)
+                            return _max_1;
+                        else
+                            return _max_1_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_1)
+                    {
+                        _max_1 = value;
+                    }
+                }
+            }
+            //
+            public float Min0Manual
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        return _min_0_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        _min_0_manual = value;
+                    }
+                }
+            }
+            public float Max0Manual
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        return _max_0_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        _max_0_manual = value;
+                    }
+                }
+            }
+            public float Min1Manual
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        return _min_1_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_1)
+                    {
+                        _min_1_manual = value;
+                    }
+                }
+            }
+            public float Max1Manual
+            {
+                get
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        return _max_1_manual;
+                    }
+                }
+                set
+                {
+                    lock (_history_data_list_lock_1)
+                    {
+                        _max_1_manual = value;
+                    }
+                }
+            }
+            //
+            public float VerticalRatio
+            {
+                get { return _vertical_ratio; }
+                set { _vertical_ratio = value; }
+            }
+            public System.Drawing.Color BackColour
+            {
+                get { return _back_colour; }
+                set { _back_colour = value; }
+            }
+            public List<HistoryData> History0
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_0)
+                    {
+                        return _history_data_list_0;
+                    }
+                }
+            }
+            public List<HistoryData> History1
+            {
+                get 
+                {
+                    lock (_history_data_list_lock_1)
+                    {
+                        return _history_data_list_1;
+                    }
+                }
+            }
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
+            {
+                float reading_0;
+                float reading_1;
+                //               
+                if (_axis_0_MMIOGuid == Guid.Empty)
+                {
+                    reading_0 = MeterManager.getReading(rx, _reading_0);
+                    if (!readingsUsed.Contains(_reading_0))
+                        readingsUsed.Add(_reading_0);
+                }
+                else
+                {
+                    reading_0 = 0;
+                    if (MultiMeterIO.Data.ContainsKey(_axis_0_MMIOGuid))
+                    {
+                        MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[_axis_0_MMIOGuid];
+                        if (mmio == null) return;
+
+                        object val = mmio.GetVariable(_axis_0_MMIOVariable);
+                        if (val is int)
+                        {
+                            int intVal = (int)val;
+                            reading_0 = (float)intVal;
+                        }
+                        else if (val is float)
+                        {
+                            reading_0 = (float)val;
+                        }
+                        else if (val is double)
+                        {
+                            double doubleVal = (double)val;
+                            reading_0 = (float)doubleVal;
+                        }
+                    }
+                }
+                addReading(0, reading_0);
+                //
+                if (_show_scale_1)
+                {
+                    if (_axis_1_MMIOGuid == Guid.Empty)
+                    {
+                        reading_1 = MeterManager.getReading(rx, _reading_1);
+                        if (!readingsUsed.Contains(_reading_1))
+                            readingsUsed.Add(_reading_1);
+                    }
+                    else
+                    {
+                        reading_1 = 0;
+                        if (MultiMeterIO.Data.ContainsKey(_axis_1_MMIOGuid))
+                        {
+                            MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[_axis_1_MMIOGuid];
+                            if (mmio == null) return;
+
+                            object val = mmio.GetVariable(_axis_1_MMIOVariable);
+                            if (val is int)
+                            {
+                                int intVal = (int)val;
+                                reading_1 = (float)intVal;
+                            }
+                            else if (val is float)
+                            {
+                                reading_1 = (float)val;
+                            }
+                            else if (val is double)
+                            {
+                                double doubleVal = (double)val;
+                                reading_1 = (float)doubleVal;
+                            }
+                        }
+                    }
+                    addReading(1, reading_1);
+                }
+                //
             }
         }
         internal class clsTextOverlay : clsMeterItem
@@ -8735,7 +9626,7 @@ namespace Thetis
                         lower = "%" + placeholder.ToLower() + "%";
                         if (sTmp.IndexOf(lower) >= 0)
                         {
-                            if (lower.IndexOf("%precis=") >= 0)
+                            if(lower.IndexOf("%precis=") >= 0)
                             {
                                 sTmp = sTmp.Replace(lower, "");
                                 if (!precis_found)
@@ -8807,26 +9698,54 @@ namespace Thetis
 
                 return sTmp;
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
-                value = 0;
                 lock (_list_placeholders_1_lock)
                 {
-                    foreach(Reading reading in _list_placeholders_readings_1)
+                    foreach (Reading reading in _list_placeholders_readings_1)
                     {
+                        float value = 0;
                         ZeroReading(out value, rx, reading);
-                        MeterManager.setReadingForced(rx, reading, value);
+
+                        if (!values.ContainsKey(reading))
+                            values.Add(reading, value);
+                        else
+                            values[reading] = value;
                     }
                 }
                 lock (_list_placeholders_2_lock)
                 {
                     foreach (Reading reading in _list_placeholders_readings_2)
                     {
+                        float value = 0;
                         ZeroReading(out value, rx, reading);
-                        MeterManager.setReadingForced(rx, reading, value);
+
+                        if (!values.ContainsKey(reading))
+                            values.Add(reading, value);
+                        else
+                            values[reading] = value;
                     }
                 }
-                return false; // false as we do our own setReadingForced just above
+                return true;
+
+                //value = 0;
+                //lock (_list_placeholders_1_lock)
+                //{
+                //    foreach(Reading reading in _list_placeholders_readings_1)
+                //    {
+                //        ZeroReading(out value, rx, reading);
+                //        MeterManager.setReadingForced(rx, reading, value);
+                //    }
+                //}
+                //lock (_list_placeholders_2_lock)
+                //{
+                //    foreach (Reading reading in _list_placeholders_readings_2)
+                //    {
+                //        ZeroReading(out value, rx, reading);
+                //        MeterManager.setReadingForced(rx, reading, value);
+                //    }
+                //}
+                //return false; // false as we do our own setReadingForced just above
             }
         }
         internal class clsLed : clsMeterItem
@@ -9308,18 +10227,32 @@ namespace Thetis
                     }
                 }
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
-                value = 0;
                 lock (_list_placeholders_lock)
                 {
                     foreach (Reading reading in _list_placeholders_readings)
                     {
+                        float value = 0;
                         ZeroReading(out value, rx, reading);
-                        MeterManager.setReadingForced(rx, reading, value);
+
+                        if (!values.ContainsKey(reading))
+                            values.Add(reading, value);
+                        else
+                            values[reading] = value;
                     }
                 }
-                return false; // false as we do our own setReadingForced just above
+                return true;
+                //value = 0;
+                //lock (_list_placeholders_lock)
+                //{
+                //    foreach (Reading reading in _list_placeholders_readings)
+                //    {
+                //        ZeroReading(out value, rx, reading);
+                //        MeterManager.setReadingForced(rx, reading, value);
+                //    }
+                //}
+                //return false; // false as we do our own setReadingForced just above
             }
         }
         internal class clsBarItem : clsMeterItem
@@ -9413,7 +10346,7 @@ namespace Thetis
                 // get latest reading
                 float reading;
                 bool use;
-                //if (GetMMIOGuid(0) == Guid.Empty)// && GetMMIOVariable(0) == "-- DEFAULT --") 
+                
                 if(MMIOGuid == Guid.Empty)
                 {
                     reading = MeterManager.getReading(rx, ReadingSource);
@@ -9672,109 +10605,118 @@ namespace Thetis
                     _units = value;
                 }
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
                 if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
-                    value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
+                    float value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
                     ZeroReading(out value, rx, ReadingSource);
-                    //switch (ReadingSource)
-                    //{
-                    //    case Reading.SIGNAL_STRENGTH:
-                    //    case Reading.AVG_SIGNAL_STRENGTH:
-                    //        {
-                    //            if (IsAboveS9Frequency(rx))
-                    //                value = -153; //S0
-                    //            else
-                    //                value = -133; //S0
-                    //        }
-                    //        break;
-                    //    case Reading.ADC_PK:
-                    //    case Reading.ADC_AV:
-                    //        {
-                    //            value = -120.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.AGC_AV:
-                    //    case Reading.AGC_PK:
-                    //        value = -125.0f;
-                    //        break;
-                    //    case Reading.AGC_GAIN:
-                    //        {
-                    //            value = -50.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.MIC:
-                    //    case Reading.MIC_PK:
-                    //        {
-                    //            value = -120.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.LEVELER:
-                    //    case Reading.LEVELER_PK:
-                    //        {
-                    //            value = -30.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.LVL_G:
-                    //        {
-                    //            value = 0f;
-                    //        }
-                    //        break;
-                    //    case Reading.ALC:
-                    //    case Reading.ALC_PK:
-                    //        {
-                    //            value = -120.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.ALC_G: //alc comp
-                    //        {
-                    //            value = 0f;
-                    //        }
-                    //        break;
-                    //    case Reading.ALC_GROUP:
-                    //        {
-                    //            value = -30.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.CFC_AV:
-                    //    case Reading.CFC_PK:
-                    //        {
-                    //            value = -30.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.CFC_G:
-                    //        {
-                    //            value = 0f;
-                    //        }
-                    //        break;
-                    //    case Reading.COMP:
-                    //    case Reading.COMP_PK:
-                    //        {
-                    //            value = -30.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.PWR:
-                    //    case Reading.REVERSE_PWR:
-                    //        {
-                    //            value = 0f;
-                    //        }
-                    //        break;
-                    //    case Reading.SWR:
-                    //        {
-                    //            value = 1.0f;
-                    //        }
-                    //        break;
-                    //    case Reading.ESTIMATED_PBSNR:
-                    //        {
-                    //            value = 0f;
-                    //        }
-                    //        break;
-                    //}                    
+
+                    if (!values.ContainsKey(ReadingSource))
+                        values.Add(ReadingSource, value);
+                    else
+                        values[ReadingSource] = value;
+
                     return true;
                 }
-                value = 0;
                 return false;
+                //    //switch (ReadingSource)
+                //    //{
+                //    //    case Reading.SIGNAL_STRENGTH:
+                //    //    case Reading.AVG_SIGNAL_STRENGTH:
+                //    //        {
+                //    //            if (IsAboveS9Frequency(rx))
+                //    //                value = -153; //S0
+                //    //            else
+                //    //                value = -133; //S0
+                //    //        }
+                //    //        break;
+                //    //    case Reading.ADC_PK:
+                //    //    case Reading.ADC_AV:
+                //    //        {
+                //    //            value = -120.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.AGC_AV:
+                //    //    case Reading.AGC_PK:
+                //    //        value = -125.0f;
+                //    //        break;
+                //    //    case Reading.AGC_GAIN:
+                //    //        {
+                //    //            value = -50.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.MIC:
+                //    //    case Reading.MIC_PK:
+                //    //        {
+                //    //            value = -120.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.LEVELER:
+                //    //    case Reading.LEVELER_PK:
+                //    //        {
+                //    //            value = -30.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.LVL_G:
+                //    //        {
+                //    //            value = 0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.ALC:
+                //    //    case Reading.ALC_PK:
+                //    //        {
+                //    //            value = -120.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.ALC_G: //alc comp
+                //    //        {
+                //    //            value = 0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.ALC_GROUP:
+                //    //        {
+                //    //            value = -30.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.CFC_AV:
+                //    //    case Reading.CFC_PK:
+                //    //        {
+                //    //            value = -30.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.CFC_G:
+                //    //        {
+                //    //            value = 0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.COMP:
+                //    //    case Reading.COMP_PK:
+                //    //        {
+                //    //            value = -30.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.PWR:
+                //    //    case Reading.REVERSE_PWR:
+                //    //        {
+                //    //            value = 0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.SWR:
+                //    //        {
+                //    //            value = 1.0f;
+                //    //        }
+                //    //        break;
+                //    //    case Reading.ESTIMATED_PBSNR:
+                //    //        {
+                //    //            value = 0f;
+                //    //        }
+                //    //        break;
+                //    //}                    
+                //    return true;
+                //}
+                //value = 0;
+                //return false;
             }
             public PointF HighPoint
             {
@@ -10031,7 +10973,7 @@ namespace Thetis
                     _units = value;
                 }
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
                 //switch (ReadingSource)
                 //{
@@ -10048,10 +10990,16 @@ namespace Thetis
                 //}
                 if (ReadingSource == Reading.SIGNAL_STRENGTH || ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
                 {
+                    float value = 0;
                     ZeroReading(out value, rx, ReadingSource);
+
+                    if (!values.ContainsKey(ReadingSource))
+                        values.Add(ReadingSource, value);
+                    else
+                        values[ReadingSource] = value;
+
                     return true;
                 }
-                value = 0;
                 return false;
             }
         }
@@ -10343,12 +11291,22 @@ namespace Thetis
                     if (_peakNeedleFadeIn < 0) _peakNeedleFadeIn = 0;
                 }
             }
-            public override bool ZeroOut(out float value, int rx)
+            public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
-                if(_scaleCalibration != null || _scaleCalibration.Count > 0)
+                if (_scaleCalibration != null || _scaleCalibration.Count > 0)
                 {
-                    value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
+                    float value = _scaleCalibration.OrderBy(p => p.Key).First().Key;
                     ZeroReading(out value, rx, ReadingSource);
+
+                    if (!values.ContainsKey(ReadingSource))
+                        values.Add(ReadingSource, value);
+                    else
+                        values[ReadingSource] = value;
+
+                    return true;
+                }
+                return false;
+
                     //switch (ReadingSource)
                     //{
                     //    case Reading.SIGNAL_STRENGTH:
@@ -10393,10 +11351,10 @@ namespace Thetis
                     //        }
                     //        break;
                     //}
-                    return true;
-                }
-                value = 0;
-                return false;
+                //    return true;
+                //}
+                //value = 0;
+                //return false;
             }
         }
         internal class clsText : clsMeterItem
@@ -10536,9 +11494,9 @@ namespace Thetis
             private int _displayGroup;
             private List<string> _displayGroups;
             private bool _mox;
-            private float _fPadX = 0.02f;
-            private float _fPadY = 0.05f;
-            private float _fHeight = 0.05f;
+            private float _fPadX;
+            private float _fPadY;
+            private float _fHeight;
 
             private bool _split;
             private double _vfoA;
@@ -10575,6 +11533,10 @@ namespace Thetis
             private string _vfoA_band_text;
             private string _vfoB_band_text;
 
+            private bool _vfoA_lock;
+            private bool _vfoB_lock;
+            private bool _vfoA_sync;
+
             internal readonly object _meterItemsLock = new object();
 
             private void addMeterItem(clsMeterItem mi)
@@ -10584,50 +11546,52 @@ namespace Thetis
                     _meterItems.Add(mi.ID, mi);
                 }
             }
-            public Reading MeterVariablesReading(MeterType meter, int variable_index)
+            public string MeterVariablesReadingString(MeterType meter, int variable_index)
             {
+                string ret = "";
                 switch (meter)
                 {
-                    case MeterType.SIGNAL_STRENGTH: return Reading.SIGNAL_STRENGTH;
-                    case MeterType.AVG_SIGNAL_STRENGTH: return Reading.AVG_SIGNAL_STRENGTH;
-                    case MeterType.SIGNAL_TEXT: return Reading.SIGNAL_STRENGTH;
-                    case MeterType.ADC: return variable_index == 0 ? Reading.ADC_PK : Reading.ADC_AV;
-                    case MeterType.AGC: return variable_index == 0 ? Reading.AGC_PK : Reading.AGC_AV;
-                    case MeterType.AGC_GAIN: return Reading.AGC_GAIN;
-                    case MeterType.MIC: return variable_index == 0 ? Reading.MIC : Reading.MIC_PK;
-                    case MeterType.PWR: return Reading.PWR;
-                    case MeterType.REVERSE_PWR: return Reading.REVERSE_PWR;
-                    case MeterType.ALC: return variable_index == 0 ? Reading.ALC : Reading.ALC_PK;
-                    case MeterType.EQ: return variable_index == 0 ? Reading.EQ : Reading.EQ_PK;
-                    case MeterType.LEVELER: return variable_index == 0 ? Reading.LEVELER : Reading.LEVELER_PK;
-                    case MeterType.COMP: return variable_index == 0 ? Reading.COMP : Reading.COMP_PK;
-                    //case MeterType.CPDR: return variable_index == 0 ? Reading.CPDR : Reading.CPDR_PK; //CPDR is the same as comp
-                    //case MeterType.CPDR: break;
-                    case MeterType.ALC_GAIN: return Reading.ALC_G;
-                    case MeterType.ALC_GROUP: return Reading.ALC_GROUP;
-                    case MeterType.LEVELER_GAIN: return Reading.LVL_G;
-                    case MeterType.CFC: return variable_index == 0 ? Reading.CFC_AV : Reading.CFC_PK;
-                    case MeterType.CFC_GAIN: return Reading.CFC_G;
-                    case MeterType.MAGIC_EYE: return Reading.SIGNAL_STRENGTH;
-                    case MeterType.ESTIMATED_PBSNR: return Reading.ESTIMATED_PBSNR;
-                    //TODO !!!case MeterType.ANANMM: return 7;
-                    case MeterType.CROSS: return variable_index == 0 ? Reading.PWR : Reading.REVERSE_PWR;
-                    case MeterType.SWR: return Reading.SWR;
-                    case MeterType.VFO_DISPLAY: return Reading.NONE;
-                    case MeterType.CLOCK: return Reading.NONE;
-                    case MeterType.SPACER: return Reading.NONE;
-                    case MeterType.TEXT_OVERLAY: return Reading.NONE;
-                    case MeterType.LED: return Reading.NONE;
-                    case MeterType.WEB_IMAGE: return Reading.NONE;
-                    case MeterType.BAND_BUTTONS: return Reading.NONE;
-                    case MeterType.MODE_BUTTONS: return Reading.NONE;
-                    case MeterType.FILTER_BUTTONS: return Reading.NONE;
-                    case MeterType.ANTENNA_BUTTONS: return Reading.NONE;
-                    case MeterType.DATA_OUT: return Reading.NONE;
-                    case MeterType.ROTATOR: return variable_index == 0 ? Reading.AZ : Reading.ELE;
-                        //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.SIGNAL_STRENGTH: ret = Reading.SIGNAL_STRENGTH.ToString(); break;
+                    case MeterType.AVG_SIGNAL_STRENGTH: ret = Reading.AVG_SIGNAL_STRENGTH.ToString(); break;
+                    case MeterType.SIGNAL_TEXT: ret = Reading.SIGNAL_STRENGTH.ToString(); break;
+                    case MeterType.ADC: ret = variable_index == 0 ? Reading.ADC_PK.ToString() : Reading.ADC_AV.ToString(); break;
+                    case MeterType.AGC: ret = variable_index == 0 ? Reading.AGC_PK.ToString() : Reading.AGC_AV.ToString(); break;
+                    case MeterType.AGC_GAIN: ret = Reading.AGC_GAIN.ToString(); break;
+                    case MeterType.MIC: ret = variable_index == 0 ? Reading.MIC.ToString() : Reading.MIC_PK.ToString(); break;
+                    case MeterType.PWR: ret = Reading.PWR.ToString(); break;
+                    case MeterType.REVERSE_PWR: ret = Reading.REVERSE_PWR.ToString(); break;
+                    case MeterType.ALC: ret = variable_index == 0 ? Reading.ALC.ToString() : Reading.ALC_PK.ToString(); break;
+                    case MeterType.EQ: ret = variable_index == 0 ? Reading.EQ.ToString() : Reading.EQ_PK.ToString(); break;
+                    case MeterType.LEVELER: ret = variable_index == 0 ? Reading.LEVELER.ToString() : Reading.LEVELER_PK.ToString(); break;
+                    case MeterType.COMP: ret = variable_index == 0 ? Reading.COMP.ToString() : Reading.COMP_PK.ToString(); break;
+                    //case MeterType.CPDR: ret = variable_index == 0 ? Reading.CPDR : Reading.CPDR_PK.ToString(); break; //CPDR is the same as comp
+                    //case MeterType.CPDR: break.ToString(); break;
+                    case MeterType.ALC_GAIN: ret = Reading.ALC_G.ToString(); break;
+                    case MeterType.ALC_GROUP: ret = Reading.ALC_GROUP.ToString(); break;
+                    case MeterType.LEVELER_GAIN: ret = Reading.LVL_G.ToString(); break;
+                    case MeterType.CFC: ret = variable_index == 0 ? Reading.CFC_AV.ToString() : Reading.CFC_PK.ToString(); break;
+                    case MeterType.CFC_GAIN: ret = Reading.CFC_G.ToString(); break;
+                    case MeterType.MAGIC_EYE: ret = Reading.SIGNAL_STRENGTH.ToString(); break;
+                    case MeterType.ESTIMATED_PBSNR: ret = Reading.ESTIMATED_PBSNR.ToString(); break;
+                    //TODO !!!case MeterType.ANANMM: ret = 7.ToString(); break;
+                    case MeterType.CROSS: ret = variable_index == 0 ? Reading.PWR.ToString() : Reading.REVERSE_PWR.ToString(); break;
+                    case MeterType.SWR: ret = Reading.SWR.ToString(); break;
+                    case MeterType.VFO_DISPLAY: ret = Reading.NONE.ToString(); break;
+                    case MeterType.CLOCK: ret = Reading.NONE.ToString(); break;
+                    case MeterType.SPACER: ret = Reading.NONE.ToString(); break;
+                    case MeterType.TEXT_OVERLAY: ret = Reading.NONE.ToString(); break;
+                    case MeterType.LED: ret = Reading.NONE.ToString(); break;
+                    case MeterType.WEB_IMAGE: ret = Reading.NONE.ToString(); break;
+                    case MeterType.BAND_BUTTONS: ret = Reading.NONE.ToString(); break;
+                    case MeterType.MODE_BUTTONS: ret = Reading.NONE.ToString(); break;
+                    case MeterType.FILTER_BUTTONS: ret = Reading.NONE.ToString(); break;
+                    case MeterType.ANTENNA_BUTTONS: ret = Reading.NONE.ToString(); break;
+                    case MeterType.DATA_OUT: ret = Reading.NONE.ToString(); break;
+                    case MeterType.ROTATOR: ret = variable_index == 0 ? Reading.AZ.ToString() : Reading.ELE.ToString(); break;
+                    case MeterType.HISTORY: ret = variable_index == 0 ? "Left Axis" : "Right Axis"; break;
+                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg).ToString(); break; break.ToString(); break;
                 }
-                return Reading.NONE;
+                return ret;
             }
             public int MeterVariables(MeterType meter)
             {
@@ -10669,6 +11633,7 @@ namespace Thetis
                     case MeterType.MODE_BUTTONS: return 0;
                     case MeterType.FILTER_BUTTONS: return 0;
                     case MeterType.ANTENNA_BUTTONS: return 0;
+                    case MeterType.HISTORY: return 2;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return 0;
@@ -10718,6 +11683,7 @@ namespace Thetis
                     case MeterType.MODE_BUTTONS: AddModeButtons(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.FILTER_BUTTONS: AddFilterButtons(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.ANTENNA_BUTTONS: AddAntennaButtons(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
@@ -13203,6 +14169,35 @@ namespace Thetis
 
                 return bb.ID;
             }
+            public string AddHistory(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsHistoryItem bb = new clsHistoryItem(this, ig);
+                bb.ParentID = ig.ID;
+
+                bb.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
+                bb.Size = new SizeF(1f - _fPadX * 2f, 0.5f);
+
+                bb.ZOrder = 1;
+                addMeterItem(bb);
+
+                fBottom = bb.TopLeft.Y + bb.Size.Height;
+
+                ig.TopLeft = bb.TopLeft;
+                ig.Size = new SizeF(bb.Size.Width, fBottom);
+                ig.MeterType = MeterType.HISTORY;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return bb.ID;
+            }
             public string AddAntennaButtons(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
@@ -13431,8 +14426,11 @@ namespace Thetis
 
                 _quickSplitEnabled = false;
 
-                _fPadX = 0.02f;
-                _fPadY = 0.05f;
+                //_fPadX = 0.02f;
+                //_fPadY = 0.05f;
+                _fPadX = 0.004f;
+                _fPadY = 0.041f;
+
                 _fHeight = 0.05f;
 
                 _XRatio = XRatio;
@@ -13655,17 +14653,15 @@ namespace Thetis
 
                         mi.ClearHistory();
 
-                        bool bOk = mi.ZeroOut(out float value, _rx); // get value to zero out the meter, returns false if no scale
+                        Dictionary<Reading, float> values = new Dictionary<Reading, float>();
+                        bool bOk = mi.ZeroOut(ref values, _rx); // get value to zero out the meter, returns false if no scale
 
                         if (bOk)
                         {
-                            // //[2.10.1.0] MW0LGE only want to do this if value is lower than current reading
-                            //float reading = getReading(RX, mi.ReadingSource);
-                            //bool bUpdate = (value < reading) || (reading == -200f); // -200f is init or no value state
-                            //if (bUpdate)
-                            //{
-                                if(bRxReadings || bTxReadings) setReadingForced(RX, mi.ReadingSource, value);
-                            //}
+                            foreach (KeyValuePair<Reading, float> kvp in values)
+                            {
+                                if (bRxReadings || bTxReadings) setReadingForced(RX, kvp.Key, kvp.Value);
+                            }
                         }
                     }
                 }
@@ -13722,8 +14718,11 @@ namespace Thetis
                         if (bOk) bOk = float.TryParse(tmp[8], out fHeight);
                         if (bOk)
                         {
-                            _fPadX = fPadX;
-                            _fPadY = fPadY;
+                            //_fPadX = fPadX;
+                            //_fPadY = fPadY;
+                            _fPadX = 0.004f;
+                            _fPadY = 0.041f;
+
                             _fHeight = fHeight;
                         }
 
@@ -13903,6 +14902,67 @@ namespace Thetis
                         {
                             switch (mt)
                             {
+                                case MeterType.HISTORY:
+                                    {
+                                        bRebuild = true;
+                                        float padding = 0f;
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY))
+                                        {
+                                            clsHistoryItem his = me.Value as clsHistoryItem;
+                                            if (his == null) continue;
+
+                                            his.VerticalRatio = igs.GetSetting<float>("history_vertical_ratio", true, 0.130f, 1f, 0.5f);
+                                            his.BackColour = igs.GetSetting("history_background_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
+                                            his.UpdateInterval = (int)igs.GetSetting<float>("history_update", true, 50f, 10000f, 0.5f);
+                                            his.KeepFor = (int)igs.GetSetting<float>("history_keep_for", true, 1f, 86400f, 20f);
+
+                                            his.Reading0 = igs.GetSetting<Reading>("history_reading_0", false, Reading.NONE, Reading.NONE, Reading.SIGNAL_STRENGTH);
+                                            his.Reading1 = igs.GetSetting<Reading>("history_reading_1", false, Reading.NONE, Reading.NONE, Reading.SIGNAL_STRENGTH);
+
+                                            his.AutoScale0 = igs.GetSetting<bool>("history_auto_scale_0", false, false, false, true); // needs to be before the min0 manuals
+                                            his.Min0Manual = igs.GetSetting<float>("history_min_0", true, -10000f, 10000f, -150f);
+                                            his.Max0Manual = igs.GetSetting<float>("history_max_0", true, -10000f, 10000f, 0f);
+
+                                            his.ShowScale1 = igs.GetSetting<bool>("history_show_scale_1", false, false, false, true);
+
+                                            his.AutoScale1 = igs.GetSetting<bool>("history_auto_scale_1", false, false, false, true); // needs to be before the min0 manuals
+                                            his.Min1Manual = igs.GetSetting<float>("history_min_1", true, -10000f, 10000f, -150f);
+                                            his.Max1Manual = igs.GetSetting<float>("history_max_1", true, -10000f, 10000f, 0f);
+
+                                            his.Axis0MMIOGuid = igs.GetMMIOGuid(0);
+                                            his.Axis0MMIOVariable = igs.GetMMIOVariable(0);
+                                            his.Axis1MMIOGuid = igs.GetMMIOGuid(1);
+                                            his.Axis1MMIOVariable = igs.GetMMIOVariable(1);
+
+                                            his.FadeOnRx = igs.FadeOnRx;
+                                            his.FadeOnTx = igs.FadeOnTx;
+
+                                            his.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                            his.Size = new SizeF(ig.Size.Width, his.VerticalRatio);
+
+                                            padding += his.Size.Height;
+                                        }
+                                        ig.Size = new SizeF(ig.Size.Width, padding + (_fPadY - (_fHeight * 0.75f)));
+
+                                        // recalc bounds for fade overlay cover as these will change
+                                        System.Drawing.RectangleF eyeBounds = getBounds(ig.ID);
+                                        if (!eyeBounds.IsEmpty)
+                                        {
+                                            foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                            {
+                                                clsFadeCover fc = fcs.Value as clsFadeCover;
+                                                if (fc == null) continue;
+
+                                                fc.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                fc.Size = new SizeF(ig.Size.Width, padding);
+
+                                                fc.FadeOnRx = igs.FadeOnRx;
+                                                fc.FadeOnTx = igs.FadeOnTx;
+                                            }
+                                        }
+                                    }
+                                    break;
                                 case MeterType.ANTENNA_BUTTONS:
                                 case MeterType.FILTER_BUTTONS:
                                 case MeterType.MODE_BUTTONS:
@@ -13937,7 +14997,7 @@ namespace Thetis
                                             bb.RebuildButtons = false;
 
                                             bool use_indicator = igs.GetSetting<bool>("buttonbox_use_indicator", false, false, false, false);
-                                            float indicator_width = igs.GetSetting<float>("buttonbox_indicator_border", true, 0, 1f, 05f) / 10f;
+                                            float indicator_width = igs.GetSetting<float>("buttonbox_indicator_border", true, 0, 1f, 0.5f) / 10f;
                                             System.Drawing.Color on_colour = igs.GetSetting("buttonbox_on_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
                                             System.Drawing.Color off_colour = igs.GetSetting("buttonbox_off_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
 
@@ -14650,10 +15710,13 @@ namespace Thetis
                                             vfo.DigitHighlightColour = igs.PowerScaleColour;
 
                                             vfo.ShowBandText = igs.GetSetting<bool>("vfo_showbandtext", false, false, false, false);
+                                            if (vfo.ShowBandText) pad = 0.03f;
+
                                             vfo.BandTextColour = igs.GetSetting<System.Drawing.Color>("vfo_showbandtext_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
                                             vfo.FrequencyColourSmall = igs.GetSetting<System.Drawing.Color>("vfo_frequency_small_numbers_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Orange);
 
-                                            if (vfo.ShowBandText) pad = 0.03f;
+                                            vfo.LockColour = igs.GetSetting<System.Drawing.Color>("vfo_lock_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
+                                            vfo.SyncColour = igs.GetSetting<System.Drawing.Color>("vfo_sync_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
 
                                             vfo.VFODispMode = (clsVfoDisplay.VFODisplayMode)igs.HistoryDuration;
                                             if (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH) both = true;
@@ -14662,7 +15725,6 @@ namespace Thetis
                                             {
                                                 vfo.Size = new SizeF(1f - _fPadX * 2f, pad + (_fHeight + _fHeight * 0.75f));
                                                 padding += pad;
-
                                             }
                                             else
                                             {
@@ -14914,6 +15976,50 @@ namespace Thetis
                             clsIGSettings igs = new clsIGSettings();
                             switch (mt)
                             {
+                                case MeterType.HISTORY:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY))
+                                        {
+                                            clsHistoryItem his = me.Value as clsHistoryItem;
+                                            if (his == null) continue; // skip
+
+                                            igs.SetSetting<float>("history_vertical_ratio", his.VerticalRatio);
+                                            igs.SetSetting<System.Drawing.Color>("history_background_colour", his.BackColour);
+                                            igs.SetSetting<float>("history_update", (float)his.UpdateInterval);
+                                            igs.SetSetting<float>("history_keep_for", (float)his.KeepFor);
+
+                                            igs.SetSetting<Reading>("history_reading_0", his.Reading0);
+                                            igs.SetSetting<Reading>("history_reading_1", his.Reading1);
+
+                                            igs.SetSetting<bool>("history_auto_scale_0", his.AutoScale0);
+                                            igs.SetSetting<float>("history_min_0", his.Min0Manual);
+                                            igs.SetSetting<float>("history_max_0", his.Max0Manual);
+
+                                            igs.SetSetting<bool>("history_show_scale_1", his.ShowScale1);
+                                            igs.SetSetting<bool>("history_auto_scale_1", his.AutoScale1);
+                                            igs.SetSetting<float>("history_min_1", his.Min1Manual);
+                                            igs.SetSetting<float>("history_max_1", his.Max1Manual);
+
+                                            igs.SetMMIOGuid(0, his.Axis0MMIOGuid);
+                                            igs.SetMMIOVariable(0, his.Axis0MMIOVariable);
+                                            igs.SetMMIOGuid(1, his.Axis1MMIOGuid);
+                                            igs.SetMMIOVariable(1, his.Axis1MMIOVariable);
+
+                                            igs.FadeOnRx = his.FadeOnRx;
+                                            igs.FadeOnTx = his.FadeOnTx;
+                                        }
+
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue; // skip
+
+                                            igs.FadeOnRx = fc.FadeOnRx;
+                                            igs.FadeOnTx = fc.FadeOnTx;
+                                        }
+                                    }
+                                    break;
                                 case MeterType.ANTENNA_BUTTONS:
                                 case MeterType.FILTER_BUTTONS:
                                 case MeterType.MODE_BUTTONS:
@@ -15384,6 +16490,9 @@ namespace Thetis
                                             igs.SetSetting<bool>("vfo_showbandtext", vfo.ShowBandText);
                                             igs.SetSetting<System.Drawing.Color>("vfo_showbandtext_colour", vfo.BandTextColour);
                                             igs.SetSetting<System.Drawing.Color>("vfo_frequency_small_numbers_colour", vfo.FrequencyColourSmall);
+
+                                            igs.SetSetting<System.Drawing.Color>("vfo_lock_colour", vfo.LockColour);
+                                            igs.SetSetting<System.Drawing.Color>("vfo_sync_colour", vfo.SyncColour);
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> sc in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.SOLID_COLOUR))
                                         {
@@ -15858,6 +16967,21 @@ namespace Thetis
                     return (long)(_qso_end - _qso_start).TotalSeconds; 
                 }
             }
+            public bool VFOSync
+            {
+                get { return _vfoA_sync; }
+                set { _vfoA_sync = value; }
+            }
+            public bool VFOALock
+            {
+                get { return _vfoA_lock; }
+                set { _vfoA_lock = value; }
+            }
+            public bool VFOBLock
+            {
+                get { return _vfoB_lock; }
+                set { _vfoB_lock = value; }
+            }
             public bool Split
             {
                 get { return _split; }
@@ -16040,7 +17164,8 @@ namespace Thetis
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.MODE_BUTTONS ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.ANTENNA_BUTTONS ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY
                                                                 ) && ( ((mox && o.Value.OnlyWhenTX) || (!mox && o.Value.OnlyWhenRX)) || (!o.Value.OnlyWhenTX && !o.Value.OnlyWhenRX) ) ))
                     {
                         clsMeterItem mi = kvp.Value;
@@ -16348,6 +17473,7 @@ namespace Thetis
             private Color4 _backColour;
             private System.Drawing.Color _backgroundColour;
             private Dictionary<string, SharpDX.Direct2D1.Bitmap> _images;
+            private Dictionary<string, BitmapBrush> _bitmap_brushes;
             //
             private Dictionary<string, SharpDX.DirectWrite.TextFormat> _textFormats; // fonts
             private SharpDX.DirectWrite.Factory _fontFactory;
@@ -16399,6 +17525,7 @@ namespace Thetis
                 _bDXSetup = false;
                 _NoVSYNCpresentFlag = PresentFlags.None;
                 _pixelShift = new Vector2(0.5f, 0.5f);
+                //_pixelShift = new Vector2(0f, 0f);
                 _nVBlanks = 0;
                 _oldRedrawDelay = -1;
                 _displayTarget = target;
@@ -16416,7 +17543,8 @@ namespace Thetis
                 _backColour = convertColour(_backgroundColour);
                 
                 _images = new Dictionary<string, SharpDX.Direct2D1.Bitmap>();
-
+                _bitmap_brushes = new Dictionary<string, BitmapBrush>();
+                
                 //fps
                 //_fLastTime = _objFrameStartTimer.ElapsedMsec;
                 //_dElapsedFrameStart = _objFrameStartTimer.ElapsedMsec;
@@ -16483,6 +17611,39 @@ namespace Thetis
                     foreach (string sKey in keysWithBoolTag)
                     {
                         RemoveDXImage(sKey);
+                    }
+                }
+            }
+            internal void LoadResouceImages()
+            {
+                if (!_bDXSetup) return;
+
+                lock (_DXlock)
+                {
+                    Dictionary<string, System.Drawing.Bitmap> resource_bitmaps = new Dictionary<string, System.Drawing.Bitmap>();
+
+                    // the resource images to use
+                    resource_bitmaps.Add("vfo_lock", Properties.Resources.Lock_64);
+                    resource_bitmaps.Add("vfo_sync", Properties.Resources.Link_64);
+
+                    foreach (KeyValuePair<string, System.Drawing.Bitmap> kvp in resource_bitmaps)
+                    {
+                        System.Drawing.Bitmap b = kvp.Value;
+                        if (!_images.ContainsKey(kvp.Key))
+                        {
+                            SharpDX.Direct2D1.Bitmap dxB = bitmapFromSystemBitmap(_renderTarget, b, kvp.Key);
+                            _images.Add(kvp.Key, dxB);
+
+                            // also add the bitmap brush
+                            BitmapBrush bb = new BitmapBrush(_renderTarget, dxB, new BitmapBrushProperties()
+                            {
+                                ExtendModeX = ExtendMode.Clamp,
+                                ExtendModeY = ExtendMode.Clamp,
+                                InterpolationMode = BitmapInterpolationMode.Linear
+                            });
+
+                            _bitmap_brushes.Add(kvp.Key, bb);
+                        }
                     }
                 }
             }
@@ -16883,7 +18044,13 @@ namespace Thetis
                         SharpDX.Direct2D1.Bitmap b = kvp.Value;
                         Utilities.Dispose(ref b);
                     }
+                    foreach (KeyValuePair<string, BitmapBrush> kvp in _bitmap_brushes)
+                    {
+                        SharpDX.Direct2D1.BitmapBrush b = kvp.Value;
+                        Utilities.Dispose(ref b);
+                    }
                     _images.Clear();
+                    _bitmap_brushes.Clear();
                 }
             }
             internal void RemoveDXImage(string sKey)
@@ -16897,6 +18064,12 @@ namespace Thetis
                         SharpDX.Direct2D1.Bitmap b = _images[sKey];
                         Utilities.Dispose(ref b);
                         _images.Remove(sKey);
+                    }
+                    if (_bitmap_brushes.ContainsKey(sKey))
+                    {
+                        BitmapBrush b = _bitmap_brushes[sKey];
+                        Utilities.Dispose(ref b);
+                        _bitmap_brushes.Remove(sKey);
                     }
                 }
             }
@@ -17210,6 +18383,12 @@ namespace Thetis
                         _renderTarget = new RenderTarget(_factory, _surface, rtp);
 
                         setupAliasing();
+
+                        // clear measure string cache
+                        _stringMeasure.Clear();
+                        _stringMeasureKeys.Clear();
+                        //
+
                         return true;
                     }
                     catch (Exception e)
@@ -17340,7 +18519,7 @@ namespace Thetis
                     {
                         if (m.SortedMeterItemsForZOrder != null)
                         {
-                            float tw = targetWidth - 1f;// 0.5f;
+                            float tw = targetWidth - 1f;
                             float rw = m.XRatio;
                             float rh = m.YRatio;
 
@@ -17487,31 +18666,6 @@ namespace Thetis
                     }
                 }
             }
-            //private void OnKeyPressed(object sender, RawInputEventArg e)
-            //{
-            //    if (e.KeyPressEvent.KeyPressState == "BREAK") return;
-
-            //    Debug.Print(e.KeyPressEvent.VKey.ToString() + " -- " + e.KeyPressEvent.ID);
-
-            //    lock (_metersLock)
-            //    {
-            //        string sId = e.KeyPressEvent.ID;
-            //        if (!_meters.ContainsKey(sId)) return;
-
-            //        clsMeter m = _meters[sId];
-
-            //        lock (m._meterItemsLock)
-            //        {
-            //            if (m.SortedMeterItemsForZOrder != null)
-            //            {
-            //                foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
-            //                {
-            //                    mi.KeyDown((Keys)e.KeyPressEvent.VKey);
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
             private void OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
             {
                 lock (_metersLock)
@@ -17622,16 +18776,14 @@ namespace Thetis
                                 if (mi.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP)
                                 {
                                     float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-                                    float h = rect.Height * (mi.Size.Height / m.YRatio);/// + (mi.Size.Height > 0f ? (0.02f / m.YRatio) : 0f));
+                                    float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                                    //float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
                                     float w = rect.Width * (mi.Size.Width / m.XRatio);
 
-                                    float pad = ((0.05f - (0.05f * 0.8f)) * 2f) * w;
-                                    int hh = (int)(y + h + pad);
+                                    //bb.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
+                                    float padY = ((m.PadY - (m.Height * 0.75f)) * w);
+                                    int hh = (int)Math.Ceiling((y + h + padY)) + 1; // 1 extra
                                     if (hh > height) height = hh;
-
-                                    //_renderTarget.DrawRectangle(new RawRectangleF(x, y, x + w - 1, y + h -1), getDXBrushForColour(System.Drawing.Color.Red), 2f);
                                 }
 
                                 switch (mi.ItemType)
@@ -17687,9 +18839,6 @@ namespace Thetis
                                     case clsMeterItem.MeterItemType.ROTATOR:
                                         renderRotator(rect, mi, m);
                                         break;
-                                    //case clsMeterItem.MeterItemType.HISTORY:
-                                    //    renderHistory(rect, mi, m);
-                                    //    break;
                                     //case clsMeterItem.MeterItemType.ITEM_GROUP:
                                     //    renderGroup(rect, mi, m);
                                     //    break;
@@ -17713,6 +18862,9 @@ namespace Thetis
                                     //    break;
                                     case clsMeterItem.MeterItemType.FADE_COVER:
                                         renderFadeCover(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.HISTORY:
+                                        renderHistory(rect, mi, m);
                                         break;
                                 }
                             }
@@ -18791,6 +19943,217 @@ namespace Thetis
                     (float tw, float th) = plotText(displayText, textX, textY, h, rect.Width, fontSize, m.MOX ? text_overlay.TextColour2 : text_overlay.TextColour1, 255, fontFamily, fontStyle, false);
                 }
             }
+            private void renderHistory(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsHistoryItem his = (clsHistoryItem)mi;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
+                if (!do_cover_fade)
+                {
+                    if (m.MOX != mi.MOX)
+                    {
+                        mi.FadeValue = 48;
+                        mi.MOX = m.MOX;
+                    }
+                    else
+                    {
+                        int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                        updateInterval = Math.Min(updateInterval, 500);
+                        // fade to take half a second
+                        int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
+                        int stepSize = (int)Math.Ceiling(207 / (float)steps_needed); // 255-48 = 207
+
+                        mi.FadeValue += stepSize;
+                        if (mi.FadeValue > 255) mi.FadeValue = 255;
+                    }
+                }
+
+                SharpDX.RectangleF rectHis = new SharpDX.RectangleF(x, y, w, h);
+
+                _renderTarget.FillRectangle(rectHis, getDXBrushForColour(his.BackColour));
+
+                float spacer = w * 0.075f;
+                float half_spacer = spacer / 2f;
+                float quarter_spacer = spacer / 4f;
+                float axis_line_width = Math.Max(1f, w * 0.002f);
+                float data_line_width = Math.Max(1f, w * 0.002f);
+
+                //x axis
+                _renderTarget.DrawLine(new RawVector2(x + half_spacer + quarter_spacer, y + h - spacer), new RawVector2(x + w - half_spacer - quarter_spacer, y + h - spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
+
+                //left y axis
+                _renderTarget.DrawLine(new RawVector2(x + spacer, y + quarter_spacer), new RawVector2(x + spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
+
+                //right y axis
+                _renderTarget.DrawLine(new RawVector2(x + w - spacer, y + quarter_spacer), new RawVector2(x + w - spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
+
+                int pixel_width = (int)(w - spacer * 2f);
+
+                //render axis 0 data
+                float text_height = (w * 0.05f);
+                float pix_space_vertical = (y + h - spacer) - (y + quarter_spacer);
+                int text_labels = (int)(pix_space_vertical / text_height) + 2; // +2 a couple extra
+                text_labels = Math.Max(2, text_labels);
+                float text_y_step = pix_space_vertical / (float)(text_labels - 1);
+                float start_x = x + spacer;
+                float base_y = y + h - spacer;
+                float last_x;
+                SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(x + spacer, y + quarter_spacer, w - spacer * 2f, h - quarter_spacer - spacer);
+
+                lock (his.DataLock1)
+                {
+                    int total1 = his.History1.Count;
+                    if (total1 > 1 && his.ShowScale1)
+                    {
+                        last_x = start_x;
+                        float range1 = his.Range1;
+                        range1 = Math.Max(1, range1);
+                        float number_step1 = range1 / (float)(text_labels - 1);
+                        float min1 = his.Min1;
+                        for (int i = 0; i < text_labels; i++)
+                        {
+                            float t_y = y + h - spacer - (i * text_y_step) - (text_height / 4f);
+
+                            if (his.ShowScale1)
+                            {
+                                //right numbers
+                                float val = min1 + (i * number_step1);
+                                plotText(val.ToString("f1"), x + w - spacer + quarter_spacer, t_y, h, rect.Width, 11f, System.Drawing.Color.Yellow, 255, "Trebuchet MS", FontStyle.Regular, false, false, spacer);
+                            }
+
+                            //ticks/grid line
+                            if (i > 0)
+                            {
+                                t_y += (text_height / 4f);
+                                // right tick
+                                _renderTarget.DrawLine(new RawVector2(x + w - spacer, t_y), new RawVector2(x + w - half_spacer - quarter_spacer, t_y), getDXBrushForColour(System.Drawing.Color.Gray), data_line_width);
+                            }
+                        }
+
+                        float y_scale1 = (h - spacer - half_spacer) / range1;
+                        float last_y1 = (his.History1[0].value - min1) * y_scale1;
+
+                        _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
+                        float pix_spacing = pixel_width / ((float)total1 - 1);
+                        List<clsHistoryItem.HistoryData> time_tags = new List<clsHistoryItem.HistoryData>();
+                        for (int n = 1; n < total1; n++)
+                        {
+                            float end_x = start_x + (n * pix_spacing);
+
+                            clsHistoryItem.HistoryData hd1 = his.History1[n];
+                            float end_y1 = (hd1.value - min1) * y_scale1;
+                            _renderTarget.DrawLine(
+                            new RawVector2(last_x, base_y - last_y1),
+                            new RawVector2(end_x, base_y - end_y1),
+                            getDXBrushForColour(System.Drawing.Color.Yellow), data_line_width);
+                            last_y1 = end_y1;
+                            last_x = end_x;
+                        }
+                        _renderTarget.PopAxisAlignedClip();
+                    }
+                }
+                lock (his.DataLock0)
+                {
+                    int total0 = his.History0.Count;
+                    if (total0 > 1)
+                    {
+                        last_x = start_x;
+                        float range0 = his.Range0;
+                        range0 = Math.Max(1, range0);
+
+                        //y-axis numbers + lines
+                        float min0 = his.Min0;
+                        float number_step0 = range0 / (float)(text_labels - 1);
+                        for (int i = 0; i < text_labels; i++)
+                        {
+                            float t_y = y + h - spacer - (i * text_y_step) - (text_height / 4f);
+
+                            //left numbers
+                            float val = min0 + (i * number_step0);
+                            plotText(val.ToString("f1"), x + spacer - quarter_spacer, t_y, h, rect.Width, 11f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular, true, false, spacer);
+
+                            //ticks/grid line
+                            if (i > 0)
+                            {
+                                t_y += (text_height / 4f);
+                                // full grid line
+                                _renderTarget.DrawLine(new RawVector2(x + spacer - quarter_spacer, t_y), new RawVector2(x + w - spacer, t_y), getDXBrushForColour(System.Drawing.Color.Gray), data_line_width);
+                            }
+                        }
+
+                        float y_scale0 = (h - spacer - half_spacer) / range0;                            
+                        float last_y0 = (his.History0[0].value - min0) * y_scale0;                                                       
+
+                        _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
+                        float pix_spacing = pixel_width / ((float)total0 - 1);
+                        List<clsHistoryItem.HistoryData> time_tags = new List<clsHistoryItem.HistoryData>();
+                        for (int n = 1; n < total0; n++)
+                        {
+                            clsHistoryItem.HistoryData hd0 = his.History0[n];
+
+                            float end_x = start_x + (n * pix_spacing);
+                            float end_y0 = (hd0.value - min0) * y_scale0;
+
+                            _renderTarget.DrawLine(
+                                new RawVector2(last_x, base_y - last_y0),
+                                new RawVector2(end_x, base_y - end_y0),
+                                getDXBrushForColour(System.Drawing.Color.Red), data_line_width);
+                            last_y0 = end_y0;
+
+                            if (hd0.show_time)
+                            {
+                                hd0.index = n;
+                                time_tags.Add(hd0);
+                            }
+
+                            last_x = end_x;
+                        }
+                        _renderTarget.PopAxisAlignedClip();
+
+                        // time tags
+                        foreach (clsHistoryItem.HistoryData hd in time_tags)
+                        {
+                            float s_x = start_x + (hd.index / (float)(total0 - 1)) * (w - spacer * 2f);
+                            float s_y = y + h - half_spacer;
+                            _renderTarget.DrawLine(new RawVector2(s_x, s_y - half_spacer), new RawVector2(s_x, s_y - half_spacer + quarter_spacer), getDXBrushForColour(System.Drawing.Color.Gray), data_line_width);
+                            plotText(hd.time.ToString("HH:mm:ss"), s_x, s_y, h, rect.Width, 10f, System.Drawing.Color.Gray, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, true, 0, 45);
+                        }
+
+                        //time axis
+                        float pix_space_horiz = (x + w - spacer) - (x + spacer);
+                        float text_height_time = (w * 0.05f);
+                        int can_fit = (int)(pix_space_horiz / text_height_time);
+                        can_fit = Math.Max(2, can_fit);
+                        his.MaxTimeLables = can_fit;
+
+                        if (his.ActiveTimeLabels < his.MaxTimeLables)
+                        {
+                            int labels_left = his.MaxTimeLables - his.ActiveTimeLabels;
+
+                            if (labels_left > 0)
+                            {
+                                // we can add one                        
+                                int interval_seconds = his.KeepFor / labels_left;
+                                interval_seconds = Math.Max(5, interval_seconds);
+
+                                if (DateTime.UtcNow >= his.LastTimeLabelAddTime.AddSeconds(interval_seconds))
+                                {
+                                    // time for another
+                                    his.NextAddMakeTimeLabel = true;
+                                }
+                            }
+                        }
+
+                        //plotText(his.IndexTracker.ToString(), x , y, h, rect.Width, 12f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular);
+                        //plotText(sampleRate.ToString(), x, y + 30, h, rect.Width, 12f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular);
+                    }
+                }               
+            }
             private void renderSpacer(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsSpacerItem spacer = (clsSpacerItem)mi;
@@ -19619,66 +20982,6 @@ namespace Thetis
                 eyeElipse.RadiusY = w / 6f;
                 _renderTarget.FillEllipse(eyeElipse, getDXBrushForColour(System.Drawing.Color.FromArgb(32, 32, 32)));
             }
-            //private void renderHistory(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
-            //{
-            //    clsHistoryItem hi = (clsHistoryItem)mi;
-
-            //    float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
-            //    float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-            //    float w = rect.Width * (mi.Size.Width / m.XRatio);
-            //    float h = rect.Height * (mi.Size.Height / m.YRatio);
-
-            //    int nFade = 255;
-
-            //    SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
-            //    _renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Green));
-
-            //    List<float> history = hi.GetHistory();
-            //    if (history.Count == 0) return;
-
-            //    float fMax = history.Max();
-            //    float fMin = history.Min();
-            //    float fSpan = fMax - fMin;
-            //    //mi.UpdateInterval
-
-            //    Vector2 start = new Vector2();
-            //    Vector2 end = new Vector2();
-
-            //    if (history.Count > 1) 
-            //    {
-            //        float fScale = 1f;
-            //        if (true)//hi.ScaleStrokeWidth)
-            //        {
-            //            //float fSmallestDimension = w < h ? w : h;
-            //            //fScale = fSmallestDimension / 200f;
-            //            float fDiag = (float)Math.Sqrt((w * w) + (h * h));
-            //            fScale = fDiag / 450f;
-            //        }
-            //        float fStrokeWidth = hi.StrokeWidth * fScale;
-
-            //        int i = history.Count - 1;
-            //        getPerc(hi, history[i], out float percX, out float percY, out PointF min, out PointF max);
-
-            //        start.X = x;
-            //        start.Y = y + (h - (h * percY));
-            //        float fStep = w / (float)history.Count;
-
-            //        for (int n = 1; n < i; n++)
-            //        {
-            //            float val = history[i - n];
-            //            getPerc(hi, val, out percX, out percY, out min, out max);
-
-            //            end.X = x + (n * fStep);
-            //            end.Y = y + (h - (h * percY));
-
-            //            System.Drawing.Color c = val >= -73 ? System.Drawing.Color.Red : System.Drawing.Color.White;
-            //            _renderTarget.DrawLine(start, end, getDXBrushForColour(c), fStrokeWidth);
-
-            //            start.X = end.X;
-            //            start.Y = end.Y;
-            //        }
-            //    }
-            //}
             private void renderText(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsText txt = (clsText)mi;
@@ -20173,7 +21476,7 @@ namespace Thetis
                 kHz = vfo.Substring(index + 1, 3);
                 hz = vfo.Substring(index + 4, 3);
             }
-            private (float, float) plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fit_size_width = 0, bool ignore_cache = false, float fit_size_height = 0)
+            private (float, float) plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fit_size_width = 0, bool ignore_cache = false, float fit_size_height = 0, float rotate_deg = 0, bool fill_background = false, object back_colour = null)
             {
                 if (string.IsNullOrEmpty(sText)) return (0, 0);
 
@@ -20234,7 +21537,22 @@ namespace Thetis
                     // use x is now right edge
                     txtrect = new SharpDX.RectangleF(x - szTextSize.Width, y, szTextSize.Width, szTextSize.Height);
                 }
+
+                Matrix3x2 originalTransform = Matrix3x2.Identity;
+                if (rotate_deg != 0) 
+                {
+                    Vector2 textCenter = new Vector2(txtrect.Width / 2, txtrect.Height / 2);
+                    originalTransform = _renderTarget.Transform;
+                    _renderTarget.Transform = originalTransform * Matrix3x2.Rotation(MathUtil.DegreesToRadians(rotate_deg), new Vector2(txtrect.Left, txtrect.Top) + textCenter);
+                }
+                if (fill_background)
+                    _renderTarget.FillRectangle(txtrect, getDXBrushForColour((System.Drawing.Color)back_colour));
+
                 _renderTarget.DrawText(sText, getDXTextFormatForFont(sFontFamily, fontSizeEmScaled, style), txtrect, getDXBrushForColour(c, nFade));
+                if(rotate_deg != 0)
+                {
+                    _renderTarget.Transform = originalTransform;
+                }
                 //_renderTarget.DrawRectangle(txtrect, getDXBrushForColour(System.Drawing.Color.Red));
 
                 return (szTextSize.Width, szTextSize.Height);
@@ -20259,7 +21577,13 @@ namespace Thetis
                 SharpDX.RectangleF rct;
                 float xB = 0;
                 float yB = y;
-                float wB = x + w * 0.47f * x_multy;
+
+                float wB;
+                if(vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH)
+                    wB = x + w * (0.5f - m.PadX - (m.PadX * 0.5f));
+                else
+                    wB = x + w * (1f - m.PadX);
+
                 float hB = h;
                 float gap = wB / 8f;
                 int nx = 0;
@@ -20399,7 +21723,14 @@ namespace Thetis
                 SharpDX.RectangleF rct;
                 float xB = 0;
                 float yB = y;
-                float wB = x + w * 0.47f * x_multy;
+
+                //float wB = x + w * 0.47f * x_multy;
+                float wB;
+                if (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH)
+                    wB = x + w * (0.5f - m.PadX - (m.PadX * 0.5f));
+                else
+                    wB = x + w * (1f - m.PadX);
+
                 float hB = h;
                 float gap = wB / 6f;
                 int nx = 0;
@@ -20487,7 +21818,14 @@ namespace Thetis
                 SharpDX.RectangleF rct;
                 float xB = 0;
                 float yB = y;
-                float wB = x + w * 0.47f * x_multy;
+
+                //float wB = x + w * 0.47f * x_multy;
+                float wB;
+                if (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH)
+                    wB = x + w * (0.5f - m.PadX - (m.PadX * 0.5f));
+                else
+                    wB = x + w * (1f - m.PadX);
+
                 float hB = h;
                 float gap = wB / 6f;
                 int nx = 0;
@@ -21173,36 +22511,78 @@ namespace Thetis
                             right = false;
                         }
                     }
+                    //lock
+                    if (my >= 0.520 && my <= 0.920 && (((mx >= 0.200 && mx <= 0.223) & left) || ((mx >= 0.200 + shift && mx <= 0.223 + shift) & right)))
+                    {
+                        xB = 0.200f + shift;
+                        yB = 0.520f;
+                        wB = 0.223f - 0.200f;
+                        hB = 0.920f - 0.520f;
+
+                        button_back_box = true;
+
+                        if (left)
+                        {
+                            button_state_vfoA = clsVfoDisplay.buttonState.LOCK;
+                            left = false;
+                        }
+                        if (right)
+                        {
+                            button_state_vfoB = clsVfoDisplay.buttonState.LOCK;
+                            right = false;
+                        }
+                    }
+                    //sync
+                    if (my >= 0.520 && my <= 0.920 && (((mx >= 0.224 && mx <= 0.250) & left) || ((mx >= 0.224 + shift && mx <= 0.250 + shift) & right)))
+                    {
+                        xB = 0.224f + shift;
+                        yB = 0.520f;
+                        wB = 0.250f - 0.224f;
+                        hB = 0.920f - 0.520f;
+
+                        button_back_box = true;
+
+                        if (left)
+                        {
+                            button_state_vfoA = clsVfoDisplay.buttonState.VFO_SYNC;
+                            left = false;
+                        }
+                        if (right)
+                        {
+                            button_state_vfoB = clsVfoDisplay.buttonState.VFO_SYNC;
+                            right = false;
+                        }
+                    }
                     // large numbers
                     if (my >= 0.100 && my <= 0.530)
                     {
                         //mhz
-                        if (((mx >= 0.206 && mx <= 0.328) && left) || ((mx >= 0.206 + shift && mx <= 0.328 + shift) && right))
+                        if (((mx >= 0.216 && mx <= 0.330) && left) || ((mx >= 0.216 + shift && mx <= 0.330 + shift) && right))
                         {
                             yB = 0.100f;
                             hB = 0.530f - 0.100f;
                             boxes = 5;
-                            box_size = (0.328f - 0.206f) / (float)boxes;
-                            tx = mx - shift - 0.206f;
+                            box_size = (0.330f - 0.216f) / (float)boxes;
+                            tx = mx - shift - 0.216f;
                             box = (int)(tx / box_size);
-                            xB = 0.206f + (box_size * box) + shift;
+                            xB = 0.216f + (box_size * box) + shift;
                             wB = box_size;
                             step = 1000000 * (int)Math.Pow(10, ((boxes - 1) - box));
 
-                            string t = (shift >= 0.5f ? m.VfoB : m.VfoA).ToString("F6", CultureInfo.InvariantCulture);
+                            string t = (shift >= 0.5f || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B ? m.VfoB : m.VfoA).ToString("F6", CultureInfo.InvariantCulture);
                             string[] parts = t.Split('.');
                             draw_box = ((boxes - 1) - box) <= parts[0].Length - 1;
                         }
                         //khz
-                        if (((mx >= 0.343 && mx <= 0.414) && left) || ((mx >= 0.343 + shift && mx <= 0.414 + shift) && right))
+                        if (((mx >= 0.346 && mx <= 0.416) && left) || ((mx >= 0.346 + shift && mx <= 0.416 + shift) && right))
                         {
                             yB = 0.100f;
                             hB = 0.530f - 0.100f;
                             boxes = 3;
-                            box_size = (0.414f - 0.343f) / (float)boxes;
-                            tx = mx - shift - 0.343f;
+                            box_size = (0.416f - 0.346f) / (float)boxes;
+                            tx = mx - shift - 0.346f;
                             box = (int)(tx / box_size);
-                            xB = 0.343f + (box_size * box) + shift;
+                            xB = 0.346f + (box_size * box) + shift;
                             wB = box_size;
                             step = 1000 * (int)Math.Pow(10, ((boxes - 1) - box));
                             draw_box = true;
@@ -21212,16 +22592,16 @@ namespace Thetis
                     if (my >= 0.170 && my <= 0.530)
                     {
                         //hz
-                        if (((mx >= 0.421 && mx <= 0.480) && left) || ((mx >= 0.421 + shift && mx <= 0.480 + shift) && right))
+                        if (((mx >= 0.425 && mx <= 0.480) && left) || ((mx >= 0.425 + shift && mx <= 0.480 + shift) && right))
                         {
                             yB = 0.170f;
                             hB = 0.530f - 0.170f;
 
                             boxes = 3;
-                            box_size = (0.480f - 0.421f) / (float)boxes;
-                            tx = mx - shift - 0.421f;
+                            box_size = (0.480f - 0.425f) / (float)boxes;
+                            tx = mx - shift - 0.425f;
                             box = (int)(tx / box_size);
-                            xB = 0.421f + (box_size * box) + shift;
+                            xB = 0.425f + (box_size * box) + shift;
                             wB = box_size;
                             step = (int)Math.Pow(10, ((boxes - 1) - box));
                             draw_box = true;
@@ -21233,6 +22613,7 @@ namespace Thetis
                     //plotText($"{mx.ToString("f3")},{my.ToString("f3")} -- boxes:{boxes} box:{box}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
                 }
 
+                float old_h = h;
                 if ((vfo.VFOARenderState != clsVfoDisplay.renderState.VFO && disp_a) ||
                     (vfo.VFOBRenderState != clsVfoDisplay.renderState.VFO && disp_b))
                 {
@@ -21240,7 +22621,7 @@ namespace Thetis
                     h = rect.Height * (mi.Size.Height / m.YRatio);
                 }
 
-                float render_state_shift_vfo_b = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH ? 0.510f : 0f;
+                float render_state_shift_vfo_b = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH ? /*0.510*/0.5f + m.PadX / 2f : 0f;
                 if (vfo.VFOARenderState == clsVfoDisplay.renderState.BAND)
                 {
                     button_state_vfoA = drawBand(x, y, w, h, rect, vfo, m, 0, x_multy);
@@ -21265,6 +22646,9 @@ namespace Thetis
                 {
                     button_state_vfoB = drawFilter(x, y, w, h, rect, vfo, m, render_state_shift_vfo_b, x_multy);
                 }
+
+                //recover old h
+                h = old_h;
 
                 if (draw_box && mouse_over_good)
                 {
@@ -21294,9 +22678,9 @@ namespace Thetis
                         vfo.VFOAButtonState = button_state_vfoA;
                 }
 
-                // nothing to do down below unless we are in VFO mode
-                if ((vfo.VFOARenderState != clsVfoDisplay.renderState.VFO && disp_a) ||
-                    (vfo.VFOBRenderState != clsVfoDisplay.renderState.VFO && disp_b)) return;
+                // nothing to do down below unless we are in VFO mode                
+                disp_a = disp_a && vfo.VFOARenderState == clsVfoDisplay.renderState.VFO;
+                disp_b = disp_b && vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO;
 
                 // plotting the normal display
                 rect.Width *= x_multy;
@@ -21480,7 +22864,47 @@ namespace Thetis
                     }
                 }
 
-
+                //vfo lock / vfo sync icons
+                Matrix3x2 originalTransform = _renderTarget.Transform;
+                AntialiasMode originalAM = _renderTarget.AntialiasMode;
+                _renderTarget.AntialiasMode = AntialiasMode.Aliased;
+                _renderTarget.Transform = Matrix3x2.Identity;
+                if (disp_a)
+                {                    
+                    if (_images.ContainsKey("vfo_lock") && _bitmap_brushes.ContainsKey("vfo_lock"))
+                    {
+                        rct = new SharpDX.RectangleF(x + (w * 0.199f) * x_multy, y + (h * 0.58f), w * 0.026f * x_multy, w * 0.026f * x_multy);
+                        SharpDX.Direct2D1.Bitmap b = _images["vfo_lock"];
+                        _renderTarget.FillRectangle(rct, _bitmap_brushes["vfo_lock"]);
+                        _renderTarget.FillOpacityMask(b, getDXBrushForColour(vfo.LockColour, m.VFOALock ? nVfoAFade : Math.Min(64, nVfoAFade)), OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+                    }
+                    if (_images.ContainsKey("vfo_sync") && _bitmap_brushes.ContainsKey("vfo_sync"))
+                    {
+                        rct = new SharpDX.RectangleF(x + (w * 0.224f) * x_multy, y + (h * 0.58f), w * 0.026f * x_multy, w * 0.026f * x_multy);
+                        SharpDX.Direct2D1.Bitmap b = _images["vfo_sync"];
+                        _renderTarget.FillRectangle(rct, _bitmap_brushes["vfo_sync"]);
+                        _renderTarget.FillOpacityMask(b, getDXBrushForColour(vfo.SyncColour, m.VFOSync ? nVfoAFade : Math.Min(64, nVfoAFade)), OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+                    }
+                }
+                if (disp_b)
+                {
+                    if (_images.ContainsKey("vfo_lock") && _bitmap_brushes.ContainsKey("vfo_lock"))
+                    {
+                        rct = new SharpDX.RectangleF(x + (w * 0.199f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.58f), w * 0.026f * x_multy, w * 0.026f * x_multy);
+                        SharpDX.Direct2D1.Bitmap b = _images["vfo_lock"];
+                        _renderTarget.FillRectangle(rct, _bitmap_brushes["vfo_lock"]);
+                        _renderTarget.FillOpacityMask(b, getDXBrushForColour(vfo.LockColour, m.VFOBLock ? nVfoBFade : Math.Min(64, nVfoBFade)), OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+                    }
+                    if (_images.ContainsKey("vfo_sync") && _bitmap_brushes.ContainsKey("vfo_sync"))
+                    {
+                        rct = new SharpDX.RectangleF(x + (w * 0.224f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.58f), w * 0.026f * x_multy, w * 0.026f * x_multy);
+                        SharpDX.Direct2D1.Bitmap b = _images["vfo_sync"];
+                        _renderTarget.FillRectangle(rct, _bitmap_brushes["vfo_sync"]);
+                        _renderTarget.FillOpacityMask(b, getDXBrushForColour(vfo.SyncColour, m.VFOSync ? nVfoBFade : Math.Min(64, nVfoBFade)), OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+                    }
+                }
+                _renderTarget.AntialiasMode = originalAM;
+                _renderTarget.Transform = originalTransform;
 
                 //if (vfo.MouseEntered)
                 //{
@@ -22202,21 +23626,30 @@ namespace Thetis
 
                     // bitmaps need to be built per render target, which use their own factory
                     // these can not be shared
-                    dxBitmap = new SharpDX.Direct2D1.Bitmap(rt, size, tempStream, stride, bitmapProperties);
+                    //dxBitmap = new SharpDX.Direct2D1.Bitmap(rt, size, tempStream, stride, bitmapProperties);
+
+                    using (SharpDX.WIC.ImagingFactory factory = new SharpDX.WIC.ImagingFactory())
+                    using (SharpDX.WIC.BitmapDecoder decoder = new SharpDX.WIC.BitmapDecoder(factory, tempStream, SharpDX.WIC.DecodeOptions.CacheOnDemand))
+                    using (SharpDX.WIC.BitmapFrameDecode frame = decoder.GetFrame(0))
+                    using (SharpDX.WIC.FormatConverter converter = new SharpDX.WIC.FormatConverter(factory))
+                    {
+                        converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPRGBA);
+                        dxBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(rt, converter);
+                    }
                 }
                 else
                 {
                     System.Drawing.Rectangle sourceArea = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
 
-                    // Transform pixels from ARGB to RGBA
-                    DataStream tempStream = new DataStream(bitmap.Height * stride, true, true);
+                    //// Transform pixels from ARGB to RGBA
+                    //DataStream tempStream = new DataStream(bitmap.Height * stride, true, true);
 
-                    // Lock System.Drawing.Bitmap
-                    System.Drawing.Imaging.BitmapData bitmapData = bitmap.LockBits(sourceArea, System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                    //// Lock System.Drawing.Bitmap
+                    //System.Drawing.Imaging.BitmapData bitmapData = bitmap.LockBits(sourceArea, System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
 
-                    // Convert all pixels 
-                    IntPtr first_pixel = bitmapData.Scan0;
-                    int bitmapData_stride = bitmapData.Stride;
+                    //// Convert all pixels 
+                    //IntPtr first_pixel = bitmapData.Scan0;
+                    //int bitmapData_stride = bitmapData.Stride;
 
                     //for (int y = 0; y < bitmap.Height; y++)
                     //{
@@ -22234,38 +23667,53 @@ namespace Thetis
                     //    }
                     //}
 
-                    // --
-                    // Parallel conversion of rows
-                    int h = bitmap.Height;
-                    int w = bitmap.Width;
-                    int[] data = new int[h * w];
-
-                    Parallel.For(0, h, y =>
+                    //
+                    DataStream memoryStream = new DataStream(bitmap.Height * stride, true, true);
+                    bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                    memoryStream.Position = 0;
+                    using (SharpDX.WIC.ImagingFactory factory = new SharpDX.WIC.ImagingFactory())
+                    using (SharpDX.WIC.BitmapDecoder decoder = new SharpDX.WIC.BitmapDecoder(factory, memoryStream, SharpDX.WIC.DecodeOptions.CacheOnDemand))
+                    using (SharpDX.WIC.BitmapFrameDecode frame = decoder.GetFrame(0))
+                    using (SharpDX.WIC.FormatConverter converter = new SharpDX.WIC.FormatConverter(factory))
                     {
-                        int offset = bitmapData_stride * y;
-                        for (int x = 0; x < w; x++)
-                        {
-                            byte B = Marshal.ReadByte(first_pixel, offset++);
-                            byte G = Marshal.ReadByte(first_pixel, offset++);
-                            byte R = Marshal.ReadByte(first_pixel, offset++);
-                            byte A = Marshal.ReadByte(first_pixel, offset++);
-                            data[(y * w) + x] = B | (G << 8) | (R << 16) | (A << 24);
-                        }
-                    });
+                        converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPRGBA);
+                        dxBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(rt, converter);
+                    }
+                    MeterManager.AddStreamData(sId, memoryStream);
+                    //
 
-                    tempStream.WriteRange<int>(data);
-                    // --
+                    //// --
+                    //// Parallel conversion of rows
+                    //int h = bitmap.Height;
+                    //int w = bitmap.Width;
+                    //int[] data = new int[h * w];
 
-                    bitmap.UnlockBits(bitmapData);
+                    //Parallel.For(0, h, y =>
+                    //{
+                    //    int offset = bitmapData_stride * y;
+                    //    for (int x = 0; x < w; x++)
+                    //    {
+                    //        byte B = Marshal.ReadByte(first_pixel, offset++);
+                    //        byte G = Marshal.ReadByte(first_pixel, offset++);
+                    //        byte R = Marshal.ReadByte(first_pixel, offset++);
+                    //        byte A = Marshal.ReadByte(first_pixel, offset++);
+                    //        data[(y * w) + x] = B | (G << 8) | (R << 16) | (A << 24);
+                    //    }
+                    //});
 
-                    tempStream.Position = 0;
+                    //tempStream.WriteRange<int>(data);
+                    //// --
 
-                    dxBitmap = new SharpDX.Direct2D1.Bitmap(rt, size, tempStream, stride, bitmapProperties);
+                    //bitmap.UnlockBits(bitmapData);
 
-                    //Utilities.Dispose(ref tempStream);
-                    //tempStream = null;
+                    //tempStream.Position = 0;
 
-                    MeterManager.AddStreamData(sId, tempStream);
+                    //dxBitmap = new SharpDX.Direct2D1.Bitmap(rt, size, tempStream, stride, bitmapProperties);
+
+                    ////Utilities.Dispose(ref tempStream);
+                    ////tempStream = null;
+
+                    //MeterManager.AddStreamData(sId, tempStream);
                 }
                 return dxBitmap;
             }
