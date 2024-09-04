@@ -6895,7 +6895,7 @@ namespace Thetis
             {
                 if (_console == null) return false;
 
-                // index to TuneStep index map, as some have been ignored in the grid representation
+                // index to TuneStep index map, as some have been ignored in the grid representation, see renderer
                 int button = vfoB ? _button_grid_index_vfoB : _button_grid_index_vfoA;
                 int tune_step_index = -1;
 
@@ -6961,122 +6961,6 @@ namespace Thetis
                 }
                 return false;
             }
-
-            //public override void MouseClick(MouseEventArgs e)
-            //{
-            //    if (!MouseEntered) return;
-
-            //    switch (_mouse_over_vfoB ? _render_button_vfoB : _render_button_vfoA)
-            //    {
-            //        case buttonState.BAND_SCREEN:
-            //            if (abortForLockedVFO()) break;
-            //            if (_mouse_over_vfoB)
-            //                VFOBRenderState = renderState.BAND;
-            //            else
-            //                VFOARenderState = renderState.BAND;
-            //            break;
-            //        case buttonState.VFO_SCREEN:
-            //            if (_mouse_over_vfoB)
-            //                VFOBRenderState = renderState.VFO;
-            //            else
-            //                VFOARenderState = renderState.VFO;
-            //            break;
-            //        case buttonState.FILTER_SCREEN:
-            //            if (_mouse_over_vfoB)
-            //                VFOBRenderState = renderState.FILTER;
-            //            else
-            //                VFOARenderState = renderState.FILTER;
-            //            break;
-            //        case buttonState.MODE_SCREEN:
-            //            if (abortForLockedVFO()) break;
-            //            if (_mouse_over_vfoB)
-            //                VFOBRenderState = renderState.MODE;
-            //            else
-            //                VFOARenderState = renderState.MODE;
-            //            break;
-            //        //////////
-            //        case buttonState.BAND:
-            //            if (abortForLockedVFO()) break;
-            //            if (_mouse_over_vfoB) 
-            //            {
-            //                if (setBand(true))
-            //                    VFOBRenderState = renderState.VFO;
-            //                else
-            //                    _render_state_vfoB_change_time = DateTime.Now;
-            //            }
-            //            else
-            //            {
-            //                if (setBand(false))
-            //                    VFOARenderState = renderState.VFO;
-            //                else
-            //                    _render_state_vfoA_change_time = DateTime.Now;
-            //            }
-            //            break;
-            //        case buttonState.MODE:                        
-            //            if (_mouse_over_vfoB)
-            //            {
-            //                if (setMode(true))
-            //                    VFOBRenderState = renderState.VFO;
-            //                else
-            //                    _render_state_vfoB_change_time = DateTime.Now;
-            //            }
-            //            else
-            //            {
-            //                if (setMode(false))
-            //                    VFOARenderState = renderState.VFO;
-            //                else
-            //                    _render_state_vfoA_change_time = DateTime.Now;
-            //            }
-            //            break;
-            //        case buttonState.FILTER:
-            //            if (_mouse_over_vfoB)
-            //            {
-            //                if (setFilter(true))
-            //                    VFOBRenderState = renderState.VFO;
-            //                else
-            //                    _render_state_vfoB_change_time = DateTime.Now;
-            //            }
-            //            else
-            //            {
-            //                if (setFilter(false))
-            //                    VFOARenderState = renderState.VFO;
-            //                else
-            //                    _render_state_vfoA_change_time = DateTime.Now;
-            //            }
-            //            break;
-            //        case buttonState.SPLIT:
-            //            if (!_mouse_over_vfoB)
-            //            {
-            //                toggleSplit();
-            //            }                            
-            //            break;
-            //        case buttonState.TX:
-            //            if (_mouse_over_vfoB)
-            //            {
-            //                setTX(true); //vfoB
-            //            }
-            //            else
-            //            {
-            //                setTX(false); //vfoA
-            //            }
-            //            break;
-            //        case buttonState.LOCK:
-            //            if (_mouse_over_vfoB)
-            //            {
-            //                setLock(true); //vfoB
-            //            }
-            //            else
-            //            {
-            //                setLock(false); //vfoA
-            //            }
-            //            break;
-            //        case buttonState.VFO_SYNC:
-            //            setVfoSync();
-            //            break;
-            //    }
-
-            //    //base.MouseClick(e);
-            //}
             private void setLock(bool vfoB)
             {
                 if (_console == null) return;
