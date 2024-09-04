@@ -2367,6 +2367,8 @@ namespace Thetis
 
             _console.VFOSyncChangedHandlers += OnVFOSyncChanged;
 
+            _console.TuneStepIndexChangedHandlers += OnTuneStepIndexChanged;
+
             _delegatesAdded = true;
         }
         private static void removeDelegates()
@@ -2422,6 +2424,8 @@ namespace Thetis
 
             _console.VFOSyncChangedHandlers -= OnVFOSyncChanged;
 
+            _console.TuneStepIndexChangedHandlers -= OnTuneStepIndexChanged;
+
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
                 kvp.Value.RemoveDelegates();
@@ -2429,11 +2433,23 @@ namespace Thetis
 
             _delegatesAdded = false;
         }
+        private static void OnTuneStepIndexChanged(int rx, int old_index, int new_index)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
+
+                    m.TuneStepIndex = new_index;
+                }
+            }
+        }
         private static void OnVFOSyncChanged(int rx, bool old_state, bool new_state)
         {
             lock (_metersLock)
             {
-                foreach (KeyValuePair<string, clsMeter> ms in _meters) //.Where(o => o.Value.RX == rx)) //not used right now, apply to all vfos
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
                 {
                     clsMeter m = ms.Value;
 
@@ -2988,6 +3004,8 @@ namespace Thetis
             {
                 m.BandGroup = m.GetBandGroupFromBand(_console.RX2Band);
             }
+
+            m.TuneStepIndex = _console.TuneStepIndex;
 
             m.AntennasChanged(_console.RX1Band, _console.TXBand, _console.VFOAFreq, _console.TXFreq);
 
@@ -6269,6 +6287,7 @@ namespace Thetis
                 BAND,
                 MODE,
                 FILTER,
+                TUNE_STEP
             }
             public enum buttonState
             {   
@@ -6277,6 +6296,7 @@ namespace Thetis
                 BAND_SCREEN,
                 FILTER_SCREEN,
                 MODE_SCREEN,
+                TUNE_STEP_SCREEN,
                 VFO,
                 BAND,
                 VHF,
@@ -6287,7 +6307,8 @@ namespace Thetis
                 SPLIT,
                 TX,
                 LOCK,
-                VFO_SYNC
+                VFO_SYNC,
+                TUNE_STEP
             }
             public enum DSPModeForModeDisplay
             {
@@ -6351,8 +6372,21 @@ namespace Thetis
             private System.Drawing.Color _lock_colour;
             private System.Drawing.Color _sync_colour;
 
+            private List<TuneStep> _tune_steps;
+
+            private DateTime _mouse_down_time;
+            private bool _long_press_released;
+
             public clsVfoDisplay(clsMeter owningmeter)
             {
+                _tune_steps = new List<TuneStep>();
+                //copy data from console to own local
+                foreach(TuneStep ts in _console.TuneStepList)
+                {
+                    TuneStep nts = new TuneStep(ts.StepHz, ts.Name);
+                    _tune_steps.Add(nts);
+                }
+
                 _fontFamily = "Trebuchet MS";
                 _fontStyle = FontStyle.Regular;
                 _fontSize = 18f;
@@ -6394,6 +6428,13 @@ namespace Thetis
 
                 _lock_colour = System.Drawing.Color.LimeGreen;
                 _sync_colour = System.Drawing.Color.LimeGreen;
+
+                _mouse_down_time = DateTime.MaxValue;
+                _long_press_released = true;
+            }
+            public List<TuneStep> TuneSteps
+            {
+                get { return _tune_steps; }
             }
             public System.Drawing.Color LockColour
             {
@@ -6655,9 +6696,28 @@ namespace Thetis
             //        base.MouseButtonDown = value;
             //    }
             //}
+            public override void MouseDown(MouseEventArgs e)
+            {
+                if (!MouseEntered) return;
+
+                _long_press_released = true;
+                _mouse_down_time = DateTime.Now;
+            }
+            public bool MouseDownLong
+            {
+                get
+                {
+                    if (!MouseEntered) return false;
+
+                    bool long_pressed = (DateTime.Now - _mouse_down_time).TotalMilliseconds >= 1000;
+                    if (long_pressed) _long_press_released = false;
+                    return long_pressed;
+                }
+            }
             public override void MouseUp(MouseEventArgs e)
             {
                 if (!MouseEntered) return;
+
                 switch (_mouse_over_vfoB ? _render_button_vfoB : _render_button_vfoA) // in mouse up, as dont get mouseclicks when we mash the button
                 {
                     case buttonState.VFO:
@@ -6678,123 +6738,345 @@ namespace Thetis
                             }
                         }
                         break;
-                }
-            }
-            public override void MouseClick(MouseEventArgs e)
-            {
-                if (!MouseEntered) return;
-
-                switch (_mouse_over_vfoB ? _render_button_vfoB : _render_button_vfoA)
-                {
                     case buttonState.BAND_SCREEN:
-                        if (abortForLockedVFO()) break;
-                        if (_mouse_over_vfoB)
-                            VFOBRenderState = renderState.BAND;
-                        else
-                            VFOARenderState = renderState.BAND;
+                        {
+                            if (abortForLockedVFO()) break;
+                            if (_mouse_over_vfoB)
+                                VFOBRenderState = renderState.BAND;
+                            else
+                                VFOARenderState = renderState.BAND;
+                        }
                         break;
                     case buttonState.VFO_SCREEN:
-                        if (_mouse_over_vfoB)
-                            VFOBRenderState = renderState.VFO;
-                        else
-                            VFOARenderState = renderState.VFO;
+                        {
+                            if (_mouse_over_vfoB)
+                                VFOBRenderState = renderState.VFO;
+                            else
+                                VFOARenderState = renderState.VFO;
+                        }
                         break;
                     case buttonState.FILTER_SCREEN:
-                        if (_mouse_over_vfoB)
-                            VFOBRenderState = renderState.FILTER;
-                        else
-                            VFOARenderState = renderState.FILTER;
+                        {
+                            if (_mouse_over_vfoB)
+                                VFOBRenderState = renderState.FILTER;
+                            else
+                                VFOARenderState = renderState.FILTER;
+                        }
                         break;
                     case buttonState.MODE_SCREEN:
-                        if (abortForLockedVFO()) break;
-                        if (_mouse_over_vfoB)
-                            VFOBRenderState = renderState.MODE;
-                        else
-                            VFOARenderState = renderState.MODE;
+                        {
+                            if (abortForLockedVFO()) break;
+                            if (_mouse_over_vfoB)
+                                VFOBRenderState = renderState.MODE;
+                            else
+                                VFOARenderState = renderState.MODE;
+                        }
                         break;
                     //////////
                     case buttonState.BAND:
-                        if (abortForLockedVFO()) break;
-                        if (_mouse_over_vfoB) 
                         {
-                            if (setBand(true))
-                                VFOBRenderState = renderState.VFO;
+                            if (abortForLockedVFO()) break;
+                            if (_mouse_over_vfoB)
+                            {
+                                if (setBand(true))
+                                    VFOBRenderState = renderState.VFO;
+                                else
+                                    _render_state_vfoB_change_time = DateTime.Now;
+                            }
                             else
-                                _render_state_vfoB_change_time = DateTime.Now;
-                        }
-                        else
-                        {
-                            if (setBand(false))
-                                VFOARenderState = renderState.VFO;
-                            else
-                                _render_state_vfoA_change_time = DateTime.Now;
+                            {
+                                if (setBand(false))
+                                    VFOARenderState = renderState.VFO;
+                                else
+                                    _render_state_vfoA_change_time = DateTime.Now;
+                            }
                         }
                         break;
-                    case buttonState.MODE:                        
-                        if (_mouse_over_vfoB)
+                    case buttonState.MODE:
                         {
-                            if (setMode(true))
-                                VFOBRenderState = renderState.VFO;
+                            if (_mouse_over_vfoB)
+                            {
+                                if (setMode(true))
+                                    VFOBRenderState = renderState.VFO;
+                                else
+                                    _render_state_vfoB_change_time = DateTime.Now;
+                            }
                             else
-                                _render_state_vfoB_change_time = DateTime.Now;
-                        }
-                        else
-                        {
-                            if (setMode(false))
-                                VFOARenderState = renderState.VFO;
-                            else
-                                _render_state_vfoA_change_time = DateTime.Now;
+                            {
+                                if (setMode(false))
+                                    VFOARenderState = renderState.VFO;
+                                else
+                                    _render_state_vfoA_change_time = DateTime.Now;
+                            }
                         }
                         break;
                     case buttonState.FILTER:
-                        if (_mouse_over_vfoB)
                         {
-                            if (setFilter(true))
-                                VFOBRenderState = renderState.VFO;
+                            if (_mouse_over_vfoB)
+                            {
+                                if (setFilter(true))
+                                    VFOBRenderState = renderState.VFO;
+                                else
+                                    _render_state_vfoB_change_time = DateTime.Now;
+                            }
                             else
-                                _render_state_vfoB_change_time = DateTime.Now;
-                        }
-                        else
-                        {
-                            if (setFilter(false))
-                                VFOARenderState = renderState.VFO;
-                            else
-                                _render_state_vfoA_change_time = DateTime.Now;
+                            {
+                                if (setFilter(false))
+                                    VFOARenderState = renderState.VFO;
+                                else
+                                    _render_state_vfoA_change_time = DateTime.Now;
+                            }
                         }
                         break;
                     case buttonState.SPLIT:
-                        if (!_mouse_over_vfoB)
                         {
-                            toggleSplit();
-                        }                            
+                            if (!_mouse_over_vfoB)
+                            {
+                                toggleSplit();
+                            }
+                        }
                         break;
                     case buttonState.TX:
-                        if (_mouse_over_vfoB)
                         {
-                            setTX(true); //vfoB
-                        }
-                        else
-                        {
-                            setTX(false); //vfoA
+                            if (_mouse_over_vfoB)
+                            {
+                                setTX(true); //vfoB
+                            }
+                            else
+                            {
+                                setTX(false); //vfoA
+                            }
                         }
                         break;
                     case buttonState.LOCK:
-                        if (_mouse_over_vfoB)
                         {
-                            setLock(true); //vfoB
-                        }
-                        else
-                        {
-                            setLock(false); //vfoA
+                            if (_mouse_over_vfoB)
+                            {
+                                setLock(true); //vfoB
+                            }
+                            else
+                            {
+                                setLock(false); //vfoA
+                            }
                         }
                         break;
                     case buttonState.VFO_SYNC:
-                        setVfoSync();
+                        {
+                            // same for both vfoa/b
+                            setVfoSync();
+                        }
+                        break;
+                    case buttonState.TUNE_STEP:
+                        {
+                            if (_long_press_released)
+                            {
+                                if (_mouse_over_vfoB)
+                                {
+                                    if (setTuneStep(true))
+                                        VFOBRenderState = renderState.VFO;
+                                    else
+                                        _render_state_vfoB_change_time = DateTime.Now;
+                                }
+                                else
+                                {
+                                    if (setTuneStep(false))
+                                        VFOARenderState = renderState.VFO;
+                                    else
+                                        _render_state_vfoA_change_time = DateTime.Now;
+                                }
+                            }
+                        }
                         break;
                 }
 
-                //base.MouseClick(e);
+                _long_press_released = true;
             }
+            private bool setTuneStep(bool vfoB)
+            {
+                if (_console == null) return false;
+
+                // index to TuneStep index map, as some have been ignored in the grid representation
+                int button = vfoB ? _button_grid_index_vfoB : _button_grid_index_vfoA;
+                int tune_step_index = -1;
+
+                switch (button)
+                {
+                    case 0:
+                        tune_step_index = 0;
+                        break;
+                    case 1:
+                        tune_step_index = 2;
+                        break;
+                    case 2:
+                        tune_step_index = 3;
+                        break;
+                    case 3:
+                        tune_step_index = 4;
+                        break;
+                    case 4:
+                        tune_step_index = 5;
+                        break;
+                    case 5:
+                        tune_step_index = 6;
+                        break;
+                    case 6:
+                        tune_step_index = 7;
+                        break;
+                    case 7:
+                        tune_step_index = 8;
+                        break;
+                    case 8:
+                        tune_step_index = 11;
+                        break;
+                    case 9:
+                        tune_step_index = 12;
+                        break;
+                    case 10:
+                        tune_step_index = 14;
+                        break;
+                    case 11:
+                        tune_step_index = 15;
+                        break;
+                    case 12:
+                        tune_step_index = 17;
+                        break;
+                    case 13:
+                        tune_step_index = 18;
+                        break;
+                    case 14:
+                        tune_step_index = 20;
+                        break;
+                    case 15:
+                        tune_step_index = 21;
+                        break;
+                }
+
+                if (tune_step_index != -1)
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.TuneStepIndex = tune_step_index;
+                    }));
+                    return true;
+                }
+                return false;
+            }
+
+            //public override void MouseClick(MouseEventArgs e)
+            //{
+            //    if (!MouseEntered) return;
+
+            //    switch (_mouse_over_vfoB ? _render_button_vfoB : _render_button_vfoA)
+            //    {
+            //        case buttonState.BAND_SCREEN:
+            //            if (abortForLockedVFO()) break;
+            //            if (_mouse_over_vfoB)
+            //                VFOBRenderState = renderState.BAND;
+            //            else
+            //                VFOARenderState = renderState.BAND;
+            //            break;
+            //        case buttonState.VFO_SCREEN:
+            //            if (_mouse_over_vfoB)
+            //                VFOBRenderState = renderState.VFO;
+            //            else
+            //                VFOARenderState = renderState.VFO;
+            //            break;
+            //        case buttonState.FILTER_SCREEN:
+            //            if (_mouse_over_vfoB)
+            //                VFOBRenderState = renderState.FILTER;
+            //            else
+            //                VFOARenderState = renderState.FILTER;
+            //            break;
+            //        case buttonState.MODE_SCREEN:
+            //            if (abortForLockedVFO()) break;
+            //            if (_mouse_over_vfoB)
+            //                VFOBRenderState = renderState.MODE;
+            //            else
+            //                VFOARenderState = renderState.MODE;
+            //            break;
+            //        //////////
+            //        case buttonState.BAND:
+            //            if (abortForLockedVFO()) break;
+            //            if (_mouse_over_vfoB) 
+            //            {
+            //                if (setBand(true))
+            //                    VFOBRenderState = renderState.VFO;
+            //                else
+            //                    _render_state_vfoB_change_time = DateTime.Now;
+            //            }
+            //            else
+            //            {
+            //                if (setBand(false))
+            //                    VFOARenderState = renderState.VFO;
+            //                else
+            //                    _render_state_vfoA_change_time = DateTime.Now;
+            //            }
+            //            break;
+            //        case buttonState.MODE:                        
+            //            if (_mouse_over_vfoB)
+            //            {
+            //                if (setMode(true))
+            //                    VFOBRenderState = renderState.VFO;
+            //                else
+            //                    _render_state_vfoB_change_time = DateTime.Now;
+            //            }
+            //            else
+            //            {
+            //                if (setMode(false))
+            //                    VFOARenderState = renderState.VFO;
+            //                else
+            //                    _render_state_vfoA_change_time = DateTime.Now;
+            //            }
+            //            break;
+            //        case buttonState.FILTER:
+            //            if (_mouse_over_vfoB)
+            //            {
+            //                if (setFilter(true))
+            //                    VFOBRenderState = renderState.VFO;
+            //                else
+            //                    _render_state_vfoB_change_time = DateTime.Now;
+            //            }
+            //            else
+            //            {
+            //                if (setFilter(false))
+            //                    VFOARenderState = renderState.VFO;
+            //                else
+            //                    _render_state_vfoA_change_time = DateTime.Now;
+            //            }
+            //            break;
+            //        case buttonState.SPLIT:
+            //            if (!_mouse_over_vfoB)
+            //            {
+            //                toggleSplit();
+            //            }                            
+            //            break;
+            //        case buttonState.TX:
+            //            if (_mouse_over_vfoB)
+            //            {
+            //                setTX(true); //vfoB
+            //            }
+            //            else
+            //            {
+            //                setTX(false); //vfoA
+            //            }
+            //            break;
+            //        case buttonState.LOCK:
+            //            if (_mouse_over_vfoB)
+            //            {
+            //                setLock(true); //vfoB
+            //            }
+            //            else
+            //            {
+            //                setLock(false); //vfoA
+            //            }
+            //            break;
+            //        case buttonState.VFO_SYNC:
+            //            setVfoSync();
+            //            break;
+            //    }
+
+            //    //base.MouseClick(e);
+            //}
             private void setLock(bool vfoB)
             {
                 if (_console == null) return;
@@ -11514,6 +11796,8 @@ namespace Thetis
             private bool _multiRxEnabled;
             private DateTime _qso_start;
             private DateTime _qso_end;
+
+            private int _tune_step_index;
 
             private bool _txeqEnabled;
             private bool _levelerEnabled;
@@ -16992,6 +17276,14 @@ namespace Thetis
                 get { return _txVfoB; }
                 set { _txVfoB = value; }
             }
+            public int TuneStepIndex
+            {
+                get { return _tune_step_index; }
+                set
+                {
+                    _tune_step_index = value;
+                }
+            }
             public double VfoA
             {
                 get { return _vfoA; }
@@ -21568,6 +21860,113 @@ namespace Thetis
                 rct = new SharpDX.RectangleF(xB, yB, wB, hB);
                 _renderTarget.FillRectangle(rct, getDXBrushForColour(vfo.DigitHighlightColour));
             }
+            private clsVfoDisplay.buttonState drawTuneStep(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, clsMeter m, float shift, float x_multy)
+            {
+                bool vfoB = shift != 0 || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B;
+
+                // draw grid
+                SharpDX.Direct2D1.Brush lineBrush = getDXBrushForColour(System.Drawing.Color.White, 255);
+                SharpDX.RectangleF rct;
+                float xB = 0;
+                float yB = y;
+
+                float wB;
+                if (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH)
+                    wB = x + w * (0.5f - m.PadX - (m.PadX * 0.5f));
+                else
+                    wB = x + w * (1f - m.PadX);
+
+                float hB = h;
+                float gap = wB / 8f;
+                int nx = 0;
+                int ny = 0;
+                float mx = 0;
+                float my = 0;
+                clsVfoDisplay.buttonState button_state = clsVfoDisplay.buttonState.NONE;
+                int button_grid_index = -1;
+
+                if (vfo.MouseEntered)
+                {
+                    mx = (vfo.MouseMovePoint.X - x) / w;
+                    my = (vfo.MouseMovePoint.Y - y) / h;
+                    mx = (mx - shift) / (wB / w);
+                    if (mx >= 0 && mx <= 1 && my >= 0 && my <= 1)
+                    {
+                        nx = (int)(8 * mx);
+                        ny = (int)(2 * my);
+                        highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                        button_grid_index = (ny * 8) + nx;
+                        button_state = clsVfoDisplay.buttonState.TUNE_STEP;
+                    }
+                }
+
+                xB = x + (w * shift);
+                rct = new SharpDX.RectangleF(xB, yB, wB, hB);
+                _renderTarget.DrawRectangle(rct, lineBrush);
+                _renderTarget.DrawLine(new RawVector2(xB, yB + hB / 2f), new RawVector2(xB + wB, yB + hB / 2f), lineBrush);
+                for (int i = 1; i < 8; i++)
+                {
+                    _renderTarget.DrawLine(new RawVector2(xB + (gap * i), y), new RawVector2(xB + (gap * i), y + h), lineBrush);
+                }
+
+                nx = 0;
+                ny = 0;
+                float t_xB;
+                float t_yB;
+
+                int added = 0;
+                for (int i = 0; i < vfo.TuneSteps.Count; i++)
+                {
+                    TuneStep ts = vfo.TuneSteps[i];
+
+                    //skip these
+                    if (ts.StepHz == 2 ||
+                        ts.StepHz == 2000 ||
+                        ts.StepHz == 2500 ||
+                        ts.StepHz == 9000 ||
+                        ts.StepHz == 15000 ||
+                        ts.StepHz == 30000 ||
+                        ts.StepHz == 250000 ||
+                        ts.StepHz == 500000 ||
+                        ts.StepHz == 1000000 ||
+                        ts.StepHz == 10000000
+                        ) continue;
+
+                    //if (!vfoB) // same for now
+                    //{
+                        if (m.TuneStepIndex == i) highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                    //}
+                    //else
+                    //{
+                    //    if (m.TuneStepIndex == i) highlightBox(x, y, w, h, rect, vfo, nx, ny, gap, m, shift);
+                    //}
+
+                    string skip_name = ts.Name.ToLower();
+                    skip_name = skip_name.Replace("hz", "");
+
+                    t_xB = xB + (gap / 2f) + (nx * gap);
+                    t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
+                    plotText(skip_name, t_xB, t_yB, h, rect.Width * x_multy, 14f, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+
+                    nx++;
+                    if (nx > 7)
+                    {
+                        nx = 0;
+                        ny += 1;
+                    }
+                    added++;
+                    if (added > 16) break; // catch incase vfo.tunesteps.count less the skipped is > 16 boxes (8x2)
+                }
+
+                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+
+                if (vfoB)
+                    vfo.ButtonGridIndexVFOb = button_grid_index;
+                else
+                    vfo.ButtonGridIndexVFOa = button_grid_index;
+
+                return button_state;
+            }
             private clsVfoDisplay.buttonState drawBand(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, clsMeter m, float shift, float x_multy)
             {
                 bool vfoB = shift != 0 || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B;
@@ -22586,6 +22985,23 @@ namespace Thetis
                             wB = box_size;
                             step = 1000 * (int)Math.Pow(10, ((boxes - 1) - box));
                             draw_box = true;
+
+                            // tune step, long mouse down, flip to different render state
+                            if(vfo.MouseButtonDown && vfo.MouseDownLong)
+                            {
+                                if (left)
+                                {
+                                    button_state_vfoA = clsVfoDisplay.buttonState.NONE;
+                                    vfo.VFOARenderState = clsVfoDisplay.renderState.TUNE_STEP;
+                                    left = false;
+                                }
+                                if (right)
+                                {
+                                    button_state_vfoB = clsVfoDisplay.buttonState.NONE;
+                                    vfo.VFOBRenderState = clsVfoDisplay.renderState.TUNE_STEP;
+                                    right = false;
+                                }
+                            }
                         }
                     }
                     //small numbers
@@ -22646,7 +23062,14 @@ namespace Thetis
                 {
                     button_state_vfoB = drawFilter(x, y, w, h, rect, vfo, m, render_state_shift_vfo_b, x_multy);
                 }
-
+                if (vfo.VFOARenderState == clsVfoDisplay.renderState.TUNE_STEP)
+                {
+                    button_state_vfoA = drawTuneStep(x, y, w, h, rect, vfo, m, 0, x_multy);
+                }
+                if (vfo.VFOBRenderState == clsVfoDisplay.renderState.TUNE_STEP)
+                {
+                    button_state_vfoB = drawTuneStep(x, y, w, h, rect, vfo, m, render_state_shift_vfo_b, x_multy);
+                }
                 //recover old h
                 h = old_h;
 

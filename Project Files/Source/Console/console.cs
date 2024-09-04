@@ -10793,6 +10793,8 @@ namespace Thetis
                 if (value < 0 || value > tune_step_list.Count - 1)
                     return;
 
+                int old_index = tune_step_index;
+
                 tune_step_index = value;
 
                 // store the step index against mode. This is recovered on mode change event MW0LGE_21j
@@ -10801,6 +10803,12 @@ namespace Thetis
 
                 txtWheelTune.Text = tune_step_list[tune_step_index].Name;
                 lblStepValue.Text = txtWheelTune.Text;
+
+                if(old_index != tune_step_index)
+                {
+                    TuneStepIndexChangedHandlers?.Invoke(1, old_index, tune_step_index);
+                    TuneStepIndexChangedHandlers?.Invoke(2, old_index, tune_step_index);
+                }
             }
         }
         public int TuneStepLookup(string s)
@@ -40447,7 +40455,9 @@ namespace Thetis
 
             if(chkVFOSync.Checked != _old_vfo_sync_state)
             {
-                VFOSyncChangedHandlers?.Invoke(1, _old_vfo_sync_state, chkVFOSync.Checked); // will always be rx1, but may change some day
+                VFOSyncChangedHandlers?.Invoke(1, _old_vfo_sync_state, chkVFOSync.Checked);
+                VFOSyncChangedHandlers?.Invoke(2, _old_vfo_sync_state, chkVFOSync.Checked);
+
                 _old_vfo_sync_state = chkVFOSync.Checked;
             }
         }
@@ -45587,6 +45597,8 @@ namespace Thetis
 
         public delegate void VFOSyncChanged(int rx, bool old_state, bool new_state);
 
+        public delegate void TuneStepIndexChanged(int rx, int old_index, int new_index);
+
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
@@ -45660,6 +45672,8 @@ namespace Thetis
         public VfoBLockChanged VfoBLockChangedHandlers;
 
         public VFOSyncChanged VFOSyncChangedHandlers;
+
+        public TuneStepIndexChanged TuneStepIndexChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
