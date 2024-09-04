@@ -2829,7 +2829,7 @@ namespace Thetis
         }
         private static void OnPreBandChange(int rx, Band currentBand)
         {
-            bandChange(rx, currentBand, currentBand);
+            //bandChange(rx, currentBand, currentBand);
         }
         private static void OnTransverterIndexChanged(int oldIndex, int newIndex)
         {

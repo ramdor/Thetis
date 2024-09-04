@@ -1632,6 +1632,7 @@ namespace Thetis
                 new TuneStep(500000, "500kHz"),
                 new TuneStep(1000000, "1MHz"),
                 new TuneStep(10000000, "10MHz")
+
             };  // initialize wheel tuning list array
 
             tune_step_index = 2;
@@ -5662,6 +5663,9 @@ namespace Thetis
 
         private void SetRX1Band(Band b)
         {
+            //[2.10.3.6]MW0LGE no band change on TX fix
+            if (MOX && (VFOATX || (!rx2_enabled && VFOBTX))) return;
+
             if (disable_split_on_bandchange)
             {
                 if (RX1Band != b && !tuning)
@@ -5706,6 +5710,9 @@ namespace Thetis
 
         private void SetTXBand(Band b, bool bIngoreBandChange = false)
         {
+            //[2.10.3.6]MW0LGE no band change on TX fix
+            if (MOX) return;
+
             if (disable_split_on_bandchange && !bIngoreBandChange) //[2.10.3.6]MW0LGE might need to ignore this is we are using extended and band is moved to a hamband
             {
                 if (TXBand != b && !tuning)
@@ -16749,6 +16756,9 @@ namespace Thetis
             get { return rx1_band; }
             set
             {
+                //[2.10.3.6]MW0LGE no band change on TX fix
+                if (MOX && (VFOATX || (!rx2_enabled && VFOBTX))) return;
+
                 Band old_band = rx1_band;
                 rx1_band = value;
 
@@ -16910,6 +16920,9 @@ namespace Thetis
             get { return rx2_band; }
             set
             {
+                //[2.10.3.6]MW0LGE no band change on TX fix
+                if (MOX && VFOBTX) return;
+
                 Band old_band = rx2_band;
                 rx2_band = value;
 
@@ -16966,6 +16979,9 @@ namespace Thetis
             get { return tx_band; }
             set
             {
+                //[2.10.3.6]MW0LGE no band change on TX fix
+                if (MOX) return;
+
                 Band old_band = tx_band;
                 if (initializing) old_band = value; // we cant use tx_band, because it is unset (GEN), unless we save it out it is irrelevant MW0LGE
 
@@ -17231,6 +17247,9 @@ namespace Thetis
             get { return rx1_dsp_mode; }
             set
             {
+                //[2.10.3.6]MW0LGE no mode change on TX fix
+                if (MOX && (VFOATX || (!rx2_enabled && VFOBTX))) return;
+
                 RadioButtonTS r = null;
                 switch (value)
                 {
@@ -17284,6 +17303,9 @@ namespace Thetis
             get { return rx2_dsp_mode; }
             set
             {
+                //[2.10.3.6]MW0LGE no mode change on TX fix
+                if (MOX && VFOBTX && rx2_enabled) return;
+
                 RadioButtonTS r = null;
                 switch (value)
                 {
@@ -26175,12 +26197,12 @@ namespace Thetis
                                 BandStackEntry bse = bsf.Current();
                                 if (bse != null)
                                 {
-                                    setBandFromBandStackEntry(bse);
+                                    setRX1BandFromBandStackEntry(bse);
                                 }
                                 else
                                 {
                                     // none in band?
-                                    setBandFromBandStackEntry(bsf.LastVisited.Copy());
+                                    setRX1BandFromBandStackEntry(bsf.LastVisited.Copy());
                                 }
                                 BandStack2Form.UpdateSelected();
                             }
@@ -26190,12 +26212,12 @@ namespace Thetis
                             BandStackEntry bse = bsf.Next();
                             if (bse != null)
                             {
-                                setBandFromBandStackEntry(bse);
+                                setRX1BandFromBandStackEntry(bse);
                             }
                             else
                             {
                                 // none in band?
-                                setBandFromBandStackEntry(bsf.LastVisited.Copy());
+                                setRX1BandFromBandStackEntry(bsf.LastVisited.Copy());
                             }
                             BandStack2Form.UpdateSelected();
                         }
@@ -26225,12 +26247,12 @@ namespace Thetis
                                 BandStackEntry bse = bsf.Current();
                                 if (bse != null)
                                 {
-                                    setBandFromBandStackEntry(bse);
+                                    setRX1BandFromBandStackEntry(bse);
                                 }
                                 else
                                 {
                                     // none in band?
-                                    setBandFromBandStackEntry(bsf.LastVisited.Copy());
+                                    setRX1BandFromBandStackEntry(bsf.LastVisited.Copy());
                                 }
                                 BandStack2Form.UpdateSelected();
                             }
@@ -26240,12 +26262,12 @@ namespace Thetis
                             BandStackEntry bse = bsf.Previous();
                             if (bse != null)
                             {
-                                setBandFromBandStackEntry(bse);
+                                setRX1BandFromBandStackEntry(bse);
                             }
                             else
                             {
                                 // none in band?
-                                setBandFromBandStackEntry(bsf.LastVisited.Copy());
+                                setRX1BandFromBandStackEntry(bsf.LastVisited.Copy());
                             }
                             BandStack2Form.UpdateSelected();
                         }
@@ -40182,13 +40204,17 @@ namespace Thetis
             }
         }
 
-        public void SetupRX2Band(Band b, bool frequency_only = false)
+        public void SetupRX2Band(Band b, bool is_for_rx1_vfo_b = false)
         {
             string sBand = BandToString(b);
-            SetupRX2Band(sBand, frequency_only);
+            SetupRX2Band(sBand, is_for_rx1_vfo_b);
         }
-        public void SetupRX2Band(string sBand, bool frequency_only = false)
+        public void SetupRX2Band(string sBand, bool is_for_rx1_vfo_b = false)
         {
+            //[2.10.3.6]MW0LGE no band change on TX fix
+            if (MOX && is_for_rx1_vfo_b && VFOBTX && !rx2_enabled) return;
+            if (MOX && VFOBTX && rx2_enabled) return;
+
             //[2.10.3.6]MW0LGE added frequency_only so that it can be used as a way to select a band for rx1, vfob, in the vfo display system
             //MW0LGE_21d BandStack2 ineresting... applies to rx2
             BandStackFilter bsf = BandStackManager.GetFilter(BandStackManager.StringToBand(sBand));
@@ -40205,7 +40231,7 @@ namespace Thetis
 
                 if (bse != null)
                 {
-                    if (!frequency_only)
+                    if (!is_for_rx1_vfo_b)
                     {
                         RX2DSPMode = bse.Mode;
                         RX2Filter = bse.Filter;
@@ -46074,11 +46100,15 @@ namespace Thetis
 
             if (m_bHideBandstackWindowOnSelect && obeyHide) this.Invoke(new MethodInvoker(BandStack2Form.HideClose));
 
-            setBandFromBandStackEntry(bse);
+            setRX1BandFromBandStackEntry(bse);
             updateStackNumberDisplay(bsf);
         }
         private void OnBandBeforeChangeHandler(int rx, Band band)
         {
+            //[2.10.3.6]MW0LGE no band change on TX fix
+            if (MOX && rx == 1 && (VFOATX || (!rx2_enabled && VFOBTX))) return;
+            if (MOX && rx == 2 && VFOBTX) return;
+
             if (m_bSetBandRunning) return;
             if (rx != 1) return; // only used for RX1, RX2 uses SetupRX2Band
             if (!BandStackManager.Ready) return;
@@ -46172,12 +46202,15 @@ namespace Thetis
 
                 BandStack2Form.UpdateSelected();
 
-                setBandFromBandStackEntry(bse);
+                setRX1BandFromBandStackEntry(bse);
             }
             updateStackNumberDisplay(bsf);
         }
-        private void setBandFromBandStackEntry(in BandStackEntry bse)
+        private void setRX1BandFromBandStackEntry(in BandStackEntry bse)
         {
+            //[2.10.3.6]MW0LGE no band change on TX fix
+            if (MOX && (VFOATX || (!rx2_enabled && VFOBTX))) return;
+
             if (bse == null) return;
 
             NetworkIO.SendHighPriority(0);
