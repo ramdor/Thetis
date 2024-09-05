@@ -6356,7 +6356,6 @@ namespace Thetis
             private System.Drawing.Color _digitHighlightColour;
 
             private double _adjust_step;
-            //private bool _adjust_enabled;
             private bool _mouse_over_vfoB;
             private clsMeter _owningmeter;
             private DateTime _render_state_vfoA_change_time;
@@ -6403,7 +6402,6 @@ namespace Thetis
                 _bandColour = System.Drawing.Color.White;
                 _digitHighlightColour = System.Drawing.Color.FromArgb(128, 128, 128);
                 _adjust_step = 0;
-                //_adjust_enabled = false;
                 _owningmeter = owningmeter;
                 _mouse_over_vfoB = false;
 
@@ -6655,7 +6653,6 @@ namespace Thetis
             public override void MouseWheel(int number_of_moves)
             {
                 if (!MouseEntered) return;
-                //if (!_adjust_enabled) return;
 
                 int sign = Math.Sign(number_of_moves);
 
@@ -6664,38 +6661,21 @@ namespace Thetis
                     adjustVfo(sign * _adjust_step * 1e-6);
                 }));                
             }
-            //public override bool MouseButtonDown
-            //{
-            //    get
-            //    {
-            //        return base.MouseButtonDown;
-            //    }
-            //    set
-            //    {
-            //        if (!MouseEntered) return;
-            //        if (base.MouseButtonDown == value) return; // ignore same state
+            public void PopBandStack()
+            {
+                if (!MouseEntered) return;
+                if (_owningmeter.RX != 1) return; // only for rx1, vfoa right now
 
-            //        if (value && _adjust_enabled)
-            //        {
-            //            if (MouseButton == MouseButtons.Left)
-            //            {
-            //                _console.BeginInvoke(new MethodInvoker(() =>
-            //                {
-            //                    adjustVfo(_adjust_step * 1e-6);
-            //                }));                            
-            //            }
-            //            else if (MouseButton == MouseButtons.Right)
-            //            {
-            //                _console.BeginInvoke(new MethodInvoker(() =>
-            //                {
-            //                    adjustVfo(-_adjust_step * 1e-6);
-            //                }));                            
-            //            }
-            //        }
+                if (_console != null)
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {                        
+                        _console.PopupBandstack(_owningmeter.RX, _owningmeter.BandVfoA, MeterManager.IsOnTop(_owningmeter.ID));
+                    }));
+                }
 
-            //        base.MouseButtonDown = value;
-            //    }
-            //}
+                _long_press_released = true;
+            }
             public override void MouseDown(MouseEventArgs e)
             {
                 if (!MouseEntered) return;
@@ -7236,11 +7216,6 @@ namespace Thetis
                 get { return _adjust_step; }
                 set { _adjust_step = value; }
             }
-            //public bool VfoAdjustEnabled
-            //{
-            //    get { return _adjust_enabled; }
-            //    set { _adjust_enabled = value; }
-            //}
             public bool MouseOverVfoB
             {
                 get { return _mouse_over_vfoB; }
@@ -22701,14 +22676,20 @@ namespace Thetis
 
                         if (left)
                         {
-                            button_state_vfoA = clsVfoDisplay.buttonState.BAND_SCREEN;
-                            left = false;
+                            if (vfo.MouseButtonDown && vfo.MouseDownLong) 
+                                vfo.PopBandStack();
+                            else
+                                button_state_vfoA = clsVfoDisplay.buttonState.BAND_SCREEN;
+                            left = false;                            
                         }
-                        if (right)
-                        {
-                            button_state_vfoB = clsVfoDisplay.buttonState.BAND_SCREEN;
-                            right = false;
-                        }
+                        //if (right) // ignore vfoB for now
+                        //{
+                        //    if (vfo.MouseButtonDown && vfo.MouseDownLong)
+                        //        vfo.PopBandStack();
+                        //    else
+                        //        button_state_vfoB = clsVfoDisplay.buttonState.BAND_SCREEN;
+                        //    right = false;                            
+                        //}
                     }
                     // mode
                     if (my >= 0.555 && my <= 0.900 && (((mx >= 0.008 && mx <= 0.078) & left) || ((mx >= 0.008 + shift && mx <= 0.078 + shift) & right)))
