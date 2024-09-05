@@ -4,7 +4,7 @@
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
-## Join us on Discord : https://discord.gg/6fHCRKnDc9
+## Join us on Discord for active test builds and much more : https://discord.gg/6fHCRKnDc9
 
 ## v2.10.3.6 Change Log - WIP dev_9
 - [add] total re-work of database management. There is now a database manager. See video : https://youtu.be/pwe3bd-tkGY
@@ -20,12 +20,13 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] antenna switch box meter item
 - [add] %precis=N% can be used on text overlay so specify precision for any floating point variable on that line. %precis=2%%signal_strength%  will show -73.49 for example
 - [add] small digits colour for vfo item
-- [add] new legacy items tab in setup->Appearance->Legacy Items to hide old legacy items
+- [add] new legacy items tab in setup->Appearance->Legacy Items to hide some of the old legacy items
 - [add] vfo meter item option can ne used to show band text
 - [add] some new variables added to text overlay, including band text for vfoa/b
 - [add] NR2. Additional setting T2 that will aid with weaker signal clarity when using Trained model. Lower setting of T2 will prevent blocking of very weak signals at the cost of a slight increase in noise. -NR0V
 - [add] added lock+vfo sync to vfo meter items. Colour can be changed for these in options
-- [add] cords are displayed on meter container drag/resize. Use ctrl to lock to 10 pixel steps when moving/resizing
+- [add] cords are displayed on meter container drag/resize. Use ctrl to lock to 10 pixel steps when moving/resizing for easier alignment
+- [add] long mouse click (>= 1 second) on a kHz value in a vfo control will show tune step options, much like an Icom
 - [change] meter container borders have been reduced
 - [change] importing a db with meter containers will no longer clear existing ones, they will be added if possible
 - [change] filter setup form now stores/recalls location

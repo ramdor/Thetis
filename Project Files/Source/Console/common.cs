@@ -1001,22 +1001,22 @@ namespace Thetis
                 doubleBufferPropertyInfo.SetValue(control, enabled, null);
             }
 
-            // Use reflection to call the protected method SetStyle
-            MethodInfo setStyleMethod = control.GetType().GetMethod("SetStyle", BindingFlags.Instance | BindingFlags.NonPublic);
-            if (setStyleMethod != null)
-            {
-                setStyleMethod.Invoke(control, new object[] { ControlStyles.OptimizedDoubleBuffer, enabled });
-                setStyleMethod.Invoke(control, new object[] { ControlStyles.AllPaintingInWmPaint, enabled });
-                //setStyleMethod.Invoke(control, new object[] { ControlStyles.UserPaint, enabled });
-                setStyleMethod.Invoke(control, new object[] { ControlStyles.ResizeRedraw, enabled });
-            }
+            //// Use reflection to call the protected method SetStyle
+            //MethodInfo setStyleMethod = control.GetType().GetMethod("SetStyle", BindingFlags.Instance | BindingFlags.NonPublic);
+            //if (setStyleMethod != null)
+            //{
+            //    setStyleMethod.Invoke(control, new object[] { ControlStyles.OptimizedDoubleBuffer, enabled });
+            //    setStyleMethod.Invoke(control, new object[] { ControlStyles.AllPaintingInWmPaint, enabled });
+            //    //setStyleMethod.Invoke(control, new object[] { ControlStyles.UserPaint, enabled });
+            //    setStyleMethod.Invoke(control, new object[] { ControlStyles.ResizeRedraw, enabled });
+            //}
 
-            // Apply the style settings to the control
-            MethodInfo updateStylesMethod = control.GetType().GetMethod("UpdateStyles", BindingFlags.Instance | BindingFlags.NonPublic);
-            if (updateStylesMethod != null)
-            {
-                updateStylesMethod.Invoke(control, null);
-            }
+            //// Apply the style settings to the control
+            //MethodInfo updateStylesMethod = control.GetType().GetMethod("UpdateStyles", BindingFlags.Instance | BindingFlags.NonPublic);
+            //if (updateStylesMethod != null)
+            //{
+            //    updateStylesMethod.Invoke(control, null);
+            //}
         }
 
 		public static int FiveDigitHash(string str)
