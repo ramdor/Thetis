@@ -22682,14 +22682,14 @@ namespace Thetis
                                 button_state_vfoA = clsVfoDisplay.buttonState.BAND_SCREEN;
                             left = false;                            
                         }
-                        //if (right) // ignore vfoB for now
-                        //{
-                        //    if (vfo.MouseButtonDown && vfo.MouseDownLong)
-                        //        vfo.PopBandStack();
-                        //    else
-                        //        button_state_vfoB = clsVfoDisplay.buttonState.BAND_SCREEN;
-                        //    right = false;                            
-                        //}
+                        if (right) 
+                        {
+                            //if (vfo.MouseButtonDown && vfo.MouseDownLong) // ignore vfoB for now
+                            //    vfo.PopBandStack();
+                            //else
+                            button_state_vfoB = clsVfoDisplay.buttonState.BAND_SCREEN;
+                            right = false;
+                        }
                     }
                     // mode
                     if (my >= 0.555 && my <= 0.900 && (((mx >= 0.008 && mx <= 0.078) & left) || ((mx >= 0.008 + shift && mx <= 0.078 + shift) & right)))
