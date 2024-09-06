@@ -45957,7 +45957,7 @@ namespace Thetis
             if (!BandStackManager.Ready) return;
             BandStackEntry bse = bsf.LastVisited.Copy(true);// take copy of the last visited data, with a new guid
 
-            if (m_bIgnoreFrequencyDupes && bsf.FindForFrequency(bse.Frequency) != null) return; // ignore if we have this frequency already
+            if (m_bIgnoreFrequencyDupes && bsf.FindEntriesForFrequency(bse.Frequency).Count > 0) return; // ignore if we have this frequency already
 
             BandStackManager.AddEntry(bse);
             bsf.GenerateFilteredList(false);

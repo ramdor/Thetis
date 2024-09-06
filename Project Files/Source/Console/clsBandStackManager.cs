@@ -357,11 +357,20 @@ namespace Thetis
 
             if (bCheckForFreqDupe)
             {
-                BandStackEntry possibleDupeBse = FindForFrequency(m_lastVisited.Frequency);
-                if(possibleDupeBse != null)
+                //BandStackEntry possibleDupeBse = FindEntriesForFrequency(m_lastVisited.Frequency);
+                //if(possibleDupeBse != null)
+                //{
+                //    int nDupe = IndexFromGUID(possibleDupeBse.GUID);
+                //    if (nDupe != -1 && nDupe != m_nCurrentlySelectedIndex) return bRet; // abort if there is an entry that has the same frequency at a different index
+                //}
+                List<BandStackEntry> entries = FindEntriesForFrequency(m_lastVisited.Frequency);
+                if (entries.Count > 0)
                 {
-                    int nDupe = IndexFromGUID(possibleDupeBse.GUID);
-                    if (nDupe != -1 && nDupe != m_nCurrentlySelectedIndex) return bRet; // abort if there is an entry that has the same frequency at a different index
+                    foreach (BandStackEntry entry in entries)
+                    {
+                        int index = IndexFromGUID(entry.GUID);
+                        if (index != -1 && index != m_nCurrentlySelectedIndex) return false;// abort if there is an entry that has the same frequency at a different index
+                    }
                 }
             }
 
@@ -564,18 +573,25 @@ namespace Thetis
                 return null;
         }
 
-        public BandStackEntry FindForFrequency(double frequency)
+        public List<BandStackEntry> FindEntriesForFrequency(double frequency)
         {
-            BandStackEntry bse = null;
+            //BandStackEntry bse = null;
             IEnumerable<BandStackEntry> data = from item in m_lstFilteredList
                                                where item.Frequency == frequency
                                                select item;
-            if (data.Count() == 1)
-            {
-                bse = data.First();
-            }
+            //if (data.Count() == 1)
+            //{
+            //    bse = data.First();
+            //}
 
-            return bse;
+            //return bse;
+
+            List<BandStackEntry> bse_list = new List<BandStackEntry>();
+            foreach(BandStackEntry bse in data)
+            {
+                bse_list.Add(bse.Copy(false));
+            }
+            return bse_list;
         }
         public List<BandStackEntry> FindForFrequencyRange(double frequencyLow, double frequencyHigh)
         {
