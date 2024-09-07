@@ -1606,32 +1606,32 @@ namespace Thetis
 
             tune_step_list = new List<TuneStep>
             {
-                new TuneStep(1, "1Hz"),
-                new TuneStep(2, "2Hz"),
-                new TuneStep(10, "10Hz"),
-                new TuneStep(25, "25Hz"),
-                new TuneStep(50, "50Hz"),
-                new TuneStep(100, "100Hz"),
-                new TuneStep(250, "250Hz"),
-                new TuneStep(500, "500Hz"),
-                new TuneStep(1000, "1kHz"),
-                new TuneStep(2000, "2kHz"),
-                new TuneStep(2500, "2.5kHz"),
-                new TuneStep(5000, "5kHz"),
-                new TuneStep(6250, "6.25kHz"),
-                new TuneStep(9000, "9kHz"),
-                new TuneStep(10000, "10kHz"),
-                new TuneStep(12500, "12.5kHz"),
-                new TuneStep(15000, "15kHz"),
-                new TuneStep(20000, "20kHz"),
-                new TuneStep(25000, "25kHz"),
-                new TuneStep(30000, "30kHz"),
-                new TuneStep(50000, "50kHz"),
-                new TuneStep(100000, "100kHz"),
-                new TuneStep(250000, "250kHz"),
-                new TuneStep(500000, "500kHz"),
-                new TuneStep(1000000, "1MHz"),
-                new TuneStep(10000000, "10MHz")
+                new TuneStep(1, "1Hz"),//0
+                new TuneStep(2, "2Hz"),//1
+                new TuneStep(10, "10Hz"),//2
+                new TuneStep(25, "25Hz"),//3
+                new TuneStep(50, "50Hz"),//4
+                new TuneStep(100, "100Hz"),//5
+                new TuneStep(250, "250Hz"),//6
+                new TuneStep(500, "500Hz"),//7
+                new TuneStep(1000, "1kHz"),//8
+                new TuneStep(2000, "2kHz"),//9
+                new TuneStep(2500, "2.5kHz"),//10
+                new TuneStep(5000, "5kHz"),//11
+                new TuneStep(6250, "6.25kHz"),//12
+                new TuneStep(9000, "9kHz"),//13
+                new TuneStep(10000, "10kHz"),//14
+                new TuneStep(12500, "12.5kHz"),//15
+                new TuneStep(15000, "15kHz"),//16
+                new TuneStep(20000, "20kHz"),//17
+                new TuneStep(25000, "25kHz"),//18
+                new TuneStep(30000, "30kHz"),//19
+                new TuneStep(50000, "50kHz"),//20
+                new TuneStep(100000, "100kHz"),//21
+                new TuneStep(250000, "250kHz"),//22
+                new TuneStep(500000, "500kHz"),//23
+                new TuneStep(1000000, "1MHz"),//24
+                new TuneStep(10000000, "10MHz")//25
 
             };  // initialize wheel tuning list array
 
@@ -27730,6 +27730,13 @@ namespace Thetis
         }
         public string PAProfile
         {
+            get
+            {
+                if (IsSetupFormNull)
+                    return "";
+                else
+                    return SetupForm.PAProfileName;
+            }
             set { lblPAProfile.Text = "PA Profile: " + value; }
         }
         private void ptbPWR_MouseUp(object sender, MouseEventArgs e)
@@ -45625,6 +45632,8 @@ namespace Thetis
 
         public delegate void TuneStepIndexChanged(int rx, int old_index, int new_index);
 
+        public delegate void PAProfileNameChanged(string old_profile_name, string new_profile_name);
+
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
@@ -45700,6 +45709,8 @@ namespace Thetis
         public VFOSyncChanged VFOSyncChangedHandlers;
 
         public TuneStepIndexChanged TuneStepIndexChangedHandlers;
+
+        public PAProfileNameChanged PAProfileNameChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected

@@ -703,6 +703,12 @@
     <Compile Include="ucQuickRecall.Designer.cs">
       <DependentUpon>ucQuickRecall.cs</DependentUpon>
     </Compile>
+    <Compile Include="ucTunestepOptionsGrid.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucTunestepOptionsGrid.Designer.cs">
+      <DependentUpon>ucTunestepOptionsGrid.cs</DependentUpon>
+    </Compile>
     <Compile Include="ucVARGrapher.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1017,6 +1023,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ucQuickRecall.resx">
       <DependentUpon>ucQuickRecall.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucTunestepOptionsGrid.resx">
+      <DependentUpon>ucTunestepOptionsGrid.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ucVARGrapher.resx">
       <DependentUpon>ucVARGrapher.cs</DependentUpon>

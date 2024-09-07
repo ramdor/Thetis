@@ -206,6 +206,7 @@ namespace Thetis
         FILTER_BUTTONS,
         ANTENNA_BUTTONS,
         HISTORY,
+        TUNESTEP_BUTTONS,
         //SPECTRUM,
         LAST
     }
@@ -459,6 +460,8 @@ namespace Thetis
                     case "bandtext_vfob":
                     case "nf_1":
                     case "nf_2":
+                    case "tune_step":
+                    case "pa_profile":
                         bRet = true;
                         break;
                 }
@@ -644,6 +647,12 @@ namespace Thetis
                     case "nf_2":
                         _readings_text_objects[key] = _console.LastNFRX2;
                         break;
+                    case "tune_step":
+                        returnTuneStep(key);
+                        break;
+                    case "pa_profile":
+                        returnPAProfile(key);
+                        break;
                 }
 
                 if (_readings_text_objects.ContainsKey(key))
@@ -655,6 +664,28 @@ namespace Thetis
                         return "";
                 }
                 return "";
+            }
+            public void returnTuneStep(string key)
+            {
+                if (_console != null)
+                {
+                    try
+                    {
+                        _readings_text_objects[key] = _console.TuneStepList[_console.TuneStepIndex].Name;
+                    }
+                    catch { }
+                }
+            }
+            public void returnPAProfile(string key)
+            {
+                if (_console != null)
+                {
+                    try
+                    {
+                        _readings_text_objects[key] = _console.PAProfile;
+                    }
+                    catch { }
+                }
             }
             public void UpdateReadings(string text)
             {
@@ -728,6 +759,8 @@ namespace Thetis
                 addReadingText("bandtext_vfob", text);
                 addReadingText("nf_1", text);
                 addReadingText("nf_2", text);
+                addReadingText("tune_step", text);
+                addReadingText("pa_profile", text);
             }
             private void addReading(Reading reading, string text)
             {
@@ -1525,6 +1558,7 @@ namespace Thetis
                 case MeterType.FILTER_BUTTONS: return 2;
                 case MeterType.ANTENNA_BUTTONS: return 2;
                 case MeterType.HISTORY: return 2;
+                case MeterType.TUNESTEP_BUTTONS: return 2;
                     //case MeterType.SPECTRUM: return 2;
             }
 
@@ -1571,6 +1605,7 @@ namespace Thetis
                 case MeterType.VFO_DISPLAY: return "Vfo Display";
                 case MeterType.CLOCK: return "Clock";
                 case MeterType.HISTORY: return "History Graph";
+                case MeterType.TUNESTEP_BUTTONS: return "Tunestep Buttons";
             }
 
             return meter.ToString();
@@ -2442,6 +2477,7 @@ namespace Thetis
                     clsMeter m = ms.Value;
 
                     m.TuneStepIndex = new_index;
+                    m.TuneStepIndexChanged(old_index, new_index);
                 }
             }
         }
@@ -4010,7 +4046,8 @@ namespace Thetis
                 BAND_BUTTONS,
                 MODE_BUTTONS,
                 FILTER_BUTTONS,
-                ANTENNA_BUTTONS
+                ANTENNA_BUTTONS,
+                TUNESTEP_BUTTONS
                 //SPECTRUM
             }
 
@@ -4503,6 +4540,10 @@ namespace Thetis
             {
 
             }
+            public virtual void TuneStepIndexChanged(int old_index, int new_index)
+            {
+
+            }
         }
         //
         internal class clsItemGroup : clsMeterItem
@@ -4920,6 +4961,155 @@ namespace Thetis
                     base.HeightRatio = value;
                     setupButtons();
                 }
+            }
+        }
+        internal class clsTunestepButtons : clsButtonBox
+        {
+            private clsMeter _owningmeter;
+            private int _button_bits;
+            private clsItemGroup _ig;
+            public clsTunestepButtons(clsMeter owningmeter, clsItemGroup ig)
+            {
+                _owningmeter = owningmeter;
+                _ig = ig;
+
+                ItemType = MeterItemType.TUNESTEP_BUTTONS;
+
+                base.Buttons = _console.TuneStepList.Count;
+                VisibleBits = (1 << 10) - 1; //1023, 10 bits
+            }
+            public override int VisibleBits
+            {
+                get
+                {
+                    return _button_bits;
+                }
+                set
+                {
+                    _button_bits = value;
+                    for (int n = 0; n < Buttons; n++)
+                    {
+                        SetVisible(0, n, (_button_bits & (1 << n)) != 0);
+                    }
+                    setupButtons();
+                }
+            }
+            private void setupButtons()
+            {
+                if (!RebuildButtons) return;
+
+                // copy from 0 to 1. 0 is settings bank, 1 is where renderer reads from
+                for (int i = 0; i < Buttons; i++)
+                {
+                    SetText(1, i, _console.TuneStepList[i].Name.Replace("Hz", ""));//GetText(0, i));
+                    SetFontColour(1, i, GetFontColour(0, i));
+                    SetFontFamily(1, i, GetFontFamily(0, i));
+                    SetFontSize(1, i, GetFontSize(0, i));
+                    SetFontStyle(1, i, GetFontStyle(0, i));
+                    SetUseIndicator(1, i, GetUseIndicator(0, i));
+                    SetOnColour(1, i, GetOnColour(0, i));
+                    SetOffColour(1, i, GetOffColour(0, i));
+                    SetIndicatorWidth(1, i, GetIndicatorWidth(0, i));
+                    SetEnabled(1, i, true);
+                    SetVisible(1, i, GetVisible(0, i));
+                    SetOn(1, i, false);
+
+                    SetFillColour(1, i, GetFillColour(0, i));
+                    SetHoverColour(1, i, GetHoverColour(0, i));
+                    SetBorderColour(1, i, GetBorderColour(0, i));
+
+                    SetUseOffColour(1, i, GetUseOffColour(0, i));
+
+                    SetIndicatorType(1, i, GetIndicatorType(0, i));
+                }
+
+                SetOn(1, _console.TuneStepIndex, true);
+
+                //
+
+                int total_buttons = 0;
+                for (int i = 0; i < Buttons; i++)
+                {
+                    if (GetVisible(1, i)) total_buttons++;
+                }
+
+                int rows = total_buttons / Columns;
+                int overflow = total_buttons % Columns;
+                if (overflow > 0) rows++;
+
+                float half_border = Border / 2f;
+                float button_width = ((1f - (0.02f * 2f)) / (float)Columns) - Margin - Border;
+                float button_height = ((1f - (0.02f * 2f)) / (float)Columns) * HeightRatio;
+
+                float height = button_height * (float)rows;
+
+                Size = new SizeF(Size.Width, height);
+
+                float fPadY = 0.05f;
+                float fHeight = 0.05f;
+                _ig.Size = new SizeF(_ig.Size.Width, height + (fPadY - (fHeight * 0.75f)));
+                _owningmeter.Rebuild();
+            }
+            public override int Columns
+            {
+                get { return base.Columns; }
+                set
+                {
+                    base.Columns = value;
+                    setupButtons();
+                }
+            }
+            public override float Border
+            {
+                get { return base.Border; }
+                set
+                {
+                    base.Border = value;
+                    setupButtons();
+                }
+            }
+            public override float Margin
+            {
+                get { return base.Margin; }
+                set
+                {
+                    base.Margin = value;
+                    setupButtons();
+                }
+            }
+            public override float Radius
+            {
+                get { return base.Radius; }
+                set
+                {
+                    base.Radius = value;
+                    setupButtons();
+                }
+            }
+            public override float HeightRatio
+            {
+                get { return base.HeightRatio; }
+                set
+                {
+                    base.HeightRatio = value;
+                    setupButtons();
+                }
+            }
+            public override void MouseUp(MouseEventArgs e)
+            {
+                if (_console == null) return;
+
+                int index = base.ButtonIndex;
+                if (index == -1) return;
+
+                _console.BeginInvoke(new MethodInvoker(() =>
+                {
+                    _console.TuneStepIndex = index;
+                }));
+            }
+            public override void TuneStepIndexChanged(int old_index, int new_index)
+            {
+                setupButtons();
             }
         }
         internal class clsAntennaButtonBox : clsButtonBox
@@ -11732,7 +11922,8 @@ namespace Thetis
                     case MeterType.DATA_OUT: ret = Reading.NONE.ToString(); break;
                     case MeterType.ROTATOR: ret = variable_index == 0 ? Reading.AZ.ToString() : Reading.ELE.ToString(); break;
                     case MeterType.HISTORY: ret = variable_index == 0 ? "Left Axis" : "Right Axis"; break;
-                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg).ToString(); break; break.ToString(); break;
+                    case MeterType.TUNESTEP_BUTTONS: ret = Reading.NONE.ToString(); break;
+                        //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg).ToString(); break; break.ToString(); break;
                 }
                 return ret;
             }
@@ -11777,6 +11968,7 @@ namespace Thetis
                     case MeterType.FILTER_BUTTONS: return 0;
                     case MeterType.ANTENNA_BUTTONS: return 0;
                     case MeterType.HISTORY: return 2;
+                    case MeterType.TUNESTEP_BUTTONS: return 0;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return 0;
@@ -11827,6 +12019,7 @@ namespace Thetis
                     case MeterType.FILTER_BUTTONS: AddFilterButtons(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.ANTENNA_BUTTONS: AddAntennaButtons(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.TUNESTEP_BUTTONS: AddTunestepButtons(nDelay, 0, out bBottom, restoreIg); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
@@ -14375,6 +14568,40 @@ namespace Thetis
 
                 return bb.ID;
             }
+            public string AddTunestepButtons(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsTunestepButtons bb = new clsTunestepButtons(this, ig);
+                bb.ParentID = ig.ID;
+
+                bb.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
+                bb.Size = new SizeF(1f - _fPadX * 2f, 1f);
+
+                bb.ZOrder = 1;
+                bb.Columns = 3;
+                bb.Margin = 0.005f;
+                bb.Radius = 0.01f;
+                bb.HeightRatio = 0.5f;
+                bb.Border = 0.005f;
+                addMeterItem(bb);
+
+                fBottom = bb.TopLeft.Y + bb.Size.Height;
+
+                ig.TopLeft = bb.TopLeft;
+                ig.Size = new SizeF(bb.Size.Width, fBottom);
+                ig.MeterType = MeterType.TUNESTEP_BUTTONS;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return bb.ID;
+            }
             public string AddVFODisplay(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
@@ -14727,6 +14954,20 @@ namespace Thetis
                         clsMeterItem mi = (clsMeterItem)mis.Value;
 
                         mi.ModeChanged(oldMode, newMode);
+                    }
+                }
+            }
+            public void TuneStepIndexChanged(int old_index, int new_index)
+            {
+                if (_console == null) return;
+
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                    {
+                        clsMeterItem mi = (clsMeterItem)mis.Value;
+
+                        mi.TuneStepIndexChanged(old_index, new_index);
                     }
                 }
             }
@@ -15106,6 +15347,7 @@ namespace Thetis
                                         }
                                     }
                                     break;
+                                case MeterType.TUNESTEP_BUTTONS:
                                 case MeterType.ANTENNA_BUTTONS:
                                 case MeterType.FILTER_BUTTONS:
                                 case MeterType.MODE_BUTTONS:
@@ -15118,6 +15360,9 @@ namespace Thetis
                                         clsMeterItem.MeterItemType mit = clsMeterItem.MeterItemType.BASE;
                                         switch (mt)
                                         {
+                                            case MeterType.TUNESTEP_BUTTONS:
+                                                mit = clsMeterItem.MeterItemType.TUNESTEP_BUTTONS;
+                                                break;
                                             case MeterType.ANTENNA_BUTTONS:
                                                 mit = clsMeterItem.MeterItemType.ANTENNA_BUTTONS;
                                                 break;
@@ -15177,7 +15422,11 @@ namespace Thetis
                                             bb.FontShiftX = igs.GetSetting<float>("buttonbox_font_shift_x", true, -0.25f, 0.25f, 0f);
                                             bb.FontShiftY = igs.GetSetting<float>("buttonbox_font_shift_y", true, -0.25f, 0.25f, 0f);
 
-                                            if (mt == MeterType.ANTENNA_BUTTONS)
+                                            if(mt == MeterType.TUNESTEP_BUTTONS)
+                                            {                                                
+                                                bb.VisibleBits = igs.GetSetting<int>("buttonbox_tunestep_bitfield", true, 0, int.MaxValue, 0);
+                                            }
+                                            else if (mt == MeterType.ANTENNA_BUTTONS)
                                             {
                                                 int bits = 0;
                                                 if (igs.GetSetting<bool>("buttonbox_rx1", false, false, false, true)) bits |= 1 << 0; // RX1
@@ -16163,6 +16412,7 @@ namespace Thetis
                                         }
                                     }
                                     break;
+                                case MeterType.TUNESTEP_BUTTONS:
                                 case MeterType.ANTENNA_BUTTONS:
                                 case MeterType.FILTER_BUTTONS:
                                 case MeterType.MODE_BUTTONS:
@@ -16171,6 +16421,9 @@ namespace Thetis
                                         clsMeterItem.MeterItemType mit = clsMeterItem.MeterItemType.BASE;
                                         switch (mt)
                                         {
+                                            case MeterType.TUNESTEP_BUTTONS:
+                                                mit = clsMeterItem.MeterItemType.TUNESTEP_BUTTONS;
+                                                break;
                                             case MeterType.ANTENNA_BUTTONS:
                                                 mit = clsMeterItem.MeterItemType.ANTENNA_BUTTONS;
                                                 break;
@@ -16218,7 +16471,11 @@ namespace Thetis
                                             igs.SetSetting<float>("buttonbox_font_shift_x", bb.FontShiftX);
                                             igs.SetSetting<float>("buttonbox_font_shift_y", bb.FontShiftY);
 
-                                            if (mt == MeterType.ANTENNA_BUTTONS)
+                                            if(mt == MeterType.TUNESTEP_BUTTONS)
+                                            {
+                                                igs.SetSetting<int>("buttonbox_tunestep_bitfield", bb.VisibleBits);
+                                            }
+                                            else if (mt == MeterType.ANTENNA_BUTTONS)
                                             {
                                                 int bits = bb.VisibleBits;
                                                 igs.SetSetting<bool>("buttonbox_rx1", (bits & (1 << 0)) != 0);
@@ -17316,7 +17573,8 @@ namespace Thetis
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.ANTENNA_BUTTONS ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.TUNESTEP_BUTTONS
                                                                 ) && ( ((mox && o.Value.OnlyWhenTX) || (!mox && o.Value.OnlyWhenRX)) || (!o.Value.OnlyWhenTX && !o.Value.OnlyWhenRX) ) ))
                     {
                         clsMeterItem mi = kvp.Value;
@@ -19002,10 +19260,11 @@ namespace Thetis
                                     case clsMeterItem.MeterItemType.SIGNAL_TEXT_DISPLAY:
                                         renderSignalTextDisplay(rect, mi, m);
                                         break;
+                                    case clsMeterItem.MeterItemType.TUNESTEP_BUTTONS:
                                     case clsMeterItem.MeterItemType.ANTENNA_BUTTONS:
                                     case clsMeterItem.MeterItemType.FILTER_BUTTONS:
                                     case clsMeterItem.MeterItemType.MODE_BUTTONS:
-                                    case clsMeterItem.MeterItemType.BAND_BUTTONS:
+                                    case clsMeterItem.MeterItemType.BAND_BUTTONS:                                    
                                         renderButtonBox(rect, mi, m);
                                         break;                                    
                                     //case clsMeterItem.MeterItemType.SPECTRUM:
