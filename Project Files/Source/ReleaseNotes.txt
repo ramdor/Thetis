@@ -39,6 +39,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] exporting a tx profile no longer exports schema for non tx profile tables
 - [fix] fixed issue where a bandstack entry could be duped if ignore dupe was turned on after there were duplicated frequencies in the stack already
 - [fix] dragging a container on the RX# in the titlebar would cause a jump/offset from the mouse pointer
+- [fix] band change is prevented in most cases when in the middle of TX. Split/Swap/TX is not prevented, so beware
 
 ## v2.10.3.6 Change Log - WIP dev_8b
 - [fix] rx att + tx att was being used in dup display, leading to incorrect display. Fixed
