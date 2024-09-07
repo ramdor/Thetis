@@ -25775,6 +25775,7 @@ namespace Thetis
                 // ignore some things [2.10.1.0] MW0LGE - fixes issue where bar with change units is paste into new bar, and source bars have no sub indicator
                 MeterManager.clsIGSettings currentSettings = m.GetSettingsForMeterGroup(mt, mtci.Order);
 
+                // prevent overwrite of the following
                 _itemGroupSettings.Unit = currentSettings.Unit;
 
                 if (!_itemGroupSettings.SubIndicators)
@@ -25783,6 +25784,24 @@ namespace Thetis
                     _itemGroupSettings.ShowSubMarker = currentSettings.ShowMarker;
                     _itemGroupSettings.ShowSubMarker = currentSettings.ShowSubMarker;
                     _itemGroupSettings.SubMarkerColour = currentSettings.SubMarkerColour;
+                }
+
+                if(mt == MeterType.TUNESTEP_BUTTONS)
+                {
+                    _itemGroupSettings.SetSetting<int>("buttonbox_tunestep_bitfield", currentSettings.GetSetting<int>("buttonbox_tunestep_bitfield", true, 0, int.MaxValue, 0));
+                }
+                else if (mt == MeterType.ANTENNA_BUTTONS)
+                {
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_rx1", currentSettings.GetSetting<bool>("buttonbox_rx1", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_rx2", currentSettings.GetSetting<bool>("buttonbox_rx2", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_rx3", currentSettings.GetSetting<bool>("buttonbox_rx3", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_tx1", currentSettings.GetSetting<bool>("buttonbox_tx1", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_tx2", currentSettings.GetSetting<bool>("buttonbox_tx2", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_tx3", currentSettings.GetSetting<bool>("buttonbox_tx3", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_byp", currentSettings.GetSetting<bool>("buttonbox_byp", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_ext1", currentSettings.GetSetting<bool>("buttonbox_ext1", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_xvtr", currentSettings.GetSetting<bool>("buttonbox_xvtr", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_rxtxant", currentSettings.GetSetting<bool>("buttonbox_rxtxant", false, false, false, true));
                 }
                 //
 
@@ -25807,7 +25826,8 @@ namespace Thetis
                 mt == MeterType.ANANMM || mt == MeterType.SIGNAL_TEXT ||
                 mt == MeterType.SPACER || mt == MeterType.TEXT_OVERLAY ||
                 mt == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
-                mt == MeterType.VFO_DISPLAY || mt == MeterType.CLOCK)
+                mt == MeterType.VFO_DISPLAY || mt == MeterType.CLOCK
+                )
             {
                 bPaste = _itemGroupSettingsMeterType == mt;
             }
@@ -25815,7 +25835,8 @@ namespace Thetis
                 _itemGroupSettingsMeterType == MeterType.ANANMM || _itemGroupSettingsMeterType == MeterType.SIGNAL_TEXT ||
                 _itemGroupSettingsMeterType == MeterType.SPACER || _itemGroupSettingsMeterType == MeterType.TEXT_OVERLAY ||
                 _itemGroupSettingsMeterType == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
-                _itemGroupSettingsMeterType == MeterType.VFO_DISPLAY || _itemGroupSettingsMeterType == MeterType.CLOCK)
+                _itemGroupSettingsMeterType == MeterType.VFO_DISPLAY || _itemGroupSettingsMeterType == MeterType.CLOCK
+                )
             {
                 bPaste = mt == _itemGroupSettingsMeterType;
             }
