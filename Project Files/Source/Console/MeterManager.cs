@@ -18678,7 +18678,7 @@ namespace Thetis
                 set
                 {
                     int tmp = value;
-                    if (tmp < 100) tmp = 100; //see resize drag in ucmeter control
+                    if (tmp < ucMeter.MIN_CONTAINER_WIDTH) tmp = ucMeter.MIN_CONTAINER_WIDTH; //see resize drag in ucmeter control
 
                     _targetWidth = tmp;
                     
@@ -18694,7 +18694,7 @@ namespace Thetis
                 set
                 {
                     int tmp = value;
-                    if (tmp < 32) tmp = 32; //see resize drag in ucmeter control
+                    if (tmp < ucMeter.MIN_CONTAINER_HEIGHT) tmp = ucMeter.MIN_CONTAINER_HEIGHT; //see resize drag in ucmeter control
 
                     _targetHeight = tmp;
                 }
@@ -19196,7 +19196,7 @@ namespace Thetis
                 int nRedrawDelay = int.MaxValue;
                 clsMeter m = _meter;
 
-                height = 32; // min height, taken from frmMeterDisplay
+                height = ucMeter.MIN_CONTAINER_HEIGHT; // min height, taken from ucMeter
 
                 lock (m._meterItemsLock)
                 {
