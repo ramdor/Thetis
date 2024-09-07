@@ -4,7 +4,7 @@
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
-## Join us on Discord for active test builds and much more : https://discord.gg/6fHCRKnDc9
+## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
 ## v2.10.3.6 Change Log - WIP dev_9
 - [add] total re-work of database management. There is now a database manager. See video : https://youtu.be/pwe3bd-tkGY
@@ -22,11 +22,14 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] small digits colour for vfo item
 - [add] new legacy items tab in setup->Appearance->Legacy Items to hide some of the old legacy items
 - [add] vfo meter item option can ne used to show band text
-- [add] some new variables added to text overlay, including band text for vfoa/b
+- [add] some new variables added to text overlay, including band text for vfoa/b, noise floor for rx1/2, tune step text, pa profile text
 - [add] NR2. Additional setting T2 that will aid with weaker signal clarity when using Trained model. Lower setting of T2 will prevent blocking of very weak signals at the cost of a slight increase in noise. -NR0V
 - [add] added lock+vfo sync to vfo meter items. Colour can be changed for these in options
 - [add] cords are displayed on meter container drag/resize. Use ctrl to lock to 10 pixel steps when moving/resizing for easier alignment
 - [add] long mouse click (>= 1 second) on a kHz value in a vfo control will show tune step options, much like an Icom
+- [add] long mouse click (>= 1 second) on the rx1 band vfoA in a vfo control will show bandstack
+- [add] new tune step button box as a meter item
+- [add] new history graph item to show data over time
 - [change] meter container borders have been reduced
 - [change] importing a db with meter containers will no longer clear existing ones, they will be added if possible
 - [change] filter setup form now stores/recalls location
@@ -34,6 +37,9 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] import of container locations now works when importing a database
 - [fix] fixed issue where a meter container would re-appear if console was minimised and then restored and that container had been docked at some point
 - [fix] exporting a tx profile no longer exports schema for non tx profile tables
+- [fix] fixed issue where a bandstack entry could be duped if ignore dupe was turned on after there were duplicated frequencies in the stack already
+- [fix] dragging a container on the RX# in the titlebar would cause a jump/offset from the mouse pointer
+- [fix] band change is prevented in most cases when in the middle of TX. Split/Swap/TX is not prevented, so beware
 
 ## v2.10.3.6 Change Log - WIP dev_8b
 - [fix] rx att + tx att was being used in dup display, leading to incorrect display. Fixed
