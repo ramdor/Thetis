@@ -24369,6 +24369,12 @@ namespace Thetis
                 igs.SetSetting<float>("history_min_1", (float)nudHistory_axis1_min.Value);
                 igs.SetSetting<float>("history_max_1", (float)nudHistory_axis1_max.Value);
 
+                igs.SetSetting<System.Drawing.Color>("history_colour_0", clrbtnHistory_colour_0.Color);
+                igs.SetSetting<System.Drawing.Color>("history_colour_1", clrbtnHistory_colour_1.Color);
+
+                igs.SetSetting<System.Drawing.Color>("history_colour_lines", clrbtnHistory_lines.Color);
+                igs.SetSetting<System.Drawing.Color>("history_colour_time", clrbtnHistory_time.Color);
+
                 igs.FadeOnRx = chkHistory_fade_rx.Checked;
                 igs.FadeOnTx = chkHistory_fade_tx.Checked;
             }
@@ -24815,6 +24821,12 @@ namespace Thetis
                 chkHistory_auto_1_scale.Checked = igs.GetSetting<bool>("history_auto_scale_1", false, false, false, true);
                 nudHistory_axis1_min.Value = (decimal)igs.GetSetting<float>("history_min_1", true, -10000f, 10000f, -150f);
                 nudHistory_axis1_max.Value = (decimal)igs.GetSetting<float>("history_max_1", true, -10000f, 10000f, 0f);
+
+                clrbtnHistory_colour_0.Color = igs.GetSetting<System.Drawing.Color>("history_colour_0", false, Color.Empty, Color.Empty, System.Drawing.Color.Red);
+                clrbtnHistory_colour_1.Color = igs.GetSetting<System.Drawing.Color>("history_colour_1", false, Color.Empty, Color.Empty, System.Drawing.Color.Yellow);
+
+                clrbtnHistory_lines.Color = igs.GetSetting<System.Drawing.Color>("history_colour_lines", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
+                clrbtnHistory_time.Color = igs.GetSetting<System.Drawing.Color>("history_colour_time", false, Color.Empty, Color.Empty, System.Drawing.Color.Gray);
 
                 chkHistory_fade_rx.Checked = igs.FadeOnRx;
                 chkHistory_fade_tx.Checked = igs.FadeOnTx;
@@ -30925,6 +30937,26 @@ namespace Thetis
         }
 
         private void ucTunestepOptionsGrid_buttons_checkbox_changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnHistory_colour_0_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnHistory_colour_1_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnHistory_lines_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnHistory_time_Changed(object sender, EventArgs e)
         {
             updateMeterType();
         }

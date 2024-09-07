@@ -8930,6 +8930,10 @@ namespace Thetis
             private float _padding;
             private float _vertical_ratio;
             private System.Drawing.Color _back_colour;
+            private System.Drawing.Color _axis0_colour;
+            private System.Drawing.Color _axis1_colour;
+            private System.Drawing.Color _lines_colour;
+            private System.Drawing.Color _time_colour;
             private int _keep_for;
 
             // convert to arrays at some point
@@ -8976,6 +8980,10 @@ namespace Thetis
                 _padding = 0.1f;
                 _vertical_ratio = 0.5f;
                 _back_colour = System.Drawing.Color.Black;
+                _axis0_colour = System.Drawing.Color.Red;
+                _axis1_colour = System.Drawing.Color.Yellow;
+                _lines_colour = System.Drawing.Color.White;
+                _time_colour = System.Drawing.Color.Gray;
                 _history_data_list_0 = new List<HistoryData>();
                 _history_data_list_1 = new List<HistoryData>();
                 _reading_0 = Reading.SIGNAL_STRENGTH;
@@ -9497,6 +9505,26 @@ namespace Thetis
             {
                 get { return _back_colour; }
                 set { _back_colour = value; }
+            }
+            public System.Drawing.Color LinesColour
+            {
+                get { return _lines_colour; }
+                set { _lines_colour = value; }
+            }
+            public System.Drawing.Color TimeColour
+            {
+                get { return _time_colour; }
+                set { _time_colour = value; }
+            }
+            public System.Drawing.Color Axis0Colour
+            {
+                get { return _axis0_colour; }
+                set { _axis0_colour = value; }
+            }
+            public System.Drawing.Color Axis1Colour
+            {
+                get { return _axis1_colour; }
+                set { _axis1_colour = value; }
             }
             public List<HistoryData> History0
             {
@@ -15319,6 +15347,12 @@ namespace Thetis
                                             his.Axis1MMIOGuid = igs.GetMMIOGuid(1);
                                             his.Axis1MMIOVariable = igs.GetMMIOVariable(1);
 
+                                            his.Axis0Colour = igs.GetSetting("history_colour_0", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Red);
+                                            his.Axis1Colour = igs.GetSetting("history_colour_1", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Yellow);
+
+                                            his.LinesColour = igs.GetSetting("history_colour_lines", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
+                                            his.TimeColour = igs.GetSetting("history_colour_time", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Gray);
+
                                             his.FadeOnRx = igs.FadeOnRx;
                                             his.FadeOnTx = igs.FadeOnTx;
 
@@ -16397,6 +16431,12 @@ namespace Thetis
                                             igs.SetMMIOVariable(0, his.Axis0MMIOVariable);
                                             igs.SetMMIOGuid(1, his.Axis1MMIOGuid);
                                             igs.SetMMIOVariable(1, his.Axis1MMIOVariable);
+
+                                            igs.SetSetting<System.Drawing.Color>("history_colour_0", his.Axis0Colour);
+                                            igs.SetSetting<System.Drawing.Color>("history_colour_1", his.Axis1Colour);
+
+                                            igs.SetSetting<System.Drawing.Color>("history_colour_lines", his.LinesColour);
+                                            igs.SetSetting<System.Drawing.Color>("history_colour_time", his.TimeColour);
 
                                             igs.FadeOnRx = his.FadeOnRx;
                                             igs.FadeOnTx = his.FadeOnTx;
@@ -20394,13 +20434,13 @@ namespace Thetis
                 float data_line_width = Math.Max(1f, w * 0.002f);
 
                 //x axis
-                _renderTarget.DrawLine(new RawVector2(x + half_spacer + quarter_spacer, y + h - spacer), new RawVector2(x + w - half_spacer - quarter_spacer, y + h - spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
+                _renderTarget.DrawLine(new RawVector2(x + half_spacer + quarter_spacer, y + h - spacer), new RawVector2(x + w - half_spacer - quarter_spacer, y + h - spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
 
                 //left y axis
-                _renderTarget.DrawLine(new RawVector2(x + spacer, y + quarter_spacer), new RawVector2(x + spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
+                _renderTarget.DrawLine(new RawVector2(x + spacer, y + quarter_spacer), new RawVector2(x + spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
 
                 //right y axis
-                _renderTarget.DrawLine(new RawVector2(x + w - spacer, y + quarter_spacer), new RawVector2(x + w - spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(System.Drawing.Color.White), axis_line_width);
+                _renderTarget.DrawLine(new RawVector2(x + w - spacer, y + quarter_spacer), new RawVector2(x + w - spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
 
                 int pixel_width = (int)(w - spacer * 2f);
 
@@ -20433,7 +20473,7 @@ namespace Thetis
                             {
                                 //right numbers
                                 float val = min1 + (i * number_step1);
-                                plotText(val.ToString("f1"), x + w - spacer + quarter_spacer, t_y, h, rect.Width, 11f, System.Drawing.Color.Yellow, 255, "Trebuchet MS", FontStyle.Regular, false, false, spacer);
+                                plotText(val.ToString("f1"), x + w - spacer + quarter_spacer, t_y, h, rect.Width, 11f, his.Axis1Colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, spacer);
                             }
 
                             //ticks/grid line
@@ -20441,7 +20481,7 @@ namespace Thetis
                             {
                                 t_y += (text_height / 4f);
                                 // right tick
-                                _renderTarget.DrawLine(new RawVector2(x + w - spacer, t_y), new RawVector2(x + w - half_spacer - quarter_spacer, t_y), getDXBrushForColour(System.Drawing.Color.Gray), data_line_width);
+                                _renderTarget.DrawLine(new RawVector2(x + w - spacer, t_y), new RawVector2(x + w - half_spacer - quarter_spacer, t_y), getDXBrushForColour(his.LinesColour, 96), data_line_width);
                             }
                         }
 
@@ -20460,7 +20500,7 @@ namespace Thetis
                             _renderTarget.DrawLine(
                             new RawVector2(last_x, base_y - last_y1),
                             new RawVector2(end_x, base_y - end_y1),
-                            getDXBrushForColour(System.Drawing.Color.Yellow), data_line_width);
+                            getDXBrushForColour(his.Axis1Colour), data_line_width);
                             last_y1 = end_y1;
                             last_x = end_x;
                         }
@@ -20485,14 +20525,14 @@ namespace Thetis
 
                             //left numbers
                             float val = min0 + (i * number_step0);
-                            plotText(val.ToString("f1"), x + spacer - quarter_spacer, t_y, h, rect.Width, 11f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular, true, false, spacer);
+                            plotText(val.ToString("f1"), x + spacer - quarter_spacer, t_y, h, rect.Width, 11f, his.Axis0Colour, 255, "Trebuchet MS", FontStyle.Regular, true, false, spacer);
 
                             //ticks/grid line
                             if (i > 0)
                             {
                                 t_y += (text_height / 4f);
                                 // full grid line
-                                _renderTarget.DrawLine(new RawVector2(x + spacer - quarter_spacer, t_y), new RawVector2(x + w - spacer, t_y), getDXBrushForColour(System.Drawing.Color.Gray), data_line_width);
+                                _renderTarget.DrawLine(new RawVector2(x + spacer - quarter_spacer, t_y), new RawVector2(x + w - spacer, t_y), getDXBrushForColour(his.LinesColour, 96), data_line_width);
                             }
                         }
 
@@ -20512,7 +20552,7 @@ namespace Thetis
                             _renderTarget.DrawLine(
                                 new RawVector2(last_x, base_y - last_y0),
                                 new RawVector2(end_x, base_y - end_y0),
-                                getDXBrushForColour(System.Drawing.Color.Red), data_line_width);
+                                getDXBrushForColour(his.Axis0Colour), data_line_width);
                             last_y0 = end_y0;
 
                             if (hd0.show_time)
@@ -20530,8 +20570,8 @@ namespace Thetis
                         {
                             float s_x = start_x + (hd.index / (float)(total0 - 1)) * (w - spacer * 2f);
                             float s_y = y + h - half_spacer;
-                            _renderTarget.DrawLine(new RawVector2(s_x, s_y - half_spacer), new RawVector2(s_x, s_y - half_spacer + quarter_spacer), getDXBrushForColour(System.Drawing.Color.Gray), data_line_width);
-                            plotText(hd.time.ToString("HH:mm:ss"), s_x, s_y, h, rect.Width, 10f, System.Drawing.Color.Gray, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, true, 0, 45);
+                            _renderTarget.DrawLine(new RawVector2(s_x, s_y - half_spacer), new RawVector2(s_x, s_y - half_spacer + quarter_spacer), getDXBrushForColour(his.LinesColour, 96), data_line_width);
+                            plotText(hd.time.ToString("HH:mm:ss"), s_x, s_y, h, rect.Width, 10f, his.TimeColour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, true, 0, 45);
                         }
 
                         //time axis

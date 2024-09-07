@@ -3745,6 +3745,8 @@
             this.pbTextOverlay_variables = new System.Windows.Forms.PictureBox();
             this.pbLedIndicator_condition_tips = new System.Windows.Forms.PictureBox();
             this.picMultiMeterRotatorControlInfo = new System.Windows.Forms.PictureBox();
+            this.clrbtnHistory_colour_0 = new Thetis.ColorButton();
+            this.clrbtnHistory_colour_1 = new Thetis.ColorButton();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -3954,12 +3956,12 @@
             this.chkHistory_fade_rx = new System.Windows.Forms.CheckBoxTS();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.ucTunestepOptionsGrid_buttons = new Thetis.ucTunestepOptionsGrid();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.ucTunestepOptionsGrid_buttons = new Thetis.ucTunestepOptionsGrid();
             this.tabPage8 = new System.Windows.Forms.TabPage();
             this.tabPage9 = new System.Windows.Forms.TabPage();
             this.tabPage10 = new System.Windows.Forms.TabPage();
@@ -3968,6 +3970,10 @@
             this.tabPage13 = new System.Windows.Forms.TabPage();
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
+            this.clrbtnHistory_lines = new Thetis.ColorButton();
+            this.clrbtnHistory_time = new Thetis.ColorButton();
+            this.labelTS280 = new System.Windows.Forms.LabelTS();
+            this.labelTS281 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -59898,6 +59904,36 @@
             this.picMultiMeterRotatorControlInfo.TabStop = false;
             this.toolTip1.SetToolTip(this.picMultiMeterRotatorControlInfo, "%AZ%\r\n%ELE%");
             // 
+            // clrbtnHistory_colour_0
+            // 
+            this.clrbtnHistory_colour_0.Automatic = "Automatic";
+            this.clrbtnHistory_colour_0.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnHistory_colour_0.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnHistory_colour_0.Image = null;
+            this.clrbtnHistory_colour_0.Location = new System.Drawing.Point(215, 21);
+            this.clrbtnHistory_colour_0.MoreColors = "More Colors...";
+            this.clrbtnHistory_colour_0.Name = "clrbtnHistory_colour_0";
+            this.clrbtnHistory_colour_0.Selectable = true;
+            this.clrbtnHistory_colour_0.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnHistory_colour_0.TabIndex = 130;
+            this.toolTip1.SetToolTip(this.clrbtnHistory_colour_0, "Background colour");
+            this.clrbtnHistory_colour_0.Changed += new System.EventHandler(this.clrbtnHistory_colour_0_Changed);
+            // 
+            // clrbtnHistory_colour_1
+            // 
+            this.clrbtnHistory_colour_1.Automatic = "Automatic";
+            this.clrbtnHistory_colour_1.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnHistory_colour_1.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnHistory_colour_1.Image = null;
+            this.clrbtnHistory_colour_1.Location = new System.Drawing.Point(215, 21);
+            this.clrbtnHistory_colour_1.MoreColors = "More Colors...";
+            this.clrbtnHistory_colour_1.Name = "clrbtnHistory_colour_1";
+            this.clrbtnHistory_colour_1.Selectable = true;
+            this.clrbtnHistory_colour_1.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnHistory_colour_1.TabIndex = 147;
+            this.toolTip1.SetToolTip(this.clrbtnHistory_colour_1, "Background colour");
+            this.clrbtnHistory_colour_1.Changed += new System.EventHandler(this.clrbtnHistory_colour_1_Changed);
+            // 
             // saveFileDialog1
             // 
             this.saveFileDialog1.Filter = "Thetis Database Files (*.xml)|*.xml|All files|*.*";
@@ -62581,6 +62617,10 @@
             // 
             // grpHistoryItem
             // 
+            this.grpHistoryItem.Controls.Add(this.labelTS281);
+            this.grpHistoryItem.Controls.Add(this.labelTS280);
+            this.grpHistoryItem.Controls.Add(this.clrbtnHistory_time);
+            this.grpHistoryItem.Controls.Add(this.clrbtnHistory_lines);
             this.grpHistoryItem.Controls.Add(this.groupBoxTS46);
             this.grpHistoryItem.Controls.Add(this.groupBoxTS45);
             this.grpHistoryItem.Controls.Add(this.pnlVariableInUse_2_history);
@@ -62607,6 +62647,7 @@
             // 
             // groupBoxTS46
             // 
+            this.groupBoxTS46.Controls.Add(this.clrbtnHistory_colour_1);
             this.groupBoxTS46.Controls.Add(this.btnHistory_copy_minmax_from_0);
             this.groupBoxTS46.Controls.Add(this.chkHistory_1_show_axis);
             this.groupBoxTS46.Controls.Add(this.nudHistory_axis1_max);
@@ -62713,6 +62754,7 @@
             // 
             // groupBoxTS45
             // 
+            this.groupBoxTS45.Controls.Add(this.clrbtnHistory_colour_0);
             this.groupBoxTS45.Controls.Add(this.nudHistory_axis0_max);
             this.groupBoxTS45.Controls.Add(this.labelTS262);
             this.groupBoxTS45.Controls.Add(this.nudHistory_axis0_min);
@@ -62935,15 +62977,6 @@
             this.tabPage1.Text = "history";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // ucTunestepOptionsGrid_buttons
-            // 
-            this.ucTunestepOptionsGrid_buttons.Bitfield = 0;
-            this.ucTunestepOptionsGrid_buttons.Location = new System.Drawing.Point(444, 171);
-            this.ucTunestepOptionsGrid_buttons.Name = "ucTunestepOptionsGrid_buttons";
-            this.ucTunestepOptionsGrid_buttons.Size = new System.Drawing.Size(157, 182);
-            this.ucTunestepOptionsGrid_buttons.TabIndex = 111;
-            this.ucTunestepOptionsGrid_buttons.checkbox_changed += new System.EventHandler(this.ucTunestepOptionsGrid_buttons_checkbox_changed);
-            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.grpWebImage);
@@ -62995,6 +63028,15 @@
             this.tabPage7.TabIndex = 5;
             this.tabPage7.Text = "buttonbox";
             this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // ucTunestepOptionsGrid_buttons
+            // 
+            this.ucTunestepOptionsGrid_buttons.Bitfield = 0;
+            this.ucTunestepOptionsGrid_buttons.Location = new System.Drawing.Point(444, 171);
+            this.ucTunestepOptionsGrid_buttons.Name = "ucTunestepOptionsGrid_buttons";
+            this.ucTunestepOptionsGrid_buttons.Size = new System.Drawing.Size(157, 182);
+            this.ucTunestepOptionsGrid_buttons.TabIndex = 111;
+            this.ucTunestepOptionsGrid_buttons.checkbox_changed += new System.EventHandler(this.ucTunestepOptionsGrid_buttons_checkbox_changed);
             // 
             // tabPage8
             // 
@@ -63071,6 +63113,56 @@
             this.tabPage15.TabIndex = 13;
             this.tabPage15.Text = "blank";
             this.tabPage15.UseVisualStyleBackColor = true;
+            // 
+            // clrbtnHistory_lines
+            // 
+            this.clrbtnHistory_lines.Automatic = "Automatic";
+            this.clrbtnHistory_lines.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnHistory_lines.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnHistory_lines.Image = null;
+            this.clrbtnHistory_lines.Location = new System.Drawing.Point(72, 110);
+            this.clrbtnHistory_lines.MoreColors = "More Colors...";
+            this.clrbtnHistory_lines.Name = "clrbtnHistory_lines";
+            this.clrbtnHistory_lines.Selectable = true;
+            this.clrbtnHistory_lines.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnHistory_lines.TabIndex = 145;
+            this.toolTip1.SetToolTip(this.clrbtnHistory_lines, "Background colour");
+            this.clrbtnHistory_lines.Changed += new System.EventHandler(this.clrbtnHistory_lines_Changed);
+            // 
+            // clrbtnHistory_time
+            // 
+            this.clrbtnHistory_time.Automatic = "Automatic";
+            this.clrbtnHistory_time.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnHistory_time.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnHistory_time.Image = null;
+            this.clrbtnHistory_time.Location = new System.Drawing.Point(170, 110);
+            this.clrbtnHistory_time.MoreColors = "More Colors...";
+            this.clrbtnHistory_time.Name = "clrbtnHistory_time";
+            this.clrbtnHistory_time.Selectable = true;
+            this.clrbtnHistory_time.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnHistory_time.TabIndex = 146;
+            this.toolTip1.SetToolTip(this.clrbtnHistory_time, "Background colour");
+            this.clrbtnHistory_time.Changed += new System.EventHandler(this.clrbtnHistory_time_Changed);
+            // 
+            // labelTS280
+            // 
+            this.labelTS280.Image = null;
+            this.labelTS280.Location = new System.Drawing.Point(8, 113);
+            this.labelTS280.Name = "labelTS280";
+            this.labelTS280.Size = new System.Drawing.Size(58, 16);
+            this.labelTS280.TabIndex = 147;
+            this.labelTS280.Text = "Lines:";
+            this.labelTS280.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // labelTS281
+            // 
+            this.labelTS281.Image = null;
+            this.labelTS281.Location = new System.Drawing.Point(118, 113);
+            this.labelTS281.Name = "labelTS281";
+            this.labelTS281.Size = new System.Drawing.Size(46, 16);
+            this.labelTS281.TabIndex = 148;
+            this.labelTS281.Text = "Time:";
+            this.labelTS281.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // Setup
             // 
@@ -68302,5 +68394,11 @@
         private TabPage tabPage14;
         private TabPage tabPage15;
         private ucTunestepOptionsGrid ucTunestepOptionsGrid_buttons;
+        private ColorButton clrbtnHistory_colour_1;
+        private ColorButton clrbtnHistory_colour_0;
+        private LabelTS labelTS281;
+        private LabelTS labelTS280;
+        private ColorButton clrbtnHistory_time;
+        private ColorButton clrbtnHistory_lines;
     }
 }

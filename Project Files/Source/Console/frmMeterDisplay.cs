@@ -50,6 +50,8 @@ namespace Thetis
         {
             InitializeComponent();
 
+            this.MinimumSize = new Size(ucMeter.MIN_CONTAINER_WIDTH, ucMeter.MIN_CONTAINER_HEIGHT);
+
             _id = System.Guid.NewGuid().ToString();
             _console = c;
             _rx = rx;

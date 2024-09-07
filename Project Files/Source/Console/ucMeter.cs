@@ -45,6 +45,9 @@ namespace Thetis
     }
     public partial class ucMeter : UserControl
     {
+        public const int MIN_CONTAINER_WIDTH = 24;
+        public const int MIN_CONTAINER_HEIGHT = 24;
+
         [Browsable(true)]
         [Category("Action")]
         public event EventHandler FloatingDockedClicked;
@@ -64,7 +67,7 @@ namespace Thetis
             picContainer.Location = new Point(0, 0);
             picContainer.Size = new Size(ClientSize.Width, ClientSize.Height);
 
-            _height = 32;
+            _height = MIN_CONTAINER_HEIGHT;
             _autoHeight = false;
 
             _console = null;
@@ -384,8 +387,8 @@ namespace Thetis
         {
             if(Parent == null) return;
 
-            if (x < 100) x = 100; // these match max size of parent when floating
-            if (y < 32) y = 32;
+            if (x < MIN_CONTAINER_WIDTH) x = MIN_CONTAINER_WIDTH; // these match max size of parent when floating
+            if (y < MIN_CONTAINER_HEIGHT) y = MIN_CONTAINER_HEIGHT;
 
             if (_floating)
             {
@@ -612,6 +615,9 @@ namespace Thetis
                 }
                 else
                 {
+                    x -= lblRX.Left;
+                    y -= lblRX.Top;
+
                     if (Common.CtrlKeyDown)
                     {
                         x = roundToNearestTen(x);
