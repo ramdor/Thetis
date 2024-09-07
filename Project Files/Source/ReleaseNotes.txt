@@ -4,7 +4,7 @@
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
-## Join us on Discord for active test builds and much more : https://discord.gg/6fHCRKnDc9
+## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
 ## v2.10.3.6 Change Log - WIP dev_9
 - [add] total re-work of database management. There is now a database manager. See video : https://youtu.be/pwe3bd-tkGY
