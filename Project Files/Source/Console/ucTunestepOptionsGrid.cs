@@ -1,4 +1,30 @@
-﻿using System;
+﻿/*  ucTunestepOptionsGrid.cs
+
+This file is part of a program that implements a Software-Defined Radio.
+
+This code/file can be found on GitHub : https://github.com/ramdor/Thetis
+
+Copyright (C) 2020-2024 Richard Samphire MW0LGE
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+The author can be reached by email at
+
+mw0lge@grange-lane.co.uk
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -7,9 +33,9 @@ namespace Thetis
 {
     public partial class ucTunestepOptionsGrid : UserControl
     {
-        private List<CheckBox> checkboxes;
+        private List<CheckBox> _check_boxes;
         private bool _init;
-        public event EventHandler checkbox_changed;
+        public event EventHandler CheckboxChanged;
 
         public ucTunestepOptionsGrid()
         {
@@ -21,7 +47,8 @@ namespace Thetis
 
         private void initialize_checkboxes()
         {
-            checkboxes = pnlButtonBox_tunestep_toggles.Controls
+            // this obtains a list of the checkboxes, sorted by the terminating number in the .Name field
+            _check_boxes = pnlButtonBox_tunestep_toggles.Controls
                         .OfType<CheckBox>()
                         .OrderBy(c => int.Parse(c.Name.Split('_').Last()))
                         .ToList();
@@ -33,9 +60,9 @@ namespace Thetis
             {
                 int bitfield_value = 0;
 
-                for (int index = 0; index < checkboxes.Count; index++)
+                for (int index = 0; index < _check_boxes.Count; index++)
                 {
-                    CheckBox checkbox = checkboxes[index];
+                    CheckBox checkbox = _check_boxes[index];
                     if (checkbox.Checked)
                     {
                         bitfield_value |= (1 << index);
@@ -46,9 +73,9 @@ namespace Thetis
             }
             set
             {
-                for (int index = 0; index < checkboxes.Count; index++)
+                for (int index = 0; index < _check_boxes.Count; index++)
                 {
-                    CheckBox checkbox = checkboxes[index];
+                    CheckBox checkbox = _check_boxes[index];
                     bool is_checked = (value & (1 << index)) != 0;
                     checkbox.Checked = is_checked;
                 }
@@ -61,9 +88,9 @@ namespace Thetis
 
             int step_count = tune_steps.Count;
 
-            for (int index = 0; index < checkboxes.Count; index++)
+            for (int index = 0; index < _check_boxes.Count; index++)
             {
-                CheckBox checkbox = checkboxes[index];
+                CheckBox checkbox = _check_boxes[index];
 
                 if (index < step_count)
                 {
@@ -80,7 +107,7 @@ namespace Thetis
 
         private void hook_up_checkbox_events()
         {
-            foreach (CheckBox checkbox in checkboxes)
+            foreach (CheckBox checkbox in _check_boxes)
             {
                 checkbox.CheckedChanged += checkbox_checked_changed;
             }
@@ -88,14 +115,14 @@ namespace Thetis
 
         private void checkbox_checked_changed(object sender, EventArgs e)
         {
-            checkbox_changed?.Invoke(this, EventArgs.Empty);
+            CheckboxChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public int GetCheckedCount()
         {
             int count = 0;
 
-            foreach (CheckBoxTS checkbox in checkboxes)
+            foreach (CheckBoxTS checkbox in _check_boxes)
             {
                 if (checkbox.Checked)
                 {
