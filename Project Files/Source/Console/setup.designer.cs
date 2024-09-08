@@ -63036,7 +63036,7 @@
             this.ucTunestepOptionsGrid_buttons.Name = "ucTunestepOptionsGrid_buttons";
             this.ucTunestepOptionsGrid_buttons.Size = new System.Drawing.Size(157, 182);
             this.ucTunestepOptionsGrid_buttons.TabIndex = 111;
-            this.ucTunestepOptionsGrid_buttons.checkbox_changed += new System.EventHandler(this.ucTunestepOptionsGrid_buttons_checkbox_changed);
+            this.ucTunestepOptionsGrid_buttons.CheckboxChanged += new System.EventHandler(this.ucTunestepOptionsGrid_buttons_checkbox_changed);
             // 
             // tabPage8
             // 
