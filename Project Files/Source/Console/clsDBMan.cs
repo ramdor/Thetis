@@ -1161,8 +1161,10 @@ namespace Thetis
         }
         private static string createUniqueFilename(string directoryPath)
         {
-            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            long secondsSinceEpoch = (long)(DateTime.UtcNow - epoch).TotalSeconds;
+            //DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            //long secondsSinceEpoch = (long)(DateTime.UtcNow - epoch).TotalSeconds;
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+            long secondsSinceEpoch = now.ToUnixTimeSeconds();
 
             string baseFilename = $"database_backup_{secondsSinceEpoch}";
             string fullPath = Path.Combine(directoryPath, $"{baseFilename}.xml");

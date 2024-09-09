@@ -1606,32 +1606,33 @@ namespace Thetis
 
             tune_step_list = new List<TuneStep>
             {
-                new TuneStep(1, "1Hz"),
-                new TuneStep(2, "2Hz"),
-                new TuneStep(10, "10Hz"),
-                new TuneStep(25, "25Hz"),
-                new TuneStep(50, "50Hz"),
-                new TuneStep(100, "100Hz"),
-                new TuneStep(250, "250Hz"),
-                new TuneStep(500, "500Hz"),
-                new TuneStep(1000, "1kHz"),
-                new TuneStep(2000, "2kHz"),
-                new TuneStep(2500, "2.5kHz"),
-                new TuneStep(5000, "5kHz"),
-                new TuneStep(6250, "6.25kHz"),
-                new TuneStep(9000, "9kHz"),
-                new TuneStep(10000, "10kHz"),
-                new TuneStep(12500, "12.5kHz"),
-                new TuneStep(15000, "15kHz"),
-                new TuneStep(20000, "20kHz"),
-                new TuneStep(25000, "25kHz"),
-                new TuneStep(30000, "30kHz"),
-                new TuneStep(50000, "50kHz"),
-                new TuneStep(100000, "100kHz"),
-                new TuneStep(250000, "250kHz"),
-                new TuneStep(500000, "500kHz"),
-                new TuneStep(1000000, "1MHz"),
-                new TuneStep(10000000, "10MHz")
+                new TuneStep(1, "1Hz"),//0
+                new TuneStep(2, "2Hz"),//1
+                new TuneStep(10, "10Hz"),//2
+                new TuneStep(25, "25Hz"),//3
+                new TuneStep(50, "50Hz"),//4
+                new TuneStep(100, "100Hz"),//5
+                new TuneStep(250, "250Hz"),//6
+                new TuneStep(500, "500Hz"),//7
+                new TuneStep(1000, "1kHz"),//8
+                new TuneStep(2000, "2kHz"),//9
+                new TuneStep(2500, "2.5kHz"),//10
+                new TuneStep(5000, "5kHz"),//11
+                new TuneStep(6250, "6.25kHz"),//12
+                new TuneStep(9000, "9kHz"),//13
+                new TuneStep(10000, "10kHz"),//14
+                new TuneStep(12500, "12.5kHz"),//15
+                new TuneStep(15000, "15kHz"),//16
+                new TuneStep(20000, "20kHz"),//17
+                new TuneStep(25000, "25kHz"),//18
+                new TuneStep(30000, "30kHz"),//19
+                new TuneStep(50000, "50kHz"),//20
+                new TuneStep(100000, "100kHz"),//21
+                new TuneStep(250000, "250kHz"),//22
+                new TuneStep(500000, "500kHz"),//23
+                new TuneStep(1000000, "1MHz"),//24
+                new TuneStep(10000000, "10MHz")//25
+
             };  // initialize wheel tuning list array
 
             tune_step_index = 2;
@@ -5664,6 +5665,9 @@ namespace Thetis
 
         private void SetRX1Band(Band b)
         {
+            //[2.10.3.6]MW0LGE no band change on TX fix
+            if (MOX && (VFOATX || (!rx2_enabled && VFOBTX))) return;
+
             if (disable_split_on_bandchange)
             {
                 if (RX1Band != b && !tuning)
@@ -5708,6 +5712,9 @@ namespace Thetis
 
         private void SetTXBand(Band b, bool bIngoreBandChange = false)
         {
+            //[2.10.3.6]MW0LGE no band change on TX fix
+            if (MOX) return;
+
             if (disable_split_on_bandchange && !bIngoreBandChange) //[2.10.3.6]MW0LGE might need to ignore this is we are using extended and band is moved to a hamband
             {
                 if (TXBand != b && !tuning)
@@ -10801,6 +10808,8 @@ namespace Thetis
                 if (value < 0 || value > tune_step_list.Count - 1)
                     return;
 
+                int old_index = tune_step_index;
+
                 tune_step_index = value;
 
                 // store the step index against mode. This is recovered on mode change event MW0LGE_21j
@@ -10809,6 +10818,12 @@ namespace Thetis
 
                 txtWheelTune.Text = tune_step_list[tune_step_index].Name;
                 lblStepValue.Text = txtWheelTune.Text;
+
+                if(old_index != tune_step_index)
+                {
+                    TuneStepIndexChangedHandlers?.Invoke(1, old_index, tune_step_index);
+                    TuneStepIndexChangedHandlers?.Invoke(2, old_index, tune_step_index);
+                }
             }
         }
         public int TuneStepLookup(string s)
@@ -14708,20 +14723,26 @@ namespace Thetis
             get { return vfoA_lock; }
             set
             {
-                bool enabled = true;
+                bool old_state = vfoA_lock;
+                //bool enabled = true;
                 vfoA_lock = value;
-                switch (vfoA_lock)
-                {
-                    case false:
-                        txtVFOAFreq.Enabled = true;
-                        break;
-                    case true:
-                        enabled = false;
-                        txtVFOAFreq.Enabled = false;
-                        break;
-                }
+                //switch (vfoA_lock)
+                //{
+                //    case false:
+                //        txtVFOAFreq.Enabled = true;
+                //        break;
+                //    case true:
+                //        enabled = false;
+                //        txtVFOAFreq.Enabled = false;
+                //        break;
+                //}
+                //[2.3.10.6]MW0LGE whoever did the commented code above needs to step away from the computer
+                //
+                bool enabled = !vfoA_lock;
+                txtVFOAFreq.Enabled = enabled;
+                if (vfoA_lock) chkVFOSync.Checked = false;
 
-                if (value)
+                if (vfoA_lock)
                 {
                     DisableAllBands();
                     DisableAllModes();
@@ -14736,6 +14757,22 @@ namespace Thetis
                 btnVFOSwap.Enabled = enabled;
 
                 btnMemoryQuickRestore.Enabled = enabled;
+
+                if (vfoA_lock)
+                    lblLockLabel.BackColor = System.Drawing.Color.Blue;
+                else
+                    lblLockLabel.BackColor = System.Drawing.Color.Transparent;
+                lblLockLabel.Invalidate();
+
+                AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, true, vfoA_lock);
+
+                chkVFOLock.Checked = vfoA_lock;
+
+                if (vfoA_lock != old_state)
+                {
+                    VfoALockChangedHandlers?.Invoke(1, old_state, vfoA_lock);
+                    old_state = vfoA_lock;
+                }
             }
         }
 
@@ -14745,19 +14782,24 @@ namespace Thetis
             get { return vfoB_lock; }
             set
             {
-                bool enabled = true;
+                bool old_state = vfoB_lock;
+                //bool enabled = true;
                 vfoB_lock = value;
-                switch (vfoB_lock)
-                {
-                    case false:
-                        txtVFOBFreq.Enabled = true;
-                        break;
-                    case true:
-                        enabled = false;
-                        txtVFOBFreq.Enabled = false;
-                        chkVFOSync.Checked = false;
-                        break;
-                }
+                //switch (vfoB_lock)
+                //{
+                //    case false:
+                //        txtVFOBFreq.Enabled = true;
+                //        break;
+                //    case true:
+                //        enabled = false;
+                //        txtVFOBFreq.Enabled = false;
+                //        chkVFOSync.Checked = false;
+                //        break;
+                //}
+                //[2.3.10.6]MW0LGE whoever did the commented code above needs to step away from the computer
+                bool enabled = !vfoB_lock;
+                txtVFOBFreq.Enabled = enabled;
+                if(vfoB_lock) chkVFOSync.Checked = false;
 
                 comboRX2Band.Enabled = enabled;
                 btnVFOAtoB.Enabled = enabled;
@@ -14777,8 +14819,22 @@ namespace Thetis
                 radRX2ModeDIGU.Enabled = enabled;
                 radRX2ModeDRM.Enabled = enabled;
 
-            }
+                if (vfoB_lock)
+                    lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
+                else
+                    lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;                
 
+                AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, false, vfoB_lock); // <- this use of false is totally wrong, because if RX2 is in use, then lock B is RX2.
+                                                                                         // I just cba to fix it, as this sort of thing keeps being done. -LGE
+
+                chkVFOBLock.Checked = vfoB_lock;
+
+                if (vfoB_lock != old_state)
+                {
+                    VfoBLockChangedHandlers?.Invoke(RX2Enabled ? 2 : 1, old_state, vfoB_lock);
+                    old_state = vfoB_lock;
+                }
+            }
         }
 
         private double wave_freq = 0.0;
@@ -16715,6 +16771,9 @@ namespace Thetis
             get { return rx1_band; }
             set
             {
+                //[2.10.3.6]MW0LGE no band change on TX fix
+                if (MOX && (VFOATX || (!rx2_enabled && VFOBTX))) return;
+
                 Band old_band = rx1_band;
                 rx1_band = value;
 
@@ -16876,6 +16935,9 @@ namespace Thetis
             get { return rx2_band; }
             set
             {
+                //[2.10.3.6]MW0LGE no band change on TX fix
+                if (MOX && VFOBTX) return;
+
                 Band old_band = rx2_band;
                 rx2_band = value;
 
@@ -16932,6 +16994,9 @@ namespace Thetis
             get { return tx_band; }
             set
             {
+                //[2.10.3.6]MW0LGE no band change on TX fix
+                if (MOX) return;
+
                 Band old_band = tx_band;
                 if (initializing) old_band = value; // we cant use tx_band, because it is unset (GEN), unless we save it out it is irrelevant MW0LGE
 
@@ -17001,11 +17066,14 @@ namespace Thetis
             get { return chkVFOLock.Checked; }
             set
             {
-                chkVFOLock.Checked = value;
-                if (value == true)
-                    lblLockLabel.BackColor = System.Drawing.Color.Blue;
-                else
-                    lblLockLabel.BackColor = System.Drawing.Color.Transparent;
+                //[2.10.3.5]MW0LGE has to be a joke, just dupe code why not
+                VFOALock = value;
+
+                //chkVFOLock.Checked = value;
+                //if (value == true)
+                //    lblLockLabel.BackColor = System.Drawing.Color.Blue;
+                //else
+                //    lblLockLabel.BackColor = System.Drawing.Color.Transparent;
             }
         }
 
@@ -17014,11 +17082,14 @@ namespace Thetis
             get { return chkVFOBLock.Checked; }
             set
             {
-                chkVFOBLock.Checked = value;
-                if (value == true)
-                    lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
-                else
-                    lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;
+                //[2.10.3.5]MW0LGE has to be a joke, just dupe code why not
+                VFOBLock = value;
+
+                //chkVFOBLock.Checked = value;
+                //if (value == true)
+                //    lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
+                //else
+                //    lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;
             }
         }
 
@@ -17191,6 +17262,9 @@ namespace Thetis
             get { return rx1_dsp_mode; }
             set
             {
+                //[2.10.3.6]MW0LGE no mode change on TX fix
+                if (MOX && (VFOATX || (!rx2_enabled && VFOBTX))) return;
+
                 RadioButtonTS r = null;
                 switch (value)
                 {
@@ -17244,6 +17318,9 @@ namespace Thetis
             get { return rx2_dsp_mode; }
             set
             {
+                //[2.10.3.6]MW0LGE no mode change on TX fix
+                if (MOX && VFOBTX && rx2_enabled) return;
+
                 RadioButtonTS r = null;
                 switch (value)
                 {
@@ -26135,12 +26212,12 @@ namespace Thetis
                                 BandStackEntry bse = bsf.Current();
                                 if (bse != null)
                                 {
-                                    setBandFromBandStackEntry(bse);
+                                    setRX1BandFromBandStackEntry(bse);
                                 }
                                 else
                                 {
                                     // none in band?
-                                    setBandFromBandStackEntry(bsf.LastVisited.Copy());
+                                    setRX1BandFromBandStackEntry(bsf.LastVisited.Copy());
                                 }
                                 BandStack2Form.UpdateSelected();
                             }
@@ -26150,12 +26227,12 @@ namespace Thetis
                             BandStackEntry bse = bsf.Next();
                             if (bse != null)
                             {
-                                setBandFromBandStackEntry(bse);
+                                setRX1BandFromBandStackEntry(bse);
                             }
                             else
                             {
                                 // none in band?
-                                setBandFromBandStackEntry(bsf.LastVisited.Copy());
+                                setRX1BandFromBandStackEntry(bsf.LastVisited.Copy());
                             }
                             BandStack2Form.UpdateSelected();
                         }
@@ -26185,12 +26262,12 @@ namespace Thetis
                                 BandStackEntry bse = bsf.Current();
                                 if (bse != null)
                                 {
-                                    setBandFromBandStackEntry(bse);
+                                    setRX1BandFromBandStackEntry(bse);
                                 }
                                 else
                                 {
                                     // none in band?
-                                    setBandFromBandStackEntry(bsf.LastVisited.Copy());
+                                    setRX1BandFromBandStackEntry(bsf.LastVisited.Copy());
                                 }
                                 BandStack2Form.UpdateSelected();
                             }
@@ -26200,12 +26277,12 @@ namespace Thetis
                             BandStackEntry bse = bsf.Previous();
                             if (bse != null)
                             {
-                                setBandFromBandStackEntry(bse);
+                                setRX1BandFromBandStackEntry(bse);
                             }
                             else
                             {
                                 // none in band?
-                                setBandFromBandStackEntry(bsf.LastVisited.Copy());
+                                setRX1BandFromBandStackEntry(bsf.LastVisited.Copy());
                             }
                             BandStack2Form.UpdateSelected();
                         }
@@ -27660,6 +27737,13 @@ namespace Thetis
         }
         public string PAProfile
         {
+            get
+            {
+                if (IsSetupFormNull)
+                    return "";
+                else
+                    return SetupForm.PAProfileName;
+            }
             set { lblPAProfile.Text = "PA Profile: " + value; }
         }
         private void ptbPWR_MouseUp(object sender, MouseEventArgs e)
@@ -29120,23 +29204,24 @@ namespace Thetis
 
         private void chkVFOLock_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (chkVFOLock.Checked == VFOALock) return;
             VFOALock = chkVFOLock.Checked;
-            if (chkVFOLock.Checked == true)
-                lblLockLabel.BackColor = System.Drawing.Color.Blue;
-            else
-                lblLockLabel.BackColor = System.Drawing.Color.Transparent;
-            AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, true, chkVFOLock.Checked);
-
+            //if (chkVFOLock.Checked == true)//[2.10.3.6]MW0LGE moved this to vfoalock property
+            //    lblLockLabel.BackColor = System.Drawing.Color.Blue;
+            //else
+            //    lblLockLabel.BackColor = System.Drawing.Color.Transparent;
+            //AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, true, chkVFOLock.Checked); 
         }
 
         private void chkVFOBLock_CheckedChanged(object sender, EventArgs e)
         {
+            if (chkVFOBLock.Checked == VFOBLock) return;
             VFOBLock = chkVFOBLock.Checked;
-            if (chkVFOBLock.Checked == true)
-                lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
-            else
-                lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;
-            AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, false, chkVFOBLock.Checked);
+            //if (chkVFOBLock.Checked == true)//[2.10.3.6]MW0LGE moved this to vfoblock property
+            //    lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
+            //else
+            //    lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;
+            //AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, false, chkVFOBLock.Checked);
         }
         private void repopulateForms()
         {
@@ -29146,11 +29231,19 @@ namespace Thetis
         }
         public void BandPanelVisible()
         {
+            //rx1 done by this
             setBandPanelVisible(_bands_GEN_selected, _bands_HF_selected, _bands_VHF_selected, true);
+
+            //rx2
+            lblRX2Band.Visible = !LegacyItemController.HideBands;
+            comboRX2Band.Visible = !LegacyItemController.HideBands;
         }
         public void ModePanelVisible(bool visible)
         {
             panelMode.Visible = visible;
+
+            //rx2
+            panelRX2Mode.Visible = visible;
         }
         public void VFOAVisible(bool visible)
         {
@@ -29179,6 +29272,17 @@ namespace Thetis
             radFilter10.Visible = visible;
             radFilterVar1.Visible = visible;
             radFilterVar2.Visible = visible;
+
+            //rx2
+            radRX2Filter1.Visible = visible;
+            radRX2Filter2.Visible = visible;
+            radRX2Filter3.Visible = visible;
+            radRX2Filter4.Visible = visible;
+            radRX2Filter5.Visible = visible;
+            radRX2Filter6.Visible = visible;
+            radRX2Filter7.Visible = visible;
+            radRX2FilterVar1.Visible = visible;
+            radRX2FilterVar2.Visible = visible;
         }
         public void ExtendPanelDisplaySizeRight(bool expand)
         {
@@ -33533,8 +33637,9 @@ namespace Thetis
                     {
                         if (Display.BandStackOverlays != null && Display.BandStackOverlays.Length > 0)
                         {
-                            if (bOverRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANAFALL))
-                            {
+                            bool panafall_check = Display.CurrentDisplayMode == DisplayMode.PANAFALL && ((!rx2_enabled && e.Y < Display.PanafallSplitBarPos) || (rx2_enabled && e.Y < picDisplay.Height / 4)); //[2.10.3.6]MW0LGE fixes issue where you could try to qsy click on the waterfall
+                            if (bOverRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || panafall_check))                                                                                          //under a band stack entry that was shown on the panadaptor area in a panafall display
+                            {                                                                                                                                                                                  //and it would not qsy             
                                 // convert mouse pos into HZ
                                 double nMousePosHZ = (CentreFrequency * 1e6) + PixelToHz(e.X, 1); // only rx1
 
@@ -40122,13 +40227,17 @@ namespace Thetis
             }
         }
 
-        public void SetupRX2Band(Band b, bool frequency_only = false)
+        public void SetupRX2Band(Band b, bool is_for_rx1_vfo_b = false)
         {
             string sBand = BandToString(b);
-            SetupRX2Band(sBand, frequency_only);
+            SetupRX2Band(sBand, is_for_rx1_vfo_b);
         }
-        public void SetupRX2Band(string sBand, bool frequency_only = false)
+        public void SetupRX2Band(string sBand, bool is_for_rx1_vfo_b = false)
         {
+            //[2.10.3.6]MW0LGE no band change on TX fix
+            if (MOX && is_for_rx1_vfo_b && VFOBTX && !rx2_enabled) return;
+            if (MOX && VFOBTX && rx2_enabled) return;
+
             //[2.10.3.6]MW0LGE added frequency_only so that it can be used as a way to select a band for rx1, vfob, in the vfo display system
             //MW0LGE_21d BandStack2 ineresting... applies to rx2
             BandStackFilter bsf = BandStackManager.GetFilter(BandStackManager.StringToBand(sBand));
@@ -40145,7 +40254,7 @@ namespace Thetis
 
                 if (bse != null)
                 {
-                    if (!frequency_only)
+                    if (!is_for_rx1_vfo_b)
                     {
                         RX2DSPMode = bse.Mode;
                         RX2Filter = bse.Filter;
@@ -40359,6 +40468,7 @@ namespace Thetis
             }
         }
 
+        private bool _old_vfo_sync_state = false;
         private void chkVFOSync_CheckedChanged(object sender, System.EventArgs e)
         {
             if (chkVFOSync.Checked)
@@ -40383,6 +40493,14 @@ namespace Thetis
                 diversityForm.VFOSync = chkVFOSync.Checked;
 
             AndromedaIndicatorCheck(EIndicatorActions.eINVFOSync, false, chkVFOSync.Checked);
+
+            if(chkVFOSync.Checked != _old_vfo_sync_state)
+            {
+                VFOSyncChangedHandlers?.Invoke(1, _old_vfo_sync_state, chkVFOSync.Checked);
+                VFOSyncChangedHandlers?.Invoke(2, _old_vfo_sync_state, chkVFOSync.Checked);
+
+                _old_vfo_sync_state = chkVFOSync.Checked;
+            }
         }
 
         private bool mute_rx1_on_vfob_tx = true;
@@ -42026,10 +42144,13 @@ namespace Thetis
             panelDSP.Location = new Point(gr_dsp_basis.X + (h_delta / 2), gr_dsp_basis.Y + v_delta);
 
             // replace the zoom/pan controls, MW0LGE_21k9rc6
-            lblDisplayZoom.Location = new Point(lbl_display_zoom_basis.X + h_delta, lbl_display_zoom_basis.Y + v_delta);
-
-            ptbDisplayZoom.Location = new Point(tb_display_zoom_basis.X + h_delta, tb_display_zoom_basis.Y + v_delta);
+            //lblDisplayZoom.Location = new Point(lbl_display_zoom_basis.X + h_delta, lbl_display_zoom_basis.Y + v_delta);
+            //ptbDisplayZoom.Location = new Point(tb_display_zoom_basis.X + h_delta, tb_display_zoom_basis.Y + v_delta);
+            
+            //[2.10.3.6]MW0LGE changed the above to cope with legacy control dynamic removal, now based off left of the ztb button
+            ptbDisplayZoom.Location = new Point(btnDisplayZTB.Left - tb_display_zoom_size_basis.Width - 4, tb_display_zoom_basis.Y + v_delta);
             ptbDisplayZoom.Size = tb_display_zoom_size_basis;
+            lblDisplayZoom.Location = new Point(ptbDisplayZoom.Location.X - lbl_display_zoom_size_basis.Width, lbl_display_zoom_basis.Y + v_delta);
 
             lblDisplayPan.Location = new Point(lbl_displaypan_basis.X, lbl_displaypan_basis.Y + v_delta);
             ptbDisplayPan.Location = new Point(tb_displaypan_basis.X, tb_displaypan_basis.Y + v_delta);
@@ -45512,6 +45633,15 @@ namespace Thetis
 
         public delegate void TXFrequncyChanged(double old_frequency, double new_frequency, Band old_band, Band new_band);
 
+        public delegate void VfoALockChanged(int rx, bool old_state, bool new_state);
+        public delegate void VfoBLockChanged(int rx, bool old_state, bool new_state);
+
+        public delegate void VFOSyncChanged(int rx, bool old_state, bool new_state);
+
+        public delegate void TuneStepIndexChanged(int rx, int old_index, int new_index);
+
+        public delegate void PAProfileNameChanged(string old_profile_name, string new_profile_name);
+
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
@@ -45580,6 +45710,15 @@ namespace Thetis
         public AntennaRxTxChanged AntennaRxTxHandlers;
 
         public TXFrequncyChanged TXFrequncyChangedHandlers;
+
+        public VfoALockChanged VfoALockChangedHandlers;
+        public VfoBLockChanged VfoBLockChangedHandlers;
+
+        public VFOSyncChanged VFOSyncChangedHandlers;
+
+        public TuneStepIndexChanged TuneStepIndexChangedHandlers;
+
+        public PAProfileNameChanged PAProfileNameChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
@@ -45837,7 +45976,7 @@ namespace Thetis
             if (!BandStackManager.Ready) return;
             BandStackEntry bse = bsf.LastVisited.Copy(true);// take copy of the last visited data, with a new guid
 
-            if (m_bIgnoreFrequencyDupes && bsf.FindForFrequency(bse.Frequency) != null) return; // ignore if we have this frequency already
+            if (m_bIgnoreFrequencyDupes && bsf.FindEntriesForFrequency(bse.Frequency).Count > 0) return; // ignore if we have this frequency already
 
             BandStackManager.AddEntry(bse);
             bsf.GenerateFilteredList(false);
@@ -45994,11 +46133,15 @@ namespace Thetis
 
             if (m_bHideBandstackWindowOnSelect && obeyHide) this.Invoke(new MethodInvoker(BandStack2Form.HideClose));
 
-            setBandFromBandStackEntry(bse);
+            setRX1BandFromBandStackEntry(bse);
             updateStackNumberDisplay(bsf);
         }
         private void OnBandBeforeChangeHandler(int rx, Band band)
         {
+            //[2.10.3.6]MW0LGE no band change on TX fix
+            if (MOX && rx == 1 && (VFOATX || (!rx2_enabled && VFOBTX))) return;
+            if (MOX && rx == 2 && VFOBTX) return;
+
             if (m_bSetBandRunning) return;
             if (rx != 1) return; // only used for RX1, RX2 uses SetupRX2Band
             if (!BandStackManager.Ready) return;
@@ -46092,12 +46235,15 @@ namespace Thetis
 
                 BandStack2Form.UpdateSelected();
 
-                setBandFromBandStackEntry(bse);
+                setRX1BandFromBandStackEntry(bse);
             }
             updateStackNumberDisplay(bsf);
         }
-        private void setBandFromBandStackEntry(in BandStackEntry bse)
+        private void setRX1BandFromBandStackEntry(in BandStackEntry bse)
         {
+            //[2.10.3.6]MW0LGE no band change on TX fix
+            if (MOX && (VFOATX || (!rx2_enabled && VFOBTX))) return;
+
             if (bse == null) return;
 
             NetworkIO.SendHighPriority(0);
@@ -46449,6 +46595,14 @@ namespace Thetis
         }
         private bool _lastRX1NoiseFloorGood = false;
         private bool _lastRX2NoiseFloorGood = false;
+        public float LastNFRX1
+        {
+            get { return _lastRX1NoiseFloor; }
+        }
+        public float LastNFRX2
+        {
+            get { return _lastRX2NoiseFloor; }
+        }
         private void tmrAutoAGC_Tick(object sender, EventArgs e)
         {
             if (!chkPower.Checked || _mox) return;
@@ -48799,9 +48953,12 @@ namespace Thetis
         {
             chkRxAnt.Checked = !chkRxAnt.Checked;
         }
-        public void PopupFilterContextMenu(MouseEventArgs e)
+        public void PopupFilterContextMenu(int rx, MouseEventArgs e)
         {
-            contextMenuStripFilterRX1.Show(MousePosition);
+            if (rx == 1)
+                contextMenuStripFilterRX1.Show(MousePosition);
+            else if(rx == 2)
+                contextMenuStripFilterRX2.Show(MousePosition);
         }
         public void PopupBandstack(int rx, Band b, bool is_on_top)
         {

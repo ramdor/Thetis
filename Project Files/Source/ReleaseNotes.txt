@@ -4,7 +4,111 @@
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
-## Join us on Discord : https://discord.gg/6fHCRKnDc9
+## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
+
+## v2.10.3.6 Change Log - Release Candidate 1 (rc1) - includes all changes since v2.10.3.5
+- [add] total re-work of database management. There is now a database manager. I advise you to watch video : https://youtu.be/pwe3bd-tkGY
+- [add] rotator can now be stopped. Hover mouse over arrow pivot point to see red circle. Click in circle and STOP will be sent. Note: reset the pstRotator commands if you are already using before this update
+- [add] cache bypass option added to web image meter item
+- [add] you can now select VFOA, VFOB or BOTH in the multimeter vfo control
+- [add] auto height options for multimeter containers
+- [add] cwx form does now not need focus to act on F1-F12 etc. Uncheck focus to enable this in the cwx form
+- [add] rotator can now have a map. Check out OE3IDE's skin server pages
+- [add] new button box meter controls for bands, modes and filters
+- [add] rotator can now have the beam width alpha adjusted
+- [add] right click a band in a band button box, and it will popup bandstack for that band for rx1 only. Right click on filter to show filter popup, rx1+2
+- [add] antenna switch box meter item
+- [add] %precis=N% can be used on text overlay so specify precision for any floating point variable on that line. %precis=2%%signal_strength%  will show -73.49 for example
+- [add] small digits colour for vfo item
+- [add] new legacy items tab in setup->Appearance->Legacy Items to hide some of the old legacy items. This will be added to over time
+- [add] vfo meter item option can ne used to show band text
+- [add] some new variables added to text overlay, including band text for vfoa/b, noise floor for rx1/2, tune step text, pa profile text. Hover mouse over the I in the text overlay settings
+- [add] NR2. Additional setting T2 that will aid with weaker signal clarity when using Trained model. Lower setting of T2 will prevent blocking of very weak signals at the cost of a slight increase in noise. -NR0V
+- [add] added lock+vfo sync to vfo meter items. Colour can be changed for these in options
+- [add] cords are displayed on meter container drag/resize. Use ctrl to lock to 10 pixel steps when moving/resizing for easier alignment
+- [add] long mouse click (>= 1 second) on a kHz value in a vfo control will show tune step options, much like an Icom
+- [add] long mouse click (>= 1 second) on the rx1 band vfoA in a vfo control will show bandstack
+- [add] new tune step button box as a meter item
+- [add] new history graph item to show data over time
+- [add] Led Indicator meter item - use variables in c# style code to provide a Boolean expression for the indicator  eg  %swr% > 2.0  or  %split% == "SPLIT"
+- [add] Added enable G2 panel; not enabled if Andromeda panel enabled and vice versa Added button actions for band selection - G8NJJ
+- [add] ability to create default G2 settings - G8NJJ
+- [add] band selector on the vfo display in multimeters. Just click the band text
+- [add] filter selector on the vfo display in multimeters. Just click the filter text
+- [add] mode selector on the vfo display in multimeters. Just click the mode text
+- [add] vfo display multimeter now allows changing values by hovering over them and spinning the mouse wheel, click to inc/dec, digit keys can be pressed
+- [add] TCPip client and serial connectors added to MultiMeter I/O (see videos listed a few items below)
+- [add] web image meter item - pull images from the internet and display in a meter container
+- [add] minimise option for containers. Default will vanish when thetis console is minimised
+- [add] MultiMeterIO - get external data - use it in the MultiMeter system. Watch video : https://youtu.be/oYRrm8YpD24
+- [add] new meter item, Rotator. Requires a data feed using the new Multi Meter io. : https://youtu.be/1LmUromJQNQ
+- [add] new MultiMeter spacer. Many can be added to pad things out. rx/tx colour and fade options
+- [add] colour picker for TX-ATT control background in appearance->general
+- [add] new MultiMeter item, Text Overlay. Can be used for various display tasks. Many can be added. Short video here : https://youtu.be/LPREPkJhaKY?si=6RxWujVnbqvsdWpd
+- [add] .bat files now supported by autostarter
+- [add] output AI (kenwwood broadcast info) over cat1/2/3/4/tcpipcat options
+- [add] option in setup for S9 @ -73 or -93 for 30MHz and 144MHz (github #418)
+- [add] options added for SWR protection. Swr limits, and tune power (github #221)
+- [add] zzoa and zzoc cat commands have been added. zzoa - get/set the rx antenna based on rx1 band. zzoc - get/set the tx antenna based on tx band (github #385)
+- [add] rx antenna port selection option for XVTR. It should also revert any changes if you leave an xvtr band. Only applies to RX1 currently (github #424)
+- [add] 8 diversity memories. shift click to store, ctrl click to clear (github #263)
+- [add] zzxa cat command to get/set audio amplifier (rear speaker sockets). zzxa1; to enable, zzxa0; to disable (github #308)
+- [add] midi button command to toggle audio amplifier (rear speaker sockets) (github #308)
+- [add] notes field in multimeter container. They are also used in the titlebar of the containers (github #104)
+- [add] new start up options tab in setup. Now includes options to open specific forms at start up, and programs/exes (GitHub #286)
+- [add] option to prevent ps from bypassing the bpfs (GitHub #413)
+- [add] CW Edge Length: This is currently only for the ANAN-G2. The ability to load CW edges into the firmware of the legacy ANAN products is not available. The minimum Edge Length is 15ms which, based upon testing, is required to meet the new ARRL Guidelines.  However, due to the edge shape, a 15ms total edge yields about 5ms in the range of 10% - 90% amplitude, i.e., the 15ms number is a bit misleading.
+- [add] New NR features: (1) the "Trained" gain method as described below, (2) an alternative Noise Power Estimation method called "NSTAT" which should have a faster response to changing noise levels, and (3) code added in the AE Filter that removes an annoying rumble that could occasionally occur.
+- ["Trained"] The new "Trained" NR has a file (zetaHat.bin). It is a data file that contains the essential information extracted from "training" the algorithm. The algorithm is currently "trained" with about 72 hours of noise and speech recordings. The file may, at some point, be replaced or augmented if different training is required.
+- [add] Fn keys now activate messages directly in the cwx form
+- [add] support for command line arguments in the auto program launch settings
+- [add] warning message shown when the bypass of BPFs is ignored for PureSignal transmissions
+- [add] -help command line option
+- [change] meter container borders have been reduced
+- [change] importing a db with meter containers will no longer clear existing ones, they will be added if possible
+- [change] filter setup form now stores/recalls location
+- [change] Button actions processed more simply when G2 enabled (no shift action etc) - G8NJJ
+- [change] rotator meter item now can be shown in az/ele/both mode. Requires you to remove-add the rotator if you were using it
+- [change] can now have up to 50 multimeter containers
+- [change] multimeter meter items are not limited. You can have unlimited in use at a time in a single container
+- [change] midi micgain now is full range -40 to 10 (default mic gain)
+- [change] midi comp is now full range 0-20
+- [change] midi rit - now hold shift when turning for smaller change ~ -250 to 250
+- [change] renamed the [HPF/BPF ByPass on PS] button in code so that a blanket default of ON will be applied everywhere to everyone. Change the setting if required
+- [change] forced the bpfs bypass check to be on as default
+- [change] simplification improvements to db import
+- [change] noise floor approximation now enters 'fast attack' mode more frequently for quicker floor detection (changing modes/antennas/etc)
+- [change] the dB shift setting for AGC auto noise floor compensation is now a true shift from NF. You will probably need to tweak your previous setting
+- [change] the shutdown log is defaulted off. Use command line param -logshutdown to cause Thetis to create a shutdown_log.txt file if you are having shutdown issues which can then be sent in for analysis
+- [fix] fix issue where you could not remove tx profile entries if they only had case changes in their name, such as ABc and abc
+- [fix] import of container locations now works when importing a database
+- [fix] fixed issue where a meter container would re-appear if console was minimised and then restored and that container had been docked at some point
+- [fix] exporting a tx profile no longer exports schema for non tx profile tables
+- [fix] fixed issue where a bandstack entry could be duped if ignore dupe was turned on after there were duplicated frequencies in the stack already
+- [fix] dragging a container on the RX# in the titlebar would cause a jump/offset from the mouse pointer
+- [fix] band change is prevented in most cases when in the middle of TX. Split/Swap/TX is not prevented, so beware
+- [fix] rx att + tx att was being used in dup display, leading to incorrect display. Fixed
+- [fix] comp meter when used in rx2 shows the correct rx1 values
+- [fix] fixed issue with %vfoasub% showing at incorrect states
+- [fix] fixed autostart process flag issue that caused DDUtil_v3 to start incorrectly
+- [fix] fixed issue at startup or where diversity form is initially shown where no gain is applied if the gain is locked. This would be noticeable with the 'control dot' being centred. Many other fixes in the diversity system
+- [fix] fixed issue where 'bad' characters in an autostarter path would cause a crash at start up
+- [fix] fixed issue where AGC gains would not be stored correctly and/or could be spread to other bands if different agc modes (slow/med/long etc) were configured for use on those bands
+- [fix] fixed issue introduced with the re-work of tx-att in dev_4. The spectrum when tx'ing with duplex enabled is now adjusted by the tx attenuation.
+- [fix] small change to auto start exe code to fix issue with command line args
+- [fix] decouple of the rx1/rx2 attenuator preamp/s-att boxes from tx-att. New tx-att control, and bg colour settings in appearance (github #399)
+- [fix] multimeters would sometimes not bottom to low values out when power off, and other rare occurrences. Now resolved
+- [fix] changes to fix issue #407, No TX output when initially going to QSK
+- [fix] TCI spot would be incorrectly shown if it came from RumLog. Thetis now ignores as string of "nil" which RumLog sends (version dependant)
+- [fix] attempt to resolve issue where out of array bounds errors are shown at startup
+- [fix] corrected character display issues in input/output combo boxes (Issue #420)
+- [fix] websocket protocol close frame message is now sent when TCIserver disconnects a client, preventing some third-party clients from closing improperly
+- [fix] reworked TCIserver input message buffer to prevent random client disconnects when TCI WebSocket messages arrive rapidly
+- [fix] vac mic audio source can now be recorded
+- [fix] split TXing out of a ham band will no longer disable split when extended mode is used. Note: 'Prevent TX when on different band to RX' option will be used if enabled and TX band has been moved for bandpass/lpf purposes (ie when tx'ing on 11m)
+- [fix] output power on ANT ports configured as RX only should be resolved. Requires an update to your firmware. See the [ApacheLab community forums here](https://community.apache-labs.com/viewtopic.php?f=32&t=4972)
+
+-----------------------------------
 
 ## v2.10.3.6 Change Log - WIP dev_9
 - [add] total re-work of database management. There is now a database manager. See video : https://youtu.be/pwe3bd-tkGY
@@ -13,21 +117,33 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] you can now select VFOA, VFOB or BOTH in the multimeter vfo control
 - [add] auto height options for multimeter containers
 - [add] cwx form does now not need focus to act on F1-F12 etc. Uncheck focus to enable this in the cwx form
-- [add] rotator can now have a map. Check out OE3IDE's skin server pages.
+- [add] rotator can now have a map. Check out OE3IDE's skin server pages
 - [add] new button box meter controls for bands, modes and filters
 - [add] rotator can now have the beam width alpha adjusted
-- [add] right click a band in a band button box, and it will bandstack for that band
+- [add] right click a band in a band button box, and it will popup bandstack for that band
 - [add] antenna switch box meter item
 - [add] %precis=N% can be used on text overlay so specify precision for any floating point variable on that line. %precis=2%%signal_strength%  will show -73.49 for example
 - [add] small digits colour for vfo item
-- [add] new legacy items tab in setup->Appearance->Legacy Items
-- [add] vfo meter item can now show band text
-- [add] some new variables added to text overlay, including band text for vfoa/b
+- [add] new legacy items tab in setup->Appearance->Legacy Items to hide some of the old legacy items
+- [add] vfo meter item option can ne used to show band text
+- [add] some new variables added to text overlay, including band text for vfoa/b, noise floor for rx1/2, tune step text, pa profile text
+- [add] NR2. Additional setting T2 that will aid with weaker signal clarity when using Trained model. Lower setting of T2 will prevent blocking of very weak signals at the cost of a slight increase in noise. -NR0V
+- [add] added lock+vfo sync to vfo meter items. Colour can be changed for these in options
+- [add] cords are displayed on meter container drag/resize. Use ctrl to lock to 10 pixel steps when moving/resizing for easier alignment
+- [add] long mouse click (>= 1 second) on a kHz value in a vfo control will show tune step options, much like an Icom
+- [add] long mouse click (>= 1 second) on the rx1 band vfoA in a vfo control will show bandstack
+- [add] new tune step button box as a meter item
+- [add] new history graph item to show data over time
+- [change] meter container borders have been reduced
 - [change] importing a db with meter containers will no longer clear existing ones, they will be added if possible
 - [change] filter setup form now stores/recalls location
+- [fix] fix issue where you could not remove tx profile entries if they only had case changes in their name, such as ABc and abc
 - [fix] import of container locations now works when importing a database
 - [fix] fixed issue where a meter container would re-appear if console was minimised and then restored and that container had been docked at some point
 - [fix] exporting a tx profile no longer exports schema for non tx profile tables
+- [fix] fixed issue where a bandstack entry could be duped if ignore dupe was turned on after there were duplicated frequencies in the stack already
+- [fix] dragging a container on the RX# in the titlebar would cause a jump/offset from the mouse pointer
+- [fix] band change is prevented in most cases when in the middle of TX. Split/Swap/TX is not prevented, so beware
 
 ## v2.10.3.6 Change Log - WIP dev_8b
 - [fix] rx att + tx att was being used in dup display, leading to incorrect display. Fixed

@@ -153,6 +153,8 @@ namespace Thetis
 
             InitAudioTab();
 
+            initComboHistoryReadings0();
+
             //MW0LGE_21d some defaults
             chkShowZeroLine.Checked = true;
             chkGridControl.Checked = true;
@@ -252,7 +254,12 @@ namespace Thetis
             "%rx2%" + System.Environment.NewLine +
             "%tx_eq%" + System.Environment.NewLine +
             "%bandtext_vfoa%" + System.Environment.NewLine +
-            "%bandtext_vfob%";// + System.Environment.NewLine +
+            "%bandtext_vfob%" + System.Environment.NewLine +
+            "%precis=1%" + System.Environment.NewLine +
+            "%nf_1%" + System.Environment.NewLine +
+            "%nf_2%" + System.Environment.NewLine +
+            "%tune_step%" + System.Environment.NewLine +
+            "%pa_profile%";// + System.Environment.NewLine +
 
             toolTip1.SetToolTip(pbTextOverlay_variables, sTip);
 
@@ -2334,18 +2341,23 @@ namespace Thetis
             radDSPNR2Linear_CheckedChanged(this, e);
             radDSPNR2Log_CheckedChanged(this, e);
             radDSPNR2TRND_CheckedChanged(this, e);
+
             udDSPNR2trainThresh_ValueChanged(this, e);
+            udDSPNR2trainThreshRX2_ValueChanged(this, e);
+            udDSPNR2trainT2_ValueChanged(this, e);
+            udDSPNR2trainT2RX2_ValueChanged(this, e);
+
             radDSPNR2OSMS_CheckedChanged(this, e);
             radDSPNR2MMSE_CheckedChanged(this, e);
             radDSPNR2NSTAT_CheckedChanged(this, e);
+            radDSPNR2OSMSRX2_CheckedChanged(this, e);
+            radDSPNR2MMSERX2_CheckedChanged(this, e);
+            radDSPNR2NSTATRX2_CheckedChanged(this, e);
+
             chkDSPNR2AE_CheckedChanged(this, e);
             radDSPNR2LinearRX2_CheckedChanged(this, e);
             radDSPNR2LogRX2_CheckedChanged(this, e);
             radDSPNR2TRNDRX2_CheckedChanged(this, e);
-            udDSPNR2trainThreshRX2_ValueChanged(this, e);
-            radDSPNR2OSMSRX2_CheckedChanged(this, e);
-            radDSPNR2MMSERX2_CheckedChanged(this, e);
-            radDSPNR2NSTATRX2_CheckedChanged(this, e);
             chkDSPNR2AERX2_CheckedChanged(this, e);
 
             // Transmit Tab
@@ -2722,6 +2734,17 @@ namespace Thetis
             report = "";
             return false;
         }
+        private DataRow[] getDataRowsForTXProfile(string profile)
+        {
+            //[2.10.3.6]MW0LGE fix for case sensitive tx profile names. For example, if you name one
+            //'ABC' and another 'abc', then two will be returned without this change causing issues
+            //to delete etc.
+            bool old_case_sen = DB.ds.Tables["TXProfile"].CaseSensitive;
+            DB.ds.Tables["TXProfile"].CaseSensitive = true;
+            DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + profile.Replace("'", "''") + "'");//MW0LGE_21k9rc6 replace ' for ''
+            DB.ds.Tables["TXProfile"].CaseSensitive = old_case_sen;
+            return rows;
+        }
         private string getTXProfileChangeReport(DataRow drToCheck = null, bool bOnlyVac = false)
         {
             // duplicate of code from checkTXProfileChanged2
@@ -2734,7 +2757,7 @@ namespace Thetis
             if (drToCheck == null)
             {
                 // check everything in the TX profile
-                DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+                DataRow[] rows = getDataRowsForTXProfile(current_profile);// DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); 
 
                 if (rows.Length != 1)
                     return "";
@@ -2936,7 +2959,7 @@ namespace Thetis
             if (drToCheck == null)
             {
                 // check everything in the TX profile
-                DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+                DataRow[] rows = getDataRowsForTXProfile(current_profile);// DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
                 if (rows.Length != 1)
                     return false;
@@ -8830,7 +8853,7 @@ namespace Thetis
             // NOTE: make sure you update checkTXProfileChanged2, if anything is added/removed
             //
 
-            DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + sProfileName.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = getDataRowsForTXProfile(sProfileName);// DB.ds.Tables["TXProfile"].Select("Name = '" + sProfileName.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
             if (rows.Length != 1)
             {
@@ -9185,7 +9208,7 @@ namespace Thetis
 
             profile_deleted = true;
 
-            DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + comboTXProfileName.Text.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = getDataRowsForTXProfile(comboTXProfileName.Text);// DB.ds.Tables["TXProfile"].Select("Name = '" + comboTXProfileName.Text.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
             if (rows.Length == 1)
                 rows[0].Delete();
@@ -12029,7 +12052,7 @@ namespace Thetis
             }
             fileName = tempFN + ".xml";
 
-            DataRow[] rows = DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = getDataRowsForTXProfile(current_profile);// DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
             DataRow exportRow = null;
             if (rows.Length > 0)
             {
@@ -22217,6 +22240,7 @@ namespace Thetis
                 btnCopyPAProfile.Enabled = true;
             }
         }
+        private string _old_pa_profile_name = "";
         private void comboPAProfile_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return; //[2.10.1.0] MW0LGE only want to apply this at the forceallevents stage
@@ -22232,9 +22256,28 @@ namespace Thetis
                 updateDriveLabels(p);
 
                 console.PAProfile = p.ProfileName;
+
+                if(p.ProfileName != _old_pa_profile_name)
+                {
+                    if (console != null)
+                    {
+                        console.PAProfileNameChangedHandlers?.Invoke(_old_pa_profile_name, p.ProfileName);
+                        _old_pa_profile_name = p.ProfileName;
+                    }
+                }
             }
         }
-
+        public string PAProfileName
+        {
+            get
+            {
+                PAProfile p = getPAProfile(comboPAProfile.Text);
+                if (p != null)
+                    return p.ProfileName;
+                else
+                    return "";
+            }
+        }
         private bool validatePAProfileName(string sProfileName)
         {
             if (sProfileName.StartsWith("Default"))
@@ -24322,11 +24365,56 @@ namespace Thetis
             MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (igs == null) return null;
 
-            if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS)
+            if (mt == MeterType.HISTORY)
             {
-                if (mt == MeterType.ANTENNA_BUTTONS)
+                igs.SetSetting<float>("history_vertical_ratio", (float)nudHistory_vertical_ratio.Value);
+                igs.SetSetting<System.Drawing.Color>("history_background_colour", clrbtnHistory_background.Color);
+                igs.SetSetting<float>("history_update", (float)nudHistory_update.Value);
+                igs.SetSetting<float>("history_keep_for", (float)nudHistory_keep_for.Value);
+                
+                clsComboHistoryItem chi = comboHistory_reading_0.SelectedItem as clsComboHistoryItem;
+                if(chi != null)
+                    igs.SetSetting<Reading>("history_reading_0", chi.Reading);
+                else
+                    igs.SetSetting<Reading>("history_reading_0", Reading.SIGNAL_STRENGTH);
+
+                chi = comboHistory_reading_1.SelectedItem as clsComboHistoryItem;
+                if (chi != null)
+                    igs.SetSetting<Reading>("history_reading_1", chi.Reading);
+                else
+                    igs.SetSetting<Reading>("history_reading_1", Reading.SIGNAL_STRENGTH);
+
+                igs.SetSetting<bool>("history_auto_scale_0", chkHistory_auto_0_scale.Checked);
+                igs.SetSetting<float>("history_min_0", (float)nudHistory_axis0_min.Value);
+                igs.SetSetting<float>("history_max_0", (float)nudHistory_axis0_max.Value);
+
+                igs.SetSetting<bool>("history_show_scale_1", chkHistory_1_show_axis.Checked);
+                igs.SetSetting<bool>("history_auto_scale_1", chkHistory_auto_1_scale.Checked);
+                igs.SetSetting<float>("history_min_1", (float)nudHistory_axis1_min.Value);
+                igs.SetSetting<float>("history_max_1", (float)nudHistory_axis1_max.Value);
+
+                igs.SetSetting<System.Drawing.Color>("history_colour_0", clrbtnHistory_colour_0.Color);
+                igs.SetSetting<System.Drawing.Color>("history_colour_1", clrbtnHistory_colour_1.Color);
+
+                igs.SetSetting<System.Drawing.Color>("history_colour_lines", clrbtnHistory_lines.Color);
+                igs.SetSetting<System.Drawing.Color>("history_colour_time", clrbtnHistory_time.Color);
+
+                igs.FadeOnRx = chkHistory_fade_rx.Checked;
+                igs.FadeOnTx = chkHistory_fade_tx.Checked;
+            }
+            else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS)
+            {
+                if(mt == MeterType.TUNESTEP_BUTTONS)
+                {
+                    int max_buttons = ucTunestepOptionsGrid_buttons.GetCheckedCount();
+                    max_buttons = Math.Max(1, max_buttons);
+                    if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
+                    if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
+                }
+                else if (mt == MeterType.ANTENNA_BUTTONS)
                 {
                     int max_buttons = getTotalColumnsNeededForAntennaButtons();
+                    max_buttons = Math.Max(1, max_buttons);
                     if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
                     if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
                 }
@@ -24354,16 +24442,23 @@ namespace Thetis
                 igs.SetSetting<float>("buttonbox_font_shift_x", (float)nudButtonBox_font_x_shift.Value);
                 igs.SetSetting<float>("buttonbox_font_shift_y", (float)nudButtonBox_font_y_shift.Value);
 
-                igs.SetSetting<bool>("buttonbox_rx1", chkButtonBox_antenna_rx1.Checked);
-                igs.SetSetting<bool>("buttonbox_rx2", chkButtonBox_antenna_rx2.Checked);
-                igs.SetSetting<bool>("buttonbox_rx3", chkButtonBox_antenna_rx3.Checked);
-                igs.SetSetting<bool>("buttonbox_tx1", chkButtonBox_antenna_tx1.Checked);
-                igs.SetSetting<bool>("buttonbox_tx2", chkButtonBox_antenna_tx2.Checked);
-                igs.SetSetting<bool>("buttonbox_tx3", chkButtonBox_antenna_tx3.Checked);
-                igs.SetSetting<bool>("buttonbox_byp", chkButtonBox_antenna_byp.Checked);
-                igs.SetSetting<bool>("buttonbox_ext1", chkButtonBox_antenna_ext1.Checked);
-                igs.SetSetting<bool>("buttonbox_xvtr", chkButtonBox_antenna_xvtr.Checked);
-                igs.SetSetting<bool>("buttonbox_rxtxant", chkButtonBox_antenna_rxtxant.Checked);
+                if(mt == MeterType.TUNESTEP_BUTTONS)
+                {
+                    igs.SetSetting<int>("buttonbox_tunestep_bitfield", ucTunestepOptionsGrid_buttons.Bitfield);
+                }
+                else if (mt == MeterType.ANTENNA_BUTTONS)
+                {
+                    igs.SetSetting<bool>("buttonbox_rx1", chkButtonBox_antenna_rx1.Checked);
+                    igs.SetSetting<bool>("buttonbox_rx2", chkButtonBox_antenna_rx2.Checked);
+                    igs.SetSetting<bool>("buttonbox_rx3", chkButtonBox_antenna_rx3.Checked);
+                    igs.SetSetting<bool>("buttonbox_tx1", chkButtonBox_antenna_tx1.Checked);
+                    igs.SetSetting<bool>("buttonbox_tx2", chkButtonBox_antenna_tx2.Checked);
+                    igs.SetSetting<bool>("buttonbox_tx3", chkButtonBox_antenna_tx3.Checked);
+                    igs.SetSetting<bool>("buttonbox_byp", chkButtonBox_antenna_byp.Checked);
+                    igs.SetSetting<bool>("buttonbox_ext1", chkButtonBox_antenna_ext1.Checked);
+                    igs.SetSetting<bool>("buttonbox_xvtr", chkButtonBox_antenna_xvtr.Checked);
+                    igs.SetSetting<bool>("buttonbox_rxtxant", chkButtonBox_antenna_rxtxant.Checked);
+                }
 
                 if (_bandButtons_font != null)
                 {
@@ -24478,6 +24573,9 @@ namespace Thetis
                 igs.SetSetting<bool>("vfo_showbandtext", chkMultiMeter_vfo_show_bandtext.Checked);
                 igs.SetSetting<System.Drawing.Color>("vfo_showbandtext_colour", clrbtnMultiMeter_vfo_show_bandtext.Color);
                 igs.SetSetting<System.Drawing.Color>("vfo_frequency_small_numbers_colour", clrbtnMMVfoDisplayFrequency_small.Color);
+
+                igs.SetSetting<System.Drawing.Color>("vfo_lock_colour", clrbtnMultiMeter_vfo_lock.Color);
+                igs.SetSetting<System.Drawing.Color>("vfo_sync_colour", clrbtnMultiMeter_vfo_sync.Color);
 
                 if (radMultiMeter_vfo_display_both.Checked)
                     igs.HistoryDuration = (int)MeterManager.clsVfoDisplay.VFODisplayMode.VFO_BOTH;
@@ -24644,9 +24742,11 @@ namespace Thetis
 
             _ignoreMeterItemChangeEvents = true;
 
+            // setup any meter that has variable % buttons, ignore those that do not
             if (mt != MeterType.ROTATOR && mt != MeterType.SIGNAL_TEXT && mt != MeterType.VFO_DISPLAY && mt != MeterType.CLOCK && 
                 mt != MeterType.TEXT_OVERLAY && mt != MeterType.SPACER && mt != MeterType.LED &&
-                mt != MeterType.BAND_BUTTONS && mt != MeterType.MODE_BUTTONS && mt != MeterType.FILTER_BUTTONS && mt != MeterType.ANTENNA_BUTTONS
+                mt != MeterType.BAND_BUTTONS && mt != MeterType.MODE_BUTTONS && mt != MeterType.FILTER_BUTTONS && mt != MeterType.ANTENNA_BUTTONS &&
+                mt != MeterType.HISTORY && mt != MeterType.TUNESTEP_BUTTONS
                 )
             {
                 switch (m.MeterVariables(mt))
@@ -24654,15 +24754,15 @@ namespace Thetis
                     case 1:
                         btnMMIO_variable.Enabled = true;
                         btnMMIO_variable_2.Enabled = false;
-                        toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReading(mt, 0).ToString());
+                        toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReadingString(mt, 0));
                         pnlVariableInUse_1.Visible = variableInUse(0);
                         pnlVariableInUse_2.Visible = false;
                         break;
                     case 2:
                         btnMMIO_variable.Enabled = true;
                         btnMMIO_variable_2.Enabled = true;
-                        toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReading(mt, 0).ToString());
-                        toolTip1.SetToolTip(btnMMIO_variable_2, m.MeterVariablesReading(mt, 1).ToString());
+                        toolTip1.SetToolTip(btnMMIO_variable, m.MeterVariablesReadingString(mt, 0));
+                        toolTip1.SetToolTip(btnMMIO_variable_2, m.MeterVariablesReadingString(mt, 1));
                         pnlVariableInUse_1.Visible = variableInUse(0);
                         pnlVariableInUse_2.Visible = variableInUse(1);
                         break;
@@ -24689,15 +24789,73 @@ namespace Thetis
                     case 2:
                         btnMMIO_variable_rotator.Enabled = true;
                         btnMMIO_variable_2_rotator.Enabled = true;
-                        toolTip1.SetToolTip(btnMMIO_variable_rotator, m.MeterVariablesReading(mt, 0).ToString());
-                        toolTip1.SetToolTip(btnMMIO_variable_2_rotator, m.MeterVariablesReading(mt, 1).ToString());
+                        toolTip1.SetToolTip(btnMMIO_variable_rotator, m.MeterVariablesReadingString(mt, 0));
+                        toolTip1.SetToolTip(btnMMIO_variable_2_rotator, m.MeterVariablesReadingString(mt, 1));
                         pnlVariableInUse_1_rotator.Visible = variableInUse(0);
                         pnlVariableInUse_2_rotator.Visible = variableInUse(1);
                         break;
                 }
             }
+            else if (mt == MeterType.HISTORY)
+            {
+                // unique controls for history as own setting grp
+                switch (m.MeterVariables(mt))
+                {
+                    case 2:
+                        btnMMIO_variable_history.Enabled = true;
+                        btnMMIO_variable_2_history.Enabled = true;
+                        toolTip1.SetToolTip(btnMMIO_variable_history, m.MeterVariablesReadingString(mt, 0));
+                        toolTip1.SetToolTip(btnMMIO_variable_2_history, m.MeterVariablesReadingString(mt, 1));
+                        pnlVariableInUse_1_history.Visible = variableInUse(0);
+                        pnlVariableInUse_2_history.Visible = variableInUse(1);
+                        break;
+                }
+            }
 
-            if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS)
+            if (mt == MeterType.HISTORY)
+            {
+                nudHistory_vertical_ratio.Value = (decimal)igs.GetSetting<float>("history_vertical_ratio", true, 0.130f, 1f, 0.5f);
+                clrbtnHistory_background.Color = igs.GetSetting<System.Drawing.Color>("history_background_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Black);
+                nudHistory_update.Value = (decimal)igs.GetSetting<float>("history_update", true, 50f, 10000f, 0.5f);
+                nudHistory_keep_for.Value = (decimal)igs.GetSetting<float>("history_keep_for", true, 1f, 86400f, 20f);
+                Reading r = igs.GetSetting<Reading>("history_reading_0", false, Reading.NONE, Reading.NONE, Reading.SIGNAL_STRENGTH);
+                foreach(clsComboHistoryItem chi in comboHistory_reading_0.Items)
+                {
+                    if (chi.Reading == r)
+                    {
+                        comboHistory_reading_0.SelectedItem = chi;
+                        break;
+                    }
+                }
+                r = igs.GetSetting<Reading>("history_reading_1", false, Reading.NONE, Reading.NONE, Reading.SIGNAL_STRENGTH);
+                foreach (clsComboHistoryItem chi in comboHistory_reading_1.Items)
+                {
+                    if (chi.Reading == r)
+                    {
+                        comboHistory_reading_1.SelectedItem = chi;
+                        break;
+                    }
+                }
+
+                chkHistory_auto_0_scale.Checked = igs.GetSetting<bool>("history_auto_scale_0", false, false, false, true);
+                nudHistory_axis0_min.Value = (decimal)igs.GetSetting<float>("history_min_0", true, -100f, 10000f, -150f);
+                nudHistory_axis0_max.Value = (decimal)igs.GetSetting<float>("history_max_0", true, -10000f, 10000f, 0f);
+
+                chkHistory_1_show_axis.Checked = igs.GetSetting<bool>("history_show_scale_1", false, false, false, true);
+                chkHistory_auto_1_scale.Checked = igs.GetSetting<bool>("history_auto_scale_1", false, false, false, true);
+                nudHistory_axis1_min.Value = (decimal)igs.GetSetting<float>("history_min_1", true, -10000f, 10000f, -150f);
+                nudHistory_axis1_max.Value = (decimal)igs.GetSetting<float>("history_max_1", true, -10000f, 10000f, 0f);
+
+                clrbtnHistory_colour_0.Color = igs.GetSetting<System.Drawing.Color>("history_colour_0", false, Color.Empty, Color.Empty, System.Drawing.Color.Red);
+                clrbtnHistory_colour_1.Color = igs.GetSetting<System.Drawing.Color>("history_colour_1", false, Color.Empty, Color.Empty, System.Drawing.Color.Yellow);
+
+                clrbtnHistory_lines.Color = igs.GetSetting<System.Drawing.Color>("history_colour_lines", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
+                clrbtnHistory_time.Color = igs.GetSetting<System.Drawing.Color>("history_colour_time", false, Color.Empty, Color.Empty, System.Drawing.Color.Gray);
+
+                chkHistory_fade_rx.Checked = igs.FadeOnRx;
+                chkHistory_fade_tx.Checked = igs.FadeOnTx;
+            }
+            else if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS)
             {
                 int columns = 1;
                 int max_buttons = 1;
@@ -24715,12 +24873,21 @@ namespace Thetis
                         break;
                     case MeterType.FILTER_BUTTONS:
                         max_buttons = m.RX == 1 ? 12 : 9; // rx2 only has 9 filter buttons
+                        max_buttons = Math.Max(1, max_buttons);
                         columns = igs.GetSetting<int>("buttonbox_columns", true, 1, max_buttons, max_buttons);
                         if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
                         if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
                         break;
                     case MeterType.ANTENNA_BUTTONS:
                         max_buttons = getTotalColumnsNeededForAntennaButtons();
+                        max_buttons = Math.Max(1, max_buttons);
+                        columns = igs.GetSetting<int>("buttonbox_columns", true, 1, max_buttons, max_buttons);
+                        if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
+                        if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
+                        break;
+                    case MeterType.TUNESTEP_BUTTONS:
+                        max_buttons = ucTunestepOptionsGrid_buttons.GetCheckedCount();
+                        max_buttons = Math.Max(1, max_buttons);
                         columns = igs.GetSetting<int>("buttonbox_columns", true, 1, max_buttons, max_buttons);
                         if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
                         if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
@@ -24749,22 +24916,29 @@ namespace Thetis
                 nudButtonBox_font_x_shift.Value = (decimal)igs.GetSetting<float>("buttonbox_font_shift_x", true, -0.25f, 0.25f, 0f);
                 nudButtonBox_font_y_shift.Value = (decimal)igs.GetSetting<float>("buttonbox_font_shift_y", true, -0.25f, 0.25f, 0f);
 
-                chkButtonBox_antenna_rx1.Checked = igs.GetSetting<bool>("buttonbox_rx1", false, false, false, true);
-                chkButtonBox_antenna_rx2.Checked = igs.GetSetting<bool>("buttonbox_rx2", false, false, false, true);
-                chkButtonBox_antenna_rx3.Checked = igs.GetSetting<bool>("buttonbox_rx3", false, false, false, true);
-                chkButtonBox_antenna_tx1.Checked = igs.GetSetting<bool>("buttonbox_tx1", false, false, false, true);
-                chkButtonBox_antenna_tx2.Checked = igs.GetSetting<bool>("buttonbox_tx2", false, false, false, true);
-                chkButtonBox_antenna_tx3.Checked = igs.GetSetting<bool>("buttonbox_tx3", false, false, false, true);
-                chkButtonBox_antenna_byp.Checked = igs.GetSetting<bool>("buttonbox_byp", false, false, false, true);
-                chkButtonBox_antenna_ext1.Checked = igs.GetSetting<bool>("buttonbox_ext1", false, false, false, true);
-                chkButtonBox_antenna_xvtr.Checked = igs.GetSetting<bool>("buttonbox_xvtr", false, false, false, true);
-                chkButtonBox_antenna_rxtxant.Checked = igs.GetSetting<bool>("buttonbox_rxtxant", false, false, false, true);
+                if (mt == MeterType.TUNESTEP_BUTTONS)
+                {
+                    ucTunestepOptionsGrid_buttons.Bitfield = igs.GetSetting<int>("buttonbox_tunestep_bitfield", true, 0, int.MaxValue, 0);
+                }
+                else if (mt == MeterType.ANTENNA_BUTTONS)
+                {
+                    chkButtonBox_antenna_rx1.Checked = igs.GetSetting<bool>("buttonbox_rx1", false, false, false, true);
+                    chkButtonBox_antenna_rx2.Checked = igs.GetSetting<bool>("buttonbox_rx2", false, false, false, true);
+                    chkButtonBox_antenna_rx3.Checked = igs.GetSetting<bool>("buttonbox_rx3", false, false, false, true);
+                    chkButtonBox_antenna_tx1.Checked = igs.GetSetting<bool>("buttonbox_tx1", false, false, false, true);
+                    chkButtonBox_antenna_tx2.Checked = igs.GetSetting<bool>("buttonbox_tx2", false, false, false, true);
+                    chkButtonBox_antenna_tx3.Checked = igs.GetSetting<bool>("buttonbox_tx3", false, false, false, true);
+                    chkButtonBox_antenna_byp.Checked = igs.GetSetting<bool>("buttonbox_byp", false, false, false, true);
+                    chkButtonBox_antenna_ext1.Checked = igs.GetSetting<bool>("buttonbox_ext1", false, false, false, true);
+                    chkButtonBox_antenna_xvtr.Checked = igs.GetSetting<bool>("buttonbox_xvtr", false, false, false, true);
+                    chkButtonBox_antenna_rxtxant.Checked = igs.GetSetting<bool>("buttonbox_rxtxant", false, false, false, true);
+                }
 
                 _bandButtons_font = new Font(igs.FontFamily1, igs.FontSize1, igs.FontStyle1);
                 chkBandButtons_fade_rx.Checked = igs.FadeOnRx;
                 chkBandButtons_fade_tx.Checked = igs.FadeOnTx;
 
-                updateBandButtonIndicatorControls();
+                updateButtonIndicatorControls();
             }
             else if (mt == MeterType.WEB_IMAGE)
             {
@@ -24930,6 +25104,10 @@ namespace Thetis
                 chkMultiMeter_vfo_show_bandtext.Checked = igs.GetSetting<bool>("vfo_showbandtext", false, false, false, false);
                 clrbtnMultiMeter_vfo_show_bandtext.Color = igs.GetSetting<System.Drawing.Color>("vfo_showbandtext_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
                 clrbtnMMVfoDisplayFrequency_small.Color = igs.GetSetting<System.Drawing.Color>("vfo_frequency_small_numbers_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Orange);
+
+                clrbtnMultiMeter_vfo_lock.Color = igs.GetSetting<System.Drawing.Color>("vfo_lock_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
+                clrbtnMultiMeter_vfo_sync.Color = igs.GetSetting<System.Drawing.Color>("vfo_sync_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
+
 
                 switch ((MeterManager.clsVfoDisplay.VFODisplayMode)igs.HistoryDuration)
                 {
@@ -25383,6 +25561,7 @@ namespace Thetis
             grpWebImage.Visible = false;
             grpBandButtons.Visible = false;
             pnlButtonBox_antenna_toggles.Visible = false;
+            grpHistoryItem.Visible = false;
 
             switch (mt)
             {
@@ -25432,6 +25611,7 @@ namespace Thetis
                     comboWebImage_nasa.SelectedIndex = 0;
                     comboWebImage_noaa.SelectedIndex = 0;
                     break;
+                case MeterType.TUNESTEP_BUTTONS:
                 case MeterType.ANTENNA_BUTTONS:
                 case MeterType.FILTER_BUTTONS:
                 case MeterType.MODE_BUTTONS:
@@ -25441,11 +25621,35 @@ namespace Thetis
                         grpBandButtons.Location = loc;
                         grpBandButtons.Visible = true;
 
-                        if(mt == MeterType.ANTENNA_BUTTONS)
-                            pnlButtonBox_antenna_toggles.Visible = true;
-                        else
-                            pnlButtonBox_antenna_toggles.Visible = false;
+                        switch (mt)
+                        {
+                            case MeterType.ANTENNA_BUTTONS:
+                                pnlButtonBox_antenna_toggles.Parent = grpBandButtons;
+                                pnlButtonBox_antenna_toggles.Location = new Point(166, 194);
+                                pnlButtonBox_antenna_toggles.Visible = true;
+                                ucTunestepOptionsGrid_buttons.Visible = false;
+                                break;
+                            case MeterType.TUNESTEP_BUTTONS:
+                                ucTunestepOptionsGrid_buttons.Parent = grpBandButtons;
+                                ucTunestepOptionsGrid_buttons.Location = new Point(166, 194);
+                                ucTunestepOptionsGrid_buttons.Visible = true;
+                                pnlButtonBox_antenna_toggles.Visible = false;
+                                if(console != null)
+                                {
+                                    ucTunestepOptionsGrid_buttons.Init(console.TuneStepList);
+                                }
+                                break;
+                            default:
+                                pnlButtonBox_antenna_toggles.Visible = false;
+                                ucTunestepOptionsGrid_buttons.Visible = false;
+                                break;
+                        }
                     }
+                    break;
+                case MeterType.HISTORY:
+                    grpHistoryItem.Parent = grpMultiMeterHolder;
+                    grpHistoryItem.Location = loc;
+                    grpHistoryItem.Visible = true;
                     break;
                 default:
                     grpMeterItemSettings.Parent = grpMultiMeterHolder;
@@ -25595,6 +25799,7 @@ namespace Thetis
                 // ignore some things [2.10.1.0] MW0LGE - fixes issue where bar with change units is paste into new bar, and source bars have no sub indicator
                 MeterManager.clsIGSettings currentSettings = m.GetSettingsForMeterGroup(mt, mtci.Order);
 
+                // prevent overwrite of the following
                 _itemGroupSettings.Unit = currentSettings.Unit;
 
                 if (!_itemGroupSettings.SubIndicators)
@@ -25603,6 +25808,24 @@ namespace Thetis
                     _itemGroupSettings.ShowSubMarker = currentSettings.ShowMarker;
                     _itemGroupSettings.ShowSubMarker = currentSettings.ShowSubMarker;
                     _itemGroupSettings.SubMarkerColour = currentSettings.SubMarkerColour;
+                }
+
+                if(mt == MeterType.TUNESTEP_BUTTONS)
+                {
+                    _itemGroupSettings.SetSetting<int>("buttonbox_tunestep_bitfield", currentSettings.GetSetting<int>("buttonbox_tunestep_bitfield", true, 0, int.MaxValue, 0));
+                }
+                else if (mt == MeterType.ANTENNA_BUTTONS)
+                {
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_rx1", currentSettings.GetSetting<bool>("buttonbox_rx1", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_rx2", currentSettings.GetSetting<bool>("buttonbox_rx2", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_rx3", currentSettings.GetSetting<bool>("buttonbox_rx3", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_tx1", currentSettings.GetSetting<bool>("buttonbox_tx1", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_tx2", currentSettings.GetSetting<bool>("buttonbox_tx2", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_tx3", currentSettings.GetSetting<bool>("buttonbox_tx3", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_byp", currentSettings.GetSetting<bool>("buttonbox_byp", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_ext1", currentSettings.GetSetting<bool>("buttonbox_ext1", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_xvtr", currentSettings.GetSetting<bool>("buttonbox_xvtr", false, false, false, true));
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_rxtxant", currentSettings.GetSetting<bool>("buttonbox_rxtxant", false, false, false, true));
                 }
                 //
 
@@ -25626,16 +25849,18 @@ namespace Thetis
             if (mt == MeterType.MAGIC_EYE || mt == MeterType.CROSS ||
                 mt == MeterType.ANANMM || mt == MeterType.SIGNAL_TEXT ||
                 mt == MeterType.SPACER || mt == MeterType.TEXT_OVERLAY ||
-                mt == MeterType.LED || mt == MeterType.ROTATOR ||
-                mt == MeterType.VFO_DISPLAY || mt == MeterType.CLOCK)
+                mt == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
+                mt == MeterType.VFO_DISPLAY || mt == MeterType.CLOCK
+                )
             {
                 bPaste = _itemGroupSettingsMeterType == mt;
             }
             else if (_itemGroupSettingsMeterType == MeterType.MAGIC_EYE || _itemGroupSettingsMeterType == MeterType.CROSS ||
                 _itemGroupSettingsMeterType == MeterType.ANANMM || _itemGroupSettingsMeterType == MeterType.SIGNAL_TEXT ||
                 _itemGroupSettingsMeterType == MeterType.SPACER || _itemGroupSettingsMeterType == MeterType.TEXT_OVERLAY ||
-                _itemGroupSettingsMeterType == MeterType.LED || mt == MeterType.ROTATOR ||
-                _itemGroupSettingsMeterType == MeterType.VFO_DISPLAY || _itemGroupSettingsMeterType == MeterType.CLOCK)
+                _itemGroupSettingsMeterType == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
+                _itemGroupSettingsMeterType == MeterType.VFO_DISPLAY || _itemGroupSettingsMeterType == MeterType.CLOCK
+                )
             {
                 bPaste = mt == _itemGroupSettingsMeterType;
             }
@@ -29404,29 +29629,47 @@ namespace Thetis
 
                 m.ApplySettingsForMeterGroup(mt, igs, mtci.Order);
 
-                if (mt == MeterType.ROTATOR)
+                switch(mt)
                 {
-                    switch (variable)
-                    {
-                        case 0:
-                            pnlVariableInUse_1_rotator.Visible = variableInUse(0);
-                            break;
-                        case 1:
-                            pnlVariableInUse_2_rotator.Visible = variableInUse(1);
-                            break;
-                    }
-                }
-                else
-                {
-                    switch (variable)
-                    {
-                        case 0:
-                            pnlVariableInUse_1.Visible = variableInUse(0);
-                            break;
-                        case 1:
-                            pnlVariableInUse_2.Visible = variableInUse(1);
-                            break;
-                    }
+                    case MeterType.HISTORY:
+                        {
+                            switch (variable)
+                            {
+                                case 0:
+                                    pnlVariableInUse_1_history.Visible = variableInUse(0);
+                                    break;
+                                case 1:
+                                    pnlVariableInUse_2_history.Visible = variableInUse(1);
+                                    break;
+                            }
+                        }
+                        break;
+                    case MeterType.ROTATOR:
+                        {
+                            switch (variable)
+                            {
+                                case 0:
+                                    pnlVariableInUse_1_rotator.Visible = variableInUse(0);
+                                    break;
+                                case 1:
+                                    pnlVariableInUse_2_rotator.Visible = variableInUse(1);
+                                    break;
+                            }
+                        }
+                        break;
+                    default:
+                        {
+                            switch (variable)
+                            {
+                                case 0:
+                                    pnlVariableInUse_1.Visible = variableInUse(0);
+                                    break;
+                                case 1:
+                                    pnlVariableInUse_2.Visible = variableInUse(1);
+                                    break;
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -29917,8 +30160,8 @@ namespace Thetis
         {
             if (txtWebImage_url.Text.Contains("hamqsl.com", StringComparison.InvariantCultureIgnoreCase) ||
                 txtWebImage_url.Text.Contains("bsdworld.org", StringComparison.InvariantCultureIgnoreCase) ||
-                txtWebImage_url.Text.Contains("nascom.nasa.gov", StringComparison.InvariantCultureIgnoreCase) ||
-                txtWebImage_url.Text.Contains("swpc.noaa.gov", StringComparison.InvariantCultureIgnoreCase) ||
+                //txtWebImage_url.Text.Contains("nascom.nasa.gov", StringComparison.InvariantCultureIgnoreCase) ||
+                //txtWebImage_url.Text.Contains("swpc.noaa.gov", StringComparison.InvariantCultureIgnoreCase) ||
                 txtWebImage_url.Text.Contains("kc2g.com", StringComparison.InvariantCultureIgnoreCase)
                 )
             {
@@ -30195,7 +30438,8 @@ namespace Thetis
             new KeyValuePair<string, string>("Northern Aurora Forecast", "https://services.swpc.noaa.gov/images/aurora-forecast-northern-hemisphere.jpg"),
             new KeyValuePair<string, string>("Southern Aurora Forecast", "https://services.swpc.noaa.gov/images/aurora-forecast-southern-hemisphere.jpg"),
             new KeyValuePair<string, string>("SWX Solar Overiew", "https://services.swpc.noaa.gov/images/swx-overview-large.gif"),
-            new KeyValuePair<string, string>("K Indicies", "https://services.swpc.noaa.gov/images/station-k-index.png")
+            new KeyValuePair<string, string>("K Indicies", "https://services.swpc.noaa.gov/images/station-k-index.png"),
+            new KeyValuePair<string, string>("D Region Absorption Map", "https://services.swpc.noaa.gov/images/animations/d-rap/global/d-rap/latest.png")
         };
 
         private void comboWebImage_BsdWorld_SelectedIndexChanged(object sender, EventArgs e)
@@ -30304,7 +30548,7 @@ namespace Thetis
 
         private void chkBandButtons_use_indicator_CheckedChanged(object sender, EventArgs e)
         {
-            updateBandButtonIndicatorControls();
+            updateButtonIndicatorControls();
             updateMeterType();
         }
 
@@ -30312,7 +30556,7 @@ namespace Thetis
         {
             updateMeterType();
         }
-        private void updateBandButtonIndicatorControls()
+        private void updateButtonIndicatorControls()
         {
             if (initializing) return;
             bool enable = chkBandButtons_use_indicator.Checked;
@@ -30514,7 +30758,6 @@ namespace Thetis
             if (chkButtonBox_antenna_ext1.Checked) enable_count++;
             if (chkButtonBox_antenna_xvtr.Checked) enable_count++;
             if (chkButtonBox_antenna_rxtxant.Checked) enable_count++;
-            if (enable_count == 0) enable_count = 1;
 
             return enable_count;
         }
@@ -30567,6 +30810,200 @@ namespace Thetis
         private void btnVFOCopyColourFromMainNumbers_Click(object sender, EventArgs e)
         {
             clrbtnMMVfoDisplayFrequency_small.Color = clrbtnMMVfoDisplayFrequency.Color;
+        }
+
+        private void nudHistory_vertical_ratio_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnHistory_background_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkHistory_fade_rx_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkHistory_fade_tx_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudHistory_update_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudHistory_keep_for_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void comboHistory_reading_0_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            clsComboHistoryItem chi = comboHistory_reading_0.SelectedItem as clsComboHistoryItem;
+            if (chi == null) return;
+
+            updateMeterType();
+        }
+        private class clsComboHistoryItem
+        {
+            private string _reading_name;
+            private Reading _reading;
+            public clsComboHistoryItem(Reading r)
+            {
+                _reading = r;
+                _reading_name = MeterManager.ReadingName(r);
+            }
+            public Reading Reading
+            {
+                get { return _reading; }
+            }
+            public string ReadingName
+            {
+                get { return _reading_name; }
+            }
+            public override string ToString()
+            {
+                return _reading_name;
+            }
+        }
+        private void initComboHistoryReadings0()
+        {
+            List<clsComboHistoryItem> items = new List<clsComboHistoryItem>();
+            comboHistory_reading_0.Items.Clear();
+            comboHistory_reading_1.Items.Clear();
+            for (int i = (int)Reading.SIGNAL_STRENGTH; i <= (int)Reading.SWR; i++)
+            {
+                if (i == 22 || i == 23) continue; // skip these as not used
+
+                Reading r = (Reading)i;
+                clsComboHistoryItem chi = new clsComboHistoryItem(r);
+                items.Add(chi);
+            }
+
+            items = items.OrderBy(item => item.ReadingName).ToList();
+
+            foreach (clsComboHistoryItem chi in items)
+            {
+                int index = comboHistory_reading_0.Items.Add(chi);
+                index = comboHistory_reading_1.Items.Add(chi);
+            }
+        }
+
+        private void nudHistory_axis0_min_ValueChanged(object sender, EventArgs e)
+        {
+            if (nudHistory_axis0_min.Value > nudHistory_axis0_max.Value) nudHistory_axis0_max.Value = nudHistory_axis0_min.Value;
+            updateMeterType();
+        }
+
+        private void nudHistory_axis0_max_ValueChanged(object sender, EventArgs e)
+        {
+            if (nudHistory_axis0_max.Value < nudHistory_axis0_min.Value) nudHistory_axis0_min.Value = nudHistory_axis0_max.Value;
+            updateMeterType();
+        }
+
+        private void chkHistory_auto_0_scale_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void comboHistory_reading_1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            clsComboHistoryItem chi = comboHistory_reading_1.SelectedItem as clsComboHistoryItem;
+            if (chi == null) return;
+
+            updateMeterType();
+        }
+
+        private void chkHistory_auto_1_scale_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudHistory_axis1_min_ValueChanged(object sender, EventArgs e)
+        {
+            if (nudHistory_axis1_min.Value > nudHistory_axis1_max.Value) nudHistory_axis1_max.Value = nudHistory_axis1_min.Value;
+            updateMeterType();
+        }
+
+        private void nudHistory_axis1_max_ValueChanged(object sender, EventArgs e)
+        {
+            if (nudHistory_axis1_max.Value < nudHistory_axis1_min.Value) nudHistory_axis1_min.Value = nudHistory_axis1_max.Value;
+            updateMeterType();
+        }
+
+        private void udDSPNR2trainT2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            WDSP.SetRXAEMNRtrainT2(WDSP.id(0, 0), (double)udDSPNR2trainT2.Value);
+            WDSP.SetRXAEMNRtrainT2(WDSP.id(0, 1), (double)udDSPNR2trainT2.Value);
+        }
+
+        private void udDSPNR2trainT2RX2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            WDSP.SetRXAEMNRtrainT2(WDSP.id(2, 0), (double)udDSPNR2trainT2RX2.Value);
+            WDSP.SetRXAEMNRtrainT2(WDSP.id(2, 1), (double)udDSPNR2trainT2RX2.Value);
+        }
+
+        private void chkHistory_1_show_axis_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void btnHistory_copy_minmax_from_0_Click(object sender, EventArgs e)
+        {
+            nudHistory_axis1_min.Value = nudHistory_axis0_min.Value;
+            nudHistory_axis1_max.Value = nudHistory_axis0_max.Value;
+        }
+
+        private void btnMMIO_variable_history_Click(object sender, EventArgs e)
+        {
+            mmioSetupVariable(0);
+        }
+
+        private void btnMMIO_variable_2_history_Click(object sender, EventArgs e)
+        {
+            mmioSetupVariable(1);
+        }
+
+        private void clrbtnMultiMeter_vfo_lock_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnMultiMeter_vfo_sync_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void ucTunestepOptionsGrid_buttons_checkbox_changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnHistory_colour_0_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnHistory_colour_1_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnHistory_lines_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnHistory_time_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 
