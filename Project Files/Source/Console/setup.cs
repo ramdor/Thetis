@@ -6910,8 +6910,8 @@ namespace Thetis
                         console.SampleRateRX1 = new_rate;
                         console.SampleRateRX2 = new_rate;
 
-                        // set PureSignal sample rate // Pavel
-                        cmaster.PSrate = new_rate; // Pavel
+                        // set PureSignal sample rate // Pavel for Red Pitaya
+                        cmaster.PSrate = new_rate; // Pavel for Red Pitaya
 
                         // set protocol_1 network software sample rate
                         NetworkIO.SetDDCRate(0, new_rate);
