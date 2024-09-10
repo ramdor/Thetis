@@ -148,10 +148,10 @@ namespace Thetis
                             return "Spots";
                         case ActionTypes.DisplayFill:
                             return "Fill";
-                        case ActionTypes.Random: // RX2 Ant.4 // DH1KLM for Red Pitaya
-                            return "RX2A4";
-                        case ActionTypes.Dither: // RX2 Ant.5 // DH1KLM for Red Pitaya
-                            return "RX2A5";
+                        case ActionTypes.Random: // RX2 Ant.1 // DH1KLM for Red Pitaya
+                            return "Rx2A1";
+                        case ActionTypes.Dither: // RX2 Ant.2 // DH1KLM for Red Pitaya
+                            return "Rx2A2";
 
                     }
                     return "?";
@@ -180,10 +180,10 @@ namespace Thetis
                             return "Show spots";
                         case ActionTypes.DisplayFill:
                             return "Fill the panadaptor";
-                        case ActionTypes.Random: // RX2 Ant.4
-                            return "Activate Antenna 4 on RX2 for Red Pitaya"; // DH1KLM for Red Pitaya
-                        case ActionTypes.Dither: // RX2 Ant.5
-                            return "Activate Antenna 5 on RX2 for Red Pitaya"; // DH1KLM for Red Pitaya
+                        case ActionTypes.Random: // RX2 Ant.1
+                            return "Activate Antenna 1 on RX2 for Red Pitaya"; // DH1KLM for Red Pitaya
+                        case ActionTypes.Dither: // RX2 Ant.2
+                            return "Activate Antenna 2 on RX2 for Red Pitaya"; // DH1KLM for Red Pitaya
                     }
                     return "";
                 }
