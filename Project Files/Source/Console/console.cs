@@ -30276,7 +30276,8 @@ namespace Thetis
                 //_bands_GEN_selected = value;
                 //if (_bands_GEN_selected)
                 //    btnBandGEN_Click(this, EventArgs.Empty);
-                setBandPanelVisible(true, false, false);
+                if(value)
+                    setBandPanelVisible(true, false, false);
             }
         }
         public bool BandHFSelected
@@ -30287,7 +30288,8 @@ namespace Thetis
                 //_bands_HF_selected = value;
                 //if (_bands_HF_selected)
                 //    btnBandHF_Click(this, EventArgs.Empty);
-                setBandPanelVisible(false, true, false);
+                if (value)
+                    setBandPanelVisible(false, true, false);
             }
         }
         public bool BandVHFSelected
@@ -30298,7 +30300,8 @@ namespace Thetis
                 //_bands_VHF_selected = value;
                 //if (_bands_VHF_selected)
                 //    btnBandVHF_Click(this, EventArgs.Empty);
-                setBandPanelVisible(false, false, true);
+                if (value)
+                    setBandPanelVisible(false, false, true);
             }
         }
         //
