@@ -4410,7 +4410,7 @@ namespace Thetis
             DataTable table = AndromedaSet.Tables["Menu Bar Settings"];
             int RowCount = table.Rows.Count;
 
-            if (this.showAndromedaButtonBar)
+            if (this._showAndromedaButtonBar)
             {
                 buttonNumber = currentButtonBarMenu * 8;            // point to 1st button
                                                                     // for each button: get its text; give it an opportunity to edit; and set highlight
