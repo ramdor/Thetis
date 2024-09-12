@@ -28287,7 +28287,7 @@ namespace Thetis
                 comboRX2Preamp.BringToFront();
 
             //update the nud and combos, for attenuators, both rx and tx
-            bool bShowOnMox = _mox && (_isexpanded || (_iscollapsed && !(showAndromedaTopControls || showAndromedaButtonBar)));
+            bool bShowOnMox = _mox && (_isexpanded || (_iscollapsed && !(_showAndromedaTopControls || _showAndromedaButtonBar)));
             if (bShowOnMox)
             {
                 if (VFOATX || (VFOBTX && !rx2_enabled))
@@ -29229,11 +29229,20 @@ namespace Thetis
             if (modePopupForm != null) modePopupForm.RepopulateForm();
             if (filterPopupForm != null) filterPopupForm.RepopulateForm();
         }
-        public void BandPanelVisible()
+        public void BandPanelVisible(bool all_hidden = false)
         {
+            if (all_hidden)
+            {
+                //rx1 done by this
+                setBandPanelVisible(false, false, false, true);
+                //rx2
+                lblRX2Band.Visible = false;
+                comboRX2Band.Visible = false;
+                return;
+            }
+
             //rx1 done by this
             setBandPanelVisible(_bands_GEN_selected, _bands_HF_selected, _bands_VHF_selected, true);
-
             //rx2
             lblRX2Band.Visible = !LegacyItemController.HideBands;
             comboRX2Band.Visible = !LegacyItemController.HideBands;
@@ -29356,20 +29365,34 @@ namespace Thetis
             }
             //
 
-            panelBandGEN.Visible = gen && !LegacyItemController.HideBands;
-            panelBandHF.Visible = hf && !LegacyItemController.HideBands;
-            panelBandVHF.Visible = vhf && !LegacyItemController.HideBands;
+            bool all_off = !(gen || hf || vhf);
 
-            bool old_gen = _bands_GEN_selected;
-            bool old_hf = _bands_HF_selected;
-            bool old_vhf = _bands_VHF_selected;
+            if (all_off)
+            {
+                panelBandGEN.Visible = false;
+                panelBandHF.Visible = false;
+                panelBandVHF.Visible = false;
+            }
+            else
+            {
+                panelBandGEN.Visible = gen && !LegacyItemController.HideBands;
+                panelBandHF.Visible = hf && !LegacyItemController.HideBands;
+                panelBandVHF.Visible = vhf && !LegacyItemController.HideBands;
+            }
 
-            _bands_GEN_selected = gen;
-            _bands_HF_selected = hf;
-            _bands_VHF_selected = vhf;
+            if (!all_off) // if all disabled, then do nothing with the state. This is probably done when andromeda button bar is shown to hide everything
+            {
+                bool old_gen = _bands_GEN_selected;
+                bool old_hf = _bands_HF_selected;
+                bool old_vhf = _bands_VHF_selected;
 
-            if(old_gen != _bands_GEN_selected || old_hf != _bands_HF_selected || old_vhf != _bands_VHF_selected)
-                BandPanelChangeHandlers?.Invoke(1, _bands_GEN_selected, _bands_HF_selected, _bands_VHF_selected);
+                _bands_GEN_selected = gen;
+                _bands_HF_selected = hf;
+                _bands_VHF_selected = vhf;
+
+                if (old_gen != _bands_GEN_selected || old_hf != _bands_HF_selected || old_vhf != _bands_VHF_selected)
+                    BandPanelChangeHandlers?.Invoke(1, _bands_GEN_selected, _bands_HF_selected, _bands_VHF_selected);
+            }
         }
         private void btnBandVHF_Click(object sender, System.EventArgs e)
         {
@@ -29418,7 +29441,8 @@ namespace Thetis
                 //_bands_GEN_selected = value;
                 //if (_bands_GEN_selected)
                 //    btnBandGEN_Click(this, EventArgs.Empty);
-                setBandPanelVisible(true, false, false);
+                if(value)
+                    setBandPanelVisible(true, false, false);
             }
         }
         public bool BandHFSelected
@@ -29429,7 +29453,8 @@ namespace Thetis
                 //_bands_HF_selected = value;
                 //if (_bands_HF_selected)
                 //    btnBandHF_Click(this, EventArgs.Empty);
-                setBandPanelVisible(false, true, false);
+                if (value)
+                    setBandPanelVisible(false, true, false);
             }
         }
         public bool BandVHFSelected
@@ -29440,7 +29465,8 @@ namespace Thetis
                 //_bands_VHF_selected = value;
                 //if (_bands_VHF_selected)
                 //    btnBandVHF_Click(this, EventArgs.Empty);
-                setBandPanelVisible(false, false, true);
+                if (value)
+                    setBandPanelVisible(false, false, true);
             }
         }
         //
@@ -41774,7 +41800,7 @@ namespace Thetis
             {
                 this.m_bShowBandControls = value;
                 this.bandControlsToolStripMenuItem.Checked = value;
-                this.bandToolStripMenuItem.Visible = !m_bShowBandControls;
+                this.bandToolStripMenuItem.Visible = !m_bShowBandControls && IsCollapsedView; //[2.10.3.6]MW0LGE added && CollapsedDisplay. The item will be shown elsewhere if this property is changed whilst in expanded
                 if (value == true)                      // if ON, turn andromeda menu button bar OFF
                     if (!IsSetupFormNull) SetupForm.chkShowAndromedaBar.Checked = false;
 
@@ -41790,7 +41816,7 @@ namespace Thetis
             {
                 this.m_bShowModeControls = value;
                 this.modeControlsToolStripMenuItem.Checked = value;
-                this.modeToolStripMenuItem.Visible = !m_bShowModeControls;
+                this.modeToolStripMenuItem.Visible = !m_bShowModeControls && IsCollapsedView; //[2.10.3.6]MW0LGE added && CollapsedDisplay. The item will be shown elsewhere if this property is changed whilst in expanded
                 if (value == true)                      // if ON, turn andromeda menu button bar OFF
                     if (!IsSetupFormNull) SetupForm.chkShowAndromedaBar.Checked = false;
 
@@ -41799,12 +41825,12 @@ namespace Thetis
             }
         }
 
-        private bool showAndromedaTopControls = false;
+        private bool _showAndromedaTopControls = false;
         public bool ShowAndromedaTopControls
         {
             set
             {
-                this.showAndromedaTopControls = value;
+                this._showAndromedaTopControls = value;
                 this.andromedaTopControlsToolStripMenuItem.Checked = value;
                 if (value == true)                  // if andromeda ON, turn the "normal" top bar OFF
                     if (!IsSetupFormNull) SetupForm.chkShowTopControls.Checked = false;
@@ -41812,14 +41838,15 @@ namespace Thetis
                     this.CollapseDisplay(true);
 
             }
+            get { return this._showAndromedaTopControls; }
         }
 
-        private bool showAndromedaButtonBar = false;
+        private bool _showAndromedaButtonBar = false;
         public bool ShowAndromedaButtonBar
         {
             set
             {
-                this.showAndromedaButtonBar = value;
+                this._showAndromedaButtonBar = value;
                 this.andromedaButtonBarToolStripMenuItem.Checked = value;
                 if (value == true)                  // if andromeda bar ON, turn mode and band OFF
                 {
@@ -41829,6 +41856,8 @@ namespace Thetis
                         SetupForm.chkShowModeControls.Checked = false;
                     }
                 }
+                else
+                    panelButtonBar.Hide(); //[2.10.3.6]MW0LGE added so that it will hide if the setup/menu option is changed
                 if (this.CollapsedDisplay)
                     this.CollapseDisplay(true);
             }
@@ -42292,7 +42321,7 @@ namespace Thetis
             }
             else if (_iscollapsed && !_isexpanded)
             {
-                if (showAndromedaTopControls || m_bShowTopControls)
+                if (_showAndromedaTopControls || m_bShowTopControls)
                 {
                     PictureBox pb = show_rx1 ? picMultiMeterDigital : picRX2Meter; // need to know which is shown
                     x = pb.Left;
@@ -42334,7 +42363,8 @@ namespace Thetis
             if (bSuspendDraw) SuspendDrawing(this);
 
             // Save expanded display size
-            if (!this.collapsedDisplay)
+            //if (!this.collapsedDisplay) //[2.10.3.6]MW0LGE this is not set on startup, so use IsCollapsed instead
+            if(!IsCollapsedView)
                 this.expandedSize = this.Size;            
 
             this.collapseToolStripMenuItem.Text = "Expand";
@@ -42369,7 +42399,7 @@ namespace Thetis
                 comboRX2MeterMode_SelectedIndexChanged(this, EventArgs.Empty);
                 comboMeterTXMode_SelectedIndexChanged(this, EventArgs.Empty);
             }
-            else if (this.showAndromedaTopControls)
+            else if (this._showAndromedaTopControls)
             {
                 minWidth = Math.Max(minWidth, console_basis_size.Width);
                 if (show_rx1)
@@ -42381,7 +42411,7 @@ namespace Thetis
                 comboMeterTXMode_SelectedIndexChanged(this, EventArgs.Empty);
             }
 
-            if (this.showAndromedaButtonBar)
+            if (this._showAndromedaButtonBar)
             {
                 statusStripMain.Show();
                 minWidth = panelButtonBar.Width;
@@ -42454,7 +42484,7 @@ namespace Thetis
             panelRX2RF.Hide();
 
             // G8NJJ: top display with both VFO controls
-            if (this.showAndromedaTopControls)
+            if (this._showAndromedaTopControls)
             {
                 chkMUT.Hide();
                 comboPreamp.Hide();
@@ -42760,7 +42790,7 @@ namespace Thetis
             //
             // G8NJJ: if Andromeda button bar, show its button panel
             //
-            if (this.showAndromedaButtonBar)
+            if (this._showAndromedaButtonBar)
             {
                 panelBandVHF.Hide();
                 panelBandHF.Hide();
@@ -42788,21 +42818,20 @@ namespace Thetis
                 comboRX2Band.Show();
                 lblRX2Band.Parent = this;
                 comboRX2Band.Parent = this;
-
             }
             else
             {
                 panelBandVHF.Hide();
                 panelBandHF.Hide();
                 panelBandGEN.Hide();
-            }
-
-            updateLegacyMeterControls(false);// [2.10.1.0] MW0LGE
+            }            
 
             if (this.m_bShowModeControls)
                 panelMode.Show();
             else
                 panelMode.Hide();
+
+            updateLegacyMeterControls(false);// [2.10.1.0] MW0LGE
 
             // [2.10.1.0] MW0LGE
             if (_modeDependentSettingsFormAutoClosedWhenExpanded)
@@ -42835,7 +42864,7 @@ namespace Thetis
             int h_delta = this.Width - console_basis_size.Width;
             int v_delta = Math.Max(this.Height - console_basis_size.Height, 0);
 
-            if (showAndromedaTopControls)
+            if (_showAndromedaTopControls)
             {
                 top = grpVFOA.Height + 50;
                 //
@@ -43072,7 +43101,7 @@ namespace Thetis
 
             int height = this.ClientSize.Height - (top + 25);
 
-            if (showAndromedaButtonBar)
+            if (_showAndromedaButtonBar)
             {
                 height -= statusStripMain.Height;
                 height -= panelButtonBar.Height;
@@ -43115,7 +43144,7 @@ namespace Thetis
 
             top = panelDisplay.Location.Y + panelDisplay.Height;
             // G8NJJ to add new Andromeda button bar in place of band, mode controls
-            if (this.showAndromedaButtonBar)
+            if (this._showAndromedaButtonBar)
             {
                 panelButtonBar.Location = new Point(5, top);
                 top = top + panelButtonBar.Height;
@@ -43230,7 +43259,7 @@ namespace Thetis
 
             }
 
-            if ((!this.m_bShowTopControls) && (!this.showAndromedaTopControls))
+            if ((!this.m_bShowTopControls) && (!this._showAndromedaTopControls))
             {
                 grpVFOA.Location = new Point(grpVFOA.Location.X, -200);
                 grpVFOB.Location = new Point(grpVFOB.Location.X, -200);
@@ -48162,7 +48191,7 @@ namespace Thetis
                 grpRX2Meter.Visible = false;
                 grpMultimeterMenus.Visible = false;
 
-                if (m_bShowTopControls || showAndromedaTopControls)
+                if (m_bShowTopControls || _showAndromedaTopControls)
                 {
                     picMultiMeterDigital.Visible = _useLegacyMeters && ShowRX1;
                     txtMultiText.Visible = _useLegacyMeters && ShowRX1;
@@ -48177,7 +48206,7 @@ namespace Thetis
                     comboRX2MeterMode.Visible = _useLegacyMeters && ShowRX2;
                     comboMeterTXMode.Visible = _useLegacyMeters;
                 }
-                else if (showAndromedaTopControls)
+                else if (_showAndromedaTopControls)
                 {
                     panelMeterLabels.Visible = _useLegacyMeters;
                     comboMeterRXMode.Visible = false;

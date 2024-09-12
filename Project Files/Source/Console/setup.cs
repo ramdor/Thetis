@@ -2230,6 +2230,13 @@ namespace Thetis
 
             chkConsoleDarkModeTitleBar_CheckedChanged(this, e); //MW0LGE [2.9.0.8]
 
+            //collapsed display related items [2.10.3.6]MW0LGE
+            chkShowTopControls_CheckedChanged(this, e);
+            chkShowBandControls_CheckedChanged(this, e);
+            chkModeControls_CheckedChanged(this, e);
+            chkShowAndromedaTop_CheckedChanged(this, e);
+            chkShowAndromedaBar_CheckedChanged(this, e);
+
             // DSP Tab
             udLMSANF_ValueChanged(this, e);
             udLMSNR_ValueChanged(this, e);
@@ -9266,18 +9273,21 @@ namespace Thetis
 
         private void chkShowTopControls_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.ShowTopControls = chkShowTopControls.Checked;
             // G8NJJ: all logic moved to the console properties code
         }
 
         private void chkShowBandControls_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.ShowBandControls = chkShowBandControls.Checked;
             // G8NJJ: all logic moved to the console properties code
         }
 
         private void chkModeControls_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.ShowModeControls = chkShowModeControls.Checked;
             // G8NJJ: all logic moved to the console properties code
         }
@@ -9287,6 +9297,7 @@ namespace Thetis
         //
         private void chkShowAndromedaTop_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.ShowAndromedaTopControls = chkShowAndromedaTop.Checked;
             // G8NJJ: all logic moved to the console properties code
         }
@@ -9296,6 +9307,7 @@ namespace Thetis
         //
         private void chkShowAndromedaBar_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.ShowAndromedaButtonBar = chkShowAndromedaBar.Checked;
             // G8NJJ: all logic moved to the console properties code
         }

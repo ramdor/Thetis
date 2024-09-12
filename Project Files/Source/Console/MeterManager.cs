@@ -5741,7 +5741,6 @@ namespace Thetis
                     // just set the band
                     int index = -1;
                     int old_index = -1;
-                    bool set = false;
                     switch (_button_bands)
                     {
                         case BandGroups.GEN:

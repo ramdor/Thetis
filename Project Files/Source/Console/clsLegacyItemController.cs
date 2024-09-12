@@ -34,7 +34,7 @@ namespace Thetis
 {
     internal static class LegacyItemController
     {
-        private static Console _c;
+        private static Console _console;
         private static bool _update_on_property_change;
 
         private static bool _hide_bands;
@@ -48,7 +48,7 @@ namespace Thetis
         private static bool _expand_spectrum_to_top;
         static LegacyItemController()
         {
-            _c = null;
+            _console = null;
             _hide_bands = false;
             _hide_modes = false;
             _hide_filters = false;
@@ -62,16 +62,16 @@ namespace Thetis
     }
         public static void Init(Console c)
         {
-            _c = c;
+            _console = c;
             _update_on_property_change = true;
         }
         public static bool HideMeters
         {
             get
             {
-                if (_c != null)
+                if (_console != null)
                 {
-                    return _hide_meters && _c.IsExpandedView;
+                    return _hide_meters && _console.IsExpandedView;
                 }
                 return _hide_meters;
             }
@@ -85,9 +85,9 @@ namespace Thetis
         {
             get 
             { 
-                if(_c != null)
+                if(_console != null)
                 {
-                    return _hide_bands && _c.IsExpandedView;
+                    return _hide_bands && _console.IsExpandedView;
                 }
                 return _hide_bands; 
             }
@@ -101,9 +101,9 @@ namespace Thetis
         {
             get 
             {
-                if (_c != null)
+                if (_console != null)
                 {
-                    return _hide_modes && _c.IsExpandedView;
+                    return _hide_modes && _console.IsExpandedView;
                 }
                 return _hide_modes; 
             }
@@ -117,9 +117,9 @@ namespace Thetis
         {
             get 
             {
-                if (_c != null)
+                if (_console != null)
                 {
-                    return _hide_filters && _c.IsExpandedView;
+                    return _hide_filters && _console.IsExpandedView;
                 }
                 return _hide_filters; 
             }
@@ -185,40 +185,42 @@ namespace Thetis
         }
         public static void Update()
         {
-            if (_c == null) return;
+            if (_console == null) return;
+            if (_console.IsSetupFormNull) return;
 
-            if(_c.IsCollapsedView && !_c.IsExpandedView) // check both, because, you never know
+            if (_console.IsCollapsedView && !_console.IsExpandedView) // check both, because, you never know
             {
                 // make control groups visible
-                _c.BandPanelVisible();
-                _c.ModePanelVisible(true);
-                _c.FilterPanelVisible(true);
+                _console.BandPanelVisible(!_console.SetupForm.chkShowBandControls.Checked || _console.SetupForm.chkShowAndromedaBar.Checked); // if we need to hide band controls in collapsed view, then force it with the optional parameter
+                _console.ModePanelVisible(_console.SetupForm.chkShowModeControls.Checked && !_console.SetupForm.chkShowAndromedaBar.Checked); // if we need to hide mode controls in collapsed view, then force it with the optional parameter
+                                                                                            // Note: I dislike the use of a public control, but that is how things have been done with this
+                _console.FilterPanelVisible(true);
 
-                _c.ExtendPanelDisplaySizeRight(false);
+                _console.ExtendPanelDisplaySizeRight(false);
 
-                _c.VFOAVisible(true);
-                _c.VFOBVisible(true);
+                _console.VFOAVisible(_console.ShowRX1 || _console.ShowAndromedaTopControls);
+                _console.VFOBVisible(_console.ShowRX2 || _console.ShowAndromedaTopControls);
             }
-            else if(_c.IsExpandedView && !_c.IsCollapsedView)
+            else if(_console.IsExpandedView && !_console.IsCollapsedView)
             {
                 // set visible based on flags
-                _c.BandPanelVisible();
-                _c.ModePanelVisible(!_hide_modes);
-                _c.FilterPanelVisible(!_hide_filters);
+                _console.BandPanelVisible();
+                _console.ModePanelVisible(!_hide_modes);
+                _console.FilterPanelVisible(!_hide_filters);
 
                 if (_expand_spectrum_to_right && _hide_bands && _hide_filters && _hide_modes & _hide_meters)
-                    _c.ExtendPanelDisplaySizeRight(true);
+                    _console.ExtendPanelDisplaySizeRight(true);
                 else
-                    _c.ExtendPanelDisplaySizeRight(false);
+                    _console.ExtendPanelDisplaySizeRight(false);
 
                 if (_expand_spectrum_to_top && _hide_vfoA && _hide_vfoB && _hide_vfo_sync & _hide_meters)
-                    _c.ExtendPanelDisplaySizeTop(true);
+                    _console.ExtendPanelDisplaySizeTop(true);
                 else
-                    _c.ExtendPanelDisplaySizeTop(false);
+                    _console.ExtendPanelDisplaySizeTop(false);
 
-                _c.VFOAVisible(!_hide_vfoA);
-                _c.VFOBVisible(!_hide_vfoB);
-                _c.VFOSyncVisible(!_hide_vfo_sync);
+                _console.VFOAVisible(!_hide_vfoA);
+                _console.VFOBVisible(!_hide_vfoB);
+                _console.VFOSyncVisible(!_hide_vfo_sync);
             }
         }
     }
