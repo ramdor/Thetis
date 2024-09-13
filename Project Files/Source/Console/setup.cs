@@ -24850,7 +24850,7 @@ namespace Thetis
                 }
 
                 chkHistory_auto_0_scale.Checked = igs.GetSetting<bool>("history_auto_scale_0", false, false, false, true);
-                nudHistory_axis0_min.Value = (decimal)igs.GetSetting<float>("history_min_0", true, -100f, 10000f, -150f);
+                nudHistory_axis0_min.Value = (decimal)igs.GetSetting<float>("history_min_0", true, -10000f, 10000f, -150f);
                 nudHistory_axis0_max.Value = (decimal)igs.GetSetting<float>("history_max_0", true, -10000f, 10000f, 0f);
 
                 chkHistory_1_show_axis.Checked = igs.GetSetting<bool>("history_show_scale_1", false, false, false, true);
