@@ -221,7 +221,7 @@ namespace Thetis
                         newPos.Y = roundToNearestTen(newPos.Y);
                     }
 
-                    Parent.Location = newPos;
+                    if(newPos != Parent.Location) Parent.Location = newPos;
 
                     showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
                 }
@@ -239,7 +239,7 @@ namespace Thetis
                     if (y > Parent.ClientSize.Height - this.Height) y = Parent.ClientSize.Height - this.Height;
 
                     Point newPos = new Point(x, y);
-                    this.Location = newPos;
+                    if (newPos != this.Location) this.Location = newPos;
 
                     showToolTip($"{newPos.X}, {newPos.Y}", this);
                 }
@@ -335,7 +335,8 @@ namespace Thetis
                     int screenHeight = Screen.FromControl(this.Parent).WorkingArea.Height;
                     if (screenHeight < height)
                     {
-                        this.Parent.Location = new Point(this.Parent.Location.X, 0);
+                        Point newPos = new Point(this.Parent.Location.X, 0);
+                        if(newPos != this.Parent.Location) this.Parent.Location = newPos;
                         shrink = true;
                     }
 
@@ -401,7 +402,8 @@ namespace Thetis
                 if (this.Left + x > Parent.ClientSize.Width) x = Parent.ClientSize.Width - this.Left;
                 if (this.Top + y > Parent.ClientSize.Height) y = Parent.ClientSize.Height - this.Top;
 
-                this.Size = new Size(x, y);
+                Size newSize = new Size(x, y);
+                if (newSize != this.Size) this.Size = newSize;
                 this.PerformLayout();
             }
         }
@@ -431,9 +433,9 @@ namespace Thetis
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public void RestoreLocation()
         {
-            this.Location = _dockedLocation;
+            if(_dockedLocation != this.Location) this.Location = _dockedLocation;
             //this.Location = new Point(_dockedLocation.X + _delta.X, _dockedLocation.Y + _delta.Y);
-            this.Size = _dockedSize;
+            if(_dockedSize != this.Size) this.Size = _dockedSize;
             this.PerformLayout();
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
@@ -609,7 +611,7 @@ namespace Thetis
                         newPos.Y = roundToNearestTen(newPos.Y);
                     }
 
-                    Parent.Location = newPos;
+                    if(newPos != Parent.Location) Parent.Location = newPos;
 
                     showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
                 }
@@ -630,7 +632,7 @@ namespace Thetis
                     if (y > Parent.ClientSize.Height - this.Height) y = Parent.ClientSize.Height - this.Height;
 
                     Point newPos = new Point(x, y);
-                    this.Location = newPos;
+                    if(newPos != this.Location) this.Location = newPos;
 
                     showToolTip($"{newPos.X}, {newPos.Y}", this);
                 }
@@ -646,7 +648,7 @@ namespace Thetis
         {
             if (!_floating && _dragging)
             {
-                _dockedLocation = this.Location;
+                if(_dockedLocation != this.Location) _dockedLocation = this.Location;
             }
         }
 

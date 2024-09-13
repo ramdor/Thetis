@@ -3660,7 +3660,7 @@ namespace Thetis
                 if (newLocation.X < 0) newLocation.X = 0;
                 if (newLocation.Y < 0) newLocation.Y = 0;
                 
-                m.Location = newLocation;
+                if(newLocation != m.Location) m.Location = newLocation;
             }
         }
         private static void returnMeterFromFloating(ucMeter m, frmMeterDisplay frm)
@@ -18853,7 +18853,7 @@ namespace Thetis
             private void target_Resize(object sender, System.EventArgs e)
             {
                 //Debug.Print(">> target resizing <<");
-
+                //Debug.Print($"wdith new {_newTargetWidth} was {_displayTarget.Width} , height new {_newTargetHeight} was {_displayTarget.Height}");
                 _newTargetWidth = _displayTarget.Width;
                 _newTargetHeight = _displayTarget.Height;
             }

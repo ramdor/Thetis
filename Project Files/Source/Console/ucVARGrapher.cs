@@ -50,6 +50,7 @@ namespace Thetis
             m_dData = new List<double>();
 
             InitializeComponent();
+            Common.DoubleBufferAll(this, true);
 
             MaxPoints = 100;
         }
