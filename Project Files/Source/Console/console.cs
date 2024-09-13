@@ -634,7 +634,7 @@ namespace Thetis
                 }
             }
 
-            if (app_data_path == "")
+            if (string.IsNullOrEmpty(app_data_path))
             {
                 if (Environment.Is64BitProcess)
                     app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
@@ -1202,7 +1202,7 @@ namespace Thetis
                 }
             }
 
-            if (app_data_path == "")
+            if (string.IsNullOrEmpty(app_data_path))
             {
                 app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                     + "\\OpenHPSDR\\Thetis\\";
@@ -1355,7 +1355,7 @@ namespace Thetis
             if (!IsSetupFormNull)
             {
                 sFW = SetupForm.GetFirmwareCodeVersionString();
-                if (sFW != "") sFW = " (" + sFW + ")";
+                if (!string.IsNullOrEmpty(sFW)) sFW = " (" + sFW + ")";
             }
 
             return TitleBar.GetString().Replace("<FW>", sFW);
@@ -4924,7 +4924,7 @@ namespace Thetis
         {
             foreach (RadioButtonTS r in panelMode.Controls)
             {
-                if (r.Text != "")
+                if (!string.IsNullOrEmpty(r.Text))
                     r.Enabled = true;
                 if (r.BackColor == vfo_text_dark_color)
                     r.BackColor = button_selected_color;
@@ -7576,10 +7576,10 @@ namespace Thetis
                     break;
             }
 
-            if (comboTXProfile.Text == "") comboTXProfile.Text = "Default";
-            if (comboDigTXProfile.Text == "") comboDigTXProfile.Text = "Default";
-            if (comboFMTXProfile.Text == "") comboFMTXProfile.Text = "Default";
-            if (comboAMTXProfile.Text == "") comboAMTXProfile.Text = "Default";
+            if (string.IsNullOrEmpty(comboTXProfile.Text)) comboTXProfile.Text = "Default";
+            if (string.IsNullOrEmpty(comboDigTXProfile.Text)) comboDigTXProfile.Text = "Default";
+            if (string.IsNullOrEmpty(comboFMTXProfile.Text)) comboFMTXProfile.Text = "Default";
+            if (string.IsNullOrEmpty(comboAMTXProfile.Text)) comboAMTXProfile.Text = "Default";
         }
         // Diversity operation is on RX1; therefore, the 'rx1_rate' will be used as the diversity rate;
         public void UpdateDDCs(bool rx2_enabled)
@@ -17521,7 +17521,7 @@ namespace Thetis
                         break;
                 }
 
-                if (text == "") return;
+                if (string.IsNullOrEmpty(text)) return;
 
                 comboMeterRXMode.Text = text;
             }
@@ -17575,7 +17575,7 @@ namespace Thetis
                         break;
                 }
 
-                if (text == "") return;
+                if (string.IsNullOrEmpty(text)) return;
 
                 comboRX2MeterMode.Text = text;
             }
@@ -17651,7 +17651,7 @@ namespace Thetis
                         text = "Off";
                         break;
                 }
-                if (text == "") return;
+                if (string.IsNullOrEmpty(text)) return;
 
                 comboMeterTXMode.Text = text;
             }
@@ -20190,7 +20190,7 @@ namespace Thetis
                 total_cpu_usage = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total", sMachineName);
                 float tmp = total_cpu_usage.NextValue();
 
-                if (_sInstanceName != "")
+                if (!string.IsNullOrEmpty(_sInstanceName))
                 {
                     total_thetis_usage = new PerformanceCounter("Process", "% Processor Time", _sInstanceName, sMachineName);
                     tmp = total_thetis_usage.NextValue();
@@ -20733,7 +20733,7 @@ namespace Thetis
                 }
             }
 
-            if (txtVFOAFreq.Text == "" ||
+            if (string.IsNullOrEmpty(txtVFOAFreq.Text) ||
                txtVFOAFreq.Text == "." ||
                txtVFOAFreq.Text == ",")
                 return;
@@ -27442,7 +27442,7 @@ namespace Thetis
         }
         private void shutdownLogStringToPath(string entry)
         {
-            if (!m_bLogShutdown || entry == "") return;
+            if (!m_bLogShutdown || string.IsNullOrEmpty(entry)) return;
 
             try
             {
@@ -30938,7 +30938,7 @@ namespace Thetis
         private void txtVFOABand_LostFocus(object sender, System.EventArgs e)
         {
             if (!rx2_enabled || (!chkEnableMultiRX.Checked && !chkVFOSplit.Checked)) return;
-            if (txtVFOABand.Text == "." || txtVFOABand.Text == "")
+            if (txtVFOABand.Text == "." || string.IsNullOrEmpty(txtVFOABand.Text))
             {
                 VFOASubFreq = VFOAFreq;
                 return;
@@ -45524,7 +45524,7 @@ namespace Thetis
 
             if (c.GetType() == typeof(PanelTS) || c.GetType() == typeof(GroupBoxTS) || c.GetType() == typeof(ucQuickRecall))
             {
-                if (sub != "")
+                if (!string.IsNullOrEmpty(sub))
                 {
                     getControl(c, new Point(p.X - c.Location.X, p.Y - c.Location.Y), sub + " > " + c.Name + " (" + c.Size.Width.ToString() + " x " + c.Size.Height.ToString() + ")");
                 }
@@ -45535,7 +45535,7 @@ namespace Thetis
             }
             else
             {
-                if (sub != "")
+                if (!string.IsNullOrEmpty(sub))
                 {
                     m_sOverControlName = sub + " > " + c.Name + " (" + c.Size.Width.ToString() + " x " + c.Size.Height.ToString() + ")";
                 }
