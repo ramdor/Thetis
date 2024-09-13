@@ -19345,9 +19345,9 @@ namespace Thetis
             private SizeF measureString(string sText, string sFontFamily, FontStyle style, float emSize, bool ignore_caching = false)
             {
                 if (!_bDXSetup) return SizeF.Empty;
-
                 if (emSize == 0) return SizeF.Empty; // zero size text is zero measurement
-
+                if (string.IsNullOrEmpty(sText)) return SizeF.Empty;
+                
                 emSize = (float)Math.Round(emSize, 2);                
 
                 string sKey = sFontFamily + "_" + style + "_" + sText.Length + "_" + emSize.ToString("0.00");
@@ -21929,6 +21929,7 @@ namespace Thetis
             {
                 if (string.IsNullOrEmpty(sText)) return (0, 0);
 
+                
                 float fontSizeEmScaled = (fTextSize / 16f) * (containerWidth / 52f);
                 SizeF szTextSize;
 
