@@ -3716,8 +3716,6 @@ namespace Thetis
                     {
                         ucMeter ucM = kvp.Value;
 
-                        //if (!_lstMeterDisplayForms.ContainsKey(ucM.ID) || !ucM.MeterEnabled) return;
-
                         if (_lstMeterDisplayForms.ContainsKey(ucM.ID) && ucM.MeterEnabled)
                         {
                             if (ucM.Floating)
