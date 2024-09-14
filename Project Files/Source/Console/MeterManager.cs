@@ -3716,12 +3716,15 @@ namespace Thetis
                     {
                         ucMeter ucM = kvp.Value;
 
-                        if (!_lstMeterDisplayForms.ContainsKey(ucM.ID) || !ucM.MeterEnabled) return;
+                        //if (!_lstMeterDisplayForms.ContainsKey(ucM.ID) || !ucM.MeterEnabled) return;
 
-                        if (ucM.Floating)
-                            setMeterFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
-                        else
-                            returnMeterFromFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
+                        if (_lstMeterDisplayForms.ContainsKey(ucM.ID) && ucM.MeterEnabled)
+                        {
+                            if (ucM.Floating)
+                                setMeterFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
+                            else
+                                returnMeterFromFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
+                        }
                     }
                 }
             }
