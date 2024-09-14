@@ -2387,7 +2387,7 @@ namespace Thetis
 
             _console.BandPanelChangeHandlers += OnBandPanelChanged;
             _console.VHFDetailsChangedHandlers += OnVHFDetailsChanged;
-            _console.FilterNameChangedHandlers += OnFilterNameChanged;
+            //_console.FilterNameChangedHandlers += OnFilterNameChanged;
 
             _console.AntennaRXChangedHandlers += OnAntennaRXChanged;
             _console.AntennaTXChangedHandlers += OnAntennaTXChanged;
@@ -2444,7 +2444,7 @@ namespace Thetis
 
             _console.BandPanelChangeHandlers -= OnBandPanelChanged;
             _console.VHFDetailsChangedHandlers -= OnVHFDetailsChanged;
-            _console.FilterNameChangedHandlers -= OnFilterNameChanged;
+            //_console.FilterNameChangedHandlers -= OnFilterNameChanged;
 
             _console.AntennaRXChangedHandlers -= OnAntennaRXChanged;
             _console.AntennaTXChangedHandlers -= OnAntennaTXChanged;
@@ -2710,28 +2710,28 @@ namespace Thetis
                 }
             }
         }
-        private static void OnFilterNameChanged(int rx, Filter f, string old_name, string new_name)
-        {
-            lock (_metersLock)
-            {
-                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
-                {
-                    clsMeter m = ms.Value;
+        //private static void OnFilterNameChanged(int rx, Filter f, string old_name, string new_name)
+        //{
+        //    lock (_metersLock)
+        //    {
+        //        foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+        //        {
+        //            clsMeter m = ms.Value;
 
-                    if (rx == 1)
-                    {
-                        m.FilterVfoAName = new_name;
-                    }
-                    else
-                    {
-                        m.FilterVfoBName = new_name;
-                    }
+        //            if (rx == 1)
+        //            {
+        //                m.FilterVfoAName = new_name;
+        //            }
+        //            else
+        //            {
+        //                m.FilterVfoBName = new_name;
+        //            }
 
-                    if (old_name != new_name)
-                        m.FilterNameDetails(f, new_name);
-                }
-            }
-        }
+        //            if (old_name != new_name)
+        //                m.FilterNameDetails(f, new_name);
+        //        }
+        //    }
+        //}
         private static void OnFilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName)
         {
             lock (_metersLock)
@@ -2740,14 +2740,19 @@ namespace Thetis
                 {
                     clsMeter m = ms.Value;
 
-                    m.FilterVfoA = newFilter;
-                    m.FilterVfoB = newFilter;
+                    bool changed = m.FilterVfoA != newFilter || m.FilterVfoB != newFilter ||
+                                   m.FilterVfoAName != sName || m.FilterVfoBName != sName || oldFilter != newFilter;
 
-                    m.FilterVfoAName = sName;
-                    m.FilterVfoBName = sName;
+                    if (changed)
+                    {
+                        m.FilterVfoA = newFilter;
+                        m.FilterVfoB = newFilter;
 
-                    if (oldFilter != newFilter)
-                        m.UpdateFilterButtons(newFilter);
+                        m.FilterVfoAName = sName;
+                        m.FilterVfoBName = sName;
+
+                        m.UpdateFilterButtons(newFilter, sName);
+                    }
                 }
             }
         }
@@ -4749,7 +4754,7 @@ namespace Thetis
 
                 setupButtons();
             }
-            public void FilterChanged(Filter f)
+            public void FilterChanged(Filter f, string name)
             {
                 Filter old = _filter;
                 _filter = f;
@@ -4765,6 +4770,7 @@ namespace Thetis
                     old_index -= old_index > (int)Filter.F7 ? (int)Filter.VAR1 - (int)Filter.F7 - 1 : 0;
                 }
 
+                SetText(1, index, name);
                 SetOn(1, old_index, false);
                 SetOn(1, index, true);
             }
@@ -4772,19 +4778,19 @@ namespace Thetis
             {
                 setupButtons();
             }
-            public void FilterNameChanged(Filter f, string new_name)
-            {
-                // just set the mode
-                int index = (int)f - (int)Filter.F1;
+            //public void FilterNameChanged(Filter f, string new_name)
+            //{
+            //    // just set the mode
+            //    int index = (int)f - (int)Filter.F1;
 
-                if (_owningmeter.RX == 2)
-                {
-                    // only 9 filters, so adjust indexes
-                    index -= index > (int)Filter.F7 ? (int)Filter.VAR1 - (int)Filter.F7 - 1 : 0;
-                }
+            //    if (_owningmeter.RX == 2)
+            //    {
+            //        // only 9 filters, so adjust indexes
+            //        index -= index > (int)Filter.F7 ? (int)Filter.VAR1 - (int)Filter.F7 - 1 : 0;
+            //    }
 
-                SetText(1, index, new_name);
-            }
+            //    SetText(1, index, new_name);
+            //}
             private void setupButtons()
             {
                 if (!RebuildButtons) return;
@@ -14928,7 +14934,7 @@ namespace Thetis
                         c.BandVHFSelected = true;
                 }));
             }
-            public void UpdateFilterButtons(Filter newFilter)
+            public void UpdateFilterButtons(Filter newFilter, string name)
             {
                 if (_console == null) return;
 
@@ -14938,7 +14944,7 @@ namespace Thetis
                     {
                         clsFilterButtonBox mi = (clsFilterButtonBox)mis.Value;
 
-                        mi.FilterChanged(newFilter);
+                        mi.FilterChanged(newFilter, name);
                     }
                 }
             }
@@ -14956,20 +14962,20 @@ namespace Thetis
                     }
                 }
             }
-            public void FilterNameDetails(Filter f, string new_name)
-            {
-                if (_console == null) return;
+            //public void FilterNameDetails(Filter f, string new_name)
+            //{
+            //    if (_console == null) return;
 
-                lock (_meterItemsLock)
-                {
-                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS))
-                    {
-                        clsFilterButtonBox mi = (clsFilterButtonBox)mis.Value;
+            //    lock (_meterItemsLock)
+            //    {
+            //        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS))
+            //        {
+            //            clsFilterButtonBox mi = (clsFilterButtonBox)mis.Value;
 
-                        mi.FilterNameChanged(f, new_name);
-                    }
-                }
-            }
+            //            mi.FilterNameChanged(f, new_name);
+            //        }
+            //    }
+            //}
             public void ModeChanged(DSPMode oldMode, DSPMode newMode)
             {
                 if (_console == null) return;

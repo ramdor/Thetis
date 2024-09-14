@@ -7174,7 +7174,8 @@ namespace Thetis
             if (f == rx1_filter)
                 panelFilter.Text = "Filter - " + rx1_filters[(int)rx1_dsp_mode].GetName(f);
 
-            if (old_name != new_name) FilterNameChangedHandlers?.Invoke(1, f, old_name, new_name);
+            //if (old_name != new_name) FilterNameChangedHandlers?.Invoke(1, f, old_name, new_name);
+            if (old_name != new_name) FilterChangedHandlers?.Invoke(1, f, f, RX1Band, rx1_filters[(int)rx1_dsp_mode].GetLow(f), rx1_filters[(int)rx1_dsp_mode].GetHigh(f), rx1_filters[(int)rx1_dsp_mode].GetName(f));
         }
 
         public void UpdateRX1FilterPresetLow(int val)
@@ -7223,7 +7224,8 @@ namespace Thetis
             if (f == rx2_filter)
                 panelRX2Filter.Text = "RX2 Filter - " + rx2_filters[(int)rx2_dsp_mode].GetName(f);
 
-            if (old_name != new_name) FilterNameChangedHandlers?.Invoke(2, f, old_name, new_name);
+            //if (old_name != new_name) FilterNameChangedHandlers?.Invoke(2, f, old_name, new_name);
+            if (old_name != new_name) FilterChangedHandlers?.Invoke(2, f, f, RX2Band, rx2_filters[(int)rx2_dsp_mode].GetLow(f), rx2_filters[(int)rx2_dsp_mode].GetHigh(f), rx2_filters[(int)rx2_dsp_mode].GetName(f));
         }
 
         public void UpdateRX2FilterPresetLow(int val)
@@ -40800,6 +40802,16 @@ namespace Thetis
             {
                 filterRX1Form.DSPMode = rx1_dsp_mode;
             }
+
+            // update all
+            for (Filter f = Filter.F1; f <= Filter.VAR2; f++)
+            {
+                if(f != rx1_filter)
+                    FilterChangedHandlers?.Invoke(1, f, f, RX1Band, rx1_filters[(int)rx1_dsp_mode].GetLow(f), rx1_filters[(int)rx1_dsp_mode].GetHigh(f), rx1_filters[(int)rx1_dsp_mode].GetName(f));
+            }
+
+            // set to where it should be
+            FilterChangedHandlers?.Invoke(1, rx1_filter, rx1_filter, RX1Band, rx1_filters[(int)rx1_dsp_mode].GetLow(rx1_filter), rx1_filters[(int)rx1_dsp_mode].GetHigh(rx1_filter), rx1_filters[(int)rx1_dsp_mode].GetName(rx1_filter));
         }
 
         private void toolStripMenuItemRX2FilterConfigure_Click(object sender, EventArgs e)
@@ -40862,6 +40874,21 @@ namespace Thetis
             {
                 filterRX2Form.DSPMode = rx2_dsp_mode;
             }
+
+            // update all
+            for (Filter f = Filter.F1; f <= Filter.F7; f++)
+            {
+                if (f != rx2_filter)
+                    FilterChangedHandlers?.Invoke(2, f, f, RX2Band, rx2_filters[(int)rx2_dsp_mode].GetLow(f), rx2_filters[(int)rx2_dsp_mode].GetHigh(f), rx2_filters[(int)rx2_dsp_mode].GetName(f));
+            }
+            for (Filter f = Filter.VAR1; f <= Filter.VAR2; f++)
+            {
+                if (f != rx2_filter)
+                    FilterChangedHandlers?.Invoke(2, f, f, RX2Band, rx2_filters[(int)rx2_dsp_mode].GetLow(f), rx2_filters[(int)rx2_dsp_mode].GetHigh(f), rx2_filters[(int)rx2_dsp_mode].GetName(f));
+            }
+
+            // set to where it should be
+            FilterChangedHandlers?.Invoke(2, rx2_filter, rx2_filter, RX2Band, rx2_filters[(int)rx2_dsp_mode].GetLow(rx2_filter), rx2_filters[(int)rx2_dsp_mode].GetHigh(rx2_filter), rx2_filters[(int)rx2_dsp_mode].GetName(rx2_filter));
         }
 
         private void chkTNF_CheckedChanged(object sender, EventArgs e)
@@ -45723,7 +45750,7 @@ namespace Thetis
 
         public BandPanelChanged BandPanelChangeHandlers;
         public VHFChanged VHFDetailsChangedHandlers;
-        public FilterNameChanged FilterNameChangedHandlers;
+        //public FilterNameChanged FilterNameChangedHandlers;
 
         public AntennaRXChanged AntennaRXChangedHandlers;
         public AntennaTXChanged AntennaTXChangedHandlers;
