@@ -48948,28 +48948,7 @@ namespace Thetis
         private void databaseManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (IsSetupFormNull) return;
-
-            if (!SetupForm.Visible)
-            {
-                if (!PowerOn)
-                {
-                    DBMan.ShowDBMan();
-                }
-                else
-                {
-                    DialogResult dr = MessageBox.Show("The Database Manager can not be used whilst the radio is powered on. Please turn it off and try again.",
-                    "Database Manager Issue",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                }
-            }
-            else
-            {
-                DialogResult dr = MessageBox.Show("The Database Manager can not be used whilst the Setup window is shown. Please close it and try again.",
-                "Database Manager Issue",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-            }
+            DBMan.ShowDBMan();
         }
 
         private void setupToolStripMenuItem1_Click(object sender, EventArgs e)
