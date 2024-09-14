@@ -79,10 +79,15 @@ namespace Thetis
         }
         private void OnWindowStateChanged(FormWindowState state)
         {
-            if (_container_minimises && state == FormWindowState.Minimized)
-                this.Hide();
-            else
-                if(_is_enabled && _floating) this.Show();
+            if (this.Disposing || this.IsDisposed) return;
+
+            if (_is_enabled && _floating && _container_minimises)
+            {
+                if (state == FormWindowState.Minimized)
+                    this.Hide();
+                else
+                    this.Show();
+            }
         }
         private void setTitle()
         {

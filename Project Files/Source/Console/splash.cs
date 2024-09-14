@@ -88,6 +88,7 @@ namespace Thetis
 		public Splash()
 		{
 			InitializeComponent();
+			Common.DoubleBufferAll(this, true);
 			this.Opacity = .00;
 			timer1.Interval = TIMER_INTERVAL;
 			timer1.Start();

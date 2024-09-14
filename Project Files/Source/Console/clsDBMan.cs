@@ -125,6 +125,40 @@ namespace Thetis
         {
             if (_dbman_settings == null) return;
 
+            Console c = Console.getConsole();
+            if (c.IsSetupFormNull) return;
+
+            if (c.PowerOn)
+            {
+                DialogResult dr = MessageBox.Show("The Database Manager can not be used whilst the radio is powered on. Please turn it off and try again.\n\n" +
+                                                  "Hold shift when clicking OK to have this happen.",
+                "Database Manager Issue",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                if (Common.ShiftKeyDown)
+                {
+                    c.PowerOn = false;
+                    if (c.PowerOn)
+                    {
+                        MessageBox.Show("Unable to power off the radio. You will need to do it manually and then try again.",
+                        "Database Manager Issue",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        return;
+                    }
+                }
+                else return;
+            }
+
+            if (c.SetupForm.Visible)
+            {
+                DialogResult dr = MessageBox.Show("The Database Manager can not be used whilst the Setup window is shown. Please close it and try again.",
+                "Database Manager Issue",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return;
+            }
+
             Dictionary<Guid, DatabaseInfo> dbs = getAvailableDBs();
             _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, Guid.Empty);
 

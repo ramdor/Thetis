@@ -2743,7 +2743,7 @@ namespace Thetis
                     }
 
                     SharpDX.Direct3D11.DeviceDebug ddb = null;
-                    if (_device != null && _device.DebugName != "")
+                    if (_device != null && !string.IsNullOrEmpty(_device.DebugName))
                     {
                         ddb = new SharpDX.Direct3D11.DeviceDebug(_device);
                         ddb.ReportLiveDeviceObjects(ReportingLevel.Detail);
@@ -3362,7 +3362,7 @@ namespace Thetis
                     //
 
                     // some debug text
-                    if (m_sDebugText != "")
+                    if (!string.IsNullOrEmpty(m_sDebugText))
                     {
                         string[] lines = m_sDebugText.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
                         int xStartX = 32;
@@ -3401,7 +3401,7 @@ namespace Thetis
                         //if (r == 0x087A0001) sMsg = "Present Device Occluded" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";      //DXGI_STATUS_OCCLUDED
                         //(ignored in the preceding if statement) if (r == 0x887A000A) sMsg = "Present Device Still Drawping" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]"; //DXGI_ERROR_WAS_STILL_DRAWING
 
-                        if (sMsg != "") throw (new Exception(sMsg));
+                        if (!string.IsNullOrEmpty(sMsg)) throw (new Exception(sMsg));
                     }
                 }
             }
@@ -8121,7 +8121,7 @@ namespace Thetis
                 int width = 0;
                 int xPos;
 
-                if (m_sMHzCursorDisplay != "")
+                if (!string.IsNullOrEmpty(m_sMHzCursorDisplay))
                 {
                     width = (int)measureStringDX2D(m_sMHzCursorDisplay, fontDX2d_callout, true).Width;
                     xPos = display_cursor_x + 12;
@@ -8133,7 +8133,7 @@ namespace Thetis
                     drawStringDX2D(m_sMHzCursorDisplay, fontDX2d_callout, m_bDX2_m_bTextCallOutActive, xPos, display_cursor_y - 18);
                 }
 
-                if (m_sOtherData1CursorDisplay != "")
+                if (!string.IsNullOrEmpty(m_sOtherData1CursorDisplay))
                 {
                     xPos = display_cursor_x + 12;
                     if (bLeftSide)
@@ -8149,7 +8149,7 @@ namespace Thetis
                     drawStringDX2D(m_sOtherData1CursorDisplay, fontDX2d_callout, m_bDX2_m_bTextCallOutActive, xPos, display_cursor_y + 2);
                 }
 
-                if (m_sOtherData2CursorDisplay != "")
+                if (!string.IsNullOrEmpty(m_sOtherData2CursorDisplay))
                 {
                     xPos = display_cursor_x + 12;
                     if (bLeftSide)
@@ -9295,7 +9295,7 @@ namespace Thetis
 
             if (_bShiftKeyDown)
             {
-                if (spot.spotter != "")
+                if (!string.IsNullOrEmpty(spot.spotter))
                     sDisplayString = spot.spotter;
                 else
                     sDisplayString = spot.callsign;
@@ -9466,7 +9466,7 @@ namespace Thetis
                 drawRectangleDX2D(brightBorder, r, 2);
                 drawStringDX2D(sDisplayString, fontDX2d_font9, textBrush, highLightedSpot.BoundingBoxInPixels[rx - 1].X + 1, highLightedSpot.BoundingBoxInPixels[rx - 1].Y + 1);
 
-                if (/*_bShiftKeyDown && */highLightedSpot.additionalText != "")
+                if (!string.IsNullOrEmpty(highLightedSpot.additionalText))
                 {
                     // show additional text in bubble below
                     SizeF additionalTextSize = measureStringDX2D(highLightedSpot.additionalText, fontDX2d_font10);

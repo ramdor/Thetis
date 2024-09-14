@@ -205,6 +205,7 @@ namespace Thetis
         {
             try
             {
+                if (!_timeouts.TryGetValue(id, out _) || !_bypass_cache.TryGetValue(id, out _)) return;
                 int timeout = _timeouts[id];
                 bool bypass_cache = _bypass_cache[id];
                 reset_event.Reset();
@@ -406,10 +407,13 @@ namespace Thetis
                     StateChanged?.Invoke(this, new StateEventArgs(id, State.WAITING));
                     if (reset_event.WaitOne(timeout * 1000)) // Convert seconds to milliseconds
                     {
+                        bool timout_exists = _timeouts.TryGetValue(id, out _);  // check we have not removed these
+                        bool bypass_exists = _bypass_cache.TryGetValue(id, out _);
+
                         //check if _timeout is the same, if so break. It will be different if we have signaled
                         //due to timeout change
-                        if (_timeouts[id] == timeout)
-                            break;  // Exit the loop if signaled to stop
+                        if (!timout_exists || !bypass_exists || _timeouts[id] == timeout)
+                            break;  // Exit the loop if signaled to stop, or items have been removed
                         else
                         {
                             timeout = _timeouts[id];
