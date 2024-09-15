@@ -24950,7 +24950,20 @@ namespace Thetis
                 _listenerThread.Join();
                 ConnectorRunning?.Invoke(_guid, _type, false);
             }
-
+            private bool clientConnected
+            {
+                get
+                {
+                    try
+                    {
+                        return _tcpClient.Connected;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }
+            }
             private void listen()
             {                
                 try
@@ -24979,7 +24992,7 @@ namespace Thetis
 
                             NetworkStream stream = _tcpClient.GetStream();
                             string bufferConcat = "";
-                            while (_tcpClient.Connected && _isRunning)
+                            while (clientConnected && _isRunning)
                             {
                                 bool sleep = true;
                                 bool inbound = _mmio_data[_guid].Direction == MMIODirection.IN || _mmio_data[_guid].Direction == MMIODirection.BOTH;
@@ -25097,7 +25110,7 @@ namespace Thetis
                                 }
 
                                 // heatbeat connection connected checker
-                                if ((DateTime.Now - lastTimeActive).TotalMilliseconds > 5000 && _tcpClient.Connected)
+                                if ((DateTime.Now - lastTimeActive).TotalMilliseconds > 5000 && clientConnected)
                                 {
                                     // at least 5 seconds since an rx or a tx, we should tx a byte, just to check connection state
                                     Byte[] sendBytes = Encoding.ASCII.GetBytes("\0");
@@ -25195,7 +25208,20 @@ namespace Thetis
                 _clientThread.Join();
                 ConnectorRunning?.Invoke(_guid, _type, false);
             }
-
+            private bool clientConnected
+            {
+                get
+                {
+                    try
+                    {
+                        return _tcpClient.Connected;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }
+            }
             private void Connect()
             {
                 bool reconnect = true;
@@ -25213,7 +25239,7 @@ namespace Thetis
 
                         while (_isRunning)
                         {
-                            if (!_tcpClient.Connected)
+                            if (!clientConnected)
                             {
                                 break;
                             }
@@ -25278,7 +25304,7 @@ namespace Thetis
                                 }
                                 catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
                                 {
-                                    if (_tcpClient != null && !_tcpClient.Connected)
+                                    if (_tcpClient != null && !clientConnected)
                                         reconnect = true;
 
                                     break;
@@ -25328,7 +25354,7 @@ namespace Thetis
                                         }
                                         catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
                                         {
-                                            if (_tcpClient != null && !_tcpClient.Connected)
+                                            if (_tcpClient != null && !clientConnected)
                                                 reconnect = true;
 
                                             break;
@@ -25337,7 +25363,7 @@ namespace Thetis
                                 }
                             }
 
-                            if ((DateTime.Now - lastTimeActive).TotalMilliseconds > 5000 && _tcpClient.Connected)
+                            if ((DateTime.Now - lastTimeActive).TotalMilliseconds > 5000 && clientConnected)
                             {
                                 Byte[] sendBytes = Encoding.ASCII.GetBytes("\0");
                                 try
@@ -25347,7 +25373,7 @@ namespace Thetis
                                 }
                                 catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
                                 {
-                                    if (_tcpClient != null && !_tcpClient.Connected)
+                                    if (_tcpClient != null && !clientConnected)
                                         reconnect = true;
 
                                     break;
@@ -25362,12 +25388,12 @@ namespace Thetis
                     }
                     catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                     {
-                        if (_tcpClient != null && !_tcpClient.Connected)
+                        if (_tcpClient != null && !clientConnected)
                             reconnect = true;
                     }
                     catch (Exception ex)
                     {
-                        if (_tcpClient != null && !_tcpClient.Connected)
+                        if (_tcpClient != null && !clientConnected)
                             reconnect = true;
                     }
                     finally
