@@ -28020,7 +28020,18 @@ namespace Thetis
         private void udCWEdgeLength_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            NetworkIO.SetCWEdgeLength((int)udCWEdgeLength.Value);
+
+            // for variable uncomment the two lines below, and comment the fixed DL1YCF and VE3NEA CW Edges
+            // note: grpCWEdgeLength.Visible = false in the form design, and as this is called from ForceAllEvents()
+            // we can make visible here to keep it all together
+            //grpCWEdgeLength.Visible = true;            
+            //NetworkIO.SetCWEdgeLength((int)udCWEdgeLength.Value);
+
+            // for DL1YCF CW Edge
+            NetworkIO.SetCWEdgeLength(9);
+
+            // for VE3NEA CW Edge
+            //NetworkIO.SetCWEdgeLength(15);
         }
 
         private void radDSPNR2TRND_CheckedChanged(object sender, EventArgs e)
