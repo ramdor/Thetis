@@ -14,7 +14,9 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] fixes for filters being reset. Previously filter button box would not update
 - [fix] fix issue where if an rx2 container was hidden, other rx2 containers might not show
 - [fix] fixed an issue for rx2 filters, where they would reset to the last used var high/low values
+- [fix] fixed crash when removing MultiMeter I/O TCPClient
 - [change] re-worked minimise/restore code for meter containers
+- [change] variable cw edge length has been disabled in the Dsp-CW settings (only utilised by the G2). This is now fixed at 9ms for the DL1YCF CW edge
 
 ## v2.10.3.6 Change Log - Release Candidate 2 (rc2) - includes rc1 changes
 - [fix] fix missing legacy buttons that happened in rare cases

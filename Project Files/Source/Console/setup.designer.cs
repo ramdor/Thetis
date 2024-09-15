@@ -3806,6 +3806,8 @@
             this.picMultiMeterRotatorControlInfo = new System.Windows.Forms.PictureBox();
             this.clrbtnHistory_colour_0 = new Thetis.ColorButton();
             this.clrbtnHistory_colour_1 = new Thetis.ColorButton();
+            this.clrbtnHistory_lines = new Thetis.ColorButton();
+            this.clrbtnHistory_time = new Thetis.ColorButton();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -3990,6 +3992,8 @@
             this.chkBandButtons_fade_tx = new System.Windows.Forms.CheckBoxTS();
             this.chkBandButtons_fade_rx = new System.Windows.Forms.CheckBoxTS();
             this.grpHistoryItem = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS281 = new System.Windows.Forms.LabelTS();
+            this.labelTS280 = new System.Windows.Forms.LabelTS();
             this.groupBoxTS46 = new System.Windows.Forms.GroupBoxTS();
             this.btnHistory_copy_minmax_from_0 = new System.Windows.Forms.ButtonTS();
             this.chkHistory_1_show_axis = new System.Windows.Forms.CheckBoxTS();
@@ -4030,10 +4034,6 @@
             this.tabPage13 = new System.Windows.Forms.TabPage();
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
-            this.clrbtnHistory_lines = new Thetis.ColorButton();
-            this.clrbtnHistory_time = new Thetis.ColorButton();
-            this.labelTS280 = new System.Windows.Forms.LabelTS();
-            this.labelTS281 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -37231,6 +37231,7 @@
             this.grpCWEdgeLength.TabIndex = 43;
             this.grpCWEdgeLength.TabStop = false;
             this.grpCWEdgeLength.Text = "CW Edge Length (0%-100%)";
+            this.grpCWEdgeLength.Visible = false;
             // 
             // udCWEdgeLength
             // 
@@ -61012,6 +61013,36 @@
             this.toolTip1.SetToolTip(this.clrbtnHistory_colour_1, "Background colour");
             this.clrbtnHistory_colour_1.Changed += new System.EventHandler(this.clrbtnHistory_colour_1_Changed);
             // 
+            // clrbtnHistory_lines
+            // 
+            this.clrbtnHistory_lines.Automatic = "Automatic";
+            this.clrbtnHistory_lines.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnHistory_lines.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnHistory_lines.Image = null;
+            this.clrbtnHistory_lines.Location = new System.Drawing.Point(72, 110);
+            this.clrbtnHistory_lines.MoreColors = "More Colors...";
+            this.clrbtnHistory_lines.Name = "clrbtnHistory_lines";
+            this.clrbtnHistory_lines.Selectable = true;
+            this.clrbtnHistory_lines.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnHistory_lines.TabIndex = 145;
+            this.toolTip1.SetToolTip(this.clrbtnHistory_lines, "Background colour");
+            this.clrbtnHistory_lines.Changed += new System.EventHandler(this.clrbtnHistory_lines_Changed);
+            // 
+            // clrbtnHistory_time
+            // 
+            this.clrbtnHistory_time.Automatic = "Automatic";
+            this.clrbtnHistory_time.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnHistory_time.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnHistory_time.Image = null;
+            this.clrbtnHistory_time.Location = new System.Drawing.Point(170, 110);
+            this.clrbtnHistory_time.MoreColors = "More Colors...";
+            this.clrbtnHistory_time.Name = "clrbtnHistory_time";
+            this.clrbtnHistory_time.Selectable = true;
+            this.clrbtnHistory_time.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnHistory_time.TabIndex = 146;
+            this.toolTip1.SetToolTip(this.clrbtnHistory_time, "Background colour");
+            this.clrbtnHistory_time.Changed += new System.EventHandler(this.clrbtnHistory_time_Changed);
+            // 
             // saveFileDialog1
             // 
             this.saveFileDialog1.Filter = "Thetis Database Files (*.xml)|*.xml|All files|*.*";
@@ -63733,6 +63764,26 @@
             this.grpHistoryItem.Text = "History Graph";
             this.grpHistoryItem.Visible = false;
             // 
+            // labelTS281
+            // 
+            this.labelTS281.Image = null;
+            this.labelTS281.Location = new System.Drawing.Point(118, 113);
+            this.labelTS281.Name = "labelTS281";
+            this.labelTS281.Size = new System.Drawing.Size(46, 16);
+            this.labelTS281.TabIndex = 148;
+            this.labelTS281.Text = "Time:";
+            this.labelTS281.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // labelTS280
+            // 
+            this.labelTS280.Image = null;
+            this.labelTS280.Location = new System.Drawing.Point(8, 113);
+            this.labelTS280.Name = "labelTS280";
+            this.labelTS280.Size = new System.Drawing.Size(58, 16);
+            this.labelTS280.TabIndex = 147;
+            this.labelTS280.Text = "Lines:";
+            this.labelTS280.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // groupBoxTS46
             // 
             this.groupBoxTS46.Controls.Add(this.clrbtnHistory_colour_1);
@@ -64201,56 +64252,6 @@
             this.tabPage15.TabIndex = 13;
             this.tabPage15.Text = "blank";
             this.tabPage15.UseVisualStyleBackColor = true;
-            // 
-            // clrbtnHistory_lines
-            // 
-            this.clrbtnHistory_lines.Automatic = "Automatic";
-            this.clrbtnHistory_lines.Color = System.Drawing.Color.LimeGreen;
-            this.clrbtnHistory_lines.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnHistory_lines.Image = null;
-            this.clrbtnHistory_lines.Location = new System.Drawing.Point(72, 110);
-            this.clrbtnHistory_lines.MoreColors = "More Colors...";
-            this.clrbtnHistory_lines.Name = "clrbtnHistory_lines";
-            this.clrbtnHistory_lines.Selectable = true;
-            this.clrbtnHistory_lines.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnHistory_lines.TabIndex = 145;
-            this.toolTip1.SetToolTip(this.clrbtnHistory_lines, "Background colour");
-            this.clrbtnHistory_lines.Changed += new System.EventHandler(this.clrbtnHistory_lines_Changed);
-            // 
-            // clrbtnHistory_time
-            // 
-            this.clrbtnHistory_time.Automatic = "Automatic";
-            this.clrbtnHistory_time.Color = System.Drawing.Color.LimeGreen;
-            this.clrbtnHistory_time.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnHistory_time.Image = null;
-            this.clrbtnHistory_time.Location = new System.Drawing.Point(170, 110);
-            this.clrbtnHistory_time.MoreColors = "More Colors...";
-            this.clrbtnHistory_time.Name = "clrbtnHistory_time";
-            this.clrbtnHistory_time.Selectable = true;
-            this.clrbtnHistory_time.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnHistory_time.TabIndex = 146;
-            this.toolTip1.SetToolTip(this.clrbtnHistory_time, "Background colour");
-            this.clrbtnHistory_time.Changed += new System.EventHandler(this.clrbtnHistory_time_Changed);
-            // 
-            // labelTS280
-            // 
-            this.labelTS280.Image = null;
-            this.labelTS280.Location = new System.Drawing.Point(8, 113);
-            this.labelTS280.Name = "labelTS280";
-            this.labelTS280.Size = new System.Drawing.Size(58, 16);
-            this.labelTS280.TabIndex = 147;
-            this.labelTS280.Text = "Lines:";
-            this.labelTS280.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // labelTS281
-            // 
-            this.labelTS281.Image = null;
-            this.labelTS281.Location = new System.Drawing.Point(118, 113);
-            this.labelTS281.Name = "labelTS281";
-            this.labelTS281.Size = new System.Drawing.Size(46, 16);
-            this.labelTS281.TabIndex = 148;
-            this.labelTS281.Text = "Time:";
-            this.labelTS281.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // Setup
             // 
