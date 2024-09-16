@@ -1449,5 +1449,35 @@ namespace Thetis
                 DoubleBufferAll(child, enabled);
             }
         }
+        public static bool IsValidFilename(string filename)
+        {
+            char[] invalidChars = Path.GetInvalidFileNameChars();
+            if (filename.Any(ch => invalidChars.Contains(ch)))
+            {
+                return false;
+            }
+
+            if (filename.Length >= 260)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        public static bool IsValidPath(string path)
+        {
+            char[] invalidChars = Path.GetInvalidPathChars();
+            if (path.Any(ch => invalidChars.Contains(ch)))
+            {
+                return false;
+            }
+
+            if (path.Length >= 260)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

@@ -183,6 +183,16 @@ namespace Thetis
             _dbman_settings = null;
             broken_folder = "";
 
+            if (!Common.IsValidPath(_db_data_path))
+            {
+                DialogResult dr = MessageBox.Show("There is an issue with the database data path.\n\n" +
+                "[" + _db_data_path + "]\n\n" + 
+                "It is not valid. Please fix and try again.",
+                "Database Manager",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return false;
+            }
             foreach (string s in args)
             {
                 if (s.StartsWith("-dbfilename:"))
@@ -198,6 +208,17 @@ namespace Thetis
                 if (s.StartsWith("-dbid:"))
                 {
                     _unique_instance_id = s.Trim().Substring(s.Trim().IndexOf(":") + 1) + "_";
+                    // check if ok
+                    if (!Common.IsValidFilename(_unique_instance_id + "dbman_settings.json"))
+                    {
+                        DialogResult dr = MessageBox.Show("There is an issue with the database dbman_settings file name.\n\n" +
+                        "[" + _unique_instance_id + "dbman_settings.json" + "]\n\n" +
+                        "It is not valid. Please fix and try again.",
+                        "Database Manager",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        return false;
+                    }
                 }
             }
 
