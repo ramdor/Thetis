@@ -64,6 +64,7 @@ using System.Security.Policy;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Runtime.CompilerServices;
 using System.Security.Permissions;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Thetis
 {
@@ -20440,15 +20441,25 @@ namespace Thetis
                 float data_line_width = Math.Max(1f, w * 0.002f);
 
                 //x axis
-                _renderTarget.DrawLine(new RawVector2(x + half_spacer + quarter_spacer, y + h - spacer), new RawVector2(x + w - half_spacer - quarter_spacer, y + h - spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
+                if(his.ShowScale1)
+                    _renderTarget.DrawLine(new RawVector2(x + half_spacer + quarter_spacer, y + h - spacer), new RawVector2(x + w - half_spacer - quarter_spacer, y + h - spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
+                else
+                    _renderTarget.DrawLine(new RawVector2(x + half_spacer + quarter_spacer, y + h - spacer), new RawVector2(x + w - quarter_spacer, y + h - spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
 
                 //left y axis
                 _renderTarget.DrawLine(new RawVector2(x + spacer, y + quarter_spacer), new RawVector2(x + spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
 
                 //right y axis
-                _renderTarget.DrawLine(new RawVector2(x + w - spacer, y + quarter_spacer), new RawVector2(x + w - spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
+                if(his.ShowScale1)
+                    _renderTarget.DrawLine(new RawVector2(x + w - spacer, y + quarter_spacer), new RawVector2(x + w - spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
+                else
+                    _renderTarget.DrawLine(new RawVector2(x + w - half_spacer, y + quarter_spacer), new RawVector2(x + w - half_spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
 
-                int pixel_width = (int)(w - spacer * 2f);
+                int pixel_width;
+                if(his.ShowScale1)
+                    pixel_width = (int)(w - spacer * 2f);
+                else
+                    pixel_width = (int)(w - spacer - half_spacer);
 
                 //render axis 0 data
                 float text_height = (w * 0.05f);
@@ -20459,7 +20470,11 @@ namespace Thetis
                 float start_x = x + spacer;
                 float base_y = y + h - spacer;
                 float last_x;
-                SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(x + spacer, y + quarter_spacer, w - spacer * 2f, h - quarter_spacer - spacer);
+                SharpDX.RectangleF clip_rect;
+                if(his.ShowScale1)
+                    clip_rect = new SharpDX.RectangleF(x + spacer, y + quarter_spacer, w - spacer * 2f, h - quarter_spacer - spacer);
+                else
+                    clip_rect = new SharpDX.RectangleF(x + spacer, y + quarter_spacer, w - spacer - quarter_spacer, h - quarter_spacer - spacer);
 
                 lock (his.DataLock1)
                 {
@@ -20538,7 +20553,7 @@ namespace Thetis
                             {
                                 t_y += (text_height / 4f);
                                 // full grid line
-                                _renderTarget.DrawLine(new RawVector2(x + spacer - quarter_spacer, t_y), new RawVector2(x + w - spacer, t_y), getDXBrushForColour(his.LinesColour, 96), data_line_width);
+                                _renderTarget.DrawLine(new RawVector2(x + spacer - quarter_spacer, t_y), new RawVector2(x + w - (his.ShowScale1 ? spacer : quarter_spacer), t_y), getDXBrushForColour(his.LinesColour, 96), data_line_width);
                             }
                         }
 
@@ -20574,7 +20589,11 @@ namespace Thetis
                         // time tags
                         foreach (clsHistoryItem.HistoryData hd in time_tags)
                         {
-                            float s_x = start_x + (hd.index / (float)(total0 - 1)) * (w - spacer * 2f);
+                            float s_x;
+                            if(his.ShowScale1)
+                                s_x = start_x + (hd.index / (float)(total0 - 1)) * (w - spacer * 2f);
+                            else
+                                s_x = start_x + (hd.index / (float)(total0 - 1)) * (w - spacer - half_spacer);
                             float s_y = y + h - half_spacer;
                             _renderTarget.DrawLine(new RawVector2(s_x, s_y - half_spacer), new RawVector2(s_x, s_y - half_spacer + quarter_spacer), getDXBrushForColour(his.LinesColour, 96), data_line_width);
                             plotText(hd.time.ToString("HH:mm:ss"), s_x, s_y, h, rect.Width, 10f, his.TimeColour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, true, 0, 45);
