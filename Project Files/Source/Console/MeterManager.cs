@@ -20491,7 +20491,7 @@ namespace Thetis
                             }
                         }
 
-                        float y_scale1 = (h - spacer - half_spacer) / range1;
+                        float y_scale1 = (h - spacer - quarter_spacer) / range1;
                         float last_y1 = (his.History1[0].value - min1) * y_scale1;
 
                         _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
@@ -20542,7 +20542,7 @@ namespace Thetis
                             }
                         }
 
-                        float y_scale0 = (h - spacer - half_spacer) / range0;                            
+                        float y_scale0 = (h - spacer - quarter_spacer) / range0;                            
                         float last_y0 = (his.History0[0].value - min0) * y_scale0;                                                       
 
                         _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
