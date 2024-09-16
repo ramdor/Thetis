@@ -43,6 +43,8 @@ namespace Thetis
             _ignore_lstActiveDBs_selectectedindexchanged = false;
             InitializeComponent();
 
+            Common.DoubleBufferAll(this, true);
+
             this.Text = $"Database Manager  [v{Common.GetVerNum()}]";
         }
         public void Restore()

@@ -634,7 +634,7 @@ namespace Thetis
                 }
             }
 
-            if (app_data_path == "")
+            if (string.IsNullOrEmpty(app_data_path))
             {
                 if (Environment.Is64BitProcess)
                     app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
@@ -1202,7 +1202,7 @@ namespace Thetis
                 }
             }
 
-            if (app_data_path == "")
+            if (string.IsNullOrEmpty(app_data_path))
             {
                 app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                     + "\\OpenHPSDR\\Thetis\\";
@@ -1355,7 +1355,7 @@ namespace Thetis
             if (!IsSetupFormNull)
             {
                 sFW = SetupForm.GetFirmwareCodeVersionString();
-                if (sFW != "") sFW = " (" + sFW + ")";
+                if (!string.IsNullOrEmpty(sFW)) sFW = " (" + sFW + ")";
             }
 
             return TitleBar.GetString().Replace("<FW>", sFW);
@@ -3147,8 +3147,11 @@ namespace Thetis
                     //ignore section
                     case "udFilterLow":
                     case "udFilterHigh":
+                    case "udRX2FilterLow":
+                    case "udRX2FilterHigh":
                         //[2.10.3]MW0LGE ignore section, in the case of the filter ud controls, they will be set by the filter being selected
                         break;
+
                     case "last_radio_protocol":
                         Audio.LastRadioProtocol = (RadioProtocol)Enum.Parse(typeof(RadioProtocol), val);
                         break;
@@ -4926,7 +4929,7 @@ namespace Thetis
         {
             foreach (RadioButtonTS r in panelMode.Controls)
             {
-                if (r.Text != "")
+                if (!string.IsNullOrEmpty(r.Text))
                     r.Enabled = true;
                 if (r.BackColor == vfo_text_dark_color)
                     r.BackColor = button_selected_color;
@@ -7176,7 +7179,8 @@ namespace Thetis
             if (f == rx1_filter)
                 panelFilter.Text = "Filter - " + rx1_filters[(int)rx1_dsp_mode].GetName(f);
 
-            if (old_name != new_name) FilterNameChangedHandlers?.Invoke(1, f, old_name, new_name);
+            //if (old_name != new_name) FilterNameChangedHandlers?.Invoke(1, f, old_name, new_name);
+            if (old_name != new_name) FilterChangedHandlers?.Invoke(1, f, f, RX1Band, rx1_filters[(int)rx1_dsp_mode].GetLow(f), rx1_filters[(int)rx1_dsp_mode].GetHigh(f), rx1_filters[(int)rx1_dsp_mode].GetName(f));
         }
 
         public void UpdateRX1FilterPresetLow(int val)
@@ -7225,7 +7229,8 @@ namespace Thetis
             if (f == rx2_filter)
                 panelRX2Filter.Text = "RX2 Filter - " + rx2_filters[(int)rx2_dsp_mode].GetName(f);
 
-            if (old_name != new_name) FilterNameChangedHandlers?.Invoke(2, f, old_name, new_name);
+            //if (old_name != new_name) FilterNameChangedHandlers?.Invoke(2, f, old_name, new_name);
+            if (old_name != new_name) FilterChangedHandlers?.Invoke(2, f, f, RX2Band, rx2_filters[(int)rx2_dsp_mode].GetLow(f), rx2_filters[(int)rx2_dsp_mode].GetHigh(f), rx2_filters[(int)rx2_dsp_mode].GetName(f));
         }
 
         public void UpdateRX2FilterPresetLow(int val)
@@ -7578,10 +7583,10 @@ namespace Thetis
                     break;
             }
 
-            if (comboTXProfile.Text == "") comboTXProfile.Text = "Default";
-            if (comboDigTXProfile.Text == "") comboDigTXProfile.Text = "Default";
-            if (comboFMTXProfile.Text == "") comboFMTXProfile.Text = "Default";
-            if (comboAMTXProfile.Text == "") comboAMTXProfile.Text = "Default";
+            if (string.IsNullOrEmpty(comboTXProfile.Text)) comboTXProfile.Text = "Default";
+            if (string.IsNullOrEmpty(comboDigTXProfile.Text)) comboDigTXProfile.Text = "Default";
+            if (string.IsNullOrEmpty(comboFMTXProfile.Text)) comboFMTXProfile.Text = "Default";
+            if (string.IsNullOrEmpty(comboAMTXProfile.Text)) comboAMTXProfile.Text = "Default";
         }
         // Diversity operation is on RX1; therefore, the 'rx1_rate' will be used as the diversity rate;
         public void UpdateDDCs(bool rx2_enabled)
@@ -17528,7 +17533,7 @@ namespace Thetis
                         break;
                 }
 
-                if (text == "") return;
+                if (string.IsNullOrEmpty(text)) return;
 
                 comboMeterRXMode.Text = text;
             }
@@ -17582,7 +17587,7 @@ namespace Thetis
                         break;
                 }
 
-                if (text == "") return;
+                if (string.IsNullOrEmpty(text)) return;
 
                 comboRX2MeterMode.Text = text;
             }
@@ -17658,7 +17663,7 @@ namespace Thetis
                         text = "Off";
                         break;
                 }
-                if (text == "") return;
+                if (string.IsNullOrEmpty(text)) return;
 
                 comboMeterTXMode.Text = text;
             }
@@ -20197,7 +20202,7 @@ namespace Thetis
                 total_cpu_usage = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total", sMachineName);
                 float tmp = total_cpu_usage.NextValue();
 
-                if (_sInstanceName != "")
+                if (!string.IsNullOrEmpty(_sInstanceName))
                 {
                     total_thetis_usage = new PerformanceCounter("Process", "% Processor Time", _sInstanceName, sMachineName);
                     tmp = total_thetis_usage.NextValue();
@@ -20740,7 +20745,7 @@ namespace Thetis
                 }
             }
 
-            if (txtVFOAFreq.Text == "" ||
+            if (string.IsNullOrEmpty(txtVFOAFreq.Text) ||
                txtVFOAFreq.Text == "." ||
                txtVFOAFreq.Text == ",")
                 return;
@@ -27449,7 +27454,7 @@ namespace Thetis
         }
         private void shutdownLogStringToPath(string entry)
         {
-            if (!m_bLogShutdown || entry == "") return;
+            if (!m_bLogShutdown || string.IsNullOrEmpty(entry)) return;
 
             try
             {
@@ -30945,7 +30950,7 @@ namespace Thetis
         private void txtVFOABand_LostFocus(object sender, System.EventArgs e)
         {
             if (!rx2_enabled || (!chkEnableMultiRX.Checked && !chkVFOSplit.Checked)) return;
-            if (txtVFOABand.Text == "." || txtVFOABand.Text == "")
+            if (txtVFOABand.Text == "." || string.IsNullOrEmpty(txtVFOABand.Text))
             {
                 VFOASubFreq = VFOAFreq;
                 return;
@@ -40807,6 +40812,16 @@ namespace Thetis
             {
                 filterRX1Form.DSPMode = rx1_dsp_mode;
             }
+
+            // update all
+            for (Filter f = Filter.F1; f <= Filter.VAR2; f++)
+            {
+                if(f != rx1_filter)
+                    FilterChangedHandlers?.Invoke(1, f, f, RX1Band, rx1_filters[(int)rx1_dsp_mode].GetLow(f), rx1_filters[(int)rx1_dsp_mode].GetHigh(f), rx1_filters[(int)rx1_dsp_mode].GetName(f));
+            }
+
+            // set to where it should be
+            FilterChangedHandlers?.Invoke(1, rx1_filter, rx1_filter, RX1Band, rx1_filters[(int)rx1_dsp_mode].GetLow(rx1_filter), rx1_filters[(int)rx1_dsp_mode].GetHigh(rx1_filter), rx1_filters[(int)rx1_dsp_mode].GetName(rx1_filter));
         }
 
         private void toolStripMenuItemRX2FilterConfigure_Click(object sender, EventArgs e)
@@ -40869,6 +40884,21 @@ namespace Thetis
             {
                 filterRX2Form.DSPMode = rx2_dsp_mode;
             }
+
+            // update all
+            for (Filter f = Filter.F1; f <= Filter.F7; f++)
+            {
+                if (f != rx2_filter)
+                    FilterChangedHandlers?.Invoke(2, f, f, RX2Band, rx2_filters[(int)rx2_dsp_mode].GetLow(f), rx2_filters[(int)rx2_dsp_mode].GetHigh(f), rx2_filters[(int)rx2_dsp_mode].GetName(f));
+            }
+            for (Filter f = Filter.VAR1; f <= Filter.VAR2; f++)
+            {
+                if (f != rx2_filter)
+                    FilterChangedHandlers?.Invoke(2, f, f, RX2Band, rx2_filters[(int)rx2_dsp_mode].GetLow(f), rx2_filters[(int)rx2_dsp_mode].GetHigh(f), rx2_filters[(int)rx2_dsp_mode].GetName(f));
+            }
+
+            // set to where it should be
+            FilterChangedHandlers?.Invoke(2, rx2_filter, rx2_filter, RX2Band, rx2_filters[(int)rx2_dsp_mode].GetLow(rx2_filter), rx2_filters[(int)rx2_dsp_mode].GetHigh(rx2_filter), rx2_filters[(int)rx2_dsp_mode].GetName(rx2_filter));
         }
 
         private void chkTNF_CheckedChanged(object sender, EventArgs e)
@@ -45531,7 +45561,7 @@ namespace Thetis
 
             if (c.GetType() == typeof(PanelTS) || c.GetType() == typeof(GroupBoxTS) || c.GetType() == typeof(ucQuickRecall))
             {
-                if (sub != "")
+                if (!string.IsNullOrEmpty(sub))
                 {
                     getControl(c, new Point(p.X - c.Location.X, p.Y - c.Location.Y), sub + " > " + c.Name + " (" + c.Size.Width.ToString() + " x " + c.Size.Height.ToString() + ")");
                 }
@@ -45542,7 +45572,7 @@ namespace Thetis
             }
             else
             {
-                if (sub != "")
+                if (!string.IsNullOrEmpty(sub))
                 {
                     m_sOverControlName = sub + " > " + c.Name + " (" + c.Size.Width.ToString() + " x " + c.Size.Height.ToString() + ")";
                 }
@@ -45730,7 +45760,7 @@ namespace Thetis
 
         public BandPanelChanged BandPanelChangeHandlers;
         public VHFChanged VHFDetailsChangedHandlers;
-        public FilterNameChanged FilterNameChangedHandlers;
+        //public FilterNameChanged FilterNameChangedHandlers;
 
         public AntennaRXChanged AntennaRXChangedHandlers;
         public AntennaTXChanged AntennaTXChangedHandlers;
@@ -48934,28 +48964,7 @@ namespace Thetis
         private void databaseManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (IsSetupFormNull) return;
-
-            if (!SetupForm.Visible)
-            {
-                if (!PowerOn)
-                {
-                    DBMan.ShowDBMan();
-                }
-                else
-                {
-                    DialogResult dr = MessageBox.Show("The Database Manager can not be used whilst the radio is powered on. Please turn it off and try again.",
-                    "Database Manager Issue",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                }
-            }
-            else
-            {
-                DialogResult dr = MessageBox.Show("The Database Manager can not be used whilst the Setup window is shown. Please close it and try again.",
-                "Database Manager Issue",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-            }
+            DBMan.ShowDBMan();
         }
 
         private void setupToolStripMenuItem1_Click(object sender, EventArgs e)

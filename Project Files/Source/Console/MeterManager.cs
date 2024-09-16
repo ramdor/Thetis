@@ -64,6 +64,7 @@ using System.Security.Policy;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Runtime.CompilerServices;
 using System.Security.Permissions;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Thetis
 {
@@ -2387,7 +2388,7 @@ namespace Thetis
 
             _console.BandPanelChangeHandlers += OnBandPanelChanged;
             _console.VHFDetailsChangedHandlers += OnVHFDetailsChanged;
-            _console.FilterNameChangedHandlers += OnFilterNameChanged;
+            //_console.FilterNameChangedHandlers += OnFilterNameChanged;
 
             _console.AntennaRXChangedHandlers += OnAntennaRXChanged;
             _console.AntennaTXChangedHandlers += OnAntennaTXChanged;
@@ -2444,7 +2445,7 @@ namespace Thetis
 
             _console.BandPanelChangeHandlers -= OnBandPanelChanged;
             _console.VHFDetailsChangedHandlers -= OnVHFDetailsChanged;
-            _console.FilterNameChangedHandlers -= OnFilterNameChanged;
+            //_console.FilterNameChangedHandlers -= OnFilterNameChanged;
 
             _console.AntennaRXChangedHandlers -= OnAntennaRXChanged;
             _console.AntennaTXChangedHandlers -= OnAntennaTXChanged;
@@ -2710,28 +2711,28 @@ namespace Thetis
                 }
             }
         }
-        private static void OnFilterNameChanged(int rx, Filter f, string old_name, string new_name)
-        {
-            lock (_metersLock)
-            {
-                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
-                {
-                    clsMeter m = ms.Value;
+        //private static void OnFilterNameChanged(int rx, Filter f, string old_name, string new_name)
+        //{
+        //    lock (_metersLock)
+        //    {
+        //        foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+        //        {
+        //            clsMeter m = ms.Value;
 
-                    if (rx == 1)
-                    {
-                        m.FilterVfoAName = new_name;
-                    }
-                    else
-                    {
-                        m.FilterVfoBName = new_name;
-                    }
+        //            if (rx == 1)
+        //            {
+        //                m.FilterVfoAName = new_name;
+        //            }
+        //            else
+        //            {
+        //                m.FilterVfoBName = new_name;
+        //            }
 
-                    if (old_name != new_name)
-                        m.FilterNameDetails(f, new_name);
-                }
-            }
-        }
+        //            if (old_name != new_name)
+        //                m.FilterNameDetails(f, new_name);
+        //        }
+        //    }
+        //}
         private static void OnFilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName)
         {
             lock (_metersLock)
@@ -2740,14 +2741,19 @@ namespace Thetis
                 {
                     clsMeter m = ms.Value;
 
-                    m.FilterVfoA = newFilter;
-                    m.FilterVfoB = newFilter;
+                    bool changed = m.FilterVfoA != newFilter || m.FilterVfoB != newFilter ||
+                                   m.FilterVfoAName != sName || m.FilterVfoBName != sName || oldFilter != newFilter;
 
-                    m.FilterVfoAName = sName;
-                    m.FilterVfoBName = sName;
+                    if (changed)
+                    {
+                        m.FilterVfoA = newFilter;
+                        m.FilterVfoB = newFilter;
 
-                    if (oldFilter != newFilter)
-                        m.UpdateFilterButtons(newFilter);
+                        m.FilterVfoAName = sName;
+                        m.FilterVfoBName = sName;
+
+                        m.UpdateFilterButtons(newFilter, sName);
+                    }
                 }
             }
         }
@@ -3660,7 +3666,7 @@ namespace Thetis
                 if (newLocation.X < 0) newLocation.X = 0;
                 if (newLocation.Y < 0) newLocation.Y = 0;
                 
-                m.Location = newLocation;
+                if(newLocation != m.Location) m.Location = newLocation;
             }
         }
         private static void returnMeterFromFloating(ucMeter m, frmMeterDisplay frm)
@@ -3711,12 +3717,13 @@ namespace Thetis
                     {
                         ucMeter ucM = kvp.Value;
 
-                        if (!_lstMeterDisplayForms.ContainsKey(ucM.ID) || !ucM.MeterEnabled) return;
-
-                        if (ucM.Floating)
-                            setMeterFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
-                        else
-                            returnMeterFromFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
+                        if (_lstMeterDisplayForms.ContainsKey(ucM.ID) && ucM.MeterEnabled)
+                        {
+                            if (ucM.Floating)
+                                setMeterFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
+                            else
+                                returnMeterFromFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
+                        }
                     }
                 }
             }
@@ -4749,7 +4756,7 @@ namespace Thetis
 
                 setupButtons();
             }
-            public void FilterChanged(Filter f)
+            public void FilterChanged(Filter f, string name)
             {
                 Filter old = _filter;
                 _filter = f;
@@ -4765,6 +4772,7 @@ namespace Thetis
                     old_index -= old_index > (int)Filter.F7 ? (int)Filter.VAR1 - (int)Filter.F7 - 1 : 0;
                 }
 
+                SetText(1, index, name);
                 SetOn(1, old_index, false);
                 SetOn(1, index, true);
             }
@@ -4772,19 +4780,19 @@ namespace Thetis
             {
                 setupButtons();
             }
-            public void FilterNameChanged(Filter f, string new_name)
-            {
-                // just set the mode
-                int index = (int)f - (int)Filter.F1;
+            //public void FilterNameChanged(Filter f, string new_name)
+            //{
+            //    // just set the mode
+            //    int index = (int)f - (int)Filter.F1;
 
-                if (_owningmeter.RX == 2)
-                {
-                    // only 9 filters, so adjust indexes
-                    index -= index > (int)Filter.F7 ? (int)Filter.VAR1 - (int)Filter.F7 - 1 : 0;
-                }
+            //    if (_owningmeter.RX == 2)
+            //    {
+            //        // only 9 filters, so adjust indexes
+            //        index -= index > (int)Filter.F7 ? (int)Filter.VAR1 - (int)Filter.F7 - 1 : 0;
+            //    }
 
-                SetText(1, index, new_name);
-            }
+            //    SetText(1, index, new_name);
+            //}
             private void setupButtons()
             {
                 if (!RebuildButtons) return;
@@ -14928,7 +14936,7 @@ namespace Thetis
                         c.BandVHFSelected = true;
                 }));
             }
-            public void UpdateFilterButtons(Filter newFilter)
+            public void UpdateFilterButtons(Filter newFilter, string name)
             {
                 if (_console == null) return;
 
@@ -14938,7 +14946,7 @@ namespace Thetis
                     {
                         clsFilterButtonBox mi = (clsFilterButtonBox)mis.Value;
 
-                        mi.FilterChanged(newFilter);
+                        mi.FilterChanged(newFilter, name);
                     }
                 }
             }
@@ -14956,20 +14964,20 @@ namespace Thetis
                     }
                 }
             }
-            public void FilterNameDetails(Filter f, string new_name)
-            {
-                if (_console == null) return;
+            //public void FilterNameDetails(Filter f, string new_name)
+            //{
+            //    if (_console == null) return;
 
-                lock (_meterItemsLock)
-                {
-                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS))
-                    {
-                        clsFilterButtonBox mi = (clsFilterButtonBox)mis.Value;
+            //    lock (_meterItemsLock)
+            //    {
+            //        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS))
+            //        {
+            //            clsFilterButtonBox mi = (clsFilterButtonBox)mis.Value;
 
-                        mi.FilterNameChanged(f, new_name);
-                    }
-                }
-            }
+            //            mi.FilterNameChanged(f, new_name);
+            //        }
+            //    }
+            //}
             public void ModeChanged(DSPMode oldMode, DSPMode newMode)
             {
                 if (_console == null) return;
@@ -18853,7 +18861,7 @@ namespace Thetis
             private void target_Resize(object sender, System.EventArgs e)
             {
                 //Debug.Print(">> target resizing <<");
-
+                //Debug.Print($"wdith new {_newTargetWidth} was {_displayTarget.Width} , height new {_newTargetHeight} was {_displayTarget.Height}");
                 _newTargetWidth = _displayTarget.Width;
                 _newTargetHeight = _displayTarget.Height;
             }
@@ -19345,9 +19353,9 @@ namespace Thetis
             private SizeF measureString(string sText, string sFontFamily, FontStyle style, float emSize, bool ignore_caching = false)
             {
                 if (!_bDXSetup) return SizeF.Empty;
-
                 if (emSize == 0) return SizeF.Empty; // zero size text is zero measurement
-
+                if (string.IsNullOrEmpty(sText)) return SizeF.Empty;
+                
                 emSize = (float)Math.Round(emSize, 2);                
 
                 string sKey = sFontFamily + "_" + style + "_" + sText.Length + "_" + emSize.ToString("0.00");
@@ -20433,15 +20441,25 @@ namespace Thetis
                 float data_line_width = Math.Max(1f, w * 0.002f);
 
                 //x axis
-                _renderTarget.DrawLine(new RawVector2(x + half_spacer + quarter_spacer, y + h - spacer), new RawVector2(x + w - half_spacer - quarter_spacer, y + h - spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
+                if(his.ShowScale1)
+                    _renderTarget.DrawLine(new RawVector2(x + half_spacer + quarter_spacer, y + h - spacer), new RawVector2(x + w - half_spacer - quarter_spacer, y + h - spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
+                else
+                    _renderTarget.DrawLine(new RawVector2(x + half_spacer + quarter_spacer, y + h - spacer), new RawVector2(x + w - quarter_spacer, y + h - spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
 
                 //left y axis
                 _renderTarget.DrawLine(new RawVector2(x + spacer, y + quarter_spacer), new RawVector2(x + spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
 
                 //right y axis
-                _renderTarget.DrawLine(new RawVector2(x + w - spacer, y + quarter_spacer), new RawVector2(x + w - spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
+                if(his.ShowScale1)
+                    _renderTarget.DrawLine(new RawVector2(x + w - spacer, y + quarter_spacer), new RawVector2(x + w - spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
+                else
+                    _renderTarget.DrawLine(new RawVector2(x + w - half_spacer, y + quarter_spacer), new RawVector2(x + w - half_spacer, y + h - half_spacer - quarter_spacer), getDXBrushForColour(his.LinesColour), axis_line_width);
 
-                int pixel_width = (int)(w - spacer * 2f);
+                int pixel_width;
+                if(his.ShowScale1)
+                    pixel_width = (int)(w - spacer * 2f);
+                else
+                    pixel_width = (int)(w - spacer - half_spacer);
 
                 //render axis 0 data
                 float text_height = (w * 0.05f);
@@ -20452,7 +20470,11 @@ namespace Thetis
                 float start_x = x + spacer;
                 float base_y = y + h - spacer;
                 float last_x;
-                SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(x + spacer, y + quarter_spacer, w - spacer * 2f, h - quarter_spacer - spacer);
+                SharpDX.RectangleF clip_rect;
+                if(his.ShowScale1)
+                    clip_rect = new SharpDX.RectangleF(x + spacer, y + quarter_spacer, w - spacer * 2f, h - quarter_spacer - spacer);
+                else
+                    clip_rect = new SharpDX.RectangleF(x + spacer, y + quarter_spacer, w - spacer - quarter_spacer, h - quarter_spacer - spacer);
 
                 lock (his.DataLock1)
                 {
@@ -20484,7 +20506,7 @@ namespace Thetis
                             }
                         }
 
-                        float y_scale1 = (h - spacer - half_spacer) / range1;
+                        float y_scale1 = (h - spacer - quarter_spacer) / range1;
                         float last_y1 = (his.History1[0].value - min1) * y_scale1;
 
                         _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
@@ -20531,11 +20553,11 @@ namespace Thetis
                             {
                                 t_y += (text_height / 4f);
                                 // full grid line
-                                _renderTarget.DrawLine(new RawVector2(x + spacer - quarter_spacer, t_y), new RawVector2(x + w - spacer, t_y), getDXBrushForColour(his.LinesColour, 96), data_line_width);
+                                _renderTarget.DrawLine(new RawVector2(x + spacer - quarter_spacer, t_y), new RawVector2(x + w - (his.ShowScale1 ? spacer : quarter_spacer), t_y), getDXBrushForColour(his.LinesColour, 96), data_line_width);
                             }
                         }
 
-                        float y_scale0 = (h - spacer - half_spacer) / range0;                            
+                        float y_scale0 = (h - spacer - quarter_spacer) / range0;                            
                         float last_y0 = (his.History0[0].value - min0) * y_scale0;                                                       
 
                         _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
@@ -20567,7 +20589,11 @@ namespace Thetis
                         // time tags
                         foreach (clsHistoryItem.HistoryData hd in time_tags)
                         {
-                            float s_x = start_x + (hd.index / (float)(total0 - 1)) * (w - spacer * 2f);
+                            float s_x;
+                            if(his.ShowScale1)
+                                s_x = start_x + (hd.index / (float)(total0 - 1)) * (w - spacer * 2f);
+                            else
+                                s_x = start_x + (hd.index / (float)(total0 - 1)) * (w - spacer - half_spacer);
                             float s_y = y + h - half_spacer;
                             _renderTarget.DrawLine(new RawVector2(s_x, s_y - half_spacer), new RawVector2(s_x, s_y - half_spacer + quarter_spacer), getDXBrushForColour(his.LinesColour, 96), data_line_width);
                             plotText(hd.time.ToString("HH:mm:ss"), s_x, s_y, h, rect.Width, 10f, his.TimeColour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, true, 0, 45);
@@ -21929,6 +21955,7 @@ namespace Thetis
             {
                 if (string.IsNullOrEmpty(sText)) return (0, 0);
 
+                
                 float fontSizeEmScaled = (fTextSize / 16f) * (containerWidth / 52f);
                 SizeF szTextSize;
 
@@ -24942,7 +24969,20 @@ namespace Thetis
                 _listenerThread.Join();
                 ConnectorRunning?.Invoke(_guid, _type, false);
             }
-
+            private bool clientConnected
+            {
+                get
+                {
+                    try
+                    {
+                        return _tcpClient.Connected;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }
+            }
             private void listen()
             {                
                 try
@@ -24971,7 +25011,7 @@ namespace Thetis
 
                             NetworkStream stream = _tcpClient.GetStream();
                             string bufferConcat = "";
-                            while (_tcpClient.Connected && _isRunning)
+                            while (clientConnected && _isRunning)
                             {
                                 bool sleep = true;
                                 bool inbound = _mmio_data[_guid].Direction == MMIODirection.IN || _mmio_data[_guid].Direction == MMIODirection.BOTH;
@@ -25089,7 +25129,7 @@ namespace Thetis
                                 }
 
                                 // heatbeat connection connected checker
-                                if ((DateTime.Now - lastTimeActive).TotalMilliseconds > 5000 && _tcpClient.Connected)
+                                if ((DateTime.Now - lastTimeActive).TotalMilliseconds > 5000 && clientConnected)
                                 {
                                     // at least 5 seconds since an rx or a tx, we should tx a byte, just to check connection state
                                     Byte[] sendBytes = Encoding.ASCII.GetBytes("\0");
@@ -25187,7 +25227,20 @@ namespace Thetis
                 _clientThread.Join();
                 ConnectorRunning?.Invoke(_guid, _type, false);
             }
-
+            private bool clientConnected
+            {
+                get
+                {
+                    try
+                    {
+                        return _tcpClient.Connected;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }
+            }
             private void Connect()
             {
                 bool reconnect = true;
@@ -25205,7 +25258,7 @@ namespace Thetis
 
                         while (_isRunning)
                         {
-                            if (!_tcpClient.Connected)
+                            if (!clientConnected)
                             {
                                 break;
                             }
@@ -25270,7 +25323,7 @@ namespace Thetis
                                 }
                                 catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
                                 {
-                                    if (_tcpClient != null && !_tcpClient.Connected)
+                                    if (_tcpClient != null && !clientConnected)
                                         reconnect = true;
 
                                     break;
@@ -25320,7 +25373,7 @@ namespace Thetis
                                         }
                                         catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
                                         {
-                                            if (_tcpClient != null && !_tcpClient.Connected)
+                                            if (_tcpClient != null && !clientConnected)
                                                 reconnect = true;
 
                                             break;
@@ -25329,7 +25382,7 @@ namespace Thetis
                                 }
                             }
 
-                            if ((DateTime.Now - lastTimeActive).TotalMilliseconds > 5000 && _tcpClient.Connected)
+                            if ((DateTime.Now - lastTimeActive).TotalMilliseconds > 5000 && clientConnected)
                             {
                                 Byte[] sendBytes = Encoding.ASCII.GetBytes("\0");
                                 try
@@ -25339,7 +25392,7 @@ namespace Thetis
                                 }
                                 catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
                                 {
-                                    if (_tcpClient != null && !_tcpClient.Connected)
+                                    if (_tcpClient != null && !clientConnected)
                                         reconnect = true;
 
                                     break;
@@ -25354,12 +25407,12 @@ namespace Thetis
                     }
                     catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
                     {
-                        if (_tcpClient != null && !_tcpClient.Connected)
+                        if (_tcpClient != null && !clientConnected)
                             reconnect = true;
                     }
                     catch (Exception ex)
                     {
-                        if (_tcpClient != null && !_tcpClient.Connected)
+                        if (_tcpClient != null && !clientConnected)
                             reconnect = true;
                     }
                     finally

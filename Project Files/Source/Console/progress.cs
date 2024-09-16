@@ -52,12 +52,9 @@ namespace Thetis
 		public Progress(string s)
 		{
 			InitializeComponent();
-			this.SetStyle(ControlStyles.DoubleBuffer, true);
-			this.Text = s;
+            Common.DoubleBufferAll(this, true);
+            this.Text = s;
 			percent_done = 0.0f;
-
-			//MW0LGE_[2.9.0.6]
-			Common.DoubleBuffered(this.panel1, true);
 		}
 
 		protected override void Dispose( bool disposing )
