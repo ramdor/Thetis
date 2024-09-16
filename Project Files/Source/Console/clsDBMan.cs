@@ -1239,7 +1239,7 @@ namespace Thetis
                     {
                         try
                         {
-                            File.Delete(file_path);
+                            File.Delete(jsonFilePath);
                         }
                         catch { }
                     }
