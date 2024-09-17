@@ -271,7 +271,7 @@ void addSnapShot(int rx, unsigned int received_seqnum, unsigned int last_seqnum)
 		prn->rx[rx].snapshot_length--;
 
 		//check to see if prn->rx[rx].snapshot is the one we are dumping
-		//prn->rx[rx].snapshot is used in the retreive snapshot code in netinterface
+		//prn->rx[rx].snapshot is used in the retrieve snapshot code in netinterface
 		if (prn->rx[rx].snapshot == tmp) {
 			prn->rx[rx].snapshot = prn->rx[rx].snapshots_tail;
 		}

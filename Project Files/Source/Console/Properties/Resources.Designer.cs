@@ -263,6 +263,16 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Data_Active_32 {
+            get {
+                object obj = ResourceManager.GetObject("Data-Active-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Data_Add_32 {
             get {
                 object obj = ResourceManager.GetObject("Data-Add-32", resourceCulture);

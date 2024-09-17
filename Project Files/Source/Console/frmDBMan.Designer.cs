@@ -291,7 +291,7 @@
             // btnMakeActive
             // 
             this.btnMakeActive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMakeActive.Image = global::Thetis.Properties.Resources.Data_Replace_32;
+            this.btnMakeActive.Image = global::Thetis.Properties.Resources.Data_Active_32;
             this.btnMakeActive.Location = new System.Drawing.Point(542, 22);
             this.btnMakeActive.Name = "btnMakeActive";
             this.btnMakeActive.Selectable = true;
@@ -396,10 +396,11 @@
             // 
             this.labelTS4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTS4.AutoSize = true;
+            this.labelTS4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTS4.Image = null;
             this.labelTS4.Location = new System.Drawing.Point(542, 250);
             this.labelTS4.Name = "labelTS4";
-            this.labelTS4.Size = new System.Drawing.Size(130, 13);
+            this.labelTS4.Size = new System.Drawing.Size(157, 13);
             this.labelTS4.TabIndex = 29;
             this.labelTS4.Text = "apply to currently selected";
             // 
@@ -407,30 +408,33 @@
             // 
             this.labelTS3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTS3.AutoSize = true;
+            this.labelTS3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTS3.Image = null;
             this.labelTS3.Location = new System.Drawing.Point(542, 176);
             this.labelTS3.Name = "labelTS3";
-            this.labelTS3.Size = new System.Drawing.Size(119, 13);
+            this.labelTS3.Size = new System.Drawing.Size(144, 13);
             this.labelTS3.TabIndex = 28;
             this.labelTS3.Text = "apply to currently active";
             // 
             // labelTS2
             // 
             this.labelTS2.AutoSize = true;
+            this.labelTS2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTS2.Image = null;
             this.labelTS2.Location = new System.Drawing.Point(12, 6);
             this.labelTS2.Name = "labelTS2";
-            this.labelTS2.Size = new System.Drawing.Size(104, 13);
+            this.labelTS2.Size = new System.Drawing.Size(123, 13);
             this.labelTS2.TabIndex = 12;
             this.labelTS2.Text = "Available Databases";
             // 
             // lblDabaseBackups_active_selected
             // 
             this.lblDabaseBackups_active_selected.AutoSize = true;
+            this.lblDabaseBackups_active_selected.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDabaseBackups_active_selected.Image = null;
             this.lblDabaseBackups_active_selected.Location = new System.Drawing.Point(12, 366);
             this.lblDabaseBackups_active_selected.Name = "lblDabaseBackups_active_selected";
-            this.lblDabaseBackups_active_selected.Size = new System.Drawing.Size(98, 13);
+            this.lblDabaseBackups_active_selected.Size = new System.Drawing.Size(114, 13);
             this.lblDabaseBackups_active_selected.TabIndex = 9;
             this.lblDabaseBackups_active_selected.Text = "Database Backups";
             // 
