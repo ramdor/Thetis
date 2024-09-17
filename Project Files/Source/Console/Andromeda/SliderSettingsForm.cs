@@ -1265,10 +1265,10 @@ namespace Thetis
             else
                 tbRX1Atten.Value = tbRX1Atten.Maximum;
             if (/*console.RX2ATT*/console.SetupForm.HermesAttenuatorDataRX2 <= tbRX2Atten.Maximum)//DH1KLM keep from dev_4 for Red Pitaya ATT
-                tbRX2Atten.Value = console.SetupForm.HermesAttenuatorDataRX2 //DH1KLM keep from dev_4 for Red Pitaya ATT /*RX2ATT*/;
+                tbRX2Atten.Value = console.SetupForm.HermesAttenuatorDataRX2; //DH1KLM keep from dev_4 for Red Pitaya ATT /*RX2ATT*/;
             else
                 tbRX2Atten.Value = tbRX2Atten.Maximum;
-            tbRX2Atten.Value = console.SetupForm.HermesAttenuatorDataRX2 //DH1KLM keep from dev_4 for Red Pitaya ATT /*RX2ATT*/; //MW0LGE_21d step atten changes
+            tbRX2Atten.Value = console.SetupForm.HermesAttenuatorDataRX2; //DH1KLM keep from dev_4 for Red Pitaya ATT /*RX2ATT*/; //MW0LGE_21d step atten changes
             tbSubRXPan.Value = console.PanSubRX;
             tbMasterAF.Value = console.AF;
             tbDrive.Value = console.PWR;
