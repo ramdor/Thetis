@@ -2693,17 +2693,17 @@ namespace Thetis
                 case EEncoderActions.eENStepAtten:
                     if (UseRX1)
                     {
-                        Value = SetupForm.ATTOnRX1;
+                        Value = SetupForm.HermesAttenuatorData; //DH1KLM keep from dev_4 for Red Pitaya ATT
                         EncoderUpdate(Steps, ref Value, (int)udRX1StepAttData.Minimum, (int)udRX1StepAttData.Maximum);
                         ShowAndromedaSlider(Value, (int)udRX1StepAttData.Minimum, (int)udRX1StepAttData.Maximum, "RX1 ATT");
-                        SetupForm.ATTOnRX1 = Value;
+                        SetupForm.HermesAttenuatorData = Value; //DH1KLM keep from dev_4 for Red Pitaya ATT
                     }
                     else
                     {
-                        Value = SetupForm.ATTOnRX2; //RX2ATT; // MW0LGE_21d step atten changes
+                        Value = SetupForm.HermesAttenuatorDataRX2; //DH1KLM keep from dev_4 for Red Pitaya ATT //RX2ATT; // MW0LGE_21d step atten changes 
                         EncoderUpdate(Steps, ref Value, (int)udRX2StepAttData.Minimum, (int)udRX2StepAttData.Maximum);
                         ShowAndromedaSlider(Value, (int)udRX2StepAttData.Minimum, (int)udRX2StepAttData.Maximum, "RX2 ATT");
-                        /*RX2ATT*/SetupForm.ATTOnRX2 = Value; // MW0LGE_21d step atten changes
+                        /*RX2ATT*/SetupForm.HermesAttenuatorDataRX2 = Value; //DH1KLM keep from dev_4 for Red Pitaya ATT // MW0LGE_21d step atten changes
                     }
                     CheckGainFormAutoShow();
                     break;

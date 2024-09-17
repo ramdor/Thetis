@@ -1260,15 +1260,15 @@ namespace Thetis
             tbRX1Pan.Value = console.PanMainRX;
             tbRX2Pan.Value = console.RX2Pan;
             // clip atten at 31dB (Andromeda is designed for 7000 series RF)
-            if (console.SetupForm.ATTOnRX1 <= tbRX1Atten.Maximum)
-                tbRX1Atten.Value = console.SetupForm.ATTOnRX1;
+            if (console.SetupForm.HermesAttenuatorData <= tbRX1Atten.Maximum)//DH1KLM keep from dev_4 for Red Pitaya ATT
+                tbRX1Atten.Value = console.SetupForm.HermesAttenuatorData; //DH1KLM keep from dev_4 for Red Pitaya ATT
             else
                 tbRX1Atten.Value = tbRX1Atten.Maximum;
-            if (/*console.RX2ATT*/console.SetupForm.ATTOnRX2 <= tbRX2Atten.Maximum)
-                tbRX2Atten.Value = console.SetupForm.ATTOnRX2/*RX2ATT*/;
+            if (/*console.RX2ATT*/console.SetupForm.HermesAttenuatorDataRX2 <= tbRX2Atten.Maximum)//DH1KLM keep from dev_4 for Red Pitaya ATT
+                tbRX2Atten.Value = console.SetupForm.HermesAttenuatorDataRX2 //DH1KLM keep from dev_4 for Red Pitaya ATT /*RX2ATT*/;
             else
                 tbRX2Atten.Value = tbRX2Atten.Maximum;
-            tbRX2Atten.Value = console.SetupForm.ATTOnRX2/*RX2ATT*/; //MW0LGE_21d step atten changes
+            tbRX2Atten.Value = console.SetupForm.HermesAttenuatorDataRX2 //DH1KLM keep from dev_4 for Red Pitaya ATT /*RX2ATT*/; //MW0LGE_21d step atten changes
             tbSubRXPan.Value = console.PanSubRX;
             tbMasterAF.Value = console.AF;
             tbDrive.Value = console.PWR;
@@ -1388,12 +1388,13 @@ namespace Thetis
 
         private void tbRX1Atten_Scroll(object sender, EventArgs e)
         {
-            console.SetupForm.ATTOnRX1 = tbRX1Atten.Value;
+            console.SetupForm.HermesAttenuatorData = tbRX1Atten.Value; //DH1KLM keep from dev_4 for Red Pitaya ATT
         }
 
         private void tbRX2Atten_Scroll(object sender, EventArgs e)
         {
-            console.SetupForm.ATTOnRX2 = tbRX2Atten.Value; //MW0LGE_21d step atten
+            //console.RX2ATT = tbRX2Atten.Value;
+            console.SetupForm.HermesAttenuatorDataRX2 = tbRX1Atten.Value; //DH1KLM keep from dev_4 for Red Pitaya ATT //MW0LGE_21d step atten
         }
 
         private void chkRX1Mute_CheckedChanged(object sender, EventArgs e)

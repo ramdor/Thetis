@@ -3671,7 +3671,7 @@ namespace Thetis
             }
         }
 
-        public bool RX1EnableAtt
+        public bool HermesEnableAttenuator //DH1KLM keep from dev_4 for Red Pitaya ATT
         {
             get
             {
@@ -3684,7 +3684,7 @@ namespace Thetis
             }
         }
 
-        public int ATTOnRX1
+        public int HermesAttenuatorData //DH1KLM keep from dev_4 for Red Pitaya ATT
         {
             get
             {
@@ -3693,16 +3693,10 @@ namespace Thetis
             }
             set
             {
-                if (udHermesStepAttenuatorData != null)
-                {
-                    if (udHermesStepAttenuatorData.Value == value)
-                        udHermesStepAttenuatorData_ValueChanged(this, EventArgs.Empty); //[2.10.3.6] no event will fire if the same, so force it
-                    else
-                        udHermesStepAttenuatorData.Value = value;
-                }
+                if (udHermesStepAttenuatorData != null) udHermesStepAttenuatorData.Value = value; //DH1KLM keep from dev_4 for Red Pitaya ATT
             }
         }
-        public int ATTOnRX2
+        public int HermesAttenuatorDataRX2 //DH1KLM keep from dev_4 for Red Pitaya ATT
         {
             get
             {
@@ -3711,13 +3705,7 @@ namespace Thetis
             }
             set
             {
-                if (udHermesStepAttenuatorDataRX2 != null)
-                {
-                    if (udHermesStepAttenuatorDataRX2.Value == value)
-                        udHermesStepAttenuatorDataRX2_ValueChanged(this, EventArgs.Empty); //[2.10.3.6]MW0LGE no event will fire if the same, so force it
-                    else
-                        udHermesStepAttenuatorDataRX2.Value = value;
-                }
+                if (udHermesStepAttenuatorDataRX2 != null) udHermesStepAttenuatorDataRX2.Value = value; //DH1KLM keep from dev_4 for Red Pitaya ATT
             }
         }
         public bool RX2EnableAtt
