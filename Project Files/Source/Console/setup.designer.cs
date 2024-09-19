@@ -45288,10 +45288,10 @@
             0,
             0});
             this.udTXTunePower.Minimum = new decimal(new int[] {
+            165,
             0,
             0,
-            0,
-            0});
+            -2147418112});
             this.udTXTunePower.Name = "udTXTunePower";
             this.udTXTunePower.Size = new System.Drawing.Size(48, 20);
             this.udTXTunePower.TabIndex = 4;

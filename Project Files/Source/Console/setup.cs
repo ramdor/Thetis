@@ -1075,8 +1075,13 @@ namespace Thetis
                 udATTOnTX.Minimum = -28;
                 udHermesStepAttenuatorData.Minimum = -28;
                 udHermesStepAttenuatorDataRX2.Minimum = -28;
+                udTXTunePower.Minimum = (Decimal)(-16.5);
                 chkEnableStaticIP_CheckedChanged(this, EventArgs.Empty);
                 chkHL2PsSync_CheckedChanged(this, EventArgs.Empty);
+            }
+            else
+            {
+                udTXTunePower.Minimum = 0;  // MI0BOT: For non HL2, minimum 0
             }
 
             chkDisable6mLNAonTX_CheckedChanged(this, e);
