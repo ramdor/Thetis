@@ -809,6 +809,7 @@
     <None Include="Resources\Data-Import-2-32.png" />
     <None Include="Resources\Lock-64.png" />
     <None Include="Resources\Link-64.png" />
+    <None Include="Resources\Data-Active-32.png" />
     <Content Include="thetis-icon.ico" />
     <None Include="Resources\thetis-logo1.png" />
     <None Include="Resources\cross_rl.cur" />
