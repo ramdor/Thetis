@@ -308,20 +308,22 @@ namespace Thetis
 		private int m_nOld_tx_ant = -99;
 		private int m_nOld_rx_out = -99;
 		private bool m_bOld_tx = false;
+		private bool m_bOld_alex_enabled = false;
 
-		public void UpdateAlexAntSelection(Band band, bool tx, bool alex_enabled, bool xvtr) 
+        public void UpdateAlexAntSelection(Band band, bool tx, bool alex_enabled, bool xvtr) 
 		{
 			if ( !alex_enabled ) 
-			{ 
-				NetworkIO.SetAntBits(0, 0, 0, 0, false); 
-				return;
+			{
+                NetworkIO.SetAntBits(0, 0, 0, 0, false);
+                m_bOld_alex_enabled = alex_enabled;
+                return;
 			}            
 
 			int rx_only_ant; 
 			int trx_ant; 
 			int tx_ant; 
 			int rx_out;
-            int xrx_out;
+            //int xrx_out;
 
 			int idx = (int)band - (int)Band.B160M; 
 
@@ -399,7 +401,8 @@ namespace Thetis
 				m_nOld_trx_ant != trx_ant ||
 				m_nOld_tx_ant != tx_ant ||
 				m_nOld_rx_out != rx_out ||
-				m_bOld_tx != tx)
+				m_bOld_tx != tx ||
+                m_bOld_alex_enabled != alex_enabled)
 			{
                 System.Console.WriteLine("Ant idx: " + idx + "(" + ((Band)idx + (int)Band.B160M).ToString() + ")"); //MW0LGE [2.9.0.8] moved here
                 NetworkIO.SetAntBits(rx_only_ant, trx_ant, tx_ant, rx_out, tx);
@@ -411,7 +414,8 @@ namespace Thetis
 				m_nOld_tx_ant = tx_ant;
 				m_nOld_rx_out = rx_out;
 				m_bOld_tx = tx;
-			}
+				m_bOld_alex_enabled = alex_enabled;
+            }
 
 			// don't allow changing antenna selections when mox is activated 
 			/*	if ( tx )  

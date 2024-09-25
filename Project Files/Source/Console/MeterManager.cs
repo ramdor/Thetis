@@ -7009,7 +7009,7 @@ namespace Thetis
                         {
                             if (!_mouse_over_vfoB)
                             {
-                                toggleSplit();
+                                toggleSplit(e);
                             }
                         }
                         break;
@@ -7182,12 +7182,19 @@ namespace Thetis
                     }));
                 }
             }
-            private void toggleSplit()
+            private void toggleSplit(MouseEventArgs e)
             {
                 if (_console == null) return;
                 _console.BeginInvoke(new MethodInvoker(() =>
                 {
-                    _console.VFOSplit = !_console.VFOSplit;
+                    if (e.Button == MouseButtons.Left && Keyboard.IsKeyDown(Keys.LShiftKey))
+                    {
+                        if (!_console.IsSetupFormNull && !_console.RX2Enabled) _console.SetupForm.QuickSplitEnabled = !_console.SetupForm.QuickSplitEnabled;
+                    }
+                    else
+                    {
+                        _console.VFOSplit = !_console.VFOSplit;
+                    }
                 }));
             }
             private bool setFilter(bool vfoB)
