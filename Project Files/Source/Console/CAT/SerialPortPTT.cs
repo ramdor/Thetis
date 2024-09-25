@@ -70,34 +70,54 @@ namespace Thetis
 			{
 				if ( Initialized ) return;  							
 				if ( portNum == 0 ) return; // bail out 
-				commPort = new SDRSerialPort(portNum);//, null); 
-				commPort.Create(true); // true says to create bit bang only port  -- fixme needs error checking! 
-				Initialized = true; 
+				try
+				{
+					commPort = new SDRSerialPort(portNum);//, null); 
+					commPort.Create(true); // true says to create bit bang only port  -- fixme needs error checking! 
+					Initialized = true;
+				}
+				catch { }
 			}
 			return; 
 		}
 
 		public bool isPTT() 
 		{
-			if ( !Initialized ) return false; 
-			if ( rtsIsPTT && commPort.isCTS() ) return true; 
-			if ( dtrIsPTT && commPort.isDSR() ) return true; 
-			return false; 
-		}
+			try
+			{
+				if (!Initialized) return false;
+				if (rtsIsPTT && commPort.isCTS()) return true;
+				if (dtrIsPTT && commPort.isDSR()) return true;
+				return false;
+			}
+            catch { return false; }
+        }
 
 		public bool isCTS() 
 		{
-			return commPort.isCTS(); 
+			try
+			{
+				return commPort.isCTS();
+			}
+			catch { return false; }
 		}
 
-		public bool isDSR() 
-		{ 
-			return commPort.isDSR(); 
+		public bool isDSR()
+		{
+			try
+			{
+				return commPort.isDSR();
+			}
+			catch { return false; }
 		}
 
 		public void setDTR(bool v) 
 		{
-			commPort.setDTR(v); 
+			try
+			{
+				commPort.setDTR(v);
+			}
+			catch { }
 		}
 		
 		public void Destroy() 
@@ -107,11 +127,14 @@ namespace Thetis
 				if ( !Initialized ) return; 
 				Initialized = false; 
 			}
-			if ( commPort != null ) 
-			{ 
-				commPort.Destroy(); 
-				commPort = null; 
-			}
+			try
+			{
+				if (commPort != null)
+				{
+					commPort.Destroy();
+					commPort = null;
+				}
+			} catch { }
 		}
 
         void SerialReceivedData(object source, SerialDataReceivedEventArgs e)
