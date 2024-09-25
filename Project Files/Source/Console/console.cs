@@ -3023,14 +3023,20 @@ namespace Thetis
                 r.Height -= ds.Height;
             }
 
-            a.Add("console_top/" + r.Top.ToString());		// save form positions
-            a.Add("console_left/" + r.Left.ToString());
-            a.Add("console_width/" + r.Width.ToString());
-            a.Add("console_height/" + r.Height.ToString());
+            if (this.WindowState != FormWindowState.Minimized)//[2.10.3.6]MW0LGE prevent garbage being stored if shutdown when minimsed
+            {
+                a.Add("console_top/" + r.Top.ToString());       // save form positions
+                a.Add("console_left/" + r.Left.ToString());
+                a.Add("console_width/" + r.Width.ToString());
+                a.Add("console_height/" + r.Height.ToString());
+            }
             a.Add("console_state/" + ((int)this.WindowState).ToString()); //MW0LGE_21 window state
 
-            a.Add("setup_top/" + SetupForm.Top.ToString());
-            a.Add("setup_left/" + SetupForm.Left.ToString());
+            if (SetupForm.WindowState != FormWindowState.Minimized)//[2.10.3.6]MW0LGE prevent garbage being stored if shutdown when minimsed
+            { 
+                a.Add("setup_top/" + SetupForm.Top.ToString());
+                a.Add("setup_left/" + SetupForm.Left.ToString());
+            }
 
             a.Add("IncludeWindowBorders/" + m_bIncludeWindowBorders);   // used in status bar resize form calcs
             a.Add("PanafallSplitBarPerc/" + Display.PanafallSplitBarPerc.ToString());  // the percentage of displayheight that is used in panafall rx1 only
@@ -9292,6 +9298,9 @@ namespace Thetis
 
             double vfoa = VFOAFreq;								// save current VFOA
 
+            bool ctun_on = chkFWCATU.Checked;
+            chkFWCATU.Checked = false;
+
             bool rit_on = chkRIT.Checked;						// save current RIT On
             chkRIT.Checked = false;								// turn RIT off
             int rit_val = (int)udRIT.Value;						// save current RIT value
@@ -9629,6 +9638,8 @@ namespace Thetis
             chkRIT.Checked = rit_on;							// restore RIT on
             udRIT.Value = rit_val;								// restore RIT value
 
+            chkFWCATU.Checked = ctun_on;
+
             RX1PreampMode = preampRX1;					        	// restore preamp value
             RX2PreampMode = preampRX2;					        	// restore preamp value MW0LGE_[2.9.0.6]
             SetupForm.RX1EnableAtt = step_attnRX1;
@@ -9676,7 +9687,10 @@ namespace Thetis
             chkRIT.Checked = false;								// turn RIT off
             int rit_val = (int)udRIT.Value;						// save current RIT value
 
-            double vfoa = VFOAFreq;								// save current VFOA
+            double vfoa = VFOAFreq;                             // save current VFOA
+
+            bool ctun_on = chkX2TR.Checked;
+            chkX2TR.Checked = false;
 
             string display = comboDisplayMode.Text;
             comboDisplayMode.Text = "Spectrum";
@@ -9880,6 +9894,9 @@ namespace Thetis
             comboDisplayMode.Text = display;
             chkRIT.Checked = rit_on;							// restore RIT on
             udRIT.Value = rit_val;								// restore RIT value		
+
+            chkX2TR.Checked = ctun_on;
+
             DisplayAVG = display_avg;							// restore AVG value
             chkRX2Preamp.Checked = rx2_preamp;
             RX1Filter = rx1_filter;							// restore AM filter
@@ -24664,7 +24681,6 @@ namespace Thetis
             {
                 if (!_mox)
                 {
-                    //TODO: who thought this a good idea to have in the sql thread? just to make sure? MW0LGE
                     float rx1PreampOffset;
                     if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
                     else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
@@ -24686,7 +24702,6 @@ namespace Thetis
         {
             while (chkPower.Checked && rx2_enabled)
             {
-                //TODO: who thought this a good idea to have in the sql2 thread? just to make sure? MW0LGE
                 float rx2PreampOffset;
                 if (rx2_step_att_present) rx2PreampOffset = (float)rx2_attenuator_data;
                 else rx2PreampOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
@@ -27094,6 +27109,14 @@ namespace Thetis
         private byte[] id_bytes = new byte[1];
         private void chkPower_CheckedChanged(object sender, System.EventArgs e)
         {
+            // ignore if dbman shown, prevents external sources from doing this such as midi/cat
+            // whilst DB man is in use
+            if(DBMan.IsVisible && chkPower.Checked)
+            {
+                PowerOn = false;
+                return;
+            }
+
             if (chkPower.Checked)
             {
                 chkPower.BackColor = button_selected_color;
@@ -28218,7 +28241,6 @@ namespace Thetis
                     {
                         mode = PreampMode.SA_MINUS20;
                     }
-
                     break;
 
                 case "0dB":

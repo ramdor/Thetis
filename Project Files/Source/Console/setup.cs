@@ -12553,6 +12553,7 @@ namespace Thetis
 
         private void chkAlexPresent_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (initializing) return;
             if (chkAlexPresent.Checked)
             {
                 chkAlexAntCtrl.Enabled = true;

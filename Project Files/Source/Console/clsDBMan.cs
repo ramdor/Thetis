@@ -120,7 +120,14 @@ namespace Thetis
             _unique_instance_id = "";
             _frm_dbman = new frmDBMan();
         }
-
+        public static bool IsVisible
+        {
+            get
+            {
+                if (_frm_dbman == null) return false;
+                return _frm_dbman.Visible;
+            }
+        }
         public static void ShowDBMan()
         {
             if (_dbman_settings == null) return;
@@ -130,12 +137,11 @@ namespace Thetis
 
             if (c.PowerOn)
             {
-                DialogResult dr = MessageBox.Show("The Database Manager can not be used whilst the radio is powered on. Please turn it off and try again.\n\n" +
-                                                  "Hold shift when clicking OK to have this happen.",
+                DialogResult dr = MessageBox.Show("The Database Manager can not be used whilst the radio is powered on. The radio will be powered off.",
                 "Database Manager Issue",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                if (Common.ShiftKeyDown)
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+                if (dr == DialogResult.OK)
                 {
                     c.PowerOn = false;
                     if (c.PowerOn)
