@@ -2581,9 +2581,7 @@ namespace Thetis
 
             a.Remove("udRX1StepAttData/" + udRX1StepAttData.Value.ToString());
             a.Remove("udRX2StepAttData/" + udRX2StepAttData.Value.ToString());
-
-            string ver_num = Common.GetVerNum(); //DH1KLM keep from dev_4 for Red Pitaya ATT
-
+ 
             a.Add("last_radio_protocol/" + Audio.LastRadioProtocol.ToString()); // MW0LGE [2.9.0.8] used incase protocol changes from last time. Used in audio.cs tp reset PS feedback level
             a.Add("last_radio_hardware/" + Audio.LastRadioHardware.ToString()); // as above, but hardware related
 
@@ -3027,7 +3025,7 @@ namespace Thetis
             a.Add("saved_rx_only/" + saved_rx_only.ToString());
             a.Add("mon_recall/" + mon_recall.ToString());
 
-            //string ver_num = Common.GetVerNum();
+            string ver_num = Common.GetVerNum();
             a.Add("Version/" + this.Text);		// save the current version
             a.Add("VersionNumber/" + ver_num);      // Thetis version number in a.b.c format
             // a.Add("RadioType/" + CurrentModel);     // radio model string (ex. FLEX1500)
@@ -9284,7 +9282,7 @@ namespace Thetis
             bool step_attnRX2 = SetupForm.RX2EnableAtt; //MW0LGE_[2.9.0.6]
             SetupForm.HermesEnableAttenuator = false; //DH1KLM keep from dev_4 for Red Pitaya ATT
             SetupForm.RX2EnableAtt = false; //MW0LGE_[2.9.0.6]
-            PreampMode preamp = RX1PreampMode;				// save current preamp mode //DH1KLM keep from dev_4 for Red Pitaya ATT
+            PreampMode preamp = RX1PreampMode; //DH1KLM keep from dev_4 for Red Pitaya ATT // save current preamp mode 
             PreampMode preampRX2 = RX2PreampMode;				// save current preamp mode
             RX1PreampMode = PreampMode.HPSDR_ON;			// set to high
             RX2PreampMode = PreampMode.HPSDR_ON;        //MW0LGE_[2.9.0.6]
@@ -9603,7 +9601,7 @@ namespace Thetis
             udRIT.Value = rit_val;								// restore RIT value
 
             RX1PreampMode = preamp; //DH1KLM keep from dev_4 for Red Pitaya ATT // restore preamp value
-            RX2PreampMode = preampRX2;					        	// restore preamp value MW0LGE_[2.9.0.6]
+            RX2PreampMode = preampRX2;		                                 	// restore preamp value MW0LGE_[2.9.0.6]
             SetupForm.HermesEnableAttenuator = step_attn; //DH1KLM keep from dev_4 for Red Pitaya ATT
             SetupForm.RX2EnableAtt = step_attnRX2;   //MW0LGE_[2.9.0.6] 
 
@@ -10243,7 +10241,7 @@ namespace Thetis
 
         }
 
-        public Color TxAttenuationBackgroundColour //DH1KLM check if it works
+        public Color TxAttenuationBackgroundColour
         {
             set { udTXStepAttData.BackColor = value; }
         }
@@ -10546,7 +10544,7 @@ namespace Thetis
                         NetworkIO.SetAlexAtten(alex_atten); // normal up alex attenuator setting
                 }
 
-                //handleAttCombosNuds(); //updateATTNudsCombos(); //DH1KLM keep from dev_4 for Red Pitaya ATT
+                //updateAttNudsCombos();
 
                 if (!_mox)
                 {
@@ -14428,7 +14426,8 @@ namespace Thetis
                         CurrentHPSDRHardware = HPSDRHW.OrionMKII;
                         break;
                     case HPSDRModel.ANAN_G2:
-                        chkDX.Visible = true;
+                        //chkDX.Visible = true; //[2.10.3.6]MW0LGE stereo diversity set as invisible until re-implemented
+                        chkDX.Visible = false;
                         rx2_preamp_present = true;
                         NetworkIO.SetRxADC(2);
                         NetworkIO.SetMKIIBPF(1);
@@ -24718,7 +24717,6 @@ namespace Thetis
 
                 if (update_preamp && !update_preamp_mutex)
                 {
-
                     old_satt = rx1_step_att_present;
                     old_satt_data = SetupForm.HermesAttenuatorData; //DH1KLM keep from dev_4 for Red Pitaya ATT
                     preamp = RX1PreampMode;				// save current preamp mode
@@ -28256,6 +28254,8 @@ namespace Thetis
             { //TX-ATT DH1KLM keep from dev_4 for Red Pitaya ATT
                 comboPreamp.Enabled = !chkMOX.Checked; //TX-ATT DH1KLM keep from dev_4 for Red Pitaya ATT
             } //TX-ATT DH1KLM keep from dev_4 for Red Pitaya ATT
+            //updateAttNudsCombos();
+
             SetupForm.MOX = chkMOX.Checked;
             ResetMultiMeterPeak();
             chkMOX.BackColor = SystemColors.Control;
@@ -42225,7 +42225,7 @@ namespace Thetis
             _isexpanded = true;
             _iscollapsed = false;
 
-            // updateAttNudsCombos(); //[2.10.3.6]MW0LGE DH1KLM
+            //updateAttNudsCombos(); //[2.10.3.6]MW0LGE
 
             updateLegacyMeterControls(true);// [2.10.1.0] MW0LGE
 
