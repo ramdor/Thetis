@@ -41521,24 +41521,27 @@ namespace Thetis
 
         private void setupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //[2.10.3.6]MW0LGE now in submenu ... setupToolStripMenuItem1_Click
-
-            //if (IsSetupFormNull) return;
-            //if (SetupForm.InvokeRequired)
-            //{
-            //    SetupForm.Invoke(new MethodInvoker(() =>
-            //    {
-            //        SetupForm.Show();
-            //        SetupForm.Focus();
-            //        SetFocusMaster(false);
-            //    }));
-            //}
-            //else
-            //{
-            //    SetupForm.Show();
-            //    SetupForm.Focus();
-            //    SetFocusMaster(false);
-            //}
+            //[2.10.3.6]MW0LGE now in submenu, however do this if shift held,
+            //because so many people moan about 1 more mouse click
+            if (Common.ShiftKeyDown)
+            {
+                if (IsSetupFormNull) return;
+                if (SetupForm.InvokeRequired)
+                {
+                    SetupForm.Invoke(new MethodInvoker(() =>
+                    {
+                        SetupForm.Show();
+                        SetupForm.Focus();
+                        SetFocusMaster(false);
+                    }));
+                }
+                else
+                {
+                    SetupForm.Show();
+                    SetupForm.Focus();
+                    SetFocusMaster(false);
+                }
+            }
         }
 
         private void memoryToolStripMenuItem_Click(object sender, EventArgs e)
