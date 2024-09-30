@@ -2266,10 +2266,13 @@ namespace Thetis
             if (!_DXrenderers.ContainsKey(sId)) return;
 
             DXRenderer r = _DXrenderers[sId];
-            r.RunDisplay();
+
+            r.RunDisplay(); // causes dx to initialise
+
+            // load images from files
             r.LoadDXImages(_openHPSDR_appdatapath, _current_skin_path);
 
-            // now the images from resources
+            // load images from resources
             r.LoadResouceImages();
         }
         public static void RunAllRendererDisplays()

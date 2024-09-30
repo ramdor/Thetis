@@ -1461,7 +1461,7 @@ namespace Thetis
                                     catch (Exception ex)
                                     {
                                         ok = false;
-                                        DialogResult dr = MessageBox.Show("There was a problem write the database info. Unable to copy the source database file.",
+                                        DialogResult dr = MessageBox.Show("There was a problem writing the database info. Unable to copy the source database file.",
                                         "Database Manager",
                                         MessageBoxButtons.OK,
                                         MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -1479,16 +1479,6 @@ namespace Thetis
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                                 }
-
-                                //DialogResult dr = MessageBox.Show("The database was imported sucessfully. Thetis will now restart.",
-                                //"Database Manager",
-                                //MessageBoxButtons.OK,
-                                //MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-
-                                //_frm_dbman.Hide();
-
-                                //Console.getConsole().Restart = true;
-                                //Console.getConsole().Close();
                             }
                             else
                             {
