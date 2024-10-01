@@ -14765,8 +14765,7 @@ namespace Thetis
                 //        txtVFOAFreq.Enabled = false;
                 //        break;
                 //}
-                //[2.3.10.6]MW0LGE whoever did the commented code above needs to step away from the computer
-                //
+                //[2.3.10.6]MW0LGE whoever did the commented code above needs to step away from the computer, how about if else????
                 bool enabled = !vfoA_lock;
                 txtVFOAFreq.Enabled = enabled;
                 if (vfoA_lock) chkVFOSync.Checked = false;
@@ -14825,7 +14824,7 @@ namespace Thetis
                 //        chkVFOSync.Checked = false;
                 //        break;
                 //}
-                //[2.3.10.6]MW0LGE whoever did the commented code above needs to step away from the computer
+                //[2.3.10.6]MW0LGE whoever did the commented code above needs to step away from the computer, how about if else????
                 bool enabled = !vfoB_lock;
                 txtVFOBFreq.Enabled = enabled;
                 if(vfoB_lock) chkVFOSync.Checked = false;
@@ -17851,7 +17850,7 @@ namespace Thetis
             }
             set
             {
-                if (vfoA_lock == true || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed the state check
+                if (vfoA_lock || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed the state check
                 if (!this.InvokeRequired)
                 {
                     VFOAUpdate(value);
@@ -17911,7 +17910,7 @@ namespace Thetis
 
             set
             {
-                if ((VFOLock != CheckState.Unchecked) || vfoA_lock == true || IsSetupFormNull) return;
+                if (vfoA_lock || IsSetupFormNull) return; //[2.10.3.6]MW0LGE removed the state check
                 if (!this.InvokeRequired)
                 {
                     VFOASubUpdate(value);
@@ -17933,7 +17932,7 @@ namespace Thetis
             }
             set
             {
-                if (vfoB_lock == true || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed state check
+                if (vfoB_lock || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed state check
                 value = Math.Max(0, value);
                 if (!this.InvokeRequired)
                 {

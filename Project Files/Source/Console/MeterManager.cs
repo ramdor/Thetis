@@ -5598,8 +5598,22 @@ namespace Thetis
 
                 setMode(m);
             }
+            private bool abortForLockedVFO()
+            {
+                bool abort = false;
+                if (_owningmeter.RX == 1)
+                {
+                    return _owningmeter.VFOALock;
+                }
+                else if (_owningmeter.RX == 2)
+                {
+                    return _owningmeter.VFOBLock;
+                }
+                return abort;
+            }
             private void setMode(DSPMode m)
             {
+                if (abortForLockedVFO()) return;
                 if (m == DSPMode.FIRST) return;
 
                 if (_owningmeter.RX == 2)
