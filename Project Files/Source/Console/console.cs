@@ -1348,7 +1348,18 @@ namespace Thetis
         //MW0LGE_21g
         public string VersionWithoutFW
         {
-            get { return TitleBar.GetString(false); }
+            get 
+            {
+                //[2.10.3.6]MW0LGE changed to use invoke if needed as CATTCPIPserver uses this from another thread
+                if (this.InvokeRequired)
+                {
+                    return (string)this.Invoke(new Func<string>(() => TitleBar.GetString(false)));
+                }
+                else
+                {
+                    return TitleBar.GetString(false);
+                }
+            }
         }
 
         private string getTitleWithFWVersion()

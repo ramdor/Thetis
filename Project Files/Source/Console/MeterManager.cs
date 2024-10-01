@@ -5056,7 +5056,7 @@ namespace Thetis
 
                 Size = new SizeF(Size.Width, height);
 
-                float fPadY = 0.05f;
+                float fPadY = 0.04f;
                 float fHeight = 0.05f;
                 _ig.Size = new SizeF(_ig.Size.Width, height + (fPadY - (fHeight * 0.75f)));
                 _owningmeter.Rebuild();
@@ -5316,7 +5316,7 @@ namespace Thetis
 
                 Size = new SizeF(Size.Width, height);
 
-                float fPadY = 0.05f;
+                float fPadY = 0.04f;
                 float fHeight = 0.05f;
                 _ig.Size = new SizeF(_ig.Size.Width, height + (fPadY - (fHeight * 0.75f)));
                 _owningmeter.Rebuild();
@@ -7879,7 +7879,7 @@ namespace Thetis
 
                     if (_ig != null)
                     {
-                        float fPadY = 0.05f;
+                        float fPadY = 0.04f;
                         float fHeight = 0.05f;
                         _ig.Size = new SizeF(_ig.Size.Width, _size + (fPadY - (fHeight * 0.75f)));
                         _owningMeter.Rebuild();
@@ -15549,8 +15549,8 @@ namespace Thetis
                                         ig.Size = new SizeF(ig.Size.Width, padding + (_fPadY - (_fHeight * 0.75f)));
 
                                         // recalc bounds for fade overlay cover as these will change as spacer changes
-                                        System.Drawing.RectangleF eyeBounds = getBounds(ig.ID);
-                                        if (!eyeBounds.IsEmpty)
+                                        System.Drawing.RectangleF bounds = getBounds(ig.ID);
+                                        if (!bounds.IsEmpty)
                                         {
                                             foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                             {
@@ -18090,26 +18090,43 @@ namespace Thetis
 
                     // the resource images to use
                     resource_bitmaps.Add("vfo_lock", Properties.Resources.Lock_64);
-                    resource_bitmaps.Add("vfo_sync", Properties.Resources.Link_64);
+                    resource_bitmaps.Add("vfo_sync", Properties.Resources.Link_64);                    
 
                     foreach (KeyValuePair<string, System.Drawing.Bitmap> kvp in resource_bitmaps)
                     {
-                        System.Drawing.Bitmap b = kvp.Value;
-                        if (!_images.ContainsKey(kvp.Key))
+                        if (!MeterManager.ContainsBitmap(kvp.Key)) // check contains incase of filename dupe somehow
                         {
-                            SharpDX.Direct2D1.Bitmap dxB = bitmapFromSystemBitmap(_renderTarget, b, kvp.Key);
-                            _images.Add(kvp.Key, dxB);
-
-                            // also add the bitmap brush
-                            BitmapBrush bb = new BitmapBrush(_renderTarget, dxB, new BitmapBrushProperties()
+                            System.Drawing.Image image = null;
+                            try
                             {
-                                ExtendModeX = ExtendMode.Clamp,
-                                ExtendModeY = ExtendMode.Clamp,
-                                InterpolationMode = BitmapInterpolationMode.Linear
-                            });
-
-                            _bitmap_brushes.Add(kvp.Key, bb);
+                                image = kvp.Value;
+                                System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(image);
+                                bmp.Tag = false;
+                                MeterManager.AddBitmap(kvp.Key, bmp);
+                            }
+                            catch { }
+                            finally
+                            {
+                                if (image != null) image.Dispose();
+                            }
                         }
+
+                        //System.Drawing.Bitmap b = kvp.Value;
+                        //if (!_images.ContainsKey(kvp.Key))
+                        //{
+                        //    SharpDX.Direct2D1.Bitmap dxB = bitmapFromSystemBitmap(_renderTarget, b, kvp.Key);
+                        //    _images.Add(kvp.Key, dxB);
+
+                        //    // also add the bitmap brush
+                        //    BitmapBrush bb = new BitmapBrush(_renderTarget, dxB, new BitmapBrushProperties()
+                        //    {
+                        //        ExtendModeX = ExtendMode.Clamp,
+                        //        ExtendModeY = ExtendMode.Clamp,
+                        //        InterpolationMode = BitmapInterpolationMode.Linear
+                        //    });
+
+                        //    _bitmap_brushes.Add(kvp.Key, bb);
+                        //}
                     }
                 }
             }
@@ -18146,12 +18163,14 @@ namespace Thetis
                                             RemoveDXImage(sRemove);
                                         }
 
-                                        loadImage(sSkinFileName + image_filname, true);
+                                        //loadImage(sSkinFileName + image_filname, true);
+                                        loadImage2(sSkinFileName + image_filname, true);
                                         break;
                                     }
                                     else if (File.Exists(sDefaultFileName + image_filname))
                                     {
-                                        loadImage(sDefaultFileName + image_filname, false);
+                                        //loadImage(sDefaultFileName + image_filname, false);
+                                        loadImage2(sDefaultFileName + image_filname, false);
                                         break;
                                     }
                                 }
@@ -18160,36 +18179,47 @@ namespace Thetis
                     }
                 }
             }
-            private void loadImage(string sFilePath, bool isSkinImage)
+            private void convertImageToDX(string sID, bool make_bitmap_brush = false)
+            {
+                if (_images.ContainsKey(sID)) return;
+
+                System.Drawing.Bitmap cachedBMP = MeterManager.GetBitmap(sID);
+                if (cachedBMP != null)
+                {
+                    SharpDX.Direct2D1.Bitmap dxImg = bitmapFromSystemBitmap(_renderTarget, cachedBMP, sID);
+                    dxImg.Tag = cachedBMP.Tag;
+                    _images.Add(sID, dxImg);
+
+                    if (make_bitmap_brush && !_bitmap_brushes.ContainsKey(sID))
+                    {
+                        // also add the bitmap brush
+                        BitmapBrush bb = new BitmapBrush(_renderTarget, dxImg, new BitmapBrushProperties()
+                        {
+                            ExtendModeX = ExtendMode.Clamp,
+                            ExtendModeY = ExtendMode.Clamp,
+                            InterpolationMode = BitmapInterpolationMode.Linear
+                        });
+                        _bitmap_brushes.Add(sID, bb);
+                    }
+                }
+            }
+            private void loadImage2(string sFilePath, bool isSkinImage) //[2.10.3.6]MW0LGE changed so that directX only builds what it needs for the specific renderer
+                                                                        //Previously, all images would be converted, even if not used. TODO: clear up any images not used if
+                                                                        //the user removes all items for example
             {
                 string sID = System.IO.Path.GetFileNameWithoutExtension(sFilePath);
 
-                if (!_images.ContainsKey(sID)) // check contains incase of filename dupe somehow
+                if (!MeterManager.ContainsBitmap(sID)) // check contains incase of filename dupe somehow
                 {
                     if (System.IO.File.Exists(sFilePath))
                     {
                         System.Drawing.Image image = null;
-
                         try
                         {
-                            if (!MeterManager.ContainsBitmap(sID))
-                            {
-                                image = System.Drawing.Image.FromFile(sFilePath);
-                                System.Drawing.Bitmap bmp2 = new System.Drawing.Bitmap(image);
-                                bmp2.Tag = isSkinImage;
-                                MeterManager.AddBitmap(sID, bmp2);
-
-                                Debug.Print("Loaded image : " + sFilePath);
-                            }
-
-                            System.Drawing.Bitmap bmp = MeterManager.GetBitmap(sID);
-
-                            if (bmp != null)
-                            {
-                                SharpDX.Direct2D1.Bitmap img = bitmapFromSystemBitmap(_renderTarget, bmp, sID);
-                                img.Tag = isSkinImage; // bool for a skin image, note we also use this as a guid for web image
-                                _images.Add(sID, img);
-                            }
+                            image = System.Drawing.Image.FromFile(sFilePath);
+                            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(image);
+                            bmp.Tag = isSkinImage;
+                            MeterManager.AddBitmap(sID, bmp);
                         }
                         catch { }
                         finally
@@ -18199,6 +18229,45 @@ namespace Thetis
                     }
                 }
             }
+            //private void loadImage(string sFilePath, bool isSkinImage)
+            //{
+            //    string sID = System.IO.Path.GetFileNameWithoutExtension(sFilePath);
+
+            //    if (!_images.ContainsKey(sID)) // check contains incase of filename dupe somehow
+            //    {
+            //        if (System.IO.File.Exists(sFilePath))
+            //        {
+            //            System.Drawing.Image image = null;
+
+            //            try
+            //            {
+            //                if (!MeterManager.ContainsBitmap(sID))
+            //                {
+            //                    image = System.Drawing.Image.FromFile(sFilePath);
+            //                    System.Drawing.Bitmap bmp2 = new System.Drawing.Bitmap(image);
+            //                    bmp2.Tag = isSkinImage;
+            //                    MeterManager.AddBitmap(sID, bmp2);
+
+            //                    Debug.Print("Loaded image : " + sFilePath);
+            //                }
+
+            //                System.Drawing.Bitmap bmp = MeterManager.GetBitmap(sID);
+
+            //                if (bmp != null)
+            //                {
+            //                    SharpDX.Direct2D1.Bitmap img = bitmapFromSystemBitmap(_renderTarget, bmp, sID);
+            //                    img.Tag = isSkinImage; // bool for a skin image, note we also use this as a guid for web image
+            //                    _images.Add(sID, img);
+            //                }
+            //            }
+            //            catch { }
+            //            finally
+            //            {
+            //                if (image != null) image.Dispose();
+            //            }
+            //        }
+            //    }
+            //}
             private int getMaxSamples()
             {
                 //D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT 32u32
@@ -20763,6 +20832,10 @@ namespace Thetis
 
                         _renderTarget.DrawBitmap(b, imgRect, 1f, BitmapInterpolationMode.Linear);
                     }
+                }
+                else
+                {
+                    plotText("No Image", x + w/2, y + h/2, h, rect.Width, 36f, System.Drawing.Color.DarkGray, 255, "Trebuchet MS", FontStyle.Regular, false, true);
                 }
             }
             private string convertDegreesToCardinal(float degrees)
@@ -23487,6 +23560,10 @@ namespace Thetis
                     }
                 }
 
+                // convert the cache bitmap to the directX version if required
+                convertImageToDX("vfo_lock", true);
+                convertImageToDX("vfo_sync", true);
+
                 //vfo lock / vfo sync icons
                 Matrix3x2 originalTransform = _renderTarget.Transform;
                 AntialiasMode originalAM = _renderTarget.AntialiasMode;
@@ -23755,8 +23832,6 @@ namespace Thetis
                 string sImage = img.ImageName;
                 if (string.IsNullOrEmpty(sImage)) return;
 
-                //string sKey = sImage;// + "-" + MeterManager.CurrentPowerRating.ToString();
-                //if (MeterManager.ContainsBitmap(sKey)) sImage = sKey; // with power rating
                 string sKey = sImage + (img.DarkMode ? "-dark" : "");
                 if (MeterManager.ContainsBitmap(sKey)) sImage = sKey;
 
@@ -23786,6 +23861,9 @@ namespace Thetis
                         SharpDX.RectangleF clipRect = new SharpDX.RectangleF(cx, cy, cw, ch);
                         _renderTarget.PushAxisAlignedClip(clipRect, AntialiasMode.Aliased); // prevent anything drawing from outside the rectangle, no nee to cut the image
                     }
+
+                    // convert the cache bitmap to the directX version if required
+                    convertImageToDX(sImage);
 
                     if (_images.ContainsKey(sImage))
                     {
@@ -23853,16 +23931,6 @@ namespace Thetis
                     _renderTarget.PopAxisAlignedClip();
                 }
             }
-            //private Vector _p;
-            //private Vector _p2;
-            //private Vector _q;
-            //private Vector _q2;
-
-            //private bool _bGotPWR = false;
-            //private bool _bGotRefPWR = false;
-
-            //private Dictionary<string, SharpDX.Vector2> _fanSWR = new Dictionary<string, Vector2>();
-
             private void renderNeedle(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsNeedleItem ni = (clsNeedleItem)mi;
@@ -24066,41 +24134,6 @@ namespace Thetis
                         _renderTarget.FillEllipse(new Ellipse(new SharpDX.Vector2(x + (p.X * w), y + (p.Y * h)), 2f, 2f), getDXBrushForColour(System.Drawing.Color.Red, nFade));
                     }
                 }
-                //if (ni.ReadingSource == Reading.PWR)
-                //{
-                //    _p = new Vector(startX, startY);
-                //    _p2 = new Vector(endX, endY);
-                //    _bGotPWR = true;
-                //}
-                //if(ni.ReadingSource == Reading.REVERSE_PWR)
-                //{
-                //    _q = new Vector(startX, startY);
-                //    _q2 = new Vector(endX, endY);
-                //    _bGotRefPWR = true;
-
-                //}
-                //if(_bGotPWR && _bGotRefPWR)
-                //{
-                //    bool b = lineSegementsIntersect(_p, _p2, _q, _q2, out Vector intersect);
-
-                //    if (b)
-                //    {
-                //        float xx = (float)(_p.X + (_q.X - _p.X)/2f);
-                //        float yy = (float)(_p.Y + (_q.Y - _p.Y)/2f);
-
-                //        string sKey = MeterManager.getReading(_rx, Reading.REVERSE_PWR).ToString("0.000");
-                //        if (!_fanSWR.ContainsKey(sKey))
-                //            _fanSWR.Add(sKey, new SharpDX.Vector2((float)intersect.X, (float)intersect.Y));
-
-                //        foreach(KeyValuePair<string, SharpDX.Vector2> pair in _fanSWR)
-                //        {
-                //            _renderTarget.DrawLine(new SharpDX.Vector2(xx, yy), new SharpDX.Vector2(pair.Value.X, pair.Value.Y), getDXBrushForColour(System.Drawing.Color.Red, nFade), ni.StrokeWidth);
-                //        }
-                //    }
-
-                //    _bGotPWR = false;
-                //    _bGotRefPWR = false;
-                //}
 
                 _renderTarget.PopAxisAlignedClip();
             }
@@ -24264,33 +24297,6 @@ namespace Thetis
                 {
                     System.Drawing.Rectangle sourceArea = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
 
-                    //// Transform pixels from ARGB to RGBA
-                    //DataStream tempStream = new DataStream(bitmap.Height * stride, true, true);
-
-                    //// Lock System.Drawing.Bitmap
-                    //System.Drawing.Imaging.BitmapData bitmapData = bitmap.LockBits(sourceArea, System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-
-                    //// Convert all pixels 
-                    //IntPtr first_pixel = bitmapData.Scan0;
-                    //int bitmapData_stride = bitmapData.Stride;
-
-                    //for (int y = 0; y < bitmap.Height; y++)
-                    //{
-                    //    int offset = bitmapData_stride * y;
-                    //    for (int x = 0; x < bitmap.Width; x++)
-                    //    {
-                    //        byte B = Marshal.ReadByte(first_pixel, offset++);
-                    //        byte G = Marshal.ReadByte(first_pixel, offset++);
-                    //        byte R = Marshal.ReadByte(first_pixel, offset++);
-                    //        byte A = Marshal.ReadByte(first_pixel, offset++);
-                    //        //int rgba = R | (G << 8) | (B << 16) | (A << 24); //MW0LGE_21k9
-                    //        //tempStream.Write(rgba);
-                    //        int bgra = B | (G << 8) | (R << 16) | (A << 24);
-                    //        tempStream.Write<int>(bgra);
-                    //    }
-                    //}
-
-                    //
                     DataStream memoryStream = new DataStream(bitmap.Height * stride, true, true);
                     bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
                     memoryStream.Position = 0;
@@ -24303,138 +24309,9 @@ namespace Thetis
                         dxBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(rt, converter);
                     }
                     MeterManager.AddStreamData(sId, memoryStream);
-                    //
-
-                    //// --
-                    //// Parallel conversion of rows
-                    //int h = bitmap.Height;
-                    //int w = bitmap.Width;
-                    //int[] data = new int[h * w];
-
-                    //Parallel.For(0, h, y =>
-                    //{
-                    //    int offset = bitmapData_stride * y;
-                    //    for (int x = 0; x < w; x++)
-                    //    {
-                    //        byte B = Marshal.ReadByte(first_pixel, offset++);
-                    //        byte G = Marshal.ReadByte(first_pixel, offset++);
-                    //        byte R = Marshal.ReadByte(first_pixel, offset++);
-                    //        byte A = Marshal.ReadByte(first_pixel, offset++);
-                    //        data[(y * w) + x] = B | (G << 8) | (R << 16) | (A << 24);
-                    //    }
-                    //});
-
-                    //tempStream.WriteRange<int>(data);
-                    //// --
-
-                    //bitmap.UnlockBits(bitmapData);
-
-                    //tempStream.Position = 0;
-
-                    //dxBitmap = new SharpDX.Direct2D1.Bitmap(rt, size, tempStream, stride, bitmapProperties);
-
-                    ////Utilities.Dispose(ref tempStream);
-                    ////tempStream = null;
-
-                    //MeterManager.AddStreamData(sId, tempStream);
                 }
                 return dxBitmap;
-            }
-            //private class Vector
-            //{
-            //    public double X;
-            //    public double Y;
-
-            //    // Constructors.
-            //    public Vector(double x, double y) { X = x; Y = y; }
-            //    public Vector() : this(double.NaN, double.NaN) { }
-
-            //    public static Vector operator -(Vector v, Vector w)
-            //    {
-            //        return new Vector(v.X - w.X, v.Y - w.Y);
-            //    }
-
-            //    public static Vector operator +(Vector v, Vector w)
-            //    {
-            //        return new Vector(v.X + w.X, v.Y + w.Y);
-            //    }
-
-            //    public static double operator *(Vector v, Vector w)
-            //    {
-            //        return v.X * w.X + v.Y * w.Y;
-            //    }
-
-            //    public static Vector operator *(Vector v, double mult)
-            //    {
-            //        return new Vector(v.X * mult, v.Y * mult);
-            //    }
-
-            //    public static Vector operator *(double mult, Vector v)
-            //    {
-            //        return new Vector(v.X * mult, v.Y * mult);
-            //    }
-
-            //    public double Cross(Vector v)
-            //    {
-            //        return X * v.Y - Y * v.X;
-            //    }
-
-            //    public override bool Equals(object obj)
-            //    {
-            //        var v = (Vector)obj;
-            //        return (X - v.X).IsZero() && (Y - v.Y).IsZero();
-            //    }
-            //}
-            ////https://www.codeproject.com/Tips/862988/Find-the-Intersection-Point-of-Two-Line-Segments
-            //private bool lineSegementsIntersect(Vector p, Vector p2, Vector q, Vector q2, out Vector intersection, bool considerCollinearOverlapAsIntersect = false)
-            //{
-            //    intersection = new Vector();
-
-            //    Vector r = p2 - p;
-            //    Vector s = q2 - q;
-            //    double rxs = r.Cross(s);
-            //    double qpxr = (q - p).Cross(r);
-
-            //    // If r x s = 0 and (q - p) x r = 0, then the two lines are collinear.
-            //    if (rxs.IsZero() && qpxr.IsZero())
-            //    {
-            //        // 1. If either  0 <= (q - p) * r <= r * r or 0 <= (p - q) * s <= * s
-            //        // then the two lines are overlapping,
-            //        if (considerCollinearOverlapAsIntersect)
-            //            if ((0 <= (q - p) * r && (q - p) * r <= r * r) || (0 <= (p - q) * s && (p - q) * s <= s * s))
-            //                return true;
-
-            //        // 2. If neither 0 <= (q - p) * r = r * r nor 0 <= (p - q) * s <= s * s
-            //        // then the two lines are collinear but disjoint.
-            //        // No need to implement this expression, as it follows from the expression above.
-            //        return false;
-            //    }
-
-            //    // 3. If r x s = 0 and (q - p) x r != 0, then the two lines are parallel and non-intersecting.
-            //    if (rxs.IsZero() && !qpxr.IsZero())
-            //        return false;
-
-            //    // t = (q - p) x s / (r x s)
-            //    double t = (q - p).Cross(s) / rxs;
-
-            //    // u = (q - p) x r / (r x s)
-
-            //    double u = (q - p).Cross(r) / rxs;
-
-            //    // 4. If r x s != 0 and 0 <= t <= 1 and 0 <= u <= 1
-            //    // the two line segments meet at the point p + t r = q + u s.
-            //    if (!rxs.IsZero() && (0 <= t && t <= 1) && (0 <= u && u <= 1))
-            //    {
-            //        // We can calculate the intersection point using either t or u.
-            //        intersection = p + t * r;
-
-            //        // An intersection was found.
-            //        return true;
-            //    }
-
-            //    // 5. Otherwise, the two line segments are not parallel but do not intersect.
-            //    return false;
-            //}
+            }            
         }        
         #endregion
     }

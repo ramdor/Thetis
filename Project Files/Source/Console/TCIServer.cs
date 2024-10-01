@@ -146,6 +146,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Thetis
 {
@@ -160,7 +161,7 @@ namespace Thetis
 		public ClientError ClientErrorHandlers;
 		//
 
-		private Console console;
+		private Console _console;
 		private TcpClient m_client = null;
 		private NetworkStream m_stream = null;
 		private bool m_stopClient = false;
@@ -174,7 +175,7 @@ namespace Thetis
 
 		public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit)
 		{
-			console = c;
+			_console = c;
 			m_nRateLimit = rateLimit;
 			m_server = server;
 			m_client = client;
@@ -184,9 +185,22 @@ namespace Thetis
 		{
 			StopSocketListener();
 		}
+        private Console console
+        {
+            get
+            {
+                if (_console == null) return null;
 
-		//
-		public void ClickedOnSpot(string callsign, long frequency, int rx = -1, int chan = -1)
+                if (_console.InvokeRequired)
+                {
+                    return (Console)_console.Invoke(new Func<Console>(() => _console));
+                }
+                else
+                    return _console;
+            }
+        }
+        //
+        public void ClickedOnSpot(string callsign, long frequency, int rx = -1, int chan = -1)
         {
 			if(rx == -1 || chan == -1)
             {
@@ -855,7 +869,7 @@ namespace Thetis
 
 		private void SocketListenerThreadStart()
 		{
-			Timer t = new Timer(new TimerCallback(PingFrameTimer),
+			System.Threading.Timer t = new System.Threading.Timer(new TimerCallback(PingFrameTimer),
 				null, 1000 * 20, 1000 * 20); // per websock spec ping frames are every 20 seconds.
 											 // Ideally we should receive something
 											// back within 20 seconds, but just use it to cause exception
@@ -1692,7 +1706,49 @@ namespace Thetis
 				SpotManager2.DeleteSpot(args[0]);
             }
         }
-		private void handleDrive(string[] args)
+        // line out to switch vacs
+		private void lineOutEnable(int vac_number, bool enable)
+		{			
+			switch (vac_number)
+			{
+				case 0:
+					if (console.ThreadSafeTCIAccessor.SetupForm.VACEnable == enable) break;
+                    console.ThreadSafeTCIAccessor.SetupForm.VACEnable = enable;
+                    break;
+				case 1:
+                    if (console.ThreadSafeTCIAccessor.SetupForm.VAC2Enable == enable) break;
+                    console.ThreadSafeTCIAccessor.SetupForm.VAC2Enable = enable;
+                    break;
+				default:
+					break;
+			}
+        }
+        private void handleLineOutStart(string[] args)
+        {
+            if (args.Length == 1)
+            {
+                bool bOK = int.TryParse(args[0], out int vac_number);
+
+                if (bOK && !console.IsSetupFormNull)
+                {
+                    lineOutEnable(vac_number, true);
+                }
+            }
+        }
+        private void handleLineOutStop(string[] args)
+        {
+            if (args.Length == 1)
+            {
+                bool bOK = int.TryParse(args[0], out int vac_number);
+
+                if (bOK && !console.IsSetupFormNull)
+                {
+                    lineOutEnable(vac_number, false);
+                }
+            }
+        }
+        //
+        private void handleDrive(string[] args)
 		{
 			if (args.Length < 1) return;
 
@@ -2037,6 +2093,12 @@ namespace Thetis
 					case "mon_enable":
                         handleMONEnable(args);
                         break;
+                    case "line_out_start":
+                        handleLineOutStart(args);
+                        break;
+                    case "line_out_stop":
+                        handleLineOutStop(args);
+                        break;
                 }
             }
 			else if (parts.Length == 1)
@@ -2076,9 +2138,9 @@ namespace Thetis
 		}
 
         private Stopwatch m_swVFO = new Stopwatch();
-        private Timer m_tmVFOtimer;
+        private System.Threading.Timer m_tmVFOtimer;
         private Stopwatch m_swCentre = new Stopwatch();
-        private Timer m_tmCentretimer;
+        private System.Threading.Timer m_tmCentretimer;
 
         private void VFOcallback(Object o)
         {
@@ -2108,7 +2170,7 @@ namespace Thetis
             }
             else
             {
-                m_tmVFOtimer = new Timer(VFOcallback, vfod, m_nRateLimit, Timeout.Infinite);
+                m_tmVFOtimer = new System.Threading.Timer(VFOcallback, vfod, m_nRateLimit, Timeout.Infinite);
             }
         }
 		public void CentreChange(VFOData vfod)
@@ -2128,7 +2190,7 @@ namespace Thetis
             }
             else
             {
-                m_tmCentretimer = new Timer(Centrecallback, vfod, m_nRateLimit, Timeout.Infinite);
+                m_tmCentretimer = new System.Threading.Timer(Centrecallback, vfod, m_nRateLimit, Timeout.Infinite);
             }
         }
 	}
@@ -2146,7 +2208,7 @@ namespace Thetis
 		public ServerError ServerErrorHandlers;
 		//
 
-		private Console console;
+		private Console _console;
 
 		public static IPAddress DEFAULT_SERVER = IPAddress.Parse("127.0.0.1");
 		public static int DEFAULT_PORT = 31001;
@@ -2168,6 +2230,20 @@ namespace Thetis
 
 		private frmLog _log;
 
+		private Console console
+		{
+			get
+			{
+				if (_console == null) return null;
+
+				if (_console.InvokeRequired)
+				{
+                    return (Console)_console.Invoke(new Func<Console>(() => _console));
+                }
+				else 
+					return _console;
+			}
+		}
 		public TCPIPtciServer()
 		{
 			Init(DEFAULT_IP_END_POINT);
@@ -2274,7 +2350,7 @@ namespace Thetis
 				m_bEmulateSunSDR2Pro = bEmulateSunSDR2Pro;
 				m_bEmulateExpertSDR3Protocol = bEmulateExpertSDR3Protocol;
 
-				console = c;
+				_console = c;
 
 				m_socketListenersList = new ArrayList();
 
