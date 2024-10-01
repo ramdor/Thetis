@@ -31002,6 +31002,12 @@ namespace Thetis
         {
             updateMeterType();
         }
+
+        private void btnGetMonitorHz_Click(object sender, EventArgs e)
+        {
+            if (console == null) return;
+            udDisplayFPS.Value = (decimal)Display.GetCurrentMonitorRefreshRate(console);
+        }
     }
 
     #region PADeviceInfo Helper Class

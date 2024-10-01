@@ -18187,19 +18187,22 @@ namespace Thetis
                 if (cachedBMP != null)
                 {
                     SharpDX.Direct2D1.Bitmap dxImg = bitmapFromSystemBitmap(_renderTarget, cachedBMP, sID);
-                    dxImg.Tag = cachedBMP.Tag;
-                    _images.Add(sID, dxImg);
-
-                    if (make_bitmap_brush && !_bitmap_brushes.ContainsKey(sID))
+                    if (dxImg != null)
                     {
-                        // also add the bitmap brush
-                        BitmapBrush bb = new BitmapBrush(_renderTarget, dxImg, new BitmapBrushProperties()
+                        dxImg.Tag = cachedBMP.Tag;
+                        _images.Add(sID, dxImg);
+
+                        if (make_bitmap_brush && !_bitmap_brushes.ContainsKey(sID))
                         {
-                            ExtendModeX = ExtendMode.Clamp,
-                            ExtendModeY = ExtendMode.Clamp,
-                            InterpolationMode = BitmapInterpolationMode.Linear
-                        });
-                        _bitmap_brushes.Add(sID, bb);
+                            // also add the bitmap brush
+                            BitmapBrush bb = new BitmapBrush(_renderTarget, dxImg, new BitmapBrushProperties()
+                            {
+                                ExtendModeX = ExtendMode.Clamp,
+                                ExtendModeY = ExtendMode.Clamp,
+                                InterpolationMode = BitmapInterpolationMode.Linear
+                            });
+                            _bitmap_brushes.Add(sID, bb);
+                        }
                     }
                 }
             }
@@ -20781,37 +20784,34 @@ namespace Thetis
                     if (!_images.ContainsKey(key))
                     {
                         // convert + add
-                        try
+                        SharpDX.Direct2D1.Bitmap img = bitmapFromSystemBitmap(_renderTarget, webimg.Bitmap, key);
+                        if (img != null)
                         {
-                            SharpDX.Direct2D1.Bitmap img = bitmapFromSystemBitmap(_renderTarget, webimg.Bitmap, key);
                             img.Tag = webimg.BitmapGuid; // guid for web image, we also use this as a bool for skin image
                             _images.Add(key, img);
                         }
-                        catch { }
                     }
-                    else
+                    
+                    if(_images.ContainsKey(key))
                     {
                         // has image changed from the one we put in _images
                         SharpDX.Direct2D1.Bitmap b = _images[key];
-                        if((Guid)b.Tag != webimg.BitmapGuid)
+                        if((Guid)b.Tag != webimg.BitmapGuid) // the tag is used to ID the web image, if it is different to the one cached, regenerate the image
                         {
                             // new image, need to remove _image, and the stream cache, and re-add
                             _images[key].Dispose();
                             _images.Remove(key);
-                            //
 
                             //remove from stream cache
                             RemoveStreamData(key);
-                            //
 
                             // convert + add
-                            try
+                            SharpDX.Direct2D1.Bitmap img = bitmapFromSystemBitmap(_renderTarget, webimg.Bitmap, key);
+                            if (img != null)
                             {
-                                SharpDX.Direct2D1.Bitmap img = bitmapFromSystemBitmap(_renderTarget, webimg.Bitmap, key);
                                 img.Tag = webimg.BitmapGuid; // guid for web image, we also use this as a bool for skin image
                                 _images.Add(key, img);
                             }
-                            catch { }
                         }
                     }
 
@@ -24270,47 +24270,54 @@ namespace Thetis
             }            
             private SharpDX.Direct2D1.Bitmap bitmapFromSystemBitmap(RenderTarget rt, System.Drawing.Bitmap bitmap, string sId)
             {
-                SharpDX.Direct2D1.Bitmap dxBitmap;
-                Size2 size = new Size2(bitmap.Width, bitmap.Height);
-                int stride = bitmap.Width * sizeof(int);
-                BitmapProperties bitmapProperties = new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(Format.B8G8R8A8_UNorm, _ALPHA_MODE)); //was R8G8B8A8_UNorm  //MW0LGE_21k9
-
-                if (MeterManager.ContainsStreamData(sId))
+                //[2.10.3.6]MW0LGE refactored to use Windows Imaging Component (WIC)
+                try
                 {
-                    DataStream tempStream = MeterManager.GetStreamData(sId);
-                    tempStream.Position = 0;
+                    SharpDX.Direct2D1.Bitmap dxBitmap;
+                    Size2 size = new Size2(bitmap.Width, bitmap.Height);
+                    int stride = bitmap.Width * sizeof(int);
+                    BitmapProperties bitmapProperties = new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(Format.B8G8R8A8_UNorm, _ALPHA_MODE));
 
-                    // bitmaps need to be built per render target, which use their own factory
-                    // these can not be shared
-                    //dxBitmap = new SharpDX.Direct2D1.Bitmap(rt, size, tempStream, stride, bitmapProperties);
-
-                    using (SharpDX.WIC.ImagingFactory factory = new SharpDX.WIC.ImagingFactory())
-                    using (SharpDX.WIC.BitmapDecoder decoder = new SharpDX.WIC.BitmapDecoder(factory, tempStream, SharpDX.WIC.DecodeOptions.CacheOnDemand))
-                    using (SharpDX.WIC.BitmapFrameDecode frame = decoder.GetFrame(0))
-                    using (SharpDX.WIC.FormatConverter converter = new SharpDX.WIC.FormatConverter(factory))
+                    if (MeterManager.ContainsStreamData(sId))
                     {
-                        converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPRGBA);
-                        dxBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(rt, converter);
+                        DataStream tempStream = MeterManager.GetStreamData(sId);
+
+                        tempStream.Position = 0;
+
+                        using (SharpDX.WIC.ImagingFactory factory = new SharpDX.WIC.ImagingFactory())
+                        using (SharpDX.WIC.BitmapDecoder decoder = new SharpDX.WIC.BitmapDecoder(factory, tempStream, SharpDX.WIC.DecodeOptions.CacheOnDemand))
+                        using (SharpDX.WIC.BitmapFrameDecode frame = decoder.GetFrame(0))
+                        using (SharpDX.WIC.FormatConverter converter = new SharpDX.WIC.FormatConverter(factory))
+                        {
+                            converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPRGBA);
+                            dxBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(rt, converter);
+                        }
                     }
+                    else
+                    {
+                        DataStream memoryStream = new DataStream(bitmap.Height * stride, true, true);
+                        bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+
+                        memoryStream.Position = 0;
+
+                        using (SharpDX.WIC.ImagingFactory factory = new SharpDX.WIC.ImagingFactory())
+                        using (SharpDX.WIC.BitmapDecoder decoder = new SharpDX.WIC.BitmapDecoder(factory, memoryStream, SharpDX.WIC.DecodeOptions.CacheOnDemand))
+                        using (SharpDX.WIC.BitmapFrameDecode frame = decoder.GetFrame(0))
+                        using (SharpDX.WIC.FormatConverter converter = new SharpDX.WIC.FormatConverter(factory))
+                        {
+                            converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPRGBA);
+                            dxBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(rt, converter);
+                        }
+
+                        MeterManager.AddStreamData(sId, memoryStream);
+                    }
+
+                    return dxBitmap;
                 }
-                else
+                catch
                 {
-                    System.Drawing.Rectangle sourceArea = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
-
-                    DataStream memoryStream = new DataStream(bitmap.Height * stride, true, true);
-                    bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-                    memoryStream.Position = 0;
-                    using (SharpDX.WIC.ImagingFactory factory = new SharpDX.WIC.ImagingFactory())
-                    using (SharpDX.WIC.BitmapDecoder decoder = new SharpDX.WIC.BitmapDecoder(factory, memoryStream, SharpDX.WIC.DecodeOptions.CacheOnDemand))
-                    using (SharpDX.WIC.BitmapFrameDecode frame = decoder.GetFrame(0))
-                    using (SharpDX.WIC.FormatConverter converter = new SharpDX.WIC.FormatConverter(factory))
-                    {
-                        converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPRGBA);
-                        dxBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(rt, converter);
-                    }
-                    MeterManager.AddStreamData(sId, memoryStream);
+                    return null;
                 }
-                return dxBitmap;
             }            
         }        
         #endregion

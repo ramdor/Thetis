@@ -1947,6 +1947,7 @@
             this.lblDisplayPhasePts = new System.Windows.Forms.LabelTS();
             this.udDisplayPhasePts = new System.Windows.Forms.NumericUpDownTS();
             this.grpDisplayRefreshRates = new System.Windows.Forms.GroupBoxTS();
+            this.btnGetMonitorHz = new System.Windows.Forms.ButtonTS();
             this.labelTS608 = new System.Windows.Forms.LabelTS();
             this.udDisplayDecimation = new System.Windows.Forms.NumericUpDownTS();
             this.chkDisplayPanFill = new System.Windows.Forms.CheckBoxTS();
@@ -32114,6 +32115,7 @@
             // 
             // grpDisplayRefreshRates
             // 
+            this.grpDisplayRefreshRates.Controls.Add(this.btnGetMonitorHz);
             this.grpDisplayRefreshRates.Controls.Add(this.labelTS608);
             this.grpDisplayRefreshRates.Controls.Add(this.udDisplayDecimation);
             this.grpDisplayRefreshRates.Controls.Add(this.chkDisplayPanFill);
@@ -32129,6 +32131,19 @@
             this.grpDisplayRefreshRates.TabIndex = 39;
             this.grpDisplayRefreshRates.TabStop = false;
             this.grpDisplayRefreshRates.Text = "Refresh Rates";
+            // 
+            // btnGetMonitorHz
+            // 
+            this.btnGetMonitorHz.Image = null;
+            this.btnGetMonitorHz.Location = new System.Drawing.Point(190, 14);
+            this.btnGetMonitorHz.Name = "btnGetMonitorHz";
+            this.btnGetMonitorHz.Selectable = true;
+            this.btnGetMonitorHz.Size = new System.Drawing.Size(57, 23);
+            this.btnGetMonitorHz.TabIndex = 97;
+            this.btnGetMonitorHz.Text = "Get Hz";
+            this.toolTip1.SetToolTip(this.btnGetMonitorHz, "Use refresh rate in Hz of the monitor that the console window sits on");
+            this.btnGetMonitorHz.UseVisualStyleBackColor = true;
+            this.btnGetMonitorHz.Click += new System.EventHandler(this.btnGetMonitorHz_Click);
             // 
             // labelTS608
             // 
@@ -68401,5 +68416,6 @@
         private LabelTS labelTS280;
         private ColorButton clrbtnHistory_time;
         private ColorButton clrbtnHistory_lines;
+        private ButtonTS btnGetMonitorHz;
     }
 }

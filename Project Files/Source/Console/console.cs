@@ -66,7 +66,7 @@ namespace Thetis
 
     public partial class Console : Form
     {
-        public const int MAX_FPS = 144;
+        public const int MAX_FPS = 360;
 
         #region Variable Declarations
         // ======================================================
