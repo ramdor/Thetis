@@ -2283,10 +2283,18 @@ namespace Thetis
                             font95 = new Font("Arial", 9.5f),
                             font32b = new Font("Arial", 32, FontStyle.Bold);
 
-#endregion
+        #endregion
 
         #region General Routines
+        private static bool localMox(int rx)
+        {
+            if (rx == 1)
+                return _mox && (!_tx_on_vfob || (_tx_on_vfob && !_rx2_enabled));
+            else if (rx == 2)
+                return _mox && (_tx_on_vfob && _rx2_enabled);
 
+            return false;
+        }
 
         #region GDI+ General Routines
 
@@ -9569,15 +9577,6 @@ namespace Thetis
             set { _wdsp_mox_transition_buffer_clear = value; }
         }
 #endregion
-        private static bool localMox(int rx)
-        {
-            if(rx == 1)
-                return _mox && (!_tx_on_vfob || (_tx_on_vfob && !_rx2_enabled));
-            else if(rx == 2)
-                return _mox && (_tx_on_vfob && _rx2_enabled);
-
-            return false;
-        }
 
 #if SNOWFALL
         private class SnowFlake
@@ -9820,5 +9819,54 @@ namespace Thetis
             }
         }
 #endif
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        private struct DEVMODE
+        {
+            private const int CCHDEVICENAME = 32;
+            private const int CCHFORMNAME = 32;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHDEVICENAME)]
+            public string dmDeviceName;
+            public ushort dmSpecVersion;
+            public ushort dmDriverVersion;
+            public ushort dmSize;
+            public ushort dmDriverExtra;
+            public uint dmFields;
+            public int dmPositionX;
+            public int dmPositionY;
+            public uint dmDisplayOrientation;
+            public uint dmDisplayFixedOutput;
+            public short dmColor;
+            public short dmDuplex;
+            public short dmYResolution;
+            public short dmTTOption;
+            public short dmCollate;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHFORMNAME)]
+            public string dmFormName;
+            public ushort dmLogPixels;
+            public uint dmBitsPerPel;
+            public uint dmPelsWidth;
+            public uint dmPelsHeight;
+            public uint dmDisplayFlags;
+            public uint dmDisplayFrequency;
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern bool EnumDisplaySettings(string deviceName, int modeNum, ref DEVMODE devMode);
+
+        public static int GetCurrentMonitorRefreshRate(Form form)
+        {
+            // get the refresh rate of the monitor that the form is on
+            Screen screen = Screen.FromControl(form);
+            DEVMODE devMode = new DEVMODE();
+            devMode.dmDeviceName = new string(new char[32]);
+
+            if (EnumDisplaySettings(screen.DeviceName, -1, ref devMode))
+            {
+                return (int)devMode.dmDisplayFrequency;
+            }
+            return 60;
+        }
     }
 }
