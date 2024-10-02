@@ -23934,7 +23934,7 @@ namespace Thetis
         {
             if (MeterManager.TotalMeterContainers < MAX_CONTAINERS)
             {
-                string sId = MeterManager.AddMeterContainer(1, false);//, true);
+                string sId = MeterManager.AddMeterContainer(1, false);
                 updateMeter2Controls(sId);
             }
         }
@@ -23943,7 +23943,7 @@ namespace Thetis
         {
             if (MeterManager.TotalMeterContainers < MAX_CONTAINERS)
             {
-                string sId = MeterManager.AddMeterContainer(2, false);//, true);
+                string sId = MeterManager.AddMeterContainer(2, false);
                 updateMeter2Controls(sId);
             }
         }
@@ -23986,24 +23986,28 @@ namespace Thetis
                 comboContainerSelect.Text = "";
             }
 
-            btnContainerDelete.Enabled = bEnableControls;
+            bool locked = chkLockContainer.Checked;
+
+            btnContainerDelete.Enabled = bEnableControls && !locked;
             chkContainerHighlight.Enabled = bEnableControls;
             comboContainerSelect.Enabled = bEnableControls;
             clrbtnContainerBackground.Enabled = bEnableControls;
             chkContainerBorder.Enabled = bEnableControls;
             chkContainerNoTitle.Enabled = bEnableControls;
             chkMultiMeter_auto_container_height.Enabled = bEnableControls;
-            chkContainerEnable.Enabled = bEnableControls;
+            chkLockContainer.Enabled = bEnableControls;
+            chkContainerShowRX.Enabled = bEnableControls;
+            chkContainerShowTX.Enabled = bEnableControls;
             chkContainerMinimises.Enabled = bEnableControls;
             txtContainerNotes.Enabled = bEnableControls;
             lblMMContainerBackground.Enabled = bEnableControls;
             lblMMContainerNotes.Enabled = bEnableControls;
             lstMetersAvailable.Enabled = bEnableControls;
             lstMetersInUse.Enabled = bEnableControls;
-            btnAddMeterItem.Enabled = bEnableControls;
-            btnRemoveMeterItem.Enabled = bEnableControls;
-            btnMeterUp.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
-            btnMeterDown.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
+            btnAddMeterItem.Enabled = bEnableControls && !locked;
+            btnRemoveMeterItem.Enabled = bEnableControls && !locked;
+            btnMeterUp.Enabled = bEnableControls && !locked && lstMetersInUse.Items.Count > 0;
+            btnMeterDown.Enabled = bEnableControls && !locked && lstMetersInUse.Items.Count > 0;
 
             btnMeterCopySettings.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
             btnMeterPasteSettings.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
@@ -24069,19 +24073,11 @@ namespace Thetis
 
             lstMetersAvailable_SelectedIndexChanged(this, EventArgs.Empty);
             lstMetersInUse_SelectedIndexChanged(this, EventArgs.Empty);
-
-            //lstMetersInUse.ResumeLayout();
-            //lstMetersAvailable.ResumeLayout();
-
-            //lstMetersInUse.Invalidate();
-            //lstMetersAvailable.Invalidate();
-
-            //lstMetersInUse.EndUpdate();
-            //lstMetersAvailable.EndUpdate();
         }
 
         private void btnContainerDelete_Click(object sender, EventArgs e)
         {
+            if (chkLockContainer.Checked) return;
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
 
             if (cci != null)
@@ -24108,7 +24104,12 @@ namespace Thetis
             chkContainerBorder.Checked = MeterManager.ContainerHasBorder(cci.ID);
             clrbtnContainerBackground.Color = MeterManager.GetContainerBackgroundColour(cci.ID);
             chkContainerNoTitle.Checked = MeterManager.ContainerNoTitleBar(cci.ID);
-            chkContainerEnable.Checked = MeterManager.ContainerShow(cci.ID);
+
+            chkLockContainer.Checked = MeterManager.ContainerLocked(cci.ID);
+            chkLockContainer_CheckedChanged(this, EventArgs.Empty); // force it
+
+            chkContainerShowRX.Checked = MeterManager.ContainerShowOnRX(cci.ID);
+            chkContainerShowTX.Checked = MeterManager.ContainerShowOnTX(cci.ID);
             chkContainerMinimises.Checked = MeterManager.ContainerMinimises(cci.ID);
             txtContainerNotes.Text = MeterManager.GetContainerNotes(cci.ID);
             chkMultiMeter_auto_container_height.Checked = MeterManager.ContainerAutoHeight(cci.ID);
@@ -24132,13 +24133,22 @@ namespace Thetis
                 MeterManager.HighlightContainer("");
             }
         }
-        private void chkContainerEnable_CheckedChanged(object sender, EventArgs e)
+        private void chkContainerShowRX_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
             if (cci != null)
             {
-                MeterManager.EnableContainer(cci.ID, chkContainerEnable.Checked);
+                MeterManager.ShowContainerOnRX(cci.ID, chkContainerShowRX.Checked);
+            }
+        }
+        private void chkContainerShowTX_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.ShowContainerOnTX(cci.ID, chkContainerShowTX.Checked);
             }
         }
         private void txtContainerNotes_TextChanged(object sender, EventArgs e)
@@ -24154,6 +24164,7 @@ namespace Thetis
         }
         private void btnAddMeterItem_Click(object sender, EventArgs e)
         {
+            if (chkLockContainer.Checked) return;
             clsMeterTypeComboboxItem mti = lstMetersAvailable.SelectedItem as clsMeterTypeComboboxItem;
             if (mti == null) return;
 
@@ -24170,8 +24181,8 @@ namespace Thetis
 
         private void lstMetersAvailable_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (initializing) return;
-            btnAddMeterItem.Enabled = lstMetersAvailable.SelectedIndex >= 0;
+            if (initializing) return;            
+            btnAddMeterItem.Enabled = !chkLockContainer.Checked && lstMetersAvailable.SelectedIndex >= 0;
         }
 
         private void lstMetersInUse_SelectedIndexChanged(object sender, EventArgs e)
@@ -24185,9 +24196,9 @@ namespace Thetis
             else
                 setupMMSettingsGroupBoxes(MeterType.NONE);
 
-            btnRemoveMeterItem.Enabled = bEnabled;
-            btnMeterUp.Enabled = bEnabled;
-            btnMeterDown.Enabled = bEnabled;
+            btnRemoveMeterItem.Enabled = !chkLockContainer.Checked && bEnabled;
+            btnMeterUp.Enabled = !chkLockContainer.Checked && bEnabled;
+            btnMeterDown.Enabled = !chkLockContainer.Checked && bEnabled;
 
             btnMeterCopySettings.Enabled = bEnabled;
             btnMeterPasteSettings.Enabled = bEnabled && canPasteSettings();
@@ -24195,6 +24206,7 @@ namespace Thetis
 
         private void btnRemoveMeterItem_Click(object sender, EventArgs e)
         {
+            if (chkLockContainer.Checked) return;
             clsMeterTypeComboboxItem mti = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
             if (mti == null) return;
 
@@ -24210,6 +24222,7 @@ namespace Thetis
 
         private void btnMeterUp_Click(object sender, EventArgs e)
         {
+            if (chkLockContainer.Checked) return;
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
 
@@ -24228,6 +24241,7 @@ namespace Thetis
 
         private void btnMeterDown_Click(object sender, EventArgs e)
         {
+            if (chkLockContainer.Checked) return;
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
 
@@ -31007,6 +31021,21 @@ namespace Thetis
         {
             if (console == null) return;
             udDisplayFPS.Value = (decimal)Display.GetCurrentMonitorRefreshRate(console);
+        }
+
+        private void chkLockContainer_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.LockContainer(cci.ID, chkLockContainer.Checked);
+                btnContainerDelete.Enabled = !chkLockContainer.Checked;
+                btnAddMeterItem.Enabled = !chkLockContainer.Checked;
+                btnRemoveMeterItem.Enabled = !chkLockContainer.Checked;
+                btnMeterUp.Enabled = !chkLockContainer.Checked;
+                btnMeterDown.Enabled = !chkLockContainer.Checked;
+            }
         }
     }
 

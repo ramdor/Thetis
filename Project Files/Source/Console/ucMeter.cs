@@ -75,6 +75,8 @@ namespace Thetis
             _border = true;
             _no_controls = false;
             _enabled = true;
+            _show_on_rx = true;
+            _show_on_tx = true;
             _container_minimises = true;
             _notes = "";
 
@@ -128,7 +130,10 @@ namespace Thetis
         private string _id;
         private bool _border;
         private bool _no_controls;
+        private bool _locked;
         private bool _enabled;
+        private bool _show_on_rx;
+        private bool _show_on_tx;
         private bool _container_minimises;
         private string _notes;
         private int _height;
@@ -695,6 +700,15 @@ namespace Thetis
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public bool Locked
+        {
+            get { return _locked; }
+            set
+            {
+                _locked = value;
+            }
+        }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public bool MeterEnabled
         {
             get { return _enabled; }
@@ -703,6 +717,25 @@ namespace Thetis
                 _enabled = value;                
             }
         }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public bool ShowOnRX
+        {
+            get { return _show_on_rx; }
+            set
+            {
+                _show_on_rx = value;
+            }
+        }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public bool ShowOnTX
+        {
+            get { return _show_on_tx; }
+            set
+            {
+                _show_on_tx = value;
+            }
+        }
+
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public bool ContainerMinimises
         {
@@ -853,7 +886,10 @@ namespace Thetis
                 MeterEnabled.ToString() + "|" +
                 Notes + "|" +
                 ContainerMinimises.ToString().ToLower() + "|" +
-                AutoHeight.ToString().ToLower();
+                AutoHeight.ToString().ToLower() + "|" +
+                ShowOnRX.ToString().ToLower() + "|" +
+                ShowOnTX.ToString().ToLower() + "|" +
+                Locked.ToString().ToLower();
         }
         public bool TryParse(string str)
         {
@@ -866,11 +902,14 @@ namespace Thetis
             bool enabled = true;
             bool minimises = true;
             bool auto_height = false;
+            bool show_on_rx = true;
+            bool show_on_tx = true;
+            bool locked = false;
 
             if (str != "")
             {
                 string[] tmp = str.Split('|');
-                if(tmp.Length >= 13 && tmp.Length <= 18)
+                if(tmp.Length >= 13 && tmp.Length <= 21)
                 {
                     bOk = tmp[0] != "";
                     if (bOk) ID = tmp[0];
@@ -940,6 +979,20 @@ namespace Thetis
                     {
                         bOk = bool.TryParse(tmp[17], out auto_height);
                         if (bOk) AutoHeight = auto_height;
+                    }
+
+                    if (bOk && tmp.Length > 18) // also showonrx and showontx for [2.10.3.6]
+                    {
+                        bOk = bool.TryParse(tmp[18], out show_on_rx);
+                        if (bOk) ShowOnRX = show_on_rx;
+                        bOk = bool.TryParse(tmp[19], out show_on_tx);
+                        if (bOk) ShowOnTX = show_on_tx;
+                    }
+
+                    if(bOk && tmp.Length > 20) // also for [2.10.3.6]
+                    {
+                        bOk = bool.TryParse(tmp[20], out locked);
+                        if (bOk) Locked = locked;
                     }
                 }
             }
