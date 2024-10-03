@@ -2774,7 +2774,6 @@
             this.radBand2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radBand2.Name = "radBand2";
             this.radBand2.TabStop = true;
-            this.toolTip1.SetToolTip(this.radBand2, resources.GetString("radBand2.ToolTip"));
             this.radBand2.UseVisualStyleBackColor = true;
             // 
             // radBand6

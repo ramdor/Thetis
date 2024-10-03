@@ -19512,9 +19512,9 @@ namespace Thetis
 
                 SizeF size = new SizeF(width, height);
 
-                //why these fudge factors? not sure, is it a font proportion issue?
-                size.Width *= 1.333333333f;
-                size.Height *= 1.333333333f;
+                //this is a 96 to 72 scaling factor for text to screen dpi
+                size.Width *= _renderTarget.DotsPerInch.Width / 72f;
+                size.Height *= _renderTarget.DotsPerInch.Height / 72f;
 
                 bool bAdd = true;
                 if (ignore_caching)
