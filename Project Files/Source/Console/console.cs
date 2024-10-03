@@ -47609,7 +47609,7 @@ namespace Thetis
                 if (updateTX)
                 {
                     MeterReadingsChangedHandlers?.Invoke(1, true, ref _RX1MeterValues);
-                    MeterReadingsChangedHandlers?.Invoke(2, true, ref _RX1MeterValues); // also for rx2 as data is the same for tx
+                    MeterReadingsChangedHandlers?.Invoke(2, true, ref _RX2MeterValues); // also for rx2 as data is the same for tx
                 }
 
                 meterDelay.Stop();
@@ -47752,7 +47752,7 @@ namespace Thetis
                 if (updateTX)
                 {
                     MeterReadingsChangedHandlers?.Invoke(2, true, ref _RX2MeterValues);
-                    MeterReadingsChangedHandlers?.Invoke(1, true, ref _RX2MeterValues); // also for rx1 as data is the same
+                    MeterReadingsChangedHandlers?.Invoke(1, true, ref _RX1MeterValues); // also for rx1 as data is the same
                 }
 
                 meterDelay.Stop();
