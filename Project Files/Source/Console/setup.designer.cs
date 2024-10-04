@@ -31236,7 +31236,7 @@
             this.tpCMAsio.Name = "tpCMAsio";
             this.tpCMAsio.Size = new System.Drawing.Size(712, 404);
             this.tpCMAsio.TabIndex = 5;
-            this.tpCMAsio.Text = "CM Asio";
+            this.tpCMAsio.Text = "cmASIO";
             // 
             // lblCMAsioInfo
             // 
@@ -31366,11 +31366,11 @@
             // 
             this.labelTS284.AutoSize = true;
             this.labelTS284.Image = null;
-            this.labelTS284.Location = new System.Drawing.Point(50, 72);
+            this.labelTS284.Location = new System.Drawing.Point(37, 72);
             this.labelTS284.Name = "labelTS284";
-            this.labelTS284.Size = new System.Drawing.Size(112, 13);
+            this.labelTS284.Size = new System.Drawing.Size(126, 13);
             this.labelTS284.TabIndex = 98;
-            this.labelTS284.Text = "Current ASIO Device :";
+            this.labelTS284.Text = "Current cmASIO Device :";
             // 
             // btnCMASIOActive
             // 
@@ -31412,9 +31412,9 @@
             this.labelTS282.Image = null;
             this.labelTS282.Location = new System.Drawing.Point(95, 154);
             this.labelTS282.Name = "labelTS282";
-            this.labelTS282.Size = new System.Drawing.Size(542, 16);
+            this.labelTS282.Size = new System.Drawing.Size(544, 16);
             this.labelTS282.TabIndex = 94;
-            this.labelTS282.Text = "WARNING: If CMAsio is used, audio hardware in the radio will not be operable";
+            this.labelTS282.Text = "WARNING: If cmASIO is used, audio hardware in the radio will not be operable";
             // 
             // tpDisplay
             // 
