@@ -37,7 +37,7 @@ namespace Thetis
 {
     class TitleBar
     {
-        public const string BUILD_NAME = "rc4";
+        public const string BUILD_NAME = "rc4b";
         public static string GetString(bool bWithFirmware = true)
         {
             string sRevision = "." + Common.GetRevision();
