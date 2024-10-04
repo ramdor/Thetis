@@ -31241,10 +31241,11 @@
             // lblCMAsioInfo
             // 
             this.lblCMAsioInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCMAsioInfo.ForeColor = System.Drawing.Color.Red;
             this.lblCMAsioInfo.Image = null;
-            this.lblCMAsioInfo.Location = new System.Drawing.Point(436, 72);
+            this.lblCMAsioInfo.Location = new System.Drawing.Point(439, 72);
             this.lblCMAsioInfo.Name = "lblCMAsioInfo";
-            this.lblCMAsioInfo.Size = new System.Drawing.Size(245, 17);
+            this.lblCMAsioInfo.Size = new System.Drawing.Size(242, 17);
             this.lblCMAsioInfo.TabIndex = 114;
             this.lblCMAsioInfo.Text = "INFO";
             this.lblCMAsioInfo.TextAlign = System.Drawing.ContentAlignment.TopCenter;

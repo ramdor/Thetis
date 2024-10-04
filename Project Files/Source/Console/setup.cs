@@ -31074,11 +31074,16 @@ namespace Thetis
             }
 
             comboASIODevicesAvailable.Items.Clear();
-            comboASIODevicesAvailable.Items.AddRange(CMASIOConfig.GetASIODevices().ToArray());
 
             txtCurrentAsioDevice.Text = CMASIOConfig.GetASIOdrivername();
             nudAsioBlockNum.Value = (decimal)CMASIOConfig.GetASIOblocknum();
             chkAsioLockMode.Checked = CMASIOConfig.GetASIOlockmode();
+
+            //the ASIO driver in use wont be in the list, lets add it
+            if (!string.IsNullOrEmpty(txtCurrentAsioDevice.Text)) 
+                comboASIODevicesAvailable.Items.Add(txtCurrentAsioDevice.Text);
+
+            comboASIODevicesAvailable.Items.AddRange(CMASIOConfig.GetASIODevices().ToArray());
 
             if (comboASIODevicesAvailable.Items.Count == 0)
             {
@@ -31092,18 +31097,17 @@ namespace Thetis
         {
             string selected = comboASIODevicesAvailable.SelectedItem.ToString();
             if (selected == "None Available") return;
+            if (string.IsNullOrEmpty(selected)) return;
 
             CMASIOConfig.SetASIOdrivername(selected);
             setCMasioControls(true);
-            lblCMAsioInfo.Text = "Settings updated. Restart to take effect.";
-            lblCMAsioInfo.Visible = true;
+            updateCMAsioInfo();
         }
 
         private void btnCMASIODisable_Click(object sender, EventArgs e)
         {
             CMASIOConfig.SetASIOdrivername("");
-            lblCMAsioInfo.Text = "Settings updated. Restart to take effect.";
-            lblCMAsioInfo.Visible = true;
+            updateCMAsioInfo();
         }
         private void setCMasioControls(bool enabled)
         {
@@ -31116,6 +31120,7 @@ namespace Thetis
         {
             if (initializing) return;
             CMASIOConfig.SetASIOblocknum((int)nudAsioBlockNum.Value, chkAsioLockMode.Checked);
+            updateCMAsioInfo();
         }
 
         private void comboASIODevicesAvailable_SelectedIndexChanged(object sender, EventArgs e)
@@ -31127,11 +31132,17 @@ namespace Thetis
         {
             if (initializing) return;
             CMASIOConfig.SetASIOblocknum((int)nudAsioBlockNum.Value, chkAsioLockMode.Checked);
+            updateCMAsioInfo();
         }
 
         private void btnCMAsioDefaultBlockNum_Click(object sender, EventArgs e)
         {
             nudAsioBlockNum.Value = 5;
+        }
+        private void updateCMAsioInfo()
+        {
+            lblCMAsioInfo.Text = "Settings updated. Restart to take effect.";
+            lblCMAsioInfo.Visible = true;
         }
     }
 
