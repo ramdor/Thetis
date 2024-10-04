@@ -10,11 +10,9 @@ namespace Thetis
 {
     internal static class CMASIOConfig
     {
-        //HKEY_LOCAL_MACHINE
         //SOFTWARE\\OpenHPSDR\\Thetis-x64
         //ASIOdrivername
         //ASIOblocknum
-        //^^ default 5
         private const string _registry_path = @"SOFTWARE\OpenHPSDR\Thetis-x64";
 
         private static RegistryKey openRegistryKey()

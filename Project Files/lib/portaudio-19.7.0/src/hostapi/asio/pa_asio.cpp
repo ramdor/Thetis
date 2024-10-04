@@ -1284,7 +1284,6 @@ PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex
         IsDebuggerPresent_ = (IsDebuggerPresentPtr)GetProcAddress( LoadLibraryA( "Kernel32.dll" ), "IsDebuggerPresent" );
 
         // check to see if cmASIO will be using a driver
-        //const HKEY hKeyPath = HKEY_LOCAL_MACHINE;
         const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
         const LPCSTR valueName = "ASIOdrivername";
         char szData[32] = { 0 };

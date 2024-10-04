@@ -517,7 +517,6 @@ void unloadASIO()
 
 long getASIODriverString(void* szData)
 {
-	//const HKEY hKeyPath = HKEY_LOCAL_MACHINE;
 	const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
 	const LPCSTR valueName = "ASIOdrivername";
 
@@ -543,7 +542,6 @@ long getASIODriverString(void* szData)
 
 long getASIOBlockNum(void* dwData)
 {
-	//const HKEY hKeyPath = HKEY_LOCAL_MACHINE;
 	const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
 	const LPCSTR valueName = "ASIOblocknum";
 
