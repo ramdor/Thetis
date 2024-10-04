@@ -31076,17 +31076,15 @@ namespace Thetis
             comboASIODevicesAvailable.Items.Clear();
             comboASIODevicesAvailable.Items.AddRange(CMASIOConfig.GetASIODevices().ToArray());
 
-            if(comboASIODevicesAvailable.Items.Count == 0)
-            {
-                comboASIODevicesAvailable.Items.Add("None Available");
-                txtCurrentAsioDevice.Text = "";
-                setCMasioControls(false);
-                return;
-            }
-
             txtCurrentAsioDevice.Text = CMASIOConfig.GetASIOdrivername();
             nudAsioBlockNum.Value = (decimal)CMASIOConfig.GetASIOblocknum();
             chkAsioLockMode.Checked = CMASIOConfig.GetASIOlockmode();
+
+            if (comboASIODevicesAvailable.Items.Count == 0)
+            {
+                comboASIODevicesAvailable.Items.Add("None Available");
+            }
+
             setCMasioControls(!string.IsNullOrEmpty(txtCurrentAsioDevice.Text));
         }
 
