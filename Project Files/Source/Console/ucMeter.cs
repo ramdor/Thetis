@@ -193,7 +193,12 @@ namespace Thetis
             }
             _dragging = true;
         }
-
+        public void Repaint()
+        {
+            if (_floating) return;
+            this.Parent.Invalidate(this.Bounds, true);
+            this.Parent.Update();
+        }
         private void pnlBar_MouseLeave(object sender, EventArgs e)
         {
             uiComponentMouseLeave();
@@ -244,7 +249,11 @@ namespace Thetis
                     if (y > Parent.ClientSize.Height - this.Height) y = Parent.ClientSize.Height - this.Height;
 
                     Point newPos = new Point(x, y);
-                    if (newPos != this.Location) this.Location = newPos;
+                    if (newPos != this.Location)
+                    {
+                        this.Location = newPos;
+                        Repaint();
+                    }
 
                     showToolTip($"{newPos.X}, {newPos.Y}", this);
                 }
@@ -408,9 +417,13 @@ namespace Thetis
                 if (this.Top + y > Parent.ClientSize.Height) y = Parent.ClientSize.Height - this.Top;
 
                 Size newSize = new Size(x, y);
-                if (newSize != this.Size) this.Size = newSize;
-                this.PerformLayout();
-            }
+                if (newSize != this.Size)
+                {
+                    this.Size = newSize;
+                    this.PerformLayout();
+                    Repaint();
+                }
+            }            
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Point DockedLocation
@@ -438,10 +451,23 @@ namespace Thetis
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public void RestoreLocation()
         {
-            if(_dockedLocation != this.Location) this.Location = _dockedLocation;
+            bool moved = false;
+            if (_dockedLocation != this.Location)
+            {
+                this.Location = _dockedLocation;
+                moved = true;
+            }
             //this.Location = new Point(_dockedLocation.X + _delta.X, _dockedLocation.Y + _delta.Y);
-            if(_dockedSize != this.Size) this.Size = _dockedSize;
-            this.PerformLayout();
+            if (_dockedSize != this.Size)
+            {
+                this.Size = _dockedSize;
+                moved = true;
+            }
+            if (moved)
+            {
+                this.PerformLayout();
+                Repaint();
+            }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public bool Floating
@@ -637,7 +663,11 @@ namespace Thetis
                     if (y > Parent.ClientSize.Height - this.Height) y = Parent.ClientSize.Height - this.Height;
 
                     Point newPos = new Point(x, y);
-                    if(newPos != this.Location) this.Location = newPos;
+                    if (newPos != this.Location)
+                    {
+                        this.Location = newPos;
+                        Repaint();
+                    }
 
                     showToolTip($"{newPos.X}, {newPos.Y}", this);
                 }

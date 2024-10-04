@@ -70,6 +70,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] support for tci msg line_out_start:0;  line_out_stop:0;    which have been repurposed to control vac1 on/off, support for tci msg line_out_start:1;  line_out_stop:1;   which have been repurposed to control  vac2 on/off
 - [add] show container on rx/tx options
 - [add] lock container to prevent removal, and to prevent add/remove of items. You can still adjust items
+- [add] dark mode option added to BsdWorld urls in Web Image item
 - [change] meter container borders have been reduced
 - [change] importing a db with meter containers will no longer clear existing ones, they will be added if possible
 - [change] containers no longer store/convert all skin meter images, only the ones required for that specific container. Considerable memory savings
@@ -133,6 +134,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] backup info stored in associated json is removed with backup is removed. There may be some orphan backup json files left behind from before this fix
 - [fix] when alex is turned off then on antenna config is now sent to hardware
 - [fix] when calibrating level, ctun is turned off if on
+- [fix] when dragging docked meter containers the user control area of the console form would show unpainted areas. The area covered by the container is now instantly repainted when the container moved/resized/hidden
 
 ## v2.10.3.5 Change Log
 - [add] midi device DJ2GO2 Touch MIDI is now handled uniquely, and main sliders will have values reversed

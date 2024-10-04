@@ -3977,6 +3977,7 @@
             this.tabPage13 = new System.Windows.Forms.TabPage();
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
+            this.chkBSDWorldDarkMode = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -62092,7 +62093,7 @@
             // 
             this.groupBoxTS42.Controls.Add(this.buttonTS1);
             this.groupBoxTS42.Controls.Add(this.comboWebImage_noaa);
-            this.groupBoxTS42.Location = new System.Drawing.Point(16, 253);
+            this.groupBoxTS42.Location = new System.Drawing.Point(16, 273);
             this.groupBoxTS42.Name = "groupBoxTS42";
             this.groupBoxTS42.Size = new System.Drawing.Size(293, 44);
             this.groupBoxTS42.TabIndex = 145;
@@ -62124,11 +62125,12 @@
             // 
             // groupBoxTS41
             // 
+            this.groupBoxTS41.Controls.Add(this.chkBSDWorldDarkMode);
             this.groupBoxTS41.Controls.Add(this.btnWebImage_bsdworld_visit);
             this.groupBoxTS41.Controls.Add(this.comboWebImage_BsdWorld);
             this.groupBoxTS41.Location = new System.Drawing.Point(16, 165);
             this.groupBoxTS41.Name = "groupBoxTS41";
-            this.groupBoxTS41.Size = new System.Drawing.Size(293, 44);
+            this.groupBoxTS41.Size = new System.Drawing.Size(293, 63);
             this.groupBoxTS41.TabIndex = 143;
             this.groupBoxTS41.TabStop = false;
             this.groupBoxTS41.Text = "bsdworld.org";
@@ -62160,7 +62162,7 @@
             // 
             this.groupBoxTS43.Controls.Add(this.buttonTS2);
             this.groupBoxTS43.Controls.Add(this.comboWebImage_nasa);
-            this.groupBoxTS43.Location = new System.Drawing.Point(16, 209);
+            this.groupBoxTS43.Location = new System.Drawing.Point(16, 229);
             this.groupBoxTS43.Name = "groupBoxTS43";
             this.groupBoxTS43.Size = new System.Drawing.Size(293, 44);
             this.groupBoxTS43.TabIndex = 144;
@@ -63212,6 +63214,17 @@
             this.tabPage15.TabIndex = 13;
             this.tabPage15.Text = "blank";
             this.tabPage15.UseVisualStyleBackColor = true;
+            // 
+            // chkBSDWorldDarkMode
+            // 
+            this.chkBSDWorldDarkMode.AutoSize = true;
+            this.chkBSDWorldDarkMode.Image = null;
+            this.chkBSDWorldDarkMode.Location = new System.Drawing.Point(209, 42);
+            this.chkBSDWorldDarkMode.Name = "chkBSDWorldDarkMode";
+            this.chkBSDWorldDarkMode.Size = new System.Drawing.Size(79, 17);
+            this.chkBSDWorldDarkMode.TabIndex = 2;
+            this.chkBSDWorldDarkMode.Text = "Dark Mode";
+            this.chkBSDWorldDarkMode.UseVisualStyleBackColor = true;
             // 
             // Setup
             // 
@@ -64449,6 +64462,7 @@
             this.grpWebImage.PerformLayout();
             this.groupBoxTS42.ResumeLayout(false);
             this.groupBoxTS41.ResumeLayout(false);
+            this.groupBoxTS41.PerformLayout();
             this.groupBoxTS43.ResumeLayout(false);
             this.groupBoxTS40.ResumeLayout(false);
             this.grpBandButtons.ResumeLayout(false);
@@ -68452,5 +68466,6 @@
         private ButtonTS btnGetMonitorHz;
         private CheckBoxTS chkContainerShowTX;
         private CheckBoxTS chkLockContainer;
+        private CheckBoxTS chkBSDWorldDarkMode;
     }
 }
