@@ -517,13 +517,21 @@ void unloadASIO()
 
 long getASIODriverString(void* szData)
 {
-	const HKEY hKeyPath = HKEY_LOCAL_MACHINE;
+	//const HKEY hKeyPath = HKEY_LOCAL_MACHINE;
 	const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
 	const LPCSTR valueName = "ASIOdrivername";
 
 	DWORD szDataSize = 32;  //length of ASIO driver names are limited to 32 bytes, including the zero terminator
 
+	// check Current User first
+	HKEY hKeyPath = HKEY_CURRENT_USER;
 	LSTATUS status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_SZ | RRF_SUBKEY_WOW6464KEY, NULL, szData, &szDataSize);
+	if (*(char*)szData == 0) 
+	{
+		// not found under current user, try local machine
+		hKeyPath = HKEY_LOCAL_MACHINE;
+		status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_SZ | RRF_SUBKEY_WOW6464KEY, NULL, szData, &szDataSize);
+	}
 	char buf[128];
 	sprintf_s(buf, 128, "RegGetValue(sz) status = %d", status);
 	OutputDebugStringA(buf);
@@ -535,13 +543,21 @@ long getASIODriverString(void* szData)
 
 long getASIOBlockNum(void* dwData)
 {
-	const HKEY hKeyPath = HKEY_LOCAL_MACHINE;
+	//const HKEY hKeyPath = HKEY_LOCAL_MACHINE;
 	const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
 	const LPCSTR valueName = "ASIOblocknum";
 
 	DWORD dwDataSize = sizeof(REG_DWORD);
 
+	// check Current User first
+	HKEY hKeyPath = HKEY_CURRENT_USER;
 	LSTATUS status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_DWORD | RRF_SUBKEY_WOW6464KEY, NULL, dwData, &dwDataSize);
+	if (status == ERROR_FILE_NOT_FOUND)
+	{
+		// not found under current user, try local machine
+		hKeyPath = HKEY_LOCAL_MACHINE;
+		status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_DWORD | RRF_SUBKEY_WOW6464KEY, NULL, dwData, &dwDataSize);
+	}
 	char buf[128];
 	sprintf_s(buf, 128, "RegGetValue(dword) status = %d", status);
 	OutputDebugStringA(buf);

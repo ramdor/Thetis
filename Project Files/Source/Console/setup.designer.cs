@@ -1890,6 +1890,20 @@
             this.udVAC1FeedbackGainIn = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS54 = new System.Windows.Forms.LabelTS();
             this.labelTS53 = new System.Windows.Forms.LabelTS();
+            this.tpCMAsio = new System.Windows.Forms.TabPage();
+            this.labelTS289 = new System.Windows.Forms.LabelTS();
+            this.labelTS288 = new System.Windows.Forms.LabelTS();
+            this.labelTS287 = new System.Windows.Forms.LabelTS();
+            this.labelTS286 = new System.Windows.Forms.LabelTS();
+            this.nudAsioBlockNum = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS285 = new System.Windows.Forms.LabelTS();
+            this.btnCMASIODisable = new System.Windows.Forms.ButtonTS();
+            this.txtCurrentAsioDevice = new System.Windows.Forms.TextBoxTS();
+            this.labelTS284 = new System.Windows.Forms.LabelTS();
+            this.btnCMASIOActive = new System.Windows.Forms.ButtonTS();
+            this.labelTS283 = new System.Windows.Forms.LabelTS();
+            this.comboASIODevicesAvailable = new System.Windows.Forms.ComboBoxTS();
+            this.labelTS282 = new System.Windows.Forms.LabelTS();
             this.tpDisplay = new System.Windows.Forms.TabPage();
             this.tcDisplay = new System.Windows.Forms.TabControl();
             this.tpDisplayGeneral = new System.Windows.Forms.TabPage();
@@ -3888,6 +3902,7 @@
             this.buttonTS1 = new System.Windows.Forms.ButtonTS();
             this.comboWebImage_noaa = new System.Windows.Forms.ComboBoxTS();
             this.groupBoxTS41 = new System.Windows.Forms.GroupBoxTS();
+            this.chkBSDWorldDarkMode = new System.Windows.Forms.CheckBoxTS();
             this.btnWebImage_bsdworld_visit = new System.Windows.Forms.ButtonTS();
             this.comboWebImage_BsdWorld = new System.Windows.Forms.ComboBoxTS();
             this.groupBoxTS43 = new System.Windows.Forms.GroupBoxTS();
@@ -3977,7 +3992,11 @@
             this.tabPage13 = new System.Windows.Forms.TabPage();
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
-            this.chkBSDWorldDarkMode = new System.Windows.Forms.CheckBoxTS();
+            this.btnCMAsioDefaultBlockNum = new System.Windows.Forms.ButtonTS();
+            this.labelTS290 = new System.Windows.Forms.LabelTS();
+            this.labelTS291 = new System.Windows.Forms.LabelTS();
+            this.labelTS292 = new System.Windows.Forms.LabelTS();
+            this.chkAsioLockMode = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4335,6 +4354,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FeedbackGainInfo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1SlewTimeIn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1FeedbackGainIn)).BeginInit();
+            this.tpCMAsio.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAsioBlockNum)).BeginInit();
             this.tpDisplay.SuspendLayout();
             this.tcDisplay.SuspendLayout();
             this.tpDisplayGeneral.SuspendLayout();
@@ -27120,6 +27141,7 @@
             this.tcAudio.Controls.Add(this.tpVAC2);
             this.tcAudio.Controls.Add(this.tpAudioOptions);
             this.tcAudio.Controls.Add(this.tpAdvancedAudio);
+            this.tcAudio.Controls.Add(this.tpCMAsio);
             this.tcAudio.Location = new System.Drawing.Point(0, 0);
             this.tcAudio.Name = "tcAudio";
             this.tcAudio.SelectedIndex = 0;
@@ -31196,6 +31218,191 @@
             this.labelTS53.TabIndex = 0;
             this.labelTS53.Text = "Feedback Gain";
             this.labelTS53.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // tpCMAsio
+            // 
+            this.tpCMAsio.BackColor = System.Drawing.SystemColors.Control;
+            this.tpCMAsio.Controls.Add(this.chkAsioLockMode);
+            this.tpCMAsio.Controls.Add(this.labelTS292);
+            this.tpCMAsio.Controls.Add(this.labelTS291);
+            this.tpCMAsio.Controls.Add(this.labelTS290);
+            this.tpCMAsio.Controls.Add(this.btnCMAsioDefaultBlockNum);
+            this.tpCMAsio.Controls.Add(this.labelTS289);
+            this.tpCMAsio.Controls.Add(this.labelTS288);
+            this.tpCMAsio.Controls.Add(this.labelTS287);
+            this.tpCMAsio.Controls.Add(this.labelTS286);
+            this.tpCMAsio.Controls.Add(this.nudAsioBlockNum);
+            this.tpCMAsio.Controls.Add(this.labelTS285);
+            this.tpCMAsio.Controls.Add(this.btnCMASIODisable);
+            this.tpCMAsio.Controls.Add(this.txtCurrentAsioDevice);
+            this.tpCMAsio.Controls.Add(this.labelTS284);
+            this.tpCMAsio.Controls.Add(this.btnCMASIOActive);
+            this.tpCMAsio.Controls.Add(this.labelTS283);
+            this.tpCMAsio.Controls.Add(this.comboASIODevicesAvailable);
+            this.tpCMAsio.Controls.Add(this.labelTS282);
+            this.tpCMAsio.Location = new System.Drawing.Point(4, 22);
+            this.tpCMAsio.Name = "tpCMAsio";
+            this.tpCMAsio.Size = new System.Drawing.Size(712, 404);
+            this.tpCMAsio.TabIndex = 5;
+            this.tpCMAsio.Text = "CM Asio";
+            // 
+            // labelTS289
+            // 
+            this.labelTS289.AutoSize = true;
+            this.labelTS289.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS289.Image = null;
+            this.labelTS289.Location = new System.Drawing.Point(95, 285);
+            this.labelTS289.Name = "labelTS289";
+            this.labelTS289.Size = new System.Drawing.Size(417, 16);
+            this.labelTS289.TabIndex = 106;
+            this.labelTS289.Text = "NOTE: If a red CMAsio icon is shown in the status bar there is an issue";
+            // 
+            // labelTS288
+            // 
+            this.labelTS288.AutoSize = true;
+            this.labelTS288.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS288.Image = null;
+            this.labelTS288.Location = new System.Drawing.Point(95, 264);
+            this.labelTS288.Name = "labelTS288";
+            this.labelTS288.Size = new System.Drawing.Size(437, 16);
+            this.labelTS288.TabIndex = 105;
+            this.labelTS288.Text = "NOTE: If VAC is enabled input will be taken from the VAC and not CMAsio";
+            // 
+            // labelTS287
+            // 
+            this.labelTS287.AutoSize = true;
+            this.labelTS287.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS287.Image = null;
+            this.labelTS287.Location = new System.Drawing.Point(95, 242);
+            this.labelTS287.Name = "labelTS287";
+            this.labelTS287.Size = new System.Drawing.Size(236, 16);
+            this.labelTS287.TabIndex = 104;
+            this.labelTS287.Text = "NOTE: CMAsio buffer size is fixed at 64";
+            // 
+            // labelTS286
+            // 
+            this.labelTS286.AutoSize = true;
+            this.labelTS286.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS286.Image = null;
+            this.labelTS286.Location = new System.Drawing.Point(95, 220);
+            this.labelTS286.Name = "labelTS286";
+            this.labelTS286.Size = new System.Drawing.Size(427, 16);
+            this.labelTS286.TabIndex = 103;
+            this.labelTS286.Text = "NOTE: Any changes made here will only apply after Thetis is restarted !";
+            // 
+            // nudAsioBlockNum
+            // 
+            this.nudAsioBlockNum.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudAsioBlockNum.Location = new System.Drawing.Point(171, 125);
+            this.nudAsioBlockNum.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.nudAsioBlockNum.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudAsioBlockNum.Name = "nudAsioBlockNum";
+            this.nudAsioBlockNum.Size = new System.Drawing.Size(56, 20);
+            this.nudAsioBlockNum.TabIndex = 102;
+            this.nudAsioBlockNum.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudAsioBlockNum, "The number of 64-sample blocks that can be held by the FIFO buffer (ringbuffer) t" +
+        "hat is used to synchronize the ChannelMaster and ASIO threads.");
+            this.nudAsioBlockNum.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.nudAsioBlockNum.ValueChanged += new System.EventHandler(this.nudAsioBlockNum_ValueChanged);
+            // 
+            // labelTS285
+            // 
+            this.labelTS285.AutoSize = true;
+            this.labelTS285.Image = null;
+            this.labelTS285.Location = new System.Drawing.Point(100, 127);
+            this.labelTS285.Name = "labelTS285";
+            this.labelTS285.Size = new System.Drawing.Size(65, 13);
+            this.labelTS285.TabIndex = 101;
+            this.labelTS285.Text = "Block Num :";
+            // 
+            // btnCMASIODisable
+            // 
+            this.btnCMASIODisable.Image = null;
+            this.btnCMASIODisable.Location = new System.Drawing.Point(566, 45);
+            this.btnCMASIODisable.Name = "btnCMASIODisable";
+            this.btnCMASIODisable.Selectable = true;
+            this.btnCMASIODisable.Size = new System.Drawing.Size(118, 39);
+            this.btnCMASIODisable.TabIndex = 100;
+            this.btnCMASIODisable.Text = "Disable";
+            this.btnCMASIODisable.UseVisualStyleBackColor = true;
+            this.btnCMASIODisable.Click += new System.EventHandler(this.btnCMASIODisable_Click);
+            // 
+            // txtCurrentAsioDevice
+            // 
+            this.txtCurrentAsioDevice.Location = new System.Drawing.Point(171, 89);
+            this.txtCurrentAsioDevice.Name = "txtCurrentAsioDevice";
+            this.txtCurrentAsioDevice.ReadOnly = true;
+            this.txtCurrentAsioDevice.Size = new System.Drawing.Size(249, 20);
+            this.txtCurrentAsioDevice.TabIndex = 99;
+            // 
+            // labelTS284
+            // 
+            this.labelTS284.AutoSize = true;
+            this.labelTS284.Image = null;
+            this.labelTS284.Location = new System.Drawing.Point(53, 92);
+            this.labelTS284.Name = "labelTS284";
+            this.labelTS284.Size = new System.Drawing.Size(112, 13);
+            this.labelTS284.TabIndex = 98;
+            this.labelTS284.Text = "Current ASIO Device :";
+            // 
+            // btnCMASIOActive
+            // 
+            this.btnCMASIOActive.Image = null;
+            this.btnCMASIOActive.Location = new System.Drawing.Point(442, 45);
+            this.btnCMASIOActive.Name = "btnCMASIOActive";
+            this.btnCMASIOActive.Selectable = true;
+            this.btnCMASIOActive.Size = new System.Drawing.Size(118, 39);
+            this.btnCMASIOActive.TabIndex = 97;
+            this.btnCMASIOActive.Text = "Make Active";
+            this.btnCMASIOActive.UseVisualStyleBackColor = true;
+            this.btnCMASIOActive.Click += new System.EventHandler(this.btnCMASIOActive_Click);
+            // 
+            // labelTS283
+            // 
+            this.labelTS283.AutoSize = true;
+            this.labelTS283.Image = null;
+            this.labelTS283.Location = new System.Drawing.Point(33, 48);
+            this.labelTS283.Name = "labelTS283";
+            this.labelTS283.Size = new System.Drawing.Size(132, 13);
+            this.labelTS283.TabIndex = 96;
+            this.labelTS283.Text = "Available ASIO Device(s) :";
+            // 
+            // comboASIODevicesAvailable
+            // 
+            this.comboASIODevicesAvailable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboASIODevicesAvailable.FormattingEnabled = true;
+            this.comboASIODevicesAvailable.Location = new System.Drawing.Point(171, 45);
+            this.comboASIODevicesAvailable.Name = "comboASIODevicesAvailable";
+            this.comboASIODevicesAvailable.Size = new System.Drawing.Size(249, 21);
+            this.comboASIODevicesAvailable.TabIndex = 95;
+            this.comboASIODevicesAvailable.SelectedIndexChanged += new System.EventHandler(this.comboASIODevicesAvailable_SelectedIndexChanged);
+            // 
+            // labelTS282
+            // 
+            this.labelTS282.AutoSize = true;
+            this.labelTS282.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS282.Image = null;
+            this.labelTS282.Location = new System.Drawing.Point(95, 190);
+            this.labelTS282.Name = "labelTS282";
+            this.labelTS282.Size = new System.Drawing.Size(542, 16);
+            this.labelTS282.TabIndex = 94;
+            this.labelTS282.Text = "WARNING: If CMAsio is used, audio hardware in the radio will not be operable";
             // 
             // tpDisplay
             // 
@@ -62135,6 +62342,17 @@
             this.groupBoxTS41.TabStop = false;
             this.groupBoxTS41.Text = "bsdworld.org";
             // 
+            // chkBSDWorldDarkMode
+            // 
+            this.chkBSDWorldDarkMode.AutoSize = true;
+            this.chkBSDWorldDarkMode.Image = null;
+            this.chkBSDWorldDarkMode.Location = new System.Drawing.Point(209, 42);
+            this.chkBSDWorldDarkMode.Name = "chkBSDWorldDarkMode";
+            this.chkBSDWorldDarkMode.Size = new System.Drawing.Size(79, 17);
+            this.chkBSDWorldDarkMode.TabIndex = 2;
+            this.chkBSDWorldDarkMode.Text = "Dark Mode";
+            this.chkBSDWorldDarkMode.UseVisualStyleBackColor = true;
+            // 
             // btnWebImage_bsdworld_visit
             // 
             this.btnWebImage_bsdworld_visit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
@@ -63215,16 +63433,65 @@
             this.tabPage15.Text = "blank";
             this.tabPage15.UseVisualStyleBackColor = true;
             // 
-            // chkBSDWorldDarkMode
+            // btnCMAsioDefaultBlockNum
             // 
-            this.chkBSDWorldDarkMode.AutoSize = true;
-            this.chkBSDWorldDarkMode.Image = null;
-            this.chkBSDWorldDarkMode.Location = new System.Drawing.Point(209, 42);
-            this.chkBSDWorldDarkMode.Name = "chkBSDWorldDarkMode";
-            this.chkBSDWorldDarkMode.Size = new System.Drawing.Size(79, 17);
-            this.chkBSDWorldDarkMode.TabIndex = 2;
-            this.chkBSDWorldDarkMode.Text = "Dark Mode";
-            this.chkBSDWorldDarkMode.UseVisualStyleBackColor = true;
+            this.btnCMAsioDefaultBlockNum.Image = null;
+            this.btnCMAsioDefaultBlockNum.Location = new System.Drawing.Point(233, 122);
+            this.btnCMAsioDefaultBlockNum.Name = "btnCMAsioDefaultBlockNum";
+            this.btnCMAsioDefaultBlockNum.Selectable = true;
+            this.btnCMAsioDefaultBlockNum.Size = new System.Drawing.Size(58, 23);
+            this.btnCMAsioDefaultBlockNum.TabIndex = 107;
+            this.btnCMAsioDefaultBlockNum.Text = "Default";
+            this.toolTip1.SetToolTip(this.btnCMAsioDefaultBlockNum, "BlockNum = 5");
+            this.btnCMAsioDefaultBlockNum.UseVisualStyleBackColor = true;
+            this.btnCMAsioDefaultBlockNum.Click += new System.EventHandler(this.btnCMAsioDefaultBlockNum_Click);
+            // 
+            // labelTS290
+            // 
+            this.labelTS290.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS290.Image = null;
+            this.labelTS290.Location = new System.Drawing.Point(95, 305);
+            this.labelTS290.Name = "labelTS290";
+            this.labelTS290.Size = new System.Drawing.Size(551, 38);
+            this.labelTS290.TabIndex = 108;
+            this.labelTS290.Text = "NOTE: Remove any previous settings from HKEY_LOCAL_MACHINE\\SOFTWARE\\OpenHPSDR\\The" +
+    "tis-x64";
+            // 
+            // labelTS291
+            // 
+            this.labelTS291.AutoSize = true;
+            this.labelTS291.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS291.Image = null;
+            this.labelTS291.Location = new System.Drawing.Point(95, 344);
+            this.labelTS291.Name = "labelTS291";
+            this.labelTS291.Size = new System.Drawing.Size(500, 16);
+            this.labelTS291.TabIndex = 109;
+            this.labelTS291.Text = "NOTE: This now uses HKEY_CURRENT_USER\\Software\\OpenHPSDR\\Thetis-x64";
+            // 
+            // labelTS292
+            // 
+            this.labelTS292.AutoSize = true;
+            this.labelTS292.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS292.Image = null;
+            this.labelTS292.Location = new System.Drawing.Point(95, 366);
+            this.labelTS292.Name = "labelTS292";
+            this.labelTS292.Size = new System.Drawing.Size(312, 16);
+            this.labelTS292.TabIndex = 110;
+            this.labelTS292.Text = "NOTE: The asio device will not be available to VAC";
+            // 
+            // chkAsioLockMode
+            // 
+            this.chkAsioLockMode.AutoSize = true;
+            this.chkAsioLockMode.Image = null;
+            this.chkAsioLockMode.Location = new System.Drawing.Point(103, 154);
+            this.chkAsioLockMode.Name = "chkAsioLockMode";
+            this.chkAsioLockMode.Size = new System.Drawing.Size(80, 17);
+            this.chkAsioLockMode.TabIndex = 111;
+            this.chkAsioLockMode.Text = "Lock Mode";
+            this.toolTip1.SetToolTip(this.chkAsioLockMode, "Lock mode for low-latency performance of transmit (mic) audio stream. No ring buf" +
+        "fer is used.");
+            this.chkAsioLockMode.UseVisualStyleBackColor = true;
+            this.chkAsioLockMode.CheckedChanged += new System.EventHandler(this.chkAsioLockMode_CheckedChanged);
             // 
             // Setup
             // 
@@ -63685,6 +63952,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbVAC1FeedbackGainInfo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1SlewTimeIn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1FeedbackGainIn)).EndInit();
+            this.tpCMAsio.ResumeLayout(false);
+            this.tpCMAsio.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAsioBlockNum)).EndInit();
             this.tpDisplay.ResumeLayout(false);
             this.tcDisplay.ResumeLayout(false);
             this.tpDisplayGeneral.ResumeLayout(false);
@@ -68467,5 +68737,24 @@
         private CheckBoxTS chkContainerShowTX;
         private CheckBoxTS chkLockContainer;
         private CheckBoxTS chkBSDWorldDarkMode;
+        private TabPage tpCMAsio;
+        private LabelTS labelTS283;
+        private ComboBoxTS comboASIODevicesAvailable;
+        private LabelTS labelTS282;
+        private NumericUpDownTS nudAsioBlockNum;
+        private LabelTS labelTS285;
+        private ButtonTS btnCMASIODisable;
+        private TextBoxTS txtCurrentAsioDevice;
+        private LabelTS labelTS284;
+        private ButtonTS btnCMASIOActive;
+        private LabelTS labelTS289;
+        private LabelTS labelTS288;
+        private LabelTS labelTS287;
+        private LabelTS labelTS286;
+        private ButtonTS btnCMAsioDefaultBlockNum;
+        private LabelTS labelTS291;
+        private LabelTS labelTS290;
+        private CheckBoxTS chkAsioLockMode;
+        private LabelTS labelTS292;
     }
 }

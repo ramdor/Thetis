@@ -1762,10 +1762,8 @@ namespace Thetis
             {
                 ivac.SetIVACrun(0, 0);
                 ivac.StopAudioIVAC(0);
-
-                Thread.Sleep(10); //MW0LGE_21k9rc4 prevent exception when using ASIO 
             }
-
+            Thread.Sleep(10); // prevent ASIO exception
         }
 
         public static void EnableVAC2(bool enable)
@@ -1846,11 +1844,9 @@ namespace Thetis
             else
             {
                 ivac.SetIVACrun(1, 0);
-                ivac.StopAudioIVAC(1);
-
-                Thread.Sleep(10); //MW0LGE_21k9rc4 prevent exception when using ASIO
+                ivac.StopAudioIVAC(1);                
             }
-
+            Thread.Sleep(10); // prevent ASIO exception
         }
 
         private static RadioProtocol _lastRadioProtocol = RadioProtocol.None;
