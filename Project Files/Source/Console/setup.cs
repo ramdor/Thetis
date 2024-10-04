@@ -31095,13 +31095,15 @@ namespace Thetis
 
             CMASIOConfig.SetASIOdrivername(selected);
             setCMasioControls(true);
+            lblCMAsioInfo.Text = "Settings updated. Restart to take effect.";
+            lblCMAsioInfo.Visible = true;
         }
 
         private void btnCMASIODisable_Click(object sender, EventArgs e)
         {
             CMASIOConfig.SetASIOdrivername("");
-            txtCurrentAsioDevice.Text = "";
-            setCMasioControls(false);
+            lblCMAsioInfo.Text = "Settings updated. Restart to take effect.";
+            lblCMAsioInfo.Visible = true;
         }
         private void setCMasioControls(bool enabled)
         {
