@@ -1284,12 +1284,20 @@ PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex
         IsDebuggerPresent_ = (IsDebuggerPresentPtr)GetProcAddress( LoadLibraryA( "Kernel32.dll" ), "IsDebuggerPresent" );
 
         // check to see if cmASIO will be using a driver
-        const HKEY hKeyPath = HKEY_LOCAL_MACHINE;
+        //const HKEY hKeyPath = HKEY_LOCAL_MACHINE;
         const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
         const LPCSTR valueName = "ASIOdrivername";
         char szData[32] = { 0 };
         DWORD szDataSize = 32;  //length of ASIO driver names are limited to 32 bytes, including the zero terminator
+        // check Current User first
+        HKEY hKeyPath = HKEY_CURRENT_USER;
         LSTATUS status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_SZ | RRF_SUBKEY_WOW6464KEY, NULL, szData, &szDataSize);
+        if (*(char*)szData == 0)
+        {
+            // not found under current user, try local machine
+            hKeyPath = HKEY_LOCAL_MACHINE;
+            status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_SZ | RRF_SUBKEY_WOW6464KEY, NULL, szData, &szDataSize);
+        }
 
         for( i=0; i < driverCount; ++i )
         {
