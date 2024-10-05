@@ -2123,7 +2123,10 @@ namespace Thetis
                     else
                     {
                         if (!enabled)
+                        {
                             uc.Hide();
+                            uc.Repaint();
+                        }
                         else
                             returnMeterFromFloating(uc, f);
                     }
@@ -3885,6 +3888,7 @@ namespace Thetis
             if (m.RX == 2 && !_console.RX2Enabled) return;
 
             m.Hide();
+            m.Repaint();
             frm.TakeOwner(m);
             frm.Floating = true;
             m.Floating = true;
@@ -3935,7 +3939,10 @@ namespace Thetis
                         if (ucM.Floating)
                             _lstMeterDisplayForms[ucM.ID].Hide();
                         else
+                        {
                             ucM.Hide();
+                            ucM.Repaint();
+                        }
                     }
                 }
             }
@@ -4190,6 +4197,7 @@ namespace Thetis
 
                 ucMeter uc = _lstUCMeters[sId];
                 uc.Hide();
+                uc.Repaint();
                 // unreg delegates
                 uc.FloatingDockedClicked -= ucMeter_FloatingDockedClicked;
                 uc.DockedMoved -= ucMeter_FloatingDockedMoved;

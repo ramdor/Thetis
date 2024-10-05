@@ -31374,6 +31374,14 @@ namespace Thetis
                 txtWebImage_url.Text.Contains("kc2g.com", StringComparison.InvariantCultureIgnoreCase)
                 )
             {
+                // for old bsdworld urls, insert -light or -dark
+                string bsd = fixBSDWorldUrls(txtWebImage_url.Text);
+                if (!string.IsNullOrEmpty(bsd))
+                {
+                    txtWebImage_url.Text = bsd;
+                    return;
+                }
+
                 // lock and set the update interval
                 nudWebImage_update_interval.Enabled = false;
                 _ignoreMeterItemChangeEvents = true;
@@ -31598,33 +31606,33 @@ namespace Thetis
         };
 
         private KeyValuePair<string, string>[] _bsdworld_urls =
-{
+        {
             new KeyValuePair<string, string>("select one", ""),
-            new KeyValuePair<string, string>("NA Propagation All", "https://bsdworld.org/DXCC/continent/NA/latest.webp"),
-            new KeyValuePair<string, string>("NA Propagation Zone 3", "https://bsdworld.org/DXCC/cqzone/3/latest.webp"),
-            new KeyValuePair<string, string>("NA Propagation Zone 4", "https://bsdworld.org/DXCC/cqzone/4/latest.webp"),
-            new KeyValuePair<string, string>("NA Propagation Zone 5", "https://bsdworld.org/DXCC/cqzone/5/latest.webp"),
-            new KeyValuePair<string, string>("EU Propagation All", "https://bsdworld.org/DXCC/continent/EU/tn_latest.webp"),
-            new KeyValuePair<string, string>("EU Propagation Zone 14", "https://bsdworld.org/DXCC/cqzone/14/latest.webp"),
-            new KeyValuePair<string, string>("EU Propagation Zone 15", "https://bsdworld.org/DXCC/cqzone/15/latest.webp"),
-            new KeyValuePair<string, string>("EU Propagation Zone 16", "https://bsdworld.org/DXCC/cqzone/16/latest.webp"),
-            new KeyValuePair<string, string>("EU Propagation Zone 20", "https://bsdworld.org/DXCC/cqzone/20/latest.webp"),
-            new KeyValuePair<string, string>("OC Propagation All", "https://bsdworld.org/DXCC/continent/OC/tn_latest.webp"),
-            new KeyValuePair<string, string>("AS Propagation All", "https://bsdworld.org/DXCC/continent/AS/tn_latest.webp"),
-            new KeyValuePair<string, string>("SA Propagation All", "https://bsdworld.org/DXCC/continent/SA/tn_latest.webp"),
-            new KeyValuePair<string, string>("AF Propagation All", "https://bsdworld.org/DXCC/continent/AF/tn_latest.webp"),
-            new KeyValuePair<string, string>("A-Index", "https://bsdworld.org/aindex.svgz"),
-            new KeyValuePair<string, string>("PK Index", "https://bsdworld.org/pkindex.svgz"),
-            new KeyValuePair<string, string>("PK Predictions", "https://bsdworld.org/pki-forecast.svgz"),
-            new KeyValuePair<string, string>("Flux", "https://bsdworld.org/flux.svgz"),
-            new KeyValuePair<string, string>("Outlook", "https://bsdworld.org/outlook.svgz"),
-            new KeyValuePair<string, string>("Solar Wind", "https://bsdworld.org/solarwind.svgz"),
-            new KeyValuePair<string, string>("SSN", "https://bsdworld.org/ssn.svgz"),
-            new KeyValuePair<string, string>("SSN History", "https://bsdworld.org/ssnhist.svgz"),
-            new KeyValuePair<string, string>("EISN", "https://bsdworld.org/eisn.svgz"),
-            new KeyValuePair<string, string>("Proton Flux", "https://bsdworld.org/proton_flux.svgz"),
-            new KeyValuePair<string, string>("X-Ray Flux", "https://bsdworld.org/xray_flux.svgz"),
-            new KeyValuePair<string, string>("D-Layer", "https://bsdworld.org/d-rap/latest.svgz"),
+            new KeyValuePair<string, string>("NA Propagation All", "https://bsdworld.org/DXCC/continent/NA/latest<light_mode>.webp"),
+            new KeyValuePair<string, string>("NA Propagation Zone 3", "https://bsdworld.org/DXCC/cqzone/3/latest<light_mode>.webp"),
+            new KeyValuePair<string, string>("NA Propagation Zone 4", "https://bsdworld.org/DXCC/cqzone/4/latest<light_mode>.webp"),
+            new KeyValuePair<string, string>("NA Propagation Zone 5", "https://bsdworld.org/DXCC/cqzone/5/latest<light_mode>.webp"),
+            new KeyValuePair<string, string>("EU Propagation All", "https://bsdworld.org/DXCC/continent/EU/tn_latest<light_mode>.webp"),
+            new KeyValuePair<string, string>("EU Propagation Zone 14", "https://bsdworld.org/DXCC/cqzone/14/latest<light_mode>.webp"),
+            new KeyValuePair<string, string>("EU Propagation Zone 15", "https://bsdworld.org/DXCC/cqzone/15/latest<light_mode>.webp"),
+            new KeyValuePair<string, string>("EU Propagation Zone 16", "https://bsdworld.org/DXCC/cqzone/16/latest<light_mode>.webp"),
+            new KeyValuePair<string, string>("EU Propagation Zone 20", "https://bsdworld.org/DXCC/cqzone/20/latest<light_mode>.webp"),
+            new KeyValuePair<string, string>("OC Propagation All", "https://bsdworld.org/DXCC/continent/OC/tn_latest<light_mode>.webp"),
+            new KeyValuePair<string, string>("AS Propagation All", "https://bsdworld.org/DXCC/continent/AS/tn_latest<light_mode>.webp"),
+            new KeyValuePair<string, string>("SA Propagation All", "https://bsdworld.org/DXCC/continent/SA/tn_latest<light_mode>.webp"),
+            new KeyValuePair<string, string>("AF Propagation All", "https://bsdworld.org/DXCC/continent/AF/tn_latest<light_mode>.webp"),
+            new KeyValuePair<string, string>("A-Index", "https://bsdworld.org/aindex<light_mode>.svgz"),
+            new KeyValuePair<string, string>("PK Index", "https://bsdworld.org/pkindex<light_mode>.svgz"),
+            new KeyValuePair<string, string>("PK Predictions", "https://bsdworld.org/pki-forecast<light_mode>.svgz"),
+            new KeyValuePair<string, string>("Flux", "https://bsdworld.org/flux<light_mode>.svgz"),
+            new KeyValuePair<string, string>("Outlook", "https://bsdworld.org/outlook<light_mode>.svgz"),
+            new KeyValuePair<string, string>("Solar Wind", "https://bsdworld.org/solarwind<light_mode>.svgz"),
+            new KeyValuePair<string, string>("SSN", "https://bsdworld.org/ssn<light_mode>.svgz"),
+            new KeyValuePair<string, string>("SSN History", "https://bsdworld.org/ssnhist<light_mode>.svgz"),
+            new KeyValuePair<string, string>("EISN", "https://bsdworld.org/eisn<light_mode>.svgz"),
+            new KeyValuePair<string, string>("Proton Flux", "https://bsdworld.org/proton_flux<light_mode>.svgz"),
+            new KeyValuePair<string, string>("X-Ray Flux", "https://bsdworld.org/xray_flux<light_mode>.svgz"),
+            new KeyValuePair<string, string>("D-Layer", "https://bsdworld.org/d-rap/latest<light_mode>.svgz"),
         };
 
         private KeyValuePair<string, string>[] _nasa_urls =
@@ -31651,6 +31659,26 @@ namespace Thetis
             new KeyValuePair<string, string>("D Region Absorption Map", "https://services.swpc.noaa.gov/images/animations/d-rap/global/d-rap/latest.png")
         };
 
+        private string fixBSDWorldUrls(string url)
+        {
+            if (!url.Contains("bsdworld.org", StringComparison.OrdinalIgnoreCase)) return "";
+            if (url.Contains("-light", StringComparison.OrdinalIgnoreCase) || url.Contains("-dark", StringComparison.OrdinalIgnoreCase)) return "";
+            if (!_bsdworld_urls.Any(kvp => (url.Replace("<light_mode>", "")).Contains((kvp.Value).Replace("<light_mode>", "")))) return ""; // the url passed is not in _bsdworld_urls
+
+            // insert before .webp or .svgz
+            string mode = chkBSDWorldDarkMode.Checked ? "-dark" : "-light";
+            int pos = url.IndexOf(".webp");
+            if (pos != -1)
+            {
+                return url.Replace(".webp", $"{mode}.webp");
+            }
+            pos = url.IndexOf(".svgz");
+            if (pos != -1)
+            {
+                return url.Replace(".svgz", $"{mode}.svgz");
+            }
+            return "";
+        }
         private void comboWebImage_BsdWorld_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return;
@@ -31658,7 +31686,8 @@ namespace Thetis
             if (comboWebImage_BsdWorld.SelectedIndex == 0) return;
 
             KeyValuePair<string, string> kvp = _bsdworld_urls[comboWebImage_BsdWorld.SelectedIndex];
-            txtWebImage_url.Text = kvp.Value;
+            string url = kvp.Value.Replace("<light_mode>", chkBSDWorldDarkMode.Checked ? "-dark" : "-light");
+            txtWebImage_url.Text = url;
 
             comboWebImage_BsdWorld.SelectedIndex = 0;
         }
