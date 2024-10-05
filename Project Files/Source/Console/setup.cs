@@ -7489,6 +7489,13 @@ namespace Thetis
         private void udDisplayGridMax_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if (udDisplayGridMax.Value < udDisplayGridMin.Value + udDisplayGridStep.Value)
+            {
+                udDisplayGridMax.Value = udDisplayGridMin.Value + udDisplayGridStep.Value;
+                return;
+            }
+            //
             UpdateDisplayGridBandInfo();
             switch (console.RX1Band)
             {
@@ -7559,6 +7566,13 @@ namespace Thetis
         private void udDisplayGridMin_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if(udDisplayGridMin.Value > udDisplayGridMax.Value - udDisplayGridStep.Value)
+            {
+                udDisplayGridMin.Value = udDisplayGridMax.Value - udDisplayGridStep.Value;
+                return;
+            }
+            //
             UpdateDisplayGridBandInfo();
             switch (console.RX1Band)
             {
@@ -7635,7 +7649,13 @@ namespace Thetis
         private void udRX2DisplayGridMax_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
-
+            //[2.10.3.6]MW0LGE limit
+            if (udRX2DisplayGridMax.Value < udRX2DisplayGridMin.Value + udRX2DisplayGridStep.Value)
+            {
+                udRX2DisplayGridMax.Value = udRX2DisplayGridMin.Value + udRX2DisplayGridStep.Value;
+                return;
+            }
+            //
             UpdateDisplayGridBandInfo();
             switch (console.RX2Band)
             {
@@ -7707,6 +7727,13 @@ namespace Thetis
         private void udRX2DisplayGridMin_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if (udRX2DisplayGridMin.Value > udRX2DisplayGridMax.Value - udRX2DisplayGridStep.Value)
+            {
+                udRX2DisplayGridMin.Value = udRX2DisplayGridMax.Value - udRX2DisplayGridStep.Value;
+                return;
+            }
+            //
             UpdateDisplayGridBandInfo();
             switch (console.RX2Band)
             {
@@ -7853,6 +7880,13 @@ namespace Thetis
         private void udDisplayWaterfallLowLevel_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if(udDisplayWaterfallLowLevel.Value > udDisplayWaterfallHighLevel.Value - 3)
+            {
+                udDisplayWaterfallLowLevel.Value = udDisplayWaterfallHighLevel.Value - 3;
+                return;
+            }
+            //
             UpdateWaterfallBandInfo();
             switch (console.RX1Band)
             {
@@ -7918,6 +7952,13 @@ namespace Thetis
         private void udDisplayWaterfallHighLevel_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if (udDisplayWaterfallHighLevel.Value < udDisplayWaterfallLowLevel.Value + 3)
+            {
+                udDisplayWaterfallHighLevel.Value = udDisplayWaterfallLowLevel.Value + 3;
+                return;
+            }
+            //
             UpdateWaterfallBandInfo();
             switch (console.RX1Band)
             {
@@ -8002,6 +8043,13 @@ namespace Thetis
         private void udRX2DisplayWaterfallLowLevel_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if (udRX2DisplayWaterfallLowLevel.Value > udRX2DisplayWaterfallHighLevel.Value - 3)
+            {
+                udRX2DisplayWaterfallLowLevel.Value = udRX2DisplayWaterfallHighLevel.Value - 3;
+                return;
+            }
+            //
             UpdateWaterfallBandInfo();
             switch (console.RX2Band)
             {
@@ -8067,6 +8115,13 @@ namespace Thetis
         private void udRX2DisplayWaterfallHighLevel_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if (udRX2DisplayWaterfallHighLevel.Value < udRX2DisplayWaterfallLowLevel.Value + 3)
+            {
+                udRX2DisplayWaterfallHighLevel.Value = udRX2DisplayWaterfallLowLevel.Value + 3;
+                return;
+            }
+            //
             UpdateWaterfallBandInfo();
             switch (console.RX2Band)
             {
