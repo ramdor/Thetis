@@ -93,6 +93,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] variable cw edge length has been disabled in the Dsp-CW settings (only utilised by the G2). This is now fixed at 9ms for the DL1YCF CW edge
 - [change] right axis on history chart is not shown if not used
 - [change] -help text adjusted for the new -dbid flag
+- [change] spectrum and grid directX renderers now use directX clip to limit draw items such as line. Previously LOTS of IF statements were used. For a 2000 pixel wide spectrum, at 60fps, it is a saving of over 720,000 IF statements per second, per receiver, and has been replaced by a single directX clip statement. It also fixes the line that used to draw at the bottom of the spectrum if data was below the low limit, and also fixes some rx2 items moving into the rx1 space
 - [fix] fix issue where you could not remove tx profile entries if they only had case changes in their name, such as ABc and abc
 - [fix] import of container locations now works when importing a database
 - [fix] fixed issue where a meter container would re-appear if console was minimised and then restored and that container had been docked at some point
@@ -136,6 +137,8 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] when alex is turned off then on antenna config is now sent to hardware
 - [fix] when calibrating level, ctun is turned off if on
 - [fix] when dragging docked meter containers the user control area of the console form would show unpainted areas. The area covered by the container is now instantly repainted when the container moved/resized/hidden
+- [fix] range limits for spectrum and waterfall high/low values. High now cant go below low, and low cant go above high
+- [fix] port limit ranges for tci/cat/n1mm/mmio, of 0-65535
 
 ## v2.10.3.5 Change Log
 - [add] midi device DJ2GO2 Touch MIDI is now handled uniquely, and main sliders will have values reversed
