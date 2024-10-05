@@ -138,6 +138,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] when calibrating level, ctun is turned off if on
 - [fix] when dragging docked meter containers the user control area of the console form would show unpainted areas. The area covered by the container is now instantly repainted when the container moved/resized/hidden
 - [fix] range limits for spectrum and waterfall high/low values. High now cant go below low, and low cant go above high
+- [fix] port limit ranges for tci/cat/n1mm/mmio, of 0-65535
 
 ## v2.10.3.5 Change Log
 - [add] midi device DJ2GO2 Touch MIDI is now handled uniquely, and main sliders will have values reversed

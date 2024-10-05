@@ -249,7 +249,11 @@ namespace Thetis
                 {
                     sTmp = parts[0];
                     bool b = int.TryParse(parts[1], out int port);
-                    if (b) DestinationPort = port;
+                    if (b)
+                    {
+                        if (port < 0 || port > 65535) return; // bad port
+                        DestinationPort = port;
+                    }
                 }
 
                 //check ip is valid
