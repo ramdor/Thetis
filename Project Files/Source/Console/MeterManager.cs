@@ -10544,6 +10544,131 @@ namespace Thetis
                 get { return _led_style; }
                 set { _led_style = value; }
             }
+            private System.Threading.Timer _timer;
+            private const int _delay_milliseconds = 1000;
+            private string _pending_condition;
+            private void onTimerElapsedCondition()
+            {
+                Debug.Print("TIMER");
+                _condition = _pending_condition;
+                ReadingsCustom.UpdateReadings(_condition);
+                lock (_list_placeholders_lock)
+                {
+                    _list_placeholders_readings.Clear();
+                    _list_placeholders_strings.Clear();
+                    List<string> placeholders = ReadingsCustom.GetPlaceholders(_condition);
+                    foreach (string placeholder in placeholders)
+                    {
+                        if (ReadingsCustom.IsCustomString(placeholder))
+                            _list_placeholders_strings.Add(placeholder);
+                        else
+                        {
+                            bool ok = Enum.TryParse<Reading>(placeholder.ToUpper(), out Reading tmpReading);
+                            if (ok) _list_placeholders_readings.Add(tmpReading);
+                        }
+                    }
+
+                    _variable_substitutions.Clear();
+                    string expression = _condition;
+                    string script_expression = _condition;
+                    string lower;
+                    foreach (Reading r in _list_placeholders_readings)
+                    {
+                        object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, _owningMeter.RX);
+                        lower = "%" + r.ToString().ToLower() + "%";
+                        if (expression.IndexOf(lower) >= 0)
+                            expression = expression.Replace(lower, reading.ToString());
+                        if (script_expression.IndexOf(lower) >= 0)
+                            script_expression = script_expression.Replace(lower, "(float)Variables[\"" + r.ToString().ToLower() + "\"]");
+
+                        if (!_variable_substitutions.ContainsKey(r.ToString().ToLower()))
+                            _variable_substitutions.Add(r.ToString().ToLower(), reading);
+                    }
+                    foreach (string placeholder in _list_placeholders_strings)
+                    {
+                        object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, _owningMeter.RX);
+                        string type;
+                        if (reading is int)
+                            type = "int";
+                        else if (reading is float)
+                            type = "float";
+                        else if (reading is double)
+                            type = "double";
+                        else if (reading is bool)
+                            type = "bool";
+                        else
+                            type = "string";
+
+                        lower = "%" + placeholder.ToLower() + "%";
+                        if (expression.IndexOf(lower) >= 0)
+                            expression = expression.Replace(lower, "(" + type + ")(" + (type == "string" ? "\"" : "") + reading.ToString() + (type == "string" ? "\"" : "") + ")");
+                        if (script_expression.IndexOf(lower) >= 0)
+                            script_expression = script_expression.Replace(lower, "(" + type + ")(Variables[\"" + placeholder.ToLower() + "\"])");
+
+                        if (!_variable_substitutions.ContainsKey(placeholder.ToLower()))
+                            _variable_substitutions.Add(placeholder.ToLower(), reading);
+                    }
+
+                    // MultiMeter IO
+                    foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
+                    {
+                        MultiMeterIO.clsMMIO mmio = mmios.Value;
+                        foreach (KeyValuePair<string, object> kvp in mmio.Variables())
+                        {
+                            object val = mmio.GetVariable(kvp.Key);
+
+                            string tmp = mmio.VariableValueType(val);
+                            lower = "%" + kvp.Key + "%";
+                            if (script_expression.IndexOf(lower) >= 0)
+                            {
+                                string type;
+                                if (val is int)
+                                    type = "int";
+                                else if (val is float)
+                                    type = "float";
+                                else if (val is double)
+                                    type = "double";
+                                else if (val is bool)
+                                    type = "bool";
+                                else
+                                    type = "string";
+
+                                if (expression.IndexOf(lower) >= 0)
+                                    expression = expression.Replace(lower, (type == "string" ? "\"" : "") + tmp + (type == "string" ? "\"" : ""));
+                                if (script_expression.IndexOf(lower) >= 0)
+                                    script_expression = script_expression.Replace(lower, "(" + type + ")(Variables[\"" + kvp.Key + "\"])");
+
+                                if (!_variable_substitutions.ContainsKey(kvp.Key))
+                                    _variable_substitutions.Add(kvp.Key, val);
+                            }
+                        }
+                    }
+                    //
+
+                    bool okExp = validateExpression(expression, _variable_substitutions);
+                    if (okExp)
+                    {
+                        try
+                        {
+                            ScriptOptions options = ScriptOptions.Default.AddReferences(typeof(object).Assembly);
+                            _script = CSharpScript.Create($"bool result = (bool)({script_expression});", options, typeof(Globals));
+                            _script.Compile();
+
+                            _valid = true;
+                        }
+                        catch
+                        {
+                            _script = null;
+                            _valid = false;
+                        }
+                    }
+                    else
+                    {
+                        _script = null;
+                        _valid = false;
+                    }
+                }
+            }
             public string Condition
             {
                 get { return _condition; }
@@ -10551,120 +10676,13 @@ namespace Thetis
                     if (value == _condition && !_forceRecompile) return;
                     _forceRecompile = false;
 
-                    //_condition = value.Replace("|", "");
-                    _condition = value;
-                    ReadingsCustom.UpdateReadings(_condition);
-                    lock (_list_placeholders_lock)
-                    {
-                        _list_placeholders_readings.Clear();
-                        _list_placeholders_strings.Clear();
-                        List<string> placeholders = ReadingsCustom.GetPlaceholders(_condition);
-                        foreach (string placeholder in placeholders)
-                        {
-                            if (ReadingsCustom.IsCustomString(placeholder))
-                                _list_placeholders_strings.Add(placeholder);
-                            else
-                            {
-                                bool ok = Enum.TryParse<Reading>(placeholder.ToUpper(), out Reading tmpReading);
-                                if (ok) _list_placeholders_readings.Add(tmpReading);
-                            }
-                        }
+                    Debug.Print("CHANGE");
+                    _pending_condition = value;
 
-                        _variable_substitutions.Clear();                        
-                        string expression = _condition;
-                        string script_expression = _condition;
-                        string lower;
-                        foreach (Reading r in _list_placeholders_readings)
-                        {
-                            object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, _owningMeter.RX);
-                            lower = "%" + r.ToString().ToLower() + "%";
-                            if (expression.IndexOf(lower) >= 0)
-                                expression = expression.Replace(lower, reading.ToString());
-                            if (script_expression.IndexOf(lower) >= 0)
-                                script_expression = script_expression.Replace(lower, "(float)Variables[\"" + r.ToString().ToLower() + "\"]");
-
-                            if (!_variable_substitutions.ContainsKey(r.ToString().ToLower()))
-                                _variable_substitutions.Add(r.ToString().ToLower(), reading);
-                        }
-                        foreach (string placeholder in _list_placeholders_strings)
-                        {
-                            object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, _owningMeter.RX);
-                            string type;
-                            if (reading is int)
-                                type = "int";
-                            else if (reading is float)
-                                type = "float";
-                            else if (reading is double)
-                                type = "double";
-                            else if (reading is bool)
-                                type = "bool";
-                            else
-                                type = "string";
-
-                            lower = "%" + placeholder.ToLower() + "%";
-                            if (expression.IndexOf(lower) >= 0)
-                                expression = expression.Replace(lower, "(" + type + ")(" + (type == "string" ? "\"" : "") + reading.ToString() + (type == "string" ? "\"" : "") + ")");
-                            if (script_expression.IndexOf(lower) >= 0)
-                                script_expression = script_expression.Replace(lower, "(" + type + ")(Variables[\"" + placeholder.ToLower() + "\"])");
-
-                            if (!_variable_substitutions.ContainsKey(placeholder.ToLower()))
-                                _variable_substitutions.Add(placeholder.ToLower(), reading);
-                        }
-
-                        // MultiMeter IO
-                        foreach (KeyValuePair<Guid, MultiMeterIO.clsMMIO> mmios in MultiMeterIO.Data)
-                        {
-                            MultiMeterIO.clsMMIO mmio = mmios.Value;
-                            foreach (KeyValuePair<string, object> kvp in mmio.Variables())
-                            {
-                                object val = mmio.GetVariable(kvp.Key);
-
-                                string tmp = mmio.VariableValueType(val);
-                                lower = "%" + kvp.Key + "%";
-                                if (script_expression.IndexOf(lower) >= 0)
-                                {
-                                    string type;
-                                    if (val is int)
-                                        type = "int";
-                                    else if (val is float)
-                                        type = "float";
-                                    else if (val is double)
-                                        type = "double";
-                                    else if (val is bool)
-                                        type = "bool";
-                                    else
-                                        type = "string";
-
-                                    if (expression.IndexOf(lower) >= 0)
-                                        expression = expression.Replace(lower, (type == "string" ? "\"" : "") + tmp + (type == "string" ? "\"" : ""));
-                                    if (script_expression.IndexOf(lower) >= 0)
-                                        script_expression = script_expression.Replace(lower, "(" + type + ")(Variables[\"" + kvp.Key + "\"])");
-
-                                    if (!_variable_substitutions.ContainsKey(kvp.Key))
-                                        _variable_substitutions.Add(kvp.Key, val);
-                                }
-                            }
-                        }
-                        //
-
-                        bool okExp = validateExpression(expression, _variable_substitutions);
-                        if (okExp)
-                        {
-                            try
-                            {
-                                ScriptOptions options = ScriptOptions.Default.AddReferences(typeof(object).Assembly);
-                                _script = CSharpScript.Create($"bool result = (bool)({script_expression});", options, typeof(Globals));
-                                _script.Compile();
-
-                                _valid = true;
-                            }
-                            catch
-                            {
-                                _script = null;
-                                _valid = false;
-                            }
-                        }
-                    }                    
+                    if (_timer == null)
+                        _timer = new System.Threading.Timer(_ => onTimerElapsedCondition(), null, _delay_milliseconds, Timeout.Infinite);
+                    else
+                        _timer.Change(_forceRecompile ? 0 : _delay_milliseconds, Timeout.Infinite);                                     
                 }
             }
             public float OffsetX

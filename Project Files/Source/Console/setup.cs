@@ -30229,8 +30229,9 @@ namespace Thetis
                 lblLed_Error.Visible = igs.ShowHistory;
                 lblLed_Valid.Text = igs.ShowType ? "Valid" : "Invalid";
                 lblLed_Valid.ForeColor = igs.ShowType ? Color.LimeGreen : Color.Red;
-            }
 
+                tmrLedValid.Enabled = true;
+            }            
         }
 
         private void chkLed_show_true_CheckedChanged(object sender, EventArgs e)
@@ -31249,6 +31250,11 @@ namespace Thetis
         {
             lblCMAsioInfo.Text = "Settings updated. Restart to take effect.";
             lblCMAsioInfo.Visible = true;
+        }
+        private void tmrLedValid_Tick(object sender, EventArgs e)
+        {
+            if (!txtLedIndicator_condition.Visible) tmrLedValid.Enabled = false;
+            updateLedValidControls();
         }
     }
 

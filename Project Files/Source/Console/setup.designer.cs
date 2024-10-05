@@ -3993,6 +3993,7 @@
             this.tabPage13 = new System.Windows.Forms.TabPage();
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
+            this.tmrLedValid = new System.Windows.Forms.Timer(this.components);
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -63445,6 +63446,11 @@
             this.tabPage15.Text = "blank";
             this.tabPage15.UseVisualStyleBackColor = true;
             // 
+            // tmrLedValid
+            // 
+            this.tmrLedValid.Interval = 500;
+            this.tmrLedValid.Tick += new System.EventHandler(this.tmrLedValid_Tick);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -68704,5 +68710,6 @@
         private LabelTS labelTS295;
         private LabelTS labelTS286;
         private LabelTS lblCMAsioInfo;
+        private Timer tmrLedValid;
     }
 }
