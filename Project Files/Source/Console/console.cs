@@ -846,6 +846,9 @@ namespace Thetis
             if (_portAudioIssue)
                 MessageBox.Show("There was an issue initialising PortAudio", "PortAudio", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
+            //            
+            if (!IsSetupFormNull) SetupForm.SetupCMAsio(!_portAudioIssue && Common.HasArg(args, "-cmasioconfig"));
+
             // still waiting cpu
             if (!_getInstanceNameComplete && instanceNameThread != null && instanceNameThread.IsAlive)
             {

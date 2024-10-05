@@ -11930,7 +11930,6 @@ namespace Thetis
             if (power && chkVAC2Enable.Checked)
             {
                 Audio.EnableVAC2(false);
-                Thread.Sleep(1); //MW0LGE_21k9 prevent exception when using ASIO //[2.10.3.5]MW0LGE CHECK THIS
             }
 
             Audio.VAC2OutputIQ = chkVAC2DirectIQ.Checked;
@@ -31065,6 +31064,85 @@ namespace Thetis
                 btnMeterUp.Enabled = !chkLockContainer.Checked;
                 btnMeterDown.Enabled = !chkLockContainer.Checked;
             }
+        }
+        public void SetupCMAsio(bool show_cmasioconfig)
+        {
+            if (!show_cmasioconfig)
+            {
+                tcAudio.TabPages.Remove(tpCMAsio);
+                return;
+            }
+
+            comboASIODevicesAvailable.Items.Clear();
+
+            txtCurrentAsioDevice.Text = CMASIOConfig.GetASIOdrivername();
+            nudAsioBlockNum.Value = (decimal)CMASIOConfig.GetASIOblocknum();
+            chkAsioLockMode.Checked = CMASIOConfig.GetASIOlockmode();
+
+            //the ASIO driver in use wont be in the list, lets add it
+            if (!string.IsNullOrEmpty(txtCurrentAsioDevice.Text)) 
+                comboASIODevicesAvailable.Items.Add(txtCurrentAsioDevice.Text);
+
+            comboASIODevicesAvailable.Items.AddRange(CMASIOConfig.GetASIODevices().ToArray());
+
+            if (comboASIODevicesAvailable.Items.Count == 0)
+            {
+                comboASIODevicesAvailable.Items.Add("None Available");
+            }
+
+            setCMasioControls(!string.IsNullOrEmpty(txtCurrentAsioDevice.Text));
+        }
+
+        private void btnCMASIOActive_Click(object sender, EventArgs e)
+        {
+            string selected = comboASIODevicesAvailable.SelectedItem.ToString();
+            if (selected == "None Available") return;
+            if (string.IsNullOrEmpty(selected)) return;
+
+            CMASIOConfig.SetASIOdrivername(selected);
+            setCMasioControls(true);
+            updateCMAsioInfo();
+        }
+
+        private void btnCMASIODisable_Click(object sender, EventArgs e)
+        {
+            CMASIOConfig.SetASIOdrivername("");
+            updateCMAsioInfo();
+        }
+        private void setCMasioControls(bool enabled)
+        {
+            nudAsioBlockNum.Enabled = enabled;
+            chkAsioLockMode.Enabled = enabled;
+            nudAsioBlockNum.Enabled = enabled;
+            btnCMAsioDefaultBlockNum.Enabled = enabled;
+        }
+        private void nudAsioBlockNum_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            CMASIOConfig.SetASIOblocknum((int)nudAsioBlockNum.Value, chkAsioLockMode.Checked);
+            updateCMAsioInfo();
+        }
+
+        private void comboASIODevicesAvailable_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+        }
+
+        private void chkAsioLockMode_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            CMASIOConfig.SetASIOblocknum((int)nudAsioBlockNum.Value, chkAsioLockMode.Checked);
+            updateCMAsioInfo();
+        }
+
+        private void btnCMAsioDefaultBlockNum_Click(object sender, EventArgs e)
+        {
+            nudAsioBlockNum.Value = 5;
+        }
+        private void updateCMAsioInfo()
+        {
+            lblCMAsioInfo.Text = "Settings updated. Restart to take effect.";
+            lblCMAsioInfo.Visible = true;
         }
     }
 

@@ -198,6 +198,18 @@
         lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
 </value>
   </data>
+  <data name="labelTS295.Text" xml:space="preserve">
+    <value>- Any changes made here will only apply after Thetis is restarted
+- If VAC is enabled input will be taken from the VAC and not cmASIO
+- If a red cmASIO icon is shown in the status bar there is an issue
+- The ASIO device will not be available to VAC if in use by cmASIO
+- 48,000 sa/s sampling rate
+- sample buffer size is fixed at 64
+- Int32LSB sample format (24 bit samples, left aligned in 32 bit little-endian integers)
+
+- Remove any previous cmASIO settings from HKEY_LOCAL_MACHINE\SOFTWARE\OpenHPSDR\Thetis-x64
+- This now uses HKEY_CURRENT_USER\SOFTWARE\OpenHPSDR\Thetis-x64</value>
+  </data>
   <data name="chkPurgeBuffers.ToolTip" xml:space="preserve">
     <value>On a mox transition there are times where you get a 'pulse' of energy in the display.
 This is not spurious RF but a side effect of the FFT bins and averages.
