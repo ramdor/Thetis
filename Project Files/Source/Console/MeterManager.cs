@@ -16376,7 +16376,7 @@ namespace Thetis
                                             vfo.SyncColour = igs.GetSetting<System.Drawing.Color>("vfo_sync_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
 
                                             vfo.VFODispMode = (clsVfoDisplay.VFODisplayMode)igs.HistoryDuration;
-                                            if (vfo.VFODispMode < clsVfoDisplay.VFODisplayMode.VFO_A || vfo.VFODispMode > clsVfoDisplay.VFODisplayMode.VFO_BOTH) vfo.VFODispMode = clsVfoDisplay.VFODisplayMode.VFO_BOTH;
+                                            if (vfo.VFODispMode < clsVfoDisplay.VFODisplayMode.VFO_BOTH || vfo.VFODispMode > clsVfoDisplay.VFODisplayMode.VFO_B) vfo.VFODispMode = clsVfoDisplay.VFODisplayMode.VFO_BOTH;
                                             if (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH) both = true;
 
                                             if (both)
