@@ -119,7 +119,7 @@ namespace Thetis
     //        return Math.Abs(d) < Epsilon;
     //    }
     //}
-    public class Common
+    public static class Common
 	{
 		private const bool ENABLE_VERSION_TIMEOUT = false;
 		private static DateTime _versionTimeout = new DateTime(2022, 06, 01, 00, 00, 00); // june 1st 2022 00:00:00

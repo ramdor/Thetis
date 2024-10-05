@@ -939,7 +939,7 @@ namespace Thetis
             if (str != "")
             {
                 string[] tmp = str.Split('|');
-                if(tmp.Length >= 13 && tmp.Length <= 21)
+                if(tmp.Length >= 13)// && tmp.Length <= 21)  //[2.10.3.6_rc4] MW0LGE removed so that clients going forward can use older data as long as 13 entries exist
                 {
                     bOk = tmp[0] != "";
                     if (bOk) ID = tmp[0];

@@ -15812,6 +15812,7 @@ namespace Thetis
                                             rotator.OuterTextColour = igs.HighColor;
                                             rotator.ShowCardinals = igs.ShowHistory;
                                             rotator.ViewMode = (clsRotatorItem.RotatorMode)igs.HistoryDuration;
+                                            if (rotator.ViewMode < clsRotatorItem.RotatorMode.AZ || rotator.ViewMode > clsRotatorItem.RotatorMode.BOTH) rotator.ViewMode = clsRotatorItem.RotatorMode.AZ;
                                             rotator.FadeOnRx = igs.FadeOnRx;
                                             rotator.FadeOnTx = igs.FadeOnTx;
                                             rotator.BeamWidth = igs.AttackRatio;
@@ -16375,6 +16376,7 @@ namespace Thetis
                                             vfo.SyncColour = igs.GetSetting<System.Drawing.Color>("vfo_sync_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
 
                                             vfo.VFODispMode = (clsVfoDisplay.VFODisplayMode)igs.HistoryDuration;
+                                            if (vfo.VFODispMode < clsVfoDisplay.VFODisplayMode.VFO_A || vfo.VFODispMode > clsVfoDisplay.VFODisplayMode.VFO_BOTH) vfo.VFODispMode = clsVfoDisplay.VFODisplayMode.VFO_BOTH;
                                             if (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH) both = true;
 
                                             if (both)
@@ -19491,11 +19493,10 @@ namespace Thetis
             }
             private SizeF measureString(string sText, string sFontFamily, FontStyle style, float emSize, bool ignore_caching = false)
             {
-                if (!_bDXSetup) return SizeF.Empty;
-                if (emSize == 0) return SizeF.Empty; // zero size text is zero measurement
+                if (!_bDXSetup) return SizeF.Empty;                
                 if (string.IsNullOrEmpty(sText)) return SizeF.Empty;
-
-                emSize = (float)Math.Round(emSize, 2);                
+                emSize = (float)Math.Round(emSize, 2);
+                if (emSize == 0) return SizeF.Empty; // zero size text is zero measurement
 
                 string sKey = sFontFamily + "_" + style + "_" + sText + "_" + emSize.ToString("0.00");
 
@@ -19505,7 +19506,7 @@ namespace Thetis
                 SharpDX.DirectWrite.FontStyle fontStyle = SharpDX.DirectWrite.FontStyle.Normal;
                 if (((int)style & (int)FontStyle.Bold) == (int)FontStyle.Bold) fontWeight = SharpDX.DirectWrite.FontWeight.Bold;
                 if (((int)style & (int)FontStyle.Italic) == (int)FontStyle.Italic) fontStyle = SharpDX.DirectWrite.FontStyle.Italic;
-                
+
                 // calculate how big the string would be @ emSize pt
                 SharpDX.DirectWrite.TextFormat tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyle, emSize);
                 tf.WordWrapping = SharpDX.DirectWrite.WordWrapping.NoWrap;
