@@ -196,8 +196,11 @@ namespace Thetis
         public void Repaint()
         {
             if (_floating) return;
-            this.Parent.Invalidate(this.Bounds, true);
-            this.Parent.Update();
+            if (this.Parent != null)
+            {
+                this.Parent.Invalidate(this.Bounds, true);
+                this.Parent.Update();
+            }
         }
         private void pnlBar_MouseLeave(object sender, EventArgs e)
         {
