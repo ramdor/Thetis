@@ -236,7 +236,10 @@ namespace Thetis
 
                     if(newPos != Parent.Location) Parent.Location = newPos;
 
-                    showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
+                    if (this.Parent != null)
+                    {
+                        showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
+                    }
                 }
                 else
                 {
@@ -396,7 +399,12 @@ namespace Thetis
                 resize(x, y);
 
                 if (_floating)
-                    showToolTip($"{this.Parent.Size.Width}, {this.Parent.Size.Height}", this.Parent, true);
+                {
+                    if (this.Parent != null)
+                    {
+                        showToolTip($"{this.Parent.Size.Width}, {this.Parent.Size.Height}", this.Parent, true);
+                    }
+                }
                 else
                     showToolTip($"{this.Size.Width}, {this.Size.Height}", this, true);
             }
@@ -412,7 +420,10 @@ namespace Thetis
             {
                 Parent.ClientSize = new Size(x, y);
                 Parent.PerformLayout();
-                (bool was_relocated, bool was_shrunk) = Common.ForceFormOnScreen((Form)this.Parent, shrink);
+                if (this.Parent != null)
+                {
+                    (bool was_relocated, bool was_shrunk) = Common.ForceFormOnScreen((Form)this.Parent, shrink);
+                }
             }
             else
             {
@@ -647,7 +658,10 @@ namespace Thetis
 
                     if(newPos != Parent.Location) Parent.Location = newPos;
 
-                    showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
+                    if (this.Parent != null)
+                    {
+                        showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
+                    }
                 }
                 else
                 {
@@ -879,10 +893,13 @@ namespace Thetis
         {
             if (_floating)
             {
-                frmMeterDisplay md = this.Parent as frmMeterDisplay;
-                if (md != null)
+                if (this.Parent != null)
                 {
-                    md.TopMost = _pinOnTop;
+                    frmMeterDisplay md = this.Parent as frmMeterDisplay;
+                    if (md != null)
+                    {
+                        md.TopMost = _pinOnTop;
+                    }
                 }
             }
         }
@@ -890,10 +907,15 @@ namespace Thetis
         {
             get
             {
-                frmMeterDisplay md = this.Parent as frmMeterDisplay;
-                if (md != null)
+                if (this.Parent != null)
                 {
-                    return md.TopMost;
+                    frmMeterDisplay md = this.Parent as frmMeterDisplay;
+                    if (md != null)
+                    {
+                        return md.TopMost;
+                    }
+                    else
+                        return false;
                 }
                 else
                     return false;
