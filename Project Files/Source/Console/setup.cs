@@ -24680,6 +24680,9 @@ namespace Thetis
                 else if (radLed_light_pulsate.Checked)
                     igs.IgnoreHistoryDuration = 2;
                 // also showhistory + showtype are return states for valid/error
+
+                igs.SetSetting<bool>("led_notx_true", chkLed_notx_true.Checked);
+                igs.SetSetting<bool>("led_notx_false", chkLed_notx_false.Checked);
             }
             else if (mt == MeterType.TEXT_OVERLAY)
             {
@@ -25227,6 +25230,9 @@ namespace Thetis
                         radLed_light_pulsate.Checked = true;
                         break;
                 }
+
+                chkLed_notx_true.Checked = igs.GetSetting<bool>("led_notx_true", false, false, false, false);
+                chkLed_notx_false.Checked = igs.GetSetting<bool>("led_notx_false", false, false, false, false);
 
                 updateLedIndicatorPanelControls();
                 updateLedValidControls();
@@ -31255,6 +31261,16 @@ namespace Thetis
         {
             if (!txtLedIndicator_condition.Visible) tmrLedValid.Enabled = false;
             updateLedValidControls();
+        }
+
+        private void chkLed_notx_true_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkLed_notx_false_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 

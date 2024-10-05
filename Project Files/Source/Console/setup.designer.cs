@@ -3994,6 +3994,8 @@
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
             this.tmrLedValid = new System.Windows.Forms.Timer(this.components);
+            this.chkLed_notx_true = new System.Windows.Forms.CheckBoxTS();
+            this.chkLed_notx_false = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -61993,6 +61995,8 @@
             // 
             // grpLedIndicator
             // 
+            this.grpLedIndicator.Controls.Add(this.chkLed_notx_false);
+            this.grpLedIndicator.Controls.Add(this.chkLed_notx_true);
             this.grpLedIndicator.Controls.Add(this.radLed_light_pulsate);
             this.grpLedIndicator.Controls.Add(this.radLed_light_blink);
             this.grpLedIndicator.Controls.Add(this.radLed_light_on_off);
@@ -62040,7 +62044,7 @@
             // 
             this.radLed_light_pulsate.AutoSize = true;
             this.radLed_light_pulsate.Image = null;
-            this.radLed_light_pulsate.Location = new System.Drawing.Point(219, 243);
+            this.radLed_light_pulsate.Location = new System.Drawing.Point(233, 286);
             this.radLed_light_pulsate.Name = "radLed_light_pulsate";
             this.radLed_light_pulsate.Size = new System.Drawing.Size(60, 17);
             this.radLed_light_pulsate.TabIndex = 172;
@@ -62053,7 +62057,7 @@
             // 
             this.radLed_light_blink.AutoSize = true;
             this.radLed_light_blink.Image = null;
-            this.radLed_light_blink.Location = new System.Drawing.Point(219, 220);
+            this.radLed_light_blink.Location = new System.Drawing.Point(233, 263);
             this.radLed_light_blink.Name = "radLed_light_blink";
             this.radLed_light_blink.Size = new System.Drawing.Size(48, 17);
             this.radLed_light_blink.TabIndex = 171;
@@ -62066,7 +62070,7 @@
             // 
             this.radLed_light_on_off.AutoSize = true;
             this.radLed_light_on_off.Image = null;
-            this.radLed_light_on_off.Location = new System.Drawing.Point(219, 197);
+            this.radLed_light_on_off.Location = new System.Drawing.Point(233, 240);
             this.radLed_light_on_off.Name = "radLed_light_on_off";
             this.radLed_light_on_off.Size = new System.Drawing.Size(58, 17);
             this.radLed_light_on_off.TabIndex = 170;
@@ -63450,6 +63454,32 @@
             // 
             this.tmrLedValid.Interval = 500;
             this.tmrLedValid.Tick += new System.EventHandler(this.tmrLedValid_Tick);
+            // 
+            // chkLed_notx_true
+            // 
+            this.chkLed_notx_true.AutoSize = true;
+            this.chkLed_notx_true.Image = null;
+            this.chkLed_notx_true.Location = new System.Drawing.Point(213, 165);
+            this.chkLed_notx_true.Name = "chkLed_notx_true";
+            this.chkLed_notx_true.Size = new System.Drawing.Size(57, 17);
+            this.chkLed_notx_true.TabIndex = 173;
+            this.chkLed_notx_true.Text = "No TX";
+            this.toolTip1.SetToolTip(this.chkLed_notx_true, "Stop and/or prevent Tx/Mox");
+            this.chkLed_notx_true.UseVisualStyleBackColor = true;
+            this.chkLed_notx_true.CheckedChanged += new System.EventHandler(this.chkLed_notx_true_CheckedChanged);
+            // 
+            // chkLed_notx_false
+            // 
+            this.chkLed_notx_false.AutoSize = true;
+            this.chkLed_notx_false.Image = null;
+            this.chkLed_notx_false.Location = new System.Drawing.Point(213, 189);
+            this.chkLed_notx_false.Name = "chkLed_notx_false";
+            this.chkLed_notx_false.Size = new System.Drawing.Size(57, 17);
+            this.chkLed_notx_false.TabIndex = 174;
+            this.chkLed_notx_false.Text = "No TX";
+            this.toolTip1.SetToolTip(this.chkLed_notx_false, "Stop and/or prevent Tx/Mox");
+            this.chkLed_notx_false.UseVisualStyleBackColor = true;
+            this.chkLed_notx_false.CheckedChanged += new System.EventHandler(this.chkLed_notx_false_CheckedChanged);
             // 
             // Setup
             // 
@@ -68711,5 +68741,7 @@
         private LabelTS labelTS286;
         private LabelTS lblCMAsioInfo;
         private Timer tmrLedValid;
+        private CheckBoxTS chkLed_notx_false;
+        private CheckBoxTS chkLed_notx_true;
     }
 }

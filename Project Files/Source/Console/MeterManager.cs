@@ -58,13 +58,6 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
-using RawInput_dll;
-using System.Drawing.Text;
-using System.Security.Policy;
-using System.Windows.Forms.DataVisualization.Charting;
-using System.Runtime.CompilerServices;
-using System.Security.Permissions;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Thetis
 {
@@ -10382,6 +10375,11 @@ namespace Thetis
             private bool _show_false;
             private bool _show_true;
 
+            private bool _notxtrue;
+            private bool _notxfalse;
+
+            private Thread _thread;
+
             public clsLed(clsMeter owningMeter)
             {
                 _list_placeholders_strings = new List<string>();
@@ -10405,6 +10403,8 @@ namespace Thetis
                 _valid = false;
                 _busy = false;
                 _error = false;
+                _notxtrue = false;
+                _notxtrue = false;
 
                 ItemType = MeterItemType.LED;
                 ReadingSource = Reading.NONE;
@@ -10490,13 +10490,23 @@ namespace Thetis
                     }
                 }
                 catch (Exception ex)
-                { 
+                {
                     _valid = false;
                     _script = null;
                     _error = true;
                 }
                 _busy = false;
                 return bRet;
+            }
+            public bool NoTxFalse
+            {
+                get { return _notxfalse; }
+                set { _notxfalse = value; }
+            }
+            public bool NoTxTrue
+            {
+                get { return _notxtrue; }
+                set { _notxtrue = value; }
             }
             public bool ScriptError
             {
@@ -10549,7 +10559,6 @@ namespace Thetis
             private string _pending_condition;
             private void onTimerElapsedCondition()
             {
-                Debug.Print("TIMER");
                 _condition = _pending_condition;
                 ReadingsCustom.UpdateReadings(_condition);
                 lock (_list_placeholders_lock)
@@ -10648,6 +10657,12 @@ namespace Thetis
                     bool okExp = validateExpression(expression, _variable_substitutions);
                     if (okExp)
                     {
+                        if (_cts != null)
+                        {
+                            _cts.Cancel();
+                            _cts.Dispose();
+                            _cts = null;
+                        }
                         try
                         {
                             ScriptOptions options = ScriptOptions.Default.AddReferences(typeof(object).Assembly);
@@ -10676,7 +10691,6 @@ namespace Thetis
                     if (value == _condition && !_forceRecompile) return;
                     _forceRecompile = false;
 
-                    Debug.Print("CHANGE");
                     _pending_condition = value;
 
                     if (_timer == null)
@@ -10826,9 +10840,28 @@ namespace Thetis
                     {
                         _cts = new CancellationTokenSource();
                         _old_result = _result;
-                        _result = evaluateExpression(_cts.Token).Result;
+                        Task.Run(async () =>
+                        {
+                             _result = await evaluateExpression(_cts.Token);
+                        });
+                        // change
+                        if(_result && _notxtrue && _console.MOX)
+                        {
+                            stopMox();
+                        }
+                        else if (!_result && _notxfalse && _console.MOX)
+                        {
+                            stopMox();
+                        }
                     }
                 }
+            }
+            private void stopMox()
+            {
+                _console.BeginInvoke(new MethodInvoker(() =>
+                {
+                    _console.StopAllTx();
+                }));
             }
             public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
@@ -10846,16 +10879,6 @@ namespace Thetis
                     }
                 }
                 return true;
-                //value = 0;
-                //lock (_list_placeholders_lock)
-                //{
-                //    foreach (Reading reading in _list_placeholders_readings)
-                //    {
-                //        ZeroReading(out value, rx, reading);
-                //        MeterManager.setReadingForced(rx, reading, value);
-                //    }
-                //}
-                //return false; // false as we do our own setReadingForced just above
             }
         }
         internal class clsBarItem : clsMeterItem
@@ -15989,6 +16012,9 @@ namespace Thetis
                                                 led.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
                                                 led.Size = new SizeF(0, 0);
                                             }
+
+                                            led.NoTxTrue = igs.GetSetting<bool>("led_notx_true", false, false, false, false);
+                                            led.NoTxFalse = igs.GetSetting<bool>("led_notx_false", false, false, false, false);
                                         }
                                         ig.Size = new SizeF(ig.Size.Width, padding == 0f ? 0 : padding + (_fPadY - (_fHeight * 0.75f)));
 
@@ -16887,6 +16913,9 @@ namespace Thetis
                                                 igs.IgnoreHistoryDuration = 1;
                                             else if (!led.Blink && led.Pulsate)
                                                 igs.IgnoreHistoryDuration = 2;
+
+                                            igs.SetSetting<bool>("led_notx_true", led.NoTxTrue);
+                                            igs.SetSetting<bool>("led_notx_false", led.NoTxFalse);
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                         {

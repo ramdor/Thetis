@@ -45986,17 +45986,24 @@ namespace Thetis
             TimeOutTimerManager.RemoveCallback(timeOutTimer);
         }
         //
-        private void timeOutTimer(string msg)
+        public void StopAllTx()
         {
             if (MOX || manual_mox || chkTUN.Checked || chk2TONE.Checked)
             {
-                //everything off !!
                 MOX = false;
                 manual_mox = false;
                 if (chkTUN.Checked)
                     chkTUN.Checked = false;
                 if (chk2TONE.Checked)
                     chk2TONE.Checked = false;
+            }
+        }
+        private void timeOutTimer(string msg)
+        {
+            if (MOX || manual_mox || chkTUN.Checked || chk2TONE.Checked)
+            {
+                //everything off !!
+                StopAllTx();
 
                 infoBar.Warning(msg + " Time Out Timer", 1, true);
             }
