@@ -26388,8 +26388,19 @@ namespace Thetis
         {
             if (token is JValue)
             {
-                JValue valueToken = (JValue)token;
-                keyValuePairs[currentPath] = valueToken.ToString();
+                //keyValuePairs[currentPath] = ((JValue)token).ToString();
+
+                if (token.Type == JTokenType.Integer ||
+                    token.Type == JTokenType.Float ||
+                    token.Type == JTokenType.Boolean
+                    )
+                {
+                    keyValuePairs[currentPath] = ((JValue)token).ToString(Newtonsoft.Json.Formatting.None);
+                }
+                else
+                {
+                    keyValuePairs[currentPath] = ((JValue)token).ToString();
+                }
             }
             else if (token is JObject)
             {
