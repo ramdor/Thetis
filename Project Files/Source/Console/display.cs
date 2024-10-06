@@ -4095,9 +4095,9 @@ namespace Thetis
             int Y;
             max = data[0] + fOffset;
             Y = (int)(((grid_max - max) * dbmToPixel) - 0.5f); // -0.5 to mimic floor
-            if (Y >= H) Y = H;
+            //crop if (Y >= H) Y = H;
             Y += nVerticalShift;
-            if (Y < nVerticalShift) Y = nVerticalShift; // crop top
+            //crop if (Y < nVerticalShift) Y = nVerticalShift; // crop top
 
             bool bIgnoringPoints = false;
             SharpDX.Vector2 point = new SharpDX.Vector2();
@@ -4157,6 +4157,9 @@ namespace Thetis
 
             unchecked // we dont expect any overflows
             {
+                SharpDX.RectangleF clipRect = new SharpDX.RectangleF(0, nVerticalShift, W, H);
+                _d2dRenderTarget.PushAxisAlignedClip(clipRect, AntialiasMode.Aliased);
+
                 // modify the data for visual notches
                 if (bDoVisualNotch && m_bShowVisualNotch && !local_mox)
                 {
@@ -4183,9 +4186,9 @@ namespace Thetis
                     //
 
                     Y = (int)(((grid_max - max) * dbmToPixel) - 0.5f); // -0.5 to mimic floor
-                    if (Y > H) Y = H;
+                    //crop if (Y > H) Y = H;
                     Y += nVerticalShift;
-                    if (Y < nVerticalShift) Y = nVerticalShift; // crop top
+                    //crop if (Y < nVerticalShift) Y = nVerticalShift; // crop top
 
                     point.Y = Y;
 
@@ -4264,9 +4267,9 @@ namespace Thetis
                             // draw to peak, but re-work Y as we might rescale the spectrum vertically
                             spectralPeakPoint.X = point.X;
                             spectralPeakPoint.Y = (int)(((grid_max - spectralPeaks[i].max_dBm) * dbmToPixel) - 0.5f);
-                            if (spectralPeakPoint.Y > H) spectralPeakPoint.Y = H;
+                            //crop if (spectralPeakPoint.Y > H) spectralPeakPoint.Y = H;
                             spectralPeakPoint.Y += nVerticalShift;
-                            if (spectralPeakPoint.Y < nVerticalShift) spectralPeakPoint.Y = nVerticalShift; // crop top
+                            //crop if (spectralPeakPoint.Y < nVerticalShift) spectralPeakPoint.Y = nVerticalShift; // crop top
 
                             if (bActivePeakFill)
                             {
@@ -4348,16 +4351,16 @@ namespace Thetis
 
                     if ((rx == 1 && m_bShowRX1NoiseFloor) || (rx == 2 && m_bShowRX2NoiseFloor))
                     {
-                        yPixelLerp = yPixelLerp < H ? yPixelLerp : H;
+                        //crop yPixelLerp = yPixelLerp < H ? yPixelLerp : H;
                         yPixelLerp += nVerticalShift;
 
-                        bool bDraw = !(yPixelLerp < nVerticalShift || yPixelLerp >= nVerticalShift + H); // crop anything off the top
+                        //crop bool bDraw = !(yPixelLerp < nVerticalShift || yPixelLerp >= nVerticalShift + H); // crop anything off the top
 
-                        if (bDraw)
-                        {
+                        //crop if (bDraw)
+                        //{
                             bool bFast = rx == 1 ? m_bFastAttackNoiseFloorRX1 : m_bFastAttackNoiseFloorRX2;
 
-                            yPixelActual = yPixelActual < H ? yPixelActual : H;
+                            //crop yPixelActual = yPixelActual < H ? yPixelActual : H;
                             yPixelActual += nVerticalShift;
 
                             SharpDX.Direct2D1.Brush nf_colour = bFast ? m_bDX2_Gray : m_bDX2_noisefloor;
@@ -4378,7 +4381,7 @@ namespace Thetis
                             {
                                 drawStringDX2D("-NF", fontDX2d_panafont, nf_colour_text, nf_box.X + nf_box.Width, nf_box.Y - 4);
                             }
-                        }
+                        //}
                     }
                 }
 
@@ -4405,7 +4408,7 @@ namespace Thetis
 
                                     // recalc Y
                                     int nNewY = (int)(((grid_max - maximums[n].max_dBm) * dbmToPixel) - 0.5f);
-                                    nNewY = nNewY < H ? nNewY + nVerticalShift : H + nVerticalShift;
+                                    //crop nNewY = nNewY < H ? nNewY + nVerticalShift : H + nVerticalShift;
                                     maximums[n].MaxY_pixel = nNewY;
                                 }
                                 else if (maximums[n].max_dBm <= -200.0)
@@ -4418,12 +4421,12 @@ namespace Thetis
                             m_objEllipse.Point.X = maximums[n].X * m_nDecimation;
                             m_objEllipse.Point.Y = maximums[n].MaxY_pixel;
 
-                            bool bDraw = true;
-                            if (m_objEllipse.Point.Y < nVerticalShift) bDraw = false; // crop top
-                            if (m_objEllipse.Point.Y >= nVerticalShift + H) bDraw = false; // crop top
+                            //crop bool bDraw = true;
+                            //crop if (m_objEllipse.Point.Y < nVerticalShift) bDraw = false; // crop top
+                            //crop if (m_objEllipse.Point.Y >= nVerticalShift + H) bDraw = false; // crop top
 
-                            if (bDraw)
-                            {
+                            //crop if (bDraw)
+                            //{
                                 string sAppend;
                                 if (rx == 1)
                                 {
@@ -4435,10 +4438,12 @@ namespace Thetis
                                 }
                                 _d2dRenderTarget.DrawEllipse(m_objEllipse, m_bDX2_PeakBlob);
                                 _d2dRenderTarget.DrawText(maximums[n].max_dBm.ToString("f1") + sAppend, fontDX2d_callout, new RectangleF(m_objEllipse.Point.X + 6, m_objEllipse.Point.Y - 8, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_PeakBlobText, DrawTextOptions.None);
-                            }
+                            //}
                         }
                     }
                 }
+
+                _d2dRenderTarget.PopAxisAlignedClip();
             }
 
             if (!bottom)
@@ -6823,6 +6828,9 @@ namespace Thetis
             //--
             #endregion
 
+            SharpDX.RectangleF clipRect = new SharpDX.RectangleF(0, nVerticalShift, W, H);
+            _d2dRenderTarget.PushAxisAlignedClip(clipRect, AntialiasMode.Aliased);
+
             #region RX filter, filter lines and sub rx overlay
             if (!local_mox && sub_rx1_enabled && rx == 1) //multi-rx
             {
@@ -8118,6 +8126,8 @@ namespace Thetis
                 }// for loop through DX_Index
             }
             #endregion
+
+            _d2dRenderTarget.PopAxisAlignedClip();
         }
 
         private static void DrawCursorInfo(int W)

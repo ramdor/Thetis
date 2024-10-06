@@ -524,6 +524,9 @@ namespace Thetis
 
         private bool _restart;
 
+        private bool _check_error_log = true;
+        private long _error_log_initial_size;
+
         public CWX CWXForm
         {
             // implemented so that the creation of the form happens in a single place
@@ -653,6 +656,12 @@ namespace Thetis
 
             AppDataPath = app_data_path;
             //AppDataPath has been set at this point
+
+            if (_check_error_log)
+            {
+                //store size of ErrorLog.txt at this point, and compare at shutdown. If different display a msg
+                _error_log_initial_size = getErrorLogSize();
+            }
 
             if (!Directory.Exists(AppDataPath))
                 Directory.CreateDirectory(AppDataPath);
@@ -1138,6 +1147,24 @@ namespace Thetis
                 _frmShutDownForm.Close(); // last thing to get rid of
                 _frmShutDownForm.Dispose();
                 shutdownLogStringToPath("After _frmShutDownForm.Dispose()");
+            }
+
+            if (_check_error_log)
+            {
+                shutdownLogStringToPath("Before error log size check");
+                //check error log size
+                long new_szie = getErrorLogSize();
+                if (new_szie != _error_log_initial_size)
+                {
+                    //log file has changed
+                    MessageBox.Show("The ErrorLog.txt has been updated during this sesson.\n\n" +
+                    "Please email it to MW0LGE at : [mw0lge@grange-lane.co.uk].\n\n" +
+                    "It is located in this folder : [" + AppDataPath + "].",
+                    "Error Log Change",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+                shutdownLogStringToPath("After error log size check");
             }
 
             if (disposing)
@@ -28210,10 +28237,21 @@ namespace Thetis
             chkPower.Checked = false;	// make sure power is off		
             ckQuickRec.Checked = false; // make sure recording is stopped
 
+            shutdownLogStringToPath("Before hide()");
             this.Hide();
             //note frm shutdown close is done in dispose now
 
             shutdownLogStringToPath("Leaving Console_Closing()");
+        }
+        private long getErrorLogSize()
+        {
+            string errorLogPath = Path.Combine(AppDataPath, "ErrorLog.txt");
+            if (File.Exists(errorLogPath))
+            {
+                FileInfo fileInfo = new FileInfo(errorLogPath);
+                return fileInfo.Length;
+            }
+            return -1;
         }
         private void shutdownLogStringToPath(string entry)
         {
@@ -46969,17 +47007,24 @@ namespace Thetis
             TimeOutTimerManager.RemoveCallback(timeOutTimer);
         }
         //
-        private void timeOutTimer(string msg)
+        public void StopAllTx()
         {
             if (MOX || manual_mox || chkTUN.Checked || chk2TONE.Checked)
             {
-                //everything off !!
                 MOX = false;
                 manual_mox = false;
                 if (chkTUN.Checked)
                     chkTUN.Checked = false;
                 if (chk2TONE.Checked)
                     chk2TONE.Checked = false;
+            }
+        }
+        private void timeOutTimer(string msg)
+        {
+            if (MOX || manual_mox || chkTUN.Checked || chk2TONE.Checked)
+            {
+                //everything off !!
+                StopAllTx();
 
                 infoBar.Warning(msg + " Time Out Timer", 1, true);
             }

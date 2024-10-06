@@ -576,6 +576,8 @@ namespace Thetis
 
         public static (bool resized, bool relocated) ForceFormOnScreen(Form f, bool shrink_to_fit = false, bool keep_on_screen = false)
         {
+            if (f == null) return (false, false);
+
             bool resized = false;
             bool relocated = false;
             Screen[] screens = Screen.AllScreens;

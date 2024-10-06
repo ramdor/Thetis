@@ -7694,6 +7694,13 @@ namespace Thetis
         private void udDisplayGridMax_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if (udDisplayGridMax.Value < udDisplayGridMin.Value + udDisplayGridStep.Value)
+            {
+                udDisplayGridMax.Value = udDisplayGridMin.Value + udDisplayGridStep.Value;
+                return;
+            }
+            //
             UpdateDisplayGridBandInfo();
             switch (console.RX1Band)
             {
@@ -7764,6 +7771,13 @@ namespace Thetis
         private void udDisplayGridMin_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if(udDisplayGridMin.Value > udDisplayGridMax.Value - udDisplayGridStep.Value)
+            {
+                udDisplayGridMin.Value = udDisplayGridMax.Value - udDisplayGridStep.Value;
+                return;
+            }
+            //
             UpdateDisplayGridBandInfo();
             switch (console.RX1Band)
             {
@@ -7840,7 +7854,13 @@ namespace Thetis
         private void udRX2DisplayGridMax_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
-
+            //[2.10.3.6]MW0LGE limit
+            if (udRX2DisplayGridMax.Value < udRX2DisplayGridMin.Value + udRX2DisplayGridStep.Value)
+            {
+                udRX2DisplayGridMax.Value = udRX2DisplayGridMin.Value + udRX2DisplayGridStep.Value;
+                return;
+            }
+            //
             UpdateDisplayGridBandInfo();
             switch (console.RX2Band)
             {
@@ -7912,6 +7932,13 @@ namespace Thetis
         private void udRX2DisplayGridMin_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if (udRX2DisplayGridMin.Value > udRX2DisplayGridMax.Value - udRX2DisplayGridStep.Value)
+            {
+                udRX2DisplayGridMin.Value = udRX2DisplayGridMax.Value - udRX2DisplayGridStep.Value;
+                return;
+            }
+            //
             UpdateDisplayGridBandInfo();
             switch (console.RX2Band)
             {
@@ -8058,6 +8085,13 @@ namespace Thetis
         private void udDisplayWaterfallLowLevel_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if(udDisplayWaterfallLowLevel.Value > udDisplayWaterfallHighLevel.Value - 3)
+            {
+                udDisplayWaterfallLowLevel.Value = udDisplayWaterfallHighLevel.Value - 3;
+                return;
+            }
+            //
             UpdateWaterfallBandInfo();
             switch (console.RX1Band)
             {
@@ -8123,6 +8157,13 @@ namespace Thetis
         private void udDisplayWaterfallHighLevel_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if (udDisplayWaterfallHighLevel.Value < udDisplayWaterfallLowLevel.Value + 3)
+            {
+                udDisplayWaterfallHighLevel.Value = udDisplayWaterfallLowLevel.Value + 3;
+                return;
+            }
+            //
             UpdateWaterfallBandInfo();
             switch (console.RX1Band)
             {
@@ -8207,6 +8248,13 @@ namespace Thetis
         private void udRX2DisplayWaterfallLowLevel_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if (udRX2DisplayWaterfallLowLevel.Value > udRX2DisplayWaterfallHighLevel.Value - 3)
+            {
+                udRX2DisplayWaterfallLowLevel.Value = udRX2DisplayWaterfallHighLevel.Value - 3;
+                return;
+            }
+            //
             UpdateWaterfallBandInfo();
             switch (console.RX2Band)
             {
@@ -8272,6 +8320,13 @@ namespace Thetis
         private void udRX2DisplayWaterfallHighLevel_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            //[2.10.3.6]MW0LGE limit
+            if (udRX2DisplayWaterfallHighLevel.Value < udRX2DisplayWaterfallLowLevel.Value + 3)
+            {
+                udRX2DisplayWaterfallHighLevel.Value = udRX2DisplayWaterfallLowLevel.Value + 3;
+                return;
+            }
+            //
             UpdateWaterfallBandInfo();
             switch (console.RX2Band)
             {
@@ -22727,6 +22782,8 @@ namespace Thetis
             {
                 sTmp = parts[0];
                 bPortOk = int.TryParse(parts[1], out port);
+
+                if (bPortOk && (port < 0 || port > 65535)) bPortOk = false;
             }
 
             //check ip is valid
@@ -22853,6 +22910,8 @@ namespace Thetis
             {
                 sTmp = parts[0];
                 bPortOk = int.TryParse(parts[1], out port);
+
+                if (bPortOk && (port < 0 || port > 65535)) bPortOk = false;
             }
 
             //check ip is valid
@@ -25723,6 +25782,9 @@ namespace Thetis
                 else if (radLed_light_pulsate.Checked)
                     igs.IgnoreHistoryDuration = 2;
                 // also showhistory + showtype are return states for valid/error
+
+                igs.SetSetting<bool>("led_notx_true", chkLed_notx_true.Checked);
+                igs.SetSetting<bool>("led_notx_false", chkLed_notx_false.Checked);
             }
             else if (mt == MeterType.TEXT_OVERLAY)
             {
@@ -26270,6 +26332,9 @@ namespace Thetis
                         radLed_light_pulsate.Checked = true;
                         break;
                 }
+
+                chkLed_notx_true.Checked = igs.GetSetting<bool>("led_notx_true", false, false, false, false);
+                chkLed_notx_false.Checked = igs.GetSetting<bool>("led_notx_false", false, false, false, false);
 
                 updateLedIndicatorPanelControls();
                 updateLedValidControls();
@@ -29514,12 +29579,33 @@ namespace Thetis
                 fontDialog.Font = _textOverlayFont1;
                 if (fontDialog.ShowDialog() == DialogResult.OK)
                 {
+                    if (!isFontTrueType(fontDialog.Font)) return;
                     _textOverlayFont1 = fontDialog.Font;
                     updateMeterType();
                 }
             }
         }
+        public bool isFontTrueType(Font f)
+        {
+            try
+            {
+                FontFamily ff = new FontFamily(f.Name);
+            }
+            catch (ArgumentException e)
+            {
+                if (e.Message.Contains("TrueType", StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("This font is not a TrueType font and can not be used.",                    
+                    "Font issue",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    return false;
+                }                
 
+                return false;// also if not found
+            }
+            return true;
+        }
         private void btnTextOverlay_Font2_Click(object sender, EventArgs e)
         {
             using (FontDialog fontDialog = new FontDialog())
@@ -29527,6 +29613,7 @@ namespace Thetis
                 fontDialog.Font = _textOverlayFont2;
                 if (fontDialog.ShowDialog() == DialogResult.OK)
                 {
+                    if (!isFontTrueType(fontDialog.Font)) return;
                     _textOverlayFont2 = fontDialog.Font;
                     updateMeterType();
                 }
@@ -30106,6 +30193,14 @@ namespace Thetis
                     bool ok = int.TryParse(port, out int portInt);
                     if (ok)
                     {
+                        if(portInt < 0 || portInt > 65535) // bad port
+                        {
+                            MessageBox.Show("The port needs to be in the range 0-65535",
+                            "Listener Start Problem",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                            return;
+                        }
                         if (check_same && (ip + ":" + portInt.ToString() == existing_ip_port)) return; // same as input, forget it
 
                         if (!MultiMeterIO.AlreadyConfigured(ip, portInt, type))
@@ -30964,6 +31059,14 @@ namespace Thetis
                 bool ok = int.TryParse(port, out int portInt);
                 if (ok)
                 {
+                    if (portInt < 0 || portInt > 65535) // bad port
+                    {
+                        MessageBox.Show("The port needs to be in the range 0-65535",
+                        "Listener Start Problem",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        return false;
+                    }
                     MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
                     mmio.UdpEndpointIP = ip;
                     mmio.UdpEndpointPort = portInt;
@@ -30986,6 +31089,14 @@ namespace Thetis
             {
                 if (int.TryParse(parts[1], out int intPort))
                 {
+                    if (intPort < 0 || intPort > 65535) // bad port
+                    {
+                        MessageBox.Show("The port needs to be in the range 0-65535",
+                        "Incorrect Format",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        return;
+                    }
                     if (Common.IsIpv4Valid(parts[0], intPort))
                     {
                         string oldIpPort = txtMMIO_network_udp_endpoint_ip_port.Text;
@@ -31322,8 +31433,9 @@ namespace Thetis
                 lblLed_Error.Visible = igs.ShowHistory;
                 lblLed_Valid.Text = igs.ShowType ? "Valid" : "Invalid";
                 lblLed_Valid.ForeColor = igs.ShowType ? Color.LimeGreen : Color.Red;
-            }
 
+                tmrLedValid.Enabled = true;
+            }            
         }
 
         private void chkLed_show_true_CheckedChanged(object sender, EventArgs e)
@@ -31848,6 +31960,7 @@ namespace Thetis
                 fontDialog.Font = _bandButtons_font;
                 if (fontDialog.ShowDialog() == DialogResult.OK)
                 {
+                    if (!isFontTrueType(fontDialog.Font)) return;
                     _bandButtons_font = fontDialog.Font;
                     updateMeterType();
                 }
@@ -32341,6 +32454,21 @@ namespace Thetis
         {
             lblCMAsioInfo.Text = "Settings updated. Restart to take effect.";
             lblCMAsioInfo.Visible = true;
+        }
+        private void tmrLedValid_Tick(object sender, EventArgs e)
+        {
+            if (!txtLedIndicator_condition.Visible) tmrLedValid.Enabled = false;
+            updateLedValidControls();
+        }
+
+        private void chkLed_notx_true_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkLed_notx_false_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 
