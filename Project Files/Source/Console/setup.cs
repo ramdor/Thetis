@@ -25768,6 +25768,7 @@ namespace Thetis
                 igs.EyeBezelScale = (float)nudLedIndicator_yOffset.Value;
                 igs.AttackRatio = (float)nudLedIndicator_xSize.Value;
                 igs.DecayRatio = (float)nudLedIndicator_ySize.Value;
+                igs.UpdateInterval = (int)nudLedIndicator_UpdateInterval.Value;
 
                 igs.Text1 = txtLedIndicator_condition.Text;
 
@@ -26313,6 +26314,7 @@ namespace Thetis
                 nudLedIndicator_yOffset.Value = (decimal)igs.EyeBezelScale;
                 nudLedIndicator_xSize.Value = (decimal)igs.AttackRatio;
                 nudLedIndicator_ySize.Value = (decimal)igs.DecayRatio;
+                nudLedIndicator_UpdateInterval.Value = (decimal)igs.UpdateInterval;
 
                 txtLedIndicator_condition.Text = igs.Text1;
 
@@ -32467,6 +32469,10 @@ namespace Thetis
         }
 
         private void chkLed_notx_false_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+        private void nudLedIndicator_UpdateInterval_ValueChanged(object sender, EventArgs e)
         {
             updateMeterType();
         }

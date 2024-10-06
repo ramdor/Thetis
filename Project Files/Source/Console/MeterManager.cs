@@ -1005,67 +1005,67 @@ namespace Thetis
                 //return ok;
             }
 
-            public override string ToString()
-            {
-                string sRet = _updateInterval.ToString() + "|" +
-                    _decay.ToString("f4") + "|" +
-                    _attack.ToString("f4") + "|" +
-                    _historyDuration.ToString() + "|" +
-                    _shadow.ToString() + "|" +
-                    _showHistory.ToString() + "|" +
-                    Common.ColourToString(_historyColor) + "|" +
-                    _peakHold.ToString() + "|" +
-                    Common.ColourToString(_peakHoldMarkerColor) + "|" +
-                    Common.ColourToString(_lowColor) + "|" +
-                    Common.ColourToString(_highColor) + "|" +
-                    Common.ColourToString(_titleColor) + "|" +
-                    _readingSource.ToString() + "|" +
-                    Common.ColourToString(_colour) + "|" +
-                    Common.ColourToString(_markerColour) + "|" +
-                    _barStyle.ToString() + "|" +
-                    _text_1.Replace("|", "") + "|" +
-                    _fadeOnRx.ToString() + "|" +
-                    _fadeOnTx.ToString() + "|" +
-                    _showType.ToString() + "|" +
-                    Common.ColourToString(_segmentedSolidLowColour) + "|" +
-                    _peakValue.ToString() + "|" +
-                    Common.ColourToString(_peakValueColour) + "|" +
-                    _eyeScale.ToString("f4") + "|" +
-                    _average.ToString() + "|" +
-                    _darkMode.ToString() + "|" +
-                    _maxPower.ToString("f2") + "|" +
-                    _units.ToString() + "|" +
-                    Common.ColourToString(_segmentedSolidHighColour) + "|" +
-                    _showMarker.ToString() + "|" +
-                    Common.ColourToString(_subMarkerColour) + "|" +
-                    _showSubMarker.ToString() + "|" +
-                    _eyeBezelScale.ToString("f4") + "|" +
-                    Common.ColourToString(_powerScaleColour) + "|" +
-                    _ignoreHistoryDuration.ToString() + "|" +
-                    _spacerPadding.ToString("f4") + "|" +
-                    _back_panel.ToString() + "|" +
-                    _text_2.Replace("|", "") + "|" +
-                    _font_family_1.Replace("|", "++><++") + "|" +
-                    _font_family_2.Replace("|", "++><++") + "|" +
-                    _font_style_1.ToString() + "|" +
-                    _font_style_2.ToString() + "|" +
-                    _font_size_1.ToString("f4") + "|" +
-                    _font_size_2.ToString("f4") + "|";
+            //public override string ToString()
+            //{
+            //    string sRet = _updateInterval.ToString() + "|" +
+            //        _decay.ToString("f4") + "|" +
+            //        _attack.ToString("f4") + "|" +
+            //        _historyDuration.ToString() + "|" +
+            //        _shadow.ToString() + "|" +
+            //        _showHistory.ToString() + "|" +
+            //        Common.ColourToString(_historyColor) + "|" +
+            //        _peakHold.ToString() + "|" +
+            //        Common.ColourToString(_peakHoldMarkerColor) + "|" +
+            //        Common.ColourToString(_lowColor) + "|" +
+            //        Common.ColourToString(_highColor) + "|" +
+            //        Common.ColourToString(_titleColor) + "|" +
+            //        _readingSource.ToString() + "|" +
+            //        Common.ColourToString(_colour) + "|" +
+            //        Common.ColourToString(_markerColour) + "|" +
+            //        _barStyle.ToString() + "|" +
+            //        _text_1.Replace("|", "") + "|" +
+            //        _fadeOnRx.ToString() + "|" +
+            //        _fadeOnTx.ToString() + "|" +
+            //        _showType.ToString() + "|" +
+            //        Common.ColourToString(_segmentedSolidLowColour) + "|" +
+            //        _peakValue.ToString() + "|" +
+            //        Common.ColourToString(_peakValueColour) + "|" +
+            //        _eyeScale.ToString("f4") + "|" +
+            //        _average.ToString() + "|" +
+            //        _darkMode.ToString() + "|" +
+            //        _maxPower.ToString("f2") + "|" +
+            //        _units.ToString() + "|" +
+            //        Common.ColourToString(_segmentedSolidHighColour) + "|" +
+            //        _showMarker.ToString() + "|" +
+            //        Common.ColourToString(_subMarkerColour) + "|" +
+            //        _showSubMarker.ToString() + "|" +
+            //        _eyeBezelScale.ToString("f4") + "|" +
+            //        Common.ColourToString(_powerScaleColour) + "|" +
+            //        _ignoreHistoryDuration.ToString() + "|" +
+            //        _spacerPadding.ToString("f4") + "|" +
+            //        _back_panel.ToString() + "|" +
+            //        _text_2.Replace("|", "") + "|" +
+            //        _font_family_1.Replace("|", "++><++") + "|" +
+            //        _font_family_2.Replace("|", "++><++") + "|" +
+            //        _font_style_1.ToString() + "|" +
+            //        _font_style_2.ToString() + "|" +
+            //        _font_size_1.ToString("f4") + "|" +
+            //        _font_size_2.ToString("f4") + "|";
 
-                for (int i = 0; i < _mmio_guid.Length; i++)
-                {
-                    sRet += _mmio_guid[i].ToString() + "|";
-                    sRet += _mmio_variable[i] + "|";
-                }
+            //    for (int i = 0; i < _mmio_guid.Length; i++)
+            //    {
+            //        sRet += _mmio_guid[i].ToString() + "|";
+            //        sRet += _mmio_variable[i] + "|";
+            //    }
 
-                if (!string.IsNullOrEmpty(sRet))
-                {
-                    //drop last |
-                    sRet = sRet.Substring(0, sRet.Length - 1);
-                }
+            //    if (!string.IsNullOrEmpty(sRet))
+            //    {
+            //        //drop last |
+            //        sRet = sRet.Substring(0, sRet.Length - 1);
+            //    }
 
-                return sRet;
-            }
+            //    return sRet;
+            //}
             public bool TryParse(string str)
             {
                 if (str == "") return false;
@@ -1102,7 +1102,7 @@ namespace Thetis
                     if (bOk) tmpColour = Common.ColourFromString(tmp[13]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _colour = tmpColour; }
                     if (bOk) tmpColour = Common.ColourFromString(tmp[14]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _markerColour = tmpColour; }
                     if (bOk) bOk = Enum.TryParse<clsBarItem.BarStyle>(tmp[15], out tmpBarStyle); if (bOk) { _barStyle = tmpBarStyle; }
-                    if (bOk) _text_1 = tmp[16].Replace("|", "");
+                    if (bOk) _text_1 = tmp[16].Replace("|", ""); // old method needs to do this, but will cause problems for LedIndictaor or statement
                     if (bOk) bOk = bool.TryParse(tmp[17], out tmpBool); if (bOk) { _fadeOnRx = tmpBool; }
                     if (bOk) bOk = bool.TryParse(tmp[18], out tmpBool); if (bOk) { _fadeOnTx = tmpBool; }
                     if (bOk) bOk = bool.TryParse(tmp[19], out tmpBool); if (bOk) { _showType = tmpBool; }
@@ -1231,8 +1231,8 @@ namespace Thetis
             public bool ShowMarker { get { return (bool)GetSetting("_showMarker", typeof(bool)); } set { SetSetting("_showMarker", value); } }
             public bool ShowSubMarker { get { return (bool)GetSetting("_showSubMarker", typeof(bool)); } set { SetSetting("_showSubMarker", value); } }
             public clsBarItem.BarStyle BarStyle { get { return (clsBarItem.BarStyle)GetSetting("_barStyle", typeof(clsBarItem.BarStyle)); } set { SetSetting("_barStyle", value); } }
-            public string Text1 { get { return ((string)GetSetting("_text_1", typeof(string))).Replace("|", ""); } set { SetSetting("_text_1", value.Replace("|", "")); } }
-            public string Text2 { get { return ((string)GetSetting("_text_2", typeof(string))).Replace("|", ""); } set { SetSetting("_text_2", value.Replace("|", "")); } }
+            public string Text1 { get { return ((string)GetSetting("_text_1", typeof(string))); } set { SetSetting("_text_1", value); } }
+            public string Text2 { get { return ((string)GetSetting("_text_2", typeof(string))); } set { SetSetting("_text_2", value); } }
             public bool FadeOnRx { get { return (bool)GetSetting("_fadeOnRx", typeof(bool)); } set { SetSetting("_fadeOnRx", value); } }
             public bool FadeOnTx { get { return (bool)GetSetting("_fadeOnTx", typeof(bool)); } set { SetSetting("_fadeOnTx", value); } }
             public bool ShowType { get { return (bool)GetSetting("_showType", typeof(bool)); } set { SetSetting("_showType", value); } }
@@ -1249,8 +1249,8 @@ namespace Thetis
             public float MaxPower { get { return (float)GetSetting("_maxPower", typeof(float)); } set { SetSetting("_maxPower", value); } }
             public System.Drawing.Color PowerScaleColour { get { return (System.Drawing.Color)GetSetting("_powerScaleColour", typeof(System.Drawing.Color)); } set { SetSetting("_powerScaleColour", value); } }
             public clsBarItem.Units Unit { get { return (clsBarItem.Units)GetSetting("_units", typeof(clsBarItem.Units)); } set { SetSetting("_units", value); } }
-            public string FontFamily1 { get { return ((string)GetSetting("_font_family_1", typeof(string))).Replace("|", "++><++"); } set { SetSetting("_font_family_1", value.Replace("++><++", "|")); } }
-            public string FontFamily2 { get { return ((string)GetSetting("_font_family_2", typeof(string))).Replace("|", "++><++"); } set { SetSetting("_font_family_2", value.Replace("++><++", "|")); } }
+            public string FontFamily1 { get { return ((string)GetSetting("_font_family_1", typeof(string))); } set { SetSetting("_font_family_1", value); } }
+            public string FontFamily2 { get { return ((string)GetSetting("_font_family_2", typeof(string))); } set { SetSetting("_font_family_2", value); } }
             public FontStyle FontStyle1 { get { return (FontStyle)GetSetting("_font_style_1", typeof(FontStyle)); } set { SetSetting("_font_style_1", value); } }
             public FontStyle FontStyle2 { get { return (FontStyle)GetSetting("_font_style_2", typeof(FontStyle)); } set { SetSetting("_font_style_2", value); } }
             public float FontSize1 { get { return (float)GetSetting("_font_size_1", typeof(float)); } set { SetSetting("_font_size_1", value); } }
@@ -9942,11 +9942,11 @@ namespace Thetis
             }
             public string Text1
             {
-                get { return _text_1.Replace("|", ""); }
+                get { return _text_1;/*.Replace("|", "");*/ }
                 set
                 {
                     _ignore_measure_cache_1 = _text_1 != value;
-                    _text_1 = value.Replace("|", "");
+                    _text_1 = string.IsNullOrEmpty(value) ? "" : value;//.Replace("|", ""); // dont need to replace this now due to new store/restore
                     ReadingsCustom.UpdateReadings(_text_1);
                     lock (_list_placeholders_1_lock)
                     {
@@ -9968,11 +9968,11 @@ namespace Thetis
             }
             public string Text2
             {
-                get { return _text_2.Replace("|", ""); }
+                get { return _text_2;/*.Replace("|", "");*/ }
                 set 
                 {
                     _ignore_measure_cache_2 = _text_2 != value;
-                    _text_2 = value.Replace("|", "");
+                    _text_2 = string.IsNullOrEmpty(value) ? "" : value;//.Replace("|", ""); // dont need to replace this now due to new store/restore
                     ReadingsCustom.UpdateReadings(_text_2);
                     lock (_list_placeholders_2_lock)
                     {
@@ -10411,7 +10411,7 @@ namespace Thetis
 
                 _owningMeter = owningMeter;
 
-                UpdateInterval = 50;
+                UpdateInterval = 100;
 
                 _cts = null;
                 _script = null;
@@ -10429,15 +10429,6 @@ namespace Thetis
                 _show_true = true;
                 _show_false = true;
             }
-            //private string substituteVariables(string expression, Dictionary<string, object> variables)
-            //{
-            //    foreach (KeyValuePair<string, object> variable in variables)
-            //    {
-            //        string placeholder = $"{variable.Key}";
-            //        expression = expression.Replace(placeholder, variable.Value.ToString());
-            //    }
-            //    return expression;
-            //}
             private bool validateExpression(string expression, Dictionary<string, object> variables)
             {
                 string tmp = $"bool result = (bool)({expression});";
@@ -10466,16 +10457,16 @@ namespace Thetis
                     return false;
                 }
             }
-            private async System.Threading.Tasks.Task<bool> evaluateExpression(CancellationToken cancellationToken)
+            private (bool,bool) evaluateExpression(CancellationToken cancellationToken)
             {
-                if (!_valid || _script == null || _busy) return false;
-                _busy = true;
+                if (!_valid || _script == null || _busy) return (false, false);                
+
                 bool bRet = false;
                 try
                 {
                     Globals globals = new Globals();
                     globals.Variables = _variable_substitutions;
-                    ScriptState ss = await _script.RunAsync(globals, cancellationToken);
+                    ScriptState ss = _script.RunAsync(globals, cancellationToken).GetAwaiter().GetResult();
                     if (ss.Variables.Length == 1)
                     {
                         ScriptVariable sv = ss.Variables[0];
@@ -10485,8 +10476,8 @@ namespace Thetis
                     else
                     {
                         _valid = false;
-                        _error = true;
                         _script = null;
+                        _error = true;
                     }
                 }
                 catch (Exception ex)
@@ -10495,8 +10486,8 @@ namespace Thetis
                     _script = null;
                     _error = true;
                 }
-                _busy = false;
-                return bRet;
+
+                return (true, bRet);
             }
             public bool NoTxFalse
             {
@@ -10558,7 +10549,7 @@ namespace Thetis
             private const int _delay_milliseconds = 1000;
             private string _pending_condition;
             private void onTimerElapsedCondition()
-            {
+            {                
                 _condition = _pending_condition;
                 ReadingsCustom.UpdateReadings(_condition);
                 lock (_list_placeholders_lock)
@@ -10667,7 +10658,7 @@ namespace Thetis
                         {
                             ScriptOptions options = ScriptOptions.Default.AddReferences(typeof(object).Assembly);
                             _script = CSharpScript.Create($"bool result = (bool)({script_expression});", options, typeof(Globals));
-                            _script.Compile();
+                            _script.Compile();                            
 
                             _valid = true;
                         }
@@ -10683,13 +10674,14 @@ namespace Thetis
                         _valid = false;
                     }
                 }
+
+                _forceRecompile = false;
             }
             public string Condition
             {
-                get { return _condition; }
+                get { return _pending_condition; }
                 set {
-                    if (value == _condition && !_forceRecompile) return;
-                    _forceRecompile = false;
+                    if (value == _condition && !_forceRecompile) return;                    
 
                     _pending_condition = value;
 
@@ -10775,7 +10767,7 @@ namespace Thetis
             }
             public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
             {
-                if (_valid && _script != null)
+                if (!_busy && _valid && _script != null && !_forceRecompile)
                 {
                     bool typesChanged = false;
 
@@ -10822,14 +10814,6 @@ namespace Thetis
                     }
                     //
 
-                    if(_cts != null)
-                    {
-                        _cts.Cancel();
-                        _cts.Dispose();
-                        _cts = null;
-                    }
-                    if (_busy) return;
-
                     if (typesChanged)
                     {
                         Debug.Print(">>>> RECOMPILE");
@@ -10838,21 +10822,29 @@ namespace Thetis
                     }
                     else
                     {
+                        _busy = true;
                         _cts = new CancellationTokenSource();
                         _old_result = _result;
-                        Task.Run(async () =>
+
+                        Task.Run(() =>
                         {
-                             _result = await evaluateExpression(_cts.Token);
+                            (bool valid, bool result) = evaluateExpression(_cts.Token);
+                            if (valid)
+                            {
+                                _result = result;
+
+                                // mox
+                                if (_result && _notxtrue && _console.MOX)
+                                {
+                                    stopMox();
+                                }
+                                else if (!_result && _notxfalse && _console.MOX)
+                                {
+                                    stopMox();
+                                }
+                            }
                         });
-                        // change
-                        if(_result && _notxtrue && _console.MOX)
-                        {
-                            stopMox();
-                        }
-                        else if (!_result && _notxfalse && _console.MOX)
-                        {
-                            stopMox();
-                        }
+                        _busy = false;
                     }
                 }
             }
@@ -15979,6 +15971,9 @@ namespace Thetis
                                             led.SizeX = igs.AttackRatio;
                                             led.SizeY = igs.DecayRatio;
 
+                                            if (igs.UpdateInterval < 50) igs.UpdateInterval = 100; // when it hasnt been set
+                                            led.UpdateInterval = igs.UpdateInterval;
+
                                             led.Condition = igs.Text1;
 
                                             led.Padding = igs.SpacerPadding;
@@ -16897,6 +16892,8 @@ namespace Thetis
                                             igs.EyeBezelScale = led.OffsetY;
                                             igs.AttackRatio = led.SizeX;
                                             igs.DecayRatio = led.SizeY;
+
+                                            igs.UpdateInterval = led.UpdateInterval;
 
                                             igs.Text1 = led.Condition;
 
@@ -26391,8 +26388,19 @@ namespace Thetis
         {
             if (token is JValue)
             {
-                JValue valueToken = (JValue)token;
-                keyValuePairs[currentPath] = valueToken.ToString();
+                //keyValuePairs[currentPath] = ((JValue)token).ToString();
+
+                if (token.Type == JTokenType.Integer ||
+                    token.Type == JTokenType.Float ||
+                    token.Type == JTokenType.Boolean
+                    )
+                {
+                    keyValuePairs[currentPath] = ((JValue)token).ToString(Newtonsoft.Json.Formatting.None);
+                }
+                else
+                {
+                    keyValuePairs[currentPath] = ((JValue)token).ToString();
+                }
             }
             else if (token is JObject)
             {

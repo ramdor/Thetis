@@ -525,7 +525,7 @@ namespace Thetis
         private bool _restart;
 
         private bool _check_error_log = true;
-        private long _error_log_initial_size;
+        private long _error_log_initial_size = -1;
 
         public CWX CWXForm
         {
@@ -49816,7 +49816,8 @@ namespace Thetis
 
                 s += "  -dbid:xyz    keep the active database unique to the install run via this shortcut\n";
                 s += "  -dbid:HL2    another example to keep the active database unique to the install run via this shortcut\n";
-                s += "  -dbid:G2    another example to keep the active database unique to the install run via this shortcut\n\n\n";
+                s += "  -dbid:G2    another example to keep the active database unique to the install run via this shortcut\n";
+                s += "  -cmasioconfig    show the cmASIO setup tab in audio setup\n\n\n";
                 s += "  Press Enter...";
                 //s += "  -dbfilename:c:\\folder\\database.xml    use this database instead\n";
                 //s += "  \"-dbfilename:c:\\folder\\database.xml\"    use this database instead, but with spaces in the path\n";

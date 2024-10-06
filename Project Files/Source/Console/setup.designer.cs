@@ -3826,6 +3826,9 @@
             this.clrbtnHistory_colour_1 = new Thetis.ColorButton();
             this.clrbtnHistory_lines = new Thetis.ColorButton();
             this.clrbtnHistory_time = new Thetis.ColorButton();
+            this.chkLed_notx_true = new System.Windows.Forms.CheckBoxTS();
+            this.chkLed_notx_false = new System.Windows.Forms.CheckBoxTS();
+            this.nudLedIndicator_UpdateInterval = new System.Windows.Forms.NumericUpDownTS();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -3935,6 +3938,7 @@
             this.chkMeterItemFadeOnRxRotator = new System.Windows.Forms.CheckBoxTS();
             this.pnlVariableInUse_1_rotator = new System.Windows.Forms.PanelTS();
             this.grpLedIndicator = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS287 = new System.Windows.Forms.LabelTS();
             this.radLed_light_pulsate = new System.Windows.Forms.RadioButtonTS();
             this.radLed_light_blink = new System.Windows.Forms.RadioButtonTS();
             this.radLed_light_on_off = new System.Windows.Forms.RadioButtonTS();
@@ -4054,8 +4058,6 @@
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
             this.tmrLedValid = new System.Windows.Forms.Timer(this.components);
-            this.chkLed_notx_true = new System.Windows.Forms.CheckBoxTS();
-            this.chkLed_notx_false = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -5036,6 +5038,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLedIndicator_condition_tips)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterRotatorControlInfo)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_UpdateInterval)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -60186,7 +60189,7 @@
             this.clrbtnLedIndicator_PanelBackgroundTX.Color = System.Drawing.Color.LimeGreen;
             this.clrbtnLedIndicator_PanelBackgroundTX.ForeColor = System.Drawing.Color.Black;
             this.clrbtnLedIndicator_PanelBackgroundTX.Image = null;
-            this.clrbtnLedIndicator_PanelBackgroundTX.Location = new System.Drawing.Point(141, 70);
+            this.clrbtnLedIndicator_PanelBackgroundTX.Location = new System.Drawing.Point(125, 72);
             this.clrbtnLedIndicator_PanelBackgroundTX.MoreColors = "More Colors...";
             this.clrbtnLedIndicator_PanelBackgroundTX.Name = "clrbtnLedIndicator_PanelBackgroundTX";
             this.clrbtnLedIndicator_PanelBackgroundTX.Selectable = true;
@@ -60228,7 +60231,7 @@
             // btnLedIndicator_copy_sizex_to_y
             // 
             this.btnLedIndicator_copy_sizex_to_y.Image = null;
-            this.btnLedIndicator_copy_sizex_to_y.Location = new System.Drawing.Point(182, 313);
+            this.btnLedIndicator_copy_sizex_to_y.Location = new System.Drawing.Point(180, 313);
             this.btnLedIndicator_copy_sizex_to_y.Name = "btnLedIndicator_copy_sizex_to_y";
             this.btnLedIndicator_copy_sizex_to_y.Selectable = true;
             this.btnLedIndicator_copy_sizex_to_y.Size = new System.Drawing.Size(33, 23);
@@ -60246,7 +60249,7 @@
             0,
             0,
             196608});
-            this.nudLedIndicator_ySize.Location = new System.Drawing.Point(101, 328);
+            this.nudLedIndicator_ySize.Location = new System.Drawing.Point(99, 328);
             this.nudLedIndicator_ySize.Maximum = new decimal(new int[] {
             10,
             0,
@@ -60277,7 +60280,7 @@
             0,
             0,
             196608});
-            this.nudLedIndicator_xSize.Location = new System.Drawing.Point(101, 302);
+            this.nudLedIndicator_xSize.Location = new System.Drawing.Point(99, 302);
             this.nudLedIndicator_xSize.Maximum = new decimal(new int[] {
             10,
             0,
@@ -60308,7 +60311,7 @@
             0,
             0,
             196608});
-            this.nudLedIndicator_yOffset.Location = new System.Drawing.Point(101, 276);
+            this.nudLedIndicator_yOffset.Location = new System.Drawing.Point(99, 276);
             this.nudLedIndicator_yOffset.Maximum = new decimal(new int[] {
             10,
             0,
@@ -60339,7 +60342,7 @@
             0,
             0,
             196608});
-            this.nudLedIndicator_xOffset.Location = new System.Drawing.Point(101, 250);
+            this.nudLedIndicator_xOffset.Location = new System.Drawing.Point(99, 250);
             this.nudLedIndicator_xOffset.Maximum = new decimal(new int[] {
             10,
             0,
@@ -60399,7 +60402,7 @@
             this.clrbtnLedIndicator_PanelBackground.Color = System.Drawing.Color.LimeGreen;
             this.clrbtnLedIndicator_PanelBackground.ForeColor = System.Drawing.Color.Black;
             this.clrbtnLedIndicator_PanelBackground.Image = null;
-            this.clrbtnLedIndicator_PanelBackground.Location = new System.Drawing.Point(141, 45);
+            this.clrbtnLedIndicator_PanelBackground.Location = new System.Drawing.Point(125, 47);
             this.clrbtnLedIndicator_PanelBackground.MoreColors = "More Colors...";
             this.clrbtnLedIndicator_PanelBackground.Name = "clrbtnLedIndicator_PanelBackground";
             this.clrbtnLedIndicator_PanelBackground.Selectable = true;
@@ -61242,7 +61245,8 @@
             this.pbLedIndicator_condition_tips.TabIndex = 164;
             this.pbLedIndicator_condition_tips.TabStop = false;
             this.toolTip1.SetToolTip(this.pbLedIndicator_condition_tips, "You can create code based conditions.\r\neg.\r\n%swr% > 1.5\r\n%variable% == 2\r\n%variab" +
-        "le% == \"Hello\"\r\n%pwr% > 15\r\n%variable1% == %variable2%\r\n%pwr% <= 10");
+        "le% == \"Hello\"\r\n%pwr% > 15\r\n%variable1% == %variable2%\r\n%pwr% <= 10\r\n%mox% == \"M" +
+        "OX\" && %swr% > 3.0");
             // 
             // picMultiMeterRotatorControlInfo
             // 
@@ -61313,6 +61317,62 @@
             this.clrbtnHistory_time.TabIndex = 146;
             this.toolTip1.SetToolTip(this.clrbtnHistory_time, "Background colour");
             this.clrbtnHistory_time.Changed += new System.EventHandler(this.clrbtnHistory_time_Changed);
+            // 
+            // chkLed_notx_true
+            // 
+            this.chkLed_notx_true.AutoSize = true;
+            this.chkLed_notx_true.Image = null;
+            this.chkLed_notx_true.Location = new System.Drawing.Point(213, 165);
+            this.chkLed_notx_true.Name = "chkLed_notx_true";
+            this.chkLed_notx_true.Size = new System.Drawing.Size(57, 17);
+            this.chkLed_notx_true.TabIndex = 173;
+            this.chkLed_notx_true.Text = "No TX";
+            this.toolTip1.SetToolTip(this.chkLed_notx_true, "Stop and/or prevent Tx/Mox");
+            this.chkLed_notx_true.UseVisualStyleBackColor = true;
+            this.chkLed_notx_true.CheckedChanged += new System.EventHandler(this.chkLed_notx_true_CheckedChanged);
+            // 
+            // chkLed_notx_false
+            // 
+            this.chkLed_notx_false.AutoSize = true;
+            this.chkLed_notx_false.Image = null;
+            this.chkLed_notx_false.Location = new System.Drawing.Point(213, 189);
+            this.chkLed_notx_false.Name = "chkLed_notx_false";
+            this.chkLed_notx_false.Size = new System.Drawing.Size(57, 17);
+            this.chkLed_notx_false.TabIndex = 174;
+            this.chkLed_notx_false.Text = "No TX";
+            this.toolTip1.SetToolTip(this.chkLed_notx_false, "Stop and/or prevent Tx/Mox");
+            this.chkLed_notx_false.UseVisualStyleBackColor = true;
+            this.chkLed_notx_false.CheckedChanged += new System.EventHandler(this.chkLed_notx_false_CheckedChanged);
+            // 
+            // nudLedIndicator_UpdateInterval
+            // 
+            this.nudLedIndicator_UpdateInterval.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_UpdateInterval.Location = new System.Drawing.Point(254, 73);
+            this.nudLedIndicator_UpdateInterval.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_UpdateInterval.Minimum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_UpdateInterval.Name = "nudLedIndicator_UpdateInterval";
+            this.nudLedIndicator_UpdateInterval.Size = new System.Drawing.Size(56, 20);
+            this.nudLedIndicator_UpdateInterval.TabIndex = 176;
+            this.nudLedIndicator_UpdateInterval.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudLedIndicator_UpdateInterval, "Reading update and is related to screen update");
+            this.nudLedIndicator_UpdateInterval.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudLedIndicator_UpdateInterval.ValueChanged += new System.EventHandler(this.nudLedIndicator_UpdateInterval_ValueChanged);
             // 
             // saveFileDialog1
             // 
@@ -63083,6 +63143,8 @@
             // 
             // grpLedIndicator
             // 
+            this.grpLedIndicator.Controls.Add(this.nudLedIndicator_UpdateInterval);
+            this.grpLedIndicator.Controls.Add(this.labelTS287);
             this.grpLedIndicator.Controls.Add(this.chkLed_notx_false);
             this.grpLedIndicator.Controls.Add(this.chkLed_notx_true);
             this.grpLedIndicator.Controls.Add(this.radLed_light_pulsate);
@@ -63128,16 +63190,26 @@
             this.grpLedIndicator.Text = "Led Indicator";
             this.grpLedIndicator.Visible = false;
             // 
+            // labelTS287
+            // 
+            this.labelTS287.Image = null;
+            this.labelTS287.Location = new System.Drawing.Point(177, 73);
+            this.labelTS287.Name = "labelTS287";
+            this.labelTS287.Size = new System.Drawing.Size(71, 16);
+            this.labelTS287.TabIndex = 175;
+            this.labelTS287.Text = "Update (ms):";
+            this.labelTS287.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // radLed_light_pulsate
             // 
             this.radLed_light_pulsate.AutoSize = true;
             this.radLed_light_pulsate.Image = null;
-            this.radLed_light_pulsate.Location = new System.Drawing.Point(233, 286);
+            this.radLed_light_pulsate.Location = new System.Drawing.Point(182, 286);
             this.radLed_light_pulsate.Name = "radLed_light_pulsate";
-            this.radLed_light_pulsate.Size = new System.Drawing.Size(60, 17);
+            this.radLed_light_pulsate.Size = new System.Drawing.Size(116, 17);
             this.radLed_light_pulsate.TabIndex = 172;
             this.radLed_light_pulsate.TabStop = true;
-            this.radLed_light_pulsate.Text = "Pulsate";
+            this.radLed_light_pulsate.Text = "Pulsate (when true)";
             this.radLed_light_pulsate.UseVisualStyleBackColor = true;
             this.radLed_light_pulsate.CheckedChanged += new System.EventHandler(this.radLed_light_pulsate_CheckedChanged);
             // 
@@ -63145,12 +63217,12 @@
             // 
             this.radLed_light_blink.AutoSize = true;
             this.radLed_light_blink.Image = null;
-            this.radLed_light_blink.Location = new System.Drawing.Point(233, 263);
+            this.radLed_light_blink.Location = new System.Drawing.Point(182, 263);
             this.radLed_light_blink.Name = "radLed_light_blink";
-            this.radLed_light_blink.Size = new System.Drawing.Size(48, 17);
+            this.radLed_light_blink.Size = new System.Drawing.Size(137, 17);
             this.radLed_light_blink.TabIndex = 171;
             this.radLed_light_blink.TabStop = true;
-            this.radLed_light_blink.Text = "Blink";
+            this.radLed_light_blink.Text = "Blink (when initially true)";
             this.radLed_light_blink.UseVisualStyleBackColor = true;
             this.radLed_light_blink.CheckedChanged += new System.EventHandler(this.radLed_light_blink_CheckedChanged);
             // 
@@ -63158,7 +63230,7 @@
             // 
             this.radLed_light_on_off.AutoSize = true;
             this.radLed_light_on_off.Image = null;
-            this.radLed_light_on_off.Location = new System.Drawing.Point(233, 240);
+            this.radLed_light_on_off.Location = new System.Drawing.Point(182, 240);
             this.radLed_light_on_off.Name = "radLed_light_on_off";
             this.radLed_light_on_off.Size = new System.Drawing.Size(58, 17);
             this.radLed_light_on_off.TabIndex = 170;
@@ -63217,7 +63289,7 @@
             // 
             this.lblLedIndicator_panelbackgroundTX.AutoSize = true;
             this.lblLedIndicator_panelbackgroundTX.Image = null;
-            this.lblLedIndicator_panelbackgroundTX.Location = new System.Drawing.Point(50, 75);
+            this.lblLedIndicator_panelbackgroundTX.Location = new System.Drawing.Point(34, 77);
             this.lblLedIndicator_panelbackgroundTX.Name = "lblLedIndicator_panelbackgroundTX";
             this.lblLedIndicator_panelbackgroundTX.Size = new System.Drawing.Size(85, 13);
             this.lblLedIndicator_panelbackgroundTX.TabIndex = 163;
@@ -63247,7 +63319,7 @@
             // 
             this.labelTS221.AutoSize = true;
             this.labelTS221.Image = null;
-            this.labelTS221.Location = new System.Drawing.Point(163, 330);
+            this.labelTS221.Location = new System.Drawing.Point(161, 330);
             this.labelTS221.Name = "labelTS221";
             this.labelTS221.Size = new System.Drawing.Size(12, 13);
             this.labelTS221.TabIndex = 154;
@@ -63257,7 +63329,7 @@
             // 
             this.labelTS222.AutoSize = true;
             this.labelTS222.Image = null;
-            this.labelTS222.Location = new System.Drawing.Point(163, 304);
+            this.labelTS222.Location = new System.Drawing.Point(161, 304);
             this.labelTS222.Name = "labelTS222";
             this.labelTS222.Size = new System.Drawing.Size(12, 13);
             this.labelTS222.TabIndex = 153;
@@ -63277,7 +63349,7 @@
             // 
             this.labelTS224.AutoSize = true;
             this.labelTS224.Image = null;
-            this.labelTS224.Location = new System.Drawing.Point(163, 278);
+            this.labelTS224.Location = new System.Drawing.Point(161, 278);
             this.labelTS224.Name = "labelTS224";
             this.labelTS224.Size = new System.Drawing.Size(12, 13);
             this.labelTS224.TabIndex = 149;
@@ -63287,7 +63359,7 @@
             // 
             this.labelTS226.AutoSize = true;
             this.labelTS226.Image = null;
-            this.labelTS226.Location = new System.Drawing.Point(163, 252);
+            this.labelTS226.Location = new System.Drawing.Point(161, 252);
             this.labelTS226.Name = "labelTS226";
             this.labelTS226.Size = new System.Drawing.Size(12, 13);
             this.labelTS226.TabIndex = 148;
@@ -63347,7 +63419,7 @@
             // 
             this.lblLedIndicator_panelbackground.AutoSize = true;
             this.lblLedIndicator_panelbackground.Image = null;
-            this.lblLedIndicator_panelbackground.Location = new System.Drawing.Point(49, 50);
+            this.lblLedIndicator_panelbackground.Location = new System.Drawing.Point(33, 52);
             this.lblLedIndicator_panelbackground.Name = "lblLedIndicator_panelbackground";
             this.lblLedIndicator_panelbackground.Size = new System.Drawing.Size(86, 13);
             this.lblLedIndicator_panelbackground.TabIndex = 130;
@@ -64542,32 +64614,6 @@
             // 
             this.tmrLedValid.Interval = 500;
             this.tmrLedValid.Tick += new System.EventHandler(this.tmrLedValid_Tick);
-            // 
-            // chkLed_notx_true
-            // 
-            this.chkLed_notx_true.AutoSize = true;
-            this.chkLed_notx_true.Image = null;
-            this.chkLed_notx_true.Location = new System.Drawing.Point(213, 165);
-            this.chkLed_notx_true.Name = "chkLed_notx_true";
-            this.chkLed_notx_true.Size = new System.Drawing.Size(57, 17);
-            this.chkLed_notx_true.TabIndex = 173;
-            this.chkLed_notx_true.Text = "No TX";
-            this.toolTip1.SetToolTip(this.chkLed_notx_true, "Stop and/or prevent Tx/Mox");
-            this.chkLed_notx_true.UseVisualStyleBackColor = true;
-            this.chkLed_notx_true.CheckedChanged += new System.EventHandler(this.chkLed_notx_true_CheckedChanged);
-            // 
-            // chkLed_notx_false
-            // 
-            this.chkLed_notx_false.AutoSize = true;
-            this.chkLed_notx_false.Image = null;
-            this.chkLed_notx_false.Location = new System.Drawing.Point(213, 189);
-            this.chkLed_notx_false.Name = "chkLed_notx_false";
-            this.chkLed_notx_false.Size = new System.Drawing.Size(57, 17);
-            this.chkLed_notx_false.TabIndex = 174;
-            this.chkLed_notx_false.Text = "No TX";
-            this.toolTip1.SetToolTip(this.chkLed_notx_false, "Stop and/or prevent Tx/Mox");
-            this.chkLed_notx_false.UseVisualStyleBackColor = true;
-            this.chkLed_notx_false.CheckedChanged += new System.EventHandler(this.chkLed_notx_false_CheckedChanged);
             // 
             // Setup
             // 
@@ -65778,6 +65824,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbTextOverlay_variables)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLedIndicator_condition_tips)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterRotatorControlInfo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_UpdateInterval)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -69912,5 +69959,7 @@
         private Timer tmrLedValid;
         private CheckBoxTS chkLed_notx_false;
         private CheckBoxTS chkLed_notx_true;
+        private NumericUpDownTS nudLedIndicator_UpdateInterval;
+        private LabelTS labelTS287;
     }
 }
