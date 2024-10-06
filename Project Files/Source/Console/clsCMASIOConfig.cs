@@ -44,7 +44,7 @@ namespace Thetis
             RegistryView view = Common.Is64Bit ? RegistryView.Registry64 : RegistryView.Registry32;
 
             try
-            {                
+            {
                 key = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, view).OpenSubKey(_registry_path, true);
             }
             catch { }
@@ -62,7 +62,7 @@ namespace Thetis
         }
         public static bool DoesRegistryValueExist(string valueName, RegistryKey key = null)
         {
-            if(key == null) key = openRegistryKey();
+            if (key == null) key = openRegistryKey();
             if (key != null)
             {
                 object value = key.GetValue(valueName);
@@ -151,10 +151,37 @@ namespace Thetis
             {
                 PA19.PaDeviceInfo devInfo = PA19.PA_GetDeviceInfo(i);
                 PA19.PaHostApiInfo hostInfo = PA19.PA_GetHostApiInfo(devInfo.hostApi);
+
                 if (hostInfo.name.Contains("asio", StringComparison.OrdinalIgnoreCase))
                 {
-                    if(!string.IsNullOrEmpty(devInfo.name))
+                    bool hasInput = devInfo.maxInputChannels > 0;
+                    bool hasOutput = devInfo.maxOutputChannels > 0;
+
+                    int result;
+                    unsafe
+                    {
+                        PA19.PaStreamParameters outputParams;
+                        PA19.PaStreamParameters inputParams;
+
+                        outputParams.device = i;
+                        outputParams.channelCount = devInfo.maxOutputChannels;
+                        outputParams.sampleFormat = PA19.paInt32;
+                        outputParams.suggestedLatency = devInfo.defaultLowOutputLatency;
+                        outputParams.hostApiSpecificStreamInfo = null;
+
+                        inputParams.device = i;
+                        inputParams.channelCount = devInfo.maxInputChannels;
+                        inputParams.sampleFormat = PA19.paInt32;
+                        inputParams.suggestedLatency = devInfo.defaultLowInputLatency;
+                        inputParams.hostApiSpecificStreamInfo = null;
+
+                        result = PA19.PA_IsFormatSupported(&inputParams, &outputParams, 48000.0);
+                    }
+                    
+                    if (result == 0 && hasInput && hasOutput && !string.IsNullOrEmpty(devInfo.name))
+                    {
                         asioDevices.Add(devInfo.name.Left(32));
+                    }
                 }
             }
             return asioDevices;
