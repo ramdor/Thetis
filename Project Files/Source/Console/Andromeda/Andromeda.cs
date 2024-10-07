@@ -711,7 +711,7 @@ namespace Thetis
             // now tell Alex to update its settings
             if (rx1_xvtr_index >= 0)
             {
-                Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, true);
+                Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, current_region);
                 Alex.getAlex().UpdateAlexAntSelection(lo_band, _mox, alex_ant_ctrl_enabled, true);
             }
             else
