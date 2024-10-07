@@ -449,6 +449,9 @@ namespace Thetis
         private static bool vfob_tx = false;
         public static bool VFOBTX
         {
+            get
+            { return vfob_tx; }
+
             set
             {
                 vfob_tx = value;

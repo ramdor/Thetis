@@ -58,6 +58,7 @@ typedef struct _cmasio
 	long underFlowsIn;
 	long underFlowsOut;
 	int lockMode;
+	int protocol;
 } cmasio, *CMASIO;
 
 extern CMASIO pcma;
