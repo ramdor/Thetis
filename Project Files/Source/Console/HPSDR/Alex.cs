@@ -26,6 +26,7 @@ namespace Thetis
 	/// <summary>
 	/// Summary description for Penny.
 	/// </summary>
+	using System.Diagnostics;
 	public class Alex
 	{
 		private static Alex theSingleton = null; 
@@ -309,7 +310,6 @@ namespace Thetis
 		private int m_nOld_rx_out = -99;
 		private bool m_bOld_tx = false;
 		private bool m_bOld_alex_enabled = false;
-
         public void UpdateAlexAntSelection(Band band, bool tx, bool alex_enabled, bool xvtr) 
 		{
 			if ( !alex_enabled ) 
@@ -330,7 +330,6 @@ namespace Thetis
 			int trx_ant; 
 			int tx_ant; 
 			int rx_out;			// Flag to identify if one of the rx only ports should be used while transmitting		
-            //int xrx_out;
 
 			int idx = (int)band - (int)Band.B160M; 
 
@@ -347,11 +346,10 @@ namespace Thetis
             }
             
 			//System.Console.WriteLine("Ant idx: " + idx);  //moved into different check down below			            
-
 			tx_ant = TxAnt[idx];
 
 			if ( tx ) 
-			{
+			{				
                 if (Ext2OutOnTx) rx_only_ant = 1;
                 else if (Ext1OutOnTx) rx_only_ant = 2;
                 else rx_only_ant = 0;
@@ -441,10 +439,11 @@ namespace Thetis
 				m_nOld_rx_out != rx_out ||
 				m_bOld_tx != tx ||
                 m_bOld_alex_enabled != alex_enabled)
-			{
-                System.Console.WriteLine("Ant idx: " + idx + "(" + ((Band)idx + (int)Band.B160M).ToString() + ")"); //MW0LGE [2.9.0.8] moved here
-                NetworkIO.SetAntBits(rx_only_ant, trx_ant, tx_ant, rx_out, tx);
-				System.Console.WriteLine("Ant Rx Only {0} , TRx Ant {1}, Tx Ant {2}, Rx Out {3}, TX {4}", rx_only_ant.ToString(), trx_ant.ToString(), tx_ant.ToString(), rx_out.ToString(), tx.ToString());
+			{                             
+				NetworkIO.SetAntBits(rx_only_ant, trx_ant, tx_ant, rx_out, tx);
+
+				System.Console.WriteLine("Ant idx: " + idx + "(" + ((Band)idx + (int)Band.B160M).ToString() + ")");
+                System.Console.WriteLine("Ant Rx Only {0} , TRx Ant {1}, Tx Ant {2}, Rx Out {3}, TX {4}", rx_only_ant.ToString(), trx_ant.ToString(), tx_ant.ToString(), rx_out.ToString(), tx.ToString());
 
                 if (c.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
 					c.SetIOBoardAerialPorts(rx_only_ant, trx_ant - 1, tx_ant - 1, tx);   // MI0BOT: Sets the aerial controls on the I/O board 
@@ -469,13 +468,6 @@ namespace Thetis
 					Console.getConsole().SetupForm.SetAlexAntEnabled(AlexEnableSavedState); 
 					AlexEnableIsStateSaved = false; 
 				} */
-
-			// Console.getConsole().SetupForm.txtRXAnt.Text = rx_ant.ToString();
-			//  Console.getConsole().SetupForm.txtRXOut.Text = rx_out.ToString();
-			//  Console.getConsole().SetupForm.txtTXAnt.Text = tx_ant.ToString();
-			// Console.getConsole().SetupForm.txtAlexBand.Text = band.ToString();
-			//  Console.getConsole().SetupForm.txtAlexEnabled.Text = alex_enabled.ToString();
-			//  Console.getConsole().SetupForm.txtAlexBits.Text = Convert.ToString(rc, 2);
 
 			return; 
 		}

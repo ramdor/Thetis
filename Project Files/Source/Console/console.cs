@@ -5083,7 +5083,7 @@ namespace Thetis
             //
 
             // These are needed for managing QSK when band changes also trigger mode changes.
-            RX1_band_change = BandByFreq(freq, tx_xvtr_index, true, current_region, true);
+            RX1_band_change = BandByFreq(freq, tx_xvtr_index, current_region);
             qsk_band_changing = true;
 
             // Set mode, filter, and frequency according to passed parameters
@@ -5658,16 +5658,16 @@ namespace Thetis
                 if (VFOBFreq == t_freq)
                 {
                     // no transverter as xvtr_index might not be changed in time when calling this RX1BandForVFOB()
-                    return BandByFreq(VFOBFreq, -1, false, current_region, false);
+                    return BandByFreq(VFOBFreq, -1, current_region);
                 }
                 else
                 {
-                    return BandByFreq(VFOBFreq, rx1_xvtr_index, false, current_region, false);
+                    return BandByFreq(VFOBFreq, rx1_xvtr_index, current_region);
                 }
             }
             else
             {
-                return BandByFreq(VFOBFreq, rx1_xvtr_index, false, current_region, false);
+                return BandByFreq(VFOBFreq, rx1_xvtr_index, current_region);
             }
         }
         public Band GetTransverterTranslatedRXBand(double freq)
@@ -5675,63 +5675,24 @@ namespace Thetis
             if (XVTRForm == null) return 0;
 
             double t_freq = XVTRForm.TranslateFreq(freq);
-            return BandByFreq(t_freq, -1, false, current_region, false);
+            return BandByFreq(t_freq, -1, current_region);
         }
         public Band GetTransverterTranslatedTXBand()
         {
             if (XVTRForm == null) return 0;
 
             double t_freq = XVTRForm.TranslateFreq(TXFreq);
-            return BandByFreq(t_freq, -1, false, current_region, false);
+            return BandByFreq(t_freq, -1, current_region);
         }
-        private Band BandByFreq(double freq, int xvtr_index, bool tx, FRSRegion region, bool updatePanelsForVFOA)
+        private Band BandByFreq(double freq, int xvtr_index, FRSRegion region)
         {
-            if (xvtr_index >= 0)
-            {
-                //[2.10.3.6]MW0LGE removed from here, put in to band change handler
-                //if (updatePanelsForVFOA)
-                //{
-                //    setBandPanelVisible(false, false, true);
-                //}
-                return (Band)(Band.VHF0 + xvtr_index);
-            }
-
-            //MW0LGE_21d
-            if (!BandStackManager.Ready)
-            {
-                // ready when it has not been assigned a region/extended flag
-
-                //[2.10.3.6]MW0LGE removed from here, put in to band change handler
-                //setBandPanelVisible(true, false, false);
-
-                return Band.GEN;
-            }
+            if (xvtr_index >= 0) return (Band)(Band.VHF0 + xvtr_index);
+            if (!BandStackManager.Ready) return Band.GEN;
 
             List<BandFrequencyData> bands = BandStackManager.GetBandFrequencyDataForFrequency(freq, extended, region);
 
             // use the first always as it will be same as old code
             BandFrequencyData bfd = bands.First<BandFrequencyData>();
-
-            //[2.10.3.6]MW0LGE removed from here, put in to band change handler
-            //if (updatePanelsForVFOA && !tx) // setup the BAND button box for vfoA only 
-            //{
-            //    switch (bfd.bandType)
-            //    {
-            //        case BandType.GEN:
-            //            setBandPanelVisible(true, false, false);
-            //            break;
-            //        case BandType.HF:
-            //            setBandPanelVisible(false, true, false);
-            //            break;
-            //        case BandType.VHF:
-            //            setBandPanelVisible(false, false, true);
-            //            break;
-            //        default:
-            //            setBandPanelVisible(true, false, false);   //!(iscollapsed && showAndromedaButtonBar);//
-            //            break;
-            //    }
-            //}
-
             return bfd.band;
         }
 
@@ -6258,19 +6219,19 @@ namespace Thetis
             return true;
         }
 
-        public int VersionTextToInt(string version)	// takes a version string like "1.0.6" 
-        {											// and converts it to an int like 010006.
-            string[] nums = version.Split('.');
-            if (nums.Length < 3 || nums.Length > 4) return -1;
+        //public int VersionTextToInt(string version)	// takes a version string like "1.0.6" 
+        //{											// and converts it to an int like 010006.
+        //    string[] nums = version.Split('.');
+        //    if (nums.Length < 3 || nums.Length > 4) return -1;
 
-            int num1 = Int32.Parse(nums[0]);
-            int num2 = Int32.Parse(nums[1]);
-            int num3 = Int32.Parse(nums[2]);
-            int num4 = 0;
-            if (nums.Length == 4) num4 = Int32.Parse(nums[3]);
+        //    int num1 = Int32.Parse(nums[0]);
+        //    int num2 = Int32.Parse(nums[1]);
+        //    int num3 = Int32.Parse(nums[2]);
+        //    int num4 = 0;
+        //    if (nums.Length == 4) num4 = Int32.Parse(nums[3]);
 
-            return num1 * 1000000 + num2 * 10000 + num3 * 100 + num4;
-        }
+        //    return num1 * 1000000 + num2 * 10000 + num3 * 100 + num4;
+        //}
 
         public bool CheckValidTXFreq(FRSRegion r, double f, DSPMode mode, bool bIgnoreFilter = false)
         {
@@ -14687,8 +14648,8 @@ namespace Thetis
 
                 if (!initializing)
                 {
-                    Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, true);
-                    Band lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, false, current_region, false);
+                    Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, current_region);
+                    Band lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, current_region);
                     int bits = Penny.getPenny().ExtCtrlEnable(lo_band, lo_bandb, _mox, value, tuning, SetupForm.TestIMD, chkExternalPA.Checked); // MW0LGE_21j
                     if (!IsSetupFormNull) SetupForm.UpdateOCLedStrip(_mox, bits);
                 }
@@ -14706,7 +14667,7 @@ namespace Thetis
                 UpdateTRXAnt();
                 if (rx1_xvtr_index >= 0)
                 {
-                    Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, true);
+                    Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, current_region);
                     Alex.getAlex().UpdateAlexAntSelection(lo_band, _mox, alex_ant_ctrl_enabled, true);
                 }
                 else
@@ -16962,7 +16923,7 @@ namespace Thetis
                 Band lo_band = Band.FIRST;
                 if (rx1_xvtr_index >= 0)
                     // Fix Penny O/C VHF control Vk4xv
-                    lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, true);
+                    lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, current_region);
 
                 if (!initializing && rx1_preamp_mode > PreampMode.FIRST)
                 {
@@ -17134,8 +17095,8 @@ namespace Thetis
 
                 Band lo_band = Band.FIRST;
                 if (rx2_xvtr_index >= 0)
-                    lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, false, current_region, false);//MW0LGE use rx2_xvtr_index
-                                                                                                                         //MW0LGE this was changed in RX1Band but not here
+                    lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, current_region);//MW0LGE use rx2_xvtr_index
+                                                                                                           //MW0LGE this was changed in RX1Band but not here
 
                 if (!initializing && rx2_preamp_mode > PreampMode.FIRST)
                 {
@@ -17187,7 +17148,7 @@ namespace Thetis
                 Band lo_band = Band.FIRST;
                 if (tx_xvtr_index >= 0)
                     // Fix Penny O/C VHF control Vk4xv
-                    lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, true);
+                    lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, current_region);
 
                 if (tx_band != old_band || initializing)
                 {
@@ -17985,14 +17946,19 @@ namespace Thetis
 
         static double freqFromString(string s)
         {
-            try
+            if(double.TryParse(s, out double f))
             {
-                return Double.Parse(s);
+                return f;
             }
-            catch
-            {
-                return 0;
-            }
+            return 0;
+            //try
+            //{
+            //    return Double.Parse(s);
+            //}
+            //catch
+            //{
+            //    return 0;
+            //}
         }
 
         private double m_dVFOAFreq = 0;
@@ -18042,8 +18008,8 @@ namespace Thetis
             //MW0LGE [2.9.0.7] also in UpdateVFOASub
             if (dOldVFOASubFreq != VFOASubFreq)
             {
-                Band ob = BandByFreq(XVTRForm.TranslateFreq(dOldVFOASubFreq), rx1_xvtr_index, false, current_region, false);
-                Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, false, current_region, false);
+                Band ob = BandByFreq(XVTRForm.TranslateFreq(dOldVFOASubFreq), rx1_xvtr_index, current_region);
+                Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, current_region);
 
                 VFOASubFrequencyChangeHandlers?.Invoke(ob, nb, RX1DSPMode, RX1Filter, dOldVFOASubFreq, VFOASubFreq,
                     CentreFrequency, ClickTuneDisplay, ptbDisplayZoom.Value, radio.GetDSPRX(0, 1).RXOsc, 1);
@@ -18400,8 +18366,8 @@ namespace Thetis
             set
             {
                 disable_6m_lna_on_rx = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
-                double freq2 = Double.Parse(txtVFOBFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
+                double freq2 = VFOBFreq;// Double.Parse(txtVFOBFreq.Text);
                 SetAlexHPF(freq);
                 if (current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
                     current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K)
@@ -18421,7 +18387,7 @@ namespace Thetis
             set
             {
                 disable_6m_lna_on_tx = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18433,7 +18399,7 @@ namespace Thetis
             set
             {
                 disable_hpf_on_tx = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18444,7 +18410,7 @@ namespace Thetis
             set
             {
                 disable_hpf_on_ps = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18457,7 +18423,7 @@ namespace Thetis
                 lpf_bypass = value;
                 if (chkPower.Checked)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     if (_mox) freq = tx_dds_freq_mhz;
                     SetAlexLPF(freq, _mox);
                     if (!initializing)
@@ -18473,7 +18439,7 @@ namespace Thetis
             set
             {
                 alex_hpf_bypass = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
                 if (!initializing)
                     txtVFOAFreq_LostFocus(this, EventArgs.Empty);
@@ -18488,7 +18454,7 @@ namespace Thetis
             set
             {
                 alex2_hpf_bypass = value;
-                double freq = Double.Parse(txtVFOBFreq.Text);
+                double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
                 SetAlex2HPF(freq);
                 if (!initializing)
                     txtVFOBFreq_LostFocus(this, EventArgs.Empty);
@@ -18503,7 +18469,7 @@ namespace Thetis
             set
             {
                 alex1_5bphpf_bypass = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18515,7 +18481,7 @@ namespace Thetis
             set
             {
                 bpf1_1_5bp_bypass = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18527,7 +18493,7 @@ namespace Thetis
             set
             {
                 alex21_5bphpf_bypass = value;
-                double freq = Double.Parse(txtVFOBFreq.Text);
+                double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
                 SetAlex2HPF(freq);
             }
         }
@@ -18539,7 +18505,7 @@ namespace Thetis
             set
             {
                 alex6_5bphpf_bypass = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18551,7 +18517,7 @@ namespace Thetis
             set
             {
                 bpf1_6_5bp_bypass = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18563,7 +18529,7 @@ namespace Thetis
             set
             {
                 alex26_5bphpf_bypass = value;
-                double freq = Double.Parse(txtVFOBFreq.Text);
+                double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
                 SetAlex2HPF(freq);
             }
         }
@@ -18575,7 +18541,7 @@ namespace Thetis
             set
             {
                 alex9_5bphpf_bypass = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18587,7 +18553,7 @@ namespace Thetis
             set
             {
                 bpf1_9_5bp_bypass = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18599,7 +18565,7 @@ namespace Thetis
             set
             {
                 alex29_5bphpf_bypass = value;
-                double freq = Double.Parse(txtVFOBFreq.Text);
+                double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
                 SetAlex2HPF(freq);
             }
         }
@@ -18611,7 +18577,7 @@ namespace Thetis
             set
             {
                 alex13bphpf_bypass = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18623,7 +18589,7 @@ namespace Thetis
             set
             {
                 bpf1_13bp_bypass = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18635,7 +18601,7 @@ namespace Thetis
             set
             {
                 alex213bphpf_bypass = value;
-                double freq = Double.Parse(txtVFOBFreq.Text);
+                double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
                 SetAlex2HPF(freq);
             }
         }
@@ -18647,7 +18613,7 @@ namespace Thetis
             set
             {
                 alex20bphpf_bypass = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18659,7 +18625,7 @@ namespace Thetis
             set
             {
                 bpf1_20bp_bypass = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18671,7 +18637,7 @@ namespace Thetis
             set
             {
                 alex220bphpf_bypass = value;
-                double freq = Double.Parse(txtVFOBFreq.Text);
+                double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
                 SetAlex2HPF(freq);
             }
         }
@@ -18683,7 +18649,7 @@ namespace Thetis
             set
             {
                 alex6bphpf_bypass = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
                 txtVFOAFreq_LostFocus(this, EventArgs.Empty);
             }
@@ -18696,7 +18662,7 @@ namespace Thetis
             set
             {
                 bpf1_6bp_bypass = value;
-                double freq = Double.Parse(txtVFOAFreq.Text);
+                double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 SetAlexHPF(freq);
             }
         }
@@ -18708,7 +18674,7 @@ namespace Thetis
             set
             {
                 alex26bphpf_bypass = value;
-                double freq = Double.Parse(txtVFOBFreq.Text);
+                double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
                 SetAlex2HPF(freq);
             }
         }
@@ -21104,8 +21070,7 @@ namespace Thetis
                     infoBar.Right1(0, x.ToString("f1") + "Hz");
                     infoBar.Right2(0, y.ToString("f1") + "dBm");
 
-                    //double Freq = double.Parse(txtVFOAFreq.Text);
-                    double Freq = VFOAFreq;
+                    double Freq = VFOAFreq;// double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     string temp_text;
                     if ((click_tune_display && !_mox) || (click_tune_display && display_duplex))    // Correct Right hand peak frequency when CTUN on -G3OQD // MW0LGE_21a also when in CTD and DUP
                         temp_text = (freq + (CentreFrequency - Freq)).ToString("f6") + " MHz";      // Disply Right hand peak frequency under Spectrum - G3OQD                            
@@ -25587,7 +25552,7 @@ namespace Thetis
 
         void HandleXml(string str)
         {
-            var elem = XElement.Parse(str);
+            XElement elem = XElement.Parse(str);
             if (elem.Name == "RadioInfo")
             {
                 //MW0LGE_21d
@@ -26731,85 +26696,85 @@ namespace Thetis
 
                 if (e.KeyCode == key_tune_up_1)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq += 1.0;
                     VFOAFreq = freq;
                 }
                 else if (e.KeyCode == key_tune_down_1)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq -= 1.0;
                     VFOAFreq = freq;
                 }
                 else if (e.KeyCode == key_tune_up_2)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq += 0.1;
                     VFOAFreq = freq;
                 }
                 else if (e.KeyCode == key_tune_down_2)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq -= 0.1;
                     VFOAFreq = freq;
                 }
                 else if (e.KeyCode == key_tune_up_3)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq += 0.01;
                     VFOAFreq = freq;
                 }
                 else if (e.KeyCode == key_tune_down_3)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq -= 0.01;
                     VFOAFreq = freq;
                 }
                 else if (e.KeyCode == key_tune_up_4)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq += 0.001;
                     VFOAFreq = freq;
                 }
                 else if (e.KeyCode == key_tune_down_4)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq -= 0.001;
                     VFOAFreq = freq;
                 }
                 else if (e.KeyCode == key_tune_up_5)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq += 0.0001;
                     VFOAFreq = freq;
                 }
                 else if (e.KeyCode == key_tune_down_5)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq -= 0.0001;
                     VFOAFreq = freq;
                 }
                 else if (e.KeyCode == key_tune_up_6)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq += 0.00001;
                     VFOAFreq = freq;
                 }
                 else if (e.KeyCode == key_tune_down_6)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq -= 0.00001;
                     VFOAFreq = freq;
                 }
                 else if (e.KeyCode == key_tune_up_7)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq += 0.000001;
                     VFOAFreq = freq;
                 }
                 else if (e.KeyCode == key_tune_down_7)
                 {
-                    double freq = Double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     freq -= 0.000001;
                     VFOAFreq = freq;
                 }
@@ -28998,8 +28963,8 @@ namespace Thetis
                 UpdateRX2DDSFreq();
                 UpdateTXDDSFreq();
 
-                Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, true);
-                Band lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, false, current_region, false);
+                Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, current_region);
+                Band lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, current_region);
 
                 if (penny_ext_ctrl_enabled) //MW0LGE_21k
                 {
@@ -29049,8 +29014,8 @@ namespace Thetis
 
                 Band lo_band = Band.FIRST;
                 Band lo_bandb = Band.FIRST;
-                lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, true);
-                lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, false, current_region, false);
+                lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, current_region);
+                lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, current_region);
 
                 if (penny_ext_ctrl_enabled) //MW0LGE_21k
                 {
@@ -29342,11 +29307,11 @@ namespace Thetis
                 }
 
                 if (chkVFOBTX.Checked || (!chkRX2.Checked && chkVFOSplit.Checked))
-                    freq = double.Parse(txtVFOBFreq.Text);
+                    freq = VFOBFreq;// double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
                 else if (chkRX2.Checked && chkVFOSplit.Checked)
-                    freq = double.Parse(txtVFOABand.Text);
+                    freq = VFOASubFreq;// double.Parse(txtVFOABand.Text); //[2.10.3.6]freq changes.
                 else
-                    freq = double.Parse(txtVFOAFreq.Text);
+                    freq = VFOAFreq;// double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
 
                 if (chkXIT.Checked)
                     freq += (int)udXIT.Value * 0.000001;
@@ -30922,7 +30887,7 @@ namespace Thetis
             {
                 case TuneLocation.VFOA:
                     if (_mox) return;
-                    double freq = double.Parse(txtVFOAFreq.Text);
+                    double freq = VFOAFreq;// double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     double mult = 1000.0;
                     int right = grpVFOA.Left + txtVFOAFreq.Left + txtVFOAFreq.Width;
                     if (vfoa_hover_digit < 0)
@@ -30951,7 +30916,7 @@ namespace Thetis
 
                 case TuneLocation.VFOB:
                     if (_mox && VFOBTX) return;
-                    freq = double.Parse(txtVFOBFreq.Text);
+                    freq = VFOBFreq;// double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
                     mult = 1000.0;
                     right = grpVFOB.Left + txtVFOBFreq.Left + txtVFOBFreq.Width;
                     if (vfob_hover_digit < 0)
@@ -31430,17 +31395,16 @@ namespace Thetis
             if (!(rx2_enabled && (chkEnableMultiRX.Checked || chkVFOSplit.Checked))) 
                 txtVFOABand.Text = bandInfo;
 
-            Band b = BandByFreq(freq, rx1_xvtr_index, false, current_region, true);
+            Band b = BandByFreq(freq, rx1_xvtr_index, current_region);
             if (b != rx1_band)
                 SetRX1Band(b);
 
             Band old_tx_band = tx_band;
             if (!chkVFOSplit.Checked && !chkVFOBTX.Checked)
             {
-                b = BandByFreq(freq, tx_xvtr_index, true, current_region, true);
+                b = BandByFreq(freq, tx_xvtr_index, current_region);
 
-                Band b1 = getTXBandWhenExtended(b);
-
+                Band b1 = getTXBandWhenExtended(b, freq);
                 if (b1 != tx_band)
                     SetTXBand(b1, b != b1);
             }
@@ -31459,8 +31423,8 @@ namespace Thetis
 
             if (chkPower.Checked)
             {
-                lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, true);
-                lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, false, current_region, false);
+                lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, current_region);
+                lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, current_region);
 
                 if (penny_ext_ctrl_enabled) //MW0LGE_21k
                 {
@@ -31757,7 +31721,7 @@ namespace Thetis
 
                     if (required_ant >= 1 && required_ant <= 3)
                     {
-                        Band xvtr_rx_band = BandByFreq(XVTRForm.TranslateFreq(freq), -1, false, current_region, false);
+                    Band xvtr_rx_band = BandByFreq(XVTRForm.TranslateFreq(freq), -1, current_region);
                         int xvtr_rx_band_ant = SetupForm.GetRXAntenna(xvtr_rx_band);
                         if (required_ant != xvtr_rx_band_ant)
                         {
@@ -31791,7 +31755,7 @@ namespace Thetis
                 _band_used_for_xvtr_modify[rx] = Band.LAST;
             }
         }
-        private Band getTXBandWhenExtended(Band b)
+        private Band getTXBandWhenExtended(Band b, double frequency = -1)
         {
             if (!extended) return b;
 
@@ -31812,7 +31776,22 @@ namespace Thetis
             else if (Band.B13M == b) b1 = Band.B12M;
             else if (Band.B11M == b) b1 = Band.B10M;
 
-            return b1;
+            if (b1 != b) return b1; // changed from above to a ham band
+
+            // check if ham band, return if that is the case
+            if (b >= Band.B160M && b <= Band.B6M) return b;
+
+            // check if xvtr band, return if that is the case
+            if (b >= Band.VHF0 && b <= Band.VHF13) return b;
+
+            // otherwise find nearest band to frequency and use that
+            if (frequency != -1)
+            {
+                Band bn = BandStackManager.GetNearestBandForFrequency(frequency, true, true);
+                if (bn != Band.FIRST) b = bn;
+            }
+
+            return b;
         }
 
         private void txtVFOAFreq_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -31909,7 +31888,7 @@ namespace Thetis
             double freq;
             if (m_bVFOABandChangedByKeys)
             {
-                freq = double.Parse(txtVFOABand.Text); //MW0LGE
+                freq = VFOASubFreq;// double.Parse(txtVFOABand.Text); //MW0LGE //[2.10.3.6]freq changes.
                 m_dVFOASubFreq = freq;
                 m_bVFOABandChangedByKeys = false;
             }
@@ -31973,9 +31952,9 @@ namespace Thetis
             {
                 tx_xvtr_index = XVTRForm.XVTRFreq(freq);
                 Band old_tx_band = tx_band;
-                Band b = BandByFreq(freq, tx_xvtr_index, true, current_region, true);
+                Band b = BandByFreq(freq, tx_xvtr_index, current_region);
 
-                Band b1 = getTXBandWhenExtended(b);
+                Band b1 = getTXBandWhenExtended(b, freq);
 
                 if (chkVFOSplit.Checked && old_tx_band != b1)
                     SetTXBand(b1, b != b1); // ke9ns mod b1
@@ -32441,8 +32420,8 @@ namespace Thetis
 
             if (chkPower.Checked)
             {
-                lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, false, current_region, false);
-                lo_banda = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, false);
+                lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, current_region);
+                lo_banda = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, current_region);
 
                 if (penny_ext_ctrl_enabled) //MW0LGE_21k
                 {
@@ -32463,9 +32442,9 @@ namespace Thetis
             tx_xvtr_index = rx2_xvtr_index;
             double tx_freq = freq;
             Band old_tx_band = tx_band;
-            Band b = BandByFreq(tx_freq, tx_xvtr_index, true, current_region, false);
+            Band b = BandByFreq(tx_freq, tx_xvtr_index, current_region);
 
-            Band b1 = getTXBandWhenExtended(b);
+            Band b1 = getTXBandWhenExtended(b, tx_freq);
 
             if (old_tx_band != b1)
                 SetTXBand(b1, b != b1); // ke9ns mod b1
@@ -32618,7 +32597,7 @@ namespace Thetis
             goto end;
 
         set_rx2_freq:
-            Band band = BandByFreq(freq, rx2_xvtr_index, false, current_region, false);
+            Band band = BandByFreq(freq, rx2_xvtr_index, current_region);
             if (band != rx2_band)
                 SetRX2Band(band);
             double f_LO = 0.0;
@@ -32713,7 +32692,7 @@ namespace Thetis
             {
                 if (dOldFreq != VFOBFreq)
                 {
-                    Band tmpBand = BandByFreq(VFOBFreq, rx1_xvtr_index, false, current_region, false);
+                    Band tmpBand = BandByFreq(VFOBFreq, rx1_xvtr_index, current_region);
 
                     VFOBFrequencyChangeHandlers?.Invoke(oldBand, tmpBand, oldMode, RX1DSPMode, oldFilter, RX1Filter, dOldFreq, VFOBFreq,
                         oldCentreFreq, CentreFrequency, oldCtun, ClickTuneDisplay, oldZoomSlider, ptbDisplayZoom.Value, radio.GetDSPRX(0, 0).RXOsc, 1);
@@ -34808,13 +34787,13 @@ namespace Thetis
                                     if (click_tune_rx2_display && current_click_tune_mode != ClickTuneMode.Off)
                                         freq = CentreRX2Frequency + (double)x * 0.0000010;
                                     else if (current_click_tune_mode != ClickTuneMode.Off)
-                                        freq = double.Parse(txtVFOBFreq.Text) + (double)x * 0.0000010; // click tune w/x-hairs
+                                        freq = /*double.Parse(txtVFOBFreq.Text)*/ VFOBFreq + (double)x * 0.0000010; // click tune w/x-hairs //[2.10.3.6]freq changes.
                                     else if (click_tune_drag)
                                         freq = CentreRX2Frequency + (double)x * 0.0000010; // click tune & drag vfo
                                     else
                                     {
                                         bShift = false; // the shift is already applied to the vfo, we dont want to do it again ! MW0LGE_21k9rc6
-                                        freq = double.Parse(txtVFOBFreq.Text); // click & drag vfo
+                                        freq = /*double.Parse(txtVFOBFreq.Text);*/ VFOBFreq; // click & drag vfo //[2.10.3.6]freq changes.
                                     }
 
                                     if (bShift)
@@ -34844,13 +34823,13 @@ namespace Thetis
                                     if (click_tune_display && current_click_tune_mode != ClickTuneMode.Off)
                                         freq = CentreFrequency + (double)x * 0.0000010;
                                     else if (current_click_tune_mode != ClickTuneMode.Off)
-                                        freq = double.Parse(txtVFOAFreq.Text) + (double)x * 0.0000010; // click tune w/x-hairs
+                                        freq = /*double.Parse(txtVFOAFreq.Text)*/ VFOAFreq + (double)x * 0.0000010; // click tune w/x-hairs //[2.10.3.6]freq changes.
                                     else if (click_tune_drag)
                                         freq = CentreFrequency + (double)x * 0.0000010; // click tune & drag vfo
                                     else
                                     {
                                         bShift = false; // the shift is already applied to the vfo, we dont want to do it again ! MW0LGE_21k9rc6
-                                        freq = double.Parse(txtVFOAFreq.Text); // click & drag vfo
+                                        freq = /*double.Parse(txtVFOAFreq.Text);*/ VFOAFreq; // click & drag vfo //[2.10.3.6]freq changes.
                                     }
 
                                     if (bShift)
@@ -37805,7 +37784,7 @@ namespace Thetis
                     VFOASubFreq = saved_vfoa_sub_freq;
 
                     tx_xvtr_index = XVTRForm.XVTRFreq(VFOASubFreq);
-                    TXBand = BandByFreq(VFOASubFreq, tx_xvtr_index, true, current_region, true);
+                    TXBand = BandByFreq(VFOASubFreq, tx_xvtr_index, current_region);
                     if (chkPower.Checked) txtVFOABand.ForeColor = Color.Red;
                     else txtVFOABand.ForeColor = Color.DarkRed;
                     txtVFOABand.TextAlign = HorizontalAlignment.Right;
@@ -37862,8 +37841,8 @@ namespace Thetis
             //MW0LGE [2.9.0.7] also in VFOASubUpdate
             if (dOldVFOASubFreq != VFOASubFreq)
             {
-                Band ob = BandByFreq(XVTRForm.TranslateFreq(dOldVFOASubFreq), rx1_xvtr_index, false, current_region, false);
-                Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, false, current_region, false);
+                Band ob = BandByFreq(XVTRForm.TranslateFreq(dOldVFOASubFreq), rx1_xvtr_index, current_region);
+                Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, current_region);
 
                 VFOASubFrequencyChangeHandlers?.Invoke(ob, nb, RX1DSPMode, RX1Filter, dOldVFOASubFreq, VFOASubFreq,
                     CentreFrequency, ClickTuneDisplay, ptbDisplayZoom.Value, radio.GetDSPRX(0, 1).RXOsc, 1);
@@ -37926,7 +37905,7 @@ namespace Thetis
                 if (chkVFOSplit.Checked)
                 {
                     if (chkVFOSync.Checked) chkVFOSync.Checked = false;
-                    TXBand = BandByFreq(VFOBFreq, tx_xvtr_index, true, current_region, false);
+                    TXBand = BandByFreq(VFOBFreq, tx_xvtr_index, current_region);
                     grpVFOB.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold);
                     grpVFOB.ForeColor = Color.Red;
 
@@ -38808,7 +38787,7 @@ namespace Thetis
 
             if (chkEnableMultiRX.Checked != _oldMultiRX)
             {
-                Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, false, current_region, false);
+                Band nb = BandByFreq(XVTRForm.TranslateFreq(VFOASubFreq), rx1_xvtr_index, current_region);
 
                 MultiRxHandlers?.Invoke(chkEnableMultiRX.Checked, _oldMultiRX, VFOASubFreq, nb, RX2Enabled);
                 _oldMultiRX = chkEnableMultiRX.Checked;
@@ -42288,7 +42267,8 @@ namespace Thetis
 
         private void comboFMCTCSS_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CTCSSFreq = double.Parse(comboFMCTCSS.Text);
+            bool ok = double.TryParse(comboFMCTCSS.Text, out double f);
+            if (ok) CTCSSFreq = f;
         }
 
         private void InitCTCSS()
@@ -46022,9 +46002,12 @@ namespace Thetis
             {
                 // W x H
                 int xPos = resolutionString.IndexOf("x");
-                W = int.Parse(resolutionString.Substring(0, xPos - 1));
-                H = int.Parse(resolutionString.Substring(xPos + 2));
-                bOK = true;
+                bOK = int.TryParse(resolutionString.Substring(0, xPos - 1), out W);
+                if (bOK)
+                    bOK = int.TryParse(resolutionString.Substring(xPos + 2), out H);
+                //W = int.Parse(resolutionString.Substring(0, xPos - 1));
+                //H = int.Parse(resolutionString.Substring(xPos + 2));
+                //bOK = true;
             }
 
             if (bOK)
@@ -46882,56 +46865,22 @@ namespace Thetis
             m_frmNotchPopup.NotchDeleteEvent += onNotchDelete;
             m_frmNotchPopup.NotchBWChangedEvent += onBWChanged;
             m_frmNotchPopup.NotchActiveChangedEvent += onActiveChanged;
-
             m_frmSeqLog.ClearButtonEvent += onClearButton;
-
             BandPreChangeHandlers += OnBandBeforeChangeHandler;            // just a band button is pressed
-            //BandNoChangeHandlers += OnBandNoChangeHandler;              // no change made to band
             BandChangeHandlers += OnBandChangeHandler;                  // band was changed
             ModeChangeHandlers += OnModeChangeHandler;                  // mode was changed
             VFOAFrequencyChangeHandlers += OnVFOAFrequencyChangeHandler;    //VFOA changed
             VFOBFrequencyChangeHandlers += OnVFOBFrequencyChangeHandler;    //VFOB changed
-            //VFOASubFrequencyChangeHandlers += OnVFOASubFrequencyChangeHandler;    //VFOASub changed
             MoxChangeHandlers += OnMoxChangeHandler;                    // mox changed
-            //MoxPreChangeHandlers += OnMoxPreChangeHandler;              // mox is about to change
             SetBandChangeHanders += OnSetBandChangeHander;              // SetBand completed
             PowerChangeHanders += OnPowerChangeHander;                  // power state changed
-
             CentreFrequencyHandlers += OnCentreFrequencyChanged;        // centrefreq's changed
             CTUNChangedHandlers += OnCTUNChanged;                       // CTUN state changed
             FilterChangedHandlers += OnFilterChanged;                   // filters changed
             ZoomFactorChangedHandlers += OnZoomChanged;                 // zoom changed
-
-            //AttenuatorDataChangedHandlers += OnAttenuatorDataChanged;                 // att data change
             PreampModeChangedHandlers += OnPreampModeChanged;                 // preamp mode change
-
-            //FilterEdgesChangedHandlers += OnFilterEdgesChanged;
-            //SplitChangedHandlers += OnSplitChanged;
-            //TuneChangedHandlers += OnTuneChanged;
-            //DrivePowerChangedHandlers += OnDrivePowerChanged;
-            //SampleRateChangedHandlers += OnSampleRateChanged;
-            //ThetisFocusChangedHandlers += OnThetisFocusChanged;
-            //RX2EnabledChangedHandlers += OnRX2EnabledChanged;
-            //RX2EnabledPreChangedHandlers += OnRX2EnabledPreChanged;
-            //SpotClickedHandlers += OnSpotClicked;
-            //MultiRxHandlers += OnMultiRxChanged;
-
             VFOTXChangedHandlers += OnVFOTXChanged;
-            //TXBandChangeHandlers += OnTXBandChanged;
-
-            //MeterReadingsChangedHandlers += OnMeterReadings;
-
-            //AlexPresentChangedHandlers += OnAlexPresentChanged;
-            //PAPresentChangedHandlers += OnPAPresentChanged;
-            //ApolloPresentChangedHandlers += OnApolloPresentChanged;
-            //CurrentModelChangedHandlers += OnCurrentModelChanged;
-            //TransverterIndexChangedHandlers += OnTransverterIndexChanged;
-
             TXInhibitChangedHandlers += OnTXInhibitChanged;
-
-            //MuteChangedHandlers += OnMuteChanged;
-            //MONChangedHandlers += OnMONChanged;
-            //MONVolumeChangedHandlers += OnMONVolumeChanged;
 
             Display.SetupDelegates();
             
@@ -46942,55 +46891,22 @@ namespace Thetis
             m_frmNotchPopup.NotchDeleteEvent -= onNotchDelete;
             m_frmNotchPopup.NotchBWChangedEvent -= onBWChanged;
             m_frmNotchPopup.NotchActiveChangedEvent -= onActiveChanged;
-
             m_frmSeqLog.ClearButtonEvent -= onClearButton;
-
             BandPreChangeHandlers -= OnBandBeforeChangeHandler;
-            //BandNoChangeHandlers -= OnBandNoChangeHandler;
             BandChangeHandlers -= OnBandChangeHandler;
             ModeChangeHandlers -= OnModeChangeHandler;
             VFOAFrequencyChangeHandlers -= OnVFOAFrequencyChangeHandler;
             VFOBFrequencyChangeHandlers -= OnVFOBFrequencyChangeHandler;
-            //VFOASubFrequencyChangeHandlers = OnVFOASubFrequencyChangeHandler;
             MoxChangeHandlers -= OnMoxChangeHandler;
-            //MoxPreChangeHandlers -= OnMoxPreChangeHandler;
             SetBandChangeHanders -= OnSetBandChangeHander;
             CentreFrequencyHandlers -= OnCentreFrequencyChanged;
             CTUNChangedHandlers -= OnCTUNChanged;
             FilterChangedHandlers -= OnFilterChanged;
             ZoomFactorChangedHandlers -= OnZoomChanged;
             PowerChangeHanders -= OnPowerChangeHander;
-
-            //AttenuatorDataChangedHandlers -= OnAttenuatorDataChanged;
             PreampModeChangedHandlers -= OnPreampModeChanged;
-
-            //FilterEdgesChangedHandlers -= OnFilterEdgesChanged;
-            //SplitChangedHandlers -= OnSplitChanged;
-            //TuneChangedHandlers -= OnTuneChanged;
-            //DrivePowerChangedHandlers -= OnDrivePowerChanged;
-            //SampleRateChangedHandlers -= OnSampleRateChanged;
-            //ThetisFocusChangedHandlers -= OnThetisFocusChanged;
-            //RX2EnabledChangedHandlers -= OnRX2EnabledChanged;
-            //RX2EnabledPreChangedHandlers -= OnRX2EnabledPreChanged;
-            //SpotClickedHandlers -= OnSpotClicked;
-            //MultiRxHandlers -= OnMultiRxChanged;
-
             VFOTXChangedHandlers -= OnVFOTXChanged;
-            //TXBandChangeHandlers -= OnTXBandChanged;
-
-            //MeterReadingsChangedHandlers -= OnMeterReadings;
-
-            //AlexPresentChangedHandlers -= OnAlexPresentChanged;
-            //PAPresentChangedHandlers -= OnPAPresentChanged;
-            //ApolloPresentChangedHandlers -= OnApolloPresentChanged;
-            //CurrentModelChangedHandlers -= OnCurrentModelChanged;
-            //TransverterIndexChangedHandlers -= OnTransverterIndexChanged;
-
             TXInhibitChangedHandlers -= OnTXInhibitChanged;
-
-            //MuteChangedHandlers -= OnMuteChanged;
-            //MONChangedHandlers -= OnMONChanged;
-            //MONVolumeChangedHandlers -= OnMONVolumeChanged;
 
             if (m_frmBandStack2 != null) // dont use the singleton accessor as we dont want to make one if one does not exist
             {
@@ -47566,8 +47482,8 @@ namespace Thetis
             //MW0LGE_21j
             if (!chkPower.Checked) return;
 
-            Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, false, current_region, true);
-            Band lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, false, current_region, false);
+            Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, current_region);
+            Band lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, current_region);
 
             if (penny_ext_ctrl_enabled) //MW0LGE_21k
             {
@@ -48476,7 +48392,7 @@ namespace Thetis
             {
                 if (slider.Focused)
                     XVTRForm.SetPower(tx_xvtr_index, slider.Value);
-                Band b = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), tx_xvtr_index, true, current_region, true);
+                Band b = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), tx_xvtr_index, current_region);
             }
 
             //constrain power
@@ -48488,7 +48404,7 @@ namespace Thetis
             double gbb;
             if (tx_xvtr_index >= 0)
             {
-                Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), tx_xvtr_index, true, current_region, true);
+                Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), tx_xvtr_index, current_region);
                 gbb = GainByBand(lo_band, new_pwr);
             }
             else
@@ -49962,9 +49878,10 @@ namespace Thetis
             for (int i = 0; i < sSplit.Length; i += 2)
             {
                 string sForm = sSplit[i];
-                bool bVal = bool.Parse(sSplit[i + 1]);
-
-                SetAutoFormStartSetting(sForm, bVal);
+                //bool bVal = bool.Parse(sSplit[i + 1]);
+                bool ok = bool.TryParse(sSplit[i + 1], out bool bVal);
+                if(ok)
+                    SetAutoFormStartSetting(sForm, bVal);
             }
             if (!IsSetupFormNull) SetupForm.UpdateAutoStartForms();
         }

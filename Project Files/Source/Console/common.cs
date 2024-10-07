@@ -1483,5 +1483,16 @@ namespace Thetis
 
             return true;
         }
+        public static void DebugPrintCallStack(bool only_with_line = true)
+        {
+            StackTrace stackTrace = new StackTrace(true);
+            foreach (StackFrame frame in stackTrace.GetFrames())
+            {
+                if (frame.GetFileLineNumber() != 0 || !only_with_line)
+                    Debug.Print($"{frame.GetMethod().Name}, " +
+                                      $"File: {frame.GetFileName()}, " +
+                                      $"Line Number: {frame.GetFileLineNumber()}");
+            }
+        }
     }
 }

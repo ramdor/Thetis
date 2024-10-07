@@ -1195,7 +1195,7 @@ namespace Thetis
         }        
         public static Band GetNearestBandForFrequency(double freq, bool ignoreGen, bool ignoreWWV)
         {
-            Band nearestBand = default(Band);
+            Band nearestBand = Band.FIRST;
             double smallestDifference = double.MaxValue;
 
             foreach (BandFrequencyData data in m_frequencyData)
