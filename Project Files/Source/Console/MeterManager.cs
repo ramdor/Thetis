@@ -8168,7 +8168,7 @@ namespace Thetis
 
                     if (_ig != null)
                     {
-                        float fPadY = 0.04f;
+                        float fPadY = 0.041f;
                         float fHeight = 0.05f;
                         _ig.Size = new SizeF(_ig.Size.Width, _size + (fPadY - (fHeight * 0.75f)));
                         _owningMeter.Rebuild();
