@@ -3799,6 +3799,32 @@ namespace Thetis
                 }
             }
         }
+        public static void FinishSetupAndDisplay(string sID)
+        {
+            if (_lstUCMeters == null || _lstUCMeters.Count == 0) return;
+
+            lock (_metersLock)
+            {
+                if (!_meters.ContainsKey(sID)) return;
+
+                clsMeter m = _meters[sID];
+                initConsoleData(m);
+                m.ZeroOut(true, true);
+
+                if (_lstUCMeters.ContainsKey(sID) && _lstMeterDisplayForms.ContainsKey(sID))
+                {
+                    ucMeter ucm = _lstUCMeters[sID];
+
+                    frmMeterDisplay f = _lstMeterDisplayForms[ucm.ID];
+                    if (ucm.Floating)
+                    {
+                        setMeterFloating(ucm, f);
+                    }
+                    else
+                        returnMeterFromFloating(ucm, f);
+                }
+            }
+        }
         public static void BringToFront()
         {
             if (_lstUCMeters == null || _lstUCMeters.Count == 0) return;

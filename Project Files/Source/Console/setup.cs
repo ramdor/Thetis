@@ -10875,9 +10875,10 @@ namespace Thetis
             // replace the DB with the one we snapshotted
             DB.RecoverTableSnapshot("Options");
 
+            List<string> different_meter_ids = new List<string>();
             if (meterDataDifferent)
             {
-                List<string> different_meter_ids = MeterManager.GetMeterIDsFromSaveData(meterDifferences);
+                different_meter_ids = MeterManager.GetMeterIDsFromSaveData(meterDifferences);
 
                 if (different_meter_ids.Count > 0)
                 {
@@ -10916,14 +10917,17 @@ namespace Thetis
                 }));
             }
 
-            getOptions(/*m_lstUpdatedControlsClone*/false, meterIODifferent); // recover ALL, except for meters
+            getOptions(false, meterIODifferent); // recover ALL, except for meters
 
             if (meterDataDifferent)
             {
                 console.Invoke(new MethodInvoker(() => // invoke on console, as this is where it normally happens
                 {
-                    MeterManager.RunAllRendererDisplays();
-                    MeterManager.FinishSetupAndDisplay();
+                    foreach (string id in different_meter_ids)
+                    {
+                        MeterManager.RunRendererDisplay(id);
+                        MeterManager.FinishSetupAndDisplay(id);
+                    }                    
                 }));
                 this.Invoke(new MethodInvoker(() =>
                 {
