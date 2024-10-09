@@ -10903,7 +10903,12 @@ namespace Thetis
                         }
 
                         // attempt to restore any meters that have changed
-                        MeterManager.RestoreSettings(ref result);
+                        if (result.Count > 0)
+                        {
+                            MeterManager.RestoreSettings(ref result);
+                        }
+                        else
+                            different_meter_ids.Clear(); // nothing to recover as result was empty
                     }));
                 }
             }

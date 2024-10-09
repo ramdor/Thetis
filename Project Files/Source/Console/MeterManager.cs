@@ -2513,10 +2513,13 @@ namespace Thetis
                         foreach (KeyValuePair<string, clsMeter> ms in _meters)
                         {
                             clsMeter m = ms.Value;
-                            string mguid = m.MeterGroupID();
-                            if (guid == mguid)
+                            Dictionary<string, clsItemGroup> igs = m.getMeterGroups();
+                            foreach(KeyValuePair<string, clsItemGroup> kvpig in igs)
                             {
-                                if (!ids.Contains(m.ID)) ids.Add(m.ID);
+                                if (guid == kvpig.Key)
+                                {
+                                    if (!ids.Contains(m.ID)) ids.Add(m.ID);
+                                }
                             }
                         }
                     }
