@@ -2523,64 +2523,7 @@ namespace Thetis
                 }
             }
             return ids;
-        }
-        //public static void ClearUp()
-        //{
-        //    if (_image_fetcher != null)
-        //        _image_fetcher.Shutdown();
-
-        //    MultiMeterIO.StopConnections();
-
-        //    List<string> remove = new List<string>();
-        //    lock (_metersLock)
-        //    {
-        //        foreach(KeyValuePair<string, clsMeter> m in _meters)
-        //        {
-        //            remove.Add(m.Key);
-        //        }
-        //    }
-        //    foreach(string id in remove)
-        //    {
-        //        RemoveMeterContainer(id);
-        //    }
-        //    lock (_metersLock)
-        //    {
-        //        _meters.Clear();
-        //    }
-        //    //foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
-        //    //{
-        //    //    kvp.Value.ShutdownDX();
-        //    //}
-        //    //_DXrenderers.Clear();
-
-        //    //_meterThreadRunning = false;
-        //    //if (_meterThread != null && _meterThread.IsAlive)
-        //    //{
-        //    //    int nWait = 0;
-        //    //    lock (_metersLock)
-        //    //    {
-        //    //        foreach (KeyValuePair<string, clsMeter> kvp in _meters)
-        //    //        {
-        //    //            clsMeter m = kvp.Value;
-
-        //    //            int nTmp = m.DelayForUpdate();
-        //    //            if (nTmp > nWait) nWait = nTmp;
-        //    //        }
-        //    //    }
-        //    //    _meterThread.Join(nWait + 100); // slightly longer
-        //    //}
-
-        //    //foreach (KeyValuePair<string, frmMeterDisplay> kvp in _lstMeterDisplayForms)
-        //    //{
-        //    //    kvp.Value.Close();
-        //    //}
-
-        //    //RemoveMeterContainer
-
-        //    //_meters.Clear();
-        //    //_lstUCMeters.Clear();
-        //    //_lstMeterDisplayForms.Clear();
-        //}
+        }       
         public static void Shutdown()
         {
             if (_image_fetcher != null)
@@ -24684,7 +24627,7 @@ namespace Thetis
                 _com_port = com_port;
                 _baud_rate = baud_rate;
                 _data_bits = data_bits;
-                _stop_bits = stop_bits; ;
+                _stop_bits = stop_bits;
                 _parity = parity;
 
                 _four_char = FourChar(com_port, baud_rate + data_bits, _guid);
