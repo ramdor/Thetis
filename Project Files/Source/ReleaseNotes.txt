@@ -73,6 +73,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] dark mode option added to BsdWorld urls in Web Image item
 - [add] use command line option -cmasioconfig to add a new cmasio tab to audio setting. Remove old cmasio settings from the registry if you want to use this feature as they have moved. See notes in the tab
 - [add] option in led indicator to stop tx if conditions met
+- [change] when using [extended] Thetis will now allow tx anywhere. It will select the nearest band to the frequency you have selected and use that band info for bpf/lpfs. This will now permit power output on 8m for example. If you use this feature be aware of the out of band transmission possibilities and potential issues for the hardware
 - [change] meter container borders have been reduced
 - [change] importing a db with meter containers will no longer clear existing ones, they will be added if possible
 - [change] containers no longer store/convert all skin meter images, only the ones required for that specific container. Considerable memory savings
@@ -95,6 +96,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] right axis on history chart is not shown if not used
 - [change] -help text adjusted for the new -dbid flag
 - [change] spectrum and grid directX renderers now use directX clip to limit draw items such as line. Previously LOTS of IF statements were used. For a 2000 pixel wide spectrum, at 60fps, it is a saving of over 720,000 IF statements per second, per receiver, and has been replaced by a single directX clip statement. It also fixes the line that used to draw at the bottom of the spectrum if data was below the low limit, and also fixes some rx2 items moving into the rx1 space
+- [change] bypass vac will only get applied in PollPTT loop if needed (for both mic and vox)
 - [fix] fix issue where you could not remove tx profile entries if they only had case changes in their name, such as ABc and abc
 - [fix] import of container locations now works when importing a database
 - [fix] fixed issue where a meter container would re-appear if console was minimised and then restored and that container had been docked at some point
@@ -140,6 +142,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] when dragging docked meter containers the user control area of the console form would show unpainted areas. The area covered by the container is now instantly repainted when the container moved/resized/hidden
 - [fix] range limits for spectrum and waterfall high/low values. High now cant go below low, and low cant go above high
 - [fix] port limit ranges for tci/cat/n1mm/mmio, of 0-65535
+- [fix] a ToT/led indicator that terminates mox will not key back up instantly if using external keying hardware. It will require PTT to be released first. Fixes #518
 
 ## v2.10.3.5 Change Log
 - [add] midi device DJ2GO2 Touch MIDI is now handled uniquely, and main sliders will have values reversed

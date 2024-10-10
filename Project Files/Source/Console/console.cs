@@ -11566,11 +11566,11 @@ namespace Thetis
             get { return rx2_meter_new_data; }
         }
 
-        private bool all_mode_mic_ptt = false;
+        private bool _all_mode_mic_ptt = false;
         public bool AllModeMicPTT
         {
-            get { return all_mode_mic_ptt; }
-            set { all_mode_mic_ptt = value; }
+            get { return _all_mode_mic_ptt; }
+            set { _all_mode_mic_ptt = value; }
         }
 
         //private int last_rx1_xvtr_index = -1;			// index of last xvtr in use
@@ -14640,11 +14640,11 @@ namespace Thetis
             }
         }
 
-        private PTTMode current_ptt_mode = PTTMode.NONE;
+        private PTTMode _current_ptt_mode = PTTMode.NONE;
         public PTTMode CurrentPTTMode
         {
-            get { return current_ptt_mode; }
-            set { current_ptt_mode = value; }
+            get { return _current_ptt_mode; }
+            set { _current_ptt_mode = value; }
         }
 
         private bool rx2_preamp_present = false;
@@ -18103,11 +18103,11 @@ namespace Thetis
             }
         }
 
-        private bool cat_ptt = false;
+        private bool _cat_ptt = false;
         public bool CATPTT
         {
-            get { return cat_ptt; }
-            set { cat_ptt = value; }
+            get { return _cat_ptt; }
+            set { _cat_ptt = value; }
         }
 
         private bool reverse_paddles = false;
@@ -24407,7 +24407,7 @@ namespace Thetis
                 await Task.Delay(100);
             }
         }
-
+        
         private bool mon_recall = false;
         private static readonly HiPerfTimer vox_timer = new HiPerfTimer();
 
@@ -24423,41 +24423,54 @@ namespace Thetis
                 if (!manual_mox && !disable_ptt && !rx_only && !_tx_inhibit && !QSKEnabled)
                 {
                     bool mic_ptt = (dotdashptt & 0x01) != 0; // PTT from radio
-                    bool cat_hs_ptt = CWInput.CATPTT; // CAT serial PTT
                     bool cw_ptt = CWInput.KeyerPTT; // CW serial PTT
                     bool vox_ptt = Audio.VOXActive;
-                    bool cat_ptt_local = (ptt_bit_bang_enabled && serialPTT != null && serialPTT.isPTT()) |
-                        (!ptt_bit_bang_enabled && cat_hs_ptt) | cat_ptt;
+                    bool cat_ptt = (ptt_bit_bang_enabled && serialPTT != null && serialPTT.isPTT()) | // CAT serial PTT
+                                   (!ptt_bit_bang_enabled && CWInput.CATPTT) | _cat_ptt;
 
                     if (!_mox)
                     {
-                        Audio.VACBypass = (chkVAC1.Checked && m_allow_micvox_bypass);
+                        // we can come in here from a ToT ( StopAllTX() ) //[2.10.3.6]MWLGE fixes #518
+                        // however we dont want switch anything back on, unless all of the above have been released
+                        if (_stop_all_tx)
+                        {
+                            if (_tci_ptt || cat_ptt || cw_ptt || mic_ptt || vox_ptt)
+                            {
+                                await Task.Delay(1);
+                                continue; // skip all, and restart the loop
+                            }
+                            else
+                                _stop_all_tx = false;
+                        }
+
+                        //Audio.VACBypass = (chkVAC1.Checked && m_allow_micvox_bypass); //[2.10.3.6]MW0LGE originally from PR #87, by W4WMT. We dont want to do this every 1ms
+                        if (chkVAC1.Checked && (allow_vac_bypass || m_allow_micvox_bypass))
+                        {
+                            if(!Audio.VACBypass) Audio.VACBypass = true;
+                        }
+                        else if (Audio.VACBypass)
+                        {
+                            Audio.VACBypass = false;
+                        }
+
                         if (_tci_ptt)
                         {
-                            current_ptt_mode = PTTMode.TCI;
+                            _current_ptt_mode = PTTMode.TCI;
                             chkMOX.Checked = true;
                         }
-                        if (cat_ptt_local)
+
+                        if (cat_ptt)
                         {
-                            current_ptt_mode = PTTMode.CAT;
+                            _current_ptt_mode = PTTMode.CAT;
                             chkMOX.Checked = true;
-                            //[2.10.3.5]MW0LGE removed as seems somewhat strange to do. Vox/cw/micptt do not consider it, and they could quite easily fail from out of band issue
-                            //if (!_mox)   // although we are in a !mox block, the mox bool gets updated by the _checked event on chkMOX.Checked=true (the line above)
-                            //            // if mox(tx) failed then assume it is ok to pull the power
-                            //{
-                            //    chkPower.Checked = false;
-                            //    return;
-                            //}
                         }
 
-                        if ((tx_mode == DSPMode.CWL ||
-                              tx_mode == DSPMode.CWU) &&
-                            (cw_ptt || mic_ptt))
+                        if ((tx_mode == DSPMode.CWL || tx_mode == DSPMode.CWU) && (cw_ptt || mic_ptt))
                         {
-                            current_ptt_mode = PTTMode.CW;
+                            _current_ptt_mode = PTTMode.CW;
 
-                            if (chkVAC1.Checked && allow_vac_bypass)
-                                Audio.VACBypass = true;
+                            //if (chkVAC1.Checked && allow_vac_bypass) //[2.10.3.6]MW0LGE see above
+                            //    Audio.VACBypass = true;
 
                             chkMOX.Checked = true;
                         }
@@ -24470,14 +24483,14 @@ namespace Thetis
                             tx_mode == DSPMode.DIGU ||
                             tx_mode == DSPMode.DIGL ||
                             tx_mode == DSPMode.FM ||
-                            all_mode_mic_ptt) &&
+                            _all_mode_mic_ptt) &&
                             mic_ptt &&
-                            current_ptt_mode != PTTMode.CW)
+                            _current_ptt_mode != PTTMode.CW)
                         {
-                            current_ptt_mode = PTTMode.MIC;
+                            _current_ptt_mode = PTTMode.MIC;
 
-                            if (chkVAC1.Checked && allow_vac_bypass)
-                                Audio.VACBypass = true;
+                            //if (chkVAC1.Checked && allow_vac_bypass) //[2.10.3.6]MW0LGE see above
+                            //    Audio.VACBypass = true;
 
                             chkMOX.Checked = true;
                         }
@@ -24492,13 +24505,13 @@ namespace Thetis
                             tx_mode == DSPMode.FM) &&
                             vox_ptt)
                         {
-                            current_ptt_mode = PTTMode.VOX;
+                            _current_ptt_mode = PTTMode.VOX;
                             chkMOX.Checked = true;
                         }
                     }
                     else // else if(mox)
                     {
-                        switch (current_ptt_mode)
+                        switch (_current_ptt_mode)
                         {
                             case PTTMode.TCI:
                                 if (!_tci_ptt)
@@ -24509,7 +24522,7 @@ namespace Thetis
                             case PTTMode.CAT:
                                 if (chkVAC1.Checked && m_allow_micvox_bypass)
                                     Audio.VACBypass = false;
-                                if (!cat_ptt_local)
+                                if (!cat_ptt)
                                 {
                                     chkMOX.Checked = false;
                                 }
@@ -25937,7 +25950,7 @@ namespace Thetis
                             {
                                 if (spacebar_ptt)
                                 {
-                                    current_ptt_mode = PTTMode.SPACE;
+                                    _current_ptt_mode = PTTMode.SPACE;
                                     chkMOX.Checked = !chkMOX.Checked;
                                     if (chkMOX.Checked)
                                     {
@@ -28172,9 +28185,9 @@ namespace Thetis
                 if (cw_fw_keyer &&
                     (RX1DSPMode == DSPMode.CWL || RX1DSPMode == DSPMode.CWU) &&
                      !chkTUN.Checked &&
-                     current_ptt_mode != PTTMode.SPACE &&
-                    current_ptt_mode != PTTMode.CAT &&
-                    current_ptt_mode != PTTMode.CW)
+                     _current_ptt_mode != PTTMode.SPACE &&
+                    _current_ptt_mode != PTTMode.CAT &&
+                    _current_ptt_mode != PTTMode.CW)
                     NetworkIO.SetPttOut(0);
                 else NetworkIO.SetPttOut(1);
                 if (serialPTT != null) serialPTT.setDTR(true);
@@ -28418,9 +28431,9 @@ namespace Thetis
                 return;
             }
 
-            if (allow_mox_bypass && current_ptt_mode != PTTMode.MIC &&
-                                    current_ptt_mode != PTTMode.SPACE &&
-                                    current_ptt_mode != PTTMode.CAT)
+            if (allow_mox_bypass && _current_ptt_mode != PTTMode.MIC &&
+                                    _current_ptt_mode != PTTMode.SPACE &&
+                                    _current_ptt_mode != PTTMode.CAT)
             {
                 if (chkMOX.Checked)
                 {
@@ -28577,7 +28590,7 @@ namespace Thetis
             }
             else
             {
-                current_ptt_mode = PTTMode.NONE;
+                _current_ptt_mode = PTTMode.NONE;
 
                 //Undo FM Offsets
                 if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM && current_fm_tx_mode != FMTXMode.Simplex
@@ -29115,7 +29128,7 @@ namespace Thetis
                 // MW0LGE_21k8 moved below mox
                 updateVFOFreqs(chkTUN.Checked, true);
 
-                current_ptt_mode = PTTMode.MANUAL;
+                _current_ptt_mode = PTTMode.MANUAL;
                 manual_mox = true;
 
                 NetworkIO.SetUserOut0(1);       // <--- love the way this is commented MW0LGE_22b - why are we switching DB9 pins? 1 & 3 ?
@@ -45902,10 +45915,12 @@ namespace Thetis
             TimeOutTimerManager.RemoveCallback(timeOutTimer);
         }
         //
+        private bool _stop_all_tx = false;
         public void StopAllTx()
         {
             if (MOX || manual_mox || chkTUN.Checked || chk2TONE.Checked)
             {
+                _stop_all_tx = true;
                 MOX = false;
                 manual_mox = false;
                 if (chkTUN.Checked)
