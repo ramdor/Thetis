@@ -74,6 +74,111 @@ namespace Thetis
         // Private Member Functions
         // ======================================================
 
+        //private static Dictionary<string, DataTable> _table_snapshots = new Dictionary<string, DataTable>();
+        //public static bool DifferentInSnapshot(string tableName, string keyPrefix, ref Dictionary<string, string> differences)
+        //{
+        //    bool bret = false;
+
+        //    if (ds.Tables.Contains(tableName) && _table_snapshots.ContainsKey(tableName))
+        //    {
+        //        // Create DataViews for filtering
+        //        DataView currentView = new DataView(ds.Tables[tableName]);
+        //        DataView snapshotView = new DataView(_table_snapshots[tableName]);
+
+        //        // Filter rows starting with the keyPrefix
+        //        currentView.RowFilter = $"Key LIKE '{keyPrefix}%'";
+        //        snapshotView.RowFilter = $"Key LIKE '{keyPrefix}%'";
+
+        //        // Track the keys in both tables
+        //        HashSet<string> currentKeys = new HashSet<string>();
+        //        HashSet<string> snapshotKeys = new HashSet<string>();
+
+        //        // Check for differences in both tables
+        //        foreach (DataRowView row_dataset in currentView)
+        //        {
+        //            string currentKey = row_dataset["Key"].ToString();
+        //            currentKeys.Add(currentKey);
+
+        //            DataRow[] matchingSnapshotRows = snapshotView.Table.Select($"Key = '{currentKey}'");
+
+        //            if (matchingSnapshotRows.Length > 0)
+        //            {
+        //                DataRow row_snapshot = matchingSnapshotRows[0];
+        //                if (row_dataset["Value"].ToString() != row_snapshot["Value"].ToString())
+        //                {
+        //                    if (!differences.ContainsKey(currentKey))
+        //                    {
+        //                        differences.Add(currentKey, row_snapshot["Value"].ToString());
+        //                    }
+        //                    bret = true;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (!differences.ContainsKey(currentKey))
+        //                {
+        //                    differences.Add(currentKey, row_dataset["Value"].ToString());
+        //                }
+        //                bret = true;
+        //            }
+        //        }
+
+        //        // Check for keys that are in the snapshot but not in ds
+        //        foreach (DataRowView row_snapshot in snapshotView)
+        //        {
+        //            string snapshotKey = row_snapshot["Key"].ToString();
+        //            snapshotKeys.Add(snapshotKey);
+        //            if (!currentKeys.Contains(snapshotKey))
+        //            {
+        //                if (!differences.ContainsKey(snapshotKey))
+        //                {
+        //                    differences.Add(snapshotKey, row_snapshot["Value"].ToString());
+        //                }
+        //                bret = true;
+        //            }
+        //        }
+        //    }
+
+        //    return bret;
+        //}
+        //public static void SnapshotTable(string table)
+        //{
+        //    if (ds == null) return;
+        //    if (!ds.Tables.Contains(table)) return;
+
+        //    DataTable tableCopy = ds.Tables[table].Copy();
+
+        //    if (_table_snapshots.ContainsKey(table))
+        //    {
+        //        _table_snapshots[table] = tableCopy;
+        //    }
+        //    else
+        //    {
+        //        _table_snapshots.Add(table, tableCopy);
+        //    }
+        //}
+        //public static void RecoverTableSnapshot(string table)
+        //{
+        //    if (ds == null) return;
+        //    if (!_table_snapshots.ContainsKey(table)) return;
+
+        //    if (ds.Tables.Contains(table))
+        //    {
+        //        ds.Tables.Remove(table);
+        //    }
+
+        //    DataTable snapshotCopy = _table_snapshots[table].Copy();
+        //    ds.Tables.Add(snapshotCopy);
+
+        //    RemoveTableSnapshot(table);
+        //}
+        //public static void RemoveTableSnapshot(string table)
+        //{
+        //    if (ds == null) return;
+        //    if (!_table_snapshots.ContainsKey(table)) return;
+
+        //    _table_snapshots.Remove(table);
+        //}
         private static void VerifyTables()
         {
             if (!ds.Tables.Contains("BandText"))

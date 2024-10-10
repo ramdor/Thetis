@@ -3675,7 +3675,6 @@
             this.chkMMClockTitle = new System.Windows.Forms.CheckBoxTS();
             this.radMM24Clock = new System.Windows.Forms.RadioButtonTS();
             this.radMM12Clock = new System.Windows.Forms.RadioButtonTS();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.lblTXProfileWarning = new System.Windows.Forms.LabelTS();
             this.btnApply = new System.Windows.Forms.ButtonTS();
@@ -3770,7 +3769,6 @@
             this.chkLed_notx_true = new System.Windows.Forms.CheckBoxTS();
             this.chkLed_notx_false = new System.Windows.Forms.CheckBoxTS();
             this.nudLedIndicator_UpdateInterval = new System.Windows.Forms.NumericUpDownTS();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -3981,7 +3979,7 @@
             this.labelTS258 = new System.Windows.Forms.LabelTS();
             this.chkHistory_fade_tx = new System.Windows.Forms.CheckBoxTS();
             this.chkHistory_fade_rx = new System.Windows.Forms.CheckBoxTS();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tcMMsettings = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
@@ -5011,7 +5009,7 @@
             this.grpHistoryItem.SuspendLayout();
             this.groupBoxTS46.SuspendLayout();
             this.groupBoxTS45.SuspendLayout();
-            this.tabControl1.SuspendLayout();
+            this.tcMMsettings.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage4.SuspendLayout();
@@ -58403,10 +58401,6 @@
             this.radMM12Clock.UseVisualStyleBackColor = true;
             this.radMM12Clock.CheckedChanged += new System.EventHandler(this.radMM12Clock_CheckedChanged);
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
-            // 
             // lblTXProfileWarning
             // 
             this.lblTXProfileWarning.BackColor = System.Drawing.Color.Orange;
@@ -60295,12 +60289,6 @@
             0,
             0});
             this.nudLedIndicator_UpdateInterval.ValueChanged += new System.EventHandler(this.nudLedIndicator_UpdateInterval_ValueChanged);
-            // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.Filter = "Thetis Database Files (*.xml)|*.xml|All files|*.*";
-            this.saveFileDialog1.InitialDirectory = "Environment.GetFolderPath(Environment.SpecialFolder.Desktop)";
-            this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
             // 
             // timer_VAC_Monitor
             // 
@@ -63352,27 +63340,27 @@
             this.chkHistory_fade_rx.UseVisualStyleBackColor = true;
             this.chkHistory_fade_rx.CheckedChanged += new System.EventHandler(this.chkHistory_fade_rx_CheckedChanged);
             // 
-            // tabControl1
+            // tcMMsettings
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage4);
-            this.tabControl1.Controls.Add(this.tabPage5);
-            this.tabControl1.Controls.Add(this.tabPage6);
-            this.tabControl1.Controls.Add(this.tabPage7);
-            this.tabControl1.Controls.Add(this.tabPage8);
-            this.tabControl1.Controls.Add(this.tabPage9);
-            this.tabControl1.Controls.Add(this.tabPage10);
-            this.tabControl1.Controls.Add(this.tabPage11);
-            this.tabControl1.Controls.Add(this.tabPage12);
-            this.tabControl1.Controls.Add(this.tabPage13);
-            this.tabControl1.Controls.Add(this.tabPage14);
-            this.tabControl1.Controls.Add(this.tabPage15);
-            this.tabControl1.Location = new System.Drawing.Point(814, 206);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(734, 489);
-            this.tabControl1.TabIndex = 111;
+            this.tcMMsettings.Controls.Add(this.tabPage1);
+            this.tcMMsettings.Controls.Add(this.tabPage2);
+            this.tcMMsettings.Controls.Add(this.tabPage4);
+            this.tcMMsettings.Controls.Add(this.tabPage5);
+            this.tcMMsettings.Controls.Add(this.tabPage6);
+            this.tcMMsettings.Controls.Add(this.tabPage7);
+            this.tcMMsettings.Controls.Add(this.tabPage8);
+            this.tcMMsettings.Controls.Add(this.tabPage9);
+            this.tcMMsettings.Controls.Add(this.tabPage10);
+            this.tcMMsettings.Controls.Add(this.tabPage11);
+            this.tcMMsettings.Controls.Add(this.tabPage12);
+            this.tcMMsettings.Controls.Add(this.tabPage13);
+            this.tcMMsettings.Controls.Add(this.tabPage14);
+            this.tcMMsettings.Controls.Add(this.tabPage15);
+            this.tcMMsettings.Location = new System.Drawing.Point(814, 206);
+            this.tcMMsettings.Name = "tcMMsettings";
+            this.tcMMsettings.SelectedIndex = 0;
+            this.tcMMsettings.Size = new System.Drawing.Size(734, 489);
+            this.tcMMsettings.TabIndex = 111;
             // 
             // tabPage1
             // 
@@ -63532,7 +63520,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1884, 1581);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.tcMMsettings);
             this.Controls.Add(this.labelTS198);
             this.Controls.Add(this.txtboxTXProfileChangedReport);
             this.Controls.Add(this.lblTXProfileWarning);
@@ -64780,7 +64768,7 @@
             this.groupBoxTS46.PerformLayout();
             this.groupBoxTS45.ResumeLayout(false);
             this.groupBoxTS45.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
+            this.tcMMsettings.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
@@ -64909,7 +64897,6 @@
         private LabelTS lblBandLight;
         private LabelTS lblBandDark;
         private LabelTS lblPeakText;
-        private OpenFileDialog openFileDialog1;
         private TabPage tpTests;
         private TabPage tpPowerAmplifier;
         private ToolTip toolTip1;
@@ -65186,7 +65173,6 @@
         private TrackBarTS tbRX1FilterAlpha;
         private TrackBarTS tbMultiRXFilterAlpha;
         private CheckBoxTS chkWheelTuneVFOB;
-        private SaveFileDialog saveFileDialog1;
         private CheckBoxTS chkAlexPresent;
         private CheckBoxTS chkPennyPresent;
         private CheckBoxTS chkMercuryPresent;
@@ -68746,7 +68732,7 @@
         private ColorButton clrbtnMultiMeter_vfo_sync;
         private LabelTS labelTS279;
         private ColorButton clrbtnMultiMeter_vfo_lock;
-        private TabControl tabControl1;
+        private TabControl tcMMsettings;
         private TabPage tabPage1;
         private TabPage tabPage2;
         private TabPage tabPage4;
