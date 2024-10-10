@@ -28126,7 +28126,7 @@ namespace Thetis
             if (!IsSetupFormNull) SetupForm.RemoveDelegates(); // MW0LGE_22b
             //
 
-            shutdownLogStringToPath("BeforeTimeOutTimerManager.StopToT()");
+            shutdownLogStringToPath("Before TimeOutTimerManager.Shutdown()");
             TimeOutTimerManager.Shutdown();
 
             //MW0LGE
@@ -50162,7 +50162,7 @@ namespace Thetis
 
         private void setupToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (IsSetupFormNull) return;
+            if (IsSetupFormNull) return;            
             if (SetupForm.InvokeRequired)
             {
                 SetupForm.Invoke(new MethodInvoker(() =>

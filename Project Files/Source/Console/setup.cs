@@ -55,6 +55,8 @@ namespace Thetis
     using System.IO.Compression;
     using System.Timers;
     using System.Runtime.InteropServices;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
     public partial class Setup : Form
     {
         private const string s_DEFAULT_GRADIENT = "9|1|0.000|-1509884160|1|0.339|-1493237760|1|0.234|-1509884160|1|0.294|-1493211648|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1493237760|";
@@ -69,9 +71,6 @@ namespace Thetis
         private string RXAntChk2Name;                   // radio dependent name for 2nd check box
         private string RXAntChk3Name;                   // radio dependent name for 3rd check box
 
-        private List<string> m_lstClickedControls;
-        private List<string> m_lstUpdatedControls;
-        private List<string> m_lstUpdatedControlsClone;
         private bool m_bShown = false; // used by the selective restore system to know accurate window state
         #endregion
 
@@ -111,17 +110,9 @@ namespace Thetis
             ucVAC2VARGrapherIn.MaxPoints = ucVAC2VARGrapherIn.Width;
             ucVAC2VARGrapherOut.MaxPoints = ucVAC2VARGrapherOut.Width;
 
-            //MW0LGE_21d used for selective cancel
-            m_lstClickedControls = new List<string>();
-            m_lstUpdatedControls = new List<string>();
-
-            registerAllControlsForStateMonitoring();
-            //-
-
             udDisplayFPS.Maximum = Console.MAX_FPS;
 
             Skin.SetConsole(console);
-            openFileDialog1.InitialDirectory = console.AppDataPath;
 
 #if(!DEBUG)
             comboGeneralProcessPriority.Items.Remove("Idle");
@@ -650,8 +641,6 @@ namespace Thetis
             console.specRX.GetSpecRX(0).Update = true;
             console.specRX.GetSpecRX(1).Update = true;
 
-            openFileDialog1.Filter = "Thetis Database Files (*.xml) | *.xml";
-
             btnRX2PBsnr.Enabled = console.RX2Enabled; //MW0LGE [2.9.0.7]
 
             //MW0LGE_21e
@@ -728,74 +717,73 @@ namespace Thetis
         // Init Routines
         // ======================================================
 
-        // note: any control that needs it settings recovered from the DB when cancel clicked, uses this 'needsRecovering' system
         private void InitGeneralTab(List<string> recoveryList = null)
         {
-            if (needsRecovering(recoveryList, "chkGeneralRXOnly")) chkGeneralRXOnly.Checked = console.RXOnly;
-            if (needsRecovering(recoveryList, "chkGeneralDisablePTT")) chkGeneralDisablePTT.Checked = console.DisablePTT;
-            if (needsRecovering(recoveryList, "chkWheelTunesOutsideSpectral")) chkWheelTunesOutsideSpectral.Checked = console.WheelTunesOutsideSpectral;
-            if (needsRecovering(recoveryList, "chkAlsoUseSpecificMouseWheel")) chkAlsoUseSpecificMouseWheel.Checked = console.AlsoUseSpecificMouseWheel;
-            if (needsRecovering(recoveryList, "chkZoomShiftModifier")) chkZoomShiftModifier.Checked = console.ZoomShiftModifier;
-            if (needsRecovering(recoveryList, "chkExtended")) chkExtended.Checked = console.Extended;
+            chkGeneralRXOnly.Checked = console.RXOnly;
+            chkGeneralDisablePTT.Checked = console.DisablePTT;
+            chkWheelTunesOutsideSpectral.Checked = console.WheelTunesOutsideSpectral;
+            chkAlsoUseSpecificMouseWheel.Checked = console.AlsoUseSpecificMouseWheel;
+            chkZoomShiftModifier.Checked = console.ZoomShiftModifier;
+            chkExtended.Checked = console.Extended;
         }
 
         private void InitADC(List<string> recoveryList = null)
         {
-            if (needsRecovering(recoveryList, "radDDC0ADC0")) radDDC0ADC0.Checked = true;
-            if (needsRecovering(recoveryList, "radDDC0ADC1")) radDDC0ADC1.Checked = false;
-            if (needsRecovering(recoveryList, "radDDC0ADC2")) radDDC0ADC2.Checked = false;
+            radDDC0ADC0.Checked = true;
+            radDDC0ADC1.Checked = false;
+            radDDC0ADC2.Checked = false;
 
-            if (needsRecovering(recoveryList, "radDDC1ADC0")) radDDC1ADC0.Checked = false;
-            if (needsRecovering(recoveryList, "radDDC1ADC1")) radDDC1ADC1.Checked = true;
-            if (needsRecovering(recoveryList, "radDDC1ADC2")) radDDC1ADC2.Checked = false;
+            radDDC1ADC0.Checked = false;
+            radDDC1ADC1.Checked = true;
+            radDDC1ADC2.Checked = false;
 
-            if (needsRecovering(recoveryList, "radDDC2ADC0")) radDDC2ADC0.Checked = true;
-            if (needsRecovering(recoveryList, "radDDC2ADC1")) radDDC2ADC1.Checked = false;
-            if (needsRecovering(recoveryList, "radDDC2ADC2")) radDDC2ADC2.Checked = false;
+            radDDC2ADC0.Checked = true;
+            radDDC2ADC1.Checked = false;
+            radDDC2ADC2.Checked = false;
 
-            if (needsRecovering(recoveryList, "radDDC3ADC0")) radDDC3ADC0.Checked = false;
-            if (needsRecovering(recoveryList, "radDDC3ADC1")) radDDC3ADC1.Checked = true;
-            if (needsRecovering(recoveryList, "radDDC3ADC2")) radDDC3ADC2.Checked = false;
+            radDDC3ADC0.Checked = false;
+            radDDC3ADC1.Checked = true;
+            radDDC3ADC2.Checked = false;
 
-            if (needsRecovering(recoveryList, "radDDC4ADC0")) radDDC4ADC0.Checked = true;
-            if (needsRecovering(recoveryList, "radDDC4ADC1")) radDDC4ADC1.Checked = false;
-            if (needsRecovering(recoveryList, "radDDC4ADC2")) radDDC4ADC2.Checked = false;
+            radDDC4ADC0.Checked = true;
+            radDDC4ADC1.Checked = false;
+            radDDC4ADC2.Checked = false;
 
-            if (needsRecovering(recoveryList, "radDDC5ADC0")) radDDC5ADC0.Checked = true;
-            if (needsRecovering(recoveryList, "radDDC5ADC1")) radDDC5ADC1.Checked = false;
-            if (needsRecovering(recoveryList, "radDDC5ADC2")) radDDC5ADC2.Checked = false;
+            radDDC5ADC0.Checked = true;
+            radDDC5ADC1.Checked = false;
+            radDDC5ADC2.Checked = false;
 
-            if (needsRecovering(recoveryList, "radDDC6ADC0")) radDDC6ADC0.Checked = true;
-            if (needsRecovering(recoveryList, "radDDC6ADC1")) radDDC6ADC1.Checked = false;
-            if (needsRecovering(recoveryList, "radDDC6ADC2")) radDDC6ADC2.Checked = false;
+            radDDC6ADC0.Checked = true;
+            radDDC6ADC1.Checked = false;
+            radDDC6ADC2.Checked = false;
 
-            if (needsRecovering(recoveryList, "radP1DDC0ADC0")) radP1DDC0ADC0.Checked = true;
-            if (needsRecovering(recoveryList, "radP1DDC0ADC1")) radP1DDC0ADC1.Checked = false;
-            if (needsRecovering(recoveryList, "radP1DDC0ADC2")) radP1DDC0ADC2.Checked = false;
+            radP1DDC0ADC0.Checked = true;
+            radP1DDC0ADC1.Checked = false;
+            radP1DDC0ADC2.Checked = false;
 
-            if (needsRecovering(recoveryList, "radP1DDC1ADC0")) radP1DDC1ADC0.Checked = false;
-            if (needsRecovering(recoveryList, "radP1DDC1ADC1")) radP1DDC1ADC1.Checked = true;
-            if (needsRecovering(recoveryList, "radP1DDC1ADC2")) radP1DDC1ADC2.Checked = false;
+            radP1DDC1ADC0.Checked = false;
+            radP1DDC1ADC1.Checked = true;
+            radP1DDC1ADC2.Checked = false;
 
-            if (needsRecovering(recoveryList, "radP1DDC2ADC0")) radP1DDC2ADC0.Checked = false;
-            if (needsRecovering(recoveryList, "radP1DDC2ADC1")) radP1DDC2ADC1.Checked = true;
-            if (needsRecovering(recoveryList, "radP1DDC2ADC2")) radP1DDC2ADC2.Checked = false;
+            radP1DDC2ADC0.Checked = false;
+            radP1DDC2ADC1.Checked = true;
+            radP1DDC2ADC2.Checked = false;
 
-            if (needsRecovering(recoveryList, "radP1DDC3ADC0")) radP1DDC3ADC0.Checked = true;
-            if (needsRecovering(recoveryList, "radP1DDC3ADC1")) radP1DDC3ADC1.Checked = false;
-            if (needsRecovering(recoveryList, "radP1DDC3ADC2")) radP1DDC3ADC2.Checked = false;
+            radP1DDC3ADC0.Checked = true;
+            radP1DDC3ADC1.Checked = false;
+            radP1DDC3ADC2.Checked = false;
 
-            if (needsRecovering(recoveryList, "radP1DDC4ADC0")) radP1DDC4ADC0.Checked = true;
-            if (needsRecovering(recoveryList, "radP1DDC4ADC1")) radP1DDC4ADC1.Checked = false;
-            if (needsRecovering(recoveryList, "radP1DDC4ADC2")) radP1DDC4ADC2.Checked = false;
+            radP1DDC4ADC0.Checked = true;
+            radP1DDC4ADC1.Checked = false;
+            radP1DDC4ADC2.Checked = false;
 
-            if (needsRecovering(recoveryList, "radP1DDC5ADC0")) radP1DDC5ADC0.Checked = true;
-            if (needsRecovering(recoveryList, "radP1DDC5ADC1")) radP1DDC5ADC1.Checked = false;
-            if (needsRecovering(recoveryList, "radP1DDC5ADC2")) radP1DDC5ADC2.Checked = false;
+            radP1DDC5ADC0.Checked = true;
+            radP1DDC5ADC1.Checked = false;
+            radP1DDC5ADC2.Checked = false;
 
-            if (needsRecovering(recoveryList, "radP1DDC6ADC0")) radP1DDC6ADC0.Checked = true;
-            if (needsRecovering(recoveryList, "radP1DDC6ADC1")) radP1DDC6ADC1.Checked = false;
-            if (needsRecovering(recoveryList, "radP1DDC6ADC2")) radP1DDC6ADC2.Checked = false;
+            radP1DDC6ADC0.Checked = true;
+            radP1DDC6ADC1.Checked = false;
+            radP1DDC6ADC2.Checked = false;
         }
 
         public void InitAudioTab(List<string> recoveryList = null)
@@ -835,11 +823,8 @@ namespace Thetis
                     comboAudioSampleRate1.Items.Remove(1536000);
             }
 
-            if (needsRecovering(recoveryList, "comboAudioSampleRate1"))
-            {
-                if (comboAudioSampleRate1.SelectedIndex < 0)
-                    comboAudioSampleRate1.Text = "192000";
-            }
+            if (comboAudioSampleRate1.SelectedIndex < 0)
+                comboAudioSampleRate1.Text = "192000";
 
             if (!comboAudioSampleRateRX2.Items.Contains(96000))
                 comboAudioSampleRateRX2.Items.Add(96000);
@@ -876,89 +861,82 @@ namespace Thetis
                     comboAudioSampleRateRX2.Items.Remove(1536000);
             }
 
-            if (needsRecovering(recoveryList, "comboAudioSampleRateRX2"))
-            {
-                if (comboAudioSampleRateRX2.SelectedIndex < 0)
-                    comboAudioSampleRateRX2.Text = "192000";
-            }
+            if (comboAudioSampleRateRX2.SelectedIndex < 0)
+                comboAudioSampleRateRX2.Text = "192000";
         }
 
         private void InitAdvancedAudioTab(List<string> recoveryList = null)
         {
-            //MW0LGE_21j // mirrors btnVAC1AdvancedDefault and btnVAC2AdvancedDefault
-            if (needsRecovering(recoveryList, "udVAC1FeedbackGainIn")) udVAC1FeedbackGainIn.Value = (decimal)4.0e-6;
-            if (needsRecovering(recoveryList, "udVAC1SlewTimeIn")) udVAC1SlewTimeIn.Value = (decimal)0.003;
-            if (needsRecovering(recoveryList, "udVAC1PropMinIn")) udVAC1PropMinIn.Value = 4096;
-            if (needsRecovering(recoveryList, "udVAC1PropMaxIn")) udVAC1PropMaxIn.Value = 16384;
-            if (needsRecovering(recoveryList, "udVAC1FFMinIn")) udVAC1FFMinIn.Value = 4096;
-            if (needsRecovering(recoveryList, "udVAC1FFMaxIn")) udVAC1FFMaxIn.Value = 262144;
-            if (needsRecovering(recoveryList, "udVAC1FFAlphaIn")) udVAC1FFAlphaIn.Value = (decimal)0.01;
-            if (needsRecovering(recoveryList, "chkVAC1OldVarIn")) chkVAC1OldVarIn.Checked = false;
-            if (needsRecovering(recoveryList, "udVAC1FeedbackGainOut")) udVAC1FeedbackGainOut.Value = (decimal)4.0e-6;
-            if (needsRecovering(recoveryList, "udVAC1SlewTimeOut")) udVAC1SlewTimeOut.Value = (decimal)0.003;
-            if (needsRecovering(recoveryList, "udVAC1PropMinOut")) udVAC1PropMinOut.Value = 4096;
-            if (needsRecovering(recoveryList, "udVAC1PropMaxOut")) udVAC1PropMaxOut.Value = 16384;
-            if (needsRecovering(recoveryList, "udVAC1FFMinOut")) udVAC1FFMinOut.Value = 4096;
-            if (needsRecovering(recoveryList, "udVAC1FFMaxOut")) udVAC1FFMaxOut.Value = 262144;
-            if (needsRecovering(recoveryList, "udVAC1FFAlphaOut")) udVAC1FFAlphaOut.Value = (decimal)0.01;
-            if (needsRecovering(recoveryList, "chkVAC1OldVarOut")) chkVAC1OldVarOut.Checked = false;
-            //
-            if (needsRecovering(recoveryList, "udVAC2FeedbackGainIn")) udVAC2FeedbackGainIn.Value = (decimal)4.0e-6;
-            if (needsRecovering(recoveryList, "udVAC2SlewTimeIn")) udVAC2SlewTimeIn.Value = (decimal)0.003;
-            if (needsRecovering(recoveryList, "udVAC2PropMinIn")) udVAC2PropMinIn.Value = 4096;
-            if (needsRecovering(recoveryList, "udVAC2PropMaxIn")) udVAC2PropMaxIn.Value = 16384;
-            if (needsRecovering(recoveryList, "udVAC2FFMinIn")) udVAC2FFMinIn.Value = 4096;
-            if (needsRecovering(recoveryList, "udVAC2FFMaxIn")) udVAC2FFMaxIn.Value = 262144;
-            if (needsRecovering(recoveryList, "udVAC2FFAlphaIn")) udVAC2FFAlphaIn.Value = (decimal)0.01;
-            if (needsRecovering(recoveryList, "chkVAC2OldVarIn")) chkVAC2OldVarIn.Checked = false;
-            if (needsRecovering(recoveryList, "udVAC2FeedbackGainOut")) udVAC2FeedbackGainOut.Value = (decimal)4.0e-6;
-            if (needsRecovering(recoveryList, "udVAC2SlewTimeOut")) udVAC2SlewTimeOut.Value = (decimal)0.003;
-            if (needsRecovering(recoveryList, "udVAC2PropMinOut")) udVAC2PropMinOut.Value = 4096;
-            if (needsRecovering(recoveryList, "udVAC2PropMaxOut")) udVAC2PropMaxOut.Value = 16384;
-            if (needsRecovering(recoveryList, "udVAC2FFMinOut")) udVAC2FFMinOut.Value = 4096;
-            if (needsRecovering(recoveryList, "udVAC2FFMaxOut")) udVAC2FFMaxOut.Value = 262144;
-            if (needsRecovering(recoveryList, "udVAC2FFAlphaOut")) udVAC2FFAlphaOut.Value = (decimal)0.01;
-            if (needsRecovering(recoveryList, "chkVAC2OldVarOut")) chkVAC2OldVarOut.Checked = false;
-            //
+            udVAC1FeedbackGainIn.Value = (decimal)4.0e-6;
+            udVAC1SlewTimeIn.Value = (decimal)0.003;
+            udVAC1PropMinIn.Value = 4096;
+            udVAC1PropMaxIn.Value = 16384;
+            udVAC1FFMinIn.Value = 4096;
+            udVAC1FFMaxIn.Value = 262144;
+            udVAC1FFAlphaIn.Value = (decimal)0.01;
+            chkVAC1OldVarIn.Checked = false;
+            udVAC1FeedbackGainOut.Value = (decimal)4.0e-6;
+            udVAC1SlewTimeOut.Value = (decimal)0.003;
+            udVAC1PropMinOut.Value = 4096;
+            udVAC1PropMaxOut.Value = 16384;
+            udVAC1FFMinOut.Value = 4096;
+            udVAC1FFMaxOut.Value = 262144;
+            udVAC1FFAlphaOut.Value = (decimal)0.01;
+            chkVAC1OldVarOut.Checked = false;
+
+            udVAC2FeedbackGainIn.Value = (decimal)4.0e-6;
+            udVAC2SlewTimeIn.Value = (decimal)0.003;
+            udVAC2PropMinIn.Value = 4096;
+            udVAC2PropMaxIn.Value = 16384;
+            udVAC2FFMinIn.Value = 4096;
+            udVAC2FFMaxIn.Value = 262144;
+            udVAC2FFAlphaIn.Value = (decimal)0.01;
+            chkVAC2OldVarIn.Checked = false;
+            udVAC2FeedbackGainOut.Value = (decimal)4.0e-6;
+            udVAC2SlewTimeOut.Value = (decimal)0.003;
+            udVAC2PropMinOut.Value = 4096;
+            udVAC2PropMaxOut.Value = 16384;
+            udVAC2FFMinOut.Value = 4096;
+            udVAC2FFMaxOut.Value = 262144;
+            udVAC2FFAlphaOut.Value = (decimal)0.01;
+            chkVAC2OldVarOut.Checked = false;
         }
+
 
         private void InitDisplayTab(List<string> recoveryList = null)
         {
-            if (needsRecovering(recoveryList, "udDisplayGridMax")) udDisplayGridMax.Value = Display.SpectrumGridMax;
-            if (needsRecovering(recoveryList, "udDisplayGridMin")) udDisplayGridMin.Value = Display.SpectrumGridMin;
-            if (needsRecovering(recoveryList, "udDisplayGridStep")) udDisplayGridStep.Value = Display.SpectrumGridStep;
-            if (needsRecovering(recoveryList, "udRX2DisplayGridMax")) udRX2DisplayGridMax.Value = Display.RX2SpectrumGridMax;
-            if (needsRecovering(recoveryList, "udRX2DisplayGridMin")) udRX2DisplayGridMin.Value = Display.RX2SpectrumGridMin;
-            if (needsRecovering(recoveryList, "udRX2DisplayGridStep")) udRX2DisplayGridStep.Value = Display.RX2SpectrumGridStep;
-            if (needsRecovering(recoveryList, "udDisplayFPS")) udDisplayFPS.Value = console.DisplayFPS;
-            if (needsRecovering(recoveryList, "clrbtnWaterfallLow")) clrbtnWaterfallLow.Color = Display.WaterfallLowColor;
-            if (needsRecovering(recoveryList, "clrbtnRX2WaterfallLow")) clrbtnRX2WaterfallLow.Color = Display.RX2WaterfallLowColor;
-            if (needsRecovering(recoveryList, "udDisplayWaterfallLowLevel")) udDisplayWaterfallLowLevel.Value = (decimal)Display.WaterfallLowThreshold;
-            if (needsRecovering(recoveryList, "udDisplayWaterfallHighLevel")) udDisplayWaterfallHighLevel.Value = (decimal)Display.WaterfallHighThreshold;
-            if (needsRecovering(recoveryList, "udRX2DisplayWaterfallLowLevel")) udRX2DisplayWaterfallLowLevel.Value = (decimal)Display.RX2WaterfallLowThreshold;
-            if (needsRecovering(recoveryList, "udRX2DisplayWaterfallHighLevel")) udRX2DisplayWaterfallHighLevel.Value = (decimal)Display.RX2WaterfallHighThreshold;
-            if (needsRecovering(recoveryList, "udDisplayMeterDelay")) udDisplayMeterDelay.Value = console.MeterDelay;
-            if (needsRecovering(recoveryList, "udDisplayPeakText")) udDisplayPeakText.Value = console.PeakTextDelay;
-            if (needsRecovering(recoveryList, "udDisplayCPUMeter")) udDisplayCPUMeter.Value = console.CPUMeterDelay;
-            if (needsRecovering(recoveryList, "udDisplayPhasePts")) udDisplayPhasePts.Value = Display.PhaseNumPts;
-            if (needsRecovering(recoveryList, "udDisplayMultiPeakHoldTime")) udDisplayMultiPeakHoldTime.Value = console.MultimeterPeakHoldTime;
-            if (needsRecovering(recoveryList, "udDisplayMultiTextHoldTime")) udDisplayMultiTextHoldTime.Value = console.MultimeterTextPeakTime;
-            if (needsRecovering(recoveryList, "udTXGridMax")) udTXGridMax.Value = Display.TXSpectrumGridMax;
-            if (needsRecovering(recoveryList, "udTXGridMin")) udTXGridMin.Value = Display.TXSpectrumGridMin;
-            if (needsRecovering(recoveryList, "udTXGridStep")) udTXGridStep.Value = Display.TXSpectrumGridStep;
-            if (needsRecovering(recoveryList, "udTXWFAmpMax")) udTXWFAmpMax.Value = Display.TXWFAmpMax;
-            if (needsRecovering(recoveryList, "udTXWFAmpMin")) udTXWFAmpMin.Value = Display.TXWFAmpMin;
+            udDisplayGridMax.Value = Display.SpectrumGridMax;
+            udDisplayGridMin.Value = Display.SpectrumGridMin;
+            udDisplayGridStep.Value = Display.SpectrumGridStep;
+            udRX2DisplayGridMax.Value = Display.RX2SpectrumGridMax;
+            udRX2DisplayGridMin.Value = Display.RX2SpectrumGridMin;
+            udRX2DisplayGridStep.Value = Display.RX2SpectrumGridStep;
+            udDisplayFPS.Value = console.DisplayFPS;
+            clrbtnWaterfallLow.Color = Display.WaterfallLowColor;
+            clrbtnRX2WaterfallLow.Color = Display.RX2WaterfallLowColor;
+            udDisplayWaterfallLowLevel.Value = (decimal)Display.WaterfallLowThreshold;
+            udDisplayWaterfallHighLevel.Value = (decimal)Display.WaterfallHighThreshold;
+            udRX2DisplayWaterfallLowLevel.Value = (decimal)Display.RX2WaterfallLowThreshold;
+            udRX2DisplayWaterfallHighLevel.Value = (decimal)Display.RX2WaterfallHighThreshold;
+            udDisplayMeterDelay.Value = console.MeterDelay;
+            udDisplayPeakText.Value = console.PeakTextDelay;
+            udDisplayCPUMeter.Value = console.CPUMeterDelay;
+            udDisplayPhasePts.Value = Display.PhaseNumPts;
+            udDisplayMultiPeakHoldTime.Value = console.MultimeterPeakHoldTime;
+            udDisplayMultiTextHoldTime.Value = console.MultimeterTextPeakTime;
+            udTXGridMax.Value = Display.TXSpectrumGridMax;
+            udTXGridMin.Value = Display.TXSpectrumGridMin;
+            udTXGridStep.Value = Display.TXSpectrumGridStep;
+            udTXWFAmpMax.Value = Display.TXWFAmpMax;
+            udTXWFAmpMin.Value = Display.TXWFAmpMin;
 
             // MW0LGE in the case where we don't have a setting in the db, this function (initdisplaytab) is called, use console instead
             SetMultiMeterMode(console.MMMeasureMode);
 
-            if (needsRecovering(recoveryList, "comboDisplayThreadPriority")) comboDisplayThreadPriority.SelectedIndex = (int)console.DisplayThreadPriority; // MW0LGE
+            comboDisplayThreadPriority.SelectedIndex = (int)console.DisplayThreadPriority; // MW0LGE
 
-            if (needsRecovering(recoveryList, "lgLinearGradientRX1"))
-            {
-                lgLinearGradientRX1.Text = s_DEFAULT_GRADIENT;
-                lgLinearGradientRX1.HighlightFirstGripper();
-            }
+            lgLinearGradientRX1.Text = s_DEFAULT_GRADIENT;
+            lgLinearGradientRX1.HighlightFirstGripper();
         }
 
         public void SetMultiMeterMode(MultiMeterMeasureMode mode)
@@ -979,82 +957,82 @@ namespace Thetis
 
         private void InitDSPTab(List<string> recoveryList = null)
         {
-            if (needsRecovering(recoveryList, "udDSPCWPitch")) udDSPCWPitch.Value = console.CWPitch;
+            udDSPCWPitch.Value = console.CWPitch;
         }
 
         private void InitKeyboardTab(List<string> recoveryList = null)
         {
             // set tune keys
-            if (needsRecovering(recoveryList, "comboKBTuneUp1")) comboKBTuneUp1.Text = KeyToString(console.KeyTuneUp1);
-            if (needsRecovering(recoveryList, "comboKBTuneUp2")) comboKBTuneUp2.Text = KeyToString(console.KeyTuneUp2);
-            if (needsRecovering(recoveryList, "comboKBTuneUp3")) comboKBTuneUp3.Text = KeyToString(console.KeyTuneUp3);
-            if (needsRecovering(recoveryList, "comboKBTuneUp4")) comboKBTuneUp4.Text = KeyToString(console.KeyTuneUp4);
-            if (needsRecovering(recoveryList, "comboKBTuneUp5")) comboKBTuneUp5.Text = KeyToString(console.KeyTuneUp5);
-            if (needsRecovering(recoveryList, "comboKBTuneUp6")) comboKBTuneUp6.Text = KeyToString(console.KeyTuneUp6);
-            if (needsRecovering(recoveryList, "comboKBTuneUp7")) comboKBTuneUp7.Text = KeyToString(console.KeyTuneUp7);
-            if (needsRecovering(recoveryList, "comboKBTuneDown1")) comboKBTuneDown1.Text = KeyToString(console.KeyTuneDown1);
-            if (needsRecovering(recoveryList, "comboKBTuneDown2")) comboKBTuneDown2.Text = KeyToString(console.KeyTuneDown2);
-            if (needsRecovering(recoveryList, "comboKBTuneDown3")) comboKBTuneDown3.Text = KeyToString(console.KeyTuneDown3);
-            if (needsRecovering(recoveryList, "comboKBTuneDown4")) comboKBTuneDown4.Text = KeyToString(console.KeyTuneDown4);
-            if (needsRecovering(recoveryList, "comboKBTuneDown5")) comboKBTuneDown5.Text = KeyToString(console.KeyTuneDown5);
-            if (needsRecovering(recoveryList, "comboKBTuneDown6")) comboKBTuneDown6.Text = KeyToString(console.KeyTuneDown6);
-            if (needsRecovering(recoveryList, "comboKBTuneDown7")) comboKBTuneDown7.Text = KeyToString(console.KeyTuneDown7);
+            comboKBTuneUp1.Text = KeyToString(console.KeyTuneUp1);
+            comboKBTuneUp2.Text = KeyToString(console.KeyTuneUp2);
+            comboKBTuneUp3.Text = KeyToString(console.KeyTuneUp3);
+            comboKBTuneUp4.Text = KeyToString(console.KeyTuneUp4);
+            comboKBTuneUp5.Text = KeyToString(console.KeyTuneUp5);
+            comboKBTuneUp6.Text = KeyToString(console.KeyTuneUp6);
+            comboKBTuneUp7.Text = KeyToString(console.KeyTuneUp7);
+            comboKBTuneDown1.Text = KeyToString(console.KeyTuneDown1);
+            comboKBTuneDown2.Text = KeyToString(console.KeyTuneDown2);
+            comboKBTuneDown3.Text = KeyToString(console.KeyTuneDown3);
+            comboKBTuneDown4.Text = KeyToString(console.KeyTuneDown4);
+            comboKBTuneDown5.Text = KeyToString(console.KeyTuneDown5);
+            comboKBTuneDown6.Text = KeyToString(console.KeyTuneDown6);
+            comboKBTuneDown7.Text = KeyToString(console.KeyTuneDown7);
 
             // set band keys
-            if (needsRecovering(recoveryList, "comboKBBandDown")) comboKBBandDown.Text = KeyToString(console.KeyBandDown);
-            if (needsRecovering(recoveryList, "comboKBBandUp")) comboKBBandUp.Text = KeyToString(console.KeyBandUp);
+            comboKBBandDown.Text = KeyToString(console.KeyBandDown);
+            comboKBBandUp.Text = KeyToString(console.KeyBandUp);
 
             // set filter keys
-            if (needsRecovering(recoveryList, "comboKBFilterDown")) comboKBFilterDown.Text = KeyToString(console.KeyFilterDown);
-            if (needsRecovering(recoveryList, "comboKBFilterUp")) comboKBFilterUp.Text = KeyToString(console.KeyFilterUp);
+            comboKBFilterDown.Text = KeyToString(console.KeyFilterDown);
+            comboKBFilterUp.Text = KeyToString(console.KeyFilterUp);
 
             // set mode keys
-            if (needsRecovering(recoveryList, "comboKBModeDown")) comboKBModeDown.Text = KeyToString(console.KeyModeDown);
-            if (needsRecovering(recoveryList, "comboKBModeUp")) comboKBModeUp.Text = KeyToString(console.KeyModeUp);
+            comboKBModeDown.Text = KeyToString(console.KeyModeDown);
+            comboKBModeUp.Text = KeyToString(console.KeyModeUp);
 
             // set RIT keys
-            if (needsRecovering(recoveryList, "comboKBRITDown")) comboKBRITDown.Text = KeyToString(console.KeyRITDown);
-            if (needsRecovering(recoveryList, "comboKBRITUp")) comboKBRITUp.Text = KeyToString(console.KeyRITUp);
+            comboKBRITDown.Text = KeyToString(console.KeyRITDown);
+            comboKBRITUp.Text = KeyToString(console.KeyRITUp);
 
             // set XIT keys
-            if (needsRecovering(recoveryList, "comboKBXITDown")) comboKBXITDown.Text = KeyToString(console.KeyXITDown);
-            if (needsRecovering(recoveryList, "comboKBXITUp")) comboKBXITUp.Text = KeyToString(console.KeyXITUp);
+            comboKBXITDown.Text = KeyToString(console.KeyXITDown);
+            comboKBXITUp.Text = KeyToString(console.KeyXITUp);
 
             // set CW keys
-            if (needsRecovering(recoveryList, "comboKBCWDot")) comboKBCWDot.Text = KeyToString(console.KeyCWDot);
-            if (needsRecovering(recoveryList, "comboKBCWDash")) comboKBCWDash.Text = KeyToString(console.KeyCWDash);
+            comboKBCWDot.Text = KeyToString(console.KeyCWDot);
+            comboKBCWDash.Text = KeyToString(console.KeyCWDash);
 
             // set PTT keys
-            if (needsRecovering(recoveryList, "comboKBPTTTx")) comboKBPTTTx.Text = KeyToString(console.KeyPTTTx);
-            if (needsRecovering(recoveryList, "comboKBPTTRx")) comboKBPTTRx.Text = KeyToString(console.KeyPTTRx);
+            comboKBPTTTx.Text = KeyToString(console.KeyPTTTx);
+            comboKBPTTRx.Text = KeyToString(console.KeyPTTRx);
         }
 
         private void InitAppearanceTab(List<string> recoveryList = null)
         {
-            if (needsRecovering(recoveryList, "clrbtnBackground")) clrbtnBackground.Color = Display.DisplayBackgroundColor;
-            if (needsRecovering(recoveryList, "clrbtnGrid")) clrbtnGrid.Color = Display.GridColor;
-            if (needsRecovering(recoveryList, "clrbtnGridFine")) clrbtnGridFine.Color = Display.GridPenDark;
-            if (needsRecovering(recoveryList, "clrbtnHGridColor")) clrbtnHGridColor.Color = Display.HGridColor;
-            if (needsRecovering(recoveryList, "clrbtnZeroLine")) clrbtnZeroLine.Color = Display.GridZeroColor;
-            if (needsRecovering(recoveryList, "clrbtnText")) clrbtnText.Color = Display.GridTextColor;
-            if (needsRecovering(recoveryList, "clrbtnDataLine")) clrbtnDataLine.Color = Display.DataLineColor;
-            if (needsRecovering(recoveryList, "clrbtnDataFill")) clrbtnDataFill.Color = Display.DataFillColor;  //MW0LGE
-            if (needsRecovering(recoveryList, "chkDisablePicDisplayBackgroundImage")) chkDisablePicDisplayBackgroundImage.Checked = console.DisableBackgroundImage;  //MW0LGE
-            if (needsRecovering(recoveryList, "chkShowRXFilterOnWaterfall")) chkShowRXFilterOnWaterfall.Checked = Display.ShowRXFilterOnWaterfall; //MW0LGE
-            if (needsRecovering(recoveryList, "chkShowTXFilterOnWaterfall")) chkShowTXFilterOnWaterfall.Checked = Display.ShowTXFilterOnWaterfall; //MW0LGE
-            if (needsRecovering(recoveryList, "chkShowRXZeroLineOnWaterfall")) chkShowRXZeroLineOnWaterfall.Checked = Display.ShowRXZeroLineOnWaterfall; //MW0LGE
-            if (needsRecovering(recoveryList, "chkShowTXZeroLineOnWaterfall")) chkShowTXZeroLineOnWaterfall.Checked = Display.ShowTXZeroLineOnWaterfall; //MW0LGE
-            if (needsRecovering(recoveryList, "chkShowTXFilterOnRXWaterfall")) chkShowTXFilterOnRXWaterfall.Checked = Display.ShowTXFilterOnRXWaterfall; //MW0LGE
-            if (needsRecovering(recoveryList, "clrbtnFilter")) clrbtnFilter.Color = Display.DisplayFilterColor;
-            if (needsRecovering(recoveryList, "clrbtnMeterLeft")) clrbtnMeterLeft.Color = console.MeterLeftColor;
-            if (needsRecovering(recoveryList, "clrbtnMeterRight")) clrbtnMeterRight.Color = console.MeterRightColor;
-            if (needsRecovering(recoveryList, "clrbtnBtnSel")) clrbtnBtnSel.Color = console.ButtonSelectedColor;
-            if (needsRecovering(recoveryList, "clrbtnVFODark")) clrbtnVFODark.Color = console.VFOTextDarkColor;
-            if (needsRecovering(recoveryList, "clrbtnVFOLight")) clrbtnVFOLight.Color = console.VFOTextLightColor;
-            if (needsRecovering(recoveryList, "clrbtnBandDark")) clrbtnBandDark.Color = console.BandTextDarkColor;
-            if (needsRecovering(recoveryList, "clrbtnBandLight")) clrbtnBandLight.Color = console.BandTextLightColor;
-            if (needsRecovering(recoveryList, "clrbtnPeakText")) clrbtnPeakText.Color = console.PeakTextColor;
-            if (needsRecovering(recoveryList, "clrbtnOutOfBand")) clrbtnOutOfBand.Color = console.OutOfBandColor;
+            clrbtnBackground.Color = Display.DisplayBackgroundColor;
+            clrbtnGrid.Color = Display.GridColor;
+            clrbtnGridFine.Color = Display.GridPenDark;
+            clrbtnHGridColor.Color = Display.HGridColor;
+            clrbtnZeroLine.Color = Display.GridZeroColor;
+            clrbtnText.Color = Display.GridTextColor;
+            clrbtnDataLine.Color = Display.DataLineColor;
+            clrbtnDataFill.Color = Display.DataFillColor;  //MW0LGE
+            chkDisablePicDisplayBackgroundImage.Checked = console.DisableBackgroundImage;  //MW0LGE
+            chkShowRXFilterOnWaterfall.Checked = Display.ShowRXFilterOnWaterfall; //MW0LGE
+            chkShowTXFilterOnWaterfall.Checked = Display.ShowTXFilterOnWaterfall; //MW0LGE
+            chkShowRXZeroLineOnWaterfall.Checked = Display.ShowRXZeroLineOnWaterfall; //MW0LGE
+            chkShowTXZeroLineOnWaterfall.Checked = Display.ShowTXZeroLineOnWaterfall; //MW0LGE
+            chkShowTXFilterOnRXWaterfall.Checked = Display.ShowTXFilterOnRXWaterfall; //MW0LGE
+            clrbtnFilter.Color = Display.DisplayFilterColor;
+            clrbtnMeterLeft.Color = console.MeterLeftColor;
+            clrbtnMeterRight.Color = console.MeterRightColor;
+            clrbtnBtnSel.Color = console.ButtonSelectedColor;
+            clrbtnVFODark.Color = console.VFOTextDarkColor;
+            clrbtnVFOLight.Color = console.VFOTextLightColor;
+            clrbtnBandDark.Color = console.BandTextDarkColor;
+            clrbtnBandLight.Color = console.BandTextLightColor;
+            clrbtnPeakText.Color = console.PeakTextColor;
+            clrbtnOutOfBand.Color = console.OutOfBandColor;
         }
 
         #endregion
@@ -1113,6 +1091,9 @@ namespace Thetis
 
             chkWaterfallUseRX1SpectrumMinMax_CheckedChanged(this, e);
             chkWaterfallUseRX2SpectrumMinMax_CheckedChanged(this, e);
+
+            //multimeter io tab
+            init_lstMMIO();
 
             //MW0LGE [2.9.0.7]
             updateMeter2Controls();
@@ -1292,6 +1273,9 @@ namespace Thetis
         // new code for selective cancel
         public new void Show()
         {
+            SaveOptions(false); // ensure the DB is up to date
+            DB.SnapshotTable("Options");
+
             if (!m_bShown)
             {
                 // always clear them when showing, they will re-appear if needed
@@ -1301,7 +1285,7 @@ namespace Thetis
 
             // shadow method to always clear the list if someone somewhere shows the form
             // this may not be 100%, but best effort, we only want to do this if we come from a 'hidden' state
-            if (!m_bShown) clearUpdatedClickControlList();
+            //snp if (!m_bShown) clearUpdatedClickControlList();
 
             if (!m_bShown && isSkinServerTabVisible(false))
                 getSkinServers();
@@ -1334,189 +1318,9 @@ namespace Thetis
                 base.Visible = value;
             }
         }
-
-        private bool inBothUpdateAndClick(string s)
-        {
-            return (m_lstUpdatedControls.Contains(s) && m_lstClickedControls.Contains(s));
-        }
-        private bool inUpdateOnly(string s)
-        {
-            return (m_lstUpdatedControls.Contains(s) && !m_lstClickedControls.Contains(s));
-        }
-        private bool inClickOnly(string s)
-        {
-            return (!m_lstClickedControls.Contains(s) && m_lstClickedControls.Contains(s));
-        }
-        private void removeSpecialCases()
-        {
-            // this will remove all special cases from m_lstUpdatedControls if there have been no associated click event for the control
-            // without a click we know that we didn't do it through setup
-            // we cant just use this globally, because setup changes can cause a number of other control in setup to change
-            // which would not have the associated click
-
-            List<string> toRemove = new List<string>();
-
-            toRemove.Add("udDisplayGridMax");
-            toRemove.Add("udDisplayGridMin");
-            toRemove.Add("udRX2DisplayGridMax");
-            toRemove.Add("udRX2DisplayGridMin");
-
-            foreach (string sControlName in toRemove)
-            {
-                if (inUpdateOnly(sControlName)) m_lstUpdatedControls.Remove(sControlName);
-            }
-
-            // also remove any that make no sense to track/update MW0LGE_21j
-            toRemove.Clear();
-
-            toRemove.Add("txtVAC1OldVarIn");
-            toRemove.Add("txtVAC1OldVarOut");
-            toRemove.Add("txtVAC2OldVarIn");
-            toRemove.Add("txtVAC2OldVarOut");
-
-            // multimeter
-            foreach (Control c in grpMultiMeterHolder.Controls)
-            {
-                toRemove.Add(c.Name);
-            }
-            foreach (Control c in grpMeterItemSettings.Controls)
-            {
-                toRemove.Add(c.Name);
-            }
-            foreach (Control c in grpMeterItemClockSettings.Controls)
-            {
-                toRemove.Add(c.Name);
-            }
-            foreach (Control c in grpMeterItemVfoDisplaySettings.Controls)
-            {
-                toRemove.Add(c.Name);
-            }
-            //
-
-            // multimeter io // fixes #485
-            foreach (Control c in pnlMMIO_network_container.Controls)
-            {
-                toRemove.Add(c.Name);
-            }
-            //
-
-            foreach (string sControlName in toRemove)
-            {
-                if (m_lstUpdatedControls.Contains(sControlName)) m_lstUpdatedControls.Remove(sControlName);
-            }
-        }
-        private bool needsRecovering(List<string> recoveryList, string s)
-        {
-            return (recoveryList == null || recoveryList.Contains(s));
-        }
-        private void listClickedControls()
-        {
-            foreach (string s in m_lstClickedControls)
-            {
-                Debug.Print("CONTROL CLICKED -> " + s);
-            }
-        }
-        private void listUpdatedControls()
-        {
-            foreach (string s in m_lstUpdatedControls)
-            {
-                Debug.Print("CONTROL UPDATED -> " + s);
-            }
-        }
-        private void clearUpdatedClickControlList()
-        {
-            m_lstClickedControls.Clear();
-            m_lstUpdatedControls.Clear();
-        }
-        private void everyControlClickHandler(object sender, EventArgs e)
-        {
-            if (initializing) return;
-            string sName = ((Control)sender).Name;
-            if (!m_lstClickedControls.Contains(sName)) m_lstClickedControls.Add(sName);
-        }
-        private void checkBoxCheckedChangeHandler(object sender, EventArgs e)
-        {
-            //[2.6.10.3]MW0LGE this had been removed, and was spotted after I diffed older version. I put it here to keep a record
-            //of which check controls had been clicked. This is so that cancel works.
-            if (initializing) return;
-            string sName = ((Control)sender).Name;
-            if (!m_lstUpdatedControls.Contains(sName)) m_lstUpdatedControls.Add(sName);
-        }
-        private void comboboxSelectedIndexChangeHandler(object sender, EventArgs e)
-        {
-            if (initializing) return;
-            string sName = ((Control)sender).Name;
-            if (!m_lstUpdatedControls.Contains(sName)) m_lstUpdatedControls.Add(sName);
-        }
-        private void numericUDValueChangeHandler(object sender, EventArgs e)
-        {
-            if (initializing) return;
-            string sName = ((Control)sender).Name;
-            if (!m_lstUpdatedControls.Contains(sName)) m_lstUpdatedControls.Add(sName);
-        }
-        private void radioButtonCheckedChangeHandler(object sender, EventArgs e)
-        {
-            if (initializing) return;
-            string sName = ((Control)sender).Name;
-            if (!m_lstUpdatedControls.Contains(sName)) m_lstUpdatedControls.Add(sName);
-        }
-        private void textBoxTextChangeHandler(object sender, EventArgs e)
-        {
-            if (initializing) return;
-            string sName = ((Control)sender).Name;
-            if (!m_lstUpdatedControls.Contains(sName)) m_lstUpdatedControls.Add(sName);
-        }
-        private void trackBarValueChangeHandler(object sender, EventArgs e)
-        {
-            if (initializing) return;
-            string sName = ((Control)sender).Name;
-            if (!m_lstUpdatedControls.Contains(sName)) m_lstUpdatedControls.Add(sName);
-        }
-        private void colourButtonChangeHandler(object sender, EventArgs e)
-        {
-            if (initializing) return;
-            string sName = ((Control)sender).Name;
-            if (!m_lstUpdatedControls.Contains(sName)) m_lstUpdatedControls.Add(sName);
-        }
-        private void lgPickerChangeHandler(object sender, EventArgs e)
-        {
-            if (initializing) return;
-            string sName = ((Control)sender).Name;
-            if (!m_lstUpdatedControls.Contains(sName)) m_lstUpdatedControls.Add(sName);
-        }
-        private void registerAllControlsForStateMonitoring()
-        {
-            Dictionary<string, Control> controls = new Dictionary<string, Control>();
-
-            getControlList(this, ref controls);
-
-            foreach (KeyValuePair<string, Control> kvp in controls)
-            {
-                Control c = kvp.Value;
-
-                c.Click += new System.EventHandler(everyControlClickHandler);
-
-                if (c.GetType() == typeof(CheckBoxTS))
-                    ((CheckBoxTS)c).CheckedChanged += new System.EventHandler(checkBoxCheckedChangeHandler);
-                else if (c.GetType() == typeof(ComboBoxTS))
-                    ((ComboBoxTS)c).SelectedIndexChanged += new System.EventHandler(comboboxSelectedIndexChangeHandler);
-                else if (c.GetType() == typeof(NumericUpDownTS))
-                    ((NumericUpDownTS)c).ValueChanged += new System.EventHandler(numericUDValueChangeHandler);
-                else if (c.GetType() == typeof(RadioButtonTS))
-                    ((RadioButtonTS)c).CheckedChanged += new System.EventHandler(radioButtonCheckedChangeHandler);
-                else if (c.GetType() == typeof(TextBoxTS))
-                    ((TextBoxTS)c).TextChanged += new System.EventHandler(textBoxTextChangeHandler);
-                else if (c.GetType() == typeof(TrackBarTS))
-                    ((TrackBarTS)c).ValueChanged += new System.EventHandler(trackBarValueChangeHandler);
-                else if (c.GetType() == typeof(ColorButton))
-                    ((ColorButton)c).Changed += new System.EventHandler(colourButtonChangeHandler);
-                else if (c.GetType() == typeof(ucLGPicker))
-                    ((ucLGPicker)c).Changed += new System.EventHandler(lgPickerChangeHandler);
-            }
-        }
         //-
         private bool _savingOptions = false;
-        public void SaveOptions()
+        public void SaveOptions(bool write = true)
         {
             // Automatically saves all control settings to the database in the tab
             // pages on this form of the following types: CheckBoxTS, ComboBoxTS,
@@ -1598,30 +1402,34 @@ namespace Thetis
             }
             //
 
-            //
-            DB.PurgeMeters(MeterManager.GetFormGuidList()); // clear the db of any meter info before we try to add it
-            if (!MeterManager.StoreSettings2(ref a))
-            {
-                MessageBox.Show("There was an issue storing the settings for MultiMeter.", "MultiMeter StoreSettings",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-            }
-            //
-            a.Add("multimeter_io2", MultiMeterIO.GetSaveData());
-            //
+            storeMeterData();
 
             // remove any outdated options from the DB MW0LGE_22b
             removeOutdatedOptions();
 
             DB.SaveVarsDictionary("Options", ref a, true);
 
-            DB.WriteDB();
+            if(write) DB.WriteDB();
 
             _savingOptions = false;
         }
-
+        private void storeMeterData(bool write = true)
+        {
+            Dictionary<string, string> a = new Dictionary<string, string>();
+            DB.PurgeMeters(MeterManager.GetFormGuidList()); // clear the db of any meter info before we try to add it
+            if (!MeterManager.StoreSettings2(ref a))
+            {
+                MessageBox.Show("There was an issue storing the settings for MultiMeter.", "MultiMeter StoreSettings",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            }
+            
+            a.Add("multimeter_io2", MultiMeterIO.GetSaveData());
+            DB.SaveVarsDictionary("Options", ref a, true);
+            if(write) DB.WriteDB();
+        }
         private void InitTransmitTab(List<string> recoveryList = null)
         {
-            if (needsRecovering(recoveryList, "comboTXTUNMeter")) comboTXTUNMeter.Text = "Fwd SWR"; // this needs to be setup in the case of new database and we havent hit tx/tune yet // MW0LGE_21a
+            comboTXTUNMeter.Text = "Fwd SWR"; // this needs to be setup in the case of new database and we havent hit tx/tune yet // MW0LGE_21a
         }
         private List<string> _oldSettings = new List<string>();
         private void handleOutdatedOptions(ref Dictionary<string, string> getDict)
@@ -1677,8 +1485,17 @@ namespace Thetis
             DB.RemoveVarsList("Options", _oldSettings);
             _oldSettings.Clear();
         }
+        private void addToIgnore(ref List<string> controlNames, Control rootControl)
+        {
+            if (rootControl == null) return;
+            if (!controlNames.Contains(rootControl.Name) && !string.IsNullOrEmpty(rootControl.Name)) controlNames.Add(rootControl.Name);
+            foreach (Control childControl in rootControl.Controls)
+            {
+                addToIgnore(ref controlNames, childControl);
+            }
+        }
         private bool _gettingOptions = false;
-        private void getOptions(List<string> recoveryList = null)
+        private void getOptions(/*List<string> recoveryList = null*/bool reload_meter_data = true, bool reload_meter_io = true)
         {
             _gettingOptions = true;
             //MW0LGE_21d
@@ -1702,120 +1519,146 @@ namespace Thetis
 
             if (a.Count < controls.Count)		// some control values are not in the database
             {								// so set all of them to the defaults
-                InitGeneralTab(recoveryList);
-                InitAudioTab(recoveryList);
-                InitAdvancedAudioTab(recoveryList);
-                InitDSPTab(recoveryList);
-                InitTransmitTab(recoveryList);
-                InitDisplayTab(recoveryList);
-                InitKeyboardTab(recoveryList);
-                InitAppearanceTab(recoveryList);
-                InitADC(recoveryList);
+                InitGeneralTab(/*recoveryList*/);
+                InitAudioTab(/*recoveryList*/);
+                InitAdvancedAudioTab(/*recoveryList*/);
+                InitDSPTab(/*recoveryList*/);
+                InitTransmitTab(/*recoveryList*/);
+                InitDisplayTab(/*recoveryList*/);
+                InitKeyboardTab(/*recoveryList*/);
+                InitAppearanceTab(/*recoveryList*/);
+                InitADC(/*recoveryList*/);
             }
 
             if (sortedList.Contains("comboPAProfile")) sortedList.Remove("comboPAProfile"); // this is done after the PA profiles are recovered // MW0LGE_22b
+
+            // we dont want to update any controls with their old settings for multimeters etc
+            // that will be done by selecting their entry in the list
+            List<string> ignoreList = new List<string>();
+            addToIgnore(ref ignoreList, tpMultiMetersIO);
+            addToIgnore(ref ignoreList, tpAppearanceMeter2);
+            addToIgnore(ref ignoreList, tcMMsettings);
+            addToIgnore(ref ignoreList, grpMultiMeterHolder);
+            addToIgnore(ref ignoreList, grpMeterItemSettings);
+            addToIgnore(ref ignoreList, grpMeterItemClockSettings);
+            addToIgnore(ref ignoreList, grpMeterItemVfoDisplaySettings);
+            addToIgnore(ref ignoreList, pnlMMIO_network_container);
+            addToIgnore(ref ignoreList, txtVAC1OldVarIn);
+            addToIgnore(ref ignoreList, txtVAC1OldVarOut);
+            addToIgnore(ref ignoreList, txtVAC2OldVarIn);
+            addToIgnore(ref ignoreList, txtVAC2OldVarOut);
+            foreach (TabPage tp in tcMMsettings.TabPages)
+            {
+                addToIgnore(ref ignoreList, tp);
+            }
+            foreach (string key in ignoreList)
+            {
+                if(sortedList.Contains(key)) sortedList.Remove(key);
+            }
+            //
 
             foreach (string sKey in sortedList)
             {
                 string name = sKey;
                 string val = a[sKey];
 
-                if (needsRecovering(recoveryList, name)) //MW0LGE_21d selective recovery
+                if (controls.ContainsKey(name))
                 {
-                    if (controls.ContainsKey(name))
-                    {
-                        Control cc = controls[name];
+                    Control cc = controls[name];
 
-                        if (cc.GetType() == typeof(CheckBoxTS))          // the control is a CheckBoxTS
+                    if (cc.GetType() == typeof(CheckBoxTS))          // the control is a CheckBoxTS
+                    {
+                        CheckBoxTS c = (CheckBoxTS)cc;
+                        c.Checked = bool.Parse(val);
+                    }
+                    else if (cc.GetType() == typeof(ComboBoxTS))     // the control is a ComboBoxTS
+                    {
+                        ComboBoxTS c = (ComboBoxTS)cc;
+                        if (c.Items.Count > 0 && c.Items[0].GetType() == typeof(string))
                         {
-                            CheckBoxTS c = (CheckBoxTS)cc;
-                            c.Checked = bool.Parse(val);
+                            c.Text = val;
                         }
-                        else if (cc.GetType() == typeof(ComboBoxTS))     // the control is a ComboBoxTS
+                        else
                         {
-                            ComboBoxTS c = (ComboBoxTS)cc;
-                            if (c.Items.Count > 0 && c.Items[0].GetType() == typeof(string))
+                            foreach (object o in c.Items)
                             {
-                                c.Text = val;
-                            }
-                            else
-                            {
-                                foreach (object o in c.Items)
-                                {
-                                    if (o.ToString() == val)
-                                        c.Text = val;   // restore value
-                                }
+                                if (o.ToString() == val)
+                                    c.Text = val;   // restore value
                             }
                         }
-                        else if (cc.GetType() == typeof(NumericUpDownTS))    // the control is a NumericUpDownTS
-                        {
-                            NumericUpDownTS c = (NumericUpDownTS)cc;
-                            decimal num = decimal.Parse(val);
+                    }
+                    else if (cc.GetType() == typeof(NumericUpDownTS))    // the control is a NumericUpDownTS
+                    {
+                        NumericUpDownTS c = (NumericUpDownTS)cc;
+                        decimal num = decimal.Parse(val);
 
-                            if (num > c.Maximum) num = c.Maximum;       // check endpoints
-                            else if (num < c.Minimum) num = c.Minimum;
-                            c.Value = num;          // restore value
-                        }
-                        else if (cc.GetType() == typeof(RadioButtonTS))  // the control is a RadioButtonTS
+                        if (num > c.Maximum) num = c.Maximum;       // check endpoints
+                        else if (num < c.Minimum) num = c.Minimum;
+                        c.Value = num;          // restore value
+                    }
+                    else if (cc.GetType() == typeof(RadioButtonTS))  // the control is a RadioButtonTS
+                    {
+                        RadioButtonTS c = (RadioButtonTS)cc;
+                        c.Checked = bool.Parse(val);    // restore value
+                    }
+                    else if (cc.GetType() == typeof(TextBoxTS))      // the control is a TextBox
+                    {
+                        TextBoxTS c = (TextBoxTS)cc;
+                        c.Text = val;   // restore value
+                    }
+                    else if (cc.GetType() == typeof(TrackBarTS))     // the control is a TrackBar (slider)
+                    {
+                        TrackBarTS c = (TrackBarTS)cc;
+                        c.Value = Int32.Parse(val);
+                    }
+                    else if (cc.GetType() == typeof(ColorButton))
+                    {
+                        string[] colors = val.Split('.');
+                        if (colors.Length == 4)
                         {
-                            RadioButtonTS c = (RadioButtonTS)cc;
-                            c.Checked = bool.Parse(val);    // restore value
-                        }
-                        else if (cc.GetType() == typeof(TextBoxTS))      // the control is a TextBox
-                        {
-                            TextBoxTS c = (TextBoxTS)cc;
-                            c.Text = val;   // restore value
-                        }
-                        else if (cc.GetType() == typeof(TrackBarTS))     // the control is a TrackBar (slider)
-                        {
-                            TrackBarTS c = (TrackBarTS)cc;
-                            c.Value = Int32.Parse(val);
-                        }
-                        else if (cc.GetType() == typeof(ColorButton))
-                        {
-                            string[] colors = val.Split('.');
-                            if (colors.Length == 4)
-                            {
-                                int R, G, B, A;
-                                R = Int32.Parse(colors[0]);
-                                G = Int32.Parse(colors[1]);
-                                B = Int32.Parse(colors[2]);
-                                A = Int32.Parse(colors[3]);
+                            int R, G, B, A;
+                            R = Int32.Parse(colors[0]);
+                            G = Int32.Parse(colors[1]);
+                            B = Int32.Parse(colors[2]);
+                            A = Int32.Parse(colors[3]);
 
-                                ColorButton c = (ColorButton)cc;
-                                c.Color = Color.FromArgb(A, R, G, B);
-                                c.Automatic = "";
-                            }
-                        }
-                        else if (name == "lgLinearGradientRX1")
-                        {
-                            lgLinearGradientRX1.Text = val;
+                            ColorButton c = (ColorButton)cc;
+                            c.Color = Color.FromArgb(A, R, G, B);
+                            c.Automatic = "";
                         }
                     }
-                    else if (name == "UsbBCDSerialNumber") // [2.10.3.5]MW0LGE recover this as the usbbcd combo box will not have any entries at this point
+                    else if (name == "lgLinearGradientRX1")
                     {
-                        m_sUsbBCDSerialNumber = val;
+                        lgLinearGradientRX1.Text = val;
                     }
-                    else if (name == "QSOTimerFilenameWav")
-                    {
-                        console.QSOTimerAudioPlayer.LoadSound(val);
-                    }
-                    else if (name.StartsWith("PAProfile_") || name == "PAProfileCount")
-                    {
-                        // ignore, done later
-                    }
-                    else if (name.StartsWith("meterContData_") ||
-                        name.StartsWith("meterData_") ||
-                        name.StartsWith("meterIGData_") ||
-                        name.StartsWith("meterIGSettings_") ||
-                        name.StartsWith("meterIGSettings_2_")) // need _2_ as the above will eventually be remoed from the db
-                    {
-                        // ignore, done later
-                    }
-                    else
-                    {
-                        Debug.WriteLine("Control not found: " + name);
-                    }
+                }
+                else if (name == "UsbBCDSerialNumber") // [2.10.3.5]MW0LGE recover this as the usbbcd combo box will not have any entries at this point
+                {
+                    m_sUsbBCDSerialNumber = val;
+                }
+                else if (name == "QSOTimerFilenameWav")
+                {
+                    console.QSOTimerAudioPlayer.LoadSound(val);
+                }
+                else if (name.StartsWith("PAProfile_") || name == "PAProfileCount")
+                {
+                    // ignore, done later
+                }
+                else if (name.StartsWith("meterContData_") ||
+                    name.StartsWith("meterData_") ||
+                    name.StartsWith("meterIGData_") ||
+                    name.StartsWith("meterIGSettings_") ||
+                    name.StartsWith("meterIGSettings_2_")) // need _2_ as the above will eventually be remoed from the db
+                {
+                    // ignore, done later
+                }
+                else if (name.StartsWith("multimeter_io")) // includes multimeter_io2
+                {
+                    // ignore, done later
+                }
+                else
+                {
+                    Debug.WriteLine("Control not found: " + name);
                 }
             }
 
@@ -1866,8 +1709,9 @@ namespace Thetis
             //
 
             //
-            if (recoveryList == null) // MW0LGE [2.9.0.8] ignore if we hit cancel, not possible to undo multimeter changes at this time
-            {
+            //if (/*recoveryList == null*/) // MW0LGE [2.9.0.8] ignore if we hit cancel, not possible to undo multimeter changes at this time
+            if(reload_meter_io)
+            {                
                 bool ok = true;
                 if (a.ContainsKey("multimeter_io2"))
                 {
@@ -1897,7 +1741,9 @@ namespace Thetis
                     MessageBox.Show("There was an issue restoring the settings for MultiMeterIO. Existing settings will be lost.", "MultiMeterIO RestoreSaveData",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
-
+            }
+            if (reload_meter_data)
+            {
                 if (!MeterManager.RestoreSettings(ref a)) // pass this dictionary of settings to the meter manager to restore from
                 {
                     MessageBox.Show("There was an issue restoring the settings for MultiMeter. Please remove all meters, re-add, and restart Thetis.", "MultiMeter RestoreSettings",
@@ -2698,9 +2544,6 @@ namespace Thetis
 
             chkSWRProtection_CheckedChanged(this, e);
             chkSWRTuneProtection_CheckedChanged(this, e);
-
-            //multimeter io tab
-            init_lstMMIO();
 
             //multimeter tab
             comboContainerSelect_SelectedIndexChanged(this, e);
@@ -11213,14 +11056,6 @@ namespace Thetis
             WaitForSaveLoad();
             m_objSaveLoadThread = null;
 
-            removeSpecialCases();
-#if DEBUG
-            listClickedControls(); //MW0LGE_21d for testing
-            listUpdatedControls();
-#endif
-            //make copy for the thread to use
-            m_lstUpdatedControlsClone = new List<string>(m_lstUpdatedControls);
-
             m_objSaveLoadThread = new Thread(new ThreadStart(PreRestoreOptions))
             {
                 Name = "Get Options Thread",
@@ -11238,8 +11073,6 @@ namespace Thetis
             WaitForSaveLoad();
             m_objSaveLoadThread = null;
 
-            clearUpdatedClickControlList(); //MW0LGE_21d
-
             m_objSaveLoadThread = new Thread(new ThreadStart(ApplyOptions))
             {
                 Name = "Apply Options Thread",
@@ -11251,7 +11084,100 @@ namespace Thetis
 
         private void PreRestoreOptions()
         {
-            getOptions(m_lstUpdatedControlsClone);
+            this.Invoke(new MethodInvoker(() =>
+            {
+                //store meter changes into the DB, this will then be checked against the snapshot
+                storeMeterData(false);
+            }));
+
+            Dictionary<string, string> meterDifferences = new Dictionary<string, string>();
+            Dictionary<string, string> meterIODifferences = new Dictionary<string, string>();
+
+            //note single | so not to 'short circuit'. We need to know if anything changed with meters, because we will need to rebuild them back to what
+            //they were before
+            bool meterDataDifferent = DB.DifferentInSnapshot("Options", "meterContData_", ref meterDifferences) |
+                DB.DifferentInSnapshot("Options", "meterData_", ref meterDifferences) | DB.DifferentInSnapshot("Options", "meterIGData_", ref meterDifferences) |
+                DB.DifferentInSnapshot("Options", "meterIGSettings_", ref meterDifferences) | DB.DifferentInSnapshot("Options", "meterIGSettings_2_", ref meterDifferences);
+
+            bool meterIODifferent = DB.DifferentInSnapshot("Options", "multimeter_io", ref meterIODifferences);
+
+            // replace the DB with the one we snapshotted
+            DB.RecoverTableSnapshot("Options");
+
+            List<string> different_meter_ids = new List<string>();
+            if (meterDataDifferent)
+            {
+                different_meter_ids = MeterManager.GetMeterIDsFromSaveData(meterDifferences);
+
+                if (different_meter_ids.Count > 0)
+                {
+                    // get all ids, including IG settings, these will be used to pull all DB data
+                    List<string> all_different_meter_ids = MeterManager.GetMeterIDsFromSaveData(meterDifferences, true);
+
+                    // get all the restored settings, we need to pull from this just things relating to the ids
+                    Dictionary<string, string> a = DB.GetVarsDictionary("Options");
+
+                    // get all that are in a.key or a.value that match any entry in different_meter_ids
+                    Dictionary<string, string> result = a
+                        .Where(entry => all_different_meter_ids.Any(item => entry.Key.Contains(item) || entry.Value.Contains(item)))
+                        .ToDictionary(entry => entry.Key, entry => entry.Value);
+
+                    //invoke on setup thread, as this is where they normally get added/removed
+                    this.Invoke(new MethodInvoker(() =>
+                    {
+                        foreach (string id in different_meter_ids)
+                        {
+                            // remove any meter that got changed and has now been reverted back
+                            MeterManager.RemoveMeterContainer(id);
+                        }
+
+                        // attempt to restore any meters that have changed
+                        if (result.Count > 0)
+                        {
+                            MeterManager.RestoreSettings(ref result);
+                        }
+                        else
+                            different_meter_ids.Clear(); // nothing to recover as result was empty
+                    }));
+                }
+            }
+
+            if (meterIODifferent)
+            {
+                // shutdown all meter io, best we can do at the moment
+                this.Invoke(new MethodInvoker(() =>
+                {
+                    MultiMeterIO.StopConnections();
+                }));
+            }
+
+            getOptions(false, meterIODifferent); // recover ALL, except for meters
+
+            if (meterDataDifferent)
+            {
+                console.Invoke(new MethodInvoker(() => // invoke on console, as this is where it normally happens
+                {
+                    foreach (string id in different_meter_ids)
+                    {
+                        MeterManager.RunRendererDisplay(id);
+                        MeterManager.FinishSetupAndDisplay(id);
+                    }                    
+                }));
+                this.Invoke(new MethodInvoker(() =>
+                {
+                    updateMeter2Controls();
+                    comboContainerSelect_SelectedIndexChanged(this, EventArgs.Empty);
+                    lstMetersInUse_SelectedIndexChanged(this, EventArgs.Empty);
+                }));
+            }
+            if (meterIODifferent)
+            {
+                this.Invoke(new MethodInvoker(() =>
+                {
+                    init_lstMMIO();
+                    lstMMIO_network_list_SelectedIndexChanged(this, EventArgs.Empty);
+                }));
+            }
 
             setButtonState(false, false);
         }
@@ -11264,22 +11190,14 @@ namespace Thetis
         {
             SaveOptions();
             setButtonState(false, false);
+
+            DB.RemoveTableSnapshot("Options");
+            DB.SnapshotTable("Options");
         }
 
         private void udGeneralLPTDelay_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
-        }
-
-        private void Setup_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            console.SetFocusMaster(true);
-            this.Hide();
-            e.Cancel = true;
-        }
-
-        private void btnImportDB_Click(object sender, System.EventArgs e)
-        {            
         }
 
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
@@ -12577,15 +12495,6 @@ namespace Thetis
         private void chkWheelTuneVFOB_CheckedChanged(object sender, EventArgs e)
         {
             console.WheelTunesVFOB = chkWheelTuneVFOB.Checked;
-        }
-
-        private void btnExportDB_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-            DB.WriteDB(saveFileDialog1.FileName);
         }
 
         private void chkPennyLane_CheckedChanged(object sender, System.EventArgs e)
@@ -25907,7 +25816,7 @@ namespace Thetis
             _ignoreMeterItemChangeEvents = true;
 
             // setup any meter that has variable % buttons, ignore those that do not
-            if (mt != MeterType.ROTATOR && mt != MeterType.SIGNAL_TEXT && mt != MeterType.VFO_DISPLAY && mt != MeterType.CLOCK && 
+            if (mt != MeterType.ROTATOR && mt != MeterType.VFO_DISPLAY && mt != MeterType.CLOCK && 
                 mt != MeterType.TEXT_OVERLAY && mt != MeterType.SPACER && mt != MeterType.LED &&
                 mt != MeterType.BAND_BUTTONS && mt != MeterType.MODE_BUTTONS && mt != MeterType.FILTER_BUTTONS && mt != MeterType.ANTENNA_BUTTONS &&
                 mt != MeterType.HISTORY && mt != MeterType.TUNESTEP_BUTTONS
@@ -30905,7 +30814,8 @@ namespace Thetis
             MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
             if (igs == null) return false;
 
-            return igs.GetMMIOVariable(variable) == "--DEFAULT--" ? false : true;
+            string value = igs.GetMMIOVariable(variable);
+            return value == "--DEFAULT--" || string.IsNullOrEmpty(value) ? false : true;
         }
         private void mmioSetupVariable(int variable)
         {
@@ -32475,6 +32385,18 @@ namespace Thetis
         private void nudLedIndicator_UpdateInterval_ValueChanged(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+
+        private void Setup_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(e.CloseReason == CloseReason.UserClosing)
+            {
+                btnCancel_Click(this, EventArgs.Empty);
+
+                console.SetFocusMaster(true);
+                this.Hide();
+                e.Cancel = true;
+            }
         }
     }
 
