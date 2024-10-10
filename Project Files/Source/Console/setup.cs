@@ -31215,9 +31215,23 @@ namespace Thetis
                 btnMeterDown.Enabled = !chkLockContainer.Checked;
             }
         }
-        public void SetupCMAsio(bool show_cmasioconfig)
+        public void SetupCMAsio(bool pa_issue, bool cmasio_config_flag)
         {
-            if (!show_cmasioconfig)
+            // for these callsigns always show cmasio tab
+            List<string> callsign_ignore = new List<string>() { "mw0lge", "m0lge", "oe3ide" };
+
+            bool ignore = false;
+            foreach (string call in callsign_ignore)
+            {
+                string tmp;
+                tmp = txtGenCustomTitle == null || txtGenCustomTitle.Text == null ? "" : txtGenCustomTitle.Text;
+                ignore |= tmp.Contains(call, StringComparison.OrdinalIgnoreCase);
+
+                tmp = txtOwnCallsign == null || txtOwnCallsign.Text == null ? "" : txtOwnCallsign.Text;
+                ignore |= tmp.Contains(call, StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (pa_issue || (!cmasio_config_flag && !ignore))
             {
                 tcAudio.TabPages.Remove(tpCMAsio);
                 return;

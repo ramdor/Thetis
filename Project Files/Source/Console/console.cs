@@ -856,7 +856,7 @@ namespace Thetis
                 MessageBox.Show("There was an issue initialising PortAudio", "PortAudio", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
             //            
-            if (!IsSetupFormNull) SetupForm.SetupCMAsio(!_portAudioIssue && Common.HasArg(args, "-cmasioconfig"));
+            if (!IsSetupFormNull) SetupForm.SetupCMAsio(_portAudioIssue, Common.HasArg(args, "-cmasioconfig"));
 
             // still waiting cpu
             if (!_getInstanceNameComplete && instanceNameThread != null && instanceNameThread.IsAlive)
@@ -45916,17 +45916,23 @@ namespace Thetis
         }
         //
         private bool _stop_all_tx = false;
-        public void StopAllTx()
+        public void StopAllTx(string msg = "")
         {
             if (MOX || manual_mox || chkTUN.Checked || chk2TONE.Checked)
             {
                 _stop_all_tx = true;
+
                 MOX = false;
                 manual_mox = false;
                 if (chkTUN.Checked)
                     chkTUN.Checked = false;
                 if (chk2TONE.Checked)
                     chk2TONE.Checked = false;
+
+                if (!string.IsNullOrEmpty(msg))
+                {
+                    infoBar.Warning(msg, 1, true);
+                }
             }
         }
         private void timeOutTimer(string msg)
@@ -45934,9 +45940,7 @@ namespace Thetis
             if (MOX || manual_mox || chkTUN.Checked || chk2TONE.Checked)
             {
                 //everything off !!
-                StopAllTx();
-
-                infoBar.Warning(msg + " Time Out Timer", 1, true);
+                StopAllTx(msg + " Time Out Timer");                
             }
         }
 

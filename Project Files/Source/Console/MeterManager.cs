@@ -10933,7 +10933,7 @@ namespace Thetis
             {
                 _console.BeginInvoke(new MethodInvoker(() =>
                 {
-                    _console.StopAllTx();
+                    _console.StopAllTx("Led Indicator stopped MOX");
                 }));
             }
             public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
