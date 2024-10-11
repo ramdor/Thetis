@@ -112,6 +112,11 @@ void asioOUT(int id, int nsamples, double* buff)
 {	// called by the global mixer with a buffer of output data for ASIO
 	if (!pcma->run) return;
 	xrmatchIN(pcma->rmatchOUT, buff);		// audio data from mixer
+	if (pcma->protocol == 0) // W4WMT cmASIO via Protocol 1
+	{
+		memset(buff, 0, nsamples * sizeof(complex));
+		OutBound(0, nsamples, buff);
+	} // W4WMT cmASIO via Protocol 1
 }
 
 void CallbackASIO(void* inputL, void* inputR, void* outputL, void* outputR)
@@ -175,15 +180,16 @@ void CallbackASIO(void* inputL, void* inputR, void* outputL, void* outputR)
 long cm_asioStart(int protocol)
 {
 	if (pcm->audioCodecId != ASIO) return -1;
-	if (protocol == 0)
-	{
-		SendpOutboundRx(OutBound);
-		pcm->audioCodecId = HERMES;
-		char buf[128];
-		sprintf_s(buf, 128, "Protocol1 Aborting!");
-		OutputDebugStringA(buf);
-		return -1;
-	}
+	pcma->protocol = protocol; // W4WMT cmASIO via Protocol 1
+	//if (protocol == 0)
+	//{
+	//	SendpOutboundRx(OutBound);
+	//	pcm->audioCodecId = HERMES;
+	//	char buf[128];
+	//	sprintf_s(buf, 128, "Protocol1 Aborting!");
+	//	OutputDebugStringA(buf);
+	//	return -1;
+	//}
 	char buf[128];
 	long result = asioStart();
 	sprintf_s(buf, 128, "asioStart = %d", result);
