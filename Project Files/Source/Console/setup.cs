@@ -32457,6 +32457,7 @@ namespace Thetis
 
         private void btnCMASIOActive_Click(object sender, EventArgs e)
         {
+            if (comboASIODevicesAvailable.SelectedItem == null) return;
             string selected = comboASIODevicesAvailable.SelectedItem.ToString();
             if (selected == "None Available") return;
             if (string.IsNullOrEmpty(selected)) return;
