@@ -24430,15 +24430,13 @@ namespace Thetis
                     bool cat_ptt = (ptt_bit_bang_enabled && serialPTT != null && serialPTT.isPTT()) | // CAT serial PTT
                                    (!ptt_bit_bang_enabled && CWInput.CATPTT) | _cat_ptt;
 
-                    bool radio_hardware_ptt = cw_ptt || mic_ptt;
-
                     if (!_mox)
                     {                        
                         // we can come in here from a ToT ( StopAllTX() ) //[2.10.3.6]MWLGE fixes #518
                         // however we dont want switch anything back on, unless all of the above have been released
                         if (_stop_all_tx)
                         {
-                            if (radio_hardware_ptt || vox_ptt || _tci_ptt || cat_ptt)
+                            if (mic_ptt || cw_ptt || cat_ptt || vox_ptt || _tci_ptt)
                             {
                                 await Task.Delay(1);
                                 continue; // skip all, and restart the loop
@@ -24448,7 +24446,7 @@ namespace Thetis
                         }
 
                         //Audio.VACBypass = (chkVAC1.Checked && m_allow_micvox_bypass); //[2.10.3.6]MW0LGE originally from PR #87, by W4WMT. We dont want to do this every 1ms
-                        if (chkVAC1.Checked && ((radio_hardware_ptt && _allow_vac_bypass) || _allow_micvox_bypass))
+                        if (chkVAC1.Checked && (((mic_ptt || cw_ptt) && _allow_vac_bypass) || _allow_micvox_bypass))
                         {
                             if(!Audio.VACBypass) Audio.VACBypass = true;
                         }
@@ -24515,6 +24513,7 @@ namespace Thetis
                     }
                     else // else if(mox)
                     {
+                        bool vac_bypass_disable = false;
                         switch (_current_ptt_mode)
                         {
                             case PTTMode.TCI:
@@ -24522,27 +24521,31 @@ namespace Thetis
                                 {
                                     chkMOX.Checked = false;
                                 }
+                                vac_bypass_disable = true;
                                 break;
                             case PTTMode.CAT:
-                                if (chkVAC1.Checked && _allow_micvox_bypass)
-                                    Audio.VACBypass = false;
+                                //if (chkVAC1.Checked && _allow_micvox_bypass)
+                                //    Audio.VACBypass = false;
                                 if (!cat_ptt)
                                 {
                                     chkMOX.Checked = false;
                                 }
+                                vac_bypass_disable = true;
                                 break;
                             case PTTMode.MIC:
                                 if (!mic_ptt)
                                 {
                                     chkMOX.Checked = false;
-                                    if (chkVAC1.Checked && Audio.VACBypass)
-                                        Audio.VACBypass = false;
+                                    vac_bypass_disable = true;
+                                    //if (chkVAC1.Checked && Audio.VACBypass)
+                                    //    Audio.VACBypass = false;
                                 }
                                 break;
                             case PTTMode.CW:
                                 if (!cw_ptt && !mic_ptt)
                                 {
                                     chkMOX.Checked = false;
+                                    vac_bypass_disable = true;
                                 }
                                 break;
                             case PTTMode.VOX:
@@ -24551,6 +24554,11 @@ namespace Thetis
                                     chkMOX.Checked = false;
                                 }
                                 break;
+                        }
+
+                        if (chkVAC1.Checked && vac_bypass_disable)
+                        {
+                            if (Audio.VACBypass) Audio.VACBypass = false;
                         }
                     }
                 }
