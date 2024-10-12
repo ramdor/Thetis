@@ -665,11 +665,7 @@ namespace Thetis
             if (!Directory.Exists(AppDataPath))
                 Directory.CreateDirectory(AppDataPath);
 
-            string sRevision = "." + Common.GetRevision();
-            if (sRevision == ".0") sRevision = "";
-            string version = Common.GetVerNum() + sRevision;
-            if (TitleBar.BUILD_NAME != "") version += " " + TitleBar.BUILD_NAME;
-            Splash.ShowSplashScreen(version);							// Start splash screen with version number
+            Splash.ShowSplashScreen(Common.GetVerNum(true, true));							// Start splash screen with version number
 
             // PA init thread - from G7KLJ changes - done as early as possible
             Splash.SetStatus("Initializing PortAudio");			// Set progress point as early as possible
@@ -49197,9 +49193,7 @@ namespace Thetis
                 sModel = current_hpsdr_model.ToString() + " (not connected)";
             }
 
-            string sRevision = "." + Common.GetRevision();
-            if (sRevision == ".0") sRevision = "";
-            string version = Common.GetVerNum() + sRevision;           
+            string version = Common.GetVerNum(true, false);
 
             int nPAVersion = PA19.PA_GetVersion();
             int major = (nPAVersion >> 16) & 0xFF;

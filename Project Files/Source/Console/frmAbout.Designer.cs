@@ -36,12 +36,12 @@
             this.lstLinks = new System.Windows.Forms.ListBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnUpdatedRelease = new System.Windows.Forms.ButtonTS();
-            this.labelTS4 = new System.Windows.Forms.LabelTS();
-            this.labelTS3 = new System.Windows.Forms.LabelTS();
             this.btnVisit = new System.Windows.Forms.ButtonTS();
             this.btnDXDiag = new System.Windows.Forms.ButtonTS();
             this.btnSysInfo = new System.Windows.Forms.ButtonTS();
             this.btnCopyContributors = new System.Windows.Forms.ButtonTS();
+            this.labelTS4 = new System.Windows.Forms.LabelTS();
+            this.labelTS3 = new System.Windows.Forms.LabelTS();
             this.labelTS2 = new System.Windows.Forms.LabelTS();
             this.btnOK = new System.Windows.Forms.ButtonTS();
             this.labelTS1 = new System.Windows.Forms.LabelTS();
@@ -62,6 +62,7 @@
             "MW0LGE, Richie (UI & various)",
             "W5WC, Doug (UI, ChannelMaster, various & Thetis naming)",
             "W2PA, Chris (QSK & MIDI)",
+            "WD5Y, Joe (UI tweaks and fixes)",
             "M0YGG, Andrew (MIDI & various)",
             "",
             "VK6PH, Phil (Firmware, Protocols & other)",
@@ -160,27 +161,6 @@
             this.btnUpdatedRelease.UseVisualStyleBackColor = false;
             this.btnUpdatedRelease.Click += new System.EventHandler(this.btnUpdatedRelease_Click);
             // 
-            // labelTS4
-            // 
-            this.labelTS4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTS4.Image = null;
-            this.labelTS4.Location = new System.Drawing.Point(16, 447);
-            this.labelTS4.Name = "labelTS4";
-            this.labelTS4.Size = new System.Drawing.Size(493, 80);
-            this.labelTS4.TabIndex = 12;
-            this.labelTS4.Text = resources.GetString("labelTS4.Text");
-            // 
-            // labelTS3
-            // 
-            this.labelTS3.AutoSize = true;
-            this.labelTS3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTS3.Image = null;
-            this.labelTS3.Location = new System.Drawing.Point(342, 85);
-            this.labelTS3.Name = "labelTS3";
-            this.labelTS3.Size = new System.Drawing.Size(41, 16);
-            this.labelTS3.TabIndex = 11;
-            this.labelTS3.Text = "Links:";
-            // 
             // btnVisit
             // 
             this.btnVisit.BackColor = System.Drawing.SystemColors.ControlLight;
@@ -240,6 +220,27 @@
             this.toolTip1.SetToolTip(this.btnCopyContributors, "Copy the version info to the clipboard");
             this.btnCopyContributors.UseVisualStyleBackColor = false;
             this.btnCopyContributors.Click += new System.EventHandler(this.btnCopyContributors_Click);
+            // 
+            // labelTS4
+            // 
+            this.labelTS4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS4.Image = null;
+            this.labelTS4.Location = new System.Drawing.Point(16, 447);
+            this.labelTS4.Name = "labelTS4";
+            this.labelTS4.Size = new System.Drawing.Size(493, 80);
+            this.labelTS4.TabIndex = 12;
+            this.labelTS4.Text = resources.GetString("labelTS4.Text");
+            // 
+            // labelTS3
+            // 
+            this.labelTS3.AutoSize = true;
+            this.labelTS3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS3.Image = null;
+            this.labelTS3.Location = new System.Drawing.Point(342, 85);
+            this.labelTS3.Name = "labelTS3";
+            this.labelTS3.Size = new System.Drawing.Size(41, 16);
+            this.labelTS3.TabIndex = 11;
+            this.labelTS3.Text = "Links:";
             // 
             // labelTS2
             // 
