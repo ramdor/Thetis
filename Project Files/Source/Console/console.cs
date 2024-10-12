@@ -49205,7 +49205,6 @@ namespace Thetis
             string sPortAudio = major.ToString() + "." + minor.ToString() + "." + subminor.ToString();
 
             string sOriginalAndromG2Verson = SetupForm.AndromedaVersionNumber;
-            sOriginalAndromG2Verson = "Andromeda: h/w=123  s/w=456";
             string sAndromG2Verson = sOriginalAndromG2Verson;
             sAndromG2Verson = sAndromG2Verson.Replace("Andromeda: ", "");
             sAndromG2Verson = sAndromG2Verson.Replace("G2 panel: ", "");
