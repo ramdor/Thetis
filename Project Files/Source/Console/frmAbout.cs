@@ -1,0 +1,264 @@
+﻿/*  frmAbout.cs
+
+This file is part of a program that implements a Software-Defined Radio.
+
+This code/file can be found on GitHub : https://github.com/ramdor/Thetis
+
+Copyright (C) 2020-2024 Richard Samphire MW0LGE
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+The author can be reached by email at
+
+mw0lge@grange-lane.co.uk
+*/
+using System;
+using System.Windows.Forms;
+using Newtonsoft.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Net.Http;
+
+namespace Thetis
+{
+    public partial class frmAbout : Form
+    {
+        private const string GITHUB_VERSION_JSON_RAW = @"https://raw.githubusercontent.com/ramdor/Thetis/refs/heads/master/version.json";
+
+        private class ThetisVersionInfo
+        {
+            public string ReleaseVersion { get; set; }
+            public string ReleaseURL { get; set; }
+            public string ReleaseName { get; set; }
+            public string DevelopmentVersion { get; set; }
+            public string DevelopmentURL { get; set; }
+            public string DevelopmentName { get; set; }
+        }
+
+        private ThetisVersionInfo _versionInfo;
+        private CancellationTokenSource _cancellationTokenSource;
+        private Task _fetchJsonTask;
+        private readonly object _version_info_lock = new object();
+        private string _version;
+
+        public frmAbout()
+        {
+            InitializeComponent();
+
+            _versionInfo = null;
+            _version = "";
+
+            btnVisit.Enabled = false;
+            btnUpdatedRelease.Visible = false;
+
+            _cancellationTokenSource = new CancellationTokenSource();
+            _fetchJsonTask = fetchJsonAsync(_cancellationTokenSource.Token);
+        }
+        public void InitVersions(string version, string build, string db_version, string radio_model, string firmware_version, string protocol, string supported_protocol, string wdsp_version, string channel_master_version, string cmASIO_version, string portAudio_version)
+        {
+            _version = version;
+
+            cancelFetchJsonTask();
+
+            if (_cancellationTokenSource == null)
+            {
+                _cancellationTokenSource = new CancellationTokenSource();
+                _fetchJsonTask = fetchJsonAsync(_cancellationTokenSource.Token);
+            }
+
+            lstLinks.ClearSelected();
+            btnVisit.Enabled = false;
+
+            if (string.IsNullOrEmpty(firmware_version)) firmware_version = "?";
+            if (string.IsNullOrEmpty(radio_model)) firmware_version = "?";
+
+            if (radio_model == HPSDRModel.FIRST.ToString() || radio_model == HPSDRModel.LAST.ToString()) radio_model = "?";
+
+            if (!string.IsNullOrEmpty(build)) version += $" [build {build}]";
+
+            lstVersions.Items.Clear();
+            lstVersions.Items.Add("Version: " + version);
+            lstVersions.Items.Add("Database Version: " + db_version);
+            lstVersions.Items.Add("Radio Model: " + radio_model);
+            lstVersions.Items.Add("Firmware Version: " + firmware_version);
+            if (!string.IsNullOrEmpty(supported_protocol)) lstVersions.Items.Add("Supports Protocol: " + supported_protocol);
+            lstVersions.Items.Add("Protocol: " + protocol);
+            lstVersions.Items.Add("WDSP Version: " + wdsp_version);
+            lstVersions.Items.Add("ChannelMaster: " + channel_master_version);
+            lstVersions.Items.Add("cmASIO Version: " + cmASIO_version);
+            lstVersions.Items.Add("PortAudio Version: " + portAudio_version);
+        }
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.OK;
+        }
+
+        private void btnCopyContributors_Click(object sender, EventArgs e)
+        {
+            string text = "";
+            foreach(string s in lstVersions.Items)
+            {
+                text += s + "\n";
+            }
+            try
+            {
+                Clipboard.SetText(text);
+            }
+            catch { }
+        }
+
+        private void btnSysInfo_Click(object sender, EventArgs e)
+        {
+            Common.OpenUri("msinfo32.exe", false);
+        }
+
+        private void btnDXDiag_Click(object sender, EventArgs e)
+        {
+            Common.OpenUri("dxdiag.exe", false);
+        }
+
+        private void lnkLicence_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            lnkLicence.LinkVisited = Common.OpenUri(@"https://github.com/ramdor/Thetis/blob/master/LICENSE");
+        }
+
+        private void btnVisit_Click(object sender, EventArgs e)
+        {
+            if (lstLinks.SelectedItems.Count == 0)
+            {
+                btnVisit.Enabled = false;
+                return;
+            }
+
+            switch (lstLinks.SelectedIndex)
+            {
+                case 0: Common.OpenUri("https://github.com/ramdor/Thetis/releases"); break;
+                case 1: Common.OpenUri("https://discord.gg/6fHCRKnDc9"); break;
+                case 2: Common.OpenUri("https://community.apache-labs.com/index.php"); break;
+                case 3: Common.OpenUri("https://apache-labs.com/"); break;
+                case 4: Common.OpenUri("https://github.com/TAPR/OpenHPSDR-Protocol1-Programmers"); break;
+                case 5: Common.OpenUri("https://github.com/TAPR/OpenHPSDR-Protocol2-Programmers"); break;
+                case 6: Common.OpenUri("https://community.apache-labs.com/viewforum.php?f=23"); break;
+                case 7: Common.OpenUri("https://community.apache-labs.com/viewtopic.php?f=27&t=3080"); break;
+                case 8: Common.OpenUri("https://community.apache-labs.com/viewtopic.php?f=32&t=4972"); break;
+                case 9: Common.OpenUri("https://github.com/laurencebarker/Saturn"); break;
+                case 10: Common.OpenUri("https://github.com/mi0bot/OpenHPSDR-Thetis/releases"); break;
+            }
+
+            lstLinks.ClearSelected();
+            btnVisit.Enabled = false;
+        }
+
+        private void lstLinks_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            btnVisit.Enabled = lstLinks.SelectedItems.Count > 0;
+        }
+        private void handleVersionInfo()
+        {
+            lock (_version_info_lock)
+            {
+                int release_version = Common.CompareVersions(_version, _versionInfo.ReleaseVersion);                
+                if (release_version < 0)
+                {
+                    btnUpdatedRelease.Text = $"Release version [{_versionInfo.ReleaseVersion}]\n{_versionInfo.ReleaseName}\navailable!";
+                    btnUpdatedRelease.Tag = _versionInfo.ReleaseURL;
+                    btnUpdatedRelease.Visible = true;
+                }
+                else
+                {
+                    // check development
+                    int development_version = Common.CompareVersions(_version, _versionInfo.DevelopmentVersion);
+                    if (development_version < 0)
+                    {
+                        btnUpdatedRelease.Text = $"Dev version [{_versionInfo.DevelopmentVersion}]\n{_versionInfo.DevelopmentName}\navailable!";
+                        btnUpdatedRelease.Tag = _versionInfo.DevelopmentURL;
+                        btnUpdatedRelease.Visible = true;
+                    }
+                    else
+                    {
+                        btnUpdatedRelease.Visible = false;
+                    }
+                }
+            }
+        }
+        private void cancelFetchJsonTask()
+        {
+            if (_cancellationTokenSource != null)
+            {
+                _cancellationTokenSource.Cancel();
+                _cancellationTokenSource.Dispose();
+                _cancellationTokenSource = null;
+            }
+        }
+        private async Task fetchJsonAsync(CancellationToken cancellationToken)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue
+                {
+                    NoCache = true,
+                    NoStore = true,
+                    MustRevalidate = true
+                };
+
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    try
+                    {
+                        HttpResponseMessage response = await client.GetAsync(GITHUB_VERSION_JSON_RAW, cancellationToken);
+                        response.EnsureSuccessStatusCode();
+
+                        string jsonData = await response.Content.ReadAsStringAsync();
+
+                        lock (_version_info_lock)
+                        {
+                            _versionInfo = JsonConvert.DeserializeObject<ThetisVersionInfo>(jsonData);
+                        }
+
+                        if (this.IsHandleCreated)
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                handleVersionInfo();
+                            }));
+                        }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+
+                    try
+                    {
+                        await Task.Delay(TimeSpan.FromMinutes(30), cancellationToken); // check every 30 mins
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void btnUpdatedRelease_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(btnUpdatedRelease.Tag.ToString())) return;
+            Common.OpenUri(btnUpdatedRelease.Tag.ToString());
+        }
+    }
+}

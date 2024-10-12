@@ -361,6 +361,12 @@
     <Compile Include="clsImgeFetcher.cs" />
     <Compile Include="clsLegacyItemController.cs" />
     <Compile Include="clsThetisSkinService.cs" />
+    <Compile Include="frmAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAbout.Designer.cs">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmDBMan.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -842,6 +848,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Andromeda\FilterButtonsPopup.resx">
       <DependentUpon>FilterButtonsPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAbout.resx">
+      <DependentUpon>frmAbout.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmDBMan.resx">
       <DependentUpon>frmDBMan.cs</DependentUpon>
