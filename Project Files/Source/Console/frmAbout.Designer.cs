@@ -103,7 +103,7 @@
             this.lstVersions.Location = new System.Drawing.Point(19, 54);
             this.lstVersions.Name = "lstVersions";
             this.lstVersions.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.lstVersions.Size = new System.Drawing.Size(304, 160);
+            this.lstVersions.Size = new System.Drawing.Size(297, 160);
             this.lstVersions.TabIndex = 3;
             // 
             // lnkLicence
@@ -111,7 +111,7 @@
             this.lnkLicence.AutoSize = true;
             this.lnkLicence.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lnkLicence.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
-            this.lnkLicence.Location = new System.Drawing.Point(342, 31);
+            this.lnkLicence.Location = new System.Drawing.Point(297, 31);
             this.lnkLicence.Name = "lnkLicence";
             this.lnkLicence.Size = new System.Drawing.Size(96, 16);
             this.lnkLicence.TabIndex = 5;
@@ -148,10 +148,10 @@
             this.btnUpdatedRelease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.btnUpdatedRelease.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUpdatedRelease.Image = null;
-            this.btnUpdatedRelease.Location = new System.Drawing.Point(470, 8);
+            this.btnUpdatedRelease.Location = new System.Drawing.Point(416, 8);
             this.btnUpdatedRelease.Name = "btnUpdatedRelease";
             this.btnUpdatedRelease.Selectable = true;
-            this.btnUpdatedRelease.Size = new System.Drawing.Size(142, 58);
+            this.btnUpdatedRelease.Size = new System.Drawing.Size(196, 58);
             this.btnUpdatedRelease.TabIndex = 13;
             this.btnUpdatedRelease.Text = "Version 2.10.3.8\r\nhas been released";
             this.toolTip1.SetToolTip(this.btnUpdatedRelease, "New release available");

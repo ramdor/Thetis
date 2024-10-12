@@ -40,9 +40,11 @@ namespace Thetis
         private class ThetisVersionInfo
         {
             public string ReleaseVersion { get; set; }
+            public string ReleaseBuild { get; set; }
             public string ReleaseURL { get; set; }
             public string ReleaseName { get; set; }
             public string DevelopmentVersion { get; set; }
+            public string DevelopmentBuild { get; set; }
             public string DevelopmentURL { get; set; }
             public string DevelopmentName { get; set; }
         }
@@ -52,6 +54,7 @@ namespace Thetis
         private Task _fetchJsonTask;
         private readonly object _version_info_lock = new object();
         private string _version;
+        private string _build;
 
         public frmAbout()
         {
@@ -59,6 +62,7 @@ namespace Thetis
 
             _versionInfo = null;
             _version = "";
+            _build = "";
 
             btnVisit.Enabled = false;
             btnUpdatedRelease.Visible = false;
@@ -69,6 +73,7 @@ namespace Thetis
         public void InitVersions(string version, string build, string db_version, string radio_model, string firmware_version, string protocol, string supported_protocol, string wdsp_version, string channel_master_version, string cmASIO_version, string portAudio_version)
         {
             _version = version;
+            _build = build;
 
             cancelFetchJsonTask();
 
@@ -169,10 +174,11 @@ namespace Thetis
         {
             lock (_version_info_lock)
             {
-                int release_version = Common.CompareVersions(_version, _versionInfo.ReleaseVersion);                
-                if (release_version < 0)
+                int release_version = Common.CompareVersions(_version, _versionInfo.ReleaseVersion);
+                bool different_release_build = !string.IsNullOrEmpty(_versionInfo.ReleaseBuild) && _versionInfo.ReleaseBuild != _build;
+                if (release_version < 0 || (release_version == 0 && different_release_build))
                 {
-                    btnUpdatedRelease.Text = $"Release version [{_versionInfo.ReleaseVersion}]\n{_versionInfo.ReleaseName}\navailable!";
+                    btnUpdatedRelease.Text = $"Release version [{_versionInfo.ReleaseVersion}]\n{_versionInfo.ReleaseName}\navailable on GitHub";
                     btnUpdatedRelease.Tag = _versionInfo.ReleaseURL;
                     btnUpdatedRelease.Visible = true;
                 }
@@ -180,9 +186,11 @@ namespace Thetis
                 {
                     // check development
                     int development_version = Common.CompareVersions(_version, _versionInfo.DevelopmentVersion);
-                    if (development_version < 0)
+                    bool different_dev_build = !string.IsNullOrEmpty(_versionInfo.DevelopmentBuild) && _versionInfo.DevelopmentBuild != _build;
+                    if (development_version < 0 || (development_version == 0 && different_dev_build))
                     {
-                        btnUpdatedRelease.Text = $"Dev version [{_versionInfo.DevelopmentVersion}]\n{_versionInfo.DevelopmentName}\navailable!";
+                        string build = string.IsNullOrEmpty(_versionInfo.DevelopmentBuild) ? "" : $" {_versionInfo.DevelopmentBuild}";
+                        btnUpdatedRelease.Text = $"Dev version [{_versionInfo.DevelopmentVersion}{build}]\n{_versionInfo.DevelopmentName}\navailable on GitHub";
                         btnUpdatedRelease.Tag = _versionInfo.DevelopmentURL;
                         btnUpdatedRelease.Visible = true;
                     }
