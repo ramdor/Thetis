@@ -74,6 +74,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] use command line option -cmasioconfig to add a new cmasio tab to audio setting. Remove old cmasio settings from the registry if you want to use this feature as they have moved. See notes in the tab
 - [add] option in led indicator to stop tx if conditions met
 - [add] mmio variable now use %precis=N% in text overlay
+- [add] about box. It will also check GitHub for updated versions
 - [change] when using [extended] Thetis will now allow tx anywhere. It will select the nearest band to the frequency you have selected and use that band info for bpf/lpfs. This will now permit power output on 8m for example. If you use this feature be aware of the out of band transmission possibilities and potential issues for the hardware
 - [change] meter container borders have been reduced
 - [change] importing a db with meter containers will no longer clear existing ones, they will be added if possible

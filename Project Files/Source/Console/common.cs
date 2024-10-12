@@ -1295,11 +1295,11 @@ namespace Thetis
 			catch { return false; }
         }
 
-        public static bool OpenUri(string uri)
+        public static bool OpenUri(string uri, bool check_uri = true)
         {
 			try
 			{
-				if (!IsValidUri(uri))
+				if (check_uri && !IsValidUri(uri))
 					return false;
 
 				Task.Run(() => System.Diagnostics.Process.Start(uri));
