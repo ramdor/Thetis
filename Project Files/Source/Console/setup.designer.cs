@@ -31273,7 +31273,7 @@
             this.labelTS295.Image = null;
             this.labelTS295.Location = new System.Drawing.Point(37, 218);
             this.labelTS295.Name = "labelTS295";
-            this.labelTS295.Size = new System.Drawing.Size(644, 140);
+            this.labelTS295.Size = new System.Drawing.Size(644, 154);
             this.labelTS295.TabIndex = 112;
             this.labelTS295.Text = resources.GetString("labelTS295.Text");
             // 

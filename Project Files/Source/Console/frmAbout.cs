@@ -55,11 +55,13 @@ namespace Thetis
         private readonly object _version_info_lock = new object();
         private string _version;
         private string _build;
+        private bool _update_available;
 
         public frmAbout()
         {
             InitializeComponent();
 
+            _update_available = false;
             _versionInfo = null;
             _version = "";
             _build = "";
@@ -70,7 +72,7 @@ namespace Thetis
             _cancellationTokenSource = new CancellationTokenSource();
             _fetchJsonTask = fetchJsonAsync(_cancellationTokenSource.Token);
         }
-        public void InitVersions(string version, string build, string db_version, string radio_model, string firmware_version, string protocol, string supported_protocol, string wdsp_version, string channel_master_version, string cmASIO_version, string portAudio_version)
+        public void InitVersions(string version, string build, string db_version, string radio_model, string firmware_version, string protocol, string supported_protocol, string wdsp_version, string channel_master_version, string cmASIO_version, string portAudio_version, string andromeda_version)
         {
             _version = version;
             _build = build;
@@ -97,13 +99,24 @@ namespace Thetis
             lstVersions.Items.Add("Version: " + version);
             lstVersions.Items.Add("Database Version: " + db_version);
             lstVersions.Items.Add("Radio Model: " + radio_model);
+            if (!string.IsNullOrEmpty(andromeda_version)) lstVersions.Items.Add(andromeda_version); // includes the version: preamble in the string
             lstVersions.Items.Add("Firmware Version: " + firmware_version);
-            if (!string.IsNullOrEmpty(supported_protocol)) lstVersions.Items.Add("Supports Protocol: " + supported_protocol);
-            lstVersions.Items.Add("Protocol: " + protocol);
+            string support = !string.IsNullOrEmpty(supported_protocol) ? $" (v{supported_protocol})" : "";
+            lstVersions.Items.Add("Protocol: " + protocol + support);
             lstVersions.Items.Add("WDSP Version: " + wdsp_version);
             lstVersions.Items.Add("ChannelMaster: " + channel_master_version);
             lstVersions.Items.Add("cmASIO Version: " + cmASIO_version);
             lstVersions.Items.Add("PortAudio Version: " + portAudio_version);
+        }
+        private bool UpdateAvaialble
+        {
+            get
+            {
+                lock (_version_info_lock)
+                {
+                    return _update_available;
+                }
+            }
         }
         private void btnOK_Click(object sender, EventArgs e)
         {
@@ -160,6 +173,7 @@ namespace Thetis
                 case 8: Common.OpenUri("https://community.apache-labs.com/viewtopic.php?f=32&t=4972"); break;
                 case 9: Common.OpenUri("https://github.com/laurencebarker/Saturn"); break;
                 case 10: Common.OpenUri("https://github.com/mi0bot/OpenHPSDR-Thetis/releases"); break;
+                case 11: Common.OpenUri("https://github.com/TAPR/OpenHPSDR-wdsp"); break;
             }
 
             lstLinks.ClearSelected();
@@ -181,6 +195,7 @@ namespace Thetis
                     btnUpdatedRelease.Text = $"Release version [{_versionInfo.ReleaseVersion}]\n{_versionInfo.ReleaseName}\navailable on GitHub";
                     btnUpdatedRelease.Tag = _versionInfo.ReleaseURL;
                     btnUpdatedRelease.Visible = true;
+                    _update_available = true;
                 }
                 else
                 {
@@ -193,10 +208,12 @@ namespace Thetis
                         btnUpdatedRelease.Text = $"Dev version [{_versionInfo.DevelopmentVersion}{build}]\n{_versionInfo.DevelopmentName}\navailable on GitHub";
                         btnUpdatedRelease.Tag = _versionInfo.DevelopmentURL;
                         btnUpdatedRelease.Visible = true;
+                        _update_available = true;
                     }
                     else
                     {
                         btnUpdatedRelease.Visible = false;
+                        _update_available = false;
                     }
                 }
             }

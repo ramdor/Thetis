@@ -49176,7 +49176,7 @@ namespace Thetis
                 {
                     sFW = NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString();
                     sProto = "2";
-                    sSupportedProtocol = NetworkIO.ProtocolSupported.ToString();
+                    sSupportedProtocol = NetworkIO.ProtocolSupported.ToString("0\\.0");
                 }
                 else
                 {
@@ -49204,9 +49204,21 @@ namespace Thetis
             nPAVersion = major * 100 + minor * 10 + subminor;
             string sPortAudio = major.ToString() + "." + minor.ToString() + "." + subminor.ToString();
 
+            string sOriginalAndromG2Verson = SetupForm.AndromedaVersionNumber;
+            sOriginalAndromG2Verson = "Andromeda: h/w=123  s/w=456";
+            string sAndromG2Verson = sOriginalAndromG2Verson;
+            sAndromG2Verson = sAndromG2Verson.Replace("Andromeda: ", "");
+            sAndromG2Verson = sAndromG2Verson.Replace("G2 panel: ", "");
+            sAndromG2Verson = sAndromG2Verson.Replace("h/w=", "h=");
+            sAndromG2Verson = sAndromG2Verson.Replace("  s/w=", " s=");
+            if (!string.IsNullOrEmpty(sAndromG2Verson))
+            {
+                sAndromG2Verson = sOriginalAndromG2Verson.Contains("G2") ? "G2 Panel Version: " + sAndromG2Verson : "Andromeda Panel Version: " + sAndromG2Verson;
+            }
+
             _frmAbout.InitVersions(version, TitleBar.BUILD_NAME, DB.VersionNumber.ToString(), sModel, sFW, sProto, sSupportedProtocol,
                 (WDSP.GetWDSPVersion() / 100f).ToString("f2"), (cmaster.GetCMVersion() / 1000f).ToString("f2"),
-                (cmaster.GetCMasioVersion() / 1000f).ToString("f2"), sPortAudio);
+                (cmaster.GetCMasioVersion() / 1000f).ToString("f2"), sPortAudio, sAndromG2Verson);
 
             _frmAbout.ShowDialog(this);
         }

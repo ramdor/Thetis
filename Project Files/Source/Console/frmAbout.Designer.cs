@@ -93,9 +93,9 @@
             "Version : 2.10.3.6",
             "Database : 2.10.3",
             "Radio Model : ANAN7000",
+            "Andromeda Info:",
             "Firmware Version : ?",
-            "Protocol : ?",
-            "Protocol Version : ?",
+            "Protocol : 2 (v1.1)",
             "WDSP Version :",
             "ChannelMaster Version :",
             "cmASIO Version :",
@@ -103,7 +103,7 @@
             this.lstVersions.Location = new System.Drawing.Point(19, 54);
             this.lstVersions.Name = "lstVersions";
             this.lstVersions.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.lstVersions.Size = new System.Drawing.Size(297, 160);
+            this.lstVersions.Size = new System.Drawing.Size(317, 176);
             this.lstVersions.TabIndex = 3;
             // 
             // lnkLicence
@@ -136,8 +136,9 @@
             "Protocol1 Firmware (7000/8000)",
             "Protocol2 Firmware (7000/8000) RF fix",
             "G2 Firmware & Software \"p2app\"",
-            "Thetis for Hermes Lite 2 on GitHub"});
-            this.lstLinks.Location = new System.Drawing.Point(345, 102);
+            "Thetis for Hermes Lite 2 on GitHub",
+            "WDSP Documentation on GitHub"});
+            this.lstLinks.Location = new System.Drawing.Point(345, 108);
             this.lstLinks.Name = "lstLinks";
             this.lstLinks.Size = new System.Drawing.Size(267, 130);
             this.lstLinks.TabIndex = 9;
@@ -173,7 +174,7 @@
             this.labelTS3.AutoSize = true;
             this.labelTS3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTS3.Image = null;
-            this.labelTS3.Location = new System.Drawing.Point(342, 79);
+            this.labelTS3.Location = new System.Drawing.Point(342, 85);
             this.labelTS3.Name = "labelTS3";
             this.labelTS3.Size = new System.Drawing.Size(41, 16);
             this.labelTS3.TabIndex = 11;
@@ -184,7 +185,7 @@
             this.btnVisit.BackColor = System.Drawing.SystemColors.ControlLight;
             this.btnVisit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnVisit.Image = null;
-            this.btnVisit.Location = new System.Drawing.Point(524, 72);
+            this.btnVisit.Location = new System.Drawing.Point(524, 78);
             this.btnVisit.Name = "btnVisit";
             this.btnVisit.Selectable = true;
             this.btnVisit.Size = new System.Drawing.Size(88, 23);
