@@ -80,6 +80,7 @@ namespace Thetis
 		private System.Windows.Forms.Timer timer1;
 		private System.Windows.Forms.LabelTS lblStatus;
 		private System.Windows.Forms.Panel pnlStatus;
+        private LabelTS lblVersion;
         private System.ComponentModel.IContainer components;
 		#endregion
 
@@ -120,6 +121,7 @@ namespace Thetis
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.lblTimeRemaining = new System.Windows.Forms.LabelTS();
             this.lblStatus = new System.Windows.Forms.LabelTS();
+            this.lblVersion = new System.Windows.Forms.LabelTS();
             this.SuspendLayout();
             // 
             // pnlStatus
@@ -161,10 +163,22 @@ namespace Thetis
             this.lblStatus.Text = "Status";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // lblVersion
+            // 
+            this.lblVersion.BackColor = System.Drawing.Color.Transparent;
+            this.lblVersion.ForeColor = System.Drawing.Color.White;
+            this.lblVersion.Image = null;
+            this.lblVersion.Location = new System.Drawing.Point(56, 290);
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Size = new System.Drawing.Size(92, 16);
+            this.lblVersion.TabIndex = 3;
+            this.lblVersion.Text = "Version";
+            // 
             // Splash
             // 
             this.BackgroundImage = global::Thetis.Properties.Resources.thetis_logo1;
             this.ClientSize = new System.Drawing.Size(400, 320);
+            this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.pnlStatus);
             this.Controls.Add(this.lblTimeRemaining);
             this.Controls.Add(this.lblStatus);
@@ -184,17 +198,17 @@ namespace Thetis
 
 		// A static method to create the thread and 
 		// launch the SplashScreen.
-		static public void ShowSplashScreen()
+		static public void ShowSplashScreen(string version)
 		{
 			// Make sure it is only launched once.
 			if( ms_frmSplash != null )
 				return;
-			ms_oThread = new Thread(new ThreadStart(ShowForm))
+			ms_oThread = new Thread(new ParameterizedThreadStart(ShowForm))
 			{
 				IsBackground = true,
 				Name = "Splash Screen Thread"
 			};
-			ms_oThread.Start();
+			ms_oThread.Start(version);
 		}
 
 		// A property returning the splash screen instance
@@ -207,9 +221,11 @@ namespace Thetis
 		}
 
 		// A private entry point for the thread.
-		static private void ShowForm()
+		static private void ShowForm(object version)
 		{
+			string sversion = version as string;
 			ms_frmSplash = new Splash();
+			ms_frmSplash.setVersion(sversion);
             Control.CheckForIllegalCrossThreadCalls = false;
 			Application.Run(ms_frmSplash);
 		}
@@ -240,8 +256,8 @@ namespace Thetis
 				ms_frmSplash.Show();
 		}
 
-		// A static method to set the status and update the reference.
-		static public void SetStatus(string newStatus)
+        // A static method to set the status and update the reference.
+        static public void SetStatus(string newStatus)
 		{
 			SetStatus(newStatus, true);
 		}
@@ -269,10 +285,14 @@ namespace Thetis
 
 		}
 
-		// ************ Private methods ************
+        // ************ Private methods ************
+        private void setVersion(string version)
+        {
+            lblVersion.Text = version;
+        }
 
-		// Internal method for setting reference points.
-		private void SetReferenceInternal()
+        // Internal method for setting reference points.
+        private void SetReferenceInternal()
 		{
 			if( m_bDTSet == false )
 			{
@@ -469,7 +489,7 @@ namespace Thetis
         private void Splash_Load(object sender, EventArgs e)
         {
 
-        }
+        }		
     }
 
     #region Registry Access Class

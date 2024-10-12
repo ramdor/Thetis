@@ -77,10 +77,10 @@
             "DH1KLM, Sigi (UI improvements)",
             "",
             "and indirectly, all the testers"});
-            this.lstContributors.Location = new System.Drawing.Point(19, 251);
+            this.lstContributors.Location = new System.Drawing.Point(19, 267);
             this.lstContributors.Name = "lstContributors";
             this.lstContributors.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.lstContributors.Size = new System.Drawing.Size(490, 178);
+            this.lstContributors.Size = new System.Drawing.Size(490, 162);
             this.lstContributors.TabIndex = 0;
             // 
             // lstVersions
@@ -99,7 +99,8 @@
             "WDSP Version :",
             "ChannelMaster Version :",
             "cmASIO Version :",
-            "PortAudio Version :"});
+            "PortAudio Version :",
+            "DirectX Version: 12.1"});
             this.lstVersions.Location = new System.Drawing.Point(19, 54);
             this.lstVersions.Name = "lstVersions";
             this.lstVersions.SelectionMode = System.Windows.Forms.SelectionMode.None;
@@ -191,6 +192,7 @@
             this.btnVisit.Size = new System.Drawing.Size(88, 23);
             this.btnVisit.TabIndex = 10;
             this.btnVisit.Text = "Visit";
+            this.toolTip1.SetToolTip(this.btnVisit, "Visit he selected link");
             this.btnVisit.UseVisualStyleBackColor = false;
             this.btnVisit.Click += new System.EventHandler(this.btnVisit_Click);
             // 
@@ -199,12 +201,13 @@
             this.btnDXDiag.BackColor = System.Drawing.SystemColors.ControlLight;
             this.btnDXDiag.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDXDiag.Image = null;
-            this.btnDXDiag.Location = new System.Drawing.Point(524, 309);
+            this.btnDXDiag.Location = new System.Drawing.Point(524, 325);
             this.btnDXDiag.Name = "btnDXDiag";
             this.btnDXDiag.Selectable = true;
             this.btnDXDiag.Size = new System.Drawing.Size(88, 23);
             this.btnDXDiag.TabIndex = 8;
             this.btnDXDiag.Text = "DxDiag";
+            this.toolTip1.SetToolTip(this.btnDXDiag, "Run dxDiag");
             this.btnDXDiag.UseVisualStyleBackColor = false;
             this.btnDXDiag.Click += new System.EventHandler(this.btnDXDiag_Click);
             // 
@@ -213,12 +216,13 @@
             this.btnSysInfo.BackColor = System.Drawing.SystemColors.ControlLight;
             this.btnSysInfo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSysInfo.Image = null;
-            this.btnSysInfo.Location = new System.Drawing.Point(524, 280);
+            this.btnSysInfo.Location = new System.Drawing.Point(524, 296);
             this.btnSysInfo.Name = "btnSysInfo";
             this.btnSysInfo.Selectable = true;
             this.btnSysInfo.Size = new System.Drawing.Size(88, 23);
             this.btnSysInfo.TabIndex = 7;
             this.btnSysInfo.Text = "System Info";
+            this.toolTip1.SetToolTip(this.btnSysInfo, "Show system info");
             this.btnSysInfo.UseVisualStyleBackColor = false;
             this.btnSysInfo.Click += new System.EventHandler(this.btnSysInfo_Click);
             // 
@@ -227,12 +231,13 @@
             this.btnCopyContributors.BackColor = System.Drawing.SystemColors.ControlLight;
             this.btnCopyContributors.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCopyContributors.Image = null;
-            this.btnCopyContributors.Location = new System.Drawing.Point(524, 251);
+            this.btnCopyContributors.Location = new System.Drawing.Point(524, 267);
             this.btnCopyContributors.Name = "btnCopyContributors";
             this.btnCopyContributors.Selectable = true;
             this.btnCopyContributors.Size = new System.Drawing.Size(88, 23);
             this.btnCopyContributors.TabIndex = 6;
             this.btnCopyContributors.Text = "Copy Info";
+            this.toolTip1.SetToolTip(this.btnCopyContributors, "Copy the version info to the clipboard");
             this.btnCopyContributors.UseVisualStyleBackColor = false;
             this.btnCopyContributors.Click += new System.EventHandler(this.btnCopyContributors_Click);
             // 
@@ -241,7 +246,7 @@
             this.labelTS2.AutoSize = true;
             this.labelTS2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTS2.Image = null;
-            this.labelTS2.Location = new System.Drawing.Point(16, 228);
+            this.labelTS2.Location = new System.Drawing.Point(16, 244);
             this.labelTS2.Name = "labelTS2";
             this.labelTS2.Size = new System.Drawing.Size(81, 16);
             this.labelTS2.TabIndex = 4;

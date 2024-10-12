@@ -665,7 +665,11 @@ namespace Thetis
             if (!Directory.Exists(AppDataPath))
                 Directory.CreateDirectory(AppDataPath);
 
-            Splash.ShowSplashScreen();							// Start splash screen
+            string sRevision = "." + Common.GetRevision();
+            if (sRevision == ".0") sRevision = "";
+            string version = Common.GetVerNum() + sRevision;
+            if (TitleBar.BUILD_NAME != "") version += " " + TitleBar.BUILD_NAME;
+            Splash.ShowSplashScreen(version);							// Start splash screen with version number
 
             // PA init thread - from G7KLJ changes - done as early as possible
             Splash.SetStatus("Initializing PortAudio");			// Set progress point as early as possible
@@ -49215,9 +49219,16 @@ namespace Thetis
                 sAndromG2Verson = sOriginalAndromG2Verson.Contains("G2") ? "G2 Panel Version: " + sAndromG2Verson : "Andromeda Panel Version: " + sAndromG2Verson;
             }
 
-            _frmAbout.InitVersions(version, TitleBar.BUILD_NAME, DB.VersionNumber.ToString(), sModel, sFW, sProto, sSupportedProtocol,
-                (WDSP.GetWDSPVersion() / 100f).ToString("f2"), (cmaster.GetCMVersion() / 1000f).ToString("f2"),
-                (cmaster.GetCMasioVersion() / 1000f).ToString("f2"), sPortAudio, sAndromG2Verson);
+            int dx_version = Display.DXVersion();
+            string sdxversion;
+            if (dx_version != -1)
+                sdxversion = (dx_version / 10f).ToString("f1");
+            else
+                sdxversion = "";
+
+            _frmAbout.InitVersions(version, TitleBar.BUILD_NAME, DB.VersionNumber.ToString(), sdxversion, sModel, sFW, sProto, sSupportedProtocol,
+                    (WDSP.GetWDSPVersion() / 100f).ToString("f2"), (cmaster.GetCMVersion() / 1000f).ToString("f2"),
+                    (cmaster.GetCMasioVersion() / 1000f).ToString("f2"), sPortAudio, sAndromG2Verson);
 
             _frmAbout.ShowDialog(this);
         }

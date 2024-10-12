@@ -72,7 +72,7 @@ namespace Thetis
             _cancellationTokenSource = new CancellationTokenSource();
             _fetchJsonTask = fetchJsonAsync(_cancellationTokenSource.Token);
         }
-        public void InitVersions(string version, string build, string db_version, string radio_model, string firmware_version, string protocol, string supported_protocol, string wdsp_version, string channel_master_version, string cmASIO_version, string portAudio_version, string andromeda_version)
+        public void InitVersions(string version, string build, string db_version, string dx_version, string radio_model, string firmware_version, string protocol, string supported_protocol, string wdsp_version, string channel_master_version, string cmASIO_version, string portAudio_version, string andromeda_version)
         {
             _version = version;
             _build = build;
@@ -107,6 +107,7 @@ namespace Thetis
             lstVersions.Items.Add("ChannelMaster: " + channel_master_version);
             lstVersions.Items.Add("cmASIO Version: " + cmASIO_version);
             lstVersions.Items.Add("PortAudio Version: " + portAudio_version);
+            if(!string.IsNullOrEmpty(firmware_version)) lstVersions.Items.Add("DirectX Version: " + dx_version);
         }
         private bool UpdateAvaialble
         {
@@ -125,11 +126,12 @@ namespace Thetis
 
         private void btnCopyContributors_Click(object sender, EventArgs e)
         {
-            string text = "";
+            string text = "Thetis\n";
             foreach(string s in lstVersions.Items)
             {
                 text += s + "\n";
             }
+            
             try
             {
                 Clipboard.SetText(text);
