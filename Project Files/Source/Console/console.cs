@@ -24446,7 +24446,7 @@ namespace Thetis
                         }
 
                         //Audio.VACBypass = (chkVAC1.Checked && m_allow_micvox_bypass); //[2.10.3.6]MW0LGE originally from PR #87, by W4WMT. We dont want to do this every 1ms
-                        if (chkVAC1.Checked && (((mic_ptt || cw_ptt) && _allow_vac_bypass) || _allow_micvox_bypass))
+                        if (chkVAC1.Checked && (((mic_ptt || cw_ptt) && _allow_vac_bypass) || (VOXEnable && _allow_micvox_bypass)))
                         {
                             if(!Audio.VACBypass) Audio.VACBypass = true;
                         }
