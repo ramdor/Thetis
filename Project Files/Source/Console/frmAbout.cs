@@ -192,7 +192,7 @@ namespace Thetis
                 bool different_release_build = !string.IsNullOrEmpty(_versionInfo.ReleaseBuild) && _versionInfo.ReleaseBuild != _build;
                 if (release_version < 0 || (release_version == 0 && different_release_build))
                 {
-                    btnUpdatedRelease.Text = $"Release version [{_versionInfo.ReleaseVersion}]\n{_versionInfo.ReleaseName}\navailable on GitHub";
+                    btnUpdatedRelease.Text = $"Release version [{_versionInfo.ReleaseVersion}]\n{_versionInfo.ReleaseName}\nClick to view on GitHub";
                     btnUpdatedRelease.Tag = _versionInfo.ReleaseURL;
                     btnUpdatedRelease.Visible = true;
                     _update_available = true;
@@ -205,7 +205,7 @@ namespace Thetis
                     if (development_version < 0 || (development_version == 0 && different_dev_build))
                     {
                         string build = string.IsNullOrEmpty(_versionInfo.DevelopmentBuild) ? "" : $" {_versionInfo.DevelopmentBuild}";
-                        btnUpdatedRelease.Text = $"Dev version [{_versionInfo.DevelopmentVersion}{build}]\n{_versionInfo.DevelopmentName}\navailable on GitHub";
+                        btnUpdatedRelease.Text = $"Dev version [{_versionInfo.DevelopmentVersion}{build}]\n{_versionInfo.DevelopmentName}\nClick to view on GitHub";
                         btnUpdatedRelease.Tag = _versionInfo.DevelopmentURL;
                         btnUpdatedRelease.Visible = true;
                         _update_available = true;
