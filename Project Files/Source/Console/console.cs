@@ -72,6 +72,8 @@ namespace Thetis
         // ======================================================
         // Variable Declarations
         // ======================================================
+        private frmAbout _frmAbout;
+
         static private List<PrivateFontCollection> _fontCollections;
         Font LEDLFont = null;
         Font LEDSFont = null;
@@ -104,7 +106,7 @@ namespace Thetis
         private bool calibration_running = false;
         private bool displaydidit = false;
         public Mutex calibration_mutex = new Mutex();
-
+        
         private Setup m_frmSetupForm;
         private readonly Object m_objSetupFormLocker = new Object();
 
@@ -1466,6 +1468,7 @@ namespace Thetis
 
         private void InitConsole()
         {
+            _frmAbout = new frmAbout();
             m_frmNotchPopup = new frmNotchPopup();
             m_frmSeqLog = new frmSeqLog();
             _frmFinder = new frmFinder();
@@ -50260,6 +50263,69 @@ namespace Thetis
                 btnHidden.Focus();
                 BandStack2Form.Show();
             }
+        }
+
+        private void miAbout_Click(object sender, EventArgs e)
+        {
+            if (IsSetupFormNull) return;
+
+            string sFW;
+            string sProto;
+            string sModel;
+            string sSupportedProtocol;
+
+            if (NetworkIO.getHaveSync() == 1)
+            {
+                sModel = current_hpsdr_model.ToString();
+
+                if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
+                {
+                    sFW = NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString();
+                    sProto = "2";
+                    sSupportedProtocol = NetworkIO.ProtocolSupported.ToString("0\\.0");
+                }
+                else
+                {
+                    sFW = NetworkIO.FWCodeVersion.ToString("0\\.0");
+                    sProto = "1";
+                    sSupportedProtocol = "";
+                }
+            }
+            else
+            {
+                sFW = "? (not connected)";
+                sProto = "? (not connected)";
+                sSupportedProtocol = "";
+                sModel = current_hpsdr_model.ToString() + " (not connected)";
+            }
+
+            string sRevision = "." + Common.GetRevision();
+            if (sRevision == ".0") sRevision = "";
+            string version = Common.GetVerNum() + sRevision;           
+
+            int nPAVersion = PA19.PA_GetVersion();
+            int major = (nPAVersion >> 16) & 0xFF;
+            int minor = (nPAVersion >> 8) & 0xFF;
+            int subminor = nPAVersion & 0xFF;
+            nPAVersion = major * 100 + minor * 10 + subminor;
+            string sPortAudio = major.ToString() + "." + minor.ToString() + "." + subminor.ToString();
+
+            string sOriginalAndromG2Verson = SetupForm.AndromedaVersionNumber;
+            string sAndromG2Verson = sOriginalAndromG2Verson;
+            sAndromG2Verson = sAndromG2Verson.Replace("Andromeda: ", "");
+            sAndromG2Verson = sAndromG2Verson.Replace("G2 panel: ", "");
+            sAndromG2Verson = sAndromG2Verson.Replace("h/w=", "h=");
+            sAndromG2Verson = sAndromG2Verson.Replace("  s/w=", " s=");
+            if (!string.IsNullOrEmpty(sAndromG2Verson))
+            {
+                sAndromG2Verson = sOriginalAndromG2Verson.Contains("G2") ? "G2 Panel Version: " + sAndromG2Verson : "Andromeda Panel Version: " + sAndromG2Verson;
+            }
+
+            _frmAbout.InitVersions(version, TitleBar.BUILD_NAME, DB.VersionNumber.ToString(), sModel, sFW, sProto, sSupportedProtocol,
+                (WDSP.GetWDSPVersion() / 100f).ToString("f2"), (cmaster.GetCMVersion() / 1000f).ToString("f2"),
+                (cmaster.GetCMasioVersion() / 1000f).ToString("f2"), sPortAudio, sAndromG2Verson);
+
+            _frmAbout.ShowDialog(this);
         }
     }
 

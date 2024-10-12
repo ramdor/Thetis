@@ -1,0 +1,10 @@
+{
+    "ReleaseVersion": "2.10.3.5",
+    "ReleaseBuild": "",
+    "ReleaseURL": "https://github.com/ramdor/Thetis/releases/tag/v2.10.3.5",
+    "ReleaseName": "Stable Release",
+    "DevelopmentVersion": "2.10.3.6",
+    "DevelopmentBuild": "",
+    "DevelopmentURL": "https://github.com/ramdor/Thetis/releases/tag/v2.10.3.6-rc3",
+    "DevelopmentName": "Release Candidate 3"
+}
