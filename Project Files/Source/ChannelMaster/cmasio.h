@@ -58,7 +58,7 @@ typedef struct _cmasio
 	long underFlowsIn;
 	long underFlowsOut;
 	int lockMode;
-	int protocol;
+	int protocol; // W4WMT cmASIO via Protocol 1
 } cmasio, *CMASIO;
 
 extern CMASIO pcma;

@@ -315,14 +315,9 @@ namespace Thetis
             }
         }
 
-        //private string _psdefpeak = "0.2899"; // MW0LGE_21k9rc6 does nothing
         public void PSdefpeak(double value)
         {
-            //_psdefpeak = value;
-            //txtPSpeak.Text = value;
-
             // note : PSpeak_TextChanged will fire if db recovers value into text box
-
             string sVal = value.ToString();
             if(txtPSpeak.Text != sVal)
                 txtPSpeak.Text = value.ToString(); // causes text change event
@@ -502,15 +497,6 @@ namespace Thetis
             else
             {
                 //protocol 2
-
-                //PSdefpeak(bForce, 0.2899);
-                //if (console.CurrentHPSDRHardware == HPSDRHW.Saturn)                             // G8NJJ
-                //    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.6121);
-                //else
-                //    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
-
-                // use PSdefpeak to do all this which will then use PSpeak_TextChanged
-                // as the related text box stores all the data in the form save/recover system (Common.SaveForm)
                 if (console.CurrentHPSDRHardware == HPSDRHW.Saturn)
                     PSdefpeak(0.6121);
                 else
