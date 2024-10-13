@@ -26187,7 +26187,7 @@ namespace Thetis
             bool bChanged = checkTXProfileChanged2();
             _timerCheckingTXProfile = false;
 
-            lblTXProfileWarning.Visible = bChanged;
+            lblTXProfileWarning.Visible = !console.RXOnly && bChanged;
 
             if (bChanged && txtboxTXProfileChangedReport.Visible)
                 lblTXProfileWarning_Click(this, e);
