@@ -127,11 +127,11 @@ namespace Thetis
 
             if (File.Exists(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext))
             {
-                f.BackgroundImage = /*Image.FromFile*/loadImage(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
+                f.BackgroundImage = loadImage(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
             }
             else if (File.Exists(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext))
             {
-                f.BackgroundImage = /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext);
+                f.BackgroundImage = loadImage(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext);
             }
             else f.BackgroundImage = null;
 
@@ -705,11 +705,11 @@ namespace Thetis
                 for (int i = 0; i < 8; i++)
                 {
                     if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
-                        b.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                        b.ImageList.Images.Add(((ImageState)i).ToString(), loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
                     else
                     {
                         if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
-                            b.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                            b.ImageList.Images.Add(((ImageState)i).ToString(), loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
                     }
                 }
 
@@ -1039,11 +1039,11 @@ namespace Thetis
                 for (int i = 0; i < 8; i++)
                 {
                     if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
-                        b.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                        b.ImageList.Images.Add(((ImageState)i).ToString(), loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
                     else
                     {
                         if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
-                            b.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                            b.ImageList.Images.Add(((ImageState)i).ToString(), loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
                     }
                 }
 
@@ -1673,11 +1673,11 @@ namespace Thetis
 
             if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "back" + pic_file_ext))
             {
-                ctrl.BackgroundImage = /*Image.FromFile*/loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "back" + pic_file_ext);
+                ctrl.BackgroundImage = loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "back" + pic_file_ext);
             }
             else if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "back" + pic_file_ext))
             {
-                ctrl.BackgroundImage = /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "back" + pic_file_ext);
+                ctrl.BackgroundImage = loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "back" + pic_file_ext);
             }
             else ctrl.BackgroundImage = null;
 
@@ -1687,11 +1687,11 @@ namespace Thetis
 
             if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "head" + pic_file_ext))
             {
-                ctrl.HeadImage = /*Image.FromFile*/loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "head" + pic_file_ext);
+                ctrl.HeadImage = loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "head" + pic_file_ext);
             }
             else if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "head" + pic_file_ext))
             {             
-                ctrl.HeadImage = /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "head" + pic_file_ext);
+                ctrl.HeadImage = loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "head" + pic_file_ext);
             }
             else ctrl.HeadImage = null;
 
@@ -1822,15 +1822,15 @@ namespace Thetis
 
         private static void SetBackgroundImage(Control c)
         {
-            Image objImg; // = File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext) ? /*Image.FromFile*/loadImage(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext) : null;
+            Image objImg;
 
             if (File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext))
             {
-                objImg = /*Image.FromFile*/loadImage(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext);
+                objImg = loadImage(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext);
             }
             else if (File.Exists(path + "\\" + "Console" + "\\" + c.Name + pic_file_ext))
             {
-                objImg = /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + c.Name + pic_file_ext);
+                objImg = loadImage(path + "\\" + "Console" + "\\" + c.Name + pic_file_ext);
             }
             else objImg = null;
 
