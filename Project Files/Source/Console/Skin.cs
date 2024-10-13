@@ -783,6 +783,7 @@ namespace Thetis
                         _shared_image_lists[skey].Images.Add(sstate, img);
                 }
             }
+            if(ctrl.ImageList == null) ctrl.ImageList = new ImageList(); // just assign one, it wont be used as no images were found
 
             //EventHandler handler = new EventHandler(Button_StateChanged);
             //ctrl.Click -= handler; // remove handlers first to ensure they don't get added multiple times
@@ -991,6 +992,7 @@ namespace Thetis
                         _shared_image_lists[skey].Images.Add(sstate, img);
                 }
             }
+            if (ctrl.ImageList == null) ctrl.ImageList = new ImageList(); // just assign one, it wont be used as no images were found
 
             setupCheckBoxHandlers(ctrl);
            
@@ -1489,6 +1491,7 @@ namespace Thetis
                         _shared_image_lists[skey].Images.Add(sstate, img);
                 }
             }
+            if (ctrl.ImageList == null) ctrl.ImageList = new ImageList(); // just assign one, it wont be used as no images were found
 
             EventHandler handler = new EventHandler(RadioButton_StateChanged);
             ctrl.CheckedChanged -= handler; // remove handlers first to ensure they don't get added multiple times
