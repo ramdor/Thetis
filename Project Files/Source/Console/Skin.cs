@@ -38,6 +38,9 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using System.Security.Cryptography;
+using System.Drawing.Imaging;
+using System.Collections.Generic;
 
 namespace Thetis
 {
@@ -124,11 +127,11 @@ namespace Thetis
 
             if (File.Exists(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext))
             {
-                f.BackgroundImage = /*Image.FromFile*/loadImage(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
+                f.BackgroundImage = loadImage(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
             }
             else if (File.Exists(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext))
             {
-                f.BackgroundImage = /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext);
+                f.BackgroundImage = loadImage(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext);
             }
             else f.BackgroundImage = null;
 
@@ -702,11 +705,11 @@ namespace Thetis
                 for (int i = 0; i < 8; i++)
                 {
                     if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
-                        b.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                        b.ImageList.Images.Add(((ImageState)i).ToString(), loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
                     else
                     {
                         if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
-                            b.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                            b.ImageList.Images.Add(((ImageState)i).ToString(), loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
                     }
                 }
 
@@ -737,27 +740,51 @@ namespace Thetis
 
             ctrl.BackgroundImage = null;
         }
-
+        private static Dictionary<string, ImageList> _shared_image_lists = new Dictionary<string, ImageList>();
         private static void SetupButtonImages(Button ctrl)
         {
-            if (ctrl.ImageList == null)
-                ctrl.ImageList = new ImageList();
-            else ctrl.ImageList.Images.Clear();
-            ctrl.ImageList.ImageSize = ctrl.Size; // may be an issue with smaller images
-            ctrl.ImageList.ColorDepth = ColorDepth.Depth32Bit;
-
-            // load images into image list property
-           // string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
+            string skey = "";
             for (int i = 0; i < 8; i++)
             {
-                if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext))
-                    ctrl.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
-                else
+                string spath = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
+                if(!File.Exists(spath))
+                    spath = path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
+                if (File.Exists(spath))
                 {
-                    if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext))
-                        ctrl.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
+                    Image img = loadImage(spath);                 
+                    if (_image_cache_map.ContainsKey(spath))
+                    {
+                        skey += _image_cache_map[spath];
+                    }
                 }
             }
+            if (!string.IsNullOrEmpty(skey))
+            {
+                skey += "_" + ctrl.Size.Width.ToString() + "_" + ctrl.Size.Height.ToString();
+                if (!_shared_image_lists.ContainsKey(skey))
+                {
+                    _shared_image_lists.Add(skey, new ImageList());
+                    _shared_image_lists[skey].ImageSize = ctrl.Size;
+                    _shared_image_lists[skey].ColorDepth = ColorDepth.Depth32Bit;
+                }
+                ctrl.ImageList = _shared_image_lists[skey];
+
+                for (int i = 0; i < 8; i++)
+                {
+                    string sstate = ((ImageState)i).ToString();
+                    string spath = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
+                    Image img = getImageFromFilePath(spath);
+                    if (img == null)
+                    {
+                        spath = path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
+                        img = getImageFromFilePath(spath);
+                    }
+                    if (img != null && !_shared_image_lists[skey].Images.ContainsKey(sstate))
+                        _shared_image_lists[skey].Images.Add(sstate, img);
+                }
+            }
+            if(ctrl.ImageList == null) ctrl.ImageList = new ImageList(); // just assign one, it wont be used as no images were found
+
             //EventHandler handler = new EventHandler(Button_StateChanged);
             //ctrl.Click -= handler; // remove handlers first to ensure they don't get added multiple times
             //ctrl.Click += handler;
@@ -925,24 +952,47 @@ namespace Thetis
 
         private static void SetupCheckBoxImages(CheckBox ctrl)
         {
-            if (ctrl.ImageList == null)
-                ctrl.ImageList = new ImageList();
-            else ctrl.ImageList.Images.Clear();
-            ctrl.ImageList.ImageSize = ctrl.Size; // may be an issue with smaller images
-            ctrl.ImageList.ColorDepth = ColorDepth.Depth32Bit;
-
-            // load images into image list property
-            //string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
-            for(int i=0; i<8; i++)
+            string skey = "";
+            for (int i=0; i<8; i++)
             {
-                if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext))
-                    ctrl.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
-                else
+                string spath = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
+                if (!File.Exists(spath))
+                    spath = path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
+                if (File.Exists(spath))
                 {
-                    if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext))
-                        ctrl.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
+                    Image img = loadImage(spath);
+                    if (_image_cache_map.ContainsKey(spath))
+                    {
+                        skey += _image_cache_map[spath];
+                    }
                 }
             }
+            if (!string.IsNullOrEmpty(skey))
+            {
+                skey += "_" + ctrl.Size.Width.ToString() + "_" + ctrl.Size.Height.ToString();
+                if (!_shared_image_lists.ContainsKey(skey))
+                {
+                    _shared_image_lists.Add(skey, new ImageList());
+                    _shared_image_lists[skey].ImageSize = ctrl.Size;
+                    _shared_image_lists[skey].ColorDepth = ColorDepth.Depth32Bit;
+                }
+                ctrl.ImageList = _shared_image_lists[skey];
+
+                for (int i = 0; i < 8; i++)
+                {
+                    string sstate = ((ImageState)i).ToString();
+                    string spath = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
+                    Image img = getImageFromFilePath(spath);
+                    if (img == null)
+                    {
+                        spath = path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
+                        img = getImageFromFilePath(spath);
+                    }
+                    if (img != null && !_shared_image_lists[skey].Images.ContainsKey(sstate))
+                        _shared_image_lists[skey].Images.Add(sstate, img);
+                }
+            }
+            if (ctrl.ImageList == null) ctrl.ImageList = new ImageList(); // just assign one, it wont be used as no images were found
 
             setupCheckBoxHandlers(ctrl);
            
@@ -989,11 +1039,11 @@ namespace Thetis
                 for (int i = 0; i < 8; i++)
                 {
                     if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
-                        b.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                        b.ImageList.Images.Add(((ImageState)i).ToString(), loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
                     else
                     {
                         if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
-                            b.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                            b.ImageList.Images.Add(((ImageState)i).ToString(), loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
                     }
                 }
 
@@ -1401,26 +1451,48 @@ namespace Thetis
 
         private static void SetupRadioButtonImages(RadioButton ctrl)
         {
-            if (ctrl.ImageList == null)
-                ctrl.ImageList = new ImageList();
-            else ctrl.ImageList.Images.Clear();
-            ctrl.ImageList.ImageSize = ctrl.Size; // may be an issue with smaller images
-            ctrl.ImageList.ColorDepth = ColorDepth.Depth32Bit;
-
-            // load images into image list property
-           // string s = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-";
+            string skey = "";
             for (int i = 0; i < 8; i++)
             {
-                if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext))
-                    ctrl.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
-                else if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext))
-                    ctrl.ImageList.Images.Add(((ImageState)i).ToString(), /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext));
-                else
+                string spath = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
+                if (!File.Exists(spath))
+                    spath = path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
+                if (File.Exists(spath))
                 {
-                    if (ctrl.ImageList.Images.ContainsKey(((ImageState)i).ToString()))
-                        ctrl.ImageList.Images.RemoveByKey(((ImageState)i).ToString());
+                    Image img = loadImage(spath);
+                    if (_image_cache_map.ContainsKey(spath))
+                    {
+                        skey += _image_cache_map[spath];
+                    }
                 }
             }
+            if (!string.IsNullOrEmpty(skey))
+            {
+                skey += "_" + ctrl.Size.Width.ToString() + "_" + ctrl.Size.Height.ToString();
+                if (!_shared_image_lists.ContainsKey(skey))
+                {
+                    _shared_image_lists.Add(skey, new ImageList());
+                    _shared_image_lists[skey].ImageSize = ctrl.Size;
+                    _shared_image_lists[skey].ColorDepth = ColorDepth.Depth32Bit;
+                }
+                ctrl.ImageList = _shared_image_lists[skey];
+
+                for (int i = 0; i < 8; i++)
+                {
+                    string sstate = ((ImageState)i).ToString();
+                    string spath = path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
+                    Image img = getImageFromFilePath(spath);
+                    if (img == null)
+                    {
+                        spath = path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
+                        img = getImageFromFilePath(spath);
+                    }
+                    if (img != null && !_shared_image_lists[skey].Images.ContainsKey(sstate))
+                        _shared_image_lists[skey].Images.Add(sstate, img);
+                }
+            }
+            if (ctrl.ImageList == null) ctrl.ImageList = new ImageList(); // just assign one, it wont be used as no images were found
+
             EventHandler handler = new EventHandler(RadioButton_StateChanged);
             ctrl.CheckedChanged -= handler; // remove handlers first to ensure they don't get added multiple times
             ctrl.CheckedChanged += handler;
@@ -1601,11 +1673,11 @@ namespace Thetis
 
             if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "back" + pic_file_ext))
             {
-                ctrl.BackgroundImage = /*Image.FromFile*/loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "back" + pic_file_ext);
+                ctrl.BackgroundImage = loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "back" + pic_file_ext);
             }
             else if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "back" + pic_file_ext))
             {
-                ctrl.BackgroundImage = /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "back" + pic_file_ext);
+                ctrl.BackgroundImage = loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "back" + pic_file_ext);
             }
             else ctrl.BackgroundImage = null;
 
@@ -1615,11 +1687,11 @@ namespace Thetis
 
             if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "head" + pic_file_ext))
             {
-                ctrl.HeadImage = /*Image.FromFile*/loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "head" + pic_file_ext);
+                ctrl.HeadImage = loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + "-" + "head" + pic_file_ext);
             }
             else if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "head" + pic_file_ext))
             {             
-                ctrl.HeadImage = /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "head" + pic_file_ext);
+                ctrl.HeadImage = loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + "-" + "head" + pic_file_ext);
             }
             else ctrl.HeadImage = null;
 
@@ -1750,15 +1822,15 @@ namespace Thetis
 
         private static void SetBackgroundImage(Control c)
         {
-            Image objImg; // = File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext) ? /*Image.FromFile*/loadImage(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext) : null;
+            Image objImg;
 
             if (File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext))
             {
-                objImg = /*Image.FromFile*/loadImage(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext);
+                objImg = loadImage(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext);
             }
             else if (File.Exists(path + "\\" + "Console" + "\\" + c.Name + pic_file_ext))
             {
-                objImg = /*Image.FromFile*/loadImage(path + "\\" + "Console" + "\\" + c.Name + pic_file_ext);
+                objImg = loadImage(path + "\\" + "Console" + "\\" + c.Name + pic_file_ext);
             }
             else objImg = null;
 
@@ -1771,7 +1843,10 @@ namespace Thetis
                 c.BackgroundImage = objImg;
             }
         }
-
+        //[2.10.3.6]MW0LGE cache based on hash of image
+        //nothing clears this, but who changes through lots of skins
+        private static Dictionary<string, Image> _image_cache = new Dictionary<string, Image>();
+        private static Dictionary<string, string> _image_cache_map = new Dictionary<string, string>();
         private static Image loadImage(string path)
         {
             //[2.10.2.2] MW0LGE
@@ -1784,7 +1859,18 @@ namespace Thetis
             {
                 using (Image imgFile = Image.FromFile(path))
                 {
+                    string hash = computeHashFromImage(imgFile);
+                    if (_image_cache.ContainsKey(hash))
+                    {
+                        if (!_image_cache_map.ContainsKey(path))
+                            _image_cache_map.Add(path, hash);
+                        return _image_cache[hash];
+                    }
+
                     img = new Bitmap(imgFile);
+                    _image_cache.Add(hash, img);
+                    if (!_image_cache_map.ContainsKey(path))
+                        _image_cache_map.Add(path, hash);
                 }
             }
             catch (Exception ex)
@@ -1792,6 +1878,35 @@ namespace Thetis
                 img = null;
             }
             return img;
+        }
+        private static Image getImageFromFilePath(string path)
+        {
+            if (!_image_cache_map.ContainsKey(path)) return null;
+            string hash = _image_cache_map[path];
+            if (!_image_cache.ContainsKey(hash)) return null;
+            return _image_cache[hash];
+        }
+        private static string computeHashFromImage(Image image)
+        {
+            byte[] imageBytes = imageToByteArray(image);
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(imageBytes);
+                StringBuilder hashStringBuilder = new StringBuilder();
+                foreach (byte b in hashBytes)
+                {
+                    hashStringBuilder.Append(b.ToString("x2"));
+                }
+                return hashStringBuilder.ToString();
+            }
+        }
+        private static byte[] imageToByteArray(Image image)
+        {
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                image.Save(memoryStream, ImageFormat.Png);
+                return memoryStream.ToArray();
+            }
         }
         #endregion
     }

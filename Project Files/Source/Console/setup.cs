@@ -24177,7 +24177,7 @@ namespace Thetis
         }
         private void OnTXBandChanged(Band oldBand, Band newBand, double tx_frequency)
         {
-            setAdjustingBand(console.TXBand);
+            setAdjustingBand(newBand);
             lblTXattBand.Text = newBand.ToString(); //[2.3.10.6]MW0LGE added (also in ATTOnTX)
         }
         private void setAdjustingBand(Band b)
@@ -27295,7 +27295,7 @@ namespace Thetis
             bool bChanged = checkTXProfileChanged2();
             _timerCheckingTXProfile = false;
 
-            lblTXProfileWarning.Visible = bChanged;
+            lblTXProfileWarning.Visible = !console.RXOnly && bChanged;
 
             if (bChanged && txtboxTXProfileChangedReport.Visible)
                 lblTXProfileWarning_Click(this, e);

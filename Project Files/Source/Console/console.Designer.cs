@@ -856,6 +856,7 @@
             this.BPF1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.BPF2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.finderMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.miAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStripMain = new System.Windows.Forms.StatusStrip();
             this.toolStripDropDownButton_ScreenSize = new System.Windows.Forms.ToolStripDropDownButton();
             this.includeBordersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1130,7 +1131,6 @@
             this.ptbRX2Squelch = new Thetis.PrettyTrackBar();
             this.picSquelch = new System.Windows.Forms.PictureBox();
             this.ptbSquelch = new Thetis.PrettyTrackBar();
-            this.miAbout = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterLow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).BeginInit();
@@ -4961,6 +4961,13 @@
             resources.ApplyResources(this.finderMenuItem, "finderMenuItem");
             this.finderMenuItem.Click += new System.EventHandler(this.finderMenuItem_Click);
             // 
+            // miAbout
+            // 
+            this.miAbout.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.miAbout.Name = "miAbout";
+            resources.ApplyResources(this.miAbout, "miAbout");
+            this.miAbout.Click += new System.EventHandler(this.miAbout_Click);
+            // 
             // statusStripMain
             // 
             resources.ApplyResources(this.statusStripMain, "statusStripMain");
@@ -7515,13 +7522,6 @@
             this.ptbSquelch.TabStop = false;
             this.ptbSquelch.Value = 0;
             this.ptbSquelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbSquelch_Scroll);
-            // 
-            // miAbout
-            // 
-            this.miAbout.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.miAbout.Name = "miAbout";
-            resources.ApplyResources(this.miAbout, "miAbout");
-            this.miAbout.Click += new System.EventHandler(this.miAbout_Click);
             // 
             // Console
             // 

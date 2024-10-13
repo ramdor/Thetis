@@ -2867,7 +2867,7 @@ namespace Thetis
                     _factory1 = new SharpDX.DXGI.Factory1();
 
                     _device = new Device(driverType, debug | DeviceCreationFlags.PreventAlteringLayerSettingsFromRegistry | DeviceCreationFlags.BgraSupport/* | DeviceCreationFlags.SingleThreaded*/, featureLevels);
-
+                    
                     SharpDX.DXGI.Device1 device1 = _device.QueryInterfaceOrNull<SharpDX.DXGI.Device1>();
                     if (device1 != null)
                     {
@@ -2973,6 +2973,32 @@ namespace Thetis
                     ShutdownDX2D();
                     MessageBox.Show("Problem initialising DirectX !" + System.Environment.NewLine + System.Environment.NewLine + "[" + e.ToString() + "]", "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
+            }
+        }
+        public static int DXVersion()
+        {
+            lock (_objDX2Lock)
+            {
+                if (!_bDX2Setup) return -1;
+
+                try
+                {
+                    SharpDX.Direct3D.FeatureLevel featureLevel = _device.FeatureLevel;
+                    switch (featureLevel)
+                    {
+                        case SharpDX.Direct3D.FeatureLevel.Level_9_1: return 91;
+                        case SharpDX.Direct3D.FeatureLevel.Level_9_2: return 92;
+                        case SharpDX.Direct3D.FeatureLevel.Level_9_3: return 93;
+                        case SharpDX.Direct3D.FeatureLevel.Level_10_0: return 100;
+                        case SharpDX.Direct3D.FeatureLevel.Level_10_1: return 101;
+                        case SharpDX.Direct3D.FeatureLevel.Level_11_0: return 110;
+                        case SharpDX.Direct3D.FeatureLevel.Level_11_1: return 111;
+                        case SharpDX.Direct3D.FeatureLevel.Level_12_0: return 120;
+                        case SharpDX.Direct3D.FeatureLevel.Level_12_1: return 121;
+                    }
+                }
+                catch { }
+                return -1;
             }
         }
         public static void ResetDX2DModeDescription()
