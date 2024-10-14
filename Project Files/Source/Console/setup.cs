@@ -28731,11 +28731,12 @@ namespace Thetis
         }
         private void updateVariableList()
         {
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
             ListView.SelectedListViewItemCollection items = lstMMIO_network_variables.SelectedItems;
             string selectedKey = items.Count == 1 ? items[0].Text : "";
 
-            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
-            if (mmioci == null) return;
             btnMMIO_network_remove_variable.Enabled = items.Count > 0;
             btnMMIO_network_copyvariable_clipboard.Enabled = items.Count > 0;
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
@@ -31321,6 +31322,12 @@ namespace Thetis
         private void nudLedIndicator_UpdateInterval_ValueChanged(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+
+        private void tcCAT_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tcCAT.SelectedTab == tpMultiMetersIO)
+                updateVariableList();
         }
     }
 

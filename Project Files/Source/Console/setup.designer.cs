@@ -53580,6 +53580,7 @@
             this.tcCAT.SelectedIndex = 0;
             this.tcCAT.Size = new System.Drawing.Size(732, 433);
             this.tcCAT.TabIndex = 0;
+            this.tcCAT.SelectedIndexChanged += new System.EventHandler(this.tcCAT_SelectedIndexChanged);
             // 
             // tpCATSerialPorts
             // 
