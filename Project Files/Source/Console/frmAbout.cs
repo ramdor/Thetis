@@ -95,7 +95,11 @@ namespace Thetis
 
             if (radio_model == HPSDRModel.FIRST.ToString() || radio_model == HPSDRModel.LAST.ToString()) radio_model = "?";
 
-            if (!string.IsNullOrEmpty(build)) version += $" [build {build}]";
+            if (!string.IsNullOrEmpty(build))
+            {
+                build = build.Left(16);
+                version += $" [build {build}]";
+            }
 
             lstVersions.Items.Clear();
             lstVersions.Items.Add("Version: " + version);

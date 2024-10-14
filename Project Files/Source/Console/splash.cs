@@ -290,7 +290,7 @@ namespace Thetis
         // ************ Private methods ************
         private void setVersion(string version)
         {
-			lblVersion.Text = string.IsNullOrEmpty(version) ? "" : version.Left(18);
+			lblVersion.Text = string.IsNullOrEmpty(version) ? "" : version.Left(16);
         }
 
         // Internal method for setting reference points.
