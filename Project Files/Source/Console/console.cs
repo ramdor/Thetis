@@ -49205,6 +49205,7 @@ namespace Thetis
                 }
 
                 _cached_background_image = value;
+                _background_image_size = Size.Empty;
                 resizeBackgroundImage();
             }
         }
