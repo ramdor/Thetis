@@ -818,12 +818,6 @@ namespace Thetis
 
             CWFWKeyer = true;
 
-            //// Activates double buffering
-            //this.SetStyle(ControlStyles.UserPaint |
-            //   ControlStyles.AllPaintingInWmPaint |
-            //   ControlStyles.OptimizedDoubleBuffer, true);
-            //this.UpdateStyles();
-
             Common.DoubleBufferAll(this, true);
 
             // update titlebar
@@ -887,9 +881,6 @@ namespace Thetis
 
             Common.FadeIn(this);
 
-            // fix flicker with panels/groups MW0LGE_[2.9.0.6]
-            Common.DoubleBuffered(grpMultimeter, true);
-            //
             txtVFOAFreq_LostFocus(this, EventArgs.Empty);
             txtVFOBFreq_LostFocus(this, EventArgs.Empty);
             chkSquelch_CheckStateChanged(this, EventArgs.Empty);
@@ -40397,7 +40388,9 @@ namespace Thetis
         private FormWindowState _old_window_state = FormWindowState.Normal;
         private void Console_Resize(object sender, System.EventArgs e)
         {
-            if(this.WindowState != _old_window_state)
+            resizeBackgroundImage();
+
+            if (this.WindowState != _old_window_state)
             {               
                 WindowStateChangedHandlers?.Invoke(this.WindowState);
                 _old_window_state = this.WindowState;
@@ -49196,6 +49189,55 @@ namespace Thetis
                     (cmaster.GetCMasioVersion() / 1000f).ToString("f2"), sPortAudio, sAndromG2Verson);
 
             _frmAbout.ShowDialog(this);
+        }
+
+        private Image _cached_background_image = null;
+        public Image CachedBackgroundImage
+        {
+            get { return _cached_background_image; }
+            set
+            {
+                if(_cached_background_image != null)
+                {
+                    _cached_background_image.Dispose();
+                    _cached_background_image = null;
+                }
+
+                _cached_background_image = value;
+                resizeBackgroundImage();
+            }
+        }
+        private void resizeBackgroundImage()
+        {
+            // fixes issue where if the background image skin is larger than the client size of the window
+            // then there would be very slow redraw/updates. So instead of the form resizing it, we do it ourseves
+            if (_cached_background_image == null) return;
+            if (this.BackgroundImage != null)
+            {
+                this.BackgroundImage.Dispose();
+                this.BackgroundImage = null;
+            }
+
+            try
+            {
+                Image resized_image = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
+                Graphics graphics = Graphics.FromImage(resized_image);
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.DrawImage(_cached_background_image, 0, 0, resized_image.Width, resized_image.Height);
+                graphics.Dispose();
+
+                this.BackgroundImageLayout = ImageLayout.None;
+                this.BackgroundImage = resized_image;
+            }
+            catch
+            {
+                if(this.BackgroundImage == null)
+                {
+                    // issue resizing it, just use the original and turn on stretch mode
+                    this.BackgroundImageLayout = ImageLayout.Stretch;
+                    this.BackgroundImage = _cached_background_image;
+                }
+            }
         }
     }
 

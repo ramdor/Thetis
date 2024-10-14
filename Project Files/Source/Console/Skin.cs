@@ -123,17 +123,39 @@ namespace Thetis
             path = p + "\\" + name;
             Skin.name = name;
 
-           // f.BackgroundImage = File.Exists(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext) ? /*Image.FromFile*/loadImage(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext) : null;
-
             if (File.Exists(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext))
             {
-                f.BackgroundImage = loadImage(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
+                if (!(f is Console))
+                {
+                    f.BackgroundImage = loadImage(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
+                }
+                else
+                {
+                    m_objConsole.CachedBackgroundImage = loadImage(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
+                }
             }
             else if (File.Exists(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext))
             {
-                f.BackgroundImage = loadImage(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext);
+                if (!(f is Console))
+                {
+                    f.BackgroundImage = loadImage(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext);
+                }
+                else
+                {
+                    m_objConsole.CachedBackgroundImage = loadImage(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext);
+                }
             }
-            else f.BackgroundImage = null;
+            else
+            {
+                if (!(f is Console))
+                {
+                    f.BackgroundImage = null;
+                }
+                else
+                {
+                    m_objConsole.CachedBackgroundImage = null;
+                }
+            }
 
             foreach (Control c in f.Controls) // load in images
                 ReadImages(c);
