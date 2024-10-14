@@ -801,8 +801,12 @@ namespace Thetis
                         spath = path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
                         img = getImageFromFilePath(spath);
                     }
+
                     if (img != null && !_shared_image_lists[skey].Images.ContainsKey(sstate))
+                    {
+                        img = resizeImage(img, ctrl);
                         _shared_image_lists[skey].Images.Add(sstate, img);
+                    }
                 }
             }
             if(ctrl.ImageList == null) ctrl.ImageList = new ImageList(); // just assign one, it wont be used as no images were found
@@ -1011,7 +1015,10 @@ namespace Thetis
                         img = getImageFromFilePath(spath);
                     }
                     if (img != null && !_shared_image_lists[skey].Images.ContainsKey(sstate))
+                    {
+                        img = resizeImage(img, ctrl);
                         _shared_image_lists[skey].Images.Add(sstate, img);
+                    }
                 }
             }
             if (ctrl.ImageList == null) ctrl.ImageList = new ImageList(); // just assign one, it wont be used as no images were found
@@ -1510,7 +1517,10 @@ namespace Thetis
                         img = getImageFromFilePath(spath);
                     }
                     if (img != null && !_shared_image_lists[skey].Images.ContainsKey(sstate))
+                    {
+                        img = resizeImage(img, ctrl);
                         _shared_image_lists[skey].Images.Add(sstate, img);
+                    }
                 }
             }
             if (ctrl.ImageList == null) ctrl.ImageList = new ImageList(); // just assign one, it wont be used as no images were found
@@ -1931,5 +1941,30 @@ namespace Thetis
             }
         }
         #endregion
+
+        private static Image resizeImage(Image image, Control c)
+        {
+            if (c.ClientSize.Width == 0 || c.ClientSize.Width == 0) return null;
+            if (c.ClientSize.Width == image.Width && c.ClientSize.Width == image.Height) return image;
+
+            Graphics graphics = null;
+            try
+            {
+                Image resized_image = new Bitmap(c.ClientSize.Width, c.ClientSize.Height);
+                graphics = Graphics.FromImage(resized_image);
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                graphics.DrawImage(image, 0, 0, resized_image.Width, resized_image.Height);
+
+                return image;
+            }
+            catch
+            {
+                return null;
+            }
+            finally
+            {
+                if (graphics != null) graphics.Dispose();
+            }
+        }
     }
 }

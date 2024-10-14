@@ -49198,12 +49198,7 @@ namespace Thetis
             get { return _cached_background_image; }
             set
             {
-                if(_cached_background_image != null)
-                {
-                    _cached_background_image.Dispose();
-                    _cached_background_image = null;
-                }
-
+                // no dispose here as we dont want to free up the cache in skins
                 _cached_background_image = value;
                 _background_image_size = Size.Empty;
                 resizeBackgroundImage();
@@ -49212,40 +49207,44 @@ namespace Thetis
         private void resizeBackgroundImage()
         {
             // fixes issue where if the background image skin is larger than the client size of the window
-            // then there would be very slow redraw/updates. So instead of the form resizing it, we do it ourseves
-
+            // then there would be very slow redraw/updates. So instead of the form resizing it, we do it ourseves                
             if (this.ClientSize == _background_image_size) return;
             if (this.ClientSize.Width == 0 || this.ClientSize.Height == 0) return;
 
-            if (_cached_background_image == null) return;
+            Graphics graphics = null;
+            _background_image_size = this.ClientSize;
+
             if (this.BackgroundImage != null)
             {
                 this.BackgroundImage.Dispose();
                 this.BackgroundImage = null;
             }
 
+            if (_cached_background_image == null) return;
             try
             {
                 Image resized_image = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
-                Graphics graphics = Graphics.FromImage(resized_image);
+
+                graphics = Graphics.FromImage(resized_image);
                 graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 graphics.DrawImage(_cached_background_image, 0, 0, resized_image.Width, resized_image.Height);
-                graphics.Dispose();
 
                 this.BackgroundImageLayout = ImageLayout.None;
                 this.BackgroundImage = resized_image;
             }
-            catch
+            catch (Exception e)
             {
-                if(this.BackgroundImage == null)
+                if (this.BackgroundImage == null)
                 {
                     // issue resizing it, just use the original and turn on stretch mode
                     this.BackgroundImageLayout = ImageLayout.Stretch;
                     this.BackgroundImage = _cached_background_image;
                 }
             }
-
-            _background_image_size = this.ClientSize;
+            finally
+            {
+                if (graphics != null) graphics.Dispose();
+            }
         }
     }
 
