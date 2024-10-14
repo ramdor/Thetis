@@ -49192,6 +49192,7 @@ namespace Thetis
         }
 
         private Image _cached_background_image = null;
+        private Size _background_image_size = Size.Empty;
         public Image CachedBackgroundImage
         {
             get { return _cached_background_image; }
@@ -49211,6 +49212,10 @@ namespace Thetis
         {
             // fixes issue where if the background image skin is larger than the client size of the window
             // then there would be very slow redraw/updates. So instead of the form resizing it, we do it ourseves
+
+            if (this.ClientSize == _background_image_size) return;
+            if (this.ClientSize.Width == 0 || this.ClientSize.Height == 0) return;
+
             if (_cached_background_image == null) return;
             if (this.BackgroundImage != null)
             {
@@ -49238,6 +49243,8 @@ namespace Thetis
                     this.BackgroundImage = _cached_background_image;
                 }
             }
+
+            _background_image_size = this.ClientSize;
         }
     }
 
