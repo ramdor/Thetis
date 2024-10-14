@@ -1275,38 +1275,9 @@ namespace Thetis
                 Application.EnableVisualStyles();
                 Application.DoEvents();
 
-                // check for timeout bypass
-                bool bBypass = false;
-                foreach (string s in args)
-                {
-                    if (s.StartsWith("-timeoutBypass:"))
-                    {
-                        string sKey = s.Trim().Substring(s.Trim().IndexOf(":") + 1);
-                        byte[] byteBuffer = System.Security.Cryptography.SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(sKey));
-                        string hash = Convert.ToBase64String(byteBuffer);
-                        bBypass = (hash == "1rbCFcNDoiPcNOhzY26GiAw2pxA=");
-                    }
-                }
-                Common.BypassTimeOut = bBypass;
-                //
-
-                if (!bBypass && Common.IsVersionTimedOut)
-                {
-                    DialogResult dr = MessageBox.Show("This version of Thetis has timed out.\n" +
-                        "Please download and install a more recent version.",
-                        "Thetis timed out",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                    Application.Exit();
-                }
-                else
-                {
-                    _theConsole = new Console(args);
-
-                    Application.Run(_theConsole);
-
-                    restart = _theConsole.Restart && !Common.ShiftKeyDown;
-                }
+                _theConsole = new Console(args);
+                Application.Run(_theConsole);
+                restart = _theConsole.Restart && !Common.ShiftKeyDown;
             }
             catch (Exception ex)
             {
@@ -1465,7 +1436,7 @@ namespace Thetis
 
         private void InitConsole()
         {
-            _frmAbout = new frmAbout();
+            _frmAbout = new frmAbout(this);
             m_frmNotchPopup = new frmNotchPopup();
             m_frmSeqLog = new frmSeqLog();
             _frmFinder = new frmFinder();
@@ -2537,7 +2508,7 @@ namespace Thetis
             stream2.Close();   // close stream
 
 
-            ArrayList a = new ArrayList();
+            List<string> a = new List<string>();
 
             foreach (Control c in this.Controls)			// For each control
             {
@@ -3087,7 +3058,7 @@ namespace Thetis
                                                 // and if we had 20 in there before, and now only write 3, how do we know?
                                                 // as it will still be [0]..[19]
 
-            DB.SaveVars("State", ref a, true);		// save the values to the DB
+            DB.SaveVars("State", a, true);		// save the values to the DB
         }
 
         private FormWindowState m_WindowState = FormWindowState.Normal;
@@ -3165,7 +3136,7 @@ namespace Thetis
                 }
             }
 
-            ArrayList a = DB.GetVars("State");							// Get the saved list of controls
+            List<string> a = DB.GetVars("State");							// Get the saved list of controls
             a.Sort();
 
             // MW0LGE_21a

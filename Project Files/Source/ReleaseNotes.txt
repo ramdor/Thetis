@@ -6,6 +6,10 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
+## v2.10.3.7 Change Log
+- [change] moved release notes button from setup to the about box
+- [add] added Ernst Connectors and Tools link to the about box links
+
 ## v2.10.3.6 Main New Features
 - database manager
 - many new meter items, including rotator, band/filter/mode/antenna button boxes, text overlay and led indicator, much much more

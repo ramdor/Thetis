@@ -121,10 +121,6 @@ namespace Thetis
     //}
     public static class Common
 	{
-		private const bool ENABLE_VERSION_TIMEOUT = false;
-		private static DateTime _versionTimeout = new DateTime(2022, 06, 01, 00, 00, 00); // june 1st 2022 00:00:00
-		private static bool _bypassTimeout = false;
-
 		public static MessageBoxOptions MB_TOPMOST = (MessageBoxOptions)0x00040000L; //MW0LGE_21g TOPMOST for MessageBox
 
 		#region HiglightControls
@@ -247,7 +243,7 @@ namespace Thetis
 		}
 		#endregion
 
-		public static void ControlList(Control c, ref ArrayList a)
+		public static void ControlList(Control c, ref List<Control> a)
 		{
 			if(c.Controls.Count > 0)
 			{
@@ -267,312 +263,329 @@ namespace Thetis
 				a.Add(c);
 
 		}
-        
         public static void SaveForm(Form form, string tablename)
-		{
+        {
             if (DB.ds == null) return;
 
-			ArrayList a = new ArrayList();
-			ArrayList temp = new ArrayList();
+            List<string> control_data = new List<string>();
+            List<Control> temp = new List<Control>();
 
-			ControlList(form, ref temp);
+            ControlList(form, ref temp);
 
-			foreach(Control c in temp)				// For each control
-			{
-				if(c.GetType() == typeof(CheckBoxTS))
-					a.Add(c.Name+"/"+((CheckBoxTS)c).Checked.ToString());
-				else if(c.GetType() == typeof(ComboBoxTS))
-				{
-					//if(((ComboBox)c).SelectedIndex >= 0)
-					a.Add(c.Name+"/"+((ComboBoxTS)c).Text);
-				}
-				else if(c.GetType() == typeof(NumericUpDownTS))
-					a.Add(c.Name+"/"+((NumericUpDownTS)c).Value.ToString());
-				else if(c.GetType() == typeof(RadioButtonTS))
-					a.Add(c.Name+"/"+((RadioButtonTS)c).Checked.ToString());
-				else if(c.GetType() == typeof(TextBoxTS))
-					a.Add(c.Name+"/"+((TextBoxTS)c).Text);
-				else if(c.GetType() == typeof(TrackBarTS))
-					a.Add(c.Name+"/"+((TrackBarTS)c).Value.ToString());
-				else if(c.GetType() == typeof(ColorButton))
-				{
-					Color clr = ((ColorButton)c).Color;
-					a.Add(c.Name+"/"+clr.R+"."+clr.G+"."+clr.B+"."+clr.A);
-				}
-#if(DEBUG)
-				else if(c.GetType() == typeof(GroupBox) ||
-					c.GetType() == typeof(CheckBoxTS) ||
-					c.GetType() == typeof(ComboBox) ||
-					c.GetType() == typeof(NumericUpDown) ||
-					c.GetType() == typeof(RadioButton) ||
-					c.GetType() == typeof(TextBox) ||
-					c.GetType() == typeof(TrackBar))
-					Debug.WriteLine(form.Name + " -> " + c.Name+" needs to be converted to a Thread Safe control.");
+            foreach (Control control in temp)
+            {
+                switch (control)
+                {
+                    case CheckBoxTS check_box:
+                        control_data.Add($"{check_box.Name}/{check_box.Checked}");
+                        break;
+                    case ComboBoxTS combo_box:
+                        control_data.Add($"{combo_box.Name}/{combo_box.Text}");
+                        break;
+                    case NumericUpDownTS numeric_up_down:
+                        control_data.Add($"{numeric_up_down.Name}/{numeric_up_down.Value}");
+                        break;
+                    case RadioButtonTS radio_button:
+                        control_data.Add($"{radio_button.Name}/{radio_button.Checked}");
+                        break;
+                    case TextBoxTS text_box:
+                        control_data.Add($"{text_box.Name}/{text_box.Text}");
+                        break;
+                    case TrackBarTS track_bar:
+                        control_data.Add($"{track_bar.Name}/{track_bar.Value}");
+                        break;
+                    case ColorButton color_button:
+                        Color clr = color_button.Color;
+                        control_data.Add($"{color_button.Name}/{clr.R}.{clr.G}.{clr.B}.{clr.A}");
+                        break;
+#if DEBUG
+                    case GroupBox gb:
+                    case CheckBox cb:
+                    case ComboBox cob:
+                    case NumericUpDown nu:
+                    case RadioButton rb:
+                    case TextBox tb:
+                    case TrackBar trk:
+                        Debug.WriteLine($"{form.Name} -> {control.Name} needs to be converted to a Thread Safe control.");
+                        break;
 #endif
-			}
-			a.Add("Top/"+form.Top);
-			a.Add("Left/"+form.Left);
-			a.Add("Width/"+form.Width);
-			a.Add("Height/"+form.Height);
+                }
+            }
 
-			DB.SaveVars(tablename, ref a);		// save the values to the DB
-		}
+            control_data.Add($"Top/{form.Top}");
+            control_data.Add($"Left/{form.Left}");
+            control_data.Add($"Width/{form.Width}");
+            control_data.Add($"Height/{form.Height}");
 
-		public static void RestoreForm(Form form, string tablename, bool restore_size)
-		{
+            DB.SaveVars(tablename, control_data);
+        }
+        //        public static void SaveForm(Form form, string tablename)
+        //		{
+        //            if (DB.ds == null) return;
+
+        //			ArrayList a = new ArrayList();
+        //			ArrayList temp = new ArrayList();
+
+        //			ControlList(form, ref temp);
+
+        //			foreach(Control c in temp)				// For each control
+        //			{
+        //				if(c.GetType() == typeof(CheckBoxTS))
+        //					a.Add(c.Name+"/"+((CheckBoxTS)c).Checked.ToString());
+        //				else if(c.GetType() == typeof(ComboBoxTS))
+        //				{
+        //					//if(((ComboBox)c).SelectedIndex >= 0)
+        //					a.Add(c.Name+"/"+((ComboBoxTS)c).Text);
+        //				}
+        //				else if(c.GetType() == typeof(NumericUpDownTS))
+        //					a.Add(c.Name+"/"+((NumericUpDownTS)c).Value.ToString());
+        //				else if(c.GetType() == typeof(RadioButtonTS))
+        //					a.Add(c.Name+"/"+((RadioButtonTS)c).Checked.ToString());
+        //				else if(c.GetType() == typeof(TextBoxTS))
+        //					a.Add(c.Name+"/"+((TextBoxTS)c).Text);
+        //				else if(c.GetType() == typeof(TrackBarTS))
+        //					a.Add(c.Name+"/"+((TrackBarTS)c).Value.ToString());
+        //				else if(c.GetType() == typeof(ColorButton))
+        //				{
+        //					Color clr = ((ColorButton)c).Color;
+        //					a.Add(c.Name+"/"+clr.R+"."+clr.G+"."+clr.B+"."+clr.A);
+        //				}
+        //#if(DEBUG)
+        //				else if(c.GetType() == typeof(GroupBox) ||
+        //					c.GetType() == typeof(CheckBoxTS) ||
+        //					c.GetType() == typeof(ComboBox) ||
+        //					c.GetType() == typeof(NumericUpDown) ||
+        //					c.GetType() == typeof(RadioButton) ||
+        //					c.GetType() == typeof(TextBox) ||
+        //					c.GetType() == typeof(TrackBar))
+        //					Debug.WriteLine(form.Name + " -> " + c.Name+" needs to be converted to a Thread Safe control.");
+        //#endif
+        //			}
+        //			a.Add("Top/"+form.Top);
+        //			a.Add("Left/"+form.Left);
+        //			a.Add("Width/"+form.Width);
+        //			a.Add("Height/"+form.Height);
+
+        //			DB.SaveVars(tablename, ref a);		// save the values to the DB
+        //		}
+        public static void RestoreForm(Form form, string tablename, bool restore_size)
+        {
             if (DB.ds == null) return;
 
-            ArrayList temp = new ArrayList();		// list of all first level controls
-			ControlList(form, ref temp);
+            List<Control> temp = new List<Control>();
+            ControlList(form, ref temp);
 
-			//ArrayList checkbox_list = new ArrayList();
-			//ArrayList combobox_list = new ArrayList();
-			//ArrayList numericupdown_list = new ArrayList();
-			//ArrayList radiobutton_list = new ArrayList();
-			//ArrayList textbox_list = new ArrayList();
-			//ArrayList trackbar_list = new ArrayList();
-			//ArrayList colorbutton_list = new ArrayList();
-
-			//[2.10.2.3]MW0LGE change to single dictionary of controls
-			Dictionary<string, Control> ctrls = new Dictionary<string, Control>();
-
-			//ArrayList controls = new ArrayList();	// list of controls to restore
-			foreach(Control c in temp)
-			{
-                //if(c.GetType() == typeof(CheckBoxTS))			// the control is a CheckBoxTS
-                //	checkbox_list.Add(c);
-                //else if(c.GetType() == typeof(ComboBoxTS))		// the control is a ComboBox
-                //	combobox_list.Add(c);
-                //else if(c.GetType() == typeof(NumericUpDownTS))	// the control is a NumericUpDown
-                //	numericupdown_list.Add(c);
-                //else if(c.GetType() == typeof(RadioButtonTS))	// the control is a RadioButton
-                //	radiobutton_list.Add(c);
-                //else if(c.GetType() == typeof(TextBoxTS))		// the control is a TextBox
-                //	textbox_list.Add(c);
-                //else if(c.GetType() == typeof(TrackBarTS))		// the control is a TrackBar (slider)
-                //	trackbar_list.Add(c);
-                //else if(c.GetType() == typeof(ColorButton))
-                //	colorbutton_list.Add(c);
-
-                ctrls.Add(c.Name, c); //[2.10.2.3]MW0LGE yes, control names are unique per form, and to create and search each list is madness
+            Dictionary<string, Control> ctrls = new Dictionary<string, Control>();
+            foreach (Control c in temp)
+            {
+                ctrls.Add(c.Name, c);
             }
-			temp.Clear();	// now that we have the controls we want, delete first list 
 
-			ArrayList a = DB.GetVars(tablename);						// Get the saved list of controls
-			a.Sort();
-			
-			// restore saved values to the controls
-			foreach(string s in a)				// string is in the format "name,value"
-			{
-				string[] vals = s.Split('/');
-				if(vals.Length > 2)
-				{
-					for(int i=2; i<vals.Length; i++)
-						vals[1] += "/"+vals[i];
-				}
+            temp.Clear();
 
-				string name = vals[0];
-				string val = vals[1];
+            List<string> control_data = DB.GetVars(tablename).OfType<string>().ToList();
+            control_data.Sort();
 
-				switch(name)
-				{
-					case "Top":
-						form.StartPosition = FormStartPosition.Manual;
-						int top = int.Parse(val);
-						/*if(top < 0) top = 0;
-						if(top > Screen.PrimaryScreen.Bounds.Height-form.Height && Screen.AllScreens.Length == 1)
-							top = Screen.PrimaryScreen.Bounds.Height-form.Height;*/
-						form.Top = top;
-						break;
-					case "Left":
-						form.StartPosition = FormStartPosition.Manual;
-						int left = int.Parse(val);
-						/*if(left < 0) left = 0;
-						if(left > Screen.PrimaryScreen.Bounds.Width-form.Width && Screen.AllScreens.Length == 1)
-							left = Screen.PrimaryScreen.Bounds.Width-form.Width;*/
-						form.Left = left;
-						break;
-					case "Width":
-						if(restore_size)
-						{
-							int width = int.Parse(val);
-							/*if(width + form.Left > Screen.PrimaryScreen.Bounds.Width && Screen.AllScreens.Length == 1)
-								form.Left -= (width+form.Left-Screen.PrimaryScreen.Bounds.Width);*/
-							form.Width = width;
-						}
-						break;
-					case "Height":
-						if(restore_size)
-						{
-							int height = int.Parse(val);
-							/*if(height + form.Top > Screen.PrimaryScreen.Bounds.Height && Screen.AllScreens.Length == 1)
-								form.Top -= (height+form.Top-Screen.PrimaryScreen.Bounds.Height);*/
-							form.Height = height;
-						}
-						break;
-				}
+            foreach (string s in control_data)
+            {
+                string[] vals = s.Split('/');
+                if (vals.Length < 2) continue;
 
-				if(s.StartsWith("chk"))			// control is a CheckBoxTS
-				{
-					//for(int i=0; i<checkbox_list.Count; i++)
-					//{	// look through each control to find the matching name
-					//	CheckBoxTS c = (CheckBoxTS)checkbox_list[i];
-					//	if(c.Name.Equals(name))		// name found
-					//	{
-					//		c.Checked = bool.Parse(val);	// restore value
-					//		i = checkbox_list.Count+1;
-					//	}
-					//	if(i == checkbox_list.Count)
-					//		MessageBox.Show("Control not found: "+name);
-					//}
-					if (ctrls.ContainsKey(name)) ((CheckBoxTS)ctrls[name]).Checked = bool.Parse(val);
-                }
-				else if(s.StartsWith("combo"))	// control is a ComboBox
-				{
-					//for(int i=0; i<combobox_list.Count; i++)
-					//{	// look through each control to find the matching name
-					//	ComboBoxTS c = (ComboBoxTS)combobox_list[i];
-					//	if(c.Name.Equals(name))		// name found
-					//	{
-					//		c.Text = val;	// restore value
-					//		i = combobox_list.Count+1;
-					//		if(c.Text != val) Debug.WriteLine("Warning: "+form.Name+"."+name+" did not set to "+val);
-					//	}
-					//	if(i == combobox_list.Count)
-					//		MessageBox.Show("Control not found: "+name);
-					//}
-					if (ctrls.ContainsKey(name)) ((ComboBoxTS)ctrls[name]).Text = val;
-                }
-				else if(s.StartsWith("ud"))
-				{
-                    //for(int i=0; i<numericupdown_list.Count; i++)
-                    //{	// look through each control to find the matching name
-                    //	NumericUpDownTS c = (NumericUpDownTS)numericupdown_list[i];
-                    //	if(c.Name.Equals(name))		// name found
-                    //	{
-                    //		decimal num = decimal.Parse(val);
+                string name = vals[0];
+                string val = vals[1];
 
-                    //		if(num > c.Maximum) num = c.Maximum;		// check endpoints
-                    //		else if(num < c.Minimum) num = c.Minimum;
-                    //		c.Value = num;			// restore value
-                    //		i = numericupdown_list.Count+1;
-                    //	}
-                    //	if(i == numericupdown_list.Count)
-                    //		MessageBox.Show("Control not found: "+name);	
-                    //}
-                    if (ctrls.ContainsKey(name))
+                if (name == "Top" || name == "Left" || name == "Width" || name == "Height")
+                {
+                    int parsed_value = int.Parse(val);
+                    switch (name)
                     {
-                        NumericUpDownTS c = (NumericUpDownTS)ctrls[name];
-                        decimal dnum = decimal.Parse(val);
-                        if (dnum > c.Maximum) dnum = c.Maximum;
-                        else if (dnum < c.Minimum) dnum = c.Minimum;
-                        c.Value = dnum;
+                        case "Top":
+                            form.StartPosition = FormStartPosition.Manual;
+                            form.Top = parsed_value;
+                            break;
+                        case "Left":
+                            form.StartPosition = FormStartPosition.Manual;
+                            form.Left = parsed_value;
+                            break;
+                        case "Width":
+                            if (restore_size) form.Width = parsed_value;
+                            break;
+                        case "Height":
+                            if (restore_size) form.Height = parsed_value;
+                            break;
                     }
+                    continue;
                 }
-				else if(s.StartsWith("rad"))
-				{   // look through each control to find the matching name
-                    //for(int i=0; i<radiobutton_list.Count; i++)
-                    //{
-                    //	RadioButtonTS c = (RadioButtonTS)radiobutton_list[i];
-                    //	if(c.Name.Equals(name))		// name found
-                    //	{
-                    //		if(!val.ToLower().Equals("true") && !val.ToLower().Equals("false"))
-                    //			val = "True";
-                    //		c.Checked = bool.Parse(val);	// restore value
-                    //		i = radiobutton_list.Count+1;
-                    //	}
-                    //	if(i == radiobutton_list.Count)
-                    //		MessageBox.Show("Control not found: "+name);
-                    //}
-                    if (ctrls.ContainsKey(name))
-                    {
-                        RadioButtonTS c = (RadioButtonTS)ctrls[name];
-                        if (!val.ToLower().Equals("true") && !val.ToLower().Equals("false")) val = "True";
-                        c.Checked = bool.Parse(val);
-                    }
-                }
-				else if(s.StartsWith("txt"))
-				{   // look through each control to find the matching name
-                    //for(int i=0; i<textbox_list.Count; i++)
-                    //{
-                    //	TextBoxTS c = (TextBoxTS)textbox_list[i];
-                    //	if(c.Name.Equals(name))		// name found
-                    //	{
-                    //		c.Text = val;	// restore value
-                    //		i = textbox_list.Count+1;
-                    //	}
-                    //	if(i == textbox_list.Count)
-                    //		MessageBox.Show("Control not found: "+name);
-                    //}
-                    if (ctrls.ContainsKey(name)) ((TextBoxTS)ctrls[name]).Text = val;
-                }
-				else if(s.StartsWith("tb"))
-				{
-					//// look through each control to find the matching name
-					//for(int i=0; i<trackbar_list.Count; i++)
-					//{
-					//	TrackBarTS c = (TrackBarTS)trackbar_list[i];
-					//	if(c.Name.Equals(name))		// name found
-					//	{
-					//		int num = int.Parse(val);
-					//		if(num > c.Maximum) num = c.Maximum;
-					//		if(num < c.Minimum) num = c.Minimum;
-					//		c.Value = num;
-					//		i = trackbar_list.Count+1;
-					//	}
-					//	if(i == trackbar_list.Count)
-					//		MessageBox.Show("Control not found: "+name);
-					//}
-					if (ctrls.ContainsKey(name))
-					{
-						TrackBarTS c = (TrackBarTS)ctrls[name];
-						int num = int.Parse(val);
-						if (num > c.Maximum) num = c.Maximum;
-						if (num < c.Minimum) num = c.Minimum;
-                        c.Value = num;
-                    }
-                }
-				else if(s.StartsWith("clrbtn"))
-				{
-					//string[] colors = val.Split('.');
-					//if(colors.Length == 4)
-					//{
-					//	int R,G,B,A;
-					//	R = Int32.Parse(colors[0]);
-					//	G = Int32.Parse(colors[1]);
-					//	B = Int32.Parse(colors[2]);
-					//	A = Int32.Parse(colors[3]);
-					//	for(int i=0; i<colorbutton_list.Count; i++)
-					//	{
-					//		ColorButton c = (ColorButton)colorbutton_list[i];
-					//		if(c.Name.Equals(name))		// name found
-					//		{
-					//			c.Color = Color.FromArgb(A, R, G, B);
-					//			i = colorbutton_list.Count+1;
-					//		}
-					//		if(i == colorbutton_list.Count)
-					//			MessageBox.Show("Control not found: "+name);
-					//	}
-					//}
-					if (ctrls.ContainsKey(name))
-					{
-                        string[] colors = val.Split('.');
-						if (colors.Length == 4)
-						{
-							int R, G, B, A;
-							R = Int32.Parse(colors[0]);
-							G = Int32.Parse(colors[1]);
-							B = Int32.Parse(colors[2]);
-							A = Int32.Parse(colors[3]);
-							ColorButton c = (ColorButton)ctrls[name];
-                            c.Color = Color.FromArgb(A, R, G, B);
-                        }
-					}
-				}
-			}
 
-			ForceFormOnScreen(form);
-		}
+                if (!ctrls.TryGetValue(name, out Control control)) continue;
+
+                if (name.StartsWith("chk") && control is CheckBoxTS check_box)
+                {
+                    check_box.Checked = bool.Parse(val);
+                }
+                else if (name.StartsWith("combo") && control is ComboBoxTS combo_box)
+                {
+                    combo_box.Text = val;
+                }
+                else if (name.StartsWith("ud") && control is NumericUpDownTS numeric_up_down)
+                {
+                    decimal numeric_value = decimal.Parse(val);
+                    numeric_up_down.Value = Math.Max(numeric_up_down.Minimum, Math.Min(numeric_value, numeric_up_down.Maximum));
+                }
+                else if (name.StartsWith("rad") && control is RadioButtonTS radio_button)
+                {
+                    radio_button.Checked = bool.Parse(val);
+                }
+                else if (name.StartsWith("txt") && control is TextBoxTS text_box)
+                {
+                    text_box.Text = val;
+                }
+                else if (name.StartsWith("tb") && control is TrackBarTS track_bar)
+                {
+                    int track_bar_value = int.Parse(val);
+                    track_bar.Value = Math.Max(track_bar.Minimum, Math.Min(track_bar_value, track_bar.Maximum));
+                }
+                else if (name.StartsWith("clrbtn") && control is ColorButton color_button)
+                {
+                    string[] colors = val.Split('.');
+                    if (colors.Length == 4 &&
+                        int.TryParse(colors[0], out int R) &&
+                        int.TryParse(colors[1], out int G) &&
+                        int.TryParse(colors[2], out int B) &&
+                        int.TryParse(colors[3], out int A))
+                    {
+                        color_button.Color = Color.FromArgb(A, R, G, B);
+                    }
+                }
+            }
+
+            ForceFormOnScreen(form);
+        }
+
+        //public static void RestoreForm(Form form, string tablename, bool restore_size)
+        //{
+        //          if (DB.ds == null) return;
+
+        //          ArrayList temp = new ArrayList();		// list of all first level controls
+        //	ControlList(form, ref temp);
+
+        //	//[2.10.2.3]MW0LGE change to single dictionary of controls
+        //	Dictionary<string, Control> ctrls = new Dictionary<string, Control>();
+
+        //	foreach(Control c in temp)
+        //	{
+        //              ctrls.Add(c.Name, c); //[2.10.2.3]MW0LGE yes, control names are unique per form, and to create and search each list is madness
+        //          }
+        //	temp.Clear();	// now that we have the controls we want, delete first list 
+
+        //	ArrayList a = DB.GetVars(tablename);						// Get the saved list of controls
+        //	a.Sort();
+
+        //	// restore saved values to the controls
+        //	foreach(string s in a)				// string is in the format "name,value"
+        //	{
+        //		string[] vals = s.Split('/');
+        //		if(vals.Length > 2)
+        //		{
+        //			for(int i=2; i<vals.Length; i++)
+        //				vals[1] += "/"+vals[i];
+        //		}
+
+        //		string name = vals[0];
+        //		string val = vals[1];
+
+        //		switch(name)
+        //		{
+        //			case "Top":
+        //				form.StartPosition = FormStartPosition.Manual;
+        //				int top = int.Parse(val);
+        //				form.Top = top;
+        //				break;
+        //			case "Left":
+        //				form.StartPosition = FormStartPosition.Manual;
+        //				int left = int.Parse(val);
+        //				form.Left = left;
+        //				break;
+        //			case "Width":
+        //				if(restore_size)
+        //				{
+        //					int width = int.Parse(val);
+        //					form.Width = width;
+        //				}
+        //				break;
+        //			case "Height":
+        //				if(restore_size)
+        //				{
+        //					int height = int.Parse(val);
+        //					form.Height = height;
+        //				}
+        //				break;
+        //		}
+
+        //		if(s.StartsWith("chk"))			// control is a CheckBoxTS
+        //		{
+        //			if (ctrls.ContainsKey(name)) ((CheckBoxTS)ctrls[name]).Checked = bool.Parse(val);
+        //              }
+        //		else if(s.StartsWith("combo"))	// control is a ComboBox
+        //		{
+        //			if (ctrls.ContainsKey(name)) ((ComboBoxTS)ctrls[name]).Text = val;
+        //              }
+        //		else if(s.StartsWith("ud"))
+        //		{
+        //                  if (ctrls.ContainsKey(name))
+        //                  {
+        //                      NumericUpDownTS c = (NumericUpDownTS)ctrls[name];
+        //                      decimal dnum = decimal.Parse(val);
+        //                      if (dnum > c.Maximum) dnum = c.Maximum;
+        //                      else if (dnum < c.Minimum) dnum = c.Minimum;
+        //                      c.Value = dnum;
+        //                  }
+        //              }
+        //		else if(s.StartsWith("rad"))
+        //		{
+        //                  if (ctrls.ContainsKey(name))
+        //                  {
+        //                      RadioButtonTS c = (RadioButtonTS)ctrls[name];
+        //                      if (!val.ToLower().Equals("true") && !val.ToLower().Equals("false")) val = "True";
+        //                      c.Checked = bool.Parse(val);
+        //                  }
+        //              }
+        //		else if(s.StartsWith("txt"))
+        //		{
+        //                  if (ctrls.ContainsKey(name)) ((TextBoxTS)ctrls[name]).Text = val;
+        //              }
+        //		else if(s.StartsWith("tb"))
+        //		{
+        //			if (ctrls.ContainsKey(name))
+        //			{
+        //				TrackBarTS c = (TrackBarTS)ctrls[name];
+        //				int num = int.Parse(val);
+        //				if (num > c.Maximum) num = c.Maximum;
+        //				if (num < c.Minimum) num = c.Minimum;
+        //                      c.Value = num;
+        //                  }
+        //              }
+        //		else if(s.StartsWith("clrbtn"))
+        //		{
+        //			if (ctrls.ContainsKey(name))
+        //			{
+        //                      string[] colors = val.Split('.');
+        //				if (colors.Length == 4)
+        //				{
+        //					int R, G, B, A;
+        //					R = Int32.Parse(colors[0]);
+        //					G = Int32.Parse(colors[1]);
+        //					B = Int32.Parse(colors[2]);
+        //					A = Int32.Parse(colors[3]);
+        //					ColorButton c = (ColorButton)ctrls[name];
+        //                          c.Color = Color.FromArgb(A, R, G, B);
+        //                      }
+        //			}
+        //		}
+        //	}
+
+        //	ForceFormOnScreen(form);
+        //}
 
         public static (bool resized, bool relocated) ForceFormOnScreen(Form f, bool shrink_to_fit = false, bool keep_on_screen = false)
         {
@@ -938,31 +951,6 @@ namespace Thetis
 			m_sFileVersion = fvi.FileVersion;
 			m_sRevision = fvi.FileVersion.Substring(fvi.FileVersion.LastIndexOf(".") + 1);
 		}
-
-		public static int DaysToTimeOut()
-		{
-			int days = (int)(_versionTimeout - DateTime.Now).TotalDays;
-			if (days < 0) days = 0;
-			return days;
-		}
-		public static bool IsVersionTimedOut
-		{
-			get
-			{
-				if (ENABLE_VERSION_TIMEOUT && !_bypassTimeout)
-					return DaysToTimeOut() == 0;
-				else
-					return false;
-			}
-		}
-		public static bool IsTimeOutEnabled
-		{
-			get { return ENABLE_VERSION_TIMEOUT && !_bypassTimeout; }
-		}
-		public static bool BypassTimeOut
-        {
-            set { _bypassTimeout = value; }
-        }
 		public static bool IsAdministrator()
 		{
 			using (WindowsIdentity identity = WindowsIdentity.GetCurrent())

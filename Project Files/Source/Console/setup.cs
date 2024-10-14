@@ -62,7 +62,7 @@ namespace Thetis
 
         private Console console;
         private Progress progress;
-        private ArrayList KeyList;
+        private List<Keys> KeyList;
         private bool initializing;
         public bool alex_fw_good = false;
         private string RXAntChk1Name;                   // radio dependent name for 1st check box
@@ -99,12 +99,6 @@ namespace Thetis
 
             addDelegates();
 
-            // timeout stuff
-            lblTimeout.Visible = Common.IsTimeOutEnabled;
-            lblShowTimeoutText.Visible = Common.IsTimeOutEnabled;
-            if (Common.IsTimeOutEnabled) lblTimeout.Text = Common.DaysToTimeOut().ToString() + " days";
-            //
-
             //MW0LGE_21i
             ucVAC1VARGrapherIn.MaxPoints = ucVAC1VARGrapherIn.Width;
             ucVAC1VARGrapherOut.MaxPoints = ucVAC1VARGrapherOut.Width;
@@ -140,7 +134,7 @@ namespace Thetis
             GetHosts();
             InitAlexAntTables();
 
-            KeyList = new ArrayList();
+            KeyList = new List<Keys>();
             SetupKeyMap();
 
             GetTxProfiles();
