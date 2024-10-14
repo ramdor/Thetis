@@ -165,14 +165,15 @@ namespace Thetis
             // 
             // lblVersion
             // 
+            this.lblVersion.AutoSize = true;
             this.lblVersion.BackColor = System.Drawing.Color.Transparent;
             this.lblVersion.ForeColor = System.Drawing.Color.White;
             this.lblVersion.Image = null;
             this.lblVersion.Location = new System.Drawing.Point(56, 290);
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(92, 16);
+            this.lblVersion.Size = new System.Drawing.Size(205, 13);
             this.lblVersion.TabIndex = 3;
-            this.lblVersion.Text = "Version";
+            this.lblVersion.Text = "WWWWWWWWWWWWWWWWWW";
             // 
             // Splash
             // 
@@ -189,6 +190,7 @@ namespace Thetis
             this.Text = "Splash";
             this.Load += new System.EventHandler(this.Splash_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 		#endregion
@@ -288,7 +290,7 @@ namespace Thetis
         // ************ Private methods ************
         private void setVersion(string version)
         {
-            lblVersion.Text = version;
+			lblVersion.Text = string.IsNullOrEmpty(version) ? "" : version.Left(18);
         }
 
         // Internal method for setting reference points.
