@@ -2993,6 +2993,7 @@ namespace Thetis
                 foreach (KeyValuePair<string, clsMeter> ms in _meters)
                 {
                     clsMeter m = ms.Value;
+                    m.TXBand = newBand;
                     m.AntennasChanged(Band.FIRST, newBand, -1, tx_frequency);
                 }
             }
@@ -3208,6 +3209,8 @@ namespace Thetis
             m.TXVFOb = _console.VFOBTX;
             m.RX2Enabled = _console.RX2Enabled;
             m.MultiRxEnabled = _console.chkEnableMultiRX.Checked;
+
+            m.TXBand = _console.TXBand;
 
             m.VfoA = _console.VFOAFreq;
             m.ModeVfoA = _console.RX1DSPMode;
@@ -5416,8 +5419,8 @@ namespace Thetis
             public clsAntennaButtonBox(clsMeter owningmeter, clsItemGroup ig)
             {
                 _owningmeter = owningmeter;
-                _rx1_band = Band.FIRST;
-                _tx_band = Band.FIRST;
+                _rx1_band = _owningmeter.BandVfoA;
+                _tx_band = _owningmeter.TXBand;
                 _vfoa_freq = -1;
                 _tx_freq = -1;
                 _rxtx_swap = false;
@@ -12222,6 +12225,7 @@ namespace Thetis
             private Band _bandVfoA;
             private Band _bandVfoB;
             private Band _bandVfoASub;
+            private Band _bandTX;
             private string _filterVfoAname;
             private string _filterVfoBname;
             private bool _rx2Enabled;
@@ -15163,6 +15167,7 @@ namespace Thetis
                 _bandVfoA = Band.FIRST;
                 _bandVfoB = Band.FIRST;
                 _bandVfoASub = Band.FIRST;
+                _bandTX = Band.FIRST;
                 _modeVfoA = DSPMode.FIRST;
                 _modeVfoB = DSPMode.FIRST;
                 _filterVfoA = Filter.FIRST;
@@ -15746,7 +15751,7 @@ namespace Thetis
                                     {
                                         bRebuild = true;
 
-                                        float height = 1f;
+                                        float height = 0f;
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
                                         clsMeterItem.MeterItemType mit = clsMeterItem.MeterItemType.BASE;
                                         switch (mt)
@@ -15839,7 +15844,7 @@ namespace Thetis
                                             bb.RebuildButtons = true;
                                             bb.Columns = bb.Columns; // just to force a rebuild
 
-                                            height = bb.Size.Height;
+                                            height += bb.Size.Height;
                                         }
                                         ig.Size = new SizeF(ig.Size.Width, height + (_fPadY - (_fHeight * 0.75f)));
 
@@ -17895,6 +17900,11 @@ namespace Thetis
             {
                 get { return _bandVfoASub; }
                 set { _bandVfoASub = value; }
+            }
+            public Band TXBand
+            {
+                get { return _bandTX; }
+                set { _bandTX = value; }
             }
             public Filter FilterVfoA
             {
