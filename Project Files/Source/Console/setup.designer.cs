@@ -207,9 +207,6 @@
             this.tpGeneral = new System.Windows.Forms.TabPage();
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
-            this.btnReleaseNotes = new System.Windows.Forms.ButtonTS();
-            this.lblTimeout = new System.Windows.Forms.LabelTS();
-            this.lblShowTimeoutText = new System.Windows.Forms.LabelTS();
             this.btnZipDebugInfo = new System.Windows.Forms.ButtonTS();
             this.grpFirmware = new System.Windows.Forms.GroupBoxTS();
             this.lblPLLLock = new System.Windows.Forms.LabelTS();
@@ -7493,9 +7490,6 @@
             // tpGeneralHardware
             // 
             this.tpGeneralHardware.BackColor = System.Drawing.SystemColors.Control;
-            this.tpGeneralHardware.Controls.Add(this.btnReleaseNotes);
-            this.tpGeneralHardware.Controls.Add(this.lblTimeout);
-            this.tpGeneralHardware.Controls.Add(this.lblShowTimeoutText);
             this.tpGeneralHardware.Controls.Add(this.btnZipDebugInfo);
             this.tpGeneralHardware.Controls.Add(this.grpFirmware);
             this.tpGeneralHardware.Controls.Add(this.grpOzyType);
@@ -7510,38 +7504,6 @@
             this.tpGeneralHardware.TabIndex = 0;
             this.tpGeneralHardware.Text = "H/W Select";
             this.tpGeneralHardware.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralHardware_Paint);
-            // 
-            // btnReleaseNotes
-            // 
-            this.btnReleaseNotes.Image = null;
-            this.btnReleaseNotes.Location = new System.Drawing.Point(246, 310);
-            this.btnReleaseNotes.Name = "btnReleaseNotes";
-            this.btnReleaseNotes.Selectable = true;
-            this.btnReleaseNotes.Size = new System.Drawing.Size(111, 53);
-            this.btnReleaseNotes.TabIndex = 123;
-            this.btnReleaseNotes.Text = "Release Notes";
-            this.toolTip1.SetToolTip(this.btnReleaseNotes, "Show the release notes for this version");
-            this.btnReleaseNotes.UseVisualStyleBackColor = true;
-            this.btnReleaseNotes.Click += new System.EventHandler(this.btnReleaseNotes_Click);
-            // 
-            // lblTimeout
-            // 
-            this.lblTimeout.Image = null;
-            this.lblTimeout.Location = new System.Drawing.Point(271, 380);
-            this.lblTimeout.Name = "lblTimeout";
-            this.lblTimeout.Size = new System.Drawing.Size(87, 13);
-            this.lblTimeout.TabIndex = 38;
-            this.lblTimeout.Text = "90 days";
-            // 
-            // lblShowTimeoutText
-            // 
-            this.lblShowTimeoutText.Image = null;
-            this.lblShowTimeoutText.Location = new System.Drawing.Point(12, 380);
-            this.lblShowTimeoutText.Name = "lblShowTimeoutText";
-            this.lblShowTimeoutText.Size = new System.Drawing.Size(253, 13);
-            this.lblShowTimeoutText.TabIndex = 37;
-            this.lblShowTimeoutText.Text = "This test/beta version of Thetis will timeout in :";
-            this.lblShowTimeoutText.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // btnZipDebugInfo
             // 
@@ -54682,6 +54644,7 @@
             this.tcCAT.SelectedIndex = 0;
             this.tcCAT.Size = new System.Drawing.Size(732, 433);
             this.tcCAT.TabIndex = 0;
+            this.tcCAT.SelectedIndexChanged += new System.EventHandler(this.tcCAT_SelectedIndexChanged);
             // 
             // tpCATSerialPorts
             // 
@@ -69075,8 +69038,6 @@
         private LabelTS labelTS613;
         private CheckBoxTS chkShowTCISpots;
         private CheckBoxTS chkLegacyDXBuffers;
-        private LabelTS lblTimeout;
-        private LabelTS lblShowTimeoutText;
         private ColorButton clrbtnOwnCallApearance;
         private TextBoxTS txtOwnCallsign;
         private CheckBoxTS chkSpotOwnCallAppearance;
@@ -69448,7 +69409,6 @@
         private CheckBoxTS chkVAC2ExclusiveOut;
         private CheckBoxTS chkVAC1ExclusiveIn;
         private CheckBoxTS chkVAC2ExclusiveIn;
-        private ButtonTS btnReleaseNotes;
         private CheckBoxTS chkIgnore14bitMidiMessages;
         private CheckBoxTS chkMidiControlIDincludesChannel;
         private CheckBoxTS chkMidiControlIDincludesStatus;

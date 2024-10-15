@@ -62,7 +62,7 @@ namespace Thetis
 
         private Console console;
         private Progress progress;
-        private ArrayList KeyList;
+        private List<Keys> KeyList;
         private bool initializing;
         public bool alex_fw_good = false;
         private string RXAntChk1Name;                   // radio dependent name for 1st check box
@@ -99,12 +99,6 @@ namespace Thetis
 
             addDelegates();
 
-            // timeout stuff
-            lblTimeout.Visible = Common.IsTimeOutEnabled;
-            lblShowTimeoutText.Visible = Common.IsTimeOutEnabled;
-            if (Common.IsTimeOutEnabled) lblTimeout.Text = Common.DaysToTimeOut().ToString() + " days";
-            //
-
             //MW0LGE_21i
             ucVAC1VARGrapherIn.MaxPoints = ucVAC1VARGrapherIn.Width;
             ucVAC1VARGrapherOut.MaxPoints = ucVAC1VARGrapherOut.Width;
@@ -140,7 +134,7 @@ namespace Thetis
             GetHosts();
             InitAlexAntTables();
 
-            KeyList = new ArrayList();
+            KeyList = new List<Keys>();
             SetupKeyMap();
 
             GetTxProfiles();
@@ -29935,11 +29929,12 @@ namespace Thetis
         }
         private void updateVariableList()
         {
+            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
+            if (mmioci == null) return;
+
             ListView.SelectedListViewItemCollection items = lstMMIO_network_variables.SelectedItems;
             string selectedKey = items.Count == 1 ? items[0].Text : "";
 
-            clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
-            if (mmioci == null) return;
             btnMMIO_network_remove_variable.Enabled = items.Count > 0;
             btnMMIO_network_copyvariable_clipboard.Enabled = items.Count > 0;
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
@@ -32525,6 +32520,12 @@ namespace Thetis
         private void nudLedIndicator_UpdateInterval_ValueChanged(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+
+        private void tcCAT_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tcCAT.SelectedTab == tpMultiMetersIO)
+                updateVariableList();
         }
     }
 

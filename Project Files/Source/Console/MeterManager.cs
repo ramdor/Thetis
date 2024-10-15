@@ -10222,7 +10222,14 @@ namespace Thetis
                                     }
                                 }
                             }
-                            string decFormat = placeholder.IndexOf("_double", StringComparison.OrdinalIgnoreCase) >= 0 ? precision_format : (precis_found ? precision_format : "0.0#####");
+                        }
+                    }
+                    foreach (string placeholder in _list_placeholders_strings_1)
+                    {
+                        lower = "%" + placeholder.ToLower() + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
+                        {
+                            string decFormat = precis_found ? precision_format : "0.0#####";
                             object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
                             if (reading is int)
                                 sTmp = sTmp.Replace(lower, ((int)reading).ToString());
@@ -10307,8 +10314,14 @@ namespace Thetis
                                     }
                                 }
                             }
-
-                            string decFormat = placeholder.IndexOf("_double", StringComparison.OrdinalIgnoreCase) >= 0 ? precision_format : (precis_found ? precision_format : "0.0#####"); 
+                        }
+                    }
+                    foreach (string placeholder in _list_placeholders_strings_2)
+                    {
+                        lower = "%" + placeholder.ToLower() + "%";
+                        if (sTmp.IndexOf(lower) >= 0)
+                        {
+                             string decFormat = precis_found ? precision_format : "0.0#####";
                             object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
                             if (reading is int)
                                 sTmp = sTmp.Replace(lower, ((int)reading).ToString());

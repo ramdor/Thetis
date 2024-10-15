@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Collections;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Thetis
 {
@@ -267,7 +268,7 @@ namespace Thetis
 		private bool m_stopPurging = false;
 		private Thread m_serverThread = null;
 		private Thread m_purgingThread = null;
-		private ArrayList m_socketListenersList = null;
+		private List<TCPIPSocketListener> m_socketListenersList = null;
 		private Object m_objLocker = new Object();
 		private bool m_bSleepingInPurge = false;
 		private frmLog _log;
@@ -329,9 +330,9 @@ namespace Thetis
 				console = c;
 				m_bSendWelcome = bTCPIPcatWelcomeMessage;
 
-				m_socketListenersList = new ArrayList();
+				m_socketListenersList = new List<TCPIPSocketListener>();
 
-				try
+                try
 				{
 					m_server.Start();
 
@@ -508,7 +509,7 @@ namespace Thetis
 		{
 			while (!m_stopPurging)
 			{
-				ArrayList deleteList = new ArrayList();
+                List<TCPIPSocketListener> deleteList = new List<TCPIPSocketListener>();
 
 				lock (m_objLocker)
 				{

@@ -2220,7 +2220,7 @@ namespace Thetis
 		private bool m_stopPurging = false;
 		private Thread m_serverThread = null;
 		private Thread m_purgingThread = null;
-		private ArrayList m_socketListenersList = null;
+		private List<TCPIPtciSocketListener> m_socketListenersList = null;
 		private Object m_objLocker = new Object();
 		private bool m_bSleepingInPurge = false;
 		private bool m_bDelegatesAdded = false;
@@ -2352,9 +2352,9 @@ namespace Thetis
 
 				_console = c;
 
-				m_socketListenersList = new ArrayList();
+				m_socketListenersList = new List<TCPIPtciSocketListener>();
 
-				if (console != null && !m_bDelegatesAdded)
+                if (console != null && !m_bDelegatesAdded)
 				{
 					console.ThreadSafeTCIAccessor.VFOAFrequencyChangeHandlers += OnVFOAFrequencyChangeHandler;
 					console.ThreadSafeTCIAccessor.VFOBFrequencyChangeHandlers += OnVFOBFrequencyChangeHandler;
@@ -2599,7 +2599,7 @@ namespace Thetis
 		{
 			while (!m_stopPurging)
 			{
-				ArrayList deleteList = new ArrayList();
+                List<TCPIPtciSocketListener> deleteList = new List<TCPIPtciSocketListener>();
 
 				lock (m_objLocker)
 				{

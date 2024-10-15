@@ -821,12 +821,6 @@ namespace Thetis
 
             CWFWKeyer = true;
 
-            //// Activates double buffering
-            //this.SetStyle(ControlStyles.UserPaint |
-            //   ControlStyles.AllPaintingInWmPaint |
-            //   ControlStyles.OptimizedDoubleBuffer, true);
-            //this.UpdateStyles();
-
             Common.DoubleBufferAll(this, true);
 
             // update titlebar
@@ -890,9 +884,6 @@ namespace Thetis
 
             Common.FadeIn(this);
 
-            // fix flicker with panels/groups MW0LGE_[2.9.0.6]
-            Common.DoubleBuffered(grpMultimeter, true);
-            //
             txtVFOAFreq_LostFocus(this, EventArgs.Empty);
             txtVFOBFreq_LostFocus(this, EventArgs.Empty);
             chkSquelch_CheckStateChanged(this, EventArgs.Empty);
@@ -1278,38 +1269,9 @@ namespace Thetis
                 Application.EnableVisualStyles();
                 Application.DoEvents();
 
-                // check for timeout bypass
-                bool bBypass = false;
-                foreach (string s in args)
-                {
-                    if (s.StartsWith("-timeoutBypass:"))
-                    {
-                        string sKey = s.Trim().Substring(s.Trim().IndexOf(":") + 1);
-                        byte[] byteBuffer = System.Security.Cryptography.SHA1.Create().ComputeHash(Encoding.UTF8.GetBytes(sKey));
-                        string hash = Convert.ToBase64String(byteBuffer);
-                        bBypass = (hash == "1rbCFcNDoiPcNOhzY26GiAw2pxA=");
-                    }
-                }
-                Common.BypassTimeOut = bBypass;
-                //
-
-                if (!bBypass && Common.IsVersionTimedOut)
-                {
-                    DialogResult dr = MessageBox.Show("This version of Thetis has timed out.\n" +
-                        "Please download and install a more recent version.",
-                        "Thetis timed out",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Stop, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                    Application.Exit();
-                }
-                else
-                {
-                    _theConsole = new Console(args);
-
-                    Application.Run(_theConsole);
-
-                    restart = _theConsole.Restart && !Common.ShiftKeyDown;
-                }
+                _theConsole = new Console(args);
+                Application.Run(_theConsole);
+                restart = _theConsole.Restart && !Common.ShiftKeyDown;
             }
             catch (Exception ex)
             {
@@ -1468,7 +1430,7 @@ namespace Thetis
 
         private void InitConsole()
         {
-            _frmAbout = new frmAbout();
+            _frmAbout = new frmAbout(this);
             m_frmNotchPopup = new frmNotchPopup();
             m_frmSeqLog = new frmSeqLog();
             _frmFinder = new frmFinder();
@@ -2562,7 +2524,7 @@ namespace Thetis
             stream2.Close();   // close stream
 
 
-            ArrayList a = new ArrayList();
+            List<string> a = new List<string>();
 
             foreach (Control c in this.Controls)			// For each control
             {
@@ -3112,7 +3074,7 @@ namespace Thetis
                                                 // and if we had 20 in there before, and now only write 3, how do we know?
                                                 // as it will still be [0]..[19]
 
-            DB.SaveVars("State", ref a, true);		// save the values to the DB
+            DB.SaveVars("State", a, true);		// save the values to the DB
         }
 
         private FormWindowState m_WindowState = FormWindowState.Normal;
@@ -3190,7 +3152,7 @@ namespace Thetis
                 }
             }
 
-            ArrayList a = DB.GetVars("State");							// Get the saved list of controls
+            List<string> a = DB.GetVars("State");							// Get the saved list of controls
             a.Sort();
 
             // MW0LGE_21a
@@ -41411,7 +41373,9 @@ namespace Thetis
         private FormWindowState _old_window_state = FormWindowState.Normal;
         private void Console_Resize(object sender, System.EventArgs e)
         {
-            if(this.WindowState != _old_window_state)
+            resizeBackgroundImage();
+
+            if (this.WindowState != _old_window_state)
             {               
                 WindowStateChangedHandlers?.Invoke(this.WindowState);
                 _old_window_state = this.WindowState;
@@ -50331,6 +50295,62 @@ namespace Thetis
                     (cmaster.GetCMasioVersion() / 1000f).ToString("f2"), sPortAudio, sAndromG2Verson);
 
             _frmAbout.ShowDialog(this);
+        }
+
+        private Image _cached_background_image = null;
+        private Size _background_image_size = Size.Empty;
+        public Image CachedBackgroundImage
+        {
+            get { return _cached_background_image; }
+            set
+            {
+                // no dispose here as we dont want to free up the cache in skins
+                _cached_background_image = value;
+                _background_image_size = Size.Empty;
+                resizeBackgroundImage();
+            }
+        }
+        private void resizeBackgroundImage()
+        {
+            // fixes issue where if the background image skin is larger than the client size of the window
+            // then there would be very slow redraw/updates. So instead of the form resizing it, we do it ourseves                
+            if (this.ClientSize == _background_image_size) return;
+            if (this.ClientSize.Width == 0 || this.ClientSize.Height == 0) return;
+
+            Graphics graphics = null;
+            _background_image_size = this.ClientSize;
+
+            if (this.BackgroundImage != null)
+            {
+                this.BackgroundImage.Dispose();
+                this.BackgroundImage = null;
+            }
+
+            if (_cached_background_image == null) return;
+            try
+            {
+                Image resized_image = new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
+
+                graphics = Graphics.FromImage(resized_image);
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.DrawImage(_cached_background_image, 0, 0, resized_image.Width, resized_image.Height);
+
+                this.BackgroundImageLayout = ImageLayout.None;
+                this.BackgroundImage = resized_image;
+            }
+            catch (Exception e)
+            {
+                if (this.BackgroundImage == null)
+                {
+                    // issue resizing it, just use the original and turn on stretch mode
+                    this.BackgroundImageLayout = ImageLayout.Stretch;
+                    this.BackgroundImage = _cached_background_image;
+                }
+            }
+            finally
+            {
+                if (graphics != null) graphics.Dispose();
+            }
         }
     }
 

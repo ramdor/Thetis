@@ -141,19 +141,6 @@
   <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <data name="labelTS295.Text" xml:space="preserve">
-    <value>- Any changes made here will only apply after Thetis is restarted
-- If VAC is enabled input will be taken from the VAC and not cmASIO
-- If a red cmASIO icon is shown in the status bar there is an issue
-- The ASIO device will not be available to VAC if in use by cmASIO
-- 48,000 sa/s sampling rate
-- sample buffer size is fixed at 64
-- Int32LSB sample format (24 bit samples, left aligned in 32 bit little-endian integers)
-
-- Protocol 1 is supported but performance may be degraded compared to Protocol 2
-- Remove any previous cmASIO settings from HKEY_LOCAL_MACHINE\SOFTWARE\OpenHPSDR\Thetis-x64
-- This now uses HKEY_CURRENT_USER\SOFTWARE\OpenHPSDR\Thetis-x64</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="pbVAC1FFAlphaInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -163,9 +150,6 @@
         lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
 </value>
   </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>302, 17</value>
-  </metadata>
   <data name="pbVAC1FFMaxInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAKJJREFUOE+V
@@ -213,6 +197,19 @@
         3+lE9WIKVDP1RjcmgiWQvfsjpBsTmxHhblk2boccLofboaxwN/xrSLib1BDYAAp3Q7oxEdiQcDdJNyYu
         lpCo75JOVGeWoKjvkk5UV8bRlbLKUThhB/VO4Cm5vBlo7QekKYbvZpySoQAAAABJRU5ErkJggg==
 </value>
+  </data>
+  <data name="labelTS295.Text" xml:space="preserve">
+    <value>- Any changes made here will only apply after Thetis is restarted
+- If VAC is enabled input will be taken from the VAC and not cmASIO
+- If a red cmASIO icon is shown in the status bar there is an issue
+- The ASIO device will not be available to VAC if in use by cmASIO
+- 48,000 sa/s sampling rate
+- sample buffer size is fixed at 64
+- Int32LSB sample format (24 bit samples, left aligned in 32 bit little-endian integers)
+
+- Protocol 1 is supported but performance may be degraded compared to Protocol 2
+- Remove any previous cmASIO settings from HKEY_LOCAL_MACHINE\SOFTWARE\OpenHPSDR\Thetis-x64
+- This now uses HKEY_CURRENT_USER\SOFTWARE\OpenHPSDR\Thetis-x64</value>
   </data>
   <data name="chkPurgeBuffers.ToolTip" xml:space="preserve">
     <value>On a mox transition there are times where you get a 'pulse' of energy in the display.

@@ -56,11 +56,13 @@ namespace Thetis
         private string _version;
         private string _build;
         private bool _update_available;
+        private Console _console;
 
-        public frmAbout()
+        public frmAbout(Console console)
         {
             InitializeComponent();
 
+            _console = console;
             _update_available = false;
             _versionInfo = null;
             _version = "";
@@ -93,7 +95,11 @@ namespace Thetis
 
             if (radio_model == HPSDRModel.FIRST.ToString() || radio_model == HPSDRModel.LAST.ToString()) radio_model = "?";
 
-            if (!string.IsNullOrEmpty(build)) version += $" [build {build}]";
+            if (!string.IsNullOrEmpty(build))
+            {
+                build = build.Left(16);
+                version += $" [build {build}]";
+            }
 
             lstVersions.Items.Clear();
             lstVersions.Items.Add("Version: " + version);
@@ -176,6 +182,7 @@ namespace Thetis
                 case 9: Common.OpenUri("https://github.com/laurencebarker/Saturn"); break;
                 case 10: Common.OpenUri("https://github.com/mi0bot/OpenHPSDR-Thetis/releases"); break;
                 case 11: Common.OpenUri("https://github.com/TAPR/OpenHPSDR-wdsp"); break;
+                case 12: Common.OpenUri("https://www.oe3ide.com/wp/software/"); break;
             }
 
             lstLinks.ClearSelected();
@@ -286,6 +293,12 @@ namespace Thetis
         {
             if (string.IsNullOrEmpty(btnUpdatedRelease.Tag.ToString())) return;
             Common.OpenUri(btnUpdatedRelease.Tag.ToString());
+        }
+
+        private void btnReleaseNotes_Click(object sender, EventArgs e)
+        {
+            if (_console != null)
+                _console.ShowReleaseNotes();
         }
     }
 }

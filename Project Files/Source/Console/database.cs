@@ -9219,7 +9219,7 @@ namespace Thetis
 
         private static void CheckBandTextValid()
         {
-            ArrayList bad_rows = new ArrayList();
+            List<DataRow> bad_rows = new List<DataRow>();
 
             if (ds == null) return;
             foreach (DataRow dr in ds.Tables["BandText"].Rows)
@@ -9731,7 +9731,7 @@ namespace Thetis
                 }
             }
         }
-        public static void SaveVars(string tableName, ref ArrayList list, bool bSaveEmptyValues = true)
+        public static void SaveVars(string tableName, List<string> list, bool bSaveEmptyValues = true)
         {
             if (_merged) return; // we just merged, dont want to change anything
 
@@ -9778,25 +9778,43 @@ namespace Thetis
                 }
              }
         }
-
-        public static Dictionary<string, string> GetVarsDictionary(string tableName)
+        public static Dictionary<string, string> GetVarsDictionary(string table_name)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
-            if (!ds.Tables.Contains(tableName))
+
+            if (!ds.Tables.Contains(table_name))
                 return dict;
 
-            DataTable t = ds.Tables[tableName];
+            DataTable table = ds.Tables[table_name];
+            dict = new Dictionary<string, string>(table.Rows.Count);
 
-            for (int i = 0; i < t.Rows.Count; i++)
+            foreach (DataRow row in table.Rows)
             {
-                dict.Add(t.Rows[i][0].ToString(), t.Rows[i][1].ToString());
+                string key = row[0].ToString();
+                string value = row[1].ToString();
+                dict.Add(key, value);
             }
 
             return dict;
         }
-        public static ArrayList GetVars(string tableName)
+        //public static Dictionary<string, string> GetVarsDictionary(string tableName)
+        //{
+        //    Dictionary<string, string> dict = new Dictionary<string, string>();
+        //    if (!ds.Tables.Contains(tableName))
+        //        return dict;
+
+        //    DataTable t = ds.Tables[tableName];
+
+        //    for (int i = 0; i < t.Rows.Count; i++)
+        //    {
+        //        dict.Add(t.Rows[i][0].ToString(), t.Rows[i][1].ToString());
+        //    }
+
+        //    return dict;
+        //}
+        public static List<string> GetVars(string tableName)
         {
-            ArrayList list = new ArrayList();
+            List<string> list = new List<string>();
             if (!ds.Tables.Contains(tableName))
                 return list;
 
