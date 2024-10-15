@@ -58,11 +58,13 @@ namespace Thetis
         private bool _update_available;
         private Console _console;
         private bool _check_dev_version;
+        private string _exe_path;
 
         public frmAbout(Console console, bool check_dev_version)
         {
             InitializeComponent();
 
+            _exe_path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\";
             _console = console;
             _update_available = false;
             _versionInfo = null;
@@ -185,6 +187,13 @@ namespace Thetis
                 case 10: Common.OpenUri("https://github.com/mi0bot/OpenHPSDR-Thetis/releases"); break;
                 case 11: Common.OpenUri("https://github.com/TAPR/OpenHPSDR-wdsp"); break;
                 case 12: Common.OpenUri("https://www.oe3ide.com/wp/software/"); break;
+                case 13: break; // splitter
+                case 14: Common.OpenUri($"file://{_exe_path}Thetis manual.pdf", false); break;
+                case 15: Common.OpenUri($"file://{_exe_path}Thetis-CAT-Command-Reference-Guide-V3.pdf", false); break;
+                case 16: Common.OpenUri($"file://{_exe_path}PureSignal.pdf", false); break;
+                case 17: Common.OpenUri($"file://{_exe_path}Midi2Cat_Instructions_V3.pdf", false); break;
+                case 18: Common.OpenUri($"file://{_exe_path}cmASIO Guide.pdf", false); break;
+                case 19: Common.OpenUri($"file://{_exe_path}BehringerMods_Midi2Cat_v2.pdf", false); break;
             }
 
             lstLinks.ClearSelected();

@@ -1060,7 +1060,7 @@ namespace Thetis
                     m_frmBandStack2.IgnoreDupeHandlers += OnIgnoreDupes;
                     m_frmBandStack2.HideOnSelectHandlers += OnHideOnSelect;
                     m_frmBandStack2.ShowInSpectrumHandlers += OnShowInSpectrum;
-                    m_frmBandStack2.InitForm(); // perform init after all handlers attached
+                    m_frmBandStack2.InitForm(this); // perform init after all handlers attached
                 }
                 return m_frmBandStack2;
             }
@@ -45888,6 +45888,8 @@ namespace Thetis
                 BandStack2Form.IgnoreDupeHandlers -= OnIgnoreDupes;
                 BandStack2Form.HideOnSelectHandlers -= OnHideOnSelect;
                 BandStack2Form.ShowInSpectrumHandlers -= OnShowInSpectrum;
+
+                m_frmBandStack2.RemoveDelegates();
             }
 
             Display.RemoveDelegates();

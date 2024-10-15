@@ -4384,7 +4384,7 @@ namespace Thetis
 
             private int _fadeValue;
             private bool _disabled;
-            private bool _mox;
+            private bool _mox_fade_toggle;
 
             //private Guid[] _mmio_guid;
             //private string[] _mmio_variable;
@@ -4436,7 +4436,7 @@ namespace Thetis
                 _updateStopwatch = new Stopwatch();
                 _fadeValue = 255;
                 _disabled = false;
-                _mox = false;
+                _mox_fade_toggle = false;
                 _visible = true;
 
                 //_mmio_guid = new Guid[10];
@@ -4494,10 +4494,11 @@ namespace Thetis
                 get { return _mmio_variable_index; }
                 set { _mmio_variable_index = value; }
             }
-            public bool MOX
+            public bool MOXFadeToggle
             {
-                get { return _mox; }
-                set { _mox = value; }
+                // this is used by the fading system, use meter container for MOX state
+                get { return _mox_fade_toggle; }
+                set { _mox_fade_toggle = value; }
             }
             public int FadeValue //[2.10.1.0] MW0LGE used for on rx/tx fading
             {
@@ -5166,8 +5167,8 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
-                if (FadeOnRx && !MOX) return;
-                if (FadeOnTx && MOX) return;
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
 
                 if (_console == null) return;
 
@@ -5394,8 +5395,8 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
-                if (FadeOnRx && !MOX) return;
-                if (FadeOnTx && MOX) return;
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
 
                 if (_console == null) return;
 
@@ -5675,8 +5676,8 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
-                if (FadeOnRx && !MOX) return;
-                if (FadeOnTx && MOX) return;
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
 
                 if (_console == null) return;
                 if (_console.IsSetupFormNull) return;
@@ -5883,8 +5884,8 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
-                if (FadeOnRx && !MOX) return;
-                if (FadeOnTx && MOX) return;
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
 
                 if (_console == null) return;
                 int index = base.ButtonIndex;
@@ -6247,8 +6248,8 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
-                if (FadeOnRx && !MOX) return;
-                if (FadeOnTx && MOX) return;
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
 
                 if (_console == null) return;
                 int index = base.ButtonIndex;
@@ -20515,10 +20516,10 @@ namespace Thetis
                 bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
                 if (!do_cover_fade && (led.PanelBackColour1 != led.PanelBackColour2))
                 {
-                    if (m.MOX != mi.MOX)
+                    if (m.MOX != mi.MOXFadeToggle)
                     {
                         mi.FadeValue = 48;
-                        mi.MOX = m.MOX;
+                        mi.MOXFadeToggle = m.MOX;
                     }
                     else
                     {
@@ -20640,10 +20641,10 @@ namespace Thetis
                 bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
                 if (!do_cover_fade && (text_overlay.PanelBackColour1 != text_overlay.PanelBackColour2))
                 {
-                    if (m.MOX != mi.MOX)
+                    if (m.MOX != mi.MOXFadeToggle)
                     {
                         mi.FadeValue = 48;
-                        mi.MOX = m.MOX;
+                        mi.MOXFadeToggle = m.MOX;
                     }
                     else
                     {
@@ -20708,10 +20709,10 @@ namespace Thetis
                 bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
                 if (!do_cover_fade)
                 {
-                    if (m.MOX != mi.MOX)
+                    if (m.MOX != mi.MOXFadeToggle)
                     {
                         mi.FadeValue = 48;
-                        mi.MOX = m.MOX;
+                        mi.MOXFadeToggle = m.MOX;
                     }
                     else
                     {
@@ -20937,10 +20938,10 @@ namespace Thetis
                 bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
                 if (!do_cover_fade && (spacer.Colour1 != spacer.Colour2))
                 {
-                    if (m.MOX != mi.MOX)
+                    if (m.MOX != mi.MOXFadeToggle)
                     {
                         mi.FadeValue = 48;
-                        mi.MOX = m.MOX;
+                        mi.MOXFadeToggle = m.MOX;
                     }
                     else
                     {
@@ -20971,10 +20972,10 @@ namespace Thetis
                 bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
                 if (!do_cover_fade)
                 {
-                    if (m.MOX != mi.MOX)
+                    if (m.MOX != mi.MOXFadeToggle)
                     {
                         mi.FadeValue = 48;
-                        mi.MOX = m.MOX;
+                        mi.MOXFadeToggle = m.MOX;
                     }
                     else
                     {

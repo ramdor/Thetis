@@ -31214,7 +31214,7 @@ namespace Thetis
         public void SetupCMAsio(bool pa_issue, bool cmasio_config_flag)
         {
             // for these callsigns always show cmasio tab
-            List<string> callsign_ignore = new List<string>() { "mw0lge", "m0lge", "oe3ide" };
+            List<string> callsign_ignore = new List<string>() { "mw0lge", "m0lge", "oe3ide", "w2pa" };
 
             bool ignore = false;
             foreach (string call in callsign_ignore)
