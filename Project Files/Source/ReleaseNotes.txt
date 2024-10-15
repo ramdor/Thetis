@@ -9,8 +9,11 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 ## v2.10.3.7 Change Log
 - [add] added OE3IDE Connectors and Tools link to the about box links
 - [change] moved release notes button from setup to the about box
+- [change] skin images are resized to button/panel/slider etc instead of relying on tile property
 - [fix] variables that have name with _double now consider %precis=N%
 - [fix] resolved issue where redraw of console controls became very slow after 8thOct Windows update
+- [fix] button boxes filter/antenna would not save columns correctly
+- [fix] fade on rx and fade on tx fixed for button boxes
 
 ## v2.10.3.6 Main New Features
 - database manager

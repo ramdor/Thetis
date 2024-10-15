@@ -5425,7 +5425,7 @@ namespace Thetis
 
                 ItemType = MeterItemType.ANTENNA_BUTTONS;
 
-                base.Buttons = 10;
+                Buttons = 10;
                 VisibleBits = (1 << 10) - 1; //1023, 10 bits
             }
             public override int VisibleBits
@@ -16909,6 +16909,9 @@ namespace Thetis
                                             igs.FontFamily1 = bb.GetFontFamily(0, 0);
                                             igs.FontSize1 = bb.GetFontSize(0, 0);
                                             igs.FontStyle1 = bb.GetFontStyle(0, 0);
+
+                                            igs.FadeOnRx = bb.FadeOnRx;
+                                            igs.FadeOnTx = bb.FadeOnTx;
                                         }
                                     }
                                     break;

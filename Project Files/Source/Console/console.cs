@@ -41,7 +41,6 @@ namespace Thetis
 {
     using RawInput_dll;
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Data;
     using System.Diagnostics;
@@ -62,7 +61,6 @@ namespace Thetis
     using System.Windows.Forms;
     using System.Xml.Linq;
     using System.Collections.Concurrent;
-    using System.Security.Policy;
 
     public partial class Console : Form
     {
