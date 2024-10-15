@@ -216,7 +216,8 @@ namespace Thetis
                     if (development_version < 0 || (development_version == 0 && different_dev_build))
                     {
                         string build = string.IsNullOrEmpty(_versionInfo.DevelopmentBuild) ? "" : $" {_versionInfo.DevelopmentBuild}";
-                        btnUpdatedRelease.Text = $"Dev version [{_versionInfo.DevelopmentVersion}{build}]\n{_versionInfo.DevelopmentName}\nClick to view on GitHub";
+                        string where = _versionInfo.DevelopmentURL != null && _versionInfo.DevelopmentURL.Contains("discord", StringComparison.OrdinalIgnoreCase) ? "Discord" : "GitHub";
+                        btnUpdatedRelease.Text = $"Dev version [{_versionInfo.DevelopmentVersion}{build}]\n{_versionInfo.DevelopmentName}\nClick to view on {where}";
                         btnUpdatedRelease.Tag = _versionInfo.DevelopmentURL;
                         btnUpdatedRelease.Visible = true;
                         _update_available = true;
