@@ -66,6 +66,8 @@ namespace Thetis
 
     public partial class Console : Form
     {
+        public const bool CHECK_DEV_VERSION = true; // this will check github for dev versions, set to false when performing a release
+
         public const int MAX_FPS = 360;
 
         #region Variable Declarations
@@ -1427,7 +1429,7 @@ namespace Thetis
 
         private void InitConsole()
         {
-            _frmAbout = new frmAbout(this);
+            _frmAbout = new frmAbout(this, CHECK_DEV_VERSION);
             m_frmNotchPopup = new frmNotchPopup();
             m_frmSeqLog = new frmSeqLog();
             _frmFinder = new frmFinder();

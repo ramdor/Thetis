@@ -57,8 +57,9 @@ namespace Thetis
         private string _build;
         private bool _update_available;
         private Console _console;
+        private bool _check_dev_version;
 
-        public frmAbout(Console console)
+        public frmAbout(Console console, bool check_dev_version)
         {
             InitializeComponent();
 
@@ -67,6 +68,7 @@ namespace Thetis
             _versionInfo = null;
             _version = "";
             _build = "";
+            _check_dev_version = check_dev_version;
 
             btnVisit.Enabled = false;
             btnUpdatedRelease.Visible = false;
@@ -206,7 +208,7 @@ namespace Thetis
                     btnUpdatedRelease.Visible = true;
                     _update_available = true;
                 }
-                else
+                else if(_check_dev_version)
                 {
                     // check development
                     int development_version = Common.CompareVersions(_version, _versionInfo.DevelopmentVersion);
