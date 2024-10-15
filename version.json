@@ -3,8 +3,8 @@
     "ReleaseBuild": "",
     "ReleaseURL": "https://github.com/ramdor/Thetis/releases/tag/v2.10.3.6",
     "ReleaseName": "Latest Release",
-    "DevelopmentVersion": "2.10.3.6",
-    "DevelopmentBuild": "",
-    "DevelopmentURL": "https://github.com/ramdor/Thetis/releases/tag/v2.10.3.6",
-    "DevelopmentName": "Latest Release"
+    "DevelopmentVersion": "2.10.3.7",
+    "DevelopmentBuild": "dev4",
+    "DevelopmentURL": "https://discord.com/channels/1271453528656969789/1273368382753996914/1295709576217231390",
+    "DevelopmentName": "Discord Test Version"
 }
