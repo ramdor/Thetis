@@ -5166,10 +5166,15 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
+                if (FadeOnRx && !MOX) return;
+                if (FadeOnTx && MOX) return;
+
+                if (_console == null) return;
+
                 int index = base.ButtonIndex;
                 if (index == -1) return;
 
-                if(e.Button == MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     if (_console != null)
                     {
@@ -5389,6 +5394,9 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
+                if (FadeOnRx && !MOX) return;
+                if (FadeOnTx && MOX) return;
+
                 if (_console == null) return;
 
                 int index = base.ButtonIndex;
@@ -5667,6 +5675,9 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
+                if (FadeOnRx && !MOX) return;
+                if (FadeOnTx && MOX) return;
+
                 if (_console == null) return;
                 if (_console.IsSetupFormNull) return;
 
@@ -5872,6 +5883,10 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
+                if (FadeOnRx && !MOX) return;
+                if (FadeOnTx && MOX) return;
+
+                if (_console == null) return;
                 int index = base.ButtonIndex;
                 if (index == -1) return;
 
@@ -6232,6 +6247,10 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
+                if (FadeOnRx && !MOX) return;
+                if (FadeOnTx && MOX) return;
+
+                if (_console == null) return;
                 int index = base.ButtonIndex;
                 if (index == -1) return;
 
@@ -7148,6 +7167,7 @@ namespace Thetis
             public override void MouseWheel(int number_of_moves)
             {
                 if (!MouseEntered) return;
+                if (_console == null) return;
 
                 int sign = Math.Sign(number_of_moves);
 
@@ -7192,6 +7212,7 @@ namespace Thetis
             public override void MouseUp(MouseEventArgs e)
             {
                 if (!MouseEntered) return;
+                if (_console == null) return;
 
                 switch (_mouse_over_vfoB ? _render_button_vfoB : _render_button_vfoA) // in mouse up, as dont get mouseclicks when we mash the button
                 {
@@ -8575,11 +8596,6 @@ namespace Thetis
 
             private Guid _data_out_mmio_guid;
 
-            //private PointF _mouseDownPoint;
-            //private PointF _mouseUpPoint;
-            //private PointF _mouseMovePoint;
-            //private bool _mouseDown;
-
             private bool _alow_control;
             private string _control_string_AZ;
             private string _control_string_ELE;
@@ -8618,11 +8634,6 @@ namespace Thetis
                 _padding = 0.5f;
 
                 _data_out_mmio_guid = Guid.Empty;
-
-                //_mouseDownPoint = new PointF(0, 0);
-                //_mouseUpPoint = new PointF(0, 0);
-                //_mouseMovePoint = new PointF(0, 0);
-                //_mouseDown = false;
 
                 _big_blob_colour = System.Drawing.Color.Red;
                 _small_blob_colour = System.Drawing.Color.White;
@@ -8709,26 +8720,6 @@ namespace Thetis
                     mmio.EnqueueOutbound(data);
                 }
             }
-            //public bool MouseDown
-            //{
-            //    get { return _mouseDown; }
-            //    set { _mouseDown = value; }
-            //}
-            //public PointF MouseDownPoint
-            //{
-            //    get { return _mouseDownPoint; }
-            //    set { _mouseDownPoint = value; }
-            //}
-            //public PointF MouseUpPoint
-            //{
-            //    get { return _mouseUpPoint; }
-            //    set { _mouseUpPoint = value; }
-            //}
-            //public PointF MouseMovePoint
-            //{
-            //    get { return _mouseMovePoint; }
-            //    set { _mouseMovePoint = value; }
-            //}
             public string ImageName
             {
                 get
