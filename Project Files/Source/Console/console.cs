@@ -103,7 +103,7 @@ namespace Thetis
         private bool calibration_running = false;
         private bool displaydidit = false;
         public Mutex calibration_mutex = new Mutex();
-        
+
         private Setup m_frmSetupForm;
         private readonly Object m_objSetupFormLocker = new Object();
 
@@ -750,7 +750,7 @@ namespace Thetis
             bool ok = DBMan.LoadDB(args, out string broken_folder);
             if (!ok)
             {
-                if(string.IsNullOrEmpty(broken_folder))
+                if (string.IsNullOrEmpty(broken_folder))
                     MessageBox.Show($"There was an issue loading the database.", "Database Issue", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 else
                     MessageBox.Show($"There was an issue loading the database. The database has been moved to [{AppDataPath}DB\\broken\\{broken_folder}].", "Database Issue", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -761,7 +761,7 @@ namespace Thetis
             }
 
             Splash.SetStatus("Initializing Hardware");			// Set progress point
-            InitCTCSS();            
+            InitCTCSS();
 
             //TODO !!!!!!!!!!!!!!
             bool RX2Enabled = false;
@@ -1342,7 +1342,7 @@ namespace Thetis
         //MW0LGE_21g
         public string VersionWithoutFW
         {
-            get 
+            get
             {
                 //[2.10.3.6]MW0LGE changed to use invoke if needed as CATTCPIPserver uses this from another thread
                 if (this.InvokeRequired)
@@ -3014,7 +3014,7 @@ namespace Thetis
             a.Add("console_state/" + ((int)this.WindowState).ToString()); //MW0LGE_21 window state
 
             if (SetupForm.WindowState != FormWindowState.Minimized)//[2.10.3.6]MW0LGE prevent garbage being stored if shutdown when minimsed
-            { 
+            {
                 a.Add("setup_top/" + SetupForm.Top.ToString());
                 a.Add("setup_left/" + SetupForm.Left.ToString());
             }
@@ -10541,6 +10541,7 @@ namespace Thetis
 
         private bool _setFromOtherAttenuator = false; // used to prevent other attenuator from re-setting the caller
         private int rx1_attenuator_data = 0;
+        private int _sa_rx1_last_adjust = 0;
         public int RX1AttenuatorData
         {
             get { return rx1_attenuator_data; }
@@ -10549,7 +10550,7 @@ namespace Thetis
                 int oldData = rx1_attenuator_data;
                 rx1_attenuator_data = value;
                 if (initializing) return;
-
+                
                 if (alexpresent &&
                     current_hpsdr_model != HPSDRModel.ANAN10 &&
                     current_hpsdr_model != HPSDRModel.ANAN10E &&
@@ -10803,7 +10804,7 @@ namespace Thetis
                 txtWheelTune.Text = tune_step_list[tune_step_index].Name;
                 lblStepValue.Text = txtWheelTune.Text;
 
-                if(old_index != tune_step_index)
+                if (old_index != tune_step_index)
                 {
                     TuneStepIndexChangedHandlers?.Invoke(1, old_index, tune_step_index);
                     TuneStepIndexChangedHandlers?.Invoke(2, old_index, tune_step_index);
@@ -14712,7 +14713,7 @@ namespace Thetis
             {
                 bool old_state = vfoA_lock;
                 //bool enabled = true;
-                vfoA_lock = value;
+                vfoA_lock = value;                
                 //switch (vfoA_lock)
                 //{
                 //    case false:
@@ -14785,7 +14786,7 @@ namespace Thetis
                 //[2.3.10.6]MW0LGE whoever did the commented code above needs to step away from the computer, how about if else????
                 bool enabled = !vfoB_lock;
                 txtVFOBFreq.Enabled = enabled;
-                if(vfoB_lock) chkVFOSync.Checked = false;
+                if (vfoB_lock) chkVFOSync.Checked = false;
 
                 comboRX2Band.Enabled = enabled;
                 btnVFOAtoB.Enabled = enabled;
@@ -14808,7 +14809,7 @@ namespace Thetis
                 if (vfoB_lock)
                     lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
                 else
-                    lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;                
+                    lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;
 
                 AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, false, vfoB_lock); // <- this use of false is totally wrong, because if RX2 is in use, then lock B is RX2.
                                                                                          // I just cba to fix it, as this sort of thing keeps being done. -LGE
@@ -17789,7 +17790,7 @@ namespace Thetis
 
         static double freqFromString(string s)
         {
-            if(double.TryParse(s, out double f))
+            if (double.TryParse(s, out double f))
             {
                 return f;
             }
@@ -18543,6 +18544,7 @@ namespace Thetis
             get { return m_bAttontx; }
             set
             {
+                if (!value && _auto_attTX_when_not_in_ps) return; // ignore in this case
                 m_bAttontx = value;
                 updateAttNudsCombos();
 
@@ -20483,11 +20485,6 @@ namespace Thetis
             m_frmSeqLog.BringToFront();
         }
 
-        private int HaveSync = 1;
-        private int change_overload_color_count = 0;
-        private int oload_select = 0;                   // selection of which overload to display this time
-        private const int num_oloads = 2;               // number of possible overload displays        
-
         private float _avNumRX1 = -200;
         private float _avNumRX2 = -200;
 
@@ -20607,8 +20604,455 @@ namespace Thetis
             rx_dBHz = 10 * Math.Log10((double)passbandWidth);//MW0LGE_22b
             rbw_dBHz = 10 * Math.Log10(dRWB);
         }
+        private class HistoricAttenuatorReading
+        {
+            public int stepAttenuator = -1;
+            public PreampMode preampMode = PreampMode.FIRST;
+        }
+        private bool _have_sync = false;
+        private bool _had_radio_sync = false;
+        private int[] _adc_overload_level = new int[3] { 0, 0, 0 }; // increases by one each cycle to max of 10
+        private bool[] _adc_overloaded = new bool[3] { false, false, false };
+        private int[] _adc_step_shift = new int[3] { 0, 0, 0 }; // from 0 to 31, which will get applied to any att
+        private Stack<HistoricAttenuatorReading> _historic_attenuator_readings_rx1 = new Stack<HistoricAttenuatorReading>();
+        private Stack<HistoricAttenuatorReading> _historic_attenuator_readings_rx2 = new Stack<HistoricAttenuatorReading>();
+        private Stack<HistoricAttenuatorReading> _historic_attenuator_readings_tx = new Stack<HistoricAttenuatorReading>();       
+        private bool _auto_attTX_when_not_in_ps = false;
+        private bool _auto_undoTXatt = false;
+        private bool _auto_attTX_rx1 = false;
+        private bool _auto_attTX_rx2 = false;
+        private bool _auto_att_undo_rx1 = false;
+        private bool _auto_att_undo_rx2 = false;
+        private int _auto_att_hold_delay_rx1 = 5;
+        private int _auto_att_hold_delay_rx2 = 5;
+        private DateTime _auto_att_last_hold_time_rx1 = DateTime.Now;
+        private DateTime _auto_att_last_hold_time_rx2 = DateTime.Now;
+        public bool AutoAttRX1
+        {
+            get { return _auto_attTX_rx1; }
+            set { _auto_attTX_rx1 = value; }
+        }
+        public bool AutoAttUndoRX1
+        {
+            get { return _auto_att_undo_rx1; }
+            set { _auto_att_undo_rx1 = value; }
+        }
+        public int AutoAttUndoDelayRX1
+        {
+            get { return _auto_att_hold_delay_rx1; }
+            set { _auto_att_hold_delay_rx1 = value; }
+        }
+        public bool AutoAttRX2
+        {
+            get { return _auto_attTX_rx2; }
+            set { _auto_attTX_rx2 = value; }
+        }
+        public bool AutoAttUndoRX2
+        {
+            get { return _auto_att_undo_rx2; }
+            set { _auto_att_undo_rx2 = value; }
+        }
+        public int AutoAttUndoDelayRX2
+        {
+            get { return _auto_att_hold_delay_rx2; }
+            set { _auto_att_hold_delay_rx2 = value; }
+        }
+        public bool HaveSync
+        {
+            get 
+            {
+                return _have_sync;
+            }
+            set 
+            {
+                _have_sync = value;
+            }
+        }
+        public bool AutoAttTXWhenNotInPS
+        {
+            get { return _auto_attTX_when_not_in_ps; }
+            set 
+            { 
+                _auto_attTX_when_not_in_ps = value;
+                if (_auto_attTX_when_not_in_ps && !ATTOnTX) ATTOnTX = true;
+
+                //check setup if we are turning this off
+                if (!_auto_attTX_when_not_in_ps && !IsSetupFormNull)
+                {
+                    if (ATTOnTX && !SetupForm.ATTOnTXChecked) ATTOnTX = false;
+                }
+            }
+        }
+        public bool UndoAutoATttTX
+        {
+            get { return _auto_undoTXatt; }
+            set { _auto_undoTXatt = value; }
+        }
+        private async void checkOverloadsAndSync()
+        {
+            string sWarning = "";
+            bool red_warning = false;
+            bool overload_only = true;
+
+            _have_sync = NetworkIO.getHaveSync() == 1;
+            if (!_have_sync)
+            {
+                // set ui to power off if lost connection to radio
+                if (chkPower.Checked) chkPower.Checked = false;
+                if (_had_radio_sync)
+                {
+                    sWarning = "Lost Radio Sync   ";
+                    _had_radio_sync = false;
+                    overload_only = false;
+                }
+            }
+            else if (!_had_radio_sync) _had_radio_sync = true;
+
+            // check for amp overload
+            bool amp_oload = amp_protect && cmaster.GetAndResetAmpProtect(0) == 1;
+            if (amp_oload)
+            {
+                ptbPWR.Value -= 2;
+                ptbPWR_Scroll(this, EventArgs.Empty);
+                await Task.Delay(100);
+                cmaster.GetAndResetAmpProtect(0);
+
+                sWarning += "AMP Overload  ";
+                overload_only = false;
+            }
+
+            string[] adc_names = { "ADC0", "ADC1", "ADC2" }; // adc2 not used for anything atm, but here for completeness
+
+            int adc_oload_num = NetworkIO.getAndResetADC_Overload();
+
+            /*
+                    overload adc_oload_num
+            | adc[0] | adc[1] | adc[2] |          |
+            |--------|--------|--------|----------|
+            |   0    |   0    |   0    |    0     |
+            |   1    |   0    |   0    |    1     |
+            |   0    |   1    |   0    |    2     |
+            |   1    |   1    |   0    |    3     |
+            |   0    |   0    |   1    |    4     |
+            |   1    |   0    |   1    |    5     |
+            |   0    |   1    |   1    |    6     |
+            |   1    |   1    |   1    |    7     |
+            */
+
+            for (int i = 0; i < 3; i++)
+            {
+                _adc_overloaded[i] = ((adc_oload_num >> i) & 1) != 0;
+
+                if (_adc_overloaded[i])
+                {
+                    _adc_overload_level[i] += 2;
+                    if (_adc_overload_level[i] > 5)
+                        _adc_overload_level[i] = 5;
+
+                    red_warning = _adc_overload_level[i] >= 3; // turn red
+                }
+                else
+                {
+                    if(_adc_overload_level[i] > 0) _adc_overload_level[i]--;
+                }
+
+                if (_adc_overload_level[i] > 0)
+                {
+                    sWarning += $"{adc_names[i]} Overload   ";
+                }
+            }
+
+            // set the adc warning
+            if (!string.IsNullOrEmpty(sWarning)) 
+            {
+                sWarning = sWarning.Trim();
+                infoBar.Warning(sWarning, red_warning, overload_only ? peak_text_delay + 200 : 2000);
+            }
+
+            //adjust s-att offset
+            handleOverload();
+        }
+        private void handleOverload()
+        {
+            if (!(current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||  // ignore if any other radio
+                            current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K)) return;
+            
+            for (int i = 0; i < 3; i++)
+            {
+                if (_adc_overloaded[i])
+                {
+                    _adc_step_shift[i] += 1;// _adc_overload_level[i]; // shift increases depending on how many overloads have happened
+                    if (_adc_step_shift[i] > 31) _adc_step_shift[i] = 31;
+                }
+                else
+                {
+                    if (_adc_step_shift[i] > 0) _adc_step_shift[i]--;
+                }
+            }
+
+            // deal with TX when not in PS-AUTO
+            if (_auto_attTX_when_not_in_ps)
+            {
+                if (psform != null && !psform.AutoCalEnabled)
+                {
+                    if (_mox)
+                    {
+                        if (_adc_overloaded[0]) // always adc0 when in tx
+                        {
+                            HistoricAttenuatorReading har = new HistoricAttenuatorReading();
+                            har.stepAttenuator = TxAttenData;
+
+                            int att = har.stepAttenuator + _adc_step_shift[0];
+                            if (att > 31) att = 31;
+
+                            if (att != har.stepAttenuator)
+                            {
+                                if (!ATTOnTX) ATTOnTX = true;
+                                TxAttenData = att;
+                                _historic_attenuator_readings_tx.Push(har);
+                            }
+                        }
+                    }
+                    else if (_historic_attenuator_readings_tx.Any())
+                    {
+                        // no overload, unwind
+                        HistoricAttenuatorReading har = _historic_attenuator_readings_tx.Pop();
+                        if (_auto_undoTXatt && har != null && har.stepAttenuator != TxAttenData)
+                        {
+                            TxAttenData = har.stepAttenuator;
+                        }
+                    }
+                }
+                else
+                    _historic_attenuator_readings_tx.Clear();
+            }
+
+            if (!_mox)
+            {
+                // deal with rx
+                int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
+                int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
+                int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
+                DateTime now = DateTime.Now;
+
+                if (_auto_attTX_rx1)
+                {
+                    // rx1
+                    if ((_adc_overloaded[0] && nRX1ADCinUse == 0) || (_adc_overloaded[1] && nRX1ADCinUse == 1)) // rx1 overload
+                    {
+                        HistoricAttenuatorReading har = new HistoricAttenuatorReading();
+                        if (RX1StepAttPresent)
+                        {
+                            har.stepAttenuator = RX1AttenuatorData;
+
+                            int att = har.stepAttenuator + (_adc_overloaded[0] ? _adc_step_shift[0] : _adc_step_shift[1]);
+                            if (att > 31) att = 31;
+
+                            if (att != har.stepAttenuator)
+                            {
+                                RX1AttenuatorData = att;
+                                _auto_att_last_hold_time_rx1 = now;
+                                _historic_attenuator_readings_rx1.Push(har);
+                            }
+                        }
+                        else
+                        {
+                            har.preampMode = RX1PreampMode;
+
+                            PreampMode pam = har.preampMode;
+                            switch (pam)
+                            {
+                                case PreampMode.HPSDR_OFF:
+                                case PreampMode.HPSDR_ON:
+                                    pam = PreampMode.SA_MINUS10;
+                                    break;
+                                case PreampMode.SA_MINUS10:
+                                    pam = PreampMode.SA_MINUS20;
+                                    break;
+                                case PreampMode.SA_MINUS20:
+                                    pam = PreampMode.SA_MINUS30;
+                                    break;
+                            }
+                            if (pam != har.preampMode)
+                            {
+                                RX1PreampMode = pam;
+                                _auto_att_last_hold_time_rx1 = now;
+                                _historic_attenuator_readings_rx1.Push(har);
+                            }
+                        }
+                    }
+                    else if ((nRX1ADCinUse == 0 || nRX1ADCinUse == 1) && _historic_attenuator_readings_rx1.Any()) // no overload rx1
+                    {
+                        if (!_auto_att_undo_rx1 || (_auto_att_undo_rx1 && ((now - _auto_att_last_hold_time_rx1).TotalSeconds > _auto_att_hold_delay_rx1)))
+                        {
+                            // unwind
+                            HistoricAttenuatorReading har = _historic_attenuator_readings_rx1.Pop();
+                            if (har != null && _auto_att_undo_rx1)
+                            {
+                                if (RX1StepAttPresent && har.stepAttenuator != -1)
+                                {
+                                    if (har.stepAttenuator != RX1AttenuatorData) RX1AttenuatorData = har.stepAttenuator;
+                                }
+                                else if (har.preampMode != PreampMode.FIRST)
+                                {
+                                    if (har.preampMode != RX1PreampMode) RX1PreampMode = har.preampMode;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (_auto_attTX_rx2)
+                {
+                    // rx2
+                    if ((_adc_overloaded[0] && nRX2ADCinUse == 0) || (_adc_overloaded[1] && nRX2ADCinUse == 1)) // rx2 overload
+                    {
+                        HistoricAttenuatorReading har = new HistoricAttenuatorReading();
+                        if (RX2StepAttPresent)
+                        {
+                            har.stepAttenuator = RX2AttenuatorData;                            
+
+                            int att = har.stepAttenuator + (_adc_overloaded[0] ? _adc_step_shift[0] : _adc_step_shift[1]);
+                            if (att > 31) att = 31;
+
+                            if (att != har.stepAttenuator)
+                            {
+                                RX2AttenuatorData = att;
+                                _auto_att_last_hold_time_rx2 = now;
+                                _historic_attenuator_readings_rx2.Push(har);
+                            }
+                        }
+                        else
+                        {
+                            har.preampMode = RX2PreampMode;
+
+                            PreampMode pam = har.preampMode;
+                            switch (pam)
+                            {
+                                case PreampMode.HPSDR_OFF:
+                                case PreampMode.HPSDR_ON:
+                                    pam = PreampMode.SA_MINUS10;
+                                    break;
+                                case PreampMode.SA_MINUS10:
+                                    pam = PreampMode.SA_MINUS20;
+                                    break;
+                                case PreampMode.SA_MINUS20:
+                                    pam = PreampMode.SA_MINUS30;
+                                    break;
+                            }
+                            if (pam != har.preampMode)
+                            {
+                                RX2PreampMode = pam;
+                               _auto_att_last_hold_time_rx2 = now;
+                                _historic_attenuator_readings_rx2.Push(har);
+                            }
+                        }
+                    }
+                    else if ((nRX2ADCinUse == 0 || nRX2ADCinUse == 1) && _historic_attenuator_readings_rx2.Any()) // no overload rx2
+                    {
+                        if (!_auto_att_undo_rx2 || (_auto_att_undo_rx2 && ((now - _auto_att_last_hold_time_rx2).TotalSeconds > _auto_att_hold_delay_rx2)))
+                        {
+                            // unwind
+                            HistoricAttenuatorReading har = _historic_attenuator_readings_rx2.Pop();
+                            if (har != null && _auto_att_undo_rx2)
+                            {
+                                if (RX2StepAttPresent && har.stepAttenuator != -1)
+                                {
+                                    if (har.stepAttenuator != RX2AttenuatorData) RX2AttenuatorData = har.stepAttenuator;
+                                }
+                                else if (har.preampMode != PreampMode.FIRST)
+                                {
+                                    if (har.preampMode != RX2PreampMode) RX2PreampMode = har.preampMode;
+                                }
+                            }
+                        }
+                    }
+                }
+            }            
+        }
+        private void checkSeqErrors()
+        {
+            int ooo = NetworkIO.getOOO(); //Out Of Order packet
+            if (ooo > 0)
+            {
+                //MW0LGE
+                string s = "";
+                if (isBitSet(ooo, 0)) s += "CC ";
+                if (isBitSet(ooo, 1)) s += "DDC0 ";
+                if (isBitSet(ooo, 2)) s += "DDC1 ";
+                if (isBitSet(ooo, 3)) s += "DDC2 ";
+                if (isBitSet(ooo, 4)) s += "DDC3 ";
+                if (isBitSet(ooo, 5)) s += "DDC4 ";
+                if (isBitSet(ooo, 6)) s += "DDC5 ";
+                if (isBitSet(ooo, 7)) s += "DDC6 ";
+                if (isBitSet(ooo, 8)) s += "Mic ";
+
+                int[] nSeqLogData = new int[40]; //MAX_IN_SEQ_LOG
+                StringBuilder sDateTimeStamp = new StringBuilder(24); // same size as dateTimeStamp in network.h
+
+                bool bNegative = false;
+                bool bDCCSeqErrors = false;
+                for (int nDCC = 0; nDCC < 7; nDCC++)
+                {
+                    if (isBitSet(ooo, nDCC + 1))
+                    {
+                        bDCCSeqErrors = true;
+                        string ss = "DCC" + nDCC.ToString() + System.Environment.NewLine;
+
+                        int n = 0;
+                        bool bInit = true;
+                        uint rec_seq;
+                        uint last_seq;
+                        while (NetworkIO.getSeqInDelta(bInit, nDCC, nSeqLogData, sDateTimeStamp, out rec_seq, out last_seq))
+                        {
+                            bInit = false;
+                            ss += "s" + n.ToString() + "=";
+                            for (int ff = 0; ff < nSeqLogData.Length; ff++)
+                            {
+                                ss += nSeqLogData[ff].ToString() + " ";
+                                if (nSeqLogData[ff] < 0) bNegative = true;// there have been negative packets, these are out of order, important !
+                            }
+                            ss += " r:" + rec_seq.ToString() + " l:" + last_seq.ToString() + " " + sDateTimeStamp.ToString() + System.Environment.NewLine;
+                            n++;
+                        }
+                        m_frmSeqLog.LogString(ss);
+                    }
+                }
+
+                if (bDCCSeqErrors)
+                {
+                    bool bShow = true;
+                    if (bNegative)
+                    {
+                        toolStripStatusLabel_SeqWarning.BackColor = Color.Red;
+                        DumpCap.StopDumpcap();
+                    }
+                    else
+                    {
+                        toolStripStatusLabel_SeqWarning.BackColor = Color.Transparent;
+                        if (!DumpCap.KillOnNegativeSeqOnly) DumpCap.StopDumpcap();
+                        bShow = !m_frmSeqLog.StatusBarWarningOnNegativeOnly;
+                    }
+
+                    DumpCap.StartDumpcap(2000);
+
+                    toolStripStatusLabel_SeqWarning.Visible = bShow;
+                }
+
+                if (_bInfoBarShowSEQErrors) infoBar.Warning("Sequence error : " + ooo.ToString() + " (" + s.Trim() + ")"); //MW0LGE_21k9c show/hide flag
+            }
+        }
         private async void UpdatePeakText()
         {
+            checkOverloadsAndSync();
+            checkSeqErrors();
+
+            if (string.IsNullOrEmpty(txtVFOAFreq.Text) ||
+                    txtVFOAFreq.Text == "." ||
+                    txtVFOAFreq.Text == ",")
+                return;
+
             bool bOverRX1 = !rx2_enabled;
             bool bOverRX2 = false;
             if (rx2_enabled)
@@ -20619,122 +21063,7 @@ namespace Thetis
                     bOverRX2 = overRX(DisplayCursorX, DisplayCursorY, 2, false);
                 }
                 if (!bOverRX1 && !bOverRX2) bOverRX1 = true;
-            }
-
-            int ooo = 0;
-            ooo = NetworkIO.getOOO();
-            HaveSync = NetworkIO.getHaveSync();
-            if (HaveSync == 0) chkPower.Checked = false;
-
-            int adc_oload_num = NetworkIO.getAndResetADC_Overload();
-            bool adc_oload = adc_oload_num > 0;
-            bool amp_oload = amp_protect && cmaster.GetAndResetAmpProtect(0) == 1;
-            if (amp_oload)
-            {
-                ptbPWR.Value -= 2;
-                ptbPWR_Scroll(this, EventArgs.Empty);
-                await Task.Delay(100);
-                cmaster.GetAndResetAmpProtect(0);
-            }
-            bool overload = adc_oload || amp_oload;
-            if (adc_oload && amp_oload) oload_select = ++oload_select % num_oloads;
-            else if (adc_oload) oload_select = 0;
-            else if (amp_oload) oload_select = 1;
-            if (overload)
-            {
-                change_overload_color_count = ++change_overload_color_count % 2;
-                switch (oload_select)
-                {
-                    case 0:
-                        if (adc_oload_num == 0)
-                            infoBar.Warning("ADC Overload !");
-                        else
-                            infoBar.Warning("ADC" + adc_oload_num.ToString() + " Overload !", change_overload_color_count);
-                        break;
-                    case 1:
-                        infoBar.Warning("AMP OVERLOAD !", change_overload_color_count);
-                        break;
-                }
-            }
-            else
-            {
-
-                change_overload_color_count = 0;
-
-                if (ooo > 0)
-                {
-                    //MW0LGE
-                    string s = "";
-                    if (isBitSet(ooo, 0)) s += "CC ";
-                    if (isBitSet(ooo, 1)) s += "DDC0 ";
-                    if (isBitSet(ooo, 2)) s += "DDC1 ";
-                    if (isBitSet(ooo, 3)) s += "DDC2 ";
-                    if (isBitSet(ooo, 4)) s += "DDC3 ";
-                    if (isBitSet(ooo, 5)) s += "DDC4 ";
-                    if (isBitSet(ooo, 6)) s += "DDC5 ";
-                    if (isBitSet(ooo, 7)) s += "DDC6 ";
-                    if (isBitSet(ooo, 8)) s += "Mic ";
-
-                    int[] nSeqLogData = new int[40]; //MAX_IN_SEQ_LOG
-                    StringBuilder sDateTimeStamp = new StringBuilder(24); // same size as dateTimeStamp in network.h
-
-                    bool bNegative = false;
-                    bool bDCCSeqErrors = false;
-                    for (int nDCC = 0; nDCC < 7; nDCC++)
-                    {
-                        if (isBitSet(ooo, nDCC + 1))
-                        {
-                            bDCCSeqErrors = true;
-                            string ss = "DCC" + nDCC.ToString() + System.Environment.NewLine;
-
-                            int n = 0;
-                            bool bInit = true;
-                            uint rec_seq;
-                            uint last_seq;
-                            while (NetworkIO.getSeqInDelta(bInit, nDCC, nSeqLogData, sDateTimeStamp, out rec_seq, out last_seq))
-                            {
-                                bInit = false;
-                                ss += "s" + n.ToString() + "=";
-                                for (int ff = 0; ff < nSeqLogData.Length; ff++)
-                                {
-                                    ss += nSeqLogData[ff].ToString() + " ";
-                                    if (nSeqLogData[ff] < 0) bNegative = true;// there have been negative packets, these are out of order, important !
-                                }
-                                ss += " r:" + rec_seq.ToString() + " l:" + last_seq.ToString() + " " + sDateTimeStamp.ToString() + System.Environment.NewLine;
-                                n++;
-                            }
-                            m_frmSeqLog.LogString(ss);
-                        }
-                    }
-
-                    if (bDCCSeqErrors)
-                    {
-                        bool bShow = true;
-                        if (bNegative)
-                        {
-                            toolStripStatusLabel_SeqWarning.BackColor = Color.Red;
-                            DumpCap.StopDumpcap();
-                        }
-                        else
-                        {
-                            toolStripStatusLabel_SeqWarning.BackColor = Color.Transparent;
-                            if (!DumpCap.KillOnNegativeSeqOnly) DumpCap.StopDumpcap();
-                            bShow = !m_frmSeqLog.StatusBarWarningOnNegativeOnly;
-                        }
-
-                        DumpCap.StartDumpcap(2000);
-
-                        toolStripStatusLabel_SeqWarning.Visible = bShow;
-                    }
-
-                    if (_bInfoBarShowSEQErrors) infoBar.Warning("Sequence error : " + ooo.ToString() + " (" + s.Trim() + ")"); //MW0LGE_21k9c show/hide flag
-                }
-            }
-
-            if (string.IsNullOrEmpty(txtVFOAFreq.Text) ||
-               txtVFOAFreq.Text == "." ||
-               txtVFOAFreq.Text == ",")
-                return;
+            }                                    
 
             // update peak value
             float x = PixelToHz(Display.MaxX);
@@ -26655,7 +26984,7 @@ namespace Thetis
                 DataFlowing = false;
                 SetupForm.TestIMD = false;
 
-                if (HaveSync == 1) //fix
+                if (HaveSync) //fix
                 {
                     WDSP.SetChannelState(WDSP.id(0, 0), 0, 1);
                     if (radio.GetDSPRX(0, 1).Active) WDSP.SetChannelState(WDSP.id(0, 1), 0, 1);
@@ -45912,7 +46241,7 @@ namespace Thetis
 
                 if (!string.IsNullOrEmpty(msg))
                 {
-                    infoBar.Warning(msg, 1, true);
+                    infoBar.Warning(msg, false, 10000);
                 }
             }
         }

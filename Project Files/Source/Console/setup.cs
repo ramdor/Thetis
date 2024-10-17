@@ -2665,6 +2665,10 @@ namespace Thetis
             //
             chkForceATTwhenPSAoff_CheckedChanged(this, e); //MW0LGE [2.9.0.7]
             chkForceATTwhenOutPowerChanges_CheckedChanged(this, e);
+            chkAutoATTTXPsOff_CheckedChanged(this, e);
+            chkUndoAutoATTTx_CheckedChanged(this, e);
+            chkAutoATTRx1_CheckedChanged(this, e);
+            chkAutoATTRx2_CheckedChanged(this, e);
 
             //options1 tab
             chkPurgeBuffers_CheckedChanged(this, e);
@@ -31327,8 +31331,85 @@ namespace Thetis
 
         private void tcCAT_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             if (tcCAT.SelectedTab == tpMultiMetersIO)
                 updateVariableList();
+        }
+
+        private void chkAutoATTTXPsOff_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.AutoAttTXWhenNotInPS = chkAutoATTTXPsOff.Checked;
+            chkUndoAutoATTTx.Enabled = chkAutoATTTXPsOff.Checked;
+        }
+
+        private void chkUndoAutoATTTx_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.UndoAutoATttTX = chkUndoAutoATTTx.Checked;
+        }
+
+        private void chkAutoATTRx1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupAttRX1Controls(1);
+            console.AutoAttRX1 = chkAutoATTRx1.Checked;
+            chkAutoAttUndoRX1_CheckedChanged(this, EventArgs.Empty);
+        }
+        private void setupAttRX1Controls(int rx)
+        {
+            bool enabled;
+            if(rx==1)
+                enabled = chkAutoATTRx1.Checked;
+            else
+                enabled = chkAutoATTRx2.Checked;
+
+            if (rx == 1)
+            {
+                chkAutoAttUndoRX1.Enabled = enabled;
+                nudAutoAttHoldRX1.Enabled = enabled;
+                lblAutoAttHoldRX1.Enabled = enabled;
+            }
+            else
+            {
+                chkAutoAttUndoRX2.Enabled = enabled;
+                nudAutoAttHoldRX2.Enabled = enabled;
+                lblAutoAttHoldRX2.Enabled = enabled;
+            }
+        }
+
+        private void chkAutoAttUndoRX1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.AutoAttUndoRX1 = chkAutoAttUndoRX1.Checked;
+            nudAutoAttHoldRX1_ValueChanged(this, EventArgs.Empty);
+        }
+
+        private void nudAutoAttHoldRX1_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.AutoAttUndoDelayRX1 = (int)nudAutoAttHoldRX1.Value;
+        }
+
+        private void chkAutoATTRx2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupAttRX1Controls(2);
+            console.AutoAttRX2 = chkAutoATTRx2.Checked;
+            chkAutoAttUndoRX2_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void chkAutoAttUndoRX2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.AutoAttUndoRX2 = chkAutoAttUndoRX2.Checked;
+            nudAutoAttHoldRX2_ValueChanged(this, EventArgs.Empty);
+        }
+
+        private void nudAutoAttHoldRX2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.AutoAttUndoDelayRX2 = (int)nudAutoAttHoldRX2.Value;
         }
     }
 
