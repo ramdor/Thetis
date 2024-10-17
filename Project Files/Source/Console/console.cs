@@ -20773,10 +20773,7 @@ namespace Thetis
             handleOverload();
         }
         private void handleOverload()
-        {
-            if (!(current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||  // ignore if any other radio
-                            current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K)) return;
-            
+        {            
             for (int i = 0; i < 3; i++)
             {
                 if (_adc_overloaded[i])
@@ -20831,13 +20828,20 @@ namespace Thetis
             {
                 // deal with rx
                 int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
-                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
-                int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
-                int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
+                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);                               
+
                 DateTime now = DateTime.Now;
 
-                if (_auto_attTX_rx1)
+                bool radioHasRx1Att = current_hpsdr_model == HPSDRModel.ANAN10 || current_hpsdr_model == HPSDRModel.ANAN10E ||
+                            current_hpsdr_model == HPSDRModel.ANAN100 || current_hpsdr_model == HPSDRModel.ANAN100B ||
+                            current_hpsdr_model == HPSDRModel.ANAN100D || current_hpsdr_model == HPSDRModel.ANAN200D ||
+                            current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                            current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K;
+
+                if (_auto_attTX_rx1 && radioHasRx1Att)
                 {
+                    int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
+
                     // rx1
                     if ((_adc_overloaded[0] && nRX1ADCinUse == 0) || (_adc_overloaded[1] && nRX1ADCinUse == 1)) // rx1 overload
                     {
@@ -20903,8 +20907,14 @@ namespace Thetis
                     }
                 }
 
-                if (_auto_attTX_rx2)
+                bool radioHasRx2Att = current_hpsdr_model == HPSDRModel.ANAN100D || current_hpsdr_model == HPSDRModel.ANAN200D || 
+                            current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
+                            current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K;
+
+                if (_auto_attTX_rx2 && radioHasRx2Att)
                 {
+                    int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
+
                     // rx2
                     if ((_adc_overloaded[0] && nRX2ADCinUse == 0) || (_adc_overloaded[1] && nRX2ADCinUse == 1)) // rx2 overload
                     {

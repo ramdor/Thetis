@@ -19378,6 +19378,10 @@ namespace Thetis
                     groupBoxHPSDRHW.Visible = true;
                     chkDisableRXOut.Visible = false;
                     chkBPF2Gnd.Visible = false;
+                    chkAutoATTRx1.Enabled = false;
+                    chkAutoATTRx2.Enabled = false;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
                     break;
 
                 case HPSDRModel.ANAN10:
@@ -19417,6 +19421,10 @@ namespace Thetis
                     chkBPF2Gnd.Visible = false;
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
+                    chkAutoATTRx1.Enabled = true;
+                    chkAutoATTRx2.Enabled = false;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
                     break;
 
                 case HPSDRModel.ANAN10E:
@@ -19460,6 +19468,10 @@ namespace Thetis
                     chkBPF2Gnd.Visible = false;
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
+                    chkAutoATTRx1.Enabled = true;
+                    chkAutoATTRx2.Enabled = false;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
                     break;
 
                 case HPSDRModel.ANAN100:
@@ -19501,6 +19513,10 @@ namespace Thetis
                     groupBoxHPSDRHW.Visible = false;
                     chkDisableRXOut.Visible = true;
                     chkBPF2Gnd.Visible = false;
+                    chkAutoATTRx1.Enabled = true;
+                    chkAutoATTRx2.Enabled = false;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
                     break;
 
                 case HPSDRModel.ANAN100B:
@@ -19548,6 +19564,10 @@ namespace Thetis
                     groupBoxHPSDRHW.Visible = false;
                     chkDisableRXOut.Visible = true;
                     chkBPF2Gnd.Visible = false;
+                    chkAutoATTRx1.Enabled = true;
+                    chkAutoATTRx2.Enabled = false;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
                     break;
 
                 case HPSDRModel.ANAN100D:
@@ -19606,6 +19626,10 @@ namespace Thetis
                     if (radDDC4ADC2.Checked) radDDC4ADC0.Checked = true;
                     if (radDDC5ADC2.Checked) radDDC5ADC0.Checked = true;
                     if (radDDC6ADC2.Checked) radDDC6ADC0.Checked = true;
+                    chkAutoATTRx1.Enabled = true;
+                    chkAutoATTRx2.Enabled = true;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
                     break;
 
                 case HPSDRModel.ANAN200D:
@@ -19646,6 +19670,10 @@ namespace Thetis
                     radDDC4ADC2.Enabled = true;
                     radDDC5ADC2.Enabled = true;
                     radDDC6ADC2.Enabled = true;
+                    chkAutoATTRx1.Enabled = true;
+                    chkAutoATTRx2.Enabled = true;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
                     break;
 
                 case HPSDRModel.ANAN7000D:
@@ -19705,6 +19733,10 @@ namespace Thetis
                     radDDC4ADC2.Enabled = true;
                     radDDC5ADC2.Enabled = true;
                     radDDC6ADC2.Enabled = true;
+                    chkAutoATTRx1.Enabled = true;
+                    chkAutoATTRx2.Enabled = true;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
                     break;
 
                 case HPSDRModel.ANAN8000D:
@@ -19767,6 +19799,10 @@ namespace Thetis
                     radDDC6ADC2.Enabled = true;
                     chkDisableRXOut.Visible = false;
                     chkBPF2Gnd.Visible = true;
+                    chkAutoATTRx1.Enabled = true;
+                    chkAutoATTRx2.Enabled = true;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
                     break;
 
                 case HPSDRModel.ANAN_G2:                 // added G8NJJ
@@ -19826,6 +19862,10 @@ namespace Thetis
                     radDDC4ADC2.Enabled = true;
                     radDDC5ADC2.Enabled = true;
                     radDDC6ADC2.Enabled = true;
+                    chkAutoATTRx1.Enabled = true;
+                    chkAutoATTRx2.Enabled = true;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
                     break;
 
                 case HPSDRModel.ANAN_G2_1K:              // added G8NJJ
@@ -19885,6 +19925,10 @@ namespace Thetis
                     radDDC4ADC2.Enabled = true;
                     radDDC5ADC2.Enabled = true;
                     radDDC6ADC2.Enabled = true;
+                    chkAutoATTRx1.Enabled = true;
+                    chkAutoATTRx2.Enabled = true;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
                     break;
             }
 
@@ -31352,17 +31396,17 @@ namespace Thetis
         private void chkAutoATTRx1_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            setupAttRX1Controls(1);
+            setupAttRXControls(1);
             console.AutoAttRX1 = chkAutoATTRx1.Checked;
             chkAutoAttUndoRX1_CheckedChanged(this, EventArgs.Empty);
         }
-        private void setupAttRX1Controls(int rx)
+        private void setupAttRXControls(int rx)
         {
             bool enabled;
             if(rx==1)
-                enabled = chkAutoATTRx1.Checked;
+                enabled = chkAutoATTRx1.Checked && chkAutoATTRx1.Enabled; // enabled used for radios that dont have rx1
             else
-                enabled = chkAutoATTRx2.Checked;
+                enabled = chkAutoATTRx2.Checked && chkAutoATTRx2.Enabled; // enabled used for radios that dont have rx2
 
             if (rx == 1)
             {
@@ -31394,7 +31438,7 @@ namespace Thetis
         private void chkAutoATTRx2_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            setupAttRX1Controls(2);
+            setupAttRXControls(2);
             console.AutoAttRX2 = chkAutoATTRx2.Checked;
             chkAutoAttUndoRX2_CheckedChanged(this, EventArgs.Empty);
         }
