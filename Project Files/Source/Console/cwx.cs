@@ -266,11 +266,11 @@ namespace Thetis
         {
             if (setptt_memory != state)
             {
-                if (!console.CWFWKeyer)
-                {
-                    // CWPTTItem item = new CWPTTItem(state, CWSensorItem.GetCurrentTime());
-                    // CWKeyer.PTTEnqueue(item);
-                }
+                //if (!console.CWFWKeyer)
+                //{
+                //    // CWPTTItem item = new CWPTTItem(state, CWSensorItem.GetCurrentTime());
+                //    // CWKeyer.PTTEnqueue(item);
+                //}
 
                 ptt = state;
                 if (state) pttLed.BackColor = System.Drawing.Color.Red;
