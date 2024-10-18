@@ -246,8 +246,7 @@ namespace Thetis
             "%bandtext_vfoa%" + System.Environment.NewLine +
             "%bandtext_vfob%" + System.Environment.NewLine +
             "%precis=1%" + System.Environment.NewLine +
-            "%nf_1%" + System.Environment.NewLine +
-            "%nf_2%" + System.Environment.NewLine +
+            "%nf%" + System.Environment.NewLine +
             "%tune_step%" + System.Environment.NewLine +
             "%pa_profile%";// + System.Environment.NewLine +
 

@@ -249,7 +249,7 @@ namespace Thetis
         private static string _current_skin = "IK3VIG Special"; // matches selectSkin() fn in setup.cs
         private static string _current_skin_path = "";
 
-        private static CustomReadings _custom_readings;
+        private static CustomReadings[] _custom_readings;
 
         private static ImageFetcher _image_fetcher;
 
@@ -268,7 +268,9 @@ namespace Thetis
         static MeterManager()
         {
             // readings used by varius meter items such as Text Overlay
-            _custom_readings = new CustomReadings();
+            _custom_readings = new CustomReadings[2];
+            _custom_readings[0] = new CustomReadings(1);
+            _custom_readings[1] = new CustomReadings(2);
 
             // image fetcher
             _image_fetcher = new ImageFetcher();
@@ -311,9 +313,11 @@ namespace Thetis
         {
             private ConcurrentDictionary<Reading, float> _readings_values;
             private ConcurrentDictionary<string, object> _readings_text_objects;
+            private int _rx;
 
-            public CustomReadings()
+            public CustomReadings(int rx)
             {
+                _rx = rx;
                 _readings_values = new ConcurrentDictionary<Reading, float>();
                 _readings_text_objects = new ConcurrentDictionary<string, object>();
             }
@@ -401,11 +405,11 @@ namespace Thetis
                 }
                 return result;
             }
-            public void TakeReading(int rx, Reading reading)
+            public void TakeReading(Reading reading)
             {
                 if (_readings_values.ContainsKey(reading))
                 {
-                    _readings_values[reading] = getReading(rx, reading, true);
+                    _readings_values[reading] = getReading(_rx, reading, true);
                 }
             }
             public bool IsCustomString(string custom)
@@ -461,7 +465,7 @@ namespace Thetis
                 }
                 return bRet;
             }
-            public object GetReading(string reading, clsMeter owningMeter, int rx)
+            public object GetReading(string reading, clsMeter owningMeter)
             {
                 if (!IsCustomString(reading.ToLower()))
                 {
@@ -471,7 +475,7 @@ namespace Thetis
                         ok = _readings_values.TryGetValue(tmpReading, out float value);
                         if (ok)
                         {
-                            _readings[rx].UseReading(tmpReading);
+                            _readings[_rx].UseReading(tmpReading);
                             return value;
                         }
                         else
@@ -513,37 +517,37 @@ namespace Thetis
                         _readings_text_objects[key] = (int)(now.Hour * 10000 + now.Minute * 100 + now.Second);
                         break;
                     case "vfoa":
-                        if (rx == 1)
+                        if (_rx == 1)
                             _readings_text_objects[key] = formatNumber(owningMeter.VfoA);
                         else
                             _readings_text_objects[key] = "";
                         break;
                     case "vfob":
-                        if (owningMeter.RX2Enabled && rx == 1)
+                        if (owningMeter.RX2Enabled && _rx == 1)
                             _readings_text_objects[key] = "";
                         else
                             _readings_text_objects[key] = formatNumber(owningMeter.VfoB);
                         break;
                     case "vfoasub":
-                        if (owningMeter.VfoSub >= 0 && rx == 1 && owningMeter.RX2Enabled && (owningMeter.Split || owningMeter.MultiRxEnabled)) // when -999.999
+                        if (owningMeter.VfoSub >= 0 && _rx == 1 && owningMeter.RX2Enabled && (owningMeter.Split || owningMeter.MultiRxEnabled)) // when -999.999
                             _readings_text_objects[key] = formatNumber(owningMeter.VfoSub);
                         else
                             _readings_text_objects[key] = "";
                         break;
                     case "vfoa_double":
-                        if (rx == 1)
+                        if (_rx == 1)
                             _readings_text_objects[key] = Math.Round(owningMeter.VfoA, 6);
                         else
                             _readings_text_objects[key] = "";
                         break;
                     case "vfob_double":
-                        if (owningMeter.RX2Enabled && rx == 1)
+                        if (owningMeter.RX2Enabled && _rx == 1)
                             _readings_text_objects[key] = "";
                         else
                             _readings_text_objects[key] = Math.Round(owningMeter.VfoB, 6);
                         break;
                     case "vfoasub_double":
-                        if (owningMeter.VfoSub >= 0 && rx == 1 && owningMeter.RX2Enabled && (owningMeter.Split || owningMeter.MultiRxEnabled)) // when -999.999
+                        if (owningMeter.VfoSub >= 0 && _rx == 1 && owningMeter.RX2Enabled && (owningMeter.Split || owningMeter.MultiRxEnabled)) // when -999.999
                             _readings_text_objects[key] = Math.Round(owningMeter.VfoSub, 6);
                         else
                             _readings_text_objects[key] = "";
@@ -635,11 +639,11 @@ namespace Thetis
                     case "bandtext_vfob":
                         _readings_text_objects[key] = owningMeter.VFOBBandText;
                         break;
-                    case "nf_1":
-                        _readings_text_objects[key] = _console.LastNFRX1;
-                        break;
-                    case "nf_2":
-                        _readings_text_objects[key] = _console.LastNFRX2;
+                    case "nf":
+                        if(_rx == 1)
+                            _readings_text_objects[key] = _console.LastNFRX1;
+                        else
+                            _readings_text_objects[key] = _console.LastNFRX2;
                         break;
                     case "tune_step":
                         returnTuneStep(key);
@@ -1341,9 +1345,10 @@ namespace Thetis
         {
             get { return _image_fetcher; }
         }
-        public static CustomReadings ReadingsCustom
+        public static CustomReadings ReadingsCustom(int rx)
         {
-            get { return _custom_readings; }
+            rx -= 1;
+            return _custom_readings[rx];
         }
         // zero reading
         public static void ZeroReading(out float value, int rx, Reading reading)
@@ -10023,15 +10028,15 @@ namespace Thetis
                 {
                     _ignore_measure_cache_1 = _text_1 != value;
                     _text_1 = string.IsNullOrEmpty(value) ? "" : value;//.Replace("|", ""); // dont need to replace this now due to new store/restore
-                    ReadingsCustom.UpdateReadings(_text_1);
+                    ReadingsCustom(_owningMeter.RX).UpdateReadings(_text_1);
                     lock (_list_placeholders_1_lock)
                     {
                         _list_placeholders_readings_1.Clear();
                         _list_placeholders_strings_1.Clear();
-                        List<string> placeholders = ReadingsCustom.GetPlaceholders(_text_1);
+                        List<string> placeholders = ReadingsCustom(_owningMeter.RX).GetPlaceholders(_text_1);
                         foreach (string placeholder in placeholders)
                         {
-                            if (ReadingsCustom.IsCustomString(placeholder) || placeholder.StartsWith("precis="))
+                            if (ReadingsCustom(_owningMeter.RX).IsCustomString(placeholder) || placeholder.StartsWith("precis="))
                                 _list_placeholders_strings_1.Add(placeholder);
                             else
                             {
@@ -10049,15 +10054,15 @@ namespace Thetis
                 {
                     _ignore_measure_cache_2 = _text_2 != value;
                     _text_2 = string.IsNullOrEmpty(value) ? "" : value;//.Replace("|", ""); // dont need to replace this now due to new store/restore
-                    ReadingsCustom.UpdateReadings(_text_2);
+                    ReadingsCustom(_owningMeter.RX).UpdateReadings(_text_2);
                     lock (_list_placeholders_2_lock)
                     {
                         _list_placeholders_readings_2.Clear();
                         _list_placeholders_strings_2.Clear();
-                        List<string> placeholders = ReadingsCustom.GetPlaceholders(_text_2);
+                        List<string> placeholders = ReadingsCustom(_owningMeter.RX).GetPlaceholders(_text_2);
                         foreach(string placeholder in placeholders)
                         {
-                            if (ReadingsCustom.IsCustomString(placeholder) || placeholder.StartsWith("precis="))
+                            if (ReadingsCustom(_owningMeter.RX).IsCustomString(placeholder) || placeholder.StartsWith("precis="))
                                 _list_placeholders_strings_2.Add(placeholder);
                             else
                             {
@@ -10164,7 +10169,7 @@ namespace Thetis
                 {
                     foreach(Reading reading in _list_placeholders_readings_1)
                     {
-                        ReadingsCustom.TakeReading(rx, reading);
+                        ReadingsCustom(_owningMeter.RX).TakeReading(reading);
 
                         //if (!readingsUsed.Contains(reading))
                         //    readingsUsed.Add(reading);
@@ -10174,7 +10179,7 @@ namespace Thetis
                 {
                     foreach (Reading reading in _list_placeholders_readings_2)
                     {
-                        ReadingsCustom.TakeReading(rx, reading);
+                        ReadingsCustom(_owningMeter.RX).TakeReading(reading);
 
                         //if (!readingsUsed.Contains(reading))
                         //    readingsUsed.Add(reading);
@@ -10225,7 +10230,7 @@ namespace Thetis
                         if (sTmp.IndexOf(lower) >= 0)
                         {
                             string decFormat = precis_found ? precision_format : "0.0#####";
-                            object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
+                            object reading = ReadingsCustom(_owningMeter.RX).GetReading(placeholder, _owningMeter);
                             if (reading is int)
                                 sTmp = sTmp.Replace(lower, ((int)reading).ToString());
                             else if (reading is float)
@@ -10243,7 +10248,7 @@ namespace Thetis
                         lower = "%" + r.ToString().ToLower() + "%";
                         if (sTmp.IndexOf(lower) >= 0)
                         {
-                            object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
+                            object reading = ReadingsCustom(_owningMeter.RX).GetReading(r.ToString(), _owningMeter);
                             sTmp = sTmp.Replace(lower, ((float)reading).ToString(precis_found ? precision_format : "0.0#####"));
                         }
                     }
@@ -10317,7 +10322,7 @@ namespace Thetis
                         if (sTmp.IndexOf(lower) >= 0)
                         {
                              string decFormat = precis_found ? precision_format : "0.0#####";
-                            object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
+                            object reading = ReadingsCustom(_owningMeter.RX).GetReading(placeholder, _owningMeter);
                             if (reading is int)
                                 sTmp = sTmp.Replace(lower, ((int)reading).ToString());
                             else if (reading is float)
@@ -10335,7 +10340,7 @@ namespace Thetis
                         lower = "%" + r.ToString().ToLower() + "%";
                         if (sTmp.IndexOf(lower) >= 0)
                         {
-                            object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
+                            object reading = ReadingsCustom(_owningMeter.RX).GetReading(r.ToString(), _owningMeter);
                             sTmp = sTmp.Replace(lower, ((float)reading).ToString(precis_found ? precision_format : "0.0#####"));
                         }
                     }
@@ -10640,15 +10645,15 @@ namespace Thetis
             private void onTimerElapsedCondition()
             {                
                 _condition = _pending_condition;
-                ReadingsCustom.UpdateReadings(_condition);
+                ReadingsCustom(_owningMeter.RX).UpdateReadings(_condition);
                 lock (_list_placeholders_lock)
                 {
                     _list_placeholders_readings.Clear();
                     _list_placeholders_strings.Clear();
-                    List<string> placeholders = ReadingsCustom.GetPlaceholders(_condition);
+                    List<string> placeholders = ReadingsCustom(_owningMeter.RX).GetPlaceholders(_condition);
                     foreach (string placeholder in placeholders)
                     {
-                        if (ReadingsCustom.IsCustomString(placeholder))
+                        if (ReadingsCustom(_owningMeter.RX).IsCustomString(placeholder))
                             _list_placeholders_strings.Add(placeholder);
                         else
                         {
@@ -10663,7 +10668,7 @@ namespace Thetis
                     string lower;
                     foreach (Reading r in _list_placeholders_readings)
                     {
-                        object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, _owningMeter.RX);
+                        object reading = ReadingsCustom(_owningMeter.RX).GetReading(r.ToString(), _owningMeter);
                         lower = "%" + r.ToString().ToLower() + "%";
                         if (expression.IndexOf(lower) >= 0)
                             expression = expression.Replace(lower, reading.ToString());
@@ -10675,7 +10680,7 @@ namespace Thetis
                     }
                     foreach (string placeholder in _list_placeholders_strings)
                     {
-                        object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, _owningMeter.RX);
+                        object reading = ReadingsCustom(_owningMeter.RX).GetReading(placeholder, _owningMeter);
                         string type;
                         if (reading is int)
                             type = "int";
@@ -10867,8 +10872,8 @@ namespace Thetis
                         {
                             if (_variable_substitutions.ContainsKey(r.ToString().ToLower()))
                             {
-                                ReadingsCustom.TakeReading(rx, r);
-                                object reading = ReadingsCustom.GetReading(r.ToString(), _owningMeter, rx);
+                                ReadingsCustom(_owningMeter.RX).TakeReading(r);
+                                object reading = ReadingsCustom(_owningMeter.RX).GetReading(r.ToString(), _owningMeter);
                                 _variable_substitutions[r.ToString().ToLower()] = (float)reading;
                             }
                         }
@@ -10877,7 +10882,7 @@ namespace Thetis
                         {
                             if (_variable_substitutions.ContainsKey(placeholder.ToLower()))
                             {
-                                object reading = ReadingsCustom.GetReading(placeholder, _owningMeter, rx);
+                                object reading = ReadingsCustom(_owningMeter.RX).GetReading(placeholder, _owningMeter);
                                 _variable_substitutions[placeholder.ToLower()] = reading;
                             }
                         }
