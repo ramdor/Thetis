@@ -1,17 +1,20 @@
-[
-    {
-        "DiscordChannel": "1271464270567309322",
-        "CanReceive": true,
-        "CanSend": false
-    },
-    {
-        "DiscordChannel": "1297299015649722480",
-        "CanReceive": true,
-        "CanSend": true
-    },
-    {
-        "DiscordChannel": "",
-        "CanReceive": false,
-        "CanSend": true
-    }
-]
+{
+    "ID": "",
+    "Channels": [
+        {
+            "DiscordChannel": "1271464270567309322",
+            "CanReceive": true,
+            "CanSend": false
+        },
+        {
+            "DiscordChannel": "1297299015649722480",
+            "CanReceive": true,
+            "CanSend": true
+        },
+        {
+            "DiscordChannel": "",
+            "CanReceive": false,
+            "CanSend": false
+        }
+    ]
+}
