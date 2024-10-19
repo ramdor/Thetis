@@ -562,8 +562,9 @@ namespace Thetis
         // ======================================================
         // Constructor and Destructor
         // ======================================================
+        
         public Console(string[] args)
-        {
+        {           
             //#error version
             this.Opacity = 0f; // FadeIn below. Note: console form has 0% set in form designer
 
@@ -976,7 +977,7 @@ namespace Thetis
                 {
                     Name = "Run Display Thread",
                     Priority = m_tpDisplayThreadPriority, //MW0LGE now defaulted with m_tpDisplayThreadPriority, and updated by setupform
-                    IsBackground = false//true MW0LGE_21b rundisplay now stops nicely, ensuring dx gpu resources are released
+                    IsBackground = false//true MW0LGE_21b rundisplay now stops nicely, ensuring dx gpu resources are released                    
                 };
                 draw_display_thread.SetApartmentState(ApartmentState.STA);
                 draw_display_thread.Start();
@@ -1611,8 +1612,6 @@ namespace Thetis
 
             // get culture specific decimal separator
             separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-
-            //MW0LGE_21d BandStack2 last_band = "";						// initialize bandstack
 
             tune_step_list = new List<TuneStep>
             {
@@ -24768,9 +24767,7 @@ namespace Thetis
             while (chkPower.Checked)
             {
                 int dotdashptt = NetworkIO.nativeGetDotDashPTT();
-                DSPMode tx_mode = rx1_dsp_mode;
-
-                if (chkVFOBTX.Checked && chkRX2.Checked) tx_mode = rx2_dsp_mode;
+                DSPMode tx_mode = chkVFOBTX.Checked && chkRX2.Checked ? rx2_dsp_mode : rx1_dsp_mode;
 
                 if (!manual_mox && !disable_ptt && !rx_only && !_tx_inhibit && !QSKEnabled)
                 {
@@ -41945,27 +41942,7 @@ namespace Thetis
 
         private void setupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //[2.10.3.6]MW0LGE now in submenu, however do this if shift held,
-            //because so many people moan about 1 more mouse click
-            if (Common.ShiftKeyDown)
-            {
-                if (IsSetupFormNull) return;
-                if (SetupForm.InvokeRequired)
-                {
-                    SetupForm.Invoke(new MethodInvoker(() =>
-                    {
-                        SetupForm.Show();
-                        SetupForm.Focus();
-                        SetFocusMaster(false);
-                    }));
-                }
-                else
-                {
-                    SetupForm.Show();
-                    SetupForm.Focus();
-                    SetFocusMaster(false);
-                }
-            }
+
         }
 
         private void memoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -49648,6 +49625,32 @@ namespace Thetis
             {
                 if (graphics != null) graphics.Dispose();
             }
+        }
+
+        private void setupToolStripMenuItem_MouseUp(object sender, MouseEventArgs e)
+        {
+            //[2.10.3.6]MW0LGE now in submenu, however do this if shift held,
+            //because so many people moan about 1 more mouse click
+            if (Common.ShiftKeyDown)
+            {
+                if (IsSetupFormNull) return;
+                if (SetupForm.InvokeRequired)
+                {
+                    SetupForm.Invoke(new MethodInvoker(() =>
+                    {
+                        SetupForm.Show();
+                        SetupForm.Focus();
+                        SetFocusMaster(false);
+                    }));
+                }
+                else
+                {
+                    SetupForm.Show();
+                    SetupForm.Focus();
+                    SetFocusMaster(false);
+                }
+            }
+            else if (!setupToolStripMenuItem.DropDown.Visible) setupToolStripMenuItem.ShowDropDown();
         }
     }
 

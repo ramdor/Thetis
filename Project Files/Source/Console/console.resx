@@ -8911,40 +8911,40 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>1044, 17</value>
   </metadata>
   <data name="toolStripNotchDelete.Size" type="System.Drawing.Size, System.Drawing">
-    <value>149, 22</value>
+    <value>148, 22</value>
   </data>
   <data name="toolStripNotchDelete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
   <data name="toolStripNotchRemember.Size" type="System.Drawing.Size, System.Drawing">
-    <value>149, 22</value>
+    <value>148, 22</value>
   </data>
   <data name="toolStripNotchRemember.Text" xml:space="preserve">
     <value>Remember</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 6</value>
+    <value>145, 6</value>
   </data>
   <data name="toolStripNotchNormal.Size" type="System.Drawing.Size, System.Drawing">
-    <value>149, 22</value>
+    <value>148, 22</value>
   </data>
   <data name="toolStripNotchNormal.Text" xml:space="preserve">
     <value>Normal (x1)</value>
   </data>
   <data name="toolStripNotchDeep.Size" type="System.Drawing.Size, System.Drawing">
-    <value>149, 22</value>
+    <value>148, 22</value>
   </data>
   <data name="toolStripNotchDeep.Text" xml:space="preserve">
     <value>Deep (x2)</value>
   </data>
   <data name="toolStripNotchVeryDeep.Size" type="System.Drawing.Size, System.Drawing">
-    <value>149, 22</value>
+    <value>148, 22</value>
   </data>
   <data name="toolStripNotchVeryDeep.Text" xml:space="preserve">
     <value>Very Deep (x3)</value>
   </data>
   <data name="contextMenuStripNotch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>150, 120</value>
+    <value>149, 120</value>
   </data>
   <data name="&gt;&gt;contextMenuStripNotch.Name" xml:space="preserve">
     <value>contextMenuStripNotch</value>
@@ -8959,16 +8959,16 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="setupToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>172, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="setupToolStripMenuItem1.Text" xml:space="preserve">
     <value>Setup</value>
   </data>
   <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>169, 6</value>
+    <value>177, 6</value>
   </data>
   <data name="databaseManagerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>172, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="databaseManagerToolStripMenuItem.Text" xml:space="preserve">
     <value>Database Manager</value>
@@ -8998,7 +8998,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>Equalizer</value>
   </data>
   <data name="xVTRsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>51, 20</value>
+    <value>52, 20</value>
   </data>
   <data name="xVTRsToolStripMenuItem.Text" xml:space="preserve">
     <value>XVTRs</value>
@@ -9033,31 +9033,31 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
  from a cluster</value>
   </data>
   <data name="topControlsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>207, 22</value>
+    <value>208, 22</value>
   </data>
   <data name="topControlsToolStripMenuItem.Text" xml:space="preserve">
     <value>Top Controls</value>
   </data>
   <data name="bandControlsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>207, 22</value>
+    <value>208, 22</value>
   </data>
   <data name="bandControlsToolStripMenuItem.Text" xml:space="preserve">
     <value>Band Controls</value>
   </data>
   <data name="modeControlsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>207, 22</value>
+    <value>208, 22</value>
   </data>
   <data name="modeControlsToolStripMenuItem.Text" xml:space="preserve">
     <value>Mode Controls</value>
   </data>
   <data name="andromedaTopControlsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>207, 22</value>
+    <value>208, 22</value>
   </data>
   <data name="andromedaTopControlsToolStripMenuItem.Text" xml:space="preserve">
     <value>Andromeda Top Controls</value>
   </data>
   <data name="andromedaButtonBarToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>207, 22</value>
+    <value>208, 22</value>
   </data>
   <data name="andromedaButtonBarToolStripMenuItem.Text" xml:space="preserve">
     <value>Andromeda Button Bar</value>
@@ -10171,9 +10171,9 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="toolStripStatusLabel_CatSerial.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAF5JREFUOE/t
-        jkEKwCAMBPP/T9tmO7ELIkUp9NLxkp3IkniNZqAEqjuiQF2SUVR2P5vFIMD9bBaDgPQO+rmgsvvZ3ElZ
-        oNYKvuW8J2+6z2q8jtaWtfP/fwFbF2sF+0Qc0tDbJYGjz0MAAAAASUVORK5CYII=
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAFNJREFUOE/t
+        jjkOACAIBP3/pzEqQa61wcLCtRAmA9rarZBKxn1vvGzIc1TngIOGgh8AR/7K0TyIWY+GvC/w9BKqHwmN
+        X81LwDobsKIM6/8F5QWVdNLQ2yVLkeY+AAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="toolStripStatusLabel_CatSerial.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">

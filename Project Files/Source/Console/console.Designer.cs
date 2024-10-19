@@ -4128,6 +4128,7 @@
             this.setupToolStripMenuItem.Name = "setupToolStripMenuItem";
             resources.ApplyResources(this.setupToolStripMenuItem, "setupToolStripMenuItem");
             this.setupToolStripMenuItem.Click += new System.EventHandler(this.setupToolStripMenuItem_Click);
+            this.setupToolStripMenuItem.MouseUp += new System.Windows.Forms.MouseEventHandler(this.setupToolStripMenuItem_MouseUp);
             // 
             // setupToolStripMenuItem1
             // 

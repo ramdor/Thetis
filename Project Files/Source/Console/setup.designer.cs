@@ -59265,7 +59265,7 @@
             this.btnLedIndicator_copy_truefalse_colours.Size = new System.Drawing.Size(33, 23);
             this.btnLedIndicator_copy_truefalse_colours.TabIndex = 165;
             this.btnLedIndicator_copy_truefalse_colours.Text = "=";
-            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_truefalse_colours, "Copy the font and colours from RX to TX");
+            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_truefalse_colours, "Copy the colours from TRUE to FALSE");
             this.btnLedIndicator_copy_truefalse_colours.UseVisualStyleBackColor = true;
             this.btnLedIndicator_copy_truefalse_colours.Click += new System.EventHandler(this.btnLedIndicator_copy_truefalse_colours_Click);
             // 
@@ -59323,7 +59323,7 @@
             this.btnLedIndicator_copy_sizex_to_y.Size = new System.Drawing.Size(33, 23);
             this.btnLedIndicator_copy_sizex_to_y.TabIndex = 155;
             this.btnLedIndicator_copy_sizex_to_y.Text = "=";
-            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_sizex_to_y, "Copy the offset values from RX to TX");
+            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_sizex_to_y, "Copy the size values from X to Y");
             this.btnLedIndicator_copy_sizex_to_y.UseVisualStyleBackColor = true;
             this.btnLedIndicator_copy_sizex_to_y.Click += new System.EventHandler(this.btnLedIndicator_copy_sizex_to_y_Click);
             // 

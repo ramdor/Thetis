@@ -456,8 +456,7 @@ namespace Thetis
                     case "tx_eq":
                     case "bandtext_vfoa":
                     case "bandtext_vfob":
-                    case "nf_1":
-                    case "nf_2":
+                    case "nf":
                     case "tune_step":
                     case "pa_profile":
                         bRet = true;
@@ -755,8 +754,7 @@ namespace Thetis
                 addReadingText("tx_eq", text);
                 addReadingText("bandtext_vfoa", text);
                 addReadingText("bandtext_vfob", text);
-                addReadingText("nf_1", text);
-                addReadingText("nf_2", text);
+                addReadingText("nf", text);
                 addReadingText("tune_step", text);
                 addReadingText("pa_profile", text);
             }
@@ -2443,6 +2441,15 @@ namespace Thetis
             foreach(KeyValuePair <string, DXRenderer> kvp in _DXrenderers)
             {
                 RunRendererDisplay(kvp.Key);
+            }
+        }
+        public static void SetVsync(bool vsync)
+        {
+            if (_DXrenderers.Count < 1) return;
+
+            foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
+            {
+                kvp.Value.SetVsync = vsync;
             }
         }
 
@@ -9958,6 +9965,14 @@ namespace Thetis
             private List<Reading> _list_placeholders_readings_2;
             private readonly object _list_placeholders_1_lock = new object();
             private readonly object _list_placeholders_2_lock = new object();
+
+            private float _x_scroll;
+            private float _x_scroll_offset_1;
+            private float _x_scroll_offset_2;
+
+            private string _parsed_text_1;
+            private string _parsed_text_2;
+
             public clsTextOverlay(clsMeter owningMeter)
             {
                 _list_placeholders_strings_1 = new List<string>();
@@ -9980,6 +9995,14 @@ namespace Thetis
                 _y_offset_1 = 0;
                 _x_offset_2 = 0;
                 _y_offset_2 = 0;
+
+                _x_scroll = -0.1f;
+                _x_scroll_offset_1 = 0;
+                _x_scroll_offset_2 = 0;
+
+                _parsed_text_1 = "";
+                _parsed_text_2 = "";
+
                 ItemType = MeterItemType.TEXT_OVERLAY;
                 ReadingSource = Reading.NONE;
 
@@ -10000,6 +10023,21 @@ namespace Thetis
                 _owningMeter = owningMeter;
 
                 UpdateInterval = 100;
+            }
+            public float ScrollXOffset1
+            {
+                get { return _x_scroll_offset_1; }
+                set { _x_scroll_offset_1 = value; }
+            }
+            public float ScrollXOffset2
+            {
+                get { return _x_scroll_offset_2; }
+                set { _x_scroll_offset_2 = value; }
+            }
+            public float ScrollX
+            {
+                get { return _x_scroll; }
+                set { _x_scroll = value; }
             }
             public System.Drawing.Color TextColour1
             {
@@ -10026,6 +10064,7 @@ namespace Thetis
                 get { return _text_1;/*.Replace("|", "");*/ }
                 set
                 {
+                    value = string.IsNullOrEmpty(value) ? "" : value;
                     _ignore_measure_cache_1 = _text_1 != value;
                     _text_1 = string.IsNullOrEmpty(value) ? "" : value;//.Replace("|", ""); // dont need to replace this now due to new store/restore
                     ReadingsCustom(_owningMeter.RX).UpdateReadings(_text_1);
@@ -10044,6 +10083,8 @@ namespace Thetis
                                 if (ok) _list_placeholders_readings_1.Add(tmpReading);
                             }
                         }
+
+                        _parsed_text_1 = parseText1();
                     }
                 }
             }
@@ -10052,6 +10093,7 @@ namespace Thetis
                 get { return _text_2;/*.Replace("|", "");*/ }
                 set 
                 {
+                    value = string.IsNullOrEmpty(value) ? "" : value;
                     _ignore_measure_cache_2 = _text_2 != value;
                     _text_2 = string.IsNullOrEmpty(value) ? "" : value;//.Replace("|", ""); // dont need to replace this now due to new store/restore
                     ReadingsCustom(_owningMeter.RX).UpdateReadings(_text_2);
@@ -10070,6 +10112,26 @@ namespace Thetis
                                 if (ok) _list_placeholders_readings_2.Add(tmpReading);
                             }
                         }
+
+                        _parsed_text_2 = parseText2();
+                    }
+                }
+            }
+            public string ParsedText1
+            {
+                get {
+                    lock (_list_placeholders_1_lock)
+                    { 
+                        return _parsed_text_1;
+                    }
+                }
+            }
+            public string ParsedText2
+            {
+                get {
+                    lock (_list_placeholders_2_lock)
+                    {
+                        return _parsed_text_2;
                     }
                 }
             }
@@ -10174,6 +10236,7 @@ namespace Thetis
                         //if (!readingsUsed.Contains(reading))
                         //    readingsUsed.Add(reading);
                     }
+                    _parsed_text_1 = parseText1();
                 }
                 lock (_list_placeholders_2_lock)
                 {
@@ -10184,9 +10247,10 @@ namespace Thetis
                         //if (!readingsUsed.Contains(reading))
                         //    readingsUsed.Add(reading);
                     }
+                    _parsed_text_2 = parseText2();
                 }
             }
-            public string ParsedText1(int rx)
+            private string parseText1()
             {
                 string sTmp = _text_1;
                 string lower;
@@ -10278,7 +10342,7 @@ namespace Thetis
 
                 return sTmp;
             }
-            public string ParsedText2(int rx)
+            private string parseText2()
             {
                 string sTmp = _text_2;
                 string lower;
@@ -10437,7 +10501,8 @@ namespace Thetis
             private System.Drawing.Color _false_colour;
             private System.Drawing.Color _panel_back_colour_1;
             private System.Drawing.Color _panel_back_colour_2;
-            private string _condition;            
+            private string _condition;
+            private string _pending_condition;
             private bool _show_back_panel;
             private float _x_offset;
             private float _y_offset;
@@ -10459,6 +10524,8 @@ namespace Thetis
             private bool _error = false;
             CancellationTokenSource _cts;
             private bool _forceRecompile;
+            private System.Threading.Timer _timer;
+            private int _delay_milliseconds;
 
             private bool _blink;
             private bool _pulsate;
@@ -10476,6 +10543,9 @@ namespace Thetis
 
             public clsLed(clsMeter owningMeter)
             {
+                _timer = null;
+                _delay_milliseconds = 1000;
+
                 _list_placeholders_strings = new List<string>();
                 _list_placeholders_readings = new List<Reading>();
 
@@ -10487,6 +10557,7 @@ namespace Thetis
                 _x_offset = 0.5f;
                 _y_offset = 0.05f;
                 _condition = "";
+                _pending_condition = "";
                 _x_size = 0.05f;
                 _y_size = 0.05f;
                 _padding = 0.1f;
@@ -10639,12 +10710,10 @@ namespace Thetis
                 get { return _led_style; }
                 set { _led_style = value; }
             }
-            private System.Threading.Timer _timer;
-            private const int _delay_milliseconds = 1000;
-            private string _pending_condition;
+
             private void onTimerElapsedCondition()
             {                
-                _condition = _pending_condition;
+                _condition = string.IsNullOrEmpty(_pending_condition) ? "" : _pending_condition;
                 ReadingsCustom(_owningMeter.RX).UpdateReadings(_condition);
                 lock (_list_placeholders_lock)
                 {
@@ -10775,9 +10844,10 @@ namespace Thetis
             {
                 get { return _pending_condition; }
                 set {
-                    if (value == _condition && !_forceRecompile) return;                    
+                    if (value == _condition && !_forceRecompile) return;
 
                     _pending_condition = value;
+                    _pending_condition = string.IsNullOrEmpty(_pending_condition) ? "" : _pending_condition;
 
                     if (_timer == null)
                         _timer = new System.Threading.Timer(_ => onTimerElapsedCondition(), null, _delay_milliseconds, Timeout.Infinite);
@@ -18340,10 +18410,13 @@ namespace Thetis
             private int _rx;
             private Console _console;
 
+            private HiPerfTimer _objFrameStartTimer = new HiPerfTimer();
+            private double _dElapsedFrameStart;
+            private double _delta_time_ms;
+
             //fps          
             //private int _nFps = 0;
-            //private int _nFrameCount = 0;
-            //private HiPerfTimer _objFrameStartTimer = new HiPerfTimer();
+            //private int _nFrameCount = 0;            
             //private double _fLastTime;
             //private double _dElapsedFrameStart;
             //
@@ -18362,6 +18435,10 @@ namespace Thetis
             public DXRenderer(string sId, int rx, PictureBox target, Console c, clsMeter meter)
             {
                 if (c == null || target == null) return;
+
+                _delta_time_ms = 0;
+                _dElapsedFrameStart = 0;
+                _objFrameStartTimer.Start();
 
                 _sId = sId;
                 _rx = rx;
@@ -18382,7 +18459,7 @@ namespace Thetis
                 _NoVSYNCpresentFlag = PresentFlags.None;
                 _pixelShift = new Vector2(0.5f, 0.5f);
                 //_pixelShift = new Vector2(0f, 0f);
-                _nVBlanks = 0;
+                _nVBlanks = Display.VerticalBlanks;
                 _oldRedrawDelay = -1;
                 _displayTarget = target;
                 _displayTarget.Tag = sId; // use the tag to hold sId, we can then use this in mouse event OnMouseUp
@@ -18415,6 +18492,18 @@ namespace Thetis
                 _displayTarget.MouseEnter += OnMouseEnter;
                 _displayTarget.Click += OnClick;
                 _displayTarget.MouseClick += OnMouseClick;
+            }
+            public bool SetVsync
+            {
+                get { return _nVBlanks != 0; }
+                set
+                {
+                    _nVBlanks = value ? 1 : 0;
+                }
+            }
+            private double deltaTimeMS
+            {
+                get { return _delta_time_ms; }
             }
             public void RunDisplay()
             {
@@ -18938,15 +19027,18 @@ namespace Thetis
                                     if (sMsg != "") throw (new Exception(sMsg));
                                 }
                             }
-
+                            
                             int nMs = (int)objStopWatch.ElapsedMsec; // dont worry about fractions of ms
                             nSleepTime -= nMs;
                             if (nSleepTime < 1) nSleepTime = 1;
                             Thread.Sleep(nSleepTime);
+
+                            _delta_time_ms = objStopWatch.ElapsedMsec;
                         }
                         else
                         {
                             Thread.Sleep(250); // if not visible, sleep for quarter second
+                            _delta_time_ms = objStopWatch.ElapsedMsec;
                         }
 
                         if (height != int.MinValue)
@@ -19632,11 +19724,9 @@ namespace Thetis
                                 }
                             }
                         }
-                        //foreach (KeyValuePair<string, clsMeterItem> mikvp in additionalDraws)
+                        
                         foreach(clsMeterItem mi in additionalDraws)
-                        {
-                            //clsMeterItem mi = mikvp.Value;
-
+                        {                           
                             float rw = m.XRatio;
                             float rh = m.YRatio;
 
@@ -19645,7 +19735,8 @@ namespace Thetis
                             switch (mi.ItemType)
                             {
                                 case clsMeterItem.MeterItemType.TEXT_OVERLAY:
-                                    renderTextOverlay(rect, mi, m, true);
+                                    bool scrolling = renderTextOverlay(rect, mi, m, true);
+                                    if (scrolling && nRedrawDelay > 32) nRedrawDelay = 32; // ensure decent redraw if scroll text (30fps)
                                     break;
                                 case clsMeterItem.MeterItemType.LED:
                                     renderLed(rect, mi, m, true);
@@ -20634,7 +20725,7 @@ namespace Thetis
                     }
                 }
             }
-            private void renderTextOverlay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m, bool text)
+            private bool renderTextOverlay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m, bool render_text)
             {
                 clsTextOverlay text_overlay = (clsTextOverlay)mi;
 
@@ -20642,6 +20733,8 @@ namespace Thetis
                 float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                bool scrolling = false;
 
                 bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
                 if (!do_cover_fade && (text_overlay.PanelBackColour1 != text_overlay.PanelBackColour2))
@@ -20664,7 +20757,7 @@ namespace Thetis
                     }
                 }
 
-                if (!text)
+                if (!render_text)
                 {
                     if (text_overlay.ShowBackPanel)
                     {
@@ -20675,32 +20768,61 @@ namespace Thetis
                 else
                 {
                     // Determine the text to measure and display
-                    string displayText = m.MOX ? text_overlay.ParsedText2(_rx) : text_overlay.ParsedText1(_rx);
+                    string displayText = m.MOX ? text_overlay.ParsedText2 : text_overlay.ParsedText1;
                     string fontFamily = m.MOX ? text_overlay.FontFamily2 : text_overlay.FontFamily1;
                     float fontSize = m.MOX ? text_overlay.FontSize2 : text_overlay.FontSize1;
                     fontSize *= 2.1f; // when a container is added, and not resized, 72 point font needs this fudge to get it to be 72 point
                     FontStyle fontStyle = m.MOX ? text_overlay.Style2 : text_overlay.Style1;
 
                     // Calculate the text position
-                    float textX = x + (m.MOX ? text_overlay.TextXOffset2 : text_overlay.TextXOffset1) * (targetWidth * m.XRatio);
-                    float textY = y + (m.MOX ? text_overlay.TextYOffset2 : text_overlay.TextYOffset1) * (targetWidth * m.YRatio);
+                    float xOffset = m.MOX ? text_overlay.TextXOffset2 : text_overlay.TextXOffset1;
+                    float yOffset = m.MOX ? text_overlay.TextYOffset2 : text_overlay.TextYOffset1;
+                    float textX = x + xOffset * (targetWidth * m.XRatio);
+                    float textY = y + yOffset * (targetWidth * m.YRatio);
 
-                    if ((text_overlay.ShowTextBackColour1 && !m.MOX) || (text_overlay.ShowTextBackColour2 && m.MOX))
+                    float scroll_x = m.MOX ? text_overlay.ScrollXOffset2 : text_overlay.ScrollXOffset1;
+                    textX += scroll_x * (targetWidth * m.XRatio);
+
+                    // scroll?
+                    if (text_overlay.ScrollX != 0)
                     {
-                        // Measure the text dimensions
                         float fontSizeEmScaled = (fontSize / 16f) * (rect.Width / 52f);
-                        SizeF textSize = measureString(displayText, fontFamily, fontStyle, fontSizeEmScaled, m.MOX ? text_overlay.IgnoreMeasureCache2 : text_overlay.IgnoreMeasureCache1);
-                        if (!m.MOX && text_overlay.IgnoreMeasureCache1) text_overlay.IgnoreMeasureCache1 = false;
-                        if (m.MOX && text_overlay.IgnoreMeasureCache2) text_overlay.IgnoreMeasureCache2 = false;
+                        SizeF szTextSize = measureString(displayText, fontFamily, fontStyle, fontSizeEmScaled, true);
+                        
+                        if(szTextSize.Width > (targetWidth * m.XRatio)) // cant use w as it becomes 0 when panel hidden
+                        {
+                            scrolling = true;
+                            scroll_x += (float)(text_overlay.ScrollX * deltaTimeMS / 1000f);
+                            if (m.MOX)
+                                text_overlay.ScrollXOffset2 = scroll_x;
+                            else
+                                text_overlay.ScrollXOffset1 = scroll_x;
 
-                        // Draw the background rectangle for the text
-                        SharpDX.RectangleF textBackgroundRect = new SharpDX.RectangleF(textX, textY, textSize.Width, textSize.Height);
-                        _renderTarget.FillRectangle(textBackgroundRect, getDXBrushForColour(m.MOX ? text_overlay.TextBackColour2 : text_overlay.TextBackColour1, mi.FadeValue));
+                            if (textX < -szTextSize.Width)
+                            {
+                                float new_x = targetWidth - (xOffset * (targetWidth * m.XRatio));
+                                scroll_x = new_x / (targetWidth * m.XRatio);
+                                if (m.MOX)
+                                    text_overlay.ScrollXOffset2 = scroll_x;
+                                else
+                                    text_overlay.ScrollXOffset1 = scroll_x;
+                            }
+                        }
+                        else
+                        {
+                            if (m.MOX)
+                                text_overlay.ScrollXOffset2 = 0;
+                            else
+                                text_overlay.ScrollXOffset1 = 0;
+                        }
                     }
 
                     // Render the text
-                    (float tw, float th) = plotText(displayText, textX, textY, h, rect.Width, fontSize, m.MOX ? text_overlay.TextColour2 : text_overlay.TextColour1, 255, fontFamily, fontStyle, false);
+                    bool fill_background = (text_overlay.ShowTextBackColour1 && !m.MOX) || (text_overlay.ShowTextBackColour2 && m.MOX);
+                    System.Drawing.Color fill_colour = m.MOX ? text_overlay.TextBackColour2 : text_overlay.TextBackColour1;
+                    (float tw, float th) = plotText(displayText, textX, textY, h, rect.Width, fontSize, m.MOX ? text_overlay.TextColour2 : text_overlay.TextColour1, 255, fontFamily, fontStyle, false, false, 0, true, 0, 0, fill_background, fill_colour);
                 }
+                return scrolling;
             }
             private void renderHistory(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {

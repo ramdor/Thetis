@@ -18968,10 +18968,12 @@ namespace Thetis
             if (chkVSyncDX.Checked)
             {
                 Display.VerticalBlanks = 1;
+                MeterManager.SetVsync(true);
             }
             else
             {
                 Display.VerticalBlanks = 0;
+                MeterManager.SetVsync(false);
             }
         }
 
