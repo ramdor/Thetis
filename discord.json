@@ -4,7 +4,7 @@
         {
             "DiscordChannel": "1271453529361481842",
             "CanReceive": true,
-            "CanSend": true
+            "CanSend": false
         },
         {
             "DiscordChannel": "1297299015649722480",
@@ -12,9 +12,9 @@
             "CanSend": true
         },
         {
-            "DiscordChannel": "",
+            "DiscordChannel": "1297325528336044144",
             "CanReceive": false,
-            "CanSend": false
+            "CanSend": true
         }
     ]
 }
