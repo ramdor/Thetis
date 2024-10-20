@@ -8,7 +8,7 @@
         },
         {
             "DiscordChannel": "1297325528336044144",
-            "CanReceive": false,
+            "CanReceive": true,
             "CanSend": true
         }
     ]
