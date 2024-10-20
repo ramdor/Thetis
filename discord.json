@@ -7,11 +7,6 @@
             "CanSend": false
         },
         {
-            "DiscordChannel": "1297299015649722480",
-            "CanReceive": true,
-            "CanSend": true
-        },
-        {
             "DiscordChannel": "1297325528336044144",
             "CanReceive": false,
             "CanSend": true
