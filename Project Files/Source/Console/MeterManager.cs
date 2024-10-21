@@ -6540,8 +6540,8 @@ namespace Thetis
                 SetText(1, 4, "QRV");
                 SetText(1, 5, "QRT");
                 SetText(1, 6, "Version");
-                SetText(1, 7, "    Net\nFinished");
-                SetText(1, 8, "   Net\nClosed");
+                SetText(1, 7, " Net\nStart");
+                SetText(1, 8, " Net\nFinish");
 
                 int rows = Buttons / Columns;
                 int overflow = Buttons % Columns;
@@ -23654,7 +23654,7 @@ namespace Thetis
                             float cy = rectBB.Top + (rectBB.Height / 2f);
                             if (rectBB.Width > 0 && rectBB.Height > 0)
                             {
-                                plotText(bb.GetText(1, button_index), cx + (bb.FontShiftX * wh / (float)(buttons_per_row * 2f)), cy + (bb.FontShiftY * wh / (float)(buttons_per_row * 2f)), h, rect.Width, bb.GetFontSize(1, button_index), text_colour, 255, bb.GetFontFamily(1, button_index), bb.GetFontStyle(1, button_index), false, true, rectBB.Width * text_size_modifier * bb.FontScale, true, rectBB.Height * text_size_modifier * bb.FontScale);
+                                plotText(text, cx + (bb.FontShiftX * wh / (float)(buttons_per_row * 2f)), cy + (bb.FontShiftY * wh / (float)(buttons_per_row * 2f)), h, rect.Width, bb.GetFontSize(1, button_index), text_colour, 255, bb.GetFontFamily(1, button_index), bb.GetFontStyle(1, button_index), false, true, rectBB.Width * text_size_modifier * bb.FontScale, true, rectBB.Height * text_size_modifier * bb.FontScale);
                             }
                         }
 

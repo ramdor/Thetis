@@ -380,7 +380,8 @@ namespace Thetis
         public static async Task SendMessage(string message, ulong channel_id = 0)
         {
             if (_discord_client.ConnectionState == ConnectionState.Disconnected) return;
-            if ((DateTime.UtcNow - _last_message_time).TotalSeconds < 1) return;
+            if ((DateTime.UtcNow - _last_message_time).TotalSeconds < 5) return;
+            _last_message_time = DateTime.UtcNow;
 
             ChannelInfo channel_info;
 
@@ -399,8 +400,7 @@ namespace Thetis
                         _process_queue = false;
                         IUserMessage sent_message = await discord_channel.SendMessageAsync($"{_callsign} - {message}").ConfigureAwait(false);
                         lock (_receive_queue)
-                        {
-                            _last_message_time = DateTime.UtcNow;
+                        {                            
                             _sent_message_ids.Add(sent_message.Id);
                             _process_queue = true;
                             processQueue();
