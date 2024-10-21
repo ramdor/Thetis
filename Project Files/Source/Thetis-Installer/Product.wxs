@@ -414,7 +414,7 @@
 				  KeyPath="yes"
               />
 		</Component>
-		<!-- 
+		<!--
 		<Component Guid="*">
 			<File Id="System.IO.CompressionDLL"
 				  Source="$(var.FilesPath)System.IO.Compression.dll"
@@ -486,6 +486,103 @@
 		</Component>
 		<!-- 
 		End CodeAnalysis for Led/MultiMeter section
+		-->
+
+		<!-- 
+		Discord
+		-->
+		<Component Guid="*">
+			<File Id="Discord.Net.CommandsDLL"
+				  Source="$(var.FilesPath)Discord.Net.Commands.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="Discord.Net.CoreDLL"
+				  Source="$(var.FilesPath)Discord.Net.Core.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="Discord.Net.InteractionsDLL"
+				  Source="$(var.FilesPath)Discord.Net.Interactions.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="Discord.Net.RestDLL"
+				  Source="$(var.FilesPath)Discord.Net.Rest.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="Discord.Net.WebhookDLL"
+				  Source="$(var.FilesPath)Discord.Net.Webhook.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="Discord.Net.WebSocketDLL"
+				  Source="$(var.FilesPath)Discord.Net.WebSocket.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="Microsoft.Bcl.AsyncInterfacesDLL"
+				  Source="$(var.FilesPath)Microsoft.Bcl.AsyncInterfaces.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="Microsoft.Extensions.DependencyInjection.AbstractionsDLL"
+				  Source="$(var.FilesPath)Microsoft.Extensions.DependencyInjection.Abstractions.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="Microsoft.Win32.RegistryDLL"
+				  Source="$(var.FilesPath)Microsoft.Win32.Registry.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.CodeDomDLL"
+				  Source="$(var.FilesPath)System.CodeDom.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.Interactive.AsyncDLL"
+				  Source="$(var.FilesPath)System.Interactive.Async.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.Linq.AsyncDLL"
+				  Source="$(var.FilesPath)System.Linq.Async.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.ReactiveDLL"
+				  Source="$(var.FilesPath)System.Reactive.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.Security.AccessControlDLL"
+				  Source="$(var.FilesPath)System.Security.AccessControl.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="System.Security.Principal.WindowsDLL"
+				  Source="$(var.FilesPath)System.Security.Principal.Windows.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<!-- 
+		End Discord
 		-->
 		
 		<Component Guid="*">

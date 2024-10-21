@@ -150,9 +150,6 @@
         j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>302, 17</value>
-  </metadata>
   <data name="pbVAC1FFMaxInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
@@ -325,6 +322,12 @@ will be handled, but as a stop gap they can be ignored.</value>
         7irc7PNimoX52EGUUdZTf6/3NvHMCa+mUcyM+Zh7oYxtcaAOlfB49NNULMqqQ0Ua/s0n0OWyxKRb9V4A
         AAAASUVORK5CYII=
 </value>
+  </data>
+  <data name="labelTS289.Text" xml:space="preserve">
+    <value>Enabling this will allow you to use the Discord button box to let others know your activity.
+You will also be able to use %discord_general% and %discord_bot% to view the activity in
+the #general and #thetis-bot channels.  You can use %discord_general=N% and %discord_bot=N%
+to view the history, where 0 is newest, 1 is the previous etc.</value>
   </data>
   <data name="lblTXProfileWarning.ToolTip" xml:space="preserve">
     <value>One or more settings have been changed that are

@@ -562,9 +562,8 @@ namespace Thetis
         // ======================================================
         // Constructor and Destructor
         // ======================================================
-        
         public Console(string[] args)
-        {           
+        {
             //#error version
             this.Opacity = 0f; // FadeIn below. Note: console form has 0% set in form designer
 
@@ -27672,8 +27671,11 @@ namespace Thetis
 
         private ShutdownForm _frmShutDownForm = null;
         private void Console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
+        {            
             shutdownLogStringToPath("Inside Console_Closing()");
+
+            shutdownLogStringToPath("Before ThetisBotDiscord.Disconnect()");
+            ThetisBotDiscord.Shutdown();
 
             // MW0LGE
             // show a shutdown window
@@ -49651,6 +49653,14 @@ namespace Thetis
                 }
             }
             else if (!setupToolStripMenuItem.DropDown.Visible) setupToolStripMenuItem.ShowDropDown();
+        }
+
+        private void buttonTS1_Click_1(object sender, EventArgs e)
+        {
+            Task.Run(async () =>
+            {
+                await ThetisBotDiscord.SendMessage("test", 1297299015649722480);
+            });
         }
     }
 

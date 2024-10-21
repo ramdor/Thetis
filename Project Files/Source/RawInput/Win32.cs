@@ -44,7 +44,11 @@ namespace RawInput_dll
         public const int WM_KEYUP = 0x0101;
         internal const int WM_SYSKEYDOWN = 0x0104;
         internal const int WM_INPUT = 0x00FF;
-        internal const int WM_USB_DEVICECHANGE = 0x0219;
+        internal const int WM_USB_DEVICECHANGE = 0x0219;           // USB device change event
+        internal const int DBT_DEVICEARRIVAL = 0x8000;             // A device or media has been inserted and is available
+        internal const int DBT_DEVICEREMOVECOMPLETE = 0x8004;      // A device or media has been removed
+        internal const int DBT_DEVNODES_CHANGED = 0x0007;          // Device node has been added or removed
+
 
         internal const int WM_MOUSEWHEEL = 0x020A;
 
