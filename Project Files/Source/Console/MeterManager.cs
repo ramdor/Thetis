@@ -6471,8 +6471,8 @@ namespace Thetis
 
                 setupButtons();
 
-                ThetisBotDiscord.Ready += OnReady;
-                ThetisBotDiscord.Disconnected += OnDisconnected;
+                ThetisBotDiscord.ReadyHandlers += OnReady;
+                ThetisBotDiscord.DisconnectedHandlers += OnDisconnected;
             }
             private void OnReady()
             {

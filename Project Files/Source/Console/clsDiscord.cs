@@ -43,11 +43,17 @@ namespace Thetis
         private const string DISCORD_URL = "https://raw.githubusercontent.com/ramdor/Thetis/refs/heads/master/discord.json";
         private const int KEEP_MESSAGES = 10; // number of messages to keep
 
-        public static event Action<MessageInfo> NewMessageArrived;
-        public static event Action Connected;
-        public static event Action Disconnected;
-        public static event Action Ready;
-        public static event Action<MessageInfo> MessageRemoved;
+        public delegate void NewMessageArrived(MessageInfo msg);
+        public delegate void Connected();
+        public delegate void Disconnected();
+        public delegate void Ready();
+        public delegate void MessageRemoved(MessageInfo msg);
+
+        public static NewMessageArrived NewMessageArrivedHandlers;
+        public static Connected ConnectedHandlers;
+        public static Disconnected DisconnectedHandlers;
+        public static Ready ReadyHandlers;
+        public static MessageRemoved MessageRemovedHandlers;
 
         private class BotConfig
         {
@@ -82,7 +88,6 @@ namespace Thetis
 
         private static DiscordSocketClient _discord_client;
         private static Timer _reconnect_timer;
-        private static bool _is_manual_disconnect = false;
 
         private static Timer _channel_info_timer;
         private static BotConfig _bot_config;
@@ -152,11 +157,18 @@ namespace Thetis
 
                 foreach (MessageInfo message in messages_to_remove)
                 {
-                    MessageRemoved?.BeginInvoke(message, null, null);
+                    if (MessageRemovedHandlers != null)
+                    {
+                        Delegate[] invocationList = MessageRemovedHandlers.GetInvocationList();
+                        foreach (Delegate handler in invocationList)
+                        {
+                            ((MessageRemoved)handler).BeginInvoke(message, null, null); //note: need to itterate through as a begin invoke cant spuple multicast delegates
+                        }
+                    }
                 }
             }
         }
-        public static async Task loadChannelInfo()
+        public static async Task loadChannelInfoFromGitHub()
         {
             try
             {
@@ -190,16 +202,17 @@ namespace Thetis
         {
             if (_started) return;
             _started = true;
+            _ready = false;
 
             _queue_process = new Timer(_ => processQueue(), null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
 
             _messageCleanupTimer = new Timer(_ => cleanupOldMessages(), null, TimeSpan.Zero, TimeSpan.FromSeconds(30));
 
-            _channel_info_timer = new Timer(async _ => await loadChannelInfo(), null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
+            _channel_info_timer = new Timer(async _ => await loadChannelInfoFromGitHub(), null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
 
             _reconnect_timer = new Timer(async _ =>
             {
-                if (_discord_client.ConnectionState == ConnectionState.Disconnected && !_is_manual_disconnect)
+                if (_discord_client.ConnectionState == ConnectionState.Disconnected)
                 {
                     await tryConnect();
                 }
@@ -209,9 +222,7 @@ namespace Thetis
         public static void ConnectStop()
         {
             if (!_started) return;
-            _started = false;
 
-            _is_manual_disconnect = true;
             _queue_process?.Dispose();
             _messageCleanupTimer?.Dispose();
             _channel_info_timer?.Dispose();
@@ -222,11 +233,23 @@ namespace Thetis
                 await _discord_client.LogoutAsync();
                 await _discord_client.StopAsync();
             }).GetAwaiter().GetResult();
+
+            _ready = false;
+            _started = false;
+
+            //send incase we dont get the disconnect event
+            if (DisconnectedHandlers != null)
+            {
+                Delegate[] invocationList = DisconnectedHandlers.GetInvocationList();
+                foreach (Delegate handler in invocationList)
+                {
+                    ((Disconnected)handler).BeginInvoke(null, null); //note: need to itterate through as a begin invoke cant spuple multicast delegates
+                }
+            }
         }
         public static void Shutdown()
         {
             ConnectStop();
-
             _discord_client.Dispose();
         }
 
@@ -234,6 +257,8 @@ namespace Thetis
         {
             try
             {
+                _ready = false;
+
                 string token = "";
                 lock (_bot_config_lock)
                 {
@@ -245,7 +270,6 @@ namespace Thetis
                 await _discord_client.LoginAsync(TokenType.Bot, token);
                 await _discord_client.StartAsync();
                 Debug.Print("Bot connected");
-                _is_manual_disconnect = false;
             }
             catch (Exception ex)
             {
@@ -260,14 +284,28 @@ namespace Thetis
 
             _ready = true;
 
-            Ready?.BeginInvoke(null, null);
+            if (ReadyHandlers != null)
+            {
+                Delegate[] invocationList = ReadyHandlers.GetInvocationList();
+                foreach (Delegate handler in invocationList)
+                {
+                    ((Ready)handler).BeginInvoke(null, null); //note: need to itterate through as a begin invoke cant spuple multicast delegates
+                }
+            }
             Debug.Print("Bot ready with Discord.");
 
             return Task.CompletedTask;
         }
         private static Task OnConnected()
         {
-            Connected?.BeginInvoke(null, null);
+            if (ConnectedHandlers != null)
+            {
+                Delegate[] invocationList = ConnectedHandlers.GetInvocationList();
+                foreach (Delegate handler in invocationList)
+                {
+                    ((Connected)handler).BeginInvoke(null, null); //note: need to itterate through as a begin invoke cant spuple multicast delegates
+                }
+            }
             Debug.Print("Bot connected to Discord.");
             return Task.CompletedTask;
         }
@@ -275,7 +313,15 @@ namespace Thetis
         private static Task OnDisconnected(Exception exception)
         {
             _ready = false;
-            Disconnected?.BeginInvoke(null, null);
+
+            if (DisconnectedHandlers != null)
+            {
+                Delegate[] invocationList = DisconnectedHandlers.GetInvocationList();
+                foreach (Delegate handler in invocationList)
+                {
+                    ((Disconnected)handler).BeginInvoke(null, null); //note: need to itterate through as a begin invoke cant spuple multicast delegates
+                }
+            }
             Debug.Print("Bot disconnected.");
             return Task.CompletedTask;
         }
@@ -349,7 +395,14 @@ namespace Thetis
                     _channelMessages[channel_id].Insert(0, message_info);
                 }
 
-                NewMessageArrived?.BeginInvoke(message_info, null, null);
+                if (NewMessageArrivedHandlers != null)
+                {
+                    Delegate[] invocationList = NewMessageArrivedHandlers.GetInvocationList();
+                    foreach (Delegate handler in invocationList)
+                    {
+                        ((NewMessageArrived)handler).BeginInvoke(message_info, null, null); //note: need to itterate through as a begin invoke cant spuple multicast delegates
+                    }
+                }
                 Debug.Print($"{author}: {received_message}");
             }
         }
@@ -555,7 +608,14 @@ namespace Thetis
                         _channelMessages[channel_id].Remove(removed_message);
                         _sent_message_ids.Remove(message_id);
 
-                        MessageRemoved?.BeginInvoke(removed_message, null, null);
+                        if (MessageRemovedHandlers != null)
+                        {
+                            Delegate[] invocationList = MessageRemovedHandlers.GetInvocationList();
+                            foreach (Delegate handler in invocationList)
+                            {
+                                ((MessageRemoved)handler).BeginInvoke(removed_message, null, null); //note: need to itterate through as a begin invoke cant spuple multicast delegates
+                            }
+                        }
                     }
                 }
             }
