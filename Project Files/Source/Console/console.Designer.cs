@@ -1131,7 +1131,6 @@
             this.ptbRX2Squelch = new Thetis.PrettyTrackBar();
             this.picSquelch = new System.Windows.Forms.PictureBox();
             this.ptbSquelch = new Thetis.PrettyTrackBar();
-            this.buttonTS1 = new System.Windows.Forms.ButtonTS();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterLow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).BeginInit();
@@ -4128,7 +4127,6 @@
             this.setupToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.setupToolStripMenuItem.Name = "setupToolStripMenuItem";
             resources.ApplyResources(this.setupToolStripMenuItem, "setupToolStripMenuItem");
-            this.setupToolStripMenuItem.Click += new System.EventHandler(this.setupToolStripMenuItem_Click);
             this.setupToolStripMenuItem.MouseUp += new System.Windows.Forms.MouseEventHandler(this.setupToolStripMenuItem_MouseUp);
             // 
             // setupToolStripMenuItem1
@@ -7524,20 +7522,11 @@
             this.ptbSquelch.Value = 0;
             this.ptbSquelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbSquelch_Scroll);
             // 
-            // buttonTS1
-            // 
-            resources.ApplyResources(this.buttonTS1, "buttonTS1");
-            this.buttonTS1.Name = "buttonTS1";
-            this.buttonTS1.Selectable = true;
-            this.buttonTS1.UseVisualStyleBackColor = true;
-            this.buttonTS1.Click += new System.EventHandler(this.buttonTS1_Click_1);
-            // 
             // Console
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.Controls.Add(this.buttonTS1);
             this.Controls.Add(this.panelDisplay);
             this.Controls.Add(this.lblPAProfile);
             this.Controls.Add(this.nudPwrTemp2);
@@ -7865,6 +7854,5 @@
         private ToolStripMenuItem setupToolStripMenuItem1;
         private ToolStripSeparator toolStripMenuItem1;
         private ToolStripMenuItem miAbout;
-        private ButtonTS buttonTS1;
     }
 }

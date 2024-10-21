@@ -41942,11 +41942,6 @@ namespace Thetis
             }
         }
 
-        private void setupToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void memoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (memoryForm == null || memoryForm.IsDisposed)
@@ -49653,14 +49648,8 @@ namespace Thetis
                 }
             }
             else if (!setupToolStripMenuItem.DropDown.Visible) setupToolStripMenuItem.ShowDropDown();
-        }
-
-        private void buttonTS1_Click_1(object sender, EventArgs e)
-        {
-            Task.Run(async () =>
-            {
-                await ThetisBotDiscord.SendMessage("test", 1297299015649722480);
-            });
+            //[2.10.3.7]MW0LGE show dropdown above fixes issue where the popup does not show if the window
+            //does not have focus and setup is clicked. Note, also needs to be in MouseUp
         }
     }
 
