@@ -6460,7 +6460,7 @@ namespace Thetis
 
             public clsDiscordButtonBox(clsMeter owningmeter)
             {
-                _ready = false;
+                _ready = ThetisBotDiscord.IsReady;
                 _owningmeter = owningmeter;
 
                 _force_update = false;

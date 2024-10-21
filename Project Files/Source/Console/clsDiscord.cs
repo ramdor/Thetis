@@ -98,6 +98,7 @@ namespace Thetis
 
         private static bool _started;
         private static string _callsign;
+        private static bool _ready;
 
         private static DateTime _last_message_time;
 
@@ -105,6 +106,7 @@ namespace Thetis
         {
             _last_message_time = DateTime.MinValue;
             _started = false;
+            _ready = false;
             _callsign = "";
 
             _process_queue = true;
@@ -180,6 +182,10 @@ namespace Thetis
         {
             get { return _discord_client.ConnectionState == ConnectionState.Connected; }
         }
+        public static bool IsReady
+        {
+            get { return _ready; }
+        }
         public static void ConnectStart()
         {
             if (_started) return;
@@ -252,6 +258,8 @@ namespace Thetis
             Task getLastMessagesTask = getLastMessages(KEEP_MESSAGES);
             getLastMessagesTask.Wait();
 
+            _ready = true;
+
             Ready?.BeginInvoke(null, null);
             Debug.Print("Bot ready with Discord.");
 
@@ -266,6 +274,7 @@ namespace Thetis
 
         private static Task OnDisconnected(Exception exception)
         {
+            _ready = false;
             Disconnected?.BeginInvoke(null, null);
             Debug.Print("Bot disconnected.");
             return Task.CompletedTask;
