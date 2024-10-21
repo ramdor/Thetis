@@ -248,7 +248,9 @@ namespace Thetis
             "%precis=1%" + System.Environment.NewLine +
             "%nf%" + System.Environment.NewLine +
             "%tune_step%" + System.Environment.NewLine +
-            "%pa_profile%";// + System.Environment.NewLine +
+            "%pa_profile%" + System.Environment.NewLine +
+            "%discord_general=0%" + System.Environment.NewLine +
+            "%discord_bot=0%";// + System.Environment.NewLine +
 
             toolTip1.SetToolTip(pbTextOverlay_variables, sTip);
 
