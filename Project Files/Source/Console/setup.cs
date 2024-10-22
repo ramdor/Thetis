@@ -97,6 +97,8 @@ namespace Thetis
 
             ThetisSkinService.Version = console.ProductVersion;
 
+            updateDiscordState();
+
             addDelegates();
 
             //MW0LGE_21i
@@ -674,6 +676,10 @@ namespace Thetis
             ThetisSkinService.SubscribeForImageLoaded(imageLoadedHandler);
             ThetisSkinService.SubscribeForDownload(fileDownloadHandler);
 
+            ThetisBotDiscord.ConnectedHandlers += OnDiscordConnect;
+            ThetisBotDiscord.DisconnectedHandlers += OnDiscordDisconnect;
+            ThetisBotDiscord.ReadyHandlers += OnDiscordReady;
+
             _bAddedDelegates = true;
         }
         public void RemoveDelegates()
@@ -691,6 +697,10 @@ namespace Thetis
             ThetisSkinService.UnsubscribeFromSkinServerData(skinServersDataReceivedHandler);
             ThetisSkinService.UnsubscribeFromImageLoaded(imageLoadedHandler);
             ThetisSkinService.UnsubscribeFromDownload(fileDownloadHandler);
+
+            ThetisBotDiscord.ConnectedHandlers -= OnDiscordConnect;
+            ThetisBotDiscord.DisconnectedHandlers -= OnDiscordDisconnect;
+            ThetisBotDiscord.ReadyHandlers -= OnDiscordReady;
 
             _bAddedDelegates = false;
         }
@@ -27217,7 +27227,9 @@ namespace Thetis
 
         private void tcSetup_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             if (isSkinServerTabVisible()) getSkinServers();
+            if (tcSetup.SelectedTab == tpCATControl && tcCAT.SelectedTab == tpMultiMetersIO) updateVariableList();
         }
 
         private void udFMLowCutRX_ValueChanged(object sender, EventArgs e)
@@ -31489,6 +31501,8 @@ namespace Thetis
                 chkDiscordEnabled.Checked = false;
                 chkDiscordEnabled.Enabled = false;
             }
+
+            updateDiscordState();
         }
 
         private void txtDiscordCallsign_TextChanged(object sender, EventArgs e)
@@ -31497,11 +31511,50 @@ namespace Thetis
             ThetisBotDiscord.SetCallsign(txtDiscordCallsign.Text);
             if (!ThetisBotDiscord.IsValidCallsign(txtDiscordCallsign.Text))
             {
-                chkDiscordEnabled.Enabled = false;
                 chkDiscordEnabled.Checked = false;
+                chkDiscordEnabled.Enabled = false;
             }
             else
                 chkDiscordEnabled.Enabled = true;
+
+            updateDiscordState();
+        }
+        private void updateDiscordState()
+        {
+            if (ThetisBotDiscord.IsConnected)
+            {
+                if (ThetisBotDiscord.IsReady)
+                {
+                    lblDiscordState.Text = "Connected + Ready";
+                }
+                else
+                {
+                    lblDiscordState.Text = "Connected + Waiting for ready...";
+                }
+            }
+            else
+            {
+                if (chkDiscordEnabled.Checked)
+                {
+                    lblDiscordState.Text = "Tyring to connect...";
+                }
+                else
+                {
+                    lblDiscordState.Text = "Disconnected";
+                }
+            }
+        }
+        private void OnDiscordConnect()
+        {
+            updateDiscordState();
+        }
+        private void OnDiscordDisconnect()
+        {
+            updateDiscordState();
+        }
+        private void OnDiscordReady()
+        {
+            updateDiscordState();
         }
     }
 

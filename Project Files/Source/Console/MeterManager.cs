@@ -4503,9 +4503,9 @@ namespace Thetis
                 _mmio_variable = "--DEFAULT--";
                 _mmio_variable_index = -1;
 
-                _mouseDownPoint = new PointF(0, 0);
-                _mouseUpPoint = new PointF(0, 0);
-                _mouseMovePoint = new PointF(0, 0);
+                _mouseDownPoint = new PointF(float.MinValue, float.MinValue);
+                _mouseUpPoint = new PointF(float.MinValue, float.MinValue);
+                _mouseMovePoint = new PointF(float.MinValue, float.MinValue);
                 _mouse_entered = false;
                 _mouseButtonDown = false;
                 _mouseButton = MouseButtons.None;
@@ -19648,6 +19648,7 @@ namespace Thetis
                         foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
                         {
                             mi.MouseEntered = false;
+                            mi.MouseMovePoint = new PointF(float.MinValue, float.MinValue);
                         }
                     }
                 }
@@ -19689,6 +19690,7 @@ namespace Thetis
                                 }
                                 else
                                 {
+                                    mi.MouseMovePoint = new PointF(e.X, e.Y);
                                     mi.MouseEntered = false;
                                 }
                             }
@@ -21184,12 +21186,27 @@ namespace Thetis
                         }
                     }
 
-                    if (text_overlay.MouseEntered)
-                    {
-                        float mx = (text_overlay.MouseMovePoint.X - x) / w;
-                        float my = (text_overlay.MouseMovePoint.Y - y) / h;
+                    // Render the text
+                    bool fill_background = (text_overlay.ShowTextBackColour1 && !m.MOX) || (text_overlay.ShowTextBackColour2 && m.MOX);
+                    System.Drawing.Color fill_colour = m.MOX ? text_overlay.TextBackColour2 : text_overlay.TextBackColour1;
+                    (float tw, float th) = plotText(displayText, textX, textY, h, rect.Width, fontSize, m.MOX ? text_overlay.TextColour2 : text_overlay.TextColour1, 255, fontFamily, fontStyle, false, false, 0, true, 0, 0, fill_background, fill_colour);
 
-                        if (mx >= 0 && mx <= 1 && my >= 0 && my <= 1)
+                    float rect_x = textX - (tw / 2);
+                    float rect_y = textY - (th / 2);
+                    System.Drawing.RectangleF bounds_rect = new System.Drawing.RectangleF(Math.Max(0, rect_x), Math.Max(0, rect_y), Math.Min(rect.Width, tw), Math.Min(rect.Height, th));
+                    bool mouse_over_text = bounds_rect.Contains(text_overlay.MouseMovePoint);
+
+                    if (mouse_over_text || text_overlay.MouseEntered)
+                    {
+                        float mx = -1;
+                        float my = -1;
+                        if (!mouse_over_text && w != 0 && h != 0)
+                        {
+                            mx = (text_overlay.MouseMovePoint.X - x) / w;
+                            my = (text_overlay.MouseMovePoint.Y - y) / h;
+                        }
+
+                        if (mouse_over_text || (mx >= 0 && mx <= 1 && my >= 0 && my <= 1))
                         {
                             if (m.MOX)
                             {
@@ -21201,11 +21218,6 @@ namespace Thetis
                             }
                         }
                     }
-
-                    // Render the text
-                    bool fill_background = (text_overlay.ShowTextBackColour1 && !m.MOX) || (text_overlay.ShowTextBackColour2 && m.MOX);
-                    System.Drawing.Color fill_colour = m.MOX ? text_overlay.TextBackColour2 : text_overlay.TextBackColour1;
-                    (float tw, float th) = plotText(displayText, textX, textY, h, rect.Width, fontSize, m.MOX ? text_overlay.TextColour2 : text_overlay.TextColour1, 255, fontFamily, fontStyle, false, false, 0, true, 0, 0, fill_background, fill_colour);
                 }
                 return scrolling;
             }

@@ -216,7 +216,7 @@ namespace Thetis
                 {
                     await tryConnect();
                 }
-            }, null, TimeSpan.Zero, TimeSpan.FromMinutes(10));
+            }, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
         }
 
         public static void ConnectStop()
@@ -228,11 +228,19 @@ namespace Thetis
             _channel_info_timer?.Dispose();
             _reconnect_timer?.Dispose();
 
-            Task.Run(async () =>
+            int tries = 10;
+            while (tries > 0)
             {
-                await _discord_client.LogoutAsync();
-                await _discord_client.StopAsync();
-            }).GetAwaiter().GetResult();
+                Task.Run(async () =>
+                {
+                    await _discord_client.LogoutAsync();
+                    await _discord_client.StopAsync();
+                }).GetAwaiter().GetResult();
+                if (_discord_client.ConnectionState == ConnectionState.Disconnected) break;
+
+                Thread.Sleep(100);
+                tries--;
+            }
 
             _ready = false;
             _started = false;
