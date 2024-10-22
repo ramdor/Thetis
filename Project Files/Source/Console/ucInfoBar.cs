@@ -888,29 +888,28 @@ namespace Thetis
             get { return this.chkButton2; }
         }
 
-        public void Warning(string msg, int nOverloadColourCount = -1, bool bExtendedShow = false)
+        //public void Warning(string msg, int nOverloadColourCount = -1, bool bExtendedShow = false)
+        public void Warning(string msg, bool red_warning = false, int show_duration = 2000)
         {
             if (_shutDown) return;
 
-            if (nOverloadColourCount > -1)
-            {
-                switch (nOverloadColourCount)
-                {
-                    case 0:
-                        lblWarning.ForeColor = Color.Red;
-                        break;
-                    case 1:
-                        lblWarning.ForeColor = Color.Yellow;
-                        break;
-                }
-            }
-
+            //if (nOverloadColourCount > -1)
+            //{
+            //    switch (nOverloadColourCount)
+            //    {
+            //        case 0:
+            //            lblWarning.ForeColor = Color.Red;
+            //            break;
+            //        case 1:
+            //            lblWarning.ForeColor = Color.Yellow;
+            //            break;
+            //    }
+            //}
+            _warningTimer.Stop();
+            lblWarning.ForeColor = red_warning ? Color.Red : Color.Yellow;
             lblWarning.Text = msg;
             lblWarning.Visible = true;
-            if (bExtendedShow)
-                _warningTimer.Interval = 10000;
-            else
-                _warningTimer.Interval = 2000;
+            _warningTimer.Interval = show_duration;
             _warningTimer.Start();
         }
         private void InfoBar_Resize(object sender, EventArgs e)

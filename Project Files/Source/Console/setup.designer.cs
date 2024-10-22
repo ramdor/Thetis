@@ -18,6 +18,8 @@
             System.Windows.Forms.NumericUpDownTS numericUpDownTS10;
             System.Windows.Forms.NumericUpDownTS numericUpDownTS12;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Setup));
+            this.chkUndoAutoATTTx = new System.Windows.Forms.CheckBoxTS();
+            this.chkAutoATTTXPsOff = new System.Windows.Forms.CheckBoxTS();
             this.lblTXattBand = new System.Windows.Forms.LabelTS();
             this.chkForceATTwhenOutPowerChanges = new System.Windows.Forms.CheckBoxTS();
             this.chkForceATTwhenPSAoff = new System.Windows.Forms.CheckBoxTS();
@@ -207,9 +209,6 @@
             this.tpGeneral = new System.Windows.Forms.TabPage();
             this.tcGeneral = new System.Windows.Forms.TabControl();
             this.tpGeneralHardware = new System.Windows.Forms.TabPage();
-            this.btnReleaseNotes = new System.Windows.Forms.ButtonTS();
-            this.lblTimeout = new System.Windows.Forms.LabelTS();
-            this.lblShowTimeoutText = new System.Windows.Forms.LabelTS();
             this.btnZipDebugInfo = new System.Windows.Forms.ButtonTS();
             this.grpFirmware = new System.Windows.Forms.GroupBoxTS();
             this.lblPLLLock = new System.Windows.Forms.LabelTS();
@@ -289,6 +288,15 @@
             this.tpGeneralOptions = new System.Windows.Forms.TabPage();
             this.tcOptions = new System.Windows.Forms.TabControl();
             this.tpOptions1 = new System.Windows.Forms.TabPage();
+            this.groupBoxTS47 = new System.Windows.Forms.GroupBoxTS();
+            this.lblAutoAttHoldRX2 = new System.Windows.Forms.LabelTS();
+            this.chkAutoATTRx1 = new System.Windows.Forms.CheckBoxTS();
+            this.chkAutoAttUndoRX1 = new System.Windows.Forms.CheckBoxTS();
+            this.nudAutoAttHoldRX2 = new System.Windows.Forms.NumericUpDownTS();
+            this.nudAutoAttHoldRX1 = new System.Windows.Forms.NumericUpDownTS();
+            this.lblAutoAttHoldRX1 = new System.Windows.Forms.LabelTS();
+            this.chkAutoAttUndoRX2 = new System.Windows.Forms.CheckBoxTS();
+            this.chkAutoATTRx2 = new System.Windows.Forms.CheckBoxTS();
             this.grpGeneralProcessPriority = new System.Windows.Forms.GroupBoxTS();
             this.comboGeneralProcessPriority = new System.Windows.Forms.ComboBoxTS();
             this.grpGeneralOptions = new System.Windows.Forms.GroupBoxTS();
@@ -3562,6 +3570,13 @@
             this.lstMMIO_network_list = new System.Windows.Forms.ListBox();
             this.radMMIO_network_add_udp = new System.Windows.Forms.ButtonTS();
             this.btnMMIO_network_add_tcpip = new System.Windows.Forms.ButtonTS();
+            this.tpDiscord = new System.Windows.Forms.TabPage();
+            this.groupBoxTS48 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS289 = new System.Windows.Forms.LabelTS();
+            this.lnkDiscordJoin = new System.Windows.Forms.LinkLabel();
+            this.labelTS288 = new System.Windows.Forms.LabelTS();
+            this.txtDiscordCallsign = new System.Windows.Forms.TextBoxTS();
+            this.chkDiscordEnabled = new System.Windows.Forms.CheckBoxTS();
             this.tpTests = new System.Windows.Forms.TabPage();
             this.groupBoxTS30 = new System.Windows.Forms.GroupBoxTS();
             this.btnShowSeqLog = new System.Windows.Forms.ButtonTS();
@@ -3996,6 +4011,7 @@
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
             this.tmrLedValid = new System.Windows.Forms.Timer(this.components);
+            this.lblDiscordState = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4077,6 +4093,9 @@
             this.tpGeneralOptions.SuspendLayout();
             this.tcOptions.SuspendLayout();
             this.tpOptions1.SuspendLayout();
+            this.groupBoxTS47.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAutoAttHoldRX2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAutoAttHoldRX1)).BeginInit();
             this.grpGeneralProcessPriority.SuspendLayout();
             this.grpGeneralOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udSpaceMoxDelay)).BeginInit();
@@ -4889,6 +4908,8 @@
             this.groupBoxTS39.SuspendLayout();
             this.pnlMMIO_network_container.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMutliMeterIO_udp_out_warning)).BeginInit();
+            this.tpDiscord.SuspendLayout();
+            this.groupBoxTS48.SuspendLayout();
             this.tpTests.SuspendLayout();
             this.groupBoxTS30.SuspendLayout();
             this.grpBoxTS1.SuspendLayout();
@@ -5025,6 +5046,8 @@
             // tpAlexAntCtrl
             // 
             tpAlexAntCtrl.BackColor = System.Drawing.SystemColors.Control;
+            tpAlexAntCtrl.Controls.Add(this.chkUndoAutoATTTx);
+            tpAlexAntCtrl.Controls.Add(this.chkAutoATTTXPsOff);
             tpAlexAntCtrl.Controls.Add(this.lblTXattBand);
             tpAlexAntCtrl.Controls.Add(this.chkForceATTwhenOutPowerChanges);
             tpAlexAntCtrl.Controls.Add(this.chkForceATTwhenPSAoff);
@@ -5048,11 +5071,38 @@
             tpAlexAntCtrl.TabIndex = 0;
             tpAlexAntCtrl.Text = "Antenna";
             // 
+            // chkUndoAutoATTTx
+            // 
+            this.chkUndoAutoATTTx.AutoSize = true;
+            this.chkUndoAutoATTTx.Enabled = false;
+            this.chkUndoAutoATTTx.Image = null;
+            this.chkUndoAutoATTTx.Location = new System.Drawing.Point(591, 251);
+            this.chkUndoAutoATTTx.Name = "chkUndoAutoATTTx";
+            this.chkUndoAutoATTTx.Size = new System.Drawing.Size(111, 17);
+            this.chkUndoAutoATTTx.TabIndex = 24;
+            this.chkUndoAutoATTTx.Text = "Undo when Tx off";
+            this.toolTip1.SetToolTip(this.chkUndoAutoATTTx, "Undo the changes made");
+            this.chkUndoAutoATTTx.UseVisualStyleBackColor = true;
+            this.chkUndoAutoATTTx.CheckedChanged += new System.EventHandler(this.chkUndoAutoATTTx_CheckedChanged);
+            // 
+            // chkAutoATTTXPsOff
+            // 
+            this.chkAutoATTTXPsOff.AutoSize = true;
+            this.chkAutoATTTXPsOff.Image = null;
+            this.chkAutoATTTXPsOff.Location = new System.Drawing.Point(465, 233);
+            this.chkAutoATTTXPsOff.Name = "chkAutoATTTXPsOff";
+            this.chkAutoATTTXPsOff.Size = new System.Drawing.Size(183, 17);
+            this.chkAutoATTTXPsOff.TabIndex = 23;
+            this.chkAutoATTTXPsOff.Text = "Auto ATT on Tx when PS-A is off";
+            this.toolTip1.SetToolTip(this.chkAutoATTTXPsOff, "Auto attenuate TX when ps-a is off");
+            this.chkAutoATTTXPsOff.UseVisualStyleBackColor = true;
+            this.chkAutoATTTXPsOff.CheckedChanged += new System.EventHandler(this.chkAutoATTTXPsOff_CheckedChanged);
+            // 
             // lblTXattBand
             // 
             this.lblTXattBand.AutoSize = true;
             this.lblTXattBand.Image = null;
-            this.lblTXattBand.Location = new System.Drawing.Point(538, 162);
+            this.lblTXattBand.Location = new System.Drawing.Point(538, 154);
             this.lblTXattBand.Name = "lblTXattBand";
             this.lblTXattBand.Size = new System.Drawing.Size(31, 13);
             this.lblTXattBand.TabIndex = 22;
@@ -5060,10 +5110,11 @@
             // 
             // chkForceATTwhenOutPowerChanges
             // 
+            this.chkForceATTwhenOutPowerChanges.AutoSize = true;
             this.chkForceATTwhenOutPowerChanges.Image = null;
-            this.chkForceATTwhenOutPowerChanges.Location = new System.Drawing.Point(465, 219);
+            this.chkForceATTwhenOutPowerChanges.Location = new System.Drawing.Point(465, 197);
             this.chkForceATTwhenOutPowerChanges.Name = "chkForceATTwhenOutPowerChanges";
-            this.chkForceATTwhenOutPowerChanges.Size = new System.Drawing.Size(225, 31);
+            this.chkForceATTwhenOutPowerChanges.Size = new System.Drawing.Size(215, 30);
             this.chkForceATTwhenOutPowerChanges.TabIndex = 21;
             this.chkForceATTwhenOutPowerChanges.Text = "Force ATT on Tx to 31 when Drive or\r\nTune power is increased and PS-A is on";
             this.toolTip1.SetToolTip(this.chkForceATTwhenOutPowerChanges, "Forces ATT on Tx to 31 when Drive or Tune power is increased and PS-A is on");
@@ -5072,10 +5123,11 @@
             // 
             // chkForceATTwhenPSAoff
             // 
+            this.chkForceATTwhenPSAoff.AutoSize = true;
             this.chkForceATTwhenPSAoff.Image = null;
-            this.chkForceATTwhenPSAoff.Location = new System.Drawing.Point(465, 188);
+            this.chkForceATTwhenPSAoff.Location = new System.Drawing.Point(465, 174);
             this.chkForceATTwhenPSAoff.Name = "chkForceATTwhenPSAoff";
-            this.chkForceATTwhenPSAoff.Size = new System.Drawing.Size(225, 31);
+            this.chkForceATTwhenPSAoff.Size = new System.Drawing.Size(215, 17);
             this.chkForceATTwhenPSAoff.TabIndex = 20;
             this.chkForceATTwhenPSAoff.Text = "Force ATT on Tx to 31 when PS-A is off";
             this.toolTip1.SetToolTip(this.chkForceATTwhenPSAoff, "Forces ATT on Tx to 31 when PS-A is off. CW will do this anyway");
@@ -5152,7 +5204,7 @@
             // 
             this.labelATTOnTX.AutoSize = true;
             this.labelATTOnTX.Image = null;
-            this.labelATTOnTX.Location = new System.Drawing.Point(457, 158);
+            this.labelATTOnTX.Location = new System.Drawing.Point(457, 150);
             this.labelATTOnTX.Name = "labelATTOnTX";
             this.labelATTOnTX.Size = new System.Drawing.Size(31, 13);
             this.labelATTOnTX.TabIndex = 9;
@@ -5166,7 +5218,7 @@
             0,
             0,
             0});
-            this.udATTOnTX.Location = new System.Drawing.Point(494, 156);
+            this.udATTOnTX.Location = new System.Drawing.Point(494, 148);
             this.udATTOnTX.Maximum = new decimal(new int[] {
             31,
             0,
@@ -5212,7 +5264,7 @@
             this.grpSWRProtectionControl.Controls.Add(this.chkSWRProtection);
             this.grpSWRProtectionControl.Location = new System.Drawing.Point(441, 44);
             this.grpSWRProtectionControl.Name = "grpSWRProtectionControl";
-            this.grpSWRProtectionControl.Size = new System.Drawing.Size(261, 84);
+            this.grpSWRProtectionControl.Size = new System.Drawing.Size(261, 76);
             this.grpSWRProtectionControl.TabIndex = 5;
             this.grpSWRProtectionControl.TabStop = false;
             this.grpSWRProtectionControl.Text = "SWR Protection";
@@ -5325,7 +5377,7 @@
             // 
             this.chkATTOnTX.AutoSize = true;
             this.chkATTOnTX.Image = null;
-            this.chkATTOnTX.Location = new System.Drawing.Point(465, 134);
+            this.chkATTOnTX.Location = new System.Drawing.Point(465, 126);
             this.chkATTOnTX.Name = "chkATTOnTX";
             this.chkATTOnTX.Size = new System.Drawing.Size(77, 17);
             this.chkATTOnTX.TabIndex = 4;
@@ -7416,9 +7468,6 @@
             // tpGeneralHardware
             // 
             this.tpGeneralHardware.BackColor = System.Drawing.SystemColors.Control;
-            this.tpGeneralHardware.Controls.Add(this.btnReleaseNotes);
-            this.tpGeneralHardware.Controls.Add(this.lblTimeout);
-            this.tpGeneralHardware.Controls.Add(this.lblShowTimeoutText);
             this.tpGeneralHardware.Controls.Add(this.btnZipDebugInfo);
             this.tpGeneralHardware.Controls.Add(this.grpFirmware);
             this.tpGeneralHardware.Controls.Add(this.grpOzyType);
@@ -7433,38 +7482,6 @@
             this.tpGeneralHardware.TabIndex = 0;
             this.tpGeneralHardware.Text = "H/W Select";
             this.tpGeneralHardware.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralHardware_Paint);
-            // 
-            // btnReleaseNotes
-            // 
-            this.btnReleaseNotes.Image = null;
-            this.btnReleaseNotes.Location = new System.Drawing.Point(246, 310);
-            this.btnReleaseNotes.Name = "btnReleaseNotes";
-            this.btnReleaseNotes.Selectable = true;
-            this.btnReleaseNotes.Size = new System.Drawing.Size(111, 53);
-            this.btnReleaseNotes.TabIndex = 123;
-            this.btnReleaseNotes.Text = "Release Notes";
-            this.toolTip1.SetToolTip(this.btnReleaseNotes, "Show the release notes for this version");
-            this.btnReleaseNotes.UseVisualStyleBackColor = true;
-            this.btnReleaseNotes.Click += new System.EventHandler(this.btnReleaseNotes_Click);
-            // 
-            // lblTimeout
-            // 
-            this.lblTimeout.Image = null;
-            this.lblTimeout.Location = new System.Drawing.Point(271, 380);
-            this.lblTimeout.Name = "lblTimeout";
-            this.lblTimeout.Size = new System.Drawing.Size(87, 13);
-            this.lblTimeout.TabIndex = 38;
-            this.lblTimeout.Text = "90 days";
-            // 
-            // lblShowTimeoutText
-            // 
-            this.lblShowTimeoutText.Image = null;
-            this.lblShowTimeoutText.Location = new System.Drawing.Point(12, 380);
-            this.lblShowTimeoutText.Name = "lblShowTimeoutText";
-            this.lblShowTimeoutText.Size = new System.Drawing.Size(253, 13);
-            this.lblShowTimeoutText.TabIndex = 37;
-            this.lblShowTimeoutText.Text = "This test/beta version of Thetis will timeout in :";
-            this.lblShowTimeoutText.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // btnZipDebugInfo
             // 
@@ -8727,6 +8744,7 @@
             // tpOptions1
             // 
             this.tpOptions1.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOptions1.Controls.Add(this.groupBoxTS47);
             this.tpOptions1.Controls.Add(this.grpGeneralProcessPriority);
             this.tpOptions1.Controls.Add(this.grpGeneralOptions);
             this.tpOptions1.Controls.Add(this.grpHermesStepAttenuator);
@@ -8741,12 +8759,173 @@
             this.tpOptions1.TabIndex = 0;
             this.tpOptions1.Text = "Options-1";
             // 
+            // groupBoxTS47
+            // 
+            this.groupBoxTS47.Controls.Add(this.lblAutoAttHoldRX2);
+            this.groupBoxTS47.Controls.Add(this.chkAutoATTRx1);
+            this.groupBoxTS47.Controls.Add(this.chkAutoAttUndoRX1);
+            this.groupBoxTS47.Controls.Add(this.nudAutoAttHoldRX2);
+            this.groupBoxTS47.Controls.Add(this.nudAutoAttHoldRX1);
+            this.groupBoxTS47.Controls.Add(this.lblAutoAttHoldRX1);
+            this.groupBoxTS47.Controls.Add(this.chkAutoAttUndoRX2);
+            this.groupBoxTS47.Controls.Add(this.chkAutoATTRx2);
+            this.groupBoxTS47.Location = new System.Drawing.Point(542, 168);
+            this.groupBoxTS47.Name = "groupBoxTS47";
+            this.groupBoxTS47.Size = new System.Drawing.Size(168, 126);
+            this.groupBoxTS47.TabIndex = 32;
+            this.groupBoxTS47.TabStop = false;
+            this.groupBoxTS47.Text = "Auto Attenuate RX";
+            // 
+            // lblAutoAttHoldRX2
+            // 
+            this.lblAutoAttHoldRX2.AutoSize = true;
+            this.lblAutoAttHoldRX2.Enabled = false;
+            this.lblAutoAttHoldRX2.Image = null;
+            this.lblAutoAttHoldRX2.Location = new System.Drawing.Point(135, 84);
+            this.lblAutoAttHoldRX2.Name = "lblAutoAttHoldRX2";
+            this.lblAutoAttHoldRX2.Size = new System.Drawing.Size(27, 26);
+            this.lblAutoAttHoldRX2.TabIndex = 21;
+            this.lblAutoAttHoldRX2.Text = "sec\r\nhold";
+            // 
+            // chkAutoATTRx1
+            // 
+            this.chkAutoATTRx1.AutoSize = true;
+            this.chkAutoATTRx1.Image = null;
+            this.chkAutoATTRx1.Location = new System.Drawing.Point(8, 27);
+            this.chkAutoATTRx1.Name = "chkAutoATTRx1";
+            this.chkAutoATTRx1.Size = new System.Drawing.Size(87, 17);
+            this.chkAutoATTRx1.TabIndex = 14;
+            this.chkAutoATTRx1.Text = "Auto att RX1";
+            this.toolTip1.SetToolTip(this.chkAutoATTRx1, "Auto attenuate RX1 on ADC overload");
+            this.chkAutoATTRx1.UseVisualStyleBackColor = true;
+            this.chkAutoATTRx1.CheckedChanged += new System.EventHandler(this.chkAutoATTRx1_CheckedChanged);
+            // 
+            // chkAutoAttUndoRX1
+            // 
+            this.chkAutoAttUndoRX1.AutoSize = true;
+            this.chkAutoAttUndoRX1.Checked = true;
+            this.chkAutoAttUndoRX1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAutoAttUndoRX1.Enabled = false;
+            this.chkAutoAttUndoRX1.Image = null;
+            this.chkAutoAttUndoRX1.Location = new System.Drawing.Point(19, 49);
+            this.chkAutoAttUndoRX1.Name = "chkAutoAttUndoRX1";
+            this.chkAutoAttUndoRX1.Size = new System.Drawing.Size(52, 17);
+            this.chkAutoAttUndoRX1.TabIndex = 15;
+            this.chkAutoAttUndoRX1.Tag = "Undo the changes after the hold delay";
+            this.chkAutoAttUndoRX1.Text = "Undo";
+            this.toolTip1.SetToolTip(this.chkAutoAttUndoRX1, "Undo the changes made after X seconds");
+            this.chkAutoAttUndoRX1.UseVisualStyleBackColor = true;
+            this.chkAutoAttUndoRX1.CheckedChanged += new System.EventHandler(this.chkAutoAttUndoRX1_CheckedChanged);
+            // 
+            // nudAutoAttHoldRX2
+            // 
+            this.nudAutoAttHoldRX2.Enabled = false;
+            this.nudAutoAttHoldRX2.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudAutoAttHoldRX2.Location = new System.Drawing.Point(74, 88);
+            this.nudAutoAttHoldRX2.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+            this.nudAutoAttHoldRX2.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudAutoAttHoldRX2.Name = "nudAutoAttHoldRX2";
+            this.nudAutoAttHoldRX2.Size = new System.Drawing.Size(56, 20);
+            this.nudAutoAttHoldRX2.TabIndex = 20;
+            this.nudAutoAttHoldRX2.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudAutoAttHoldRX2, "Hold the changes for X seconds");
+            this.nudAutoAttHoldRX2.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.nudAutoAttHoldRX2.ValueChanged += new System.EventHandler(this.nudAutoAttHoldRX2_ValueChanged);
+            // 
+            // nudAutoAttHoldRX1
+            // 
+            this.nudAutoAttHoldRX1.Enabled = false;
+            this.nudAutoAttHoldRX1.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudAutoAttHoldRX1.Location = new System.Drawing.Point(74, 46);
+            this.nudAutoAttHoldRX1.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+            this.nudAutoAttHoldRX1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudAutoAttHoldRX1.Name = "nudAutoAttHoldRX1";
+            this.nudAutoAttHoldRX1.Size = new System.Drawing.Size(56, 20);
+            this.nudAutoAttHoldRX1.TabIndex = 16;
+            this.nudAutoAttHoldRX1.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudAutoAttHoldRX1, "Hold the changes for X seconds");
+            this.nudAutoAttHoldRX1.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.nudAutoAttHoldRX1.ValueChanged += new System.EventHandler(this.nudAutoAttHoldRX1_ValueChanged);
+            // 
+            // lblAutoAttHoldRX1
+            // 
+            this.lblAutoAttHoldRX1.AutoSize = true;
+            this.lblAutoAttHoldRX1.Enabled = false;
+            this.lblAutoAttHoldRX1.Image = null;
+            this.lblAutoAttHoldRX1.Location = new System.Drawing.Point(135, 42);
+            this.lblAutoAttHoldRX1.Name = "lblAutoAttHoldRX1";
+            this.lblAutoAttHoldRX1.Size = new System.Drawing.Size(27, 26);
+            this.lblAutoAttHoldRX1.TabIndex = 17;
+            this.lblAutoAttHoldRX1.Text = "sec\r\nhold";
+            // 
+            // chkAutoAttUndoRX2
+            // 
+            this.chkAutoAttUndoRX2.AutoSize = true;
+            this.chkAutoAttUndoRX2.Checked = true;
+            this.chkAutoAttUndoRX2.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAutoAttUndoRX2.Enabled = false;
+            this.chkAutoAttUndoRX2.Image = null;
+            this.chkAutoAttUndoRX2.Location = new System.Drawing.Point(19, 91);
+            this.chkAutoAttUndoRX2.Name = "chkAutoAttUndoRX2";
+            this.chkAutoAttUndoRX2.Size = new System.Drawing.Size(52, 17);
+            this.chkAutoAttUndoRX2.TabIndex = 19;
+            this.chkAutoAttUndoRX2.Tag = "Undo the changes after the hold delay";
+            this.chkAutoAttUndoRX2.Text = "Undo";
+            this.toolTip1.SetToolTip(this.chkAutoAttUndoRX2, "Undo the changes made after X seconds");
+            this.chkAutoAttUndoRX2.UseVisualStyleBackColor = true;
+            this.chkAutoAttUndoRX2.CheckedChanged += new System.EventHandler(this.chkAutoAttUndoRX2_CheckedChanged);
+            // 
+            // chkAutoATTRx2
+            // 
+            this.chkAutoATTRx2.AutoSize = true;
+            this.chkAutoATTRx2.Image = null;
+            this.chkAutoATTRx2.Location = new System.Drawing.Point(8, 69);
+            this.chkAutoATTRx2.Name = "chkAutoATTRx2";
+            this.chkAutoATTRx2.Size = new System.Drawing.Size(87, 17);
+            this.chkAutoATTRx2.TabIndex = 18;
+            this.chkAutoATTRx2.Text = "Auto att RX2";
+            this.toolTip1.SetToolTip(this.chkAutoATTRx2, "Auto attenuate RX2 on ADC overload");
+            this.chkAutoATTRx2.UseVisualStyleBackColor = true;
+            this.chkAutoATTRx2.CheckedChanged += new System.EventHandler(this.chkAutoATTRx2_CheckedChanged);
+            // 
             // grpGeneralProcessPriority
             // 
             this.grpGeneralProcessPriority.Controls.Add(this.comboGeneralProcessPriority);
-            this.grpGeneralProcessPriority.Location = new System.Drawing.Point(542, 328);
+            this.grpGeneralProcessPriority.Location = new System.Drawing.Point(91, 332);
             this.grpGeneralProcessPriority.Name = "grpGeneralProcessPriority";
-            this.grpGeneralProcessPriority.Size = new System.Drawing.Size(168, 49);
+            this.grpGeneralProcessPriority.Size = new System.Drawing.Size(168, 44);
             this.grpGeneralProcessPriority.TabIndex = 23;
             this.grpGeneralProcessPriority.TabStop = false;
             this.grpGeneralProcessPriority.Text = "Process Priority";
@@ -8762,7 +8941,7 @@
             "Above Normal",
             "High",
             "Real Time"});
-            this.comboGeneralProcessPriority.Location = new System.Drawing.Point(8, 19);
+            this.comboGeneralProcessPriority.Location = new System.Drawing.Point(8, 16);
             this.comboGeneralProcessPriority.Name = "comboGeneralProcessPriority";
             this.comboGeneralProcessPriority.Size = new System.Drawing.Size(112, 21);
             this.comboGeneralProcessPriority.TabIndex = 0;
@@ -9009,7 +9188,7 @@
             this.grpHermesStepAttenuator.Controls.Add(this.chkHermesStepAttenuator);
             this.grpHermesStepAttenuator.Location = new System.Drawing.Point(542, 63);
             this.grpHermesStepAttenuator.Name = "grpHermesStepAttenuator";
-            this.grpHermesStepAttenuator.Size = new System.Drawing.Size(168, 102);
+            this.grpHermesStepAttenuator.Size = new System.Drawing.Size(168, 99);
             this.grpHermesStepAttenuator.TabIndex = 30;
             this.grpHermesStepAttenuator.TabStop = false;
             this.grpHermesStepAttenuator.Text = "Hermes Step Attenuator";
@@ -9034,7 +9213,7 @@
             0,
             0,
             0});
-            this.udHermesStepAttenuatorDataRX2.Location = new System.Drawing.Point(107, 67);
+            this.udHermesStepAttenuatorDataRX2.Location = new System.Drawing.Point(107, 68);
             this.udHermesStepAttenuatorDataRX2.Maximum = new decimal(new int[] {
             31,
             0,
@@ -9060,7 +9239,7 @@
             // chkRX2StepAtt
             // 
             this.chkRX2StepAtt.Image = null;
-            this.chkRX2StepAtt.Location = new System.Drawing.Point(8, 68);
+            this.chkRX2StepAtt.Location = new System.Drawing.Point(8, 69);
             this.chkRX2StepAtt.Name = "chkRX2StepAtt";
             this.chkRX2StepAtt.Size = new System.Drawing.Size(88, 16);
             this.chkRX2StepAtt.TabIndex = 4;
@@ -9207,7 +9386,7 @@
             this.grpGenCustomTitleText.Controls.Add(this.txtGenCustomTitle);
             this.grpGenCustomTitleText.Location = new System.Drawing.Point(542, 8);
             this.grpGenCustomTitleText.Name = "grpGenCustomTitleText";
-            this.grpGenCustomTitleText.Size = new System.Drawing.Size(168, 56);
+            this.grpGenCustomTitleText.Size = new System.Drawing.Size(168, 49);
             this.grpGenCustomTitleText.TabIndex = 29;
             this.grpGenCustomTitleText.TabStop = false;
             this.grpGenCustomTitleText.Text = "Custom Title Text";
@@ -9510,9 +9689,9 @@
             this.grpGenTuningOptions.Controls.Add(this.udOptClickTuneOffsetDIGL);
             this.grpGenTuningOptions.Controls.Add(this.lblOptClickTuneDIGU);
             this.grpGenTuningOptions.Controls.Add(this.udOptClickTuneOffsetDIGU);
-            this.grpGenTuningOptions.Location = new System.Drawing.Point(542, 249);
+            this.grpGenTuningOptions.Location = new System.Drawing.Point(542, 307);
             this.grpGenTuningOptions.Name = "grpGenTuningOptions";
-            this.grpGenTuningOptions.Size = new System.Drawing.Size(168, 73);
+            this.grpGenTuningOptions.Size = new System.Drawing.Size(168, 69);
             this.grpGenTuningOptions.TabIndex = 25;
             this.grpGenTuningOptions.TabStop = false;
             this.grpGenTuningOptions.Text = "Click Tune / Filter Offsets";
@@ -53613,11 +53792,13 @@
             this.tcCAT.Controls.Add(this.tpUserInterface);
             this.tcCAT.Controls.Add(this.tpAndromeda);
             this.tcCAT.Controls.Add(this.tpMultiMetersIO);
+            this.tcCAT.Controls.Add(this.tpDiscord);
             this.tcCAT.Location = new System.Drawing.Point(0, 3);
             this.tcCAT.Name = "tcCAT";
             this.tcCAT.SelectedIndex = 0;
             this.tcCAT.Size = new System.Drawing.Size(732, 433);
             this.tcCAT.TabIndex = 0;
+            this.tcCAT.SelectedIndexChanged += new System.EventHandler(this.tcCAT_SelectedIndexChanged);
             // 
             // tpCATSerialPorts
             // 
@@ -56618,6 +56799,85 @@
             this.btnMMIO_network_add_tcpip.UseVisualStyleBackColor = true;
             this.btnMMIO_network_add_tcpip.Click += new System.EventHandler(this.btnMMIO_network_add_tcpip_Click);
             // 
+            // tpDiscord
+            // 
+            this.tpDiscord.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDiscord.Controls.Add(this.groupBoxTS48);
+            this.tpDiscord.Location = new System.Drawing.Point(4, 22);
+            this.tpDiscord.Name = "tpDiscord";
+            this.tpDiscord.Size = new System.Drawing.Size(724, 407);
+            this.tpDiscord.TabIndex = 8;
+            this.tpDiscord.Text = "Discord Link";
+            // 
+            // groupBoxTS48
+            // 
+            this.groupBoxTS48.Controls.Add(this.lblDiscordState);
+            this.groupBoxTS48.Controls.Add(this.labelTS289);
+            this.groupBoxTS48.Controls.Add(this.lnkDiscordJoin);
+            this.groupBoxTS48.Controls.Add(this.labelTS288);
+            this.groupBoxTS48.Controls.Add(this.txtDiscordCallsign);
+            this.groupBoxTS48.Controls.Add(this.chkDiscordEnabled);
+            this.groupBoxTS48.Location = new System.Drawing.Point(16, 14);
+            this.groupBoxTS48.Name = "groupBoxTS48";
+            this.groupBoxTS48.Size = new System.Drawing.Size(702, 385);
+            this.groupBoxTS48.TabIndex = 0;
+            this.groupBoxTS48.TabStop = false;
+            this.groupBoxTS48.Text = "Discord";
+            // 
+            // labelTS289
+            // 
+            this.labelTS289.AutoSize = true;
+            this.labelTS289.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS289.Image = null;
+            this.labelTS289.Location = new System.Drawing.Point(35, 99);
+            this.labelTS289.Name = "labelTS289";
+            this.labelTS289.Size = new System.Drawing.Size(594, 64);
+            this.labelTS289.TabIndex = 4;
+            this.labelTS289.Text = resources.GetString("labelTS289.Text");
+            // 
+            // lnkDiscordJoin
+            // 
+            this.lnkDiscordJoin.AutoSize = true;
+            this.lnkDiscordJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lnkDiscordJoin.Location = new System.Drawing.Point(404, 49);
+            this.lnkDiscordJoin.Name = "lnkDiscordJoin";
+            this.lnkDiscordJoin.Size = new System.Drawing.Size(200, 25);
+            this.lnkDiscordJoin.TabIndex = 3;
+            this.lnkDiscordJoin.TabStop = true;
+            this.lnkDiscordJoin.Text = "Join Discord Server";
+            this.lnkDiscordJoin.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkDiscordJoin_LinkClicked);
+            // 
+            // labelTS288
+            // 
+            this.labelTS288.AutoSize = true;
+            this.labelTS288.Image = null;
+            this.labelTS288.Location = new System.Drawing.Point(26, 43);
+            this.labelTS288.Name = "labelTS288";
+            this.labelTS288.Size = new System.Drawing.Size(49, 13);
+            this.labelTS288.TabIndex = 2;
+            this.labelTS288.Text = "Callsign :";
+            // 
+            // txtDiscordCallsign
+            // 
+            this.txtDiscordCallsign.Location = new System.Drawing.Point(81, 40);
+            this.txtDiscordCallsign.MaxLength = 12;
+            this.txtDiscordCallsign.Name = "txtDiscordCallsign";
+            this.txtDiscordCallsign.Size = new System.Drawing.Size(100, 20);
+            this.txtDiscordCallsign.TabIndex = 1;
+            this.txtDiscordCallsign.TextChanged += new System.EventHandler(this.txtDiscordCallsign_TextChanged);
+            // 
+            // chkDiscordEnabled
+            // 
+            this.chkDiscordEnabled.AutoSize = true;
+            this.chkDiscordEnabled.Image = null;
+            this.chkDiscordEnabled.Location = new System.Drawing.Point(212, 43);
+            this.chkDiscordEnabled.Name = "chkDiscordEnabled";
+            this.chkDiscordEnabled.Size = new System.Drawing.Size(65, 17);
+            this.chkDiscordEnabled.TabIndex = 0;
+            this.chkDiscordEnabled.Text = "Enabled";
+            this.chkDiscordEnabled.UseVisualStyleBackColor = true;
+            this.chkDiscordEnabled.CheckedChanged += new System.EventHandler(this.chkDiscordEnabled_CheckedChanged);
+            // 
             // tpTests
             // 
             this.tpTests.Controls.Add(this.groupBoxTS30);
@@ -59095,7 +59355,7 @@
             this.btnLedIndicator_copy_truefalse_colours.Size = new System.Drawing.Size(33, 23);
             this.btnLedIndicator_copy_truefalse_colours.TabIndex = 165;
             this.btnLedIndicator_copy_truefalse_colours.Text = "=";
-            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_truefalse_colours, "Copy the font and colours from RX to TX");
+            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_truefalse_colours, "Copy the colours from TRUE to FALSE");
             this.btnLedIndicator_copy_truefalse_colours.UseVisualStyleBackColor = true;
             this.btnLedIndicator_copy_truefalse_colours.Click += new System.EventHandler(this.btnLedIndicator_copy_truefalse_colours_Click);
             // 
@@ -59153,7 +59413,7 @@
             this.btnLedIndicator_copy_sizex_to_y.Size = new System.Drawing.Size(33, 23);
             this.btnLedIndicator_copy_sizex_to_y.TabIndex = 155;
             this.btnLedIndicator_copy_sizex_to_y.Text = "=";
-            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_sizex_to_y, "Copy the offset values from RX to TX");
+            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_sizex_to_y, "Copy the size values from X to Y");
             this.btnLedIndicator_copy_sizex_to_y.UseVisualStyleBackColor = true;
             this.btnLedIndicator_copy_sizex_to_y.Click += new System.EventHandler(this.btnLedIndicator_copy_sizex_to_y_Click);
             // 
@@ -63515,6 +63775,16 @@
             this.tmrLedValid.Interval = 500;
             this.tmrLedValid.Tick += new System.EventHandler(this.tmrLedValid_Tick);
             // 
+            // lblDiscordState
+            // 
+            this.lblDiscordState.AutoSize = true;
+            this.lblDiscordState.Image = null;
+            this.lblDiscordState.Location = new System.Drawing.Point(216, 63);
+            this.lblDiscordState.Name = "lblDiscordState";
+            this.lblDiscordState.Size = new System.Drawing.Size(42, 13);
+            this.lblDiscordState.TabIndex = 1;
+            this.lblDiscordState.Text = "STATE";
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -63626,6 +63896,10 @@
             this.tpGeneralOptions.ResumeLayout(false);
             this.tcOptions.ResumeLayout(false);
             this.tpOptions1.ResumeLayout(false);
+            this.groupBoxTS47.ResumeLayout(false);
+            this.groupBoxTS47.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAutoAttHoldRX2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudAutoAttHoldRX1)).EndInit();
             this.grpGeneralProcessPriority.ResumeLayout(false);
             this.grpGeneralOptions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udSpaceMoxDelay)).EndInit();
@@ -64625,6 +64899,9 @@
             this.pnlMMIO_network_container.ResumeLayout(false);
             this.pnlMMIO_network_container.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMutliMeterIO_udp_out_warning)).EndInit();
+            this.tpDiscord.ResumeLayout(false);
+            this.groupBoxTS48.ResumeLayout(false);
+            this.groupBoxTS48.PerformLayout();
             this.tpTests.ResumeLayout(false);
             this.groupBoxTS30.ResumeLayout(false);
             this.grpBoxTS1.ResumeLayout(false);
@@ -67931,8 +68208,6 @@
         private LabelTS labelTS613;
         private CheckBoxTS chkShowTCISpots;
         private CheckBoxTS chkLegacyDXBuffers;
-        private LabelTS lblTimeout;
-        private LabelTS lblShowTimeoutText;
         private ColorButton clrbtnOwnCallApearance;
         private TextBoxTS txtOwnCallsign;
         private CheckBoxTS chkSpotOwnCallAppearance;
@@ -68288,7 +68563,6 @@
         private CheckBoxTS chkVAC2ExclusiveOut;
         private CheckBoxTS chkVAC1ExclusiveIn;
         private CheckBoxTS chkVAC2ExclusiveIn;
-        private ButtonTS btnReleaseNotes;
         private CheckBoxTS chkIgnore14bitMidiMessages;
         private CheckBoxTS chkMidiControlIDincludesChannel;
         private CheckBoxTS chkMidiControlIDincludesStatus;
@@ -68778,5 +69052,24 @@
         private CheckBoxTS chkLed_notx_true;
         private NumericUpDownTS nudLedIndicator_UpdateInterval;
         private LabelTS labelTS287;
+        private CheckBoxTS chkAutoATTTXPsOff;
+        private CheckBoxTS chkUndoAutoATTTx;
+        private CheckBoxTS chkAutoAttUndoRX1;
+        private CheckBoxTS chkAutoATTRx1;
+        private NumericUpDownTS nudAutoAttHoldRX1;
+        private LabelTS lblAutoAttHoldRX2;
+        private NumericUpDownTS nudAutoAttHoldRX2;
+        private CheckBoxTS chkAutoAttUndoRX2;
+        private CheckBoxTS chkAutoATTRx2;
+        private LabelTS lblAutoAttHoldRX1;
+        private GroupBoxTS groupBoxTS47;
+        private TabPage tpDiscord;
+        private GroupBoxTS groupBoxTS48;
+        private LabelTS labelTS289;
+        private LinkLabel lnkDiscordJoin;
+        private LabelTS labelTS288;
+        private TextBoxTS txtDiscordCallsign;
+        private CheckBoxTS chkDiscordEnabled;
+        private LabelTS lblDiscordState;
     }
 }

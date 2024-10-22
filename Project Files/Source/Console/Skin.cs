@@ -123,17 +123,39 @@ namespace Thetis
             path = p + "\\" + name;
             Skin.name = name;
 
-           // f.BackgroundImage = File.Exists(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext) ? /*Image.FromFile*/loadImage(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext) : null;
-
             if (File.Exists(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext))
             {
-                f.BackgroundImage = loadImage(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
+                if (!(f is Console))
+                {
+                    f.BackgroundImage = loadImage(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
+                }
+                else
+                {
+                    m_objConsole.CachedBackgroundImage = loadImage(path + "\\" + f.Name + "\\" + f.Name + pic_file_ext);
+                }
             }
             else if (File.Exists(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext))
             {
-                f.BackgroundImage = loadImage(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext);
+                if (!(f is Console))
+                {
+                    f.BackgroundImage = loadImage(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext);
+                }
+                else
+                {
+                    m_objConsole.CachedBackgroundImage = loadImage(path + "\\" + "Console" + "\\" + "Console" + pic_file_ext);
+                }
             }
-            else f.BackgroundImage = null;
+            else
+            {
+                if (!(f is Console))
+                {
+                    f.BackgroundImage = null;
+                }
+                else
+                {
+                    m_objConsole.CachedBackgroundImage = null;
+                }
+            }
 
             foreach (Control c in f.Controls) // load in images
                 ReadImages(c);
@@ -779,8 +801,12 @@ namespace Thetis
                         spath = path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
                         img = getImageFromFilePath(spath);
                     }
+
                     if (img != null && !_shared_image_lists[skey].Images.ContainsKey(sstate))
+                    {
+                        img = resizeImage(img, ctrl);
                         _shared_image_lists[skey].Images.Add(sstate, img);
+                    }
                 }
             }
             if(ctrl.ImageList == null) ctrl.ImageList = new ImageList(); // just assign one, it wont be used as no images were found
@@ -989,7 +1015,10 @@ namespace Thetis
                         img = getImageFromFilePath(spath);
                     }
                     if (img != null && !_shared_image_lists[skey].Images.ContainsKey(sstate))
+                    {
+                        img = resizeImage(img, ctrl);
                         _shared_image_lists[skey].Images.Add(sstate, img);
+                    }
                 }
             }
             if (ctrl.ImageList == null) ctrl.ImageList = new ImageList(); // just assign one, it wont be used as no images were found
@@ -1488,7 +1517,10 @@ namespace Thetis
                         img = getImageFromFilePath(spath);
                     }
                     if (img != null && !_shared_image_lists[skey].Images.ContainsKey(sstate))
+                    {
+                        img = resizeImage(img, ctrl);
                         _shared_image_lists[skey].Images.Add(sstate, img);
+                    }
                 }
             }
             if (ctrl.ImageList == null) ctrl.ImageList = new ImageList(); // just assign one, it wont be used as no images were found
@@ -1909,5 +1941,30 @@ namespace Thetis
             }
         }
         #endregion
+
+        private static Image resizeImage(Image image, Control c)
+        {
+            if (c.ClientSize.Width == 0 || c.ClientSize.Width == 0) return null;
+            if (c.ClientSize.Width == image.Width && c.ClientSize.Width == image.Height) return image;
+
+            Graphics graphics = null;
+            try
+            {
+                Image resized_image = new Bitmap(c.ClientSize.Width, c.ClientSize.Height);
+                graphics = Graphics.FromImage(resized_image);
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                graphics.DrawImage(image, 0, 0, resized_image.Width, resized_image.Height);
+
+                return image;
+            }
+            catch
+            {
+                return null;
+            }
+            finally
+            {
+                if (graphics != null) graphics.Dispose();
+            }
+        }
     }
 }

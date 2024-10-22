@@ -125,7 +125,7 @@ namespace Thetis
 
         public void SaveWideBand()
         {
-            ArrayList a = new ArrayList();
+            List<string> a = new List<string>();
 
             a.Add("average_on/" + wbdisplay.AverageOn);
             a.Add("update_rate/" + wbdisplay.UpdateRate);
@@ -138,12 +138,12 @@ namespace Thetis
             a.Add("Width/" + this.Width);
             a.Add("Height/" + this.Height);
 
-            DB.SaveVars("WideBand", ref a);
+            DB.SaveVars("WideBand", a);
         }
 
         public void GetWideBand()
         {
-            ArrayList a = DB.GetVars("WideBand");
+            List<string> a = DB.GetVars("WideBand");
             a.Sort();
 
             foreach (string s in a)

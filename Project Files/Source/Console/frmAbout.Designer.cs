@@ -35,6 +35,7 @@
             this.lnkLicence = new System.Windows.Forms.LinkLabel();
             this.lstLinks = new System.Windows.Forms.ListBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnReleaseNotes = new System.Windows.Forms.ButtonTS();
             this.btnUpdatedRelease = new System.Windows.Forms.ButtonTS();
             this.btnVisit = new System.Windows.Forms.ButtonTS();
             this.btnDXDiag = new System.Windows.Forms.ButtonTS();
@@ -91,7 +92,7 @@
             this.lstVersions.FormattingEnabled = true;
             this.lstVersions.ItemHeight = 16;
             this.lstVersions.Items.AddRange(new object[] {
-            "Version : 2.10.3.6",
+            "Version : 2.10.3.6 WWWWWWWWWWWWWWWW",
             "Database : 2.10.3",
             "Radio Model : ANAN7000",
             "Andromeda Info:",
@@ -139,12 +140,35 @@
             "Protocol2 Firmware (7000/8000) RF fix",
             "G2 Firmware & Software \"p2app\"",
             "Thetis for Hermes Lite 2 on GitHub",
-            "WDSP Documentation on GitHub"});
+            "WDSP Documentation on GitHub",
+            "OE3IDE\'s (Ernst) Connectors & Tools",
+            "---MANUALS---",
+            "Thetis",
+            "Cat Command Reference",
+            "PureSignal",
+            "Midi",
+            "cmASIO",
+            "Behringer"});
             this.lstLinks.Location = new System.Drawing.Point(345, 108);
             this.lstLinks.Name = "lstLinks";
             this.lstLinks.Size = new System.Drawing.Size(267, 130);
             this.lstLinks.TabIndex = 9;
             this.lstLinks.SelectedIndexChanged += new System.EventHandler(this.lstLinks_SelectedIndexChanged);
+            // 
+            // btnReleaseNotes
+            // 
+            this.btnReleaseNotes.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.btnReleaseNotes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnReleaseNotes.Image = null;
+            this.btnReleaseNotes.Location = new System.Drawing.Point(524, 388);
+            this.btnReleaseNotes.Name = "btnReleaseNotes";
+            this.btnReleaseNotes.Selectable = true;
+            this.btnReleaseNotes.Size = new System.Drawing.Size(88, 41);
+            this.btnReleaseNotes.TabIndex = 14;
+            this.btnReleaseNotes.Text = "Release\r\nNotes";
+            this.toolTip1.SetToolTip(this.btnReleaseNotes, "Show the release notes");
+            this.btnReleaseNotes.UseVisualStyleBackColor = false;
+            this.btnReleaseNotes.Click += new System.EventHandler(this.btnReleaseNotes_Click);
             // 
             // btnUpdatedRelease
             // 
@@ -171,7 +195,7 @@
             this.btnVisit.Selectable = true;
             this.btnVisit.Size = new System.Drawing.Size(88, 23);
             this.btnVisit.TabIndex = 10;
-            this.btnVisit.Text = "Visit";
+            this.btnVisit.Text = "View";
             this.toolTip1.SetToolTip(this.btnVisit, "Visit he selected link");
             this.btnVisit.UseVisualStyleBackColor = false;
             this.btnVisit.Click += new System.EventHandler(this.btnVisit_Click);
@@ -238,9 +262,9 @@
             this.labelTS3.Image = null;
             this.labelTS3.Location = new System.Drawing.Point(342, 85);
             this.labelTS3.Name = "labelTS3";
-            this.labelTS3.Size = new System.Drawing.Size(41, 16);
+            this.labelTS3.Size = new System.Drawing.Size(102, 16);
             this.labelTS3.TabIndex = 11;
-            this.labelTS3.Text = "Links:";
+            this.labelTS3.Text = "Links / Manuals:";
             // 
             // labelTS2
             // 
@@ -285,6 +309,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(624, 534);
+            this.Controls.Add(this.btnReleaseNotes);
             this.Controls.Add(this.btnUpdatedRelease);
             this.Controls.Add(this.labelTS4);
             this.Controls.Add(this.labelTS3);
@@ -327,5 +352,6 @@
         private System.Windows.Forms.LabelTS labelTS4;
         private System.Windows.Forms.ButtonTS btnUpdatedRelease;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ButtonTS btnReleaseNotes;
     }
 }
