@@ -76,7 +76,7 @@
             "NC3Z, Gary (forum mod)",
             "OE3IDE, Ernst (skins & primary tester)",
             "W1AEX, Rob (skins & audio information)",
-            "DH1KLM, Sigi (UI improvements)",
+            "DH1KLM, Sigi (skins & UI improvements)",
             "",
             "and indirectly, all the testers"});
             this.lstContributors.Location = new System.Drawing.Point(19, 267);

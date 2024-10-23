@@ -111,6 +111,7 @@ namespace Thetis
         private static DBSettings _dbman_settings;
         private static bool _ignore_written;
         private static string _unique_instance_id;
+        private static bool _prune_backups;
         static DBMan()
         {
             _ignore_written = false;
@@ -118,6 +119,7 @@ namespace Thetis
             _app_data_path = "";
             _db_data_path = "";
             _unique_instance_id = "";
+            _prune_backups = false;
             _frm_dbman = new frmDBMan();
         }
         public static bool IsVisible
@@ -169,6 +171,7 @@ namespace Thetis
             _frm_dbman.InitAvailableDBs(dbs, _dbman_settings.ActiveDB_GUID, Guid.Empty);
 
             _frm_dbman.Restore();
+            _frm_dbman.PruneBackups = _prune_backups;
             _frm_dbman.ShowDialog();
         }
 
@@ -321,6 +324,7 @@ namespace Thetis
 
                     if (ok)
                     {
+                        bool did_backup = false;
                         //check for backup at startup
                         try
                         {
@@ -330,7 +334,10 @@ namespace Thetis
                                 string jsonString = File.ReadAllText(json_file);
                                 DatabaseInfo di = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
                                 if (di.BackupOnStartup)
+                                {
+                                    did_backup = true;
                                     TakeBackup(Guid.Empty, "Startup");
+                                }
                             }
                         }
                         catch { }
@@ -343,6 +350,23 @@ namespace Thetis
 
                         //check version
                         if(ok) checkVersion(made_new, ctrl_key_force_update);
+
+                        if(ok && did_backup) // note, the TakeBackup above will not prune, as the DB has not been recovered for the flag PruneBackups
+                        {
+                            // prune
+                            Dictionary<string, string> vals = DB.GetVarsDictionary("State");
+                            bool prune = false;
+                            if (vals.ContainsKey("PruneBackups"))
+                                bool.TryParse(vals["PruneBackups"], out prune);
+
+                            _frm_dbman.PruneBackups = prune;
+
+                            if (prune)
+                            {
+                                string directory_path = Path.GetDirectoryName(db_xml_file) + "\\backups";
+                                pruneForGFS(directory_path);
+                            }
+                        }
                     }
                 }
                 else
@@ -1130,14 +1154,14 @@ namespace Thetis
             bool ok = false;
             Guid guid = _dbman_settings.ActiveDB_GUID;
 
+            string backup_directory = _db_data_path + guid.ToString() + "\\backups";
             try
             {
                 // TODO: backup limits GFS
-                string backup_filename = "";
+                string backup_filename = "";                
                 string db_filename_xml = _db_data_path + guid.ToString() + "\\database.xml";
-                if (File.Exists(db_filename_xml))
+                if (File.Exists(db_filename_xml) && Directory.Exists(backup_directory))
                 {
-                    string backup_directory = _db_data_path + guid.ToString() + "\\backups";
                     backup_filename = createUniqueFilename(backup_directory);
 
                     File.Copy(db_filename_xml, backup_filename, true);
@@ -1164,6 +1188,11 @@ namespace Thetis
                 }
             }
             catch { }
+
+            if (ok && _prune_backups)
+            {
+                pruneForGFS(backup_directory);
+            }
 
             if (highlighted != Guid.Empty)
                 guid = highlighted;
@@ -1800,6 +1829,84 @@ namespace Thetis
             }
         }
 
+        private static int getWeekOfYear(DateTime date)
+        {
+            System.Globalization.CultureInfo cul = System.Globalization.CultureInfo.CurrentCulture;
+            return cul.Calendar.GetWeekOfYear(date, System.Globalization.CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+        }
+        public static bool PruneBackups
+        {
+            get { return _prune_backups; }
+            set { _prune_backups = value; }
+        }
+        private static void pruneForGFS(string backup_folder_path)
+        {
+            if (!_prune_backups || !Directory.Exists(backup_folder_path)) return;
 
+            bool ok = false;
+            List<FileInfo> keep_backups = null;
+            List<FileInfo> backups = null;
+
+            try
+            {
+                backups = new DirectoryInfo(backup_folder_path).GetFiles("*.xml")
+                    .OrderByDescending(f => f.CreationTime)
+                    .ToList();
+
+                DateTime now = DateTime.Now;
+
+                List<FileInfo> last_7_days = backups
+                    .Where(f => (now - f.CreationTime).TotalDays <= 7)
+                    .ToList();
+
+                List<FileInfo> weekly_backups = backups
+                    .Where(f => (now - f.CreationTime).TotalDays > 7)
+                    .GroupBy(f => new { Year = f.CreationTime.Year, Week = getWeekOfYear(f.CreationTime) })
+                    .Select(g => g.OrderByDescending(f => f.CreationTime).First())
+                    .ToList();
+
+                List<FileInfo> monthly_backups = backups
+                    .Where(f => (now - f.CreationTime).TotalDays > 30)
+                    .GroupBy(f => new { Year = f.CreationTime.Year, Month = f.CreationTime.Month })
+                    .Select(g => g.OrderByDescending(f => f.CreationTime).First())
+                    .ToList();
+
+                List<FileInfo> yearly_backups = backups
+                    .Where(f => (now - f.CreationTime).TotalDays > 365)
+                    .GroupBy(f => f.CreationTime.Year)
+                    .Select(g => g.OrderByDescending(f => f.CreationTime).First())
+                    .ToList();
+
+                keep_backups = last_7_days
+                    .Concat(weekly_backups)
+                    .Concat(monthly_backups)
+                    .Concat(yearly_backups)
+                    .Distinct()
+                    .ToList();
+
+                ok = true;
+            }
+            catch { }
+
+            if (ok)
+            {
+                foreach (FileInfo backup in backups)
+                {
+                    if (!keep_backups.Contains(backup))
+                    {
+                        try
+                        {
+                            backup.Delete();
+                            string json_file_path = Path.ChangeExtension(backup.FullName, ".json");
+                            if (File.Exists(json_file_path))
+                            {
+                                File.Delete(json_file_path);
+                            }
+                        }
+                        catch { }
+                    }
+                }
+            }
+        }
     }
 }

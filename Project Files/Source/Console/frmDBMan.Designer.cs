@@ -70,6 +70,7 @@
             this.labelTS3 = new System.Windows.Forms.LabelTS();
             this.labelTS2 = new System.Windows.Forms.LabelTS();
             this.lblDabaseBackups_active_selected = new System.Windows.Forms.LabelTS();
+            this.chkPruneBackups = new System.Windows.Forms.CheckBoxTS();
             this.SuspendLayout();
             // 
             // lstActiveDBs
@@ -438,12 +439,27 @@
             this.lblDabaseBackups_active_selected.TabIndex = 9;
             this.lblDabaseBackups_active_selected.Text = "Database Backups";
             // 
+            // chkPruneBackups
+            // 
+            this.chkPruneBackups.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkPruneBackups.AutoSize = true;
+            this.chkPruneBackups.Image = null;
+            this.chkPruneBackups.Location = new System.Drawing.Point(542, 574);
+            this.chkPruneBackups.Name = "chkPruneBackups";
+            this.chkPruneBackups.Size = new System.Drawing.Size(104, 17);
+            this.chkPruneBackups.TabIndex = 31;
+            this.chkPruneBackups.Text = "Prune backuups";
+            this.toolTip1.SetToolTip(this.chkPruneBackups, resources.GetString("chkPruneBackups.ToolTip"));
+            this.chkPruneBackups.UseVisualStyleBackColor = true;
+            this.chkPruneBackups.CheckedChanged += new System.EventHandler(this.chkPruneBackups_CheckedChanged);
+            // 
             // frmDBMan
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(704, 601);
+            this.Controls.Add(this.chkPruneBackups);
             this.Controls.Add(this.btnRenameBackup);
             this.Controls.Add(this.labelTS4);
             this.Controls.Add(this.labelTS3);
@@ -518,5 +534,6 @@
         private System.Windows.Forms.LabelTS labelTS4;
         private System.Windows.Forms.ColumnHeader colDescription;
         private System.Windows.Forms.ButtonTS btnRenameBackup;
+        private System.Windows.Forms.CheckBoxTS chkPruneBackups;
     }
 }

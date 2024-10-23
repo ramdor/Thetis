@@ -3572,6 +3572,11 @@
             this.btnMMIO_network_add_tcpip = new System.Windows.Forms.ButtonTS();
             this.tpDiscord = new System.Windows.Forms.TabPage();
             this.groupBoxTS48 = new System.Windows.Forms.GroupBoxTS();
+            this.txtDiscordFilter = new System.Windows.Forms.TextBoxTS();
+            this.labelTS291 = new System.Windows.Forms.LabelTS();
+            this.txtDiscordUniqueIDs = new System.Windows.Forms.TextBoxTS();
+            this.labelTS290 = new System.Windows.Forms.LabelTS();
+            this.lblDiscordState = new System.Windows.Forms.LabelTS();
             this.labelTS289 = new System.Windows.Forms.LabelTS();
             this.lnkDiscordJoin = new System.Windows.Forms.LinkLabel();
             this.labelTS288 = new System.Windows.Forms.LabelTS();
@@ -4011,7 +4016,6 @@
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
             this.tmrLedValid = new System.Windows.Forms.Timer(this.components);
-            this.lblDiscordState = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -56811,6 +56815,10 @@
             // 
             // groupBoxTS48
             // 
+            this.groupBoxTS48.Controls.Add(this.txtDiscordFilter);
+            this.groupBoxTS48.Controls.Add(this.labelTS291);
+            this.groupBoxTS48.Controls.Add(this.txtDiscordUniqueIDs);
+            this.groupBoxTS48.Controls.Add(this.labelTS290);
             this.groupBoxTS48.Controls.Add(this.lblDiscordState);
             this.groupBoxTS48.Controls.Add(this.labelTS289);
             this.groupBoxTS48.Controls.Add(this.lnkDiscordJoin);
@@ -56824,12 +56832,67 @@
             this.groupBoxTS48.TabStop = false;
             this.groupBoxTS48.Text = "Discord";
             // 
+            // txtDiscordFilter
+            // 
+            this.txtDiscordFilter.Location = new System.Drawing.Point(104, 123);
+            this.txtDiscordFilter.MaxLength = 512;
+            this.txtDiscordFilter.Name = "txtDiscordFilter";
+            this.txtDiscordFilter.Size = new System.Drawing.Size(391, 20);
+            this.txtDiscordFilter.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.txtDiscordFilter, "Comma separated list of strings. Only messages that contain these will be receive" +
+        "d.Case sensitive and trimmed");
+            this.txtDiscordFilter.TextChanged += new System.EventHandler(this.txtDiscordFilter_TextChanged);
+            this.txtDiscordFilter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDiscordFilter_KeyPress);
+            // 
+            // labelTS291
+            // 
+            this.labelTS291.AutoSize = true;
+            this.labelTS291.Image = null;
+            this.labelTS291.Location = new System.Drawing.Point(66, 126);
+            this.labelTS291.Name = "labelTS291";
+            this.labelTS291.Size = new System.Drawing.Size(32, 13);
+            this.labelTS291.TabIndex = 7;
+            this.labelTS291.Text = "Filter:";
+            // 
+            // txtDiscordUniqueIDs
+            // 
+            this.txtDiscordUniqueIDs.Location = new System.Drawing.Point(104, 97);
+            this.txtDiscordUniqueIDs.MaxLength = 512;
+            this.txtDiscordUniqueIDs.Name = "txtDiscordUniqueIDs";
+            this.txtDiscordUniqueIDs.Size = new System.Drawing.Size(391, 20);
+            this.txtDiscordUniqueIDs.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.txtDiscordUniqueIDs, "Comma separated list of ids that will be included in your discord bot messages th" +
+        "at others can filter on. Case sensitive and trimmed. Example : 80mFriendsNet, NA" +
+        "RS\r\n");
+            this.txtDiscordUniqueIDs.TextChanged += new System.EventHandler(this.txtDiscordUniqueIDs_TextChanged);
+            this.txtDiscordUniqueIDs.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDiscordUniqueIDs_KeyPress);
+            // 
+            // labelTS290
+            // 
+            this.labelTS290.AutoSize = true;
+            this.labelTS290.Image = null;
+            this.labelTS290.Location = new System.Drawing.Point(26, 100);
+            this.labelTS290.Name = "labelTS290";
+            this.labelTS290.Size = new System.Drawing.Size(72, 13);
+            this.labelTS290.TabIndex = 5;
+            this.labelTS290.Text = "Unique ID(s) :";
+            // 
+            // lblDiscordState
+            // 
+            this.lblDiscordState.AutoSize = true;
+            this.lblDiscordState.Image = null;
+            this.lblDiscordState.Location = new System.Drawing.Point(216, 63);
+            this.lblDiscordState.Name = "lblDiscordState";
+            this.lblDiscordState.Size = new System.Drawing.Size(42, 13);
+            this.lblDiscordState.TabIndex = 1;
+            this.lblDiscordState.Text = "STATE";
+            // 
             // labelTS289
             // 
             this.labelTS289.AutoSize = true;
             this.labelTS289.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTS289.Image = null;
-            this.labelTS289.Location = new System.Drawing.Point(35, 99);
+            this.labelTS289.Location = new System.Drawing.Point(27, 181);
             this.labelTS289.Name = "labelTS289";
             this.labelTS289.Size = new System.Drawing.Size(594, 64);
             this.labelTS289.TabIndex = 4;
@@ -63775,16 +63838,6 @@
             this.tmrLedValid.Interval = 500;
             this.tmrLedValid.Tick += new System.EventHandler(this.tmrLedValid_Tick);
             // 
-            // lblDiscordState
-            // 
-            this.lblDiscordState.AutoSize = true;
-            this.lblDiscordState.Image = null;
-            this.lblDiscordState.Location = new System.Drawing.Point(216, 63);
-            this.lblDiscordState.Name = "lblDiscordState";
-            this.lblDiscordState.Size = new System.Drawing.Size(42, 13);
-            this.lblDiscordState.TabIndex = 1;
-            this.lblDiscordState.Text = "STATE";
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -69071,5 +69124,9 @@
         private TextBoxTS txtDiscordCallsign;
         private CheckBoxTS chkDiscordEnabled;
         private LabelTS lblDiscordState;
+        private TextBoxTS txtDiscordFilter;
+        private LabelTS labelTS291;
+        private TextBoxTS txtDiscordUniqueIDs;
+        private LabelTS labelTS290;
     }
 }

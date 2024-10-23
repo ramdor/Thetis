@@ -31556,6 +31556,34 @@ namespace Thetis
         {
             updateDiscordState();
         }
+
+        private void txtDiscordUniqueIDs_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '[' || e.KeyChar == ']' || e.KeyChar == '"' ||
+                e.KeyChar == '\'' || e.KeyChar == '\\' || e.KeyChar == '/')
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void txtDiscordFilter_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '[' || e.KeyChar == ']' || e.KeyChar == '"' ||
+                e.KeyChar == '\'' || e.KeyChar == '\\' || e.KeyChar == '/')
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void txtDiscordUniqueIDs_TextChanged(object sender, EventArgs e)
+        {
+            ThetisBotDiscord.UniqueIDs = txtDiscordUniqueIDs.Text;
+        }
+
+        private void txtDiscordFilter_TextChanged(object sender, EventArgs e)
+        {
+            ThetisBotDiscord.Filter = txtDiscordFilter.Text;
+        }
     }
 
     #region PADeviceInfo Helper Class

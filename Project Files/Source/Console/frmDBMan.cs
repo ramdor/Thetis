@@ -36,9 +36,10 @@ namespace Thetis
     {
         private bool _allow_check_change;
         private bool _ignore_lstActiveDBs_selectectedindexchanged;
-
+        private bool _restore;
         public frmDBMan()
         {
+            _restore = false;
             _allow_check_change = true;
             _ignore_lstActiveDBs_selectectedindexchanged = false;
             InitializeComponent();
@@ -49,7 +50,9 @@ namespace Thetis
         }
         public void Restore()
         {
+            _restore = true;
             Common.RestoreForm(this, "DBManForm", true);
+            _restore = false;
         }
         private string localDateTimeFormat(DateTime dateTime)
         {
@@ -454,6 +457,17 @@ namespace Thetis
 
             lvi = lstBackups.SelectedItems[0];
             DBMan.RenameBackup(highlighted, lvi.Tag.ToString());
+        }
+
+        private void chkPruneBackups_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_restore) return;
+            DBMan.PruneBackups = chkPruneBackups.Checked;
+        }
+        public bool PruneBackups
+        {
+            get { return chkPruneBackups.Checked; }
+            set { chkPruneBackups.Checked = value; }
         }
     }
 }
