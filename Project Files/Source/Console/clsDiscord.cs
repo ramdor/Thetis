@@ -90,7 +90,10 @@ namespace Thetis
         private static DiscordSocketClient _discord_client;
         private static Timer _reconnect_timer;
 
-        private static Timer _channel_info_timer;
+        private static Timer _channel_info_timer_from_github;
+        private static int _retry_attempts = 0;
+        private static readonly object _retry_lock = new object();
+
         private static BotConfig _bot_config;
         private static readonly object _bot_config_lock = new object();
 
@@ -99,13 +102,14 @@ namespace Thetis
 
         private static Timer _queue_process;
         private static List<IMessage> _receive_queue;
-        private static List<ulong> _sent_message_ids;
         private static bool _process_queue;
 
+        private static List<ulong> _sent_message_ids;
+
         private static bool _started;
-        private static string _callsign;
         private static bool _ready;
 
+        private static string _callsign;
         private static string _unique_ids;
         private static string _filter;
 
@@ -177,6 +181,7 @@ namespace Thetis
         }
         public static async Task loadChannelInfoFromGitHub()
         {
+            bool git_hub_ok = false;
             try
             {
                 HttpClient client = new HttpClient();
@@ -185,16 +190,50 @@ namespace Thetis
                 lock (_bot_config_lock)
                 {
                     _bot_config = JsonConvert.DeserializeObject<BotConfig>(json_data);
+                    git_hub_ok = true;
                 }
 
                 if (_reconnect_timer != null && _discord_client.ConnectionState != ConnectionState.Connected)
                 {
                     await tryConnect();
                 }
+
+                _retry_attempts = 0;
+                _channel_info_timer_from_github.Change(TimeSpan.FromMinutes(30), TimeSpan.FromMinutes(30));
             }
             catch (Exception ex)
             {
                 Debug.Print($"Failed to load channel info: {ex.Message}");
+
+                // if github fail, then adjust
+                if(!git_hub_ok) adjustRetryInterval();
+            }
+        }
+        private static void adjustRetryInterval()
+        {
+            Debug.Print("failed github");
+            _retry_attempts++;
+            if (_retry_attempts > 21) _retry_attempts = 21;
+
+            if (_retry_attempts <= 5)
+            {
+                _channel_info_timer_from_github.Change(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+            }
+            else if (_retry_attempts <= 10)
+            {
+                _channel_info_timer_from_github.Change(TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
+            }
+            else if (_retry_attempts <= 15)
+            {
+                _channel_info_timer_from_github.Change(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
+            }
+            else if (_retry_attempts <= 20)
+            {
+                _channel_info_timer_from_github.Change(TimeSpan.FromMinutes(10), TimeSpan.FromMinutes(10));
+            }
+            else
+            {
+                _channel_info_timer_from_github.Change(TimeSpan.FromMinutes(30), TimeSpan.FromMinutes(30));
             }
         }
         public static bool IsConnected
@@ -215,7 +254,7 @@ namespace Thetis
 
             _messageCleanupTimer = new Timer(_ => cleanupOldMessages(), null, TimeSpan.Zero, TimeSpan.FromSeconds(30));
 
-            _channel_info_timer = new Timer(async _ => await loadChannelInfoFromGitHub(), null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
+            _channel_info_timer_from_github = new Timer(async _ => await loadChannelInfoFromGitHub(), null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
 
             _reconnect_timer = new Timer(async _ =>
             {
@@ -232,7 +271,7 @@ namespace Thetis
 
             _queue_process?.Dispose();
             _messageCleanupTimer?.Dispose();
-            _channel_info_timer?.Dispose();
+            _channel_info_timer_from_github?.Dispose();
             _reconnect_timer?.Dispose();
 
             int tries = 10;
