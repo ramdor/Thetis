@@ -66,11 +66,11 @@
             this.btnTakeBackupNow = new System.Windows.Forms.ButtonTS();
             this.btnRemoveDB = new System.Windows.Forms.ButtonTS();
             this.btnNewDB = new System.Windows.Forms.ButtonTS();
+            this.chkPruneBackups = new System.Windows.Forms.CheckBoxTS();
             this.labelTS4 = new System.Windows.Forms.LabelTS();
             this.labelTS3 = new System.Windows.Forms.LabelTS();
             this.labelTS2 = new System.Windows.Forms.LabelTS();
             this.lblDabaseBackups_active_selected = new System.Windows.Forms.LabelTS();
-            this.chkPruneBackups = new System.Windows.Forms.CheckBoxTS();
             this.SuspendLayout();
             // 
             // lstActiveDBs
@@ -393,6 +393,20 @@
             this.btnNewDB.UseVisualStyleBackColor = true;
             this.btnNewDB.Click += new System.EventHandler(this.btnNewDB_Click);
             // 
+            // chkPruneBackups
+            // 
+            this.chkPruneBackups.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkPruneBackups.AutoSize = true;
+            this.chkPruneBackups.Image = null;
+            this.chkPruneBackups.Location = new System.Drawing.Point(548, 574);
+            this.chkPruneBackups.Name = "chkPruneBackups";
+            this.chkPruneBackups.Size = new System.Drawing.Size(98, 17);
+            this.chkPruneBackups.TabIndex = 31;
+            this.chkPruneBackups.Text = "Prune backups";
+            this.toolTip1.SetToolTip(this.chkPruneBackups, resources.GetString("chkPruneBackups.ToolTip"));
+            this.chkPruneBackups.UseVisualStyleBackColor = true;
+            this.chkPruneBackups.CheckedChanged += new System.EventHandler(this.chkPruneBackups_CheckedChanged);
+            // 
             // labelTS4
             // 
             this.labelTS4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -438,20 +452,6 @@
             this.lblDabaseBackups_active_selected.Size = new System.Drawing.Size(114, 13);
             this.lblDabaseBackups_active_selected.TabIndex = 9;
             this.lblDabaseBackups_active_selected.Text = "Database Backups";
-            // 
-            // chkPruneBackups
-            // 
-            this.chkPruneBackups.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkPruneBackups.AutoSize = true;
-            this.chkPruneBackups.Image = null;
-            this.chkPruneBackups.Location = new System.Drawing.Point(542, 574);
-            this.chkPruneBackups.Name = "chkPruneBackups";
-            this.chkPruneBackups.Size = new System.Drawing.Size(104, 17);
-            this.chkPruneBackups.TabIndex = 31;
-            this.chkPruneBackups.Text = "Prune backuups";
-            this.toolTip1.SetToolTip(this.chkPruneBackups, resources.GetString("chkPruneBackups.ToolTip"));
-            this.chkPruneBackups.UseVisualStyleBackColor = true;
-            this.chkPruneBackups.CheckedChanged += new System.EventHandler(this.chkPruneBackups_CheckedChanged);
             // 
             // frmDBMan
             // 

@@ -351,7 +351,7 @@ namespace Thetis
                         //check version
                         if(ok) checkVersion(made_new, ctrl_key_force_update);
 
-                        if(ok && did_backup) // note, the TakeBackup above will not prune, as the DB has not been recovered for the flag PruneBackups
+                        if(ok) // note, the TakeBackup above will not prune, as the DB has not been recovered for the flag PruneBackups
                         {
                             // prune
                             Dictionary<string, string> vals = DB.GetVarsDictionary("State");
@@ -361,7 +361,7 @@ namespace Thetis
 
                             _frm_dbman.PruneBackups = prune;
 
-                            if (prune)
+                            if (prune && did_backup)
                             {
                                 string directory_path = Path.GetDirectoryName(db_xml_file) + "\\backups";
                                 pruneForGFS(directory_path);
