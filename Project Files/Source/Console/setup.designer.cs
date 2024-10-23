@@ -3572,12 +3572,13 @@
             this.btnMMIO_network_add_tcpip = new System.Windows.Forms.ButtonTS();
             this.tpDiscord = new System.Windows.Forms.TabPage();
             this.groupBoxTS48 = new System.Windows.Forms.GroupBoxTS();
+            this.lblDiscordNotes = new System.Windows.Forms.LabelTS();
             this.txtDiscordFilter = new System.Windows.Forms.TextBoxTS();
             this.labelTS291 = new System.Windows.Forms.LabelTS();
             this.txtDiscordUniqueIDs = new System.Windows.Forms.TextBoxTS();
             this.labelTS290 = new System.Windows.Forms.LabelTS();
             this.lblDiscordState = new System.Windows.Forms.LabelTS();
-            this.labelTS289 = new System.Windows.Forms.LabelTS();
+            this.lblDiscordNotesText = new System.Windows.Forms.LabelTS();
             this.lnkDiscordJoin = new System.Windows.Forms.LinkLabel();
             this.labelTS288 = new System.Windows.Forms.LabelTS();
             this.txtDiscordCallsign = new System.Windows.Forms.TextBoxTS();
@@ -3790,6 +3791,7 @@
             this.chkLed_notx_false = new System.Windows.Forms.CheckBoxTS();
             this.nudLedIndicator_UpdateInterval = new System.Windows.Forms.NumericUpDownTS();
             this.clrbtnButonBox_click = new Thetis.ColorButton();
+            this.clrbtnButonBox_fontcolour = new Thetis.ColorButton();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -4018,7 +4020,6 @@
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
             this.tmrLedValid = new System.Windows.Forms.Timer(this.components);
-            this.clrbtnButonBox_fontcolour = new Thetis.ColorButton();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -56818,12 +56819,13 @@
             // 
             // groupBoxTS48
             // 
+            this.groupBoxTS48.Controls.Add(this.lblDiscordNotes);
             this.groupBoxTS48.Controls.Add(this.txtDiscordFilter);
             this.groupBoxTS48.Controls.Add(this.labelTS291);
             this.groupBoxTS48.Controls.Add(this.txtDiscordUniqueIDs);
             this.groupBoxTS48.Controls.Add(this.labelTS290);
             this.groupBoxTS48.Controls.Add(this.lblDiscordState);
-            this.groupBoxTS48.Controls.Add(this.labelTS289);
+            this.groupBoxTS48.Controls.Add(this.lblDiscordNotesText);
             this.groupBoxTS48.Controls.Add(this.lnkDiscordJoin);
             this.groupBoxTS48.Controls.Add(this.labelTS288);
             this.groupBoxTS48.Controls.Add(this.txtDiscordCallsign);
@@ -56835,6 +56837,16 @@
             this.groupBoxTS48.TabStop = false;
             this.groupBoxTS48.Text = "Discord";
             // 
+            // lblDiscordNotes
+            // 
+            this.lblDiscordNotes.AutoSize = true;
+            this.lblDiscordNotes.Image = null;
+            this.lblDiscordNotes.Location = new System.Drawing.Point(27, 180);
+            this.lblDiscordNotes.Name = "lblDiscordNotes";
+            this.lblDiscordNotes.Size = new System.Drawing.Size(38, 13);
+            this.lblDiscordNotes.TabIndex = 9;
+            this.lblDiscordNotes.Text = "Notes:";
+            // 
             // txtDiscordFilter
             // 
             this.txtDiscordFilter.Location = new System.Drawing.Point(104, 123);
@@ -56843,7 +56855,7 @@
             this.txtDiscordFilter.Size = new System.Drawing.Size(391, 20);
             this.txtDiscordFilter.TabIndex = 8;
             this.toolTip1.SetToolTip(this.txtDiscordFilter, "Comma separated list of strings. Only messages that contain these will be receive" +
-        "d.Case sensitive and trimmed");
+        "d. Case sensitive and trimmed");
             this.txtDiscordFilter.TextChanged += new System.EventHandler(this.txtDiscordFilter_TextChanged);
             this.txtDiscordFilter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDiscordFilter_KeyPress);
             // 
@@ -56864,9 +56876,9 @@
             this.txtDiscordUniqueIDs.Name = "txtDiscordUniqueIDs";
             this.txtDiscordUniqueIDs.Size = new System.Drawing.Size(391, 20);
             this.txtDiscordUniqueIDs.TabIndex = 6;
-            this.toolTip1.SetToolTip(this.txtDiscordUniqueIDs, "Comma separated list of ids that will be included in your discord bot messages th" +
-        "at others can filter on. Case sensitive and trimmed. Example : 80mFriendsNet, NA" +
-        "RS\r\n");
+            this.toolTip1.SetToolTip(this.txtDiscordUniqueIDs, "Comma separated list of tags that will be included in your discord bot messages t" +
+        "hat others can filter on. Case sensitive and trimmed. Example : 80mFriendsNet, N" +
+        "ARS\r\n");
             this.txtDiscordUniqueIDs.TextChanged += new System.EventHandler(this.txtDiscordUniqueIDs_TextChanged);
             this.txtDiscordUniqueIDs.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDiscordUniqueIDs_KeyPress);
             // 
@@ -56874,11 +56886,11 @@
             // 
             this.labelTS290.AutoSize = true;
             this.labelTS290.Image = null;
-            this.labelTS290.Location = new System.Drawing.Point(26, 100);
+            this.labelTS290.Location = new System.Drawing.Point(61, 100);
             this.labelTS290.Name = "labelTS290";
-            this.labelTS290.Size = new System.Drawing.Size(72, 13);
+            this.labelTS290.Size = new System.Drawing.Size(37, 13);
             this.labelTS290.TabIndex = 5;
-            this.labelTS290.Text = "Unique ID(s) :";
+            this.labelTS290.Text = "Tags :";
             // 
             // lblDiscordState
             // 
@@ -56890,24 +56902,24 @@
             this.lblDiscordState.TabIndex = 1;
             this.lblDiscordState.Text = "STATE";
             // 
-            // labelTS289
+            // lblDiscordNotesText
             // 
-            this.labelTS289.AutoSize = true;
-            this.labelTS289.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTS289.Image = null;
-            this.labelTS289.Location = new System.Drawing.Point(27, 181);
-            this.labelTS289.Name = "labelTS289";
-            this.labelTS289.Size = new System.Drawing.Size(594, 64);
-            this.labelTS289.TabIndex = 4;
-            this.labelTS289.Text = resources.GetString("labelTS289.Text");
+            this.lblDiscordNotesText.AutoSize = true;
+            this.lblDiscordNotesText.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDiscordNotesText.Image = null;
+            this.lblDiscordNotesText.Location = new System.Drawing.Point(48, 199);
+            this.lblDiscordNotesText.Name = "lblDiscordNotesText";
+            this.lblDiscordNotesText.Size = new System.Drawing.Size(540, 128);
+            this.lblDiscordNotesText.TabIndex = 4;
+            this.lblDiscordNotesText.Text = resources.GetString("lblDiscordNotesText.Text");
             // 
             // lnkDiscordJoin
             // 
             this.lnkDiscordJoin.AutoSize = true;
-            this.lnkDiscordJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lnkDiscordJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lnkDiscordJoin.Location = new System.Drawing.Point(404, 49);
             this.lnkDiscordJoin.Name = "lnkDiscordJoin";
-            this.lnkDiscordJoin.Size = new System.Drawing.Size(200, 25);
+            this.lnkDiscordJoin.Size = new System.Drawing.Size(174, 24);
             this.lnkDiscordJoin.TabIndex = 3;
             this.lnkDiscordJoin.TabStop = true;
             this.lnkDiscordJoin.Text = "Join Discord Server";
@@ -60631,6 +60643,21 @@
             this.toolTip1.SetToolTip(this.clrbtnButonBox_click, "Active colour");
             this.clrbtnButonBox_click.Changed += new System.EventHandler(this.clrbtnButonBox_click_Changed);
             // 
+            // clrbtnButonBox_fontcolour
+            // 
+            this.clrbtnButonBox_fontcolour.Automatic = "Automatic";
+            this.clrbtnButonBox_fontcolour.Color = System.Drawing.Color.White;
+            this.clrbtnButonBox_fontcolour.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnButonBox_fontcolour.Image = null;
+            this.clrbtnButonBox_fontcolour.Location = new System.Drawing.Point(195, 60);
+            this.clrbtnButonBox_fontcolour.MoreColors = "More Colors...";
+            this.clrbtnButonBox_fontcolour.Name = "clrbtnButonBox_fontcolour";
+            this.clrbtnButonBox_fontcolour.Selectable = true;
+            this.clrbtnButonBox_fontcolour.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnButonBox_fontcolour.TabIndex = 168;
+            this.toolTip1.SetToolTip(this.clrbtnButonBox_fontcolour, "Active colour");
+            this.clrbtnButonBox_fontcolour.Changed += new System.EventHandler(this.clrbtnButonBox_fontcolour_Changed);
+            // 
             // timer_VAC_Monitor
             // 
             this.timer_VAC_Monitor.Enabled = true;
@@ -63869,21 +63896,6 @@
             // 
             this.tmrLedValid.Interval = 500;
             this.tmrLedValid.Tick += new System.EventHandler(this.tmrLedValid_Tick);
-            // 
-            // clrbtnButonBox_fontcolour
-            // 
-            this.clrbtnButonBox_fontcolour.Automatic = "Automatic";
-            this.clrbtnButonBox_fontcolour.Color = System.Drawing.Color.White;
-            this.clrbtnButonBox_fontcolour.ForeColor = System.Drawing.Color.Black;
-            this.clrbtnButonBox_fontcolour.Image = null;
-            this.clrbtnButonBox_fontcolour.Location = new System.Drawing.Point(195, 60);
-            this.clrbtnButonBox_fontcolour.MoreColors = "More Colors...";
-            this.clrbtnButonBox_fontcolour.Name = "clrbtnButonBox_fontcolour";
-            this.clrbtnButonBox_fontcolour.Selectable = true;
-            this.clrbtnButonBox_fontcolour.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnButonBox_fontcolour.TabIndex = 168;
-            this.toolTip1.SetToolTip(this.clrbtnButonBox_fontcolour, "Active colour");
-            this.clrbtnButonBox_fontcolour.Changed += new System.EventHandler(this.clrbtnButonBox_fontcolour_Changed);
             // 
             // Setup
             // 
@@ -69165,7 +69177,7 @@
         private GroupBoxTS groupBoxTS47;
         private TabPage tpDiscord;
         private GroupBoxTS groupBoxTS48;
-        private LabelTS labelTS289;
+        private LabelTS lblDiscordNotesText;
         private LinkLabel lnkDiscordJoin;
         private LabelTS labelTS288;
         private TextBoxTS txtDiscordCallsign;
@@ -69178,5 +69190,6 @@
         private LabelTS labelTS292;
         private ColorButton clrbtnButonBox_click;
         private ColorButton clrbtnButonBox_fontcolour;
+        private LabelTS lblDiscordNotes;
     }
 }

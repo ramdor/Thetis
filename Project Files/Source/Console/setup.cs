@@ -25090,7 +25090,7 @@ namespace Thetis
                 clrbtnBandButtons_hover.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_hover_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LightGray);
                 clrbtnBandButtons_border.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_border_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
 
-                clrbtnButonBox_click.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_click_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
+                clrbtnButonBox_click.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_click_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Orange);
                 clrbtnButonBox_fontcolour.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_font_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
 
                 chkBandButtons_band_inactive_use.Checked = igs.GetSetting<bool>("buttonbox_use_off_colour", false, false, false, false);

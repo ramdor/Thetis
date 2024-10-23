@@ -7118,7 +7118,7 @@ namespace Thetis
                         _hover_colour[n][b] = System.Drawing.Color.LightGray;
                         _border_colour[n][b] = System.Drawing.Color.White;
 
-                        _click_colour[n][b] = System.Drawing.Color.White;
+                        _click_colour[n][b] = System.Drawing.Color.Orange;
 
                         _use_off_colour[n][b] = false;
                         _use_indicator[n][b] = false;
@@ -16503,7 +16503,7 @@ namespace Thetis
                                             System.Drawing.Color hover_colour = igs.GetSetting("buttonbox_hover_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LightGray);
                                             System.Drawing.Color border_colour = igs.GetSetting("buttonbox_border_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
 
-                                            System.Drawing.Color click_colour = igs.GetSetting("buttonbox_click_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
+                                            System.Drawing.Color click_colour = igs.GetSetting("buttonbox_click_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Orange);
                                             System.Drawing.Color font_colour = igs.GetSetting("buttonbox_font_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
 
                                             bool use_off_colour = igs.GetSetting<bool>("buttonbox_use_off_colour", false, false, false, false);
