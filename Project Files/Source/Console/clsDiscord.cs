@@ -357,7 +357,7 @@ namespace Thetis
             {
                 foreach (IMessage message in _receive_queue)
                 {
-                    /*if(!_sent_message_ids.Contains(message.Id))*/ handleQueuedMessage(message);
+                    if(!_sent_message_ids.Contains(message.Id)) handleQueuedMessage(message);
                 }
                 _receive_queue.Clear();
             }
