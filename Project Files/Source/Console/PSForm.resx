@@ -118,6 +118,28 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pbWarningSetPk.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWZJREFUOE+l
+        kc8rRGEYhZ+yQaREksZ/YKtIZKvs2MxfwMLKgoWyVsQCWwvKzlLJLHTHj9gMQ9e4QxQ7Gr9jDHN17o25
+        8ykzxqmn3t73nNPtu/CLFmchEWU+EWVOc8mKrcN1jIzQXJJGh8C2iL47vAnbwtLuT6qsgP0IpA64d09x
+        hWbtdCtK1ZVldLV5X3OXcUgvTuEuTOBqti1udZOnoDrb4Gyb0F2cC30J+Gh+OORSN3kKKrFRjrNJNpsk
+        axZpp9vaMvR115vRnDpavd/dk07w9PU2wSKhmzwr0yEznpMTqeV8h/RXSDTU+QR38sjb3lJjVkBTo/fA
+        o882qWBoIIw7GM4vkse2GJkZbjZrILkFl3vcBgMim/Qx91d73CuTp8lxOI6y9OGQMQPVVT7mXl5llP3W
+        7irc7PNimoX52EGUUdZTf6/3NvHMCa+mUcyM+Zh7oYxtcaAOlfB49NNULMqqQ0Ua/s0n0OWyxKRb9V4A
+        AAAASUVORK5CYII=
+</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="pbWarningSetPk.ToolTip" xml:space="preserve">
+    <value>The SetPk value is different to that expected for the hardware.
+Poor performance of PS might result. Go into [Advanced]
+and use the [Default] button.
+
+If this difference isexpected then ignore this warning.</value>
+  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAEAQEAAAAEAIAAoQgAAFgAAACgAAABAAAAAgAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA

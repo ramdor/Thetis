@@ -483,21 +483,25 @@ namespace Thetis
                 _restoreON = true;
             }
         }
-        public void SetDefaultPeaks()
+        public double GetDefaultPeak()
         {
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
             {
                 //protocol 1
-                PSdefpeak(0.4072);
+                return 0.4072;
             }
             else
             {
                 //protocol 2
                 if (console.CurrentHPSDRHardware == HPSDRHW.Saturn)
-                    PSdefpeak(0.6121);
+                    return 0.6121;
                 else
-                    PSdefpeak(0.2899);
+                    return 0.2899;
             }
+        }
+        public void SetDefaultPeaks()
+        {
+            PSdefpeak(GetDefaultPeak());
         }
         #region PSLoops
 
@@ -731,7 +735,10 @@ namespace Thetis
             {
                 _PShwpeak = tmp;
                 puresignal.SetPSHWPeak(_txachannel, _PShwpeak);
-            }
+
+                double set_pk = GetDefaultPeak();
+                pbWarningSetPk.Visible = _PShwpeak != set_pk; //[2.10.3.7]MW0LGE show a warning if the setpk is different to what we expect for this hardware
+            }                       
         }
 
         private void chkPSRelaxPtol_CheckedChanged(object sender, EventArgs e)

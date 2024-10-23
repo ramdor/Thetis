@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PSForm));
             this.chkPSOnTop = new System.Windows.Forms.CheckBoxTS();
             this.lblPSTint = new System.Windows.Forms.LabelTS();
@@ -81,10 +82,13 @@
             this.udPSCalWait = new System.Windows.Forms.NumericUpDownTS();
             this.chkQuickAttenuate = new System.Windows.Forms.CheckBoxTS();
             this.chkAdvancedViewHidden = new System.Windows.Forms.CheckBoxTS();
+            this.pbWarningSetPk = new System.Windows.Forms.PictureBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.udPSMoxDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPSPhnum)).BeginInit();
             this.grpPSInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udPSCalWait)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbWarningSetPk)).BeginInit();
             this.SuspendLayout();
             // 
             // chkPSOnTop
@@ -784,12 +788,24 @@
             this.chkAdvancedViewHidden.UseVisualStyleBackColor = false;
             this.chkAdvancedViewHidden.Visible = false;
             // 
+            // pbWarningSetPk
+            // 
+            this.pbWarningSetPk.Image = ((System.Drawing.Image)(resources.GetObject("pbWarningSetPk.Image")));
+            this.pbWarningSetPk.Location = new System.Drawing.Point(501, 38);
+            this.pbWarningSetPk.Name = "pbWarningSetPk";
+            this.pbWarningSetPk.Size = new System.Drawing.Size(20, 20);
+            this.pbWarningSetPk.TabIndex = 51;
+            this.pbWarningSetPk.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbWarningSetPk, resources.GetString("pbWarningSetPk.ToolTip"));
+            this.pbWarningSetPk.Visible = false;
+            // 
             // PSForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(560, 303);
+            this.Controls.Add(this.pbWarningSetPk);
             this.Controls.Add(this.chkAdvancedViewHidden);
             this.Controls.Add(this.chkQuickAttenuate);
             this.Controls.Add(this.chkPSOnTop);
@@ -829,6 +845,7 @@
             this.grpPSInfo.ResumeLayout(false);
             this.grpPSInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udPSCalWait)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbWarningSetPk)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -888,5 +905,7 @@
         private System.Windows.Forms.CheckBoxTS chkQuickAttenuate;
         private System.Windows.Forms.ButtonTS btnDefaultPeaks;
         private System.Windows.Forms.CheckBoxTS chkAdvancedViewHidden;
+        private System.Windows.Forms.PictureBox pbWarningSetPk;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
