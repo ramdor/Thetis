@@ -99,8 +99,10 @@ namespace Thetis
             [JsonIgnore]
             public TimeSpan AgeSinceBackedUp { get; set; }
             public string Description { get; set; }
+            public bool Auto { get; set; }
             public BackupFileInfo()
             {
+                Auto = false;
                 Description = "Default";
             }
         }
@@ -336,7 +338,7 @@ namespace Thetis
                                 if (di.BackupOnStartup)
                                 {
                                     did_backup = true;
-                                    TakeBackup(Guid.Empty, "Startup");
+                                    TakeBackup(Guid.Empty, "Startup", true);
                                 }
                             }
                         }
@@ -474,7 +476,7 @@ namespace Thetis
                     string jsonString = File.ReadAllText(json_file);
                     DatabaseInfo di = JsonConvert.DeserializeObject<DatabaseInfo>(jsonString);
                     if (di.BackupOnShutdown)
-                        TakeBackup(Guid.Empty, "Shutdown");
+                        TakeBackup(Guid.Empty, "Shutdown", true);
                 }
             }
             catch { }
@@ -1138,7 +1140,7 @@ namespace Thetis
             List<BackupFileInfo> backups = getOrderedBackupFiles(backup_path);
             _frm_dbman.InitBackups(backups);
         }
-        public static bool TakeBackup(Guid highlighted, string description = "")
+        public static bool TakeBackup(Guid highlighted, string description = "", bool auto = false)
         {
             if (_dbman_settings == null) return false;
 
@@ -1173,6 +1175,7 @@ namespace Thetis
                     //same as backup_filename, but with .json extension instead
                     BackupFileInfo bfi = new BackupFileInfo()
                     {
+                        Auto = auto,
                         Description = desc
                     };
                     string jsonFilePath = System.IO.Path.ChangeExtension(backup_filename, ".json");
@@ -1228,11 +1231,13 @@ namespace Thetis
 
                         string jsonFilePath = System.IO.Path.ChangeExtension(filePath, ".json");
                         string desc = "Default";
+                        bool auto = false;
                         if (File.Exists(jsonFilePath))
                         {
                             string jsonString = File.ReadAllText(jsonFilePath);
                             BackupFileInfo backup_info_json = JsonConvert.DeserializeObject<BackupFileInfo>(jsonString);
                             desc = backup_info_json.Description;
+                            auto = backup_info_json.Auto;
                         }
                         backupFiles.Add(new BackupFileInfo
                         {
@@ -1240,7 +1245,8 @@ namespace Thetis
                             DateTimeOfBackup = backupDateTimeLocal,
                             SecondsSinceEpoch = secondsSinceEpoch,
                             AgeSinceBackedUp = age,
-                            Description = desc
+                            Description = desc,
+                            Auto = auto
                         });
                     }
                 }
@@ -1579,21 +1585,27 @@ namespace Thetis
                 string tmp_desc;
                 BackupFileInfo backup_info_json;
                 string jsonString;
+                bool auto;
 
                 if (file_to_read)
                 {
                     jsonString = File.ReadAllText(jsonFilePath);
                     backup_info_json = JsonConvert.DeserializeObject<BackupFileInfo>(jsonString);
                     tmp_desc = backup_info_json.Description;
+                    auto = backup_info_json.Auto;
                 }
                 else
+                {
+                    auto = false;
                     tmp_desc = "Default";
+                }
 
                 string desc = InputBox.Show("Database Change Description", "Please edit the description.", tmp_desc, true);
                 if (string.IsNullOrEmpty(desc) || desc == tmp_desc) return;
 
                 backup_info_json = new BackupFileInfo();
                 backup_info_json.Description = desc;
+                backup_info_json.Auto = auto;
 
                 //write the updated version
                 jsonString = JsonConvert.SerializeObject(backup_info_json, Newtonsoft.Json.Formatting.Indented);
@@ -1896,11 +1908,24 @@ namespace Thetis
                     {
                         try
                         {
-                            backup.Delete();
+                            bool is_auto = false;
                             string json_file_path = Path.ChangeExtension(backup.FullName, ".json");
                             if (File.Exists(json_file_path))
                             {
-                                File.Delete(json_file_path);
+                                string jsonString = File.ReadAllText(json_file_path);
+                                BackupFileInfo backup_info_json = JsonConvert.DeserializeObject<BackupFileInfo>(jsonString);
+
+                                is_auto = backup_info_json.Auto || backup_info_json.Description == "Startup" || backup_info_json.Description == "Shutdown";
+                            }
+
+                            if (is_auto)
+                            {
+                                backup.Delete();
+
+                                if (File.Exists(json_file_path))
+                                {
+                                    File.Delete(json_file_path);
+                                }
                             }
                         }
                         catch { }

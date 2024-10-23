@@ -121,7 +121,8 @@
     <value>17, 17</value>
   </metadata>
   <data name="chkPruneBackups.ToolTip" xml:space="preserve">
-    <value>Prune when a backup is taken
+    <value>Prune happens after a backup is taken
+Only auto backups are pruned
 
 Last 7 days: Keep all backups
 Weekly backups: Retain 1 backup per week (the last one of the week)

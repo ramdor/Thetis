@@ -398,11 +398,11 @@
             this.chkPruneBackups.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkPruneBackups.AutoSize = true;
             this.chkPruneBackups.Image = null;
-            this.chkPruneBackups.Location = new System.Drawing.Point(548, 574);
+            this.chkPruneBackups.Location = new System.Drawing.Point(524, 574);
             this.chkPruneBackups.Name = "chkPruneBackups";
-            this.chkPruneBackups.Size = new System.Drawing.Size(98, 17);
+            this.chkPruneBackups.Size = new System.Drawing.Size(122, 17);
             this.chkPruneBackups.TabIndex = 31;
-            this.chkPruneBackups.Text = "Prune backups";
+            this.chkPruneBackups.Text = "Prune auto backups";
             this.toolTip1.SetToolTip(this.chkPruneBackups, resources.GetString("chkPruneBackups.ToolTip"));
             this.chkPruneBackups.UseVisualStyleBackColor = true;
             this.chkPruneBackups.CheckedChanged += new System.EventHandler(this.chkPruneBackups_CheckedChanged);
