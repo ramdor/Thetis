@@ -398,7 +398,7 @@
             this.chkPruneBackups.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkPruneBackups.AutoSize = true;
             this.chkPruneBackups.Image = null;
-            this.chkPruneBackups.Location = new System.Drawing.Point(524, 574);
+            this.chkPruneBackups.Location = new System.Drawing.Point(542, 574);
             this.chkPruneBackups.Name = "chkPruneBackups";
             this.chkPruneBackups.Size = new System.Drawing.Size(122, 17);
             this.chkPruneBackups.TabIndex = 31;
