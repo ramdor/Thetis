@@ -120,6 +120,15 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="chkPruneBackups.ToolTip" xml:space="preserve">
+    <value>Prune happens after a backup is taken
+Only auto backups are pruned
+
+Last 7 days: Keep all backups
+Weekly backups: Retain 1 backup per week (the last one of the week)
+Monthly backups: Retain 1 backup per month (the last one of the month)
+Yearly backups: Retain 1 backup per year (the last one of the year)</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

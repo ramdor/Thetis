@@ -4820,7 +4820,7 @@ namespace Thetis
             }
             public virtual void MouseDown(MouseEventArgs e)
             {
-
+                
             }
             public virtual void MouseUp(MouseEventArgs e)
             {
@@ -4855,6 +4855,10 @@ namespace Thetis
             {
                 get { return _mouse_entered; }
                 set { _mouse_entered = value; }
+            }
+            public virtual bool ClickHighlight
+            {
+                get { return false; } set { }
             }
             public virtual void KeyDown(Keys keycode)
             {
@@ -5073,10 +5077,12 @@ namespace Thetis
         {
             private Filter _filter;
             clsMeter _owningmeter;
-
+            private bool _click_highlight;
+            private System.Timers.Timer _click_timer;
             public clsFilterButtonBox(clsMeter owningmeter)
             {
                 _owningmeter = owningmeter;
+                _click_highlight = false;
 
                 if (_owningmeter.RX == 1)
                 {
@@ -5154,6 +5160,8 @@ namespace Thetis
                     SetHoverColour(1, i, GetHoverColour(0, i));
                     SetBorderColour(1, i, GetBorderColour(0, i));
 
+                    SetClickColour(1, i, GetClickColour(0, i));
+
                     SetUseOffColour(1, i, GetUseOffColour(0, i));
 
                     SetIndicatorType(1, i, GetIndicatorType(0, i));
@@ -5177,7 +5185,7 @@ namespace Thetis
                 {
                     int start_filter = (int)Filter.F1;
                     int end_filter = (int)Filter.VAR2;
-                    System.Drawing.Color text_color = System.Drawing.Color.White;
+                    System.Drawing.Color text_color = GetFontColour(0, 0);// System.Drawing.Color.White;
 
                     int filters = end_filter - start_filter + 1;
                     int offset = 0;
@@ -5217,6 +5225,47 @@ namespace Thetis
 
                 Size = new SizeF(Size.Width, height);
             }
+            public override bool ClickHighlight
+            {
+                get { return _click_highlight; }
+            }
+            private void setupClick(bool setup)
+            {
+                if (setup)
+                {
+                    _click_timer = new System.Timers.Timer(100);
+                    _click_timer.Elapsed += (sender, ee) =>
+                    {
+                        _click_highlight = false;
+                        _click_timer.Stop();
+                        _click_timer.Dispose();
+                    };
+                    _click_timer.AutoReset = false;
+                    _click_timer.Start();
+                }
+                else
+                {
+                    if (_click_timer != null)
+                    {
+                        _click_timer.Stop();
+                        _click_timer.Dispose();
+                    }
+                    _click_highlight = true;
+                }
+            }
+            public override void MouseDown(MouseEventArgs e)
+            {
+                Debug.Print("DOWN");
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
+
+                int index = base.ButtonIndex;
+                if (index == -1) return;
+
+                if (!GetEnabled(1, index)) return;
+
+                setupClick(false);
+            }
             public override void MouseUp(MouseEventArgs e)
             {
                 if (FadeOnRx && !_owningmeter.MOX) return;
@@ -5226,6 +5275,8 @@ namespace Thetis
 
                 int index = base.ButtonIndex;
                 if (index == -1) return;
+
+                setupClick(true);
 
                 if (e.Button == MouseButtons.Right)
                 {
@@ -5318,9 +5369,12 @@ namespace Thetis
             private clsMeter _owningmeter;
             private int _button_bits;
             private clsItemGroup _ig;
+            private bool _click_highlight;
+            private System.Timers.Timer _click_timer;
             public clsTunestepButtons(clsMeter owningmeter, clsItemGroup ig)
             {
                 _owningmeter = owningmeter;
+                _click_highlight = false;
                 _ig = ig;
 
                 ItemType = MeterItemType.TUNESTEP_BUTTONS;
@@ -5367,6 +5421,8 @@ namespace Thetis
                     SetFillColour(1, i, GetFillColour(0, i));
                     SetHoverColour(1, i, GetHoverColour(0, i));
                     SetBorderColour(1, i, GetBorderColour(0, i));
+
+                    SetClickColour(1, i, GetClickColour(0, i));
 
                     SetUseOffColour(1, i, GetUseOffColour(0, i));
 
@@ -5445,12 +5501,55 @@ namespace Thetis
                     setupButtons();
                 }
             }
+            public override bool ClickHighlight
+            {
+                get { return _click_highlight; }
+            }
+            private void setupClick(bool setup)
+            {
+                if (setup)
+                {
+                    _click_timer = new System.Timers.Timer(100);
+                    _click_timer.Elapsed += (sender, ee) =>
+                    {
+                        _click_highlight = false;
+                        _click_timer.Stop();
+                        _click_timer.Dispose();
+                    };
+                    _click_timer.AutoReset = false;
+                    _click_timer.Start();
+                }
+                else
+                {
+                    if (_click_timer != null)
+                    {
+                        _click_timer.Stop();
+                        _click_timer.Dispose();
+                    }
+                    _click_highlight = true;
+                }
+            }
+            public override void MouseDown(MouseEventArgs e)
+            {
+                Debug.Print("DOWN");
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
+
+                int index = base.ButtonIndex;
+                if (index == -1) return;
+
+                if (!GetEnabled(1, index)) return;
+
+                setupClick(false);
+            }
             public override void MouseUp(MouseEventArgs e)
             {
                 if (FadeOnRx && !_owningmeter.MOX) return;
                 if (FadeOnTx && _owningmeter.MOX) return;
 
                 if (_console == null) return;
+
+                setupClick(true);
 
                 int index = base.ButtonIndex;
                 if (index == -1) return;
@@ -5477,9 +5576,12 @@ namespace Thetis
             private int _button_bits;
             private bool _rxtx_swap;
             private clsItemGroup _ig;
+            private bool _click_highlight;
+            private System.Timers.Timer _click_timer;
             public clsAntennaButtonBox(clsMeter owningmeter, clsItemGroup ig)
             {
                 _owningmeter = owningmeter;
+                _click_highlight = false;
                 _rx1_band = _owningmeter.BandVfoA;
                 _tx_band = _owningmeter.TXBand;
                 _vfoa_freq = -1;
@@ -5533,6 +5635,8 @@ namespace Thetis
                     SetFillColour(1, i, GetFillColour(0, i));
                     SetHoverColour(1, i, GetHoverColour(0, i));
                     SetBorderColour(1, i, GetBorderColour(0, i));
+
+                    SetClickColour(1, i, GetClickColour(0, i));
 
                     SetUseOffColour(1, i, GetUseOffColour(0, i));
 
@@ -5726,6 +5830,47 @@ namespace Thetis
                         _timer.Change(100, Timeout.Infinite);
                 }
             }
+            public override bool ClickHighlight
+            {
+                get { return _click_highlight; }
+            }
+            private void setupClick(bool setup)
+            {
+                if (setup)
+                {
+                    _click_timer = new System.Timers.Timer(100);
+                    _click_timer.Elapsed += (sender, ee) =>
+                    {
+                        _click_highlight = false;
+                        _click_timer.Stop();
+                        _click_timer.Dispose();
+                    };
+                    _click_timer.AutoReset = false;
+                    _click_timer.Start();
+                }
+                else
+                {
+                    if (_click_timer != null)
+                    {
+                        _click_timer.Stop();
+                        _click_timer.Dispose();
+                    }
+                    _click_highlight = true;
+                }
+            }
+            public override void MouseDown(MouseEventArgs e)
+            {
+                Debug.Print("DOWN");
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
+
+                int index = base.ButtonIndex;
+                if (index == -1) return;
+
+                if (!GetEnabled(1, index)) return;
+
+                setupClick(false);
+            }
             public override void MouseUp(MouseEventArgs e)
             {
                 if (FadeOnRx && !_owningmeter.MOX) return;
@@ -5736,6 +5881,8 @@ namespace Thetis
 
                 int index = base.ButtonIndex;
                 if (index == -1) return;
+
+                setupClick(true);
 
                 if (index >= 0 && index <= 2)
                     setRXAntenna(index, _rx1_band);
@@ -5838,10 +5985,13 @@ namespace Thetis
         {
             private DSPMode _mode;
             clsMeter _owningmeter;
+            private bool _click_highlight;
+            private System.Timers.Timer _click_timer;
 
             public clsModeButtonBox(clsMeter owningmeter)
             {
                 _owningmeter = owningmeter;
+                _click_highlight = false;
 
                 if (_owningmeter.RX == 1)
                     _mode = _owningmeter.ModeVfoA;
@@ -5890,6 +6040,8 @@ namespace Thetis
                     SetHoverColour(1, i, GetHoverColour(0, i));
                     SetBorderColour(1, i, GetBorderColour(0, i));
 
+                    SetClickColour(1, i, GetClickColour(0, i));
+
                     SetUseOffColour(1, i, GetUseOffColour(0, i));
 
                     SetIndicatorType(1, i, GetIndicatorType(0, i));
@@ -5898,7 +6050,7 @@ namespace Thetis
 
                 int start_mode = (int)DSPMode.LSB;
                 int end_mode = (int)DSPMode.DRM;
-                System.Drawing.Color text_color = System.Drawing.Color.White;
+                System.Drawing.Color text_color = GetFontColour(0, 0);//System.Drawing.Color.White;
 
                 int modes = end_mode - start_mode + 1;
 
@@ -5934,6 +6086,47 @@ namespace Thetis
 
                 Size = new SizeF(Size.Width, height);
             }
+            public override bool ClickHighlight
+            {
+                get { return _click_highlight; }
+            }
+            private void setupClick(bool setup)
+            {
+                if (setup)
+                {
+                    _click_timer = new System.Timers.Timer(100);
+                    _click_timer.Elapsed += (sender, ee) =>
+                    {
+                        _click_highlight = false;
+                        _click_timer.Stop();
+                        _click_timer.Dispose();
+                    };
+                    _click_timer.AutoReset = false;
+                    _click_timer.Start();
+                }
+                else
+                {
+                    if (_click_timer != null)
+                    {
+                        _click_timer.Stop();
+                        _click_timer.Dispose();
+                    }
+                    _click_highlight = true;
+                }
+            }
+            public override void MouseDown(MouseEventArgs e)
+            {
+                Debug.Print("DOWN");
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
+
+                int index = base.ButtonIndex;
+                if (index == -1) return;
+
+                if (!GetEnabled(1, index)) return;
+
+                setupClick(false);
+            }
             public override void MouseUp(MouseEventArgs e)
             {
                 if (FadeOnRx && !_owningmeter.MOX) return;
@@ -5942,6 +6135,8 @@ namespace Thetis
                 if (_console == null) return;
                 int index = base.ButtonIndex;
                 if (index == -1) return;
+
+                setupClick(true);
 
                 DSPMode m = (DSPMode)((int)DSPMode.LSB + index);                
 
@@ -6033,6 +6228,8 @@ namespace Thetis
             private Band _band;
             private bool _force_update;
             clsMeter _owningmeter;
+            private bool _click_highlight;
+            private System.Timers.Timer _click_timer;
 
             public clsBandButtonBox(clsMeter owningmeter)
             {
@@ -6064,6 +6261,7 @@ namespace Thetis
                     _button_bands = _owningmeter.GetBandGroupFromBand(_band);
                 }
 
+                _click_highlight = false;
                 _force_update = false;
 
                 ItemType = MeterItemType.BAND_BUTTONS;
@@ -6174,6 +6372,8 @@ namespace Thetis
                     SetHoverColour(1, i, GetHoverColour(0, i));
                     SetBorderColour(1, i, GetBorderColour(0, i));
 
+                    SetClickColour(1, i, GetClickColour(0, i));
+
                     SetUseOffColour(1, i, GetUseOffColour(0, i));
 
                     SetIndicatorType(1, i, GetIndicatorType(0, i));
@@ -6199,7 +6399,7 @@ namespace Thetis
                     case BandGroups.HF:
                         start_band = (int)Band.B160M;
                         end_band = (int)Band.B6M;
-                        text_color = BandStackManager.BandToColour(Band.B160M);
+                        text_color = GetFontColour(0, 0);//BandStackManager.BandToColour(Band.B160M);
 
                         SetText(1, 11, "");
                         SetHoverColour(1, 11, System.Drawing.Color.Transparent);
@@ -6298,10 +6498,54 @@ namespace Thetis
 
                 Size = new SizeF(Size.Width, height);
             }
-            public override void MouseUp(MouseEventArgs e)
+            public override bool ClickHighlight
             {
+                get { return _click_highlight; }
+            }
+            private void setupClick(bool setup)
+            {
+                if (setup)
+                {
+                    _click_timer = new System.Timers.Timer(100);
+                    _click_timer.Elapsed += (sender, ee) =>
+                    {
+                        _click_highlight = false;
+                        _click_timer.Stop();
+                        _click_timer.Dispose();
+                    };
+                    _click_timer.AutoReset = false;
+                    _click_timer.Start();
+                }
+                else
+                {
+                    if (_click_timer != null)
+                    {
+                        _click_timer.Stop();
+                        _click_timer.Dispose();
+                    }
+                    _click_highlight = true;
+                }
+            }
+            public override void MouseDown(MouseEventArgs e)
+            {
+                Debug.Print("DOWN");
                 if (FadeOnRx && !_owningmeter.MOX) return;
                 if (FadeOnTx && _owningmeter.MOX) return;
+
+                int index = base.ButtonIndex;
+                if (index == -1) return;
+
+                if (!GetEnabled(1, index)) return;
+
+                setupClick(false);
+            }
+            public override void MouseUp(MouseEventArgs e)
+            {
+                Debug.Print("UP");
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
+
+                setupClick(true);
 
                 if (_console == null) return;
                 int index = base.ButtonIndex;
@@ -6457,12 +6701,13 @@ namespace Thetis
             private bool _force_update;
             clsMeter _owningmeter;
             private bool _ready;
-
+            private bool _click_highlight;
+            private System.Timers.Timer _click_timer;
             public clsDiscordButtonBox(clsMeter owningmeter)
             {
                 _ready = ThetisBotDiscord.IsReady;
                 _owningmeter = owningmeter;
-
+                _click_highlight = false;
                 _force_update = false;
 
                 ItemType = MeterItemType.DISCORD_BUTTONS;
@@ -6527,6 +6772,8 @@ namespace Thetis
                     SetHoverColour(1, i, GetHoverColour(0, i));
                     SetBorderColour(1, i, GetBorderColour(0, i));
 
+                    SetClickColour(1, i, GetClickColour(0, i));
+
                     SetUseOffColour(1, i, GetUseOffColour(0, i));
 
                     SetIndicatorType(1, i, GetIndicatorType(0, i));
@@ -6565,16 +6812,60 @@ namespace Thetis
                 }
                 return numberString;
             }
-            public override void MouseUp(MouseEventArgs e)
+            public override bool ClickHighlight
             {
+                get { return _click_highlight; }
+            }
+            private void setupClick(bool setup)
+            {
+                if (setup)
+                {
+                    _click_timer = new System.Timers.Timer(100);
+                    _click_timer.Elapsed += (sender, ee) =>
+                    {
+                        _click_highlight = false;
+                        _click_timer.Stop();
+                        _click_timer.Dispose();
+                    };
+                    _click_timer.AutoReset = false;
+                    _click_timer.Start();
+                }
+                else
+                {
+                    if (_click_timer != null)
+                    {
+                        _click_timer.Stop();
+                        _click_timer.Dispose();
+                    }
+                    _click_highlight = true;
+                }
+            }
+            public override void MouseDown(MouseEventArgs e)
+            {
+                Debug.Print("DOWN");
                 if (FadeOnRx && !_owningmeter.MOX) return;
                 if (FadeOnTx && _owningmeter.MOX) return;
+
+                int index = base.ButtonIndex;
+                if (index == -1) return;
+
+                if (!GetEnabled(1, index)) return;
+
+                setupClick(false);               
+            }
+            public override void MouseUp(MouseEventArgs e)
+            {
+                Debug.Print("UP");
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
+
+                setupClick(true);
 
                 if (_console == null) return;
                 int index = base.ButtonIndex;
                 if (index == -1) return;
 
-                if (!GetEnabled(1, index)) return;
+                if (!GetEnabled(1, index)) return;                
 
                 double freq;
                 if (!_owningmeter.RX2Enabled)
@@ -6719,6 +7010,8 @@ namespace Thetis
             private System.Drawing.Color[][] _hover_colour;
             private System.Drawing.Color[][] _border_colour;
 
+            private System.Drawing.Color[][] _click_colour;
+
             private bool[][] _use_off_colour;
             private bool[][] _use_indicator;
             private float[][] _indicator_width;
@@ -6769,6 +7062,8 @@ namespace Thetis
                 _hover_colour = new System.Drawing.Color[2][];
                 _border_colour = new System.Drawing.Color[2][];
 
+                _click_colour = new System.Drawing.Color[2][];
+
                 _use_off_colour = new bool[2][];
                 _use_indicator = new bool[2][];
                 _indicator_width = new float[2][];
@@ -6796,6 +7091,8 @@ namespace Thetis
                     _hover_colour[n] = new System.Drawing.Color[_number_of_buttons];
                     _border_colour[n] = new System.Drawing.Color[_number_of_buttons];
 
+                    _click_colour[n] = new System.Drawing.Color[_number_of_buttons];
+
                     _use_off_colour[n] = new bool[_number_of_buttons];
                     _use_indicator[n] = new bool[_number_of_buttons];
                     _indicator_width[n] = new float[_number_of_buttons];
@@ -6820,6 +7117,8 @@ namespace Thetis
                         _fill_colour[n][b] = System.Drawing.Color.Black;
                         _hover_colour[n][b] = System.Drawing.Color.LightGray;
                         _border_colour[n][b] = System.Drawing.Color.White;
+
+                        _click_colour[n][b] = System.Drawing.Color.Orange;
 
                         _use_off_colour[n][b] = false;
                         _use_indicator[n][b] = false;
@@ -6926,6 +7225,16 @@ namespace Thetis
             {
                 if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
                 return _hover_colour[bank][button];
+            }
+            public void SetClickColour(int bank, int button, System.Drawing.Color colour)
+            {
+                if (button < 0 || button >= _number_of_buttons) return;
+                _click_colour[bank][button] = colour;
+            }
+            public System.Drawing.Color GetClickColour(int bank, int button)
+            {
+                if (button < 0 || button >= _number_of_buttons) return System.Drawing.Color.Empty;
+                return _click_colour[bank][button];
             }
             public void SetBorderColour(int bank, int button, System.Drawing.Color colour)
             {
@@ -16194,6 +16503,9 @@ namespace Thetis
                                             System.Drawing.Color hover_colour = igs.GetSetting("buttonbox_hover_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LightGray);
                                             System.Drawing.Color border_colour = igs.GetSetting("buttonbox_border_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
 
+                                            System.Drawing.Color click_colour = igs.GetSetting("buttonbox_click_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Orange);
+                                            System.Drawing.Color font_colour = igs.GetSetting("buttonbox_font_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
+
                                             bool use_off_colour = igs.GetSetting<bool>("buttonbox_use_off_colour", false, false, false, false);
 
                                             clsButtonBox.IndicatorType indicator_type = igs.GetSetting<clsButtonBox.IndicatorType>("buttonbox_indicator_type", true, clsButtonBox.IndicatorType.RING, clsButtonBox.IndicatorType.LAST, clsButtonBox.IndicatorType.RING);
@@ -16211,6 +16523,8 @@ namespace Thetis
                                                 bb.SetFontFamily(0, button, igs.FontFamily1);
                                                 bb.SetFontStyle(0, button, igs.FontStyle1);
                                                 bb.SetIndicatorType(0, button, indicator_type);
+                                                bb.SetClickColour(0, button, click_colour);
+                                                bb.SetFontColour(0, button, font_colour);
                                             }
 
                                             bb.Columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 15, 3);
@@ -17286,6 +17600,9 @@ namespace Thetis
                                             igs.SetSetting<System.Drawing.Color>("buttonbox_fill_colour", bb.GetFillColour(0, 0));
                                             igs.SetSetting<System.Drawing.Color>("buttonbox_hover_colour", bb.GetHoverColour(0, 0));
                                             igs.SetSetting<System.Drawing.Color>("buttonbox_border_colour", bb.GetBorderColour(0, 0));
+
+                                            igs.SetSetting<System.Drawing.Color>("buttonbox_click_colour", bb.GetClickColour(0, 0));
+                                            igs.SetSetting<System.Drawing.Color>("buttonbox_font_colour", bb.GetFontColour(0, 0));
 
                                             igs.SetSetting<int>("buttonbox_columns", bb.Columns);
                                             igs.SetSetting<float>("buttonbox_border", bb.Border * 10f);
@@ -18833,7 +19150,7 @@ namespace Thetis
                 _displayTarget.VisibleChanged += target_VisibleChanged;
                 _displayTarget.MouseLeave += OnMouseLeave;
                 _displayTarget.MouseEnter += OnMouseEnter;
-                _displayTarget.Click += OnClick;
+                //_displayTarget.Click += OnClick;
                 _displayTarget.MouseClick += OnMouseClick;
             }
             public bool SetVsync
@@ -19150,7 +19467,7 @@ namespace Thetis
                     _displayTarget.MouseLeave -= OnMouseLeave;
                     _displayTarget.MouseEnter -= OnMouseEnter;
                     _displayTarget.VisibleChanged -= target_VisibleChanged;
-                    _displayTarget.Click -= OnClick;
+                    //_displayTarget.Click -= OnClick;
                     _displayTarget.MouseClick -= OnMouseClick;
                 }
 
@@ -19807,10 +20124,10 @@ namespace Thetis
                     }
                 }
             }
-            private void OnClick(object sender, System.EventArgs e)
-            {
+            //private void OnClick(object sender, System.EventArgs e)
+            //{
                 
-            }
+            //}
             private void OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
             {
                 lock (_metersLock)
@@ -23442,6 +23759,7 @@ namespace Thetis
                         System.Drawing.Color hover_colour = bb.GetHoverColour(1, button_index);
                         System.Drawing.Color on_colour = bb.GetOnColour(1, button_index);
                         System.Drawing.Color off_colour = bb.GetOffColour(1, button_index);
+                        System.Drawing.Color click_colour = bb.GetClickColour(1, button_index);
 
                         bool on = bb.GetOn(1, button_index);
                         System.Drawing.Color actual_bg;
@@ -23475,6 +23793,12 @@ namespace Thetis
                                 if(bb.GetUseOffColour(1, button_index))
                                     fillRoundedRectangle(rr, getDXBrushForColour(bb.GetOffColour(1, button_index), 255));
                             }
+                        }
+
+                        //click - change the highlight
+                        if(bb.MouseEntered)
+                        {
+                            if (bb.ClickHighlight) hover_colour = click_colour;
                         }
 
                         // mouse highlight

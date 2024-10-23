@@ -3043,6 +3043,8 @@ namespace Thetis
             a.Add("Metis_IP_address/" + NetworkIO.HpSdrHwIpAddress.ToString(nfi));
             a.Add("EthernetHostIPAddress/" + NetworkIO.EthernetHostIPAddress.ToString(nfi));
 
+            a.Add("PruneBackups/" + DBMan.PruneBackups.ToString());
+
             DB.PurgeNotches();                  // remove old notches from DB
                                                 // this is done because we have not stored an upper limit the number of notches
                                                 // and if we had 20 in there before, and now only write 3, how do we know?

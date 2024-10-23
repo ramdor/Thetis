@@ -323,11 +323,15 @@ will be handled, but as a stop gap they can be ignored.</value>
         AAAASUVORK5CYII=
 </value>
   </data>
-  <data name="labelTS289.Text" xml:space="preserve">
+  <data name="lblDiscordNotesText.Text" xml:space="preserve">
     <value>Enabling this will allow you to use the Discord button box to let others know your activity.
 You will also be able to use %discord_general% and %discord_bot% to view the activity in
-the #general and #thetis-bot channels.  You can use %discord_general=N% and %discord_bot=N%
-to view the history, where 0 is newest, 1 is the previous etc.</value>
+textoverlay and ledindicitaor meter items. You can use %discord_general=N% and
+%discord_bot=N% to view the history, where 0 is newest, 1 is the previous etc.
+
+You do not need to be a member of discord to use this functionality but there are lots
+of us there and you can interact with many channles and actively view the
+#thetis-bot channel to see what is going on.</value>
   </data>
   <data name="lblTXProfileWarning.ToolTip" xml:space="preserve">
     <value>One or more settings have been changed that are
