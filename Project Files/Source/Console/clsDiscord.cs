@@ -145,6 +145,7 @@ namespace Thetis
                     if (channel.Value.Count > KEEP_MESSAGES)
                     {
                         List<MessageInfo> old_messages = channel.Value
+                            .OrderBy(m => m.Timestamp)
                             .Where(m => (now - m.Timestamp).TotalMinutes > 5)
                             .ToList();
 
@@ -365,39 +366,10 @@ namespace Thetis
         private static void handleQueuedMessage(IMessage message)
         {
             if (!(message is SocketUserMessage || message is RestUserMessage)) return;
-            if (message.Attachments.Any()) return;
+            if (message.Attachments.Any()) return;          
 
-            string filter = "";
-            string clean_content = message.CleanContent.Replace("\r\n", " ").Replace("\n", " ").Trim();
-
-            int filter_pos = clean_content.IndexOf("  [");
-            if (filter_pos >= 0)
-            {
-                int pos = filter_pos + 3;
-                int close_pos = clean_content.IndexOf("]", pos);
-                if (close_pos >= 0)
-                {                        
-                    filter = clean_content.Substring(pos, close_pos - pos);
-
-                    //remove, it will always be on the end
-                    clean_content = clean_content.Substring(0, filter_pos);
-                }
-            }
-
-            if (!string.IsNullOrEmpty(_filter))
-            {
-                bool found = false;
-                string[] filters = _filter.Split(',');
-                foreach(string f in filters)
-                {
-                    string tmp = f.Trim();
-                    if (clean_content.Contains(tmp + " " + filter)) found = true;
-                }
-                if (!found) return; //ignore as we are filtering and it wasnt found
-            }
-
+            // check we are interested in this channel
             bool is_channel_in_list = false;
-
             lock (_bot_config_lock)
             {
                 List<ChannelInfo> channels_to_receive;
@@ -414,13 +386,40 @@ namespace Thetis
                     }
                 }
             }
+            if (!is_channel_in_list) return; // we are not interested in this channel
 
-            if (!is_channel_in_list) return;
+            // check filters
+            string filter = "";
+            string clean_content = message.CleanContent.Replace("\r\n", " ").Replace("\n", " ").Trim();
+            int filter_pos = clean_content.IndexOf("  [");
+            if (filter_pos >= 0)
+            {
+                int pos = filter_pos + 3;
+                int close_pos = clean_content.IndexOf("]", pos);
+                if (close_pos >= 0)
+                {
+                    filter = clean_content.Substring(pos, close_pos - pos);
+
+                    //remove, it will always be on the end
+                    clean_content = clean_content.Substring(0, filter_pos);
+                }
+            }
+            if (!string.IsNullOrEmpty(_filter))
+            {
+                bool found = false;
+                string[] filters = _filter.Split(',');
+                foreach (string f in filters)
+                {
+                    string tmp = f.Trim();
+                    if (clean_content.Contains(tmp + " " + filter)) found = true;
+                }
+                if (!found) return; //ignore as we are filtering and it wasnt found
+            }
+
 
             string author = getAuthorName(message);
             string received_message = clean_content;
             ulong channel_id = message.Channel.Id;
-
             MessageInfo message_info = new MessageInfo
             {
                 Message = received_message,
@@ -430,7 +429,7 @@ namespace Thetis
                 Timestamp = DateTime.UtcNow
             };
 
-            // Add to the list for the channel, with newest first
+            // Add to the list for the channel, this one added to head of queue
             lock (_channelMessages)
             {
                 if (!_channelMessages.ContainsKey(channel_id))
