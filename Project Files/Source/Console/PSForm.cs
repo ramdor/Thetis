@@ -411,6 +411,13 @@ namespace Thetis
 
         private void btnPSCalibrate_Click(object sender, EventArgs e)
         {
+            if (_singlecalON)
+            {
+                // need this incase single cal is unable to complete do to bad feedback level
+                // state machine will drop out if this is the case
+                _singlecalON = false;
+                return;
+            }
             console.ForcePureSignalAutoCalDisable();
             _singlecalON = true;
             console.PSState = false;
@@ -620,6 +627,9 @@ namespace Thetis
                     _cmdstate = eCMDState.SingleCalibrate;// 4;
                     break;
                 case eCMDState.SingleCalibrate://4:     // Single-Calibrate Mode
+                    // ideally we need to wait here for feedback to be good if singal cal is on
+                    if (_singlecalON && !(puresignal.IsFeedbackLevelOK && puresignal.Correcting)) break; //[2.10.3.7]MW0LGE
+
                     _singlecalON = false;
                     if (_OFF)
                         _cmdstate = eCMDState.TurnOFF;// 6;
