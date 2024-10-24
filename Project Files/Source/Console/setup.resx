@@ -142,43 +142,6 @@
     <value>False</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="pbDiscordInfo_filter.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
-        0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
-        eMaYLGBnX8SQDKOzr+AGJgNEMLyzBTmU35egDEFoiWXQ1l/LEAdZLIMc0iOLf6GeMeQDbuzxsYsFKwAH
-        j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="pbDiscordInfo_ignore.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
-        0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
-        eMaYLGBnX8SQDKOzr+AGJgNEMLyzBTmU35egDEFoiWXQ1l/LEAdZLIMc0iOLf6GeMeQDbuzxsYsFKwAH
-        j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="pbDiscordInfo_tag.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
-        0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
-        eMaYLGBnX8SQDKOzr+AGJgNEMLyzBTmU35egDEFoiWXQ1l/LEAdZLIMc0iOLf6GeMeQDbuzxsYsFKwAH
-        j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
-</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>302, 17</value>
-  </metadata>
-  <data name="lblDiscordNotesText.Text" xml:space="preserve">
-    <value>Enabling this will allow you to use the Discord button box to let others know your activity.
-You will also be able to use %discord_general% and %discord_bot% to view the activity in
-textoverlay and ledindicitaor meter items. You can use %discord_general=N% and
-%discord_bot=N% to view the history, where 0 is newest, 1 is the previous etc.
-
-You do not need to be a member of discord to use this functionality but there are lots
-of us there and you can interact with many channles and actively view the
-#thetis-bot channel to see what is going on.</value>
-  </data>
   <data name="pbVAC1FFAlphaInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
@@ -359,6 +322,40 @@ will be handled, but as a stop gap they can be ignored.</value>
         7irc7PNimoX52EGUUdZTf6/3NvHMCa+mUcyM+Zh7oYxtcaAOlfB49NNULMqqQ0Ua/s0n0OWyxKRb9V4A
         AAAASUVORK5CYII=
 </value>
+  </data>
+  <data name="pbDiscordInfo_filter.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
+        0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
+        eMaYLGBnX8SQDKOzr+AGJgNEMLyzBTmU35egDEFoiWXQ1l/LEAdZLIMc0iOLf6GeMeQDbuzxsYsFKwAH
+        j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="pbDiscordInfo_ignore.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
+        0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
+        eMaYLGBnX8SQDKOzr+AGJgNEMLyzBTmU35egDEFoiWXQ1l/LEAdZLIMc0iOLf6GeMeQDbuzxsYsFKwAH
+        j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="pbDiscordInfo_tag.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
+        0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
+        eMaYLGBnX8SQDKOzr+AGJgNEMLyzBTmU35egDEFoiWXQ1l/LEAdZLIMc0iOLf6GeMeQDbuzxsYsFKwAH
+        j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="lblDiscordNotesText.Text" xml:space="preserve">
+    <value>Enabling this will allow you to use the Discord button box to let others know your activity.
+You will also be able to use %discord_general% and %discord_bot% to view the activity in
+textoverlay and ledindicitaor meter items. You can use %discord_general=N% and
+%discord_bot=N% to view the history, where 0 is newest, 1 is the previous etc.
+
+You do not need to be a member of discord to use this functionality but there are lots
+of us there and you can interact with many channles and actively view the
+#thetis-bot channel to see what is going on.</value>
   </data>
   <data name="lblTXProfileWarning.ToolTip" xml:space="preserve">
     <value>One or more settings have been changed that are

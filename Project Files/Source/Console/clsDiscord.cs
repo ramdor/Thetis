@@ -100,6 +100,8 @@ namespace Thetis
         private static Dictionary<ulong, List<MessageInfo>> _channelMessages = new Dictionary<ulong, List<MessageInfo>>();
         private static Timer _messageCleanupTimer;
 
+        private static Timer _ready_timeout_timer;
+
         private static Timer _queue_process;
         private static List<IMessage> _receive_queue;
         private static bool _process_queue;
@@ -335,6 +337,9 @@ namespace Thetis
 
         private static Task OnReady()
         {
+            _ready_timeout_timer?.Dispose();
+            _ready = true;
+
             Task getLastMessagesTask = getLastMessages(KEEP_MESSAGES);
             getLastMessagesTask.Wait();
 
@@ -354,6 +359,16 @@ namespace Thetis
         }
         private static Task OnConnected()
         {
+            _ready_timeout_timer?.Dispose();
+            _ready_timeout_timer = new Timer(async _ =>
+            {
+                if (!_ready)
+                {
+                    Debug.Print("OnReady not triggered within 20 seconds, reconnecting...");
+                    await _discord_client.StopAsync(); // disconnect
+                }
+            }, null, TimeSpan.FromSeconds(20), Timeout.InfiniteTimeSpan);
+
             if (ConnectedHandlers != null)
             {
                 Delegate[] invocationList = ConnectedHandlers.GetInvocationList();

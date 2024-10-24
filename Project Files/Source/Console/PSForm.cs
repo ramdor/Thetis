@@ -147,23 +147,20 @@ namespace Thetis
             {
                 if (console.PowerOn)
                 {
-                    if (nCount < (m_bQuckAttenuate ? 1 : 10))
-                    {
-                        timer1code(); // every 10ms
-                        nCount++;
-                    }
-                    else
-                    {
-                        timer2code(); // every 100ms if !m_bQuckAttenuate, or every 20ms otherwise
+                    timer1code();
+                    if (nCount == 0) timer2code();
+
+                    nCount++;
+                    if (m_bQuckAttenuate) 
                         nCount = 0;
-                    }
+                    else if(nCount == 10) nCount = 0;
 
                     Thread.Sleep(10);
                 }
                 else
                 {
                     nCount = 0;
-                    Thread.Sleep(50);
+                    Thread.Sleep(100);
                 }
             }
         }
@@ -512,6 +509,8 @@ namespace Thetis
         }
         #region PSLoops
 
+        private bool _performing_single_cal = false;
+        private int _performing_single_cal_retries = 0;
         private void timer1code()
         {
             if (!_bPSRunning) return;
@@ -574,10 +573,6 @@ namespace Thetis
             // MW0LGE_21k9
             if (_autocal_enabled)
             {
-                //CONVERTif (console.TxtLeftForeColor != Color.Lime) console.TxtLeftForeColor = Color.Lime;
-                //CONVERTif (console.TxtRightBackColor != lblPSInfoCO.BackColor) console.TxtRightBackColor = lblPSInfoCO.BackColor;
-                //CONVERTif (console.TxtCenterBackColor != lblPSInfoFB.BackColor) console.TxtCenterBackColor = lblPSInfoFB.BackColor;
-
                 if (puresignal.HasInfoChanged)
                     console.InfoBarFeedbackLevel(puresignal.FeedbackLevel, puresignal.IsFeedbackLevelOK, puresignal.CorrectionsBeingApplied, puresignal.CalibrationAttemptsChanged, puresignal.FeedbackColourLevel);
             }
@@ -621,15 +616,13 @@ namespace Thetis
                     break;
                 case eCMDState.TurnOnSingleCalibrate://3:     // Turn-ON Single-Calibrate Mode
                     _autoON = false;
+                    _performing_single_cal = true;
                     puresignal.SetPSControl(_txachannel, 1, 1, 0, 0);
                     if (!PSEnabled) PSEnabled = true;
                     btnPSCalibrate.BackColor = Color.FromArgb(_gcolor);
                     _cmdstate = eCMDState.SingleCalibrate;// 4;
                     break;
                 case eCMDState.SingleCalibrate://4:     // Single-Calibrate Mode
-                    // ideally we need to wait here for feedback to be good if singal cal is on
-                    if (_singlecalON && !(puresignal.IsFeedbackLevelOK && puresignal.Correcting)) break; //[2.10.3.7]MW0LGE
-
                     _singlecalON = false;
                     if (_OFF)
                         _cmdstate = eCMDState.TurnOFF;// 6;
@@ -651,6 +644,18 @@ namespace Thetis
                         _cmdstate = eCMDState.TurnOnAutoCalibrate;// 1;
                     else if (_singlecalON)
                         _cmdstate = eCMDState.TurnOnSingleCalibrate;// 3;
+                    else if (_performing_single_cal)
+                    {
+                        // fix for when we were performing a single cal, but needed to change attenuation
+                        _performing_single_cal = false;
+                        if (!puresignal.IsFeedbackLevelOKRange && _performing_single_cal_retries < 5)
+                        {
+                            _performing_single_cal_retries++;
+                            _singlecalON = true;
+                        }
+                        else
+                            _performing_single_cal_retries = 0;
+                    }
                     break;
                 case eCMDState.TurnOFF://6:     // Turn-OFF
                     //_autoON = false;
@@ -1046,6 +1051,10 @@ namespace Thetis
         }
         public static bool IsFeedbackLevelOK {
             get { return FeedbackLevel <= 256; }
+        }
+        public static bool IsFeedbackLevelOKRange
+        {
+            get { return FeedbackLevel > 128 && FeedbackLevel <= 181; }
         }
         public static int FeedbackLevel {
             get { return Info[4]; }

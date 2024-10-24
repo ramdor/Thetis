@@ -56903,6 +56903,7 @@
             this.toolTip1.SetToolTip(this.txtDiscordIgnore, "Comma separated list of strings. All received messages with these strings will be" +
         " ignored.\r\nCase sensitive and trimmed");
             this.txtDiscordIgnore.TextChanged += new System.EventHandler(this.txtDiscordIgnore_TextChanged);
+            this.txtDiscordIgnore.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDiscordIgnore_KeyPress);
             // 
             // lblDiscordNotes
             // 

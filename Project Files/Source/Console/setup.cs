@@ -31621,6 +31621,15 @@ namespace Thetis
         {
             toolTip1.Show(toolTip1.GetToolTip(txtDiscordFilter), txtDiscordFilter, 10 * 1000);
         }
+
+        private void txtDiscordIgnore_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '[' || e.KeyChar == ']' || e.KeyChar == '"' ||
+                e.KeyChar == '\'' || e.KeyChar == '\\' || e.KeyChar == '/' || e.KeyChar == '%')
+            {
+                e.Handled = true;
+            }
+        }
     }
 
     #region PADeviceInfo Helper Class
