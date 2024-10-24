@@ -954,7 +954,10 @@ namespace Thetis
             {
                 try
                 {
-                    return "1|" + Common.SerializeToBase64<ConcurrentDictionary<string, object>>(_settings); // 1| signifies version 1 of the serialize for future proofing
+                    //1 for version 1
+                    string tmp = Common.SerializeToBase64<ConcurrentDictionary<string, object>>(_settings); // 1| signifies version 1 of the serialize for future proofing
+                    tmp = tmp.Replace("/", "[backslash]");
+                    return "1|" + tmp;
                 }
                 catch
                 {
@@ -1012,7 +1015,10 @@ namespace Thetis
                     if (parts.Length != 2) return false;
 
                     if (parts[0] == "1") // 1 signifies version 1 of the serialize for future proofing
-                        _settings = Common.DeserializeFromBase64<ConcurrentDictionary<string, object>>(parts[1]);
+                    {
+                        string tmp = parts[1].Replace("[backslash]", "/");
+                        _settings = Common.DeserializeFromBase64<ConcurrentDictionary<string, object>>(tmp);
+                    }
 
                     return true;
                 }
@@ -27039,7 +27045,9 @@ namespace Thetis
         public static string GetSaveData()
         {
             //1 for version 1
-            return "1|" + Common.SerializeToBase64<ConcurrentDictionary<Guid, clsMMIO>>(_mmio_data);
+            string tmp = Common.SerializeToBase64<ConcurrentDictionary<Guid, clsMMIO>>(_mmio_data);
+            tmp = tmp.Replace("/", "[backslash]");
+            return "1|" + tmp;
 
             //string data = "";
 
@@ -27100,7 +27108,10 @@ namespace Thetis
                 if (parts.Length != 2) return false;
 
                 if (parts[0] == "1") // 1 signifies version 1 of the serialize for future proofing
-                    _mmio_data = Common.DeserializeFromBase64<ConcurrentDictionary<Guid, clsMMIO>>(parts[1]);
+                {
+                    string tmp = parts[1].Replace("[backslash]", "/");
+                    _mmio_data = Common.DeserializeFromBase64<ConcurrentDictionary<Guid, clsMMIO>>(tmp);
+                }
 
                 foreach(KeyValuePair<Guid, clsMMIO> kvp in _mmio_data)
                 {

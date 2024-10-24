@@ -135,6 +135,7 @@ namespace Thetis
         private ButtonTS btnShift90;
         private ButtonTS btnShiftUp10;
         private IContainer components;
+        private Label label2;
         private bool _initalising;
 
         public DiversityForm(Console c)
@@ -236,6 +237,16 @@ namespace Thetis
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DiversityForm));
             this.picRadar = new System.Windows.Forms.PictureBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnM8 = new System.Windows.Forms.ButtonTS();
+            this.btnM7 = new System.Windows.Forms.ButtonTS();
+            this.btnM6 = new System.Windows.Forms.ButtonTS();
+            this.btnM5 = new System.Windows.Forms.ButtonTS();
+            this.btnM4 = new System.Windows.Forms.ButtonTS();
+            this.btnM3 = new System.Windows.Forms.ButtonTS();
+            this.btnM2 = new System.Windows.Forms.ButtonTS();
+            this.btnM1 = new System.Windows.Forms.ButtonTS();
+            this.chkVFOSync = new System.Windows.Forms.CheckBoxTS();
+            this.chkNoAttLink = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS2 = new System.Windows.Forms.GroupBoxTS();
             this.txtMemoryDataHidden = new System.Windows.Forms.TextBoxTS();
             this.labelTS9 = new System.Windows.Forms.LabelTS();
@@ -259,16 +270,6 @@ namespace Thetis
             this.btnShift90 = new System.Windows.Forms.ButtonTS();
             this.btnShiftUp10 = new System.Windows.Forms.ButtonTS();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnM8 = new System.Windows.Forms.ButtonTS();
-            this.btnM7 = new System.Windows.Forms.ButtonTS();
-            this.btnM6 = new System.Windows.Forms.ButtonTS();
-            this.btnM5 = new System.Windows.Forms.ButtonTS();
-            this.btnM4 = new System.Windows.Forms.ButtonTS();
-            this.btnM3 = new System.Windows.Forms.ButtonTS();
-            this.btnM2 = new System.Windows.Forms.ButtonTS();
-            this.btnM1 = new System.Windows.Forms.ButtonTS();
-            this.chkVFOSync = new System.Windows.Forms.CheckBoxTS();
-            this.chkNoAttLink = new System.Windows.Forms.CheckBoxTS();
             this.chkAlwaysOnTop = new System.Windows.Forms.CheckBoxTS();
             this.chkEnableDiversity = new System.Windows.Forms.CheckBoxTS();
             this.grpRxSource = new System.Windows.Forms.GroupBoxTS();
@@ -293,6 +294,7 @@ namespace Thetis
             this.radioButtonMerc2 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonMerc1 = new System.Windows.Forms.RadioButtonTS();
             this.btnShiftUp45 = new System.Windows.Forms.ButtonTS();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picRadar)).BeginInit();
             this.groupBoxTS2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAngle0)).BeginInit();
@@ -325,6 +327,148 @@ namespace Thetis
             this.picRadar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picRadar_MouseDown);
             this.picRadar.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picRadar_MouseMove);
             this.picRadar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picRadar_MouseUp);
+            // 
+            // btnM8
+            // 
+            this.btnM8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM8.Image = null;
+            this.btnM8.Location = new System.Drawing.Point(51, 202);
+            this.btnM8.Name = "btnM8";
+            this.btnM8.Selectable = true;
+            this.btnM8.Size = new System.Drawing.Size(36, 23);
+            this.btnM8.TabIndex = 112;
+            this.btnM8.Text = "M8";
+            this.toolTip1.SetToolTip(this.btnM8, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM8.UseVisualStyleBackColor = true;
+            this.btnM8.Click += new System.EventHandler(this.btnMemory_Click);
+            // 
+            // btnM7
+            // 
+            this.btnM7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM7.Image = null;
+            this.btnM7.Location = new System.Drawing.Point(6, 202);
+            this.btnM7.Name = "btnM7";
+            this.btnM7.Selectable = true;
+            this.btnM7.Size = new System.Drawing.Size(36, 23);
+            this.btnM7.TabIndex = 111;
+            this.btnM7.Text = "M7";
+            this.toolTip1.SetToolTip(this.btnM7, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM7.UseVisualStyleBackColor = true;
+            this.btnM7.Click += new System.EventHandler(this.btnMemory_Click);
+            // 
+            // btnM6
+            // 
+            this.btnM6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM6.Image = null;
+            this.btnM6.Location = new System.Drawing.Point(51, 177);
+            this.btnM6.Name = "btnM6";
+            this.btnM6.Selectable = true;
+            this.btnM6.Size = new System.Drawing.Size(36, 23);
+            this.btnM6.TabIndex = 110;
+            this.btnM6.Text = "M6";
+            this.toolTip1.SetToolTip(this.btnM6, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM6.UseVisualStyleBackColor = true;
+            this.btnM6.Click += new System.EventHandler(this.btnMemory_Click);
+            // 
+            // btnM5
+            // 
+            this.btnM5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM5.Image = null;
+            this.btnM5.Location = new System.Drawing.Point(6, 177);
+            this.btnM5.Name = "btnM5";
+            this.btnM5.Selectable = true;
+            this.btnM5.Size = new System.Drawing.Size(36, 23);
+            this.btnM5.TabIndex = 109;
+            this.btnM5.Text = "M5";
+            this.toolTip1.SetToolTip(this.btnM5, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM5.UseVisualStyleBackColor = true;
+            this.btnM5.Click += new System.EventHandler(this.btnMemory_Click);
+            // 
+            // btnM4
+            // 
+            this.btnM4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM4.Image = null;
+            this.btnM4.Location = new System.Drawing.Point(51, 151);
+            this.btnM4.Name = "btnM4";
+            this.btnM4.Selectable = true;
+            this.btnM4.Size = new System.Drawing.Size(36, 23);
+            this.btnM4.TabIndex = 108;
+            this.btnM4.Text = "M4";
+            this.toolTip1.SetToolTip(this.btnM4, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM4.UseVisualStyleBackColor = true;
+            this.btnM4.Click += new System.EventHandler(this.btnMemory_Click);
+            // 
+            // btnM3
+            // 
+            this.btnM3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM3.Image = null;
+            this.btnM3.Location = new System.Drawing.Point(6, 151);
+            this.btnM3.Name = "btnM3";
+            this.btnM3.Selectable = true;
+            this.btnM3.Size = new System.Drawing.Size(36, 23);
+            this.btnM3.TabIndex = 107;
+            this.btnM3.Text = "M3";
+            this.toolTip1.SetToolTip(this.btnM3, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM3.UseVisualStyleBackColor = true;
+            this.btnM3.Click += new System.EventHandler(this.btnMemory_Click);
+            // 
+            // btnM2
+            // 
+            this.btnM2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM2.Image = null;
+            this.btnM2.Location = new System.Drawing.Point(51, 126);
+            this.btnM2.Name = "btnM2";
+            this.btnM2.Selectable = true;
+            this.btnM2.Size = new System.Drawing.Size(36, 23);
+            this.btnM2.TabIndex = 106;
+            this.btnM2.Text = "M2";
+            this.toolTip1.SetToolTip(this.btnM2, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM2.UseVisualStyleBackColor = true;
+            this.btnM2.Click += new System.EventHandler(this.btnMemory_Click);
+            // 
+            // btnM1
+            // 
+            this.btnM1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnM1.Image = null;
+            this.btnM1.Location = new System.Drawing.Point(6, 126);
+            this.btnM1.Name = "btnM1";
+            this.btnM1.Selectable = true;
+            this.btnM1.Size = new System.Drawing.Size(36, 23);
+            this.btnM1.TabIndex = 105;
+            this.btnM1.Text = "M1";
+            this.toolTip1.SetToolTip(this.btnM1, "Memory. Shift click to store. Ctrl click to remove.");
+            this.btnM1.UseVisualStyleBackColor = true;
+            this.btnM1.Click += new System.EventHandler(this.btnMemory_Click);
+            // 
+            // chkVFOSync
+            // 
+            this.chkVFOSync.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkVFOSync.BackColor = System.Drawing.SystemColors.Control;
+            this.chkVFOSync.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkVFOSync.Image = null;
+            this.chkVFOSync.Location = new System.Drawing.Point(221, 67);
+            this.chkVFOSync.Name = "chkVFOSync";
+            this.chkVFOSync.Size = new System.Drawing.Size(84, 23);
+            this.chkVFOSync.TabIndex = 104;
+            this.chkVFOSync.Text = "VFO Sync";
+            this.chkVFOSync.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.toolTip1.SetToolTip(this.chkVFOSync, "Enable VFO sync");
+            this.chkVFOSync.UseVisualStyleBackColor = false;
+            this.chkVFOSync.CheckedChanged += new System.EventHandler(this.chkVFOSync_CheckedChanged);
+            // 
+            // chkNoAttLink
+            // 
+            this.chkNoAttLink.AutoSize = true;
+            this.chkNoAttLink.Image = null;
+            this.chkNoAttLink.Location = new System.Drawing.Point(230, 96);
+            this.chkNoAttLink.Name = "chkNoAttLink";
+            this.chkNoAttLink.Size = new System.Drawing.Size(83, 17);
+            this.chkNoAttLink.TabIndex = 103;
+            this.chkNoAttLink.Text = "No ATT link";
+            this.toolTip1.SetToolTip(this.chkNoAttLink, "Normally if RX1+RX2 are in use the attenuators will be linked. Select this if you" +
+        " dont want that to happen.");
+            this.chkNoAttLink.UseVisualStyleBackColor = true;
+            this.chkNoAttLink.CheckedChanged += new System.EventHandler(this.chkNoAttLink_CheckedChanged);
             // 
             // groupBoxTS2
             // 
@@ -636,6 +780,7 @@ namespace Thetis
             // panelDivControls
             // 
             this.panelDivControls.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.panelDivControls.Controls.Add(this.label2);
             this.panelDivControls.Controls.Add(this.btnShiftDown10);
             this.panelDivControls.Controls.Add(this.btnShift90);
             this.panelDivControls.Controls.Add(this.btnShiftUp10);
@@ -711,154 +856,12 @@ namespace Thetis
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.label1.Location = new System.Drawing.Point(2, 240);
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label1.Location = new System.Drawing.Point(2, 228);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 13);
             this.label1.TabIndex = 113;
             this.label1.Text = "shift click to store";
-            // 
-            // btnM8
-            // 
-            this.btnM8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnM8.Image = null;
-            this.btnM8.Location = new System.Drawing.Point(51, 214);
-            this.btnM8.Name = "btnM8";
-            this.btnM8.Selectable = true;
-            this.btnM8.Size = new System.Drawing.Size(36, 23);
-            this.btnM8.TabIndex = 112;
-            this.btnM8.Text = "M8";
-            this.toolTip1.SetToolTip(this.btnM8, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM8.UseVisualStyleBackColor = true;
-            this.btnM8.Click += new System.EventHandler(this.btnMemory_Click);
-            // 
-            // btnM7
-            // 
-            this.btnM7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnM7.Image = null;
-            this.btnM7.Location = new System.Drawing.Point(6, 214);
-            this.btnM7.Name = "btnM7";
-            this.btnM7.Selectable = true;
-            this.btnM7.Size = new System.Drawing.Size(36, 23);
-            this.btnM7.TabIndex = 111;
-            this.btnM7.Text = "M7";
-            this.toolTip1.SetToolTip(this.btnM7, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM7.UseVisualStyleBackColor = true;
-            this.btnM7.Click += new System.EventHandler(this.btnMemory_Click);
-            // 
-            // btnM6
-            // 
-            this.btnM6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnM6.Image = null;
-            this.btnM6.Location = new System.Drawing.Point(51, 185);
-            this.btnM6.Name = "btnM6";
-            this.btnM6.Selectable = true;
-            this.btnM6.Size = new System.Drawing.Size(36, 23);
-            this.btnM6.TabIndex = 110;
-            this.btnM6.Text = "M6";
-            this.toolTip1.SetToolTip(this.btnM6, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM6.UseVisualStyleBackColor = true;
-            this.btnM6.Click += new System.EventHandler(this.btnMemory_Click);
-            // 
-            // btnM5
-            // 
-            this.btnM5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnM5.Image = null;
-            this.btnM5.Location = new System.Drawing.Point(6, 185);
-            this.btnM5.Name = "btnM5";
-            this.btnM5.Selectable = true;
-            this.btnM5.Size = new System.Drawing.Size(36, 23);
-            this.btnM5.TabIndex = 109;
-            this.btnM5.Text = "M5";
-            this.toolTip1.SetToolTip(this.btnM5, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM5.UseVisualStyleBackColor = true;
-            this.btnM5.Click += new System.EventHandler(this.btnMemory_Click);
-            // 
-            // btnM4
-            // 
-            this.btnM4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnM4.Image = null;
-            this.btnM4.Location = new System.Drawing.Point(51, 155);
-            this.btnM4.Name = "btnM4";
-            this.btnM4.Selectable = true;
-            this.btnM4.Size = new System.Drawing.Size(36, 23);
-            this.btnM4.TabIndex = 108;
-            this.btnM4.Text = "M4";
-            this.toolTip1.SetToolTip(this.btnM4, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM4.UseVisualStyleBackColor = true;
-            this.btnM4.Click += new System.EventHandler(this.btnMemory_Click);
-            // 
-            // btnM3
-            // 
-            this.btnM3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnM3.Image = null;
-            this.btnM3.Location = new System.Drawing.Point(6, 155);
-            this.btnM3.Name = "btnM3";
-            this.btnM3.Selectable = true;
-            this.btnM3.Size = new System.Drawing.Size(36, 23);
-            this.btnM3.TabIndex = 107;
-            this.btnM3.Text = "M3";
-            this.toolTip1.SetToolTip(this.btnM3, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM3.UseVisualStyleBackColor = true;
-            this.btnM3.Click += new System.EventHandler(this.btnMemory_Click);
-            // 
-            // btnM2
-            // 
-            this.btnM2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnM2.Image = null;
-            this.btnM2.Location = new System.Drawing.Point(51, 126);
-            this.btnM2.Name = "btnM2";
-            this.btnM2.Selectable = true;
-            this.btnM2.Size = new System.Drawing.Size(36, 23);
-            this.btnM2.TabIndex = 106;
-            this.btnM2.Text = "M2";
-            this.toolTip1.SetToolTip(this.btnM2, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM2.UseVisualStyleBackColor = true;
-            this.btnM2.Click += new System.EventHandler(this.btnMemory_Click);
-            // 
-            // btnM1
-            // 
-            this.btnM1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnM1.Image = null;
-            this.btnM1.Location = new System.Drawing.Point(6, 126);
-            this.btnM1.Name = "btnM1";
-            this.btnM1.Selectable = true;
-            this.btnM1.Size = new System.Drawing.Size(36, 23);
-            this.btnM1.TabIndex = 105;
-            this.btnM1.Text = "M1";
-            this.toolTip1.SetToolTip(this.btnM1, "Memory. Shift click to store. Ctrl click to remove.");
-            this.btnM1.UseVisualStyleBackColor = true;
-            this.btnM1.Click += new System.EventHandler(this.btnMemory_Click);
-            // 
-            // chkVFOSync
-            // 
-            this.chkVFOSync.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkVFOSync.BackColor = System.Drawing.SystemColors.Control;
-            this.chkVFOSync.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkVFOSync.Image = null;
-            this.chkVFOSync.Location = new System.Drawing.Point(221, 67);
-            this.chkVFOSync.Name = "chkVFOSync";
-            this.chkVFOSync.Size = new System.Drawing.Size(84, 23);
-            this.chkVFOSync.TabIndex = 104;
-            this.chkVFOSync.Text = "VFO Sync";
-            this.chkVFOSync.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.toolTip1.SetToolTip(this.chkVFOSync, "Enable VFO sync");
-            this.chkVFOSync.UseVisualStyleBackColor = false;
-            this.chkVFOSync.CheckedChanged += new System.EventHandler(this.chkVFOSync_CheckedChanged);
-            // 
-            // chkNoAttLink
-            // 
-            this.chkNoAttLink.AutoSize = true;
-            this.chkNoAttLink.Image = null;
-            this.chkNoAttLink.Location = new System.Drawing.Point(230, 96);
-            this.chkNoAttLink.Name = "chkNoAttLink";
-            this.chkNoAttLink.Size = new System.Drawing.Size(83, 17);
-            this.chkNoAttLink.TabIndex = 103;
-            this.chkNoAttLink.Text = "No ATT link";
-            this.toolTip1.SetToolTip(this.chkNoAttLink, "Normally if RX1+RX2 are in use the attenuators will be linked. Select this if you" +
-        " dont want that to happen.");
-            this.chkNoAttLink.UseVisualStyleBackColor = true;
-            this.chkNoAttLink.CheckedChanged += new System.EventHandler(this.chkNoAttLink_CheckedChanged);
             // 
             // chkAlwaysOnTop
             // 
@@ -1250,6 +1253,16 @@ namespace Thetis
             this.btnShiftUp45.UseVisualStyleBackColor = false;
             this.btnShiftUp45.Click += new System.EventHandler(this.btnShiftUp45_Click);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label2.Location = new System.Drawing.Point(5, 244);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(84, 13);
+            this.label2.TabIndex = 117;
+            this.label2.Text = "ctrl click to clear";
+            // 
             // DiversityForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -1310,12 +1323,15 @@ namespace Thetis
             {
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
                 binaryFormatter.Serialize(memoryStream, obj);
-                return Convert.ToBase64String(memoryStream.ToArray());
+                string tmp = Convert.ToBase64String(memoryStream.ToArray());
+                tmp = tmp.Replace("/", "[backslash]"); // to fix issue with SaveForm/RestoreForm
+                return tmp;
             }
         }
 
         public T DeserializeStringToObject<T>(string str)
         {
+            str = str.Replace("[backslash]", "/"); // to fix issue with SaveForm/RestoreForm
             byte[] bytes = Convert.FromBase64String(str);
             using (MemoryStream memoryStream = new MemoryStream(bytes))
             {
