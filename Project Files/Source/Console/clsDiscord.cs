@@ -112,6 +112,7 @@ namespace Thetis
         private static string _callsign;
         private static string _unique_ids;
         private static string _filter;
+        private static string _ignore;
 
         private static DateTime _last_message_time;
 
@@ -123,6 +124,7 @@ namespace Thetis
             _callsign = "";
             _unique_ids = "";
             _filter = "";
+            _ignore = "";
 
             _process_queue = true;
             _receive_queue = new List<IMessage>();
@@ -427,9 +429,24 @@ namespace Thetis
             }
             if (!is_channel_in_list) return; // we are not interested in this channel
 
-            // check filters
-            string filter = "";
+            // the content
             string clean_content = message.CleanContent.Replace("\r\n", " ").Replace("\n", " ").Trim();
+
+            // check ignore
+            if (!string.IsNullOrEmpty(_ignore))
+            {
+                bool found = false;
+                string[] ignores = _ignore.Split(',');
+                foreach(string f in ignores)
+                {
+                    string tmp = f.Trim();
+                    if (clean_content.Contains(tmp)) found = true;
+                }
+                if (found) return; //ignore
+            }
+
+            // check filters
+            string filter = "";            
             int filter_pos = clean_content.IndexOf("  [");
             if (filter_pos >= 0)
             {
@@ -743,6 +760,15 @@ namespace Thetis
             {
                 // comma spearated, if set only matches will be received
                 _filter = value;
+            }
+        }
+        public static string Ignore
+        {
+            get { return _ignore; }
+            set
+            {
+                // comma spearated, if any matches, message will be ignored
+                _ignore = value;
             }
         }
     }

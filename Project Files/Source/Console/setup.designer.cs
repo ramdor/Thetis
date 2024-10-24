@@ -3572,6 +3572,11 @@
             this.btnMMIO_network_add_tcpip = new System.Windows.Forms.ButtonTS();
             this.tpDiscord = new System.Windows.Forms.TabPage();
             this.groupBoxTS48 = new System.Windows.Forms.GroupBoxTS();
+            this.pbDiscordInfo_filter = new System.Windows.Forms.PictureBox();
+            this.pbDiscordInfo_ignore = new System.Windows.Forms.PictureBox();
+            this.pbDiscordInfo_tag = new System.Windows.Forms.PictureBox();
+            this.labelTS289 = new System.Windows.Forms.LabelTS();
+            this.txtDiscordIgnore = new System.Windows.Forms.TextBoxTS();
             this.lblDiscordNotes = new System.Windows.Forms.LabelTS();
             this.txtDiscordFilter = new System.Windows.Forms.TextBoxTS();
             this.labelTS291 = new System.Windows.Forms.LabelTS();
@@ -4918,6 +4923,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.picMutliMeterIO_udp_out_warning)).BeginInit();
             this.tpDiscord.SuspendLayout();
             this.groupBoxTS48.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDiscordInfo_filter)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDiscordInfo_ignore)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDiscordInfo_tag)).BeginInit();
             this.tpTests.SuspendLayout();
             this.groupBoxTS30.SuspendLayout();
             this.grpBoxTS1.SuspendLayout();
@@ -56819,6 +56827,11 @@
             // 
             // groupBoxTS48
             // 
+            this.groupBoxTS48.Controls.Add(this.pbDiscordInfo_filter);
+            this.groupBoxTS48.Controls.Add(this.pbDiscordInfo_ignore);
+            this.groupBoxTS48.Controls.Add(this.pbDiscordInfo_tag);
+            this.groupBoxTS48.Controls.Add(this.labelTS289);
+            this.groupBoxTS48.Controls.Add(this.txtDiscordIgnore);
             this.groupBoxTS48.Controls.Add(this.lblDiscordNotes);
             this.groupBoxTS48.Controls.Add(this.txtDiscordFilter);
             this.groupBoxTS48.Controls.Add(this.labelTS291);
@@ -56837,6 +56850,60 @@
             this.groupBoxTS48.TabStop = false;
             this.groupBoxTS48.Text = "Discord";
             // 
+            // pbDiscordInfo_filter
+            // 
+            this.pbDiscordInfo_filter.Image = ((System.Drawing.Image)(resources.GetObject("pbDiscordInfo_filter.Image")));
+            this.pbDiscordInfo_filter.Location = new System.Drawing.Point(501, 149);
+            this.pbDiscordInfo_filter.Name = "pbDiscordInfo_filter";
+            this.pbDiscordInfo_filter.Size = new System.Drawing.Size(20, 20);
+            this.pbDiscordInfo_filter.TabIndex = 41;
+            this.pbDiscordInfo_filter.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbDiscordInfo_filter, "Click for info");
+            this.pbDiscordInfo_filter.Click += new System.EventHandler(this.pbDiscordInfo_filter_Click);
+            // 
+            // pbDiscordInfo_ignore
+            // 
+            this.pbDiscordInfo_ignore.Image = ((System.Drawing.Image)(resources.GetObject("pbDiscordInfo_ignore.Image")));
+            this.pbDiscordInfo_ignore.Location = new System.Drawing.Point(501, 123);
+            this.pbDiscordInfo_ignore.Name = "pbDiscordInfo_ignore";
+            this.pbDiscordInfo_ignore.Size = new System.Drawing.Size(20, 20);
+            this.pbDiscordInfo_ignore.TabIndex = 40;
+            this.pbDiscordInfo_ignore.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbDiscordInfo_ignore, "Click for info");
+            this.pbDiscordInfo_ignore.Click += new System.EventHandler(this.pbDiscordInfo_ignore_Click);
+            // 
+            // pbDiscordInfo_tag
+            // 
+            this.pbDiscordInfo_tag.Image = ((System.Drawing.Image)(resources.GetObject("pbDiscordInfo_tag.Image")));
+            this.pbDiscordInfo_tag.Location = new System.Drawing.Point(501, 97);
+            this.pbDiscordInfo_tag.Name = "pbDiscordInfo_tag";
+            this.pbDiscordInfo_tag.Size = new System.Drawing.Size(20, 20);
+            this.pbDiscordInfo_tag.TabIndex = 39;
+            this.pbDiscordInfo_tag.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbDiscordInfo_tag, "Click for info");
+            this.pbDiscordInfo_tag.Click += new System.EventHandler(this.pbDiscordInfo_tag_Click);
+            // 
+            // labelTS289
+            // 
+            this.labelTS289.AutoSize = true;
+            this.labelTS289.Image = null;
+            this.labelTS289.Location = new System.Drawing.Point(58, 126);
+            this.labelTS289.Name = "labelTS289";
+            this.labelTS289.Size = new System.Drawing.Size(40, 13);
+            this.labelTS289.TabIndex = 11;
+            this.labelTS289.Text = "Ignore:";
+            // 
+            // txtDiscordIgnore
+            // 
+            this.txtDiscordIgnore.Location = new System.Drawing.Point(104, 123);
+            this.txtDiscordIgnore.MaxLength = 512;
+            this.txtDiscordIgnore.Name = "txtDiscordIgnore";
+            this.txtDiscordIgnore.Size = new System.Drawing.Size(391, 20);
+            this.txtDiscordIgnore.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.txtDiscordIgnore, "Comma separated list of strings. All received messages with these strings will be" +
+        " ignored.\r\nCase sensitive and trimmed");
+            this.txtDiscordIgnore.TextChanged += new System.EventHandler(this.txtDiscordIgnore_TextChanged);
+            // 
             // lblDiscordNotes
             // 
             this.lblDiscordNotes.AutoSize = true;
@@ -56849,13 +56916,13 @@
             // 
             // txtDiscordFilter
             // 
-            this.txtDiscordFilter.Location = new System.Drawing.Point(104, 123);
+            this.txtDiscordFilter.Location = new System.Drawing.Point(104, 149);
             this.txtDiscordFilter.MaxLength = 512;
             this.txtDiscordFilter.Name = "txtDiscordFilter";
             this.txtDiscordFilter.Size = new System.Drawing.Size(391, 20);
             this.txtDiscordFilter.TabIndex = 8;
             this.toolTip1.SetToolTip(this.txtDiscordFilter, "Comma separated list of strings. Only messages that contain these will be receive" +
-        "d. Case sensitive and trimmed");
+        "d.\r\nCase sensitive and trimmed");
             this.txtDiscordFilter.TextChanged += new System.EventHandler(this.txtDiscordFilter_TextChanged);
             this.txtDiscordFilter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDiscordFilter_KeyPress);
             // 
@@ -56863,7 +56930,7 @@
             // 
             this.labelTS291.AutoSize = true;
             this.labelTS291.Image = null;
-            this.labelTS291.Location = new System.Drawing.Point(66, 126);
+            this.labelTS291.Location = new System.Drawing.Point(66, 152);
             this.labelTS291.Name = "labelTS291";
             this.labelTS291.Size = new System.Drawing.Size(32, 13);
             this.labelTS291.TabIndex = 7;
@@ -56877,8 +56944,8 @@
             this.txtDiscordUniqueIDs.Size = new System.Drawing.Size(391, 20);
             this.txtDiscordUniqueIDs.TabIndex = 6;
             this.toolTip1.SetToolTip(this.txtDiscordUniqueIDs, "Comma separated list of tags that will be included in your discord bot messages t" +
-        "hat others can filter on. Case sensitive and trimmed. Example : 80mFriendsNet, N" +
-        "ARS\r\n");
+        "hat others can filter on.\r\nCase sensitive and trimmed. Example : 80mFriendsNet, " +
+        "NARS\r\n");
             this.txtDiscordUniqueIDs.TextChanged += new System.EventHandler(this.txtDiscordUniqueIDs_TextChanged);
             this.txtDiscordUniqueIDs.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDiscordUniqueIDs_KeyPress);
             // 
@@ -65014,6 +65081,9 @@
             this.tpDiscord.ResumeLayout(false);
             this.groupBoxTS48.ResumeLayout(false);
             this.groupBoxTS48.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDiscordInfo_filter)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDiscordInfo_ignore)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDiscordInfo_tag)).EndInit();
             this.tpTests.ResumeLayout(false);
             this.groupBoxTS30.ResumeLayout(false);
             this.grpBoxTS1.ResumeLayout(false);
@@ -69191,5 +69261,10 @@
         private ColorButton clrbtnButonBox_click;
         private ColorButton clrbtnButonBox_fontcolour;
         private LabelTS lblDiscordNotes;
+        private LabelTS labelTS289;
+        private TextBoxTS txtDiscordIgnore;
+        private PictureBox pbDiscordInfo_filter;
+        private PictureBox pbDiscordInfo_ignore;
+        private PictureBox pbDiscordInfo_tag;
     }
 }
