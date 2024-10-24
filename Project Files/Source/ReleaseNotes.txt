@@ -29,6 +29,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] text overlay will now retrieve rx1 and rx2 data correctly
 - [fix] setup dropdown menu will show if window doesn't have focus and setup is clicked
 - [fix] single cal retries up to 5 times if feedback levels are not suitable. Fixes issue where it would need to be clicked multiple times if tx-att was not where it needed to be
+- [fix] fixed issues when serialising an object out to a string to be stored in the database. Resolves missing memories for Diversity
 
 ## v2.10.3.6 Main New Features
 - database manager
