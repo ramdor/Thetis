@@ -49692,7 +49692,12 @@ namespace Thetis
         private void rX2ToolStripMenuItem_MouseUp(object sender, MouseEventArgs e)
         {            
             if (!rX2ToolStripMenuItem.DropDown.Visible) rX2ToolStripMenuItem.ShowDropDown();
-        }       
+        }
+
+        private void BPFToolStripMenuItem_MouseUp(object sender, MouseEventArgs e)
+        {            
+            if (!BPFToolStripMenuItem.DropDown.Visible) BPFToolStripMenuItem.ShowDropDown();
+        }
     }
 
     public class DigiMode

@@ -4945,6 +4945,7 @@
             this.BPFToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.BPFToolStripMenuItem.Name = "BPFToolStripMenuItem";
             resources.ApplyResources(this.BPFToolStripMenuItem, "BPFToolStripMenuItem");
+            this.BPFToolStripMenuItem.MouseUp += new System.Windows.Forms.MouseEventHandler(this.BPFToolStripMenuItem_MouseUp);
             // 
             // BPF1ToolStripMenuItem
             // 
