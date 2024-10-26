@@ -20184,7 +20184,17 @@ namespace Thetis
 
                 //NOTE: run 'lodctr /R' on admin command prompt to rebuild performance counters
 
-                total_cpu_usage = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total", sMachineName);
+                Version osVersion = Environment.OSVersion.Version;
+                bool isWindows7 = osVersion.Major == 6 && osVersion.Minor == 1;
+
+                if (isWindows7)
+                {
+                    total_cpu_usage = new PerformanceCounter("Processor", "% Processor Time", "_Total", sMachineName);
+                }
+                else
+                {
+                    total_cpu_usage = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total", sMachineName);
+                }
                 float tmp = total_cpu_usage.NextValue();
 
                 if (!string.IsNullOrEmpty(_sInstanceName))
@@ -49652,6 +49662,81 @@ namespace Thetis
             else if (!setupToolStripMenuItem.DropDown.Visible) setupToolStripMenuItem.ShowDropDown();
             //[2.10.3.7]MW0LGE show dropdown above fixes issue where the popup does not show if the window
             //does not have focus and setup is clicked. Note, also needs to be in MouseUp
+        }
+
+        private void displayControlsToolStripMenuItem_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (!displayControlsToolStripMenuItem.DropDown.Visible) displayControlsToolStripMenuItem.ShowDropDown();
+        }
+
+        private void dSPToolStripMenuItem_MouseUp(object sender, MouseEventArgs e)
+        {            
+            if (!dSPToolStripMenuItem.DropDown.Visible) dSPToolStripMenuItem.ShowDropDown();
+        }
+
+        private void bandToolStripMenuItem_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (!bandToolStripMenuItem.DropDown.Visible) bandToolStripMenuItem.ShowDropDown();            
+        }
+
+        private void modeToolStripMenuItem_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (!modeToolStripMenuItem.DropDown.Visible) modeToolStripMenuItem.ShowDropDown();            
+        }
+
+        private void filterToolStripMenuItem_MouseUp(object sender, MouseEventArgs e)
+        {            
+            if (!filterToolStripMenuItem.DropDown.Visible) filterToolStripMenuItem.ShowDropDown();
+        }
+
+        private void rX2ToolStripMenuItem_MouseUp(object sender, MouseEventArgs e)
+        {            
+            if (!rX2ToolStripMenuItem.DropDown.Visible) rX2ToolStripMenuItem.ShowDropDown();
+        }
+
+        private void btnAndrBar8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAndrBar7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAndrBar6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAndrBar5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAndrBar4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAndrBar3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAndrBar2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAndrBar1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panelButtonBar_Layout(object sender, LayoutEventArgs e)
+        {
+
         }
     }
 

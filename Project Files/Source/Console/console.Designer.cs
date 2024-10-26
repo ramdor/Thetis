@@ -4213,6 +4213,7 @@
             this.displayControlsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.displayControlsToolStripMenuItem.Name = "displayControlsToolStripMenuItem";
             resources.ApplyResources(this.displayControlsToolStripMenuItem, "displayControlsToolStripMenuItem");
+            this.displayControlsToolStripMenuItem.MouseUp += new System.Windows.Forms.MouseEventHandler(this.displayControlsToolStripMenuItem_MouseUp);
             // 
             // topControlsToolStripMenuItem
             // 
@@ -4261,6 +4262,7 @@
             this.dSPToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.dSPToolStripMenuItem.Name = "dSPToolStripMenuItem";
             resources.ApplyResources(this.dSPToolStripMenuItem, "dSPToolStripMenuItem");
+            this.dSPToolStripMenuItem.MouseUp += new System.Windows.Forms.MouseEventHandler(this.dSPToolStripMenuItem_MouseUp);
             // 
             // NRToolStripMenuItem
             // 
@@ -4341,6 +4343,7 @@
             this.bandToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.bandToolStripMenuItem.Name = "bandToolStripMenuItem";
             resources.ApplyResources(this.bandToolStripMenuItem, "bandToolStripMenuItem");
+            this.bandToolStripMenuItem.MouseUp += new System.Windows.Forms.MouseEventHandler(this.bandToolStripMenuItem_MouseUp);
             // 
             // bandtoolStripMenuItem1
             // 
@@ -4438,6 +4441,7 @@
             this.modeToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
             resources.ApplyResources(this.modeToolStripMenuItem, "modeToolStripMenuItem");
+            this.modeToolStripMenuItem.MouseUp += new System.Windows.Forms.MouseEventHandler(this.modeToolStripMenuItem_MouseUp);
             // 
             // lSBToolStripMenuItem
             // 
@@ -4527,6 +4531,7 @@
             this.filterToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.filterToolStripMenuItem.Name = "filterToolStripMenuItem";
             resources.ApplyResources(this.filterToolStripMenuItem, "filterToolStripMenuItem");
+            this.filterToolStripMenuItem.MouseUp += new System.Windows.Forms.MouseEventHandler(this.filterToolStripMenuItem_MouseUp);
             // 
             // FilterToolStripMenuItem1
             // 
@@ -4598,6 +4603,7 @@
             this.rX2ToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.rX2ToolStripMenuItem.Name = "rX2ToolStripMenuItem";
             resources.ApplyResources(this.rX2ToolStripMenuItem, "rX2ToolStripMenuItem");
+            this.rX2ToolStripMenuItem.MouseUp += new System.Windows.Forms.MouseEventHandler(this.rX2ToolStripMenuItem_MouseUp);
             // 
             // bandToolStripMenuItem6
             // 
