@@ -323,6 +323,30 @@ will be handled, but as a stop gap they can be ignored.</value>
         AAAASUVORK5CYII=
 </value>
   </data>
+  <data name="pbDiscordInfo_filter.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
+        0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
+        eMaYLGBnX8SQDKOzr+AGJgNEMLyzBTmU35egDEFoiWXQ1l/LEAdZLIMc0iOLf6GeMeQDbuzxsYsFKwAH
+        j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="pbDiscordInfo_ignore.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
+        0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
+        eMaYLGBnX8SQDKOzr+AGJgNEMLyzBTmU35egDEFoiWXQ1l/LEAdZLIMc0iOLf6GeMeQDbuzxsYsFKwAH
+        j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="pbDiscordInfo_tag.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
+        0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
+        eMaYLGBnX8SQDKOzr+AGJgNEMLyzBTmU35egDEFoiWXQ1l/LEAdZLIMc0iOLf6GeMeQDbuzxsYsFKwAH
+        j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
+</value>
+  </data>
   <data name="lblDiscordNotesText.Text" xml:space="preserve">
     <value>Enabling this will allow you to use the Discord button box to let others know your activity.
 You will also be able to use %discord_general% and %discord_bot% to view the activity in

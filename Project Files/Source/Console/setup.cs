@@ -32765,7 +32765,7 @@ namespace Thetis
         private void txtDiscordUniqueIDs_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == '[' || e.KeyChar == ']' || e.KeyChar == '"' ||
-                e.KeyChar == '\'' || e.KeyChar == '\\' || e.KeyChar == '/')
+                e.KeyChar == '\'' || e.KeyChar == '\\' || e.KeyChar == '/' || e.KeyChar == '%')
             {
                 e.Handled = true;
             }
@@ -32774,7 +32774,7 @@ namespace Thetis
         private void txtDiscordFilter_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == '[' || e.KeyChar == ']' || e.KeyChar == '"' ||
-                e.KeyChar == '\'' || e.KeyChar == '\\' || e.KeyChar == '/')
+                e.KeyChar == '\'' || e.KeyChar == '\\' || e.KeyChar == '/' || e.KeyChar == '%')
             {
                 e.Handled = true;
             }
@@ -32798,6 +32798,35 @@ namespace Thetis
         private void clrbtnButonBox_fontcolour_Changed(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+
+        private void txtDiscordIgnore_TextChanged(object sender, EventArgs e)
+        {
+            ThetisBotDiscord.Ignore = txtDiscordIgnore.Text;
+        }
+
+        private void pbDiscordInfo_tag_Click(object sender, EventArgs e)
+        {
+            toolTip1.Show(toolTip1.GetToolTip(txtDiscordUniqueIDs), txtDiscordUniqueIDs, 10 * 1000);
+        }
+
+        private void pbDiscordInfo_ignore_Click(object sender, EventArgs e)
+        {
+            toolTip1.Show(toolTip1.GetToolTip(txtDiscordIgnore), txtDiscordIgnore, 10 * 1000);
+        }
+
+        private void pbDiscordInfo_filter_Click(object sender, EventArgs e)
+        {
+            toolTip1.Show(toolTip1.GetToolTip(txtDiscordFilter), txtDiscordFilter, 10 * 1000);
+        }
+
+        private void txtDiscordIgnore_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '[' || e.KeyChar == ']' || e.KeyChar == '"' ||
+                e.KeyChar == '\'' || e.KeyChar == '\\' || e.KeyChar == '/' || e.KeyChar == '%')
+            {
+                e.Handled = true;
+            }
         }
     }
 
