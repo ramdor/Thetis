@@ -494,9 +494,9 @@ namespace Thetis
                 // MI0BOT: HL2 has a different PSdefpeak 
                 //protocol 1
                 if (console.CurrentHPSDRHardware == HPSDRHW.HermesLite)
-                    PSdefpeak(0.233);
+                    return 0.233;
                 else
-                    PSdefpeak(0.4072);
+                    return 0.4072;
             }
             else
             {

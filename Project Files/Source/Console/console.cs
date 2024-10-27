@@ -20639,9 +20639,6 @@ namespace Thetis
             m_frmSeqLog.BringToFront();
         }
 
-        private Band current_band = Band.FIRST;         // MI0BOT: Holds current band for auto attenuator control 
-        private bool autoAttSearch = true;              // MI0BOT: Flag to control the auto attenuator search
-        private int attn_loop = 0;                      // MI0BOT: Delay timer used to slowly increase HL2 LNA gain until over flow, typically 100 secs
         private float _avNumRX1 = -200;
         private float _avNumRX2 = -200;
 
@@ -29458,15 +29455,7 @@ namespace Thetis
                     udTXStepAttData.BringToFront();
                     udTXStepAttData.Visible = m_bAttontx;
 
-                    if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: Correct labeling for HL2
-                    {
-                        lblPreamp.Text = m_bAttontx ? "Tx-ATT" : (RX1AutoAtt ? "A-ATT" : "S-ATT");
-                    }
-                    else
-                    {
-                        lblPreamp.Text = m_bAttontx ? "Tx-ATT" : (rx1_step_att_present ? "S-ATT" : "ATT");
-                    }
-
+                    lblPreamp.Text = m_bAttontx ? "Tx-ATT" : (rx1_step_att_present ? "S-ATT" : "ATT");
                 }
                 else if (VFOBTX && rx2_enabled)
                 {
@@ -29482,14 +29471,7 @@ namespace Thetis
                     udTXStepAttData.BringToFront();
                     udTXStepAttData.Visible = m_bAttontx;
 
-                    if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: Correct labeling for HL2
-                    {
-                        lblPreamp.Text = m_bAttontx ? "Tx-ATT" : (RX1AutoAtt ? "A-ATT" : "S-ATT");
-                    }
-                    else
-                    {
-                        lblRX2Preamp.Text = m_bAttontx ? "Tx-ATT" : (rx2_step_att_present ? "S-ATT" : "ATT");
-                    }
+                    lblRX2Preamp.Text = m_bAttontx ? "Tx-ATT" : (rx2_step_att_present ? "S-ATT" : "ATT");
                 }
                 else
                 {
@@ -29504,10 +29486,7 @@ namespace Thetis
                 udRX2StepAttData.Enabled = rx2_preamp_present;
                 udTXStepAttData.Visible = false;
 
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: Correct labeling for HL2
-                    lblPreamp.Text = RX1AutoAtt ? "A-ATT" : "S-ATT";
-                else
-                    lblPreamp.Text = rx1_step_att_present ? "S-ATT" : "ATT";
+                lblPreamp.Text = rx1_step_att_present ? "S-ATT" : "ATT";
 
                 lblRX2Preamp.Text = rx2_step_att_present ? "S-ATT" : (rx2_preamp_present ? "ATT" : "");
             }
@@ -45208,28 +45187,7 @@ namespace Thetis
 
         private void lblPreamp_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-            {
-                if (rx1_step_att_present)
-                {
-                    if (udRX1StepAttData.Tag == null && RX1AutoAtt)
-                    {
-                        udRX1StepAttData.Tag = 1;
-                        lblPreamp.Text = "A-ATT";
-                        autoAttSearch = true;
-                    }
-                    else
-                    {
-                        udRX1StepAttData.Tag = null;
-                        lblPreamp.Text = "S-ATT";
-                    }
-                }
-                else
-                {
-                    SetupForm.RX1EnableAtt = !SetupForm.RX1EnableAtt;
-                }
-            }
-            else if (current_hpsdr_model != HPSDRModel.HPSDR)
+            if (current_hpsdr_model != HPSDRModel.HPSDR)
             {
                 SetupForm.RX1EnableAtt = !SetupForm.RX1EnableAtt;
                 if (RX1RX2usingSameADC) SetupForm.RX2EnableAtt = SetupForm.RX1EnableAtt; //MW0LGE_22b

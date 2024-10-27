@@ -233,7 +233,6 @@
             this.chkReduceBW3 = new System.Windows.Forms.CheckBoxTS();
             this.txtIPAddress2 = new System.Windows.Forms.TextBoxTS();
             this.chkReduceBW2 = new System.Windows.Forms.CheckBoxTS();
-            this.txtIPAddress1 = new System.Windows.Forms.TextBoxTS();
             this.chkReduceBW1 = new System.Windows.Forms.CheckBoxTS();
             this.chkDisplayIPPort = new System.Windows.Forms.CheckBoxTS();
             this.udDiscoveryPort4 = new System.Windows.Forms.NumericUpDownTS();
@@ -261,6 +260,7 @@
             this.udStaticIP3 = new System.Windows.Forms.NumericUpDownTS();
             this.udStaticIP2 = new System.Windows.Forms.NumericUpDownTS();
             this.udStaticIP1 = new System.Windows.Forms.NumericUpDownTS();
+            this.txtIPAddress1 = new System.Windows.Forms.TextBoxTS();
             this.chkEnableStaticIP = new System.Windows.Forms.CheckBoxTS();
             this.chkFullDiscovery = new System.Windows.Forms.CheckBoxTS();
             this.grpFRSRegion = new System.Windows.Forms.GroupBoxTS();
@@ -524,10 +524,6 @@
             this.ucOutPinsLedStripHF = new Thetis.ucOCLedStrip();
             this.labelIOState = new System.Windows.Forms.LabelTS();
             this.ucIOPinsLedStripHF = new Thetis.ucOCLedStrip();
-            this.grpHermesLiteStepAttenuator = new System.Windows.Forms.GroupBoxTS();
-            this.lblAutoDelay = new System.Windows.Forms.LabelTS();
-            this.chkAutoStepAttenuator = new System.Windows.Forms.CheckBoxTS();
-            this.udHermesStepAttenuatorDelay = new System.Windows.Forms.NumericUpDownTS();
             this.tpGeneralCalibration = new System.Windows.Forms.TabPage();
             this.groupBoxTS27 = new System.Windows.Forms.GroupBoxTS();
             this.chkLogVoltsAmps = new System.Windows.Forms.CheckBoxTS();
@@ -3907,7 +3903,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.labelAutoAttDelay = new System.Windows.Forms.LabelTS();
             this.grpMeterItemSpacerSettings = new System.Windows.Forms.GroupBoxTS();
             this.labelTS199 = new System.Windows.Forms.LabelTS();
             this.labelTS197 = new System.Windows.Forms.LabelTS();
@@ -4224,8 +4219,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udI2CControl0)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udI2CAddress)).BeginInit();
             this.grpIOPinState.SuspendLayout();
-            this.grpHermesLiteStepAttenuator.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udHermesStepAttenuatorDelay)).BeginInit();
             this.tpGeneralCalibration.SuspendLayout();
             this.groupBoxTS27.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAmpSens)).BeginInit();
@@ -5131,7 +5124,6 @@
             this.tabPage6.SuspendLayout();
             this.tabPage7.SuspendLayout();
             this.tabPage8.SuspendLayout();
-            this.tabPage9.SuspendLayout();
             this.tabPage10.SuspendLayout();
             this.tabPage11.SuspendLayout();
             this.SuspendLayout();
@@ -7899,18 +7891,6 @@
         "PS may not work with this option selected.\r\n");
             this.chkReduceBW2.Visible = false;
             // 
-            // txtIPAddress1
-            // 
-            this.txtIPAddress1.Location = new System.Drawing.Point(14, 2);
-            this.txtIPAddress1.MaxLength = 100;
-            this.txtIPAddress1.Multiline = true;
-            this.txtIPAddress1.Name = "txtIPAddress1";
-            this.txtIPAddress1.Size = new System.Drawing.Size(177, 20);
-            this.txtIPAddress1.TabIndex = 124;
-            this.txtIPAddress1.Visible = false;
-            this.txtIPAddress1.WordWrap = false;
-            this.txtIPAddress1.MouseHover += new System.EventHandler(this.txtIPAddress1_MouseHover);
-            // 
             // chkReduceBW1
             // 
             this.chkReduceBW1.Checked = true;
@@ -8582,6 +8562,18 @@
             0,
             0,
             0});
+            // 
+            // txtIPAddress1
+            // 
+            this.txtIPAddress1.Location = new System.Drawing.Point(14, 2);
+            this.txtIPAddress1.MaxLength = 100;
+            this.txtIPAddress1.Multiline = true;
+            this.txtIPAddress1.Name = "txtIPAddress1";
+            this.txtIPAddress1.Size = new System.Drawing.Size(177, 20);
+            this.txtIPAddress1.TabIndex = 124;
+            this.txtIPAddress1.Visible = false;
+            this.txtIPAddress1.WordWrap = false;
+            this.txtIPAddress1.MouseHover += new System.EventHandler(this.txtIPAddress1_MouseHover);
             // 
             // chkEnableStaticIP
             // 
@@ -11624,51 +11616,6 @@
             this.toolTip1.SetToolTip(this.chkShowFormStartup_bandstack, "Show this form at start up");
             this.chkShowFormStartup_bandstack.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_bandstack.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
-            //
-            // tpHL2Options
-            //
-            this.tpHL2Options.BackColor = System.Drawing.SystemColors.Control;
-            this.tpHL2Options.Controls.Add(this.groupBoxHL2RXOptions);
-            this.tpHL2Options.Controls.Add(this.groupBoxI2CControl);
-            this.tpHL2Options.Controls.Add(this.chkI2CEnable);
-            this.tpHL2Options.Controls.Add(this.grpIOPinState);
-            this.tpHL2Options.Controls.Add(this.grpHermesLiteStepAttenuator);
-            this.tpHL2Options.Location = new System.Drawing.Point(4, 22);
-            this.tpHL2Options.Name = "tpHL2Options";
-            this.tpHL2Options.Size = new System.Drawing.Size(716, 384);
-            this.tpHL2Options.TabIndex = 1;
-            this.tpHL2Options.Text = "HL2 Options";
-            this.tpHL2Options.Enter += new System.EventHandler(this.ucOutPinsLedStripHF_Click);
-            // 
-            // groupBoxHL2RXOptions
-            // 
-            this.groupBoxHL2RXOptions.Controls.Add(this.labelCl2Freq);
-            this.groupBoxHL2RXOptions.Controls.Add(this.udCl2Freq);
-            this.groupBoxHL2RXOptions.Controls.Add(this.chkCl2Enable);
-            this.groupBoxHL2RXOptions.Controls.Add(this.chkExt10MHz);
-            this.groupBoxHL2RXOptions.Controls.Add(this.chkDisconnectReset);
-            this.groupBoxHL2RXOptions.Controls.Add(this.labelPttHang);
-            this.groupBoxHL2RXOptions.Controls.Add(this.labelTxLatency);
-            this.groupBoxHL2RXOptions.Controls.Add(this.udPTTHang);
-            this.groupBoxHL2RXOptions.Controls.Add(this.udTxBufferLat);
-            this.groupBoxHL2RXOptions.Controls.Add(this.chkHL2PsSync);
-            this.groupBoxHL2RXOptions.Controls.Add(this.chkHL2BandVolts);
-            this.groupBoxHL2RXOptions.Location = new System.Drawing.Point(12, 15);
-            this.groupBoxHL2RXOptions.Name = "groupBoxHL2RXOptions";
-            this.groupBoxHL2RXOptions.Size = new System.Drawing.Size(236, 148);
-            this.groupBoxHL2RXOptions.TabIndex = 3;
-            this.groupBoxHL2RXOptions.TabStop = false;
-            this.groupBoxHL2RXOptions.Text = "Hermes Lite Options";
-            // 
-            // labelCl2Freq
-            // 
-            this.labelCl2Freq.BackColor = System.Drawing.SystemColors.Control;
-            this.labelCl2Freq.Image = null;
-            this.labelCl2Freq.Location = new System.Drawing.Point(157, 121);
-            this.labelCl2Freq.Name = "labelCl2Freq";
-            this.labelCl2Freq.Size = new System.Drawing.Size(36, 16);
-            this.labelCl2Freq.TabIndex = 200;
-            this.labelCl2Freq.Text = "MHz";
             // 
             // chkShowFormStartup_finder
             // 
@@ -11862,8 +11809,52 @@
             this.chkAutoPowerOn.UseVisualStyleBackColor = true;
             this.chkAutoPowerOn.CheckedChanged += new System.EventHandler(this.chkAutoPowerOn_CheckedChanged);
             // 
+            // tpHL2Options
+            // 
+            this.tpHL2Options.BackColor = System.Drawing.SystemColors.Control;
+            this.tpHL2Options.Controls.Add(this.groupBoxHL2RXOptions);
+            this.tpHL2Options.Controls.Add(this.groupBoxI2CControl);
+            this.tpHL2Options.Controls.Add(this.chkI2CEnable);
+            this.tpHL2Options.Controls.Add(this.grpIOPinState);
+            this.tpHL2Options.Location = new System.Drawing.Point(4, 22);
+            this.tpHL2Options.Name = "tpHL2Options";
+            this.tpHL2Options.Size = new System.Drawing.Size(716, 384);
+            this.tpHL2Options.TabIndex = 1;
+            this.tpHL2Options.Text = "HL2 Options";
+            this.tpHL2Options.Enter += new System.EventHandler(this.ucOutPinsLedStripHF_Click);
+            // 
+            // groupBoxHL2RXOptions
+            // 
+            this.groupBoxHL2RXOptions.Controls.Add(this.labelCl2Freq);
+            this.groupBoxHL2RXOptions.Controls.Add(this.udCl2Freq);
+            this.groupBoxHL2RXOptions.Controls.Add(this.chkCl2Enable);
+            this.groupBoxHL2RXOptions.Controls.Add(this.chkExt10MHz);
+            this.groupBoxHL2RXOptions.Controls.Add(this.chkDisconnectReset);
+            this.groupBoxHL2RXOptions.Controls.Add(this.labelPttHang);
+            this.groupBoxHL2RXOptions.Controls.Add(this.labelTxLatency);
+            this.groupBoxHL2RXOptions.Controls.Add(this.udPTTHang);
+            this.groupBoxHL2RXOptions.Controls.Add(this.udTxBufferLat);
+            this.groupBoxHL2RXOptions.Controls.Add(this.chkHL2PsSync);
+            this.groupBoxHL2RXOptions.Controls.Add(this.chkHL2BandVolts);
+            this.groupBoxHL2RXOptions.Location = new System.Drawing.Point(12, 15);
+            this.groupBoxHL2RXOptions.Name = "groupBoxHL2RXOptions";
+            this.groupBoxHL2RXOptions.Size = new System.Drawing.Size(236, 148);
+            this.groupBoxHL2RXOptions.TabIndex = 3;
+            this.groupBoxHL2RXOptions.TabStop = false;
+            this.groupBoxHL2RXOptions.Text = "Hermes Lite Options";
+            // 
+            // labelCl2Freq
+            // 
+            this.labelCl2Freq.BackColor = System.Drawing.SystemColors.Control;
+            this.labelCl2Freq.Image = null;
+            this.labelCl2Freq.Location = new System.Drawing.Point(157, 121);
+            this.labelCl2Freq.Name = "labelCl2Freq";
+            this.labelCl2Freq.Size = new System.Drawing.Size(36, 16);
+            this.labelCl2Freq.TabIndex = 200;
+            this.labelCl2Freq.Text = "MHz";
+            // 
             // udCl2Freq
-            //
+            // 
             this.udCl2Freq.DecimalPlaces = 3;
             this.udCl2Freq.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.udCl2Freq.Increment = new decimal(new int[] {
@@ -12447,75 +12438,6 @@
             this.ucIOPinsLedStripHF.TabIndex = 1;
             this.ucIOPinsLedStripHF.TX = false;
             this.ucIOPinsLedStripHF.Visible = false;
-            // 
-            // grpHermesLiteStepAttenuator
-            // 
-            this.grpHermesLiteStepAttenuator.Controls.Add(this.labelAutoAttDelay);
-            this.grpHermesLiteStepAttenuator.Controls.Add(this.lblAutoDelay);
-            this.grpHermesLiteStepAttenuator.Controls.Add(this.chkAutoStepAttenuator);
-            this.grpHermesLiteStepAttenuator.Controls.Add(this.udHermesStepAttenuatorDelay);
-            this.grpHermesLiteStepAttenuator.Location = new System.Drawing.Point(12, 169);
-            this.grpHermesLiteStepAttenuator.Name = "grpHermesLiteStepAttenuator";
-            this.grpHermesLiteStepAttenuator.Size = new System.Drawing.Size(236, 46);
-            this.grpHermesLiteStepAttenuator.TabIndex = 30;
-            this.grpHermesLiteStepAttenuator.TabStop = false;
-            this.grpHermesLiteStepAttenuator.Text = "Hermes Lite Step Attenuator";
-            // 
-            // lblAutoDelay
-            // 
-            this.lblAutoDelay.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.lblAutoDelay.AutoSize = true;
-            this.lblAutoDelay.Image = null;
-            this.lblAutoDelay.Location = new System.Drawing.Point(126, -129);
-            this.lblAutoDelay.Name = "lblAutoDelay";
-            this.lblAutoDelay.Size = new System.Drawing.Size(34, 13);
-            this.lblAutoDelay.TabIndex = 11;
-            this.lblAutoDelay.Text = "Delay";
-            this.toolTip1.SetToolTip(this.lblAutoDelay, "Specifies how offten auto attenuator re-tests ");
-            // 
-            // chkAutoStepAttenuator
-            // 
-            this.chkAutoStepAttenuator.AutoSize = true;
-            this.chkAutoStepAttenuator.Checked = true;
-            this.chkAutoStepAttenuator.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutoStepAttenuator.Image = null;
-            this.chkAutoStepAttenuator.Location = new System.Drawing.Point(8, 22);
-            this.chkAutoStepAttenuator.Name = "chkAutoStepAttenuator";
-            this.chkAutoStepAttenuator.Size = new System.Drawing.Size(116, 17);
-            this.chkAutoStepAttenuator.TabIndex = 5;
-            this.chkAutoStepAttenuator.Text = "Auto Rx Attenuator";
-            this.toolTip1.SetToolTip(this.chkAutoStepAttenuator, "Automaticly adjust attenuation to maximise ADC range");
-            this.chkAutoStepAttenuator.CheckedChanged += new System.EventHandler(this.chkAutoStepAttenuator_CheckedChanged);
-            // 
-            // udHermesStepAttenuatorDelay
-            // 
-            this.udHermesStepAttenuatorDelay.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udHermesStepAttenuatorDelay.Location = new System.Drawing.Point(180, 19);
-            this.udHermesStepAttenuatorDelay.Maximum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.udHermesStepAttenuatorDelay.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udHermesStepAttenuatorDelay.Name = "udHermesStepAttenuatorDelay";
-            this.udHermesStepAttenuatorDelay.Size = new System.Drawing.Size(46, 20);
-            this.udHermesStepAttenuatorDelay.TabIndex = 4;
-            this.udHermesStepAttenuatorDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.udHermesStepAttenuatorDelay.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udHermesStepAttenuatorDelay, "Time between tests for ADC range check");
-            this.udHermesStepAttenuatorDelay.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
             // 
             // tpGeneralCalibration
             // 
@@ -62884,16 +62806,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // labelAutoAttDelay
-            //
-            this.labelAutoAttDelay.Image = null;
-            this.labelAutoAttDelay.Location = new System.Drawing.Point(132, 21);
-            this.labelAutoAttDelay.Name = "labelAutoAttDelay";
-            this.labelAutoAttDelay.Size = new System.Drawing.Size(42, 16);
-            this.labelAutoAttDelay.TabIndex = 191;
-            this.labelAutoAttDelay.Text = "Delay";
-            this.labelAutoAttDelay.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            //
             // grpMeterItemSpacerSettings
             // 
             this.grpMeterItemSpacerSettings.Controls.Add(this.labelTS199);
@@ -64984,7 +64896,6 @@
             // 
             // tabPage9
             // 
-            this.tabPage9.Controls.Add(this.grpMeterItemDataOutNode);
             this.tabPage9.Location = new System.Drawing.Point(4, 22);
             this.tabPage9.Name = "tabPage9";
             this.tabPage9.Size = new System.Drawing.Size(726, 463);
@@ -65059,7 +64970,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1884, 1581);
             this.Controls.Add(this.tcMMsettings);
-            this.Controls.Add(this.grpMeterItemDataOutNode);
             this.Controls.Add(this.labelTS198);
             this.Controls.Add(this.txtboxTXProfileChangedReport);
             this.Controls.Add(this.lblTXProfileWarning);
@@ -65068,6 +64978,7 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.tcSetup);
+            this.Controls.Add(this.grpMeterItemDataOutNode);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -65241,9 +65152,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udI2CAddress)).EndInit();
             this.grpIOPinState.ResumeLayout(false);
             this.grpIOPinState.PerformLayout();
-            this.grpHermesLiteStepAttenuator.ResumeLayout(false);
-            this.grpHermesLiteStepAttenuator.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udHermesStepAttenuatorDelay)).EndInit();
             this.tpGeneralCalibration.ResumeLayout(false);
             this.groupBoxTS27.ResumeLayout(false);
             this.groupBoxTS27.PerformLayout();
@@ -66345,7 +66253,6 @@
             this.tabPage6.ResumeLayout(false);
             this.tabPage7.ResumeLayout(false);
             this.tabPage8.ResumeLayout(false);
-            this.tabPage9.ResumeLayout(false);
             this.tabPage10.ResumeLayout(false);
             this.tabPage11.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -67651,7 +67558,6 @@
         private System.Windows.Forms.RadioButtonTS radRX2LSBUSB;
         private System.Windows.Forms.PanelTS panelAutoPACalibrate;
         private System.Windows.Forms.GroupBoxTS grpHermesStepAttenuator;
-        private System.Windows.Forms.GroupBoxTS grpHermesLiteStepAttenuator;
         private System.Windows.Forms.CheckBoxTS chkHermesStepAttenuator;
         private System.Windows.Forms.NumericUpDownTS udHermesStepAttenuatorData;
         private System.Windows.Forms.PanelTS panelAlexTXAntControl;
@@ -69108,9 +69014,6 @@
         private RadioButtonTS radP1DDC0ADC1;
         private RadioButtonTS radP1DDC0ADC0;
         private TabPage tpADC;
-        private LabelTS lblAutoDelay;
-        private CheckBoxTS chkAutoStepAttenuator;
-        private NumericUpDownTS udHermesStepAttenuatorDelay;
         private CheckBoxTS chkCATtoVFOB;
         private CheckBoxTS checkEnableAriesQuickTune;
         private CheckBoxTS checkAriesStandalone;
@@ -69967,7 +69870,6 @@
         private ucOCLedStrip ucOutPinsLedStripHF;
         private LabelTS labelOutState;
         private CheckBoxTS chkIOPinControl;
-        private LabelTS labelAutoAttDelay;
         private LabelTS lblTRNDThreshRX2;
         private NumericUpDownTS udDSPNR2trainThreshRX2;
         private GroupBoxTS groupBoxTS34;

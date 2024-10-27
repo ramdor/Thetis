@@ -3789,20 +3789,6 @@ namespace Thetis
             }
         }
 
-        // MI0BOT: Support for HL2 auto attenuator
-        public bool AutoStepAttenuator
-        {
-            get
-            {
-                if (chkAutoStepAttenuator != null) return chkAutoStepAttenuator.Checked;
-                else return false;
-            }
-            set
-            {
-                if (chkAutoStepAttenuator != null) chkAutoStepAttenuator.Checked = value;
-            }
-        }
-
         public int ATTOnRX1
         {
             get
@@ -5634,13 +5620,6 @@ namespace Thetis
                 }
                 return rv;
             }
-        }
-
-        // MI0BOT: Support for HL2 auto attenuator
-        public int HermesStepAttenuatorDelay
-        {
-            get { return (int)udHermesStepAttenuatorDelay.Value; }
-            set { udHermesStepAttenuatorDelay.Value = value; }
         }
 
         // Added 06/21/05 BT for CAT commands
@@ -15866,26 +15845,7 @@ namespace Thetis
 
             if (chkHermesStepAttenuator.Checked)
             {
-                if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
-                {
-                    chkAutoStepAttenuator.Enabled = true;
-                    udHermesStepAttenuatorDelay.Enabled = true;
-                    lblAutoDelay.Enabled = true;
-                    chkAutoStepAttenuator_CheckedChanged(this, EventArgs.Empty);
-
-                }
-
                 udHermesStepAttenuatorData_ValueChanged(this, EventArgs.Empty);
-            }
-            else
-            {
-                if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
-                {
-                    chkAutoStepAttenuator.Enabled = false;
-                    udHermesStepAttenuatorDelay.Enabled = false;
-                    lblAutoDelay.Enabled = false;
-                    console.RX1AutoAtt = false;
-                }
             }
 
             CheckBoxTS chk = sender as CheckBoxTS;
@@ -20112,8 +20072,6 @@ namespace Thetis
 
                     udATTOnTX.Minimum = (decimal)-28;
 
-                    chkAutoStepAttenuator_CheckedChanged(sender, e);
-
                     nud160M.Minimum = 0;
                     nud80M.Minimum = 0;
                     nud60M.Minimum = 0;
@@ -20990,12 +20948,6 @@ namespace Thetis
             console.AriesStandalone = checkAriesStandalone.Checked;
         }
        
-        // MI0BOT: Controls the auto attenuator functionality for the HL2
-		private void chkAutoStepAttenuator_CheckedChanged(object sender, EventArgs e)
-        {
-            console.RX1AutoAtt = chkAutoStepAttenuator.Checked;
-        }
-
         // MI0BOT: Controls the hardware tx buffer in the HL2
 
         private void udTxBufferLat_ValueChanged(object sender, EventArgs e)
