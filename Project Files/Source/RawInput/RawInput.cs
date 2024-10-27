@@ -134,9 +134,9 @@ namespace RawInput_dll
             
             return usbNotifyHandle;
         }
-        
+
         protected override void WndProc(ref Message message)
-        {            
+        {
             switch (message.Msg)
             {
                 case Win32.WM_INPUT:
@@ -145,26 +145,36 @@ namespace RawInput_dll
                         _mouseDriver.ProcessRawInput(message.LParam);
                     }
                     break;
+
                 case Win32.WM_USB_DEVICECHANGE:
                     {
-                        //0x0007 DBT_DEVNODES_CHANGED
-                        if ((((int)message.WParam) & 0x0007) == 0x0007)
+                        const int DBT_DEVICEARRIVAL = 0x8000;
+                        const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
+
+                        if (((int)message.WParam & DBT_DEVICEARRIVAL) == DBT_DEVICEARRIVAL)
                         {
-                            Debug.WriteLine("USB Device Arrival / Removal");
+                            Debug.WriteLine("USB Device Added");
                             _keyboardDriver.EnumerateDevices(_id);
                             _mouseDriver.EnumerateDevices(_id);
 
-                            if (DevicesChanged != null)
-                            {
-                                DevicesChanged(this);
-                            }
+                            DevicesChanged?.Invoke(this);
+                        }
+
+                        if (((int)message.WParam & DBT_DEVICEREMOVECOMPLETE) == DBT_DEVICEREMOVECOMPLETE)
+                        {
+                            Debug.WriteLine("USB Device Removed");
+                            _keyboardDriver.EnumerateDevices(_id);
+                            _mouseDriver.EnumerateDevices(_id);
+
+                            DevicesChanged?.Invoke(this);
                         }
                     }
                     break;
             }
+
             base.WndProc(ref message);
         }
-        
+
         ~RawInput()
         {
             Win32.UnregisterDeviceNotification(_devNotifyHandle);

@@ -3629,6 +3629,13 @@
             this.lstMMIO_network_list = new System.Windows.Forms.ListBox();
             this.radMMIO_network_add_udp = new System.Windows.Forms.ButtonTS();
             this.btnMMIO_network_add_tcpip = new System.Windows.Forms.ButtonTS();
+            this.tpDiscord = new System.Windows.Forms.TabPage();
+            this.groupBoxTS48 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS289 = new System.Windows.Forms.LabelTS();
+            this.lnkDiscordJoin = new System.Windows.Forms.LinkLabel();
+            this.labelTS288 = new System.Windows.Forms.LabelTS();
+            this.txtDiscordCallsign = new System.Windows.Forms.TextBoxTS();
+            this.chkDiscordEnabled = new System.Windows.Forms.CheckBoxTS();
             this.tpTests = new System.Windows.Forms.TabPage();
             this.groupBoxTS30 = new System.Windows.Forms.GroupBoxTS();
             this.btnShowSeqLog = new System.Windows.Forms.ButtonTS();
@@ -4064,6 +4071,7 @@
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
             this.tmrLedValid = new System.Windows.Forms.Timer(this.components);
+            this.lblDiscordState = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4977,6 +4985,8 @@
             this.groupBoxTS39.SuspendLayout();
             this.pnlMMIO_network_container.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMutliMeterIO_udp_out_warning)).BeginInit();
+            this.tpDiscord.SuspendLayout();
+            this.groupBoxTS48.SuspendLayout();
             this.tpTests.SuspendLayout();
             this.groupBoxTS30.SuspendLayout();
             this.grpBoxTS1.SuspendLayout();
@@ -54846,6 +54856,7 @@
             this.tcCAT.Controls.Add(this.tpUserInterface);
             this.tcCAT.Controls.Add(this.tpAndromeda);
             this.tcCAT.Controls.Add(this.tpMultiMetersIO);
+            this.tcCAT.Controls.Add(this.tpDiscord);
             this.tcCAT.Location = new System.Drawing.Point(0, 3);
             this.tcCAT.Name = "tcCAT";
             this.tcCAT.SelectedIndex = 0;
@@ -57866,6 +57877,85 @@
             this.btnMMIO_network_add_tcpip.UseVisualStyleBackColor = true;
             this.btnMMIO_network_add_tcpip.Click += new System.EventHandler(this.btnMMIO_network_add_tcpip_Click);
             // 
+            // tpDiscord
+            // 
+            this.tpDiscord.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDiscord.Controls.Add(this.groupBoxTS48);
+            this.tpDiscord.Location = new System.Drawing.Point(4, 22);
+            this.tpDiscord.Name = "tpDiscord";
+            this.tpDiscord.Size = new System.Drawing.Size(724, 407);
+            this.tpDiscord.TabIndex = 8;
+            this.tpDiscord.Text = "Discord Link";
+            // 
+            // groupBoxTS48
+            // 
+            this.groupBoxTS48.Controls.Add(this.lblDiscordState);
+            this.groupBoxTS48.Controls.Add(this.labelTS289);
+            this.groupBoxTS48.Controls.Add(this.lnkDiscordJoin);
+            this.groupBoxTS48.Controls.Add(this.labelTS288);
+            this.groupBoxTS48.Controls.Add(this.txtDiscordCallsign);
+            this.groupBoxTS48.Controls.Add(this.chkDiscordEnabled);
+            this.groupBoxTS48.Location = new System.Drawing.Point(16, 14);
+            this.groupBoxTS48.Name = "groupBoxTS48";
+            this.groupBoxTS48.Size = new System.Drawing.Size(702, 385);
+            this.groupBoxTS48.TabIndex = 0;
+            this.groupBoxTS48.TabStop = false;
+            this.groupBoxTS48.Text = "Discord";
+            // 
+            // labelTS289
+            // 
+            this.labelTS289.AutoSize = true;
+            this.labelTS289.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS289.Image = null;
+            this.labelTS289.Location = new System.Drawing.Point(35, 99);
+            this.labelTS289.Name = "labelTS289";
+            this.labelTS289.Size = new System.Drawing.Size(594, 64);
+            this.labelTS289.TabIndex = 4;
+            this.labelTS289.Text = resources.GetString("labelTS289.Text");
+            // 
+            // lnkDiscordJoin
+            // 
+            this.lnkDiscordJoin.AutoSize = true;
+            this.lnkDiscordJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lnkDiscordJoin.Location = new System.Drawing.Point(404, 49);
+            this.lnkDiscordJoin.Name = "lnkDiscordJoin";
+            this.lnkDiscordJoin.Size = new System.Drawing.Size(200, 25);
+            this.lnkDiscordJoin.TabIndex = 3;
+            this.lnkDiscordJoin.TabStop = true;
+            this.lnkDiscordJoin.Text = "Join Discord Server";
+            this.lnkDiscordJoin.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkDiscordJoin_LinkClicked);
+            // 
+            // labelTS288
+            // 
+            this.labelTS288.AutoSize = true;
+            this.labelTS288.Image = null;
+            this.labelTS288.Location = new System.Drawing.Point(26, 43);
+            this.labelTS288.Name = "labelTS288";
+            this.labelTS288.Size = new System.Drawing.Size(49, 13);
+            this.labelTS288.TabIndex = 2;
+            this.labelTS288.Text = "Callsign :";
+            // 
+            // txtDiscordCallsign
+            // 
+            this.txtDiscordCallsign.Location = new System.Drawing.Point(81, 40);
+            this.txtDiscordCallsign.MaxLength = 12;
+            this.txtDiscordCallsign.Name = "txtDiscordCallsign";
+            this.txtDiscordCallsign.Size = new System.Drawing.Size(100, 20);
+            this.txtDiscordCallsign.TabIndex = 1;
+            this.txtDiscordCallsign.TextChanged += new System.EventHandler(this.txtDiscordCallsign_TextChanged);
+            // 
+            // chkDiscordEnabled
+            // 
+            this.chkDiscordEnabled.AutoSize = true;
+            this.chkDiscordEnabled.Image = null;
+            this.chkDiscordEnabled.Location = new System.Drawing.Point(212, 43);
+            this.chkDiscordEnabled.Name = "chkDiscordEnabled";
+            this.chkDiscordEnabled.Size = new System.Drawing.Size(65, 17);
+            this.chkDiscordEnabled.TabIndex = 0;
+            this.chkDiscordEnabled.Text = "Enabled";
+            this.chkDiscordEnabled.UseVisualStyleBackColor = true;
+            this.chkDiscordEnabled.CheckedChanged += new System.EventHandler(this.chkDiscordEnabled_CheckedChanged);
+            // 
             // tpTests
             // 
             this.tpTests.Controls.Add(this.groupBoxTS30);
@@ -60343,7 +60433,7 @@
             this.btnLedIndicator_copy_truefalse_colours.Size = new System.Drawing.Size(33, 23);
             this.btnLedIndicator_copy_truefalse_colours.TabIndex = 165;
             this.btnLedIndicator_copy_truefalse_colours.Text = "=";
-            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_truefalse_colours, "Copy the font and colours from RX to TX");
+            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_truefalse_colours, "Copy the colours from TRUE to FALSE");
             this.btnLedIndicator_copy_truefalse_colours.UseVisualStyleBackColor = true;
             this.btnLedIndicator_copy_truefalse_colours.Click += new System.EventHandler(this.btnLedIndicator_copy_truefalse_colours_Click);
             // 
@@ -60401,7 +60491,7 @@
             this.btnLedIndicator_copy_sizex_to_y.Size = new System.Drawing.Size(33, 23);
             this.btnLedIndicator_copy_sizex_to_y.TabIndex = 155;
             this.btnLedIndicator_copy_sizex_to_y.Text = "=";
-            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_sizex_to_y, "Copy the offset values from RX to TX");
+            this.toolTip1.SetToolTip(this.btnLedIndicator_copy_sizex_to_y, "Copy the size values from X to Y");
             this.btnLedIndicator_copy_sizex_to_y.UseVisualStyleBackColor = true;
             this.btnLedIndicator_copy_sizex_to_y.Click += new System.EventHandler(this.btnLedIndicator_copy_sizex_to_y_Click);
             // 
@@ -64773,6 +64863,16 @@
             this.tmrLedValid.Interval = 500;
             this.tmrLedValid.Tick += new System.EventHandler(this.tmrLedValid_Tick);
             // 
+            // lblDiscordState
+            // 
+            this.lblDiscordState.AutoSize = true;
+            this.lblDiscordState.Image = null;
+            this.lblDiscordState.Location = new System.Drawing.Point(216, 63);
+            this.lblDiscordState.Name = "lblDiscordState";
+            this.lblDiscordState.Size = new System.Drawing.Size(42, 13);
+            this.lblDiscordState.TabIndex = 1;
+            this.lblDiscordState.Text = "STATE";
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -65908,6 +66008,9 @@
             this.pnlMMIO_network_container.ResumeLayout(false);
             this.pnlMMIO_network_container.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMutliMeterIO_udp_out_warning)).EndInit();
+            this.tpDiscord.ResumeLayout(false);
+            this.groupBoxTS48.ResumeLayout(false);
+            this.groupBoxTS48.PerformLayout();
             this.tpTests.ResumeLayout(false);
             this.groupBoxTS30.ResumeLayout(false);
             this.grpBoxTS1.ResumeLayout(false);
@@ -70129,5 +70232,13 @@
         private CheckBoxTS chkAutoATTRx2;
         private LabelTS lblAutoAttHoldRX1;
         private GroupBoxTS groupBoxTS47;
+        private TabPage tpDiscord;
+        private GroupBoxTS groupBoxTS48;
+        private LabelTS labelTS289;
+        private LinkLabel lnkDiscordJoin;
+        private LabelTS labelTS288;
+        private TextBoxTS txtDiscordCallsign;
+        private CheckBoxTS chkDiscordEnabled;
+        private LabelTS lblDiscordState;
     }
 }

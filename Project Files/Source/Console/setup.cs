@@ -97,6 +97,8 @@ namespace Thetis
 
             ThetisSkinService.Version = console.ProductVersion;
 
+            updateDiscordState();
+
             addDelegates();
 
             //MW0LGE_21i
@@ -246,10 +248,11 @@ namespace Thetis
             "%bandtext_vfoa%" + System.Environment.NewLine +
             "%bandtext_vfob%" + System.Environment.NewLine +
             "%precis=1%" + System.Environment.NewLine +
-            "%nf_1%" + System.Environment.NewLine +
-            "%nf_2%" + System.Environment.NewLine +
+            "%nf%" + System.Environment.NewLine +
             "%tune_step%" + System.Environment.NewLine +
-            "%pa_profile%";// + System.Environment.NewLine +
+            "%pa_profile%" + System.Environment.NewLine +
+            "%discord_general=0%" + System.Environment.NewLine +
+            "%discord_bot=0%";// + System.Environment.NewLine +
 
             toolTip1.SetToolTip(pbTextOverlay_variables, sTip);
 
@@ -673,6 +676,10 @@ namespace Thetis
             ThetisSkinService.SubscribeForImageLoaded(imageLoadedHandler);
             ThetisSkinService.SubscribeForDownload(fileDownloadHandler);
 
+            ThetisBotDiscord.ConnectedHandlers += OnDiscordConnect;
+            ThetisBotDiscord.DisconnectedHandlers += OnDiscordDisconnect;
+            ThetisBotDiscord.ReadyHandlers += OnDiscordReady;
+
             _bAddedDelegates = true;
         }
         public void RemoveDelegates()
@@ -690,6 +697,10 @@ namespace Thetis
             ThetisSkinService.UnsubscribeFromSkinServerData(skinServersDataReceivedHandler);
             ThetisSkinService.UnsubscribeFromImageLoaded(imageLoadedHandler);
             ThetisSkinService.UnsubscribeFromDownload(fileDownloadHandler);
+
+            ThetisBotDiscord.ConnectedHandlers -= OnDiscordConnect;
+            ThetisBotDiscord.DisconnectedHandlers -= OnDiscordDisconnect;
+            ThetisBotDiscord.ReadyHandlers -= OnDiscordReady;
 
             _bAddedDelegates = false;
         }
@@ -2757,6 +2768,9 @@ namespace Thetis
             chkLegacyItems_vfob_CheckedChanged(this, e);
             chkLegacyItems_expand_spectral_top_CheckedChanged(this, e);
             chkLegacyItems_vfosync_CheckedChanged(this, e);
+
+            //
+            chkDiscordEnabled_CheckedChanged(this, e);
         }
 
         public string[] GetTXProfileStrings()
@@ -19403,10 +19417,12 @@ namespace Thetis
             if (chkVSyncDX.Checked)
             {
                 Display.VerticalBlanks = 1;
+                MeterManager.SetVsync(true);
             }
             else
             {
                 Display.VerticalBlanks = 0;
+                MeterManager.SetVsync(false);
             }
         }
 
@@ -25639,7 +25655,7 @@ namespace Thetis
                 igs.FadeOnRx = chkHistory_fade_rx.Checked;
                 igs.FadeOnTx = chkHistory_fade_tx.Checked;
             }
-            else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS)
+            else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS)
             {
                 if (mt == MeterType.TUNESTEP_BUTTONS)
                 {
@@ -25987,7 +26003,7 @@ namespace Thetis
             if (mt != MeterType.ROTATOR && mt != MeterType.SIGNAL_TEXT && mt != MeterType.VFO_DISPLAY && mt != MeterType.CLOCK && 
                 mt != MeterType.TEXT_OVERLAY && mt != MeterType.SPACER && mt != MeterType.LED &&
                 mt != MeterType.BAND_BUTTONS && mt != MeterType.MODE_BUTTONS && mt != MeterType.FILTER_BUTTONS && mt != MeterType.ANTENNA_BUTTONS &&
-                mt != MeterType.HISTORY && mt != MeterType.TUNESTEP_BUTTONS
+                mt != MeterType.HISTORY && mt != MeterType.TUNESTEP_BUTTONS && mt != MeterType.DISCORD_BUTTONS
                 )
             {
                 switch (m.MeterVariables(mt))
@@ -26096,7 +26112,7 @@ namespace Thetis
                 chkHistory_fade_rx.Checked = igs.FadeOnRx;
                 chkHistory_fade_tx.Checked = igs.FadeOnTx;
             }
-            else if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS)
+            else if(mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS)
             {
                 int columns = 1;
                 int max_buttons = 1;
@@ -26151,6 +26167,11 @@ namespace Thetis
                         columns = igs.GetSetting<int>("buttonbox_columns", true, 1, max_buttons, max_buttons);
                         if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
                         if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
+                        break;
+                    case MeterType.DISCORD_BUTTONS:
+                        columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 9, 9);
+                        if (nudBandButtons_columns.Value > 9) nudBandButtons_columns.Value = 9;
+                        if (nudBandButtons_columns.Maximum != 9) nudBandButtons_columns.Maximum = 9;
                         break;
                 }
                 nudBandButtons_columns.Value = columns;
@@ -26862,6 +26883,7 @@ namespace Thetis
                 case MeterType.FILTER_BUTTONS:
                 case MeterType.MODE_BUTTONS:
                 case MeterType.BAND_BUTTONS:
+                case MeterType.DISCORD_BUTTONS:
                     {
                         grpBandButtons.Parent = grpMultiMeterHolder;
                         grpBandButtons.Location = loc;
@@ -28360,7 +28382,9 @@ namespace Thetis
 
         private void tcSetup_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             if (isSkinServerTabVisible()) getSkinServers();
+            if (tcSetup.SelectedTab == tpCATControl && tcCAT.SelectedTab == tpMultiMetersIO) updateVariableList();
         }
 
         private void udFMLowCutRX_ValueChanged(object sender, EventArgs e)
@@ -32652,6 +32676,83 @@ namespace Thetis
         {
             if (initializing) return;
             console.AutoAttUndoDelayRX2 = (int)nudAutoAttHoldRX2.Value;
+        }
+
+        private void lnkDiscordJoin_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            lnkDiscordJoin.LinkVisited = true;
+            Common.OpenUri("https://discord.gg/6fHCRKnDc9");
+        }
+
+        private void chkDiscordEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            txtDiscordCallsign_TextChanged(this, EventArgs.Empty);
+            if (ThetisBotDiscord.IsValidCallsign(txtDiscordCallsign.Text))
+            {
+                chkDiscordEnabled.Enabled = true;
+                ThetisBotDiscord.SetEnabled(chkDiscordEnabled.Checked);
+            }
+            else
+            {
+                chkDiscordEnabled.Checked = false;
+                chkDiscordEnabled.Enabled = false;
+            }
+
+            updateDiscordState();
+        }
+
+        private void txtDiscordCallsign_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            ThetisBotDiscord.SetCallsign(txtDiscordCallsign.Text);
+            if (!ThetisBotDiscord.IsValidCallsign(txtDiscordCallsign.Text))
+            {
+                chkDiscordEnabled.Checked = false;
+                chkDiscordEnabled.Enabled = false;
+            }
+            else
+                chkDiscordEnabled.Enabled = true;
+
+            updateDiscordState();
+        }
+        private void updateDiscordState()
+        {
+            if (ThetisBotDiscord.IsConnected)
+            {
+                if (ThetisBotDiscord.IsReady)
+                {
+                    lblDiscordState.Text = "Connected + Ready";
+                }
+                else
+                {
+                    lblDiscordState.Text = "Connected + Waiting for ready...";
+                }
+            }
+            else
+            {
+                if (chkDiscordEnabled.Checked)
+                {
+                    lblDiscordState.Text = "Tyring to connect...";
+                }
+                else
+                {
+                    lblDiscordState.Text = "Disconnected";
+                }
+            }
+        }
+        private void OnDiscordConnect()
+        {
+            updateDiscordState();
+        }
+        private void OnDiscordDisconnect()
+        {
+            updateDiscordState();
+        }
+        private void OnDiscordReady()
+        {
+            updateDiscordState();
         }
     }
 
