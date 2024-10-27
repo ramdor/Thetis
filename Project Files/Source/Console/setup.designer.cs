@@ -3631,7 +3631,13 @@
             this.btnMMIO_network_add_tcpip = new System.Windows.Forms.ButtonTS();
             this.tpDiscord = new System.Windows.Forms.TabPage();
             this.groupBoxTS48 = new System.Windows.Forms.GroupBoxTS();
-            this.labelTS289 = new System.Windows.Forms.LabelTS();
+            this.lblDiscordNotes = new System.Windows.Forms.LabelTS();
+            this.txtDiscordFilter = new System.Windows.Forms.TextBoxTS();
+            this.labelTS291 = new System.Windows.Forms.LabelTS();
+            this.txtDiscordUniqueIDs = new System.Windows.Forms.TextBoxTS();
+            this.labelTS290 = new System.Windows.Forms.LabelTS();
+            this.lblDiscordState = new System.Windows.Forms.LabelTS();
+            this.lblDiscordNotesText = new System.Windows.Forms.LabelTS();
             this.lnkDiscordJoin = new System.Windows.Forms.LinkLabel();
             this.labelTS288 = new System.Windows.Forms.LabelTS();
             this.txtDiscordCallsign = new System.Windows.Forms.TextBoxTS();
@@ -3843,6 +3849,8 @@
             this.chkLed_notx_true = new System.Windows.Forms.CheckBoxTS();
             this.chkLed_notx_false = new System.Windows.Forms.CheckBoxTS();
             this.nudLedIndicator_UpdateInterval = new System.Windows.Forms.NumericUpDownTS();
+            this.clrbtnButonBox_click = new Thetis.ColorButton();
+            this.clrbtnButonBox_fontcolour = new Thetis.ColorButton();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -3997,6 +4005,7 @@
             this.chkWebImage_fade_tx = new System.Windows.Forms.CheckBoxTS();
             this.chkWebImage_fade_rx = new System.Windows.Forms.CheckBoxTS();
             this.grpBandButtons = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS292 = new System.Windows.Forms.LabelTS();
             this.pnlButtonBox_antenna_toggles = new System.Windows.Forms.PanelTS();
             this.chkButtonBox_antenna_rxtxant = new System.Windows.Forms.CheckBoxTS();
             this.chkButtonBox_antenna_xvtr = new System.Windows.Forms.CheckBoxTS();
@@ -4071,7 +4080,6 @@
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
             this.tmrLedValid = new System.Windows.Forms.Timer(this.components);
-            this.lblDiscordState = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -57889,8 +57897,13 @@
             // 
             // groupBoxTS48
             // 
+            this.groupBoxTS48.Controls.Add(this.lblDiscordNotes);
+            this.groupBoxTS48.Controls.Add(this.txtDiscordFilter);
+            this.groupBoxTS48.Controls.Add(this.labelTS291);
+            this.groupBoxTS48.Controls.Add(this.txtDiscordUniqueIDs);
+            this.groupBoxTS48.Controls.Add(this.labelTS290);
             this.groupBoxTS48.Controls.Add(this.lblDiscordState);
-            this.groupBoxTS48.Controls.Add(this.labelTS289);
+            this.groupBoxTS48.Controls.Add(this.lblDiscordNotesText);
             this.groupBoxTS48.Controls.Add(this.lnkDiscordJoin);
             this.groupBoxTS48.Controls.Add(this.labelTS288);
             this.groupBoxTS48.Controls.Add(this.txtDiscordCallsign);
@@ -57902,24 +57915,89 @@
             this.groupBoxTS48.TabStop = false;
             this.groupBoxTS48.Text = "Discord";
             // 
-            // labelTS289
+            // lblDiscordNotes
             // 
-            this.labelTS289.AutoSize = true;
-            this.labelTS289.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTS289.Image = null;
-            this.labelTS289.Location = new System.Drawing.Point(35, 99);
-            this.labelTS289.Name = "labelTS289";
-            this.labelTS289.Size = new System.Drawing.Size(594, 64);
-            this.labelTS289.TabIndex = 4;
-            this.labelTS289.Text = resources.GetString("labelTS289.Text");
+            this.lblDiscordNotes.AutoSize = true;
+            this.lblDiscordNotes.Image = null;
+            this.lblDiscordNotes.Location = new System.Drawing.Point(27, 180);
+            this.lblDiscordNotes.Name = "lblDiscordNotes";
+            this.lblDiscordNotes.Size = new System.Drawing.Size(38, 13);
+            this.lblDiscordNotes.TabIndex = 9;
+            this.lblDiscordNotes.Text = "Notes:";
+            // 
+            // txtDiscordFilter
+            // 
+            this.txtDiscordFilter.Location = new System.Drawing.Point(104, 123);
+            this.txtDiscordFilter.MaxLength = 512;
+            this.txtDiscordFilter.Name = "txtDiscordFilter";
+            this.txtDiscordFilter.Size = new System.Drawing.Size(391, 20);
+            this.txtDiscordFilter.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.txtDiscordFilter, "Comma separated list of strings. Only messages that contain these will be receive" +
+        "d. Case sensitive and trimmed");
+            this.txtDiscordFilter.TextChanged += new System.EventHandler(this.txtDiscordFilter_TextChanged);
+            this.txtDiscordFilter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDiscordFilter_KeyPress);
+            // 
+            // labelTS291
+            // 
+            this.labelTS291.AutoSize = true;
+            this.labelTS291.Image = null;
+            this.labelTS291.Location = new System.Drawing.Point(66, 126);
+            this.labelTS291.Name = "labelTS291";
+            this.labelTS291.Size = new System.Drawing.Size(32, 13);
+            this.labelTS291.TabIndex = 7;
+            this.labelTS291.Text = "Filter:";
+            // 
+            // txtDiscordUniqueIDs
+            // 
+            this.txtDiscordUniqueIDs.Location = new System.Drawing.Point(104, 97);
+            this.txtDiscordUniqueIDs.MaxLength = 512;
+            this.txtDiscordUniqueIDs.Name = "txtDiscordUniqueIDs";
+            this.txtDiscordUniqueIDs.Size = new System.Drawing.Size(391, 20);
+            this.txtDiscordUniqueIDs.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.txtDiscordUniqueIDs, "Comma separated list of tags that will be included in your discord bot messages t" +
+        "hat others can filter on. Case sensitive and trimmed. Example : 80mFriendsNet, N" +
+        "ARS\r\n");
+            this.txtDiscordUniqueIDs.TextChanged += new System.EventHandler(this.txtDiscordUniqueIDs_TextChanged);
+            this.txtDiscordUniqueIDs.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDiscordUniqueIDs_KeyPress);
+            // 
+            // labelTS290
+            // 
+            this.labelTS290.AutoSize = true;
+            this.labelTS290.Image = null;
+            this.labelTS290.Location = new System.Drawing.Point(61, 100);
+            this.labelTS290.Name = "labelTS290";
+            this.labelTS290.Size = new System.Drawing.Size(37, 13);
+            this.labelTS290.TabIndex = 5;
+            this.labelTS290.Text = "Tags :";
+            // 
+            // lblDiscordState
+            // 
+            this.lblDiscordState.AutoSize = true;
+            this.lblDiscordState.Image = null;
+            this.lblDiscordState.Location = new System.Drawing.Point(216, 63);
+            this.lblDiscordState.Name = "lblDiscordState";
+            this.lblDiscordState.Size = new System.Drawing.Size(42, 13);
+            this.lblDiscordState.TabIndex = 1;
+            this.lblDiscordState.Text = "STATE";
+            // 
+            // lblDiscordNotesText
+            // 
+            this.lblDiscordNotesText.AutoSize = true;
+            this.lblDiscordNotesText.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDiscordNotesText.Image = null;
+            this.lblDiscordNotesText.Location = new System.Drawing.Point(48, 199);
+            this.lblDiscordNotesText.Name = "lblDiscordNotesText";
+            this.lblDiscordNotesText.Size = new System.Drawing.Size(540, 128);
+            this.lblDiscordNotesText.TabIndex = 4;
+            this.lblDiscordNotesText.Text = resources.GetString("lblDiscordNotesText.Text");
             // 
             // lnkDiscordJoin
             // 
             this.lnkDiscordJoin.AutoSize = true;
-            this.lnkDiscordJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lnkDiscordJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lnkDiscordJoin.Location = new System.Drawing.Point(404, 49);
             this.lnkDiscordJoin.Name = "lnkDiscordJoin";
-            this.lnkDiscordJoin.Size = new System.Drawing.Size(200, 25);
+            this.lnkDiscordJoin.Size = new System.Drawing.Size(174, 24);
             this.lnkDiscordJoin.TabIndex = 3;
             this.lnkDiscordJoin.TabStop = true;
             this.lnkDiscordJoin.Text = "Join Discord Server";
@@ -60858,7 +60936,7 @@
             this.clrbtnBandButtons_indicator_on.Color = System.Drawing.Color.CornflowerBlue;
             this.clrbtnBandButtons_indicator_on.ForeColor = System.Drawing.Color.Black;
             this.clrbtnBandButtons_indicator_on.Image = null;
-            this.clrbtnBandButtons_indicator_on.Location = new System.Drawing.Point(74, 220);
+            this.clrbtnBandButtons_indicator_on.Location = new System.Drawing.Point(74, 202);
             this.clrbtnBandButtons_indicator_on.MoreColors = "More Colors...";
             this.clrbtnBandButtons_indicator_on.Name = "clrbtnBandButtons_indicator_on";
             this.clrbtnBandButtons_indicator_on.Selectable = true;
@@ -61041,7 +61119,7 @@
             this.clrbtnBandButtons_indicator_off.Color = System.Drawing.Color.LightGray;
             this.clrbtnBandButtons_indicator_off.ForeColor = System.Drawing.Color.Black;
             this.clrbtnBandButtons_indicator_off.Image = null;
-            this.clrbtnBandButtons_indicator_off.Location = new System.Drawing.Point(74, 249);
+            this.clrbtnBandButtons_indicator_off.Location = new System.Drawing.Point(74, 231);
             this.clrbtnBandButtons_indicator_off.MoreColors = "More Colors...";
             this.clrbtnBandButtons_indicator_off.Name = "clrbtnBandButtons_indicator_off";
             this.clrbtnBandButtons_indicator_off.Selectable = true;
@@ -61056,7 +61134,7 @@
             this.clrbtnBandButtons_border.Color = System.Drawing.Color.White;
             this.clrbtnBandButtons_border.ForeColor = System.Drawing.Color.Black;
             this.clrbtnBandButtons_border.Image = null;
-            this.clrbtnBandButtons_border.Location = new System.Drawing.Point(74, 278);
+            this.clrbtnBandButtons_border.Location = new System.Drawing.Point(74, 260);
             this.clrbtnBandButtons_border.MoreColors = "More Colors...";
             this.clrbtnBandButtons_border.Name = "clrbtnBandButtons_border";
             this.clrbtnBandButtons_border.Selectable = true;
@@ -61071,7 +61149,7 @@
             this.clrbtnBandButtons_fill.Color = System.Drawing.Color.Black;
             this.clrbtnBandButtons_fill.ForeColor = System.Drawing.Color.Black;
             this.clrbtnBandButtons_fill.Image = null;
-            this.clrbtnBandButtons_fill.Location = new System.Drawing.Point(74, 307);
+            this.clrbtnBandButtons_fill.Location = new System.Drawing.Point(74, 289);
             this.clrbtnBandButtons_fill.MoreColors = "More Colors...";
             this.clrbtnBandButtons_fill.Name = "clrbtnBandButtons_fill";
             this.clrbtnBandButtons_fill.Selectable = true;
@@ -61086,7 +61164,7 @@
             this.clrbtnBandButtons_hover.Color = System.Drawing.Color.LightGray;
             this.clrbtnBandButtons_hover.ForeColor = System.Drawing.Color.Black;
             this.clrbtnBandButtons_hover.Image = null;
-            this.clrbtnBandButtons_hover.Location = new System.Drawing.Point(74, 336);
+            this.clrbtnBandButtons_hover.Location = new System.Drawing.Point(74, 318);
             this.clrbtnBandButtons_hover.MoreColors = "More Colors...";
             this.clrbtnBandButtons_hover.Name = "clrbtnBandButtons_hover";
             this.clrbtnBandButtons_hover.Selectable = true;
@@ -61627,6 +61705,36 @@
             0,
             0});
             this.nudLedIndicator_UpdateInterval.ValueChanged += new System.EventHandler(this.nudLedIndicator_UpdateInterval_ValueChanged);
+            // 
+            // clrbtnButonBox_click
+            // 
+            this.clrbtnButonBox_click.Automatic = "Automatic";
+            this.clrbtnButonBox_click.Color = System.Drawing.Color.White;
+            this.clrbtnButonBox_click.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnButonBox_click.Image = null;
+            this.clrbtnButonBox_click.Location = new System.Drawing.Point(74, 347);
+            this.clrbtnButonBox_click.MoreColors = "More Colors...";
+            this.clrbtnButonBox_click.Name = "clrbtnButonBox_click";
+            this.clrbtnButonBox_click.Selectable = true;
+            this.clrbtnButonBox_click.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnButonBox_click.TabIndex = 166;
+            this.toolTip1.SetToolTip(this.clrbtnButonBox_click, "Active colour");
+            this.clrbtnButonBox_click.Changed += new System.EventHandler(this.clrbtnButonBox_click_Changed);
+            // 
+            // clrbtnButonBox_fontcolour
+            // 
+            this.clrbtnButonBox_fontcolour.Automatic = "Automatic";
+            this.clrbtnButonBox_fontcolour.Color = System.Drawing.Color.White;
+            this.clrbtnButonBox_fontcolour.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnButonBox_fontcolour.Image = null;
+            this.clrbtnButonBox_fontcolour.Location = new System.Drawing.Point(195, 60);
+            this.clrbtnButonBox_fontcolour.MoreColors = "More Colors...";
+            this.clrbtnButonBox_fontcolour.Name = "clrbtnButonBox_fontcolour";
+            this.clrbtnButonBox_fontcolour.Selectable = true;
+            this.clrbtnButonBox_fontcolour.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnButonBox_fontcolour.TabIndex = 168;
+            this.toolTip1.SetToolTip(this.clrbtnButonBox_fontcolour, "Active colour");
+            this.clrbtnButonBox_fontcolour.Changed += new System.EventHandler(this.clrbtnButonBox_fontcolour_Changed);
             // 
             // timer_VAC_Monitor
             // 
@@ -63943,6 +64051,9 @@
             // 
             // grpBandButtons
             // 
+            this.grpBandButtons.Controls.Add(this.clrbtnButonBox_fontcolour);
+            this.grpBandButtons.Controls.Add(this.labelTS292);
+            this.grpBandButtons.Controls.Add(this.clrbtnButonBox_click);
             this.grpBandButtons.Controls.Add(this.pnlButtonBox_antenna_toggles);
             this.grpBandButtons.Controls.Add(this.nudButtonBox_font_y_shift);
             this.grpBandButtons.Controls.Add(this.labelTS250);
@@ -63986,6 +64097,17 @@
             this.grpBandButtons.TabStop = false;
             this.grpBandButtons.Text = "Button Box";
             this.grpBandButtons.Visible = false;
+            // 
+            // labelTS292
+            // 
+            this.labelTS292.AutoSize = true;
+            this.labelTS292.Image = null;
+            this.labelTS292.Location = new System.Drawing.Point(35, 352);
+            this.labelTS292.Name = "labelTS292";
+            this.labelTS292.Size = new System.Drawing.Size(33, 13);
+            this.labelTS292.TabIndex = 167;
+            this.labelTS292.Text = "Click:";
+            this.labelTS292.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // pnlButtonBox_antenna_toggles
             // 
@@ -64174,7 +64296,7 @@
             // 
             this.chkBandButtons_band_inactive_use.AutoSize = true;
             this.chkBandButtons_band_inactive_use.Image = null;
-            this.chkBandButtons_band_inactive_use.Location = new System.Drawing.Point(120, 253);
+            this.chkBandButtons_band_inactive_use.Location = new System.Drawing.Point(120, 235);
             this.chkBandButtons_band_inactive_use.Name = "chkBandButtons_band_inactive_use";
             this.chkBandButtons_band_inactive_use.Size = new System.Drawing.Size(45, 17);
             this.chkBandButtons_band_inactive_use.TabIndex = 157;
@@ -64186,7 +64308,7 @@
             // 
             this.labelTS246.AutoSize = true;
             this.labelTS246.Image = null;
-            this.labelTS246.Location = new System.Drawing.Point(29, 341);
+            this.labelTS246.Location = new System.Drawing.Point(29, 323);
             this.labelTS246.Name = "labelTS246";
             this.labelTS246.Size = new System.Drawing.Size(39, 13);
             this.labelTS246.TabIndex = 156;
@@ -64197,7 +64319,7 @@
             // 
             this.labelTS245.AutoSize = true;
             this.labelTS245.Image = null;
-            this.labelTS245.Location = new System.Drawing.Point(46, 312);
+            this.labelTS245.Location = new System.Drawing.Point(46, 294);
             this.labelTS245.Name = "labelTS245";
             this.labelTS245.Size = new System.Drawing.Size(22, 13);
             this.labelTS245.TabIndex = 154;
@@ -64208,7 +64330,7 @@
             // 
             this.labelTS244.AutoSize = true;
             this.labelTS244.Image = null;
-            this.labelTS244.Location = new System.Drawing.Point(27, 283);
+            this.labelTS244.Location = new System.Drawing.Point(27, 265);
             this.labelTS244.Name = "labelTS244";
             this.labelTS244.Size = new System.Drawing.Size(41, 13);
             this.labelTS244.TabIndex = 152;
@@ -64219,7 +64341,7 @@
             // 
             this.labelTS243.AutoSize = true;
             this.labelTS243.Image = null;
-            this.labelTS243.Location = new System.Drawing.Point(20, 254);
+            this.labelTS243.Location = new System.Drawing.Point(20, 236);
             this.labelTS243.Name = "labelTS243";
             this.labelTS243.Size = new System.Drawing.Size(48, 13);
             this.labelTS243.TabIndex = 150;
@@ -64230,7 +64352,7 @@
             // 
             this.labelTS242.AutoSize = true;
             this.labelTS242.Image = null;
-            this.labelTS242.Location = new System.Drawing.Point(28, 225);
+            this.labelTS242.Location = new System.Drawing.Point(28, 207);
             this.labelTS242.Name = "labelTS242";
             this.labelTS242.Size = new System.Drawing.Size(40, 13);
             this.labelTS242.TabIndex = 148;
@@ -64862,16 +64984,6 @@
             // 
             this.tmrLedValid.Interval = 500;
             this.tmrLedValid.Tick += new System.EventHandler(this.tmrLedValid_Tick);
-            // 
-            // lblDiscordState
-            // 
-            this.lblDiscordState.AutoSize = true;
-            this.lblDiscordState.Image = null;
-            this.lblDiscordState.Location = new System.Drawing.Point(216, 63);
-            this.lblDiscordState.Name = "lblDiscordState";
-            this.lblDiscordState.Size = new System.Drawing.Size(42, 13);
-            this.lblDiscordState.TabIndex = 1;
-            this.lblDiscordState.Text = "STATE";
             // 
             // Setup
             // 
@@ -70234,11 +70346,19 @@
         private GroupBoxTS groupBoxTS47;
         private TabPage tpDiscord;
         private GroupBoxTS groupBoxTS48;
-        private LabelTS labelTS289;
+        private LabelTS lblDiscordNotesText;
         private LinkLabel lnkDiscordJoin;
         private LabelTS labelTS288;
         private TextBoxTS txtDiscordCallsign;
         private CheckBoxTS chkDiscordEnabled;
         private LabelTS lblDiscordState;
+        private TextBoxTS txtDiscordFilter;
+        private LabelTS labelTS291;
+        private TextBoxTS txtDiscordUniqueIDs;
+        private LabelTS labelTS290;
+        private LabelTS labelTS292;
+        private ColorButton clrbtnButonBox_click;
+        private ColorButton clrbtnButonBox_fontcolour;
+        private LabelTS lblDiscordNotes;
     }
 }

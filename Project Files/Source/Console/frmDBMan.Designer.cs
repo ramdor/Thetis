@@ -66,6 +66,7 @@
             this.btnTakeBackupNow = new System.Windows.Forms.ButtonTS();
             this.btnRemoveDB = new System.Windows.Forms.ButtonTS();
             this.btnNewDB = new System.Windows.Forms.ButtonTS();
+            this.chkPruneBackups = new System.Windows.Forms.CheckBoxTS();
             this.labelTS4 = new System.Windows.Forms.LabelTS();
             this.labelTS3 = new System.Windows.Forms.LabelTS();
             this.labelTS2 = new System.Windows.Forms.LabelTS();
@@ -392,6 +393,20 @@
             this.btnNewDB.UseVisualStyleBackColor = true;
             this.btnNewDB.Click += new System.EventHandler(this.btnNewDB_Click);
             // 
+            // chkPruneBackups
+            // 
+            this.chkPruneBackups.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkPruneBackups.AutoSize = true;
+            this.chkPruneBackups.Image = null;
+            this.chkPruneBackups.Location = new System.Drawing.Point(542, 574);
+            this.chkPruneBackups.Name = "chkPruneBackups";
+            this.chkPruneBackups.Size = new System.Drawing.Size(122, 17);
+            this.chkPruneBackups.TabIndex = 31;
+            this.chkPruneBackups.Text = "Prune auto backups";
+            this.toolTip1.SetToolTip(this.chkPruneBackups, resources.GetString("chkPruneBackups.ToolTip"));
+            this.chkPruneBackups.UseVisualStyleBackColor = true;
+            this.chkPruneBackups.CheckedChanged += new System.EventHandler(this.chkPruneBackups_CheckedChanged);
+            // 
             // labelTS4
             // 
             this.labelTS4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -444,6 +459,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(704, 601);
+            this.Controls.Add(this.chkPruneBackups);
             this.Controls.Add(this.btnRenameBackup);
             this.Controls.Add(this.labelTS4);
             this.Controls.Add(this.labelTS3);
@@ -518,5 +534,6 @@
         private System.Windows.Forms.LabelTS labelTS4;
         private System.Windows.Forms.ColumnHeader colDescription;
         private System.Windows.Forms.ButtonTS btnRenameBackup;
+        private System.Windows.Forms.CheckBoxTS chkPruneBackups;
     }
 }

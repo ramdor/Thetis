@@ -4575,7 +4575,11 @@ namespace Thetis
                 textBox1.SelectionStart = DX_SELECTED * LineLength;      // start of each dx spot line
                 textBox1.SelectionLength = LineLength;                    // length of each dx spot  line
 
-                DX_TEXT = textBox1.Text.Substring((DX_SELECTED * LineLength)+16, 40); // just check freq and callsign of dx station
+                try // [2.10.3.6]MW0LGE this can error, and I can't be bothered to find out why. All of this code should be put in the bin and reimplemented.
+                {
+                    DX_TEXT = textBox1.Text.Substring((DX_SELECTED * LineLength) + 16, 40); // just check freq and callsign of dx station
+                }
+                catch { }
 
              //   Debug.WriteLine("1DX_SELECTED " + DX_SELECTED + " , "+ DX_TEXT);
 

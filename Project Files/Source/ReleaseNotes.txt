@@ -1,6 +1,6 @@
 **UPDATE: The CW issue has been resolved for Protocol 2. It requires a firmware update and this modified version of Thetis. Please see the [ApacheLab community forums here](https://community.apache-labs.com/viewtopic.php?f=32&t=4972)**
 
-**Note: You can revisit these release notes by clicking the button in the setup form within the General -> H/W Select tab.**
+**Note: You can revisit these release notes by using the button inside the About box**
 
 Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/issues/new/choose).
 
@@ -12,6 +12,9 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] new auto attenuate TX when PS is off options in Setup->Ant/Filters->Antenna
 - [add] new auto attenuate RX options in Setup->General->Options-1
 - [add] Discord integration, let others know when you are on air using the Discord button box. Get scrolling text for #general and #thetis-bot. Config in Setup->Networking->Discord
+- [add] Backup prune implemented GFS (grandfather, father son). Check to enable in the DBMan form. Tool tip explains all
+- [add] font colour added to button boxes (except for antenna box)
+- [add] click colour added to button boxes
 - [change] moved release notes button from setup to the about box
 - [change] skin images are resized to button/panel/slider etc instead of relying on tile property
 - [change] button clicks are ignored in button boxes that are faded
@@ -23,6 +26,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] when in Tx rx1, selecting a bandstack entry will not updated it or attempt to change to it
 - [fix] mox & ping tot now work for times greater than 59 seconds
 - [fix] text overlay will now retrieve rx1 and rx2 data correctly
+- fix] setup dropdown menu will show if window doesn't have focus and setup is clicked
 
 ## v2.10.3.6 Main New Features
 - database manager

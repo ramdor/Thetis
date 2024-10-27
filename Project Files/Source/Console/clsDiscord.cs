@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using Discord.Rest;
 
 namespace Thetis
 {
@@ -97,13 +98,16 @@ namespace Thetis
         private static Timer _messageCleanupTimer;
 
         private static Timer _queue_process;
-        private static List<SocketMessage> _receive_queue;
+        private static List<IMessage> _receive_queue;
         private static List<ulong> _sent_message_ids;
         private static bool _process_queue;
 
         private static bool _started;
         private static string _callsign;
         private static bool _ready;
+
+        private static string _unique_ids;
+        private static string _filter;
 
         private static DateTime _last_message_time;
 
@@ -113,9 +117,11 @@ namespace Thetis
             _started = false;
             _ready = false;
             _callsign = "";
+            _unique_ids = "";
+            _filter = "";
 
             _process_queue = true;
-            _receive_queue = new List<SocketMessage>();
+            _receive_queue = new List<IMessage>();
             _sent_message_ids = new List<ulong>();
 
             _bot_config = new BotConfig();
@@ -339,7 +345,7 @@ namespace Thetis
 
             lock (_receive_queue)
             {
-                _receive_queue.Add(message);
+                if (!_sent_message_ids.Contains(message.Id)) _receive_queue.Add(message);
             }
 
             return Task.CompletedTask;
@@ -349,70 +355,99 @@ namespace Thetis
             if (!_process_queue) return;
             lock (_receive_queue)
             {
-                foreach (SocketMessage message in _receive_queue)
+                foreach (IMessage message in _receive_queue)
                 {
                     if(!_sent_message_ids.Contains(message.Id)) handleQueuedMessage(message);
                 }
                 _receive_queue.Clear();
             }
         }
-        private static void handleQueuedMessage(SocketMessage message)
+        private static void handleQueuedMessage(IMessage message)
         {
-            if (message is SocketUserMessage user_message && !user_message.Attachments.Any())
+            if (!(message is SocketUserMessage || message is RestUserMessage)) return;
+            if (message.Attachments.Any()) return;
+
+            string filter = "";
+            string clean_content = message.CleanContent.Replace("\r\n", " ").Replace("\n", " ").Trim();
+
+            int filter_pos = clean_content.IndexOf("  [");
+            if (filter_pos >= 0)
             {
-                bool is_channel_in_list = false;
+                int pos = filter_pos + 3;
+                int close_pos = clean_content.IndexOf("]", pos);
+                if (close_pos >= 0)
+                {                        
+                    filter = clean_content.Substring(pos, close_pos - pos);
 
-                lock (_bot_config_lock)
-                {
-                    List<ChannelInfo> channels_to_receive;
-                    channels_to_receive = _bot_config.channels.Where(c => c.can_receive).ToList();
-
-                    foreach (ChannelInfo channel in channels_to_receive)
-                    {
-                        if (!string.IsNullOrEmpty(channel.discord_channel) &&
-                            ulong.TryParse(channel.discord_channel, out ulong discord_channel_id) &&
-                            discord_channel_id == user_message.Channel.Id)
-                        {
-                            is_channel_in_list = true;
-                            break;
-                        }
-                    }
+                    //remove, it will always be on the end
+                    clean_content = clean_content.Substring(0, filter_pos);
                 }
-
-                if (!is_channel_in_list) return;
-
-                string author = getAuthorName(message);
-                string received_message = user_message.CleanContent;
-                ulong channel_id = message.Channel.Id;
-
-                MessageInfo message_info = new MessageInfo
-                {
-                    Message = received_message,
-                    Author = author,
-                    ChannelID = channel_id,
-                    MessageID = message.Id,
-                    Timestamp = DateTime.UtcNow
-                };
-
-                // Add to the list for the channel, with newest first
-                lock (_channelMessages)
-                {
-                    if (!_channelMessages.ContainsKey(channel_id))
-                        _channelMessages[channel_id] = new List<MessageInfo>();
-
-                    _channelMessages[channel_id].Insert(0, message_info);
-                }
-
-                if (NewMessageArrivedHandlers != null)
-                {
-                    Delegate[] invocationList = NewMessageArrivedHandlers.GetInvocationList();
-                    foreach (Delegate handler in invocationList)
-                    {
-                        ((NewMessageArrived)handler).BeginInvoke(message_info, null, null); //note: need to itterate through as a begin invoke cant spuple multicast delegates
-                    }
-                }
-                Debug.Print($"{author}: {received_message}");
             }
+
+            if (!string.IsNullOrEmpty(_filter))
+            {
+                bool found = false;
+                string[] filters = _filter.Split(',');
+                foreach(string f in filters)
+                {
+                    string tmp = f.Trim();
+                    if (clean_content.Contains(tmp + " " + filter)) found = true;
+                }
+                if (!found) return; //ignore as we are filtering and it wasnt found
+            }
+
+            bool is_channel_in_list = false;
+
+            lock (_bot_config_lock)
+            {
+                List<ChannelInfo> channels_to_receive;
+                channels_to_receive = _bot_config.channels.Where(c => c.can_receive).ToList();
+
+                foreach (ChannelInfo channel in channels_to_receive)
+                {
+                    if (!string.IsNullOrEmpty(channel.discord_channel) &&
+                        ulong.TryParse(channel.discord_channel, out ulong discord_channel_id) &&
+                        discord_channel_id == message.Channel.Id)
+                    {
+                        is_channel_in_list = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!is_channel_in_list) return;
+
+            string author = getAuthorName(message);
+            string received_message = clean_content;
+            ulong channel_id = message.Channel.Id;
+
+            MessageInfo message_info = new MessageInfo
+            {
+                Message = received_message,
+                Author = author,
+                ChannelID = channel_id,
+                MessageID = message.Id,
+                Timestamp = DateTime.UtcNow
+            };
+
+            // Add to the list for the channel, with newest first
+            lock (_channelMessages)
+            {
+                if (!_channelMessages.ContainsKey(channel_id))
+                    _channelMessages[channel_id] = new List<MessageInfo>();
+
+                _channelMessages[channel_id].Insert(0, message_info);
+            }
+
+            if (NewMessageArrivedHandlers != null)
+            {
+                Delegate[] invocationList = NewMessageArrivedHandlers.GetInvocationList();
+                foreach (Delegate handler in invocationList)
+                {
+                    ((NewMessageArrived)handler).BeginInvoke(message_info, null, null); //note: need to itterate through as a begin invoke cant spuple multicast delegates
+                }
+            }
+            Debug.Print($"{author}: {received_message}");
         }
         private static string getAuthorName(IMessage message)
         {
@@ -445,6 +480,7 @@ namespace Thetis
                 }
             }
 
+            if (!string.IsNullOrEmpty(author)) author = author.Trim();
             return string.IsNullOrEmpty(author) ? message.Author.Username ?? "(unknown user)" : author;
         }
         public static async Task SendMessage(string message, ulong channel_id = 0)
@@ -452,6 +488,7 @@ namespace Thetis
             if (_discord_client.ConnectionState == ConnectionState.Disconnected) return;
             if ((DateTime.UtcNow - _last_message_time).TotalSeconds < 5) return;
             _last_message_time = DateTime.UtcNow;
+            message = message.Replace("\r\n", " ").Replace("\n", " ").Trim();
 
             ChannelInfo channel_info;
 
@@ -467,8 +504,23 @@ namespace Thetis
                 {
                     try
                     {
+                        string msg = $"{_callsign} - {message}";
+                        string[] ids = _unique_ids.Split(',');
+                        if (ids.Length > 0 && !string.IsNullOrEmpty(ids[0]))
+                        {
+                            msg += "  [";
+                            foreach (string id in ids)
+                            {
+                                string tmp = id.Trim();
+                                tmp = tmp.Replace("[", "");
+                                tmp = tmp.Replace("]", "");
+                                msg += $"{tmp},";
+                            }
+                            msg = msg.Substring(0, msg.Length - 1); // remove ,
+                            msg += "]";
+                        }
                         _process_queue = false;
-                        IUserMessage sent_message = await discord_channel.SendMessageAsync($"{_callsign} - {message}").ConfigureAwait(false);
+                        IUserMessage sent_message = await discord_channel.SendMessageAsync(msg).ConfigureAwait(false);
                         lock (_receive_queue)
                         {                            
                             _sent_message_ids.Add(sent_message.Id);
@@ -511,32 +563,9 @@ namespace Thetis
                             IEnumerable<IMessage> retrieved_messages = await discord_channel.GetMessagesAsync(n).FlattenAsync();
                             foreach (IMessage message in retrieved_messages)
                             {
-                                if (!string.IsNullOrWhiteSpace(message.CleanContent))
+                                lock (_receive_queue)
                                 {
-                                    string author = getAuthorName(message);
-                                    string channel_name = discord_channel.Name;
-                                    ulong channel_id = discord_channel.Id;
-                                    ulong message_id = message.Id;
-
-                                    MessageInfo message_info = new MessageInfo
-                                    {
-                                        Message = message.CleanContent,
-                                        Author = author,
-                                        ChannelName = channel_name,
-                                        ChannelID = channel_id,
-                                        MessageID = message_id,
-                                        Timestamp = message.Timestamp.UtcDateTime
-                                    };
-
-                                    messages.Add(message_info);
-
-                                    lock (_channelMessages)
-                                    {
-                                        if (!_channelMessages.ContainsKey(channel_id))
-                                            _channelMessages[channel_id] = new List<MessageInfo>();
-
-                                        _channelMessages[channel_id].Add(message_info);
-                                    }
+                                    _receive_queue.Insert(0, message);
                                 }
                             }
                         }
@@ -658,6 +687,24 @@ namespace Thetis
             if(_started && !IsValidCallsign(_callsign))
             {
                 ConnectStop();
+            }
+        }
+        public static string UniqueIDs
+        {
+            get { return _unique_ids; }
+            set
+            {
+                // comma separated, these ids get added to all outbound in the form [id1,id2,id3]
+                _unique_ids = value;
+            }
+        }
+        public static string Filter
+        {
+            get { return _filter; }
+            set
+            {
+                // comma spearated, if set only matches will be received
+                _filter = value;
             }
         }
     }

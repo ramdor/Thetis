@@ -25705,6 +25705,9 @@ namespace Thetis
                 igs.SetSetting<System.Drawing.Color>("buttonbox_hover_colour", clrbtnBandButtons_hover.Color);
                 igs.SetSetting<System.Drawing.Color>("buttonbox_border_colour", clrbtnBandButtons_border.Color);
 
+                igs.SetSetting<System.Drawing.Color>("buttonbox_click_colour", clrbtnButonBox_click.Color);
+                igs.SetSetting<System.Drawing.Color>("buttonbox_font_colour", clrbtnButonBox_fontcolour.Color);
+
                 igs.SetSetting<bool>("buttonbox_use_off_colour", chkBandButtons_band_inactive_use.Checked);
 
                 igs.SetSetting<MeterManager.clsButtonBox.IndicatorType>("buttonbox_indicator_type", (MeterManager.clsButtonBox.IndicatorType)((int)nudBandButtons_indicator_style.Value));
@@ -26188,6 +26191,9 @@ namespace Thetis
                 clrbtnBandButtons_fill.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_fill_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Black);
                 clrbtnBandButtons_hover.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_hover_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LightGray);
                 clrbtnBandButtons_border.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_border_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
+
+                clrbtnButonBox_click.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_click_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Orange);
+                clrbtnButonBox_fontcolour.Color = igs.GetSetting<System.Drawing.Color>("buttonbox_font_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
 
                 chkBandButtons_band_inactive_use.Checked = igs.GetSetting<bool>("buttonbox_use_off_colour", false, false, false, false);
 
@@ -26885,6 +26891,7 @@ namespace Thetis
                 case MeterType.BAND_BUTTONS:
                 case MeterType.DISCORD_BUTTONS:
                     {
+                        clrbtnButonBox_fontcolour.Visible = mt != MeterType.ANTENNA_BUTTONS;
                         grpBandButtons.Parent = grpMultiMeterHolder;
                         grpBandButtons.Location = loc;
                         grpBandButtons.Visible = true;
@@ -32753,6 +32760,44 @@ namespace Thetis
         private void OnDiscordReady()
         {
             updateDiscordState();
+        }
+
+        private void txtDiscordUniqueIDs_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '[' || e.KeyChar == ']' || e.KeyChar == '"' ||
+                e.KeyChar == '\'' || e.KeyChar == '\\' || e.KeyChar == '/')
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void txtDiscordFilter_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '[' || e.KeyChar == ']' || e.KeyChar == '"' ||
+                e.KeyChar == '\'' || e.KeyChar == '\\' || e.KeyChar == '/')
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void txtDiscordUniqueIDs_TextChanged(object sender, EventArgs e)
+        {
+            ThetisBotDiscord.UniqueIDs = txtDiscordUniqueIDs.Text;
+        }
+
+        private void txtDiscordFilter_TextChanged(object sender, EventArgs e)
+        {
+            ThetisBotDiscord.Filter = txtDiscordFilter.Text;
+        }
+
+        private void clrbtnButonBox_click_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnButonBox_fontcolour_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 
