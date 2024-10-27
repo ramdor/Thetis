@@ -266,11 +266,11 @@ namespace Thetis
         {
             if (setptt_memory != state)
             {
-                if (!console.CWFWKeyer)
-                {
-                    // CWPTTItem item = new CWPTTItem(state, CWSensorItem.GetCurrentTime());
-                    // CWKeyer.PTTEnqueue(item);
-                }
+                //if (!console.CWFWKeyer)
+                //{
+                //    // CWPTTItem item = new CWPTTItem(state, CWSensorItem.GetCurrentTime());
+                //    // CWKeyer.PTTEnqueue(item);
+                //}
 
                 if(console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
                     NetworkIO.SetCWXPTT(Convert.ToInt32(state));

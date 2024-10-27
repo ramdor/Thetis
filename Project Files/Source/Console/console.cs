@@ -20915,10 +20915,10 @@ namespace Thetis
             }
 
             // set the adc warning
-            if (!string.IsNullOrEmpty(sWarning)) 
+            if (!string.IsNullOrEmpty(sWarning))
             {
                 sWarning = sWarning.Trim();
-                infoBar.Warning(sWarning, red_warning, overload_only ? peak_text_delay + 200 : 2000);
+                infoBar.Warning(sWarning, red_warning, overload_only ? 1000 : 2000);
             }
 
             //adjust s-att offset
@@ -20930,7 +20930,7 @@ namespace Thetis
             {
                 if (_adc_overloaded[i])
                 {
-                    _adc_step_shift[i] += 1;// _adc_overload_level[i]; // shift increases depending on how many overloads have happened
+                    _adc_step_shift[i]++;
                     if (_adc_step_shift[i] > 31) _adc_step_shift[i] = 31;
                 }
                 else
