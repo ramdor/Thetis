@@ -20988,7 +20988,8 @@ namespace Thetis
                             current_hpsdr_model == HPSDRModel.ANAN100 || current_hpsdr_model == HPSDRModel.ANAN100B ||
                             current_hpsdr_model == HPSDRModel.ANAN100D || current_hpsdr_model == HPSDRModel.ANAN200D ||
                             current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
-                            current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K;
+                            current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K ||
+                            current_hpsdr_model == HPSDRModel.HERMESLITE;
 
                 if (_auto_attTX_rx1 && radioHasRx1Att)
                 {
