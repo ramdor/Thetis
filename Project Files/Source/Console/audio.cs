@@ -378,35 +378,6 @@ namespace Thetis
 
         private static void setupIVACforMon()
         {
-            ////MW0LGE_21k9d - reworked
-            //if (mon && vfob_tx)
-            //{
-            //    if (rx2_enabled) // need to check the vac2 split thing?
-            //    {
-            //        ivac.SetIVACmon(0, 0);
-            //        ivac.SetIVACmon(1, 1);
-            //        ivac.SetIVACmonVol(1, monitor_volume);
-            //    }
-            //    else
-            //    {
-            //        ivac.SetIVACmon(0, 1);
-            //        ivac.SetIVACmon(1, 0);
-            //        ivac.SetIVACmonVol(0, monitor_volume);
-            //    }                                    
-            //}
-            //else if (mon && !vfob_tx)
-            //{
-            //    ivac.SetIVACmon(0, 1);
-            //    ivac.SetIVACmon(1, 0);
-            //    ivac.SetIVACmonVol(0, monitor_volume);
-            //}
-            //else if (!mon)
-            //{
-            //    ivac.SetIVACmon(0, 0);
-            //    ivac.SetIVACmon(1, 0);
-            //}
-
-            //MW0LGE [pre g2]
             if (mon)
             {
                 ivac.SetIVACmon(0, 1);

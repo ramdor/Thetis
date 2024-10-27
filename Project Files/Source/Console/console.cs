@@ -99,6 +99,7 @@ namespace Thetis
         private Thread rx2_sql_update_thread;				// polls the RX2 signal strength
         private Thread vox_update_thread;					// polls the mic input
         private Thread noise_gate_update_thread;			// polls the mic input during TX
+        private Thread _overload_thread;
         public bool _pause_DisplayThread = true;             // MW0LGE_21d initally paused
         private Thread IOBoard_update_thread;		    	// updates the HL2 I/O board (MI0BOT)
 
@@ -12664,11 +12665,6 @@ namespace Thetis
                     ATTOnTX = true;         // Enable attenuation on transmit via the setting
                     SetupForm.ATTOnTX = 31; // W2PA_21a                 
                     BreakInDelay = 0;       // Set break-in delay to zero in case it's something else                    
-
-                    if (chkCWSidetone.Checked)
-                    {
-                        NetworkIO.SetCWSidetoneVolume((int)(qsk_sidetone_volume * 1.27));
-                    } else NetworkIO.SetCWSidetoneVolume((int)(0));
                 }
                 else // Disable
                 {
@@ -12680,18 +12676,37 @@ namespace Thetis
                     ATTOnTX = non_qsk_ATTOnTX;
                     SetupForm.ATTOnTX = non_qsk_ATTOnTXVal;
                     BreakInDelay = non_qsk_breakin_delay;
-
-                    //MW0LGE_21k9 - did not turn off sidetone if it needed to be
-                    if (chkCWSidetone.Checked)
-                    {
-                        qsk_sidetone_volume = SetupForm.TXAF;
-                        NetworkIO.SetCWSidetoneVolume((int)(ptbAF.Value * 1.27));
-                    } else NetworkIO.SetCWSidetoneVolume((int)(0));
-
                 }
+
+                setCWSideToneVolume();
             }
         }
-
+        private void setCWSideToneVolume()
+        {
+            //[2.10.3.6]MW0LGE changed to one location as code was everywhere previously
+            if (cw_sidetone)
+            {
+                if (qsk_enabled)
+                {
+                    NetworkIO.SetCWSidetoneVolume((int)(qsk_sidetone_volume * 1.27));
+                }
+                else
+                {
+                    if (current_breakin_mode == BreakIn.Manual)
+                    {
+                        NetworkIO.SetCWSidetoneVolume((int)(txaf * 0.73));
+                    }
+                    else
+                    {
+                        NetworkIO.SetCWSidetoneVolume((int)(txaf * 1.27));
+                    }
+                }
+            }
+            else
+            {
+                NetworkIO.SetCWSidetoneVolume(0);
+            }
+        }
         public CheckState BreakInEnabledState
         {
             get
@@ -14710,11 +14725,7 @@ namespace Thetis
                 if (tx_mode == DSPMode.CWL || tx_mode == DSPMode.CWU)
                     chkMON.Checked = value;
 
-                if (QSKEnabled)
-                {
-                    if (cw_sidetone) NetworkIO.SetCWSidetoneVolume(qsk_sidetone_volume);
-                    else NetworkIO.SetCWSidetoneVolume(0); // so we don't get audio artifacts with QSK on and sidetone off
-                }
+                setCWSideToneVolume();
             }
         }
 
@@ -18114,27 +18125,13 @@ namespace Thetis
                 int oldMONVolume = txaf;
 
                 txaf = value;
-                if (QSKEnabled && chkCWSidetone.Checked)
-                {
-                    qsk_sidetone_volume = value;  // For QSK sidetone separate from rx audio level
-                    NetworkIO.SetCWSidetoneVolume((int)(qsk_sidetone_volume * 1.27));
-                }
-                if (!IsSetupFormNull)
-                {
-                    SetupForm.TXAF = txaf;
-                    if (MOX || Audio.MOX)
-                    {
-                        ptbAF.Value = txaf;
-                    }
+                qsk_sidetone_volume = value;
 
-                    if (cw_sidetone)
-                    {
-                        if (current_breakin_mode == BreakIn.Manual)
-                            NetworkIO.SetCWSidetoneVolume((int)(txaf * 0.73));
-                        else NetworkIO.SetCWSidetoneVolume((int)(txaf * 1.27));
-                    }
-                    else NetworkIO.SetCWSidetoneVolume(0);
-                }
+                if (!IsSetupFormNull) SetupForm.TXAF = txaf;
+
+                if (MOX || Audio.MOX) ptbAF.Value = txaf;
+
+                setCWSideToneVolume();
 
                 if (txaf != oldMONVolume)
                     MONVolumeChangedHandlers?.Invoke(oldMONVolume, txaf);
@@ -20838,7 +20835,7 @@ namespace Thetis
             get { return _auto_undoTXatt; }
             set { _auto_undoTXatt = value; }
         }
-        private async void checkOverloadsAndSync()
+        private async void checkOverloads()
         {
             string sWarning = "";
             bool red_warning = false;
@@ -20874,7 +20871,12 @@ namespace Thetis
             string[] adc_names = { "ADC0", "ADC1", "ADC2" }; // adc2 not used for anything atm, but here for completeness
 
             int adc_oload_num = NetworkIO.getAndResetADC_Overload();
-
+            if(adc_oload_num > 0)
+            {
+                // this is done so that if in a constant overload state, the above call to getAndResetADC_Overload would return 0,
+                // this call below will 'use' this up just like amp overload above
+                NetworkIO.getAndResetADC_Overload();
+            }
             /*
                     overload adc_oload_num
             | adc[0] | adc[1] | adc[2] |          |
@@ -20899,7 +20901,7 @@ namespace Thetis
                     if (_adc_overload_level[i] > 5)
                         _adc_overload_level[i] = 5;
 
-                    red_warning = _adc_overload_level[i] >= 3; // turn red
+                    red_warning = _adc_overload_level[i] > 3; // turn red
                 }
                 else
                 {
@@ -21130,6 +21132,53 @@ namespace Thetis
                 }
             }            
         }
+        private async void pollOverloadSyncSeqErr()
+        {
+            int count = 0;
+            bool run = false;
+
+            try
+            {
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new MethodInvoker(() =>
+                    {
+                        run = this.chkPower.Checked;
+                    }));
+                }
+                else
+                    run = this.chkPower.Checked;
+            }
+            catch { }
+
+            while (run)
+            {
+                try
+                {
+                    if (this.InvokeRequired)
+                    {
+                        this.Invoke(new MethodInvoker(() =>
+                        {
+                            checkOverloads();
+                            if (count == 0) checkSeqErrors();
+                            run = this.chkPower.Checked;
+                        }));
+                    }
+                    else
+                    {
+                        checkOverloads();
+                        if (count == 0) checkSeqErrors();
+                        run = this.chkPower.Checked;
+                    }
+
+                    count++;
+                    if (count == 5) count = 0;
+                }
+                catch { }
+
+                await Task.Delay(100);
+            }
+        }
         private void checkSeqErrors()
         {
             int ooo = NetworkIO.getOOO(); //Out Of Order packet
@@ -21204,9 +21253,6 @@ namespace Thetis
         }
         private async void UpdatePeakText()
         {
-            checkOverloadsAndSync();
-            checkSeqErrors();
-
             if (string.IsNullOrEmpty(txtVFOAFreq.Text) ||
                     txtVFOAFreq.Text == "." ||
                     txtVFOAFreq.Text == ",")
@@ -27540,6 +27586,17 @@ namespace Thetis
                     poll_pa_pwr_thread.Start();
                 }
 
+                if (_overload_thread == null || !_overload_thread.IsAlive)
+                {
+                    _overload_thread = new Thread(new ThreadStart(pollOverloadSyncSeqErr))
+                    {
+                        Name = "Overload Thread",
+                        Priority = ThreadPriority.BelowNormal,
+                        IsBackground = true
+                    };
+                    _overload_thread.Start();
+                }
+
                 if (poll_tx_inhibit_thead == null || !poll_tx_inhibit_thead.IsAlive)
                 {
                     poll_tx_inhibit_thead = new Thread(new ThreadStart(PollTXInhibit))
@@ -27736,6 +27793,11 @@ namespace Thetis
                 {
                     if (!poll_pa_pwr_thread.Join(500))
                         poll_pa_pwr_thread.Abort();
+                }
+                if(_overload_thread != null)
+                {
+                    if (!_overload_thread.Join(500))
+                        _overload_thread.Abort();
                 }
                 if (poll_tx_inhibit_thead != null)
                 {
@@ -30200,7 +30262,7 @@ namespace Thetis
                 _current_ptt_mode = PTTMode.MANUAL;
                 manual_mox = true;
 
-                NetworkIO.SetUserOut0(1);       // <--- love the way this is commented MW0LGE_22b - why are we switching DB9 pins? 1 & 3 ?
+                NetworkIO.SetUserOut0(1);       // why this?? CHECK
                 NetworkIO.SetUserOut2(1);
 
                 if ((apollopresent && apollo_tuner_enabled) ||
@@ -30248,7 +30310,7 @@ namespace Thetis
                 if (current_meter_tx_mode != old_meter_tx_mode_before_tune) //MW0LGE_21j
                     CurrentMeterTXMode = old_meter_tx_mode_before_tune;
 
-                NetworkIO.SetUserOut0(0);
+                NetworkIO.SetUserOut0(0);      // why this?? CHECK
                 NetworkIO.SetUserOut2(0);
 
                 manual_mox = false;
