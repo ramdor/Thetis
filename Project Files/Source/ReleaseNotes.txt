@@ -27,8 +27,9 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] when in Tx rx1, selecting a bandstack entry will not updated it or attempt to change to it
 - [fix] mox & ping tot now work for times greater than 59 seconds
 - [fix] text overlay will now retrieve rx1 and rx2 data correctly
-- [fix] setup dropdown menu will show if window doesn't have focus and setup is clicked
+- [fix] setup and other dropdown menus will show if window doesn't have focus and the menu is clicked
 - [fix] single cal retries up to 5 times if feedback levels are not suitable. Fixes issue where it would need to be clicked multiple times if tx-att was not where it needed to be
+- [fix] fixed issues when serialising an object out to a string to be stored in the database. Resolves missing memories for Diversity
 
 ## v2.10.3.6 Main New Features
 - database manager

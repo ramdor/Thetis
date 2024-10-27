@@ -7072,11 +7072,23 @@ namespace Thetis
 
         private void comboAudioSampleRate1_SelectedIndexChanged(object sender, System.EventArgs e)
         {
+            // rx1 f/w sample rate
             if (initializing) return;
             if (comboAudioSampleRate1.SelectedIndex < 0) return;
 
             int old_rate = console.SampleRateRX1;
-            int new_rate = Int32.Parse(comboAudioSampleRate1.Text);
+
+            bool ok = Int32.TryParse(comboAudioSampleRate1.Text, out int new_rate); //[2.10.3.7]MW0LGE repleaced line below with this
+            if (!ok)
+            {
+                MessageBox.Show("There was an issue with RX1 F/W sample rate. Please re-configure.",
+                "RX1 F/W sample rate issue",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return;
+            }
+            //int new_rate = Int32.Parse(comboAudioSampleRate1.Text);
+
             bool was_enabled = console.RX1Enabled;  //... was set to RX2 for some reason, it should be RX1 which always true. MW0LGE_21a
 
             if (new_rate != old_rate || initializing || m_bForceAudio)
@@ -7232,11 +7244,23 @@ namespace Thetis
 
         private void comboAudioSampleRateRX2_SelectedIndexChanged(object sender, System.EventArgs e)
         {
+            // rx2 f/w sample rate
             if (initializing) return;
             if (comboAudioSampleRateRX2.SelectedIndex < 0) return;
 
             int old_rate = console.SampleRateRX2;
-            int new_rate = Int32.Parse(comboAudioSampleRateRX2.Text);
+
+            bool ok = Int32.TryParse(comboAudioSampleRateRX2.Text, out int new_rate); //[2.10.3.7]MW0LGE repleaced line below with this
+            if (!ok)
+            {
+                MessageBox.Show("There was an issue with RX2 F/W sample rate. Please re-configure.",
+                "RX2 F/W sample rate issue",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return;
+            }
+            //int new_rate = Int32.Parse(comboAudioSampleRateRX2.Text);
+
             bool was_enabled = console.RX2Enabled;
 
             // MW0LGE [2.9.07] always initialise rx2 even if P1. Thanks to Reid (Gi8TME/Mi0BOT) and DH1KLM
@@ -7292,11 +7316,23 @@ namespace Thetis
 
         private void comboAudioSampleRate2_SelectedIndexChanged(object sender, System.EventArgs e)
         {
+            // vac1 sample rate
             if (initializing) return;
             if (comboAudioSampleRate2.SelectedIndex < 0) return;
 
             int old_rate = console.SampleRate2;
-            int new_rate = Int32.Parse(comboAudioSampleRate2.Text);
+
+            bool ok = Int32.TryParse(comboAudioSampleRate2.Text, out int new_rate); //[2.10.3.7]MW0LGE repleaced line below with this
+            if (!ok)
+            {
+                MessageBox.Show("There was an issue with VAC1 audio sample rate. Please re-configure.",
+                "VAC1 sample rate issue",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return;
+            }
+            //int new_rate = Int32.Parse(comboAudioSampleRate2.Text);
+
             bool poweron = console.PowerOn;
 
             if (poweron && chkAudioEnableVAC.Checked && new_rate != old_rate)
@@ -7315,10 +7351,22 @@ namespace Thetis
 
         private void comboAudioSampleRate3_SelectedIndexChanged(object sender, System.EventArgs e)
         {
+            // vac2 sample rate
             if (comboAudioSampleRate3.SelectedIndex < 0) return;
 
             int old_rate = console.SampleRate3;
-            int new_rate = Int32.Parse(comboAudioSampleRate3.Text);
+
+            bool ok = Int32.TryParse(comboAudioSampleRate3.Text, out int new_rate); //[2.10.3.7]MW0LGE repleaced line below with this
+            if (!ok)
+            {
+                MessageBox.Show("There was an issue with VAC2 audio sample rate. Please re-configure.",
+                "VAC2 sample rate issue",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return;
+            }
+            //int new_rate = Int32.Parse(comboAudioSampleRate3.Text);
+
             bool poweron = console.PowerOn;
 
             if (poweron && chkVAC2Enable.Checked && new_rate != old_rate)
