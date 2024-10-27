@@ -160,8 +160,8 @@ namespace Thetis
 
                         // basic mox ToT
                         if (_moxTimeOutEnabled)
-                            totMox = (now - _lastMox).Seconds >= _moxTimeOutSeconds;
-
+                            totMox = (now - _lastMox).TotalSeconds >= _moxTimeOutSeconds;
+                        
                         // ping ToT
                         if (!totMox && _pingTimeoutEnabled)
                         {
@@ -175,7 +175,7 @@ namespace Thetis
                             catch
                             {
                             }
-                            totPing = (now - _lastPing).Seconds >= _pingTimeOutSeconds;
+                            totPing = (now - _lastPing).TotalSeconds >= _pingTimeOutSeconds;
                         }
                     }
                 }

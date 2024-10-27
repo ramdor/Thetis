@@ -2993,6 +2993,7 @@ namespace Thetis
                 foreach (KeyValuePair<string, clsMeter> ms in _meters)
                 {
                     clsMeter m = ms.Value;
+                    m.TXBand = newBand;
                     m.AntennasChanged(Band.FIRST, newBand, -1, tx_frequency);
                 }
             }
@@ -3208,6 +3209,8 @@ namespace Thetis
             m.TXVFOb = _console.VFOBTX;
             m.RX2Enabled = _console.RX2Enabled;
             m.MultiRxEnabled = _console.chkEnableMultiRX.Checked;
+
+            m.TXBand = _console.TXBand;
 
             m.VfoA = _console.VFOAFreq;
             m.ModeVfoA = _console.RX1DSPMode;
@@ -4381,7 +4384,7 @@ namespace Thetis
 
             private int _fadeValue;
             private bool _disabled;
-            private bool _mox;
+            private bool _mox_fade_toggle;
 
             //private Guid[] _mmio_guid;
             //private string[] _mmio_variable;
@@ -4433,7 +4436,7 @@ namespace Thetis
                 _updateStopwatch = new Stopwatch();
                 _fadeValue = 255;
                 _disabled = false;
-                _mox = false;
+                _mox_fade_toggle = false;
                 _visible = true;
 
                 //_mmio_guid = new Guid[10];
@@ -4491,10 +4494,11 @@ namespace Thetis
                 get { return _mmio_variable_index; }
                 set { _mmio_variable_index = value; }
             }
-            public bool MOX
+            public bool MOXFadeToggle
             {
-                get { return _mox; }
-                set { _mox = value; }
+                // this is used by the fading system, use meter container for MOX state
+                get { return _mox_fade_toggle; }
+                set { _mox_fade_toggle = value; }
             }
             public int FadeValue //[2.10.1.0] MW0LGE used for on rx/tx fading
             {
@@ -5163,10 +5167,15 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
+
+                if (_console == null) return;
+
                 int index = base.ButtonIndex;
                 if (index == -1) return;
 
-                if(e.Button == MouseButtons.Right)
+                if (e.Button == MouseButtons.Right)
                 {
                     if (_console != null)
                     {
@@ -5386,6 +5395,9 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
+
                 if (_console == null) return;
 
                 int index = base.ButtonIndex;
@@ -5416,8 +5428,8 @@ namespace Thetis
             public clsAntennaButtonBox(clsMeter owningmeter, clsItemGroup ig)
             {
                 _owningmeter = owningmeter;
-                _rx1_band = Band.FIRST;
-                _tx_band = Band.FIRST;
+                _rx1_band = _owningmeter.BandVfoA;
+                _tx_band = _owningmeter.TXBand;
                 _vfoa_freq = -1;
                 _tx_freq = -1;
                 _rxtx_swap = false;
@@ -5425,7 +5437,7 @@ namespace Thetis
 
                 ItemType = MeterItemType.ANTENNA_BUTTONS;
 
-                base.Buttons = 10;
+                Buttons = 10;
                 VisibleBits = (1 << 10) - 1; //1023, 10 bits
             }
             public override int VisibleBits
@@ -5664,6 +5676,9 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
+
                 if (_console == null) return;
                 if (_console.IsSetupFormNull) return;
 
@@ -5869,6 +5884,10 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
+
+                if (_console == null) return;
                 int index = base.ButtonIndex;
                 if (index == -1) return;
 
@@ -6229,6 +6248,10 @@ namespace Thetis
             }
             public override void MouseUp(MouseEventArgs e)
             {
+                if (FadeOnRx && !_owningmeter.MOX) return;
+                if (FadeOnTx && _owningmeter.MOX) return;
+
+                if (_console == null) return;
                 int index = base.ButtonIndex;
                 if (index == -1) return;
 
@@ -7145,6 +7168,7 @@ namespace Thetis
             public override void MouseWheel(int number_of_moves)
             {
                 if (!MouseEntered) return;
+                if (_console == null) return;
 
                 int sign = Math.Sign(number_of_moves);
 
@@ -7189,6 +7213,7 @@ namespace Thetis
             public override void MouseUp(MouseEventArgs e)
             {
                 if (!MouseEntered) return;
+                if (_console == null) return;
 
                 switch (_mouse_over_vfoB ? _render_button_vfoB : _render_button_vfoA) // in mouse up, as dont get mouseclicks when we mash the button
                 {
@@ -8572,11 +8597,6 @@ namespace Thetis
 
             private Guid _data_out_mmio_guid;
 
-            //private PointF _mouseDownPoint;
-            //private PointF _mouseUpPoint;
-            //private PointF _mouseMovePoint;
-            //private bool _mouseDown;
-
             private bool _alow_control;
             private string _control_string_AZ;
             private string _control_string_ELE;
@@ -8615,11 +8635,6 @@ namespace Thetis
                 _padding = 0.5f;
 
                 _data_out_mmio_guid = Guid.Empty;
-
-                //_mouseDownPoint = new PointF(0, 0);
-                //_mouseUpPoint = new PointF(0, 0);
-                //_mouseMovePoint = new PointF(0, 0);
-                //_mouseDown = false;
 
                 _big_blob_colour = System.Drawing.Color.Red;
                 _small_blob_colour = System.Drawing.Color.White;
@@ -8706,26 +8721,6 @@ namespace Thetis
                     mmio.EnqueueOutbound(data);
                 }
             }
-            //public bool MouseDown
-            //{
-            //    get { return _mouseDown; }
-            //    set { _mouseDown = value; }
-            //}
-            //public PointF MouseDownPoint
-            //{
-            //    get { return _mouseDownPoint; }
-            //    set { _mouseDownPoint = value; }
-            //}
-            //public PointF MouseUpPoint
-            //{
-            //    get { return _mouseUpPoint; }
-            //    set { _mouseUpPoint = value; }
-            //}
-            //public PointF MouseMovePoint
-            //{
-            //    get { return _mouseMovePoint; }
-            //    set { _mouseMovePoint = value; }
-            //}
             public string ImageName
             {
                 get
@@ -12222,6 +12217,7 @@ namespace Thetis
             private Band _bandVfoA;
             private Band _bandVfoB;
             private Band _bandVfoASub;
+            private Band _bandTX;
             private string _filterVfoAname;
             private string _filterVfoBname;
             private bool _rx2Enabled;
@@ -15163,6 +15159,7 @@ namespace Thetis
                 _bandVfoA = Band.FIRST;
                 _bandVfoB = Band.FIRST;
                 _bandVfoASub = Band.FIRST;
+                _bandTX = Band.FIRST;
                 _modeVfoA = DSPMode.FIRST;
                 _modeVfoB = DSPMode.FIRST;
                 _filterVfoA = Filter.FIRST;
@@ -15746,7 +15743,7 @@ namespace Thetis
                                     {
                                         bRebuild = true;
 
-                                        float height = 1f;
+                                        float height = 0f;
                                         Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
                                         clsMeterItem.MeterItemType mit = clsMeterItem.MeterItemType.BASE;
                                         switch (mt)
@@ -15839,7 +15836,7 @@ namespace Thetis
                                             bb.RebuildButtons = true;
                                             bb.Columns = bb.Columns; // just to force a rebuild
 
-                                            height = bb.Size.Height;
+                                            height += bb.Size.Height;
                                         }
                                         ig.Size = new SizeF(ig.Size.Width, height + (_fPadY - (_fHeight * 0.75f)));
 
@@ -16909,6 +16906,9 @@ namespace Thetis
                                             igs.FontFamily1 = bb.GetFontFamily(0, 0);
                                             igs.FontSize1 = bb.GetFontSize(0, 0);
                                             igs.FontStyle1 = bb.GetFontStyle(0, 0);
+
+                                            igs.FadeOnRx = bb.FadeOnRx;
+                                            igs.FadeOnTx = bb.FadeOnTx;
                                         }
                                     }
                                     break;
@@ -17892,6 +17892,11 @@ namespace Thetis
             {
                 get { return _bandVfoASub; }
                 set { _bandVfoASub = value; }
+            }
+            public Band TXBand
+            {
+                get { return _bandTX; }
+                set { _bandTX = value; }
             }
             public Filter FilterVfoA
             {
@@ -20511,10 +20516,10 @@ namespace Thetis
                 bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
                 if (!do_cover_fade && (led.PanelBackColour1 != led.PanelBackColour2))
                 {
-                    if (m.MOX != mi.MOX)
+                    if (m.MOX != mi.MOXFadeToggle)
                     {
                         mi.FadeValue = 48;
-                        mi.MOX = m.MOX;
+                        mi.MOXFadeToggle = m.MOX;
                     }
                     else
                     {
@@ -20636,10 +20641,10 @@ namespace Thetis
                 bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
                 if (!do_cover_fade && (text_overlay.PanelBackColour1 != text_overlay.PanelBackColour2))
                 {
-                    if (m.MOX != mi.MOX)
+                    if (m.MOX != mi.MOXFadeToggle)
                     {
                         mi.FadeValue = 48;
-                        mi.MOX = m.MOX;
+                        mi.MOXFadeToggle = m.MOX;
                     }
                     else
                     {
@@ -20704,10 +20709,10 @@ namespace Thetis
                 bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
                 if (!do_cover_fade)
                 {
-                    if (m.MOX != mi.MOX)
+                    if (m.MOX != mi.MOXFadeToggle)
                     {
                         mi.FadeValue = 48;
-                        mi.MOX = m.MOX;
+                        mi.MOXFadeToggle = m.MOX;
                     }
                     else
                     {
@@ -20933,10 +20938,10 @@ namespace Thetis
                 bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
                 if (!do_cover_fade && (spacer.Colour1 != spacer.Colour2))
                 {
-                    if (m.MOX != mi.MOX)
+                    if (m.MOX != mi.MOXFadeToggle)
                     {
                         mi.FadeValue = 48;
-                        mi.MOX = m.MOX;
+                        mi.MOXFadeToggle = m.MOX;
                     }
                     else
                     {
@@ -20967,10 +20972,10 @@ namespace Thetis
                 bool do_cover_fade = (mi.FadeOnRx && !m.MOX) || (mi.FadeOnTx && m.MOX);
                 if (!do_cover_fade)
                 {
-                    if (m.MOX != mi.MOX)
+                    if (m.MOX != mi.MOXFadeToggle)
                     {
                         mi.FadeValue = 48;
-                        mi.MOX = m.MOX;
+                        mi.MOXFadeToggle = m.MOX;
                     }
                     else
                     {

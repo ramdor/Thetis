@@ -69,14 +69,20 @@ namespace Thetis
         private bool _is_popup_on_top;
         private Point _location;
         private bool m_bIgnoreIndexChanged; // ignore select index change when updating the list with initbandstack filter or the update selected
+        private Console _console;
+        private bool _mox;
 
         public frmBandStack2()
         {
             InitializeComponent();
+            _console = null;
         }
 
-        public void InitForm()
-        {            
+        public void InitForm(Console console)
+        {
+            _console = console;
+            _mox = _console.MOX;
+            _console.MoxChangeHandlers += OnMox;
             _is_popup = false;
             _is_popup_on_top = false;
             m_bIgnoreIndexChanged = false;
@@ -96,7 +102,17 @@ namespace Thetis
 
             _location = this.Location;
         }
-
+        private void OnMox(int rx, bool oldMox,  bool newMox)
+        {
+            if (rx == 1) _mox = newMox;
+        }
+        public void RemoveDelegates()
+        {
+            if (_console != null)
+            {
+                _console.MoxChangeHandlers -= OnMox;
+            }
+        }
         public void InitBandStackFilter(BandStackFilter bsf, bool select = true)
         {
             m_bIgnoreIndexChanged = true;
@@ -321,7 +337,7 @@ namespace Thetis
 
         private void bandStackListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (m_bIgnoreIndexChanged) return;
+            if (m_bIgnoreIndexChanged || _mox) return;
 
             if (bandStackListBox.SelectedIndex >= 0)
             {

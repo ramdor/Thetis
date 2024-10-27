@@ -57,16 +57,20 @@ namespace Thetis
         private string _build;
         private bool _update_available;
         private Console _console;
+        private bool _check_dev_version;
+        private string _exe_path;
 
-        public frmAbout(Console console)
+        public frmAbout(Console console, bool check_dev_version)
         {
             InitializeComponent();
 
+            _exe_path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\";
             _console = console;
             _update_available = false;
             _versionInfo = null;
             _version = "";
             _build = "";
+            _check_dev_version = check_dev_version;
 
             btnVisit.Enabled = false;
             btnUpdatedRelease.Visible = false;
@@ -183,6 +187,13 @@ namespace Thetis
                 case 10: Common.OpenUri("https://github.com/mi0bot/OpenHPSDR-Thetis/releases"); break;
                 case 11: Common.OpenUri("https://github.com/TAPR/OpenHPSDR-wdsp"); break;
                 case 12: Common.OpenUri("https://www.oe3ide.com/wp/software/"); break;
+                case 13: break; // splitter
+                case 14: Common.OpenUri($"file://{_exe_path}Thetis manual.pdf", false); break;
+                case 15: Common.OpenUri($"file://{_exe_path}Thetis-CAT-Command-Reference-Guide-V3.pdf", false); break;
+                case 16: Common.OpenUri($"file://{_exe_path}PureSignal.pdf", false); break;
+                case 17: Common.OpenUri($"file://{_exe_path}Midi2Cat_Instructions_V3.pdf", false); break;
+                case 18: Common.OpenUri($"file://{_exe_path}cmASIO Guide.pdf", false); break;
+                case 19: Common.OpenUri($"file://{_exe_path}BehringerMods_Midi2Cat_v2.pdf", false); break;
             }
 
             lstLinks.ClearSelected();
@@ -206,7 +217,7 @@ namespace Thetis
                     btnUpdatedRelease.Visible = true;
                     _update_available = true;
                 }
-                else
+                else if(_check_dev_version)
                 {
                     // check development
                     int development_version = Common.CompareVersions(_version, _versionInfo.DevelopmentVersion);
@@ -214,7 +225,8 @@ namespace Thetis
                     if (development_version < 0 || (development_version == 0 && different_dev_build))
                     {
                         string build = string.IsNullOrEmpty(_versionInfo.DevelopmentBuild) ? "" : $" {_versionInfo.DevelopmentBuild}";
-                        btnUpdatedRelease.Text = $"Dev version [{_versionInfo.DevelopmentVersion}{build}]\n{_versionInfo.DevelopmentName}\nClick to view on GitHub";
+                        string where = _versionInfo.DevelopmentURL != null && _versionInfo.DevelopmentURL.Contains("discord", StringComparison.OrdinalIgnoreCase) ? "Discord" : "GitHub";
+                        btnUpdatedRelease.Text = $"Dev version [{_versionInfo.DevelopmentVersion}{build}]\n{_versionInfo.DevelopmentName}\nClick to view on {where}";
                         btnUpdatedRelease.Tag = _versionInfo.DevelopmentURL;
                         btnUpdatedRelease.Visible = true;
                         _update_available = true;
