@@ -1852,12 +1852,12 @@
             0,
             0});
             this.udRX2FilterHigh.Maximum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
             this.udRX2FilterHigh.Minimum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             -2147483648});
@@ -1882,12 +1882,12 @@
             0,
             0});
             this.udRX2FilterLow.Maximum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
             this.udRX2FilterLow.Minimum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             -2147483648});

@@ -115,6 +115,7 @@ namespace Thetis
         private static string _unique_ids;
         private static string _filter;
         private static string _ignore;
+        private static bool _include_time_stamp;
 
         private static DateTime _last_message_time;
 
@@ -127,6 +128,7 @@ namespace Thetis
             _unique_ids = "";
             _filter = "";
             _ignore = "";
+            _include_time_stamp = true;
 
             _process_queue = true;
             _receive_queue = new List<IMessage>();
@@ -574,7 +576,8 @@ namespace Thetis
                 {
                     try
                     {
-                        string msg = $"{_callsign} - {message}";
+                        string timestamp = _include_time_stamp ? _last_message_time.ToString("HH:mm") + "z - " : "";
+                        string msg = $"{timestamp}{_callsign} - {message}";
                         string[] ids = _unique_ids.Split(',');
                         if (ids.Length > 0 && !string.IsNullOrEmpty(ids[0]))
                         {
@@ -784,6 +787,15 @@ namespace Thetis
             {
                 // comma spearated, if any matches, message will be ignored
                 _ignore = value;
+            }
+        }
+
+        public static bool IncludeTimeStamp
+        {
+            get { return _include_time_stamp; }
+            set
+            {
+                _include_time_stamp = value;
             }
         }
     }

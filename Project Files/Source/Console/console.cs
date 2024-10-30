@@ -1782,6 +1782,11 @@ namespace Thetis
                (rx2_filter == Filter.NONE && rx2_dsp_mode != DSPMode.DRM && rx2_dsp_mode != DSPMode.SPEC))
                 radRX2Filter3.Checked = true;
 
+            //[2.10.3.7]MW0LGE FM tx filter select, this was not being done at startup
+            fmDeviation2k(true);
+            fmDeviation5k(true);
+            //
+
             chkVFOATX_CheckedChanged(this, EventArgs.Empty);
             chkVFOBTX_CheckedChanged(this, EventArgs.Empty);
 
@@ -2202,6 +2207,16 @@ namespace Thetis
                 if (m_tcpTCIServer != null) m_tcpTCIServer.CopyRX2VFObToVFOa = m_bTCIcopyRX2VFObToVFOa;
             }
         }
+        private bool m_bTCIreplaceRX2VFObToVFOa = false;
+        public bool TCIreplaceRX2VFObToVFOa
+        {
+            get { return m_bTCIreplaceRX2VFObToVFOa; }
+            set
+            {
+                m_bTCIreplaceRX2VFObToVFOa = value;
+                if (m_tcpTCIServer != null) m_tcpTCIServer.ReplaceRX2VFObToVFOa = m_bTCIreplaceRX2VFObToVFOa;
+            }
+        }
         private bool m_bTCIsendInitialStateOnConnect = true;
         public bool TCIsendInitialStateOnConnect
         {
@@ -2231,7 +2246,7 @@ namespace Thetis
 
                     addTCIDelegates();
 
-                    m_tcpTCIServer.StartServer(this, rateLimit, m_bTCIcopyRX2VFObToVFOa, m_bTCIuseRX1vfoaForRX2vfoa, m_bTCIsendInitialStateOnConnect, m_bTCICWLUbecomesCW, m_bEmulateSunSDR2Pro, m_bEmulateExpertSDR3Protocol);
+                    m_tcpTCIServer.StartServer(this, rateLimit, m_bTCIcopyRX2VFObToVFOa, m_bTCIuseRX1vfoaForRX2vfoa, m_bTCIsendInitialStateOnConnect, m_bTCICWLUbecomesCW, m_bEmulateSunSDR2Pro, m_bEmulateExpertSDR3Protocol, m_bTCIreplaceRX2VFObToVFOa);
 
                     if (!m_tcpTCIServer.IsServerRunning)
                     {
@@ -6705,7 +6720,6 @@ namespace Thetis
             radFilterVar1.Checked = true;
             if (update) UpdateRX1Filters(low, high);
         }
-
         public void SelectRX2VarFilter(bool update = true)
         {
             if (rx2_filter == Filter.VAR1) return;
@@ -6910,19 +6924,21 @@ namespace Thetis
         private int m_nHighOutRX1;
         private int m_nLowOutRX2;
         private int m_nHighOutRX2;
-        public void UpdateRX1Filters(int low, int high)
+        private int _old_filter_low = 0;
+        private int _old_filter_high = 0;
+        public void UpdateRX1Filters(int low, int high, bool force = false, bool from_change_event = false)
         {
-            int oldLow, oldHigh;
+            //int oldLow, oldHigh;
             if (rx1_filter == Filter.FIRST || rx1_filter == Filter.LAST || rx1_dsp_mode == DSPMode.FIRST || rx1_dsp_mode == DSPMode.LAST)
             {
-                oldLow = 0;
-                oldHigh = 0;
+                _old_filter_low = 0;
+                _old_filter_high = 0;
             }
-            else
-            {
-                oldLow = rx1_filters[(int)rx1_dsp_mode].GetLow(rx1_filter);
-                oldHigh = rx1_filters[(int)rx1_dsp_mode].GetHigh(rx1_filter);
-            }
+            //else
+            //{
+            //    oldLow = rx1_filters[(int)rx1_dsp_mode].GetLow(rx1_filter);
+            //    oldHigh = rx1_filters[(int)rx1_dsp_mode].GetHigh(rx1_filter);
+            //}
 
             switch (rx1_dsp_mode)
             {
@@ -6949,7 +6965,7 @@ namespace Thetis
                     }
                     break;
                 case DSPMode.FM:
-                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(0, 0).RXFMHighCut);  //[2.10.3.4]MW0LGE
+                    int halfBw = (int)(radio.GetDSPRX(0, 0).RXFMDeviation + radio.GetDSPRX(0, 0).RXFMHighCut);  //[2.10.3.4]MW0LGE
                     int bw = ((halfBw * 2) / 1000);
                     low = -halfBw;
                     high = halfBw;
@@ -6983,10 +6999,27 @@ namespace Thetis
             // send the setting to the display
             Display.RX1FilterLow = low;
             Display.RX1FilterHigh = high;
-
-            // update var filter controls
-            udFilterLow.Value = low;
-            udFilterHigh.Value = high;
+            
+            if (!from_change_event)// this is required to prevent endless loop from the change event
+            {
+                // update var filter controls
+                if (udFilterLow.Value == low)
+                {
+                    udFilterLow_ValueChanged(this, EventArgs.Empty); // cause an update even if the values are the same, because a change event wont happen if they are
+                }
+                else
+                {
+                    udFilterLow.Value = low;
+                }
+                if (udFilterHigh.Value == high)
+                {
+                    udFilterHigh_ValueChanged(this, EventArgs.Empty);
+                }
+                else
+                {
+                    udFilterHigh.Value = high;
+                }
+            }
 
             // update Filter Shift
             ptbFilterShift_Update(low, high);
@@ -7016,13 +7049,18 @@ namespace Thetis
                     filterRX1Form.CurrentFilter = rx1_filter;
             }
 
-            if (oldLow != low || oldHigh != high) FilterEdgesChangedHandlers?.Invoke(1, rx1_filter, RX1Band, low, high, rx1_filters[(int)rx1_dsp_mode].GetName(rx1_filter)); //MW0LGE [2.9.0.7]
+            if (force || rx1_dsp_mode != DSPMode.FIRST && (_old_filter_low != low || _old_filter_high != high))
+            {
+                _old_filter_low = low;
+                _old_filter_high = high;
+                FilterEdgesChangedHandlers?.Invoke(1, rx1_filter, RX1Band, low, high, rx1_filters[(int)rx1_dsp_mode].GetName(rx1_filter), max_filter_width, max_filter_shift); //MW0LGE [2.9.0.7]
+            }
 
             m_nLowOutRX1 = low;
             m_nHighOutRX1 = high;
         }
 
-        public void UpdateRX2Filters(int low, int high)
+        public void UpdateRX2Filters(int low, int high, bool force = false, bool from_change_event = false)
         {
             int oldLow, oldHigh;
             if (rx2_filter == Filter.FIRST || rx2_filter == Filter.LAST || rx2_dsp_mode == DSPMode.FIRST || rx2_dsp_mode == DSPMode.LAST)
@@ -7061,7 +7099,7 @@ namespace Thetis
                     }
                     break;
                 case DSPMode.FM:
-                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(1, 0).RXFMHighCut);  //[2.10.3.4]MW0LGE
+                    int halfBw = (int)(radio.GetDSPRX(1, 0).RXFMDeviation + radio.GetDSPRX(1, 0).RXFMHighCut);  //[2.10.3.4]MW0LGE
                     low = -halfBw;
                     high = halfBw;
                     break;
@@ -7093,9 +7131,26 @@ namespace Thetis
             Display.RX2FilterLow = low;
             Display.RX2FilterHigh = high;
 
-            // update var filter controls
-            udRX2FilterLow.Value = low;
-            udRX2FilterHigh.Value = high;
+            if (!from_change_event) // this is required to prevent endless loop from the change event
+            {
+                // update var filter controls
+                if (udRX2FilterLow.Value == low)
+                {
+                    udRX2FilterLow_ValueChanged(this, EventArgs.Empty); // cause an update even if the values are the same, because a change event wont happen if they are
+                }
+                else
+                {
+                    udRX2FilterLow.Value = low;
+                }
+                if (udRX2FilterHigh.Value == high)
+                {
+                    udRX2FilterHigh_ValueChanged(this, EventArgs.Empty);
+                }
+                else
+                {
+                    udRX2FilterHigh.Value = high;
+                }
+            }
 
             if (filterRX2Form != null && !filterRX2Form.IsDisposed)
             {
@@ -7103,7 +7158,7 @@ namespace Thetis
                     filterRX2Form.CurrentFilter = rx2_filter;
             }
 
-            if (oldLow != low || oldHigh != high) FilterEdgesChangedHandlers?.Invoke(2, rx2_filter, RX2Band, low, high, rx1_filters[(int)rx2_dsp_mode].GetName(rx2_filter)); //MW0LGE [2.9.0.7]
+            if (force || rx2_dsp_mode != DSPMode.FIRST && (oldLow != low || oldHigh != high)) FilterEdgesChangedHandlers?.Invoke(2, rx2_filter, RX2Band, low, high, rx2_filters[(int)rx2_dsp_mode].GetName(rx2_filter), max_filter_width, max_filter_shift); //MW0LGE [2.9.0.7]
 
             m_nLowOutRX2 = low;
             m_nHighOutRX2 = high;
@@ -7441,8 +7496,11 @@ namespace Thetis
             specRX.GetSpecRX(cmaster.inid(1, 0)).CalcSpectrum(low, high, spec_blocksize, 96000);
         }
 
-        public void SetTXFilters(DSPMode mode, int low, int high)
+        public void SetTXFilters(DSPMode mode, int low, int high, bool force = false)
         {
+            int oldl = radio.GetDSPTX(0).TXFilterLow;
+            int oldh = radio.GetDSPTX(0).TXFilterHigh;
+
             int l = 0, h = 0;
             switch (mode)
             {
@@ -7501,6 +7559,8 @@ namespace Thetis
 
             Display.TXFilterLow = l;
             Display.TXFilterHigh = h;
+
+            if (force || oldl != l || oldh != h) TXFiltersChangedHandlers?.Invoke(l, h);
         }
 
         public void BuildTXProfileCombos()
@@ -12735,25 +12795,27 @@ namespace Thetis
             set { save_filter_changes = value; }
         }
 
-        private int max_filter_shift = 9999;
+        private int max_filter_shift = 10000;
         public int MaxFilterShift
         {
             get { return max_filter_shift; }
             set
             {
                 max_filter_shift = value;
-                UpdateRX1Filters(radio.GetDSPRX(0, 0).RXFilterLow, radio.GetDSPRX(0, 0).RXFilterHigh);
+                UpdateRX1Filters(radio.GetDSPRX(0, 0).RXFilterLow, radio.GetDSPRX(0, 0).RXFilterHigh, true);                
+                UpdateRX2Filters(radio.GetDSPRX(1, 0).RXFilterLow, radio.GetDSPRX(1, 0).RXFilterHigh, true);
             }
         }
 
-        private int max_filter_width = 9999;
+        private int max_filter_width = 10000;
         public int MaxFilterWidth
         {
             get { return max_filter_width; }
             set
             {
                 max_filter_width = value;
-                UpdateRX1Filters(radio.GetDSPRX(0, 0).RXFilterLow, radio.GetDSPRX(0, 0).RXFilterHigh);
+                UpdateRX1Filters(radio.GetDSPRX(0, 0).RXFilterLow, radio.GetDSPRX(0, 0).RXFilterHigh, true);
+                UpdateRX2Filters(radio.GetDSPRX(1, 0).RXFilterLow, radio.GetDSPRX(1, 0).RXFilterHigh, true);
             }
         }
 
@@ -18169,7 +18231,11 @@ namespace Thetis
         public int FilterShiftValue
         {
             get { return ptbFilterShift.Value; }
-            set { ptbFilterShift.Value = value; }
+            set 
+            {
+                ptbFilterShift.Value = value;
+                ptbFilterShift_Scroll(this, EventArgs.Empty);
+            }
         }
 
         private static List<Channel> channels_60m;
@@ -19170,6 +19236,8 @@ namespace Thetis
             get { return tx_filter_high; }
             set
             {
+                if (value < udTXFilterHigh.Minimum) value = (int)udTXFilterHigh.Minimum;
+                if (value > udTXFilterHigh.Maximum) value = (int)udTXFilterHigh.Maximum;
                 tx_filter_high = value;
                 udTXFilterHigh.Value = value;
                 SetTXFilters(rx1_dsp_mode, tx_filter_low, tx_filter_high);
@@ -19182,6 +19250,8 @@ namespace Thetis
             get { return tx_filter_low; }
             set
             {
+                if (value < udTXFilterLow.Minimum) value = (int)udTXFilterLow.Minimum;
+                if (value > udTXFilterLow.Maximum) value = (int)udTXFilterLow.Maximum;
                 tx_filter_low = value;
                 udTXFilterLow.Value = value;
                 SetTXFilters(rx1_dsp_mode, tx_filter_low, tx_filter_high);
@@ -32575,11 +32645,22 @@ namespace Thetis
         }
         //END NOTCH
 
-        private bool currentDSPhasTwoSidebands(int rx)
+        public bool CurrentDSPhasTwoSidebands(int rx, bool tx = false)
         {
             DSPMode dspMode;
 
-            if (rx == 1)
+            if (tx)
+            {
+                if (RX2Enabled && VFOBTX)
+                {
+                    dspMode = RX2DSPMode;
+                }
+                else
+                {
+                    dspMode = RX1DSPMode;
+                }
+            }
+            else if (rx == 1)
                 dspMode = rx1_dsp_mode;
             else
                 dspMode = rx2_dsp_mode;
@@ -33404,7 +33485,7 @@ namespace Thetis
                                 int lowerLimit;
                                 int new_low;
 
-                                bool bMirrorSidebands = Common.ShiftKeyDown && currentDSPhasTwoSidebands(1);
+                                bool bMirrorSidebands = Common.ShiftKeyDown && CurrentDSPhasTwoSidebands(1);
 
                                 if (bMirrorSidebands)
                                     lowerLimit = 10;
@@ -33434,7 +33515,7 @@ namespace Thetis
                                 int upperLimit;
                                 int new_high;
 
-                                bool bMirrorSidebands = Common.ShiftKeyDown && currentDSPhasTwoSidebands(1);
+                                bool bMirrorSidebands = Common.ShiftKeyDown && CurrentDSPhasTwoSidebands(1);
 
                                 if (bMirrorSidebands)
                                     upperLimit = -10;
@@ -33480,7 +33561,7 @@ namespace Thetis
                                 int lowerLimit;
                                 int new_low;
 
-                                bool bMirrorSidebands = Common.ShiftKeyDown && currentDSPhasTwoSidebands(2);
+                                bool bMirrorSidebands = Common.ShiftKeyDown && CurrentDSPhasTwoSidebands(2);
 
                                 if (bMirrorSidebands)
                                     lowerLimit = 10;
@@ -33510,7 +33591,7 @@ namespace Thetis
                                 int upperLimit;
                                 int new_high;
 
-                                bool bMirrorSidebands = Common.ShiftKeyDown && currentDSPhasTwoSidebands(2);
+                                bool bMirrorSidebands = Common.ShiftKeyDown && CurrentDSPhasTwoSidebands(2);
 
                                 if (bMirrorSidebands)
                                     upperLimit = -10;
@@ -35967,13 +36048,13 @@ namespace Thetis
             }
             else
             {
+                RX1Filter = Filter.NONE;
+
                 if (rx1_dsp_mode == DSPMode.FM)
                 {
-                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(0, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
+                    int halfBw = (int)(radio.GetDSPRX(0, 0).RXFMDeviation + radio.GetDSPRX(0, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
                     UpdateRX1Filters(-halfBw, halfBw);
                 }
-
-                RX1Filter = Filter.NONE;
             }
             BINToolStripMenuItem.Enabled = chkBIN.Enabled;
 
@@ -36276,7 +36357,7 @@ namespace Thetis
                     return;
             }
             UpdateRX1Filters(low, high);
-            if (oldFilter != rx1_filter) FilterChangedHandlers?.Invoke(1, oldFilter, rx1_filter, RX1Band, low, high, rx1_filters[(int)rx1_dsp_mode].GetName(rx1_filter));
+            if (oldFilter != rx1_filter) FilterChangedHandlers?.Invoke(1, oldFilter, rx1_filter, RX1Band, rx1_filters[(int)rx1_dsp_mode].GetLow(rx1_filter), rx1_filters[(int)rx1_dsp_mode].GetHigh(rx1_filter), rx1_filters[(int)rx1_dsp_mode].GetName(rx1_filter));
         }
 
         private void radRX2Filter_CheckedChanged(object sender, EventArgs e)
@@ -36427,7 +36508,7 @@ namespace Thetis
                     return;
                 }
 
-                UpdateRX1Filters((int)udFilterLow.Value, (int)udFilterHigh.Value);
+                UpdateRX1Filters((int)udFilterLow.Value, (int)udFilterHigh.Value, false, true);
 
                 if (!save_filter_changes)
                     rx1_filters[(int)rx1_dsp_mode].SetLow(rx1_filter, (int)udFilterLow.Value);
@@ -36448,7 +36529,7 @@ namespace Thetis
                     return;
                 }
 
-                UpdateRX1Filters((int)udFilterLow.Value, (int)udFilterHigh.Value);
+                UpdateRX1Filters((int)udFilterLow.Value, (int)udFilterHigh.Value, false, true);
 
                 if (!save_filter_changes)
                     rx1_filters[(int)rx1_dsp_mode].SetHigh(rx1_filter, (int)udFilterHigh.Value);
@@ -36470,7 +36551,7 @@ namespace Thetis
             int low;
             int high;
             int bandwidth;
-            int max_shift = 9999;		// needed when using variable filters so we can't exceed +/- 10kHz DSP limits
+            int max_shift = 10000;		// needed when using variable filters so we can't exceed +/- 10kHz DSP limits
 
             if (rx1_dsp_mode == DSPMode.SPEC ||
                 rx1_dsp_mode == DSPMode.DRM)
@@ -36620,19 +36701,19 @@ namespace Thetis
             {
                 if (ptbFilterShift.Value > 0)
                 {
-                    adjusted_max = Math.Min(max_filter_shift, 9999 - (Math.Abs(default_center) + bw / 2));
+                    adjusted_max = Math.Min(max_filter_shift, 10000 - (Math.Abs(default_center) + bw / 2));
                 }
             }
             else if (default_center < 0)
             {
                 if (ptbFilterShift.Value < 0)
                 {
-                    adjusted_max = Math.Min(max_filter_shift, 9999 - (Math.Abs(default_center) + bw / 2));
+                    adjusted_max = Math.Min(max_filter_shift, 10000 - (Math.Abs(default_center) + bw / 2));
                 }
             }
             else //default_center == 0
             {
-                adjusted_max = Math.Min(max_filter_shift, 9999 - bw / 2);
+                adjusted_max = Math.Min(max_filter_shift, 10000 - bw / 2);
             }
 
             int range = ptbFilterShift.Maximum - ptbFilterShift.Minimum;
@@ -36689,19 +36770,19 @@ namespace Thetis
             {
                 if (current_center > default_center)
                 {
-                    adjusted_max = Math.Min(max_filter_shift, 9999 - (Math.Abs(default_center) + bw / 2));
+                    adjusted_max = Math.Min(max_filter_shift, 10000 - (Math.Abs(default_center) + bw / 2));
                 }
             }
             else if (default_center < 0)
             {
                 if (current_center < default_center)
                 {
-                    adjusted_max = Math.Min(max_filter_shift, 9999 - (Math.Abs(default_center) + bw / 2));
+                    adjusted_max = Math.Min(max_filter_shift, 10000 - (Math.Abs(default_center) + bw / 2));
                 }
             }
             else //default_center == 0
             {
-                adjusted_max = Math.Min(max_filter_shift, 9999 - bw / 2);
+                adjusted_max = Math.Min(max_filter_shift, 10000 - bw / 2);
             }
 
             int range = ptbFilterShift.Maximum - ptbFilterShift.Minimum;
@@ -36739,9 +36820,9 @@ namespace Thetis
                         low += delta;
                         high += delta;
                     }
-                    else if (high > 9999)
+                    else if (high > 10000)
                     {
-                        int delta = high - 9999;
+                        int delta = high - 10000;
                         high -= delta;
                         low -= delta;
                     }
@@ -36756,9 +36837,9 @@ namespace Thetis
                         low += delta;
                         high += delta;
                     }
-                    else if (high > 9999)
+                    else if (high > 10000)
                     {
-                        int delta = high - 9999;
+                        int delta = high - 10000;
                         high -= delta;
                         low -= delta;
                     }
@@ -36778,9 +36859,9 @@ namespace Thetis
                         low -= delta;
                         high -= delta;
                     }
-                    else if (low < -9999)
+                    else if (low < -10000)
                     {
-                        int delta = low + 9999;
+                        int delta = low + 10000;
                         high += delta;
                         low += delta;
                     }
@@ -36795,9 +36876,9 @@ namespace Thetis
                         low -= delta;
                         high -= delta;
                     }
-                    else if (low < -9999)
+                    else if (low < -10000)
                     {
-                        int delta = low + 9999;
+                        int delta = low + 10000;
                         high += delta;
                         low += delta;
                     }
@@ -36983,9 +37064,9 @@ namespace Thetis
                         }
                     }
 
-                    if (low < -9999)
+                    if (low < -10000)
                     {
-                        low = -9999;
+                        low = -10000;
                         high = low + new_bw;
                     }
                     break;
@@ -37035,9 +37116,9 @@ namespace Thetis
                         }
                     }
 
-                    if (high > 9999)
+                    if (high > 10000)
                     {
-                        high = 9999;
+                        high = 10000;
                         low = high - new_bw;
                     }
                     break;
@@ -39575,12 +39656,13 @@ namespace Thetis
             }
             else
             {
+                RX2Filter = Filter.NONE;
+
                 if (rx2_dsp_mode == DSPMode.FM)
                 {
-                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(1, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
+                    int halfBw = (int)(radio.GetDSPRX(1, 0).RXFMDeviation + radio.GetDSPRX(1, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
                     UpdateRX2Filters(-halfBw, halfBw);
-                }
-                RX2Filter = Filter.NONE;
+                }                
             }
 
             if (rx2_dsp_mode != DSPMode.FM && rx2_dsp_mode != DSPMode.DRM)
@@ -39863,7 +39945,7 @@ namespace Thetis
 
             UpdateRX2Filters(low, high);
 
-            if (oldFilter != rx2_filter) FilterChangedHandlers?.Invoke(2, oldFilter, rx2_filter, RX2Band, low, high, rx2_filters[(int)rx2_dsp_mode].GetName(rx2_filter)); //MW0LGE [2.9.0.7]
+            if (oldFilter != rx2_filter) FilterChangedHandlers?.Invoke(2, oldFilter, rx2_filter, RX2Band, rx2_filters[(int)rx2_dsp_mode].GetLow(rx2_filter), rx2_filters[(int)rx2_dsp_mode].GetHigh(rx2_filter), rx2_filters[(int)rx2_dsp_mode].GetName(rx2_filter)); //MW0LGE [2.9.0.7]
         }
 
         private void radRX2Filter1_CheckedChanged(object sender, System.EventArgs e)
@@ -39931,7 +40013,7 @@ namespace Thetis
                     return;
                 }
 
-                UpdateRX2Filters((int)udRX2FilterLow.Value, (int)udRX2FilterHigh.Value);
+                UpdateRX2Filters((int)udRX2FilterLow.Value, (int)udRX2FilterHigh.Value, false, true);
 
                 if (!save_filter_changes)
                     rx2_filters[(int)rx2_dsp_mode].SetLow(rx2_filter, (int)udRX2FilterLow.Value);
@@ -39958,7 +40040,7 @@ namespace Thetis
                     return;
                 }
 
-                UpdateRX2Filters((int)udRX2FilterLow.Value, (int)udRX2FilterHigh.Value);
+                UpdateRX2Filters((int)udRX2FilterLow.Value, (int)udRX2FilterHigh.Value, false, true);
 
                 if (!save_filter_changes)
                     rx2_filters[(int)rx2_dsp_mode].SetHigh(rx2_filter, (int)udRX2FilterHigh.Value);
@@ -40482,7 +40564,9 @@ namespace Thetis
             if (bMadeAChange && !IsSetupFormNull)
             {
                 SetupForm.DSPChangeDuration = sw.ElapsedMilliseconds;
-                Display.UpdateMNFminWidth(); //[2.10.3]MW0LGE update
+                //Display.UpdateMNFminWidth(); //[2.10.3]MW0LGE update
+                UpdateMinimumNotchWidth(1);
+                UpdateMinimumNotchWidth(2);
             }
         }
 
@@ -41691,48 +41775,59 @@ namespace Thetis
 
         private void radFMDeviation2kHz_CheckedChanged(object sender, EventArgs e)
         {
+            fmDeviation2k(false);
+        }
+        private void fmDeviation2k(bool force)
+        {
             if (radFMDeviation2kHz.Checked)
             {
                 radio.GetDSPTX(0).TXFMDeviation = 2500;
                 radio.GetDSPRX(0, 0).RXFMDeviation = 2500;
+                radio.GetDSPRX(1, 0).RXFMDeviation = 2500;
+
                 if (RX1DSPMode == DSPMode.FM)
                 {
-                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(0, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
-                    UpdateRX1Filters(-halfBw, halfBw);
+                    int halfBw = (int)(radio.GetDSPRX(0, 0).RXFMDeviation + radio.GetDSPRX(0, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
+                    UpdateRX1Filters(-halfBw, halfBw, force);
                 }
                 if (RX2DSPMode == DSPMode.FM)
                 {
-                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(1, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
-                    UpdateRX2Filters(-halfBw, halfBw);
+                    int halfBw = (int)(radio.GetDSPRX(1, 0).RXFMDeviation + radio.GetDSPRX(1, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
+                    UpdateRX2Filters(-halfBw, halfBw, force);
                 }
                 if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM)
                 {
                     int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPTX(0).TXFMHighCut); //[2.10.3.4]MW0LGE
-                    SetTXFilters(DSPMode.FM, -halfBw, halfBw);
+                    SetTXFilters(DSPMode.FM, -halfBw, halfBw, force);
                 }
             }
         }
-
         private void radFMDeviation5kHz_CheckedChanged(object sender, EventArgs e)
+        {
+            fmDeviation5k(false);
+        }
+        private void fmDeviation5k(bool force)
         {
             if (radFMDeviation5kHz.Checked)
             {
                 radio.GetDSPTX(0).TXFMDeviation = 5000;
                 radio.GetDSPRX(0, 0).RXFMDeviation = 5000;
+                radio.GetDSPRX(1, 0).RXFMDeviation = 5000;
+
                 if (RX1DSPMode == DSPMode.FM)
                 {
-                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(0, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
-                    UpdateRX1Filters(-halfBw, halfBw);
+                    int halfBw = (int)(radio.GetDSPRX(0, 0).RXFMDeviation + radio.GetDSPRX(0, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
+                    UpdateRX1Filters(-halfBw, halfBw, force);
                 }
                 if (RX2DSPMode == DSPMode.FM)
                 {
-                    int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPRX(1, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
-                    UpdateRX2Filters(-halfBw, halfBw);
+                    int halfBw = (int)(radio.GetDSPRX(1, 0).RXFMDeviation + radio.GetDSPRX(1, 0).RXFMHighCut); //[2.10.3.4]MW0LGE
+                    UpdateRX2Filters(-halfBw, halfBw, force);
                 }
                 if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM)
                 {
                     int halfBw = (int)(radio.GetDSPTX(0).TXFMDeviation + radio.GetDSPTX(0).TXFMHighCut); //[2.10.3.4]MW0LGE
-                    SetTXFilters(DSPMode.FM , - halfBw, halfBw);
+                    SetTXFilters(DSPMode.FM, -halfBw, halfBw, force);
                 }
             }
         }
@@ -46072,7 +46167,7 @@ namespace Thetis
         public delegate void AttenuatorDataChanged(int rx, int oldAtt, int newAtt);
         public delegate void PreampModeChanged(int rx, PreampMode oldMode, PreampMode newMode);
 
-        public delegate void FilterEdgesChanged(int rx, Filter filter, Band band, int low, int high, string sName);
+        public delegate void FilterEdgesChanged(int rx, Filter filter, Band band, int low, int high, string sName, int max_width, int max_shift);
         public delegate void SplitChanged(int rx, bool oldSplit, bool newSplit);
         public delegate void TuneChanged(int rx, bool oldTune, bool newTune);
         public delegate void DrivePowerChanged(int rx, int newPower, bool tune);
@@ -46116,7 +46211,7 @@ namespace Thetis
 
         public delegate void BandPanelChanged(int rx, bool gen, bool hf, bool vhf);
         public delegate void VHFChanged(int idx, bool old_state, bool new_state, string old_text, string new_text);
-        public delegate void FilterNameChanged(int rx, Filter f, string old_name, string new_name);
+        //public delegate void FilterNameChanged(int rx, Filter f, string old_name, string new_name);
 
         public delegate void AntennaRXChanged(Band b, int antenna, bool old_state, bool new_state);
         public delegate void AntennaTXChanged(Band b, int antenna, bool old_state, bool new_state);
@@ -46134,6 +46229,10 @@ namespace Thetis
         public delegate void TuneStepIndexChanged(int rx, int old_index, int new_index);
 
         public delegate void PAProfileNameChanged(string old_profile_name, string new_profile_name);
+
+        public delegate void MinimumNotchWidthChanged(int rx, double width);
+
+        public delegate void TXFiltersChanged(int low, int high);
 
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
@@ -46212,6 +46311,10 @@ namespace Thetis
         public TuneStepIndexChanged TuneStepIndexChangedHandlers;
 
         public PAProfileNameChanged PAProfileNameChangedHandlers;
+
+        public MinimumNotchWidthChanged MinimumNotchWidthChangedHandlers;
+
+        public TXFiltersChanged TXFiltersChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
@@ -49697,6 +49800,49 @@ namespace Thetis
         private void BPFToolStripMenuItem_MouseUp(object sender, MouseEventArgs e)
         {            
             if (!BPFToolStripMenuItem.DropDown.Visible) BPFToolStripMenuItem.ShowDropDown();
+        }
+
+        private Dictionary<string, double> _minimum_notch_width = new Dictionary<string, double>();
+        public double GetMinimumNotchWidth(int rx)
+        {
+            if(rx<1 || rx>2) return 100;
+
+            string key = rx.ToString();
+            if(_minimum_notch_width.ContainsKey(key)) return _minimum_notch_width[key];
+            return 100;
+        }
+        public void UpdateMinimumNotchWidth(int rx)
+        {
+            int chan = -1;
+            if (rx == 1)
+            {
+                chan = WDSP.id(0, 0);
+            }
+            else if (rx == 2)
+            {
+                chan = WDSP.id(2, 0);
+            }
+
+            if (chan != -1)
+            {
+                double min_notch_width = 0;
+                unsafe
+                {
+                    WDSP.RXANBPGetMinNotchWidth(chan, &min_notch_width);
+                }
+
+                string key = rx.ToString();
+                if (_minimum_notch_width.ContainsKey(key))
+                {
+                    _minimum_notch_width[key] = min_notch_width;
+                }
+                else
+                {
+                    _minimum_notch_width.Add(key, min_notch_width);
+                }
+
+                MinimumNotchWidthChangedHandlers?.Invoke(rx, min_notch_width);
+            }
         }
     }
 

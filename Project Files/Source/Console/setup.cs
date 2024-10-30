@@ -8957,12 +8957,22 @@ namespace Thetis
         {
             if (initializing) return;
             if (_timerCheckingTXProfile) return;
-            if (udTXFilterHigh.Value < udTXFilterLow.Value + 100)
-            {
-                udTXFilterHigh.Value = udTXFilterLow.Value + 100;
-                return;
+            if (!console.CurrentDSPhasTwoSidebands(0, true)) // do not limit if two sidebands, like am, dsb etc
+            { 
+                if (udTXFilterHigh.Value < udTXFilterLow.Value + 100)
+                {
+                    udTXFilterHigh.Value = udTXFilterLow.Value + 100;
+                    return;
+                }
             }
-
+            else
+            {
+                if (udTXFilterHigh.Value < 10)
+                {
+                    udTXFilterHigh.Value = 10;
+                    return;
+                }
+            }
             if (udTXFilterHigh.Focused &&
                 (udTXFilterHigh.Value - udTXFilterLow.Value) > 3000 &&
                 (console.TXFilterHigh - console.TXFilterLow) <= 3000)
@@ -8988,12 +8998,22 @@ namespace Thetis
         {
             if (initializing) return;
             if (_timerCheckingTXProfile) return;
-            if (udTXFilterLow.Value > udTXFilterHigh.Value - 100)
+            if (!console.CurrentDSPhasTwoSidebands(0, true)) // do not limit if two sidebands, like am, dsb etc
             {
-                udTXFilterLow.Value = udTXFilterHigh.Value - 100;
-                return;
+                if (udTXFilterLow.Value > udTXFilterHigh.Value - 100)
+                {
+                    udTXFilterLow.Value = udTXFilterHigh.Value - 100;
+                    return;
+                }
             }
-
+            else
+            {
+                if (udTXFilterLow.Value < 10)
+                {
+                    udTXFilterLow.Value = 10;
+                    return;
+                }
+            }
             if (udTXFilterLow.Focused &&
                 (udTXFilterHigh.Value - udTXFilterLow.Value) > 3000 &&
                 (console.TXFilterHigh - console.TXFilterLow) <= 3000)
@@ -16149,7 +16169,9 @@ namespace Thetis
             console.radio.GetDSPRX(0, 1).RXBandpassWindow = wintype;
             console.radio.GetDSPRX(1, 0).RXBandpassWindow = wintype;
 
-            Display.UpdateMNFminWidth(); //[2.10.3.4]MW0LGE
+            //Display.UpdateMNFminWidth(); //[2.10.3.4]MW0LGE
+            console.UpdateMinimumNotchWidth(1);
+            console.UpdateMinimumNotchWidth(2);
         }
 
         private void comboDSPTxWindow_SelectedIndexChanged(object sender, EventArgs e)
@@ -22011,7 +22033,10 @@ namespace Thetis
         {
             console.TCIcopyRX2VFObToVFOa = chkCopyRX2VFObToVFOa.Checked;
         }
-
+        private void chkForgetRX2VfoBVFOinfo_CheckedChanged(object sender, EventArgs e)
+        {
+            console.TCIreplaceRX2VFObToVFOa = chkForgetRX2VfoBVFOinfo.Checked;
+        }
         private void chkUseRX1vfoaForRX2vfoa_CheckedChanged(object sender, EventArgs e)
         {
             console.TCIuseRX1vfoaForRX2vfoa = chkUseRX1vfoaForRX2vfoa.Checked;
@@ -24875,6 +24900,31 @@ namespace Thetis
                 igs.FadeOnTx = chkMeterItemFadeOnTxSpacer.Checked;
                 igs.SpacerPadding = (float)nudMeterItemSpacerPadding.Value;
             }
+            else if (mt == MeterType.FILTER_DISPLAY)
+            {
+                igs.Colour = clrbtnFilterDisplay_backcolour.Color;
+                igs.FadeOnRx = chkFilterDisplay_fadeonrx.Checked;
+                igs.FadeOnTx = chkFilterDisplay_fadeontx.Checked;
+
+                igs.SetSetting<float>("filterdisplay_vertical_ratio", (float)nudFilterDisplay_vertical_ratio.Value);
+
+                if (radFilterDisplay_show_both.Checked)
+                {
+                    igs.SetSetting<bool>("filterdisplay_show_rx", true);
+                    igs.SetSetting<bool>("filterdisplay_show_tx", true);
+                }
+                else
+                {
+                    igs.SetSetting<bool>("filterdisplay_show_rx", radFilterDisplay_show_rx.Checked);
+                    igs.SetSetting<bool>("filterdisplay_show_tx", radFilterDisplay_show_tx.Checked);
+                }
+
+                igs.SetSetting<bool>("filterdisplay_show_filter_limits", chkFilterDisplay_show_limits.Checked);
+                igs.SetSetting<bool>("filterdisplay_show_fixed_rx_zoom", chkFilterDisplay_fixed_zoom.Checked);
+                igs.SetSetting<bool>("filterdisplay_show_fixed_tx_zoom", chkFilterDisplay_fixed_tx_zoom.Checked);
+                igs.SetSetting<float>("filterdisplay_rx_zoom", (float)nudFilterDisplay_fixed_zoom_level.Value);
+                igs.SetSetting<float>("filterdisplay_tx_zoom", (float)nudFilterDisplay_fixed_tx_zoom_level.Value);
+            }
             else
             {
                 igs.LowColor = Color.FromArgb(255, clrbtnMeterItemLow.Color);
@@ -24952,7 +25002,7 @@ namespace Thetis
             if (mt != MeterType.ROTATOR && mt != MeterType.SIGNAL_TEXT && mt != MeterType.VFO_DISPLAY && mt != MeterType.CLOCK && 
                 mt != MeterType.TEXT_OVERLAY && mt != MeterType.SPACER && mt != MeterType.LED &&
                 mt != MeterType.BAND_BUTTONS && mt != MeterType.MODE_BUTTONS && mt != MeterType.FILTER_BUTTONS && mt != MeterType.ANTENNA_BUTTONS &&
-                mt != MeterType.HISTORY && mt != MeterType.TUNESTEP_BUTTONS && mt != MeterType.DISCORD_BUTTONS
+                mt != MeterType.HISTORY && mt != MeterType.TUNESTEP_BUTTONS && mt != MeterType.DISCORD_BUTTONS && mt != MeterType.FILTER_DISPLAY
                 )
             {
                 switch (m.MeterVariables(mt))
@@ -25431,6 +25481,35 @@ namespace Thetis
                 chkMeterItemFadeOnTxSpacer.Checked = igs.FadeOnTx;
                 nudMeterItemSpacerPadding.Value = (decimal)igs.SpacerPadding;
             }
+            else if (mt == MeterType.FILTER_DISPLAY)
+            {
+                clrbtnFilterDisplay_backcolour.Color = igs.Colour;
+                chkFilterDisplay_fadeonrx.Checked = igs.FadeOnRx;
+                chkFilterDisplay_fadeontx.Checked = igs.FadeOnTx;
+
+                nudFilterDisplay_vertical_ratio.Value = (decimal)igs.GetSetting<float>("filterdisplay_vertical_ratio", true, 0.05f, 1f, 0.2f);
+
+                bool showrx = igs.GetSetting<bool>("filterdisplay_show_rx", false, false, false, true);
+                bool showtx = igs.GetSetting<bool>("filterdisplay_show_tx", false, false, false, false);
+                if(showrx && showtx)
+                {
+                    radFilterDisplay_show_both.Checked = true;
+                }
+                else if (showrx)
+                {
+                    radFilterDisplay_show_rx.Checked = true;
+                }
+                else if (showtx)
+                {
+                    radFilterDisplay_show_tx.Checked = true;
+                }
+
+                chkFilterDisplay_show_limits.Checked = igs.GetSetting<bool>("filterdisplay_show_filter_limits", false, false, false, true);
+                chkFilterDisplay_fixed_zoom.Checked = igs.GetSetting<bool>("filterdisplay_show_fixed_rx_zoom", false, false, false, false);
+                chkFilterDisplay_fixed_tx_zoom.Checked = igs.GetSetting<bool>("filterdisplay_show_fixed_tx_zoom", false, false, false, false);
+                nudFilterDisplay_fixed_zoom_level.Value = (decimal)igs.GetSetting<float>("filterdisplay_rx_zoom", true, 1f, 4f, 1f);
+                nudFilterDisplay_fixed_tx_zoom_level.Value = (decimal)igs.GetSetting<float>("filterdisplay_tx_zoom", true, 1f, 4f, 1f);
+            }
             else
             {
                 clrbtnMeterItemLow.Color = igs.LowColor;
@@ -25781,6 +25860,7 @@ namespace Thetis
             grpBandButtons.Visible = false;
             pnlButtonBox_antenna_toggles.Visible = false;
             grpHistoryItem.Visible = false;
+            grpMeterItemFilterDisplay.Visible = false;
 
             switch (mt)
             {
@@ -25800,6 +25880,11 @@ namespace Thetis
                     grpMeterItemSpacerSettings.Parent = grpMultiMeterHolder;
                     grpMeterItemSpacerSettings.Location = loc;
                     grpMeterItemSpacerSettings.Visible = true;
+                    break;
+                case MeterType.FILTER_DISPLAY:
+                    grpMeterItemFilterDisplay.Parent = grpMultiMeterHolder;
+                    grpMeterItemFilterDisplay.Location = loc;
+                    grpMeterItemFilterDisplay.Visible = true;
                     break;
                 case MeterType.TEXT_OVERLAY:
                     grpTextOverlay.Parent = grpMultiMeterHolder;
@@ -26071,7 +26156,8 @@ namespace Thetis
                 mt == MeterType.ANANMM || mt == MeterType.SIGNAL_TEXT ||
                 mt == MeterType.SPACER || mt == MeterType.TEXT_OVERLAY ||
                 mt == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
-                mt == MeterType.VFO_DISPLAY || mt == MeterType.CLOCK
+                mt == MeterType.VFO_DISPLAY || mt == MeterType.CLOCK ||
+                mt == MeterType.FILTER_DISPLAY
                 )
             {
                 bPaste = _itemGroupSettingsMeterType == mt;
@@ -26080,7 +26166,8 @@ namespace Thetis
                 _itemGroupSettingsMeterType == MeterType.ANANMM || _itemGroupSettingsMeterType == MeterType.SIGNAL_TEXT ||
                 _itemGroupSettingsMeterType == MeterType.SPACER || _itemGroupSettingsMeterType == MeterType.TEXT_OVERLAY ||
                 _itemGroupSettingsMeterType == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
-                _itemGroupSettingsMeterType == MeterType.VFO_DISPLAY || _itemGroupSettingsMeterType == MeterType.CLOCK
+                _itemGroupSettingsMeterType == MeterType.VFO_DISPLAY || _itemGroupSettingsMeterType == MeterType.CLOCK ||
+                _itemGroupSettingsMeterType == MeterType.FILTER_DISPLAY
                 )
             {
                 bPaste = mt == _itemGroupSettingsMeterType;
@@ -31677,6 +31764,65 @@ namespace Thetis
             {
                 e.Handled = true;
             }
+        }
+
+        private void nudFilterDisplay_vertical_ratio_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+        private void clrbtnFilterDisplay_backcolour_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+        private void radFilterDisplay_show_both_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!radFilterDisplay_show_both.Checked) return;
+            updateMeterType();
+        }
+        private void radFilterDisplay_show_rx_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!radFilterDisplay_show_rx.Checked) return;
+            updateMeterType();
+        }
+        private void radFilterDisplay_show_tx_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!radFilterDisplay_show_tx.Checked) return;
+            updateMeterType();
+        }
+        private void chkFilterDisplay_fadeonrx_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+        private void chkFilterDisplay_fadeontx_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+        private void chkFilterDisplay_show_limits_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+        private void chkFilterDisplay_fixed_zoom_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+        private void nudFilterDisplay_fixed_zoom_level_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkFilterDisplay_fixed_tx_zoom_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudFilterDisplay_fixed_tx_zoom_level_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkDiscordTimeStamp_CheckedChanged(object sender, EventArgs e)
+        {
+            ThetisBotDiscord.IncludeTimeStamp = chkDiscordTimeStamp.Checked;
         }
     }
 

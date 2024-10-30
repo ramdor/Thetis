@@ -551,6 +551,7 @@ namespace Thetis
             console.PreampModeChangedHandlers += OnPreampModeChanged;
             console.CentreFrequencyHandlers += OnCentreFrequencyChanged;
             console.CTUNChangedHandlers += OnCTUNChanged;
+            console.MinimumNotchWidthChangedHandlers += OnMinNotchWidthChanged;
         }
         public static void RemoveDelegates()
         {
@@ -560,6 +561,11 @@ namespace Thetis
             console.PreampModeChangedHandlers -= OnPreampModeChanged;
             console.CentreFrequencyHandlers -= OnCentreFrequencyChanged;
             console.CTUNChangedHandlers -= OnCTUNChanged;
+            console.MinimumNotchWidthChangedHandlers -= OnMinNotchWidthChanged;
+        }
+        private static void OnMinNotchWidthChanged(int rx, double width)
+        {
+            _mnfMinSize = width;
         }
         private static bool _rx1ClickDisplayCTUN = false;
         private static bool _rx2ClickDisplayCTUN = false;
@@ -801,7 +807,8 @@ namespace Thetis
 
                     initDisplayArrays(displayTargetWidth, displayTargetHeight);
 
-                    UpdateMNFminWidth();
+                    //UpdateMNFminWidth();
+                    _mnfMinSize = console.GetMinimumNotchWidth(1); // just for rx1
 
                     if (!_bDX2Setup)
                     {
@@ -837,16 +844,17 @@ namespace Thetis
             }
         }
 
-        public static void UpdateMNFminWidth()
-        {
-            unsafe
-            {
-                fixed (double* ptr = &_mnfMinSize)
-                {
-                    WDSP.RXANBPGetMinNotchWidth(0, ptr);
-                }
-            }
-        }
+        //public static void UpdateMNFminWidth()
+        //{
+        //    unsafe
+        //    {
+        //        fixed (double* ptr = &_mnfMinSize)
+        //        {
+        //            WDSP.RXANBPGetMinNotchWidth(0, ptr);
+        //        }
+        //    }
+        //    Debug.Print("min notch width = " + _mnfMinSize.ToString());
+        //}
 
         private static int m_nDecimation = 1;
         public static int Decimation

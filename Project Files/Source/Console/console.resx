@@ -9678,7 +9678,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>PI</value>
   </data>
   <data name="BPF1ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>158, 22</value>
   </data>
   <data name="BPF1ToolStripMenuItem.Text" xml:space="preserve">
     <value>BPF-1 @ ByPass</value>
@@ -9687,7 +9687,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>BandPass Filter #1 ByPass Mode</value>
   </data>
   <data name="BPF2ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>158, 22</value>
   </data>
   <data name="BPF2ToolStripMenuItem.Text" xml:space="preserve">
     <value>BPF-2 @ ByPass</value>
@@ -14404,7 +14404,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>128, 420</value>
   </data>
   <data name="panelVFO.Size" type="System.Drawing.Size, System.Drawing">
-    <value>130, 156</value>
+    <value>130, 168</value>
   </data>
   <data name="panelVFO.TabIndex" type="System.Int32, mscorlib">
     <value>120</value>

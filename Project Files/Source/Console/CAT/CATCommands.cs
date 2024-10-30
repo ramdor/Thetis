@@ -2799,8 +2799,8 @@ namespace Thetis
 			{
                 console.SelectRX1VarFilter();  //-W2PA Transfer focus to VAR1                                                               
 				n = Convert.ToInt32(s);
-				n = Math.Min(9999, n);
-				n = Math.Max(-9999, n);
+				n = Math.Min(10000, n);
+				n = Math.Max(-10000, n);
 				console.RX1FilterLow = n;
                 console.TitleBarEncoderString = "VFO A Filter low cut = " + n + "Hz";
 				console.UpdateRX1Filters(n, console.RX1FilterHigh);
@@ -2836,8 +2836,8 @@ namespace Thetis
 				{
                     console.SelectRX1VarFilter();  //-W2PA Transfer focus to VAR1                                                             
 					n = Convert.ToInt32(s);
-					n = Math.Min(9999, n);
-					n = Math.Max(-9999, n);
+					n = Math.Min(10000, n);
+					n = Math.Max(-10000, n);
 					console.RX1FilterHigh = n;
                     console.TitleBarEncoderString = "VFO A Filter high cut = " + n + "Hz";
 					console.UpdateRX1Filters(console.RX1FilterLow, n);
@@ -2892,8 +2892,8 @@ namespace Thetis
             if (s.Length == parser.nSet)
             {
                 n = Convert.ToInt32(s);
-                n = Math.Min(9999, n);
-                n = Math.Max(-9999, n);
+                n = Math.Min(10000, n);
+                n = Math.Max(-10000, n);
                 console.RX2FilterHigh = n;
                 console.TitleBarEncoderString = "VFO B Filter high cut = " + n + "Hz";
                 console.UpdateRX2Filters(console.RX2FilterLow, n);
@@ -2928,8 +2928,8 @@ namespace Thetis
             if (s.Length == parser.nSet)
             {
                 n = Convert.ToInt32(s);
-                n = Math.Min(9999, n);
-                n = Math.Max(-9999, n);
+                n = Math.Min(10000, n);
+                n = Math.Max(-10000, n);
                 console.RX2FilterLow = n;
                 console.TitleBarEncoderString = "VFO B Filter low cut =" + n + "Hz";
                 console.UpdateRX2Filters(n, console.RX2FilterHigh);
@@ -4792,7 +4792,7 @@ namespace Thetis
             if (s != null && s != "")
                 n = Convert.ToInt32(s);
             n = Math.Max(0, n);
-            n = Math.Min(9999, n);
+            n = Math.Min(10000, n);
 
             if (s.Length == parser.nSet)
             {
@@ -4851,7 +4851,7 @@ namespace Thetis
             if (s != null && s != "")
                 n = Convert.ToInt32(s);
             n = Math.Max(0, n);
-            n = Math.Min(9999, n);
+            n = Math.Min(10000, n);
 
             if (s.Length == parser.nSet)
             {
