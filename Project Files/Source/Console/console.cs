@@ -40587,10 +40587,12 @@ namespace Thetis
             if (bMadeAChange && !IsSetupFormNull)
             {
                 SetupForm.DSPChangeDuration = sw.ElapsedMilliseconds;
-                //Display.UpdateMNFminWidth(); //[2.10.3]MW0LGE update
-                UpdateMinimumNotchWidth(1);
-                UpdateMinimumNotchWidth(2);
             }
+
+            //always update
+            //Display.UpdateMNFminWidth(); //[2.10.3]MW0LGE update
+            UpdateMinimumNotchWidth(1);
+            UpdateMinimumNotchWidth(2);
         }
 
         private int dsp_buf_phone_rx = 64;
