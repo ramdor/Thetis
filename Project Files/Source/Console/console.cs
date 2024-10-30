@@ -6974,7 +6974,7 @@ namespace Thetis
             }
 
             //MW0LGE_21k9
-            limitFilterToSidebands(ref low, ref high, 1);
+            LimitFilterToSidebands(ref low, ref high, 1);
 
             if (rx1_dsp_mode != DSPMode.FM) //[2.10.3.4]MW0LGE bypass for FM
             {
@@ -7106,7 +7106,7 @@ namespace Thetis
             }
 
             //MW0LGE_21k9
-            limitFilterToSidebands(ref low, ref high, 2);
+            LimitFilterToSidebands(ref low, ref high, 2);
 
             if (rx1_dsp_mode != DSPMode.FM) //[2.10.3.4]MW0LGE bypass for FM
             {
@@ -33546,7 +33546,7 @@ namespace Thetis
                                 int diff = (int)(PixelToHz(e.X) - PixelToHz(whole_filter_start_x));
                                 int nLow = whole_filter_start_low + diff;
                                 int nHigh = whole_filter_start_high + diff;
-                                limitFilterToSidebands(ref nLow, ref nHigh, 1, true);
+                                LimitFilterToSidebands(ref nLow, ref nHigh, 1, true);
                                 UpdateRX1Filters(nLow, nHigh);
                             }
                             else if (rx1_sub_drag)
@@ -33622,7 +33622,7 @@ namespace Thetis
                                 int diff = (int)(PixelToHz(e.X, 2) - PixelToHz(whole_filter_start_x, 2));
                                 int nLow = whole_filter_start_low + diff;
                                 int nHigh = whole_filter_start_high + diff;
-                                limitFilterToSidebands(ref nLow, ref nHigh, 2, true);
+                                LimitFilterToSidebands(ref nLow, ref nHigh, 2, true);
                                 UpdateRX2Filters(nLow, nHigh);
                             }
                             else if (tx_high_filter_drag)
@@ -36597,10 +36597,10 @@ namespace Thetis
             if (shift != 0)
                 btnFilterShiftReset.BackColor = button_selected_color;
         }
-        private void limitFilterToSidebands(ref int nNewLow, ref int nNewHigh, int rx, bool filterShift = false)
+        public void LimitFilterToSidebands(ref int nNewLow, ref int nNewHigh, int rx, bool filterShift = false)
         {
 
-            if (!m_bLimitFiltersToSidebands) return;
+            //if (!m_bLimitFiltersToSidebands) return;
 
             DSPMode dspMode;
             if (rx == 1)
@@ -36617,7 +36617,7 @@ namespace Thetis
                 case DSPMode.LSB:
                 case DSPMode.DIGL:
                 case DSPMode.CWL:
-                    if (nNewHigh > 0)
+                    if (nNewHigh > 0 && m_bLimitFiltersToSidebands)
                     {
                         if (filterShift) nNewLow -= nNewHigh;
                         nNewHigh = 0;
@@ -36628,14 +36628,26 @@ namespace Thetis
                         nNewLow += n;
                         if (filterShift) nNewHigh += n;
                     }
+                    if (nNewHigh > max_filter_shift)
+                    {
+                        int n = nNewHigh - max_filter_shift;
+                        nNewHigh -= n;
+                        if (filterShift) nNewLow -= n;
+                    }
                     break;
                 case DSPMode.USB:
                 case DSPMode.DIGU:
                 case DSPMode.CWU:
-                    if (nNewLow < 0)
+                    if (nNewLow < 0 && m_bLimitFiltersToSidebands)
                     {
                         if (filterShift) nNewHigh += nNewLow * -1;
                         nNewLow = 0;
+                    }
+                    if (nNewLow < -max_filter_shift)
+                    {
+                        int n = -max_filter_shift - nNewLow;
+                        nNewLow += n;
+                        if (filterShift) nNewHigh += n;
                     }
                     if (nNewHigh > max_filter_shift)
                     {
@@ -36648,15 +36660,27 @@ namespace Thetis
                 case DSPMode.SAM:
                 case DSPMode.DSB:
                 case DSPMode.SPEC: //MW0LGE_21k9
-                    if (nNewLow > 0)
+                    if (nNewLow > 0 && m_bLimitFiltersToSidebands)
                     {
                         if (filterShift) nNewHigh -= nNewLow;
                         nNewLow = 0;
                     }
-                    if (nNewHigh < 0)
+                    if (nNewHigh < 0 && m_bLimitFiltersToSidebands)
                     {
                         if (filterShift) nNewLow += nNewHigh * -1;
                         nNewHigh = 0;
+                    }
+                    if (nNewLow < -max_filter_shift)
+                    {
+                        int n = -max_filter_shift - nNewLow;
+                        nNewLow += n;
+                        if (filterShift) nNewHigh += n;
+                    }
+                    if (nNewHigh > max_filter_shift)
+                    {
+                        int n = nNewHigh - max_filter_shift;
+                        nNewHigh -= n;
+                        if (filterShift) nNewLow -= n;
                     }
                     break;
                 case DSPMode.FM:
@@ -36725,7 +36749,7 @@ namespace Thetis
             // stop filter moving over 0 MW0LGE_21k9
             int nNewLow = new_center - bw / 2;
             int nNewHigh = new_center + bw / 2;
-            limitFilterToSidebands(ref nNewLow, ref nNewHigh, 1, true);
+            LimitFilterToSidebands(ref nNewLow, ref nNewHigh, 1, true);
 
             UpdateRX1Filters(nNewLow, nNewHigh);
 
@@ -36792,7 +36816,6 @@ namespace Thetis
             if (new_val < ptbFilterShift.Minimum) new_val = ptbFilterShift.Minimum;
             ptbFilterShift.Value = new_val;
         }
-
         private void btnFilterShiftReset_Click(object sender, System.EventArgs e)
         {
             int bw = (int)udFilterHigh.Value - (int)udFilterLow.Value;

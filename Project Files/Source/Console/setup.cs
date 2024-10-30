@@ -25487,7 +25487,7 @@ namespace Thetis
                 chkFilterDisplay_fadeonrx.Checked = igs.FadeOnRx;
                 chkFilterDisplay_fadeontx.Checked = igs.FadeOnTx;
 
-                nudFilterDisplay_vertical_ratio.Value = (decimal)igs.GetSetting<float>("filterdisplay_vertical_ratio", true, 0.05f, 1f, 0.2f);
+                nudFilterDisplay_vertical_ratio.Value = (decimal)igs.GetSetting<float>("filterdisplay_vertical_ratio", true, 0.15f, 1f, 0.2f);
 
                 bool showrx = igs.GetSetting<bool>("filterdisplay_show_rx", false, false, false, true);
                 bool showtx = igs.GetSetting<bool>("filterdisplay_show_tx", false, false, false, false);

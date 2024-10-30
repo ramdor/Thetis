@@ -60793,10 +60793,10 @@
             0,
             0});
             this.nudFilterDisplay_vertical_ratio.Minimum = new decimal(new int[] {
-            1,
+            15,
             0,
             0,
-            65536});
+            131072});
             this.nudFilterDisplay_vertical_ratio.Name = "nudFilterDisplay_vertical_ratio";
             this.nudFilterDisplay_vertical_ratio.Size = new System.Drawing.Size(56, 20);
             this.nudFilterDisplay_vertical_ratio.TabIndex = 132;

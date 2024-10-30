@@ -10637,7 +10637,9 @@ namespace Thetis
             private bool _top_selected;
             private bool _adjust_low;
             private bool _adjust_high;
-
+            private float _start_shift_x;
+            private float _start_low;
+            private float _start_high;
             public clsFilterItem(clsMeter owning_meter, clsItemGroup item_group)
             {
                 _owningmeter = owning_meter;
@@ -10671,6 +10673,10 @@ namespace Thetis
 
                 _adjust_low = false;
                 _adjust_high = false;
+
+                _start_shift_x = 0;
+                _start_low = 0;
+                _start_high = 0;
 
                 _tx_low = 0;
                 _tx_high = 0;
@@ -10740,6 +10746,16 @@ namespace Thetis
             {
                 _tx_low = low;
                 _tx_high = high;
+            }
+            public float StartShiftX
+            {
+                get { return _start_shift_x; }
+                set 
+                {
+                    _start_low = Low;
+                    _start_high = High;
+                    _start_shift_x = value; 
+                }
             }
             public override void FilterChanged(Filter f, string name, int low, int high, bool vfoA, bool vfoB, int max_width, int max_shift)
             {
@@ -11013,18 +11029,25 @@ namespace Thetis
                 }
                 else
                 {
-                    int shift = MouseButton == MouseButtons.Left ? mapToRange(shift_hz, _owningmeter.FilterMaxWidth) : 0;
+                    float shift = (int)shift_hz;
 
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
                         if (_owningmeter.RX == 1)
-                        {
+                        {                            
                             _console.SelectRX1VarFilter(true);
-                            _console.FilterShiftValue = shift;
+                            int low = (int)(_start_low + shift);
+                            int high = (int)(_start_high + shift);
+                            _console.LimitFilterToSidebands(ref low, ref high, _owningmeter.RX, true);
+                            _console.UpdateRX1Filters(low, high);
                         }
                         else if (_owningmeter.RX == 2)
                         {
-
+                            _console.SelectRX2VarFilter(true);
+                            int low = (int)(_start_low + shift);
+                            int high = (int)(_start_high + shift);
+                            _console.LimitFilterToSidebands(ref low, ref high, _owningmeter.RX, true);
+                            _console.UpdateRX2Filters(low, high);
                         }
                     }));
                 }
@@ -17670,7 +17693,7 @@ namespace Thetis
                                             fi.FadeOnRx = igs.FadeOnRx;
                                             fi.FadeOnTx = igs.FadeOnTx;
                                             fi.Colour = igs.Colour;
-                                            fi.Padding = igs.GetSetting<float>("filterdisplay_vertical_ratio", true, 0.05f, 1f, 0.2f);
+                                            fi.Padding = igs.GetSetting<float>("filterdisplay_vertical_ratio", true, 0.15f, 1f, 0.2f);
 
                                             fi.ShowRX = igs.GetSetting<bool>("filterdisplay_show_rx", false, false, false, true);
                                             fi.ShowTX = igs.GetSetting<bool>("filterdisplay_show_tx", false, false, false, false);
@@ -22451,7 +22474,7 @@ namespace Thetis
                 {
                     low_highlighted = isMouseNearLine(low_bot, low_top, filter.MouseMovePoint, 4);
                     high_highlighted = isMouseNearLine(high_bot, high_top, filter.MouseMovePoint, 4);
-                    top_highlighted = m.RX == 1 && !m.MOX && isMouseNearLine(top_left, top_right, filter.MouseMovePoint, 12);
+                    top_highlighted = !m.MOX && isMouseNearLine(top_left, top_right, filter.MouseMovePoint, 12);
 
                     bool selected = filter.LowSelected || filter.HighSelected || filter.TopSelected;
 
@@ -22465,6 +22488,7 @@ namespace Thetis
                     }
                     else if (!selected && top_highlighted && filter.MouseButtonDown)
                     {
+                        filter.StartShiftX = filter.MouseMovePoint.X;
                         filter.TopSelected = true;
                     }
                     else if (selected)
@@ -22492,10 +22516,18 @@ namespace Thetis
                 fontSizeEmScaled = (22f / 16f) * (rect.Width / 52f);
                 SizeF lowSize = measureString(local_low.ToString(), "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, false);
                 SizeF highSize = measureString((local_high > 0 ? "+" : "") + local_high.ToString(), "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, false);
-                bool collide_l = (xl + (lowSize.Width / 2f) >= centre - (ztw / 2f)) && (xl - (lowSize.Width / 2f) <= centre + (ztw / 2f));
-                if(filter.ShowFilterLimits) collide_l |= (xl - (lowSize.Width / 2)) <= x - zoom_diff_pixels + lowSize.Width;
-                bool collide_h = (xh + (highSize.Width / 2f) >= centre - (ztw / 2f)) && (xh - (highSize.Width / 2f) <= centre + (ztw / 2f));
-                if(filter.ShowFilterLimits) collide_h |= (xh + (highSize.Width / 2)) >= x + w + zoom_diff_pixels - highSize.Width;
+
+                int collide_l_count = 0;
+                int collide_h_count = 0;
+
+                if ((xl + (lowSize.Width / 2f) >= centre - (ztw / 2f)) && (xl - (lowSize.Width / 2f) <= centre + (ztw / 2f))) collide_l_count++; // centre text
+                if (filter.ShowFilterLimits && (xl - (lowSize.Width / 2)) <= x - zoom_diff_pixels + lowSize.Width) collide_l_count++; // limit text
+                if (filter.ShowFilterLimits && (xl + (highSize.Width / 2)) >= x + w + zoom_diff_pixels - highSize.Width) collide_l_count++;
+                if ((xl + (lowSize.Width / 2f) >= xh - (highSize.Width / 2f)) && (xl - (lowSize.Width / 2f) <= xh + (highSize.Width / 2f))) collide_l_count++;
+
+                if ( (xh + (highSize.Width / 2f) >= centre - (ztw / 2f)) && (xh - (highSize.Width / 2f) <= centre + (ztw / 2f))) collide_h_count++;
+                if (filter.ShowFilterLimits && (xh + (highSize.Width / 2)) >= x + w + zoom_diff_pixels - highSize.Width) collide_h_count++;
+                if (filter.ShowFilterLimits && (xh - (highSize.Width / 2)) <= x - zoom_diff_pixels + lowSize.Width) collide_h_count++;
 
                 // closest to which filter edge?
                 bool highlight_low_text = false;
@@ -22511,8 +22543,8 @@ namespace Thetis
                 filter.AdjustHigh = highlight_high_text;
                 //
 
-                float yoff_l = collide_l ? -zth : 0;
-                float yoff_h = collide_h ? -zth : 0;
+                float yoff_l = collide_l_count * -zth;
+                float yoff_h = collide_h_count * -zth;
                 text_y = y + h - (lowSize.Height / 2f);
                 plotText(local_low.ToString(), xl, text_y + yoff_l, rect.Width, 22f, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, highlight_low_text ? text_overlay_highlight_colour : text_overlay_colour);
                 plotText((local_high > 0 ? "+" : "") + local_high.ToString(), xh, text_y + yoff_h, rect.Width, 22f, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, highlight_high_text ? text_overlay_highlight_colour : text_overlay_colour);
@@ -22530,7 +22562,7 @@ namespace Thetis
                     }
                     else if (filter.TopSelected)
                     {
-                        float delta = filter.MouseMovePoint.X - centre;
+                        float delta = filter.MouseMovePoint.X - filter.StartShiftX;
                         filter.Shift((float)pixelsToHz(Math.Abs(delta), pixel_span, hz_span) * (delta < 0 ? -1 : 1));
                     }
                 }
