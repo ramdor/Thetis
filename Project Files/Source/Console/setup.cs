@@ -1631,6 +1631,9 @@ namespace Thetis
             if (getDict.ContainsKey("multimeter_io"))
                 _oldSettings.Add("multimeter_io");
 
+            if (getDict.ContainsKey("chkDisableHPFonPS")) // replaced by chkDisableHPFonPSb
+                _oldSettings.Add("chkDisableHPFonPS");            
+
             handleOldPAGainSettings(ref getDict);
         }
         private void removeOutdatedOptions()

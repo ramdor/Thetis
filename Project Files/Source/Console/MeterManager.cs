@@ -10695,11 +10695,11 @@ namespace Thetis
                     bool adjust = true;
                     if (_showVfoA)
                     {
-                        adjust = _owningmeter.ModeVfoA != DSPMode.FM;
+                        adjust = _owningmeter.ModeVfoA != DSPMode.FM && _owningmeter.ModeVfoA != DSPMode.SPEC;
                     }
                     else
                     {
-                        adjust = _owningmeter.ModeVfoB != DSPMode.FM;
+                        adjust = _owningmeter.ModeVfoB != DSPMode.FM && _owningmeter.ModeVfoA != DSPMode.SPEC;
                     }
 
                     if (_owningmeter.MOX)
@@ -10720,11 +10720,11 @@ namespace Thetis
                 {
                     if (_showVfoA)
                     {
-                        return !(_owningmeter.ModeVfoA == DSPMode.SPEC || _owningmeter.ModeVfoA == DSPMode.DRM);
+                        return !(_owningmeter.ModeVfoA == DSPMode.DRM);
                     }
                     else
                     {
-                        return !(_owningmeter.ModeVfoB == DSPMode.SPEC || _owningmeter.ModeVfoB == DSPMode.DRM);
+                        return !(_owningmeter.ModeVfoB == DSPMode.DRM);
                     }
                 }
             }
@@ -10734,11 +10734,11 @@ namespace Thetis
                 {
                     if (_showVfoA)
                     {
-                        return !(_owningmeter.ModeVfoA == DSPMode.CWL || _owningmeter.ModeVfoA == DSPMode.CWU || _owningmeter.ModeVfoA == DSPMode.SPEC || _owningmeter.ModeVfoA == DSPMode.DRM);
+                        return !(_owningmeter.ModeVfoA == DSPMode.CWL || _owningmeter.ModeVfoA == DSPMode.CWU || _owningmeter.ModeVfoA == DSPMode.DRM);
                     }
                     else
                     {
-                        return !(_owningmeter.ModeVfoB == DSPMode.CWL || _owningmeter.ModeVfoB == DSPMode.CWU || _owningmeter.ModeVfoB == DSPMode.SPEC || _owningmeter.ModeVfoB == DSPMode.DRM);
+                        return !(_owningmeter.ModeVfoB == DSPMode.CWL || _owningmeter.ModeVfoB == DSPMode.CWU || _owningmeter.ModeVfoB == DSPMode.DRM);
                     }
                 }
             }
@@ -11029,24 +11029,68 @@ namespace Thetis
                 }
                 else
                 {
-                    float shift = (int)shift_hz;
+                    int low = 0;
+                    int high = 0;
+
+                    if (MouseButton == MouseButtons.Left)
+                    {
+                        float shift = (int)shift_hz;
+                        low = (int)(_start_low + shift);
+                        high = (int)(_start_high + shift);
+                    }
+                    else
+                    { // reset
+                        int bw = (int)(High - Low);
+                        DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                        switch (mode)
+                        {
+                            case DSPMode.AM:
+                            case DSPMode.DSB:
+                            case DSPMode.SPEC:
+                            case DSPMode.DRM:
+                            case DSPMode.FM:
+                            case DSPMode.SAM:
+                                low = (int)-bw / 2;
+                                high = (int)bw / 2;
+                                break;
+                            case DSPMode.LSB:
+                                high = -_console.DefaultLowCut;
+                                low = high - bw;
+                                break;
+                            case DSPMode.USB:
+                                low = _console.DefaultLowCut;
+                                high = low + bw;
+                                break;
+                            case DSPMode.DIGL:
+                                high = -_console.DIGLClickTuneOffset + bw / 2;
+                                low = -_console.DIGLClickTuneOffset - bw / 2;
+                                break;
+                            case DSPMode.DIGU:
+                                low = _console.DIGUClickTuneOffset - bw / 2;
+                                high = _console.DIGUClickTuneOffset + bw / 2;
+                                break;
+                            case DSPMode.CWL:
+                                high = -_console.CWPitch + bw / 2;
+                                low = -_console.CWPitch - bw / 2;
+                                break;
+                            case DSPMode.CWU:
+                                low = _console.CWPitch - bw / 2;
+                                high = _console.CWPitch + bw / 2;
+                                break;
+                        }
+                    }
 
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
+                        _console.LimitFilterToSidebands(ref low, ref high, _owningmeter.RX, true);
                         if (_owningmeter.RX == 1)
-                        {                            
+                        {
                             _console.SelectRX1VarFilter(true);
-                            int low = (int)(_start_low + shift);
-                            int high = (int)(_start_high + shift);
-                            _console.LimitFilterToSidebands(ref low, ref high, _owningmeter.RX, true);
                             _console.UpdateRX1Filters(low, high);
                         }
                         else if (_owningmeter.RX == 2)
                         {
                             _console.SelectRX2VarFilter(true);
-                            int low = (int)(_start_low + shift);
-                            int high = (int)(_start_high + shift);
-                            _console.LimitFilterToSidebands(ref low, ref high, _owningmeter.RX, true);
                             _console.UpdateRX2Filters(low, high);
                         }
                     }));

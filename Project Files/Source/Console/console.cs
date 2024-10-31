@@ -6209,6 +6209,7 @@ namespace Thetis
                 case DSPMode.AM:
                 case DSPMode.SAM:
                 case DSPMode.FM:
+                case DSPMode.SPEC:
                     retval = (CheckValidTXFreq_Private(r, f + filterLow * 1e-6) &&
                         CheckValidTXFreq_Private(r, f + filterHigh * 1e-6));
                     break;
@@ -33417,8 +33418,8 @@ namespace Thetis
                                 break;
                         }
 
-                        bool bOkToChangeRX1 = bOverRX1 && rx1_enabled && !rx1_click_tune_drag && !rx1_spectrum_drag && (rx1_dsp_mode != DSPMode.DRM) && !(_mox && (VFOATX || (RX2Enabled && VFOSplit))); //[2.10.1.0] MW0LGE prevent highlight when MOX
-                        bool bOkToChangeRX2 = bOverRX2 && rx2_enabled && !rx2_click_tune_drag && !rx2_spectrum_drag && (rx2_dsp_mode != DSPMode.DRM) && !(_mox && RX2Enabled && VFOBTX);
+                        bool bOkToChangeRX1 = bOverRX1 && rx1_enabled && !rx1_click_tune_drag && !rx1_spectrum_drag && (rx1_dsp_mode != DSPMode.DRM && rx1_dsp_mode != DSPMode.SPEC) && !(_mox && (VFOATX || (RX2Enabled && VFOSplit))); //[2.10.1.0] MW0LGE prevent highlight when MOX
+                        bool bOkToChangeRX2 = bOverRX2 && rx2_enabled && !rx2_click_tune_drag && !rx2_spectrum_drag && (rx2_dsp_mode != DSPMode.DRM && rx2_dsp_mode != DSPMode.SPEC) && !(_mox && RX2Enabled && VFOBTX);
 
                         if (bOkToChangeRX1 || bOkToChangeRX2)
                         {
@@ -41345,6 +41346,8 @@ namespace Thetis
 
         private void toolStripMenuItemRX1FilterReset_Click(object sender, EventArgs e)
         {
+            if (rx1_dsp_mode == DSPMode.DRM || rx1_dsp_mode == DSPMode.SPEC) return;
+
             DialogResult dr = MessageBox.Show(
                 "Are you sure you want to reset all RX1 custom filter settings to the default?",
                 "Reset Filters?",
