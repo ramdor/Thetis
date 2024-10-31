@@ -31,6 +31,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] setup and other dropdown menus will show if window doesn't have focus and the menu is clicked
 - [fix] single cal retries up to 5 times if feedback levels are not suitable. Fixes issue where it would need to be clicked multiple times if tx-att was not where it needed to be
 - [fix] fixed issues when serialising an object out to a string to be stored in the database. Resolves missing memories for Diversity
+- [fix] crash in IOThreadStop() fixed in netinterface.c if moving between p1 and p2 radios without restarting thetis
 
 ## v2.10.3.6 Main New Features
 - database manager
