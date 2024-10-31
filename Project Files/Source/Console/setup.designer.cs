@@ -54639,6 +54639,7 @@
             // chkForgetRX2VfoBVFOinfo
             // 
             this.chkForgetRX2VfoBVFOinfo.AutoSize = true;
+            this.chkForgetRX2VfoBVFOinfo.Enabled = false;
             this.chkForgetRX2VfoBVFOinfo.Image = null;
             this.chkForgetRX2VfoBVFOinfo.Location = new System.Drawing.Point(243, 131);
             this.chkForgetRX2VfoBVFOinfo.Name = "chkForgetRX2VfoBVFOinfo";

@@ -22034,6 +22034,7 @@ namespace Thetis
 
         private void chkCopyRX2VFObToVFOa_CheckedChanged(object sender, EventArgs e)
         {
+            chkForgetRX2VfoBVFOinfo.Enabled = chkCopyRX2VFObToVFOa.Checked;
             console.TCIcopyRX2VFObToVFOa = chkCopyRX2VFObToVFOa.Checked;
         }
         private void chkForgetRX2VfoBVFOinfo_CheckedChanged(object sender, EventArgs e)

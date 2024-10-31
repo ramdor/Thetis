@@ -22576,7 +22576,7 @@ namespace Thetis
                 // closest to which filter edge?
                 bool highlight_low_text = false;
                 bool highlight_high_text = false;
-                if (filter.CanAdjust && filter.MouseEntered && !(filter.LowSelected || filter.HighSelected || filter.TopSelected))
+                if (filter.CanAdjust && filter.MouseEntered && !(filter.LowSelected || filter.HighSelected || filter.TopSelected || low_highlighted || high_highlighted || top_highlighted))
                 {
                     float low_dist = pointToSegmentDistance(low_bot, low_top, filter.MouseMovePoint);
                     float high_dist = pointToSegmentDistance(high_bot, high_top, filter.MouseMovePoint);

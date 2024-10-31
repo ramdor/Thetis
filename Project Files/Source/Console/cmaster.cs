@@ -401,7 +401,7 @@ namespace Thetis
 
             NetworkIO.CreateRNet();
             
-            cmaster.create_rxa();
+            //cmaster.create_rxa();
 
            // create_wb();
         }
@@ -988,37 +988,37 @@ namespace Thetis
 
         #region rxa
 
-        private static bool EXPOSE = false; 
+        //private static bool EXPOSE = false; 
         private static bool EXPOSEwb = true;
-        private const int nrxa = 8;
-        private static rxa[] rxa = new rxa[nrxa];
+        //private const int nrxa = 8;
+        //private static rxa[] rxa = new rxa[nrxa];
         private static wideband[] wideband = new wideband[3];
 
-        private static void create_rxa()
-        {
-            if (EXPOSE)
-            {
-                for (int i = 4; i < 7; i++)
-                {
-                    rxa[i] = new rxa(i);
-                    rxa[i].Show();
-                }
-            }
-        }
+        //private static void create_rxa()
+        //{
+        //    if (EXPOSE)
+        //    {
+        //        for (int i = 4; i < 7; i++)
+        //        {
+        //            rxa[i] = new rxa(i);
+        //            rxa[i].Show();
+        //        }
+        //    }
+        //}
 
-        public static void close_rxa()
-        {
-            for (int i = 4; i < 7; i++)
-            {
-                if (rxa[i] != null)
-                    rxa[i].Close();
-            }
-        }
+        //public static void close_rxa()
+        //{
+        //    for (int i = 4; i < 7; i++)
+        //    {
+        //        if (rxa[i] != null)
+        //            rxa[i].Close();
+        //    }
+        //}
 
-        public static rxa Getrxa(int rx)
-        {
-            return rxa[rx];
-        }
+        //public static rxa Getrxa(int rx)
+        //{
+        //    return rxa[rx];
+        //}
 
         #endregion
 

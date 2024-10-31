@@ -35196,8 +35196,16 @@ namespace Thetis
             double spanMHz = highMHz - lowMHz;
             double centre = lowMHz + (spanMHz / 2.0f);
 
+            int id = 0;
+            if (rx == 1)
+                id = cmaster.inid(0, 0);
+            else if (rx == 2)
+                id = cmaster.inid(0, 1);
+            else
+                return false;
+
             SpecHPSDR spec;
-            spec = specRX.GetSpecRX(rx - 1);
+            spec = specRX.GetSpecRX(id);
 
             if ((int)(spanMHz * 1e6) > spec.SampleRate)
             {

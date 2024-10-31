@@ -3651,7 +3651,9 @@ namespace Thetis
                                         //}
                                         //else
                                            // VFOFreq += deltaFreq * 0.0000010;
-                                        cmaster.Getrxa(display_id + 2).RXFreq += (long)deltaFreq;
+
+                                        //cmaster.Getrxa(display_id + 2).RXFreq += (long)deltaFreq;
+
                                         // cmaster.Getrxa(display_id + 2).RXFreq += (deltaFreq * 0.0000010);
                                         //VFOHz += (long)deltaFreq;
                                         //JanusAudio.SetVFOfreq(display_id+2, JanusAudio.Freq2PW((int)VFOHz), 0);
