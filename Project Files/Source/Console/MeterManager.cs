@@ -270,6 +270,8 @@ namespace Thetis
         //private static bool _spectrumReady;
         static MeterManager()
         {
+            //MiniRX.AddRX(0);
+
             // readings used by varius meter items such as Text Overlay
             _custom_readings = new CustomReadings[2];
             _custom_readings[0] = new CustomReadings(1);
@@ -714,7 +716,7 @@ namespace Thetis
                 {
                     try
                     {
-                        _readings_text_objects[key] = _console.PAProfile;
+                        _readings_text_objects[key] = _console.PAProfileName;
                     }
                     catch { }
                 }
@@ -2591,11 +2593,13 @@ namespace Thetis
         public static void Shutdown()
         {
             if (_image_fetcher != null)
-                _image_fetcher.Shutdown();                
+                _image_fetcher.Shutdown();
                 
             MultiMeterIO.StopConnections();
 
             removeDelegates();
+
+            //MiniRX.ShutdownAllRX();
 
             foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
             {
@@ -2685,6 +2689,8 @@ namespace Thetis
 
             _console.TXFiltersChangedHandlers += OnTXFiltersChanged;
 
+            _console.PAProfileNameChangedHandlers += OnPaProfileNameChanged;
+
             _delegatesAdded = true;
         }
         private static void removeDelegates()
@@ -2746,12 +2752,28 @@ namespace Thetis
 
             _console.TXFiltersChangedHandlers -= OnTXFiltersChanged;
 
+            _console.PAProfileNameChangedHandlers -= OnPaProfileNameChanged;
+
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
                 kvp.Value.RemoveDelegates();
             }
 
             _delegatesAdded = false;
+        }
+        private static void OnPaProfileNameChanged(string old_name, string new_name)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+
+                    m.PAProfile = new_name;
+
+                    m.PAProfileNameChanged(new_name);
+                }
+            }
         }
         private static void OnTXFiltersChanged(int low, int high)
         {
@@ -3347,6 +3369,7 @@ namespace Thetis
 
             m.TXFilterLow = _console.TXFilterLow;
             m.TXFilterHigh = _console.TXFilterHigh;
+            m.PAProfile = _console.PAProfileName;
 
             m.VfoB = _console.VFOBFreq;
 
@@ -4985,6 +5008,10 @@ namespace Thetis
 
             }
             public virtual void TXFilterChanged(int low, int high)
+            {
+
+            }
+            public virtual void PAProfileNameChanged(string name)
             {
 
             }
@@ -10631,7 +10658,6 @@ namespace Thetis
             private string _vfoB_name;
             private int _tx_low;
             private int _tx_high;
-            private string _tx_name;
             private bool _low_selected;
             private bool _high_selected;
             private bool _top_selected;
@@ -10640,6 +10666,7 @@ namespace Thetis
             private float _start_shift_x;
             private float _start_low;
             private float _start_high;
+            private string _pa_profile;
             public clsFilterItem(clsMeter owning_meter, clsItemGroup item_group)
             {
                 _owningmeter = owning_meter;
@@ -10654,7 +10681,7 @@ namespace Thetis
                 _tx_zoom = 1f;
                 _showVfoA = _owningmeter.RX == 1;
 
-                _extent_hz = 10000;
+                _extent_hz = _owningmeter.FilterMaxWidth;
                 _tx_extent_hz = 20000;
 
                 _colour = System.Drawing.Color.FromArgb(32, 32, 32);
@@ -10678,9 +10705,9 @@ namespace Thetis
                 _start_low = 0;
                 _start_high = 0;
 
-                _tx_low = 0;
-                _tx_high = 0;
-                _tx_name = "TX";
+                _tx_low = _owningmeter.TXFilterLow;
+                _tx_high = _owningmeter.TXFilterHigh;
+                _pa_profile = _owningmeter.PAProfile;
 
                 ItemType = MeterItemType.FILTER_DISPLAY;
 
@@ -10741,6 +10768,10 @@ namespace Thetis
                         return !(_owningmeter.ModeVfoB == DSPMode.CWL || _owningmeter.ModeVfoB == DSPMode.CWU || _owningmeter.ModeVfoB == DSPMode.DRM);
                     }
                 }
+            }
+            public override void PAProfileNameChanged(string name)
+            {
+                _pa_profile = name;
             }
             public override void TXFilterChanged(int low, int high)
             {
@@ -11102,7 +11133,8 @@ namespace Thetis
                 {
                     if (_owningmeter.MOX)
                     {
-                        return _tx_name;
+                        if(!string.IsNullOrEmpty(_pa_profile)) return _pa_profile;
+                        return "TX";
                     }
                     else
                     {
@@ -13582,6 +13614,7 @@ namespace Thetis
             private string _filterVfoBname;
             private int _tx_filter_low;
             private int _tx_filter_high;
+            private string _pa_profile;
             private int _filter_vfoa_low;
             private int _filter_vfoa_high;
             private int _filter_vfob_low;
@@ -16743,6 +16776,20 @@ namespace Thetis
                     }
                 }
             }
+            public void PAProfileNameChanged(string name)
+            {
+                if (_console == null) return;
+
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                    {
+                        clsMeterItem mi = mis.Value;
+
+                        mi.PAProfileNameChanged(name);
+                    }
+                }
+            }
             public void UpdateTXFilterDetails(int low, int high)
             {
                 if (_console == null) return;
@@ -19462,6 +19509,11 @@ namespace Thetis
             {
                 get { return _tx_filter_high; }
                 set { _tx_filter_high = value; }
+            }
+            public string PAProfile
+            {
+                get { return _pa_profile; }
+                set { _pa_profile = value; }
             }
             public int FilterMaxWidth
             {
@@ -22431,6 +22483,7 @@ namespace Thetis
                 if (m.MOX)
                 {
                     if (filter.FixedTXZoom) zoom = filter.TXZoom;
+                    filter_line_colour = System.Drawing.Color.Red;
                 }
                 else
                 {
@@ -22482,10 +22535,12 @@ namespace Thetis
                 pixel_span = extent_h - extent_l;
 
                 //mode text
-                plotText(filter.Mode, x, y, rect.Width, 18f, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, false, null);
+                (float mdw, float mdh) = plotText(filter.Mode, x, y, rect.Width, 18f, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, false, null);
+                float mode_text_right = x + mdw;
 
                 //filter
-                plotText(filter.FilterName, x + w, y, rect.Width, 18f, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, true, false, 0, false, 0, 0, false, null);
+                (float fnw, float fnh) = plotText(filter.FilterName, x + w, y, rect.Width, 18f, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, true, false, 0, false, 0, 0, false, null);
+                float filter_name_left = x + w - fnw;
 
                 bool filter_enabled;
                 if (m.MOX)
@@ -22549,7 +22604,10 @@ namespace Thetis
 
                 float centre_top_line = top_left.X + ((top_right.X - top_left.X) / 2f);
                 // bw text
-                plotText(Math.Abs(local_high - local_low).ToString(), centre_top_line, y + (tsl.Height / 2f), rect.Width, 18f, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, text_overlay_colour);
+                string bw = Math.Abs(local_high - local_low).ToString();
+                SizeF bws = measureString(bw, "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                bool bw_collide = (centre_top_line + (bws.Width / 2f) > filter_name_left) || (centre_top_line - (bws.Width / 2f) < mode_text_right);
+                plotText(bw, centre_top_line, y + (tsl.Height / 2f) + (bw_collide ? bws.Height : 0), rect.Width, 18f, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, text_overlay_colour);
 
                 // centre text
                 (float ztw, float zth) = plotText("0", centre, text_y + (tsl.Height / 2f), rect.Width, 18f, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, text_overlay_colour);
@@ -26509,6 +26567,7 @@ namespace Thetis
         }        
         #endregion
     }
+    #region MMIO
     public static class MultiMeterIO
     {
         private const int DELAY = 100; // msec
@@ -28558,4 +28617,398 @@ namespace Thetis
             }
         }
     }
+    #endregion
+    /*
+    #region spec
+    public static class MiniRX
+    {
+        private static Dictionary<int, clsMiniRX> _mini_rx;
+
+        static MiniRX()
+        {
+            _mini_rx = new Dictionary<int, clsMiniRX>();
+        }
+
+        public static void AddRX(int adc)
+        {
+            if(_mini_rx.ContainsKey(adc))
+            {
+                // shutdown, remove
+                _mini_rx[adc].Shutdown();
+                _mini_rx.Remove(adc);
+            }
+
+            clsMiniRX mrx = new clsMiniRX(adc);
+            _mini_rx.Add(adc, mrx);
+        }
+        public static void ShutdownRX(int adc)
+        {
+            if (!_mini_rx.ContainsKey(adc)) return;
+
+            _mini_rx[adc].Shutdown();
+            _mini_rx.Remove(adc);
+        }
+        public static void ShutdownAllRX()
+        {
+            List<int> ids = _mini_rx.Keys.ToList();
+            foreach(int i in ids)
+            {
+                ShutdownRX(i);
+            }
+        }
+
+        private class clsMiniRX
+        {
+            private int _disp_id; // firmware
+            //private int _st_id; // chanelmaster
+            //private int _ch_id; // WDSP channel id
+
+            private int _pixels;
+            private int _sample_rate;
+            private int _fft_size;
+            private int _window_type;
+            private int _frame_rate;
+            private double _tau;
+            private double _kaiser_pi;
+            private int _data_type;
+            private double _z_factor;
+            private double _p_slider;
+            private double _freq_offset;
+            private int _low_freq;
+            private int _high_freq;
+            private double _frequency;
+
+            private float[] new_display_data;
+            private bool _display_running;
+            private Thread _display_thread;
+            private bool _pause_display;
+
+            public clsMiniRX(int adc)
+            {
+                _disp_id = adc + 16;
+                //_st_id = _disp_id - 2;
+                //_ch_id = _st_id * 2;
+
+                _pixels = 300;
+                _sample_rate = 192000;
+                _fft_size = 4096;
+                _window_type = 6;
+                _frame_rate = 32;
+                _tau = 0.120;
+                _kaiser_pi = 14.0;
+                _data_type = 1; // 1 => Complex; 0 => Real
+                _z_factor = 0.5; // range is 0.0 to 1.0
+                _p_slider = 0.5; // range is 0.0 to 1.0
+                _freq_offset = 0.0;
+
+                new_display_data = new float[_pixels];
+                for (int n = 0; n < _pixels; n++)
+                {
+                    new_display_data[n] = -200.0f;
+                }
+
+                //NetworkIO.SetDDCRate(_disp_id, 48000);
+                //NetworkIO.EnableRx(_disp_id, 1); // enable rx
+
+                //cmaster.SetXcmInrate(_st_id, 48000); // channelmaster sample rate
+                //cmaster.SetRunPanadapter(_st_id, true); // turn panadapator computation
+
+                //WDSP.SetChannelState(_ch_id + 0, 1, 0); // main rcvr on
+                //WDSP.SetChannelState(_ch_id + 1, 0, 0); // sub-rcvr off
+
+                int success = 0;
+                SpecHPSDRDLL.XCreateAnalyzer(_disp_id, ref success, 262144, 1, 1, "");
+
+                initAnalyzer();
+
+                Frequency = 0.909;
+
+                //WDSP.OpenChannel(
+                //    _disp_id,                         // channel number
+                //    getbuffsize(_sample_rate),             // input buffer size
+                //    4096,                               // dsp buffer size
+                //    getbuffsize(_sample_rate),             // input sample rate
+                //    48000,                              // dsp sample rate
+                //    getbuffsize(_sample_rate),            // output sample rate
+                //    0,                                  // channel type
+                //    0,                                  // initial state
+                //    0.010,                              // tdelayup
+                //    0.025,                              // tslewup
+                //    0.000,                              // tdelaydown
+                //    0.010,                              // tslewdown
+                //    1);									// block until output available
+
+                //WDSP.SetChannelState(_disp_id, 1, 0);
+
+                _pause_display = false;
+                _display_running = true;
+                _display_thread = new Thread(new ThreadStart(runDisplay))
+                {
+                    Name = "MiniRX Display Thread",
+                    Priority = ThreadPriority.Lowest,
+                    IsBackground = true
+                };
+                _display_thread.Start();
+            }
+            private int getbuffsize(int rate)
+            {
+                const int base_rate = 48000;
+                const int base_size = 64;
+                return base_size * rate / base_rate;
+            }
+            private void runDisplay()
+            {
+                while (_display_running)
+                {
+                    if (!_pause_display)
+                    {
+                        int flag = 0;
+
+                        unsafe
+                        {
+                            fixed (float* ptr = &new_display_data[0])
+                                SpecHPSDRDLL.GetPixels(_disp_id, 0, ptr, ref flag);
+                        }
+
+                        if(flag == 1)
+                        {
+                            Debug.Print("moo");
+                        }
+                    }
+
+                    Thread.Sleep(1000 / _frame_rate);
+                }
+            }
+            public void Shutdown()
+            {
+                _display_running = false;
+                if (_display_thread != null && _display_thread.IsAlive) _display_thread.Join((1000 / _frame_rate) + 100);
+
+                //WDSP.SetChannelState(_disp_id, 0, 1);
+
+                //WDSP.SetChannelState(_ch_id + 0, 0, 0); // main rcvr off
+                //WDSP.SetChannelState(_ch_id + 1, 0, 0); // sub-rcvr off
+
+                //cmaster.SetRunPanadapter(_st_id, false);
+            }
+            public double Frequency
+            {
+                get { return _frequency; }
+                set
+                {
+                    _frequency = value;
+                    NetworkIO.SetVFOfreq(_disp_id, NetworkIO.Freq2PW((int)(1000000.0 * (double)_frequency)), 0);
+                }
+            }
+            public int Pixels                               // display code must set the number of pixel values it needs
+            {
+                get { return _pixels; }
+                set
+                {
+                    _pause_display = true;
+                    _pixels = value;
+                    new_display_data = new float[_pixels];
+                    for (int n = 0; n < _pixels; n++)
+                    {
+                        new_display_data[n] = -200.0f;
+                    }
+                    initAnalyzer();
+                    _pause_display = false;
+                }
+            }
+            public int SampleRate                           // set from incoming sample rate selection for this receiver
+            {
+                get { return _sample_rate; }
+                set
+                {
+                    _sample_rate = value;
+                    initAnalyzer();
+                }
+            }            
+            public int FFTSize
+            {
+                get { return _fft_size; }
+                set
+                {
+                    _fft_size = value;
+                    initAnalyzer();
+                }
+            }            
+            public int WindowType                           // set from Window Type control
+            {
+                get { return _window_type; }
+                set
+                {
+                    _window_type = value;
+                    initAnalyzer();
+                }
+            }            
+            public int FrameRate                            // set from Frame Rate control
+            {
+                get { return _frame_rate; }
+                set
+                {
+                    _frame_rate = value;
+                    initAnalyzer();
+                }
+            }
+            public double AvTau                             // set from Averaging Time Constant control
+            {
+                get { return _tau; }
+                set
+                {
+                    _tau = value;
+                    initAnalyzer();
+                }
+            }
+            public double KaiserPi                          // set from Kaiser PiAlpha control
+            {
+                get { return _kaiser_pi; }
+                set
+                {
+                    _kaiser_pi = value;
+                    initAnalyzer();
+                }
+            }
+            public int DataType                             // initialized depending upon the use of this display
+            {
+                get { return _data_type; }
+                set
+                {
+                    _data_type = value;
+                    initAnalyzer();
+                }
+            }            
+            public double ZoomFactor                        // set by Zoom Slider position
+            {
+                get { return _z_factor; }
+                set
+                {
+                    if (value > 1.0) value = 1.0;
+                    if (value < 0.05) value = 0.05;
+
+                    _z_factor = value;
+                    initAnalyzer();
+                }
+            }            
+            public double PanSlider                         // set by Pan Slider position
+            {
+                get { return _p_slider; }
+                set
+                {
+                    _p_slider = value;
+                    initAnalyzer();
+                }
+            }
+            public double FreqOffset                        // set to 12000.0 for DRM mode
+            {
+                get { return _freq_offset; }
+                set
+                {
+                    _freq_offset = value;
+                    initAnalyzer();
+                }
+            }
+            public int LowFreq                              // get the lowest freq that's being displayed (relative to center = 0)
+            {
+                get { return _low_freq; }
+                //set { _low_freq = value; }
+            }
+            public int HighFreq                             // get the highest freq that's being displayed (relative to center = 0)
+            {
+                get { return _high_freq; }
+                //set { _high_freq = value; }
+            }
+            public void initAnalyzer()
+            {
+                const double KEEP_TIME = 0.1;
+
+                // no spur elimination => only one spur_elim_fft and it's spectrum is not flipped
+                int[] flip = { 0 };
+                GCHandle handle = GCHandle.Alloc(flip, GCHandleType.Pinned);
+                IntPtr h_flip = handle.AddrOfPinnedObject();
+
+                //compute multiplier for weighted averaging
+                double avb = Math.Exp(-1.0 / (_frame_rate * _tau));
+
+                int overlap = 0, clip = 0, span_clip_l = 0, span_clip_h = 0, max_w = 0;
+                switch (_data_type)
+                {
+                    case 0: // real samples
+
+                        break;
+                    case 1: // complex samples
+                            // fraction of the spectrum to clip off each side of each sub-span
+                        const double CLIP_FRACTION = 0.017;
+
+                        // set overlap as needed to achieve the desired frame_rate
+                        overlap = (int)Math.Max(0.0, Math.Ceiling(_fft_size - (double)_sample_rate / (double)_frame_rate));
+
+                        // clip is the number of bins to clip off each side of each sub-span
+                        clip = (int)Math.Floor(CLIP_FRACTION * _fft_size);
+
+                        // the amount of frequency in each fft bin (for complex samples) is given by:
+                        double bin_width = (double)_sample_rate / (double)_fft_size;
+
+                        // the number of useable bins
+                        int bins = _fft_size - 2 * clip;
+
+                        // the amount of useable bandwidth we get is:
+                        double bw = bins * bin_width;
+
+                        // apply log function to zoom slider value
+                        double zoom_slider = Math.Log10(9.0 * _z_factor + 1.0);
+
+                        // limits how much you can zoom in; higher value means you zoom more
+                        const double zoom_limit = 100.0;
+
+                        // width = number of bins to use AFTER zooming
+                        int width = (int)(bins * (1.0 - (1.0 - 1.0 / zoom_limit) * zoom_slider));
+
+                        // FSCLIPL is 0 if pan_slider is 0; it's bins-width if pan_slider is 1
+                        // FSCLIPH is bins-width if pan_slider is 0; it's 0 if pan_slider is 1
+                        span_clip_l = (int)Math.Floor(_p_slider * (bins - width));
+                        span_clip_h = bins - width - span_clip_l;
+
+                        // apply any desired frequency offset
+                        int bin_offset = (int)(_freq_offset / bin_width);
+                        if ((span_clip_h -= bin_offset) < 0) span_clip_h = 0;
+                        span_clip_l = bins - width - span_clip_h;
+
+                        // the low and high frequencies that are being displayed:
+                        _low_freq = -(int)(0.5 * bw - (double)span_clip_l * bin_width + bin_width / 2.0);
+                        _high_freq = +(int)(0.5 * bw - (double)span_clip_h * bin_width - bin_width / 2.0);
+                        // Note that the bin_width/2.0 factors are included because the complex FFT has one more negative output bin
+                        // than positive output bin.
+
+                        // samples to keep for future display
+                        max_w = _fft_size + (int)Math.Min(KEEP_TIME * _sample_rate, KEEP_TIME * _fft_size * _frame_rate);
+                        break;
+                }
+
+                SpecHPSDRDLL.SetAnalyzer(_disp_id,                    // id of this display unit
+                            1,                                      // number of outputs for this display
+                            1,                                      // spur elimination FFTs:  not used for simple console display
+                            _data_type,                              // 0 for real data, 1 for complex data
+                            h_flip,                                 // no spur elimination:  only one spur_elim_fft and it's spectrum is not flipped
+                            _fft_size,                               // fft size
+                            cmaster.GetBuffSize(_sample_rate),       // input buffer size
+                            _window_type,                            // window function type
+                            _kaiser_pi,                              // piAlpha value for Kaiser window choice
+                            overlap,                                // number of samples by which to overlap successive frames
+                            clip,                                   // number of bins to clip from EACH side
+                            span_clip_l,                            // number of additional bins to clip from LOW side
+                            span_clip_h,                            // number of additional bins to clip from HIGH side
+                            _pixels,                                 // number of pixels to output
+                            1,                                      // stitches:  no display stitching used
+                            0,                                      // calibration_data_set:  not using calibration
+                            0.0,                                    // span_min_freq:  not using calibration
+                            0.0,                                    // span_max_freq:  not using calibration
+                            max_w);                                 // samples to keep for future display
+
+            }
+        }
+    }
+    #endregion
+    */
 }

@@ -22469,7 +22469,7 @@ namespace Thetis
                 updateMaxPower(p);
                 updateDriveLabels(p);
 
-                console.PAProfile = p.ProfileName;
+                console.PAProfileName = p.ProfileName;
 
                 if(p.ProfileName != _old_pa_profile_name)
                 {
