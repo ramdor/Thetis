@@ -21229,6 +21229,12 @@ namespace Thetis
             //            
             private int drawMeters(out int height)
             {
+#if !DEBUG
+#if !ALLOW_RELEASE
+                height = 0;
+                return int.MaxValue;
+#endif
+#endif
                 int nRedrawDelay = int.MaxValue;
                 clsMeter m = _meter;
 
@@ -21244,11 +21250,9 @@ namespace Thetis
                         if (nTmp < nRedrawDelay) nRedrawDelay = nTmp;
 
                         List<clsMeterItem> additionalDraws = new List<clsMeterItem>();
-                        //foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
+                        
                         foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
-                        {
-                            //clsMeterItem mi = mikvp.Value;
-
+                        {                          
                             bool bRender = ((m.MOX && mi.OnlyWhenTX) || (!m.MOX && mi.OnlyWhenRX)) || (!mi.OnlyWhenTX && !mi.OnlyWhenRX);
 
                             if (bRender && ((m.DisplayGroup == 0 || mi.DisplayGroup == 0) || (mi.DisplayGroup == m.DisplayGroup)))
@@ -21265,7 +21269,6 @@ namespace Thetis
 
                                     float w = rect.Width * (mi.Size.Width / m.XRatio);
 
-                                    //bb.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
                                     float padY = ((m.PadY - (m.Height * 0.75f)) * w);
                                     int hh = (int)Math.Ceiling((y + h + padY)) + 1; // 1 extra
                                     if (hh > height) height = hh;
@@ -22621,8 +22624,8 @@ namespace Thetis
                 bool top_highlighted = false;
                 if (filter.MouseEntered && filter.CanAdjust)
                 {
-                    low_highlighted = isMouseNearLine(low_bot, low_top, filter.MouseMovePoint, 4);
-                    high_highlighted = isMouseNearLine(high_bot, high_top, filter.MouseMovePoint, 4);
+                    low_highlighted = isMouseNearLine(low_bot, low_top, filter.MouseMovePoint, 6);
+                    high_highlighted = isMouseNearLine(high_bot, high_top, filter.MouseMovePoint, 6);
                     top_highlighted = !m.MOX && isMouseNearLine(top_left, top_right, filter.MouseMovePoint, 12);
 
                     bool selected = filter.LowSelected || filter.HighSelected || filter.TopSelected;
@@ -26615,7 +26618,7 @@ namespace Thetis
                 }
             }            
         }        
-        #endregion
+#endregion
     }
     #region MMIO
     public static class MultiMeterIO
@@ -28773,22 +28776,22 @@ namespace Thetis
 
                 Frequency = 0.909;
 
-                //WDSP.OpenChannel(
-                //    _disp_id,                         // channel number
-                //    getbuffsize(_sample_rate),             // input buffer size
-                //    4096,                               // dsp buffer size
-                //    getbuffsize(_sample_rate),             // input sample rate
-                //    48000,                              // dsp sample rate
-                //    getbuffsize(_sample_rate),            // output sample rate
-                //    0,                                  // channel type
-                //    0,                                  // initial state
-                //    0.010,                              // tdelayup
-                //    0.025,                              // tslewup
-                //    0.000,                              // tdelaydown
-                //    0.010,                              // tslewdown
-                //    1);									// block until output available
+                WDSP.OpenChannel(
+                    _disp_id,                         // channel number
+                    getbuffsize(_sample_rate),             // input buffer size
+                    4096,                               // dsp buffer size
+                    getbuffsize(_sample_rate),             // input sample rate
+                    48000,                              // dsp sample rate
+                    getbuffsize(_sample_rate),            // output sample rate
+                    0,                                  // channel type
+                    0,                                  // initial state
+                    0.010,                              // tdelayup
+                    0.025,                              // tslewup
+                    0.000,                              // tdelaydown
+                    0.010,                              // tslewdown
+                    1);									// block until output available
 
-                //WDSP.SetChannelState(_disp_id, 1, 0);
+                WDSP.SetChannelState(_disp_id, 1, 0);
 
                 _pause_display = false;
                 _display_running = true;

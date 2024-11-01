@@ -3152,6 +3152,11 @@ namespace Thetis
 
         public static void RenderDX2D()
         {
+#if !DEBUG
+#if !ALLOW_RELEASE
+            return;
+#endif
+#endif
             try
             {
                 lock (_objDX2Lock)
