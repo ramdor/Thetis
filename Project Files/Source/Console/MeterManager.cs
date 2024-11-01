@@ -270,7 +270,7 @@ namespace Thetis
         //private static bool _spectrumReady;
         static MeterManager()
         {
-            //MiniRX.AddRX(0);
+            //MiniRX.AddRX(4);
 
             // readings used by varius meter items such as Text Overlay
             _custom_readings = new CustomReadings[2];
@@ -21229,12 +21229,6 @@ namespace Thetis
             //            
             private int drawMeters(out int height)
             {
-#if !DEBUG
-#if !ALLOW_RELEASE
-                height = 0;
-                return int.MaxValue;
-#endif
-#endif
                 int nRedrawDelay = int.MaxValue;
                 clsMeter m = _meter;
 
@@ -28682,17 +28676,17 @@ namespace Thetis
             _mini_rx = new Dictionary<int, clsMiniRX>();
         }
 
-        public static void AddRX(int adc)
+        public static void AddRX(int ddc)
         {
-            if(_mini_rx.ContainsKey(adc))
+            if(_mini_rx.ContainsKey(ddc))
             {
                 // shutdown, remove
-                _mini_rx[adc].Shutdown();
-                _mini_rx.Remove(adc);
+                _mini_rx[ddc].Shutdown();
+                _mini_rx.Remove(ddc);
             }
 
-            clsMiniRX mrx = new clsMiniRX(adc);
-            _mini_rx.Add(adc, mrx);
+            clsMiniRX mrx = new clsMiniRX(ddc);
+            _mini_rx.Add(ddc, mrx);
         }
         public static void ShutdownRX(int adc)
         {
@@ -28713,8 +28707,8 @@ namespace Thetis
         private class clsMiniRX
         {
             private int _disp_id; // firmware
-            //private int _st_id; // chanelmaster
-            //private int _ch_id; // WDSP channel id
+            private int _st_id; // chanelmaster
+            private int _ch_id; // WDSP channel id
 
             private int _pixels;
             private int _sample_rate;
@@ -28736,11 +28730,11 @@ namespace Thetis
             private Thread _display_thread;
             private bool _pause_display;
 
-            public clsMiniRX(int adc)
+            public clsMiniRX(int ddc)
             {
-                _disp_id = adc + 16;
-                //_st_id = _disp_id - 2;
-                //_ch_id = _st_id * 2;
+                _disp_id = ddc;
+                _st_id = ddc;//_disp_id - 2;
+                _ch_id = ddc;//_st_id * 2;
 
                 _pixels = 300;
                 _sample_rate = 192000;
@@ -28760,38 +28754,23 @@ namespace Thetis
                     new_display_data[n] = -200.0f;
                 }
 
-                //NetworkIO.SetDDCRate(_disp_id, 48000);
-                //NetworkIO.EnableRx(_disp_id, 1); // enable rx
+                NetworkIO.EnableRx(_disp_id, 1); // enable rx
+                NetworkIO.SetDDCRate(_disp_id, _sample_rate);
 
-                //cmaster.SetXcmInrate(_st_id, 48000); // channelmaster sample rate
-                //cmaster.SetRunPanadapter(_st_id, true); // turn panadapator computation
+                cmaster.SetXcmInrate(_st_id, _sample_rate); // channelmaster sample rate
+                cmaster.SetRunPanadapter(_st_id, true); // turn panadapator computation
 
-                //WDSP.SetChannelState(_ch_id + 0, 1, 0); // main rcvr on
-                //WDSP.SetChannelState(_ch_id + 1, 0, 0); // sub-rcvr off
+                WDSP.SetChannelState(_ch_id + 0, 1, 0); // main rcvr on
+                WDSP.SetChannelState(_ch_id + 1, 0, 0); // sub-rcvr off
 
-                int success = 0;
-                SpecHPSDRDLL.XCreateAnalyzer(_disp_id, ref success, 262144, 1, 1, "");
+                WDSP.SetRXAAGCTop(_ch_id, -80f); // -120 to 20
+                WDSP.SetRXABandpassFreqs(_ch_id, -3100.0, -200.0);
+                WDSP.RXANBPSetFreqs(_ch_id, -3100.0, -200.0);
+                WDSP.SetRXASNBAOutputBandwidth(_ch_id, -3100.0, -200.0);
 
                 initAnalyzer();
 
                 Frequency = 0.909;
-
-                WDSP.OpenChannel(
-                    _disp_id,                         // channel number
-                    getbuffsize(_sample_rate),             // input buffer size
-                    4096,                               // dsp buffer size
-                    getbuffsize(_sample_rate),             // input sample rate
-                    48000,                              // dsp sample rate
-                    getbuffsize(_sample_rate),            // output sample rate
-                    0,                                  // channel type
-                    0,                                  // initial state
-                    0.010,                              // tdelayup
-                    0.025,                              // tslewup
-                    0.000,                              // tdelaydown
-                    0.010,                              // tslewdown
-                    1);									// block until output available
-
-                WDSP.SetChannelState(_disp_id, 1, 0);
 
                 _pause_display = false;
                 _display_running = true;
@@ -28837,12 +28816,10 @@ namespace Thetis
                 _display_running = false;
                 if (_display_thread != null && _display_thread.IsAlive) _display_thread.Join((1000 / _frame_rate) + 100);
 
-                //WDSP.SetChannelState(_disp_id, 0, 1);
+                WDSP.SetChannelState(_ch_id + 0, 0, 0); // main rcvr off
+                WDSP.SetChannelState(_ch_id + 1, 0, 0); // sub-rcvr off
 
-                //WDSP.SetChannelState(_ch_id + 0, 0, 0); // main rcvr off
-                //WDSP.SetChannelState(_ch_id + 1, 0, 0); // sub-rcvr off
-
-                //cmaster.SetRunPanadapter(_st_id, false);
+                cmaster.SetRunPanadapter(_st_id, false);
             }
             public double Frequency
             {
@@ -28976,92 +28953,127 @@ namespace Thetis
             {
                 const double KEEP_TIME = 0.1;
 
-                // no spur elimination => only one spur_elim_fft and it's spectrum is not flipped
+                //no spur elimination => only one spur_elim_fft and it's spectrum is not flipped
                 int[] flip = { 0 };
                 GCHandle handle = GCHandle.Alloc(flip, GCHandleType.Pinned);
                 IntPtr h_flip = handle.AddrOfPinnedObject();
+                //PinnedObject<FlipStruct> h_flip = new PinnedObject<FlipStruct>();
+                //FlipStruct fs = new FlipStruct();
+                //fs.flip = new int[] { 0 };
+                //h_flip.ManangedObject = fs;
 
-                //compute multiplier for weighted averaging
-                double avb = Math.Exp(-1.0 / (_frame_rate * _tau));
+                int low = 0;
+                int high = 0;
+                double bw_per_subspan = 0.0;
+                int max_w = 0;
+                double span_min_freq = 0.0;
+                double span_max_freq = 0.0;
+                int calibration_data_set = 0;
+                int clip = 0;
+                int overlap = 30000;
+                int stitches = 1;
+                double span_clip_l = 0;
+                double span_clip_h = 0;
+                int blocksize = getbuffsize(_sample_rate);
+                int spur_eliminationtion_ffts = 1;
 
-                int overlap = 0, clip = 0, span_clip_l = 0, span_clip_h = 0, max_w = 0;
                 switch (_data_type)
                 {
-                    case 0: // real samples
+                    case 0:     //real fft - in case we want to use for wideband data in the future
+                        {
 
-                        break;
-                    case 1: // complex samples
-                            // fraction of the spectrum to clip off each side of each sub-span
-                        const double CLIP_FRACTION = 0.017;
+                            break;
+                        }
+                    case 1:     //complex fft
+                        {
+                            //fraction of the spectrum to clip off each side of each sub-span
+                            const double CLIP_FRACTION = 0.04;
 
-                        // set overlap as needed to achieve the desired frame_rate
-                        overlap = (int)Math.Max(0.0, Math.Ceiling(_fft_size - (double)_sample_rate / (double)_frame_rate));
+                            //set overlap as needed to achieve the desired frame_rate
+                            overlap = (int)Math.Max(0.0, Math.Ceiling(_fft_size - (double)_sample_rate / (double)_frame_rate));
 
-                        // clip is the number of bins to clip off each side of each sub-span
-                        clip = (int)Math.Floor(CLIP_FRACTION * _fft_size);
+                            //clip is the number of bins to clip off each side of each sub-span
+                            clip = (int)Math.Floor(CLIP_FRACTION * _fft_size);
 
-                        // the amount of frequency in each fft bin (for complex samples) is given by:
-                        double bin_width = (double)_sample_rate / (double)_fft_size;
+                            //the amount of frequency in each fft bin (for complex samples) is given by:
+                            //   this is also equal to the interval width!
+                            double bin_width = (double)_frame_rate / (double)_fft_size;
+                            double bin_width_tx = 96000.0 / (double)_fft_size;
 
-                        // the number of useable bins
-                        int bins = _fft_size - 2 * clip;
+                            //the number of useable bins per subspan is
+                            //   the '-1' is due to clipping the Nyquist bin
+                            int bins_per_subspan = _fft_size - 1 - 2 * clip;
 
-                        // the amount of useable bandwidth we get is:
-                        double bw = bins * bin_width;
+                            //the amount of useable bandwidth we get from each subspan is:
+                            //  we'd subtract '1' from 'bins_per_subspan' if we wanted the interval_width_per_subspan
+                            bw_per_subspan = bins_per_subspan * bin_width;
 
-                        // apply log function to zoom slider value
-                        double zoom_slider = Math.Log10(9.0 * _z_factor + 1.0);
+                            //the total number of bins available to display is:
+                            int bins = stitches * bins_per_subspan;
 
-                        // limits how much you can zoom in; higher value means you zoom more
-                        const double zoom_limit = 100.0;
+                            //the number of intervals among all the bins equals 'bins - 1'
+                            double intervals = (double)(bins - 1);
 
-                        // width = number of bins to use AFTER zooming
-                        int width = (int)(bins * (1.0 - (1.0 - 1.0 / zoom_limit) * zoom_slider));
+                            //apply log function to zoom slider value
+                            double zoom_slider = Math.Log10(9.0 * _z_factor + 1.0);
 
-                        // FSCLIPL is 0 if pan_slider is 0; it's bins-width if pan_slider is 1
-                        // FSCLIPH is bins-width if pan_slider is 0; it's 0 if pan_slider is 1
-                        span_clip_l = (int)Math.Floor(_p_slider * (bins - width));
-                        span_clip_h = bins - width - span_clip_l;
+                            //limits how much you can zoom in; higher value means you zoom more
+                            const double zoom_limit = 100;
 
-                        // apply any desired frequency offset
-                        int bin_offset = (int)(_freq_offset / bin_width);
-                        if ((span_clip_h -= bin_offset) < 0) span_clip_h = 0;
-                        span_clip_l = bins - width - span_clip_h;
+                            //calculate the width in intervals after applying zoom
+                            double width = intervals * (1.0 - (1.0 - 1.0 / zoom_limit) * zoom_slider);
 
-                        // the low and high frequencies that are being displayed:
-                        _low_freq = -(int)(0.5 * bw - (double)span_clip_l * bin_width + bin_width / 2.0);
-                        _high_freq = +(int)(0.5 * bw - (double)span_clip_h * bin_width - bin_width / 2.0);
-                        // Note that the bin_width/2.0 factors are included because the complex FFT has one more negative output bin
-                        // than positive output bin.
+                            //span_clip_l is 0 if pan_slider is 0; it's 'intervals - width' if pan_slider is 1
+                            //span_clip_h is 'intervals - width' if pan_slider is 0; it's 0 if pan_slider is 1
+                            span_clip_l = _p_slider * (intervals - width);
+                            span_clip_h = intervals - width - span_clip_l;
 
-                        // samples to keep for future display
-                        max_w = _fft_size + (int)Math.Min(KEEP_TIME * _sample_rate, KEEP_TIME * _fft_size * _frame_rate);
-                        break;
+                            //MW0LGE_21a
+                            //this was causing an odd warping in the spectrum when zooming fully out    
+                            //if (Display.RX1DSPMode == DSPMode.DRM)
+                            //{
+                            //    //Apply any desired frequency offset
+                            //    int bin_offset = (int)(freq_offset / bin_width);
+                            //    if ((span_clip_h -= bin_offset) < 0) span_clip_h = 0;
+                            //    span_clip_l = bins - width - span_clip_h;
+                            //}
+
+                            //As for the low and high frequencies that are being displayed:
+                            //   The Thetis grid interface is limited to integer Hertz values.
+                            low = -(int)((intervals / 2.0 - span_clip_l) * bin_width);
+                            high = +(int)((intervals / 2.0 - span_clip_h) * bin_width);
+
+                            max_w = _fft_size + (int)Math.Min(KEEP_TIME * _sample_rate, KEEP_TIME * _fft_size * _frame_rate);
+                            break;
+                        }
                 }
 
-                SpecHPSDRDLL.SetAnalyzer(_disp_id,                    // id of this display unit
-                            1,                                      // number of outputs for this display
-                            1,                                      // spur elimination FFTs:  not used for simple console display
-                            _data_type,                              // 0 for real data, 1 for complex data
-                            h_flip,                                 // no spur elimination:  only one spur_elim_fft and it's spectrum is not flipped
-                            _fft_size,                               // fft size
-                            cmaster.GetBuffSize(_sample_rate),       // input buffer size
-                            _window_type,                            // window function type
-                            _kaiser_pi,                              // piAlpha value for Kaiser window choice
-                            overlap,                                // number of samples by which to overlap successive frames
-                            clip,                                   // number of bins to clip from EACH side
-                            span_clip_l,                            // number of additional bins to clip from LOW side
-                            span_clip_h,                            // number of additional bins to clip from HIGH side
-                            _pixels,                                 // number of pixels to output
-                            1,                                      // stitches:  no display stitching used
-                            0,                                      // calibration_data_set:  not using calibration
-                            0.0,                                    // span_min_freq:  not using calibration
-                            0.0,                                    // span_max_freq:  not using calibration
-                            max_w);                                 // samples to keep for future display
+                NetworkIO.LowFreqOffset = bw_per_subspan;
+                NetworkIO.HighFreqOffset = bw_per_subspan;
 
+                SpecHPSDRDLL.SetAnalyzer(
+                            _disp_id,
+                            2,
+                            spur_eliminationtion_ffts,
+                            _data_type,
+                            h_flip,
+                            _fft_size,
+                            blocksize,
+                            _window_type,
+                            _kaiser_pi,
+                            overlap,
+                            clip,
+                            span_clip_l,
+                            span_clip_h,
+                            _pixels,
+                            stitches,
+                            calibration_data_set,
+                            span_min_freq,
+                            span_max_freq,
+                            max_w);
             }
         }
     }
-    #endregion
+    #endregion   
     */
 }

@@ -31644,9 +31644,9 @@ namespace Thetis
             if (initializing) return;
 
             txtDiscordCallsign_TextChanged(this, EventArgs.Empty);
-            if (ThetisBotDiscord.IsValidCallsign(txtDiscordCallsign.Text))
+            if (ThetisBotDiscord.IsValidCallsign(txtDiscordCallsign.Text, out string country))
             {
-                chkDiscordEnabled.Enabled = true;
+                chkDiscordEnabled.Enabled = true;                
                 ThetisBotDiscord.SetEnabled(chkDiscordEnabled.Checked);
             }
             else
@@ -31655,6 +31655,7 @@ namespace Thetis
                 chkDiscordEnabled.Enabled = false;
             }
 
+            lblDiscordCountry.Text = string.IsNullOrEmpty(country) ? "" : country;
             updateDiscordState();
         }
 
@@ -31662,7 +31663,7 @@ namespace Thetis
         {
             if (initializing) return;
             ThetisBotDiscord.SetCallsign(txtDiscordCallsign.Text);
-            if (!ThetisBotDiscord.IsValidCallsign(txtDiscordCallsign.Text))
+            if (!ThetisBotDiscord.IsValidCallsign(txtDiscordCallsign.Text, out string country))
             {
                 chkDiscordEnabled.Checked = false;
                 chkDiscordEnabled.Enabled = false;
@@ -31670,6 +31671,7 @@ namespace Thetis
             else
                 chkDiscordEnabled.Enabled = true;
 
+            lblDiscordCountry.Text = string.IsNullOrEmpty(country) ? "" : country;
             updateDiscordState();
         }
         private void updateDiscordState()

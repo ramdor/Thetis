@@ -4042,6 +4042,7 @@
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
             this.tmrLedValid = new System.Windows.Forms.Timer(this.components);
+            this.lblDiscordCountry = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -56864,6 +56865,7 @@
             // 
             // groupBoxTS48
             // 
+            this.groupBoxTS48.Controls.Add(this.lblDiscordCountry);
             this.groupBoxTS48.Controls.Add(this.chkDiscordTimeStamp);
             this.groupBoxTS48.Controls.Add(this.pbDiscordInfo_filter);
             this.groupBoxTS48.Controls.Add(this.pbDiscordInfo_ignore);
@@ -64270,6 +64272,15 @@
             this.tmrLedValid.Interval = 500;
             this.tmrLedValid.Tick += new System.EventHandler(this.tmrLedValid_Tick);
             // 
+            // lblDiscordCountry
+            // 
+            this.lblDiscordCountry.AutoSize = true;
+            this.lblDiscordCountry.Image = null;
+            this.lblDiscordCountry.Location = new System.Drawing.Point(78, 24);
+            this.lblDiscordCountry.Name = "lblDiscordCountry";
+            this.lblDiscordCountry.Size = new System.Drawing.Size(0, 13);
+            this.lblDiscordCountry.TabIndex = 43;
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -69595,5 +69606,6 @@
         private CheckBoxTS chkFilterDisplay_fixed_tx_zoom;
         private CheckBoxTS chkDiscordTimeStamp;
         private CheckBoxTS chkForgetRX2VfoBVFOinfo;
+        private LabelTS lblDiscordCountry;
     }
 }
