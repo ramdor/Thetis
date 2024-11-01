@@ -11986,16 +11986,13 @@ namespace Thetis
                 if (chkX2TR != null) chkX2TR.Checked = value;
             }
         }
-
+        private string _tx_profile = "";
         public string TXProfile
         {
-            get
-            {
-                if (comboTXProfile != null) return comboTXProfile.Text;
-                else return "";
-            }
+            get { return _tx_profile; }
             set
             {
+                string old_profile = _tx_profile;
                 switch (rx1_dsp_mode)
                 {
                     case DSPMode.DIGL:
@@ -12012,6 +12009,12 @@ namespace Thetis
                     default:
                         if (comboTXProfile != null) comboTXProfile.Text = value;
                         break;
+                }
+                _tx_profile = value;
+
+                if (old_profile != _tx_profile)
+                {
+                    TXProfileChangedHandlers?.Invoke(old_profile, _tx_profile);
                 }
             }
         }
@@ -46279,11 +46282,11 @@ namespace Thetis
 
         public delegate void TuneStepIndexChanged(int rx, int old_index, int new_index);
 
-        public delegate void PAProfileNameChanged(string old_profile_name, string new_profile_name);
-
         public delegate void MinimumNotchWidthChanged(int rx, double width);
 
         public delegate void TXFiltersChanged(int low, int high);
+        public delegate void PAProfileChanged(string old_profile_name, string new_profile_name);
+        public delegate void TXProfileChanged(string old_name, string new_name);
 
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
@@ -46361,11 +46364,13 @@ namespace Thetis
 
         public TuneStepIndexChanged TuneStepIndexChangedHandlers;
 
-        public PAProfileNameChanged PAProfileNameChangedHandlers;
+        public PAProfileChanged PAProfileChangedHandlers;
 
         public MinimumNotchWidthChanged MinimumNotchWidthChangedHandlers;
 
         public TXFiltersChanged TXFiltersChangedHandlers;
+
+        public TXProfileChanged TXProfileChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected

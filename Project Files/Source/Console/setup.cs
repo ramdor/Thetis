@@ -9308,15 +9308,22 @@ namespace Thetis
                     if (result == DialogResult.Yes)
                     {
                         btnTXProfileSave_Click(this, EventArgs.Empty);
-                        //return;
                     }
                     else if (result == DialogResult.Cancel)
+                    {
                         return;
+                    }
                 }
             }
 
-            if (loadTXProfile(comboTXProfileName.Text)) current_profile = comboTXProfileName.Text;
-            else current_profile = "";
+            if (loadTXProfile(comboTXProfileName.Text))
+            {
+                current_profile = comboTXProfileName.Text;
+            }
+            else
+            {
+                current_profile = "";
+            }
         }
 
         private void btnTXProfileSave_Click(object sender, System.EventArgs e)
@@ -22475,7 +22482,7 @@ namespace Thetis
                 {
                     if (console != null)
                     {
-                        console.PAProfileNameChangedHandlers?.Invoke(_old_pa_profile_name, p.ProfileName);
+                        console.PAProfileChangedHandlers?.Invoke(_old_pa_profile_name, p.ProfileName);
                         _old_pa_profile_name = p.ProfileName;
                     }
                 }

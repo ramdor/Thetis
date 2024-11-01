@@ -2689,7 +2689,8 @@ namespace Thetis
 
             _console.TXFiltersChangedHandlers += OnTXFiltersChanged;
 
-            _console.PAProfileNameChangedHandlers += OnPaProfileNameChanged;
+            _console.PAProfileChangedHandlers += OnPAProfileChanged;
+            _console.TXProfileChangedHandlers += OnTXProfileChanged;
 
             _delegatesAdded = true;
         }
@@ -2752,7 +2753,8 @@ namespace Thetis
 
             _console.TXFiltersChangedHandlers -= OnTXFiltersChanged;
 
-            _console.PAProfileNameChangedHandlers -= OnPaProfileNameChanged;
+            _console.PAProfileChangedHandlers -= OnPAProfileChanged;
+            _console.TXProfileChangedHandlers -= OnTXProfileChanged;
 
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
@@ -2761,7 +2763,7 @@ namespace Thetis
 
             _delegatesAdded = false;
         }
-        private static void OnPaProfileNameChanged(string old_name, string new_name)
+        private static void OnPAProfileChanged(string old_profile, string new_profile)
         {
             lock (_metersLock)
             {
@@ -2769,9 +2771,23 @@ namespace Thetis
                 {
                     clsMeter m = ms.Value;
 
-                    m.PAProfile = new_name;
+                    m.PAProfile = new_profile;
 
-                    m.PAProfileNameChanged(new_name);
+                    m.PAProfileChanged(new_profile);
+                }
+            }
+        }
+        private static void OnTXProfileChanged(string old_profile, string new_profile)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+
+                    m.PAProfile = new_profile;
+
+                    m.TXProfileChanged(new_profile);
                 }
             }
         }
@@ -3370,6 +3386,7 @@ namespace Thetis
             m.TXFilterLow = _console.TXFilterLow;
             m.TXFilterHigh = _console.TXFilterHigh;
             m.PAProfile = _console.PAProfileName;
+            m.TXProfile = _console.TXProfile;
 
             m.VfoB = _console.VFOBFreq;
 
@@ -5011,7 +5028,11 @@ namespace Thetis
             {
 
             }
-            public virtual void PAProfileNameChanged(string name)
+            public virtual void PAProfileChanged(string name)
+            {
+
+            }
+            public virtual void TXProfileChanged(string name)
             {
 
             }
@@ -10666,7 +10687,8 @@ namespace Thetis
             private float _start_shift_x;
             private float _start_low;
             private float _start_high;
-            private string _pa_profile;
+            //private string _pa_profile;
+            private string _tx_profile;
             public clsFilterItem(clsMeter owning_meter, clsItemGroup item_group)
             {
                 _owningmeter = owning_meter;
@@ -10707,7 +10729,8 @@ namespace Thetis
 
                 _tx_low = _owningmeter.TXFilterLow;
                 _tx_high = _owningmeter.TXFilterHigh;
-                _pa_profile = _owningmeter.PAProfile;
+                //_pa_profile = _owningmeter.PAProfile;
+                _tx_profile = _owningmeter.TXProfile;
 
                 ItemType = MeterItemType.FILTER_DISPLAY;
 
@@ -10769,9 +10792,13 @@ namespace Thetis
                     }
                 }
             }
-            public override void PAProfileNameChanged(string name)
+            //public override void PAProfileChanged(string name)
+            //{
+            //    _pa_profile = name;
+            //}
+            public override void TXProfileChanged(string name)
             {
-                _pa_profile = name;
+                _tx_profile = name;
             }
             public override void TXFilterChanged(int low, int high)
             {
@@ -11133,7 +11160,8 @@ namespace Thetis
                 {
                     if (_owningmeter.MOX)
                     {
-                        if(!string.IsNullOrEmpty(_pa_profile)) return _pa_profile;
+                        //if(!string.IsNullOrEmpty(_pa_profile)) return _pa_profile;
+                        if (!string.IsNullOrEmpty(_tx_profile)) return _tx_profile;
                         return "TX";
                     }
                     else
@@ -13615,6 +13643,7 @@ namespace Thetis
             private int _tx_filter_low;
             private int _tx_filter_high;
             private string _pa_profile;
+            private string _tx_profile;
             private int _filter_vfoa_low;
             private int _filter_vfoa_high;
             private int _filter_vfob_low;
@@ -16640,6 +16669,8 @@ namespace Thetis
                 _filter_max_shift = -1;
                 _tx_filter_low = 0;
                 _tx_filter_high = 0;
+                _pa_profile = "";
+                _tx_profile = "";
                 _filter_vfoa_low = 0;
                 _filter_vfoa_high = 0;
                 _filter_vfob_low = 0;
@@ -16776,7 +16807,7 @@ namespace Thetis
                     }
                 }
             }
-            public void PAProfileNameChanged(string name)
+            public void PAProfileChanged(string profile)
             {
                 if (_console == null) return;
 
@@ -16786,7 +16817,21 @@ namespace Thetis
                     {
                         clsMeterItem mi = mis.Value;
 
-                        mi.PAProfileNameChanged(name);
+                        mi.PAProfileChanged(profile);
+                    }
+                }
+            }
+            public void TXProfileChanged(string profile)
+            {
+                if (_console == null) return;
+
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                    {
+                        clsMeterItem mi = mis.Value;
+
+                        mi.TXProfileChanged(profile);
                     }
                 }
             }
@@ -19514,6 +19559,11 @@ namespace Thetis
             {
                 get { return _pa_profile; }
                 set { _pa_profile = value; }
+            }
+            public string TXProfile
+            {
+                get { return _tx_profile; }
+                set { _tx_profile = value; }
             }
             public int FilterMaxWidth
             {
