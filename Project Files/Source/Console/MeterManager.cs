@@ -3098,11 +3098,15 @@ namespace Thetis
                 {
                     clsMeter m = ms.Value;
 
-                    bool changed = (forVfoA && (m.FilterVfoA != newFilter)) || (forVfoB && (m.FilterVfoB != newFilter)) ||
-                                   m.FilterVfoAName != sName || m.FilterVfoBName != sName || oldFilter != newFilter ||
-                                   (forVfoA && (m.FilterVfoAlow != low) || (forVfoA && (m.FilterVfoAhigh != high))) ||
-                                   (forVfoB && (m.FilterVfoBlow != low) || (forVfoB && (m.FilterVfoBhigh != high))) ||
-                                   m.FilterMaxWidth != max_width || m.FilterMaxShift != max_shift;
+                    bool changed = oldFilter != newFilter || m.FilterMaxWidth != max_width || m.FilterMaxShift != max_shift;
+                    if (forVfoA)
+                    {
+                        changed |= m.FilterVfoA != newFilter || m.FilterVfoAName != sName || m.FilterVfoAlow != low || m.FilterVfoAhigh != high;
+                    }
+                    if (forVfoB)
+                    {
+                        changed |= m.FilterVfoB != newFilter || m.FilterVfoBName != sName || m.FilterVfoBlow != low || m.FilterVfoBhigh != high;
+                    }
 
                     if (changed)
                     {
@@ -3377,8 +3381,8 @@ namespace Thetis
             m.BandVfoA = _console.RX1Band;
             m.FilterVfoA = _console.RX1Filter;
             m.FilterVfoAName = getFilterName(1);// _console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
-            m.FilterVfoAlow = _console.RX1FilterLow;
-            m.FilterVfoAhigh = _console.RX1FilterHigh;
+            //m.FilterVfoAlow = _console.RX1FilterLow;
+            //m.FilterVfoAhigh = _console.RX1FilterHigh;
             m.MinRXNotchWidth = _console.GetMinimumNotchWidth(m.RX);
             m.FilterMaxWidth = _console.MaxFilterWidth;
             m.FilterMaxShift = _console.MaxFilterShift;

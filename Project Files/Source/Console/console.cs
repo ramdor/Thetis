@@ -7061,7 +7061,7 @@ namespace Thetis
         public void UpdateRX2Filters(int low, int high, bool force = false, bool from_change_event = false)
         {
             int oldLow, oldHigh;
-            if (rx2_filter == Filter.FIRST || rx2_filter == Filter.LAST || rx2_dsp_mode == DSPMode.FIRST || rx2_dsp_mode == DSPMode.LAST)
+            if (!filterAndDspModeValid(2))
             {
                 oldLow = 0;
                 oldHigh = 0;
@@ -19244,7 +19244,8 @@ namespace Thetis
                 if (value > udTXFilterHigh.Maximum) value = (int)udTXFilterHigh.Maximum;
                 tx_filter_high = value;
                 udTXFilterHigh.Value = value;
-                SetTXFilters(rx1_dsp_mode, tx_filter_low, tx_filter_high);
+                DSPMode mode = RX2Enabled && VFOBTX ? rx2_dsp_mode : rx1_dsp_mode; //[2.10.3.7]MW0LGE use the correct mode, age old bug from before 27/4/2019
+                SetTXFilters(mode, tx_filter_low, tx_filter_high);
             }
         }
 
@@ -19258,7 +19259,8 @@ namespace Thetis
                 if (value > udTXFilterLow.Maximum) value = (int)udTXFilterLow.Maximum;
                 tx_filter_low = value;
                 udTXFilterLow.Value = value;
-                SetTXFilters(rx1_dsp_mode, tx_filter_low, tx_filter_high);
+                DSPMode mode = RX2Enabled && VFOBTX ? rx2_dsp_mode : rx1_dsp_mode; //[2.10.3.7]MW0LGE use the correct mode, age old bug from before 27/4/2019
+                SetTXFilters(mode, tx_filter_low, tx_filter_high);
             }
         }
 
