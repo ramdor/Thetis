@@ -28,11 +28,13 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 	- right click notch to show popup for that notch
 	- duplex mode is used for these displays, duplex off will not be provided
 	- uses new spectrum duplication system from Warren
+- [add] right click setup menu item from the menubar will show setup instantly. To prevent all those repetitive strain injuries and to free up the doctors ! ;)
 - [change] moved release notes button from setup to the about box
 - [change] skin images are resized to button/panel/slider etc instead of relying on tile property
 - [change] button clicks are ignored in meter item button boxes that are faded
 - [change] nf_1 and nf_2 has become nf, and will read from the trx container it is in (noise floor)
 - [change] dragging the filter edges of am/sam/dsb etc will mirror the change to the other side. Shift to prevent this
+- [change] adding a notch with +MNF when in CW will place it at centre of CW filter
 - [fix] inbuilt variables that have name with _double now consider %precis=N%
 - [fix] resolved issue where redraw of console controls became very slow after 8thOct Windows update
 - [fix] button boxes filter/antenna would not save columns correctly

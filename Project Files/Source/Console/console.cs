@@ -42085,6 +42085,9 @@ namespace Thetis
             // shift into sideband
             vfoHz += notchSidebandShift(1); //MW0LGE_21k9rc4
 
+            // shift it by cwpitch if needed
+            vfoHz += GetDSPcwPitchShiftToZero(1);
+
             addNotch(vfoHz, 1);
         }
         private void ptbFMMic_Scroll(object sender, EventArgs e)
@@ -50073,25 +50076,27 @@ namespace Thetis
 
         private void setupToolStripMenuItem_MouseUp(object sender, MouseEventArgs e)
         {
-            //[2.10.3.6]MW0LGE now in submenu, however do this if shift held,
+            //[2.10.3.6]MW0LGE now in submenu, however do this if shift held, or right click,
             //because so many people moan about 1 more mouse click
-            if (Common.ShiftKeyDown)
+            if (Common.ShiftKeyDown || e.Button == MouseButtons.Right)
             {
-                if (IsSetupFormNull) return;
-                if (SetupForm.InvokeRequired)
+                if (!IsSetupFormNull)
                 {
-                    SetupForm.Invoke(new MethodInvoker(() =>
+                    if (SetupForm.InvokeRequired)
+                    {
+                        SetupForm.Invoke(new MethodInvoker(() =>
+                        {
+                            SetupForm.Show();
+                            SetupForm.Focus();
+                            SetFocusMaster(false);
+                        }));
+                    }
+                    else
                     {
                         SetupForm.Show();
                         SetupForm.Focus();
                         SetFocusMaster(false);
-                    }));
-                }
-                else
-                {
-                    SetupForm.Show();
-                    SetupForm.Focus();
-                    SetFocusMaster(false);
+                    }
                 }
             }
             else if (!setupToolStripMenuItem.DropDown.Visible) setupToolStripMenuItem.ShowDropDown();

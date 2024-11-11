@@ -224,7 +224,7 @@ namespace Thetis
         private static Console _console;
         private static bool _delegatesAdded;
         private static bool _finishedSetup;
-        //private static bool _power; //not used yet
+        private static bool _power;
         private static Dictionary<int, clsReadings> _readings;
         private static Dictionary<string, clsMeter> _meters;
         private static Dictionary<int, bool> _readingIgnore;
@@ -287,7 +287,7 @@ namespace Thetis
             _meters = new Dictionary<string, clsMeter>();
             _readingIgnore = new Dictionary<int, bool>();
 
-            //_power = false;
+            _power = false;
             _currentHPSDRmodel = HPSDRModel.HERMES;
             _alexPresent = false;
             _paPresent = false;
@@ -2407,7 +2407,7 @@ namespace Thetis
         {
             _console = c;
             _image_fetcher.Version = c.ProductVersion;
-            //_power = _console.PowerOn;
+
             _rx1VHForAbove = _console.VFOAFreq >= _console.S9Frequency;
             _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= _console.S9Frequency;
             _currentHPSDRmodel = _console.CurrentHPSDRModel;
@@ -3172,7 +3172,7 @@ namespace Thetis
             {
                 clsMeter m = ms.Value;
 
-                m.MinRXNotchWidth = width;
+                m.MinNotchWidth = width;
             }
         }
         private static void OnFilterEdgesChanged(int rx, Filter newFilter, Band band, int low, int high, string sName, int max_width, int max_shift)
@@ -3481,6 +3481,7 @@ namespace Thetis
         }
         private static void initConsoleData(clsMeter m)
         {
+            m.Power = _console.PowerOn;
             m.MOX = _console.MOX;
             m.Split = _console.VFOSplit;
             m.TXVFOb = _console.VFOBTX;
@@ -3499,7 +3500,7 @@ namespace Thetis
             m.FilterVfoAName = getFilterName(1);// _console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
             //m.FilterVfoAlow = _console.RX1FilterLow;
             //m.FilterVfoAhigh = _console.RX1FilterHigh;
-            m.MinRXNotchWidth = _console.GetMinimumNotchWidth(m.RX);
+            m.MinNotchWidth = _console.GetMinimumNotchWidth(m.RX);
             m.FilterMaxWidth = _console.MaxFilterWidth;
             m.FilterMaxShift = _console.MaxFilterShift;
 
@@ -3666,7 +3667,7 @@ namespace Thetis
         }
         private static void OnPower(bool oldPower, bool newPower)
         {
-            //_power = newPower;
+            _power = newPower;
 
             if(oldPower != newPower)
             {
@@ -5220,6 +5221,11 @@ namespace Thetis
             public virtual bool TNFActive
             {
                 get { return false; }
+                set { }
+            }
+            public virtual double MinNotchWidth
+            {
+                get { return 100; }
                 set { }
             }
         }
@@ -10928,10 +10934,13 @@ namespace Thetis
             //private string _pa_profile;
             private string _tx_profile;
             private float[] _spec_data;
+            private float[] _spec_data_raw;
             private float[] _spec_greyscale;
             private readonly object _spec_data_lock = new object();
             private float _spec_min;
             private float _spec_max;
+            private float _spec_raw_min;
+            private float _spec_raw_max;
             //private double _vfoA_freq;
             //private double _vfoB_freq;
             private int _rx_spec_grid_min;
@@ -11037,10 +11046,14 @@ namespace Thetis
                 _tx_profile = _owningmeter.TXProfile;
 
                 _spec_data = new float[MiniSpec.PIXELS];
+                _spec_data_raw = new float[MiniSpec.PIXELS];
                 _spec_greyscale = new float[MiniSpec.PIXELS];
 
                 _spec_min = -200f;
                 _spec_max = 200f;
+                _spec_raw_min = -200f;
+                _spec_raw_max = 200f;
+
                 _rx_spec_grid_min = _owningmeter.RXSpectrumGridMin;
                 _rx_spec_grid_max = _owningmeter.RXSpectrumGridMax;
                 _tx_spec_grid_min = _owningmeter.TXSpectrumGridMin;
@@ -11060,6 +11073,7 @@ namespace Thetis
                 for (int i = 0; i < _spec_data.Length; i++)
                 {
                     _spec_data[i] = -200f;
+                    _spec_data_raw[i] = -200f;
                     _spec_greyscale[i] = 0f;
                 }
 
@@ -11101,6 +11115,14 @@ namespace Thetis
             public System.Drawing.Color NotchColour { get { return _notch_colour; } set { _notch_colour = value; } }
             public System.Drawing.Color NotchHighlightColour { get { return _notchhighligh_colour; } set { _notchhighligh_colour = value; } }
 
+            public override double MinNotchWidth 
+            {
+                get { return _owningmeter.MinNotchWidth; }
+                set
+                {
+                    buildSpectrumGreyScale(true, true);
+                }
+            }
             public override bool MOX
             {
                 get { return _mox; }
@@ -11118,6 +11140,7 @@ namespace Thetis
                             for (int i = 0; i < _spec_data.Length; i++)
                             {
                                 _spec_data[i] = -200f;
+                                _spec_data_raw[i] = -200f;
                             }
                         }
                     }
@@ -11229,10 +11252,12 @@ namespace Thetis
             }
             public override void TXFilterChanged(int low, int high)
             {
+                int old_low = _tx_low;
+                int old_high = _tx_high;
                 _tx_low = low;
                 _tx_high = high;
 
-                buildSpectrumGreyScale(true, true);
+                buildSpectrumGreyScale(old_low != _tx_low, old_high != _tx_high);
             }
             public float StartShiftX
             {
@@ -11246,6 +11271,9 @@ namespace Thetis
             }
             public override void FilterChanged(Filter f, string name, int low, int high, bool vfoA, bool vfoB, int max_width, int max_shift)
             {
+                bool build_low = false;
+                bool build_high = false;
+
                 if (vfoA)
                 {
                     int old_low = _vfoA_low;
@@ -11254,7 +11282,8 @@ namespace Thetis
                     _vfoA_low = low;
                     _vfoA_high = high;
 
-                    buildSpectrumGreyScale(old_low != _vfoA_low, old_high != _vfoA_high);
+                    build_low |= old_low != _vfoA_low;
+                    build_high |= old_high != _vfoA_high;
                 }
                 if(vfoB)
                 {
@@ -11264,7 +11293,8 @@ namespace Thetis
                     _vfoB_low = low;
                     _vfoB_high = high;
 
-                    buildSpectrumGreyScale(old_low != _vfoB_low, old_high != _vfoB_high);
+                    build_low |= old_low != _vfoB_low;
+                    build_high |= old_high != _vfoB_high;
                 }
 
                 if (max_width != -1 && max_width != _extent_hz)
@@ -11272,8 +11302,11 @@ namespace Thetis
                     _extent_hz = max_width;
                     //setZoom();
 
-                    buildSpectrumGreyScale(true, true);
+                    build_low |= true;
+                    build_high |= true;
                 }
+
+                buildSpectrumGreyScale(build_low, build_high);
             }
             public override void MouseUp(MouseEventArgs e)
             {
@@ -11788,10 +11821,6 @@ namespace Thetis
                     return _showVfoA ? _owningmeter.ModeVfoA.ToString() : _owningmeter.ModeVfoB.ToString();
                 }
             }
-            public double SlopeHZ
-            {
-                get { return _owningmeter.MinRXNotchWidth; }
-            }
             public double CentreFrequencyHZ
             {
                 get
@@ -11916,7 +11945,7 @@ namespace Thetis
                 lock (_spec_data_lock)
                 {
                     float bandwidth = _owningmeter.MOX ? _tx_extent_hz * 2f : _extent_hz * 2f;
-                    float falloff_span = (float)_owningmeter.MinRXNotchWidth;
+                    float falloff_span = (float)_owningmeter.MinNotchWidth / 2f;
                     float frequency_step = bandwidth / _spec_data.Length;
 
                     int center_index = _spec_data.Length / 2;
@@ -11946,10 +11975,11 @@ namespace Thetis
                         {
                             _spec_greyscale[i] = cosineFalloff(i - high_index, falloff_steps);
                         }
-                        else
-                        {
-                            _spec_greyscale[i] = 1f;
-                        }
+                        // do no modify existing
+                        //else
+                        //{
+                        //    _spec_greyscale[i] = 1f;
+                        //}
                     }
                 }
             }
@@ -11988,10 +12018,19 @@ namespace Thetis
                                     fixed (void* rptr = &data[0])
                                     fixed (void* wptr = &_spec_data[0])
                                         Win32.memcpy(wptr, rptr, _spec_data.Length * sizeof(float));
+
+                                    float[] data_raw = MiniSpec.GetMiniRX(id).DataRaw;
+
+                                    fixed (void* rptr = &data_raw[0])
+                                    fixed (void* wptr = &_spec_data_raw[0])
+                                        Win32.memcpy(wptr, rptr, data_raw.Length * sizeof(float));
                                 }
 
                                 _spec_min = _spec_data.Min();
                                 _spec_max = _spec_data.Max();
+
+                                _spec_raw_min = _spec_data_raw.Min();
+                                _spec_raw_max = _spec_data_raw.Max();
                                 //_spec_range = _spec_max - _spec_min;                                
                             }
                         }
@@ -12017,6 +12056,16 @@ namespace Thetis
                     lock (_spec_data_lock) 
                     { 
                         return _spec_data; 
+                    }
+                }
+            }
+            public float[] SpectrumDataRaw
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        return _spec_data_raw;
                     }
                 }
             }
@@ -12047,6 +12096,26 @@ namespace Thetis
                     lock (_spec_data_lock)
                     {
                         return _spec_max;
+                    }
+                }
+            }
+            public float SpectrumDataRawMin
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        return _spec_raw_min;
+                    }
+                }
+            }
+            public float SpectrumDataRawMax
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        return _spec_raw_max;
                     }
                 }
             }
@@ -12089,14 +12158,6 @@ namespace Thetis
                     }
                 }
             }
-            public float LastMinForWaterfallAutoAgc
-            {
-                get { return _waterfall_min_agc; }
-                set
-                {
-                    _waterfall_min_agc = value;
-                }
-            }
             public int WaterfallMin
             {
                 get
@@ -12104,11 +12165,13 @@ namespace Thetis
                     lock (_spec_data_lock)
                     {
                         if (_owningmeter.MOX)
+                        {
                             return _tx_waterfall_min;
+                        }
                         else
                         {
                             int min;
-                            if(_owningmeter.RX == 1)
+                            if (_owningmeter.RX == 1)
                             {
                                 if (Display.RX1WaterfallAGC && Display.WaterfallUseNFForACGRX1)
                                     min = (int)Display.ActiveNoiseFloorRX1;
@@ -12116,7 +12179,10 @@ namespace Thetis
                                 {
                                     if (Display.RX1WaterfallAGC)
                                     {
+                                        float calc = (((_waterfall_min_agc * 8) + (_spec_raw_min * 2)) / 10) + 1;
+                                        _waterfall_min_agc = calc;
                                         min = (int)_waterfall_min_agc;
+                                        //min = (int)_waterfall_min_agc;
                                     }
                                     else
                                     {
@@ -12134,7 +12200,10 @@ namespace Thetis
                                 {
                                     if (Display.RX2WaterfallAGC)
                                     {
+                                        float calc = (((_waterfall_min_agc * 8) + (_spec_raw_min * 2)) / 10) + 1;
+                                        _waterfall_min_agc = calc;
                                         min = (int)_waterfall_min_agc;
+                                        //min = (int)_waterfall_min_agc;
                                     }
                                     else
                                     {
@@ -14659,7 +14728,7 @@ namespace Thetis
             private float _fPadY;
             private float _fHeight;
 
-            private double _min_rx_notch_width;
+            private double _min_notch_width;
 
             private bool _split;
             private double _vfoA;
@@ -17724,7 +17793,7 @@ namespace Thetis
                 _filter_vfoa_high = 0;
                 _filter_vfob_low = 0;
                 _filter_vfob_high = 0;
-                _min_rx_notch_width = 100;
+                _min_notch_width = 100;
                 _rx2Enabled = false;
                 _multiRxEnabled = false;
                 _qso_start = DateTime.Now;
@@ -20725,6 +20794,11 @@ namespace Thetis
                     }
                 }
             }
+            public bool Power
+            {
+                get { return _power; }
+                set { _power = value; }
+            }
             public bool MOX
             {
                 get { return _mox; }
@@ -20923,10 +20997,23 @@ namespace Thetis
                 get { return _filter_vfob_high; }
                 set { _filter_vfob_high = value; }
             }
-            public double MinRXNotchWidth
+            public double MinNotchWidth
             {
-                get { return _min_rx_notch_width; }
-                set { _min_rx_notch_width = value; }
+                get { return _min_notch_width; }
+                set 
+                { 
+                    _min_notch_width = value;
+
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.MinNotchWidth = _min_notch_width;
+                        }
+                    }
+                }
             }
             public bool RX2Enabled
             {
@@ -21374,6 +21461,8 @@ namespace Thetis
 
             private bool _waterfall_row_added;
 
+            private StrokeStyle _rounded_stroke_style;
+
             public DXRenderer(string sId, int rx, PictureBox target, Console c, clsMeter meter)
             {
                 if (c == null || target == null) return;
@@ -21702,7 +21791,16 @@ namespace Thetis
                     {
                         _device.DebugName = ""; // used in shutdown
                     }
-                    
+
+                    //setup a rounded stroke style to be used by items that want a smooth end to lines
+                    StrokeStyleProperties strokeStyleProps = new StrokeStyleProperties
+                    {
+                        StartCap = CapStyle.Round,
+                        EndCap = CapStyle.Round,
+                        DashCap = CapStyle.Round
+                    };
+                    _rounded_stroke_style = new StrokeStyle(_factory, strokeStyleProps);
+
                     _bDXSetup = true;
 
                     setupAliasing();
@@ -21822,6 +21920,9 @@ namespace Thetis
 
                     releaseDXFonts();
                     releaseDXResources();
+
+                    Utilities.Dispose(ref _rounded_stroke_style);
+                    _rounded_stroke_style = null;
 
                     if (_filter_display_waterfall_bmp != null)
                     {
@@ -23880,8 +23981,8 @@ namespace Thetis
                 int R = 0, G = 0, B = 0;
                 int pixel_size = 4;
                 int pixel_wdith = MiniSpec.PIXELS;
-                float low_threshold = filter.SpectrumGridMin;//filter.WaterfallMin;
-                float high_threshold = filter.SpectrumGridMax;//filter.WaterfallMax;
+                float low_threshold = filter.WaterfallMin;
+                float high_threshold = filter.WaterfallMax;
                 float[] waterfall_data = filter.SpectrumData;
                 float[] greyscale_data = filter.GreyscaleData;
                 byte[] row_rx = new byte[pixel_wdith * pixel_size];
@@ -24825,9 +24926,7 @@ namespace Thetis
                         row_tx[index + 1] = 0;
                         row_tx[index + 2] = 0;
                     }
-                }
-
-                //filter.LastMinForWaterfallAutoAgc = (((filter.LastMinForWaterfallAutoAgc * 8) + (waterfall_minimum * 2)) / 10) + 1;
+                }                
 
                 return (row_rx, row_tx);
             }
@@ -24919,7 +25018,7 @@ namespace Thetis
 
                 //slope extent edges                
                 int hz_span = filter.ExtentHZ * 2;
-                float slope_pixels = hzToPixels(filter.SlopeHZ / 2, pixel_span, hz_span);
+                float slope_pixels = hzToPixels(filter.MinNotchWidth / 2f, pixel_span, hz_span);
                 float hz_zoom_diff = (filter.ExtentHZ * zoom) - filter.ExtentHZ;
                 float zoom_diff_pixels = hzToPixels(Math.Abs(hz_zoom_diff), pixel_span, hz_span) * (hz_zoom_diff < 0 ? -1 : 1);
 
@@ -24995,7 +25094,7 @@ namespace Thetis
 
                                 SharpDX.Direct2D1.Brush line_brush = getDXBrushForColour(blended_line_colour);
 
-                                _renderTarget.DrawLine(old_pos, new_pos, line_brush, x_step);
+                                _renderTarget.DrawLine(old_pos, new_pos, line_brush, x_step, _rounded_stroke_style);
 
                                 old_pos = new_pos;
                             }
@@ -25006,34 +25105,37 @@ namespace Thetis
                         if (_filter_display_waterfall_bmp != null && _filter_display_waterfall_bmp_tx != null && (filter.DispMode == clsFilterItem.DisplayMode.WATERFALL || filter.DispMode == clsFilterItem.DisplayMode.PANAFALL))
                         {
                             //waterfall
-                            if (!_waterfall_row_added && filter.BuildWaterfallCount == 0)
+                            if (m.Power)
                             {
-                                (byte[] waterfall_row_rx, byte[] waterfall_row_tx) = buildWaterfall(filter);
+                                if (!_waterfall_row_added && filter.BuildWaterfallCount == 0)
+                                {
+                                    (byte[] waterfall_row_rx, byte[] waterfall_row_tx) = buildWaterfall(filter);
 
-                                SharpDX.Direct2D1.Bitmap top_section_rx = new SharpDX.Direct2D1.Bitmap(_renderTarget, new Size2(MiniSpec.PIXELS, MiniSpec.PIXELS - 1),
-                                    new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(_filter_display_waterfall_bmp.PixelFormat.Format, _ALPHA_MODE)));
+                                    SharpDX.Direct2D1.Bitmap top_section_rx = new SharpDX.Direct2D1.Bitmap(_renderTarget, new Size2(MiniSpec.PIXELS, MiniSpec.PIXELS - 1),
+                                        new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(_filter_display_waterfall_bmp.PixelFormat.Format, _ALPHA_MODE)));
 
-                                SharpDX.Direct2D1.Bitmap top_section_tx = new SharpDX.Direct2D1.Bitmap(_renderTarget, new Size2(MiniSpec.PIXELS, MiniSpec.PIXELS - 1),
-                                    new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(_filter_display_waterfall_bmp_tx.PixelFormat.Format, _ALPHA_MODE)));
+                                    SharpDX.Direct2D1.Bitmap top_section_tx = new SharpDX.Direct2D1.Bitmap(_renderTarget, new Size2(MiniSpec.PIXELS, MiniSpec.PIXELS - 1),
+                                        new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(_filter_display_waterfall_bmp_tx.PixelFormat.Format, _ALPHA_MODE)));
 
-                                top_section_rx.CopyFromBitmap(_filter_display_waterfall_bmp, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)top_section_rx.Size.Width, (int)top_section_rx.Size.Height));
-                                top_section_tx.CopyFromBitmap(_filter_display_waterfall_bmp_tx, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)top_section_tx.Size.Width, (int)top_section_tx.Size.Height));
+                                    top_section_rx.CopyFromBitmap(_filter_display_waterfall_bmp, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)top_section_rx.Size.Width, (int)top_section_rx.Size.Height));
+                                    top_section_tx.CopyFromBitmap(_filter_display_waterfall_bmp_tx, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)top_section_tx.Size.Width, (int)top_section_tx.Size.Height));
 
-                                _filter_display_waterfall_bmp.CopyFromMemory(waterfall_row_rx, waterfall_row_rx.Length, new SharpDX.Rectangle(0, 0, MiniSpec.PIXELS, 1));
-                                _filter_display_waterfall_bmp.CopyFromBitmap(top_section_rx, new SharpDX.Point(0, 1));
+                                    _filter_display_waterfall_bmp.CopyFromMemory(waterfall_row_rx, waterfall_row_rx.Length, new SharpDX.Rectangle(0, 0, MiniSpec.PIXELS, 1));
+                                    _filter_display_waterfall_bmp.CopyFromBitmap(top_section_rx, new SharpDX.Point(0, 1));
 
-                                _filter_display_waterfall_bmp_tx.CopyFromMemory(waterfall_row_tx, waterfall_row_tx.Length, new SharpDX.Rectangle(0, 0, MiniSpec.PIXELS, 1));
-                                _filter_display_waterfall_bmp_tx.CopyFromBitmap(top_section_tx, new SharpDX.Point(0, 1));
+                                    _filter_display_waterfall_bmp_tx.CopyFromMemory(waterfall_row_tx, waterfall_row_tx.Length, new SharpDX.Rectangle(0, 0, MiniSpec.PIXELS, 1));
+                                    _filter_display_waterfall_bmp_tx.CopyFromBitmap(top_section_tx, new SharpDX.Point(0, 1));
 
-                                Utilities.Dispose(ref top_section_rx);
-                                top_section_rx = null;
+                                    Utilities.Dispose(ref top_section_rx);
+                                    top_section_rx = null;
 
-                                Utilities.Dispose(ref top_section_tx);
-                                top_section_tx = null;
+                                    Utilities.Dispose(ref top_section_tx);
+                                    top_section_tx = null;
 
-                                _waterfall_row_added = true; // prevent other filter items in the render from updating the waterfall bitmap, this gets set to false just above the draw loop
+                                    _waterfall_row_added = true; // prevent other filter items in the render from updating the waterfall bitmap, this gets set to false just above the draw loop
+                                }
+                                filter.BuildWaterfallCount++;
                             }
-                            filter.BuildWaterfallCount++;
 
                             //render waterfall
                             float top_y = y + line_width_half + tsl.Height + (filter.DispMode == clsFilterItem.DisplayMode.PANAFALL ? spectrum_height : 0);
@@ -31384,6 +31486,7 @@ namespace Thetis
                 _console.NotifiySpectrumDetailsChangedHandlers += OnSpectrumDetailsChanged;
                 _console.CWPitchChangedHandlers += OnCWPitchChanged;
                 _console.ModeChangeHandlers += OnModeChanged;
+                _console.PowerChangeHanders += OnPowerChanged;
 
                 //get all the notches
                 lock (_notch_locker)
@@ -31546,12 +31649,25 @@ namespace Thetis
                 _console.NotifiySpectrumDetailsChangedHandlers -= OnSpectrumDetailsChanged;
                 _console.CWPitchChangedHandlers -= OnCWPitchChanged;
                 _console.ModeChangeHandlers -= OnModeChanged;
+                _console.PowerChangeHanders -= OnPowerChanged;
             }
 
             List<int> ids = _mini_spec.Keys.ToList();
             foreach(int i in ids)
             {
                 ShutdownRX(i);
+            }
+        }
+        private static void OnPowerChanged(bool old_state, bool new_state)
+        {
+            if(old_state && !new_state)
+            {
+                // turned off, clear spectrum data
+                foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec)
+                {
+                    clsMiniSpec mrx = kvp.Value;
+                    mrx.ClearData();
+                }
             }
         }
         private static void OnModeChanged(int rx, DSPMode oldMode, DSPMode newMode, Band oldBand, Band newBand)
@@ -31683,7 +31799,10 @@ namespace Thetis
             private double _frequency;
 
             private float[] _new_display_data;
+            private float[] _new_display_data_raw;
             private float[] _current_display_data;
+            private float[] _current_display_data_raw;
+
             private bool _display_running;
             private Thread _display_thread;
             private bool _pause_display;
@@ -31714,9 +31833,10 @@ namespace Thetis
                 _cw_pitch = _console.CWPitch;
 
                 _centre_freq = _rx == 1 ? _console.CentreFrequency : _console.CentreRX2Frequency;
+                _frequency = _rx == 1 ? _console.VFOAFreq : _console.VFOBFreq;
 
                 _id = id;
-                _disp = cmaster.AllocAnalyzer(0, _id, 262144); // 65536);    //262144 = max size
+                _disp = cmaster.AllocAnalyzer(0, _id, 262144); // must be pow2, 262144 = max size
 
                 _new_data_available = false;
                 _data_index = 0;
@@ -31729,11 +31849,15 @@ namespace Thetis
                 _p_slider = 0.5; // range is 0.0 to 1.0
 
                 _new_display_data = new float[_pixels];
+                _new_display_data_raw = new float[_pixels];
                 _current_display_data = new float[_pixels];
+                _current_display_data_raw = new float[_pixels];
                 for (int n = 0; n < _pixels; n++)
                 {
                     _new_display_data[n] = -200.0f;
+                    _new_display_data_raw[n] = -200.0f;
                     _current_display_data[n] = -200.0f;
+                    _current_display_data_raw[n] = -200.0f;
                 }
 
                 _spec = new SpecHPSDR(_disp);
@@ -31874,6 +31998,18 @@ namespace Thetis
                     for (int n = 0; n < _pixels; n++)
                     {
                         _new_display_data[n] = -200.0f;
+                        _new_display_data_raw[n] = -200.0f;
+                    }
+                }
+            }
+            public void ClearData()
+            {
+                lock(_data_lock)
+                {
+                    for (int i = 0; i < _current_display_data.Length; i++)
+                    {
+                        _current_display_data[i] = -200.0f;
+                        _current_display_data_raw[i] = -200.0f;
                     }
                 }
             }
@@ -31891,6 +32027,11 @@ namespace Thetis
                             {
                                 fixed (float* ptr = &_new_display_data[0])
                                     SpecHPSDRDLL.GetPixels(_disp, 0, ptr, ref flag);
+
+                                // make a copy that can be used by code that needs to ignore notches, such as waterfall minimum
+                                fixed (void* rptr = &_new_display_data[0])
+                                fixed (void* wptr = &_new_display_data_raw[0])
+                                    Win32.memcpy(wptr, rptr, _new_display_data.Length * sizeof(float));
                             }
 
                             if (flag == 1)
@@ -31997,6 +32138,10 @@ namespace Thetis
                                     fixed (void* rptr = &_new_display_data[0])
                                     fixed (void* wptr = &_current_display_data[0])
                                         Win32.memcpy(wptr, rptr, _current_display_data.Length * sizeof(float));
+
+                                    fixed (void* rptr = &_new_display_data_raw[0])
+                                    fixed (void* wptr = &_current_display_data_raw[0])
+                                        Win32.memcpy(wptr, rptr, _current_display_data.Length * sizeof(float));
                                 }
                             }
 
@@ -32007,6 +32152,16 @@ namespace Thetis
                     lock (_data_lock)
                     {
                         return _current_display_data;
+                    }
+                }
+            }
+            public float[] DataRaw
+            {
+                get
+                {
+                    lock (_data_lock)
+                    {
+                        return _current_display_data_raw;
                     }
                 }
             }
@@ -32081,11 +32236,15 @@ namespace Thetis
 
                     _pixels = value;
                     _new_display_data = new float[_pixels];
+                    _new_display_data_raw = new float[_pixels];
                     _current_display_data = new float[_pixels];
+                    _current_display_data_raw = new float[_pixels];
                     for (int n = 0; n < _pixels; n++)
                     {
                         _new_display_data[n] = -200.0f;
+                        _new_display_data_raw[n] = -200.0f;
                         _current_display_data[n] = -200.0f;
+                        _current_display_data_raw[n] = -200.0f;
                     }
                     _spec.Pixels = _pixels;
                     _pause_display = false;
