@@ -12,17 +12,28 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] new auto attenuate TX when PS is off options in Setup->Ant/Filters->Antenna
 - [add] new auto attenuate RX options in Setup->General->Options-1
 - [add] Discord integration, let others know when you are on air using the Discord button box. Get scrolling text for #general and #thetis-bot. Config in Setup->Networking->Discord
-- [add] Backup prune implemented GFS (grandfather, father son). Check to enable in the DBMan form. Tool tip explains all
+- [add] Backup prune implemented GFS (grandfather, father son). Check to enable in the DBMan form (bottom right). Tool tip explains all
 - [add] font colour added to button boxes (except for antenna box)
 - [add] click colour added to button boxes (default orange)
 - [add] warning shown in Linearity form if SetPk is different to that expected for the hardware
-- [add] include timestamp on discord messages
-- [add] filter display meter item
+- [add] added Thetis bespoke input TCI command spot_simulate_click which simulates a user clicking on a spot in the spectrum. It causes a clicked_on_spot message to go out via TCI. Example test input msg, spot_simulate_click:MW0LGE,3750000;
+- [add] added command line option, -noinstancewarn   so that no warning is shown if other instances are running. Use -help in a console window to get more info
+- [add] new filter item that will view the passband
+	- mouse wheel/click left-right when a number glows (10 steps default, ctrl single steps)
+	- drag filter edges in tx + rx
+	- drag top filter to shift in rx
+	- uses min/max spectrum grid values for waterfall
+	- can add notches with the [+mnf] button, and turn the mnf system with the [mnf] button
+	- drag notches (no notch edge drag implemented as yet)
+	- right click notch to show popup for that notch
+	- duplex mode is used for these displays, duplex off will not be provided
+	- uses new spectrum duplication system from Warren
 - [change] moved release notes button from setup to the about box
 - [change] skin images are resized to button/panel/slider etc instead of relying on tile property
-- [change] button clicks are ignored in button boxes that are faded
+- [change] button clicks are ignored in meter item button boxes that are faded
 - [change] nf_1 and nf_2 has become nf, and will read from the trx container it is in (noise floor)
-- [fix] variables that have name with _double now consider %precis=N%
+- [change] dragging the filter edges of am/sam/dsb etc will mirror the change to the other side. Shift to prevent this
+- [fix] inbuilt variables that have name with _double now consider %precis=N%
 - [fix] resolved issue where redraw of console controls became very slow after 8thOct Windows update
 - [fix] button boxes filter/antenna would not save columns correctly
 - [fix] fade on rx and fade on tx fixed for button boxes
@@ -34,6 +45,11 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] fixed issues when serialising an object out to a string to be stored in the database. Resolves missing memories for Diversity
 - [fix] crash in IOThreadStop() fixed in netinterface.c if moving between p1 and p2 radios without restarting thetis
 - [fix] changing tx filter width when rx2 enabled and vfob-tx will now use rx2 mode. Very old bug, pre-dates 27th Feb 2019
+- [fix] container when docked might move if title selected with the mouse, yet the mouse was not moved. Coord issue fixed
+- [fix] fixed crash issues when using line_out_start and stop tci commands
+- [fix] fixed various midi errors that had been sent in via error logs
+- [fix] when engaging rx2 a vfoB update is now always performed which preforms necessary initialisation. Previously this was not happening and sometimes rx2 would show 0.0mhz even though vfob was correct, mostly happened at startup
+- [fix] fixed crash issue when swapping between P1 and P2 without restarting Thetis
 
 ## v2.10.3.6 Main New Features
 - database manager

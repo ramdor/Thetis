@@ -1722,12 +1722,22 @@ namespace Thetis
 			switch (vac_number)
 			{
 				case 0:
-					if (console.ThreadSafeTCIAccessor.SetupForm.VACEnable == enable) break;
-                    console.ThreadSafeTCIAccessor.SetupForm.VACEnable = enable;
+                    console.ThreadSafeTCIAccessor.Invoke(new MethodInvoker(() =>
+                    {
+						if (console.ThreadSafeTCIAccessor.SetupForm.VACEnable != enable)
+						{
+							console.ThreadSafeTCIAccessor.SetupForm.VACEnable = enable;
+						}
+                    }));
                     break;
 				case 1:
-                    if (console.ThreadSafeTCIAccessor.SetupForm.VAC2Enable == enable) break;
-                    console.ThreadSafeTCIAccessor.SetupForm.VAC2Enable = enable;
+                    console.ThreadSafeTCIAccessor.Invoke(new MethodInvoker(() =>
+                    {
+						if (console.ThreadSafeTCIAccessor.SetupForm.VAC2Enable != enable)
+						{
+							console.ThreadSafeTCIAccessor.SetupForm.VAC2Enable = enable;
+						}
+                    }));
                     break;
 				default:
 					break;
@@ -1898,6 +1908,20 @@ namespace Thetis
             {
 				//read
                 sendMONVolume(linearToDbVolume(console.ThreadSafeTCIAccessor.TXAF));
+            }
+        }
+        private void handleSpotSimulateClick(string[] args)
+        {
+			if (m_server == null) return;
+
+            if (args.Length == 2)
+            {
+				string callsign = args[0];
+                bool bOK = long.TryParse(args[1], out long freq);
+                if (bOK)
+				{
+					m_server.SendSpotSimulationClickToAll(callsign, freq);
+                }
             }
         }
         private void handleSpot(string[] args)
@@ -2108,7 +2132,10 @@ namespace Thetis
                         break;
                     case "line_out_stop":
                         handleLineOutStop(args);
-                        break;
+						break;
+					case "spot_simulate_click": // bespoke command to Thetis
+						handleSpotSimulateClick(args);
+						break;
                 }
             }
 			else if (parts.Length == 1)
@@ -2911,7 +2938,16 @@ namespace Thetis
         {
 			if (_log != null) _log.Hide();
 		}
-
+		public void SendSpotSimulationClickToAll(string callsign, long freq)
+		{
+			lock (m_objLocker)
+			{
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+					socketListener.ClickedOnSpot(callsign, freq);
+                }
+            }
+		}
         public async Task ConnectToServer(string serverAddress, int port, int timeoutMilliseconds)
         {
             using (TcpClient client = new TcpClient())

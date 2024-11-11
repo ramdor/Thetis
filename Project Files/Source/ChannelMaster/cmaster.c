@@ -290,11 +290,15 @@ void create_cmaster()
 	}
 	create_cmasio();
 	create_router(0);
+	pcm->panalalloc = (ANALYZERS)create_analyzer_alloc(32, 40);
+	// alloc_analyzer(1, 0, 262144);
+	// alloc_analyzer(1, 0, 16384);
 }
 
 void destroy_cmaster()
 {
 	int i;
+	destroy_analyzer_alloc();
 	destroy_router(0, 0);
 	destroy_cmasio();
 	destroy_aamix  (0, 0);
@@ -315,15 +319,25 @@ void xcmaster (int stream)
 	EnterCriticalSection (&pcm->update[stream]);
 	switch (stype (stream))
 	{
-	int rx, tx, j, k;
+	int rx, tx, j, k, disp;
 
 	case 0:  // standard receiver
 		rx = rxid (stream);
 		xpipe (stream, 0, pcm->in);
 		xanb (pcm->rcvr[rx].panb);																// nb
 		xnob (pcm->rcvr[rx].pnob);																// nb2
-		Spectrum0  (_InterlockedAnd (&pcm->rcvr[rx].run_pan, 0xffffffff), rx, 0, 0,				// panadapter 
+		Spectrum0 (_InterlockedAnd (&pcm->rcvr[rx].run_pan, 0xffffffff), rx, 0, 0,				// panadapter 
 			pcm->in[stream]);
+
+		for (j = 0; j < pcm->panalalloc->m_analyzers; j++)										// additional analyzers
+		{
+			disp = pcm->panalalloc->disp[j];
+			if (disp >= 0 && pcm->panalalloc->stream[j] == stream)
+				Spectrum0 ( _InterlockedAnd (&pcm->panalalloc->run[j],   0xffffffff)
+					   && (!_InterlockedAnd (&pcm->panalalloc->stype[j], 0xffffffff)),
+					   disp, 0, 0, pcm->in[stream]);
+		}
+
 		for (j = 0; j < pcm->cmSubRCVR; j++)
 			fexchange0 (chid (stream, j), pcm->in[stream], pcm->rcvr[rx].audio[j], &error);		// dsp
 		xpipe (stream, 1, pcm->rcvr[rx].audio);

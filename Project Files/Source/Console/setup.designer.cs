@@ -3573,6 +3573,7 @@
             this.btnMMIO_network_add_tcpip = new System.Windows.Forms.ButtonTS();
             this.tpDiscord = new System.Windows.Forms.TabPage();
             this.groupBoxTS48 = new System.Windows.Forms.GroupBoxTS();
+            this.lblDiscordCountry = new System.Windows.Forms.LabelTS();
             this.chkDiscordTimeStamp = new System.Windows.Forms.CheckBoxTS();
             this.pbDiscordInfo_filter = new System.Windows.Forms.PictureBox();
             this.pbDiscordInfo_ignore = new System.Windows.Forms.PictureBox();
@@ -3803,6 +3804,12 @@
             this.clrbtnFilterDisplay_backcolour = new Thetis.ColorButton();
             this.nudFilterDisplay_fixed_zoom_level = new System.Windows.Forms.NumericUpDownTS();
             this.nudFilterDisplay_fixed_tx_zoom_level = new System.Windows.Forms.NumericUpDownTS();
+            this.nudFilterItem_sidebands_scale = new System.Windows.Forms.NumericUpDownTS();
+            this.nudFilterItem_cw_scale = new System.Windows.Forms.NumericUpDownTS();
+            this.nudFilterItem_others_scale = new System.Windows.Forms.NumericUpDownTS();
+            this.nudFilterItem_font_scale = new System.Windows.Forms.NumericUpDownTS();
+            this.comboFilter_wf_palette = new System.Windows.Forms.ComboBoxTS();
+            this.label22 = new System.Windows.Forms.Label();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -4028,12 +4035,41 @@
             this.tabPage11 = new System.Windows.Forms.TabPage();
             this.tabPage12 = new System.Windows.Forms.TabPage();
             this.grpMeterItemFilterDisplay = new System.Windows.Forms.GroupBoxTS();
+            this.clrbtnFilter_extents = new Thetis.ColorButton();
+            this.labelTS338 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_notch_highlight = new Thetis.ColorButton();
+            this.labelTS336 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_notch = new Thetis.ColorButton();
+            this.labelTS337 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_meter_back = new Thetis.ColorButton();
+            this.labelTS335 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_edge_highlight = new Thetis.ColorButton();
+            this.labelTS334 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_edges = new Thetis.ColorButton();
+            this.labelTS331 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_number_highlight = new Thetis.ColorButton();
+            this.labelTS330 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_text = new Thetis.ColorButton();
+            this.labelTS301 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_data_fill = new Thetis.ColorButton();
+            this.labelTS300 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_data_line = new Thetis.ColorButton();
+            this.labelTS299 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_wf_low = new Thetis.ColorButton();
+            this.labelTS298 = new System.Windows.Forms.LabelTS();
+            this.chkFilter_fill_spec = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS297 = new System.Windows.Forms.LabelTS();
+            this.radFilterItem_none = new System.Windows.Forms.RadioButtonTS();
+            this.radFilterItem_panadaptor = new System.Windows.Forms.RadioButtonTS();
+            this.radFilterItem_waterfall = new System.Windows.Forms.RadioButtonTS();
+            this.radFilterItem_panafall = new System.Windows.Forms.RadioButtonTS();
+            this.pnlFilterModeModifiers = new System.Windows.Forms.PanelTS();
+            this.labelTS296 = new System.Windows.Forms.LabelTS();
+            this.labelTS294 = new System.Windows.Forms.LabelTS();
+            this.labelTS293 = new System.Windows.Forms.LabelTS();
             this.chkFilterDisplay_fixed_tx_zoom = new System.Windows.Forms.CheckBoxTS();
             this.chkFilterDisplay_fixed_zoom = new System.Windows.Forms.CheckBoxTS();
             this.chkFilterDisplay_show_limits = new System.Windows.Forms.CheckBoxTS();
-            this.radFilterDisplay_show_tx = new System.Windows.Forms.RadioButtonTS();
-            this.radFilterDisplay_show_rx = new System.Windows.Forms.RadioButtonTS();
-            this.radFilterDisplay_show_both = new System.Windows.Forms.RadioButtonTS();
             this.labelTS332 = new System.Windows.Forms.LabelTS();
             this.labelTS333 = new System.Windows.Forms.LabelTS();
             this.chkFilterDisplay_fadeontx = new System.Windows.Forms.CheckBoxTS();
@@ -4042,7 +4078,7 @@
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
             this.tmrLedValid = new System.Windows.Forms.Timer(this.components);
-            this.lblDiscordCountry = new System.Windows.Forms.LabelTS();
+            this.chkFilter_sideband_mode = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -5018,6 +5054,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudFilterDisplay_vertical_ratio)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudFilterDisplay_fixed_zoom_level)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudFilterDisplay_fixed_tx_zoom_level)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_sidebands_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_cw_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_others_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_font_scale)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -5080,6 +5120,7 @@
             this.tabPage11.SuspendLayout();
             this.tabPage12.SuspendLayout();
             this.grpMeterItemFilterDisplay.SuspendLayout();
+            this.pnlFilterModeModifiers.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -56890,6 +56931,15 @@
             this.groupBoxTS48.TabStop = false;
             this.groupBoxTS48.Text = "Discord";
             // 
+            // lblDiscordCountry
+            // 
+            this.lblDiscordCountry.AutoSize = true;
+            this.lblDiscordCountry.Image = null;
+            this.lblDiscordCountry.Location = new System.Drawing.Point(78, 24);
+            this.lblDiscordCountry.Name = "lblDiscordCountry";
+            this.lblDiscordCountry.Size = new System.Drawing.Size(0, 13);
+            this.lblDiscordCountry.TabIndex = 43;
+            // 
             // chkDiscordTimeStamp
             // 
             this.chkDiscordTimeStamp.AutoSize = true;
@@ -60789,7 +60839,7 @@
             0,
             0,
             196608});
-            this.nudFilterDisplay_vertical_ratio.Location = new System.Drawing.Point(118, 26);
+            this.nudFilterDisplay_vertical_ratio.Location = new System.Drawing.Point(118, 20);
             this.nudFilterDisplay_vertical_ratio.Maximum = new decimal(new int[] {
             1,
             0,
@@ -60818,7 +60868,7 @@
             this.clrbtnFilterDisplay_backcolour.Color = System.Drawing.Color.LimeGreen;
             this.clrbtnFilterDisplay_backcolour.ForeColor = System.Drawing.Color.Black;
             this.clrbtnFilterDisplay_backcolour.Image = null;
-            this.clrbtnFilterDisplay_backcolour.Location = new System.Drawing.Point(272, 23);
+            this.clrbtnFilterDisplay_backcolour.Location = new System.Drawing.Point(272, 17);
             this.clrbtnFilterDisplay_backcolour.MoreColors = "More Colors...";
             this.clrbtnFilterDisplay_backcolour.Name = "clrbtnFilterDisplay_backcolour";
             this.clrbtnFilterDisplay_backcolour.Selectable = true;
@@ -60835,9 +60885,9 @@
             0,
             0,
             131072});
-            this.nudFilterDisplay_fixed_zoom_level.Location = new System.Drawing.Point(126, 121);
+            this.nudFilterDisplay_fixed_zoom_level.Location = new System.Drawing.Point(126, 95);
             this.nudFilterDisplay_fixed_zoom_level.Maximum = new decimal(new int[] {
-            4,
+            10,
             0,
             0,
             0});
@@ -60850,7 +60900,7 @@
             this.nudFilterDisplay_fixed_zoom_level.Size = new System.Drawing.Size(56, 20);
             this.nudFilterDisplay_fixed_zoom_level.TabIndex = 140;
             this.nudFilterDisplay_fixed_zoom_level.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudFilterDisplay_fixed_zoom_level, "Vertical size, compared to width");
+            this.toolTip1.SetToolTip(this.nudFilterDisplay_fixed_zoom_level, "Scale");
             this.nudFilterDisplay_fixed_zoom_level.Value = new decimal(new int[] {
             1,
             0,
@@ -60866,9 +60916,9 @@
             0,
             0,
             131072});
-            this.nudFilterDisplay_fixed_tx_zoom_level.Location = new System.Drawing.Point(126, 147);
+            this.nudFilterDisplay_fixed_tx_zoom_level.Location = new System.Drawing.Point(126, 121);
             this.nudFilterDisplay_fixed_tx_zoom_level.Maximum = new decimal(new int[] {
-            4,
+            20,
             0,
             0,
             0});
@@ -60881,13 +60931,166 @@
             this.nudFilterDisplay_fixed_tx_zoom_level.Size = new System.Drawing.Size(56, 20);
             this.nudFilterDisplay_fixed_tx_zoom_level.TabIndex = 142;
             this.nudFilterDisplay_fixed_tx_zoom_level.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudFilterDisplay_fixed_tx_zoom_level, "Vertical size, compared to width");
+            this.toolTip1.SetToolTip(this.nudFilterDisplay_fixed_tx_zoom_level, "Scale");
             this.nudFilterDisplay_fixed_tx_zoom_level.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.nudFilterDisplay_fixed_tx_zoom_level.ValueChanged += new System.EventHandler(this.nudFilterDisplay_fixed_tx_zoom_level_ValueChanged);
+            // 
+            // nudFilterItem_sidebands_scale
+            // 
+            this.nudFilterItem_sidebands_scale.DecimalPlaces = 2;
+            this.nudFilterItem_sidebands_scale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudFilterItem_sidebands_scale.Location = new System.Drawing.Point(58, 12);
+            this.nudFilterItem_sidebands_scale.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudFilterItem_sidebands_scale.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFilterItem_sidebands_scale.Name = "nudFilterItem_sidebands_scale";
+            this.nudFilterItem_sidebands_scale.Size = new System.Drawing.Size(56, 20);
+            this.nudFilterItem_sidebands_scale.TabIndex = 141;
+            this.nudFilterItem_sidebands_scale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudFilterItem_sidebands_scale, "Mode scale");
+            this.nudFilterItem_sidebands_scale.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFilterItem_sidebands_scale.ValueChanged += new System.EventHandler(this.nudFilterItem_sidebands_scale_ValueChanged);
+            // 
+            // nudFilterItem_cw_scale
+            // 
+            this.nudFilterItem_cw_scale.DecimalPlaces = 2;
+            this.nudFilterItem_cw_scale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudFilterItem_cw_scale.Location = new System.Drawing.Point(58, 38);
+            this.nudFilterItem_cw_scale.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudFilterItem_cw_scale.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFilterItem_cw_scale.Name = "nudFilterItem_cw_scale";
+            this.nudFilterItem_cw_scale.Size = new System.Drawing.Size(56, 20);
+            this.nudFilterItem_cw_scale.TabIndex = 142;
+            this.nudFilterItem_cw_scale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudFilterItem_cw_scale, "Mode scale");
+            this.nudFilterItem_cw_scale.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFilterItem_cw_scale.ValueChanged += new System.EventHandler(this.nudFilterItem_cw_scale_ValueChanged);
+            // 
+            // nudFilterItem_others_scale
+            // 
+            this.nudFilterItem_others_scale.DecimalPlaces = 2;
+            this.nudFilterItem_others_scale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudFilterItem_others_scale.Location = new System.Drawing.Point(58, 64);
+            this.nudFilterItem_others_scale.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudFilterItem_others_scale.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFilterItem_others_scale.Name = "nudFilterItem_others_scale";
+            this.nudFilterItem_others_scale.Size = new System.Drawing.Size(56, 20);
+            this.nudFilterItem_others_scale.TabIndex = 143;
+            this.nudFilterItem_others_scale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudFilterItem_others_scale, "Mode scale");
+            this.nudFilterItem_others_scale.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFilterItem_others_scale.ValueChanged += new System.EventHandler(this.nudFilterItem_others_scale_ValueChanged);
+            // 
+            // nudFilterItem_font_scale
+            // 
+            this.nudFilterItem_font_scale.DecimalPlaces = 2;
+            this.nudFilterItem_font_scale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudFilterItem_font_scale.Location = new System.Drawing.Point(118, 47);
+            this.nudFilterItem_font_scale.Maximum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.nudFilterItem_font_scale.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudFilterItem_font_scale.Name = "nudFilterItem_font_scale";
+            this.nudFilterItem_font_scale.Size = new System.Drawing.Size(56, 20);
+            this.nudFilterItem_font_scale.TabIndex = 163;
+            this.nudFilterItem_font_scale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudFilterItem_font_scale, "Font scale adjustment");
+            this.nudFilterItem_font_scale.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudFilterItem_font_scale.ValueChanged += new System.EventHandler(this.nudFilterItem_font_scale_ValueChanged);
+            // 
+            // comboFilter_wf_palette
+            // 
+            this.comboFilter_wf_palette.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboFilter_wf_palette.DropDownWidth = 48;
+            this.comboFilter_wf_palette.Items.AddRange(new object[] {
+            "Enhanced",
+            "Spectran",
+            "BlackWhite",
+            "LinLog",
+            "LinRad",
+            "LinAuto"});
+            this.comboFilter_wf_palette.Location = new System.Drawing.Point(239, 186);
+            this.comboFilter_wf_palette.Name = "comboFilter_wf_palette";
+            this.comboFilter_wf_palette.Size = new System.Drawing.Size(72, 21);
+            this.comboFilter_wf_palette.TabIndex = 166;
+            this.toolTip1.SetToolTip(this.comboFilter_wf_palette, "Sets the color sheme");
+            this.comboFilter_wf_palette.SelectedIndexChanged += new System.EventHandler(this.comboFilter_wf_palette_SelectedIndexChanged);
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(145, 189);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(88, 13);
+            this.label22.TabIndex = 165;
+            this.label22.Text = "Waterfall Palette:";
+            this.label22.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.toolTip1.SetToolTip(this.label22, "Color sheme");
             // 
             // timer_VAC_Monitor
             // 
@@ -64099,14 +64302,44 @@
             // 
             // grpMeterItemFilterDisplay
             // 
+            this.grpMeterItemFilterDisplay.Controls.Add(this.chkFilter_sideband_mode);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.clrbtnFilter_extents);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS338);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.clrbtnFilter_notch_highlight);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS336);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.clrbtnFilter_notch);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS337);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.clrbtnFilter_meter_back);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS335);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.clrbtnFilter_edge_highlight);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS334);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.clrbtnFilter_edges);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS331);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.clrbtnFilter_number_highlight);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS330);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.clrbtnFilter_text);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS301);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.clrbtnFilter_data_fill);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS300);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.clrbtnFilter_data_line);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS299);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.clrbtnFilter_wf_low);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS298);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.comboFilter_wf_palette);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.label22);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.chkFilter_fill_spec);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.nudFilterItem_font_scale);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS297);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.radFilterItem_none);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.radFilterItem_panadaptor);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.radFilterItem_waterfall);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.radFilterItem_panafall);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.pnlFilterModeModifiers);
             this.grpMeterItemFilterDisplay.Controls.Add(this.nudFilterDisplay_fixed_tx_zoom_level);
             this.grpMeterItemFilterDisplay.Controls.Add(this.chkFilterDisplay_fixed_tx_zoom);
             this.grpMeterItemFilterDisplay.Controls.Add(this.nudFilterDisplay_fixed_zoom_level);
             this.grpMeterItemFilterDisplay.Controls.Add(this.chkFilterDisplay_fixed_zoom);
             this.grpMeterItemFilterDisplay.Controls.Add(this.chkFilterDisplay_show_limits);
-            this.grpMeterItemFilterDisplay.Controls.Add(this.radFilterDisplay_show_tx);
-            this.grpMeterItemFilterDisplay.Controls.Add(this.radFilterDisplay_show_rx);
-            this.grpMeterItemFilterDisplay.Controls.Add(this.radFilterDisplay_show_both);
             this.grpMeterItemFilterDisplay.Controls.Add(this.nudFilterDisplay_vertical_ratio);
             this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS332);
             this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS333);
@@ -64121,11 +64354,399 @@
             this.grpMeterItemFilterDisplay.Text = "Filter Display";
             this.grpMeterItemFilterDisplay.Visible = false;
             // 
+            // clrbtnFilter_extents
+            // 
+            this.clrbtnFilter_extents.Automatic = "Automatic";
+            this.clrbtnFilter_extents.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_extents.Image = null;
+            this.clrbtnFilter_extents.Location = new System.Drawing.Point(91, 348);
+            this.clrbtnFilter_extents.MoreColors = "More Colors...";
+            this.clrbtnFilter_extents.Name = "clrbtnFilter_extents";
+            this.clrbtnFilter_extents.Selectable = true;
+            this.clrbtnFilter_extents.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_extents.TabIndex = 188;
+            this.clrbtnFilter_extents.Changed += new System.EventHandler(this.clrbtnFilter_extents_Changed);
+            // 
+            // labelTS338
+            // 
+            this.labelTS338.AutoSize = true;
+            this.labelTS338.Image = null;
+            this.labelTS338.Location = new System.Drawing.Point(5, 353);
+            this.labelTS338.Name = "labelTS338";
+            this.labelTS338.Size = new System.Drawing.Size(80, 13);
+            this.labelTS338.TabIndex = 187;
+            this.labelTS338.Text = "Edges/Extents:";
+            this.labelTS338.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_notch_highlight
+            // 
+            this.clrbtnFilter_notch_highlight.Automatic = "Automatic";
+            this.clrbtnFilter_notch_highlight.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_notch_highlight.Image = null;
+            this.clrbtnFilter_notch_highlight.Location = new System.Drawing.Point(271, 348);
+            this.clrbtnFilter_notch_highlight.MoreColors = "More Colors...";
+            this.clrbtnFilter_notch_highlight.Name = "clrbtnFilter_notch_highlight";
+            this.clrbtnFilter_notch_highlight.Selectable = true;
+            this.clrbtnFilter_notch_highlight.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_notch_highlight.TabIndex = 186;
+            this.clrbtnFilter_notch_highlight.Changed += new System.EventHandler(this.clrbtnFilter_notch_highlight_Changed);
+            // 
+            // labelTS336
+            // 
+            this.labelTS336.AutoSize = true;
+            this.labelTS336.Image = null;
+            this.labelTS336.Location = new System.Drawing.Point(182, 353);
+            this.labelTS336.Name = "labelTS336";
+            this.labelTS336.Size = new System.Drawing.Size(83, 13);
+            this.labelTS336.TabIndex = 185;
+            this.labelTS336.Text = "Notch Highlight:";
+            this.labelTS336.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_notch
+            // 
+            this.clrbtnFilter_notch.Automatic = "Automatic";
+            this.clrbtnFilter_notch.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_notch.Image = null;
+            this.clrbtnFilter_notch.Location = new System.Drawing.Point(271, 325);
+            this.clrbtnFilter_notch.MoreColors = "More Colors...";
+            this.clrbtnFilter_notch.Name = "clrbtnFilter_notch";
+            this.clrbtnFilter_notch.Selectable = true;
+            this.clrbtnFilter_notch.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_notch.TabIndex = 184;
+            this.clrbtnFilter_notch.Changed += new System.EventHandler(this.clrbtnFilter_notch_Changed);
+            // 
+            // labelTS337
+            // 
+            this.labelTS337.AutoSize = true;
+            this.labelTS337.Image = null;
+            this.labelTS337.Location = new System.Drawing.Point(226, 330);
+            this.labelTS337.Name = "labelTS337";
+            this.labelTS337.Size = new System.Drawing.Size(39, 13);
+            this.labelTS337.TabIndex = 183;
+            this.labelTS337.Text = "Notch:";
+            this.labelTS337.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_meter_back
+            // 
+            this.clrbtnFilter_meter_back.Automatic = "Automatic";
+            this.clrbtnFilter_meter_back.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_meter_back.Image = null;
+            this.clrbtnFilter_meter_back.Location = new System.Drawing.Point(91, 324);
+            this.clrbtnFilter_meter_back.MoreColors = "More Colors...";
+            this.clrbtnFilter_meter_back.Name = "clrbtnFilter_meter_back";
+            this.clrbtnFilter_meter_back.Selectable = true;
+            this.clrbtnFilter_meter_back.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_meter_back.TabIndex = 182;
+            this.clrbtnFilter_meter_back.Changed += new System.EventHandler(this.clrbtnFilter_meter_back_Changed);
+            // 
+            // labelTS335
+            // 
+            this.labelTS335.AutoSize = true;
+            this.labelTS335.Image = null;
+            this.labelTS335.Location = new System.Drawing.Point(20, 329);
+            this.labelTS335.Name = "labelTS335";
+            this.labelTS335.Size = new System.Drawing.Size(65, 13);
+            this.labelTS335.TabIndex = 181;
+            this.labelTS335.Text = "Meter Back:";
+            this.labelTS335.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_edge_highlight
+            // 
+            this.clrbtnFilter_edge_highlight.Automatic = "Automatic";
+            this.clrbtnFilter_edge_highlight.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_edge_highlight.Image = null;
+            this.clrbtnFilter_edge_highlight.Location = new System.Drawing.Point(271, 302);
+            this.clrbtnFilter_edge_highlight.MoreColors = "More Colors...";
+            this.clrbtnFilter_edge_highlight.Name = "clrbtnFilter_edge_highlight";
+            this.clrbtnFilter_edge_highlight.Selectable = true;
+            this.clrbtnFilter_edge_highlight.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_edge_highlight.TabIndex = 180;
+            this.clrbtnFilter_edge_highlight.Changed += new System.EventHandler(this.clrbtnFilter_edge_highlight_Changed);
+            // 
+            // labelTS334
+            // 
+            this.labelTS334.AutoSize = true;
+            this.labelTS334.Image = null;
+            this.labelTS334.Location = new System.Drawing.Point(161, 307);
+            this.labelTS334.Name = "labelTS334";
+            this.labelTS334.Size = new System.Drawing.Size(104, 13);
+            this.labelTS334.TabIndex = 179;
+            this.labelTS334.Text = "Filter Edge Highlight:";
+            this.labelTS334.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_edges
+            // 
+            this.clrbtnFilter_edges.Automatic = "Automatic";
+            this.clrbtnFilter_edges.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_edges.Image = null;
+            this.clrbtnFilter_edges.Location = new System.Drawing.Point(271, 279);
+            this.clrbtnFilter_edges.MoreColors = "More Colors...";
+            this.clrbtnFilter_edges.Name = "clrbtnFilter_edges";
+            this.clrbtnFilter_edges.Selectable = true;
+            this.clrbtnFilter_edges.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_edges.TabIndex = 178;
+            this.clrbtnFilter_edges.Changed += new System.EventHandler(this.clrbtnFilter_edges_Changed);
+            // 
+            // labelTS331
+            // 
+            this.labelTS331.AutoSize = true;
+            this.labelTS331.Image = null;
+            this.labelTS331.Location = new System.Drawing.Point(200, 284);
+            this.labelTS331.Name = "labelTS331";
+            this.labelTS331.Size = new System.Drawing.Size(65, 13);
+            this.labelTS331.TabIndex = 177;
+            this.labelTS331.Text = "Filter Edges:";
+            this.labelTS331.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_number_highlight
+            // 
+            this.clrbtnFilter_number_highlight.Automatic = "Automatic";
+            this.clrbtnFilter_number_highlight.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_number_highlight.Image = null;
+            this.clrbtnFilter_number_highlight.Location = new System.Drawing.Point(271, 255);
+            this.clrbtnFilter_number_highlight.MoreColors = "More Colors...";
+            this.clrbtnFilter_number_highlight.Name = "clrbtnFilter_number_highlight";
+            this.clrbtnFilter_number_highlight.Selectable = true;
+            this.clrbtnFilter_number_highlight.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_number_highlight.TabIndex = 176;
+            this.clrbtnFilter_number_highlight.Changed += new System.EventHandler(this.clrbtnFilter_number_highlight_Changed);
+            // 
+            // labelTS330
+            // 
+            this.labelTS330.AutoSize = true;
+            this.labelTS330.Image = null;
+            this.labelTS330.Location = new System.Drawing.Point(177, 260);
+            this.labelTS330.Name = "labelTS330";
+            this.labelTS330.Size = new System.Drawing.Size(91, 13);
+            this.labelTS330.TabIndex = 175;
+            this.labelTS330.Text = "Number Highlight:";
+            this.labelTS330.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_text
+            // 
+            this.clrbtnFilter_text.Automatic = "Automatic";
+            this.clrbtnFilter_text.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_text.Image = null;
+            this.clrbtnFilter_text.Location = new System.Drawing.Point(271, 232);
+            this.clrbtnFilter_text.MoreColors = "More Colors...";
+            this.clrbtnFilter_text.Name = "clrbtnFilter_text";
+            this.clrbtnFilter_text.Selectable = true;
+            this.clrbtnFilter_text.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_text.TabIndex = 174;
+            this.clrbtnFilter_text.Changed += new System.EventHandler(this.clrbtnFilter_text_Changed);
+            // 
+            // labelTS301
+            // 
+            this.labelTS301.AutoSize = true;
+            this.labelTS301.Image = null;
+            this.labelTS301.Location = new System.Drawing.Point(234, 237);
+            this.labelTS301.Name = "labelTS301";
+            this.labelTS301.Size = new System.Drawing.Size(31, 13);
+            this.labelTS301.TabIndex = 173;
+            this.labelTS301.Text = "Text:";
+            this.labelTS301.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_data_fill
+            // 
+            this.clrbtnFilter_data_fill.Automatic = "Automatic";
+            this.clrbtnFilter_data_fill.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_data_fill.Image = null;
+            this.clrbtnFilter_data_fill.Location = new System.Drawing.Point(91, 301);
+            this.clrbtnFilter_data_fill.MoreColors = "More Colors...";
+            this.clrbtnFilter_data_fill.Name = "clrbtnFilter_data_fill";
+            this.clrbtnFilter_data_fill.Selectable = true;
+            this.clrbtnFilter_data_fill.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_data_fill.TabIndex = 172;
+            this.clrbtnFilter_data_fill.Changed += new System.EventHandler(this.clrbtnFilter_data_fill_Changed);
+            // 
+            // labelTS300
+            // 
+            this.labelTS300.AutoSize = true;
+            this.labelTS300.Image = null;
+            this.labelTS300.Location = new System.Drawing.Point(37, 306);
+            this.labelTS300.Name = "labelTS300";
+            this.labelTS300.Size = new System.Drawing.Size(48, 13);
+            this.labelTS300.TabIndex = 171;
+            this.labelTS300.Text = "Data Fill:";
+            this.labelTS300.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_data_line
+            // 
+            this.clrbtnFilter_data_line.Automatic = "Automatic";
+            this.clrbtnFilter_data_line.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_data_line.Image = null;
+            this.clrbtnFilter_data_line.Location = new System.Drawing.Point(91, 278);
+            this.clrbtnFilter_data_line.MoreColors = "More Colors...";
+            this.clrbtnFilter_data_line.Name = "clrbtnFilter_data_line";
+            this.clrbtnFilter_data_line.Selectable = true;
+            this.clrbtnFilter_data_line.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_data_line.TabIndex = 170;
+            this.clrbtnFilter_data_line.Changed += new System.EventHandler(this.clrbtnFilter_data_line_Changed);
+            // 
+            // labelTS299
+            // 
+            this.labelTS299.AutoSize = true;
+            this.labelTS299.Image = null;
+            this.labelTS299.Location = new System.Drawing.Point(29, 283);
+            this.labelTS299.Name = "labelTS299";
+            this.labelTS299.Size = new System.Drawing.Size(56, 13);
+            this.labelTS299.TabIndex = 169;
+            this.labelTS299.Text = "Data Line:";
+            this.labelTS299.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_wf_low
+            // 
+            this.clrbtnFilter_wf_low.Automatic = "Automatic";
+            this.clrbtnFilter_wf_low.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_wf_low.Image = null;
+            this.clrbtnFilter_wf_low.Location = new System.Drawing.Point(271, 209);
+            this.clrbtnFilter_wf_low.MoreColors = "More Colors...";
+            this.clrbtnFilter_wf_low.Name = "clrbtnFilter_wf_low";
+            this.clrbtnFilter_wf_low.Selectable = true;
+            this.clrbtnFilter_wf_low.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_wf_low.TabIndex = 168;
+            this.clrbtnFilter_wf_low.Changed += new System.EventHandler(this.clrbtnFilter_wf_low_Changed);
+            // 
+            // labelTS298
+            // 
+            this.labelTS298.AutoSize = true;
+            this.labelTS298.Image = null;
+            this.labelTS298.Location = new System.Drawing.Point(190, 213);
+            this.labelTS298.Name = "labelTS298";
+            this.labelTS298.Size = new System.Drawing.Size(75, 13);
+            this.labelTS298.TabIndex = 167;
+            this.labelTS298.Text = "Waterfall Low:";
+            this.labelTS298.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // chkFilter_fill_spec
+            // 
+            this.chkFilter_fill_spec.AutoSize = true;
+            this.chkFilter_fill_spec.Checked = true;
+            this.chkFilter_fill_spec.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFilter_fill_spec.Image = null;
+            this.chkFilter_fill_spec.Location = new System.Drawing.Point(23, 259);
+            this.chkFilter_fill_spec.Name = "chkFilter_fill_spec";
+            this.chkFilter_fill_spec.Size = new System.Drawing.Size(86, 17);
+            this.chkFilter_fill_spec.TabIndex = 164;
+            this.chkFilter_fill_spec.Text = "Fill Spectrum";
+            this.chkFilter_fill_spec.UseVisualStyleBackColor = true;
+            this.chkFilter_fill_spec.CheckedChanged += new System.EventHandler(this.chkFilter_fill_spec_CheckedChanged);
+            // 
+            // labelTS297
+            // 
+            this.labelTS297.AutoSize = true;
+            this.labelTS297.Image = null;
+            this.labelTS297.Location = new System.Drawing.Point(51, 51);
+            this.labelTS297.Name = "labelTS297";
+            this.labelTS297.Size = new System.Drawing.Size(61, 13);
+            this.labelTS297.TabIndex = 162;
+            this.labelTS297.Text = "Font Scale:";
+            this.labelTS297.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // radFilterItem_none
+            // 
+            this.radFilterItem_none.AutoSize = true;
+            this.radFilterItem_none.Image = null;
+            this.radFilterItem_none.Location = new System.Drawing.Point(23, 226);
+            this.radFilterItem_none.Name = "radFilterItem_none";
+            this.radFilterItem_none.Size = new System.Drawing.Size(51, 17);
+            this.radFilterItem_none.TabIndex = 147;
+            this.radFilterItem_none.Text = "None";
+            this.radFilterItem_none.UseVisualStyleBackColor = true;
+            this.radFilterItem_none.CheckedChanged += new System.EventHandler(this.radFilterItem_none_CheckedChanged);
+            // 
+            // radFilterItem_panadaptor
+            // 
+            this.radFilterItem_panadaptor.AutoSize = true;
+            this.radFilterItem_panadaptor.Image = null;
+            this.radFilterItem_panadaptor.Location = new System.Drawing.Point(23, 157);
+            this.radFilterItem_panadaptor.Name = "radFilterItem_panadaptor";
+            this.radFilterItem_panadaptor.Size = new System.Drawing.Size(80, 17);
+            this.radFilterItem_panadaptor.TabIndex = 146;
+            this.radFilterItem_panadaptor.Text = "Panadaptor";
+            this.radFilterItem_panadaptor.UseVisualStyleBackColor = true;
+            this.radFilterItem_panadaptor.CheckedChanged += new System.EventHandler(this.radFilterItem_panadaptor_CheckedChanged);
+            // 
+            // radFilterItem_waterfall
+            // 
+            this.radFilterItem_waterfall.AutoSize = true;
+            this.radFilterItem_waterfall.Image = null;
+            this.radFilterItem_waterfall.Location = new System.Drawing.Point(23, 180);
+            this.radFilterItem_waterfall.Name = "radFilterItem_waterfall";
+            this.radFilterItem_waterfall.Size = new System.Drawing.Size(67, 17);
+            this.radFilterItem_waterfall.TabIndex = 145;
+            this.radFilterItem_waterfall.Text = "Waterfall";
+            this.radFilterItem_waterfall.UseVisualStyleBackColor = true;
+            this.radFilterItem_waterfall.CheckedChanged += new System.EventHandler(this.radFilterItem_waterfall_CheckedChanged);
+            // 
+            // radFilterItem_panafall
+            // 
+            this.radFilterItem_panafall.AutoSize = true;
+            this.radFilterItem_panafall.Checked = true;
+            this.radFilterItem_panafall.Image = null;
+            this.radFilterItem_panafall.Location = new System.Drawing.Point(23, 203);
+            this.radFilterItem_panafall.Name = "radFilterItem_panafall";
+            this.radFilterItem_panafall.Size = new System.Drawing.Size(63, 17);
+            this.radFilterItem_panafall.TabIndex = 144;
+            this.radFilterItem_panafall.TabStop = true;
+            this.radFilterItem_panafall.Text = "Panafall";
+            this.radFilterItem_panafall.UseVisualStyleBackColor = true;
+            this.radFilterItem_panafall.CheckedChanged += new System.EventHandler(this.radFilterItem_panafall_CheckedChanged);
+            // 
+            // pnlFilterModeModifiers
+            // 
+            this.pnlFilterModeModifiers.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlFilterModeModifiers.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlFilterModeModifiers.Controls.Add(this.nudFilterItem_others_scale);
+            this.pnlFilterModeModifiers.Controls.Add(this.nudFilterItem_cw_scale);
+            this.pnlFilterModeModifiers.Controls.Add(this.nudFilterItem_sidebands_scale);
+            this.pnlFilterModeModifiers.Controls.Add(this.labelTS296);
+            this.pnlFilterModeModifiers.Controls.Add(this.labelTS294);
+            this.pnlFilterModeModifiers.Controls.Add(this.labelTS293);
+            this.pnlFilterModeModifiers.Enabled = false;
+            this.pnlFilterModeModifiers.Location = new System.Drawing.Point(190, 91);
+            this.pnlFilterModeModifiers.Name = "pnlFilterModeModifiers";
+            this.pnlFilterModeModifiers.Size = new System.Drawing.Size(133, 89);
+            this.pnlFilterModeModifiers.TabIndex = 143;
+            // 
+            // labelTS296
+            // 
+            this.labelTS296.AutoSize = true;
+            this.labelTS296.Image = null;
+            this.labelTS296.Location = new System.Drawing.Point(16, 66);
+            this.labelTS296.Name = "labelTS296";
+            this.labelTS296.Size = new System.Drawing.Size(36, 13);
+            this.labelTS296.TabIndex = 2;
+            this.labelTS296.Text = "others";
+            this.labelTS296.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS294
+            // 
+            this.labelTS294.AutoSize = true;
+            this.labelTS294.Image = null;
+            this.labelTS294.Location = new System.Drawing.Point(3, 43);
+            this.labelTS294.Name = "labelTS294";
+            this.labelTS294.Size = new System.Drawing.Size(49, 13);
+            this.labelTS294.TabIndex = 1;
+            this.labelTS294.Text = "cwl, cwu";
+            this.labelTS294.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS293
+            // 
+            this.labelTS293.AutoSize = true;
+            this.labelTS293.Image = null;
+            this.labelTS293.Location = new System.Drawing.Point(3, 6);
+            this.labelTS293.Name = "labelTS293";
+            this.labelTS293.Size = new System.Drawing.Size(49, 26);
+            this.labelTS293.TabIndex = 0;
+            this.labelTS293.Text = "lsb, usb\r\ndigl, digu";
+            this.labelTS293.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // chkFilterDisplay_fixed_tx_zoom
             // 
             this.chkFilterDisplay_fixed_tx_zoom.AutoSize = true;
             this.chkFilterDisplay_fixed_tx_zoom.Image = null;
-            this.chkFilterDisplay_fixed_tx_zoom.Location = new System.Drawing.Point(23, 148);
+            this.chkFilterDisplay_fixed_tx_zoom.Location = new System.Drawing.Point(23, 122);
             this.chkFilterDisplay_fixed_tx_zoom.Name = "chkFilterDisplay_fixed_tx_zoom";
             this.chkFilterDisplay_fixed_tx_zoom.Size = new System.Drawing.Size(96, 17);
             this.chkFilterDisplay_fixed_tx_zoom.TabIndex = 141;
@@ -64137,7 +64758,7 @@
             // 
             this.chkFilterDisplay_fixed_zoom.AutoSize = true;
             this.chkFilterDisplay_fixed_zoom.Image = null;
-            this.chkFilterDisplay_fixed_zoom.Location = new System.Drawing.Point(23, 122);
+            this.chkFilterDisplay_fixed_zoom.Location = new System.Drawing.Point(23, 96);
             this.chkFilterDisplay_fixed_zoom.Name = "chkFilterDisplay_fixed_zoom";
             this.chkFilterDisplay_fixed_zoom.Size = new System.Drawing.Size(97, 17);
             this.chkFilterDisplay_fixed_zoom.TabIndex = 139;
@@ -64149,7 +64770,7 @@
             // 
             this.chkFilterDisplay_show_limits.AutoSize = true;
             this.chkFilterDisplay_show_limits.Image = null;
-            this.chkFilterDisplay_show_limits.Location = new System.Drawing.Point(23, 99);
+            this.chkFilterDisplay_show_limits.Location = new System.Drawing.Point(23, 73);
             this.chkFilterDisplay_show_limits.Name = "chkFilterDisplay_show_limits";
             this.chkFilterDisplay_show_limits.Size = new System.Drawing.Size(100, 17);
             this.chkFilterDisplay_show_limits.TabIndex = 138;
@@ -64157,50 +64778,11 @@
             this.chkFilterDisplay_show_limits.UseVisualStyleBackColor = true;
             this.chkFilterDisplay_show_limits.CheckedChanged += new System.EventHandler(this.chkFilterDisplay_show_limits_CheckedChanged);
             // 
-            // radFilterDisplay_show_tx
-            // 
-            this.radFilterDisplay_show_tx.AutoSize = true;
-            this.radFilterDisplay_show_tx.Image = null;
-            this.radFilterDisplay_show_tx.Location = new System.Drawing.Point(122, 65);
-            this.radFilterDisplay_show_tx.Name = "radFilterDisplay_show_tx";
-            this.radFilterDisplay_show_tx.Size = new System.Drawing.Size(39, 17);
-            this.radFilterDisplay_show_tx.TabIndex = 137;
-            this.radFilterDisplay_show_tx.TabStop = true;
-            this.radFilterDisplay_show_tx.Text = "TX";
-            this.radFilterDisplay_show_tx.UseVisualStyleBackColor = true;
-            this.radFilterDisplay_show_tx.CheckedChanged += new System.EventHandler(this.radFilterDisplay_show_tx_CheckedChanged);
-            // 
-            // radFilterDisplay_show_rx
-            // 
-            this.radFilterDisplay_show_rx.AutoSize = true;
-            this.radFilterDisplay_show_rx.Image = null;
-            this.radFilterDisplay_show_rx.Location = new System.Drawing.Point(76, 65);
-            this.radFilterDisplay_show_rx.Name = "radFilterDisplay_show_rx";
-            this.radFilterDisplay_show_rx.Size = new System.Drawing.Size(40, 17);
-            this.radFilterDisplay_show_rx.TabIndex = 136;
-            this.radFilterDisplay_show_rx.TabStop = true;
-            this.radFilterDisplay_show_rx.Text = "RX";
-            this.radFilterDisplay_show_rx.UseVisualStyleBackColor = true;
-            this.radFilterDisplay_show_rx.CheckedChanged += new System.EventHandler(this.radFilterDisplay_show_rx_CheckedChanged);
-            // 
-            // radFilterDisplay_show_both
-            // 
-            this.radFilterDisplay_show_both.AutoSize = true;
-            this.radFilterDisplay_show_both.Image = null;
-            this.radFilterDisplay_show_both.Location = new System.Drawing.Point(23, 65);
-            this.radFilterDisplay_show_both.Name = "radFilterDisplay_show_both";
-            this.radFilterDisplay_show_both.Size = new System.Drawing.Size(47, 17);
-            this.radFilterDisplay_show_both.TabIndex = 135;
-            this.radFilterDisplay_show_both.TabStop = true;
-            this.radFilterDisplay_show_both.Text = "Both";
-            this.radFilterDisplay_show_both.UseVisualStyleBackColor = true;
-            this.radFilterDisplay_show_both.CheckedChanged += new System.EventHandler(this.radFilterDisplay_show_both_CheckedChanged);
-            // 
             // labelTS332
             // 
             this.labelTS332.AutoSize = true;
             this.labelTS332.Image = null;
-            this.labelTS332.Location = new System.Drawing.Point(45, 28);
+            this.labelTS332.Location = new System.Drawing.Point(39, 22);
             this.labelTS332.Name = "labelTS332";
             this.labelTS332.Size = new System.Drawing.Size(73, 13);
             this.labelTS332.TabIndex = 131;
@@ -64210,7 +64792,7 @@
             // 
             this.labelTS333.AutoSize = true;
             this.labelTS333.Image = null;
-            this.labelTS333.Location = new System.Drawing.Point(198, 28);
+            this.labelTS333.Location = new System.Drawing.Point(198, 22);
             this.labelTS333.Name = "labelTS333";
             this.labelTS333.Size = new System.Drawing.Size(68, 13);
             this.labelTS333.TabIndex = 130;
@@ -64220,7 +64802,7 @@
             // 
             this.chkFilterDisplay_fadeontx.AutoSize = true;
             this.chkFilterDisplay_fadeontx.Image = null;
-            this.chkFilterDisplay_fadeontx.Location = new System.Drawing.Point(229, 76);
+            this.chkFilterDisplay_fadeontx.Location = new System.Drawing.Point(229, 70);
             this.chkFilterDisplay_fadeontx.Name = "chkFilterDisplay_fadeontx";
             this.chkFilterDisplay_fadeontx.Size = new System.Drawing.Size(82, 17);
             this.chkFilterDisplay_fadeontx.TabIndex = 3;
@@ -64232,7 +64814,7 @@
             // 
             this.chkFilterDisplay_fadeonrx.AutoSize = true;
             this.chkFilterDisplay_fadeonrx.Image = null;
-            this.chkFilterDisplay_fadeonrx.Location = new System.Drawing.Point(229, 53);
+            this.chkFilterDisplay_fadeonrx.Location = new System.Drawing.Point(229, 47);
             this.chkFilterDisplay_fadeonrx.Name = "chkFilterDisplay_fadeonrx";
             this.chkFilterDisplay_fadeonrx.Size = new System.Drawing.Size(83, 17);
             this.chkFilterDisplay_fadeonrx.TabIndex = 2;
@@ -64272,14 +64854,18 @@
             this.tmrLedValid.Interval = 500;
             this.tmrLedValid.Tick += new System.EventHandler(this.tmrLedValid_Tick);
             // 
-            // lblDiscordCountry
+            // chkFilter_sideband_mode
             // 
-            this.lblDiscordCountry.AutoSize = true;
-            this.lblDiscordCountry.Image = null;
-            this.lblDiscordCountry.Location = new System.Drawing.Point(78, 24);
-            this.lblDiscordCountry.Name = "lblDiscordCountry";
-            this.lblDiscordCountry.Size = new System.Drawing.Size(0, 13);
-            this.lblDiscordCountry.TabIndex = 43;
+            this.chkFilter_sideband_mode.AutoSize = true;
+            this.chkFilter_sideband_mode.Image = null;
+            this.chkFilter_sideband_mode.Location = new System.Drawing.Point(103, 224);
+            this.chkFilter_sideband_mode.Name = "chkFilter_sideband_mode";
+            this.chkFilter_sideband_mode.Size = new System.Drawing.Size(71, 30);
+            this.chkFilter_sideband_mode.TabIndex = 189;
+            this.chkFilter_sideband_mode.Text = "Sideband\r\nmode";
+            this.toolTip1.SetToolTip(this.chkFilter_sideband_mode, "Align the filter display to the sideband");
+            this.chkFilter_sideband_mode.UseVisualStyleBackColor = true;
+            this.chkFilter_sideband_mode.CheckedChanged += new System.EventHandler(this.chkFilter_sideband_mode_CheckedChanged);
             // 
             // Setup
             // 
@@ -65483,6 +66069,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudFilterDisplay_vertical_ratio)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudFilterDisplay_fixed_zoom_level)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudFilterDisplay_fixed_tx_zoom_level)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_sidebands_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_cw_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_others_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_font_scale)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -65561,6 +66151,8 @@
             this.tabPage12.ResumeLayout(false);
             this.grpMeterItemFilterDisplay.ResumeLayout(false);
             this.grpMeterItemFilterDisplay.PerformLayout();
+            this.pnlFilterModeModifiers.ResumeLayout(false);
+            this.pnlFilterModeModifiers.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -69592,9 +70184,6 @@
         private GroupBoxTS grpMeterItemFilterDisplay;
         private CheckBoxTS chkFilterDisplay_fixed_zoom;
         private CheckBoxTS chkFilterDisplay_show_limits;
-        private RadioButtonTS radFilterDisplay_show_tx;
-        private RadioButtonTS radFilterDisplay_show_rx;
-        private RadioButtonTS radFilterDisplay_show_both;
         private NumericUpDownTS nudFilterDisplay_vertical_ratio;
         private LabelTS labelTS332;
         private LabelTS labelTS333;
@@ -69607,5 +70196,44 @@
         private CheckBoxTS chkDiscordTimeStamp;
         private CheckBoxTS chkForgetRX2VfoBVFOinfo;
         private LabelTS lblDiscordCountry;
+        private PanelTS pnlFilterModeModifiers;
+        private NumericUpDownTS nudFilterItem_others_scale;
+        private NumericUpDownTS nudFilterItem_cw_scale;
+        private NumericUpDownTS nudFilterItem_sidebands_scale;
+        private LabelTS labelTS296;
+        private LabelTS labelTS294;
+        private LabelTS labelTS293;
+        private RadioButtonTS radFilterItem_panadaptor;
+        private RadioButtonTS radFilterItem_waterfall;
+        private RadioButtonTS radFilterItem_panafall;
+        private RadioButtonTS radFilterItem_none;
+        private NumericUpDownTS nudFilterItem_font_scale;
+        private LabelTS labelTS297;
+        private ColorButton clrbtnFilter_data_line;
+        private LabelTS labelTS299;
+        private ColorButton clrbtnFilter_wf_low;
+        private LabelTS labelTS298;
+        private ComboBoxTS comboFilter_wf_palette;
+        private Label label22;
+        private CheckBoxTS chkFilter_fill_spec;
+        private ColorButton clrbtnFilter_edges;
+        private LabelTS labelTS331;
+        private ColorButton clrbtnFilter_number_highlight;
+        private LabelTS labelTS330;
+        private ColorButton clrbtnFilter_text;
+        private LabelTS labelTS301;
+        private ColorButton clrbtnFilter_data_fill;
+        private LabelTS labelTS300;
+        private ColorButton clrbtnFilter_edge_highlight;
+        private LabelTS labelTS334;
+        private ColorButton clrbtnFilter_notch_highlight;
+        private LabelTS labelTS336;
+        private ColorButton clrbtnFilter_notch;
+        private LabelTS labelTS337;
+        private ColorButton clrbtnFilter_meter_back;
+        private LabelTS labelTS335;
+        private ColorButton clrbtnFilter_extents;
+        private LabelTS labelTS338;
+        private CheckBoxTS chkFilter_sideband_mode;
     }
 }

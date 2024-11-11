@@ -7038,6 +7038,11 @@ namespace Thetis
 
                 console.InitFFTFillTime(1);//[2.10.1.0]MW0LGE
             }
+
+            if (console != null && ((new_rate != old_rate) || initializing || m_bForceAudio))
+            {
+                console.HWSampleRateChangedHandlers?.Invoke(1, old_rate, new_rate);
+            }
         }
 
         private void comboAudioSampleRateRX2_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -7110,6 +7115,11 @@ namespace Thetis
             }
 
             console.InitFFTFillTime(2);//[2.10.1.0]MW0LGE
+
+            if (console != null && ((new_rate != old_rate) || initializing || m_bForceAudio))
+            {
+                console.HWSampleRateChangedHandlers?.Invoke(2, old_rate, new_rate);
+            }
         }
 
         private void comboAudioSampleRate2_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -7669,6 +7679,7 @@ namespace Thetis
                                                                                               // which is needed because Cat etc will cause
                                                                                               // this valuechanged event
 
+            console.CheckForMinMaxGridUpdatesRX(1);
         }
 
         private void udDisplayGridMin_ValueChanged(object sender, System.EventArgs e)
@@ -7746,6 +7757,7 @@ namespace Thetis
                                                                                               // which is needed because Cat etc will cause
                                                                                               // this valuechanged event
 
+            console.CheckForMinMaxGridUpdatesRX(1);
         }
 
         private void udDisplayGridStep_ValueChanged(object sender, System.EventArgs e)
@@ -7830,6 +7842,7 @@ namespace Thetis
                                                                                               // which is needed because Cat etc will cause
                                                                                               // this valuechanged event
 
+            console.CheckForMinMaxGridUpdatesRX(2);
         }
 
         private void udRX2DisplayGridMin_ValueChanged(object sender, System.EventArgs e)
@@ -7905,6 +7918,8 @@ namespace Thetis
             console.WaterfallUseRX2SpectrumMinMax = chkWaterfallUseRX2SpectrumMinMax.Checked; // MW0LGE_21d this will force an update
                                                                                               // which is needed because Cat etc will cause
                                                                                               // this valuechanged event
+
+            console.CheckForMinMaxGridUpdatesRX(2);
         }
 
         private void udRX2DisplayGridStep_ValueChanged(object sender, System.EventArgs e)
@@ -7947,18 +7962,30 @@ namespace Thetis
         private void udDisplayAVGTime_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            double old_tau = console.specRX.GetSpecRX(0).AvTau;
             console.specRX.GetSpecRX(0).AvTau = 0.001 * (double)udDisplayAVGTime.Value;
             console.UpdateRXSpectrumDisplayVars();
             console.specRX.GetSpecRX(cmaster.inid(1, 0)).AvTau = 0.001 * (double)udDisplayAVGTime.Value;
             console.UpdateTXSpectrumDisplayVars();
             double display_time = 1 / (double)udDisplayFPS.Value;
             int buffersToAvg = (int)((float)udDisplayAVGTime.Value * 0.001 / display_time);
+
+            if (console != null && old_tau != console.specRX.GetSpecRX(0).AvTau)
+            {
+                console.NotifiySpectrumDetailsChangedHandlers?.Invoke(1);
+            }
         }
 
         private void udRX2DisplayAVGTime_ValueChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+            double old_tau = console.specRX.GetSpecRX(1).AvTau;
             console.specRX.GetSpecRX(1).AvTau = 0.001 * (double)udRX2DisplayAVGTime.Value;
+
+            if (console != null && old_tau != console.specRX.GetSpecRX(1).AvTau)
+            {
+                console.NotifiySpectrumDetailsChangedHandlers?.Invoke(2);
+            }
         }
 
         private void udDisplayMeterDelay_ValueChanged(object sender, System.EventArgs e)
@@ -8318,7 +8345,9 @@ namespace Thetis
             if (initializing) return;
             if (udTXGridMax.Value <= udTXGridMin.Value)
                 udTXGridMax.Value = udTXGridMin.Value + 10;
+
             Display.TXSpectrumGridMax = (int)udTXGridMax.Value;
+            if(console != null) console.CheckForMinMaxGridUpdatesTX();
         }
 
         private void udTXGridMin_ValueChanged(object sender, System.EventArgs e)
@@ -8326,7 +8355,9 @@ namespace Thetis
             if (initializing) return;
             if (udTXGridMin.Value >= udTXGridMax.Value)
                 udTXGridMin.Value = udTXGridMax.Value - 10;
+
             Display.TXSpectrumGridMin = (int)udTXGridMin.Value;
+            if (console != null) console.CheckForMinMaxGridUpdatesTX();
         }
 
         private void udTXGridStep_ValueChanged(object sender, System.EventArgs e)
@@ -15921,6 +15952,7 @@ namespace Thetis
             if (initializing) return;
             if (console._spectrum_mutex != null) console._spectrum_mutex.WaitOne();
 
+            int old_fft = console.specRX.GetSpecRX(0).FFTSize;
             console.specRX.GetSpecRX(0).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbDisplayFFTSize.Value))));
 
             console.UpdateRXSpectrumDisplayVars();
@@ -15933,6 +15965,11 @@ namespace Thetis
             if (console._spectrum_mutex != null) console._spectrum_mutex.ReleaseMutex();
 
             console.InitFFTFillTime(1);//[2.10.1.0]MW0LGE
+
+            if(console != null && old_fft != console.specRX.GetSpecRX(0).FFTSize)
+            {
+                console.SpectrumSettingsChangedHandlers?.Invoke(1);
+            }
         }
 
         private void tbRX2DisplayFFTSize_Scroll(object sender, EventArgs e)
@@ -15940,6 +15977,7 @@ namespace Thetis
             if (initializing) return;
             if (console._spectrum_mutex != null) console._spectrum_mutex.WaitOne();
 
+            int old_fft = console.specRX.GetSpecRX(1).FFTSize;
             console.specRX.GetSpecRX(1).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbRX2DisplayFFTSize.Value))));
             double bin_width = (double)Display.SampleRateRX2 / (double)console.specRX.GetSpecRX(1).FFTSize;
             lblRX2DisplayBinWidth.Text = bin_width.ToString("N3");
@@ -15950,21 +15988,38 @@ namespace Thetis
             if (console._spectrum_mutex != null) console._spectrum_mutex.ReleaseMutex();
 
             console.InitFFTFillTime(2);//[2.10.1.0]MW0LGE
+
+            if (console != null && old_fft != console.specRX.GetSpecRX(1).FFTSize)
+            {
+                console.SpectrumSettingsChangedHandlers?.Invoke(2);
+            }
         }
 
         private void comboDispWinType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            int old_window_type = console.specRX.GetSpecRX(0).WindowType;
             console.specRX.GetSpecRX(0).WindowType = comboDispWinType.SelectedIndex;
             console.UpdateRXSpectrumDisplayVars();
             console.specRX.GetSpecRX(cmaster.inid(1, 0)).WindowType = comboDispWinType.SelectedIndex;
             console.UpdateTXSpectrumDisplayVars();
+
+            if (console != null && old_window_type != console.specRX.GetSpecRX(0).WindowType)
+            {
+                console.SpectrumSettingsChangedHandlers?.Invoke(1);
+            }
         }
 
         private void comboRX2DispWinType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            int old_window_type = console.specRX.GetSpecRX(1).WindowType;
             console.specRX.GetSpecRX(1).WindowType = comboRX2DispWinType.SelectedIndex;
+
+            if (console != null && old_window_type != console.specRX.GetSpecRX(1).WindowType)
+            {
+                console.SpectrumSettingsChangedHandlers?.Invoke(2);
+            }
         }
 
         private void udDSPNBTransition_ValueChanged(object sender, EventArgs e)
@@ -17443,6 +17498,8 @@ namespace Thetis
         // store the values from an Add or Edit operation
         private void btnMNFEnter_Click(object sender, EventArgs e)
         {
+            int notch_index = (int)udMNFNotch.Value;
+
             if (AddActive)
             {
                 AddActive = false;
@@ -17450,11 +17507,13 @@ namespace Thetis
                 udMNFFreq.BackColor = SystemColors.Control;
                 udMNFWidth.BackColor = SystemColors.Control;
                 chkMNFActive.BackColor = SystemColors.Control;
-                WDSP.RXANBPAddNotch(WDSP.id(0, 0), (int)udMNFNotch.Value, 1.0e6 * (double)udMNFFreq.Value, (double)udMNFWidth.Value, chkMNFActive.Checked);
-                WDSP.RXANBPAddNotch(WDSP.id(0, 1), (int)udMNFNotch.Value, 1.0e6 * (double)udMNFFreq.Value, (double)udMNFWidth.Value, chkMNFActive.Checked);
-                WDSP.RXANBPAddNotch(WDSP.id(2, 0), (int)udMNFNotch.Value, 1.0e6 * (double)udMNFFreq.Value, (double)udMNFWidth.Value, chkMNFActive.Checked);
+                WDSP.RXANBPAddNotch(WDSP.id(0, 0), notch_index, 1.0e6 * (double)udMNFFreq.Value, (double)udMNFWidth.Value, chkMNFActive.Checked);
+                WDSP.RXANBPAddNotch(WDSP.id(0, 1), notch_index, 1.0e6 * (double)udMNFFreq.Value, (double)udMNFWidth.Value, chkMNFActive.Checked);
+                WDSP.RXANBPAddNotch(WDSP.id(2, 0), notch_index, 1.0e6 * (double)udMNFFreq.Value, (double)udMNFWidth.Value, chkMNFActive.Checked);
                 // we have at least one notch; enable the 'Delete' button
                 btnMNFDelete.Enabled = true;
+
+                console.NotchChangedHandlers?.Invoke(notch_index, -1, (double)udMNFWidth.Value, chkMNFActive.Checked, -1, 1.0e6 * (double)udMNFFreq.Value, true, false);
             }
             if (EditActive)
             {
@@ -17464,9 +17523,11 @@ namespace Thetis
                 udMNFFreq.BackColor = SystemColors.Control;
                 udMNFWidth.BackColor = SystemColors.Control;
                 chkMNFActive.BackColor = SystemColors.Control;
-                WDSP.RXANBPEditNotch(WDSP.id(0, 0), (int)udMNFNotch.Value, 1.0e6 * (double)udMNFFreq.Value, (double)udMNFWidth.Value, chkMNFActive.Checked);
-                WDSP.RXANBPEditNotch(WDSP.id(0, 1), (int)udMNFNotch.Value, 1.0e6 * (double)udMNFFreq.Value, (double)udMNFWidth.Value, chkMNFActive.Checked);
-                WDSP.RXANBPEditNotch(WDSP.id(2, 0), (int)udMNFNotch.Value, 1.0e6 * (double)udMNFFreq.Value, (double)udMNFWidth.Value, chkMNFActive.Checked);
+                WDSP.RXANBPEditNotch(WDSP.id(0, 0), notch_index, 1.0e6 * (double)udMNFFreq.Value, (double)udMNFWidth.Value, chkMNFActive.Checked);
+                WDSP.RXANBPEditNotch(WDSP.id(0, 1), notch_index, 1.0e6 * (double)udMNFFreq.Value, (double)udMNFWidth.Value, chkMNFActive.Checked);
+                WDSP.RXANBPEditNotch(WDSP.id(2, 0), notch_index, 1.0e6 * (double)udMNFFreq.Value, (double)udMNFWidth.Value, chkMNFActive.Checked);
+
+                console.NotchChangedHandlers?.Invoke(notch_index, -1, (double)udMNFWidth.Value, chkMNFActive.Checked, -1, 1.0e6 * (double)udMNFFreq.Value, false, false);
             }
             // no longer accepting input; disable entry of values
             udMNFFreq.Enabled = false;
@@ -17524,10 +17585,12 @@ namespace Thetis
         // delete a notch
         private void btnMNFDelete_Click(object sender, EventArgs e)
         {
+            int notch_index = (int)udMNFNotch.Value;
+
             // delete the notch
-            WDSP.RXANBPDeleteNotch(WDSP.id(0, 0), (int)udMNFNotch.Value);
-            WDSP.RXANBPDeleteNotch(WDSP.id(0, 1), (int)udMNFNotch.Value);
-            WDSP.RXANBPDeleteNotch(WDSP.id(2, 0), (int)udMNFNotch.Value);
+            WDSP.RXANBPDeleteNotch(WDSP.id(0, 0), notch_index);
+            WDSP.RXANBPDeleteNotch(WDSP.id(0, 1), notch_index);
+            WDSP.RXANBPDeleteNotch(WDSP.id(2, 0), notch_index);
             // get the number of remaining notches, 'numnotches'
             unsafe
             {
@@ -17542,7 +17605,7 @@ namespace Thetis
                 {
                     double fcenter, fwidth;
                     int active;
-                    WDSP.RXANBPGetNotch(WDSP.id(0, 0), (int)udMNFNotch.Value, &fcenter, &fwidth, &active);
+                    WDSP.RXANBPGetNotch(WDSP.id(0, 0), notch_index, &fcenter, &fwidth, &active);
                     udMNFFreq.Value = (decimal)(fcenter / 1.0e6);
                     udMNFWidth.Value = (decimal)fwidth;
                     if (active != 0)
@@ -17558,7 +17621,7 @@ namespace Thetis
                 {
                     double fcenter, fwidth;
                     int active;
-                    WDSP.RXANBPGetNotch(WDSP.id(0, 0), (int)udMNFNotch.Value - 1, &fcenter, &fwidth, &active);
+                    WDSP.RXANBPGetNotch(WDSP.id(0, 0), notch_index - 1, &fcenter, &fwidth, &active);
                     udMNFNotch.Value -= 1;
                     udMNFFreq.Value = (decimal)(fcenter / 1.0e6);
                     udMNFWidth.Value = (decimal)fwidth;
@@ -17585,6 +17648,8 @@ namespace Thetis
                 udMNFNotch.Maximum = 0;
 
             SaveNotchesToDatabase(); // aligns notch db with what has actually happened MW0LGE
+
+            console.NotchChangedHandlers?.Invoke(notch_index, -1, -1, false, -1, -1, false, true);
         }
 
         private void udMNFNotch_ValueChanged(object sender, EventArgs e)
@@ -17626,7 +17691,7 @@ namespace Thetis
             WDSP.RXANBPSetAutoIncrease(WDSP.id(2, 0), chkMNFAutoIncrease.Checked);
         }
 
-        private Object _notchLock = new Object();
+        private readonly object _notchLock = new object();
         unsafe public void SaveNotchesToDatabase()
         {
             lock (_notchLock)
@@ -17726,16 +17791,28 @@ namespace Thetis
         private void comboRX2DispPanDetector_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            int old_det = console.specRX.GetSpecRX(1).DetTypePan;
             console.specRX.GetSpecRX(1).DetTypePan = comboRX2DispPanDetector.SelectedIndex;
 
             //[2.10.3.5]MW0LGE note: see updateNormalizePan() in specHPSDR as it only applies to pan detector type 2,3,4
             chkDispRX2Normalize.Enabled = console.specRX.GetSpecRX(1).DetTypePan >= 2;
+
+            if (console != null && old_det != console.specRX.GetSpecRX(1).DetTypePan)
+            {
+                console.NotifiySpectrumDetailsChangedHandlers?.Invoke(2);
+            }
         }
 
         private void comboRX2DispPanAveraging_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            int old_avg_mode = console.specRX.GetSpecRX(1).AverageMode;
             console.specRX.GetSpecRX(1).AverageMode = comboRX2DispPanAveraging.SelectedIndex;
+
+            if (console != null && old_avg_mode != console.specRX.GetSpecRX(1).AverageMode)
+            {
+                console.NotifiySpectrumDetailsChangedHandlers?.Invoke(2);
+            }
         }
 
         private void comboRX2DispWFDetector_SelectedIndexChanged(object sender, EventArgs e)
@@ -17759,10 +17836,16 @@ namespace Thetis
         private void comboDispPanDetector_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            int old_det = console.specRX.GetSpecRX(0).DetTypePan;
             console.specRX.GetSpecRX(0).DetTypePan = comboDispPanDetector.SelectedIndex;
 
             //[2.10.3.5]MW0LGE note: see updateNormalizePan() in specHPSDR as it only applies to pan detector type 2,3,4
             chkDispNormalize.Enabled = console.specRX.GetSpecRX(0).DetTypePan >= 2;
+
+            if (console != null && old_det != console.specRX.GetSpecRX(0).DetTypePan)
+            {
+                console.NotifiySpectrumDetailsChangedHandlers?.Invoke(1);
+            }
         }
 
         private void comboDispWFDetector_SelectedIndexChanged(object sender, EventArgs e)
@@ -17774,9 +17857,15 @@ namespace Thetis
         private void comboDispPanAveraging_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            int old_avg_mode = console.specRX.GetSpecRX(0).AverageMode;
             console.specRX.GetSpecRX(0).AverageMode = comboDispPanAveraging.SelectedIndex;
             console.UpdateRXSpectrumDisplayVars();
             console.UpdateTXSpectrumDisplayVars();
+
+            if (console != null && old_avg_mode != console.specRX.GetSpecRX(0).AverageMode)
+            {
+                console.NotifiySpectrumDetailsChangedHandlers?.Invoke(1);
+            }
         }
 
         private void comboDispWFAveraging_SelectedIndexChanged(object sender, EventArgs e)
@@ -17794,13 +17883,25 @@ namespace Thetis
         private void chkDispRX2Normalize_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            bool old_norm_one = console.specRX.GetSpecRX(1).NormOneHzPan;
             console.specRX.GetSpecRX(1).NormOneHzPan = chkDispRX2Normalize.Checked;
+
+            if (console != null && old_norm_one != console.specRX.GetSpecRX(1).NormOneHzPan)
+            {
+                console.NotifiySpectrumDetailsChangedHandlers?.Invoke(2);
+            }
         }
 
         private void chkDispNormalize_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            bool old_norm_one = console.specRX.GetSpecRX(0).NormOneHzPan;
             console.specRX.GetSpecRX(0).NormOneHzPan = chkDispNormalize.Checked;
+
+            if (console != null && old_norm_one != console.specRX.GetSpecRX(0).NormOneHzPan)
+            {
+                console.NotifiySpectrumDetailsChangedHandlers?.Invoke(1);
+            }
         }
 
         private void comboTXDispPanDetector_SelectedIndexChanged(object sender, EventArgs e)
@@ -18191,164 +18292,196 @@ namespace Thetis
                 timer_VAC_Monitor.Interval = 50;
             }
 
-            int underflows, overflows, ringsize, nring;
-            double var, dP;
+            int underflows = 0, overflows = 0, ringsize = 0, nring = 0;
+            double var = 0, dP = 0;
 
-            unsafe
+            bool ok = true;
+            try //[2.10.3.7]MW0LGE this can fail if the vac is turned on/off. Mostly seen when TCI server does it via line_out command
             {
-                ivac.getIVACdiags(0, 0, &underflows, &overflows, &var, &ringsize, &nring);
-            }
-
-            // front end isplay of overflow/underflow MW0LGE_21k9rc5
-            if (overflows != _oldVAC1OutOverflows)
-            {
-                if (overflows != 0) console.VAC1UnderOver.OutOverflow = true;
-                _oldVAC1OutOverflows = overflows;
-            }
-            if (underflows != _oldVAC1OutUnderflows)
-            {
-                if (underflows != 0) console.VAC1UnderOver.OutUnderflow = true;
-                _oldVAC1OutUnderflows = underflows;
-            }
-            //
-
-            if (updateUI)
-            {
-                lblVAC1ovfl.Text = overflows.ToString();
-                lblVAC1unfl.Text = underflows.ToString();
-                lblVAC1var.Text = var.ToString("F6");
-                lblVAC1NRing1.Text = nring.ToString("00000");
-                lblVAC1RingSize1.Text = ringsize.ToString("00000");
-                dP = (nring / (double)ringsize) * 100.0;
-                m_dVAC1Perc1 += dP;
-                lblVAC1RingPerc1.Text = dP.ToString("000");
-                if (chkAudioEnableVAC.Checked) ucVAC1VARGrapherOut.AddDataPoint(var - 1f);
-            }
-            if (Audio.VAC1ControlFlagOut)
-                txtVAC1OldVarOut.Text = var.ToString("F6");
-
-            unsafe
-            {
-                ivac.getIVACdiags(0, 1, &underflows, &overflows, &var, &ringsize, &nring);
-            }
-
-            // front end isplay of overflow/underflow MW0LGE_21k9rc5
-            if (overflows != _oldVAC1InOverflows)
-            {
-                if (overflows != 0) console.VAC1UnderOver.InOverflow = true;
-                _oldVAC1InOverflows = overflows;
-            }
-            if (underflows != _oldVAC1InUnderflows)
-            {
-                if (underflows != 0) console.VAC1UnderOver.InUnderflow = true;
-                _oldVAC1InUnderflows = underflows;
-            }
-            //
-
-            if (updateUI)
-            {
-                lblVAC1ovfl2.Text = overflows.ToString();
-                lblVAC1unfl2.Text = underflows.ToString();
-                lblVAC1var2.Text = var.ToString("F6");
-                lblVAC1NRing2.Text = nring.ToString("00000");
-                lblVAC1RingSize2.Text = ringsize.ToString("00000");
-                dP = (nring / (double)ringsize) * 100.0;
-                m_dVAC1Perc2 += dP;
-                lblVAC1RingPerc2.Text = dP.ToString("000");
-                if (chkAudioEnableVAC.Checked) ucVAC1VARGrapherIn.AddDataPoint(var - 1f);
-            }
-            if (Audio.VAC1ControlFlagIn)
-                txtVAC1OldVarIn.Text = var.ToString("F6");
-
-            unsafe
-            {
-                ivac.getIVACdiags(1, 0, &underflows, &overflows, &var, &ringsize, &nring);
-            }
-
-            // front end isplay of overflow/underflow MW0LGE_21k9rc5
-            if (overflows != _oldVAC2OutOverflows)
-            {
-                if (overflows != 0) console.VAC2UnderOver.OutOverflow = true;
-                _oldVAC2OutOverflows = overflows;
-            }
-            if (underflows != _oldVAC2OutUnderflows)
-            {
-                if (underflows != 0) console.VAC2UnderOver.OutUnderflow = true;
-                _oldVAC2OutUnderflows = underflows;
-            }
-            //
-
-            if (updateUI)
-            {
-                lblVAC2ovfl.Text = overflows.ToString();
-                lblVAC2unfl.Text = underflows.ToString();
-                lblVAC2var.Text = var.ToString("F6");
-                lblVAC2NRing1.Text = nring.ToString("00000");
-                lblVAC2RingSize1.Text = ringsize.ToString("00000");
-                dP = (nring / (double)ringsize) * 100.0;
-                m_dVAC2Perc1 += dP;
-                lblVAC2RingPerc1.Text = dP.ToString("000");
-                if (chkVAC2Enable.Checked) ucVAC2VARGrapherOut.AddDataPoint(var - 1f);
-            }
-
-            unsafe
-            {
-                ivac.getIVACdiags(1, 1, &underflows, &overflows, &var, &ringsize, &nring);
-            }
-
-            // front end isplay of overflow/underflow MW0LGE_21k9rc5
-            if (overflows != _oldVAC2InOverflows)
-            {
-                if (overflows != 0) console.VAC2UnderOver.InOverflow = true;
-                _oldVAC2InOverflows = overflows;
-            }
-            if (underflows != _oldVAC2InUnderflows)
-            {
-                if (underflows != 0) console.VAC2UnderOver.InUnderflow = true;
-                _oldVAC2InUnderflows = underflows;
-            }
-            //
-
-            if (updateUI)
-            {
-                lblVAC2ovfl2.Text = overflows.ToString();
-                lblVAC2unfl2.Text = underflows.ToString();
-                lblVAC2var2.Text = var.ToString("F6");
-                lblVAC2NRing2.Text = nring.ToString("00000");
-                lblVAC2RingSize2.Text = ringsize.ToString("00000");
-                dP = (nring / (double)ringsize) * 100.0;
-                m_dVAC2Perc2 += dP;
-                lblVAC2RingPerc2.Text = dP.ToString("000");
-                if (chkVAC2Enable.Checked) ucVAC2VARGrapherIn.AddDataPoint(var - 1f);
-            }
-
-            if (updateUI)
-            {
-                m_nAverageCount++;
-                if (m_nAverageCount > 9)
+                unsafe
                 {
-                    m_dVAC1Perc1 /= (m_nAverageCount + 1);
-                    m_dVAC1Perc2 /= (m_nAverageCount + 1);
-                    m_dVAC2Perc1 /= (m_nAverageCount + 1);
-                    m_dVAC2Perc2 /= (m_nAverageCount + 1);
+                    ivac.getIVACdiags(0, 0, &underflows, &overflows, &var, &ringsize, &nring);
+                }
+            }
+            catch { ok = false; }
 
-                    lblVAC1RingPercAV1.Text = m_dVAC1Perc1.ToString("000");
-                    lblVAC1RingPercAV2.Text = m_dVAC1Perc2.ToString("000");
-                    lblVAC2RingPercAV1.Text = m_dVAC2Perc1.ToString("000");
-                    lblVAC2RingPercAV2.Text = m_dVAC2Perc2.ToString("000");
+            if (ok)
+            {
+                // front end isplay of overflow/underflow MW0LGE_21k9rc5
+                if (overflows != _oldVAC1OutOverflows)
+                {
+                    if (overflows != 0) console.VAC1UnderOver.OutOverflow = true;
+                    _oldVAC1OutOverflows = overflows;
+                }
+                if (underflows != _oldVAC1OutUnderflows)
+                {
+                    if (underflows != 0) console.VAC1UnderOver.OutUnderflow = true;
+                    _oldVAC1OutUnderflows = underflows;
+                }
+                //
 
-                    if (chkAudioEnableVAC.Checked)
+                if (updateUI)
+                {
+                    lblVAC1ovfl.Text = overflows.ToString();
+                    lblVAC1unfl.Text = underflows.ToString();
+                    lblVAC1var.Text = var.ToString("F6");
+                    lblVAC1NRing1.Text = nring.ToString("00000");
+                    lblVAC1RingSize1.Text = ringsize.ToString("00000");
+                    dP = (nring / (double)ringsize) * 100.0;
+                    m_dVAC1Perc1 += dP;
+                    lblVAC1RingPerc1.Text = dP.ToString("000");
+                    if (chkAudioEnableVAC.Checked) ucVAC1VARGrapherOut.AddDataPoint(var - 1f);
+                }
+                if (Audio.VAC1ControlFlagOut)
+                    txtVAC1OldVarOut.Text = var.ToString("F6");
+            }
+
+            ok = true;
+            try //[2.10.3.7]MW0LGE this can fail if the vac is turned on/off. Mostly seen when TCI server does it via line_out command
+            {
+                unsafe
+                {
+                    ivac.getIVACdiags(0, 1, &underflows, &overflows, &var, &ringsize, &nring);
+                }
+            }
+            catch { ok = false; }
+
+            if (ok)
+            {
+                // front end isplay of overflow/underflow MW0LGE_21k9rc5
+                if (overflows != _oldVAC1InOverflows)
+                {
+                    if (overflows != 0) console.VAC1UnderOver.InOverflow = true;
+                    _oldVAC1InOverflows = overflows;
+                }
+                if (underflows != _oldVAC1InUnderflows)
+                {
+                    if (underflows != 0) console.VAC1UnderOver.InUnderflow = true;
+                    _oldVAC1InUnderflows = underflows;
+                }
+                //
+
+                if (updateUI)
+                {
+                    lblVAC1ovfl2.Text = overflows.ToString();
+                    lblVAC1unfl2.Text = underflows.ToString();
+                    lblVAC1var2.Text = var.ToString("F6");
+                    lblVAC1NRing2.Text = nring.ToString("00000");
+                    lblVAC1RingSize2.Text = ringsize.ToString("00000");
+                    dP = (nring / (double)ringsize) * 100.0;
+                    m_dVAC1Perc2 += dP;
+                    lblVAC1RingPerc2.Text = dP.ToString("000");
+                    if (chkAudioEnableVAC.Checked) ucVAC1VARGrapherIn.AddDataPoint(var - 1f);
+                }
+                if (Audio.VAC1ControlFlagIn)
+                    txtVAC1OldVarIn.Text = var.ToString("F6");
+            }
+
+            ok = true;
+            try //[2.10.3.7]MW0LGE this can fail if the vac is turned on/off. Mostly seen when TCI server does it via line_out command
+            {
+                unsafe
+                {
+                    ivac.getIVACdiags(1, 0, &underflows, &overflows, &var, &ringsize, &nring);
+                }
+            }
+            catch { ok = false; }
+
+            if (ok)
+            {
+                // front end isplay of overflow/underflow MW0LGE_21k9rc5
+                if (overflows != _oldVAC2OutOverflows)
+                {
+                    if (overflows != 0) console.VAC2UnderOver.OutOverflow = true;
+                    _oldVAC2OutOverflows = overflows;
+                }
+                if (underflows != _oldVAC2OutUnderflows)
+                {
+                    if (underflows != 0) console.VAC2UnderOver.OutUnderflow = true;
+                    _oldVAC2OutUnderflows = underflows;
+                }
+                //
+
+                if (updateUI)
+                {
+                    lblVAC2ovfl.Text = overflows.ToString();
+                    lblVAC2unfl.Text = underflows.ToString();
+                    lblVAC2var.Text = var.ToString("F6");
+                    lblVAC2NRing1.Text = nring.ToString("00000");
+                    lblVAC2RingSize1.Text = ringsize.ToString("00000");
+                    dP = (nring / (double)ringsize) * 100.0;
+                    m_dVAC2Perc1 += dP;
+                    lblVAC2RingPerc1.Text = dP.ToString("000");
+                    if (chkVAC2Enable.Checked) ucVAC2VARGrapherOut.AddDataPoint(var - 1f);
+                }
+            }
+
+            ok = true;
+            try //[2.10.3.7]MW0LGE this can fail if the vac is turned on/off. Mostly seen when TCI server does it via line_out command
+            {
+                unsafe
+                {
+                    ivac.getIVACdiags(1, 1, &underflows, &overflows, &var, &ringsize, &nring);
+                }
+            }
+            catch { ok = false; }
+
+            if (ok)
+            {
+                // front end isplay of overflow/underflow MW0LGE_21k9rc5
+                if (overflows != _oldVAC2InOverflows)
+                {
+                    if (overflows != 0) console.VAC2UnderOver.InOverflow = true;
+                    _oldVAC2InOverflows = overflows;
+                }
+                if (underflows != _oldVAC2InUnderflows)
+                {
+                    if (underflows != 0) console.VAC2UnderOver.InUnderflow = true;
+                    _oldVAC2InUnderflows = underflows;
+                }
+                //
+
+                if (updateUI)
+                {
+                    lblVAC2ovfl2.Text = overflows.ToString();
+                    lblVAC2unfl2.Text = underflows.ToString();
+                    lblVAC2var2.Text = var.ToString("F6");
+                    lblVAC2NRing2.Text = nring.ToString("00000");
+                    lblVAC2RingSize2.Text = ringsize.ToString("00000");
+                    dP = (nring / (double)ringsize) * 100.0;
+                    m_dVAC2Perc2 += dP;
+                    lblVAC2RingPerc2.Text = dP.ToString("000");
+                    if (chkVAC2Enable.Checked) ucVAC2VARGrapherIn.AddDataPoint(var - 1f);
+                }
+
+                if (updateUI)
+                {
+                    m_nAverageCount++;
+                    if (m_nAverageCount > 9)
                     {
-                        ucVAC1VARGrapherOut.RingBufferPerc = m_dVAC1Perc1;
-                        ucVAC1VARGrapherIn.RingBufferPerc = m_dVAC1Perc2;
-                    }
-                    if (chkVAC2Enable.Checked)
-                    {
-                        ucVAC2VARGrapherOut.RingBufferPerc = m_dVAC2Perc1;
-                        ucVAC2VARGrapherIn.RingBufferPerc = m_dVAC2Perc2;
-                    }
+                        m_dVAC1Perc1 /= (m_nAverageCount + 1);
+                        m_dVAC1Perc2 /= (m_nAverageCount + 1);
+                        m_dVAC2Perc1 /= (m_nAverageCount + 1);
+                        m_dVAC2Perc2 /= (m_nAverageCount + 1);
 
-                    m_nAverageCount = 0;
+                        lblVAC1RingPercAV1.Text = m_dVAC1Perc1.ToString("000");
+                        lblVAC1RingPercAV2.Text = m_dVAC1Perc2.ToString("000");
+                        lblVAC2RingPercAV1.Text = m_dVAC2Perc1.ToString("000");
+                        lblVAC2RingPercAV2.Text = m_dVAC2Perc2.ToString("000");
+
+                        if (chkAudioEnableVAC.Checked)
+                        {
+                            ucVAC1VARGrapherOut.RingBufferPerc = m_dVAC1Perc1;
+                            ucVAC1VARGrapherIn.RingBufferPerc = m_dVAC1Perc2;
+                        }
+                        if (chkVAC2Enable.Checked)
+                        {
+                            ucVAC2VARGrapherOut.RingBufferPerc = m_dVAC2Perc1;
+                            ucVAC2VARGrapherIn.RingBufferPerc = m_dVAC2Perc2;
+                        }
+
+                        m_nAverageCount = 0;
+                    }
                 }
             }
         }
@@ -24082,6 +24215,7 @@ namespace Thetis
         private void chkVisualNotch_CheckedChanged(object sender, EventArgs e)
         {
             Display.ShowVisualNotch = chkVisualNotch.Checked;
+            MiniSpec.ShowVisualNotch = chkVisualNotch.Checked;
         }
 
         private void btnRX1PBsnr_Click(object sender, EventArgs e)
@@ -24642,6 +24776,11 @@ namespace Thetis
                 if (mt == MeterType.TUNESTEP_BUTTONS)
                 {
                     igs.SetSetting<int>("buttonbox_tunestep_bitfield", ucTunestepOptionsGrid_buttons.Bitfield);
+
+                    int max_buttons = ucTunestepOptionsGrid_buttons.GetCheckedCount();
+                    max_buttons = Math.Max(1, max_buttons);
+                    if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
+                    if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
                 }
                 else if (mt == MeterType.ANTENNA_BUTTONS)
                 {
@@ -24655,17 +24794,7 @@ namespace Thetis
                     igs.SetSetting<bool>("buttonbox_ext1", chkButtonBox_antenna_ext1.Checked);
                     igs.SetSetting<bool>("buttonbox_xvtr", chkButtonBox_antenna_xvtr.Checked);
                     igs.SetSetting<bool>("buttonbox_rxtxant", chkButtonBox_antenna_rxtxant.Checked);
-                }
 
-                if (mt == MeterType.TUNESTEP_BUTTONS)
-                {
-                    int max_buttons = ucTunestepOptionsGrid_buttons.GetCheckedCount();
-                    max_buttons = Math.Max(1, max_buttons);
-                    if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
-                    if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
-                }
-                else if (mt == MeterType.ANTENNA_BUTTONS)
-                {
                     int max_buttons = getTotalColumnsNeededForAntennaButtons();
                     max_buttons = Math.Max(1, max_buttons);
                     if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
@@ -24919,22 +25048,49 @@ namespace Thetis
 
                 igs.SetSetting<float>("filterdisplay_vertical_ratio", (float)nudFilterDisplay_vertical_ratio.Value);
 
-                if (radFilterDisplay_show_both.Checked)
-                {
-                    igs.SetSetting<bool>("filterdisplay_show_rx", true);
-                    igs.SetSetting<bool>("filterdisplay_show_tx", true);
-                }
-                else
-                {
-                    igs.SetSetting<bool>("filterdisplay_show_rx", radFilterDisplay_show_rx.Checked);
-                    igs.SetSetting<bool>("filterdisplay_show_tx", radFilterDisplay_show_tx.Checked);
-                }
-
                 igs.SetSetting<bool>("filterdisplay_show_filter_limits", chkFilterDisplay_show_limits.Checked);
                 igs.SetSetting<bool>("filterdisplay_show_fixed_rx_zoom", chkFilterDisplay_fixed_zoom.Checked);
                 igs.SetSetting<bool>("filterdisplay_show_fixed_tx_zoom", chkFilterDisplay_fixed_tx_zoom.Checked);
                 igs.SetSetting<float>("filterdisplay_rx_zoom", (float)nudFilterDisplay_fixed_zoom_level.Value);
                 igs.SetSetting<float>("filterdisplay_tx_zoom", (float)nudFilterDisplay_fixed_tx_zoom_level.Value);
+
+                igs.SetSetting<float>("filterdisplay_sidebands_scale", (float)nudFilterItem_sidebands_scale.Value);
+                igs.SetSetting<float>("filterdisplay_cw_scale", (float)nudFilterItem_cw_scale.Value);
+                igs.SetSetting<float>("filterdisplay_others_scale", (float)nudFilterItem_others_scale.Value);
+
+                if (radFilterItem_panadaptor.Checked)
+                {
+                    igs.SetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", MeterManager.clsFilterItem.DisplayMode.PANADAPTOR);
+                }
+                else if (radFilterItem_waterfall.Checked)
+                {
+                    igs.SetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", MeterManager.clsFilterItem.DisplayMode.WATERFALL);
+                }
+                else if (radFilterItem_panafall.Checked)
+                {
+                    igs.SetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", MeterManager.clsFilterItem.DisplayMode.PANAFALL);
+                }
+                else if (radFilterItem_none.Checked)
+                {
+                    igs.SetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", MeterManager.clsFilterItem.DisplayMode.NONE);
+                }
+
+                igs.SetSetting<float>("filterdisplay_font_scale", (float)nudFilterItem_font_scale.Value);
+
+                igs.SetSetting<bool>("filterdisplay_fill_spec", chkFilter_fill_spec.Checked);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_dataline_colour", clrbtnFilter_data_line.Color);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_datafill_colour", clrbtnFilter_data_fill.Color);
+                igs.SetSetting<MeterManager.clsFilterItem.WaterfallPalette>("filterdisplay_wf_palette", (MeterManager.clsFilterItem.WaterfallPalette)comboFilter_wf_palette.SelectedIndex);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_wflow_colour", clrbtnFilter_wf_low.Color);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_text_colour", clrbtnFilter_text.Color);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", clrbtnFilter_number_highlight.Color);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_edges_colour", clrbtnFilter_edges.Color);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_edgehighlight_colour", clrbtnFilter_edge_highlight.Color);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_meterback_colour", clrbtnFilter_meter_back.Color);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_notch_colour", clrbtnFilter_notch.Color);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_notchhighlight_colour", clrbtnFilter_notch_highlight.Color);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_extents_colour", clrbtnFilter_extents.Color);
+                igs.SetSetting<bool>("filterdisplay_sideband_mode", chkFilter_sideband_mode.Checked);
             }
             else
             {
@@ -25179,9 +25335,9 @@ namespace Thetis
                         if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
                         break;
                     case MeterType.DISCORD_BUTTONS:
-                        columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 9, 9);
-                        if (nudBandButtons_columns.Value > 9) nudBandButtons_columns.Value = 9;
-                        if (nudBandButtons_columns.Maximum != 9) nudBandButtons_columns.Maximum = 9;
+                        columns = igs.GetSetting<int>("buttonbox_columns", true, 1, 12, 12);
+                        if (nudBandButtons_columns.Value > 12) nudBandButtons_columns.Value = 12;
+                        if (nudBandButtons_columns.Maximum != 12) nudBandButtons_columns.Maximum = 12;
                         break;
                 }
                 nudBandButtons_columns.Value = columns;
@@ -25500,26 +25656,48 @@ namespace Thetis
 
                 nudFilterDisplay_vertical_ratio.Value = (decimal)igs.GetSetting<float>("filterdisplay_vertical_ratio", true, 0.15f, 1f, 0.2f);
 
-                bool showrx = igs.GetSetting<bool>("filterdisplay_show_rx", false, false, false, true);
-                bool showtx = igs.GetSetting<bool>("filterdisplay_show_tx", false, false, false, false);
-                if(showrx && showtx)
-                {
-                    radFilterDisplay_show_both.Checked = true;
-                }
-                else if (showrx)
-                {
-                    radFilterDisplay_show_rx.Checked = true;
-                }
-                else if (showtx)
-                {
-                    radFilterDisplay_show_tx.Checked = true;
-                }
-
                 chkFilterDisplay_show_limits.Checked = igs.GetSetting<bool>("filterdisplay_show_filter_limits", false, false, false, true);
                 chkFilterDisplay_fixed_zoom.Checked = igs.GetSetting<bool>("filterdisplay_show_fixed_rx_zoom", false, false, false, false);
                 chkFilterDisplay_fixed_tx_zoom.Checked = igs.GetSetting<bool>("filterdisplay_show_fixed_tx_zoom", false, false, false, false);
-                nudFilterDisplay_fixed_zoom_level.Value = (decimal)igs.GetSetting<float>("filterdisplay_rx_zoom", true, 1f, 4f, 1f);
-                nudFilterDisplay_fixed_tx_zoom_level.Value = (decimal)igs.GetSetting<float>("filterdisplay_tx_zoom", true, 1f, 4f, 1f);
+                nudFilterDisplay_fixed_zoom_level.Value = (decimal)igs.GetSetting<float>("filterdisplay_rx_zoom", true, 1f, 10f, 1f);
+                nudFilterDisplay_fixed_tx_zoom_level.Value = (decimal)igs.GetSetting<float>("filterdisplay_tx_zoom", true, 1f, 20f, 1f);
+
+                nudFilterItem_sidebands_scale.Value = (decimal)igs.GetSetting<float>("filterdisplay_sidebands_scale", true, 0f, 10f, 0f);
+                nudFilterItem_cw_scale.Value = (decimal)igs.GetSetting<float>("filterdisplay_cw_scale", true, 0f, 10f, 0f);
+                nudFilterItem_others_scale.Value = (decimal)igs.GetSetting<float>("filterdisplay_others_scale", true, 0f, 10f, 0f);
+
+                switch(igs.GetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", false, MeterManager.clsFilterItem.DisplayMode.PANADAPTOR, MeterManager.clsFilterItem.DisplayMode.NONE, MeterManager.clsFilterItem.DisplayMode.PANAFALL))
+                {
+                    case MeterManager.clsFilterItem.DisplayMode.PANADAPTOR:
+                        radFilterItem_panadaptor.Checked = true;
+                        break;
+                    case MeterManager.clsFilterItem.DisplayMode.WATERFALL:
+                        radFilterItem_waterfall.Checked = true;
+                        break;
+                    case MeterManager.clsFilterItem.DisplayMode.PANAFALL:
+                        radFilterItem_panafall.Checked = true;
+                        break;
+                    case MeterManager.clsFilterItem.DisplayMode.NONE:
+                        radFilterItem_none.Checked = true;
+                        break;
+                }
+
+                nudFilterItem_font_scale.Value = (decimal)igs.GetSetting<float>("filterdisplay_font_scale", true, 0.01f, 4f, 1f);
+
+                chkFilter_fill_spec.Checked = igs.GetSetting<bool>("filterdisplay_fill_spec", false, false, false, true);
+                clrbtnFilter_data_line.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_dataline_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
+                clrbtnFilter_data_fill.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_datafill_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
+                comboFilter_wf_palette.SelectedIndex = (int)igs.GetSetting<MeterManager.clsFilterItem.WaterfallPalette>("filterdisplay_wf_palette", false, MeterManager.clsFilterItem.WaterfallPalette.NONE, MeterManager.clsFilterItem.WaterfallPalette.NONE, MeterManager.clsFilterItem.WaterfallPalette.ENHANCED);
+                clrbtnFilter_wf_low.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_wflow_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Black);
+                clrbtnFilter_text.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_text_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
+                clrbtnFilter_number_highlight.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.DarkRed);
+                clrbtnFilter_edges.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_edges_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Yellow);
+                clrbtnFilter_edge_highlight.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_edgehighlight_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
+                clrbtnFilter_meter_back.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_meterback_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Black);
+                clrbtnFilter_notch.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_notch_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.OrangeRed);
+                clrbtnFilter_notch_highlight.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_notchhighlight_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
+                clrbtnFilter_extents.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_extents_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Gray);
+                chkFilter_sideband_mode.Checked = igs.GetSetting<bool>("filterdisplay_sideband_mode", false, false, false, false);
             }
             else
             {
@@ -25536,6 +25714,7 @@ namespace Thetis
 
                 updateHistoryControls(igs.ShowHistory, igs.HistoryColor, igs.ShowHistory);
                 nudMeterItemHistoryDuration.Value = igs.HistoryDuration < nudMeterItemHistoryDuration.Minimum ? nudMeterItemHistoryDuration.Minimum : igs.HistoryDuration;
+                nudMeterItemIgnoreHistoryDuration.Value = igs.IgnoreHistoryDuration;
 
                 if (igs.BarStyle == MeterManager.clsBarItem.BarStyle.Segments)
                     chkMeterItemSegmented.Checked = true; // will cause solid to turn off
@@ -31787,21 +31966,6 @@ namespace Thetis
         {
             updateMeterType();
         }
-        private void radFilterDisplay_show_both_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!radFilterDisplay_show_both.Checked) return;
-            updateMeterType();
-        }
-        private void radFilterDisplay_show_rx_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!radFilterDisplay_show_rx.Checked) return;
-            updateMeterType();
-        }
-        private void radFilterDisplay_show_tx_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!radFilterDisplay_show_tx.Checked) return;
-            updateMeterType();
-        }
         private void chkFilterDisplay_fadeonrx_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
@@ -31817,6 +31981,7 @@ namespace Thetis
         private void chkFilterDisplay_fixed_zoom_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
+            pnlFilterModeModifiers.Enabled = chkFilterDisplay_fixed_zoom.Checked || chkFilterDisplay_fixed_tx_zoom.Checked;
         }
         private void nudFilterDisplay_fixed_zoom_level_ValueChanged(object sender, EventArgs e)
         {
@@ -31826,6 +31991,7 @@ namespace Thetis
         private void chkFilterDisplay_fixed_tx_zoom_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
+            pnlFilterModeModifiers.Enabled = chkFilterDisplay_fixed_zoom.Checked || chkFilterDisplay_fixed_tx_zoom.Checked;
         }
 
         private void nudFilterDisplay_fixed_tx_zoom_level_ValueChanged(object sender, EventArgs e)
@@ -31836,6 +32002,120 @@ namespace Thetis
         private void chkDiscordTimeStamp_CheckedChanged(object sender, EventArgs e)
         {
             ThetisBotDiscord.IncludeTimeStamp = chkDiscordTimeStamp.Checked;
+        }
+
+        private void nudFilterItem_sidebands_scale_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudFilterItem_cw_scale_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudFilterItem_others_scale_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void radFilterItem_panadaptor_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!radFilterItem_panadaptor.Checked) return;
+            updateMeterType();
+        }
+
+        private void radFilterItem_waterfall_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!radFilterItem_waterfall.Checked) return;
+            updateMeterType();
+        }
+
+        private void radFilterItem_panafall_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!radFilterItem_panafall.Checked) return;
+            updateMeterType();
+        }
+
+        private void radFilterItem_none_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!radFilterItem_none.Checked) return;
+            updateMeterType();
+        }
+
+        private void nudFilterItem_font_scale_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkFilter_fill_spec_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnFilter_data_line_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnFilter_data_fill_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void comboFilter_wf_palette_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnFilter_wf_low_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnFilter_text_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnFilter_number_highlight_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnFilter_edges_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnFilter_edge_highlight_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnFilter_meter_back_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnFilter_notch_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnFilter_notch_highlight_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnFilter_extents_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkFilter_sideband_mode_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 

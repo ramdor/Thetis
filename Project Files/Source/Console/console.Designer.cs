@@ -943,8 +943,8 @@
             this.panelOptions = new System.Windows.Forms.PanelTS();
             this.checkBoxTS1 = new System.Windows.Forms.CheckBoxTS();
             this.panelModeSpecificPhone = new System.Windows.Forms.PanelTS();
-            this.labelTS4 = new System.Windows.Forms.LabelTS();
-            this.labelTS3 = new System.Windows.Forms.LabelTS();
+            this.lblTXHigh = new System.Windows.Forms.LabelTS();
+            this.lblTXLow = new System.Windows.Forms.LabelTS();
             this.picNoiseGate = new System.Windows.Forms.PictureBox();
             this.lblNoiseGateVal = new System.Windows.Forms.LabelTS();
             this.ptbNoiseGate = new Thetis.PrettyTrackBar();
@@ -5701,8 +5701,8 @@
             // 
             resources.ApplyResources(this.panelModeSpecificPhone, "panelModeSpecificPhone");
             this.panelModeSpecificPhone.BackColor = System.Drawing.Color.Transparent;
-            this.panelModeSpecificPhone.Controls.Add(this.labelTS4);
-            this.panelModeSpecificPhone.Controls.Add(this.labelTS3);
+            this.panelModeSpecificPhone.Controls.Add(this.lblTXHigh);
+            this.panelModeSpecificPhone.Controls.Add(this.lblTXLow);
             this.panelModeSpecificPhone.Controls.Add(this.udTXFilterLow);
             this.panelModeSpecificPhone.Controls.Add(this.udTXFilterHigh);
             this.panelModeSpecificPhone.Controls.Add(this.chkMicMute);
@@ -5728,17 +5728,17 @@
             this.panelModeSpecificPhone.Controls.Add(this.comboAMTXProfile);
             this.panelModeSpecificPhone.Name = "panelModeSpecificPhone";
             // 
-            // labelTS4
+            // lblTXHigh
             // 
-            resources.ApplyResources(this.labelTS4, "labelTS4");
-            this.labelTS4.ForeColor = System.Drawing.Color.White;
-            this.labelTS4.Name = "labelTS4";
+            resources.ApplyResources(this.lblTXHigh, "lblTXHigh");
+            this.lblTXHigh.ForeColor = System.Drawing.Color.White;
+            this.lblTXHigh.Name = "lblTXHigh";
             // 
-            // labelTS3
+            // lblTXLow
             // 
-            resources.ApplyResources(this.labelTS3, "labelTS3");
-            this.labelTS3.ForeColor = System.Drawing.Color.White;
-            this.labelTS3.Name = "labelTS3";
+            resources.ApplyResources(this.lblTXLow, "lblTXLow");
+            this.lblTXLow.ForeColor = System.Drawing.Color.White;
+            this.lblTXLow.Name = "lblTXLow";
             // 
             // picNoiseGate
             // 
@@ -7744,8 +7744,8 @@
         private RadioButtonTS radBandGEN1;
         private RadioButtonTS radBandGEN0;
         private ButtonTS btnBandHF1;
-        private LabelTS labelTS4;
-        private LabelTS labelTS3;
+        private LabelTS lblTXHigh;
+        private LabelTS lblTXLow;
         public NumericUpDownTS udTXFilterLow;
         public NumericUpDownTS udTXFilterHigh;
         private CheckBoxTS chkRxAnt;

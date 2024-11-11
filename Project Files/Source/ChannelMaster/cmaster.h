@@ -34,6 +34,7 @@ warren@wpratt.com
 #include "txgain.h"
 #include "vox.h"
 #include "aamix.h"
+#include "analyzers.h"
 
 typedef struct _cmaster
 {
@@ -64,6 +65,7 @@ typedef struct _cmaster
 	void (*OutboundRx)(int id, int nsamples, double* buff);			// pointer to Outbound function called by aamix with rx audio from the global mixer
 	void (*OutboundTx)(int id, int nsamples, double* buff);			// pointer to Outbound function called by ilv with xmtr samples from the interleaver
 	int	audioCodecId;
+	ANALYZERS panalalloc;											// pointer to additional analyzer data structure
 	
 	// receivers
 	struct _rcvr

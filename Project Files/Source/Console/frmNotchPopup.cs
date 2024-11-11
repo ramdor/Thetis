@@ -26,29 +26,45 @@ mw0lge@grange-lane.co.uk
 */
 using System;
 using System.Windows.Forms;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Thetis
 {
     public partial class frmNotchPopup : Form
     {
-        public delegate void NotchDeleteHandler();
+        private int _notch_index;
+
+        public delegate void NotchDeleteHandler(int notch_index);
         private event NotchDeleteHandler deleteEvents;
 
-        public delegate void NotchBWChangeHandler(double width);
+        public delegate void NotchBWChangeHandler(int notch_index, double width);
         private event NotchBWChangeHandler bwChangeEvents;
 
-        public delegate void NotchActiveChangedHandler(bool active);
+        public delegate void NotchActiveChangedHandler(int notch_index, bool active);
         private event NotchActiveChangedHandler activeEvents;
 
+        private DateTime _deactivate_time;
         public frmNotchPopup()
         {
-            InitializeComponent();           
-        }
+            _notch_index = -1;
 
-        public void Show(MNotch notch, int minWidth, int maxWidth, bool top)
+            InitializeComponent();
+
+            _deactivate_time = DateTime.UtcNow;
+        }
+        public DateTime DeactivateTime
         {
+            get { return _deactivate_time; }
+        }
+        public void Show(MNotch notch, int minWidth, int maxWidth, bool top, int notch_index = -1)
+        {
+            _deactivate_time = DateTime.UtcNow;
+
             // init with the passed notch
             if (notch == null) return;  // Todo initialise empty?
+
+            _notch_index = notch_index;
 
             if (top) //MW0LGE_21k9
             {
@@ -84,16 +100,21 @@ namespace Thetis
 
             this.Show();
         }
-
         private void FrmNotchPopup_Deactivate(object sender, EventArgs e)
         {
-            this.Hide();
-        }
+            _notch_index = -1;
 
+            _deactivate_time = DateTime.UtcNow;
+            this.Hide();  // something other than -1 will be done from filter item multi meter
+        }
+        
         private void BtnDelete_Click(object sender, EventArgs e)
         {
-            deleteEvents();
+            deleteEvents(_notch_index);
 
+            _notch_index = -1;
+
+            _deactivate_time = DateTime.UtcNow;
             this.Hide();
         }
 
@@ -126,7 +147,7 @@ namespace Thetis
         {
             trkWidth.Value = width;
             setText(width);
-            bwChangeEvents(width);
+            bwChangeEvents(_notch_index, width);
         }
 
         private void Btn25_Click(object sender, EventArgs e)
@@ -153,7 +174,7 @@ namespace Thetis
         {
             setText(trkWidth.Value);
 
-            bwChangeEvents(trkWidth.Value);
+            bwChangeEvents(_notch_index, trkWidth.Value);
         }
 
         private void setText(int v)
@@ -163,7 +184,7 @@ namespace Thetis
 
         private void ChkActive_CheckedChanged(object sender, EventArgs e)
         {
-            activeEvents(chkActive.Checked);
+            activeEvents(_notch_index, chkActive.Checked);
         }
     }
 }
