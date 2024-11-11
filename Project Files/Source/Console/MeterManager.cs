@@ -32049,6 +32049,7 @@ namespace Thetis
                                 for (int i = 0; i < _new_display_data.Length; i++)
                                 {
                                     _new_display_data[i] += offset;
+                                    _new_display_data_raw[i] += offset;
                                 }
                                 if (!_mox)
                                 {
