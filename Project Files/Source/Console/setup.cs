@@ -16235,8 +16235,8 @@ namespace Thetis
             console.radio.GetDSPRX(1, 0).RXBandpassWindow = wintype;
 
             //Display.UpdateMNFminWidth(); //[2.10.3.4]MW0LGE
-            console.UpdateMinimumNotchWidth(1);
-            console.UpdateMinimumNotchWidth(2);
+            console.UpdateMinimumNotchWidthRX(1);
+            console.UpdateMinimumNotchWidthRX(2);
         }
 
         private void comboDSPTxWindow_SelectedIndexChanged(object sender, EventArgs e)
@@ -16249,6 +16249,7 @@ namespace Thetis
                 comboDSPTxWindow.Text = "BH - 7";
             }
             console.radio.GetDSPTX(0).TXBandpassWindow = wintype;
+            console.UpdateMinimumNotchWidthTX();
         }
 
         private void radSaturn3p5mm_CheckedChanged(object sender, EventArgs e)
@@ -25091,6 +25092,7 @@ namespace Thetis
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_notchhighlight_colour", clrbtnFilter_notch_highlight.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_extents_colour", clrbtnFilter_extents.Color);
                 igs.SetSetting<bool>("filterdisplay_sideband_mode", chkFilter_sideband_mode.Checked);
+                igs.SetSetting<int>("filterdisplay_waterfall_frameupdate", (int)nudFilter_waterfall_frame_update.Value);
             }
             else
             {
@@ -25698,6 +25700,7 @@ namespace Thetis
                 clrbtnFilter_notch_highlight.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_notchhighlight_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
                 clrbtnFilter_extents.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_extents_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Gray);
                 chkFilter_sideband_mode.Checked = igs.GetSetting<bool>("filterdisplay_sideband_mode", false, false, false, false);
+                nudFilter_waterfall_frame_update.Value = igs.GetSetting<int>("filterdisplay_waterfall_frameupdate", true, 1, 1000, 4);
             }
             else
             {
@@ -32114,6 +32117,11 @@ namespace Thetis
         }
 
         private void chkFilter_sideband_mode_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudFilter_waterfall_frame_update_ValueChanged(object sender, EventArgs e)
         {
             updateMeterType();
         }

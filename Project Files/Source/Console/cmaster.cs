@@ -92,11 +92,14 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", EntryPoint = "SetPSRxIdx", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSRxIdx(int id, int idx);
 
-        // cmaster analyzer
+        // cmaster multiple analyzers
         [DllImport("ChannelMaster.dll", EntryPoint = "alloc_analyzer", CallingConvention = CallingConvention.Cdecl)]
         public static extern int AllocAnalyzer(int stype, int id, int max_fft_size);
         [DllImport("ChannelMaster.dll", EntryPoint = "free_analyzer", CallingConvention = CallingConvention.Cdecl)]
         public static extern int FreeAnalyzer(int disp);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "run_analyzer", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int RunAnalyzer(int disp, int run);
 
         // vox-dexp
 

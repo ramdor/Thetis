@@ -1812,8 +1812,9 @@ namespace Thetis
 
             //
             MiniSpec.Init(this);
-            MiniSpec.Add(1, 0); // rx1
-            MiniSpec.Add(2, 1); // rx2
+            MiniSpec.Add(1, 0, false); // rx1
+            MiniSpec.Add(2, 1, false); // rx2
+            MiniSpec.Add(1, 0, true); // rx1 sub
             //
 
             UpdateTXProfile(SetupForm.TXProfile); // now update the combos
@@ -40871,9 +40872,9 @@ namespace Thetis
             }
 
             //always update
-            //Display.UpdateMNFminWidth(); //[2.10.3]MW0LGE update
-            UpdateMinimumNotchWidth(1);
-            UpdateMinimumNotchWidth(2);
+            UpdateMinimumNotchWidthRX(1);
+            UpdateMinimumNotchWidthRX(2);
+            UpdateMinimumNotchWidthTX();
         }
 
         private int dsp_buf_phone_rx = 64;
@@ -46600,7 +46601,8 @@ namespace Thetis
 
         public delegate void TuneStepIndexChanged(int rx, int old_index, int new_index);
 
-        public delegate void MinimumNotchWidthChanged(int rx, double width);
+        public delegate void MinimumRXNotchWidthChanged(int rx, double width);
+        public delegate void MinimumTXNotchWidthChanged(double width);
         public delegate void NotchChanged(int notch_index, double old_bw, double new_bw, bool active, double old_centre_freq, double new_centre_freq, bool added, bool removed);
 
         public delegate void TXFiltersChanged(int low, int high);
@@ -46702,7 +46704,8 @@ namespace Thetis
 
         public PAProfileChanged PAProfileChangedHandlers;
 
-        public MinimumNotchWidthChanged MinimumNotchWidthChangedHandlers;
+        public MinimumTXNotchWidthChanged MinimumTXNotchWidthChangedHandlers;
+        public MinimumRXNotchWidthChanged MinimumRXNotchWidthChangedHandlers;
         public NotchChanged NotchChangedHandlers;
 
         public TXFiltersChanged TXFiltersChangedHandlers;
@@ -50139,16 +50142,21 @@ namespace Thetis
             if (!BPFToolStripMenuItem.DropDown.Visible) BPFToolStripMenuItem.ShowDropDown();
         }
 
-        private Dictionary<string, double> _minimum_notch_width = new Dictionary<string, double>();
-        public double GetMinimumNotchWidth(int rx)
+        private Dictionary<string, double> _minimum_rx_notch_width = new Dictionary<string, double>();
+        private double _minimum_tx_notch_width = 100;
+        public double GetMinimumRXNotchWidth(int rx)
         {
             if(rx<1 || rx>2) return 100;
 
             string key = rx.ToString();
-            if(_minimum_notch_width.ContainsKey(key)) return _minimum_notch_width[key];
+            if(_minimum_rx_notch_width.ContainsKey(key)) return _minimum_rx_notch_width[key];
             return 100;
         }
-        public void UpdateMinimumNotchWidth(int rx)
+        public double GetMinimumTXNotchWidth()
+        {
+            return _minimum_tx_notch_width;
+        }
+        public void UpdateMinimumNotchWidthRX(int rx)
         {
             int chan = -1;
             if (rx == 1)
@@ -50169,17 +50177,27 @@ namespace Thetis
                 }
 
                 string key = rx.ToString();
-                if (_minimum_notch_width.ContainsKey(key))
+                if (_minimum_rx_notch_width.ContainsKey(key))
                 {
-                    _minimum_notch_width[key] = min_notch_width;
+                    _minimum_rx_notch_width[key] = min_notch_width;
                 }
                 else
                 {
-                    _minimum_notch_width.Add(key, min_notch_width);
+                    _minimum_rx_notch_width.Add(key, min_notch_width);
                 }
 
-                MinimumNotchWidthChangedHandlers?.Invoke(rx, min_notch_width);
+                MinimumRXNotchWidthChangedHandlers?.Invoke(rx, min_notch_width);
             }
+        }
+        public void UpdateMinimumNotchWidthTX()
+        {
+            //int chan = WDSP.id(1, 0);
+            double min_notch_width = 100;// 0;
+            //unsafe
+            //{
+            //    WDSP.RXANBPGetMinNotchWidth(chan, &min_notch_width);
+            //}
+            MinimumTXNotchWidthChangedHandlers?.Invoke(min_notch_width);
         }
     }
 

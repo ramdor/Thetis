@@ -551,7 +551,8 @@ namespace Thetis
             console.PreampModeChangedHandlers += OnPreampModeChanged;
             console.CentreFrequencyHandlers += OnCentreFrequencyChanged;
             console.CTUNChangedHandlers += OnCTUNChanged;
-            console.MinimumNotchWidthChangedHandlers += OnMinNotchWidthChanged;
+            console.MinimumRXNotchWidthChangedHandlers += OnMinRXNotchWidthChanged;
+            console.MinimumTXNotchWidthChangedHandlers += OnMinTXNotchWidthChanged;
         }
         public static void RemoveDelegates()
         {
@@ -561,11 +562,16 @@ namespace Thetis
             console.PreampModeChangedHandlers -= OnPreampModeChanged;
             console.CentreFrequencyHandlers -= OnCentreFrequencyChanged;
             console.CTUNChangedHandlers -= OnCTUNChanged;
-            console.MinimumNotchWidthChangedHandlers -= OnMinNotchWidthChanged;
+            console.MinimumRXNotchWidthChangedHandlers -= OnMinRXNotchWidthChanged;
+            console.MinimumTXNotchWidthChangedHandlers -= OnMinTXNotchWidthChanged;
         }
-        private static void OnMinNotchWidthChanged(int rx, double width)
+        private static void OnMinRXNotchWidthChanged(int rx, double width)
         {
-            _mnfMinSize = width;
+            _mnfMinSizeRX = width;
+        }
+        private static void OnMinTXNotchWidthChanged(double width)
+        {
+            _mnfMinSizeTX = width;
         }
         private static bool _rx1ClickDisplayCTUN = false;
         private static bool _rx2ClickDisplayCTUN = false;
@@ -792,7 +798,8 @@ namespace Thetis
         private static int displayTargetHeight = 0;	// target height
         private static int displayTargetWidth = 0;	// target width
         private static Control displayTarget = null;
-        private static double _mnfMinSize = 100;
+        private static double _mnfMinSizeRX = 100;
+        private static double _mnfMinSizeTX = 100;
         public static Control Target
         {
             get { return displayTarget; }
@@ -808,7 +815,8 @@ namespace Thetis
                     initDisplayArrays(displayTargetWidth, displayTargetHeight);
 
                     //UpdateMNFminWidth();
-                    _mnfMinSize = console.GetMinimumNotchWidth(1); // just for rx1
+                    _mnfMinSizeRX = console.GetMinimumRXNotchWidth(1); // just for rx1
+                    _mnfMinSizeTX = console.GetMinimumTXNotchWidth();
 
                     if (!_bDX2Setup)
                     {
@@ -6674,6 +6682,8 @@ namespace Thetis
             List<MNotch> notches = MNotchDB.NotchesInBW(rf_freq, Low - console.MaxFilterWidth, High + console.MaxFilterWidth);
             List<clsNotchCoords> notchData = new List<clsNotchCoords>();
 
+            double min_notch_wdith = localMox(rx) ? _mnfMinSizeTX : _mnfMinSizeRX;
+
             foreach (MNotch n in notches)
             {
                 int notch_centre_x;
@@ -6688,7 +6698,7 @@ namespace Thetis
                 }
                 else
                 {
-                    double dNewWidth = n.FWidth < _mnfMinSize ? _mnfMinSize : n.FWidth; // use the min width of filter from WDSP
+                    double dNewWidth = n.FWidth < min_notch_wdith ? min_notch_wdith : n.FWidth; // use the min width of filter from WDSP
                     dNewWidth += 20; // fudge factor to align better with spectrum notch
                     notch_centre_x = (int)((float)((n.FCenter) - rf_freq - Low - localRit) / width * W);
                     notch_left_x = (int)((float)((n.FCenter) - rf_freq - dNewWidth / 2 - Low - localRit) / width * W);
