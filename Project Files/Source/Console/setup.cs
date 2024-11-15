@@ -25093,6 +25093,7 @@ namespace Thetis
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_extents_colour", clrbtnFilter_extents.Color);
                 igs.SetSetting<bool>("filterdisplay_sideband_mode", chkFilter_sideband_mode.Checked);
                 igs.SetSetting<int>("filterdisplay_waterfall_frameupdate", (int)nudFilter_waterfall_frame_update.Value);
+                igs.SetSetting<bool>("filterdisplay_use_grey", chkFilter_grey_outsidepb.Checked);
             }
             else
             {
@@ -25701,6 +25702,7 @@ namespace Thetis
                 clrbtnFilter_extents.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_extents_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Gray);
                 chkFilter_sideband_mode.Checked = igs.GetSetting<bool>("filterdisplay_sideband_mode", false, false, false, false);
                 nudFilter_waterfall_frame_update.Value = igs.GetSetting<int>("filterdisplay_waterfall_frameupdate", true, 1, 1000, 4);
+                chkFilter_grey_outsidepb.Checked = igs.GetSetting<bool>("filterdisplay_use_grey", false, false, false, true);
             }
             else
             {
@@ -32122,6 +32124,11 @@ namespace Thetis
         }
 
         private void nudFilter_waterfall_frame_update_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkFilter_grey_outsidepb_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
         }

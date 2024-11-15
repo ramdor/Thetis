@@ -3813,6 +3813,7 @@
             this.chkFilter_sideband_mode = new System.Windows.Forms.CheckBoxTS();
             this.nudFilter_waterfall_frame_update = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS341 = new System.Windows.Forms.LabelTS();
+            this.chkFilter_grey_outsidepb = new System.Windows.Forms.CheckBoxTS();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -60889,7 +60890,7 @@
             0,
             0,
             131072});
-            this.nudFilterDisplay_fixed_zoom_level.Location = new System.Drawing.Point(126, 95);
+            this.nudFilterDisplay_fixed_zoom_level.Location = new System.Drawing.Point(126, 84);
             this.nudFilterDisplay_fixed_zoom_level.Maximum = new decimal(new int[] {
             10,
             0,
@@ -60920,7 +60921,7 @@
             0,
             0,
             131072});
-            this.nudFilterDisplay_fixed_tx_zoom_level.Location = new System.Drawing.Point(126, 121);
+            this.nudFilterDisplay_fixed_tx_zoom_level.Location = new System.Drawing.Point(126, 110);
             this.nudFilterDisplay_fixed_tx_zoom_level.Maximum = new decimal(new int[] {
             20,
             0,
@@ -61100,7 +61101,7 @@
             // 
             this.chkFilter_sideband_mode.AutoSize = true;
             this.chkFilter_sideband_mode.Image = null;
-            this.chkFilter_sideband_mode.Location = new System.Drawing.Point(103, 224);
+            this.chkFilter_sideband_mode.Location = new System.Drawing.Point(113, 136);
             this.chkFilter_sideband_mode.Name = "chkFilter_sideband_mode";
             this.chkFilter_sideband_mode.Size = new System.Drawing.Size(71, 30);
             this.chkFilter_sideband_mode.TabIndex = 189;
@@ -61153,6 +61154,21 @@
             this.labelTS341.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.toolTip1.SetToolTip(this.labelTS341, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
         "hat this is tamed by the FPS setting.");
+            // 
+            // chkFilter_grey_outsidepb
+            // 
+            this.chkFilter_grey_outsidepb.AutoSize = true;
+            this.chkFilter_grey_outsidepb.Checked = true;
+            this.chkFilter_grey_outsidepb.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFilter_grey_outsidepb.Image = null;
+            this.chkFilter_grey_outsidepb.Location = new System.Drawing.Point(23, 236);
+            this.chkFilter_grey_outsidepb.Name = "chkFilter_grey_outsidepb";
+            this.chkFilter_grey_outsidepb.Size = new System.Drawing.Size(100, 17);
+            this.chkFilter_grey_outsidepb.TabIndex = 194;
+            this.chkFilter_grey_outsidepb.Text = "Grey outside pb";
+            this.toolTip1.SetToolTip(this.chkFilter_grey_outsidepb, "Show a grey scale outside the passband");
+            this.chkFilter_grey_outsidepb.UseVisualStyleBackColor = true;
+            this.chkFilter_grey_outsidepb.CheckedChanged += new System.EventHandler(this.chkFilter_grey_outsidepb_CheckedChanged);
             // 
             // timer_VAC_Monitor
             // 
@@ -64364,6 +64380,7 @@
             // 
             // grpMeterItemFilterDisplay
             // 
+            this.grpMeterItemFilterDisplay.Controls.Add(this.chkFilter_grey_outsidepb);
             this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS339);
             this.grpMeterItemFilterDisplay.Controls.Add(this.nudFilter_waterfall_frame_update);
             this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS341);
@@ -64722,7 +64739,7 @@
             // 
             this.radFilterItem_none.AutoSize = true;
             this.radFilterItem_none.Image = null;
-            this.radFilterItem_none.Location = new System.Drawing.Point(23, 226);
+            this.radFilterItem_none.Location = new System.Drawing.Point(23, 205);
             this.radFilterItem_none.Name = "radFilterItem_none";
             this.radFilterItem_none.Size = new System.Drawing.Size(51, 17);
             this.radFilterItem_none.TabIndex = 147;
@@ -64734,7 +64751,7 @@
             // 
             this.radFilterItem_panadaptor.AutoSize = true;
             this.radFilterItem_panadaptor.Image = null;
-            this.radFilterItem_panadaptor.Location = new System.Drawing.Point(23, 157);
+            this.radFilterItem_panadaptor.Location = new System.Drawing.Point(23, 136);
             this.radFilterItem_panadaptor.Name = "radFilterItem_panadaptor";
             this.radFilterItem_panadaptor.Size = new System.Drawing.Size(80, 17);
             this.radFilterItem_panadaptor.TabIndex = 146;
@@ -64746,7 +64763,7 @@
             // 
             this.radFilterItem_waterfall.AutoSize = true;
             this.radFilterItem_waterfall.Image = null;
-            this.radFilterItem_waterfall.Location = new System.Drawing.Point(23, 180);
+            this.radFilterItem_waterfall.Location = new System.Drawing.Point(23, 159);
             this.radFilterItem_waterfall.Name = "radFilterItem_waterfall";
             this.radFilterItem_waterfall.Size = new System.Drawing.Size(67, 17);
             this.radFilterItem_waterfall.TabIndex = 145;
@@ -64759,7 +64776,7 @@
             this.radFilterItem_panafall.AutoSize = true;
             this.radFilterItem_panafall.Checked = true;
             this.radFilterItem_panafall.Image = null;
-            this.radFilterItem_panafall.Location = new System.Drawing.Point(23, 203);
+            this.radFilterItem_panafall.Location = new System.Drawing.Point(23, 182);
             this.radFilterItem_panafall.Name = "radFilterItem_panafall";
             this.radFilterItem_panafall.Size = new System.Drawing.Size(63, 17);
             this.radFilterItem_panafall.TabIndex = 144;
@@ -64799,7 +64816,7 @@
             // 
             this.labelTS294.AutoSize = true;
             this.labelTS294.Image = null;
-            this.labelTS294.Location = new System.Drawing.Point(3, 39);
+            this.labelTS294.Location = new System.Drawing.Point(3, 33);
             this.labelTS294.Name = "labelTS294";
             this.labelTS294.Size = new System.Drawing.Size(49, 13);
             this.labelTS294.TabIndex = 1;
@@ -64821,7 +64838,7 @@
             // 
             this.chkFilterDisplay_fixed_tx_zoom.AutoSize = true;
             this.chkFilterDisplay_fixed_tx_zoom.Image = null;
-            this.chkFilterDisplay_fixed_tx_zoom.Location = new System.Drawing.Point(23, 122);
+            this.chkFilterDisplay_fixed_tx_zoom.Location = new System.Drawing.Point(23, 111);
             this.chkFilterDisplay_fixed_tx_zoom.Name = "chkFilterDisplay_fixed_tx_zoom";
             this.chkFilterDisplay_fixed_tx_zoom.Size = new System.Drawing.Size(96, 17);
             this.chkFilterDisplay_fixed_tx_zoom.TabIndex = 141;
@@ -64833,7 +64850,7 @@
             // 
             this.chkFilterDisplay_fixed_zoom.AutoSize = true;
             this.chkFilterDisplay_fixed_zoom.Image = null;
-            this.chkFilterDisplay_fixed_zoom.Location = new System.Drawing.Point(23, 96);
+            this.chkFilterDisplay_fixed_zoom.Location = new System.Drawing.Point(23, 85);
             this.chkFilterDisplay_fixed_zoom.Name = "chkFilterDisplay_fixed_zoom";
             this.chkFilterDisplay_fixed_zoom.Size = new System.Drawing.Size(97, 17);
             this.chkFilterDisplay_fixed_zoom.TabIndex = 139;
@@ -64845,7 +64862,7 @@
             // 
             this.chkFilterDisplay_show_limits.AutoSize = true;
             this.chkFilterDisplay_show_limits.Image = null;
-            this.chkFilterDisplay_show_limits.Location = new System.Drawing.Point(23, 73);
+            this.chkFilterDisplay_show_limits.Location = new System.Drawing.Point(23, 62);
             this.chkFilterDisplay_show_limits.Name = "chkFilterDisplay_show_limits";
             this.chkFilterDisplay_show_limits.Size = new System.Drawing.Size(100, 17);
             this.chkFilterDisplay_show_limits.TabIndex = 138;
@@ -70301,5 +70318,6 @@
         private LabelTS labelTS339;
         private NumericUpDownTS nudFilter_waterfall_frame_update;
         private LabelTS labelTS341;
+        private CheckBoxTS chkFilter_grey_outsidepb;
     }
 }
