@@ -11520,7 +11520,7 @@ namespace Thetis
                 _notch_highlighted_index = -1;
                 _notch_start_freq = -1;
 
-                float step = Common.CtrlKeyDown ? 1 : 10; 
+                float step = Common.ShiftKeyDown ? 1 : 10; 
 
                 if (_adjust_low)
                 {
@@ -11558,19 +11558,21 @@ namespace Thetis
             public override void MouseWheel(int number_of_moves)
             {
                 int sign = Math.Sign(number_of_moves);
-                float step = Common.CtrlKeyDown ? 1 : 10;
+                float step = Common.ShiftKeyDown && !Common.CtrlKeyDown ? 1 : 10;
 
                 if (_notch_highlighted_index == -1 && !_notch_selected)
                 {
                     if (_adjust_low)
                     {
-                        Low += sign * step;
+                        float tmp = Common.CtrlKeyDown ? (float)(Math.Round(Low / 10) * 10) : Low;
+                        Low = tmp + (sign * step);                        
                     }
-                    if (_adjust_high)
+                    else if (_adjust_high)
                     {
-                        High += sign * step;
+                        float tmp = Common.CtrlKeyDown ? (float)(Math.Round(High / 10) * 10) : High;
+                        High = tmp + (sign * step);
                     }
-                    if (_adjust_shift)
+                    else if (_adjust_shift)
                     {
                         _start_low = Low;
                         _start_high = High;
@@ -11581,6 +11583,7 @@ namespace Thetis
                 {
                     if (_console == null || _notch_highlighted_index == -1) return;
 
+                    //notch
                     bool ok = false;
                     double width = 0;
                     lock (MiniSpec.NotchLocker)
@@ -11710,6 +11713,7 @@ namespace Thetis
                     if (_owningmeter.MOX)
                     {
                         DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                        float val = Common.CtrlKeyDown ? (float)(Math.Round(value / 10) * 10) : value;
 
                         _console.BeginInvoke(new MethodInvoker(() =>
                         {
@@ -11723,19 +11727,19 @@ namespace Thetis
                                 case DSPMode.LSB:
                                 case DSPMode.SAM:
                                 case DSPMode.SPEC:
-                                    if (value > 0) value = 0;
-                                    _console.TXFilterHigh = (int)Math.Abs(value);
+                                    if (val > 0) val = 0;
+                                    _console.TXFilterHigh = (int)Math.Abs(val);
                                     break;
                                 default:
-                                    if (value < 0) value = 0;
-                                    _console.TXFilterLow = (int)Math.Abs(value);
+                                    if (val < 0) val = 0;
+                                    _console.TXFilterLow = (int)Math.Abs(val);
                                     break;
                             }
                         }));
                     }
                     else
                     {
-                        int low = (int)value;
+                        int low = (int)(Common.CtrlKeyDown ? (float)(Math.Round(value / 10) * 10) : value);
                         int old_low = _showVfoA ? _vfoA_low : _vfoB_low;
                         if (old_low == low) return;
 
@@ -11807,6 +11811,7 @@ namespace Thetis
                     if (_owningmeter.MOX)
                     {
                         DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                        float val = Common.CtrlKeyDown ? (float)(Math.Round(value / 10) * 10) : value;
 
                         _console.BeginInvoke(new MethodInvoker(() =>
                         {
@@ -11814,20 +11819,20 @@ namespace Thetis
                             {
                                 case DSPMode.DIGL:
                                 case DSPMode.LSB:
-                                    if (value > 0) value = 0;
-                                    _console.TXFilterLow = (int)Math.Abs(value);
+                                    if (val > 0) val = 0;
+                                    _console.TXFilterLow = (int)Math.Abs(val);
                                     break;
                                 default:
-                                    if (value < 0) value = 0;
-                                    _console.TXFilterHigh = (int)Math.Abs(value);
+                                    if (val < 0) val = 0;
+                                    _console.TXFilterHigh = (int)Math.Abs(val);
                                     break;
                             }
                         }));
                     }
                     else
                     {
-                        int high = (int)value;
-                        int old_high = _showVfoA ? _vfoA_high : _vfoB_high;
+                        int high = (int)(Common.CtrlKeyDown ? (float)(Math.Round(value / 10) * 10) : value);
+                        int old_high = _showVfoA ? _vfoA_high : _vfoB_high;                        
                         if (old_high == high) return;
 
                         _console.BeginInvoke(new MethodInvoker(() =>
@@ -11876,6 +11881,7 @@ namespace Thetis
 
                 bool ok = false;
                 double new_freq = (int)delta + _notch_start_freq;
+                new_freq = Common.CtrlKeyDown ? (float)(Math.Round(new_freq / 10) * 10) : new_freq;
 
                 lock (MiniSpec.NotchLocker)
                 {
@@ -11905,9 +11911,15 @@ namespace Thetis
                 {
                     if (shift_hz == 0) return;
                     float shift = (int)shift_hz;
-                    int low = (int)(_start_low + shift);
-                    int high = (int)(_start_high + shift);
-
+                    float fLow = _start_low + shift;
+                    float fHigh = _start_high + shift;
+                    if (Common.CtrlKeyDown)
+                    {
+                        fLow = (float)(Math.Round(fLow / 10) * 10);
+                        fHigh = (float)(Math.Round(fHigh / 10) * 10);
+                    }
+                    int low = (int)fLow;
+                    int high = (int)fHigh;
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
                         _console.LimitFilterToSidebands(ref low, ref high, _owningmeter.RX, true);
@@ -25046,53 +25058,50 @@ namespace Thetis
                         break;
                 }
 
-                if (filter.Greyscale)
+                // apply greyscale
+                for (int i = 0; i < pixel_wdith; i++)
                 {
-                    // apply greyscale
-                    for (int i = 0; i < pixel_wdith; i++)
+                    float grey_val = greyscale_data[i];
+                    int index = i * pixel_size;
+
+                    int alpha_rx = row_rx[index + 3];
+                    if (filter.Greyscale && alpha_rx != 0 && grey_val > 0)
                     {
-                        float grey_val = greyscale_data[i];
-                        int index = i * pixel_size;
-                        int alpha_rx = row_rx[index + 3];
-                        int alpha_tx = row_tx[index + 3];
+                        int originalB = row_rx[index + 0];
+                        int originalG = row_rx[index + 1];
+                        int originalR = row_rx[index + 2];
 
-                        if (alpha_rx != 0 && grey_val > 0)
-                        {
-                            int originalB = row_rx[index + 0];
-                            int originalG = row_rx[index + 1];
-                            int originalR = row_rx[index + 2];
+                        int grayscale = (int)(originalR * 0.3 + originalG * 0.59 + originalB * 0.11);
 
-                            int grayscale = (int)(originalR * 0.3 + originalG * 0.59 + originalB * 0.11);
+                        row_rx[index + 0] = (byte)((1 - grey_val) * originalB + grey_val * grayscale);
+                        row_rx[index + 1] = (byte)((1 - grey_val) * originalG + grey_val * grayscale);
+                        row_rx[index + 2] = (byte)((1 - grey_val) * originalR + grey_val * grayscale);
+                    }
+                    else if (alpha_rx == 0)
+                    {
+                        row_rx[index + 0] = 0;
+                        row_rx[index + 1] = 0;
+                        row_rx[index + 2] = 0;
+                    }
 
-                            row_rx[index + 0] = (byte)((1 - grey_val) * originalB + grey_val * grayscale);
-                            row_rx[index + 1] = (byte)((1 - grey_val) * originalG + grey_val * grayscale);
-                            row_rx[index + 2] = (byte)((1 - grey_val) * originalR + grey_val * grayscale);
-                        }
-                        else if (alpha_rx == 0)
-                        {
-                            row_rx[index + 0] = 0;
-                            row_rx[index + 1] = 0;
-                            row_rx[index + 2] = 0;
-                        }
+                    int alpha_tx = row_tx[index + 3];
+                    if (filter.Greyscale && alpha_tx != 0 && grey_val > 0)
+                    {
+                        int originalB = row_tx[index + 0];
+                        int originalG = row_tx[index + 1];
+                        int originalR = row_tx[index + 2];
 
-                        if (alpha_tx != 0 && grey_val > 0)
-                        {
-                            int originalB = row_tx[index + 0];
-                            int originalG = row_tx[index + 1];
-                            int originalR = row_tx[index + 2];
+                        int grayscale = (int)(originalR * 0.3 + originalG * 0.59 + originalB * 0.11);
 
-                            int grayscale = (int)(originalR * 0.3 + originalG * 0.59 + originalB * 0.11);
-
-                            row_tx[index + 0] = (byte)((1 - grey_val) * originalB + grey_val * grayscale);
-                            row_tx[index + 1] = (byte)((1 - grey_val) * originalG + grey_val * grayscale);
-                            row_tx[index + 2] = (byte)((1 - grey_val) * originalR + grey_val * grayscale);
-                        }
-                        else if (alpha_tx == 0)
-                        {
-                            row_tx[index + 0] = 0;
-                            row_tx[index + 1] = 0;
-                            row_tx[index + 2] = 0;
-                        }
+                        row_tx[index + 0] = (byte)((1 - grey_val) * originalB + grey_val * grayscale);
+                        row_tx[index + 1] = (byte)((1 - grey_val) * originalG + grey_val * grayscale);
+                        row_tx[index + 2] = (byte)((1 - grey_val) * originalR + grey_val * grayscale);
+                    }
+                    else if (alpha_tx == 0)
+                    {
+                        row_tx[index + 0] = 0;
+                        row_tx[index + 1] = 0;
+                        row_tx[index + 2] = 0;
                     }
                 }
 
