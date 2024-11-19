@@ -55,6 +55,7 @@ namespace Thetis
     using System.IO.Compression;
     using System.Timers;
     using System.Runtime.InteropServices;
+
     public partial class Setup : Form
     {
         private const string s_DEFAULT_GRADIENT = "9|1|0.000|-1509884160|1|0.339|-1493237760|1|0.234|-1509884160|1|0.294|-1493211648|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1493237760|";
@@ -82,7 +83,6 @@ namespace Thetis
             InitializeComponent();
 
             Common.DoubleBufferAll(this, true);
-            Common.DoubleBuffered(scrlFilter, false); // turn this off as was causing issue with colour drop down arrows
 
             MaximumSize = MinimumSize;
             Size = MinimumSize;
@@ -31697,7 +31697,7 @@ namespace Thetis
         {
             // for these callsigns always show cmasio tab, as a perk to the testers from discord
             List<string> callsign_ignore = new List<string>() { "mw0lge", "oe3ide", "w2pa", "w9ez", "dl5tt", "k1lsb", "k1sr", "nc3z", "m0cke",
-                                                                "w9ez", "w1aex", "ny8t", "nj2us", "oz1ct", "nj2us", "w9ez"};
+                                                                "w9ez", "w1aex", "ny8t", "nj2us", "oz1ct", "nj2us", "w9ez", "w3ub", "ve9iou"};
 
             bool ignore = false;
             foreach (string call in callsign_ignore)
@@ -32328,21 +32328,6 @@ namespace Thetis
         {
             string four_char = txtWebImage_background_4char.Text;
             if (string.IsNullOrEmpty(four_char)) return;
-
-            //string mgID = meterItemGroupIDfromSelected();
-            //if (mgID == "") return;
-
-            //clsMeterTypeComboboxItem mtci = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
-            //if (mtci == null) return;
-
-            //MeterManager.clsMeter m = meterFromSelectedContainer();
-            //if (m == null) return;
-
-            //MeterType mt = meterItemGroupTypefromSelected();
-            //if (mt == MeterType.NONE) return;
-
-            //MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
-            //if (igs == null) return;
 
             (string mid, string igid) = MeterManager.GetWebImageIDsFrom4Char(four_char);
             if (mid == null && igid == null) return;

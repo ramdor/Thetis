@@ -5754,8 +5754,11 @@ namespace Thetis
                     _click_timer.Elapsed += (sender, ee) =>
                     {
                         _click_highlight = false;
-                        _click_timer.Stop();
-                        _click_timer.Dispose();
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
                     };
                     _click_timer.AutoReset = false;
                     _click_timer.Start();
@@ -5768,6 +5771,26 @@ namespace Thetis
                         _click_timer.Dispose();
                     }
                     _click_highlight = true;
+                }
+            }
+            public override bool MouseEntered
+            {
+                get
+                {
+                    return base.MouseEntered;
+                }
+                set
+                {
+                    if (!value && _click_highlight)
+                    {
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
+                        _click_highlight = false;
+                    }
+                    base.MouseEntered = value;
                 }
             }
             public override void MouseDown(MouseEventArgs e)
@@ -6030,8 +6053,11 @@ namespace Thetis
                     _click_timer.Elapsed += (sender, ee) =>
                     {
                         _click_highlight = false;
-                        _click_timer.Stop();
-                        _click_timer.Dispose();
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
                     };
                     _click_timer.AutoReset = false;
                     _click_timer.Start();
@@ -6044,6 +6070,26 @@ namespace Thetis
                         _click_timer.Dispose();
                     }
                     _click_highlight = true;
+                }
+            }
+            public override bool MouseEntered
+            {
+                get
+                {
+                    return base.MouseEntered;
+                }
+                set
+                {
+                    if (!value && _click_highlight)
+                    {
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
+                        _click_highlight = false;
+                    }
+                    base.MouseEntered = value;
                 }
             }
             public override void MouseDown(MouseEventArgs e)
@@ -6359,8 +6405,11 @@ namespace Thetis
                     _click_timer.Elapsed += (sender, ee) =>
                     {
                         _click_highlight = false;
-                        _click_timer.Stop();
-                        _click_timer.Dispose();
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
                     };
                     _click_timer.AutoReset = false;
                     _click_timer.Start();
@@ -6373,6 +6422,26 @@ namespace Thetis
                         _click_timer.Dispose();
                     }
                     _click_highlight = true;
+                }
+            }
+            public override bool MouseEntered
+            {
+                get
+                {
+                    return base.MouseEntered;
+                }
+                set
+                {
+                    if (!value && _click_highlight)
+                    {
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
+                        _click_highlight = false;
+                    }
+                    base.MouseEntered = value;
                 }
             }
             public override void MouseDown(MouseEventArgs e)
@@ -6615,8 +6684,11 @@ namespace Thetis
                     _click_timer.Elapsed += (sender, ee) =>
                     {
                         _click_highlight = false;
-                        _click_timer.Stop();
-                        _click_timer.Dispose();
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
                     };
                     _click_timer.AutoReset = false;
                     _click_timer.Start();
@@ -6629,6 +6701,26 @@ namespace Thetis
                         _click_timer.Dispose();
                     }
                     _click_highlight = true;
+                }
+            }
+            public override bool MouseEntered
+            {
+                get
+                {
+                    return base.MouseEntered;
+                }
+                set
+                {
+                    if (!value && _click_highlight)
+                    {
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
+                        _click_highlight = false;
+                    }
+                    base.MouseEntered = value;
                 }
             }
             public override void MouseDown(MouseEventArgs e)
@@ -7027,8 +7119,11 @@ namespace Thetis
                     _click_timer.Elapsed += (sender, ee) =>
                     {
                         _click_highlight = false;
-                        _click_timer.Stop();
-                        _click_timer.Dispose();
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
                     };
                     _click_timer.AutoReset = false;
                     _click_timer.Start();
@@ -7041,6 +7136,26 @@ namespace Thetis
                         _click_timer.Dispose();
                     }
                     _click_highlight = true;
+                }
+            }
+            public override bool MouseEntered
+            {
+                get
+                {
+                    return base.MouseEntered;
+                }
+                set
+                {
+                    if (!value && _click_highlight)
+                    {
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
+                        _click_highlight = false;
+                    }
+                    base.MouseEntered = value;
                 }
             }
             public override void MouseDown(MouseEventArgs e)
@@ -7347,8 +7462,11 @@ namespace Thetis
                     _click_timer.Elapsed += (sender, ee) =>
                     {
                         _click_highlight = false;
-                        _click_timer.Stop();
-                        _click_timer.Dispose();
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
                     };
                     _click_timer.AutoReset = false;
                     _click_timer.Start();
@@ -7361,6 +7479,26 @@ namespace Thetis
                         _click_timer.Dispose();
                     }
                     _click_highlight = true;
+                }
+            }
+            public override bool MouseEntered
+            {
+                get
+                {
+                    return base.MouseEntered;
+                }
+                set
+                {
+                    if (!value && _click_highlight)
+                    {
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
+                        _click_highlight = false;
+                    }
+                    base.MouseEntered = value;
                 }
             }
             public override void MouseDown(MouseEventArgs e)
@@ -12089,7 +12227,7 @@ namespace Thetis
                         _console.TNFAdd();
                     }));
                 }
-                else if (_snap_selected)
+                else if (_snap_selected && !_auto_zoom)
                 {
                     _snap_lines = !_snap_lines;
                 }
@@ -12271,7 +12409,7 @@ namespace Thetis
                     {
                         DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
                         float val = Common.CtrlKeyDown ? (float)(Math.Round(value / 10) * 10) : value;
-                        if (!_snap_lines_ignore && _snap_lines) val = findNearestVGrid((int)val);
+                        if (!_snap_lines_ignore && _snap_lines && !_auto_zoom) val = findNearestVGrid((int)val);
 
                         _console.BeginInvoke(new MethodInvoker(() =>
                         {
@@ -12298,7 +12436,7 @@ namespace Thetis
                     else
                     {
                         int low = (int)(Common.CtrlKeyDown ? (float)(Math.Round(value / 10) * 10) : value);
-                        if(!_snap_lines_ignore && _snap_lines) low = findNearestVGrid(low);
+                        if(!_snap_lines_ignore && _snap_lines && !_auto_zoom) low = findNearestVGrid(low);
                         int old_low = _showVfoA ? _vfoA_low : _vfoB_low;
                         if (old_low == low) return;
 
@@ -12371,7 +12509,7 @@ namespace Thetis
                     {
                         DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
                         float val = Common.CtrlKeyDown ? (float)(Math.Round(value / 10) * 10) : value;
-                        if (!_snap_lines_ignore && _snap_lines) val = findNearestVGrid((int)val);
+                        if (!_snap_lines_ignore && _snap_lines && !_auto_zoom) val = findNearestVGrid((int)val);
 
                         _console.BeginInvoke(new MethodInvoker(() =>
                         {
@@ -12392,7 +12530,7 @@ namespace Thetis
                     else
                     {
                         int high = (int)(Common.CtrlKeyDown ? (float)(Math.Round(value / 10) * 10) : value);
-                        if (!_snap_lines_ignore && _snap_lines) high = findNearestVGrid(high);
+                        if (!_snap_lines_ignore && _snap_lines && !_auto_zoom) high = findNearestVGrid(high);
                         int old_high = _showVfoA ? _vfoA_high : _vfoB_high;                        
                         if (old_high == high) return;
 
@@ -26079,7 +26217,7 @@ namespace Thetis
                 pixel_span = extent_h - extent_l;
 
                 //vgrid
-                if (filter.SnapLines)
+                if (filter.SnapLines && !filter.AutoZoom)
                 {
                     foreach (float f in filter.VGridFrequencies.Where(ff => ff != 0))
                     {
@@ -26135,11 +26273,12 @@ namespace Thetis
                 filter.MouseFrequency = (float)pixelsToHz(filter.MouseMovePoint.X - centre, pixel_span, hz_span);
 
                 //mnf/mnf+ button hover
+                // the + "\u200B" is for a zero-width space to preserve layout, otherwise direct write trims
                 SizeF zero = measureString("0", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
-                SizeF mnf = measureString("MNF", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
-                SizeF mnf_plus = measureString("+MNF", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
-                SizeF snap = measureString("SNAP", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
-                SizeF zoomsize = measureString("FILL", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                SizeF mnf = measureString(" MNF " + "\u200B", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                SizeF mnf_plus = measureString(" +MNF " + "\u200B", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                SizeF snap = measureString(" SNAP " + "\u200B", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                SizeF zoomsize = measureString(" FIT " + "\u200B", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
 
                 System.Drawing.RectangleF mnf_rect = System.Drawing.RectangleF.Empty;
                 System.Drawing.RectangleF mnf_plus_rect = System.Drawing.RectangleF.Empty;
@@ -26332,7 +26471,7 @@ namespace Thetis
                         filter.TopSelected = false;
                         mnf_plus_selected = true;
                     }
-                    else if (snap_rect.Contains(filter.MouseMovePoint))
+                    else if (snap_rect.Contains(filter.MouseMovePoint) && !filter.AutoZoom)
                     {
                         snap_highlight = text_highlight_colour_snap;
                         filter.LowSelected = false;
@@ -26354,10 +26493,11 @@ namespace Thetis
                 filter.SnapSelected = snap_selected;
                 filter.AutoZoomSelected = zoom_selected;
 
-                plotText("MNF", mnf_rect.X, text_y, rect.Width, font_size_scaled, filter.TNFActive ? System.Drawing.Color.White : extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, filter.TNFActive ? mnf_on_colour : mnf_highlight);
-                plotText("+MNF", mnf_plus_rect.X, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, mnfplus_highlight);
-                plotText("SNAP", snap_rect.X, text_y, rect.Width, font_size_scaled, extent_text_colour, filter.AutoZoom ? 128 : 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, filter.SnapLines ? snap_on_colour : snap_highlight);
-                plotText("FILL", zoom_rect.X, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, filter.AutoZoom ? zoom_on_colour : zoom_highlight);
+                // the + "\u200B" is for a zero-width space to preserve layout, otherwise direct write trims
+                plotText(" MNF " + "\u200B", mnf_rect.X, text_y, rect.Width, font_size_scaled, filter.TNFActive ? System.Drawing.Color.White : extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, filter.TNFActive ? mnf_on_colour : mnf_highlight);
+                plotText(" +MNF " + "\u200B", mnf_plus_rect.X, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, mnfplus_highlight);
+                plotText(" SNAP " + "\u200B", snap_rect.X, text_y, rect.Width, font_size_scaled, extent_text_colour, filter.AutoZoom ? 92 : 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, filter.SnapLines ? snap_on_colour : snap_highlight);
+                plotText(" FIT " + "\u200B", zoom_rect.X, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, filter.AutoZoom ? zoom_on_colour : zoom_highlight);
 
                 //filter edge values
                 float xl = filter_l;

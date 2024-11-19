@@ -1820,7 +1820,7 @@ namespace Thetis
                 MiniSpec.Init(this);
                 MiniSpec.Add(1, 0, false); // rx1
                 MiniSpec.Add(2, 1, false); // rx2
-                MiniSpec.Add(1, 0, true); // rx1 sub
+                //MiniSpec.Add(1, 0, true); // rx1 sub //not used yet
             }
             //
 
@@ -50228,6 +50228,24 @@ namespace Thetis
             //    WDSP.RXANBPGetMinNotchWidth(chan, &min_notch_width);
             //}
             MinimumTXNotchWidthChangedHandlers?.Invoke(min_notch_width);
+        }
+
+        private void chkFWCATU_MouseUp(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Right && ClickTuneDisplay)
+            {
+                chkFWCATU.Checked = false; // recentre
+                chkFWCATU.Checked = true; // restore setting
+            }
+        }
+
+        private void chkX2TR_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && ClickTuneRX2Display)
+            {
+                chkX2TR.Checked = false; // recentre
+                chkX2TR.Checked = true; // restore setting
+            }
         }
     }
 

@@ -1707,6 +1707,7 @@
             this.chkX2TR.Name = "chkX2TR";
             this.toolTip1.SetToolTip(this.chkX2TR, resources.GetString("chkX2TR.ToolTip"));
             this.chkX2TR.CheckedChanged += new System.EventHandler(this.chkX2TR_CheckedChanged);
+            this.chkX2TR.MouseUp += new System.Windows.Forms.MouseEventHandler(this.chkX2TR_MouseUp);
             // 
             // chkFWCATU
             // 
@@ -1716,6 +1717,7 @@
             this.chkFWCATU.Name = "chkFWCATU";
             this.toolTip1.SetToolTip(this.chkFWCATU, resources.GetString("chkFWCATU.ToolTip"));
             this.chkFWCATU.CheckedChanged += new System.EventHandler(this.chkFWCATU_CheckedChanged);
+            this.chkFWCATU.MouseUp += new System.Windows.Forms.MouseEventHandler(this.chkFWCATU_MouseUp);
             // 
             // comboRX2Band
             // 
