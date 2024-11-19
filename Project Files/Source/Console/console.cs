@@ -519,6 +519,8 @@ namespace Thetis
         private bool _portAudioIssue = false;
         private bool _exitConsoleInDispose = true;
 
+        private bool _use_additional_sas = true; // use additional spectrum analysers
+
         private bool m_bLogShutdown = false; // bool that is set via command line args to log the shutdown stages
 
         private frmReleaseNotes _frmReleaseNotes;
@@ -810,6 +812,7 @@ namespace Thetis
 
             TimeOutTimerManager.Initialise(this);
 
+            _use_additional_sas = !Common.HasArg(args, "-nospec"); // prevent the use of additional spec analysers
             InitConsole();                                      // Initialize all forms and main variables  INIT_SLOW
 
             //[2.10.3.4]MW0LGE shutdown log remove
@@ -1194,6 +1197,7 @@ namespace Thetis
                 s += "  -autostart         attempt to power on radio at start up\n";
                 s += "  -cmasioconfig      show the cmASIO setup tab in audio setup\n";
                 s += "  -noinstancewarn    do not warn if other instances are running\n";
+                s += "  -nospec            do not use additional spectrum analysers from WDSP for filter item display\n";
                 s += "  -logshutdown       generate shutdown_log.txt when closing down\n\n";
 
                 s += "  -datapath:c:\\thetisdatafolder\\                  use this data folder for everything\n";
@@ -1810,11 +1814,14 @@ namespace Thetis
 
             GetState(); // recall saved state
 
-            //
-            MiniSpec.Init(this);
-            MiniSpec.Add(1, 0, false); // rx1
-            MiniSpec.Add(2, 1, false); // rx2
-            MiniSpec.Add(1, 0, true); // rx1 sub
+            // sa system used by meter system
+            if (_use_additional_sas)
+            {
+                MiniSpec.Init(this);
+                MiniSpec.Add(1, 0, false); // rx1
+                MiniSpec.Add(2, 1, false); // rx2
+                MiniSpec.Add(1, 0, true); // rx1 sub
+            }
             //
 
             UpdateTXProfile(SetupForm.TXProfile); // now update the combos
@@ -21228,7 +21235,7 @@ namespace Thetis
                     }
                     else if ((nRX1ADCinUse == 0 || nRX1ADCinUse == 1) && _historic_attenuator_readings_rx1.Any()) // no overload rx1
                     {
-                        if (!_auto_att_undo_rx1 || (_auto_att_undo_rx1 && ((now - _auto_att_last_hold_time_rx1).TotalSeconds > _auto_att_hold_delay_rx1)))
+                        if (!_auto_att_undo_rx1 || (_auto_att_undo_rx1 && ((now - _auto_att_last_hold_time_rx1).TotalSeconds >= _auto_att_hold_delay_rx1)))
                         {
                             // unwind
                             HistoricAttenuatorReading har = _historic_attenuator_readings_rx1.Pop();
@@ -21241,8 +21248,9 @@ namespace Thetis
                                 else if (har.preampMode != PreampMode.FIRST)
                                 {
                                     if (har.preampMode != RX1PreampMode) RX1PreampMode = har.preampMode;
-                                }
+                                }                                
                             }
+                            _auto_att_last_hold_time_rx1 = now;
                         }
                     }
                 }
@@ -21301,7 +21309,7 @@ namespace Thetis
                     }
                     else if ((nRX2ADCinUse == 0 || nRX2ADCinUse == 1) && _historic_attenuator_readings_rx2.Any()) // no overload rx2
                     {
-                        if (!_auto_att_undo_rx2 || (_auto_att_undo_rx2 && ((now - _auto_att_last_hold_time_rx2).TotalSeconds > _auto_att_hold_delay_rx2)))
+                        if (!_auto_att_undo_rx2 || (_auto_att_undo_rx2 && ((now - _auto_att_last_hold_time_rx2).TotalSeconds >= _auto_att_hold_delay_rx2)))
                         {
                             // unwind
                             HistoricAttenuatorReading har = _historic_attenuator_readings_rx2.Pop();
@@ -21314,8 +21322,9 @@ namespace Thetis
                                 else if (har.preampMode != PreampMode.FIRST)
                                 {
                                     if (har.preampMode != RX2PreampMode) RX2PreampMode = har.preampMode;
-                                }
+                                }                                
                             }
+                            _auto_att_last_hold_time_rx2 = now;
                         }
                     }
                 }
@@ -21440,7 +21449,7 @@ namespace Thetis
                 if (_bInfoBarShowSEQErrors) infoBar.Warning("Sequence error : " + ooo.ToString() + " (" + s.Trim() + ")"); //MW0LGE_21k9c show/hide flag
             }
         }
-        private async void UpdatePeakText()
+        private void UpdatePeakText()
         {
             if (string.IsNullOrEmpty(txtVFOAFreq.Text) ||
                     txtVFOAFreq.Text == "." ||
@@ -24774,7 +24783,7 @@ namespace Thetis
             if (PAValues)
             {
                 average_fwdadc = alpha * average_fwdadc + (1.0f - alpha) * adc;
-                SetupForm.textFwdVoltage.Text = volts.ToString("f2") + " V";
+                if(!IsSetupFormNull) SetupForm.textFwdVoltage.Text = volts.ToString("f2") + " V";
             }
             if (watts < 0) watts = 0;
             return watts;
@@ -24789,7 +24798,7 @@ namespace Thetis
             if (MeterManager.RequiresUpdate(1, Reading.FWD_ADC)) _RX1MeterValues[Reading.FWD_ADC] = (float)power_int; //MW0LGE_[2.9.0.7]
             if (PAValues)
             {
-                SetupForm.textDriveFwdADCValue.Text = power_int.ToString();
+                if (!IsSetupFormNull) SetupForm.textDriveFwdADCValue.Text = power_int.ToString();
             }
 
             if (power_int <= 2095)
@@ -35008,7 +35017,7 @@ namespace Thetis
                             dFreq = getFrequencyAtPixel(e.X, 1);
                             rx = 1;
                         }
-                        addNotch(dFreq, rx);
+                        AddNotch(dFreq, rx);
                         return;
                     }
                     //
@@ -42000,15 +42009,23 @@ namespace Thetis
             return bRet;
         }
 
-        private void addNotch(double fFreq, int sourceRX)
+        public void AddNotch(double fFreqHZ, int sourceRX)
         {
+            if (SetupForm.NotchAdminBusy) return; // dont add if using add/edit on the setup form
+            if (sourceRX < 1 || sourceRX > 2) return;
+
+            // shift it by cwpitch if needed
+            fFreqHZ += GetDSPcwPitchShiftToZero(sourceRX);
+
+            fFreqHZ = Math.Round(fFreqHZ); //[2.10.3.7]MW0LGE moved from below
+
             //MW0LGE_21e XVTR
             double tmpMin = min_freq;
             double tmpMax = max_freq;
 
             if (sourceRX == 1 && rx1_xvtr_index >= 0)
             {
-                int nXIndex = XVTRForm.XVTRFreq(fFreq * 1e-6);
+                int nXIndex = XVTRForm.XVTRFreq(fFreqHZ * 1e-6);
                 if (nXIndex == rx1_xvtr_index)
                 {
                     tmpMin = XVTRForm.GetBegin(nXIndex);
@@ -42017,7 +42034,7 @@ namespace Thetis
             }
             else if (sourceRX == 2 && rx2_xvtr_index >= 0)
             {
-                int nXIndex = XVTRForm.XVTRFreq(fFreq * 1e-6);
+                int nXIndex = XVTRForm.XVTRFreq(fFreqHZ * 1e-6);
                 if (nXIndex == rx2_xvtr_index)
                 {
                     tmpMin = XVTRForm.GetBegin(nXIndex);
@@ -42027,12 +42044,12 @@ namespace Thetis
             //
 
             //constrain
-            if (fFreq < tmpMin * 1e6 || fFreq > tmpMax * 1e6) return;
+            if (fFreqHZ < tmpMin * 1e6 || fFreqHZ > tmpMax * 1e6) return;
 
-            fFreq = Math.Round(fFreq); //MW0LGE_21d3
+            //fFreqHZ = Math.Round(fFreqHZ); //MW0LGE_21d3
 
             // if there is a notch within 10hz ignore 
-            if (MNotchDB.NotchNearFreq(fFreq, 10)) return;
+            if (MNotchDB.NotchNearFreq(fFreqHZ, 10)) return;
 
             int nNumberofExistingNotches;
             unsafe
@@ -42043,14 +42060,14 @@ namespace Thetis
             double fWidth = 200;
             if (Common.ShiftKeyDown) fWidth = 100;
 
-            WDSP.RXANBPAddNotch(WDSP.id(0, 0), nNumberofExistingNotches, fFreq, fWidth, true);
-            WDSP.RXANBPAddNotch(WDSP.id(0, 1), nNumberofExistingNotches, fFreq, fWidth, true);
-            WDSP.RXANBPAddNotch(WDSP.id(2, 0), nNumberofExistingNotches, fFreq, fWidth, true);
+            WDSP.RXANBPAddNotch(WDSP.id(0, 0), nNumberofExistingNotches, fFreqHZ, fWidth, true);
+            WDSP.RXANBPAddNotch(WDSP.id(0, 1), nNumberofExistingNotches, fFreqHZ, fWidth, true);
+            WDSP.RXANBPAddNotch(WDSP.id(2, 0), nNumberofExistingNotches, fFreqHZ, fWidth, true);
 
             SetupForm.SaveNotchesToDatabase();
             SetupForm.UpdateNotchDisplay();
 
-            NotchChangedHandlers?.Invoke(nNumberofExistingNotches, fWidth, fWidth, true, fFreq, fFreq, true, false);
+            NotchChangedHandlers?.Invoke(nNumberofExistingNotches, fWidth, fWidth, true, fFreqHZ, fFreqHZ, true, false);
         }
 
         private int notchSidebandShift(int rx)
@@ -42095,10 +42112,10 @@ namespace Thetis
             // shift into sideband
             vfoHz += notchSidebandShift(1); //MW0LGE_21k9rc4
 
-            // shift it by cwpitch if needed
-            vfoHz += GetDSPcwPitchShiftToZero(1);
+            // shift it by cwpitch if needed  //[2.10.3.7]MW0LGE moved to AddNotch
+            //vfoHz += GetDSPcwPitchShiftToZero(1);
 
-            addNotch(vfoHz, 1);
+            AddNotch(vfoHz, 1);
         }
         private void ptbFMMic_Scroll(object sender, EventArgs e)
         {
@@ -45516,8 +45533,12 @@ namespace Thetis
                 return m_imgBackground;
             }
             set {
-                if(m_imgBackground != null)
-                    m_imgBackground.Dispose();
+                try
+                {
+                    if (m_imgBackground != null)
+                        m_imgBackground.Dispose();
+                }
+                catch { }
 
                 try
                 {

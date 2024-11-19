@@ -82,6 +82,7 @@ namespace Thetis
             InitializeComponent();
 
             Common.DoubleBufferAll(this, true);
+            Common.DoubleBuffered(scrlFilter, false); // turn this off as was causing issue with colour drop down arrows
 
             MaximumSize = MinimumSize;
             Size = MinimumSize;
@@ -422,7 +423,10 @@ namespace Thetis
 
             //MW0LGE_22b PA Profiles
             initPAProfiles();
-            //
+
+            initFilterSnapFrequencies();
+
+            defaultAlexSettings();
 
             getOptions();
 
@@ -658,7 +662,7 @@ namespace Thetis
                 AllowFreqBroadcast = false;
 
             //MW0LGE_21h
-            updateNetworkThrottleCheckBox();
+            updateNetworkThrottleCheckBox();            
         }
         private bool _bAddedDelegates = false;
         private void addDelegates()
@@ -802,65 +806,94 @@ namespace Thetis
 
         public void InitAudioTab(List<string> recoveryList = null)
         {
-            if (!comboAudioSampleRate1.Items.Contains(96000))
-                comboAudioSampleRate1.Items.Add(96000);
-            if (!comboAudioSampleRate1.Items.Contains(192000))
-                comboAudioSampleRate1.Items.Add(192000);
+            // refactored 2.10.3.7
+            int selected_rate1_index = comboAudioSampleRate1.SelectedIndex;
+            int selected_rate2_index = comboAudioSampleRateRX2.SelectedIndex;
 
-            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
+            comboAudioSampleRate1.Items.Clear();
+            comboAudioSampleRateRX2.Items.Clear();
+
+            bool include_extra_p1_rate = false;
+            int[] p1_rates = include_extra_p1_rate ? new int[] { 48000, 96000, 192000, 384000 } : new int[] { 48000, 96000, 192000 };
+            int[] p2_rates = { 48000, 96000, 192000, 384000, 768000, 1536000 };
+
+            int[] rates = NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH ? p2_rates : p1_rates;
+
+            foreach (int rate in rates)
             {
-                if (!comboAudioSampleRate1.Items.Contains(384000))
-                    comboAudioSampleRate1.Items.Add(384000);
-                if (!comboAudioSampleRate1.Items.Contains(768000))
-                    comboAudioSampleRate1.Items.Add(768000);
-                if (!comboAudioSampleRate1.Items.Contains(1536000))
-                    comboAudioSampleRate1.Items.Add(1536000);
+                comboAudioSampleRate1.Items.Add(rate);
+                comboAudioSampleRateRX2.Items.Add(rate);
             }
+
+            if (selected_rate1_index >= 0 && selected_rate1_index < comboAudioSampleRate1.Items.Count)
+                comboAudioSampleRate1.SelectedIndex = selected_rate1_index;
             else
-            {
-                if (comboAudioSampleRate1.Items.Contains(384000))
-                    comboAudioSampleRate1.Items.Remove(384000);
-                if (comboAudioSampleRate1.Items.Contains(768000))
-                    comboAudioSampleRate1.Items.Remove(768000);
-                if (comboAudioSampleRate1.Items.Contains(1536000))
-                    comboAudioSampleRate1.Items.Remove(1536000);
-            }
+                comboAudioSampleRate1.SelectedIndex = Array.IndexOf(rates, 192000);
 
-            if (needsRecovering(recoveryList, "comboAudioSampleRate1"))
-            {
-                if (comboAudioSampleRate1.SelectedIndex < 0)
-                    comboAudioSampleRate1.Text = "192000";
-            }
-
-            if (!comboAudioSampleRateRX2.Items.Contains(96000))
-                comboAudioSampleRateRX2.Items.Add(96000);
-            if (!comboAudioSampleRateRX2.Items.Contains(192000))
-                comboAudioSampleRateRX2.Items.Add(192000);
-
-            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
-            {
-                if (!comboAudioSampleRateRX2.Items.Contains(384000))
-                    comboAudioSampleRateRX2.Items.Add(384000);
-                if (!comboAudioSampleRateRX2.Items.Contains(768000))
-                    comboAudioSampleRateRX2.Items.Add(768000);
-                if (!comboAudioSampleRateRX2.Items.Contains(1536000))
-                    comboAudioSampleRateRX2.Items.Add(1536000);
-            }
+            if (selected_rate2_index >= 0 && selected_rate2_index < comboAudioSampleRateRX2.Items.Count)
+                comboAudioSampleRateRX2.SelectedIndex = selected_rate2_index;
             else
-            {
-                if (comboAudioSampleRateRX2.Items.Contains(384000))
-                    comboAudioSampleRateRX2.Items.Remove(384000);
-                if (comboAudioSampleRateRX2.Items.Contains(768000))
-                    comboAudioSampleRateRX2.Items.Remove(768000);
-                if (comboAudioSampleRateRX2.Items.Contains(1536000))
-                    comboAudioSampleRateRX2.Items.Remove(1536000);
-            }
+                comboAudioSampleRateRX2.SelectedIndex = Array.IndexOf(rates, 192000);
 
-            if (needsRecovering(recoveryList, "comboAudioSampleRateRX2"))
-            {
-                if (comboAudioSampleRateRX2.SelectedIndex < 0)
-                    comboAudioSampleRateRX2.Text = "192000";
-            }
+            //if (!comboAudioSampleRate1.Items.Contains(96000))
+            //    comboAudioSampleRate1.Items.Add(96000);
+            //if (!comboAudioSampleRate1.Items.Contains(192000))
+            //    comboAudioSampleRate1.Items.Add(192000);
+
+            //if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
+            //{
+            //    if (!comboAudioSampleRate1.Items.Contains(384000))
+            //        comboAudioSampleRate1.Items.Add(384000);
+            //    if (!comboAudioSampleRate1.Items.Contains(768000))
+            //        comboAudioSampleRate1.Items.Add(768000);
+            //    if (!comboAudioSampleRate1.Items.Contains(1536000))
+            //        comboAudioSampleRate1.Items.Add(1536000);
+            //}
+            //else
+            //{
+            //    if (comboAudioSampleRate1.Items.Contains(384000))
+            //        comboAudioSampleRate1.Items.Remove(384000);
+            //    if (comboAudioSampleRate1.Items.Contains(768000))
+            //        comboAudioSampleRate1.Items.Remove(768000);
+            //    if (comboAudioSampleRate1.Items.Contains(1536000))
+            //        comboAudioSampleRate1.Items.Remove(1536000);
+            //}
+
+            //if (needsRecovering(recoveryList, "comboAudioSampleRate1"))
+            //{
+            //    if (comboAudioSampleRate1.SelectedIndex < 0)
+            //        comboAudioSampleRate1.Text = "192000";
+            //}
+
+            //if (!comboAudioSampleRateRX2.Items.Contains(96000))
+            //    comboAudioSampleRateRX2.Items.Add(96000);
+            //if (!comboAudioSampleRateRX2.Items.Contains(192000))
+            //    comboAudioSampleRateRX2.Items.Add(192000);
+
+            //if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
+            //{
+            //    if (!comboAudioSampleRateRX2.Items.Contains(384000))
+            //        comboAudioSampleRateRX2.Items.Add(384000);
+            //    if (!comboAudioSampleRateRX2.Items.Contains(768000))
+            //        comboAudioSampleRateRX2.Items.Add(768000);
+            //    if (!comboAudioSampleRateRX2.Items.Contains(1536000))
+            //        comboAudioSampleRateRX2.Items.Add(1536000);
+            //}
+            //else
+            //{
+            //    if (comboAudioSampleRateRX2.Items.Contains(384000))
+            //        comboAudioSampleRateRX2.Items.Remove(384000);
+            //    if (comboAudioSampleRateRX2.Items.Contains(768000))
+            //        comboAudioSampleRateRX2.Items.Remove(768000);
+            //    if (comboAudioSampleRateRX2.Items.Contains(1536000))
+            //        comboAudioSampleRateRX2.Items.Remove(1536000);
+            //}
+
+            //if (needsRecovering(recoveryList, "comboAudioSampleRateRX2"))
+            //{
+            //    if (comboAudioSampleRateRX2.SelectedIndex < 0)
+            //        comboAudioSampleRateRX2.Text = "192000";
+            //}
         }
 
         private void InitAdvancedAudioTab(List<string> recoveryList = null)
@@ -2025,7 +2058,6 @@ namespace Thetis
             {
                 if (c.GetType() == typeof(GroupBoxTS))
                 {
-
                     foreach (Control c2 in c.Controls)
                     {
                         if (c2.GetType() != typeof(ComboBoxTS)) continue;
@@ -2728,6 +2760,11 @@ namespace Thetis
 
             //
             chkDiscordEnabled_CheckedChanged(this, e);
+
+            // filter item config
+            txtFilter_sideband_frequencies_TextChanged(this, e);
+            txtFilter_cw_frequencies_TextChanged(this, e);
+            txtFilter_other_frequencies_TextChanged(this, e);
         }
 
         public string[] GetTXProfileStrings()
@@ -21792,12 +21829,28 @@ namespace Thetis
             Graphics g = e.Graphics;
             g.Clear(Color.Black);
 
+            const float binsPerHz = 1025 / 48000f;
+
             Point[] linePoints;
             int height = picCFC.Height;
-            float binsPerHz = 1025 / 48000f;
-            int endFreqIndex = (int)((double)udCFC9.Value * binsPerHz);
-            int startFreqIndex = (int)((double)udCFC0.Value * binsPerHz);
+
+            //sanity checks
+            double start = (double)udCFC0.Value;
+            double stop = (double)udCFC9.Value;
+            if (start >= stop) return;
+
+            int endFreqIndex = (int)(stop * binsPerHz);
+            int startFreqIndex = (int)(start * binsPerHz);
+
+            //sanity checks
+            startFreqIndex = Math.Max(0, Math.Min(_CFCCompValues.Length - 1, startFreqIndex));
+            endFreqIndex = Math.Max(0, Math.Min(_CFCCompValues.Length - 1, endFreqIndex));
+
             int span = endFreqIndex - startFreqIndex;
+
+            //sanity checks
+            if (span <= 0) return;
+
             float step = picCFC.Width / (float)span;
             double max = (int)udCFCPicDBPerLine.Value - 10;
             int tenDBs = (int)Math.Floor(max / 10f) + 1;
@@ -24456,6 +24509,8 @@ namespace Thetis
                 comboContainerSelect.Items.Remove(cci);
 
                 updateMeter2Controls();
+
+                setupMMSettingsGroupBoxes(MeterType.NONE);
             }
         }
 
@@ -24846,6 +24901,10 @@ namespace Thetis
                 igs.FadeOnTx = chkWebImage_fade_tx.Checked;
                 igs.Text1 = txtWebImage_url.Text;
                 igs.DarkMode = chkWebImage_bypass_cache.Checked;
+
+                igs.SetSetting<bool>("webimage_background", chkWebImage_background.Checked);
+                igs.SetSetting<int>("webimage_background_interval", (int)nudWebImage_background_time.Value);
+                igs.SetSetting<string>("webimage_background_4char", txtWebImage_background_4char.Text);
             }
             else if(mt == MeterType.ROTATOR)
             {
@@ -25094,6 +25153,9 @@ namespace Thetis
                 igs.SetSetting<bool>("filterdisplay_sideband_mode", chkFilter_sideband_mode.Checked);
                 igs.SetSetting<int>("filterdisplay_waterfall_frameupdate", (int)nudFilter_waterfall_frame_update.Value);
                 igs.SetSetting<bool>("filterdisplay_use_grey", chkFilter_grey_outsidepb.Checked);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_snap_line_colour", clrbtnFilter_snap_line.Color);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_settingon_colour", clrbtnFilter_setting_on.Color);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_button_highlight_colour", clrbtnFilter_button_highlight.Color);
             }
             else
             {
@@ -25384,6 +25446,12 @@ namespace Thetis
                 txtWebImage_url.Text = igs.Text1;
                 chkWebImage_bypass_cache.Checked = igs.DarkMode;
                 updateWebImageState((ImageFetcher.State)igs.HistoryDuration);
+
+                txtWebImage_4char.Text = igs.GetSetting<string>("webimage_4char", false, "", "", "");
+                chkWebImage_background.Checked = igs.GetSetting<bool>("webimage_background", false, false, false, false);
+                nudWebImage_background_time.Value = (decimal)igs.GetSetting<int>("webimage_background_interval", true, 5, 3600, 5);
+                txtWebImage_background_4char.Text = igs.GetSetting<string>("webimage_background_4char", false, "", "", "");
+                updateWebImageBackground();
             }
             else if (mt == MeterType.ROTATOR)
             {
@@ -25703,6 +25771,9 @@ namespace Thetis
                 chkFilter_sideband_mode.Checked = igs.GetSetting<bool>("filterdisplay_sideband_mode", false, false, false, false);
                 nudFilter_waterfall_frame_update.Value = igs.GetSetting<int>("filterdisplay_waterfall_frameupdate", true, 1, 1000, 4);
                 chkFilter_grey_outsidepb.Checked = igs.GetSetting<bool>("filterdisplay_use_grey", false, false, false, true);
+                clrbtnFilter_snap_line.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_snap_line_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Gray);
+                clrbtnFilter_setting_on.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_settingon_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.CornflowerBlue);
+                clrbtnFilter_button_highlight.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_button_highlight_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Gray);
             }
             else
             {
@@ -30721,7 +30792,7 @@ namespace Thetis
         }
 
         private void txtWebImage_url_TextChanged(object sender, EventArgs e)
-        {
+        {            
             if (txtWebImage_url.Text.Contains("hamqsl.com", StringComparison.InvariantCultureIgnoreCase) ||
                 txtWebImage_url.Text.Contains("bsdworld.org", StringComparison.InvariantCultureIgnoreCase) ||
                 //txtWebImage_url.Text.Contains("nascom.nasa.gov", StringComparison.InvariantCultureIgnoreCase) ||
@@ -30737,17 +30808,19 @@ namespace Thetis
                     return;
                 }
 
+                bool old_ignore = _ignoreMeterItemChangeEvents;
+
                 // lock and set the update interval
                 nudWebImage_update_interval.Enabled = false;
                 _ignoreMeterItemChangeEvents = true;
                 nudWebImage_update_interval.Value = (decimal)600;
-                _ignoreMeterItemChangeEvents = false;
+                _ignoreMeterItemChangeEvents = old_ignore;
 
                 // lock and set the bypass cache
                 chkWebImage_bypass_cache.Enabled = false;
                 _ignoreMeterItemChangeEvents = true;
                 chkWebImage_bypass_cache.Checked = false;
-                _ignoreMeterItemChangeEvents = false;
+                _ignoreMeterItemChangeEvents = old_ignore;
             }
             else
             {
@@ -31620,23 +31693,27 @@ namespace Thetis
                 btnMeterDown.Enabled = !chkLockContainer.Checked;
             }
         }
-        public void SetupCMAsio(bool pa_issue, bool cmasio_config_flag)
+        public void SetupCMAsio(bool portaudio_issue, bool cmasio_config_flag)
         {
-            // for these callsigns always show cmasio tab
-            List<string> callsign_ignore = new List<string>() { "mw0lge", "m0lge", "oe3ide", "w2pa" };
+            // for these callsigns always show cmasio tab, as a perk to the testers from discord
+            List<string> callsign_ignore = new List<string>() { "mw0lge", "oe3ide", "w2pa", "w9ez", "dl5tt", "k1lsb", "k1sr", "nc3z", "m0cke",
+                                                                "w9ez", "w1aex", "ny8t", "nj2us", "oz1ct", "nj2us", "w9ez"};
 
             bool ignore = false;
             foreach (string call in callsign_ignore)
             {
                 string tmp;
-                tmp = txtGenCustomTitle == null || txtGenCustomTitle.Text == null ? "" : txtGenCustomTitle.Text;
+                tmp = txtGenCustomTitle == null || string.IsNullOrEmpty(txtGenCustomTitle.Text) ? "" : txtGenCustomTitle.Text;
                 ignore |= tmp.Contains(call, StringComparison.OrdinalIgnoreCase);
 
-                tmp = txtOwnCallsign == null || txtOwnCallsign.Text == null ? "" : txtOwnCallsign.Text;
+                tmp = txtOwnCallsign == null || string.IsNullOrEmpty(txtOwnCallsign.Text) ? "" : txtOwnCallsign.Text;
+                ignore |= tmp.Contains(call, StringComparison.OrdinalIgnoreCase);
+
+                tmp = txtDiscordCallsign == null || string.IsNullOrEmpty(txtDiscordCallsign.Text) ? "" : txtDiscordCallsign.Text;
                 ignore |= tmp.Contains(call, StringComparison.OrdinalIgnoreCase);
             }
 
-            if (pa_issue || (!cmasio_config_flag && !ignore))
+            if (portaudio_issue || (!cmasio_config_flag && !ignore))
             {
                 tcAudio.TabPages.Remove(tpCMAsio);
                 return;
@@ -32131,6 +32208,159 @@ namespace Thetis
         private void chkFilter_grey_outsidepb_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+
+        private void txtFilter_sideband_frequencies_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            MeterManager.FilterItemFrequencies(MeterManager.FilterItemSnapFrequencies.SIDEBANDS, txtFilter_sideband_frequencies.Text);
+        }
+
+        private void txtFilter_cw_frequencies_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            MeterManager.FilterItemFrequencies(MeterManager.FilterItemSnapFrequencies.CW, txtFilter_cw_frequencies.Text);
+        }
+
+        private void txtFilter_other_frequencies_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            MeterManager.FilterItemFrequencies(MeterManager.FilterItemSnapFrequencies.OTHER, txtFilter_other_frequencies.Text);
+        }
+
+        private void btnFilter_sideband_default_Click(object sender, EventArgs e)
+        {
+            txtFilter_sideband_frequencies.Text = "50,100,1000,1500,2800,3000,4000,5000";
+        }
+
+        private void btnFilter_cw_default_Click(object sender, EventArgs e)
+        {
+            txtFilter_cw_frequencies.Text = "50,100,250,500,700,750,1000";
+        }
+
+        private void btnFilter_others_default_Click(object sender, EventArgs e)
+        {
+            txtFilter_other_frequencies.Text = "1000,2500,5000,6000,8000";
+        }
+        private void initFilterSnapFrequencies()
+        {
+            btnFilter_sideband_default_Click(this, EventArgs.Empty);
+            btnFilter_cw_default_Click(this, EventArgs.Empty);
+            btnFilter_others_default_Click(this, EventArgs.Empty);
+        }
+
+        private void clrbtnFilter_snap_line_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+        private void defaultAlexSettings()
+        {
+            // set all the options to default for the alex tab
+            Control[] controls = new Control[] { radAlexR1_160, radAlexR1_80, radAlexR1_60, radAlexR1_40, radAlexR1_30, radAlexR1_20, radAlexR1_17, radAlexR1_15, radAlexR1_12, radAlexR1_10, radAlexR1_6,
+                                                chkBlockTxAnt2, chkBlockTxAnt3,
+                                                radAlexT1_160, radAlexT1_80, radAlexT1_60, radAlexT1_40, radAlexT1_30, radAlexT1_20, radAlexT1_17, radAlexT1_15, radAlexT1_12, radAlexT1_10, radAlexT1_6,
+                                                chkATTOnTX, chkSWRProtection, chkSWRTuneProtection, chkForceATTwhenPSAoff, chkForceATTwhenOutPowerChanges, chkBPF2Gnd };
+
+            foreach (Control control in controls)
+            {
+                if (control is CheckBox)
+                {
+                    ((CheckBox)control).Checked = true;
+                }
+                else if (control is RadioButton)
+                {
+                    ((RadioButton)control).Checked = true;
+                }
+            }
+        }
+
+        private void clrbtnFilter_setting_on_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnFilter_button_highlight_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void txtWebImage_4char_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void btnFilter_4char_copy_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(txtWebImage_4char.Text);
+        }
+
+        private void chkWebImage_background_CheckedChanged(object sender, EventArgs e)
+        {
+            updateWebImageBackground();
+            updateMeterType();
+        }
+
+        private void nudWebImage_background_time_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void txtWebImage_background_4char_TextChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+        private void updateWebImageBackground()
+        {
+            bool enabled = chkWebImage_background.Checked;
+            lblWebImage_after.Enabled = enabled;
+            nudWebImage_background_time.Enabled = enabled;
+            lblWebImage_secs.Enabled = enabled;
+            txtWebImage_background_4char.Enabled = enabled;
+            btnWebImage_goto_next.Enabled = enabled;
+        }
+
+        private void chkMaintainBackgroundAspectRatio_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.MaintainBackgroundAspectRatio = chkMaintainBackgroundAspectRatio.Checked;
+        }
+
+        private void btnWebImage_goto_next_Click(object sender, EventArgs e)
+        {
+            string four_char = txtWebImage_background_4char.Text;
+            if (string.IsNullOrEmpty(four_char)) return;
+
+            //string mgID = meterItemGroupIDfromSelected();
+            //if (mgID == "") return;
+
+            //clsMeterTypeComboboxItem mtci = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            //if (mtci == null) return;
+
+            //MeterManager.clsMeter m = meterFromSelectedContainer();
+            //if (m == null) return;
+
+            //MeterType mt = meterItemGroupTypefromSelected();
+            //if (mt == MeterType.NONE) return;
+
+            //MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
+            //if (igs == null) return;
+
+            (string mid, string igid) = MeterManager.GetWebImageIDsFrom4Char(four_char);
+            if (mid == null && igid == null) return;
+
+            ShowMultiMeterSetupTab(mid);
+
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return;
+
+            foreach (clsMeterTypeComboboxItem mtci in lstMetersInUse.Items)
+            {
+                string id = m.MeterGroupID(mtci.MeterType, mtci.Order);
+                if(id == igid)
+                {
+                    lstMetersInUse.SelectedItem = mtci;
+                    break;
+                }
+            }
         }
     }
 

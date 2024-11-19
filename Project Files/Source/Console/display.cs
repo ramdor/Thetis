@@ -3193,7 +3193,12 @@ namespace Thetis
                 _d2dRenderTarget.TextAntialiasMode = TextAntialiasMode.Default;
             }
         }
-
+        private static bool _maintain_background_aspectratio = false;
+        public static bool MaintainBackgroundAspectRatio
+        {
+            get { return _maintain_background_aspectratio; }
+            set { _maintain_background_aspectratio = value; }
+        }
         public static void RenderDX2D()
         {
             try
@@ -3221,7 +3226,36 @@ namespace Thetis
                     else
                     {
                         // draw background image
-                        RectangleF rectDest = new RectangleF(0, 0, displayTargetWidth, displayTargetHeight);
+                        //RectangleF rectDest = new RectangleF(0, 0, displayTargetWidth, displayTargetHeight);
+                        RectangleF rectDest;
+
+                        if (_maintain_background_aspectratio && _bitmapBackground != null)
+                        {
+                            float imageWidth = _bitmapBackground.PixelSize.Width;
+                            float imageHeight = _bitmapBackground.PixelSize.Height;
+                            float aspectRatio = imageWidth / imageHeight;
+
+                            float targetAspectRatio = displayTargetWidth / displayTargetHeight;
+
+                            if (aspectRatio > targetAspectRatio)
+                            {
+                                float scaledHeight = displayTargetWidth / aspectRatio;
+                                rectDest = new RectangleF(0, (displayTargetHeight - scaledHeight) / 2, displayTargetWidth, scaledHeight);
+                            }
+                            else
+                            {
+                                float scaledWidth = displayTargetHeight * aspectRatio;
+                                rectDest = new RectangleF((displayTargetWidth - scaledWidth) / 2, 0, scaledWidth, displayTargetHeight);
+                            }
+
+                            _d2dRenderTarget.Clear(m_cDX2_display_background_colour);
+                        }
+                        else
+                        {
+                            rectDest = new RectangleF(0, 0, displayTargetWidth, displayTargetHeight);
+                        }
+                        //
+
                         _d2dRenderTarget.DrawBitmap(_bitmapBackground, rectDest, 1f, BitmapInterpolationMode.Linear);
                         _d2dRenderTarget.FillRectangle(rectDest, m_bDX2_display_background_brush); // used for the transparency
                     }

@@ -48,6 +48,8 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO.Compression;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Thetis
 {
@@ -974,7 +976,14 @@ namespace Thetis
 				return Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey);
 			}
 		}
-		public static bool Is64Bit
+        public static bool AltlKeyDown
+        {
+            get
+            {
+                return (Control.ModifierKeys & Keys.Alt) == Keys.Alt;
+            }
+        }
+        public static bool Is64Bit
         {
             get
             {
@@ -1492,6 +1501,33 @@ namespace Thetis
                                       $"File: {frame.GetFileName()}, " +
                                       $"Line Number: {frame.GetFileLineNumber()}");
             }
+        }
+
+        public static string FourChar(string data1, int data2, Guid guid)
+        {
+            string input = $"{data1}:{data2}:{guid}";
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+                string base64Hash = Convert.ToBase64String(hashBytes);
+                return convertToFourChar(base64Hash);
+            }
+        }
+
+        private static string convertToFourChar(string base64Hash)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            char[] result = new char[4];
+            int[] indices = new int[4];
+            for (int i = 0; i < base64Hash.Length; i++)
+            {
+                indices[i % 4] = (indices[i % 4] + base64Hash[i]) % chars.Length;
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                result[i] = chars[indices[i]];
+            }
+            return new string(result);
         }
     }
 }
