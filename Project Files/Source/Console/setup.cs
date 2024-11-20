@@ -31698,7 +31698,7 @@ namespace Thetis
             // for these callsigns always show cmasio tab, as a perk to the testers from discord
             List<string> callsign_ignore = new List<string>() { "mw0lge", "oe3ide", "w2pa", "w9ez", "dl5tt", "k1lsb", "k1sr", "nc3z", "m0cke",
                                                                 "w9ez", "w1aex", "ny8t", "nj2us", "oz1ct", "nj2us", "w9ez", "w3ub", "ve9iou",
-                                                                "n6mud" };
+                                                                "n6mud", "k2gx" };
 
             bool ignore = false;
             foreach (string call in callsign_ignore)
