@@ -26102,6 +26102,10 @@ namespace Thetis
                 grey_val = (int)(fill_base_colour.R * 0.3 + fill_base_colour.G * 0.59 + fill_base_colour.B * 0.11);
                 System.Drawing.Color grey_fill_colour = System.Drawing.Color.FromArgb(grey_val, grey_val, grey_val);
 
+                SharpDX.Direct2D1.Brush filter_line_colour_brush;
+                SharpDX.Direct2D1.Brush filter_line_colour_faded_brush = getDXBrushForColour(filter_line_colour, 128);
+                SharpDX.Direct2D1.Brush filter_line_highlight_colour_brush = getDXBrushForColour(filter_line_colour_highlight, 255);
+
                 double min_notch_width;
                 bool mouse_entered = filter.MouseEntered;
                 bool show_notches = !m.MOX;
@@ -26111,13 +26115,14 @@ namespace Thetis
                 if (m.MOX)
                 {
                     if (!filter.AutoZoom && filter.FixedTXZoom) zoom = filter.TXZoom + filter.ModeZoom;
-                    filter_line_colour = System.Drawing.Color.Red;
                     min_notch_width = filter.MinNotchWidthTX / 2f;
+                    filter_line_colour_brush = getDXBrushForColour(System.Drawing.Color.Red, 255);
                 }
                 else
                 {
                     if (!filter.AutoZoom && filter.FixedRXZoom) zoom = filter.RXZoom + filter.ModeZoom;
                     min_notch_width = filter.MinNotchWidthRX / 2f;
+                    filter_line_colour_brush = getDXBrushForColour(filter_line_colour, 255);
                 }
 
                 //calc pixels per hz etc
@@ -26499,34 +26504,29 @@ namespace Thetis
                 //filter lines
                 if (!filter.ShowCharacteristic)
                 {
-                    if (!low_highlighted) _renderTarget.DrawLine(low_bot, low_top, getDXBrushForColour(filter_line_colour, 255), line_width);
-                    if (!high_highlighted) _renderTarget.DrawLine(high_bot, high_top, getDXBrushForColour(filter_line_colour, 255), line_width);
-                    if (!top_highlighted) _renderTarget.DrawLine(top_left, top_right, getDXBrushForColour(filter_line_colour, 255), line_width);
+                    if (!low_highlighted) _renderTarget.DrawLine(low_bot, low_top, filter_line_colour_brush, line_width);
+                    if (!high_highlighted) _renderTarget.DrawLine(high_bot, high_top, filter_line_colour_brush, line_width);
+                    if (!top_highlighted) _renderTarget.DrawLine(top_left, top_right, filter_line_colour_brush, line_width);
                 }
                 else
                 {
                     //characteristic plot
 
                     //dashed lines for filter edge settings
-                    if (!low_highlighted) _renderTarget.DrawLine(low_bot, low_top, getDXBrushForColour(filter_line_colour, 128), line_width, _dash_style);
-                    if (!high_highlighted) _renderTarget.DrawLine(high_bot, high_top, getDXBrushForColour(filter_line_colour, 128), line_width, _dash_style);
+                    if (!low_highlighted) _renderTarget.DrawLine(low_bot, low_top, filter_line_colour_faded_brush, line_width, _dash_style);
+                    if (!high_highlighted) _renderTarget.DrawLine(high_bot, high_top, filter_line_colour_faded_brush, line_width, _dash_style);
                     
                     //simulated plot
                     float cp_height = bot_line_y - top_line_y;
                     SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(extent_l, y + line_width_half + tsl.Height, width_between_slopes, cp_height);
                     _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
-
                     lock (MiniSpec.FilterCharacteristicsLocker)
                     {
-                        MiniSpec.FilterCharacteristics fc = MiniSpec.GetRXCharacteristic(filter.Mode);
+                        MiniSpec.FilterCharacteristics fc;
                         if (m.MOX)
-                        {
                             fc = MiniSpec.GetTXCharacteristic();
-                        }
                         else
-                        {
                             fc = MiniSpec.GetRXCharacteristic(filter.Mode);
-                        }
 
                         float cp_dbmToPixel = cp_height / (float)(fc.max - filter.CharacteristicLow);
                         float tot = fc.segments.Length - 2; // ignore first/last
@@ -26546,7 +26546,7 @@ namespace Thetis
                         RawVector2 df_new_pos_right = new RawVector2(0, 0);
                         RawVector2 df_old_pos_right = new RawVector2(high_top.X - cp_six_db_shift, top_pos + df_py);
 
-                        for (int px = cp_mid; px > 0; px--) // ignore 0
+                        for (int px = cp_mid; px > 0; px--) // ignore 0, loop through left side, but also draw the mirror on the right
                         {
                             df_py = ((float)fc.max - (float)fc.segments[px]) * cp_dbmToPixel;
 
@@ -26556,10 +26556,12 @@ namespace Thetis
                             df_new_pos_right.X = high_top.X + ((cp_mid - px) * cp_x_step) - cp_six_db_shift;
                             df_new_pos_right.Y = df_new_pos_left.Y;
 
+                            if (df_new_pos_left.X < clip_rect.Left && df_new_pos_right.X > clip_rect.Right) break; // exit loop when both edges are hit
+
                             if ((df_new_pos_right.X - df_new_pos_left.X > 0) && (df_old_pos_right.X - df_old_pos_left.X > 0))
                             {
-                                _renderTarget.DrawLine(df_old_pos_left, df_new_pos_left, getDXBrushForColour(filter_line_colour), line_width, _rounded_stroke_style);
-                                _renderTarget.DrawLine(df_old_pos_right, df_new_pos_right, getDXBrushForColour(filter_line_colour), line_width, _rounded_stroke_style);
+                                _renderTarget.DrawLine(df_old_pos_left, df_new_pos_left, filter_line_colour_brush, line_width, _rounded_stroke_style);
+                                _renderTarget.DrawLine(df_old_pos_right, df_new_pos_right, filter_line_colour_brush, line_width, _rounded_stroke_style);
 
                                 if (!first_set)
                                 {
@@ -26577,14 +26579,14 @@ namespace Thetis
                             df_old_pos_right = df_new_pos_right;
                         }
 
-                        if (first_set && end_set) _renderTarget.DrawLine(first_point, end_point, getDXBrushForColour(filter_line_colour), line_width, _rounded_stroke_style);
+                        if (first_set && end_set) _renderTarget.DrawLine(first_point, end_point, filter_line_colour_brush, line_width, _rounded_stroke_style);
                     }
                     _renderTarget.PopAxisAlignedClip();
                 }
 
-                if (low_highlighted || filter.LowSelected) _renderTarget.DrawLine(low_bot, low_top, getDXBrushForColour(filter_line_colour_highlight, 255), line_width * 3);
-                if (high_highlighted || filter.HighSelected) _renderTarget.DrawLine(high_bot, high_top, getDXBrushForColour(filter_line_colour_highlight, 255), line_width * 3);
-                if (top_highlighted || filter.TopSelected) _renderTarget.DrawLine(top_left, top_right, getDXBrushForColour(filter_line_colour_highlight, 255), line_width * 3);
+                if (low_highlighted || filter.LowSelected) _renderTarget.DrawLine(low_bot, low_top, filter_line_highlight_colour_brush, line_width * 3);
+                if (high_highlighted || filter.HighSelected) _renderTarget.DrawLine(high_bot, high_top, filter_line_highlight_colour_brush, line_width * 3);
+                if (top_highlighted || filter.TopSelected) _renderTarget.DrawLine(top_left, top_right, filter_line_highlight_colour_brush, line_width * 3);
 
                 // notches
                 bool notch_highlighted = false;
