@@ -408,6 +408,7 @@
     <Compile Include="clsCountryData.cs" />
     <Compile Include="clsDBMan.cs" />
     <Compile Include="clsDiscord.cs" />
+    <Compile Include="clsHardwareSpecific.cs" />
     <Compile Include="clsImgeFetcher.cs" />
     <Compile Include="clsLegacyItemController.cs" />
     <Compile Include="clsThetisSkinService.cs" />

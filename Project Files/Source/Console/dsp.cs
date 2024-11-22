@@ -691,6 +691,19 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "SetRXASSQLTauUnMute", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXASSQLTauUnMute(int channel, double tau_unmute);
 
+        // filter characteristics utility
+        [DllImport("wdsp.dll", EntryPoint = "create_bfcu", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void create_bfcu(int id, int min_size, int max_size, double rate, double corner, int points);
+
+        [DllImport("wdsp.dll", EntryPoint = "getFilterCorners", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void getFilterCorners(int id, int* lower_index, int* upper_index);
+
+        [DllImport("wdsp.dll", EntryPoint = "getFilterCurve", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void getFilterCurve(int id, int size, int w_type, int index_low, int index_high, double* segment);
+
+        [DllImport("wdsp.dll", EntryPoint = "destroy_bfcu", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void destroy_bfcu(int id);
+
         #endregion
 
         #region Enums

@@ -16274,6 +16274,8 @@ namespace Thetis
             //Display.UpdateMNFminWidth(); //[2.10.3.4]MW0LGE
             console.UpdateMinimumNotchWidthRX(1);
             console.UpdateMinimumNotchWidthRX(2);
+
+            console.BuildFilterCharacteristics();
         }
 
         private void comboDSPTxWindow_SelectedIndexChanged(object sender, EventArgs e)
@@ -16287,6 +16289,8 @@ namespace Thetis
             }
             console.radio.GetDSPTX(0).TXBandpassWindow = wintype;
             console.UpdateMinimumNotchWidthTX();
+
+            console.BuildFilterCharacteristics();
         }
 
         private void radSaturn3p5mm_CheckedChanged(object sender, EventArgs e)
@@ -25156,6 +25160,8 @@ namespace Thetis
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_snap_line_colour", clrbtnFilter_snap_line.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_settingon_colour", clrbtnFilter_setting_on.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_button_highlight_colour", clrbtnFilter_button_highlight.Color);
+                igs.SetSetting<bool>("filterdisplay_characteristic", chkFilter_characteristic.Checked);
+                igs.SetSetting<float>("filterdisplay_characteristic_low", (float)nudFilter_lower_characteristic.Value);
             }
             else
             {
@@ -25774,6 +25780,8 @@ namespace Thetis
                 clrbtnFilter_snap_line.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_snap_line_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Gray);
                 clrbtnFilter_setting_on.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_settingon_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.CornflowerBlue);
                 clrbtnFilter_button_highlight.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_button_highlight_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Gray);
+                chkFilter_characteristic.Checked = igs.GetSetting<bool>("filterdisplay_characteristic", false, false, false, false);
+                nudFilter_lower_characteristic.Value = (decimal)igs.GetSetting<float>("filterdisplay_characteristic_low", true, -300f, -50f, -250f);
             }
             else
             {
@@ -32347,6 +32355,22 @@ namespace Thetis
                     break;
                 }
             }
+        }
+
+        private void chkFilter_characteristic_CheckedChanged(object sender, EventArgs e)
+        {
+            nudFilter_lower_characteristic.Enabled = chkFilter_characteristic.Checked;
+            updateMeterType();
+        }
+
+        private void nudFilter_lower_characteristic_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkFilter_high_resolution_characteristics_CheckedChanged(object sender, EventArgs e)
+        {
+            console.HighResolutionFilterCharacteristics = chkFilter_high_resolution_characteristics.Checked;
         }
     }
 

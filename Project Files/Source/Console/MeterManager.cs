@@ -8463,6 +8463,20 @@ namespace Thetis
 
                 _long_press_released = true;
             }
+            public void PopFilterMenu()
+            {
+                if (!MouseEntered) return;
+
+                if (_console != null)
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.PopupFilterContextMenu(_owningmeter.RX, null);
+                    }));
+                }
+
+                _long_press_released = true;
+            }
             public override void MouseDown(MouseEventArgs e)
             {
                 if (!MouseEntered) return;
@@ -8873,36 +8887,103 @@ namespace Thetis
             private bool setBand(bool vfoB)
             {
                 if (abortForLockedVFO()) return false;
+
+                BandGroups bg;
+                if (_owningmeter.RX == 1)
+                {
+                    if (_console.BandHFSelected)
+                    {
+                        bg = BandGroups.HF;
+                    }
+                    else if (_console.BandVHFSelected)
+                    {
+                        bg = BandGroups.VHF;
+                    }
+                    else if (_console.BandGENSelected)
+                    {
+                        bg = BandGroups.GEN;
+                    }
+                    else
+                    {
+                        bg = _owningmeter.GetBandGroupFromBand(vfoB ? _owningmeter.BandVfoB : _owningmeter.BandVfoA);
+                    }
+                }
+                else
+                {
+                    bg = _owningmeter.GetBandGroupFromBand(vfoB ? _owningmeter.BandVfoB : _owningmeter.BandVfoA);
+                }
+
                 if (vfoB)
                 {
                     int b = _button_grid_index_vfoB;
                     if (b < 0) return true;
-                    Band band;
-                    if (_console.BandGENSelected)
+                    Band band;                    
+
+                    if (bg == BandGroups.GEN)
                     {
                         if(b > (int)Band.B11M - (int)Band.B120M)
                         {
                             if (b == 13)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                }
+                                else
+                                {
+                                    // need to move to some HF band
+                                    _console.BeginInvoke(new MethodInvoker(() =>
+                                    {
+                                        _console.RX2Band = Band.B20M;
+                                    }));
+                                }
                                 return false;
                             }
                             return true;
                         }
                         band = (Band)((int)Band.B120M + b);
                     }
-                    else if (_console.BandHFSelected)
+                    else if (bg == BandGroups.HF)
                     {
                         if (b > (int)Band.B6M - (int)Band.B160M)
                         {
                             if (b == 11)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
+                                }
+                                else
+                                {
+                                    // need to move to some vhf band
+                                    _console.BeginInvoke(new MethodInvoker(() =>
+                                    {
+                                        for(Band bb = Band.VHF0; bb <= Band.VHF13; bb++)
+                                        {
+                                            if (_console.XVTRForm.GetEnabled((int)bb - (int)Band.VHF0))
+                                            {
+                                                _console.RX2Band = Band.VHF0;
+                                                break;
+                                            }
+                                        }
+                                    }));
+                                }
                                 return false;
                             }
                             if (b == 13)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
+                                }
+                                else
+                                {
+                                    // need to move to some GEN band
+                                    _console.BeginInvoke(new MethodInvoker(() =>
+                                    {
+                                        _console.RX2Band = Band.B31M;
+                                    }));
+                                }
                                 return false;
                             }
                             if (b == 12) // WWV
@@ -8912,13 +8993,25 @@ namespace Thetis
                         }
                         band = (Band)((int)Band.B160M + b);
                     }
-                    else if (_console.BandVHFSelected)
+                    else if (bg == BandGroups.VHF)
                     {
                         if (b > (int)Band.VHF13 - (int)Band.VHF0)
                         {
                             if (b == 14)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                }
+                                else
+                                {
+                                    // need to move to some HF band
+                                    _console.BeginInvoke(new MethodInvoker(() =>
+                                    {
+                                        _console.RX2Band = Band.B20M;
+                                    }));
+
+                                }
                                 return false;
                             }
                             return true;
@@ -8944,7 +9037,10 @@ namespace Thetis
                         {
                             if (b == 13)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                }
                                 return false;
                             }
                             return true;
@@ -8957,12 +9053,18 @@ namespace Thetis
                         {
                             if (b == 11)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
+                                }
                                 return false;
                             }
                             if (b == 13)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
+                                }
                                 return false;
                             }
                             if (b == 12) // WWV
@@ -8978,7 +9080,10 @@ namespace Thetis
                         {
                             if (b == 14)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                }
                                 return false;
                             }
                             return true;
@@ -9449,6 +9554,7 @@ namespace Thetis
                 }
                 if (show_this)
                 {
+                    _show_background = false;
                     ShowBackground = true;
                 }
 
@@ -11572,6 +11678,8 @@ namespace Thetis
             private System.Drawing.Color _setting_on_colour;
             private System.Drawing.Color _button_highlight_colour;
             private bool _auto_zoom;
+            private bool _show_characteristic;
+            private float _characteristic_low;
 
             private float _waterfall_min_agc;
             private bool _enabled;
@@ -11709,6 +11817,8 @@ namespace Thetis
                 _button_highlight_colour = System.Drawing.Color.Gray;
 
                 _auto_zoom = false;
+                _show_characteristic = false;
+                _characteristic_low = -250.0f;
                 _snap_lines = false;
                 _snap_lines_ignore = false;
 
@@ -11765,6 +11875,16 @@ namespace Thetis
             {
                 get { return _auto_zoom; }
                 set { _auto_zoom = value; }
+            }
+            public bool ShowCharacteristic
+            {
+                get { return _show_characteristic; }
+                set { _show_characteristic = value; }
+            }
+            public float CharacteristicLow
+            {
+                get { return _characteristic_low; }
+                set { _characteristic_low = value; }
             }
             public override bool Enabled
             {
@@ -12651,11 +12771,18 @@ namespace Thetis
                     }
                 }
             }
-            public string Mode
+            public string ModeString
             {
                 get
                 {
                     return _showVfoA ? _owningmeter.ModeVfoA.ToString() : _owningmeter.ModeVfoB.ToString();
+                }
+            }
+            public DSPMode Mode
+            {
+                get
+                {
+                    return _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
                 }
             }
             public double CentreFrequencyHZ
@@ -12770,10 +12897,10 @@ namespace Thetis
                 get { return _padding; }
                 set { _padding = value; }
             }
-            private float cosineFalloff(float distance, int falloff_steps)
-            {
-                return 1f - (0.5f * (1f + (float)Math.Cos(Math.PI * distance / falloff_steps)));
-            }
+            //private float cosineFalloff(float distance, int falloff_steps)
+            //{
+            //    return 1f - (0.5f * (1f + (float)Math.Cos(Math.PI * distance / falloff_steps)));
+            //}
 
             private void buildSpectrumGreyScale(bool do_low, bool do_high)
             {
@@ -12783,21 +12910,21 @@ namespace Thetis
                 {
                     float bandwidth = _owningmeter.MOX ? _tx_extent_hz * 2f : _extent_hz * 2f;
                     double min_notch = _owningmeter.MOX ? _owningmeter.MinNotchWidthTX : _owningmeter.MinNotchWidthRX;
-                    float falloff_span = (float)(min_notch / 2f);
+                    float falloff_span = (float)(min_notch/* / 2f*/); // removed /2 to better align with actual filter characteristic
                     float frequency_step = bandwidth / _spec_data.Length;
 
                     int center_index = _spec_data.Length / 2;
                     int low_index = center_index + (int)(Low / frequency_step);
                     int high_index = center_index + (int)(High / frequency_step);
-                    int falloff_steps = (int)(falloff_span / frequency_step);
+                    //int falloff_steps = (int)(falloff_span / frequency_step); // cosine falloff, not used
 
                     for (int i = 0; i < _spec_greyscale.Length; i++)
                     {
-                        if (do_low && i < low_index - falloff_steps)
+                        if (do_low && i < low_index)
                         {
                             _spec_greyscale[i] = 1f;
                         }
-                        else if (do_high && i > high_index + falloff_steps)
+                        else if (do_high && i > high_index)
                         {
                             _spec_greyscale[i] = 1f;
                         }
@@ -12805,18 +12932,27 @@ namespace Thetis
                         {
                             _spec_greyscale[i] = 0f;
                         }
-                        else if (do_low && i >= low_index - falloff_steps && i < low_index)
-                        {
-                            _spec_greyscale[i] = cosineFalloff(low_index - i, falloff_steps);
-                        }
-                        else if (do_high && i <= high_index + falloff_steps && i > high_index)
-                        {
-                            _spec_greyscale[i] = cosineFalloff(i - high_index, falloff_steps);
-                        }
-                        // do no modify existing
-                        //else
+
+                        // cosine fallof, not used
+                        //if (do_low && i < low_index - falloff_steps)
                         //{
                         //    _spec_greyscale[i] = 1f;
+                        //}
+                        //else if (do_high && i > high_index + falloff_steps)
+                        //{
+                        //    _spec_greyscale[i] = 1f;
+                        //}
+                        //else if (i >= low_index && i <= high_index)
+                        //{
+                        //    _spec_greyscale[i] = 0f;
+                        //}
+                        //else if (do_low && i >= low_index - falloff_steps && i < low_index)
+                        //{
+                        //    _spec_greyscale[i] = cosineFalloff(low_index - i, falloff_steps);
+                        //}
+                        //else if (do_high && i <= high_index + falloff_steps && i > high_index)
+                        //{
+                        //    _spec_greyscale[i] = cosineFalloff(i - high_index, falloff_steps);
                         //}
                     }
                 }
@@ -12847,8 +12983,8 @@ namespace Thetis
                                     for (int i = 0; i < _spec_data.Length; i++)
                                     {
                                         _spec_data[i] = _spec_min;
-                                        buildSpectrumGreyScale(true, true);
                                     }
+                                    buildSpectrumGreyScale(true, true);
                                 }
 
                                 // copy
@@ -20097,6 +20233,8 @@ namespace Thetis
                                             fi.SnapLineColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_snap_line_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Gray);
                                             fi.SettingOnColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_settingon_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
                                             fi.ButtonHighlightColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_button_highlight_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Gray);
+                                            fi.ShowCharacteristic = igs.GetSetting<bool>("filterdisplay_characteristic", false, false, false, false);
+                                            fi.CharacteristicLow = igs.GetSetting<float>("filterdisplay_characteristic_low", true, -300f, -50f, -250f);
 
                                             fi.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
                                             fi.Size = new SizeF(ig.Size.Width, fi.Padding);
@@ -21070,6 +21208,8 @@ namespace Thetis
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_snap_line_colour", fi.SnapLineColour);
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_settingon_colour", fi.SettingOnColour);
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_button_highlight_colour", fi.ButtonHighlightColour);
+                                            igs.SetSetting<bool>("filterdisplay_characteristic", fi.ShowCharacteristic);
+                                            igs.SetSetting<float>("filterdisplay_characteristic_low", fi.CharacteristicLow);
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                         {
@@ -24979,10 +25119,10 @@ namespace Thetis
                 int LinCor = 2;
 
                 float local_max_y = filter.SpectrumDataMax;
-                float local_min_y_w3sz = filter.SpectrumDataMin;//float.MaxValue;
-                float min_y_w3sz;// = float.MaxValue;
-                float display_min_w3sz;// = float.MaxValue;
-                float display_max_w3sz;// = float.MinValue;
+                float local_min_y_w3sz = filter.SpectrumDataMin;
+                float min_y_w3sz;
+                float display_min_w3sz;
+                float display_max_w3sz;
 
                 float max_y;// = filter.SpectrumDataMax;
 
@@ -25072,9 +25212,6 @@ namespace Thetis
                                     }
                                 }
 
-                                //if (waterfall_minimum > dataCopy[i] + fOffset) //[2.10.3]MW0LGE use non notched data
-                                //    waterfall_minimum = dataCopy[i] + fOffset;
-
                                 // set pixel color
                                 row_rx[i * pixel_size + 0] = (byte)B;    // set color in memory
                                 row_rx[i * pixel_size + 1] = (byte)G;
@@ -25161,9 +25298,6 @@ namespace Thetis
                                     }
                                 }
 
-                                //if (waterfall_minimum > dataCopy[i] + fOffset) //[2.10.3]MW0LGE use non notched data
-                                //    waterfall_minimum = dataCopy[i] + fOffset;
-
                                 // set pixel color
                                 row_rx[i * pixel_size + 0] = (byte)B;    // set color in memory
                                 row_rx[i * pixel_size + 1] = (byte)G;
@@ -25206,9 +25340,6 @@ namespace Thetis
                                     G = R;
                                     B = R;
                                 }
-
-                                //if (waterfall_minimum > dataCopy[i] + fOffset) //[2.10.3]MW0LGE use non notched data
-                                //    waterfall_minimum = dataCopy[i] + fOffset;
 
                                 // set pixel color
                                 row_rx[i * pixel_size + 0] = (byte)B;    // set color in memory
@@ -25423,9 +25554,6 @@ namespace Thetis
                                     }
                                 }
 
-                                //if (waterfall_minimum > dataCopy[i] + fOffset) //[2.10.3]MW0LGE use non notched data
-                                //    waterfall_minimum = dataCopy[i] + fOffset;
-
                                 // set pixel color changed by w3sz
                                 //[2.10.3.5]MW0LGE note these are reverse RGB, we normally expect BGRA #289
                                 row_rx[i * pixel_size + 0] = (byte)R;    // set color in memory
@@ -25635,9 +25763,6 @@ namespace Thetis
                                         B = 0;
                                     }
                                 }
-
-                                //if (waterfall_minimum > dataCopy[i] + fOffset) //[2.10.3]MW0LGE use non notched data
-                                //    waterfall_minimum = dataCopy[i] + fOffset;
 
                                 //[2.10.3.5]MW0LGE note these are reverse RGB, we normally expect BGRA #289
                                 row_rx[i * pixel_size + 0] = (byte)R;    // set color in memory
@@ -25987,22 +26112,22 @@ namespace Thetis
                 {
                     if (!filter.AutoZoom && filter.FixedTXZoom) zoom = filter.TXZoom + filter.ModeZoom;
                     filter_line_colour = System.Drawing.Color.Red;
-                    min_notch_width = filter.MinNotchWidthTX;
+                    min_notch_width = filter.MinNotchWidthTX / 2f;
                 }
                 else
                 {
                     if (!filter.AutoZoom && filter.FixedRXZoom) zoom = filter.RXZoom + filter.ModeZoom;
-                    min_notch_width = filter.MinNotchWidthRX;
+                    min_notch_width = filter.MinNotchWidthRX / 2f;
                 }
 
                 //calc pixels per hz etc
                 int hz_span = filter.ExtentHZ * 2;
                 float font_size_scaled = 18f * font_scale;
                 float fontSizeEmScaled = (font_size_scaled / 16f) * (rect.Width / 52f);
-                string low = (-filter.ExtentHZ).ToString();
-                string high = "+" + (filter.ExtentHZ).ToString();
-                SizeF tsl = measureString(low, "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
-                SizeF tsh = measureString(high, "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                string low_extent_text = (-filter.ExtentHZ).ToString();
+                string high_extent_text = "+" + (filter.ExtentHZ).ToString();
+                SizeF tsl = measureString(low_extent_text, "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                SizeF tsh = measureString(high_extent_text, "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
                 float max_w = Math.Max(tsl.Width, tsh.Width);
                 float pixel_span = w - (max_w * 2f);
                 float text_y = y + h - tsl.Height;
@@ -26036,17 +26161,24 @@ namespace Thetis
                 float line_width_half = line_width / 2f;
 
                 //slope extent edges                                
-                float slope_pixels = hzToPixels(min_notch_width / 2f, pixel_span, hz_span);
+                float slope_pixels = hzToPixels(min_notch_width, pixel_span, hz_span);
                 float hz_zoom_diff = (filter.ExtentHZ * zoom) - filter.ExtentHZ;
                 float zoom_diff_pixels = hzToPixels(Math.Abs(hz_zoom_diff), pixel_span, hz_span) * (hz_zoom_diff < 0 ? -1 : 1);
 
                 //top/bottom lines
-                _renderTarget.DrawLine(new RawVector2(x, y + line_width_half + tsl.Height), new RawVector2(w, y + line_width_half + tsl.Height), getDXBrushForColour(extent_colour, 255), line_width);
-                _renderTarget.DrawLine(new RawVector2(x, y + h - line_width_half - tsl.Height), new RawVector2(w, y + h - line_width_half - tsl.Height), getDXBrushForColour(extent_colour, 255), line_width);
+                float top_line_y = y + line_width_half + tsl.Height;
+                float bot_line_y = y + h - line_width_half - tsl.Height;
+                _renderTarget.DrawLine(new RawVector2(x, top_line_y), new RawVector2(w, y + line_width_half + tsl.Height), getDXBrushForColour(extent_colour, 255), line_width);
+                _renderTarget.DrawLine(new RawVector2(x, bot_line_y), new RawVector2(w, y + h - line_width_half - tsl.Height), getDXBrushForColour(extent_colour, 255), line_width);
 
                 //slope extents
                 float extent_l = x + max_w + slope_pixels - zoom_diff_pixels;
                 float extent_h = x + w - max_w - slope_pixels + zoom_diff_pixels;
+                float width_between_slopes = extent_h - extent_l;
+                float spectrum_height = h - ((line_width_half + tsl.Height) * 2f); // between top/bottom lines
+                float top_pos = y + line_width_half + tsl.Height;
+                float bot_pos = y + h - line_width_half - tsl.Height;
+                if (filter.DispMode == clsFilterItem.DisplayMode.PANAFALL) spectrum_height /= 2f; // half display, spectrum at the top, lower will be waterfall
 
                 //spectrum + waterfall display
                 if (filter.DispMode != clsFilterItem.DisplayMode.NONE)
@@ -26054,13 +26186,7 @@ namespace Thetis
                     lock (filter.SpectrumDataLock)
                     {
                         int tot_data = filter.SpectrumData.Length;
-
-                        float width_between_slopes = extent_h - extent_l;
-                        float top_pos = y + line_width_half + tsl.Height;
-                        float bot_pos = y + h - line_width_half - tsl.Height;
-                        float x_step = width_between_slopes / tot_data;
-                        float spectrum_height = h - ((line_width_half + tsl.Height) * 2f); // between top/bottom lines
-                        if (filter.DispMode == clsFilterItem.DisplayMode.PANAFALL) spectrum_height /= 2f; // half display, at the top, lower will be waterfall
+                        float x_step = width_between_slopes / tot_data;                                                
 
                         if (filter.DispMode == clsFilterItem.DisplayMode.PANADAPTOR || filter.DispMode == clsFilterItem.DisplayMode.PANAFALL)
                         {
@@ -26239,15 +26365,15 @@ namespace Thetis
                 if (filter.ShowFilterLimits)
                 {
                     //extent text                
-                    plotText(low, x - zoom_diff_pixels, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, false, null);
-                    plotText(high, x + w + zoom_diff_pixels, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, true, false, 0, false, 0, 0, false, null);
+                    plotText(low_extent_text, x - zoom_diff_pixels, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, false, null);
+                    plotText(high_extent_text, x + w + zoom_diff_pixels, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, true, false, 0, false, 0, 0, false, null);
                     
                     _renderTarget.DrawLine(new RawVector2(x + max_w - zoom_diff_pixels, y + h), new RawVector2(extent_l, y + tsl.Height), getDXBrushForColour(extent_colour, 255), line_width);
                     _renderTarget.DrawLine(new RawVector2(x + w - max_w + zoom_diff_pixels, y + h), new RawVector2(extent_h, y + tsl.Height), getDXBrushForColour(extent_colour, 255), line_width);
                 }
 
                 //mode text
-                (float mdw, float mdh) = plotText(filter.Mode, original_x, y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, false, null);
+                (float mdw, float mdh) = plotText(filter.ModeString, original_x, y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, false, null);
                 float mode_text_right = original_x + mdw;
 
                 //filter
@@ -26316,6 +26442,7 @@ namespace Thetis
 
                 float filter_l = centre + hzToPixels(Math.Abs(local_low), pixel_span, hz_span) * (local_low < 0 ? -1 : 1);
                 float filter_h = centre + hzToPixels(Math.Abs(local_high), pixel_span, hz_span) * (local_high < 0 ? -1 : 1);
+
                 RawVector2 low_bot = new RawVector2(filter_l - slope_pixels, y + h);
                 RawVector2 low_top = new RawVector2(filter_l, y + tsl.Height);
                 RawVector2 high_bot = new RawVector2(filter_h + slope_pixels, y + h);
@@ -26326,6 +26453,7 @@ namespace Thetis
                 bool low_highlighted = false;
                 bool high_highlighted = false;
                 bool top_highlighted = false;
+
                 if (!highlight_button && mouse_entered && filter.CanAdjust && !filter.AutoZoom)
                 {
                     float low_dist = pointToSegmentDistance(low_bot, low_top, filter.MouseMovePoint);
@@ -26369,14 +26497,99 @@ namespace Thetis
                 }
 
                 //filter lines
-                _renderTarget.DrawLine(low_bot, low_top, getDXBrushForColour(low_highlighted || filter.LowSelected ? filter_line_colour_highlight : filter_line_colour, 255), low_highlighted || filter.LowSelected ? line_width * 3 : line_width);
-                _renderTarget.DrawLine(high_bot, high_top, getDXBrushForColour(high_highlighted || filter.HighSelected ? filter_line_colour_highlight : filter_line_colour, 255), high_highlighted || filter.HighSelected ? line_width * 3 : line_width);
-                _renderTarget.DrawLine(top_left, top_right, getDXBrushForColour(top_highlighted || filter.TopSelected ? filter_line_colour_highlight : filter_line_colour, 255), top_highlighted || filter.TopSelected ? line_width * 3 : line_width);
+                if (!filter.ShowCharacteristic)
+                {
+                    if (!low_highlighted) _renderTarget.DrawLine(low_bot, low_top, getDXBrushForColour(filter_line_colour, 255), line_width);
+                    if (!high_highlighted) _renderTarget.DrawLine(high_bot, high_top, getDXBrushForColour(filter_line_colour, 255), line_width);
+                    if (!top_highlighted) _renderTarget.DrawLine(top_left, top_right, getDXBrushForColour(filter_line_colour, 255), line_width);
+                }
+                else
+                {
+                    //characteristic plot
 
+                    //dashed lines for filter edge settings
+                    if (!low_highlighted) _renderTarget.DrawLine(low_bot, low_top, getDXBrushForColour(filter_line_colour, 128), line_width, _dash_style);
+                    if (!high_highlighted) _renderTarget.DrawLine(high_bot, high_top, getDXBrushForColour(filter_line_colour, 128), line_width, _dash_style);
+                    
+                    //simulated plot
+                    float cp_height = bot_line_y - top_line_y;
+                    SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(extent_l, y + line_width_half + tsl.Height, width_between_slopes, cp_height);
+                    _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
+
+                    lock (MiniSpec.FilterCharacteristicsLocker)
+                    {
+                        MiniSpec.FilterCharacteristics fc = MiniSpec.GetRXCharacteristic(filter.Mode);
+                        if (m.MOX)
+                        {
+                            fc = MiniSpec.GetTXCharacteristic();
+                        }
+                        else
+                        {
+                            fc = MiniSpec.GetRXCharacteristic(filter.Mode);
+                        }
+
+                        float cp_dbmToPixel = cp_height / (float)(fc.max - filter.CharacteristicLow);
+                        float tot = fc.segments.Length - 2; // ignore first/last
+                        float cp_hz_per_index = (float)((fc.corner_freq * 2f) / (float)(fc.hz_span + 1)); // hz span is the number of indexes between low/upper
+                        float cp_total_hz = cp_hz_per_index * tot;
+                        float cp_x_step = hzToPixels(cp_total_hz, pixel_span, hz_span) / tot;
+                        float cp_six_db_shift = fc.six_db_shift * cp_x_step;
+                        int cp_mid = fc.middle_index;
+                        float df_py = ((float)fc.max - (float)fc.segments[cp_mid]) * cp_dbmToPixel; // skip 0
+                        RawVector2 first_point = new RawVector2(-1, -1);
+                        RawVector2 end_point = new RawVector2(-1, -1);
+                        bool first_set = false;
+                        bool end_set = false;
+
+                        RawVector2 df_new_pos_left = new RawVector2(0, 0);
+                        RawVector2 df_old_pos_left = new RawVector2(low_top.X + cp_six_db_shift, top_pos + df_py);
+                        RawVector2 df_new_pos_right = new RawVector2(0, 0);
+                        RawVector2 df_old_pos_right = new RawVector2(high_top.X - cp_six_db_shift, top_pos + df_py);
+
+                        for (int px = cp_mid; px > 0; px--) // ignore 0
+                        {
+                            df_py = ((float)fc.max - (float)fc.segments[px]) * cp_dbmToPixel;
+
+                            df_new_pos_left.X = low_top.X - ((cp_mid - px) * cp_x_step) + cp_six_db_shift;
+                            df_new_pos_left.Y = top_pos + df_py;
+
+                            df_new_pos_right.X = high_top.X + ((cp_mid - px) * cp_x_step) - cp_six_db_shift;
+                            df_new_pos_right.Y = df_new_pos_left.Y;
+
+                            if ((df_new_pos_right.X - df_new_pos_left.X > 0) && (df_old_pos_right.X - df_old_pos_left.X > 0))
+                            {
+                                _renderTarget.DrawLine(df_old_pos_left, df_new_pos_left, getDXBrushForColour(filter_line_colour), line_width, _rounded_stroke_style);
+                                _renderTarget.DrawLine(df_old_pos_right, df_new_pos_right, getDXBrushForColour(filter_line_colour), line_width, _rounded_stroke_style);
+
+                                if (!first_set)
+                                {
+                                    first_set = true;
+                                    first_point = new RawVector2(df_old_pos_left.X, df_old_pos_left.Y);
+                                }
+                                if (!end_set)
+                                {
+                                    end_set = true;
+                                    end_point = new RawVector2(df_old_pos_right.X, df_old_pos_right.Y);
+                                }
+                            }
+
+                            df_old_pos_left = df_new_pos_left;
+                            df_old_pos_right = df_new_pos_right;
+                        }
+
+                        if (first_set && end_set) _renderTarget.DrawLine(first_point, end_point, getDXBrushForColour(filter_line_colour), line_width, _rounded_stroke_style);
+                    }
+                    _renderTarget.PopAxisAlignedClip();
+                }
+
+                if (low_highlighted || filter.LowSelected) _renderTarget.DrawLine(low_bot, low_top, getDXBrushForColour(filter_line_colour_highlight, 255), line_width * 3);
+                if (high_highlighted || filter.HighSelected) _renderTarget.DrawLine(high_bot, high_top, getDXBrushForColour(filter_line_colour_highlight, 255), line_width * 3);
+                if (top_highlighted || filter.TopSelected) _renderTarget.DrawLine(top_left, top_right, getDXBrushForColour(filter_line_colour_highlight, 255), line_width * 3);
+
+                // notches
                 bool notch_highlighted = false;
                 if (show_notches)
-                {
-                    // notches
+                {                    
                     lock (MiniSpec.NotchLocker)
                     {
                         SharpDX.Direct2D1.Brush notch_brush = getDXBrushForColour(notch_colour);
@@ -26420,8 +26633,6 @@ namespace Thetis
                                 notch_highlighted |= highlight_notch;
                             }
                             _renderTarget.FillRectangle(notch_rect, highlight_notch ? notch_brush_fill_highlight : (notch.active && filter.TNFActive ? notch_brush_fill : notch_brush_fill_disabled));
-                            //_renderTarget.DrawLine(width_low_bot, width_low_top, notch_brush, line_width);
-                            //_renderTarget.DrawLine(width_high_bot, width_high_top, notch_brush, line_width);
                             _renderTarget.DrawLine(notch_bot, notch_top, highlight_notch ? notch_brush_line_highlight : (notch.active && filter.TNFActive ? notch_brush_fill : notch_brush_fill_disabled), line_width);
                         }
                     }
@@ -26500,26 +26711,22 @@ namespace Thetis
                 plotText(" FIT " + "\u200B", zoom_rect.X, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, filter.AutoZoom ? zoom_on_colour : zoom_highlight);
 
                 //filter edge values
-                float xl = filter_l;
-                float xh = filter_h;
                 SizeF lowSize = measureString(local_low.ToString(), "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, false);
                 SizeF highSize = measureString((local_high > 0 ? "+" : "") + local_high.ToString(), "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, false);
 
-                int collide_l_count = 0;
-                int collide_h_count = 0;
-                if ((xl + (lowSize.Width / 2f) >= xh - (highSize.Width / 2f)) && (xl - (lowSize.Width / 2f) <= xh + (highSize.Width / 2f))) collide_l_count++;
+                int collide_count = 0;
+                if ((filter_l + (lowSize.Width / 2f) >= filter_h - (highSize.Width / 2f)) && (filter_l - (lowSize.Width / 2f) <= filter_h + (highSize.Width / 2f))) collide_count++;
 
                 // closest to which filter edge?
                 float centre_top_line = top_left.X + ((top_right.X - top_left.X) / 2f);
-                text_y = y + h - (lowSize.Height / 2f) - line_width;
                 bool highlight_low_text = false;
                 bool highlight_high_text = false;
                 bool highlight_shift_text = false;
 
                 if (!notch_highlighted && !highlight_button && filter.CanAdjust && mouse_entered && !(filter.LowSelected || filter.HighSelected || filter.TopSelected))
                 {
-                    float low_dist = distanceBetweenPoints(new RawVector2(xl, text_y + (tsl.Height / 2f)), filter.MouseMovePoint);
-                    float high_dist = distanceBetweenPoints(new RawVector2(xh, text_y + (tsl.Height / 2f)), filter.MouseMovePoint);
+                    float low_dist = distanceBetweenPoints(new RawVector2(filter_l, text_y + (tsl.Height / 2f)), filter.MouseMovePoint);
+                    float high_dist = distanceBetweenPoints(new RawVector2(filter_h, text_y + (tsl.Height / 2f)), filter.MouseMovePoint);
                     float shift_dist = distanceBetweenPoints(new RawVector2(centre_top_line, y), filter.MouseMovePoint);
 
                     if (low_dist <= high_dist && low_dist <= shift_dist)
@@ -26538,7 +26745,6 @@ namespace Thetis
                 filter.AdjustLow = highlight_low_text;
                 filter.AdjustHigh = highlight_high_text;
                 filter.AdjustShift = highlight_shift_text;
-                //
                 
                 // bw text                
                 string bw = Math.Abs(local_high - local_low).ToString();
@@ -26547,10 +26753,9 @@ namespace Thetis
                 plotText(bw, centre_top_line, y + (tsl.Height / 2f) + (bw_collide ? bws.Height : 0), rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, highlight_shift_text ? text_overlay_highlight_colour : text_overlay_colour);
 
                 // filter edge number text
-                float yoff_l = collide_l_count * -zero.Height;
-                float yoff_h = collide_h_count * -zero.Height;                
-                plotText(local_low.ToString(), xl, text_y + yoff_l - tsl.Height, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, highlight_low_text ? text_overlay_highlight_colour : text_overlay_colour);
-                plotText((local_high > 0 ? "+" : "") + local_high.ToString(), xh, text_y + yoff_h - tsl.Height, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, highlight_high_text ? text_overlay_highlight_colour : text_overlay_colour);
+                float y_collide_offset = collide_count * -zero.Height;              
+                plotText(local_low.ToString(), filter_l, text_y + y_collide_offset - tsl.Height, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, highlight_low_text ? text_overlay_highlight_colour : text_overlay_colour);
+                plotText((local_high > 0 ? "+" : "") + local_high.ToString(), filter_h, text_y - tsl.Height, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, highlight_high_text ? text_overlay_highlight_colour : text_overlay_colour);
 
                 //mouse down
                 if (mouse_entered && filter.MouseButtonDown && (filter.LowSelected || filter.HighSelected || filter.TopSelected || filter.NotchSelected))
@@ -28414,25 +28619,52 @@ namespace Thetis
                 ny = 0;
                 float t_xB;
                 float t_yB;
-                Band start = Band.FIRST;
-                Band end = Band.LAST;
+                Band start;
+                Band end;
                 bool vhf = false;
-                if (_console.BandHFSelected)
+                BandGroups bg;
+
+                if (m.RX == 1)
                 {
-                    start = Band.B160M;
-                    end = Band.B6M;
+                    if (_console.BandHFSelected)
+                    {
+                        bg = BandGroups.HF;
+                    }
+                    else if (_console.BandVHFSelected)
+                    {
+                        bg = BandGroups.VHF;
+                    }
+                    else if (_console.BandGENSelected)
+                    {
+                        bg = BandGroups.GEN;
+                    }
+                    else
+                    {
+                        bg = m.GetBandGroupFromBand(vfoB ? m.BandVfoB : m.BandVfoA);
+                    }
                 }
-                else if (_console.BandVHFSelected)
+                else
                 {
-                    start = Band.VHF0;
-                    end = Band.VHF13;
-                    vhf = true;
+                    bg = m.GetBandGroupFromBand(vfoB ? m.BandVfoB : m.BandVfoA);
                 }
-                else if (_console.BandGENSelected)
+
+                switch (bg)
                 {
-                    start = Band.B120M;
-                    end = Band.B11M;
+                    case BandGroups.HF:
+                        start = Band.B160M;
+                        end = Band.B6M;
+                        break;
+                    case BandGroups.VHF:
+                        start = Band.VHF0;
+                        end = Band.VHF13;
+                        vhf = true;
+                        break;
+                    default:
+                        start = Band.B120M;
+                        end = Band.B11M;
+                        break;
                 }
+
                 System.Drawing.Color band_colour;
                 string band;
                 for (int i = (int)start; i <= (int)end; i++)
@@ -28483,7 +28715,7 @@ namespace Thetis
 
                 t_xB = xB + (gap / 2f) + (nx * gap);
                 t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
-                if (_console.BandHFSelected)
+                if (bg == BandGroups.HF)
                 {
                     plotText("VHF", t_xB, t_yB, rect.Width * x_multy, 16f, System.Drawing.Color.Yellow, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                     nx++;
@@ -28493,7 +28725,7 @@ namespace Thetis
                     t_xB = xB + (gap / 2f) + (nx * gap);
                     plotText("SWL", t_xB, t_yB, rect.Width * x_multy, 16f, System.Drawing.Color.Orange, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                 }
-                else if (_console.BandGENSelected || _console.BandVHFSelected)
+                else if (bg == BandGroups.GEN || bg == BandGroups.VHF)
                 {
                     plotText("HF", t_xB, t_yB, rect.Width * x_multy, 16f, System.Drawing.Color.Red, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                 }
@@ -29260,12 +29492,18 @@ namespace Thetis
 
                         if (left)
                         {
-                            button_state_vfoA = clsVfoDisplay.buttonState.FILTER_SCREEN;
+                            if (vfo.MouseButtonDown && vfo.MouseDownLong)
+                                vfo.PopFilterMenu();
+                            else
+                                button_state_vfoA = clsVfoDisplay.buttonState.FILTER_SCREEN;
                             left = false;
                         }
                         if (right)
                         {
-                            button_state_vfoB = clsVfoDisplay.buttonState.FILTER_SCREEN;
+                            if (vfo.MouseButtonDown && vfo.MouseDownLong)
+                                vfo.PopFilterMenu();
+                            else
+                                button_state_vfoB = clsVfoDisplay.buttonState.FILTER_SCREEN;
                             right = false;
                         }
                     }
@@ -32505,6 +32743,19 @@ namespace Thetis
         public const int FRAME_RATE = 30;
         public const int SUB_RX_OFFSET = 1024; // there can be 1024 regular, before the subrx's start
 
+        public class FilterCharacteristics
+        {
+            public double[] segments;
+            public int index_low;
+            public int index_upper;
+            public double corner_freq;
+            public int hz_span;
+            public int middle_index;
+            public int six_db_shift;
+            public double min;
+            public double max;
+        }
+
         private static Dictionary<int, clsMiniSpec> _mini_spec;
         private static Console _console;
         private static List<Notch> _notches;
@@ -32513,6 +32764,11 @@ namespace Thetis
         private static bool _tnf;
         private static bool _mox;
         private static Dictionary<int, int> _using_filter_count;
+
+        private static readonly object _filter_characteristics_lock = new object();
+
+        private static FilterCharacteristics[] _rx_filter_characteristics;
+        private static FilterCharacteristics _tx_filter_characteristics;
 
         public class Notch
         {
@@ -32529,6 +32785,13 @@ namespace Thetis
             _mox = false;
             _visual_notch_display = false;
             _using_filter_count = new Dictionary<int, int>();
+
+            _rx_filter_characteristics = new FilterCharacteristics[2]; // 0 is any mode, 1 is fm
+            for(int n = 0;n < _rx_filter_characteristics.Length; n++)
+            {
+                _rx_filter_characteristics[n] = new FilterCharacteristics();
+            }
+            _tx_filter_characteristics = new FilterCharacteristics();
         }
         public static void Init(Console console)
         {
@@ -32579,6 +32842,71 @@ namespace Thetis
                         notch_index++;
                     }
                 }
+            }
+        }
+        public static void UpdateRXFilterCharacteristics(DSPMode mode, double[] segments, int index_low, int index_upper, double corner_freq)
+        {
+            lock(_filter_characteristics_lock)
+            {
+                int id = mode == DSPMode.FM ? 1 : 0;
+                _rx_filter_characteristics[id].segments = (double[])segments.Clone(); // clone is ok for primatives
+                _rx_filter_characteristics[id].index_low = index_low;
+                _rx_filter_characteristics[id].index_upper = index_upper;
+                _rx_filter_characteristics[id].corner_freq = corner_freq;
+                _rx_filter_characteristics[id].hz_span = index_upper - index_low;
+                _rx_filter_characteristics[id].middle_index = index_low + ((index_upper - index_low) / 2);
+                _rx_filter_characteristics[id].six_db_shift = _rx_filter_characteristics[id].middle_index - index_low;
+                _rx_filter_characteristics[id].min = double.MaxValue;
+                _rx_filter_characteristics[id].max = double.MinValue;
+                for (int n = 1; n < _rx_filter_characteristics[id].segments.Length - 1; n++) // ignore first/last
+                {
+                    if (_rx_filter_characteristics[id].segments[n] < _rx_filter_characteristics[id].min) _rx_filter_characteristics[id].min = _rx_filter_characteristics[id].segments[n];
+                    if (_rx_filter_characteristics[id].segments[n] > _rx_filter_characteristics[id].max) _rx_filter_characteristics[id].max = _rx_filter_characteristics[id].segments[n];
+                }
+                //_rx_filter_characteristics[id].min = Math.Max(-300.0, _rx_filter_characteristics[id].min); // drop everything below as we do not show it
+            }
+        }
+        public static void UpdateTXFilterCharacteristics(double[] segments, int index_low, int index_upper, double corner_freq)
+        {
+            lock (_filter_characteristics_lock)
+            {
+                _tx_filter_characteristics.segments = (double[])segments.Clone(); // clone is ok for primatives
+                _tx_filter_characteristics.index_low = index_low;
+                _tx_filter_characteristics.index_upper = index_upper;
+                _tx_filter_characteristics.corner_freq = corner_freq;
+                _tx_filter_characteristics.hz_span = index_upper - index_low;
+                _tx_filter_characteristics.middle_index = index_low + ((index_upper - index_low) / 2);
+                _tx_filter_characteristics.six_db_shift = _tx_filter_characteristics.middle_index - index_low;
+                _tx_filter_characteristics.min = double.MaxValue;
+                _tx_filter_characteristics.max = double.MinValue;
+                for (int n = 1; n < _tx_filter_characteristics.segments.Length - 1; n++) // ignore first/last
+                {
+                    if (_tx_filter_characteristics.segments[n] < _tx_filter_characteristics.min) _tx_filter_characteristics.min = _tx_filter_characteristics.segments[n];
+                    if (_tx_filter_characteristics.segments[n] > _tx_filter_characteristics.max) _tx_filter_characteristics.max = _tx_filter_characteristics.segments[n];
+                }
+                //_tx_filter_characteristics.min = Math.Max(-300.0, _tx_filter_characteristics.min); // drop everything below as we do not show it
+            }
+        }
+        public static object FilterCharacteristicsLocker
+        {
+            get
+            {
+                return _filter_characteristics_lock;
+            }
+        }
+        public static FilterCharacteristics GetRXCharacteristic(DSPMode mode)
+        {
+            lock (_filter_characteristics_lock)
+            {
+                int id = mode == DSPMode.FM ? 1 : 0;
+                return _rx_filter_characteristics[id];
+            }
+        }
+        public static FilterCharacteristics GetTXCharacteristic()
+        {
+            lock (_filter_characteristics_lock)
+            {
+                return _tx_filter_characteristics;
             }
         }
         public static bool UsingAFilter(int id, bool sub_receiver = false)
@@ -32981,6 +33309,7 @@ namespace Thetis
                 _tx_frequency = _console.TXFreq;
 
                 _id = id;
+
                 _disp = cmaster.AllocAnalyzer(0/*99*/, _id, 262144); // must be pow2, 262144 = max size
                 if (!_enabled) cmaster.RunAnalyzer(_disp, 0); // turn it off if not in use
 

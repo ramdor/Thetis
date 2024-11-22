@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2019 Warren Pratt, NR0V
+Copyright (C) 2013, 2019, 2024 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -59,3 +59,32 @@ extern void WriteScaledAudio (
 	int rate,				// sample rate
 	int size,				// incoming buffer size
 	double* indata );		// pointer to incoming data buffer
+
+
+#ifndef _bfcu_h
+#define _bfcu_h
+
+typedef struct _bfcu
+{
+	int id;
+	int min_size;
+	int max_size;
+	double rate;
+	double corner;
+	int points;
+	double* dataset[16];
+	int i_lower_corner;
+	int i_upper_corner;
+}bfcu, * BFCU;
+
+extern __declspec (dllexport) int create_bfcu(int id, int min_size, int max_size, double rate, double corner, int points);
+
+extern __declspec (dllexport) void destroy_bfcu(int id);
+
+extern __declspec (dllexport) void getFilterCorners(int id, int* lower_index, int* upper_index);
+
+extern __declspec (dllexport) void getFilterCurve(int id, int size, int w_type, int index_low, int index_high, double* segment);
+
+extern void test_bfcu();
+
+#endif

@@ -6717,7 +6717,7 @@ namespace Thetis
             List<clsNotchCoords> notchData = new List<clsNotchCoords>();
 
             double min_notch_wdith = localMox(rx) ? _mnfMinSizeTX : _mnfMinSizeRX;
-
+            
             foreach (MNotch n in notches)
             {
                 int notch_centre_x;
@@ -9518,13 +9518,30 @@ namespace Thetis
             int rxDisplayHigh;
 
             bool local_mox = localMox(rx);
+            bool duplex = isRxDuplex(rx);
             int local_rit;
 
             if (rx == 1)
             {
                 vfo_hz = (int)vfoa_hz;
-                rxDisplayLow = RXDisplayLow;
-                rxDisplayHigh = RXDisplayHigh;
+                if (local_mox)
+                {
+                    if (duplex)
+                    {
+                        rxDisplayLow = RXDisplayLow;
+                        rxDisplayHigh = RXDisplayHigh;
+                    }
+                    else
+                    {
+                        rxDisplayLow = TXDisplayLow;
+                        rxDisplayHigh = TXDisplayHigh;
+                    }
+                }
+                else
+                {
+                    rxDisplayLow = RXDisplayLow;
+                    rxDisplayHigh = RXDisplayHigh;
+                }
                 _spotLayerRightRX1.Clear();
 
                 local_rit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
@@ -9532,8 +9549,24 @@ namespace Thetis
             else// rx == 2
             {
                 vfo_hz = (int)vfob_hz;
-                rxDisplayLow = RX2DisplayLow;
-                rxDisplayHigh = RX2DisplayHigh;
+                if (local_mox)
+                {
+                    if (duplex)
+                    {
+                        rxDisplayLow = RX2DisplayLow;
+                        rxDisplayHigh = RX2DisplayHigh;
+                    }
+                    else // always false on rx2
+                    {
+                        rxDisplayLow = TXDisplayLow;
+                        rxDisplayHigh = TXDisplayHigh;
+                    }
+                }
+                else
+                {
+                    rxDisplayLow = RX2DisplayLow;
+                    rxDisplayHigh = RX2DisplayHigh;
+                }
                 _spotLayerRightRX2.Clear();
 
                 local_rit = 0;

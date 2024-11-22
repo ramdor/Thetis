@@ -140,11 +140,7 @@ namespace Thetis
                 }
 
                 if (bAdd)
-                {
-                    string xmlReplace = "";
-                    if(_xmlData.ContainsKey(sKey))
-                        xmlReplace = _xmlData[sKey];
-                    
+                {                    
                     string toolTip = "";
                     if (tt != null)
                         toolTip = tt.GetToolTip(c).Replace("\n", " ");
@@ -172,10 +168,9 @@ namespace Thetis
                         ShortName = sShortName,
                         Text = c.Text.Replace("\n", " "),
                         ToolTip = toolTip,
-                        XMLReplacement = xmlReplace,
+                        XMLReplacement = _xmlData.ContainsKey(sKey) ? _xmlData[sKey] : "",
                         FullName = sKey
                     };
-
                     lock (_objLocker)
                     {
                         _searchData.Add(sKey, sd);
@@ -198,10 +193,11 @@ namespace Thetis
                 string sSearch = txtSearch.Text.ToLower();
                 Dictionary<string, SearchData> filteredDictionary = _searchData
                     .Where(kv => 
-                    kv.Value.Name.ToLower().Contains(sSearch) ||
-                    kv.Value.Text.ToLower().Contains(sSearch) ||
-                    kv.Value.ToolTip.ToLower().Contains(sSearch))
-                    .ToDictionary(kv => kv.Key, kv => kv.Value);
+                    kv.Value.Name.Contains(sSearch, StringComparison.OrdinalIgnoreCase) ||
+                    kv.Value.Text.Contains(sSearch, StringComparison.OrdinalIgnoreCase) ||
+                    kv.Value.ToolTip.Contains(sSearch, StringComparison.OrdinalIgnoreCase) ||
+                    kv.Value.XMLReplacement.Contains(sSearch, StringComparison.OrdinalIgnoreCase)
+                    ).ToDictionary(kv => kv.Key, kv => kv.Value);
 
                 List<SearchData> searchDataList = filteredDictionary.Values.ToList();
 
@@ -272,9 +268,10 @@ namespace Thetis
                     yPos += 20;
                 }
 
-                if (_xmlData.ContainsKey(sd.FullName.ToLower()))
+                if (_xmlData.ContainsKey(sd.FullName))
                 {
-                    string sText = _xmlData[sd.FullName.ToLower()];
+                    string sText = _xmlData[sd.FullName];
+                    sText = sText.Replace("\n", "").Replace("\r", "").Replace("\t", "");
                     highlight(sSearchLower, sText, listBox, e.Bounds.X, yPos, g);
                     g.DrawString(sText, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, _stringFormat);
                     yPos += 20;
@@ -292,9 +289,10 @@ namespace Thetis
             else
             {
                 string sText;
-                if (_xmlData.ContainsKey(sd.FullName.ToLower()))
+                if (_xmlData.ContainsKey(sd.FullName))
                 {
-                    sText = _xmlData[sd.FullName.ToLower()];
+                    sText = _xmlData[sd.FullName];
+                    sText = sText.Replace("\n", "").Replace("\r", "").Replace("\t", "");
                 }
                 else if (!string.IsNullOrEmpty(sd.ToolTip))
                 {
@@ -473,7 +471,7 @@ namespace Thetis
 
                     if (!string.IsNullOrEmpty(controlName) && !string.IsNullOrEmpty(text))
                     {
-                        _xmlData.Add(controlName.ToLower(), text); // to lower, make life easier in the xml
+                        _xmlData.Add(controlName, text);
                     }
                 }
             }

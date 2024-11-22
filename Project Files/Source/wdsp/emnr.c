@@ -977,13 +977,15 @@ void calc_gain (EMNR a)
 					double v_ts = (xi_ts / (1.0 + xi_ts)) * gamma;
 					a->g.mask[k] = a->g.gf1p5 * sqrt(v_ts) / gamma * exp(-0.5 * v_ts)
 						* ((1.0 + v_ts) * bessI0(0.5 * v_ts) + v_ts * bessI1(0.5 * v_ts));
-					double v2 = min(v, 700.0);
+					double v2 = min(v_ts, 700.0);
 					double eta = a->g.mask[k] * a->g.mask[k] * a->g.lambda_y[k] / a->g.lambda_d[k];
 					double eps = eta / (1.0 - a->g.q);
 					double witchHat = (1.0 - a->g.q) / a->g.q * exp(v2) / (1.0 + eps);
 					a->g.mask[k] *= witchHat / (1.0 + witchHat);
 					xi_hat = xi_ts;
 				}
+				if (a->g.mask[k] > a->g.gmax) a->g.mask[k] = a->g.gmax;
+				if (a->g.mask[k] != a->g.mask[k]) a->g.mask[k] = 0.01;
 
 				if (getZeta(a, gamma, xi_hat, &zeta_hat) >= 0)
 				{

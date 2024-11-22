@@ -15415,6 +15415,17 @@ namespace Thetis
                 if (IsSetupFormNull) return;
                 if (VFOAFreq > max_freq && rx1_xvtr_index < 0)
                     VFOAFreq = max_freq;
+
+                if (RX2Enabled)//[2.10.3.7]MW0LGE added
+                {
+                    if (VFOBFreq > max_freq && rx2_xvtr_index < 0) 
+                        VFOBFreq = max_freq;
+                }
+                else
+                {
+                    if (VFOBFreq > max_freq && rx1_xvtr_index < 0)
+                        VFOBFreq = max_freq;
+                }
             }
         }
 
@@ -32108,6 +32119,18 @@ namespace Thetis
                 else chkEnableMultiRX.Checked = false; // MW0LGE [2.9.0.7] same as vfoA lost focus
             }
 
+            //[2.10.3.7]MW0LGE limits added
+            bool xvtr = false;
+            if (XVTRForm != null)
+            {
+                xvtr = XVTRForm.XVTRFreq(freq) > 0;
+            }
+            if (!xvtr) //in HF
+            {
+                if (freq < min_freq) freq = min_freq;
+                else if (freq > max_freq) freq = max_freq;
+            }
+
             UpdateVFOBFreq(freq.ToString("f6"));
 
             if (rx2_enabled)
@@ -40893,6 +40916,73 @@ namespace Thetis
             UpdateMinimumNotchWidthRX(1);
             UpdateMinimumNotchWidthRX(2);
             UpdateMinimumNotchWidthTX();
+
+            //calculate filter characteristics
+            if (bMadeAChange)
+            {
+                BuildFilterCharacteristics();
+            }
+        }
+        public void BuildFilterCharacteristics()
+        {
+            Debug.Print("Rebuilding Filter Characteristics");
+            double[] segments;
+            int low, high;
+            double corner_freq = 1000.0;
+            (segments, low, high) = calcFilterCharacteristics(0, 48000.0, radio.GetDSPRX(0, 0).FilterSize, radio.GetDSPRX(0, 0).RXBandpassWindow, corner_freq, _hi_resolution_filter_characteristics); //rx1 + rx2 values will be the same
+            MiniSpec.UpdateRXFilterCharacteristics(DSPMode.FIRST, segments, low, high, corner_freq);
+            (segments, low, high) = calcFilterCharacteristics(1, 192000.0, radio.GetDSPRX(0, 0).FilterSize, radio.GetDSPRX(0, 0).RXBandpassWindow, corner_freq, _hi_resolution_filter_characteristics); //fm, use rx1 as rx2 values will be the same
+            MiniSpec.UpdateRXFilterCharacteristics(DSPMode.FM, segments, low, high, corner_freq);
+            (segments, low, high) = calcFilterCharacteristics(2, 96000.0, radio.GetDSPTX(0).FilterSize, radio.GetDSPTX(0).TXBandpassWindow, corner_freq, _hi_resolution_filter_characteristics); //tx
+            MiniSpec.UpdateTXFilterCharacteristics(segments, low, high, corner_freq);
+
+            // we dont need this info any more, as it has been passed to MiniSpec, so free it up
+            WDSP.destroy_bfcu(0); // 48k rx
+            WDSP.destroy_bfcu(1); // 192k rx fm
+            WDSP.destroy_bfcu(2); // 96k tx
+            Debug.Print("Done.");
+        }
+        private bool _hi_resolution_filter_characteristics = false;
+        public bool HighResolutionFilterCharacteristics
+        {
+            get { return _hi_resolution_filter_characteristics; }
+            set 
+            {
+                if(_hi_resolution_filter_characteristics != value)
+                {
+                    _hi_resolution_filter_characteristics = value;
+                    if(!initializing) BuildFilterCharacteristics();
+                }                
+            }
+        }
+        private (double[], int, int) calcFilterCharacteristics(int id, double rate, int filter_size, int w_type, double corner_freq, bool hi_res)
+        {
+            try
+            {
+                int points = (int)Math.Max(1024, filter_size) * (hi_res ? 8 : 1); // points must be power of 2
+
+                WDSP.create_bfcu(id, 1024, points, rate, corner_freq, points);
+
+                int lower_corner, upper_corner;
+                unsafe
+                {
+                    WDSP.getFilterCorners(id, &lower_corner, &upper_corner);
+                }
+
+                int mid_index = lower_corner + ((upper_corner - lower_corner) / 2);
+                double[] segment = new double[points + 1];
+                unsafe
+                {
+                    fixed (double* segment_ptr = &segment[0])
+                        WDSP.getFilterCurve(id, filter_size, w_type, mid_index - (points / 2), mid_index + (points / 2), segment_ptr);
+                }
+
+                return (segment, lower_corner, upper_corner);
+            }
+            catch
+            {
+                return (null, -1, -1);
+            }
         }
 
         private int dsp_buf_phone_rx = 64;

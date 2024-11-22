@@ -34,6 +34,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] added -nospec command line option to prevent the use of analysers when the filter item is in use
 - [add] webimage item can now be configured to apply the image to the spectral area, and can be used to implement slide shows with the use of 4charID
 - [add] right click on a CTUN button will re-centre the associated rx
+- [add] long click on vfo container filter size will show menu popup
 - [change] moved release notes button from setup to the about box
 - [change] skin images are resized to button/panel/slider etc instead of relying on tile property
 - [change] button clicks are ignored in meter item button boxes that are faded
@@ -61,6 +62,11 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] antenna tab is initialised with suitable settings for new databases. This has been broken since early dev 2.10.3.6
 - [fix] button boxes now release the click colour if you click and whilst keeping the mouse button down move off the button box
 - [fix] colour drop down controls in setup now position the down arrow correctly
+- [fix] fixed issue where audio would stop if the filter extent was moved below 201hz when using NR2-trained and SNB together
+- [fix] rx2 is now prevented from going above max freq, unless rx2 is on an xvtr band
+- [fix] vfo container now handles band selection correctly for rx2
+- [fix] tci spots are now positioned correctly when DUPlex is off when in TX
+- [fix] some finder issues where a user defined xml file is used
 
 ## v2.10.3.6 Main New Features
 - database manager
