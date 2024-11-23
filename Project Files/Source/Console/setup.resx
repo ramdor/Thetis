@@ -145,9 +145,10 @@
     <value>302, 17</value>
   </metadata>
   <data name="chkFilter_high_resolution_characteristics.ToolTip" xml:space="preserve">
-    <value>This produces more data for the filter item to use when showing filter characteristics.
-It will have an impact on the time to process a filter Size/Window change and will
-result in a different view when using the filter passband display item.</value>
+    <value>Generates additional data for the filter item to enhance the display of filter characteristics.
+Enabling this option will increase processing time for filter Size/Window changes and alter
+the appearance of the filter passband display. It has a higher CPU usage and is intended
+for experimental and exploratory purposes only. It should be turned off during normal operation.</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="pbWarningBufferType.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

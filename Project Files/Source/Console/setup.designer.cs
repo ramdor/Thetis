@@ -35940,11 +35940,12 @@
             // 
             this.chkFilter_high_resolution_characteristics.AutoSize = true;
             this.chkFilter_high_resolution_characteristics.Image = null;
-            this.chkFilter_high_resolution_characteristics.Location = new System.Drawing.Point(428, 119);
+            this.chkFilter_high_resolution_characteristics.Location = new System.Drawing.Point(529, 117);
             this.chkFilter_high_resolution_characteristics.Name = "chkFilter_high_resolution_characteristics";
-            this.chkFilter_high_resolution_characteristics.Size = new System.Drawing.Size(189, 17);
+            this.chkFilter_high_resolution_characteristics.Size = new System.Drawing.Size(189, 43);
             this.chkFilter_high_resolution_characteristics.TabIndex = 56;
-            this.chkFilter_high_resolution_characteristics.Text = "High resolution filter characteristics";
+            this.chkFilter_high_resolution_characteristics.Text = "High resolution filter characteristics\r\nused in the filter item display\r\n(please " +
+    "read the tootip)";
             this.toolTip1.SetToolTip(this.chkFilter_high_resolution_characteristics, resources.GetString("chkFilter_high_resolution_characteristics.ToolTip"));
             this.chkFilter_high_resolution_characteristics.UseVisualStyleBackColor = true;
             this.chkFilter_high_resolution_characteristics.CheckedChanged += new System.EventHandler(this.chkFilter_high_resolution_characteristics_CheckedChanged);
