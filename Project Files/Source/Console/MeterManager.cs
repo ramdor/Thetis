@@ -4778,6 +4778,7 @@ namespace Thetis
                 removeRenderer(sId);
 
                 f.Close();
+                f.Dispose();//[2.10.3.7]MW0LGE // we have to dispose it because close() prevent this being freed up
 
                 _lstMeterDisplayForms.Remove(sId);
 
@@ -11828,7 +11829,7 @@ namespace Thetis
 
                 ReadingSource = Reading.NONE;
 
-                UpdateInterval = 1000 / MiniSpec.FRAME_RATE;
+                UpdateInterval = 1000 / MiniSpec.FRAME_RATE; // to ms
 
                 buildSpectrumGreyScale(true, true);
 
@@ -12074,7 +12075,14 @@ namespace Thetis
             public bool Greyscale
             {
                 get { return _use_greyscale; }
-                set { _use_greyscale = value; }
+                set 
+                {
+                    if (_use_greyscale != value)
+                    {
+                        _use_greyscale = value;
+                        buildSpectrumGreyScale(true, true);
+                    }
+                }
             }
             public bool SidebandMode
             {
@@ -26104,7 +26112,9 @@ namespace Thetis
 
                 SharpDX.Direct2D1.Brush filter_line_colour_brush;
                 SharpDX.Direct2D1.Brush filter_line_colour_faded_brush = getDXBrushForColour(filter_line_colour, 128);
-                SharpDX.Direct2D1.Brush filter_line_highlight_colour_brush = getDXBrushForColour(filter_line_colour_highlight, 255);
+                SharpDX.Direct2D1.Brush filter_line_highlight_colour_brush = getDXBrushForColour(filter_line_colour_highlight);
+                SharpDX.Direct2D1.Brush line_base_colour_brush = getDXBrushForColour(line_base_colour);
+                SharpDX.Direct2D1.Brush fill_base_colour_brush = getDXBrushForColour(fill_base_colour);
 
                 double min_notch_width;
                 bool mouse_entered = filter.MouseEntered;
@@ -26116,13 +26126,13 @@ namespace Thetis
                 {
                     if (!filter.AutoZoom && filter.FixedTXZoom) zoom = filter.TXZoom + filter.ModeZoom;
                     min_notch_width = filter.MinNotchWidthTX / 2f;
-                    filter_line_colour_brush = getDXBrushForColour(System.Drawing.Color.Red, 255);
+                    filter_line_colour_brush = getDXBrushForColour(System.Drawing.Color.Red);
                 }
                 else
                 {
                     if (!filter.AutoZoom && filter.FixedRXZoom) zoom = filter.RXZoom + filter.ModeZoom;
                     min_notch_width = filter.MinNotchWidthRX / 2f;
-                    filter_line_colour_brush = getDXBrushForColour(filter_line_colour, 255);
+                    filter_line_colour_brush = getDXBrushForColour(filter_line_colour);
                 }
 
                 //calc pixels per hz etc
@@ -26173,8 +26183,8 @@ namespace Thetis
                 //top/bottom lines
                 float top_line_y = y + line_width_half + tsl.Height;
                 float bot_line_y = y + h - line_width_half - tsl.Height;
-                _renderTarget.DrawLine(new RawVector2(x, top_line_y), new RawVector2(w, y + line_width_half + tsl.Height), getDXBrushForColour(extent_colour, 255), line_width);
-                _renderTarget.DrawLine(new RawVector2(x, bot_line_y), new RawVector2(w, y + h - line_width_half - tsl.Height), getDXBrushForColour(extent_colour, 255), line_width);
+                _renderTarget.DrawLine(new RawVector2(x, top_line_y), new RawVector2(w, y + line_width_half + tsl.Height), getDXBrushForColour(extent_colour), line_width);
+                _renderTarget.DrawLine(new RawVector2(x, bot_line_y), new RawVector2(w, y + h - line_width_half - tsl.Height), getDXBrushForColour(extent_colour), line_width);
 
                 //slope extents
                 float extent_l = x + max_w + slope_pixels - zoom_diff_pixels;
@@ -26210,7 +26220,7 @@ namespace Thetis
 
                             SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(extent_l, y + line_width_half + tsl.Height, width_between_slopes, spectrum_height);
                             _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
-                            _renderTarget.FillRectangle(clip_rect, getDXBrushForColour(meter_back_colour, 255));
+                            _renderTarget.FillRectangle(clip_rect, getDXBrushForColour(meter_back_colour));
 
                             for (int px = 1; px < tot_data; px++)
                             {
@@ -26235,7 +26245,7 @@ namespace Thetis
                                     }
                                     else
                                     {
-                                        fill_brush = getDXBrushForColour(fill_base_colour);
+                                        fill_brush = fill_base_colour_brush;
                                     }
 
                                     fill_bot_pos.X = extent_l + (px * x_step);
@@ -26256,7 +26266,7 @@ namespace Thetis
                                 }
                                 else
                                 {
-                                    line_brush = getDXBrushForColour(line_base_colour);
+                                    line_brush = line_base_colour_brush;
                                 }
 
                                 _renderTarget.DrawLine(old_pos, new_pos, line_brush, x_step, _rounded_stroke_style);
@@ -26330,7 +26340,7 @@ namespace Thetis
                             }
 
                             _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
-                            _renderTarget.FillRectangle(clip_rect, getDXBrushForColour(meter_back_colour, 255));
+                            _renderTarget.FillRectangle(clip_rect, getDXBrushForColour(meter_back_colour));
 
                             _renderTarget.DrawBitmap(_filter_display_waterfall_bmp_tx, dest_rect_tx, 1f, BitmapInterpolationMode.Linear);
                             _renderTarget.DrawBitmap(_filter_display_waterfall_bmp, dest_rect_rx, 1f, BitmapInterpolationMode.Linear);
@@ -26342,7 +26352,7 @@ namespace Thetis
 
                 //centre line
                 float centre = x + (w / 2f);
-                _renderTarget.DrawLine(new RawVector2(centre, y + h), new RawVector2(centre, y + tsl.Height), getDXBrushForColour(extent_colour, 255), line_width);
+                _renderTarget.DrawLine(new RawVector2(centre, y + h), new RawVector2(centre, y + tsl.Height), getDXBrushForColour(extent_colour), line_width);
 
                 //adjust pixel span between the two extents as that is the filter width, the slopes are extra
                 pixel_span = extent_h - extent_l;
@@ -26355,7 +26365,7 @@ namespace Thetis
                         if (filter.SidebandMode && (filter.SidebandMode && ((filter.SidebandModeSign == -1 && f > 0) || (filter.SidebandModeSign == 1 && f < 0)))) continue; // skip sideband not interested in
 
                         float xp = hzToPixels(Math.Abs(f), pixel_span, hz_span) * (f < 0 ? -1 : 1);
-                        _renderTarget.DrawLine(new RawVector2(centre + xp, y + h), new RawVector2(centre + xp, y + tsl.Height), getDXBrushForColour(snapline_colour, 255), line_width, _dash_style);
+                        _renderTarget.DrawLine(new RawVector2(centre + xp, y + h), new RawVector2(centre + xp, y + tsl.Height), getDXBrushForColour(snapline_colour), line_width, _dash_style);
                     }
                 }
 
@@ -26364,7 +26374,7 @@ namespace Thetis
                 {
                     int cw_offset = filter.CWPichOffset;
                     float cw_shift = hzToPixels(Math.Abs(cw_offset), pixel_span, hz_span) * (cw_offset < 0 ? -1 : 1);
-                    _renderTarget.DrawLine(new RawVector2(centre - cw_shift, y + h), new RawVector2(centre - cw_shift, y + tsl.Height), getDXBrushForColour(extent_colour, 255), line_width);
+                    _renderTarget.DrawLine(new RawVector2(centre - cw_shift, y + h), new RawVector2(centre - cw_shift, y + tsl.Height), getDXBrushForColour(extent_colour), line_width);
                 }
 
                 if (filter.ShowFilterLimits)
@@ -26373,8 +26383,8 @@ namespace Thetis
                     plotText(low_extent_text, x - zoom_diff_pixels, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, false, null);
                     plotText(high_extent_text, x + w + zoom_diff_pixels, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, true, false, 0, false, 0, 0, false, null);
                     
-                    _renderTarget.DrawLine(new RawVector2(x + max_w - zoom_diff_pixels, y + h), new RawVector2(extent_l, y + tsl.Height), getDXBrushForColour(extent_colour, 255), line_width);
-                    _renderTarget.DrawLine(new RawVector2(x + w - max_w + zoom_diff_pixels, y + h), new RawVector2(extent_h, y + tsl.Height), getDXBrushForColour(extent_colour, 255), line_width);
+                    _renderTarget.DrawLine(new RawVector2(x + max_w - zoom_diff_pixels, y + h), new RawVector2(extent_l, y + tsl.Height), getDXBrushForColour(extent_colour), line_width);
+                    _renderTarget.DrawLine(new RawVector2(x + w - max_w + zoom_diff_pixels, y + h), new RawVector2(extent_h, y + tsl.Height), getDXBrushForColour(extent_colour), line_width);
                 }
 
                 //mode text
@@ -26535,51 +26545,108 @@ namespace Thetis
                         float cp_x_step = hzToPixels(cp_total_hz, pixel_span, hz_span) / tot;
                         float cp_six_db_shift = fc.six_db_shift * cp_x_step;
                         int cp_mid = fc.middle_index;
-                        float df_py = ((float)fc.max - (float)fc.segments[cp_mid]) * cp_dbmToPixel; // skip 0
-                        RawVector2 first_point = new RawVector2(-1, -1);
-                        RawVector2 end_point = new RawVector2(-1, -1);
+
+                        //new method
+                        //get span of pixels used between limits, and between container edges, whatever is smaller
+                        float pixels_between_filter_limits = (int)hzToPixels(hz_span, pixel_span, hz_span);
+                        int pixel_width = (int)Math.Min(pixels_between_filter_limits, rect.Width);
+                        //add on the cp_six_db_shift as we can put the data off the edge of the draw area by this much
+                        pixel_width += (int)cp_six_db_shift;
+                        //find the hz per pixel, hz_per_pixel
+                        double hz_per_pixel = pixelsToHz(1, pixel_span, hz_span);
+                        //step through the filter data and combine all values in that hz_per_pixel range to a single min/max value
+                        List<(float,float)> lines = new List<(float,float)>();
+                        float min = float.MaxValue;
+                        float max = float.MinValue;
+                        double hz_count = 0;
+                        bool adding = true;
                         bool first_set = false;
-                        bool end_set = false;
-
-                        RawVector2 df_new_pos_left = new RawVector2(0, 0);
-                        RawVector2 df_old_pos_left = new RawVector2(low_top.X + cp_six_db_shift, top_pos + df_py);
-                        RawVector2 df_new_pos_right = new RawVector2(0, 0);
-                        RawVector2 df_old_pos_right = new RawVector2(high_top.X - cp_six_db_shift, top_pos + df_py);
-
-                        for (int px = cp_mid; px > 0; px--) // ignore 0, loop through left side, but also draw the mirror on the right
+                        for (int px = cp_mid; px > 0; px--)
                         {
-                            df_py = ((float)fc.max - (float)fc.segments[px]) * cp_dbmToPixel;
+                            float val = (float)fc.segments[px];
+                            if (val < min) min = val;
+                            if (val > max) max = val;
 
-                            df_new_pos_left.X = low_top.X - ((cp_mid - px) * cp_x_step) + cp_six_db_shift;
-                            df_new_pos_left.Y = top_pos + df_py;
-
-                            df_new_pos_right.X = high_top.X + ((cp_mid - px) * cp_x_step) - cp_six_db_shift;
-                            df_new_pos_right.Y = df_new_pos_left.Y;
-
-                            if (df_new_pos_left.X < clip_rect.Left && df_new_pos_right.X > clip_rect.Right) break; // exit loop when both edges are hit
-
-                            if ((df_new_pos_right.X - df_new_pos_left.X > 0) && (df_old_pos_right.X - df_old_pos_left.X > 0))
+                            hz_count += cp_hz_per_index;
+                            if(hz_count >= hz_per_pixel)
                             {
-                                _renderTarget.DrawLine(df_old_pos_left, df_new_pos_left, filter_line_colour_brush, line_width, _rounded_stroke_style);
-                                _renderTarget.DrawLine(df_old_pos_right, df_new_pos_right, filter_line_colour_brush, line_width, _rounded_stroke_style);
+                                min = top_pos + (((float)fc.max - min) * cp_dbmToPixel);
+                                max = top_pos + (((float)fc.max - max) * cp_dbmToPixel);
+
+                                while (adding && hz_count > hz_per_pixel)
+                                {
+                                    lines.Add((min, max));
+                                    hz_count = hz_count - hz_per_pixel;
+                                    if (lines.Count == pixel_width) adding = false; // exit when enough pixels for the display area
+                                }
+                                if (!adding) break;
+
+                                min = float.MaxValue;
+                                max = float.MinValue;
+                            }
+                        }
+                        RawVector2 low_pos_left = new RawVector2();
+                        RawVector2 high_pos_left = new RawVector2();
+                        RawVector2 low_pos_right = new RawVector2();
+                        RawVector2 high_pos_right = new RawVector2();
+
+                        RawVector2 join_left = new RawVector2();
+                        RawVector2 join_right = new RawVector2();
+
+                        RawVector2 old_pos_left = new RawVector2();
+                        RawVector2 old_pos_right = new RawVector2();
+                        if (lines.Count > 0)
+                        {
+                            float start_x = low_top.X + cp_six_db_shift;
+                            old_pos_left.X = start_x;
+                            old_pos_left.Y = lines.First().Item1;
+                            start_x = high_top.X - cp_six_db_shift;
+                            old_pos_right.X = start_x;
+                            old_pos_right.Y = lines.First().Item1;
+                        }
+                        //for each pixel plot line beteen min/max, and join them
+                        int pixel_x = cp_mid;
+                        foreach ((float min_v, float max_v) in lines)
+                        {
+                            low_pos_left.Y = min_v;
+                            high_pos_left.Y = max_v;
+                            low_pos_right.Y = min_v;
+                            high_pos_right.Y = max_v;
+
+                            //left
+                            low_pos_left.X = low_top.X - (cp_mid - pixel_x) + cp_six_db_shift;
+                            high_pos_left.X = low_pos_left.X;
+                            //right
+                            low_pos_right.X = high_top.X + (cp_mid - pixel_x) - cp_six_db_shift;
+                            high_pos_right.X = low_pos_right.X;
+
+                            if (high_pos_right.X - high_pos_left.X > 0)
+                            {
+                                _renderTarget.DrawLine(high_pos_left, low_pos_left, filter_line_colour_brush, line_width);
+                                //join
+                                _renderTarget.DrawLine(low_pos_left, old_pos_left, filter_line_colour_brush, line_width);
+
+                                _renderTarget.DrawLine(high_pos_right, low_pos_right, filter_line_colour_brush, line_width);
+                                //join
+                                _renderTarget.DrawLine(low_pos_right, old_pos_right, filter_line_colour_brush, line_width);
 
                                 if (!first_set)
                                 {
                                     first_set = true;
-                                    first_point = new RawVector2(df_old_pos_left.X, df_old_pos_left.Y);
-                                }
-                                if (!end_set)
-                                {
-                                    end_set = true;
-                                    end_point = new RawVector2(df_old_pos_right.X, df_old_pos_right.Y);
+                                    join_left.X = high_pos_left.X;
+                                    join_right.X = high_pos_right.X;
+                                    join_left.Y = high_pos_left.Y;
+                                    join_right.Y = high_pos_left.Y; // same as left Y so we dont ever get a slope
                                 }
                             }
+                            old_pos_left.X = low_pos_left.X;
+                            old_pos_left.Y = low_pos_left.Y;
+                            old_pos_right.X = low_pos_right.X;
+                            old_pos_right.Y = low_pos_right.Y;
 
-                            df_old_pos_left = df_new_pos_left;
-                            df_old_pos_right = df_new_pos_right;
+                            pixel_x--;
                         }
-
-                        if (first_set && end_set) _renderTarget.DrawLine(first_point, end_point, filter_line_colour_brush, line_width, _rounded_stroke_style);
+                        if(first_set) _renderTarget.DrawLine(join_left, join_right, filter_line_colour_brush, line_width);
                     }
                     _renderTarget.PopAxisAlignedClip();
                 }
