@@ -448,4 +448,7 @@
   <data name="Data-Active-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Data-Active-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="cty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cty.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

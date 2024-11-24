@@ -56,7 +56,7 @@
             this.lblWidth.Name = "lblWidth";
             this.lblWidth.Size = new System.Drawing.Size(127, 21);
             this.lblWidth.TabIndex = 7;
-            this.lblWidth.Text = "9999 Hz";
+            this.lblWidth.Text = "10000 Hz";
             this.lblWidth.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             // 
             // btn200

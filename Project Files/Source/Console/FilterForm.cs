@@ -359,12 +359,12 @@ namespace Thetis
             // 
             this.udLow.Location = new System.Drawing.Point(72, 64);
             this.udLow.Maximum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
             this.udLow.Minimum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             -2147483648});
@@ -378,12 +378,12 @@ namespace Thetis
             // 
             this.udHigh.Location = new System.Drawing.Point(72, 40);
             this.udHigh.Maximum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
             this.udHigh.Minimum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             -2147483648});
@@ -451,7 +451,7 @@ namespace Thetis
             // 
             this.udWidth.Location = new System.Drawing.Point(72, 88);
             this.udWidth.Maximum = new decimal(new int[] {
-            19998,
+            20000,
             0,
             0,
             0});

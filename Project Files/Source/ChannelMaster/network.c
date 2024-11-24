@@ -1234,12 +1234,15 @@ int IOThreadStop() {
 
 	CloseHandle(prn->hReadThreadMain);
 	CloseHandle(prn->hReadThreadInitSem);
-	CloseHandle(prn->hWriteThreadMain);
-	CloseHandle(prn->hWriteThreadInitSem);
+	//CloseHandle(prn->hWriteThreadMain); //[2.10.3.7]MW0LGE moved below, this only gets created with USB, crash if connected to a p2, then moved to a p1 etc
+	//CloseHandle(prn->hWriteThreadInitSem); //[2.10.3.7]MW0LGE moved below, this only gets created with USB
 
 	// Protocol 1 handles
 	if (RadioProtocol == USB)
 	{
+		CloseHandle(prn->hWriteThreadMain);
+		CloseHandle(prn->hWriteThreadInitSem);
+
 		CloseHandle(prn->hsendIQSem);
 		CloseHandle(prn->hsendLRSem);
 		CloseHandle(prn->hobbuffsRun[0]);

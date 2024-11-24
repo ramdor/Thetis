@@ -261,6 +261,15 @@ namespace Thetis.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to H4sIAAAAAAAEAMS9d3gTV9f2a7ksECW0AKnEISQBQgBjagLBlmzL3bLlRvrYFraCLRHZhkAa6b333nvvPZDee++9996Ts9bse8krz/uc95zr+v74yKXl39wa394zs2fvtfeUZAWysrL+4X/yU/4Ny+awQ2NXvC/ROy2/OZ7uTaSSi2ZNL5g5vXD6vGn54f7uvv50fFEy3t+X9rqn5Uf727oT7VXxVY2pZfHkomR/d3eumB0YiK3q7Yv3TA+nurvj7X1s0zs9Ek/G04n26dWJ3r7dC3bayf0dXqU/2ZdeVeL1edtE0/Glib0Ep+X/nxVjl11yuBy0W4JL0Zu3W29idXzwbiucVW5W1mb/6x/faRfZEYMHB8Vjx4D7DJKFLH9X8be5m/6vDvL7wVwJeRJIwiAJgyUEJQyRMFTCMAnDJawnYYSEkRJGSRgtYYyE9SWMlTBOwngJG0jYUMJGEjaWsImETSVMkLCZhHwJm0uYKGELCZMkbClhKwlbS5gsYYqE [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string cty {
+            get {
+                return ResourceManager.GetString("cty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Data_Active_32 {

@@ -179,7 +179,13 @@ namespace Thetis
                                       SocketType.Dgram,
                                       ProtocolType.Udp);
                 IPEndPoint localEndPoint = QueryRoutingInterface(sock, remoteEndPoint);
-                EthernetHostIPAddress = IPAddress.Parse(localEndPoint.Address.ToString()).ToString();
+                if (localEndPoint != null) //[2.10.3.7]MW0LGE null check added, and changed to tryparse
+                {
+                    if (IPAddress.TryParse(localEndPoint.Address.ToString(), out IPAddress ep_ip))
+                    {
+                        EthernetHostIPAddress = ep_ip.ToString();
+                    }
+                }
 
                 sock.Close();
                 sock = null;
@@ -808,26 +814,33 @@ namespace Thetis
                   Socket socket,
                   IPEndPoint remoteEndPoint)
         {
-            SocketAddress address = remoteEndPoint.Serialize();
-
-            byte[] remoteAddrBytes = new byte[address.Size];
-            for (int i = 0; i < address.Size; i++)
+            try
             {
-                remoteAddrBytes[i] = address[i];
-            }
+                SocketAddress address = remoteEndPoint.Serialize();
 
-            byte[] outBytes = new byte[remoteAddrBytes.Length];
-            socket.IOControl(
-                        IOControlCode.RoutingInterfaceQuery,
-                        remoteAddrBytes,
-                        outBytes);
-            for (int i = 0; i < address.Size; i++)
+                byte[] remoteAddrBytes = new byte[address.Size];
+                for (int i = 0; i < address.Size; i++)
+                {
+                    remoteAddrBytes[i] = address[i];
+                }
+
+                byte[] outBytes = new byte[remoteAddrBytes.Length];
+                socket.IOControl(
+                            IOControlCode.RoutingInterfaceQuery,
+                            remoteAddrBytes,
+                            outBytes);
+                for (int i = 0; i < address.Size; i++)
+                {
+                    address[i] = outBytes[i];
+                }
+
+                EndPoint ep = remoteEndPoint.Create(address);
+                return (IPEndPoint)ep;
+            }
+            catch
             {
-                address[i] = outBytes[i];
+                return null;  //[2.10.3.7]MW0LGE added try catch
             }
-
-            EndPoint ep = remoteEndPoint.Create(address);
-            return (IPEndPoint)ep;
         }
 
     }

@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013 Warren Pratt, NR0V
+Copyright (C) 2013, 2024 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at  
 
-warren@wpratt.com
+warren@pratt.one
 
 */
 
@@ -71,12 +71,17 @@ SIPHON create_siphon (int run, int position, int mode, int disp, int insize,
 	a->window  = (double *) malloc0 (a->fftsize * sizeof (complex));
 	InitializeCriticalSectionAndSpinCount(&a->update, 2500);
 	build_window (a);
+	a->n_alloc_disps = 0;
+	a->alloc_run  = (int*) malloc0 (dMAX_DISPLAYS * sizeof(int));
+	a->alloc_disp = (int*) malloc0 (dMAX_DISPLAYS * sizeof(int));
 	return a;
 }
 
 void destroy_siphon (SIPHON a)
 {
-	DeleteCriticalSection(&a->update);
+	_aligned_free (a->alloc_disp);
+	_aligned_free (a->alloc_run);
+	DeleteCriticalSection (&a->update);
 	fftw_destroy_plan (a->sipplan);
 	_aligned_free (a->window);
 	_aligned_free (a->specout);
@@ -95,7 +100,7 @@ void flush_siphon (SIPHON a)
 
 void xsiphon (SIPHON a, int pos)
 {
-	int first, second;
+	int first, second, i;
 	EnterCriticalSection(&a->update);
 	if (a->run && a->position == pos)
 	{
@@ -123,6 +128,8 @@ void xsiphon (SIPHON a, int pos)
 			break;
 		case 1:
 			Spectrum0 (1, a->disp, 0, 0, a->in);
+			for (i = 0; i < a->n_alloc_disps; i++)
+				Spectrum0 (a->alloc_run[i], a->alloc_disp[i], 0, 0, a->in);
 			break;
 		}
 	}
@@ -309,6 +316,21 @@ void TXAGetSpecF1 (int channel, float* out)
 			out[i] = (float)(10.0 * mlog10 (a->specout[2 * j + 0] * a->specout[2 * j + 0] + a->specout[2 * j + 1] * a->specout[2 * j + 1] + 1.0e-60));
 			out[m] = (float)(10.0 * mlog10 (a->specout[2 * n + 0] * a->specout[2 * n + 0] + a->specout[2 * n + 1] * a->specout[2 * n + 1] + 1.0e-60));
 		}
+}
+
+PORT
+void TXASetSipAllocDisps (int channel, int n_alloc_disps, int* alloc_run, int* alloc_disp)
+{
+	SIPHON a = txa[channel].sip1.p;
+	int i;
+	EnterCriticalSection(&a->update);
+	a->n_alloc_disps = n_alloc_disps;
+	for (i = 0; i < a->n_alloc_disps; i++)
+	{
+		a->alloc_run[i]  = alloc_run[i];
+		a->alloc_disp[i] = alloc_disp[i];
+	}
+	LeaveCriticalSection(&a->update);
 }
 
 /********************************************************************************************************

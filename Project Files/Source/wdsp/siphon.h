@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013 Warren Pratt, NR0V
+Copyright (C) 2013, 2024 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 The author can be reached by email at  
 
-warren@wpratt.com
+warren@pratt.one
 
 */
 
@@ -49,6 +49,9 @@ typedef struct _siphon
 	fftw_plan sipplan;
 	double* window;
 	CRITICAL_SECTION update;
+	int n_alloc_disps;			// number of additional allocated displays for this channel
+	int* alloc_run;				// vector of corresponding 'run' variables for the additional allocated disps
+	int* alloc_disp;			// vector of 'disp' identifiers for the additional allocated disps
 } siphon, *SIPHON;
 
 extern SIPHON create_siphon (int run, int position, int mode, int disp, int insize, double* in, int sipsize, 
@@ -65,6 +68,8 @@ extern void setBuffers_siphon (SIPHON a, double* in);
 extern void setSamplerate_siphon (SIPHON a, int rate);
 
 extern void setSize_siphon (SIPHON a, int size);
+
+extern __declspec (dllexport) void TXASetSipAllocDisps (int channel, int n_alloc_disps, int* alloc_run, int* alloc_disp);
 
 // RXA Properties
 

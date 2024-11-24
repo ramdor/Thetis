@@ -330,7 +330,7 @@ namespace Midi2Cat.IO
 
         private void ShowAddPrompt()
         {
-            bool ShowPrompt = (((ControlType)mappingControlTypeCB2.SelectedValue) == ControlType.Unknown || string.IsNullOrWhiteSpace(mappingControlNameTB2.Text));
+            bool ShowPrompt = (mappingControlTypeCB2.SelectedValue != null && ((ControlType)mappingControlTypeCB2.SelectedValue) == ControlType.Unknown) || string.IsNullOrWhiteSpace(mappingControlNameTB2.Text);
             if (ShowPrompt == true)
             {
                 mappingPromptLabel2.Text = MapCtrl2CmdMsg1;

@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2019 Warren Pratt, NR0V
+Copyright (C) 2013, 2019, 2024 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -452,4 +452,138 @@ void WriteScaledAudio (
 		complete = 1;
 		_beginthread (WriteScaledAudioFile, 0, (void *)dstruct);
 	}
+}
+
+/********************************************************************************************************
+*																										*
+*								Bandpass Filter Characterization Utility								*
+*																										*
+********************************************************************************************************/
+
+double* model_bandpass(int nc, double f_low, double f_high, double rate, int wtype, int points)
+{
+	double* h = fir_bandpass(nc, f_low, f_high, rate, wtype, 1, 1.0 / (double)nc);
+	double* in = (double*)malloc0(points * sizeof(complex));
+	double* out = (double*)malloc0(points * sizeof(complex));
+	memcpy(in, h, nc * sizeof(complex));
+	fftw_plan p = fftw_plan_dft_1d(points, (fftw_complex*)in, (fftw_complex*)out, FFTW_FORWARD, FFTW_PATIENT);
+	fftw_execute(p);
+	fftw_destroy_plan(p);
+	double* mag = (double*)malloc0(points * sizeof(double));
+	double mult = 1.0/sqrt(out[0] * out[0] + out[1] * out[1]);
+	for (int i = 0; i < points; i++)
+	{
+		mag[i] = mult * sqrt(out[2 * i + 0] * out[2 * i + 0] + out[2 * i + 1] * out[2 * i + 1]);
+		if (mag[i] > 1.0e-300)
+			mag[i] = 20.0 * log10(mag[i]);
+		else
+			mag[i] = -200.0;
+	}
+	// reverse normal-order
+	double* magrev = (double*)malloc0(points * sizeof(double));
+	memcpy(magrev, &mag[points / 2], points / 2 * sizeof(double));
+	memcpy(&magrev[points / 2], mag, points / 2 * sizeof(double));
+	_aligned_free(mag);
+	_aligned_free(out);
+	_aligned_free(in);
+	_aligned_free(h);
+	return magrev;
+}
+
+void print_bandpass_response (const char* filename, int points, double* response)
+{
+	int i;
+	FILE* file = fopen(filename, "w");
+	for (i = 0; i < points; i++)
+		fprintf(file, "%.17e\n", response[i]);
+	fflush(file);
+	fclose(file);
+}
+
+BFCU pbfcu[4];
+
+PORT
+int create_bfcu(int id, int min_size, int max_size, double rate, double corner, int points)
+{
+	// id - from 0 through 3
+	// min_size = minimum impulse response size for filters (power of two)
+	// max_size = maximum impulse response size for filters (power of two
+	// rate = sample-rate at which filters run
+	// corner = -6dB corner frequency; bandpass filter is symmetrical about zero
+	//    two corners, one at +corner and the other at -corner
+	// points = number of points to generate for each filter response (power of two; >= max_size)
+	if (max_size > points) return -1;
+	BFCU a = (BFCU)malloc0(sizeof(bfcu));
+	int nc, i_wtype, i_dataset;
+	int i_corner_offset;
+	a->id = id;
+	a->min_size = min_size;
+	a->max_size = max_size;
+	a->rate = rate;
+	a->corner = corner;
+	a->points = points;
+	nc = a->min_size;
+	while (nc <= a->max_size)
+	{
+		for (i_wtype = 0; i_wtype < 2; i_wtype++)
+		{
+			i_dataset = 2 * (int)log2(nc / a->min_size) + i_wtype;
+			a->dataset[i_dataset] = model_bandpass(nc, -a->corner, +a->corner, a->rate, i_wtype, a->points);
+		}
+		nc *= 2;
+	}
+	i_corner_offset = (int)round(a->corner / a->rate * a->points);
+	a->i_lower_corner = (a->points / 2) - i_corner_offset;
+	a->i_upper_corner = (a->points / 2) + i_corner_offset;
+	pbfcu[a->id] = a;
+	return 0;
+}
+
+PORT
+void destroy_bfcu(int id)
+{
+	BFCU a = pbfcu[id];
+	int nc = a->min_size;
+	while (nc <= a->max_size)
+	{
+		int i_dataset = 2 * (int)log2(nc / a->min_size) + 0;
+		_aligned_free(a->dataset[i_dataset]);
+		_aligned_free(a->dataset[i_dataset + 1]);
+		nc *= 2;
+	}
+	_aligned_free(a);
+}
+
+PORT
+void getFilterCorners(int id, int* lower_index, int* upper_index)
+{
+	// stores the index of the lower corner and the index of the upper corner at the pointers given.
+	BFCU a = pbfcu[id];
+	*lower_index = a->i_lower_corner;
+	*upper_index = a->i_upper_corner;
+}
+
+PORT 
+void getFilterCurve(int id, int size, int w_type, int index_low, int index_high, double* segment)
+{
+	// size = filter_size
+	// w_type = window_type (0 -> bh4; 1->bh7)
+	// index_low = lower index of the segment you want (range is 0 through points-1)
+	// index_high = upper index of the segment you want (range is 0 through points-1)
+	// segment = pointer to location where you want the result stored
+	BFCU a = pbfcu[id];
+	int i_dataset = 2 * (int)log2(size / a->min_size) + w_type;
+	memcpy(segment, &a->dataset[i_dataset][index_low], (index_high - index_low + 1) * sizeof(double));
+}
+
+void test_bfcu()
+{
+	create_bfcu(0, 1024, 16384, 48000.0, 1000.0, 16384);
+	int lower_corner, upper_corner;
+	getFilterCorners(0, &lower_corner, &upper_corner);
+	double* segment = (double*)malloc0(1025 * sizeof(double));
+	getFilterCurve(0, 4096, 1, upper_corner - 512, upper_corner + 512, segment);
+	print_bandpass_response("response", 1025, segment);
+	_aligned_free(segment);
+	destroy_bfcu(0);
 }

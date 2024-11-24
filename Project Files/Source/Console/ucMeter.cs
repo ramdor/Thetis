@@ -218,14 +218,14 @@ namespace Thetis
         private void pnlBar_MouseMove(object sender, MouseEventArgs e)
         {
             if (_dragging)
-            {
-                Point clientPos = Parent.PointToClient(Cursor.Position);
-
-                int x = clientPos.X - _point.X;
-                int y = clientPos.Y - _point.Y;
-
+            {                
                 if (_floating)
                 {
+                    Point clientPos = Parent.PointToClient(Cursor.Position);
+
+                    int x = clientPos.X - _point.X;
+                    int y = clientPos.Y - _point.Y;
+
                     Point newPos = new Point(Parent.Left + x, Parent.Top + y);
 
                     if (Common.CtrlKeyDown)
@@ -234,15 +234,25 @@ namespace Thetis
                         newPos.Y = roundToNearestTen(newPos.Y);
                     }
 
-                    if(newPos != Parent.Location) Parent.Location = newPos;
-
                     if (this.Parent != null)
                     {
-                        showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
+                        if (newPos != Parent.Location)
+                        {
+                            Parent.Location = newPos;
+                            showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
+                        }                        
                     }
                 }
                 else
                 {
+                    Point clientPos = e.Location;
+
+                    int x = clientPos.X - _point.X;
+                    int y = clientPos.Y - _point.Y;
+
+                    x += this.Location.X;
+                    y += this.Location.Y;
+
                     if (Common.CtrlKeyDown)
                     {
                         x = roundToNearestTen(x);
@@ -259,9 +269,8 @@ namespace Thetis
                     {
                         this.Location = newPos;
                         Repaint();
-                    }
-
-                    showToolTip($"{newPos.X}, {newPos.Y}", this);
+                        showToolTip($"{newPos.X}, {newPos.Y}", this);
+                    }                    
                 }
             }
         }

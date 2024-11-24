@@ -308,12 +308,20 @@ namespace Thetis
                     }
                     else
                     {
-                        if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
-                        sendVFO(vfoData.rx, vfoData.chan, (long)(vfoData.freqMHz * 1e6));
                         if (vfoData.duplicate_tochan != -1)
                         {
-							if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.duplicate_tochan, (int)vfoData.offsetHz);
+							if (!vfoData.replace_if_duplicated)
+							{
+                                if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
+                                sendVFO(vfoData.rx, vfoData.chan, (long)(vfoData.freqMHz * 1e6));
+                            }
+                            if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.duplicate_tochan, (int)vfoData.offsetHz);
                             sendVFO(vfoData.rx, vfoData.duplicate_tochan, (long)(vfoData.freqMHz * 1e6));
+                        }
+						else
+						{
+                            if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
+                            sendVFO(vfoData.rx, vfoData.chan, (long)(vfoData.freqMHz * 1e6));
                         }
                     }                   
                 }
@@ -340,6 +348,7 @@ namespace Thetis
 			public double centreMHz;
 			public int chan;
 			public int duplicate_tochan;
+			public bool replace_if_duplicated;
 			public bool cen;
 			public int rx;
 			public bool sendIF;
@@ -1588,6 +1597,7 @@ namespace Thetis
 						offsetHz = -1,
 						chan = chan,
 						duplicate_tochan = -1,
+						replace_if_duplicated = false,
 						sendIF = false
 					};
 
@@ -1712,12 +1722,22 @@ namespace Thetis
 			switch (vac_number)
 			{
 				case 0:
-					if (console.ThreadSafeTCIAccessor.SetupForm.VACEnable == enable) break;
-                    console.ThreadSafeTCIAccessor.SetupForm.VACEnable = enable;
+                    console.ThreadSafeTCIAccessor.Invoke(new MethodInvoker(() =>
+                    {
+						if (console.ThreadSafeTCIAccessor.SetupForm.VACEnable != enable)
+						{
+							console.ThreadSafeTCIAccessor.SetupForm.VACEnable = enable;
+						}
+                    }));
                     break;
 				case 1:
-                    if (console.ThreadSafeTCIAccessor.SetupForm.VAC2Enable == enable) break;
-                    console.ThreadSafeTCIAccessor.SetupForm.VAC2Enable = enable;
+                    console.ThreadSafeTCIAccessor.Invoke(new MethodInvoker(() =>
+                    {
+						if (console.ThreadSafeTCIAccessor.SetupForm.VAC2Enable != enable)
+						{
+							console.ThreadSafeTCIAccessor.SetupForm.VAC2Enable = enable;
+						}
+                    }));
                     break;
 				default:
 					break;
@@ -1888,6 +1908,20 @@ namespace Thetis
             {
 				//read
                 sendMONVolume(linearToDbVolume(console.ThreadSafeTCIAccessor.TXAF));
+            }
+        }
+        private void handleSpotSimulateClick(string[] args)
+        {
+			if (m_server == null) return;
+
+            if (args.Length == 2)
+            {
+				string callsign = args[0];
+                bool bOK = long.TryParse(args[1], out long freq);
+                if (bOK)
+				{
+					m_server.SendSpotSimulationClickToAll(callsign, freq);
+                }
             }
         }
         private void handleSpot(string[] args)
@@ -2098,7 +2132,10 @@ namespace Thetis
                         break;
                     case "line_out_stop":
                         handleLineOutStop(args);
-                        break;
+						break;
+					case "spot_simulate_click": // bespoke command to Thetis
+						handleSpotSimulateClick(args);
+						break;
                 }
             }
 			else if (parts.Length == 1)
@@ -2304,7 +2341,13 @@ namespace Thetis
 			get { return m_bCopyRX2VFObToVFOa; }
 			set { m_bCopyRX2VFObToVFOa = value;	}
         }
-		private bool m_bCWLUbecomesCW = false;
+        private bool _replace_if_copy_RX2VFObToVFOa = false;
+        public bool ReplaceRX2VFObToVFOa
+        {
+            get { return _replace_if_copy_RX2VFObToVFOa; }
+            set { _replace_if_copy_RX2VFObToVFOa = value; }
+        }
+        private bool m_bCWLUbecomesCW = false;
 		public bool CWLUbecomesCW
         {
 			get { return m_bCWLUbecomesCW; }
@@ -2338,13 +2381,14 @@ namespace Thetis
 			get { return m_bEmulateExpertSDR3Protocol; }
 			set { m_bEmulateExpertSDR3Protocol = value; }
 		}
-		public void StartServer(Console c, int rateLimit = 0, bool bCopyRX2VFObToVFOa = false, bool bTCIuseRX1vfoaForRX2vfoa = false, bool bSentInitialStateOnConnect = true, bool bCWLUbecomesCW = false, bool bEmulateSunSDR2Pro = false, bool bEmulateExpertSDR3Protocol = false)
+		public void StartServer(Console c, int rateLimit = 0, bool bCopyRX2VFObToVFOa = false, bool bTCIuseRX1vfoaForRX2vfoa = false, bool bSentInitialStateOnConnect = true, bool bCWLUbecomesCW = false, bool bEmulateSunSDR2Pro = false, bool bEmulateExpertSDR3Protocol = false, bool bReplaceRX2VFObToVFOa = false)
 		{
 			if (m_server != null)
 			{
 				m_nRateLimit = rateLimit;
 				m_bCopyRX2VFObToVFOa = bCopyRX2VFObToVFOa;
-				m_bUseRX1VFOaForRX2VFOa = bTCIuseRX1vfoaForRX2vfoa;
+				_replace_if_copy_RX2VFObToVFOa = bReplaceRX2VFObToVFOa;
+                m_bUseRX1VFOaForRX2VFOa = bTCIuseRX1vfoaForRX2vfoa;
 				m_bSendInitialStateOnConnect = bSentInitialStateOnConnect;
 				m_bCWLUbecomesCW = bCWLUbecomesCW;
 				m_bEmulateSunSDR2Pro = bEmulateSunSDR2Pro;
@@ -2663,7 +2707,8 @@ namespace Thetis
                 offsetHz = (int)-offset,
                 chan = 0,
                 duplicate_tochan = -1,
-				sendIF = true
+                replace_if_duplicated = false,
+                sendIF = true
             };
 
             lock (m_objLocker)
@@ -2685,7 +2730,8 @@ namespace Thetis
                 offsetHz = (int)-offset,
                 chan = 1,
                 duplicate_tochan = m_bCopyRX2VFObToVFOa && console.ThreadSafeTCIAccessor.RX2Enabled ? 0 : -1,
-				sendIF = true
+                replace_if_duplicated = m_bCopyRX2VFObToVFOa && _replace_if_copy_RX2VFObToVFOa && console.ThreadSafeTCIAccessor.RX2Enabled,
+                sendIF = true
             };
 
 			lock (m_objLocker)
@@ -2740,7 +2786,8 @@ namespace Thetis
                 cen = true,
                 rx = rx - 1,
                 duplicate_tochan = -1,
-				sendIF = bCTun
+                replace_if_duplicated = false,
+                sendIF = bCTun
             };
             lock (m_objLocker)
             {
@@ -2760,7 +2807,7 @@ namespace Thetis
 				}
 			}
 		}
-		public void OnFilterEdgesChanged(int rx, Filter filter, Band band, int low, int high, string sName)
+		public void OnFilterEdgesChanged(int rx, Filter filter, Band band, int low, int high, string sName, int max_width, int max_shift)
 		{
 			lock (m_objLocker)
 			{
@@ -2891,7 +2938,16 @@ namespace Thetis
         {
 			if (_log != null) _log.Hide();
 		}
-
+		public void SendSpotSimulationClickToAll(string callsign, long freq)
+		{
+			lock (m_objLocker)
+			{
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+					socketListener.ClickedOnSpot(callsign, freq);
+                }
+            }
+		}
         public async Task ConnectToServer(string serverAddress, int port, int timeoutMilliseconds)
         {
             using (TcpClient client = new TcpClient())
