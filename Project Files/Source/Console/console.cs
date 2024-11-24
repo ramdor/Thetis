@@ -10844,30 +10844,6 @@ namespace Thetis
 
         private int[] m_nTuneStepsByMode; //MW0LGE_21j
         
-        private bool rx1_auto_attenuator = false;       // MI0BOT: Controls the use of the auto attenuator in the HL2
-        public bool RX1AutoAtt
-        {
-            get { return rx1_auto_attenuator; }
-            set
-            {
-                rx1_auto_attenuator = value;
-
-                if (rx1_step_att_present)
-                {
-                    if (rx1_auto_attenuator)
-                    {
-                        udRX1StepAttData.Tag = 1;
-                        lblPreamp.Text = "A-ATT";
-                    }
-                    else
-                    {
-                        udRX1StepAttData.Tag = null;
-                        lblPreamp.Text = "S-ATT";
-                    }
-                }
-            }
-        }
-
         private List<TuneStep> tune_step_list;				// A list of available tuning steps
         public List<TuneStep> TuneStepList
         {
@@ -20781,10 +20757,30 @@ namespace Thetis
         private int _auto_att_hold_delay_rx2 = 5;
         private DateTime _auto_att_last_hold_time_rx1 = DateTime.Now;
         private DateTime _auto_att_last_hold_time_rx2 = DateTime.Now;
+        private bool _band_change = false;
         public bool AutoAttRX1
         {
-            get { return _auto_attTX_rx1; }
-            set { _auto_attTX_rx1 = value; }
+            get { 
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                    if (_auto_attTX_rx1)
+                        lblPreamp.Text = "A-ATT";
+                    else
+                        lblPreamp.Text = "S-ATT";
+            
+                return _auto_attTX_rx1; 
+            }
+            set
+            {
+                _auto_attTX_rx1 = value;
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                    if (_auto_attTX_rx1)
+                    {
+                        lblPreamp.Text = "A-ATT";
+                        _band_change = true;
+                    }
+                    else
+                        lblPreamp.Text = "S-ATT";
+            }
         }
         public bool AutoAttUndoRX1
         {
@@ -20925,7 +20921,10 @@ namespace Thetis
             if (!string.IsNullOrEmpty(sWarning))
             {
                 sWarning = sWarning.Trim();
-                infoBar.Warning(sWarning, red_warning, overload_only ? 1000 : 2000);
+
+                if (current_hpsdr_model != HPSDRModel.HERMESLITE ||
+                    AutoAttRX1 == false)
+                    infoBar.Warning(sWarning, red_warning, overload_only ? 1000 : 2000);
             }
 
             //adjust s-att offset
@@ -21008,16 +21007,28 @@ namespace Thetis
                         HistoricAttenuatorReading har = new HistoricAttenuatorReading();
                         if (RX1StepAttPresent)
                         {
-                            har.stepAttenuator = RX1AttenuatorData;
-
-                            int att = har.stepAttenuator + (_adc_overloaded[0] ? _adc_step_shift[0] : _adc_step_shift[1]);
-                            if (att > 31) att = 31;
-
-                            if (att != har.stepAttenuator)
+                            if (current_hpsdr_model == HPSDRModel.HERMESLITE)
                             {
-                                RX1AttenuatorData = att;
+                                _band_change = false;
+
+                                if (RX1AttenuatorData < (31 - 3))
+                                    RX1AttenuatorData += 3;
+                                    
                                 _auto_att_last_hold_time_rx1 = now;
-                                _historic_attenuator_readings_rx1.Push(har);
+                            }
+                            else
+                            {
+                                har.stepAttenuator = RX1AttenuatorData;
+
+                                int att = har.stepAttenuator + (_adc_overloaded[0] ? _adc_step_shift[0] : _adc_step_shift[1]);
+                                if (att > 31) att = 31;
+
+                                if (att != har.stepAttenuator)
+                                {
+                                    RX1AttenuatorData = att;
+                                    _auto_att_last_hold_time_rx1 = now;
+                                    _historic_attenuator_readings_rx1.Push(har);
+                                }
                             }
                         }
                         else
@@ -21046,6 +21057,17 @@ namespace Thetis
                             }
                         }
                     }
+                    else if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                    {
+                        if (_band_change ||
+                        (_auto_att_undo_rx1 && (((now - _auto_att_last_hold_time_rx1).TotalSeconds > _auto_att_hold_delay_rx1))))
+                        {
+                            if (RX1AttenuatorData > -28)
+                                RX1AttenuatorData--;
+
+                            _auto_att_last_hold_time_rx1 = now;
+                        }
+                    }
                     else if ((nRX1ADCinUse == 0 || nRX1ADCinUse == 1) && _historic_attenuator_readings_rx1.Any()) // no overload rx1
                     {
                         if (!_auto_att_undo_rx1 || (_auto_att_undo_rx1 && ((now - _auto_att_last_hold_time_rx1).TotalSeconds > _auto_att_hold_delay_rx1)))
@@ -21066,6 +21088,7 @@ namespace Thetis
                         }
                     }
                 }
+
                 bool radioHasRx2Att = current_hpsdr_model == HPSDRModel.ANAN100D || current_hpsdr_model == HPSDRModel.ANAN200D || 
                             current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
                             current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K;
@@ -29446,8 +29469,17 @@ namespace Thetis
                     //if txing on rx1 (split or non-split), then the att combo and nud will be disabled for rx1
                     comboPreamp.Enabled = false;
                     udRX1StepAttData.Enabled = false;
-                    comboRX2Preamp.Enabled = true;
-                    udRX2StepAttData.Enabled = true;
+
+                    if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                    {
+                        comboRX2Preamp.Enabled = false;
+                        udRX2StepAttData.Enabled = false;
+                    }
+                    else
+                    {
+                        comboRX2Preamp.Enabled = true;
+                        udRX2StepAttData.Enabled = true;
+                    }
 
                     //move it to rx1
                     udTXStepAttData.Location = udRX1StepAttData.Location;
@@ -29455,7 +29487,14 @@ namespace Thetis
                     udTXStepAttData.BringToFront();
                     udTXStepAttData.Visible = m_bAttontx;
 
-                    lblPreamp.Text = m_bAttontx ? "Tx-ATT" : (rx1_step_att_present ? "S-ATT" : "ATT");
+                    if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                    {
+                        lblPreamp.Text = m_bAttontx ? "Tx-ATT" : (AutoAttRX1 ? "A-ATT" : "S-ATT");
+                    }
+                    else
+                    {
+                        lblPreamp.Text = m_bAttontx ? "Tx-ATT" : (rx1_step_att_present ? "S-ATT" : "ATT");
+                    }
                 }
                 else if (VFOBTX && rx2_enabled)
                 {
@@ -29471,6 +29510,14 @@ namespace Thetis
                     udTXStepAttData.BringToFront();
                     udTXStepAttData.Visible = m_bAttontx;
 
+                    if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                    {
+                        if (m_bAttontx)
+                            lblRX2Preamp.Enabled = true;
+                        else
+                            lblRX2Preamp.Enabled = false;
+                    }
+                    
                     lblRX2Preamp.Text = m_bAttontx ? "Tx-ATT" : (rx2_step_att_present ? "S-ATT" : "ATT");
                 }
                 else
@@ -29486,7 +29533,22 @@ namespace Thetis
                 udRX2StepAttData.Enabled = rx2_preamp_present;
                 udTXStepAttData.Visible = false;
 
-                lblPreamp.Text = rx1_step_att_present ? "S-ATT" : "ATT";
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                {
+                    lblPreamp.Text = AutoAttRX1 ? "A-ATT" : "S-ATT";
+                }
+                else
+                {
+                    lblPreamp.Text = rx1_step_att_present ? "S-ATT" : "ATT";
+                }
+
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                {
+                    if (m_bAttontx)
+                        lblRX2Preamp.Enabled = true;
+                    else
+                        lblRX2Preamp.Enabled = false;
+                }
 
                 lblRX2Preamp.Text = rx2_step_att_present ? "S-ATT" : (rx2_preamp_present ? "ATT" : "");
             }
@@ -45050,6 +45112,8 @@ namespace Thetis
             bandtoolStripMenuItem13.Checked = radBandGEN.Checked;
 
             repopulateForms();
+
+            _band_change = true;
         }
 
         private void eSCToolStripMenuItem_Click(object sender, EventArgs e)
@@ -45189,8 +45253,22 @@ namespace Thetis
         {
             if (current_hpsdr_model != HPSDRModel.HPSDR)
             {
-                SetupForm.RX1EnableAtt = !SetupForm.RX1EnableAtt;
-                if (RX1RX2usingSameADC) SetupForm.RX2EnableAtt = SetupForm.RX1EnableAtt; //MW0LGE_22b
+                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
+                {
+                    if (AutoAttRX1)
+                    {
+                        AutoAttRX1 = false;
+                    }
+                    else
+                    {
+                        AutoAttRX1 = true;
+                    }
+                }
+                else
+                {
+                    SetupForm.RX1EnableAtt = !SetupForm.RX1EnableAtt;
+                    if (RX1RX2usingSameADC) SetupForm.RX2EnableAtt = SetupForm.RX1EnableAtt; //MW0LGE_22b
+                }
             }
         }
 

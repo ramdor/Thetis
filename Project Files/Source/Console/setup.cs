@@ -19900,6 +19900,10 @@ namespace Thetis
                     toolTip1.SetToolTip(chkHERCULES, "Preset pins for for N2ADR filter board");
                     toolTip1.SetToolTip(chkApolloFilter, "Enables the full duplex on the HL2");
                     toolTip1.SetToolTip(chkApolloTuner, "Enables HL2 power amplifier");
+                    chkAutoATTRx1.Enabled = true;
+                    chkAutoATTRx2.Enabled = false;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
 
                     radDDC0ADC0.Checked = true;
                     radDDC1ADC0.Checked = true;
