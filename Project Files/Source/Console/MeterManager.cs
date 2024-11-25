@@ -376,9 +376,9 @@ namespace Thetis
 
             List<float> values = new List<float>();
 
-            foreach(string v in split)
+            foreach (string v in split)
             {
-                if(!string.IsNullOrEmpty(v) && float.TryParse(v, out float value))
+                if (!string.IsNullOrEmpty(v) && float.TryParse(v, out float value))
                 {
                     value = Math.Abs(value);
                     switch (setting_group)
@@ -386,7 +386,7 @@ namespace Thetis
                         case FilterItemSnapFrequencies.OTHER:
                             {
                                 if (!values.Contains(-value)) values.Add(-value);
-                                if (!values.Contains(value)) values.Add(value);                                
+                                if (!values.Contains(value)) values.Add(value);
                             }
                             break;
                         case FilterItemSnapFrequencies.SIDEBANDS:
@@ -397,7 +397,7 @@ namespace Thetis
                                 if (!values.Contains(value)) values.Add(value);
                             }
                             break;
-                    }                    
+                    }
                 }
             }
 
@@ -767,7 +767,7 @@ namespace Thetis
                         _readings_text_objects[key] = owningMeter.VFOBBandText;
                         break;
                     case "nf":
-                        if(_rx == 1)
+                        if (_rx == 1)
                             _readings_text_objects[key] = _console.LastNFRX1;
                         else
                             _readings_text_objects[key] = _console.LastNFRX2;
@@ -1299,7 +1299,7 @@ namespace Thetis
                 {
                     if (bOk) tmpColour = Common.ColourFromString(tmp[33]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _powerScaleColour = tmpColour; }
                 }
-                if(bOk && tmp.Length >= 35)
+                if (bOk && tmp.Length >= 35)
                 {
                     if (bOk) bOk = int.TryParse(tmp[34], out tmpInt); if (bOk) { _ignoreHistoryDuration = tmpInt; }
                 }
@@ -1319,8 +1319,8 @@ namespace Thetis
                 {
                     for (int i = 0; i < _mmio_guid.Length; i++) //44,45, 46,47, 48,49, 50,51, 52,53, 54,55, 56,57, 58,59, 60,61, 62,63
                     {
-                        if (bOk) bOk = Guid.TryParse(tmp[44 + (i*2)], out tmpGuid); if (bOk) { _mmio_guid[i] = tmpGuid; }
-                        if (bOk) _mmio_variable[i] = tmp[45 + (i*2)];
+                        if (bOk) bOk = Guid.TryParse(tmp[44 + (i * 2)], out tmpGuid); if (bOk) { _mmio_guid[i] = tmpGuid; }
+                        if (bOk) _mmio_variable[i] = tmp[45 + (i * 2)];
                     }
                 }
 
@@ -1506,7 +1506,7 @@ namespace Thetis
             //    _mmio_variable[index] = variable;
             //}
         }
-        
+
         public static ImageFetcher ImgFetch
         {
             get { return _image_fetcher; }
@@ -1607,8 +1607,8 @@ namespace Thetis
                     break;
                 //case Reading.CPDR: //CPDR is the same as comp
                 //case Reading.CPDR_PK:
-                    //value = -30.0f;
-                    //break;
+                //value = -30.0f;
+                //break;
                 case Reading.PWR:
                 case Reading.REVERSE_PWR:
                     {
@@ -1830,7 +1830,7 @@ namespace Thetis
                 case Reading.ELE: return "Elevation";
 
                 // not used
-                case (Reading)(int)22:return "";
+                case (Reading)(int)22: return "";
                 case (Reading)(int)23: return "";
             }
 
@@ -2042,7 +2042,7 @@ namespace Thetis
             {
                 List<string> keys = _image_cache.Keys.ToList();
 
-                foreach(string sKey in keys)
+                foreach (string sKey in keys)
                 {
                     removeImageCacheData(sKey, bOnlySkins);
                 }
@@ -2069,7 +2069,7 @@ namespace Thetis
 
                 if (_image_streamdata_cache != null)
                 {
-                    if(_image_streamdata_cache.ContainsKey(sKey))
+                    if (_image_streamdata_cache.ContainsKey(sKey))
                     {
                         // remove the stream related to the bitmap
                         _image_streamdata_cache[sKey].Dispose();
@@ -2145,7 +2145,7 @@ namespace Thetis
                 if (_image_streamdata_cache.ContainsKey(sKey))
                 {
                     MemoryStream ms = _image_streamdata_cache[sKey];
-                    
+
                     Utilities.Dispose(ref ms);
                     ms = null;
 
@@ -2218,7 +2218,7 @@ namespace Thetis
                 {
                     frmMeterDisplay f = _lstMeterDisplayForms[uc.ID];
 
-                    if(minimises != uc.ContainerMinimises)
+                    if (minimises != uc.ContainerMinimises)
                     {
                         uc.ContainerMinimises = minimises;
                         f.ContainerMinimises = minimises;
@@ -2280,7 +2280,7 @@ namespace Thetis
             {
                 if (_lstUCMeters == null) return;
                 if (!_lstUCMeters.ContainsKey(sId)) return;
-                
+
                 ucMeter uc = _lstUCMeters[sId];
                 bool bOldState = uc.MeterEnabled;
                 uc.MeterEnabled = enabled;
@@ -2309,7 +2309,7 @@ namespace Thetis
                     }
 
                     // meter
-                    if(_meters != null && _meters.ContainsKey(sId))
+                    if (_meters != null && _meters.ContainsKey(sId))
                         _meters[sId].Enabled = enabled;
 
                     // DXrenderer
@@ -2599,7 +2599,7 @@ namespace Thetis
             foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
             {
                 DXRenderer r = kvp.Value;
-                r.RemoveAnySkinImages();              
+                r.RemoveAnySkinImages();
             }
 
             loadImages();
@@ -2619,7 +2619,7 @@ namespace Thetis
         {
             if (_DXrenderers.Count < 1) return;
 
-            foreach(KeyValuePair <string, DXRenderer> kvp in _DXrenderers)
+            foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
             {
                 RunRendererDisplay(kvp.Key);
             }
@@ -2691,7 +2691,7 @@ namespace Thetis
                     // find container that has this ig setting, it will be any container that has item group with this id
                     string[] split = key.Split('_');
                     string guid;
-                    if(split.Length == 3) // for _2_
+                    if (split.Length == 3) // for _2_
                     {
                         guid = key.Split('_')[2];
                     }
@@ -2707,7 +2707,7 @@ namespace Thetis
                         {
                             clsMeter m = ms.Value;
                             Dictionary<string, clsItemGroup> igs = m.getMeterGroups();
-                            foreach(KeyValuePair<string, clsItemGroup> kvpig in igs)
+                            foreach (KeyValuePair<string, clsItemGroup> kvpig in igs)
                             {
                                 if (guid == kvpig.Key)
                                 {
@@ -2719,12 +2719,12 @@ namespace Thetis
                 }
             }
             return ids;
-        }       
+        }
         public static void Shutdown()
         {
             if (_image_fetcher != null)
                 _image_fetcher.Shutdown();
-                
+
             MultiMeterIO.StopConnections();
 
             removeDelegates();
@@ -3201,7 +3201,7 @@ namespace Thetis
             if ((int)b < (int)Band.B160M || (int)b > (int)Band.B6M) return false;
             if (antenna < 0 || antenna > 2) return false;
             lock (_antenna_lock)
-            {                
+            {
                 return _rx_ant[(int)b - (int)Band.B160M][antenna];
             }
         }
@@ -3426,7 +3426,7 @@ namespace Thetis
                     clsMeter m = ms.Value;
                     m.TXVFOb = vfoB && newState;
 
-                    if(oldState != newState)
+                    if (oldState != newState)
                         m.AntennasChanged(Band.FIRST, Band.FIRST, -1, -1);
                 }
             }
@@ -3455,7 +3455,7 @@ namespace Thetis
                     }
                 }
             }
-        }       
+        }
         private static void OnVHFDetailsChanged(int idx, bool old_state, bool new_state, string old_text, string new_text)
         {
             lock (_metersLock)
@@ -3510,7 +3510,7 @@ namespace Thetis
                 {
                     foreach (KeyValuePair<string, clsMeter> ms in _meters)
                     {
-                        clsMeter m = ms.Value;                        
+                        clsMeter m = ms.Value;
                         m.AntennasChanged(new_band, Band.FIRST, -1, -1);
                     }
                 }
@@ -3833,7 +3833,7 @@ namespace Thetis
         {
             _power = newPower;
 
-            if(oldPower != newPower)
+            if (oldPower != newPower)
             {
                 lock (_metersLock)
                 {
@@ -3898,7 +3898,7 @@ namespace Thetis
                 }
 
                 //show first, then hide, so we dont get a flicker, where container vanishes then shows sometime after
-                foreach(string id in to_show)
+                foreach (string id in to_show)
                 {
                     enableContainer(id, true);
                 }
@@ -3986,8 +3986,8 @@ namespace Thetis
 
                 int nWatts = 500;
 
-                if (_alexPresent && 
-                    ((_currentHPSDRmodel == HPSDRModel.ORIONMKII || _currentHPSDRmodel == HPSDRModel.ANAN8000D || _currentHPSDRmodel == HPSDRModel.ANAN_G2) 
+                if (_alexPresent &&
+                    ((_currentHPSDRmodel == HPSDRModel.ORIONMKII || _currentHPSDRmodel == HPSDRModel.ANAN8000D || _currentHPSDRmodel == HPSDRModel.ANAN_G2)
                     && _transverterIndex < 0))
                 {
                     nWatts = 200;
@@ -4012,7 +4012,7 @@ namespace Thetis
                 {
                     nWatts = 1;
                 }
-                
+
                 return nWatts;
             }
         }
@@ -4125,7 +4125,7 @@ namespace Thetis
                     }
                 }
                 setReading(rx, Reading.VOLTS, ref readings);
-                setReading(rx, Reading.AMPS, ref readings);    
+                setReading(rx, Reading.AMPS, ref readings);
             }
         }
         public static bool RequiresUpdate(int rx, Reading rt)
@@ -4217,13 +4217,13 @@ namespace Thetis
                 // If we don't do this there will be a few frames where the target size is incorrect and the height calculated
                 // will be from the default container size of 400x200.
                 // Note: f.ID above causes the form sizes to be reloaded from the db
-                if(ucM.Floating && bFromRestore)
+                if (ucM.Floating && bFromRestore)
                     ucM.Size = new Size(f.Size.Width, f.Size.Height);
 
                 // meter items
                 clsMeter meter = new clsMeter(ucM.RX, ucM.Name, 1f, 1f);
                 meter.ID = ucM.ID;
-                meter.Enabled = bEnabled;                
+                meter.Enabled = bEnabled;
 
                 // a renderer
                 addRenderer(ucM.ID, ucM.RX, ucM.DisplayContainer, meter, ucM.BackColor);
@@ -4349,7 +4349,7 @@ namespace Thetis
         }
         public static int TotalMeterContainers
         {
-            get 
+            get
             {
                 lock (_metersLock)
                 {
@@ -4433,8 +4433,8 @@ namespace Thetis
                 if (newLocation.Y + m.Height > _console.Height) newLocation.Y = _console.Height - m.Height;
                 if (newLocation.X < 0) newLocation.X = 0;
                 if (newLocation.Y < 0) newLocation.Y = 0;
-                
-                if(newLocation != m.Location) m.Location = newLocation;
+
+                if (newLocation != m.Location) m.Location = newLocation;
             }
         }
         private static void returnMeterFromFloating(ucMeter m, frmMeterDisplay frm)
@@ -4524,9 +4524,9 @@ namespace Thetis
         }
         private static void zeroAllMeters()
         {
-            lock(_metersLock)
+            lock (_metersLock)
             {
-                foreach(KeyValuePair<string, clsMeter> kvp in _meters)
+                foreach (KeyValuePair<string, clsMeter> kvp in _meters)
                 {
                     clsMeter m = kvp.Value;
                     m.ZeroOut(true, true);
@@ -4620,14 +4620,14 @@ namespace Thetis
                 bRestoreOk = false;
             }
             return bRestoreOk;
-        }        
+        }
         public static List<string> GetFormGuidList()
         {
             List<string> sGuidList = new List<string>();
 
             lock (_metersLock)
             {
-                foreach(KeyValuePair<string, frmMeterDisplay> kvp in _lstMeterDisplayForms)
+                foreach (KeyValuePair<string, frmMeterDisplay> kvp in _lstMeterDisplayForms)
                 {
                     frmMeterDisplay fmd = kvp.Value;
 
@@ -4752,7 +4752,7 @@ namespace Thetis
         //}
         public static Dictionary<string, ucMeter> MeterContainers
         {
-            get 
+            get
             {
                 lock (_metersLock)
                 {
@@ -4776,7 +4776,7 @@ namespace Thetis
                 // unreg delegates
                 uc.FloatingDockedClicked -= ucMeter_FloatingDockedClicked;
                 uc.DockedMoved -= ucMeter_FloatingDockedMoved;
-                uc.SettingsClicked -= ucMeter_SettingsClicked;                
+                uc.SettingsClicked -= ucMeter_SettingsClicked;
 
                 removeRenderer(sId);
 
@@ -5028,8 +5028,8 @@ namespace Thetis
             {
                 return _percCache.ContainsKey(value);
             }
-            public string ID { 
-                get { return _sId; } 
+            public string ID {
+                get { return _sId; }
                 set { _sId = value; }
             }
             public string ParentID
@@ -5059,7 +5059,7 @@ namespace Thetis
             }
             public PointF TopLeft {
                 get { return _topLeft; }
-                set { 
+                set {
                     _topLeft = value;
                     _displayTopLeft = new PointF(_topLeft.X, _topLeft.Y);
                 }
@@ -5072,7 +5072,7 @@ namespace Thetis
             public SizeF Size
             {
                 get { return _size; }
-                set 
+                set
                 { _size = value; }
             }
             public int DisplayGroup
@@ -5121,8 +5121,8 @@ namespace Thetis
             public Reading ReadingSource
             {
                 get { return _readingType; }
-                set 
-                { 
+                set
+                {
                     _readingType = value;
                     _readingName = MeterManager.ReadingName(_readingType);
                 }
@@ -5224,7 +5224,7 @@ namespace Thetis
             {
                 get { return _scaleCalibration; }
                 set { }
-            }            
+            }
             public bool OnlyWhenTX
             {
                 get { return _bOnlyWhenTx; }
@@ -5242,11 +5242,11 @@ namespace Thetis
             public virtual bool TryParse(string val)
             {
                 return false;
-            }            
+            }
             public float MaxPower
             {
                 get { return _maxPower; }
-                set {                    
+                set {
                     _maxPower = value;
                     if (_maxPower < 0.1f) _maxPower = CurrentPowerRating; // incase of 0 recovery from db
                 }
@@ -5269,7 +5269,7 @@ namespace Thetis
             }
             public virtual void MouseDown(MouseEventArgs e)
             {
-                
+
             }
             public virtual void MouseUp(MouseEventArgs e)
             {
@@ -5451,12 +5451,12 @@ namespace Thetis
                     Size.Height.ToString("f4") + "|" +
                     MeterType.ToString() + "|" +
                     Order.ToString();
-                    //ZOrder.ToString() + "|" +
-                    //UpdateInterval.ToString() + "|" +
-                    //AttackRatio.ToString("f4") + "|" +
-                    //DecayRatio.ToString("f4") + "|" +
-                    //HistoryColour.ToString() + "|" +
-                    //ReadingSource.ToString();
+                //ZOrder.ToString() + "|" +
+                //UpdateInterval.ToString() + "|" +
+                //AttackRatio.ToString("f4") + "|" +
+                //DecayRatio.ToString("f4") + "|" +
+                //HistoryColour.ToString() + "|" +
+                //ReadingSource.ToString();
 
                 return sRet;
             }
@@ -5515,7 +5515,7 @@ namespace Thetis
                 get { return _button; }
                 set { _button = value; }
             }
-            public int GotoGroup 
+            public int GotoGroup
             {
                 get { return _gotoGroup; }
                 set { _gotoGroup = value; }
@@ -5565,7 +5565,7 @@ namespace Thetis
             {
                 get { return _colour; }
                 set
-                { 
+                {
                     _colour = value;
                 }
             }
@@ -5617,7 +5617,7 @@ namespace Thetis
                     Buttons = 9;
                 }
 
-                ItemType = MeterItemType.FILTER_BUTTONS;                
+                ItemType = MeterItemType.FILTER_BUTTONS;
 
                 setupButtons();
             }
@@ -5630,7 +5630,7 @@ namespace Thetis
                 int index = (int)_filter - (int)Filter.F1;
                 int old_index = (int)old - (int)Filter.F1;
 
-                if(_owningmeter.RX == 2)
+                if (_owningmeter.RX == 2)
                 {
                     // only 9 filters, so adjust indexes
                     index -= index > (int)Filter.F7 ? (int)Filter.VAR1 - (int)Filter.F7 - 1 : 0;
@@ -5691,13 +5691,13 @@ namespace Thetis
                 //
 
                 bool update = true;
-                if(_console != null)
+                if (_console != null)
                 {
-                    if(_owningmeter.RX == 1)
+                    if (_owningmeter.RX == 1)
                     {
                         if (_console.RX1DSPMode == DSPMode.FM || _console.RX1DSPMode == DSPMode.DRM || _console.RX1DSPMode == DSPMode.SPEC) update = false;
                     }
-                    else if(_owningmeter.RX == 2)
+                    else if (_owningmeter.RX == 2)
                     {
                         if (_console.RX2DSPMode == DSPMode.FM || _console.RX2DSPMode == DSPMode.DRM || _console.RX2DSPMode == DSPMode.SPEC) update = false;
                     }
@@ -5829,9 +5829,9 @@ namespace Thetis
                     {
                         _console.BeginInvoke(new MethodInvoker(() =>
                         {
-                            _console.PopupFilterContextMenu(_owningmeter.RX ,e);
+                            _console.PopupFilterContextMenu(_owningmeter.RX, e);
                         }));
-                    }                        
+                    }
                     return;
                 }
 
@@ -6216,7 +6216,7 @@ namespace Thetis
 
                 rx_band = _rx1_band;
                 tx_band = _tx_band;
-                
+
                 bool using_xvtr = ((int)rx_band >= (int)Band.VHF0 && (int)rx_band <= (int)Band.VHF13);
                 bool is_xvtr_rx = false;
                 if (using_xvtr)
@@ -6251,7 +6251,7 @@ namespace Thetis
 
                 SetText(1, 5, formatAux(MeterManager.GetRXAuxName(2)));
                 SetFontColour(1, 5, System.Drawing.Color.Orange);
-                if(!using_byp_ext1 && using_xvtr) SetOn(1, 5, MeterManager.GetRXAuxState(rx_band, 2));
+                if (!using_byp_ext1 && using_xvtr) SetOn(1, 5, MeterManager.GetRXAuxState(rx_band, 2));
 
                 int rx_ant = MeterManager.GetRXAnt(rx_band, using_xvtr);
                 int tx_ant = MeterManager.GetTXAnt(tx_band);
@@ -6266,7 +6266,7 @@ namespace Thetis
                 {
                     SetFontColour(1, 6, System.Drawing.Color.Red);
                     SetOn(1, 6, MeterManager.GetTXAntState(tx_band, 0));
-                }                
+                }
 
                 SetText(1, 7, "Tx Ant 2");
                 if (rx_ant_on_tx_band == 1 && GetNoTX(1))
@@ -6277,7 +6277,7 @@ namespace Thetis
                 {
                     SetFontColour(1, 7, System.Drawing.Color.Red);
                     SetOn(1, 7, MeterManager.GetTXAntState(tx_band, 1));
-                }                
+                }
 
                 SetText(1, 8, "Tx Ant 3");
                 if (rx_ant_on_tx_band == 2 && GetNoTX(2))
@@ -6288,9 +6288,9 @@ namespace Thetis
                 {
                     SetFontColour(1, 8, System.Drawing.Color.Red);
                     SetOn(1, 8, MeterManager.GetTXAntState(tx_band, 2));
-                }               
-                               
-                if(rx_ant == tx_ant || using_xvtr || GetNoTX(tx_ant) || (rx_ant > 4))
+                }
+
+                if (rx_ant == tx_ant || using_xvtr || GetNoTX(tx_ant) || (rx_ant > 4))
                 {
                     SetText(1, 9, "Rx Ant");
                     SetFontColour(1, 9, System.Drawing.Color.Gray);
@@ -6752,7 +6752,7 @@ namespace Thetis
 
                 setupClick(true);
 
-                DSPMode m = (DSPMode)((int)DSPMode.LSB + index);                
+                DSPMode m = (DSPMode)((int)DSPMode.LSB + index);
 
                 setMode(m);
             }
@@ -6853,7 +6853,7 @@ namespace Thetis
                 {
                     _band = _owningmeter.BandVfoA;
                     //use panels
-                    if(_console != null)
+                    if (_console != null)
                     {
                         if (_console.BandGENSelected)
                             _button_bands = BandGroups.GEN;
@@ -6868,7 +6868,7 @@ namespace Thetis
                     {
                         _button_bands = _owningmeter.GetBandGroupFromBand(_band);
                     }
-                } 
+                }
                 else if (_owningmeter.RX == 2)
                 {
                     _band = _owningmeter.BandVfoB;
@@ -6942,7 +6942,7 @@ namespace Thetis
                             old_index = (int)old - (int)Band.VHF0;
                             break;
                     }
-                    if(index != -1 && old_index != -1)
+                    if (index != -1 && old_index != -1)
                     {
                         SetOn(1, old_index, false);
                         if (newBand != Band.WWV)
@@ -6953,12 +6953,12 @@ namespace Thetis
             public BandGroups ButtonBands
             {
                 get { return _button_bands; }
-                set 
+                set
                 {
                     BandGroups old = _button_bands;
                     _button_bands = value;
 
-                    if(old != _button_bands || _force_update)
+                    if (old != _button_bands || _force_update)
                         setupButtons();
                 }
             }
@@ -6973,7 +6973,7 @@ namespace Thetis
                     SetFontColour(1, i, GetFontColour(0, i));
                     SetFontFamily(1, i, GetFontFamily(0, i));
                     SetFontSize(1, i, GetFontSize(0, i));
-                    SetFontStyle(1, i, GetFontStyle(0, i));                    
+                    SetFontStyle(1, i, GetFontStyle(0, i));
                     SetUseIndicator(1, i, GetUseIndicator(0, i));
                     SetOnColour(1, i, GetOnColour(0, i));
                     SetOffColour(1, i, GetOffColour(0, i));
@@ -7017,7 +7017,7 @@ namespace Thetis
 
                         SetText(1, 11, "");
                         SetHoverColour(1, 11, System.Drawing.Color.Transparent);
-                        SetUseIndicator(1, 12, false);                        
+                        SetUseIndicator(1, 12, false);
                         SetOn(1, 11, false);
                         SetUseOffColour(1, 11, false);
                         //SetBorderColour(1, 11, System.Drawing.Color.Transparent);
@@ -7055,10 +7055,10 @@ namespace Thetis
                 }
 
                 int bands = end_band - start_band + 1;
-                
+
                 for (int i = 0; i < Buttons; i++)
                 {
-                    if(i < bands)
+                    if (i < bands)
                     {
                         string band_text = "";
                         Band b = (Band)(start_band + i);
@@ -7254,7 +7254,7 @@ namespace Thetis
             }
             private void setBand(Band b)
             {
-                if(abortForLockedVFO()) return;
+                if (abortForLockedVFO()) return;
                 if (b == Band.FIRST) return;
 
                 if (_owningmeter.RX == 1)
@@ -7264,7 +7264,7 @@ namespace Thetis
                         _console.BandPreChangeHandlers?.Invoke(1, b);
                     }));
                 }
-                else if(_owningmeter.RX == 2)
+                else if (_owningmeter.RX == 2)
                 {
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
@@ -7368,7 +7368,7 @@ namespace Thetis
             }
             private void OnDisconnected()
             {
-                
+
                 for (int i = 0; i < Buttons; i++)
                 {
                     System.Drawing.Color text_color = GetFontColour(0, i);
@@ -7517,7 +7517,7 @@ namespace Thetis
 
                 if (!GetEnabled(1, index)) return;
 
-                setupClick(false);               
+                setupClick(false);
             }
             public override void MouseUp(MouseEventArgs e)
             {
@@ -7531,7 +7531,7 @@ namespace Thetis
                 int index = base.ButtonIndex;
                 if (index == -1) return;
 
-                if (!GetEnabled(1, index)) return;                
+                if (!GetEnabled(1, index)) return;
 
                 double tx_freq;
                 double rx_freq = _owningmeter.RX == 2 && _owningmeter.RX2Enabled ? _owningmeter.VfoB : _owningmeter.VfoA;
@@ -7852,8 +7852,8 @@ namespace Thetis
             public int Buttons
             {
                 get { return _number_of_buttons; }
-                set 
-                { 
+                set
+                {
                     _number_of_buttons = value;
                     setupArrays();
                 }
@@ -8081,7 +8081,7 @@ namespace Thetis
                 TUNE_STEP
             }
             public enum buttonState
-            {   
+            {
                 NONE = 0,
                 VFO_SCREEN,
                 BAND_SCREEN,
@@ -8171,7 +8171,7 @@ namespace Thetis
             {
                 _tune_steps = new List<TuneStep>();
                 //copy data from console to own local
-                foreach(TuneStep ts in _console.TuneStepList)
+                foreach (TuneStep ts in _console.TuneStepList)
                 {
                     TuneStep nts = new TuneStep(ts.StepHz, ts.Name);
                     _tune_steps.Add(nts);
@@ -8248,8 +8248,8 @@ namespace Thetis
             public VFODisplayMode VFODispMode
             {
                 get { return _vfo_display_mode; }
-                set 
-                { 
+                set
+                {
                     _vfo_display_mode = value;
                     switch (_vfo_display_mode)
                     {
@@ -8411,7 +8411,7 @@ namespace Thetis
                         digit = keycode - Keys.NumPad0;
 
                     double freq = getVfo();
-                    if(freq >= 0)
+                    if (freq >= 0)
                     {
                         string freqs = freq.ToString("F6", CultureInfo.InvariantCulture);
                         int pos = freqs.Length - findOnePosition(_adjust_step * 1e-6) - 1;
@@ -8451,7 +8451,7 @@ namespace Thetis
                 _console.BeginInvoke(new MethodInvoker(() =>
                 {
                     adjustVfo(sign * _adjust_step * 1e-6);
-                }));                
+                }));
             }
             public void PopBandStack()
             {
@@ -8461,7 +8461,7 @@ namespace Thetis
                 if (_console != null)
                 {
                     _console.BeginInvoke(new MethodInvoker(() =>
-                    {                        
+                    {
                         _console.PopupBandstack(_owningmeter.RX, _owningmeter.BandVfoA, MeterManager.IsOnTop(_owningmeter.ID));
                     }));
                 }
@@ -8819,7 +8819,7 @@ namespace Thetis
                     {
                         // special for rx2 as only F1-F7 + VAR1 + VAR2, so, 0,1,2,3,4,5,6,7,8
                         if (f > 8) return true;
-                        if(f > 6)
+                        if (f > 6)
                         {
                             f += 3;
                             fltr = (Filter)((int)Filter.F1 + f);
@@ -8922,11 +8922,11 @@ namespace Thetis
                 {
                     int b = _button_grid_index_vfoB;
                     if (b < 0) return true;
-                    Band band;                    
+                    Band band;
 
                     if (bg == BandGroups.GEN)
                     {
-                        if(b > (int)Band.B11M - (int)Band.B120M)
+                        if (b > (int)Band.B11M - (int)Band.B120M)
                         {
                             if (b == 13)
                             {
@@ -8963,7 +8963,7 @@ namespace Thetis
                                     // need to move to some vhf band
                                     _console.BeginInvoke(new MethodInvoker(() =>
                                     {
-                                        for(Band bb = Band.VHF0; bb <= Band.VHF13; bb++)
+                                        for (Band bb = Band.VHF0; bb <= Band.VHF13; bb++)
                                         {
                                             if (_console.XVTRForm.GetEnabled((int)bb - (int)Band.VHF0))
                                             {
@@ -9128,15 +9128,15 @@ namespace Thetis
             }
             public renderState VFOARenderState
             {
-                get 
+                get
                 {
                     if (_render_state_vfoA != renderState.VFO && (DateTime.Now - _render_state_vfoA_change_time).Seconds > 5) VFOARenderState = renderState.VFO;
-                    return _render_state_vfoA; 
+                    return _render_state_vfoA;
                 }
-                set 
+                set
                 {
                     if (_render_state_vfoA != value) _render_state_vfoA_change_time = DateTime.Now;
-                    _render_state_vfoA = value; 
+                    _render_state_vfoA = value;
                 }
             }
             public renderState VFOBRenderState
@@ -9144,12 +9144,12 @@ namespace Thetis
                 get
                 {
                     if (_render_state_vfoB != renderState.VFO && (DateTime.Now - _render_state_vfoB_change_time).Seconds > 5) VFOBRenderState = renderState.VFO;
-                    return _render_state_vfoB; 
+                    return _render_state_vfoB;
                 }
-                set 
+                set
                 {
                     if (_render_state_vfoB != value) _render_state_vfoB_change_time = DateTime.Now;
-                    _render_state_vfoB = value; 
+                    _render_state_vfoB = value;
                 }
             }
             public buttonState VFOAButtonState
@@ -9429,7 +9429,7 @@ namespace Thetis
 
                 UpdateInterval = 100;
             }
-            public override bool UpdateAlways 
+            public override bool UpdateAlways
             {
                 get
                 {
@@ -9445,7 +9445,7 @@ namespace Thetis
             }
             private void OnShowWebImageBackground(object sender, string fourchar)
             {
-                if(_four_char == fourchar)
+                if (_four_char == fourchar)
                 {
                     lock (_background_start_time_lock)
                     {
@@ -9465,11 +9465,11 @@ namespace Thetis
             }
             public bool ShowBackground
             {
-                get 
+                get
                 {
                     return _show_background;
                 }
-                set 
+                set
                 {
                     if (!_background) return;
                     if (_show_background == value) return;
@@ -9516,7 +9516,7 @@ namespace Thetis
             }
             private void timerCallback(object state)
             {
-                if (!_process_timer) return;                
+                if (!_process_timer) return;
 
                 DateTime start_time;
                 lock (_background_start_time_lock)
@@ -9581,7 +9581,7 @@ namespace Thetis
             public bool Background
             {
                 get { return _background; }
-                set 
+                set
                 {
                     if (_background == value) return;
                     _background = value;
@@ -9591,7 +9591,7 @@ namespace Thetis
             public int BackgroundInterval
             {
                 get { return _background_interval; }
-                set 
+                set
                 {
                     int interval;
                     lock (_background_interval_lock)
@@ -9616,14 +9616,14 @@ namespace Thetis
             }
             public string BackgroundFourChar
             {
-                get 
+                get
                 {
                     lock (_background_4char_lock)
                     {
                         return _background_4char;
                     }
                 }
-                set 
+                set
                 {
                     lock (_background_4char_lock)
                     {
@@ -9672,12 +9672,12 @@ namespace Thetis
                 lock (_bitmap_lock)
                 {
                     if (_bitmap != null)
-                    {                        
+                    {
                         _bitmap.Dispose();
                         key = "webimg_" + _image_fetcher_guid.ToString();
                     }
 
-                    if(!string.IsNullOrEmpty(key)) MeterManager.RemoveStreamData(key);
+                    if (!string.IsNullOrEmpty(key)) MeterManager.RemoveStreamData(key);
                 }
 
                 MeterManager.WebImageRemoved?.Invoke(this, _four_char);
@@ -9685,7 +9685,7 @@ namespace Thetis
 
             public System.Drawing.Bitmap Bitmap
             {
-                get 
+                get
                 {
                     lock (_bitmap_lock)
                     {
@@ -9696,17 +9696,17 @@ namespace Thetis
             public int SecondsInterval
             {
                 get { return _secs_interval; }
-                set 
-                { 
-                    _secs_interval = value; 
+                set
+                {
+                    _secs_interval = value;
 
                     // change the related image fetcher if one exists
-                    if(_image_fetcher_guid != Guid.Empty)
+                    if (_image_fetcher_guid != Guid.Empty)
                     {
                         MeterManager.ImgFetch.UpdateInterval(_image_fetcher_guid, _secs_interval);
                     }
                 }
-            }public bool BypassCache
+            } public bool BypassCache
             {
                 get { return _bypass_cache; }
                 set
@@ -9721,7 +9721,7 @@ namespace Thetis
             }
             public Guid BitmapGuid
             {
-                get                 
+                get
                 {
                     lock (_bitmap_lock)
                     {
@@ -9745,7 +9745,7 @@ namespace Thetis
                 set
                 {
                     if (value == _url) return;
-                    if(value != _url && _image_fetcher_guid != Guid.Empty)
+                    if (value != _url && _image_fetcher_guid != Guid.Empty)
                     {
                         MeterManager.ImgFetch.ImagesObtained -= OnImage;
                         MeterManager.ImgFetch.StateChanged -= OnState;
@@ -9758,7 +9758,7 @@ namespace Thetis
                     if (!Common.IsValidUri(value))
                     {
                         // check if it is a file
-                        if(value.ToLower().IndexOf("file://") >= 0)
+                        if (value.ToLower().IndexOf("file://") >= 0)
                         {
                             try
                             {
@@ -9768,7 +9768,7 @@ namespace Thetis
                                 isFile = true;
                                 sPath = file.LocalPath;
                             }
-                            catch 
+                            catch
                             {
                                 return;
                             }
@@ -9866,8 +9866,8 @@ namespace Thetis
             public float WidthScale
             {
                 get { return _width_scale; }
-                set 
-                { 
+                set
+                {
                     _width_scale = value;
                     lock (_bitmap_lock)
                     {
@@ -10006,7 +10006,7 @@ namespace Thetis
                 _fontColorLow = System.Drawing.Color.White;
                 _fontColorHigh = System.Drawing.Color.Red;
                 _fontColourMeterType = System.Drawing.Color.DarkGray;
-                _fontSize = 20f;               
+                _fontSize = 20f;
 
                 ItemType = MeterItemType.H_SCALE;
                 ReadingSource = Reading.NONE;
@@ -10014,7 +10014,7 @@ namespace Thetis
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
                 StoreSettings = false;
-            }           
+            }
             public System.Drawing.Color LowColour
             {
                 get { return _lowColour; }
@@ -10059,7 +10059,7 @@ namespace Thetis
             {
                 get { return _showType; }
                 set { _showType = value; }
-            }  
+            }
             public bool ShowMarkers
             {
                 get { return _showMarkers; }
@@ -10076,11 +10076,11 @@ namespace Thetis
                     TopLeft.Y.ToString("f4") + "|" +
                     Size.Width.ToString("f4") + "|" +
                     Size.Height.ToString("f4");
-                    //
+                //
 
 
                 return sRet;
-            }            
+            }
         }
         internal class clsNeedleScalePwrItem : clsMeterItem
         {
@@ -10134,7 +10134,7 @@ namespace Thetis
                 _needleOffset.X = 0f;
                 _needleOffset.Y = 0.5f;
                 _darkMode = false;
-            }            
+            }
             public System.Drawing.Color LowColour
             {
                 get { return _lowColour; }
@@ -10381,7 +10381,7 @@ namespace Thetis
             {
                 get
                 {
-                    switch(_rotator_mode)
+                    switch (_rotator_mode)
                     {
                         case RotatorMode.AZ:
                             return "rotator_az-bg";
@@ -10411,7 +10411,7 @@ namespace Thetis
                 get { return _padding; }
                 set {
                     if (value < 0.001f) value = 0.001f;
-                    _padding = value; 
+                    _padding = value;
                 }
             }
             public bool DarkMode
@@ -10439,7 +10439,7 @@ namespace Thetis
                 // get latest reading
                 float reading;
                 bool use;
-                
+
                 if (MMIOGuid == Guid.Empty)
                 {
                     reading = MeterManager.getReading(rx, ReadingSource);
@@ -10574,7 +10574,7 @@ namespace Thetis
         internal class clsDialDisplay : clsMeterItem
         {
             private clsMeter _owningmeter;
-            
+
             private System.Drawing.Color _colour;
             private float _vscale;
             private float _font_scale;
@@ -10597,6 +10597,24 @@ namespace Thetis
             private int _tune_step_direction;
             private bool _ignore_next_vfo_update;
             private bool _always_show_vfos;
+            private int _max_tune_step_changes;
+            private int _tune_step_changes;
+            private bool _align_with_tunestep;
+            private int _up_threshold;
+            private int _down_threshold;
+            private int _tune_step_interval_seconds;
+
+            private System.Drawing.Color _text_colour;
+            private System.Drawing.Color _circle_colour;
+            private System.Drawing.Color _pad_colour;
+            private System.Drawing.Color _pad_pressed_colour;
+            private System.Drawing.Color _button_on_colour;
+            private System.Drawing.Color _button_off_colour;
+            private System.Drawing.Color _button_highlight_colour;
+            private System.Drawing.Color _ring_colour;
+            private System.Drawing.Color _slow_colour;
+            private System.Drawing.Color _hold_colour;
+            private System.Drawing.Color _fast_colour;
             public clsDialDisplay(clsMeter owning_meter)
             {
                 _owningmeter = owning_meter;
@@ -10622,11 +10640,74 @@ namespace Thetis
                 _direction = 0;
                 _old_direction = 0;
                 _ignore_next_vfo_update = false;
+                _max_tune_step_changes = 3;
+                _tune_step_changes = 0;
+                _align_with_tunestep = true;
+                _up_threshold = 540;
+                _down_threshold = 360;
+                _tune_step_interval_seconds = 2;
+
+                _text_colour = System.Drawing.Color.White;
+                _circle_colour = System.Drawing.Color.Black;
+                _pad_colour = System.Drawing.Color.Blue;
+                _pad_pressed_colour = System.Drawing.Color.Orange;
+                _button_on_colour = System.Drawing.Color.CornflowerBlue;
+                _button_off_colour = System.Drawing.Color.Black;
+                _button_highlight_colour = System.Drawing.Color.Gray;
+                _ring_colour = System.Drawing.Color.Gray;
+                _slow_colour = System.Drawing.Color.Blue;
+                _hold_colour = System.Drawing.Color.Green;
+                _fast_colour = System.Drawing.Color.Red;
 
                 ItemType = MeterItemType.DIAL_DISPLAY;
                 ReadingSource = Reading.NONE;
                 UpdateInterval = 1000 / 60;
-            }        
+            }
+            public System.Drawing.Color TextColour { get{ return _text_colour;} set{ _text_colour = value; } }
+            public System.Drawing.Color CircleColour { get { return _circle_colour; } set { _circle_colour = value; } }
+            public System.Drawing.Color PadColour { get { return _pad_colour; } set { _pad_colour = value; } }
+            public System.Drawing.Color PadPressedColour { get { return _pad_pressed_colour; } set { _pad_pressed_colour = value; } }
+            public System.Drawing.Color ButtonOnColour { get { return _button_on_colour; } set { _button_on_colour = value; } }
+            public System.Drawing.Color ButtonOffColour { get { return _button_off_colour; } set { _button_off_colour = value; } }
+            public System.Drawing.Color ButtonHighlightColour { get { return _button_highlight_colour; } set { _button_highlight_colour = value; } }
+            public System.Drawing.Color RingColour { get { return _ring_colour; } set { _ring_colour = value; } }
+            public System.Drawing.Color SlowColour { get { return _slow_colour; } set { _slow_colour = value; } }
+            public System.Drawing.Color HoldColour { get { return _hold_colour; } set { _hold_colour = value; } }
+            public System.Drawing.Color FastColour { get { return _fast_colour; } set { _fast_colour = value; } }
+
+            public int UpThreshold
+            {
+                get { return _up_threshold; }
+                set 
+                {
+                    if (value < _down_threshold + 90) value = _down_threshold + 90;
+                    _up_threshold = value; 
+                }
+            }
+            public int DownThreshold
+            {
+                get { return _down_threshold; }
+                set 
+                {
+                    if (value > _up_threshold - 90) value = _up_threshold - 90;
+                    _down_threshold = value; 
+                }
+            }
+            public int TuneStepIntervalSeconds
+            {
+                get { return _tune_step_interval_seconds; }
+                set { _tune_step_interval_seconds = value; }
+            }
+            public int MaxTuneStepChanges
+            {
+                get { return _max_tune_step_changes; }
+                set { _max_tune_step_changes = value; }
+            }
+            public bool AlignWithTunestep
+            {
+                get { return _align_with_tunestep; }
+                set { _align_with_tunestep = value; }
+            }
             public int TuneStepDirection
             {
                 get { return _tune_step_direction; }
@@ -10712,15 +10793,38 @@ namespace Thetis
 
                         if (_console != null)
                         {
+                            double freq = (steps * _console.CurrentTuneStepHz) * 1e-6;                            
+                            if (VFOA)
+                            {
+                                if (_align_with_tunestep)
+                                {
+                                    freq = Math.Round((_console.VFOAFreq + freq) / (_console.CurrentTuneStepHz * 1e-6)) * (_console.CurrentTuneStepHz * 1e-6);
+                                }
+                                else
+                                {
+                                    freq = _console.VFOAFreq + freq;
+                                }
+                            }
+                            else
+                            {
+                                if (_align_with_tunestep)
+                                {
+                                    freq = Math.Round((_console.VFOBFreq + freq) / (_console.CurrentTuneStepHz * 1e-6)) * (_console.CurrentTuneStepHz * 1e-6);
+                                }
+                                else
+                                {
+                                    freq = _console.VFOBFreq + freq;
+                                }
+                            }
                             _console.BeginInvoke(new MethodInvoker(() =>
                             {
                                 if (VFOA)
                                 {
-                                    _console.VFOAFreq += (steps * _console.CurrentTuneStepHz) * 1e-6;
+                                    _console.VFOAFreq = freq;
                                 }
                                 else
                                 {
-                                    _console.VFOBFreq += (steps * _console.CurrentTuneStepHz) * 1e-6;
+                                    _console.VFOBFreq = freq;
                                 }
                             }));
                         }
@@ -10729,23 +10833,25 @@ namespace Thetis
                         if (_accelerate)
                         {
                             float speed = Math.Abs(_smoothed_speed);
-                            if (speed >= 540)
+                            if (speed >= _up_threshold)
                             {
-                                if ((DateTime.UtcNow - _last_accelerated).TotalSeconds >= 1)
+                                if ((_tune_step_changes < _max_tune_step_changes) && (DateTime.UtcNow - _last_accelerated).TotalSeconds >= _tune_step_interval_seconds)
                                 {
                                     _console.BeginInvoke(new MethodInvoker(() =>
                                     {
                                         _console.ChangeTuneStepUp();
                                     }));
                                     _last_accelerated = DateTime.UtcNow;
+
+                                    _tune_step_changes++;
                                 }
                                 _tune_step_direction = 1;
                             }
-                            else if (speed <= 270)
+                            else if (speed <= _down_threshold)
                             {
                                 if (_existing_step_index != -1 && _existing_step_index < _owningmeter.TuneStepIndex)
                                 {
-                                    if ((DateTime.UtcNow - _last_accelerated).TotalSeconds >= 1)
+                                    if ((DateTime.UtcNow - _last_accelerated).TotalSeconds >= _tune_step_interval_seconds)
                                     {
                                         _console.BeginInvoke(new MethodInvoker(() =>
                                         {
@@ -10753,6 +10859,9 @@ namespace Thetis
                                         }));
                                         _last_accelerated = DateTime.UtcNow;
                                     }
+
+                                    _tune_step_changes--;
+                                    if (_tune_step_changes < 0) _tune_step_changes = 0;
                                 }
                                 _tune_step_direction = -1;
                             }
@@ -10818,6 +10927,7 @@ namespace Thetis
                         _deg_turned = 0;
                         _degrees_total = 0;
                         _ignore_next_vfo_update = true;
+                        _tune_step_changes = 0;
 
                         if (_pressed)
                         {
@@ -10839,7 +10949,6 @@ namespace Thetis
                     {
                         _console.TuneStepIndex = step;
                     }));
-                    _degrees_total = 0;
                     _existing_step_index = -1;
                     _last_accelerated = DateTime.MinValue;
                 }
@@ -10853,7 +10962,7 @@ namespace Thetis
                 DateTime current_time = DateTime.UtcNow;
                 TimeSpan elapsed_time = current_time - _previous_time;
 
-                if (_pressed && elapsed_time.TotalMilliseconds > 50)
+                if (_pressed && elapsed_time.TotalMilliseconds > UpdateInterval * 4) // over 4 frames
                 {
                     float degrees_per_second = _degrees_total / (float)(elapsed_time.TotalMilliseconds / 1000);
                     _smoothed_speed = (_smoothed_speed * 0.95f) + (degrees_per_second * 0.05f);
@@ -10894,7 +11003,7 @@ namespace Thetis
                 if (!_pressed)
                 {
                     int sign = Math.Sign(number_of_moves);
-                    Degrees += 1 * sign;
+                    Degrees -= 1 * sign;
                 }
             }
             public bool Accelerate
@@ -20653,12 +20762,33 @@ namespace Thetis
                                             clsDialDisplay dial = me.Value as clsDialDisplay;
                                             if (dial == null) continue;
 
-                                            dial.Colour = igs.Colour;
+                                            dial.FadeOnRx = igs.FadeOnRx;
+                                            dial.FadeOnTx = igs.FadeOnTx;
+
+                                            //dial.Colour = igs.Colour;
                                             dial.VScale = igs.GetSetting<float>("dialdisplay_vertical_ratio", true, 0.01f, 1f, 1f);
-                                            dial.FontScale = igs.GetSetting<float>("dialdisplay_font_scale", true, 0.01f, 4f, 1f);
+                                            dial.FontScale = igs.GetSetting<float>("dialdisplay_font_scale", true, 0.01f, 1.1f, 1f);
                                             dial.Accelerate = igs.GetSetting<bool>("dialdisplay_accelerate", false, false, false, false);
                                             dial.VFOA = igs.GetSetting<bool>("dialdisplay_vfoa", false, false, false, true);
                                             dial.AlwaysShowVFOs = igs.GetSetting<bool>("dialdisplay_alwaysshow_vfos", false, false, false, false);
+                                            dial.AlignWithTunestep = igs.GetSetting<bool>("dialdisplay_align_with_tunestep", false, false, false, true);
+
+                                            dial.UpThreshold = igs.GetSetting<int>("dialdisplay_increment", true, 90, 720, 540);
+                                            dial.DownThreshold = igs.GetSetting<int>("dialdisplay_decrement", true, 90, 720, 360);
+                                            dial.TuneStepIntervalSeconds = igs.GetSetting<int>("dialdisplay_interval", true, 1, 10, 2);
+                                            dial.MaxTuneStepChanges = igs.GetSetting<int>("dialdisplay_max_increments", true, 1, 30, 4);
+
+                                            dial.TextColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_text", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
+                                            dial.CircleColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_cirlce", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
+                                            dial.PadColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_pad", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Blue);
+                                            dial.PadPressedColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_pad_pressed", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Orange);
+                                            dial.ButtonOnColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_button_on", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
+                                            dial.ButtonOffColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_button_off", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
+                                            dial.ButtonHighlightColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_button_highlight", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Gray);
+                                            dial.RingColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_ring", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Gray);
+                                            dial.SlowColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_slow", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Blue);
+                                            dial.HoldColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_hold", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Green);
+                                            dial.FastColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_fast", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Red);
 
                                             dial.TopLeft = new PointF(0.5f - (dial.VScale / 2f), _fPadY - (_fHeight * 0.75f));
                                             dial.Size = new SizeF(dial.VScale, dial.VScale);
@@ -21659,12 +21789,30 @@ namespace Thetis
                                             clsDialDisplay dial = me.Value as clsDialDisplay;
                                             if (dial == null) continue; // skip the img
 
-                                            igs.Colour = dial.Colour;
+                                            //igs.Colour = dial.Colour;
                                             igs.SetSetting<float>("dialdisplay_vertical_ratio", dial.VScale);
                                             igs.SetSetting<float>("dialdisplay_font_scale", dial.FontScale);
                                             igs.SetSetting<bool>("dialdisplay_accelerate", dial.Accelerate);
                                             igs.SetSetting<bool>("dialdisplay_vfoa", dial.VFOA);
                                             igs.SetSetting<bool>("dialdisplay_alwaysshow_vfos", dial.AlwaysShowVFOs);
+                                            igs.SetSetting<bool>("dialdisplay_align_with_tunestep", dial.AlignWithTunestep);
+
+                                            igs.SetSetting<int>("dialdisplay_increment", dial.UpThreshold);
+                                            igs.SetSetting<int>("dialdisplay_decrement", dial.DownThreshold);
+                                            igs.SetSetting<int>("dialdisplay_interval", dial.TuneStepIntervalSeconds);
+                                            igs.SetSetting<int>("dialdisplay_max_increments", dial.MaxTuneStepChanges);
+
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_text", dial.TextColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_cirlce", dial.CircleColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_pad", dial.PadColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_pad_pressed", dial.PadPressedColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_button_on", dial.ButtonOnColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_button_off", dial.ButtonOffColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_button_highlight", dial.ButtonHighlightColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_ring", dial.RingColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_slow", dial.SlowColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_hold", dial.HoldColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_fast", dial.FastColour);
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                         {
@@ -26557,22 +26705,21 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
-                SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
-                _renderTarget.FillRectangle(rectSC, getDXBrushForColour(dial.Colour, mi.FadeValue));
+                //SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
+                //_renderTarget.FillRectangle(rectSC, getDXBrushForColour(dial.Colour, mi.FadeValue));
 
-                SharpDX.Direct2D1.Brush main_circle_brush = getDXBrushForColour(System.Drawing.Color.Black);
-                SharpDX.Direct2D1.Brush main_ring_brush = getDXBrushForColour(System.Drawing.Color.Gray);
-                SharpDX.Direct2D1.Brush marker_brush = getDXBrushForColour(System.Drawing.Color.Blue);
-                SharpDX.Direct2D1.Brush marker_pressed_brush = getDXBrushForColour(System.Drawing.Color.Orange);                
-                SharpDX.Direct2D1.Brush button_border = getDXBrushForColour(System.Drawing.Color.White);
-                SharpDX.Direct2D1.Brush button_on = getDXBrushForColour(System.Drawing.Color.CornflowerBlue);
-                SharpDX.Direct2D1.Brush button_off = getDXBrushForColour(System.Drawing.Color.Black);
-                SharpDX.Direct2D1.Brush button_highlight = getDXBrushForColour(System.Drawing.Color.Gray);
+                bool enabled = (!dial.FadeOnRx && !m.MOX) | (!dial.FadeOnTx && m.MOX);
 
-                SharpDX.Direct2D1.Brush marker_speed_brush_down = getDXBrushForColour(System.Drawing.Color.Blue);
-                SharpDX.Direct2D1.Brush marker_speed_brush = getDXBrushForColour(System.Drawing.Color.Green);
-                SharpDX.Direct2D1.Brush marker_speed_brush_up = getDXBrushForColour(System.Drawing.Color.Red);
-
+                SharpDX.Direct2D1.Brush main_circle_brush = getDXBrushForColour(dial.CircleColour);//System.Drawing.Color.Black);
+                SharpDX.Direct2D1.Brush main_ring_brush = getDXBrushForColour(dial.RingColour);//System.Drawing.Color.Gray);
+                SharpDX.Direct2D1.Brush marker_brush = getDXBrushForColour(dial.PadColour);//System.Drawing.Color.Blue);
+                SharpDX.Direct2D1.Brush marker_pressed_brush = getDXBrushForColour(dial.PadPressedColour);//System.Drawing.Color.Orange);                
+                SharpDX.Direct2D1.Brush button_on = getDXBrushForColour(dial.ButtonOnColour);//System.Drawing.Color.CornflowerBlue);
+                SharpDX.Direct2D1.Brush button_off = getDXBrushForColour(dial.ButtonOffColour);//System.Drawing.Color.Black);
+                SharpDX.Direct2D1.Brush button_highlight = getDXBrushForColour(dial.ButtonHighlightColour);//System.Drawing.Color.Gray);
+                SharpDX.Direct2D1.Brush marker_speed_brush_down = getDXBrushForColour(dial.SlowColour);//System.Drawing.Color.Blue);
+                SharpDX.Direct2D1.Brush marker_speed_brush = getDXBrushForColour(dial.HoldColour);//System.Drawing.Color.Green);
+                SharpDX.Direct2D1.Brush marker_speed_brush_up = getDXBrushForColour(dial.FastColour);//System.Drawing.Color.Red);
 
                 bool hightlight0 = false;
                 bool hightlight1 = false;
@@ -26581,14 +26728,14 @@ namespace Thetis
                 float mouse_raw_x = -1;
                 float mouse_raw_y = -1;
                 float distance_from_centre = -1;
-
+                
                 System.Drawing.RectangleF zone0 = new System.Drawing.RectangleF(x, y, w / 2, h / 2);
                 System.Drawing.RectangleF zone1 = new System.Drawing.RectangleF(x + (w / 2), y, w / 2, h / 2);
                 System.Drawing.RectangleF zone2 = new System.Drawing.RectangleF(x, y + (h / 2), w / 2, h / 2);
                 System.Drawing.RectangleF zone3 = new System.Drawing.RectangleF(x + (w / 2), y + (h / 2), w / 2, h / 2);
                 RawVector2 centre = new RawVector2(x + (w / 2f), y + (h / 2f));
 
-                if (dial.MouseEntered)
+                if (enabled && dial.MouseEntered)
                 {
                     distance_from_centre = (dial.MouseMovePoint.X - centre.X) * (dial.MouseMovePoint.X - centre.X) +
                          (dial.MouseMovePoint.Y - centre.Y) * (dial.MouseMovePoint.Y - centre.Y);
@@ -26651,8 +26798,8 @@ namespace Thetis
                 float mouse_x = (dial.MouseMovePoint.X - x) / w;
                 float mouse_y = (dial.MouseMovePoint.Y - y) / h;
 
-                float marker_radius = w * 0.125f;
-                if (dial.MouseButtonDown)
+                float marker_radius = w * 0.125f;                
+                if (enabled && dial.MouseButtonDown)
                 {                    
                     float rad = dial.Degrees * (float)Math.PI / 180f;
                     float marker_x = centre.X + (float)Math.Cos(rad) * ring_radius;
@@ -26695,10 +26842,10 @@ namespace Thetis
                 SizeF sz = measureString("VFOA", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled);
                 sz.Width += w * 0.05f;
                 sz.Height += w * 0.025f;
-                if (m.RX == 1 || dial.AlwaysShowVFOs) plotText(" VFOA ", x, y, rect.Width, font_size_scaled, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular); // no vfoa on rx2
-                if ((m.RX == 1 && !m.RX2Enabled) || m.RX == 2 || dial.AlwaysShowVFOs) plotText("VFOB " + "\u200B", x + w, y, rect.Width, font_size_scaled, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular, true);
-                plotText(" LOCK " + "\u200B", x + w, y + h - sz.Height, rect.Width, font_size_scaled, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular, true);
-                plotText(" ACCEL ", x, y + h - sz.Height, rect.Width, font_size_scaled, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular);
+                if (m.RX == 1 || dial.AlwaysShowVFOs) plotText(" VFOA ", x, y, rect.Width, font_size_scaled, dial.TextColour, 255, "Trebuchet MS", FontStyle.Regular); // no vfoa on rx2
+                if ((m.RX == 1 && !m.RX2Enabled) || m.RX == 2 || dial.AlwaysShowVFOs) plotText("VFOB " + "\u200B", x + w, y, rect.Width, font_size_scaled, dial.TextColour, 255, "Trebuchet MS", FontStyle.Regular, true);
+                plotText(" LOCK " + "\u200B", x + w, y + h - sz.Height, rect.Width, font_size_scaled, dial.TextColour, 255, "Trebuchet MS", FontStyle.Regular, true);
+                plotText(" ACCEL ", x, y + h - sz.Height, rect.Width, font_size_scaled, dial.TextColour, 255, "Trebuchet MS", FontStyle.Regular);
 
                 //marker circle
                 float radians = dial.Degrees * (float)Math.PI / 180f;
