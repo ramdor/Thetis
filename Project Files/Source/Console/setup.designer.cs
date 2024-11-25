@@ -3840,6 +3840,7 @@
             this.nudDial_interval = new System.Windows.Forms.NumericUpDownTS();
             this.chkDial_align = new System.Windows.Forms.CheckBoxTS();
             this.nudDial_max_increments = new System.Windows.Forms.NumericUpDownTS();
+            this.nudDial_degrees_for_change = new System.Windows.Forms.NumericUpDownTS();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -4122,6 +4123,7 @@
             this.chkFilterDisplay_fadeonrx = new System.Windows.Forms.CheckBoxTS();
             this.tabPage13 = new System.Windows.Forms.TabPage();
             this.grpDialDisplay = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS421 = new System.Windows.Forms.LabelTS();
             this.labelTS419 = new System.Windows.Forms.LabelTS();
             this.labelTS418 = new System.Windows.Forms.LabelTS();
             this.clrbtnDial_button_highlight = new Thetis.ColorButton();
@@ -5146,6 +5148,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudDial_decrement)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDial_interval)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDial_max_increments)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDial_degrees_for_change)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -61558,7 +61561,7 @@
             // 
             this.chkDialDisplay_alwaysshow_vfos.AutoSize = true;
             this.chkDialDisplay_alwaysshow_vfos.Image = null;
-            this.chkDialDisplay_alwaysshow_vfos.Location = new System.Drawing.Point(41, 78);
+            this.chkDialDisplay_alwaysshow_vfos.Location = new System.Drawing.Point(42, 65);
             this.chkDialDisplay_alwaysshow_vfos.Name = "chkDialDisplay_alwaysshow_vfos";
             this.chkDialDisplay_alwaysshow_vfos.Size = new System.Drawing.Size(116, 17);
             this.chkDialDisplay_alwaysshow_vfos.TabIndex = 164;
@@ -61574,7 +61577,7 @@
             0,
             0,
             0});
-            this.nudDial_increment.Location = new System.Drawing.Point(145, 131);
+            this.nudDial_increment.Location = new System.Drawing.Point(145, 110);
             this.nudDial_increment.Maximum = new decimal(new int[] {
             720,
             0,
@@ -61604,7 +61607,7 @@
             0,
             0,
             0});
-            this.nudDial_decrement.Location = new System.Drawing.Point(145, 157);
+            this.nudDial_decrement.Location = new System.Drawing.Point(145, 134);
             this.nudDial_decrement.Maximum = new decimal(new int[] {
             720,
             0,
@@ -61634,7 +61637,7 @@
             0,
             0,
             0});
-            this.nudDial_interval.Location = new System.Drawing.Point(145, 183);
+            this.nudDial_interval.Location = new System.Drawing.Point(145, 158);
             this.nudDial_interval.Maximum = new decimal(new int[] {
             10,
             0,
@@ -61661,7 +61664,7 @@
             // 
             this.chkDial_align.AutoSize = true;
             this.chkDial_align.Image = null;
-            this.chkDial_align.Location = new System.Drawing.Point(41, 101);
+            this.chkDial_align.Location = new System.Drawing.Point(42, 86);
             this.chkDial_align.Name = "chkDial_align";
             this.chkDial_align.Size = new System.Drawing.Size(165, 17);
             this.chkDial_align.TabIndex = 176;
@@ -61677,7 +61680,7 @@
             0,
             0,
             0});
-            this.nudDial_max_increments.Location = new System.Drawing.Point(145, 209);
+            this.nudDial_max_increments.Location = new System.Drawing.Point(145, 182);
             this.nudDial_max_increments.Maximum = new decimal(new int[] {
             30,
             0,
@@ -61699,6 +61702,36 @@
             0,
             0});
             this.nudDial_max_increments.ValueChanged += new System.EventHandler(this.nudDial_max_increments_ValueChanged);
+            // 
+            // nudDial_degrees_for_change
+            // 
+            this.nudDial_degrees_for_change.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDial_degrees_for_change.Location = new System.Drawing.Point(145, 206);
+            this.nudDial_degrees_for_change.Maximum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            0});
+            this.nudDial_degrees_for_change.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDial_degrees_for_change.Name = "nudDial_degrees_for_change";
+            this.nudDial_degrees_for_change.Size = new System.Drawing.Size(44, 20);
+            this.nudDial_degrees_for_change.TabIndex = 200;
+            this.nudDial_degrees_for_change.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudDial_degrees_for_change, "The number of degrees required for a VFO change");
+            this.nudDial_degrees_for_change.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.nudDial_degrees_for_change.ValueChanged += new System.EventHandler(this.nudDial_degrees_for_change_ValueChanged);
             // 
             // timer_VAC_Monitor
             // 
@@ -65662,6 +65695,8 @@
             // 
             // grpDialDisplay
             // 
+            this.grpDialDisplay.Controls.Add(this.nudDial_degrees_for_change);
+            this.grpDialDisplay.Controls.Add(this.labelTS421);
             this.grpDialDisplay.Controls.Add(this.nudDial_max_increments);
             this.grpDialDisplay.Controls.Add(this.labelTS419);
             this.grpDialDisplay.Controls.Add(this.labelTS418);
@@ -65711,11 +65746,21 @@
             this.grpDialDisplay.Text = "Dial Display";
             this.grpDialDisplay.Visible = false;
             // 
+            // labelTS421
+            // 
+            this.labelTS421.AutoSize = true;
+            this.labelTS421.Image = null;
+            this.labelTS421.Location = new System.Drawing.Point(35, 208);
+            this.labelTS421.Name = "labelTS421";
+            this.labelTS421.Size = new System.Drawing.Size(104, 13);
+            this.labelTS421.TabIndex = 199;
+            this.labelTS421.Text = "Degrees for change:";
+            // 
             // labelTS419
             // 
             this.labelTS419.AutoSize = true;
             this.labelTS419.Image = null;
-            this.labelTS419.Location = new System.Drawing.Point(45, 211);
+            this.labelTS419.Location = new System.Drawing.Point(45, 184);
             this.labelTS419.Name = "labelTS419";
             this.labelTS419.Size = new System.Drawing.Size(94, 13);
             this.labelTS419.TabIndex = 197;
@@ -65965,7 +66010,7 @@
             // 
             this.labelTS407.AutoSize = true;
             this.labelTS407.Image = null;
-            this.labelTS407.Location = new System.Drawing.Point(195, 185);
+            this.labelTS407.Location = new System.Drawing.Point(195, 160);
             this.labelTS407.Name = "labelTS407";
             this.labelTS407.Size = new System.Drawing.Size(12, 13);
             this.labelTS407.TabIndex = 175;
@@ -65975,7 +66020,7 @@
             // 
             this.labelTS408.AutoSize = true;
             this.labelTS408.Image = null;
-            this.labelTS408.Location = new System.Drawing.Point(6, 185);
+            this.labelTS408.Location = new System.Drawing.Point(6, 160);
             this.labelTS408.Name = "labelTS408";
             this.labelTS408.Size = new System.Drawing.Size(133, 13);
             this.labelTS408.TabIndex = 173;
@@ -65985,7 +66030,7 @@
             // 
             this.labelTS353.AutoSize = true;
             this.labelTS353.Image = null;
-            this.labelTS353.Location = new System.Drawing.Point(195, 159);
+            this.labelTS353.Location = new System.Drawing.Point(195, 136);
             this.labelTS353.Name = "labelTS353";
             this.labelTS353.Size = new System.Drawing.Size(35, 13);
             this.labelTS353.TabIndex = 172;
@@ -65995,7 +66040,7 @@
             // 
             this.labelTS354.AutoSize = true;
             this.labelTS354.Image = null;
-            this.labelTS354.Location = new System.Drawing.Point(15, 159);
+            this.labelTS354.Location = new System.Drawing.Point(15, 136);
             this.labelTS354.Name = "labelTS354";
             this.labelTS354.Size = new System.Drawing.Size(124, 13);
             this.labelTS354.TabIndex = 170;
@@ -66005,7 +66050,7 @@
             // 
             this.labelTS352.AutoSize = true;
             this.labelTS352.Image = null;
-            this.labelTS352.Location = new System.Drawing.Point(195, 133);
+            this.labelTS352.Location = new System.Drawing.Point(195, 112);
             this.labelTS352.Name = "labelTS352";
             this.labelTS352.Size = new System.Drawing.Size(35, 13);
             this.labelTS352.TabIndex = 169;
@@ -66015,7 +66060,7 @@
             // 
             this.labelTS351.AutoSize = true;
             this.labelTS351.Image = null;
-            this.labelTS351.Location = new System.Drawing.Point(20, 133);
+            this.labelTS351.Location = new System.Drawing.Point(20, 112);
             this.labelTS351.Name = "labelTS351";
             this.labelTS351.Size = new System.Drawing.Size(119, 13);
             this.labelTS351.TabIndex = 167;
@@ -67329,6 +67374,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudDial_decrement)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDial_interval)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDial_max_increments)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDial_degrees_for_change)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -71577,5 +71623,7 @@
         private ColorButton clrbtnDial_button_highlight;
         private NumericUpDownTS nudDial_max_increments;
         private LabelTS labelTS419;
+        private NumericUpDownTS nudDial_degrees_for_change;
+        private LabelTS labelTS421;
     }
 }

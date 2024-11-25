@@ -10603,6 +10603,7 @@ namespace Thetis
             private int _up_threshold;
             private int _down_threshold;
             private int _tune_step_interval_seconds;
+            private int _degrees_per_change;
 
             private System.Drawing.Color _text_colour;
             private System.Drawing.Color _circle_colour;
@@ -10646,6 +10647,7 @@ namespace Thetis
                 _up_threshold = 540;
                 _down_threshold = 360;
                 _tune_step_interval_seconds = 2;
+                _degrees_per_change = 5;
 
                 _text_colour = System.Drawing.Color.White;
                 _circle_colour = System.Drawing.Color.Black;
@@ -10675,6 +10677,11 @@ namespace Thetis
             public System.Drawing.Color HoldColour { get { return _hold_colour; } set { _hold_colour = value; } }
             public System.Drawing.Color FastColour { get { return _fast_colour; } set { _fast_colour = value; } }
 
+            public int DegreesPerChange
+            {
+                get { return _degrees_per_change; }
+                set { _degrees_per_change = value; }
+            }
             public int UpThreshold
             {
                 get { return _up_threshold; }
@@ -10785,48 +10792,52 @@ namespace Thetis
                     else
                         _direction = -1;
 
-                    if (Math.Abs(_deg_turned) >= 1)
+                    float turned = Math.Abs(_deg_turned);
+                    if (turned >= 1)
                     {
-                        int steps = (int)_deg_turned;
-
-                        _deg_turned -= steps;
-
-                        if (_console != null)
+                        if (turned >= _degrees_per_change)
                         {
-                            double freq = (steps * _console.CurrentTuneStepHz) * 1e-6;                            
-                            if (VFOA)
+                            _deg_turned -= (int)_deg_turned;
+
+                            int steps = _direction;
+
+                            if (_console != null)
                             {
-                                if (_align_with_tunestep)
-                                {
-                                    freq = Math.Round((_console.VFOAFreq + freq) / (_console.CurrentTuneStepHz * 1e-6)) * (_console.CurrentTuneStepHz * 1e-6);
-                                }
-                                else
-                                {
-                                    freq = _console.VFOAFreq + freq;
-                                }
-                            }
-                            else
-                            {
-                                if (_align_with_tunestep)
-                                {
-                                    freq = Math.Round((_console.VFOBFreq + freq) / (_console.CurrentTuneStepHz * 1e-6)) * (_console.CurrentTuneStepHz * 1e-6);
-                                }
-                                else
-                                {
-                                    freq = _console.VFOBFreq + freq;
-                                }
-                            }
-                            _console.BeginInvoke(new MethodInvoker(() =>
-                            {
+                                double freq = (steps * _console.CurrentTuneStepHz) * 1e-6;
                                 if (VFOA)
                                 {
-                                    _console.VFOAFreq = freq;
+                                    if (_align_with_tunestep)
+                                    {
+                                        freq = Math.Round((_console.VFOAFreq + freq) / (_console.CurrentTuneStepHz * 1e-6)) * (_console.CurrentTuneStepHz * 1e-6);
+                                    }
+                                    else
+                                    {
+                                        freq = _console.VFOAFreq + freq;
+                                    }
                                 }
                                 else
                                 {
-                                    _console.VFOBFreq = freq;
+                                    if (_align_with_tunestep)
+                                    {
+                                        freq = Math.Round((_console.VFOBFreq + freq) / (_console.CurrentTuneStepHz * 1e-6)) * (_console.CurrentTuneStepHz * 1e-6);
+                                    }
+                                    else
+                                    {
+                                        freq = _console.VFOBFreq + freq;
+                                    }
                                 }
-                            }));
+                                _console.BeginInvoke(new MethodInvoker(() =>
+                                {
+                                    if (VFOA)
+                                    {
+                                        _console.VFOAFreq = freq;
+                                    }
+                                    else
+                                    {
+                                        _console.VFOBFreq = freq;
+                                    }
+                                }));
+                            }
                         }
 
                         // accelerate
@@ -11003,7 +11014,7 @@ namespace Thetis
                 if (!_pressed)
                 {
                     int sign = Math.Sign(number_of_moves);
-                    Degrees -= 1 * sign;
+                    Degrees -= _degrees_per_change * sign;
                 }
             }
             public bool Accelerate
@@ -20777,6 +20788,7 @@ namespace Thetis
                                             dial.DownThreshold = igs.GetSetting<int>("dialdisplay_decrement", true, 90, 720, 360);
                                             dial.TuneStepIntervalSeconds = igs.GetSetting<int>("dialdisplay_interval", true, 1, 10, 2);
                                             dial.MaxTuneStepChanges = igs.GetSetting<int>("dialdisplay_max_increments", true, 1, 30, 4);
+                                            dial.DegreesPerChange = igs.GetSetting<int>("dialdisplay_degrees_for_change", true, 1, 90, 5);
 
                                             dial.TextColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_text", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
                                             dial.CircleColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_cirlce", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
@@ -21801,6 +21813,7 @@ namespace Thetis
                                             igs.SetSetting<int>("dialdisplay_decrement", dial.DownThreshold);
                                             igs.SetSetting<int>("dialdisplay_interval", dial.TuneStepIntervalSeconds);
                                             igs.SetSetting<int>("dialdisplay_max_increments", dial.MaxTuneStepChanges);
+                                            igs.SetSetting<int>("dialdisplay_degrees_for_change", dial.DegreesPerChange);
 
                                             igs.SetSetting<System.Drawing.Color>("dialdisplay_text", dial.TextColour);
                                             igs.SetSetting<System.Drawing.Color>("dialdisplay_cirlce", dial.CircleColour);

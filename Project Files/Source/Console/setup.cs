@@ -25006,6 +25006,7 @@ namespace Thetis
                 igs.SetSetting<int>("dialdisplay_decrement", (int)nudDial_decrement.Value);
                 igs.SetSetting<int>("dialdisplay_interval", (int)nudDial_interval.Value);
                 igs.SetSetting<int>("dialdisplay_max_increments", (int)nudDial_max_increments.Value);
+                igs.SetSetting<int>("dialdisplay_degrees_for_change", (int)nudDial_degrees_for_change.Value);
 
                 igs.SetSetting<System.Drawing.Color>("dialdisplay_text", clrbtnDial_text.Color);
                 igs.SetSetting<System.Drawing.Color>("dialdisplay_cirlce", clrbtnDial_circle.Color);
@@ -25580,6 +25581,7 @@ namespace Thetis
                 nudDial_decrement.Value = (decimal)igs.GetSetting<int>("dialdisplay_decrement", true, 90, 720, 360);
                 nudDial_interval.Value = (decimal)igs.GetSetting<int>("dialdisplay_interval", true, 1, 10, 2);
                 nudDial_max_increments.Value = (decimal)igs.GetSetting<int>("dialdisplay_max_increments", true, 1, 30, 4);
+                nudDial_degrees_for_change.Value = (decimal)igs.GetSetting<int>("dialdisplay_degrees_for_change", true, 1, 90, 5);
 
                 clrbtnDial_text.Color = igs.GetSetting<System.Drawing.Color>("dialdisplay_text", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
                 clrbtnDial_circle.Color = igs.GetSetting<System.Drawing.Color>("dialdisplay_cirlce", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
@@ -32596,6 +32598,11 @@ namespace Thetis
         }
 
         private void nudDial_max_increments_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudDial_degrees_for_change_ValueChanged(object sender, EventArgs e)
         {
             updateMeterType();
         }

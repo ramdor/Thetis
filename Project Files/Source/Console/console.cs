@@ -527,6 +527,8 @@ namespace Thetis
 
         private bool _restart;
 
+        private bool _force_vfo_update = false; // used to always apply vfo change, mostly in initialisation
+
         private bool _check_error_log = true;
         private long _error_log_initial_size = -1;
         private bool _touch_support = false;
@@ -916,9 +918,6 @@ namespace Thetis
             BandStackFilter bsf = BandStackManager.GetFilter(RX1Band, false);
             if (bsf != null)
             {
-                bool oldInit = initializing;
-                initializing = true; // needed so that setting of frequency is allowed even if vfo's locked
-
                 bsf.GenerateFilteredList(true);
                 bsf.SelectInitial(); // sets up the filter to obey the mode of operation, be it current, preset or last used
 
@@ -941,13 +940,13 @@ namespace Thetis
                     if (RX1DSPMode != bse.Mode)
                         RX1DSPMode = bse.Mode;
 
+                    _force_vfo_update = true; // needed so that setting of frequency is allowed even if vfo's locked
                     VFOAFreq = bse.Frequency;
+                    _force_vfo_update = false;
                 }
 
                 BandStack2Form.InitBandStackFilter(bsf);
                 updateStackNumberDisplay(bsf);
-
-                initializing = oldInit;
             }
 
             if (!IsSetupFormNull)
@@ -2592,6 +2591,12 @@ namespace Thetis
             writer2.Close();    // close  file
             stream2.Close();   // close stream
 
+            //[2.10.3.7]MW0LGE control names to always save, some were being missed if disabled
+            List<string> always_save = new List<string>();
+            always_save.Add(chkVFOLock.Name);
+            always_save.Add(chkVFOBLock.Name);
+            always_save.Add(chkVFOSync.Name);
+            //
 
             List<string> a = new List<string>();
 
@@ -2602,7 +2607,7 @@ namespace Thetis
                 {
                     foreach (Control c2 in c.Controls)	// for each sub-control
                     {	// check to see if it is a value type we need to save
-                        if (c2.Enabled)
+                        if (c2.Enabled || always_save.Contains(c2.Name))
                         {
                             if (c2.GetType() == typeof(CheckBoxTS))
                                 a.Add(c2.Name + "/" + ((CheckBoxTS)c2).Checked.ToString());
@@ -2641,7 +2646,7 @@ namespace Thetis
                 }
                 else // it is not a group box
                 {	// check to see if it is a value type we need to save
-                    if (c.Enabled)
+                    if (c.Enabled || always_save.Contains(c.Name))
                     {
                         if (c.GetType() == typeof(CheckBoxTS))
                             a.Add(c.Name + "/" + ((CheckBoxTS)c).Checked.ToString());
@@ -3473,7 +3478,9 @@ namespace Thetis
                         dVFOBFreq = double.Parse(val); // MW0LGE_21c need to do this at end, as we used center_freq etc
                         break;
                     case "VFOASubFreq": // MW0LGE_21a
+                        _force_vfo_update = true;
                         VFOASubFreq = double.Parse(val);
+                        _force_vfo_update = false;
                         saved_vfoa_sub_freq = m_dVFOASubFreq;  // init the save sub freq (i dont like this, TODO)
                         break;
                     case "CentreRX2Frequency":
@@ -4369,11 +4376,10 @@ namespace Thetis
                 CentreRX2Frequency = dVFOBFreq;
             }
 
-            bool oldInit = initializing;
-            initializing = true; //[2.10.3.7]MW0LGE set to true so that a locked vfo will not prevent this from being applied
+            _force_vfo_update = true; // needed so that setting of frequency is allowed even if vfo's locked
             VFOAFreq = dVFOAFreq;
             VFOBFreq = dVFOBFreq;
-            initializing = oldInit;
+            _force_vfo_update = false;
 
             if (bNeedUpdate)
             {
@@ -18196,7 +18202,7 @@ namespace Thetis
             }
             set
             {
-                if (!initializing && vfoA_lock || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed the state check //[2.10.3.7]MW0LGE always process if initialising
+                if (!_force_vfo_update && vfoA_lock || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed the state check //[2.10.3.7]MW0LGE always process if initialising
                 if (!this.InvokeRequired)
                 {
                     VFOAUpdate(value);
@@ -18256,7 +18262,7 @@ namespace Thetis
 
             set
             {
-                if (!initializing && vfoA_lock || IsSetupFormNull) return; //[2.10.3.6]MW0LGE removed the state check //[2.10.3.7]MW0LGE always process if initialising
+                if (!_force_vfo_update && vfoA_lock || IsSetupFormNull) return; //[2.10.3.6]MW0LGE removed the state check //[2.10.3.7]MW0LGE always process if initialising
                 if (!this.InvokeRequired)
                 {
                     VFOASubUpdate(value);
@@ -18278,7 +18284,7 @@ namespace Thetis
             }
             set
             {
-                if (!initializing && (vfoB_lock || IsSetupFormNull)) return; //[2.10.3.5]MW0LGE removed state check //[2.10.3.7]MW0LGE always process if initialising
+                if (!_force_vfo_update && (vfoB_lock || IsSetupFormNull)) return; //[2.10.3.5]MW0LGE removed state check //[2.10.3.7]MW0LGE always process if initialising
                 value = Math.Max(0, value);
                 if (!this.InvokeRequired)
                 {
@@ -27490,6 +27496,7 @@ namespace Thetis
                 }
 
                 chkVFOLock.Enabled = false;
+                chkVFOBLock.Enabled = false; //[2.10.3.7]MW0LGE
 
                 chkPower.BackColor = SystemColors.Control;
                 txtVFOAFreq.ForeColor = vfo_text_dark_color;
