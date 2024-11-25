@@ -1780,7 +1780,7 @@
     <value>panelRX2Power</value>
   </data>
   <data name="&gt;&gt;comboRX2Band.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="chkRX2Preamp.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -3649,7 +3649,7 @@
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;comboAGC.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="lblAGC.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -3685,7 +3685,7 @@
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblAGC.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>13</value>
   </data>
   <data name="comboPreamp.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Popup</value>
@@ -3715,7 +3715,7 @@
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;comboPreamp.ZOrder" xml:space="preserve">
-    <value>16</value>
+    <value>17</value>
   </data>
   <data name="lblRF.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -3751,7 +3751,7 @@
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblRF.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>14</value>
   </data>
   <data name="chkDX.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -6905,7 +6905,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;udRX1StepAttData.ZOrder" xml:space="preserve">
-    <value>17</value>
+    <value>18</value>
   </data>
   <data name="comboRX2Preamp.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Popup</value>
@@ -6935,7 +6935,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>panelRX2Power</value>
   </data>
   <data name="&gt;&gt;comboRX2Preamp.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="udRX2StepAttData.Location" type="System.Drawing.Point, System.Drawing">
     <value>8, 78</value>
@@ -6962,7 +6962,7 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
     <value>panelRX2Power</value>
   </data>
   <data name="&gt;&gt;udRX2StepAttData.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="chkCWAPFEnabled.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -8224,7 +8224,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;ptbPWR.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="ptbRF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -8260,7 +8260,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;ptbRF.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="ptbAF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -8296,7 +8296,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;ptbAF.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>11</value>
   </data>
   <data name="ptbPanMainRX.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -8602,7 +8602,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;ptbRX2AF.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="ptbRX1AF.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -8638,7 +8638,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;ptbRX1AF.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="ptbCWAPFGain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -8782,10 +8782,10 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;ptbTune.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="udTXStepAttData.Location" type="System.Drawing.Point, System.Drawing">
-    <value>29, 272</value>
+    <value>33, 301</value>
   </data>
   <data name="udTXStepAttData.Size" type="System.Drawing.Size, System.Drawing">
     <value>52, 20</value>
@@ -8809,7 +8809,88 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;udTXStepAttData.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
+  </data>
+  <data name="pbAutoAttWarningRX1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWZJREFUOE+l
+        kc8rRGEYhZ+yQaREksZ/YKtIZKvs2MxfwMLKgoWyVsQCWwvKzlLJLHTHj9gMQ9e4QxQ7Gr9jDHN17o25
+        8ykzxqmn3t73nNPtu/CLFmchEWU+EWVOc8mKrcN1jIzQXJJGh8C2iL47vAnbwtLuT6qsgP0IpA64d09x
+        hWbtdCtK1ZVldLV5X3OXcUgvTuEuTOBqti1udZOnoDrb4Gyb0F2cC30J+Gh+OORSN3kKKrFRjrNJNpsk
+        axZpp9vaMvR115vRnDpavd/dk07w9PU2wSKhmzwr0yEznpMTqeV8h/RXSDTU+QR38sjb3lJjVkBTo/fA
+        o882qWBoIIw7GM4vkse2GJkZbjZrILkFl3vcBgMim/Qx91d73CuTp8lxOI6y9OGQMQPVVT7mXl5llP3W
+        7irc7PNimoX52EGUUdZTf6/3NvHMCa+mUcyM+Zh7oYxtcaAOlfB49NNULMqqQ0Ua/s0n0OWyxKRb9V4A
+        AAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="pbAutoAttWarningRX1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>97, 271</value>
+  </data>
+  <data name="pbAutoAttWarningRX1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>20, 20</value>
+  </data>
+  <data name="pbAutoAttWarningRX1.TabIndex" type="System.Int32, mscorlib">
+    <value>171</value>
+  </data>
+  <data name="pbAutoAttWarningRX1.ToolTip" xml:space="preserve">
+    <value>Auto Attenuation has been triggered from an ADC overload !</value>
+  </data>
+  <data name="pbAutoAttWarningRX1.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;pbAutoAttWarningRX1.Name" xml:space="preserve">
+    <value>pbAutoAttWarningRX1</value>
+  </data>
+  <data name="&gt;&gt;pbAutoAttWarningRX1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pbAutoAttWarningRX1.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;pbAutoAttWarningRX1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="pbAutoAttWarningRX2.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWZJREFUOE+l
+        kc8rRGEYhZ+yQaREksZ/YKtIZKvs2MxfwMLKgoWyVsQCWwvKzlLJLHTHj9gMQ9e4QxQ7Gr9jDHN17o25
+        8ykzxqmn3t73nNPtu/CLFmchEWU+EWVOc8mKrcN1jIzQXJJGh8C2iL47vAnbwtLuT6qsgP0IpA64d09x
+        hWbtdCtK1ZVldLV5X3OXcUgvTuEuTOBqti1udZOnoDrb4Gyb0F2cC30J+Gh+OORSN3kKKrFRjrNJNpsk
+        axZpp9vaMvR115vRnDpavd/dk07w9PU2wSKhmzwr0yEznpMTqeV8h/RXSDTU+QR38sjb3lJjVkBTo/fA
+        o882qWBoIIw7GM4vkse2GJkZbjZrILkFl3vcBgMim/Qx91d73CuTp8lxOI6y9OGQMQPVVT7mXl5llP3W
+        7irc7PNimoX52EGUUdZTf6/3NvHMCa+mUcyM+Zh7oYxtcaAOlfB49NNULMqqQ0Ua/s0n0OWyxKRb9V4A
+        AAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="pbAutoAttWarningRX2.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="pbAutoAttWarningRX2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>50, 55</value>
+  </data>
+  <data name="pbAutoAttWarningRX2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>20, 20</value>
+  </data>
+  <data name="pbAutoAttWarningRX2.TabIndex" type="System.Int32, mscorlib">
+    <value>172</value>
+  </data>
+  <data name="pbAutoAttWarningRX2.ToolTip" xml:space="preserve">
+    <value>Auto Attenuation has been triggered from an ADC overload !</value>
+  </data>
+  <data name="pbAutoAttWarningRX2.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;pbAutoAttWarningRX2.Name" xml:space="preserve">
+    <value>pbAutoAttWarningRX2</value>
+  </data>
+  <data name="&gt;&gt;pbAutoAttWarningRX2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pbAutoAttWarningRX2.Parent" xml:space="preserve">
+    <value>panelRX2Power</value>
+  </data>
+  <data name="&gt;&gt;pbAutoAttWarningRX2.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="radBand2.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -13051,7 +13132,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelRX2Power</value>
   </data>
   <data name="&gt;&gt;lblRX2Band.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="lblRX2Preamp.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -13084,7 +13165,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelRX2Power</value>
   </data>
   <data name="&gt;&gt;lblRX2Preamp.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="panelRX2Power.Location" type="System.Drawing.Point, System.Drawing">
     <value>5, 591</value>
@@ -14458,7 +14539,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblTune.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="lblRX2AF.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -14491,7 +14572,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblRX2AF.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="lblRX1AF.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -14524,7 +14605,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblRX1AF.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="lblAF.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -14557,7 +14638,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblAF.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>12</value>
   </data>
   <data name="lblPWR.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -14590,7 +14671,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblPWR.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>15</value>
   </data>
   <data name="lblPreamp.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -14608,7 +14689,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>40</value>
   </data>
   <data name="lblPreamp.Text" xml:space="preserve">
-    <value>ATT</value>
+    <value>S-ATT</value>
   </data>
   <data name="lblPreamp.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>TopCenter</value>
@@ -14623,7 +14704,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>panelSoundControls</value>
   </data>
   <data name="&gt;&gt;lblPreamp.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>16</value>
   </data>
   <data name="panelSoundControls.Location" type="System.Drawing.Point, System.Drawing">
     <value>5, 204</value>

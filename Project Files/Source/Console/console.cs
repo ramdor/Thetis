@@ -21178,8 +21178,28 @@ namespace Thetis
             //adjust s-att offset
             handleOverload();
         }
+        private bool _auto_att_applied_rx1 = false;
+        private bool _auto_att_applied_rx2 = false;
+        private bool AutoAttAppliedRX1
+        {
+            get { return _auto_att_applied_rx1; }
+            set
+            {
+                _auto_att_applied_rx1 = value;
+                pbAutoAttWarningRX1.Visible = _auto_att_applied_rx1;
+            }
+        }
+        private bool AutoAttAppliedRX2
+        {
+            get { return _auto_att_applied_rx2; }
+            set
+            {
+                _auto_att_applied_rx2 = value;
+                pbAutoAttWarningRX2.Visible = _auto_att_applied_rx2;
+            }
+        }
         private void handleOverload()
-        {            
+        {
             for (int i = 0; i < 3; i++)
             {
                 if (_adc_overloaded[i])
@@ -21213,6 +21233,11 @@ namespace Thetis
                                 if (!ATTOnTX) ATTOnTX = true;
                                 TxAttenData = att;
                                 _historic_attenuator_readings_tx.Push(har);
+                                
+                                if(RX2Enabled && VFOBTX)
+                                    AutoAttAppliedRX2 = true;
+                                else
+                                    AutoAttAppliedRX1 = true;
                             }
                         }
                     }
@@ -21224,6 +21249,11 @@ namespace Thetis
                         {
                             TxAttenData = har.stepAttenuator;
                         }
+
+                        if (RX2Enabled && VFOBTX)
+                            AutoAttAppliedRX2 = _historic_attenuator_readings_tx.Any();
+                        else
+                            AutoAttAppliedRX1 = _historic_attenuator_readings_tx.Any();
                     }
                 }
                 else
@@ -21265,6 +21295,8 @@ namespace Thetis
                                 RX1AttenuatorData = att;
                                 _auto_att_last_hold_time_rx1 = now;
                                 _historic_attenuator_readings_rx1.Push(har);
+
+                                AutoAttAppliedRX1 = true;
                             }
                         }
                         else
@@ -21290,8 +21322,10 @@ namespace Thetis
                                 RX1PreampMode = pam;
                                 _auto_att_last_hold_time_rx1 = now;
                                 _historic_attenuator_readings_rx1.Push(har);
+
+                                AutoAttAppliedRX1 = true;
                             }
-                        }
+                        }                        
                     }
                     else if ((nRX1ADCinUse == 0 || nRX1ADCinUse == 1) && _historic_attenuator_readings_rx1.Any()) // no overload rx1
                     {
@@ -21311,7 +21345,9 @@ namespace Thetis
                                 }                                
                             }
                             _auto_att_last_hold_time_rx1 = now;
-                        }
+
+                            AutoAttAppliedRX1 = _historic_attenuator_readings_rx1.Any();
+                        }                        
                     }
                 }
 
@@ -21339,6 +21375,8 @@ namespace Thetis
                                 RX2AttenuatorData = att;
                                 _auto_att_last_hold_time_rx2 = now;
                                 _historic_attenuator_readings_rx2.Push(har);
+
+                                AutoAttAppliedRX2 = true;
                             }
                         }
                         else
@@ -21364,8 +21402,11 @@ namespace Thetis
                                 RX2PreampMode = pam;
                                _auto_att_last_hold_time_rx2 = now;
                                 _historic_attenuator_readings_rx2.Push(har);
+
+                                AutoAttAppliedRX2 = true;
                             }
                         }
+                        AutoAttAppliedRX2 = _historic_attenuator_readings_rx2.Any();
                     }
                     else if ((nRX2ADCinUse == 0 || nRX2ADCinUse == 1) && _historic_attenuator_readings_rx2.Any()) // no overload rx2
                     {
@@ -21385,8 +21426,10 @@ namespace Thetis
                                 }                                
                             }
                             _auto_att_last_hold_time_rx2 = now;
+
+                            AutoAttAppliedRX2 = _historic_attenuator_readings_rx2.Any();
                         }
-                    }
+                    }                    
                 }
             }            
         }
@@ -50390,11 +50433,39 @@ namespace Thetis
         public void UpdateMinimumNotchWidthTX()
         {
             //int chan = WDSP.id(1, 0);
-            double min_notch_width = 100;// 0;
             //unsafe
             //{
             //    WDSP.RXANBPGetMinNotchWidth(chan, &min_notch_width);
             //}
+
+            //basd on info from Warren
+            //'nc' is the filter size
+            //switch (a->wintype)
+            //{
+            //    case 0:
+            //        min_width = 1600.0 / (a->nc / 256) * (a->rate / 48000);
+            //        break;
+            //    case 1:
+            //        min_width = 2200.0 / (a->nc / 256) * (a->rate / 48000);
+            //        break;
+            //}
+
+            double min_notch_width;
+            int sample_rate = radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM ? 192000 : 96000;
+
+            switch (radio.GetDSPTX(0).TXBandpassWindow)
+            {
+                case 0:
+                    min_notch_width = 1600.0 / (radio.GetDSPTX(0).FilterSize / 256) * (sample_rate / 48000);
+                    break;
+                case 1:
+                    min_notch_width = 2200.0 / (radio.GetDSPTX(0).FilterSize / 256) * (sample_rate / 48000);
+                    break;
+                default:
+                    min_notch_width = 100;
+                    break;
+            }
+
             MinimumTXNotchWidthChangedHandlers?.Invoke(min_notch_width);
         }
 
