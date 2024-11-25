@@ -529,7 +529,11 @@ namespace Thetis
 
         private bool _check_error_log = true;
         private long _error_log_initial_size = -1;
-
+        private bool _touch_support = false;
+        public bool TouchSupport
+        {
+            get { return _touch_support; }
+        }
         public CWX CWXForm
         {
             // implemented so that the creation of the form happens in a single place
@@ -648,7 +652,6 @@ namespace Thetis
 #if(DEBUG)
             app_data_path += "Debug\\";
 #endif
-
             AppDataPath = app_data_path;
             //AppDataPath has been set at this point
 
@@ -660,6 +663,9 @@ namespace Thetis
 
             if (!Directory.Exists(AppDataPath))
                 Directory.CreateDirectory(AppDataPath);
+
+            // configure touch support for mouse down/up/move, used primarily by containers, and ucMeter
+            _touch_support = Common.HasArg(args, "-touch");
 
             Splash.ShowSplashScreen(Common.GetVerNum(true, true));							// Start splash screen with version number
 
@@ -1198,6 +1204,7 @@ namespace Thetis
                 s += "  -cmasioconfig      show the cmASIO setup tab in audio setup\n";
                 s += "  -noinstancewarn    do not warn if other instances are running\n";
                 s += "  -nospec            do not use additional spectrum analysers from WDSP for filter item display\n";
+                s += "  -touch             provide touch support for containers to simulate mouse down/move/up\n";
                 s += "  -logshutdown       generate shutdown_log.txt when closing down\n\n";
 
                 s += "  -datapath:c:\\thetisdatafolder\\                  use this data folder for everything\n";
@@ -5355,13 +5362,13 @@ namespace Thetis
         public int last_MHZ = 0; // ke9ns 
         public DSPMode last_MODE = DSPMode.LAST;
 
-        private void ChangeTuneStepUp()
+        public void ChangeTuneStepUp()
         {
             //MW0LGE_21j
             TuneStepIndex = (tune_step_index + 1) % tune_step_list.Count;
         }
 
-        private void ChangeTuneStepDown()
+        public void ChangeTuneStepDown()
         {
             //MW0LGE_21j
             TuneStepIndex = (tune_step_index - 1 + tune_step_list.Count) % tune_step_list.Count;
@@ -42190,22 +42197,30 @@ namespace Thetis
 
         private void btnTNFAdd_Click(object sender, EventArgs e)
         {
-            TNFAdd();
+            TNFAdd(1);
         }
-        public void TNFAdd()
+        public void TNFAdd(int rx)
         {
             if (SetupForm.NotchAdminBusy) return; // dont add if using add/edit on the setup form
 
-            double vfoHz = VFOAFreq * 1.0e6;
-            if (RITOn) vfoHz += (double)RITValue * 1e-6; // check for RIT
+            double vfoHz;
+            if (rx == 1)
+            {
+                vfoHz = VFOAFreq * 1.0e6;
+                if (RITOn) vfoHz += (double)RITValue * 1e-6; // check for RIT
+            }
+            else
+            {
+                vfoHz = VFOBFreq * 1.0e6;
+            }
 
             // shift into sideband
-            vfoHz += notchSidebandShift(1); //MW0LGE_21k9rc4
+            vfoHz += notchSidebandShift(rx); //MW0LGE_21k9rc4
 
             // shift it by cwpitch if needed  //[2.10.3.7]MW0LGE moved to AddNotch
             //vfoHz += GetDSPcwPitchShiftToZero(1);
 
-            AddNotch(vfoHz, 1);
+            AddNotch(vfoHz, rx);
         }
         private void ptbFMMic_Scroll(object sender, EventArgs e)
         {

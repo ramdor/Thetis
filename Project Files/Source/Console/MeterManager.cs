@@ -203,6 +203,7 @@ namespace Thetis
         TUNESTEP_BUTTONS,
         DISCORD_BUTTONS,
         FILTER_DISPLAY,
+        DIAL_DISPLAY,
         //SPECTRUM,
         LAST
     }
@@ -1725,6 +1726,7 @@ namespace Thetis
                 case MeterType.TUNESTEP_BUTTONS: return 2;
                 case MeterType.DISCORD_BUTTONS: return 2;
                 case MeterType.FILTER_DISPLAY: return 2;
+                case MeterType.DIAL_DISPLAY: return 2;
                     //case MeterType.SPECTRUM: return 2;
             }
 
@@ -1774,6 +1776,7 @@ namespace Thetis
                 case MeterType.HISTORY: return "History Graph";
                 case MeterType.TUNESTEP_BUTTONS: return "Tunestep Buttons";
                 case MeterType.FILTER_DISPLAY: return "Filter Display";
+                case MeterType.DIAL_DISPLAY: return "Dial Display";
             }
 
             return meter.ToString();
@@ -3063,7 +3066,7 @@ namespace Thetis
         {
             lock (_metersLock)
             {
-                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)//.Where(o => o.Value.RX == rx))  // ignore for now as A/B locks apply to both rx
                 {
                     clsMeter m = ms.Value;
 
@@ -3075,7 +3078,7 @@ namespace Thetis
         {
             lock (_metersLock)
             {
-                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)//.Where(o => o.Value.RX == rx))  // ignore for now as A/B locks apply to both rx
                 {
                     clsMeter m = ms.Value;
 
@@ -4829,7 +4832,8 @@ namespace Thetis
                 ANTENNA_BUTTONS,
                 TUNESTEP_BUTTONS,
                 DISCORD_BUTTONS,
-                FILTER_DISPLAY
+                FILTER_DISPLAY,
+                DIAL_DISPLAY
                 //SPECTRUM
             }
 
@@ -10567,6 +10571,342 @@ namespace Thetis
                 return false;
             }
         }
+        internal class clsDialDisplay : clsMeterItem
+        {
+            private clsMeter _owningmeter;
+            
+            private System.Drawing.Color _colour;
+            private float _vscale;
+            private float _font_scale;
+            private float _degrees;
+            private bool _pressed;
+            private DateTime _previous_time;
+            private float _smoothed_speed;
+            private float _deg_turned;
+            private bool _vfoA;
+            private bool _vfoA_highlighted;
+            private bool _vfoB_highlighted;
+            private bool _accel_highlighted;
+            private bool _lock_highlighted;
+            private bool _accelerate;
+            private DateTime _last_accelerated;
+            private int _existing_step_index;
+            private int _direction; // -1 anti cw, 0, +1 cw
+            private int _old_direction;
+            private float _degrees_total;
+            private int _tune_step_direction;
+            private bool _ignore_next_vfo_update;
+            private bool _always_show_vfos;
+            public clsDialDisplay(clsMeter owning_meter)
+            {
+                _owningmeter = owning_meter;
+
+                _always_show_vfos = false;
+                _tune_step_direction = 0;
+                _accelerate = false;
+                _last_accelerated = DateTime.MinValue;
+                _existing_step_index = -1;
+                _vfoA = _owningmeter.RX == 1;
+                _previous_time = DateTime.MinValue;
+                _smoothed_speed = 0;
+                _deg_turned = 0;
+                _pressed = false;
+                _degrees = 0;
+                _colour = System.Drawing.Color.Black;
+                _vscale = 1f;
+                _font_scale = 1f;
+                _vfoA_highlighted = false;
+                _vfoB_highlighted = false;
+                _accel_highlighted = false;
+                _lock_highlighted = false;
+                _direction = 0;
+                _old_direction = 0;
+                _ignore_next_vfo_update = false;
+
+                ItemType = MeterItemType.DIAL_DISPLAY;
+                ReadingSource = Reading.NONE;
+                UpdateInterval = 1000 / 60;
+            }        
+            public int TuneStepDirection
+            {
+                get { return _tune_step_direction; }
+            }
+            public bool VFOAHighlighted
+            {
+                get { return _vfoA_highlighted; }
+                set { _vfoA_highlighted = value; }
+            }
+            public bool VFOBHighlighted
+            {
+                get { return _vfoB_highlighted; }
+                set { _vfoB_highlighted = value; }
+            }
+            public bool AccelerateHighlighted
+            {
+                get { return _accel_highlighted; }
+                set { _accel_highlighted = value; }
+            }
+            public bool LockHighlighted
+            {
+                get { return _lock_highlighted; }
+                set { _lock_highlighted = value; }
+            }
+            public System.Drawing.Color Colour
+            {
+                get { return _colour; }
+                set { _colour = value; }
+            }
+            public float VScale
+            {
+                get { return _vscale; }
+                set { _vscale = value; }
+            }
+            public float FontScale
+            {
+                get { return _font_scale; }
+                set { _font_scale = value; }
+            }
+            public bool AlwaysShowVFOs
+            {
+                get { return _always_show_vfos; }
+                set { _always_show_vfos = value; }
+            }
+            public float Degrees
+            {
+                get { return _degrees; }
+                set
+                {
+                    if (Lock) return;
+                    if (_degrees == value) return;
+
+                    float deg_diff = value - _degrees;
+                    if (deg_diff < -180f) deg_diff += 360f;
+                    if (deg_diff > 180f) deg_diff -= 360f;
+
+                    _degrees = value;
+
+                    if (_ignore_next_vfo_update)
+                    {
+                        _ignore_next_vfo_update = false;
+                        return;
+                    }
+
+                    deg_diff = -deg_diff; //-ve so that +ve clockwise
+                    _deg_turned += deg_diff;
+
+                    _degrees_total += Math.Abs(deg_diff);
+
+                    _old_direction = _direction;
+                    if (deg_diff == 0)
+                        _direction = 0;
+                    else if (deg_diff > 0)
+                        _direction = 1;
+                    else
+                        _direction = -1;
+
+                    if (Math.Abs(_deg_turned) >= 1)
+                    {
+                        int steps = (int)_deg_turned;
+
+                        _deg_turned -= steps;
+
+                        if (_console != null)
+                        {
+                            _console.BeginInvoke(new MethodInvoker(() =>
+                            {
+                                if (VFOA)
+                                {
+                                    _console.VFOAFreq += (steps * _console.CurrentTuneStepHz) * 1e-6;
+                                }
+                                else
+                                {
+                                    _console.VFOBFreq += (steps * _console.CurrentTuneStepHz) * 1e-6;
+                                }
+                            }));
+                        }
+
+                        // accelerate
+                        if (_accelerate)
+                        {
+                            float speed = Math.Abs(_smoothed_speed);
+                            if (speed >= 540)
+                            {
+                                if ((DateTime.UtcNow - _last_accelerated).TotalSeconds >= 1)
+                                {
+                                    _console.BeginInvoke(new MethodInvoker(() =>
+                                    {
+                                        _console.ChangeTuneStepUp();
+                                    }));
+                                    _last_accelerated = DateTime.UtcNow;
+                                }
+                                _tune_step_direction = 1;
+                            }
+                            else if (speed <= 270)
+                            {
+                                if (_existing_step_index != -1 && _existing_step_index < _owningmeter.TuneStepIndex)
+                                {
+                                    if ((DateTime.UtcNow - _last_accelerated).TotalSeconds >= 1)
+                                    {
+                                        _console.BeginInvoke(new MethodInvoker(() =>
+                                        {
+                                            _console.ChangeTuneStepDown();
+                                        }));
+                                        _last_accelerated = DateTime.UtcNow;
+                                    }
+                                }
+                                _tune_step_direction = -1;
+                            }
+                            else
+                            {
+                                _tune_step_direction = 0;
+                            }
+                        }
+                    }
+                }
+            }
+            public bool VFOA
+            {
+                get
+                {
+                    if (_always_show_vfos)
+                    {
+                        return _vfoA;
+                    }
+                    else
+                    {
+                        if (_owningmeter.RX == 1)
+                        {
+                            if (_owningmeter.RX2Enabled)
+                            {
+                                return true; // can not use vfoB on rx1 when rx2 enabled
+                            }
+                            {
+                                return _vfoA;
+                            }
+                        }
+                        else
+                        {
+                            return false; // always vfoB on rx2
+                        }
+                    }                   
+                }
+                set
+                {
+                    if (_always_show_vfos)
+                    {
+                        _vfoA = value;
+                    }
+                    else
+                    {
+                        if (_owningmeter.RX == 2)
+                            _vfoA = false;
+                        else
+                            _vfoA = value;
+                    }
+                }
+            }
+
+            public bool Pressed
+            {
+                get { return _pressed; }
+                set 
+                {
+                    if (_pressed != value)
+                    {
+                        _pressed = value;
+                        _smoothed_speed = 0;
+                        _deg_turned = 0;
+                        _degrees_total = 0;
+                        _ignore_next_vfo_update = true;
+
+                        if (_pressed)
+                        {
+                            _existing_step_index = _owningmeter.TuneStepIndex;                            
+                        }
+                        else
+                        {
+                            undoTuneStep();
+                        }
+                    }
+                }
+            }
+            private void undoTuneStep()
+            {
+                if (_existing_step_index != -1)
+                {
+                    int step = _existing_step_index;
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.TuneStepIndex = step;
+                    }));
+                    _degrees_total = 0;
+                    _existing_step_index = -1;
+                    _last_accelerated = DateTime.MinValue;
+                }
+            }
+            public float SmoothedSpeed
+            {
+                get { return _smoothed_speed; }
+            }
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
+            {
+                DateTime current_time = DateTime.UtcNow;
+                TimeSpan elapsed_time = current_time - _previous_time;
+
+                if (_pressed && elapsed_time.TotalMilliseconds > 50)
+                {
+                    float degrees_per_second = _degrees_total / (float)(elapsed_time.TotalMilliseconds / 1000);
+                    _smoothed_speed = (_smoothed_speed * 0.95f) + (degrees_per_second * 0.05f);
+
+                    _degrees_total = 0;
+                    _previous_time = current_time;
+                }
+            }
+            public float DegreesTotal
+            {
+                get { return _degrees_total; }
+            }
+            public override void MouseUp(MouseEventArgs e)
+            {
+                if (!_pressed)
+                {
+                    if (_vfoA_highlighted) VFOA = true;
+                    if (_vfoB_highlighted) VFOA = false;
+                    if (_accel_highlighted) _accelerate = !_accelerate;
+                    if (_lock_highlighted)
+                    {
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            if (VFOA)
+                            {
+                                _console.VFOALock = !_console.VFOALock;
+                            }
+                            else
+                            {
+                                _console.VFOBLock = !_console.VFOBLock;
+                            }
+                        }));
+                    }
+                }
+            }
+            public override void MouseWheel(int number_of_moves)
+            {
+                if (!_pressed)
+                {
+                    int sign = Math.Sign(number_of_moves);
+                    Degrees += 1 * sign;
+                }
+            }
+            public bool Accelerate
+            {
+                get { return _accelerate; }
+                set { _accelerate = value; }
+            }
+            public bool Lock
+            {
+                get { return (VFOA && _owningmeter.VFOALock) || (!VFOA && _owningmeter.VFOBLock); }
+            }
+        }
         internal class clsMagicEyeItem : clsMeterItem
         {
             private List<float> _history;
@@ -10599,7 +10939,7 @@ namespace Thetis
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
                 StoreSettings = false;
-            }           
+            }
             public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
             {
                 // get latest reading
@@ -12352,7 +12692,7 @@ namespace Thetis
                 {
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
-                        _console.TNFAdd();
+                        _console.TNFAdd(_owningmeter.RX);
                     }));
                 }
                 else if (_snap_selected && !_auto_zoom)
@@ -15864,6 +16204,7 @@ namespace Thetis
                     case MeterType.TUNESTEP_BUTTONS: ret = Reading.NONE.ToString(); break;
                     case MeterType.DISCORD_BUTTONS: ret = Reading.NONE.ToString(); break;
                     case MeterType.FILTER_DISPLAY: ret = Reading.NONE.ToString(); break;
+                    case MeterType.DIAL_DISPLAY: ret = Reading.NONE.ToString(); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg).ToString(); break; break.ToString(); break;
                 }
                 return ret;
@@ -15912,6 +16253,7 @@ namespace Thetis
                     case MeterType.TUNESTEP_BUTTONS: return 0;
                     case MeterType.DISCORD_BUTTONS: return 0;
                     case MeterType.FILTER_DISPLAY: return 0;
+                    case MeterType.DIAL_DISPLAY: return 0;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return 0;
@@ -15965,6 +16307,7 @@ namespace Thetis
                     case MeterType.TUNESTEP_BUTTONS: AddTunestepButtons(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.DISCORD_BUTTONS: AddDiscordButtons(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.FILTER_DISPLAY: AddFilterDisplay(nDelay, 0, out bBottom, 0.2f, restoreIg); break;
+                    case MeterType.DIAL_DISPLAY: AddDial(nDelay, 0, out bBottom, 1f, restoreIg); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
@@ -16615,6 +16958,34 @@ namespace Thetis
                 clsFadeCover fc = getFadeCover(ig.ID);
                 if (fc != null) addMeterItem(fc);
                 
+                addMeterItem(ig);
+
+                return me.ID;
+            }
+            public string AddDial(int nMSupdate, float fTop, out float fBottom, float fSize, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsDialDisplay me = new clsDialDisplay(this);
+                me.ParentID = ig.ID;
+                me.Primary = true;
+                me.TopLeft = new PointF(0.5f - (fSize / 2f), fTop + _fPadY - (_fHeight * 0.75f));
+                me.Size = new SizeF(fSize, fSize);
+                me.ZOrder = 2;
+                addMeterItem(me);
+
+                fBottom = me.TopLeft.Y + me.Size.Height;
+
+                ig.TopLeft = me.TopLeft;
+                ig.Size = new SizeF(me.Size.Width, fBottom);
+                ig.MeterType = MeterType.DIAL_DISPLAY;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
                 addMeterItem(ig);
 
                 return me.ID;
@@ -20269,6 +20640,57 @@ namespace Thetis
                                         }
                                     }
                                     break;
+                                case MeterType.DIAL_DISPLAY:
+                                    {
+                                        bRebuild = true; // always cause a rebuild
+
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+
+                                        float padding = 0f;
+
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.DIAL_DISPLAY))
+                                        {
+                                            clsDialDisplay dial = me.Value as clsDialDisplay;
+                                            if (dial == null) continue;
+
+                                            dial.Colour = igs.Colour;
+                                            dial.VScale = igs.GetSetting<float>("dialdisplay_vertical_ratio", true, 0.01f, 1f, 1f);
+                                            dial.FontScale = igs.GetSetting<float>("dialdisplay_font_scale", true, 0.01f, 4f, 1f);
+                                            dial.Accelerate = igs.GetSetting<bool>("dialdisplay_accelerate", false, false, false, false);
+                                            dial.VFOA = igs.GetSetting<bool>("dialdisplay_vfoa", false, false, false, true);
+                                            dial.AlwaysShowVFOs = igs.GetSetting<bool>("dialdisplay_alwaysshow_vfos", false, false, false, false);
+
+                                            dial.TopLeft = new PointF(0.5f - (dial.VScale / 2f), _fPadY - (_fHeight * 0.75f));
+                                            dial.Size = new SizeF(dial.VScale, dial.VScale);
+
+                                            padding += dial.VScale;
+                                        }
+                                        ig.Size = new SizeF(ig.Size.Width, padding + (_fPadY - (_fHeight * 0.75f)));
+
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue;
+
+                                            fc.FadeOnRx = igs.FadeOnRx;
+                                            fc.FadeOnTx = igs.FadeOnTx;
+                                        }
+
+                                        // recalc bounds for fade overlay cover as these will change as scale changes
+                                        System.Drawing.RectangleF dialBounds = getBounds(ig.ID);
+                                        if (!dialBounds.IsEmpty)
+                                        {
+                                            foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                            {
+                                                clsFadeCover fc = fcs.Value as clsFadeCover;
+                                                if (fc == null) continue;
+
+                                                fc.TopLeft = new PointF(0.5f - (padding / 2f), _fPadY - (_fHeight * 0.75f));
+                                                fc.Size = new SizeF(padding, padding); // square
+                                            }
+                                        }
+                                    }
+                                    break;
                                 case MeterType.MAGIC_EYE:
                                     {
                                         float fLargest = Math.Max(igs.EyeScale, igs.EyeBezelScale);
@@ -21218,6 +21640,31 @@ namespace Thetis
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_button_highlight_colour", fi.ButtonHighlightColour);
                                             igs.SetSetting<bool>("filterdisplay_characteristic", fi.ShowCharacteristic);
                                             igs.SetSetting<float>("filterdisplay_characteristic_low", fi.CharacteristicLow);
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue; // skip
+
+                                            igs.FadeOnRx = fc.FadeOnRx;
+                                            igs.FadeOnTx = fc.FadeOnTx;
+                                        }
+                                    }
+                                    break;
+                                case MeterType.DIAL_DISPLAY:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.DIAL_DISPLAY))
+                                        {
+                                            clsDialDisplay dial = me.Value as clsDialDisplay;
+                                            if (dial == null) continue; // skip the img
+
+                                            igs.Colour = dial.Colour;
+                                            igs.SetSetting<float>("dialdisplay_vertical_ratio", dial.VScale);
+                                            igs.SetSetting<float>("dialdisplay_font_scale", dial.FontScale);
+                                            igs.SetSetting<bool>("dialdisplay_accelerate", dial.Accelerate);
+                                            igs.SetSetting<bool>("dialdisplay_vfoa", dial.VFOA);
+                                            igs.SetSetting<bool>("dialdisplay_alwaysshow_vfos", dial.AlwaysShowVFOs);
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                         {
@@ -22238,7 +22685,8 @@ namespace Thetis
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.TUNESTEP_BUTTONS ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.DISCORD_BUTTONS ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_DISPLAY
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_DISPLAY ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.DIAL_DISPLAY
                                                                 ) && ( ((mox && o.Value.OnlyWhenTX) || (!mox && o.Value.OnlyWhenRX)) || (!o.Value.OnlyWhenTX && !o.Value.OnlyWhenRX) ) ))
                     {
                         clsMeterItem mi = kvp.Value;
@@ -22587,6 +23035,8 @@ namespace Thetis
             private StrokeStyle _rounded_stroke_style;
             private StrokeStyle _dash_style;
 
+            private Guid _touch_guid;
+
             public DXRenderer(string sId, int rx, PictureBox target, Console c, clsMeter meter)
             {
                 if (c == null || target == null) return;
@@ -22603,6 +23053,11 @@ namespace Thetis
                 _meter = meter;
                 _highlightEdge = false;
                 _enabled = meter.Enabled;
+
+                if (_console.TouchSupport)
+                    _touch_guid = TouchHandler.EnableTouchSupport(target, HandleTouchDown, HandleTouchMove, HandleTouchUp, TouchHandler.TOUCHEVENTF_DOWN | TouchHandler.TOUCHEVENTF_MOVE | TouchHandler.TOUCHEVENTF_UP, _sId);
+                else
+                    _touch_guid = Guid.Empty;
 
                 //dx
                 _filter_display_waterfall_bmp = null;
@@ -22649,8 +23104,26 @@ namespace Thetis
                 _displayTarget.VisibleChanged += target_VisibleChanged;
                 _displayTarget.MouseLeave += OnMouseLeave;
                 _displayTarget.MouseEnter += OnMouseEnter;
+                _displayTarget.MouseCaptureChanged += OnMouseCaptureChanged;
                 //_displayTarget.Click += OnClick;
                 _displayTarget.MouseClick += OnMouseClick;                
+            }
+            private void HandleTouchDown(int x, int y)
+            {
+                //delta of min value to signifiy this is a touch to the event handler
+                OnMouseEnter(_displayTarget, EventArgs.Empty);
+                OnMouseDown(_displayTarget, new MouseEventArgs(MouseButtons.Left, 0, x, y, int.MinValue));
+            }
+            private void HandleTouchUp(int x, int y)
+            {
+                //delta of min value to signifiy this is a touch to the event handler
+                OnMouseUp(_displayTarget, new MouseEventArgs(MouseButtons.Left, 0, x, y, int.MinValue));
+                OnMouseLeave(_displayTarget, EventArgs.Empty);
+            }
+            private void HandleTouchMove(int x, int y)
+            {
+                //delta of min value to signifiy this is a touch to the event handler
+                OnMouseMove(_displayTarget, new MouseEventArgs(MouseButtons.None, 0, x, y, int.MinValue));
             }
             public bool SetVsync
             {
@@ -23009,6 +23482,11 @@ namespace Thetis
             }
             public void ShutdownDX(bool bFromRenderThread = false)
             {
+                if (_touch_guid != Guid.Empty)
+                {
+                    TouchHandler.DisableTouchSupport(_touch_guid);
+                }
+
                 if (_displayTarget != null)
                 {
                     _displayTarget.Resize -= target_Resize;
@@ -23018,6 +23496,7 @@ namespace Thetis
                     _displayTarget.MouseMove -= OnMouseMove;
                     _displayTarget.MouseLeave -= OnMouseLeave;
                     _displayTarget.MouseEnter -= OnMouseEnter;
+                    _displayTarget.MouseCaptureChanged -= OnMouseCaptureChanged;
                     _displayTarget.VisibleChanged -= target_VisibleChanged;
                     //_displayTarget.Click -= OnClick;
                     _displayTarget.MouseClick -= OnMouseClick;
@@ -23537,6 +24016,27 @@ namespace Thetis
                     }
                 }
             }
+            private void OnMouseCaptureChanged(object sender, System.EventArgs e)
+            {
+                PictureBox pb = sender as PictureBox;
+                if (pb == null) return;
+                string sId = pb.Tag.ToString();
+                if (!_meters.ContainsKey(sId)) return;
+
+                clsMeter m = _meters[sId];
+
+                lock (m._meterItemsLock)
+                {
+                    if (m.SortedMeterItemsForZOrder != null)
+                    {
+                        foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
+                        {
+                            mi.MouseEntered = false;
+                            mi.MouseMovePoint = new PointF(float.MinValue, float.MinValue);
+                        }
+                    }
+                }
+            }
             private void OnMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
             {
                 lock (_metersLock)
@@ -23691,10 +24191,6 @@ namespace Thetis
                     }
                 }
             }
-            //private void OnClick(object sender, System.EventArgs e)
-            //{
-                
-            //}
             private void OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
             {
                 lock (_metersLock)
@@ -23952,6 +24448,9 @@ namespace Thetis
                                         break;
                                     case clsMeterItem.MeterItemType.FILTER_DISPLAY:
                                         renderFilterDisplay(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.DIAL_DISPLAY:
+                                        renderDialDisplay(rect, mi, m);
                                         break;
                                 }
                             }
@@ -26048,6 +26547,189 @@ namespace Thetis
                 }
 
                 return (row_rx, row_tx);
+            }
+            private void renderDialDisplay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsDialDisplay dial = (clsDialDisplay)mi;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
+                _renderTarget.FillRectangle(rectSC, getDXBrushForColour(dial.Colour, mi.FadeValue));
+
+                SharpDX.Direct2D1.Brush main_circle_brush = getDXBrushForColour(System.Drawing.Color.Black);
+                SharpDX.Direct2D1.Brush main_ring_brush = getDXBrushForColour(System.Drawing.Color.Gray);
+                SharpDX.Direct2D1.Brush marker_brush = getDXBrushForColour(System.Drawing.Color.Blue);
+                SharpDX.Direct2D1.Brush marker_pressed_brush = getDXBrushForColour(System.Drawing.Color.Orange);                
+                SharpDX.Direct2D1.Brush button_border = getDXBrushForColour(System.Drawing.Color.White);
+                SharpDX.Direct2D1.Brush button_on = getDXBrushForColour(System.Drawing.Color.CornflowerBlue);
+                SharpDX.Direct2D1.Brush button_off = getDXBrushForColour(System.Drawing.Color.Black);
+                SharpDX.Direct2D1.Brush button_highlight = getDXBrushForColour(System.Drawing.Color.Gray);
+
+                SharpDX.Direct2D1.Brush marker_speed_brush_down = getDXBrushForColour(System.Drawing.Color.Blue);
+                SharpDX.Direct2D1.Brush marker_speed_brush = getDXBrushForColour(System.Drawing.Color.Green);
+                SharpDX.Direct2D1.Brush marker_speed_brush_up = getDXBrushForColour(System.Drawing.Color.Red);
+
+
+                bool hightlight0 = false;
+                bool hightlight1 = false;
+                bool hightlight2 = false;
+                bool hightlight3 = false;
+                float mouse_raw_x = -1;
+                float mouse_raw_y = -1;
+                float distance_from_centre = -1;
+
+                System.Drawing.RectangleF zone0 = new System.Drawing.RectangleF(x, y, w / 2, h / 2);
+                System.Drawing.RectangleF zone1 = new System.Drawing.RectangleF(x + (w / 2), y, w / 2, h / 2);
+                System.Drawing.RectangleF zone2 = new System.Drawing.RectangleF(x, y + (h / 2), w / 2, h / 2);
+                System.Drawing.RectangleF zone3 = new System.Drawing.RectangleF(x + (w / 2), y + (h / 2), w / 2, h / 2);
+                RawVector2 centre = new RawVector2(x + (w / 2f), y + (h / 2f));
+
+                if (dial.MouseEntered)
+                {
+                    distance_from_centre = (dial.MouseMovePoint.X - centre.X) * (dial.MouseMovePoint.X - centre.X) +
+                         (dial.MouseMovePoint.Y - centre.Y) * (dial.MouseMovePoint.Y - centre.Y);
+
+                    bool outside_main_circle = distance_from_centre > ((w / 2f) * (w / 2f));
+
+                    //corner buttons
+                    //quadrant,     0 1
+                    //              2 3
+                    mouse_raw_x = dial.MouseMovePoint.X;
+                    mouse_raw_y = dial.MouseMovePoint.Y;
+                    hightlight0 = (m.RX == 1 || dial.AlwaysShowVFOs) && !dial.Pressed && outside_main_circle && zone0.Contains(mouse_raw_x, mouse_raw_y); // vfoa // no vfoa on rx2
+                    hightlight1 = ((m.RX == 1 && !m.RX2Enabled) || m.RX == 2 || dial.AlwaysShowVFOs) && !dial.Pressed && outside_main_circle && zone1.Contains(mouse_raw_x, mouse_raw_y); // vfob
+                    hightlight2 = !dial.Pressed && outside_main_circle && zone2.Contains(mouse_raw_x, mouse_raw_y); // accel
+                    hightlight3 = !dial.Pressed && outside_main_circle && zone3.Contains(mouse_raw_x, mouse_raw_y); // lock
+                }
+
+                _renderTarget.FillRectangle(new SharpDX.RectangleF(zone0.X, zone0.Y, zone0.Width, zone0.Height), dial.VFOA ? button_on : (hightlight0 ? button_highlight : button_off) );
+                _renderTarget.FillRectangle(new SharpDX.RectangleF(zone1.X, zone1.Y, zone1.Width, zone1.Height), !dial.VFOA ? button_on : (hightlight1 ? button_highlight : button_off));
+                _renderTarget.FillRectangle(new SharpDX.RectangleF(zone2.X, zone2.Y, zone2.Width, zone2.Height), dial.Accelerate ? button_on : (hightlight2 ? button_highlight : button_off));
+                _renderTarget.FillRectangle(new SharpDX.RectangleF(zone3.X, zone3.Y, zone3.Width, zone3.Height), dial.Lock ? button_on : (hightlight3 ? button_highlight : button_off));
+
+                dial.VFOAHighlighted = hightlight0 && !hightlight1;
+                dial.VFOBHighlighted = hightlight1 && !hightlight0;
+                dial.AccelerateHighlighted = hightlight2;
+                dial.LockHighlighted = hightlight3;
+
+                //large circle                
+                Ellipse elipse = new Ellipse(centre, w / 2f, w / 2f);
+                _renderTarget.FillEllipse(elipse, main_circle_brush);
+
+                float ring_radius = (w * 0.65f) / 2f;
+                elipse.RadiusX = ring_radius;
+                elipse.RadiusY = ring_radius;
+
+                //acceleration colour
+                if (dial.Accelerate)
+                {
+                    if (dial.Pressed && Math.Abs(dial.SmoothedSpeed) >= 0.1f)
+                    {
+                        SharpDX.Direct2D1.Brush speed_brush;
+                        switch (dial.TuneStepDirection)
+                        {
+                            case -1:
+                                speed_brush = marker_speed_brush_down;
+                                break;
+                            case 1:
+                                speed_brush = marker_speed_brush_up;
+                                break;
+                            default:
+                                speed_brush = marker_speed_brush;
+                                break;
+                        }
+                        _renderTarget.DrawEllipse(elipse, speed_brush, (w * 0.025f));
+                    }
+                }
+                //dotted ring
+                _renderTarget.DrawEllipse(elipse, main_ring_brush, (w * 0.005f), _dash_style);
+
+                float mouse_x = (dial.MouseMovePoint.X - x) / w;
+                float mouse_y = (dial.MouseMovePoint.Y - y) / h;
+
+                float marker_radius = w * 0.125f;
+                if (dial.MouseButtonDown)
+                {                    
+                    float rad = dial.Degrees * (float)Math.PI / 180f;
+                    float marker_x = centre.X + (float)Math.Cos(rad) * ring_radius;
+                    float marker_y = centre.Y - (float)Math.Sin(rad) * ring_radius;
+
+                    float distance_squared = (dial.MouseMovePoint.X - marker_x) * (dial.MouseMovePoint.X - marker_x) +
+                        (dial.MouseMovePoint.Y - marker_y) * (dial.MouseMovePoint.Y - marker_y);
+
+                    if (!dial.Pressed)
+                    {
+                        dial.Pressed = distance_squared <= marker_radius * marker_radius;
+                    }
+
+                    if (dial.Pressed)
+                    {
+                        //if (distance_squared > ((marker_radius * marker_radius) * 6f))
+                        //{
+                        //    // if we move to far away after pressed
+                        //    dial.Pressed = false;
+                        //}
+                        //else
+                        //{
+                            float relative_x = (mouse_x - 0.5f) * 2f;
+                            float relative_y = (0.5f - mouse_y) * 2f;
+                            float degrees = (float)Math.Atan2(relative_y, relative_x) * 180f / (float)Math.PI;
+                            if (degrees < 0) degrees += 360f;
+
+                            dial.Degrees = degrees;
+                        //}
+                    }
+                }
+                else
+                {
+                    dial.Pressed = false;
+                }
+
+                //button text
+                float font_size_scaled = 38f * dial.FontScale;
+                float fontSizeEmScaled = (font_size_scaled / 16f) * (rect.Width / 52f);
+                SizeF sz = measureString("VFOA", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled);
+                sz.Width += w * 0.05f;
+                sz.Height += w * 0.025f;
+                if (m.RX == 1 || dial.AlwaysShowVFOs) plotText(" VFOA ", x, y, rect.Width, font_size_scaled, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular); // no vfoa on rx2
+                if ((m.RX == 1 && !m.RX2Enabled) || m.RX == 2 || dial.AlwaysShowVFOs) plotText("VFOB " + "\u200B", x + w, y, rect.Width, font_size_scaled, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular, true);
+                plotText(" LOCK " + "\u200B", x + w, y + h - sz.Height, rect.Width, font_size_scaled, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular, true);
+                plotText(" ACCEL ", x, y + h - sz.Height, rect.Width, font_size_scaled, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular);
+
+                //marker circle
+                float radians = dial.Degrees * (float)Math.PI / 180f;
+                elipse.Point.X = centre.X + (float)Math.Cos(radians) * ring_radius;
+                elipse.Point.Y = centre.Y - (float)Math.Sin(radians) * ring_radius;
+                elipse.RadiusX = marker_radius;
+                elipse.RadiusY = marker_radius;
+                _renderTarget.FillEllipse(elipse, dial.Pressed ? marker_pressed_brush : marker_brush);
+
+                //contrain mouse
+                //if (dial.Pressed)
+                //{
+                //    System.Drawing.PointF mousePosition = new System.Drawing.PointF(dial.MouseMovePoint.X, dial.MouseMovePoint.Y);
+
+                //    float dx = mousePosition.X - elipse.Point.X;
+                //    float dy = mousePosition.Y - elipse.Point.Y;
+                //    float squaredDistance = dx * dx + dy * dy;
+                //    float squaredRadius = elipse.RadiusX * elipse.RadiusX;
+
+                //    if (squaredDistance > squaredRadius)
+                //    {
+                //        double angle = Math.Atan2(dy, dx);
+                //        int restrictedX = (int)(elipse.Point.X + Math.Cos(angle) * elipse.RadiusX);
+                //        int restrictedY = (int)(elipse.Point.Y + Math.Sin(angle) * elipse.RadiusX);
+                //        Cursor.Position = _displayTarget.PointToScreen(new System.Drawing.Point(restrictedX, restrictedY));
+                //    }
+                //}
+
+                //plotText(dial.SmoothedSpeed.ToString("f0"), 0, 0 + 30, rect.Width, 36f, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular);
+                //plotText(dial.DegreesTotal.ToString("f0"), 0, 0 + 60, rect.Width, 36f, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular);
+                //plotText($"{mouse_x.ToString("f2")},{mouse_y.ToString("f2")},{distance_from_centre.ToString("f2")}", 0, x + h / 2f, rect.Width, 36f, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular);
             }
             private void renderFilterDisplay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
@@ -29039,14 +29721,14 @@ namespace Thetis
 
                 return shrunkRectangle;
             }
-            private void drawRoundedRectangle(RoundedRectangle rr, SharpDX.Direct2D1.Brush b, float stroke)
+            private void drawRoundedRectangle(RoundedRectangle rr, SharpDX.Direct2D1.Brush b, float stroke, bool centred = false)
             {
                 if(rr.RadiusX>0 || rr.RadiusY>0)
                     _renderTarget.DrawRoundedRectangle(rr, b, stroke);
                 else
                     _renderTarget.DrawRectangle(rr.Rect, b, stroke);
             }
-            private void fillRoundedRectangle(RoundedRectangle rr, SharpDX.Direct2D1.Brush b)
+            private void fillRoundedRectangle(RoundedRectangle rr, SharpDX.Direct2D1.Brush b, bool centred = false)
             {
                 if (rr.RadiusX > 0 || rr.RadiusY > 0)
                     _renderTarget.FillRoundedRectangle(rr, b);
