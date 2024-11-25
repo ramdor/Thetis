@@ -812,15 +812,11 @@ namespace Thetis
             
             comboAudioSampleRate1.Items.Clear();
             comboAudioSampleRateRX2.Items.Clear();
-            {
-                if (!comboAudioSampleRate1.Items.Contains(384000))
-                    comboAudioSampleRate1.Items.Add(384000);
-            }
 
             bool include_extra_p1_rate = false;
             
             // The HL supports 384K
-            if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+            if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
                 include_extra_p1_rate = true;
 
             int[] p1_rates = include_extra_p1_rate ? new int[] { 48000, 96000, 192000, 384000 } : new int[] { 48000, 96000, 192000 };

@@ -746,13 +746,6 @@ namespace Thetis
 
             Splash.SetStatus("Initializing Database");          // Set progress point
 
-            //Uncomment for HL2 build
-            //bool dbid_exists = args.Any(arg => arg.IndexOf("-dbid", StringComparison.OrdinalIgnoreCase) >= 0);
-            //if (!dbid_exists)
-            //{
-            //    Array.Resize(ref args, args.Length + 1);
-            //    args[args.Length - 1] = "-dbid:HL2";
-            //}
             bool ok = DBMan.LoadDB(args, out string broken_folder);
             if (!ok)
             {
