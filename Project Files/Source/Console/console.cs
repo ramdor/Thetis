@@ -667,8 +667,8 @@ namespace Thetis
             if (!Directory.Exists(AppDataPath))
                 Directory.CreateDirectory(AppDataPath);
 
-            // configure touch support for mouse down/up/move, used primarily by containers, and ucMeter
-            _touch_support = Common.HasArg(args, "-touch");
+            _use_additional_sas = !Common.HasArg(args, "-nospec"); // prevent the use of additional spec analysers           
+            _touch_support = Common.HasArg(args, "-touch"); // configure touch support for mouse down/up/move, used primarily by containers, and ucMeter
 
             Splash.ShowSplashScreen(Common.GetVerNum(true, true));							// Start splash screen with version number
 
@@ -700,6 +700,8 @@ namespace Thetis
             Splash.SetStatus("Initializing Components");        // Set progress point
 
             InitializeComponent();								// Windows Forms Generated Code
+            Common.DoubleBufferAll(this, true);
+
             InitialiseAndromedaMenus();
 
             //
@@ -813,8 +815,7 @@ namespace Thetis
             Splash.SetStatus("Loading Settings");				// Set progress point
 
             TimeOutTimerManager.Initialise(this);
-
-            _use_additional_sas = !Common.HasArg(args, "-nospec"); // prevent the use of additional spec analysers
+            
             InitConsole();                                      // Initialize all forms and main variables  INIT_SLOW
 
             //[2.10.3.4]MW0LGE shutdown log remove
@@ -822,9 +823,7 @@ namespace Thetis
 
             addDelegates();
 
-            CWFWKeyer = true;
-
-            Common.DoubleBufferAll(this, true);
+            CWFWKeyer = true;            
 
             // update titlebar
             this.Text = BasicTitleBar;//TitleBar.GetString(); //MW0LGE_21b
@@ -913,6 +912,9 @@ namespace Thetis
             BandStackFilter bsf = BandStackManager.GetFilter(RX1Band, false);
             if (bsf != null)
             {
+                bool oldInit = initializing;
+                initializing = true; // needed so that setting of frequency is allowed even if vfo's locked
+
                 bsf.GenerateFilteredList(true);
                 bsf.SelectInitial(); // sets up the filter to obey the mode of operation, be it current, preset or last used
 
@@ -940,6 +942,8 @@ namespace Thetis
 
                 BandStack2Form.InitBandStackFilter(bsf);
                 updateStackNumberDisplay(bsf);
+
+                initializing = oldInit;
             }
 
             if (!IsSetupFormNull)
@@ -1007,8 +1011,7 @@ namespace Thetis
             //
 
             //autostart
-            bool bAutoStart = Common.HasArg(args, "-autostart") || m_bAutoPowerOn;
-            if (bAutoStart)
+            if (Common.HasArg(args, "-autostart") || m_bAutoPowerOn)
             {
                 autoStartTimer = new System.Timers.Timer(2000);
                 autoStartTimer.Elapsed += OnAutoStartTimerEvent;
@@ -4383,8 +4386,12 @@ namespace Thetis
             {
                 CentreRX2Frequency = dVFOBFreq;
             }
+
+            bool oldInit = initializing;
+            initializing = true; //[2.10.3.7]MW0LGE set to true so that a locked vfo will not prevent this from being applied
             VFOAFreq = dVFOAFreq;
             VFOBFreq = dVFOBFreq;
+            initializing = oldInit;
 
             if (bNeedUpdate)
             {
@@ -18259,7 +18266,7 @@ namespace Thetis
             }
             set
             {
-                if (vfoA_lock || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed the state check
+                if (!initializing && vfoA_lock || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed the state check //[2.10.3.7]MW0LGE always process if initialising
                 if (!this.InvokeRequired)
                 {
                     VFOAUpdate(value);
@@ -18319,7 +18326,7 @@ namespace Thetis
 
             set
             {
-                if (vfoA_lock || IsSetupFormNull) return; //[2.10.3.6]MW0LGE removed the state check
+                if (!initializing && vfoA_lock || IsSetupFormNull) return; //[2.10.3.6]MW0LGE removed the state check //[2.10.3.7]MW0LGE always process if initialising
                 if (!this.InvokeRequired)
                 {
                     VFOASubUpdate(value);
@@ -18341,7 +18348,7 @@ namespace Thetis
             }
             set
             {
-                if (vfoB_lock || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed state check
+                if (!initializing && (vfoB_lock || IsSetupFormNull)) return; //[2.10.3.5]MW0LGE removed state check //[2.10.3.7]MW0LGE always process if initialising
                 value = Math.Max(0, value);
                 if (!this.InvokeRequired)
                 {

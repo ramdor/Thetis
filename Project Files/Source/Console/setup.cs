@@ -25943,10 +25943,29 @@ namespace Thetis
             {
                 igs.FadeOnRx = chkDialDisplay_fade_rx.Checked;
                 igs.FadeOnTx = chkDialDisplay_fade_tx.Checked;
-                igs.Colour = clrbtnDialDisplay_background.Color;
+                //igs.Colour = clrbtnDialDisplay_background.Color;
+
                 igs.SetSetting<float>("dialdisplay_vertical_ratio", (float)nudDialDisplay_vertical_ratio.Value);
                 igs.SetSetting<float>("dialdisplay_font_scale", (float)nudDialDisplay_font_scale.Value);
                 igs.SetSetting<bool>("dialdisplay_alwaysshow_vfos", chkDialDisplay_alwaysshow_vfos.Checked);
+                igs.SetSetting<bool>("dialdisplay_align_with_tunestep", chkDial_align.Checked);
+
+                igs.SetSetting<int>("dialdisplay_increment", (int)nudDial_increment.Value);
+                igs.SetSetting<int>("dialdisplay_decrement", (int)nudDial_decrement.Value);
+                igs.SetSetting<int>("dialdisplay_interval", (int)nudDial_interval.Value);
+                igs.SetSetting<int>("dialdisplay_max_increments", (int)nudDial_max_increments.Value);
+
+                igs.SetSetting<System.Drawing.Color>("dialdisplay_text", clrbtnDial_text.Color);
+                igs.SetSetting<System.Drawing.Color>("dialdisplay_cirlce", clrbtnDial_circle.Color);
+                igs.SetSetting<System.Drawing.Color>("dialdisplay_pad", clrbtnDial_pad.Color);
+                igs.SetSetting<System.Drawing.Color>("dialdisplay_pad_pressed", clrbtnDial_pad_pressed.Color);
+                igs.SetSetting<System.Drawing.Color>("dialdisplay_button_on", clrbtnDial_button_on.Color);
+                igs.SetSetting<System.Drawing.Color>("dialdisplay_button_off", clrbtnDial_button_off.Color);
+                igs.SetSetting<System.Drawing.Color>("dialdisplay_button_highlight", clrbtnDial_button_highlight.Color);
+                igs.SetSetting<System.Drawing.Color>("dialdisplay_ring", clrbtnDial_ring.Color);
+                igs.SetSetting<System.Drawing.Color>("dialdisplay_slow", clrbtnDial_slow.Color);
+                igs.SetSetting<System.Drawing.Color>("dialdisplay_hold", clrbtnDial_hold.Color);
+                igs.SetSetting<System.Drawing.Color>("dialdisplay_fast", clrbtnDial_fast.Color);
             }
             else if (mt == MeterType.WEB_IMAGE)
             {
@@ -26499,10 +26518,28 @@ namespace Thetis
             {
                 chkDialDisplay_fade_rx.Checked = igs.FadeOnRx;
                 chkDialDisplay_fade_tx.Checked = igs.FadeOnTx;
-                clrbtnDialDisplay_background.Color = igs.Colour;
+                //clrbtnDialDisplay_background.Color = igs.Colour;
                 nudDialDisplay_vertical_ratio.Value = (decimal)igs.GetSetting<float>("dialdisplay_vertical_ratio", true, 0.01f, 1f, 1f);
-                nudDialDisplay_font_scale.Value = (decimal)igs.GetSetting<float>("dialdisplay_font_scale", true, 0.01f, 4f, 1f);
+                nudDialDisplay_font_scale.Value = (decimal)igs.GetSetting<float>("dialdisplay_font_scale", true, 0.01f, 1.1f, 1f);
                 chkDialDisplay_alwaysshow_vfos.Checked = igs.GetSetting<bool>("dialdisplay_alwaysshow_vfos", false, false, false, false);
+                chkDial_align.Checked = igs.GetSetting<bool>("dialdisplay_align_with_tunestep", false, false, false, true);
+
+                nudDial_increment.Value = (decimal)igs.GetSetting<int>("dialdisplay_increment", true, 90, 720, 540);
+                nudDial_decrement.Value = (decimal)igs.GetSetting<int>("dialdisplay_decrement", true, 90, 720, 360);
+                nudDial_interval.Value = (decimal)igs.GetSetting<int>("dialdisplay_interval", true, 1, 10, 2);
+                nudDial_max_increments.Value = (decimal)igs.GetSetting<int>("dialdisplay_max_increments", true, 1, 30, 4);
+
+                clrbtnDial_text.Color = igs.GetSetting<System.Drawing.Color>("dialdisplay_text", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
+                clrbtnDial_circle.Color = igs.GetSetting<System.Drawing.Color>("dialdisplay_cirlce", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
+                clrbtnDial_pad.Color = igs.GetSetting<System.Drawing.Color>("dialdisplay_pad", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Blue);
+                clrbtnDial_pad_pressed.Color = igs.GetSetting<System.Drawing.Color>("dialdisplay_pad_pressed", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Orange);
+                clrbtnDial_button_on.Color = igs.GetSetting<System.Drawing.Color>("dialdisplay_button_on", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
+                clrbtnDial_button_off.Color = igs.GetSetting<System.Drawing.Color>("dialdisplay_button_off", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
+                clrbtnDial_button_highlight.Color = igs.GetSetting<System.Drawing.Color>("dialdisplay_button_highlight", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Gray);
+                clrbtnDial_ring.Color = igs.GetSetting<System.Drawing.Color>("dialdisplay_ring", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Gray);
+                clrbtnDial_slow.Color = igs.GetSetting<System.Drawing.Color>("dialdisplay_slow", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Blue);
+                clrbtnDial_hold.Color = igs.GetSetting<System.Drawing.Color>("dialdisplay_hold", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Green);
+                clrbtnDial_fast.Color = igs.GetSetting<System.Drawing.Color>("dialdisplay_fast", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Red);
             }
             else if (mt == MeterType.WEB_IMAGE)
             {
@@ -33563,6 +33600,46 @@ namespace Thetis
         }
 
         private void chkDialDisplay_alwaysshow_vfos_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkDial_align_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudDial_increment_ValueChanged(object sender, EventArgs e)
+        {
+            if (nudDial_increment.Value < nudDial_decrement.Value + 90)
+            {
+                nudDial_increment.Value = nudDial_decrement.Value + 90;
+                return;
+            }
+            updateMeterType();
+        }
+
+        private void nudDial_decrement_ValueChanged(object sender, EventArgs e)
+        {
+            if (nudDial_decrement.Value > nudDial_increment.Value - 90) 
+            {
+                nudDial_decrement.Value = nudDial_increment.Value - 90;
+                return;
+            }
+            updateMeterType();
+        }
+
+        private void nudDial_interval_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnDial_colours_changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudDial_max_increments_ValueChanged(object sender, EventArgs e)
         {
             updateMeterType();
         }
