@@ -490,6 +490,7 @@ namespace Thetis
                             case HPSDRModel.ORIONMKII:
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
+                            case HPSDRModel.ANVELINAPRO3:
                                 int[] FIVE_DDC_Function = new int[48]
                                     {
                                     2, 2, 2, 2, 2, 0, 2, 0,     // DDC0+DDC1, port 1035, Call 0
@@ -571,6 +572,7 @@ namespace Thetis
                             case HPSDRModel.ORIONMKII:
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
+                            case HPSDRModel.ANVELINAPRO3:
                                 int[] FIVE_DDC_Function = new int[24]
                                     {
                                     2, 2, 2, 2, 2, 2, 2, 2,     // DDC0+DDC1, port 1035, Call 0
@@ -605,6 +607,7 @@ namespace Thetis
                             case HPSDRModel.ORIONMKII:
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
+                            case HPSDRModel.ANVELINAPRO3:
                             case HPSDRModel.ANAN_G2:
                             case HPSDRModel.ANAN_G2_1K:
                                 // This ANGELIA table is for test purposes and it routes DDC0 and DDC1 to RX1 and RX2, 
@@ -697,6 +700,7 @@ namespace Thetis
                             case HPSDRModel.ORIONMKII:
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
+                            case HPSDRModel.ANVELINAPRO3:
                             case HPSDRModel.ANAN_G2:
                             case HPSDRModel.ANAN_G2_1K:
                                 // control bits are { MOX, Diversity_Enabled, PureSignal_Enabled }

@@ -60,7 +60,8 @@ namespace Thetis
             get
             {
                 return _model == HPSDRModel.ANAN7000D || _model == HPSDRModel.ANAN8000D ||
-                     _model == HPSDRModel.ANAN_G2 || _model == HPSDRModel.ANAN_G2_1K;
+                       _model == HPSDRModel.ANVELINAPRO3 || _model == HPSDRModel.ANAN_G2 ||
+                       _model == HPSDRModel.ANAN_G2_1K;
             }
         }
         public static bool HasAmps
@@ -68,7 +69,8 @@ namespace Thetis
             get
             {
                 return _model == HPSDRModel.ANAN7000D || _model == HPSDRModel.ANAN8000D ||
-                     _model == HPSDRModel.ANAN_G2 || _model == HPSDRModel.ANAN_G2_1K;
+                       _model == HPSDRModel.ANVELINAPRO3 || _model == HPSDRModel.ANAN_G2 ||
+                       _model == HPSDRModel.ANAN_G2_1K;
             }
         }
     }
