@@ -25939,6 +25939,15 @@ namespace Thetis
                 igs.FadeOnRx = chkBandButtons_fade_rx.Checked;
                 igs.FadeOnTx = chkBandButtons_fade_tx.Checked;
             }
+            else if (mt == MeterType.DIAL_DISPLAY)
+            {
+                igs.FadeOnRx = chkDialDisplay_fade_rx.Checked;
+                igs.FadeOnTx = chkDialDisplay_fade_tx.Checked;
+                igs.Colour = clrbtnDialDisplay_background.Color;
+                igs.SetSetting<float>("dialdisplay_vertical_ratio", (float)nudDialDisplay_vertical_ratio.Value);
+                igs.SetSetting<float>("dialdisplay_font_scale", (float)nudDialDisplay_font_scale.Value);
+                igs.SetSetting<bool>("dialdisplay_alwaysshow_vfos", chkDialDisplay_alwaysshow_vfos.Checked);
+            }
             else if (mt == MeterType.WEB_IMAGE)
             {
                 igs.UpdateInterval = (int)nudWebImage_update_interval.Value;
@@ -26282,7 +26291,8 @@ namespace Thetis
             if (mt != MeterType.ROTATOR && mt != MeterType.SIGNAL_TEXT && mt != MeterType.VFO_DISPLAY && mt != MeterType.CLOCK && 
                 mt != MeterType.TEXT_OVERLAY && mt != MeterType.SPACER && mt != MeterType.LED &&
                 mt != MeterType.BAND_BUTTONS && mt != MeterType.MODE_BUTTONS && mt != MeterType.FILTER_BUTTONS && mt != MeterType.ANTENNA_BUTTONS &&
-                mt != MeterType.HISTORY && mt != MeterType.TUNESTEP_BUTTONS && mt != MeterType.DISCORD_BUTTONS && mt != MeterType.FILTER_DISPLAY
+                mt != MeterType.HISTORY && mt != MeterType.TUNESTEP_BUTTONS && mt != MeterType.DISCORD_BUTTONS && mt != MeterType.FILTER_DISPLAY && 
+                mt != MeterType.DIAL_DISPLAY
                 )
             {
                 switch (m.MeterVariables(mt))
@@ -26484,6 +26494,15 @@ namespace Thetis
                 chkBandButtons_fade_tx.Checked = igs.FadeOnTx;
 
                 updateButtonIndicatorControls();
+            }
+            else if (mt == MeterType.DIAL_DISPLAY)
+            {
+                chkDialDisplay_fade_rx.Checked = igs.FadeOnRx;
+                chkDialDisplay_fade_tx.Checked = igs.FadeOnTx;
+                clrbtnDialDisplay_background.Color = igs.Colour;
+                nudDialDisplay_vertical_ratio.Value = (decimal)igs.GetSetting<float>("dialdisplay_vertical_ratio", true, 0.01f, 1f, 1f);
+                nudDialDisplay_font_scale.Value = (decimal)igs.GetSetting<float>("dialdisplay_font_scale", true, 0.01f, 4f, 1f);
+                chkDialDisplay_alwaysshow_vfos.Checked = igs.GetSetting<bool>("dialdisplay_alwaysshow_vfos", false, false, false, false);
             }
             else if (mt == MeterType.WEB_IMAGE)
             {
@@ -27177,6 +27196,7 @@ namespace Thetis
             pnlButtonBox_antenna_toggles.Visible = false;
             grpHistoryItem.Visible = false;
             grpMeterItemFilterDisplay.Visible = false;
+            grpDialDisplay.Visible = false;
 
             switch (mt)
             {
@@ -27221,6 +27241,11 @@ namespace Thetis
                     grpLedIndicator.Parent = grpMultiMeterHolder;
                     grpLedIndicator.Location = loc;
                     grpLedIndicator.Visible = true;
+                    break;
+                case MeterType.DIAL_DISPLAY:
+                    grpDialDisplay.Parent = grpMultiMeterHolder;
+                    grpDialDisplay.Location = loc;
+                    grpDialDisplay.Visible = true;
                     break;
                 case MeterType.WEB_IMAGE:
                     grpWebImage.Parent = grpMultiMeterHolder;
@@ -33510,6 +33535,36 @@ namespace Thetis
         private void chkFilter_high_resolution_characteristics_CheckedChanged(object sender, EventArgs e)
         {
             console.HighResolutionFilterCharacteristics = chkFilter_high_resolution_characteristics.Checked;
+        }
+
+        private void nudDialDisplay_vertical_ratio_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void nudDialDisplay_font_scale_ValueChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void clrbtnDialDisplay_background_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkDialDisplay_fade_rx_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkDialDisplay_fade_tx_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void chkDialDisplay_alwaysshow_vfos_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 

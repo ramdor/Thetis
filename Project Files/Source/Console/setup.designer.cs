@@ -3887,6 +3887,9 @@
             this.btnWebImage_goto_next = new System.Windows.Forms.ButtonTS();
             this.nudFilter_lower_characteristic = new System.Windows.Forms.NumericUpDownTS();
             this.chkFilter_characteristic = new System.Windows.Forms.CheckBoxTS();
+            this.nudDialDisplay_font_scale = new System.Windows.Forms.NumericUpDownTS();
+            this.nudDialDisplay_vertical_ratio = new System.Windows.Forms.NumericUpDownTS();
+            this.clrbtnDialDisplay_background = new Thetis.ColorButton();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -4168,9 +4171,16 @@
             this.chkFilterDisplay_fadeontx = new System.Windows.Forms.CheckBoxTS();
             this.chkFilterDisplay_fadeonrx = new System.Windows.Forms.CheckBoxTS();
             this.tabPage13 = new System.Windows.Forms.TabPage();
+            this.grpDialDisplay = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS420 = new System.Windows.Forms.LabelTS();
+            this.labelTS424 = new System.Windows.Forms.LabelTS();
+            this.labelTS425 = new System.Windows.Forms.LabelTS();
+            this.chkDialDisplay_fade_tx = new System.Windows.Forms.CheckBoxTS();
+            this.chkDialDisplay_fade_rx = new System.Windows.Forms.CheckBoxTS();
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
             this.tmrLedValid = new System.Windows.Forms.Timer(this.components);
+            this.chkDialDisplay_alwaysshow_vfos = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -5168,6 +5178,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_font_scale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudFilter_waterfall_frame_update)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudFilter_lower_characteristic)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDialDisplay_font_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDialDisplay_vertical_ratio)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -5233,6 +5245,8 @@
             this.grpMeterItemFilterDisplay.SuspendLayout();
             this.scrlFilter.SuspendLayout();
             this.pnlFilterModeModifiers.SuspendLayout();
+            this.tabPage13.SuspendLayout();
+            this.grpDialDisplay.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -62441,6 +62455,84 @@
             this.chkFilter_characteristic.UseVisualStyleBackColor = true;
             this.chkFilter_characteristic.CheckedChanged += new System.EventHandler(this.chkFilter_characteristic_CheckedChanged);
             // 
+            // nudDialDisplay_font_scale
+            // 
+            this.nudDialDisplay_font_scale.DecimalPlaces = 2;
+            this.nudDialDisplay_font_scale.Enabled = false;
+            this.nudDialDisplay_font_scale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudDialDisplay_font_scale.Location = new System.Drawing.Point(118, 39);
+            this.nudDialDisplay_font_scale.Maximum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.nudDialDisplay_font_scale.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudDialDisplay_font_scale.Name = "nudDialDisplay_font_scale";
+            this.nudDialDisplay_font_scale.Size = new System.Drawing.Size(56, 20);
+            this.nudDialDisplay_font_scale.TabIndex = 163;
+            this.nudDialDisplay_font_scale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudDialDisplay_font_scale, "Font scale adjustment");
+            this.nudDialDisplay_font_scale.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDialDisplay_font_scale.ValueChanged += new System.EventHandler(this.nudDialDisplay_font_scale_ValueChanged);
+            // 
+            // nudDialDisplay_vertical_ratio
+            // 
+            this.nudDialDisplay_vertical_ratio.DecimalPlaces = 3;
+            this.nudDialDisplay_vertical_ratio.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudDialDisplay_vertical_ratio.Location = new System.Drawing.Point(118, 16);
+            this.nudDialDisplay_vertical_ratio.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDialDisplay_vertical_ratio.Minimum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            131072});
+            this.nudDialDisplay_vertical_ratio.Name = "nudDialDisplay_vertical_ratio";
+            this.nudDialDisplay_vertical_ratio.Size = new System.Drawing.Size(56, 20);
+            this.nudDialDisplay_vertical_ratio.TabIndex = 132;
+            this.nudDialDisplay_vertical_ratio.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudDialDisplay_vertical_ratio, "Vertical size, compared to width");
+            this.nudDialDisplay_vertical_ratio.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDialDisplay_vertical_ratio.ValueChanged += new System.EventHandler(this.nudDialDisplay_vertical_ratio_ValueChanged);
+            // 
+            // clrbtnDialDisplay_background
+            // 
+            this.clrbtnDialDisplay_background.Automatic = "Automatic";
+            this.clrbtnDialDisplay_background.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnDialDisplay_background.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnDialDisplay_background.Image = null;
+            this.clrbtnDialDisplay_background.Location = new System.Drawing.Point(272, 13);
+            this.clrbtnDialDisplay_background.MoreColors = "More Colors...";
+            this.clrbtnDialDisplay_background.Name = "clrbtnDialDisplay_background";
+            this.clrbtnDialDisplay_background.Selectable = true;
+            this.clrbtnDialDisplay_background.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnDialDisplay_background.TabIndex = 129;
+            this.toolTip1.SetToolTip(this.clrbtnDialDisplay_background, "Background colour");
+            this.clrbtnDialDisplay_background.Changed += new System.EventHandler(this.clrbtnDialDisplay_background_Changed);
+            // 
             // timer_VAC_Monitor
             // 
             this.timer_VAC_Monitor.Enabled = true;
@@ -66390,12 +66482,87 @@
             // 
             // tabPage13
             // 
+            this.tabPage13.Controls.Add(this.grpDialDisplay);
             this.tabPage13.Location = new System.Drawing.Point(4, 22);
             this.tabPage13.Name = "tabPage13";
             this.tabPage13.Size = new System.Drawing.Size(726, 463);
             this.tabPage13.TabIndex = 11;
-            this.tabPage13.Text = "blank";
+            this.tabPage13.Text = "dial";
             this.tabPage13.UseVisualStyleBackColor = true;
+            // 
+            // grpDialDisplay
+            // 
+            this.grpDialDisplay.Controls.Add(this.chkDialDisplay_alwaysshow_vfos);
+            this.grpDialDisplay.Controls.Add(this.nudDialDisplay_font_scale);
+            this.grpDialDisplay.Controls.Add(this.labelTS420);
+            this.grpDialDisplay.Controls.Add(this.nudDialDisplay_vertical_ratio);
+            this.grpDialDisplay.Controls.Add(this.labelTS424);
+            this.grpDialDisplay.Controls.Add(this.labelTS425);
+            this.grpDialDisplay.Controls.Add(this.clrbtnDialDisplay_background);
+            this.grpDialDisplay.Controls.Add(this.chkDialDisplay_fade_tx);
+            this.grpDialDisplay.Controls.Add(this.chkDialDisplay_fade_rx);
+            this.grpDialDisplay.Location = new System.Drawing.Point(202, 43);
+            this.grpDialDisplay.Name = "grpDialDisplay";
+            this.grpDialDisplay.Size = new System.Drawing.Size(323, 376);
+            this.grpDialDisplay.TabIndex = 112;
+            this.grpDialDisplay.TabStop = false;
+            this.grpDialDisplay.Text = "Dial Display";
+            this.grpDialDisplay.Visible = false;
+            // 
+            // labelTS420
+            // 
+            this.labelTS420.AutoSize = true;
+            this.labelTS420.Image = null;
+            this.labelTS420.Location = new System.Drawing.Point(51, 43);
+            this.labelTS420.Name = "labelTS420";
+            this.labelTS420.Size = new System.Drawing.Size(61, 13);
+            this.labelTS420.TabIndex = 162;
+            this.labelTS420.Text = "Font Scale:";
+            this.labelTS420.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS424
+            // 
+            this.labelTS424.AutoSize = true;
+            this.labelTS424.Image = null;
+            this.labelTS424.Location = new System.Drawing.Point(39, 18);
+            this.labelTS424.Name = "labelTS424";
+            this.labelTS424.Size = new System.Drawing.Size(73, 13);
+            this.labelTS424.TabIndex = 131;
+            this.labelTS424.Text = "Vertical Ratio:";
+            // 
+            // labelTS425
+            // 
+            this.labelTS425.AutoSize = true;
+            this.labelTS425.Image = null;
+            this.labelTS425.Location = new System.Drawing.Point(198, 18);
+            this.labelTS425.Name = "labelTS425";
+            this.labelTS425.Size = new System.Drawing.Size(68, 13);
+            this.labelTS425.TabIndex = 130;
+            this.labelTS425.Text = "Background:";
+            // 
+            // chkDialDisplay_fade_tx
+            // 
+            this.chkDialDisplay_fade_tx.AutoSize = true;
+            this.chkDialDisplay_fade_tx.Image = null;
+            this.chkDialDisplay_fade_tx.Location = new System.Drawing.Point(229, 60);
+            this.chkDialDisplay_fade_tx.Name = "chkDialDisplay_fade_tx";
+            this.chkDialDisplay_fade_tx.Size = new System.Drawing.Size(82, 17);
+            this.chkDialDisplay_fade_tx.TabIndex = 3;
+            this.chkDialDisplay_fade_tx.Text = "Fade on TX";
+            this.chkDialDisplay_fade_tx.UseVisualStyleBackColor = true;
+            this.chkDialDisplay_fade_tx.CheckedChanged += new System.EventHandler(this.chkDialDisplay_fade_tx_CheckedChanged);
+            // 
+            // chkDialDisplay_fade_rx
+            // 
+            this.chkDialDisplay_fade_rx.AutoSize = true;
+            this.chkDialDisplay_fade_rx.Image = null;
+            this.chkDialDisplay_fade_rx.Location = new System.Drawing.Point(229, 39);
+            this.chkDialDisplay_fade_rx.Name = "chkDialDisplay_fade_rx";
+            this.chkDialDisplay_fade_rx.Size = new System.Drawing.Size(83, 17);
+            this.chkDialDisplay_fade_rx.TabIndex = 2;
+            this.chkDialDisplay_fade_rx.Text = "Fade on RX";
+            this.chkDialDisplay_fade_rx.UseVisualStyleBackColor = true;
+            this.chkDialDisplay_fade_rx.CheckedChanged += new System.EventHandler(this.chkDialDisplay_fade_rx_CheckedChanged);
             // 
             // tabPage14
             // 
@@ -66419,6 +66586,19 @@
             // 
             this.tmrLedValid.Interval = 500;
             this.tmrLedValid.Tick += new System.EventHandler(this.tmrLedValid_Tick);
+            // 
+            // chkDialDisplay_alwaysshow_vfos
+            // 
+            this.chkDialDisplay_alwaysshow_vfos.AutoSize = true;
+            this.chkDialDisplay_alwaysshow_vfos.Image = null;
+            this.chkDialDisplay_alwaysshow_vfos.Location = new System.Drawing.Point(42, 90);
+            this.chkDialDisplay_alwaysshow_vfos.Name = "chkDialDisplay_alwaysshow_vfos";
+            this.chkDialDisplay_alwaysshow_vfos.Size = new System.Drawing.Size(116, 17);
+            this.chkDialDisplay_alwaysshow_vfos.TabIndex = 164;
+            this.chkDialDisplay_alwaysshow_vfos.Text = "Always show VFOs";
+            this.toolTip1.SetToolTip(this.chkDialDisplay_alwaysshow_vfos, "Will always show VFOa when on RX2 and VFOb on RX1 when RX2 enabled");
+            this.chkDialDisplay_alwaysshow_vfos.UseVisualStyleBackColor = true;
+            this.chkDialDisplay_alwaysshow_vfos.CheckedChanged += new System.EventHandler(this.chkDialDisplay_alwaysshow_vfos_CheckedChanged);
             // 
             // Setup
             // 
@@ -67648,6 +67828,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_font_scale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudFilter_waterfall_frame_update)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudFilter_lower_characteristic)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDialDisplay_font_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDialDisplay_vertical_ratio)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -67731,6 +67913,9 @@
             this.scrlFilter.PerformLayout();
             this.pnlFilterModeModifiers.ResumeLayout(false);
             this.pnlFilterModeModifiers.PerformLayout();
+            this.tabPage13.ResumeLayout(false);
+            this.grpDialDisplay.ResumeLayout(false);
+            this.grpDialDisplay.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -71905,5 +72090,15 @@
         private LabelTS labelTS348;
         private LabelTS labelTS349;
         private CheckBoxTS chkFilter_high_resolution_characteristics;
+        private GroupBoxTS grpDialDisplay;
+        private NumericUpDownTS nudDialDisplay_font_scale;
+        private LabelTS labelTS420;
+        private NumericUpDownTS nudDialDisplay_vertical_ratio;
+        private LabelTS labelTS424;
+        private LabelTS labelTS425;
+        private ColorButton clrbtnDialDisplay_background;
+        private CheckBoxTS chkDialDisplay_fade_tx;
+        private CheckBoxTS chkDialDisplay_fade_rx;
+        private CheckBoxTS chkDialDisplay_alwaysshow_vfos;
     }
 }
