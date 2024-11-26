@@ -4243,28 +4243,31 @@ namespace Thetis
                     case var nam when name.StartsWith("rx_meter_cal_offset_by_radio"):
                         list = val.Split('|');
                         int numVals = list.Length;
-                        if (numVals == (int)HPSDRModel.LAST)  //-W2PA  The number of rig types in the imported DB matches the number in this version
+                        //[2.10.3.7]MW0LGE changed to <= from == so that if a new radio model is added, we will still use the data for the existing radios.
+                        //This assumes the new radio model is added to the end of the HPSDRModel list. If a model is remove this will cause issues.
+                        if (numVals <= (int)HPSDRModel.LAST)  //-W2PA  The number of rig types in the imported DB matches the number in this version
                         {
-                            for (int i = 0; i < (int)HPSDRModel.LAST; i++)
+                            for (int i = 0; i < numVals; i++)
                             {
                                 rx_meter_cal_offset_by_radio[i] = float.Parse(list[i]);
                             }
                         }  //-W2PA  else the number has changed so don't import, leave the defaults alone
-                         ;
                         break;
 
                     case var nam when name.StartsWith("rx_display_cal_offset_by_radio"):
                         list = val.Split('|');
                         numVals = list.Length;
-                        if (numVals == (int)HPSDRModel.LAST)  //-W2PA  The number of rig types in the imported DB matches the number in this version
+                        //[2.10.3.7]MW0LGE changed to <= from == so that if a new radio model is added, we will still use the data for the existing radios.
+                        //This assumes the new radio model is added to the end of the HPSDRModel list. If a model is remove this will cause issues.
+                        if (numVals <= (int)HPSDRModel.LAST)  //-W2PA  The number of rig types in the imported DB matches the number in this version
                         {
-                            for (int i = 0; i < (int)HPSDRModel.LAST; i++)
+                            for (int i = 0; i < numVals; i++)
                             {
                                 rx_display_cal_offset_by_radio[i] = float.Parse(list[i]);
                             }
                         }  //-W2PA  else the number has changed so don't import, leave the defaults alone
-                            ;
                         break;
+
                     default:
                         // add to the ToDoList
                         toDoList.Add(new KeyValuePair<string, string>(name, val));
