@@ -8871,7 +8871,8 @@
             "ANAN-7000DLE",
             "ANAN-8000DLE",
             "ANAN-G2",
-            "ANAN-G2-1K"});
+            "ANAN-G2-1K",
+            "ANVELINA-PRO3"});
             this.comboRadioModel.Location = new System.Drawing.Point(6, 19);
             this.comboRadioModel.Name = "comboRadioModel";
             this.comboRadioModel.Size = new System.Drawing.Size(136, 23);
@@ -65644,7 +65645,8 @@
             "ANAN-7000DLE",
             "ANAN-8000DLE",
             "ANAN-G2",
-            "ANAN-G2-1K"});
+            "ANAN-G2-1K",
+            "ANVELINA-PRO3"});
             this.comboHistory_reading_1.Location = new System.Drawing.Point(73, 21);
             this.comboHistory_reading_1.Name = "comboHistory_reading_1";
             this.comboHistory_reading_1.Size = new System.Drawing.Size(136, 23);
@@ -65726,7 +65728,8 @@
             "ANAN-7000DLE",
             "ANAN-8000DLE",
             "ANAN-G2",
-            "ANAN-G2-1K"});
+            "ANAN-G2-1K",
+            "ANVELINA-PRO3"});
             this.comboHistory_reading_0.Location = new System.Drawing.Point(73, 21);
             this.comboHistory_reading_0.Name = "comboHistory_reading_0";
             this.comboHistory_reading_0.Size = new System.Drawing.Size(136, 23);
