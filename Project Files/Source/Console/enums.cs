@@ -66,7 +66,6 @@
     {
         HPSDR = 0,
         HERMES,
-        HERMESLITE,     //MI0BOT
         ANAN10,
         ANAN10E,
         ANAN100,
@@ -79,6 +78,7 @@
         ANAN_G2,        //G8NJJ
         ANAN_G2_1K,     //G8NJJ
         ANVELINAPRO3,
+        HERMESLITE,     //MI0BOT
         LAST
     }
 
@@ -87,7 +87,6 @@
         FIRST = -1,
         HPSDR,
         HERMES,
-        HERMESLITE,     //MI0BOT
         ANAN10,
         ANAN10E,
         ANAN100,
@@ -100,6 +99,7 @@
         ANAN_G2,        //G8NJJ
         ANAN_G2_1K,     //G8NJJ
         ANVELINAPRO3,
+        HERMESLITE,     //MI0BOT
         LAST
     }
 

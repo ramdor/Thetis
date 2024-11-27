@@ -1219,10 +1219,15 @@ DWORD WINAPI sendProtocol1Samples(LPVOID n)
 					temp = pbuffs[j][i * 2 + k] >= 0.0 ? (short)floor(pbuffs[j][i * 2 + k] * 32767.0 + 0.5) :
 						(short)ceil(pbuffs[j][i * 2 + k] * 32767.0 - 0.5);
 					if (prn->cw.cw_enable && j == 1)
-						temp = (prn->tx[0].cwx_ptt << 3 |	// MI0BOT: Bit 3 in HL2 is used to signal PTT for CWX, this shouldn't affect other models
-						    	prn->tx[0].dot << 2 |
-								prn->tx[0].dash << 1 |
-						    	prn->tx[0].cwx) & 0b00001111;
+						if (prn->discovery.BoardType == HermesLite)
+							temp = (prn->tx[0].cwx_ptt << 3 |	// MI0BOT: Bit 3 in HL2 is used to signal PTT for CWX
+						    		prn->tx[0].dot << 2 |
+									prn->tx[0].dash << 1 |
+						    		prn->tx[0].cwx) & 0b00001111;
+						else
+							temp = (prn->tx[0].dot << 2 |
+									prn->tx[0].dash << 1 |
+						    		prn->tx[0].cwx) & 0b00000111;
 					prn->OutBufp[8 * i + 4 * j + 2 * k + 0] = (char)((temp >> 8) & 0xff);
 					prn->OutBufp[8 * i + 4 * j + 2 * k + 1] = (char)(temp & 0xff);
 				}
