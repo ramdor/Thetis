@@ -1092,6 +1092,7 @@ namespace Thetis
                 HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)     // MI0BOT: Changes for HL2 only having a 16 step output attenuator 
             {
                 udATTOnTX.Minimum = -28;
+                udMicGainMax.Maximum = 40;
                 udHermesStepAttenuatorData.Minimum = -28;
                 udHermesStepAttenuatorDataRX2.Minimum = -28;
                 udTXTunePower.Minimum = (Decimal)(-16.5);
