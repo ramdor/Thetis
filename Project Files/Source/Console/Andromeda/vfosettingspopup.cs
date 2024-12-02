@@ -90,6 +90,7 @@ namespace Thetis
             this.buttonClose.Image = null;
             this.buttonClose.Location = new System.Drawing.Point(238, 74);
             this.buttonClose.Name = "buttonClose";
+            this.buttonClose.Selectable = true;
             this.buttonClose.Size = new System.Drawing.Size(75, 32);
             this.buttonClose.TabIndex = 4;
             this.buttonClose.Text = "Close";
@@ -113,6 +114,7 @@ namespace Thetis
             this.buttonPlus.Image = null;
             this.buttonPlus.Location = new System.Drawing.Point(261, 24);
             this.buttonPlus.Name = "buttonPlus";
+            this.buttonPlus.Selectable = true;
             this.buttonPlus.Size = new System.Drawing.Size(52, 32);
             this.buttonPlus.TabIndex = 2;
             this.buttonPlus.Text = "+";
@@ -125,6 +127,7 @@ namespace Thetis
             this.buttonMinus.Image = null;
             this.buttonMinus.Location = new System.Drawing.Point(75, 24);
             this.buttonMinus.Name = "buttonMinus";
+            this.buttonMinus.Selectable = true;
             this.buttonMinus.Size = new System.Drawing.Size(52, 32);
             this.buttonMinus.TabIndex = 1;
             this.buttonMinus.Text = "-";

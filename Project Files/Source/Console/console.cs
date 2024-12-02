@@ -1255,6 +1255,9 @@ namespace Thetis
             get { return _restart; }
             set { _restart = value; }
         }
+
+        //[DllImport("shcore.dll")]
+        //private static extern int SetProcessDpiAwareness(int awareness);
         // ======================================================
         // Main
         // ======================================================
@@ -1341,6 +1344,8 @@ namespace Thetis
                 Common.SetLogPath(app_data_path); // init the logger MW0LGE
 
                 Win32.TimeBeginPeriod(1); // set timer resolution to 1ms => freq=1000Hz
+
+                //SetProcessDpiAwareness(2); // Per-Monitor DPI Awareness
                 Application.EnableVisualStyles();
                 Application.DoEvents();
 
