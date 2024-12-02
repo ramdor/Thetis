@@ -7,7 +7,7 @@
     <ProjectGuid>{831AEB2F-CA78-4057-85D7-32B4816ED6AE}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>thetis-icon.ico</ApplicationIcon>
+    <ApplicationIcon>Thetis2_256.ico</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>Thetis</AssemblyName>
@@ -812,6 +812,9 @@
     <Compile Include="xvtr.cs">
       <SubType>Form</SubType>
     </Compile>
+    <None Include="Resources\thetis-logo2.png" />
+    <Content Include="Thetis2_256.ico" />
+    <Content Include="Thetis2_48.ico" />
     <None Include="Resources\resizegrab.png" />
     <None Include="Resources\dockIcon_float.png" />
     <None Include="Resources\dockIcon_dock.png" />

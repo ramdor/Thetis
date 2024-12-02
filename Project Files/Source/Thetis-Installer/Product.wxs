@@ -76,8 +76,8 @@
     <UIRef Id="WixUI_Mondo" />
 
     <!-- UI customization -->
-    <WixVariable Id="WixUIBannerBmp" Value="binary/hpsdrbanner.bmp"/>
-    <WixVariable Id="WixUIDialogBmp" Value="binary/hpsdrBackground.bmp"/>
+    <WixVariable Id="WixUIBannerBmp" Value="binary/thetis_banner.bmp"/>
+    <WixVariable Id="WixUIDialogBmp" Value="binary/thetis_background.bmp"/>
 
     <!-- Define icons (ID should not be longer than 18 chars") -->
     <Icon Id="icon.ico" SourceFile="binary/Thetis.ico" />

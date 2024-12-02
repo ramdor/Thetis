@@ -56,8 +56,8 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
-using Microsoft.CodeAnalysis.Operations;
-using Markdig.Syntax.Inlines;
+
+using System.Runtime.InteropServices;
 
 namespace Thetis
 {
@@ -4472,7 +4472,7 @@ namespace Thetis
 
             if (!_finishedSetup) return;
 
-            //frm.Opacity = 0f;
+            //frm.Opacity = 0f;            
             frm.Show();
             //Common.FadeIn(frm, 100);
         }

@@ -44,6 +44,16 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 	- tune step up (red ring) will happen at rotation speed >= 540deg per second, and step down (blue ring) at <= 270deg per second
 	- mouse wheel will turn the dial by 1 degree
 - [add] Anvelina-Pro3 profile added to Thetis - N1GP
+- [add] tci swl spot support. Implemented to handle swl spots from OE3IDE's Cluster-TCI-Bridge software. If using the TCI spot message, the mode field can have -swl[X] added to the mode, so 'ssb-swl[10]', that spot would then last 10 seconds before being cleared away
+- [add] a bespoke tci outbound message has been added to support the way Thetis deals with vfoTX and RX2. Note, this is not in the standard TCI protocol The message is as follows:
+	// tx_frequency:3700000,b80m,false,false;
+	// arg1 tx frequency (long)
+	// arg2 band b80m, b40m etc
+	// arg3 rx2 enabled  true/false
+	// arg4 tx on vfoB  true/false
+- [add] if OpenHSPDR\SplashScreens folder exists and there are 400x320 pixel .png files in there, a random one will be used for the startup splash screen
+- [add] reduce power on high swr option
+- [change] new splash screen, icons, setup banners. The community picked Jordie EA3CL as the winner this time over on the Discord server pictures and screenshot section. AI and Photoshop used
 - [change] moved release notes button from setup to the about box
 - [change] skin images are resized to button/panel/slider etc instead of relying on tile property
 - [change] button clicks are ignored in meter item button boxes that are faded
@@ -79,6 +89,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] vfos will have frequency initialised on startup even if vfos are locked
 - [fix] vfoB lock button will now disable on power off
 - [fix] vfo lock state will be stored in db even if button is disabled
+- [fix] fixed the power output issue when back to back high swr tunes were performed
 
 ## v2.10.3.6 Main New Features
 - database manager

@@ -1202,6 +1202,12 @@ namespace Thetis
             get { return high_swr; }
             set { high_swr = value; }
         }
+        private static bool _power_folded_back = false;
+        public static bool PowerFoldedBack
+        {
+            get { return _power_folded_back; }
+            set { _power_folded_back = value; }
+        }        
 
         private static bool _old_mox = false;
         private static bool _mox = false;
@@ -3465,9 +3471,16 @@ namespace Thetis
                     }
 
                     // HIGH swr display warning
-                    if (high_swr)
+                    if (high_swr || _power_folded_back)
                     {
-                        drawStringDX2D("High SWR", fontDX2d_font14, m_bDX2_Red, 245, 20);
+                        if(_power_folded_back)
+                        {
+                            drawStringDX2D("HIGH SWR\n\nPOWER FOLD BACK", fontDX2d_font14, m_bDX2_Red, 245, 20);
+                        }
+                        else
+                        {
+                            drawStringDX2D("HIGH SWR", fontDX2d_font14, m_bDX2_Red, 245, 20);
+                        }
                         _d2dRenderTarget.DrawRectangle(new RectangleF(3, 3, displayTargetWidth - 6, displayTargetHeight - 6), m_bDX2_Red, 6f);
                     }
 
