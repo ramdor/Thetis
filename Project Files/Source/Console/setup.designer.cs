@@ -32,6 +32,7 @@
             this.udATTOnTX = new System.Windows.Forms.NumericUpDownTS();
             this.chkHFTRRelay = new System.Windows.Forms.CheckBoxTS();
             this.grpSWRProtectionControl = new System.Windows.Forms.GroupBoxTS();
+            this.chkWindBackPowerSWR = new System.Windows.Forms.CheckBoxTS();
             this.labelTS194 = new System.Windows.Forms.LabelTS();
             this.udSwrProtectionLimit = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS193 = new System.Windows.Forms.LabelTS();
@@ -3472,6 +3473,7 @@
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
             this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.btnClearTCISpotsSWL = new System.Windows.Forms.ButtonTS();
             this.chkForgetRX2VfoBVFOinfo = new System.Windows.Forms.CheckBoxTS();
             this.chkCWbecomesCWUabove10mhz = new System.Windows.Forms.CheckBoxTS();
             this.btnClearTCISpots = new System.Windows.Forms.ButtonTS();
@@ -5501,18 +5503,32 @@
             // 
             // grpSWRProtectionControl
             // 
+            this.grpSWRProtectionControl.Controls.Add(this.chkWindBackPowerSWR);
             this.grpSWRProtectionControl.Controls.Add(this.labelTS194);
             this.grpSWRProtectionControl.Controls.Add(this.udSwrProtectionLimit);
             this.grpSWRProtectionControl.Controls.Add(this.labelTS193);
             this.grpSWRProtectionControl.Controls.Add(this.udTunePowerSwrIgnore);
             this.grpSWRProtectionControl.Controls.Add(this.chkSWRTuneProtection);
             this.grpSWRProtectionControl.Controls.Add(this.chkSWRProtection);
-            this.grpSWRProtectionControl.Location = new System.Drawing.Point(441, 44);
+            this.grpSWRProtectionControl.Location = new System.Drawing.Point(441, 6);
             this.grpSWRProtectionControl.Name = "grpSWRProtectionControl";
-            this.grpSWRProtectionControl.Size = new System.Drawing.Size(261, 76);
+            this.grpSWRProtectionControl.Size = new System.Drawing.Size(261, 101);
             this.grpSWRProtectionControl.TabIndex = 5;
             this.grpSWRProtectionControl.TabStop = false;
             this.grpSWRProtectionControl.Text = "SWR Protection";
+            // 
+            // chkWindBackPowerSWR
+            // 
+            this.chkWindBackPowerSWR.AutoSize = true;
+            this.chkWindBackPowerSWR.Image = null;
+            this.chkWindBackPowerSWR.Location = new System.Drawing.Point(24, 73);
+            this.chkWindBackPowerSWR.Name = "chkWindBackPowerSWR";
+            this.chkWindBackPowerSWR.Size = new System.Drawing.Size(141, 17);
+            this.chkWindBackPowerSWR.TabIndex = 13;
+            this.chkWindBackPowerSWR.Text = "Reduce Pwr if protected";
+            this.toolTip1.SetToolTip(this.chkWindBackPowerSWR, "Winds back the power if high swr protection kicks in");
+            this.chkWindBackPowerSWR.UseVisualStyleBackColor = true;
+            this.chkWindBackPowerSWR.CheckedChanged += new System.EventHandler(this.chkWindBackPowerSWR_CheckedChanged);
             // 
             // labelTS194
             // 
@@ -5654,7 +5670,7 @@
             this.chkAlexAntCtrl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.chkAlexAntCtrl.ForeColor = System.Drawing.SystemColors.ControlText;
             this.chkAlexAntCtrl.Image = null;
-            this.chkAlexAntCtrl.Location = new System.Drawing.Point(477, 15);
+            this.chkAlexAntCtrl.Location = new System.Drawing.Point(337, 283);
             this.chkAlexAntCtrl.Name = "chkAlexAntCtrl";
             this.chkAlexAntCtrl.Size = new System.Drawing.Size(95, 23);
             this.chkAlexAntCtrl.TabIndex = 1;
@@ -55882,6 +55898,7 @@
             // 
             // grpTCIServer
             // 
+            this.grpTCIServer.Controls.Add(this.btnClearTCISpotsSWL);
             this.grpTCIServer.Controls.Add(this.chkForgetRX2VfoBVFOinfo);
             this.grpTCIServer.Controls.Add(this.chkCWbecomesCWUabove10mhz);
             this.grpTCIServer.Controls.Add(this.btnClearTCISpots);
@@ -55916,6 +55933,18 @@
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
             // 
+            // btnClearTCISpotsSWL
+            // 
+            this.btnClearTCISpotsSWL.Image = null;
+            this.btnClearTCISpotsSWL.Location = new System.Drawing.Point(267, 245);
+            this.btnClearTCISpotsSWL.Name = "btnClearTCISpotsSWL";
+            this.btnClearTCISpotsSWL.Selectable = true;
+            this.btnClearTCISpotsSWL.Size = new System.Drawing.Size(73, 39);
+            this.btnClearTCISpotsSWL.TabIndex = 102;
+            this.btnClearTCISpotsSWL.Text = "Clear SWL";
+            this.btnClearTCISpotsSWL.UseVisualStyleBackColor = true;
+            this.btnClearTCISpotsSWL.Click += new System.EventHandler(this.btnClearTCISpotsSWL_Click);
+            // 
             // chkForgetRX2VfoBVFOinfo
             // 
             this.chkForgetRX2VfoBVFOinfo.AutoSize = true;
@@ -55946,12 +55975,12 @@
             // btnClearTCISpots
             // 
             this.btnClearTCISpots.Image = null;
-            this.btnClearTCISpots.Location = new System.Drawing.Point(184, 261);
+            this.btnClearTCISpots.Location = new System.Drawing.Point(184, 245);
             this.btnClearTCISpots.Name = "btnClearTCISpots";
             this.btnClearTCISpots.Selectable = true;
-            this.btnClearTCISpots.Size = new System.Drawing.Size(77, 26);
+            this.btnClearTCISpots.Size = new System.Drawing.Size(77, 39);
             this.btnClearTCISpots.TabIndex = 99;
-            this.btnClearTCISpots.Text = "Clear Spots";
+            this.btnClearTCISpots.Text = "Clear Non SWL";
             this.btnClearTCISpots.UseVisualStyleBackColor = true;
             this.btnClearTCISpots.Click += new System.EventHandler(this.btnClearTCISpots_Click);
             // 
@@ -72696,5 +72725,7 @@
         private LabelTS labelTS419;
         private NumericUpDownTS nudDial_degrees_for_change;
         private LabelTS labelTS421;
+        private ButtonTS btnClearTCISpotsSWL;
+        private CheckBoxTS chkWindBackPowerSWR;
     }
 }

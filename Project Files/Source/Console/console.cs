@@ -672,7 +672,16 @@ namespace Thetis
             _use_additional_sas = !Common.HasArg(args, "-nospec"); // prevent the use of additional spec analysers           
             _touch_support = Common.HasArg(args, "-touch"); // configure touch support for mouse down/up/move, used primarily by containers, and ucMeter
 
-            Splash.ShowSplashScreen(Common.GetVerNum(true, true));							// Start splash screen with version number
+            string splash_screen_folder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\SplashScreens";
+            if (!Directory.Exists(splash_screen_folder))
+            {
+                try
+                {
+                    Directory.CreateDirectory(splash_screen_folder);
+                }
+                catch { splash_screen_folder = ""; }
+            }
+            Splash.ShowSplashScreen(Common.GetVerNum(true, true), splash_screen_folder);							// Start splash screen with version number
 
             // PA init thread - from G7KLJ changes - done as early as possible
             Splash.SetStatus("Initializing PortAudio");			// Set progress point as early as possible
@@ -18996,6 +19005,16 @@ namespace Thetis
             }
         }
 
+        private bool _wind_back_engaged = false; // this will be true if we are winding back
+        private bool _swr_wind_back_power = false;
+        public bool SWRWindBackPower
+        {
+            get { return _swr_wind_back_power; }
+            set
+            {
+                _swr_wind_back_power = value;
+            }
+        }
         private bool swrprotection = true;
         public bool SWRProtection
         {
@@ -26329,6 +26348,8 @@ namespace Thetis
             {
                 if (_mox)
                 {
+                    float old_swr_protect = NetworkIO.SWRProtect;
+
                     alex_fwd = computeAlexFwdPower(); //high power
                     alex_rev = computeRefPower();
 
@@ -26452,23 +26473,45 @@ namespace Thetis
                         }
                     }
                     else
-                    {
+                    { 
                         high_swr_count = 0;
                         NetworkIO.SWRProtect = 1.0f;
                         HighSWR = false;
                     }
 
+                    //catch all
+                    if(swrprotection && _swr_wind_back_power & !_wind_back_engaged && HighSWR) _wind_back_engaged = true; // this and NetworkIO.SWRProtect reset in UIMOXChangedFalse
+                    if (_wind_back_engaged)
+                    {
+                        NetworkIO.SWRProtect = 0.01f;
+                        Display.PowerFoldedBack = true;
+                    }
+                    else
+                    {
+                        Display.PowerFoldedBack = false;
+                    }
                 end:
                     swr_pass = false;
                     if (float.IsNaN(swr) || float.IsInfinity(swr) || swr < 1.0f)
                         alex_swr = 1.0f;
                     else
                         alex_swr = swr;
+
+                    if(_swr_wind_back_power && swrprotection && old_swr_protect != NetworkIO.SWRProtect)
+                    {
+                        // there has been a change
+                        // We need to change the output power, as setting SWRProtect does nothing unless
+                        // power is changed, RadioVolume is the only code that uses SWRProtect using NetworkIO.SetOutputPower.
+                        // So just assign it with its own data
+                        Audio.RadioVolume = Audio.RadioVolume;
+                    }
                 }
                 else if (high_swr) HighSWR = false;
 
                 if (_mox)
+                {
                     await Task.Delay(1);
+                }
                 else
                     await Task.Delay(10);
             }
@@ -29875,6 +29918,10 @@ namespace Thetis
             pa_fwd_power = 0;
             pa_rev_power = 0;
 
+            //[2.10.3.7]MW0LGE reset
+            NetworkIO.SWRProtect = 1.0f;
+            _wind_back_engaged = false;
+            Display.PowerFoldedBack = false;
             Audio.HighSWRScale = 1.0;
             HighSWR = false;
 
@@ -49547,7 +49594,6 @@ namespace Thetis
         {
             UpdateTuneLabel(false, EventArgs.Empty);
         }
-
         public void ResetLevelCalibration(bool ignoreSet = false)
         {
             for (int i = 0; i < (int)HPSDRModel.LAST; i++)

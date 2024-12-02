@@ -2772,6 +2772,7 @@ namespace Thetis
 
             chkSWRProtection_CheckedChanged(this, e);
             chkSWRTuneProtection_CheckedChanged(this, e);
+            chkWindBackPowerSWR_CheckedChanged(this, e);
 
             //multimeter io tab
             init_lstMMIO();
@@ -9298,7 +9299,7 @@ namespace Thetis
 
             if (rows.Length != 1)
             {
-                MessageBox.Show("Database error reading TxProfile Table.",
+                MessageBox.Show($"Database error reading TxProfile Table. The profile [{sProfileName}] does not seem to exist.",
                     "Database error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -9645,6 +9646,15 @@ namespace Thetis
         private bool profile_deleted = false;
         private void btnTXProfileDelete_Click(object sender, System.EventArgs e)
         {
+            if(comboTXProfileName.Items.Count == 1)
+            {
+                MessageBox.Show(
+                "It is not possible to delete the last remaining TX profile.",
+                "Delete Prevented",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+                return;
+            }
             DialogResult dr = MessageBox.Show(
                 "Are you sure you want to delete the " + comboTXProfileName.Text + " TX Profile?",
                 "Delete Profile?",
@@ -15953,11 +15963,11 @@ namespace Thetis
             }
         }
 
-        private bool _updatingRX1HermiesStepAttData = false;
+        private bool _updatingRX1HermesStepAttData = false;
         private void udHermesStepAttenuatorData_ValueChanged(object sender, EventArgs e)
         {
-            if (_updatingRX1HermiesStepAttData) return;
-            _updatingRX1HermiesStepAttData = true;
+            if (_updatingRX1HermesStepAttData) return;
+            _updatingRX1HermesStepAttData = true;
             console.RX1AttenuatorData = (int)udHermesStepAttenuatorData.Value;
 
             if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
@@ -15976,7 +15986,7 @@ namespace Thetis
                 console.CurrentHPSDRModel != HPSDRModel.ANVELINAPRO3)
                 udHermesStepAttenuatorData.Maximum = (decimal)61;
             else udHermesStepAttenuatorData.Maximum = (decimal)31;
-            _updatingRX1HermiesStepAttData = false;
+            _updatingRX1HermesStepAttData = false;
         }
 
         private void chkRX2StepAtt_CheckedChanged(object sender, EventArgs e)
@@ -15999,11 +16009,11 @@ namespace Thetis
                 if (nRX1ADCinUse == nRX2ADCinUse && chkHermesStepAttenuator.Checked != chkRX2StepAtt.Checked) chkHermesStepAttenuator.Checked = chkRX2StepAtt.Checked;
             }
         }
-        private bool _updatingRX2HermiesStepAttData = false;
+        private bool _updatingRX2HermesStepAttData = false;
         private void udHermesStepAttenuatorDataRX2_ValueChanged(object sender, EventArgs e)
         {
-            if (_updatingRX2HermiesStepAttData) return;
-            _updatingRX2HermiesStepAttData = true;
+            if (_updatingRX2HermesStepAttData) return;
+            _updatingRX2HermesStepAttData = true;
             console.RX2AttenuatorData = (int)udHermesStepAttenuatorDataRX2.Value;
 
             //MW0LGE_21f
@@ -16018,7 +16028,7 @@ namespace Thetis
                 console.CurrentHPSDRModel != HPSDRModel.ANVELINAPRO3)
                 udHermesStepAttenuatorDataRX2.Maximum = (decimal)61;
             else udHermesStepAttenuatorDataRX2.Maximum = (decimal)31;
-            _updatingRX2HermiesStepAttData = false;
+            _updatingRX2HermesStepAttData = false;
         }
 
         private void udAlex160mLPFStart_ValueChanged(object sender, EventArgs e)
@@ -27934,7 +27944,7 @@ namespace Thetis
 
         private void btnClearTCISpots_Click(object sender, EventArgs e)
         {
-            SpotManager2.ClearAllSpots();
+            SpotManager2.ClearAllSpots(true, false);
         }
 
         public bool QuickSplitEnabled
@@ -33744,6 +33754,17 @@ namespace Thetis
         private void nudDial_degrees_for_change_ValueChanged(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+
+        private void btnClearTCISpotsSWL_Click(object sender, EventArgs e)
+        {
+            SpotManager2.ClearAllSpots(false, true);
+        }
+
+        private void chkWindBackPowerSWR_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.SWRWindBackPower = chkWindBackPowerSWR.Checked;
         }
     }
 

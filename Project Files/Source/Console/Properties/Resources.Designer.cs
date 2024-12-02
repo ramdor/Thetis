@@ -1082,6 +1082,16 @@ namespace Thetis.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap thetis_logo2 {
+            get {
+                object obj = ResourceManager.GetObject("thetis_logo2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap timer {
             get {
                 object obj = ResourceManager.GetObject("timer", resourceCulture);

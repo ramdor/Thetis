@@ -123,7 +123,7 @@ namespace Thetis
     //}
     public static class Common
 	{
-		public static MessageBoxOptions MB_TOPMOST = (MessageBoxOptions)0x00040000L; //MW0LGE_21g TOPMOST for MessageBox
+		public const MessageBoxOptions MB_TOPMOST = (MessageBoxOptions)0x00040000L; //MW0LGE_21g TOPMOST for MessageBox
 
 		#region HiglightControls
 
@@ -1208,8 +1208,9 @@ namespace Thetis
         {
             return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= build;
         }
+        #endregion
 
-		public static string DateTimeStringForFile(string cultureName = "")
+        public static string DateTimeStringForFile(string cultureName = "")
 		{
 			CultureInfo ci;
 
@@ -1229,8 +1230,7 @@ namespace Thetis
             string sRet = string.Join("_", sDate.Split(Path.GetInvalidFileNameChars()));
 
 			return sRet;
-        }
-        #endregion
+        }        
 
         #region WindowFade
         public static async void FadeIn(Form frm, int msTimeToFade = 500, int steps = 20)

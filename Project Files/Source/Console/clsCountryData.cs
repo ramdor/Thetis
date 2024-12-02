@@ -57,10 +57,6 @@ namespace Thetis
         {
             try
             {
-                //build();
-                //string plistPath = "C:\\Users\\Richie\\Downloads\\cty_plist-3436\\cty.txt";
-                //string data = File.ReadAllText(plistPath);
-
                 string data = Properties.Resources.cty;
                 _prefixDataList = Common.DeserializeFromBase64<List<PrefixData>>(data);
             }

@@ -266,6 +266,11 @@ namespace Thetis
 			if (m_disconnected) return;
             sendMONVolume(linearToDbVolume(newVolume));
 		}
+		public void TXFrequencyChanged(long new_frequency, Band new_band, bool rx2_enabled, bool tx_vfob)
+		{
+            if (m_disconnected) return;
+            sendTXFrequencyChanged(new_frequency, new_band, rx2_enabled, tx_vfob);
+        }
         private void limitList()
         {
 			lock (m_objVFODataLock)
@@ -301,29 +306,37 @@ namespace Thetis
 						m_vfoDataList.RemoveFirst();
 					}
 
-					if (vfoData.cen)
-                    {
-                        sendDDS(vfoData.rx, (long)(vfoData.centreMHz * 1e6));
-                        if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
-                    }
-                    else
-                    {
-                        if (vfoData.duplicate_tochan != -1)
-                        {
-							if (!vfoData.replace_if_duplicated)
-							{
-                                if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
-                                sendVFO(vfoData.rx, vfoData.chan, (long)(vfoData.freqMHz * 1e6));
-                            }
-                            if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.duplicate_tochan, (int)vfoData.offsetHz);
-                            sendVFO(vfoData.rx, vfoData.duplicate_tochan, (long)(vfoData.freqMHz * 1e6));
-                        }
+					if (vfoData.SendTXInfo)
+					{
+						// tx info only
+						sendTXFrequencyChanged((long)(vfoData.freqMHz * 1e6), vfoData.TXfreqBand, vfoData.RX2EnabledForTX, vfoData.TXVFOB);
+					}
+					else
+					{
+						if (vfoData.cen)
+						{
+							sendDDS(vfoData.rx, (long)(vfoData.centreMHz * 1e6));
+							if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
+						}
 						else
 						{
-                            if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
-                            sendVFO(vfoData.rx, vfoData.chan, (long)(vfoData.freqMHz * 1e6));
-                        }
-                    }                   
+							if (vfoData.duplicate_tochan != -1)
+							{
+								if (!vfoData.replace_if_duplicated)
+								{
+									if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
+									sendVFO(vfoData.rx, vfoData.chan, (long)(vfoData.freqMHz * 1e6));
+								}
+								if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.duplicate_tochan, (int)vfoData.offsetHz);
+								sendVFO(vfoData.rx, vfoData.duplicate_tochan, (long)(vfoData.freqMHz * 1e6));
+							}
+							else
+							{
+								if (vfoData.sendIF) sendIF(vfoData.rx, vfoData.chan, (int)vfoData.offsetHz);
+								sendVFO(vfoData.rx, vfoData.chan, (long)(vfoData.freqMHz * 1e6));
+							}
+						}
+					}
                 }
 
                 lock (m_objVFODataLock)
@@ -352,6 +365,12 @@ namespace Thetis
 			public bool cen;
 			public int rx;
 			public bool sendIF;
+
+			//bespoke for tx info only
+			public bool SendTXInfo;
+			public Band TXfreqBand;
+			public bool RX2EnabledForTX;
+			public bool TXVFOB;
 		}
 
 		private void vfoFrequencyChange(VFOData vfod)
@@ -372,7 +391,16 @@ namespace Thetis
 				m_vfoDataList.AddLast(vfod);
 			}
 		}
-		public void MoxChange(int rx, bool oldMox, bool newMox)
+        private void txFrequencyChange(VFOData vfod)
+        {
+            if (m_disconnected) return;
+            lock (m_objVFODataLock)
+            {
+                //limitList();
+                m_vfoDataList.AddLast(vfod);
+            }
+        }
+        public void MoxChange(int rx, bool oldMox, bool newMox)
         {
 			if (m_disconnected) return;
 
@@ -677,6 +705,17 @@ namespace Thetis
             string s = "mon_volume:" + volume.ToString("F1").ToLower() + ";";
             sendTextFrame(s);
         }
+		private void sendTXFrequencyChanged(long new_frequency, Band new_band, bool rx2_enabled, bool tx_vfob)
+		{
+            // bespoke TCI command for anan to make life easier determining active TX frequency
+            // format is : tx_frequency:3700000,b80m,false,false;
+			// arg1 freq (long)
+			// arg2 band b80m, b40m etc
+			// arg3 rx2 enabled  true/false
+			// arg4 tx on vfoB  true/false
+            string s = $"tx_frequency:{new_frequency},{new_band.ToString()},{rx2_enabled.ToString()},{tx_vfob.ToString()};";
+            sendTextFrame(s.ToLower());
+        }
         private void sendTunePower(int rx, int drive)
 		{
 			if (drive < 0 || drive > 100) return;
@@ -777,9 +816,12 @@ namespace Thetis
 				sendVFO(0, 1);
 				sendVFO(1, 0);
 				sendVFO(1, 1);
-			}
 
-			sendMode(0);
+                //bespoke
+                sendTXFrequencyChanged((long)(console.ThreadSafeTCIAccessor.TXFreq * 1e6), console.ThreadSafeTCIAccessor.TXBand, console.ThreadSafeTCIAccessor.RX2Enabled, console.ThreadSafeTCIAccessor.VFOBTX);
+            }
+
+            sendMode(0);
 			sendMode(1);
 
 			//TODO sendFilterBand(0)
@@ -1048,7 +1090,7 @@ namespace Thetis
 					}
 				}
 			}
-			catch
+			catch(Exception ex)
 			{
 				Debug.Print("problem writing text frame");
 				m_stopClient = true;
@@ -1257,7 +1299,7 @@ namespace Thetis
 		}
 		private void handleSpotClear()
 		{
-			SpotManager2.ClearAllSpots();
+			SpotManager2.ClearAllSpots(true, false);
 		}
 		private void handleSplitEnableMessage(string[] args)
 		{
@@ -1950,7 +1992,9 @@ namespace Thetis
                     {
 						bool isFreqencyNormallyUSB = freq >= 10000000 || (freq >= 5300000 && freq < 5410000);
 
-						switch (args[1].ToLower())
+						string mode_filtered = SpotManager2.FilterForRawMode(args[1].ToLower());
+
+                        switch (mode_filtered)
                         {
 							case "ssb":
 								if(isFreqencyNormallyUSB)
@@ -2002,7 +2046,7 @@ namespace Thetis
 																							//downside is that any additional text that is the string 'nil'
 																							//will be removed, not that it is too much of an issue
 					string callsign = args[0];
-                    SpotManager2.AddSpot(callsign, mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText);
+                    SpotManager2.AddSpot(callsign, mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText, "", args[1]);
 				}
 			}
 		}
@@ -2178,6 +2222,8 @@ namespace Thetis
         private System.Threading.Timer m_tmVFOtimer;
         private Stopwatch m_swCentre = new Stopwatch();
         private System.Threading.Timer m_tmCentretimer;
+        private Stopwatch m_swTXFrequency = new Stopwatch();
+        private System.Threading.Timer m_tmTXFrequency;
 
         private void VFOcallback(Object o)
         {
@@ -2189,8 +2235,12 @@ namespace Thetis
             TCPIPtciSocketListener.VFOData vfod = (TCPIPtciSocketListener.VFOData)o;
             centreFrequencyChange(vfod);
         }
-
-		public void VFOChange(VFOData vfod)
+        private void TXFrequencycallback(Object o)
+        {
+            TCPIPtciSocketListener.VFOData vfod = (TCPIPtciSocketListener.VFOData)o;
+            TXFrequencyChange(vfod);
+        }
+        public void VFOChange(VFOData vfod)
         {
             if (m_tmVFOtimer != null)
             {
@@ -2230,7 +2280,27 @@ namespace Thetis
                 m_tmCentretimer = new System.Threading.Timer(Centrecallback, vfod, m_nRateLimit, Timeout.Infinite);
             }
         }
-	}
+        public void TXFrequencyChange(VFOData vfod)
+        {
+            if (m_tmTXFrequency != null)
+            {
+                m_tmTXFrequency.Change(Timeout.Infinite, Timeout.Infinite);
+                m_tmTXFrequency = null;
+            }
+
+            bool bOK = !m_swTXFrequency.IsRunning || (m_swTXFrequency.IsRunning && m_swTXFrequency.ElapsedMilliseconds > m_nRateLimit);
+
+            if (bOK)
+            {
+                txFrequencyChange(vfod);
+                if (m_nRateLimit > 0) m_swTXFrequency.Restart();
+            }
+            else
+            {
+                m_tmTXFrequency = new System.Threading.Timer(Centrecallback, vfod, m_nRateLimit, Timeout.Infinite);
+            }
+        }
+    }
 
 	public class TCPIPtciServer
 	{
@@ -2419,6 +2489,7 @@ namespace Thetis
 					console.ThreadSafeTCIAccessor.MuteChangedHandlers += OnMuteChanged;
 					console.ThreadSafeTCIAccessor.MONChangedHandlers += OnMONChanged;
                     console.ThreadSafeTCIAccessor.MONVolumeChangedHandlers += OnMONVolumeChanged;
+					console.ThreadSafeTCIAccessor.TXFrequncyChangedHandlers += OnTXFrequencyChanged;
 
                     m_bDelegatesAdded = true;
 				}
@@ -2505,6 +2576,7 @@ namespace Thetis
                     console.ThreadSafeTCIAccessor.MuteChangedHandlers -= OnMuteChanged;
                     console.ThreadSafeTCIAccessor.MONChangedHandlers -= OnMONChanged;
                     console.ThreadSafeTCIAccessor.MONVolumeChangedHandlers -= OnMONVolumeChanged;
+                    console.ThreadSafeTCIAccessor.TXFrequncyChangedHandlers -= OnTXFrequencyChanged;
 
                     m_bDelegatesAdded = false;
 				}
@@ -2926,6 +2998,34 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
                     socketListener.MONVolumeChanged(newVolume);
+                }
+            }
+        }
+		private void OnTXFrequencyChanged(double old_frequency, double new_frequency, Band old_band, Band new_band, bool rx2_enabled, bool tx_vfob, double centre_freq)
+		{
+			TCPIPtciSocketListener.VFOData vfod = new TCPIPtciSocketListener.VFOData()
+			{
+				cen = false,
+				centreMHz = -1,
+				rx = -1,
+				freqMHz = new_frequency,
+				offsetHz = -1,
+				chan = -1,
+				duplicate_tochan = -1,
+				replace_if_duplicated = false,
+				sendIF = false,
+
+				SendTXInfo = true,
+				TXfreqBand = new_band,
+                RX2EnabledForTX = rx2_enabled,
+				TXVFOB = tx_vfob
+			};
+
+            lock (m_objLocker)
+            {
+                foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
+                {
+                    socketListener.TXFrequencyChange(vfod);
                 }
             }
         }

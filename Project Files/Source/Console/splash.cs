@@ -36,6 +36,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.Web;
+using System.IO;
+using System.Linq;
 
 namespace Thetis
 {
@@ -81,6 +84,7 @@ namespace Thetis
 		private System.Windows.Forms.LabelTS lblStatus;
 		private System.Windows.Forms.Panel pnlStatus;
         private LabelTS lblVersion;
+        private Panel panel1;
         private System.ComponentModel.IContainer components;
 		#endregion
 
@@ -119,9 +123,10 @@ namespace Thetis
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Splash));
             this.pnlStatus = new System.Windows.Forms.Panel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.lblVersion = new System.Windows.Forms.LabelTS();
             this.lblTimeRemaining = new System.Windows.Forms.LabelTS();
             this.lblStatus = new System.Windows.Forms.LabelTS();
-            this.lblVersion = new System.Windows.Forms.LabelTS();
             this.SuspendLayout();
             // 
             // pnlStatus
@@ -139,9 +144,29 @@ namespace Thetis
             this.timer1.Enabled = true;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.panel1.Location = new System.Drawing.Point(50, 249);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(306, 59);
+            this.panel1.TabIndex = 4;
+            // 
+            // lblVersion
+            // 
+            this.lblVersion.AutoSize = true;
+            this.lblVersion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.lblVersion.ForeColor = System.Drawing.Color.White;
+            this.lblVersion.Image = null;
+            this.lblVersion.Location = new System.Drawing.Point(56, 290);
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Size = new System.Drawing.Size(205, 13);
+            this.lblVersion.TabIndex = 3;
+            this.lblVersion.Text = "WWWWWWWWWWWWWWWWWW";
+            // 
             // lblTimeRemaining
             // 
-            this.lblTimeRemaining.BackColor = System.Drawing.Color.Transparent;
+            this.lblTimeRemaining.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.lblTimeRemaining.ForeColor = System.Drawing.Color.White;
             this.lblTimeRemaining.Image = null;
             this.lblTimeRemaining.Location = new System.Drawing.Point(256, 290);
@@ -153,36 +178,25 @@ namespace Thetis
             // 
             // lblStatus
             // 
-            this.lblStatus.BackColor = System.Drawing.Color.Transparent;
+            this.lblStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.lblStatus.ForeColor = System.Drawing.Color.White;
             this.lblStatus.Image = null;
-            this.lblStatus.Location = new System.Drawing.Point(12, 252);
+            this.lblStatus.Location = new System.Drawing.Point(50, 252);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(376, 16);
+            this.lblStatus.Size = new System.Drawing.Size(306, 16);
             this.lblStatus.TabIndex = 0;
             this.lblStatus.Text = "Status";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lblVersion
-            // 
-            this.lblVersion.AutoSize = true;
-            this.lblVersion.BackColor = System.Drawing.Color.Transparent;
-            this.lblVersion.ForeColor = System.Drawing.Color.White;
-            this.lblVersion.Image = null;
-            this.lblVersion.Location = new System.Drawing.Point(56, 290);
-            this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(205, 13);
-            this.lblVersion.TabIndex = 3;
-            this.lblVersion.Text = "WWWWWWWWWWWWWWWWWW";
-            // 
             // Splash
             // 
-            this.BackgroundImage = global::Thetis.Properties.Resources.thetis_logo1;
+            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.ClientSize = new System.Drawing.Size(400, 320);
             this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.pnlStatus);
             this.Controls.Add(this.lblTimeRemaining);
             this.Controls.Add(this.lblStatus);
+            this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Splash";
@@ -198,9 +212,15 @@ namespace Thetis
 		#region Static Methods
 		// ************* Static Methods *************** //
 
-		// A static method to create the thread and 
-		// launch the SplashScreen.
-		static public void ShowSplashScreen(string version)
+		private class StartParams
+		{
+			public string vers;
+			public string splash_folder;
+		}
+
+        // A static method to create the thread and 
+        // launch the SplashScreen.
+        static public void ShowSplashScreen(string version, string splash_screen_folder = "")
 		{
 			// Make sure it is only launched once.
 			if( ms_frmSplash != null )
@@ -210,7 +230,8 @@ namespace Thetis
 				IsBackground = true,
 				Name = "Splash Screen Thread"
 			};
-			ms_oThread.Start(version);
+			StartParams sp = new StartParams { vers = version, splash_folder = splash_screen_folder };
+			ms_oThread.Start(sp);
 		}
 
 		// A property returning the splash screen instance
@@ -223,11 +244,14 @@ namespace Thetis
 		}
 
 		// A private entry point for the thread.
-		static private void ShowForm(object version)
+		static private void ShowForm(object param)
 		{
-			string sversion = version as string;
+			StartParams sp = param as StartParams;
+			
 			ms_frmSplash = new Splash();
-			ms_frmSplash.setVersion(sversion);
+			ms_frmSplash.setVersion(sp.vers);
+			ms_frmSplash.setBackground(sp.splash_folder);
+
             Control.CheckForIllegalCrossThreadCalls = false;
 			Application.Run(ms_frmSplash);
 		}
@@ -292,7 +316,42 @@ namespace Thetis
         {
 			lblVersion.Text = string.IsNullOrEmpty(version) ? "" : version.Left(32);
         }
+        private void setBackground(string splash_screen_folder)
+        {
+			if (string.IsNullOrEmpty(splash_screen_folder)) return;
 
+			int width = 400;
+			int height = 320;
+
+            string[] files = Directory.GetFiles(splash_screen_folder, "*.png");
+            string[] matchingFiles = files
+                .Where(file =>
+                {
+                    using (Image image = Image.FromFile(file))
+                    {
+                        return image.Width == width && image.Height == height;
+                    }
+                })
+                .ToArray();
+
+			if (matchingFiles.Length == 0) return;
+
+            Random random = new Random();
+            int index = random.Next(matchingFiles.Length);
+
+			//Debug.Print(matchingFiles[index]);
+			try
+			{
+				if (File.Exists(matchingFiles[index]))
+				{
+					this.BackgroundImage = Image.FromFile(matchingFiles[index]);
+				}
+			}
+			catch 
+			{
+				this.BackgroundImage = Properties.Resources.thetis_logo2;
+			}
+        }
         // Internal method for setting reference points.
         private void SetReferenceInternal()
 		{
