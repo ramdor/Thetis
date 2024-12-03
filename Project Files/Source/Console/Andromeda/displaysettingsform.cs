@@ -218,6 +218,7 @@ namespace Thetis
             this.btnClose.Image = null;
             this.btnClose.Location = new System.Drawing.Point(326, 153);
             this.btnClose.Name = "btnClose";
+            this.btnClose.Selectable = true;
             this.btnClose.Size = new System.Drawing.Size(109, 41);
             this.btnClose.TabIndex = 0;
             this.btnClose.Text = "Close";

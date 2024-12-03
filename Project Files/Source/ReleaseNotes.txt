@@ -90,6 +90,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] vfoB lock button will now disable on power off
 - [fix] vfo lock state will be stored in db even if button is disabled
 - [fix] fixed the power output issue when back to back high swr tunes were performed
+- [fix] fixed scaling issue when containers appear on a different monitor to the main console window, and those monitors have different dpi/scales/resolution set
 
 ## v2.10.3.6 Main New Features
 - database manager
