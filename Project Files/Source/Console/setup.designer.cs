@@ -32,6 +32,7 @@
             this.udATTOnTX = new System.Windows.Forms.NumericUpDownTS();
             this.chkHFTRRelay = new System.Windows.Forms.CheckBoxTS();
             this.grpSWRProtectionControl = new System.Windows.Forms.GroupBoxTS();
+            this.chkWindBackPowerSWR = new System.Windows.Forms.CheckBoxTS();
             this.labelTS194 = new System.Windows.Forms.LabelTS();
             this.udSwrProtectionLimit = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS193 = new System.Windows.Forms.LabelTS();
@@ -516,6 +517,16 @@
             this.lblGenCalRXImageFreq = new System.Windows.Forms.LabelTS();
             this.btnGeneralCalImageStart = new System.Windows.Forms.ButtonTS();
             this.tpFilters = new System.Windows.Forms.TabPage();
+            this.groupBoxTS49 = new System.Windows.Forms.GroupBoxTS();
+            this.btnFilter_others_default = new System.Windows.Forms.ButtonTS();
+            this.btnFilter_cw_default = new System.Windows.Forms.ButtonTS();
+            this.btnFilter_sideband_default = new System.Windows.Forms.ButtonTS();
+            this.labelTS343 = new System.Windows.Forms.LabelTS();
+            this.labelTS342 = new System.Windows.Forms.LabelTS();
+            this.labelTS340 = new System.Windows.Forms.LabelTS();
+            this.txtFilter_other_frequencies = new System.Windows.Forms.TextBoxTS();
+            this.txtFilter_cw_frequencies = new System.Windows.Forms.TextBoxTS();
+            this.txtFilter_sideband_frequencies = new System.Windows.Forms.TextBoxTS();
             this.chkLimitFilterEdgesToSidebands = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS6 = new System.Windows.Forms.GroupBoxTS();
             this.udRX2FilterDefaultLowCut = new System.Windows.Forms.NumericUpDownTS();
@@ -2170,6 +2181,7 @@
             this.tpDSP = new System.Windows.Forms.TabPage();
             this.tcDSP = new System.Windows.Forms.TabControl();
             this.tpDSPOptions = new System.Windows.Forms.TabPage();
+            this.chkFilter_high_resolution_characteristics = new System.Windows.Forms.CheckBoxTS();
             this.lblWarningBufferType = new System.Windows.Forms.LabelTS();
             this.lblWarningFilterSize = new System.Windows.Forms.LabelTS();
             this.lblWarningBufferSize = new System.Windows.Forms.LabelTS();
@@ -2982,6 +2994,7 @@
             this.nlblStatusBarBackground = new System.Windows.Forms.LabelTS();
             this.btnSkinExport = new System.Windows.Forms.ButtonTS();
             this.grpAppSkins = new System.Windows.Forms.GroupBoxTS();
+            this.chkMaintainBackgroundAspectRatio = new System.Windows.Forms.CheckBoxTS();
             this.btnOpenSkinsFolder = new System.Windows.Forms.ButtonTS();
             this.btnRemoveSkin = new System.Windows.Forms.ButtonTS();
             this.chkDisablePicDisplayBackgroundImage = new System.Windows.Forms.CheckBoxTS();
@@ -3405,6 +3418,8 @@
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
             this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.btnClearTCISpotsSWL = new System.Windows.Forms.ButtonTS();
+            this.chkForgetRX2VfoBVFOinfo = new System.Windows.Forms.CheckBoxTS();
             this.chkCWbecomesCWUabove10mhz = new System.Windows.Forms.CheckBoxTS();
             this.btnClearTCISpots = new System.Windows.Forms.ButtonTS();
             this.chkEmulateExpertSDR3Protocol = new System.Windows.Forms.CheckBoxTS();
@@ -3572,6 +3587,8 @@
             this.btnMMIO_network_add_tcpip = new System.Windows.Forms.ButtonTS();
             this.tpDiscord = new System.Windows.Forms.TabPage();
             this.groupBoxTS48 = new System.Windows.Forms.GroupBoxTS();
+            this.lblDiscordCountry = new System.Windows.Forms.LabelTS();
+            this.chkDiscordTimeStamp = new System.Windows.Forms.CheckBoxTS();
             this.pbDiscordInfo_filter = new System.Windows.Forms.PictureBox();
             this.pbDiscordInfo_ignore = new System.Windows.Forms.PictureBox();
             this.pbDiscordInfo_tag = new System.Windows.Forms.PictureBox();
@@ -3797,6 +3814,35 @@
             this.nudLedIndicator_UpdateInterval = new System.Windows.Forms.NumericUpDownTS();
             this.clrbtnButonBox_click = new Thetis.ColorButton();
             this.clrbtnButonBox_fontcolour = new Thetis.ColorButton();
+            this.nudFilterDisplay_vertical_ratio = new System.Windows.Forms.NumericUpDownTS();
+            this.clrbtnFilterDisplay_backcolour = new Thetis.ColorButton();
+            this.nudFilterDisplay_fixed_zoom_level = new System.Windows.Forms.NumericUpDownTS();
+            this.nudFilterDisplay_fixed_tx_zoom_level = new System.Windows.Forms.NumericUpDownTS();
+            this.nudFilterItem_sidebands_scale = new System.Windows.Forms.NumericUpDownTS();
+            this.nudFilterItem_cw_scale = new System.Windows.Forms.NumericUpDownTS();
+            this.nudFilterItem_others_scale = new System.Windows.Forms.NumericUpDownTS();
+            this.nudFilterItem_font_scale = new System.Windows.Forms.NumericUpDownTS();
+            this.comboFilter_wf_palette = new System.Windows.Forms.ComboBoxTS();
+            this.label22 = new System.Windows.Forms.Label();
+            this.chkFilter_sideband_mode = new System.Windows.Forms.CheckBoxTS();
+            this.nudFilter_waterfall_frame_update = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS341 = new System.Windows.Forms.LabelTS();
+            this.chkFilter_grey_outsidepb = new System.Windows.Forms.CheckBoxTS();
+            this.btnFilter_4char_copy = new System.Windows.Forms.ButtonTS();
+            this.txtWebImage_4char = new System.Windows.Forms.TextBoxTS();
+            this.txtWebImage_background_4char = new System.Windows.Forms.TextBoxTS();
+            this.btnWebImage_goto_next = new System.Windows.Forms.ButtonTS();
+            this.nudFilter_lower_characteristic = new System.Windows.Forms.NumericUpDownTS();
+            this.chkFilter_characteristic = new System.Windows.Forms.CheckBoxTS();
+            this.nudDialDisplay_font_scale = new System.Windows.Forms.NumericUpDownTS();
+            this.nudDialDisplay_vertical_ratio = new System.Windows.Forms.NumericUpDownTS();
+            this.chkDialDisplay_alwaysshow_vfos = new System.Windows.Forms.CheckBoxTS();
+            this.nudDial_increment = new System.Windows.Forms.NumericUpDownTS();
+            this.nudDial_decrement = new System.Windows.Forms.NumericUpDownTS();
+            this.nudDial_interval = new System.Windows.Forms.NumericUpDownTS();
+            this.chkDial_align = new System.Windows.Forms.CheckBoxTS();
+            this.nudDial_max_increments = new System.Windows.Forms.NumericUpDownTS();
+            this.nudDial_degrees_for_change = new System.Windows.Forms.NumericUpDownTS();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -3929,20 +3975,26 @@
             this.chkLedIndicator_FadeOnTX = new System.Windows.Forms.CheckBoxTS();
             this.chkLedIndicator_FadeOnRX = new System.Windows.Forms.CheckBoxTS();
             this.grpWebImage = new System.Windows.Forms.GroupBoxTS();
+            this.lblWebImage_after = new System.Windows.Forms.LabelTS();
+            this.scrollableControl1 = new System.Windows.Forms.ScrollableControl();
+            this.groupBoxTS40 = new System.Windows.Forms.GroupBoxTS();
+            this.btnWebImage_hamqsl_donate = new System.Windows.Forms.ButtonTS();
+            this.comboWebImage_HamQsl = new System.Windows.Forms.ComboBoxTS();
             this.groupBoxTS42 = new System.Windows.Forms.GroupBoxTS();
             this.buttonTS1 = new System.Windows.Forms.ButtonTS();
             this.comboWebImage_noaa = new System.Windows.Forms.ComboBoxTS();
+            this.groupBoxTS43 = new System.Windows.Forms.GroupBoxTS();
+            this.buttonTS2 = new System.Windows.Forms.ButtonTS();
+            this.comboWebImage_nasa = new System.Windows.Forms.ComboBoxTS();
             this.groupBoxTS41 = new System.Windows.Forms.GroupBoxTS();
             this.chkBSDWorldDarkMode = new System.Windows.Forms.CheckBoxTS();
             this.btnWebImage_bsdworld_visit = new System.Windows.Forms.ButtonTS();
             this.comboWebImage_BsdWorld = new System.Windows.Forms.ComboBoxTS();
-            this.groupBoxTS43 = new System.Windows.Forms.GroupBoxTS();
-            this.buttonTS2 = new System.Windows.Forms.ButtonTS();
-            this.comboWebImage_nasa = new System.Windows.Forms.ComboBoxTS();
+            this.lblWebImage_secs = new System.Windows.Forms.LabelTS();
+            this.nudWebImage_background_time = new System.Windows.Forms.NumericUpDownTS();
+            this.chkWebImage_background = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS347 = new System.Windows.Forms.LabelTS();
             this.lblWebImage_state = new System.Windows.Forms.LabelTS();
-            this.groupBoxTS40 = new System.Windows.Forms.GroupBoxTS();
-            this.btnWebImage_hamqsl_donate = new System.Windows.Forms.ButtonTS();
-            this.comboWebImage_HamQsl = new System.Windows.Forms.ComboBoxTS();
             this.labelTS236 = new System.Windows.Forms.LabelTS();
             this.txtWebImage_url = new System.Windows.Forms.TextBoxTS();
             this.labelTS232 = new System.Windows.Forms.LabelTS();
@@ -4021,7 +4073,92 @@
             this.tabPage10 = new System.Windows.Forms.TabPage();
             this.tabPage11 = new System.Windows.Forms.TabPage();
             this.tabPage12 = new System.Windows.Forms.TabPage();
+            this.grpMeterItemFilterDisplay = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS349 = new System.Windows.Forms.LabelTS();
+            this.scrlFilter = new System.Windows.Forms.ScrollableControl();
+            this.clrbtnFilter_button_highlight = new Thetis.ColorButton();
+            this.labelTS345 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_setting_on = new Thetis.ColorButton();
+            this.clrbtnFilter_wf_low = new Thetis.ColorButton();
+            this.labelTS346 = new System.Windows.Forms.LabelTS();
+            this.labelTS298 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_snap_line = new Thetis.ColorButton();
+            this.labelTS344 = new System.Windows.Forms.LabelTS();
+            this.chkFilter_fill_spec = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS299 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_data_line = new Thetis.ColorButton();
+            this.labelTS300 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_extents = new Thetis.ColorButton();
+            this.clrbtnFilter_data_fill = new Thetis.ColorButton();
+            this.labelTS338 = new System.Windows.Forms.LabelTS();
+            this.labelTS301 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_notch_highlight = new Thetis.ColorButton();
+            this.clrbtnFilter_text = new Thetis.ColorButton();
+            this.labelTS336 = new System.Windows.Forms.LabelTS();
+            this.labelTS330 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_notch = new Thetis.ColorButton();
+            this.clrbtnFilter_number_highlight = new Thetis.ColorButton();
+            this.labelTS337 = new System.Windows.Forms.LabelTS();
+            this.labelTS331 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_meter_back = new Thetis.ColorButton();
+            this.clrbtnFilter_edges = new Thetis.ColorButton();
+            this.labelTS335 = new System.Windows.Forms.LabelTS();
+            this.labelTS334 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_edge_highlight = new Thetis.ColorButton();
+            this.labelTS348 = new System.Windows.Forms.LabelTS();
+            this.labelTS339 = new System.Windows.Forms.LabelTS();
+            this.labelTS297 = new System.Windows.Forms.LabelTS();
+            this.radFilterItem_none = new System.Windows.Forms.RadioButtonTS();
+            this.radFilterItem_panadaptor = new System.Windows.Forms.RadioButtonTS();
+            this.radFilterItem_waterfall = new System.Windows.Forms.RadioButtonTS();
+            this.radFilterItem_panafall = new System.Windows.Forms.RadioButtonTS();
+            this.pnlFilterModeModifiers = new System.Windows.Forms.PanelTS();
+            this.labelTS296 = new System.Windows.Forms.LabelTS();
+            this.labelTS294 = new System.Windows.Forms.LabelTS();
+            this.labelTS293 = new System.Windows.Forms.LabelTS();
+            this.chkFilterDisplay_fixed_tx_zoom = new System.Windows.Forms.CheckBoxTS();
+            this.chkFilterDisplay_fixed_zoom = new System.Windows.Forms.CheckBoxTS();
+            this.chkFilterDisplay_show_limits = new System.Windows.Forms.CheckBoxTS();
+            this.labelTS332 = new System.Windows.Forms.LabelTS();
+            this.labelTS333 = new System.Windows.Forms.LabelTS();
+            this.chkFilterDisplay_fadeontx = new System.Windows.Forms.CheckBoxTS();
+            this.chkFilterDisplay_fadeonrx = new System.Windows.Forms.CheckBoxTS();
             this.tabPage13 = new System.Windows.Forms.TabPage();
+            this.grpDialDisplay = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS421 = new System.Windows.Forms.LabelTS();
+            this.labelTS419 = new System.Windows.Forms.LabelTS();
+            this.labelTS418 = new System.Windows.Forms.LabelTS();
+            this.clrbtnDial_button_highlight = new Thetis.ColorButton();
+            this.labelTS414 = new System.Windows.Forms.LabelTS();
+            this.clrbtnDial_fast = new Thetis.ColorButton();
+            this.labelTS415 = new System.Windows.Forms.LabelTS();
+            this.clrbtnDial_hold = new Thetis.ColorButton();
+            this.labelTS416 = new System.Windows.Forms.LabelTS();
+            this.clrbtnDial_slow = new Thetis.ColorButton();
+            this.labelTS417 = new System.Windows.Forms.LabelTS();
+            this.clrbtnDial_ring = new Thetis.ColorButton();
+            this.labelTS412 = new System.Windows.Forms.LabelTS();
+            this.clrbtnDial_button_off = new Thetis.ColorButton();
+            this.labelTS413 = new System.Windows.Forms.LabelTS();
+            this.clrbtnDial_button_on = new Thetis.ColorButton();
+            this.labelTS410 = new System.Windows.Forms.LabelTS();
+            this.clrbtnDial_pad_pressed = new Thetis.ColorButton();
+            this.labelTS411 = new System.Windows.Forms.LabelTS();
+            this.clrbtnDial_pad = new Thetis.ColorButton();
+            this.labelTS409 = new System.Windows.Forms.LabelTS();
+            this.clrbtnDial_circle = new Thetis.ColorButton();
+            this.labelTS407 = new System.Windows.Forms.LabelTS();
+            this.labelTS408 = new System.Windows.Forms.LabelTS();
+            this.labelTS353 = new System.Windows.Forms.LabelTS();
+            this.labelTS354 = new System.Windows.Forms.LabelTS();
+            this.labelTS352 = new System.Windows.Forms.LabelTS();
+            this.labelTS351 = new System.Windows.Forms.LabelTS();
+            this.labelTS350 = new System.Windows.Forms.LabelTS();
+            this.clrbtnDial_text = new Thetis.ColorButton();
+            this.labelTS420 = new System.Windows.Forms.LabelTS();
+            this.labelTS424 = new System.Windows.Forms.LabelTS();
+            this.chkDialDisplay_fade_tx = new System.Windows.Forms.CheckBoxTS();
+            this.chkDialDisplay_fade_rx = new System.Windows.Forms.CheckBoxTS();
             this.tabPage14 = new System.Windows.Forms.TabPage();
             this.tabPage15 = new System.Windows.Forms.TabPage();
             this.tmrLedValid = new System.Windows.Forms.Timer(this.components);
@@ -4171,6 +4308,7 @@
             this.grpGenCalRXImage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq3)).BeginInit();
             this.tpFilters.SuspendLayout();
+            this.groupBoxTS49.SuspendLayout();
             this.groupBoxTS6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2FilterDefaultLowCut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2OptMaxFilterShift)).BeginInit();
@@ -4997,6 +5135,22 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbLedIndicator_condition_tips)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterRotatorControlInfo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_UpdateInterval)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterDisplay_vertical_ratio)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterDisplay_fixed_zoom_level)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterDisplay_fixed_tx_zoom_level)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_sidebands_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_cw_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_others_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_font_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilter_waterfall_frame_update)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilter_lower_characteristic)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDialDisplay_font_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDialDisplay_vertical_ratio)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDial_increment)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDial_decrement)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDial_interval)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDial_max_increments)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDial_degrees_for_change)).BeginInit();
             this.grpDiagInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).BeginInit();
@@ -5037,10 +5191,12 @@
             this.grpMeterItemRotator.SuspendLayout();
             this.grpLedIndicator.SuspendLayout();
             this.grpWebImage.SuspendLayout();
-            this.groupBoxTS42.SuspendLayout();
-            this.groupBoxTS41.SuspendLayout();
-            this.groupBoxTS43.SuspendLayout();
+            this.scrollableControl1.SuspendLayout();
             this.groupBoxTS40.SuspendLayout();
+            this.groupBoxTS42.SuspendLayout();
+            this.groupBoxTS43.SuspendLayout();
+            this.groupBoxTS41.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudWebImage_background_time)).BeginInit();
             this.grpBandButtons.SuspendLayout();
             this.pnlButtonBox_antenna_toggles.SuspendLayout();
             this.grpHistoryItem.SuspendLayout();
@@ -5057,6 +5213,12 @@
             this.tabPage9.SuspendLayout();
             this.tabPage10.SuspendLayout();
             this.tabPage11.SuspendLayout();
+            this.tabPage12.SuspendLayout();
+            this.grpMeterItemFilterDisplay.SuspendLayout();
+            this.scrlFilter.SuspendLayout();
+            this.pnlFilterModeModifiers.SuspendLayout();
+            this.tabPage13.SuspendLayout();
+            this.grpDialDisplay.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -5272,18 +5434,32 @@
             // 
             // grpSWRProtectionControl
             // 
+            this.grpSWRProtectionControl.Controls.Add(this.chkWindBackPowerSWR);
             this.grpSWRProtectionControl.Controls.Add(this.labelTS194);
             this.grpSWRProtectionControl.Controls.Add(this.udSwrProtectionLimit);
             this.grpSWRProtectionControl.Controls.Add(this.labelTS193);
             this.grpSWRProtectionControl.Controls.Add(this.udTunePowerSwrIgnore);
             this.grpSWRProtectionControl.Controls.Add(this.chkSWRTuneProtection);
             this.grpSWRProtectionControl.Controls.Add(this.chkSWRProtection);
-            this.grpSWRProtectionControl.Location = new System.Drawing.Point(441, 44);
+            this.grpSWRProtectionControl.Location = new System.Drawing.Point(441, 6);
             this.grpSWRProtectionControl.Name = "grpSWRProtectionControl";
-            this.grpSWRProtectionControl.Size = new System.Drawing.Size(261, 76);
+            this.grpSWRProtectionControl.Size = new System.Drawing.Size(261, 101);
             this.grpSWRProtectionControl.TabIndex = 5;
             this.grpSWRProtectionControl.TabStop = false;
             this.grpSWRProtectionControl.Text = "SWR Protection";
+            // 
+            // chkWindBackPowerSWR
+            // 
+            this.chkWindBackPowerSWR.AutoSize = true;
+            this.chkWindBackPowerSWR.Image = null;
+            this.chkWindBackPowerSWR.Location = new System.Drawing.Point(24, 73);
+            this.chkWindBackPowerSWR.Name = "chkWindBackPowerSWR";
+            this.chkWindBackPowerSWR.Size = new System.Drawing.Size(141, 17);
+            this.chkWindBackPowerSWR.TabIndex = 13;
+            this.chkWindBackPowerSWR.Text = "Reduce Pwr if protected";
+            this.toolTip1.SetToolTip(this.chkWindBackPowerSWR, "Winds back the power if high swr protection kicks in");
+            this.chkWindBackPowerSWR.UseVisualStyleBackColor = true;
+            this.chkWindBackPowerSWR.CheckedChanged += new System.EventHandler(this.chkWindBackPowerSWR_CheckedChanged);
             // 
             // labelTS194
             // 
@@ -5425,7 +5601,7 @@
             this.chkAlexAntCtrl.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.chkAlexAntCtrl.ForeColor = System.Drawing.SystemColors.ControlText;
             this.chkAlexAntCtrl.Image = null;
-            this.chkAlexAntCtrl.Location = new System.Drawing.Point(477, 15);
+            this.chkAlexAntCtrl.Location = new System.Drawing.Point(337, 283);
             this.chkAlexAntCtrl.Name = "chkAlexAntCtrl";
             this.chkAlexAntCtrl.Size = new System.Drawing.Size(95, 23);
             this.chkAlexAntCtrl.TabIndex = 1;
@@ -8376,7 +8552,8 @@
             "ANAN-7000DLE",
             "ANAN-8000DLE",
             "ANAN-G2",
-            "ANAN-G2-1K"});
+            "ANAN-G2-1K",
+            "ANVELINA-PRO3"});
             this.comboRadioModel.Location = new System.Drawing.Point(6, 19);
             this.comboRadioModel.Name = "comboRadioModel";
             this.comboRadioModel.Size = new System.Drawing.Size(136, 23);
@@ -9732,7 +9909,7 @@
             0});
             this.udOptClickTuneOffsetDIGL.Location = new System.Drawing.Point(106, 41);
             this.udOptClickTuneOffsetDIGL.Maximum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
@@ -9774,7 +9951,7 @@
             0});
             this.udOptClickTuneOffsetDIGU.Location = new System.Drawing.Point(106, 21);
             this.udOptClickTuneOffsetDIGU.Maximum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
@@ -12244,6 +12421,7 @@
             // tpFilters
             // 
             this.tpFilters.BackColor = System.Drawing.SystemColors.Control;
+            this.tpFilters.Controls.Add(this.groupBoxTS49);
             this.tpFilters.Controls.Add(this.chkLimitFilterEdgesToSidebands);
             this.tpFilters.Controls.Add(this.groupBoxTS6);
             this.tpFilters.Controls.Add(this.grpOptFilterControls);
@@ -12253,11 +12431,122 @@
             this.tpFilters.TabIndex = 3;
             this.tpFilters.Text = "Filters";
             // 
+            // groupBoxTS49
+            // 
+            this.groupBoxTS49.Controls.Add(this.btnFilter_others_default);
+            this.groupBoxTS49.Controls.Add(this.btnFilter_cw_default);
+            this.groupBoxTS49.Controls.Add(this.btnFilter_sideband_default);
+            this.groupBoxTS49.Controls.Add(this.labelTS343);
+            this.groupBoxTS49.Controls.Add(this.labelTS342);
+            this.groupBoxTS49.Controls.Add(this.labelTS340);
+            this.groupBoxTS49.Controls.Add(this.txtFilter_other_frequencies);
+            this.groupBoxTS49.Controls.Add(this.txtFilter_cw_frequencies);
+            this.groupBoxTS49.Controls.Add(this.txtFilter_sideband_frequencies);
+            this.groupBoxTS49.Location = new System.Drawing.Point(8, 210);
+            this.groupBoxTS49.Name = "groupBoxTS49";
+            this.groupBoxTS49.Size = new System.Drawing.Size(411, 109);
+            this.groupBoxTS49.TabIndex = 32;
+            this.groupBoxTS49.TabStop = false;
+            this.groupBoxTS49.Text = "Filter Item Snap Frequencies";
+            // 
+            // btnFilter_others_default
+            // 
+            this.btnFilter_others_default.Image = null;
+            this.btnFilter_others_default.Location = new System.Drawing.Point(348, 76);
+            this.btnFilter_others_default.Name = "btnFilter_others_default";
+            this.btnFilter_others_default.Selectable = true;
+            this.btnFilter_others_default.Size = new System.Drawing.Size(53, 23);
+            this.btnFilter_others_default.TabIndex = 8;
+            this.btnFilter_others_default.Text = "Default";
+            this.btnFilter_others_default.UseVisualStyleBackColor = true;
+            this.btnFilter_others_default.Click += new System.EventHandler(this.btnFilter_others_default_Click);
+            // 
+            // btnFilter_cw_default
+            // 
+            this.btnFilter_cw_default.Image = null;
+            this.btnFilter_cw_default.Location = new System.Drawing.Point(348, 50);
+            this.btnFilter_cw_default.Name = "btnFilter_cw_default";
+            this.btnFilter_cw_default.Selectable = true;
+            this.btnFilter_cw_default.Size = new System.Drawing.Size(53, 23);
+            this.btnFilter_cw_default.TabIndex = 7;
+            this.btnFilter_cw_default.Text = "Default";
+            this.btnFilter_cw_default.UseVisualStyleBackColor = true;
+            this.btnFilter_cw_default.Click += new System.EventHandler(this.btnFilter_cw_default_Click);
+            // 
+            // btnFilter_sideband_default
+            // 
+            this.btnFilter_sideband_default.Image = null;
+            this.btnFilter_sideband_default.Location = new System.Drawing.Point(348, 24);
+            this.btnFilter_sideband_default.Name = "btnFilter_sideband_default";
+            this.btnFilter_sideband_default.Selectable = true;
+            this.btnFilter_sideband_default.Size = new System.Drawing.Size(53, 23);
+            this.btnFilter_sideband_default.TabIndex = 6;
+            this.btnFilter_sideband_default.Text = "Default";
+            this.btnFilter_sideband_default.UseVisualStyleBackColor = true;
+            this.btnFilter_sideband_default.Click += new System.EventHandler(this.btnFilter_sideband_default_Click);
+            // 
+            // labelTS343
+            // 
+            this.labelTS343.AutoSize = true;
+            this.labelTS343.Image = null;
+            this.labelTS343.Location = new System.Drawing.Point(58, 81);
+            this.labelTS343.Name = "labelTS343";
+            this.labelTS343.Size = new System.Drawing.Size(39, 13);
+            this.labelTS343.TabIndex = 5;
+            this.labelTS343.Text = "others:";
+            // 
+            // labelTS342
+            // 
+            this.labelTS342.AutoSize = true;
+            this.labelTS342.Image = null;
+            this.labelTS342.Location = new System.Drawing.Point(46, 55);
+            this.labelTS342.Name = "labelTS342";
+            this.labelTS342.Size = new System.Drawing.Size(51, 13);
+            this.labelTS342.TabIndex = 4;
+            this.labelTS342.Text = "cwl/cwu:";
+            // 
+            // labelTS340
+            // 
+            this.labelTS340.AutoSize = true;
+            this.labelTS340.Image = null;
+            this.labelTS340.Location = new System.Drawing.Point(6, 29);
+            this.labelTS340.Name = "labelTS340";
+            this.labelTS340.Size = new System.Drawing.Size(91, 13);
+            this.labelTS340.TabIndex = 3;
+            this.labelTS340.Text = "lsb/usb/digl/digu:";
+            // 
+            // txtFilter_other_frequencies
+            // 
+            this.txtFilter_other_frequencies.Location = new System.Drawing.Point(103, 78);
+            this.txtFilter_other_frequencies.Name = "txtFilter_other_frequencies";
+            this.txtFilter_other_frequencies.Size = new System.Drawing.Size(241, 20);
+            this.txtFilter_other_frequencies.TabIndex = 2;
+            this.txtFilter_other_frequencies.Text = "1000,2500,5000,6000,8000";
+            this.txtFilter_other_frequencies.TextChanged += new System.EventHandler(this.txtFilter_other_frequencies_TextChanged);
+            // 
+            // txtFilter_cw_frequencies
+            // 
+            this.txtFilter_cw_frequencies.Location = new System.Drawing.Point(103, 52);
+            this.txtFilter_cw_frequencies.Name = "txtFilter_cw_frequencies";
+            this.txtFilter_cw_frequencies.Size = new System.Drawing.Size(241, 20);
+            this.txtFilter_cw_frequencies.TabIndex = 1;
+            this.txtFilter_cw_frequencies.Text = "50,100,250,500,700,750,1000";
+            this.txtFilter_cw_frequencies.TextChanged += new System.EventHandler(this.txtFilter_cw_frequencies_TextChanged);
+            // 
+            // txtFilter_sideband_frequencies
+            // 
+            this.txtFilter_sideband_frequencies.Location = new System.Drawing.Point(103, 26);
+            this.txtFilter_sideband_frequencies.Name = "txtFilter_sideband_frequencies";
+            this.txtFilter_sideband_frequencies.Size = new System.Drawing.Size(241, 20);
+            this.txtFilter_sideband_frequencies.TabIndex = 0;
+            this.txtFilter_sideband_frequencies.Text = "50,100,1000,1500,2800,3000,4000,5000";
+            this.txtFilter_sideband_frequencies.TextChanged += new System.EventHandler(this.txtFilter_sideband_frequencies_TextChanged);
+            // 
             // chkLimitFilterEdgesToSidebands
             // 
             this.chkLimitFilterEdgesToSidebands.AutoSize = true;
             this.chkLimitFilterEdgesToSidebands.Image = null;
-            this.chkLimitFilterEdgesToSidebands.Location = new System.Drawing.Point(19, 166);
+            this.chkLimitFilterEdgesToSidebands.Location = new System.Drawing.Point(19, 176);
             this.chkLimitFilterEdgesToSidebands.Name = "chkLimitFilterEdgesToSidebands";
             this.chkLimitFilterEdgesToSidebands.Size = new System.Drawing.Size(164, 17);
             this.chkLimitFilterEdgesToSidebands.TabIndex = 31;
@@ -12332,7 +12621,7 @@
             0});
             this.udRX2OptMaxFilterShift.Location = new System.Drawing.Point(128, 69);
             this.udRX2OptMaxFilterShift.Maximum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
@@ -12342,13 +12631,13 @@
             0,
             0});
             this.udRX2OptMaxFilterShift.Name = "udRX2OptMaxFilterShift";
-            this.udRX2OptMaxFilterShift.Size = new System.Drawing.Size(48, 20);
+            this.udRX2OptMaxFilterShift.Size = new System.Drawing.Size(59, 20);
             this.udRX2OptMaxFilterShift.TabIndex = 13;
             this.udRX2OptMaxFilterShift.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2OptMaxFilterShift, "Sets the maximum amount for the Shift control.  Set lower for finer resolution co" +
         "ntrol");
             this.udRX2OptMaxFilterShift.Value = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
@@ -12372,9 +12661,9 @@
             "Linear",
             "Log",
             "Log10"});
-            this.comboRX2OptFilterWidthMode.Location = new System.Drawing.Point(120, 44);
+            this.comboRX2OptFilterWidthMode.Location = new System.Drawing.Point(128, 44);
             this.comboRX2OptFilterWidthMode.Name = "comboRX2OptFilterWidthMode";
-            this.comboRX2OptFilterWidthMode.Size = new System.Drawing.Size(56, 21);
+            this.comboRX2OptFilterWidthMode.Size = new System.Drawing.Size(59, 21);
             this.comboRX2OptFilterWidthMode.TabIndex = 12;
             this.toolTip1.SetToolTip(this.comboRX2OptFilterWidthMode, "Sets the mapping for the filter width slider.");
             this.comboRX2OptFilterWidthMode.Visible = false;
@@ -12398,7 +12687,7 @@
             0});
             this.udRX2OptMaxFilterWidth.Location = new System.Drawing.Point(128, 21);
             this.udRX2OptMaxFilterWidth.Maximum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
@@ -12408,12 +12697,12 @@
             0,
             0});
             this.udRX2OptMaxFilterWidth.Name = "udRX2OptMaxFilterWidth";
-            this.udRX2OptMaxFilterWidth.Size = new System.Drawing.Size(48, 20);
+            this.udRX2OptMaxFilterWidth.Size = new System.Drawing.Size(59, 20);
             this.udRX2OptMaxFilterWidth.TabIndex = 0;
             this.udRX2OptMaxFilterWidth.TinyStep = false;
             this.toolTip1.SetToolTip(this.udRX2OptMaxFilterWidth, "Sets the maximum filter bandwidth");
             this.udRX2OptMaxFilterWidth.Value = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
@@ -12508,7 +12797,7 @@
             0});
             this.udOptMaxFilterShift.Location = new System.Drawing.Point(128, 70);
             this.udOptMaxFilterShift.Maximum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
@@ -12518,13 +12807,13 @@
             0,
             0});
             this.udOptMaxFilterShift.Name = "udOptMaxFilterShift";
-            this.udOptMaxFilterShift.Size = new System.Drawing.Size(48, 20);
+            this.udOptMaxFilterShift.Size = new System.Drawing.Size(59, 20);
             this.udOptMaxFilterShift.TabIndex = 13;
             this.udOptMaxFilterShift.TinyStep = false;
             this.toolTip1.SetToolTip(this.udOptMaxFilterShift, "Sets the maximum amount for the Shift control.  Set lower for finer resolution co" +
         "ntrol");
             this.udOptMaxFilterShift.Value = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
@@ -12548,9 +12837,9 @@
             "Linear",
             "Log",
             "Log10"});
-            this.comboOptFilterWidthMode.Location = new System.Drawing.Point(120, 45);
+            this.comboOptFilterWidthMode.Location = new System.Drawing.Point(128, 44);
             this.comboOptFilterWidthMode.Name = "comboOptFilterWidthMode";
-            this.comboOptFilterWidthMode.Size = new System.Drawing.Size(56, 21);
+            this.comboOptFilterWidthMode.Size = new System.Drawing.Size(59, 21);
             this.comboOptFilterWidthMode.TabIndex = 12;
             this.toolTip1.SetToolTip(this.comboOptFilterWidthMode, "Sets the mapping for the filter width slider.");
             this.comboOptFilterWidthMode.SelectedIndexChanged += new System.EventHandler(this.comboOptFilterWidthMode_SelectedIndexChanged);
@@ -12573,7 +12862,7 @@
             0});
             this.udOptMaxFilterWidth.Location = new System.Drawing.Point(128, 22);
             this.udOptMaxFilterWidth.Maximum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
@@ -12583,12 +12872,12 @@
             0,
             0});
             this.udOptMaxFilterWidth.Name = "udOptMaxFilterWidth";
-            this.udOptMaxFilterWidth.Size = new System.Drawing.Size(48, 20);
+            this.udOptMaxFilterWidth.Size = new System.Drawing.Size(59, 20);
             this.udOptMaxFilterWidth.TabIndex = 0;
             this.udOptMaxFilterWidth.TinyStep = false;
             this.toolTip1.SetToolTip(this.udOptMaxFilterWidth, "Sets the maximum filter bandwidth");
             this.udOptMaxFilterWidth.Value = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
@@ -35698,6 +35987,7 @@
             // 
             // tpDSPOptions
             // 
+            this.tpDSPOptions.Controls.Add(this.chkFilter_high_resolution_characteristics);
             this.tpDSPOptions.Controls.Add(this.lblWarningBufferType);
             this.tpDSPOptions.Controls.Add(this.lblWarningFilterSize);
             this.tpDSPOptions.Controls.Add(this.lblWarningBufferSize);
@@ -35715,6 +36005,20 @@
             this.tpDSPOptions.Size = new System.Drawing.Size(724, 414);
             this.tpDSPOptions.TabIndex = 2;
             this.tpDSPOptions.Text = "Options";
+            // 
+            // chkFilter_high_resolution_characteristics
+            // 
+            this.chkFilter_high_resolution_characteristics.AutoSize = true;
+            this.chkFilter_high_resolution_characteristics.Image = null;
+            this.chkFilter_high_resolution_characteristics.Location = new System.Drawing.Point(529, 117);
+            this.chkFilter_high_resolution_characteristics.Name = "chkFilter_high_resolution_characteristics";
+            this.chkFilter_high_resolution_characteristics.Size = new System.Drawing.Size(189, 43);
+            this.chkFilter_high_resolution_characteristics.TabIndex = 56;
+            this.chkFilter_high_resolution_characteristics.Text = "High resolution filter characteristics\r\nused in the filter item display\r\n(please " +
+    "read the tootip)";
+            this.toolTip1.SetToolTip(this.chkFilter_high_resolution_characteristics, resources.GetString("chkFilter_high_resolution_characteristics.ToolTip"));
+            this.chkFilter_high_resolution_characteristics.UseVisualStyleBackColor = true;
+            this.chkFilter_high_resolution_characteristics.CheckedChanged += new System.EventHandler(this.chkFilter_high_resolution_characteristics_CheckedChanged);
             // 
             // lblWarningBufferType
             // 
@@ -49113,7 +49417,7 @@
             // btnSkinExport
             // 
             this.btnSkinExport.Image = null;
-            this.btnSkinExport.Location = new System.Drawing.Point(36, 91);
+            this.btnSkinExport.Location = new System.Drawing.Point(14, 277);
             this.btnSkinExport.Name = "btnSkinExport";
             this.btnSkinExport.Selectable = true;
             this.btnSkinExport.Size = new System.Drawing.Size(51, 23);
@@ -49125,16 +49429,30 @@
             // 
             // grpAppSkins
             // 
+            this.grpAppSkins.Controls.Add(this.chkMaintainBackgroundAspectRatio);
             this.grpAppSkins.Controls.Add(this.btnOpenSkinsFolder);
             this.grpAppSkins.Controls.Add(this.btnRemoveSkin);
             this.grpAppSkins.Controls.Add(this.chkDisablePicDisplayBackgroundImage);
             this.grpAppSkins.Controls.Add(this.comboAppSkin);
             this.grpAppSkins.Location = new System.Drawing.Point(8, 8);
             this.grpAppSkins.Name = "grpAppSkins";
-            this.grpAppSkins.Size = new System.Drawing.Size(294, 80);
+            this.grpAppSkins.Size = new System.Drawing.Size(294, 105);
             this.grpAppSkins.TabIndex = 85;
             this.grpAppSkins.TabStop = false;
             this.grpAppSkins.Text = "Skins";
+            // 
+            // chkMaintainBackgroundAspectRatio
+            // 
+            this.chkMaintainBackgroundAspectRatio.AutoSize = true;
+            this.chkMaintainBackgroundAspectRatio.Image = null;
+            this.chkMaintainBackgroundAspectRatio.Location = new System.Drawing.Point(6, 73);
+            this.chkMaintainBackgroundAspectRatio.Name = "chkMaintainBackgroundAspectRatio";
+            this.chkMaintainBackgroundAspectRatio.Size = new System.Drawing.Size(124, 17);
+            this.chkMaintainBackgroundAspectRatio.TabIndex = 93;
+            this.chkMaintainBackgroundAspectRatio.Text = "Maintain aspect ratio";
+            this.toolTip1.SetToolTip(this.chkMaintainBackgroundAspectRatio, "Maintain the aspect ratio of he background image if shown");
+            this.chkMaintainBackgroundAspectRatio.UseVisualStyleBackColor = true;
+            this.chkMaintainBackgroundAspectRatio.CheckedChanged += new System.EventHandler(this.chkMaintainBackgroundAspectRatio_CheckedChanged);
             // 
             // btnOpenSkinsFolder
             // 
@@ -54580,6 +54898,8 @@
             // 
             // grpTCIServer
             // 
+            this.grpTCIServer.Controls.Add(this.btnClearTCISpotsSWL);
+            this.grpTCIServer.Controls.Add(this.chkForgetRX2VfoBVFOinfo);
             this.grpTCIServer.Controls.Add(this.chkCWbecomesCWUabove10mhz);
             this.grpTCIServer.Controls.Add(this.btnClearTCISpots);
             this.grpTCIServer.Controls.Add(this.chkEmulateExpertSDR3Protocol);
@@ -54613,6 +54933,32 @@
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
             // 
+            // btnClearTCISpotsSWL
+            // 
+            this.btnClearTCISpotsSWL.Image = null;
+            this.btnClearTCISpotsSWL.Location = new System.Drawing.Point(267, 245);
+            this.btnClearTCISpotsSWL.Name = "btnClearTCISpotsSWL";
+            this.btnClearTCISpotsSWL.Selectable = true;
+            this.btnClearTCISpotsSWL.Size = new System.Drawing.Size(73, 39);
+            this.btnClearTCISpotsSWL.TabIndex = 102;
+            this.btnClearTCISpotsSWL.Text = "Clear SWL";
+            this.btnClearTCISpotsSWL.UseVisualStyleBackColor = true;
+            this.btnClearTCISpotsSWL.Click += new System.EventHandler(this.btnClearTCISpotsSWL_Click);
+            // 
+            // chkForgetRX2VfoBVFOinfo
+            // 
+            this.chkForgetRX2VfoBVFOinfo.AutoSize = true;
+            this.chkForgetRX2VfoBVFOinfo.Enabled = false;
+            this.chkForgetRX2VfoBVFOinfo.Image = null;
+            this.chkForgetRX2VfoBVFOinfo.Location = new System.Drawing.Point(243, 131);
+            this.chkForgetRX2VfoBVFOinfo.Name = "chkForgetRX2VfoBVFOinfo";
+            this.chkForgetRX2VfoBVFOinfo.Size = new System.Drawing.Size(110, 17);
+            this.chkForgetRX2VfoBVFOinfo.TabIndex = 101;
+            this.chkForgetRX2VfoBVFOinfo.Text = "Forget RX2 VFOb";
+            this.toolTip1.SetToolTip(this.chkForgetRX2VfoBVFOinfo, "RX2 VFOb messages will not be sent (out)");
+            this.chkForgetRX2VfoBVFOinfo.UseVisualStyleBackColor = true;
+            this.chkForgetRX2VfoBVFOinfo.CheckedChanged += new System.EventHandler(this.chkForgetRX2VfoBVFOinfo_CheckedChanged);
+            // 
             // chkCWbecomesCWUabove10mhz
             // 
             this.chkCWbecomesCWUabove10mhz.AutoSize = true;
@@ -54629,12 +54975,12 @@
             // btnClearTCISpots
             // 
             this.btnClearTCISpots.Image = null;
-            this.btnClearTCISpots.Location = new System.Drawing.Point(184, 261);
+            this.btnClearTCISpots.Location = new System.Drawing.Point(184, 245);
             this.btnClearTCISpots.Name = "btnClearTCISpots";
             this.btnClearTCISpots.Selectable = true;
-            this.btnClearTCISpots.Size = new System.Drawing.Size(77, 26);
+            this.btnClearTCISpots.Size = new System.Drawing.Size(77, 39);
             this.btnClearTCISpots.TabIndex = 99;
-            this.btnClearTCISpots.Text = "Clear Spots";
+            this.btnClearTCISpots.Text = "Clear Non SWL";
             this.btnClearTCISpots.UseVisualStyleBackColor = true;
             this.btnClearTCISpots.Click += new System.EventHandler(this.btnClearTCISpots_Click);
             // 
@@ -56827,6 +57173,8 @@
             // 
             // groupBoxTS48
             // 
+            this.groupBoxTS48.Controls.Add(this.lblDiscordCountry);
+            this.groupBoxTS48.Controls.Add(this.chkDiscordTimeStamp);
             this.groupBoxTS48.Controls.Add(this.pbDiscordInfo_filter);
             this.groupBoxTS48.Controls.Add(this.pbDiscordInfo_ignore);
             this.groupBoxTS48.Controls.Add(this.pbDiscordInfo_tag);
@@ -56849,6 +57197,30 @@
             this.groupBoxTS48.TabIndex = 0;
             this.groupBoxTS48.TabStop = false;
             this.groupBoxTS48.Text = "Discord";
+            // 
+            // lblDiscordCountry
+            // 
+            this.lblDiscordCountry.AutoSize = true;
+            this.lblDiscordCountry.Image = null;
+            this.lblDiscordCountry.Location = new System.Drawing.Point(78, 24);
+            this.lblDiscordCountry.Name = "lblDiscordCountry";
+            this.lblDiscordCountry.Size = new System.Drawing.Size(0, 13);
+            this.lblDiscordCountry.TabIndex = 43;
+            // 
+            // chkDiscordTimeStamp
+            // 
+            this.chkDiscordTimeStamp.AutoSize = true;
+            this.chkDiscordTimeStamp.Checked = true;
+            this.chkDiscordTimeStamp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDiscordTimeStamp.Image = null;
+            this.chkDiscordTimeStamp.Location = new System.Drawing.Point(81, 66);
+            this.chkDiscordTimeStamp.Name = "chkDiscordTimeStamp";
+            this.chkDiscordTimeStamp.Size = new System.Drawing.Size(116, 17);
+            this.chkDiscordTimeStamp.TabIndex = 42;
+            this.chkDiscordTimeStamp.Text = "Include timestamps";
+            this.toolTip1.SetToolTip(this.chkDiscordTimeStamp, "Include timestamps HH:MM in your notification messages");
+            this.chkDiscordTimeStamp.UseVisualStyleBackColor = true;
+            this.chkDiscordTimeStamp.CheckedChanged += new System.EventHandler(this.chkDiscordTimeStamp_CheckedChanged);
             // 
             // pbDiscordInfo_filter
             // 
@@ -60726,6 +61098,670 @@
             this.toolTip1.SetToolTip(this.clrbtnButonBox_fontcolour, "Active colour");
             this.clrbtnButonBox_fontcolour.Changed += new System.EventHandler(this.clrbtnButonBox_fontcolour_Changed);
             // 
+            // nudFilterDisplay_vertical_ratio
+            // 
+            this.nudFilterDisplay_vertical_ratio.DecimalPlaces = 3;
+            this.nudFilterDisplay_vertical_ratio.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudFilterDisplay_vertical_ratio.Location = new System.Drawing.Point(118, 16);
+            this.nudFilterDisplay_vertical_ratio.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudFilterDisplay_vertical_ratio.Minimum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            131072});
+            this.nudFilterDisplay_vertical_ratio.Name = "nudFilterDisplay_vertical_ratio";
+            this.nudFilterDisplay_vertical_ratio.Size = new System.Drawing.Size(56, 20);
+            this.nudFilterDisplay_vertical_ratio.TabIndex = 132;
+            this.nudFilterDisplay_vertical_ratio.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudFilterDisplay_vertical_ratio, "Vertical size, compared to width");
+            this.nudFilterDisplay_vertical_ratio.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudFilterDisplay_vertical_ratio.ValueChanged += new System.EventHandler(this.nudFilterDisplay_vertical_ratio_ValueChanged);
+            // 
+            // clrbtnFilterDisplay_backcolour
+            // 
+            this.clrbtnFilterDisplay_backcolour.Automatic = "Automatic";
+            this.clrbtnFilterDisplay_backcolour.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnFilterDisplay_backcolour.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnFilterDisplay_backcolour.Image = null;
+            this.clrbtnFilterDisplay_backcolour.Location = new System.Drawing.Point(272, 13);
+            this.clrbtnFilterDisplay_backcolour.MoreColors = "More Colors...";
+            this.clrbtnFilterDisplay_backcolour.Name = "clrbtnFilterDisplay_backcolour";
+            this.clrbtnFilterDisplay_backcolour.Selectable = true;
+            this.clrbtnFilterDisplay_backcolour.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilterDisplay_backcolour.TabIndex = 129;
+            this.toolTip1.SetToolTip(this.clrbtnFilterDisplay_backcolour, "Background colour");
+            this.clrbtnFilterDisplay_backcolour.Changed += new System.EventHandler(this.clrbtnFilterDisplay_backcolour_Changed);
+            // 
+            // nudFilterDisplay_fixed_zoom_level
+            // 
+            this.nudFilterDisplay_fixed_zoom_level.DecimalPlaces = 2;
+            this.nudFilterDisplay_fixed_zoom_level.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudFilterDisplay_fixed_zoom_level.Location = new System.Drawing.Point(126, 84);
+            this.nudFilterDisplay_fixed_zoom_level.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudFilterDisplay_fixed_zoom_level.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudFilterDisplay_fixed_zoom_level.Name = "nudFilterDisplay_fixed_zoom_level";
+            this.nudFilterDisplay_fixed_zoom_level.Size = new System.Drawing.Size(56, 20);
+            this.nudFilterDisplay_fixed_zoom_level.TabIndex = 140;
+            this.nudFilterDisplay_fixed_zoom_level.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudFilterDisplay_fixed_zoom_level, "Scale");
+            this.nudFilterDisplay_fixed_zoom_level.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudFilterDisplay_fixed_zoom_level.ValueChanged += new System.EventHandler(this.nudFilterDisplay_fixed_zoom_level_ValueChanged);
+            // 
+            // nudFilterDisplay_fixed_tx_zoom_level
+            // 
+            this.nudFilterDisplay_fixed_tx_zoom_level.DecimalPlaces = 2;
+            this.nudFilterDisplay_fixed_tx_zoom_level.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudFilterDisplay_fixed_tx_zoom_level.Location = new System.Drawing.Point(126, 110);
+            this.nudFilterDisplay_fixed_tx_zoom_level.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.nudFilterDisplay_fixed_tx_zoom_level.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudFilterDisplay_fixed_tx_zoom_level.Name = "nudFilterDisplay_fixed_tx_zoom_level";
+            this.nudFilterDisplay_fixed_tx_zoom_level.Size = new System.Drawing.Size(56, 20);
+            this.nudFilterDisplay_fixed_tx_zoom_level.TabIndex = 142;
+            this.nudFilterDisplay_fixed_tx_zoom_level.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudFilterDisplay_fixed_tx_zoom_level, "Scale");
+            this.nudFilterDisplay_fixed_tx_zoom_level.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudFilterDisplay_fixed_tx_zoom_level.ValueChanged += new System.EventHandler(this.nudFilterDisplay_fixed_tx_zoom_level_ValueChanged);
+            // 
+            // nudFilterItem_sidebands_scale
+            // 
+            this.nudFilterItem_sidebands_scale.DecimalPlaces = 2;
+            this.nudFilterItem_sidebands_scale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudFilterItem_sidebands_scale.Location = new System.Drawing.Point(58, 9);
+            this.nudFilterItem_sidebands_scale.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudFilterItem_sidebands_scale.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFilterItem_sidebands_scale.Name = "nudFilterItem_sidebands_scale";
+            this.nudFilterItem_sidebands_scale.Size = new System.Drawing.Size(56, 20);
+            this.nudFilterItem_sidebands_scale.TabIndex = 141;
+            this.nudFilterItem_sidebands_scale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudFilterItem_sidebands_scale, "Mode scale");
+            this.nudFilterItem_sidebands_scale.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFilterItem_sidebands_scale.ValueChanged += new System.EventHandler(this.nudFilterItem_sidebands_scale_ValueChanged);
+            // 
+            // nudFilterItem_cw_scale
+            // 
+            this.nudFilterItem_cw_scale.DecimalPlaces = 2;
+            this.nudFilterItem_cw_scale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudFilterItem_cw_scale.Location = new System.Drawing.Point(58, 31);
+            this.nudFilterItem_cw_scale.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudFilterItem_cw_scale.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFilterItem_cw_scale.Name = "nudFilterItem_cw_scale";
+            this.nudFilterItem_cw_scale.Size = new System.Drawing.Size(56, 20);
+            this.nudFilterItem_cw_scale.TabIndex = 142;
+            this.nudFilterItem_cw_scale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudFilterItem_cw_scale, "Mode scale");
+            this.nudFilterItem_cw_scale.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFilterItem_cw_scale.ValueChanged += new System.EventHandler(this.nudFilterItem_cw_scale_ValueChanged);
+            // 
+            // nudFilterItem_others_scale
+            // 
+            this.nudFilterItem_others_scale.DecimalPlaces = 2;
+            this.nudFilterItem_others_scale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudFilterItem_others_scale.Location = new System.Drawing.Point(58, 53);
+            this.nudFilterItem_others_scale.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudFilterItem_others_scale.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFilterItem_others_scale.Name = "nudFilterItem_others_scale";
+            this.nudFilterItem_others_scale.Size = new System.Drawing.Size(56, 20);
+            this.nudFilterItem_others_scale.TabIndex = 143;
+            this.nudFilterItem_others_scale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudFilterItem_others_scale, "Mode scale");
+            this.nudFilterItem_others_scale.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFilterItem_others_scale.ValueChanged += new System.EventHandler(this.nudFilterItem_others_scale_ValueChanged);
+            // 
+            // nudFilterItem_font_scale
+            // 
+            this.nudFilterItem_font_scale.DecimalPlaces = 2;
+            this.nudFilterItem_font_scale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudFilterItem_font_scale.Location = new System.Drawing.Point(118, 39);
+            this.nudFilterItem_font_scale.Maximum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.nudFilterItem_font_scale.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudFilterItem_font_scale.Name = "nudFilterItem_font_scale";
+            this.nudFilterItem_font_scale.Size = new System.Drawing.Size(56, 20);
+            this.nudFilterItem_font_scale.TabIndex = 163;
+            this.nudFilterItem_font_scale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudFilterItem_font_scale, "Font scale adjustment");
+            this.nudFilterItem_font_scale.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudFilterItem_font_scale.ValueChanged += new System.EventHandler(this.nudFilterItem_font_scale_ValueChanged);
+            // 
+            // comboFilter_wf_palette
+            // 
+            this.comboFilter_wf_palette.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboFilter_wf_palette.DropDownWidth = 48;
+            this.comboFilter_wf_palette.Items.AddRange(new object[] {
+            "Enhanced",
+            "Spectran",
+            "BlackWhite",
+            "LinLog",
+            "LinRad",
+            "LinAuto"});
+            this.comboFilter_wf_palette.Location = new System.Drawing.Point(217, 5);
+            this.comboFilter_wf_palette.Name = "comboFilter_wf_palette";
+            this.comboFilter_wf_palette.Size = new System.Drawing.Size(72, 21);
+            this.comboFilter_wf_palette.TabIndex = 166;
+            this.toolTip1.SetToolTip(this.comboFilter_wf_palette, "Sets the color sheme");
+            this.comboFilter_wf_palette.SelectedIndexChanged += new System.EventHandler(this.comboFilter_wf_palette_SelectedIndexChanged);
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(125, 8);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(88, 13);
+            this.label22.TabIndex = 165;
+            this.label22.Text = "Waterfall Palette:";
+            this.label22.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.toolTip1.SetToolTip(this.label22, "Color sheme");
+            // 
+            // chkFilter_sideband_mode
+            // 
+            this.chkFilter_sideband_mode.AutoSize = true;
+            this.chkFilter_sideband_mode.Image = null;
+            this.chkFilter_sideband_mode.Location = new System.Drawing.Point(13, 5);
+            this.chkFilter_sideband_mode.Name = "chkFilter_sideband_mode";
+            this.chkFilter_sideband_mode.Size = new System.Drawing.Size(100, 17);
+            this.chkFilter_sideband_mode.TabIndex = 189;
+            this.chkFilter_sideband_mode.Text = "Sideband mode";
+            this.toolTip1.SetToolTip(this.chkFilter_sideband_mode, "Align the filter display to the sideband");
+            this.chkFilter_sideband_mode.UseVisualStyleBackColor = true;
+            this.chkFilter_sideband_mode.CheckedChanged += new System.EventHandler(this.chkFilter_sideband_mode_CheckedChanged);
+            // 
+            // nudFilter_waterfall_frame_update
+            // 
+            this.nudFilter_waterfall_frame_update.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudFilter_waterfall_frame_update.Location = new System.Drawing.Point(237, 164);
+            this.nudFilter_waterfall_frame_update.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudFilter_waterfall_frame_update.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudFilter_waterfall_frame_update.Name = "nudFilter_waterfall_frame_update";
+            this.nudFilter_waterfall_frame_update.Size = new System.Drawing.Size(47, 20);
+            this.nudFilter_waterfall_frame_update.TabIndex = 190;
+            this.nudFilter_waterfall_frame_update.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudFilter_waterfall_frame_update, "How often to update (scroll another pixel line) on the waterfall display.\r\nFilter" +
+        "s have a fixed fps of 30, so a setting of 1 here will be adding a row\r\nevery fra" +
+        "me.");
+            this.nudFilter_waterfall_frame_update.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.nudFilter_waterfall_frame_update.ValueChanged += new System.EventHandler(this.nudFilter_waterfall_frame_update_ValueChanged);
+            // 
+            // labelTS341
+            // 
+            this.labelTS341.AutoSize = true;
+            this.labelTS341.Image = null;
+            this.labelTS341.Location = new System.Drawing.Point(117, 166);
+            this.labelTS341.Name = "labelTS341";
+            this.labelTS341.Size = new System.Drawing.Size(116, 13);
+            this.labelTS341.TabIndex = 191;
+            this.labelTS341.Text = "Update waterfall every:";
+            this.labelTS341.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.toolTip1.SetToolTip(this.labelTS341, "How often to update (scroll another pixel line) on the waterfall display.  Note t" +
+        "hat this is tamed by the FPS setting.");
+            // 
+            // chkFilter_grey_outsidepb
+            // 
+            this.chkFilter_grey_outsidepb.AutoSize = true;
+            this.chkFilter_grey_outsidepb.Checked = true;
+            this.chkFilter_grey_outsidepb.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFilter_grey_outsidepb.Image = null;
+            this.chkFilter_grey_outsidepb.Location = new System.Drawing.Point(13, 29);
+            this.chkFilter_grey_outsidepb.Name = "chkFilter_grey_outsidepb";
+            this.chkFilter_grey_outsidepb.Size = new System.Drawing.Size(100, 17);
+            this.chkFilter_grey_outsidepb.TabIndex = 194;
+            this.chkFilter_grey_outsidepb.Text = "Grey outside pb";
+            this.toolTip1.SetToolTip(this.chkFilter_grey_outsidepb, "Show a grey scale outside the passband");
+            this.chkFilter_grey_outsidepb.UseVisualStyleBackColor = true;
+            this.chkFilter_grey_outsidepb.CheckedChanged += new System.EventHandler(this.chkFilter_grey_outsidepb_CheckedChanged);
+            // 
+            // btnFilter_4char_copy
+            // 
+            this.btnFilter_4char_copy.Image = global::Thetis.Properties.Resources.copy;
+            this.btnFilter_4char_copy.Location = new System.Drawing.Point(284, 84);
+            this.btnFilter_4char_copy.Name = "btnFilter_4char_copy";
+            this.btnFilter_4char_copy.Selectable = true;
+            this.btnFilter_4char_copy.Size = new System.Drawing.Size(27, 27);
+            this.btnFilter_4char_copy.TabIndex = 118;
+            this.toolTip1.SetToolTip(this.btnFilter_4char_copy, "Copy to clipboard");
+            this.btnFilter_4char_copy.UseVisualStyleBackColor = true;
+            this.btnFilter_4char_copy.Click += new System.EventHandler(this.btnFilter_4char_copy_Click);
+            // 
+            // txtWebImage_4char
+            // 
+            this.txtWebImage_4char.Location = new System.Drawing.Point(238, 86);
+            this.txtWebImage_4char.MaxLength = 4;
+            this.txtWebImage_4char.Name = "txtWebImage_4char";
+            this.txtWebImage_4char.Size = new System.Drawing.Size(43, 20);
+            this.txtWebImage_4char.TabIndex = 116;
+            this.txtWebImage_4char.Text = "AGHJ";
+            this.toolTip1.SetToolTip(this.txtWebImage_4char, "The four character code for this web image");
+            this.txtWebImage_4char.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtWebImage_4char_KeyPress);
+            // 
+            // txtWebImage_background_4char
+            // 
+            this.txtWebImage_background_4char.Location = new System.Drawing.Point(208, 166);
+            this.txtWebImage_background_4char.MaxLength = 4;
+            this.txtWebImage_background_4char.Name = "txtWebImage_background_4char";
+            this.txtWebImage_background_4char.Size = new System.Drawing.Size(43, 20);
+            this.txtWebImage_background_4char.TabIndex = 150;
+            this.txtWebImage_background_4char.Text = "AGHJ";
+            this.toolTip1.SetToolTip(this.txtWebImage_background_4char, "The four character code of the next webimage to show");
+            this.txtWebImage_background_4char.TextChanged += new System.EventHandler(this.txtWebImage_background_4char_TextChanged);
+            // 
+            // btnWebImage_goto_next
+            // 
+            this.btnWebImage_goto_next.Image = null;
+            this.btnWebImage_goto_next.Location = new System.Drawing.Point(257, 162);
+            this.btnWebImage_goto_next.Name = "btnWebImage_goto_next";
+            this.btnWebImage_goto_next.Selectable = true;
+            this.btnWebImage_goto_next.Size = new System.Drawing.Size(26, 26);
+            this.btnWebImage_goto_next.TabIndex = 151;
+            this.btnWebImage_goto_next.Text = ">";
+            this.toolTip1.SetToolTip(this.btnWebImage_goto_next, "Go to the webimage item");
+            this.btnWebImage_goto_next.UseVisualStyleBackColor = true;
+            this.btnWebImage_goto_next.Click += new System.EventHandler(this.btnWebImage_goto_next_Click);
+            // 
+            // nudFilter_lower_characteristic
+            // 
+            this.nudFilter_lower_characteristic.DecimalPlaces = 1;
+            this.nudFilter_lower_characteristic.Enabled = false;
+            this.nudFilter_lower_characteristic.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudFilter_lower_characteristic.Location = new System.Drawing.Point(233, 205);
+            this.nudFilter_lower_characteristic.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            -2147483648});
+            this.nudFilter_lower_characteristic.Minimum = new decimal(new int[] {
+            300,
+            0,
+            0,
+            -2147483648});
+            this.nudFilter_lower_characteristic.Name = "nudFilter_lower_characteristic";
+            this.nudFilter_lower_characteristic.Size = new System.Drawing.Size(50, 20);
+            this.nudFilter_lower_characteristic.TabIndex = 202;
+            this.nudFilter_lower_characteristic.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudFilter_lower_characteristic, "The lower level of the characteristic plot");
+            this.nudFilter_lower_characteristic.Value = new decimal(new int[] {
+            250,
+            0,
+            0,
+            -2147483648});
+            this.nudFilter_lower_characteristic.ValueChanged += new System.EventHandler(this.nudFilter_lower_characteristic_ValueChanged);
+            // 
+            // chkFilter_characteristic
+            // 
+            this.chkFilter_characteristic.AutoSize = true;
+            this.chkFilter_characteristic.Image = null;
+            this.chkFilter_characteristic.Location = new System.Drawing.Point(113, 187);
+            this.chkFilter_characteristic.Name = "chkFilter_characteristic";
+            this.chkFilter_characteristic.Size = new System.Drawing.Size(125, 17);
+            this.chkFilter_characteristic.TabIndex = 201;
+            this.chkFilter_characteristic.Text = "Show Characteristics";
+            this.toolTip1.SetToolTip(this.chkFilter_characteristic, "Show the filter characteristic");
+            this.chkFilter_characteristic.UseVisualStyleBackColor = true;
+            this.chkFilter_characteristic.CheckedChanged += new System.EventHandler(this.chkFilter_characteristic_CheckedChanged);
+            // 
+            // nudDialDisplay_font_scale
+            // 
+            this.nudDialDisplay_font_scale.DecimalPlaces = 2;
+            this.nudDialDisplay_font_scale.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudDialDisplay_font_scale.Location = new System.Drawing.Point(118, 39);
+            this.nudDialDisplay_font_scale.Maximum = new decimal(new int[] {
+            11,
+            0,
+            0,
+            65536});
+            this.nudDialDisplay_font_scale.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudDialDisplay_font_scale.Name = "nudDialDisplay_font_scale";
+            this.nudDialDisplay_font_scale.Size = new System.Drawing.Size(56, 20);
+            this.nudDialDisplay_font_scale.TabIndex = 163;
+            this.nudDialDisplay_font_scale.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudDialDisplay_font_scale, "Font scale adjustment");
+            this.nudDialDisplay_font_scale.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDialDisplay_font_scale.ValueChanged += new System.EventHandler(this.nudDialDisplay_font_scale_ValueChanged);
+            // 
+            // nudDialDisplay_vertical_ratio
+            // 
+            this.nudDialDisplay_vertical_ratio.DecimalPlaces = 3;
+            this.nudDialDisplay_vertical_ratio.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.nudDialDisplay_vertical_ratio.Location = new System.Drawing.Point(118, 16);
+            this.nudDialDisplay_vertical_ratio.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDialDisplay_vertical_ratio.Minimum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            131072});
+            this.nudDialDisplay_vertical_ratio.Name = "nudDialDisplay_vertical_ratio";
+            this.nudDialDisplay_vertical_ratio.Size = new System.Drawing.Size(56, 20);
+            this.nudDialDisplay_vertical_ratio.TabIndex = 132;
+            this.nudDialDisplay_vertical_ratio.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudDialDisplay_vertical_ratio, "Vertical size, compared to width");
+            this.nudDialDisplay_vertical_ratio.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDialDisplay_vertical_ratio.ValueChanged += new System.EventHandler(this.nudDialDisplay_vertical_ratio_ValueChanged);
+            // 
+            // chkDialDisplay_alwaysshow_vfos
+            // 
+            this.chkDialDisplay_alwaysshow_vfos.AutoSize = true;
+            this.chkDialDisplay_alwaysshow_vfos.Image = null;
+            this.chkDialDisplay_alwaysshow_vfos.Location = new System.Drawing.Point(42, 65);
+            this.chkDialDisplay_alwaysshow_vfos.Name = "chkDialDisplay_alwaysshow_vfos";
+            this.chkDialDisplay_alwaysshow_vfos.Size = new System.Drawing.Size(116, 17);
+            this.chkDialDisplay_alwaysshow_vfos.TabIndex = 164;
+            this.chkDialDisplay_alwaysshow_vfos.Text = "Always show VFOs";
+            this.toolTip1.SetToolTip(this.chkDialDisplay_alwaysshow_vfos, "Will always show VFOa when on RX2 and VFOb on RX1 when RX2 enabled");
+            this.chkDialDisplay_alwaysshow_vfos.UseVisualStyleBackColor = true;
+            this.chkDialDisplay_alwaysshow_vfos.CheckedChanged += new System.EventHandler(this.chkDialDisplay_alwaysshow_vfos_CheckedChanged);
+            // 
+            // nudDial_increment
+            // 
+            this.nudDial_increment.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDial_increment.Location = new System.Drawing.Point(145, 110);
+            this.nudDial_increment.Maximum = new decimal(new int[] {
+            720,
+            0,
+            0,
+            0});
+            this.nudDial_increment.Minimum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            0});
+            this.nudDial_increment.Name = "nudDial_increment";
+            this.nudDial_increment.Size = new System.Drawing.Size(44, 20);
+            this.nudDial_increment.TabIndex = 168;
+            this.nudDial_increment.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudDial_increment, "At this degree per second tunstep will be incremented");
+            this.nudDial_increment.Value = new decimal(new int[] {
+            540,
+            0,
+            0,
+            0});
+            this.nudDial_increment.ValueChanged += new System.EventHandler(this.nudDial_increment_ValueChanged);
+            // 
+            // nudDial_decrement
+            // 
+            this.nudDial_decrement.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDial_decrement.Location = new System.Drawing.Point(145, 134);
+            this.nudDial_decrement.Maximum = new decimal(new int[] {
+            720,
+            0,
+            0,
+            0});
+            this.nudDial_decrement.Minimum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            0});
+            this.nudDial_decrement.Name = "nudDial_decrement";
+            this.nudDial_decrement.Size = new System.Drawing.Size(44, 20);
+            this.nudDial_decrement.TabIndex = 171;
+            this.nudDial_decrement.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudDial_decrement, "At this degree per second tunstep will be decremented");
+            this.nudDial_decrement.Value = new decimal(new int[] {
+            360,
+            0,
+            0,
+            0});
+            this.nudDial_decrement.ValueChanged += new System.EventHandler(this.nudDial_decrement_ValueChanged);
+            // 
+            // nudDial_interval
+            // 
+            this.nudDial_interval.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDial_interval.Location = new System.Drawing.Point(145, 158);
+            this.nudDial_interval.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudDial_interval.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDial_interval.Name = "nudDial_interval";
+            this.nudDial_interval.Size = new System.Drawing.Size(44, 20);
+            this.nudDial_interval.TabIndex = 174;
+            this.nudDial_interval.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudDial_interval, "Apply a tunestep change at this interval");
+            this.nudDial_interval.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudDial_interval.ValueChanged += new System.EventHandler(this.nudDial_interval_ValueChanged);
+            // 
+            // chkDial_align
+            // 
+            this.chkDial_align.AutoSize = true;
+            this.chkDial_align.Image = null;
+            this.chkDial_align.Location = new System.Drawing.Point(42, 86);
+            this.chkDial_align.Name = "chkDial_align";
+            this.chkDial_align.Size = new System.Drawing.Size(165, 17);
+            this.chkDial_align.TabIndex = 176;
+            this.chkDial_align.Text = "Align frequency with tunestep";
+            this.toolTip1.SetToolTip(this.chkDial_align, "Align the frequency with tunstep");
+            this.chkDial_align.UseVisualStyleBackColor = true;
+            this.chkDial_align.CheckedChanged += new System.EventHandler(this.chkDial_align_CheckedChanged);
+            // 
+            // nudDial_max_increments
+            // 
+            this.nudDial_max_increments.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDial_max_increments.Location = new System.Drawing.Point(145, 182);
+            this.nudDial_max_increments.Maximum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.nudDial_max_increments.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDial_max_increments.Name = "nudDial_max_increments";
+            this.nudDial_max_increments.Size = new System.Drawing.Size(44, 20);
+            this.nudDial_max_increments.TabIndex = 198;
+            this.nudDial_max_increments.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudDial_max_increments, "The maximum number of tunestep increments that can happen");
+            this.nudDial_max_increments.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.nudDial_max_increments.ValueChanged += new System.EventHandler(this.nudDial_max_increments_ValueChanged);
+            // 
+            // nudDial_degrees_for_change
+            // 
+            this.nudDial_degrees_for_change.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDial_degrees_for_change.Location = new System.Drawing.Point(145, 206);
+            this.nudDial_degrees_for_change.Maximum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            0});
+            this.nudDial_degrees_for_change.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudDial_degrees_for_change.Name = "nudDial_degrees_for_change";
+            this.nudDial_degrees_for_change.Size = new System.Drawing.Size(44, 20);
+            this.nudDial_degrees_for_change.TabIndex = 200;
+            this.nudDial_degrees_for_change.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudDial_degrees_for_change, "The number of degrees required for a VFO change");
+            this.nudDial_degrees_for_change.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.nudDial_degrees_for_change.ValueChanged += new System.EventHandler(this.nudDial_degrees_for_change_ValueChanged);
+            // 
             // timer_VAC_Monitor
             // 
             this.timer_VAC_Monitor.Enabled = true;
@@ -62787,12 +63823,18 @@
             // 
             // grpWebImage
             // 
+            this.grpWebImage.Controls.Add(this.lblWebImage_after);
+            this.grpWebImage.Controls.Add(this.scrollableControl1);
+            this.grpWebImage.Controls.Add(this.btnWebImage_goto_next);
+            this.grpWebImage.Controls.Add(this.txtWebImage_background_4char);
+            this.grpWebImage.Controls.Add(this.lblWebImage_secs);
+            this.grpWebImage.Controls.Add(this.nudWebImage_background_time);
+            this.grpWebImage.Controls.Add(this.chkWebImage_background);
+            this.grpWebImage.Controls.Add(this.btnFilter_4char_copy);
             this.grpWebImage.Controls.Add(this.chkWebImage_bypass_cache);
-            this.grpWebImage.Controls.Add(this.groupBoxTS42);
-            this.grpWebImage.Controls.Add(this.groupBoxTS41);
-            this.grpWebImage.Controls.Add(this.groupBoxTS43);
+            this.grpWebImage.Controls.Add(this.labelTS347);
+            this.grpWebImage.Controls.Add(this.txtWebImage_4char);
             this.grpWebImage.Controls.Add(this.lblWebImage_state);
-            this.grpWebImage.Controls.Add(this.groupBoxTS40);
             this.grpWebImage.Controls.Add(this.labelTS236);
             this.grpWebImage.Controls.Add(this.txtWebImage_url);
             this.grpWebImage.Controls.Add(this.nudWebImage_update_interval);
@@ -62809,137 +63851,37 @@
             this.grpWebImage.Text = "Web Image";
             this.grpWebImage.Visible = false;
             // 
-            // groupBoxTS42
+            // lblWebImage_after
             // 
-            this.groupBoxTS42.Controls.Add(this.buttonTS1);
-            this.groupBoxTS42.Controls.Add(this.comboWebImage_noaa);
-            this.groupBoxTS42.Location = new System.Drawing.Point(16, 273);
-            this.groupBoxTS42.Name = "groupBoxTS42";
-            this.groupBoxTS42.Size = new System.Drawing.Size(293, 44);
-            this.groupBoxTS42.TabIndex = 145;
-            this.groupBoxTS42.TabStop = false;
-            this.groupBoxTS42.Text = "noaa";
+            this.lblWebImage_after.AutoSize = true;
+            this.lblWebImage_after.Image = null;
+            this.lblWebImage_after.Location = new System.Drawing.Point(33, 169);
+            this.lblWebImage_after.Name = "lblWebImage_after";
+            this.lblWebImage_after.Size = new System.Drawing.Size(29, 13);
+            this.lblWebImage_after.TabIndex = 152;
+            this.lblWebImage_after.Text = "After";
             // 
-            // buttonTS1
+            // scrollableControl1
             // 
-            this.buttonTS1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
-            this.buttonTS1.Image = null;
-            this.buttonTS1.Location = new System.Drawing.Point(208, 12);
-            this.buttonTS1.Name = "buttonTS1";
-            this.buttonTS1.Selectable = true;
-            this.buttonTS1.Size = new System.Drawing.Size(75, 24);
-            this.buttonTS1.TabIndex = 1;
-            this.buttonTS1.Text = "Visit";
-            this.buttonTS1.UseVisualStyleBackColor = false;
-            this.buttonTS1.Visible = false;
-            // 
-            // comboWebImage_noaa
-            // 
-            this.comboWebImage_noaa.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboWebImage_noaa.FormattingEnabled = true;
-            this.comboWebImage_noaa.Location = new System.Drawing.Point(12, 15);
-            this.comboWebImage_noaa.Name = "comboWebImage_noaa";
-            this.comboWebImage_noaa.Size = new System.Drawing.Size(190, 21);
-            this.comboWebImage_noaa.TabIndex = 0;
-            this.comboWebImage_noaa.SelectedIndexChanged += new System.EventHandler(this.comboWebImage_noaa_SelectedIndexChanged);
-            // 
-            // groupBoxTS41
-            // 
-            this.groupBoxTS41.Controls.Add(this.chkBSDWorldDarkMode);
-            this.groupBoxTS41.Controls.Add(this.btnWebImage_bsdworld_visit);
-            this.groupBoxTS41.Controls.Add(this.comboWebImage_BsdWorld);
-            this.groupBoxTS41.Location = new System.Drawing.Point(16, 165);
-            this.groupBoxTS41.Name = "groupBoxTS41";
-            this.groupBoxTS41.Size = new System.Drawing.Size(293, 63);
-            this.groupBoxTS41.TabIndex = 143;
-            this.groupBoxTS41.TabStop = false;
-            this.groupBoxTS41.Text = "bsdworld.org";
-            // 
-            // chkBSDWorldDarkMode
-            // 
-            this.chkBSDWorldDarkMode.AutoSize = true;
-            this.chkBSDWorldDarkMode.Image = null;
-            this.chkBSDWorldDarkMode.Location = new System.Drawing.Point(209, 42);
-            this.chkBSDWorldDarkMode.Name = "chkBSDWorldDarkMode";
-            this.chkBSDWorldDarkMode.Size = new System.Drawing.Size(79, 17);
-            this.chkBSDWorldDarkMode.TabIndex = 2;
-            this.chkBSDWorldDarkMode.Text = "Dark Mode";
-            this.chkBSDWorldDarkMode.UseVisualStyleBackColor = true;
-            // 
-            // btnWebImage_bsdworld_visit
-            // 
-            this.btnWebImage_bsdworld_visit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
-            this.btnWebImage_bsdworld_visit.Image = null;
-            this.btnWebImage_bsdworld_visit.Location = new System.Drawing.Point(208, 12);
-            this.btnWebImage_bsdworld_visit.Name = "btnWebImage_bsdworld_visit";
-            this.btnWebImage_bsdworld_visit.Selectable = true;
-            this.btnWebImage_bsdworld_visit.Size = new System.Drawing.Size(75, 24);
-            this.btnWebImage_bsdworld_visit.TabIndex = 1;
-            this.btnWebImage_bsdworld_visit.Text = "Visit";
-            this.btnWebImage_bsdworld_visit.UseVisualStyleBackColor = false;
-            this.btnWebImage_bsdworld_visit.Click += new System.EventHandler(this.btnWebImage_bsdworld_visit_Click);
-            // 
-            // comboWebImage_BsdWorld
-            // 
-            this.comboWebImage_BsdWorld.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboWebImage_BsdWorld.FormattingEnabled = true;
-            this.comboWebImage_BsdWorld.Location = new System.Drawing.Point(12, 15);
-            this.comboWebImage_BsdWorld.Name = "comboWebImage_BsdWorld";
-            this.comboWebImage_BsdWorld.Size = new System.Drawing.Size(190, 21);
-            this.comboWebImage_BsdWorld.TabIndex = 0;
-            this.comboWebImage_BsdWorld.SelectedIndexChanged += new System.EventHandler(this.comboWebImage_BsdWorld_SelectedIndexChanged);
-            // 
-            // groupBoxTS43
-            // 
-            this.groupBoxTS43.Controls.Add(this.buttonTS2);
-            this.groupBoxTS43.Controls.Add(this.comboWebImage_nasa);
-            this.groupBoxTS43.Location = new System.Drawing.Point(16, 229);
-            this.groupBoxTS43.Name = "groupBoxTS43";
-            this.groupBoxTS43.Size = new System.Drawing.Size(293, 44);
-            this.groupBoxTS43.TabIndex = 144;
-            this.groupBoxTS43.TabStop = false;
-            this.groupBoxTS43.Text = "nasa";
-            // 
-            // buttonTS2
-            // 
-            this.buttonTS2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
-            this.buttonTS2.Image = null;
-            this.buttonTS2.Location = new System.Drawing.Point(208, 12);
-            this.buttonTS2.Name = "buttonTS2";
-            this.buttonTS2.Selectable = true;
-            this.buttonTS2.Size = new System.Drawing.Size(75, 24);
-            this.buttonTS2.TabIndex = 1;
-            this.buttonTS2.Text = "Visit";
-            this.buttonTS2.UseVisualStyleBackColor = false;
-            this.buttonTS2.Visible = false;
-            // 
-            // comboWebImage_nasa
-            // 
-            this.comboWebImage_nasa.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboWebImage_nasa.FormattingEnabled = true;
-            this.comboWebImage_nasa.Location = new System.Drawing.Point(12, 15);
-            this.comboWebImage_nasa.Name = "comboWebImage_nasa";
-            this.comboWebImage_nasa.Size = new System.Drawing.Size(190, 21);
-            this.comboWebImage_nasa.TabIndex = 0;
-            this.comboWebImage_nasa.SelectedIndexChanged += new System.EventHandler(this.comboWebImage_nasa_SelectedIndexChanged);
-            // 
-            // lblWebImage_state
-            // 
-            this.lblWebImage_state.Image = null;
-            this.lblWebImage_state.Location = new System.Drawing.Point(220, 108);
-            this.lblWebImage_state.Name = "lblWebImage_state";
-            this.lblWebImage_state.Size = new System.Drawing.Size(93, 13);
-            this.lblWebImage_state.TabIndex = 142;
-            this.lblWebImage_state.Text = "state";
-            this.lblWebImage_state.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.scrollableControl1.AutoScroll = true;
+            this.scrollableControl1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.scrollableControl1.Controls.Add(this.groupBoxTS40);
+            this.scrollableControl1.Controls.Add(this.groupBoxTS42);
+            this.scrollableControl1.Controls.Add(this.groupBoxTS43);
+            this.scrollableControl1.Controls.Add(this.groupBoxTS41);
+            this.scrollableControl1.Location = new System.Drawing.Point(6, 194);
+            this.scrollableControl1.Name = "scrollableControl1";
+            this.scrollableControl1.Size = new System.Drawing.Size(311, 176);
+            this.scrollableControl1.TabIndex = 112;
+            this.scrollableControl1.Text = "scrollableControl1";
             // 
             // groupBoxTS40
             // 
             this.groupBoxTS40.Controls.Add(this.btnWebImage_hamqsl_donate);
             this.groupBoxTS40.Controls.Add(this.comboWebImage_HamQsl);
-            this.groupBoxTS40.Location = new System.Drawing.Point(16, 121);
+            this.groupBoxTS40.Location = new System.Drawing.Point(3, 3);
             this.groupBoxTS40.Name = "groupBoxTS40";
-            this.groupBoxTS40.Size = new System.Drawing.Size(293, 44);
+            this.groupBoxTS40.Size = new System.Drawing.Size(278, 44);
             this.groupBoxTS40.TabIndex = 141;
             this.groupBoxTS40.TabStop = false;
             this.groupBoxTS40.Text = "hamqsl.com";
@@ -62951,7 +63893,7 @@
             this.btnWebImage_hamqsl_donate.Location = new System.Drawing.Point(208, 12);
             this.btnWebImage_hamqsl_donate.Name = "btnWebImage_hamqsl_donate";
             this.btnWebImage_hamqsl_donate.Selectable = true;
-            this.btnWebImage_hamqsl_donate.Size = new System.Drawing.Size(75, 24);
+            this.btnWebImage_hamqsl_donate.Size = new System.Drawing.Size(63, 24);
             this.btnWebImage_hamqsl_donate.TabIndex = 1;
             this.btnWebImage_hamqsl_donate.Text = "Donate";
             this.btnWebImage_hamqsl_donate.UseVisualStyleBackColor = false;
@@ -62967,11 +63909,195 @@
             this.comboWebImage_HamQsl.TabIndex = 0;
             this.comboWebImage_HamQsl.SelectedIndexChanged += new System.EventHandler(this.comboWebImage_HamQsl_SelectedIndexChanged);
             // 
+            // groupBoxTS42
+            // 
+            this.groupBoxTS42.Controls.Add(this.buttonTS1);
+            this.groupBoxTS42.Controls.Add(this.comboWebImage_noaa);
+            this.groupBoxTS42.Location = new System.Drawing.Point(3, 155);
+            this.groupBoxTS42.Name = "groupBoxTS42";
+            this.groupBoxTS42.Size = new System.Drawing.Size(278, 44);
+            this.groupBoxTS42.TabIndex = 145;
+            this.groupBoxTS42.TabStop = false;
+            this.groupBoxTS42.Text = "noaa";
+            // 
+            // buttonTS1
+            // 
+            this.buttonTS1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.buttonTS1.Image = null;
+            this.buttonTS1.Location = new System.Drawing.Point(208, 12);
+            this.buttonTS1.Name = "buttonTS1";
+            this.buttonTS1.Selectable = true;
+            this.buttonTS1.Size = new System.Drawing.Size(63, 24);
+            this.buttonTS1.TabIndex = 1;
+            this.buttonTS1.Text = "Visit";
+            this.buttonTS1.UseVisualStyleBackColor = false;
+            this.buttonTS1.Visible = false;
+            // 
+            // comboWebImage_noaa
+            // 
+            this.comboWebImage_noaa.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboWebImage_noaa.FormattingEnabled = true;
+            this.comboWebImage_noaa.Location = new System.Drawing.Point(12, 15);
+            this.comboWebImage_noaa.Name = "comboWebImage_noaa";
+            this.comboWebImage_noaa.Size = new System.Drawing.Size(190, 21);
+            this.comboWebImage_noaa.TabIndex = 0;
+            this.comboWebImage_noaa.SelectedIndexChanged += new System.EventHandler(this.comboWebImage_noaa_SelectedIndexChanged);
+            // 
+            // groupBoxTS43
+            // 
+            this.groupBoxTS43.Controls.Add(this.buttonTS2);
+            this.groupBoxTS43.Controls.Add(this.comboWebImage_nasa);
+            this.groupBoxTS43.Location = new System.Drawing.Point(3, 111);
+            this.groupBoxTS43.Name = "groupBoxTS43";
+            this.groupBoxTS43.Size = new System.Drawing.Size(278, 44);
+            this.groupBoxTS43.TabIndex = 144;
+            this.groupBoxTS43.TabStop = false;
+            this.groupBoxTS43.Text = "nasa";
+            // 
+            // buttonTS2
+            // 
+            this.buttonTS2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.buttonTS2.Image = null;
+            this.buttonTS2.Location = new System.Drawing.Point(208, 12);
+            this.buttonTS2.Name = "buttonTS2";
+            this.buttonTS2.Selectable = true;
+            this.buttonTS2.Size = new System.Drawing.Size(63, 24);
+            this.buttonTS2.TabIndex = 1;
+            this.buttonTS2.Text = "Visit";
+            this.buttonTS2.UseVisualStyleBackColor = false;
+            this.buttonTS2.Visible = false;
+            // 
+            // comboWebImage_nasa
+            // 
+            this.comboWebImage_nasa.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboWebImage_nasa.FormattingEnabled = true;
+            this.comboWebImage_nasa.Location = new System.Drawing.Point(12, 15);
+            this.comboWebImage_nasa.Name = "comboWebImage_nasa";
+            this.comboWebImage_nasa.Size = new System.Drawing.Size(190, 21);
+            this.comboWebImage_nasa.TabIndex = 0;
+            this.comboWebImage_nasa.SelectedIndexChanged += new System.EventHandler(this.comboWebImage_nasa_SelectedIndexChanged);
+            // 
+            // groupBoxTS41
+            // 
+            this.groupBoxTS41.Controls.Add(this.chkBSDWorldDarkMode);
+            this.groupBoxTS41.Controls.Add(this.btnWebImage_bsdworld_visit);
+            this.groupBoxTS41.Controls.Add(this.comboWebImage_BsdWorld);
+            this.groupBoxTS41.Location = new System.Drawing.Point(3, 47);
+            this.groupBoxTS41.Name = "groupBoxTS41";
+            this.groupBoxTS41.Size = new System.Drawing.Size(278, 63);
+            this.groupBoxTS41.TabIndex = 143;
+            this.groupBoxTS41.TabStop = false;
+            this.groupBoxTS41.Text = "bsdworld.org";
+            // 
+            // chkBSDWorldDarkMode
+            // 
+            this.chkBSDWorldDarkMode.AutoSize = true;
+            this.chkBSDWorldDarkMode.Image = null;
+            this.chkBSDWorldDarkMode.Location = new System.Drawing.Point(192, 40);
+            this.chkBSDWorldDarkMode.Name = "chkBSDWorldDarkMode";
+            this.chkBSDWorldDarkMode.Size = new System.Drawing.Size(79, 17);
+            this.chkBSDWorldDarkMode.TabIndex = 2;
+            this.chkBSDWorldDarkMode.Text = "Dark Mode";
+            this.chkBSDWorldDarkMode.UseVisualStyleBackColor = true;
+            // 
+            // btnWebImage_bsdworld_visit
+            // 
+            this.btnWebImage_bsdworld_visit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.btnWebImage_bsdworld_visit.Image = null;
+            this.btnWebImage_bsdworld_visit.Location = new System.Drawing.Point(208, 12);
+            this.btnWebImage_bsdworld_visit.Name = "btnWebImage_bsdworld_visit";
+            this.btnWebImage_bsdworld_visit.Selectable = true;
+            this.btnWebImage_bsdworld_visit.Size = new System.Drawing.Size(63, 24);
+            this.btnWebImage_bsdworld_visit.TabIndex = 1;
+            this.btnWebImage_bsdworld_visit.Text = "Visit";
+            this.btnWebImage_bsdworld_visit.UseVisualStyleBackColor = false;
+            this.btnWebImage_bsdworld_visit.Click += new System.EventHandler(this.btnWebImage_bsdworld_visit_Click);
+            // 
+            // comboWebImage_BsdWorld
+            // 
+            this.comboWebImage_BsdWorld.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboWebImage_BsdWorld.FormattingEnabled = true;
+            this.comboWebImage_BsdWorld.Location = new System.Drawing.Point(12, 15);
+            this.comboWebImage_BsdWorld.Name = "comboWebImage_BsdWorld";
+            this.comboWebImage_BsdWorld.Size = new System.Drawing.Size(190, 21);
+            this.comboWebImage_BsdWorld.TabIndex = 0;
+            this.comboWebImage_BsdWorld.SelectedIndexChanged += new System.EventHandler(this.comboWebImage_BsdWorld_SelectedIndexChanged);
+            // 
+            // lblWebImage_secs
+            // 
+            this.lblWebImage_secs.AutoSize = true;
+            this.lblWebImage_secs.Image = null;
+            this.lblWebImage_secs.Location = new System.Drawing.Point(118, 169);
+            this.lblWebImage_secs.Name = "lblWebImage_secs";
+            this.lblWebImage_secs.Size = new System.Drawing.Size(84, 13);
+            this.lblWebImage_secs.TabIndex = 149;
+            this.lblWebImage_secs.Text = "s goto 4Char ID:";
+            // 
+            // nudWebImage_background_time
+            // 
+            this.nudWebImage_background_time.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudWebImage_background_time.Location = new System.Drawing.Point(65, 167);
+            this.nudWebImage_background_time.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+            this.nudWebImage_background_time.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.nudWebImage_background_time.Name = "nudWebImage_background_time";
+            this.nudWebImage_background_time.Size = new System.Drawing.Size(47, 20);
+            this.nudWebImage_background_time.TabIndex = 148;
+            this.nudWebImage_background_time.TinyStep = false;
+            this.nudWebImage_background_time.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.nudWebImage_background_time.ValueChanged += new System.EventHandler(this.nudWebImage_background_time_ValueChanged);
+            // 
+            // chkWebImage_background
+            // 
+            this.chkWebImage_background.AutoSize = true;
+            this.chkWebImage_background.Image = null;
+            this.chkWebImage_background.Location = new System.Drawing.Point(14, 147);
+            this.chkWebImage_background.Name = "chkWebImage_background";
+            this.chkWebImage_background.Size = new System.Drawing.Size(183, 17);
+            this.chkWebImage_background.TabIndex = 147;
+            this.chkWebImage_background.Text = "Use as spectral area background";
+            this.chkWebImage_background.UseVisualStyleBackColor = true;
+            this.chkWebImage_background.CheckedChanged += new System.EventHandler(this.chkWebImage_background_CheckedChanged);
+            // 
+            // labelTS347
+            // 
+            this.labelTS347.AutoSize = true;
+            this.labelTS347.Image = null;
+            this.labelTS347.Location = new System.Drawing.Point(180, 89);
+            this.labelTS347.Name = "labelTS347";
+            this.labelTS347.Size = new System.Drawing.Size(52, 13);
+            this.labelTS347.TabIndex = 117;
+            this.labelTS347.Text = "4Char ID:";
+            // 
+            // lblWebImage_state
+            // 
+            this.lblWebImage_state.Image = null;
+            this.lblWebImage_state.Location = new System.Drawing.Point(42, 101);
+            this.lblWebImage_state.Name = "lblWebImage_state";
+            this.lblWebImage_state.Size = new System.Drawing.Size(93, 13);
+            this.lblWebImage_state.TabIndex = 142;
+            this.lblWebImage_state.Text = "state";
+            // 
             // labelTS236
             // 
             this.labelTS236.AutoSize = true;
             this.labelTS236.Image = null;
-            this.labelTS236.Location = new System.Drawing.Point(18, 87);
+            this.labelTS236.Location = new System.Drawing.Point(16, 120);
             this.labelTS236.Name = "labelTS236";
             this.labelTS236.Size = new System.Drawing.Size(23, 13);
             this.labelTS236.TabIndex = 140;
@@ -62979,9 +64105,9 @@
             // 
             // txtWebImage_url
             // 
-            this.txtWebImage_url.Location = new System.Drawing.Point(47, 84);
+            this.txtWebImage_url.Location = new System.Drawing.Point(45, 117);
             this.txtWebImage_url.Name = "txtWebImage_url";
-            this.txtWebImage_url.Size = new System.Drawing.Size(267, 20);
+            this.txtWebImage_url.Size = new System.Drawing.Size(266, 20);
             this.txtWebImage_url.TabIndex = 139;
             this.txtWebImage_url.TextChanged += new System.EventHandler(this.txtWebImage_url_TextChanged);
             // 
@@ -63581,7 +64707,8 @@
             "ANAN-7000DLE",
             "ANAN-8000DLE",
             "ANAN-G2",
-            "ANAN-G2-1K"});
+            "ANAN-G2-1K",
+            "ANVELINA-PRO3"});
             this.comboHistory_reading_1.Location = new System.Drawing.Point(73, 21);
             this.comboHistory_reading_1.Name = "comboHistory_reading_1";
             this.comboHistory_reading_1.Size = new System.Drawing.Size(136, 23);
@@ -63663,7 +64790,8 @@
             "ANAN-7000DLE",
             "ANAN-8000DLE",
             "ANAN-G2",
-            "ANAN-G2-1K"});
+            "ANAN-G2-1K",
+            "ANVELINA-PRO3"});
             this.comboHistory_reading_0.Location = new System.Drawing.Point(73, 21);
             this.comboHistory_reading_0.Name = "comboHistory_reading_0";
             this.comboHistory_reading_0.Size = new System.Drawing.Size(136, 23);
@@ -63926,21 +65054,1115 @@
             // 
             // tabPage12
             // 
+            this.tabPage12.Controls.Add(this.grpMeterItemFilterDisplay);
             this.tabPage12.Location = new System.Drawing.Point(4, 22);
             this.tabPage12.Name = "tabPage12";
             this.tabPage12.Size = new System.Drawing.Size(726, 463);
             this.tabPage12.TabIndex = 10;
-            this.tabPage12.Text = "blank";
+            this.tabPage12.Text = "filter";
             this.tabPage12.UseVisualStyleBackColor = true;
+            // 
+            // grpMeterItemFilterDisplay
+            // 
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS349);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.nudFilter_lower_characteristic);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.scrlFilter);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS348);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS339);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.chkFilter_characteristic);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.nudFilter_waterfall_frame_update);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS341);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.nudFilterItem_font_scale);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS297);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.radFilterItem_none);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.radFilterItem_panadaptor);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.radFilterItem_waterfall);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.radFilterItem_panafall);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.pnlFilterModeModifiers);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.nudFilterDisplay_fixed_tx_zoom_level);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.chkFilterDisplay_fixed_tx_zoom);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.nudFilterDisplay_fixed_zoom_level);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.chkFilterDisplay_fixed_zoom);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.chkFilterDisplay_show_limits);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.nudFilterDisplay_vertical_ratio);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS332);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.labelTS333);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.clrbtnFilterDisplay_backcolour);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.chkFilterDisplay_fadeontx);
+            this.grpMeterItemFilterDisplay.Controls.Add(this.chkFilterDisplay_fadeonrx);
+            this.grpMeterItemFilterDisplay.Location = new System.Drawing.Point(26, 24);
+            this.grpMeterItemFilterDisplay.Name = "grpMeterItemFilterDisplay";
+            this.grpMeterItemFilterDisplay.Size = new System.Drawing.Size(323, 376);
+            this.grpMeterItemFilterDisplay.TabIndex = 111;
+            this.grpMeterItemFilterDisplay.TabStop = false;
+            this.grpMeterItemFilterDisplay.Text = "Filter Display";
+            this.grpMeterItemFilterDisplay.Visible = false;
+            // 
+            // labelTS349
+            // 
+            this.labelTS349.AutoSize = true;
+            this.labelTS349.Image = null;
+            this.labelTS349.Location = new System.Drawing.Point(286, 207);
+            this.labelTS349.Margin = new System.Windows.Forms.Padding(0);
+            this.labelTS349.Name = "labelTS349";
+            this.labelTS349.Size = new System.Drawing.Size(20, 13);
+            this.labelTS349.TabIndex = 204;
+            this.labelTS349.Text = "dB";
+            // 
+            // scrlFilter
+            // 
+            this.scrlFilter.AutoScroll = true;
+            this.scrlFilter.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_button_highlight);
+            this.scrlFilter.Controls.Add(this.labelTS345);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_setting_on);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_wf_low);
+            this.scrlFilter.Controls.Add(this.labelTS346);
+            this.scrlFilter.Controls.Add(this.labelTS298);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_snap_line);
+            this.scrlFilter.Controls.Add(this.comboFilter_wf_palette);
+            this.scrlFilter.Controls.Add(this.label22);
+            this.scrlFilter.Controls.Add(this.labelTS344);
+            this.scrlFilter.Controls.Add(this.chkFilter_grey_outsidepb);
+            this.scrlFilter.Controls.Add(this.chkFilter_fill_spec);
+            this.scrlFilter.Controls.Add(this.labelTS299);
+            this.scrlFilter.Controls.Add(this.chkFilter_sideband_mode);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_data_line);
+            this.scrlFilter.Controls.Add(this.labelTS300);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_extents);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_data_fill);
+            this.scrlFilter.Controls.Add(this.labelTS338);
+            this.scrlFilter.Controls.Add(this.labelTS301);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_notch_highlight);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_text);
+            this.scrlFilter.Controls.Add(this.labelTS336);
+            this.scrlFilter.Controls.Add(this.labelTS330);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_notch);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_number_highlight);
+            this.scrlFilter.Controls.Add(this.labelTS337);
+            this.scrlFilter.Controls.Add(this.labelTS331);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_meter_back);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_edges);
+            this.scrlFilter.Controls.Add(this.labelTS335);
+            this.scrlFilter.Controls.Add(this.labelTS334);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_edge_highlight);
+            this.scrlFilter.Location = new System.Drawing.Point(6, 231);
+            this.scrlFilter.Name = "scrlFilter";
+            this.scrlFilter.Size = new System.Drawing.Size(311, 139);
+            this.scrlFilter.TabIndex = 112;
+            // 
+            // clrbtnFilter_button_highlight
+            // 
+            this.clrbtnFilter_button_highlight.Automatic = "Automatic";
+            this.clrbtnFilter_button_highlight.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_button_highlight.Image = null;
+            this.clrbtnFilter_button_highlight.Location = new System.Drawing.Point(95, 183);
+            this.clrbtnFilter_button_highlight.MoreColors = "More Colors...";
+            this.clrbtnFilter_button_highlight.Name = "clrbtnFilter_button_highlight";
+            this.clrbtnFilter_button_highlight.Selectable = true;
+            this.clrbtnFilter_button_highlight.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_button_highlight.TabIndex = 200;
+            this.clrbtnFilter_button_highlight.Changed += new System.EventHandler(this.clrbtnFilter_button_highlight_Changed);
+            // 
+            // labelTS345
+            // 
+            this.labelTS345.AutoSize = true;
+            this.labelTS345.Image = null;
+            this.labelTS345.Location = new System.Drawing.Point(4, 188);
+            this.labelTS345.Name = "labelTS345";
+            this.labelTS345.Size = new System.Drawing.Size(85, 13);
+            this.labelTS345.TabIndex = 199;
+            this.labelTS345.Text = "Button Highlight:";
+            this.labelTS345.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_setting_on
+            // 
+            this.clrbtnFilter_setting_on.Automatic = "Automatic";
+            this.clrbtnFilter_setting_on.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_setting_on.Image = null;
+            this.clrbtnFilter_setting_on.Location = new System.Drawing.Point(95, 160);
+            this.clrbtnFilter_setting_on.MoreColors = "More Colors...";
+            this.clrbtnFilter_setting_on.Name = "clrbtnFilter_setting_on";
+            this.clrbtnFilter_setting_on.Selectable = true;
+            this.clrbtnFilter_setting_on.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_setting_on.TabIndex = 198;
+            this.clrbtnFilter_setting_on.Changed += new System.EventHandler(this.clrbtnFilter_setting_on_Changed);
+            // 
+            // clrbtnFilter_wf_low
+            // 
+            this.clrbtnFilter_wf_low.Automatic = "Automatic";
+            this.clrbtnFilter_wf_low.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_wf_low.Image = null;
+            this.clrbtnFilter_wf_low.Location = new System.Drawing.Point(249, 27);
+            this.clrbtnFilter_wf_low.MoreColors = "More Colors...";
+            this.clrbtnFilter_wf_low.Name = "clrbtnFilter_wf_low";
+            this.clrbtnFilter_wf_low.Selectable = true;
+            this.clrbtnFilter_wf_low.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_wf_low.TabIndex = 168;
+            this.clrbtnFilter_wf_low.Changed += new System.EventHandler(this.clrbtnFilter_wf_low_Changed);
+            // 
+            // labelTS346
+            // 
+            this.labelTS346.AutoSize = true;
+            this.labelTS346.Image = null;
+            this.labelTS346.Location = new System.Drawing.Point(29, 165);
+            this.labelTS346.Name = "labelTS346";
+            this.labelTS346.Size = new System.Drawing.Size(60, 13);
+            this.labelTS346.TabIndex = 197;
+            this.labelTS346.Text = "Setting On:";
+            this.labelTS346.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS298
+            // 
+            this.labelTS298.AutoSize = true;
+            this.labelTS298.Image = null;
+            this.labelTS298.Location = new System.Drawing.Point(170, 31);
+            this.labelTS298.Name = "labelTS298";
+            this.labelTS298.Size = new System.Drawing.Size(75, 13);
+            this.labelTS298.TabIndex = 167;
+            this.labelTS298.Text = "Waterfall Low:";
+            this.labelTS298.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_snap_line
+            // 
+            this.clrbtnFilter_snap_line.Automatic = "Automatic";
+            this.clrbtnFilter_snap_line.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_snap_line.Image = null;
+            this.clrbtnFilter_snap_line.Location = new System.Drawing.Point(249, 183);
+            this.clrbtnFilter_snap_line.MoreColors = "More Colors...";
+            this.clrbtnFilter_snap_line.Name = "clrbtnFilter_snap_line";
+            this.clrbtnFilter_snap_line.Selectable = true;
+            this.clrbtnFilter_snap_line.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_snap_line.TabIndex = 196;
+            this.clrbtnFilter_snap_line.Changed += new System.EventHandler(this.clrbtnFilter_snap_line_Changed);
+            // 
+            // labelTS344
+            // 
+            this.labelTS344.AutoSize = true;
+            this.labelTS344.Image = null;
+            this.labelTS344.Location = new System.Drawing.Point(185, 188);
+            this.labelTS344.Name = "labelTS344";
+            this.labelTS344.Size = new System.Drawing.Size(58, 13);
+            this.labelTS344.TabIndex = 195;
+            this.labelTS344.Text = "Snap Line:";
+            this.labelTS344.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // chkFilter_fill_spec
+            // 
+            this.chkFilter_fill_spec.AutoSize = true;
+            this.chkFilter_fill_spec.Checked = true;
+            this.chkFilter_fill_spec.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFilter_fill_spec.Image = null;
+            this.chkFilter_fill_spec.Location = new System.Drawing.Point(13, 52);
+            this.chkFilter_fill_spec.Name = "chkFilter_fill_spec";
+            this.chkFilter_fill_spec.Size = new System.Drawing.Size(86, 17);
+            this.chkFilter_fill_spec.TabIndex = 164;
+            this.chkFilter_fill_spec.Text = "Fill Spectrum";
+            this.chkFilter_fill_spec.UseVisualStyleBackColor = true;
+            this.chkFilter_fill_spec.CheckedChanged += new System.EventHandler(this.chkFilter_fill_spec_CheckedChanged);
+            // 
+            // labelTS299
+            // 
+            this.labelTS299.AutoSize = true;
+            this.labelTS299.Image = null;
+            this.labelTS299.Location = new System.Drawing.Point(33, 77);
+            this.labelTS299.Name = "labelTS299";
+            this.labelTS299.Size = new System.Drawing.Size(56, 13);
+            this.labelTS299.TabIndex = 169;
+            this.labelTS299.Text = "Data Line:";
+            this.labelTS299.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_data_line
+            // 
+            this.clrbtnFilter_data_line.Automatic = "Automatic";
+            this.clrbtnFilter_data_line.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_data_line.Image = null;
+            this.clrbtnFilter_data_line.Location = new System.Drawing.Point(95, 72);
+            this.clrbtnFilter_data_line.MoreColors = "More Colors...";
+            this.clrbtnFilter_data_line.Name = "clrbtnFilter_data_line";
+            this.clrbtnFilter_data_line.Selectable = true;
+            this.clrbtnFilter_data_line.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_data_line.TabIndex = 170;
+            this.clrbtnFilter_data_line.Changed += new System.EventHandler(this.clrbtnFilter_data_line_Changed);
+            // 
+            // labelTS300
+            // 
+            this.labelTS300.AutoSize = true;
+            this.labelTS300.Image = null;
+            this.labelTS300.Location = new System.Drawing.Point(41, 99);
+            this.labelTS300.Name = "labelTS300";
+            this.labelTS300.Size = new System.Drawing.Size(48, 13);
+            this.labelTS300.TabIndex = 171;
+            this.labelTS300.Text = "Data Fill:";
+            this.labelTS300.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_extents
+            // 
+            this.clrbtnFilter_extents.Automatic = "Automatic";
+            this.clrbtnFilter_extents.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_extents.Image = null;
+            this.clrbtnFilter_extents.Location = new System.Drawing.Point(95, 138);
+            this.clrbtnFilter_extents.MoreColors = "More Colors...";
+            this.clrbtnFilter_extents.Name = "clrbtnFilter_extents";
+            this.clrbtnFilter_extents.Selectable = true;
+            this.clrbtnFilter_extents.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_extents.TabIndex = 188;
+            this.clrbtnFilter_extents.Changed += new System.EventHandler(this.clrbtnFilter_extents_Changed);
+            // 
+            // clrbtnFilter_data_fill
+            // 
+            this.clrbtnFilter_data_fill.Automatic = "Automatic";
+            this.clrbtnFilter_data_fill.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_data_fill.Image = null;
+            this.clrbtnFilter_data_fill.Location = new System.Drawing.Point(95, 94);
+            this.clrbtnFilter_data_fill.MoreColors = "More Colors...";
+            this.clrbtnFilter_data_fill.Name = "clrbtnFilter_data_fill";
+            this.clrbtnFilter_data_fill.Selectable = true;
+            this.clrbtnFilter_data_fill.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_data_fill.TabIndex = 172;
+            this.clrbtnFilter_data_fill.Changed += new System.EventHandler(this.clrbtnFilter_data_fill_Changed);
+            // 
+            // labelTS338
+            // 
+            this.labelTS338.AutoSize = true;
+            this.labelTS338.Image = null;
+            this.labelTS338.Location = new System.Drawing.Point(9, 143);
+            this.labelTS338.Name = "labelTS338";
+            this.labelTS338.Size = new System.Drawing.Size(80, 13);
+            this.labelTS338.TabIndex = 187;
+            this.labelTS338.Text = "Edges/Extents:";
+            this.labelTS338.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS301
+            // 
+            this.labelTS301.AutoSize = true;
+            this.labelTS301.Image = null;
+            this.labelTS301.Location = new System.Drawing.Point(212, 55);
+            this.labelTS301.Name = "labelTS301";
+            this.labelTS301.Size = new System.Drawing.Size(31, 13);
+            this.labelTS301.TabIndex = 173;
+            this.labelTS301.Text = "Text:";
+            this.labelTS301.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_notch_highlight
+            // 
+            this.clrbtnFilter_notch_highlight.Automatic = "Automatic";
+            this.clrbtnFilter_notch_highlight.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_notch_highlight.Image = null;
+            this.clrbtnFilter_notch_highlight.Location = new System.Drawing.Point(249, 161);
+            this.clrbtnFilter_notch_highlight.MoreColors = "More Colors...";
+            this.clrbtnFilter_notch_highlight.Name = "clrbtnFilter_notch_highlight";
+            this.clrbtnFilter_notch_highlight.Selectable = true;
+            this.clrbtnFilter_notch_highlight.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_notch_highlight.TabIndex = 186;
+            this.clrbtnFilter_notch_highlight.Changed += new System.EventHandler(this.clrbtnFilter_notch_highlight_Changed);
+            // 
+            // clrbtnFilter_text
+            // 
+            this.clrbtnFilter_text.Automatic = "Automatic";
+            this.clrbtnFilter_text.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_text.Image = null;
+            this.clrbtnFilter_text.Location = new System.Drawing.Point(249, 50);
+            this.clrbtnFilter_text.MoreColors = "More Colors...";
+            this.clrbtnFilter_text.Name = "clrbtnFilter_text";
+            this.clrbtnFilter_text.Selectable = true;
+            this.clrbtnFilter_text.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_text.TabIndex = 174;
+            this.clrbtnFilter_text.Changed += new System.EventHandler(this.clrbtnFilter_text_Changed);
+            // 
+            // labelTS336
+            // 
+            this.labelTS336.AutoSize = true;
+            this.labelTS336.Image = null;
+            this.labelTS336.Location = new System.Drawing.Point(160, 166);
+            this.labelTS336.Name = "labelTS336";
+            this.labelTS336.Size = new System.Drawing.Size(83, 13);
+            this.labelTS336.TabIndex = 185;
+            this.labelTS336.Text = "Notch Highlight:";
+            this.labelTS336.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS330
+            // 
+            this.labelTS330.AutoSize = true;
+            this.labelTS330.Image = null;
+            this.labelTS330.Location = new System.Drawing.Point(155, 77);
+            this.labelTS330.Name = "labelTS330";
+            this.labelTS330.Size = new System.Drawing.Size(91, 13);
+            this.labelTS330.TabIndex = 175;
+            this.labelTS330.Text = "Number Highlight:";
+            this.labelTS330.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_notch
+            // 
+            this.clrbtnFilter_notch.Automatic = "Automatic";
+            this.clrbtnFilter_notch.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_notch.Image = null;
+            this.clrbtnFilter_notch.Location = new System.Drawing.Point(249, 139);
+            this.clrbtnFilter_notch.MoreColors = "More Colors...";
+            this.clrbtnFilter_notch.Name = "clrbtnFilter_notch";
+            this.clrbtnFilter_notch.Selectable = true;
+            this.clrbtnFilter_notch.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_notch.TabIndex = 184;
+            this.clrbtnFilter_notch.Changed += new System.EventHandler(this.clrbtnFilter_notch_Changed);
+            // 
+            // clrbtnFilter_number_highlight
+            // 
+            this.clrbtnFilter_number_highlight.Automatic = "Automatic";
+            this.clrbtnFilter_number_highlight.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_number_highlight.Image = null;
+            this.clrbtnFilter_number_highlight.Location = new System.Drawing.Point(249, 72);
+            this.clrbtnFilter_number_highlight.MoreColors = "More Colors...";
+            this.clrbtnFilter_number_highlight.Name = "clrbtnFilter_number_highlight";
+            this.clrbtnFilter_number_highlight.Selectable = true;
+            this.clrbtnFilter_number_highlight.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_number_highlight.TabIndex = 176;
+            this.clrbtnFilter_number_highlight.Changed += new System.EventHandler(this.clrbtnFilter_number_highlight_Changed);
+            // 
+            // labelTS337
+            // 
+            this.labelTS337.AutoSize = true;
+            this.labelTS337.Image = null;
+            this.labelTS337.Location = new System.Drawing.Point(204, 144);
+            this.labelTS337.Name = "labelTS337";
+            this.labelTS337.Size = new System.Drawing.Size(39, 13);
+            this.labelTS337.TabIndex = 183;
+            this.labelTS337.Text = "Notch:";
+            this.labelTS337.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS331
+            // 
+            this.labelTS331.AutoSize = true;
+            this.labelTS331.Image = null;
+            this.labelTS331.Location = new System.Drawing.Point(186, 101);
+            this.labelTS331.Name = "labelTS331";
+            this.labelTS331.Size = new System.Drawing.Size(65, 13);
+            this.labelTS331.TabIndex = 177;
+            this.labelTS331.Text = "Filter Edges:";
+            this.labelTS331.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_meter_back
+            // 
+            this.clrbtnFilter_meter_back.Automatic = "Automatic";
+            this.clrbtnFilter_meter_back.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_meter_back.Image = null;
+            this.clrbtnFilter_meter_back.Location = new System.Drawing.Point(95, 116);
+            this.clrbtnFilter_meter_back.MoreColors = "More Colors...";
+            this.clrbtnFilter_meter_back.Name = "clrbtnFilter_meter_back";
+            this.clrbtnFilter_meter_back.Selectable = true;
+            this.clrbtnFilter_meter_back.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_meter_back.TabIndex = 182;
+            this.clrbtnFilter_meter_back.Changed += new System.EventHandler(this.clrbtnFilter_meter_back_Changed);
+            // 
+            // clrbtnFilter_edges
+            // 
+            this.clrbtnFilter_edges.Automatic = "Automatic";
+            this.clrbtnFilter_edges.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_edges.Image = null;
+            this.clrbtnFilter_edges.Location = new System.Drawing.Point(249, 95);
+            this.clrbtnFilter_edges.MoreColors = "More Colors...";
+            this.clrbtnFilter_edges.Name = "clrbtnFilter_edges";
+            this.clrbtnFilter_edges.Selectable = true;
+            this.clrbtnFilter_edges.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_edges.TabIndex = 178;
+            this.clrbtnFilter_edges.Changed += new System.EventHandler(this.clrbtnFilter_edges_Changed);
+            // 
+            // labelTS335
+            // 
+            this.labelTS335.AutoSize = true;
+            this.labelTS335.Image = null;
+            this.labelTS335.Location = new System.Drawing.Point(24, 121);
+            this.labelTS335.Name = "labelTS335";
+            this.labelTS335.Size = new System.Drawing.Size(65, 13);
+            this.labelTS335.TabIndex = 181;
+            this.labelTS335.Text = "Meter Back:";
+            this.labelTS335.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS334
+            // 
+            this.labelTS334.AutoSize = true;
+            this.labelTS334.Image = null;
+            this.labelTS334.Location = new System.Drawing.Point(139, 122);
+            this.labelTS334.Name = "labelTS334";
+            this.labelTS334.Size = new System.Drawing.Size(104, 13);
+            this.labelTS334.TabIndex = 179;
+            this.labelTS334.Text = "Filter Edge Highlight:";
+            this.labelTS334.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_edge_highlight
+            // 
+            this.clrbtnFilter_edge_highlight.Automatic = "Automatic";
+            this.clrbtnFilter_edge_highlight.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_edge_highlight.Image = null;
+            this.clrbtnFilter_edge_highlight.Location = new System.Drawing.Point(249, 117);
+            this.clrbtnFilter_edge_highlight.MoreColors = "More Colors...";
+            this.clrbtnFilter_edge_highlight.Name = "clrbtnFilter_edge_highlight";
+            this.clrbtnFilter_edge_highlight.Selectable = true;
+            this.clrbtnFilter_edge_highlight.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_edge_highlight.TabIndex = 180;
+            this.clrbtnFilter_edge_highlight.Changed += new System.EventHandler(this.clrbtnFilter_edge_highlight_Changed);
+            // 
+            // labelTS348
+            // 
+            this.labelTS348.AutoSize = true;
+            this.labelTS348.Image = null;
+            this.labelTS348.Location = new System.Drawing.Point(163, 207);
+            this.labelTS348.Name = "labelTS348";
+            this.labelTS348.Size = new System.Drawing.Size(64, 13);
+            this.labelTS348.TabIndex = 203;
+            this.labelTS348.Text = "Lower level:";
+            // 
+            // labelTS339
+            // 
+            this.labelTS339.AutoSize = true;
+            this.labelTS339.Image = null;
+            this.labelTS339.Location = new System.Drawing.Point(287, 166);
+            this.labelTS339.Margin = new System.Windows.Forms.Padding(0);
+            this.labelTS339.Name = "labelTS339";
+            this.labelTS339.Size = new System.Drawing.Size(33, 13);
+            this.labelTS339.TabIndex = 193;
+            this.labelTS339.Text = "frame";
+            // 
+            // labelTS297
+            // 
+            this.labelTS297.AutoSize = true;
+            this.labelTS297.Image = null;
+            this.labelTS297.Location = new System.Drawing.Point(51, 43);
+            this.labelTS297.Name = "labelTS297";
+            this.labelTS297.Size = new System.Drawing.Size(61, 13);
+            this.labelTS297.TabIndex = 162;
+            this.labelTS297.Text = "Font Scale:";
+            this.labelTS297.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // radFilterItem_none
+            // 
+            this.radFilterItem_none.AutoSize = true;
+            this.radFilterItem_none.Image = null;
+            this.radFilterItem_none.Location = new System.Drawing.Point(23, 203);
+            this.radFilterItem_none.Name = "radFilterItem_none";
+            this.radFilterItem_none.Size = new System.Drawing.Size(51, 17);
+            this.radFilterItem_none.TabIndex = 147;
+            this.radFilterItem_none.Text = "None";
+            this.radFilterItem_none.UseVisualStyleBackColor = true;
+            this.radFilterItem_none.CheckedChanged += new System.EventHandler(this.radFilterItem_none_CheckedChanged);
+            // 
+            // radFilterItem_panadaptor
+            // 
+            this.radFilterItem_panadaptor.AutoSize = true;
+            this.radFilterItem_panadaptor.Image = null;
+            this.radFilterItem_panadaptor.Location = new System.Drawing.Point(23, 134);
+            this.radFilterItem_panadaptor.Name = "radFilterItem_panadaptor";
+            this.radFilterItem_panadaptor.Size = new System.Drawing.Size(80, 17);
+            this.radFilterItem_panadaptor.TabIndex = 146;
+            this.radFilterItem_panadaptor.Text = "Panadaptor";
+            this.radFilterItem_panadaptor.UseVisualStyleBackColor = true;
+            this.radFilterItem_panadaptor.CheckedChanged += new System.EventHandler(this.radFilterItem_panadaptor_CheckedChanged);
+            // 
+            // radFilterItem_waterfall
+            // 
+            this.radFilterItem_waterfall.AutoSize = true;
+            this.radFilterItem_waterfall.Image = null;
+            this.radFilterItem_waterfall.Location = new System.Drawing.Point(23, 157);
+            this.radFilterItem_waterfall.Name = "radFilterItem_waterfall";
+            this.radFilterItem_waterfall.Size = new System.Drawing.Size(67, 17);
+            this.radFilterItem_waterfall.TabIndex = 145;
+            this.radFilterItem_waterfall.Text = "Waterfall";
+            this.radFilterItem_waterfall.UseVisualStyleBackColor = true;
+            this.radFilterItem_waterfall.CheckedChanged += new System.EventHandler(this.radFilterItem_waterfall_CheckedChanged);
+            // 
+            // radFilterItem_panafall
+            // 
+            this.radFilterItem_panafall.AutoSize = true;
+            this.radFilterItem_panafall.Checked = true;
+            this.radFilterItem_panafall.Image = null;
+            this.radFilterItem_panafall.Location = new System.Drawing.Point(23, 180);
+            this.radFilterItem_panafall.Name = "radFilterItem_panafall";
+            this.radFilterItem_panafall.Size = new System.Drawing.Size(63, 17);
+            this.radFilterItem_panafall.TabIndex = 144;
+            this.radFilterItem_panafall.TabStop = true;
+            this.radFilterItem_panafall.Text = "Panafall";
+            this.radFilterItem_panafall.UseVisualStyleBackColor = true;
+            this.radFilterItem_panafall.CheckedChanged += new System.EventHandler(this.radFilterItem_panafall_CheckedChanged);
+            // 
+            // pnlFilterModeModifiers
+            // 
+            this.pnlFilterModeModifiers.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlFilterModeModifiers.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlFilterModeModifiers.Controls.Add(this.nudFilterItem_others_scale);
+            this.pnlFilterModeModifiers.Controls.Add(this.nudFilterItem_cw_scale);
+            this.pnlFilterModeModifiers.Controls.Add(this.nudFilterItem_sidebands_scale);
+            this.pnlFilterModeModifiers.Controls.Add(this.labelTS296);
+            this.pnlFilterModeModifiers.Controls.Add(this.labelTS294);
+            this.pnlFilterModeModifiers.Controls.Add(this.labelTS293);
+            this.pnlFilterModeModifiers.Enabled = false;
+            this.pnlFilterModeModifiers.Location = new System.Drawing.Point(190, 81);
+            this.pnlFilterModeModifiers.Name = "pnlFilterModeModifiers";
+            this.pnlFilterModeModifiers.Size = new System.Drawing.Size(127, 79);
+            this.pnlFilterModeModifiers.TabIndex = 143;
+            // 
+            // labelTS296
+            // 
+            this.labelTS296.AutoSize = true;
+            this.labelTS296.Image = null;
+            this.labelTS296.Location = new System.Drawing.Point(16, 55);
+            this.labelTS296.Name = "labelTS296";
+            this.labelTS296.Size = new System.Drawing.Size(36, 13);
+            this.labelTS296.TabIndex = 2;
+            this.labelTS296.Text = "others";
+            this.labelTS296.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS294
+            // 
+            this.labelTS294.AutoSize = true;
+            this.labelTS294.Image = null;
+            this.labelTS294.Location = new System.Drawing.Point(3, 33);
+            this.labelTS294.Name = "labelTS294";
+            this.labelTS294.Size = new System.Drawing.Size(49, 13);
+            this.labelTS294.TabIndex = 1;
+            this.labelTS294.Text = "cwl, cwu";
+            this.labelTS294.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS293
+            // 
+            this.labelTS293.AutoSize = true;
+            this.labelTS293.Image = null;
+            this.labelTS293.Location = new System.Drawing.Point(3, 3);
+            this.labelTS293.Name = "labelTS293";
+            this.labelTS293.Size = new System.Drawing.Size(49, 26);
+            this.labelTS293.TabIndex = 0;
+            this.labelTS293.Text = "lsb, usb\r\ndigl, digu";
+            this.labelTS293.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // chkFilterDisplay_fixed_tx_zoom
+            // 
+            this.chkFilterDisplay_fixed_tx_zoom.AutoSize = true;
+            this.chkFilterDisplay_fixed_tx_zoom.Image = null;
+            this.chkFilterDisplay_fixed_tx_zoom.Location = new System.Drawing.Point(23, 111);
+            this.chkFilterDisplay_fixed_tx_zoom.Name = "chkFilterDisplay_fixed_tx_zoom";
+            this.chkFilterDisplay_fixed_tx_zoom.Size = new System.Drawing.Size(96, 17);
+            this.chkFilterDisplay_fixed_tx_zoom.TabIndex = 141;
+            this.chkFilterDisplay_fixed_tx_zoom.Text = "Fixed TX zoom";
+            this.chkFilterDisplay_fixed_tx_zoom.UseVisualStyleBackColor = true;
+            this.chkFilterDisplay_fixed_tx_zoom.CheckedChanged += new System.EventHandler(this.chkFilterDisplay_fixed_tx_zoom_CheckedChanged);
+            // 
+            // chkFilterDisplay_fixed_zoom
+            // 
+            this.chkFilterDisplay_fixed_zoom.AutoSize = true;
+            this.chkFilterDisplay_fixed_zoom.Image = null;
+            this.chkFilterDisplay_fixed_zoom.Location = new System.Drawing.Point(23, 85);
+            this.chkFilterDisplay_fixed_zoom.Name = "chkFilterDisplay_fixed_zoom";
+            this.chkFilterDisplay_fixed_zoom.Size = new System.Drawing.Size(97, 17);
+            this.chkFilterDisplay_fixed_zoom.TabIndex = 139;
+            this.chkFilterDisplay_fixed_zoom.Text = "Fixed RX zoom";
+            this.chkFilterDisplay_fixed_zoom.UseVisualStyleBackColor = true;
+            this.chkFilterDisplay_fixed_zoom.CheckedChanged += new System.EventHandler(this.chkFilterDisplay_fixed_zoom_CheckedChanged);
+            // 
+            // chkFilterDisplay_show_limits
+            // 
+            this.chkFilterDisplay_show_limits.AutoSize = true;
+            this.chkFilterDisplay_show_limits.Image = null;
+            this.chkFilterDisplay_show_limits.Location = new System.Drawing.Point(23, 62);
+            this.chkFilterDisplay_show_limits.Name = "chkFilterDisplay_show_limits";
+            this.chkFilterDisplay_show_limits.Size = new System.Drawing.Size(100, 17);
+            this.chkFilterDisplay_show_limits.TabIndex = 138;
+            this.chkFilterDisplay_show_limits.Text = "Show filter limits";
+            this.chkFilterDisplay_show_limits.UseVisualStyleBackColor = true;
+            this.chkFilterDisplay_show_limits.CheckedChanged += new System.EventHandler(this.chkFilterDisplay_show_limits_CheckedChanged);
+            // 
+            // labelTS332
+            // 
+            this.labelTS332.AutoSize = true;
+            this.labelTS332.Image = null;
+            this.labelTS332.Location = new System.Drawing.Point(39, 18);
+            this.labelTS332.Name = "labelTS332";
+            this.labelTS332.Size = new System.Drawing.Size(73, 13);
+            this.labelTS332.TabIndex = 131;
+            this.labelTS332.Text = "Vertical Ratio:";
+            // 
+            // labelTS333
+            // 
+            this.labelTS333.AutoSize = true;
+            this.labelTS333.Image = null;
+            this.labelTS333.Location = new System.Drawing.Point(198, 18);
+            this.labelTS333.Name = "labelTS333";
+            this.labelTS333.Size = new System.Drawing.Size(68, 13);
+            this.labelTS333.TabIndex = 130;
+            this.labelTS333.Text = "Background:";
+            // 
+            // chkFilterDisplay_fadeontx
+            // 
+            this.chkFilterDisplay_fadeontx.AutoSize = true;
+            this.chkFilterDisplay_fadeontx.Image = null;
+            this.chkFilterDisplay_fadeontx.Location = new System.Drawing.Point(229, 60);
+            this.chkFilterDisplay_fadeontx.Name = "chkFilterDisplay_fadeontx";
+            this.chkFilterDisplay_fadeontx.Size = new System.Drawing.Size(82, 17);
+            this.chkFilterDisplay_fadeontx.TabIndex = 3;
+            this.chkFilterDisplay_fadeontx.Text = "Fade on TX";
+            this.chkFilterDisplay_fadeontx.UseVisualStyleBackColor = true;
+            this.chkFilterDisplay_fadeontx.CheckedChanged += new System.EventHandler(this.chkFilterDisplay_fadeontx_CheckedChanged);
+            // 
+            // chkFilterDisplay_fadeonrx
+            // 
+            this.chkFilterDisplay_fadeonrx.AutoSize = true;
+            this.chkFilterDisplay_fadeonrx.Image = null;
+            this.chkFilterDisplay_fadeonrx.Location = new System.Drawing.Point(229, 39);
+            this.chkFilterDisplay_fadeonrx.Name = "chkFilterDisplay_fadeonrx";
+            this.chkFilterDisplay_fadeonrx.Size = new System.Drawing.Size(83, 17);
+            this.chkFilterDisplay_fadeonrx.TabIndex = 2;
+            this.chkFilterDisplay_fadeonrx.Text = "Fade on RX";
+            this.chkFilterDisplay_fadeonrx.UseVisualStyleBackColor = true;
+            this.chkFilterDisplay_fadeonrx.CheckedChanged += new System.EventHandler(this.chkFilterDisplay_fadeonrx_CheckedChanged);
             // 
             // tabPage13
             // 
+            this.tabPage13.Controls.Add(this.grpDialDisplay);
             this.tabPage13.Location = new System.Drawing.Point(4, 22);
             this.tabPage13.Name = "tabPage13";
             this.tabPage13.Size = new System.Drawing.Size(726, 463);
             this.tabPage13.TabIndex = 11;
-            this.tabPage13.Text = "blank";
+            this.tabPage13.Text = "dial";
             this.tabPage13.UseVisualStyleBackColor = true;
+            // 
+            // grpDialDisplay
+            // 
+            this.grpDialDisplay.Controls.Add(this.nudDial_degrees_for_change);
+            this.grpDialDisplay.Controls.Add(this.labelTS421);
+            this.grpDialDisplay.Controls.Add(this.nudDial_max_increments);
+            this.grpDialDisplay.Controls.Add(this.labelTS419);
+            this.grpDialDisplay.Controls.Add(this.labelTS418);
+            this.grpDialDisplay.Controls.Add(this.clrbtnDial_button_highlight);
+            this.grpDialDisplay.Controls.Add(this.labelTS414);
+            this.grpDialDisplay.Controls.Add(this.clrbtnDial_fast);
+            this.grpDialDisplay.Controls.Add(this.labelTS415);
+            this.grpDialDisplay.Controls.Add(this.clrbtnDial_hold);
+            this.grpDialDisplay.Controls.Add(this.labelTS416);
+            this.grpDialDisplay.Controls.Add(this.clrbtnDial_slow);
+            this.grpDialDisplay.Controls.Add(this.labelTS417);
+            this.grpDialDisplay.Controls.Add(this.clrbtnDial_ring);
+            this.grpDialDisplay.Controls.Add(this.labelTS412);
+            this.grpDialDisplay.Controls.Add(this.clrbtnDial_button_off);
+            this.grpDialDisplay.Controls.Add(this.labelTS413);
+            this.grpDialDisplay.Controls.Add(this.clrbtnDial_button_on);
+            this.grpDialDisplay.Controls.Add(this.labelTS410);
+            this.grpDialDisplay.Controls.Add(this.clrbtnDial_pad_pressed);
+            this.grpDialDisplay.Controls.Add(this.labelTS411);
+            this.grpDialDisplay.Controls.Add(this.clrbtnDial_pad);
+            this.grpDialDisplay.Controls.Add(this.labelTS409);
+            this.grpDialDisplay.Controls.Add(this.clrbtnDial_circle);
+            this.grpDialDisplay.Controls.Add(this.chkDial_align);
+            this.grpDialDisplay.Controls.Add(this.labelTS407);
+            this.grpDialDisplay.Controls.Add(this.nudDial_interval);
+            this.grpDialDisplay.Controls.Add(this.labelTS408);
+            this.grpDialDisplay.Controls.Add(this.labelTS353);
+            this.grpDialDisplay.Controls.Add(this.nudDial_decrement);
+            this.grpDialDisplay.Controls.Add(this.labelTS354);
+            this.grpDialDisplay.Controls.Add(this.labelTS352);
+            this.grpDialDisplay.Controls.Add(this.nudDial_increment);
+            this.grpDialDisplay.Controls.Add(this.labelTS351);
+            this.grpDialDisplay.Controls.Add(this.labelTS350);
+            this.grpDialDisplay.Controls.Add(this.clrbtnDial_text);
+            this.grpDialDisplay.Controls.Add(this.chkDialDisplay_alwaysshow_vfos);
+            this.grpDialDisplay.Controls.Add(this.nudDialDisplay_font_scale);
+            this.grpDialDisplay.Controls.Add(this.labelTS420);
+            this.grpDialDisplay.Controls.Add(this.nudDialDisplay_vertical_ratio);
+            this.grpDialDisplay.Controls.Add(this.labelTS424);
+            this.grpDialDisplay.Controls.Add(this.chkDialDisplay_fade_tx);
+            this.grpDialDisplay.Controls.Add(this.chkDialDisplay_fade_rx);
+            this.grpDialDisplay.Location = new System.Drawing.Point(202, 43);
+            this.grpDialDisplay.Name = "grpDialDisplay";
+            this.grpDialDisplay.Size = new System.Drawing.Size(323, 376);
+            this.grpDialDisplay.TabIndex = 112;
+            this.grpDialDisplay.TabStop = false;
+            this.grpDialDisplay.Text = "Dial Display";
+            this.grpDialDisplay.Visible = false;
+            // 
+            // labelTS421
+            // 
+            this.labelTS421.AutoSize = true;
+            this.labelTS421.Image = null;
+            this.labelTS421.Location = new System.Drawing.Point(35, 208);
+            this.labelTS421.Name = "labelTS421";
+            this.labelTS421.Size = new System.Drawing.Size(104, 13);
+            this.labelTS421.TabIndex = 199;
+            this.labelTS421.Text = "Degrees for change:";
+            // 
+            // labelTS419
+            // 
+            this.labelTS419.AutoSize = true;
+            this.labelTS419.Image = null;
+            this.labelTS419.Location = new System.Drawing.Point(45, 184);
+            this.labelTS419.Name = "labelTS419";
+            this.labelTS419.Size = new System.Drawing.Size(94, 13);
+            this.labelTS419.TabIndex = 197;
+            this.labelTS419.Text = "Max # increments:";
+            // 
+            // labelTS418
+            // 
+            this.labelTS418.AutoSize = true;
+            this.labelTS418.Image = null;
+            this.labelTS418.Location = new System.Drawing.Point(180, 319);
+            this.labelTS418.Name = "labelTS418";
+            this.labelTS418.Size = new System.Drawing.Size(85, 13);
+            this.labelTS418.TabIndex = 196;
+            this.labelTS418.Text = "Button Highlight:";
+            // 
+            // clrbtnDial_button_highlight
+            // 
+            this.clrbtnDial_button_highlight.Automatic = "Automatic";
+            this.clrbtnDial_button_highlight.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnDial_button_highlight.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnDial_button_highlight.Image = null;
+            this.clrbtnDial_button_highlight.Location = new System.Drawing.Point(271, 314);
+            this.clrbtnDial_button_highlight.MoreColors = "More Colors...";
+            this.clrbtnDial_button_highlight.Name = "clrbtnDial_button_highlight";
+            this.clrbtnDial_button_highlight.Selectable = true;
+            this.clrbtnDial_button_highlight.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnDial_button_highlight.TabIndex = 195;
+            this.clrbtnDial_button_highlight.Changed += new System.EventHandler(this.clrbtnDial_colours_changed);
+            // 
+            // labelTS414
+            // 
+            this.labelTS414.AutoSize = true;
+            this.labelTS414.Image = null;
+            this.labelTS414.Location = new System.Drawing.Point(184, 294);
+            this.labelTS414.Name = "labelTS414";
+            this.labelTS414.Size = new System.Drawing.Size(81, 13);
+            this.labelTS414.TabIndex = 194;
+            this.labelTS414.Text = "Auto accel fast:";
+            // 
+            // clrbtnDial_fast
+            // 
+            this.clrbtnDial_fast.Automatic = "Automatic";
+            this.clrbtnDial_fast.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnDial_fast.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnDial_fast.Image = null;
+            this.clrbtnDial_fast.Location = new System.Drawing.Point(271, 289);
+            this.clrbtnDial_fast.MoreColors = "More Colors...";
+            this.clrbtnDial_fast.Name = "clrbtnDial_fast";
+            this.clrbtnDial_fast.Selectable = true;
+            this.clrbtnDial_fast.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnDial_fast.TabIndex = 193;
+            this.clrbtnDial_fast.Changed += new System.EventHandler(this.clrbtnDial_colours_changed);
+            // 
+            // labelTS415
+            // 
+            this.labelTS415.AutoSize = true;
+            this.labelTS415.Image = null;
+            this.labelTS415.Location = new System.Drawing.Point(181, 269);
+            this.labelTS415.Name = "labelTS415";
+            this.labelTS415.Size = new System.Drawing.Size(84, 13);
+            this.labelTS415.TabIndex = 192;
+            this.labelTS415.Text = "Auto accel hold:";
+            // 
+            // clrbtnDial_hold
+            // 
+            this.clrbtnDial_hold.Automatic = "Automatic";
+            this.clrbtnDial_hold.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnDial_hold.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnDial_hold.Image = null;
+            this.clrbtnDial_hold.Location = new System.Drawing.Point(271, 264);
+            this.clrbtnDial_hold.MoreColors = "More Colors...";
+            this.clrbtnDial_hold.Name = "clrbtnDial_hold";
+            this.clrbtnDial_hold.Selectable = true;
+            this.clrbtnDial_hold.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnDial_hold.TabIndex = 191;
+            this.clrbtnDial_hold.Changed += new System.EventHandler(this.clrbtnDial_colours_changed);
+            // 
+            // labelTS416
+            // 
+            this.labelTS416.AutoSize = true;
+            this.labelTS416.Image = null;
+            this.labelTS416.Location = new System.Drawing.Point(180, 244);
+            this.labelTS416.Name = "labelTS416";
+            this.labelTS416.Size = new System.Drawing.Size(85, 13);
+            this.labelTS416.TabIndex = 190;
+            this.labelTS416.Text = "Auto accel slow:";
+            // 
+            // clrbtnDial_slow
+            // 
+            this.clrbtnDial_slow.Automatic = "Automatic";
+            this.clrbtnDial_slow.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnDial_slow.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnDial_slow.Image = null;
+            this.clrbtnDial_slow.Location = new System.Drawing.Point(271, 239);
+            this.clrbtnDial_slow.MoreColors = "More Colors...";
+            this.clrbtnDial_slow.Name = "clrbtnDial_slow";
+            this.clrbtnDial_slow.Selectable = true;
+            this.clrbtnDial_slow.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnDial_slow.TabIndex = 189;
+            this.clrbtnDial_slow.Changed += new System.EventHandler(this.clrbtnDial_colours_changed);
+            // 
+            // labelTS417
+            // 
+            this.labelTS417.AutoSize = true;
+            this.labelTS417.Image = null;
+            this.labelTS417.Location = new System.Drawing.Point(203, 219);
+            this.labelTS417.Name = "labelTS417";
+            this.labelTS417.Size = new System.Drawing.Size(62, 13);
+            this.labelTS417.TabIndex = 188;
+            this.labelTS417.Text = "Dotted ring:";
+            // 
+            // clrbtnDial_ring
+            // 
+            this.clrbtnDial_ring.Automatic = "Automatic";
+            this.clrbtnDial_ring.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnDial_ring.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnDial_ring.Image = null;
+            this.clrbtnDial_ring.Location = new System.Drawing.Point(271, 214);
+            this.clrbtnDial_ring.MoreColors = "More Colors...";
+            this.clrbtnDial_ring.Name = "clrbtnDial_ring";
+            this.clrbtnDial_ring.Selectable = true;
+            this.clrbtnDial_ring.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnDial_ring.TabIndex = 187;
+            this.clrbtnDial_ring.Changed += new System.EventHandler(this.clrbtnDial_colours_changed);
+            // 
+            // labelTS412
+            // 
+            this.labelTS412.AutoSize = true;
+            this.labelTS412.Image = null;
+            this.labelTS412.Location = new System.Drawing.Point(207, 344);
+            this.labelTS412.Name = "labelTS412";
+            this.labelTS412.Size = new System.Drawing.Size(58, 13);
+            this.labelTS412.TabIndex = 186;
+            this.labelTS412.Text = "Button Off:";
+            // 
+            // clrbtnDial_button_off
+            // 
+            this.clrbtnDial_button_off.Automatic = "Automatic";
+            this.clrbtnDial_button_off.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnDial_button_off.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnDial_button_off.Image = null;
+            this.clrbtnDial_button_off.Location = new System.Drawing.Point(271, 339);
+            this.clrbtnDial_button_off.MoreColors = "More Colors...";
+            this.clrbtnDial_button_off.Name = "clrbtnDial_button_off";
+            this.clrbtnDial_button_off.Selectable = true;
+            this.clrbtnDial_button_off.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnDial_button_off.TabIndex = 185;
+            this.clrbtnDial_button_off.Changed += new System.EventHandler(this.clrbtnDial_colours_changed);
+            // 
+            // labelTS413
+            // 
+            this.labelTS413.AutoSize = true;
+            this.labelTS413.Image = null;
+            this.labelTS413.Location = new System.Drawing.Point(35, 344);
+            this.labelTS413.Name = "labelTS413";
+            this.labelTS413.Size = new System.Drawing.Size(58, 13);
+            this.labelTS413.TabIndex = 184;
+            this.labelTS413.Text = "Button On:";
+            // 
+            // clrbtnDial_button_on
+            // 
+            this.clrbtnDial_button_on.Automatic = "Automatic";
+            this.clrbtnDial_button_on.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnDial_button_on.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnDial_button_on.Image = null;
+            this.clrbtnDial_button_on.Location = new System.Drawing.Point(99, 339);
+            this.clrbtnDial_button_on.MoreColors = "More Colors...";
+            this.clrbtnDial_button_on.Name = "clrbtnDial_button_on";
+            this.clrbtnDial_button_on.Selectable = true;
+            this.clrbtnDial_button_on.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnDial_button_on.TabIndex = 183;
+            this.clrbtnDial_button_on.Changed += new System.EventHandler(this.clrbtnDial_colours_changed);
+            // 
+            // labelTS410
+            // 
+            this.labelTS410.AutoSize = true;
+            this.labelTS410.Image = null;
+            this.labelTS410.Location = new System.Drawing.Point(24, 319);
+            this.labelTS410.Name = "labelTS410";
+            this.labelTS410.Size = new System.Drawing.Size(69, 13);
+            this.labelTS410.TabIndex = 182;
+            this.labelTS410.Text = "Pad pressed:";
+            // 
+            // clrbtnDial_pad_pressed
+            // 
+            this.clrbtnDial_pad_pressed.Automatic = "Automatic";
+            this.clrbtnDial_pad_pressed.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnDial_pad_pressed.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnDial_pad_pressed.Image = null;
+            this.clrbtnDial_pad_pressed.Location = new System.Drawing.Point(99, 314);
+            this.clrbtnDial_pad_pressed.MoreColors = "More Colors...";
+            this.clrbtnDial_pad_pressed.Name = "clrbtnDial_pad_pressed";
+            this.clrbtnDial_pad_pressed.Selectable = true;
+            this.clrbtnDial_pad_pressed.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnDial_pad_pressed.TabIndex = 181;
+            this.clrbtnDial_pad_pressed.Changed += new System.EventHandler(this.clrbtnDial_colours_changed);
+            // 
+            // labelTS411
+            // 
+            this.labelTS411.AutoSize = true;
+            this.labelTS411.Image = null;
+            this.labelTS411.Location = new System.Drawing.Point(64, 294);
+            this.labelTS411.Name = "labelTS411";
+            this.labelTS411.Size = new System.Drawing.Size(29, 13);
+            this.labelTS411.TabIndex = 180;
+            this.labelTS411.Text = "Pad:";
+            // 
+            // clrbtnDial_pad
+            // 
+            this.clrbtnDial_pad.Automatic = "Automatic";
+            this.clrbtnDial_pad.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnDial_pad.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnDial_pad.Image = null;
+            this.clrbtnDial_pad.Location = new System.Drawing.Point(99, 289);
+            this.clrbtnDial_pad.MoreColors = "More Colors...";
+            this.clrbtnDial_pad.Name = "clrbtnDial_pad";
+            this.clrbtnDial_pad.Selectable = true;
+            this.clrbtnDial_pad.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnDial_pad.TabIndex = 179;
+            this.clrbtnDial_pad.Changed += new System.EventHandler(this.clrbtnDial_colours_changed);
+            // 
+            // labelTS409
+            // 
+            this.labelTS409.AutoSize = true;
+            this.labelTS409.Image = null;
+            this.labelTS409.Location = new System.Drawing.Point(32, 269);
+            this.labelTS409.Name = "labelTS409";
+            this.labelTS409.Size = new System.Drawing.Size(61, 13);
+            this.labelTS409.TabIndex = 178;
+            this.labelTS409.Text = "Main circle:";
+            // 
+            // clrbtnDial_circle
+            // 
+            this.clrbtnDial_circle.Automatic = "Automatic";
+            this.clrbtnDial_circle.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnDial_circle.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnDial_circle.Image = null;
+            this.clrbtnDial_circle.Location = new System.Drawing.Point(99, 264);
+            this.clrbtnDial_circle.MoreColors = "More Colors...";
+            this.clrbtnDial_circle.Name = "clrbtnDial_circle";
+            this.clrbtnDial_circle.Selectable = true;
+            this.clrbtnDial_circle.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnDial_circle.TabIndex = 177;
+            this.clrbtnDial_circle.Changed += new System.EventHandler(this.clrbtnDial_colours_changed);
+            // 
+            // labelTS407
+            // 
+            this.labelTS407.AutoSize = true;
+            this.labelTS407.Image = null;
+            this.labelTS407.Location = new System.Drawing.Point(195, 160);
+            this.labelTS407.Name = "labelTS407";
+            this.labelTS407.Size = new System.Drawing.Size(12, 13);
+            this.labelTS407.TabIndex = 175;
+            this.labelTS407.Text = "s";
+            // 
+            // labelTS408
+            // 
+            this.labelTS408.AutoSize = true;
+            this.labelTS408.Image = null;
+            this.labelTS408.Location = new System.Drawing.Point(6, 160);
+            this.labelTS408.Name = "labelTS408";
+            this.labelTS408.Size = new System.Drawing.Size(133, 13);
+            this.labelTS408.TabIndex = 173;
+            this.labelTS408.Text = "Tunestep Change Interval:";
+            // 
+            // labelTS353
+            // 
+            this.labelTS353.AutoSize = true;
+            this.labelTS353.Image = null;
+            this.labelTS353.Location = new System.Drawing.Point(195, 136);
+            this.labelTS353.Name = "labelTS353";
+            this.labelTS353.Size = new System.Drawing.Size(35, 13);
+            this.labelTS353.TabIndex = 172;
+            this.labelTS353.Text = "deg/s";
+            // 
+            // labelTS354
+            // 
+            this.labelTS354.AutoSize = true;
+            this.labelTS354.Image = null;
+            this.labelTS354.Location = new System.Drawing.Point(15, 136);
+            this.labelTS354.Name = "labelTS354";
+            this.labelTS354.Size = new System.Drawing.Size(124, 13);
+            this.labelTS354.TabIndex = 170;
+            this.labelTS354.Text = "Decrement Tunestep @:";
+            // 
+            // labelTS352
+            // 
+            this.labelTS352.AutoSize = true;
+            this.labelTS352.Image = null;
+            this.labelTS352.Location = new System.Drawing.Point(195, 112);
+            this.labelTS352.Name = "labelTS352";
+            this.labelTS352.Size = new System.Drawing.Size(35, 13);
+            this.labelTS352.TabIndex = 169;
+            this.labelTS352.Text = "deg/s";
+            // 
+            // labelTS351
+            // 
+            this.labelTS351.AutoSize = true;
+            this.labelTS351.Image = null;
+            this.labelTS351.Location = new System.Drawing.Point(20, 112);
+            this.labelTS351.Name = "labelTS351";
+            this.labelTS351.Size = new System.Drawing.Size(119, 13);
+            this.labelTS351.TabIndex = 167;
+            this.labelTS351.Text = "Increment Tunestep @:";
+            // 
+            // labelTS350
+            // 
+            this.labelTS350.AutoSize = true;
+            this.labelTS350.Image = null;
+            this.labelTS350.Location = new System.Drawing.Point(62, 244);
+            this.labelTS350.Name = "labelTS350";
+            this.labelTS350.Size = new System.Drawing.Size(31, 13);
+            this.labelTS350.TabIndex = 166;
+            this.labelTS350.Text = "Text:";
+            // 
+            // clrbtnDial_text
+            // 
+            this.clrbtnDial_text.Automatic = "Automatic";
+            this.clrbtnDial_text.Color = System.Drawing.Color.LimeGreen;
+            this.clrbtnDial_text.ForeColor = System.Drawing.Color.Black;
+            this.clrbtnDial_text.Image = null;
+            this.clrbtnDial_text.Location = new System.Drawing.Point(99, 239);
+            this.clrbtnDial_text.MoreColors = "More Colors...";
+            this.clrbtnDial_text.Name = "clrbtnDial_text";
+            this.clrbtnDial_text.Selectable = true;
+            this.clrbtnDial_text.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnDial_text.TabIndex = 165;
+            this.clrbtnDial_text.Changed += new System.EventHandler(this.clrbtnDial_colours_changed);
+            // 
+            // labelTS420
+            // 
+            this.labelTS420.AutoSize = true;
+            this.labelTS420.Image = null;
+            this.labelTS420.Location = new System.Drawing.Point(51, 43);
+            this.labelTS420.Name = "labelTS420";
+            this.labelTS420.Size = new System.Drawing.Size(61, 13);
+            this.labelTS420.TabIndex = 162;
+            this.labelTS420.Text = "Font Scale:";
+            this.labelTS420.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelTS424
+            // 
+            this.labelTS424.AutoSize = true;
+            this.labelTS424.Image = null;
+            this.labelTS424.Location = new System.Drawing.Point(39, 18);
+            this.labelTS424.Name = "labelTS424";
+            this.labelTS424.Size = new System.Drawing.Size(73, 13);
+            this.labelTS424.TabIndex = 131;
+            this.labelTS424.Text = "Vertical Ratio:";
+            // 
+            // chkDialDisplay_fade_tx
+            // 
+            this.chkDialDisplay_fade_tx.AutoSize = true;
+            this.chkDialDisplay_fade_tx.Image = null;
+            this.chkDialDisplay_fade_tx.Location = new System.Drawing.Point(228, 40);
+            this.chkDialDisplay_fade_tx.Name = "chkDialDisplay_fade_tx";
+            this.chkDialDisplay_fade_tx.Size = new System.Drawing.Size(82, 17);
+            this.chkDialDisplay_fade_tx.TabIndex = 3;
+            this.chkDialDisplay_fade_tx.Text = "Fade on TX";
+            this.chkDialDisplay_fade_tx.UseVisualStyleBackColor = true;
+            this.chkDialDisplay_fade_tx.CheckedChanged += new System.EventHandler(this.chkDialDisplay_fade_tx_CheckedChanged);
+            // 
+            // chkDialDisplay_fade_rx
+            // 
+            this.chkDialDisplay_fade_rx.AutoSize = true;
+            this.chkDialDisplay_fade_rx.Image = null;
+            this.chkDialDisplay_fade_rx.Location = new System.Drawing.Point(228, 19);
+            this.chkDialDisplay_fade_rx.Name = "chkDialDisplay_fade_rx";
+            this.chkDialDisplay_fade_rx.Size = new System.Drawing.Size(83, 17);
+            this.chkDialDisplay_fade_rx.TabIndex = 2;
+            this.chkDialDisplay_fade_rx.Text = "Fade on RX";
+            this.chkDialDisplay_fade_rx.UseVisualStyleBackColor = true;
+            this.chkDialDisplay_fade_rx.CheckedChanged += new System.EventHandler(this.chkDialDisplay_fade_rx_CheckedChanged);
             // 
             // tabPage14
             // 
@@ -64161,6 +66383,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq3)).EndInit();
             this.tpFilters.ResumeLayout(false);
             this.tpFilters.PerformLayout();
+            this.groupBoxTS49.ResumeLayout(false);
+            this.groupBoxTS49.PerformLayout();
             this.groupBoxTS6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udRX2FilterDefaultLowCut)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2OptMaxFilterShift)).EndInit();
@@ -65164,6 +67388,22 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbLedIndicator_condition_tips)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterRotatorControlInfo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLedIndicator_UpdateInterval)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterDisplay_vertical_ratio)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterDisplay_fixed_zoom_level)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterDisplay_fixed_tx_zoom_level)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_sidebands_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_cw_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_others_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilterItem_font_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilter_waterfall_frame_update)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilter_lower_characteristic)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDialDisplay_font_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDialDisplay_vertical_ratio)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDial_increment)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDial_decrement)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDial_interval)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDial_max_increments)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDial_degrees_for_change)).EndInit();
             this.grpDiagInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS7)).EndInit();
@@ -65213,11 +67453,13 @@
             this.grpLedIndicator.PerformLayout();
             this.grpWebImage.ResumeLayout(false);
             this.grpWebImage.PerformLayout();
+            this.scrollableControl1.ResumeLayout(false);
+            this.groupBoxTS40.ResumeLayout(false);
             this.groupBoxTS42.ResumeLayout(false);
+            this.groupBoxTS43.ResumeLayout(false);
             this.groupBoxTS41.ResumeLayout(false);
             this.groupBoxTS41.PerformLayout();
-            this.groupBoxTS43.ResumeLayout(false);
-            this.groupBoxTS40.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nudWebImage_background_time)).EndInit();
             this.grpBandButtons.ResumeLayout(false);
             this.grpBandButtons.PerformLayout();
             this.pnlButtonBox_antenna_toggles.ResumeLayout(false);
@@ -65239,6 +67481,16 @@
             this.tabPage9.ResumeLayout(false);
             this.tabPage10.ResumeLayout(false);
             this.tabPage11.ResumeLayout(false);
+            this.tabPage12.ResumeLayout(false);
+            this.grpMeterItemFilterDisplay.ResumeLayout(false);
+            this.grpMeterItemFilterDisplay.PerformLayout();
+            this.scrlFilter.ResumeLayout(false);
+            this.scrlFilter.PerformLayout();
+            this.pnlFilterModeModifiers.ResumeLayout(false);
+            this.pnlFilterModeModifiers.PerformLayout();
+            this.tabPage13.ResumeLayout(false);
+            this.grpDialDisplay.ResumeLayout(false);
+            this.grpDialDisplay.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -69267,5 +71519,142 @@
         private PictureBox pbDiscordInfo_filter;
         private PictureBox pbDiscordInfo_ignore;
         private PictureBox pbDiscordInfo_tag;
+        private GroupBoxTS grpMeterItemFilterDisplay;
+        private CheckBoxTS chkFilterDisplay_fixed_zoom;
+        private CheckBoxTS chkFilterDisplay_show_limits;
+        private NumericUpDownTS nudFilterDisplay_vertical_ratio;
+        private LabelTS labelTS332;
+        private LabelTS labelTS333;
+        private ColorButton clrbtnFilterDisplay_backcolour;
+        private CheckBoxTS chkFilterDisplay_fadeontx;
+        private CheckBoxTS chkFilterDisplay_fadeonrx;
+        private NumericUpDownTS nudFilterDisplay_fixed_zoom_level;
+        private NumericUpDownTS nudFilterDisplay_fixed_tx_zoom_level;
+        private CheckBoxTS chkFilterDisplay_fixed_tx_zoom;
+        private CheckBoxTS chkDiscordTimeStamp;
+        private CheckBoxTS chkForgetRX2VfoBVFOinfo;
+        private LabelTS lblDiscordCountry;
+        private PanelTS pnlFilterModeModifiers;
+        private NumericUpDownTS nudFilterItem_others_scale;
+        private NumericUpDownTS nudFilterItem_cw_scale;
+        private NumericUpDownTS nudFilterItem_sidebands_scale;
+        private LabelTS labelTS296;
+        private LabelTS labelTS294;
+        private LabelTS labelTS293;
+        private RadioButtonTS radFilterItem_panadaptor;
+        private RadioButtonTS radFilterItem_waterfall;
+        private RadioButtonTS radFilterItem_panafall;
+        private RadioButtonTS radFilterItem_none;
+        private NumericUpDownTS nudFilterItem_font_scale;
+        private LabelTS labelTS297;
+        private ColorButton clrbtnFilter_data_line;
+        private LabelTS labelTS299;
+        private ColorButton clrbtnFilter_wf_low;
+        private LabelTS labelTS298;
+        private ComboBoxTS comboFilter_wf_palette;
+        private Label label22;
+        private CheckBoxTS chkFilter_fill_spec;
+        private ColorButton clrbtnFilter_edges;
+        private LabelTS labelTS331;
+        private ColorButton clrbtnFilter_number_highlight;
+        private LabelTS labelTS330;
+        private ColorButton clrbtnFilter_text;
+        private LabelTS labelTS301;
+        private ColorButton clrbtnFilter_data_fill;
+        private LabelTS labelTS300;
+        private ColorButton clrbtnFilter_edge_highlight;
+        private LabelTS labelTS334;
+        private ColorButton clrbtnFilter_notch_highlight;
+        private LabelTS labelTS336;
+        private ColorButton clrbtnFilter_notch;
+        private LabelTS labelTS337;
+        private ColorButton clrbtnFilter_meter_back;
+        private LabelTS labelTS335;
+        private ColorButton clrbtnFilter_extents;
+        private LabelTS labelTS338;
+        private CheckBoxTS chkFilter_sideband_mode;
+        private LabelTS labelTS339;
+        private NumericUpDownTS nudFilter_waterfall_frame_update;
+        private LabelTS labelTS341;
+        private CheckBoxTS chkFilter_grey_outsidepb;
+        private GroupBoxTS groupBoxTS49;
+        private TextBoxTS txtFilter_other_frequencies;
+        private TextBoxTS txtFilter_cw_frequencies;
+        private TextBoxTS txtFilter_sideband_frequencies;
+        private LabelTS labelTS343;
+        private LabelTS labelTS342;
+        private LabelTS labelTS340;
+        private ButtonTS btnFilter_others_default;
+        private ButtonTS btnFilter_cw_default;
+        private ButtonTS btnFilter_sideband_default;
+        private ScrollableControl scrlFilter;
+        private ColorButton clrbtnFilter_snap_line;
+        private LabelTS labelTS344;
+        private ColorButton clrbtnFilter_button_highlight;
+        private LabelTS labelTS345;
+        private ColorButton clrbtnFilter_setting_on;
+        private LabelTS labelTS346;
+        private ButtonTS btnFilter_4char_copy;
+        private LabelTS labelTS347;
+        private TextBoxTS txtWebImage_4char;
+        private TextBoxTS txtWebImage_background_4char;
+        private LabelTS lblWebImage_secs;
+        private NumericUpDownTS nudWebImage_background_time;
+        private CheckBoxTS chkWebImage_background;
+        private CheckBoxTS chkMaintainBackgroundAspectRatio;
+        private ScrollableControl scrollableControl1;
+        private ButtonTS btnWebImage_goto_next;
+        private LabelTS lblWebImage_after;
+        private NumericUpDownTS nudFilter_lower_characteristic;
+        private CheckBoxTS chkFilter_characteristic;
+        private LabelTS labelTS348;
+        private LabelTS labelTS349;
+        private CheckBoxTS chkFilter_high_resolution_characteristics;
+        private GroupBoxTS grpDialDisplay;
+        private NumericUpDownTS nudDialDisplay_font_scale;
+        private LabelTS labelTS420;
+        private NumericUpDownTS nudDialDisplay_vertical_ratio;
+        private LabelTS labelTS424;
+        private CheckBoxTS chkDialDisplay_fade_tx;
+        private CheckBoxTS chkDialDisplay_fade_rx;
+        private CheckBoxTS chkDialDisplay_alwaysshow_vfos;
+        private NumericUpDownTS nudDial_increment;
+        private LabelTS labelTS351;
+        private LabelTS labelTS350;
+        private ColorButton clrbtnDial_text;
+        private CheckBoxTS chkDial_align;
+        private LabelTS labelTS407;
+        private NumericUpDownTS nudDial_interval;
+        private LabelTS labelTS408;
+        private LabelTS labelTS353;
+        private NumericUpDownTS nudDial_decrement;
+        private LabelTS labelTS354;
+        private LabelTS labelTS352;
+        private LabelTS labelTS412;
+        private ColorButton clrbtnDial_button_off;
+        private LabelTS labelTS413;
+        private ColorButton clrbtnDial_button_on;
+        private LabelTS labelTS410;
+        private ColorButton clrbtnDial_pad_pressed;
+        private LabelTS labelTS411;
+        private ColorButton clrbtnDial_pad;
+        private LabelTS labelTS409;
+        private ColorButton clrbtnDial_circle;
+        private LabelTS labelTS414;
+        private ColorButton clrbtnDial_fast;
+        private LabelTS labelTS415;
+        private ColorButton clrbtnDial_hold;
+        private LabelTS labelTS416;
+        private ColorButton clrbtnDial_slow;
+        private LabelTS labelTS417;
+        private ColorButton clrbtnDial_ring;
+        private LabelTS labelTS418;
+        private ColorButton clrbtnDial_button_highlight;
+        private NumericUpDownTS nudDial_max_increments;
+        private LabelTS labelTS419;
+        private NumericUpDownTS nudDial_degrees_for_change;
+        private LabelTS labelTS421;
+        private ButtonTS btnClearTCISpotsSWL;
+        private CheckBoxTS chkWindBackPowerSWR;
     }
 }

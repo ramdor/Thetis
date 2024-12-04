@@ -32,13 +32,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.IO;
 using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Security.Cryptography;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Xml.Linq;
@@ -58,6 +56,8 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
+
+using System.Runtime.InteropServices;
 
 namespace Thetis
 {
@@ -202,6 +202,8 @@ namespace Thetis
         HISTORY,
         TUNESTEP_BUTTONS,
         DISCORD_BUTTONS,
+        FILTER_DISPLAY,
+        DIAL_DISPLAY,
         //SPECTRUM,
         LAST
     }
@@ -219,11 +221,21 @@ namespace Thetis
     internal static class MeterManager
     {
         #region MeterManager
+        public enum FilterItemSnapFrequencies
+        {
+            OTHER = 0,
+            SIDEBANDS,
+            CW
+        }
+
+        public static event EventHandler<string> WebImageRemoved;
+        public static event EventHandler<string> ShowWebImageBackground;
+
         // member variables
         private static Console _console;
         private static bool _delegatesAdded;
         private static bool _finishedSetup;
-        //private static bool _power; //not used yet
+        private static bool _power;
         private static Dictionary<int, clsReadings> _readings;
         private static Dictionary<string, clsMeter> _meters;
         private static Dictionary<int, bool> _readingIgnore;
@@ -260,6 +272,11 @@ namespace Thetis
         private static bool[] _ant_no_tx;
         private static string[] _ant_aux_names;
 
+        private static readonly object _snap_freqs_locker = new object();
+        private static float[] _snap_freqs_sidebands;
+        private static float[] _snap_freqs_cw;
+        private static float[] _snap_freqs_other;
+
         private static Dictionary<string, frmMeterDisplay> _lstMeterDisplayForms = new Dictionary<string, frmMeterDisplay>();
         private static Dictionary<string, ucMeter> _lstUCMeters = new Dictionary<string, ucMeter>();
 
@@ -286,7 +303,7 @@ namespace Thetis
             _meters = new Dictionary<string, clsMeter>();
             _readingIgnore = new Dictionary<int, bool>();
 
-            //_power = false;
+            _power = false;
             _currentHPSDRmodel = HPSDRModel.HERMES;
             _alexPresent = false;
             _paPresent = false;
@@ -307,7 +324,115 @@ namespace Thetis
 
             _meterThreadRunning = false;
 
+            _snap_freqs_sidebands = new float[0];
+            _snap_freqs_cw = new float[0];
+            _snap_freqs_other = new float[0];
+
             _openHPSDR_appdatapath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
+        }
+        public static (string, string) GetWebImageIDsFrom4Char(string fourchar)
+        {
+            string mid = null;
+            string igid = null;
+            lock (_metersLock)
+            {
+                HashSet<string> wids = new HashSet<string>();
+
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+
+                    (mid, igid) = m.GetWebImageIDsFrom4Char(fourchar);
+
+                    if (mid != null && igid != null) break;
+                }
+            }
+
+            return (mid, igid);
+        }
+        public static bool IsWebImageBackgroundShown()
+        {
+            bool ret = false;
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+
+                    ret |= m.IsWebImageBackgroundShown();
+                    if (ret) break;
+                }
+            }
+            return ret;
+        }
+        public static void FilterItemFrequencies(FilterItemSnapFrequencies setting_group, string settings)
+        {
+            if (string.IsNullOrEmpty(settings)) return;
+            settings = settings.Trim().Replace(" ", "");
+            if (string.IsNullOrEmpty(settings)) return;
+
+            string[] split = settings.Split(',');
+            if (split.Length == 0) return;
+
+            List<float> values = new List<float>();
+
+            foreach (string v in split)
+            {
+                if (!string.IsNullOrEmpty(v) && float.TryParse(v, out float value))
+                {
+                    value = Math.Abs(value);
+                    switch (setting_group)
+                    {
+                        case FilterItemSnapFrequencies.OTHER:
+                            {
+                                if (!values.Contains(-value)) values.Add(-value);
+                                if (!values.Contains(value)) values.Add(value);
+                            }
+                            break;
+                        case FilterItemSnapFrequencies.SIDEBANDS:
+                        case FilterItemSnapFrequencies.CW:
+                            {
+                                if (!values.Contains(0)) values.Add(0);
+                                if (!values.Contains(-value)) values.Add(-value);
+                                if (!values.Contains(value)) values.Add(value);
+                            }
+                            break;
+                    }
+                }
+            }
+
+            lock (_snap_freqs_locker)
+            {
+                values.Sort();
+                switch (setting_group)
+                {
+                    case FilterItemSnapFrequencies.OTHER:
+                        _snap_freqs_other = values.ToArray();
+                        break;
+                    case FilterItemSnapFrequencies.CW:
+                        _snap_freqs_cw = values.ToArray();
+                        break;
+                    case FilterItemSnapFrequencies.SIDEBANDS:
+                        _snap_freqs_sidebands = values.ToArray();
+                        break;
+                }
+            }
+        }
+        public static float[] GetFilterItemFrequencies(FilterItemSnapFrequencies setting_group)
+        {
+            lock (_snap_freqs_locker)
+            {
+                switch (setting_group)
+                {
+                    case FilterItemSnapFrequencies.OTHER:
+                        return (float[])_snap_freqs_other.Clone();
+                    case FilterItemSnapFrequencies.CW:
+                        return (float[])_snap_freqs_cw.Clone();
+                    case FilterItemSnapFrequencies.SIDEBANDS:
+                        return (float[])_snap_freqs_sidebands.Clone();
+                }
+                return null;
+            }
         }
 
         internal class CustomReadings
@@ -642,7 +767,7 @@ namespace Thetis
                         _readings_text_objects[key] = owningMeter.VFOBBandText;
                         break;
                     case "nf":
-                        if(_rx == 1)
+                        if (_rx == 1)
                             _readings_text_objects[key] = _console.LastNFRX1;
                         else
                             _readings_text_objects[key] = _console.LastNFRX2;
@@ -712,7 +837,7 @@ namespace Thetis
                 {
                     try
                     {
-                        _readings_text_objects[key] = _console.PAProfile;
+                        _readings_text_objects[key] = _console.PAProfileName;
                     }
                     catch { }
                 }
@@ -1174,7 +1299,7 @@ namespace Thetis
                 {
                     if (bOk) tmpColour = Common.ColourFromString(tmp[33]); bOk = tmpColour != System.Drawing.Color.Empty; if (bOk) { _powerScaleColour = tmpColour; }
                 }
-                if(bOk && tmp.Length >= 35)
+                if (bOk && tmp.Length >= 35)
                 {
                     if (bOk) bOk = int.TryParse(tmp[34], out tmpInt); if (bOk) { _ignoreHistoryDuration = tmpInt; }
                 }
@@ -1194,8 +1319,8 @@ namespace Thetis
                 {
                     for (int i = 0; i < _mmio_guid.Length; i++) //44,45, 46,47, 48,49, 50,51, 52,53, 54,55, 56,57, 58,59, 60,61, 62,63
                     {
-                        if (bOk) bOk = Guid.TryParse(tmp[44 + (i*2)], out tmpGuid); if (bOk) { _mmio_guid[i] = tmpGuid; }
-                        if (bOk) _mmio_variable[i] = tmp[45 + (i*2)];
+                        if (bOk) bOk = Guid.TryParse(tmp[44 + (i * 2)], out tmpGuid); if (bOk) { _mmio_guid[i] = tmpGuid; }
+                        if (bOk) _mmio_variable[i] = tmp[45 + (i * 2)];
                     }
                 }
 
@@ -1381,7 +1506,7 @@ namespace Thetis
             //    _mmio_variable[index] = variable;
             //}
         }
-        
+
         public static ImageFetcher ImgFetch
         {
             get { return _image_fetcher; }
@@ -1482,8 +1607,8 @@ namespace Thetis
                     break;
                 //case Reading.CPDR: //CPDR is the same as comp
                 //case Reading.CPDR_PK:
-                    //value = -30.0f;
-                    //break;
+                //value = -30.0f;
+                //break;
                 case Reading.PWR:
                 case Reading.REVERSE_PWR:
                     {
@@ -1600,6 +1725,8 @@ namespace Thetis
                 case MeterType.HISTORY: return 2;
                 case MeterType.TUNESTEP_BUTTONS: return 2;
                 case MeterType.DISCORD_BUTTONS: return 2;
+                case MeterType.FILTER_DISPLAY: return 2;
+                case MeterType.DIAL_DISPLAY: return 2;
                     //case MeterType.SPECTRUM: return 2;
             }
 
@@ -1648,6 +1775,8 @@ namespace Thetis
                 case MeterType.CLOCK: return "Clock";
                 case MeterType.HISTORY: return "History Graph";
                 case MeterType.TUNESTEP_BUTTONS: return "Tunestep Buttons";
+                case MeterType.FILTER_DISPLAY: return "Filter Display";
+                case MeterType.DIAL_DISPLAY: return "Dial Display";
             }
 
             return meter.ToString();
@@ -1701,7 +1830,7 @@ namespace Thetis
                 case Reading.ELE: return "Elevation";
 
                 // not used
-                case (Reading)(int)22:return "";
+                case (Reading)(int)22: return "";
                 case (Reading)(int)23: return "";
             }
 
@@ -1766,36 +1895,43 @@ namespace Thetis
             _meterThreadRunning = true;
             while (_meterThreadRunning)
             {
-                int nDelay = int.MaxValue;
-                lock (_metersLock)
+                if (_finishedSetup)
                 {
-                    // udpate any meter
-                    foreach (KeyValuePair<string, clsMeter> kvp in _meters)
+                    int nDelay = int.MaxValue;
+                    lock (_metersLock)
                     {
-                        clsMeter m = kvp.Value;
-
-                        if (m.Enabled)
+                        // udpate any meter
+                        foreach (KeyValuePair<string, clsMeter> kvp in _meters)
                         {
-                            readingsUsed.Clear();
+                            clsMeter m = kvp.Value;
 
-                            m.Update(ref readingsUsed);
-
-                            int nTmp = m.DelayForUpdate();
-                            if (nTmp < nDelay) nDelay = nTmp;
-
-                            //lock (_readingsLock)
+                            if (m.Enabled || m.UpdateAlways())
                             {
-                                // use/invalidate any readings that have been used, so that they can be updated
-                                foreach (Reading rt in readingsUsed)
+                                readingsUsed.Clear();
+
+                                m.Update(ref readingsUsed);
+
+                                int nTmp = m.DelayForUpdate();
+                                if (nTmp < nDelay) nDelay = nTmp;
+
+                                //lock (_readingsLock)
                                 {
-                                    _readings[m.RX].UseReading(rt);
+                                    // use/invalidate any readings that have been used, so that they can be updated
+                                    foreach (Reading rt in readingsUsed)
+                                    {
+                                        _readings[m.RX].UseReading(rt);
+                                    }
                                 }
                             }
                         }
                     }
+                    if (nDelay == int.MaxValue) nDelay = 250;
+                    Thread.Sleep(nDelay);
                 }
-                if (nDelay == int.MaxValue) nDelay = 250;
-                Thread.Sleep(nDelay);
+                else
+                {
+                    Thread.Sleep(250);
+                }
             }
         }
 
@@ -1906,7 +2042,7 @@ namespace Thetis
             {
                 List<string> keys = _image_cache.Keys.ToList();
 
-                foreach(string sKey in keys)
+                foreach (string sKey in keys)
                 {
                     removeImageCacheData(sKey, bOnlySkins);
                 }
@@ -1933,7 +2069,7 @@ namespace Thetis
 
                 if (_image_streamdata_cache != null)
                 {
-                    if(_image_streamdata_cache.ContainsKey(sKey))
+                    if (_image_streamdata_cache.ContainsKey(sKey))
                     {
                         // remove the stream related to the bitmap
                         _image_streamdata_cache[sKey].Dispose();
@@ -2009,7 +2145,7 @@ namespace Thetis
                 if (_image_streamdata_cache.ContainsKey(sKey))
                 {
                     MemoryStream ms = _image_streamdata_cache[sKey];
-                    
+
                     Utilities.Dispose(ref ms);
                     ms = null;
 
@@ -2082,7 +2218,7 @@ namespace Thetis
                 {
                     frmMeterDisplay f = _lstMeterDisplayForms[uc.ID];
 
-                    if(minimises != uc.ContainerMinimises)
+                    if (minimises != uc.ContainerMinimises)
                     {
                         uc.ContainerMinimises = minimises;
                         f.ContainerMinimises = minimises;
@@ -2144,7 +2280,7 @@ namespace Thetis
             {
                 if (_lstUCMeters == null) return;
                 if (!_lstUCMeters.ContainsKey(sId)) return;
-                
+
                 ucMeter uc = _lstUCMeters[sId];
                 bool bOldState = uc.MeterEnabled;
                 uc.MeterEnabled = enabled;
@@ -2173,7 +2309,7 @@ namespace Thetis
                     }
 
                     // meter
-                    if(_meters != null && _meters.ContainsKey(sId))
+                    if (_meters != null && _meters.ContainsKey(sId))
                         _meters[sId].Enabled = enabled;
 
                     // DXrenderer
@@ -2404,7 +2540,7 @@ namespace Thetis
         {
             _console = c;
             _image_fetcher.Version = c.ProductVersion;
-            //_power = _console.PowerOn;
+
             _rx1VHForAbove = _console.VFOAFreq >= _console.S9Frequency;
             _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= _console.S9Frequency;
             _currentHPSDRmodel = _console.CurrentHPSDRModel;
@@ -2463,7 +2599,7 @@ namespace Thetis
             foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
             {
                 DXRenderer r = kvp.Value;
-                r.RemoveAnySkinImages();              
+                r.RemoveAnySkinImages();
             }
 
             loadImages();
@@ -2483,7 +2619,7 @@ namespace Thetis
         {
             if (_DXrenderers.Count < 1) return;
 
-            foreach(KeyValuePair <string, DXRenderer> kvp in _DXrenderers)
+            foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
             {
                 RunRendererDisplay(kvp.Key);
             }
@@ -2555,7 +2691,7 @@ namespace Thetis
                     // find container that has this ig setting, it will be any container that has item group with this id
                     string[] split = key.Split('_');
                     string guid;
-                    if(split.Length == 3) // for _2_
+                    if (split.Length == 3) // for _2_
                     {
                         guid = key.Split('_')[2];
                     }
@@ -2571,7 +2707,7 @@ namespace Thetis
                         {
                             clsMeter m = ms.Value;
                             Dictionary<string, clsItemGroup> igs = m.getMeterGroups();
-                            foreach(KeyValuePair<string, clsItemGroup> kvpig in igs)
+                            foreach (KeyValuePair<string, clsItemGroup> kvpig in igs)
                             {
                                 if (guid == kvpig.Key)
                                 {
@@ -2583,15 +2719,17 @@ namespace Thetis
                 }
             }
             return ids;
-        }       
+        }
         public static void Shutdown()
         {
             if (_image_fetcher != null)
-                _image_fetcher.Shutdown();                
-                
+                _image_fetcher.Shutdown();
+
             MultiMeterIO.StopConnections();
 
             removeDelegates();
+
+            MiniSpec.ShutdownAllRX();
 
             foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
             {
@@ -2639,8 +2777,11 @@ namespace Thetis
             _console.VFOTXChangedHandlers += OnVFOTXChanged;
             _console.TXBandChangeHandlers += OnTXBandChanged;
             _console.FilterChangedHandlers += OnFilterChanged;
+            _console.FilterEdgesChangedHandlers += OnFilterEdgesChanged;
             _console.MultiRxHandlers += OnMultiRxChanged;
             _console.VFOASubFrequencyChangeHandlers += OnVFOASub;
+            _console.MinimumRXNotchWidthChangedHandlers += OnMinimumNotchWidthChangedRX;
+            _console.MinimumTXNotchWidthChangedHandlers += OnMinimumNotchWidthChangedTX;
 
             _console.AlexPresentChangedHandlers += OnAlexPresentChanged;
             _console.PAPresentChangedHandlers += OnPAPresentChanged;
@@ -2677,6 +2818,21 @@ namespace Thetis
 
             _console.TuneStepIndexChangedHandlers += OnTuneStepIndexChanged;
 
+            _console.TXFiltersChangedHandlers += OnTXFiltersChanged;
+
+            _console.PAProfileChangedHandlers += OnPAProfileChanged;
+            _console.TXProfileChangedHandlers += OnTXProfileChanged;
+
+            _console.RXSpecGridMinMaxChangedHandlers += OnRXSpecGridMinMaxChanged;
+            _console.TXSpecGridMinMaxChangedHandlers += OnTXSpecGridMinMaxChanged;
+
+            _console.RXWaterfallMinMaxChangedHandlers += OnRXWaterfallMinMaxChanged;
+            _console.TXWaterfallMinMaxChangedHandlers += OnTXWaterfallMinMaxChanged;
+
+            _console.TNFChangedHandlers += OnTNFChanged;
+
+            _console.CWPitchChangedHandlers += OnCWPitchChanged;
+
             _delegatesAdded = true;
         }
         private static void removeDelegates()
@@ -2696,8 +2852,11 @@ namespace Thetis
             _console.VFOTXChangedHandlers -= OnVFOTXChanged;
             _console.TXBandChangeHandlers -= OnTXBandChanged;
             _console.FilterChangedHandlers -= OnFilterChanged;
+            _console.FilterEdgesChangedHandlers -= OnFilterEdgesChanged;
             _console.MultiRxHandlers -= OnMultiRxChanged;
             _console.VFOASubFrequencyChangeHandlers -= OnVFOASub;
+            _console.MinimumRXNotchWidthChangedHandlers -= OnMinimumNotchWidthChangedRX;
+            _console.MinimumTXNotchWidthChangedHandlers -= OnMinimumNotchWidthChangedTX;
 
             _console.AlexPresentChangedHandlers -= OnAlexPresentChanged;
             _console.PAPresentChangedHandlers -= OnPAPresentChanged;
@@ -2734,12 +2893,149 @@ namespace Thetis
 
             _console.TuneStepIndexChangedHandlers -= OnTuneStepIndexChanged;
 
+            _console.TXFiltersChangedHandlers -= OnTXFiltersChanged;
+
+            _console.PAProfileChangedHandlers -= OnPAProfileChanged;
+            _console.TXProfileChangedHandlers -= OnTXProfileChanged;
+
+            _console.RXSpecGridMinMaxChangedHandlers -= OnRXSpecGridMinMaxChanged;
+            _console.TXSpecGridMinMaxChangedHandlers -= OnTXSpecGridMinMaxChanged;
+
+            _console.RXWaterfallMinMaxChangedHandlers -= OnRXWaterfallMinMaxChanged;
+            _console.TXWaterfallMinMaxChangedHandlers -= OnTXWaterfallMinMaxChanged;
+
+            _console.TNFChangedHandlers -= OnTNFChanged;
+
+            _console.CWPitchChangedHandlers -= OnCWPitchChanged;
+
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
                 kvp.Value.RemoveDelegates();
             }
 
             _delegatesAdded = false;
+        }
+        public static void OnCWPitchChanged(int old_pitch, int new_pitch, bool show_cwzero)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+
+                    m.CWPitch = new_pitch;
+                    m.ShowCWZero = show_cwzero;
+                }
+            }
+        }
+        public static void OnTNFChanged(bool old_tnf, bool new_tnf)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+
+                    m.TNFActive = new_tnf;
+                }
+            }
+        }
+        private static void OnRXSpecGridMinMaxChanged(int rx, int min, int max)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
+
+                    m.RXSpectrumGridMin = min;
+                    m.RXSpectrumGridMax = max;
+                }
+            }
+        }
+        private static void OnTXSpecGridMinMaxChanged(int min, int max)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+
+                    m.TXSpectrumGridMin = min;
+                    m.TXSpectrumGridMax = max;
+                }
+            }
+        }
+        //
+        private static void OnRXWaterfallMinMaxChanged(int rx, int min, int max)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
+
+                    m.RXWaterfallMin = min;
+                    m.RXWaterfallMax = max;
+                }
+            }
+        }
+        private static void OnTXWaterfallMinMaxChanged(int min, int max)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+
+                    m.TXWaterfallMin = min;
+                    m.TXWaterfallMax = max;
+                }
+            }
+        }
+        //
+        private static void OnPAProfileChanged(string old_profile, string new_profile)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+
+                    m.PAProfile = new_profile;
+
+                    m.PAProfileChanged(new_profile);
+                }
+            }
+        }
+        private static void OnTXProfileChanged(string old_profile, string new_profile)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+
+                    m.PAProfile = new_profile;
+
+                    m.TXProfileChanged(new_profile);
+                }
+            }
+        }
+        private static void OnTXFiltersChanged(int low, int high)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+
+                    m.TXFilterLow = low;
+                    m.TXFilterHigh = high;
+
+                    m.UpdateTXFilterDetails(low, high);
+                }
+            }
         }
         private static void OnTuneStepIndexChanged(int rx, int old_index, int new_index)
         {
@@ -2770,7 +3066,7 @@ namespace Thetis
         {
             lock (_metersLock)
             {
-                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)//.Where(o => o.Value.RX == rx))  // ignore for now as A/B locks apply to both rx
                 {
                     clsMeter m = ms.Value;
 
@@ -2782,7 +3078,7 @@ namespace Thetis
         {
             lock (_metersLock)
             {
-                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)//.Where(o => o.Value.RX == rx))  // ignore for now as A/B locks apply to both rx
                 {
                     clsMeter m = ms.Value;
 
@@ -2802,8 +3098,23 @@ namespace Thetis
                 }
             }
         }
-        private static void OnTXFrequencyChanged(double old_frequency, double new_frequency, Band old_band, Band new_band)
+        private static void OnTXFrequencyChanged(double old_frequency, double new_frequency, Band old_band, Band new_band, bool rx2_enabled, bool tx_vfob, double centre_freq)
         {
+            MiniSpec.clsMiniSpec miniRx;
+            if (rx2_enabled && tx_vfob)
+            {
+                miniRx = MiniSpec.GetMiniRX(1, false);
+            }
+            else
+            {
+                miniRx = MiniSpec.GetMiniRX(0, false);
+            }
+            if (miniRx != null)
+            {
+                miniRx.CentreFreq = centre_freq;
+                miniRx.TXFrequency = new_frequency;
+            }
+
             lock (_metersLock)
             {
                 foreach (KeyValuePair<string, clsMeter> ms in _meters)
@@ -2890,7 +3201,7 @@ namespace Thetis
             if ((int)b < (int)Band.B160M || (int)b > (int)Band.B6M) return false;
             if (antenna < 0 || antenna > 2) return false;
             lock (_antenna_lock)
-            {                
+            {
                 return _rx_ant[(int)b - (int)Band.B160M][antenna];
             }
         }
@@ -3005,26 +3316,77 @@ namespace Thetis
         //        }
         //    }
         //}
+        private static void OnMinimumNotchWidthChangedRX(int rx, double width)
+        {
+            foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+            {
+                clsMeter m = ms.Value;
+
+                m.MinNotchWidthRX = width;
+            }
+        }
+        private static void OnMinimumNotchWidthChangedTX(double width)
+        {
+            foreach (KeyValuePair<string, clsMeter> ms in _meters)
+            {
+                clsMeter m = ms.Value;
+
+                m.MinNotchWidthTX = width;
+            }
+        }
+        private static void OnFilterEdgesChanged(int rx, Filter newFilter, Band band, int low, int high, string sName, int max_width, int max_shift)
+        {
+            updateFilterInfo(rx, newFilter, newFilter, band, low, high, sName, max_width, max_shift);
+        }
         private static void OnFilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName)
+        {
+            updateFilterInfo(rx, newFilter, newFilter, band, low, high, sName);
+        }
+        private static void updateFilterInfo(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName, int max_width = -1, int max_shift = -1)
         {
             lock (_metersLock)
             {
+                bool forVfoA = true; // both true at the moment until different filters are implemented
+                bool forVfoB = true;
+
                 foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
                 {
                     clsMeter m = ms.Value;
 
-                    bool changed = m.FilterVfoA != newFilter || m.FilterVfoB != newFilter ||
-                                   m.FilterVfoAName != sName || m.FilterVfoBName != sName || oldFilter != newFilter;
+                    bool changed = oldFilter != newFilter || m.FilterMaxWidth != max_width || m.FilterMaxShift != max_shift;
+                    if (forVfoA)
+                    {
+                        changed |= m.FilterVfoA != newFilter || m.FilterVfoAName != sName || m.FilterVfoAlow != low || m.FilterVfoAhigh != high;
+                    }
+                    if (forVfoB)
+                    {
+                        changed |= m.FilterVfoB != newFilter || m.FilterVfoBName != sName || m.FilterVfoBlow != low || m.FilterVfoBhigh != high;
+                    }
 
                     if (changed)
                     {
-                        m.FilterVfoA = newFilter;
-                        m.FilterVfoB = newFilter;
+                        if (forVfoA)
+                        {
+                            m.FilterVfoA = newFilter;
+                            m.FilterVfoAName = sName;
+                            m.FilterVfoAlow = low;
+                            m.FilterVfoAhigh = high;
+                        }
+                        if (forVfoB)
+                        {
+                            m.FilterVfoB = newFilter;
+                            m.FilterVfoBName = sName;
+                            m.FilterVfoBlow = low;
+                            m.FilterVfoBhigh = high;
+                        }
 
-                        m.FilterVfoAName = sName;
-                        m.FilterVfoBName = sName;
+                        if (max_width != -1 && max_shift != -1)
+                        {
+                            m.FilterMaxWidth = max_width;
+                            m.FilterMaxShift = max_shift;
+                        }
 
-                        m.UpdateFilterButtons(newFilter, sName);
+                        m.UpdateFilterDetails(newFilter, sName, low, high, forVfoA, forVfoB, max_width, max_shift);
                     }
                 }
             }
@@ -3064,7 +3426,7 @@ namespace Thetis
                     clsMeter m = ms.Value;
                     m.TXVFOb = vfoB && newState;
 
-                    if(oldState != newState)
+                    if (oldState != newState)
                         m.AntennasChanged(Band.FIRST, Band.FIRST, -1, -1);
                 }
             }
@@ -3093,7 +3455,7 @@ namespace Thetis
                     }
                 }
             }
-        }       
+        }
         private static void OnVHFDetailsChanged(int idx, bool old_state, bool new_state, string old_text, string new_text)
         {
             lock (_metersLock)
@@ -3148,7 +3510,7 @@ namespace Thetis
                 {
                     foreach (KeyValuePair<string, clsMeter> ms in _meters)
                     {
-                        clsMeter m = ms.Value;                        
+                        clsMeter m = ms.Value;
                         m.AntennasChanged(new_band, Band.FIRST, -1, -1);
                     }
                 }
@@ -3184,8 +3546,16 @@ namespace Thetis
         }
         private static void OnVFOA(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
-            if(rx == 1)
+            if (rx == 1)
+            {
                 _rx1VHForAbove = newFreq >= _console.S9Frequency;
+
+                MiniSpec.clsMiniSpec miniRx = MiniSpec.GetMiniRX(0, false);
+                if (miniRx != null)
+                {
+                    miniRx.RXFrequency = newFreq;
+                }
+            }
 
             lock (_metersLock)
             {
@@ -3212,7 +3582,15 @@ namespace Thetis
         {
             //_rx2VHForAbove = _console.RX2Enabled && newFreq/*_console.VFOBFreq*/ >= 30;
             if (rx == 2)
+            {
                 _rx2VHForAbove = _console.RX2Enabled && newFreq >= _console.S9Frequency;
+
+                MiniSpec.clsMiniSpec miniRx = MiniSpec.GetMiniRX(1, false);
+                if (miniRx != null)
+                {
+                    miniRx.RXFrequency = newFreq;
+                }
+            }
 
             lock (_metersLock)
             {
@@ -3228,6 +3606,12 @@ namespace Thetis
         }
         public static void OnVFOASub(Band oldBand, Band newBand, DSPMode newMode, Filter newFilter, double oldFreq, double newFreq, double newCentreF, bool newCTUN, int newZoomSlider, double offset, int rx)
         {
+            MiniSpec.clsMiniSpec miniRx = MiniSpec.GetMiniRX(0, true);
+            if (miniRx != null)
+            {
+                miniRx.RXFrequency = newFreq;
+            }
+
             lock (_metersLock)
             {
                 foreach (KeyValuePair<string, clsMeter> mkvp in _meters.Where(o => o.Value.RX == 1)) // only applies to rx1
@@ -3261,11 +3645,15 @@ namespace Thetis
         }
         private static void initConsoleData(clsMeter m)
         {
+            m.Power = _console.PowerOn;
             m.MOX = _console.MOX;
             m.Split = _console.VFOSplit;
             m.TXVFOb = _console.VFOBTX;
             m.RX2Enabled = _console.RX2Enabled;
             m.MultiRxEnabled = _console.chkEnableMultiRX.Checked;
+
+            m.CWPitch = _console.CWPitch;
+            m.ShowCWZero = Display.ShowCWZeroLine;
 
             m.TXBand = _console.TXBand;
 
@@ -3274,10 +3662,26 @@ namespace Thetis
             m.BandVfoA = _console.RX1Band;
             m.FilterVfoA = _console.RX1Filter;
             m.FilterVfoAName = getFilterName(1);// _console.rx1_filters[(int)_console.RX1DSPMode].GetName(_console.RX1Filter);
+            //m.FilterVfoAlow = _console.RX1FilterLow;
+            //m.FilterVfoAhigh = _console.RX1FilterHigh;
+            m.MinNotchWidthRX = _console.GetMinimumRXNotchWidth(m.RX);
+            m.FilterMaxWidth = _console.MaxFilterWidth;
+            m.FilterMaxShift = _console.MaxFilterShift;
+
+            int low = _console.TXFilterLow;
+            int high = _console.TXFilterHigh;
+            _console.UpdateTXLowHighFilterForMode(_console.RX2Enabled && _console.VFOBTX ? _console.RX2DSPMode : _console.RX1DSPMode, ref low, ref high);
+            m.TXFilterLow = low;
+            m.TXFilterHigh = high;
+
+            m.PAProfile = _console.PAProfileName;
+            m.TXProfile = _console.TXProfile;
 
             m.VfoB = _console.VFOBFreq;
 
             m.VfoSub = _console.VFOASubFreq;
+
+            m.TNFActive = _console.TNFActive;
 
             if (!_console.RX2Enabled)
             {
@@ -3316,11 +3720,37 @@ namespace Thetis
                     m.BandGroup = BandGroups.HF;
                 if (_console.BandVHFSelected)
                     m.BandGroup = BandGroups.VHF;
+
+                m.FilterVfoAlow = _console.RX1FilterLow;
+                m.FilterVfoAhigh = _console.RX1FilterHigh;
+
+                m.RXSpectrumGridMin = Display.SpectrumGridMin;
+                m.RXSpectrumGridMax = Display.SpectrumGridMax;
+
+                m.RXWaterfallMin = (int)Display.WaterfallLowThreshold;
+                m.RXWaterfallMax = (int)Display.WaterfallHighThreshold;
             }
             else if (m.RX == 2)
             {
                 m.BandGroup = m.GetBandGroupFromBand(_console.RX2Band);
+
+                m.FilterVfoAlow = _console.RX2FilterLow;
+                m.FilterVfoAhigh = _console.RX2FilterHigh;
+                m.FilterVfoBlow = _console.RX2FilterLow;
+                m.FilterVfoBhigh = _console.RX2FilterHigh;
+
+                m.RXSpectrumGridMin = Display.RX2SpectrumGridMin;
+                m.RXSpectrumGridMax = Display.RX2SpectrumGridMax;
+
+                m.RXWaterfallMin = (int)Display.RX2WaterfallLowThreshold;
+                m.RXWaterfallMax = (int)Display.RX2WaterfallHighThreshold;
             }
+
+            m.TXSpectrumGridMin = Display.TXSpectrumGridMin;
+            m.TXSpectrumGridMax = Display.TXSpectrumGridMax;
+
+            m.TXWaterfallMin = Display.TXWFAmpMin;
+            m.TXWaterfallMax = Display.TXWFAmpMax;
 
             m.TuneStepIndex = _console.TuneStepIndex;
 
@@ -3401,9 +3831,9 @@ namespace Thetis
         }
         private static void OnPower(bool oldPower, bool newPower)
         {
-            //_power = newPower;
+            _power = newPower;
 
-            if(oldPower != newPower)
+            if (oldPower != newPower)
             {
                 lock (_metersLock)
                 {
@@ -3468,7 +3898,7 @@ namespace Thetis
                 }
 
                 //show first, then hide, so we dont get a flicker, where container vanishes then shows sometime after
-                foreach(string id in to_show)
+                foreach (string id in to_show)
                 {
                     enableContainer(id, true);
                 }
@@ -3556,8 +3986,8 @@ namespace Thetis
 
                 int nWatts = 500;
 
-                if (_alexPresent && 
-                    ((_currentHPSDRmodel == HPSDRModel.ORIONMKII || _currentHPSDRmodel == HPSDRModel.ANAN8000D || _currentHPSDRmodel == HPSDRModel.ANAN_G2) 
+                if (_alexPresent &&
+                    ((_currentHPSDRmodel == HPSDRModel.ORIONMKII || _currentHPSDRmodel == HPSDRModel.ANAN8000D || _currentHPSDRmodel == HPSDRModel.ANAN_G2)
                     && _transverterIndex < 0))
                 {
                     nWatts = 200;
@@ -3582,7 +4012,7 @@ namespace Thetis
                 {
                     nWatts = 1;
                 }
-                
+
                 return nWatts;
             }
         }
@@ -3695,7 +4125,7 @@ namespace Thetis
                     }
                 }
                 setReading(rx, Reading.VOLTS, ref readings);
-                setReading(rx, Reading.AMPS, ref readings);    
+                setReading(rx, Reading.AMPS, ref readings);
             }
         }
         public static bool RequiresUpdate(int rx, Reading rt)
@@ -3787,13 +4217,13 @@ namespace Thetis
                 // If we don't do this there will be a few frames where the target size is incorrect and the height calculated
                 // will be from the default container size of 400x200.
                 // Note: f.ID above causes the form sizes to be reloaded from the db
-                if(ucM.Floating && bFromRestore)
+                if (ucM.Floating && bFromRestore)
                     ucM.Size = new Size(f.Size.Width, f.Size.Height);
 
                 // meter items
                 clsMeter meter = new clsMeter(ucM.RX, ucM.Name, 1f, 1f);
                 meter.ID = ucM.ID;
-                meter.Enabled = bEnabled;                
+                meter.Enabled = bEnabled;
 
                 // a renderer
                 addRenderer(ucM.ID, ucM.RX, ucM.DisplayContainer, meter, ucM.BackColor);
@@ -3835,12 +4265,16 @@ namespace Thetis
         }
         public static void FinishSetupAndDisplay()
         {
-            _finishedSetup = true;
-
-            if (_lstUCMeters == null || _lstUCMeters.Count == 0) return;
+            if (_lstUCMeters == null || _lstUCMeters.Count == 0)
+            {
+                _finishedSetup = true;
+                return;
+            }
 
             initAllConsoleData(); //[2.10.3.6]MW0LGE get all console info here, as everything will be at the correct state
             zeroAllMeters();
+
+            _finishedSetup = true;
 
             lock (_metersLock)
             {
@@ -3915,7 +4349,7 @@ namespace Thetis
         }
         public static int TotalMeterContainers
         {
-            get 
+            get
             {
                 lock (_metersLock)
                 {
@@ -3999,8 +4433,8 @@ namespace Thetis
                 if (newLocation.Y + m.Height > _console.Height) newLocation.Y = _console.Height - m.Height;
                 if (newLocation.X < 0) newLocation.X = 0;
                 if (newLocation.Y < 0) newLocation.Y = 0;
-                
-                if(newLocation != m.Location) m.Location = newLocation;
+
+                if (newLocation != m.Location) m.Location = newLocation;
             }
         }
         private static void returnMeterFromFloating(ucMeter m, frmMeterDisplay frm)
@@ -4038,7 +4472,7 @@ namespace Thetis
 
             if (!_finishedSetup) return;
 
-            //frm.Opacity = 0f;
+            //frm.Opacity = 0f;            
             frm.Show();
             //Common.FadeIn(frm, 100);
         }
@@ -4090,9 +4524,9 @@ namespace Thetis
         }
         private static void zeroAllMeters()
         {
-            lock(_metersLock)
+            lock (_metersLock)
             {
-                foreach(KeyValuePair<string, clsMeter> kvp in _meters)
+                foreach (KeyValuePair<string, clsMeter> kvp in _meters)
                 {
                     clsMeter m = kvp.Value;
                     m.ZeroOut(true, true);
@@ -4186,14 +4620,14 @@ namespace Thetis
                 bRestoreOk = false;
             }
             return bRestoreOk;
-        }        
+        }
         public static List<string> GetFormGuidList()
         {
             List<string> sGuidList = new List<string>();
 
             lock (_metersLock)
             {
-                foreach(KeyValuePair<string, frmMeterDisplay> kvp in _lstMeterDisplayForms)
+                foreach (KeyValuePair<string, frmMeterDisplay> kvp in _lstMeterDisplayForms)
                 {
                     frmMeterDisplay fmd = kvp.Value;
 
@@ -4318,7 +4752,7 @@ namespace Thetis
         //}
         public static Dictionary<string, ucMeter> MeterContainers
         {
-            get 
+            get
             {
                 lock (_metersLock)
                 {
@@ -4342,11 +4776,12 @@ namespace Thetis
                 // unreg delegates
                 uc.FloatingDockedClicked -= ucMeter_FloatingDockedClicked;
                 uc.DockedMoved -= ucMeter_FloatingDockedMoved;
-                uc.SettingsClicked -= ucMeter_SettingsClicked;                
+                uc.SettingsClicked -= ucMeter_SettingsClicked;
 
                 removeRenderer(sId);
 
                 f.Close();
+                f.Dispose();//[2.10.3.7]MW0LGE // we have to dispose it because close() prevent this being freed up
 
                 _lstMeterDisplayForms.Remove(sId);
 
@@ -4396,7 +4831,9 @@ namespace Thetis
                 FILTER_BUTTONS,
                 ANTENNA_BUTTONS,
                 TUNESTEP_BUTTONS,
-                DISCORD_BUTTONS
+                DISCORD_BUTTONS,
+                FILTER_DISPLAY,
+                DIAL_DISPLAY
                 //SPECTRUM
             }
 
@@ -4423,6 +4860,7 @@ namespace Thetis
             private SizeF _size;  // 0-1,0-1
             private int _zOrder; // lower first
             private int _msUpdateInterval; //ms
+            private bool _update_always;
             private float _attackRatio; // 0f - 1f
             private float _decayRatio; // 0f - 1f
             private float _value;
@@ -4474,6 +4912,7 @@ namespace Thetis
                 _displayTopLeft.Y = _topLeft.Y;
                 _zOrder = 0;
                 _msUpdateInterval = 5000; //ms
+                _update_always = false;
                 _attackRatio = 0.8f;
                 _decayRatio = 0.2f;
                 _value = -200f;
@@ -4589,8 +5028,8 @@ namespace Thetis
             {
                 return _percCache.ContainsKey(value);
             }
-            public string ID { 
-                get { return _sId; } 
+            public string ID {
+                get { return _sId; }
                 set { _sId = value; }
             }
             public string ParentID
@@ -4620,7 +5059,7 @@ namespace Thetis
             }
             public PointF TopLeft {
                 get { return _topLeft; }
-                set { 
+                set {
                     _topLeft = value;
                     _displayTopLeft = new PointF(_topLeft.X, _topLeft.Y);
                 }
@@ -4633,7 +5072,7 @@ namespace Thetis
             public SizeF Size
             {
                 get { return _size; }
-                set 
+                set
                 { _size = value; }
             }
             public int DisplayGroup
@@ -4682,8 +5121,8 @@ namespace Thetis
             public Reading ReadingSource
             {
                 get { return _readingType; }
-                set 
-                { 
+                set
+                {
                     _readingType = value;
                     _readingName = MeterManager.ReadingName(_readingType);
                 }
@@ -4753,6 +5192,10 @@ namespace Thetis
                 minHistory = 0f;
                 maxHistory = 0f;
             }
+            public virtual bool UpdateAlways
+            {
+                get { return false; }
+            }
             public virtual float MinHistory
             {
                 get
@@ -4781,7 +5224,7 @@ namespace Thetis
             {
                 get { return _scaleCalibration; }
                 set { }
-            }            
+            }
             public bool OnlyWhenTX
             {
                 get { return _bOnlyWhenTx; }
@@ -4799,11 +5242,11 @@ namespace Thetis
             public virtual bool TryParse(string val)
             {
                 return false;
-            }            
+            }
             public float MaxPower
             {
                 get { return _maxPower; }
-                set {                    
+                set {
                     _maxPower = value;
                     if (_maxPower < 0.1f) _maxPower = CurrentPowerRating; // incase of 0 recovery from db
                 }
@@ -4826,7 +5269,7 @@ namespace Thetis
             }
             public virtual void MouseDown(MouseEventArgs e)
             {
-                
+
             }
             public virtual void MouseUp(MouseEventArgs e)
             {
@@ -4898,6 +5341,79 @@ namespace Thetis
             {
 
             }
+            public virtual void FilterChanged(Filter f, string name, int low, int high, bool vfoA, bool vfoB, int max_width, int max_shift)
+            {
+
+            }
+            public virtual void TXFilterChanged(int low, int high)
+            {
+
+            }
+            public virtual void PAProfileChanged(string name)
+            {
+
+            }
+            public virtual void TXProfileChanged(string name)
+            {
+
+            }
+            public virtual void SetRXSpectrumGridMin(int min)
+            {
+
+            }
+            public virtual void SetRXSpectrumGridMax(int min)
+            {
+
+            }
+            public virtual void SetTXSpectrumGridMin(int min)
+            {
+
+            }
+            public virtual void SetTXSpectrumGridMax(int min)
+            {
+
+            }
+            public virtual void SetRXWaterfallMin(int min)
+            {
+
+            }
+            public virtual void SetRXWaterfallMax(int min)
+            {
+
+            }
+            public virtual void SetTXWaterfallMin(int min)
+            {
+
+            }
+            public virtual void SetTXWaterfallMax(int min)
+            {
+
+            }
+            public virtual bool MOX
+            {
+                get { return false; }
+                set { }
+            }
+            public virtual bool TNFActive
+            {
+                get { return false; }
+                set { }
+            }
+            public virtual double MinNotchWidthRX
+            {
+                get { return 100; }
+                set { }
+            }
+            public virtual bool Enabled
+            {
+                get { return false; }
+                set { }
+            }
+            public virtual double MinNotchWidthTX
+            {
+                get { return 100; }
+                set { }
+            }
         }
         //
         internal class clsItemGroup : clsMeterItem
@@ -4935,12 +5451,12 @@ namespace Thetis
                     Size.Height.ToString("f4") + "|" +
                     MeterType.ToString() + "|" +
                     Order.ToString();
-                    //ZOrder.ToString() + "|" +
-                    //UpdateInterval.ToString() + "|" +
-                    //AttackRatio.ToString("f4") + "|" +
-                    //DecayRatio.ToString("f4") + "|" +
-                    //HistoryColour.ToString() + "|" +
-                    //ReadingSource.ToString();
+                //ZOrder.ToString() + "|" +
+                //UpdateInterval.ToString() + "|" +
+                //AttackRatio.ToString("f4") + "|" +
+                //DecayRatio.ToString("f4") + "|" +
+                //HistoryColour.ToString() + "|" +
+                //ReadingSource.ToString();
 
                 return sRet;
             }
@@ -4999,7 +5515,7 @@ namespace Thetis
                 get { return _button; }
                 set { _button = value; }
             }
-            public int GotoGroup 
+            public int GotoGroup
             {
                 get { return _gotoGroup; }
                 set { _gotoGroup = value; }
@@ -5049,7 +5565,7 @@ namespace Thetis
             {
                 get { return _colour; }
                 set
-                { 
+                {
                     _colour = value;
                 }
             }
@@ -5101,11 +5617,11 @@ namespace Thetis
                     Buttons = 9;
                 }
 
-                ItemType = MeterItemType.FILTER_BUTTONS;                
+                ItemType = MeterItemType.FILTER_BUTTONS;
 
                 setupButtons();
             }
-            public void FilterChanged(Filter f, string name)
+            public override void FilterChanged(Filter f, string name, int low, int high, bool vfoA, bool vfoB, int max_width, int max_shift)
             {
                 Filter old = _filter;
                 _filter = f;
@@ -5114,7 +5630,7 @@ namespace Thetis
                 int index = (int)_filter - (int)Filter.F1;
                 int old_index = (int)old - (int)Filter.F1;
 
-                if(_owningmeter.RX == 2)
+                if (_owningmeter.RX == 2)
                 {
                     // only 9 filters, so adjust indexes
                     index -= index > (int)Filter.F7 ? (int)Filter.VAR1 - (int)Filter.F7 - 1 : 0;
@@ -5175,13 +5691,13 @@ namespace Thetis
                 //
 
                 bool update = true;
-                if(_console != null)
+                if (_console != null)
                 {
-                    if(_owningmeter.RX == 1)
+                    if (_owningmeter.RX == 1)
                     {
                         if (_console.RX1DSPMode == DSPMode.FM || _console.RX1DSPMode == DSPMode.DRM || _console.RX1DSPMode == DSPMode.SPEC) update = false;
                     }
-                    else if(_owningmeter.RX == 2)
+                    else if (_owningmeter.RX == 2)
                     {
                         if (_console.RX2DSPMode == DSPMode.FM || _console.RX2DSPMode == DSPMode.DRM || _console.RX2DSPMode == DSPMode.SPEC) update = false;
                     }
@@ -5243,8 +5759,11 @@ namespace Thetis
                     _click_timer.Elapsed += (sender, ee) =>
                     {
                         _click_highlight = false;
-                        _click_timer.Stop();
-                        _click_timer.Dispose();
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
                     };
                     _click_timer.AutoReset = false;
                     _click_timer.Start();
@@ -5257,6 +5776,26 @@ namespace Thetis
                         _click_timer.Dispose();
                     }
                     _click_highlight = true;
+                }
+            }
+            public override bool MouseEntered
+            {
+                get
+                {
+                    return base.MouseEntered;
+                }
+                set
+                {
+                    if (!value && _click_highlight)
+                    {
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
+                        _click_highlight = false;
+                    }
+                    base.MouseEntered = value;
                 }
             }
             public override void MouseDown(MouseEventArgs e)
@@ -5290,9 +5829,9 @@ namespace Thetis
                     {
                         _console.BeginInvoke(new MethodInvoker(() =>
                         {
-                            _console.PopupFilterContextMenu(_owningmeter.RX ,e);
+                            _console.PopupFilterContextMenu(_owningmeter.RX, e);
                         }));
-                    }                        
+                    }
                     return;
                 }
 
@@ -5519,8 +6058,11 @@ namespace Thetis
                     _click_timer.Elapsed += (sender, ee) =>
                     {
                         _click_highlight = false;
-                        _click_timer.Stop();
-                        _click_timer.Dispose();
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
                     };
                     _click_timer.AutoReset = false;
                     _click_timer.Start();
@@ -5533,6 +6075,26 @@ namespace Thetis
                         _click_timer.Dispose();
                     }
                     _click_highlight = true;
+                }
+            }
+            public override bool MouseEntered
+            {
+                get
+                {
+                    return base.MouseEntered;
+                }
+                set
+                {
+                    if (!value && _click_highlight)
+                    {
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
+                        _click_highlight = false;
+                    }
+                    base.MouseEntered = value;
                 }
             }
             public override void MouseDown(MouseEventArgs e)
@@ -5654,7 +6216,7 @@ namespace Thetis
 
                 rx_band = _rx1_band;
                 tx_band = _tx_band;
-                
+
                 bool using_xvtr = ((int)rx_band >= (int)Band.VHF0 && (int)rx_band <= (int)Band.VHF13);
                 bool is_xvtr_rx = false;
                 if (using_xvtr)
@@ -5689,7 +6251,7 @@ namespace Thetis
 
                 SetText(1, 5, formatAux(MeterManager.GetRXAuxName(2)));
                 SetFontColour(1, 5, System.Drawing.Color.Orange);
-                if(!using_byp_ext1 && using_xvtr) SetOn(1, 5, MeterManager.GetRXAuxState(rx_band, 2));
+                if (!using_byp_ext1 && using_xvtr) SetOn(1, 5, MeterManager.GetRXAuxState(rx_band, 2));
 
                 int rx_ant = MeterManager.GetRXAnt(rx_band, using_xvtr);
                 int tx_ant = MeterManager.GetTXAnt(tx_band);
@@ -5704,7 +6266,7 @@ namespace Thetis
                 {
                     SetFontColour(1, 6, System.Drawing.Color.Red);
                     SetOn(1, 6, MeterManager.GetTXAntState(tx_band, 0));
-                }                
+                }
 
                 SetText(1, 7, "Tx Ant 2");
                 if (rx_ant_on_tx_band == 1 && GetNoTX(1))
@@ -5715,7 +6277,7 @@ namespace Thetis
                 {
                     SetFontColour(1, 7, System.Drawing.Color.Red);
                     SetOn(1, 7, MeterManager.GetTXAntState(tx_band, 1));
-                }                
+                }
 
                 SetText(1, 8, "Tx Ant 3");
                 if (rx_ant_on_tx_band == 2 && GetNoTX(2))
@@ -5726,9 +6288,9 @@ namespace Thetis
                 {
                     SetFontColour(1, 8, System.Drawing.Color.Red);
                     SetOn(1, 8, MeterManager.GetTXAntState(tx_band, 2));
-                }               
-                               
-                if(rx_ant == tx_ant || using_xvtr || GetNoTX(tx_ant) || (rx_ant > 4))
+                }
+
+                if (rx_ant == tx_ant || using_xvtr || GetNoTX(tx_ant) || (rx_ant > 4))
                 {
                     SetText(1, 9, "Rx Ant");
                     SetFontColour(1, 9, System.Drawing.Color.Gray);
@@ -5848,8 +6410,11 @@ namespace Thetis
                     _click_timer.Elapsed += (sender, ee) =>
                     {
                         _click_highlight = false;
-                        _click_timer.Stop();
-                        _click_timer.Dispose();
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
                     };
                     _click_timer.AutoReset = false;
                     _click_timer.Start();
@@ -5862,6 +6427,26 @@ namespace Thetis
                         _click_timer.Dispose();
                     }
                     _click_highlight = true;
+                }
+            }
+            public override bool MouseEntered
+            {
+                get
+                {
+                    return base.MouseEntered;
+                }
+                set
+                {
+                    if (!value && _click_highlight)
+                    {
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
+                        _click_highlight = false;
+                    }
+                    base.MouseEntered = value;
                 }
             }
             public override void MouseDown(MouseEventArgs e)
@@ -6104,8 +6689,11 @@ namespace Thetis
                     _click_timer.Elapsed += (sender, ee) =>
                     {
                         _click_highlight = false;
-                        _click_timer.Stop();
-                        _click_timer.Dispose();
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
                     };
                     _click_timer.AutoReset = false;
                     _click_timer.Start();
@@ -6118,6 +6706,26 @@ namespace Thetis
                         _click_timer.Dispose();
                     }
                     _click_highlight = true;
+                }
+            }
+            public override bool MouseEntered
+            {
+                get
+                {
+                    return base.MouseEntered;
+                }
+                set
+                {
+                    if (!value && _click_highlight)
+                    {
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
+                        _click_highlight = false;
+                    }
+                    base.MouseEntered = value;
                 }
             }
             public override void MouseDown(MouseEventArgs e)
@@ -6144,7 +6752,7 @@ namespace Thetis
 
                 setupClick(true);
 
-                DSPMode m = (DSPMode)((int)DSPMode.LSB + index);                
+                DSPMode m = (DSPMode)((int)DSPMode.LSB + index);
 
                 setMode(m);
             }
@@ -6245,7 +6853,7 @@ namespace Thetis
                 {
                     _band = _owningmeter.BandVfoA;
                     //use panels
-                    if(_console != null)
+                    if (_console != null)
                     {
                         if (_console.BandGENSelected)
                             _button_bands = BandGroups.GEN;
@@ -6260,7 +6868,7 @@ namespace Thetis
                     {
                         _button_bands = _owningmeter.GetBandGroupFromBand(_band);
                     }
-                } 
+                }
                 else if (_owningmeter.RX == 2)
                 {
                     _band = _owningmeter.BandVfoB;
@@ -6334,7 +6942,7 @@ namespace Thetis
                             old_index = (int)old - (int)Band.VHF0;
                             break;
                     }
-                    if(index != -1 && old_index != -1)
+                    if (index != -1 && old_index != -1)
                     {
                         SetOn(1, old_index, false);
                         if (newBand != Band.WWV)
@@ -6345,12 +6953,12 @@ namespace Thetis
             public BandGroups ButtonBands
             {
                 get { return _button_bands; }
-                set 
+                set
                 {
                     BandGroups old = _button_bands;
                     _button_bands = value;
 
-                    if(old != _button_bands || _force_update)
+                    if (old != _button_bands || _force_update)
                         setupButtons();
                 }
             }
@@ -6365,7 +6973,7 @@ namespace Thetis
                     SetFontColour(1, i, GetFontColour(0, i));
                     SetFontFamily(1, i, GetFontFamily(0, i));
                     SetFontSize(1, i, GetFontSize(0, i));
-                    SetFontStyle(1, i, GetFontStyle(0, i));                    
+                    SetFontStyle(1, i, GetFontStyle(0, i));
                     SetUseIndicator(1, i, GetUseIndicator(0, i));
                     SetOnColour(1, i, GetOnColour(0, i));
                     SetOffColour(1, i, GetOffColour(0, i));
@@ -6409,7 +7017,7 @@ namespace Thetis
 
                         SetText(1, 11, "");
                         SetHoverColour(1, 11, System.Drawing.Color.Transparent);
-                        SetUseIndicator(1, 12, false);                        
+                        SetUseIndicator(1, 12, false);
                         SetOn(1, 11, false);
                         SetUseOffColour(1, 11, false);
                         //SetBorderColour(1, 11, System.Drawing.Color.Transparent);
@@ -6447,10 +7055,10 @@ namespace Thetis
                 }
 
                 int bands = end_band - start_band + 1;
-                
+
                 for (int i = 0; i < Buttons; i++)
                 {
-                    if(i < bands)
+                    if (i < bands)
                     {
                         string band_text = "";
                         Band b = (Band)(start_band + i);
@@ -6516,8 +7124,11 @@ namespace Thetis
                     _click_timer.Elapsed += (sender, ee) =>
                     {
                         _click_highlight = false;
-                        _click_timer.Stop();
-                        _click_timer.Dispose();
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
                     };
                     _click_timer.AutoReset = false;
                     _click_timer.Start();
@@ -6530,6 +7141,26 @@ namespace Thetis
                         _click_timer.Dispose();
                     }
                     _click_highlight = true;
+                }
+            }
+            public override bool MouseEntered
+            {
+                get
+                {
+                    return base.MouseEntered;
+                }
+                set
+                {
+                    if (!value && _click_highlight)
+                    {
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
+                        _click_highlight = false;
+                    }
+                    base.MouseEntered = value;
                 }
             }
             public override void MouseDown(MouseEventArgs e)
@@ -6623,7 +7254,7 @@ namespace Thetis
             }
             private void setBand(Band b)
             {
-                if(abortForLockedVFO()) return;
+                if (abortForLockedVFO()) return;
                 if (b == Band.FIRST) return;
 
                 if (_owningmeter.RX == 1)
@@ -6633,7 +7264,7 @@ namespace Thetis
                         _console.BandPreChangeHandlers?.Invoke(1, b);
                     }));
                 }
-                else if(_owningmeter.RX == 2)
+                else if (_owningmeter.RX == 2)
                 {
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
@@ -6718,7 +7349,7 @@ namespace Thetis
 
                 ItemType = MeterItemType.DISCORD_BUTTONS;
 
-                Buttons = 9;
+                Buttons = 12;
 
                 setupButtons();
 
@@ -6737,7 +7368,7 @@ namespace Thetis
             }
             private void OnDisconnected()
             {
-                
+
                 for (int i = 0; i < Buttons; i++)
                 {
                     System.Drawing.Color text_color = GetFontColour(0, i);
@@ -6789,12 +7420,18 @@ namespace Thetis
                 SetText(1, 0, "Active");
                 SetText(1, 1, "Away");
                 SetText(1, 2, "Double");
+
                 SetText(1, 3, "CQ");
                 SetText(1, 4, "QRV");
                 SetText(1, 5, "QRT");
-                SetText(1, 6, "Version");
-                SetText(1, 7, " Net\nStart");
-                SetText(1, 8, " Net\nFinish");
+
+                SetText(1, 6, "QSY");
+                SetText(1, 7, "QRX");
+                SetText(1, 8, "DX");
+
+                SetText(1, 9, "Version");
+                SetText(1, 10, " Net\nStart");
+                SetText(1, 11, " Net\nFinish");
 
                 int rows = Buttons / Columns;
                 int overflow = Buttons % Columns;
@@ -6830,8 +7467,11 @@ namespace Thetis
                     _click_timer.Elapsed += (sender, ee) =>
                     {
                         _click_highlight = false;
-                        _click_timer.Stop();
-                        _click_timer.Dispose();
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
                     };
                     _click_timer.AutoReset = false;
                     _click_timer.Start();
@@ -6846,6 +7486,26 @@ namespace Thetis
                     _click_highlight = true;
                 }
             }
+            public override bool MouseEntered
+            {
+                get
+                {
+                    return base.MouseEntered;
+                }
+                set
+                {
+                    if (!value && _click_highlight)
+                    {
+                        if (_click_timer != null)
+                        {
+                            _click_timer.Stop();
+                            _click_timer.Dispose();
+                        }
+                        _click_highlight = false;
+                    }
+                    base.MouseEntered = value;
+                }
+            }
             public override void MouseDown(MouseEventArgs e)
             {
                 Debug.Print("DOWN");
@@ -6857,7 +7517,7 @@ namespace Thetis
 
                 if (!GetEnabled(1, index)) return;
 
-                setupClick(false);               
+                setupClick(false);
             }
             public override void MouseUp(MouseEventArgs e)
             {
@@ -6871,28 +7531,30 @@ namespace Thetis
                 int index = base.ButtonIndex;
                 if (index == -1) return;
 
-                if (!GetEnabled(1, index)) return;                
+                if (!GetEnabled(1, index)) return;
 
-                double freq;
+                double tx_freq;
+                double rx_freq = _owningmeter.RX == 2 && _owningmeter.RX2Enabled ? _owningmeter.VfoB : _owningmeter.VfoA;
+
                 if (!_owningmeter.RX2Enabled)
                 {
                     if (_owningmeter.TXVFOb)
-                        freq = _owningmeter.VfoB;
+                        tx_freq = _owningmeter.VfoB;
                     else
-                        freq = _owningmeter.VfoA;
+                        tx_freq = _owningmeter.VfoA;
                 }
                 else
                 {
                     if (_owningmeter.TXVFOb)
                     {
-                        freq = _owningmeter.VfoB;
+                        tx_freq = _owningmeter.VfoB;
                     }
                     else
                     {
                         if (_owningmeter.Split)
-                            freq = _owningmeter.VfoSub;
+                            tx_freq = _owningmeter.VfoSub;
                         else
-                            freq = _owningmeter.VfoA;
+                            tx_freq = _owningmeter.VfoA;
                     }
                 }
 
@@ -6907,23 +7569,37 @@ namespace Thetis
                     case 2:
                         sendMsg("Someone is doubling !");
                         break;
+
                     case 3:
-                        sendMsg("Is calling CQ : " + formatNumber(freq) + " MHz");
+                        sendMsg("Is calling CQ : " + formatNumber(tx_freq) + " MHz");
                         break;
                     case 4:
-                        sendMsg("Is listening : " + formatNumber(_owningmeter.VfoA) + " MHz");
+                        sendMsg("Is listening : " + formatNumber(rx_freq) + " MHz");
                         break;
                     case 5:
                         sendMsg("Has gone QRT");
                         break;
+
                     case 6:
-                        sendMsg("Is running Thetis v" + Common.GetVerNum(true, true));
+                        sendMsg("Has QSY to : " + formatNumber(rx_freq) + " MHz");
                         break;
                     case 7:
-                        sendMsg("Is starting a net on : " + formatNumber(freq) + " MHz");
+                        sendMsg("Will be right back, QRX");
                         break;
                     case 8:
-                        sendMsg("Is ending a net on : " + formatNumber(freq) + " MHz");
+                        {
+                            string msg = "Is calling CQDX : " + formatNumber(tx_freq) + " MHz";
+                            sendMsg(msg);
+                        }
+                        break;
+                    case 9:
+                        sendMsg("Is running Thetis v" + Common.GetVerNum(true, true));
+                        break;
+                    case 10:
+                        sendMsg("Is starting a net on : " + formatNumber(tx_freq) + " MHz");
+                        break;
+                    case 11:
+                        sendMsg("Is ending a net on : " + formatNumber(tx_freq) + " MHz");
                         break;
                 }
             }
@@ -7176,8 +7852,8 @@ namespace Thetis
             public int Buttons
             {
                 get { return _number_of_buttons; }
-                set 
-                { 
+                set
+                {
                     _number_of_buttons = value;
                     setupArrays();
                 }
@@ -7405,7 +8081,7 @@ namespace Thetis
                 TUNE_STEP
             }
             public enum buttonState
-            {   
+            {
                 NONE = 0,
                 VFO_SCREEN,
                 BAND_SCREEN,
@@ -7495,7 +8171,7 @@ namespace Thetis
             {
                 _tune_steps = new List<TuneStep>();
                 //copy data from console to own local
-                foreach(TuneStep ts in _console.TuneStepList)
+                foreach (TuneStep ts in _console.TuneStepList)
                 {
                     TuneStep nts = new TuneStep(ts.StepHz, ts.Name);
                     _tune_steps.Add(nts);
@@ -7572,8 +8248,8 @@ namespace Thetis
             public VFODisplayMode VFODispMode
             {
                 get { return _vfo_display_mode; }
-                set 
-                { 
+                set
+                {
                     _vfo_display_mode = value;
                     switch (_vfo_display_mode)
                     {
@@ -7735,7 +8411,7 @@ namespace Thetis
                         digit = keycode - Keys.NumPad0;
 
                     double freq = getVfo();
-                    if(freq >= 0)
+                    if (freq >= 0)
                     {
                         string freqs = freq.ToString("F6", CultureInfo.InvariantCulture);
                         int pos = freqs.Length - findOnePosition(_adjust_step * 1e-6) - 1;
@@ -7775,7 +8451,7 @@ namespace Thetis
                 _console.BeginInvoke(new MethodInvoker(() =>
                 {
                     adjustVfo(sign * _adjust_step * 1e-6);
-                }));                
+                }));
             }
             public void PopBandStack()
             {
@@ -7785,8 +8461,22 @@ namespace Thetis
                 if (_console != null)
                 {
                     _console.BeginInvoke(new MethodInvoker(() =>
-                    {                        
+                    {
                         _console.PopupBandstack(_owningmeter.RX, _owningmeter.BandVfoA, MeterManager.IsOnTop(_owningmeter.ID));
+                    }));
+                }
+
+                _long_press_released = true;
+            }
+            public void PopFilterMenu()
+            {
+                if (!MouseEntered) return;
+
+                if (_console != null)
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.PopupFilterContextMenu(_owningmeter.RX, null);
                     }));
                 }
 
@@ -8129,7 +8819,7 @@ namespace Thetis
                     {
                         // special for rx2 as only F1-F7 + VAR1 + VAR2, so, 0,1,2,3,4,5,6,7,8
                         if (f > 8) return true;
-                        if(f > 6)
+                        if (f > 6)
                         {
                             f += 3;
                             fltr = (Filter)((int)Filter.F1 + f);
@@ -8202,36 +8892,103 @@ namespace Thetis
             private bool setBand(bool vfoB)
             {
                 if (abortForLockedVFO()) return false;
+
+                BandGroups bg;
+                if (_owningmeter.RX == 1)
+                {
+                    if (_console.BandHFSelected)
+                    {
+                        bg = BandGroups.HF;
+                    }
+                    else if (_console.BandVHFSelected)
+                    {
+                        bg = BandGroups.VHF;
+                    }
+                    else if (_console.BandGENSelected)
+                    {
+                        bg = BandGroups.GEN;
+                    }
+                    else
+                    {
+                        bg = _owningmeter.GetBandGroupFromBand(vfoB ? _owningmeter.BandVfoB : _owningmeter.BandVfoA);
+                    }
+                }
+                else
+                {
+                    bg = _owningmeter.GetBandGroupFromBand(vfoB ? _owningmeter.BandVfoB : _owningmeter.BandVfoA);
+                }
+
                 if (vfoB)
                 {
                     int b = _button_grid_index_vfoB;
                     if (b < 0) return true;
                     Band band;
-                    if (_console.BandGENSelected)
+
+                    if (bg == BandGroups.GEN)
                     {
-                        if(b > (int)Band.B11M - (int)Band.B120M)
+                        if (b > (int)Band.B11M - (int)Band.B120M)
                         {
                             if (b == 13)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                }
+                                else
+                                {
+                                    // need to move to some HF band
+                                    _console.BeginInvoke(new MethodInvoker(() =>
+                                    {
+                                        _console.RX2Band = Band.B20M;
+                                    }));
+                                }
                                 return false;
                             }
                             return true;
                         }
                         band = (Band)((int)Band.B120M + b);
                     }
-                    else if (_console.BandHFSelected)
+                    else if (bg == BandGroups.HF)
                     {
                         if (b > (int)Band.B6M - (int)Band.B160M)
                         {
                             if (b == 11)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
+                                }
+                                else
+                                {
+                                    // need to move to some vhf band
+                                    _console.BeginInvoke(new MethodInvoker(() =>
+                                    {
+                                        for (Band bb = Band.VHF0; bb <= Band.VHF13; bb++)
+                                        {
+                                            if (_console.XVTRForm.GetEnabled((int)bb - (int)Band.VHF0))
+                                            {
+                                                _console.RX2Band = Band.VHF0;
+                                                break;
+                                            }
+                                        }
+                                    }));
+                                }
                                 return false;
                             }
                             if (b == 13)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
+                                }
+                                else
+                                {
+                                    // need to move to some GEN band
+                                    _console.BeginInvoke(new MethodInvoker(() =>
+                                    {
+                                        _console.RX2Band = Band.B31M;
+                                    }));
+                                }
                                 return false;
                             }
                             if (b == 12) // WWV
@@ -8241,13 +8998,25 @@ namespace Thetis
                         }
                         band = (Band)((int)Band.B160M + b);
                     }
-                    else if (_console.BandVHFSelected)
+                    else if (bg == BandGroups.VHF)
                     {
                         if (b > (int)Band.VHF13 - (int)Band.VHF0)
                         {
                             if (b == 14)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                }
+                                else
+                                {
+                                    // need to move to some HF band
+                                    _console.BeginInvoke(new MethodInvoker(() =>
+                                    {
+                                        _console.RX2Band = Band.B20M;
+                                    }));
+
+                                }
                                 return false;
                             }
                             return true;
@@ -8273,7 +9042,10 @@ namespace Thetis
                         {
                             if (b == 13)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                }
                                 return false;
                             }
                             return true;
@@ -8286,12 +9058,18 @@ namespace Thetis
                         {
                             if (b == 11)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, false, true); // VHF
+                                }
                                 return false;
                             }
                             if (b == 13)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, true, false, false); // GEN(SWL)
+                                }
                                 return false;
                             }
                             if (b == 12) // WWV
@@ -8307,7 +9085,10 @@ namespace Thetis
                         {
                             if (b == 14)
                             {
-                                _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                if (_owningmeter.RX == 1)
+                                {
+                                    _owningmeter.SetBandPanel(_console, _owningmeter.RX, false, true, false); // HF
+                                }
                                 return false;
                             }
                             return true;
@@ -8347,15 +9128,15 @@ namespace Thetis
             }
             public renderState VFOARenderState
             {
-                get 
+                get
                 {
                     if (_render_state_vfoA != renderState.VFO && (DateTime.Now - _render_state_vfoA_change_time).Seconds > 5) VFOARenderState = renderState.VFO;
-                    return _render_state_vfoA; 
+                    return _render_state_vfoA;
                 }
-                set 
+                set
                 {
                     if (_render_state_vfoA != value) _render_state_vfoA_change_time = DateTime.Now;
-                    _render_state_vfoA = value; 
+                    _render_state_vfoA = value;
                 }
             }
             public renderState VFOBRenderState
@@ -8363,12 +9144,12 @@ namespace Thetis
                 get
                 {
                     if (_render_state_vfoB != renderState.VFO && (DateTime.Now - _render_state_vfoB_change_time).Seconds > 5) VFOBRenderState = renderState.VFO;
-                    return _render_state_vfoB; 
+                    return _render_state_vfoB;
                 }
-                set 
+                set
                 {
                     if (_render_state_vfoB != value) _render_state_vfoB_change_time = DateTime.Now;
-                    _render_state_vfoB = value; 
+                    _render_state_vfoB = value;
                 }
             }
             public buttonState VFOAButtonState
@@ -8587,12 +9368,44 @@ namespace Thetis
             private float _width_scale;
             private float _size;
             private ImageFetcher.State _state;
+            private string _four_char;
+
+            private bool _background;
+            private int _background_interval;
+            private string _background_4char;
+            private DateTime _background_start_time;
+            private bool _show_background;
+            private bool _background_details_updated;
+            private bool _show_next;
+            private bool _show_this;
+
+            private readonly object _show_this_lock = new object();
+            private readonly object _show_next_lock = new object();
+            private readonly object _background_start_time_lock = new object();
+            private readonly object _background_interval_lock = new object();
+            private readonly object _background_4char_lock = new object();
+            private bool _process_timer;
+
+            private System.Threading.Timer _timer;
 
             public clsWebImage(clsMeter owningMeter, clsItemGroup ig)
             {
                 _owningMeter = owningMeter;
+                Guid guid;
+                if (!Guid.TryParse(ig.ID, out guid)) guid = Guid.NewGuid();
+                _four_char = Common.FourChar("webimage", 0, guid);
 
                 ItemType = MeterItemType.WEB_IMAGE;
+
+                _background_details_updated = false;
+                _show_next = false;
+                _show_this = false;
+                _background = false;
+                _background_interval = 5;
+                _background_4char = "";
+                _background_start_time = DateTime.MinValue;
+                _show_background = false;
+                _process_timer = false;
 
                 _clipTopLeft = new PointF(0f, 0f);
                 _clipSize = new SizeF(1f, 1f);
@@ -8608,12 +9421,247 @@ namespace Thetis
                 _ig = ig;
                 _width_scale = 1f;
                 _size = 0.1f;
-                UpdateInterval = 100;
                 _state = ImageFetcher.State.IDLE;
+                _timer = new System.Threading.Timer(timerCallback, null, 0, 1000);
+
+                MeterManager.WebImageRemoved += OnWebImageRemoved;
+                MeterManager.ShowWebImageBackground += OnShowWebImageBackground;
+
+                UpdateInterval = 100;
+            }
+            public override bool UpdateAlways
+            {
+                get
+                {
+                    return _background; // has a background, so we always want to call the update function
+                }
+            }
+            private void OnWebImageRemoved(object sender, string fourchar)
+            {
+                lock (_background_4char_lock)
+                {
+                    if (_background_4char == fourchar) _background_4char = "";
+                }
+            }
+            private void OnShowWebImageBackground(object sender, string fourchar)
+            {
+                if (_four_char == fourchar)
+                {
+                    lock (_background_start_time_lock)
+                    {
+                        _background_start_time = DateTime.UtcNow;
+                    }
+                    lock (_show_this_lock)
+                    {
+                        _show_this = true;
+                    }
+                    _process_timer = true;
+                }
+                else
+                {
+                    ShowBackground = false;
+                    _process_timer = false;
+                }
+            }
+            public bool ShowBackground
+            {
+                get
+                {
+                    return _show_background;
+                }
+                set
+                {
+                    if (!_background) return;
+                    if (_show_background == value) return;
+
+                    _show_background = value;
+
+                    if (_show_background)
+                    {
+                        lock (_background_start_time_lock)
+                        {
+                            _background_start_time = DateTime.UtcNow;
+                        }
+
+                        lock (_bitmap_lock)
+                        {
+                            if (_bitmap != null && _console != null)
+                            {
+                                System.Drawing.Bitmap bmp = null;
+                                try
+                                {
+                                    bmp = _bitmap.Clone() as System.Drawing.Bitmap;
+                                }
+                                catch
+                                {
+                                    bmp = null;
+                                }
+                                if (bmp != null && _console.IsHandleCreated)
+                                {
+                                    _console.BeginInvoke(new MethodInvoker(() =>
+                                    {
+                                        bool setimage = true;
+                                        if (_console.SpotForm != null && !_console.SpotForm.IsDisposed)
+                                        {
+                                            setimage = !_console.SpotForm.TrackingAndMapShown; // do not set if the spot tracking is being used
+                                        }
+                                        if (setimage) _console.PicDisplayBackgroundImage = bmp;
+                                        bmp.Dispose();
+                                    }));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            private void timerCallback(object state)
+            {
+                if (!_process_timer) return;
+
+                DateTime start_time;
+                lock (_background_start_time_lock)
+                {
+                    start_time = _background_start_time;
+                }
+                int interval;
+                lock (_background_interval_lock)
+                {
+                    interval = _background_interval;
+                }
+                if ((DateTime.UtcNow - start_time).TotalSeconds >= interval)
+                {
+                    _process_timer = false;
+                    lock (_show_next_lock)
+                    {
+                        _show_next = true; // done in update
+                    }
+                }
+            }
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
+            {
+                // this is done here, so that the call teh showwebimagebackground is dones from the same thread as the locked
+                // meters and items from the update
+                if (_background_details_updated)
+                {
+                    _background_details_updated = false;
+
+                    if (_background && !MeterManager.IsWebImageBackgroundShown())
+                    {
+                        MeterManager.ShowWebImageBackground?.Invoke(this, _four_char);
+                    }
+                }
+
+                bool show_this;
+                lock (_show_this_lock)
+                {
+                    show_this = _show_this;
+                    _show_this = false;
+                }
+                if (show_this)
+                {
+                    _show_background = false;
+                    ShowBackground = true;
+                }
+
+                bool show_next;
+                lock (_show_next_lock)
+                {
+                    show_next = _show_next;
+                    _show_next = false;
+                }
+                if (show_next)
+                {
+                    //tell the next web image to show
+                    lock (_background_4char_lock)
+                    {
+                        MeterManager.ShowWebImageBackground?.Invoke(this, _background_4char);
+                    }
+                }
+            }
+            public bool Background
+            {
+                get { return _background; }
+                set
+                {
+                    if (_background == value) return;
+                    _background = value;
+                    _background_details_updated = true;
+                }
+            }
+            public int BackgroundInterval
+            {
+                get { return _background_interval; }
+                set
+                {
+                    int interval;
+                    lock (_background_interval_lock)
+                    {
+                        interval = _background_interval;
+                    }
+                    if (interval == value) return;
+
+                    lock (_background_interval_lock)
+                    {
+                        _background_interval = value;
+                    }
+                    _background_details_updated = true;
+                }
+            }
+            public void ClearBackgroundFourChar()
+            {
+                lock (_background_4char_lock)
+                {
+                    _background_4char = "";
+                }
+            }
+            public string BackgroundFourChar
+            {
+                get
+                {
+                    lock (_background_4char_lock)
+                    {
+                        return _background_4char;
+                    }
+                }
+                set
+                {
+                    lock (_background_4char_lock)
+                    {
+                        if (_background_4char == value) return;
+                        _background_4char = value;
+                    }
+                    _background_details_updated = true;
+                }
+            }
+            public string FourChar
+            {
+                get { return _four_char; }
             }
             public override void Removing()
             {
-                if(_image_fetcher_guid != Guid.Empty)
+                MeterManager.WebImageRemoved -= OnWebImageRemoved;
+                MeterManager.ShowWebImageBackground -= OnShowWebImageBackground;
+
+                if (_timer != null)
+                {
+                    _timer.Dispose();
+                    _timer = null;
+                }
+
+                if (_show_background && _console != null) // if removed, and we were being shown, then null image
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        bool setimage = true;
+                        if (_console.SpotForm != null && !_console.SpotForm.IsDisposed)
+                        {
+                            setimage = !_console.SpotForm.TrackingAndMapShown; // do not set if the spot tracking is being used
+                        }
+                        if (setimage) _console.PicDisplayBackgroundImage = null;
+                    }));
+                }
+
+                if (_image_fetcher_guid != Guid.Empty)
                 {
                     MeterManager.ImgFetch.ImagesObtained -= OnImage;
                     MeterManager.ImgFetch.StateChanged -= OnState;
@@ -8624,18 +9672,20 @@ namespace Thetis
                 lock (_bitmap_lock)
                 {
                     if (_bitmap != null)
-                    {                        
+                    {
                         _bitmap.Dispose();
                         key = "webimg_" + _image_fetcher_guid.ToString();
                     }
 
-                    if(!string.IsNullOrEmpty(key)) MeterManager.RemoveStreamData(key);
+                    if (!string.IsNullOrEmpty(key)) MeterManager.RemoveStreamData(key);
                 }
+
+                MeterManager.WebImageRemoved?.Invoke(this, _four_char);
             }
 
             public System.Drawing.Bitmap Bitmap
             {
-                get 
+                get
                 {
                     lock (_bitmap_lock)
                     {
@@ -8646,17 +9696,17 @@ namespace Thetis
             public int SecondsInterval
             {
                 get { return _secs_interval; }
-                set 
-                { 
-                    _secs_interval = value; 
+                set
+                {
+                    _secs_interval = value;
 
                     // change the related image fetcher if one exists
-                    if(_image_fetcher_guid != Guid.Empty)
+                    if (_image_fetcher_guid != Guid.Empty)
                     {
                         MeterManager.ImgFetch.UpdateInterval(_image_fetcher_guid, _secs_interval);
                     }
                 }
-            }public bool BypassCache
+            } public bool BypassCache
             {
                 get { return _bypass_cache; }
                 set
@@ -8671,7 +9721,7 @@ namespace Thetis
             }
             public Guid BitmapGuid
             {
-                get                 
+                get
                 {
                     lock (_bitmap_lock)
                     {
@@ -8695,7 +9745,7 @@ namespace Thetis
                 set
                 {
                     if (value == _url) return;
-                    if(value != _url && _image_fetcher_guid != Guid.Empty)
+                    if (value != _url && _image_fetcher_guid != Guid.Empty)
                     {
                         MeterManager.ImgFetch.ImagesObtained -= OnImage;
                         MeterManager.ImgFetch.StateChanged -= OnState;
@@ -8708,7 +9758,7 @@ namespace Thetis
                     if (!Common.IsValidUri(value))
                     {
                         // check if it is a file
-                        if(value.ToLower().IndexOf("file://") >= 0)
+                        if (value.ToLower().IndexOf("file://") >= 0)
                         {
                             try
                             {
@@ -8718,7 +9768,7 @@ namespace Thetis
                                 isFile = true;
                                 sPath = file.LocalPath;
                             }
-                            catch 
+                            catch
                             {
                                 return;
                             }
@@ -8749,9 +9799,15 @@ namespace Thetis
 
                 _state = e.WebImageState;
                 //Debug.Print(_state.ToString());
-                if (!_console.IsSetupFormNull)
+                if (_console != null && _console.IsHandleCreated)
                 {
-                    _console.SetupForm.SetWebImageState(ParentID, _state);
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        if (!_console.IsSetupFormNull)
+                        {
+                            _console.SetupForm.SetWebImageState(ParentID, _state);
+                        }
+                    }));
                 }
             }
             public ImageFetcher.State WebImageState
@@ -8810,8 +9866,8 @@ namespace Thetis
             public float WidthScale
             {
                 get { return _width_scale; }
-                set 
-                { 
+                set
+                {
                     _width_scale = value;
                     lock (_bitmap_lock)
                     {
@@ -8950,7 +10006,7 @@ namespace Thetis
                 _fontColorLow = System.Drawing.Color.White;
                 _fontColorHigh = System.Drawing.Color.Red;
                 _fontColourMeterType = System.Drawing.Color.DarkGray;
-                _fontSize = 20f;               
+                _fontSize = 20f;
 
                 ItemType = MeterItemType.H_SCALE;
                 ReadingSource = Reading.NONE;
@@ -8958,7 +10014,7 @@ namespace Thetis
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
                 StoreSettings = false;
-            }           
+            }
             public System.Drawing.Color LowColour
             {
                 get { return _lowColour; }
@@ -9003,7 +10059,7 @@ namespace Thetis
             {
                 get { return _showType; }
                 set { _showType = value; }
-            }  
+            }
             public bool ShowMarkers
             {
                 get { return _showMarkers; }
@@ -9020,11 +10076,11 @@ namespace Thetis
                     TopLeft.Y.ToString("f4") + "|" +
                     Size.Width.ToString("f4") + "|" +
                     Size.Height.ToString("f4");
-                    //
+                //
 
 
                 return sRet;
-            }            
+            }
         }
         internal class clsNeedleScalePwrItem : clsMeterItem
         {
@@ -9078,7 +10134,7 @@ namespace Thetis
                 _needleOffset.X = 0f;
                 _needleOffset.Y = 0.5f;
                 _darkMode = false;
-            }            
+            }
             public System.Drawing.Color LowColour
             {
                 get { return _lowColour; }
@@ -9325,7 +10381,7 @@ namespace Thetis
             {
                 get
                 {
-                    switch(_rotator_mode)
+                    switch (_rotator_mode)
                     {
                         case RotatorMode.AZ:
                             return "rotator_az-bg";
@@ -9355,7 +10411,7 @@ namespace Thetis
                 get { return _padding; }
                 set {
                     if (value < 0.001f) value = 0.001f;
-                    _padding = value; 
+                    _padding = value;
                 }
             }
             public bool DarkMode
@@ -9383,7 +10439,7 @@ namespace Thetis
                 // get latest reading
                 float reading;
                 bool use;
-                
+
                 if (MMIOGuid == Guid.Empty)
                 {
                     reading = MeterManager.getReading(rx, ReadingSource);
@@ -9515,6 +10571,462 @@ namespace Thetis
                 return false;
             }
         }
+        internal class clsDialDisplay : clsMeterItem
+        {
+            private clsMeter _owningmeter;
+
+            private System.Drawing.Color _colour;
+            private float _vscale;
+            private float _font_scale;
+            private float _degrees;
+            private bool _pressed;
+            private DateTime _previous_time;
+            private float _smoothed_speed;
+            private float _deg_turned;
+            private bool _vfoA;
+            private bool _vfoA_highlighted;
+            private bool _vfoB_highlighted;
+            private bool _accel_highlighted;
+            private bool _lock_highlighted;
+            private bool _accelerate;
+            private DateTime _last_accelerated;
+            private int _existing_step_index;
+            private int _direction; // -1 anti cw, 0, +1 cw
+            private int _old_direction;
+            private float _degrees_total;
+            private int _tune_step_direction;
+            private bool _ignore_next_vfo_update;
+            private bool _always_show_vfos;
+            private int _max_tune_step_changes;
+            private int _tune_step_changes;
+            private bool _align_with_tunestep;
+            private int _up_threshold;
+            private int _down_threshold;
+            private int _tune_step_interval_seconds;
+            private int _degrees_per_change;
+
+            private System.Drawing.Color _text_colour;
+            private System.Drawing.Color _circle_colour;
+            private System.Drawing.Color _pad_colour;
+            private System.Drawing.Color _pad_pressed_colour;
+            private System.Drawing.Color _button_on_colour;
+            private System.Drawing.Color _button_off_colour;
+            private System.Drawing.Color _button_highlight_colour;
+            private System.Drawing.Color _ring_colour;
+            private System.Drawing.Color _slow_colour;
+            private System.Drawing.Color _hold_colour;
+            private System.Drawing.Color _fast_colour;
+            public clsDialDisplay(clsMeter owning_meter)
+            {
+                _owningmeter = owning_meter;
+
+                _always_show_vfos = false;
+                _tune_step_direction = 0;
+                _accelerate = false;
+                _last_accelerated = DateTime.MinValue;
+                _existing_step_index = -1;
+                _vfoA = _owningmeter.RX == 1;
+                _previous_time = DateTime.MinValue;
+                _smoothed_speed = 0;
+                _deg_turned = 0;
+                _pressed = false;
+                _degrees = 0;
+                _colour = System.Drawing.Color.Black;
+                _vscale = 1f;
+                _font_scale = 1f;
+                _vfoA_highlighted = false;
+                _vfoB_highlighted = false;
+                _accel_highlighted = false;
+                _lock_highlighted = false;
+                _direction = 0;
+                _old_direction = 0;
+                _ignore_next_vfo_update = false;
+                _max_tune_step_changes = 3;
+                _tune_step_changes = 0;
+                _align_with_tunestep = true;
+                _up_threshold = 540;
+                _down_threshold = 360;
+                _tune_step_interval_seconds = 2;
+                _degrees_per_change = 5;
+
+                _text_colour = System.Drawing.Color.White;
+                _circle_colour = System.Drawing.Color.Black;
+                _pad_colour = System.Drawing.Color.Blue;
+                _pad_pressed_colour = System.Drawing.Color.Orange;
+                _button_on_colour = System.Drawing.Color.CornflowerBlue;
+                _button_off_colour = System.Drawing.Color.Black;
+                _button_highlight_colour = System.Drawing.Color.Gray;
+                _ring_colour = System.Drawing.Color.Gray;
+                _slow_colour = System.Drawing.Color.Blue;
+                _hold_colour = System.Drawing.Color.Green;
+                _fast_colour = System.Drawing.Color.Red;
+
+                ItemType = MeterItemType.DIAL_DISPLAY;
+                ReadingSource = Reading.NONE;
+                UpdateInterval = 1000 / 60;
+            }
+            public System.Drawing.Color TextColour { get{ return _text_colour;} set{ _text_colour = value; } }
+            public System.Drawing.Color CircleColour { get { return _circle_colour; } set { _circle_colour = value; } }
+            public System.Drawing.Color PadColour { get { return _pad_colour; } set { _pad_colour = value; } }
+            public System.Drawing.Color PadPressedColour { get { return _pad_pressed_colour; } set { _pad_pressed_colour = value; } }
+            public System.Drawing.Color ButtonOnColour { get { return _button_on_colour; } set { _button_on_colour = value; } }
+            public System.Drawing.Color ButtonOffColour { get { return _button_off_colour; } set { _button_off_colour = value; } }
+            public System.Drawing.Color ButtonHighlightColour { get { return _button_highlight_colour; } set { _button_highlight_colour = value; } }
+            public System.Drawing.Color RingColour { get { return _ring_colour; } set { _ring_colour = value; } }
+            public System.Drawing.Color SlowColour { get { return _slow_colour; } set { _slow_colour = value; } }
+            public System.Drawing.Color HoldColour { get { return _hold_colour; } set { _hold_colour = value; } }
+            public System.Drawing.Color FastColour { get { return _fast_colour; } set { _fast_colour = value; } }
+
+            public int DegreesPerChange
+            {
+                get { return _degrees_per_change; }
+                set { _degrees_per_change = value; }
+            }
+            public int UpThreshold
+            {
+                get { return _up_threshold; }
+                set 
+                {
+                    if (value < _down_threshold + 90) value = _down_threshold + 90;
+                    _up_threshold = value; 
+                }
+            }
+            public int DownThreshold
+            {
+                get { return _down_threshold; }
+                set 
+                {
+                    if (value > _up_threshold - 90) value = _up_threshold - 90;
+                    _down_threshold = value; 
+                }
+            }
+            public int TuneStepIntervalSeconds
+            {
+                get { return _tune_step_interval_seconds; }
+                set { _tune_step_interval_seconds = value; }
+            }
+            public int MaxTuneStepChanges
+            {
+                get { return _max_tune_step_changes; }
+                set { _max_tune_step_changes = value; }
+            }
+            public bool AlignWithTunestep
+            {
+                get { return _align_with_tunestep; }
+                set { _align_with_tunestep = value; }
+            }
+            public int TuneStepDirection
+            {
+                get { return _tune_step_direction; }
+            }
+            public bool VFOAHighlighted
+            {
+                get { return _vfoA_highlighted; }
+                set { _vfoA_highlighted = value; }
+            }
+            public bool VFOBHighlighted
+            {
+                get { return _vfoB_highlighted; }
+                set { _vfoB_highlighted = value; }
+            }
+            public bool AccelerateHighlighted
+            {
+                get { return _accel_highlighted; }
+                set { _accel_highlighted = value; }
+            }
+            public bool LockHighlighted
+            {
+                get { return _lock_highlighted; }
+                set { _lock_highlighted = value; }
+            }
+            public System.Drawing.Color Colour
+            {
+                get { return _colour; }
+                set { _colour = value; }
+            }
+            public float VScale
+            {
+                get { return _vscale; }
+                set { _vscale = value; }
+            }
+            public float FontScale
+            {
+                get { return _font_scale; }
+                set { _font_scale = value; }
+            }
+            public bool AlwaysShowVFOs
+            {
+                get { return _always_show_vfos; }
+                set { _always_show_vfos = value; }
+            }
+            public float Degrees
+            {
+                get { return _degrees; }
+                set
+                {
+                    if (Lock) return;
+                    if (_degrees == value) return;
+
+                    float deg_diff = value - _degrees;
+                    if (deg_diff < -180f) deg_diff += 360f;
+                    if (deg_diff > 180f) deg_diff -= 360f;
+
+                    _degrees = value;
+
+                    if (_ignore_next_vfo_update)
+                    {
+                        _ignore_next_vfo_update = false;
+                        return;
+                    }
+
+                    deg_diff = -deg_diff; //-ve so that +ve clockwise
+                    _deg_turned += deg_diff;
+
+                    _degrees_total += Math.Abs(deg_diff);
+
+                    _old_direction = _direction;
+                    if (deg_diff == 0)
+                        _direction = 0;
+                    else if (deg_diff > 0)
+                        _direction = 1;
+                    else
+                        _direction = -1;
+
+                    float turned = Math.Abs(_deg_turned);
+                    if (turned >= 1)
+                    {
+                        if (turned >= _degrees_per_change)
+                        {
+                            _deg_turned -= (int)_deg_turned;
+
+                            int steps = _direction;
+
+                            if (_console != null)
+                            {
+                                double freq = (steps * _console.CurrentTuneStepHz) * 1e-6;
+                                if (VFOA)
+                                {
+                                    if (_align_with_tunestep)
+                                    {
+                                        freq = Math.Round((_console.VFOAFreq + freq) / (_console.CurrentTuneStepHz * 1e-6)) * (_console.CurrentTuneStepHz * 1e-6);
+                                    }
+                                    else
+                                    {
+                                        freq = _console.VFOAFreq + freq;
+                                    }
+                                }
+                                else
+                                {
+                                    if (_align_with_tunestep)
+                                    {
+                                        freq = Math.Round((_console.VFOBFreq + freq) / (_console.CurrentTuneStepHz * 1e-6)) * (_console.CurrentTuneStepHz * 1e-6);
+                                    }
+                                    else
+                                    {
+                                        freq = _console.VFOBFreq + freq;
+                                    }
+                                }
+                                _console.BeginInvoke(new MethodInvoker(() =>
+                                {
+                                    if (VFOA)
+                                    {
+                                        _console.VFOAFreq = freq;
+                                    }
+                                    else
+                                    {
+                                        _console.VFOBFreq = freq;
+                                    }
+                                }));
+                            }
+                        }
+
+                        // accelerate
+                        if (_accelerate)
+                        {
+                            float speed = Math.Abs(_smoothed_speed);
+                            if (speed >= _up_threshold)
+                            {
+                                if ((_tune_step_changes < _max_tune_step_changes) && (DateTime.UtcNow - _last_accelerated).TotalSeconds >= _tune_step_interval_seconds)
+                                {
+                                    _console.BeginInvoke(new MethodInvoker(() =>
+                                    {
+                                        _console.ChangeTuneStepUp();
+                                    }));
+                                    _last_accelerated = DateTime.UtcNow;
+
+                                    _tune_step_changes++;
+                                }
+                                _tune_step_direction = 1;
+                            }
+                            else if (speed <= _down_threshold)
+                            {
+                                if (_existing_step_index != -1 && _existing_step_index < _owningmeter.TuneStepIndex)
+                                {
+                                    if ((DateTime.UtcNow - _last_accelerated).TotalSeconds >= _tune_step_interval_seconds)
+                                    {
+                                        _console.BeginInvoke(new MethodInvoker(() =>
+                                        {
+                                            _console.ChangeTuneStepDown();
+                                        }));
+                                        _last_accelerated = DateTime.UtcNow;
+                                    }
+
+                                    _tune_step_changes--;
+                                    if (_tune_step_changes < 0) _tune_step_changes = 0;
+                                }
+                                _tune_step_direction = -1;
+                            }
+                            else
+                            {
+                                _tune_step_direction = 0;
+                            }
+                        }
+                    }
+                }
+            }
+            public bool VFOA
+            {
+                get
+                {
+                    if (_always_show_vfos)
+                    {
+                        return _vfoA;
+                    }
+                    else
+                    {
+                        if (_owningmeter.RX == 1)
+                        {
+                            if (_owningmeter.RX2Enabled)
+                            {
+                                return true; // can not use vfoB on rx1 when rx2 enabled
+                            }
+                            {
+                                return _vfoA;
+                            }
+                        }
+                        else
+                        {
+                            return false; // always vfoB on rx2
+                        }
+                    }                   
+                }
+                set
+                {
+                    if (_always_show_vfos)
+                    {
+                        _vfoA = value;
+                    }
+                    else
+                    {
+                        if (_owningmeter.RX == 2)
+                            _vfoA = false;
+                        else
+                            _vfoA = value;
+                    }
+                }
+            }
+
+            public bool Pressed
+            {
+                get { return _pressed; }
+                set 
+                {
+                    if (_pressed != value)
+                    {
+                        _pressed = value;
+                        _smoothed_speed = 0;
+                        _deg_turned = 0;
+                        _degrees_total = 0;
+                        _ignore_next_vfo_update = true;
+                        _tune_step_changes = 0;
+
+                        if (_pressed)
+                        {
+                            _existing_step_index = _owningmeter.TuneStepIndex;                            
+                        }
+                        else
+                        {
+                            undoTuneStep();
+                        }
+                    }
+                }
+            }
+            private void undoTuneStep()
+            {
+                if (_existing_step_index != -1)
+                {
+                    int step = _existing_step_index;
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.TuneStepIndex = step;
+                    }));
+                    _existing_step_index = -1;
+                    _last_accelerated = DateTime.MinValue;
+                }
+            }
+            public float SmoothedSpeed
+            {
+                get { return _smoothed_speed; }
+            }
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
+            {
+                DateTime current_time = DateTime.UtcNow;
+                TimeSpan elapsed_time = current_time - _previous_time;
+
+                if (_pressed && elapsed_time.TotalMilliseconds > UpdateInterval * 4) // over 4 frames
+                {
+                    float degrees_per_second = _degrees_total / (float)(elapsed_time.TotalMilliseconds / 1000);
+                    _smoothed_speed = (_smoothed_speed * 0.95f) + (degrees_per_second * 0.05f);
+
+                    _degrees_total = 0;
+                    _previous_time = current_time;
+                }
+            }
+            public float DegreesTotal
+            {
+                get { return _degrees_total; }
+            }
+            public override void MouseUp(MouseEventArgs e)
+            {
+                if (!_pressed)
+                {
+                    if (_vfoA_highlighted) VFOA = true;
+                    if (_vfoB_highlighted) VFOA = false;
+                    if (_accel_highlighted) _accelerate = !_accelerate;
+                    if (_lock_highlighted)
+                    {
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            if (VFOA)
+                            {
+                                _console.VFOALock = !_console.VFOALock;
+                            }
+                            else
+                            {
+                                _console.VFOBLock = !_console.VFOBLock;
+                            }
+                        }));
+                    }
+                }
+            }
+            public override void MouseWheel(int number_of_moves)
+            {
+                if (!_pressed)
+                {
+                    int sign = Math.Sign(number_of_moves);
+                    Degrees -= _degrees_per_change * sign;
+                }
+            }
+            public bool Accelerate
+            {
+                get { return _accelerate; }
+                set { _accelerate = value; }
+            }
+            public bool Lock
+            {
+                get { return (VFOA && _owningmeter.VFOALock) || (!VFOA && _owningmeter.VFOBLock); }
+            }
+        }
         internal class clsMagicEyeItem : clsMeterItem
         {
             private List<float> _history;
@@ -9547,7 +11059,7 @@ namespace Thetis
                 AttackRatio = 0.8f;
                 DecayRatio = 0.2f;
                 StoreSettings = false;
-            }           
+            }
             public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
             {
                 // get latest reading
@@ -10515,6 +12027,1799 @@ namespace Thetis
                     addReading(1, reading_1);
                 }
                 //
+            }
+        }
+        internal class clsFilterItem : clsMeterItem
+        {
+            public enum WaterfallPalette
+            {
+                NONE = -1,
+                ENHANCED = 0,
+                SPECTRAN,
+                BLACKWHITE,
+                LINLOG,
+                LINRAD,
+                LINAUTO
+            }
+            public enum DisplayMode
+            {
+                PANADAPTOR = 0,
+                WATERFALL,
+                PANAFALL,
+                NONE
+            }          
+
+            private clsMeter _owningmeter;
+            private clsItemGroup _ig;
+            private System.Drawing.Color _colour;
+            private float _padding;
+            private bool _show_limits;
+            private bool _fixed_rx_zoom;
+            private bool _fixed_tx_zoom;
+            private float _rx_zoom;
+            private float _tx_zoom;
+            private float _sidebands_scale;
+            private float _cw_scale;
+            private float _others_scale;
+            private int _extent_hz;
+            private int _tx_extent_hz;
+            private bool _showVfoA;
+            private int _vfoA_low;
+            private int _vfoA_high;
+            private int _vfoB_low;
+            private int _vfoB_high;
+            private string _vfoA_name;
+            private string _vfoB_name;
+            private int _tx_low;
+            private int _tx_high;
+            private int _notch_highlighted_index;
+            private bool _notch_selected;
+            private double _notch_start_freq;
+            private bool _mnf_selected;
+            private bool _mnf_plus_selected;
+            private bool _snap_selected;
+            private bool _autozoom_selected;
+            private bool _low_selected;
+            private bool _high_selected;
+            private bool _top_selected;
+            private bool _adjust_low;
+            private bool _adjust_high;
+            private bool _adjust_shift;
+            private float _start_shift_x;
+            private float _start_low;
+            private float _start_high;
+            //private string _pa_profile;
+            private string _tx_profile;
+            private float[] _spec_data;
+            private float[] _spec_data_raw;
+            private float[] _spec_greyscale;
+            private readonly object _spec_data_lock = new object();
+            private readonly object _interval_locker = new object();
+            private float _spec_min;
+            private float _spec_max;
+            private float _spec_raw_min;
+            private float _spec_raw_max;
+            //private double _vfoA_freq;
+            //private double _vfoB_freq;
+            private int _rx_spec_grid_min;
+            private int _rx_spec_grid_max;
+            private int _rx_spec_grid_range;
+            private int _rx_waterfall_min;
+            private int _rx_waterfall_max;
+            private int _rx_waterfall_range;
+            private int _tx_spec_grid_min;
+            private int _tx_spec_grid_max;
+            private int _tx_spec_grid_range;
+            private int _tx_waterfall_min;
+            private int _tx_waterfall_max;
+            private int _tx_waterfall_range;
+            private bool _mox;
+            private bool _fill_spec;
+            private bool _use_greyscale;
+            private bool _sideband_mode;
+            private int _old_data_index;
+            private int _waterfall_frame_interval;
+            private float _font_scale;
+            private bool _tnf_active;
+            private int _waterfall_frame_count; // frame count for the waterfall
+            private DisplayMode _display_mode;
+            private System.Drawing.Color _dataline_colour;
+            private System.Drawing.Color _datafill_colour;
+            private WaterfallPalette _waterfall_palette;
+            private System.Drawing.Color _waterfall_low_colour;
+            private System.Drawing.Color _text_colour;
+            private System.Drawing.Color _number_highlight_colour;
+            private System.Drawing.Color _edges_colour;
+            private System.Drawing.Color _edge_highlight_colour;
+            private System.Drawing.Color _extents_colour;
+            private System.Drawing.Color _snapline_colour;
+            private System.Drawing.Color _meterback_colour;
+            private System.Drawing.Color _notch_colour;
+            private System.Drawing.Color _notchhighligh_colour;
+            private System.Drawing.Color _setting_on_colour;
+            private System.Drawing.Color _button_highlight_colour;
+            private bool _auto_zoom;
+            private bool _show_characteristic;
+            private float _characteristic_low;
+
+            private float _waterfall_min_agc;
+            private bool _enabled;
+            private bool _snap_lines;
+            private bool _snap_lines_ignore;
+
+            private double _mouse_frequency;
+            private readonly object _mouse_frequency_locker = new object();
+
+            private HiPerfTimer _hiperf_timer;
+
+            public clsFilterItem(clsMeter owning_meter, clsItemGroup item_group)
+            {
+                _hiperf_timer = new HiPerfTimer();
+                
+                _owningmeter = owning_meter;
+                _ig = item_group;
+
+                _display_mode = DisplayMode.PANAFALL;
+
+                _waterfall_frame_interval = 4; // every 4th frame
+
+                _font_scale = 1f;
+
+                _fill_spec = true;
+                _old_data_index = -1;
+
+                _use_greyscale = true;
+
+                _sideband_mode = false;
+                _show_limits = true;
+                _fixed_rx_zoom = false;
+                _fixed_tx_zoom = false;
+                _rx_zoom = 1f;
+                _tx_zoom = 1f;
+                _sidebands_scale = 0f;
+                _cw_scale = 0f;
+                _others_scale = 0f;
+                _showVfoA = _owningmeter.RX == 1;
+
+                _extent_hz = _owningmeter.FilterMaxWidth;
+                _tx_extent_hz = MiniSpec.TX_BANDWIDTH;
+
+                _colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                _padding = 0.2f;
+
+                _vfoA_low = _owningmeter.FilterVfoAlow;
+                _vfoA_high = _owningmeter.FilterVfoAhigh;
+                _vfoB_low = _owningmeter.FilterVfoBlow;
+                _vfoB_high = _owningmeter.FilterVfoBhigh;
+                _vfoA_name = _owningmeter.FilterVfoAName;
+                _vfoB_name = _owningmeter.FilterVfoBName;
+
+                //_vfoA_freq = _owningmeter.VfoA;
+                //_vfoB_freq = _owningmeter.VfoB;
+
+                _mnf_selected = false;
+                _mnf_plus_selected = false;
+                _snap_selected = false;
+                _autozoom_selected = false;
+                _low_selected = false;
+                _high_selected = false;
+                _top_selected = false;
+                _notch_selected = false;
+                _notch_highlighted_index = -1;
+                _notch_start_freq = -1;
+
+                _adjust_low = false;
+                _adjust_high = false;
+
+                _start_shift_x = 0;
+                _start_low = 0;
+                _start_high = 0;
+
+                _mox = _owningmeter.MOX;
+
+                _waterfall_frame_count = 0;
+
+                _tx_low = _owningmeter.TXFilterLow;
+                _tx_high = _owningmeter.TXFilterHigh;
+                //_pa_profile = _owningmeter.PAProfile;
+                _tx_profile = _owningmeter.TXProfile;
+
+                _spec_data = new float[MiniSpec.PIXELS];
+                _spec_data_raw = new float[MiniSpec.PIXELS];
+                _spec_greyscale = new float[MiniSpec.PIXELS];
+
+                _spec_min = -200f;
+                _spec_max = 200f;
+                _spec_raw_min = -200f;
+                _spec_raw_max = 200f;
+
+                _rx_spec_grid_min = _owningmeter.RXSpectrumGridMin;
+                _rx_spec_grid_max = _owningmeter.RXSpectrumGridMax;
+                _tx_spec_grid_min = _owningmeter.TXSpectrumGridMin;
+                _tx_spec_grid_max = _owningmeter.TXSpectrumGridMax;
+
+                _rx_waterfall_min = _owningmeter.RXWaterfallMin;
+                _rx_waterfall_max = _owningmeter.RXWaterfallMax;
+                _tx_waterfall_min = _owningmeter.TXWaterfallMin;
+                _tx_waterfall_max = _owningmeter.TXWaterfallMax;
+
+                _rx_spec_grid_range = _rx_spec_grid_max - _rx_spec_grid_min;
+                _tx_spec_grid_range = _tx_spec_grid_max - _tx_spec_grid_min;
+
+                _rx_waterfall_range = _rx_waterfall_max - _rx_waterfall_min;
+                _tx_waterfall_range = _tx_waterfall_max - _tx_waterfall_min;
+
+                for (int i = 0; i < _spec_data.Length; i++)
+                {
+                    _spec_data[i] = -200f;
+                    _spec_data_raw[i] = -200f;
+                    _spec_greyscale[i] = 0f;
+                }
+
+                _tnf_active = _owningmeter.TNFActive;
+
+                _waterfall_min_agc = -200;
+
+                _dataline_colour = System.Drawing.Color.LimeGreen;
+                _datafill_colour = System.Drawing.Color.LimeGreen;
+                _waterfall_palette = WaterfallPalette.ENHANCED;
+                _waterfall_low_colour = System.Drawing.Color.Black;
+                _text_colour = System.Drawing.Color.White;
+                _number_highlight_colour = System.Drawing.Color.DarkRed;
+                _edges_colour = System.Drawing.Color.Yellow;
+                _edge_highlight_colour = System.Drawing.Color.White;
+                _extents_colour = System.Drawing.Color.Gray;
+                _snapline_colour = System.Drawing.Color.Gray;
+                _meterback_colour = System.Drawing.Color.Black;
+                _notch_colour = System.Drawing.Color.Orange;
+                _notchhighligh_colour = System.Drawing.Color.LimeGreen;
+                _snapline_colour = System.Drawing.Color.Gray;
+                _setting_on_colour = System.Drawing.Color.CornflowerBlue;
+                _button_highlight_colour = System.Drawing.Color.Gray;
+
+                _auto_zoom = false;
+                _show_characteristic = false;
+                _characteristic_low = -250.0f;
+                _snap_lines = false;
+                _snap_lines_ignore = false;
+
+                _mouse_frequency = -1;
+
+                ItemType = MeterItemType.FILTER_DISPLAY;
+
+                ReadingSource = Reading.NONE;
+
+                UpdateInterval = 1000 / MiniSpec.FRAME_RATE; // to ms
+
+                buildSpectrumGreyScale(true, true);
+
+                _enabled = _owningmeter.Enabled;
+                if (_enabled)
+                {
+                    int id = _owningmeter.RX == 1 ? 0 : 1;
+                    MiniSpec.UsingFilter(id, false);
+                }
+            }
+            public double MouseFrequency
+            {
+                get 
+                {
+                    lock (_mouse_frequency_locker)
+                    {
+                        return _mouse_frequency;
+                    }
+                }
+                set 
+                {
+                    lock (_mouse_frequency_locker)
+                    {
+                        _mouse_frequency = value;
+                    }
+                }
+            }
+            public System.Drawing.Color DataLineColour { get { return _dataline_colour; } set { _dataline_colour = value; } }
+            public System.Drawing.Color DataFillColour { get { return _datafill_colour; } set { _datafill_colour = value; } }
+            public WaterfallPalette WaterfallPal { get { return _waterfall_palette; } set { _waterfall_palette = value; } }
+            public System.Drawing.Color WaterfallLowColour { get { return _waterfall_low_colour; } set { _waterfall_low_colour = value; } }
+            public System.Drawing.Color TextColour { get { return _text_colour; } set { _text_colour = value; } }
+            public System.Drawing.Color NumberHighlightColour { get { return _number_highlight_colour; } set { _number_highlight_colour = value; } }
+            public System.Drawing.Color EdgesColour { get { return _edges_colour; } set { _edges_colour = value; } }
+            public System.Drawing.Color EdgeHighlightColour { get { return _edge_highlight_colour; } set { _edge_highlight_colour = value; } }
+            public System.Drawing.Color ExtentsColour { get { return _extents_colour; } set { _extents_colour = value; } }
+            public System.Drawing.Color MeterbackColour { get { return _meterback_colour; } set { _meterback_colour = value; } }
+            public System.Drawing.Color NotchColour { get { return _notch_colour; } set { _notch_colour = value; } }
+            public System.Drawing.Color NotchHighlightColour { get { return _notchhighligh_colour; } set { _notchhighligh_colour = value; } }
+            public System.Drawing.Color SnapLineColour { get { return _snapline_colour; } set { _snapline_colour = value; } }
+            public System.Drawing.Color SettingOnColour { get { return _setting_on_colour; } set { _setting_on_colour = value; } }
+            public System.Drawing.Color ButtonHighlightColour { get { return _button_highlight_colour; } set { _button_highlight_colour = value; } }
+            public bool AutoZoom
+            {
+                get { return _auto_zoom; }
+                set { _auto_zoom = value; }
+            }
+            public bool ShowCharacteristic
+            {
+                get { return _show_characteristic; }
+                set { _show_characteristic = value; }
+            }
+            public float CharacteristicLow
+            {
+                get { return _characteristic_low; }
+                set { _characteristic_low = value; }
+            }
+            public override bool Enabled
+            {
+                get { return _enabled; }
+                set
+                {                    
+                    if (value && !_enabled)
+                    {
+                        // now enabled, was not previously
+                        _enabled = true;
+                        int id = _owningmeter.RX == 1 ? 0 : 1;
+                        MiniSpec.UsingFilter(id, false);
+                    }
+                    else if (!value && _enabled)
+                    {
+                        // was enabled, now is not
+                        _enabled = false;
+                        int id = _owningmeter.RX == 1 ? 0 : 1;
+                        MiniSpec.StopUsingFilter(id, false);
+                    }
+                }
+            }
+            public bool SnapLines
+            {
+                get { return _snap_lines; }
+                set { _snap_lines = value; }
+            }
+            public float[] VGridFrequencies
+            {
+                get
+                {
+                    DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                    switch (mode)
+                    {
+                        case DSPMode.LSB:
+                        case DSPMode.DIGL:
+                        case DSPMode.USB:
+                        case DSPMode.DIGU:
+                            return MeterManager.GetFilterItemFrequencies(FilterItemSnapFrequencies.SIDEBANDS);
+                        case DSPMode.CWL:
+                        case DSPMode.CWU:
+                            return MeterManager.GetFilterItemFrequencies(FilterItemSnapFrequencies.CW);
+                        case DSPMode.SAM:
+                        case DSPMode.DSB:
+                        case DSPMode.AM:
+                            return MeterManager.GetFilterItemFrequencies(FilterItemSnapFrequencies.OTHER);
+                        default:
+                            return new float[] { };
+                    }
+                }
+            }
+            public int findNearestVGrid(int hz)
+            {
+                float[] frequencies = VGridFrequencies;
+                if (frequencies.Length == 0) return hz;
+
+                float nearestFrequency = frequencies[0];
+                float smallestDifference = Math.Abs(hz - nearestFrequency);
+
+                foreach (float frequency in frequencies)
+                {
+                    if (SidebandModeSign < 0 && frequency > 0) continue;
+                    if (SidebandModeSign > 0 && frequency < 0) continue;
+
+                    float difference = Math.Abs(hz - frequency);
+                    if (difference < smallestDifference)
+                    {
+                        smallestDifference = difference;
+                        nearestFrequency = frequency;
+                    }
+                }
+
+                return (int)nearestFrequency;
+            }
+            public override void Removing()
+            {
+                if (_enabled)
+                {
+                    _enabled = false;
+                    int id = _owningmeter.RX == 1 ? 0 : 1;
+                    MiniSpec.StopUsingFilter(id, false);
+                }
+            }
+            public override double MinNotchWidthRX 
+            {
+                get { return _owningmeter.MinNotchWidthRX; }
+                set
+                {
+                    buildSpectrumGreyScale(true, true);
+                }
+            }
+            public override double MinNotchWidthTX
+            {
+                get { return _owningmeter.MinNotchWidthTX; }
+                set
+                {
+                    buildSpectrumGreyScale(true, true);
+                }
+            }
+            public override bool MOX
+            {
+                get { return _mox; }
+                set 
+                {
+                    bool old_mox = _mox;
+                    _mox = value; 
+
+                    if(old_mox != MOX)
+                    {
+                        buildSpectrumGreyScale(true, true);
+
+                        lock (_spec_data_lock)
+                        {
+                            for (int i = 0; i < _spec_data.Length; i++)
+                            {
+                                _spec_data[i] = -200f;
+                                _spec_data_raw[i] = -200f;
+                            }
+                        }
+                    }
+                }
+            }
+            public override bool TNFActive
+            {
+                get { return _tnf_active; }
+                set
+                {
+                    _tnf_active = value;
+                }
+            }
+            public int FrameCount
+            {
+                get 
+                {
+                    lock (_interval_locker)
+                    {
+                        return _waterfall_frame_count;
+                    }
+                }
+                set
+                {
+                    lock (_interval_locker)
+                    {
+                        if (_hiperf_timer.ElapsedMsec >= UpdateInterval)
+                        {
+                            _waterfall_frame_count = value;
+                            if (_waterfall_frame_count >= _waterfall_frame_interval) _waterfall_frame_count = 0;
+
+                            _hiperf_timer.Reset();
+                        }
+                    }
+                }
+            }
+            public int FrameInterval
+            {
+                get 
+                {
+                    lock (_interval_locker)
+                    {
+                        return _waterfall_frame_interval;
+                    }
+                }
+                set 
+                {
+                    lock (_interval_locker)
+                    {
+                        _waterfall_frame_interval = value;
+                        _waterfall_frame_count = 0;
+                    }
+                }
+            }
+            public float FontScale
+            {
+                get { return _font_scale; }
+                set { _font_scale = value; }
+            }
+            public DisplayMode DispMode
+            {
+                get { return _display_mode; }
+                set { _display_mode = value; }
+            }
+            public bool FillSpectrum
+            {
+                get { return _fill_spec; }
+                set { _fill_spec = value; }
+            }
+            public bool Greyscale
+            {
+                get { return _use_greyscale; }
+                set 
+                {
+                    if (_use_greyscale != value)
+                    {
+                        _use_greyscale = value;
+                        buildSpectrumGreyScale(true, true);
+                    }
+                }
+            }
+            public bool SidebandMode
+            {
+                get { return _sideband_mode; }
+                set { _sideband_mode = value; }
+            }
+            public bool CanAdjust
+            {
+                get
+                {
+                    bool adjust = true;
+                    if (_showVfoA)
+                    {
+                        adjust = _owningmeter.ModeVfoA != DSPMode.FM && _owningmeter.ModeVfoA != DSPMode.SPEC;
+                    }
+                    else
+                    {
+                        adjust = _owningmeter.ModeVfoB != DSPMode.FM && _owningmeter.ModeVfoA != DSPMode.SPEC;
+                    }
+
+                    if (_owningmeter.MOX)
+                    {
+                        adjust &= TXEnabled;
+                    }
+                    else
+                    {
+                        adjust &= RXEnabled;
+                    }
+
+                    return adjust;
+                }
+            }
+            public bool RXEnabled
+            {
+                get
+                {
+                    if (_showVfoA)
+                    {
+                        return !(_owningmeter.ModeVfoA == DSPMode.DRM);
+                    }
+                    else
+                    {
+                        return !(_owningmeter.ModeVfoB == DSPMode.DRM);
+                    }
+                }
+            }
+            public bool TXEnabled
+            {
+                get
+                {
+                    if (_showVfoA)
+                    {
+                        return !(_owningmeter.ModeVfoA == DSPMode.CWL || _owningmeter.ModeVfoA == DSPMode.CWU || _owningmeter.ModeVfoA == DSPMode.DRM);
+                    }
+                    else
+                    {
+                        return !(_owningmeter.ModeVfoB == DSPMode.CWL || _owningmeter.ModeVfoB == DSPMode.CWU || _owningmeter.ModeVfoB == DSPMode.DRM);
+                    }
+                }
+            }
+            //public override void PAProfileChanged(string name)
+            //{
+            //    _pa_profile = name;
+            //}
+            public override void TXProfileChanged(string name)
+            {
+                _tx_profile = name;
+            }
+            public override void TXFilterChanged(int low, int high)
+            {
+                int old_low = _tx_low;
+                int old_high = _tx_high;
+                _tx_low = low;
+                _tx_high = high;
+
+                buildSpectrumGreyScale(old_low != _tx_low, old_high != _tx_high);
+            }
+            public float StartShiftX
+            {
+                get { return _start_shift_x; }
+                set 
+                {
+                    _start_low = Low;
+                    _start_high = High;
+                    _start_shift_x = value; 
+                }
+            }
+            public override void FilterChanged(Filter f, string name, int low, int high, bool vfoA, bool vfoB, int max_width, int max_shift)
+            {
+                bool build_low = false;
+                bool build_high = false;
+
+                if (vfoA)
+                {
+                    int old_low = _vfoA_low;
+                    int old_high = _vfoA_high;
+                    _vfoA_name = name;
+                    _vfoA_low = low;
+                    _vfoA_high = high;
+
+                    build_low |= old_low != _vfoA_low;
+                    build_high |= old_high != _vfoA_high;
+                }
+                if(vfoB)
+                {
+                    int old_low = _vfoB_low;
+                    int old_high = _vfoB_high;
+                    _vfoB_name = name;
+                    _vfoB_low = low;
+                    _vfoB_high = high;
+
+                    build_low |= old_low != _vfoB_low;
+                    build_high |= old_high != _vfoB_high;
+                }
+
+                if (max_width != -1 && max_width != _extent_hz)
+                {
+                    _extent_hz = max_width;
+                    //setZoom();
+
+                    build_low |= true;
+                    build_high |= true;
+                }
+
+                buildSpectrumGreyScale(build_low, build_high);
+            }
+            public override void MouseUp(MouseEventArgs e)
+            {
+                if (_console == null) return;
+
+                // this work around so that we dont cause another click. We cant use .visible as the form deactivate event hides
+                // it. This is not very clean, but will do for now. Ignore this click if within 500ms of the notch form deactivating
+                bool exit = false;
+                _console.Invoke(new MethodInvoker(() =>
+                {
+                    if ((DateTime.UtcNow - _console.NotchPopupLastDeactivateTime).TotalMilliseconds <= 500) exit = true;
+                }));
+                if (exit) return;
+
+                if (e.Button == MouseButtons.Right && _top_selected)
+                {
+                    // reset
+                    int bw = (int)(High - Low);
+                    int high = (int)High;
+                    int low = (int)Low;
+                    DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                    switch (mode)
+                    {
+                        case DSPMode.AM:
+                        case DSPMode.DSB:
+                        case DSPMode.SPEC:
+                        case DSPMode.DRM:
+                        case DSPMode.FM:
+                        case DSPMode.SAM:
+                            low = (int)-bw / 2;
+                            high = (int)bw / 2;
+                            break;
+                        case DSPMode.LSB:
+                            high = -_console.DefaultLowCut;
+                            low = high - bw;
+                            break;
+                        case DSPMode.USB:
+                            low = _console.DefaultLowCut;
+                            high = low + bw;
+                            break;
+                        case DSPMode.DIGL:
+                            high = -_console.DIGLClickTuneOffset + bw / 2;
+                            low = -_console.DIGLClickTuneOffset - bw / 2;
+                            break;
+                        case DSPMode.DIGU:
+                            low = _console.DIGUClickTuneOffset - bw / 2;
+                            high = _console.DIGUClickTuneOffset + bw / 2;
+                            break;
+                        case DSPMode.CWL:
+                            high = -_console.CWPitch + bw / 2;
+                            low = -_console.CWPitch - bw / 2;
+                            break;
+                        case DSPMode.CWU:
+                            low = _console.CWPitch - bw / 2;
+                            high = _console.CWPitch + bw / 2;
+                            break;
+                    }
+                    _snap_lines_ignore = true;
+                    Low = low;
+                    High = high;
+                    _snap_lines_ignore = false;
+                    _top_selected = false;
+                    return;
+                }
+                else if(e.Button == MouseButtons.Right && _notch_highlighted_index != -1 && !Common.CtrlKeyDown)
+                {
+                    if(_console != null)
+                    {
+                        int index = _notch_highlighted_index;
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            int x = Cursor.Position.X - 16;
+                            int y = Cursor.Position.Y - 16;
+                            _console.ShowNotchPopup(x, y, null, 0, 1000, true, index);
+                        }));
+                    }
+                    _notch_selected = false;
+                    _notch_highlighted_index = -1;
+                    _notch_start_freq = -1;
+                    return;
+                }
+
+                _low_selected = false;
+                _high_selected = false;
+                _top_selected = false;
+                _notch_selected = false;
+                _notch_highlighted_index = -1;
+                _notch_start_freq = -1;
+
+                //notch at mouse pos with ctrl
+                lock (_mouse_frequency_locker)
+                {
+                    if (e.Button == MouseButtons.Right && Common.CtrlKeyDown && _mouse_frequency != -1 && !_owningmeter.MOX)
+                    {
+                        if (_console != null)
+                        {
+                            // add a notch at frequency
+                            double freq = _showVfoA ? _owningmeter.VfoA * 1e6 : _owningmeter.VfoB * 1e6;
+                            freq = Math.Round(freq + _mouse_frequency);
+                            _console.BeginInvoke(new MethodInvoker(() =>
+                            {
+                                _console.AddNotch(freq, _owningmeter.RX);
+                            }));
+                        }
+                        _mouse_frequency = -1;
+                        return;
+                    }
+                }
+
+                float step = Common.ShiftKeyDown ? 1 : 10;
+
+                if (_adjust_low)
+                {
+                    _snap_lines_ignore = true;
+                    if (e.Button == MouseButtons.Left) Low -= step;
+                    if (e.Button == MouseButtons.Right) Low += step;
+                    _snap_lines_ignore = false;
+                }
+                if (_adjust_high)
+                {
+                    _snap_lines_ignore = true;
+                    if (e.Button == MouseButtons.Left) High -= step;
+                    if (e.Button == MouseButtons.Right) High += step;
+                    _snap_lines_ignore = false;
+                }
+                if (_adjust_shift)
+                {
+                    _start_low = Low;
+                    _start_high = High;
+                    if (e.Button == MouseButtons.Left) Shift(-step);
+                    if (e.Button == MouseButtons.Right) Shift(step);
+                }
+
+                if (_mnf_selected)
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.TNFActive = !_console.TNFActive;
+                    }));
+                }
+                else if (_mnf_plus_selected && !_owningmeter.MOX)
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.TNFAdd(_owningmeter.RX);
+                    }));
+                }
+                else if (_snap_selected && !_auto_zoom)
+                {
+                    _snap_lines = !_snap_lines;
+                }
+                else if (_autozoom_selected)
+                {
+                    _auto_zoom = !_auto_zoom;
+                }
+            }
+            public override void MouseWheel(int number_of_moves)
+            {
+                int sign = Math.Sign(number_of_moves);
+                float step = Common.ShiftKeyDown ? 1 : 10;
+
+                _snap_lines_ignore = true;
+
+                if (_notch_highlighted_index == -1 && !_notch_selected)
+                {
+                    if (_adjust_low)
+                    {
+                        float tmp = Common.CtrlKeyDown ? (float)(Math.Round(Low / 10) * 10) : Low;
+                        Low = tmp + (sign * step);                        
+                    }
+                    else if (_adjust_high)
+                    {
+                        float tmp = Common.CtrlKeyDown ? (float)(Math.Round(High / 10) * 10) : High;
+                        High = tmp + (sign * step);
+                    }
+                    else if (_adjust_shift)
+                    {
+                        _start_low = Low;
+                        _start_high = High;
+                        Shift(sign * step);
+                    }
+                }
+                else
+                {
+                    if (_console == null || _notch_highlighted_index == -1) return;
+
+                    //notch
+                    bool ok = false;
+                    double width = 0;
+                    lock (MiniSpec.NotchLocker)
+                    {
+                        MiniSpec.Notch n = MiniSpec.GetNotch(_notch_highlighted_index);
+                        if (n != null)
+                        {
+                            width = n.width_hz;
+                            ok = true;
+                        }
+                    }
+
+                    if (ok)
+                    {
+                        width += sign * step;
+                        if(width < 0) width = 0;
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.ChangeNotchBW(null, width, _notch_highlighted_index);
+                        }));
+                    }
+                }
+
+                _snap_lines_ignore = false;
+            }
+            public int NotchHighlightedIndex
+            {
+                get { return _notch_highlighted_index; }
+                set { _notch_highlighted_index = value; }
+            }
+            public bool NotchSelected
+            {
+                get { return _notch_selected; }
+                set 
+                { 
+                    _notch_selected = value;
+                    if (_notch_selected)
+                    {
+                        MiniSpec.Notch notch = MiniSpec.GetNotch(_notch_highlighted_index);
+                        if (notch != null)
+                        {
+                            _notch_start_freq = notch.frequency_hz;
+                        }
+                        else
+                        {
+                            _notch_selected = false;
+                            _notch_highlighted_index = -1;
+                            _notch_start_freq = -1;
+                        }
+                    }
+                    else
+                    {
+                        _notch_highlighted_index = -1;
+                        _notch_start_freq = -1;
+                    }
+                }
+            }
+            public bool MNFSelected
+            {
+                get { return _mnf_selected; }
+                set { _mnf_selected = value; }
+            }
+            public bool MNFPlusSelected
+            {
+                get { return _mnf_plus_selected; }
+                set { _mnf_plus_selected = value; }
+            }
+            public bool SnapSelected
+            {
+                get { return _snap_selected; }
+                set { _snap_selected = value; }
+            }
+            public bool AutoZoomSelected
+            {
+                get { return _autozoom_selected; }
+                set { _autozoom_selected = value; }
+            }
+            public bool LowSelected
+            {
+                get { return _low_selected; }
+                set { _low_selected = value; }
+            }
+            public bool HighSelected
+            {
+                get { return _high_selected; }
+                set { _high_selected = value; }
+            }
+            public bool TopSelected
+            {
+                get { return _top_selected; }
+                set { _top_selected = value; }
+            }
+            public bool AdjustLow
+            {
+                get { return _adjust_low; }
+                set { _adjust_low = value; }
+            }
+            public bool AdjustHigh
+            {
+                get { return _adjust_high; }
+                set { _adjust_high = value; }
+            }
+            public bool AdjustShift
+            {
+                get { return _adjust_shift; }
+                set { _adjust_shift = value; }
+            }
+            public float Low
+            {
+                get
+                {
+                    if (_owningmeter.MOX)
+                    {
+                        DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+
+                        switch(mode)
+                        {
+                            case DSPMode.AM:
+                            case DSPMode.SAM:
+                            case DSPMode.FM:
+                            case DSPMode.DSB:
+                            case DSPMode.DRM:
+                            case DSPMode.SPEC:
+                            //case DSPMode.LSB:
+                            //case DSPMode.DIGL:
+                                return -_tx_high;
+                            default:
+                                return _tx_low;
+                        }
+                    }
+                    else
+                    {
+                        return _showVfoA ? _vfoA_low : _vfoB_low;
+                    }
+                }
+                set
+                {
+                    if (_console == null) return;
+                    if (_owningmeter.MOX)
+                    {
+                        DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                        float val = Common.CtrlKeyDown ? (float)(Math.Round(value / 10) * 10) : value;
+                        if (!_snap_lines_ignore && _snap_lines && !_auto_zoom) val = findNearestVGrid((int)val);
+
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            switch (mode)
+                            {
+                                case DSPMode.AM:
+                                case DSPMode.DIGL:
+                                case DSPMode.DRM:
+                                case DSPMode.DSB:
+                                case DSPMode.FM:
+                                case DSPMode.LSB:
+                                case DSPMode.SAM:
+                                case DSPMode.SPEC:
+                                    if (val > 0) val = 0;
+                                    _console.TXFilterHigh = (int)Math.Abs(val);
+                                    break;
+                                default:
+                                    if (val < 0) val = 0;
+                                    _console.TXFilterLow = (int)Math.Abs(val);
+                                    break;
+                            }
+                        }));
+                    }
+                    else
+                    {
+                        int low = (int)(Common.CtrlKeyDown ? (float)(Math.Round(value / 10) * 10) : value);
+                        if(!_snap_lines_ignore && _snap_lines && !_auto_zoom) low = findNearestVGrid(low);
+                        int old_low = _showVfoA ? _vfoA_low : _vfoB_low;
+                        if (old_low == low) return;
+
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            bool mirror = _console.CurrentDSPhasTwoSidebands(_owningmeter.RX) && !Common.ShiftKeyDown;
+
+                            if (_owningmeter.RX == 1)
+                            {
+                                int high = _console.RX1FilterHigh;
+                                _console.SelectRX1VarFilter(true, true);
+
+                                if (mirror)
+                                {
+                                    if (low > 0) low = 0;
+                                    _console.UpdateRX1Filters(low, Math.Abs(low));
+                                }
+                                else
+                                {
+                                    if (low > high - 10) low = high - 10;
+                                    _console.UpdateRX1Filters(low, high);
+                                }
+                            }
+                            else if(_owningmeter.RX == 2)
+                            {
+                                int high = _console.RX2FilterHigh;
+                                _console.SelectRX2VarFilter(true, true);
+
+                                if (mirror)
+                                {
+                                    if (low > 0) low = 0;
+                                    _console.UpdateRX2Filters(low, Math.Abs(low));
+                                }
+                                else
+                                {
+                                    if (low > high - 10) low = high - 10;
+                                    _console.UpdateRX2Filters(low, high);
+                                }
+                            }
+                        }));
+                    }
+                }
+            }
+            public float High
+            {
+                get
+                {
+                    if (_owningmeter.MOX)
+                    {
+                        DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+
+                        switch (mode)
+                        {
+                            //case DSPMode.LSB:
+                            //case DSPMode.DIGL:
+                            //    return -_tx_low;
+                            default:
+                                return _tx_high;
+                        }
+                    }
+                    else
+                    {
+                        return _showVfoA ? _vfoA_high : _vfoB_high;
+                    }
+                }
+                set
+                {
+                    if (_console == null) return;
+                    if (_owningmeter.MOX)
+                    {
+                        DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                        float val = Common.CtrlKeyDown ? (float)(Math.Round(value / 10) * 10) : value;
+                        if (!_snap_lines_ignore && _snap_lines && !_auto_zoom) val = findNearestVGrid((int)val);
+
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            switch (mode)
+                            {
+                                case DSPMode.DIGL:
+                                case DSPMode.LSB:
+                                    if (val > 0) val = 0;
+                                    _console.TXFilterLow = (int)Math.Abs(val);
+                                    break;
+                                default:
+                                    if (val < 0) val = 0;
+                                    _console.TXFilterHigh = (int)Math.Abs(val);
+                                    break;
+                            }
+                        }));
+                    }
+                    else
+                    {
+                        int high = (int)(Common.CtrlKeyDown ? (float)(Math.Round(value / 10) * 10) : value);
+                        if (!_snap_lines_ignore && _snap_lines && !_auto_zoom) high = findNearestVGrid(high);
+                        int old_high = _showVfoA ? _vfoA_high : _vfoB_high;                        
+                        if (old_high == high) return;
+
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            bool mirror = _console.CurrentDSPhasTwoSidebands(_owningmeter.RX) && !Common.ShiftKeyDown;
+
+                            if (_owningmeter.RX == 1)
+                            {
+                                int low = _console.RX1FilterLow;
+                                _console.SelectRX1VarFilter(true, true);
+
+                                if (mirror)
+                                {
+                                    if (high < 0) high = 0;
+                                    _console.UpdateRX1Filters(-high, high);
+                                }
+                                else
+                                {
+                                    if (high < low + 10) high = low + 10;
+                                    _console.UpdateRX1Filters(low, high);
+                                }
+                            }
+                            else if (_owningmeter.RX == 2)
+                            {
+                                int low = _console.RX2FilterLow;
+                                _console.SelectRX2VarFilter(true, true);
+
+                                if (mirror)
+                                {
+                                    if (high < 0) high = 0;
+                                    _console.UpdateRX2Filters(-high, high);
+                                }
+                                else
+                                {
+                                    if (high < low + 10) high = low + 10;
+                                    _console.UpdateRX2Filters(low, high);
+                                }
+                            }
+                        }));
+                    }
+                }
+            }
+            public void AdjustNotch(float delta)
+            {
+                if (_console == null || !_notch_selected || _notch_highlighted_index == -1) return;
+
+                bool ok = false;
+                double new_freq = (int)delta + _notch_start_freq;
+                new_freq = Common.CtrlKeyDown ? (float)(Math.Round(new_freq / 10) * 10) : new_freq;
+
+                lock (MiniSpec.NotchLocker)
+                {
+                    MiniSpec.Notch n = MiniSpec.GetNotch(_notch_highlighted_index);
+                    if (n != null)
+                    {
+                        double vfoFreq = (_showVfoA ? _owningmeter.VfoA : _owningmeter.VfoB) * 1e6;
+                        ok = n.frequency_hz != new_freq && ((new_freq >= vfoFreq - _extent_hz) && (new_freq <= vfoFreq + _extent_hz));
+                    }
+                }
+
+                if (ok)
+                {
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.ChangeNotchCentreFrequency(null, new_freq, _owningmeter.RX, _notch_highlighted_index);
+                    }));
+                }
+            }
+            public void Shift(float shift_hz)
+            {            
+                if (_owningmeter.MOX)
+                {
+
+                }
+                else
+                {
+                    if (shift_hz == 0) return;
+                    float shift = (int)shift_hz;
+                    float fLow = _start_low + shift;
+                    float fHigh = _start_high + shift;
+                    if (Common.CtrlKeyDown)
+                    {
+                        fLow = (float)(Math.Round(fLow / 10) * 10);
+                        fHigh = (float)(Math.Round(fHigh / 10) * 10);
+                    }
+                    int low = (int)fLow;
+                    int high = (int)fHigh;
+                    _console.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        _console.LimitFilterToSidebands(ref low, ref high, _owningmeter.RX, true);
+                        if (_owningmeter.RX == 1)
+                        {
+                            _console.SelectRX1VarFilter(true, true);
+                            _console.UpdateRX1Filters(low, high);
+                        }
+                        else if (_owningmeter.RX == 2)
+                        {
+                            _console.SelectRX2VarFilter(true, true);
+                            _console.UpdateRX2Filters(low, high);
+                        }
+                    }));
+                }
+            }
+            public string FilterName
+            {
+                get
+                {
+                    if (_owningmeter.MOX)
+                    {
+                        //if(!string.IsNullOrEmpty(_pa_profile)) return _pa_profile;
+                        if (!string.IsNullOrEmpty(_tx_profile)) return _tx_profile;
+                        return "TX";
+                    }
+                    else
+                    {
+                        return _showVfoA ? _vfoA_name : _vfoB_name;
+                    }
+                }
+            }
+            public string ModeString
+            {
+                get
+                {
+                    return _showVfoA ? _owningmeter.ModeVfoA.ToString() : _owningmeter.ModeVfoB.ToString();
+                }
+            }
+            public DSPMode Mode
+            {
+                get
+                {
+                    return _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                }
+            }
+            public double CentreFrequencyHZ
+            {
+                get
+                {
+                    double freq = _showVfoA ? _owningmeter.VfoA : _owningmeter.VfoB;
+                    return freq * 1e6;
+                }
+            }
+            public int RXExtentHZ
+            {
+                get
+                {
+                    int ret = _extent_hz;
+                    int high = _showVfoA ? _vfoA_high : _vfoB_high;
+
+                    // fm mode with a large high cut can be > than extent
+                    DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                    if (mode == DSPMode.FM && high > _extent_hz) ret = high + 2000;
+
+                    return ret;
+                }
+            }
+            public int ExtentHZ
+            {
+                get
+                {
+                    if (_owningmeter.MOX)
+                    {
+                        return _tx_extent_hz;
+                    }
+                    else
+                    {
+                        return RXExtentHZ;
+                    }
+                }
+            }
+            public bool ShowCWZeroLine
+            {
+                get { return _owningmeter.ShowCWZero; }
+            }
+            public bool ShowFilterLimits
+            {
+                get { return _show_limits; }
+                set { _show_limits = value; }
+            }
+            public bool FixedRXZoom
+            {
+                get { return _fixed_rx_zoom; }
+                set { _fixed_rx_zoom = value; }
+            }
+            public bool FixedTXZoom
+            {
+                get { return _fixed_tx_zoom; }
+                set { _fixed_tx_zoom = value; }
+            }
+            public float RXZoom
+            {
+                get { return _rx_zoom; }
+                set { _rx_zoom = value; }
+            }
+            public float TXZoom
+            {
+                get { return _tx_zoom; }
+                set { _tx_zoom = value; }
+            }
+            public float ModeZoom
+            {
+                get
+                {
+                    DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                    switch (mode)
+                    {
+                        case DSPMode.LSB:
+                        case DSPMode.USB:
+                        case DSPMode.DIGL:
+                        case DSPMode.DIGU:
+                            return _sidebands_scale;
+                        case DSPMode.CWL:
+                        case DSPMode.CWU:
+                            return _cw_scale;
+                        default:
+                            return _others_scale;
+                    }
+                }
+            }
+            //
+            public float SidebandsScale
+            {
+                get { return _sidebands_scale; }
+                set { _sidebands_scale = value; }
+            }
+            public float CWScale
+            {
+                get { return _cw_scale; }
+                set { _cw_scale = value; }
+            }
+            public float OthersScale
+            {
+                get { return _others_scale; }
+                set { _others_scale = value; }
+            }
+            //
+            public System.Drawing.Color Colour
+            {
+                get { return _colour; }
+                set { _colour = value; }
+            }
+            public float Padding
+            {
+                get { return _padding; }
+                set { _padding = value; }
+            }
+            //private float cosineFalloff(float distance, int falloff_steps)
+            //{
+            //    return 1f - (0.5f * (1f + (float)Math.Cos(Math.PI * distance / falloff_steps)));
+            //}
+
+            private void buildSpectrumGreyScale(bool do_low, bool do_high)
+            {
+                if (!_use_greyscale || (!do_low && !do_high)) return;
+
+                lock (_spec_data_lock)
+                {
+                    float bandwidth = _owningmeter.MOX ? _tx_extent_hz * 2f : _extent_hz * 2f;
+                    double min_notch = _owningmeter.MOX ? _owningmeter.MinNotchWidthTX : _owningmeter.MinNotchWidthRX;
+                    float falloff_span = (float)(min_notch/* / 2f*/); // removed /2 to better align with actual filter characteristic
+                    float frequency_step = bandwidth / _spec_data.Length;
+
+                    int center_index = _spec_data.Length / 2;
+                    int low_index = center_index + (int)(Low / frequency_step);
+                    int high_index = center_index + (int)(High / frequency_step);
+                    //int falloff_steps = (int)(falloff_span / frequency_step); // cosine falloff, not used
+
+                    for (int i = 0; i < _spec_greyscale.Length; i++)
+                    {
+                        if (do_low && i < low_index)
+                        {
+                            _spec_greyscale[i] = 1f;
+                        }
+                        else if (do_high && i > high_index)
+                        {
+                            _spec_greyscale[i] = 1f;
+                        }
+                        else if (i >= low_index && i <= high_index)
+                        {
+                            _spec_greyscale[i] = 0f;
+                        }
+
+                        // cosine fallof, not used
+                        //if (do_low && i < low_index - falloff_steps)
+                        //{
+                        //    _spec_greyscale[i] = 1f;
+                        //}
+                        //else if (do_high && i > high_index + falloff_steps)
+                        //{
+                        //    _spec_greyscale[i] = 1f;
+                        //}
+                        //else if (i >= low_index && i <= high_index)
+                        //{
+                        //    _spec_greyscale[i] = 0f;
+                        //}
+                        //else if (do_low && i >= low_index - falloff_steps && i < low_index)
+                        //{
+                        //    _spec_greyscale[i] = cosineFalloff(low_index - i, falloff_steps);
+                        //}
+                        //else if (do_high && i <= high_index + falloff_steps && i > high_index)
+                        //{
+                        //    _spec_greyscale[i] = cosineFalloff(i - high_index, falloff_steps);
+                        //}
+                    }
+                }
+            }
+
+            public override void Update(int rx, ref List<Reading> readingsUsed, Dictionary<Reading, object> all_list_item_readings = null)
+            {
+                int id = _owningmeter.RX == 1 ? 0 : 1;
+
+                MiniSpec.clsMiniSpec miniRx = MiniSpec.GetMiniRX(id);
+                
+                if (miniRx != null)
+                {                   
+                    int index = MiniSpec.GetMiniRX(id).DataIndex;
+
+                    if (index != _old_data_index)
+                    {
+                        float[] data = MiniSpec.GetMiniRX(id).Data;
+
+                        if (data != null)
+                        {
+                            lock (_spec_data_lock)
+                            {
+                                if (data.Length != _spec_data.Length)
+                                {
+                                    _spec_data = new float[data.Length];
+                                    _spec_greyscale = new float[data.Length];
+                                    for (int i = 0; i < _spec_data.Length; i++)
+                                    {
+                                        _spec_data[i] = _spec_min;
+                                    }
+                                    buildSpectrumGreyScale(true, true);
+                                }
+
+                                // copy
+                                unsafe
+                                {
+                                    fixed (void* rptr = &data[0])
+                                    fixed (void* wptr = &_spec_data[0])
+                                        Win32.memcpy(wptr, rptr, _spec_data.Length * sizeof(float));
+
+                                    float[] data_raw = MiniSpec.GetMiniRX(id).DataRaw;
+
+                                    fixed (void* rptr = &data_raw[0])
+                                    fixed (void* wptr = &_spec_data_raw[0])
+                                        Win32.memcpy(wptr, rptr, data_raw.Length * sizeof(float));
+                                }
+
+                                _spec_min = _spec_data.Min();
+                                _spec_max = _spec_data.Max();
+
+                                _spec_raw_min = _spec_data_raw.Min();
+                                _spec_raw_max = _spec_data_raw.Max();
+                                //_spec_range = _spec_max - _spec_min;                                
+                            }
+                        }
+
+                        _old_data_index = index;
+                    }
+                }
+            }
+            public object SpectrumDataLock
+            {
+                get 
+                {
+                    lock (_spec_data_lock)
+                    {
+                        return _spec_data_lock;
+                    }
+                }
+            }
+            public float[] SpectrumData
+            {
+                get 
+                {
+                    lock (_spec_data_lock) 
+                    { 
+                        return _spec_data; 
+                    }
+                }
+            }
+            public float[] SpectrumDataRaw
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        return _spec_data_raw;
+                    }
+                }
+            }
+            public float[] GreyscaleData
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        return _spec_greyscale;
+                    }
+                }
+            }
+            public float SpectrumDataMin
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        return _spec_min;
+                    }
+                }
+            }
+            public float SpectrumDataMax
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        return _spec_max;
+                    }
+                }
+            }
+            public float SpectrumDataRawMin
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        return _spec_raw_min;
+                    }
+                }
+            }
+            public float SpectrumDataRawMax
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        return _spec_raw_max;
+                    }
+                }
+            }
+            public int SpectrumGridMin
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        if(_owningmeter.MOX)
+                            return _tx_spec_grid_min;
+                        else
+                            return _rx_spec_grid_min;
+                    }
+                }
+            }
+            public int SpectrumGridMax
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        if (_owningmeter.MOX)
+                            return _tx_spec_grid_max;
+                        else
+                            return _rx_spec_grid_max;
+                    }
+                }
+            }
+            public float SpectrumGridRange
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        if (_owningmeter.MOX)
+                            return _tx_spec_grid_range;
+                        else
+                            return _rx_spec_grid_range;
+                    }
+                }
+            }
+            public int WaterfallMin
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        if (_owningmeter.MOX)
+                        {
+                            return _tx_waterfall_min;
+                        }
+                        else
+                        {
+                            int min;
+                            if (_owningmeter.RX == 1)
+                            {
+                                if (Display.RX1WaterfallAGC && Display.WaterfallUseNFForACGRX1)
+                                    min = (int)Display.ActiveNoiseFloorRX1;
+                                else
+                                {
+                                    if (Display.RX1WaterfallAGC)
+                                    {
+                                        float calc = (((_waterfall_min_agc * 8) + (_spec_raw_min * 2)) / 10) + 1;
+                                        _waterfall_min_agc = calc;
+                                        min = (int)_waterfall_min_agc;
+                                        //min = (int)_waterfall_min_agc;
+                                    }
+                                    else
+                                    {
+                                        min = _rx_waterfall_min;
+                                    }
+                                }
+
+                                min -= (int)Display.WaterfallAGCOffsetRX1;
+                            }
+                            else
+                            {
+                                if (Display.RX2WaterfallAGC && Display.WaterfallUseNFForACGRX2)
+                                    min = (int)Display.ActiveNoiseFloorRX2;
+                                else
+                                {
+                                    if (Display.RX2WaterfallAGC)
+                                    {
+                                        float calc = (((_waterfall_min_agc * 8) + (_spec_raw_min * 2)) / 10) + 1;
+                                        _waterfall_min_agc = calc;
+                                        min = (int)_waterfall_min_agc;
+                                        //min = (int)_waterfall_min_agc;
+                                    }
+                                    else
+                                    {
+                                        min = _rx_waterfall_min;
+                                    }
+                                }
+
+                                min -= (int)Display.WaterfallAGCOffsetRX2;
+                            }
+                            return min;
+                        }
+                    }
+                }
+            }
+            public int WaterfallMax
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        if (_owningmeter.MOX)
+                            return _tx_waterfall_max;
+                        else
+                            return _rx_waterfall_max;
+                    }
+                }
+            }
+            public float WaterfallRange
+            {
+                get
+                {
+                    lock (_spec_data_lock)
+                    {
+                        if (_owningmeter.MOX)
+                            return _tx_waterfall_range;
+                        else
+                            return _rx_waterfall_range;
+                    }
+                }
+            }
+            public override void SetRXSpectrumGridMin(int min)
+            {
+                lock (_spec_data_lock)
+                {
+                    _rx_spec_grid_min = min;
+                    _rx_spec_grid_range = _rx_spec_grid_max - _rx_spec_grid_min;
+                }
+            }
+            public override void SetRXSpectrumGridMax(int max)
+            {
+                lock (_spec_data_lock)
+                {
+                    _rx_spec_grid_max = max;
+                    _rx_spec_grid_range = _rx_spec_grid_max - _rx_spec_grid_min;
+                }
+            }
+            public override void SetTXSpectrumGridMin(int min)
+            {
+                lock (_spec_data_lock)
+                {
+                    _tx_spec_grid_min = min;
+                    _tx_spec_grid_range = _tx_spec_grid_max - _tx_spec_grid_min;
+                }
+            }
+            public override void SetTXSpectrumGridMax(int max)
+            {
+                lock (_spec_data_lock)
+                {
+                    _tx_spec_grid_max = max;
+                    _tx_spec_grid_range = _tx_spec_grid_max - _tx_spec_grid_min;
+                }
+            }
+            //
+            public override void SetRXWaterfallMin(int min)
+            {
+                lock (_spec_data_lock)
+                {
+                    _rx_waterfall_min = min;
+                    _rx_waterfall_range = _rx_waterfall_max - _rx_waterfall_min;
+                }
+            }
+            public override void SetRXWaterfallMax(int max)
+            {
+                lock (_spec_data_lock)
+                {
+                    _rx_waterfall_max = max;
+                    _rx_waterfall_range = _rx_waterfall_max - _rx_waterfall_min;
+                }
+            }
+            public override void SetTXWaterfallMin(int min)
+            {
+                lock (_spec_data_lock)
+                {
+                    _tx_waterfall_min = min;
+                    _tx_waterfall_range = _tx_waterfall_max - _tx_waterfall_min;
+                }
+            }
+            public override void SetTXWaterfallMax(int max)
+            {
+                lock (_spec_data_lock)
+                {
+                    _tx_waterfall_max = max;
+                    _tx_waterfall_range = _tx_waterfall_max - _tx_waterfall_min;
+                }
+            }
+            //
+            public int CWPichOffset
+            {
+                get
+                {
+                    DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                    int pitch = 0;
+                    switch (mode)
+                    {
+                        case (DSPMode.CWL):
+                            pitch = _owningmeter.CWPitch;
+                            break;
+                        case (DSPMode.CWU):
+                            pitch = -_owningmeter.CWPitch;
+                            break;
+                    }
+                    return pitch;
+                }
+            }
+            public int SidebandModeSign
+            {
+                get
+                {
+                    if (!_sideband_mode) return 0;
+
+                    DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                    switch (mode)
+                    {
+                        case DSPMode.CWL:
+                        case DSPMode.LSB:
+                        case DSPMode.DIGL:
+                            return -1;
+                        case DSPMode.CWU:
+                        case DSPMode.USB:
+                        case DSPMode.DIGU:
+                            return 1;
+                        default:
+                            return 0;
+                    }
+                }
+            }
+            public bool IsCW
+            {
+                get
+                {
+                    DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                    return mode == DSPMode.CWL || mode == DSPMode.CWU;
+                }
+            }
+            public int ModeSign
+            {
+                get
+                {
+                    DSPMode mode = _showVfoA ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                    switch (mode)
+                    {
+                        case DSPMode.CWL:
+                        case DSPMode.LSB:
+                        case DSPMode.DIGL:
+                            return -1;
+                        case DSPMode.CWU:
+                        case DSPMode.USB:
+                        case DSPMode.DIGU:
+                            return 1;
+                        default:
+                            return 0;
+                    }
+                }
             }
         }
         internal class clsTextOverlay : clsMeterItem
@@ -12894,6 +16199,9 @@ namespace Thetis
             private float _fPadY;
             private float _fHeight;
 
+            private double _min_notch_width_rx;
+            private double _min_notch_width_tx;
+
             private bool _split;
             private double _vfoA;
             private double _vfoB;
@@ -12907,6 +16215,16 @@ namespace Thetis
             private Band _bandTX;
             private string _filterVfoAname;
             private string _filterVfoBname;
+            private int _tx_filter_low;
+            private int _tx_filter_high;
+            private string _pa_profile;
+            private string _tx_profile;
+            private int _filter_vfoa_low;
+            private int _filter_vfoa_high;
+            private int _filter_vfob_low;
+            private int _filter_vfob_high;
+            private int _filter_max_width;
+            private int _filter_max_shift;
             private bool _rx2Enabled;
             private bool _multiRxEnabled;
             private DateTime _qso_start;
@@ -12932,9 +16250,24 @@ namespace Thetis
             private string _vfoA_band_text;
             private string _vfoB_band_text;
 
+            private int _rx_spectrum_grid_min;
+            private int _rx_spectrum_grid_max;
+            private int _tx_spectrum_grid_min;
+            private int _tx_spectrum_grid_max;
+
+            private int _rx_waterfall_min;
+            private int _rx_waterfall_max;
+            private int _tx_waterfall_min;
+            private int _tx_waterfall_max;
+
             private bool _vfoA_lock;
             private bool _vfoB_lock;
             private bool _vfoA_sync;
+
+            private bool _tnf_active;
+
+            private int _cwpitch;
+            private bool _show_cwzero;
 
             internal readonly object _meterItemsLock = new object();
 
@@ -12990,6 +16323,8 @@ namespace Thetis
                     case MeterType.HISTORY: ret = variable_index == 0 ? "Left Axis" : "Right Axis"; break;
                     case MeterType.TUNESTEP_BUTTONS: ret = Reading.NONE.ToString(); break;
                     case MeterType.DISCORD_BUTTONS: ret = Reading.NONE.ToString(); break;
+                    case MeterType.FILTER_DISPLAY: ret = Reading.NONE.ToString(); break;
+                    case MeterType.DIAL_DISPLAY: ret = Reading.NONE.ToString(); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg).ToString(); break; break.ToString(); break;
                 }
                 return ret;
@@ -13037,6 +16372,8 @@ namespace Thetis
                     case MeterType.HISTORY: return 2;
                     case MeterType.TUNESTEP_BUTTONS: return 0;
                     case MeterType.DISCORD_BUTTONS: return 0;
+                    case MeterType.FILTER_DISPLAY: return 0;
+                    case MeterType.DIAL_DISPLAY: return 0;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return 0;
@@ -13089,6 +16426,8 @@ namespace Thetis
                     case MeterType.HISTORY: AddHistory(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.TUNESTEP_BUTTONS: AddTunestepButtons(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.DISCORD_BUTTONS: AddDiscordButtons(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.FILTER_DISPLAY: AddFilterDisplay(nDelay, 0, out bBottom, 0.2f, restoreIg); break;
+                    case MeterType.DIAL_DISPLAY: AddDial(nDelay, 0, out bBottom, 1f, restoreIg); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
@@ -13739,6 +17078,34 @@ namespace Thetis
                 clsFadeCover fc = getFadeCover(ig.ID);
                 if (fc != null) addMeterItem(fc);
                 
+                addMeterItem(ig);
+
+                return me.ID;
+            }
+            public string AddDial(int nMSupdate, float fTop, out float fBottom, float fSize, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsDialDisplay me = new clsDialDisplay(this);
+                me.ParentID = ig.ID;
+                me.Primary = true;
+                me.TopLeft = new PointF(0.5f - (fSize / 2f), fTop + _fPadY - (_fHeight * 0.75f));
+                me.Size = new SizeF(fSize, fSize);
+                me.ZOrder = 2;
+                addMeterItem(me);
+
+                fBottom = me.TopLeft.Y + me.Size.Height;
+
+                ig.TopLeft = me.TopLeft;
+                ig.Size = new SizeF(me.Size.Width, fBottom);
+                ig.MeterType = MeterType.DIAL_DISPLAY;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
                 addMeterItem(ig);
 
                 return me.ID;
@@ -15705,6 +19072,35 @@ namespace Thetis
 
                 return bb.ID;
             }
+            public string AddFilterDisplay(int nMSupdate, float fTop, out float fBottom, float fSize, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsFilterItem fi = new clsFilterItem(this, ig);
+                fi.ParentID = ig.ID;
+
+                fi.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
+                fi.Size = new SizeF(1f - _fPadX * 2f, fSize);
+
+                fi.ZOrder = 1;
+                addMeterItem(fi);
+
+                fBottom = fi.TopLeft.Y + fi.Size.Height;
+
+                ig.TopLeft = fi.TopLeft;
+                ig.Size = new SizeF(fi.Size.Width, fBottom);
+                ig.MeterType = MeterType.FILTER_DISPLAY;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
+                addMeterItem(ig);
+
+                return fi.ID;
+            }
             public string AddVFODisplay(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 clsItemGroup ig = new clsItemGroup();
@@ -15890,6 +19286,18 @@ namespace Thetis
                 _filterVfoB = Filter.FIRST;
                 _filterVfoAname = "";
                 _filterVfoBname = "";
+                _filter_max_width = -1;
+                _filter_max_shift = -1;
+                _tx_filter_low = 0;
+                _tx_filter_high = 0;
+                _pa_profile = "";
+                _tx_profile = "";
+                _filter_vfoa_low = 0;
+                _filter_vfoa_high = 0;
+                _filter_vfob_low = 0;
+                _filter_vfob_high = 0;
+                _min_notch_width_rx = 100;
+                _min_notch_width_tx = 10; ;
                 _rx2Enabled = false;
                 _multiRxEnabled = false;
                 _qso_start = DateTime.Now;
@@ -15921,6 +19329,21 @@ namespace Thetis
 
                 _vfoA_band_text = "";
                 _vfoB_band_text = "";
+
+                _rx_spectrum_grid_min = -200;
+                _rx_spectrum_grid_max = -200;
+                _tx_spectrum_grid_min = -200;
+                _tx_spectrum_grid_max = -200;
+
+                _rx_waterfall_min = -200;
+                _rx_waterfall_max = -200;
+                _tx_waterfall_min = -200;
+                _tx_waterfall_max = -200;
+
+                _tnf_active = false;
+
+                _cwpitch = 600;
+                _show_cwzero = false;
             }
             public BandGroups GetBandGroupFromBand(Band b)
             {
@@ -16007,17 +19430,284 @@ namespace Thetis
                         c.BandVHFSelected = true;
                 }));
             }
-            public void UpdateFilterButtons(Filter newFilter, string name)
+            public (string, string) GetWebImageIDsFrom4Char(string fourchar)
+            {
+                string id = null;
+                string parentid = null;
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                    {
+                        clsWebImage wi = mis.Value as clsWebImage;
+                        if(wi != null && !string.IsNullOrEmpty(wi.FourChar) && wi.FourChar == fourchar)
+                        {
+                            id = ID;
+                            parentid = wi.ParentID;
+                        }
+                    }
+
+                }
+                return (id, parentid);
+            }
+            public bool IsWebImageBackgroundShown()
+            {
+                bool ret = false;
+                lock (_meterItemsLock)
+                {                    
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                    {
+                        clsWebImage wi = mis.Value as clsWebImage;
+                        if (wi != null)
+                        {
+                            ret |= wi.ShowBackground;
+                            if (ret) break;
+                        }
+                    }
+                }
+                return ret;
+            }
+            public void UpdateFilterDetails(Filter newFilter, string name, int low, int high, bool vfoA, bool vfoB, int max_width, int max_size)
             {
                 if (_console == null) return;
 
                 lock (_meterItemsLock)
                 {
-                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems.Where(mis => mis.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS))
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
                     {
-                        clsFilterButtonBox mi = (clsFilterButtonBox)mis.Value;
+                        clsMeterItem mi = mis.Value;
 
-                        mi.FilterChanged(newFilter, name);
+                        mi.FilterChanged(newFilter, name, low, high, vfoA, vfoB, max_width, max_size);
+                    }
+                }
+            }
+            public void PAProfileChanged(string profile)
+            {
+                if (_console == null) return;
+
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                    {
+                        clsMeterItem mi = mis.Value;
+
+                        mi.PAProfileChanged(profile);
+                    }
+                }
+            }
+            public bool TNFActive
+            {
+                get { return _tnf_active; }
+                set
+                {
+                    _tnf_active = value;
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.TNFActive = TNFActive;
+                        }
+                    }
+                }
+            }
+            public int CWPitch
+            {
+                get { return _cwpitch; }
+                set { _cwpitch = value; }
+            }
+            public bool ShowCWZero
+            {
+                get { return _show_cwzero; }
+                set { _show_cwzero = value; }
+            }
+            public int RXSpectrumGridMin
+            {
+                get
+                {
+                    return _rx_spectrum_grid_min;
+                }
+                set
+                {
+                    _rx_spectrum_grid_min = value;
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.SetRXSpectrumGridMin(_rx_spectrum_grid_min);
+                        }
+                    }
+                }
+            }
+            public int RXSpectrumGridMax
+            {
+                get
+                {
+                    return _rx_spectrum_grid_max;
+                }
+                set
+                {
+                    _rx_spectrum_grid_max = value;
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.SetRXSpectrumGridMax(_rx_spectrum_grid_max);
+                        }
+                    }
+                }
+            }
+            public int TXSpectrumGridMin
+            {
+                get
+                {
+                    return _tx_spectrum_grid_min;
+                }
+                set
+                {
+                    _tx_spectrum_grid_min = value;
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.SetTXSpectrumGridMin(_tx_spectrum_grid_min);
+                        }
+                    }
+                }
+            }
+            public int TXSpectrumGridMax
+            {
+                get
+                {
+                    return _tx_spectrum_grid_max;
+                }
+                set
+                {
+                    _tx_spectrum_grid_max = value;
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.SetTXSpectrumGridMax(_tx_spectrum_grid_max);
+                        }
+                    }
+                }
+            }
+            //
+            public int RXWaterfallMin
+            {
+                get
+                {
+                    return _rx_waterfall_min;
+                }
+                set
+                {
+                    _rx_waterfall_min = value;
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.SetRXWaterfallMin(_rx_waterfall_min);
+                        }
+                    }
+                }
+            }
+            public int RXWaterfallMax
+            {
+                get
+                {
+                    return _rx_waterfall_max;
+                }
+                set
+                {
+                    _rx_waterfall_max = value;
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.SetRXWaterfallMax(_rx_waterfall_max);
+                        }
+                    }
+                }
+            }
+            public int TXWaterfallMin
+            {
+                get
+                {
+                    return _tx_waterfall_min;
+                }
+                set
+                {
+                    _tx_waterfall_min = value;
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.SetTXWaterfallMin(_tx_waterfall_min);
+                        }
+                    }
+                }
+            }
+            public int TXWaterfallMax
+            {
+                get
+                {
+                    return _tx_waterfall_max;
+                }
+                set
+                {
+                    _tx_waterfall_max = value;
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.SetTXWaterfallMax(_tx_waterfall_max);
+                        }
+                    }
+                }
+            }
+            //
+            public void TXProfileChanged(string profile)
+            {
+                if (_console == null) return;
+
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                    {
+                        clsMeterItem mi = mis.Value;
+
+                        mi.TXProfileChanged(profile);
+                    }
+                }
+            }
+            public void UpdateTXFilterDetails(int low, int high)
+            {
+                if (_console == null) return;
+
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                    {
+                        clsMeterItem mi = mis.Value;
+
+                        mi.TXFilterChanged(low, high);
                     }
                 }
             }
@@ -16610,6 +20300,10 @@ namespace Thetis
                                             webimg.BypassCache = igs.DarkMode;
                                             webimg.WidthScale = igs.EyeScale;
 
+                                            webimg.Background = igs.GetSetting<bool>("webimage_background", false, false, false, false);
+                                            webimg.BackgroundInterval = igs.GetSetting<int>("webimage_background_interval", true, 5, 3600, 5);
+                                            webimg.BackgroundFourChar = igs.GetSetting<string>("webimage_background_4char", false, "", "", "");
+
                                             //webimg.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
                                             webimg.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f), _fPadY - (_fHeight * 0.75f));
                                             webimg.Size = new SizeF(/*ig.Size.Width*/ igs.EyeScale, webimg.ScaleSize/*ig.Size.Height * igs.EyeScale*//*igs.SpacerPadding*/);
@@ -16962,15 +20656,15 @@ namespace Thetis
                                             spacer.Padding = igs.SpacerPadding;
                                             
                                             spacer.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
-                                            spacer.Size = new SizeF(ig.Size.Width, igs.SpacerPadding);
+                                            spacer.Size = new SizeF(ig.Size.Width, spacer.Padding);
 
-                                            padding += igs.SpacerPadding;
+                                            padding += spacer.Padding;
                                         }
                                         ig.Size = new SizeF(ig.Size.Width, padding + (_fPadY - (_fHeight * 0.75f)));
                                         
                                         // recalc bounds for fade overlay cover as these will change as spacer changes
-                                        System.Drawing.RectangleF eyeBounds = getBounds(ig.ID);
-                                        if (!eyeBounds.IsEmpty)
+                                        System.Drawing.RectangleF bounds = getBounds(ig.ID);
+                                        if (!bounds.IsEmpty)
                                         {
                                             foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                             {
@@ -16982,6 +20676,159 @@ namespace Thetis
 
                                                 fc.FadeOnRx = igs.FadeOnRx;
                                                 fc.FadeOnTx = igs.FadeOnTx;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case MeterType.FILTER_DISPLAY:
+                                    {
+                                        bRebuild = true; // alwayys cause a rebuild as we relocate the spacer each time
+
+                                        float padding = 0f;
+
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_DISPLAY))
+                                        {
+                                            clsFilterItem fi = me.Value as clsFilterItem;
+                                            if (fi == null) continue;
+
+                                            fi.FadeOnRx = igs.FadeOnRx;
+                                            fi.FadeOnTx = igs.FadeOnTx;
+                                            fi.Colour = igs.Colour;
+                                            fi.Padding = igs.GetSetting<float>("filterdisplay_vertical_ratio", true, 0.15f, 1f, 0.2f);
+
+                                            fi.ShowFilterLimits = igs.GetSetting<bool>("filterdisplay_show_filter_limits", false, false, false, true);
+                                            fi.FixedRXZoom = igs.GetSetting<bool>("filterdisplay_show_fixed_rx_zoom", false, false, false, false);
+                                            fi.FixedTXZoom = igs.GetSetting<bool>("filterdisplay_show_fixed_tx_zoom", false, false, false, false);
+                                            fi.RXZoom = igs.GetSetting<float>("filterdisplay_rx_zoom", true, 1f, 10f, 1f);
+                                            fi.TXZoom = igs.GetSetting<float>("filterdisplay_tx_zoom", true, 1f, 20f, 1f);
+
+                                            fi.SidebandsScale = igs.GetSetting<float>("filterdisplay_sidebands_scale", true, 0f, 10f, 0f);
+                                            fi.CWScale = igs.GetSetting<float>("filterdisplay_cw_scale", true, 0f, 10f, 0f);
+                                            fi.OthersScale = igs.GetSetting<float>("filterdisplay_others_scale", true, 0f, 10f, 0f);
+
+                                            fi.DispMode = igs.GetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", false, MeterManager.clsFilterItem.DisplayMode.PANADAPTOR, MeterManager.clsFilterItem.DisplayMode.NONE, MeterManager.clsFilterItem.DisplayMode.PANAFALL);
+
+                                            fi.FontScale = igs.GetSetting<float>("filterdisplay_font_scale", true, 0.01f, 4f, 1f);
+
+                                            fi.FillSpectrum = igs.GetSetting<bool>("filterdisplay_fill_spec", false, false, false, true);
+                                            fi.DataLineColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_dataline_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
+                                            fi.DataFillColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_datafill_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
+                                            fi.WaterfallPal = igs.GetSetting<MeterManager.clsFilterItem.WaterfallPalette>("filterdisplay_wf_palette", false, MeterManager.clsFilterItem.WaterfallPalette.NONE, MeterManager.clsFilterItem.WaterfallPalette.NONE, MeterManager.clsFilterItem.WaterfallPalette.ENHANCED);
+                                            fi.WaterfallLowColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_wflow_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
+                                            fi.TextColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_text_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
+                                            fi.NumberHighlightColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.DarkRed);
+                                            fi.EdgesColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_edges_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Yellow);
+                                            fi.EdgeHighlightColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_edgehighlight_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
+                                            fi.MeterbackColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_meterback_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
+                                            fi.NotchColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_notch_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.OrangeRed);
+                                            fi.NotchHighlightColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_notchhighlight_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
+                                            fi.ExtentsColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_extents_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Gray);
+                                            fi.SidebandMode = igs.GetSetting<bool>("filterdisplay_sideband_mode", false, false, false, false);
+                                            fi.FrameInterval = igs.GetSetting<int>("filterdisplay_waterfall_frameupdate", true, 1, 1000, 4);
+                                            fi.Greyscale = igs.GetSetting<bool>("filterdisplay_use_grey", false, false, false, true);
+                                            fi.SnapLines = igs.GetSetting<bool>("filterdisplay_snap_lines", false, false, false, false);
+                                            fi.AutoZoom = igs.GetSetting<bool>("filterdisplay_autozoom", false, false, false, false);
+                                            fi.SnapLineColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_snap_line_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Gray);
+                                            fi.SettingOnColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_settingon_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
+                                            fi.ButtonHighlightColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_button_highlight_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Gray);
+                                            fi.ShowCharacteristic = igs.GetSetting<bool>("filterdisplay_characteristic", false, false, false, false);
+                                            fi.CharacteristicLow = igs.GetSetting<float>("filterdisplay_characteristic_low", true, -300f, -50f, -250f);
+
+                                            fi.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                            fi.Size = new SizeF(ig.Size.Width, fi.Padding);
+
+                                            padding += fi.Padding;
+                                        }
+                                        ig.Size = new SizeF(ig.Size.Width, padding + (_fPadY - (_fHeight * 0.75f)));
+
+                                        // recalc bounds for fade overlay cover as these will change
+                                        System.Drawing.RectangleF bounds = getBounds(ig.ID);
+                                        if (!bounds.IsEmpty)
+                                        {
+                                            foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                            {
+                                                clsFadeCover fc = fcs.Value as clsFadeCover;
+                                                if (fc == null) continue;
+
+                                                fc.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
+                                                fc.Size = new SizeF(ig.Size.Width, padding);
+
+                                                fc.FadeOnRx = igs.FadeOnRx;
+                                                fc.FadeOnTx = igs.FadeOnTx;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case MeterType.DIAL_DISPLAY:
+                                    {
+                                        bRebuild = true; // always cause a rebuild
+
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+
+                                        float padding = 0f;
+
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.DIAL_DISPLAY))
+                                        {
+                                            clsDialDisplay dial = me.Value as clsDialDisplay;
+                                            if (dial == null) continue;
+
+                                            dial.FadeOnRx = igs.FadeOnRx;
+                                            dial.FadeOnTx = igs.FadeOnTx;
+
+                                            //dial.Colour = igs.Colour;
+                                            dial.VScale = igs.GetSetting<float>("dialdisplay_vertical_ratio", true, 0.01f, 1f, 1f);
+                                            dial.FontScale = igs.GetSetting<float>("dialdisplay_font_scale", true, 0.01f, 1.1f, 1f);
+                                            dial.Accelerate = igs.GetSetting<bool>("dialdisplay_accelerate", false, false, false, false);
+                                            dial.VFOA = igs.GetSetting<bool>("dialdisplay_vfoa", false, false, false, true);
+                                            dial.AlwaysShowVFOs = igs.GetSetting<bool>("dialdisplay_alwaysshow_vfos", false, false, false, false);
+                                            dial.AlignWithTunestep = igs.GetSetting<bool>("dialdisplay_align_with_tunestep", false, false, false, true);
+
+                                            dial.UpThreshold = igs.GetSetting<int>("dialdisplay_increment", true, 90, 720, 540);
+                                            dial.DownThreshold = igs.GetSetting<int>("dialdisplay_decrement", true, 90, 720, 360);
+                                            dial.TuneStepIntervalSeconds = igs.GetSetting<int>("dialdisplay_interval", true, 1, 10, 2);
+                                            dial.MaxTuneStepChanges = igs.GetSetting<int>("dialdisplay_max_increments", true, 1, 30, 4);
+                                            dial.DegreesPerChange = igs.GetSetting<int>("dialdisplay_degrees_for_change", true, 1, 90, 5);
+
+                                            dial.TextColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_text", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
+                                            dial.CircleColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_cirlce", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
+                                            dial.PadColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_pad", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Blue);
+                                            dial.PadPressedColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_pad_pressed", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Orange);
+                                            dial.ButtonOnColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_button_on", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.CornflowerBlue);
+                                            dial.ButtonOffColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_button_off", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
+                                            dial.ButtonHighlightColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_button_highlight", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Gray);
+                                            dial.RingColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_ring", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Gray);
+                                            dial.SlowColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_slow", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Blue);
+                                            dial.HoldColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_hold", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Green);
+                                            dial.FastColour = igs.GetSetting<System.Drawing.Color>("dialdisplay_fast", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Red);
+
+                                            dial.TopLeft = new PointF(0.5f - (dial.VScale / 2f), _fPadY - (_fHeight * 0.75f));
+                                            dial.Size = new SizeF(dial.VScale, dial.VScale);
+
+                                            padding += dial.VScale;
+                                        }
+                                        ig.Size = new SizeF(ig.Size.Width, padding + (_fPadY - (_fHeight * 0.75f)));
+
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue;
+
+                                            fc.FadeOnRx = igs.FadeOnRx;
+                                            fc.FadeOnTx = igs.FadeOnTx;
+                                        }
+
+                                        // recalc bounds for fade overlay cover as these will change as scale changes
+                                        System.Drawing.RectangleF dialBounds = getBounds(ig.ID);
+                                        if (!dialBounds.IsEmpty)
+                                        {
+                                            foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                            {
+                                                clsFadeCover fc = fcs.Value as clsFadeCover;
+                                                if (fc == null) continue;
+
+                                                fc.TopLeft = new PointF(0.5f - (padding / 2f), _fPadY - (_fHeight * 0.75f));
+                                                fc.Size = new SizeF(padding, padding); // square
                                             }
                                         }
                                     }
@@ -17848,6 +21695,11 @@ namespace Thetis
                                             igs.DarkMode = webimg.BypassCache;
                                             igs.EyeScale = webimg.WidthScale;
                                             igs.HistoryDuration = (int)webimg.WebImageState;
+
+                                            igs.SetSetting<string>("webimage_4char", webimg.FourChar);
+                                            igs.SetSetting<bool>("webimage_background", webimg.Background);
+                                            igs.SetSetting<int>("webimage_background_interval", webimg.BackgroundInterval);
+                                            igs.SetSetting<string>("webimage_background_4char", webimg.BackgroundFourChar);
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                         {
@@ -17871,6 +21723,109 @@ namespace Thetis
                                             igs.Colour = spacer.Colour1;
                                             igs.MarkerColour = spacer.Colour2;
                                             igs.SpacerPadding = spacer.Padding;
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue; // skip
+
+                                            igs.FadeOnRx = fc.FadeOnRx;
+                                            igs.FadeOnTx = fc.FadeOnTx;
+                                        }
+                                    }
+                                    break;
+                                case MeterType.FILTER_DISPLAY:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_DISPLAY))
+                                        {
+                                            clsFilterItem fi = me.Value as clsFilterItem;
+                                            if (fi == null) continue; // skip
+
+                                            igs.Colour = fi.Colour;
+                                            igs.SetSetting<float>("filterdisplay_vertical_ratio", (float)fi.Padding);
+
+                                            igs.SetSetting<bool>("filterdisplay_show_filter_limits", fi.ShowFilterLimits);
+                                            igs.SetSetting<bool>("filterdisplay_show_fixed_rx_zoom", fi.FixedRXZoom);
+                                            igs.SetSetting<bool>("filterdisplay_show_fixed_tx_zoom", fi.FixedTXZoom);
+                                            igs.SetSetting<float>("filterdisplay_rx_zoom", fi.RXZoom);
+                                            igs.SetSetting<float>("filterdisplay_tx_zoom", fi.TXZoom);
+
+                                            igs.SetSetting<float>("filterdisplay_sidebands_scale", fi.SidebandsScale);
+                                            igs.SetSetting<float>("filterdisplay_cw_scale", fi.CWScale);
+                                            igs.SetSetting<float>("filterdisplay_others_scale", fi.OthersScale);
+
+                                            igs.SetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", fi.DispMode);
+
+                                            igs.SetSetting<float>("filterdisplay_font_scale", fi.FontScale);
+
+                                            igs.SetSetting<bool>("filterdisplay_fill_spec", fi.FillSpectrum);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_dataline_colour", fi.DataLineColour);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_datafill_colour", fi.DataFillColour);
+                                            igs.SetSetting<MeterManager.clsFilterItem.WaterfallPalette>("filterdisplay_wf_palette", fi.WaterfallPal);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_wflow_colour", fi.WaterfallLowColour);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_text_colour", fi.TextColour);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", fi.NumberHighlightColour);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_edges_colour", fi.EdgesColour);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_edgehighlight_colour", fi.EdgeHighlightColour);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_meterback_colour", fi.MeterbackColour);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_notch_colour", fi.NotchColour);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_notchhighlight_colour", fi.NotchHighlightColour);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_extents_colour", fi.ExtentsColour);
+                                            igs.SetSetting<bool>("filterdisplay_sideband_mode", fi.SidebandMode);
+                                            igs.SetSetting<int>("filterdisplay_waterfall_frameupdate", fi.FrameInterval);
+                                            igs.SetSetting<bool>("filterdisplay_use_grey", fi.Greyscale);
+                                            igs.SetSetting<bool>("filterdisplay_snap_lines", fi.SnapLines);
+                                            igs.SetSetting<bool>("filterdisplay_autozoom", fi.AutoZoom);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_snap_line_colour", fi.SnapLineColour);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_settingon_colour", fi.SettingOnColour);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_button_highlight_colour", fi.ButtonHighlightColour);
+                                            igs.SetSetting<bool>("filterdisplay_characteristic", fi.ShowCharacteristic);
+                                            igs.SetSetting<float>("filterdisplay_characteristic_low", fi.CharacteristicLow);
+                                        }
+                                        foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
+                                        {
+                                            clsFadeCover fc = fcs.Value as clsFadeCover;
+                                            if (fc == null) continue; // skip
+
+                                            igs.FadeOnRx = fc.FadeOnRx;
+                                            igs.FadeOnTx = fc.FadeOnTx;
+                                        }
+                                    }
+                                    break;
+                                case MeterType.DIAL_DISPLAY:
+                                    {
+                                        Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                                        foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.DIAL_DISPLAY))
+                                        {
+                                            clsDialDisplay dial = me.Value as clsDialDisplay;
+                                            if (dial == null) continue; // skip the img
+
+                                            //igs.Colour = dial.Colour;
+                                            igs.SetSetting<float>("dialdisplay_vertical_ratio", dial.VScale);
+                                            igs.SetSetting<float>("dialdisplay_font_scale", dial.FontScale);
+                                            igs.SetSetting<bool>("dialdisplay_accelerate", dial.Accelerate);
+                                            igs.SetSetting<bool>("dialdisplay_vfoa", dial.VFOA);
+                                            igs.SetSetting<bool>("dialdisplay_alwaysshow_vfos", dial.AlwaysShowVFOs);
+                                            igs.SetSetting<bool>("dialdisplay_align_with_tunestep", dial.AlignWithTunestep);
+
+                                            igs.SetSetting<int>("dialdisplay_increment", dial.UpThreshold);
+                                            igs.SetSetting<int>("dialdisplay_decrement", dial.DownThreshold);
+                                            igs.SetSetting<int>("dialdisplay_interval", dial.TuneStepIntervalSeconds);
+                                            igs.SetSetting<int>("dialdisplay_max_increments", dial.MaxTuneStepChanges);
+                                            igs.SetSetting<int>("dialdisplay_degrees_for_change", dial.DegreesPerChange);
+
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_text", dial.TextColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_cirlce", dial.CircleColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_pad", dial.PadColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_pad_pressed", dial.PadPressedColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_button_on", dial.ButtonOnColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_button_off", dial.ButtonOffColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_button_highlight", dial.ButtonHighlightColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_ring", dial.RingColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_slow", dial.SlowColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_hold", dial.HoldColour);
+                                            igs.SetSetting<System.Drawing.Color>("dialdisplay_fast", dial.FastColour);
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                         {
@@ -18302,7 +22257,36 @@ namespace Thetis
             public bool Enabled
             {
                 get { return _enabled; }
-                set { _enabled = value; }
+                set 
+                { 
+                    _enabled = value;
+
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.Enabled = _enabled;
+                        }
+                    }
+                }
+            }
+            public bool UpdateAlways()
+            {
+                bool update_always = false;
+                lock (_meterItemsLock)
+                {
+                    foreach (clsMeterItem mi in _meterItems.Values)
+                    {
+                        if (mi.UpdateAlways)
+                        {
+                            update_always = true;
+                            break;
+                        }
+                    }
+                }
+                return update_always;
             }
             public bool ShowOnRX
             {
@@ -18369,16 +22353,19 @@ namespace Thetis
             }
             private bool hasReading(Reading reading)
             {
-                bool bRet = false;
-                foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
+                lock (_meterItemsLock)
                 {
-                    if(kvp.Value.ReadingSource == reading)
+                    bool bRet = false;
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
                     {
-                        bRet = true;
-                        break;
+                        if (kvp.Value.ReadingSource == reading)
+                        {
+                            bRet = true;
+                            break;
+                        }
                     }
+                    return bRet;
                 }
-                return bRet;
             }
             public float GetBottom()
             {
@@ -18520,6 +22507,11 @@ namespace Thetis
                     }
                 }
             }
+            public bool Power
+            {
+                get { return _power; }
+                set { _power = value; }
+            }
             public bool MOX
             {
                 get { return _mox; }
@@ -18527,6 +22519,16 @@ namespace Thetis
                 {
                     bool changed = _mox != value;
                     _mox = value;
+
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
+                        {
+                            clsMeterItem mi = kvp.Value;
+                            mi.MOX = _mox;
+                        }
+                    }
+
                     if (changed)
                     {
                         if (_mox)
@@ -18638,6 +22640,36 @@ namespace Thetis
                 get { return _bandTX; }
                 set { _bandTX = value; }
             }
+            public int TXFilterLow
+            {
+                get { return _tx_filter_low; }
+                set { _tx_filter_low = value; }
+            }
+            public int TXFilterHigh
+            {
+                get { return _tx_filter_high; }
+                set { _tx_filter_high = value; }
+            }
+            public string PAProfile
+            {
+                get { return _pa_profile; }
+                set { _pa_profile = value; }
+            }
+            public string TXProfile
+            {
+                get { return _tx_profile; }
+                set { _tx_profile = value; }
+            }
+            public int FilterMaxWidth
+            {
+                get { return _filter_max_width; }
+                set { _filter_max_width = value; }
+            }
+            public int FilterMaxShift
+            {
+                get { return _filter_max_shift; }
+                set { _filter_max_shift = value; }
+            }
             public Filter FilterVfoA
             {
                 get { return _filterVfoA; }
@@ -18657,6 +22689,62 @@ namespace Thetis
             {
                 get { return _filterVfoBname; }
                 set { _filterVfoBname = value; }
+            }
+            public int FilterVfoAlow
+            {
+                get { return _filter_vfoa_low; }
+                set { _filter_vfoa_low = value; }
+            }
+            public int FilterVfoAhigh
+            {
+                get { return _filter_vfoa_high; }
+                set { _filter_vfoa_high = value; }
+            }
+            public int FilterVfoBlow
+            {
+                get { return _filter_vfob_low; }
+                set { _filter_vfob_low = value; }
+            }
+            public int FilterVfoBhigh
+            {
+                get { return _filter_vfob_high; }
+                set { _filter_vfob_high = value; }
+            }
+            public double MinNotchWidthRX
+            {
+                get { return _min_notch_width_rx; }
+                set 
+                { 
+                    _min_notch_width_rx = value;
+
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.MinNotchWidthRX = _min_notch_width_rx;
+                        }
+                    }
+                }
+            }
+            public double MinNotchWidthTX
+            {
+                get { return _min_notch_width_tx; }
+                set
+                {
+                    _min_notch_width_tx = value;
+
+                    lock (_meterItemsLock)
+                    {
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.MinNotchWidthTX = _min_notch_width_tx;
+                        }
+                    }
+                }
             }
             public bool RX2Enabled
             {
@@ -18757,7 +22845,9 @@ namespace Thetis
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY ||
                                                                 o.Value.ItemType == clsMeterItem.MeterItemType.TUNESTEP_BUTTONS ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.DISCORD_BUTTONS
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.DISCORD_BUTTONS ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_DISPLAY ||
+                                                                o.Value.ItemType == clsMeterItem.MeterItemType.DIAL_DISPLAY
                                                                 ) && ( ((mox && o.Value.OnlyWhenTX) || (!mox && o.Value.OnlyWhenRX)) || (!o.Value.OnlyWhenTX && !o.Value.OnlyWhenRX) ) ))
                     {
                         clsMeterItem mi = kvp.Value;
@@ -19072,6 +23162,9 @@ namespace Thetis
             private Dictionary<string, SizeF> _stringMeasure;
             private Queue<string> _stringMeasureKeys;
             //
+            private SharpDX.Direct2D1.Bitmap _filter_display_waterfall_bmp;
+            private SharpDX.Direct2D1.Bitmap _filter_display_waterfall_bmp_tx;
+            //
 
             private int _rx;
             private Console _console;
@@ -19098,6 +23191,13 @@ namespace Thetis
             private bool _enabled;
             private ColorInterpolator _color_interp;
 
+            private bool _waterfall_row_added;
+
+            private StrokeStyle _rounded_stroke_style;
+            private StrokeStyle _dash_style;
+
+            private Guid _touch_guid;
+
             public DXRenderer(string sId, int rx, PictureBox target, Console c, clsMeter meter)
             {
                 if (c == null || target == null) return;
@@ -19106,6 +23206,8 @@ namespace Thetis
                 _dElapsedFrameStart = 0;
                 _objFrameStartTimer.Start();
 
+                _waterfall_row_added = false;
+
                 _sId = sId;
                 _rx = rx;
                 _console = c;
@@ -19113,7 +23215,15 @@ namespace Thetis
                 _highlightEdge = false;
                 _enabled = meter.Enabled;
 
+                if (_console.TouchSupport)
+                    _touch_guid = TouchHandler.EnableTouchSupport(target, HandleTouchDown, HandleTouchMove, HandleTouchUp, TouchHandler.TOUCHEVENTF_DOWN | TouchHandler.TOUCHEVENTF_MOVE | TouchHandler.TOUCHEVENTF_UP, _sId);
+                else
+                    _touch_guid = Guid.Empty;
+
                 //dx
+                _filter_display_waterfall_bmp = null;
+                _filter_display_waterfall_bmp_tx = null;
+
                 _DXBrushes = new Dictionary<System.Drawing.Color, SharpDX.Direct2D1.Brush>();
                 _textFormats = new Dictionary<string, SharpDX.DirectWrite.TextFormat>();
                 _stringMeasure = new Dictionary<string, SizeF>();
@@ -19124,7 +23234,6 @@ namespace Thetis
                 _bDXSetup = false;
                 _NoVSYNCpresentFlag = PresentFlags.None;
                 _pixelShift = new Vector2(0.5f, 0.5f);
-                //_pixelShift = new Vector2(0f, 0f);
                 _nVBlanks = Display.VerticalBlanks;
                 _oldRedrawDelay = -1;
                 _displayTarget = target;
@@ -19156,8 +23265,26 @@ namespace Thetis
                 _displayTarget.VisibleChanged += target_VisibleChanged;
                 _displayTarget.MouseLeave += OnMouseLeave;
                 _displayTarget.MouseEnter += OnMouseEnter;
+                _displayTarget.MouseCaptureChanged += OnMouseCaptureChanged;
                 //_displayTarget.Click += OnClick;
-                _displayTarget.MouseClick += OnMouseClick;
+                _displayTarget.MouseClick += OnMouseClick;                
+            }
+            private void HandleTouchDown(int x, int y)
+            {
+                //delta of min value to signifiy this is a touch to the event handler
+                OnMouseEnter(_displayTarget, EventArgs.Empty);
+                OnMouseDown(_displayTarget, new MouseEventArgs(MouseButtons.Left, 0, x, y, int.MinValue));
+            }
+            private void HandleTouchUp(int x, int y)
+            {
+                //delta of min value to signifiy this is a touch to the event handler
+                OnMouseUp(_displayTarget, new MouseEventArgs(MouseButtons.Left, 0, x, y, int.MinValue));
+                OnMouseLeave(_displayTarget, EventArgs.Empty);
+            }
+            private void HandleTouchMove(int x, int y)
+            {
+                //delta of min value to signifiy this is a touch to the event handler
+                OnMouseMove(_displayTarget, new MouseEventArgs(MouseButtons.None, 0, x, y, int.MinValue));
             }
             public bool SetVsync
             {
@@ -19423,6 +23550,23 @@ namespace Thetis
                         _device.DebugName = ""; // used in shutdown
                     }
 
+                    //setup a rounded stroke style to be used by items that want a smooth end to lines
+                    StrokeStyleProperties stroke_style_rounded = new StrokeStyleProperties
+                    {
+                        StartCap = CapStyle.Round,
+                        EndCap = CapStyle.Round,
+                        DashCap = CapStyle.Round
+                    };
+                    _rounded_stroke_style = new StrokeStyle(_factory, stroke_style_rounded);
+
+                    //setup dashed style
+                    StrokeStyleProperties stroke_style_dash = new StrokeStyleProperties
+                    {
+                        DashStyle = DashStyle.Dash,
+                        DashOffset = 2
+                    };
+                    _dash_style = new StrokeStyle(_factory, stroke_style_dash);
+
                     _bDXSetup = true;
 
                     setupAliasing();
@@ -19435,6 +23579,42 @@ namespace Thetis
                     ShutdownDX();
                     MessageBox.Show("Problem initialising Meter DirectX !" + System.Environment.NewLine + System.Environment.NewLine + "[" + e.ToString() + "]", "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
+            }
+            private void setupFilterWaterfallBitmap()
+            {
+                if (!_bDXSetup) return;
+                if (_filter_display_waterfall_bmp != null && _filter_display_waterfall_bmp_tx != null) return; // already setup, dont do again
+
+                //SharpDX.Direct2D1.Bitmap copy = null;
+                //if (_filter_display_waterfall_bmp != null)
+                //{
+                //    //make copy of existing bitmpap
+                //    copy = new SharpDX.Direct2D1.Bitmap(_renderTarget, new Size2(MiniSpec.PIXELS, MiniSpec.PIXELS), new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(_swapChain.Description.ModeDescription.Format, SharpDX.Direct2D1.AlphaMode.Premultiplied)));
+                //    copy.CopyFromBitmap(_filter_display_waterfall_bmp, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, MiniSpec.PIXELS, MiniSpec.PIXELS));
+                //}
+
+                if (_filter_display_waterfall_bmp != null)
+                {
+                    Utilities.Dispose(ref _filter_display_waterfall_bmp);
+                    _filter_display_waterfall_bmp = null;
+                }
+                if (_filter_display_waterfall_bmp_tx != null)
+                {
+                    Utilities.Dispose(ref _filter_display_waterfall_bmp_tx);
+                    _filter_display_waterfall_bmp_tx = null;
+                }
+                _filter_display_waterfall_bmp = new SharpDX.Direct2D1.Bitmap(_renderTarget, new Size2(MiniSpec.PIXELS, MiniSpec.PIXELS), new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(_swapChain.Description.ModeDescription.Format, SharpDX.Direct2D1.AlphaMode.Premultiplied)));
+                _filter_display_waterfall_bmp.Tag = _sId;
+
+                _filter_display_waterfall_bmp_tx = new SharpDX.Direct2D1.Bitmap(_renderTarget, new Size2(MiniSpec.PIXELS, MiniSpec.PIXELS), new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(_swapChain.Description.ModeDescription.Format, SharpDX.Direct2D1.AlphaMode.Premultiplied)));
+                _filter_display_waterfall_bmp_tx.Tag = _sId;
+                //if(copy != null)
+                //{
+                //    //paste copy into bmp
+                //    _filter_display_waterfall_bmp.CopyFromBitmap(copy, new SharpDX.Point(0, 0));
+                //    Utilities.Dispose(ref copy);
+                //    copy = null;
+                //}
             }
             private void resetDX2DModeDescription(int fps)
             {
@@ -19463,6 +23643,11 @@ namespace Thetis
             }
             public void ShutdownDX(bool bFromRenderThread = false)
             {
+                if (_touch_guid != Guid.Empty)
+                {
+                    TouchHandler.DisableTouchSupport(_touch_guid);
+                }
+
                 if (_displayTarget != null)
                 {
                     _displayTarget.Resize -= target_Resize;
@@ -19472,6 +23657,7 @@ namespace Thetis
                     _displayTarget.MouseMove -= OnMouseMove;
                     _displayTarget.MouseLeave -= OnMouseLeave;
                     _displayTarget.MouseEnter -= OnMouseEnter;
+                    _displayTarget.MouseCaptureChanged -= OnMouseCaptureChanged;
                     _displayTarget.VisibleChanged -= target_VisibleChanged;
                     //_displayTarget.Click -= OnClick;
                     _displayTarget.MouseClick -= OnMouseClick;
@@ -19507,12 +23693,28 @@ namespace Thetis
                     releaseDXFonts();
                     releaseDXResources();
 
+                    Utilities.Dispose(ref _rounded_stroke_style);
+                    _rounded_stroke_style = null;
+                    Utilities.Dispose(ref _dash_style);
+                    _dash_style = null;
+
+                    if (_filter_display_waterfall_bmp != null)
+                    {
+                        Utilities.Dispose(ref _filter_display_waterfall_bmp);
+                        _filter_display_waterfall_bmp = null;
+                    }
+                    if (_filter_display_waterfall_bmp_tx != null)
+                    {
+                        Utilities.Dispose(ref _filter_display_waterfall_bmp_tx);
+                        _filter_display_waterfall_bmp_tx = null;
+                    }
+
                     Utilities.Dispose(ref _renderTarget);
                     Utilities.Dispose(ref _swapChain1);
                     Utilities.Dispose(ref _swapChain);
                     Utilities.Dispose(ref _surface);
                     Utilities.Dispose(ref _factory);
-                    Utilities.Dispose(ref _factory1);
+                    Utilities.Dispose(ref _factory1);                    
 
                     _renderTarget = null;
                     _swapChain1 = null;
@@ -19751,8 +23953,7 @@ namespace Thetis
                     int tmp = value;
                     if (tmp < ucMeter.MIN_CONTAINER_WIDTH) tmp = ucMeter.MIN_CONTAINER_WIDTH; //see resize drag in ucmeter control
 
-                    _targetWidth = tmp;
-                    
+                    _targetWidth = tmp;                    
                 }
             }
             private int targetHeight
@@ -19976,6 +24177,27 @@ namespace Thetis
                     }
                 }
             }
+            private void OnMouseCaptureChanged(object sender, System.EventArgs e)
+            {
+                PictureBox pb = sender as PictureBox;
+                if (pb == null) return;
+                string sId = pb.Tag.ToString();
+                if (!_meters.ContainsKey(sId)) return;
+
+                clsMeter m = _meters[sId];
+
+                lock (m._meterItemsLock)
+                {
+                    if (m.SortedMeterItemsForZOrder != null)
+                    {
+                        foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
+                        {
+                            mi.MouseEntered = false;
+                            mi.MouseMovePoint = new PointF(float.MinValue, float.MinValue);
+                        }
+                    }
+                }
+            }
             private void OnMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
             {
                 lock (_metersLock)
@@ -20130,10 +24352,6 @@ namespace Thetis
                     }
                 }
             }
-            //private void OnClick(object sender, System.EventArgs e)
-            //{
-                
-            //}
             private void OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
             {
                 lock (_metersLock)
@@ -20281,11 +24499,11 @@ namespace Thetis
                         if (nTmp < nRedrawDelay) nRedrawDelay = nTmp;
 
                         List<clsMeterItem> additionalDraws = new List<clsMeterItem>();
-                        //foreach (KeyValuePair<string, clsMeterItem> mikvp in m.SortedMeterItemsForZOrder)
-                        foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
-                        {
-                            //clsMeterItem mi = mikvp.Value;
 
+                        _waterfall_row_added = false;
+
+                        foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
+                        {                          
                             bool bRender = ((m.MOX && mi.OnlyWhenTX) || (!m.MOX && mi.OnlyWhenRX)) || (!mi.OnlyWhenTX && !mi.OnlyWhenRX);
 
                             if (bRender && ((m.DisplayGroup == 0 || mi.DisplayGroup == 0) || (mi.DisplayGroup == m.DisplayGroup)))
@@ -20302,7 +24520,6 @@ namespace Thetis
 
                                     float w = rect.Width * (mi.Size.Width / m.XRatio);
 
-                                    //bb.TopLeft = new PointF(_fPadX, fTop + _fPadY - (_fHeight * 0.75f));
                                     float padY = ((m.PadY - (m.Height * 0.75f)) * w);
                                     int hh = (int)Math.Ceiling((y + h + padY)) + 1; // 1 extra
                                     if (hh > height) height = hh;
@@ -20389,6 +24606,12 @@ namespace Thetis
                                         break;
                                     case clsMeterItem.MeterItemType.HISTORY:
                                         renderHistory(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.FILTER_DISPLAY:
+                                        renderFilterDisplay(rect, mi, m);
+                                        break;
+                                    case clsMeterItem.MeterItemType.DIAL_DISPLAY:
+                                        renderDialDisplay(rect, mi, m);
                                         break;
                                 }
                             }
@@ -21512,7 +25735,7 @@ namespace Thetis
                     // Render the text
                     bool fill_background = (text_overlay.ShowTextBackColour1 && !m.MOX) || (text_overlay.ShowTextBackColour2 && m.MOX);
                     System.Drawing.Color fill_colour = m.MOX ? text_overlay.TextBackColour2 : text_overlay.TextBackColour1;
-                    (float tw, float th) = plotText(displayText, textX, textY, h, rect.Width, fontSize, m.MOX ? text_overlay.TextColour2 : text_overlay.TextColour1, 255, fontFamily, fontStyle, false, false, 0, true, 0, 0, fill_background, fill_colour);
+                    (float tw, float th) = plotText(displayText, textX, textY, rect.Width, fontSize, m.MOX ? text_overlay.TextColour2 : text_overlay.TextColour1, 255, fontFamily, fontStyle, false, false, 0, true, 0, 0, fill_background, fill_colour);
 
                     float rect_x = textX - (tw / 2);
                     float rect_y = textY - (th / 2);
@@ -21544,6 +25767,1975 @@ namespace Thetis
                 }
                 return scrolling;
             }
+            private (byte[], byte[]) buildWaterfall(clsFilterItem filter)
+            {
+                //B8G8R8A8
+                System.Drawing.Color low_colour = filter.WaterfallLowColour;
+                clsFilterItem.WaterfallPalette cSheme = filter.WaterfallPal;
+                int R = 0, G = 0, B = 0;
+                int pixel_size = 4;
+                int pixel_wdith = MiniSpec.PIXELS;
+                float low_threshold = filter.WaterfallMin;
+                float high_threshold = filter.WaterfallMax;
+                float[] waterfall_data = filter.SpectrumData;
+                float[] greyscale_data = filter.GreyscaleData;
+                byte[] row_rx = new byte[pixel_wdith * pixel_size];
+                byte[] row_tx = new byte[pixel_wdith * pixel_size];
+                byte nbBitmapAlpaha_rx = (byte)(filter.MOX ? 0 : 255);
+                byte nbBitmapAlpaha_tx = (byte)(filter.MOX ? 255 : 0);
+                int LinLogCor = -14;
+                int LinCor = 2;
+
+                float local_max_y = filter.SpectrumDataMax;
+                float local_min_y_w3sz = filter.SpectrumDataMin;
+                float min_y_w3sz;
+                float display_min_w3sz;
+                float display_max_w3sz;
+
+                float max_y;// = filter.SpectrumDataMax;
+
+                max_y = local_max_y;
+                min_y_w3sz = local_min_y_w3sz;
+
+                switch (cSheme)
+                {
+                    //case (ColorSheme.original):
+                    //    {
+
+                    //    }
+                    //    break;
+
+                    case (clsFilterItem.WaterfallPalette.ENHANCED):
+                        {
+                            // draw new data
+                            for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
+                            {
+                                float data = waterfall_data[i];
+                                if (data <= low_threshold)
+                                {
+                                    R = low_colour.R;
+                                    G = low_colour.G;
+                                    B = low_colour.B;
+                                }
+                                else if (data >= high_threshold)
+                                {
+                                    R = 192;
+                                    G = 124;
+                                    B = 255;
+                                }
+                                else // value is between low and high
+                                {
+                                    float range = high_threshold - low_threshold;
+                                    float offset = data - low_threshold;
+                                    float overall_percent = offset / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
+
+                                    if (overall_percent < (float)2 / 9) // background to blue
+                                    {
+                                        float local_percent = overall_percent / ((float)2 / 9);
+                                        R = (int)((1.0 - local_percent) * low_colour.R);
+                                        G = (int)((1.0 - local_percent) * low_colour.G);
+                                        B = (int)(low_colour.B + local_percent * (255 - low_colour.B));
+                                    }
+                                    else if (overall_percent < (float)3 / 9) // blue to blue-green
+                                    {
+                                        float local_percent = (overall_percent - (float)2 / 9) / ((float)1 / 9);
+                                        R = 0;
+                                        G = (int)(local_percent * 255);
+                                        B = 255;
+                                    }
+                                    else if (overall_percent < (float)4 / 9) // blue-green to green
+                                    {
+                                        float local_percent = (overall_percent - (float)3 / 9) / ((float)1 / 9);
+                                        R = 0;
+                                        G = 255;
+                                        B = (int)((1.0 - local_percent) * 255);
+                                    }
+                                    else if (overall_percent < (float)5 / 9) // green to red-green
+                                    {
+                                        float local_percent = (overall_percent - (float)4 / 9) / ((float)1 / 9);
+                                        R = (int)(local_percent * 255);
+                                        G = 255;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)7 / 9) // red-green to red
+                                    {
+                                        float local_percent = (overall_percent - (float)5 / 9) / ((float)2 / 9);
+                                        R = 255;
+                                        G = (int)((1.0 - local_percent) * 255);
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)8 / 9) // red to red-blue
+                                    {
+                                        float local_percent = (overall_percent - (float)7 / 9) / ((float)1 / 9);
+                                        R = 255;
+                                        G = 0;
+                                        B = (int)(local_percent * 255);
+                                    }
+                                    else // red-blue to purple end
+                                    {
+                                        float local_percent = (overall_percent - (float)8 / 9) / ((float)1 / 9);
+                                        R = (int)((0.75 + 0.25 * (1.0 - local_percent)) * 255);
+                                        G = (int)(local_percent * 255 * 0.5);
+                                        B = 255;
+                                    }
+                                }
+
+                                // set pixel color
+                                row_rx[i * pixel_size + 0] = (byte)B;    // set color in memory
+                                row_rx[i * pixel_size + 1] = (byte)G;
+                                row_rx[i * pixel_size + 2] = (byte)R;
+                                row_rx[i * pixel_size + 3] = nbBitmapAlpaha_rx;
+
+                                row_tx[i * pixel_size + 0] = (byte)B;    // set color in memory
+                                row_tx[i * pixel_size + 1] = (byte)G;
+                                row_tx[i * pixel_size + 2] = (byte)R;
+                                row_tx[i * pixel_size + 3] = nbBitmapAlpaha_tx;
+                            }
+                        }
+                        break;
+
+                    case (clsFilterItem.WaterfallPalette.SPECTRAN):
+                        {
+                            // draw new data
+                            for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
+                            {
+                                float data = waterfall_data[i];
+
+                                if (data <= low_threshold)
+                                {
+                                    R = 0;
+                                    G = 0;
+                                    B = 0;
+                                }
+                                else if (data >= high_threshold) // white
+                                {
+                                    R = 240;
+                                    G = 240;
+                                    B = 240;
+                                }
+                                else // value is between low and high
+                                {
+                                    float range = high_threshold - low_threshold;
+                                    float offset = data - low_threshold;
+                                    float local_percent = ((100.0f * offset) / range);
+
+                                    if (local_percent < 5.0f)
+                                    {
+                                        R = G = 0;
+                                        B = (int)local_percent * 5;
+                                    }
+                                    else if (local_percent < 11.0f)
+                                    {
+                                        R = G = 0;
+                                        B = (int)local_percent * 5;
+                                    }
+                                    else if (local_percent < 22.0f)
+                                    {
+                                        R = G = 0;
+                                        B = (int)local_percent * 5;
+                                    }
+                                    else if (local_percent < 44.0f)
+                                    {
+                                        R = G = 0;
+                                        B = (int)local_percent * 5;
+                                    }
+                                    else if (local_percent < 51.0f)
+                                    {
+                                        R = G = 0;
+                                        B = (int)local_percent * 5;
+                                    }
+                                    else if (local_percent < 66.0f)
+                                    {
+                                        R = G = (int)(local_percent - 50) * 2;
+                                        B = 255;
+                                    }
+                                    else if (local_percent < 77.0f)
+                                    {
+                                        R = G = (int)(local_percent - 50) * 3;
+                                        B = 255;
+                                    }
+                                    else if (local_percent < 88.0f)
+                                    {
+                                        R = G = (int)(local_percent - 50) * 4;
+                                        B = 255;
+                                    }
+                                    else if (local_percent < 99.0f)
+                                    {
+                                        R = G = (int)(local_percent - 50) * 5;
+                                        B = 255;
+                                    }
+                                }
+
+                                // set pixel color
+                                row_rx[i * pixel_size + 0] = (byte)B;    // set color in memory
+                                row_rx[i * pixel_size + 1] = (byte)G;
+                                row_rx[i * pixel_size + 2] = (byte)R;
+                                row_rx[i * pixel_size + 3] = nbBitmapAlpaha_rx;
+
+                                row_tx[i * pixel_size + 0] = (byte)B;    // set color in memory
+                                row_tx[i * pixel_size + 1] = (byte)G;
+                                row_tx[i * pixel_size + 2] = (byte)R;
+                                row_tx[i * pixel_size + 3] = nbBitmapAlpaha_tx;
+                            }
+                        }
+                        break;
+
+                    case (clsFilterItem.WaterfallPalette.BLACKWHITE):
+                        {
+                            // draw new data
+                            for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
+                            {
+                                float data = waterfall_data[i];
+
+                                if (data <= low_threshold)
+                                {
+                                    R = 0;
+                                    G = 0;
+                                    B = 0;
+                                }
+                                else if (data >= high_threshold) // white
+                                {
+                                    R = 255;
+                                    G = 255;
+                                    B = 255;
+                                }
+                                else // value is between low and high
+                                {
+                                    float range = high_threshold - low_threshold;
+                                    float offset = data - low_threshold;
+                                    float local_percent = ((100.0f * offset) / range);
+                                    R = (int)((local_percent / 100) * 255);
+                                    G = R;
+                                    B = R;
+                                }
+
+                                // set pixel color
+                                row_rx[i * pixel_size + 0] = (byte)B;    // set color in memory
+                                row_rx[i * pixel_size + 1] = (byte)G;
+                                row_rx[i * pixel_size + 2] = (byte)R;
+                                row_rx[i * pixel_size + 3] = nbBitmapAlpaha_rx;
+
+                                row_tx[i * pixel_size + 0] = (byte)B;    // set color in memory
+                                row_tx[i * pixel_size + 1] = (byte)G;
+                                row_tx[i * pixel_size + 2] = (byte)R;
+                                row_tx[i * pixel_size + 3] = nbBitmapAlpaha_tx;
+                            }
+                        }
+                        break;
+
+                    case (clsFilterItem.WaterfallPalette.LINLOG):
+                        {
+                            for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
+                            {
+                                float data = waterfall_data[i];
+
+                                if (data <= low_threshold)
+                                {
+                                    R = 0;
+                                    G = 0;
+                                    B = 0;
+                                }
+                                else if (data >= high_threshold)
+                                {
+                                    R = 252;
+                                    G = 252;
+                                    B = 252;
+                                }
+                                else // value is between low and high
+                                {
+                                    float range = high_threshold - low_threshold;
+                                    float offset = data - low_threshold + LinLogCor;
+                                    float spec_bits = 1024;
+                                    float overall_percent = (spec_bits * offset) / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
+                                    float log_fract = (float)(Math.Log10(spec_bits));
+                                    if (overall_percent == 0)
+                                    {
+                                        overall_percent = (float)0.001;
+                                    }
+                                    overall_percent = (float)(Math.Log10(overall_percent));
+
+                                    if (overall_percent < log_fract / 23)
+                                    {
+                                        //			float local_percent = overall_percent / ((float)1/23);
+                                        R = 0;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)2 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)1/23) / ((float)1/23);
+                                        R = 32;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)3 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)2/23) / ((float)1/23);
+                                        R = 64;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)4 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)3/23) / ((float)1/23);
+                                        R = 96;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)5 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)4/23) / ((float)1/23);
+                                        R = 104;
+                                        G = 40;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)6 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)5/23) / ((float)1/23);
+                                        R = 112;
+                                        G = 60;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)7 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)6/23) / ((float)1/23);
+                                        R = 116;
+                                        G = 88;
+                                        B = 0;
+                                    }
+
+
+                                    else if (overall_percent < (float)8 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)7/23) / ((float)1/23);
+                                        R = 92;
+                                        G = 112;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)9 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)8/23) / ((float)1/23);
+                                        R = 80;
+                                        G = 132;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)10 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)9/23) / ((float)1/23);
+                                        R = 20;
+                                        G = 140;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)11 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)10/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 160;
+                                        B = 40;
+                                    }
+                                    else if (overall_percent < (float)12 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)11/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 160;
+                                        B = 120;
+                                    }
+
+                                    else if (overall_percent < (float)13 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)12/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 140;
+                                        B = 148;
+                                    }
+                                    else if (overall_percent < (float)14 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)13/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 132;
+                                        B = 192;
+                                    }
+                                    else if (overall_percent < (float)15 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)14/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 112;
+                                        B = 200;
+                                    }
+                                    else if (overall_percent < (float)16 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)15/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 88;
+                                        B = 208;
+                                    }
+                                    else if (overall_percent < (float)17 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)16/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 60;
+                                        B = 232;
+                                    }
+                                    else if (overall_percent < (float)18 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)17/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 40;
+                                        B = 252;
+                                    }
+                                    else if (overall_percent < (float)19 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)18/23) / ((float)1/23);
+                                        R = 80;
+                                        G = 80;
+                                        B = 252;
+                                    }
+
+                                    else if (overall_percent < (float)20 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)19/23) / ((float)1/23);
+                                        R = 124;
+                                        G = 124;
+                                        B = 252;
+                                    }
+
+                                    else if (overall_percent < (float)21 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)20/23) / ((float)1/23);
+                                        R = 172;
+                                        G = 172;
+                                        B = 252;
+                                    }
+
+                                    else if (overall_percent >= (float)21 * log_fract / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)22/23) / ((float)1/23);
+                                        R = 252;
+                                        G = 252;
+                                        B = 252;
+                                    }
+                                    else
+                                    {
+                                        R = 0;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                }
+
+                                // set pixel color changed by w3sz
+                                //[2.10.3.5]MW0LGE note these are reverse RGB, we normally expect BGRA #289
+                                row_rx[i * pixel_size + 0] = (byte)R;    // set color in memory
+                                row_rx[i * pixel_size + 1] = (byte)G;
+                                row_rx[i * pixel_size + 2] = (byte)B;
+                                row_rx[i * pixel_size + 3] = nbBitmapAlpaha_rx;
+
+                                row_tx[i * pixel_size + 0] = (byte)R;    // set color in memory
+                                row_tx[i * pixel_size + 1] = (byte)G;
+                                row_tx[i * pixel_size + 2] = (byte)B;
+                                row_tx[i * pixel_size + 3] = nbBitmapAlpaha_tx;
+                            }
+                        }
+                        break;
+
+                    //  now Linrad palette without log
+
+                    case (clsFilterItem.WaterfallPalette.LINRAD):
+                        {
+                            for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
+                            {
+                                float data = waterfall_data[i];
+
+                                if (data <= low_threshold)
+                                {
+                                    R = 0;
+                                    G = 0;
+                                    B = 0;
+                                }
+                                else if (data >= high_threshold)
+                                {
+                                    R = 252;
+                                    G = 252;
+                                    B = 252;
+                                }
+                                else // value is between low and high
+                                {
+                                    float range = high_threshold - low_threshold;
+                                    float offset = data - low_threshold + LinCor;
+                                    float overall_percent = (offset) / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
+
+
+                                    if (overall_percent < (float)1 / 23)
+                                    {
+                                        //			float local_percent = overall_percent / ((float)1/23);
+                                        R = 0;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)2 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)1/23) / ((float)1/23);
+                                        R = 32;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)3 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)2/23) / ((float)1/23);
+                                        R = 64;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)4 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)3/23) / ((float)1/23);
+                                        R = 96;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)5 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)4/23) / ((float)1/23);
+                                        R = 104;
+                                        G = 40;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)6 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)5/23) / ((float)1/23);
+                                        R = 112;
+                                        G = 60;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)7 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)6/23) / ((float)1/23);
+                                        R = 116;
+                                        G = 88;
+                                        B = 0;
+                                    }
+
+
+                                    else if (overall_percent < (float)8 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)7/23) / ((float)1/23);
+                                        R = 92;
+                                        G = 112;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)9 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)8/23) / ((float)1/23);
+                                        R = 80;
+                                        G = 132;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)10 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)9/23) / ((float)1/23);
+                                        R = 20;
+                                        G = 140;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)11 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)10/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 160;
+                                        B = 40;
+                                    }
+                                    else if (overall_percent < (float)12 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)11/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 160;
+                                        B = 120;
+                                    }
+
+                                    else if (overall_percent < (float)13 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)12/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 140;
+                                        B = 148;
+                                    }
+                                    else if (overall_percent < (float)14 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)13/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 132;
+                                        B = 192;
+                                    }
+                                    else if (overall_percent < (float)15 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)14/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 112;
+                                        B = 200;
+                                    }
+                                    else if (overall_percent < (float)16 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)15/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 88;
+                                        B = 208;
+                                    }
+                                    else if (overall_percent < (float)17 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)16/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 60;
+                                        B = 232;
+                                    }
+                                    else if (overall_percent < (float)18 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)17/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 40;
+                                        B = 252;
+                                    }
+                                    else if (overall_percent < (float)19 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)18/23) / ((float)1/23);
+                                        R = 80;
+                                        G = 80;
+                                        B = 252;
+                                    }
+
+                                    else if (overall_percent < (float)20 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)19/23) / ((float)1/23);
+                                        R = 124;
+                                        G = 124;
+                                        B = 252;
+                                    }
+
+                                    else if (overall_percent < (float)21 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)20/23) / ((float)1/23);
+                                        R = 172;
+                                        G = 172;
+                                        B = 252;
+                                    }
+
+                                    else if (overall_percent >= (float)21 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)22/23) / ((float)1/23);
+                                        R = 252;
+                                        G = 252;
+                                        B = 252;
+                                    }
+                                    else
+                                    {
+                                        R = 0;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                }
+
+                                //[2.10.3.5]MW0LGE note these are reverse RGB, we normally expect BGRA #289
+                                row_rx[i * pixel_size + 0] = (byte)R;    // set color in memory
+                                row_rx[i * pixel_size + 1] = (byte)G;
+                                row_rx[i * pixel_size + 2] = (byte)B;
+                                row_rx[i * pixel_size + 3] = nbBitmapAlpaha_rx;
+
+                                row_tx[i * pixel_size + 0] = (byte)R;    // set color in memory
+                                row_tx[i * pixel_size + 1] = (byte)G;
+                                row_tx[i * pixel_size + 2] = (byte)B;
+                                row_tx[i * pixel_size + 3] = nbBitmapAlpaha_tx;
+                            }
+                        }
+                        break;
+
+                    //  now Linrad palette without log
+
+                    case (clsFilterItem.WaterfallPalette.LINAUTO):
+                        {
+                            for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
+                            {
+                                float data = waterfall_data[i];
+
+                                display_min_w3sz = min_y_w3sz - 5; //for histogram equilization
+                                display_max_w3sz = max_y; //for histogram equalization
+
+                                if (data <= display_min_w3sz)
+                                {
+                                    R = 0;
+                                    G = 0;
+                                    B = 0;
+                                }
+                                else if (data >= display_max_w3sz)
+                                {
+                                    R = 252;
+                                    G = 252;
+                                    B = 252;
+                                }
+                                else // value is between low and high
+                                {
+                                    float range = display_max_w3sz - display_min_w3sz;
+                                    float offset = data - display_min_w3sz;
+                                    float overall_percent = (offset) / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
+
+
+                                    if (overall_percent < (float)1 / 23)
+                                    {
+                                        //			float local_percent = overall_percent / ((float)1/23);
+                                        R = 0;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)2 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)1/23) / ((float)1/23);
+                                        R = 32;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)3 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)2/23) / ((float)1/23);
+                                        R = 64;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)4 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)3/23) / ((float)1/23);
+                                        R = 96;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)5 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)4/23) / ((float)1/23);
+                                        R = 104;
+                                        G = 40;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)6 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)5/23) / ((float)1/23);
+                                        R = 112;
+                                        G = 60;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)7 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)6/23) / ((float)1/23);
+                                        R = 116;
+                                        G = 88;
+                                        B = 0;
+                                    }
+
+
+                                    else if (overall_percent < (float)8 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)7/23) / ((float)1/23);
+                                        R = 92;
+                                        G = 112;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)9 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)8/23) / ((float)1/23);
+                                        R = 80;
+                                        G = 132;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)10 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)9/23) / ((float)1/23);
+                                        R = 20;
+                                        G = 140;
+                                        B = 0;
+                                    }
+                                    else if (overall_percent < (float)11 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)10/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 160;
+                                        B = 40;
+                                    }
+                                    else if (overall_percent < (float)12 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)11/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 160;
+                                        B = 120;
+                                    }
+
+                                    else if (overall_percent < (float)13 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)12/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 140;
+                                        B = 148;
+                                    }
+                                    else if (overall_percent < (float)14 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)13/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 132;
+                                        B = 192;
+                                    }
+                                    else if (overall_percent < (float)15 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)14/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 112;
+                                        B = 200;
+                                    }
+                                    else if (overall_percent < (float)16 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)15/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 88;
+                                        B = 208;
+                                    }
+                                    else if (overall_percent < (float)17 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)16/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 60;
+                                        B = 232;
+                                    }
+                                    else if (overall_percent < (float)18 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)17/23) / ((float)1/23);
+                                        R = 0;
+                                        G = 40;
+                                        B = 252;
+                                    }
+                                    else if (overall_percent < (float)19 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)18/23) / ((float)1/23);
+                                        R = 80;
+                                        G = 80;
+                                        B = 252;
+                                    }
+
+                                    else if (overall_percent < (float)20 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)19/23) / ((float)1/23);
+                                        R = 124;
+                                        G = 124;
+                                        B = 252;
+                                    }
+
+                                    else if (overall_percent < (float)21 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)20/23) / ((float)1/23);
+                                        R = 172;
+                                        G = 172;
+                                        B = 252;
+                                    }
+
+                                    else if (overall_percent >= (float)21 / 23)
+                                    {
+                                        //			float local_percent = (overall_percent - (float)22/23) / ((float)1/23);
+                                        R = 252;
+                                        G = 252;
+                                        B = 252;
+                                    }
+                                    else
+                                    {
+                                        R = 0;
+                                        G = 0;
+                                        B = 0;
+                                    }
+                                }
+
+                                // set pixel color changed by w3sz
+                                //[2.10.3.5]MW0LGE note these are reverse RGB, we normally expect BGRA #289
+                                row_rx[i * pixel_size + 0] = (byte)R;    // set color in memory
+                                row_rx[i * pixel_size + 1] = (byte)G;
+                                row_rx[i * pixel_size + 2] = (byte)B;
+                                row_rx[i * pixel_size + 3] = nbBitmapAlpaha_rx;
+
+                                row_tx[i * pixel_size + 0] = (byte)R;    // set color in memory
+                                row_tx[i * pixel_size + 1] = (byte)G;
+                                row_tx[i * pixel_size + 2] = (byte)B;
+                                row_tx[i * pixel_size + 3] = nbBitmapAlpaha_tx;
+                            }
+                        }
+                        break;
+                }
+
+                // apply greyscale
+                for (int i = 0; i < pixel_wdith; i++)
+                {
+                    float grey_val = greyscale_data[i];
+                    int index = i * pixel_size;
+
+                    int alpha_rx = row_rx[index + 3];
+                    if (filter.Greyscale && alpha_rx != 0 && grey_val > 0)
+                    {
+                        int originalB = row_rx[index + 0];
+                        int originalG = row_rx[index + 1];
+                        int originalR = row_rx[index + 2];
+
+                        int grayscale = (int)(originalR * 0.3 + originalG * 0.59 + originalB * 0.11);
+
+                        row_rx[index + 0] = (byte)((1 - grey_val) * originalB + grey_val * grayscale);
+                        row_rx[index + 1] = (byte)((1 - grey_val) * originalG + grey_val * grayscale);
+                        row_rx[index + 2] = (byte)((1 - grey_val) * originalR + grey_val * grayscale);
+                    }
+                    else if (alpha_rx == 0)
+                    {
+                        row_rx[index + 0] = 0;
+                        row_rx[index + 1] = 0;
+                        row_rx[index + 2] = 0;
+                    }
+
+                    int alpha_tx = row_tx[index + 3];
+                    if (filter.Greyscale && alpha_tx != 0 && grey_val > 0)
+                    {
+                        int originalB = row_tx[index + 0];
+                        int originalG = row_tx[index + 1];
+                        int originalR = row_tx[index + 2];
+
+                        int grayscale = (int)(originalR * 0.3 + originalG * 0.59 + originalB * 0.11);
+
+                        row_tx[index + 0] = (byte)((1 - grey_val) * originalB + grey_val * grayscale);
+                        row_tx[index + 1] = (byte)((1 - grey_val) * originalG + grey_val * grayscale);
+                        row_tx[index + 2] = (byte)((1 - grey_val) * originalR + grey_val * grayscale);
+                    }
+                    else if (alpha_tx == 0)
+                    {
+                        row_tx[index + 0] = 0;
+                        row_tx[index + 1] = 0;
+                        row_tx[index + 2] = 0;
+                    }
+                }
+
+                return (row_rx, row_tx);
+            }
+            private void renderDialDisplay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsDialDisplay dial = (clsDialDisplay)mi;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                //SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
+                //_renderTarget.FillRectangle(rectSC, getDXBrushForColour(dial.Colour, mi.FadeValue));
+
+                bool enabled = (!dial.FadeOnRx && !m.MOX) | (!dial.FadeOnTx && m.MOX);
+
+                SharpDX.Direct2D1.Brush main_circle_brush = getDXBrushForColour(dial.CircleColour);//System.Drawing.Color.Black);
+                SharpDX.Direct2D1.Brush main_ring_brush = getDXBrushForColour(dial.RingColour);//System.Drawing.Color.Gray);
+                SharpDX.Direct2D1.Brush marker_brush = getDXBrushForColour(dial.PadColour);//System.Drawing.Color.Blue);
+                SharpDX.Direct2D1.Brush marker_pressed_brush = getDXBrushForColour(dial.PadPressedColour);//System.Drawing.Color.Orange);                
+                SharpDX.Direct2D1.Brush button_on = getDXBrushForColour(dial.ButtonOnColour);//System.Drawing.Color.CornflowerBlue);
+                SharpDX.Direct2D1.Brush button_off = getDXBrushForColour(dial.ButtonOffColour);//System.Drawing.Color.Black);
+                SharpDX.Direct2D1.Brush button_highlight = getDXBrushForColour(dial.ButtonHighlightColour);//System.Drawing.Color.Gray);
+                SharpDX.Direct2D1.Brush marker_speed_brush_down = getDXBrushForColour(dial.SlowColour);//System.Drawing.Color.Blue);
+                SharpDX.Direct2D1.Brush marker_speed_brush = getDXBrushForColour(dial.HoldColour);//System.Drawing.Color.Green);
+                SharpDX.Direct2D1.Brush marker_speed_brush_up = getDXBrushForColour(dial.FastColour);//System.Drawing.Color.Red);
+
+                bool hightlight0 = false;
+                bool hightlight1 = false;
+                bool hightlight2 = false;
+                bool hightlight3 = false;
+                float mouse_raw_x = -1;
+                float mouse_raw_y = -1;
+                float distance_from_centre = -1;
+                
+                System.Drawing.RectangleF zone0 = new System.Drawing.RectangleF(x, y, w / 2, h / 2);
+                System.Drawing.RectangleF zone1 = new System.Drawing.RectangleF(x + (w / 2), y, w / 2, h / 2);
+                System.Drawing.RectangleF zone2 = new System.Drawing.RectangleF(x, y + (h / 2), w / 2, h / 2);
+                System.Drawing.RectangleF zone3 = new System.Drawing.RectangleF(x + (w / 2), y + (h / 2), w / 2, h / 2);
+                RawVector2 centre = new RawVector2(x + (w / 2f), y + (h / 2f));
+
+                if (enabled && dial.MouseEntered)
+                {
+                    distance_from_centre = (dial.MouseMovePoint.X - centre.X) * (dial.MouseMovePoint.X - centre.X) +
+                         (dial.MouseMovePoint.Y - centre.Y) * (dial.MouseMovePoint.Y - centre.Y);
+
+                    bool outside_main_circle = distance_from_centre > ((w / 2f) * (w / 2f));
+
+                    //corner buttons
+                    //quadrant,     0 1
+                    //              2 3
+                    mouse_raw_x = dial.MouseMovePoint.X;
+                    mouse_raw_y = dial.MouseMovePoint.Y;
+                    hightlight0 = (m.RX == 1 || dial.AlwaysShowVFOs) && !dial.Pressed && outside_main_circle && zone0.Contains(mouse_raw_x, mouse_raw_y); // vfoa // no vfoa on rx2
+                    hightlight1 = ((m.RX == 1 && !m.RX2Enabled) || m.RX == 2 || dial.AlwaysShowVFOs) && !dial.Pressed && outside_main_circle && zone1.Contains(mouse_raw_x, mouse_raw_y); // vfob
+                    hightlight2 = !dial.Pressed && outside_main_circle && zone2.Contains(mouse_raw_x, mouse_raw_y); // accel
+                    hightlight3 = !dial.Pressed && outside_main_circle && zone3.Contains(mouse_raw_x, mouse_raw_y); // lock
+                }
+
+                _renderTarget.FillRectangle(new SharpDX.RectangleF(zone0.X, zone0.Y, zone0.Width, zone0.Height), dial.VFOA ? button_on : (hightlight0 ? button_highlight : button_off) );
+                _renderTarget.FillRectangle(new SharpDX.RectangleF(zone1.X, zone1.Y, zone1.Width, zone1.Height), !dial.VFOA ? button_on : (hightlight1 ? button_highlight : button_off));
+                _renderTarget.FillRectangle(new SharpDX.RectangleF(zone2.X, zone2.Y, zone2.Width, zone2.Height), dial.Accelerate ? button_on : (hightlight2 ? button_highlight : button_off));
+                _renderTarget.FillRectangle(new SharpDX.RectangleF(zone3.X, zone3.Y, zone3.Width, zone3.Height), dial.Lock ? button_on : (hightlight3 ? button_highlight : button_off));
+
+                dial.VFOAHighlighted = hightlight0 && !hightlight1;
+                dial.VFOBHighlighted = hightlight1 && !hightlight0;
+                dial.AccelerateHighlighted = hightlight2;
+                dial.LockHighlighted = hightlight3;
+
+                //large circle                
+                Ellipse elipse = new Ellipse(centre, w / 2f, w / 2f);
+                _renderTarget.FillEllipse(elipse, main_circle_brush);
+
+                float ring_radius = (w * 0.65f) / 2f;
+                elipse.RadiusX = ring_radius;
+                elipse.RadiusY = ring_radius;
+
+                //acceleration colour
+                if (dial.Accelerate)
+                {
+                    if (dial.Pressed && Math.Abs(dial.SmoothedSpeed) >= 0.1f)
+                    {
+                        SharpDX.Direct2D1.Brush speed_brush;
+                        switch (dial.TuneStepDirection)
+                        {
+                            case -1:
+                                speed_brush = marker_speed_brush_down;
+                                break;
+                            case 1:
+                                speed_brush = marker_speed_brush_up;
+                                break;
+                            default:
+                                speed_brush = marker_speed_brush;
+                                break;
+                        }
+                        _renderTarget.DrawEllipse(elipse, speed_brush, (w * 0.025f));
+                    }
+                }
+                //dotted ring
+                _renderTarget.DrawEllipse(elipse, main_ring_brush, (w * 0.005f), _dash_style);
+
+                float mouse_x = (dial.MouseMovePoint.X - x) / w;
+                float mouse_y = (dial.MouseMovePoint.Y - y) / h;
+
+                float marker_radius = w * 0.125f;                
+                if (enabled && dial.MouseButtonDown)
+                {                    
+                    float rad = dial.Degrees * (float)Math.PI / 180f;
+                    float marker_x = centre.X + (float)Math.Cos(rad) * ring_radius;
+                    float marker_y = centre.Y - (float)Math.Sin(rad) * ring_radius;
+
+                    float distance_squared = (dial.MouseMovePoint.X - marker_x) * (dial.MouseMovePoint.X - marker_x) +
+                        (dial.MouseMovePoint.Y - marker_y) * (dial.MouseMovePoint.Y - marker_y);
+
+                    if (!dial.Pressed)
+                    {
+                        dial.Pressed = distance_squared <= marker_radius * marker_radius;
+                    }
+
+                    if (dial.Pressed)
+                    {
+                        //if (distance_squared > ((marker_radius * marker_radius) * 6f))
+                        //{
+                        //    // if we move to far away after pressed
+                        //    dial.Pressed = false;
+                        //}
+                        //else
+                        //{
+                            float relative_x = (mouse_x - 0.5f) * 2f;
+                            float relative_y = (0.5f - mouse_y) * 2f;
+                            float degrees = (float)Math.Atan2(relative_y, relative_x) * 180f / (float)Math.PI;
+                            if (degrees < 0) degrees += 360f;
+
+                            dial.Degrees = degrees;
+                        //}
+                    }
+                }
+                else
+                {
+                    dial.Pressed = false;
+                }
+
+                //button text
+                float font_size_scaled = 38f * dial.FontScale;
+                float fontSizeEmScaled = (font_size_scaled / 16f) * (rect.Width / 52f);
+                SizeF sz = measureString("VFOA", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled);
+                sz.Width += w * 0.05f;
+                sz.Height += w * 0.025f;
+                if (m.RX == 1 || dial.AlwaysShowVFOs) plotText(" VFOA ", x, y, rect.Width, font_size_scaled, dial.TextColour, 255, "Trebuchet MS", FontStyle.Regular); // no vfoa on rx2
+                if ((m.RX == 1 && !m.RX2Enabled) || m.RX == 2 || dial.AlwaysShowVFOs) plotText("VFOB " + "\u200B", x + w, y, rect.Width, font_size_scaled, dial.TextColour, 255, "Trebuchet MS", FontStyle.Regular, true);
+                plotText(" LOCK " + "\u200B", x + w, y + h - sz.Height, rect.Width, font_size_scaled, dial.TextColour, 255, "Trebuchet MS", FontStyle.Regular, true);
+                plotText(" ACCEL ", x, y + h - sz.Height, rect.Width, font_size_scaled, dial.TextColour, 255, "Trebuchet MS", FontStyle.Regular);
+
+                //marker circle
+                float radians = dial.Degrees * (float)Math.PI / 180f;
+                elipse.Point.X = centre.X + (float)Math.Cos(radians) * ring_radius;
+                elipse.Point.Y = centre.Y - (float)Math.Sin(radians) * ring_radius;
+                elipse.RadiusX = marker_radius;
+                elipse.RadiusY = marker_radius;
+                _renderTarget.FillEllipse(elipse, dial.Pressed ? marker_pressed_brush : marker_brush);
+
+                //contrain mouse
+                //if (dial.Pressed)
+                //{
+                //    System.Drawing.PointF mousePosition = new System.Drawing.PointF(dial.MouseMovePoint.X, dial.MouseMovePoint.Y);
+
+                //    float dx = mousePosition.X - elipse.Point.X;
+                //    float dy = mousePosition.Y - elipse.Point.Y;
+                //    float squaredDistance = dx * dx + dy * dy;
+                //    float squaredRadius = elipse.RadiusX * elipse.RadiusX;
+
+                //    if (squaredDistance > squaredRadius)
+                //    {
+                //        double angle = Math.Atan2(dy, dx);
+                //        int restrictedX = (int)(elipse.Point.X + Math.Cos(angle) * elipse.RadiusX);
+                //        int restrictedY = (int)(elipse.Point.Y + Math.Sin(angle) * elipse.RadiusX);
+                //        Cursor.Position = _displayTarget.PointToScreen(new System.Drawing.Point(restrictedX, restrictedY));
+                //    }
+                //}
+
+                //plotText(dial.SmoothedSpeed.ToString("f0"), 0, 0 + 30, rect.Width, 36f, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular);
+                //plotText(dial.DegreesTotal.ToString("f0"), 0, 0 + 60, rect.Width, 36f, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular);
+                //plotText($"{mouse_x.ToString("f2")},{mouse_y.ToString("f2")},{distance_from_centre.ToString("f2")}", 0, x + h / 2f, rect.Width, 36f, System.Drawing.Color.White, 255, "Trebuchet MS", FontStyle.Regular);
+            }
+            private void renderFilterDisplay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
+            {
+                clsFilterItem filter = (clsFilterItem)mi;
+
+                float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
+                float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                float w = rect.Width * (mi.Size.Width / m.XRatio);
+                float h = rect.Height * (mi.Size.Height / m.YRatio);
+                float original_x = x;
+                float original_w = w;
+
+                int mode_sign = filter.SidebandModeSign;
+                switch (mode_sign)
+                {
+                    case -1:
+                        w *= 1.9f;
+                        break;
+                    case 0:
+                        break;
+                    case 1:                        
+                        w *= 1.9f;
+                        float expanded_by = w - original_w;
+                        x -= expanded_by;
+                        break;
+                }
+
+                SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
+                _renderTarget.FillRectangle(rectSC, getDXBrushForColour(filter.Colour, mi.FadeValue));
+
+                if (filter.DispMode == clsFilterItem.DisplayMode.WATERFALL || filter.DispMode == clsFilterItem.DisplayMode.PANAFALL)
+                {
+                    // build the bitmap
+                    setupFilterWaterfallBitmap();
+                }
+
+                System.Drawing.Color extent_text_colour = filter.TextColour;// System.Drawing.Color.White;
+                System.Drawing.Color extent_colour = filter.ExtentsColour;// System.Drawing.Color.Gray;
+                System.Drawing.Color snapline_colour = filter.SnapLineColour;// System.Drawing.Color.Gray;
+                System.Drawing.Color text_overlay_colour = filter.Colour; // same as the background
+                System.Drawing.Color filter_line_colour = filter.EdgesColour;// System.Drawing.Color.Yellow;
+                System.Drawing.Color filter_line_colour_highlight = filter.EdgeHighlightColour;// System.Drawing.Color.White;
+                System.Drawing.Color text_overlay_highlight_colour = filter.NumberHighlightColour;// System.Drawing.Color.DarkRed;
+                System.Drawing.Color meter_back_colour = filter.MeterbackColour;// System.Drawing.Color.Black;
+                System.Drawing.Color notch_colour = filter.NotchColour;// System.Drawing.Color.Orange;
+                System.Drawing.Color notch_colour_highlight = filter.NotchHighlightColour;// System.Drawing.Color.LimeGreen;
+
+                System.Drawing.Color text_highlight_colour_mnf = filter.ButtonHighlightColour;//System.Drawing.Color.Gray;
+                System.Drawing.Color text_highlight_colour_mnfplus = filter.ButtonHighlightColour;//System.Drawing.Color.Gray;
+                System.Drawing.Color text_highlight_colour_snap = filter.ButtonHighlightColour;//System.Drawing.Color.Gray;
+                System.Drawing.Color text_highlight_colour_zoom = filter.ButtonHighlightColour;//System.Drawing.Color.Gray;
+                System.Drawing.Color mnf_on_colour = filter.SettingOnColour;//System.Drawing.Color.CornflowerBlue;
+                System.Drawing.Color snap_on_colour = filter.SettingOnColour;//System.Drawing.Color.CornflowerBlue;
+                System.Drawing.Color zoom_on_colour = filter.SettingOnColour;//System.Drawing.Color.CornflowerBlue;
+
+                System.Drawing.Color line_base_colour = filter.DataLineColour;// System.Drawing.Color.LimeGreen;
+                System.Drawing.Color fill_base_colour = filter.DataFillColour;// System.Drawing.Color.LimeGreen;
+                int grey_val = (int)(line_base_colour.R * 0.3 + line_base_colour.G * 0.59 + line_base_colour.B * 0.11);
+                System.Drawing.Color grey_line_colour = System.Drawing.Color.FromArgb(grey_val, grey_val, grey_val);
+                grey_val = (int)(fill_base_colour.R * 0.3 + fill_base_colour.G * 0.59 + fill_base_colour.B * 0.11);
+                System.Drawing.Color grey_fill_colour = System.Drawing.Color.FromArgb(grey_val, grey_val, grey_val);
+
+                SharpDX.Direct2D1.Brush filter_line_colour_brush;
+                SharpDX.Direct2D1.Brush filter_line_colour_faded_brush = getDXBrushForColour(filter_line_colour, 128);
+                SharpDX.Direct2D1.Brush filter_line_highlight_colour_brush = getDXBrushForColour(filter_line_colour_highlight);
+                SharpDX.Direct2D1.Brush line_base_colour_brush = getDXBrushForColour(line_base_colour);
+                SharpDX.Direct2D1.Brush fill_base_colour_brush = getDXBrushForColour(fill_base_colour);
+
+                double min_notch_width;
+                bool mouse_entered = filter.MouseEntered;
+                bool show_notches = !m.MOX;
+                float font_scale = filter.FontScale;
+                float zoom = 1;
+
+                if (m.MOX)
+                {
+                    if (!filter.AutoZoom && filter.FixedTXZoom) zoom = filter.TXZoom + filter.ModeZoom;
+                    min_notch_width = filter.MinNotchWidthTX / 2f;
+                    filter_line_colour_brush = getDXBrushForColour(System.Drawing.Color.Red);
+                }
+                else
+                {
+                    if (!filter.AutoZoom && filter.FixedRXZoom) zoom = filter.RXZoom + filter.ModeZoom;
+                    min_notch_width = filter.MinNotchWidthRX / 2f;
+                    filter_line_colour_brush = getDXBrushForColour(filter_line_colour);
+                }
+
+                //calc pixels per hz etc
+                int hz_span = filter.ExtentHZ * 2;
+                float font_size_scaled = 18f * font_scale;
+                float fontSizeEmScaled = (font_size_scaled / 16f) * (rect.Width / 52f);
+                string low_extent_text = (-filter.ExtentHZ).ToString();
+                string high_extent_text = "+" + (filter.ExtentHZ).ToString();
+                SizeF tsl = measureString(low_extent_text, "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                SizeF tsh = measureString(high_extent_text, "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                float max_w = Math.Max(tsl.Width, tsh.Width);
+                float pixel_span = w - (max_w * 2f);
+                float text_y = y + h - tsl.Height;
+
+                // autozoom
+                if (filter.AutoZoom)
+                {
+                    double hz_span_for_width = pixelsToHz(w, pixel_span, hz_span);
+                    float sbw;
+                    if (filter.ModeSign == -1)
+                    {
+                        sbw = Math.Abs(filter.Low);
+                        if (filter.IsCW) sbw += Math.Abs(filter.High);
+                    }
+                    else
+                    {
+                        sbw = filter.High;
+                        if (filter.IsCW) sbw += filter.Low;
+                    }
+
+                    sbw *= 2f;
+                    zoom = (float)(1f / (sbw / hz_span_for_width));
+                    zoom *= filter.SidebandModeSign == 0 ? 0.85f : 0.92f;
+                    zoom = Math.Max(1, zoom);
+                    zoom = Math.Min(zoom, 20);
+                }
+
+                //lines
+                float line_width = w * 0.001f;
+                line_width = Math.Max(2f, line_width);
+                float line_width_half = line_width / 2f;
+
+                //slope extent edges                                
+                float slope_pixels = hzToPixels(min_notch_width, pixel_span, hz_span);
+                float hz_zoom_diff = (filter.ExtentHZ * zoom) - filter.ExtentHZ;
+                float zoom_diff_pixels = hzToPixels(Math.Abs(hz_zoom_diff), pixel_span, hz_span) * (hz_zoom_diff < 0 ? -1 : 1);
+
+                //top/bottom lines
+                float top_line_y = y + line_width_half + tsl.Height;
+                float bot_line_y = y + h - line_width_half - tsl.Height;
+                _renderTarget.DrawLine(new RawVector2(x, top_line_y), new RawVector2(w, y + line_width_half + tsl.Height), getDXBrushForColour(extent_colour), line_width);
+                _renderTarget.DrawLine(new RawVector2(x, bot_line_y), new RawVector2(w, y + h - line_width_half - tsl.Height), getDXBrushForColour(extent_colour), line_width);
+
+                //slope extents
+                float extent_l = x + max_w + slope_pixels - zoom_diff_pixels;
+                float extent_h = x + w - max_w - slope_pixels + zoom_diff_pixels;
+                float width_between_slopes = extent_h - extent_l;
+                float spectrum_height = h - ((line_width_half + tsl.Height) * 2f); // between top/bottom lines
+                float top_pos = y + line_width_half + tsl.Height;
+                float bot_pos = y + h - line_width_half - tsl.Height;
+                if (filter.DispMode == clsFilterItem.DisplayMode.PANAFALL) spectrum_height /= 2f; // half display, spectrum at the top, lower will be waterfall
+
+                //spectrum + waterfall display
+                if (filter.DispMode != clsFilterItem.DisplayMode.NONE)
+                {
+                    lock (filter.SpectrumDataLock)
+                    {
+                        int tot_data = filter.SpectrumData.Length;
+                        float x_step = width_between_slopes / tot_data;                                                
+
+                        if (filter.DispMode == clsFilterItem.DisplayMode.PANADAPTOR || filter.DispMode == clsFilterItem.DisplayMode.PANAFALL)
+                        {
+                            float spec_range = filter.SpectrumGridRange;
+                            int grid_max = filter.SpectrumGridMax;
+
+                            AntialiasMode old_mode = _renderTarget.AntialiasMode;
+                            _renderTarget.AntialiasMode = AntialiasMode.Aliased;
+
+                            float dbmToPixel = spectrum_height / spec_range;
+                            float py = (grid_max - filter.SpectrumData[0]) * dbmToPixel;
+
+                            RawVector2 new_pos = new RawVector2(0, 0);
+                            RawVector2 fill_bot_pos = new RawVector2(0, 0);
+                            RawVector2 old_pos = new RawVector2(extent_l, top_pos + py);                            
+
+                            SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(extent_l, y + line_width_half + tsl.Height, width_between_slopes, spectrum_height);
+                            _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
+                            _renderTarget.FillRectangle(clip_rect, getDXBrushForColour(meter_back_colour));
+
+                            for (int px = 1; px < tot_data; px++)
+                            {
+                                py = (grid_max - filter.SpectrumData[px]) * dbmToPixel;
+                                new_pos.X = extent_l + (px * x_step);
+                                new_pos.Y = top_pos + py;
+
+                                float attenuation = filter.GreyscaleData[px];
+
+                                if (filter.FillSpectrum)
+                                {
+                                    SharpDX.Direct2D1.Brush fill_brush;
+                                    if (filter.Greyscale)
+                                    {
+                                        System.Drawing.Color blended_fill_colour = System.Drawing.Color.FromArgb(
+                                             (int)((1 - attenuation) * fill_base_colour.R + attenuation * grey_fill_colour.R),
+                                             (int)((1 - attenuation) * fill_base_colour.G + attenuation * grey_fill_colour.G),
+                                             (int)((1 - attenuation) * fill_base_colour.B + attenuation * grey_fill_colour.B)
+                                         );
+
+                                        fill_brush = getDXBrushForColour(blended_fill_colour);
+                                    }
+                                    else
+                                    {
+                                        fill_brush = fill_base_colour_brush;
+                                    }
+
+                                    fill_bot_pos.X = extent_l + (px * x_step);
+                                    fill_bot_pos.Y = bot_pos;
+                                    _renderTarget.DrawLine(fill_bot_pos, new_pos, fill_brush, x_step);
+                                }
+
+                                SharpDX.Direct2D1.Brush line_brush;
+                                if (filter.Greyscale)
+                                {
+                                    System.Drawing.Color blended_line_colour = System.Drawing.Color.FromArgb(
+                                        (int)((1 - attenuation) * line_base_colour.R + attenuation * grey_line_colour.R),
+                                        (int)((1 - attenuation) * line_base_colour.G + attenuation * grey_line_colour.G),
+                                        (int)((1 - attenuation) * line_base_colour.B + attenuation * grey_line_colour.B)
+                                    );
+
+                                    line_brush = getDXBrushForColour(blended_line_colour);
+                                }
+                                else
+                                {
+                                    line_brush = line_base_colour_brush;
+                                }
+
+                                _renderTarget.DrawLine(old_pos, new_pos, line_brush, x_step, _rounded_stroke_style);
+
+                                old_pos = new_pos;
+                            }
+                            _renderTarget.PopAxisAlignedClip();
+
+                            _renderTarget.AntialiasMode = old_mode;
+                        }
+                        if (_filter_display_waterfall_bmp != null && _filter_display_waterfall_bmp_tx != null && (filter.DispMode == clsFilterItem.DisplayMode.WATERFALL || filter.DispMode == clsFilterItem.DisplayMode.PANAFALL))
+                        {
+                            //waterfall
+                            if (m.Power)
+                            {
+                                if (!_waterfall_row_added && filter.FrameCount == 0)
+                                {
+                                    (byte[] waterfall_row_rx, byte[] waterfall_row_tx) = buildWaterfall(filter);
+
+                                    SharpDX.Direct2D1.Bitmap top_section_rx = new SharpDX.Direct2D1.Bitmap(_renderTarget, new Size2(MiniSpec.PIXELS, MiniSpec.PIXELS - 1),
+                                        new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(_filter_display_waterfall_bmp.PixelFormat.Format, _ALPHA_MODE)));
+
+                                    SharpDX.Direct2D1.Bitmap top_section_tx = new SharpDX.Direct2D1.Bitmap(_renderTarget, new Size2(MiniSpec.PIXELS, MiniSpec.PIXELS - 1),
+                                        new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(_filter_display_waterfall_bmp_tx.PixelFormat.Format, _ALPHA_MODE)));
+
+                                    top_section_rx.CopyFromBitmap(_filter_display_waterfall_bmp, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)top_section_rx.Size.Width, (int)top_section_rx.Size.Height));
+                                    top_section_tx.CopyFromBitmap(_filter_display_waterfall_bmp_tx, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)top_section_tx.Size.Width, (int)top_section_tx.Size.Height));
+
+                                    _filter_display_waterfall_bmp.CopyFromMemory(waterfall_row_rx, waterfall_row_rx.Length, new SharpDX.Rectangle(0, 0, MiniSpec.PIXELS, 1));
+                                    _filter_display_waterfall_bmp.CopyFromBitmap(top_section_rx, new SharpDX.Point(0, 1));
+
+                                    _filter_display_waterfall_bmp_tx.CopyFromMemory(waterfall_row_tx, waterfall_row_tx.Length, new SharpDX.Rectangle(0, 0, MiniSpec.PIXELS, 1));
+                                    _filter_display_waterfall_bmp_tx.CopyFromBitmap(top_section_tx, new SharpDX.Point(0, 1));
+
+                                    Utilities.Dispose(ref top_section_rx);
+                                    top_section_rx = null;
+
+                                    Utilities.Dispose(ref top_section_tx);
+                                    top_section_tx = null;
+
+                                    _waterfall_row_added = true; // prevent other filter items in the render from updating the waterfall bitmap, this gets set to false just above the draw loop
+                                }
+                                filter.FrameCount++;
+                            }
+
+                            //render waterfall
+                            float top_y = y + line_width_half + tsl.Height + (filter.DispMode == clsFilterItem.DisplayMode.PANAFALL ? spectrum_height : 0);
+                            SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(extent_l, top_y, width_between_slopes, spectrum_height);
+                            float bitmap_height = Math.Max(_filter_display_waterfall_bmp.Size.Height, spectrum_height);
+
+                            SharpDX.RectangleF dest_rect_rx = new SharpDX.RectangleF(clip_rect.Left, top_y, clip_rect.Width, bitmap_height);
+                            SharpDX.RectangleF dest_rect_tx = new SharpDX.RectangleF(clip_rect.Left, top_y, clip_rect.Width, bitmap_height);
+                            
+                            if (filter.MOX)
+                            {
+                                //adjust dest_rect_rx to scale from whatever max filter width is, to 20k tx filter
+                                float size_pix = dest_rect_tx.Width / (float)MiniSpec.TX_BANDWIDTH;
+                                float new_width = (size_pix * (float)filter.RXExtentHZ) / 2f;
+                                float middle = dest_rect_tx.Left + (dest_rect_tx.Width / 2f);
+                                dest_rect_rx.Left = middle - new_width;
+                                dest_rect_rx.Right = middle + new_width;
+                            }
+                            else
+                            {
+                                //adjust dest_rect_tx to scale from 20k to max filter width
+                                float size_pix = dest_rect_rx.Width / (float)filter.RXExtentHZ;
+                                float new_width = (size_pix * (float)MiniSpec.TX_BANDWIDTH) / 2f;
+                                float middle = dest_rect_rx.Left + (dest_rect_rx.Width / 2f);
+                                dest_rect_tx.Left = middle - new_width;
+                                dest_rect_tx.Right = middle + new_width;
+                            }
+
+                            _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
+                            _renderTarget.FillRectangle(clip_rect, getDXBrushForColour(meter_back_colour));
+
+                            _renderTarget.DrawBitmap(_filter_display_waterfall_bmp_tx, dest_rect_tx, 1f, BitmapInterpolationMode.Linear);
+                            _renderTarget.DrawBitmap(_filter_display_waterfall_bmp, dest_rect_rx, 1f, BitmapInterpolationMode.Linear);
+
+                            _renderTarget.PopAxisAlignedClip();
+                        }
+                    }
+                }
+
+                //centre line
+                float centre = x + (w / 2f);
+                _renderTarget.DrawLine(new RawVector2(centre, y + h), new RawVector2(centre, y + tsl.Height), getDXBrushForColour(extent_colour), line_width);
+
+                //adjust pixel span between the two extents as that is the filter width, the slopes are extra
+                pixel_span = extent_h - extent_l;
+
+                //vgrid
+                if (filter.SnapLines && !filter.AutoZoom)
+                {
+                    foreach (float f in filter.VGridFrequencies.Where(ff => ff != 0))
+                    {
+                        if (filter.SidebandMode && (filter.SidebandMode && ((filter.SidebandModeSign == -1 && f > 0) || (filter.SidebandModeSign == 1 && f < 0)))) continue; // skip sideband not interested in
+
+                        float xp = hzToPixels(Math.Abs(f), pixel_span, hz_span) * (f < 0 ? -1 : 1);
+                        _renderTarget.DrawLine(new RawVector2(centre + xp, y + h), new RawVector2(centre + xp, y + tsl.Height), getDXBrushForColour(snapline_colour), line_width, _dash_style);
+                    }
+                }
+
+                //cwline
+                if (filter.ShowCWZeroLine)
+                {
+                    int cw_offset = filter.CWPichOffset;
+                    float cw_shift = hzToPixels(Math.Abs(cw_offset), pixel_span, hz_span) * (cw_offset < 0 ? -1 : 1);
+                    _renderTarget.DrawLine(new RawVector2(centre - cw_shift, y + h), new RawVector2(centre - cw_shift, y + tsl.Height), getDXBrushForColour(extent_colour), line_width);
+                }
+
+                if (filter.ShowFilterLimits)
+                {
+                    //extent text                
+                    plotText(low_extent_text, x - zoom_diff_pixels, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, false, null);
+                    plotText(high_extent_text, x + w + zoom_diff_pixels, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, true, false, 0, false, 0, 0, false, null);
+                    
+                    _renderTarget.DrawLine(new RawVector2(x + max_w - zoom_diff_pixels, y + h), new RawVector2(extent_l, y + tsl.Height), getDXBrushForColour(extent_colour), line_width);
+                    _renderTarget.DrawLine(new RawVector2(x + w - max_w + zoom_diff_pixels, y + h), new RawVector2(extent_h, y + tsl.Height), getDXBrushForColour(extent_colour), line_width);
+                }
+
+                //mode text
+                (float mdw, float mdh) = plotText(filter.ModeString, original_x, y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, false, null);
+                float mode_text_right = original_x + mdw;
+
+                //filter
+                (float fnw, float fnh) = plotText(filter.FilterName, original_x + original_w, y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, true, false, 0, false, 0, 0, false, null);
+                float filter_name_left = original_x + original_w - fnw;
+
+                bool filter_enabled;
+                if (m.MOX)
+                {
+                    filter_enabled = filter.TXEnabled;
+                }
+                else
+                {
+                    filter_enabled = filter.RXEnabled;
+                }                
+
+                if (!filter_enabled)
+                {
+                    filter.MouseFrequency = -1;
+                    return; // return if we are not able to do anything with this filter
+                }
+
+                filter.MouseFrequency = (float)pixelsToHz(filter.MouseMovePoint.X - centre, pixel_span, hz_span);
+
+                //mnf/mnf+ button hover
+                // the + "\u200B" is for a zero-width space to preserve layout, otherwise direct write trims
+                SizeF zero = measureString("0", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                SizeF mnf = measureString(" MNF " + "\u200B", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                SizeF mnf_plus = measureString(" +MNF " + "\u200B", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                SizeF snap = measureString(" SNAP " + "\u200B", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                SizeF zoomsize = measureString(" FIT " + "\u200B", "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+
+                System.Drawing.RectangleF mnf_rect = System.Drawing.RectangleF.Empty;
+                System.Drawing.RectangleF mnf_plus_rect = System.Drawing.RectangleF.Empty;
+                System.Drawing.RectangleF snap_rect = System.Drawing.RectangleF.Empty;
+                System.Drawing.RectangleF zoom_rect = System.Drawing.RectangleF.Empty;
+                switch (mode_sign)
+                {
+                    case -1:
+                        mnf_rect = new System.Drawing.RectangleF(centre - (zero.Width * 3f) - mnf.Width, text_y, mnf.Width, mnf.Height);
+                        mnf_plus_rect = new System.Drawing.RectangleF(mnf_rect.X - (zero.Width * 2f) - mnf_plus.Width, text_y, mnf_plus.Width, mnf_plus.Height);
+                        snap_rect = new System.Drawing.RectangleF(mnf_plus_rect.X - (zero.Width * 2f) - snap.Width, text_y, snap.Width, snap.Height);
+                        zoom_rect = new System.Drawing.RectangleF(snap_rect.X - (zero.Width * 2f) - zoomsize.Width, text_y, zoomsize.Width, zoomsize.Height);
+                        break;
+                    case 0:
+                        mnf_rect = new System.Drawing.RectangleF(centre - (zero.Width * 3f) - mnf.Width, text_y, mnf.Width, mnf.Height);
+                        mnf_plus_rect = new System.Drawing.RectangleF(centre + (zero.Width * 3f), text_y, mnf_plus.Width, mnf_plus.Height);
+                        snap_rect = new System.Drawing.RectangleF(mnf_rect.X - (zero.Width * 2f) - snap.Width, text_y, snap.Width, snap.Height);
+                        zoom_rect = new System.Drawing.RectangleF(mnf_plus_rect.X + (zero.Width * 2f) + mnf_plus_rect.Width, text_y, zoomsize.Width, zoomsize.Height);
+                        break;
+                    case 1:
+                        mnf_rect = new System.Drawing.RectangleF(centre + (zero.Width * 3f), text_y, mnf.Width, mnf.Height);
+                        mnf_plus_rect = new System.Drawing.RectangleF(mnf_rect.X + (zero.Width * 2f) + mnf.Width, text_y, mnf_plus.Width, mnf_plus.Height);
+                        snap_rect = new System.Drawing.RectangleF(mnf_plus_rect.X + (zero.Width * 2f) + mnf_plus_rect.Width, text_y, snap.Width, snap.Height);
+                        zoom_rect = new System.Drawing.RectangleF(snap_rect.X + (zero.Width * 2f) + snap_rect.Width, text_y, zoomsize.Width, zoomsize.Height);
+                        break;
+                }
+                System.Drawing.Color mnf_highlight = text_overlay_colour;
+                System.Drawing.Color mnfplus_highlight = text_overlay_colour;
+                System.Drawing.Color snap_highlight = text_overlay_colour;
+                System.Drawing.Color zoom_highlight = text_overlay_colour;
+                bool highlight_button = mouse_entered && (mnf_rect.Contains(filter.MouseMovePoint) || mnf_plus_rect.Contains(filter.MouseMovePoint) || snap_rect.Contains(filter.MouseMovePoint) || zoom_rect.Contains(filter.MouseMovePoint));
+
+                float local_low = filter.Low;
+                float local_high = filter.High;
+
+                float filter_l = centre + hzToPixels(Math.Abs(local_low), pixel_span, hz_span) * (local_low < 0 ? -1 : 1);
+                float filter_h = centre + hzToPixels(Math.Abs(local_high), pixel_span, hz_span) * (local_high < 0 ? -1 : 1);
+
+                RawVector2 low_bot = new RawVector2(filter_l - slope_pixels, y + h);
+                RawVector2 low_top = new RawVector2(filter_l, y + tsl.Height);
+                RawVector2 high_bot = new RawVector2(filter_h + slope_pixels, y + h);
+                RawVector2 high_top = new RawVector2(filter_h, y + tsl.Height);
+                RawVector2 top_left = new RawVector2(filter_l, y + line_width_half + tsl.Height);
+                RawVector2 top_right = new RawVector2(filter_h, y + line_width_half + tsl.Height);
+
+                bool low_highlighted = false;
+                bool high_highlighted = false;
+                bool top_highlighted = false;
+
+                if (!highlight_button && mouse_entered && filter.CanAdjust && !filter.AutoZoom)
+                {
+                    float low_dist = pointToSegmentDistance(low_bot, low_top, filter.MouseMovePoint);
+                    float high_dist = pointToSegmentDistance(high_bot, high_top, filter.MouseMovePoint);
+                    float shift_dist = pointToSegmentDistance(top_left, top_right, filter.MouseMovePoint);
+
+                    if(low_dist <= high_dist && low_dist <= shift_dist)
+                    {
+                        low_highlighted = isMouseNearLine(low_bot, low_top, filter.MouseMovePoint, 6);
+                    }
+                    else if(high_dist <= low_dist && high_dist <= shift_dist)
+                    {
+                        high_highlighted = isMouseNearLine(high_bot, high_top, filter.MouseMovePoint, 6);
+                    }
+                    else
+                    {
+                        top_highlighted = !m.MOX && isMouseNearLine(top_left, top_right, filter.MouseMovePoint, 12);
+                    }                                                          
+
+                    bool selected = filter.LowSelected || filter.HighSelected || filter.TopSelected || filter.NotchSelected;
+
+                    if (!selected && low_highlighted && filter.MouseButtonDown)
+                    {
+                        filter.LowSelected = true;
+                    }
+                    else if (!selected && high_highlighted && filter.MouseButtonDown)
+                    {
+                        filter.HighSelected = true;
+                    }
+                    else if (!selected && top_highlighted && filter.MouseButtonDown)
+                    {
+                        filter.StartShiftX = filter.MouseMovePoint.X;
+                        filter.TopSelected = true;
+                    }
+                    else if (selected)
+                    {
+                        low_highlighted = false;
+                        high_highlighted = false;
+                        top_highlighted = false;
+                    }
+                }
+
+                //filter lines
+                if (!filter.ShowCharacteristic)
+                {
+                    if (!low_highlighted) _renderTarget.DrawLine(low_bot, low_top, filter_line_colour_brush, line_width);
+                    if (!high_highlighted) _renderTarget.DrawLine(high_bot, high_top, filter_line_colour_brush, line_width);
+                    if (!top_highlighted) _renderTarget.DrawLine(top_left, top_right, filter_line_colour_brush, line_width);
+                }
+                else
+                {
+                    //characteristic plot
+
+                    //dashed lines for filter edge settings
+                    if (!low_highlighted) _renderTarget.DrawLine(low_bot, low_top, filter_line_colour_faded_brush, line_width, _dash_style);
+                    if (!high_highlighted) _renderTarget.DrawLine(high_bot, high_top, filter_line_colour_faded_brush, line_width, _dash_style);
+                    
+                    //simulated plot
+                    float cp_height = bot_line_y - top_line_y;
+                    SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(extent_l, y + line_width_half + tsl.Height, width_between_slopes, cp_height);
+                    _renderTarget.PushAxisAlignedClip(clip_rect, AntialiasMode.Aliased);
+                    lock (MiniSpec.FilterCharacteristicsLocker)
+                    {
+                        MiniSpec.FilterCharacteristics fc;
+                        if (m.MOX)
+                            fc = MiniSpec.GetTXCharacteristic();
+                        else
+                            fc = MiniSpec.GetRXCharacteristic(filter.Mode);
+
+                        float cp_dbmToPixel = cp_height / (float)(fc.max - filter.CharacteristicLow);
+                        float tot = fc.segments.Length - 2; // ignore first/last
+                        float cp_hz_per_index = (float)((fc.corner_freq * 2f) / (float)(fc.hz_span + 1)); // hz span is the number of indexes between low/upper
+                        float cp_total_hz = cp_hz_per_index * tot;
+                        float cp_x_step = hzToPixels(cp_total_hz, pixel_span, hz_span) / tot;
+                        float cp_six_db_shift = fc.six_db_shift * cp_x_step;
+                        int cp_mid = fc.middle_index;
+
+                        //new method
+                        //get span of pixels used between limits, and between container edges, whatever is smaller
+                        float pixels_between_filter_limits = (int)hzToPixels(hz_span, pixel_span, hz_span);
+                        int pixel_width = (int)Math.Min(pixels_between_filter_limits, rect.Width);
+                        //add on the cp_six_db_shift as we can put the data off the edge of the draw area by this much
+                        pixel_width += (int)cp_six_db_shift;
+                        //find the hz per pixel, hz_per_pixel
+                        double hz_per_pixel = pixelsToHz(1, pixel_span, hz_span);
+                        //step through the filter data and combine all values in that hz_per_pixel range to a single min/max value
+                        List<(float,float)> lines = new List<(float,float)>();
+                        float min = float.MaxValue;
+                        float max = float.MinValue;
+                        double hz_count = 0;
+                        bool adding = true;
+                        bool first_set = false;
+                        for (int px = cp_mid; px > 0; px--)
+                        {
+                            float val = (float)fc.segments[px];
+                            if (val < min) min = val;
+                            if (val > max) max = val;
+
+                            hz_count += cp_hz_per_index;
+                            if(hz_count >= hz_per_pixel)
+                            {
+                                min = top_pos + (((float)fc.max - min) * cp_dbmToPixel);
+                                max = top_pos + (((float)fc.max - max) * cp_dbmToPixel);
+
+                                while (adding && hz_count > hz_per_pixel)
+                                {
+                                    lines.Add((min, max));
+                                    hz_count = hz_count - hz_per_pixel;
+                                    if (lines.Count == pixel_width) adding = false; // exit when enough pixels for the display area
+                                }
+                                if (!adding) break;
+
+                                min = float.MaxValue;
+                                max = float.MinValue;
+                            }
+                        }
+                        RawVector2 low_pos_left = new RawVector2();
+                        RawVector2 high_pos_left = new RawVector2();
+                        RawVector2 low_pos_right = new RawVector2();
+                        RawVector2 high_pos_right = new RawVector2();
+
+                        RawVector2 join_left = new RawVector2();
+                        RawVector2 join_right = new RawVector2();
+
+                        RawVector2 old_pos_left = new RawVector2();
+                        RawVector2 old_pos_right = new RawVector2();
+                        if (lines.Count > 0)
+                        {
+                            float start_x = low_top.X + cp_six_db_shift;
+                            old_pos_left.X = start_x;
+                            old_pos_left.Y = lines.First().Item1;
+                            start_x = high_top.X - cp_six_db_shift;
+                            old_pos_right.X = start_x;
+                            old_pos_right.Y = lines.First().Item1;
+                        }
+                        //for each pixel plot line beteen min/max, and join them
+                        int pixel_x = cp_mid;
+                        foreach ((float min_v, float max_v) in lines)
+                        {
+                            low_pos_left.Y = min_v;
+                            high_pos_left.Y = max_v;
+                            low_pos_right.Y = min_v;
+                            high_pos_right.Y = max_v;
+
+                            //left
+                            low_pos_left.X = low_top.X - (cp_mid - pixel_x) + cp_six_db_shift;
+                            high_pos_left.X = low_pos_left.X;
+                            //right
+                            low_pos_right.X = high_top.X + (cp_mid - pixel_x) - cp_six_db_shift;
+                            high_pos_right.X = low_pos_right.X;
+
+                            if (high_pos_right.X - high_pos_left.X > 0)
+                            {
+                                _renderTarget.DrawLine(high_pos_left, low_pos_left, filter_line_colour_brush, line_width);
+                                //join
+                                _renderTarget.DrawLine(low_pos_left, old_pos_left, filter_line_colour_brush, line_width);
+
+                                _renderTarget.DrawLine(high_pos_right, low_pos_right, filter_line_colour_brush, line_width);
+                                //join
+                                _renderTarget.DrawLine(low_pos_right, old_pos_right, filter_line_colour_brush, line_width);
+
+                                if (!first_set)
+                                {
+                                    first_set = true;
+                                    join_left.X = high_pos_left.X;
+                                    join_right.X = high_pos_right.X;
+                                    join_left.Y = high_pos_left.Y;
+                                    join_right.Y = high_pos_left.Y; // same as left Y so we dont ever get a slope
+                                }
+                            }
+                            old_pos_left.X = low_pos_left.X;
+                            old_pos_left.Y = low_pos_left.Y;
+                            old_pos_right.X = low_pos_right.X;
+                            old_pos_right.Y = low_pos_right.Y;
+
+                            pixel_x--;
+                        }
+                        if(first_set) _renderTarget.DrawLine(join_left, join_right, filter_line_colour_brush, line_width);
+                    }
+                    _renderTarget.PopAxisAlignedClip();
+                }
+
+                if (low_highlighted || filter.LowSelected) _renderTarget.DrawLine(low_bot, low_top, filter_line_highlight_colour_brush, line_width * 3);
+                if (high_highlighted || filter.HighSelected) _renderTarget.DrawLine(high_bot, high_top, filter_line_highlight_colour_brush, line_width * 3);
+                if (top_highlighted || filter.TopSelected) _renderTarget.DrawLine(top_left, top_right, filter_line_highlight_colour_brush, line_width * 3);
+
+                // notches
+                bool notch_highlighted = false;
+                if (show_notches)
+                {                    
+                    lock (MiniSpec.NotchLocker)
+                    {
+                        SharpDX.Direct2D1.Brush notch_brush = getDXBrushForColour(notch_colour);
+                        SharpDX.Direct2D1.Brush notch_brush_fill = getDXBrushForColour(notch_colour, 96);
+                        SharpDX.Direct2D1.Brush notch_brush_fill_highlight = getDXBrushForColour(notch_colour_highlight, 192);
+                        SharpDX.Direct2D1.Brush notch_brush_line_highlight = getDXBrushForColour(filter_line_colour_highlight);
+                        SharpDX.Direct2D1.Brush notch_brush_disabled = getDXBrushForColour(notch_colour, 128);
+                        SharpDX.Direct2D1.Brush notch_brush_fill_disabled = getDXBrushForColour(notch_colour, 48);
+
+                        double centre_freq = filter.CentreFrequencyHZ;
+                        List<MiniSpec.Notch> notches = MiniSpec.GetNotches(centre_freq, filter.ExtentHZ + (filter.ExtentHZ / 2));
+                        bool selected = filter.LowSelected || filter.HighSelected || filter.TopSelected;
+                        foreach (MiniSpec.Notch notch in notches)
+                        {
+                            double shift_hz = notch.frequency_hz - centre_freq - filter.CWPichOffset;
+                            float notch_x = centre + hzToPixels(Math.Abs(shift_hz), pixel_span, hz_span) * (shift_hz < 0 ? -1 : 1);
+                            float width_pix = hzToPixels(Math.Abs(notch.width_hz / 2f), pixel_span, hz_span);
+
+                            RawVector2 notch_bot = new RawVector2(notch_x, y + h);
+                            RawVector2 notch_top = new RawVector2(notch_x, y + tsl.Height);
+
+                            RawVector2 width_low_bot = new RawVector2(notch_x - width_pix, y + h);
+                            RawVector2 width_low_top = new RawVector2(notch_x - width_pix, y + tsl.Height);
+                            RawVector2 width_high_bot = new RawVector2(notch_x + width_pix, y + h);
+                            RawVector2 width_high_top = new RawVector2(notch_x + width_pix, y + tsl.Height);
+
+                            bool highlight_notch = false;
+                            RawRectangleF notch_rect = new RawRectangleF(width_low_top.X, width_low_top.Y, width_high_bot.X, width_high_bot.Y);
+                            if (mouse_entered && !selected)
+                            {
+                                if (!highlight_button && !filter.NotchSelected && filter.MouseMovePoint.X >= width_low_top.X - 2 && filter.MouseMovePoint.X <= width_high_top.X + 2 &&
+                                    filter.MouseMovePoint.Y >= width_low_top.Y && filter.MouseMovePoint.Y <= width_low_bot.Y)
+                                {
+                                    filter.NotchHighlightedIndex = notch.index;
+                                    highlight_notch = true;
+                                }
+                                else if (filter.NotchSelected)
+                                {
+                                    highlight_notch = filter.NotchHighlightedIndex == notch.index;
+                                }
+                                notch_highlighted |= highlight_notch;
+                            }
+                            _renderTarget.FillRectangle(notch_rect, highlight_notch ? notch_brush_fill_highlight : (notch.active && filter.TNFActive ? notch_brush_fill : notch_brush_fill_disabled));
+                            _renderTarget.DrawLine(notch_bot, notch_top, highlight_notch ? notch_brush_line_highlight : (notch.active && filter.TNFActive ? notch_brush_fill : notch_brush_fill_disabled), line_width);
+                        }
+                    }
+                    if (notch_highlighted)
+                    {
+                        if (!filter.NotchSelected && filter.MouseButtonDown)
+                        {
+                            filter.StartShiftX = filter.MouseMovePoint.X;
+                            filter.NotchSelected = true;
+                        }
+
+                        filter.LowSelected = false;
+                        filter.HighSelected = false;
+                        filter.TopSelected = false;
+                    }
+                    else
+                    {
+                        filter.NotchHighlightedIndex = -1;
+                    }
+                }
+
+                // centre text
+                plotText("0", centre, text_y + (tsl.Height / 2f), rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, text_overlay_colour);
+
+                //mnf and +mnf buttons
+                bool sel = filter.LowSelected || filter.HighSelected || filter.TopSelected || filter.NotchSelected;
+                bool mnf_selected = false;
+                bool mnf_plus_selected = false;
+                bool snap_selected = false;
+                bool zoom_selected = false;
+
+                if (mouse_entered && !sel)
+                {                    
+                    if (mnf_rect.Contains(filter.MouseMovePoint))
+                    {
+                        mnf_highlight = text_highlight_colour_mnf;
+                        filter.LowSelected = false;
+                        filter.HighSelected = false;
+                        filter.TopSelected = false;
+                        mnf_selected = true;
+                    }
+                    else if (mnf_plus_rect.Contains(filter.MouseMovePoint))
+                    {
+                        mnfplus_highlight = text_highlight_colour_mnfplus;
+                        filter.LowSelected = false;
+                        filter.HighSelected = false;
+                        filter.TopSelected = false;
+                        mnf_plus_selected = true;
+                    }
+                    else if (snap_rect.Contains(filter.MouseMovePoint) && !filter.AutoZoom)
+                    {
+                        snap_highlight = text_highlight_colour_snap;
+                        filter.LowSelected = false;
+                        filter.HighSelected = false;
+                        filter.TopSelected = false;
+                        snap_selected = true;
+                    }
+                    else if (zoom_rect.Contains(filter.MouseMovePoint))
+                    {
+                        zoom_highlight = text_highlight_colour_zoom;
+                        filter.LowSelected = false;
+                        filter.HighSelected = false;
+                        filter.TopSelected = false;
+                        zoom_selected = true;
+                    }
+                }
+                filter.MNFSelected = mnf_selected;
+                filter.MNFPlusSelected = mnf_plus_selected;
+                filter.SnapSelected = snap_selected;
+                filter.AutoZoomSelected = zoom_selected;
+
+                // the + "\u200B" is for a zero-width space to preserve layout, otherwise direct write trims
+                plotText(" MNF " + "\u200B", mnf_rect.X, text_y, rect.Width, font_size_scaled, filter.TNFActive ? System.Drawing.Color.White : extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, filter.TNFActive ? mnf_on_colour : mnf_highlight);
+                plotText(" +MNF " + "\u200B", mnf_plus_rect.X, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, mnfplus_highlight);
+                plotText(" SNAP " + "\u200B", snap_rect.X, text_y, rect.Width, font_size_scaled, extent_text_colour, filter.AutoZoom ? 92 : 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, filter.SnapLines ? snap_on_colour : snap_highlight);
+                plotText(" FIT " + "\u200B", zoom_rect.X, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, filter.AutoZoom ? zoom_on_colour : zoom_highlight);
+
+                //filter edge values
+                SizeF lowSize = measureString(local_low.ToString(), "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, false);
+                SizeF highSize = measureString((local_high > 0 ? "+" : "") + local_high.ToString(), "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, false);
+
+                int collide_count = 0;
+                if ((filter_l + (lowSize.Width / 2f) >= filter_h - (highSize.Width / 2f)) && (filter_l - (lowSize.Width / 2f) <= filter_h + (highSize.Width / 2f))) collide_count++;
+
+                // closest to which filter edge?
+                float centre_top_line = top_left.X + ((top_right.X - top_left.X) / 2f);
+                bool highlight_low_text = false;
+                bool highlight_high_text = false;
+                bool highlight_shift_text = false;
+
+                if (!notch_highlighted && !highlight_button && filter.CanAdjust && mouse_entered && !(filter.LowSelected || filter.HighSelected || filter.TopSelected))
+                {
+                    float low_dist = distanceBetweenPoints(new RawVector2(filter_l, text_y + (tsl.Height / 2f)), filter.MouseMovePoint);
+                    float high_dist = distanceBetweenPoints(new RawVector2(filter_h, text_y + (tsl.Height / 2f)), filter.MouseMovePoint);
+                    float shift_dist = distanceBetweenPoints(new RawVector2(centre_top_line, y), filter.MouseMovePoint);
+
+                    if (low_dist <= high_dist && low_dist <= shift_dist)
+                    {
+                        highlight_low_text = true;
+                    }
+                    else if (high_dist <= low_dist && high_dist <= shift_dist)
+                    {
+                        highlight_high_text = true;
+                    }
+                    else
+                    {
+                        highlight_shift_text = !m.MOX;
+                    }
+                }
+                filter.AdjustLow = highlight_low_text;
+                filter.AdjustHigh = highlight_high_text;
+                filter.AdjustShift = highlight_shift_text;
+                
+                // bw text                
+                string bw = Math.Abs(local_high - local_low).ToString();
+                SizeF bws = measureString(bw, "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, true);
+                bool bw_collide = (centre_top_line + (bws.Width / 2f) > filter_name_left) || (centre_top_line - (bws.Width / 2f) < mode_text_right);
+                plotText(bw, centre_top_line, y + (tsl.Height / 2f) + (bw_collide ? bws.Height : 0), rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, highlight_shift_text ? text_overlay_highlight_colour : text_overlay_colour);
+
+                // filter edge number text
+                float y_collide_offset = collide_count * -zero.Height;              
+                plotText(local_low.ToString(), filter_l, text_y + y_collide_offset - tsl.Height, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, highlight_low_text ? text_overlay_highlight_colour : text_overlay_colour);
+                plotText((local_high > 0 ? "+" : "") + local_high.ToString(), filter_h, text_y - tsl.Height, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, true, 0, false, 0, 0, true, highlight_high_text ? text_overlay_highlight_colour : text_overlay_colour);
+
+                //mouse down
+                if (mouse_entered && filter.MouseButtonDown && (filter.LowSelected || filter.HighSelected || filter.TopSelected || filter.NotchSelected))
+                {
+                    if (filter.LowSelected)
+                    {
+                        filter.Low = (float)pixelsToHz(filter.MouseMovePoint.X - centre, pixel_span, hz_span);
+                    }
+                    else if (filter.HighSelected)
+                    {
+                        filter.High = (float)pixelsToHz(filter.MouseMovePoint.X - centre, pixel_span, hz_span);
+                    }
+                    else if (filter.TopSelected)
+                    {
+                        float delta = filter.MouseMovePoint.X - filter.StartShiftX;
+                        filter.Shift((float)pixelsToHz(Math.Abs(delta), pixel_span, hz_span) * (delta < 0 ? -1 : 1));
+                    }
+                    else if(filter.NotchSelected && filter.MouseButton != MouseButtons.Right)
+                    {
+                        //adjust notch
+                        float delta = filter.MouseMovePoint.X - filter.StartShiftX;
+                        filter.AdjustNotch((float)pixelsToHz(Math.Abs(delta), pixel_span, hz_span) * (delta < 0 ? -1 : 1));
+                    }
+                }
+            }
+            //
+            private float hzToPixels(double hz, float pixel_span, int hz_span)
+            {
+                if (hz <= 0 || pixel_span <= 0 || hz_span <= 0) return 0;
+                return (float)((pixel_span / (float)hz_span) * (double)hz);
+            }
+            private double pixelsToHz(float pixels, float pixel_span, int hz_span)
+            {
+                if (pixel_span <= 0 || hz_span <= 0) return 0;
+                return (pixels / pixel_span) * hz_span;
+            }
+            public bool isMouseNearLine(RawVector2 point1, RawVector2 point2, PointF mousePosition, float proximityThreshold = 3.0f)
+            {
+                float distance = pointToSegmentDistance(point1, point2, mousePosition);
+                return distance <= proximityThreshold;
+            }
+
+            private float pointToSegmentDistance(RawVector2 lineStart, RawVector2 lineEnd, PointF point)
+            {
+                float lineLengthSquared = (lineEnd.X - lineStart.X) * (lineEnd.X - lineStart.X) +
+                                          (lineEnd.Y - lineStart.Y) * (lineEnd.Y - lineStart.Y);
+
+                if (lineLengthSquared == 0.0f)
+                {
+                    return distanceBetweenPoints(lineStart, point);
+                }
+
+                float t = ((point.X - lineStart.X) * (lineEnd.X - lineStart.X) +
+                           (point.Y - lineStart.Y) * (lineEnd.Y - lineStart.Y)) / lineLengthSquared;
+                t = Math.Max(0, Math.Min(1, t));
+
+                RawVector2 closestPoint = new RawVector2(
+                    lineStart.X + t * (lineEnd.X - lineStart.X),
+                    lineStart.Y + t * (lineEnd.Y - lineStart.Y)
+                );
+
+                return distanceBetweenPoints(closestPoint, point);
+            }
+
+            private float distanceBetweenPoints(RawVector2 p1, PointF p2)
+            {
+                return (float)Math.Sqrt((p1.X - p2.X) * (p1.X - p2.X) + (p1.Y - p2.Y) * (p1.Y - p2.Y));
+            }
+            //
             private void renderHistory(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsHistoryItem his = (clsHistoryItem)mi;
@@ -21638,7 +27830,7 @@ namespace Thetis
                             {
                                 //right numbers
                                 float val = min1 + (i * number_step1);
-                                plotText(val.ToString("f1"), x + w - spacer + quarter_spacer, t_y, h, rect.Width, 11f, his.Axis1Colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, spacer);
+                                plotText(val.ToString("f1"), x + w - spacer + quarter_spacer, t_y, rect.Width, 11f, his.Axis1Colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, spacer);
                             }
 
                             //ticks/grid line
@@ -21690,7 +27882,7 @@ namespace Thetis
 
                             //left numbers
                             float val = min0 + (i * number_step0);
-                            plotText(val.ToString("f1"), x + spacer - quarter_spacer, t_y, h, rect.Width, 11f, his.Axis0Colour, 255, "Trebuchet MS", FontStyle.Regular, true, false, spacer);
+                            plotText(val.ToString("f1"), x + spacer - quarter_spacer, t_y, rect.Width, 11f, his.Axis0Colour, 255, "Trebuchet MS", FontStyle.Regular, true, false, spacer);
 
                             //ticks/grid line
                             if (i > 0)
@@ -21740,7 +27932,7 @@ namespace Thetis
                                 s_x = start_x + (hd.index / (float)(total0 - 1)) * (w - spacer - half_spacer);
                             float s_y = y + h - half_spacer;
                             _renderTarget.DrawLine(new RawVector2(s_x, s_y - half_spacer), new RawVector2(s_x, s_y - half_spacer + quarter_spacer), getDXBrushForColour(his.LinesColour, 96), data_line_width);
-                            plotText(hd.time.ToString("HH:mm:ss"), s_x, s_y, h, rect.Width, 10f, his.TimeColour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, true, 0, 45);
+                            plotText(hd.time.ToString("HH:mm:ss"), s_x, s_y, rect.Width, 10f, his.TimeColour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, true, 0, 45);
                         }
 
                         //time axis
@@ -21768,8 +27960,8 @@ namespace Thetis
                             }
                         }
 
-                        //plotText(his.IndexTracker.ToString(), x , y, h, rect.Width, 12f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular);
-                        //plotText(sampleRate.ToString(), x, y + 30, h, rect.Width, 12f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular);
+                        //plotText(his.IndexTracker.ToString(), x , y, rect.Width, 12f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular);
+                        //plotText(sampleRate.ToString(), x, y + 30, rect.Width, 12f, System.Drawing.Color.Red, 255, "Trebuchet MS", FontStyle.Regular);
                     }
                 }               
             }
@@ -21897,7 +28089,7 @@ namespace Thetis
                 }
                 else
                 {
-                    plotText("No Image", x + w/2, y + h/2, h, rect.Width, 36f, System.Drawing.Color.DarkGray, 255, "Trebuchet MS", FontStyle.Regular, false, true);
+                    plotText("No Image", x + w/2, y + h/2, rect.Width, 36f, System.Drawing.Color.DarkGray, 255, "Trebuchet MS", FontStyle.Regular, false, true);
                 }
             }
             private string convertDegreesToCardinal(float degrees)
@@ -22038,7 +28230,7 @@ namespace Thetis
 
                                 cx = centre.X + radius_text * (float)Math.Cos(rad);
                                 cy = centre.Y + radius_text * (float)Math.Sin(rad);
-                                plotText(card, cx, cy, h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, true);
+                                plotText(card, cx, cy, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, true);
                             }
                         }
 
@@ -22059,7 +28251,7 @@ namespace Thetis
 
                                 cx = centre.X + radius_text * (float)Math.Cos(rad);
                                 cy = centre.Y + radius_text * (float)Math.Sin(rad);
-                                plotText(deg.ToString(), cx, cy, h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, true);
+                                plotText(deg.ToString(), cx, cy, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, true);
                             }
                             else
                             {
@@ -22130,21 +28322,21 @@ namespace Thetis
                     {
                         cx = x + w * 0.75f;
                         cy = y + h * 0.575f;
-                        plotText(convertDegreesToCardinal(degrees_az), cx, cy, h, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
-                        plotText(" cardinal", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
+                        plotText(convertDegreesToCardinal(degrees_az), cx, cy, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
+                        plotText(" cardinal", cx - (w * 0.01f), cy + (h * 0.035f), rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
                         cy = y + h * 0.7f;
-                        plotText(degrees_az.ToString("f1") + "°", cx, cy, h, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
-                        plotText("  azimuth", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
+                        plotText(degrees_az.ToString("f1") + "°", cx, cy, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
+                        plotText("  azimuth", cx - (w * 0.01f), cy + (h * 0.035f), rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
                     }
                     else
                     {
                         cx = x + w * 0.5f;
                         cy = y + h * 0.525f;
-                        plotText(convertDegreesToCardinal(degrees_az), cx, cy, h, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
-                        plotText(" cardinal", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
+                        plotText(convertDegreesToCardinal(degrees_az), cx, cy, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
+                        plotText(" cardinal", cx - (w * 0.01f), cy + (h * 0.035f), rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
                         cy = y + h * 0.65f;
-                        plotText(degrees_az.ToString("f1") + "°", cx, cy, h, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
-                        plotText("  azimuth", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
+                        plotText(degrees_az.ToString("f1") + "°", cx, cy, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
+                        plotText("  azimuth", cx - (w * 0.01f), cy + (h * 0.035f), rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
                     }
 
                     // check if arrow at desination
@@ -22296,7 +28488,7 @@ namespace Thetis
 
                             cx = centre.X + radius_text * (float)Math.Cos(rad);
                             cy = centre.Y + radius_text * (float)Math.Sin(rad);
-                            plotText((90 - deg).ToString(), cx, cy, h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, false);
+                            plotText((90 - deg).ToString(), cx, cy, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, true, 0, false);
                         }
                         else
                         {
@@ -22332,15 +28524,15 @@ namespace Thetis
                     {
                         cx = x + w * 0.4f;
                         cy = y + h * 0.75f;
-                        plotText(degrees_ele.ToString("f1") + "°", cx, cy, h, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
-                        plotText("elevation", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
+                        plotText(degrees_ele.ToString("f1") + "°", cx, cy, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
+                        plotText("elevation", cx - (w * 0.01f), cy + (h * 0.035f), rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
                     }
                     else
                     {
                         cx = x + w * 0.75f;
                         cy = y + h * 0.825f;
-                        plotText(degrees_ele.ToString("f1") + "°", cx, cy, h, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
-                        plotText("elevation", cx - (w * 0.01f), cy + (h * 0.035f), h, rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
+                        plotText(degrees_ele.ToString("f1") + "°", cx, cy, rect.Width, rotator.FontSize * 2f * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, false, false, 0, true);
+                        plotText("elevation", cx - (w * 0.01f), cy + (h * 0.035f), rect.Width, rotator.FontSize * text_scale, rotator.OuterTextColour, 255, rotator.FontFamily, rotator.Style, true, false, 0, true);
                     }
 
                     // check if arrow at desination
@@ -23086,7 +29278,7 @@ namespace Thetis
                 kHz = vfo.Substring(index + 1, 3);
                 hz = vfo.Substring(index + 4, 3);
             }
-            private (float, float) plotText(string sText, float x, float y, float h, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fit_size_width = 0, bool ignore_cache = false, float fit_size_height = 0, float rotate_deg = 0, bool fill_background = false, object back_colour = null)
+            private (float, float) plotText(string sText, float x, float y, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fit_size_width = 0, bool ignore_cache = false, float fit_size_height = 0, float rotate_deg = 0, bool fill_background = false, object back_colour = null)
             {
                 if (string.IsNullOrEmpty(sText)) return (0, 0);
 
@@ -23095,7 +29287,7 @@ namespace Thetis
 
                 float ratio_w = 1f;
                 float ratio_h = 1f;
-                float ratio = 1f;
+                float ratio;
                 szTextSize = measureString(sText, sFontFamily, style, fontSizeEmScaled, ignore_cache);
                 if (fit_size_width > 0)
                 {
@@ -23156,7 +29348,7 @@ namespace Thetis
                     _renderTarget.Transform = originalTransform * Matrix3x2.Rotation(MathUtil.DegreesToRadians(rotate_deg), new Vector2(txtrect.Left, txtrect.Top) + textCenter);
                 }
                 if (fill_background)
-                    _renderTarget.FillRectangle(txtrect, getDXBrushForColour((System.Drawing.Color)back_colour));
+                    _renderTarget.FillRectangle(txtrect, getDXBrushForColour((System.Drawing.Color)back_colour, nFade));
 
                 _renderTarget.DrawText(sText, getDXTextFormatForFont(sFontFamily, fontSizeEmScaled, style), txtrect, getDXBrushForColour(c, nFade));
                 if(rotate_deg != 0)
@@ -23264,7 +29456,7 @@ namespace Thetis
 
                     t_xB = xB + (gap / 2f) + (nx * gap);
                     t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
-                    plotText(skip_name, t_xB, t_yB, h, rect.Width * x_multy, 14f, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    plotText(skip_name, t_xB, t_yB, rect.Width * x_multy, 14f, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
 
                     nx++;
                     if (nx > 7)
@@ -23276,7 +29468,7 @@ namespace Thetis
                     if (added > 16) break; // catch incase vfo.tunesteps.count less the skipped is > 16 boxes (8x2)
                 }
 
-                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
 
                 if (vfoB)
                     vfo.ButtonGridIndexVFOb = button_grid_index;
@@ -23338,25 +29530,52 @@ namespace Thetis
                 ny = 0;
                 float t_xB;
                 float t_yB;
-                Band start = Band.FIRST;
-                Band end = Band.LAST;
+                Band start;
+                Band end;
                 bool vhf = false;
-                if (_console.BandHFSelected)
+                BandGroups bg;
+
+                if (m.RX == 1)
                 {
-                    start = Band.B160M;
-                    end = Band.B6M;
+                    if (_console.BandHFSelected)
+                    {
+                        bg = BandGroups.HF;
+                    }
+                    else if (_console.BandVHFSelected)
+                    {
+                        bg = BandGroups.VHF;
+                    }
+                    else if (_console.BandGENSelected)
+                    {
+                        bg = BandGroups.GEN;
+                    }
+                    else
+                    {
+                        bg = m.GetBandGroupFromBand(vfoB ? m.BandVfoB : m.BandVfoA);
+                    }
                 }
-                else if (_console.BandVHFSelected)
+                else
                 {
-                    start = Band.VHF0;
-                    end = Band.VHF13;
-                    vhf = true;
+                    bg = m.GetBandGroupFromBand(vfoB ? m.BandVfoB : m.BandVfoA);
                 }
-                else if (_console.BandGENSelected)
+
+                switch (bg)
                 {
-                    start = Band.B120M;
-                    end = Band.B11M;
+                    case BandGroups.HF:
+                        start = Band.B160M;
+                        end = Band.B6M;
+                        break;
+                    case BandGroups.VHF:
+                        start = Band.VHF0;
+                        end = Band.VHF13;
+                        vhf = true;
+                        break;
+                    default:
+                        start = Band.B120M;
+                        end = Band.B11M;
+                        break;
                 }
+
                 System.Drawing.Color band_colour;
                 string band;
                 for (int i = (int)start; i <= (int)end; i++)
@@ -23396,7 +29615,7 @@ namespace Thetis
 
                     t_xB = xB + (gap / 2f) + (nx * gap);
                     t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
-                    plotText(band, t_xB, t_yB, h, rect.Width * x_multy, 20f, band_colour, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    plotText(band, t_xB, t_yB, rect.Width * x_multy, 20f, band_colour, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                     nx++;
                     if (nx > 7)
                     {
@@ -23407,22 +29626,22 @@ namespace Thetis
 
                 t_xB = xB + (gap / 2f) + (nx * gap);
                 t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
-                if (_console.BandHFSelected)
+                if (bg == BandGroups.HF)
                 {
-                    plotText("VHF", t_xB, t_yB, h, rect.Width * x_multy, 16f, System.Drawing.Color.Yellow, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    plotText("VHF", t_xB, t_yB, rect.Width * x_multy, 16f, System.Drawing.Color.Yellow, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                     nx++;
                     t_xB = xB + (gap / 2f) + (nx * gap);
-                    plotText("WWV", t_xB, t_yB, h, rect.Width * x_multy, 14f, BandStackManager.BandToColour(Band.WWV), 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    plotText("WWV", t_xB, t_yB, rect.Width * x_multy, 14f, BandStackManager.BandToColour(Band.WWV), 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                     nx++;
                     t_xB = xB + (gap / 2f) + (nx * gap);
-                    plotText("SWL", t_xB, t_yB, h, rect.Width * x_multy, 16f, System.Drawing.Color.Orange, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    plotText("SWL", t_xB, t_yB, rect.Width * x_multy, 16f, System.Drawing.Color.Orange, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                 }
-                else if (_console.BandGENSelected || _console.BandVHFSelected)
+                else if (bg == BandGroups.GEN || bg == BandGroups.VHF)
                 {
-                    plotText("HF", t_xB, t_yB, h, rect.Width * x_multy, 16f, System.Drawing.Color.Red, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    plotText("HF", t_xB, t_yB, rect.Width * x_multy, 16f, System.Drawing.Color.Red, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                 }
 
-                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
 
                 if (vfoB)
                     vfo.ButtonGridIndexVFOb = button_grid_index;
@@ -23508,7 +29727,7 @@ namespace Thetis
 
                     t_xB = xB + (gap / 2f) + (nx * gap);
                     t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
-                    plotText(mode, t_xB, t_yB, h, rect.Width * x_multy, 18f, mode_colour, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
+                    plotText(mode, t_xB, t_yB, rect.Width * x_multy, 18f, mode_colour, 255, vfo.FontFamily, vfo.Style, false, true, 0, true);
                     nx++;
                     if (nx > 5)
                     {
@@ -23517,7 +29736,7 @@ namespace Thetis
                     }
                 }
 
-                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
 
                 if (vfoB)
                     vfo.ButtonGridIndexVFOb = button_grid_index;
@@ -23615,7 +29834,7 @@ namespace Thetis
 
                     t_xB = xB + (gap / 2f) + (nx * gap);
                     t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
-                    plotText(filter, t_xB, t_yB, h, rect.Width * x_multy, 16f, filter_colour, 255, vfo.FontFamily, vfo.Style, false, true, gap, true);
+                    plotText(filter, t_xB, t_yB, rect.Width * x_multy, 16f, filter_colour, 255, vfo.FontFamily, vfo.Style, false, true, gap, true);
                     nx++;
                     if (nx > 5)
                     {
@@ -23631,7 +29850,7 @@ namespace Thetis
                     }
                 }
 
-                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                //plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
 
                 if (vfoB)
                     vfo.ButtonGridIndexVFOb = button_grid_index;
@@ -23662,14 +29881,14 @@ namespace Thetis
 
                 return shrunkRectangle;
             }
-            private void drawRoundedRectangle(RoundedRectangle rr, SharpDX.Direct2D1.Brush b, float stroke)
+            private void drawRoundedRectangle(RoundedRectangle rr, SharpDX.Direct2D1.Brush b, float stroke, bool centred = false)
             {
                 if(rr.RadiusX>0 || rr.RadiusY>0)
                     _renderTarget.DrawRoundedRectangle(rr, b, stroke);
                 else
                     _renderTarget.DrawRectangle(rr.Rect, b, stroke);
             }
-            private void fillRoundedRectangle(RoundedRectangle rr, SharpDX.Direct2D1.Brush b)
+            private void fillRoundedRectangle(RoundedRectangle rr, SharpDX.Direct2D1.Brush b, bool centred = false)
             {
                 if (rr.RadiusX > 0 || rr.RadiusY > 0)
                     _renderTarget.FillRoundedRectangle(rr, b);
@@ -23996,7 +30215,7 @@ namespace Thetis
                             float cy = rectBB.Top + (rectBB.Height / 2f);
                             if (rectBB.Width > 0 && rectBB.Height > 0)
                             {
-                                plotText(text, cx + (bb.FontShiftX * wh / (float)(buttons_per_row * 2f)), cy + (bb.FontShiftY * wh / (float)(buttons_per_row * 2f)), h, rect.Width, bb.GetFontSize(1, button_index), text_colour, 255, bb.GetFontFamily(1, button_index), bb.GetFontStyle(1, button_index), false, true, rectBB.Width * text_size_modifier * bb.FontScale, true, rectBB.Height * text_size_modifier * bb.FontScale);
+                                plotText(text, cx + (bb.FontShiftX * wh / (float)(buttons_per_row * 2f)), cy + (bb.FontShiftY * wh / (float)(buttons_per_row * 2f)), rect.Width, bb.GetFontSize(1, button_index), text_colour, 255, bb.GetFontFamily(1, button_index), bb.GetFontStyle(1, button_index), false, true, rectBB.Width * text_size_modifier * bb.FontScale, true, rectBB.Height * text_size_modifier * bb.FontScale);
                             }
                         }
 
@@ -24184,12 +30403,18 @@ namespace Thetis
 
                         if (left)
                         {
-                            button_state_vfoA = clsVfoDisplay.buttonState.FILTER_SCREEN;
+                            if (vfo.MouseButtonDown && vfo.MouseDownLong)
+                                vfo.PopFilterMenu();
+                            else
+                                button_state_vfoA = clsVfoDisplay.buttonState.FILTER_SCREEN;
                             left = false;
                         }
                         if (right)
                         {
-                            button_state_vfoB = clsVfoDisplay.buttonState.FILTER_SCREEN;
+                            if (vfo.MouseButtonDown && vfo.MouseDownLong)
+                                vfo.PopFilterMenu();
+                            else
+                                button_state_vfoB = clsVfoDisplay.buttonState.FILTER_SCREEN;
                             right = false;
                         }
                     }
@@ -24351,7 +30576,7 @@ namespace Thetis
 
                     vfo.MouseOverVfoB = shift != 0 || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B;
 
-                    //plotText($"{mx.ToString("f3")},{my.ToString("f3")} -- boxes:{boxes} box:{box}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                    //plotText($"{mx.ToString("f3")},{my.ToString("f3")} -- boxes:{boxes} box:{box}", x, y, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
                 }
 
                 float old_h = h;
@@ -24439,7 +30664,7 @@ namespace Thetis
                 string hz;
                 if (disp_a)
                 {
-                    plotText("VFO A", x + (w * 0.01f) * x_multy, y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                    plotText("VFO A", x + (w * 0.01f) * x_multy, y + (h * 0.03f), rect.Width, vfo.FontSize, vfo.TypeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
                 }
 
                 // 0.50 difference in x between vfoa/b on both mode
@@ -24449,18 +30674,18 @@ namespace Thetis
                     if (m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split) && m.VfoSub >= 0) //[2.10.3.6]MW0LGE added m.vfosub >= 0
                     {
                         // vfoa sub
-                        plotText("VFO Sub", x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                        plotText("VFO Sub", x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.03f), rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
                     }
                     else
-                        plotText("VFO B", x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.03f), h, rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                        plotText("VFO B", x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.03f), rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
                 }
 
                 if (disp_a) 
                 { 
                     getParts(m.VfoA, out MHz, out kHz, out hz);
                     string sVfoA = MHz + "." + kHz;// + "." + hz;
-                    plotText(sVfoA, x + (w * 0.415f) * x_multy, y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
-                    plotText(hz, x + (w * 0.48f) * x_multy, y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColourSmall, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(sVfoA, x + (w * 0.415f) * x_multy, y + (h * 0.02f), rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(hz, x + (w * 0.48f) * x_multy, y + (h * 0.11f), rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColourSmall, nVfoAFade, vfo.FontFamily, vfo.Style, true);
                 }
 
                 double tmpVfoB;
@@ -24488,20 +30713,20 @@ namespace Thetis
                     // hz VFOB
                     getParts(tmpVfoB, out MHz, out kHz, out hz);
                     string sVfoB = MHz + "." + kHz;// + "." + hz;
-                    plotText(sVfoB, x + (w * 0.415f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.02f), h, rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
-                    plotText(hz, x + (w * 0.48f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.11f), h, rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColourSmall, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(sVfoB, x + (w * 0.415f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.02f), rect.Width, vfo.FontSize * 1.5f, vfo.FrequencyColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(hz, x + (w * 0.48f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.11f), rect.Width, vfo.FontSize * 1.2f, vfo.FrequencyColourSmall, nVfoBFade, vfo.FontFamily, vfo.Style, true);
                 }
 
                 if (disp_a)
                 {
                     // mode VFOA
-                    plotText(m.ModeVfoA.ToString(), x + (w * 0.01f) * x_multy, y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                    plotText(m.ModeVfoA.ToString(), x + (w * 0.01f) * x_multy, y + (h * 0.52f), rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoAFade, vfo.FontFamily, vfo.Style);
                 }
 
                 if (disp_b)
                 {
                     // mode VFOB
-                    plotText(tmpVfoBMode.ToString(), x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.52f), h, rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                    plotText(tmpVfoBMode.ToString(), x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.52f), rect.Width, vfo.FontSize * 1f, vfo.ModeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
                 }
 
                 if (disp_a)
@@ -24509,7 +30734,7 @@ namespace Thetis
                     //band VFOA
                     string sBand = BandStackManager.BandToString(m.BandVfoA);
                     if (sBand.EndsWith("M")) sBand = sBand.ToLower();
-                    plotText(sBand + " band", x + (w * 0.48f) * x_multy, y + (h * 0.54f), h, rect.Width, vfo.FontSize * 1f, vfo.BandColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(sBand + " band", x + (w * 0.48f) * x_multy, y + (h * 0.54f), rect.Width, vfo.FontSize * 1f, vfo.BandColour, nVfoAFade, vfo.FontFamily, vfo.Style, true);
                 }
 
                 if (disp_b)
@@ -24517,7 +30742,7 @@ namespace Thetis
                     //band VFOB
                     string sBand = BandStackManager.BandToString(tmpVfoBBand);
                     if (sBand.EndsWith("M")) sBand = sBand.ToLower();
-                    plotText(sBand + " band", x + (w * 0.48f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.54f), h, rect.Width, vfo.FontSize * 1f, vfo.BandColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
+                    plotText(sBand + " band", x + (w * 0.48f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.54f), rect.Width, vfo.FontSize * 1f, vfo.BandColour, nVfoBFade, vfo.FontFamily, vfo.Style, true);
                 }
                 
                 if (disp_a)
@@ -24526,7 +30751,7 @@ namespace Thetis
                     SharpDX.RectangleF rectSplit = new SharpDX.RectangleF(x + (w * 0.1f) * x_multy, y + (h * 0.03f), w * 0.1f * x_multy, h * 0.4f);
                     if(!(button_back_box && button_state_vfoA == clsVfoDisplay.buttonState.SPLIT)) _renderTarget.FillRectangle(rectSplit, getDXBrushForColour(vfo.SplitBackColour, nVfoAFade));
                     System.Drawing.Color splitColor = m.Split ? vfo.SplitColour : System.Drawing.Color.Black;
-                    plotText(m.QuickSplitEnabled ? "QSPLT" : "SPLIT", rectSplit.X + (w * (m.QuickSplitEnabled ? 0.01f : 0.015f)) * x_multy, rectSplit.Y, h, rect.Width, vfo.FontSize * 1f, splitColor, nVfoAFade, vfo.FontFamily, vfo.Style);
+                    plotText(m.QuickSplitEnabled ? "QSPLT" : "SPLIT", rectSplit.X + (w * (m.QuickSplitEnabled ? 0.01f : 0.015f)) * x_multy, rectSplit.Y, rect.Width, vfo.FontSize * 1f, splitColor, nVfoAFade, vfo.FontFamily, vfo.Style);
                 }
 
                 //-- tx/rx state
@@ -24556,14 +30781,14 @@ namespace Thetis
                     boxColour = bRxVFOA ? cDimRx : cDimerRx;
                     _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoAFade));
                     txtColour = bRxVFOA ? cRx : System.Drawing.Color.Black;
-                    plotText("RX", rct.X + (w * 0.005f) * x_multy, rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                    plotText("RX", rct.X + (w * 0.005f) * x_multy, rct.Y, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);
 
                     //tx box VFOA
                     rct = new SharpDX.RectangleF(x + (w * 0.152f) * x_multy, y + (h * 0.52f), w * 0.048f * x_multy, h * 0.4f);
                     boxColour = bCanVfoATx ? cDimTx : cDimerTx;
                     if (!(button_back_box && button_state_vfoA == clsVfoDisplay.buttonState.TX)) _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoAFade));
                     txtColour = bTxVFOA ? cTx : System.Drawing.Color.Black;
-                    plotText("TX", rct.X + (w * 0.005f) * x_multy, rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                    plotText("TX", rct.X + (w * 0.005f) * x_multy, rct.Y, rect.Width, vfo.FontSize * 1f, txtColour, nVfoAFade, vfo.FontFamily, vfo.Style);
                 }
                 if (disp_b)
                 {
@@ -24572,27 +30797,27 @@ namespace Thetis
                     boxColour = bRxVFOB ? cDimRx : cDimerRx;
                     _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoBFade));
                     txtColour = bRxVFOB ? cRx : System.Drawing.Color.Black;
-                    plotText("RX", rct.X + (w * 0.005f) * x_multy, rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                    plotText("RX", rct.X + (w * 0.005f) * x_multy, rct.Y, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
 
                     //tx box VFOB
                     rct = new SharpDX.RectangleF(x + (w * 0.152f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.52f), w * 0.048f * x_multy, h * 0.4f);
                     boxColour = bCanVfoBTx ? cDimTx : cDimerTx;
                     if(!(button_back_box && button_state_vfoB == clsVfoDisplay.buttonState.TX)) _renderTarget.FillRectangle(rct, getDXBrushForColour(boxColour, nVfoBFade));
                     txtColour = bTxVFOB ? cTx : System.Drawing.Color.Black;
-                    plotText("TX", rct.X + (w * 0.005f) * x_multy, rct.Y, h, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                    plotText("TX", rct.X + (w * 0.005f) * x_multy, rct.Y, rect.Width, vfo.FontSize * 1f, txtColour, nVfoBFade, vfo.FontFamily, vfo.Style);
                 }
 
                 if (disp_a)
                 {
                     //filter VFOA
                     rct = new SharpDX.RectangleF(x + (w * 0.25f) * x_multy, y + (h * 0.54f), w * 0.048f, h * 0.4f);
-                    plotText(m.FilterVfoAName, rct.X + (w * 0.005f) * x_multy, rct.Y, h, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoAFade, vfo.FontFamily, vfo.Style);
+                    plotText(m.FilterVfoAName, rct.X + (w * 0.005f) * x_multy, rct.Y, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoAFade, vfo.FontFamily, vfo.Style);
                 }
                 if (disp_b)
                 {
                     //filter VFOB
                     rct = new SharpDX.RectangleF(x + (w * 0.25f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.54f), w * 0.048f * x_multy, h * 0.4f);
-                    plotText(tmpVfoBFilterName, rct.X + (w * 0.005f) * x_multy, rct.Y, h, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                    plotText(tmpVfoBFilterName, rct.X + (w * 0.005f) * x_multy, rct.Y, rect.Width, vfo.FontSize * 1f, vfo.FilterColour, nVfoBFade, vfo.FontFamily, vfo.Style);
                 }
 
                 if (vfo.ShowBandText)
@@ -24603,12 +30828,12 @@ namespace Thetis
                     if (disp_a)
                     {
                         rct = new SharpDX.RectangleF(x + (w * 0.250f) * x_multy, y + (bt_h * 0.85f), w * 0.08f, bt_h * 0.03f);
-                        plotText(m.VFOABandText, rct.X, rct.Y, bt_h, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoAFade, vfo.FontFamily, vfo.Style, false, true);
+                        plotText(m.VFOABandText, rct.X, rct.Y, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoAFade, vfo.FontFamily, vfo.Style, false, true);
                     }
                     if (disp_b)
                     {
                         rct = new SharpDX.RectangleF(x + (w * 0.250f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (bt_h * 0.85f), w * 0.08f, bt_h * 0.03f);
-                        plotText(m.VFOBBandText, rct.X, rct.Y, bt_h, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoBFade, vfo.FontFamily, vfo.Style, false, true);
+                        plotText(m.VFOBBandText, rct.X, rct.Y, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoBFade, vfo.FontFamily, vfo.Style, false, true);
                     }
                 }
 
@@ -24660,14 +30885,14 @@ namespace Thetis
 
                 //if (vfo.MouseEntered)
                 //{
-                //    plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                //    plotText($"{mx.ToString("f3")},{my.ToString("f3")}", x, y, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
                 //}
 
-                //plotText($"a render state = {vfo.VFOARenderState}", x, y, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
-                //plotText($"b render state = {vfo.VFOBRenderState}", x, y + 20, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                //plotText($"a render state = {vfo.VFOARenderState}", x, y, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                //plotText($"b render state = {vfo.VFOBRenderState}", x, y + 20, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
 
-                //plotText($"a button state = {vfo.VFOAButtonState}", x, y + 40, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
-                //plotText($"b button state = {vfo.VFOBButtonState}", x, y + 60, h, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                //plotText($"a button state = {vfo.VFOAButtonState}", x, y + 40, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
+                //plotText($"b button state = {vfo.VFOBButtonState}", x, y + 60, rect.Width, 12, System.Drawing.Color.White, 255, vfo.FontFamily, vfo.Style);
             }
             private void renderClock(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
@@ -24710,28 +30935,28 @@ namespace Thetis
 
                 if (clk.ShowType)
                 {
-                    plotText("local", x + (w * 0.01f), y + (h * 0.03f), h, rect.Width, clk.FontSize, clk.TypeTitleColour, 255, clk.FontFamily, clk.Style);
-                    plotText("utc", x + (w * 0.52f), y + (h * 0.03f), h, rect.Width, clk.FontSize, clk.TypeTitleColour, 255, clk.FontFamily, clk.Style);
+                    plotText("local", x + (w * 0.01f), y + (h * 0.03f), rect.Width, clk.FontSize, clk.TypeTitleColour, 255, clk.FontFamily, clk.Style);
+                    plotText("utc", x + (w * 0.52f), y + (h * 0.03f), rect.Width, clk.FontSize, clk.TypeTitleColour, 255, clk.FontFamily, clk.Style);
                 }
 
                 SharpDX.RectangleF rct;
 
                 //time
                 rct = new SharpDX.RectangleF(x + (w * 0.12f), y + (h * 0.02f), w, h);
-                plotText(sLoc, rct.X + fPadLoc, rct.Y, h, rect.Width, clk.FontSize * 1.9f, clk.TimeColour, 255, clk.FontFamily, clk.Style);
+                plotText(sLoc, rct.X + fPadLoc, rct.Y, rect.Width, clk.FontSize * 1.9f, clk.TimeColour, 255, clk.FontFamily, clk.Style);
                 if (!clk.Show24HourCLock)
-                    plotText(sLocAmPm, rct.X + (w * 0.228f), rct.Y + (h * 0.285f), h, rect.Width, clk.FontSize * 0.8f, clk.TimeColour, 255, clk.FontFamily, clk.Style);
+                    plotText(sLocAmPm, rct.X + (w * 0.228f), rct.Y + (h * 0.285f), rect.Width, clk.FontSize * 0.8f, clk.TimeColour, 255, clk.FontFamily, clk.Style);
 
                 rct = new SharpDX.RectangleF(x + (w * 0.12f) + (w * 0.52f), y + (h * 0.02f), w, h);
-                plotText(sUtc, rct.X + fPadUtc, rct.Y, h, rect.Width, clk.FontSize * 1.9f, clk.TimeColour, 255, clk.FontFamily, clk.Style);
+                plotText(sUtc, rct.X + fPadUtc, rct.Y, rect.Width, clk.FontSize * 1.9f, clk.TimeColour, 255, clk.FontFamily, clk.Style);
                 if (!clk.Show24HourCLock)
-                    plotText(sUtcAmPm, rct.X + (w * 0.228f), rct.Y + (h * 0.285f), h, rect.Width, clk.FontSize * 0.8f, clk.TimeColour, 255, clk.FontFamily, clk.Style);
+                    plotText(sUtcAmPm, rct.X + (w * 0.228f), rct.Y + (h * 0.285f), rect.Width, clk.FontSize * 0.8f, clk.TimeColour, 255, clk.FontFamily, clk.Style);
 
                 //date
                 rct = new SharpDX.RectangleF(x + (w * 0.132f), y + (h * 0.6f), w, h);
-                plotText(sLocDate, rct.X, rct.Y, h, rect.Width, clk.FontSize * 0.9f, clk.DateColour, 255, clk.FontFamily, clk.Style);
+                plotText(sLocDate, rct.X, rct.Y, rect.Width, clk.FontSize * 0.9f, clk.DateColour, 255, clk.FontFamily, clk.Style);
                 rct = new SharpDX.RectangleF(x + (w * 0.132f) + (w * 0.52f), y + (h * 0.6f), w, h);
-                plotText(sUtcDate, rct.X, rct.Y, h, rect.Width, clk.FontSize * 0.9f, clk.DateColour, 255, clk.FontFamily, clk.Style);
+                plotText(sUtcDate, rct.X, rct.Y, rect.Width, clk.FontSize * 0.9f, clk.DateColour, 255, clk.FontFamily, clk.Style);
             }
             private void renderSignalTextDisplay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
@@ -24754,18 +30979,18 @@ namespace Thetis
                 _renderTarget.DrawText(sText, getDXTextFormatForFont(st.FontFamily, fontSizeEmScaled, st.FntStyle), txtrect, getDXBrushForColour(st.FontColour, 255));
                 if (dBmOver > 0)
                 {
-                    plotText("+" + dBmOver.ToString(), txtrect.X + txtrect.Width + (w * 0.005f), txtrect.Y + (h * 0.24f), h, rect.Width, st.FontSize * 0.6f, st.FontColour, 255, st.FontFamily, st.FntStyle);
+                    plotText("+" + dBmOver.ToString(), txtrect.X + txtrect.Width + (w * 0.005f), txtrect.Y + (h * 0.24f), rect.Width, st.FontSize * 0.6f, st.FontColour, 255, st.FontFamily, st.FntStyle);
                 }
 
                 if (st.ShowSubMarker)
                 {
                     //uv reading
                     sText = Common.UVfromDBM(st.Value).ToString("f2") + "uV";
-                    plotText(sText, x + (w * 0.98f), y + (h * 0.22f), h, rect.Width, st.FontSize * 0.55f, st.HistoryColour, 255, st.FontFamily, st.FntStyle, true);
+                    plotText(sText, x + (w * 0.98f), y + (h * 0.22f), rect.Width, st.FontSize * 0.55f, st.HistoryColour, 255, st.FontFamily, st.FntStyle, true);
 
                     //dbm reading
                     sText = st.Value.ToString("f1") + MeterManager.ReadingUnits(st.ReadingSource);
-                    plotText(sText, x + (w * 0.02f), y + (h * 0.22f), h, rect.Width, st.FontSize * 0.55f, st.HistoryColour, 255, st.FontFamily, st.FntStyle);
+                    plotText(sText, x + (w * 0.02f), y + (h * 0.22f), rect.Width, st.FontSize * 0.55f, st.HistoryColour, 255, st.FontFamily, st.FntStyle);
                 }
 
                 if (st.ShowPeakValue)
@@ -24779,18 +31004,18 @@ namespace Thetis
                     _renderTarget.DrawText(sText, getDXTextFormatForFont(st.FontFamily, fontSizeEmScaled, st.FntStyle), txtrect, getDXBrushForColour(st.PeakValueColour, 255));
                     if (dBmOver > 0)
                     {
-                        plotText("+" + dBmOver.ToString(), txtrect.X + txtrect.Width + (w * 0.005f), txtrect.Y + (h * 0.12f), h, rect.Width, st.FontSize * 0.3f, st.PeakValueColour, 255, st.FontFamily, st.FntStyle);
+                        plotText("+" + dBmOver.ToString(), txtrect.X + txtrect.Width + (w * 0.005f), txtrect.Y + (h * 0.12f), rect.Width, st.FontSize * 0.3f, st.PeakValueColour, 255, st.FontFamily, st.FntStyle);
                     }
 
                     if (st.ShowSubMarker)
                     {
                         //uv peak
                         sText = Common.UVfromDBM(st.MaxHistory).ToString("f2") + "uV";
-                        plotText(sText, x + (w * 0.98f), y + (h * 0.65f), h, rect.Width, st.FontSize * 0.35f, st.PeakValueColour, 255, st.FontFamily, st.FntStyle, true);
+                        plotText(sText, x + (w * 0.98f), y + (h * 0.65f), rect.Width, st.FontSize * 0.35f, st.PeakValueColour, 255, st.FontFamily, st.FntStyle, true);
 
                         //dbm peak
                         sText = st.MaxHistory.ToString("f1") + MeterManager.ReadingUnits(st.ReadingSource);
-                        plotText(sText, x + (w * 0.02f), y + (h * 0.65f), h, rect.Width, st.FontSize * 0.35f, st.PeakValueColour, 255, st.FontFamily, st.FntStyle);
+                        plotText(sText, x + (w * 0.02f), y + (h * 0.65f), rect.Width, st.FontSize * 0.35f, st.PeakValueColour, 255, st.FontFamily, st.FntStyle);
                     }
                 }
             }
@@ -24952,7 +31177,7 @@ namespace Thetis
                         else
                             imgRect.Width = imgRect.Height * (im_w / im_h);
 
-                        _renderTarget.DrawBitmap(b, imgRect, 1f, BitmapInterpolationMode.Linear);//, sourceRect);
+                        _renderTarget.DrawBitmap(b, imgRect, 1f, BitmapInterpolationMode.Linear);
 
                         if (img.ClippedEllipse)
                         {
@@ -25321,8 +31546,6 @@ namespace Thetis
 
                     SharpDX.Direct2D1.Bitmap dxBitmap;
                     Size2 size = new Size2(bitmap.Width, bitmap.Height);
-                    //int bpp = System.Drawing.Image.GetPixelFormatSize(bitmap.PixelFormat);
-                    //int stride = (bitmap.Width * bpp + 7) / 8;
 
                     BitmapProperties bitmapProperties = new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(Format.B8G8R8A8_UNorm, _ALPHA_MODE));
 
@@ -25396,8 +31619,9 @@ namespace Thetis
                 }
             }            
         }        
-        #endregion
     }
+    #endregion DX
+    #region MMIO
     public static class MultiMeterIO
     {
         private const int DELAY = 100; // msec
@@ -25473,7 +31697,7 @@ namespace Thetis
             {
                 init();
 
-                _four_char = FourChar(_ip, _port, _guid);
+                _four_char = Common.FourChar(_ip, _port, _guid);
             }
             private void init()
             {
@@ -25514,7 +31738,7 @@ namespace Thetis
                 _ip = ip;
                 _port = port;
 
-                _four_char = FourChar(_ip, _port, _guid);
+                _four_char = Common.FourChar(_ip, _port, _guid);
             }
             public clsMMIO(MMIOType type, string com_port, int baud_rate, int data_bits, StopBits stop_bits, Parity parity, bool enabled)
             {
@@ -25531,14 +31755,14 @@ namespace Thetis
                 _stop_bits = stop_bits;
                 _parity = parity;
 
-                _four_char = FourChar(com_port, baud_rate + data_bits, _guid);
+                _four_char = Common.FourChar(com_port, baud_rate + data_bits, _guid);
             }
             public Guid Guid
             {
                 get { return _guid; }
                 set { 
                     _guid = value;
-                    _four_char = FourChar(_ip, _port, _guid); // update the four char if guid is assigned, unlike ip and port
+                    _four_char = Common.FourChar(_ip, _port, _guid); // update the four char if guid is assigned, unlike ip and port
                 }
             }
             public MMIODirection Direction
@@ -25554,7 +31778,7 @@ namespace Thetis
                 get { return _ip; }
                 set { 
                     _ip = value;
-                    if (string.IsNullOrEmpty(_four_char)) _four_char = FourChar(_ip, _port, _guid);
+                    if (string.IsNullOrEmpty(_four_char)) _four_char = Common.FourChar(_ip, _port, _guid);
                 }
             }
             public int Port
@@ -25562,7 +31786,7 @@ namespace Thetis
                 get { return _port; }
                 set { 
                     _port = value;
-                    if(string.IsNullOrEmpty(_four_char)) _four_char = FourChar(_ip, _port, _guid);
+                    if(string.IsNullOrEmpty(_four_char)) _four_char = Common.FourChar(_ip, _port, _guid);
                 }
             }
             public string UdpEndpointIP
@@ -27015,33 +33239,6 @@ namespace Thetis
             }
             return false;
         }
-        public static string FourChar(string data1, int data2, Guid guid)
-        {
-            string input = $"{data1}:{data2}:{guid}";
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
-                string base64Hash = Convert.ToBase64String(hashBytes);
-                return convertToFourChar(base64Hash);
-            }
-        }
-
-        private static string convertToFourChar(string base64Hash)
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            char[] result = new char[4];
-            int[] indices = new int[4];
-            for (int i = 0; i < base64Hash.Length; i++)
-            {
-                indices[i % 4] = (indices[i % 4] + base64Hash[i]) % chars.Length;
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                result[i] = chars[indices[i]];
-            }
-            return new string(result);
-        }
-
         public static string GetSaveData()
         {
             //1 for version 1
@@ -27447,4 +33644,1081 @@ namespace Thetis
             }
         }
     }
+    #endregion
+
+    #region spec   
+    public static class MiniSpec
+    {
+        public const int TX_BANDWIDTH = 20000;
+        public const int PIXELS = 1024;
+        public const int FRAME_RATE = 30;
+        public const int SUB_RX_OFFSET = 1024; // there can be 1024 regular, before the subrx's start
+
+        public class FilterCharacteristics
+        {
+            public double[] segments;
+            public int index_low;
+            public int index_upper;
+            public double corner_freq;
+            public int hz_span;
+            public int middle_index;
+            public int six_db_shift;
+            public double min;
+            public double max;
+        }
+
+        private static Dictionary<int, clsMiniSpec> _mini_spec;
+        private static Console _console;
+        private static List<Notch> _notches;
+        private static readonly object _notch_locker = new object();
+        private static bool _visual_notch_display;
+        private static bool _tnf;
+        private static bool _mox;
+        private static Dictionary<int, int> _using_filter_count;
+
+        private static readonly object _filter_characteristics_lock = new object();
+
+        private static FilterCharacteristics[] _rx_filter_characteristics;
+        private static FilterCharacteristics _tx_filter_characteristics;
+
+        public class Notch
+        {
+            public int index;
+            public double frequency_hz;
+            public double width_hz;
+            public bool active;
+        }
+        static MiniSpec()
+        {
+            _mini_spec = new Dictionary<int, clsMiniSpec>();
+            _notches = new List<Notch>();
+            _tnf = false;
+            _mox = false;
+            _visual_notch_display = false;
+            _using_filter_count = new Dictionary<int, int>();
+
+            _rx_filter_characteristics = new FilterCharacteristics[2]; // 0 is any mode, 1 is fm
+            for(int n = 0;n < _rx_filter_characteristics.Length; n++)
+            {
+                _rx_filter_characteristics[n] = new FilterCharacteristics();
+            }
+            _tx_filter_characteristics = new FilterCharacteristics();
+        }
+        public static void Init(Console console)
+        {
+            _console = console;
+
+            if (_console != null)
+            {
+                _mox = _console.MOX;
+                _tnf = _console.TNFActive;
+                _visual_notch_display = Display.ShowVisualNotch;
+
+                _console.MoxPreChangeHandlers += OnMox;
+                _console.MoxChangeHandlers += OnMox;
+                _console.NotchChangedHandlers += OnNotchChanged;
+                _console.TNFChangedHandlers += OnTNFChanged;
+                _console.MinimumRXNotchWidthChangedHandlers += OnMinNotchWidth;
+                _console.CentreFrequencyHandlers += OnCentreFrequency;
+                _console.FilterEdgesChangedHandlers += OnFilterEdgesChanged;
+                _console.HWSampleRateChangedHandlers += OnHWSampleRateChanged;
+                _console.SpectrumSettingsChangedHandlers += OnSpectrumSettingsChanged;
+                _console.AVGOnChangedHandlers += OnAVGChanged;
+                _console.NotifiySpectrumDetailsChangedHandlers += OnSpectrumDetailsChanged;
+                _console.CWPitchChangedHandlers += OnCWPitchChanged;
+                _console.ModeChangeHandlers += OnModeChanged;
+                _console.PowerChangeHanders += OnPowerChanged;
+
+                //get all the notches
+                lock (_notch_locker)
+                {
+                    _notches.Clear();
+
+                    double bw_halfHZ = (_console.MaxFreq * 1e6) / 2f;
+
+                    int notch_index = 0;
+                    List<MNotch> notches = MNotchDB.NotchesInBW(bw_halfHZ, (int)-bw_halfHZ, (int)bw_halfHZ);
+                    foreach (MNotch notch in notches)
+                    {
+                        Notch n = new Notch()
+                        {
+                            index = notch_index,
+                            active = notch.Active,
+                            frequency_hz = notch.FCenter,
+                            width_hz = notch.FWidth,
+                        };
+
+                        _notches.Add(n);
+
+                        notch_index++;
+                    }
+                }
+            }
+        }
+        public static void UpdateRXFilterCharacteristics(DSPMode mode, double[] segments, int index_low, int index_upper, double corner_freq)
+        {
+            lock(_filter_characteristics_lock)
+            {
+                int id = mode == DSPMode.FM ? 1 : 0;
+                _rx_filter_characteristics[id].segments = (double[])segments.Clone(); // clone is ok for primatives
+                _rx_filter_characteristics[id].index_low = index_low;
+                _rx_filter_characteristics[id].index_upper = index_upper;
+                _rx_filter_characteristics[id].corner_freq = corner_freq;
+                _rx_filter_characteristics[id].hz_span = index_upper - index_low;
+                _rx_filter_characteristics[id].middle_index = index_low + ((index_upper - index_low) / 2);
+                _rx_filter_characteristics[id].six_db_shift = _rx_filter_characteristics[id].middle_index - index_low;
+                _rx_filter_characteristics[id].min = double.MaxValue;
+                _rx_filter_characteristics[id].max = double.MinValue;
+                for (int n = 1; n < _rx_filter_characteristics[id].segments.Length - 1; n++) // ignore first/last
+                {
+                    if (_rx_filter_characteristics[id].segments[n] < _rx_filter_characteristics[id].min) _rx_filter_characteristics[id].min = _rx_filter_characteristics[id].segments[n];
+                    if (_rx_filter_characteristics[id].segments[n] > _rx_filter_characteristics[id].max) _rx_filter_characteristics[id].max = _rx_filter_characteristics[id].segments[n];
+                }
+                //_rx_filter_characteristics[id].min = Math.Max(-300.0, _rx_filter_characteristics[id].min); // drop everything below as we do not show it
+            }
+        }
+        public static void UpdateTXFilterCharacteristics(double[] segments, int index_low, int index_upper, double corner_freq)
+        {
+            lock (_filter_characteristics_lock)
+            {
+                _tx_filter_characteristics.segments = (double[])segments.Clone(); // clone is ok for primatives
+                _tx_filter_characteristics.index_low = index_low;
+                _tx_filter_characteristics.index_upper = index_upper;
+                _tx_filter_characteristics.corner_freq = corner_freq;
+                _tx_filter_characteristics.hz_span = index_upper - index_low;
+                _tx_filter_characteristics.middle_index = index_low + ((index_upper - index_low) / 2);
+                _tx_filter_characteristics.six_db_shift = _tx_filter_characteristics.middle_index - index_low;
+                _tx_filter_characteristics.min = double.MaxValue;
+                _tx_filter_characteristics.max = double.MinValue;
+                for (int n = 1; n < _tx_filter_characteristics.segments.Length - 1; n++) // ignore first/last
+                {
+                    if (_tx_filter_characteristics.segments[n] < _tx_filter_characteristics.min) _tx_filter_characteristics.min = _tx_filter_characteristics.segments[n];
+                    if (_tx_filter_characteristics.segments[n] > _tx_filter_characteristics.max) _tx_filter_characteristics.max = _tx_filter_characteristics.segments[n];
+                }
+                //_tx_filter_characteristics.min = Math.Max(-300.0, _tx_filter_characteristics.min); // drop everything below as we do not show it
+            }
+        }
+        public static object FilterCharacteristicsLocker
+        {
+            get
+            {
+                return _filter_characteristics_lock;
+            }
+        }
+        public static FilterCharacteristics GetRXCharacteristic(DSPMode mode)
+        {
+            lock (_filter_characteristics_lock)
+            {
+                int id = mode == DSPMode.FM ? 1 : 0;
+                return _rx_filter_characteristics[id];
+            }
+        }
+        public static FilterCharacteristics GetTXCharacteristic()
+        {
+            lock (_filter_characteristics_lock)
+            {
+                return _tx_filter_characteristics;
+            }
+        }
+        public static bool UsingAFilter(int id, bool sub_receiver = false)
+        {
+            int key = sub_receiver ? id + SUB_RX_OFFSET : id;
+            if (!_using_filter_count.ContainsKey(key)) return false;
+            return _using_filter_count[key] > 0;
+        }
+        public static void UsingFilter(int id, bool sub_receiver = false)
+        {
+            int key = sub_receiver ? id + SUB_RX_OFFSET : id;
+            if (_using_filter_count.ContainsKey(key))
+            {
+                int count = _using_filter_count[key];
+                count++;
+                _using_filter_count[key] = count;
+            }
+            else
+            {
+                _using_filter_count.Add(key, 1);
+            }
+
+            if(_using_filter_count[key] > 0)
+            {
+                // enable
+                foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Key == key))
+                {
+                    clsMiniSpec mrx = kvp.Value;
+                    mrx.Enable = true;
+                }
+            }
+        }
+        public static void StopUsingFilter(int id, bool sub_receiver = false)
+        {
+            int key = sub_receiver ? id + SUB_RX_OFFSET : id;
+            if (_using_filter_count.ContainsKey(key))
+            {
+                int count = _using_filter_count[key];
+                count--;
+                _using_filter_count[key] = count;
+
+                if (_using_filter_count[key] <= 0)
+                {
+                    // disable enable
+                    foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Key == key))
+                    {
+                        clsMiniSpec mrx = kvp.Value;
+                        mrx.Enable = false;
+                    }
+                }
+            }
+        }
+        private static void OnSpectrumDetailsChanged(int rx)
+        {
+            foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Value.RX == rx))
+            {
+                clsMiniSpec mrx = kvp.Value;
+                mrx.UpdateSpecSettings();
+            }
+        }
+        private static void OnAVGChanged(int rx, bool old_state, bool new_state)
+        {
+            foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Value.RX == rx))
+            {
+                clsMiniSpec mrx = kvp.Value;
+                mrx.AVGOn = new_state;
+            }
+        }
+        private static void OnFilterEdgesChanged(int rx, Filter filter, Band band, int low, int high, string sName, int max_width, int max_shift)
+        {
+            if (max_width == -1) return; // only interesting in width
+
+            foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Value.RX == rx))
+            {
+                clsMiniSpec mrx = kvp.Value;
+                mrx.MaxFilterWidth = max_width;
+            }
+        }
+        private static void OnMinNotchWidth(int rx, double width)
+        {
+            foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Value.RX == rx))
+            {
+                clsMiniSpec mrx = kvp.Value;
+                mrx.MinNotchWidth = width;
+            }
+        }
+        private static void OnTNFChanged(bool old_tnf, bool new_tnf)
+        {
+            lock (_notch_locker)
+            {
+                _tnf = new_tnf;
+            }
+        }
+        public static bool ShowVisualNotch
+        {
+            get 
+            {
+                lock (_notch_locker)
+                { 
+                    return _visual_notch_display; 
+                }
+            }
+            set 
+            {
+                lock (_notch_locker)
+                {
+                    _visual_notch_display = value;
+                }
+            }
+        }
+        public static bool TNFActive
+        {
+            get
+            {
+                lock (_notch_locker)
+                {
+                    return _tnf;
+                }
+            }
+            set
+            {
+                lock (_notch_locker)
+                {
+                    _tnf = value;
+                }
+            }
+        }
+        private static void OnMox(int rx, bool oldMox, bool newMox)
+        {
+            foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Value.RX == rx))
+            {
+                clsMiniSpec mrx = kvp.Value;
+                mrx.MOX = newMox;
+            }
+        }
+        public static void Add(int rx, int id, bool sub_receiver = false)
+        {
+            int key = sub_receiver ? id + SUB_RX_OFFSET : id;
+
+            if(_mini_spec.ContainsKey(key))
+            {
+                // shutdown, remove
+                _mini_spec[key].Shutdown();
+                _mini_spec.Remove(key);
+            }
+
+            clsMiniSpec mrx = new clsMiniSpec(rx, id, sub_receiver, _console);
+
+            _mini_spec.Add(key, mrx);
+        }
+        public static int MaxPixels
+        {
+            set
+            {
+                foreach(KeyValuePair<int, clsMiniSpec> kvp in _mini_spec)
+                {
+                    clsMiniSpec mrx = kvp.Value;
+                    mrx.Pixels = value;
+                }
+            }
+        }
+        public static clsMiniSpec GetMiniRX(int id, bool sub_receiver = false)
+        {
+            int key = sub_receiver ? id + SUB_RX_OFFSET : id;
+
+            if (!_mini_spec.ContainsKey(key)) return null;
+            if (sub_receiver)
+            {
+                if (_mini_spec[key].SubReceiver)
+                {
+                    return _mini_spec[key];
+                }
+                else
+                {
+                    return null;
+                }
+            } 
+            else
+            {
+                return _mini_spec[key];
+            }
+        }
+        private static void shutdownRX(int key)
+        {
+            if (!_mini_spec.ContainsKey(key)) return;
+
+            _mini_spec[key].Shutdown();
+            _mini_spec.Remove(key);
+        }
+        public static void ShutdownAllRX()
+        {
+            if (_console != null)
+            {
+                _console.MoxPreChangeHandlers -= OnMox;
+                _console.MoxChangeHandlers -= OnMox;
+                _console.NotchChangedHandlers -= OnNotchChanged;
+                _console.TNFChangedHandlers -= OnTNFChanged;
+                _console.MinimumRXNotchWidthChangedHandlers -= OnMinNotchWidth;
+                _console.CentreFrequencyHandlers -= OnCentreFrequency;
+                _console.FilterEdgesChangedHandlers -= OnFilterEdgesChanged;
+                _console.HWSampleRateChangedHandlers -= OnHWSampleRateChanged;
+                _console.SpectrumSettingsChangedHandlers -= OnSpectrumSettingsChanged;
+                _console.AVGOnChangedHandlers -= OnAVGChanged;
+                _console.NotifiySpectrumDetailsChangedHandlers -= OnSpectrumDetailsChanged;
+                _console.CWPitchChangedHandlers -= OnCWPitchChanged;
+                _console.ModeChangeHandlers -= OnModeChanged;
+                _console.PowerChangeHanders -= OnPowerChanged;
+            }
+
+            List<int> ids = _mini_spec.Keys.ToList();
+            foreach(int key in ids)
+            {
+                shutdownRX(key);
+            }
+        }
+        private static void OnPowerChanged(bool old_state, bool new_state)
+        {
+            if(old_state && !new_state)
+            {
+                // turned off, clear spectrum data
+                foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec)
+                {
+                    clsMiniSpec mrx = kvp.Value;
+                    mrx.ClearData();
+                }
+            }
+        }
+        private static void OnModeChanged(int rx, DSPMode oldMode, DSPMode newMode, Band oldBand, Band newBand)
+        {
+            foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Value.RX == rx))
+            {
+                clsMiniSpec mrx = kvp.Value;
+                mrx.Mode = newMode;
+            }
+        }
+        private static void OnCWPitchChanged(int old_pitch, int new_pitch, bool show_cwzero)
+        {
+            foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec)
+            {
+                clsMiniSpec mrx = kvp.Value;
+                mrx.CWPitchOffset = new_pitch;
+            }
+        }
+        private static void OnSpectrumSettingsChanged(int rx)
+        {
+            foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Value.RX == rx))
+            {
+                clsMiniSpec mrx = kvp.Value;
+                mrx.UpdateSpecSettings();
+            }
+        }
+        private static void OnHWSampleRateChanged(int rx, int old_rate, int new_rate)
+        {
+            foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Value.RX == rx))
+            {
+                clsMiniSpec mrx = kvp.Value;
+                mrx.HWSampleRate = new_rate;
+            }
+        }
+        private static void OnCentreFrequency(int rx, double oldFreq, double newFreq, Band band, double offset)
+        {
+            foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Value.RX == rx))
+            {
+                clsMiniSpec mrx = kvp.Value;
+                mrx.CentreFreq = newFreq;
+            }
+        }
+        private static void OnNotchChanged(int notch_index, double old_bw, double new_bw, bool active, double old_centre_freq, double new_centre_freq, bool added, bool removed)
+        {
+            //Debug.Print($"notch_index={notch_index} old_bw={old_bw} new_bw={new_bw} active={active} old_centre_freq={old_centre_freq} new_centre_freq={new_centre_freq} added={added} removed={removed}");
+            lock (_notch_locker)
+            {
+                if (added)
+                {
+                    if (notch_index < _notches.Count) _notches.RemoveAt(notch_index);
+
+                    int new_index = _notches.Count;
+                    Notch notch = new Notch()
+                    {
+                        index = new_index,
+                        active = active,
+                        frequency_hz = new_centre_freq,
+                        width_hz = new_bw,
+                    };
+
+                    _notches.Add(notch);
+
+                    return;
+                }
+                if (removed)
+                {
+                    if (notch_index < _notches.Count) _notches.RemoveAt(notch_index);
+
+                    int index = 0;
+                    foreach(Notch n in _notches)
+                    {
+                        n.index = index;
+                        index++;
+                    }
+                    return;
+                }
+
+                //edit
+                if (notch_index >= _notches.Count) return;
+
+                if(new_bw != -1)
+                {
+                    _notches[notch_index].width_hz = new_bw;
+                }
+
+                if (new_centre_freq != -1)
+                {
+                    _notches[notch_index].frequency_hz = new_centre_freq;
+                }
+
+                _notches[notch_index].active = active;
+            }
+        }
+        public static object NotchLocker
+        {
+            get { return _notch_locker; }
+        }
+        public static List<Notch> GetNotches(double centre_hz, int half_bandwidth)
+        {
+            lock (_notch_locker)
+            {
+                double lower_bound = centre_hz - half_bandwidth;
+                double upper_bound = centre_hz + half_bandwidth;
+
+                return _notches
+                    .Where(notch => notch.frequency_hz >= lower_bound && notch.frequency_hz <= upper_bound)
+                    .ToList();
+            }
+        }
+        public static Notch GetNotch(int notch_index)
+        {
+            lock (_notch_locker)
+            {
+                if (notch_index >= _notches.Count) return null;
+                return _notches[notch_index];
+            }
+        }
+        public class clsMiniSpec
+        {
+            private int _rx;
+            private int _id;
+            private int _disp;
+
+            private bool _enabled;
+
+            private int _pixels;
+            private int _hwsample_rate;
+            private int _frame_rate;
+            private double _z_factor;
+            private double _p_slider;
+            private double _rx_frequency;
+            private double _tx_frequency;
+
+            private float[] _new_display_data;
+            private float[] _new_display_data_raw;
+            private float[] _current_display_data;
+            private float[] _current_display_data_raw;
+
+            private bool _display_running;
+            private Thread _display_thread;
+            private bool _pause_display;
+            private bool _new_data_available;
+            private SpecHPSDR _spec;
+
+            private bool _mox;
+            private int _data_index;
+            private double _min_notch_width;
+            private double _centre_freq;
+            private int _max_filter_width;
+            private bool _avg_on;
+
+            private int _cw_pitch;
+            private DSPMode _mode;
+
+            private bool _sub_receiver;
+
+            private readonly object _data_lock = new object();
+            private readonly object _new_data_lock = new object();
+
+            public clsMiniSpec(int rx, int id, bool sub_receiver, Console console)
+            {
+                _enabled = UsingAFilter(id, sub_receiver);
+
+                _hwsample_rate = 0; // updated by setupSpecDetails()
+
+                _rx = rx;
+                _sub_receiver = sub_receiver;
+                _mox = console.MOX;
+                _max_filter_width = _console.MaxFilterWidth;
+                _mode = _rx == 1 ? _console.RX1DSPMode : _console.RX2DSPMode;
+                _cw_pitch = _console.CWPitch;
+
+                _centre_freq = _rx == 1 ? _console.CentreFrequency : _console.CentreRX2Frequency;
+                _rx_frequency = _rx == 1 ? _console.VFOAFreq : _console.VFOBFreq;
+                _tx_frequency = _console.TXFreq;
+
+                _id = id;
+
+                _disp = cmaster.AllocAnalyzer(0/*99*/, _id, 262144); // must be pow2, 262144 = max size
+                if (!_enabled) cmaster.RunAnalyzer(_disp, 0); // turn it off if not in use
+
+                /*
+                // test spectrum, note 99 for the stype above
+                int sub_rx_id = _sub_receiver ? 1 : 0;
+                int wdsp_id = _rx == 1 ? (WDSP.id(0, (uint)sub_rx_id)) : (WDSP.id(2, (uint)sub_rx_id));
+                WDSP.SetRXASpectrum(wdsp_id, 1, _disp, 0, 0);
+                //
+                */
+
+                _new_data_available = false;
+                _data_index = 0;
+
+                _min_notch_width = console.GetMinimumRXNotchWidth(_rx);
+                
+                _pixels = PIXELS;
+                _frame_rate = FRAME_RATE;
+                _z_factor = 0; // range is 0.0 to 1.0, done UpdateSpecSettings
+                _p_slider = 0.5; // range is 0.0 to 1.0
+
+                _new_display_data = new float[_pixels];
+                _new_display_data_raw = new float[_pixels];
+                _current_display_data = new float[_pixels];
+                _current_display_data_raw = new float[_pixels];
+                for (int n = 0; n < _pixels; n++)
+                {
+                    _new_display_data[n] = -200.0f;
+                    _new_display_data_raw[n] = -200.0f;
+                    _current_display_data[n] = -200.0f;
+                    _current_display_data_raw[n] = -200.0f;
+                }
+
+                _spec = new SpecHPSDR(_disp);
+                _spec.Update = false;
+
+                _spec.FrameRate = _frame_rate;
+                _spec.PixelOut = 1;
+                _spec.IgnoreFrequencyOffset = true;
+                _spec.Pixels = _pixels;
+
+                UpdateSpecSettings();
+
+                _avg_on = _spec.AverageOn;
+
+                _pause_display = false;
+                _display_running = true;
+                _display_thread = new Thread(new ThreadStart(runDisplay))
+                {
+                    Name = "MiniRX Display Thread",
+                    Priority = ThreadPriority.Lowest,
+                    IsBackground = true
+                };
+                _display_thread.Start();
+            }
+            internal bool Enable
+            {
+                set 
+                {                    
+                    lock (_new_data_lock)
+                    {
+                        if (value != _enabled)
+                        {
+                            _enabled = value;
+                            int run = _enabled ? 1 : 0;
+                            cmaster.RunAnalyzer(_disp, run);
+
+                            Debug.Print($"disp={_disp} enabled={_enabled}");
+                        }
+                    }
+                }
+            }
+            public bool SubReceiver
+            {
+                get { return _sub_receiver; }
+            }
+            public DSPMode Mode
+            {
+                set
+                {
+                    _mode = value;
+                }
+            }
+            public int CWPitchOffset
+            {
+                get
+                {
+                    int pitch = 0;
+                    switch (_mode)
+                    {
+                        case (DSPMode.CWL):
+                            pitch = _cw_pitch;
+                            break;
+                        case (DSPMode.CWU):
+                            pitch = -_cw_pitch;
+                            break;
+                    }
+                    return pitch;
+                }
+                set
+                {
+                    _cw_pitch = value;
+                }
+            }
+            public bool AVGOn
+            {
+                set
+                {
+                    if(value != _avg_on)
+                    {
+                        _avg_on = value;
+
+                        _spec.AverageOn = _avg_on;
+                    }
+                }
+            }
+            public int MaxFilterWidth
+            {
+                set
+                {
+                    if(value != _max_filter_width)
+                    {
+                        _max_filter_width = value;
+
+                        zoom();
+                        setPan();
+                    }
+                }
+            }
+            public int RX
+            {
+                get
+                {
+                    return _rx;
+                }
+            }
+            public bool MOX
+            {
+                set
+                {
+                    if (value != _mox)
+                    {
+                        _mox = value;
+
+                        lock (_new_data_lock)
+                        {
+                            UpdateSpecSettings();
+                            resetBuffers();
+                        }
+                    }
+                }
+            }
+            private void setupSpecDetails()
+            {
+                //bool duplex = true; // todo
+                SpecHPSDR spec;
+                //if (_mox && !duplex)
+                //{
+                    //spec = _console.specRX.GetSpecRX(cmaster.inid(1, 0));
+                //}
+                //else
+                //{
+                spec = _console.specRX.GetSpecRX(_id);
+                //}
+                _spec.Update = false;
+                _spec.DetTypePan = spec.DetTypePan;
+                _spec.AvTau = spec.AvTau;
+                _spec.FFTSize = spec.FFTSize;
+                _spec.BlockSize = spec.BlockSize;
+                _spec.SampleRate = spec.SampleRate;// _mox ? 96000 : spec.SampleRate;
+                _spec.WindowType = spec.WindowType;
+                _spec.AverageMode = spec.AverageMode;
+                _spec.AverageOn = spec.AverageOn;
+                _spec.NormOneHzPan = spec.NormOneHzPan;
+                _spec.Update = true;
+                _spec.initAnalyzer();
+
+                _hwsample_rate = _spec.SampleRate;
+            }
+            public double MinNotchWidth
+            {
+                get { return _min_notch_width; }
+                set { _min_notch_width = value; }
+            }
+            private void resetBuffers()
+            {
+                lock (_new_data_lock)
+                {
+                    _spec.resetPixelBuffers();
+                    for (int n = 0; n < _pixels; n++)
+                    {
+                        _new_display_data[n] = -200.0f;
+                        _new_display_data_raw[n] = -200.0f;
+                    }
+                }
+            }
+            public void ClearData()
+            {
+                lock(_data_lock)
+                {
+                    for (int i = 0; i < _current_display_data.Length; i++)
+                    {
+                        _current_display_data[i] = -200.0f;
+                        _current_display_data_raw[i] = -200.0f;
+                    }
+                }
+            }
+            private void runDisplay()
+            {
+                while (_display_running)
+                {
+                    lock (_new_data_lock)
+                    {
+                        if (_enabled && !_pause_display && !_new_data_available)
+                        {
+                            int flag = 0;
+
+                            unsafe
+                            {
+                                fixed (float* ptr = &_new_display_data[0])
+                                    SpecHPSDRDLL.GetPixels(_disp, 0, ptr, ref flag);
+
+                                // make a copy that can be used by code that needs to ignore notches, such as waterfall minimum
+                                fixed (void* rptr = &_new_display_data[0])
+                                fixed (void* wptr = &_new_display_data_raw[0])
+                                    Win32.memcpy(wptr, rptr, _new_display_data.Length * sizeof(float));
+                            }
+
+                            if (flag == 1)
+                            {
+                                float offset = 0;
+                                switch (_rx)
+                                {
+                                    case 1:
+                                        offset = Display.RX1OffsetWithDup;
+                                        break;
+                                    case 2:
+                                        offset = Display.RX2OffsetWithDup;
+                                        break;
+                                }
+                                for (int i = 0; i < _new_display_data.Length; i++)
+                                {
+                                    _new_display_data[i] += offset;
+                                    _new_display_data_raw[i] += offset;
+                                }
+                                if (!_mox)
+                                {
+                                    lock (_notch_locker)
+                                    {
+                                        if (_visual_notch_display)
+                                        {
+                                            int bandwidth = _spec.HighFreq - _spec.LowFreq;
+                                            float pixel_per_hz = _pixels / (float)bandwidth;
+                                            List<Notch> notches = GetNotches(_rx_frequency * 1e6, _hwsample_rate / 2);
+                                            foreach (Notch n in notches)
+                                            {
+                                                if (!_tnf || !n.active) continue;
+
+                                                double frequency_offset = n.frequency_hz - (_rx_frequency * 1e6) - CWPitchOffset;
+                                                int index_pos = (int)((_pixels / 2) + (frequency_offset * pixel_per_hz));
+                                                if (index_pos < 0 || index_pos >= _new_display_data.Length) continue;
+                                                attenuateData(index_pos, 200f, (int)(Math.Max(_min_notch_width, n.width_hz) * pixel_per_hz));
+                                            }
+                                        }
+                                    }
+                                }
+
+                                _new_data_available = true;
+
+                                _data_index++;
+                                if (_data_index > 1800) _data_index = 0; //used by clients to keep track of frames, to only request them when differnt data index
+                            }
+                        }
+                    }
+                    if (_enabled)
+                    {
+                        Thread.Sleep(1000 / _frame_rate);
+                    }
+                    else
+                    {
+                        Thread.Sleep(200);
+                    }
+                }
+                Debug.Print("ended runDisplay thead in MiniRX");
+            }
+            private void attenuateData(int center_index, float attenuation, int span_in_pixels)
+            {
+                span_in_pixels = Math.Max(2, span_in_pixels);
+                int halfSpan = span_in_pixels / 2;
+                for (int i = -halfSpan; i <= halfSpan; i++)
+                {
+                    int index = center_index + i;
+                    if (index < 0 || index >= _new_display_data.Length) continue;
+
+                    int xpos = span_in_pixels * (halfSpan - Math.Abs(i)) / halfSpan;
+                    float fTmp = 1f / ((float)Math.Pow((double)span_in_pixels / (double)(Math.Max(1, xpos)), 1));
+                    _new_display_data[index] -= (attenuation * fTmp);
+                }
+            }
+            public void UpdateSpecSettings()
+            {
+                setupSpecDetails();
+                zoom();
+                setPan();
+            }
+            public int HWSampleRate
+            {
+                get { return _hwsample_rate; }
+                set
+                {
+                    // ignore the value passed, it will be updated by setupSpecDetails
+                    UpdateSpecSettings();
+                }
+            }
+            public int DataIndex
+            {
+                get
+                {
+                    lock (_data_lock)
+                    {
+                        return _data_index;
+                    }
+                }
+            }
+            public float[] Data
+            {
+                get
+                {
+                    lock (_new_data_lock)
+                    {
+                        if (_new_data_available)
+                        {
+                            lock (_data_lock)
+                            {
+                                unsafe
+                                {
+                                    fixed (void* rptr = &_new_display_data[0])
+                                    fixed (void* wptr = &_current_display_data[0])
+                                        Win32.memcpy(wptr, rptr, _current_display_data.Length * sizeof(float));
+
+                                    fixed (void* rptr = &_new_display_data_raw[0])
+                                    fixed (void* wptr = &_current_display_data_raw[0])
+                                        Win32.memcpy(wptr, rptr, _current_display_data.Length * sizeof(float));
+                                }
+                            }
+
+                            _new_data_available = false;
+                        }
+                    }
+
+                    lock (_data_lock)
+                    {
+                        return _current_display_data;
+                    }
+                }
+            }
+            public float[] DataRaw
+            {
+                get
+                {
+                    lock (_data_lock)
+                    {
+                        return _current_display_data_raw;
+                    }
+                }
+            }
+            public void Shutdown()
+            {
+                _display_running = false;
+                if (_display_thread != null && _display_thread.IsAlive) _display_thread.Join((1000 / _frame_rate) + 100);
+
+                cmaster.FreeAnalyzer(_disp);
+            }
+            public double RXFrequency
+            {
+                get { return _rx_frequency; }
+                set
+                {
+                    double freq_round = Math.Round(value, 6);
+                    if (_rx_frequency == freq_round) return;
+                    _rx_frequency = freq_round;
+
+                    if (!_mox)
+                    {
+                        bool clickTune = _rx == 1 ? _console.ClickTuneDisplay : _console.ClickTuneRX2Display;
+                        if (!clickTune)
+                        {
+                            //if ctun is off, 0.5 is the centre, always
+                            _spec.PanSlider = 0.5;
+                        }
+                        else
+                        {
+                            setPan();
+                        }
+                    }
+                }
+            }
+            public double TXFrequency
+            {
+                get { return _tx_frequency; }
+                set
+                {
+                    double freq_round = Math.Round(value, 6);
+                    if (_tx_frequency == freq_round) return;
+                    _tx_frequency = freq_round;
+
+                    if (_mox)
+                    {
+                        bool clickTune = _rx == 1 ? _console.ClickTuneDisplay : _console.ClickTuneRX2Display;
+                        //CTUN does not play a part in tx
+                        //if (!clickTune)
+                        //{
+                        //    //if ctun is off, 0.5 is the centre, always
+                        //    _spec.PanSlider = 0.5;
+                        //}
+                        //else
+                        //{
+                            setPan();
+                        //}
+                    }
+                }
+            }
+            private void setPan()
+            {
+                int centre_freq_hz = (int)(_centre_freq * 1e6);
+
+                int freq_hz;
+                if (_mox)
+                {
+                    freq_hz = (int)(_tx_frequency * 1e6);
+                }
+                else
+                {
+                    freq_hz = (int)(_rx_frequency * 1e6);
+                }
+
+                (int spec_low_hz, int spec_high_hz) = _spec.GetFrequencyExtents(0, 0.5); // get the full extents using 0 zoom slider, 0.5 pan (centre)
+
+                int bw_hz = spec_high_hz - spec_low_hz;
+                int low_freq_hz = centre_freq_hz - (bw_hz / 2);
+                int high_freq_hz = centre_freq_hz + (bw_hz / 2);
+
+                if (freq_hz >= low_freq_hz && freq_hz <= high_freq_hz)
+                {
+                    // the frequency as a ratio through the entire spctrum view, from 0 to 1.0
+                    //double ratio_in_source = (freq_hz - low_freq_hz) / (double)bw_hz;
+
+                    // adjust for destination, we need to drag the edges in, so that the edge becomes centre
+                    // the limit edges of the source spectrum become centre in the mini spectrum
+                    low_freq_hz += _mox ? TX_BANDWIDTH : _max_filter_width;
+                    high_freq_hz -= _mox ? TX_BANDWIDTH : _max_filter_width;
+                    bw_hz = high_freq_hz - low_freq_hz;
+
+                    double ratio_in_dest = (freq_hz - low_freq_hz) / (double)bw_hz;
+
+                    _spec.PanSlider = ratio_in_dest;
+                }
+            }
+            private void zoom()
+            {
+                double target_bandwidth = _mox ? TX_BANDWIDTH : _max_filter_width;
+                _spec.ZoomToBandwidth(target_bandwidth * 2f);
+            }
+            public int Pixels                               // display code must set the number of pixel values it needs
+            {
+                get { return _pixels; }
+                set
+                {
+                    _pause_display = true;
+                    _new_data_available = false;
+
+                    _pixels = value;
+                    _new_display_data = new float[_pixels];
+                    _new_display_data_raw = new float[_pixels];
+                    _current_display_data = new float[_pixels];
+                    _current_display_data_raw = new float[_pixels];
+                    for (int n = 0; n < _pixels; n++)
+                    {
+                        _new_display_data[n] = -200.0f;
+                        _new_display_data_raw[n] = -200.0f;
+                        _current_display_data[n] = -200.0f;
+                        _current_display_data_raw[n] = -200.0f;
+                    }
+                    _spec.Pixels = _pixels;
+                    _pause_display = false;
+                }
+            }
+            public double CentreFreq
+            {
+                set
+                {
+                    double rounded = Math.Round(value, 6);
+                    if (rounded == _centre_freq) return;
+                    _centre_freq = rounded;
+                    setPan();
+                }
+            }
+        }
+    }
+    #endregion          
 }

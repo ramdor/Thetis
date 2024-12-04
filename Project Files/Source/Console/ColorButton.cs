@@ -145,9 +145,9 @@ namespace Thetis
 								rc.Right + 5, rc.Top, rc.Right + 5, rc.Bottom);
 
 			Pen textPen = new Pen(Enabled ? SystemColors.ControlText : SystemColors.GrayText);
-			Point pt = new Point(rc.Right, (e.ClipRectangle.Height + offset) / 2);
-
-			e.Graphics.DrawLine(textPen, pt.X +  9, pt.Y - 1, pt.X + 13, pt.Y - 1);
+            //Point pt = new Point(rc.Right, (e.ClipRectangle.Height + offset) / 2);
+            Point pt = new Point(rc.Right, rc.Top + (rc.Height / 2)); //[2.10.3.7]MW0LGE fixed, as it is not a good idea to use the clip rect to position the triangle
+            e.Graphics.DrawLine(textPen, pt.X +  9, pt.Y - 1, pt.X + 13, pt.Y - 1);
 			e.Graphics.DrawLine(textPen, pt.X + 10, pt.Y,     pt.X + 12, pt.Y    );
 			e.Graphics.DrawLine(textPen, pt.X + 11, pt.Y,     pt.X + 11, pt.Y + 1);
 		}

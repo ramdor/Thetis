@@ -90,6 +90,9 @@
     <ClInclude Include="cmasio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="analyzers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aamix.c">
@@ -165,6 +168,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cmasio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="analyzers.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

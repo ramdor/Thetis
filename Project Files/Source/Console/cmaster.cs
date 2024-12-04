@@ -92,6 +92,15 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", EntryPoint = "SetPSRxIdx", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetPSRxIdx(int id, int idx);
 
+        // cmaster multiple analyzers
+        [DllImport("ChannelMaster.dll", EntryPoint = "alloc_analyzer", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int AllocAnalyzer(int stype, int id, int max_fft_size);
+        [DllImport("ChannelMaster.dll", EntryPoint = "free_analyzer", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int FreeAnalyzer(int disp);
+
+        [DllImport("ChannelMaster.dll", EntryPoint = "run_analyzer", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int RunAnalyzer(int disp, int run);
+
         // vox-dexp
 
         [DllImport("wdsp.dll", EntryPoint = "SetDEXPAttackThreshold", CallingConvention = CallingConvention.Cdecl)]
@@ -401,7 +410,7 @@ namespace Thetis
 
             NetworkIO.CreateRNet();
             
-            cmaster.create_rxa();
+            //cmaster.create_rxa();
 
            // create_wb();
         }
@@ -481,6 +490,7 @@ namespace Thetis
                             case HPSDRModel.ORIONMKII:
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
+                            case HPSDRModel.ANVELINAPRO3:
                                 int[] FIVE_DDC_Function = new int[48]
                                     {
                                     2, 2, 2, 2, 2, 0, 2, 0,     // DDC0+DDC1, port 1035, Call 0
@@ -562,6 +572,7 @@ namespace Thetis
                             case HPSDRModel.ORIONMKII:
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
+                            case HPSDRModel.ANVELINAPRO3:
                                 int[] FIVE_DDC_Function = new int[24]
                                     {
                                     2, 2, 2, 2, 2, 2, 2, 2,     // DDC0+DDC1, port 1035, Call 0
@@ -596,6 +607,7 @@ namespace Thetis
                             case HPSDRModel.ORIONMKII:
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
+                            case HPSDRModel.ANVELINAPRO3:
                             case HPSDRModel.ANAN_G2:
                             case HPSDRModel.ANAN_G2_1K:
                                 // This ANGELIA table is for test purposes and it routes DDC0 and DDC1 to RX1 and RX2, 
@@ -688,6 +700,7 @@ namespace Thetis
                             case HPSDRModel.ORIONMKII:
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
+                            case HPSDRModel.ANVELINAPRO3:
                             case HPSDRModel.ANAN_G2:
                             case HPSDRModel.ANAN_G2_1K:
                                 // control bits are { MOX, Diversity_Enabled, PureSignal_Enabled }
@@ -988,37 +1001,37 @@ namespace Thetis
 
         #region rxa
 
-        private static bool EXPOSE = false; 
+        //private static bool EXPOSE = false; 
         private static bool EXPOSEwb = true;
-        private const int nrxa = 8;
-        private static rxa[] rxa = new rxa[nrxa];
+        //private const int nrxa = 8;
+        //private static rxa[] rxa = new rxa[nrxa];
         private static wideband[] wideband = new wideband[3];
 
-        private static void create_rxa()
-        {
-            if (EXPOSE)
-            {
-                for (int i = 4; i < 7; i++)
-                {
-                    rxa[i] = new rxa(i);
-                    rxa[i].Show();
-                }
-            }
-        }
+        //private static void create_rxa()
+        //{
+        //    if (EXPOSE)
+        //    {
+        //        for (int i = 4; i < 7; i++)
+        //        {
+        //            rxa[i] = new rxa(i);
+        //            rxa[i].Show();
+        //        }
+        //    }
+        //}
 
-        public static void close_rxa()
-        {
-            for (int i = 4; i < 7; i++)
-            {
-                if (rxa[i] != null)
-                    rxa[i].Close();
-            }
-        }
+        //public static void close_rxa()
+        //{
+        //    for (int i = 4; i < 7; i++)
+        //    {
+        //        if (rxa[i] != null)
+        //            rxa[i].Close();
+        //    }
+        //}
 
-        public static rxa Getrxa(int rx)
-        {
-            return rxa[rx];
-        }
+        //public static rxa Getrxa(int rx)
+        //{
+        //    return rxa[rx];
+        //}
 
         #endregion
 

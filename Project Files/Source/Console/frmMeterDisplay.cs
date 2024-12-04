@@ -34,6 +34,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Thetis
 {
@@ -128,6 +129,33 @@ namespace Thetis
             m.Size = new Size(this.Width, this.Height);
             m.BringToFront();
             m.Show();
+        }
+        [DllImport("user32.dll")]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+        private const uint SWP_NOSIZE = 0x0001;
+        private const uint SWP_NOZORDER = 0x0004;
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            //IMPORTANT NOTE *****   //[2.10.3.7]MW0LGE
+            //This crazy looking code that moves the window by 1 pixel X and then back again
+            //causes windows to reculate the window size based on the DPI of the monitor it is on.
+            //Otherwise we would need to enable Per Monitor DPI support in Thetis which breaks a
+            //couple of things. Containers should now launch correctly scaled when on a secondary monitor
+            //that is at a different UI scaling/resolution compared to the main Thetis window.
+
+            IntPtr handle = this.Handle;
+
+            Rectangle bounds = this.Bounds;
+            int originalX = bounds.X;
+            int originalY = bounds.Y;
+
+            // Move the window by 1 pixel
+            SetWindowPos(handle, IntPtr.Zero, originalX + 1, originalY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
+            // Move it back to the original position
+            SetWindowPos(handle, IntPtr.Zero, originalX, originalY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
         }
     }
 }

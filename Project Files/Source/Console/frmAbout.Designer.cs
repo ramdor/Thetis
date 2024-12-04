@@ -249,9 +249,9 @@
             // 
             this.labelTS4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelTS4.Image = null;
-            this.labelTS4.Location = new System.Drawing.Point(16, 447);
+            this.labelTS4.Location = new System.Drawing.Point(16, 441);
             this.labelTS4.Name = "labelTS4";
-            this.labelTS4.Size = new System.Drawing.Size(493, 80);
+            this.labelTS4.Size = new System.Drawing.Size(493, 86);
             this.labelTS4.TabIndex = 12;
             this.labelTS4.Text = resources.GetString("labelTS4.Text");
             // 

@@ -9362,6 +9362,8 @@ namespace Thetis
             try
             {
                 outStr = "";
+                if (ds == null) return false;
+
                 string f = freq.ToString("f6");
                 f = f.Replace(",", ".");
                 DataRow[] rows = ds.Tables["BandText"].Select(f + ">=Low AND " + f + "<=High");
@@ -9610,6 +9612,8 @@ namespace Thetis
         }
         public static void PurgeMeters(List<string>formGuids)
         {
+            if (ds == null) return;
+
             purgeTableEntries("Options", "meterContData_*");
             purgeTableEntries("Options", "meterData_*");
             purgeTableEntries("Options", "meterIGData_*");
@@ -9655,6 +9659,8 @@ namespace Thetis
         //}
         private static void purgeTableEntries(string sTable, string sKey)
         {
+            if (ds == null) return;
+
             // make sure there is a table
             if (!ds.Tables.Contains(sTable)) return;
 
@@ -9668,6 +9674,8 @@ namespace Thetis
         }
         public static void RemoveVarsList(string tableName, List<string> list)
         {
+            if (ds == null) return;
+
             if (!ds.Tables.Contains(tableName))
                 AddFormTable(tableName);
 
@@ -9691,7 +9699,7 @@ namespace Thetis
         }
         public static void SaveVarsDictionary(string tableName, ref Dictionary<string,string> dict, bool bSaveEmptyValues = true)
         {
-            if (_merged) return; // we just merged, dont want to change anything
+            if (_merged || ds == null) return; // we just merged, dont want to change anything
 
             //[2.10.1.0] MW0LGE added bSaveEmptyValues. All entries need to be in the database even if empty, because
             //on a DB upgrade the database starts off empty, and without these added into the newdb they wont merge from the oldDb
@@ -9733,7 +9741,7 @@ namespace Thetis
         }
         public static void SaveVars(string tableName, List<string> list, bool bSaveEmptyValues = true)
         {
-            if (_merged) return; // we just merged, dont want to change anything
+            if (_merged || ds == null) return; // we just merged, dont want to change anything
 
             //[2.10.1.0] MW0LGE added bSaveEmptyValues. All entries need to be in the database even if empty, because
             //on a DB upgrade the database starts off empty, and without these added into the newdb they wont merge from the oldDb
@@ -9742,6 +9750,8 @@ namespace Thetis
                 AddFormTable(tableName);
 
             checkForPrimaryKeys(tableName);
+
+            if (list == null) return; // table added, but there are no entries needed at this time
 
             foreach (string s in list)
             {
@@ -9782,6 +9792,8 @@ namespace Thetis
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
 
+            if (ds == null) return dict;
+
             if (!ds.Tables.Contains(table_name))
                 return dict;
 
@@ -9815,6 +9827,9 @@ namespace Thetis
         public static List<string> GetVars(string tableName)
         {
             List<string> list = new List<string>();
+
+            if (ds == null) return list;
+
             if (!ds.Tables.Contains(tableName))
                 return list;
 

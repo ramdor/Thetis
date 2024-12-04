@@ -720,6 +720,8 @@
             this.ptbCWAPFFreq = new Thetis.PrettyTrackBar();
             this.ptbTune = new Thetis.PrettyTrackBar();
             this.udTXStepAttData = new System.Windows.Forms.NumericUpDownTS();
+            this.pbAutoAttWarningRX1 = new System.Windows.Forms.PictureBox();
+            this.pbAutoAttWarningRX2 = new System.Windows.Forms.PictureBox();
             this.radBand2 = new System.Windows.Forms.RadioButtonTS();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -943,8 +945,8 @@
             this.panelOptions = new System.Windows.Forms.PanelTS();
             this.checkBoxTS1 = new System.Windows.Forms.CheckBoxTS();
             this.panelModeSpecificPhone = new System.Windows.Forms.PanelTS();
-            this.labelTS4 = new System.Windows.Forms.LabelTS();
-            this.labelTS3 = new System.Windows.Forms.LabelTS();
+            this.lblTXHigh = new System.Windows.Forms.LabelTS();
+            this.lblTXLow = new System.Windows.Forms.LabelTS();
             this.picNoiseGate = new System.Windows.Forms.PictureBox();
             this.lblNoiseGateVal = new System.Windows.Forms.LabelTS();
             this.ptbNoiseGate = new Thetis.PrettyTrackBar();
@@ -1168,6 +1170,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbTune)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXStepAttData)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbAutoAttWarningRX1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbAutoAttWarningRX2)).BeginInit();
             this.contextMenuStripFilterRX1.SuspendLayout();
             this.contextMenuStripFilterRX2.SuspendLayout();
             this.contextMenuStripNotch.SuspendLayout();
@@ -1707,6 +1711,7 @@
             this.chkX2TR.Name = "chkX2TR";
             this.toolTip1.SetToolTip(this.chkX2TR, resources.GetString("chkX2TR.ToolTip"));
             this.chkX2TR.CheckedChanged += new System.EventHandler(this.chkX2TR_CheckedChanged);
+            this.chkX2TR.MouseUp += new System.Windows.Forms.MouseEventHandler(this.chkX2TR_MouseUp);
             // 
             // chkFWCATU
             // 
@@ -1716,6 +1721,7 @@
             this.chkFWCATU.Name = "chkFWCATU";
             this.toolTip1.SetToolTip(this.chkFWCATU, resources.GetString("chkFWCATU.ToolTip"));
             this.chkFWCATU.CheckedChanged += new System.EventHandler(this.chkFWCATU_CheckedChanged);
+            this.chkFWCATU.MouseUp += new System.Windows.Forms.MouseEventHandler(this.chkFWCATU_MouseUp);
             // 
             // comboRX2Band
             // 
@@ -1852,12 +1858,12 @@
             0,
             0});
             this.udRX2FilterHigh.Maximum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
             this.udRX2FilterHigh.Minimum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             -2147483648});
@@ -1882,12 +1888,12 @@
             0,
             0});
             this.udRX2FilterLow.Maximum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             0});
             this.udRX2FilterLow.Minimum = new decimal(new int[] {
-            9999,
+            10000,
             0,
             0,
             -2147483648});
@@ -3983,6 +3989,20 @@
             0});
             this.udTXStepAttData.ValueChanged += new System.EventHandler(this.udTXStepAttData_ValueChanged);
             // 
+            // pbAutoAttWarningRX1
+            // 
+            resources.ApplyResources(this.pbAutoAttWarningRX1, "pbAutoAttWarningRX1");
+            this.pbAutoAttWarningRX1.Name = "pbAutoAttWarningRX1";
+            this.pbAutoAttWarningRX1.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbAutoAttWarningRX1, resources.GetString("pbAutoAttWarningRX1.ToolTip"));
+            // 
+            // pbAutoAttWarningRX2
+            // 
+            resources.ApplyResources(this.pbAutoAttWarningRX2, "pbAutoAttWarningRX2");
+            this.pbAutoAttWarningRX2.Name = "pbAutoAttWarningRX2";
+            this.pbAutoAttWarningRX2.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbAutoAttWarningRX2, resources.GetString("pbAutoAttWarningRX2.ToolTip"));
+            // 
             // radBand2
             // 
             resources.ApplyResources(this.radBand2, "radBand2");
@@ -5701,8 +5721,8 @@
             // 
             resources.ApplyResources(this.panelModeSpecificPhone, "panelModeSpecificPhone");
             this.panelModeSpecificPhone.BackColor = System.Drawing.Color.Transparent;
-            this.panelModeSpecificPhone.Controls.Add(this.labelTS4);
-            this.panelModeSpecificPhone.Controls.Add(this.labelTS3);
+            this.panelModeSpecificPhone.Controls.Add(this.lblTXHigh);
+            this.panelModeSpecificPhone.Controls.Add(this.lblTXLow);
             this.panelModeSpecificPhone.Controls.Add(this.udTXFilterLow);
             this.panelModeSpecificPhone.Controls.Add(this.udTXFilterHigh);
             this.panelModeSpecificPhone.Controls.Add(this.chkMicMute);
@@ -5728,17 +5748,17 @@
             this.panelModeSpecificPhone.Controls.Add(this.comboAMTXProfile);
             this.panelModeSpecificPhone.Name = "panelModeSpecificPhone";
             // 
-            // labelTS4
+            // lblTXHigh
             // 
-            resources.ApplyResources(this.labelTS4, "labelTS4");
-            this.labelTS4.ForeColor = System.Drawing.Color.White;
-            this.labelTS4.Name = "labelTS4";
+            resources.ApplyResources(this.lblTXHigh, "lblTXHigh");
+            this.lblTXHigh.ForeColor = System.Drawing.Color.White;
+            this.lblTXHigh.Name = "lblTXHigh";
             // 
-            // labelTS3
+            // lblTXLow
             // 
-            resources.ApplyResources(this.labelTS3, "labelTS3");
-            this.labelTS3.ForeColor = System.Drawing.Color.White;
-            this.labelTS3.Name = "labelTS3";
+            resources.ApplyResources(this.lblTXLow, "lblTXLow");
+            this.lblTXLow.ForeColor = System.Drawing.Color.White;
+            this.lblTXLow.Name = "lblTXLow";
             // 
             // picNoiseGate
             // 
@@ -6154,6 +6174,7 @@
             // 
             resources.ApplyResources(this.panelRX2Power, "panelRX2Power");
             this.panelRX2Power.BackColor = System.Drawing.Color.Transparent;
+            this.panelRX2Power.Controls.Add(this.pbAutoAttWarningRX2);
             this.panelRX2Power.Controls.Add(this.lblRX2Band);
             this.panelRX2Power.Controls.Add(this.comboRX2Band);
             this.panelRX2Power.Controls.Add(this.lblRX2Preamp);
@@ -6555,6 +6576,7 @@
             // 
             resources.ApplyResources(this.panelSoundControls, "panelSoundControls");
             this.panelSoundControls.BackColor = System.Drawing.Color.Transparent;
+            this.panelSoundControls.Controls.Add(this.pbAutoAttWarningRX1);
             this.panelSoundControls.Controls.Add(this.ptbTune);
             this.panelSoundControls.Controls.Add(this.lblTune);
             this.panelSoundControls.Controls.Add(this.ptbRX2AF);
@@ -7638,6 +7660,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFFreq)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbTune)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXStepAttData)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbAutoAttWarningRX1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbAutoAttWarningRX2)).EndInit();
             this.contextMenuStripFilterRX1.ResumeLayout(false);
             this.contextMenuStripFilterRX2.ResumeLayout(false);
             this.contextMenuStripNotch.ResumeLayout(false);
@@ -7744,8 +7768,8 @@
         private RadioButtonTS radBandGEN1;
         private RadioButtonTS radBandGEN0;
         private ButtonTS btnBandHF1;
-        private LabelTS labelTS4;
-        private LabelTS labelTS3;
+        private LabelTS lblTXHigh;
+        private LabelTS lblTXLow;
         public NumericUpDownTS udTXFilterLow;
         public NumericUpDownTS udTXFilterHigh;
         private CheckBoxTS chkRxAnt;
@@ -7861,5 +7885,7 @@
         private ToolStripMenuItem setupToolStripMenuItem1;
         private ToolStripSeparator toolStripMenuItem1;
         private ToolStripMenuItem miAbout;
+        private PictureBox pbAutoAttWarningRX1;
+        private PictureBox pbAutoAttWarningRX2;
     }
 }

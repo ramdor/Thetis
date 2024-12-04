@@ -226,6 +226,7 @@ namespace Thetis
             this.btnAdd.Image = null;
             this.btnAdd.Location = new System.Drawing.Point(24, 24);
             this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Selectable = true;
             this.btnAdd.Size = new System.Drawing.Size(48, 23);
             this.btnAdd.TabIndex = 6;
             this.btnAdd.Text = "Add...";
@@ -247,6 +248,7 @@ namespace Thetis
             this.btnRemove.Image = null;
             this.btnRemove.Location = new System.Drawing.Point(80, 24);
             this.btnRemove.Name = "btnRemove";
+            this.btnRemove.Selectable = true;
             this.btnRemove.Size = new System.Drawing.Size(56, 23);
             this.btnRemove.TabIndex = 11;
             this.btnRemove.Text = "Remove";
@@ -393,6 +395,7 @@ namespace Thetis
             this.udPreamp.Name = "udPreamp";
             this.udPreamp.Size = new System.Drawing.Size(40, 20);
             this.udPreamp.TabIndex = 52;
+            this.udPreamp.TinyStep = false;
             this.udPreamp.Value = new decimal(new int[] {
             0,
             0,
@@ -462,6 +465,7 @@ namespace Thetis
             this.btnNext.Image = null;
             this.btnNext.Location = new System.Drawing.Point(232, 56);
             this.btnNext.Name = "btnNext";
+            this.btnNext.Selectable = true;
             this.btnNext.Size = new System.Drawing.Size(40, 23);
             this.btnNext.TabIndex = 8;
             this.btnNext.Text = "Next";
@@ -473,6 +477,7 @@ namespace Thetis
             this.btnPrevious.Image = null;
             this.btnPrevious.Location = new System.Drawing.Point(184, 56);
             this.btnPrevious.Name = "btnPrevious";
+            this.btnPrevious.Selectable = true;
             this.btnPrevious.Size = new System.Drawing.Size(40, 23);
             this.btnPrevious.TabIndex = 7;
             this.btnPrevious.Text = "Prev";
@@ -497,6 +502,7 @@ namespace Thetis
             this.btnStop.Image = null;
             this.btnStop.Location = new System.Drawing.Point(32, 56);
             this.btnStop.Name = "btnStop";
+            this.btnStop.Selectable = true;
             this.btnStop.Size = new System.Drawing.Size(40, 23);
             this.btnStop.TabIndex = 4;
             this.btnStop.Text = "Stop";
@@ -692,18 +698,35 @@ namespace Thetis
 				return false;
 			}
 
-			while((data_chunk == null ||
+            bool ok = true;
+			while(ok && (data_chunk == null ||
 				riff == null || fmt == null) &&
 				reader.BaseStream.Position < reader.BaseStream.Length)
 			{
-				Chunk chunk = Chunk.ReadChunk(ref reader);
-				if(chunk.GetType() == typeof(RIFFChunk))
-					riff = (RIFFChunk)chunk;
-				else if(chunk.GetType() == typeof(fmtChunk))
-					fmt = (fmtChunk)chunk;
-				else if(chunk.GetType() == typeof(dataChunk))
-					data_chunk = (dataChunk)chunk;
+                try
+                {
+                    Chunk chunk = Chunk.ReadChunk(ref reader);
+                    if (chunk.GetType() == typeof(RIFFChunk))
+                        riff = (RIFFChunk)chunk;
+                    else if (chunk.GetType() == typeof(fmtChunk))
+                        fmt = (fmtChunk)chunk;
+                    else if (chunk.GetType() == typeof(dataChunk))
+                        data_chunk = (dataChunk)chunk;
+                }
+                catch { ok = false; }
 			}
+
+            if (!ok)
+            {
+                try { reader.Close(); } catch { }
+                MessageBox.Show("File is unable to be read.",
+                    "File Format Issue",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                try { file_list.RemoveAt(currently_playing); } catch { }
+                return false;
+            }
 
             if (reader.BaseStream.Position == reader.BaseStream.Length)
 			{
@@ -809,9 +832,10 @@ namespace Thetis
 			int index = lstPlaylist.SelectedIndex;
 			foreach(string s in file_list)
 			{
-				int i = s.LastIndexOf("\\")+1;
-				string file = s.Substring(i, s.IndexOf(".wav")-i);
-				lstPlaylist.Items.Add(file);
+                //int i = s.LastIndexOf("\\")+1;
+                //string file = s.Substring(i, s.IndexOf(".wav")-i);
+                string file = Path.GetFileNameWithoutExtension(s); //[2.10.3.7]MW0LGE get filename only, fixes issue where file_list could contain files that didn't have .wav (this now fixed in the code that adds to this list as well)
+                lstPlaylist.Items.Add(file);
 			}
 
 			if(index < 0 && lstPlaylist.Items.Count > 0)
@@ -867,7 +891,9 @@ namespace Thetis
 		{
 			foreach(string s in openFileDialog1.FileNames)
 			{
-				if(!file_list.Contains(s))
+                if (Path.GetExtension(s) != ".wav") continue; //[2.10.3.7]MW0LGE ignore any that do not end .wav, fixes issue in UpdatePlaylist that looks for .wav in substring
+
+                if (!file_list.Contains(s))
 					file_list.Add(s);
 			}
 

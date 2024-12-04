@@ -468,6 +468,22 @@ namespace Thetis
             set { nb2_on = value; }
         }
 
+        private int _pixel_out = 2;
+        public int PixelOut
+        {
+            get { return _pixel_out; }
+            set
+            {
+                _pixel_out = value;
+                if (update) initAnalyzer();
+            }
+        }
+        private bool _ignore_frequency_offset = false;
+        public bool IgnoreFrequencyOffset
+        {
+            get { return _ignore_frequency_offset; }
+            set { _ignore_frequency_offset = value; }
+        }
         const double KEEP_TIME = 0.1;
         private int max_w;
         private double freq_offset = 12000.0;
@@ -475,10 +491,20 @@ namespace Thetis
         //{
         //    public int[] flip;
         //}
-
+       
         public void resetPixelBuffers()
         {
             SpecHPSDRDLL.ResetPixelBuffers(disp);
+        }
+        private int _low_freq = 0;
+        private int _high_freq = 0;
+        public int LowFreq
+        {
+            get { return _low_freq; }
+        }
+        public int HighFreq
+        {
+            get { return _high_freq; }
         }
         public void initAnalyzer()
         {
@@ -490,9 +516,9 @@ namespace Thetis
             //FlipStruct fs = new FlipStruct();
             //fs.flip = new int[] { 0 };
             //h_flip.ManangedObject = fs;
-            
-            int low = 0;
-            int high = 0;
+
+            _low_freq = 0;
+            _high_freq = 0;
             double bw_per_subspan = 0.0;
 
             switch (data_type)
@@ -558,8 +584,8 @@ namespace Thetis
 
                         //As for the low and high frequencies that are being displayed:
                         //   The Thetis grid interface is limited to integer Hertz values.
-                        low = -(int)((intervals / 2.0 - span_clip_l) * bin_width);
-                        high = +(int)((intervals / 2.0 - span_clip_h) * bin_width);
+                        _low_freq = -(int)((intervals / 2.0 - span_clip_l) * bin_width);
+                        _high_freq = +(int)((intervals / 2.0 - span_clip_h) * bin_width);
                         
                         max_w = fft_size + (int)Math.Min(KEEP_TIME * sample_rate, KEEP_TIME * fft_size * frame_rate);
                         break;
@@ -569,24 +595,27 @@ namespace Thetis
             switch (disp)
             {
                 case 0:
-                    Display.RXDisplayLow = low;
-                    Display.RXDisplayHigh = high;
+                    Display.RXDisplayLow = _low_freq;
+                    Display.RXDisplayHigh = _high_freq;
                      break;
                 case 1:
-                    Display.RX2DisplayLow = low;
-                    Display.RX2DisplayHigh = high;
+                    Display.RX2DisplayLow = _low_freq;
+                    Display.RX2DisplayHigh = _high_freq;
                     break;
                 case 2:
                 case 3:
                 case 4:
                 case 5:
-                    Display.TXDisplayLow = low;
-                    Display.TXDisplayHigh = high;
+                    Display.TXDisplayLow = _low_freq;
+                    Display.TXDisplayHigh = _high_freq;
                     break;
             }
 
-            NetworkIO.LowFreqOffset = bw_per_subspan;
-            NetworkIO.HighFreqOffset = bw_per_subspan;
+            if (!_ignore_frequency_offset)
+            {
+                NetworkIO.LowFreqOffset = bw_per_subspan;
+                NetworkIO.HighFreqOffset = bw_per_subspan;
+            }
 
             if (disp == 0)
             {
@@ -599,7 +628,7 @@ namespace Thetis
      
             SpecHPSDRDLL.SetAnalyzer(
                         disp,
-                        2,
+                        _pixel_out,
                         spur_eliminationtion_ffts,
                         data_type,
                         h_flip,
@@ -618,7 +647,99 @@ namespace Thetis
                         span_max_freq,
                         max_w);
         }
+        public void ZoomToBandwidth(double target_bandwidth_hz)
+        {
+            const double CLIP_FRACTION = 0.04;
+            const double zoom_limit = 100.0;
 
+            double bin_width = (double)sample_rate / (double)fft_size;
+            int bins_per_subspan = fft_size - 1 - 2 * (int)Math.Floor(CLIP_FRACTION * fft_size);
+
+            int bins = stitches * bins_per_subspan;
+            double intervals = (double)(bins - 1);
+
+            double required_width = target_bandwidth_hz / bin_width;
+
+            double zoom_scaled = 1.0 - required_width / intervals;
+            double calculated_zoom = (Math.Pow(10.0, zoom_scaled / (1.0 - 1.0 / zoom_limit)) - 1.0) / 9.0;
+
+            double zoom = Math.Max(0.0, Math.Min(1.0, calculated_zoom));
+
+            bool oldUpdate = Update;
+            if (zoom != ZoomSlider)
+            {
+                Update = false;
+                ZoomSlider = zoom;
+            }
+            Update = oldUpdate;
+            PanSlider = 0.5;
+        }
+        public (int, int) GetFrequencyExtents(double zslider, double panslider)
+        {
+            // just returns the frequency extents based on passed on info, does not change analayser
+
+            int low = 0;
+            int high = 0;
+
+            switch (data_type)
+            {
+                case 0:     //real fft - in case we want to use for wideband data in the future
+                    {
+
+                        break;
+                    }
+                case 1:     //complex fft
+                    {
+                        //fraction of the spectrum to clip off each side of each sub-span
+                        const double CLIP_FRACTION = 0.04;
+
+                        //clip is the number of bins to clip off each side of each sub-span
+                        int clip = (int)Math.Floor(CLIP_FRACTION * fft_size);
+
+                        //the amount of frequency in each fft bin (for complex samples) is given by:
+                        //   this is also equal to the interval width!
+                        double bin_width = (double)sample_rate / (double)fft_size;
+                        double bin_width_tx = 96000.0 / (double)fft_size;
+
+                        //the number of useable bins per subspan is
+                        //   the '-1' is due to clipping the Nyquist bin
+                        int bins_per_subspan = fft_size - 1 - 2 * clip;
+
+                        //the amount of useable bandwidth we get from each subspan is:
+                        //  we'd subtract '1' from 'bins_per_subspan' if we wanted the interval_width_per_subspan
+                        double bw_per_subspan = bins_per_subspan * bin_width;
+
+                        //the total number of bins available to display is:
+                        int bins = stitches * bins_per_subspan;
+
+                        //the number of intervals among all the bins equals 'bins - 1'
+                        double intervals = (double)(bins - 1);
+
+                        //apply log function to zoom slider value
+                        double zoom_slider = Math.Log10(9.0 * zslider + 1.0);
+
+                        //limits how much you can zoom in; higher value means you zoom more
+                        const double zoom_limit = 100;
+
+                        //calculate the width in intervals after applying zoom
+                        double width = intervals * (1.0 - (1.0 - 1.0 / zoom_limit) * zoom_slider);
+
+                        //span_clip_l is 0 if pan_slider is 0; it's 'intervals - width' if pan_slider is 1
+                        //span_clip_h is 'intervals - width' if pan_slider is 0; it's 0 if pan_slider is 1
+                        double span_clip_l = panslider * (intervals - width);
+                        double span_clip_h = intervals - width - span_clip_l;
+
+                        //As for the low and high frequencies that are being displayed:
+                        //   The Thetis grid interface is limited to integer Hertz values.
+                        low = -(int)((intervals / 2.0 - span_clip_l) * bin_width);
+                        high = +(int)((intervals / 2.0 - span_clip_h) * bin_width);
+
+                        //local_maxw = local_fft_size + (int)Math.Min(KEEP_TIME * local_sample_rate, KEEP_TIME * local_fft_size * frame_rate);
+                        break;
+                    }
+            }
+            return (low, high);
+        }
         public void CalcSpectrum(int filter_low, int filter_high, int spec_blocksize, int sample_rate)
         {
             //filter_low is the low frequency setting for the filter
@@ -669,7 +790,7 @@ namespace Thetis
 
             SpecHPSDRDLL.SetAnalyzer (
               disp,
-              2,
+              _pixel_out,
               spur_eliminationtion_ffts,
               data_type,
               h_flip,

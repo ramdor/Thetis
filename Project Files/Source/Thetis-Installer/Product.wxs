@@ -63,7 +63,6 @@
 
     <Feature Id="ProductFeature" Title="Thetis" Level="1" ConfigurableDirectory="INSTALLFOLDER">
       <ComponentGroupRef Id="ProductComponents" />
-	  <ComponentGroupRef Id="SkiaSharpComponents" />
       <ComponentRef Id="StartMenuShortcut" />
       <ComponentRef Id="DesktopShortcut" />
     </Feature>
@@ -76,8 +75,8 @@
     <UIRef Id="WixUI_Mondo" />
 
     <!-- UI customization -->
-    <WixVariable Id="WixUIBannerBmp" Value="binary/hpsdrbanner.bmp"/>
-    <WixVariable Id="WixUIDialogBmp" Value="binary/hpsdrBackground.bmp"/>
+    <WixVariable Id="WixUIBannerBmp" Value="binary/thetis_banner.bmp"/>
+    <WixVariable Id="WixUIDialogBmp" Value="binary/thetis_background.bmp"/>
 
     <!-- Define icons (ID should not be longer than 18 chars") -->
     <Icon Id="icon.ico" SourceFile="binary/Thetis.ico" />
@@ -120,13 +119,6 @@
       <Directory Id="$(var.PlatformProgramFilesFolder)">
         <Directory Id="HPSDRFolder" Name="OpenHPSDR">
           <Directory Id="INSTALLFOLDER" Name="Thetis">
-			  <?if $(var.Platform) = x64 ?>
-			  <Directory Id="SKIASHARP_INSTALLFOLDERx64" Name="x64">
-			  </Directory>
-			  <?else ?>
-			  <Directory Id="SKIASHARP_INSTALLFOLDERx86" Name="x86">
-			  </Directory>
-			  <?endif ?>
 		  </Directory>
         </Directory>
       </Directory>
@@ -213,26 +205,6 @@
 		  
 	  </Component>
     </DirectoryRef>
-
-	  <?if $(var.Platform) = x64 ?>
-	  <ComponentGroup Id="SkiaSharpComponents" Directory="SKIASHARP_INSTALLFOLDERx64">
-		  <Component Guid="*">
-			  <File Id="SkiaSharpLibDLL"
-					Source="$(var.FilesPath)\x64\libSkiaSharp.dll"
-					KeyPath="yes"
-              />
-		  </Component>
-	  </ComponentGroup>
-	  <?else ?>
-	  <ComponentGroup Id="SkiaSharpComponents" Directory="SKIASHARP_INSTALLFOLDERx86">
-		  <Component Guid="*">
-			  <File Id="SkiaSharpLibDLL"
-					Source="$(var.FilesPath)\x86\libSkiaSharp.dll"
-					KeyPath="yes"
-              />
-		  </Component>
-	  </ComponentGroup>
-	  <?endif ?>
 	  
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       
@@ -301,6 +273,13 @@
               KeyPath="yes"
               />
       </Component>
+
+	<Component Guid="*">
+		<File Id="libSkiaSharpDLL"
+				Source="$(var.FilesPath)libSkiaSharp.dll"
+				KeyPath="yes"
+            />
+	</Component>
 
       <Component Guid="*">
         <File Id="zetaHat.bin"

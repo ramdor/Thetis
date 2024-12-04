@@ -58,6 +58,36 @@ namespace Thetis
 
         public event EventHandler DockedMoved;
 
+        private bool _dragging = false;
+        private bool _resizing = false;
+        private bool _floating = false;
+        private Point _point;
+        private Point _clientPos;
+        private Size _size;
+        private Point _dockedLocation;
+        private Size _dockedSize;
+        private Cursor _cursor;
+        private int _rx = 0;
+        private Point _delta;
+        private Axis _axisLock;
+        private bool _pinOnTop;
+        private Console _console;
+        private bool _mox;
+        private string _id;
+        private bool _border;
+        private bool _no_controls;
+        private bool _locked;
+        private bool _enabled;
+        private bool _show_on_rx;
+        private bool _show_on_tx;
+        private bool _container_minimises;
+        private string _notes;
+        private int _height;
+        private bool _autoHeight;
+        private ToolTip _tool_tip;
+        private IWin32Window _tool_tip_owner;
+        private Guid _touch_guid;
+
         public ucMeter()
         {
             InitializeComponent();
@@ -70,6 +100,7 @@ namespace Thetis
             _height = MIN_CONTAINER_HEIGHT;
             _autoHeight = false;
 
+            _touch_guid = Guid.Empty;
             _console = null;
             _id = System.Guid.NewGuid().ToString();
             _border = true;
@@ -111,36 +142,71 @@ namespace Thetis
             pnlBar.Hide();
             pbGrab.Hide();
         }
-
-        private bool _dragging = false;
-        private bool _resizing = false;
-        private bool _floating = false;
-        private Point _point;
-        private Point _clientPos;
-        private Size _size;
-        private Point _dockedLocation;
-        private Size _dockedSize;
-        private Cursor _cursor;
-        private int _rx = 0;
-        private Point _delta;
-        private Axis _axisLock;
-        private bool _pinOnTop;
-        private Console _console;
-        private bool _mox;
-        private string _id;
-        private bool _border;
-        private bool _no_controls;
-        private bool _locked;
-        private bool _enabled;
-        private bool _show_on_rx;
-        private bool _show_on_tx;
-        private bool _container_minimises;
-        private string _notes;
-        private int _height;
-        private bool _autoHeight;
-        private ToolTip _tool_tip;
-        private IWin32Window _tool_tip_owner;
-
+        ~ucMeter()
+        {
+            if (_touch_guid != Guid.Empty) TouchHandler.DisableTouchSupport(_touch_guid);
+        }
+        private void HandleTouchDown(int x, int y)
+        {
+            if (pnlBar.Visible && pnlBar.Bounds.Contains(x, y))
+            {
+                pnlBar_MouseDown(this, new MouseEventArgs(MouseButtons.Left, 0, x, y, 0));
+            }
+            else if (pbGrab.Visible && pbGrab.Bounds.Contains(x, y))
+            {
+                pbGrab_MouseEnter(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+                pbGrab_MouseDown(this, new MouseEventArgs(MouseButtons.Left, 0, x, y, 0));
+            }
+            else if (lblRX.Visible && lblRX.Bounds.Contains(x, y))
+            {
+                lblRX_MouseDown(this, new MouseEventArgs(MouseButtons.Left, 0, x, y, 0));
+            }
+            else if (picContainer.Bounds.Contains(x, y))
+            {
+                picContainer_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+            }
+        }
+        private void HandleTouchMove(int x, int y)
+        {
+            if (pnlBar.Visible && pnlBar.Bounds.Contains(x, y))
+            {
+                pnlBar_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+            }
+            else if (pbGrab.Visible && pbGrab.Bounds.Contains(x, y))
+            {
+                pbGrab_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+            }
+            else if (lblRX.Visible && lblRX.Bounds.Contains(x, y))
+            {
+                lblRX_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+            }
+            if (picContainer.Bounds.Contains(x, y))
+            {
+                picContainer_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+            }
+        }
+        private void HandleTouchUp(int x, int y)
+        {
+            if (pnlBar.Visible && pnlBar.Bounds.Contains(x, y))
+            {
+                pnlBar_MouseUp(this, new MouseEventArgs(MouseButtons.Left, 0, x, y, 0));
+                pnlBar_MouseLeave(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+            }
+            else if (pbGrab.Visible && pbGrab.Bounds.Contains(x, y))
+            {
+                pbGrab_MouseUp(this, new MouseEventArgs(MouseButtons.Left, 0, x, y, 0));
+                pbGrab_MouseLeave(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+            }
+            else if (lblRX.Visible && lblRX.Bounds.Contains(x, y))
+            {
+                lblRX_MouseUp(this, new MouseEventArgs(MouseButtons.Left, 0, x, y, 0));
+                lblRX_MouseLeave(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+            }
+            else if (picContainer.Bounds.Contains(x, y))
+            {
+                picContainer_MouseLeave(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+            }
+        }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public Console Console
         {
@@ -148,6 +214,13 @@ namespace Thetis
             {
                 _console = value;
                 if (_console == null) return;
+
+                if (_touch_guid != Guid.Empty) TouchHandler.DisableTouchSupport(_touch_guid);
+
+                if (_console.TouchSupport)
+                    _touch_guid = TouchHandler.EnableTouchSupport(picContainer, HandleTouchDown, HandleTouchMove, HandleTouchUp, TouchHandler.TOUCHEVENTF_DOWN | TouchHandler.TOUCHEVENTF_MOVE | TouchHandler.TOUCHEVENTF_UP);
+                else
+                    _touch_guid = Guid.Empty;
 
                 _mox = (_console.RX2Enabled && _console.VFOBTX && _console.MOX) || (!_console.RX2Enabled && _console.MOX);
                 setTitle();
@@ -218,14 +291,14 @@ namespace Thetis
         private void pnlBar_MouseMove(object sender, MouseEventArgs e)
         {
             if (_dragging)
-            {
-                Point clientPos = Parent.PointToClient(Cursor.Position);
-
-                int x = clientPos.X - _point.X;
-                int y = clientPos.Y - _point.Y;
-
+            {                
                 if (_floating)
                 {
+                    Point clientPos = Parent.PointToClient(Cursor.Position);
+
+                    int x = clientPos.X - _point.X;
+                    int y = clientPos.Y - _point.Y;
+
                     Point newPos = new Point(Parent.Left + x, Parent.Top + y);
 
                     if (Common.CtrlKeyDown)
@@ -234,15 +307,25 @@ namespace Thetis
                         newPos.Y = roundToNearestTen(newPos.Y);
                     }
 
-                    if(newPos != Parent.Location) Parent.Location = newPos;
-
                     if (this.Parent != null)
                     {
-                        showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
+                        if (newPos != Parent.Location)
+                        {
+                            Parent.Location = newPos;
+                            showToolTip($"{newPos.X}, {newPos.Y}", this.Parent);
+                        }                        
                     }
                 }
                 else
                 {
+                    Point clientPos = e.Location;
+
+                    int x = clientPos.X - _point.X;
+                    int y = clientPos.Y - _point.Y;
+
+                    x += this.Location.X;
+                    y += this.Location.Y;
+
                     if (Common.CtrlKeyDown)
                     {
                         x = roundToNearestTen(x);
@@ -259,9 +342,8 @@ namespace Thetis
                     {
                         this.Location = newPos;
                         Repaint();
-                    }
-
-                    showToolTip($"{newPos.X}, {newPos.Y}", this);
+                        showToolTip($"{newPos.X}, {newPos.Y}", this);
+                    }                    
                 }
             }
         }

@@ -194,7 +194,7 @@ namespace Thetis
                 _console.BandPanelVisible(!_console.SetupForm.chkShowBandControls.Checked || _console.SetupForm.chkShowAndromedaBar.Checked); // if we need to hide band controls in collapsed view, then force it with the optional parameter
                 _console.ModePanelVisible(_console.SetupForm.chkShowModeControls.Checked && !_console.SetupForm.chkShowAndromedaBar.Checked); // if we need to hide mode controls in collapsed view, then force it with the optional parameter
                                                                                             // Note: I dislike the use of a public control, but that is how things have been done with this
-                _console.FilterPanelVisible(true);
+                _console.FilterPanelVisible(false);
 
                 _console.ExtendPanelDisplaySizeRight(false);
 

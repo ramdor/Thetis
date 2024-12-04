@@ -308,8 +308,16 @@ namespace Thetis
                                             // Reset the position of the MemoryStream
                                             memoryStream.Position = 0;
 
-                                            // Attempt to decode with SkiaSharp
-                                            SKBitmap skBitmap = SKBitmap.Decode(memoryStream);
+                                            SKBitmap skBitmap;
+                                            try
+                                            {
+                                                // Attempt to decode with SkiaSharp
+                                                skBitmap = SKBitmap.Decode(memoryStream);
+                                            }
+                                            catch (Exception ex) 
+                                            {
+                                                skBitmap = null;
+                                            }
 
                                             if (skBitmap != null)
                                             {
