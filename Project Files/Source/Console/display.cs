@@ -9536,7 +9536,7 @@ namespace Thetis
 
             if (rx == 1)
             {
-                vfo_hz = (int)vfoa_hz;
+                vfo_hz = vfoa_hz;
                 if (local_mox)
                 {
                     if (duplex)
@@ -9561,7 +9561,7 @@ namespace Thetis
             }
             else// rx == 2
             {
-                vfo_hz = (int)vfob_hz;
+                vfo_hz = vfob_hz;
                 if (local_mox)
                 {
                     if (duplex)

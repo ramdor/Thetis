@@ -123,6 +123,7 @@
   <data name="labelTS4.Text" xml:space="preserve">
     <value>Thetis and related code is covered by the GNU General Public License (at least version 2) and uses code and libraries from other projects and/or sources.
 
-FlexRadio Systems, PortAudio (audio), SharpDX (directX), RawInput (input capture), ExCSS (stylesheets), FTD2XX (ftdi), Newtonsoft (json), SkiaSharp (image handling), Svg	</value>
+FlexRadio Systems, PortAudio (audio), SharpDX (directX), RawInput (input capture), ExCSS (stylesheets), FTD2XX (ftdi), Newtonsoft (json), SkiaSharp (image handling), Svg.
+The Thetis splash screen, install banners and icons have been AI generated.</value>
   </data>
 </root>

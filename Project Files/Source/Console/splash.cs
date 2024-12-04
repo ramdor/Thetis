@@ -86,13 +86,20 @@ namespace Thetis
         private LabelTS lblVersion;
         private Panel panel1;
         private System.ComponentModel.IContainer components;
-		#endregion
+        #endregion
 
-		#region Constructor and Destructor
+        private class StartParams
+        {
+            public string vers;
+            public string splash_folder;
+        }
+		private static StartParams _start_params = new StartParams();
 
-		public Splash()
+        #region Constructor and Destructor
+
+        public Splash()
 		{
-			InitializeComponent();
+            InitializeComponent();
 			Common.DoubleBufferAll(this, true);
 			this.Opacity = .00;
 			timer1.Interval = TIMER_INTERVAL;
@@ -212,12 +219,6 @@ namespace Thetis
 		#region Static Methods
 		// ************* Static Methods *************** //
 
-		private class StartParams
-		{
-			public string vers;
-			public string splash_folder;
-		}
-
         // A static method to create the thread and 
         // launch the SplashScreen.
         static public void ShowSplashScreen(string version, string splash_screen_folder = "")
@@ -225,13 +226,16 @@ namespace Thetis
 			// Make sure it is only launched once.
 			if( ms_frmSplash != null )
 				return;
-			ms_oThread = new Thread(new ParameterizedThreadStart(ShowForm))
+			ms_oThread = new Thread(ShowForm)
 			{
 				IsBackground = true,
 				Name = "Splash Screen Thread"
 			};
-			StartParams sp = new StartParams { vers = version, splash_folder = splash_screen_folder };
-			ms_oThread.Start(sp);
+
+			_start_params.vers = version;
+			_start_params.splash_folder = splash_screen_folder;
+
+			ms_oThread.Start();
 		}
 
 		// A property returning the splash screen instance
@@ -244,13 +248,11 @@ namespace Thetis
 		}
 
 		// A private entry point for the thread.
-		static private void ShowForm(object param)
+		static private void ShowForm()
 		{
-			StartParams sp = param as StartParams;
-			
 			ms_frmSplash = new Splash();
-			ms_frmSplash.setVersion(sp.vers);
-			ms_frmSplash.setBackground(sp.splash_folder);
+			ms_frmSplash.setVersion(_start_params.vers);
+			ms_frmSplash.setBackground(_start_params.splash_folder);
 
             Control.CheckForIllegalCrossThreadCalls = false;
 			Application.Run(ms_frmSplash);
@@ -549,7 +551,9 @@ namespace Thetis
 
         private void Splash_Load(object sender, EventArgs e)
         {
-
+			lblStatus.Text = "";
+			lblVersion.Text = _start_params.vers;
+			lblTimeRemaining.Text = "";
         }		
     }
 
