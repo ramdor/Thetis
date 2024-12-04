@@ -96,6 +96,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] fixed scaling issue when containers appear on a different monitor to the main console window, and those monitors have different dpi/scales/resolution set
 - [fix] zorder fighting issues with bandstack overlays and other drag items resolved
 - [fix] high frequency TCI spots from Qo100 for example should now show in the correct place
+- [fix] closing wb will return BPF bypass state correctly if multiple wb menu presses are made and the window is closed
 
 ## v2.10.3.6 Main New Features
 - database manager

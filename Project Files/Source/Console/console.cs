@@ -45377,13 +45377,13 @@ namespace Thetis
             AndromedaIndicatorCheck(EIndicatorActions.eINNR, false, (chkRX2NR.CheckState != CheckState.Unchecked));
         }
 
-        private bool isHPFBypassed;
-
+        private bool _wb_caused_alex_hpf_bypass = false;
         public void wbClosing()
         {
-            SetupForm.AlexHPFBypass = isHPFBypassed;
+            // this flag is used to undo any change made by showing the wb form
+            if (_wb_caused_alex_hpf_bypass) SetupForm.AlexHPFBypass = false;
+            _wb_caused_alex_hpf_bypass = false;
         }
-
         private void wBToolStripMenuItem_Click(object sender, EventArgs e)
         {
             cmaster.Getwb(0).WBdisplay.Init();
@@ -45392,8 +45392,12 @@ namespace Thetis
             else NetworkIO.SetWBPacketsPerFrame(32);
             NetworkIO.SetWBEnable(0, 1);
             cmaster.Getwb(0).WBdisplay.StartDisplay(32);
-            isHPFBypassed = alex_hpf_bypass;
-            if (!IsSetupFormNull) SetupForm.AlexHPFBypass = true;
+            
+            if (!IsSetupFormNull && !alex_hpf_bypass)
+            {
+                _wb_caused_alex_hpf_bypass = true;
+                SetupForm.AlexHPFBypass = true;
+            }
         }
 
         private void pIToolStripMenuItem_Click(object sender, EventArgs e)
