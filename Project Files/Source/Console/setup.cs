@@ -59,6 +59,12 @@ namespace Thetis
     public partial class Setup : Form
     {
         private const string s_DEFAULT_GRADIENT = "9|1|0.000|-1509884160|1|0.339|-1493237760|1|0.234|-1509884160|1|0.294|-1493211648|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1493237760|";
+
+        // for these callsigns always show cmasio tab, as a perk to the testers from discord
+        private readonly List<string> CALLSIGN_IGNORE = new List<string>() {    "dl5tt", "ea8djr", "kc1lko", "k1lsb", "k1sr", "k2gx", "k2tc", "kb2uka",
+                                                                                "ki4tga", "ko6dlv", "kw4ex", "m0cke", "mw0lge", "n6mud", "nc3z", "nj2us",
+                                                                                "nr0v", "ny8t", "oe3ide", "oz1ct", "sa3atf", "ve2jn", "ve9iou", "vk6ia",
+                                                                                "w1aex", "w1rs", "w2pa", "w3ub", "w9ez" };
         #region Variable Declaration
 
         private Console console;
@@ -33010,14 +33016,8 @@ namespace Thetis
         }
         public void SetupCMAsio(bool portaudio_issue, bool cmasio_config_flag)
         {
-            // for these callsigns always show cmasio tab, as a perk to the testers from discord
-            List<string> callsign_ignore = new List<string>() { "mw0lge", "oe3ide", "w2pa", "w9ez", "dl5tt", "k1lsb", "k1sr", "nc3z", "m0cke",
-                                                                "w9ez", "w1aex", "ny8t", "nj2us", "oz1ct", "nj2us", "w9ez", "w3ub", "ve9iou",
-                                                                "n6mud", "k2gx", "vk6ia", "ki4tga", "ve2jn", "kb2uka", "w1rs", "ko6dlv",
-                                                                "nr0v", "k2tc", "sa3atf"};
-
             bool ignore = false;
-            foreach (string call in callsign_ignore)
+            foreach (string call in CALLSIGN_IGNORE)
             {
                 string tmp;
                 tmp = txtGenCustomTitle == null || string.IsNullOrEmpty(txtGenCustomTitle.Text) ? "" : txtGenCustomTitle.Text;

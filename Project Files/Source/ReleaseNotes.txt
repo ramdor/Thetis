@@ -7,8 +7,6 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
 ## v2.10.3.7 Change Log
-- [add] added OE3IDE Connectors and Tools link to the about box links
-- [add] manuals added to about box links/manuals
 - [add] new auto attenuate TX when PS is off options in Setup->Ant/Filters->Antenna
 - [add] new auto attenuate RX options in Setup->General->Options-1. If the undo option is used the attenuation will be unwound in the order originally applied after each delay period
 - [add] Discord integration, let others know when you are on air using the Discord button box. Get scrolling text for #general and #thetis-bot. Config in Setup->Networking->Discord
@@ -18,6 +16,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] warning shown in Linearity form if SetPk is different to that expected for the hardware
 - [add] added Thetis bespoke input TCI command spot_simulate_click which simulates a user clicking on a spot in the spectrum. It causes a clicked_on_spot message to go out via TCI. Example test input msg, spot_simulate_click:MW0LGE,3750000;
 - [add] added command line option, -noinstancewarn   so that no warning is shown if other instances are running. Use -help in a console window to get more info
+- [add] Anvelina-Pro3 profile added to Thetis - N1GP
 - [add] new filter item that will view the passband
 	- mouse wheel/click left-right when a number glows (10 steps default, ctrl single steps)
 	- drag filter edges in tx + rx
@@ -29,38 +28,43 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 	- mouse wheel over a notch to adjust width
 	- grid snap for common widths when dragging. These can be adjusted in Setup->Filters
 	- duplex mode is used for these displays, duplex off will not be provided
+	- show filter characteristic option in Setup->DSP->Options that will show the actual filter characteristics
 	- uses new spectrum duplication system from Warren
 - [add] right click setup menu item from the menubar will show setup instantly. To prevent all those repetitive strain injuries and to free up the doctors ! ;)
 - [add] added -nospec command line option to prevent the use of analysers when the filter item is in use
 - [add] webimage item can now be configured to apply the image to the spectral area, and can be used to implement slide shows with the use of 4charID
 - [add] right click on a CTUN button will re-centre the associated rx
 - [add] long click on vfo container filter size will show menu popup
-- [add] new container item, work in progress, Dial Display
+- [add] new container item, Dial Display. It is a mouse or touch driven vfo dial
 	- if using ACCEL mode, it will step up through the tune steps when the red ring is shown
 	- if using ACCEL mode, it will step down through the tune steps to where it started if the blue ring is shown
 	- if the green ring is shown in ACCEL mode, no changes to tune step will be made
 	- releasing the dial will return to the tunestep that was set when the dial pad was pressed
 	- option in settings to always show both vfoa+b so you don't need two of them for rx1+2
 	- tune step up (red ring) will happen at rotation speed >= 540deg per second, and step down (blue ring) at <= 270deg per second
-	- mouse wheel will turn the dial by 1 degree
-- [add] Anvelina-Pro3 profile added to Thetis - N1GP
-- [add] tci swl spot support. Implemented to handle swl spots from OE3IDE's Cluster-TCI-Bridge software. If using the TCI spot message, the mode field can have -swl[X] added to the mode, so 'ssb-swl[10]', that spot would then last 10 seconds before being cleared away
-- [add] a bespoke tci outbound message has been added to support the way Thetis deals with vfoTX and RX2. Note, this is not in the standard TCI protocol The message is as follows:
-	// tx_frequency:3700000,b80m,false,false;
-	// arg1 tx frequency (long)
-	// arg2 band b80m, b40m etc
-	// arg3 rx2 enabled  true/false
-	// arg4 tx on vfoB  true/false
+	- mouse wheel can be used
+- [add] tci swl spot support. Implemented to handle swl spots from OE3IDE's Cluster-TCI-Bridge software. If using the TCI spot message, the mode field can have -swl[X] added to the mode, example 'ssb-swl[10]', and that spot would then last 10 seconds before being cleared away
+- [add] The outbound tci message tx_frequency has been modified and will include some extra information over the standard protocol. This has been added to support the way Thetis deals with vfoTX and RX2. Note, this is not in the standard TCI protocol The message is as follows, and args 2,3,4 are additional to the base TCI message.
+	- tx_frequency:3700000,b80m,false,false;
+	- arg1 tx frequency (long)
+	- arg2 band b80m, b40m etc
+	- arg3 rx2 enabled  true/false
+	- arg4 tx on vfoB  true/false
 - [add] if OpenHSPDR\SplashScreens folder exists and there are 400x320 pixel .png files in there, a random one will be used for the startup splash screen
 - [add] reduce power on high swr option
+- [add] a command line option -touch can be used to enable touch support for containers. This is still early days for this and long hold for right click is not yet supported
+- [add] added OE3IDE Connectors and Tools link to the about box links
+- [add] manuals added to about box links/manuals
+
 - [change] new splash screen, icons, setup banners. The community picked Jordi EA3CL as the winner this time over on the Discord server pictures and screenshot section. AI and Photoshop used
 - [change] moved release notes button from setup to the about box
 - [change] skin images are resized to button/panel/slider etc instead of relying on tile property
 - [change] button clicks are ignored in meter item button boxes that are faded
-- [change] nf_1 and nf_2 has become nf, and will read from the trx container it is in (noise floor)
+- [change] nf_1 and nf_2 has become nf in variables used by text overlay and led indicator, and will read from the trx container it is in (noise floor)
 - [change] dragging the filter edges of am/sam/dsb etc will mirror the change to the other side. Shift to prevent this
 - [change] adding a notch with +MNF when in CW will place it at centre of CW filter
 - [change] many libs and nuget packages are updated to latest
+
 - [fix] inbuilt mm variables that have name with _double now consider %precis=N%
 - [fix] resolved issue where redraw of console controls became very slow after 8thOct Windows update
 - [fix] button boxes filter/antenna would not save columns correctly
@@ -77,11 +81,10 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] fixed crash issues when using line_out_start and stop tci commands
 - [fix] fixed various midi errors that had been sent in via error logs
 - [fix] when engaging rx2 a vfoB update is now always performed which preforms necessary initialisation. Previously this was not happening and sometimes rx2 would show 0.0mhz even though vfob was correct, mostly happened at startup
-- [fix] fixed crash issue when swapping between P1 and P2 without restarting Thetis
 - [fix] antenna tab is initialised with suitable settings for new databases. This has been broken since early dev 2.10.3.6
 - [fix] button boxes now release the click colour if you click and whilst keeping the mouse button down move off the button box
 - [fix] colour drop down controls in setup now position the down arrow correctly
-- [fix] fixed issue where audio would stop if the filter extent was moved below 201hz when using NR2-trained and SNB together
+- [fix] wdsp issue fixed issue where audio would stop if the filter extent was moved below 201hz when using NR2-trained and SNB together
 - [fix] rx2 is now prevented from going above max freq, unless rx2 is on an xvtr band
 - [fix] vfo container now handles band selection correctly for rx2
 - [fix] tci spots are now positioned correctly when DUPlex is off when in TX
@@ -91,6 +94,9 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] vfo lock state will be stored in db even if button is disabled
 - [fix] fixed the power output issue when back to back high swr tunes were performed
 - [fix] fixed scaling issue when containers appear on a different monitor to the main console window, and those monitors have different dpi/scales/resolution set
+- [fix] zorder fighting issues with bandstack overlays and other drag items resolved
+- [fix] high frequency TCI spots from Qo100 for example should now show in the correct place
+- [fix] closing wb will return BPF bypass state correctly if multiple wb menu presses are made and the window is closed
 
 ## v2.10.3.6 Main New Features
 - database manager
