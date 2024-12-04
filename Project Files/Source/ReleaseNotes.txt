@@ -22,7 +22,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 	- drag filter edges in tx + rx
 	- drag top filter to shift in rx
 	- uses min/max spectrum grid values for waterfall
-	- can add notches with the [+mnf] button, and turn the mnf system on/off with the [mnf] button, ctrl-rightclick to add one at the mouse 200hz wide, a shif-ctrol-righclick for 100hz
+	- can add notches with the [+mnf] button, and turn the mnf system on/off with the [mnf] button, ctrl-right-click to add one at the mouse 200hz wide, a shift-ctrl-right-click for 100hz
 	- drag notches
 	- right click notch to show popup for that notch
 	- mouse wheel over a notch to adjust width
@@ -55,7 +55,6 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] a command line option -touch can be used to enable touch support for containers. This is still early days for this and long hold for right click is not yet supported
 - [add] added OE3IDE Connectors and Tools link to the about box links
 - [add] manuals added to about box links/manuals
-
 - [change] new splash screen, icons, setup banners. The community picked Jordi EA3CL as the winner this time over on the Discord server pictures and screenshot section. AI and Photoshop used
 - [change] moved release notes button from setup to the about box
 - [change] skin images are resized to button/panel/slider etc instead of relying on tile property
@@ -64,7 +63,6 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] dragging the filter edges of am/sam/dsb etc will mirror the change to the other side. Shift to prevent this
 - [change] adding a notch with +MNF when in CW will place it at centre of CW filter
 - [change] many libs and nuget packages are updated to latest
-
 - [fix] inbuilt mm variables that have name with _double now consider %precis=N%
 - [fix] resolved issue where redraw of console controls became very slow after 8thOct Windows update
 - [fix] button boxes filter/antenna would not save columns correctly
@@ -89,7 +87,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] vfo container now handles band selection correctly for rx2
 - [fix] tci spots are now positioned correctly when DUPlex is off when in TX
 - [fix] some finder issues where a user defined xml file is used
-- [fix] vfos will have frequency initialised on startup even if vfos are locked
+- [fix] vfos will have frequency initialised on start-up even if vfos are locked
 - [fix] vfoB lock button will now disable on power off
 - [fix] vfo lock state will be stored in db even if button is disabled
 - [fix] fixed the power output issue when back to back high swr tunes were performed
