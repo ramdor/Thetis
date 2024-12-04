@@ -45377,7 +45377,7 @@ namespace Thetis
             AndromedaIndicatorCheck(EIndicatorActions.eINNR, false, (chkRX2NR.CheckState != CheckState.Unchecked));
         }
 
-        private bool _wb_caused_alex_hpf_bypass = false;
+        private bool _wb_caused_alex_hpf_bypass = false; //[2.10.3.7]MW0LGE fixes #529
         public void wbClosing()
         {
             // this flag is used to undo any change made by showing the wb form
