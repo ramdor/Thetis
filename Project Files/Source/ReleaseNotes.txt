@@ -55,7 +55,6 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] a command line option -touch can be used to enable touch support for containers. This is still early days for this and long hold for right click is not yet supported
 - [add] added OE3IDE Connectors and Tools link to the about box links
 - [add] manuals added to about box links/manuals
-
 - [change] new splash screen, icons, setup banners. The community picked Jordi EA3CL as the winner this time over on the Discord server pictures and screenshot section. AI and Photoshop used
 - [change] moved release notes button from setup to the about box
 - [change] skin images are resized to button/panel/slider etc instead of relying on tile property
@@ -64,7 +63,6 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] dragging the filter edges of am/sam/dsb etc will mirror the change to the other side. Shift to prevent this
 - [change] adding a notch with +MNF when in CW will place it at centre of CW filter
 - [change] many libs and nuget packages are updated to latest
-
 - [fix] inbuilt mm variables that have name with _double now consider %precis=N%
 - [fix] resolved issue where redraw of console controls became very slow after 8thOct Windows update
 - [fix] button boxes filter/antenna would not save columns correctly

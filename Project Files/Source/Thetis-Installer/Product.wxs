@@ -274,6 +274,13 @@
               />
       </Component>
 
+	<Component Guid="*">
+		<File Id="libSkiaSharpDLL"
+				Source="$(var.FilesPath)libSkiaSharp.dll"
+				KeyPath="yes"
+            />
+	</Component>
+
       <Component Guid="*">
         <File Id="zetaHat.bin"
               Source="$(var.FilesPath)zetaHat.bin"
