@@ -25676,7 +25676,13 @@ namespace Thetis
 
             if (read_data[0] == 0xf1)   // Expect to find version 1 of the IO board
             {
-                if (!SetupForm.HL2IOBoardPresent) SetupForm.HL2IOBoardPresent = true;
+                if (!SetupForm.HL2IOBoardPresent)
+                {
+                    if (this.InvokeRequired)
+                        this.Invoke((Action)(() => SetupForm.HL2IOBoardPresent = true));
+                    else
+                        auto_tuning = AutoTuneState.Disabled;
+                }
 
                 lastFreq = 0;   // Force update if restarted
 
@@ -25807,8 +25813,10 @@ namespace Thetis
                 }
             }
 
-            auto_tuning = AutoTuneState.Disabled;
-            SetupForm.HL2IOBoardPresent = false;
+            if (this.InvokeRequired)
+                this.Invoke((Action)(() => SetupForm.HL2IOBoardPresent = false));
+            else
+                auto_tuning = AutoTuneState.Disabled;
 
             return;
         }
