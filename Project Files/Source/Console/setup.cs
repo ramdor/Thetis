@@ -2350,6 +2350,10 @@ namespace Thetis
             chkShowAndromedaTop_CheckedChanged(this, e);
             chkShowAndromedaBar_CheckedChanged(this, e);
 
+            //[2.10.3.8]MW0LGE
+            chkAdjustGridMinToNFRX1_CheckedChanged(this, e);
+            chkAdjustGridMinToNFRX2_CheckedChanged(this, e);
+
             // DSP Tab
             udLMSANF_ValueChanged(this, e);
             udLMSNR_ValueChanged(this, e);
@@ -4493,7 +4497,7 @@ namespace Thetis
             }
             set
             {
-                if (udAudioVACGainRX != null) udAudioVACGainRX.Value = value;
+                if (udAudioVACGainRX != null) udAudioVACGainRX.Value = Math.Min(udAudioVACGainRX.Maximum, Math.Max(udAudioVACGainRX.Minimum, value));//see comment below, not really needed, but belts/braces
             }
         }
 
@@ -4506,7 +4510,7 @@ namespace Thetis
             }
             set
             {
-                if (udVAC2GainRX != null) udVAC2GainRX.Value = value;
+                if (udVAC2GainRX != null) udVAC2GainRX.Value = Math.Min(udVAC2GainRX.Maximum, Math.Max(udVAC2GainRX.Minimum, value));//see comment below, not really needed, but belts/braces
             }
         }
 
@@ -4519,7 +4523,7 @@ namespace Thetis
             }
             set
             {
-                if (udAudioVACGainTX != null) udAudioVACGainTX.Value = value;
+                if (udAudioVACGainTX != null) udAudioVACGainTX.Value = Math.Min(udAudioVACGainTX.Maximum, Math.Max(udAudioVACGainTX.Minimum, value));//[2.10.3.8]MW0LGE to fix HL2 issues introduced by linking mic gain to vac gain
             }
         }
 
@@ -4532,7 +4536,7 @@ namespace Thetis
             }
             set
             {
-                if (udVAC2GainTX != null) udVAC2GainTX.Value = value;
+                if (udVAC2GainTX != null) udVAC2GainTX.Value = Math.Min(udVAC2GainTX.Maximum, Math.Max(udVAC2GainTX.Minimum, value));//[2.10.3.8]MW0LGE to fix HL2 issues introduced by linking mic gain to vac gain
             }
         }
 
@@ -23944,8 +23948,8 @@ namespace Thetis
         private void updateDriveLabels(PAProfile p = null)
         {
             if (_adjustingBand == Band.FIRST) return;
-            if (p == null)
-                p = getPAProfile(comboPAProfile.Text);
+
+            if (p == null) p = getPAProfile(comboPAProfile.Text);
 
             // populate dict first time, it never gets cleared
             if (_PADriveLabels.Count == 0)
@@ -23958,7 +23962,7 @@ namespace Thetis
             }
 
             //update drive/watts display
-            if (p.GetMaxPowerUse(_adjustingBand))
+            if (p != null && p.GetMaxPowerUse(_adjustingBand))
             {
                 // using watts
                 lblDriveHeader.TextAlign = ContentAlignment.MiddleRight;

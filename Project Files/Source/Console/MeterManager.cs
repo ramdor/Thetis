@@ -13616,45 +13616,61 @@ namespace Thetis
                             int min;
                             if (_owningmeter.RX == 1)
                             {
-                                if (Display.RX1WaterfallAGC && Display.WaterfallUseNFForACGRX1)
-                                    min = (int)Display.ActiveNoiseFloorRX1;
+                                if (Display.SpectrumBasedThresholdsRX1)
+                                {
+                                    min = _rx_spec_grid_min;
+                                }
                                 else
                                 {
                                     if (Display.RX1WaterfallAGC)
                                     {
-                                        float calc = (((_waterfall_min_agc * 8) + (_spec_raw_min * 2)) / 10) + 1;
-                                        _waterfall_min_agc = calc;
-                                        min = (int)_waterfall_min_agc;
-                                        //min = (int)_waterfall_min_agc;
+                                        if (Display.WaterfallUseNFForACGRX1)
+                                        {
+                                            min = (int)Display.ActiveNoiseFloorRX1;
+                                        }
+                                        else
+                                        {
+                                            float calc = (((_waterfall_min_agc * 8) + (_spec_raw_min * 2)) / 10) + 1;
+                                            _waterfall_min_agc = calc;
+                                            min = (int)_waterfall_min_agc;
+                                        }
+
+                                        min -= (int)Display.WaterfallAGCOffsetRX1;
                                     }
                                     else
                                     {
                                         min = _rx_waterfall_min;
                                     }
                                 }
-
-                                min -= (int)Display.WaterfallAGCOffsetRX1;
                             }
                             else
                             {
-                                if (Display.RX2WaterfallAGC && Display.WaterfallUseNFForACGRX2)
-                                    min = (int)Display.ActiveNoiseFloorRX2;
+                                if (Display.SpectrumBasedThresholdsRX2)
+                                {
+                                    min = _rx_spec_grid_min;
+                                }
                                 else
                                 {
                                     if (Display.RX2WaterfallAGC)
                                     {
-                                        float calc = (((_waterfall_min_agc * 8) + (_spec_raw_min * 2)) / 10) + 1;
-                                        _waterfall_min_agc = calc;
-                                        min = (int)_waterfall_min_agc;
-                                        //min = (int)_waterfall_min_agc;
+                                        if (Display.WaterfallUseNFForACGRX2)
+                                        {
+                                            min = (int)Display.ActiveNoiseFloorRX2;
+                                        }
+                                        else
+                                        {
+                                            float calc = (((_waterfall_min_agc * 8) + (_spec_raw_min * 2)) / 10) + 1;
+                                            _waterfall_min_agc = calc;
+                                            min = (int)_waterfall_min_agc;
+                                        }
+
+                                        min -= (int)Display.WaterfallAGCOffsetRX2;
                                     }
                                     else
                                     {
                                         min = _rx_waterfall_min;
                                     }
                                 }
-
-                                min -= (int)Display.WaterfallAGCOffsetRX2;
                             }
                             return min;
                         }
