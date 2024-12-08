@@ -66,8 +66,31 @@ namespace Thetis
             public bool BackupOnStartup {  get; set; }
             public bool BackupOnShutdown {  get; set; }
 
-            [JsonConverter(typeof(StringEnumConverter))] //this will turn the enum (int) to a string
+            //[JsonConverter(typeof(StringEnumConverter))] //this will turn the enum (int) to a string
+            [JsonConverter(typeof(DatabaseInfoDefaultStringEnumConverter), HPSDRModel.HERMES)] //[2.10.3.8]MW0LGE a custom string converter, that will default to HERMES if the model is not in the enum
             public HPSDRModel Model { get; set; }
+
+            public class DatabaseInfoDefaultStringEnumConverter : StringEnumConverter
+            {
+                private readonly HPSDRModel _defaultValue;
+
+                public DatabaseInfoDefaultStringEnumConverter(HPSDRModel defaultValue)
+                {
+                    _defaultValue = defaultValue;
+                }
+
+                public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+                {
+                    try
+                    {
+                        return base.ReadJson(reader, objectType, existingValue, serializer);
+                    }
+                    catch
+                    {
+                        return _defaultValue;
+                    }
+                }
+            }
 
             public DatabaseInfo()
             {

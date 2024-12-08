@@ -46,6 +46,7 @@ namespace Thetis
         private bool _container_minimises = true;
         private bool _is_enabled = true;
         private bool _floating = false;
+        private bool _rx2_enabled;
 
         public frmMeterDisplay(Console c, int rx)
         {
@@ -56,12 +57,18 @@ namespace Thetis
             _id = System.Guid.NewGuid().ToString();
             _console = c;
             _rx = rx;
+            _rx2_enabled = _console.RX2Enabled;
 
             Common.DoubleBufferAll(this, true);
 
             _console.WindowStateChangedHandlers += OnWindowStateChanged;
+            _console.RX2EnabledChangedHandlers += OnRX2Enabled;
 
             setTitle();
+        }
+        private void OnRX2Enabled(bool enabled)
+        {
+            _rx2_enabled = enabled;
         }
         public bool Floating
         {
@@ -87,7 +94,17 @@ namespace Thetis
                 if (state == FormWindowState.Minimized)
                     this.Hide();
                 else
-                    this.Show();
+                {
+                    switch(_rx)
+                    {
+                        case 1:
+                            this.Show();
+                            break;
+                        case 2:
+                            if (_rx2_enabled) this.Show();
+                            break;
+                    }
+                }
             }
         }
         private void setTitle()
