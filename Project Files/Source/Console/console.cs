@@ -1863,7 +1863,14 @@ namespace Thetis
                 comboRX2Preamp.Enabled = false;
                 udRX2StepAttData.Enabled = false;
                 lblRX2Preamp.Enabled = false;
-            }
+
+                // MI0BOT: Remove items from main menu that are currently not used
+
+                this.menuStrip1.Items.Remove(pIToolStripMenuItem);
+                this.menuStrip1.Items.Remove(wBToolStripMenuItem);
+                this.menuStrip1.Items.Remove(eSCToolStripMenuItem);
+                this.menuStrip1.Items.Remove(BPFToolStripMenuItem);
+             }
 
             UpdateTXProfile(SetupForm.TXProfile); // now update the combos
 
@@ -51315,7 +51322,11 @@ namespace Thetis
                 }
                 else
                 {
-                    sFW = NetworkIO.FWCodeVersion.ToString("0\\.0");
+                    if (HPSDRModel.HERMESLITE == current_hpsdr_model)
+                        sFW = NetworkIO.FWCodeVersion.ToString("0\\.0") + NetworkIO.FWCodeVersionMinor.ToString("\\.0");
+                    else
+                        sFW = NetworkIO.FWCodeVersion.ToString("0\\.0");
+
                     sProto = "1";
                     sSupportedProtocol = "";
                 }
