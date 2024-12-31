@@ -2803,7 +2803,7 @@ namespace Thetis
 				n = Math.Max(-10000, n);
 				console.RX1FilterLow = n;
                 console.TitleBarEncoderString = "VFO A Filter low cut = " + n + "Hz";
-				console.UpdateRX1Filters(n, console.RX1FilterHigh);
+				console.UpdateRX1Filters(n, console.RX1FilterHigh, true, false);
 				return "";
 			}
 			else if(s.Length == parser.nGet)
@@ -2840,7 +2840,7 @@ namespace Thetis
 					n = Math.Max(-10000, n);
 					console.RX1FilterHigh = n;
                     console.TitleBarEncoderString = "VFO A Filter high cut = " + n + "Hz";
-					console.UpdateRX1Filters(console.RX1FilterLow, n);
+					console.UpdateRX1Filters(console.RX1FilterLow, n, true, false);
 					return "";
 				}
 				else if(s.Length == parser.nGet)
@@ -2896,7 +2896,7 @@ namespace Thetis
                 n = Math.Max(-10000, n);
                 console.RX2FilterHigh = n;
                 console.TitleBarEncoderString = "VFO B Filter high cut = " + n + "Hz";
-                console.UpdateRX2Filters(console.RX2FilterLow, n);
+                console.UpdateRX2Filters(console.RX2FilterLow, n, true, false);
                 return "";
             }
             else if (s.Length == parser.nGet)
@@ -2932,7 +2932,7 @@ namespace Thetis
                 n = Math.Max(-10000, n);
                 console.RX2FilterLow = n;
                 console.TitleBarEncoderString = "VFO B Filter low cut =" + n + "Hz";
-                console.UpdateRX2Filters(n, console.RX2FilterHigh);
+                console.UpdateRX2Filters(n, console.RX2FilterHigh, true, false);
                 return "";
             }
             else if (s.Length == parser.nGet)
@@ -8833,7 +8833,7 @@ namespace Thetis
 			 
 			// System.Console.WriteLine("zzsf: " + new_lo + " " + new_hi); 
 			console.SelectRX1VarFilter();
-			console.UpdateRX1Filters(new_lo, new_hi); 	
+			console.UpdateRX1Filters(new_lo, new_hi, true, false); 	
 
 			return; 
 		} 
