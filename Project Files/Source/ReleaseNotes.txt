@@ -6,13 +6,14 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
-## v2.10.3.8 dev1 - Change Log
+## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked
 - [fix] filter view now updates when zzfl etc cat commands are used
 - [fix] refactored waterfall colour min/max for filterview. Fixes issues with high AGC offsets
 - [fix] rx2 containers will not show if rx2 is disabled and the console window is restored from a minimised state
 - [fix] fixed issue with DB manager, wher dbman.json would not be loaded correctly if a radio model was added/removed from the code. Now defaults to HERMES if model not found, ie HL2
 - [fix] vac tx gains are min/max validated. To prevent crash/error with the HL2 modified version that is able to assign mic gain to tx vac gain
+- [fix] fixed vfoB frequency limit issue and potential crash issue when using xvtr slot vhf0
 
 ## v2.10.3.7 Change Log
 - [add] new auto attenuate TX when PS is off options in Setup->Ant/Filters->Antenna

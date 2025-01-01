@@ -1,10 +1,10 @@
 {
-    "ReleaseVersion": "2.10.3.6",
+    "ReleaseVersion": "2.10.3.7",
     "ReleaseBuild": "",
-    "ReleaseURL": "https://github.com/ramdor/Thetis/releases/tag/v2.10.3.6",
+    "ReleaseURL": "https://github.com/ramdor/Thetis/releases/tag/v2.10.3.7",
     "ReleaseName": "Latest Release",
-    "DevelopmentVersion": "2.10.3.6",
+    "DevelopmentVersion": "",
     "DevelopmentBuild": "",
-    "DevelopmentURL": "https://discord.com/channels/1271453528656969789/1273368382753996914/1295709576217231390",
-    "DevelopmentName": "Discord Test Version"
+    "DevelopmentURL": "",
+    "DevelopmentName": ""
 }
