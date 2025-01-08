@@ -18,7 +18,7 @@
 //
 // You may contact the author via email at: k5kdn@arrl.net
 //=================================================================
-// Continual modifications Copyright (C) 2019-2024 Richard Samphire (MW0LGE)
+// Continual modifications Copyright (C) 2019-2025 Richard Samphire (MW0LGE)
 /*
 Modifications to support the Behringer Midi controllers
 by Chris Codella, W2PA, April 2017.  Indicated by //-W2PA comment lines.

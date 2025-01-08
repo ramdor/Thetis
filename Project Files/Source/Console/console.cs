@@ -32,7 +32,7 @@
 // by Chris Codella, W2PA, May 2017.  Indicated by //-W2PA comment lines. 
 // Modifications for using the new database import function.  W2PA, 29 May 2017
 // Support QSK, possible with Protocol-2 firmware v1.7 (Orion-MkI and Orion-MkII), and later.  W2PA, 5 April 2019 
-// Modfied heavily - Copyright (C) 2019-2024 Richard Samphire (MW0LGE)
+// Modfied heavily - Copyright (C) 2019-2025 Richard Samphire (MW0LGE)
 //=================================================================
 
 using Midi2Cat.Data; //-W2PA Necessary for Behringer MIDI changes
@@ -28812,9 +28812,10 @@ namespace Thetis
         }
         private void chkMicMute_CheckedChanged(object sender, System.EventArgs e)
         {
-            if (chkMicMute.Checked)
-                ptbMic_Scroll(this, EventArgs.Empty);
-            else Audio.MicPreamp = 0.0;
+            //if (chkMicMute.Checked)  //[2.10.3.9]MW0LGE mic_scroll now handles all of this
+            ptbMic_Scroll(this, EventArgs.Empty);
+            //else 
+            //    Audio.MicPreamp = 0.0;
         }
 
         private void ptbMic_Scroll(object sender, System.EventArgs e)
@@ -28838,7 +28839,8 @@ namespace Thetis
                     toolTip1.SetToolTip(ptbMic, "");
                 }
 
-                Audio.MicPreamp = Math.Pow(10.0, gain_db / 20.0); // convert to scalar 
+                //[2.10.3.9]MW0LGE fix for when mic is disabled
+                setAudioMicGain(gain_db);
             }
 
             if (sender.GetType() == typeof(PrettyTrackBar))
@@ -28848,7 +28850,13 @@ namespace Thetis
             if (sliderForm != null)
                 sliderForm.MicGain = ptbMic.Value;
         }
-
+        private void setAudioMicGain(double gain_db)
+        {
+            if (chkMicMute.Checked) // although it is called chkMicMute, checked = mic in use
+                Audio.MicPreamp = Math.Pow(10.0, gain_db / 20.0); // convert to scalar 
+            else
+                Audio.MicPreamp = 0.0;
+        }
         private void ptbCWSpeed_Scroll(object sender, System.EventArgs e)
         {
             lblCWSpeed.Text = "Speed:  " + ptbCWSpeed.Value.ToString() + " WPM";
@@ -42404,7 +42412,9 @@ namespace Thetis
                 {
                     toolTip1.SetToolTip(ptbFMMic, "");
                 }
-                Audio.MicPreamp = Math.Pow(10.0, gain_db / 20.0); // convert to scalar
+
+                //[2.10.3.9]MW0LGE fix for when mic is disabled
+                setAudioMicGain(gain_db);
             }
 
             if (sender.GetType() == typeof(PrettyTrackBar))
