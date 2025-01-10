@@ -12335,16 +12335,16 @@ namespace Thetis
                 fileName = fileName.Replace(c.ToString(), "_");  // Remove profile name chars that are invalid in filenames.
             }
 
-            fileName = console.AppDataPath + fileName;
+            //[2.10.3.9]MW0LGE now requests file location, incrementing filename functionality removed
+            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.InitialDirectory = myDocumentsPath;
+            saveFileDialog.Filter = "XML Files (*.xml)|*.xml";
+            saveFileDialog.FileName = fileName;
 
-            int i = 1;
-            string tempFN = fileName;
-            while (File.Exists(tempFN + ".xml"))
-            {
-                tempFN = fileName + Convert.ToString(i);  // Get a slightly different file name if it already exists.
-                i++;
-            }
-            fileName = tempFN + ".xml";
+            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+
+            fileName = saveFileDialog.FileName;
 
             DataRow[] rows = getDataRowsForTXProfile(current_profile);// DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
             DataRow exportRow = null;
@@ -12393,7 +12393,7 @@ namespace Thetis
                 return;
             }
 
-            MessageBox.Show("Profile" + current_profile + " has been saved in file " + fileName,
+            MessageBox.Show("Profile [" + current_profile + "] has been saved to the file\n" + fileName,
                     "Done",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);

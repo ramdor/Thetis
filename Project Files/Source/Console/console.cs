@@ -28825,7 +28825,6 @@ namespace Thetis
             lblMicVal.Text = ptbMic.Value.ToString() + " dB";
             if (radio.GetDSPTX(0).CurrentDSPMode != DSPMode.FM)
             {
-                double gain_db = (double)ptbMic.Value;
                 if (mic_boost)
                 {
                     toolTip1.SetToolTip(ptbMic, (ptbMic.Value + 20).ToString());
@@ -28840,7 +28839,7 @@ namespace Thetis
                 }
 
                 //[2.10.3.9]MW0LGE fix for when mic is disabled
-                setAudioMicGain(gain_db);
+                setAudioMicGain((double)ptbMic.Value);
             }
 
             if (sender.GetType() == typeof(PrettyTrackBar))
@@ -42398,8 +42397,6 @@ namespace Thetis
             lblMicValFM.Text = ptbFMMic.Value.ToString();
             if (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM)
             {
-                double gain_db = (double)ptbFMMic.Value;
-
                 if (mic_boost)
                 {
                     toolTip1.SetToolTip(ptbFMMic, (ptbFMMic.Value + 20).ToString());
@@ -42414,7 +42411,7 @@ namespace Thetis
                 }
 
                 //[2.10.3.9]MW0LGE fix for when mic is disabled
-                setAudioMicGain(gain_db);
+                setAudioMicGain((double)ptbFMMic.Value);
             }
 
             if (sender.GetType() == typeof(PrettyTrackBar))
