@@ -19658,8 +19658,8 @@ namespace Thetis
                     chkApolloPresent.Enabled = true;
                     chkApolloPresent.Visible = true;
                     chkGeneralRXOnly.Visible = true;
-                    chkHermesStepAttenuator.Enabled = false; // turn this off MW0LGE_21d
-                    udHermesStepAttenuatorData.Enabled = false;
+                    chkHermesStepAttenuator.Enabled = true; //[2.10.3.9]MW0LGE re-enabled, not sure why I removed it as double clicking ATT would show S-ATT
+                    udHermesStepAttenuatorData.Enabled = true; //[2.10.3.9]MW0LGE re-enabled, not sure why I removed it as double clicking ATT would show S-ATT
                     chkRX2StepAtt.Checked = false;
                     chkRX2StepAtt.Enabled = false;
                     udHermesStepAttenuatorDataRX2.Enabled = false;
