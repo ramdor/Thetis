@@ -9821,59 +9821,95 @@ namespace Thetis
 
 		private string Step2String(int pSize)
 		{
-			// Modified 2/25/07 to accomodate changes to console where odd step sizes added.  BT
-			string stepval = "";
-			int step = pSize;
-			switch(step)
+            //[2.10.3.9]MW0LGE refactored, and tweaked for special cases to match original
+            List<string> binaryMapping = new List<string>
 			{
-				case 0:
-					stepval = "0000";	//10e0 = 1 hz
-					break;
-				case 1:
-					stepval = "0001";	//10e1 = 10 hz
-					break;
-				case 2:
-					stepval = "1000";	//special default for 50 hz
-					break;
-				case 3:
-					stepval = "0010";	//10e2 = 100 hz
-					break;
-				case 4:
-					stepval = "1001";	//special default for 250 hz
-					break;
-				case 5:
-					stepval = "1010";	//10e3 = 1 kHz default for 500 hz
-					break;
-				case 6:
-					stepval = "0011";	//10e3 = 1 kHz
-					break;
-				case 7:
-					stepval = "1011";	//special default for 5 kHz
-					break;
-				case 8:
-					stepval = "1100";	//special default for 9 kHz
-					break;
-				case 9:
-					stepval = "0100";	//10e4 = 10 khZ
-					break;
-				case 10:
-					stepval = "0101";	//10e5 = 100 kHz
-					break;
-                case 11:
-                    stepval = "1101";   //special default for 250 kHz
-                    break;
-                case 12:
-                    stepval = "1110";   //special default for 500 kHz
-                    break;
-				case 13:
-					stepval = "0110";	//10e6 = 1 mHz
-					break;
-				case 14:
-					stepval = "0111";	//10e7 = 10 mHz
-					break;
+				"0000", // 10e0 (1Hz)
+				"0000", // 10e0 (2Hz)
+				"0001", // 10e1 (10Hz)
+				"0001", // 10e1 (25Hz)
+				"1000", //"0001", // 10e1 (50Hz)
+				"0010", // 10e2 (100Hz)
+				"1001", //"0010", // 10e2 (250Hz)
+				"1010", //"0010", // 10e2 (500Hz)
+				"0011", // 10e3 (1kHz)
+				"0011", // 10e3 (2kHz)
+				"0011", // 10e3 (2.5kHz)
+				"1011", //"0011", // 10e3 (5kHz)
+				"0011", // 10e3 (6.25kHz)
+				"1100", //"0011", // 10e3 (9kHz)
+				"0100", // 10e4 (10kHz)
+				"0100", // 10e4 (12.5kHz)
+				"0100", // 10e4 (15kHz)
+				"0100", // 10e4 (20kHz)
+				"0100", // 10e4 (25kHz)
+				"0100", // 10e4 (30kHz)
+				"0100", // 10e4 (50kHz)
+				"0101", // 10e5 (100kHz)
+				"1101", //"0101", // 10e5 (250kHz)
+				"1110", //"0101", // 10e5 (500kHz)
+				"0110", // 10e6 (1MHz)
+				"0111"  // 10e7 (10MHz)
+			};
+            if (pSize < 0 || pSize >= binaryMapping.Count)
+            {
+                return "0000"; // some default
+            }
+            return binaryMapping[pSize];
+
+			//// Modified 2/25/07 to accomodate changes to console where odd step sizes added.  BT
+			//string stepval = "";
+			//int step = pSize;
+			//switch(step)
+			//{
+			//	case 0:
+			//		stepval = "0000";	//10e0 = 1 hz
+			//		break;
+			//	case 1:
+			//		stepval = "0001";	//10e1 = 10 hz
+			//		break;
+			//	case 2:
+			//		stepval = "1000";	//special default for 50 hz
+			//		break;
+			//	case 3:
+			//		stepval = "0010";	//10e2 = 100 hz
+			//		break;
+			//	case 4:
+			//		stepval = "1001";	//special default for 250 hz
+			//		break;
+			//	case 5:
+			//		stepval = "1010";	//10e3 = 1 kHz default for 500 hz
+			//		break;
+			//	case 6:
+			//		stepval = "0011";	//10e3 = 1 kHz
+			//		break;
+			//	case 7:
+			//		stepval = "1011";	//special default for 5 kHz
+			//		break;
+			//	case 8:
+			//		stepval = "1100";	//special default for 9 kHz
+			//		break;
+			//	case 9:
+			//		stepval = "0100";	//10e4 = 10 khZ
+			//		break;
+			//	case 10:
+			//		stepval = "0101";	//10e5 = 100 kHz
+			//		break;
+			//	case 11:
+			//	stepval = "1101";   //special default for 250 kHz
+			//	break;
+			//case 12:
+			//	stepval = "1110";   //special default for 500 kHz
+			//	break;
+			//	case 13:
+			//		stepval = "0110";	//10e6 = 1 mHz
+			//		break;
+			//	case 14:
+			//		stepval = "0111";	//10e7 = 10 mHz
+			//		break;
+			//}
+			//return stepval;
 			}
-			return stepval;
-		}
 
 		#endregion Step Methods
 
