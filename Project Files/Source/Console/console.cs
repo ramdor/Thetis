@@ -30213,10 +30213,15 @@ namespace Thetis
         }
         public void ModePanelVisible(bool visible)
         {
-            panelMode.Visible = visible;
-
-            //rx2
-            panelRX2Mode.Visible = visible;
+            if (IsCollapsedView && !IsExpandedView)
+            {
+                // done by collapsed display code
+            }
+            else
+            {
+                panelMode.Visible = visible;
+                panelRX2Mode.Visible = visible;
+            }
         }
         public void VFOAVisible(bool visible)
         {
@@ -43904,6 +43909,7 @@ namespace Thetis
                     }
                     else
                         panelMode.Hide();
+
                     panelRX2Mode.Hide();
                 }
                 if (show_rx2)
@@ -44002,6 +44008,7 @@ namespace Thetis
                     }
                     else
                         panelRX2Mode.Hide();
+
                     panelMode.Hide();
                 }
 
