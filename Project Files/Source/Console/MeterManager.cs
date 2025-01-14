@@ -23417,7 +23417,7 @@ namespace Thetis
 
                     // to get this to work, need to target the os
                     // https://www.prugg.at/2019/09/09/properly-detect-windows-version-in-c-net-even-windows-10/
-                    // you need to enable operating system support in the app1.manifest file, otherwise majVers will not report 10+
+                    // you need to enable operating system support in the app.manifest file, otherwise majVers will not report 10+
                     // note: windows 10, 11, server 2016, server 2019, server 2022 all use the windows 10 os id in the manifest file at this current time
                     int majVers = Environment.OSVersion.Version.Major;
                     int minVers = Environment.OSVersion.Version.Minor;
