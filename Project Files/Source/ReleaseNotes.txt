@@ -7,6 +7,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
 ## v2.10.3.9 - Change Log
+- [add] tool tips add to fields/options in the linearity form
 - [change] exporting a tx profile will now ask for destination location and filename. It will complain if filename already exists
 - [change] restored step attenuator RX1 if HERMES is used. Unsure why I disabled it a few years ago
 - [fix] mic disable/enable button on front end will now disable the mic at startup if set as off
