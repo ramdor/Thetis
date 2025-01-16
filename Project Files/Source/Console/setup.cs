@@ -17491,16 +17491,6 @@ namespace Thetis
         bool AddActive = false;
         bool EditActive = false;
 
-        // On the Console
-        // 'OFF/ON' button for Multi Notch Filter
-        private void btnMNFRun_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void chkMNFRun_CheckedChanged(object sender, EventArgs e)
-        {
-        }
-
         // accept input for a notch to be added
         private void btnMNFAdd_Click(object sender, EventArgs e)
         {

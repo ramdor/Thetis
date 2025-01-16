@@ -2256,7 +2256,6 @@
             this.grpCWEdgeLength = new System.Windows.Forms.GroupBoxTS();
             this.udCWEdgeLength = new System.Windows.Forms.NumericUpDownTS();
             this.lblCWEdgeLength = new System.Windows.Forms.LabelTS();
-            this.chkCWDisableUI = new System.Windows.Forms.CheckBoxTS();
             this.grpKeyerConnections = new System.Windows.Forms.GroupBoxTS();
             this.comboKeyerConnKeyLine = new System.Windows.Forms.ComboBoxTS();
             this.comboKeyerConnSecondary = new System.Windows.Forms.ComboBoxTS();
@@ -2271,6 +2270,7 @@
             this.udDSPCWPitch = new System.Windows.Forms.NumericUpDownTS();
             this.grpDSPKeyerOptions = new System.Windows.Forms.GroupBoxTS();
             this.lblAutoModeSwitchCWms = new System.Windows.Forms.LabelTS();
+            this.chkCWDisableUI = new System.Windows.Forms.CheckBoxTS();
             this.nudAutoModeSwitchCWReturn = new System.Windows.Forms.NumericUpDownTS();
             this.chkAutoModeSwitchCWReturn = new System.Windows.Forms.CheckBoxTS();
             this.udCWKeyerWeight = new System.Windows.Forms.NumericUpDownTS();
@@ -2568,13 +2568,11 @@
             this.grpDSPMNF = new System.Windows.Forms.GroupBoxTS();
             this.chkVisualNotch = new System.Windows.Forms.CheckBoxTS();
             this.btnVFOFreq = new System.Windows.Forms.ButtonTS();
-            this.chkMNFRun = new System.Windows.Forms.CheckBoxTS();
             this.chkMNFAutoIncrease = new System.Windows.Forms.CheckBoxTS();
             this.btnMNFDelete = new System.Windows.Forms.ButtonTS();
             this.btnMNFCancel = new System.Windows.Forms.ButtonTS();
             this.btnMNFEdit = new System.Windows.Forms.ButtonTS();
             this.chkMNFActive = new System.Windows.Forms.CheckBoxTS();
-            this.btnMNFRun = new System.Windows.Forms.ButtonTS();
             this.btnMNFEnter = new System.Windows.Forms.ButtonTS();
             this.btnMNFAdd = new System.Windows.Forms.ButtonTS();
             this.lblMNFWidth = new System.Windows.Forms.LabelTS();
@@ -2637,13 +2635,27 @@
             this.udSCFLowCut = new System.Windows.Forms.NumericUpDownTS();
             this.chkSCFEnable = new System.Windows.Forms.CheckBoxTS();
             this.tpDSPCFC = new System.Windows.Forms.TabPage();
+            this.pnlPostCFCEQ = new System.Windows.Forms.PanelTS();
+            this.tbCFCPEQGAIN = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ2 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ1 = new System.Windows.Forms.TrackBarTS();
+            this.lblCFCPEG = new System.Windows.Forms.LabelTS();
+            this.tbCFCEQ0 = new System.Windows.Forms.TrackBarTS();
+            this.lblCFCPEG15 = new System.Windows.Forms.LabelTS();
+            this.tbCFCEQ5 = new System.Windows.Forms.TrackBarTS();
+            this.lblCFCPEG0 = new System.Windows.Forms.LabelTS();
+            this.tbCFCEQ4 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ3 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ8 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ7 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ6 = new System.Windows.Forms.TrackBarTS();
+            this.tbCFCEQ9 = new System.Windows.Forms.TrackBarTS();
+            this.lblCFCEQ0dB = new System.Windows.Forms.LabelTS();
+            this.lblCFCEQ10dB = new System.Windows.Forms.LabelTS();
+            this.lblCFCEQPOST = new System.Windows.Forms.LabelTS();
             this.labelTS607 = new System.Windows.Forms.LabelTS();
             this.labelTS606 = new System.Windows.Forms.LabelTS();
             this.udCFCPicDBPerLine = new System.Windows.Forms.NumericUpDownTS();
-            this.lblCFCPEG = new System.Windows.Forms.LabelTS();
-            this.lblCFCPEG15 = new System.Windows.Forms.LabelTS();
-            this.lblCFCPEG0 = new System.Windows.Forms.LabelTS();
-            this.tbCFCPEQGAIN = new System.Windows.Forms.TrackBarTS();
             this.grpPhRot = new System.Windows.Forms.GroupBoxTS();
             this.chkPHROTReverse = new System.Windows.Forms.CheckBoxTS();
             this.lblPHROTStages = new System.Windows.Forms.LabelTS();
@@ -2656,19 +2668,6 @@
             this.lblCFCPC15 = new System.Windows.Forms.LabelTS();
             this.lblCFCPC0 = new System.Windows.Forms.LabelTS();
             this.tbCFCPRECOMP = new System.Windows.Forms.TrackBarTS();
-            this.lblCFCEQPOST = new System.Windows.Forms.LabelTS();
-            this.lblCFCEQ10dB = new System.Windows.Forms.LabelTS();
-            this.lblCFCEQ0dB = new System.Windows.Forms.LabelTS();
-            this.tbCFCEQ9 = new System.Windows.Forms.TrackBarTS();
-            this.tbCFCEQ6 = new System.Windows.Forms.TrackBarTS();
-            this.tbCFCEQ7 = new System.Windows.Forms.TrackBarTS();
-            this.tbCFCEQ8 = new System.Windows.Forms.TrackBarTS();
-            this.tbCFCEQ3 = new System.Windows.Forms.TrackBarTS();
-            this.tbCFCEQ4 = new System.Windows.Forms.TrackBarTS();
-            this.tbCFCEQ5 = new System.Windows.Forms.TrackBarTS();
-            this.tbCFCEQ0 = new System.Windows.Forms.TrackBarTS();
-            this.tbCFCEQ1 = new System.Windows.Forms.TrackBarTS();
-            this.tbCFCEQ2 = new System.Windows.Forms.TrackBarTS();
             this.chkCFCEnable = new System.Windows.Forms.CheckBoxTS();
             this.lblCFCFreq = new System.Windows.Forms.LabelTS();
             this.lblCFCComp = new System.Windows.Forms.LabelTS();
@@ -4792,22 +4791,23 @@
             ((System.ComponentModel.ISupportInitialize)(this.udSCFHighCut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udSCFLowCut)).BeginInit();
             this.tpDSPCFC.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udCFCPicDBPerLine)).BeginInit();
+            this.pnlPostCFCEQ.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFCPEQGAIN)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ0)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ8)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFCPicDBPerLine)).BeginInit();
             this.grpPhRot.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udPHROTStages)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPhRotFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFCPRECOMP)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ9)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ6)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ7)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ8)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ0)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCFC9)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCFC8)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCFC7)).BeginInit();
@@ -36353,7 +36353,6 @@
             this.comboDSPFMTXFiltSize.Size = new System.Drawing.Size(64, 21);
             this.comboDSPFMTXFiltSize.TabIndex = 20;
             this.toolTip1.SetToolTip(this.comboDSPFMTXFiltSize, "Sets DSP internal Buffer Size -- larger yields sharper filters, more latency");
-            this.comboDSPFMTXFiltSize.ValueMember = "1024";
             this.comboDSPFMTXFiltSize.SelectedIndexChanged += new System.EventHandler(this.comboDSPFMTXFiltSize_SelectedIndexChanged);
             // 
             // labelTS398
@@ -36381,7 +36380,6 @@
             this.comboDSPFMRXFiltSize.Size = new System.Drawing.Size(64, 21);
             this.comboDSPFMRXFiltSize.TabIndex = 18;
             this.toolTip1.SetToolTip(this.comboDSPFMRXFiltSize, "Sets DSP internal Buffer Size -- larger yields sharper filters, more latency");
-            this.comboDSPFMRXFiltSize.ValueMember = "256";
             this.comboDSPFMRXFiltSize.SelectedIndexChanged += new System.EventHandler(this.comboDSPFMRXFiltSize_SelectedIndexChanged);
             // 
             // labelTS399
@@ -36422,7 +36420,6 @@
             this.comboDSPDigTXFiltSize.Size = new System.Drawing.Size(64, 21);
             this.comboDSPDigTXFiltSize.TabIndex = 20;
             this.toolTip1.SetToolTip(this.comboDSPDigTXFiltSize, "Sets DSP internal Buffer Size -- larger yields sharper filters, more latency");
-            this.comboDSPDigTXFiltSize.ValueMember = "1024";
             this.comboDSPDigTXFiltSize.SelectedIndexChanged += new System.EventHandler(this.comboDSPDigTXFiltSize_SelectedIndexChanged);
             // 
             // labelTS400
@@ -36450,7 +36447,6 @@
             this.comboDSPDigRXFiltSize.Size = new System.Drawing.Size(64, 21);
             this.comboDSPDigRXFiltSize.TabIndex = 18;
             this.toolTip1.SetToolTip(this.comboDSPDigRXFiltSize, "Sets DSP internal Buffer Size -- larger yields sharper filters, more latency");
-            this.comboDSPDigRXFiltSize.ValueMember = "1024";
             this.comboDSPDigRXFiltSize.SelectedIndexChanged += new System.EventHandler(this.comboDSPDigRXFiltSize_SelectedIndexChanged);
             // 
             // labelTS401
@@ -36498,7 +36494,6 @@
             this.comboDSPCWRXFiltSize.Size = new System.Drawing.Size(64, 21);
             this.comboDSPCWRXFiltSize.TabIndex = 18;
             this.toolTip1.SetToolTip(this.comboDSPCWRXFiltSize, "Sets DSP internal Buffer Size -- larger yields sharper filters, more latency");
-            this.comboDSPCWRXFiltSize.ValueMember = "1024";
             this.comboDSPCWRXFiltSize.SelectedIndexChanged += new System.EventHandler(this.comboDSPCWRXFiltSize_SelectedIndexChanged);
             // 
             // grpDSPFiltSizePhone
@@ -36530,7 +36525,6 @@
             this.comboDSPPhoneTXFiltSize.Size = new System.Drawing.Size(64, 21);
             this.comboDSPPhoneTXFiltSize.TabIndex = 20;
             this.toolTip1.SetToolTip(this.comboDSPPhoneTXFiltSize, "Sets DSP internal Buffer Size -- larger yields sharper filters, more latency");
-            this.comboDSPPhoneTXFiltSize.ValueMember = "128";
             this.comboDSPPhoneTXFiltSize.SelectedIndexChanged += new System.EventHandler(this.comboDSPPhoneTXFiltSize_SelectedIndexChanged);
             // 
             // labelTS403
@@ -36557,6 +36551,7 @@
             this.comboDSPPhoneRXFiltSize.Name = "comboDSPPhoneRXFiltSize";
             this.comboDSPPhoneRXFiltSize.Size = new System.Drawing.Size(64, 21);
             this.comboDSPPhoneRXFiltSize.TabIndex = 18;
+            this.toolTip1.SetToolTip(this.comboDSPPhoneRXFiltSize, "Sets DSP internal Buffer Size -- larger yields sharper filters, more latency");
             this.comboDSPPhoneRXFiltSize.SelectedIndexChanged += new System.EventHandler(this.comboDSPPhoneRXFiltSize_SelectedIndexChanged);
             // 
             // labelTS404
@@ -36637,7 +36632,6 @@
             this.comboDSPFMRXBuf.Size = new System.Drawing.Size(64, 21);
             this.comboDSPFMRXBuf.TabIndex = 18;
             this.toolTip1.SetToolTip(this.comboDSPFMRXBuf, "Sets DSP internal Buffer Size -- larger yields sharper filters, more latency");
-            this.comboDSPFMRXBuf.ValueMember = "1024";
             this.comboDSPFMRXBuf.SelectedIndexChanged += new System.EventHandler(this.comboDSPFMRXBuf_SelectedIndexChanged);
             // 
             // labelTS406
@@ -36705,7 +36699,6 @@
             this.comboDSPDigRXBuf.Size = new System.Drawing.Size(64, 21);
             this.comboDSPDigRXBuf.TabIndex = 18;
             this.toolTip1.SetToolTip(this.comboDSPDigRXBuf, "Sets DSP internal Buffer Size -- larger yields sharper filters, more latency");
-            this.comboDSPDigRXBuf.ValueMember = "1024";
             this.comboDSPDigRXBuf.SelectedIndexChanged += new System.EventHandler(this.comboDSPDigRXBuf_SelectedIndexChanged);
             // 
             // lblDSPDigBufferTX
@@ -36753,7 +36746,6 @@
             this.comboDSPCWRXBuf.Size = new System.Drawing.Size(64, 21);
             this.comboDSPCWRXBuf.TabIndex = 18;
             this.toolTip1.SetToolTip(this.comboDSPCWRXBuf, "Sets DSP internal Buffer Size -- larger yields sharper filters, more latency");
-            this.comboDSPCWRXBuf.ValueMember = "1024";
             this.comboDSPCWRXBuf.SelectedIndexChanged += new System.EventHandler(this.comboDSPCWRXBuf_SelectedIndexChanged);
             // 
             // grpDSPBufPhone
@@ -36785,7 +36777,6 @@
             this.comboDSPPhoneTXBuf.Size = new System.Drawing.Size(64, 21);
             this.comboDSPPhoneTXBuf.TabIndex = 20;
             this.toolTip1.SetToolTip(this.comboDSPPhoneTXBuf, "Sets DSP internal Buffer Size -- larger yields sharper filters, more latency");
-            this.comboDSPPhoneTXBuf.ValueMember = "1024";
             this.comboDSPPhoneTXBuf.SelectedIndexChanged += new System.EventHandler(this.comboDSPPhoneTXBuf_SelectedIndexChanged);
             // 
             // lblDSPPhoneBufferRX
@@ -36884,7 +36875,6 @@
             // tpDSPKeyer
             // 
             this.tpDSPKeyer.Controls.Add(this.grpCWEdgeLength);
-            this.tpDSPKeyer.Controls.Add(this.chkCWDisableUI);
             this.tpDSPKeyer.Controls.Add(this.grpKeyerConnections);
             this.tpDSPKeyer.Controls.Add(this.grpDSPCWPitch);
             this.tpDSPKeyer.Controls.Add(this.grpDSPKeyerOptions);
@@ -36899,7 +36889,7 @@
             // 
             this.grpCWEdgeLength.Controls.Add(this.udCWEdgeLength);
             this.grpCWEdgeLength.Controls.Add(this.lblCWEdgeLength);
-            this.grpCWEdgeLength.Location = new System.Drawing.Point(8, 250);
+            this.grpCWEdgeLength.Location = new System.Drawing.Point(8, 221);
             this.grpCWEdgeLength.Margin = new System.Windows.Forms.Padding(2);
             this.grpCWEdgeLength.Name = "grpCWEdgeLength";
             this.grpCWEdgeLength.Padding = new System.Windows.Forms.Padding(2);
@@ -36949,19 +36939,6 @@
             this.lblCWEdgeLength.Size = new System.Drawing.Size(65, 13);
             this.lblCWEdgeLength.TabIndex = 0;
             this.lblCWEdgeLength.Text = "Length (ms):";
-            // 
-            // chkCWDisableUI
-            // 
-            this.chkCWDisableUI.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkCWDisableUI.Image = null;
-            this.chkCWDisableUI.Location = new System.Drawing.Point(161, 152);
-            this.chkCWDisableUI.Name = "chkCWDisableUI";
-            this.chkCWDisableUI.Size = new System.Drawing.Size(109, 32);
-            this.chkCWDisableUI.TabIndex = 42;
-            this.chkCWDisableUI.Text = "Disable UI MOX Changes";
-            this.toolTip1.SetToolTip(this.chkCWDisableUI, "If enabled, will automatically switch to CW mode when paddles are used no matter " +
-        "the current mode ");
-            this.chkCWDisableUI.CheckedChanged += new System.EventHandler(this.chkCWDisableUI_CheckedChanged);
             // 
             // grpKeyerConnections
             // 
@@ -37140,6 +37117,7 @@
             // grpDSPKeyerOptions
             // 
             this.grpDSPKeyerOptions.Controls.Add(this.lblAutoModeSwitchCWms);
+            this.grpDSPKeyerOptions.Controls.Add(this.chkCWDisableUI);
             this.grpDSPKeyerOptions.Controls.Add(this.nudAutoModeSwitchCWReturn);
             this.grpDSPKeyerOptions.Controls.Add(this.chkAutoModeSwitchCWReturn);
             this.grpDSPKeyerOptions.Controls.Add(this.udCWKeyerWeight);
@@ -37152,7 +37130,7 @@
             this.grpDSPKeyerOptions.Controls.Add(this.chkCWAutoSwitchMode);
             this.grpDSPKeyerOptions.Location = new System.Drawing.Point(296, 8);
             this.grpDSPKeyerOptions.Name = "grpDSPKeyerOptions";
-            this.grpDSPKeyerOptions.Size = new System.Drawing.Size(188, 223);
+            this.grpDSPKeyerOptions.Size = new System.Drawing.Size(188, 262);
             this.grpDSPKeyerOptions.TabIndex = 37;
             this.grpDSPKeyerOptions.TabStop = false;
             this.grpDSPKeyerOptions.Text = "Options";
@@ -37166,6 +37144,20 @@
             this.lblAutoModeSwitchCWms.Size = new System.Drawing.Size(20, 13);
             this.lblAutoModeSwitchCWms.TabIndex = 50;
             this.lblAutoModeSwitchCWms.Text = "ms";
+            // 
+            // chkCWDisableUI
+            // 
+            this.chkCWDisableUI.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkCWDisableUI.Image = null;
+            this.chkCWDisableUI.Location = new System.Drawing.Point(16, 234);
+            this.chkCWDisableUI.Name = "chkCWDisableUI";
+            this.chkCWDisableUI.Size = new System.Drawing.Size(164, 21);
+            this.chkCWDisableUI.TabIndex = 42;
+            this.chkCWDisableUI.Text = "Disable UI MOX Changes";
+            this.toolTip1.SetToolTip(this.chkCWDisableUI, "If enabled, changes to the UI for TX will be prevented.\r\nMode, band buttons and o" +
+        "ther UI elements will not be disabled/toggled.\r\nThis can result in performace im" +
+        "provements if CW is causing UI \'lag\'.");
+            this.chkCWDisableUI.CheckedChanged += new System.EventHandler(this.chkCWDisableUI_CheckedChanged);
             // 
             // nudAutoModeSwitchCWReturn
             // 
@@ -37588,6 +37580,7 @@
             this.chkAutoAGCRX2.Size = new System.Drawing.Size(201, 17);
             this.chkAutoAGCRX2.TabIndex = 131;
             this.chkAutoAGCRX2.Text = "Auto AGC RX2 (requires pana/water)";
+            this.toolTip1.SetToolTip(this.chkAutoAGCRX2, "Automatically adjust AGC based on Noise Floor");
             this.chkAutoAGCRX2.UseVisualStyleBackColor = true;
             this.chkAutoAGCRX2.CheckedChanged += new System.EventHandler(this.chkAutoAGCRX2_CheckedChanged);
             // 
@@ -37600,6 +37593,7 @@
             this.chkAutoAGCRX1.Size = new System.Drawing.Size(201, 17);
             this.chkAutoAGCRX1.TabIndex = 130;
             this.chkAutoAGCRX1.Text = "Auto AGC RX1 (requires pana/water)";
+            this.toolTip1.SetToolTip(this.chkAutoAGCRX1, "Automatically adjust AGC based on Noise Floor");
             this.chkAutoAGCRX1.UseVisualStyleBackColor = true;
             this.chkAutoAGCRX1.CheckedChanged += new System.EventHandler(this.chkAutoAGCRX1_CheckedChanged);
             // 
@@ -38764,11 +38758,11 @@
             this.chkDSPTXMeterPeak.Checked = true;
             this.chkDSPTXMeterPeak.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkDSPTXMeterPeak.Image = null;
-            this.chkDSPTXMeterPeak.Location = new System.Drawing.Point(60, 347);
+            this.chkDSPTXMeterPeak.Location = new System.Drawing.Point(35, 342);
             this.chkDSPTXMeterPeak.Name = "chkDSPTXMeterPeak";
-            this.chkDSPTXMeterPeak.Size = new System.Drawing.Size(144, 48);
+            this.chkDSPTXMeterPeak.Size = new System.Drawing.Size(198, 48);
             this.chkDSPTXMeterPeak.TabIndex = 38;
-            this.chkDSPTXMeterPeak.Text = "Use Peak Meter Readings for TX COMP and ALC";
+            this.chkDSPTXMeterPeak.Text = "Use Peak Meter Readings for TX COMP and ALC\r\n(legacy meters only)";
             this.chkDSPTXMeterPeak.CheckedChanged += new System.EventHandler(this.chkDSPTXMeterPeak_CheckedChanged);
             // 
             // tpDSPAMSAM
@@ -39290,6 +39284,7 @@
             this.udFMHighCutRX.Size = new System.Drawing.Size(63, 20);
             this.udFMHighCutRX.TabIndex = 56;
             this.udFMHighCutRX.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udFMHighCutRX, "The RX AF high cut");
             this.udFMHighCutRX.Value = new decimal(new int[] {
             3000,
             0,
@@ -39319,6 +39314,7 @@
             this.udFMLowCutRX.Size = new System.Drawing.Size(63, 20);
             this.udFMLowCutRX.TabIndex = 55;
             this.udFMLowCutRX.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udFMLowCutRX, "The RX AF low cut");
             this.udFMLowCutRX.Value = new decimal(new int[] {
             300,
             0,
@@ -39475,6 +39471,7 @@
             this.udFMHighCutTX.Size = new System.Drawing.Size(63, 20);
             this.udFMHighCutTX.TabIndex = 62;
             this.udFMHighCutTX.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udFMHighCutTX, "The TX AF high cut");
             this.udFMHighCutTX.Value = new decimal(new int[] {
             3000,
             0,
@@ -39504,6 +39501,7 @@
             this.udFMLowCutTX.Size = new System.Drawing.Size(63, 20);
             this.udFMLowCutTX.TabIndex = 61;
             this.udFMLowCutTX.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udFMLowCutTX, "The TX AF low cut");
             this.udFMLowCutTX.Value = new decimal(new int[] {
             300,
             0,
@@ -41992,13 +41990,11 @@
             // 
             this.grpDSPMNF.Controls.Add(this.chkVisualNotch);
             this.grpDSPMNF.Controls.Add(this.btnVFOFreq);
-            this.grpDSPMNF.Controls.Add(this.chkMNFRun);
             this.grpDSPMNF.Controls.Add(this.chkMNFAutoIncrease);
             this.grpDSPMNF.Controls.Add(this.btnMNFDelete);
             this.grpDSPMNF.Controls.Add(this.btnMNFCancel);
             this.grpDSPMNF.Controls.Add(this.btnMNFEdit);
             this.grpDSPMNF.Controls.Add(this.chkMNFActive);
-            this.grpDSPMNF.Controls.Add(this.btnMNFRun);
             this.grpDSPMNF.Controls.Add(this.btnMNFEnter);
             this.grpDSPMNF.Controls.Add(this.btnMNFAdd);
             this.grpDSPMNF.Controls.Add(this.lblMNFWidth);
@@ -42041,21 +42037,6 @@
             this.btnVFOFreq.UseVisualStyleBackColor = true;
             this.btnVFOFreq.Click += new System.EventHandler(this.btnVFOFreq_Click);
             // 
-            // chkMNFRun
-            // 
-            this.chkMNFRun.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkMNFRun.Enabled = false;
-            this.chkMNFRun.Image = null;
-            this.chkMNFRun.Location = new System.Drawing.Point(490, 40);
-            this.chkMNFRun.Name = "chkMNFRun";
-            this.chkMNFRun.Size = new System.Drawing.Size(75, 23);
-            this.chkMNFRun.TabIndex = 14;
-            this.chkMNFRun.Text = "OFF";
-            this.chkMNFRun.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.chkMNFRun.UseVisualStyleBackColor = true;
-            this.chkMNFRun.Visible = false;
-            this.chkMNFRun.CheckedChanged += new System.EventHandler(this.chkMNFRun_CheckedChanged);
-            // 
             // chkMNFAutoIncrease
             // 
             this.chkMNFAutoIncrease.AutoSize = true;
@@ -42067,6 +42048,7 @@
             this.chkMNFAutoIncrease.Size = new System.Drawing.Size(322, 17);
             this.chkMNFAutoIncrease.TabIndex = 13;
             this.chkMNFAutoIncrease.Text = "Auto-Increase width (if needed) to achieve >100dB attenuation";
+            this.toolTip1.SetToolTip(this.chkMNFAutoIncrease, "The notch width will be increased if needed to ensure >100dB of attenuation");
             this.chkMNFAutoIncrease.UseVisualStyleBackColor = true;
             this.chkMNFAutoIncrease.CheckedChanged += new System.EventHandler(this.chkMNFAutoIncrease_CheckedChanged);
             // 
@@ -42080,6 +42062,7 @@
             this.btnMNFDelete.Size = new System.Drawing.Size(75, 23);
             this.btnMNFDelete.TabIndex = 12;
             this.btnMNFDelete.Text = "Delete";
+            this.toolTip1.SetToolTip(this.btnMNFDelete, "Delete the current notch index");
             this.btnMNFDelete.UseVisualStyleBackColor = true;
             this.btnMNFDelete.Click += new System.EventHandler(this.btnMNFDelete_Click);
             // 
@@ -42092,6 +42075,7 @@
             this.btnMNFCancel.Size = new System.Drawing.Size(75, 23);
             this.btnMNFCancel.TabIndex = 11;
             this.btnMNFCancel.Text = "Cancel";
+            this.toolTip1.SetToolTip(this.btnMNFCancel, "Cancel the changes");
             this.btnMNFCancel.UseVisualStyleBackColor = true;
             this.btnMNFCancel.Click += new System.EventHandler(this.btnMNFCancel_Click);
             // 
@@ -42104,6 +42088,7 @@
             this.btnMNFEdit.Size = new System.Drawing.Size(75, 23);
             this.btnMNFEdit.TabIndex = 10;
             this.btnMNFEdit.Text = "Edit";
+            this.toolTip1.SetToolTip(this.btnMNFEdit, "Edit the current notch index");
             this.btnMNFEdit.UseVisualStyleBackColor = true;
             this.btnMNFEdit.Click += new System.EventHandler(this.btnMNFEdit_Click);
             // 
@@ -42119,21 +42104,8 @@
             this.chkMNFActive.Size = new System.Drawing.Size(56, 17);
             this.chkMNFActive.TabIndex = 9;
             this.chkMNFActive.Text = "Active";
+            this.toolTip1.SetToolTip(this.chkMNFActive, "Checked if the notch is active");
             this.chkMNFActive.UseVisualStyleBackColor = true;
-            // 
-            // btnMNFRun
-            // 
-            this.btnMNFRun.Enabled = false;
-            this.btnMNFRun.Image = null;
-            this.btnMNFRun.Location = new System.Drawing.Point(490, 10);
-            this.btnMNFRun.Name = "btnMNFRun";
-            this.btnMNFRun.Selectable = true;
-            this.btnMNFRun.Size = new System.Drawing.Size(75, 23);
-            this.btnMNFRun.TabIndex = 8;
-            this.btnMNFRun.Text = "OFF";
-            this.btnMNFRun.UseVisualStyleBackColor = true;
-            this.btnMNFRun.Visible = false;
-            this.btnMNFRun.Click += new System.EventHandler(this.btnMNFRun_Click);
             // 
             // btnMNFEnter
             // 
@@ -42144,6 +42116,7 @@
             this.btnMNFEnter.Size = new System.Drawing.Size(75, 23);
             this.btnMNFEnter.TabIndex = 7;
             this.btnMNFEnter.Text = "ENTER";
+            this.toolTip1.SetToolTip(this.btnMNFEnter, "Accept the changes");
             this.btnMNFEnter.UseVisualStyleBackColor = true;
             this.btnMNFEnter.Click += new System.EventHandler(this.btnMNFEnter_Click);
             // 
@@ -42156,6 +42129,7 @@
             this.btnMNFAdd.Size = new System.Drawing.Size(75, 23);
             this.btnMNFAdd.TabIndex = 6;
             this.btnMNFAdd.Text = "Add";
+            this.toolTip1.SetToolTip(this.btnMNFAdd, "Add a notch");
             this.btnMNFAdd.UseVisualStyleBackColor = true;
             this.btnMNFAdd.Click += new System.EventHandler(this.btnMNFAdd_Click);
             // 
@@ -42212,6 +42186,7 @@
             this.udMNFWidth.Size = new System.Drawing.Size(75, 20);
             this.udMNFWidth.TabIndex = 2;
             this.udMNFWidth.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udMNFWidth, "Bandwdith of the notch");
             this.udMNFWidth.Value = new decimal(new int[] {
             0,
             0,
@@ -42242,6 +42217,7 @@
             this.udMNFFreq.Size = new System.Drawing.Size(120, 20);
             this.udMNFFreq.TabIndex = 1;
             this.udMNFFreq.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udMNFFreq, "Center frequency of the notch");
             this.udMNFFreq.Value = new decimal(new int[] {
             0,
             0,
@@ -42270,6 +42246,7 @@
             this.udMNFNotch.Size = new System.Drawing.Size(75, 20);
             this.udMNFNotch.TabIndex = 0;
             this.udMNFNotch.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udMNFNotch, "Notch index number");
             this.udMNFNotch.Value = new decimal(new int[] {
             0,
             0,
@@ -43228,32 +43205,16 @@
             // tpDSPCFC
             // 
             this.tpDSPCFC.BackColor = System.Drawing.SystemColors.Control;
+            this.tpDSPCFC.Controls.Add(this.pnlPostCFCEQ);
             this.tpDSPCFC.Controls.Add(this.labelTS607);
             this.tpDSPCFC.Controls.Add(this.labelTS606);
             this.tpDSPCFC.Controls.Add(this.udCFCPicDBPerLine);
-            this.tpDSPCFC.Controls.Add(this.lblCFCPEG);
-            this.tpDSPCFC.Controls.Add(this.lblCFCPEG15);
-            this.tpDSPCFC.Controls.Add(this.lblCFCPEG0);
-            this.tpDSPCFC.Controls.Add(this.tbCFCPEQGAIN);
             this.tpDSPCFC.Controls.Add(this.grpPhRot);
             this.tpDSPCFC.Controls.Add(this.chkCFCPeqEnable);
             this.tpDSPCFC.Controls.Add(this.lblCFCPRECOMP);
             this.tpDSPCFC.Controls.Add(this.lblCFCPC15);
             this.tpDSPCFC.Controls.Add(this.lblCFCPC0);
             this.tpDSPCFC.Controls.Add(this.tbCFCPRECOMP);
-            this.tpDSPCFC.Controls.Add(this.lblCFCEQPOST);
-            this.tpDSPCFC.Controls.Add(this.lblCFCEQ10dB);
-            this.tpDSPCFC.Controls.Add(this.lblCFCEQ0dB);
-            this.tpDSPCFC.Controls.Add(this.tbCFCEQ9);
-            this.tpDSPCFC.Controls.Add(this.tbCFCEQ6);
-            this.tpDSPCFC.Controls.Add(this.tbCFCEQ7);
-            this.tpDSPCFC.Controls.Add(this.tbCFCEQ8);
-            this.tpDSPCFC.Controls.Add(this.tbCFCEQ3);
-            this.tpDSPCFC.Controls.Add(this.tbCFCEQ4);
-            this.tpDSPCFC.Controls.Add(this.tbCFCEQ5);
-            this.tpDSPCFC.Controls.Add(this.tbCFCEQ0);
-            this.tpDSPCFC.Controls.Add(this.tbCFCEQ1);
-            this.tpDSPCFC.Controls.Add(this.tbCFCEQ2);
             this.tpDSPCFC.Controls.Add(this.chkCFCEnable);
             this.tpDSPCFC.Controls.Add(this.lblCFCFreq);
             this.tpDSPCFC.Controls.Add(this.lblCFCComp);
@@ -43286,6 +43247,253 @@
             this.tpDSPCFC.Size = new System.Drawing.Size(724, 414);
             this.tpDSPCFC.TabIndex = 12;
             this.tpDSPCFC.Text = "CFC";
+            // 
+            // pnlPostCFCEQ
+            // 
+            this.pnlPostCFCEQ.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlPostCFCEQ.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlPostCFCEQ.Controls.Add(this.tbCFCPEQGAIN);
+            this.pnlPostCFCEQ.Controls.Add(this.tbCFCEQ2);
+            this.pnlPostCFCEQ.Controls.Add(this.tbCFCEQ1);
+            this.pnlPostCFCEQ.Controls.Add(this.lblCFCPEG);
+            this.pnlPostCFCEQ.Controls.Add(this.tbCFCEQ0);
+            this.pnlPostCFCEQ.Controls.Add(this.lblCFCPEG15);
+            this.pnlPostCFCEQ.Controls.Add(this.tbCFCEQ5);
+            this.pnlPostCFCEQ.Controls.Add(this.lblCFCPEG0);
+            this.pnlPostCFCEQ.Controls.Add(this.tbCFCEQ4);
+            this.pnlPostCFCEQ.Controls.Add(this.tbCFCEQ3);
+            this.pnlPostCFCEQ.Controls.Add(this.tbCFCEQ8);
+            this.pnlPostCFCEQ.Controls.Add(this.tbCFCEQ7);
+            this.pnlPostCFCEQ.Controls.Add(this.tbCFCEQ6);
+            this.pnlPostCFCEQ.Controls.Add(this.tbCFCEQ9);
+            this.pnlPostCFCEQ.Controls.Add(this.lblCFCEQ0dB);
+            this.pnlPostCFCEQ.Controls.Add(this.lblCFCEQ10dB);
+            this.pnlPostCFCEQ.Controls.Add(this.lblCFCEQPOST);
+            this.pnlPostCFCEQ.Location = new System.Drawing.Point(6, 259);
+            this.pnlPostCFCEQ.Name = "pnlPostCFCEQ";
+            this.pnlPostCFCEQ.Size = new System.Drawing.Size(423, 140);
+            this.pnlPostCFCEQ.TabIndex = 112;
+            // 
+            // tbCFCPEQGAIN
+            // 
+            this.tbCFCPEQGAIN.AutoSize = false;
+            this.tbCFCPEQGAIN.BackColor = System.Drawing.Color.Black;
+            this.tbCFCPEQGAIN.LargeChange = 2;
+            this.tbCFCPEQGAIN.Location = new System.Drawing.Point(45, 3);
+            this.tbCFCPEQGAIN.Minimum = -16;
+            this.tbCFCPEQGAIN.Name = "tbCFCPEQGAIN";
+            this.tbCFCPEQGAIN.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCPEQGAIN.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCPEQGAIN.TabIndex = 171;
+            this.tbCFCPEQGAIN.TickFrequency = 2;
+            this.tbCFCPEQGAIN.Scroll += new System.EventHandler(this.tbCFCPEG_Scroll);
+            // 
+            // tbCFCEQ2
+            // 
+            this.tbCFCEQ2.AutoSize = false;
+            this.tbCFCEQ2.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ2.LargeChange = 2;
+            this.tbCFCEQ2.Location = new System.Drawing.Point(186, 3);
+            this.tbCFCEQ2.Minimum = -10;
+            this.tbCFCEQ2.Name = "tbCFCEQ2";
+            this.tbCFCEQ2.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ2.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ2.TabIndex = 154;
+            this.tbCFCEQ2.TickFrequency = 2;
+            this.tbCFCEQ2.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ1
+            // 
+            this.tbCFCEQ1.AutoSize = false;
+            this.tbCFCEQ1.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ1.LargeChange = 2;
+            this.tbCFCEQ1.Location = new System.Drawing.Point(156, 3);
+            this.tbCFCEQ1.Minimum = -10;
+            this.tbCFCEQ1.Name = "tbCFCEQ1";
+            this.tbCFCEQ1.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ1.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ1.TabIndex = 153;
+            this.tbCFCEQ1.TickFrequency = 2;
+            this.tbCFCEQ1.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // lblCFCPEG
+            // 
+            this.lblCFCPEG.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCPEG.Image = null;
+            this.lblCFCPEG.Location = new System.Drawing.Point(5, 56);
+            this.lblCFCPEG.Name = "lblCFCPEG";
+            this.lblCFCPEG.Size = new System.Drawing.Size(40, 39);
+            this.lblCFCPEG.TabIndex = 174;
+            this.lblCFCPEG.Text = "POST EQ GAIN";
+            // 
+            // tbCFCEQ0
+            // 
+            this.tbCFCEQ0.AutoSize = false;
+            this.tbCFCEQ0.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ0.LargeChange = 2;
+            this.tbCFCEQ0.Location = new System.Drawing.Point(126, 3);
+            this.tbCFCEQ0.Minimum = -10;
+            this.tbCFCEQ0.Name = "tbCFCEQ0";
+            this.tbCFCEQ0.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ0.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ0.TabIndex = 152;
+            this.tbCFCEQ0.TickFrequency = 2;
+            this.tbCFCEQ0.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // lblCFCPEG15
+            // 
+            this.lblCFCPEG15.AutoSize = true;
+            this.lblCFCPEG15.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCPEG15.Image = null;
+            this.lblCFCPEG15.Location = new System.Drawing.Point(5, 2);
+            this.lblCFCPEG15.Name = "lblCFCPEG15";
+            this.lblCFCPEG15.Size = new System.Drawing.Size(41, 13);
+            this.lblCFCPEG15.TabIndex = 173;
+            this.lblCFCPEG15.Text = "+10 dB";
+            // 
+            // tbCFCEQ5
+            // 
+            this.tbCFCEQ5.AutoSize = false;
+            this.tbCFCEQ5.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ5.LargeChange = 2;
+            this.tbCFCEQ5.Location = new System.Drawing.Point(276, 3);
+            this.tbCFCEQ5.Minimum = -10;
+            this.tbCFCEQ5.Name = "tbCFCEQ5";
+            this.tbCFCEQ5.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ5.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ5.TabIndex = 157;
+            this.tbCFCEQ5.TickFrequency = 2;
+            this.tbCFCEQ5.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // lblCFCPEG0
+            // 
+            this.lblCFCPEG0.AutoSize = true;
+            this.lblCFCPEG0.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCPEG0.Image = null;
+            this.lblCFCPEG0.Location = new System.Drawing.Point(5, 116);
+            this.lblCFCPEG0.Name = "lblCFCPEG0";
+            this.lblCFCPEG0.Size = new System.Drawing.Size(38, 13);
+            this.lblCFCPEG0.TabIndex = 172;
+            this.lblCFCPEG0.Text = "-16 dB";
+            // 
+            // tbCFCEQ4
+            // 
+            this.tbCFCEQ4.AutoSize = false;
+            this.tbCFCEQ4.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ4.LargeChange = 2;
+            this.tbCFCEQ4.Location = new System.Drawing.Point(246, 3);
+            this.tbCFCEQ4.Minimum = -10;
+            this.tbCFCEQ4.Name = "tbCFCEQ4";
+            this.tbCFCEQ4.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ4.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ4.TabIndex = 156;
+            this.tbCFCEQ4.TickFrequency = 2;
+            this.tbCFCEQ4.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ3
+            // 
+            this.tbCFCEQ3.AutoSize = false;
+            this.tbCFCEQ3.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ3.LargeChange = 2;
+            this.tbCFCEQ3.Location = new System.Drawing.Point(216, 3);
+            this.tbCFCEQ3.Minimum = -10;
+            this.tbCFCEQ3.Name = "tbCFCEQ3";
+            this.tbCFCEQ3.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ3.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ3.TabIndex = 155;
+            this.tbCFCEQ3.TickFrequency = 2;
+            this.tbCFCEQ3.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ8
+            // 
+            this.tbCFCEQ8.AutoSize = false;
+            this.tbCFCEQ8.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ8.LargeChange = 2;
+            this.tbCFCEQ8.Location = new System.Drawing.Point(366, 2);
+            this.tbCFCEQ8.Minimum = -10;
+            this.tbCFCEQ8.Name = "tbCFCEQ8";
+            this.tbCFCEQ8.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ8.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ8.TabIndex = 160;
+            this.tbCFCEQ8.TickFrequency = 2;
+            this.tbCFCEQ8.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ7
+            // 
+            this.tbCFCEQ7.AutoSize = false;
+            this.tbCFCEQ7.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ7.LargeChange = 2;
+            this.tbCFCEQ7.Location = new System.Drawing.Point(336, 3);
+            this.tbCFCEQ7.Minimum = -10;
+            this.tbCFCEQ7.Name = "tbCFCEQ7";
+            this.tbCFCEQ7.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ7.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ7.TabIndex = 159;
+            this.tbCFCEQ7.TickFrequency = 2;
+            this.tbCFCEQ7.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ6
+            // 
+            this.tbCFCEQ6.AutoSize = false;
+            this.tbCFCEQ6.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ6.LargeChange = 2;
+            this.tbCFCEQ6.Location = new System.Drawing.Point(306, 3);
+            this.tbCFCEQ6.Minimum = -10;
+            this.tbCFCEQ6.Name = "tbCFCEQ6";
+            this.tbCFCEQ6.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ6.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ6.TabIndex = 158;
+            this.tbCFCEQ6.TickFrequency = 2;
+            this.tbCFCEQ6.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // tbCFCEQ9
+            // 
+            this.tbCFCEQ9.AutoSize = false;
+            this.tbCFCEQ9.BackColor = System.Drawing.Color.Black;
+            this.tbCFCEQ9.LargeChange = 2;
+            this.tbCFCEQ9.Location = new System.Drawing.Point(396, 3);
+            this.tbCFCEQ9.Minimum = -10;
+            this.tbCFCEQ9.Name = "tbCFCEQ9";
+            this.tbCFCEQ9.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbCFCEQ9.Size = new System.Drawing.Size(20, 128);
+            this.tbCFCEQ9.TabIndex = 161;
+            this.tbCFCEQ9.TickFrequency = 2;
+            this.tbCFCEQ9.Scroll += new System.EventHandler(this.setCFCProfile);
+            // 
+            // lblCFCEQ0dB
+            // 
+            this.lblCFCEQ0dB.AutoSize = true;
+            this.lblCFCEQ0dB.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCEQ0dB.Image = null;
+            this.lblCFCEQ0dB.Location = new System.Drawing.Point(82, 116);
+            this.lblCFCEQ0dB.Name = "lblCFCEQ0dB";
+            this.lblCFCEQ0dB.Size = new System.Drawing.Size(38, 13);
+            this.lblCFCEQ0dB.TabIndex = 162;
+            this.lblCFCEQ0dB.Text = "-10 dB";
+            this.lblCFCEQ0dB.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // lblCFCEQ10dB
+            // 
+            this.lblCFCEQ10dB.AutoSize = true;
+            this.lblCFCEQ10dB.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCEQ10dB.Image = null;
+            this.lblCFCEQ10dB.Location = new System.Drawing.Point(79, 2);
+            this.lblCFCEQ10dB.Name = "lblCFCEQ10dB";
+            this.lblCFCEQ10dB.Size = new System.Drawing.Size(41, 13);
+            this.lblCFCEQ10dB.TabIndex = 163;
+            this.lblCFCEQ10dB.Text = "+10 dB";
+            this.lblCFCEQ10dB.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // lblCFCEQPOST
+            // 
+            this.lblCFCEQPOST.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCFCEQPOST.Image = null;
+            this.lblCFCEQPOST.Location = new System.Drawing.Point(80, 56);
+            this.lblCFCEQPOST.Name = "lblCFCEQPOST";
+            this.lblCFCEQPOST.Size = new System.Drawing.Size(40, 26);
+            this.lblCFCEQPOST.TabIndex = 164;
+            this.lblCFCEQPOST.Text = "POST EQ";
+            this.lblCFCEQPOST.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelTS607
             // 
@@ -43335,52 +43543,6 @@
             0,
             0});
             this.udCFCPicDBPerLine.ValueChanged += new System.EventHandler(this.udCFCPicDBPerLine_ValueChanged);
-            // 
-            // lblCFCPEG
-            // 
-            this.lblCFCPEG.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCFCPEG.Image = null;
-            this.lblCFCPEG.Location = new System.Drawing.Point(11, 312);
-            this.lblCFCPEG.Name = "lblCFCPEG";
-            this.lblCFCPEG.Size = new System.Drawing.Size(40, 39);
-            this.lblCFCPEG.TabIndex = 174;
-            this.lblCFCPEG.Text = "POST EQ GAIN";
-            // 
-            // lblCFCPEG15
-            // 
-            this.lblCFCPEG15.AutoSize = true;
-            this.lblCFCPEG15.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCFCPEG15.Image = null;
-            this.lblCFCPEG15.Location = new System.Drawing.Point(11, 258);
-            this.lblCFCPEG15.Name = "lblCFCPEG15";
-            this.lblCFCPEG15.Size = new System.Drawing.Size(41, 13);
-            this.lblCFCPEG15.TabIndex = 173;
-            this.lblCFCPEG15.Text = "+10 dB";
-            // 
-            // lblCFCPEG0
-            // 
-            this.lblCFCPEG0.AutoSize = true;
-            this.lblCFCPEG0.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCFCPEG0.Image = null;
-            this.lblCFCPEG0.Location = new System.Drawing.Point(11, 372);
-            this.lblCFCPEG0.Name = "lblCFCPEG0";
-            this.lblCFCPEG0.Size = new System.Drawing.Size(38, 13);
-            this.lblCFCPEG0.TabIndex = 172;
-            this.lblCFCPEG0.Text = "-16 dB";
-            // 
-            // tbCFCPEQGAIN
-            // 
-            this.tbCFCPEQGAIN.AutoSize = false;
-            this.tbCFCPEQGAIN.BackColor = System.Drawing.Color.Black;
-            this.tbCFCPEQGAIN.LargeChange = 2;
-            this.tbCFCPEQGAIN.Location = new System.Drawing.Point(51, 259);
-            this.tbCFCPEQGAIN.Minimum = -16;
-            this.tbCFCPEQGAIN.Name = "tbCFCPEQGAIN";
-            this.tbCFCPEQGAIN.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbCFCPEQGAIN.Size = new System.Drawing.Size(20, 128);
-            this.tbCFCPEQGAIN.TabIndex = 171;
-            this.tbCFCPEQGAIN.TickFrequency = 2;
-            this.tbCFCPEQGAIN.Scroll += new System.EventHandler(this.tbCFCPEG_Scroll);
             // 
             // grpPhRot
             // 
@@ -43443,6 +43605,7 @@
             this.udPHROTStages.Size = new System.Drawing.Size(58, 20);
             this.udPHROTStages.TabIndex = 155;
             this.udPHROTStages.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udPHROTStages, "Choose the number of rotation stages. Larger values = smoother (default 8)");
             this.udPHROTStages.Value = new decimal(new int[] {
             8,
             0,
@@ -43483,6 +43646,7 @@
             this.udPhRotFreq.Size = new System.Drawing.Size(58, 20);
             this.udPhRotFreq.TabIndex = 153;
             this.udPhRotFreq.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udPhRotFreq, "Set rotation frequency in Hz. (default 338)");
             this.udPhRotFreq.Value = new decimal(new int[] {
             338,
             0,
@@ -43499,6 +43663,7 @@
             this.chkPHROTEnable.Size = new System.Drawing.Size(59, 17);
             this.chkPHROTEnable.TabIndex = 152;
             this.chkPHROTEnable.Text = "Enable";
+            this.toolTip1.SetToolTip(this.chkPHROTEnable, "Turn the phase rotator on or off");
             this.chkPHROTEnable.UseVisualStyleBackColor = true;
             this.chkPHROTEnable.CheckedChanged += new System.EventHandler(this.chkPHROTEnable_CheckedChanged);
             // 
@@ -43511,6 +43676,7 @@
             this.chkCFCPeqEnable.Size = new System.Drawing.Size(124, 17);
             this.chkCFCPeqEnable.TabIndex = 169;
             this.chkCFCPeqEnable.Text = "Post-CFC EQ Enable";
+            this.toolTip1.SetToolTip(this.chkCFCPeqEnable, "When enabled EQ post CFC");
             this.chkCFCPeqEnable.UseVisualStyleBackColor = true;
             this.chkCFCPeqEnable.CheckedChanged += new System.EventHandler(this.chkCFCPeqEnable_CheckedChanged);
             // 
@@ -43559,178 +43725,6 @@
             this.tbCFCPRECOMP.TabIndex = 165;
             this.tbCFCPRECOMP.Scroll += new System.EventHandler(this.tbCFCPRECOMP_Scroll);
             // 
-            // lblCFCEQPOST
-            // 
-            this.lblCFCEQPOST.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCFCEQPOST.Image = null;
-            this.lblCFCEQPOST.Location = new System.Drawing.Point(81, 312);
-            this.lblCFCEQPOST.Name = "lblCFCEQPOST";
-            this.lblCFCEQPOST.Size = new System.Drawing.Size(40, 26);
-            this.lblCFCEQPOST.TabIndex = 164;
-            this.lblCFCEQPOST.Text = "POST EQ";
-            // 
-            // lblCFCEQ10dB
-            // 
-            this.lblCFCEQ10dB.AutoSize = true;
-            this.lblCFCEQ10dB.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCFCEQ10dB.Image = null;
-            this.lblCFCEQ10dB.Location = new System.Drawing.Point(80, 258);
-            this.lblCFCEQ10dB.Name = "lblCFCEQ10dB";
-            this.lblCFCEQ10dB.Size = new System.Drawing.Size(41, 13);
-            this.lblCFCEQ10dB.TabIndex = 163;
-            this.lblCFCEQ10dB.Text = "+10 dB";
-            // 
-            // lblCFCEQ0dB
-            // 
-            this.lblCFCEQ0dB.AutoSize = true;
-            this.lblCFCEQ0dB.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCFCEQ0dB.Image = null;
-            this.lblCFCEQ0dB.Location = new System.Drawing.Point(81, 372);
-            this.lblCFCEQ0dB.Name = "lblCFCEQ0dB";
-            this.lblCFCEQ0dB.Size = new System.Drawing.Size(38, 13);
-            this.lblCFCEQ0dB.TabIndex = 162;
-            this.lblCFCEQ0dB.Text = "-10 dB";
-            // 
-            // tbCFCEQ9
-            // 
-            this.tbCFCEQ9.AutoSize = false;
-            this.tbCFCEQ9.BackColor = System.Drawing.Color.Black;
-            this.tbCFCEQ9.LargeChange = 2;
-            this.tbCFCEQ9.Location = new System.Drawing.Point(402, 259);
-            this.tbCFCEQ9.Minimum = -10;
-            this.tbCFCEQ9.Name = "tbCFCEQ9";
-            this.tbCFCEQ9.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbCFCEQ9.Size = new System.Drawing.Size(20, 128);
-            this.tbCFCEQ9.TabIndex = 161;
-            this.tbCFCEQ9.TickFrequency = 2;
-            this.tbCFCEQ9.Scroll += new System.EventHandler(this.setCFCProfile);
-            // 
-            // tbCFCEQ6
-            // 
-            this.tbCFCEQ6.AutoSize = false;
-            this.tbCFCEQ6.BackColor = System.Drawing.Color.Black;
-            this.tbCFCEQ6.LargeChange = 2;
-            this.tbCFCEQ6.Location = new System.Drawing.Point(312, 259);
-            this.tbCFCEQ6.Minimum = -10;
-            this.tbCFCEQ6.Name = "tbCFCEQ6";
-            this.tbCFCEQ6.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbCFCEQ6.Size = new System.Drawing.Size(20, 128);
-            this.tbCFCEQ6.TabIndex = 158;
-            this.tbCFCEQ6.TickFrequency = 2;
-            this.tbCFCEQ6.Scroll += new System.EventHandler(this.setCFCProfile);
-            // 
-            // tbCFCEQ7
-            // 
-            this.tbCFCEQ7.AutoSize = false;
-            this.tbCFCEQ7.BackColor = System.Drawing.Color.Black;
-            this.tbCFCEQ7.LargeChange = 2;
-            this.tbCFCEQ7.Location = new System.Drawing.Point(342, 259);
-            this.tbCFCEQ7.Minimum = -10;
-            this.tbCFCEQ7.Name = "tbCFCEQ7";
-            this.tbCFCEQ7.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbCFCEQ7.Size = new System.Drawing.Size(20, 128);
-            this.tbCFCEQ7.TabIndex = 159;
-            this.tbCFCEQ7.TickFrequency = 2;
-            this.tbCFCEQ7.Scroll += new System.EventHandler(this.setCFCProfile);
-            // 
-            // tbCFCEQ8
-            // 
-            this.tbCFCEQ8.AutoSize = false;
-            this.tbCFCEQ8.BackColor = System.Drawing.Color.Black;
-            this.tbCFCEQ8.LargeChange = 2;
-            this.tbCFCEQ8.Location = new System.Drawing.Point(372, 258);
-            this.tbCFCEQ8.Minimum = -10;
-            this.tbCFCEQ8.Name = "tbCFCEQ8";
-            this.tbCFCEQ8.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbCFCEQ8.Size = new System.Drawing.Size(20, 128);
-            this.tbCFCEQ8.TabIndex = 160;
-            this.tbCFCEQ8.TickFrequency = 2;
-            this.tbCFCEQ8.Scroll += new System.EventHandler(this.setCFCProfile);
-            // 
-            // tbCFCEQ3
-            // 
-            this.tbCFCEQ3.AutoSize = false;
-            this.tbCFCEQ3.BackColor = System.Drawing.Color.Black;
-            this.tbCFCEQ3.LargeChange = 2;
-            this.tbCFCEQ3.Location = new System.Drawing.Point(222, 259);
-            this.tbCFCEQ3.Minimum = -10;
-            this.tbCFCEQ3.Name = "tbCFCEQ3";
-            this.tbCFCEQ3.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbCFCEQ3.Size = new System.Drawing.Size(20, 128);
-            this.tbCFCEQ3.TabIndex = 155;
-            this.tbCFCEQ3.TickFrequency = 2;
-            this.tbCFCEQ3.Scroll += new System.EventHandler(this.setCFCProfile);
-            // 
-            // tbCFCEQ4
-            // 
-            this.tbCFCEQ4.AutoSize = false;
-            this.tbCFCEQ4.BackColor = System.Drawing.Color.Black;
-            this.tbCFCEQ4.LargeChange = 2;
-            this.tbCFCEQ4.Location = new System.Drawing.Point(252, 259);
-            this.tbCFCEQ4.Minimum = -10;
-            this.tbCFCEQ4.Name = "tbCFCEQ4";
-            this.tbCFCEQ4.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbCFCEQ4.Size = new System.Drawing.Size(20, 128);
-            this.tbCFCEQ4.TabIndex = 156;
-            this.tbCFCEQ4.TickFrequency = 2;
-            this.tbCFCEQ4.Scroll += new System.EventHandler(this.setCFCProfile);
-            // 
-            // tbCFCEQ5
-            // 
-            this.tbCFCEQ5.AutoSize = false;
-            this.tbCFCEQ5.BackColor = System.Drawing.Color.Black;
-            this.tbCFCEQ5.LargeChange = 2;
-            this.tbCFCEQ5.Location = new System.Drawing.Point(282, 259);
-            this.tbCFCEQ5.Minimum = -10;
-            this.tbCFCEQ5.Name = "tbCFCEQ5";
-            this.tbCFCEQ5.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbCFCEQ5.Size = new System.Drawing.Size(20, 128);
-            this.tbCFCEQ5.TabIndex = 157;
-            this.tbCFCEQ5.TickFrequency = 2;
-            this.tbCFCEQ5.Scroll += new System.EventHandler(this.setCFCProfile);
-            // 
-            // tbCFCEQ0
-            // 
-            this.tbCFCEQ0.AutoSize = false;
-            this.tbCFCEQ0.BackColor = System.Drawing.Color.Black;
-            this.tbCFCEQ0.LargeChange = 2;
-            this.tbCFCEQ0.Location = new System.Drawing.Point(132, 259);
-            this.tbCFCEQ0.Minimum = -10;
-            this.tbCFCEQ0.Name = "tbCFCEQ0";
-            this.tbCFCEQ0.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbCFCEQ0.Size = new System.Drawing.Size(20, 128);
-            this.tbCFCEQ0.TabIndex = 152;
-            this.tbCFCEQ0.TickFrequency = 2;
-            this.tbCFCEQ0.Scroll += new System.EventHandler(this.setCFCProfile);
-            // 
-            // tbCFCEQ1
-            // 
-            this.tbCFCEQ1.AutoSize = false;
-            this.tbCFCEQ1.BackColor = System.Drawing.Color.Black;
-            this.tbCFCEQ1.LargeChange = 2;
-            this.tbCFCEQ1.Location = new System.Drawing.Point(162, 259);
-            this.tbCFCEQ1.Minimum = -10;
-            this.tbCFCEQ1.Name = "tbCFCEQ1";
-            this.tbCFCEQ1.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbCFCEQ1.Size = new System.Drawing.Size(20, 128);
-            this.tbCFCEQ1.TabIndex = 153;
-            this.tbCFCEQ1.TickFrequency = 2;
-            this.tbCFCEQ1.Scroll += new System.EventHandler(this.setCFCProfile);
-            // 
-            // tbCFCEQ2
-            // 
-            this.tbCFCEQ2.AutoSize = false;
-            this.tbCFCEQ2.BackColor = System.Drawing.Color.Black;
-            this.tbCFCEQ2.LargeChange = 2;
-            this.tbCFCEQ2.Location = new System.Drawing.Point(192, 259);
-            this.tbCFCEQ2.Minimum = -10;
-            this.tbCFCEQ2.Name = "tbCFCEQ2";
-            this.tbCFCEQ2.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbCFCEQ2.Size = new System.Drawing.Size(20, 128);
-            this.tbCFCEQ2.TabIndex = 154;
-            this.tbCFCEQ2.TickFrequency = 2;
-            this.tbCFCEQ2.Scroll += new System.EventHandler(this.setCFCProfile);
-            // 
             // chkCFCEnable
             // 
             this.chkCFCEnable.AutoSize = true;
@@ -43760,11 +43754,12 @@
             this.lblCFCComp.AutoSize = true;
             this.lblCFCComp.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblCFCComp.Image = null;
-            this.lblCFCComp.Location = new System.Drawing.Point(81, 134);
+            this.lblCFCComp.Location = new System.Drawing.Point(87, 134);
             this.lblCFCComp.Name = "lblCFCComp";
             this.lblCFCComp.Size = new System.Drawing.Size(38, 13);
             this.lblCFCComp.TabIndex = 147;
             this.lblCFCComp.Text = "COMP";
+            this.lblCFCComp.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // udCFC9
             // 
@@ -44061,22 +44056,24 @@
             this.lblCFC15dB.AutoSize = true;
             this.lblCFC15dB.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblCFC15dB.Image = null;
-            this.lblCFC15dB.Location = new System.Drawing.Point(81, 75);
+            this.lblCFC15dB.Location = new System.Drawing.Point(87, 75);
             this.lblCFC15dB.Name = "lblCFC15dB";
             this.lblCFC15dB.Size = new System.Drawing.Size(35, 13);
             this.lblCFC15dB.TabIndex = 136;
             this.lblCFC15dB.Text = "10 dB";
+            this.lblCFC15dB.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // lblCFC0dB
             // 
             this.lblCFC0dB.AutoSize = true;
             this.lblCFC0dB.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblCFC0dB.Image = null;
-            this.lblCFC0dB.Location = new System.Drawing.Point(81, 192);
+            this.lblCFC0dB.Location = new System.Drawing.Point(93, 192);
             this.lblCFC0dB.Name = "lblCFC0dB";
             this.lblCFC0dB.Size = new System.Drawing.Size(29, 13);
             this.lblCFC0dB.TabIndex = 135;
             this.lblCFC0dB.Text = "0 dB";
+            this.lblCFC0dB.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // tbCFC9
             // 
@@ -66983,23 +66980,25 @@
             ((System.ComponentModel.ISupportInitialize)(this.udSCFLowCut)).EndInit();
             this.tpDSPCFC.ResumeLayout(false);
             this.tpDSPCFC.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udCFCPicDBPerLine)).EndInit();
+            this.pnlPostCFCEQ.ResumeLayout(false);
+            this.pnlPostCFCEQ.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFCPEQGAIN)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ0)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udCFCPicDBPerLine)).EndInit();
             this.grpPhRot.ResumeLayout(false);
             this.grpPhRot.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udPHROTStages)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPhRotFreq)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbCFCPRECOMP)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ9)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ6)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ7)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ8)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ0)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbCFCEQ2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCFC9)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCFC8)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCFC7)).EndInit();
@@ -69425,7 +69424,6 @@
         private System.Windows.Forms.ButtonTS btnMNFCancel;
         private System.Windows.Forms.ButtonTS btnMNFEdit;
         private System.Windows.Forms.CheckBoxTS chkMNFActive;
-        private System.Windows.Forms.ButtonTS btnMNFRun;
         private System.Windows.Forms.ButtonTS btnMNFEnter;
         private System.Windows.Forms.ButtonTS btnMNFAdd;
         private System.Windows.Forms.LabelTS lblMNFWidth;
@@ -69434,7 +69432,6 @@
         private System.Windows.Forms.NumericUpDownTS udMNFWidth;
         private System.Windows.Forms.NumericUpDownTS udMNFFreq;
         private System.Windows.Forms.NumericUpDownTS udMNFNotch;
-        private System.Windows.Forms.CheckBoxTS chkMNFRun;
         private System.Windows.Forms.ButtonTS btnVFOFreq;
         private System.Windows.Forms.LabelTS labelTS361;
         private System.Windows.Forms.LabelTS labelTS360;
@@ -71656,5 +71653,6 @@
         private LabelTS labelTS421;
         private ButtonTS btnClearTCISpotsSWL;
         private CheckBoxTS chkWindBackPowerSWR;
+        private PanelTS pnlPostCFCEQ;
     }
 }
