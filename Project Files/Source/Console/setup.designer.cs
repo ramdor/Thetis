@@ -2298,30 +2298,14 @@
             this.chkAutoAGCRX1 = new System.Windows.Forms.CheckBoxTS();
             this.grpDSPLeveler = new System.Windows.Forms.GroupBoxTS();
             this.chkDSPLevelerEnabled = new System.Windows.Forms.CheckBoxTS();
-            this.lblDSPLevelerHangThreshold = new System.Windows.Forms.LabelTS();
-            this.udDSPLevelerHangTime = new System.Windows.Forms.NumericUpDownTS();
-            this.lblDSPLevelerHangTime = new System.Windows.Forms.LabelTS();
             this.udDSPLevelerThreshold = new System.Windows.Forms.NumericUpDownTS();
-            this.udDSPLevelerSlope = new System.Windows.Forms.NumericUpDownTS();
             this.udDSPLevelerDecay = new System.Windows.Forms.NumericUpDownTS();
-            this.lblDSPLevelerSlope = new System.Windows.Forms.LabelTS();
-            this.udDSPLevelerAttack = new System.Windows.Forms.NumericUpDownTS();
             this.lblDSPLevelerDecay = new System.Windows.Forms.LabelTS();
-            this.lblDSPLevelerAttack = new System.Windows.Forms.LabelTS();
             this.lblDSPLevelerThreshold = new System.Windows.Forms.LabelTS();
-            this.tbDSPLevelerHangThreshold = new System.Windows.Forms.TrackBarTS();
             this.grpDSPALC = new System.Windows.Forms.GroupBoxTS();
-            this.lblDSPALCHangThreshold = new System.Windows.Forms.LabelTS();
-            this.tbDSPALCHangThreshold = new System.Windows.Forms.TrackBarTS();
-            this.udDSPALCHangTime = new System.Windows.Forms.NumericUpDownTS();
-            this.lblDSPALCHangTime = new System.Windows.Forms.LabelTS();
             this.udDSPALCMaximumGain = new System.Windows.Forms.NumericUpDownTS();
-            this.udDSPALCSlope = new System.Windows.Forms.NumericUpDownTS();
             this.udDSPALCDecay = new System.Windows.Forms.NumericUpDownTS();
-            this.lblDSPALCSlope = new System.Windows.Forms.LabelTS();
-            this.udDSPALCAttack = new System.Windows.Forms.NumericUpDownTS();
             this.lblDSPALCDecay = new System.Windows.Forms.LabelTS();
-            this.lblDSPALCAttack = new System.Windows.Forms.LabelTS();
             this.lblDSPALCThreshold = new System.Windows.Forms.LabelTS();
             this.grpDSPAGC = new System.Windows.Forms.GroupBoxTS();
             this.chkRX2HangSpectrumLine = new System.Windows.Forms.CheckBoxTS();
@@ -2338,7 +2322,6 @@
             this.labelTS137 = new System.Windows.Forms.LabelTS();
             this.udDSPAGCRX2HangTime = new System.Windows.Forms.NumericUpDownTS();
             this.udDSPAGCRX2Decay = new System.Windows.Forms.NumericUpDownTS();
-            this.udDSPAGCRX2Attack = new System.Windows.Forms.NumericUpDownTS();
             this.udDSPAGCRX2Slope = new System.Windows.Forms.NumericUpDownTS();
             this.tbDSPAGCRX2HangThreshold = new System.Windows.Forms.TrackBarTS();
             this.udDSPAGCRX2MaxGaindB = new System.Windows.Forms.NumericUpDownTS();
@@ -2351,9 +2334,7 @@
             this.udDSPAGCSlope = new System.Windows.Forms.NumericUpDownTS();
             this.udDSPAGCDecay = new System.Windows.Forms.NumericUpDownTS();
             this.lblDSPAGCSlope = new System.Windows.Forms.LabelTS();
-            this.udDSPAGCAttack = new System.Windows.Forms.NumericUpDownTS();
             this.lblDSPAGCDecay = new System.Windows.Forms.LabelTS();
-            this.lblDSPAGCAttack = new System.Windows.Forms.LabelTS();
             this.lblDSPAGCMaxGain = new System.Windows.Forms.LabelTS();
             this.udDSPAGCFixedGaindB = new System.Windows.Forms.NumericUpDownTS();
             this.lblDSPAGCFixed = new System.Windows.Forms.LabelTS();
@@ -4648,23 +4629,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.udRX2AutoAGCOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX1AutoAGCOffset)).BeginInit();
             this.grpDSPLeveler.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerHangTime)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerThreshold)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerSlope)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerDecay)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerAttack)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbDSPLevelerHangThreshold)).BeginInit();
             this.grpDSPALC.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tbDSPALCHangThreshold)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPALCHangTime)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPALCMaximumGain)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPALCSlope)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPALCDecay)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPALCAttack)).BeginInit();
             this.grpDSPAGC.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCRX2HangTime)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCRX2Decay)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCRX2Attack)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCRX2Slope)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPAGCRX2HangThreshold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCRX2MaxGaindB)).BeginInit();
@@ -4674,7 +4646,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCMaxGaindB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCSlope)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCDecay)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCAttack)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCFixedGaindB)).BeginInit();
             this.tpDSPAMSAM.SuspendLayout();
             this.groupBoxTS28.SuspendLayout();
@@ -36131,6 +36102,7 @@
             this.comboDSPFMTXFiltType.Name = "comboDSPFMTXFiltType";
             this.comboDSPFMTXFiltType.Size = new System.Drawing.Size(95, 21);
             this.comboDSPFMTXFiltType.TabIndex = 20;
+            this.toolTip1.SetToolTip(this.comboDSPFMTXFiltType, "Select ‘Low Latency’ (Minimum Phase) or ‘Linear Phase’ Filters");
             this.comboDSPFMTXFiltType.SelectedIndexChanged += new System.EventHandler(this.comboDSPFMTXFiltType_SelectedIndexChanged);
             // 
             // labelTS391
@@ -36153,6 +36125,7 @@
             this.comboDSPFMRXFiltType.Name = "comboDSPFMRXFiltType";
             this.comboDSPFMRXFiltType.Size = new System.Drawing.Size(95, 21);
             this.comboDSPFMRXFiltType.TabIndex = 18;
+            this.toolTip1.SetToolTip(this.comboDSPFMRXFiltType, "Select ‘Low Latency’ (Minimum Phase) or ‘Linear Phase’ Filters");
             this.comboDSPFMRXFiltType.SelectedIndexChanged += new System.EventHandler(this.comboDSPFMRXFiltType_SelectedIndexChanged);
             // 
             // labelTS392
@@ -36188,6 +36161,7 @@
             this.comboDSPDigTXFiltType.Name = "comboDSPDigTXFiltType";
             this.comboDSPDigTXFiltType.Size = new System.Drawing.Size(95, 21);
             this.comboDSPDigTXFiltType.TabIndex = 20;
+            this.toolTip1.SetToolTip(this.comboDSPDigTXFiltType, "Select ‘Low Latency’ (Minimum Phase) or ‘Linear Phase’ Filters");
             this.comboDSPDigTXFiltType.SelectedIndexChanged += new System.EventHandler(this.comboDSPDigTXFiltType_SelectedIndexChanged);
             // 
             // labelTS393
@@ -36210,6 +36184,7 @@
             this.comboDSPDigRXFiltType.Name = "comboDSPDigRXFiltType";
             this.comboDSPDigRXFiltType.Size = new System.Drawing.Size(95, 21);
             this.comboDSPDigRXFiltType.TabIndex = 18;
+            this.toolTip1.SetToolTip(this.comboDSPDigRXFiltType, "Select ‘Low Latency’ (Minimum Phase) or ‘Linear Phase’ Filters");
             this.comboDSPDigRXFiltType.SelectedIndexChanged += new System.EventHandler(this.comboDSPDigRXFiltType_SelectedIndexChanged);
             // 
             // labelTS394
@@ -36252,6 +36227,7 @@
             this.comboDSPCWRXFiltType.Name = "comboDSPCWRXFiltType";
             this.comboDSPCWRXFiltType.Size = new System.Drawing.Size(95, 21);
             this.comboDSPCWRXFiltType.TabIndex = 18;
+            this.toolTip1.SetToolTip(this.comboDSPCWRXFiltType, "Select ‘Low Latency’ (Minimum Phase) or ‘Linear Phase’ Filters");
             this.comboDSPCWRXFiltType.SelectedIndexChanged += new System.EventHandler(this.comboDSPCWRXFiltType_SelectedIndexChanged);
             // 
             // grpDSPFiltTypePhone
@@ -36278,6 +36254,7 @@
             this.comboDSPPhoneTXFiltType.Name = "comboDSPPhoneTXFiltType";
             this.comboDSPPhoneTXFiltType.Size = new System.Drawing.Size(95, 21);
             this.comboDSPPhoneTXFiltType.TabIndex = 20;
+            this.toolTip1.SetToolTip(this.comboDSPPhoneTXFiltType, "Select ‘Low Latency’ (Minimum Phase) or ‘Linear Phase’ Filters");
             this.comboDSPPhoneTXFiltType.SelectedIndexChanged += new System.EventHandler(this.comboDSPPhoneTXFiltType_SelectedIndexChanged);
             // 
             // labelTS396
@@ -36300,6 +36277,7 @@
             this.comboDSPPhoneRXFiltType.Name = "comboDSPPhoneRXFiltType";
             this.comboDSPPhoneRXFiltType.Size = new System.Drawing.Size(95, 21);
             this.comboDSPPhoneRXFiltType.TabIndex = 18;
+            this.toolTip1.SetToolTip(this.comboDSPPhoneRXFiltType, "Select ‘Low Latency’ (Minimum Phase) or ‘Linear Phase’ Filters");
             this.comboDSPPhoneRXFiltType.SelectedIndexChanged += new System.EventHandler(this.comboDSPPhoneRXFiltType_SelectedIndexChanged);
             // 
             // labelTS397
@@ -36857,6 +36835,7 @@
             this.comboDSPTxWindow.Name = "comboDSPTxWindow";
             this.comboDSPTxWindow.Size = new System.Drawing.Size(67, 21);
             this.comboDSPTxWindow.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.comboDSPTxWindow, "BH-4 yields Sharper Filter; BH-7 yields Deeper Cutoff");
             this.comboDSPTxWindow.SelectedIndexChanged += new System.EventHandler(this.comboDSPTxWindow_SelectedIndexChanged);
             // 
             // comboDSPRxWindow
@@ -36870,6 +36849,7 @@
             this.comboDSPRxWindow.Name = "comboDSPRxWindow";
             this.comboDSPRxWindow.Size = new System.Drawing.Size(67, 21);
             this.comboDSPRxWindow.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.comboDSPRxWindow, "BH-4 yields Sharper Filter; BH-7 yields Deeper Cutoff");
             this.comboDSPRxWindow.SelectedIndexChanged += new System.EventHandler(this.comboDSPRxWindow_SelectedIndexChanged);
             // 
             // tpDSPKeyer
@@ -37413,7 +37393,7 @@
             this.groupBoxTS17.Controls.Add(this.udRX1AutoAGCOffset);
             this.groupBoxTS17.Controls.Add(this.chkAutoAGCRX2);
             this.groupBoxTS17.Controls.Add(this.chkAutoAGCRX1);
-            this.groupBoxTS17.Location = new System.Drawing.Point(264, 230);
+            this.groupBoxTS17.Location = new System.Drawing.Point(264, 118);
             this.groupBoxTS17.Name = "groupBoxTS17";
             this.groupBoxTS17.Size = new System.Drawing.Size(296, 146);
             this.groupBoxTS17.TabIndex = 40;
@@ -37600,21 +37580,13 @@
             // grpDSPLeveler
             // 
             this.grpDSPLeveler.Controls.Add(this.chkDSPLevelerEnabled);
-            this.grpDSPLeveler.Controls.Add(this.lblDSPLevelerHangThreshold);
-            this.grpDSPLeveler.Controls.Add(this.udDSPLevelerHangTime);
-            this.grpDSPLeveler.Controls.Add(this.lblDSPLevelerHangTime);
             this.grpDSPLeveler.Controls.Add(this.udDSPLevelerThreshold);
-            this.grpDSPLeveler.Controls.Add(this.udDSPLevelerSlope);
             this.grpDSPLeveler.Controls.Add(this.udDSPLevelerDecay);
-            this.grpDSPLeveler.Controls.Add(this.lblDSPLevelerSlope);
-            this.grpDSPLeveler.Controls.Add(this.udDSPLevelerAttack);
             this.grpDSPLeveler.Controls.Add(this.lblDSPLevelerDecay);
-            this.grpDSPLeveler.Controls.Add(this.lblDSPLevelerAttack);
             this.grpDSPLeveler.Controls.Add(this.lblDSPLevelerThreshold);
-            this.grpDSPLeveler.Controls.Add(this.tbDSPLevelerHangThreshold);
             this.grpDSPLeveler.Location = new System.Drawing.Point(264, 8);
             this.grpDSPLeveler.Name = "grpDSPLeveler";
-            this.grpDSPLeveler.Size = new System.Drawing.Size(144, 216);
+            this.grpDSPLeveler.Size = new System.Drawing.Size(144, 104);
             this.grpDSPLeveler.TabIndex = 39;
             this.grpDSPLeveler.TabStop = false;
             this.grpDSPLeveler.Text = "Leveler";
@@ -37629,59 +37601,8 @@
             this.chkDSPLevelerEnabled.Size = new System.Drawing.Size(104, 16);
             this.chkDSPLevelerEnabled.TabIndex = 42;
             this.chkDSPLevelerEnabled.Text = "Enabled";
-            this.toolTip1.SetToolTip(this.chkDSPLevelerEnabled, "Check this box to Enable (activate) the leveler feature.");
+            this.toolTip1.SetToolTip(this.chkDSPLevelerEnabled, "Adjust gain if transmit audio increases/decreases");
             this.chkDSPLevelerEnabled.CheckedChanged += new System.EventHandler(this.chkDSPLevelerEnabled_CheckedChanged);
-            // 
-            // lblDSPLevelerHangThreshold
-            // 
-            this.lblDSPLevelerHangThreshold.Image = null;
-            this.lblDSPLevelerHangThreshold.Location = new System.Drawing.Point(8, 168);
-            this.lblDSPLevelerHangThreshold.Name = "lblDSPLevelerHangThreshold";
-            this.lblDSPLevelerHangThreshold.Size = new System.Drawing.Size(88, 16);
-            this.lblDSPLevelerHangThreshold.TabIndex = 41;
-            this.lblDSPLevelerHangThreshold.Text = "Hang Threshold:";
-            this.lblDSPLevelerHangThreshold.Visible = false;
-            // 
-            // udDSPLevelerHangTime
-            // 
-            this.udDSPLevelerHangTime.Enabled = false;
-            this.udDSPLevelerHangTime.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDSPLevelerHangTime.Location = new System.Drawing.Point(88, 144);
-            this.udDSPLevelerHangTime.Maximum = new decimal(new int[] {
-            5000,
-            0,
-            0,
-            0});
-            this.udDSPLevelerHangTime.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udDSPLevelerHangTime.Name = "udDSPLevelerHangTime";
-            this.udDSPLevelerHangTime.Size = new System.Drawing.Size(48, 20);
-            this.udDSPLevelerHangTime.TabIndex = 15;
-            this.udDSPLevelerHangTime.TinyStep = false;
-            this.udDSPLevelerHangTime.Value = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-            this.udDSPLevelerHangTime.Visible = false;
-            this.udDSPLevelerHangTime.LostFocus += new System.EventHandler(this.udDSPLevelerHangTime_LostFocus);
-            // 
-            // lblDSPLevelerHangTime
-            // 
-            this.lblDSPLevelerHangTime.Image = null;
-            this.lblDSPLevelerHangTime.Location = new System.Drawing.Point(8, 146);
-            this.lblDSPLevelerHangTime.Name = "lblDSPLevelerHangTime";
-            this.lblDSPLevelerHangTime.Size = new System.Drawing.Size(72, 16);
-            this.lblDSPLevelerHangTime.TabIndex = 14;
-            this.lblDSPLevelerHangTime.Text = "Hang (ms):";
-            this.lblDSPLevelerHangTime.Visible = false;
             // 
             // udDSPLevelerThreshold
             // 
@@ -37690,7 +37611,7 @@
             0,
             0,
             0});
-            this.udDSPLevelerThreshold.Location = new System.Drawing.Point(88, 72);
+            this.udDSPLevelerThreshold.Location = new System.Drawing.Point(88, 42);
             this.udDSPLevelerThreshold.Maximum = new decimal(new int[] {
             20,
             0,
@@ -37715,37 +37636,6 @@
             this.udDSPLevelerThreshold.ValueChanged += new System.EventHandler(this.udDSPLevelerThreshold_ValueChanged);
             this.udDSPLevelerThreshold.LostFocus += new System.EventHandler(this.udDSPLevelerThreshold_LostFocus);
             // 
-            // udDSPLevelerSlope
-            // 
-            this.udDSPLevelerSlope.Enabled = false;
-            this.udDSPLevelerSlope.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDSPLevelerSlope.Location = new System.Drawing.Point(88, 48);
-            this.udDSPLevelerSlope.Maximum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.udDSPLevelerSlope.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udDSPLevelerSlope.Name = "udDSPLevelerSlope";
-            this.udDSPLevelerSlope.Size = new System.Drawing.Size(40, 20);
-            this.udDSPLevelerSlope.TabIndex = 13;
-            this.udDSPLevelerSlope.TinyStep = false;
-            this.udDSPLevelerSlope.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udDSPLevelerSlope.Visible = false;
-            this.udDSPLevelerSlope.LostFocus += new System.EventHandler(this.udDSPLevelerSlope_LostFocus);
-            // 
             // udDSPLevelerDecay
             // 
             this.udDSPLevelerDecay.Increment = new decimal(new int[] {
@@ -37753,7 +37643,7 @@
             0,
             0,
             0});
-            this.udDSPLevelerDecay.Location = new System.Drawing.Point(88, 120);
+            this.udDSPLevelerDecay.Location = new System.Drawing.Point(88, 68);
             this.udDSPLevelerDecay.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -37768,6 +37658,7 @@
             this.udDSPLevelerDecay.Size = new System.Drawing.Size(48, 20);
             this.udDSPLevelerDecay.TabIndex = 12;
             this.udDSPLevelerDecay.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPLevelerDecay, "Time-constant to increase gain after strong transmit audio");
             this.udDSPLevelerDecay.Value = new decimal(new int[] {
             100,
             0,
@@ -37776,173 +37667,37 @@
             this.udDSPLevelerDecay.ValueChanged += new System.EventHandler(this.udDSPLevelerDecay_ValueChanged);
             this.udDSPLevelerDecay.LostFocus += new System.EventHandler(this.udDSPLevelerDecay_LostFocus);
             // 
-            // lblDSPLevelerSlope
-            // 
-            this.lblDSPLevelerSlope.Enabled = false;
-            this.lblDSPLevelerSlope.Image = null;
-            this.lblDSPLevelerSlope.Location = new System.Drawing.Point(8, 50);
-            this.lblDSPLevelerSlope.Name = "lblDSPLevelerSlope";
-            this.lblDSPLevelerSlope.Size = new System.Drawing.Size(64, 16);
-            this.lblDSPLevelerSlope.TabIndex = 11;
-            this.lblDSPLevelerSlope.Text = "Slope (dB):";
-            this.lblDSPLevelerSlope.Visible = false;
-            // 
-            // udDSPLevelerAttack
-            // 
-            this.udDSPLevelerAttack.Enabled = false;
-            this.udDSPLevelerAttack.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDSPLevelerAttack.Location = new System.Drawing.Point(88, 96);
-            this.udDSPLevelerAttack.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udDSPLevelerAttack.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDSPLevelerAttack.Name = "udDSPLevelerAttack";
-            this.udDSPLevelerAttack.Size = new System.Drawing.Size(40, 20);
-            this.udDSPLevelerAttack.TabIndex = 10;
-            this.udDSPLevelerAttack.TinyStep = false;
-            this.udDSPLevelerAttack.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.udDSPLevelerAttack.Visible = false;
-            this.udDSPLevelerAttack.LostFocus += new System.EventHandler(this.udDSPLevelerAttack_LostFocus);
-            // 
             // lblDSPLevelerDecay
             // 
             this.lblDSPLevelerDecay.Image = null;
-            this.lblDSPLevelerDecay.Location = new System.Drawing.Point(8, 122);
+            this.lblDSPLevelerDecay.Location = new System.Drawing.Point(8, 70);
             this.lblDSPLevelerDecay.Name = "lblDSPLevelerDecay";
             this.lblDSPLevelerDecay.Size = new System.Drawing.Size(72, 16);
             this.lblDSPLevelerDecay.TabIndex = 9;
             this.lblDSPLevelerDecay.Text = "Decay (ms):";
             // 
-            // lblDSPLevelerAttack
-            // 
-            this.lblDSPLevelerAttack.Image = null;
-            this.lblDSPLevelerAttack.Location = new System.Drawing.Point(8, 98);
-            this.lblDSPLevelerAttack.Name = "lblDSPLevelerAttack";
-            this.lblDSPLevelerAttack.Size = new System.Drawing.Size(64, 16);
-            this.lblDSPLevelerAttack.TabIndex = 8;
-            this.lblDSPLevelerAttack.Text = "Attack (ms):";
-            this.lblDSPLevelerAttack.Visible = false;
-            // 
             // lblDSPLevelerThreshold
             // 
             this.lblDSPLevelerThreshold.Image = null;
-            this.lblDSPLevelerThreshold.Location = new System.Drawing.Point(8, 74);
+            this.lblDSPLevelerThreshold.Location = new System.Drawing.Point(8, 44);
             this.lblDSPLevelerThreshold.Name = "lblDSPLevelerThreshold";
             this.lblDSPLevelerThreshold.Size = new System.Drawing.Size(88, 24);
             this.lblDSPLevelerThreshold.TabIndex = 7;
             this.lblDSPLevelerThreshold.Text = "Max.Gain (dB):";
-            // 
-            // tbDSPLevelerHangThreshold
-            // 
-            this.tbDSPLevelerHangThreshold.AutoSize = false;
-            this.tbDSPLevelerHangThreshold.Enabled = false;
-            this.tbDSPLevelerHangThreshold.LargeChange = 1;
-            this.tbDSPLevelerHangThreshold.Location = new System.Drawing.Point(8, 184);
-            this.tbDSPLevelerHangThreshold.Maximum = 100;
-            this.tbDSPLevelerHangThreshold.Name = "tbDSPLevelerHangThreshold";
-            this.tbDSPLevelerHangThreshold.Size = new System.Drawing.Size(128, 16);
-            this.tbDSPLevelerHangThreshold.TabIndex = 40;
-            this.tbDSPLevelerHangThreshold.TickFrequency = 10;
-            this.tbDSPLevelerHangThreshold.Visible = false;
+            this.toolTip1.SetToolTip(this.lblDSPLevelerThreshold, "Maximum gain to apply to transmit audio");
             // 
             // grpDSPALC
             // 
-            this.grpDSPALC.Controls.Add(this.lblDSPALCHangThreshold);
-            this.grpDSPALC.Controls.Add(this.tbDSPALCHangThreshold);
-            this.grpDSPALC.Controls.Add(this.udDSPALCHangTime);
-            this.grpDSPALC.Controls.Add(this.lblDSPALCHangTime);
             this.grpDSPALC.Controls.Add(this.udDSPALCMaximumGain);
-            this.grpDSPALC.Controls.Add(this.udDSPALCSlope);
             this.grpDSPALC.Controls.Add(this.udDSPALCDecay);
-            this.grpDSPALC.Controls.Add(this.lblDSPALCSlope);
-            this.grpDSPALC.Controls.Add(this.udDSPALCAttack);
             this.grpDSPALC.Controls.Add(this.lblDSPALCDecay);
-            this.grpDSPALC.Controls.Add(this.lblDSPALCAttack);
             this.grpDSPALC.Controls.Add(this.lblDSPALCThreshold);
             this.grpDSPALC.Location = new System.Drawing.Point(416, 8);
             this.grpDSPALC.Name = "grpDSPALC";
-            this.grpDSPALC.Size = new System.Drawing.Size(144, 216);
+            this.grpDSPALC.Size = new System.Drawing.Size(144, 104);
             this.grpDSPALC.TabIndex = 38;
             this.grpDSPALC.TabStop = false;
             this.grpDSPALC.Text = "ALC";
-            // 
-            // lblDSPALCHangThreshold
-            // 
-            this.lblDSPALCHangThreshold.Image = null;
-            this.lblDSPALCHangThreshold.Location = new System.Drawing.Point(8, 168);
-            this.lblDSPALCHangThreshold.Name = "lblDSPALCHangThreshold";
-            this.lblDSPALCHangThreshold.Size = new System.Drawing.Size(88, 16);
-            this.lblDSPALCHangThreshold.TabIndex = 43;
-            this.lblDSPALCHangThreshold.Text = "Hang Threshold:";
-            this.lblDSPALCHangThreshold.Visible = false;
-            // 
-            // tbDSPALCHangThreshold
-            // 
-            this.tbDSPALCHangThreshold.AutoSize = false;
-            this.tbDSPALCHangThreshold.Enabled = false;
-            this.tbDSPALCHangThreshold.LargeChange = 1;
-            this.tbDSPALCHangThreshold.Location = new System.Drawing.Point(8, 184);
-            this.tbDSPALCHangThreshold.Maximum = 100;
-            this.tbDSPALCHangThreshold.Name = "tbDSPALCHangThreshold";
-            this.tbDSPALCHangThreshold.Size = new System.Drawing.Size(128, 16);
-            this.tbDSPALCHangThreshold.TabIndex = 42;
-            this.tbDSPALCHangThreshold.TickFrequency = 10;
-            this.tbDSPALCHangThreshold.Visible = false;
-            // 
-            // udDSPALCHangTime
-            // 
-            this.udDSPALCHangTime.Enabled = false;
-            this.udDSPALCHangTime.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDSPALCHangTime.Location = new System.Drawing.Point(88, 144);
-            this.udDSPALCHangTime.Maximum = new decimal(new int[] {
-            5000,
-            0,
-            0,
-            0});
-            this.udDSPALCHangTime.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udDSPALCHangTime.Name = "udDSPALCHangTime";
-            this.udDSPALCHangTime.Size = new System.Drawing.Size(48, 20);
-            this.udDSPALCHangTime.TabIndex = 17;
-            this.udDSPALCHangTime.TinyStep = false;
-            this.udDSPALCHangTime.Value = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-            this.udDSPALCHangTime.Visible = false;
-            this.udDSPALCHangTime.LostFocus += new System.EventHandler(this.udDSPALCHangTime_LostFocus);
-            // 
-            // lblDSPALCHangTime
-            // 
-            this.lblDSPALCHangTime.Image = null;
-            this.lblDSPALCHangTime.Location = new System.Drawing.Point(8, 146);
-            this.lblDSPALCHangTime.Name = "lblDSPALCHangTime";
-            this.lblDSPALCHangTime.Size = new System.Drawing.Size(72, 16);
-            this.lblDSPALCHangTime.TabIndex = 16;
-            this.lblDSPALCHangTime.Text = "Hang (ms):";
-            this.lblDSPALCHangTime.Visible = false;
             // 
             // udDSPALCMaximumGain
             // 
@@ -37951,7 +37706,7 @@
             0,
             0,
             0});
-            this.udDSPALCMaximumGain.Location = new System.Drawing.Point(88, 72);
+            this.udDSPALCMaximumGain.Location = new System.Drawing.Point(86, 42);
             this.udDSPALCMaximumGain.Maximum = new decimal(new int[] {
             120,
             0,
@@ -37966,8 +37721,7 @@
             this.udDSPALCMaximumGain.Size = new System.Drawing.Size(48, 20);
             this.udDSPALCMaximumGain.TabIndex = 6;
             this.udDSPALCMaximumGain.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPALCMaximumGain, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
-        "in over this Max Gain is applied.");
+            this.toolTip1.SetToolTip(this.udDSPALCMaximumGain, "Maximum gain to apply before ALC limiting");
             this.udDSPALCMaximumGain.Value = new decimal(new int[] {
             3,
             0,
@@ -37976,37 +37730,6 @@
             this.udDSPALCMaximumGain.ValueChanged += new System.EventHandler(this.udDSPALCMaximumGain_ValueChanged);
             this.udDSPALCMaximumGain.LostFocus += new System.EventHandler(this.udDSPALCThreshold_LostFocus);
             // 
-            // udDSPALCSlope
-            // 
-            this.udDSPALCSlope.Enabled = false;
-            this.udDSPALCSlope.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDSPALCSlope.Location = new System.Drawing.Point(88, 48);
-            this.udDSPALCSlope.Maximum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.udDSPALCSlope.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udDSPALCSlope.Name = "udDSPALCSlope";
-            this.udDSPALCSlope.Size = new System.Drawing.Size(40, 20);
-            this.udDSPALCSlope.TabIndex = 13;
-            this.udDSPALCSlope.TinyStep = false;
-            this.udDSPALCSlope.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udDSPALCSlope.Visible = false;
-            this.udDSPALCSlope.LostFocus += new System.EventHandler(this.udDSPALCSlope_LostFocus);
-            // 
             // udDSPALCDecay
             // 
             this.udDSPALCDecay.Increment = new decimal(new int[] {
@@ -38014,7 +37737,7 @@
             0,
             0,
             0});
-            this.udDSPALCDecay.Location = new System.Drawing.Point(88, 120);
+            this.udDSPALCDecay.Location = new System.Drawing.Point(86, 68);
             this.udDSPALCDecay.Maximum = new decimal(new int[] {
             50,
             0,
@@ -38029,6 +37752,7 @@
             this.udDSPALCDecay.Size = new System.Drawing.Size(48, 20);
             this.udDSPALCDecay.TabIndex = 12;
             this.udDSPALCDecay.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPALCDecay, "Time-constant to increase gain after strong transmit signal");
             this.udDSPALCDecay.Value = new decimal(new int[] {
             10,
             0,
@@ -38037,70 +37761,19 @@
             this.udDSPALCDecay.ValueChanged += new System.EventHandler(this.udDSPALCDecay_ValueChanged);
             this.udDSPALCDecay.LostFocus += new System.EventHandler(this.udDSPALCDecay_LostFocus);
             // 
-            // lblDSPALCSlope
-            // 
-            this.lblDSPALCSlope.Image = null;
-            this.lblDSPALCSlope.Location = new System.Drawing.Point(8, 50);
-            this.lblDSPALCSlope.Name = "lblDSPALCSlope";
-            this.lblDSPALCSlope.Size = new System.Drawing.Size(64, 16);
-            this.lblDSPALCSlope.TabIndex = 11;
-            this.lblDSPALCSlope.Text = "Slope (dB):";
-            this.lblDSPALCSlope.Visible = false;
-            // 
-            // udDSPALCAttack
-            // 
-            this.udDSPALCAttack.Enabled = false;
-            this.udDSPALCAttack.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDSPALCAttack.Location = new System.Drawing.Point(88, 96);
-            this.udDSPALCAttack.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udDSPALCAttack.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDSPALCAttack.Name = "udDSPALCAttack";
-            this.udDSPALCAttack.Size = new System.Drawing.Size(40, 20);
-            this.udDSPALCAttack.TabIndex = 10;
-            this.udDSPALCAttack.TinyStep = false;
-            this.udDSPALCAttack.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.udDSPALCAttack.Visible = false;
-            this.udDSPALCAttack.LostFocus += new System.EventHandler(this.udDSPALCAttack_LostFocus);
-            // 
             // lblDSPALCDecay
             // 
             this.lblDSPALCDecay.Image = null;
-            this.lblDSPALCDecay.Location = new System.Drawing.Point(8, 122);
+            this.lblDSPALCDecay.Location = new System.Drawing.Point(6, 70);
             this.lblDSPALCDecay.Name = "lblDSPALCDecay";
             this.lblDSPALCDecay.Size = new System.Drawing.Size(72, 16);
             this.lblDSPALCDecay.TabIndex = 9;
             this.lblDSPALCDecay.Text = "Decay (ms):";
             // 
-            // lblDSPALCAttack
-            // 
-            this.lblDSPALCAttack.Image = null;
-            this.lblDSPALCAttack.Location = new System.Drawing.Point(8, 98);
-            this.lblDSPALCAttack.Name = "lblDSPALCAttack";
-            this.lblDSPALCAttack.Size = new System.Drawing.Size(64, 16);
-            this.lblDSPALCAttack.TabIndex = 8;
-            this.lblDSPALCAttack.Text = "Attack (ms):";
-            this.lblDSPALCAttack.Visible = false;
-            // 
             // lblDSPALCThreshold
             // 
             this.lblDSPALCThreshold.Image = null;
-            this.lblDSPALCThreshold.Location = new System.Drawing.Point(8, 74);
+            this.lblDSPALCThreshold.Location = new System.Drawing.Point(6, 44);
             this.lblDSPALCThreshold.Name = "lblDSPALCThreshold";
             this.lblDSPALCThreshold.Size = new System.Drawing.Size(88, 24);
             this.lblDSPALCThreshold.TabIndex = 7;
@@ -38123,7 +37796,6 @@
             this.grpDSPAGC.Controls.Add(this.labelTS137);
             this.grpDSPAGC.Controls.Add(this.udDSPAGCRX2HangTime);
             this.grpDSPAGC.Controls.Add(this.udDSPAGCRX2Decay);
-            this.grpDSPAGC.Controls.Add(this.udDSPAGCRX2Attack);
             this.grpDSPAGC.Controls.Add(this.udDSPAGCRX2Slope);
             this.grpDSPAGC.Controls.Add(this.tbDSPAGCRX2HangThreshold);
             this.grpDSPAGC.Controls.Add(this.udDSPAGCRX2MaxGaindB);
@@ -38136,9 +37808,7 @@
             this.grpDSPAGC.Controls.Add(this.udDSPAGCSlope);
             this.grpDSPAGC.Controls.Add(this.udDSPAGCDecay);
             this.grpDSPAGC.Controls.Add(this.lblDSPAGCSlope);
-            this.grpDSPAGC.Controls.Add(this.udDSPAGCAttack);
             this.grpDSPAGC.Controls.Add(this.lblDSPAGCDecay);
-            this.grpDSPAGC.Controls.Add(this.lblDSPAGCAttack);
             this.grpDSPAGC.Controls.Add(this.lblDSPAGCMaxGain);
             this.grpDSPAGC.Controls.Add(this.udDSPAGCFixedGaindB);
             this.grpDSPAGC.Controls.Add(this.lblDSPAGCFixed);
@@ -38256,7 +37926,7 @@
             // labelTS138
             // 
             this.labelTS138.Image = null;
-            this.labelTS138.Location = new System.Drawing.Point(158, 209);
+            this.labelTS138.Location = new System.Drawing.Point(158, 195);
             this.labelTS138.Name = "labelTS138";
             this.labelTS138.Size = new System.Drawing.Size(36, 16);
             this.labelTS138.TabIndex = 121;
@@ -38287,7 +37957,7 @@
             // labelTS137
             // 
             this.labelTS137.Image = null;
-            this.labelTS137.Location = new System.Drawing.Point(158, 182);
+            this.labelTS137.Location = new System.Drawing.Point(158, 168);
             this.labelTS137.Name = "labelTS137";
             this.labelTS137.Size = new System.Drawing.Size(36, 16);
             this.labelTS137.TabIndex = 55;
@@ -38301,7 +37971,7 @@
             0,
             0,
             0});
-            this.udDSPAGCRX2HangTime.Location = new System.Drawing.Point(177, 120);
+            this.udDSPAGCRX2HangTime.Location = new System.Drawing.Point(177, 98);
             this.udDSPAGCRX2HangTime.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -38316,6 +37986,7 @@
             this.udDSPAGCRX2HangTime.Size = new System.Drawing.Size(48, 20);
             this.udDSPAGCRX2HangTime.TabIndex = 54;
             this.udDSPAGCRX2HangTime.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPAGCRX2HangTime, "Time to hold constant gain after strong signal");
             this.udDSPAGCRX2HangTime.Value = new decimal(new int[] {
             250,
             0,
@@ -38331,7 +38002,7 @@
             0,
             0,
             0});
-            this.udDSPAGCRX2Decay.Location = new System.Drawing.Point(177, 96);
+            this.udDSPAGCRX2Decay.Location = new System.Drawing.Point(177, 74);
             this.udDSPAGCRX2Decay.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -38346,42 +38017,13 @@
             this.udDSPAGCRX2Decay.Size = new System.Drawing.Size(48, 20);
             this.udDSPAGCRX2Decay.TabIndex = 53;
             this.udDSPAGCRX2Decay.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPAGCRX2Decay, "Time-constant to increase signal amplitude after strong signal");
             this.udDSPAGCRX2Decay.Value = new decimal(new int[] {
             250,
             0,
             0,
             0});
             this.udDSPAGCRX2Decay.ValueChanged += new System.EventHandler(this.udDSPAGCRX2Decay_ValueChanged);
-            // 
-            // udDSPAGCRX2Attack
-            // 
-            this.udDSPAGCRX2Attack.Enabled = false;
-            this.udDSPAGCRX2Attack.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDSPAGCRX2Attack.Location = new System.Drawing.Point(177, 72);
-            this.udDSPAGCRX2Attack.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udDSPAGCRX2Attack.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDSPAGCRX2Attack.Name = "udDSPAGCRX2Attack";
-            this.udDSPAGCRX2Attack.Size = new System.Drawing.Size(40, 20);
-            this.udDSPAGCRX2Attack.TabIndex = 52;
-            this.udDSPAGCRX2Attack.TinyStep = false;
-            this.udDSPAGCRX2Attack.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.udDSPAGCRX2Attack.Visible = false;
             // 
             // udDSPAGCRX2Slope
             // 
@@ -38406,6 +38048,7 @@
             this.udDSPAGCRX2Slope.TabIndex = 51;
             this.udDSPAGCRX2Slope.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udDSPAGCRX2Slope.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPAGCRX2Slope, "Gain difference for weak and strong signals");
             this.udDSPAGCRX2Slope.Value = new decimal(new int[] {
             0,
             0,
@@ -38418,12 +38061,13 @@
             this.tbDSPAGCRX2HangThreshold.AutoSize = false;
             this.tbDSPAGCRX2HangThreshold.BackColor = System.Drawing.Color.Black;
             this.tbDSPAGCRX2HangThreshold.LargeChange = 1;
-            this.tbDSPAGCRX2HangThreshold.Location = new System.Drawing.Point(8, 209);
+            this.tbDSPAGCRX2HangThreshold.Location = new System.Drawing.Point(8, 195);
             this.tbDSPAGCRX2HangThreshold.Maximum = 100;
             this.tbDSPAGCRX2HangThreshold.Name = "tbDSPAGCRX2HangThreshold";
             this.tbDSPAGCRX2HangThreshold.Size = new System.Drawing.Size(144, 16);
             this.tbDSPAGCRX2HangThreshold.TabIndex = 50;
             this.tbDSPAGCRX2HangThreshold.TickFrequency = 10;
+            this.toolTip1.SetToolTip(this.tbDSPAGCRX2HangThreshold, "Level at which the ‘hang’ function is engaged");
             this.tbDSPAGCRX2HangThreshold.Scroll += new System.EventHandler(this.tbDSPAGCRX2HangThreshold_Scroll);
             // 
             // udDSPAGCRX2MaxGaindB
@@ -38464,7 +38108,7 @@
             0,
             0,
             0});
-            this.udDSPAGCRX2FixedGaindB.Location = new System.Drawing.Point(177, 144);
+            this.udDSPAGCRX2FixedGaindB.Location = new System.Drawing.Point(177, 122);
             this.udDSPAGCRX2FixedGaindB.Maximum = new decimal(new int[] {
             120,
             0,
@@ -38479,8 +38123,7 @@
             this.udDSPAGCRX2FixedGaindB.Size = new System.Drawing.Size(40, 20);
             this.udDSPAGCRX2FixedGaindB.TabIndex = 48;
             this.udDSPAGCRX2FixedGaindB.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPAGCRX2FixedGaindB, "When you choose Fixed AGC on the front panel, this number is used to multiply the" +
-        " signal.");
+            this.toolTip1.SetToolTip(this.udDSPAGCRX2FixedGaindB, "Gain when AGC is disabled");
             this.udDSPAGCRX2FixedGaindB.Value = new decimal(new int[] {
             20,
             0,
@@ -38493,18 +38136,19 @@
             this.tbDSPAGCHangThreshold.AutoSize = false;
             this.tbDSPAGCHangThreshold.BackColor = System.Drawing.Color.Black;
             this.tbDSPAGCHangThreshold.LargeChange = 1;
-            this.tbDSPAGCHangThreshold.Location = new System.Drawing.Point(8, 182);
+            this.tbDSPAGCHangThreshold.Location = new System.Drawing.Point(8, 168);
             this.tbDSPAGCHangThreshold.Maximum = 100;
             this.tbDSPAGCHangThreshold.Name = "tbDSPAGCHangThreshold";
             this.tbDSPAGCHangThreshold.Size = new System.Drawing.Size(144, 16);
             this.tbDSPAGCHangThreshold.TabIndex = 47;
             this.tbDSPAGCHangThreshold.TickFrequency = 10;
+            this.toolTip1.SetToolTip(this.tbDSPAGCHangThreshold, "Level at which the ‘hang’ function is engaged");
             this.tbDSPAGCHangThreshold.Scroll += new System.EventHandler(this.tbDSPAGCHangThreshold_Scroll);
             // 
             // lblDSPAGCHangThreshold
             // 
             this.lblDSPAGCHangThreshold.Image = null;
-            this.lblDSPAGCHangThreshold.Location = new System.Drawing.Point(8, 165);
+            this.lblDSPAGCHangThreshold.Location = new System.Drawing.Point(8, 151);
             this.lblDSPAGCHangThreshold.Name = "lblDSPAGCHangThreshold";
             this.lblDSPAGCHangThreshold.Size = new System.Drawing.Size(88, 16);
             this.lblDSPAGCHangThreshold.TabIndex = 46;
@@ -38513,7 +38157,7 @@
             // lblDSPAGCHangTime
             // 
             this.lblDSPAGCHangTime.Image = null;
-            this.lblDSPAGCHangTime.Location = new System.Drawing.Point(8, 122);
+            this.lblDSPAGCHangTime.Location = new System.Drawing.Point(8, 100);
             this.lblDSPAGCHangTime.Name = "lblDSPAGCHangTime";
             this.lblDSPAGCHangTime.Size = new System.Drawing.Size(72, 16);
             this.lblDSPAGCHangTime.TabIndex = 45;
@@ -38527,7 +38171,7 @@
             0,
             0,
             0});
-            this.udDSPAGCHangTime.Location = new System.Drawing.Point(104, 120);
+            this.udDSPAGCHangTime.Location = new System.Drawing.Point(104, 98);
             this.udDSPAGCHangTime.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -38542,6 +38186,7 @@
             this.udDSPAGCHangTime.Size = new System.Drawing.Size(48, 20);
             this.udDSPAGCHangTime.TabIndex = 44;
             this.udDSPAGCHangTime.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPAGCHangTime, "Time to hold constant gain after strong signal");
             this.udDSPAGCHangTime.Value = new decimal(new int[] {
             250,
             0,
@@ -38605,6 +38250,7 @@
             this.udDSPAGCSlope.TabIndex = 13;
             this.udDSPAGCSlope.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.udDSPAGCSlope.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPAGCSlope, "Gain difference for weak and strong signals");
             this.udDSPAGCSlope.Value = new decimal(new int[] {
             0,
             0,
@@ -38621,7 +38267,7 @@
             0,
             0,
             0});
-            this.udDSPAGCDecay.Location = new System.Drawing.Point(104, 96);
+            this.udDSPAGCDecay.Location = new System.Drawing.Point(104, 74);
             this.udDSPAGCDecay.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -38636,6 +38282,7 @@
             this.udDSPAGCDecay.Size = new System.Drawing.Size(48, 20);
             this.udDSPAGCDecay.TabIndex = 12;
             this.udDSPAGCDecay.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPAGCDecay, "Time-constant to increase signal amplitude after strong signal");
             this.udDSPAGCDecay.Value = new decimal(new int[] {
             250,
             0,
@@ -38653,55 +38300,14 @@
             this.lblDSPAGCSlope.TabIndex = 11;
             this.lblDSPAGCSlope.Text = "Slope (dB):";
             // 
-            // udDSPAGCAttack
-            // 
-            this.udDSPAGCAttack.Enabled = false;
-            this.udDSPAGCAttack.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDSPAGCAttack.Location = new System.Drawing.Point(104, 72);
-            this.udDSPAGCAttack.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udDSPAGCAttack.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udDSPAGCAttack.Name = "udDSPAGCAttack";
-            this.udDSPAGCAttack.Size = new System.Drawing.Size(40, 20);
-            this.udDSPAGCAttack.TabIndex = 10;
-            this.udDSPAGCAttack.TinyStep = false;
-            this.udDSPAGCAttack.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.udDSPAGCAttack.Visible = false;
-            this.udDSPAGCAttack.LostFocus += new System.EventHandler(this.udDSPAGCAttack_LostFocus);
-            // 
             // lblDSPAGCDecay
             // 
             this.lblDSPAGCDecay.Image = null;
-            this.lblDSPAGCDecay.Location = new System.Drawing.Point(8, 98);
+            this.lblDSPAGCDecay.Location = new System.Drawing.Point(8, 76);
             this.lblDSPAGCDecay.Name = "lblDSPAGCDecay";
             this.lblDSPAGCDecay.Size = new System.Drawing.Size(72, 16);
             this.lblDSPAGCDecay.TabIndex = 9;
             this.lblDSPAGCDecay.Text = "Decay (ms):";
-            // 
-            // lblDSPAGCAttack
-            // 
-            this.lblDSPAGCAttack.Image = null;
-            this.lblDSPAGCAttack.Location = new System.Drawing.Point(8, 74);
-            this.lblDSPAGCAttack.Name = "lblDSPAGCAttack";
-            this.lblDSPAGCAttack.Size = new System.Drawing.Size(64, 16);
-            this.lblDSPAGCAttack.TabIndex = 8;
-            this.lblDSPAGCAttack.Text = "Attack (ms):";
-            this.lblDSPAGCAttack.Visible = false;
             // 
             // lblDSPAGCMaxGain
             // 
@@ -38719,7 +38325,7 @@
             0,
             0,
             0});
-            this.udDSPAGCFixedGaindB.Location = new System.Drawing.Point(104, 144);
+            this.udDSPAGCFixedGaindB.Location = new System.Drawing.Point(104, 122);
             this.udDSPAGCFixedGaindB.Maximum = new decimal(new int[] {
             120,
             0,
@@ -38734,8 +38340,7 @@
             this.udDSPAGCFixedGaindB.Size = new System.Drawing.Size(40, 20);
             this.udDSPAGCFixedGaindB.TabIndex = 4;
             this.udDSPAGCFixedGaindB.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPAGCFixedGaindB, "When you choose Fixed AGC on the front panel, this number is used to multiply the" +
-        " signal.");
+            this.toolTip1.SetToolTip(this.udDSPAGCFixedGaindB, "Gain when AGC is disabled");
             this.udDSPAGCFixedGaindB.Value = new decimal(new int[] {
             20,
             0,
@@ -38747,7 +38352,7 @@
             // lblDSPAGCFixed
             // 
             this.lblDSPAGCFixed.Image = null;
-            this.lblDSPAGCFixed.Location = new System.Drawing.Point(8, 146);
+            this.lblDSPAGCFixed.Location = new System.Drawing.Point(8, 124);
             this.lblDSPAGCFixed.Name = "lblDSPAGCFixed";
             this.lblDSPAGCFixed.Size = new System.Drawing.Size(88, 16);
             this.lblDSPAGCFixed.TabIndex = 5;
@@ -39000,6 +38605,7 @@
             this.udRXAMSQMaxTail.Size = new System.Drawing.Size(38, 20);
             this.udRXAMSQMaxTail.TabIndex = 0;
             this.udRXAMSQMaxTail.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udRXAMSQMaxTail, "Maximum time to hold squelch open after signal");
             this.udRXAMSQMaxTail.Value = new decimal(new int[] {
             1,
             0,
@@ -39030,6 +38636,7 @@
             this.chkCBlock.Size = new System.Drawing.Size(71, 17);
             this.chkCBlock.TabIndex = 2;
             this.chkCBlock.Text = "DC Block";
+            this.toolTip1.SetToolTip(this.chkCBlock, "Block carrier in output audio");
             this.chkCBlock.UseVisualStyleBackColor = true;
             this.chkCBlock.CheckedChanged += new System.EventHandler(this.chkCBlock_CheckedChanged);
             // 
@@ -39044,6 +38651,7 @@
             this.chkLevelFades.Size = new System.Drawing.Size(88, 17);
             this.chkLevelFades.TabIndex = 1;
             this.chkLevelFades.Text = "Fade Leveler";
+            this.toolTip1.SetToolTip(this.chkLevelFades, "Insert stable carrier to replace fading carrier");
             this.chkLevelFades.UseVisualStyleBackColor = true;
             this.chkLevelFades.CheckedChanged += new System.EventHandler(this.chkLevelFades_CheckedChanged);
             // 
@@ -39120,6 +38728,7 @@
             this.chkRX2CBlock.Size = new System.Drawing.Size(71, 17);
             this.chkRX2CBlock.TabIndex = 2;
             this.chkRX2CBlock.Text = "DC Block";
+            this.toolTip1.SetToolTip(this.chkRX2CBlock, "Block carrier in output audio");
             this.chkRX2CBlock.UseVisualStyleBackColor = true;
             this.chkRX2CBlock.CheckedChanged += new System.EventHandler(this.chkRX2CBlock_CheckedChanged);
             // 
@@ -39134,6 +38743,7 @@
             this.chkRX2LevelFades.Size = new System.Drawing.Size(88, 17);
             this.chkRX2LevelFades.TabIndex = 1;
             this.chkRX2LevelFades.Text = "Fade Leveler";
+            this.toolTip1.SetToolTip(this.chkRX2LevelFades, "Insert stable carrier to replace fading carrier");
             this.chkRX2LevelFades.UseVisualStyleBackColor = true;
             this.chkRX2LevelFades.CheckedChanged += new System.EventHandler(this.chkRX2LevelFades_CheckedChanged);
             // 
@@ -39364,6 +38974,7 @@
             this.tbDSPFMDetLimGain.Size = new System.Drawing.Size(180, 20);
             this.tbDSPFMDetLimGain.TabIndex = 51;
             this.tbDSPFMDetLimGain.TickFrequency = 2;
+            this.toolTip1.SetToolTip(this.tbDSPFMDetLimGain, "Maximum gain applied by the limiter");
             this.tbDSPFMDetLimGain.Value = 10;
             this.tbDSPFMDetLimGain.Scroll += new System.EventHandler(this.tbDSPDetLimGain_Scroll);
             // 
@@ -39376,6 +38987,7 @@
             this.chkFMDetLimON.Size = new System.Drawing.Size(100, 17);
             this.chkFMDetLimON.TabIndex = 1;
             this.chkFMDetLimON.Text = "Limiter ON/OFF";
+            this.toolTip1.SetToolTip(this.chkFMDetLimON, " Level noise/signal volume, especially useful for weak signals with squelch OFF");
             this.chkFMDetLimON.UseVisualStyleBackColor = true;
             this.chkFMDetLimON.CheckedChanged += new System.EventHandler(this.chkFMDetLimON_CheckedChanged);
             // 
@@ -39390,6 +39002,7 @@
             this.chkRemoveTone.Size = new System.Drawing.Size(132, 17);
             this.chkRemoveTone.TabIndex = 0;
             this.chkRemoveTone.Text = "Remove CTCSS Tone";
+            this.toolTip1.SetToolTip(this.chkRemoveTone, "Remove the CTCSS tone from the RX audio");
             this.chkRemoveTone.UseVisualStyleBackColor = true;
             this.chkRemoveTone.CheckedChanged += new System.EventHandler(this.chkRemoveTone_CheckedChanged);
             // 
@@ -39594,6 +39207,7 @@
             this.udDSPRX2DollyF1.Size = new System.Drawing.Size(50, 20);
             this.udDSPRX2DollyF1.TabIndex = 3;
             this.udDSPRX2DollyF1.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPRX2DollyF1, "RTTY MARK frequency");
             this.udDSPRX2DollyF1.Value = new decimal(new int[] {
             2295,
             0,
@@ -39623,6 +39237,7 @@
             this.udDSPRX2DollyF0.Size = new System.Drawing.Size(50, 20);
             this.udDSPRX2DollyF0.TabIndex = 2;
             this.udDSPRX2DollyF0.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPRX2DollyF0, "RTTY SPACE frequency");
             this.udDSPRX2DollyF0.Value = new decimal(new int[] {
             2125,
             0,
@@ -39639,6 +39254,7 @@
             this.chkDSPRX2DollyEnable.Size = new System.Drawing.Size(59, 17);
             this.chkDSPRX2DollyEnable.TabIndex = 1;
             this.chkDSPRX2DollyEnable.Text = "Enable";
+            this.toolTip1.SetToolTip(this.chkDSPRX2DollyEnable, "RTTY Dual-lobe Filter");
             this.chkDSPRX2DollyEnable.UseVisualStyleBackColor = true;
             this.chkDSPRX2DollyEnable.CheckedChanged += new System.EventHandler(this.chkDSPRX2DollyEnable_CheckedChanged);
             // 
@@ -39698,6 +39314,7 @@
             this.udDSPRX1SubDollyF1.Size = new System.Drawing.Size(50, 20);
             this.udDSPRX1SubDollyF1.TabIndex = 3;
             this.udDSPRX1SubDollyF1.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPRX1SubDollyF1, "RTTY MARK frequency");
             this.udDSPRX1SubDollyF1.Value = new decimal(new int[] {
             2295,
             0,
@@ -39727,6 +39344,7 @@
             this.udDSPRX1SubDollyF0.Size = new System.Drawing.Size(50, 20);
             this.udDSPRX1SubDollyF0.TabIndex = 2;
             this.udDSPRX1SubDollyF0.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPRX1SubDollyF0, "RTTY SPACE frequency");
             this.udDSPRX1SubDollyF0.Value = new decimal(new int[] {
             2125,
             0,
@@ -39743,6 +39361,7 @@
             this.chkDSPRX1SubDollyEnable.Size = new System.Drawing.Size(59, 17);
             this.chkDSPRX1SubDollyEnable.TabIndex = 1;
             this.chkDSPRX1SubDollyEnable.Text = "Enable";
+            this.toolTip1.SetToolTip(this.chkDSPRX1SubDollyEnable, "RTTY Dual-lobe Filter");
             this.chkDSPRX1SubDollyEnable.UseVisualStyleBackColor = true;
             this.chkDSPRX1SubDollyEnable.CheckedChanged += new System.EventHandler(this.chkDSPRX1DollySubEnable_CheckedChanged);
             // 
@@ -39802,6 +39421,7 @@
             this.udDSPRX1DollyF1.Size = new System.Drawing.Size(50, 20);
             this.udDSPRX1DollyF1.TabIndex = 3;
             this.udDSPRX1DollyF1.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPRX1DollyF1, "RTTY MARK frequency");
             this.udDSPRX1DollyF1.Value = new decimal(new int[] {
             2295,
             0,
@@ -39831,6 +39451,7 @@
             this.udDSPRX1DollyF0.Size = new System.Drawing.Size(50, 20);
             this.udDSPRX1DollyF0.TabIndex = 2;
             this.udDSPRX1DollyF0.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPRX1DollyF0, "RTTY SPACE frequency");
             this.udDSPRX1DollyF0.Value = new decimal(new int[] {
             2125,
             0,
@@ -39847,6 +39468,7 @@
             this.chkDSPRX1DollyEnable.Size = new System.Drawing.Size(59, 17);
             this.chkDSPRX1DollyEnable.TabIndex = 1;
             this.chkDSPRX1DollyEnable.Text = "Enable";
+            this.toolTip1.SetToolTip(this.chkDSPRX1DollyEnable, "RTTY Dual-lobe Filter");
             this.chkDSPRX1DollyEnable.UseVisualStyleBackColor = true;
             this.chkDSPRX1DollyEnable.CheckedChanged += new System.EventHandler(this.chkDSPRX1DollyEnable_CheckedChanged);
             // 
@@ -39873,6 +39495,7 @@
             this.radDSPRX1APFControls.TabIndex = 50;
             this.radDSPRX1APFControls.TabStop = true;
             this.radDSPRX1APFControls.Text = "RX1";
+            this.toolTip1.SetToolTip(this.radDSPRX1APFControls, "Set which RX is controlled by the APF controls on the console");
             this.radDSPRX1APFControls.UseVisualStyleBackColor = true;
             this.radDSPRX1APFControls.CheckedChanged += new System.EventHandler(this.radDSPRX1APFControls_CheckedChanged);
             // 
@@ -39885,6 +39508,7 @@
             this.radDSPRX2APFControls.Size = new System.Drawing.Size(46, 17);
             this.radDSPRX2APFControls.TabIndex = 52;
             this.radDSPRX2APFControls.Text = "RX2";
+            this.toolTip1.SetToolTip(this.radDSPRX2APFControls, "Set which RX is controlled by the APF controls on the console");
             this.radDSPRX2APFControls.UseVisualStyleBackColor = true;
             this.radDSPRX2APFControls.CheckedChanged += new System.EventHandler(this.radDSPRX2APFControls_CheckedChanged);
             // 
@@ -39897,6 +39521,7 @@
             this.radDSPRX1subAPFControls.Size = new System.Drawing.Size(68, 17);
             this.radDSPRX1subAPFControls.TabIndex = 51;
             this.radDSPRX1subAPFControls.Text = "RX1 Sub";
+            this.toolTip1.SetToolTip(this.radDSPRX1subAPFControls, "Set which RX is controlled by the APF controls on the console");
             this.radDSPRX1subAPFControls.UseVisualStyleBackColor = true;
             this.radDSPRX1subAPFControls.CheckedChanged += new System.EventHandler(this.radDSPRX1subAPFControls_CheckedChanged);
             // 
@@ -39932,6 +39557,7 @@
             this.tbDSPAudRX2APFGain.Size = new System.Drawing.Size(100, 16);
             this.tbDSPAudRX2APFGain.TabIndex = 60;
             this.tbDSPAudRX2APFGain.TickFrequency = 10;
+            this.toolTip1.SetToolTip(this.tbDSPAudRX2APFGain, "Gain of Audio Peaking Filter");
             this.tbDSPAudRX2APFGain.ValueChanged += new System.EventHandler(this.tbDSPAudRX2APFGain_ValueChanged);
             this.tbDSPAudRX2APFGain.LostFocus += new System.EventHandler(this.tbDSPAudRX2APFGain_LostFocus);
             // 
@@ -40022,6 +39648,7 @@
             this.tbRX2APFBW.Size = new System.Drawing.Size(193, 16);
             this.tbRX2APFBW.TabIndex = 52;
             this.tbRX2APFBW.TickFrequency = 20;
+            this.toolTip1.SetToolTip(this.tbRX2APFBW, "Approximate -3dB bandwidth of Audio Peaking Filter");
             this.tbRX2APFBW.Value = 150;
             this.tbRX2APFBW.Scroll += new System.EventHandler(this.tbRX2APFBW_Scroll);
             // 
@@ -40037,6 +39664,7 @@
             this.tbRX2APFTune.Size = new System.Drawing.Size(193, 16);
             this.tbRX2APFTune.TabIndex = 51;
             this.tbRX2APFTune.TickFrequency = 50;
+            this.toolTip1.SetToolTip(this.tbRX2APFTune, "Relative center frequency of Audio Peaking Filter");
             this.tbRX2APFTune.Scroll += new System.EventHandler(this.tbRX2APFTune_Scroll);
             // 
             // labelRX2APFGain
@@ -40058,6 +39686,7 @@
             this.chkDSPRX2APFEnable.Size = new System.Drawing.Size(59, 17);
             this.chkDSPRX2APFEnable.TabIndex = 0;
             this.chkDSPRX2APFEnable.Text = "Enable";
+            this.toolTip1.SetToolTip(this.chkDSPRX2APFEnable, "CW Audio Peaking Filter");
             this.chkDSPRX2APFEnable.UseVisualStyleBackColor = true;
             this.chkDSPRX2APFEnable.CheckedChanged += new System.EventHandler(this.chkDSPRX2APFEnable_CheckedChanged);
             // 
@@ -40093,6 +39722,7 @@
             this.tbDSPAudRX1subAPFGain.Size = new System.Drawing.Size(100, 16);
             this.tbDSPAudRX1subAPFGain.TabIndex = 61;
             this.tbDSPAudRX1subAPFGain.TickFrequency = 10;
+            this.toolTip1.SetToolTip(this.tbDSPAudRX1subAPFGain, "Gain of Audio Peaking Filter");
             this.tbDSPAudRX1subAPFGain.ValueChanged += new System.EventHandler(this.tbDSPAudRX1subAPFGain_ValueChanged);
             this.tbDSPAudRX1subAPFGain.LostFocus += new System.EventHandler(this.tbDSPAudRX1subAPFGain_LostFocus);
             // 
@@ -40183,6 +39813,7 @@
             this.tbRX1subAPFBW.Size = new System.Drawing.Size(193, 16);
             this.tbRX1subAPFBW.TabIndex = 52;
             this.tbRX1subAPFBW.TickFrequency = 20;
+            this.toolTip1.SetToolTip(this.tbRX1subAPFBW, "Approximate -3dB bandwidth of Audio Peaking Filter");
             this.tbRX1subAPFBW.Value = 150;
             this.tbRX1subAPFBW.Scroll += new System.EventHandler(this.tbRX1subAPFBW_Scroll);
             // 
@@ -40198,6 +39829,7 @@
             this.tbRX1subAPFTune.Size = new System.Drawing.Size(193, 16);
             this.tbRX1subAPFTune.TabIndex = 51;
             this.tbRX1subAPFTune.TickFrequency = 50;
+            this.toolTip1.SetToolTip(this.tbRX1subAPFTune, "Relative center frequency of Audio Peaking Filter");
             this.tbRX1subAPFTune.Scroll += new System.EventHandler(this.tbRX1subAPFTune_Scroll);
             // 
             // labelRX1subAPFGain
@@ -40219,6 +39851,7 @@
             this.chkDSPRX1subAPFEnable.Size = new System.Drawing.Size(59, 17);
             this.chkDSPRX1subAPFEnable.TabIndex = 0;
             this.chkDSPRX1subAPFEnable.Text = "Enable";
+            this.toolTip1.SetToolTip(this.chkDSPRX1subAPFEnable, "CW Audio Peaking Filter");
             this.chkDSPRX1subAPFEnable.UseVisualStyleBackColor = true;
             this.chkDSPRX1subAPFEnable.CheckedChanged += new System.EventHandler(this.chkDSPRX1subAPFEnable_CheckedChanged);
             // 
@@ -40254,6 +39887,7 @@
             this.tbDSPAudRX1APFGain.Size = new System.Drawing.Size(100, 16);
             this.tbDSPAudRX1APFGain.TabIndex = 61;
             this.tbDSPAudRX1APFGain.TickFrequency = 10;
+            this.toolTip1.SetToolTip(this.tbDSPAudRX1APFGain, "Gain of Audio Peaking Filter");
             this.tbDSPAudRX1APFGain.ValueChanged += new System.EventHandler(this.tbDSPAudRX1APFGain_ValueChanged);
             this.tbDSPAudRX1APFGain.LostFocus += new System.EventHandler(this.tbDSPAudRX1APFGain_LostFocus);
             // 
@@ -40344,6 +39978,7 @@
             this.tbRX1APFBW.Size = new System.Drawing.Size(193, 16);
             this.tbRX1APFBW.TabIndex = 52;
             this.tbRX1APFBW.TickFrequency = 20;
+            this.toolTip1.SetToolTip(this.tbRX1APFBW, "Approximate -3dB bandwidth of Audio Peaking Filter");
             this.tbRX1APFBW.Value = 150;
             this.tbRX1APFBW.Scroll += new System.EventHandler(this.tbRX1APFBW_Scroll);
             // 
@@ -40359,6 +39994,7 @@
             this.tbRX1APFTune.Size = new System.Drawing.Size(193, 16);
             this.tbRX1APFTune.TabIndex = 51;
             this.tbRX1APFTune.TickFrequency = 50;
+            this.toolTip1.SetToolTip(this.tbRX1APFTune, "Relative center frequency of Audio Peaking Filter");
             this.tbRX1APFTune.Scroll += new System.EventHandler(this.tbRX1APFTune_Scroll);
             // 
             // labelRX1APFGain
@@ -40380,6 +40016,7 @@
             this.chkDSPRX1APFEnable.Size = new System.Drawing.Size(59, 17);
             this.chkDSPRX1APFEnable.TabIndex = 0;
             this.chkDSPRX1APFEnable.Text = "Enable";
+            this.toolTip1.SetToolTip(this.chkDSPRX1APFEnable, "CW Audio Peaking Filter");
             this.chkDSPRX1APFEnable.UseVisualStyleBackColor = true;
             this.chkDSPRX1APFEnable.CheckedChanged += new System.EventHandler(this.chkDSPRX1APFEnable_CheckedChanged);
             // 
@@ -40439,6 +40076,7 @@
             this.udDSPEERpwmMin.Size = new System.Drawing.Size(61, 20);
             this.udDSPEERpwmMin.TabIndex = 7;
             this.udDSPEERpwmMin.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPEERpwmMin, "Minimum pulse width control");
             this.udDSPEERpwmMin.Value = new decimal(new int[] {
             100,
             0,
@@ -40468,6 +40106,7 @@
             this.udDSPEERpwmMax.Size = new System.Drawing.Size(61, 20);
             this.udDSPEERpwmMax.TabIndex = 6;
             this.udDSPEERpwmMax.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPEERpwmMax, "Maximum pulse width control");
             this.udDSPEERpwmMax.Value = new decimal(new int[] {
             800,
             0,
@@ -40506,6 +40145,7 @@
             this.chkDSPEERRunDelays.Size = new System.Drawing.Size(80, 17);
             this.chkDSPEERRunDelays.TabIndex = 10;
             this.chkDSPEERRunDelays.Text = "Use Delays";
+            this.toolTip1.SetToolTip(this.chkDSPEERRunDelays, "Apply the indicated delays");
             this.chkDSPEERRunDelays.UseVisualStyleBackColor = true;
             this.chkDSPEERRunDelays.CheckedChanged += new System.EventHandler(this.chkDSPEERRunDelays_CheckedChanged);
             // 
@@ -40754,6 +40394,7 @@
             this.radDSPNR2NSTATRX2.TabIndex = 2;
             this.radDSPNR2NSTATRX2.TabStop = true;
             this.radDSPNR2NSTATRX2.Text = "NSTAT";
+            this.toolTip1.SetToolTip(this.radDSPNR2NSTATRX2, "Non-Stationary Noise method of Noise Power Estimation");
             this.radDSPNR2NSTATRX2.UseVisualStyleBackColor = true;
             this.radDSPNR2NSTATRX2.CheckedChanged += new System.EventHandler(this.radDSPNR2NSTATRX2_CheckedChanged);
             // 
@@ -40766,6 +40407,7 @@
             this.radDSPNR2MMSERX2.Size = new System.Drawing.Size(57, 17);
             this.radDSPNR2MMSERX2.TabIndex = 1;
             this.radDSPNR2MMSERX2.Text = "MMSE";
+            this.toolTip1.SetToolTip(this.radDSPNR2MMSERX2, "Minimum Mean Squared Error method of Noise Power Estimation");
             this.radDSPNR2MMSERX2.UseVisualStyleBackColor = true;
             this.radDSPNR2MMSERX2.CheckedChanged += new System.EventHandler(this.radDSPNR2MMSERX2_CheckedChanged);
             // 
@@ -40780,6 +40422,7 @@
             this.radDSPNR2OSMSRX2.TabIndex = 0;
             this.radDSPNR2OSMSRX2.TabStop = true;
             this.radDSPNR2OSMSRX2.Text = "OSMS";
+            this.toolTip1.SetToolTip(this.radDSPNR2OSMSRX2, "Optimal Smoothing Minimal Statistics method of Noise Power Estimation");
             this.radDSPNR2OSMSRX2.UseVisualStyleBackColor = true;
             this.radDSPNR2OSMSRX2.CheckedChanged += new System.EventHandler(this.radDSPNR2OSMSRX2_CheckedChanged);
             // 
@@ -40794,6 +40437,7 @@
             this.chkDSPNR2AERX2.Size = new System.Drawing.Size(65, 17);
             this.chkDSPNR2AERX2.TabIndex = 1;
             this.chkDSPNR2AERX2.Text = "AE Filter";
+            this.toolTip1.SetToolTip(this.chkDSPNR2AERX2, "Filter artifacts typical of frequency-domain NR methods");
             this.chkDSPNR2AERX2.UseVisualStyleBackColor = true;
             this.chkDSPNR2AERX2.CheckedChanged += new System.EventHandler(this.chkDSPNR2AERX2_CheckedChanged);
             // 
@@ -40859,6 +40503,7 @@
             this.udDSPNR2trainT2RX2.Size = new System.Drawing.Size(46, 20);
             this.udDSPNR2trainT2RX2.TabIndex = 8;
             this.udDSPNR2trainT2RX2.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPNR2trainT2RX2, "Secondary threshold, use lower values to allow very weak signals");
             this.udDSPNR2trainT2RX2.Value = new decimal(new int[] {
             2,
             0,
@@ -40901,6 +40546,7 @@
             this.udDSPNR2trainThreshRX2.Size = new System.Drawing.Size(46, 20);
             this.udDSPNR2trainThreshRX2.TabIndex = 6;
             this.udDSPNR2trainThreshRX2.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPNR2trainThreshRX2, "Main threshold, higher values restrict noise more");
             this.udDSPNR2trainThreshRX2.Value = new decimal(new int[] {
             5,
             0,
@@ -40919,6 +40565,7 @@
             this.radDSPNR2TRNDRX2.TabIndex = 3;
             this.radDSPNR2TRNDRX2.TabStop = true;
             this.radDSPNR2TRNDRX2.Text = "Trained";
+            this.toolTip1.SetToolTip(this.radDSPNR2TRNDRX2, "NR Method that was trained with speech and noise signals");
             this.radDSPNR2TRNDRX2.UseVisualStyleBackColor = true;
             this.radDSPNR2TRNDRX2.CheckedChanged += new System.EventHandler(this.radDSPNR2TRNDRX2_CheckedChanged);
             // 
@@ -40933,6 +40580,7 @@
             this.radDSPNR2GammaRX2.TabIndex = 2;
             this.radDSPNR2GammaRX2.TabStop = true;
             this.radDSPNR2GammaRX2.Text = "Gamma";
+            this.toolTip1.SetToolTip(this.radDSPNR2GammaRX2, "Use a Gamma Distribution of speech audio amplitudes");
             this.radDSPNR2GammaRX2.UseVisualStyleBackColor = true;
             this.radDSPNR2GammaRX2.CheckedChanged += new System.EventHandler(this.radDSPNR2GammaRX2_CheckedChanged);
             // 
@@ -40945,6 +40593,7 @@
             this.radDSPNR2LogRX2.Size = new System.Drawing.Size(43, 17);
             this.radDSPNR2LogRX2.TabIndex = 1;
             this.radDSPNR2LogRX2.Text = "Log";
+            this.toolTip1.SetToolTip(this.radDSPNR2LogRX2, "Use a log audio amplitude scale in calculating gain");
             this.radDSPNR2LogRX2.UseVisualStyleBackColor = true;
             this.radDSPNR2LogRX2.CheckedChanged += new System.EventHandler(this.radDSPNR2LogRX2_CheckedChanged);
             // 
@@ -40957,6 +40606,7 @@
             this.radDSPNR2LinearRX2.Size = new System.Drawing.Size(54, 17);
             this.radDSPNR2LinearRX2.TabIndex = 0;
             this.radDSPNR2LinearRX2.Text = "Linear";
+            this.toolTip1.SetToolTip(this.radDSPNR2LinearRX2, "Use linear audio amplitude scale in calculating gain");
             this.radDSPNR2LinearRX2.UseVisualStyleBackColor = true;
             this.radDSPNR2LinearRX2.CheckedChanged += new System.EventHandler(this.radDSPNR2LinearRX2_CheckedChanged);
             // 
@@ -40982,6 +40632,7 @@
             this.radANF2PreAGC.TabIndex = 12;
             this.radANF2PreAGC.TabStop = true;
             this.radANF2PreAGC.Text = "Pre-AGC";
+            this.toolTip1.SetToolTip(this.radANF2PreAGC, "Apply functions BEFORE the AGC");
             this.radANF2PreAGC.UseVisualStyleBackColor = true;
             this.radANF2PreAGC.CheckedChanged += new System.EventHandler(this.radANF2PreAGC_CheckedChanged);
             // 
@@ -40994,6 +40645,7 @@
             this.radANFPostAGC2.Size = new System.Drawing.Size(71, 17);
             this.radANFPostAGC2.TabIndex = 13;
             this.radANFPostAGC2.Text = "Post-AGC";
+            this.toolTip1.SetToolTip(this.radANFPostAGC2, "Apply functions AFTER the AGC");
             this.radANFPostAGC2.UseVisualStyleBackColor = true;
             // 
             // grpDSPNR2
@@ -41031,6 +40683,7 @@
             this.radDSPNR2NSTAT.TabIndex = 2;
             this.radDSPNR2NSTAT.TabStop = true;
             this.radDSPNR2NSTAT.Text = "NSTAT";
+            this.toolTip1.SetToolTip(this.radDSPNR2NSTAT, "Non-Stationary Noise method of Noise Power Estimation");
             this.radDSPNR2NSTAT.UseVisualStyleBackColor = true;
             this.radDSPNR2NSTAT.CheckedChanged += new System.EventHandler(this.radDSPNR2NSTAT_CheckedChanged);
             // 
@@ -41043,6 +40696,7 @@
             this.radDSPNR2MMSE.Size = new System.Drawing.Size(57, 17);
             this.radDSPNR2MMSE.TabIndex = 1;
             this.radDSPNR2MMSE.Text = "MMSE";
+            this.toolTip1.SetToolTip(this.radDSPNR2MMSE, "Minimum Mean Squared Error method of Noise Power Estimation");
             this.radDSPNR2MMSE.UseVisualStyleBackColor = true;
             this.radDSPNR2MMSE.CheckedChanged += new System.EventHandler(this.radDSPNR2MMSE_CheckedChanged);
             // 
@@ -41057,6 +40711,7 @@
             this.radDSPNR2OSMS.TabIndex = 0;
             this.radDSPNR2OSMS.TabStop = true;
             this.radDSPNR2OSMS.Text = "OSMS";
+            this.toolTip1.SetToolTip(this.radDSPNR2OSMS, "Optimal Smoothing Minimal Statistics method of Noise Power Estimation");
             this.radDSPNR2OSMS.UseVisualStyleBackColor = true;
             this.radDSPNR2OSMS.CheckedChanged += new System.EventHandler(this.radDSPNR2OSMS_CheckedChanged);
             // 
@@ -41071,6 +40726,7 @@
             this.chkDSPNR2AE.Size = new System.Drawing.Size(65, 17);
             this.chkDSPNR2AE.TabIndex = 1;
             this.chkDSPNR2AE.Text = "AE Filter";
+            this.toolTip1.SetToolTip(this.chkDSPNR2AE, "Filter artifacts typical of frequency-domain NR methods");
             this.chkDSPNR2AE.UseVisualStyleBackColor = true;
             this.chkDSPNR2AE.CheckedChanged += new System.EventHandler(this.chkDSPNR2AE_CheckedChanged);
             // 
@@ -41136,6 +40792,7 @@
             this.udDSPNR2trainT2.Size = new System.Drawing.Size(46, 20);
             this.udDSPNR2trainT2.TabIndex = 6;
             this.udDSPNR2trainT2.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPNR2trainT2, "Secondary threshold, use lower values to allow very weak signals");
             this.udDSPNR2trainT2.Value = new decimal(new int[] {
             2,
             0,
@@ -41178,6 +40835,7 @@
             this.udDSPNR2trainThresh.Size = new System.Drawing.Size(46, 20);
             this.udDSPNR2trainThresh.TabIndex = 4;
             this.udDSPNR2trainThresh.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDSPNR2trainThresh, "Main threshold, higher values restrict noise more");
             this.udDSPNR2trainThresh.Value = new decimal(new int[] {
             5,
             0,
@@ -41196,6 +40854,7 @@
             this.radDSPNR2TRND.TabIndex = 3;
             this.radDSPNR2TRND.TabStop = true;
             this.radDSPNR2TRND.Text = "Trained";
+            this.toolTip1.SetToolTip(this.radDSPNR2TRND, "NR Method that was trained with speech and noise signals");
             this.radDSPNR2TRND.UseVisualStyleBackColor = true;
             this.radDSPNR2TRND.CheckedChanged += new System.EventHandler(this.radDSPNR2TRND_CheckedChanged);
             // 
@@ -41210,6 +40869,7 @@
             this.radDSPNR2Gamma.TabIndex = 2;
             this.radDSPNR2Gamma.TabStop = true;
             this.radDSPNR2Gamma.Text = "Gamma";
+            this.toolTip1.SetToolTip(this.radDSPNR2Gamma, "Use a Gamma Distribution of speech audio amplitudes");
             this.radDSPNR2Gamma.UseVisualStyleBackColor = true;
             this.radDSPNR2Gamma.CheckedChanged += new System.EventHandler(this.radDSPNR2Gamma_CheckedChanged);
             // 
@@ -41222,6 +40882,7 @@
             this.radDSPNR2Log.Size = new System.Drawing.Size(43, 17);
             this.radDSPNR2Log.TabIndex = 1;
             this.radDSPNR2Log.Text = "Log";
+            this.toolTip1.SetToolTip(this.radDSPNR2Log, "Use a log audio amplitude scale in calculating gain");
             this.radDSPNR2Log.UseVisualStyleBackColor = true;
             this.radDSPNR2Log.CheckedChanged += new System.EventHandler(this.radDSPNR2Log_CheckedChanged);
             // 
@@ -41234,6 +40895,7 @@
             this.radDSPNR2Linear.Size = new System.Drawing.Size(54, 17);
             this.radDSPNR2Linear.TabIndex = 0;
             this.radDSPNR2Linear.Text = "Linear";
+            this.toolTip1.SetToolTip(this.radDSPNR2Linear, "Use linear audio amplitude scale in calculating gain");
             this.radDSPNR2Linear.UseVisualStyleBackColor = true;
             this.radDSPNR2Linear.CheckedChanged += new System.EventHandler(this.radDSPNR2Linear_CheckedChanged);
             // 
@@ -41436,6 +41098,7 @@
             this.radANFPreAGC.TabIndex = 10;
             this.radANFPreAGC.TabStop = true;
             this.radANFPreAGC.Text = "Pre-AGC";
+            this.toolTip1.SetToolTip(this.radANFPreAGC, "Apply functions BEFORE the AGC");
             this.radANFPreAGC.UseVisualStyleBackColor = true;
             this.radANFPreAGC.CheckedChanged += new System.EventHandler(this.radANFPreAGC_CheckedChanged);
             // 
@@ -41448,6 +41111,7 @@
             this.radANFPostAGC.Size = new System.Drawing.Size(71, 17);
             this.radANFPostAGC.TabIndex = 11;
             this.radANFPostAGC.Text = "Post-AGC";
+            this.toolTip1.SetToolTip(this.radANFPostAGC, "Apply functions AFTER the AGC");
             this.radANFPostAGC.UseVisualStyleBackColor = true;
             // 
             // grpDSPLMSANF
@@ -42302,7 +41966,7 @@
             this.udDSPSNBThresh2.Size = new System.Drawing.Size(56, 20);
             this.udDSPSNBThresh2.TabIndex = 12;
             this.udDSPSNBThresh2.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPSNBThresh2, "Controls the detection threshold for impulse noise.  ");
+            this.toolTip1.SetToolTip(this.udDSPSNBThresh2, "Multiplier for final detection threshold");
             this.udDSPSNBThresh2.Value = new decimal(new int[] {
             200,
             0,
@@ -42342,7 +42006,7 @@
             this.udDSPSNBThresh1.Size = new System.Drawing.Size(56, 20);
             this.udDSPSNBThresh1.TabIndex = 10;
             this.udDSPSNBThresh1.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPSNBThresh1, "Controls the detection threshold for impulse noise.  ");
+            this.toolTip1.SetToolTip(this.udDSPSNBThresh1, "Multiple of power at which to discount samples");
             this.udDSPSNBThresh1.Value = new decimal(new int[] {
             80,
             0,
@@ -42403,6 +42067,7 @@
             this.comboDSPNOBmode.Name = "comboDSPNOBmode";
             this.comboDSPNOBmode.Size = new System.Drawing.Size(95, 21);
             this.comboDSPNOBmode.TabIndex = 17;
+            this.toolTip1.SetToolTip(this.comboDSPNOBmode, resources.GetString("comboDSPNOBmode.ToolTip"));
             this.comboDSPNOBmode.SelectedIndexChanged += new System.EventHandler(this.comboDSPNOBmode_SelectedIndexChanged);
             // 
             // labelTS154
@@ -42438,7 +42103,7 @@
             this.udDSPNBLag.Size = new System.Drawing.Size(64, 20);
             this.udDSPNBLag.TabIndex = 14;
             this.udDSPNBLag.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPNBLag, "Controls the detection threshold for impulse noise.  ");
+            this.toolTip1.SetToolTip(this.udDSPNBLag, "NB time to remain at zero amplitude after impulse");
             this.udDSPNBLag.Value = new decimal(new int[] {
             1,
             0,
@@ -42478,7 +42143,7 @@
             this.udDSPNBLead.Size = new System.Drawing.Size(64, 20);
             this.udDSPNBLead.TabIndex = 12;
             this.udDSPNBLead.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPNBLead, "Controls the detection threshold for impulse noise.  ");
+            this.toolTip1.SetToolTip(this.udDSPNBLead, "NB time at zero amplitude before impulse");
             this.udDSPNBLead.Value = new decimal(new int[] {
             1,
             0,
@@ -42518,7 +42183,7 @@
             this.udDSPNBTransition.Size = new System.Drawing.Size(64, 20);
             this.udDSPNBTransition.TabIndex = 10;
             this.udDSPNBTransition.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPNBTransition, "Controls the detection threshold for impulse noise.  ");
+            this.toolTip1.SetToolTip(this.udDSPNBTransition, "NB time to decrease/increase to/from zero amplitude around impulse");
             this.udDSPNBTransition.Value = new decimal(new int[] {
             1,
             0,
@@ -42613,6 +42278,7 @@
             this.chkAntiVoxSource.Size = new System.Drawing.Size(99, 17);
             this.chkAntiVoxSource.TabIndex = 20;
             this.chkAntiVoxSource.Text = "Use VAC Audio";
+            this.toolTip1.SetToolTip(this.chkAntiVoxSource, "Use VAC as Anti-VOX source");
             this.chkAntiVoxSource.UseVisualStyleBackColor = true;
             this.chkAntiVoxSource.CheckedChanged += new System.EventHandler(this.chkAntiVoxSource_CheckedChanged);
             // 
@@ -42638,6 +42304,7 @@
             this.udAntiVoxTau.Size = new System.Drawing.Size(56, 20);
             this.udAntiVoxTau.TabIndex = 19;
             this.udAntiVoxTau.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udAntiVoxTau, "Time-constant used in smoothing Anti-VOX data");
             this.udAntiVoxTau.Value = new decimal(new int[] {
             20,
             0,
@@ -42678,6 +42345,7 @@
             this.udAntiVoxGain.Size = new System.Drawing.Size(56, 20);
             this.udAntiVoxGain.TabIndex = 17;
             this.udAntiVoxGain.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udAntiVoxGain, "Gain applied to Anti-VOX audio (Anti-VOX sensitivity)");
             this.udAntiVoxGain.Value = new decimal(new int[] {
             10,
             0,
@@ -42704,6 +42372,7 @@
             this.chkAntiVoxEnable.Size = new System.Drawing.Size(105, 17);
             this.chkAntiVoxEnable.TabIndex = 0;
             this.chkAntiVoxEnable.Text = "Anti-VOX Enable";
+            this.toolTip1.SetToolTip(this.chkAntiVoxEnable, "Enable prevention measures for RX audio tripping VOX");
             this.chkAntiVoxEnable.UseVisualStyleBackColor = true;
             this.chkAntiVoxEnable.CheckedChanged += new System.EventHandler(this.chkAntiVoxEnable_CheckedChanged);
             // 
@@ -42741,6 +42410,7 @@
             this.udDEXPLookAhead.Size = new System.Drawing.Size(57, 20);
             this.udDEXPLookAhead.TabIndex = 2;
             this.udDEXPLookAhead.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDEXPLookAhead, "Time for VOX audio lookahead");
             this.udDEXPLookAhead.Value = new decimal(new int[] {
             60,
             0,
@@ -42769,6 +42439,7 @@
             this.chkDEXPLookAheadEnable.Size = new System.Drawing.Size(59, 17);
             this.chkDEXPLookAheadEnable.TabIndex = 0;
             this.chkDEXPLookAheadEnable.Text = "Enable";
+            this.toolTip1.SetToolTip(this.chkDEXPLookAheadEnable, "Trigger VOX ahead of transmit audio");
             this.chkDEXPLookAheadEnable.UseVisualStyleBackColor = true;
             this.chkDEXPLookAheadEnable.CheckedChanged += new System.EventHandler(this.chkDEXPLookAheadEnable_CheckedChanged);
             // 
@@ -42820,6 +42491,7 @@
             this.udDEXPHysteresisRatio.Size = new System.Drawing.Size(56, 20);
             this.udDEXPHysteresisRatio.TabIndex = 16;
             this.udDEXPHysteresisRatio.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDEXPHysteresisRatio, "Ratio of activation level and hold level");
             this.udDEXPHysteresisRatio.Value = new decimal(new int[] {
             20,
             0,
@@ -42850,6 +42522,7 @@
             this.udDEXPExpansionRatio.Size = new System.Drawing.Size(56, 20);
             this.udDEXPExpansionRatio.TabIndex = 15;
             this.udDEXPExpansionRatio.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDEXPExpansionRatio, "Ratio between full gain and reduced gain of expander");
             this.udDEXPExpansionRatio.Value = new decimal(new int[] {
             10,
             0,
@@ -42879,6 +42552,7 @@
             this.udDEXPThreshold.Size = new System.Drawing.Size(56, 20);
             this.udDEXPThreshold.TabIndex = 14;
             this.udDEXPThreshold.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDEXPThreshold, "Activation threshold");
             this.udDEXPThreshold.Value = new decimal(new int[] {
             200,
             0,
@@ -42938,6 +42612,7 @@
             this.udDEXPRelease.Size = new System.Drawing.Size(57, 20);
             this.udDEXPRelease.TabIndex = 10;
             this.udDEXPRelease.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDEXPRelease, "Time from high to low gain of downward expander");
             this.udDEXPRelease.Value = new decimal(new int[] {
             100,
             0,
@@ -42967,6 +42642,7 @@
             this.udDEXPHold.Size = new System.Drawing.Size(57, 20);
             this.udDEXPHold.TabIndex = 9;
             this.udDEXPHold.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDEXPHold, "Time from signal drop to initiation of gain increase");
             this.udDEXPHold.Value = new decimal(new int[] {
             500,
             0,
@@ -42996,6 +42672,7 @@
             this.udDEXPAttack.Size = new System.Drawing.Size(57, 20);
             this.udDEXPAttack.TabIndex = 8;
             this.udDEXPAttack.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDEXPAttack, "Time from low to high gain of downward expander");
             this.udDEXPAttack.Value = new decimal(new int[] {
             2,
             0,
@@ -43012,6 +42689,7 @@
             this.chkVOXEnable.Size = new System.Drawing.Size(84, 17);
             this.chkVOXEnable.TabIndex = 7;
             this.chkVOXEnable.Text = "Enable VOX";
+            this.toolTip1.SetToolTip(this.chkVOXEnable, "Enable voice activated transmit");
             this.chkVOXEnable.UseVisualStyleBackColor = true;
             this.chkVOXEnable.CheckedChanged += new System.EventHandler(this.chkVOXEnable_CheckedChanged);
             // 
@@ -43037,6 +42715,7 @@
             this.udDEXPDetTau.Size = new System.Drawing.Size(57, 20);
             this.udDEXPDetTau.TabIndex = 6;
             this.udDEXPDetTau.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udDEXPDetTau, "Time-constant for low-pass filtering of input");
             this.udDEXPDetTau.Value = new decimal(new int[] {
             20,
             0,
@@ -43093,6 +42772,7 @@
             this.chkDEXPEnable.Size = new System.Drawing.Size(91, 17);
             this.chkDEXPEnable.TabIndex = 1;
             this.chkDEXPEnable.Text = "Enable DEXP";
+            this.toolTip1.SetToolTip(this.chkDEXPEnable, "Enable Downward Expander");
             this.chkDEXPEnable.UseVisualStyleBackColor = true;
             this.chkDEXPEnable.CheckedChanged += new System.EventHandler(this.chkDEXPEnable_CheckedChanged);
             // 
@@ -43152,6 +42832,7 @@
             this.udSCFHighCut.Size = new System.Drawing.Size(55, 20);
             this.udSCFHighCut.TabIndex = 2;
             this.udSCFHighCut.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udSCFHighCut, "High frequency cut-off for VOX trigger filter");
             this.udSCFHighCut.Value = new decimal(new int[] {
             1500,
             0,
@@ -43181,6 +42862,7 @@
             this.udSCFLowCut.Size = new System.Drawing.Size(55, 20);
             this.udSCFLowCut.TabIndex = 1;
             this.udSCFLowCut.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udSCFLowCut, "Low frequency cut-off for VOX trigger filter");
             this.udSCFLowCut.Value = new decimal(new int[] {
             500,
             0,
@@ -43199,6 +42881,7 @@
             this.chkSCFEnable.Size = new System.Drawing.Size(59, 17);
             this.chkSCFEnable.TabIndex = 0;
             this.chkSCFEnable.Text = "Enable";
+            this.toolTip1.SetToolTip(this.chkSCFEnable, "Filter audio that triggers VOX");
             this.chkSCFEnable.UseVisualStyleBackColor = true;
             this.chkSCFEnable.CheckedChanged += new System.EventHandler(this.chkSCFEnable_CheckedChanged);
             // 
@@ -44310,6 +43993,7 @@
             this.chkLimitExtAmpOnOverload.Size = new System.Drawing.Size(184, 17);
             this.chkLimitExtAmpOnOverload.TabIndex = 72;
             this.chkLimitExtAmpOnOverload.Text = "Limit Drive on Ext. Amp. Overload";
+            this.toolTip1.SetToolTip(this.chkLimitExtAmpOnOverload, "Emergency transmit power reduction based upon AIN3 input value");
             this.chkLimitExtAmpOnOverload.UseVisualStyleBackColor = true;
             this.chkLimitExtAmpOnOverload.CheckedChanged += new System.EventHandler(this.chkLimitExtAmpOnOverload_CheckedChanged);
             // 
@@ -44332,6 +44016,8 @@
             this.chkDSPCESSB.Size = new System.Drawing.Size(149, 17);
             this.chkDSPCESSB.TabIndex = 0;
             this.chkDSPCESSB.Text = "CESSB Overshoot Control";
+            this.toolTip1.SetToolTip(this.chkDSPCESSB, "Enable CESSB limiting of transmit filter overshoot (there is no RF output oversho" +
+        "ot with or without CESSB)");
             this.chkDSPCESSB.UseVisualStyleBackColor = true;
             this.chkDSPCESSB.CheckedChanged += new System.EventHandler(this.chkDSPCESSB_CheckedChanged);
             // 
@@ -66804,23 +66490,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.udRX2AutoAGCOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX1AutoAGCOffset)).EndInit();
             this.grpDSPLeveler.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerHangTime)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerThreshold)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerSlope)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerDecay)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPLevelerAttack)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbDSPLevelerHangThreshold)).EndInit();
             this.grpDSPALC.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.tbDSPALCHangThreshold)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPALCHangTime)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPALCMaximumGain)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPALCSlope)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPALCDecay)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPALCAttack)).EndInit();
             this.grpDSPAGC.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCRX2HangTime)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCRX2Decay)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCRX2Attack)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCRX2Slope)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDSPAGCRX2HangThreshold)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCRX2MaxGaindB)).EndInit();
@@ -66830,7 +66507,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCMaxGaindB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCSlope)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCDecay)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCAttack)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDSPAGCFixedGaindB)).EndInit();
             this.tpDSPAMSAM.ResumeLayout(false);
             this.groupBoxTS28.ResumeLayout(false);
@@ -69254,30 +68930,14 @@
         private System.Windows.Forms.CheckBoxTS chkDisplayRX2GainLine;
         private System.Windows.Forms.GroupBoxTS grpDSPLeveler;
         private System.Windows.Forms.CheckBoxTS chkDSPLevelerEnabled;
-        private System.Windows.Forms.LabelTS lblDSPLevelerHangThreshold;
-        private System.Windows.Forms.NumericUpDownTS udDSPLevelerHangTime;
-        private System.Windows.Forms.LabelTS lblDSPLevelerHangTime;
         private System.Windows.Forms.NumericUpDownTS udDSPLevelerThreshold;
-        private System.Windows.Forms.NumericUpDownTS udDSPLevelerSlope;
         private System.Windows.Forms.NumericUpDownTS udDSPLevelerDecay;
-        private System.Windows.Forms.LabelTS lblDSPLevelerSlope;
-        private System.Windows.Forms.NumericUpDownTS udDSPLevelerAttack;
         private System.Windows.Forms.LabelTS lblDSPLevelerDecay;
-        private System.Windows.Forms.LabelTS lblDSPLevelerAttack;
         private System.Windows.Forms.LabelTS lblDSPLevelerThreshold;
-        private System.Windows.Forms.TrackBarTS tbDSPLevelerHangThreshold;
         private System.Windows.Forms.GroupBoxTS grpDSPALC;
-        private System.Windows.Forms.LabelTS lblDSPALCHangThreshold;
-        private System.Windows.Forms.TrackBarTS tbDSPALCHangThreshold;
-        private System.Windows.Forms.NumericUpDownTS udDSPALCHangTime;
-        private System.Windows.Forms.LabelTS lblDSPALCHangTime;
         private System.Windows.Forms.NumericUpDownTS udDSPALCMaximumGain;
-        private System.Windows.Forms.NumericUpDownTS udDSPALCSlope;
         private System.Windows.Forms.NumericUpDownTS udDSPALCDecay;
-        private System.Windows.Forms.LabelTS lblDSPALCSlope;
-        private System.Windows.Forms.NumericUpDownTS udDSPALCAttack;
         private System.Windows.Forms.LabelTS lblDSPALCDecay;
-        private System.Windows.Forms.LabelTS lblDSPALCAttack;
         private System.Windows.Forms.LabelTS lblDSPALCThreshold;
         private System.Windows.Forms.GroupBoxTS grpDSPAGC;
         private System.Windows.Forms.CheckBoxTS chkAGCHangSpectrumLine;
@@ -69290,7 +68950,6 @@
         private System.Windows.Forms.LabelTS labelTS137;
         private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2HangTime;
         private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2Decay;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2Attack;
         private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2Slope;
         public System.Windows.Forms.TrackBarTS tbDSPAGCRX2HangThreshold;
         private System.Windows.Forms.NumericUpDownTS udDSPAGCRX2MaxGaindB;
@@ -69303,9 +68962,7 @@
         private System.Windows.Forms.NumericUpDownTS udDSPAGCSlope;
         private System.Windows.Forms.NumericUpDownTS udDSPAGCDecay;
         private System.Windows.Forms.LabelTS lblDSPAGCSlope;
-        private System.Windows.Forms.NumericUpDownTS udDSPAGCAttack;
         private System.Windows.Forms.LabelTS lblDSPAGCDecay;
-        private System.Windows.Forms.LabelTS lblDSPAGCAttack;
         private System.Windows.Forms.LabelTS lblDSPAGCMaxGain;
         private System.Windows.Forms.NumericUpDownTS udDSPAGCFixedGaindB;
         private System.Windows.Forms.LabelTS lblDSPAGCFixed;
