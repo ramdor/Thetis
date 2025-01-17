@@ -13169,14 +13169,15 @@ namespace Thetis
                 bool ok = false;
                 double new_freq = (int)delta + _notch_start_freq;
                 new_freq = Common.CtrlKeyDown ? (float)(Math.Round(new_freq / 10) * 10) : new_freq;
-
+                
                 lock (MiniSpec.NotchLocker)
                 {
                     MiniSpec.Notch n = MiniSpec.GetNotch(_notch_highlighted_index);
                     if (n != null)
                     {
                         double vfoFreq = (_showVfoA ? _owningmeter.VfoA : _owningmeter.VfoB) * 1e6;
-                        ok = n.frequency_hz != new_freq && ((new_freq >= vfoFreq - _extent_hz) && (new_freq <= vfoFreq + _extent_hz));
+                        ok = (n.frequency_hz != new_freq) && ((new_freq >= vfoFreq - _extent_hz) && (new_freq <= vfoFreq + _extent_hz));
+                        if (ok) n.frequency_hz = new_freq; //[2.10.3.9]MW0LGE update the data, prevents loads of updates
                     }
                 }
 
