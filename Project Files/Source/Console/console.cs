@@ -29325,7 +29325,15 @@ namespace Thetis
                 _forceATTwhenPowerChangesWhenPSAon = value;
             }
         }
-
+        private bool _forceATTwhenPowerChangesWhenPSAon_anddecreased = false; // also when decresed if set to true
+        public bool ForceATTwhenOutputPowerChangesWhenPSAonAndDecreased
+        {
+            get { return _forceATTwhenPowerChangesWhenPSAon_anddecreased; }
+            set
+            {
+                _forceATTwhenPowerChangesWhenPSAon_anddecreased = value;
+            }
+        }
         private void chkMOX_CheckedChanged2(object sender, System.EventArgs e)
         {
             bool bOldMox = _mox; //MW0LGE_21b used for state change delgates at end of fn
@@ -48562,7 +48570,7 @@ namespace Thetis
             //[2.10.3.5]MW0LGE max tx attenuation when power is increased and PS is enabled
             if (new_pwr != _lastPower && chkFWCATUBypass.Checked && _forceATTwhenPowerChangesWhenPSAon)
             {
-                if(new_pwr > _lastPower)
+                if(new_pwr > _lastPower || _forceATTwhenPowerChangesWhenPSAon_anddecreased)
                     SetupForm.ATTOnTX = 31;
 
                 _lastPower = new_pwr;

@@ -2721,6 +2721,8 @@ namespace Thetis
             //
             chkForceATTwhenPSAoff_CheckedChanged(this, e); //MW0LGE [2.9.0.7]
             chkForceATTwhenOutPowerChanges_CheckedChanged(this, e);
+            chkForceATTwhenOutPowerChanges_decreased_CheckedChanged(this, e);
+
             chkAutoATTTXPsOff_CheckedChanged(this, e);
             chkUndoAutoATTTx_CheckedChanged(this, e);
             chkAutoATTRx1_CheckedChanged(this, e);
@@ -27971,6 +27973,7 @@ namespace Thetis
         {
             if (initializing) return;
             console.ForceATTwhenOutputPowerChangesWhenPSAon = chkForceATTwhenOutPowerChanges.Checked;
+            chkForceATTwhenOutPowerChanges_decreased.Enabled = chkForceATTwhenOutPowerChanges.Checked;
         }
 
         private void chkToTMox_CheckedChanged(object sender, EventArgs e)
@@ -32587,6 +32590,12 @@ namespace Thetis
         {
             if (initializing) return;
             console.SWRWindBackPower = chkWindBackPowerSWR.Checked;
+        }
+
+        private void chkForceATTwhenOutPowerChanges_decreased_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.ForceATTwhenOutputPowerChangesWhenPSAonAndDecreased = chkForceATTwhenOutPowerChanges_decreased.Checked;
         }
     }
 

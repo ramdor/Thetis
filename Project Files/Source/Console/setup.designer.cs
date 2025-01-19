@@ -4142,6 +4142,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.chkForceATTwhenOutPowerChanges_decreased = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -5195,6 +5196,7 @@
             // tpAlexAntCtrl
             // 
             tpAlexAntCtrl.BackColor = System.Drawing.SystemColors.Control;
+            tpAlexAntCtrl.Controls.Add(this.chkForceATTwhenOutPowerChanges_decreased);
             tpAlexAntCtrl.Controls.Add(this.chkUndoAutoATTTx);
             tpAlexAntCtrl.Controls.Add(this.chkAutoATTTXPsOff);
             tpAlexAntCtrl.Controls.Add(this.lblTXattBand);
@@ -5251,7 +5253,7 @@
             // 
             this.lblTXattBand.AutoSize = true;
             this.lblTXattBand.Image = null;
-            this.lblTXattBand.Location = new System.Drawing.Point(538, 154);
+            this.lblTXattBand.Location = new System.Drawing.Point(538, 140);
             this.lblTXattBand.Name = "lblTXattBand";
             this.lblTXattBand.Size = new System.Drawing.Size(31, 13);
             this.lblTXattBand.TabIndex = 22;
@@ -5261,7 +5263,7 @@
             // 
             this.chkForceATTwhenOutPowerChanges.AutoSize = true;
             this.chkForceATTwhenOutPowerChanges.Image = null;
-            this.chkForceATTwhenOutPowerChanges.Location = new System.Drawing.Point(465, 197);
+            this.chkForceATTwhenOutPowerChanges.Location = new System.Drawing.Point(465, 182);
             this.chkForceATTwhenOutPowerChanges.Name = "chkForceATTwhenOutPowerChanges";
             this.chkForceATTwhenOutPowerChanges.Size = new System.Drawing.Size(215, 30);
             this.chkForceATTwhenOutPowerChanges.TabIndex = 21;
@@ -5274,7 +5276,7 @@
             // 
             this.chkForceATTwhenPSAoff.AutoSize = true;
             this.chkForceATTwhenPSAoff.Image = null;
-            this.chkForceATTwhenPSAoff.Location = new System.Drawing.Point(465, 174);
+            this.chkForceATTwhenPSAoff.Location = new System.Drawing.Point(465, 160);
             this.chkForceATTwhenPSAoff.Name = "chkForceATTwhenPSAoff";
             this.chkForceATTwhenPSAoff.Size = new System.Drawing.Size(215, 17);
             this.chkForceATTwhenPSAoff.TabIndex = 20;
@@ -5353,7 +5355,7 @@
             // 
             this.labelATTOnTX.AutoSize = true;
             this.labelATTOnTX.Image = null;
-            this.labelATTOnTX.Location = new System.Drawing.Point(457, 150);
+            this.labelATTOnTX.Location = new System.Drawing.Point(457, 136);
             this.labelATTOnTX.Name = "labelATTOnTX";
             this.labelATTOnTX.Size = new System.Drawing.Size(31, 13);
             this.labelATTOnTX.TabIndex = 9;
@@ -5367,7 +5369,7 @@
             0,
             0,
             0});
-            this.udATTOnTX.Location = new System.Drawing.Point(494, 148);
+            this.udATTOnTX.Location = new System.Drawing.Point(494, 134);
             this.udATTOnTX.Maximum = new decimal(new int[] {
             31,
             0,
@@ -5540,7 +5542,7 @@
             // 
             this.chkATTOnTX.AutoSize = true;
             this.chkATTOnTX.Image = null;
-            this.chkATTOnTX.Location = new System.Drawing.Point(465, 126);
+            this.chkATTOnTX.Location = new System.Drawing.Point(465, 113);
             this.chkATTOnTX.Name = "chkATTOnTX";
             this.chkATTOnTX.Size = new System.Drawing.Size(77, 17);
             this.chkATTOnTX.TabIndex = 4;
@@ -65870,6 +65872,20 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // chkForceATTwhenOutPowerChanges_decreased
+            // 
+            this.chkForceATTwhenOutPowerChanges_decreased.AutoSize = true;
+            this.chkForceATTwhenOutPowerChanges_decreased.Enabled = false;
+            this.chkForceATTwhenOutPowerChanges_decreased.Image = null;
+            this.chkForceATTwhenOutPowerChanges_decreased.Location = new System.Drawing.Point(592, 213);
+            this.chkForceATTwhenOutPowerChanges_decreased.Name = "chkForceATTwhenOutPowerChanges_decreased";
+            this.chkForceATTwhenOutPowerChanges_decreased.Size = new System.Drawing.Size(88, 17);
+            this.chkForceATTwhenOutPowerChanges_decreased.TabIndex = 25;
+            this.chkForceATTwhenOutPowerChanges_decreased.Text = "or decreased";
+            this.toolTip1.SetToolTip(this.chkForceATTwhenOutPowerChanges_decreased, "also when decreased");
+            this.chkForceATTwhenOutPowerChanges_decreased.UseVisualStyleBackColor = true;
+            this.chkForceATTwhenOutPowerChanges_decreased.CheckedChanged += new System.EventHandler(this.chkForceATTwhenOutPowerChanges_decreased_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -71311,5 +71327,6 @@
         private ButtonTS btnClearTCISpotsSWL;
         private CheckBoxTS chkWindBackPowerSWR;
         private PanelTS pnlPostCFCEQ;
+        private CheckBoxTS chkForceATTwhenOutPowerChanges_decreased;
     }
 }
