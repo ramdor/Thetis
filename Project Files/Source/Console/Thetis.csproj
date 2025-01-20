@@ -7,7 +7,7 @@
     <ProjectGuid>{831AEB2F-CA78-4057-85D7-32B4816ED6AE}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>Thetis2_256.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Thetis2_256.ico</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>Thetis</AssemblyName>
@@ -813,8 +813,8 @@
       <SubType>Form</SubType>
     </Compile>
     <None Include="Resources\thetis-logo2.png" />
-    <Content Include="Thetis2_256.ico" />
-    <Content Include="Thetis2_48.ico" />
+    <Content Include="Resources\Thetis2_256.ico" />
+    <Content Include="Resources\Thetis2_48.ico" />
     <None Include="Resources\resizegrab.png" />
     <None Include="Resources\dockIcon_float.png" />
     <None Include="Resources\dockIcon_dock.png" />
@@ -873,7 +873,7 @@
     <None Include="Resources\Link-64.png" />
     <None Include="Resources\Data-Active-32.png" />
     <None Include="Resources\cty.txt" />
-    <Content Include="thetis-icon.ico" />
+    <Content Include="Resources\thetis-icon.ico" />
     <None Include="Resources\thetis-logo1.png" />
     <None Include="Resources\cross_rl.cur" />
     <None Include="Resources\info.png" />

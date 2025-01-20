@@ -707,13 +707,16 @@ namespace Thetis
         }
 		private void sendTXFrequencyChanged(long new_frequency, Band new_band, bool rx2_enabled, bool tx_vfob)
 		{
+            string s = $"tx_frequency:{new_frequency};";
+            sendTextFrame(s.ToLower());
+
             // bespoke TCI command for anan to make life easier determining active TX frequency
-            // format is : tx_frequency:3700000,b80m,false,false;
-			// arg1 freq (long)
-			// arg2 band b80m, b40m etc
-			// arg3 rx2 enabled  true/false
-			// arg4 tx on vfoB  true/false
-            string s = $"tx_frequency:{new_frequency},{new_band.ToString()},{rx2_enabled.ToString()},{tx_vfob.ToString()};";
+            // format is : tx_frequency_thetis:3700000,b80m,false,false;
+            // arg1 freq (long)
+            // arg2 band b80m, b40m etc
+            // arg3 rx2 enabled  true/false
+            // arg4 tx on vfoB  true/false
+            s = $"tx_frequency_thetis:{new_frequency},{new_band.ToString()},{rx2_enabled.ToString()},{tx_vfob.ToString()};";
             sendTextFrame(s.ToLower());
         }
         private void sendTunePower(int rx, int drive)
