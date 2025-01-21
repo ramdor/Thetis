@@ -1751,14 +1751,14 @@ namespace Thetis
 			if(s.Length == parser.nSet && (s == "0" || s == "1"))
 			{
 				if(s == "1")
-					console.CWSidetone = false;
+					console.CWHWSidetone = false;
 				else
-					console.CWSidetone = true;
+					console.CWHWSidetone = true;
 				return "";
 			}
 			else if(s.Length == parser.nGet)
 			{
-				if(console.CWSidetone)
+				if(console.CWHWSidetone)
 					return "0";
 				else
 					return "1";

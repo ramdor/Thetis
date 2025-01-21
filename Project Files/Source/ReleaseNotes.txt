@@ -10,6 +10,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] or decreased option added to "Force ATT on Tx to 31 when Drive or Tune power is increased and PS-A is on"
 - [add] tool tips add to fields and options in the linearity form
 - [add] many tool tips added to DSP setup form
+- [add] software sidetone option added. New options in DSP->CW. Audio via cmASIO + VAC.
 - [change] exporting a tx profile will now ask for destination location and filename. It will complain if filename already exists
 - [change] restored step attenuator RX1 if HERMES is used. Unsure why I disabled it a few years ago
 - [change] the bespoke TCI command tx_frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; . There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;

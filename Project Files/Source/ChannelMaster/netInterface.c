@@ -854,6 +854,7 @@ void SetCWKeyerSpeed(int speed)
 		prn->cw.keyer_speed = speed;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
+		SetSidetoneWPM(0, speed);
 	}
 }
 
@@ -982,6 +983,7 @@ void EnableCWKeyer(int enable)
 		prn->cw.cw_enable = enable;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
+		SetSidetoneRun(0, enable);
 	}
 }
 
@@ -993,6 +995,7 @@ void SetCWSidetoneVolume(int vol)
 		prn->cw.sidetone_level = vol;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
+		SetSidetoneVolume(0, (double)vol / 100.0);
 	}
 }
 
@@ -1026,6 +1029,7 @@ void SetCWSidetoneFreq(int freq)
 		prn->cw.sidetone_freq = freq;
 		if (listenSock != INVALID_SOCKET)
 			CmdTx();
+		SetSidetonePitch(0, (double)freq);
 	}
 }
 
@@ -1127,6 +1131,7 @@ void SetCWX(int bit)
 	if (prn->tx[0].cwx != bit) 
 	{
 		prn->tx[0].cwx = bit;
+		keySidetone(0, 0, bit);
 		if (listenSock != INVALID_SOCKET) //[2.10.3.6]MW0LGE high priority always
 			CmdHighPriority();
 	}

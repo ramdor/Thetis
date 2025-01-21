@@ -10677,6 +10677,11 @@ namespace Thetis
                 udCWBreakInDelay_ValueChanged(this, EventArgs.Empty);
                 NetworkIO.EnableCWKeyer(Convert.ToInt32(value));
 
+                //software cw keying, as the run state is changed in EnableCWKeyer
+                NetworkIO.SetSidetoneRun(0, _cw_sidetones && _cw_sw_sidetone ? 1 : 0);
+
+                setCWSideToneVolume();
+
                 if (!initializing)
                     txtVFOAFreq_LostFocus(this, EventArgs.Empty);
             }
@@ -12963,27 +12968,45 @@ namespace Thetis
         private void setCWSideToneVolume()
         {
             //[2.10.3.6]MW0LGE changed to one location as code was everywhere previously
-            if (cw_sidetone)
+            int vol = 0;
+            if (_cw_sidetones)
             {
-                if (qsk_enabled)
+                if (_cw_hw_sidetone || _cw_sw_sidetone)
                 {
-                    NetworkIO.SetCWSidetoneVolume((int)(qsk_sidetone_volume * 1.27));
-                }
-                else
-                {
-                    if (current_breakin_mode == BreakIn.Manual)
+                    if (qsk_enabled)
                     {
-                        NetworkIO.SetCWSidetoneVolume((int)(txaf * 0.73));
+                        if (_cw_sw_sidetone)
+                            vol = 0; // no volume for the sw sidetone if using qsk
+                        else
+                            vol = (int)(qsk_sidetone_volume * 1.27);
                     }
                     else
                     {
-                        NetworkIO.SetCWSidetoneVolume((int)(txaf * 1.27));
+                        if (current_breakin_mode == BreakIn.Manual)
+                        {
+                            vol = (int)(txaf * 0.73);
+                        }
+                        else
+                        {
+                            vol = (int)(txaf * 1.27);
+                        }
                     }
                 }
+
+                if (_cw_hw_sidetone)
+                    NetworkIO.SetCWSidetoneVolume(vol);
+                else
+                    NetworkIO.SetCWSidetoneVolume(0);
+
+                if (_cw_sw_sidetone) 
+                    NetworkIO.SetSidetoneVolume(0, vol / 100f);
+                else
+                    NetworkIO.SetSidetoneVolume(0, 0);
             }
             else
             {
                 NetworkIO.SetCWSidetoneVolume(0);
+                NetworkIO.SetSidetoneVolume(0, 0);
             }
         }
         public CheckState BreakInEnabledState
@@ -14978,22 +15001,59 @@ namespace Thetis
             }
         }
 
-        private bool cw_sidetone = true;
-        public bool CWSidetone
+        private void enableMonForCW()
         {
-            get { return cw_sidetone; }
+            DSPMode tx_mode = rx1_dsp_mode;
+            if (chkVFOBTX.Checked && chkRX2.Checked) tx_mode = rx2_dsp_mode;
+
+            if (tx_mode == DSPMode.CWL || tx_mode == DSPMode.CWU)
+                chkMON.Checked = _cw_sidetones && (_cw_hw_sidetone || _cw_sw_sidetone);
+        }
+        private bool _cw_sidetones = false;
+        public bool CWSidetones
+        {
+            get { return _cw_sidetones; }
             set
             {
-                cw_sidetone = value;
-                if (chkCWSidetone != null) chkCWSidetone.Checked = value;
+                _cw_sidetones = value;
+                chkCWSidetone.Checked = _cw_sidetones;
 
-                DSPMode tx_mode = rx1_dsp_mode;
-                if (chkVFOBTX.Checked && chkRX2.Checked) tx_mode = rx2_dsp_mode;
+                // force update
+                CWSWSidetone = CWSWSidetone;
+                CWHWSidetone = CWHWSidetone;
+            }
+        }
+        private bool _cw_sw_sidetone = false;
+        public bool CWSWSidetone
+        {
+            //software side tone
+            get { return _cw_sw_sidetone; }
+            set
+            {
+                _cw_sw_sidetone = value;
 
-                if (tx_mode == DSPMode.CWL || tx_mode == DSPMode.CWU)
-                    chkMON.Checked = value;
+                NetworkIO.SetSidetoneRun(0, _cw_sidetones && _cw_sw_sidetone ? 1 : 0);
 
                 setCWSideToneVolume();
+                enableMonForCW();
+            }
+        }
+        private bool _cw_hw_sidetone = false;
+        public bool CWHWSidetone
+        {
+            //hardware side tone
+            get { return _cw_hw_sidetone; }
+            set
+            {
+                _cw_hw_sidetone = value;
+
+                if (_cw_sidetones && _cw_hw_sidetone)
+                    NetworkIO.SetCWSidetone(1);
+                else
+                    NetworkIO.SetCWSidetone(0);
+
+                setCWSideToneVolume();
+                enableMonForCW();
             }
         }
 
@@ -29063,7 +29123,14 @@ namespace Thetis
                 path_Illustrator.pi_Changed();
 
             if (Audio.MON != oldMON)
-                MONChangedHandlers?.Invoke(oldMON, Audio.MON);
+            {
+                if (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU)
+                {
+                    chkCWSidetone.Checked = chkMON.Checked;
+                }
+
+                MONChangedHandlers?.Invoke(oldMON, chkMON.Checked);
+            }
         }
 
         private void AudioMOXChanged(bool tx)
@@ -30599,7 +30666,7 @@ namespace Thetis
 
         private void chkCWSidetone_CheckedChanged(object sender, System.EventArgs e)
         {
-            if (!IsSetupFormNull) SetupForm.CWDisableMonitor = chkCWSidetone.Checked;
+            if (!IsSetupFormNull) SetupForm.CWSideTones = chkCWSidetone.Checked;
         }
 
         private void udCWPitch_ValueChanged(object sender, System.EventArgs e)
@@ -30619,8 +30686,6 @@ namespace Thetis
                     SetupForm.VAC2SampleRate = comboVACSampleRate.Text;
             }
             if (comboVACSampleRate.Focused) btnHidden.Focus();
-
-
         }
 
         private void chkX2TR_CheckedChanged(object sender, System.EventArgs e)
@@ -36334,7 +36399,7 @@ namespace Thetis
                         {
                             if (!initializing)
                                 mon_recall = chkMON.Checked;
-                            chkMON.Checked = cw_sidetone;
+                            chkMON.Checked = _cw_sidetones && (_cw_hw_sidetone || _cw_sidetones);
                         }
                         SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
                     }
@@ -36382,7 +36447,7 @@ namespace Thetis
                         {
                             if (!initializing)
                                 mon_recall = chkMON.Checked;
-                            chkMON.Checked = cw_sidetone;
+                            chkMON.Checked = _cw_sidetones && (_cw_hw_sidetone || _cw_sw_sidetone);
                         }
                         SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
                     }
@@ -45335,16 +45400,17 @@ namespace Thetis
             CWFWKeyer = chkCWFWKeyer.Checked;
         }
 
-        private void CAT2port_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
+        //private void CAT2port_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        //{
+        //}
 
-        }
-
-        private void chkMON_Click(object sender, EventArgs e)
-        {
-            if (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU)
-                chkCWSidetone.Checked = chkMON.Checked;
-        }
+        //private void chkMON_Click(object sender, EventArgs e)
+        //{
+        //    if (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU)
+        //    {
+        //        chkCWSidetone.Checked = chkMON.Checked;
+        //    }
+        //}
 
         private void chkNR_CheckStateChanged(object sender, EventArgs e)
         {

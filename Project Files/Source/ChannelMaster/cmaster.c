@@ -119,9 +119,13 @@ void create_xmtr()
 	for (i = 0; i < pcm->cmXMTR; i++)
 	{
 		int in_id = inid (1, i);
-		// output buffers (two because of EER)
-		for (j = 0; j < 2; j++)
+
+		// out[0] is transmitter output buffer
+		// out[1] is needed for EER
+		// out[2] is used for sidetone-out
+		for (j = 0; j < 3; j++)
 			pcm->xmtr[i].out[j] = (double *) malloc0 (getbuffsize (pcm->cmMAXTxOutRate) * sizeof (complex));
+
 		// dexp - vox
 		create_dexp (
 			i,									// transmitter id, txid
@@ -226,6 +230,21 @@ void create_xmtr()
 			2,									// maximum number of inputs
 			3,									// which streams to interleave, one bit per stream
 			pcm->OutboundTx);					// function to call with Outbound data
+
+		// sidetone
+		create_sidetone(
+			i,									// id
+			1,									// run
+			pcm->xmtr[i].ch_outrate,			// rate
+			pcm->xmtr[i].ch_outsize,			// size
+			pcm->xmtr[i].out[0],				// *in
+			pcm->xmtr[i].out[2],				// *out
+			400.0,								// pitch
+			1.0,								// volume
+			20,									// wpm
+			0,									// raised-cosine edge
+			0.005);								// edge length
+		// keySidetone(0, 1);					// for testing only
 	}
 }
 
@@ -234,6 +253,7 @@ void destroy_xmtr()
 	int i, j;
 	for (i = 0; i < pcm->cmXMTR; i++)
 	{
+		destroy_sidetone(i);
 		destroy_ilv (pcm->xmtr[i].pilv);
 		destroy_eer (pcm->xmtr[i].peer);
 		destroy_txgain (pcm->xmtr[i].pgain);
@@ -241,7 +261,7 @@ void destroy_xmtr()
 		CloseChannel (chid (inid (1, i), 0));
 		destroy_aamix ((void *)(pcm->xmtr[i].pavoxmix), -1);
 		destroy_dexp (i);
-		for (j = 0; j < 2; j++)
+		for (j = 0; j < 3; j++)
 			_aligned_free (pcm->xmtr[i].out[j]);
 	}
 }
@@ -356,10 +376,11 @@ void xcmaster (int stream)
 		xpipe (stream, 0, pcm->in);
 		xdexp (tx);																				// vox-dexp
 		fexchange0 (chid (stream, 0), pcm->in[stream], pcm->xmtr[tx].out[0], &error);			// dsp
+		// WriteAudio(10.0, pcm->xmtr[tx].ch_outrate, pcm->xmtr[tx].ch_outsize, pcm->xmtr[tx].out[0], 3);
+		xsidetone(tx);
 		xpipe (stream, 1, pcm->xmtr[tx].out);
 		// Spectrum0 (1, stream, 0, 0, pcm->xmtr[tx].out[0]);									// panadapter
-		xMixAudio (0, 0, chid (stream, 0), pcm->xmtr[tx].out[0]);								// mix monitor audio
-		// WriteAudio(30.0, 192000, 256, pcm->xmtr[0].out[0], 3);
+		xMixAudio (0, 0, chid (stream, 0), pcm->xmtr[tx].out[2]);								// mix monitor audio
 		xtxgain (pcm->xmtr[tx].pgain);															// Gain for Penelope & amp_protect
 		xeer (pcm->xmtr[tx].peer);																// EER transmission
 		xilv(pcm->xmtr[tx].pilv, pcm->xmtr[tx].out);											// interleave EER, call Outbound()
@@ -497,6 +518,8 @@ void SetXmtrChannelOutrate (int xmtr_id, int rate, int state)	// 2014-11-24:  Ca
 	pcm->xmtr[xmtr_id].ch_outsize = size;									// channel out_size
 	SetOutputSamplerate(chid(in_id, 0), rate);								// set DSP Channel output rate (sets size too)
 	// set TX display (currently in C#)
+	setSidetoneRate(xmtr_id, rate);
+	setSidetoneSize(xmtr_id, size);
 																			// set audio mixer
 	SetAAudioMixState (0, 0, mix_in_id, 0);									//	.Make this stream INACTIVE in AAMixer
 	SetAAudioStreamRate (0, 0, mix_in_id, rate);							//	.Set Mixer input rate (sets size too)

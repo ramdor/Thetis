@@ -93,6 +93,9 @@
     <ClInclude Include="analyzers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="sidetone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aamix.c">
@@ -171,6 +174,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="analyzers.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sidetone.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

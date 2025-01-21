@@ -475,7 +475,7 @@ ReadThreadMainLoop() {
 	PrintTimeHack();
 	printf("- ReadThreadMainLoop()\n");
 	fflush(stdout);
-
+	
 	while (io_keep_running != 0) {
 		DWORD retVal = WSAWaitForMultipleEvents(1, &prn->hDataEvent, FALSE, prn->wdt ? 3000 : WSA_INFINITE, FALSE);
 		if ((retVal == WSA_WAIT_FAILED) || (retVal == WSA_WAIT_TIMEOUT))
@@ -512,6 +512,7 @@ ReadThreadMainLoop() {
 					prn->ptt_in = prn->ReadBufp[0] & 0x1;
 					prn->dot_in = prn->ReadBufp[0] & 0x2;
 					prn->dash_in = prn->ReadBufp[0] & 0x4;
+					keySidetone(0, 1, (prn->ReadBufp[0] & 0b10000000) >> 7);
 					prn->pll_locked = prn->ReadBufp[0] & 0x10; //MW0LGE_21d
 
 					//Byte 1 - Bit [0] - ADC0  Overload 1 = active, 0 = inactive

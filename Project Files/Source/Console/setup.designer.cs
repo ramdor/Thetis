@@ -18,6 +18,7 @@
             System.Windows.Forms.NumericUpDownTS numericUpDownTS10;
             System.Windows.Forms.NumericUpDownTS numericUpDownTS12;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Setup));
+            this.chkForceATTwhenOutPowerChanges_decreased = new System.Windows.Forms.CheckBoxTS();
             this.chkUndoAutoATTTx = new System.Windows.Forms.CheckBoxTS();
             this.chkAutoATTTXPsOff = new System.Windows.Forms.CheckBoxTS();
             this.lblTXattBand = new System.Windows.Forms.LabelTS();
@@ -2269,6 +2270,8 @@
             this.lblDSPCWPitchFreq = new System.Windows.Forms.LabelTS();
             this.udDSPCWPitch = new System.Windows.Forms.NumericUpDownTS();
             this.grpDSPKeyerOptions = new System.Windows.Forms.GroupBoxTS();
+            this.chkDSPKeyerSidetone_software = new System.Windows.Forms.CheckBoxTS();
+            this.chkSideTones = new System.Windows.Forms.CheckBoxTS();
             this.lblAutoModeSwitchCWms = new System.Windows.Forms.LabelTS();
             this.chkCWDisableUI = new System.Windows.Forms.CheckBoxTS();
             this.nudAutoModeSwitchCWReturn = new System.Windows.Forms.NumericUpDownTS();
@@ -4142,7 +4145,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.chkForceATTwhenOutPowerChanges_decreased = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -5221,6 +5223,20 @@
             tpAlexAntCtrl.Size = new System.Drawing.Size(708, 378);
             tpAlexAntCtrl.TabIndex = 0;
             tpAlexAntCtrl.Text = "Antenna";
+            // 
+            // chkForceATTwhenOutPowerChanges_decreased
+            // 
+            this.chkForceATTwhenOutPowerChanges_decreased.AutoSize = true;
+            this.chkForceATTwhenOutPowerChanges_decreased.Enabled = false;
+            this.chkForceATTwhenOutPowerChanges_decreased.Image = null;
+            this.chkForceATTwhenOutPowerChanges_decreased.Location = new System.Drawing.Point(592, 213);
+            this.chkForceATTwhenOutPowerChanges_decreased.Name = "chkForceATTwhenOutPowerChanges_decreased";
+            this.chkForceATTwhenOutPowerChanges_decreased.Size = new System.Drawing.Size(88, 17);
+            this.chkForceATTwhenOutPowerChanges_decreased.TabIndex = 25;
+            this.chkForceATTwhenOutPowerChanges_decreased.Text = "or decreased";
+            this.toolTip1.SetToolTip(this.chkForceATTwhenOutPowerChanges_decreased, "also when decreased");
+            this.chkForceATTwhenOutPowerChanges_decreased.UseVisualStyleBackColor = true;
+            this.chkForceATTwhenOutPowerChanges_decreased.CheckedChanged += new System.EventHandler(this.chkForceATTwhenOutPowerChanges_decreased_CheckedChanged);
             // 
             // chkUndoAutoATTTx
             // 
@@ -37098,6 +37114,8 @@
             // 
             // grpDSPKeyerOptions
             // 
+            this.grpDSPKeyerOptions.Controls.Add(this.chkDSPKeyerSidetone_software);
+            this.grpDSPKeyerOptions.Controls.Add(this.chkSideTones);
             this.grpDSPKeyerOptions.Controls.Add(this.lblAutoModeSwitchCWms);
             this.grpDSPKeyerOptions.Controls.Add(this.chkCWDisableUI);
             this.grpDSPKeyerOptions.Controls.Add(this.nudAutoModeSwitchCWReturn);
@@ -37112,16 +37130,42 @@
             this.grpDSPKeyerOptions.Controls.Add(this.chkCWAutoSwitchMode);
             this.grpDSPKeyerOptions.Location = new System.Drawing.Point(296, 8);
             this.grpDSPKeyerOptions.Name = "grpDSPKeyerOptions";
-            this.grpDSPKeyerOptions.Size = new System.Drawing.Size(188, 262);
+            this.grpDSPKeyerOptions.Size = new System.Drawing.Size(188, 315);
             this.grpDSPKeyerOptions.TabIndex = 37;
             this.grpDSPKeyerOptions.TabStop = false;
             this.grpDSPKeyerOptions.Text = "Options";
+            // 
+            // chkDSPKeyerSidetone_software
+            // 
+            this.chkDSPKeyerSidetone_software.Enabled = false;
+            this.chkDSPKeyerSidetone_software.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkDSPKeyerSidetone_software.Image = null;
+            this.chkDSPKeyerSidetone_software.Location = new System.Drawing.Point(38, 91);
+            this.chkDSPKeyerSidetone_software.Name = "chkDSPKeyerSidetone_software";
+            this.chkDSPKeyerSidetone_software.Size = new System.Drawing.Size(126, 16);
+            this.chkDSPKeyerSidetone_software.TabIndex = 51;
+            this.chkDSPKeyerSidetone_software.Text = "Software";
+            this.toolTip1.SetToolTip(this.chkDSPKeyerSidetone_software, "Generates a software side tone");
+            this.chkDSPKeyerSidetone_software.CheckedChanged += new System.EventHandler(this.chkDSPKeyerSidetone_software_CheckedChanged);
+            // 
+            // chkSideTones
+            // 
+            this.chkSideTones.AutoSize = true;
+            this.chkSideTones.Image = null;
+            this.chkSideTones.Location = new System.Drawing.Point(16, 46);
+            this.chkSideTones.Name = "chkSideTones";
+            this.chkSideTones.Size = new System.Drawing.Size(68, 17);
+            this.chkSideTones.TabIndex = 51;
+            this.chkSideTones.Text = "Sidetone";
+            this.toolTip1.SetToolTip(this.chkSideTones, "Hardware and/or software sidetones");
+            this.chkSideTones.UseVisualStyleBackColor = true;
+            this.chkSideTones.CheckedChanged += new System.EventHandler(this.chkSideTones_CheckedChanged);
             // 
             // lblAutoModeSwitchCWms
             // 
             this.lblAutoModeSwitchCWms.AutoSize = true;
             this.lblAutoModeSwitchCWms.Image = null;
-            this.lblAutoModeSwitchCWms.Location = new System.Drawing.Point(160, 141);
+            this.lblAutoModeSwitchCWms.Location = new System.Drawing.Point(160, 182);
             this.lblAutoModeSwitchCWms.Name = "lblAutoModeSwitchCWms";
             this.lblAutoModeSwitchCWms.Size = new System.Drawing.Size(20, 13);
             this.lblAutoModeSwitchCWms.TabIndex = 50;
@@ -37131,7 +37175,7 @@
             // 
             this.chkCWDisableUI.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkCWDisableUI.Image = null;
-            this.chkCWDisableUI.Location = new System.Drawing.Point(16, 234);
+            this.chkCWDisableUI.Location = new System.Drawing.Point(16, 275);
             this.chkCWDisableUI.Name = "chkCWDisableUI";
             this.chkCWDisableUI.Size = new System.Drawing.Size(164, 21);
             this.chkCWDisableUI.TabIndex = 42;
@@ -37148,7 +37192,7 @@
             0,
             0,
             0});
-            this.nudAutoModeSwitchCWReturn.Location = new System.Drawing.Point(98, 137);
+            this.nudAutoModeSwitchCWReturn.Location = new System.Drawing.Point(98, 178);
             this.nudAutoModeSwitchCWReturn.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -37175,7 +37219,7 @@
             // 
             this.chkAutoModeSwitchCWReturn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkAutoModeSwitchCWReturn.Image = null;
-            this.chkAutoModeSwitchCWReturn.Location = new System.Drawing.Point(29, 138);
+            this.chkAutoModeSwitchCWReturn.Location = new System.Drawing.Point(29, 179);
             this.chkAutoModeSwitchCWReturn.Name = "chkAutoModeSwitchCWReturn";
             this.chkAutoModeSwitchCWReturn.Size = new System.Drawing.Size(63, 16);
             this.chkAutoModeSwitchCWReturn.TabIndex = 48;
@@ -37190,7 +37234,7 @@
             0,
             0,
             0});
-            this.udCWKeyerWeight.Location = new System.Drawing.Point(72, 187);
+            this.udCWKeyerWeight.Location = new System.Drawing.Point(72, 228);
             this.udCWKeyerWeight.Maximum = new decimal(new int[] {
             66,
             0,
@@ -37218,13 +37262,14 @@
             // 
             this.chkDSPKeyerSidetone.Checked = true;
             this.chkDSPKeyerSidetone.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDSPKeyerSidetone.Enabled = false;
             this.chkDSPKeyerSidetone.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkDSPKeyerSidetone.Image = null;
-            this.chkDSPKeyerSidetone.Location = new System.Drawing.Point(16, 48);
+            this.chkDSPKeyerSidetone.Location = new System.Drawing.Point(38, 69);
             this.chkDSPKeyerSidetone.Name = "chkDSPKeyerSidetone";
-            this.chkDSPKeyerSidetone.Size = new System.Drawing.Size(113, 16);
+            this.chkDSPKeyerSidetone.Size = new System.Drawing.Size(126, 16);
             this.chkDSPKeyerSidetone.TabIndex = 47;
-            this.chkDSPKeyerSidetone.Text = "Sidetone";
+            this.chkDSPKeyerSidetone.Text = "Hardware";
             this.toolTip1.SetToolTip(this.chkDSPKeyerSidetone, "Turns the sidetone in the speakers on/off");
             this.chkDSPKeyerSidetone.CheckedChanged += new System.EventHandler(this.chkDSPKeyerSidetone_CheckedChanged);
             // 
@@ -37232,7 +37277,7 @@
             // 
             this.chkStrictCharSpacing.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkStrictCharSpacing.Image = null;
-            this.chkStrictCharSpacing.Location = new System.Drawing.Point(16, 160);
+            this.chkStrictCharSpacing.Location = new System.Drawing.Point(16, 201);
             this.chkStrictCharSpacing.Name = "chkStrictCharSpacing";
             this.chkStrictCharSpacing.Size = new System.Drawing.Size(113, 16);
             this.chkStrictCharSpacing.TabIndex = 46;
@@ -37246,7 +37291,7 @@
             this.chkCWKeyerMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkCWKeyerMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkCWKeyerMode.Image = null;
-            this.chkCWKeyerMode.Location = new System.Drawing.Point(16, 94);
+            this.chkCWKeyerMode.Location = new System.Drawing.Point(16, 135);
             this.chkCWKeyerMode.Name = "chkCWKeyerMode";
             this.chkCWKeyerMode.Size = new System.Drawing.Size(96, 16);
             this.chkCWKeyerMode.TabIndex = 40;
@@ -37258,7 +37303,7 @@
             // 
             this.chkCWKeyerRevPdl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkCWKeyerRevPdl.Image = null;
-            this.chkCWKeyerRevPdl.Location = new System.Drawing.Point(16, 72);
+            this.chkCWKeyerRevPdl.Location = new System.Drawing.Point(16, 113);
             this.chkCWKeyerRevPdl.Name = "chkCWKeyerRevPdl";
             this.chkCWKeyerRevPdl.Size = new System.Drawing.Size(113, 16);
             this.chkCWKeyerRevPdl.TabIndex = 38;
@@ -37269,7 +37314,7 @@
             // lblCWWeight
             // 
             this.lblCWWeight.Image = null;
-            this.lblCWWeight.Location = new System.Drawing.Point(13, 187);
+            this.lblCWWeight.Location = new System.Drawing.Point(13, 228);
             this.lblCWWeight.Name = "lblCWWeight";
             this.lblCWWeight.Size = new System.Drawing.Size(48, 16);
             this.lblCWWeight.TabIndex = 39;
@@ -37293,7 +37338,7 @@
             // 
             this.chkCWAutoSwitchMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkCWAutoSwitchMode.Image = null;
-            this.chkCWAutoSwitchMode.Location = new System.Drawing.Point(16, 116);
+            this.chkCWAutoSwitchMode.Location = new System.Drawing.Point(16, 157);
             this.chkCWAutoSwitchMode.Name = "chkCWAutoSwitchMode";
             this.chkCWAutoSwitchMode.Size = new System.Drawing.Size(109, 16);
             this.chkCWAutoSwitchMode.TabIndex = 41;
@@ -65872,20 +65917,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // chkForceATTwhenOutPowerChanges_decreased
-            // 
-            this.chkForceATTwhenOutPowerChanges_decreased.AutoSize = true;
-            this.chkForceATTwhenOutPowerChanges_decreased.Enabled = false;
-            this.chkForceATTwhenOutPowerChanges_decreased.Image = null;
-            this.chkForceATTwhenOutPowerChanges_decreased.Location = new System.Drawing.Point(592, 213);
-            this.chkForceATTwhenOutPowerChanges_decreased.Name = "chkForceATTwhenOutPowerChanges_decreased";
-            this.chkForceATTwhenOutPowerChanges_decreased.Size = new System.Drawing.Size(88, 17);
-            this.chkForceATTwhenOutPowerChanges_decreased.TabIndex = 25;
-            this.chkForceATTwhenOutPowerChanges_decreased.Text = "or decreased";
-            this.toolTip1.SetToolTip(this.chkForceATTwhenOutPowerChanges_decreased, "also when decreased");
-            this.chkForceATTwhenOutPowerChanges_decreased.UseVisualStyleBackColor = true;
-            this.chkForceATTwhenOutPowerChanges_decreased.CheckedChanged += new System.EventHandler(this.chkForceATTwhenOutPowerChanges_decreased_CheckedChanged);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -71328,5 +71359,7 @@
         private CheckBoxTS chkWindBackPowerSWR;
         private PanelTS pnlPostCFCEQ;
         private CheckBoxTS chkForceATTwhenOutPowerChanges_decreased;
+        private CheckBoxTS chkDSPKeyerSidetone_software;
+        private CheckBoxTS chkSideTones;
     }
 }

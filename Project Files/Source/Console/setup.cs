@@ -2348,7 +2348,9 @@ namespace Thetis
             udCWKeyerWeight_ValueChanged(this, e);
             chkStrictCharSpacing_CheckedChanged(this, e);
             chkCWKeyerMode_CheckedChanged(this, e);
-            chkDSPKeyerSidetone_CheckedChanged(this, e);
+            chkSideTones_CheckedChanged(this, e);
+            //chkDSPKeyerSidetone_CheckedChanged(this, e); // done in chkSideTones_CheckedChanged
+            //chkDSPKeyerSidetone_software_CheckedChanged(this, e);
             chkDSPCESSB_CheckedChanged(this, e);
             udRXAMSQMaxTail_ValueChanged(this, e);
             radANFPreAGC_CheckedChanged(this, e);
@@ -4183,19 +4185,18 @@ namespace Thetis
             }
         }
 
-        public bool CWDisableMonitor
+        public bool CWSideTones
         {
             get
             {
-                if (chkDSPKeyerSidetone != null) return chkDSPKeyerSidetone.Checked;
+                if (chkSideTones != null) return chkSideTones.Checked;
                 else return false;
             }
             set
             {
-                if (chkDSPKeyerSidetone != null) chkDSPKeyerSidetone.Checked = value;
+                if (chkSideTones != null) chkSideTones.Checked = value;
             }
         }
-
         public bool CWIambic
         {
             get
@@ -8720,14 +8721,38 @@ namespace Thetis
             udCWKeyerSemiBreakInDelay_ValueChanged(this, EventArgs.Empty);
         }
 
+        private void chkSideTones_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            chkDSPKeyerSidetone.Enabled = chkSideTones.Checked;
+            chkDSPKeyerSidetone_software.Enabled = chkSideTones.Checked;
+
+            console.CWSidetones = chkSideTones.Checked;
+
+            chkDSPKeyerSidetone_CheckedChanged(this, EventArgs.Empty);
+            chkDSPKeyerSidetone_software_CheckedChanged(this, EventArgs.Empty);
+        }
         private void chkDSPKeyerSidetone_CheckedChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
-            console.CWSidetone = chkDSPKeyerSidetone.Checked;
-            if (chkDSPKeyerSidetone.Checked)
-                NetworkIO.SetCWSidetone(1);
-            else NetworkIO.SetCWSidetone(0);
-
+            if (!chkDSPKeyerSidetone.Checked && !chkDSPKeyerSidetone_software.Checked)
+            {
+                // both off, turn on hardware
+                chkDSPKeyerSidetone.Checked = true;
+                return;
+            }
+            console.CWHWSidetone = chkDSPKeyerSidetone.Checked;
+        }
+        private void chkDSPKeyerSidetone_software_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!chkDSPKeyerSidetone.Checked && !chkDSPKeyerSidetone_software.Checked)
+            {
+                // both off, turn on software
+                chkDSPKeyerSidetone_software.Checked = true;
+                return;
+            }
+            console.CWSWSidetone = chkDSPKeyerSidetone_software.Checked;
         }
 
         private void chkCWKeyerRevPdl_CheckedChanged(object sender, System.EventArgs e)

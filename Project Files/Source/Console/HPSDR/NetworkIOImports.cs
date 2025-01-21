@@ -267,6 +267,12 @@ namespace Thetis
         public static extern void EnableCWKeyer(int enable);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetSidetoneRun(int id, int enable);
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetSidetoneVolume(int id, double volume);
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetCWSidetoneVolume(int vol);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
