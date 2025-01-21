@@ -7718,8 +7718,10 @@ namespace Thetis
             private int _button_index;
             private bool _rebuild_buttons;
 
+            private int _total_buttons_visible;
             public clsButtonBox()
             {
+                _total_buttons_visible = 1;
                 _number_of_buttons = 1;
                 _columns = 1;
                 _margin = 0;
@@ -7732,7 +7734,7 @@ namespace Thetis
                 _font_shift_x = 0f;
                 _font_shift_y = 0f;
 
-                _rebuild_buttons = true;
+                _rebuild_buttons = true;                
 
                 UpdateInterval = 50;
 
@@ -7795,6 +7797,7 @@ namespace Thetis
 
                     _indicator_type[n] = new IndicatorType[_number_of_buttons];
 
+                    _total_buttons_visible = 0;
                     for (int b = 0; b < _number_of_buttons; b++) {
                         _fill_colour[n][b] = System.Drawing.Color.Black;
                         _hover_colour[n][b] = System.Drawing.Color.LightGray;
@@ -7819,6 +7822,7 @@ namespace Thetis
 
                         _enabled[n][b] = true;
                         _visible[n][b] = true;
+                        _total_buttons_visible++;
 
                         _indicator_type[n][b] = IndicatorType.RING;
                     }
@@ -8052,6 +8056,17 @@ namespace Thetis
             {
                 if (button < 0 || button >= _number_of_buttons) return;
                 _visible[bank][button] = enabled;
+
+                int total_buttons_visible = 0;
+                for (int i = 0; i < _number_of_buttons; i++)
+                {
+                    if (_visible[bank][i]) total_buttons_visible++;
+                }
+                _total_buttons_visible = total_buttons_visible;
+            }
+            public int TotalButtonsVisible
+            {
+                get { return _total_buttons_visible; }
             }
             public bool GetVisible(int bank, int button)
             {
@@ -29072,7 +29087,7 @@ namespace Thetis
                     {
                         case clsBarItem.Units.S_UNTS:
                             if (cbi.ReadingSource != Reading.ESTIMATED_PBSNR)
-                                sText = Common.SMeterFromDBM(cbi.Value, MeterManager.IsAboveS9Frequency(_rx)).Replace(" ", "");
+                                sText = Common.SMeterFromDBM_Spaceless(cbi.Value, MeterManager.IsAboveS9Frequency(_rx));
                             else
                                 sText = (cbi.Value / 6f).ToString("f1") + "su";
                             break;
@@ -29097,7 +29112,7 @@ namespace Thetis
                     {
                         case clsBarItem.Units.S_UNTS:
                             if (cbi.ReadingSource != Reading.ESTIMATED_PBSNR)
-                                sText = Common.SMeterFromDBM(cbi.MaxHistory, MeterManager.IsAboveS9Frequency(_rx)).Replace(" ", "");
+                                sText = Common.SMeterFromDBM_Spaceless(cbi.MaxHistory, MeterManager.IsAboveS9Frequency(_rx));
                             else
                                 sText = (cbi.Value / 6f).ToString("f1") + "su";
                             break;
@@ -29936,11 +29951,8 @@ namespace Thetis
 
                 //SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
                 //_renderTarget.FillRectangle(rectSC, getDXBrushForColour(System.Drawing.Color.Green));
-                int total_buttons = 0;
-                for(int i = 0; i < bb.Buttons; i++)
-                {
-                    if (bb.GetVisible(1, i)) total_buttons++;
-                }
+
+                int total_buttons = bb.TotalButtonsVisible;
                 if (total_buttons == 0) return; // nothing visible
 
                 int rows = total_buttons / bb.Columns;
@@ -29970,7 +29982,7 @@ namespace Thetis
                     mouse.Y = bb.MouseMovePoint.Y / h;
                 }
 
-                for(int row  = 0; row < rows; row++)
+                for (int row  = 0; row < rows; row++)
                 {
                     int col = 0;
                     while(col < buttons_per_row)
@@ -30029,11 +30041,11 @@ namespace Thetis
                         if (!indicator)
                         {
                             if (on)
-                                fillRoundedRectangle(rr, getDXBrushForColour(bb.GetOnColour(1, button_index), 255));
+                                fillRoundedRectangle(rr, getDXBrushForColour(on_colour, 255));
                             else
                             {
                                 if(bb.GetUseOffColour(1, button_index))
-                                    fillRoundedRectangle(rr, getDXBrushForColour(bb.GetOffColour(1, button_index), 255));
+                                    fillRoundedRectangle(rr, getDXBrushForColour(off_colour, 255));
                             }
                         }
 
@@ -30041,13 +30053,13 @@ namespace Thetis
                         if(bb.MouseEntered)
                         {
                             if (bb.ClickHighlight) hover_colour = click_colour;
-                        }
 
-                        // mouse highlight
-                        if (bb.MouseEntered && rectBB.Contains((float)bb.MouseMovePoint.X, (float)bb.MouseMovePoint.Y))
-                        {
-                            fillRoundedRectangle(rr, getDXBrushForColour(hover_colour, 192));
-                            highlighted_index = button_index;
+                            // mouse highlight
+                            if (rectBB.Contains((float)bb.MouseMovePoint.X, (float)bb.MouseMovePoint.Y))
+                            {
+                                fillRoundedRectangle(rr, getDXBrushForColour(hover_colour, 192));
+                                highlighted_index = button_index;
+                            }
                         }
 
                         //border
@@ -30057,24 +30069,26 @@ namespace Thetis
                         SharpDX.RectangleF indicator_adjust = new SharpDX.RectangleF(0, 0, 0, 0);
                         float text_size_modifier = 0.9f; // text gets shrunk slightly if no indicator ring is in use
                         if (indicator)
-                        {                                                        
-                            System.Drawing.Color indicator_colour = System.Drawing.Color.Transparent;
-                            bool indicator_draw = false;
+                        {
+                            System.Drawing.Color indicator_colour;
+                            bool indicator_draw;
 
                             if(bb.GetOn(1, button_index))
                             {
-                                indicator_colour = bb.GetOnColour(1, button_index);
+                                indicator_colour = on_colour;
                                 indicator_draw = true;
                             }
                             else
                             {
                                 if (bb.GetUseOffColour(1, button_index))
                                 {
-                                    //if (highlighted_index != button_index)
-                                    //{
-                                        indicator_colour = bb.GetOffColour(1, button_index);
-                                        indicator_draw = true;
-                                    //}
+                                    indicator_colour = off_colour;
+                                    indicator_draw = true;
+                                }
+                                else
+                                {
+                                    indicator_colour = System.Drawing.Color.Transparent;
+                                    indicator_draw = false;
                                 }
                             }
 
@@ -30088,7 +30102,6 @@ namespace Thetis
                                         text_size_modifier = 0.9f;
                                         indicator_shrink = (0.015f * wh);
                                         drawSafeLine(new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Top + indicator_shrink + (radius * 0.45f)), new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Bottom - indicator_shrink - (radius * 0.45f)), getDXBrushForColour(indicator_colour), indicator_width);
-                                        //indicator_adjust.Left = indicator_width + (indicator_shrink * 1.5f);
                                         indicator_adjust.Left = indicator_width;
                                         break;
                                     case clsButtonBox.IndicatorType.BAR_RIGHT:
@@ -30096,7 +30109,6 @@ namespace Thetis
                                         indicator_shrink = (0.015f * wh);
                                         drawSafeLine(new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Top + indicator_shrink + (radius * 0.45f)), new RawVector2(rectBB.Right - indicator_shrink - (indicator_width / 2f), rectBB.Bottom - indicator_shrink - (radius * 0.45f)), getDXBrushForColour(indicator_colour), indicator_width);
                                         indicator_adjust.Right = indicator_width;
-                                        //indicator_adjust.Right = indicator_width + (indicator_shrink * 1.5f);
                                         break;
                                     case clsButtonBox.IndicatorType.BAR_TOP:
                                         text_size_modifier = 0.9f;
@@ -30223,15 +30235,14 @@ namespace Thetis
                         string text = bb.GetText(1, button_index);
                         if (!string.IsNullOrEmpty(text))
                         {
-                            //rectBB = shrinkRectangle(rectBB, 1f, border + (indicator_width * 2f));
                             rectBB.Top += indicator_adjust.Top;
                             rectBB.Left += indicator_adjust.Left;
                             rectBB.Right -= indicator_adjust.Right;
                             rectBB.Bottom -= indicator_adjust.Bottom;
-                            float cx = rectBB.Left + (rectBB.Width / 2f);
-                            float cy = rectBB.Top + (rectBB.Height / 2f);
                             if (rectBB.Width > 0 && rectBB.Height > 0)
                             {
+                                float cx = rectBB.Left + (rectBB.Width / 2f);
+                                float cy = rectBB.Top + (rectBB.Height / 2f);
                                 plotText(text, cx + (bb.FontShiftX * wh / (float)(buttons_per_row * 2f)), cy + (bb.FontShiftY * wh / (float)(buttons_per_row * 2f)), rect.Width, bb.GetFontSize(1, button_index), text_colour, 255, bb.GetFontFamily(1, button_index), bb.GetFontStyle(1, button_index), false, true, rectBB.Width * text_size_modifier * bb.FontScale, true, rectBB.Height * text_size_modifier * bb.FontScale);
                             }
                         }

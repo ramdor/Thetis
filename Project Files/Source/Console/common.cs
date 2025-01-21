@@ -1126,6 +1126,53 @@ namespace Thetis
             }
             return "    " + sRet;
         }
+        public static string SMeterFromDBM_Spaceless(double dbm, bool bAboveS9Frequency)
+        {
+            // same as above, but without spaces. Used by MultiMeter display
+
+            if (bAboveS9Frequency)
+            {
+                if (dbm <= -144.0f) return "S0";
+                else if (dbm > -144.0f & dbm <= -138.0f) return "S1";
+                else if (dbm > -138.0f & dbm <= -132.0f) return "S2";
+                else if (dbm > -132.0f & dbm <= -126.0f) return "S3";
+                else if (dbm > -126.0f & dbm <= -120.0f) return "S4";
+                else if (dbm > -120.0f & dbm <= -114.0f) return "S5";
+                else if (dbm > -114.0f & dbm <= -108.0f) return "S6";
+                else if (dbm > -108.0f & dbm <= -102.0f) return "S7";
+                else if (dbm > -102.0f & dbm <= -96.0f) return "S8";
+                else if (dbm > -96.0f & dbm <= -90.0f) return "S9";
+                else if (dbm > -90.0f & dbm <= -86.0f) return "S9+5";
+                else if (dbm > -86.0f & dbm <= -80.0f) return "S9+10";
+                else if (dbm > -80.0f & dbm <= -76.0f) return "S9+15";
+                else if (dbm > -76.0f & dbm <= -66.0f) return "S9+20";
+                else if (dbm > -66.0f & dbm <= -56.0f) return "S9+30";
+                else if (dbm > -56.0f & dbm <= -46.0f) return "S9+40";
+                else if (dbm > -46.0f & dbm <= -36.0f) return "S9+50";
+                else return "S9+60";
+            }
+            else
+            {
+                if (dbm <= -124.0f) return "S0";
+                else if (dbm > -124.0f & dbm <= -118.0f) return "S1";
+                else if (dbm > -118.0f & dbm <= -112.0f) return "S2";
+                else if (dbm > -112.0f & dbm <= -106.0f) return "S3";
+                else if (dbm > -106.0f & dbm <= -100.0f) return "S4";
+                else if (dbm > -100.0f & dbm <= -94.0f) return "S5";
+                else if (dbm > -94.0f & dbm <= -88.0f) return "S6";
+                else if (dbm > -88.0f & dbm <= -82.0f) return "S7";
+                else if (dbm > -82.0f & dbm <= -76.0f) return "S8";
+                else if (dbm > -76.0f & dbm <= -70.0f) return "S9";
+                else if (dbm > -70.0f & dbm <= -66.0f) return "S9+5";
+                else if (dbm > -66.0f & dbm <= -60.0f) return "S9+10";
+                else if (dbm > -60.0f & dbm <= -56.0f) return "S9+15";
+                else if (dbm > -56.0f & dbm <= -46.0f) return "S9+20";
+                else if (dbm > -46.0f & dbm <= -36.0f) return "S9+30";
+                else if (dbm > -36.0f & dbm <= -26.0f) return "S9+40";
+                else if (dbm > -26.0f & dbm <= -16.0f) return "S9+50";
+                else return "S9+60";
+            }
+        }
         public static double GetSMeterUnits(double dbm, bool bAboveS9Frequency)
         {
             if (bAboveS9Frequency)

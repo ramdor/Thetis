@@ -879,7 +879,7 @@ namespace Thetis
             {
                 Splash.SetStatus("Waiting for CPU GetInstance");
                 bool bOk = instanceNameThread.Join(5000);
-                if (!bOk) MessageBox.Show("There was an issue initialising CPU ussage", "CPU Ussage. This will not be available on the status bar.", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                if (!bOk) MessageBox.Show("There was an issue initialising CPU usage", "CPU Usage. This will not be available on the status bar.", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
             CpuUsage(); //[2.10.1.0] MW0LGE initial call to setup check marks in status bar as a minimum
 
@@ -20529,8 +20529,8 @@ namespace Thetis
         }
 
         private bool m_bShowSystemCPUUsage = true;
-        public volatile PerformanceCounter total_cpu_usage = null;
-        public volatile PerformanceCounter total_thetis_usage = null;
+        public volatile PerformanceCounter _total_cpu_usage = null;
+        public volatile PerformanceCounter _total_thetis_usage = null;
         private volatile string _sInstanceName = "";
         private volatile bool _getInstanceNameComplete = false;
 
@@ -20539,6 +20539,7 @@ namespace Thetis
             //MW0LGE_21k9 updated to get actual process name used by perf counter
             //moved to thread, as GetInstanceNames is very very slow
 
+            _getInstanceNameComplete = false;
             _sInstanceName = "";
 
             try
@@ -20588,18 +20589,18 @@ namespace Thetis
 
                 string sMachineName = System.Environment.MachineName;
 
-                if (total_cpu_usage != null)
+                if (_total_cpu_usage != null)
                 {
-                    total_cpu_usage.Close();
-                    total_cpu_usage.Dispose(); //MW0LGE_21k8
-                    total_cpu_usage = null;
+                    _total_cpu_usage.Close();
+                    _total_cpu_usage.Dispose(); //MW0LGE_21k8
+                    _total_cpu_usage = null;
                 }
 
-                if (total_thetis_usage != null)
+                if (_total_thetis_usage != null)
                 {
-                    total_thetis_usage.Close();
-                    total_thetis_usage.Dispose(); //MW0LGE_21k8
-                    total_thetis_usage = null;
+                    _total_thetis_usage.Close();
+                    _total_thetis_usage.Dispose(); //MW0LGE_21k8
+                    _total_thetis_usage = null;
                 }
 
                 //NOTE: run 'lodctr /R' on admin command prompt to rebuild performance counters
@@ -20609,18 +20610,18 @@ namespace Thetis
 
                 if (isWindows7)
                 {
-                    total_cpu_usage = new PerformanceCounter("Processor", "% Processor Time", "_Total", sMachineName);
+                    _total_cpu_usage = new PerformanceCounter("Processor", "% Processor Time", "_Total", sMachineName);
                 }
                 else
                 {
-                    total_cpu_usage = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total", sMachineName);
+                    _total_cpu_usage = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total", sMachineName);
                 }
-                float tmp = total_cpu_usage.NextValue();
+                float tmp = _total_cpu_usage.NextValue();
 
                 if (!string.IsNullOrEmpty(_sInstanceName))
                 {
-                    total_thetis_usage = new PerformanceCounter("Process", "% Processor Time", _sInstanceName, sMachineName);
-                    tmp = total_thetis_usage.NextValue();
+                    _total_thetis_usage = new PerformanceCounter("Process", "% Processor Time", _sInstanceName, sMachineName);
+                    tmp = _total_thetis_usage.NextValue();
                 }
 
                 _cpu_usage_setup = true;
@@ -26007,15 +26008,48 @@ namespace Thetis
             // cpu ussage
             if (_cpu_usage_setup && Environment.ProcessorCount > 0)
             {
-                if ((total_cpu_usage != null && m_bShowSystemCPUUsage) || (total_thetis_usage != null && !m_bShowSystemCPUUsage))
+                if ((_total_cpu_usage != null && m_bShowSystemCPUUsage) || (_total_thetis_usage != null && !m_bShowSystemCPUUsage))
                 {
                     if (!toolStripDropDownButton_CPU.Visible) toolStripDropDownButton_CPU.Visible = true;
 
                     float cpuPerc = 0f;
+
                     if (m_bShowSystemCPUUsage)
-                        cpuPerc = total_cpu_usage.NextValue();
+                    {
+                        if (_total_cpu_usage != null)
+                        {
+                            cpuPerc = _total_cpu_usage.NextValue();
+                        }
+                    }
                     else
-                        cpuPerc = total_thetis_usage.NextValue() / (float)Environment.ProcessorCount;
+                    {
+                        if (_total_thetis_usage != null)
+                        {
+                            try
+                            {
+                                cpuPerc = _total_thetis_usage.NextValue() / (float)Environment.ProcessorCount;
+                            }
+                            catch (Exception ex)
+                            {
+                                //[2.10.3.9]MW0LGE handle an instance name change
+                                try
+                                {
+                                    _total_thetis_usage.Close();
+                                    _total_thetis_usage.Dispose();
+                                }
+                                catch { }
+                                _total_thetis_usage = null;
+
+                                if(ex.HResult == unchecked((int)0x80131509)) // Instance 'XYZ' does not exist in the specified Category.
+                                {
+                                    // need to get the instance again
+                                    // this can be a slow process, ideally should be in another thread, but we can live with this
+                                    getInstanceName();
+                                    CpuUsage();
+                                }
+                            }
+                        }
+                    }
 
                     _cpu_perc_smoothed = (_cpu_perc_smoothed * 0.8f) + (cpuPerc * 0.2f);
                     toolStripDropDownButton_CPU.Text = String.Format("{0:##0}%", _cpu_perc_smoothed);
