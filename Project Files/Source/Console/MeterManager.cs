@@ -24534,31 +24534,32 @@ namespace Thetis
 
                         _waterfall_row_added = false;
 
+                        float rw = m.XRatio;
+                        float rh = m.YRatio;
+                        SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
+
                         foreach (clsMeterItem mi in m.SortedMeterItemsForZOrder)
                         {                          
                             bool bRender = ((m.MOX && mi.OnlyWhenTX) || (!m.MOX && mi.OnlyWhenRX)) || (!mi.OnlyWhenTX && !mi.OnlyWhenRX);
 
                             if (bRender && ((m.DisplayGroup == 0 || mi.DisplayGroup == 0) || (mi.DisplayGroup == m.DisplayGroup)))
                             {
-                                float rw = m.XRatio;
-                                float rh = m.YRatio;
-
-                                SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
-
-                                if (mi.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP)
-                                {
-                                    float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-                                    float h = rect.Height * (mi.Size.Height / m.YRatio);
-
-                                    float w = rect.Width * (mi.Size.Width / m.XRatio);
-
-                                    float padY = ((m.PadY - (m.Height * 0.75f)) * w);
-                                    int hh = (int)Math.Ceiling((y + h + padY)) + 1; // 1 extra
-                                    if (hh > height) height = hh;
-                                }
-
                                 switch (mi.ItemType)
                                 {
+                                    case clsMeterItem.MeterItemType.ITEM_GROUP:
+                                        //    renderGroup(rect, mi, m);
+                                        {
+                                            float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
+                                            float h = rect.Height * (mi.Size.Height / m.YRatio);
+
+                                            float w = rect.Width * (mi.Size.Width / m.XRatio);
+
+                                            float padY = ((m.PadY - (m.Height * 0.75f)) * w);
+                                            int hh = (int)Math.Ceiling((y + h + padY)) + 1; // 1 extra
+                                            if (hh > height) height = hh;
+                                        }
+                                        break;
+
                                     //case clsMeterItem.MeterItemType.V_BAR:
                                     //    renderVBar(rect, mi, m);
                                     //    break;
@@ -24610,9 +24611,6 @@ namespace Thetis
                                     case clsMeterItem.MeterItemType.ROTATOR:
                                         renderRotator(rect, mi, m);
                                         break;
-                                    //case clsMeterItem.MeterItemType.ITEM_GROUP:
-                                    //    renderGroup(rect, mi, m);
-                                    //    break;
                                     case clsMeterItem.MeterItemType.VFO_DISPLAY:
                                         renderVfoDisplay(rect, mi, m);
                                         break;
@@ -24648,14 +24646,9 @@ namespace Thetis
                                 }
                             }
                         }
-                        
-                        foreach(clsMeterItem mi in additionalDraws)
+
+                        foreach (clsMeterItem mi in additionalDraws)
                         {                           
-                            float rw = m.XRatio;
-                            float rh = m.YRatio;
-
-                            SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, tw * rw, tw * rh);
-
                             switch (mi.ItemType)
                             {
                                 case clsMeterItem.MeterItemType.TEXT_OVERLAY:
@@ -24690,7 +24683,7 @@ namespace Thetis
                 // calculate how big the string would be @ emSize pt
                 SharpDX.DirectWrite.TextFormat tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyle, emSize);
                 tf.WordWrapping = SharpDX.DirectWrite.WordWrapping.NoWrap;
-                
+
                 SharpDX.DirectWrite.TextLayout layout = new SharpDX.DirectWrite.TextLayout(_fontFactory, sText, tf, float.MaxValue, float.MaxValue);
                 float width = layout.Metrics.Width;
                 float height = layout.Metrics.Height;
@@ -29891,7 +29884,7 @@ namespace Thetis
 
                 return button_state;
             }
-            private SharpDX.RectangleF shrinkRectangle(SharpDX.RectangleF original, float ratio, float absolute = 0f)
+            private void shrinkRectangle(SharpDX.RectangleF original, float ratio, ref SharpDX.RectangleF shrunk, float absolute = 0f)
             {
                 float newWidth = original.Width * ratio;
                 float newHeight = original.Height * ratio;
@@ -29904,18 +29897,14 @@ namespace Thetis
                 float offsetX = (original.Width - newWidth) / 2f;
                 float offsetY = (original.Height - newHeight) / 2f;
 
-                SharpDX.RectangleF shrunkRectangle = new SharpDX.RectangleF(
-                    original.X + offsetX,
-                    original.Y + offsetY,
-                    newWidth,
-                    newHeight
-                );
-
-                return shrunkRectangle;
+                shrunk.X = original.X + offsetX;
+                shrunk.Y = original.Y + offsetY;
+                shrunk.Width = newWidth;
+                shrunk.Height = newHeight;
             }
             private void drawRoundedRectangle(RoundedRectangle rr, SharpDX.Direct2D1.Brush b, float stroke, bool centred = false)
             {
-                if(rr.RadiusX>0 || rr.RadiusY>0)
+                if(rr.RadiusX > 0 || rr.RadiusY > 0)
                     _renderTarget.DrawRoundedRectangle(rr, b, stroke);
                 else
                     _renderTarget.DrawRectangle(rr.Rect, b, stroke);
@@ -29982,6 +29971,13 @@ namespace Thetis
                     mouse.Y = bb.MouseMovePoint.Y / h;
                 }
 
+                RoundedRectangle rr = new RoundedRectangle();
+                SharpDX.RectangleF indicator_adjust = new SharpDX.RectangleF();
+                SharpDX.RectangleF rectBB = new SharpDX.RectangleF();
+                SharpDX.RectangleF shrunk_rect = new SharpDX.RectangleF();
+                SharpDX.Vector2 start = new Vector2();
+                SharpDX.Vector2 end = new Vector2();
+
                 for (int row  = 0; row < rows; row++)
                 {
                     int col = 0;
@@ -29998,14 +29994,14 @@ namespace Thetis
                         float xP = x + half_border + (button_width * col);
                         float yP = y + half_border + (button_height * row);
 
-                        SharpDX.RectangleF rectBB = new SharpDX.RectangleF(xP, yP, button_width - margin - half_border, button_height - margin - half_border);
+                        rectBB.X = xP;
+                        rectBB.Y = yP;
+                        rectBB.Width = button_width - margin - half_border;
+                        rectBB.Height = button_height - margin - half_border;
 
-                        RoundedRectangle rr = new RoundedRectangle
-                        {
-                            Rect = rectBB,
-                            RadiusX = radius,
-                            RadiusY = radius
-                        };
+                        rr.Rect = rectBB;
+                        rr.RadiusX = radius;
+                        rr.RadiusY = radius;
 
                         // luminance
                         System.Drawing.Color bg_colour = bb.GetFillColour(1, button_index);
@@ -30016,6 +30012,7 @@ namespace Thetis
                         System.Drawing.Color click_colour = bb.GetClickColour(1, button_index);
 
                         bool on = bb.GetOn(1, button_index);
+
                         System.Drawing.Color actual_bg;
                         if (!indicator)
                         {
@@ -30066,7 +30063,11 @@ namespace Thetis
                         drawRoundedRectangle(rr, getDXBrushForColour(bb.GetBorderColour(1, button_index)), bb.Border * w);
 
                         //indicator
-                        SharpDX.RectangleF indicator_adjust = new SharpDX.RectangleF(0, 0, 0, 0);
+                        indicator_adjust.Left = 0;
+                        indicator_adjust.Right = 0;
+                        indicator_adjust.Width = 0;
+                        indicator_adjust.Height = 0;
+
                         float text_size_modifier = 0.9f; // text gets shrunk slightly if no indicator ring is in use
                         if (indicator)
                         {
@@ -30102,6 +30103,7 @@ namespace Thetis
                                         text_size_modifier = 0.9f;
                                         indicator_shrink = (0.015f * wh);
                                         drawSafeLine(new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Top + indicator_shrink + (radius * 0.45f)), new RawVector2(rectBB.Left + indicator_shrink + (indicator_width / 2f), rectBB.Bottom - indicator_shrink - (radius * 0.45f)), getDXBrushForColour(indicator_colour), indicator_width);
+                                        drawSafeLine(start, end, getDXBrushForColour(indicator_colour), indicator_width);
                                         indicator_adjust.Left = indicator_width;
                                         break;
                                     case clsButtonBox.IndicatorType.BAR_RIGHT:
@@ -30220,7 +30222,8 @@ namespace Thetis
                                     default:
                                         text_size_modifier = 0.85f;
                                         indicator_shrink = (0.02f * wh) + border + indicator_width;
-                                        rr.Rect = shrinkRectangle(rectBB, 1f, indicator_shrink);
+                                        shrinkRectangle(rectBB, 1f, ref shrunk_rect, indicator_shrink);
+                                        rr.Rect = shrunk_rect;
                                         drawRoundedRectangle(rr, getDXBrushForColour(indicator_colour), indicator_width);
                                         indicator_adjust.Top = indicator_width;
                                         indicator_adjust.Left = indicator_width;

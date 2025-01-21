@@ -17,7 +17,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] fixed rare out of bounds issue in memory ScheduleUpdate
 - [fix] cat IF command fix where an error (O;) message would be returned if an unsupported TuneStep was in use. This bug has existed since 25/02/2007
 - [fix] mode buttons when in collapsed mode should now work again when Thetis is first launched
-- [fix] when running multiple instances of Thetis, closing down others may result in PerformaceCounter/CpuLoad display issues on others, resulting in endless error logs. This has been resolved
+- [fix] when running multiple instances of Thetis, closing down others may cause issues with PerformaceCounter/CpuLoad display, resulting in endless error logs. This has been resolved
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked
