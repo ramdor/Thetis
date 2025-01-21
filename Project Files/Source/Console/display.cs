@@ -28,7 +28,7 @@
 //
 //=================================================================
 // Waterfall AGC Modifications Copyright (C) 2013 Phil Harman (VK6APH)
-// Transitions to directX and continual modifications Copyright (C) 2020-2024 Richard Samphire (MW0LGE)
+// Transitions to directX and continual modifications Copyright (C) 2020-2025 Richard Samphire (MW0LGE)
 //=================================================================
 
 

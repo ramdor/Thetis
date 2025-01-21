@@ -27,7 +27,7 @@
 //    USA
 //
 //=================================================================
-// Modifications Copyright (C) 2019-2024 Richard Samphire (MW0LGE)
+// Modifications Copyright (C) 2019-2025 Richard Samphire (MW0LGE)
 //=================================================================
 
 using System;
