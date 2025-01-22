@@ -1649,5 +1649,18 @@ namespace Thetis
                 return false;
             }
         }
+
+        public static bool GetComPortNumber(string comport, out int portNumber)
+        {
+            string lower_comport = comport.ToLower();
+
+            if (!lower_comport.StartsWith("com"))
+            {
+                portNumber = 0;
+                return false;
+            }
+
+            return int.TryParse(lower_comport.Substring(3), out portNumber);
+        }
     }
 }

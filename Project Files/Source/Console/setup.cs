@@ -10035,13 +10035,20 @@ namespace Thetis
             console.MaxMIDIMessagesPerTuneStep = Convert.ToInt32(udUpdatesPerStepMax.Value);
             console.MinMIDIMessagesPerTuneStep = Convert.ToInt32(udUpdatesPerStepMin.Value);
 
-            if (comboCATPort.Text.StartsWith("COM"))
-                console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
+            //if (comboCATPort.Text.StartsWith("COM"))
+            //    console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCATPort.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.CATPort = port;
+
             console.CATPTTRTS = chkCATPTT_RTS.Checked;
             console.CATPTTDTR = chkCATPTT_DTR.Checked;
 
-            if (comboCATPTTPort.Text.StartsWith("COM"))
-                console.CATPTTBitBangPort = Int32.Parse(comboCATPTTPort.Text.Substring(3));
+            //if (comboCATPTTPort.Text.StartsWith("COM"))
+            //  console.CATPTTBitBangPort = Int32.Parse(comboCATPTTPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCATPTTPort.Text, out port)) //[2.10.3.9]MW0LGE
+                console.CATPTTBitBangPort = port;
+
+
             console.CATParity = SDRSerialPort.StringToParity((string)comboCATparity.SelectedItem);
             console.CATDataBits = int.Parse((string)comboCATdatabits.SelectedItem);
             console.CATStopBits = SDRSerialPort.StringToStopBits((string)comboCATstopbits.SelectedItem);
@@ -10058,37 +10065,52 @@ namespace Thetis
                 chkCATPTTEnabled.Checked = false;
             }
 
-            if (comboCAT2Port.Text.StartsWith("COM"))
-                console.CAT2Port = Int32.Parse(comboCAT2Port.Text.Substring(3));
+            //if (comboCAT2Port.Text.StartsWith("COM"))
+            //    console.CAT2Port = Int32.Parse(comboCAT2Port.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCAT2Port.Text, out port)) //[2.10.3.9]MW0LGE
+                console.CAT2Port = port;
+
             console.CAT2Parity = SDRSerialPort.StringToParity((string)comboCAT2parity.SelectedItem);
             console.CAT2DataBits = int.Parse((string)comboCAT2databits.SelectedItem);
             console.CAT2StopBits = SDRSerialPort.StringToStopBits((string)comboCAT2stopbits.SelectedItem);
             console.CAT2Enabled = chkCAT2Enable.Checked;
 
-            if (comboCAT3Port.Text.StartsWith("COM"))
-                console.CAT3Port = Int32.Parse(comboCAT3Port.Text.Substring(3));
+            //if (comboCAT3Port.Text.StartsWith("COM"))
+            //    console.CAT3Port = Int32.Parse(comboCAT3Port.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCAT3Port.Text, out port)) //[2.10.3.9]MW0LGE
+                console.CAT3Port = port;
+
             console.CAT3Parity = SDRSerialPort.StringToParity((string)comboCAT3parity.SelectedItem);
             console.CAT3DataBits = int.Parse((string)comboCAT3databits.SelectedItem);
             console.CAT3StopBits = SDRSerialPort.StringToStopBits((string)comboCAT3stopbits.SelectedItem);
             console.CAT3Enabled = chkCAT3Enable.Checked;
 
-            if (comboCAT4Port.Text.StartsWith("COM"))
-                console.CAT4Port = Int32.Parse(comboCAT4Port.Text.Substring(3));
+            //if (comboCAT4Port.Text.StartsWith("COM"))
+            //    console.CAT4Port = Int32.Parse(comboCAT4Port.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCAT4Port.Text, out port)) //[2.10.3.9]MW0LGE
+                console.CAT4Port = port;
+
             console.CAT4Parity = SDRSerialPort.StringToParity((string)comboCAT4parity.SelectedItem);
             console.CAT4DataBits = int.Parse((string)comboCAT4databits.SelectedItem);
             console.CAT4StopBits = SDRSerialPort.StringToStopBits((string)comboCAT4stopbits.SelectedItem);
             console.CAT4Enabled = chkCAT4Enable.Checked;
 
-            if (comboAndromedaCATPort.Text.StartsWith("COM"))
-                console.AndromedaCATPort = Int32.Parse(comboAndromedaCATPort.Text.Substring(3));
+            //if (comboAndromedaCATPort.Text.StartsWith("COM"))
+            //    console.AndromedaCATPort = Int32.Parse(comboAndromedaCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboAndromedaCATPort.Text, out port)) //[2.10.3.9]MW0LGE
+                console.AndromedaCATPort = port;
             console.AndromedaCATEnabled = chkEnableAndromeda.Checked;
 
-            if (comboAriesCATPort.Text.StartsWith("COM"))
-                console.AriesCATPort = Int32.Parse(comboAriesCATPort.Text.Substring(3));
+            //if (comboAriesCATPort.Text.StartsWith("COM"))
+            //    console.AriesCATPort = Int32.Parse(comboAriesCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboAriesCATPort.Text, out port)) //[2.10.3.9]MW0LGE
+                console.AriesCATPort = port;
             console.AriesCATEnabled = chkEnableAries.Checked;
 
-            if (comboGanymedeCATPort.Text.StartsWith("COM"))
-                console.GanymedeCATPort = Int32.Parse(comboGanymedeCATPort.Text.Substring(3));
+            //if (comboGanymedeCATPort.Text.StartsWith("COM"))
+            //    console.GanymedeCATPort = Int32.Parse(comboGanymedeCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboGanymedeCATPort.Text, out port)) //[2.10.3.9]MW0LGE
+                console.GanymedeCATPort = port;
             console.GanymedeCATEnabled = chkEnableGanymede.Checked;
 
         }
@@ -10637,8 +10659,10 @@ namespace Thetis
             }
             else chkCATEnable.Enabled = true;
 
-            if (comboCATPort.Text.StartsWith("COM"))
-                console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
+            //if (comboCATPort.Text.StartsWith("COM"))
+            //    console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCATPort.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.CATPort = port;
 
             console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
@@ -10657,8 +10681,10 @@ namespace Thetis
             }
             else chkCAT2Enable.Enabled = true;
 
-            if (comboCAT2Port.Text.StartsWith("COM"))
-                console.CAT2Port = Int32.Parse(comboCAT2Port.Text.Substring(3));
+            //if (comboCAT2Port.Text.StartsWith("COM"))
+            //    console.CAT2Port = Int32.Parse(comboCAT2Port.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCAT2Port.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.CAT2Port = port;
 
             console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
@@ -10677,8 +10703,10 @@ namespace Thetis
             }
             else chkCAT3Enable.Enabled = true;
 
-            if (comboCAT3Port.Text.StartsWith("COM"))
-                console.CAT3Port = Int32.Parse(comboCAT3Port.Text.Substring(3));
+            //if (comboCAT3Port.Text.StartsWith("COM"))
+            //    console.CAT3Port = Int32.Parse(comboCAT3Port.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCAT3Port.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.CAT3Port = port;
 
             console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
@@ -10697,8 +10725,10 @@ namespace Thetis
             }
             else chkCAT4Enable.Enabled = true;
 
-            if (comboCAT4Port.Text.StartsWith("COM"))
-                console.CAT4Port = Int32.Parse(comboCAT4Port.Text.Substring(3));
+            //if (comboCAT4Port.Text.StartsWith("COM"))
+            //    console.CAT4Port = Int32.Parse(comboCAT4Port.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCAT4Port.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.CAT4Port = port;
 
             console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
@@ -10718,8 +10748,10 @@ namespace Thetis
             }
             else chkEnableAndromeda.Enabled = true;
 
-            if (comboAndromedaCATPort.Text.StartsWith("COM"))
-                console.AndromedaCATPort = Int32.Parse(comboAndromedaCATPort.Text.Substring(3));
+            //if (comboAndromedaCATPort.Text.StartsWith("COM"))
+            //    console.AndromedaCATPort = Int32.Parse(comboAndromedaCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboAndromedaCATPort.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.AndromedaCATPort = port;
         }
 
         private void comboCATPTTPort_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -10760,8 +10792,11 @@ namespace Thetis
             if (console.Siolisten != null && comboCATPTTPort.Text != "CAT")
                 console.Siolisten.UseForCATPTT = false;
 
-            if (comboCATPTTPort.Text.StartsWith("COM"))
-                console.CATPTTBitBangPort = Int32.Parse(comboCATPTTPort.Text.Substring(3));
+            //if (comboCATPTTPort.Text.StartsWith("COM"))
+            //    console.CATPTTBitBangPort = Int32.Parse(comboCATPTTPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCATPTTPort.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.CATPTTBitBangPort = port;
+
             if (!comboCATPTTPort.Focused)
                 chkCATPTTEnabled_CheckedChanged(sender, e);
         }
@@ -19320,8 +19355,10 @@ namespace Thetis
             }
             else chkEnableGanymede.Enabled = true;
 
-            if (comboGanymedeCATPort.Text.StartsWith("COM"))
-                console.GanymedeCATPort = Int32.Parse(comboGanymedeCATPort.Text.Substring(3));
+            //if (comboGanymedeCATPort.Text.StartsWith("COM"))
+            //    console.GanymedeCATPort = Int32.Parse(comboGanymedeCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboGanymedeCATPort.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.GanymedeCATPort = port;
         }
 
         private void ComboAriesCATPort_SelectedIndexChanged(object sender, EventArgs e)
@@ -19338,8 +19375,10 @@ namespace Thetis
             }
             else chkEnableAries.Enabled = true;
 
-            if (comboAriesCATPort.Text.StartsWith("COM"))
-                console.AriesCATPort = Int32.Parse(comboAriesCATPort.Text.Substring(3));
+            //if (comboAriesCATPort.Text.StartsWith("COM"))
+            //    console.AriesCATPort = Int32.Parse(comboAriesCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboAriesCATPort.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.AriesCATPort = port;
         }
 
         private void ChkEnableGanymede_CheckedChanged(object sender, EventArgs e)
