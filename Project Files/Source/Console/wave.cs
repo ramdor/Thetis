@@ -978,7 +978,18 @@ namespace Thetis
                 string file_name = temp+".wav";
                 scheduleName = file_name; // ke9ns add
 
-               // string file_name2 = file_name+"-rx2";				
+                if (!Common.CanCreateFile(file_name))
+                {
+                    MessageBox.Show($"Unable to open the file : \n\n{file_name}\n\nThis may be due to controlled folder access or some other reason.",
+                    "Wave Record",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                    checkBoxRecord.Checked = false;
+                    return;
+                }
+
+                // string file_name2 = file_name+"-rx2";				
                 WaveThing.wave_file_writer[0] = new WaveFileWriter(0, 2, waveOptionsForm.SampleRate, file_name);
 
                 if (console.RX2Enabled)
@@ -1236,8 +1247,8 @@ namespace Thetis
  //           }
 
 			if(chkQuickPlay.Checked)
-			{				
-				temp_txeq = console.TXEQ;
+			{               
+                temp_txeq = console.TXEQ;
 				console.TXEQ = false;               // set TX Eq temporarily to OFF
 
 				temp_cpdr = console.CPDR;
@@ -1312,19 +1323,32 @@ namespace Thetis
         {
             if (chkQuickRec.Checked)
             {
-//                 temp_record = Audio.RecordRXPreProcessed;
-//                 quickmp3SR = waveOptionsForm.comboSampleRate.Text;
-// 
-//                 if (chkBoxMP3.Checked == true)
-//                     waveOptionsForm.comboSampleRate.Text = "48000"; // reduce file size
+                string file_name;
+                file_name = console.AppDataPath + "SDRQuickAudio.wav";
+                if (!Common.CanCreateFile(file_name))
+                {
+                    MessageBox.Show($"Unable to open the file : \n\n{file_name}\n\nThis may be due to controlled folder access or some other reason.",
+                    "Wave Record",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
 
-               // Audio.RecordRXPreProcessed = false;                            //ke9ns add  set this FALSE temporarily
+                    chkQuickRec.Checked = false;
+                    return;
+                }
+
+                //                 temp_record = Audio.RecordRXPreProcessed;
+                //                 quickmp3SR = waveOptionsForm.comboSampleRate.Text;
+                // 
+                //                 if (chkBoxMP3.Checked == true)
+                //                     waveOptionsForm.comboSampleRate.Text = "48000"; // reduce file size
+
+                // Audio.RecordRXPreProcessed = false;                            //ke9ns add  set this FALSE temporarily
 
                 chkQuickRec.BackColor = console.ButtonSelectedColor;
 
                 chkQuickPlay.Enabled = true;
 
-                string file_name;
+                //string file_name;
 
 //                 if (chkQuickAudioFolder.Checked == true)
 //                 {
@@ -1342,7 +1366,7 @@ namespace Thetis
 //                 else
 //                 {
 // 
-                     file_name = console.AppDataPath + "SDRQuickAudio.wav";
+                     //file_name = console.AppDataPath + "SDRQuickAudio.wav";
 // 
 //                     quickmp3 = console.AppDataPath + "SDRQuickAudio.mp3"; // ke9ns add mp3
 // 
@@ -2391,7 +2415,7 @@ namespace Thetis
 
         // gets called when a record button is clicked
 		public WaveFileWriter(int wfw_id, short chan, int samp_rate, string file)
-		{
+		{            
             id = wfw_id;
             // get rates and sizes for recording the receiver and recording the transmitter
             // pre/post choices must have been selected in advance of clicking record

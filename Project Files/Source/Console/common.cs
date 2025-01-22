@@ -1578,5 +1578,76 @@ namespace Thetis
             }
             return new string(result);
         }
+
+        public static bool CanCreateFile(string filePath)
+        {
+            try
+            {
+                string directoryPath = Path.GetDirectoryName(filePath);
+
+                if (!Directory.Exists(directoryPath))
+                {
+                    return false;
+                }
+
+                if (!hasWritePermissionOnDir(directoryPath))
+                {
+                    return false;
+                }
+
+                if (File.Exists(filePath))
+                {
+                    FileInfo fileInfo = new FileInfo(filePath);
+                    if (fileInfo.IsReadOnly)
+                    {
+                        return false;
+                    }
+
+                    if (!isFileWritable(filePath))
+                    {
+                        return false;
+                    }
+                }
+
+                string tempFile = Path.Combine(directoryPath, Path.GetRandomFileName());
+                FileStream tempStream = File.Create(tempFile);
+                tempStream.Close();
+                File.Delete(tempFile);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        private static bool hasWritePermissionOnDir(string path)
+        {
+            try
+            {
+                string tempFile = Path.Combine(path, Path.GetRandomFileName());
+                FileStream fs = File.Create(tempFile, 1, FileOptions.DeleteOnClose);
+                fs.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool isFileWritable(string filePath)
+        {
+            try
+            {
+                FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Write);
+                stream.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
