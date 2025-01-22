@@ -38886,7 +38886,7 @@ namespace Thetis
                                                                                        //thetis loaded with multirx already on
             if (chkEnableMultiRX.Checked)
             {
-                cmaster.SetAAudioMixWhat((void*)0, 0, 1, true);
+                cmaster.SetAAudioMixWhat((void*)0, 0, 1, !Audio.MuteRX1); //[2.10.3.9]MW0LGE now considers RX1 audio mute state
                 if (!_mox) WDSP.SetChannelState(WDSP.id(0, 1), 1, 0);
 
                 chkEnableMultiRX.BackColor = button_selected_color;
