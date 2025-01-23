@@ -28,6 +28,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] the sub-receiver now respects the main receiver’s mute state, fixing an issue where sub-receiver audio could still be heard even when the main receiver was muted
 - [fix] serial ports that are not of COMnn format now do not causes errors. If a serial port is for example name COMB13, then it will not be able to be used
 - [fix] notch popup window will be shifted so that it is visible when close to the edge of a screen
+- [fix] fix filter width crash under certain conditions in the filter config form
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked

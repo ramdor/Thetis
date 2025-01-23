@@ -74,7 +74,7 @@
             this.panDisplay.cOnsole = null;
             this.panDisplay.CurrentClickTuneMode = Thetis.ClickTuneMode.Off;
             this.panDisplay.CurrentDisplayMode = Thetis.DisplayMode.PANADAPTER;
-            this.panDisplay.CurrentModel = Thetis.Model.HERMES;
+            this.panDisplay.CurrentModel = Thetis.HPSDRModel.HERMES;
             this.panDisplay.CurrentRegion = Thetis.FRSRegion.US;
             this.panDisplay.CWPitch = 600;
             this.panDisplay.DataLineColor = System.Drawing.Color.White;
