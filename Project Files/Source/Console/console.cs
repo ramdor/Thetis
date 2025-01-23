@@ -29505,34 +29505,7 @@ namespace Thetis
         }
         private void chkMicMute_CheckedChanged(object sender, System.EventArgs e)
         {
-            //if (chkMicMute.Checked)  //[2.10.3.9]MW0LGE mic_scroll now handles all of this
-            {
-                if(CurrentHPSDRModel == HPSDRModel.HERMESLITE)      // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                {
-                    if (ptbMic.Tag != null)
-                    {
-                        Audio.VACPreamp = (double) ptbMic.Tag;
-                        ptbMic.Tag = null;
-                    }
-                    ptbMic.Enabled = true;
-                }
             ptbMic_Scroll(this, EventArgs.Empty);
-            //else 
-            //    Audio.MicPreamp = 0.0;
-            }
-            else
-            {
-                if(CurrentHPSDRModel == HPSDRModel.HERMESLITE)      // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                {
-                    ptbMic.Enabled = false;
-                    ptbMic.Tag = Audio.VACPreamp;
-                    Audio.VACPreamp = 0.0;
-                }
-                else
-                {
-                    Audio.MicPreamp = 0.0;
-                }
-            }
         }
 
         private void ptbMic_Scroll(object sender, System.EventArgs e)
@@ -29592,10 +29565,33 @@ namespace Thetis
         }
         private void setAudioMicGain(double gain_db)
         {
-            if (chkMicMute.Checked) // although it is called chkMicMute, checked = mic in use
-                Audio.MicPreamp = Math.Pow(10.0, gain_db / 20.0); // convert to scalar 
+            if (chkMicMute.Checked)  // although it is called chkMicMute, checked = mic in use
+            {
+                if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)      // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                {
+                    if (ptbMic.Tag != null)
+                    {
+                        Audio.VACPreamp = (double)ptbMic.Tag;
+                        ptbMic.Tag = null;
+                    }
+                    ptbMic.Enabled = true;
+                }
+                else
+                    Audio.MicPreamp = Math.Pow(10.0, gain_db / 20.0); // convert to scalar 
+            }
             else
-                Audio.MicPreamp = 0.0;
+            {
+                if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)      // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                {
+                    ptbMic.Enabled = false;
+                    ptbMic.Tag = Audio.VACPreamp;
+                    Audio.VACPreamp = 0.0;
+                }
+                else
+                {
+                    Audio.MicPreamp = 0.0;
+                }
+            }
         }
         private void ptbCWSpeed_Scroll(object sender, System.EventArgs e)
         {
