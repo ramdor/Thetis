@@ -356,7 +356,19 @@ namespace Thetis
         public static int PSrate
         {
             get { return ps_rate; }
-            set { ps_rate = value; }
+            set 
+            {
+                ps_rate = value;
+
+                if(Audio.console.CurrentHPSDRModel == HPSDRModel.REDPITAYA) //DH1KLM
+                {
+                    // get transmitter identifiers
+                    int txinid = cmaster.inid(1, 0);        // stream id  REDPITAYA Pavel
+                    int txch = cmaster.chid(txinid, 0);     // wdsp channel REDPITAYA Pavel
+
+                    puresignal.SetPSFeedbackRate(txch, ps_rate); // REDPITAYA Pavel
+                }
+            }
         }
 
         public static RadioProtocol CurrentRadioProtocol { get; set; }
@@ -431,7 +443,7 @@ namespace Thetis
         {
             switch (NetworkIO.CurrentRadioProtocol)
             {
-                case RadioProtocol.USB:
+                case RadioProtocol.USB: //Protocol 1
                     if (ps_loopback)
                     {
                         switch (model)
@@ -491,6 +503,7 @@ namespace Thetis
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
                             case HPSDRModel.ANVELINAPRO3:
+                            case HPSDRModel.REDPITAYA: //DH1KLM
                                 int[] FIVE_DDC_Function = new int[48]
                                     {
                                     2, 2, 2, 2, 2, 0, 2, 0,     // DDC0+DDC1, port 1035, Call 0
@@ -573,6 +586,7 @@ namespace Thetis
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
                             case HPSDRModel.ANVELINAPRO3:
+                            case HPSDRModel.REDPITAYA: //DH1KLM
                                 int[] FIVE_DDC_Function = new int[24]
                                     {
                                     2, 2, 2, 2, 2, 2, 2, 2,     // DDC0+DDC1, port 1035, Call 0
@@ -597,7 +611,7 @@ namespace Thetis
                         }
                     }
                     break;
-                case RadioProtocol.ETH:
+                case RadioProtocol.ETH: //Protocol 2
                     if (ps_loopback)    // for test purposes
                     {
                         switch (model)

@@ -1445,40 +1445,7 @@ namespace Thetis
                 if (s.Contains(arg, StringComparison.OrdinalIgnoreCase)) return true;
             }
             return false;
-        }
-
-        public static HPSDRModel StringModelToEnum(string sModel)
-        {
-            switch (sModel.ToUpper())
-            {
-                case "HERMES":
-                    return HPSDRModel.HERMES;
-                case "ANAN-10":
-                    return HPSDRModel.ANAN10;
-                case "ANAN-10E":
-                    return HPSDRModel.ANAN10E;
-                case "ANAN-100":
-                    return HPSDRModel.ANAN100;
-                case "ANAN-100B":
-                    return HPSDRModel.ANAN100B;
-                case "ANAN-100D":
-                    return HPSDRModel.ANAN100D;
-                case "ANAN-200D":
-                    return HPSDRModel.ANAN200D;
-                case "ANAN-7000DLE":
-                    return HPSDRModel.ANAN7000D;
-                case "ANAN-8000DLE":
-                    return HPSDRModel.ANAN8000D;
-                case "ANAN-G2":
-                    return HPSDRModel.ANAN_G2;
-                case "ANAN-G2-1K":
-                    return HPSDRModel.ANAN_G2_1K;
-                case "ANVELINA-PRO3":
-                    return HPSDRModel.ANVELINAPRO3;
-            }
-
-            return HPSDRModel.FIRST;
-        }
+        }       
         public static int GetLuminance(Color c)
         {
             //https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color

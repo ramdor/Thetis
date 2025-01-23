@@ -418,15 +418,16 @@ enum _RXPort
 	WB0Port = 1027, // 16-Raw ADC Samples
 };
 
-enum HPSDRHW
+enum _HPSDRHW
 {
 	Atlas = 0,
 	Hermes = 1,   // ANAN-10/100
 	HermesII = 2, // ANAN-10E/100B
 	Angelia = 3,  // ANAN-100D
 	Orion = 4,    // ANAN-200D
-	OrionMKII = 5 // ANAN-7000DLE/8000DLE AnvelinaPro3
-};
+	OrionMKII = 5, // ANAN-7000DLE/8000DLE AnvelinaPro3
+	RedPitaya = 6 // RedPitaya, code mods DH1KLM
+} HPSDRHW;
 
 enum _RadioProtocol
 {

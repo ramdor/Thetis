@@ -281,7 +281,7 @@ namespace Thetis
                 }
             }
 
-            rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort, (int)CurrentRadioProtocol);
+            rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort, (int)CurrentRadioProtocol, (int)BoardID);
             return -rc;
         }
 
