@@ -32263,6 +32263,8 @@
             // chkVSyncDX
             // 
             this.chkVSyncDX.AutoSize = true;
+            this.chkVSyncDX.Checked = true;
+            this.chkVSyncDX.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkVSyncDX.Image = null;
             this.chkVSyncDX.Location = new System.Drawing.Point(8, 95);
             this.chkVSyncDX.Name = "chkVSyncDX";

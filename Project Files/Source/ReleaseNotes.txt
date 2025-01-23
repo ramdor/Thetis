@@ -18,6 +18,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] restored step attenuator RX1 if HERMES is used. Unsure why I disabled it a few years ago
 - [change] the bespoke TCI command tx_frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; . There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;
 - [change] refactor serial port pin change detection code for slight performance improvements
+- [change] display vsync defaulted to on for new databases. I would advise turning this on if not already
 - [fix] mic disable/enable button on front end will now disable the mic at startup if set as off. Note: its state is saved as part of the tx profile
 - [fix] fixed rare out of bounds issue in memory ScheduleUpdate
 - [fix] cat IF command fix where an error (O;) message would be returned if an unsupported TuneStep was in use. This bug has existed since 25/02/2007

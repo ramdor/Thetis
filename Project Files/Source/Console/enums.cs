@@ -81,7 +81,7 @@
         ANAN_G2,        //G8NJJ
         ANAN_G2_1K,     //G8NJJ
         ANVELINAPRO3,
-        HERMESLITE,    //MI0BOT
+        HERMESLITE,     //MI0BOT
         REDPITAYA,      //DH1KLM
         LAST
     }
