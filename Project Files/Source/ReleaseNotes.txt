@@ -1,4 +1,4 @@
-**UPDATE: The CW issue has been resolved for Protocol 2. It requires a firmware update and this modified version of Thetis. Please see the [ApacheLab community forums here](https://community.apache-labs.com/viewtopic.php?f=32&t=4972)**
+**UPDATE: The CW issue has been resolved for Protocol 2. It requires a firmware update and this modified version of Thetis. Please see the [ApacheLabs community forums here](https://community.apache-labs.com/viewtopic.php?f=32&t=4972)**
 
 **Note: You can revisit these release notes by using the button inside the About box**
 
@@ -7,8 +7,8 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
 ## v2.10.3.9 development - Change Log
-- [add] or decreased option added to "Force ATT on Tx to 31 when Drive or Tune power is increased and PS-A is on"
-- [add] tool tips add to fields and options in the linearity form
+- [add] [or decreased] option added to "Force ATT on Tx to 31 when Drive or Tune power is increased and PS-A is on"
+- [add] tool tips added to fields and options in the linearity form
 - [add] many tool tips added to DSP setup form
 - [add] software sidetone option added. New options in Setup->DSP->CW. Audio via cmASIO + VAC
 - [add] tx filter edge colour for the filter view item
@@ -33,7 +33,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] filter view now updates when zzfl etc cat commands are used
 - [fix] refactored waterfall colour min/max for filterview. Fixes issues with high AGC offsets
 - [fix] rx2 containers will not show if rx2 is disabled and the console window is restored from a minimised state
-- [fix] fixed issue with DB manager, wher dbman.json would not be loaded correctly if a radio model was added/removed from the code. Now defaults to HERMES if model not found, ie HL2
+- [fix] fixed issue with DB manager, where dbman.json would not be loaded correctly if a radio model was added/removed from the code. Now defaults to HERMES if model not found, ie HL2
 - [fix] vac tx gains are min/max validated. To prevent crash/error with the HL2 modified version that is able to assign mic gain to tx vac gain
 - [fix] fixed vfoB frequency limit issue and potential crash issue when using xvtr slot vhf0
 
