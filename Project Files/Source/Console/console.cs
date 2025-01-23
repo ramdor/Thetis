@@ -8199,7 +8199,7 @@ namespace Thetis
                 {
                     case HPSDRHW.Angelia: // ANAN-100D (all 5 adc)
                     case HPSDRHW.Orion: // ANAN-200D
-                    case HPSDRHW.OrionMKII: // ANAN-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII
+                    case HPSDRHW.OrionMKII: // ANAN-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII RedPitaya
                                             // (note Saturn would only be used with P2, so not added here)
                         switch (tot)
                         {

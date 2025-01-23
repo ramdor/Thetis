@@ -426,7 +426,7 @@ enum _HPSDRHW
 	Angelia = 3,  // ANAN-100D
 	Orion = 4,    // ANAN-200D
 	OrionMKII = 5, // ANAN-7000DLE/8000DLE AnvelinaPro3
-	RedPitaya = 6 // RedPitaya, code mods DH1KLM
+	RedPitaya = 99 // RedPitaya a variant of OrionMKII, used in networkproto1.c to identify it
 } HPSDRHW;
 
 enum _RadioProtocol

@@ -365,9 +365,9 @@
         HermesII = 2,       // ANAN-10E ANAN-100B HeremesII
         Angelia = 3,        // ANAN-100D
         Orion = 4,          // ANAN-200D
-        OrionMKII = 5,      // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII Anvelina-Pro3
-        RedPitaya = 6,      // RedPitaya, code mods DH1KLM
+        OrionMKII = 5,      // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII Anvelina-Pro3 RedPitaya
         Saturn = 10,         // ANAN-G2: added G8NJJ
+        RedPitaya = 99,     //RedPitaya - not used, here to match network.h (channelmaster) //DH1KLM
         Unknown = 999,      //MW0LGE
     }
 
