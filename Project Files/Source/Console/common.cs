@@ -1662,5 +1662,75 @@ namespace Thetis
 
             return int.TryParse(lower_comport.Substring(3), out portNumber);
         }
+
+        private static int getIntersectionArea(Rectangle rect1, Rectangle rect2)
+        {
+            Rectangle intersection = Rectangle.Intersect(rect1, rect2);
+            return intersection.Width > 0 && intersection.Height > 0 ? intersection.Width * intersection.Height : 0;
+        }
+        public static bool EnsureFormIsOnScreen(Form frm, bool entirely_on_screen, bool prioritizeCursorScreen = false)
+        {
+            bool shifted = false;
+            Rectangle formBounds = frm.Bounds;
+
+            if (entirely_on_screen)
+            {
+                Screen targetScreen = null;
+
+                if (prioritizeCursorScreen)
+                {
+                    Screen cursorScreen = Screen.FromPoint(Cursor.Position);
+
+                    Rectangle cursorWorkingArea = cursorScreen.WorkingArea;
+                    Rectangle newBoundsOnCursorScreen = getAdjustedBounds(formBounds, cursorWorkingArea);
+
+                    if (cursorWorkingArea.Contains(newBoundsOnCursorScreen))
+                    {
+                        targetScreen = cursorScreen;
+                    }
+                }
+
+                if (targetScreen == null)
+                {
+                    targetScreen = Screen.AllScreens
+                    .OrderByDescending(screen => getIntersectionArea(screen.WorkingArea, formBounds))
+                    .First();
+                }
+
+                Rectangle targetWorkingArea = targetScreen.WorkingArea;
+
+                int newX = Math.Max(targetWorkingArea.X, Math.Min(formBounds.X, targetWorkingArea.Right - formBounds.Width));
+                int newY = Math.Max(targetWorkingArea.Y, Math.Min(formBounds.Y, targetWorkingArea.Bottom - formBounds.Height));
+
+                shifted = frm.Location.X != newX || frm.Location.Y != newY;
+                frm.Location = new Point(newX, newY);
+            }
+            else
+            {
+                bool isOnScreen = Screen.AllScreens.Any(screen => screen.WorkingArea.IntersectsWith(formBounds));
+
+                if (!isOnScreen)
+                {
+                    Screen primaryScreen = Screen.PrimaryScreen;
+                    Rectangle primaryWorkingArea = primaryScreen.WorkingArea;
+
+                    int newX = Math.Max(primaryWorkingArea.X, Math.Min(formBounds.X, primaryWorkingArea.Right - formBounds.Width));
+                    int newY = Math.Max(primaryWorkingArea.Y, Math.Min(formBounds.Y, primaryWorkingArea.Bottom - formBounds.Height));
+
+                    shifted = frm.Location.X != newX || frm.Location.Y != newY;
+                    frm.Location = new Point(newX, newY);
+                }
+            }
+            return shifted;
+        }
+        private static Rectangle getAdjustedBounds(Rectangle formBounds, Rectangle screenWorkingArea)
+        {
+            int newX = Math.Max(screenWorkingArea.X,
+                Math.Min(formBounds.X, screenWorkingArea.Right - formBounds.Width));
+            int newY = Math.Max(screenWorkingArea.Y,
+                Math.Min(formBounds.Y, screenWorkingArea.Bottom - formBounds.Height));
+
+            return new Rectangle(new Point(newX, newY), formBounds.Size);
+        }
     }
 }

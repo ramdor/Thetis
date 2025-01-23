@@ -12144,7 +12144,8 @@ namespace Thetis
             private System.Drawing.Color _waterfall_low_colour;
             private System.Drawing.Color _text_colour;
             private System.Drawing.Color _number_highlight_colour;
-            private System.Drawing.Color _edges_colour;
+            private System.Drawing.Color _edges_colour_rx;
+            private System.Drawing.Color _edges_colour_tx;
             private System.Drawing.Color _edge_highlight_colour;
             private System.Drawing.Color _extents_colour;
             private System.Drawing.Color _snapline_colour;
@@ -12281,7 +12282,8 @@ namespace Thetis
                 _waterfall_low_colour = System.Drawing.Color.Black;
                 _text_colour = System.Drawing.Color.White;
                 _number_highlight_colour = System.Drawing.Color.DarkRed;
-                _edges_colour = System.Drawing.Color.Yellow;
+                _edges_colour_rx = System.Drawing.Color.Yellow;
+                _edges_colour_tx = System.Drawing.Color.Red;
                 _edge_highlight_colour = System.Drawing.Color.White;
                 _extents_colour = System.Drawing.Color.Gray;
                 _snapline_colour = System.Drawing.Color.Gray;
@@ -12338,7 +12340,8 @@ namespace Thetis
             public System.Drawing.Color WaterfallLowColour { get { return _waterfall_low_colour; } set { _waterfall_low_colour = value; } }
             public System.Drawing.Color TextColour { get { return _text_colour; } set { _text_colour = value; } }
             public System.Drawing.Color NumberHighlightColour { get { return _number_highlight_colour; } set { _number_highlight_colour = value; } }
-            public System.Drawing.Color EdgesColour { get { return _edges_colour; } set { _edges_colour = value; } }
+            public System.Drawing.Color EdgesColourRX { get { return _edges_colour_rx; } set { _edges_colour_rx = value; } }
+            public System.Drawing.Color EdgesColourTX { get { return _edges_colour_tx; } set { _edges_colour_tx = value; } }
             public System.Drawing.Color EdgeHighlightColour { get { return _edge_highlight_colour; } set { _edge_highlight_colour = value; } }
             public System.Drawing.Color ExtentsColour { get { return _extents_colour; } set { _extents_colour = value; } }
             public System.Drawing.Color MeterbackColour { get { return _meterback_colour; } set { _meterback_colour = value; } }
@@ -20750,7 +20753,8 @@ namespace Thetis
                                             fi.WaterfallLowColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_wflow_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
                                             fi.TextColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_text_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
                                             fi.NumberHighlightColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.DarkRed);
-                                            fi.EdgesColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_edges_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Yellow);
+                                            fi.EdgesColourRX = igs.GetSetting<System.Drawing.Color>("filterdisplay_edges_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Yellow);
+                                            fi.EdgesColourTX = igs.GetSetting<System.Drawing.Color>("filterdisplay_edges_colour_tx", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Red);
                                             fi.EdgeHighlightColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_edgehighlight_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
                                             fi.MeterbackColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_meterback_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
                                             fi.NotchColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_notch_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.OrangeRed);
@@ -21798,7 +21802,8 @@ namespace Thetis
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_wflow_colour", fi.WaterfallLowColour);
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_text_colour", fi.TextColour);
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", fi.NumberHighlightColour);
-                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_edges_colour", fi.EdgesColour);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_edges_colour", fi.EdgesColourRX);
+                                            igs.SetSetting<System.Drawing.Color>("filterdisplay_edges_colour_tx", fi.EdgesColourTX);
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_edgehighlight_colour", fi.EdgeHighlightColour);
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_meterback_colour", fi.MeterbackColour);
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_notch_colour", fi.NotchColour);
@@ -26955,7 +26960,8 @@ namespace Thetis
                 System.Drawing.Color extent_colour = filter.ExtentsColour;// System.Drawing.Color.Gray;
                 System.Drawing.Color snapline_colour = filter.SnapLineColour;// System.Drawing.Color.Gray;
                 System.Drawing.Color text_overlay_colour = filter.Colour; // same as the background
-                System.Drawing.Color filter_line_colour = filter.EdgesColour;// System.Drawing.Color.Yellow;
+                System.Drawing.Color filter_line_colour_rx = filter.EdgesColourRX;// System.Drawing.Color.Yellow;
+                System.Drawing.Color filter_line_colour_tx = filter.EdgesColourTX;// System.Drawing.Color.Red;
                 System.Drawing.Color filter_line_colour_highlight = filter.EdgeHighlightColour;// System.Drawing.Color.White;
                 System.Drawing.Color text_overlay_highlight_colour = filter.NumberHighlightColour;// System.Drawing.Color.DarkRed;
                 System.Drawing.Color meter_back_colour = filter.MeterbackColour;// System.Drawing.Color.Black;
@@ -26978,7 +26984,7 @@ namespace Thetis
                 System.Drawing.Color grey_fill_colour = System.Drawing.Color.FromArgb(grey_val, grey_val, grey_val);
 
                 SharpDX.Direct2D1.Brush filter_line_colour_brush;
-                SharpDX.Direct2D1.Brush filter_line_colour_faded_brush = getDXBrushForColour(filter_line_colour, 128);
+                SharpDX.Direct2D1.Brush filter_line_colour_faded_brush = getDXBrushForColour(m.MOX ? filter_line_colour_tx : filter_line_colour_rx, 128);
                 SharpDX.Direct2D1.Brush filter_line_highlight_colour_brush = getDXBrushForColour(filter_line_colour_highlight);
                 SharpDX.Direct2D1.Brush line_base_colour_brush = getDXBrushForColour(line_base_colour);
                 SharpDX.Direct2D1.Brush fill_base_colour_brush = getDXBrushForColour(fill_base_colour);
@@ -26993,13 +26999,13 @@ namespace Thetis
                 {
                     if (!filter.AutoZoom && filter.FixedTXZoom) zoom = filter.TXZoom + filter.ModeZoom;
                     min_notch_width = filter.MinNotchWidthTX / 2f;
-                    filter_line_colour_brush = getDXBrushForColour(System.Drawing.Color.Red);
+                    filter_line_colour_brush = getDXBrushForColour(filter_line_colour_tx);
                 }
                 else
                 {
                     if (!filter.AutoZoom && filter.FixedRXZoom) zoom = filter.RXZoom + filter.ModeZoom;
                     min_notch_width = filter.MinNotchWidthRX / 2f;
-                    filter_line_colour_brush = getDXBrushForColour(filter_line_colour);
+                    filter_line_colour_brush = getDXBrushForColour(filter_line_colour_rx);
                 }
 
                 //calc pixels per hz etc

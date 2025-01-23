@@ -10,7 +10,10 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] or decreased option added to "Force ATT on Tx to 31 when Drive or Tune power is increased and PS-A is on"
 - [add] tool tips add to fields and options in the linearity form
 - [add] many tool tips added to DSP setup form
-- [add] software sidetone option added. New options in Setup->DSP->CW. Audio via cmASIO + VAC.
+- [add] software sidetone option added. New options in Setup->DSP->CW. Audio via cmASIO + VAC
+- [add] tx filter edge colour for the filter view item
+- [add] show/hide option for frequency numbers in Setup->Appearance->RX Display->Text
+- [add] options to show/hide major/minor grid lines in Setup->Appearance->RX Display
 - [change] exporting a tx profile will now ask for destination location and filename. It will complain if filename already exists
 - [change] restored step attenuator RX1 if HERMES is used. Unsure why I disabled it a few years ago
 - [change] the bespoke TCI command tx_frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; . There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;
@@ -23,6 +26,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] fixed wave record crash if Windows [Controlled folder access] is turned on. You have to add  Thetis.exe  to the [Allow an app through Controlled folder access] list if you want to use the wave record when [Controlled folder access] is turned on
 - [fix] the sub-receiver now respects the main receiver’s mute state, fixing an issue where sub-receiver audio could still be heard even when the main receiver was muted
 - [fix] serial ports that are not of COMnn format now do not causes errors. If a serial port is for example name COMB13, then it will not be able to be used
+- [fix] notch popup window will be shifted so that it is visible when close to the edge of a screen
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked

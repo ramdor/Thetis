@@ -1091,13 +1091,24 @@ namespace Thetis
             set { display_cursor_y = value; }
         }
 
-        private static bool grid_control = false;
-        public static bool GridControl
+        private static bool _grid_control_major = false;
+        public static bool GridControlMajor
         {
-            get { return grid_control; }
-            set { grid_control = value; }
+            get { return _grid_control_major; }
+            set { _grid_control_major = value; }
         }
-
+        private static bool _grid_control_minor = false;
+        public static bool GridControlMinor
+        {
+            get { return _grid_control_minor; }
+            set { _grid_control_minor = value; }
+        }
+        private static bool _show_frequency_numbers = true;
+        public static bool ShowFrequencyNumbers
+        {
+            get { return _show_frequency_numbers; }
+            set { _show_frequency_numbers = value; }
+        }
         private static bool show_agc = false;
         public static bool ShowAGC
         {
@@ -4108,10 +4119,10 @@ namespace Thetis
         }
         unsafe static private bool DrawPanadapterDX2D(int nVerticalShift, int W, int H, int rx, bool bottom)
         {
-            if (grid_control)
-            {
+            //if (grid_control) //[2.10.3.9]MW0LGE raw grid control option now just turns off the grid, all other elements are shown
+            //{
                 drawPanadapterAndWaterfallGridDX2D(nVerticalShift, W, H, rx, bottom, false);
-            }
+            //}
 
             float local_max_y = float.MinValue;
             float local_max_x = float.MinValue;
@@ -5937,7 +5948,8 @@ namespace Thetis
             _d2dRenderTarget.Transform = originalTransform;
 
             // MW0LGE now draw any grid/labels/scales over the top of waterfall
-            if (grid_control) drawPanadapterAndWaterfallGridDX2D(nVerticalShift, W, H, rx, bottom, true);
+            //if (grid_control_major)  //[2.10.3.9]MW0LGE
+            drawPanadapterAndWaterfallGridDX2D(nVerticalShift, W, H, rx, bottom, true);
 
             if (_showTCISpots) drawSpots(rx, nVerticalShift, W, bottom);
 
@@ -7509,43 +7521,49 @@ namespace Thetis
                     //--
 
                     //draw vertical in between lines
-                    if (grid_control && !bIsWaterfall)
+                    if (_grid_control_major && !bIsWaterfall)
                     {
                         drawLineDX2D(pnMajorLine, vgrid, nVerticalShift + top, vgrid, nVerticalShift + H);
 
-                        int fgrid_2 = ((i + 1) * freq_step_size) + (int)((Low / freq_step_size) * freq_step_size);
-                        int x_2 = (int)(((float)(fgrid_2 - vfo_delta - Low) / width * W));
-                        float scale = (float)(x_2 - vgrid) / inbetweenies;
-
-                        for (int j = 1; j < inbetweenies; j++)
+                        if (_grid_control_minor)
                         {
-                            float x3 = (float)vgrid + (j * scale);
+                            int fgrid_2 = ((i + 1) * freq_step_size) + (int)((Low / freq_step_size) * freq_step_size);
+                            int x_2 = (int)(((float)(fgrid_2 - vfo_delta - Low) / width * W));
+                            float scale = (float)(x_2 - vgrid) / inbetweenies;
 
-                            drawLineDX2D(pnInbetweenLine, x3, nVerticalShift + top, x3, nVerticalShift + H);
+                            for (int j = 1; j < inbetweenies; j++)
+                            {
+                                float x3 = (float)vgrid + (j * scale);
+
+                                drawLineDX2D(pnInbetweenLine, x3, nVerticalShift + top, x3, nVerticalShift + H);
+                            }
                         }
                     }
 
-                    if (((double)((int)(actual_fgrid * 1000))) == actual_fgrid * 1000)
+                    if (_show_frequency_numbers)
                     {
-                        label = actual_fgrid.ToString("f3");
-                        if (actual_fgrid < 10) offsetL = (int)((label.Length + 1) * 4.1) - 14;
-                        else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
-                        else offsetL = (int)((label.Length + 1) * 4.1) - 8;
-                    }
-                    else
-                    {
-                        //display freqencies
-                        int jper;
-                        label = actual_fgrid.ToString("f4");
-                        jper = label.IndexOf('.') + 4;
-                        label = label.Insert(jper, " ");
+                        if (((double)((int)(actual_fgrid * 1000))) == actual_fgrid * 1000)
+                        {
+                            label = actual_fgrid.ToString("f3");
+                            if (actual_fgrid < 10) offsetL = (int)((label.Length + 1) * 4.1) - 14;
+                            else if (actual_fgrid < 100.0) offsetL = (int)((label.Length + 1) * 4.1) - 11;
+                            else offsetL = (int)((label.Length + 1) * 4.1) - 8;
+                        }
+                        else
+                        {
+                            //display freqencies
+                            int jper;
+                            label = actual_fgrid.ToString("f4");
+                            jper = label.IndexOf('.') + 4;
+                            label = label.Insert(jper, " ");
 
-                        if (actual_fgrid < 10) offsetL = (int)((label.Length) * 4.1) - 14;
-                        else if (actual_fgrid < 100.0) offsetL = (int)((label.Length) * 4.1) - 11;
-                        else offsetL = (int)((label.Length) * 4.1) - 8;
-                    }
+                            if (actual_fgrid < 10) offsetL = (int)((label.Length) * 4.1) - 14;
+                            else if (actual_fgrid < 100.0) offsetL = (int)((label.Length) * 4.1) - 11;
+                            else offsetL = (int)((label.Length) * 4.1) - 8;
+                        }
 
-                    drawStringDX2D(label, fontDX2d_font9, brTextBrush, vgrid - offsetL, nVerticalShift + 4);
+                        drawStringDX2D(label, fontDX2d_font9, brTextBrush, vgrid - offsetL, nVerticalShift + 4);
+                    }
                     //--------------
                 }
                 else
@@ -7656,7 +7674,7 @@ namespace Thetis
             }
             //--
 
-            if (grid_control && !bIsWaterfall)
+            if (!bIsWaterfall)
             {
                 SharpDX.Direct2D1.Brush brTextLabel;
 
@@ -7734,8 +7752,11 @@ namespace Thetis
                     int num = grid_max - i * grid_step;
                     int y = (int)((double)(grid_max - num) * H / y_range);
 
-                    // MW0LGE
-                    drawLineDX2D(local_mox ? m_bDX2_tx_hgrid_pen : m_bDX2_hgrid_pen, 0, nVerticalShift + y, W, nVerticalShift + y);
+                    if (_grid_control_minor)
+                    {
+                        // MW0LGE
+                        drawLineDX2D(local_mox ? m_bDX2_tx_hgrid_pen : m_bDX2_hgrid_pen, 0, nVerticalShift + y, W, nVerticalShift + y);
+                    }
 
                     // Draw horizontal line labels
                     if (i != 1) // avoid intersecting vertical and horizontal labels

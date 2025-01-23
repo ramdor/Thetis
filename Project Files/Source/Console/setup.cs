@@ -157,6 +157,7 @@ namespace Thetis
             //MW0LGE_21d some defaults
             chkShowZeroLine.Checked = true;
             chkGridControl.Checked = true;
+            chkGridControl_minor.Checked = true;
             chkDisplayPanFill.Checked = true;
             showRegionBandstackWarning(false);
             //
@@ -2531,6 +2532,7 @@ namespace Thetis
             clrbtnMeterLeft_Changed(this, e);
             clrbtnMeterRight_Changed(this, e);
             chkGridControl_CheckedChanged(this, e);
+            chkGridControl_minor_CheckedChanged(this, e);
             clrbtnBandEdge_Changed(this, e);
             clrbtnTXBandEdge_Changed(this, e);
             tbDisplayFFTSize_Scroll(this, e);
@@ -2588,6 +2590,7 @@ namespace Thetis
             chkLegacyMeters_CheckedChanged(this, e);
 
             chkJoinBandEdges_CheckedChanged(this, e);
+            chkShowFrequencyNumbers_CheckedChanged(this, e);
 
             clrbtnTXAttenuationBackground_Changed(this, e);
 
@@ -14385,9 +14388,13 @@ namespace Thetis
         private void chkGridControl_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            Display.GridControl = chkGridControl.Checked;
+            Display.GridControlMajor = chkGridControl.Checked;
         }
-
+        private void chkGridControl_minor_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            Display.GridControlMinor = chkGridControl_minor.Checked;
+        }
         private void chkTXGridControl_CheckedChanged(object sender, EventArgs e)
         {
             Display.TXGridControl = chkTXGridControl.Checked;
@@ -25315,6 +25322,7 @@ namespace Thetis
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_text_colour", clrbtnFilter_text.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", clrbtnFilter_number_highlight.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_edges_colour", clrbtnFilter_edges.Color);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_edges_colour_tx", clrbtnFilter_edges_tx.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_edgehighlight_colour", clrbtnFilter_edge_highlight.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_meterback_colour", clrbtnFilter_meter_back.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_notch_colour", clrbtnFilter_notch.Color);
@@ -25964,6 +25972,7 @@ namespace Thetis
                 clrbtnFilter_text.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_text_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
                 clrbtnFilter_number_highlight.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.DarkRed);
                 clrbtnFilter_edges.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_edges_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Yellow);
+                clrbtnFilter_edges_tx.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_edges_colour_tx", false, Color.Empty, Color.Empty, System.Drawing.Color.Red);
                 clrbtnFilter_edge_highlight.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_edgehighlight_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
                 clrbtnFilter_meter_back.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_meterback_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Black);
                 clrbtnFilter_notch.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_notch_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.OrangeRed);
@@ -27027,7 +27036,6 @@ namespace Thetis
         private void chkJoinBandEdges_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-
             Display.JoinBandEdges = chkJoinBandEdges.Checked;
         }
 
@@ -32376,6 +32384,11 @@ namespace Thetis
             updateMeterType();
         }
 
+        private void clrbtnFilter_edges_tx_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
         private void clrbtnFilter_edge_highlight_Changed(object sender, EventArgs e)
         {
             updateMeterType();
@@ -32660,6 +32673,12 @@ namespace Thetis
         {
             if (initializing) return;
             console.ForceATTwhenOutputPowerChangesWhenPSAonAndDecreased = chkForceATTwhenOutPowerChanges_decreased.Checked;
+        }
+
+        private void chkShowFrequencyNumbers_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            Display.ShowFrequencyNumbers = chkShowFrequencyNumbers.Checked;
         }
     }
 

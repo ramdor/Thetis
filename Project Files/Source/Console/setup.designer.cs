@@ -3028,6 +3028,7 @@
             this.chkShowRXZeroLineOnWaterfall = new System.Windows.Forms.CheckBoxTS();
             this.chkShowRXFilterOnWaterfall = new System.Windows.Forms.CheckBoxTS();
             this.grpAppGrid = new System.Windows.Forms.GroupBoxTS();
+            this.chkShowFrequencyNumbers = new System.Windows.Forms.CheckBoxTS();
             this.tbHGridColorAlpha = new System.Windows.Forms.TrackBarTS();
             this.clrbtnHGridColor = new Thetis.ColorButton();
             this.lblHGrid = new System.Windows.Forms.LabelTS();
@@ -3045,6 +3046,7 @@
             this.clrbtnText = new Thetis.ColorButton();
             this.lblDisplayTextColor = new System.Windows.Forms.LabelTS();
             this.grpAppPanadapter = new System.Windows.Forms.GroupBoxTS();
+            this.chkGridControl_minor = new System.Windows.Forms.CheckBoxTS();
             this.chkJoinBandEdges = new System.Windows.Forms.CheckBoxTS();
             this.tbBandstackOverlayAlpha = new System.Windows.Forms.TrackBarTS();
             this.clrbtnBandstackOverlay = new Thetis.ColorButton();
@@ -4013,6 +4015,8 @@
             this.grpMeterItemFilterDisplay = new System.Windows.Forms.GroupBoxTS();
             this.labelTS349 = new System.Windows.Forms.LabelTS();
             this.scrlFilter = new System.Windows.Forms.ScrollableControl();
+            this.labelTS422 = new System.Windows.Forms.LabelTS();
+            this.clrbtnFilter_edges_tx = new Thetis.ColorButton();
             this.clrbtnFilter_button_highlight = new Thetis.ColorButton();
             this.labelTS345 = new System.Windows.Forms.LabelTS();
             this.clrbtnFilter_setting_on = new Thetis.ColorButton();
@@ -49806,6 +49810,7 @@
             // 
             // grpAppGrid
             // 
+            this.grpAppGrid.Controls.Add(this.chkShowFrequencyNumbers);
             this.grpAppGrid.Controls.Add(this.tbHGridColorAlpha);
             this.grpAppGrid.Controls.Add(this.clrbtnHGridColor);
             this.grpAppGrid.Controls.Add(this.lblHGrid);
@@ -49828,6 +49833,21 @@
             this.grpAppGrid.TabIndex = 78;
             this.grpAppGrid.TabStop = false;
             this.grpAppGrid.Text = "Grid                                            Alpha";
+            // 
+            // chkShowFrequencyNumbers
+            // 
+            this.chkShowFrequencyNumbers.AutoSize = true;
+            this.chkShowFrequencyNumbers.Checked = true;
+            this.chkShowFrequencyNumbers.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkShowFrequencyNumbers.Image = null;
+            this.chkShowFrequencyNumbers.Location = new System.Drawing.Point(156, 162);
+            this.chkShowFrequencyNumbers.Name = "chkShowFrequencyNumbers";
+            this.chkShowFrequencyNumbers.Size = new System.Drawing.Size(53, 17);
+            this.chkShowFrequencyNumbers.TabIndex = 89;
+            this.chkShowFrequencyNumbers.Text = "Show";
+            this.toolTip1.SetToolTip(this.chkShowFrequencyNumbers, "Show frequency numbers");
+            this.chkShowFrequencyNumbers.UseVisualStyleBackColor = true;
+            this.chkShowFrequencyNumbers.CheckedChanged += new System.EventHandler(this.chkShowFrequencyNumbers_CheckedChanged);
             // 
             // tbHGridColorAlpha
             // 
@@ -50017,6 +50037,7 @@
             // 
             // grpAppPanadapter
             // 
+            this.grpAppPanadapter.Controls.Add(this.chkGridControl_minor);
             this.grpAppPanadapter.Controls.Add(this.chkJoinBandEdges);
             this.grpAppPanadapter.Controls.Add(this.tbBandstackOverlayAlpha);
             this.grpAppPanadapter.Controls.Add(this.clrbtnBandstackOverlay);
@@ -50057,11 +50078,22 @@
             this.grpAppPanadapter.TabStop = false;
             this.grpAppPanadapter.Text = "Panadapter                                        Alpha";
             // 
+            // chkGridControl_minor
+            // 
+            this.chkGridControl_minor.Image = null;
+            this.chkGridControl_minor.Location = new System.Drawing.Point(130, 370);
+            this.chkGridControl_minor.Name = "chkGridControl_minor";
+            this.chkGridControl_minor.Size = new System.Drawing.Size(120, 18);
+            this.chkGridControl_minor.TabIndex = 101;
+            this.chkGridControl_minor.Text = "Display Minor Grid";
+            this.toolTip1.SetToolTip(this.chkGridControl_minor, "Display the Minor Grid on the Panadapter");
+            this.chkGridControl_minor.CheckedChanged += new System.EventHandler(this.chkGridControl_minor_CheckedChanged);
+            // 
             // chkJoinBandEdges
             // 
             this.chkJoinBandEdges.AutoSize = true;
             this.chkJoinBandEdges.Image = null;
-            this.chkJoinBandEdges.Location = new System.Drawing.Point(130, 338);
+            this.chkJoinBandEdges.Location = new System.Drawing.Point(130, 327);
             this.chkJoinBandEdges.Name = "chkJoinBandEdges";
             this.chkJoinBandEdges.Size = new System.Drawing.Size(106, 17);
             this.chkJoinBandEdges.TabIndex = 100;
@@ -50192,7 +50224,7 @@
             // 
             this.chkShowZeroLine.AutoSize = true;
             this.chkShowZeroLine.Image = null;
-            this.chkShowZeroLine.Location = new System.Drawing.Point(9, 362);
+            this.chkShowZeroLine.Location = new System.Drawing.Point(9, 349);
             this.chkShowZeroLine.Name = "chkShowZeroLine";
             this.chkShowZeroLine.Size = new System.Drawing.Size(101, 17);
             this.chkShowZeroLine.TabIndex = 84;
@@ -50239,12 +50271,12 @@
             // chkGridControl
             // 
             this.chkGridControl.Image = null;
-            this.chkGridControl.Location = new System.Drawing.Point(130, 361);
+            this.chkGridControl.Location = new System.Drawing.Point(130, 348);
             this.chkGridControl.Name = "chkGridControl";
             this.chkGridControl.Size = new System.Drawing.Size(120, 18);
             this.chkGridControl.TabIndex = 83;
-            this.chkGridControl.Text = "Display Grid";
-            this.toolTip1.SetToolTip(this.chkGridControl, "Display the Grid on the Panadapter");
+            this.chkGridControl.Text = "Display Major Grid";
+            this.toolTip1.SetToolTip(this.chkGridControl, "Display the Major Grid on the Panadapter including the frequency numbers");
             this.chkGridControl.CheckedChanged += new System.EventHandler(this.chkGridControl_CheckedChanged);
             // 
             // tbMultiRXFilterAlpha
@@ -50275,7 +50307,7 @@
             // chkShowFreqOffset
             // 
             this.chkShowFreqOffset.Image = null;
-            this.chkShowFreqOffset.Location = new System.Drawing.Point(9, 338);
+            this.chkShowFreqOffset.Location = new System.Drawing.Point(9, 327);
             this.chkShowFreqOffset.Name = "chkShowFreqOffset";
             this.chkShowFreqOffset.Size = new System.Drawing.Size(120, 18);
             this.chkShowFreqOffset.TabIndex = 77;
@@ -63786,6 +63818,8 @@
             // 
             this.scrlFilter.AutoScroll = true;
             this.scrlFilter.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.scrlFilter.Controls.Add(this.labelTS422);
+            this.scrlFilter.Controls.Add(this.clrbtnFilter_edges_tx);
             this.scrlFilter.Controls.Add(this.clrbtnFilter_button_highlight);
             this.scrlFilter.Controls.Add(this.labelTS345);
             this.scrlFilter.Controls.Add(this.clrbtnFilter_setting_on);
@@ -63823,6 +63857,30 @@
             this.scrlFilter.Name = "scrlFilter";
             this.scrlFilter.Size = new System.Drawing.Size(311, 139);
             this.scrlFilter.TabIndex = 112;
+            // 
+            // labelTS422
+            // 
+            this.labelTS422.AutoSize = true;
+            this.labelTS422.Image = null;
+            this.labelTS422.Location = new System.Drawing.Point(161, 124);
+            this.labelTS422.Name = "labelTS422";
+            this.labelTS422.Size = new System.Drawing.Size(82, 13);
+            this.labelTS422.TabIndex = 201;
+            this.labelTS422.Text = "TX Filter Edges:";
+            this.labelTS422.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // clrbtnFilter_edges_tx
+            // 
+            this.clrbtnFilter_edges_tx.Automatic = "Automatic";
+            this.clrbtnFilter_edges_tx.Color = System.Drawing.Color.Transparent;
+            this.clrbtnFilter_edges_tx.Image = null;
+            this.clrbtnFilter_edges_tx.Location = new System.Drawing.Point(249, 119);
+            this.clrbtnFilter_edges_tx.MoreColors = "More Colors...";
+            this.clrbtnFilter_edges_tx.Name = "clrbtnFilter_edges_tx";
+            this.clrbtnFilter_edges_tx.Selectable = true;
+            this.clrbtnFilter_edges_tx.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnFilter_edges_tx.TabIndex = 202;
+            this.clrbtnFilter_edges_tx.Changed += new System.EventHandler(this.clrbtnFilter_edges_tx_Changed);
             // 
             // clrbtnFilter_button_highlight
             // 
@@ -63901,7 +63959,7 @@
             this.clrbtnFilter_snap_line.Automatic = "Automatic";
             this.clrbtnFilter_snap_line.Color = System.Drawing.Color.Transparent;
             this.clrbtnFilter_snap_line.Image = null;
-            this.clrbtnFilter_snap_line.Location = new System.Drawing.Point(249, 183);
+            this.clrbtnFilter_snap_line.Location = new System.Drawing.Point(249, 209);
             this.clrbtnFilter_snap_line.MoreColors = "More Colors...";
             this.clrbtnFilter_snap_line.Name = "clrbtnFilter_snap_line";
             this.clrbtnFilter_snap_line.Selectable = true;
@@ -63913,7 +63971,7 @@
             // 
             this.labelTS344.AutoSize = true;
             this.labelTS344.Image = null;
-            this.labelTS344.Location = new System.Drawing.Point(185, 188);
+            this.labelTS344.Location = new System.Drawing.Point(185, 214);
             this.labelTS344.Name = "labelTS344";
             this.labelTS344.Size = new System.Drawing.Size(58, 13);
             this.labelTS344.TabIndex = 195;
@@ -64022,7 +64080,7 @@
             this.clrbtnFilter_notch_highlight.Automatic = "Automatic";
             this.clrbtnFilter_notch_highlight.Color = System.Drawing.Color.Transparent;
             this.clrbtnFilter_notch_highlight.Image = null;
-            this.clrbtnFilter_notch_highlight.Location = new System.Drawing.Point(249, 161);
+            this.clrbtnFilter_notch_highlight.Location = new System.Drawing.Point(249, 187);
             this.clrbtnFilter_notch_highlight.MoreColors = "More Colors...";
             this.clrbtnFilter_notch_highlight.Name = "clrbtnFilter_notch_highlight";
             this.clrbtnFilter_notch_highlight.Selectable = true;
@@ -64047,7 +64105,7 @@
             // 
             this.labelTS336.AutoSize = true;
             this.labelTS336.Image = null;
-            this.labelTS336.Location = new System.Drawing.Point(160, 166);
+            this.labelTS336.Location = new System.Drawing.Point(160, 192);
             this.labelTS336.Name = "labelTS336";
             this.labelTS336.Size = new System.Drawing.Size(83, 13);
             this.labelTS336.TabIndex = 185;
@@ -64058,7 +64116,7 @@
             // 
             this.labelTS330.AutoSize = true;
             this.labelTS330.Image = null;
-            this.labelTS330.Location = new System.Drawing.Point(155, 77);
+            this.labelTS330.Location = new System.Drawing.Point(152, 77);
             this.labelTS330.Name = "labelTS330";
             this.labelTS330.Size = new System.Drawing.Size(91, 13);
             this.labelTS330.TabIndex = 175;
@@ -64070,7 +64128,7 @@
             this.clrbtnFilter_notch.Automatic = "Automatic";
             this.clrbtnFilter_notch.Color = System.Drawing.Color.Transparent;
             this.clrbtnFilter_notch.Image = null;
-            this.clrbtnFilter_notch.Location = new System.Drawing.Point(249, 139);
+            this.clrbtnFilter_notch.Location = new System.Drawing.Point(249, 165);
             this.clrbtnFilter_notch.MoreColors = "More Colors...";
             this.clrbtnFilter_notch.Name = "clrbtnFilter_notch";
             this.clrbtnFilter_notch.Selectable = true;
@@ -64095,7 +64153,7 @@
             // 
             this.labelTS337.AutoSize = true;
             this.labelTS337.Image = null;
-            this.labelTS337.Location = new System.Drawing.Point(204, 144);
+            this.labelTS337.Location = new System.Drawing.Point(204, 170);
             this.labelTS337.Name = "labelTS337";
             this.labelTS337.Size = new System.Drawing.Size(39, 13);
             this.labelTS337.TabIndex = 183;
@@ -64106,11 +64164,11 @@
             // 
             this.labelTS331.AutoSize = true;
             this.labelTS331.Image = null;
-            this.labelTS331.Location = new System.Drawing.Point(186, 101);
+            this.labelTS331.Location = new System.Drawing.Point(160, 100);
             this.labelTS331.Name = "labelTS331";
-            this.labelTS331.Size = new System.Drawing.Size(65, 13);
+            this.labelTS331.Size = new System.Drawing.Size(83, 13);
             this.labelTS331.TabIndex = 177;
-            this.labelTS331.Text = "Filter Edges:";
+            this.labelTS331.Text = "RX Filter Edges:";
             this.labelTS331.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // clrbtnFilter_meter_back
@@ -64154,7 +64212,7 @@
             // 
             this.labelTS334.AutoSize = true;
             this.labelTS334.Image = null;
-            this.labelTS334.Location = new System.Drawing.Point(139, 122);
+            this.labelTS334.Location = new System.Drawing.Point(139, 148);
             this.labelTS334.Name = "labelTS334";
             this.labelTS334.Size = new System.Drawing.Size(104, 13);
             this.labelTS334.TabIndex = 179;
@@ -64166,7 +64224,7 @@
             this.clrbtnFilter_edge_highlight.Automatic = "Automatic";
             this.clrbtnFilter_edge_highlight.Color = System.Drawing.Color.Transparent;
             this.clrbtnFilter_edge_highlight.Image = null;
-            this.clrbtnFilter_edge_highlight.Location = new System.Drawing.Point(249, 117);
+            this.clrbtnFilter_edge_highlight.Location = new System.Drawing.Point(249, 143);
             this.clrbtnFilter_edge_highlight.MoreColors = "More Colors...";
             this.clrbtnFilter_edge_highlight.Name = "clrbtnFilter_edge_highlight";
             this.clrbtnFilter_edge_highlight.Selectable = true;
@@ -71361,5 +71419,9 @@
         private CheckBoxTS chkForceATTwhenOutPowerChanges_decreased;
         private CheckBoxTS chkDSPKeyerSidetone_software;
         private CheckBoxTS chkSideTones;
+        private LabelTS labelTS422;
+        private ColorButton clrbtnFilter_edges_tx;
+        public CheckBoxTS chkGridControl_minor;
+        private CheckBoxTS chkShowFrequencyNumbers;
     }
 }

@@ -35653,6 +35653,7 @@ namespace Thetis
                 notch = MNotchDB.NotchFromIndex(notch_index);
             }
             m_frmNotchPopup.Location = new Point(x, y);
+            Common.EnsureFormIsOnScreen(m_frmNotchPopup, true, true);
             if (!m_frmNotchPopup.Visible && notch != null) m_frmNotchPopup.Show(notch, min_width, max_width, on_top, notch_index);
         }
         public DateTime NotchPopupLastDeactivateTime
