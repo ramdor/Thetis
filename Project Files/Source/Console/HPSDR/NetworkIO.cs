@@ -281,12 +281,12 @@ namespace Thetis
                 }
             }
 
-            //override boardid as the firmware might not return what we want
+            //override boardid
             int boardID = (int)BoardID;
             switch (Hardware.Model)
             {
                 case HPSDRModel.REDPITAYA:
-                    boardID = 99; // from network.h RedPitaya
+                    boardID = (int)HPSDRHW.RedPitaya; // matches network.h RedPitaya
                     break;
             }
 

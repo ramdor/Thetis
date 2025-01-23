@@ -443,8 +443,8 @@ namespace Thetis
             }
         }
 
-        private Model current_model = Model.HERMES;
-        public Model CurrentModel
+        private HPSDRModel current_model = HPSDRModel.HERMES;
+        public HPSDRModel CurrentModel
         {
             get { return current_model; }
             set { current_model = value; }
