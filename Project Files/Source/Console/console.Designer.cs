@@ -1467,7 +1467,6 @@
             this.chkMON.Name = "chkMON";
             this.toolTip1.SetToolTip(this.chkMON, resources.GetString("chkMON.ToolTip"));
             this.chkMON.CheckedChanged += new System.EventHandler(this.chkMON_CheckedChanged);
-            this.chkMON.Click += new System.EventHandler(this.chkMON_Click);
             // 
             // ckQuickRec
             // 

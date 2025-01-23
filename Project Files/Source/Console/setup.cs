@@ -2371,7 +2371,9 @@ namespace Thetis
             udCWKeyerWeight_ValueChanged(this, e);
             chkStrictCharSpacing_CheckedChanged(this, e);
             chkCWKeyerMode_CheckedChanged(this, e);
-            chkDSPKeyerSidetone_CheckedChanged(this, e);
+            chkSideTones_CheckedChanged(this, e);
+            //chkDSPKeyerSidetone_CheckedChanged(this, e); // done in chkSideTones_CheckedChanged
+            //chkDSPKeyerSidetone_software_CheckedChanged(this, e);
             chkDSPCESSB_CheckedChanged(this, e);
             udRXAMSQMaxTail_ValueChanged(this, e);
             radANFPreAGC_CheckedChanged(this, e);
@@ -2752,6 +2754,8 @@ namespace Thetis
             //
             chkForceATTwhenPSAoff_CheckedChanged(this, e); //MW0LGE [2.9.0.7]
             chkForceATTwhenOutPowerChanges_CheckedChanged(this, e);
+            chkForceATTwhenOutPowerChanges_decreased_CheckedChanged(this, e);
+
             chkAutoATTTXPsOff_CheckedChanged(this, e);
             chkUndoAutoATTTx_CheckedChanged(this, e);
             chkAutoATTRx1_CheckedChanged(this, e);
@@ -2935,19 +2939,19 @@ namespace Thetis
                 if (isTXProfileSettingDifferent<bool>(dr, "MicMute", console.MicMute, out sReportOut)) sReport += sReportOut;
 
                 if (isTXProfileSettingDifferent<bool>(dr, "Lev_On", chkDSPLevelerEnabled.Checked, out sReportOut)) sReport += sReportOut;
-                if (isTXProfileSettingDifferent<int>(dr, "Lev_Slope", (int)udDSPLevelerSlope.Value, out sReportOut)) sReport += sReportOut;
+                //if (isTXProfileSettingDifferent<int>(dr, "Lev_Slope", (int)udDSPLevelerSlope.Value, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<int>(dr, "Lev_MaxGain", (int)udDSPLevelerThreshold.Value, out sReportOut)) sReport += sReportOut;
-                if (isTXProfileSettingDifferent<int>(dr, "Lev_Attack", (int)udDSPLevelerAttack.Value, out sReportOut)) sReport += sReportOut;
+                //if (isTXProfileSettingDifferent<int>(dr, "Lev_Attack", (int)udDSPLevelerAttack.Value, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<int>(dr, "Lev_Decay", (int)udDSPLevelerDecay.Value, out sReportOut)) sReport += sReportOut;
-                if (isTXProfileSettingDifferent<int>(dr, "Lev_Hang", (int)udDSPLevelerHangTime.Value, out sReportOut)) sReport += sReportOut;
-                if (isTXProfileSettingDifferent<int>(dr, "Lev_HangThreshold", tbDSPLevelerHangThreshold.Value, out sReportOut)) sReport += sReportOut;
+                //if (isTXProfileSettingDifferent<int>(dr, "Lev_Hang", (int)udDSPLevelerHangTime.Value, out sReportOut)) sReport += sReportOut;
+                //if (isTXProfileSettingDifferent<int>(dr, "Lev_HangThreshold", tbDSPLevelerHangThreshold.Value, out sReportOut)) sReport += sReportOut;
 
-                if (isTXProfileSettingDifferent<int>(dr, "ALC_Slope", (int)udDSPALCSlope.Value, out sReportOut)) sReport += sReportOut;
+                //if (isTXProfileSettingDifferent<int>(dr, "ALC_Slope", (int)udDSPALCSlope.Value, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<int>(dr, "ALC_MaximumGain", (int)udDSPALCMaximumGain.Value, out sReportOut)) sReport += sReportOut;
-                if (isTXProfileSettingDifferent<int>(dr, "ALC_Attack", (int)udDSPALCAttack.Value, out sReportOut)) sReport += sReportOut;
+                //if (isTXProfileSettingDifferent<int>(dr, "ALC_Attack", (int)udDSPALCAttack.Value, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<int>(dr, "ALC_Decay", (int)udDSPALCDecay.Value, out sReportOut)) sReport += sReportOut;
-                if (isTXProfileSettingDifferent<int>(dr, "ALC_Hang", (int)udDSPALCHangTime.Value, out sReportOut)) sReport += sReportOut;
-                if (isTXProfileSettingDifferent<int>(dr, "ALC_HangThreshold", tbDSPALCHangThreshold.Value, out sReportOut)) sReport += sReportOut;
+                //if (isTXProfileSettingDifferent<int>(dr, "ALC_Hang", (int)udDSPALCHangTime.Value, out sReportOut)) sReport += sReportOut;
+                //if (isTXProfileSettingDifferent<int>(dr, "ALC_HangThreshold", tbDSPALCHangThreshold.Value, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "VOX_On", chkVOXEnable.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "Dexp_On", chkDEXPEnable.Checked, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<int>(dr, "Dexp_Threshold", (int)udDEXPThreshold.Value, out sReportOut)) sReport += sReportOut;
@@ -3138,19 +3142,19 @@ namespace Thetis
                 if (DB.ConvertFromDBVal<bool>(dr["MicMute"]) != console.MicMute) return true;
 
                 if (DB.ConvertFromDBVal<bool>(dr["Lev_On"]) != chkDSPLevelerEnabled.Checked) return true;
-                if (DB.ConvertFromDBVal<int>(dr["Lev_Slope"]) != (int)udDSPLevelerSlope.Value) return true;
+                //if (DB.ConvertFromDBVal<int>(dr["Lev_Slope"]) != (int)udDSPLevelerSlope.Value) return true;
                 if (DB.ConvertFromDBVal<int>(dr["Lev_MaxGain"]) != (int)udDSPLevelerThreshold.Value) return true;
-                if (DB.ConvertFromDBVal<int>(dr["Lev_Attack"]) != (int)udDSPLevelerAttack.Value) return true;
+                //if (DB.ConvertFromDBVal<int>(dr["Lev_Attack"]) != (int)udDSPLevelerAttack.Value) return true;
                 if (DB.ConvertFromDBVal<int>(dr["Lev_Decay"]) != (int)udDSPLevelerDecay.Value) return true;
-                if (DB.ConvertFromDBVal<int>(dr["Lev_Hang"]) != (int)udDSPLevelerHangTime.Value) return true;
-                if (DB.ConvertFromDBVal<int>(dr["Lev_HangThreshold"]) != tbDSPLevelerHangThreshold.Value) return true;
+                //if (DB.ConvertFromDBVal<int>(dr["Lev_Hang"]) != (int)udDSPLevelerHangTime.Value) return true;
+                //if (DB.ConvertFromDBVal<int>(dr["Lev_HangThreshold"]) != tbDSPLevelerHangThreshold.Value) return true;
 
-                if (DB.ConvertFromDBVal<int>(dr["ALC_Slope"]) != (int)udDSPALCSlope.Value) return true;
+                //if (DB.ConvertFromDBVal<int>(dr["ALC_Slope"]) != (int)udDSPALCSlope.Value) return true;
                 if (DB.ConvertFromDBVal<int>(dr["ALC_MaximumGain"]) != (int)udDSPALCMaximumGain.Value) return true;
-                if (DB.ConvertFromDBVal<int>(dr["ALC_Attack"]) != (int)udDSPALCAttack.Value) return true;
+                //if (DB.ConvertFromDBVal<int>(dr["ALC_Attack"]) != (int)udDSPALCAttack.Value) return true;
                 if (DB.ConvertFromDBVal<int>(dr["ALC_Decay"]) != (int)udDSPALCDecay.Value) return true;
-                if (DB.ConvertFromDBVal<int>(dr["ALC_Hang"]) != (int)udDSPALCHangTime.Value) return true;
-                if (DB.ConvertFromDBVal<int>(dr["ALC_HangThreshold"]) != tbDSPALCHangThreshold.Value) return true;
+                //if (DB.ConvertFromDBVal<int>(dr["ALC_Hang"]) != (int)udDSPALCHangTime.Value) return true;
+                //if (DB.ConvertFromDBVal<int>(dr["ALC_HangThreshold"]) != tbDSPALCHangThreshold.Value) return true;
 
                 if (DB.ConvertFromDBVal<bool>(dr["VOX_On"]) != chkVOXEnable.Checked) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["Dexp_On"]) != chkDEXPEnable.Checked) return true;
@@ -3318,19 +3322,19 @@ namespace Thetis
             console.HighlightTXProfileSaveItems(bHighlight);
 
             Common.HightlightControl(chkDSPLevelerEnabled, bHighlight);
-            Common.HightlightControl(udDSPLevelerSlope, bHighlight);
+            //Common.HightlightControl(udDSPLevelerSlope, bHighlight);
             Common.HightlightControl(udDSPLevelerThreshold, bHighlight);
-            Common.HightlightControl(udDSPLevelerAttack, bHighlight);
+            //Common.HightlightControl(udDSPLevelerAttack, bHighlight);
             Common.HightlightControl(udDSPLevelerDecay, bHighlight);
-            Common.HightlightControl(udDSPLevelerHangTime, bHighlight);
-            Common.HightlightControl(tbDSPLevelerHangThreshold, bHighlight);
+            //Common.HightlightControl(udDSPLevelerHangTime, bHighlight);
+            //Common.HightlightControl(tbDSPLevelerHangThreshold, bHighlight);
 
-            Common.HightlightControl(udDSPALCSlope, bHighlight);
+            //Common.HightlightControl(udDSPALCSlope, bHighlight);
             Common.HightlightControl(udDSPALCMaximumGain, bHighlight);
-            Common.HightlightControl(udDSPALCAttack, bHighlight);
+            //Common.HightlightControl(udDSPALCAttack, bHighlight);
             Common.HightlightControl(udDSPALCDecay, bHighlight);
-            Common.HightlightControl(udDSPALCHangTime, bHighlight);
-            Common.HightlightControl(tbDSPALCHangThreshold, bHighlight);
+            //Common.HightlightControl(udDSPALCHangTime, bHighlight);
+            //Common.HightlightControl(tbDSPALCHangThreshold, bHighlight);
 
             Common.HightlightControl(chkVOXEnable, bHighlight);
             Common.HightlightControl(chkDEXPEnable, bHighlight);
@@ -3517,19 +3521,19 @@ namespace Thetis
             dr["MicMute"] = console.MicMute;
 
             dr["Lev_On"] = chkDSPLevelerEnabled.Checked;
-            dr["Lev_Slope"] = (int)udDSPLevelerSlope.Value;
+            //dr["Lev_Slope"] = (int)udDSPLevelerSlope.Value;
             dr["Lev_MaxGain"] = (int)udDSPLevelerThreshold.Value;
-            dr["Lev_Attack"] = (int)udDSPLevelerAttack.Value;
+            //dr["Lev_Attack"] = (int)udDSPLevelerAttack.Value;
             dr["Lev_Decay"] = (int)udDSPLevelerDecay.Value;
-            dr["Lev_Hang"] = (int)udDSPLevelerHangTime.Value;
-            dr["Lev_HangThreshold"] = tbDSPLevelerHangThreshold.Value;
+            //dr["Lev_Hang"] = (int)udDSPLevelerHangTime.Value;
+            //dr["Lev_HangThreshold"] = tbDSPLevelerHangThreshold.Value;
 
-            dr["ALC_Slope"] = (int)udDSPALCSlope.Value;
+            //dr["ALC_Slope"] = (int)udDSPALCSlope.Value;
             dr["ALC_MaximumGain"] = (int)udDSPALCMaximumGain.Value;
-            dr["ALC_Attack"] = (int)udDSPALCAttack.Value;
+            //dr["ALC_Attack"] = (int)udDSPALCAttack.Value;
             dr["ALC_Decay"] = (int)udDSPALCDecay.Value;
-            dr["ALC_Hang"] = (int)udDSPALCHangTime.Value;
-            dr["ALC_HangThreshold"] = tbDSPALCHangThreshold.Value;
+            //dr["ALC_Hang"] = (int)udDSPALCHangTime.Value;
+            //dr["ALC_HangThreshold"] = tbDSPALCHangThreshold.Value;
 
             dr["Power"] = console.PWR;
 
@@ -4131,19 +4135,6 @@ namespace Thetis
             }
         }
 
-        public int RXAGCAttack
-        {
-            get
-            {
-                if (udDSPAGCAttack != null) return (int)udDSPAGCAttack.Value;
-                else return 0;
-            }
-            set
-            {
-                if (udDSPAGCAttack != null) udDSPAGCAttack.Value = value;
-            }
-        }
-
         public int RXAGCHang
         {
             get
@@ -4167,19 +4158,6 @@ namespace Thetis
             set
             {
                 if (udDSPAGCDecay != null) udDSPAGCDecay.Value = value;
-            }
-        }
-
-        public int RX2AGCAttack
-        {
-            get
-            {
-                if (udDSPAGCRX2Attack != null) return (int)udDSPAGCRX2Attack.Value;
-                else return 0;
-            }
-            set
-            {
-                if (udDSPAGCRX2Attack != null) udDSPAGCRX2Attack.Value = value;
             }
         }
 
@@ -4247,19 +4225,18 @@ namespace Thetis
             }
         }
 
-        public bool CWDisableMonitor
+        public bool CWSideTones
         {
             get
             {
-                if (chkDSPKeyerSidetone != null) return chkDSPKeyerSidetone.Checked;
+                if (chkSideTones != null) return chkSideTones.Checked;
                 else return false;
             }
             set
             {
-                if (chkDSPKeyerSidetone != null) chkDSPKeyerSidetone.Checked = value;
+                if (chkSideTones != null) chkSideTones.Checked = value;
             }
         }
-
         public bool CWIambic
         {
             get
@@ -4991,7 +4968,6 @@ namespace Thetis
         {
             set
             {
-                udDSPAGCAttack.Enabled = value;
                 udDSPAGCDecay.Enabled = value;
                 udDSPAGCHangTime.Enabled = value;
 
@@ -5011,7 +4987,6 @@ namespace Thetis
         {
             set
             {
-                udDSPAGCRX2Attack.Enabled = value;
                 udDSPAGCRX2Decay.Enabled = value;
                 udDSPAGCRX2HangTime.Enabled = value;
 
@@ -8915,14 +8890,38 @@ namespace Thetis
             udCWKeyerSemiBreakInDelay_ValueChanged(this, EventArgs.Empty);
         }
 
+        private void chkSideTones_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            chkDSPKeyerSidetone.Enabled = chkSideTones.Checked;
+            chkDSPKeyerSidetone_software.Enabled = chkSideTones.Checked;
+
+            console.CWSidetones = chkSideTones.Checked;
+
+            chkDSPKeyerSidetone_CheckedChanged(this, EventArgs.Empty);
+            chkDSPKeyerSidetone_software_CheckedChanged(this, EventArgs.Empty);
+        }
         private void chkDSPKeyerSidetone_CheckedChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
-            console.CWSidetone = chkDSPKeyerSidetone.Checked;
-            if (chkDSPKeyerSidetone.Checked)
-                NetworkIO.SetCWSidetone(1);
-            else NetworkIO.SetCWSidetone(0);
-
+            if (!chkDSPKeyerSidetone.Checked && !chkDSPKeyerSidetone_software.Checked)
+            {
+                // both off, turn on hardware
+                chkDSPKeyerSidetone.Checked = true;
+                return;
+            }
+            console.CWHWSidetone = chkDSPKeyerSidetone.Checked;
+        }
+        private void chkDSPKeyerSidetone_software_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!chkDSPKeyerSidetone.Checked && !chkDSPKeyerSidetone_software.Checked)
+            {
+                // both off, turn on software
+                chkDSPKeyerSidetone_software.Checked = true;
+                return;
+            }
+            console.CWSWSidetone = chkDSPKeyerSidetone_software.Checked;
         }
 
         private void chkCWKeyerRevPdl_CheckedChanged(object sender, System.EventArgs e)
@@ -9354,19 +9353,19 @@ namespace Thetis
             console.MicMute = (bool)dr["MicMute"]; //MW0LGE_21f
 
             chkDSPLevelerEnabled.Checked = (bool)dr["Lev_On"];
-            udDSPLevelerSlope.Value = (int)dr["Lev_Slope"];
+            //udDSPLevelerSlope.Value = (int)dr["Lev_Slope"];
             udDSPLevelerThreshold.Value = (int)dr["Lev_MaxGain"];
-            udDSPLevelerAttack.Value = (int)dr["Lev_Attack"];
+            //udDSPLevelerAttack.Value = (int)dr["Lev_Attack"];
             udDSPLevelerDecay.Value = (int)dr["Lev_Decay"];
-            udDSPLevelerHangTime.Value = (int)dr["Lev_Hang"];
-            tbDSPLevelerHangThreshold.Value = (int)dr["Lev_HangThreshold"];
+            //udDSPLevelerHangTime.Value = (int)dr["Lev_Hang"];
+            //tbDSPLevelerHangThreshold.Value = (int)dr["Lev_HangThreshold"];
 
-            udDSPALCSlope.Value = (int)dr["ALC_Slope"];
+            //udDSPALCSlope.Value = (int)dr["ALC_Slope"];
             udDSPALCMaximumGain.Value = (int)dr["ALC_MaximumGain"];
-            udDSPALCAttack.Value = (int)dr["ALC_Attack"];
+            //udDSPALCAttack.Value = (int)dr["ALC_Attack"];
             udDSPALCDecay.Value = (int)dr["ALC_Decay"];
-            udDSPALCHangTime.Value = (int)dr["ALC_Hang"];
-            tbDSPALCHangThreshold.Value = (int)dr["ALC_HangThreshold"];
+            //udDSPALCHangTime.Value = (int)dr["ALC_Hang"];
+            //tbDSPALCHangThreshold.Value = (int)dr["ALC_HangThreshold"];
 
             chkVOXEnable.Checked = (bool)dr["VOX_On"];
             chkDEXPEnable.Checked = (bool)dr["Dexp_On"];
@@ -11783,55 +11782,55 @@ namespace Thetis
             udCWBreakInDelay.Value = udCWBreakInDelay.Value;
         }
 
-        private void udDSPLevelerHangTime_LostFocus(object sender, EventArgs e)
-        {
-            udDSPLevelerHangTime.Value = udDSPLevelerHangTime.Value;
-        }
+        //private void udDSPLevelerHangTime_LostFocus(object sender, EventArgs e)
+        //{
+        //    udDSPLevelerHangTime.Value = udDSPLevelerHangTime.Value;
+        //}
 
         private void udDSPLevelerThreshold_LostFocus(object sender, EventArgs e)
         {
             udDSPLevelerThreshold.Value = udDSPLevelerThreshold.Value;
         }
 
-        private void udDSPLevelerSlope_LostFocus(object sender, EventArgs e)
-        {
-            udDSPLevelerSlope.Value = udDSPLevelerSlope.Value;
-        }
+        //private void udDSPLevelerSlope_LostFocus(object sender, EventArgs e)
+        //{
+        //    udDSPLevelerSlope.Value = udDSPLevelerSlope.Value;
+        //}
 
         private void udDSPLevelerDecay_LostFocus(object sender, EventArgs e)
         {
             udDSPLevelerDecay.Value = udDSPLevelerDecay.Value;
         }
 
-        private void udDSPLevelerAttack_LostFocus(object sender, EventArgs e)
-        {
-            udDSPLevelerAttack.Value = udDSPLevelerAttack.Value;
-        }
+        //private void udDSPLevelerAttack_LostFocus(object sender, EventArgs e)
+        //{
+        //    udDSPLevelerAttack.Value = udDSPLevelerAttack.Value;
+        //}
 
-        private void udDSPALCHangTime_LostFocus(object sender, EventArgs e)
-        {
-            udDSPALCHangTime.Value = udDSPALCHangTime.Value;
-        }
+        //private void udDSPALCHangTime_LostFocus(object sender, EventArgs e)
+        //{
+        //    udDSPALCHangTime.Value = udDSPALCHangTime.Value;
+        //}
 
         private void udDSPALCThreshold_LostFocus(object sender, EventArgs e)
         {
             udDSPALCMaximumGain.Value = udDSPALCMaximumGain.Value;
         }
 
-        private void udDSPALCSlope_LostFocus(object sender, EventArgs e)
-        {
-            udDSPALCSlope.Value = udDSPALCSlope.Value;
-        }
+        //private void udDSPALCSlope_LostFocus(object sender, EventArgs e)
+        //{
+        //    udDSPALCSlope.Value = udDSPALCSlope.Value;
+        //}
 
         private void udDSPALCDecay_LostFocus(object sender, EventArgs e)
         {
             udDSPALCDecay.Value = udDSPALCDecay.Value;
         }
 
-        private void udDSPALCAttack_LostFocus(object sender, EventArgs e)
-        {
-            udDSPALCAttack.Value = udDSPALCAttack.Value;
-        }
+        //private void udDSPALCAttack_LostFocus(object sender, EventArgs e)
+        //{
+        //    udDSPALCAttack.Value = udDSPALCAttack.Value;
+        //}
 
         private void udDSPAGCHangTime_LostFocus(object sender, EventArgs e)
         {
@@ -11851,11 +11850,6 @@ namespace Thetis
         private void udDSPAGCDecay_LostFocus(object sender, EventArgs e)
         {
             udDSPAGCDecay.Value = udDSPAGCDecay.Value;
-        }
-
-        private void udDSPAGCAttack_LostFocus(object sender, EventArgs e)
-        {
-            udDSPAGCAttack.Value = udDSPAGCAttack.Value;
         }
 
         private void udDSPAGCFixedGaindB_LostFocus(object sender, EventArgs e)
@@ -12576,16 +12570,16 @@ namespace Thetis
                 fileName = fileName.Replace(c.ToString(), "_");  // Remove profile name chars that are invalid in filenames.
             }
 
-            fileName = console.AppDataPath + fileName;
+            //[2.10.3.9]MW0LGE now requests file location, incrementing filename functionality removed
+            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.InitialDirectory = myDocumentsPath;
+            saveFileDialog.Filter = "XML Files (*.xml)|*.xml";
+            saveFileDialog.FileName = fileName;
 
-            int i = 1;
-            string tempFN = fileName;
-            while (File.Exists(tempFN + ".xml"))
-            {
-                tempFN = fileName + Convert.ToString(i);  // Get a slightly different file name if it already exists.
-                i++;
-            }
-            fileName = tempFN + ".xml";
+            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+
+            fileName = saveFileDialog.FileName;
 
             DataRow[] rows = getDataRowsForTXProfile(current_profile);// DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
             DataRow exportRow = null;
@@ -12634,7 +12628,7 @@ namespace Thetis
                 return;
             }
 
-            MessageBox.Show("Profile" + current_profile + " has been saved in file " + fileName,
+            MessageBox.Show("Profile [" + current_profile + "] has been saved to the file\n" + fileName,
                     "Done",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
@@ -17870,16 +17864,6 @@ namespace Thetis
         bool AddActive = false;
         bool EditActive = false;
 
-        // On the Console
-        // 'OFF/ON' button for Multi Notch Filter
-        private void btnMNFRun_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void chkMNFRun_CheckedChanged(object sender, EventArgs e)
-        {
-        }
-
         // accept input for a notch to be added
         private void btnMNFAdd_Click(object sender, EventArgs e)
         {
@@ -20040,8 +20024,8 @@ namespace Thetis
                     chkApolloPresent.Enabled = true;
                     chkApolloPresent.Visible = true;
                     chkGeneralRXOnly.Visible = true;
-                    chkHermesStepAttenuator.Enabled = false; // turn this off MW0LGE_21d
-                    udHermesStepAttenuatorData.Enabled = false;
+                    chkHermesStepAttenuator.Enabled = true; //[2.10.3.9]MW0LGE re-enabled, not sure why I removed it as double clicking ATT would show S-ATT
+                    udHermesStepAttenuatorData.Enabled = true; //[2.10.3.9]MW0LGE re-enabled, not sure why I removed it as double clicking ATT would show S-ATT
                     chkRX2StepAtt.Checked = false;
                     chkRX2StepAtt.Enabled = false;
                     udHermesStepAttenuatorDataRX2.Enabled = false;
@@ -29128,6 +29112,7 @@ namespace Thetis
         {
             if (initializing) return;
             console.ForceATTwhenOutputPowerChangesWhenPSAon = chkForceATTwhenOutPowerChanges.Checked;
+            chkForceATTwhenOutPowerChanges_decreased.Enabled = chkForceATTwhenOutPowerChanges.Checked;
         }
 
         private void chkToTMox_CheckedChanged(object sender, EventArgs e)
@@ -33787,6 +33772,12 @@ namespace Thetis
         {
             if (initializing) return;
             console.SWRWindBackPower = chkWindBackPowerSWR.Checked;
+        }
+
+        private void chkForceATTwhenOutPowerChanges_decreased_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.ForceATTwhenOutputPowerChangesWhenPSAonAndDecreased = chkForceATTwhenOutPowerChanges_decreased.Checked;
         }
     }
 
