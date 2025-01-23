@@ -64,6 +64,8 @@
 
     public enum HPSDRModel
     {
+        //IMPORTANT: Please keep the int value order on these enums, ie add new items before LAST,
+        //otherwise 'bad' things might happen
         FIRST = -1,
         HPSDR,
         HERMES,
