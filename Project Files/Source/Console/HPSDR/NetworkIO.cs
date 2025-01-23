@@ -281,7 +281,16 @@ namespace Thetis
                 }
             }
 
-            rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort, (int)CurrentRadioProtocol, (int)BoardID);
+            //override boardid as the firmware might not return what we want
+            int boardID = (int)BoardID;
+            switch (Hardware.Model)
+            {
+                case HPSDRModel.REDPITAYA:
+                    boardID = 99; // from network.h RedPitaya
+                    break;
+            }
+
+            rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort, (int)CurrentRadioProtocol, boardID);
             return -rc;
         }
 

@@ -367,7 +367,7 @@
         Orion = 4,          // ANAN-200D
         OrionMKII = 5,      // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII Anvelina-Pro3 RedPitaya
         Saturn = 10,         // ANAN-G2: added G8NJJ
-        RedPitaya = 99,     //RedPitaya - not used, here to match network.h (channelmaster) //DH1KLM
+        RedPitaya = 99,     //RedPitaya - not used as it is classed as an OrionMKII, here to match network.h (channelmaster) //DH1KLM
         Unknown = 999,      //MW0LGE
     }
 

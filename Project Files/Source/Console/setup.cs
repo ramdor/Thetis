@@ -19700,6 +19700,8 @@ namespace Thetis
 
             comboAudioSampleRateRX2.Enabled = true;
 
+            Hardware.Model = Hardware.StringModelToEnum(comboRadioModel.Text);
+
             switch (Hardware.StringModelToEnum(comboRadioModel.Text))
             {
                 case HPSDRModel.HERMES:
