@@ -102,7 +102,7 @@ namespace Thetis
                 case "ANVELINA-PRO3":
                     return HPSDRModel.ANVELINAPRO3;
                 case "HERMESLITE":
-                    return HPSDRModel.HERMESLITE2;
+                    return HPSDRModel.HERMESLITE;
                 case "RED-PITAYA":
                     return HPSDRModel.REDPITAYA;
                 default:
@@ -137,7 +137,7 @@ namespace Thetis
                     return "ANAN-G2-1K";
                 case HPSDRModel.ANVELINAPRO3:
                     return "ANVELINA-PRO3";
-                case HPSDRModel.HERMESLITE2:
+                case HPSDRModel.HERMESLITE:
                     return "HERMESLITE";
                 case HPSDRModel.REDPITAYA:
                     return "RED-PITAYA";
