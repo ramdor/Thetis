@@ -61,7 +61,7 @@ namespace Thetis
             {
                 return _model == HPSDRModel.ANAN7000D || _model == HPSDRModel.ANAN8000D ||
                        _model == HPSDRModel.ANVELINAPRO3 || _model == HPSDRModel.ANAN_G2 ||
-                       _model == HPSDRModel.ANAN_G2_1K;
+                       _model == HPSDRModel.ANAN_G2_1K || _model == HPSDRModel.REDPITAYA;
             }
         }
         public static bool HasAmps
@@ -70,7 +70,7 @@ namespace Thetis
             {
                 return _model == HPSDRModel.ANAN7000D || _model == HPSDRModel.ANAN8000D ||
                        _model == HPSDRModel.ANVELINAPRO3 || _model == HPSDRModel.ANAN_G2 ||
-                       _model == HPSDRModel.ANAN_G2_1K;
+                       _model == HPSDRModel.ANAN_G2_1K || _model == HPSDRModel.REDPITAYA;
             }
         }
         public static HPSDRModel StringModelToEnum(string sModel)
