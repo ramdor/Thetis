@@ -113,13 +113,17 @@ void decalc_sidetone(SIDETONE a)
 
 SIDETONE create_sidetone(
 	int id,
-	int run, 
-	int rate, 
-	int size, 
+	int run_st,
+	int run_tx,
+	int rate,
+	int size,
 	double* in,
-	double* out,
+	double* out_st,
+	double* out_tx,
+	int IQ_polarity,
 	double pitch,						// Hertz
-	double volume,						// 0.0 - 1.0
+	double volume_st,					// 0.0 - 1.0
+	double volume_tx,					// 0.0 - 1.0
 	int wpm,							// words-per-minute
 	int edgetype,						// '0' = raised-cosine
 	double edgelength					// time in seconds
@@ -127,13 +131,17 @@ SIDETONE create_sidetone(
 {
 	SIDETONE a = (SIDETONE)malloc0(sizeof(sidetone));
 	a->id = id;
-	a->run = run;
+	a->run_st = run_st;
+	a->run_tx = run_tx;
 	a->rate = rate;
 	a->size = size;
 	a->in = in;
-	a->out = out;
+	a->out_st = out_st;
+	a->out_tx = out_tx;
+	a->IQ_polarity = IQ_polarity;
 	a->pitch = pitch;
-	a->volume = volume;
+	a->volume_st = volume_st;
+	a->volume_tx = volume_tx;
 	a->wpm = wpm;
 	a->edgetype = edgetype;
 	a->edgelength = edgelength;
@@ -187,7 +195,7 @@ void xsidetone(int id)
 	SIDETONE a = psidetone[id];
 	int i;
 	
-	if (a->run)
+	if (a->run_st || a->run_tx)
 	{
 		osc_init(a);
 		for (i = 0; i < a->size; i++)
@@ -197,15 +205,15 @@ void xsidetone(int id)
 			switch (a->state)
 			{
 			case LOW:
-				a->out[2 * i + 0] = 0.0;
-				a->out[2 * i + 1] = 0.0;
+				a->outI = 0.0;
+				a->outQ = 0.0;
 				if (a->key || a->dot || a->dash)
 					a->state = RISE;
 				a->ntimer = 0;
 				break;
 			case RISE:
-				a->out[2 * i + 0] = a->rise_samps[a->ntimer] * a->tone_out0 * a->volume;
-				a->out[2 * i + 1] = a->rise_samps[a->ntimer] * a->tone_out1 * a->volume;
+				a->outI = a->rise_samps[a->ntimer] * a->tone_out0;
+				a->outQ = a->rise_samps[a->ntimer] * a->tone_out1;
 				++(a->ntimer);
 				if (a->ntimer > a->nrise)
 				{
@@ -223,10 +231,8 @@ void xsidetone(int id)
 				}
 				break;
 			case HIGH:
-				a->out[2 * i + 0] = a->tone_out0 * a->volume;
-				a->out[2 * i + 1] = a->tone_out1 * a->volume;
-				// a->out[2 * i + 0] = a->in[2 * i + 0];			// for testing
-				// a->out[2 * i + 1] = a->in[2 * i + 1];
+				a->outI = a->tone_out0;
+				a->outQ = a->tone_out1;
 				if (a->ntimer > 0)
 					--(a->ntimer);
 				if (a->ntimer <= 0 && !a->key)
@@ -236,8 +242,8 @@ void xsidetone(int id)
 				}
 				break;
 			case FALL:
-				a->out[2 * i + 0] = a->fall_samps[a->ntimer] * a->tone_out0 * a->volume;
-				a->out[2 * i + 1] = a->fall_samps[a->ntimer] * a->tone_out1 * a->volume;
+				a->outI = a->fall_samps[a->ntimer] * a->tone_out0;
+				a->outQ = a->fall_samps[a->ntimer] * a->tone_out1;
 				++(a->ntimer);
 				if (a->ntimer > a->nfall)
 				{
@@ -256,13 +262,29 @@ void xsidetone(int id)
 				}
 				break;
 			}
+			if (a->run_st)
+			{
+				a->out_st[2 * i + 0] = a->outI * a->volume_st;
+				a->out_st[2 * i + 1] = a->outQ * a->volume_st;
+			}
+			if (a->run_tx)
+			{
+				if (a->IQ_polarity)
+				{
+					a->out_tx[2 * i + 0] = +a->outI * a->volume_tx;
+					a->out_tx[2 * i + 1] = -a->outQ * a->volume_tx;
+				}
+				else
+				{
+					a->out_tx[2 * i + 0] = +a->outI * a->volume_tx;
+					a->out_tx[2 * i + 1] = +a->outQ * a->volume_tx;
+				}
+			}
 			LeaveCriticalSection(&a->update);
 		}
 	}
-	else
-	{
-		if (a->out != a->in) memcpy(a->out, a->in, a->size * sizeof(complex));
-	}
+	if (!a->run_st && (a->out_st != a->in)) memcpy (a->out_st, a->in, a->size * sizeof(complex));
+	if (!a->run_tx && (a->out_tx != a->in)) memcpy (a->out_tx, a->in, a->size * sizeof(complex));
 }
 
 void setSidetoneRate(int id, int rate)
@@ -321,11 +343,30 @@ void makedashSidetone(int id)
 }
 
 PORT
+void SetCWtxIQpolarity(int id, int polarity)
+{
+	SIDETONE a = psidetone[id];
+	EnterCriticalSection(&a->update);
+	a->IQ_polarity = polarity;
+	LeaveCriticalSection(&a->update);
+}
+
+PORT
 void SetSidetoneVolume(int id, double volume)
 {
 	SIDETONE a = psidetone[id];
 	EnterCriticalSection(&a->update);
-	a->volume = volume;
+	a->volume_st = volume;
+	LeaveCriticalSection(&a->update);
+}
+
+PORT
+void SetCWtxVolume(int id, double volume)
+{
+	SIDETONE a = psidetone[id];
+	EnterCriticalSection(&a->update);
+	a->volume_tx = volume;
+	if (a->volume_tx > 0.999) a->volume_tx = 0.999;
 	LeaveCriticalSection(&a->update);
 }
 
@@ -344,7 +385,16 @@ void SetSidetoneRun(int id, int run)
 {
 	SIDETONE a = psidetone[id];
 	EnterCriticalSection(&a->update);
-	a->run = run;
+	a->run_st = run;
+	LeaveCriticalSection(&a->update);
+}
+
+PORT
+void SetCWtxRun(int id, int run)
+{
+	SIDETONE a = psidetone[id];
+	EnterCriticalSection(&a->update);
+	a->run_tx = run;
 	LeaveCriticalSection(&a->update);
 }
 
