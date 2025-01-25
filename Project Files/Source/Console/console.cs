@@ -21206,6 +21206,7 @@ namespace Thetis
         {
             public int stepAttenuator = -1;
             public PreampMode preampMode = PreampMode.FIRST;
+            public Band band;
         }
         private bool _have_sync = false;
         private bool _had_radio_sync = false;
@@ -21395,8 +21396,26 @@ namespace Thetis
                 pbAutoAttWarningRX2.Visible = _auto_att_applied_rx2;
             }
         }
+        private void keep_att_entries_for_band(Stack<HistoricAttenuatorReading> readings_stack, Band target_band)
+        {
+            // if attenuation is applied on a previous band then clear it //TODO: re-apply these to the old band
+            if (readings_stack == null || readings_stack.Count == 0) return;
+
+            List<HistoricAttenuatorReading> tmplist = new List<HistoricAttenuatorReading>();
+            while (readings_stack.Count > 0)
+            {
+                HistoricAttenuatorReading entry = readings_stack.Pop();
+                if (entry.band == target_band) tmplist.Add(entry);
+            }
+
+            for (int i = tmplist.Count - 1; i >= 0; i--)
+            {
+                readings_stack.Push(tmplist[i]);
+            }
+        }
         private void handleOverload()
         {
+            // adjust the step shift
             for (int i = 0; i < 3; i++)
             {
                 if (_adc_overloaded[i])
@@ -21430,8 +21449,8 @@ namespace Thetis
                                 if (!ATTOnTX) ATTOnTX = true;
                                 TxAttenData = att;
                                 _historic_attenuator_readings_tx.Push(har);
-                                
-                                if(RX2Enabled && VFOBTX)
+
+                                if (RX2Enabled && VFOBTX)
                                     AutoAttAppliedRX2 = true;
                                 else
                                     AutoAttAppliedRX1 = true;
@@ -21453,13 +21472,25 @@ namespace Thetis
                             AutoAttAppliedRX1 = _historic_attenuator_readings_tx.Any();
                     }
                 }
-                else
+                else if (_historic_attenuator_readings_tx.Any())
+                {
                     _historic_attenuator_readings_tx.Clear();
+                    if (RX2Enabled && VFOBTX)
+                        AutoAttAppliedRX2 = false;
+                    else
+                        AutoAttAppliedRX1 = false;
+                }
             }
 
+            // deal with RX
             if (!_mox)
             {
-                // deal with rx
+                // clear any for different band
+                keep_att_entries_for_band(_historic_attenuator_readings_rx1, RX1Band);
+                keep_att_entries_for_band(_historic_attenuator_readings_rx2, RX2Band);
+                if (_historic_attenuator_readings_rx1.Count == 0 && AutoAttAppliedRX1) AutoAttAppliedRX1 = false;
+                if (_historic_attenuator_readings_rx2.Count == 0 && AutoAttAppliedRX2) AutoAttAppliedRX2 = false;
+
                 int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
                 GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);                               
 
@@ -21483,6 +21514,7 @@ namespace Thetis
                         if (RX1StepAttPresent)
                         {
                             har.stepAttenuator = RX1AttenuatorData;
+                            har.band = RX1Band;
 
                             int att = har.stepAttenuator + (_adc_overloaded[0] ? _adc_step_shift[0] : _adc_step_shift[1]);
                             if (att > 31) att = 31;
@@ -21563,7 +21595,8 @@ namespace Thetis
                         HistoricAttenuatorReading har = new HistoricAttenuatorReading();
                         if (RX2StepAttPresent)
                         {
-                            har.stepAttenuator = RX2AttenuatorData;                            
+                            har.stepAttenuator = RX2AttenuatorData;
+                            har.band = RX2Band;
 
                             int att = har.stepAttenuator + (_adc_overloaded[0] ? _adc_step_shift[0] : _adc_step_shift[1]);
                             if (att > 31) att = 31;

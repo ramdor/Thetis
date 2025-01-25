@@ -29,6 +29,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] serial ports that are not of COMnn format now do not causes errors. If a serial port is for example name COMB13, then it will not be able to be used
 - [fix] notch popup window will be shifted so that it is visible when close to the edge of a screen
 - [fix] fix filter width crash under certain conditions in the filter config form
+- [fix] fix issues where adc overload has caused an rx attenuation to be applied and the band has been changed before the attenuation has been removed
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked
