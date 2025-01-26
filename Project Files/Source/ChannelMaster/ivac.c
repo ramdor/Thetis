@@ -480,18 +480,29 @@ PORT void SetIVACmox(int id, int mox)
 	a->mox = mox;
 	if (!a->mox)
 	{
-		SetAAudioMixWhat(a->mixer, 0, 1, 0);
-		SetAAudioMixWhat(a->mixer, 0, 0, 1);
-	}
-	else if (a->mon)
-	{
-		SetAAudioMixWhat(a->mixer, 0, 0, 0);
-		SetAAudioMixWhat(a->mixer, 0, 1, 1);
+		if (a->mon)
+		{
+			SetAAudioMixWhat(a->mixer, 0, 1, 1);
+			SetAAudioMixWhat(a->mixer, 0, 0, 1);
+		}
+		else
+		{
+			SetAAudioMixWhat(a->mixer, 0, 1, 0);
+			SetAAudioMixWhat(a->mixer, 0, 0, 1);
+		}
 	}
 	else
 	{
-		SetAAudioMixWhat(a->mixer, 0, 0, 0);
-		SetAAudioMixWhat(a->mixer, 0, 1, 0);
+		if (a->mon)
+		{
+			SetAAudioMixWhat(a->mixer, 0, 0, 0);
+			SetAAudioMixWhat(a->mixer, 0, 1, 1);
+		}
+		else
+		{
+			SetAAudioMixWhat(a->mixer, 0, 0, 0);
+			SetAAudioMixWhat(a->mixer, 0, 1, 0);
+		}
 	}
 }
 
@@ -501,19 +512,30 @@ PORT void SetIVACmon(int id, int mon)
 	a->mon = mon;
 	if (!a->mox)
 	{
-		SetAAudioMixWhat(a->mixer, 0, 1, 0);
-		SetAAudioMixWhat(a->mixer, 0, 0, 1);
-	}
-	else if (a->mon)
-	{
-		SetAAudioMixWhat(a->mixer, 0, 0, 0);
-		SetAAudioMixWhat(a->mixer, 0, 1, 1);
+		if (a->mon)
+		{
+			SetAAudioMixWhat(a->mixer, 0, 1, 1);
+			SetAAudioMixWhat(a->mixer, 0, 0, 1);
+		}
+		else
+		{
+			SetAAudioMixWhat(a->mixer, 0, 1, 0);
+			SetAAudioMixWhat(a->mixer, 0, 0, 1);
+		}
 	}
 	else
 	{
-		SetAAudioMixWhat(a->mixer, 0, 0, 0);
-		SetAAudioMixWhat(a->mixer, 0, 1, 0);
-	}	
+		if (a->mon)
+		{
+			SetAAudioMixWhat(a->mixer, 0, 0, 0);
+			SetAAudioMixWhat(a->mixer, 0, 1, 1);
+		}
+		else
+		{
+			SetAAudioMixWhat(a->mixer, 0, 0, 0);
+			SetAAudioMixWhat(a->mixer, 0, 1, 0);
+		}
+	}
 }
 
 PORT void SetIVACmonVol(int id, double vol)

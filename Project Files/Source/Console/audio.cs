@@ -229,25 +229,6 @@ namespace Thetis
             {
                 monitor_volume = value;
                 cmaster.CMSetAudioVolume(value);
-
-                ////MW0LGE_21k-rc2
-                //if (vfob_tx)
-                //{
-                //    if (rx2_enabled) // need to check the vac2 split thing ?
-                //    {
-                //        ivac.SetIVACmonVol(1, monitor_volume);
-                //    }
-                //    else
-                //    {
-                //        ivac.SetIVACmonVol(0, monitor_volume);
-                //    }
-                //}
-                //else
-                //{
-                //    ivac.SetIVACmonVol(0, monitor_volume);
-                //}
-
-                //MW0LGE [pre g2]
                 ivac.SetIVACmonVol(0, monitor_volume);
             }
         }

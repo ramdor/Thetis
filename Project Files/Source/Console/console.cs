@@ -10762,7 +10762,8 @@ namespace Thetis
                 NetworkIO.EnableCWKeyer(Convert.ToInt32(value));
 
                 //software cw keying, as the run state is changed in EnableCWKeyer
-                NetworkIO.SetSidetoneRun(0, _cw_sidetones && _cw_sw_sidetone ? 1 : 0);
+                bool is_cw = VFOBTX && RX2Enabled ? RX2DSPMode == DSPMode.CWL || RX2DSPMode == DSPMode.CWU : RX1DSPMode == DSPMode.CWL || RX1DSPMode == DSPMode.CWU;
+                NetworkIO.SetSidetoneRun(0, is_cw && _cw_sidetones && _cw_sw_sidetone ? 1 : 0);
 
                 setCWSideToneVolume();
 
@@ -15104,7 +15105,7 @@ namespace Thetis
             }
         }
 
-        private void enableMonForCW()
+        private void enableMONForCW()
         {
             DSPMode tx_mode = rx1_dsp_mode;
             if (chkVFOBTX.Checked && chkRX2.Checked) tx_mode = rx2_dsp_mode;
@@ -15135,10 +15136,11 @@ namespace Thetis
             {
                 _cw_sw_sidetone = value;
 
-                NetworkIO.SetSidetoneRun(0, _cw_sidetones && _cw_sw_sidetone ? 1 : 0);
+                bool is_cw = VFOBTX && RX2Enabled ? RX2DSPMode == DSPMode.CWL || RX2DSPMode == DSPMode.CWU : RX1DSPMode == DSPMode.CWL || RX1DSPMode == DSPMode.CWU;
+                NetworkIO.SetSidetoneRun(0, is_cw && _cw_sidetones && _cw_sw_sidetone ? 1 : 0);
 
                 setCWSideToneVolume();
-                enableMonForCW();
+                enableMONForCW();
             }
         }
         private bool _cw_hw_sidetone = false;
@@ -15156,7 +15158,7 @@ namespace Thetis
                     NetworkIO.SetCWSidetone(0);
 
                 setCWSideToneVolume();
-                enableMonForCW();
+                enableMONForCW();
             }
         }
 
