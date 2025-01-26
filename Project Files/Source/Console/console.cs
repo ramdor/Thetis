@@ -25469,7 +25469,7 @@ namespace Thetis
                 if (!manual_mox && !disable_ptt && !rx_only && !_tx_inhibit && !QSKEnabled)
                 {
                     bool mic_ptt = (dotdashptt & 0x01) != 0; // PTT from radio
-                    bool cw_ptt = CWInput.KeyerPTT && _current_breakin_mode != BreakIn.Manual; // CW serial PTT  //[2.10.3.9]MW0LGE ignore when in manual break in state
+                    bool cw_ptt = CWInput.KeyerPTT && _current_breakin_mode == BreakIn.Semi; // CW serial PTT  //[2.10.3.9]MW0LGE only want to do this on semi breakin
                     bool vox_ptt = Audio.VOXActive;
                     bool cat_ptt = (ptt_bit_bang_enabled && serialPTT != null && serialPTT.isPTT()) | // CAT serial PTT
                                    (!ptt_bit_bang_enabled && CWInput.CATPTT) | _cat_ptt;
