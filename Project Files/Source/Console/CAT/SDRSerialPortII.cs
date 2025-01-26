@@ -234,6 +234,8 @@ namespace Thetis
         void SerialPinChanged(object source, SerialPinChangedEventArgs e)
         {
             //refactored for MAX performance [2.10.3.9]MW0LGE
+            // added else's to match switch's from old code
+
             if (!use_for_keyptt && !use_for_paddles && !use_for_cat_ptt) return;
             bool dsrHolding = commPort.DsrHolding;
             bool ctsHolding = commPort.CtsHolding;
@@ -248,7 +250,7 @@ namespace Thetis
                     if (ptt_on_dtr) CWInput.KeyerPTT = dsrHolding;
                     if (key_on_dtr) NetworkIO.SetCWX(dsrHolding ? 1 : 0);
                 }
-                if (isCtsChanged)
+                else if (isCtsChanged)
                 {
                     if (ptt_on_rts) CWInput.KeyerPTT = ctsHolding;
                     if (key_on_rts) NetworkIO.SetCWX(ctsHolding ? 1 : 0);
@@ -257,13 +259,13 @@ namespace Thetis
             else if (use_for_paddles && isPinChangeRelevant)
             {
                 if (isDsrChanged) NetworkIO.SetCWDot(dsrHolding ? 1 : 0);
-                if (isCtsChanged) NetworkIO.SetCWDash(ctsHolding ? 1 : 0);
+                else if (isCtsChanged) NetworkIO.SetCWDash(ctsHolding ? 1 : 0);
             }
 
             if (use_for_cat_ptt)
             {
                 if (isDsrChanged && ptt_on_dtr) CWInput.CATPTT = dsrHolding;
-                if (isCtsChanged && ptt_on_rts) CWInput.CATPTT = ctsHolding;
+                else if (isCtsChanged && ptt_on_rts) CWInput.CATPTT = ctsHolding;
             }
 
             //if (!use_for_keyptt && !use_for_paddles && !use_for_cat_ptt) return;
