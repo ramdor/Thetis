@@ -878,7 +878,7 @@ namespace Thetis
 			if (m_server != null && m_server.EmulateSunSDR2Pro)
 				sDevice = "SunSDR2PRO";
 			else
-				sDevice = console.ThreadSafeTCIAccessor.CurrentHPSDRModel.ToString();
+				sDevice = HardwareSpecific.Model.ToString();
 			sendTextFrame("device:" + sDevice + ";");
 			sendTextFrame("receive_only:false;");
 			sendTextFrame("trx_count:2;");

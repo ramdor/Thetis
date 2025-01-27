@@ -234,13 +234,17 @@ void create_xmtr()
 		// sidetone
 		create_sidetone(
 			i,									// id
-			1,									// run
+			1,									// run_sidetone
+			0,									// run_tx
 			pcm->xmtr[i].ch_outrate,			// rate
 			pcm->xmtr[i].ch_outsize,			// size
 			pcm->xmtr[i].out[0],				// *in
-			pcm->xmtr[i].out[2],				// *out
+			pcm->xmtr[i].out[2],				// *out_sidetone
+			pcm->xmtr[i].out[0],				// *out_tx
+			0,									// tx IQ_polarity
 			400.0,								// pitch
-			1.0,								// volume
+			1.0,								// volume_sidetone
+			1.0,								// volume_tx
 			20,									// wpm
 			0,									// raised-cosine edge
 			0.005);								// edge length
@@ -302,7 +306,7 @@ void create_cmaster()
 			4096,														// ring buffer size
 			pcm->aamix_inrates,											// sample rates of input streams
 			pcm->audio_outrate,											// audio output sample rate
-			pcm->OutboundRx,												// pointer to Outbound() call
+			pcm->OutboundRx,											// pointer to Outbound() call
 			0.000,														// tdelayup
 			0.010,														// tslewup
 			0.000,														// tdelaydown

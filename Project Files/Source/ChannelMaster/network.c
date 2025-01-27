@@ -81,7 +81,7 @@ void DeInitMetisSockets() {
 
 /* returns 0 on success, != 0 otherwise */	// MI0BOT: Added remotePort to allow remote access to several HL2s by different port number
 PORT
-int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol, int remotePort) {
+int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol, int hpsdrhardware, int remotePort) {
 	IPAddr DestIp = 0;
 	IPAddr SrcIp = 0;       /* default for src ip */
 	ULONG MacAddr[2];       /* for 6-byte hardware addresses */
@@ -91,6 +91,7 @@ int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol,
 	struct sockaddr_in local = { 0 };
 
 	RadioProtocol = protocol;
+	HPSDRHW = hpsdrhardware;
 
 	//if (!WSA_inited) {
 	//	rc = initWSA();

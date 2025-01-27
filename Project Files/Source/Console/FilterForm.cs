@@ -658,10 +658,13 @@ namespace Thetis
 			return (float)(low + ((double)x*(high - low)/picDisplay.Width));
 		}
 
-		private bool filter_updating = false;
+		private bool _filter_updating = false;
 		private void UpdateFilter(int low, int high)
 		{
-			filter_updating = true;
+			if (_filter_updating) return; //[2.10.3.9]MW0LGE prevent update if already happening
+
+			_filter_updating = true;
+
 			if(low < udLow.Minimum) low = (int)udLow.Minimum;
 			if(low > udLow.Maximum) low = (int)udLow.Maximum;
 			if(high < udHigh.Minimum) high = (int)udHigh.Minimum;
@@ -671,7 +674,8 @@ namespace Thetis
 			udHigh.Value = high;
 
 			udWidth.Value = high - low;
-			filter_updating = false;
+
+			_filter_updating = false;
 		}
 
 		#endregion
@@ -759,7 +763,7 @@ namespace Thetis
 
 		private void udLow_ValueChanged(object sender, System.EventArgs e)
 		{
-			if(udLow.Value + 10 > udHigh.Value && !filter_updating) udLow.Value = udHigh.Value - 10;
+			if(udLow.Value + 10 > udHigh.Value/* && !_filter_updating*/) udLow.Value = udHigh.Value - 10;
 			preset[(int)dsp_mode].SetLow(current_filter, (int)udLow.Value);
 			if(!rx2)
 			{
@@ -773,13 +777,13 @@ namespace Thetis
 					console.RX2Filter == current_filter)
 					console.UpdateRX2FilterPresetLow((int)udLow.Value);
 			}
-			if(!filter_updating) UpdateFilter((int)udLow.Value, (int)udHigh.Value);
+			/*if(!_filter_updating) */UpdateFilter((int)udLow.Value, (int)udHigh.Value);
 			picDisplay.Invalidate();
 		}
 
 		private void udHigh_ValueChanged(object sender, System.EventArgs e)
 		{
-			if(udHigh.Value - 10 < udLow.Value && !filter_updating) udHigh.Value = udLow.Value + 10;
+			if(udHigh.Value - 10 < udLow.Value/* && !_filter_updating*/) udHigh.Value = udLow.Value + 10;
 			preset[(int)dsp_mode].SetHigh(current_filter, (int)udHigh.Value);
 			if(!rx2)
 			{
@@ -793,7 +797,7 @@ namespace Thetis
 					console.RX2Filter == current_filter)
 					console.UpdateRX2FilterPresetHigh((int)udHigh.Value);
 			}
-			if(!filter_updating) UpdateFilter((int)udLow.Value, (int)udHigh.Value);
+			/*if(!_filter_updating) */UpdateFilter((int)udLow.Value, (int)udHigh.Value);
 			picDisplay.Invalidate();
 		}	
 
@@ -926,7 +930,7 @@ namespace Thetis
 						break;
 				}
 
-				if(!filter_updating) UpdateFilter(low, high);
+				/*if(!_filter_updating) */UpdateFilter(low, high);
 			}
 			
 		}

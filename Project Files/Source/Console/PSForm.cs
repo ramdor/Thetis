@@ -487,29 +487,25 @@ namespace Thetis
                 _restoreON = true;
             }
         }
-        public double GetDefaultPeak()
-        {
-            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
-            {
-                // MI0BOT: HL2 has a different PSdefpeak 
-                //protocol 1
-                if (console.CurrentHPSDRHardware == HPSDRHW.HermesLite)
-                    return 0.233;
-                else
-                    return 0.4072;
-            }
-            else
-            {
-                //protocol 2
-                if (console.CurrentHPSDRHardware == HPSDRHW.Saturn)
-                    return 0.6121;
-                else
-                    return 0.2899;
-            }
-        }
+        //public double GetDefaultPeak()
+        //{
+        //    if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
+        //    {
+        //        //protocol 1
+        //        return 0.4072;
+        //    }
+        //    else
+        //    {
+        //        //protocol 2
+        //        if (HardwareSpecific.Hardware == HPSDRHW.Saturn)
+        //            return 0.6121;
+        //        else
+        //            return 0.2899;
+        //    }
+        //}
         public void SetDefaultPeaks()
         {
-            PSdefpeak(GetDefaultPeak());
+            PSdefpeak(/*GetDefaultPeak()*/HardwareSpecific.PSDefaultPeak);
         }
         #region PSLoops
 
@@ -782,8 +778,8 @@ namespace Thetis
                 _PShwpeak = tmp;
                 puresignal.SetPSHWPeak(_txachannel, _PShwpeak);
 
-                double set_pk = GetDefaultPeak();
-                pbWarningSetPk.Visible = _PShwpeak != set_pk; //[2.10.3.7]MW0LGE show a warning if the setpk is different to what we expect for this hardware
+                //double set_pk = GetDefaultPeak();
+                pbWarningSetPk.Visible = _PShwpeak != HardwareSpecific.PSDefaultPeak;//set_pk; //[2.10.3.7]MW0LGE show a warning if the setpk is different to what we expect for this hardware
             }                       
         }
 

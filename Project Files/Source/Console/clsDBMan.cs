@@ -522,7 +522,7 @@ namespace Thetis
                 // get db values
                 Dictionary<string, string> options = DB.GetVarsDictionary("Options");
                 if (options.ContainsKey("comboRadioModel"))
-                    di.Model = Common.StringModelToEnum(options["comboRadioModel"]);
+                    di.Model = HardwareSpecific.StringModelToEnum(options["comboRadioModel"]);
                 else
                     di.Model = HPSDRModel.HERMES;
 
@@ -612,7 +612,7 @@ namespace Thetis
                 di.Description = string.IsNullOrEmpty(description) ? "Default" : description;
 
                 if (options.ContainsKey("comboRadioModel"))
-                    di.Model = Common.StringModelToEnum(options["comboRadioModel"]);
+                    di.Model = HardwareSpecific.StringModelToEnum(options["comboRadioModel"]);
 
                 di.VersionString = DB.VersionString;
                 di.VersionNumber = DB.VersionNumber;
@@ -1449,7 +1449,7 @@ namespace Thetis
                             // get db values
                             Dictionary<string, string> options = DB.GetVarsDictionary("Options");
                             if (options.ContainsKey("comboRadioModel"))
-                                model = Common.StringModelToEnum(options["comboRadioModel"]);
+                                model = HardwareSpecific.StringModelToEnum(options["comboRadioModel"]);
                             else
                                 model = HPSDRModel.HERMES;
 
@@ -1812,7 +1812,7 @@ namespace Thetis
                     // get db values
                     Dictionary<string, string> options = DB.GetVarsDictionary("Options");
                     if (options.ContainsKey("comboRadioModel"))
-                        model = Common.StringModelToEnum(options["comboRadioModel"]);
+                        model = HardwareSpecific.StringModelToEnum(options["comboRadioModel"]);
                     else
                         model = HPSDRModel.HERMES;
 

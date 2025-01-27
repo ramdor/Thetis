@@ -157,6 +157,7 @@ namespace Thetis
             //MW0LGE_21d some defaults
             chkShowZeroLine.Checked = true;
             chkGridControl.Checked = true;
+            chkGridControl_minor.Checked = true;
             chkDisplayPanFill.Checked = true;
             showRegionBandstackWarning(false);
             //
@@ -819,8 +820,8 @@ namespace Thetis
             comboAudioSampleRate1.Items.Clear();
             comboAudioSampleRateRX2.Items.Clear();
 
-            bool include_extra_p1_rate = false;
-            
+            bool include_extra_p1_rate = HardwareSpecific.Model == HPSDRModel.REDPITAYA; //DH1KLM
+
             // The HL supports 384K
             if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
                 include_extra_p1_rate = true;
@@ -2554,6 +2555,7 @@ namespace Thetis
             clrbtnMeterLeft_Changed(this, e);
             clrbtnMeterRight_Changed(this, e);
             chkGridControl_CheckedChanged(this, e);
+            chkGridControl_minor_CheckedChanged(this, e);
             clrbtnBandEdge_Changed(this, e);
             clrbtnTXBandEdge_Changed(this, e);
             tbDisplayFFTSize_Scroll(this, e);
@@ -2611,6 +2613,7 @@ namespace Thetis
             chkLegacyMeters_CheckedChanged(this, e);
 
             chkJoinBandEdges_CheckedChanged(this, e);
+            chkShowFrequencyNumbers_CheckedChanged(this, e);
 
             clrbtnTXAttenuationBackground_Changed(this, e);
 
@@ -2742,8 +2745,9 @@ namespace Thetis
             {
                 chkMercDither_CheckedChanged(this, e);
                 chkMercRandom_CheckedChanged(this, e);
+                showLedMirror();
             }
-
+   
             //OC tab
             chkAllowHotSwitching_CheckedChanged(this, e);
             chkUsbBCD_CheckedChanged(this, e); //[2.10.3.5]MW0LGE
@@ -5357,7 +5361,7 @@ namespace Thetis
             {
                 float rv = (float)ud100PA10W.Value;
 
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:     // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -5378,7 +5382,7 @@ namespace Thetis
             get
             {
                 float rv = (float)ud100PA20W.Value;
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -5398,7 +5402,7 @@ namespace Thetis
             get
             {
                 float rv = (float)ud100PA30W.Value;
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -5418,7 +5422,7 @@ namespace Thetis
             get
             {
                 float rv = (float)ud100PA40W.Value;
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -5438,7 +5442,7 @@ namespace Thetis
             get
             {
                 float rv = (float)ud100PA50W.Value;
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -5458,7 +5462,7 @@ namespace Thetis
             get
             {
                 float rv = (float)ud100PA60W.Value;
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -5478,7 +5482,7 @@ namespace Thetis
             get
             {
                 float rv = (float)ud100PA70W.Value;
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -5498,7 +5502,7 @@ namespace Thetis
             get
             {
                 float rv = (float)ud100PA80W.Value;
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -5518,7 +5522,7 @@ namespace Thetis
             get
             {
                 float rv = (float)ud100PA90W.Value;
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -5538,7 +5542,7 @@ namespace Thetis
             get
             {
                 float rv = (float)ud100PA100W.Value;
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -5558,7 +5562,7 @@ namespace Thetis
             get
             {
                 float rv = (float)ud100PA110W.Value;
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -5578,7 +5582,7 @@ namespace Thetis
             get
             {
                 float rv = (float)ud100PA120W.Value;
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -5598,7 +5602,7 @@ namespace Thetis
             get
             {
                 float rv = (float)ud100PA130W.Value;
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -5618,7 +5622,7 @@ namespace Thetis
             get
             {
                 float rv = (float)ud100PA140W.Value;
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                     case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     case HPSDRModel.ANAN10:
@@ -6194,12 +6198,13 @@ namespace Thetis
             grpOzyType.Enabled = true;
             grpMetisAddr.Visible = true;
 
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN200D ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN7000D ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN8000D ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN_G2 ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN_G2_1K ||
-                console.CurrentHPSDRModel == HPSDRModel.ANVELINAPRO3)
+            if (HardwareSpecific.Model == HPSDRModel.ANAN200D ||
+                HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
+                HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+                HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+                HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
+                HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
+                HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
             {
                 groupBoxHPSDRHW.Visible = false;
                 grpGeneralHardwareORION.Visible = true;
@@ -6210,11 +6215,12 @@ namespace Thetis
 
             }
 
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN8000D ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN7000D ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN_G2 ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN_G2_1K ||
-                console.CurrentHPSDRModel == HPSDRModel.ANVELINAPRO3)
+            if (HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+                HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
+                HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+                HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
+                HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
+                HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
             {
                 chkLPFBypass.Checked = false;
                 chkLPFBypass.Visible = false;
@@ -6223,8 +6229,8 @@ namespace Thetis
                 chkBPF2Gnd.Visible = true;
                 chkEnableXVTRHF.Visible = true;
                 toolTip1.SetToolTip(chkEXT2OutOnTx, "Enable Rx BYPASS during transmit.");
-                if (console.CurrentHPSDRModel == HPSDRModel.ANAN_G2 ||
-                    console.CurrentHPSDRModel == HPSDRModel.ANAN_G2_1K)
+                if (HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+                    HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K)
                 {
                     panelSaturnMicInput.Visible = true;
                     lblSaturnMicInput.Visible = true;
@@ -6233,6 +6239,12 @@ namespace Thetis
                 {
                     panelSaturnMicInput.Visible = false;
                     lblSaturnMicInput.Visible = false;
+                }
+
+                if (HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
+                {
+                    chkLPFBypass.Checked = false;
+                    chkLPFBypass.Visible = true;
                 }
             }
             else
@@ -6246,8 +6258,8 @@ namespace Thetis
             }
 
 
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN10 ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN10E)
+            if (HardwareSpecific.Model == HPSDRModel.ANAN10 ||
+                HardwareSpecific.Model == HPSDRModel.ANAN10E)
             {
                 chkRxOutOnTx.Checked = false;
                 chkRxOutOnTx.Visible = false;
@@ -6262,16 +6274,17 @@ namespace Thetis
                 grp10WattMeterTrim.BringToFront();
                 chkEnableXVTRHF.Visible = false;
             }
-            else
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN7000D ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN8000D ||
-                console.CurrentHPSDRModel == HPSDRModel.ANVELINAPRO3 ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN_G2 ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN_G2_1K)
+            else if (HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
+                HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+                HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
+                HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+                HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
+                HardwareSpecific.Model == HPSDRModel.REDPITAYA)//DH1KLM
             {
-                if ((console.CurrentHPSDRModel == HPSDRModel.ANAN7000D) ||
-                    (console.CurrentHPSDRModel == HPSDRModel.ANVELINAPRO3) ||
-                    (console.CurrentHPSDRModel == HPSDRModel.ANAN_G2))
+                if ((HardwareSpecific.Model == HPSDRModel.ANAN7000D) ||
+                    (HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3) ||
+                    (HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+                    HardwareSpecific.Model == HPSDRModel.REDPITAYA))//DH1KLM
                 {
                     chkRxOutOnTx.Visible = false;
                     chkEXT1OutOnTx.Visible = true;
@@ -6279,7 +6292,7 @@ namespace Thetis
                     panelAlexRXXVRTControl.Visible = true;
                     grp100WattMeterTrim.BringToFront();
                 }
-                else if (console.CurrentHPSDRModel == HPSDRModel.ANAN8000D)
+                else if (HardwareSpecific.Model == HPSDRModel.ANAN8000D)
                 {
                     chkRxOutOnTx.Visible = false;
                     chkEXT1OutOnTx.Visible = false;
@@ -6287,7 +6300,7 @@ namespace Thetis
                     panelAlexRXXVRTControl.Visible = false;
                     grp200WattMeterTrim.BringToFront();
                 }
-                else if (console.CurrentHPSDRModel == HPSDRModel.ANAN_G2_1K)            // G8NJJ. will need more work ofr high power PA
+                else if (HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K)            // G8NJJ. will need more work ofr high power PA
                 {
                     chkRxOutOnTx.Visible = false;
                     chkEXT1OutOnTx.Visible = false;
@@ -6338,8 +6351,8 @@ namespace Thetis
                 chkEnableXVTRHF.Visible = false;
             }
 
-            if (console.CurrentHPSDRModel == HPSDRModel.HERMES ||
-               (console.CurrentHPSDRModel == HPSDRModel.HPSDR))
+            if (HardwareSpecific.Model == HPSDRModel.HERMES ||
+               (HardwareSpecific.Model == HPSDRModel.HPSDR))
             {
                 tpAlexControl.Text = "Alex";
                 chkHFTRRelay.Checked = false;
@@ -6357,12 +6370,13 @@ namespace Thetis
                 }
             }
 
-            if (console.CurrentHPSDRModel != HPSDRModel.ANAN200D &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN7000D &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN8000D &&
-                console.CurrentHPSDRModel != HPSDRModel.ANVELINAPRO3 &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN_G2 &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN_G2_1K)
+            if (HardwareSpecific.Model != HPSDRModel.ANAN200D &&
+                HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
+                HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
+                HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+                HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
+                HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
+                HardwareSpecific.Model != HPSDRModel.REDPITAYA)//DH1KLM
             {
                 chkAlexPresent.Parent = groupBoxHPSDRHW;
                 chkAlexPresent.Location = new Point(25, 80);
@@ -6385,7 +6399,7 @@ namespace Thetis
                 chkDisableHPFonPSb.Location = new Point(140, 241);
             }
 
-            if (console.CurrentHPSDRModel == HPSDRModel.HERMES) tpPennyCtrl.Text = "Hermes Ctrl";
+            if (HardwareSpecific.Model == HPSDRModel.HERMES) tpPennyCtrl.Text = "Hermes Ctrl";
             else tpPennyCtrl.Text = "OC Control";
 
             if (!console.RX2PreampPresent &&
@@ -6411,10 +6425,10 @@ namespace Thetis
                 }
             }
 
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN200D || console.CurrentHPSDRModel == HPSDRModel.ANAN100D ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN8000D || console.CurrentHPSDRModel == HPSDRModel.ANAN7000D ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN_G2 || console.CurrentHPSDRModel == HPSDRModel.ANAN_G2_1K ||
-                console.CurrentHPSDRModel == HPSDRModel.ANVELINAPRO3)
+            if (HardwareSpecific.Model == HPSDRModel.ANAN200D || HardwareSpecific.Model == HPSDRModel.ANAN100D ||
+                HardwareSpecific.Model == HPSDRModel.ANAN8000D || HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
+                HardwareSpecific.Model == HPSDRModel.ANAN_G2 || HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
+                HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
             {
                 if (!tcGeneral.TabPages.Contains(tpADC))
                 {
@@ -6448,11 +6462,12 @@ namespace Thetis
                 }
             }
 
-            if (console.CurrentHPSDRModel == HPSDRModel.HERMES      ||
-               console.CurrentHPSDRModel == HPSDRModel.ANAN7000D    ||
-               console.CurrentHPSDRModel == HPSDRModel.ANAN_G2      ||
-               console.CurrentHPSDRModel == HPSDRModel.ANVELINAPRO3 ||
-               console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+            if (HardwareSpecific.Model == HPSDRModel.HERMES      ||
+               HardwareSpecific.Model == HPSDRModel.ANAN7000D    ||
+               HardwareSpecific.Model == HPSDRModel.ANAN_G2      ||
+               HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
+               HardwareSpecific.Model == HPSDRModel.REDPITAYA    || //DH1KLM
+               HardwareSpecific.Model == HPSDRModel.HERMESLITE)
             {
                 if (!tcGeneral.TabPages.Contains(tpApolloControl))
                 {
@@ -6479,9 +6494,9 @@ namespace Thetis
                 }
             }
 
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN8000D || console.CurrentHPSDRModel == HPSDRModel.ANAN7000D ||
-                console.CurrentHPSDRModel == HPSDRModel.ANAN_G2 || console.CurrentHPSDRModel == HPSDRModel.ANAN_G2_1K ||
-                console.CurrentHPSDRModel == HPSDRModel.ANVELINAPRO3)
+            if (HardwareSpecific.Model == HPSDRModel.ANAN8000D || HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
+                HardwareSpecific.Model == HPSDRModel.ANAN_G2 || HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
+                HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
             {
                 if (!tcAlexControl.TabPages.Contains(tpAlex2FilterControl))
                 {
@@ -6507,8 +6522,8 @@ namespace Thetis
                 !chkGeneralRXOnly.Checked)
             {
                 DialogResult dr = MessageBox.Show(
-                    "Unchecking Receive Only while in Unsupported Card mode may \n" +
-                    "cause damage to your SDR-1000 hardware.  Are you sure you want \n" +
+                    "Unchecking Receive Only may \n" +
+                    "cause damage to your SDR hardware.  Are you sure you want \n" +
                     "to enable transmit?",
                     "Warning: Enable Transmit?",
                     MessageBoxButtons.YesNo,
@@ -7151,9 +7166,9 @@ namespace Thetis
                         lblDisplayBinWidth.Text = bin_width.ToString("N3");
 
                         // be sure RX2 sample rate setting is enabled, UNLESS it's a 10E or 100B
-                        if (console.CurrentHPSDRModel == HPSDRModel.ANAN10E ||
-                            console.CurrentHPSDRModel == HPSDRModel.ANAN100B ||
-                            console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                        if (HardwareSpecific.Model == HPSDRModel.ANAN10E ||
+                            HardwareSpecific.Model == HPSDRModel.ANAN100B ||
+                            HardwareSpecific.Model == HPSDRModel.HERMESLITE)
                         {
                             // if it's a 10E/100B, set RX2 sample_rate equal to RX1 rate
                             comboAudioSampleRateRX2.Enabled = false;
@@ -7188,6 +7203,11 @@ namespace Thetis
                         // in the property SampleRate1:  SetXcmInrate() is called by Audio.SampleRate1 which is called by console.SampleRate1
                         console.SampleRateRX1 = new_rate;
                         console.SampleRateRX2 = new_rate;
+
+                        if (HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
+                        {
+                            cmaster.PSrate = new_rate; //REDPITAYA Pavel
+                        }
 
                         // set protocol_1 network software sample rate
                         NetworkIO.SetDDCRate(0, new_rate);
@@ -8870,8 +8890,8 @@ namespace Thetis
                     break;
                 case CheckState.Indeterminate:
                     // G8NJJ Saturn has QSK capability in any version.
-                    if (((console.CurrentHPSDRHardware == HPSDRHW.Orion || console.CurrentHPSDRHardware == HPSDRHW.OrionMKII) &&
-                        (NetworkIO.FWCodeVersion >= 17) && !Alex.trx_ant_different) || (console.CurrentHPSDRHardware == HPSDRHW.Saturn))
+                    if (((HardwareSpecific.Hardware == HPSDRHW.Orion || HardwareSpecific.Hardware == HPSDRHW.OrionMKII) &&
+                        (NetworkIO.FWCodeVersion >= 17) && !Alex.trx_ant_different) || (HardwareSpecific.Hardware == HPSDRHW.Saturn))
                     {
                         console.BreakInEnabledState = chkCWBreakInEnabled.CheckState;
                         chkCWBreakInEnabled.Text = "QSK";
@@ -10213,13 +10233,20 @@ namespace Thetis
             console.MaxMIDIMessagesPerTuneStep = Convert.ToInt32(udUpdatesPerStepMax.Value);
             console.MinMIDIMessagesPerTuneStep = Convert.ToInt32(udUpdatesPerStepMin.Value);
 
-            if (comboCATPort.Text.StartsWith("COM"))
-                console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
+            //if (comboCATPort.Text.StartsWith("COM"))
+            //    console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCATPort.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.CATPort = port;
+
             console.CATPTTRTS = chkCATPTT_RTS.Checked;
             console.CATPTTDTR = chkCATPTT_DTR.Checked;
 
-            if (comboCATPTTPort.Text.StartsWith("COM"))
-                console.CATPTTBitBangPort = Int32.Parse(comboCATPTTPort.Text.Substring(3));
+            //if (comboCATPTTPort.Text.StartsWith("COM"))
+            //  console.CATPTTBitBangPort = Int32.Parse(comboCATPTTPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCATPTTPort.Text, out port)) //[2.10.3.9]MW0LGE
+                console.CATPTTBitBangPort = port;
+
+
             console.CATParity = SDRSerialPort.StringToParity((string)comboCATparity.SelectedItem);
             console.CATDataBits = int.Parse((string)comboCATdatabits.SelectedItem);
             console.CATStopBits = SDRSerialPort.StringToStopBits((string)comboCATstopbits.SelectedItem);
@@ -10236,37 +10263,52 @@ namespace Thetis
                 chkCATPTTEnabled.Checked = false;
             }
 
-            if (comboCAT2Port.Text.StartsWith("COM"))
-                console.CAT2Port = Int32.Parse(comboCAT2Port.Text.Substring(3));
+            //if (comboCAT2Port.Text.StartsWith("COM"))
+            //    console.CAT2Port = Int32.Parse(comboCAT2Port.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCAT2Port.Text, out port)) //[2.10.3.9]MW0LGE
+                console.CAT2Port = port;
+
             console.CAT2Parity = SDRSerialPort.StringToParity((string)comboCAT2parity.SelectedItem);
             console.CAT2DataBits = int.Parse((string)comboCAT2databits.SelectedItem);
             console.CAT2StopBits = SDRSerialPort.StringToStopBits((string)comboCAT2stopbits.SelectedItem);
             console.CAT2Enabled = chkCAT2Enable.Checked;
 
-            if (comboCAT3Port.Text.StartsWith("COM"))
-                console.CAT3Port = Int32.Parse(comboCAT3Port.Text.Substring(3));
+            //if (comboCAT3Port.Text.StartsWith("COM"))
+            //    console.CAT3Port = Int32.Parse(comboCAT3Port.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCAT3Port.Text, out port)) //[2.10.3.9]MW0LGE
+                console.CAT3Port = port;
+
             console.CAT3Parity = SDRSerialPort.StringToParity((string)comboCAT3parity.SelectedItem);
             console.CAT3DataBits = int.Parse((string)comboCAT3databits.SelectedItem);
             console.CAT3StopBits = SDRSerialPort.StringToStopBits((string)comboCAT3stopbits.SelectedItem);
             console.CAT3Enabled = chkCAT3Enable.Checked;
 
-            if (comboCAT4Port.Text.StartsWith("COM"))
-                console.CAT4Port = Int32.Parse(comboCAT4Port.Text.Substring(3));
+            //if (comboCAT4Port.Text.StartsWith("COM"))
+            //    console.CAT4Port = Int32.Parse(comboCAT4Port.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCAT4Port.Text, out port)) //[2.10.3.9]MW0LGE
+                console.CAT4Port = port;
+
             console.CAT4Parity = SDRSerialPort.StringToParity((string)comboCAT4parity.SelectedItem);
             console.CAT4DataBits = int.Parse((string)comboCAT4databits.SelectedItem);
             console.CAT4StopBits = SDRSerialPort.StringToStopBits((string)comboCAT4stopbits.SelectedItem);
             console.CAT4Enabled = chkCAT4Enable.Checked;
 
-            if (comboAndromedaCATPort.Text.StartsWith("COM"))
-                console.AndromedaCATPort = Int32.Parse(comboAndromedaCATPort.Text.Substring(3));
+            //if (comboAndromedaCATPort.Text.StartsWith("COM"))
+            //    console.AndromedaCATPort = Int32.Parse(comboAndromedaCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboAndromedaCATPort.Text, out port)) //[2.10.3.9]MW0LGE
+                console.AndromedaCATPort = port;
             console.AndromedaCATEnabled = chkEnableAndromeda.Checked;
 
-            if (comboAriesCATPort.Text.StartsWith("COM"))
-                console.AriesCATPort = Int32.Parse(comboAriesCATPort.Text.Substring(3));
+            //if (comboAriesCATPort.Text.StartsWith("COM"))
+            //    console.AriesCATPort = Int32.Parse(comboAriesCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboAriesCATPort.Text, out port)) //[2.10.3.9]MW0LGE
+                console.AriesCATPort = port;
             console.AriesCATEnabled = chkEnableAries.Checked;
 
-            if (comboGanymedeCATPort.Text.StartsWith("COM"))
-                console.GanymedeCATPort = Int32.Parse(comboGanymedeCATPort.Text.Substring(3));
+            //if (comboGanymedeCATPort.Text.StartsWith("COM"))
+            //    console.GanymedeCATPort = Int32.Parse(comboGanymedeCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboGanymedeCATPort.Text, out port)) //[2.10.3.9]MW0LGE
+                console.GanymedeCATPort = port;
             console.GanymedeCATEnabled = chkEnableGanymede.Checked;
 
         }
@@ -10824,8 +10866,10 @@ namespace Thetis
                     chkCATtoVFOB.Enabled = true;
             }
 
-            if (comboCATPort.Text.StartsWith("COM"))
-                console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
+            //if (comboCATPort.Text.StartsWith("COM"))
+            //    console.CATPort = Int32.Parse(comboCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCATPort.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.CATPort = port;
 
             console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
@@ -10844,8 +10888,10 @@ namespace Thetis
             }
             else chkCAT2Enable.Enabled = true;
 
-            if (comboCAT2Port.Text.StartsWith("COM"))
-                console.CAT2Port = Int32.Parse(comboCAT2Port.Text.Substring(3));
+            //if (comboCAT2Port.Text.StartsWith("COM"))
+            //    console.CAT2Port = Int32.Parse(comboCAT2Port.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCAT2Port.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.CAT2Port = port;
 
             console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
@@ -10864,8 +10910,10 @@ namespace Thetis
             }
             else chkCAT3Enable.Enabled = true;
 
-            if (comboCAT3Port.Text.StartsWith("COM"))
-                console.CAT3Port = Int32.Parse(comboCAT3Port.Text.Substring(3));
+            //if (comboCAT3Port.Text.StartsWith("COM"))
+            //    console.CAT3Port = Int32.Parse(comboCAT3Port.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCAT3Port.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.CAT3Port = port;
 
             console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
@@ -10884,8 +10932,10 @@ namespace Thetis
             }
             else chkCAT4Enable.Enabled = true;
 
-            if (comboCAT4Port.Text.StartsWith("COM"))
-                console.CAT4Port = Int32.Parse(comboCAT4Port.Text.Substring(3));
+            //if (comboCAT4Port.Text.StartsWith("COM"))
+            //    console.CAT4Port = Int32.Parse(comboCAT4Port.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCAT4Port.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.CAT4Port = port;
 
             console.UpdateStatusBarStatusIcons(StatusBarIconGroup.SerialCat);
         }
@@ -10905,8 +10955,10 @@ namespace Thetis
             }
             else chkEnableAndromeda.Enabled = true;
 
-            if (comboAndromedaCATPort.Text.StartsWith("COM"))
-                console.AndromedaCATPort = Int32.Parse(comboAndromedaCATPort.Text.Substring(3));
+            //if (comboAndromedaCATPort.Text.StartsWith("COM"))
+            //    console.AndromedaCATPort = Int32.Parse(comboAndromedaCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboAndromedaCATPort.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.AndromedaCATPort = port;
         }
 
         private void comboCATPTTPort_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -10947,8 +10999,11 @@ namespace Thetis
             if (console.Siolisten != null && comboCATPTTPort.Text != "CAT")
                 console.Siolisten.UseForCATPTT = false;
 
-            if (comboCATPTTPort.Text.StartsWith("COM"))
-                console.CATPTTBitBangPort = Int32.Parse(comboCATPTTPort.Text.Substring(3));
+            //if (comboCATPTTPort.Text.StartsWith("COM"))
+            //    console.CATPTTBitBangPort = Int32.Parse(comboCATPTTPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboCATPTTPort.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.CATPTTBitBangPort = port;
+
             if (!comboCATPTTPort.Focused)
                 chkCATPTTEnabled_CheckedChanged(sender, e);
         }
@@ -14134,7 +14189,7 @@ namespace Thetis
 
         private void tpHPSDR_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
-            if (console.PowerOn && console.CurrentHPSDRModel == HPSDRModel.HPSDR)
+            if (console.PowerOn && HardwareSpecific.Model == HPSDRModel.HPSDR)
             {
                 grpVersion.Visible = true;
                 lblMercury2FWVer.Visible = console.RX2PreampPresent;
@@ -14666,9 +14721,13 @@ namespace Thetis
         private void chkGridControl_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            Display.GridControl = chkGridControl.Checked;
+            Display.GridControlMajor = chkGridControl.Checked;
         }
-
+        private void chkGridControl_minor_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            Display.GridControlMinor = chkGridControl_minor.Checked;
+        }
         private void chkTXGridControl_CheckedChanged(object sender, EventArgs e)
         {
             Display.TXGridControl = chkTXGridControl.Checked;
@@ -15763,7 +15822,7 @@ namespace Thetis
 
         private void tpPennyCtrl_Paint(object sender, PaintEventArgs e)
         {
-            switch (console.CurrentHPSDRModel)
+            switch (HardwareSpecific.Model)
             {
                 case HPSDRModel.HPSDR:
                     lblHFRxControl.Text = "J6 Receive Pins";
@@ -15778,6 +15837,7 @@ namespace Thetis
                 case HPSDRModel.ANVELINAPRO3:
                 case HPSDRModel.ANAN_G2:
                 case HPSDRModel.ANAN_G2_1K:
+                case HPSDRModel.REDPITAYA: //DH1KLM
                     lblHFRxControl.Text = "OC Receive Pins";
                     lblHFTxControl.Text = "OC Transmit Pins";
                     lblVHFRxControl.Text = "OC Receive Pins";
@@ -15980,14 +16040,15 @@ namespace Thetis
                 udHermesStepAttenuatorData.Minimum = (decimal)-28;
             }
             else if (AlexPresent && 
-                console.CurrentHPSDRModel != HPSDRModel.ANAN10 &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN10E &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN7000D &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN8000D &&
-                console.CurrentHPSDRModel != HPSDRModel.ORIONMKII &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN_G2 &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN_G2_1K &&
-                console.CurrentHPSDRModel != HPSDRModel.ANVELINAPRO3)
+                HardwareSpecific.Model != HPSDRModel.ANAN10 &&
+                HardwareSpecific.Model != HPSDRModel.ANAN10E &&
+                HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
+                HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
+                HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
+                HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
+                HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
+                HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+                HardwareSpecific.Model != HPSDRModel.REDPITAYA) //DH1KLM
                 udHermesStepAttenuatorData.Maximum = (decimal)61;
             else udHermesStepAttenuatorData.Maximum = (decimal)31;
             _updatingRX1HermesStepAttData = false;
@@ -16022,14 +16083,15 @@ namespace Thetis
 
             //MW0LGE_21f
             if (AlexPresent &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN10 &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN10E &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN7000D &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN8000D &&
-                console.CurrentHPSDRModel != HPSDRModel.ORIONMKII &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN_G2 &&
-                console.CurrentHPSDRModel != HPSDRModel.ANAN_G2_1K &&
-                console.CurrentHPSDRModel != HPSDRModel.ANVELINAPRO3)
+                HardwareSpecific.Model != HPSDRModel.ANAN10 &&
+                HardwareSpecific.Model != HPSDRModel.ANAN10E &&
+                HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
+                HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
+                HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
+                HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
+                HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
+                HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+                HardwareSpecific.Model != HPSDRModel.REDPITAYA) //DH1KLM
                 udHermesStepAttenuatorDataRX2.Maximum = (decimal)61;
             else udHermesStepAttenuatorDataRX2.Maximum = (decimal)31;
             _updatingRX2HermesStepAttData = false;
@@ -16608,7 +16670,7 @@ namespace Thetis
 
         private void btnResetWattMeterValues_Click(object sender, EventArgs e)
         {
-            switch (console.CurrentHPSDRModel)              // G8NJJ will need more work for ANAN_G2_1K (1KW PA)
+            switch (HardwareSpecific.Model)              // G8NJJ will need more work for ANAN_G2_1K (1KW PA)
             {
                 case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                 case HPSDRModel.ANAN10:
@@ -18547,7 +18609,7 @@ namespace Thetis
         private void chkANAN8000DLEDisplayVoltsAmps_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            console.ANAN8000DLEDisplayVoltsAmps = chkANAN8000DLEDisplayVoltsAmps.Checked;
+            console.DisplayVoltsAmps = chkANAN8000DLEDisplayVoltsAmps.Checked;
         }
 
         private void ud6mRx2LNAGainOffset_ValueChanged(object sender, EventArgs e)
@@ -19699,8 +19761,10 @@ namespace Thetis
             }
             else chkEnableGanymede.Enabled = true;
 
-            if (comboGanymedeCATPort.Text.StartsWith("COM"))
-                console.GanymedeCATPort = Int32.Parse(comboGanymedeCATPort.Text.Substring(3));
+            //if (comboGanymedeCATPort.Text.StartsWith("COM"))
+            //    console.GanymedeCATPort = Int32.Parse(comboGanymedeCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboGanymedeCATPort.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.GanymedeCATPort = port;
         }
 
         private void ComboAriesCATPort_SelectedIndexChanged(object sender, EventArgs e)
@@ -19717,8 +19781,10 @@ namespace Thetis
             }
             else chkEnableAries.Enabled = true;
 
-            if (comboAriesCATPort.Text.StartsWith("COM"))
-                console.AriesCATPort = Int32.Parse(comboAriesCATPort.Text.Substring(3));
+            //if (comboAriesCATPort.Text.StartsWith("COM"))
+            //    console.AriesCATPort = Int32.Parse(comboAriesCATPort.Text.Substring(3));
+            if (Common.GetComPortNumber(comboAriesCATPort.Text, out int port)) //[2.10.3.9]MW0LGE
+                console.AriesCATPort = port;
         }
 
         private void ChkEnableGanymede_CheckedChanged(object sender, EventArgs e)
@@ -20007,19 +20073,29 @@ namespace Thetis
 
             HPSDRModel old_model;
             if (_firstRadioModelChange) // unset state // [2.10.1.0] MW0LGE
-                old_model = Common.StringModelToEnum(comboRadioModel.Text);
+                old_model = HardwareSpecific.StringModelToEnum(comboRadioModel.Text);
             else
-                old_model = console.CurrentHPSDRModel;
+                old_model = HardwareSpecific.Model;
+
+            HPSDRModel new_model = HardwareSpecific.StringModelToEnum(comboRadioModel.Text);
+
+            /////
+            HardwareSpecific.Model = new_model; //IMPORTANT: THE SINGLE ASSIGNMENT TO MODEL !!
+            /////
+
+            console.SetupForHPSDRModel();
 
             comboAudioSampleRateRX2.Enabled = true;
-
-            // MI0BOT: Remove the HL2 option and only add back if HL2
-            tcOptions.Controls.Remove(tpHL2Options);
             
-            switch (Common.StringModelToEnum(comboRadioModel.Text))
+            // MI0BOT: Remove the HL2 option and only add back if HL2
+            tcOptions.Controls.Remove(tpHL2Options);          
+
+            switch (HardwareSpecific.Model)
+            
             {
                 case HPSDRModel.HERMES:
-                    console.CurrentHPSDRModel = HPSDRModel.HERMES;
+                    //Hardware.Model = HPSDRModel.HERMES;
+                    //console.SetupForHPSDRModel();
                     chkAlexPresent.Enabled = true;
                     chkApolloPresent.Enabled = true;
                     chkApolloPresent.Visible = true;
@@ -20320,7 +20396,8 @@ namespace Thetis
                     break;
 
                 case HPSDRModel.ANAN10:
-                    console.CurrentHPSDRModel = HPSDRModel.ANAN10;
+                    //Hardware.Model = HPSDRModel.ANAN10;
+                    //console.SetupForHPSDRModel();
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
                     chkMercuryPresent.Checked = true;
@@ -20364,7 +20441,8 @@ namespace Thetis
 
                 case HPSDRModel.ANAN10E:
                     // set RX2 sample_rate equal to RX1 rate
-                    console.CurrentHPSDRModel = HPSDRModel.ANAN10E;
+                    //Hardware.Model = HPSDRModel.ANAN10E;
+                    //console.SetupForHPSDRModel();
                     comboAudioSampleRateRX2.SelectedIndex = comboAudioSampleRate1.SelectedIndex;
                     comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
                     comboAudioSampleRateRX2.Enabled = false;
@@ -20410,7 +20488,8 @@ namespace Thetis
                     break;
 
                 case HPSDRModel.ANAN100:
-                    console.CurrentHPSDRModel = HPSDRModel.ANAN100;
+                    //Hardware.Model = HPSDRModel.ANAN100;
+                    //console.SetupForHPSDRModel();
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
                     chkMercuryPresent.Checked = true;
@@ -20455,7 +20534,8 @@ namespace Thetis
                     break;
 
                 case HPSDRModel.ANAN100B:
-                    console.CurrentHPSDRModel = HPSDRModel.ANAN100B;
+                    //Hardware.Model = HPSDRModel.ANAN100B;
+                    //console.SetupForHPSDRModel();
                     comboAudioSampleRateRX2.SelectedIndex = comboAudioSampleRate1.SelectedIndex;
                     comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
                     comboAudioSampleRateRX2.Enabled = false;
@@ -20506,7 +20586,8 @@ namespace Thetis
                     break;
 
                 case HPSDRModel.ANAN100D:
-                    console.CurrentHPSDRModel = HPSDRModel.ANAN100D;
+                    //Hardware.Model = HPSDRModel.ANAN100D;
+                    //console.SetupForHPSDRModel();
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
                     chkPennyPresent.Visible = false;
@@ -20568,7 +20649,8 @@ namespace Thetis
                     break;
 
                 case HPSDRModel.ANAN200D:
-                    console.CurrentHPSDRModel = HPSDRModel.ANAN200D;
+                    //Hardware.Model = HPSDRModel.ANAN200D;
+                    //console.SetupForHPSDRModel();
                     chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
                     chkApolloPresent.Checked = false;
@@ -20612,7 +20694,8 @@ namespace Thetis
                     break;
 
                 case HPSDRModel.ANAN7000D:
-                    console.CurrentHPSDRModel = HPSDRModel.ANAN7000D;
+                    //Hardware.Model = HPSDRModel.ANAN7000D;
+                    //console.SetupForHPSDRModel();
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
                     chkMercuryPresent.Checked = true;
@@ -20675,7 +20758,8 @@ namespace Thetis
                     break;
 
                 case HPSDRModel.ANAN8000D:
-                    console.CurrentHPSDRModel = HPSDRModel.ANAN8000D;
+                    //Hardware.Model = HPSDRModel.ANAN8000D;
+                    //console.SetupForHPSDRModel();
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
                     chkMercuryPresent.Checked = true;
@@ -20741,7 +20825,8 @@ namespace Thetis
                     break;
 
                 case HPSDRModel.ANAN_G2:                 // added G8NJJ
-                    console.CurrentHPSDRModel = HPSDRModel.ANAN_G2;
+                    //Hardware.Model = HPSDRModel.ANAN_G2;
+                    //console.SetupForHPSDRModel();
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
                     chkMercuryPresent.Checked = true;
@@ -20804,7 +20889,8 @@ namespace Thetis
                     break;
 
                 case HPSDRModel.ANAN_G2_1K:              // added G8NJJ
-                    console.CurrentHPSDRModel = HPSDRModel.ANAN_G2_1K;
+                    //Hardware.Model = HPSDRModel.ANAN_G2_1K;
+                    //console.SetupForHPSDRModel();
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
                     chkMercuryPresent.Checked = true;
@@ -20867,7 +20953,8 @@ namespace Thetis
                     break;
 
                 case HPSDRModel.ANVELINAPRO3:
-                    console.CurrentHPSDRModel = HPSDRModel.ANVELINAPRO3;
+                    //Hardware.Model = HPSDRModel.ANVELINAPRO3;
+                    //console.SetupForHPSDRModel();
                     chkPennyPresent.Checked = false;
                     chkPennyPresent.Enabled = false;
                     chkMercuryPresent.Checked = true;
@@ -20928,22 +21015,86 @@ namespace Thetis
                     setupAttRXControls(1);
                     setupAttRXControls(2);
                     break;
+
+                case HPSDRModel.REDPITAYA: //DH1KLM
+                    //Hardware.Model = HPSDRModel.REDPITAYA;
+                    //console.SetupForHPSDRModel();
+                    chkPennyPresent.Checked = false;
+                    chkPennyPresent.Enabled = false;
+                    chkMercuryPresent.Checked = true;
+                    chkMercuryPresent.Enabled = false;
+                    chkPennyLane.Checked = true;
+                    chkPennyLane.Enabled = false;
+                    chkAlexPresent.Enabled = true;
+                    chkApolloPresent.Visible = false;
+                    chkApolloPresent.Enabled = false;
+                    chkApolloPresent.Checked = false;
+                    chkGeneralRXOnly.Visible = true;
+                    chkHermesStepAttenuator.Enabled = true;
+                    udHermesStepAttenuatorData.Enabled = true;
+                    chkRX2StepAtt.Enabled = true;
+                    udHermesStepAttenuatorDataRX2.Enabled = true;
+                    groupBoxRXOptions.Text = "RED-PITAYA Options";
+                    grpMetisAddr.Text = "RED-PITAYA Address";
+                    grpHermesStepAttenuator.Text = "Step Attenuator";
+                    chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
+                    chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
+                    chkAutoPACalibrate.Checked = false;
+                    chkAutoPACalibrate.Visible = false;
+                    chkBypassANANPASettings.Visible = true;
+                    labelRXAntControl.Text = "  BYPS  EXT1  XVTR";
+                    RXAntChk1Name = "BYPS";
+                    RXAntChk2Name = "EXT1";
+                    RXAntChk3Name = "XVTR";
+                    labelATTOnTX.Visible = true;
+                    udATTOnTX.Visible = true;
+                    chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
+                    chkEXT1OutOnTx.Text = "Ext 1 on Tx";
+                    chkEXT2OutOnTx.Text = "Rx BYPASS on Tx";
+                    chkAlexPresent.Parent = grpGeneralHardwareORION;
+                    chkAlexPresent.Location = new Point(43, 120);
+                    chkApolloPresent.Parent = grpGeneralHardwareORION;
+                    chkApolloPresent.Location = new Point(43, 140);
+                    panelAlex1HPFControl.Visible = false;
+                    panelBPFControl.Visible = true;
+                    chkDisable6mLNAonRX.Parent = panelBPFControl;
+                    chkDisable6mLNAonRX.Location = new Point(16, 208);
+                    chkDisable6mLNAonTX.Parent = panelBPFControl;
+                    chkDisable6mLNAonTX.Location = new Point(63, 208);
+                    chkAlexHPFBypass.Parent = panelBPFControl;
+                    chkAlexHPFBypass.Location = new Point(140, 185);
+                    chkDisableHPFonTX.Parent = panelBPFControl;
+                    chkDisableHPFonTX.Location = new Point(140, 213);
+                    chkDisableHPFonPSb.Parent = panelBPFControl;
+                    chkDisableHPFonPSb.Location = new Point(140, 241);
+                    radDDC0ADC2.Enabled = true;
+                    radDDC1ADC2.Enabled = true;
+                    radDDC2ADC2.Enabled = true;
+                    radDDC3ADC2.Enabled = true;
+                    radDDC4ADC2.Enabled = true;
+                    radDDC5ADC2.Enabled = true;
+                    radDDC6ADC2.Enabled = true;
+                    chkAutoATTRx1.Enabled = true;
+                    chkAutoATTRx2.Enabled = true;
+                    setupAttRXControls(1);
+                    setupAttRXControls(2);
+                    break;
             }
 
-            if (old_model != console.CurrentHPSDRModel)
+            if (old_model != HardwareSpecific.Model)
             {
                 setupADCRadioButtions();
                 btnResetP2ADC_Click(this, EventArgs.Empty);
                 btnResetP1ADC_Click(this, EventArgs.Empty);
             }
 
-            if (_firstRadioModelChange || old_model != console.CurrentHPSDRModel)
+            if (_firstRadioModelChange || old_model != HardwareSpecific.Model)
             {
                 if (!initializing)
                 {
                     string sCurrentPAProfile = comboPAProfile.Text;
 
-                    updatePAProfileCombo("Default - " + console.CurrentHPSDRModel.ToString()); //MW0LGE_22b
+                    updatePAProfileCombo("Default - " + HardwareSpecific.Model.ToString()); //MW0LGE_22b
 
                     //[2.10.1.0] MW0LGE
                     //re-assign the current if it still exists, this needed because on a DB import, we are changing from HERMES to whatever is set in the DB
@@ -20963,14 +21114,14 @@ namespace Thetis
 
             InitHPSDR();
 
-            if (power && (old_model != console.CurrentHPSDRModel))
+            if (power && (old_model != HardwareSpecific.Model))
             {
                 console.PowerOn = false;
                 Thread.Sleep(100);
             }
-            cmaster.CMLoadRouterAll(console.CurrentHPSDRModel);
+            cmaster.CMLoadRouterAll(HardwareSpecific.Model);
 
-            if (power && (old_model != console.CurrentHPSDRModel))
+            if (power && (old_model != HardwareSpecific.Model))
             {
                 console.PowerOn = true;
             }
@@ -20985,7 +21136,7 @@ namespace Thetis
             bool bADC1 = false;
             bool bADC2 = false;
 
-            switch (console.CurrentHPSDRModel)
+            switch (HardwareSpecific.Model)
             {
                 case HPSDRModel.HERMES:
                 case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
@@ -21147,7 +21298,7 @@ namespace Thetis
 
         private void btnResetP2ADC_Click(object sender, EventArgs e)
         {
-            switch (console.CurrentHPSDRModel)
+            switch (HardwareSpecific.Model)
             {
                 case HPSDRModel.HERMESLITE:
                 case HPSDRModel.ANAN10:
@@ -21176,7 +21327,7 @@ namespace Thetis
 
         private void btnResetP1ADC_Click(object sender, EventArgs e)
         {
-            switch (console.CurrentHPSDRModel)
+            switch (HardwareSpecific.Model)
             {
                 case HPSDRModel.HERMESLITE:
                 case HPSDRModel.ANAN10:
@@ -21981,6 +22132,9 @@ namespace Thetis
                     }
                 }
             }
+
+            //[2,10.3.9]MW0LGE update the led mirror, as at this stage we know protocol
+            showLedMirror();
         }
 
         private void chkHighlightTXProfileSaveItems_CheckedChanged(object sender, EventArgs e)
@@ -23826,7 +23980,7 @@ namespace Thetis
             if (sProfileName == "") return;
             if (!validatePAProfileName(sProfileName)) return;
 
-            PAProfile p = new PAProfile(sProfileName, console.CurrentHPSDRModel/*HPSDRModel.FIRST*/, false); // set the initial values based on current model, all we can do
+            PAProfile p = new PAProfile(sProfileName, HardwareSpecific.Model/*HPSDRModel.FIRST*/, false); // set the initial values based on current model, all we can do
 
             _PAProfiles.Add(sProfileName, p);
 
@@ -24177,7 +24331,7 @@ namespace Thetis
                 }
                 else
                 {
-                    if ((p.IsDefault && p.Model == console.CurrentHPSDRModel) || !p.IsDefault) // add any that are default for this current model, or are not default, ie user added
+                    if ((p.IsDefault && p.Model == HardwareSpecific.Model) || !p.IsDefault) // add any that are default for this current model, or are not default, ie user added
                         comboPAProfile.Items.Add(p.ProfileName);
                 }
             }
@@ -24546,6 +24700,24 @@ namespace Thetis
                         {
                             Band b = (Band)n;
                             string sSetting = "udORIONMKIIPAGainVHF" + (n - (int)Band.VHF0).ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
+                        }
+                        break;
+                    case HPSDRModel.REDPITAYA: //DH1KLM
+                        for (int n = (int)Band.B160M; n <= (int)Band.B6M; n++)
+                        {
+                            Band b = (Band)n;
+                            string sSetting = "udREDPITAYAPAGain" + mapBandToMeters(b).ToString();
+                            float g = getOldVariablePAgain(sSetting, ref getDict);
+                            if (g != 1000) p.SetGainForBand(b, g);
+                            if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
+                        }
+                        for (int n = (int)Band.VHF0; n <= (int)Band.VHF13; n++)
+                        {
+                            Band b = (Band)n;
+                            string sSetting = "udREDPITAYAPAGainVHF" + (n - (int)Band.VHF0).ToString();
                             float g = getOldVariablePAgain(sSetting, ref getDict);
                             if (g != 1000) p.SetGainForBand(b, g);
                             if (g != 1000 && bRemoveOld) removeOldPASetting(sSetting);
@@ -25103,7 +25275,7 @@ namespace Thetis
                     return;
                 }
 
-                if (model == HPSDRModel.ANAN7000D || model == HPSDRModel.ANAN_G2 || model == HPSDRModel.ANVELINAPRO3)
+                if (model == HPSDRModel.ANAN7000D || model == HPSDRModel.ANAN_G2 || model == HPSDRModel.ANVELINAPRO3 || model == HPSDRModel.REDPITAYA)//DH1KLM
                 {
                     SetGainForBand(Band.B160M, 47.9f);
                     SetGainForBand(Band.B80M, 50.5f);
@@ -25395,13 +25567,7 @@ namespace Thetis
         private bool _bSensSet = false;
         private void btnAmpDefault_Click(object sender, EventArgs e)
         {
-            float voff = 360.0f, sens = 120.0f;
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN7000D || console.CurrentHPSDRModel == HPSDRModel.ANAN_G2 ||
-                console.CurrentHPSDRModel == HPSDRModel.ANVELINAPRO3)
-            {
-                voff = 340.0f;
-                sens = 88.0f;
-            }
+            (float voff, float sens) = HardwareSpecific.GetDefaultVoltCalibration();
 
             udAmpVoff.Value = (decimal)voff;
             udAmpSens.Value = (decimal)sens;
@@ -26337,6 +26503,7 @@ namespace Thetis
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_text_colour", clrbtnFilter_text.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", clrbtnFilter_number_highlight.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_edges_colour", clrbtnFilter_edges.Color);
+                igs.SetSetting<System.Drawing.Color>("filterdisplay_edges_colour_tx", clrbtnFilter_edges_tx.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_edgehighlight_colour", clrbtnFilter_edge_highlight.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_meterback_colour", clrbtnFilter_meter_back.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_notch_colour", clrbtnFilter_notch.Color);
@@ -26986,6 +27153,7 @@ namespace Thetis
                 clrbtnFilter_text.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_text_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
                 clrbtnFilter_number_highlight.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.DarkRed);
                 clrbtnFilter_edges.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_edges_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Yellow);
+                clrbtnFilter_edges_tx.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_edges_colour_tx", false, Color.Empty, Color.Empty, System.Drawing.Color.Red);
                 clrbtnFilter_edge_highlight.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_edgehighlight_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
                 clrbtnFilter_meter_back.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_meterback_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Black);
                 clrbtnFilter_notch.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_notch_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.OrangeRed);
@@ -28102,7 +28270,6 @@ namespace Thetis
         private void chkJoinBandEdges_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-
             Display.JoinBandEdges = chkJoinBandEdges.Checked;
         }
 
@@ -33494,6 +33661,11 @@ namespace Thetis
             updateMeterType();
         }
 
+        private void clrbtnFilter_edges_tx_Changed(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
         private void clrbtnFilter_edge_highlight_Changed(object sender, EventArgs e)
         {
             updateMeterType();
@@ -33778,6 +33950,24 @@ namespace Thetis
         {
             if (initializing) return;
             console.ForceATTwhenOutputPowerChangesWhenPSAonAndDecreased = chkForceATTwhenOutPowerChanges_decreased.Checked;
+        }
+
+        private void chkShowFrequencyNumbers_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            Display.ShowFrequencyNumbers = chkShowFrequencyNumbers.Checked;
+        }
+
+        private void chkShowLedMirror_CheckedChanged(object sender, EventArgs e)
+        {            
+            grpLEDMirror.Visible = chkShowLedMirror.Checked;
+        }
+        private void showLedMirror()
+        {
+            if (initializing) return;
+            bool p2 = NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH;
+            chkShowLedMirror.Visible = p2;
+            grpLEDMirror.Visible = p2 && chkShowLedMirror.Checked;
         }
     }
 

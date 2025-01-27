@@ -1445,42 +1445,9 @@ namespace Thetis
                 if (s.Contains(arg, StringComparison.OrdinalIgnoreCase)) return true;
             }
             return false;
-        }
-
-        public static HPSDRModel StringModelToEnum(string sModel)
-        {
-            switch (sModel.ToUpper())
-            {
-                case "HERMES":
-                    return HPSDRModel.HERMES;
+        }       
                 case "HERMES LITE":
                     return HPSDRModel.HERMESLITE;
-                case "ANAN-10":
-                    return HPSDRModel.ANAN10;
-                case "ANAN-10E":
-                    return HPSDRModel.ANAN10E;
-                case "ANAN-100":
-                    return HPSDRModel.ANAN100;
-                case "ANAN-100B":
-                    return HPSDRModel.ANAN100B;
-                case "ANAN-100D":
-                    return HPSDRModel.ANAN100D;
-                case "ANAN-200D":
-                    return HPSDRModel.ANAN200D;
-                case "ANAN-7000DLE":
-                    return HPSDRModel.ANAN7000D;
-                case "ANAN-8000DLE":
-                    return HPSDRModel.ANAN8000D;
-                case "ANAN-G2":
-                    return HPSDRModel.ANAN_G2;
-                case "ANAN-G2-1K":
-                    return HPSDRModel.ANAN_G2_1K;
-                case "ANVELINA-PRO3":
-                    return HPSDRModel.ANVELINAPRO3;
-            }
-
-            return HPSDRModel.FIRST;
-        }
         public static int GetLuminance(Color c)
         {
             //https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
@@ -1579,6 +1546,160 @@ namespace Thetis
                 result[i] = chars[indices[i]];
             }
             return new string(result);
+        }
+
+        public static bool CanCreateFile(string filePath)
+        {
+            try
+            {
+                string directoryPath = Path.GetDirectoryName(filePath);
+
+                if (!Directory.Exists(directoryPath))
+                {
+                    return false;
+                }
+
+                if (!hasWritePermissionOnDir(directoryPath))
+                {
+                    return false;
+                }
+
+                if (File.Exists(filePath))
+                {
+                    FileInfo fileInfo = new FileInfo(filePath);
+                    if (fileInfo.IsReadOnly)
+                    {
+                        return false;
+                    }
+
+                    if (!isFileWritable(filePath))
+                    {
+                        return false;
+                    }
+                }
+
+                string tempFile = Path.Combine(directoryPath, Path.GetRandomFileName());
+                FileStream tempStream = File.Create(tempFile);
+                tempStream.Close();
+                File.Delete(tempFile);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        private static bool hasWritePermissionOnDir(string path)
+        {
+            try
+            {
+                string tempFile = Path.Combine(path, Path.GetRandomFileName());
+                FileStream fs = File.Create(tempFile, 1, FileOptions.DeleteOnClose);
+                fs.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool isFileWritable(string filePath)
+        {
+            try
+            {
+                FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Write);
+                stream.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool GetComPortNumber(string comport, out int portNumber)
+        {
+            string lower_comport = comport.ToLower();
+
+            if (!lower_comport.StartsWith("com"))
+            {
+                portNumber = 0;
+                return false;
+            }
+
+            return int.TryParse(lower_comport.Substring(3), out portNumber);
+        }
+
+        private static int getIntersectionArea(Rectangle rect1, Rectangle rect2)
+        {
+            Rectangle intersection = Rectangle.Intersect(rect1, rect2);
+            return intersection.Width > 0 && intersection.Height > 0 ? intersection.Width * intersection.Height : 0;
+        }
+        public static bool EnsureFormIsOnScreen(Form frm, bool entirely_on_screen, bool prioritizeCursorScreen = false)
+        {
+            bool shifted = false;
+            Rectangle formBounds = frm.Bounds;
+
+            if (entirely_on_screen)
+            {
+                Screen targetScreen = null;
+
+                if (prioritizeCursorScreen)
+                {
+                    Screen cursorScreen = Screen.FromPoint(Cursor.Position);
+
+                    Rectangle cursorWorkingArea = cursorScreen.WorkingArea;
+                    Rectangle newBoundsOnCursorScreen = getAdjustedBounds(formBounds, cursorWorkingArea);
+
+                    if (cursorWorkingArea.Contains(newBoundsOnCursorScreen))
+                    {
+                        targetScreen = cursorScreen;
+                    }
+                }
+
+                if (targetScreen == null)
+                {
+                    targetScreen = Screen.AllScreens
+                    .OrderByDescending(screen => getIntersectionArea(screen.WorkingArea, formBounds))
+                    .First();
+                }
+
+                Rectangle targetWorkingArea = targetScreen.WorkingArea;
+
+                int newX = Math.Max(targetWorkingArea.X, Math.Min(formBounds.X, targetWorkingArea.Right - formBounds.Width));
+                int newY = Math.Max(targetWorkingArea.Y, Math.Min(formBounds.Y, targetWorkingArea.Bottom - formBounds.Height));
+
+                shifted = frm.Location.X != newX || frm.Location.Y != newY;
+                frm.Location = new Point(newX, newY);
+            }
+            else
+            {
+                bool isOnScreen = Screen.AllScreens.Any(screen => screen.WorkingArea.IntersectsWith(formBounds));
+
+                if (!isOnScreen)
+                {
+                    Screen primaryScreen = Screen.PrimaryScreen;
+                    Rectangle primaryWorkingArea = primaryScreen.WorkingArea;
+
+                    int newX = Math.Max(primaryWorkingArea.X, Math.Min(formBounds.X, primaryWorkingArea.Right - formBounds.Width));
+                    int newY = Math.Max(primaryWorkingArea.Y, Math.Min(formBounds.Y, primaryWorkingArea.Bottom - formBounds.Height));
+
+                    shifted = frm.Location.X != newX || frm.Location.Y != newY;
+                    frm.Location = new Point(newX, newY);
+                }
+            }
+            return shifted;
+        }
+        private static Rectangle getAdjustedBounds(Rectangle formBounds, Rectangle screenWorkingArea)
+        {
+            int newX = Math.Max(screenWorkingArea.X,
+                Math.Min(formBounds.X, screenWorkingArea.Right - formBounds.Width));
+            int newY = Math.Max(screenWorkingArea.Y,
+                Math.Min(formBounds.Y, screenWorkingArea.Bottom - formBounds.Height));
+
+            return new Rectangle(new Point(newX, newY), formBounds.Size);
         }
     }
 }

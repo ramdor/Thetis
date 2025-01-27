@@ -29,17 +29,23 @@ warren@pratt.one
 
 typedef struct _sidetone
 {
-	int id;
-	int run;
-	int rate;
-	int size;
-	double* in;
-	double* out;
-	double pitch;
-	double volume;
-	int wpm;
-	int edgetype;
-	double edgelength;
+	int id;					// 'id' of the sidetone instance = id of the transmitter
+	int run_st;				// run the sidetone (0 or 1)
+	int run_tx;				// output IQ to transmit CW (0 or 1)
+	int rate;				// sample rate
+	int size;				// buffer size
+	double outI;			// I value without volume applied
+	double outQ;			// Q value without volume applied
+	double* in;				// pointer to input buffer
+	double* out_st;			// pointer to sidetone output buffer
+	double* out_tx;			// pointer to transmit output buffer
+	int IQ_polarity;		// transmit upper or lower sideband CW (0 or 1)
+	double pitch;			// pitch frequency for both sidetone and transmit (Hz)
+	double volume_st;		// volume multiplier to apply for sidetone (0.0 - 1.0)
+	double volume_tx;		// volume multiplier to apply for CW tx IQ (0.0 - 1.0)
+	int wpm;				// words-per-minute for dot/dash creation
+	int edgetype;			// cw edge; 0 -> raised_cosine
+	double edgelength;		// length of a rising or falling edge (seconds)
 
 	double tone_phs;
 	double tone_cos_phs;
@@ -76,13 +82,17 @@ typedef struct _sidetone
 
 extern SIDETONE create_sidetone(
 	int id,
-	int run,
+	int run_st,
+	int run_tx,
 	int rate,
 	int size,
 	double* in,
-	double* out,
+	double* out_st,
+	double* out_tx,
+	int IQ_polarity,
 	double pitch,						// Hertz
-	double volume,						// 0.0 - 1.0
+	double volume_st,					// 0.0 - 1.0
+	double volume_tx,					// 0.0 - 1.0
 	int wpm,							// words-per-minute
 	int edgetype,						// '0' = raised-cosine
 	double edgelength					// time in seconds
@@ -104,11 +114,17 @@ extern void setSidetoneSize(int id, int size);
 
 extern void setSidetoneRate(int id, int rate);
 
+extern __declspec (dllexport) void SetCWtxIQpolarity(int id, int polarity);
+
 extern __declspec (dllexport) void SetSidetoneVolume(int id, double volume);
+
+extern __declspec (dllexport) void SetCWtxVolume(int id, double volume);
 
 extern __declspec (dllexport) void SetSidetoneWPM(int id, int wpm);
 
 extern __declspec (dllexport) void SetSidetoneRun(int id, int run);
+
+extern __declspec (dllexport) void SetCWtxRun(int id, int run);
 
 extern __declspec (dllexport) void SetSidetonePitch(int id, double pitch);
 
@@ -118,6 +134,8 @@ extern __declspec (dllexport) void SetSidetoneEdgelength(int id, double length);
 
 #endif
 
+// SYMBOL GENERATION
+//
 // There are three internal bits in the sidetone generator : key, dot, and dash.  There are corresponding 
 // functions that will be called from the ChannelMaster code for each of these bits.  (It’s the 
 // ChannelMaster code that receives and unpacks the incoming packets.)
@@ -148,3 +166,23 @@ extern __declspec (dllexport) void SetSidetoneEdgelength(int id, double length);
 // three or five ‘1’ packets, at 1ms intervals, followed by ‘0’ packets until it’s time for the next dot.
 // 
 // ‘Dash’ works just like ‘dot’, it just generates a symbol of appropriate length for a dash, given the speed setting.
+//
+//
+// FUNCTION INPUTS AND OUTPUTS
+//
+// This function was originally written to only provide CW Sidetone to be mixed into audio.  It has since been
+// extended to also provide a 'matching' transmit IQ output.  'Matching' implies that the symbol shape, timing,
+// and pitch will be the same between the sidetone and IQ output.  Things that can vary between the two are:
+// * They can be turned OFF/ON independently.
+// * They have different output buffers (they have a common input buffer).
+// * They have different volume multipliers.
+// * The TX output has a 'polarity' indicator to select upper or lower sideband.
+//
+// Considering the above differences, the following calls have been added for the TX IQ output to change its
+// unique parameters:
+//
+// void SetCWtxRun(int id, int run);				// 0 or 1 to turn OFF/ON the CW TX output
+// void SetCWtxVolume(int id, double volume);		// Value of 0.0 to 1.0 to specify output level
+// void SetCWtxIQpolarity(int id, int polarity);	// 0 or 1 to select sideband for CW TX
+//
+

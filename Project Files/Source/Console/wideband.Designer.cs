@@ -184,7 +184,7 @@
             this.wbdisplay.ContextMenuStrip = this.contextMenuStripWideBand;
             this.wbdisplay.CurrentClickTuneMode = Thetis.ClickTuneMode.Off;
             this.wbdisplay.CurrentDisplayMode = Thetis.DisplayMode.PANADAPTER;
-            this.wbdisplay.CurrentModel = Thetis.Model.HERMES;
+            this.wbdisplay.CurrentModel = Thetis.HPSDRModel.HERMES;
             this.wbdisplay.CurrentRegion = Thetis.FRSRegion.US;
             this.wbdisplay.CWPitch = 600;
             this.wbdisplay.DataLineColor = System.Drawing.Color.White;

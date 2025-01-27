@@ -144,7 +144,7 @@ namespace Thetis
 
                 lvi.Checked = dbi.GUID == active_guid;
 
-                lvi.SubItems.Add(dbi.Model.ToString());
+                lvi.SubItems.Add(HardwareSpecific.EnumModelToString(dbi.Model));
                 lvi.SubItems.Add(localDateTimeFormat(dbi.LastChanged));
 
                 TimeSpan difference = DateTime.Now - dbi.CreationTime;
