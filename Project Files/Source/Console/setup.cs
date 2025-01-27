@@ -6069,8 +6069,15 @@ namespace Thetis
                 HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
                 HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
             {
-                chkLPFBypass.Checked = false;
-                chkLPFBypass.Visible = false;
+                if (HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
+                {
+                    chkLPFBypass.Visible = true;
+                }
+                else
+                {
+                    chkLPFBypass.Checked = false;
+                    chkLPFBypass.Visible = false;
+                }
 
                 chkDisableRXOut.Visible = false;
                 chkBPF2Gnd.Visible = true;
@@ -6086,12 +6093,6 @@ namespace Thetis
                 {
                     panelSaturnMicInput.Visible = false;
                     lblSaturnMicInput.Visible = false;
-                }
-
-                if (HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
-                {
-                    chkLPFBypass.Checked = false;
-                    chkLPFBypass.Visible = true;
                 }
             }
             else
