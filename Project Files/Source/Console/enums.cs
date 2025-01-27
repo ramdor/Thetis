@@ -62,7 +62,6 @@
         DIRECT_X,
     }
 
-        HERMESLITE,     //MI0BOT
     public enum HPSDRModel
     {
         //IMPORTANT: Please keep the int value order on these enums, ie add new items before LAST,

@@ -76,6 +76,13 @@ namespace Thetis
                         NetworkIO.LRAudioSwap(1);
                         HardwareSpecific.Hardware = HPSDRHW.Hermes;
                         break;
+                    case HPSDRModel.HERMESLITE:
+                        NetworkIO.SetRxADC(1);
+                        NetworkIO.SetMKIIBPF(0);
+                        cmaster.SetADCSupply(0, 33);
+                        NetworkIO.LRAudioSwap(1);
+                        HardwareSpecific.Hardware = HPSDRHW.HermesLite;
+                        break;
                     case HPSDRModel.ANAN10:
                         NetworkIO.SetRxADC(1);
                         NetworkIO.SetMKIIBPF(0);
@@ -221,7 +228,8 @@ namespace Thetis
             {
                 return _model == HPSDRModel.ANAN7000D || _model == HPSDRModel.ANAN8000D ||
                        _model == HPSDRModel.ANVELINAPRO3 || _model == HPSDRModel.ANAN_G2 ||
-                       _model == HPSDRModel.ANAN_G2_1K || _model == HPSDRModel.REDPITAYA;
+                       _model == HPSDRModel.ANAN_G2_1K || _model == HPSDRModel.REDPITAYA ||
+                       _model == HPSDRModel.HERMESLITE;
             }
         }
         public static bool HasAmps
@@ -230,7 +238,8 @@ namespace Thetis
             {
                 return _model == HPSDRModel.ANAN7000D || _model == HPSDRModel.ANAN8000D ||
                        _model == HPSDRModel.ANVELINAPRO3 || _model == HPSDRModel.ANAN_G2 ||
-                       _model == HPSDRModel.ANAN_G2_1K || _model == HPSDRModel.REDPITAYA;
+                       _model == HPSDRModel.ANAN_G2_1K || _model == HPSDRModel.REDPITAYA ||
+                       _model == HPSDRModel.HERMESLITE;
             }
         }
         public static (float, float) GetDefaultVoltCalibration()
