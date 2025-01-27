@@ -272,7 +272,7 @@ namespace Thetis
                 //    // CWKeyer.PTTEnqueue(item);
                 //}
 
-                if(console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                if(HardwareSpecific.Model == HPSDRModel.HERMESLITE)
                     NetworkIO.SetCWXPTT(Convert.ToInt32(state));
 
                 ptt = state;

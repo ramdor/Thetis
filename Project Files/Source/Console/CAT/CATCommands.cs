@@ -365,7 +365,7 @@ namespace Thetis
 			string f = ZZFA("");
             
             // MI0BOT: Redirect CAT to VFO B
-            if (console.CATtoVFOB && Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+            if (console.CATtoVFOB && HardwareSpecific.Model == HPSDRModel.HERMESLITE)
                 f = ZZFB("");
 
             if (f.Length > 11)
@@ -383,7 +383,7 @@ namespace Thetis
                                                         //			rtn += temp;
                                                         //			rtn += Mode2KString(console.RX1DSPMode);	// current mode			 1 bytes
             // MI0BOT: Redirect CAT to VFO B
-            if (console.CATtoVFOB && Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+            if (console.CATtoVFOB && HardwareSpecific.Model == HPSDRModel.HERMESLITE)
                 tempmode = Mode2KString(console.RX2DSPMode);
 			else
                 tempmode = Mode2KString(console.RX1DSPMode);
@@ -594,7 +594,7 @@ namespace Thetis
 			else if(s.Length == parser.nGet)
 			{
 				// MI0BOT: Redirect CAT to VFO B
-                if (console.CATtoVFOB && Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                if (console.CATtoVFOB && HardwareSpecific.Model == HPSDRModel.HERMESLITE)
                     return Mode2KString(console.RX2DSPMode);
 				else
                     return Mode2KString(console.RX1DSPMode);
@@ -6337,8 +6337,8 @@ namespace Thetis
 		// Reads the Flex 5000 temperature sensor
         public string ZZTS()
         {
-            if ((console.CurrentHPSDRModel == HPSDRModel.HERMES) ||
-                (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE))		// MI0BOT: HL2
+            if ((HardwareSpecific.Model == HPSDRModel.HERMES) ||
+                (HardwareSpecific.Model == HPSDRModel.HERMESLITE))		// MI0BOT: HL2
             {
                 int val = 0;
                 float volts = 0.0f;
@@ -9444,7 +9444,7 @@ namespace Thetis
 			}
 			
             // MI0BOT: Redirect CAT to VFO B
-			if (console.CATtoVFOB && Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+			if (console.CATtoVFOB && HardwareSpecific.Model == HPSDRModel.HERMESLITE)
 				console.RX2DSPMode = newMode;
 			else
 				console.RX1DSPMode = newMode;

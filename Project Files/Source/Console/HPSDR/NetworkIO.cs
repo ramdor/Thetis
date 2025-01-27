@@ -311,7 +311,6 @@ namespace Thetis
             }
 
             //override boardid
-            rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort, (int)CurrentRadioProtocol, EthernetRemotePort);
             int boardID = (int)BoardID;
             switch (HardwareSpecific.Model)
             {
@@ -320,7 +319,7 @@ namespace Thetis
                     break;
             }
 
-            rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort, (int)CurrentRadioProtocol, EthernetRemotePort);
+            rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort, (int)CurrentRadioProtocol, boardID, EthernetRemotePort);
             return -rc;
         }
 

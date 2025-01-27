@@ -693,8 +693,8 @@ namespace Thetis
                 case eAAState.Monitor:// 0: // monitor
                     if (_autoattenuate &&
                         puresignal.CalibrationAttemptsChanged &&
-                        ((HPSDRModel.HERMESLITE != console.CurrentHPSDRModel && puresignal.NeedToRecalibrate(console.SetupForm.ATTOnTX)) ||
-                        (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel && puresignal.NeedToRecalibrate_HL2(console.SetupForm.ATTOnTX))))
+                        ((HPSDRModel.HERMESLITE != HardwareSpecific.Model && puresignal.NeedToRecalibrate(console.SetupForm.ATTOnTX)) ||
+                        (HPSDRModel.HERMESLITE == HardwareSpecific.Model && puresignal.NeedToRecalibrate_HL2(console.SetupForm.ATTOnTX))))
                     {
                         if (!console.ATTOnTX) AutoAttenuate = true; //MW0LGE
 
@@ -706,7 +706,7 @@ namespace Thetis
                             ddB = 20.0 * Math.Log10((double)puresignal.FeedbackLevel / 152.293);
 
 
-                            if (HPSDRModel.HERMESLITE != console.CurrentHPSDRModel)
+                            if (HPSDRModel.HERMESLITE != HardwareSpecific.Model)
                             {
                                 if (Double.IsNaN(ddB)) ddB = 31.1;
                                 if (ddB < -100.0) ddB = -100.0;
@@ -721,7 +721,7 @@ namespace Thetis
                         }
                         else
                         {
-                            if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                            if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
                                 ddB = 10.0;
                             else
                                 ddB = 31.1;
@@ -741,7 +741,7 @@ namespace Thetis
                     int newAtten;
                     int oldAtten = console.SetupForm.ATTOnTX;
 
-                    if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                    if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
                     {
                         newAtten = oldAtten + _deltadB;     //MI0BOT: HL2 can handle negative up to -28, just let it be handled in ATTOnTx section
                     }

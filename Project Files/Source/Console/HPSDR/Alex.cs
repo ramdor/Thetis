@@ -362,7 +362,7 @@ namespace Thetis
                 rx_only_ant = RxOnlyAnt[idx];
                 if (xvtr)
                 {
-					if (c.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+					if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
 					{
                         int xvtrAnt = c.XVTRForm.GetRXAntenna(c.RX1XVTRIndex);
 
@@ -389,7 +389,7 @@ namespace Thetis
                 else trx_ant = RxAnt[idx];
 
                 if ((RxAnt[idx] != TxAnt[idx]) ||
-					(0 != rx_only_ant && c.CurrentHPSDRModel == HPSDRModel.HERMESLITE))  // MI0BOT: Antenna not the same is valid
+					(0 != rx_only_ant && HardwareSpecific.Model == HPSDRModel.HERMESLITE))  // MI0BOT: Antenna not the same is valid
                 {                                                                        //         for receive only aerial as well
                     trx_ant_different = true;
 				}
@@ -424,7 +424,7 @@ namespace Thetis
             //    Thread.Sleep(10);
             //}
 
-            if (TRxAnt && c.CurrentHPSDRModel == HPSDRModel.HERMESLITE && !xvtr)
+            if (TRxAnt && HardwareSpecific.Model == HPSDRModel.HERMESLITE && !xvtr)
             {
                 // MI0BOT: Transmit antenna is being used for reception in split aerial operation
                 //         so switch of the rx only aerial but not with transverter operation
@@ -445,7 +445,7 @@ namespace Thetis
 				System.Console.WriteLine("Ant idx: " + idx + "(" + ((Band)idx + (int)Band.B160M).ToString() + ")");
                 System.Console.WriteLine("Ant Rx Only {0} , TRx Ant {1}, Tx Ant {2}, Rx Out {3}, TX {4}", rx_only_ant.ToString(), trx_ant.ToString(), tx_ant.ToString(), rx_out.ToString(), tx.ToString());
 
-                if (c.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
 					c.SetIOBoardAerialPorts(rx_only_ant, trx_ant - 1, tx_ant - 1, tx);   // MI0BOT: Sets the aerial controls on the I/O board 
 
 				//store old

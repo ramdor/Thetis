@@ -171,7 +171,7 @@ namespace Thetis
                 }
                 else
                 {
-                    if (Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE)    // MI0BOT: Select correct LPF for 2 receivers
+                    if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)    // MI0BOT: Select correct LPF for 2 receivers
                     {
                         if (tx)
                         {

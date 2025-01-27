@@ -1446,8 +1446,7 @@ namespace Thetis
             }
             return false;
         }       
-                case "HERMES LITE":
-                    return HPSDRModel.HERMESLITE;
+
         public static int GetLuminance(Color c)
         {
             //https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color

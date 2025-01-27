@@ -823,7 +823,7 @@ namespace Thetis
             bool include_extra_p1_rate = HardwareSpecific.Model == HPSDRModel.REDPITAYA; //DH1KLM
 
             // The HL supports 384K
-            if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+            if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
                 include_extra_p1_rate = true;
 
             int[] p1_rates = include_extra_p1_rate ? new int[] { 48000, 96000, 192000, 384000 } : new int[] { 48000, 96000, 192000 };
@@ -1096,7 +1096,7 @@ namespace Thetis
 
             // MI0BOT: Make sure the correct stuff is enabled
             if (HPSDRHW.HermesLite == Audio.LastRadioHardware ||
-                HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)     // MI0BOT: Changes for HL2 only having a 16 step output attenuator 
+                HPSDRModel.HERMESLITE == HardwareSpecific.Model)     // MI0BOT: Changes for HL2 only having a 16 step output attenuator 
             {
                 udATTOnTX.Minimum = -28;
                 udMicGainMax.Maximum = 40;
@@ -2736,7 +2736,7 @@ namespace Thetis
             chkAntiVoxSource_CheckedChanged(this, e);
 
             // F/W Set
-            if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+            if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
             {
                 chkHL2BandVolts_CheckedChanged(this, e);        // MI0BOT: HL2 option page now doesn't share ditter and random
                 chkHL2PsSync_CheckedChanged(this, e);
@@ -3897,7 +3897,7 @@ namespace Thetis
                 {
                     if (value > 31) value = 31;
 
-                    if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                    if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
                     {
                         if (value < -28) value = -28; //MI0BOT: HL2 has a greater range and can go negative 
                     }
@@ -5205,7 +5205,7 @@ namespace Thetis
             get { return (int)udTXTunePower.Value; }
             set 
             {
-                if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
                 {
                     udTXTunePower.Value = (decimal)(value/3 - 33)/2;    // MI0BOT: Now only has a -16.5 to 0 range in HL2 for Tune power
                 }
@@ -6324,7 +6324,7 @@ namespace Thetis
             }
             else
             {
-                if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+                if (HardwareSpecific.Model != HPSDRModel.HERMESLITE)
                 {
                     chkRxOutOnTx.Enabled = true;
                     chkRxOutOnTx.Visible = true;
@@ -6363,7 +6363,7 @@ namespace Thetis
             {
                 tpAlexControl.Text = "Ant/Filters";
 
-                if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+                if (HardwareSpecific.Model != HPSDRModel.HERMESLITE)
                 {
                     chkHFTRRelay.Visible = true;
                     chkHFTRRelay.Enabled = true;
@@ -9307,7 +9307,7 @@ namespace Thetis
         {
             if (initializing) return; //[2.10.2.3]MW0LGE forceallevents call this
             
-            if (console.CurrentHPSDRModel != HPSDRModel.HERMESLITE)
+            if (HardwareSpecific.Model != HPSDRModel.HERMESLITE)
             {
                 console.TunePower = (int)udTXTunePower.Value;
             }
@@ -10855,14 +10855,14 @@ namespace Thetis
 
                 chkCATEnable.Enabled = false;
 
-                if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
                     chkCATtoVFOB.Enabled = false;
             }
             else
             {
                 chkCATEnable.Enabled = true;
 
-                if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
                     chkCATtoVFOB.Enabled = true;
             }
 
@@ -11221,7 +11221,7 @@ namespace Thetis
             }
             else
             {
-                if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
                 {
                     console.radio.GetDSPTX(0).TXPostGenRun = 0; // MI0BOT: Switch of the tone gen before releasing PTT
                     await Task.Delay(console.MoxDelay);
@@ -12281,7 +12281,7 @@ namespace Thetis
 
         private void txtGenCustomTitle_TextChanged(object sender, System.EventArgs e)
         {
-            if (HPSDRModel.HERMESLITE != console.CurrentHPSDRModel)
+            if (HPSDRModel.HERMESLITE != HardwareSpecific.Model)
             {
                 console.CustomTitle = txtGenCustomTitle.Lines[0];
             }
@@ -14220,7 +14220,7 @@ namespace Thetis
                 {
                     sProtocolInfo = "Protocol 1";
 
-                    if(HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                    if(HPSDRModel.HERMESLITE == HardwareSpecific.Model)
                         sMetisCodeVersion = NetworkIO.FWCodeVersion.ToString("0\\.0") + NetworkIO.FWCodeVersionMinor.ToString("\\.0");
                     else
                         sMetisCodeVersion = NetworkIO.FWCodeVersion.ToString("0\\.0");
@@ -14249,7 +14249,7 @@ namespace Thetis
                 }
                 else
                 {
-                    if(HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                    if(HPSDRModel.HERMESLITE == HardwareSpecific.Model)
                         sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + NetworkIO.FWCodeVersionMinor.ToString("\\.0") + " Protocol 1";
                     else
                         sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + " Protocol 1";
@@ -14263,7 +14263,7 @@ namespace Thetis
         {
             tpGeneralHardware.Invalidate();
 
-            if(HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+            if(HPSDRModel.HERMESLITE == HardwareSpecific.Model)
                 txtGenCustomTitle_TextChanged(this, EventArgs.Empty);
         }
 
@@ -14298,7 +14298,7 @@ namespace Thetis
                         }
                     }
 
-                    if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                    if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
                     {
                         chkPenOCrcv1601.Checked = true;
                         chkPenOCrcv802.Checked = true;
@@ -16034,7 +16034,7 @@ namespace Thetis
             _updatingRX1HermesStepAttData = true;
             console.RX1AttenuatorData = (int)udHermesStepAttenuatorData.Value;
 
-            if (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+            if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
             {
                 udHermesStepAttenuatorData.Maximum = (decimal)32;
                 udHermesStepAttenuatorData.Minimum = (decimal)-28;
@@ -16545,7 +16545,7 @@ namespace Thetis
             if (initializing) return;
             if (radStaticIP1.Checked)
             {
-                if(HPSDRModel.HERMESLITE != console.CurrentHPSDRModel)
+                if(HPSDRModel.HERMESLITE != HardwareSpecific.Model)
                 {
                     console.HPSDRNetworkIPAddr = udStaticIP1.Text + "." + udStaticIP2.Text + "." +
                                                  udStaticIP3.Text + "." + udStaticIP4.Text;
@@ -16560,7 +16560,7 @@ namespace Thetis
             }
             if (radStaticIP2.Checked)
             {
-                if (HPSDRModel.HERMESLITE != console.CurrentHPSDRModel)
+                if (HPSDRModel.HERMESLITE != HardwareSpecific.Model)
                 {
                     console.HPSDRNetworkIPAddr = udStaticIP5.Text + "." + udStaticIP6.Text + "." +
                              udStaticIP7.Text + "." + udStaticIP8.Text;
@@ -16575,7 +16575,7 @@ namespace Thetis
             }
             if (radStaticIP3.Checked)
             {
-                if (HPSDRModel.HERMESLITE != console.CurrentHPSDRModel)
+                if (HPSDRModel.HERMESLITE != HardwareSpecific.Model)
                 {
                     console.HPSDRNetworkIPAddr = udStaticIP9.Text + "." + udStaticIP10.Text + "." +
                                                  udStaticIP11.Text + "." + udStaticIP12.Text;
@@ -16591,7 +16591,7 @@ namespace Thetis
             }
             if (radStaticIP4.Checked)
             {
-                if (HPSDRModel.HERMESLITE != console.CurrentHPSDRModel)
+                if (HPSDRModel.HERMESLITE != HardwareSpecific.Model)
                 {
                     console.HPSDRNetworkIPAddr = udStaticIP13.Text + "." + udStaticIP14.Text + "." +
                              udStaticIP15.Text + "." + udStaticIP16.Text;
@@ -16612,12 +16612,12 @@ namespace Thetis
             {
                 chkFullDiscovery.Checked = false;
 
-                if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
                 {
                     btnSetIPAddr_Click(sender, e);
                 }
             }
-            else if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+            else if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
             {
                 chkLimit2Subnet.Checked = true;
                 NetworkIO.DiscoveryPort = 1024;
@@ -16625,7 +16625,7 @@ namespace Thetis
 
             NetworkIO.enableStaticIP = chkEnableStaticIP.Checked;
 
-            if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+            if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
                 chkLimit2Subnet.Enabled = chkEnableStaticIP.Checked;
         }
 
@@ -20130,7 +20130,7 @@ namespace Thetis
                     break;
 
                 case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
-                    console.CurrentHPSDRModel = HPSDRModel.HERMESLITE;
+                    HardwareSpecific.Model = HPSDRModel.HERMESLITE;
                     tcOptions.Controls.Add(tpHL2Options);
                     chkAlexPresent.Enabled = true;
                     chkAlexPresent.Visible = false;
