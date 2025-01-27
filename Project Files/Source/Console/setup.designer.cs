@@ -1386,7 +1386,7 @@
             this.lblSWLTxControl = new System.Windows.Forms.LabelTS();
             this.lblSWLRxControl = new System.Windows.Forms.LabelTS();
             this.tpHPSDR = new System.Windows.Forms.TabPage();
-            this.chkIncludeOtherSampleRates = new System.Windows.Forms.CheckBoxTS();
+            this.chkShowLedMirror = new System.Windows.Forms.CheckBoxTS();
             this.grpLEDMirror = new System.Windows.Forms.GroupBoxTS();
             this.lblLED10 = new System.Windows.Forms.LabelTS();
             this.lblLED09 = new System.Windows.Forms.LabelTS();
@@ -23093,7 +23093,7 @@
             // tpHPSDR
             // 
             this.tpHPSDR.BackColor = System.Drawing.SystemColors.Control;
-            this.tpHPSDR.Controls.Add(this.chkIncludeOtherSampleRates);
+            this.tpHPSDR.Controls.Add(this.chkShowLedMirror);
             this.tpHPSDR.Controls.Add(this.grpLEDMirror);
             this.tpHPSDR.Controls.Add(this.grpAudioSampleRateRX2);
             this.tpHPSDR.Controls.Add(this.grpVersion);
@@ -23108,17 +23108,18 @@
             this.toolTip1.SetToolTip(this.tpHPSDR, "Firmware Configuration");
             this.tpHPSDR.Paint += new System.Windows.Forms.PaintEventHandler(this.tpHPSDR_Paint);
             // 
-            // chkIncludeOtherSampleRates
+            // chkShowLedMirror
             // 
-            this.chkIncludeOtherSampleRates.Image = null;
-            this.chkIncludeOtherSampleRates.Location = new System.Drawing.Point(92, 88);
-            this.chkIncludeOtherSampleRates.Name = "chkIncludeOtherSampleRates";
-            this.chkIncludeOtherSampleRates.Size = new System.Drawing.Size(125, 20);
-            this.chkIncludeOtherSampleRates.TabIndex = 54;
-            this.chkIncludeOtherSampleRates.Text = "Include other rates";
-            this.chkIncludeOtherSampleRates.UseVisualStyleBackColor = true;
-            this.chkIncludeOtherSampleRates.Visible = false;
-            this.chkIncludeOtherSampleRates.CheckedChanged += new System.EventHandler(this.chkIncludeOtherSampleRates_CheckedChanged);
+            this.chkShowLedMirror.AutoSize = true;
+            this.chkShowLedMirror.Image = null;
+            this.chkShowLedMirror.Location = new System.Drawing.Point(24, 81);
+            this.chkShowLedMirror.Name = "chkShowLedMirror";
+            this.chkShowLedMirror.Size = new System.Drawing.Size(103, 17);
+            this.chkShowLedMirror.TabIndex = 55;
+            this.chkShowLedMirror.Text = "Show Led Mirror";
+            this.toolTip1.SetToolTip(this.chkShowLedMirror, "Used for protocol 2 debugging purposes");
+            this.chkShowLedMirror.UseVisualStyleBackColor = true;
+            this.chkShowLedMirror.CheckedChanged += new System.EventHandler(this.chkShowLedMirror_CheckedChanged);
             // 
             // grpLEDMirror
             // 
@@ -23132,12 +23133,13 @@
             this.grpLEDMirror.Controls.Add(this.lblLED03);
             this.grpLEDMirror.Controls.Add(this.lblLED02);
             this.grpLEDMirror.Controls.Add(this.lblLED01);
-            this.grpLEDMirror.Location = new System.Drawing.Point(346, 269);
+            this.grpLEDMirror.Location = new System.Drawing.Point(24, 104);
             this.grpLEDMirror.Name = "grpLEDMirror";
             this.grpLEDMirror.Size = new System.Drawing.Size(289, 47);
             this.grpLEDMirror.TabIndex = 53;
             this.grpLEDMirror.TabStop = false;
             this.grpLEDMirror.Text = "LED Mirror";
+            this.grpLEDMirror.Visible = false;
             // 
             // lblLED10
             // 
@@ -32215,7 +32217,7 @@
             this.grpDisplay8000DLE.Size = new System.Drawing.Size(215, 47);
             this.grpDisplay8000DLE.TabIndex = 44;
             this.grpDisplay8000DLE.TabStop = false;
-            this.grpDisplay8000DLE.Text = "7000DLE/8000DLE";
+            this.grpDisplay8000DLE.Text = "7000/8000/G2/ANV/RP";
             // 
             // chkANAN8000DLEDisplayVoltsAmps
             // 
@@ -66240,6 +66242,7 @@
             this.groupBoxTS19.PerformLayout();
             this.grpExtCtrlSWL.ResumeLayout(false);
             this.tpHPSDR.ResumeLayout(false);
+            this.tpHPSDR.PerformLayout();
             this.grpLEDMirror.ResumeLayout(false);
             this.grpLEDMirror.PerformLayout();
             this.grpAudioSampleRateRX2.ResumeLayout(false);
@@ -70013,7 +70016,6 @@
         private CheckBoxTS chkAndrBandBtnDefault;
         private CheckBoxTS chkAndrStickyMenus;
         private CheckBoxTS chkAndrStickyShift;
-        private CheckBoxTS chkIncludeOtherSampleRates;
         private LabelTS labelTS18;
         private LabelTS labelTS17;
         private NumericUpDownTS udFreq2Delay;
@@ -71426,5 +71428,6 @@
         private ColorButton clrbtnFilter_edges_tx;
         public CheckBoxTS chkGridControl_minor;
         private CheckBoxTS chkShowFrequencyNumbers;
+        private CheckBoxTS chkShowLedMirror;
     }
 }

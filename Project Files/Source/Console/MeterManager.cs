@@ -2543,7 +2543,7 @@ namespace Thetis
 
             _rx1VHForAbove = _console.VFOAFreq >= _console.S9Frequency;
             _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= _console.S9Frequency;
-            _currentHPSDRmodel = _console.CurrentHPSDRModel;
+            _currentHPSDRmodel = HardwareSpecific.Model;
             _apolloPresent = _console.ApolloPresent;
             _alexPresent = _console.AlexPresent;
             _paPresent = _console.PAPresent;

@@ -1545,7 +1545,7 @@ namespace Thetis
 		//Sets or reads the BCI Rejection button status
 		public string ZZBR(string s)
 		{
-			if(console.CurrentHPSDRModel == HPSDRModel.HPSDR)
+			if(HardwareSpecific.Model == HPSDRModel.HPSDR)
 			{
 				int sx = 0;
 
@@ -2860,7 +2860,7 @@ namespace Thetis
 
 		public string ZZFM()
 		{
-			string radio = console.CurrentHPSDRModel.ToString();
+			string radio = HardwareSpecific.Model.ToString();
             bool alex_att = console.AlexPresent;
 
             if (radio == "HPSDR" || radio == "HERMES")
@@ -5578,13 +5578,13 @@ namespace Thetis
         public string ZZRV()
         {
             //MW0LGE [2.10.1.0]
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN7000D || console.CurrentHPSDRModel == HPSDRModel.ANAN8000D ||
-                   console.CurrentHPSDRModel == HPSDRModel.ANVELINAPRO3 || console.CurrentHPSDRModel == HPSDRModel.ANAN_G2 ||
-				   console.CurrentHPSDRModel == HPSDRModel.ANAN_G2_1K)
+            if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+                   HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+				   HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K)
             {
 				return String.Format("{0:00.0}", console.MKIIPAVolts);
             }
-            else if (console.CurrentHPSDRModel != HPSDRModel.HPSDR)
+            else if (HardwareSpecific.Model != HPSDRModel.HPSDR)
             {
 				//int val = 0;
 				//decimal volts = 0.0m;
@@ -5744,7 +5744,7 @@ namespace Thetis
                     else
                         num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH);
 
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                      case HPSDRModel.HPSDR:
                         num = num +
@@ -6324,7 +6324,7 @@ namespace Thetis
 		// Reads the Flex 5000 temperature sensor
         public string ZZTS()
         {
-            if (console.CurrentHPSDRModel == HPSDRModel.HERMES)
+            if (HardwareSpecific.Model == HPSDRModel.HERMES)
             {
                 int val = 0;
                 float volts = 0.0f;
@@ -8090,7 +8090,7 @@ namespace Thetis
 			if (s.Length == parser.nGet)
 			{
 				// add command to the return string and terminator, because it is variable length answer
-				return "ZZZM" + console.CurrentHPSDRModel.ToString() + ";";
+				return "ZZZM" + HardwareSpecific.Model.ToString() + ";";
 			}
 			else
 				return parser.Error1;

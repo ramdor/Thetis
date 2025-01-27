@@ -1858,18 +1858,11 @@ namespace Thetis
             {
                 console.SampleRateTX = 48000; // set tx audio sampling rate  
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), false);
-                //puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.4072);
-                //console.psform.PSdefpeak = "0.4072"; //MW0LGE_21k9rc5 moved to psform.SetDefaultPeaks(), called below
             }
             else
             {
                 console.SampleRateTX = 192000;
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), true);
-                //if(console.CurrentHPSDRHardware == HPSDRHW.Saturn)                              // G8NJJ  // MW0LGE note, we do this below by calling SetDefaultPeaks if needed
-                //    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.6121);
-                //else
-                //    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
-                //console.psform.PSdefpeak = "0.2899"; //moved to psform.SetDefaultPeaks(), called below
             }
 
             //console.psform.SetDefaultPeaks(NetworkIO.CurrentRadioProtocol != oldProto); // if the procol changed, force it MW0LGE_21k9rc6

@@ -283,7 +283,7 @@ namespace Thetis
 
             //override boardid
             int boardID = (int)BoardID;
-            switch (Hardware.Model)
+            switch (HardwareSpecific.Model)
             {
                 case HPSDRModel.REDPITAYA:
                     boardID = (int)HPSDRHW.RedPitaya; // matches network.h RedPitaya

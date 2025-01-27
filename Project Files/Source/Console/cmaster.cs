@@ -360,7 +360,7 @@ namespace Thetis
             {
                 ps_rate = value;
 
-                if(Audio.console.CurrentHPSDRModel == HPSDRModel.REDPITAYA) //DH1KLM
+                if(HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
                 {
                     // get transmitter identifiers
                     int txinid = cmaster.inid(1, 0);        // stream id  REDPITAYA Pavel
@@ -435,7 +435,7 @@ namespace Thetis
             {
                 ps_loopback = value;
                 if (Audio.console != null)
-                    CMLoadRouterAll(Audio.console.CurrentHPSDRModel);
+                    CMLoadRouterAll(HardwareSpecific.Model);
             }
         }
 
