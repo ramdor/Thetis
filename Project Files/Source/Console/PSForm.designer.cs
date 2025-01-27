@@ -557,7 +557,7 @@
             this.txtGetPSpeak.ReadOnly = true;
             this.txtGetPSpeak.Size = new System.Drawing.Size(57, 20);            
             this.txtGetPSpeak.TabIndex = 15;
-            this.toolTip1.SetToolTip(this.GetPSpeak, "Indicator:  Peak level of measured digital TX feedback.");
+            this.toolTip1.SetToolTip(this.txtGetPSpeak, "Indicator:  Peak level of measured digital TX feedback.");
             // 
             // labelTS3
             // 
