@@ -11723,7 +11723,7 @@
             1,
             0,
             0,
-            0});
+            196608});
             this.udAmpSens.Name = "udAmpSens";
             this.udAmpSens.Size = new System.Drawing.Size(67, 20);
             this.udAmpSens.TabIndex = 1;
@@ -11750,7 +11750,7 @@
             0,
             0});
             this.udAmpVoff.Minimum = new decimal(new int[] {
-            1,
+            0,
             0,
             0,
             0});
