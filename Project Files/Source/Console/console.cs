@@ -39700,11 +39700,12 @@ namespace Thetis
         }
 
         private bool update_rx2_display = false;
+        private bool _old_rx2_checked = false;
         private void chkRX2_CheckedChanged(object sender, System.EventArgs e)
         {
             _pause_DisplayThread = true; //MW0LGE_21k8 hide the changes
 
-            bool oldRX2Enabled = RX2Enabled;
+            bool oldRX2Enabled = _old_rx2_checked;// RX2Enabled;
 
             if (oldRX2Enabled != chkRX2.Checked) RX2EnabledPreChangedHandlers?.Invoke(chkRX2.Checked);
 
@@ -39796,6 +39797,7 @@ namespace Thetis
             {
                 SetQuickSplit(); //[2.10.1.0] MW0LGE
                 RX2EnabledChangedHandlers?.Invoke(RX2Enabled);
+                _old_rx2_checked = chkRX2.Checked;
             }
         }
 
