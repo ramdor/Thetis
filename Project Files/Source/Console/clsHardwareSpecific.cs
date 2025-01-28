@@ -31,6 +31,7 @@ mw0lge@grange-lane.co.uk
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
@@ -53,6 +54,7 @@ namespace Thetis
             _old_hardware = _hardware;
         }
 
+        #region MODEL
         // model
         public static HPSDRModel Model
         {
@@ -192,7 +194,9 @@ namespace Thetis
                 return (int)_old_model;
             }
         }
+        #endregion
 
+        #region HARDWARE
         // hardware
         public static HPSDRHW Hardware
         {
@@ -213,7 +217,9 @@ namespace Thetis
                 return _old_hardware;
             }
         }
+        #endregion
 
+        #region VOLTS_AMPS
         //volts/amps
         public static bool HasVolts
         {
@@ -258,7 +264,9 @@ namespace Thetis
             }
             return (voff, sens);
         }
+        #endregion
 
+        #region PURESIGNAL
         // pursignal
         public static double PSDefaultPeak
         {
@@ -284,7 +292,9 @@ namespace Thetis
                 }
             }
         }
+        #endregion
 
+        #region STRING_CONVERSION
         // enums/string conversion
         public static HPSDRModel StringModelToEnum(string sModel)
         {
@@ -358,5 +368,370 @@ namespace Thetis
                     return "HERMES";
             }
         }
+        #endregion
+
+        #region RX_CALIBRATION_OFFSET
+        public static float RXMeterCalbrationOffsetDefaults(HPSDRModel model)
+        {
+            switch (model)
+            {
+                case HPSDRModel.ANAN7000D:
+                case HPSDRModel.ANAN8000D:
+                case HPSDRModel.ORIONMKII:
+                case HPSDRModel.ANVELINAPRO3:
+                case HPSDRModel.REDPITAYA: //DH1KLM
+                    return 4.841644f;
+                case HPSDRModel.ANAN_G2:
+                case HPSDRModel.ANAN_G2_1K:
+                    return -4.476f;
+                default:
+                    return 0.98f;
+            }
+        }
+        public static float RXDisplayCalbrationOffsetDefauls(HPSDRModel model)
+        {
+            switch (model)
+            {
+                case HPSDRModel.ANAN7000D:
+                case HPSDRModel.ANAN8000D:
+                case HPSDRModel.ORIONMKII:
+                case HPSDRModel.ANVELINAPRO3:
+                case HPSDRModel.REDPITAYA: //DH1KLM
+                    return 5.259f;
+                case HPSDRModel.ANAN_G2:
+                case HPSDRModel.ANAN_G2_1K:
+                    return -4.4005f;
+                default:
+                    return -2.1f;
+            }
+        }
+        public static float RXMeterCalbrationOffset
+        {
+            get
+            {
+                return RXMeterCalbrationOffsetDefaults(_model);
+            }
+        }
+        public static float RXDisplayCalbrationOffset
+        {
+            get
+            {
+                return RXDisplayCalbrationOffsetDefauls(_model);
+            }
+        }
+        #endregion
+
+        #region AUDIO
+        public static bool HasAudioAmplifier
+        {
+            get
+            {
+                return NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH && //only protocol 2
+                (_model == HPSDRModel.ANAN7000D || _model == HPSDRModel.ANAN8000D ||
+                _model == HPSDRModel.ANVELINAPRO3 || _model == HPSDRModel.ANAN_G2 ||
+                _model == HPSDRModel.ANAN_G2_1K || _model == HPSDRModel.REDPITAYA);
+            }
+        }
+        #endregion
+
+        #region PA_GAINS
+        public static float[] DefaultPAGainsForBands(HPSDRModel model)
+        {
+            float[] gains = new float[(int)Band.LAST];
+
+            // max them out, these gains are PA attenuations, so 100 is no output power
+            for (int i = 0; i < (int)Band.LAST; i++)
+            {
+                gains[i] = 100f;
+            }
+
+            switch (model) 
+            {
+                case HPSDRModel.FIRST:
+                case HPSDRModel.HERMES:
+                case HPSDRModel.HPSDR:
+                case HPSDRModel.ORIONMKII:
+                    gains[(int)Band.B160M] = 41.0f;
+                    gains[(int)Band.B80M] = 41.2f;
+                    gains[(int)Band.B60M] = 41.3f;
+                    gains[(int)Band.B40M] = 41.3f;
+                    gains[(int)Band.B30M] = 41.0f;
+                    gains[(int)Band.B20M] = 40.5f;
+                    gains[(int)Band.B17M] = 39.9f;
+                    gains[(int)Band.B15M] = 38.8f;
+                    gains[(int)Band.B12M] = 38.8f;
+                    gains[(int)Band.B10M] = 38.8f;
+                    gains[(int)Band.B6M] = 38.8f;
+
+                    gains[(int)Band.VHF0] = 56.2f;
+                    gains[(int)Band.VHF1] = 56.2f;
+                    gains[(int)Band.VHF2] = 56.2f;
+                    gains[(int)Band.VHF3] = 56.2f;
+                    gains[(int)Band.VHF4] = 56.2f;
+                    gains[(int)Band.VHF5] = 56.2f;
+                    gains[(int)Band.VHF6] = 56.2f;
+                    gains[(int)Band.VHF7] = 56.2f;
+                    gains[(int)Band.VHF8] = 56.2f;
+                    gains[(int)Band.VHF9] = 56.2f;
+                    gains[(int)Band.VHF10] = 56.2f;
+                    gains[(int)Band.VHF11] = 56.2f;
+                    gains[(int)Band.VHF12] = 56.2f;
+                    gains[(int)Band.VHF13] = 56.2f;
+
+                    return gains;
+
+                case HPSDRModel.ANAN10:
+                case HPSDRModel.ANAN10E:
+                    gains[(int)Band.B160M] = 41.0f;
+                    gains[(int)Band.B80M] = 41.2f;
+                    gains[(int)Band.B60M] = 41.3f;
+                    gains[(int)Band.B40M] = 41.3f;
+                    gains[(int)Band.B30M] = 41.0f;
+                    gains[(int)Band.B20M] = 40.5f;
+                    gains[(int)Band.B17M] = 39.9f;
+                    gains[(int)Band.B15M] = 38.8f;
+                    gains[(int)Band.B12M] = 38.8f;
+                    gains[(int)Band.B10M] = 38.8f;
+                    gains[(int)Band.B6M] = 38.8f;
+
+                    gains[(int)Band.VHF0] = 56.2f;
+                    gains[(int)Band.VHF1] = 56.2f;
+                    gains[(int)Band.VHF2] = 56.2f;
+                    gains[(int)Band.VHF3] = 56.2f;
+                    gains[(int)Band.VHF4] = 56.2f;
+                    gains[(int)Band.VHF5] = 56.2f;
+                    gains[(int)Band.VHF6] = 56.2f;
+                    gains[(int)Band.VHF7] = 56.2f;
+                    gains[(int)Band.VHF8] = 56.2f;
+                    gains[(int)Band.VHF9] = 56.2f;
+                    gains[(int)Band.VHF10] = 56.2f;
+                    gains[(int)Band.VHF11] = 56.2f;
+                    gains[(int)Band.VHF12] = 56.2f;
+                    gains[(int)Band.VHF13] = 56.2f;
+
+                    return gains;
+
+                case HPSDRModel.ANAN100:
+                    gains[(int)Band.B160M] = 50.0f;
+                    gains[(int)Band.B80M] = 50.5f;
+                    gains[(int)Band.B60M] = 50.5f;
+                    gains[(int)Band.B40M] = 50.0f;
+                    gains[(int)Band.B30M] = 49.5f;
+                    gains[(int)Band.B20M] = 48.5f;
+                    gains[(int)Band.B17M] = 48.0f;
+                    gains[(int)Band.B15M] = 47.5f;
+                    gains[(int)Band.B12M] = 46.5f;
+                    gains[(int)Band.B10M] = 42.0f;
+                    gains[(int)Band.B6M] = 43.0f;
+
+                    gains[(int)Band.VHF0] = 56.2f;
+                    gains[(int)Band.VHF1] = 56.2f;
+                    gains[(int)Band.VHF2] = 56.2f;
+                    gains[(int)Band.VHF3] = 56.2f;
+                    gains[(int)Band.VHF4] = 56.2f;
+                    gains[(int)Band.VHF5] = 56.2f;
+                    gains[(int)Band.VHF6] = 56.2f;
+                    gains[(int)Band.VHF7] = 56.2f;
+                    gains[(int)Band.VHF8] = 56.2f;
+                    gains[(int)Band.VHF9] = 56.2f;
+                    gains[(int)Band.VHF10] = 56.2f;
+                    gains[(int)Band.VHF11] = 56.2f;
+                    gains[(int)Band.VHF12] = 56.2f;
+                    gains[(int)Band.VHF13] = 56.2f;
+
+                    return gains;
+
+                case HPSDRModel.ANAN100B:
+                    gains[(int)Band.B160M] = 50.0f;
+                    gains[(int)Band.B80M] = 50.5f;
+                    gains[(int)Band.B60M] = 50.5f;
+                    gains[(int)Band.B40M] = 50.0f;
+                    gains[(int)Band.B30M] = 49.5f;
+                    gains[(int)Band.B20M] = 48.5f;
+                    gains[(int)Band.B17M] = 48.0f;
+                    gains[(int)Band.B15M] = 47.5f;
+                    gains[(int)Band.B12M] = 46.5f;
+                    gains[(int)Band.B10M] = 42.0f;
+                    gains[(int)Band.B6M] = 43.0f;
+
+                    gains[(int)Band.VHF0] = 56.2f;
+                    gains[(int)Band.VHF1] = 56.2f;
+                    gains[(int)Band.VHF2] = 56.2f;
+                    gains[(int)Band.VHF3] = 56.2f;
+                    gains[(int)Band.VHF4] = 56.2f;
+                    gains[(int)Band.VHF5] = 56.2f;
+                    gains[(int)Band.VHF6] = 56.2f;
+                    gains[(int)Band.VHF7] = 56.2f;
+                    gains[(int)Band.VHF8] = 56.2f;
+                    gains[(int)Band.VHF9] = 56.2f;
+                    gains[(int)Band.VHF10] = 56.2f;
+                    gains[(int)Band.VHF11] = 56.2f;
+                    gains[(int)Band.VHF12] = 56.2f;
+                    gains[(int)Band.VHF13] = 56.2f;
+
+                    return gains;
+
+                case HPSDRModel.ANAN100D:
+                    gains[(int)Band.B160M] = 49.5f;
+                    gains[(int)Band.B80M] = 50.5f;
+                    gains[(int)Band.B60M] = 50.5f;
+                    gains[(int)Band.B40M] = 50.0f;
+                    gains[(int)Band.B30M] = 49.0f;
+                    gains[(int)Band.B20M] = 48.0f;
+                    gains[(int)Band.B17M] = 47.0f;
+                    gains[(int)Band.B15M] = 46.5f;
+                    gains[(int)Band.B12M] = 46.0f;
+                    gains[(int)Band.B10M] = 43.5f;
+                    gains[(int)Band.B6M] = 43.0f;
+
+                    gains[(int)Band.VHF0] = 56.2f;
+                    gains[(int)Band.VHF1] = 56.2f;
+                    gains[(int)Band.VHF2] = 56.2f;
+                    gains[(int)Band.VHF3] = 56.2f;
+                    gains[(int)Band.VHF4] = 56.2f;
+                    gains[(int)Band.VHF5] = 56.2f;
+                    gains[(int)Band.VHF6] = 56.2f;
+                    gains[(int)Band.VHF7] = 56.2f;
+                    gains[(int)Band.VHF8] = 56.2f;
+                    gains[(int)Band.VHF9] = 56.2f;
+                    gains[(int)Band.VHF10] = 56.2f;
+                    gains[(int)Band.VHF11] = 56.2f;
+                    gains[(int)Band.VHF12] = 56.2f;
+                    gains[(int)Band.VHF13] = 56.2f;
+
+                    return gains;
+
+                case HPSDRModel.ANAN200D:
+                    gains[(int)Band.B160M] = 49.5f;
+                    gains[(int)Band.B80M] = 50.5f;
+                    gains[(int)Band.B60M] = 50.5f;
+                    gains[(int)Band.B40M] = 50.0f;
+                    gains[(int)Band.B30M] = 49.0f;
+                    gains[(int)Band.B20M] = 48.0f;
+                    gains[(int)Band.B17M] = 47.0f;
+                    gains[(int)Band.B15M] = 46.5f;
+                    gains[(int)Band.B12M] = 46.0f;
+                    gains[(int)Band.B10M] = 43.5f;
+                    gains[(int)Band.B6M] = 43.0f;
+
+                    gains[(int)Band.VHF0] = 56.2f;
+                    gains[(int)Band.VHF1] = 56.2f;
+                    gains[(int)Band.VHF2] = 56.2f;
+                    gains[(int)Band.VHF3] = 56.2f;
+                    gains[(int)Band.VHF4] = 56.2f;
+                    gains[(int)Band.VHF5] = 56.2f;
+                    gains[(int)Band.VHF6] = 56.2f;
+                    gains[(int)Band.VHF7] = 56.2f;
+                    gains[(int)Band.VHF8] = 56.2f;
+                    gains[(int)Band.VHF9] = 56.2f;
+                    gains[(int)Band.VHF10] = 56.2f;
+                    gains[(int)Band.VHF11] = 56.2f;
+                    gains[(int)Band.VHF12] = 56.2f;
+                    gains[(int)Band.VHF13] = 56.2f;
+
+                    return gains;
+
+                case HPSDRModel.ANAN8000D:
+                    gains[(int)Band.B160M] = 50.0f;
+                    gains[(int)Band.B80M] = 50.5f;
+                    gains[(int)Band.B60M] = 50.5f;
+                    gains[(int)Band.B40M] = 50.0f;
+                    gains[(int)Band.B30M] = 49.5f;
+                    gains[(int)Band.B20M] = 48.5f;
+                    gains[(int)Band.B17M] = 48.0f;
+                    gains[(int)Band.B15M] = 47.5f;
+                    gains[(int)Band.B12M] = 46.5f;
+                    gains[(int)Band.B10M] = 42.0f;
+                    gains[(int)Band.B6M] = 43.0f;
+
+                    gains[(int)Band.VHF0] = 56.2f;
+                    gains[(int)Band.VHF1] = 56.2f;
+                    gains[(int)Band.VHF2] = 56.2f;
+                    gains[(int)Band.VHF3] = 56.2f;
+                    gains[(int)Band.VHF4] = 56.2f;
+                    gains[(int)Band.VHF5] = 56.2f;
+                    gains[(int)Band.VHF6] = 56.2f;
+                    gains[(int)Band.VHF7] = 56.2f;
+                    gains[(int)Band.VHF8] = 56.2f;
+                    gains[(int)Band.VHF9] = 56.2f;
+                    gains[(int)Band.VHF10] = 56.2f;
+                    gains[(int)Band.VHF11] = 56.2f;
+                    gains[(int)Band.VHF12] = 56.2f;
+                    gains[(int)Band.VHF13] = 56.2f;
+
+                    return gains;
+
+                case HPSDRModel.ANAN7000D:
+                case HPSDRModel.ANAN_G2:
+                case HPSDRModel.ANVELINAPRO3:
+                case HPSDRModel.REDPITAYA:
+                    gains[(int)Band.B160M] = 47.9f;
+                    gains[(int)Band.B80M] = 50.5f;
+                    gains[(int)Band.B60M] = 50.8f;
+                    gains[(int)Band.B40M] = 50.8f;
+                    gains[(int)Band.B30M] = 50.9f;
+                    gains[(int)Band.B20M] = 50.9f;
+                    gains[(int)Band.B17M] = 50.5f;
+                    gains[(int)Band.B15M] = 47.0f;
+                    gains[(int)Band.B12M] = 47.9f;
+                    gains[(int)Band.B10M] = 46.5f;
+                    gains[(int)Band.B6M] = 44.6f;
+
+                    gains[(int)Band.VHF0] = 63.1f;
+                    gains[(int)Band.VHF1] = 63.1f;
+                    gains[(int)Band.VHF2] = 63.1f;
+                    gains[(int)Band.VHF3] = 63.1f;
+                    gains[(int)Band.VHF4] = 63.1f;
+                    gains[(int)Band.VHF5] = 63.1f;
+                    gains[(int)Band.VHF6] = 63.1f;
+                    gains[(int)Band.VHF7] = 63.1f;
+                    gains[(int)Band.VHF8] = 63.1f;
+                    gains[(int)Band.VHF9] = 63.1f;
+                    gains[(int)Band.VHF10] = 63.1f;
+                    gains[(int)Band.VHF11] = 63.1f;
+                    gains[(int)Band.VHF12] = 63.1f;
+                    gains[(int)Band.VHF13] = 63.1f;
+
+                    return gains;
+
+                case HPSDRModel.ANAN_G2_1K:
+                    gains[(int)Band.B160M] = 47.9f;
+                    gains[(int)Band.B80M] = 50.5f;
+                    gains[(int)Band.B60M] = 50.8f;
+                    gains[(int)Band.B40M] = 50.8f;
+                    gains[(int)Band.B30M] = 50.9f;
+                    gains[(int)Band.B20M] = 50.9f;
+                    gains[(int)Band.B17M] = 50.5f;
+                    gains[(int)Band.B15M] = 47.0f;
+                    gains[(int)Band.B12M] = 47.9f;
+                    gains[(int)Band.B10M] = 46.5f;
+                    gains[(int)Band.B6M] = 44.6f;
+
+                    gains[(int)Band.VHF0] = 63.1f;
+                    gains[(int)Band.VHF1] = 63.1f;
+                    gains[(int)Band.VHF2] = 63.1f;
+                    gains[(int)Band.VHF3] = 63.1f;
+                    gains[(int)Band.VHF4] = 63.1f;
+                    gains[(int)Band.VHF5] = 63.1f;
+                    gains[(int)Band.VHF6] = 63.1f;
+                    gains[(int)Band.VHF7] = 63.1f;
+                    gains[(int)Band.VHF8] = 63.1f;
+                    gains[(int)Band.VHF9] = 63.1f;
+                    gains[(int)Band.VHF10] = 63.1f;
+                    gains[(int)Band.VHF11] = 63.1f;
+                    gains[(int)Band.VHF12] = 63.1f;
+                    gains[(int)Band.VHF13] = 63.1f;
+
+                    return gains;
+
+                default:
+                    return gains;
+            }
+        }
+        public static float[] DefaultPAGainsForBands()
+        {
+            return DefaultPAGainsForBands(_model);
+        }
+        #endregion
     }
 }
