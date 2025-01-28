@@ -752,8 +752,12 @@ namespace Thetis
                 puresignal.SetPSHWPeak(_txachannel, _PShwpeak);
 
                 //double set_pk = GetDefaultPeak();
-                pbWarningSetPk.Visible = _PShwpeak != HardwareSpecific.PSDefaultPeak;//set_pk; //[2.10.3.7]MW0LGE show a warning if the setpk is different to what we expect for this hardware
+                UpdateWarningSetPk();
             }                       
+        }
+        public void UpdateWarningSetPk()
+        {
+            pbWarningSetPk.Visible = _PShwpeak != HardwareSpecific.PSDefaultPeak;//set_pk; //[2.10.3.7]MW0LGE show a warning if the setpk is different to what we expect for this hardware
         }
 
         private void chkPSRelaxPtol_CheckedChanged(object sender, EventArgs e)

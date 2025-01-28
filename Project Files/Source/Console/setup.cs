@@ -603,6 +603,10 @@ namespace Thetis
 
             ForceAllEvents();
 
+            //model known, update anything that might have been initialsed without this being known
+            if (console.psform != null) console.psform.UpdateWarningSetPk();
+            //
+
             EventArgs e = EventArgs.Empty;
             tbRX1FilterAlpha_Scroll(this, e);
             tbTXFilterAlpha_Scroll(this, e);
@@ -2116,6 +2120,7 @@ namespace Thetis
 
             // General Tab
             comboRadioModel_SelectedIndexChanged(this, e);
+
             udGeneralLPTDelay_ValueChanged(this, e);
             chkGeneralRXOnly_CheckedChanged(this, e);
             comboGeneralXVTR_SelectedIndexChanged(this, e);
