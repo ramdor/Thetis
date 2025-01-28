@@ -63,6 +63,7 @@ namespace Thetis
     using System.Collections.Concurrent;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using System.Diagnostics.Contracts;
+    using Newtonsoft.Json.Bson;
 
     public partial class Console : Form
     {
@@ -45591,7 +45592,17 @@ namespace Thetis
                 SetupForm.AlexHPFBypass = true;
             }
         }
+        public void UpdatePIVisibilty()
+        {
+            pIToolStripMenuItem.Visible = HardwareSpecific.SupportsPathIllustrator;
 
+            if(!HardwareSpecific.SupportsPathIllustrator && path_Illustrator != null)
+            {
+                path_Illustrator.Close();
+                path_Illustrator.Dispose();
+                path_Illustrator = null;
+            }
+        }
         private void pIToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (path_Illustrator == null || path_Illustrator.IsDisposed)

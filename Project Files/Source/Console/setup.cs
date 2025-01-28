@@ -19710,6 +19710,12 @@ namespace Thetis
 
             comboAudioSampleRateRX2.Enabled = true;
 
+            groupBoxRXOptions.Text = HardwareSpecific.ModelString + " Options";
+            grpMetisAddr.Text = HardwareSpecific.ModelString + " Address";
+            grpHermesStepAttenuator.Text = HardwareSpecific.ModelString + " Step Atten";
+
+            console.UpdatePIVisibilty();
+
             switch (HardwareSpecific.Model)
             {
                 case HPSDRModel.HERMES:
@@ -19724,9 +19730,9 @@ namespace Thetis
                     chkRX2StepAtt.Checked = false;
                     chkRX2StepAtt.Enabled = false;
                     udHermesStepAttenuatorDataRX2.Enabled = false;
-                    groupBoxRXOptions.Text = "Hermes Options";
-                    grpMetisAddr.Text = "Hermes Address";
-                    grpHermesStepAttenuator.Text = "Hermes Step Attenuator";
+                    //groupBoxRXOptions.Text = "Hermes Options";
+                    //grpMetisAddr.Text = "Hermes Address";
+                    //grpHermesStepAttenuator.Text = "Hermes Step Attenuator";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
                     labelRXAntControl.Text = "  RX1   RX2    XVTR";
@@ -19768,9 +19774,9 @@ namespace Thetis
                     chkRX2StepAtt.Checked = false;
                     chkRX2StepAtt.Enabled = false;
                     udHermesStepAttenuatorDataRX2.Enabled = false;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     tpAlexControl.Text = "Ant/Filters";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
@@ -19816,9 +19822,9 @@ namespace Thetis
                     chkRX2StepAtt.Checked = false;
                     chkRX2StepAtt.Enabled = false;
                     udHermesStepAttenuatorDataRX2.Enabled = false;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     tpAlexControl.Text = "Ant/Filters";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
@@ -19860,9 +19866,9 @@ namespace Thetis
                     chkRX2StepAtt.Checked = false;
                     chkRX2StepAtt.Enabled = false;
                     udHermesStepAttenuatorDataRX2.Enabled = false;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -19912,9 +19918,9 @@ namespace Thetis
                     chkRX2StepAtt.Checked = false;
                     chkRX2StepAtt.Enabled = false;
                     udHermesStepAttenuatorDataRX2.Enabled = false;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -19959,9 +19965,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -20012,9 +20018,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
                     chkBypassANANPASettings.Visible = true;
@@ -20064,9 +20070,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -20128,9 +20134,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -20195,9 +20201,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -20259,9 +20265,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -20323,9 +20329,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -20387,9 +20393,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "RED-PITAYA Options";
-                    grpMetisAddr.Text = "RED-PITAYA Address";
-                    grpHermesStepAttenuator.Text = "Step Attenuator";
+                    //groupBoxRXOptions.Text = "RED-PITAYA Options";
+                    //grpMetisAddr.Text = "RED-PITAYA Address";
+                    //grpHermesStepAttenuator.Text = "Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;

@@ -368,6 +368,10 @@ namespace Thetis
                     return "HERMES";
             }
         }
+        public static string ModelString
+        {
+            get { return EnumModelToString(_model); }
+        }            
         #endregion
 
         #region RX_CALIBRATION_OFFSET
@@ -731,6 +735,17 @@ namespace Thetis
         public static float[] DefaultPAGainsForBands()
         {
             return DefaultPAGainsForBands(_model);
+        }
+        #endregion
+
+        #region UI
+        public static bool SupportsPathIllustrator
+        {
+            get
+            {
+                return !(_model == HPSDRModel.ORIONMKII || _model == HPSDRModel.ANAN7000D || _model == HPSDRModel.ANAN8000D ||
+                    _model == HPSDRModel.ANAN_G2 || _model == HPSDRModel.ANAN_G2_1K || _model == HPSDRModel.ANVELINAPRO3 || _model == HPSDRModel.REDPITAYA);
+            }
         }
         #endregion
     }
