@@ -21324,6 +21324,7 @@ namespace Thetis
                 if (entry.band == target_band) tmplist.Add(entry);
             }
 
+            // put the ones we want to keep back, and keep the correct order
             for (int i = tmplist.Count - 1; i >= 0; i--)
             {
                 readings_stack.Push(tmplist[i]);
@@ -21427,10 +21428,11 @@ namespace Thetis
                     if ((_adc_overloaded[0] && nRX1ADCinUse == 0) || (_adc_overloaded[1] && nRX1ADCinUse == 1)) // rx1 overload
                     {
                         HistoricAttenuatorReading har = new HistoricAttenuatorReading();
+                        har.band = RX1Band;
+
                         if (RX1StepAttPresent)
                         {
                             har.stepAttenuator = RX1AttenuatorData;
-                            har.band = RX1Band;
 
                             int att = har.stepAttenuator + (_adc_overloaded[0] ? _adc_step_shift[0] : _adc_step_shift[1]);
                             if (att > 31) att = 31;
@@ -21446,7 +21448,7 @@ namespace Thetis
                         }
                         else
                         {
-                            har.preampMode = RX1PreampMode;
+                            har.preampMode = RX1PreampMode;                            
 
                             PreampMode pam = har.preampMode;
                             switch (pam)
