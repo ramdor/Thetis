@@ -186,28 +186,6 @@ namespace Thetis
             }
 
             if (m_oneLineBuf.Length > 255) m_oneLineBuf.Clear();
-
-
-            //string data = Encoding.ASCII.GetString(byteBuffer, 0, size);
-            //int lineEndIndex = 0;
-
-            //do
-            //{
-            //	lineEndIndex = data.IndexOf(";");
-            //	if (lineEndIndex != -1)
-            //	{
-            //		m_oneLineBuf = m_oneLineBuf.Append(data, 0, lineEndIndex + 1);
-            //		processClientData(m_oneLineBuf.ToString());
-            //		m_oneLineBuf.Remove(0, m_oneLineBuf.Length);
-            //		data = data.Substring(lineEndIndex + 1,
-            //			data.Length - lineEndIndex - 1);
-            //	}
-            //	else
-            //	{
-            //		m_oneLineBuf = m_oneLineBuf.Append(data);
-            //		if (m_oneLineBuf.Length > 255) m_oneLineBuf.Clear(); // Just clear it out, likely not to be CAT command being over 255 chars long
-            //	}
-            //} while (lineEndIndex != -1);
         }
 
 		private void processClientData(string sInboundCatCommand)

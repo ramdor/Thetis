@@ -19731,11 +19731,11 @@ namespace Thetis
             set { chkPower.Checked = value; }
         }
 
-        public bool PowerEnabled
-        {
-            get { return chkPower.Enabled; }
-            set { chkPower.Enabled = value; }
-        }
+        //public bool PowerEnabled
+        //{
+        //    get { return chkPower.Enabled; }
+        //    set { chkPower.Enabled = value; }
+        //}
 
         private bool vac_sound_card_stereo = false;
         public bool VACSoundCardStereo
@@ -21134,8 +21134,8 @@ namespace Thetis
         private Stack<HistoricAttenuatorReading> _historic_attenuator_readings_tx = new Stack<HistoricAttenuatorReading>();       
         private bool _auto_attTX_when_not_in_ps = false;
         private bool _auto_undoTXatt = false;
-        private bool _auto_attTX_rx1 = false;
-        private bool _auto_attTX_rx2 = false;
+        private bool _auto_att_rx1 = false;
+        private bool _auto_att_rx2 = false;
         private bool _auto_att_undo_rx1 = false;
         private bool _auto_att_undo_rx2 = false;
         private int _auto_att_hold_delay_rx1 = 5;
@@ -21144,8 +21144,8 @@ namespace Thetis
         private DateTime _auto_att_last_hold_time_rx2 = DateTime.Now;
         public bool AutoAttRX1
         {
-            get { return _auto_attTX_rx1; }
-            set { _auto_attTX_rx1 = value; }
+            get { return _auto_att_rx1; }
+            set { _auto_att_rx1 = value; }
         }
         public bool AutoAttUndoRX1
         {
@@ -21159,8 +21159,8 @@ namespace Thetis
         }
         public bool AutoAttRX2
         {
-            get { return _auto_attTX_rx2; }
-            set { _auto_attTX_rx2 = value; }
+            get { return _auto_att_rx2; }
+            set { _auto_att_rx2 = value; }
         }
         public bool AutoAttUndoRX2
         {
@@ -21418,9 +21418,9 @@ namespace Thetis
                             HardwareSpecific.Model == HPSDRModel.ANAN100D || HardwareSpecific.Model == HPSDRModel.ANAN200D ||
                             HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
                             HardwareSpecific.Model == HPSDRModel.ANAN_G2 || HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
-                            HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.REDPITAYA;//DH1KLM
+                            HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.REDPITAYA;
 
-                if (_auto_attTX_rx1 && radioHasRx1Att)
+                if (_auto_att_rx1 && radioHasRx1Att)
                 {
                     int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
 
@@ -21479,12 +21479,12 @@ namespace Thetis
                         if (!_auto_att_undo_rx1 || (_auto_att_undo_rx1 && ((now - _auto_att_last_hold_time_rx1).TotalSeconds >= _auto_att_hold_delay_rx1)))
                         {
                             // unwind
-                            HistoricAttenuatorReading har = _historic_attenuator_readings_rx1.Pop();
+                            HistoricAttenuatorReading har = _historic_attenuator_readings_rx1.Pop();                            
                             if (har != null && _auto_att_undo_rx1)
                             {
                                 if (RX1StepAttPresent && har.stepAttenuator != -1)
                                 {
-                                    if (har.stepAttenuator != RX1AttenuatorData) RX1AttenuatorData = har.stepAttenuator;
+                                    if (har.stepAttenuator != RX1AttenuatorData) RX1AttenuatorData = har.stepAttenuator;                                    
                                 }
                                 else if (har.preampMode != PreampMode.FIRST)
                                 {
@@ -21503,8 +21503,9 @@ namespace Thetis
                             HardwareSpecific.Model == HPSDRModel.ANAN_G2 || HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
                             HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.REDPITAYA;
 
-                if (_auto_attTX_rx2 && radioHasRx2Att)
+                if (_auto_att_rx2 && radioHasRx2Att)
                 {
+                    int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
                     int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
 
                     // rx2
@@ -21563,7 +21564,10 @@ namespace Thetis
                         {
                             // unwind
                             HistoricAttenuatorReading har = _historic_attenuator_readings_rx2.Pop();
-                            if (har != null && _auto_att_undo_rx2)
+
+                            bool adcs_linked = nRX1ADCinUse == nRX2ADCinUse;
+
+                            if (!adcs_linked && har != null && _auto_att_undo_rx2) //[2.10.3.9]MW0LGE ignore if adcs linked, as will be maintained by rx1 data
                             {
                                 if (RX2StepAttPresent && har.stepAttenuator != -1)
                                 {
@@ -27478,11 +27482,12 @@ namespace Thetis
         {
             // ignore if dbman shown, prevents external sources from doing this such as midi/cat
             // whilst DB man is in use
-            if(DBMan.IsVisible && chkPower.Checked)
+            if (DBMan.IsVisible && chkPower.Checked)
             {
-                PowerOn = false;
+                chkPower.Checked = false;
                 return;
             }
+            //
 
             if (chkPower.Checked)
             {
@@ -45254,7 +45259,6 @@ namespace Thetis
         {
             if (_updatingRX2StepAttData) return;
             _updatingRX2StepAttData = true;
-
             if (!IsSetupFormNull) SetupForm.ATTOnRX2 = (int)udRX2StepAttData.Value; //[2.10.3.6]MW0LGE
             if (udRX2StepAttData.Focused) btnHidden.Focus();
             if (sliderForm != null) sliderForm.RX2Atten = (int)udRX2StepAttData.Value;
