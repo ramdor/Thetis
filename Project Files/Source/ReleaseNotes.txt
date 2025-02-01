@@ -35,6 +35,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] volt sens fix for G2, would cause an error log from time to time
 - [fix] fix for tcpip cat server where if a multiple cat message arrived, then only the first would be processed
 - [fix] simulated tci spot clicks using bespoke TCI message [spot_simulate_click] now also sends out [rx_clicked_on_spot] defaulted to rx1 and vfoa
+- [fix] when adcs were linked, unwinding of adc overload attenuation did not always return to original att
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked

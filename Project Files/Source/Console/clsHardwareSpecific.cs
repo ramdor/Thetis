@@ -253,9 +253,12 @@ namespace Thetis
                     sens = 88.0f;
                     break;
                 case HPSDRModel.ANAN_G2:
+                    voff = 0.001f;                                // current sensor voltage offset
+                    sens = 66.23f;                                // current reading sensitivity //0.001 to prevent /0 in the calcs
+                    break;
                 case HPSDRModel.ANAN_G2_1K:                       // will need adjustment probably
-                    voff = 66.23f;                                // current reading sensitivity
-                    sens = 0.001f;                                // current sensor voltage offset //0.001 to prevent /0 in the calcs
+                    voff = 0.001f;                                // current sensor voltage offset
+                    sens = 66.23f;                                // current reading sensitivity //0.001 to prevent /0 in the calcs
                     break;
                 default:
                     voff = 360.0f;
