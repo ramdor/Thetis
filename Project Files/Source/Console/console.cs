@@ -2177,7 +2177,10 @@ namespace Thetis
             }
             UpdateStatusBarStatusIcons(StatusBarIconGroup.TCPIPCat);
         }
+        private void closeTcpIpCatServer()
+        {
 
+        }
         //TCI
         private bool _tci_ptt = false;
         public bool TCIPTT
@@ -28390,9 +28393,10 @@ namespace Thetis
             if (m_tcpCATServer != null)
             {
                 shutdownLogStringToPath("Before m_tcpCATServer.StopServer()");
-                bool wasRunning = m_tcpCATServer.IsServerRunning;
+                NetworkIO.SetCATPort(0); // tell the hardware the cat port is now 'gone'
+                Thread.Sleep(100); // give some flight time delay
                 m_tcpCATServer.StopServer();
-                if (wasRunning) removeTCPIPcatDelegates();
+                removeTCPIPcatDelegates();
             }
 
             shutdownLogStringToPath("Before infoBar.ShutDown()");
