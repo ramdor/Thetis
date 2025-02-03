@@ -2149,16 +2149,16 @@ namespace Thetis
 
                     m_tcpCATServer.StartServer(this, m_bTCPIPcatWelcomeMessage);
 
-                    if (!m_tcpCATServer.IsServerRunning)
+                    if (m_tcpCATServer.IsServerRunning)
+                    {
+                        NetworkIO.SetCATPort(m_nTCPIPCatPort); // tell the hardware the cat port
+                    }
+                    else
                     {
                         if (!IsSetupFormNull) SetupForm.DisableTCPIPCatServerDueToError();
                         removeTCPIPcatDelegates();
                         MessageBox.Show("Unable to start the server." + Environment.NewLine + Environment.NewLine + "[ " + m_tcpCATServer.LastError + " ]", "TCPIP CAT Server",
                             MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                    }
-                    else
-                    {
-                        NetworkIO.SetCATPort(m_nTCPIPCatPort);
                     }
                 }
                 //
@@ -2167,9 +2167,12 @@ namespace Thetis
             {
                 if (m_tcpCATServer != null)
                 {
+                    NetworkIO.SetCATPort(0); // tell the hardware the cat port is now 'gone'
+                    Thread.Sleep(100); // give some flight time delay
+
                     m_tcpCATServer.CloseLog();
                     m_tcpCATServer.StopServer();
-                    removeTCPIPcatDelegates();
+                    removeTCPIPcatDelegates();                    
                 }
             }
             UpdateStatusBarStatusIcons(StatusBarIconGroup.TCPIPCat);
