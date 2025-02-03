@@ -28386,9 +28386,8 @@ namespace Thetis
             if (m_tcpTCIServer != null)
             {
                 shutdownLogStringToPath("Before m_tcpTCIServer.StopServer()");
-                bool wasRunning = m_tcpTCIServer.IsServerRunning;
                 m_tcpTCIServer.StopServer();
-                if (wasRunning) removeTCIDelegates();
+                removeTCIDelegates();
             }
             if (m_tcpCATServer != null)
             {
