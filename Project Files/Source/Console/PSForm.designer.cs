@@ -84,6 +84,7 @@
             this.chkAdvancedViewHidden = new System.Windows.Forms.CheckBoxTS();
             this.pbWarningSetPk = new System.Windows.Forms.PictureBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.chkShow2ToneMeasurements = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.udPSMoxDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPSPhnum)).BeginInit();
             this.grpPSInfo.SuspendLayout();
@@ -834,7 +835,7 @@
             // pbWarningSetPk
             // 
             this.pbWarningSetPk.Image = ((System.Drawing.Image)(resources.GetObject("pbWarningSetPk.Image")));
-            this.pbWarningSetPk.Location = new System.Drawing.Point(501, 38);
+            this.pbWarningSetPk.Location = new System.Drawing.Point(323, 35);
             this.pbWarningSetPk.Name = "pbWarningSetPk";
             this.pbWarningSetPk.Size = new System.Drawing.Size(20, 20);
             this.pbWarningSetPk.TabIndex = 51;
@@ -842,12 +843,26 @@
             this.toolTip1.SetToolTip(this.pbWarningSetPk, resources.GetString("pbWarningSetPk.ToolTip"));
             this.pbWarningSetPk.Visible = false;
             // 
+            // chkShow2ToneMeasurements
+            // 
+            this.chkShow2ToneMeasurements.AutoSize = true;
+            this.chkShow2ToneMeasurements.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkShow2ToneMeasurements.Image = null;
+            this.chkShow2ToneMeasurements.Location = new System.Drawing.Point(389, 38);
+            this.chkShow2ToneMeasurements.Name = "chkShow2ToneMeasurements";
+            this.chkShow2ToneMeasurements.Size = new System.Drawing.Size(158, 17);
+            this.chkShow2ToneMeasurements.TabIndex = 52;
+            this.chkShow2ToneMeasurements.Text = "Show 2Tone measurements";
+            this.chkShow2ToneMeasurements.UseVisualStyleBackColor = true;
+            this.chkShow2ToneMeasurements.CheckedChanged += new System.EventHandler(this.chkShow2ToneMeasurements_CheckedChanged);
+            // 
             // PSForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(560, 303);
+            this.Controls.Add(this.chkShow2ToneMeasurements);
             this.Controls.Add(this.pbWarningSetPk);
             this.Controls.Add(this.chkAdvancedViewHidden);
             this.Controls.Add(this.chkQuickAttenuate);
@@ -950,5 +965,6 @@
         private System.Windows.Forms.CheckBoxTS chkAdvancedViewHidden;
         private System.Windows.Forms.PictureBox pbWarningSetPk;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.CheckBoxTS chkShow2ToneMeasurements;
     }
 }

@@ -6440,7 +6440,7 @@ namespace Thetis
         private void CalibrateFreq()
         {
             bool done = console.CalibrateFreq((float)udGeneralCalFreq1.Value);
-            if (done) MessageBox.Show("Frequency Calibration complete.");
+            if (done) showCalibrateDone("Frequency Calibration complete.");
             btnGeneralCalFreqStart.Enabled = true;
         }
 
@@ -6452,7 +6452,7 @@ namespace Thetis
                 progress,
                 false);
 
-            if (done) MessageBox.Show("Level Calibration complete.");
+            if (done) showCalibrateDone("Level Calibration complete.");
             btnGeneralCalLevelStart.Enabled = true;
             btnResetLevelCal.Enabled = true;
         }
@@ -6464,8 +6464,16 @@ namespace Thetis
                 (float)udGeneralCalRX2Freq2.Value,
                 progress,
                 false);
-            if (done) MessageBox.Show("Level Calibration complete.");
+            if (done) showCalibrateDone("Level Calibration complete.");
             btnCalLevel.Enabled = true;
+        }
+
+        private void showCalibrateDone(string msg)
+        {
+            MessageBox.Show(msg,
+            "Calibration",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
         }
 
         private void chkGeneralDisablePTT_CheckedChanged(object sender, System.EventArgs e)
@@ -9692,7 +9700,7 @@ namespace Thetis
             }
             bool done = false;
             done = chkPANewCal.Checked ? console.CalibratePAGain2(progress, run, false) : console.CalibratePAGain(progress, run, (int)udPACalPower.Value);
-            if (done) MessageBox.Show("PA Gain Calibration complete.");
+            if (done) showCalibrateDone("PA Gain Calibration complete.");
             btnPAGainCalibration.Enabled = true;
         }
         #endregion
@@ -11066,6 +11074,8 @@ namespace Thetis
 
                 chkTestIMD.Text = "Start";
             }
+
+            Display.TestingIMD = chkTestIMD.Checked;
         }
 
         private void cmboSigGenRXMode_SelectedIndexChanged(object sender, System.EventArgs e)

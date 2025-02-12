@@ -487,25 +487,9 @@ namespace Thetis
                 _restoreON = true;
             }
         }
-        //public double GetDefaultPeak()
-        //{
-        //    if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
-        //    {
-        //        //protocol 1
-        //        return 0.4072;
-        //    }
-        //    else
-        //    {
-        //        //protocol 2
-        //        if (HardwareSpecific.Hardware == HPSDRHW.Saturn)
-        //            return 0.6121;
-        //        else
-        //            return 0.2899;
-        //    }
-        //}
         public void SetDefaultPeaks()
         {
-            PSdefpeak(/*GetDefaultPeak()*/HardwareSpecific.PSDefaultPeak);
+            PSdefpeak(HardwareSpecific.PSDefaultPeak);
         }
         #region PSLoops
 
@@ -757,7 +741,7 @@ namespace Thetis
         }
         public void UpdateWarningSetPk()
         {
-            pbWarningSetPk.Visible = _PShwpeak != HardwareSpecific.PSDefaultPeak;//set_pk; //[2.10.3.7]MW0LGE show a warning if the setpk is different to what we expect for this hardware
+            pbWarningSetPk.Visible = _PShwpeak != HardwareSpecific.PSDefaultPeak; //[2.10.3.7]MW0LGE show a warning if the setpk is different to what we expect for this hardware
         }
 
         private void chkPSRelaxPtol_CheckedChanged(object sender, EventArgs e)
@@ -908,6 +892,7 @@ namespace Thetis
             comboPSTint_SelectedIndexChanged(this, e);
             chkPSOnTop_CheckedChanged(this, e);
             chkQuickAttenuate_CheckedChanged(this, e);
+            chkShow2ToneMeasurements_CheckedChanged(this, e);
         }
 
         #endregion
@@ -920,6 +905,11 @@ namespace Thetis
         private void btnDefaultPeaks_Click(object sender, EventArgs e)
         {
             SetDefaultPeaks();
+        }
+
+        private void chkShow2ToneMeasurements_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.ShowIMDMeasurments = chkShow2ToneMeasurements.Checked;
         }
     }
 
