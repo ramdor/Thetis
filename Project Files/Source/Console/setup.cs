@@ -605,7 +605,7 @@ namespace Thetis
 
             //model known, update anything that might have been initialsed without this being known
             if (console.psform != null) console.psform.UpdateWarningSetPk();
-            //
+
 
             EventArgs e = EventArgs.Empty;
             tbRX1FilterAlpha_Scroll(this, e);
@@ -19702,24 +19702,14 @@ namespace Thetis
             if (initializing) return;
             console.QSOTimerFlashAfterAutoReset = chkQSOTimerFlashTimerIfResetOnExpiry.Checked;
         }
-        private bool _firstRadioModelChange = true;
         private void comboRadioModel_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return; // forceallevents will call this  // [2.10.1.0] MW0LGE renabled
 
             bool power = console.PowerOn;
 
-            HPSDRModel old_model;
-            if (_firstRadioModelChange) // unset state // [2.10.1.0] MW0LGE
-                old_model = HardwareSpecific.StringModelToEnum(comboRadioModel.Text);
-            else
-                old_model = HardwareSpecific.Model;
-
             HPSDRModel new_model = HardwareSpecific.StringModelToEnum(comboRadioModel.Text);
-
-            /////
             HardwareSpecific.Model = new_model; //IMPORTANT: THE SINGLE ASSIGNMENT TO MODEL !!
-            /////
 
             console.SetupForHPSDRModel();
 
@@ -20455,52 +20445,49 @@ namespace Thetis
                     break;
             }
 
-            if (old_model != HardwareSpecific.Model)
+            bool model_changed = false;
+            if (HardwareSpecific.OldModel != HardwareSpecific.Model)
             {
+                model_changed = true;
+
+                if (sender != this && console.psform != null) console.psform.SetDefaultPeaks(); // this change event caused by user selecting new model, reset the setpk
+
                 setupADCRadioButtions();
                 btnResetP2ADC_Click(this, EventArgs.Empty);
                 btnResetP1ADC_Click(this, EventArgs.Empty);
-            }
 
-            if (_firstRadioModelChange || old_model != HardwareSpecific.Model)
-            {
-                if (!initializing)
+                string sCurrentPAProfile = comboPAProfile.Text;
+
+                updatePAProfileCombo("Default - " + HardwareSpecific.Model.ToString()); //MW0LGE_22b
+
+                //[2.10.1.0] MW0LGE
+                //re-assign the current PA if it still exists, this needed because on a DB import, we are changing from HERMES to whatever is set in the DB
+                //and if the PA profile is in the new rebuilt list, let us use it instead of the radio Default
+                for (int n = 0; n < comboPAProfile.Items.Count; n++)
                 {
-                    string sCurrentPAProfile = comboPAProfile.Text;
+                    string sName = (string)comboPAProfile.Items[n];
 
-                    updatePAProfileCombo("Default - " + HardwareSpecific.Model.ToString()); //MW0LGE_22b
-
-                    //[2.10.1.0] MW0LGE
-                    //re-assign the current if it still exists, this needed because on a DB import, we are changing from HERMES to whatever is set in the DB
-                    //and if the PA profile is in the new rebuilt list, let us use it instead of the radio Default
-                    for (int n = 0; n < comboPAProfile.Items.Count; n++)
+                    if (sName == sCurrentPAProfile)
                     {
-                        string sName = (string)comboPAProfile.Items[n];
-
-                        if (sName == sCurrentPAProfile)
-                        {
-                            comboPAProfile.SelectedIndex = n;
-                            break;
-                        }
+                        comboPAProfile.SelectedIndex = n;
+                        break;
                     }
                 }
             }
 
             InitHPSDR();
 
-            if (power && (old_model != HardwareSpecific.Model))
+            if (power && model_changed)
             {
                 console.PowerOn = false;
                 Thread.Sleep(100);
             }
             cmaster.CMLoadRouterAll(HardwareSpecific.Model);
 
-            if (power && (old_model != HardwareSpecific.Model))
+            if (power && model_changed)
             {
                 console.PowerOn = true;
             }
-
-            _firstRadioModelChange = false;
 
             MeterManager.SetAntennaAuxText(RXAntChk1Name, RXAntChk2Name, RXAntChk3Name);
         }
