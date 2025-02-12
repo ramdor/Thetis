@@ -4450,7 +4450,7 @@ namespace Thetis
                     ///
                     /// new peak blob code MW0LGE_21b
                     ///
-                    if (bPeakBlobs)
+                    if (bPeakBlobs || show_imd_measurements)
                     {
                         bool bInsideFilter =  m_bInsideFilterOnly && (point.X >= filter_left_x) && (point.X <= filter_right_x);
                         if (!m_bInsideFilterOnly || bInsideFilter || show_imd_measurements)
@@ -4629,7 +4629,7 @@ namespace Thetis
                 }
 
                 // peak blobs
-                if (bPeakBlobs)
+                if (bPeakBlobs || show_imd_measurements)
                 {
                     Maximums[] maximums;
                     if (show_imd_measurements)
