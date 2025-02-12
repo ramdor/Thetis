@@ -6470,7 +6470,7 @@ namespace Thetis
 
         private void showCalibrateDone(string msg)
         {
-            MessageBox.Show(msg,
+            MessageBox.Show(this, msg,
             "Calibration",
             MessageBoxButtons.OK,
             MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -7011,6 +7011,7 @@ namespace Thetis
                         // calculate and display the new bin_width
                         double bin_width = (double)new_rate / (double)console.specRX.GetSpecRX(0).FFTSize;
                         lblDisplayBinWidth.Text = bin_width.ToString("N3");
+                        lblRX1FFT_size.Text = console.specRX.GetSpecRX(0).FFTSize.ToString();
 
                         // be sure RX2 sample rate setting is enabled, UNLESS it's a 10E or 100B
                         if (HardwareSpecific.Model == HPSDRModel.ANAN10E ||
@@ -7095,6 +7096,8 @@ namespace Thetis
                         double bin_width1 = (double)new_rate / (double)console.specRX.GetSpecRX(0).FFTSize;
                         lblDisplayBinWidth.Text = bin_width1.ToString("N3");
                         lblRX2DisplayBinWidth.Text = bin_width1.ToString("N3");
+                        lblRX1FFT_size.Text = console.specRX.GetSpecRX(0).FFTSize.ToString();
+                        lblRX2FFT_size.Text = console.specRX.GetSpecRX(0).FFTSize.ToString();
 
                         // set displayed RX2 rate equal to RX1 Rate
                         comboAudioSampleRateRX2.Enabled = false;
@@ -7179,6 +7182,7 @@ namespace Thetis
                 // calculate and display the new bin_width
                 double bin_width = (double)new_rate / (double)console.specRX.GetSpecRX(1).FFTSize;
                 lblRX2DisplayBinWidth.Text = bin_width.ToString("N3");
+                lblRX2FFT_size.Text = console.specRX.GetSpecRX(1).FFTSize.ToString();
             }
 
             console.InitFFTFillTime(2);//[2.10.1.0]MW0LGE
@@ -16100,6 +16104,7 @@ namespace Thetis
             console.UpdateRXSpectrumDisplayVars();
             double bin_width = (double)Display.SampleRateRX1 / (double)console.specRX.GetSpecRX(0).FFTSize;
             lblDisplayBinWidth.Text = bin_width.ToString("N3");
+            lblRX1FFT_size.Text = console.specRX.GetSpecRX(0).FFTSize.ToString();
             Display.RX1FFTSizeOffset = tbDisplayFFTSize.Value * 2;
 
             Display.FastAttackNoiseFloorRX1 = true;
@@ -16123,6 +16128,7 @@ namespace Thetis
             console.specRX.GetSpecRX(1).FFTSize = (int)(4096 * Math.Pow(2, Math.Floor((double)(tbRX2DisplayFFTSize.Value))));
             double bin_width = (double)Display.SampleRateRX2 / (double)console.specRX.GetSpecRX(1).FFTSize;
             lblRX2DisplayBinWidth.Text = bin_width.ToString("N3");
+            lblRX2FFT_size.Text = console.specRX.GetSpecRX(1).FFTSize.ToString();
 
             Display.RX2FFTSizeOffset = tbRX2DisplayFFTSize.Value * 2;
             Display.FastAttackNoiseFloorRX2 = true;

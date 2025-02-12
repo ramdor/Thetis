@@ -9676,7 +9676,7 @@ namespace Thetis
             double[,] buf = new double[fft_size, 2];        // buffer for complex spectrum data
             double[] sum = new double[fft_size];            // buffer for "averaged" spectrum data
 
-            int iterations = 20;                            // number of samples to average
+            int iterations = 40;                            // number of samples to average //[2.10.3.9]MW0LGE changed from 20 to 40
 
             //~~~~~
 

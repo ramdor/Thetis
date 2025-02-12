@@ -2057,6 +2057,8 @@
             this.udDisplayAVGTime = new System.Windows.Forms.NumericUpDownTS();
             this.lblDisplayAVGTime = new System.Windows.Forms.LabelTS();
             this.grpDisplayRX1Pan = new System.Windows.Forms.GroupBoxTS();
+            this.lblRX1FFT_size = new System.Windows.Forms.LabelTS();
+            this.labelTS425 = new System.Windows.Forms.LabelTS();
             this.comboDispWinType = new System.Windows.Forms.ComboBoxTS();
             this.labelTS147 = new System.Windows.Forms.LabelTS();
             this.labelTS146 = new System.Windows.Forms.LabelTS();
@@ -2130,6 +2132,8 @@
             this.udRX2DisplayAVGTime = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS143 = new System.Windows.Forms.LabelTS();
             this.grpDisplayRX2Pan = new System.Windows.Forms.GroupBoxTS();
+            this.lblRX2FFT_size = new System.Windows.Forms.LabelTS();
+            this.labelTS426 = new System.Windows.Forms.LabelTS();
             this.comboRX2DispWinType = new System.Windows.Forms.ComboBoxTS();
             this.labelTS150 = new System.Windows.Forms.LabelTS();
             this.labelTS149 = new System.Windows.Forms.LabelTS();
@@ -34061,6 +34065,8 @@
             // 
             // grpDisplayRX1Pan
             // 
+            this.grpDisplayRX1Pan.Controls.Add(this.lblRX1FFT_size);
+            this.grpDisplayRX1Pan.Controls.Add(this.labelTS425);
             this.grpDisplayRX1Pan.Controls.Add(this.comboDispWinType);
             this.grpDisplayRX1Pan.Controls.Add(this.labelTS147);
             this.grpDisplayRX1Pan.Controls.Add(this.labelTS146);
@@ -34075,6 +34081,29 @@
             this.grpDisplayRX1Pan.TabIndex = 45;
             this.grpDisplayRX1Pan.TabStop = false;
             this.grpDisplayRX1Pan.Text = "Fast Fourier Transform";
+            // 
+            // lblRX1FFT_size
+            // 
+            this.lblRX1FFT_size.AutoSize = true;
+            this.lblRX1FFT_size.BackColor = System.Drawing.Color.Bisque;
+            this.lblRX1FFT_size.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblRX1FFT_size.Image = null;
+            this.lblRX1FFT_size.Location = new System.Drawing.Point(196, 79);
+            this.lblRX1FFT_size.MinimumSize = new System.Drawing.Size(35, 0);
+            this.lblRX1FFT_size.Name = "lblRX1FFT_size";
+            this.lblRX1FFT_size.Size = new System.Drawing.Size(45, 15);
+            this.lblRX1FFT_size.TabIndex = 57;
+            this.lblRX1FFT_size.Text = "000000";
+            // 
+            // labelTS425
+            // 
+            this.labelTS425.AutoSize = true;
+            this.labelTS425.Image = null;
+            this.labelTS425.Location = new System.Drawing.Point(143, 79);
+            this.labelTS425.Name = "labelTS425";
+            this.labelTS425.Size = new System.Drawing.Size(49, 13);
+            this.labelTS425.TabIndex = 56;
+            this.labelTS425.Text = "FFT Size";
             // 
             // comboDispWinType
             // 
@@ -35198,6 +35227,8 @@
             // 
             // grpDisplayRX2Pan
             // 
+            this.grpDisplayRX2Pan.Controls.Add(this.lblRX2FFT_size);
+            this.grpDisplayRX2Pan.Controls.Add(this.labelTS426);
             this.grpDisplayRX2Pan.Controls.Add(this.comboRX2DispWinType);
             this.grpDisplayRX2Pan.Controls.Add(this.labelTS150);
             this.grpDisplayRX2Pan.Controls.Add(this.labelTS149);
@@ -35212,6 +35243,29 @@
             this.grpDisplayRX2Pan.TabIndex = 46;
             this.grpDisplayRX2Pan.TabStop = false;
             this.grpDisplayRX2Pan.Text = "Fast Fourier Transform";
+            // 
+            // lblRX2FFT_size
+            // 
+            this.lblRX2FFT_size.AutoSize = true;
+            this.lblRX2FFT_size.BackColor = System.Drawing.Color.Bisque;
+            this.lblRX2FFT_size.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblRX2FFT_size.Image = null;
+            this.lblRX2FFT_size.Location = new System.Drawing.Point(196, 79);
+            this.lblRX2FFT_size.MinimumSize = new System.Drawing.Size(35, 0);
+            this.lblRX2FFT_size.Name = "lblRX2FFT_size";
+            this.lblRX2FFT_size.Size = new System.Drawing.Size(45, 15);
+            this.lblRX2FFT_size.TabIndex = 59;
+            this.lblRX2FFT_size.Text = "000000";
+            // 
+            // labelTS426
+            // 
+            this.labelTS426.AutoSize = true;
+            this.labelTS426.Image = null;
+            this.labelTS426.Location = new System.Drawing.Point(143, 79);
+            this.labelTS426.Name = "labelTS426";
+            this.labelTS426.Size = new System.Drawing.Size(49, 13);
+            this.labelTS426.TabIndex = 58;
+            this.labelTS426.Text = "FFT Size";
             // 
             // comboRX2DispWinType
             // 
@@ -71429,5 +71483,9 @@
         public CheckBoxTS chkGridControl_minor;
         private CheckBoxTS chkShowFrequencyNumbers;
         private CheckBoxTS chkShowLedMirror;
+        private LabelTS lblRX1FFT_size;
+        private LabelTS labelTS425;
+        private LabelTS lblRX2FFT_size;
+        private LabelTS labelTS426;
     }
 }
