@@ -4799,10 +4799,10 @@ namespace Thetis
                                         "IMD3_u\n" +
                                         "IMD5_l\n" +
                                         "IMD5_u\n\n" +
-                                        "    IMD3\n" +
-                                        "    IMD5\n" +
-                                        "    OIP3\n" +
-                                        "    OIP5";
+                                        "        IMD3\n" +
+                                        "        IMD5\n" +
+                                        "        OIP3\n" +
+                                        "        OIP5";
 
                                     string val1 =
                                         _ema_f0l.ToString("f2") + "\n" +
@@ -4811,10 +4811,10 @@ namespace Thetis
                                         _ema_imd3u.ToString("f2") + "\n" +
                                         _ema_imd5l.ToString("f2") + "\n" +
                                         _ema_imd5u.ToString("f2") + "\n\n" +
-                                        _ema_imd3dBc.ToString("f2") + " dBc\n" +
-                                        _ema_imd5dBc.ToString("f2") + " dBc\n" +
-                                        _ema_oip3.ToString("f2") + " dB\n" +
-                                        _ema_oip5.ToString("f2") + " dB";
+                                        "    " + _ema_imd3dBc.ToString("f2") + " dBc\n" +
+                                        "    " + _ema_imd5dBc.ToString("f2") + " dBc\n" +
+                                        "    " + _ema_oip3.ToString("f2") + " dB\n" +
+                                        "    " + _ema_oip5.ToString("f2") + " dB";
 
                                     string val2 =
                                         (_ema_dbc - _ema_f0l).ToString("f2") + "\n" +
@@ -4825,10 +4825,11 @@ namespace Thetis
                                         (_ema_dbc - _ema_imd5u).ToString("f2");
 
                                     RoundedRectangle rr = new RoundedRectangle();
-                                    rr.Rect = new RectangleF(50, 50, 176, 180);
-                                    rr.RadiusX = 12f;
-                                    rr.RadiusY = 12f;
+                                    rr.Rect = new RectangleF(50, 50, 164, 180);
+                                    rr.RadiusX = 14f;
+                                    rr.RadiusY = 14f;
                                     _d2dRenderTarget.FillRoundedRectangle(rr, m_bDX2_m_bHightlightNumberScale);
+                                    _d2dRenderTarget.DrawRoundedRectangle(rr, m_bDX2_m_bHightlightNumbers);
 
                                     _d2dRenderTarget.DrawText("dBm        dBc", fontDX2d_callout, new RectangleF(120, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                     _d2dRenderTarget.DrawText(readings, fontDX2d_callout, new RectangleF(60, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
