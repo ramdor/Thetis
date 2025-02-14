@@ -4146,6 +4146,21 @@ namespace Thetis
                 }
             }
         }
+        // ExponentialMovingAverage previous values for 2tone calcs
+        private static float _ema_dbc = -999; //used as the init state
+
+        private static float _ema_f0l;
+        private static float _ema_f0u;
+        private static float _ema_imd3l;
+        private static float _ema_imd3u;
+        private static float _ema_imd5l;
+        private static float _ema_imd5u;
+
+        private static float _ema_imd3dBc;
+        private static float _ema_imd5dBc;
+        private static float _ema_oip3;
+        private static float _ema_oip5;
+        //
         unsafe static private bool DrawPanadapterDX2D(int nVerticalShift, int W, int H, int rx, bool bottom)
         {
             //if (grid_control) //[2.10.3.9]MW0LGE raw grid control option now just turns off the grid, all other elements are shown
@@ -4723,7 +4738,7 @@ namespace Thetis
                                 int imd5indexH = findImd(sortedhigh, 5, diff, high_x, false);
 
                                 bool ok = fL != -1 && fH != -1 && imd3indexL != -1 && imd3indexH != -1 && imd5indexL != -1 && imd5indexH != -1;
-                                
+
                                 if (ok)
                                 {
                                     float[] f = new float[] { sortedlow[fL].max_dBm, sortedhigh[fH].max_dBm };
@@ -4738,6 +4753,45 @@ namespace Thetis
                                     float oip3 = dbc + (imd3dBc / 2f);
                                     float oip5 = dbc + (imd5dBc / 2f);
 
+                                    //ExponentialMovingAverage
+                                    //previous = alpha * newValue + (1 - alpha) * previous;
+
+                                    if (_ema_dbc == -999)
+                                    {
+                                        //init state
+                                        _ema_dbc = dbc;
+
+                                        _ema_f0l = f[0];
+                                        _ema_f0u = f[1];
+                                        _ema_imd3l = imd3[0];
+                                        _ema_imd3u = imd3[1];
+                                        _ema_imd5l = imd5[0];
+                                        _ema_imd5u = imd5[1];
+
+                                        _ema_imd3dBc = imd3dBc;
+                                        _ema_imd5dBc = imd5dBc;
+                                        _ema_oip3 = oip3;
+                                        _ema_oip5 = oip5;
+                                    }
+                                    else
+                                    {
+                                        float alpha = 0.1f;
+
+                                        _ema_dbc = alpha * dbc + (1 - alpha) * _ema_dbc;
+
+                                        _ema_f0l = alpha * f[0] + (1 - alpha) * _ema_f0l;
+                                        _ema_f0u = alpha * f[1] + (1 - alpha) * _ema_f0u;
+                                        _ema_imd3l = alpha * imd3[0] + (1 - alpha) * _ema_imd3l;
+                                        _ema_imd3u = alpha * imd3[1] + (1 - alpha) * _ema_imd3u;
+                                        _ema_imd5l = alpha * imd5[0] + (1 - alpha) * _ema_imd5l;
+                                        _ema_imd5u = alpha * imd5[1] + (1 - alpha) * _ema_imd5u;
+
+                                        _ema_imd3dBc = alpha * imd3dBc + (1 - alpha) * _ema_imd3dBc;
+                                        _ema_imd5dBc = alpha * imd5dBc + (1 - alpha) * _ema_imd5dBc;
+                                        _ema_oip3 = alpha * oip3 + (1 - alpha) * _ema_oip3;
+                                        _ema_oip5 = alpha * oip5 + (1 - alpha) * _ema_oip5;
+                                    }
+
                                     string readings =
                                         "    f0_l\n" +
                                         "    f0_u\n" +
@@ -4751,24 +4805,24 @@ namespace Thetis
                                         "    OIP5";
 
                                     string val1 =
-                                        f[0].ToString("f2") + "\n" +
-                                        f[1].ToString("f2") + "\n" +
-                                        imd3[0].ToString("f2") + "\n" +
-                                        imd3[1].ToString("f2") + "\n" +
-                                        imd5[0].ToString("f2") + "\n" +
-                                        imd5[1].ToString("f2") + "\n\n" +
-                                        imd3dBc.ToString("f1") + "\n" +
-                                        imd5dBc.ToString("f1") + "\n" +
-                                        oip3.ToString("f2") + "\n" +
-                                        oip5.ToString("f2");
+                                        _ema_f0l.ToString("f2") + "\n" +
+                                        _ema_f0u.ToString("f2") + "\n" +
+                                        _ema_imd3l.ToString("f2") + "\n" +
+                                        _ema_imd3u.ToString("f2") + "\n" +
+                                        _ema_imd5l.ToString("f2") + "\n" +
+                                        _ema_imd5u.ToString("f2") + "\n\n" +
+                                        _ema_imd3dBc.ToString("f1") + "\n" +
+                                        _ema_imd5dBc.ToString("f1") + "\n" +
+                                        _ema_oip3.ToString("f2") + "\n" +
+                                        _ema_oip5.ToString("f2");
 
                                     string val2 =
-                                        (dbc - f[0]).ToString("f2") + "\n" +
-                                        (dbc - f[1]).ToString("f2") + "\n" +
-                                        (dbc - imd3[0]).ToString("f2") + "\n" +
-                                        (dbc - imd3[1]).ToString("f2") + "\n" +
-                                        (dbc - imd5[0]).ToString("f2") + "\n" +
-                                        (dbc - imd5[1]).ToString("f2");
+                                        (_ema_dbc - _ema_f0l).ToString("f2") + "\n" +
+                                        (_ema_dbc - _ema_f0u).ToString("f2") + "\n" +
+                                        (_ema_dbc - _ema_imd3l).ToString("f2") + "\n" +
+                                        (_ema_dbc - _ema_imd3u).ToString("f2") + "\n" +
+                                        (_ema_dbc - _ema_imd5l).ToString("f2") + "\n" +
+                                        (_ema_dbc - _ema_imd5u).ToString("f2");
 
                                     RoundedRectangle rr = new RoundedRectangle();
                                     rr.Rect = new RectangleF(50, 50, 176, 180);
@@ -4784,6 +4838,7 @@ namespace Thetis
                             }
                         }
                     }
+                    else if (_ema_dbc != -999) _ema_dbc = -999;
                 }
 
                 _d2dRenderTarget.PopAxisAlignedClip();
