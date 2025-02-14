@@ -4811,8 +4811,8 @@ namespace Thetis
                                         _ema_imd3u.ToString("f2") + "\n" +
                                         _ema_imd5l.ToString("f2") + "\n" +
                                         _ema_imd5u.ToString("f2") + "\n\n" +
-                                        _ema_imd3dBc.ToString("f1") + "\n" +
-                                        _ema_imd5dBc.ToString("f1") + "\n" +
+                                        _ema_imd3dBc.ToString("f2") + "\n" +
+                                        _ema_imd5dBc.ToString("f2") + "\n" +
                                         _ema_oip3.ToString("f2") + "\n" +
                                         _ema_oip5.ToString("f2");
 
