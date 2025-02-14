@@ -4746,12 +4746,13 @@ namespace Thetis
                                     float[] imd5 = new float[] { sortedlow[imd5indexL].max_dBm, sortedhigh[imd5indexH].max_dBm };
 
                                     float dbc = Math.Max(f[0], f[1]);
+                                    float dbc_min = Math.Min(f[0], f[1]);
                                     float imd3max = Math.Max(imd3[0], imd3[1]);
                                     float imd5max = Math.Max(imd5[0], imd5[1]);
-                                    float imd3dBc = dbc - imd3max;
-                                    float imd5dBc = dbc - imd5max;
-                                    float oip3 = dbc + (imd3dBc / 2f);
-                                    float oip5 = dbc + (imd5dBc / 2f);
+                                    float imd3dBc = dbc_min - imd3max;
+                                    float imd5dBc = dbc_min - imd5max;
+                                    float oip3 = dbc_min + (imd3dBc / 2f);
+                                    float oip5 = dbc_min + (imd5dBc / 2f);
 
                                     //ExponentialMovingAverage
                                     //previous = alpha * newValue + (1 - alpha) * previous;
