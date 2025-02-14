@@ -4723,37 +4723,63 @@ namespace Thetis
                                 int imd5indexH = findImd(sortedhigh, 5, diff, high_x, false);
 
                                 bool ok = fL != -1 && fH != -1 && imd3indexL != -1 && imd3indexH != -1 && imd5indexL != -1 && imd5indexH != -1;
-
+                                
                                 if (ok)
                                 {
                                     float[] f = new float[] { sortedlow[fL].max_dBm, sortedhigh[fH].max_dBm };
                                     float[] imd3 = new float[] { sortedlow[imd3indexL].max_dBm, sortedhigh[imd3indexH].max_dBm };
                                     float[] imd5 = new float[] { sortedlow[imd5indexL].max_dBm, sortedhigh[imd5indexH].max_dBm };
 
-                                    float imd3dBc = f[0] - imd3[0];
-                                    float imd5dBc = f[0] - imd5[0];
-                                    float oip3 = f[0] + (imd3dBc / 2f);
-                                    float oip5 = f[0] + (imd5dBc / 2f);
+                                    float dbc = Math.Max(f[0], f[1]);
+                                    float imd3max = Math.Max(imd3[0], imd3[1]);
+                                    float imd5max = Math.Max(imd5[0], imd5[1]);
+                                    float imd3dBc = dbc - imd3max;
+                                    float imd5dBc = dbc - imd5max;
+                                    float oip3 = dbc + (imd3dBc / 2f);
+                                    float oip5 = dbc + (imd5dBc / 2f);
 
                                     string readings =
-                                        "f1 : " + f[0].ToString("f1") + "\n" +
-                                        "f2 : " + f[1].ToString("f1") + "\n" +
-                                        "imd3_1 : " + imd3[0].ToString("f1") + "\n" +
-                                        "imd3_2 : " + imd3[1].ToString("f1") + "\n" +
-                                        "imd5_1 : " + imd5[0].ToString("f1") + "\n" +
-                                        "imd5_2 : " + imd5[1].ToString("f1") + "\n" +
-                                        "IMD3 (dBc) : " + imd3dBc.ToString("f1") + "\n" +
-                                        "IMD5 (dBc) : " + imd5dBc.ToString("f1") + "\n" +
-                                        "OIP3 : " + oip3.ToString("f1") + "\n" +
-                                        "OIP5 : " + oip5.ToString("f1");
+                                        "    f0_l\n" +
+                                        "    f0_u\n" +
+                                        "IMD3_l\n" +
+                                        "IMD3_u\n" +
+                                        "IMD5_l\n" +
+                                        "IMD5_u\n\n" +
+                                        "    IMD3\n" +
+                                        "    IMD5\n" +
+                                        "    OIP3\n" +
+                                        "    OIP5";
+
+                                    string val1 =
+                                        f[0].ToString("f2") + "\n" +
+                                        f[1].ToString("f2") + "\n" +
+                                        imd3[0].ToString("f2") + "\n" +
+                                        imd3[1].ToString("f2") + "\n" +
+                                        imd5[0].ToString("f2") + "\n" +
+                                        imd5[1].ToString("f2") + "\n\n" +
+                                        imd3dBc.ToString("f1") + "\n" +
+                                        imd5dBc.ToString("f1") + "\n" +
+                                        oip3.ToString("f2") + "\n" +
+                                        oip5.ToString("f2");
+
+                                    string val2 =
+                                        (dbc - f[0]).ToString("f2") + "\n" +
+                                        (dbc - f[1]).ToString("f2") + "\n" +
+                                        (dbc - imd3[0]).ToString("f2") + "\n" +
+                                        (dbc - imd3[1]).ToString("f2") + "\n" +
+                                        (dbc - imd5[0]).ToString("f2") + "\n" +
+                                        (dbc - imd5[1]).ToString("f2");
 
                                     RoundedRectangle rr = new RoundedRectangle();
-                                    rr.Rect = new RectangleF(50, 50, 120, 160);
+                                    rr.Rect = new RectangleF(50, 50, 176, 180);
                                     rr.RadiusX = 12f;
                                     rr.RadiusY = 12f;
                                     _d2dRenderTarget.FillRoundedRectangle(rr, m_bDX2_m_bHightlightNumberScale);
 
-                                    _d2dRenderTarget.DrawText(readings, fontDX2d_callout, new RectangleF(60, 60, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText("dBm        dBc", fontDX2d_callout, new RectangleF(120, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText(readings, fontDX2d_callout, new RectangleF(60, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText(val1, fontDX2d_callout, new RectangleF(114, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText(val2, fontDX2d_callout, new RectangleF(172, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                 }
                             }
                         }
