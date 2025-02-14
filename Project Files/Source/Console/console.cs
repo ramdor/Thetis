@@ -1808,7 +1808,7 @@ namespace Thetis
 
             // ***** THIS IS WHERE SETUP FORM IS CREATED
             _onlyOneSetupInstance = true; // make sure that we limit to one instance
-            SetupForm.StartPosition = FormStartPosition.Manual; // *********** IMPORTANT   first use of singleton will create Setup form       INIT_SLOW            
+            SetupForm.StartPosition = FormStartPosition.Manual; // *********** IMPORTANT   first use of singleton will create Setup form       INIT_SLOW
 
             BuildTXProfileCombos(); // MW0LGE_21k9rc4b build them, so that GetState can apply the combobox text
 
@@ -12084,28 +12084,28 @@ namespace Thetis
             set { last_tx_xvtr_index = value; }
         }
 
-        private float rx1_path_offset = 0.0f;
-        public float RX1PathOffset
-        {
-            get { return rx1_path_offset; }
-        }
+        //private float rx1_path_offset = 0.0f;
+        //public float RX1PathOffset
+        //{
+        //    get { return rx1_path_offset; }
+        //}
 
-        private float rx2_path_offset = 0.0f;
-        public float RX2PathOffset
-        {
-            get { return rx2_path_offset; }
-        }
+        //private float rx2_path_offset = 0.0f;
+        //public float RX2PathOffset
+        //{
+        //    get { return rx2_path_offset; }
+        //}
 
         private PreampMode[] rx1_preamp_by_band;
-        public void SetRX1Preamp(Band b, PreampMode mode)
-        {
-            rx1_preamp_by_band[(int)b] = mode;
-        }
+        //public void SetRX1Preamp(Band b, PreampMode mode)
+        //{
+        //    rx1_preamp_by_band[(int)b] = mode;
+        //}
 
-        public PreampMode GetPreamp(Band b)
-        {
-            return rx1_preamp_by_band[(int)b];
-        }
+        //public PreampMode GetPreamp(Band b)
+        //{
+        //    return rx1_preamp_by_band[(int)b];
+        //}
 
         private PreampMode[] rx2_preamp_by_band;
 
@@ -14914,19 +14914,20 @@ namespace Thetis
 
             cmaster.CMSetTXOutputLevelRun();
 
-            if (HardwareSpecific.OldModel != HardwareSpecific.Model) CurrentModelChangedHandlers?.Invoke(HardwareSpecific.OldModel, HardwareSpecific.Model); //MW0LGE_[2.9.0.7]
+            //do always, to update everything
+            CurrentModelChangedHandlers?.Invoke(HardwareSpecific.OldModel, HardwareSpecific.Model); //MW0LGE_[2.9.0.7]
         }
 
-        private int alex_preamp_offset = 0;
-        public int AlexPreampOffset
-        {
-            get { return alex_preamp_offset; }
-            set
-            {
-                alex_preamp_offset = value;
-                Display.AlexPreampOffset = alex_preamp_offset;
-            }
-        }
+        //private int alex_preamp_offset = 0;
+        //public int AlexPreampOffset
+        //{
+        //    get { return alex_preamp_offset; }
+        //    set
+        //    {
+        //        alex_preamp_offset = value;
+        //        Display.AlexPreampOffset = alex_preamp_offset;
+        //    }
+        //}
 
         private double saved_vfoa_freq = 7.1;
         private double saved_vfoa_sub_freq = 7.1;
@@ -17573,16 +17574,17 @@ namespace Thetis
         public string CATReadSigStrength()
         {
             float num = 0f;
-            float rx1PreampOffset = 0.0f;
+            //float rx1PreampOffset = 0.0f;
 
-            if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
-            else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+            //if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
+            //else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
 
             num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH);
-            num = num +
-                rx1_meter_cal_offset +
-                rx1PreampOffset +
-                rx1_xvtr_gain_offset;
+            //num = num +
+            //    rx1_meter_cal_offset +
+            //    rx1PreampOffset +
+            //    rx1_xvtr_gain_offset;
+            num += RXOffset(1);
             return num.ToString("f1") + " dBm";
         }
 
@@ -17590,11 +17592,12 @@ namespace Thetis
         {
             float num = 0f;
             num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
-            num = num +
-                rx1_meter_cal_offset +
-                rx1_preamp_offset[(int)rx1_preamp_mode] +
-                rx1_path_offset +
-                rx1_xvtr_gain_offset;
+            //num = num +
+            //    rx1_meter_cal_offset +
+            //    rx1_preamp_offset[(int)rx1_preamp_mode] +
+            //    rx1_path_offset +
+            //    rx1_xvtr_gain_offset;
+            num += RXOffset(1);
             return num.ToString("f1") + " dBm";
         }
 
@@ -17698,11 +17701,12 @@ namespace Thetis
         {
             float num = 0f;
             num = WDSP.CalculateRXMeter(0, sub, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
-            num = num +
-                rx1_meter_cal_offset +
-                rx1_preamp_offset[(int)rx1_preamp_mode] +
-                rx1_path_offset +
-                rx1_xvtr_gain_offset;
+            //num = num +
+            //    rx1_meter_cal_offset +
+            //    rx1_preamp_offset[(int)rx1_preamp_mode] +
+            //    rx1_path_offset +
+            //    rx1_xvtr_gain_offset;
+            num += RXOffset(1);
             return (int)num;
         }
 
@@ -17712,11 +17716,12 @@ namespace Thetis
         {
             float num = 0f;
             num = WDSP.CalculateRXMeter(0, sub, WDSP.MeterType.SIGNAL_STRENGTH);
-            num = num +
-                rx1_meter_cal_offset +
-                rx1_preamp_offset[(int)rx1_preamp_mode] +
-                rx1_path_offset +
-                rx1_xvtr_gain_offset;
+            //num = num +
+            //    rx1_meter_cal_offset +
+            //    rx1_preamp_offset[(int)rx1_preamp_mode] +
+            //    rx1_path_offset +
+            //    rx1_xvtr_gain_offset;
+            num += RXOffset(1);
             return (int)num;
 
         }
@@ -21032,12 +21037,15 @@ namespace Thetis
                 }
                 else
                 {
+                    // use rx1 offsets
                     if (rx1_step_att_present)
                         fOffset = (float)rx1_attenuator_data;
                     else
                         fOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
                 }
+
                 fOffset += rx2_meter_cal_offset + rx2_xvtr_gain_offset;
+
                 if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
                     HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
                     HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K || HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
@@ -21817,16 +21825,17 @@ namespace Thetis
                     if (!MOX)
                     {
                         //
-                        float rx1PreampOffset;
-                        if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
-                        else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+                        //float rx1PreampOffset;
+                        //if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
+                        //else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
 
                         num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
-                        num = num +
-                        rx1_meter_cal_offset +
-                        rx1PreampOffset +
-                        rx1_xvtr_gain_offset +
-                        rx1_6m_gain_offset;
+                        //num = num +
+                        //rx1_meter_cal_offset +
+                        //rx1PreampOffset +
+                        //rx1_xvtr_gain_offset +
+                        //rx1_6m_gain_offset;
+                        num += RXOffset(1);
 
                         if (num > _avNumRX1) // quick rise
                             num = _avNumRX1 = num * 0.8f + _avNumRX1 * 0.2f;
@@ -21857,39 +21866,40 @@ namespace Thetis
                     if (!MOX)
                     {
                         //
-                        float rx2PreampOffset;
-                        if (HardwareSpecific.Model == HPSDRModel.ANAN100D ||
-                            HardwareSpecific.Model == HPSDRModel.ANAN200D ||
-                            HardwareSpecific.Model == HPSDRModel.ORIONMKII ||
-                            HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
-                            HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
-                            HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
-                            HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
-                            HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
-                            HardwareSpecific.Model == HPSDRModel.REDPITAYA || //DH1KLM
-                            rx2_preamp_present)
-                        {
-                            if (rx2_step_att_present)
-                                rx2PreampOffset = (float)rx2_attenuator_data;
-                            else
-                                rx2PreampOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
-                        }
-                        else
-                        {
-                            if (rx1_step_att_present)
-                                rx2PreampOffset = (float)rx1_attenuator_data;
-                            else
-                                rx2PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
-                        }
+                        //float rx2PreampOffset;
+                        //if (HardwareSpecific.Model == HPSDRModel.ANAN100D ||
+                        //    HardwareSpecific.Model == HPSDRModel.ANAN200D ||
+                        //    HardwareSpecific.Model == HPSDRModel.ORIONMKII ||
+                        //    HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
+                        //    HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+                        //    HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+                        //    HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
+                        //    HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
+                        //    HardwareSpecific.Model == HPSDRModel.REDPITAYA || //DH1KLM
+                        //    rx2_preamp_present)
+                        //{
+                        //    if (rx2_step_att_present)
+                        //        rx2PreampOffset = (float)rx2_attenuator_data;
+                        //    else
+                        //        rx2PreampOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
+                        //}
+                        //else
+                        //{
+                        //    if (rx1_step_att_present)
+                        //        rx2PreampOffset = (float)rx1_attenuator_data;
+                        //    else
+                        //        rx2PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+                        //}
                         num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
-                        num = num +
-                        rx2_meter_cal_offset +
-                        rx2PreampOffset +
-                        rx2_xvtr_gain_offset;
-                        if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
-                            HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
-                            HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K || HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
-                                num += rx2_6m_gain_offset;
+                        //num = num +
+                        //rx2_meter_cal_offset +
+                        //rx2PreampOffset +
+                        //rx2_xvtr_gain_offset;
+                        num += RXOffset(2);
+                        //if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+                        //    HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+                        //    HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K || HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
+                        //        num += rx2_6m_gain_offset;
 
                         if (num > _avNumRX2) // quick rise
                             num = _avNumRX2 = num * 0.8f + _avNumRX2 * 0.2f;
@@ -24466,30 +24476,31 @@ namespace Thetis
                     {
                         MeterRXMode mode = CurrentMeterRXMode;
                         float num = 0.0f;
-                        float rx1PreampOffset = 0.0f;
+                        //float rx1PreampOffset = 0.0f;
 
-                        if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
-                        else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+                        //if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
+                        //else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
 
                         switch (mode)
                         {
                             case MeterRXMode.SIGNAL_STRENGTH:
                                 num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH);
-                                num = num +
-                                 rx1_meter_cal_offset +
-                                 rx1PreampOffset +
-                                 rx1_xvtr_gain_offset +
-                                 rx1_6m_gain_offset;
-
+                                //num = num +
+                                // rx1_meter_cal_offset +
+                                // rx1PreampOffset +
+                                // rx1_xvtr_gain_offset +
+                                // rx1_6m_gain_offset;
+                                num += RXOffset(1);
                                 new_meter_data = num;
                                 break;
                             case MeterRXMode.SIGNAL_AVERAGE:
                                 num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
-                                num = num +
-                                  rx1_meter_cal_offset +
-                                   rx1PreampOffset +
-                                   rx1_xvtr_gain_offset +
-                                   rx1_6m_gain_offset;
+                                //num = num +
+                                //  rx1_meter_cal_offset +
+                                //   rx1PreampOffset +
+                                //   rx1_xvtr_gain_offset +
+                                //   rx1_6m_gain_offset;
+                                num += RXOffset(1);
                                 new_meter_data = num;
                                 break;
                             case MeterRXMode.ADC_L:
@@ -24629,7 +24640,7 @@ namespace Thetis
 
         private HiPerfTimer rx2_meter_timer = new HiPerfTimer();
 
-        private async void UpdateRX2MeterData()
+        private async void UpdateRX2Multimeter()
         {
             rx2_meter_timer.Start();
             while (_useLegacyMeters && chkPower.Checked && rx2_enabled)
@@ -24638,59 +24649,60 @@ namespace Thetis
                 {
                     //MW0LGE_21d step atten
                     MeterRXMode mode = RX2MeterMode;
-                    float rx2PreampOffset = 0;
-                    if (HardwareSpecific.Model == HPSDRModel.ANAN100D ||
-                        HardwareSpecific.Model == HPSDRModel.ANAN200D ||
-                        HardwareSpecific.Model == HPSDRModel.ORIONMKII ||
-                        HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
-                        HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
-                        HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
-                        HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
-                        HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
-                        HardwareSpecific.Model == HPSDRModel.REDPITAYA || //DH1KLM
-                        rx2_preamp_present)
-                    {
-                        if (rx2_step_att_present)
-                            rx2PreampOffset = (float)rx2_attenuator_data;
-                        else
-                            rx2PreampOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
-                    }
-                    else
-                    {
-                        if (rx1_step_att_present)
-                        {
-                            rx2PreampOffset = (float)rx1_attenuator_data;
-                        }
-                        else
-                        {
-                            rx2PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
-                        }
-                    }
+                    //float rx2PreampOffset = 0;
+                    //if (HardwareSpecific.Model == HPSDRModel.ANAN100D ||
+                    //    HardwareSpecific.Model == HPSDRModel.ANAN200D ||
+                    //    HardwareSpecific.Model == HPSDRModel.ORIONMKII ||
+                    //    HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
+                    //    HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+                    //    HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+                    //    HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
+                    //    HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
+                    //    HardwareSpecific.Model == HPSDRModel.REDPITAYA || //DH1KLM
+                    //    rx2_preamp_present)
+                    //{
+                    //    if (rx2_step_att_present)
+                    //        rx2PreampOffset = (float)rx2_attenuator_data;
+                    //    else
+                    //        rx2PreampOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
+                    //}
+                    //else
+                    //{
+                    //    if (rx1_step_att_present)
+                    //    {
+                    //        rx2PreampOffset = (float)rx1_attenuator_data;
+                    //    }
+                    //    else
+                    //    {
+                    //        rx2PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+                    //    }
+                    //}
 
                     float num;
                     switch (mode)
                     {
                         case MeterRXMode.SIGNAL_STRENGTH:
                             num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH);
-
-                            num = num +
-                              rx2_meter_cal_offset + // MW0LGE was rx1_meter_cal_offset
-                              rx2PreampOffset +
-                              rx2_xvtr_gain_offset;
-                            if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
-                                HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
-                                HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K || HardwareSpecific.Model == HPSDRModel.REDPITAYA) num += rx2_6m_gain_offset; //DH1KLM
+                            //num = num +
+                            //  rx2_meter_cal_offset + // MW0LGE was rx1_meter_cal_offset
+                            //  rx2PreampOffset +
+                            //  rx2_xvtr_gain_offset;
+                            num += RXOffset(2);
+                            //if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+                            //    HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+                            //    HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K || HardwareSpecific.Model == HPSDRModel.REDPITAYA) num += rx2_6m_gain_offset; //DH1KLM
                             rx2_meter_new_data = num;
                             break;
                         case MeterRXMode.SIGNAL_AVERAGE:
                             num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
-                            num = num +
-                            rx2_meter_cal_offset + // MW0LGE was rx1_meter_cal_offset
-                            rx2PreampOffset +
-                            rx2_xvtr_gain_offset;
-                            if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
-                                HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
-                                HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K || HardwareSpecific.Model == HPSDRModel.REDPITAYA) num += rx2_6m_gain_offset; //DH1KLM
+                            //num = num +
+                            //rx2_meter_cal_offset + // MW0LGE was rx1_meter_cal_offset
+                            //rx2PreampOffset +
+                            //rx2_xvtr_gain_offset;
+                            num += RXOffset(2);
+                            //if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+                            //    HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+                            //    HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K || HardwareSpecific.Model == HPSDRModel.REDPITAYA) num += rx2_6m_gain_offset; //DH1KLM
                             rx2_meter_new_data = num;
                             break;
                         case MeterRXMode.ADC_L:
@@ -25309,15 +25321,16 @@ namespace Thetis
             {
                 if (!_mox)
                 {
-                    float rx1PreampOffset;
-                    if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
-                    else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+                    //float rx1PreampOffset;
+                    //if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
+                    //else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
 
                     float num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.SIGNAL_STRENGTH);
-                    num = num +
-                    rx1_meter_cal_offset +
-                    rx1PreampOffset;
-                    sql_data = num;
+                    //num = num +
+                    //rx1_meter_cal_offset +
+                    //rx1PreampOffset;
+                    num += RXOffset(1);
+                    sql_data = num;                    
                     picSquelch.Invalidate();
                 }
 
@@ -25332,14 +25345,15 @@ namespace Thetis
             {
                 if (!_mox)
                 {
-                    float rx2PreampOffset;
-                    if (rx2_step_att_present) rx2PreampOffset = (float)rx2_attenuator_data;
-                    else rx2PreampOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
+                    //float rx2PreampOffset;
+                    //if (rx2_step_att_present) rx2PreampOffset = (float)rx2_attenuator_data;
+                    //else rx2PreampOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
 
                     float num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH);
-                    num = num +
-                    rx2_meter_cal_offset +
-                    rx2PreampOffset;
+                    //num = num +
+                    //rx2_meter_cal_offset +
+                    //rx2PreampOffset;
+                    num += RXOffset(2);
                     rx2_sql_data = num;
                     picRX2Squelch.Invalidate();
                 }
@@ -27471,7 +27485,7 @@ namespace Thetis
                 {
                     if (rx == 2 && (rx2_meter_thread == null || !rx2_meter_thread.IsAlive))
                     {
-                        rx2_meter_thread = new Thread(new ThreadStart(UpdateRX2MeterData))
+                        rx2_meter_thread = new Thread(new ThreadStart(UpdateRX2Multimeter))
                         {
                             Name = "RX2 Meter Thread",
                             Priority = ThreadPriority.Lowest,
@@ -29441,7 +29455,7 @@ namespace Thetis
                     udTXStepAttData.Parent = udRX1StepAttData.Parent;
                     udTXStepAttData.BringToFront();
                     udTXStepAttData.Visible = m_bAttontx;
-                    lblPreamp.Text = m_bAttontx ? "Tx-ATT" : (rx1_step_att_present ? "S-ATT" : "ATT");
+                    lblPreamp.Text = m_bAttontx ? "[S-ATT]" : (rx1_step_att_present ? "S-ATT" : "ATT");
                 }
                 else if (VFOBTX && rx2_enabled)
                 {
@@ -29456,7 +29470,7 @@ namespace Thetis
                     udTXStepAttData.Parent = udRX2StepAttData.Parent;
                     udTXStepAttData.BringToFront();
                     udTXStepAttData.Visible = m_bAttontx;
-                    lblRX2Preamp.Text = m_bAttontx ? "Tx-ATT" : (rx2_step_att_present ? "S-ATT" : "ATT");
+                    lblRX2Preamp.Text = m_bAttontx ? "[S-ATT]" : (rx2_step_att_present ? "S-ATT" : "ATT");
                 }
                 else
                 {
@@ -39606,7 +39620,7 @@ namespace Thetis
                     {
                         if (rx2_meter_thread == null || !rx2_meter_thread.IsAlive)
                         {
-                            rx2_meter_thread = new Thread(new ThreadStart(UpdateRX2MeterData))
+                            rx2_meter_thread = new Thread(new ThreadStart(UpdateRX2Multimeter))
                             {
                                 Name = "RX2 Meter Thread",
                                 Priority = ThreadPriority.Lowest,
@@ -40880,8 +40894,9 @@ namespace Thetis
         private void picRX2Squelch_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
             int signal_x = (int)((rx2_sql_data + 160.0) * (picRX2Squelch.Width - 1) / 160.0);
-            int sql_x = (int)(((float)ptbRX2Squelch.Value + 160.0) * (ptbRX2Squelch.Width - 1) / 160.0);
+            int sql_x = (int)(((float)ptbRX2Squelch.Value + 160.0) * (picRX2Squelch.Width - 1) / 160.0);
 
+            //if (_mox) signal_x = sql_x = 0;
             e.Graphics.FillRectangle(Brushes.LimeGreen, 0, 0, signal_x, picRX2Squelch.Height);
             if (sql_x < signal_x)
                 e.Graphics.FillRectangle(Brushes.Red, sql_x + 1, 0, signal_x - sql_x - 1, picRX2Squelch.Height);
@@ -49253,17 +49268,19 @@ namespace Thetis
                         rx1_squelch_threshold_scroll = ptbSquelch.Value;
 
                         //[2.10.3.5]MW0LGE reverted back to a -160 to 0 scale
-                        nValue = ptbSquelch.Value;                        
+                        nValue = ptbSquelch.Value;
 
                         radio.GetDSPRX(0, 0).RXSquelchThreshold = (float)nValue -
-                          rx1_preamp_offset[(int)rx1_preamp_mode] -
-                          rx1_meter_cal_offset -
-                          (-alex_preamp_offset);
+                          //rx1_preamp_offset[(int)rx1_preamp_mode] -
+                          //rx1_meter_cal_offset -
+                          //(-alex_preamp_offset);
+                          RXOffset(1);
 
                         radio.GetDSPRX(0, 1).RXSquelchThreshold = (float)nValue -
-                            rx1_preamp_offset[(int)rx1_preamp_mode] -
-                            rx1_meter_cal_offset -
-                            (-alex_preamp_offset);
+                            //rx1_preamp_offset[(int)rx1_preamp_mode] -
+                            //rx1_meter_cal_offset -
+                            //(-alex_preamp_offset);
+                            RXOffset(1);
                     }
 
                     chkSquelch.Text = "SQL:  " + nValue.ToString();
@@ -49585,14 +49602,16 @@ namespace Thetis
                         nValue = ptbRX2Squelch.Value;
 
                         radio.GetDSPRX(1, 0).RXSquelchThreshold = (float)nValue -
-                          rx2_preamp_offset[(int)rx2_preamp_mode] -
-                          rx2_meter_cal_offset -
-                          rx2_path_offset;
+                          //rx2_preamp_offset[(int)rx2_preamp_mode] -
+                          //rx2_meter_cal_offset -
+                          //rx2_path_offset;
+                          RXOffset(2);
 
                         radio.GetDSPRX(1, 1).RXSquelchThreshold = (float)nValue -
-                            rx2_preamp_offset[(int)rx2_preamp_mode] -
-                            rx2_meter_cal_offset -
-                            rx2_path_offset;
+                            //rx2_preamp_offset[(int)rx2_preamp_mode] -
+                            //rx2_meter_cal_offset -
+                            //rx2_path_offset;
+                            RXOffset(2);
                     }
 
                     chkRX2Squelch.Text = "SQL:  " + nValue.ToString();

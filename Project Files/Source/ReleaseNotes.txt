@@ -21,6 +21,8 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] the bespoke TCI command tx_frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; . There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;
 - [change] refactor serial port pin change detection code for slight performance improvements
 - [change] display vsync defaulted to on for new databases. I would advise turning this on if not already
+- [change] all RX display offsets are now done in one place in the code
+- [change] TX-ATT label has been changed to [S-ATT]
 - [fix] mic disable/enable button on front end will now disable the mic at startup if set as off. Note: its state is saved as part of the tx profile
 - [fix] fixed rare out of bounds issue in memory ScheduleUpdate
 - [fix] cat IF command fix where an error (O;) message would be returned if an unsupported TuneStep was in use. This bug has existed since 25/02/2007
@@ -39,6 +41,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] simulated tci spot clicks using bespoke TCI message [spot_simulate_click] now also sends out [rx_clicked_on_spot] defaulted to rx1 and vfoa
 - [fix] when adcs were linked, unwinding of adc overload attenuation did not always return to original att
 - [fix] PS SetPk reset if user selects different radio model
+- [fix] rx2 sql thumb control now aligns with signal displayed below
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked

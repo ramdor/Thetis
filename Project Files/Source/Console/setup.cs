@@ -102,6 +102,13 @@ namespace Thetis
         {
             Splash.SetStatus("Setting up controls");
 
+            //[2.10.3.9]MW0LGE atempt to get the model as soon as possile, before the getoptions, so that everything that relies on it at least has a chance
+            HardwareSpecific.Model = getModelFromDB();
+            setupADCRadioButtions();
+            btnResetP2ADC_Click(this, EventArgs.Empty);
+            btnResetP1ADC_Click(this, EventArgs.Empty);
+            //
+
             ThetisSkinService.Version = console.ProductVersion;
 
             updateDiscordState();
@@ -1702,6 +1709,16 @@ namespace Thetis
             {
                 addToIgnore(ref controlNames,childControl);
             }
+        }
+        private HPSDRModel getModelFromDB()
+        {
+            Dictionary<string, string> a = DB.GetVarsDictionary("Options");
+            if (a.ContainsKey("comboRadioModel"))
+            {
+                return HardwareSpecific.StringModelToEnum(a["comboRadioModel"]);
+            }
+            else
+                return HPSDRModel.FIRST;
         }
         private bool _gettingOptions = false;
         private void getOptions(List<string> recoveryList = null)
@@ -19715,7 +19732,7 @@ namespace Thetis
             bool power = console.PowerOn;
 
             HPSDRModel new_model = HardwareSpecific.StringModelToEnum(comboRadioModel.Text);
-            HardwareSpecific.Model = new_model; //IMPORTANT: THE SINGLE ASSIGNMENT TO MODEL !!
+            HardwareSpecific.Model = new_model;
 
             console.SetupForHPSDRModel();
 
@@ -20451,46 +20468,36 @@ namespace Thetis
                     break;
             }
 
-            bool model_changed = false;
-            if (HardwareSpecific.OldModel != HardwareSpecific.Model)
+            bool user_adjusted = sender != this;
+
+            setupADCRadioButtions();
+
+            if (user_adjusted) // reset this if user selects a different model
             {
-                model_changed = true;
+                console.psform.SetDefaultPeaks();
 
-                if (sender != this && console.psform != null) console.psform.SetDefaultPeaks(); // this change event caused by user selecting new model, reset the setpk
-
-                setupADCRadioButtions();
                 btnResetP2ADC_Click(this, EventArgs.Empty);
                 btnResetP1ADC_Click(this, EventArgs.Empty);
-
-                string sCurrentPAProfile = comboPAProfile.Text;
-
-                updatePAProfileCombo("Default - " + HardwareSpecific.Model.ToString()); //MW0LGE_22b
-
-                //[2.10.1.0] MW0LGE
-                //re-assign the current PA if it still exists, this needed because on a DB import, we are changing from HERMES to whatever is set in the DB
-                //and if the PA profile is in the new rebuilt list, let us use it instead of the radio Default
-                for (int n = 0; n < comboPAProfile.Items.Count; n++)
-                {
-                    string sName = (string)comboPAProfile.Items[n];
-
-                    if (sName == sCurrentPAProfile)
-                    {
-                        comboPAProfile.SelectedIndex = n;
-                        break;
-                    }
-                }
             }
+
+            string sCurrentPAProfile = comboPAProfile.Text;
+            updatePAProfileCombo("Default - " + HardwareSpecific.Model.ToString()); //MW0LGE_22b
+
+            //re-assign the current PA if it still exists, this needed because on a DB import, we are changing from HERMES to whatever is set in the DB
+            //and if the PA profile is in the new rebuilt list, let us use it instead of the radio Default
+            int index = comboPAProfile.Items.IndexOf(sCurrentPAProfile);
+            if (index != -1) comboPAProfile.SelectedIndex = index;
 
             InitHPSDR();
 
-            if (power && model_changed)
+            if (power)
             {
                 console.PowerOn = false;
                 Thread.Sleep(100);
             }
             cmaster.CMLoadRouterAll(HardwareSpecific.Model);
 
-            if (power && model_changed)
+            if (power)
             {
                 console.PowerOn = true;
             }
@@ -20666,6 +20673,7 @@ namespace Thetis
         {
             switch (HardwareSpecific.Model)
             {
+                case HPSDRModel.HERMES:
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                 case HPSDRModel.ANAN100:
@@ -20694,6 +20702,7 @@ namespace Thetis
         {
             switch (HardwareSpecific.Model)
             {
+                case HPSDRModel.HERMES:
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                 case HPSDRModel.ANAN100:

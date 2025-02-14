@@ -47,10 +47,10 @@ namespace Thetis
         private static HPSDRHW _old_hardware;
         static HardwareSpecific()
         {
-            _model = HPSDRModel.HERMES;
+            _model = HPSDRModel.FIRST;
             _old_model = HPSDRModel.FIRST;
 
-            _hardware = HPSDRHW.Atlas;
+            _hardware = HPSDRHW.Unknown;
             _old_hardware = HPSDRHW.Unknown;
         }
 

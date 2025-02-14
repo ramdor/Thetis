@@ -304,7 +304,7 @@ namespace Thetis
             _readingIgnore = new Dictionary<int, bool>();
 
             _power = false;
-            _currentHPSDRmodel = HPSDRModel.HERMES;
+            _currentHPSDRmodel = HardwareSpecific.Model;
             _alexPresent = false;
             _paPresent = false;
             _apolloPresent = false;
