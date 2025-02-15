@@ -18101,6 +18101,7 @@ namespace Thetis
             console.UpdateTXSpectrumDisplayVars();
             double bin_width = (double)console.specRX.GetSpecRX(cmaster.inid(1, 0)).SampleRate / (double)console.specRX.GetSpecRX(cmaster.inid(1, 0)).FFTSize;
             lblTXDispBinWidth.Text = bin_width.ToString("N3");
+            lblTXFFT_size.Text = console.specRX.GetSpecRX(cmaster.inid(1, 0)).FFTSize.ToString();
         }
 
         private void comboTXDispWinType_SelectedIndexChanged(object sender, EventArgs e)

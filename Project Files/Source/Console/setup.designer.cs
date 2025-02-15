@@ -4153,6 +4153,8 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.lblTXFFT_size = new System.Windows.Forms.LabelTS();
+            this.labelTS427 = new System.Windows.Forms.LabelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -35582,6 +35584,8 @@
             // 
             // groupBoxTS8
             // 
+            this.groupBoxTS8.Controls.Add(this.lblTXFFT_size);
+            this.groupBoxTS8.Controls.Add(this.labelTS427);
             this.groupBoxTS8.Controls.Add(this.comboTXDispWinType);
             this.groupBoxTS8.Controls.Add(this.labelTS381);
             this.groupBoxTS8.Controls.Add(this.labelTS382);
@@ -66034,6 +66038,29 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // lblTXFFT_size
+            // 
+            this.lblTXFFT_size.AutoSize = true;
+            this.lblTXFFT_size.BackColor = System.Drawing.Color.Bisque;
+            this.lblTXFFT_size.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblTXFFT_size.Image = null;
+            this.lblTXFFT_size.Location = new System.Drawing.Point(196, 79);
+            this.lblTXFFT_size.MinimumSize = new System.Drawing.Size(35, 0);
+            this.lblTXFFT_size.Name = "lblTXFFT_size";
+            this.lblTXFFT_size.Size = new System.Drawing.Size(45, 15);
+            this.lblTXFFT_size.TabIndex = 61;
+            this.lblTXFFT_size.Text = "000000";
+            // 
+            // labelTS427
+            // 
+            this.labelTS427.AutoSize = true;
+            this.labelTS427.Image = null;
+            this.labelTS427.Location = new System.Drawing.Point(143, 79);
+            this.labelTS427.Name = "labelTS427";
+            this.labelTS427.Size = new System.Drawing.Size(49, 13);
+            this.labelTS427.TabIndex = 60;
+            this.labelTS427.Text = "FFT Size";
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -71487,5 +71514,7 @@
         private LabelTS labelTS425;
         private LabelTS lblRX2FFT_size;
         private LabelTS labelTS426;
+        private LabelTS lblTXFFT_size;
+        private LabelTS labelTS427;
     }
 }
