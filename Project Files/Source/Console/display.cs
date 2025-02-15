@@ -4718,6 +4718,15 @@ namespace Thetis
 
                         if (sorted.Length >= 2)
                         {
+                            // the box
+                            RoundedRectangle rr = new RoundedRectangle();
+                            rr.Rect = new RectangleF(50, 50, 260, 180);
+                            rr.RadiusX = 14f;
+                            rr.RadiusY = 14f;
+                            _d2dRenderTarget.FillRoundedRectangle(rr, m_bDX2_m_bHightlightNumberScale);
+                            _d2dRenderTarget.DrawRoundedRectangle(rr, m_bDX2_m_bHightlightNumbers);
+                            //
+
                             int diff = Math.Abs(sorted[0].X - sorted[1].X);
                             if (diff > 10)
                             {
@@ -4867,13 +4876,6 @@ namespace Thetis
                                         (_ema_imd5h_freq * 1e-6).ToString("f6") + " MHz\n\n\n" +
                                         "  " + ((f0h_freq - f0l_freq) / 1000f).ToString("F3") + " kHz";
 
-                                    RoundedRectangle rr = new RoundedRectangle();
-                                    rr.Rect = new RectangleF(50, 50, 260, 180);
-                                    rr.RadiusX = 14f;
-                                    rr.RadiusY = 14f;
-                                    _d2dRenderTarget.FillRoundedRectangle(rr, m_bDX2_m_bHightlightNumberScale);
-                                    _d2dRenderTarget.DrawRoundedRectangle(rr, m_bDX2_m_bHightlightNumbers);
-
                                     _d2dRenderTarget.DrawText("dBm        dBc           frequency", fontDX2d_callout, new RectangleF(120, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                     _d2dRenderTarget.DrawText(readings, fontDX2d_callout, new RectangleF(60, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                     _d2dRenderTarget.DrawText(val1, fontDX2d_callout, new RectangleF(114, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
@@ -4881,6 +4883,14 @@ namespace Thetis
                                     _d2dRenderTarget.DrawText(val3, fontDX2d_callout, new RectangleF(220, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                     _d2dRenderTarget.DrawText("f0 diff", fontDX2d_callout, new RectangleF(240, 166, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                 }
+                                else
+                                {
+                                    _d2dRenderTarget.DrawText("Peaks not found !\n\nEnsure that IMD3 lower/upper and\nIMD5 lower/upper are in the display.", fontDX2d_callout, new RectangleF(60, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                }
+                            }
+                            else
+                            {
+                                _d2dRenderTarget.DrawText("Peaks not found !\n\nTry increasing zoom and/or\nchanging sample rate.\n\nFundamental peak separation needs to be increased.", fontDX2d_callout, new RectangleF(60, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                             }
                         }
                     }
