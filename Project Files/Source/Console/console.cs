@@ -11170,7 +11170,8 @@ namespace Thetis
                     HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
                     HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
                     HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
-                    HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3)
+                    HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+                    HardwareSpecific.Model != HPSDRModel.REDPITAYA) //DH1KLM
                     udRX2StepAttData.Maximum = (decimal)61; //MW0LGE_[2.9.0.7]  changed to udRX2
                 else udRX2StepAttData.Maximum = (decimal)31;
 
@@ -11191,7 +11192,8 @@ namespace Thetis
                         HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
                         HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
                         HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
-                        HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3)
+                        HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+                        HardwareSpecific.Model != HPSDRModel.REDPITAYA) //DH1KLM
                     {
                         if (rx2_attenuator_data <= 31)
                         {
