@@ -4156,6 +4156,13 @@ namespace Thetis
         private static float _ema_imd5l;
         private static float _ema_imd5u;
 
+        private static float _ema_f0l_freq;
+        private static float _ema_f0h_freq;
+        private static float _ema_imd3l_freq;
+        private static float _ema_imd3h_freq;
+        private static float _ema_imd5l_freq;
+        private static float _ema_imd5h_freq;
+
         private static float _ema_imd3dBc;
         private static float _ema_imd5dBc;
         private static float _ema_oip3;
@@ -4165,7 +4172,7 @@ namespace Thetis
         {
             //if (grid_control) //[2.10.3.9]MW0LGE raw grid control option now just turns off the grid, all other elements are shown
             //{
-                int centre_x = drawPanadapterAndWaterfallGridDX2D(nVerticalShift, W, H, rx, bottom, false);
+                int centre_x = drawPanadapterAndWaterfallGridDX2D(nVerticalShift, W, H, rx, bottom, out long left_edge, out long right_edge, false);
             //}
 
             float local_max_y = float.MinValue;
@@ -4728,14 +4735,14 @@ namespace Thetis
                                 .Where(m => m.X > mid_x)
                                 .ToArray();
 
-                                int fL = findImd(sortedlow, 1, diff, low_x, true);
-                                int fH = findImd(sortedhigh, 1, diff, high_x, false);
+                                int fL = findImd(sortedlow, 1, diff, low_x, true, out int fL_X);
+                                int fH = findImd(sortedhigh, 1, diff, high_x, false, out int fH_X);
 
-                                int imd3indexL = findImd(sortedlow, 3, diff, low_x, true);
-                                int imd3indexH = findImd(sortedhigh, 3, diff, high_x, false);
+                                int imd3indexL = findImd(sortedlow, 3, diff, low_x, true, out int imd3L_X);
+                                int imd3indexH = findImd(sortedhigh, 3, diff, high_x, false, out int imd3H_X);
 
-                                int imd5indexL = findImd(sortedlow, 5, diff, low_x, true);
-                                int imd5indexH = findImd(sortedhigh, 5, diff, high_x, false);
+                                int imd5indexL = findImd(sortedlow, 5, diff, low_x, true, out int imd5L_X);
+                                int imd5indexH = findImd(sortedhigh, 5, diff, high_x, false, out int imd5H_X);
 
                                 bool ok = fL != -1 && fH != -1 && imd3indexL != -1 && imd3indexH != -1 && imd5indexL != -1 && imd5indexH != -1;
 
@@ -4744,6 +4751,18 @@ namespace Thetis
                                     float[] f = new float[] { sortedlow[fL].max_dBm, sortedhigh[fH].max_dBm };
                                     float[] imd3 = new float[] { sortedlow[imd3indexL].max_dBm, sortedhigh[imd3indexH].max_dBm };
                                     float[] imd5 = new float[] { sortedlow[imd5indexL].max_dBm, sortedhigh[imd5indexH].max_dBm };
+
+                                    long low_frequency_edge_hz = (long)(m_dCentreFreqRX1 * 1e6) + left_edge;
+                                    long high_frequency_edge_hz = (long)(m_dCentreFreqRX1 * 1e6) + right_edge;
+
+                                    double hz_per_pixel = (high_frequency_edge_hz - low_frequency_edge_hz) / (double)W;
+
+                                    long f0l_freq = low_frequency_edge_hz + (long)(fL_X * hz_per_pixel);
+                                    long f0h_freq = low_frequency_edge_hz + (long)(fH_X * hz_per_pixel);
+                                    long imd3l_freq = low_frequency_edge_hz + (long)(imd3L_X * hz_per_pixel);
+                                    long imd3h_freq = low_frequency_edge_hz + (long)(imd3H_X * hz_per_pixel);
+                                    long imd5l_freq = low_frequency_edge_hz + (long)(imd5L_X * hz_per_pixel);
+                                    long imd5h_freq = low_frequency_edge_hz + (long)(imd5H_X * hz_per_pixel);
 
                                     float dbc = Math.Max(f[0], f[1]);
                                     float dbc_min = Math.Min(f[0], f[1]);
@@ -4769,6 +4788,13 @@ namespace Thetis
                                         _ema_imd5l = imd5[0];
                                         _ema_imd5u = imd5[1];
 
+                                        _ema_f0l_freq = f0l_freq;
+                                        _ema_f0h_freq = f0h_freq;
+                                        _ema_imd3l_freq = imd3l_freq;
+                                        _ema_imd3h_freq = imd3h_freq;
+                                        _ema_imd5l_freq = imd5l_freq;
+                                        _ema_imd5h_freq = imd5h_freq;
+
                                         _ema_imd3dBc = imd3dBc;
                                         _ema_imd5dBc = imd5dBc;
                                         _ema_oip3 = oip3;
@@ -4786,6 +4812,13 @@ namespace Thetis
                                         _ema_imd3u = alpha * imd3[1] + (1 - alpha) * _ema_imd3u;
                                         _ema_imd5l = alpha * imd5[0] + (1 - alpha) * _ema_imd5l;
                                         _ema_imd5u = alpha * imd5[1] + (1 - alpha) * _ema_imd5u;
+
+                                        _ema_f0l_freq = alpha * f0l_freq + (1 - alpha) * _ema_f0l_freq;
+                                        _ema_f0h_freq = alpha * f0h_freq + (1 - alpha) * _ema_f0h_freq;
+                                        _ema_imd3l_freq = alpha * imd3l_freq + (1 - alpha) * _ema_imd3l_freq;
+                                        _ema_imd3h_freq = alpha * imd3h_freq + (1 - alpha) * _ema_imd3h_freq;
+                                        _ema_imd5l_freq = alpha * imd5l_freq + (1 - alpha) * _ema_imd5l_freq;
+                                        _ema_imd5h_freq = alpha * imd5h_freq + (1 - alpha) * _ema_imd5h_freq;
 
                                         _ema_imd3dBc = alpha * imd3dBc + (1 - alpha) * _ema_imd3dBc;
                                         _ema_imd5dBc = alpha * imd5dBc + (1 - alpha) * _ema_imd5dBc;
@@ -4825,17 +4858,28 @@ namespace Thetis
                                         (_ema_dbc - _ema_imd5l).ToString("f2") + "\n" +
                                         (_ema_dbc - _ema_imd5u).ToString("f2");
 
+                                    string val3 =
+                                        (_ema_f0l_freq * 1e-6).ToString("f6") + " MHz\n" +
+                                        (_ema_f0h_freq * 1e-6).ToString("f6") + " MHz\n" +
+                                        (_ema_imd3l_freq * 1e-6).ToString("f6") + " MHz\n" +
+                                        (_ema_imd3h_freq * 1e-6).ToString("f6") + " MHz\n" +
+                                        (_ema_imd5l_freq * 1e-6).ToString("f6") + " MHz\n" +
+                                        (_ema_imd5h_freq * 1e-6).ToString("f6") + " MHz\n\n\n" +
+                                        "  " + ((f0h_freq - f0l_freq) / 1000f).ToString("F3") + " kHz";
+
                                     RoundedRectangle rr = new RoundedRectangle();
-                                    rr.Rect = new RectangleF(50, 50, 164, 180);
+                                    rr.Rect = new RectangleF(50, 50, 260, 180);
                                     rr.RadiusX = 14f;
                                     rr.RadiusY = 14f;
                                     _d2dRenderTarget.FillRoundedRectangle(rr, m_bDX2_m_bHightlightNumberScale);
                                     _d2dRenderTarget.DrawRoundedRectangle(rr, m_bDX2_m_bHightlightNumbers);
 
-                                    _d2dRenderTarget.DrawText("dBm        dBc", fontDX2d_callout, new RectangleF(120, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText("dBm        dBc           frequency", fontDX2d_callout, new RectangleF(120, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                     _d2dRenderTarget.DrawText(readings, fontDX2d_callout, new RectangleF(60, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                     _d2dRenderTarget.DrawText(val1, fontDX2d_callout, new RectangleF(114, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                     _d2dRenderTarget.DrawText(val2, fontDX2d_callout, new RectangleF(172, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText(val3, fontDX2d_callout, new RectangleF(220, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText("f0 diff", fontDX2d_callout, new RectangleF(240, 166, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                 }
                             }
                         }
@@ -4856,7 +4900,7 @@ namespace Thetis
 
             return true;
         }
-        private static int findImd(Maximums[] sorted, int imd, int pixel_jump, int offset, bool low)
+        private static int findImd(Maximums[] sorted, int imd, int pixel_jump, int offset, bool low, out int X)
         {
             int jump = (imd - 1) / 2;
             int estimate_pixel_pos;
@@ -4870,6 +4914,7 @@ namespace Thetis
             }
             int search_range = pixel_jump / 4;
 
+            X = -1;
             int best_index = -1;
             float best_dBm = float.MinValue;
             int best_distance = int.MaxValue;
@@ -4883,6 +4928,7 @@ namespace Thetis
                     if (sorted[i].max_dBm > best_dBm || (sorted[i].max_dBm == best_dBm && distance < best_distance))
                     {
                         best_dBm = sorted[i].max_dBm;
+                        X = sorted[i].X;
                         best_distance = distance;
                         best_index = i;
                     }
@@ -6178,7 +6224,7 @@ namespace Thetis
 
             // MW0LGE now draw any grid/labels/scales over the top of waterfall
             //if (grid_control_major)  //[2.10.3.9]MW0LGE
-            drawPanadapterAndWaterfallGridDX2D(nVerticalShift, W, H, rx, bottom, true);
+            drawPanadapterAndWaterfallGridDX2D(nVerticalShift, W, H, rx, bottom, out long left_edge, out long right_edge, true);
 
             if (_showTCISpots) drawSpots(rx, nVerticalShift, W, bottom);
 
@@ -7059,7 +7105,7 @@ namespace Thetis
             get { return _joinBandEdges; }
             set { _joinBandEdges = value; }
         }
-        private static int drawPanadapterAndWaterfallGridDX2D(int nVerticalShift, int W, int H, int rx, bool bottom, bool bIsWaterfall = false)
+        private static int drawPanadapterAndWaterfallGridDX2D(int nVerticalShift, int W, int H, int rx, bool bottom, out long left_edge, out long right_edge, bool bIsWaterfall = false)
         {
             // MW0LGE
             // this now draws the grid for either panadapter or waterfall, pass in a bool to pick
@@ -8576,6 +8622,9 @@ namespace Thetis
             #endregion
 
             _d2dRenderTarget.PopAxisAlignedClip();
+
+            left_edge = Low;
+            right_edge = High;
 
             return center_line_x;
         }

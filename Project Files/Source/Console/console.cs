@@ -838,7 +838,7 @@ namespace Thetis
             //[2.10.3.4]MW0LGE shutdown log remove
             removeShutdownLog();
 
-            addDelegates();
+            //addDelegates(); // moved to init console
 
             CWFWKeyer = true;            
 
@@ -1518,8 +1518,9 @@ namespace Thetis
             m_frmNotchPopup = new frmNotchPopup();
             m_frmSeqLog = new frmSeqLog();
             _frmFinder = new frmFinder();
-
             psform = new PSForm(this);
+
+            addDelegates();
 
             Audio.console = this;
 
@@ -21255,8 +21256,7 @@ namespace Thetis
             int adc_oload_num = NetworkIO.getAndResetADC_Overload();
             if(adc_oload_num > 0)
             {
-                // this is done so that if in a constant overload state, the above call to getAndResetADC_Overload would return 0,
-                // this call below will 'use' this up just like amp overload above
+                // if there is an overload, then call it again, as a subsequent call to getAndResetADC_Overload would always return a 0 as the above getAndResetADC_Overload resets it
                 NetworkIO.getAndResetADC_Overload();
             }
             /*
@@ -21412,10 +21412,29 @@ namespace Thetis
                         AutoAttAppliedRX1 = false;
                 }
             }
+            else if (_historic_attenuator_readings_tx.Any()) _historic_attenuator_readings_tx.Clear();
 
             // deal with RX
             if (!_mox)
             {
+                if(!_auto_att_rx1)
+                {
+                    if (_historic_attenuator_readings_rx1.Any())
+                    {
+                        _historic_attenuator_readings_rx1.Clear();
+                        AutoAttAppliedRX1 = false;
+                    }
+                }
+                if (!_auto_att_rx2)
+                {
+                    if (_historic_attenuator_readings_rx2.Any())
+                    {
+                        _historic_attenuator_readings_rx2.Clear();
+                        AutoAttAppliedRX2 = false;
+                    }
+                }
+                if (!_auto_att_rx1 && !_auto_att_rx2) return;
+
                 // clear any for different band
                 keep_att_entries_for_band(_historic_attenuator_readings_rx1, RX1Band);
                 keep_att_entries_for_band(_historic_attenuator_readings_rx2, RX2Band);
@@ -21423,7 +21442,7 @@ namespace Thetis
                 if (_historic_attenuator_readings_rx2.Count == 0 && AutoAttAppliedRX2) AutoAttAppliedRX2 = false;
 
                 int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
-                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);                               
+                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
 
                 DateTime now = DateTime.Now;
 
@@ -21462,7 +21481,7 @@ namespace Thetis
                         }
                         else
                         {
-                            har.preampMode = RX1PreampMode;                            
+                            har.preampMode = RX1PreampMode;
 
                             PreampMode pam = har.preampMode;
                             switch (pam)
@@ -21486,29 +21505,29 @@ namespace Thetis
 
                                 AutoAttAppliedRX1 = true;
                             }
-                        }                        
+                        }
                     }
                     else if ((nRX1ADCinUse == 0 || nRX1ADCinUse == 1) && _historic_attenuator_readings_rx1.Any()) // no overload rx1
                     {
                         if (!_auto_att_undo_rx1 || (_auto_att_undo_rx1 && ((now - _auto_att_last_hold_time_rx1).TotalSeconds >= _auto_att_hold_delay_rx1)))
                         {
                             // unwind
-                            HistoricAttenuatorReading har = _historic_attenuator_readings_rx1.Pop();                            
+                            HistoricAttenuatorReading har = _historic_attenuator_readings_rx1.Pop();
                             if (har != null && _auto_att_undo_rx1)
                             {
                                 if (RX1StepAttPresent && har.stepAttenuator != -1)
                                 {
-                                    if (har.stepAttenuator != RX1AttenuatorData) RX1AttenuatorData = har.stepAttenuator;                                    
+                                    if (har.stepAttenuator != RX1AttenuatorData) RX1AttenuatorData = har.stepAttenuator;
                                 }
                                 else if (har.preampMode != PreampMode.FIRST)
                                 {
                                     if (har.preampMode != RX1PreampMode) RX1PreampMode = har.preampMode;
-                                }                                
+                                }
                             }
                             _auto_att_last_hold_time_rx1 = now;
 
                             AutoAttAppliedRX1 = _historic_attenuator_readings_rx1.Any();
-                        }                        
+                        }
                     }
                 }
 
@@ -21564,7 +21583,7 @@ namespace Thetis
                             if (pam != har.preampMode)
                             {
                                 RX2PreampMode = pam;
-                               _auto_att_last_hold_time_rx2 = now;
+                                _auto_att_last_hold_time_rx2 = now;
                                 _historic_attenuator_readings_rx2.Push(har);
 
                                 AutoAttAppliedRX2 = true;
@@ -21590,13 +21609,13 @@ namespace Thetis
                                 else if (har.preampMode != PreampMode.FIRST)
                                 {
                                     if (har.preampMode != RX2PreampMode) RX2PreampMode = har.preampMode;
-                                }                                
+                                }
                             }
                             _auto_att_last_hold_time_rx2 = now;
 
                             AutoAttAppliedRX2 = _historic_attenuator_readings_rx2.Any();
                         }
-                    }                    
+                    }
                 }
             }            
         }
