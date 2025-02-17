@@ -138,7 +138,7 @@
 Poor performance of PS might result. Go into [Advanced]
 and use the [Default] button.
 
-If this difference isexpected then ignore this warning.</value>
+If this difference is expected then ignore this warning.</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

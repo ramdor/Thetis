@@ -427,8 +427,27 @@ enum _HPSDRHW
 	Orion = 4,      // ANAN-200D
 	OrionMKII = 5,  // ANAN-7000DLE/8000DLE AnvelinaPro3
 	HermesLite = 6, // MI0BOT
-	RedPitaya = 7   // RedPitaya a variant of OrionMKII, used in networkproto1.c to identify it
 } HPSDRHW;
+
+enum _HPSDRModel //from enums.cs
+{
+	HPSDRModel_HPSDR = 1,
+	HPSDRModel_HERMES = 2,
+	HPSDRModel_ANAN10 = 3,
+	HPSDRModel_ANAN10E = 4,
+	HPSDRModel_ANAN100 = 5,
+	HPSDRModel_ANAN100B = 6,
+	HPSDRModel_ANAN100D = 7,
+	HPSDRModel_ANAN200D = 8,
+	HPSDRModel_ORIONMKII = 9,
+	HPSDRModel_ANAN7000D = 10,
+	HPSDRModel_ANAN8000D = 11,
+	HPSDRModel_ANAN_G2 = 12,
+	HPSDRModel_ANAN_G2_1K = 13,
+	HPSDRModel_ANVELINAPRO3 = 14,
+	HPSDRModel_HERMESLITE = 15,
+	HPSDRModel_REDPITAYA = 16,
+} HPSDRModel;
 
 enum _RadioProtocol
 {

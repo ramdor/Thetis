@@ -32840,6 +32840,23 @@ namespace Thetis
             chkShowLedMirror.Visible = p2;
             grpLEDMirror.Visible = p2 && chkShowLedMirror.Checked;
         }
+
+        public string BoardWarning
+        {
+            get { return ""; }
+            set
+            {
+                if(string.IsNullOrEmpty(value))
+                {
+                    picModelBoardWarning.Visible = false;
+                }
+                else
+                {
+                    toolTip1.SetToolTip(picModelBoardWarning, value);
+                    picModelBoardWarning.Visible = true;
+                }
+            }
+        }
     }
 
     #region PADeviceInfo Helper Class

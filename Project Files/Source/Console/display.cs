@@ -4148,6 +4148,7 @@ namespace Thetis
         }
         // ExponentialMovingAverage previous values for 2tone calcs
         private static float _ema_dbc = -999; //used as the init state
+        private static int _two_tone_readings_X_offset = 50;
 
         private static float _ema_f0l;
         private static float _ema_f0u;
@@ -4720,7 +4721,7 @@ namespace Thetis
                         {
                             // the box
                             RoundedRectangle rr = new RoundedRectangle();
-                            rr.Rect = new RectangleF(50, 50, 260, 180);
+                            rr.Rect = new RectangleF(_two_tone_readings_X_offset, 50, 260, 180);
                             rr.RadiusX = 14f;
                             rr.RadiusY = 14f;
                             _d2dRenderTarget.FillRoundedRectangle(rr, m_bDX2_m_bHightlightNumberScale);
@@ -4781,6 +4782,9 @@ namespace Thetis
                                     float imd5dBc = dbc_min - imd5max;
                                     float oip3 = dbc_min + (imd3dBc / 2f);
                                     float oip5 = dbc_min + (imd5dBc / 2f);
+
+                                    _two_tone_readings_X_offset = imd5L_X - (int)(rr.Rect.Right - rr.Rect.Left) - diff;
+                                    if (_two_tone_readings_X_offset < 50) _two_tone_readings_X_offset = 50;
 
                                     //ExponentialMovingAverage
                                     //previous = alpha * newValue + (1 - alpha) * previous;
@@ -4876,21 +4880,23 @@ namespace Thetis
                                         (_ema_imd5h_freq * 1e-6).ToString("f6") + " MHz\n\n\n" +
                                         "  " + ((f0h_freq - f0l_freq) / 1000f).ToString("F3") + " kHz";
 
-                                    _d2dRenderTarget.DrawText("dBm        dBc           frequency", fontDX2d_callout, new RectangleF(120, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
-                                    _d2dRenderTarget.DrawText(readings, fontDX2d_callout, new RectangleF(60, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
-                                    _d2dRenderTarget.DrawText(val1, fontDX2d_callout, new RectangleF(114, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
-                                    _d2dRenderTarget.DrawText(val2, fontDX2d_callout, new RectangleF(172, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
-                                    _d2dRenderTarget.DrawText(val3, fontDX2d_callout, new RectangleF(220, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
-                                    _d2dRenderTarget.DrawText("f0 diff", fontDX2d_callout, new RectangleF(240, 166, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText("dBm        dBc           frequency", fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 70, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText(readings, fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 10, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText(val1, fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 64, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText(val2, fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 122, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText(val3, fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 170, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText("f0 diff", fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 190, 166, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                 }
                                 else
                                 {
-                                    _d2dRenderTarget.DrawText("Peaks not found !\n\nEnsure that IMD3 lower/upper and\nIMD5 lower/upper are in the display.", fontDX2d_callout, new RectangleF(60, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _two_tone_readings_X_offset = 50;
+                                    _d2dRenderTarget.DrawText("Peaks not found !\n\nEnsure that IMD3 lower/upper and\nIMD5 lower/upper are in the display.", fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 10, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                 }
                             }
                             else
                             {
-                                _d2dRenderTarget.DrawText("Peaks not found !\n\nTry increasing zoom and/or\nchanging sample rate.\n\nFundamental peak separation needs to be increased.", fontDX2d_callout, new RectangleF(60, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                _two_tone_readings_X_offset = 50;
+                                _d2dRenderTarget.DrawText("Peaks not found !\n\nTry increasing zoom and/or\nchanging sample rate.\n\nFundamental peak separation needs to be increased.", fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 10, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                             }
                         }
                     }

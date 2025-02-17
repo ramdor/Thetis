@@ -25,6 +25,7 @@ namespace Thetis
     using System.Net;
     using System.Net.Sockets;
     using System.Net.NetworkInformation;
+    using System.Windows.Forms;
 
     partial class NetworkIO
     {
@@ -262,6 +263,7 @@ namespace Thetis
             }
 
             int chosenDevice = 0;
+
             BoardID = hpsdrd[chosenDevice].deviceType;
             FWCodeVersion = hpsdrd[chosenDevice].codeVersion;
             BetaVersion = hpsdrd[chosenDevice].betaVersion;
@@ -281,17 +283,24 @@ namespace Thetis
                 }
             }
 
-            //override boardid
-            int boardID = (int)BoardID;
-            switch (HardwareSpecific.Model)
+            if(BoardID != HardwareSpecific.Hardware) //[2.10.3.9]MW0LGE
             {
-                case HPSDRModel.REDPITAYA:
-                    boardID = (int)HPSDRHW.RedPitaya; // matches network.h RedPitaya
-                    break;
+                // the board returned in the packet, does not match the expected board for the Model selected
+                _board_mismatch = $"The board returned from network query was:\n\n{BoardID.ToString()}\n\nExpected board for model selected is:\n\n{HardwareSpecific.Hardware.ToString()}";                
             }
+            else
+            {
+                _board_mismatch = "";
+            }    
 
-            rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort, (int)CurrentRadioProtocol, boardID);
+            rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort, (int)CurrentRadioProtocol, (int)BoardID, (int)HardwareSpecific.Model);
             return -rc;
+        }
+
+        private static string _board_mismatch = "";
+        public static string BoardMismatch
+        {
+            get { return _board_mismatch; }
         }
 
         public static bool fwVersionsChecked = false;

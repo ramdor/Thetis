@@ -603,7 +603,7 @@ void WriteMainLoop(char* bufp)
 				C1 = 0x1F;
 			else
 			{
-				if (HPSDRHW == RedPitaya) //DH1KLM
+				if (HPSDRModel == HPSDRModel_REDPITAYA) //[2.10.3.9]DH1KLM
 					C1 = (prn->adc[1].rx_step_attn & 0b00011111);
 				else
 					C1 = (prn->adc[1].rx_step_attn);
