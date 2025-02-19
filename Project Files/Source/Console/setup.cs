@@ -58,7 +58,8 @@ namespace Thetis
 
     public partial class Setup : Form
     {
-        private const string s_DEFAULT_GRADIENT = "9|1|0.000|-1509884160|1|0.339|-1493237760|1|0.234|-1509884160|1|0.294|-1493211648|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1493237760|";
+        private const string s_DEFAULT_GRADIENT = "9|1|0.000|-2147418368|1|0.494|-2130771968|1|0.341|-2147418368|1|0.432|-2130745856|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-2130771968|";
+        //"9|1|0.000|-1509884160|1|0.339|-1493237760|1|0.234|-1509884160|1|0.294|-1493211648|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1493237760|";
 
         // for these callsigns always show cmasio tab, as a perk to the testers from discord
         private readonly List<string> CALLSIGN_IGNORE = new List<string>() {    "dl5tt", "ea8djr", "kc1lko", "k1lsb", "k1sr", "k2gx", "k2tc", "kb2uka",
