@@ -63,6 +63,7 @@ namespace Thetis
     using Device = SharpDX.Direct3D11.Device;
     using RectangleF = SharpDX.RectangleF;
     using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
+    using Discord.Commands;
 
     class Display
     {
@@ -4728,12 +4729,12 @@ namespace Thetis
                             _d2dRenderTarget.DrawRoundedRectangle(rr, m_bDX2_m_bHightlightNumbers);
                             //
 
-                            int diff = Math.Abs(sorted[0].X - sorted[1].X);
-                            if (diff > 10)
+                            int pixel_diff = Math.Abs(sorted[0].X - sorted[1].X);
+                            if (pixel_diff > 10)
                             {
                                 int low_x = sorted[0].X < sorted[1].X ? sorted[0].X : sorted[1].X;
                                 int high_x = sorted[0].X > sorted[1].X ? sorted[0].X : sorted[1].X;
-                                int mid_x = low_x + (diff / 2);
+                                int mid_x = low_x + (pixel_diff / 2);
 
                                 Maximums[] sortedlow = imd_measurements
                                 .OrderByDescending(m => m.X)
@@ -4745,14 +4746,14 @@ namespace Thetis
                                 .Where(m => m.X > mid_x)
                                 .ToArray();
 
-                                int fL = findImd(sortedlow, 1, diff, low_x, true, out int fL_X);
-                                int fH = findImd(sortedhigh, 1, diff, high_x, false, out int fH_X);
+                                int fL = findImd(sortedlow, 1, pixel_diff, low_x, true, out int fL_X);
+                                int fH = findImd(sortedhigh, 1, pixel_diff, high_x, false, out int fH_X);
 
-                                int imd3indexL = findImd(sortedlow, 3, diff, low_x, true, out int imd3L_X);
-                                int imd3indexH = findImd(sortedhigh, 3, diff, high_x, false, out int imd3H_X);
+                                int imd3indexL = findImd(sortedlow, 3, pixel_diff, low_x, true, out int imd3L_X);
+                                int imd3indexH = findImd(sortedhigh, 3, pixel_diff, high_x, false, out int imd3H_X);
 
-                                int imd5indexL = findImd(sortedlow, 5, diff, low_x, true, out int imd5L_X);
-                                int imd5indexH = findImd(sortedhigh, 5, diff, high_x, false, out int imd5H_X);
+                                int imd5indexL = findImd(sortedlow, 5, pixel_diff, low_x, true, out int imd5L_X);
+                                int imd5indexH = findImd(sortedhigh, 5, pixel_diff, high_x, false, out int imd5H_X);
 
                                 bool ok = fL != -1 && fH != -1 && imd3indexL != -1 && imd3indexH != -1 && imd5indexL != -1 && imd5indexH != -1;
 
@@ -4783,7 +4784,7 @@ namespace Thetis
                                     float oip3 = dbc_min + (imd3dBc / 2f);
                                     float oip5 = dbc_min + (imd5dBc / 2f);
 
-                                    _two_tone_readings_X_offset = imd5L_X - (int)(rr.Rect.Right - rr.Rect.Left) - diff;
+                                    _two_tone_readings_X_offset = imd5L_X - (int)(rr.Rect.Right - rr.Rect.Left) - pixel_diff;
                                     if (_two_tone_readings_X_offset < 50) _two_tone_readings_X_offset = 50;
 
                                     //ExponentialMovingAverage
@@ -4839,6 +4840,16 @@ namespace Thetis
                                         _ema_oip5 = alpha * oip5 + (1 - alpha) * _ema_oip5;
                                     }
 
+                                    float f0l = -(_ema_dbc - _ema_f0l);
+                                    float f0u = -(_ema_dbc - _ema_f0u);
+                                    float imd3l = -(_ema_dbc - _ema_imd3l);
+                                    float imd3u = -(_ema_dbc - _ema_imd3u);
+                                    float imd5l = -(_ema_dbc - _ema_imd5l);
+                                    float imd5u = -(_ema_dbc - _ema_imd5u);
+                                    float diff = (f0h_freq - f0l_freq) / 1000f;
+                                    float worst_imd3 = -_ema_imd3dBc;
+                                    float worst_imd5 = -_ema_imd5dBc;
+
                                     string readings =
                                         "    f0_l\n" +
                                         "    f0_u\n" +
@@ -4858,18 +4869,18 @@ namespace Thetis
                                         _ema_imd3u.ToString("f2") + "\n" +
                                         _ema_imd5l.ToString("f2") + "\n" +
                                         _ema_imd5u.ToString("f2") + "\n\n" +
-                                        "    " + _ema_imd3dBc.ToString("f2") + " dBc\n" +
-                                        "    " + _ema_imd5dBc.ToString("f2") + " dBc\n" +
+                                        "    " + worst_imd3.ToString("f2") + " dBc\n" +
+                                        "    " + worst_imd5.ToString("f2") + " dBc\n" +
                                         "    " + _ema_oip3.ToString("f2") + " dB\n" +
                                         "    " + _ema_oip5.ToString("f2") + " dB";
 
                                     string val2 =
-                                        (_ema_dbc - _ema_f0l).ToString("f2") + "\n" +
-                                        (_ema_dbc - _ema_f0u).ToString("f2") + "\n" +
-                                        (_ema_dbc - _ema_imd3l).ToString("f2") + "\n" +
-                                        (_ema_dbc - _ema_imd3u).ToString("f2") + "\n" +
-                                        (_ema_dbc - _ema_imd5l).ToString("f2") + "\n" +
-                                        (_ema_dbc - _ema_imd5u).ToString("f2");
+                                        f0l.ToString("f2") + "\n" +
+                                        f0u.ToString("f2") + "\n" +
+                                        imd3l.ToString("f2") + "\n" +
+                                        imd3u.ToString("f2") + "\n" +
+                                        imd5l.ToString("f2") + "\n" +
+                                        imd5u.ToString("f2");
 
                                     string val3 =
                                         (_ema_f0l_freq * 1e-6).ToString("f6") + " MHz\n" +
@@ -4878,12 +4889,12 @@ namespace Thetis
                                         (_ema_imd3h_freq * 1e-6).ToString("f6") + " MHz\n" +
                                         (_ema_imd5l_freq * 1e-6).ToString("f6") + " MHz\n" +
                                         (_ema_imd5h_freq * 1e-6).ToString("f6") + " MHz\n\n\n" +
-                                        "  " + ((f0h_freq - f0l_freq) / 1000f).ToString("F3") + " kHz";
+                                        "  " + diff.ToString("F3") + " kHz";
 
                                     _d2dRenderTarget.DrawText("dBm        dBc           frequency", fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 70, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                     _d2dRenderTarget.DrawText(readings, fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 10, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                     _d2dRenderTarget.DrawText(val1, fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 64, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
-                                    _d2dRenderTarget.DrawText(val2, fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 122, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText(val2, fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 114, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                     _d2dRenderTarget.DrawText(val3, fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 170, 70, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                     _d2dRenderTarget.DrawText("f0 diff", fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 190, 166, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                 }
