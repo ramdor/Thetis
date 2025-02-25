@@ -44,6 +44,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] when adcs were linked, unwinding of adc overload attenuation did not always return to original att
 - [fix] PS SetPk reset if user selects different radio model
 - [fix] rx2 sql thumb control now aligns with signal displayed below
+- [fix] VAC2 on/off state is recovered from the TX profile when rx2 is enabled 
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked

@@ -4851,12 +4851,12 @@ namespace Thetis
                                     float worst_imd5 = -_ema_imd5dBc;
 
                                     string readings =
-                                        "    f0_l\n" +
-                                        "    f0_u\n" +
-                                        "IMD3_l\n" +
-                                        "IMD3_u\n" +
-                                        "IMD5_l\n" +
-                                        "IMD5_u\n\n" +
+                                        "    f0 L\n" +
+                                        "    f0 U\n" +
+                                        "IMD3 L\n" +
+                                        "IMD3 U\n" +
+                                        "IMD5 L\n" +
+                                        "IMD5 U\n\n" +
                                         "        IMD3\n" +
                                         "        IMD5\n" +
                                         "        OIP3\n" +

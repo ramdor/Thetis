@@ -39764,6 +39764,15 @@ namespace Thetis
 
             RX2Enabled = chkRX2.Checked;
 
+            //[2.10.3.9]MW0LGE restore VAC on/off state for VAC2 if the TX profile is configured to do so
+            if (RX2Enabled && !IsSetupFormNull && oldRX2Enabled != chkRX2.Checked)
+            {
+                int vac_enabled_bits = SetupForm.GetVACEnabledBitfield();                
+                bool is_vac2_enabled = (vac_enabled_bits & (1 << 1)) != 0;
+                chkVAC2.Checked = is_vac2_enabled;
+            }
+            //
+
             if (chkVFOBTX.Checked && chkVAC2.Checked && chkRX2.Checked)
             {
                 ptbVACRXGain.Value = vac2_rx_gain;
