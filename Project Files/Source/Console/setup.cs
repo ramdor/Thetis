@@ -15485,6 +15485,13 @@ namespace Thetis
             if (initializing) return;
             console.SWRProtection = chkSWRProtection.Checked;
             udSwrProtectionLimit.Enabled = chkSWRProtection.Checked;
+
+            bool enable = chkSWRProtection.Checked;
+
+            chkSWRTuneProtection.Enabled = enable;
+            udTunePowerSwrIgnore.Enabled = chkSWRTuneProtection.Checked && enable;
+
+            chkWindBackPowerSWR.Enabled = enable;            
         }
 
         public bool ATTOnTXChecked
@@ -16135,7 +16142,7 @@ namespace Thetis
         {
             if (initializing) return;
             console.DisableSWRonTune = chkSWRTuneProtection.Checked;
-            udTunePowerSwrIgnore.Enabled = chkSWRTuneProtection.Checked;
+            udTunePowerSwrIgnore.Enabled = chkSWRTuneProtection.Checked && chkSWRProtection.Checked;
         }
 
         private void tbDisplayFFTSize_Scroll(object sender, EventArgs e)

@@ -5562,7 +5562,7 @@
             this.chkSWRProtection.Size = new System.Drawing.Size(148, 17);
             this.chkSWRProtection.TabIndex = 3;
             this.chkSWRProtection.Text = "Enable Protection SWR >";
-            this.toolTip1.SetToolTip(this.chkSWRProtection, "Disables SWR Protection.");
+            this.toolTip1.SetToolTip(this.chkSWRProtection, "Show a visual SWR warning in the spectral area");
             this.chkSWRProtection.UseVisualStyleBackColor = true;
             this.chkSWRProtection.CheckedChanged += new System.EventHandler(this.chkSWRProtection_CheckedChanged);
             // 
