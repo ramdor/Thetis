@@ -81,7 +81,7 @@ void DeInitMetisSockets() {
 
 /* returns 0 on success, != 0 otherwise */
 PORT
-int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol, int hardware_id, int model_id) {
+int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol, int model_id) {
 	IPAddr DestIp = 0;
 	IPAddr SrcIp = 0;       /* default for src ip */
 	ULONG MacAddr[2];       /* for 6-byte hardware addresses */
@@ -91,7 +91,6 @@ int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol,
 	struct sockaddr_in local = { 0 };
 
 	RadioProtocol = protocol;
-	HPSDRHW = hardware_id;
 	HPSDRModel = model_id;
 
 	//if (!WSA_inited) {

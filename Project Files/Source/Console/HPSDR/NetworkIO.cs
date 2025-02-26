@@ -293,7 +293,7 @@ namespace Thetis
                 _board_mismatch = "";
             }    
 
-            rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort, (int)CurrentRadioProtocol, (int)BoardID, (int)HardwareSpecific.Model);
+            rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort, (int)CurrentRadioProtocol, (int)HardwareSpecific.Model);
             return -rc;
         }
 

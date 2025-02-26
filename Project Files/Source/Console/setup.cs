@@ -9193,7 +9193,7 @@ namespace Thetis
 
             DataRow[] rows = getDataRowsForTXProfile(profile_name);
 
-            if (rows.Length < 1) return bitfield;
+            if (rows.Length != 1) return bitfield;
 
             DataRow row = rows[0];
             for (int n = 0; n <= 1; n++) 

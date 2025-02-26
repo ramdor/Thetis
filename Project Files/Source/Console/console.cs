@@ -61,10 +61,7 @@ namespace Thetis
     using System.Windows.Forms;
     using System.Xml.Linq;
     using System.Collections.Concurrent;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using System.Diagnostics.Contracts;
-    using Newtonsoft.Json.Bson;
-
+    
     public partial class Console : Form
     {
         public const bool CHECK_DEV_VERSION = true; // this will check github for dev versions, set to false when performing a release
