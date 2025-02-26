@@ -457,6 +457,7 @@
             // 
             // picTick
             // 
+            this.picTick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.picTick.BackColor = System.Drawing.Color.Transparent;
             this.picTick.Image = ((System.Drawing.Image)(resources.GetObject("picTick.Image")));
             this.picTick.Location = new System.Drawing.Point(650, 86);
