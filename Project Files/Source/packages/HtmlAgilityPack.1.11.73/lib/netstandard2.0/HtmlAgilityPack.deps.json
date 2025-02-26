@@ -7,7 +7,7 @@
   "targets": {
     ".NETStandard,Version=v2.0": {},
     ".NETStandard,Version=v2.0/": {
-      "HtmlAgilityPack/1.11.72": {
+      "HtmlAgilityPack/1.11.73": {
         "dependencies": {
           "NETStandard.Library": "2.0.3"
         },
@@ -24,7 +24,7 @@
     }
   },
   "libraries": {
-    "HtmlAgilityPack/1.11.72": {
+    "HtmlAgilityPack/1.11.73": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
