@@ -5102,8 +5102,8 @@ namespace Thetis
         private static int m_nRX1WaterFallFrameCount = 0; // 1=every frame, 2= every other, etc
         private static int m_nRX2WaterFallFrameCount = 0;
 
-        private static Dictionary<int, Color> _rx1_waterfall_grad = new Dictionary<int, Color>();
-        private static Dictionary<int, Color> _rx2_waterfall_grad = new Dictionary<int, Color>();
+        private static Color[] _rx1_waterfall_grad = new Color[101];
+        private static Color[] _rx2_waterfall_grad = new Color[101];
 
         unsafe static private bool DrawWaterfallDX2D(int nVerticalShift, int W, int H, int rx, bool bottom)
         {
@@ -5384,28 +5384,25 @@ namespace Thetis
                                 {
                                     if (rx == 1)
                                     {
-                                        _rx1_waterfall_grad.Clear();
                                         for(int perc = 0; perc <= 100; perc++)
                                         {
                                             Color c = console.SetupForm.WaterfallGradPicker.GetColourAtPercent(perc / 100f);
-                                            _rx1_waterfall_grad.Add(perc, c);
+                                            _rx1_waterfall_grad[perc] = c;
                                         }
                                         _rebuild_rx1_waterfall_gradient = false;
                                     }
                                     else if (rx == 2)
                                     {
-                                        _rx2_waterfall_grad.Clear();
                                         for (int perc = 0; perc <= 100; perc++)
                                         {
                                             Color c = console.SetupForm.WaterfallGradPicker.GetColourAtPercent(perc / 100f);
-                                            _rx2_waterfall_grad.Add(perc, c);
+                                            _rx2_waterfall_grad[perc] = c;
                                         }
                                         _rebuild_rx2_waterfall_gradient = false;
                                     }
                                 }
 
-                                Dictionary<int, Color> cols;
-
+                                Color[] cols;
                                 if (rx == 1)
                                 {
                                     cols = _rx1_waterfall_grad;
