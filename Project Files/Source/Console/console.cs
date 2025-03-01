@@ -17786,7 +17786,11 @@ namespace Thetis
                         r = radModeDRM;
                         break;
                 }
-                r.Checked = true;
+
+                if (r != null)
+                {
+                    r.Checked = true;
+                }
 
                 if (modePopupForm != null) modePopupForm.RepopulateForm();
                 if (filterPopupForm != null) filterPopupForm.RepopulateForm();
@@ -17840,7 +17844,11 @@ namespace Thetis
                         break;
                 }
 
-                r.Checked = true;
+                if (r != null)
+                {
+                    r.Checked = true;
+                }
+
                 if (modePopupForm != null) modePopupForm.RepopulateForm();
                 if (filterPopupForm != null) filterPopupForm.RepopulateForm();
             }
