@@ -2965,6 +2965,20 @@
             this.tpAppearance = new System.Windows.Forms.TabPage();
             this.tcAppearance = new System.Windows.Forms.TabControl();
             this.tpAppearanceGeneral = new System.Windows.Forms.TabPage();
+            this.panelTS10 = new System.Windows.Forms.PanelTS();
+            this.btnWaterfallDefaultLG_rainbow = new System.Windows.Forms.ButtonTS();
+            this.btnWaterfallDefaultLG_orange = new System.Windows.Forms.ButtonTS();
+            this.btnWaterfallDefaultLG_blue = new System.Windows.Forms.ButtonTS();
+            this.btnWaterfallDefaultLG_lemon = new System.Windows.Forms.ButtonTS();
+            this.btnWaterfallDefaultLG_grey = new System.Windows.Forms.ButtonTS();
+            this.btnWaterfallToClipboard = new System.Windows.Forms.ButtonTS();
+            this.clrbtnGripperColour_waterfall = new Thetis.ColorButton();
+            this.btnLoadGradient_waterfall = new System.Windows.Forms.ButtonTS();
+            this.lgLinearGradient_waterfall = new Thetis.ucLGPicker();
+            this.btnClearColourGrippers_waterfall = new System.Windows.Forms.ButtonTS();
+            this.btnSaveGradient_waterfall = new System.Windows.Forms.ButtonTS();
+            this.btnDeleteColourGripper_waterfall = new System.Windows.Forms.ButtonTS();
+            this.btnDefaultGradient_waterfall = new System.Windows.Forms.ButtonTS();
             this.groupBoxTS38 = new System.Windows.Forms.GroupBoxTS();
             this.clrbtnTXAttenuationBackground = new Thetis.ColorButton();
             this.labelTS195 = new System.Windows.Forms.LabelTS();
@@ -3011,6 +3025,7 @@
             this.lblVFOPowerOn = new System.Windows.Forms.LabelTS();
             this.lblVFOPowerOff = new System.Windows.Forms.LabelTS();
             this.tpAppearanceDisplay = new System.Windows.Forms.TabPage();
+            this.chkPanadpatorGradient = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS18 = new System.Windows.Forms.GroupBoxTS();
             this.clrbtnNoiseFloorText = new Thetis.ColorButton();
             this.labelTS192 = new System.Windows.Forms.LabelTS();
@@ -3020,16 +3035,15 @@
             this.labelTS605 = new System.Windows.Forms.LabelTS();
             this.labelTS604 = new System.Windows.Forms.LabelTS();
             this.chkNoiseFloorShowDBM = new System.Windows.Forms.CheckBoxTS();
-            this.chkPanadpatorGradient = new System.Windows.Forms.CheckBoxTS();
-            this.grpPanadaptorGradient = new System.Windows.Forms.GroupBoxTS();
+            this.pnlPanadaptorGradient = new System.Windows.Forms.PanelTS();
             this.btnLoadGradient = new System.Windows.Forms.ButtonTS();
+            this.lgLinearGradientRX1 = new Thetis.ucLGPicker();
+            this.clrbtnGripperColour = new Thetis.ColorButton();
+            this.btnClearColourGrippers = new System.Windows.Forms.ButtonTS();
             this.btnSaveGradient = new System.Windows.Forms.ButtonTS();
             this.chkDataLineGradient = new System.Windows.Forms.CheckBoxTS();
-            this.btnDefaultGradient = new System.Windows.Forms.ButtonTS();
-            this.clrbtnGripperColour = new Thetis.ColorButton();
-            this.lgLinearGradientRX1 = new Thetis.ucLGPicker();
             this.btnDeleteColourGripper = new System.Windows.Forms.ButtonTS();
-            this.btnClearColourGrippers = new System.Windows.Forms.ButtonTS();
+            this.btnDefaultGradient = new System.Windows.Forms.ButtonTS();
             this.grpAppRXWaterfall = new System.Windows.Forms.GroupBoxTS();
             this.chkShowTXFilterOnRXWaterfall = new System.Windows.Forms.CheckBoxTS();
             this.chkShowRXZeroLineOnWaterfall = new System.Windows.Forms.CheckBoxTS();
@@ -4156,6 +4170,8 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.groupBoxTS50 = new System.Windows.Forms.GroupBoxTS();
+            this.groupBoxTS51 = new System.Windows.Forms.GroupBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4929,6 +4945,7 @@
             this.tpAppearance.SuspendLayout();
             this.tcAppearance.SuspendLayout();
             this.tpAppearanceGeneral.SuspendLayout();
+            this.panelTS10.SuspendLayout();
             this.groupBoxTS38.SuspendLayout();
             this.groupBoxTS31.SuspendLayout();
             this.groupBoxTS12.SuspendLayout();
@@ -4938,7 +4955,7 @@
             this.tpAppearanceDisplay.SuspendLayout();
             this.groupBoxTS18.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udNoiseFloorLineWidth)).BeginInit();
-            this.grpPanadaptorGradient.SuspendLayout();
+            this.pnlPanadaptorGradient.SuspendLayout();
             this.grpAppRXWaterfall.SuspendLayout();
             this.grpAppGrid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbHGridColorAlpha)).BeginInit();
@@ -5205,6 +5222,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
+            this.groupBoxTS50.SuspendLayout();
+            this.groupBoxTS51.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -33278,7 +33297,8 @@
             "BlackWhite",
             "LinLog",
             "LinRad",
-            "LinAuto"});
+            "LinAuto",
+            "Custom"});
             this.comboColorPalette.Location = new System.Drawing.Point(54, 95);
             this.comboColorPalette.Name = "comboColorPalette";
             this.comboColorPalette.Size = new System.Drawing.Size(72, 21);
@@ -34444,7 +34464,8 @@
             "BlackWhite",
             "LinLog",
             "LinRad",
-            "LinAuto"});
+            "LinAuto",
+            "Custom"});
             this.comboRX2ColorPalette.Location = new System.Drawing.Point(54, 95);
             this.comboRX2ColorPalette.Name = "comboRX2ColorPalette";
             this.comboRX2ColorPalette.Size = new System.Drawing.Size(72, 21);
@@ -49031,6 +49052,7 @@
             // tpAppearanceGeneral
             // 
             this.tpAppearanceGeneral.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS50);
             this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS38);
             this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS31);
             this.tpAppearanceGeneral.Controls.Add(this.groupBoxTS12);
@@ -49043,6 +49065,185 @@
             this.tpAppearanceGeneral.Size = new System.Drawing.Size(724, 410);
             this.tpAppearanceGeneral.TabIndex = 0;
             this.tpAppearanceGeneral.Text = "General";
+            // 
+            // panelTS10
+            // 
+            this.panelTS10.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.panelTS10.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelTS10.Controls.Add(this.btnWaterfallDefaultLG_rainbow);
+            this.panelTS10.Controls.Add(this.btnWaterfallDefaultLG_orange);
+            this.panelTS10.Controls.Add(this.btnWaterfallDefaultLG_blue);
+            this.panelTS10.Controls.Add(this.btnWaterfallDefaultLG_lemon);
+            this.panelTS10.Controls.Add(this.btnWaterfallDefaultLG_grey);
+            this.panelTS10.Controls.Add(this.btnWaterfallToClipboard);
+            this.panelTS10.Controls.Add(this.clrbtnGripperColour_waterfall);
+            this.panelTS10.Controls.Add(this.btnLoadGradient_waterfall);
+            this.panelTS10.Controls.Add(this.lgLinearGradient_waterfall);
+            this.panelTS10.Controls.Add(this.btnClearColourGrippers_waterfall);
+            this.panelTS10.Controls.Add(this.btnSaveGradient_waterfall);
+            this.panelTS10.Controls.Add(this.btnDeleteColourGripper_waterfall);
+            this.panelTS10.Controls.Add(this.btnDefaultGradient_waterfall);
+            this.panelTS10.Location = new System.Drawing.Point(6, 19);
+            this.panelTS10.Name = "panelTS10";
+            this.panelTS10.Size = new System.Drawing.Size(431, 105);
+            this.panelTS10.TabIndex = 93;
+            // 
+            // btnWaterfallDefaultLG_rainbow
+            // 
+            this.btnWaterfallDefaultLG_rainbow.Image = null;
+            this.btnWaterfallDefaultLG_rainbow.Location = new System.Drawing.Point(348, 74);
+            this.btnWaterfallDefaultLG_rainbow.Name = "btnWaterfallDefaultLG_rainbow";
+            this.btnWaterfallDefaultLG_rainbow.Selectable = true;
+            this.btnWaterfallDefaultLG_rainbow.Size = new System.Drawing.Size(63, 23);
+            this.btnWaterfallDefaultLG_rainbow.TabIndex = 98;
+            this.btnWaterfallDefaultLG_rainbow.Text = "rainbow";
+            this.btnWaterfallDefaultLG_rainbow.Click += new System.EventHandler(this.btnWaterfallDefaultLG_Colours_Click);
+            // 
+            // btnWaterfallDefaultLG_orange
+            // 
+            this.btnWaterfallDefaultLG_orange.Image = null;
+            this.btnWaterfallDefaultLG_orange.Location = new System.Drawing.Point(293, 74);
+            this.btnWaterfallDefaultLG_orange.Name = "btnWaterfallDefaultLG_orange";
+            this.btnWaterfallDefaultLG_orange.Selectable = true;
+            this.btnWaterfallDefaultLG_orange.Size = new System.Drawing.Size(49, 23);
+            this.btnWaterfallDefaultLG_orange.TabIndex = 97;
+            this.btnWaterfallDefaultLG_orange.Text = "orange";
+            this.btnWaterfallDefaultLG_orange.Click += new System.EventHandler(this.btnWaterfallDefaultLG_Colours_Click);
+            // 
+            // btnWaterfallDefaultLG_blue
+            // 
+            this.btnWaterfallDefaultLG_blue.Image = null;
+            this.btnWaterfallDefaultLG_blue.Location = new System.Drawing.Point(238, 74);
+            this.btnWaterfallDefaultLG_blue.Name = "btnWaterfallDefaultLG_blue";
+            this.btnWaterfallDefaultLG_blue.Selectable = true;
+            this.btnWaterfallDefaultLG_blue.Size = new System.Drawing.Size(49, 23);
+            this.btnWaterfallDefaultLG_blue.TabIndex = 96;
+            this.btnWaterfallDefaultLG_blue.Text = "blue";
+            this.btnWaterfallDefaultLG_blue.Click += new System.EventHandler(this.btnWaterfallDefaultLG_Colours_Click);
+            // 
+            // btnWaterfallDefaultLG_lemon
+            // 
+            this.btnWaterfallDefaultLG_lemon.Image = null;
+            this.btnWaterfallDefaultLG_lemon.Location = new System.Drawing.Point(183, 74);
+            this.btnWaterfallDefaultLG_lemon.Name = "btnWaterfallDefaultLG_lemon";
+            this.btnWaterfallDefaultLG_lemon.Selectable = true;
+            this.btnWaterfallDefaultLG_lemon.Size = new System.Drawing.Size(49, 23);
+            this.btnWaterfallDefaultLG_lemon.TabIndex = 95;
+            this.btnWaterfallDefaultLG_lemon.Text = "lemon";
+            this.btnWaterfallDefaultLG_lemon.Click += new System.EventHandler(this.btnWaterfallDefaultLG_Colours_Click);
+            // 
+            // btnWaterfallDefaultLG_grey
+            // 
+            this.btnWaterfallDefaultLG_grey.Image = null;
+            this.btnWaterfallDefaultLG_grey.Location = new System.Drawing.Point(128, 74);
+            this.btnWaterfallDefaultLG_grey.Name = "btnWaterfallDefaultLG_grey";
+            this.btnWaterfallDefaultLG_grey.Selectable = true;
+            this.btnWaterfallDefaultLG_grey.Size = new System.Drawing.Size(49, 23);
+            this.btnWaterfallDefaultLG_grey.TabIndex = 94;
+            this.btnWaterfallDefaultLG_grey.Text = "grey";
+            this.btnWaterfallDefaultLG_grey.Click += new System.EventHandler(this.btnWaterfallDefaultLG_Colours_Click);
+            // 
+            // btnWaterfallToClipboard
+            // 
+            this.btnWaterfallToClipboard.Image = null;
+            this.btnWaterfallToClipboard.Location = new System.Drawing.Point(49, 45);
+            this.btnWaterfallToClipboard.Name = "btnWaterfallToClipboard";
+            this.btnWaterfallToClipboard.Selectable = true;
+            this.btnWaterfallToClipboard.Size = new System.Drawing.Size(32, 23);
+            this.btnWaterfallToClipboard.TabIndex = 93;
+            this.btnWaterfallToClipboard.Text = "C";
+            this.btnWaterfallToClipboard.UseVisualStyleBackColor = true;
+            this.btnWaterfallToClipboard.Visible = false;
+            this.btnWaterfallToClipboard.Click += new System.EventHandler(this.btnWaterfallToClipboard_Click);
+            // 
+            // clrbtnGripperColour_waterfall
+            // 
+            this.clrbtnGripperColour_waterfall.Automatic = "Automatic";
+            this.clrbtnGripperColour_waterfall.Color = System.Drawing.Color.Yellow;
+            this.clrbtnGripperColour_waterfall.Image = null;
+            this.clrbtnGripperColour_waterfall.Location = new System.Drawing.Point(3, 45);
+            this.clrbtnGripperColour_waterfall.MoreColors = "More Colors...";
+            this.clrbtnGripperColour_waterfall.Name = "clrbtnGripperColour_waterfall";
+            this.clrbtnGripperColour_waterfall.Selectable = true;
+            this.clrbtnGripperColour_waterfall.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnGripperColour_waterfall.TabIndex = 92;
+            this.clrbtnGripperColour_waterfall.Changed += new System.EventHandler(this.clrbtnGripperColour_waterfall_Changed);
+            // 
+            // btnLoadGradient_waterfall
+            // 
+            this.btnLoadGradient_waterfall.Image = null;
+            this.btnLoadGradient_waterfall.Location = new System.Drawing.Point(349, 45);
+            this.btnLoadGradient_waterfall.Name = "btnLoadGradient_waterfall";
+            this.btnLoadGradient_waterfall.Selectable = true;
+            this.btnLoadGradient_waterfall.Size = new System.Drawing.Size(31, 23);
+            this.btnLoadGradient_waterfall.TabIndex = 91;
+            this.btnLoadGradient_waterfall.Text = "L";
+            this.toolTip1.SetToolTip(this.btnLoadGradient_waterfall, "Load a gradient");
+            this.btnLoadGradient_waterfall.Click += new System.EventHandler(this.btnLoadGradient_waterfall_Click);
+            // 
+            // lgLinearGradient_waterfall
+            // 
+            this.lgLinearGradient_waterfall.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.lgLinearGradient_waterfall.ColourForSelectedGripper = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.lgLinearGradient_waterfall.EncodedText = resources.GetString("lgLinearGradient_waterfall.EncodedText");
+            this.lgLinearGradient_waterfall.IncludeAlphaInPreview = false;
+            this.lgLinearGradient_waterfall.Location = new System.Drawing.Point(0, 0);
+            this.lgLinearGradient_waterfall.Margin = new System.Windows.Forms.Padding(4);
+            this.lgLinearGradient_waterfall.MinimumSize = new System.Drawing.Size(192, 38);
+            this.lgLinearGradient_waterfall.Name = "lgLinearGradient_waterfall";
+            this.lgLinearGradient_waterfall.ShowAsPercent = true;
+            this.lgLinearGradient_waterfall.Size = new System.Drawing.Size(431, 38);
+            this.lgLinearGradient_waterfall.TabIndex = 85;
+            this.lgLinearGradient_waterfall.Changed += new System.EventHandler(this.lgLinearGradient_waterfall_Changed);
+            this.lgLinearGradient_waterfall.GripperSelected += new Thetis.ucLGPicker.GripperSelectedEventHandler(this.lgLinearGradient_waterfall_GripperSelected);
+            this.lgLinearGradient_waterfall.GripperDBMChanged += new Thetis.ucLGPicker.GripperDBMChangedEventHandler(this.lgLinearGradient_waterfall_GripperDBMChanged);
+            this.lgLinearGradient_waterfall.GripperMouseEnter += new Thetis.ucLGPicker.GripperMouseEnterEventHandler(this.lgLinearGradient_waterfall_GripperMouseEnter);
+            this.lgLinearGradient_waterfall.GripperMouseLeave += new Thetis.ucLGPicker.GripperMouseLeaveEventHandler(this.lgLinearGradient_waterfall_GripperMouseLeave);
+            // 
+            // btnClearColourGrippers_waterfall
+            // 
+            this.btnClearColourGrippers_waterfall.Image = null;
+            this.btnClearColourGrippers_waterfall.Location = new System.Drawing.Point(277, 45);
+            this.btnClearColourGrippers_waterfall.Name = "btnClearColourGrippers_waterfall";
+            this.btnClearColourGrippers_waterfall.Selectable = true;
+            this.btnClearColourGrippers_waterfall.Size = new System.Drawing.Size(64, 23);
+            this.btnClearColourGrippers_waterfall.TabIndex = 24;
+            this.btnClearColourGrippers_waterfall.Text = "Clear";
+            this.btnClearColourGrippers_waterfall.Click += new System.EventHandler(this.btnClearColourGrippers_waterfall_Click);
+            // 
+            // btnSaveGradient_waterfall
+            // 
+            this.btnSaveGradient_waterfall.Image = null;
+            this.btnSaveGradient_waterfall.Location = new System.Drawing.Point(380, 45);
+            this.btnSaveGradient_waterfall.Name = "btnSaveGradient_waterfall";
+            this.btnSaveGradient_waterfall.Selectable = true;
+            this.btnSaveGradient_waterfall.Size = new System.Drawing.Size(31, 23);
+            this.btnSaveGradient_waterfall.TabIndex = 90;
+            this.btnSaveGradient_waterfall.Text = "S";
+            this.toolTip1.SetToolTip(this.btnSaveGradient_waterfall, "Save a gradient");
+            this.btnSaveGradient_waterfall.Click += new System.EventHandler(this.btnSaveGradient_waterfall_Click);
+            // 
+            // btnDeleteColourGripper_waterfall
+            // 
+            this.btnDeleteColourGripper_waterfall.Image = null;
+            this.btnDeleteColourGripper_waterfall.Location = new System.Drawing.Point(208, 45);
+            this.btnDeleteColourGripper_waterfall.Name = "btnDeleteColourGripper_waterfall";
+            this.btnDeleteColourGripper_waterfall.Selectable = true;
+            this.btnDeleteColourGripper_waterfall.Size = new System.Drawing.Size(64, 23);
+            this.btnDeleteColourGripper_waterfall.TabIndex = 86;
+            this.btnDeleteColourGripper_waterfall.Text = "Delete";
+            this.btnDeleteColourGripper_waterfall.Click += new System.EventHandler(this.btnDeleteColourGripper_waterfall_Click);
+            // 
+            // btnDefaultGradient_waterfall
+            // 
+            this.btnDefaultGradient_waterfall.Image = null;
+            this.btnDefaultGradient_waterfall.Location = new System.Drawing.Point(138, 45);
+            this.btnDefaultGradient_waterfall.Name = "btnDefaultGradient_waterfall";
+            this.btnDefaultGradient_waterfall.Selectable = true;
+            this.btnDefaultGradient_waterfall.Size = new System.Drawing.Size(64, 23);
+            this.btnDefaultGradient_waterfall.TabIndex = 88;
+            this.btnDefaultGradient_waterfall.Text = "Default";
+            this.btnDefaultGradient_waterfall.Click += new System.EventHandler(this.btnDefaultGradient_waterfall_Click);
             // 
             // groupBoxTS38
             // 
@@ -49252,7 +49453,7 @@
             // btnSkinExport
             // 
             this.btnSkinExport.Image = null;
-            this.btnSkinExport.Location = new System.Drawing.Point(14, 277);
+            this.btnSkinExport.Location = new System.Drawing.Point(556, 356);
             this.btnSkinExport.Name = "btnSkinExport";
             this.btnSkinExport.Selectable = true;
             this.btnSkinExport.Size = new System.Drawing.Size(51, 23);
@@ -49587,9 +49788,8 @@
             // tpAppearanceDisplay
             // 
             this.tpAppearanceDisplay.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAppearanceDisplay.Controls.Add(this.groupBoxTS51);
             this.tpAppearanceDisplay.Controls.Add(this.groupBoxTS18);
-            this.tpAppearanceDisplay.Controls.Add(this.chkPanadpatorGradient);
-            this.tpAppearanceDisplay.Controls.Add(this.grpPanadaptorGradient);
             this.tpAppearanceDisplay.Controls.Add(this.grpAppRXWaterfall);
             this.tpAppearanceDisplay.Controls.Add(this.grpAppGrid);
             this.tpAppearanceDisplay.Controls.Add(this.grpAppPanadapter);
@@ -49599,6 +49799,18 @@
             this.tpAppearanceDisplay.Size = new System.Drawing.Size(724, 410);
             this.tpAppearanceDisplay.TabIndex = 1;
             this.tpAppearanceDisplay.Text = "RX Display";
+            // 
+            // chkPanadpatorGradient
+            // 
+            this.chkPanadpatorGradient.AutoSize = true;
+            this.chkPanadpatorGradient.Image = null;
+            this.chkPanadpatorGradient.Location = new System.Drawing.Point(116, 0);
+            this.chkPanadpatorGradient.Name = "chkPanadpatorGradient";
+            this.chkPanadpatorGradient.Size = new System.Drawing.Size(15, 14);
+            this.chkPanadpatorGradient.TabIndex = 91;
+            this.toolTip1.SetToolTip(this.chkPanadpatorGradient, "Use gradient for data fill and dataline");
+            this.chkPanadpatorGradient.UseVisualStyleBackColor = true;
+            this.chkPanadpatorGradient.CheckedChanged += new System.EventHandler(this.chkPanadpatorGradient_CheckedChanged);
             // 
             // groupBoxTS18
             // 
@@ -49610,9 +49822,9 @@
             this.groupBoxTS18.Controls.Add(this.labelTS605);
             this.groupBoxTS18.Controls.Add(this.labelTS604);
             this.groupBoxTS18.Controls.Add(this.chkNoiseFloorShowDBM);
-            this.groupBoxTS18.Location = new System.Drawing.Point(283, 201);
+            this.groupBoxTS18.Location = new System.Drawing.Point(283, 182);
             this.groupBoxTS18.Name = "groupBoxTS18";
-            this.groupBoxTS18.Size = new System.Drawing.Size(254, 101);
+            this.groupBoxTS18.Size = new System.Drawing.Size(431, 66);
             this.groupBoxTS18.TabIndex = 97;
             this.groupBoxTS18.TabStop = false;
             this.groupBoxTS18.Text = "Panadapter Noise Floor";
@@ -49644,7 +49856,7 @@
             // 
             this.chkNFShowDecimal.AutoSize = true;
             this.chkNFShowDecimal.Image = null;
-            this.chkNFShowDecimal.Location = new System.Drawing.Point(116, 78);
+            this.chkNFShowDecimal.Location = new System.Drawing.Point(116, 46);
             this.chkNFShowDecimal.Name = "chkNFShowDecimal";
             this.chkNFShowDecimal.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.chkNFShowDecimal.Size = new System.Drawing.Size(92, 17);
@@ -49675,7 +49887,7 @@
             0,
             0,
             65536});
-            this.udNoiseFloorLineWidth.Location = new System.Drawing.Point(106, 47);
+            this.udNoiseFloorLineWidth.Location = new System.Drawing.Point(329, 22);
             this.udNoiseFloorLineWidth.Maximum = new decimal(new int[] {
             6,
             0,
@@ -49701,7 +49913,7 @@
             // 
             this.labelTS605.AutoSize = true;
             this.labelTS605.Image = null;
-            this.labelTS605.Location = new System.Drawing.Point(6, 49);
+            this.labelTS605.Location = new System.Drawing.Point(262, 24);
             this.labelTS605.Name = "labelTS605";
             this.labelTS605.Size = new System.Drawing.Size(61, 13);
             this.labelTS605.TabIndex = 96;
@@ -49723,7 +49935,7 @@
             this.chkNoiseFloorShowDBM.Checked = true;
             this.chkNoiseFloorShowDBM.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkNoiseFloorShowDBM.Image = null;
-            this.chkNoiseFloorShowDBM.Location = new System.Drawing.Point(9, 78);
+            this.chkNoiseFloorShowDBM.Location = new System.Drawing.Point(9, 46);
             this.chkNoiseFloorShowDBM.Name = "chkNoiseFloorShowDBM";
             this.chkNoiseFloorShowDBM.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.chkNoiseFloorShowDBM.Size = new System.Drawing.Size(77, 17);
@@ -49733,39 +49945,27 @@
             this.toolTip1.SetToolTip(this.chkNoiseFloorShowDBM, "Show the dBm reading and heading line");
             this.chkNoiseFloorShowDBM.CheckedChanged += new System.EventHandler(this.chkNoiseFloorShowDBM_CheckedChanged);
             // 
-            // chkPanadpatorGradient
+            // pnlPanadaptorGradient
             // 
-            this.chkPanadpatorGradient.AutoSize = true;
-            this.chkPanadpatorGradient.Image = null;
-            this.chkPanadpatorGradient.Location = new System.Drawing.Point(399, 304);
-            this.chkPanadpatorGradient.Name = "chkPanadpatorGradient";
-            this.chkPanadpatorGradient.Size = new System.Drawing.Size(15, 14);
-            this.chkPanadpatorGradient.TabIndex = 91;
-            this.toolTip1.SetToolTip(this.chkPanadpatorGradient, "Use gradient for data fill and dataline");
-            this.chkPanadpatorGradient.UseVisualStyleBackColor = true;
-            this.chkPanadpatorGradient.CheckedChanged += new System.EventHandler(this.chkPanadpatorGradient_CheckedChanged);
-            // 
-            // grpPanadaptorGradient
-            // 
-            this.grpPanadaptorGradient.Controls.Add(this.btnLoadGradient);
-            this.grpPanadaptorGradient.Controls.Add(this.btnSaveGradient);
-            this.grpPanadaptorGradient.Controls.Add(this.chkDataLineGradient);
-            this.grpPanadaptorGradient.Controls.Add(this.btnDefaultGradient);
-            this.grpPanadaptorGradient.Controls.Add(this.clrbtnGripperColour);
-            this.grpPanadaptorGradient.Controls.Add(this.lgLinearGradientRX1);
-            this.grpPanadaptorGradient.Controls.Add(this.btnDeleteColourGripper);
-            this.grpPanadaptorGradient.Controls.Add(this.btnClearColourGrippers);
-            this.grpPanadaptorGradient.Location = new System.Drawing.Point(283, 304);
-            this.grpPanadaptorGradient.Name = "grpPanadaptorGradient";
-            this.grpPanadaptorGradient.Size = new System.Drawing.Size(433, 94);
-            this.grpPanadaptorGradient.TabIndex = 90;
-            this.grpPanadaptorGradient.TabStop = false;
-            this.grpPanadaptorGradient.Text = "Panadaptor Gradient";
+            this.pnlPanadaptorGradient.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlPanadaptorGradient.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlPanadaptorGradient.Controls.Add(this.btnLoadGradient);
+            this.pnlPanadaptorGradient.Controls.Add(this.lgLinearGradientRX1);
+            this.pnlPanadaptorGradient.Controls.Add(this.clrbtnGripperColour);
+            this.pnlPanadaptorGradient.Controls.Add(this.btnClearColourGrippers);
+            this.pnlPanadaptorGradient.Controls.Add(this.btnSaveGradient);
+            this.pnlPanadaptorGradient.Controls.Add(this.chkDataLineGradient);
+            this.pnlPanadaptorGradient.Controls.Add(this.btnDeleteColourGripper);
+            this.pnlPanadaptorGradient.Controls.Add(this.btnDefaultGradient);
+            this.pnlPanadaptorGradient.Location = new System.Drawing.Point(6, 19);
+            this.pnlPanadaptorGradient.Name = "pnlPanadaptorGradient";
+            this.pnlPanadaptorGradient.Size = new System.Drawing.Size(419, 74);
+            this.pnlPanadaptorGradient.TabIndex = 92;
             // 
             // btnLoadGradient
             // 
             this.btnLoadGradient.Image = null;
-            this.btnLoadGradient.Location = new System.Drawing.Point(365, 60);
+            this.btnLoadGradient.Location = new System.Drawing.Point(349, 45);
             this.btnLoadGradient.Name = "btnLoadGradient";
             this.btnLoadGradient.Selectable = true;
             this.btnLoadGradient.Size = new System.Drawing.Size(31, 23);
@@ -49774,10 +49974,53 @@
             this.toolTip1.SetToolTip(this.btnLoadGradient, "Load a gradient");
             this.btnLoadGradient.Click += new System.EventHandler(this.btnLoadGradient_Click);
             // 
+            // lgLinearGradientRX1
+            // 
+            this.lgLinearGradientRX1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.lgLinearGradientRX1.ColourForSelectedGripper = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.lgLinearGradientRX1.EncodedText = resources.GetString("lgLinearGradientRX1.EncodedText");
+            this.lgLinearGradientRX1.IncludeAlphaInPreview = false;
+            this.lgLinearGradientRX1.Location = new System.Drawing.Point(0, 0);
+            this.lgLinearGradientRX1.Margin = new System.Windows.Forms.Padding(4);
+            this.lgLinearGradientRX1.MinimumSize = new System.Drawing.Size(192, 38);
+            this.lgLinearGradientRX1.Name = "lgLinearGradientRX1";
+            this.lgLinearGradientRX1.ShowAsPercent = false;
+            this.lgLinearGradientRX1.Size = new System.Drawing.Size(419, 38);
+            this.lgLinearGradientRX1.TabIndex = 85;
+            this.lgLinearGradientRX1.Changed += new System.EventHandler(this.lgPickerRX1_Changed);
+            this.lgLinearGradientRX1.GripperSelected += new Thetis.ucLGPicker.GripperSelectedEventHandler(this.lgPickerRX1_GripperSelected);
+            this.lgLinearGradientRX1.GripperDBMChanged += new Thetis.ucLGPicker.GripperDBMChangedEventHandler(this.lgPickerRX1_GripperDBMChanged);
+            this.lgLinearGradientRX1.GripperMouseEnter += new Thetis.ucLGPicker.GripperMouseEnterEventHandler(this.lgPickerRX1_GripperMouseEnter);
+            this.lgLinearGradientRX1.GripperMouseLeave += new Thetis.ucLGPicker.GripperMouseLeaveEventHandler(this.lgPickerRX1_GripperMouseLeave);
+            // 
+            // clrbtnGripperColour
+            // 
+            this.clrbtnGripperColour.Automatic = "Automatic";
+            this.clrbtnGripperColour.Color = System.Drawing.Color.Yellow;
+            this.clrbtnGripperColour.Image = null;
+            this.clrbtnGripperColour.Location = new System.Drawing.Point(3, 45);
+            this.clrbtnGripperColour.MoreColors = "More Colors...";
+            this.clrbtnGripperColour.Name = "clrbtnGripperColour";
+            this.clrbtnGripperColour.Selectable = true;
+            this.clrbtnGripperColour.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnGripperColour.TabIndex = 87;
+            this.clrbtnGripperColour.Changed += new System.EventHandler(this.clrbtnGripperColour_Changed);
+            // 
+            // btnClearColourGrippers
+            // 
+            this.btnClearColourGrippers.Image = null;
+            this.btnClearColourGrippers.Location = new System.Drawing.Point(279, 45);
+            this.btnClearColourGrippers.Name = "btnClearColourGrippers";
+            this.btnClearColourGrippers.Selectable = true;
+            this.btnClearColourGrippers.Size = new System.Drawing.Size(64, 23);
+            this.btnClearColourGrippers.TabIndex = 24;
+            this.btnClearColourGrippers.Text = "Clear";
+            this.btnClearColourGrippers.Click += new System.EventHandler(this.btnClearColourGrippers_Click);
+            // 
             // btnSaveGradient
             // 
             this.btnSaveGradient.Image = null;
-            this.btnSaveGradient.Location = new System.Drawing.Point(396, 60);
+            this.btnSaveGradient.Location = new System.Drawing.Point(380, 45);
             this.btnSaveGradient.Name = "btnSaveGradient";
             this.btnSaveGradient.Selectable = true;
             this.btnSaveGradient.Size = new System.Drawing.Size(31, 23);
@@ -49789,7 +50032,7 @@
             // chkDataLineGradient
             // 
             this.chkDataLineGradient.Image = null;
-            this.chkDataLineGradient.Location = new System.Drawing.Point(62, 63);
+            this.chkDataLineGradient.Location = new System.Drawing.Point(49, 48);
             this.chkDataLineGradient.Name = "chkDataLineGradient";
             this.chkDataLineGradient.Size = new System.Drawing.Size(82, 18);
             this.chkDataLineGradient.TabIndex = 89;
@@ -49797,52 +50040,10 @@
             this.toolTip1.SetToolTip(this.chkDataLineGradient, "The data line is also uses the gradient if checked");
             this.chkDataLineGradient.CheckedChanged += new System.EventHandler(this.chkDataLineGradient_CheckedChanged);
             // 
-            // btnDefaultGradient
-            // 
-            this.btnDefaultGradient.Image = null;
-            this.btnDefaultGradient.Location = new System.Drawing.Point(150, 60);
-            this.btnDefaultGradient.Name = "btnDefaultGradient";
-            this.btnDefaultGradient.Selectable = true;
-            this.btnDefaultGradient.Size = new System.Drawing.Size(64, 23);
-            this.btnDefaultGradient.TabIndex = 88;
-            this.btnDefaultGradient.Text = "Default";
-            this.btnDefaultGradient.Click += new System.EventHandler(this.btnDefaultGradient_Click);
-            // 
-            // clrbtnGripperColour
-            // 
-            this.clrbtnGripperColour.Automatic = "Automatic";
-            this.clrbtnGripperColour.Color = System.Drawing.Color.Yellow;
-            this.clrbtnGripperColour.Image = null;
-            this.clrbtnGripperColour.Location = new System.Drawing.Point(8, 61);
-            this.clrbtnGripperColour.MoreColors = "More Colors...";
-            this.clrbtnGripperColour.Name = "clrbtnGripperColour";
-            this.clrbtnGripperColour.Selectable = true;
-            this.clrbtnGripperColour.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnGripperColour.TabIndex = 87;
-            this.clrbtnGripperColour.Changed += new System.EventHandler(this.clrbtnGripperColour_Changed);
-            // 
-            // lgLinearGradientRX1
-            // 
-            this.lgLinearGradientRX1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.lgLinearGradientRX1.ColourForSelectedGripper = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.lgLinearGradientRX1.EncodedText = resources.GetString("lgLinearGradientRX1.EncodedText");
-            this.lgLinearGradientRX1.IncludeAlphaInPreview = false;
-            this.lgLinearGradientRX1.Location = new System.Drawing.Point(8, 20);
-            this.lgLinearGradientRX1.Margin = new System.Windows.Forms.Padding(4);
-            this.lgLinearGradientRX1.MinimumSize = new System.Drawing.Size(192, 38);
-            this.lgLinearGradientRX1.Name = "lgLinearGradientRX1";
-            this.lgLinearGradientRX1.Size = new System.Drawing.Size(419, 38);
-            this.lgLinearGradientRX1.TabIndex = 85;
-            this.lgLinearGradientRX1.Changed += new System.EventHandler(this.lgPickerRX1_Changed);
-            this.lgLinearGradientRX1.GripperSelected += new Thetis.ucLGPicker.GripperSelectedEventHandler(this.lgPickerRX1_GripperSelected);
-            this.lgLinearGradientRX1.GripperDBMChanged += new Thetis.ucLGPicker.GripperDBMChangedEventHandler(this.lgPickerRX1_GripperDBMChanged);
-            this.lgLinearGradientRX1.GripperMouseEnter += new Thetis.ucLGPicker.GripperMouseEnterEventHandler(this.lgPickerRX1_GripperMouseEnter);
-            this.lgLinearGradientRX1.GripperMouseLeave += new Thetis.ucLGPicker.GripperMouseLeaveEventHandler(this.lgPickerRX1_GripperMouseLeave);
-            // 
             // btnDeleteColourGripper
             // 
             this.btnDeleteColourGripper.Image = null;
-            this.btnDeleteColourGripper.Location = new System.Drawing.Point(220, 60);
+            this.btnDeleteColourGripper.Location = new System.Drawing.Point(210, 45);
             this.btnDeleteColourGripper.Name = "btnDeleteColourGripper";
             this.btnDeleteColourGripper.Selectable = true;
             this.btnDeleteColourGripper.Size = new System.Drawing.Size(64, 23);
@@ -49850,25 +50051,25 @@
             this.btnDeleteColourGripper.Text = "Delete";
             this.btnDeleteColourGripper.Click += new System.EventHandler(this.btnDeleteColourGripper_Click);
             // 
-            // btnClearColourGrippers
+            // btnDefaultGradient
             // 
-            this.btnClearColourGrippers.Image = null;
-            this.btnClearColourGrippers.Location = new System.Drawing.Point(289, 60);
-            this.btnClearColourGrippers.Name = "btnClearColourGrippers";
-            this.btnClearColourGrippers.Selectable = true;
-            this.btnClearColourGrippers.Size = new System.Drawing.Size(64, 23);
-            this.btnClearColourGrippers.TabIndex = 24;
-            this.btnClearColourGrippers.Text = "Clear";
-            this.btnClearColourGrippers.Click += new System.EventHandler(this.btnClearColourGrippers_Click);
+            this.btnDefaultGradient.Image = null;
+            this.btnDefaultGradient.Location = new System.Drawing.Point(140, 45);
+            this.btnDefaultGradient.Name = "btnDefaultGradient";
+            this.btnDefaultGradient.Selectable = true;
+            this.btnDefaultGradient.Size = new System.Drawing.Size(64, 23);
+            this.btnDefaultGradient.TabIndex = 88;
+            this.btnDefaultGradient.Text = "Default";
+            this.btnDefaultGradient.Click += new System.EventHandler(this.btnDefaultGradient_Click);
             // 
             // grpAppRXWaterfall
             // 
             this.grpAppRXWaterfall.Controls.Add(this.chkShowTXFilterOnRXWaterfall);
             this.grpAppRXWaterfall.Controls.Add(this.chkShowRXZeroLineOnWaterfall);
             this.grpAppRXWaterfall.Controls.Add(this.chkShowRXFilterOnWaterfall);
-            this.grpAppRXWaterfall.Location = new System.Drawing.Point(548, 109);
+            this.grpAppRXWaterfall.Location = new System.Drawing.Point(548, 87);
             this.grpAppRXWaterfall.Name = "grpAppRXWaterfall";
-            this.grpAppRXWaterfall.Size = new System.Drawing.Size(135, 88);
+            this.grpAppRXWaterfall.Size = new System.Drawing.Size(166, 89);
             this.grpAppRXWaterfall.TabIndex = 84;
             this.grpAppRXWaterfall.TabStop = false;
             this.grpAppRXWaterfall.Text = "Waterfall";
@@ -49930,7 +50131,7 @@
             this.grpAppGrid.Controls.Add(this.lblDisplayTextColor);
             this.grpAppGrid.Location = new System.Drawing.Point(283, 8);
             this.grpAppGrid.Name = "grpAppGrid";
-            this.grpAppGrid.Size = new System.Drawing.Size(254, 190);
+            this.grpAppGrid.Size = new System.Drawing.Size(254, 168);
             this.grpAppGrid.TabIndex = 78;
             this.grpAppGrid.TabStop = false;
             this.grpAppGrid.Text = "Grid                                            Alpha";
@@ -49941,7 +50142,7 @@
             this.chkShowFrequencyNumbers.Checked = true;
             this.chkShowFrequencyNumbers.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkShowFrequencyNumbers.Image = null;
-            this.chkShowFrequencyNumbers.Location = new System.Drawing.Point(156, 162);
+            this.chkShowFrequencyNumbers.Location = new System.Drawing.Point(156, 142);
             this.chkShowFrequencyNumbers.Name = "chkShowFrequencyNumbers";
             this.chkShowFrequencyNumbers.Size = new System.Drawing.Size(53, 17);
             this.chkShowFrequencyNumbers.TabIndex = 89;
@@ -49953,7 +50154,7 @@
             // tbHGridColorAlpha
             // 
             this.tbHGridColorAlpha.AutoSize = false;
-            this.tbHGridColorAlpha.Location = new System.Drawing.Point(156, 102);
+            this.tbHGridColorAlpha.Location = new System.Drawing.Point(156, 90);
             this.tbHGridColorAlpha.Maximum = 255;
             this.tbHGridColorAlpha.Name = "tbHGridColorAlpha";
             this.tbHGridColorAlpha.Size = new System.Drawing.Size(66, 18);
@@ -49967,7 +50168,7 @@
             this.clrbtnHGridColor.Automatic = "Automatic";
             this.clrbtnHGridColor.Color = System.Drawing.Color.White;
             this.clrbtnHGridColor.Image = null;
-            this.clrbtnHGridColor.Location = new System.Drawing.Point(106, 102);
+            this.clrbtnHGridColor.Location = new System.Drawing.Point(106, 90);
             this.clrbtnHGridColor.MoreColors = "More Colors...";
             this.clrbtnHGridColor.Name = "clrbtnHGridColor";
             this.clrbtnHGridColor.Selectable = true;
@@ -49979,7 +50180,7 @@
             // 
             this.lblHGrid.AutoSize = true;
             this.lblHGrid.Image = null;
-            this.lblHGrid.Location = new System.Drawing.Point(6, 107);
+            this.lblHGrid.Location = new System.Drawing.Point(6, 95);
             this.lblHGrid.Name = "lblHGrid";
             this.lblHGrid.Size = new System.Drawing.Size(40, 13);
             this.lblHGrid.TabIndex = 86;
@@ -49988,7 +50189,7 @@
             // tbGridFineAlpha
             // 
             this.tbGridFineAlpha.AutoSize = false;
-            this.tbGridFineAlpha.Location = new System.Drawing.Point(156, 74);
+            this.tbGridFineAlpha.Location = new System.Drawing.Point(156, 66);
             this.tbGridFineAlpha.Maximum = 255;
             this.tbGridFineAlpha.Name = "tbGridFineAlpha";
             this.tbGridFineAlpha.Size = new System.Drawing.Size(66, 18);
@@ -50000,7 +50201,7 @@
             // tbGridCourseAlpha
             // 
             this.tbGridCourseAlpha.AutoSize = false;
-            this.tbGridCourseAlpha.Location = new System.Drawing.Point(156, 46);
+            this.tbGridCourseAlpha.Location = new System.Drawing.Point(156, 42);
             this.tbGridCourseAlpha.Maximum = 255;
             this.tbGridCourseAlpha.Name = "tbGridCourseAlpha";
             this.tbGridCourseAlpha.Size = new System.Drawing.Size(66, 18);
@@ -50026,7 +50227,7 @@
             this.clrbtnGridFine.Automatic = "Automatic";
             this.clrbtnGridFine.Color = System.Drawing.Color.White;
             this.clrbtnGridFine.Image = null;
-            this.clrbtnGridFine.Location = new System.Drawing.Point(106, 74);
+            this.clrbtnGridFine.Location = new System.Drawing.Point(106, 66);
             this.clrbtnGridFine.MoreColors = "More Colors...";
             this.clrbtnGridFine.Name = "clrbtnGridFine";
             this.clrbtnGridFine.Selectable = true;
@@ -50038,7 +50239,7 @@
             // 
             this.lblGridFine.AutoSize = true;
             this.lblGridFine.Image = null;
-            this.lblGridFine.Location = new System.Drawing.Point(6, 79);
+            this.lblGridFine.Location = new System.Drawing.Point(6, 71);
             this.lblGridFine.Name = "lblGridFine";
             this.lblGridFine.Size = new System.Drawing.Size(62, 13);
             this.lblGridFine.TabIndex = 74;
@@ -50048,7 +50249,7 @@
             // 
             this.lblDisplayGridColor.AutoSize = true;
             this.lblDisplayGridColor.Image = null;
-            this.lblDisplayGridColor.Location = new System.Drawing.Point(6, 51);
+            this.lblDisplayGridColor.Location = new System.Drawing.Point(6, 47);
             this.lblDisplayGridColor.Name = "lblDisplayGridColor";
             this.lblDisplayGridColor.Size = new System.Drawing.Size(39, 13);
             this.lblDisplayGridColor.TabIndex = 35;
@@ -50072,7 +50273,7 @@
             this.clrbtnGrid.Automatic = "Automatic";
             this.clrbtnGrid.Color = System.Drawing.Color.White;
             this.clrbtnGrid.Image = null;
-            this.clrbtnGrid.Location = new System.Drawing.Point(106, 46);
+            this.clrbtnGrid.Location = new System.Drawing.Point(106, 42);
             this.clrbtnGrid.MoreColors = "More Colors...";
             this.clrbtnGrid.Name = "clrbtnGrid";
             this.clrbtnGrid.Selectable = true;
@@ -50095,7 +50296,7 @@
             this.clrbtnZeroLine.Automatic = "Automatic";
             this.clrbtnZeroLine.Color = System.Drawing.Color.Red;
             this.clrbtnZeroLine.Image = null;
-            this.clrbtnZeroLine.Location = new System.Drawing.Point(106, 130);
+            this.clrbtnZeroLine.Location = new System.Drawing.Point(106, 114);
             this.clrbtnZeroLine.MoreColors = "More Colors...";
             this.clrbtnZeroLine.Name = "clrbtnZeroLine";
             this.clrbtnZeroLine.Selectable = true;
@@ -50107,7 +50308,7 @@
             // 
             this.lblDisplayZeroLineColor.AutoSize = true;
             this.lblDisplayZeroLineColor.Image = null;
-            this.lblDisplayZeroLineColor.Location = new System.Drawing.Point(6, 135);
+            this.lblDisplayZeroLineColor.Location = new System.Drawing.Point(6, 119);
             this.lblDisplayZeroLineColor.Name = "lblDisplayZeroLineColor";
             this.lblDisplayZeroLineColor.Size = new System.Drawing.Size(55, 13);
             this.lblDisplayZeroLineColor.TabIndex = 36;
@@ -50118,7 +50319,7 @@
             this.clrbtnText.Automatic = "Automatic";
             this.clrbtnText.Color = System.Drawing.Color.Yellow;
             this.clrbtnText.Image = null;
-            this.clrbtnText.Location = new System.Drawing.Point(106, 158);
+            this.clrbtnText.Location = new System.Drawing.Point(106, 138);
             this.clrbtnText.MoreColors = "More Colors...";
             this.clrbtnText.Name = "clrbtnText";
             this.clrbtnText.Selectable = true;
@@ -50130,7 +50331,7 @@
             // 
             this.lblDisplayTextColor.AutoSize = true;
             this.lblDisplayTextColor.Image = null;
-            this.lblDisplayTextColor.Location = new System.Drawing.Point(6, 163);
+            this.lblDisplayTextColor.Location = new System.Drawing.Point(6, 143);
             this.lblDisplayTextColor.Name = "lblDisplayTextColor";
             this.lblDisplayTextColor.Size = new System.Drawing.Size(31, 13);
             this.lblDisplayTextColor.TabIndex = 39;
@@ -50603,7 +50804,7 @@
             this.grpDisplayPeakCursor.Controls.Add(this.lblPeakText);
             this.grpDisplayPeakCursor.Location = new System.Drawing.Point(548, 8);
             this.grpDisplayPeakCursor.Name = "grpDisplayPeakCursor";
-            this.grpDisplayPeakCursor.Size = new System.Drawing.Size(136, 96);
+            this.grpDisplayPeakCursor.Size = new System.Drawing.Size(166, 74);
             this.grpDisplayPeakCursor.TabIndex = 74;
             this.grpDisplayPeakCursor.TabStop = false;
             this.grpDisplayPeakCursor.Text = "Cursor/Peak Readout";
@@ -50613,7 +50814,7 @@
             this.clrbtnPeakBackground.Automatic = "Automatic";
             this.clrbtnPeakBackground.Color = System.Drawing.Color.Black;
             this.clrbtnPeakBackground.Image = null;
-            this.clrbtnPeakBackground.Location = new System.Drawing.Point(80, 46);
+            this.clrbtnPeakBackground.Location = new System.Drawing.Point(80, 42);
             this.clrbtnPeakBackground.MoreColors = "More Colors...";
             this.clrbtnPeakBackground.Name = "clrbtnPeakBackground";
             this.clrbtnPeakBackground.Selectable = true;
@@ -50625,7 +50826,7 @@
             // 
             this.lblPeakBackground.AutoSize = true;
             this.lblPeakBackground.Image = null;
-            this.lblPeakBackground.Location = new System.Drawing.Point(6, 51);
+            this.lblPeakBackground.Location = new System.Drawing.Point(6, 47);
             this.lblPeakBackground.Name = "lblPeakBackground";
             this.lblPeakBackground.Size = new System.Drawing.Size(68, 13);
             this.lblPeakBackground.TabIndex = 72;
@@ -66076,6 +66277,27 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // groupBoxTS50
+            // 
+            this.groupBoxTS50.Controls.Add(this.panelTS10);
+            this.groupBoxTS50.Location = new System.Drawing.Point(8, 261);
+            this.groupBoxTS50.Name = "groupBoxTS50";
+            this.groupBoxTS50.Size = new System.Drawing.Size(449, 127);
+            this.groupBoxTS50.TabIndex = 94;
+            this.groupBoxTS50.TabStop = false;
+            this.groupBoxTS50.Text = "Custom Waterfall Gradient";
+            // 
+            // groupBoxTS51
+            // 
+            this.groupBoxTS51.Controls.Add(this.pnlPanadaptorGradient);
+            this.groupBoxTS51.Controls.Add(this.chkPanadpatorGradient);
+            this.groupBoxTS51.Location = new System.Drawing.Point(283, 254);
+            this.groupBoxTS51.Name = "groupBoxTS51";
+            this.groupBoxTS51.Size = new System.Drawing.Size(431, 99);
+            this.groupBoxTS51.TabIndex = 98;
+            this.groupBoxTS51.TabStop = false;
+            this.groupBoxTS51.Text = "Panadaptor Gradient";
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -67030,6 +67252,7 @@
             this.tpAppearance.ResumeLayout(false);
             this.tcAppearance.ResumeLayout(false);
             this.tpAppearanceGeneral.ResumeLayout(false);
+            this.panelTS10.ResumeLayout(false);
             this.groupBoxTS38.ResumeLayout(false);
             this.groupBoxTS31.ResumeLayout(false);
             this.groupBoxTS31.PerformLayout();
@@ -67039,11 +67262,10 @@
             this.grpAppearanceBand.ResumeLayout(false);
             this.grpAppearanceVFO.ResumeLayout(false);
             this.tpAppearanceDisplay.ResumeLayout(false);
-            this.tpAppearanceDisplay.PerformLayout();
             this.groupBoxTS18.ResumeLayout(false);
             this.groupBoxTS18.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udNoiseFloorLineWidth)).EndInit();
-            this.grpPanadaptorGradient.ResumeLayout(false);
+            this.pnlPanadaptorGradient.ResumeLayout(false);
             this.grpAppRXWaterfall.ResumeLayout(false);
             this.grpAppRXWaterfall.PerformLayout();
             this.grpAppGrid.ResumeLayout(false);
@@ -67374,6 +67596,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
+            this.groupBoxTS50.ResumeLayout(false);
+            this.groupBoxTS51.ResumeLayout(false);
+            this.groupBoxTS51.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -70125,7 +70350,6 @@
         private ColorButton clrbtnActiveSpectralPeak;
         private LabelTS lblActiveSpectralPeakColour;
         private ucLGPicker lgLinearGradientRX1;
-        private GroupBoxTS grpPanadaptorGradient;
         public ColorButton clrbtnGripperColour;
         private ButtonTS btnDeleteColourGripper;
         private ButtonTS btnClearColourGrippers;
@@ -71533,5 +71757,22 @@
         private LabelTS lblTXFFT_size;
         private LabelTS labelTS427;
         private PictureBox picModelBoardWarning;
+        private PanelTS pnlPanadaptorGradient;
+        private PanelTS panelTS10;
+        private ButtonTS btnLoadGradient_waterfall;
+        private ucLGPicker lgLinearGradient_waterfall;
+        private ButtonTS btnClearColourGrippers_waterfall;
+        private ButtonTS btnSaveGradient_waterfall;
+        private ButtonTS btnDeleteColourGripper_waterfall;
+        private ButtonTS btnDefaultGradient_waterfall;
+        public ColorButton clrbtnGripperColour_waterfall;
+        private ButtonTS btnWaterfallDefaultLG_blue;
+        private ButtonTS btnWaterfallDefaultLG_lemon;
+        private ButtonTS btnWaterfallDefaultLG_grey;
+        private ButtonTS btnWaterfallToClipboard;
+        private ButtonTS btnWaterfallDefaultLG_rainbow;
+        private ButtonTS btnWaterfallDefaultLG_orange;
+        private GroupBoxTS groupBoxTS50;
+        private GroupBoxTS groupBoxTS51;
     }
 }

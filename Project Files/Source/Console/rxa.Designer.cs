@@ -70,7 +70,7 @@
             this.panDisplay.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.panDisplay.BandEdgeColor = System.Drawing.Color.Red;
             this.panDisplay.ClickTuneFilter = true;
-            this.panDisplay.ColorSheme = Thetis.ColorSheme.enhanced;
+            this.panDisplay.ColorSheme = Thetis.ColorScheme.enhanced;
             this.panDisplay.cOnsole = null;
             this.panDisplay.CurrentClickTuneMode = Thetis.ClickTuneMode.Off;
             this.panDisplay.CurrentDisplayMode = Thetis.DisplayMode.PANADAPTER;

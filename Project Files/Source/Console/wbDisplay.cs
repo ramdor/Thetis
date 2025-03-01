@@ -210,8 +210,8 @@ namespace Thetis
         private Color channel_background_off = Color.FromArgb(100, Color.RoyalBlue);
         private Color channel_foreground = Color.Cyan;
 
-        private ColorSheme color_sheme = ColorSheme.enhanced;
-        public ColorSheme ColorSheme
+        private ColorScheme color_sheme = ColorScheme.enhanced;
+        public ColorScheme ColorSheme
         {
             get { return color_sheme; }
 

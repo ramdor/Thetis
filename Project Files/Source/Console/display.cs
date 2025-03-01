@@ -216,20 +216,28 @@ namespace Thetis
         private static Brush m_bTextCallOutActive = new SolidBrush(notch_callout_active_color);
         private static Brush m_bTextCallOutInactive = new SolidBrush(notch_callout_inactive_color);
 
-        private static ColorSheme color_sheme = ColorSheme.enhanced;
-        public static ColorSheme ColorSheme
+        private static ColorScheme _color_sheme = ColorScheme.enhanced;
+        public static ColorScheme ColorSheme
         {
-            get { return color_sheme; }
+            get { return _color_sheme; }
 
-            set { color_sheme = value; }
+            set 
+            {
+                if (value == ColorScheme.Custom && _color_sheme != ColorScheme.Custom) _rebuild_rx1_waterfall_gradient = true;
+                _color_sheme = value; 
+            }
         }
 
-        private static ColorSheme rx2_color_sheme = ColorSheme.enhanced;
-        public static ColorSheme RX2ColorSheme
+        private static ColorScheme _rx2_color_sheme = ColorScheme.enhanced;
+        public static ColorScheme RX2ColorSheme
         {
-            get { return rx2_color_sheme; }
+            get { return _rx2_color_sheme; }
 
-            set { rx2_color_sheme = value; }
+            set 
+            {
+                if (value == ColorScheme.Custom && _rx2_color_sheme != ColorScheme.Custom) _rebuild_rx2_waterfall_gradient = true;
+                _rx2_color_sheme = value; 
+            }
         }
 
         private static bool reverse_waterfall = false;
@@ -1359,6 +1367,24 @@ namespace Thetis
             set { _rx2_enabled = value; }
         }
 
+        private static bool _rebuild_rx1_waterfall_gradient = true;
+        public static bool WaterfallGradientChangedRX1
+        {
+            get { return _rebuild_rx1_waterfall_gradient; }
+            set
+            {
+                _rebuild_rx1_waterfall_gradient = value;
+            }
+        }
+        private static bool _rebuild_rx2_waterfall_gradient = true;
+        public static bool WaterfallGradientChangedRX2
+        {
+            get { return _rebuild_rx2_waterfall_gradient; }
+            set
+            {
+                _rebuild_rx2_waterfall_gradient = value;
+            }
+        }
         private static bool _bRebuildRX1LinearGradBrush = true;
         public static bool RebuildLinearGradientBrushRX1
         {
@@ -5075,6 +5101,10 @@ namespace Thetis
 
         private static int m_nRX1WaterFallFrameCount = 0; // 1=every frame, 2= every other, etc
         private static int m_nRX2WaterFallFrameCount = 0;
+
+        private static Dictionary<int, Color> _rx1_waterfall_grad = new Dictionary<int, Color>();
+        private static Dictionary<int, Color> _rx2_waterfall_grad = new Dictionary<int, Color>();
+
         unsafe static private bool DrawWaterfallDX2D(int nVerticalShift, int W, int H, int rx, bool bottom)
         {
             // undo the rendertarget transform that is used to move linedraws to middle of pixel grid
@@ -5097,7 +5127,7 @@ namespace Thetis
             float low_threshold = 0.0f;
             float high_threshold = 0.0f;
             float waterfall_minimum = 200f;
-            ColorSheme cSheme = ColorSheme.enhanced;
+            ColorScheme cSheme = ColorScheme.enhanced;
             Color low_color = Color.Black;
 
             bool bDoVisualNotch = false;
@@ -5127,7 +5157,7 @@ namespace Thetis
                     }
                     else low_threshold = rx2_waterfall_low_threshold;
                 }
-                cSheme = rx2_color_sheme;
+                cSheme = _rx2_color_sheme;
                 low_color = rx2_waterfall_low_color;
             }
             else
@@ -5155,7 +5185,7 @@ namespace Thetis
                     }
                     else low_threshold = waterfall_low_threshold;
                 }
-                cSheme = color_sheme;
+                cSheme = _color_sheme;
                 low_color = waterfall_low_color;
             }
 
@@ -5348,13 +5378,88 @@ namespace Thetis
                     #region colours
                     switch (cSheme)
                     {
-                        case (ColorSheme.original):
+                        case (ColorScheme.Custom):
+                            {
+                                if (_rebuild_rx1_waterfall_gradient || _rebuild_rx2_waterfall_gradient)
+                                {
+                                    if (rx == 1)
+                                    {
+                                        _rx1_waterfall_grad.Clear();
+                                        for(int perc = 0; perc <= 100; perc++)
+                                        {
+                                            Color c = console.SetupForm.WaterfallGradPicker.GetColourAtPercent(perc / 100f);
+                                            _rx1_waterfall_grad.Add(perc, c);
+                                        }
+                                        _rebuild_rx1_waterfall_gradient = false;
+                                    }
+                                    else if (rx == 2)
+                                    {
+                                        _rx2_waterfall_grad.Clear();
+                                        for (int perc = 0; perc <= 100; perc++)
+                                        {
+                                            Color c = console.SetupForm.WaterfallGradPicker.GetColourAtPercent(perc / 100f);
+                                            _rx2_waterfall_grad.Add(perc, c);
+                                        }
+                                        _rebuild_rx2_waterfall_gradient = false;
+                                    }
+                                }
+
+                                Dictionary<int, Color> cols;
+
+                                if (rx == 1)
+                                {
+                                    cols = _rx1_waterfall_grad;
+                                }
+                                else
+                                {
+                                    cols = _rx2_waterfall_grad;
+                                }
+                                
+                                for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
+                                {
+                                    if (waterfall_data[i] <= low_threshold)
+                                    {
+                                        R = cols[0].R;
+                                        G = cols[0].G;
+                                        B = cols[0].B;
+                                    }
+                                    else if (waterfall_data[i] >= high_threshold)
+                                    {
+                                        R = cols[100].R;
+                                        G = cols[100].G;
+                                        B = cols[100].B;
+                                    }
+                                    else // value is between low and high
+                                    {
+                                        float range = high_threshold - low_threshold;
+                                        float offset = waterfall_data[i] - low_threshold;
+                                        float overall_percent = offset / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
+                                        int perc = (int)(overall_percent * 100f);
+
+                                        R = cols[perc].R;
+                                        G = cols[perc].G;
+                                        B = cols[perc].B;
+                                    }
+
+                                    if (waterfall_minimum > dataCopy[i] + fOffset) //[2.10.3]MW0LGE use non notched data
+                                    waterfall_minimum = dataCopy[i] + fOffset;
+
+                                    // set pixel color
+                                    row[(i * m_nDecimation) * pixel_size + 0] = (byte)B;    // set color in memory
+                                    row[(i * m_nDecimation) * pixel_size + 1] = (byte)G;
+                                    row[(i * m_nDecimation) * pixel_size + 2] = (byte)R;
+                                    row[(i * m_nDecimation) * pixel_size + 3] = nbBitmapAlpaha;
+                                }
+                            }
+                            break;
+
+                        case (ColorScheme.original):
                             {
 
                             }
                             break;
 
-                        case (ColorSheme.enhanced):
+                        case (ColorScheme.enhanced):
                             {
                                 // draw new data
                                 for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
@@ -5440,7 +5545,7 @@ namespace Thetis
                             }
                             break;
 
-                        case (ColorSheme.SPECTRAN):
+                        case (ColorScheme.SPECTRAN):
                             {
                                 // draw new data
                                 for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
@@ -5522,7 +5627,7 @@ namespace Thetis
                             }
                             break;
 
-                        case (ColorSheme.BLACKWHITE):
+                        case (ColorScheme.BLACKWHITE):
                             {
                                 // draw new data
                                 for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
@@ -5561,7 +5666,7 @@ namespace Thetis
                             }
                             break;
 
-                        case (ColorSheme.LinLog):
+                        case (ColorScheme.LinLog):
                             {
                                 for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
                                 {
@@ -5773,7 +5878,7 @@ namespace Thetis
 
                         //  now Linrad palette without log
 
-                        case (ColorSheme.LinRad):
+                        case (ColorScheme.LinRad):
                             {
                                 for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
                                 {
@@ -5978,7 +6083,7 @@ namespace Thetis
 
                         //  now Linrad palette without log
 
-                        case (ColorSheme.LinAuto):
+                        case (ColorScheme.LinAuto):
                             {
                                 for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
                                 {

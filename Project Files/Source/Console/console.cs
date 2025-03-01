@@ -13332,8 +13332,8 @@ namespace Thetis
             set { quick_qsy = value; }
         }
 
-        private ColorSheme color_palette = ColorSheme.enhanced;
-        public ColorSheme color_sheme
+        private ColorScheme color_palette = ColorScheme.enhanced;
+        public ColorScheme color_sheme
         {
             get { return color_palette; }
 
@@ -13344,8 +13344,8 @@ namespace Thetis
             }
         }
 
-        private ColorSheme rx2_color_palette = ColorSheme.enhanced;
-        public ColorSheme rx2_color_sheme
+        private ColorScheme rx2_color_palette = ColorScheme.enhanced;
+        public ColorScheme rx2_color_sheme
         {
             get { return rx2_color_palette; }
 

@@ -22,7 +22,7 @@
         SIG_GEN,
     }
 
-    public enum ColorSheme
+    public enum ColorScheme
     {
         original = 0,
         enhanced,
@@ -32,6 +32,7 @@
         LinRad,
         LinAuto,
         off,
+        Custom,
     }
 
     public enum MultiMeterDisplayMode
