@@ -49117,7 +49117,7 @@
             this.btnWaterfallDefaultLG_orange.Selectable = true;
             this.btnWaterfallDefaultLG_orange.Size = new System.Drawing.Size(49, 23);
             this.btnWaterfallDefaultLG_orange.TabIndex = 97;
-            this.btnWaterfallDefaultLG_orange.Text = "orange";
+            this.btnWaterfallDefaultLG_orange.Text = "fire";
             this.btnWaterfallDefaultLG_orange.Click += new System.EventHandler(this.btnWaterfallDefaultLG_Colours_Click);
             // 
             // btnWaterfallDefaultLG_blue
@@ -49128,7 +49128,7 @@
             this.btnWaterfallDefaultLG_blue.Selectable = true;
             this.btnWaterfallDefaultLG_blue.Size = new System.Drawing.Size(49, 23);
             this.btnWaterfallDefaultLG_blue.TabIndex = 96;
-            this.btnWaterfallDefaultLG_blue.Text = "blue";
+            this.btnWaterfallDefaultLG_blue.Text = "ice";
             this.btnWaterfallDefaultLG_blue.Click += new System.EventHandler(this.btnWaterfallDefaultLG_Colours_Click);
             // 
             // btnWaterfallDefaultLG_lemon
@@ -49145,12 +49145,12 @@
             // btnWaterfallDefaultLG_grey
             // 
             this.btnWaterfallDefaultLG_grey.Image = null;
-            this.btnWaterfallDefaultLG_grey.Location = new System.Drawing.Point(128, 74);
+            this.btnWaterfallDefaultLG_grey.Location = new System.Drawing.Point(114, 74);
             this.btnWaterfallDefaultLG_grey.Name = "btnWaterfallDefaultLG_grey";
             this.btnWaterfallDefaultLG_grey.Selectable = true;
-            this.btnWaterfallDefaultLG_grey.Size = new System.Drawing.Size(49, 23);
+            this.btnWaterfallDefaultLG_grey.Size = new System.Drawing.Size(63, 23);
             this.btnWaterfallDefaultLG_grey.TabIndex = 94;
-            this.btnWaterfallDefaultLG_grey.Text = "grey";
+            this.btnWaterfallDefaultLG_grey.Text = "graphite";
             this.btnWaterfallDefaultLG_grey.Click += new System.EventHandler(this.btnWaterfallDefaultLG_Colours_Click);
             // 
             // btnWaterfallToClipboard
