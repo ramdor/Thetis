@@ -13333,25 +13333,25 @@ namespace Thetis
         }
 
         private ColorScheme color_palette = ColorScheme.enhanced;
-        public ColorScheme color_sheme
+        public ColorScheme _color_scheme
         {
             get { return color_palette; }
 
             set
             {
-                Display.ColorSheme = value;
+                Display.ColorScheme = value;
                 color_palette = value;
             }
         }
 
         private ColorScheme rx2_color_palette = ColorScheme.enhanced;
-        public ColorScheme rx2_color_sheme
+        public ColorScheme rx2_color_scheme
         {
             get { return rx2_color_palette; }
 
             set
             {
-                Display.RX2ColorSheme = value;
+                Display.RX2ColorScheme = value;
                 rx2_color_palette = value;
             }
         }
@@ -47196,6 +47196,8 @@ namespace Thetis
 
         public delegate void CWPitchChanged(int old_pitch, int new_pitch, bool show_cwzero);
 
+        public delegate void WaterfallRXGradientChanged(int rx, Color[] colours); // colours is a 101 element array, each index is 0-100 represent a percent from LOW to HIGH
+
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
         public BandChanged BandChangeHandlers;
@@ -47297,6 +47299,8 @@ namespace Thetis
         public NotifiySpectrumDetailsChanged NotifiySpectrumDetailsChangedHandlers;
 
         public CWPitchChanged CWPitchChangedHandlers;
+
+        public WaterfallRXGradientChanged WaterfallRXGradientChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
@@ -50799,6 +50803,13 @@ namespace Thetis
                 chkX2TR.Checked = false; // recentre
                 chkX2TR.Checked = true; // restore setting
             }
+        }
+
+        public Color[] WaterfallRXGradient()
+        {
+            //used by multimeter to get the initial state for the waterfall gradient
+            if (IsSetupFormNull) return null;
+            return SetupForm.WaterfallRXGradient();
         }
     }
 

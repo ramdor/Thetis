@@ -216,27 +216,25 @@ namespace Thetis
         private static Brush m_bTextCallOutActive = new SolidBrush(notch_callout_active_color);
         private static Brush m_bTextCallOutInactive = new SolidBrush(notch_callout_inactive_color);
 
-        private static ColorScheme _color_sheme = ColorScheme.enhanced;
-        public static ColorScheme ColorSheme
+        private static ColorScheme _color_scheme = ColorScheme.enhanced;
+        public static ColorScheme ColorScheme
         {
-            get { return _color_sheme; }
+            get { return _color_scheme; }
 
             set 
             {
-                if (value == ColorScheme.Custom && _color_sheme != ColorScheme.Custom) _rebuild_rx1_waterfall_gradient = true;
-                _color_sheme = value; 
+                _color_scheme = value; 
             }
         }
 
-        private static ColorScheme _rx2_color_sheme = ColorScheme.enhanced;
-        public static ColorScheme RX2ColorSheme
+        private static ColorScheme _rx2_color_scheme = ColorScheme.enhanced;
+        public static ColorScheme RX2ColorScheme
         {
-            get { return _rx2_color_sheme; }
+            get { return _rx2_color_scheme; }
 
             set 
             {
-                if (value == ColorScheme.Custom && _rx2_color_sheme != ColorScheme.Custom) _rebuild_rx2_waterfall_gradient = true;
-                _rx2_color_sheme = value; 
+                _rx2_color_scheme = value; 
             }
         }
 
@@ -578,6 +576,8 @@ namespace Thetis
             console.CTUNChangedHandlers += OnCTUNChanged;
             console.MinimumRXNotchWidthChangedHandlers += OnMinRXNotchWidthChanged;
             console.MinimumTXNotchWidthChangedHandlers += OnMinTXNotchWidthChanged;
+
+            console.WaterfallRXGradientChangedHandlers += OnWaterfallRXGradientChanged;
         }
         public static void RemoveDelegates()
         {
@@ -589,6 +589,8 @@ namespace Thetis
             console.CTUNChangedHandlers -= OnCTUNChanged;
             console.MinimumRXNotchWidthChangedHandlers -= OnMinRXNotchWidthChanged;
             console.MinimumTXNotchWidthChangedHandlers -= OnMinTXNotchWidthChanged;
+
+            console.WaterfallRXGradientChangedHandlers -= OnWaterfallRXGradientChanged;
         }
         private static void OnMinRXNotchWidthChanged(int rx, double width)
         {
@@ -1367,24 +1369,6 @@ namespace Thetis
             set { _rx2_enabled = value; }
         }
 
-        private static bool _rebuild_rx1_waterfall_gradient = true;
-        public static bool WaterfallGradientChangedRX1
-        {
-            get { return _rebuild_rx1_waterfall_gradient; }
-            set
-            {
-                _rebuild_rx1_waterfall_gradient = value;
-            }
-        }
-        private static bool _rebuild_rx2_waterfall_gradient = true;
-        public static bool WaterfallGradientChangedRX2
-        {
-            get { return _rebuild_rx2_waterfall_gradient; }
-            set
-            {
-                _rebuild_rx2_waterfall_gradient = value;
-            }
-        }
         private static bool _bRebuildRX1LinearGradBrush = true;
         public static bool RebuildLinearGradientBrushRX1
         {
@@ -5104,6 +5088,40 @@ namespace Thetis
 
         private static Color[] _rx1_waterfall_grad = new Color[101];
         private static Color[] _rx2_waterfall_grad = new Color[101];
+        private static bool _rx1_waterfall_grad_ok = false;
+        private static bool _rx2_waterfall_grad_ok = false;
+        private static void OnWaterfallRXGradientChanged(int rx, Color[] colours)
+        {
+            if (colours.Length != 101) return;
+
+            Color[] cols;
+            if (rx == 1)
+            {
+                _rx1_waterfall_grad_ok = false;
+                cols = _rx1_waterfall_grad;
+            }
+            else if (rx == 2)
+            {
+                _rx2_waterfall_grad_ok = false;
+                cols = _rx2_waterfall_grad;
+            }
+            else
+                return;
+
+            for (int perc = 0; perc <= 100; perc++)
+            {
+                cols[perc] = Color.FromArgb(255, colours[perc]);
+            }
+
+            if (rx == 1)
+            {
+                _rx1_waterfall_grad_ok = true;
+            }
+            else if (rx == 2)
+            {
+                _rx2_waterfall_grad_ok = true;
+            }
+        }
 
         unsafe static private bool DrawWaterfallDX2D(int nVerticalShift, int W, int H, int rx, bool bottom)
         {
@@ -5127,7 +5145,7 @@ namespace Thetis
             float low_threshold = 0.0f;
             float high_threshold = 0.0f;
             float waterfall_minimum = 200f;
-            ColorScheme cSheme = ColorScheme.enhanced;
+            ColorScheme cScheme = ColorScheme.enhanced;
             Color low_color = Color.Black;
 
             bool bDoVisualNotch = false;
@@ -5157,7 +5175,7 @@ namespace Thetis
                     }
                     else low_threshold = rx2_waterfall_low_threshold;
                 }
-                cSheme = _rx2_color_sheme;
+                cScheme = _rx2_color_scheme;
                 low_color = rx2_waterfall_low_color;
             }
             else
@@ -5185,7 +5203,7 @@ namespace Thetis
                     }
                     else low_threshold = waterfall_low_threshold;
                 }
-                cSheme = _color_sheme;
+                cScheme = _color_scheme;
                 low_color = waterfall_low_color;
             }
 
@@ -5376,39 +5394,19 @@ namespace Thetis
                     }
 
                     #region colours
-                    switch (cSheme)
+                    switch (cScheme)
                     {
                         case (ColorScheme.Custom):
                             {
-                                if (_rebuild_rx1_waterfall_gradient || _rebuild_rx2_waterfall_gradient)
-                                {
-                                    if (rx == 1)
-                                    {
-                                        for(int perc = 0; perc <= 100; perc++)
-                                        {
-                                            Color c = console.SetupForm.WaterfallGradPicker.GetColourAtPercent(perc / 100f);
-                                            _rx1_waterfall_grad[perc] = c;
-                                        }
-                                        _rebuild_rx1_waterfall_gradient = false;
-                                    }
-                                    else if (rx == 2)
-                                    {
-                                        for (int perc = 0; perc <= 100; perc++)
-                                        {
-                                            Color c = console.SetupForm.WaterfallGradPicker.GetColourAtPercent(perc / 100f);
-                                            _rx2_waterfall_grad[perc] = c;
-                                        }
-                                        _rebuild_rx2_waterfall_gradient = false;
-                                    }
-                                }
-
                                 Color[] cols;
                                 if (rx == 1)
                                 {
+                                    if (!_rx1_waterfall_grad_ok) return false; // leave if not ok
                                     cols = _rx1_waterfall_grad;
                                 }
                                 else
                                 {
+                                    if (!_rx2_waterfall_grad_ok) return false; // leave if not ok
                                     cols = _rx2_waterfall_grad;
                                 }
                                 

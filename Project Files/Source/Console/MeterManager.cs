@@ -2831,6 +2831,8 @@ namespace Thetis
 
             _console.CWPitchChangedHandlers += OnCWPitchChanged;
 
+            _console.WaterfallRXGradientChangedHandlers += OnWaterfallRXGradientChanged;
+
             _delegatesAdded = true;
         }
         private static void removeDelegates()
@@ -2906,6 +2908,8 @@ namespace Thetis
 
             _console.CWPitchChangedHandlers -= OnCWPitchChanged;
 
+            _console.WaterfallRXGradientChangedHandlers -= OnWaterfallRXGradientChanged;
+
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
                 kvp.Value.RemoveDelegates();
@@ -2965,6 +2969,18 @@ namespace Thetis
             }
         }
         //
+        private static void OnWaterfallRXGradientChanged(int rx, System.Drawing.Color[] colours)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                {
+                    clsMeter m = ms.Value;
+
+                    m.WaterfallRXGradient = colours;
+                }
+            }
+        }
         private static void OnRXWaterfallMinMaxChanged(int rx, int min, int max)
         {
             lock (_metersLock)
@@ -3749,6 +3765,8 @@ namespace Thetis
 
             m.TXWaterfallMin = Display.TXWFAmpMin;
             m.TXWaterfallMax = Display.TXWFAmpMax;
+
+            m.WaterfallRXGradient = _console.WaterfallRXGradient();
 
             m.TuneStepIndex = _console.TuneStepIndex;
 
@@ -5384,6 +5402,10 @@ namespace Thetis
 
             }
             public virtual void SetTXWaterfallMax(int min)
+            {
+
+            }
+            public virtual void WaterfallRXGradient(System.Drawing.Color[] colours)
             {
 
             }
@@ -12052,7 +12074,8 @@ namespace Thetis
                 BLACKWHITE,
                 LINLOG,
                 LINRAD,
-                LINAUTO
+                LINAUTO,
+                CUSTOM
             }
             public enum DisplayMode
             {
@@ -12166,6 +12189,9 @@ namespace Thetis
 
             private HiPerfTimer _hiperf_timer;
 
+            private System.Drawing.Color[] _waterfall_colours;
+            private bool _waterfall_gradient_ok;
+
             public clsFilterItem(clsMeter owning_meter, clsItemGroup item_group)
             {
                 _hiperf_timer = new HiPerfTimer();
@@ -12274,6 +12300,9 @@ namespace Thetis
 
                 _waterfall_min_agc = -200;
 
+                _waterfall_colours = new System.Drawing.Color[101];
+                _waterfall_gradient_ok = false;
+
                 _dataline_colour = System.Drawing.Color.LimeGreen;
                 _datafill_colour = System.Drawing.Color.LimeGreen;
                 _waterfall_palette = WaterfallPalette.ENHANCED;
@@ -12362,6 +12391,26 @@ namespace Thetis
             {
                 get { return _characteristic_low; }
                 set { _characteristic_low = value; }
+            }
+
+            public override void WaterfallRXGradient(System.Drawing.Color[] colours)
+            {
+                if (colours.Length != 101) return;
+
+                _waterfall_gradient_ok = false;
+                for(int perc = 0;perc <= 100; perc++)
+                {
+                    _waterfall_colours[perc] = System.Drawing.Color.FromArgb(255, colours[perc]);
+                }
+                _waterfall_gradient_ok = true;
+            }
+            public bool WaterfallGradientOK
+            {
+                get { return _waterfall_gradient_ok; }
+            }
+            public System.Drawing.Color[] WaterfallRXGradient()
+            {
+                return _waterfall_colours;
             }
             public override bool Enabled
             {
@@ -16293,6 +16342,8 @@ namespace Thetis
             private int _tx_waterfall_min;
             private int _tx_waterfall_max;
 
+            private System.Drawing.Color[] _waterfall_rx_colours;
+
             private bool _vfoA_lock;
             private bool _vfoB_lock;
             private bool _vfoA_sync;
@@ -19373,6 +19424,8 @@ namespace Thetis
                 _tx_waterfall_min = -200;
                 _tx_waterfall_max = -200;
 
+                _waterfall_rx_colours = new System.Drawing.Color[101];
+
                 _tnf_active = false;
 
                 _cwpitch = 600;
@@ -19635,6 +19688,35 @@ namespace Thetis
                 }
             }
             //
+            public System.Drawing.Color[] WaterfallRXGradient
+            {
+                get
+                {
+                    lock (_meterItemsLock)
+                    {
+                        return _waterfall_rx_colours;
+                    }
+                }
+                set
+                {
+                    if (value.Length != 101) return; // we do not have 101 elements passed in
+
+                    lock (_meterItemsLock)
+                    {
+                        for(int perc = 0; perc <= 100; perc++)
+                        {
+                            _waterfall_rx_colours[perc] = System.Drawing.Color.FromArgb(255, value[perc]);
+                        }
+
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.WaterfallRXGradient(_waterfall_rx_colours);
+                        }
+                    }
+                }
+            }
             public int RXWaterfallMin
             {
                 get
@@ -25795,11 +25877,11 @@ namespace Thetis
                 }
                 return scrolling;
             }
-            private (byte[], byte[]) buildWaterfall(clsFilterItem filter)
+            private (byte[], byte[], bool) buildWaterfall(clsFilterItem filter)
             {
                 //B8G8R8A8
                 System.Drawing.Color low_colour = filter.WaterfallLowColour;
-                clsFilterItem.WaterfallPalette cSheme = filter.WaterfallPal;
+                clsFilterItem.WaterfallPalette cScheme = filter.WaterfallPal;
                 int R = 0, G = 0, B = 0;
                 int pixel_size = 4;
                 int pixel_wdith = MiniSpec.PIXELS;
@@ -25825,9 +25907,54 @@ namespace Thetis
                 max_y = local_max_y;
                 min_y_w3sz = local_min_y_w3sz;
 
-                switch (cSheme)
+                switch (cScheme)
                 {
-                    //case (ColorSheme.original):
+                    case (clsFilterItem.WaterfallPalette.CUSTOM):
+                        {
+                            if (!filter.WaterfallGradientOK) return (null, null, false);
+
+                            System.Drawing.Color[] cols = filter.WaterfallRXGradient();
+
+                            for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
+                            {
+                                if (waterfall_data[i] <= low_threshold)
+                                {
+                                    R = cols[0].R;
+                                    G = cols[0].G;
+                                    B = cols[0].B;
+                                }
+                                else if (waterfall_data[i] >= high_threshold)
+                                {
+                                    R = cols[100].R;
+                                    G = cols[100].G;
+                                    B = cols[100].B;
+                                }
+                                else // value is between low and high
+                                {
+                                    float range = high_threshold - low_threshold;
+                                    float offset = waterfall_data[i] - low_threshold;
+                                    float overall_percent = offset / range; // value from 0.0 to 1.0 where 1.0 is high and 0.0 is low.
+                                    int perc = (int)(overall_percent * 100f);
+
+                                    R = cols[perc].R;
+                                    G = cols[perc].G;
+                                    B = cols[perc].B;
+                                }
+
+                                row_rx[i * pixel_size + 0] = (byte)B;    // set color in memory
+                                row_rx[i * pixel_size + 1] = (byte)G;
+                                row_rx[i * pixel_size + 2] = (byte)R;
+                                row_rx[i * pixel_size + 3] = nbBitmapAlpaha_rx;
+
+                                row_tx[i * pixel_size + 0] = (byte)B;    // set color in memory
+                                row_tx[i * pixel_size + 1] = (byte)G;
+                                row_tx[i * pixel_size + 2] = (byte)R;
+                                row_tx[i * pixel_size + 3] = nbBitmapAlpaha_tx;
+                            }
+                        }
+                        break;
+
+                    //case (ColorScheme.original):
                     //    {
 
                     //    }
@@ -26735,7 +26862,7 @@ namespace Thetis
                     }
                 }
 
-                return (row_rx, row_tx);
+                return (row_rx, row_tx, true);
             }
             private void renderDialDisplay(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
@@ -27155,30 +27282,33 @@ namespace Thetis
                             {
                                 if (!_waterfall_row_added && filter.FrameCount == 0)
                                 {
-                                    (byte[] waterfall_row_rx, byte[] waterfall_row_tx) = buildWaterfall(filter);
+                                    (byte[] waterfall_row_rx, byte[] waterfall_row_tx, bool row_ok) = buildWaterfall(filter);
 
-                                    SharpDX.Direct2D1.Bitmap top_section_rx = new SharpDX.Direct2D1.Bitmap(_renderTarget, new Size2(MiniSpec.PIXELS, MiniSpec.PIXELS - 1),
-                                        new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(_filter_display_waterfall_bmp.PixelFormat.Format, _ALPHA_MODE)));
+                                    if (row_ok)
+                                    {
+                                        SharpDX.Direct2D1.Bitmap top_section_rx = new SharpDX.Direct2D1.Bitmap(_renderTarget, new Size2(MiniSpec.PIXELS, MiniSpec.PIXELS - 1),
+                                            new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(_filter_display_waterfall_bmp.PixelFormat.Format, _ALPHA_MODE)));
 
-                                    SharpDX.Direct2D1.Bitmap top_section_tx = new SharpDX.Direct2D1.Bitmap(_renderTarget, new Size2(MiniSpec.PIXELS, MiniSpec.PIXELS - 1),
-                                        new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(_filter_display_waterfall_bmp_tx.PixelFormat.Format, _ALPHA_MODE)));
+                                        SharpDX.Direct2D1.Bitmap top_section_tx = new SharpDX.Direct2D1.Bitmap(_renderTarget, new Size2(MiniSpec.PIXELS, MiniSpec.PIXELS - 1),
+                                            new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(_filter_display_waterfall_bmp_tx.PixelFormat.Format, _ALPHA_MODE)));
 
-                                    top_section_rx.CopyFromBitmap(_filter_display_waterfall_bmp, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)top_section_rx.Size.Width, (int)top_section_rx.Size.Height));
-                                    top_section_tx.CopyFromBitmap(_filter_display_waterfall_bmp_tx, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)top_section_tx.Size.Width, (int)top_section_tx.Size.Height));
+                                        top_section_rx.CopyFromBitmap(_filter_display_waterfall_bmp, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)top_section_rx.Size.Width, (int)top_section_rx.Size.Height));
+                                        top_section_tx.CopyFromBitmap(_filter_display_waterfall_bmp_tx, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)top_section_tx.Size.Width, (int)top_section_tx.Size.Height));
 
-                                    _filter_display_waterfall_bmp.CopyFromMemory(waterfall_row_rx, waterfall_row_rx.Length, new SharpDX.Rectangle(0, 0, MiniSpec.PIXELS, 1));
-                                    _filter_display_waterfall_bmp.CopyFromBitmap(top_section_rx, new SharpDX.Point(0, 1));
+                                        _filter_display_waterfall_bmp.CopyFromMemory(waterfall_row_rx, waterfall_row_rx.Length, new SharpDX.Rectangle(0, 0, MiniSpec.PIXELS, 1));
+                                        _filter_display_waterfall_bmp.CopyFromBitmap(top_section_rx, new SharpDX.Point(0, 1));
 
-                                    _filter_display_waterfall_bmp_tx.CopyFromMemory(waterfall_row_tx, waterfall_row_tx.Length, new SharpDX.Rectangle(0, 0, MiniSpec.PIXELS, 1));
-                                    _filter_display_waterfall_bmp_tx.CopyFromBitmap(top_section_tx, new SharpDX.Point(0, 1));
+                                        _filter_display_waterfall_bmp_tx.CopyFromMemory(waterfall_row_tx, waterfall_row_tx.Length, new SharpDX.Rectangle(0, 0, MiniSpec.PIXELS, 1));
+                                        _filter_display_waterfall_bmp_tx.CopyFromBitmap(top_section_tx, new SharpDX.Point(0, 1));
 
-                                    Utilities.Dispose(ref top_section_rx);
-                                    top_section_rx = null;
+                                        Utilities.Dispose(ref top_section_rx);
+                                        top_section_rx = null;
 
-                                    Utilities.Dispose(ref top_section_tx);
-                                    top_section_tx = null;
+                                        Utilities.Dispose(ref top_section_tx);
+                                        top_section_tx = null;
 
-                                    _waterfall_row_added = true; // prevent other filter items in the render from updating the waterfall bitmap, this gets set to false just above the draw loop
+                                        _waterfall_row_added = true; // prevent other filter items in the render from updating the waterfall bitmap, this gets set to false just above the draw loop
+                                    }
                                 }
                                 filter.FrameCount++;
                             }

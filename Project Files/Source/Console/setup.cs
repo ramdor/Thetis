@@ -11989,42 +11989,42 @@ namespace Thetis
 
             if (comboColorPalette.Text == "original")
             {
-                console.color_sheme = ColorScheme.original;
+                console._color_scheme = ColorScheme.original;
                 clrbtnWaterfallLow.Visible = true;
             }
             else if (comboColorPalette.Text == "Enhanced")
             {
-                console.color_sheme = ColorScheme.enhanced;
+                console._color_scheme = ColorScheme.enhanced;
                 clrbtnWaterfallLow.Visible = true;
             }
             else if (comboColorPalette.Text == "Spectran")
             {
                 clrbtnWaterfallLow.Visible = false;
-                console.color_sheme = ColorScheme.SPECTRAN;
+                console._color_scheme = ColorScheme.SPECTRAN;
             }
             else if (comboColorPalette.Text == "BlackWhite")
             {
-                console.color_sheme = ColorScheme.BLACKWHITE;
+                console._color_scheme = ColorScheme.BLACKWHITE;
                 clrbtnWaterfallLow.Visible = false;
             }
             else if (comboColorPalette.Text == "LinLog")
             {
-                console.color_sheme = ColorScheme.LinLog;
+                console._color_scheme = ColorScheme.LinLog;
                 clrbtnWaterfallLow.Visible = false;
             }
             else if (comboColorPalette.Text == "LinRad")
             {
-                console.color_sheme = ColorScheme.LinRad;
+                console._color_scheme = ColorScheme.LinRad;
                 clrbtnWaterfallLow.Visible = false;
             }
             else if (comboColorPalette.Text == "LinAuto")
             {
-                console.color_sheme = ColorScheme.LinAuto;
+                console._color_scheme = ColorScheme.LinAuto;
                 clrbtnWaterfallLow.Visible = false;
             }
             else if (comboColorPalette.Text == "Custom")
             {
-                console.color_sheme = ColorScheme.Custom;
+                console._color_scheme = ColorScheme.Custom;
                 clrbtnWaterfallLow.Visible = false;
             }
         }
@@ -12058,42 +12058,42 @@ namespace Thetis
 
             if (comboRX2ColorPalette.Text == "original")
             {
-                console.rx2_color_sheme = ColorScheme.original;
+                console.rx2_color_scheme = ColorScheme.original;
                 clrbtnRX2WaterfallLow.Visible = true;
             }
             else if (comboRX2ColorPalette.Text == "Enhanced")
             {
-                console.rx2_color_sheme = ColorScheme.enhanced;
+                console.rx2_color_scheme = ColorScheme.enhanced;
                 clrbtnRX2WaterfallLow.Visible = true;
             }
             else if (comboRX2ColorPalette.Text == "Spectran")
             {
-                console.rx2_color_sheme = ColorScheme.SPECTRAN;
+                console.rx2_color_scheme = ColorScheme.SPECTRAN;
                 clrbtnRX2WaterfallLow.Visible = false;
             }
             else if (comboRX2ColorPalette.Text == "BlackWhite")
             {
-                console.rx2_color_sheme = ColorScheme.BLACKWHITE;
+                console.rx2_color_scheme = ColorScheme.BLACKWHITE;
                 clrbtnRX2WaterfallLow.Visible = false;
             }
             else if (comboRX2ColorPalette.Text == "LinLog")
             {
-                console.rx2_color_sheme = ColorScheme.LinLog;
+                console.rx2_color_scheme = ColorScheme.LinLog;
                 clrbtnRX2WaterfallLow.Visible = false;
             }
             else if (comboRX2ColorPalette.Text == "LinRad")
             {
-                console.rx2_color_sheme = ColorScheme.LinRad;
+                console.rx2_color_scheme = ColorScheme.LinRad;
                 clrbtnRX2WaterfallLow.Visible = false;
             }
             else if (comboRX2ColorPalette.Text == "LinAuto")
             {
-                console.rx2_color_sheme = ColorScheme.LinAuto;
+                console.rx2_color_scheme = ColorScheme.LinAuto;
                 clrbtnRX2WaterfallLow.Visible = false;
             }
             else if (comboRX2ColorPalette.Text == "Custom")
             {
-                console.rx2_color_sheme = ColorScheme.Custom;
+                console.rx2_color_scheme = ColorScheme.Custom;
 
                 showHideWaterfallControls(2, false);
             }
@@ -20915,11 +20915,11 @@ namespace Thetis
             get { return lgLinearGradientRX1; }
             set { }
         }
-        public ucLGPicker WaterfallGradPicker
-        {
-            get { return lgLinearGradient_waterfall; }
-            set { }
-        }
+        //public ucLGPicker WaterfallGradPicker
+        //{
+        //    get { return lgLinearGradient_waterfall; }
+        //    set { }
+        //}
         private void lgPickerRX1_Changed(object sender, EventArgs e)
         {
             rebuildLGBrushes();
@@ -21018,6 +21018,8 @@ namespace Thetis
         private void lgPickerRX1_GripperDBMChanged(object sender, GripperEventArgs e)
         {
             toolTip1.SetToolTip(lgLinearGradientRX1, e.DBM.ToString());
+
+            rebuildLGBrushes(); //moving a dbm blob also causes rebuild so we have instant update
         }
 
         private void lgPickerRX1_GripperMouseLeave(object sender, GripperEventArgs e)
@@ -33004,13 +33006,29 @@ namespace Thetis
 
         private void lgLinearGradient_waterfall_Changed(object sender, EventArgs e)
         {
-            Display.WaterfallGradientChangedRX1 = true;
-            Display.WaterfallGradientChangedRX2 = true;
+            Color[] waterfall_grad = WaterfallRXGradient();
+
+            console.WaterfallRXGradientChangedHandlers?.Invoke(1, waterfall_grad); //rx1
+            console.WaterfallRXGradientChangedHandlers?.Invoke(2, waterfall_grad); //rx2
+        }
+
+        public Color[] WaterfallRXGradient()
+        {
+            Color[] waterfall_grad = new Color[101];
+            for (int perc = 0; perc <= 100; perc++)
+            {
+                Color c = lgLinearGradient_waterfall.GetColourAtPercent(perc / 100f);
+                waterfall_grad[perc] = c;
+            }
+            return waterfall_grad;
         }
 
         private void lgLinearGradient_waterfall_GripperDBMChanged(object sender, GripperEventArgs e)
         {
             toolTip1.SetToolTip(lgLinearGradient_waterfall, ((int)(e.Percent * 100f)).ToString());
+
+            //when dragging also rebuild, so we have instant update
+            lgLinearGradient_waterfall_Changed(this, EventArgs.Empty);
         }
 
         private void lgLinearGradient_waterfall_GripperMouseEnter(object sender, GripperEventArgs e)
