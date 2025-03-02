@@ -619,9 +619,15 @@ namespace Thetis
         private static void OnBandChangeHandler(int rx, Band oldBand, Band newBand)
         {
             if (rx == 1)
+            {
                 FastAttackNoiseFloorRX1 = true;
+                _RX1waterfallPreviousMinValue = 20;
+            }
             else
+            {
                 FastAttackNoiseFloorRX2 = true;
+                _RX2waterfallPreviousMinValue = 20;
+            }
         }
 
         private static bool m_bDelayRX1Blobs = false;
@@ -2443,7 +2449,7 @@ namespace Thetis
                 _rx2_no_agc_duration = m_objFrameStartTimer.ElapsedMsec + _fft_fill_timeRX2 + ((m_nFps / 1000f) * 2); // 2 extra frames
                 _ignore_waterfall_rx2_agc = true;
             }
-    }
+        }
 
         private static void initDisplayArrays(int W, int H)
         {
@@ -2655,8 +2661,8 @@ namespace Thetis
             set { m_bStopRX2WaterfallOnTX = value; }
         }
 
-        private static float _RX1waterfallPreviousMinValue = -100f;
-        private static float _RX2waterfallPreviousMinValue = -100f;
+        private static float _RX1waterfallPreviousMinValue = 20;
+        private static float _RX2waterfallPreviousMinValue = 20;
         private static void ResetWaterfallBmp()
         {
             int H = displayTargetHeight;
@@ -4452,7 +4458,7 @@ namespace Thetis
                     max_copy = dataCopy[i] + fOffset;
 
                     // noise floor
-                    if (/*!local_mox && */(max_copy < currentAverage))
+                    if (!local_mox && (max_copy < currentAverage))
                     {
                         averageSum += (float)Math.Pow(10f, max_copy / 10f);
                         averageCount++;
@@ -4631,7 +4637,7 @@ namespace Thetis
 
                         yPixelLerp = (int)dBToRX2Pixel(lerp, H);
                         yPixelActual = (int)dBToRX2Pixel(m_fFFTBinAverageRX2 + _fNFshiftDBM, H);                        
-                    }
+                    }                    
 
                     if ((rx == 1 && m_bShowRX1NoiseFloor) || (rx == 2 && m_bShowRX2NoiseFloor))
                     {
@@ -5123,6 +5129,7 @@ namespace Thetis
             }
         }
 
+        private static bool _old_power = false;
         unsafe static private bool DrawWaterfallDX2D(int nVerticalShift, int W, int H, int rx, bool bottom)
         {
             // undo the rendertarget transform that is used to move linedraws to middle of pixel grid
@@ -5151,6 +5158,13 @@ namespace Thetis
             bool bDoVisualNotch = false;
             int nDecimatedWidth = W / m_nDecimation;
 
+            if (console.PowerOn != _old_power)
+            {
+                _old_power = console.PowerOn;
+                _RX1waterfallPreviousMinValue = 20;
+                _RX2waterfallPreviousMinValue = 20;
+            }
+
             if (rx == 2)
             {
                 if (local_mox)
@@ -5163,17 +5177,29 @@ namespace Thetis
                     high_threshold = rx2_waterfall_high_threshold;
                     if (rx2_waterfall_agc && !m_bRX2_spectrum_thresholds)
                     {
-                        if (m_bWaterfallUseNFForACGRX2 && !FastAttackNoiseFloorRX2)
+                        if (m_bWaterfallUseNFForACGRX2)
                         {
-                            low_threshold = m_fLerpAverageRX2;
+                            if (FastAttackNoiseFloorRX2)
+                            {
+                                low_threshold = _RX2waterfallPreviousMinValue;
+                                //note: no adjust if using old value
+                            }
+                            else
+                            {
+                                low_threshold = m_fLerpAverageRX2;
+                                low_threshold -= m_fWaterfallAGCOffsetRX2;
+                            }
                         }
                         else
                         {
                             low_threshold = _RX2waterfallPreviousMinValue;
+                            low_threshold -= m_fWaterfallAGCOffsetRX2;
                         }
-                        low_threshold -= m_fWaterfallAGCOffsetRX2;
                     }
-                    else low_threshold = rx2_waterfall_low_threshold;
+                    else
+                    {
+                        low_threshold = rx2_waterfall_low_threshold;
+                    }
                 }
                 cScheme = _rx2_color_scheme;
                 low_color = rx2_waterfall_low_color;
@@ -5187,25 +5213,36 @@ namespace Thetis
                 }
                 else
                 {
-                    low_threshold = _RX1waterfallPreviousMinValue;
                     high_threshold = waterfall_high_threshold;
                     if (rx1_waterfall_agc && !m_bRX1_spectrum_thresholds)
                     {
-                        if (m_bWaterfallUseNFForACGRX1 && !FastAttackNoiseFloorRX1)
+                        if (m_bWaterfallUseNFForACGRX1)
                         {
-                            low_threshold = m_fLerpAverageRX1;
+                            if (FastAttackNoiseFloorRX1)
+                            {
+                                low_threshold = _RX1waterfallPreviousMinValue;
+                                //note: no adjust if using old value
+                            }
+                            else
+                            {
+                                low_threshold = m_fLerpAverageRX1;
+                                low_threshold -= m_fWaterfallAGCOffsetRX1;
+                            }
                         }
                         else
                         {
                             low_threshold = _RX1waterfallPreviousMinValue;
+                            low_threshold -= m_fWaterfallAGCOffsetRX1;
                         }
-                        low_threshold -= m_fWaterfallAGCOffsetRX1;
                     }
-                    else low_threshold = waterfall_low_threshold;
+                    else
+                    {
+                        low_threshold = waterfall_low_threshold;
+                    }
                 }
                 cScheme = _color_scheme;
                 low_color = waterfall_low_color;
-            }
+            }           
 
             if (console.PowerOn)
             {
@@ -5328,16 +5365,16 @@ namespace Thetis
                         }
                         //
 
-                        if (max > local_max_y)
+                        if (max_copy > local_max_y)
                         {
-                            local_max_y = max;
+                            local_max_y = max_copy; //[2.10.3.9]MW0LGE changed from max
                             max_x = i * m_nDecimation;
                         }
 
                         //below added by w3sz
-                        if (max < local_min_y_w3sz)
+                        if (max_copy < local_min_y_w3sz)
                         {
-                            local_min_y_w3sz = max_copy; //[2.10.3]MW0LGE use unmodified, not the notced datta
+                            local_min_y_w3sz = max_copy; //[2.10.3]MW0LGE use unmodified, not the notced data
                         }
                         //end of addition by w3sz
 
@@ -5401,12 +5438,12 @@ namespace Thetis
                                 Color[] cols;
                                 if (rx == 1)
                                 {
-                                    if (!_rx1_waterfall_grad_ok) return false; // leave if not ok
+                                    if (!_rx1_waterfall_grad_ok) break;
                                     cols = _rx1_waterfall_grad;
                                 }
                                 else
                                 {
-                                    if (!_rx2_waterfall_grad_ok) return false; // leave if not ok
+                                    if (!_rx2_waterfall_grad_ok) break;
                                     cols = _rx2_waterfall_grad;
                                 }
                                 
@@ -6318,7 +6355,7 @@ namespace Thetis
 
                     bool bIgnoreAgc = (rx == 1 && _ignore_waterfall_rx1_agc && m_objFrameStartTimer.ElapsedMsec < _rx1_no_agc_duration) ||
                                         (rx == 2 && _ignore_waterfall_rx2_agc && m_objFrameStartTimer.ElapsedMsec < _rx2_no_agc_duration);
-
+                    
                     if (!bIgnoreAgc)
                     {
                         if (rx == 1)
@@ -6329,10 +6366,33 @@ namespace Thetis
 
                     if (!local_mox && !bIgnoreAgc)
                     {
+                        //if (rx == 1)
+                        //    _RX1waterfallPreviousMinValue = (((_RX1waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10) + 1; //wfagc
+                        //else
+                        //    _RX2waterfallPreviousMinValue = (((_RX2waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10) + 1; //wfagc
+
                         if (rx == 1)
-                            _RX1waterfallPreviousMinValue = (((_RX1waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10) + 1; //wfagc
+                        {
+                            if (rx1_waterfall_agc && !m_bRX1_spectrum_thresholds && m_bWaterfallUseNFForACGRX1)
+                            {
+                                _RX1waterfallPreviousMinValue = (_RX1waterfallPreviousMinValue * 0.6f) + (low_threshold * 0.4f);
+                            }
+                            else
+                            {
+                                _RX1waterfallPreviousMinValue = (_RX1waterfallPreviousMinValue * 0.6f) + (waterfall_minimum * 0.4f);
+                            }
+                        }
                         else
-                            _RX2waterfallPreviousMinValue = ((_RX2waterfallPreviousMinValue * 8) + (waterfall_minimum * 2)) / 10 + 1; //wfagc
+                        {
+                            if (rx2_waterfall_agc && !m_bRX2_spectrum_thresholds && m_bWaterfallUseNFForACGRX2)
+                            {
+                                _RX2waterfallPreviousMinValue = (_RX2waterfallPreviousMinValue * 0.6f) + (low_threshold * 0.4f);
+                            }
+                            else
+                            {
+                                _RX2waterfallPreviousMinValue = (_RX2waterfallPreviousMinValue * 0.6f) + (waterfall_minimum * 0.4f);
+                            }
+                        }
                     }
                 }
 
@@ -6354,6 +6414,8 @@ namespace Thetis
             drawPanadapterAndWaterfallGridDX2D(nVerticalShift, W, H, rx, bottom, out long left_edge, out long right_edge, true);
 
             if (_showTCISpots) drawSpots(rx, nVerticalShift, W, bottom);
+
+            //DebugText = $"previous low : {_RX1waterfallPreviousMinValue.ToString("F2")}\nlow : {low_threshold.ToString("F2")}\nhigh : {high_threshold.ToString("F2")}";
 
             return true;
         }
