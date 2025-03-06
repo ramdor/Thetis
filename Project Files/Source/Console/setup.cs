@@ -12094,8 +12094,7 @@ namespace Thetis
             else if (comboRX2ColorPalette.Text == "Custom")
             {
                 console.rx2_color_scheme = ColorScheme.Custom;
-
-                showHideWaterfallControls(2, false);
+                clrbtnRX2WaterfallLow.Visible = false;
             }
         }
 

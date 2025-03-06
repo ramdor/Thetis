@@ -33136,10 +33136,10 @@
             this.chkStopRX1WaterfallOnTx.Image = null;
             this.chkStopRX1WaterfallOnTx.Location = new System.Drawing.Point(139, 116);
             this.chkStopRX1WaterfallOnTx.Name = "chkStopRX1WaterfallOnTx";
-            this.chkStopRX1WaterfallOnTx.Size = new System.Drawing.Size(82, 17);
+            this.chkStopRX1WaterfallOnTx.Size = new System.Drawing.Size(104, 17);
             this.chkStopRX1WaterfallOnTx.TabIndex = 93;
-            this.chkStopRX1WaterfallOnTx.Text = "Stop On TX";
-            this.toolTip1.SetToolTip(this.chkStopRX1WaterfallOnTx, "Stop the waterfall when TX\'ing");
+            this.chkStopRX1WaterfallOnTx.Text = "Stop On Rx1 TX";
+            this.toolTip1.SetToolTip(this.chkStopRX1WaterfallOnTx, "Stop the waterfall when TX\'ing on Rx1");
             this.chkStopRX1WaterfallOnTx.UseVisualStyleBackColor = true;
             this.chkStopRX1WaterfallOnTx.CheckedChanged += new System.EventHandler(this.chkStopRX1WaterfallOnTx_CheckedChanged);
             // 
