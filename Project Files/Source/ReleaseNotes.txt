@@ -16,6 +16,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] options to show/hide major/minor grid lines in Setup->Appearance->RX Display
 - [add] option to show two tone measurements in the linearity form. Note: suitable spectrum scale etc required. Code attempts to find peaks at expected locations
 - [add] added fft size display to the rx display settings
+- [add] Red-Pitaya radio model. Specific modifications for that hardware. Still undergoing testing
 - [add] PSForm tooltips now used in finder
 - [add] custom waterfall palette added for each RX. Adjust in Appearance->General. Also supported by the filter item
 - [change] exporting a tx profile will now ask for destination location and filename. It will complain if filename already exists
