@@ -9240,6 +9240,10 @@ namespace Thetis
 
             if (checkTXProfileChanged2(dr, true)) // check if vac settings are different
             {
+                //[2.10.3.9]MW0LGE added
+                chkAudioVACAutoEnable.Checked = false;
+                chkVAC2AutoEnable.Checked = false;
+
                 // diable the vacs, so we can make changes without them trying to re-init etc MW0LGE_21dk5
                 chkAudioEnableVAC.Checked = false;
                 chkVAC2Enable.Checked = false;

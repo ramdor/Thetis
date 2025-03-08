@@ -27590,7 +27590,7 @@ namespace Thetis
                     chkPower.Checked = false;
                     return;
                 }
-                if (!IsSetupFormNull) SetupForm.BoardWarning = Audio.BoardMismatch; //[2.10.3.9]MW0LGE show warning in setup if board does not match expected
+                if (!IsSetupFormNull) SetupForm.BoardWarning = NetworkIO.BoardMismatch; //[2.10.3.9]MW0LGE show warning in setup if board does not match expected
 
                 //MW0LGE_21k9 these two moved after the audio start
                 //seems to fix issue that was causing multiRX to be silent when starting up and it was switched on
