@@ -151,6 +151,9 @@ namespace Thetis
         SUB_RX,
         //
 
+        CUSTOM_PK,
+        CUSTOM_AV,
+
         LAST
     }
 
@@ -202,6 +205,7 @@ namespace Thetis
         DISCORD_BUTTONS,
         FILTER_DISPLAY,
         DIAL_DISPLAY,
+        CUSTOM_METER_BAR,
         //SPECTRUM,
         LAST
     }
@@ -1725,6 +1729,7 @@ namespace Thetis
                 case MeterType.DISCORD_BUTTONS: return 2;
                 case MeterType.FILTER_DISPLAY: return 2;
                 case MeterType.DIAL_DISPLAY: return 2;
+                case MeterType.CUSTOM_METER_BAR: return 2;
                     //case MeterType.SPECTRUM: return 2;
             }
 
@@ -1775,6 +1780,7 @@ namespace Thetis
                 case MeterType.TUNESTEP_BUTTONS: return "Tunestep Buttons";
                 case MeterType.FILTER_DISPLAY: return "Filter Display";
                 case MeterType.DIAL_DISPLAY: return "Dial Display";
+                case MeterType.CUSTOM_METER_BAR: return "Custom Meter Bar";
             }
 
             return meter.ToString();
@@ -1826,6 +1832,8 @@ namespace Thetis
                 case Reading.VOLTS: return "Volts";
                 case Reading.AZ: return "Azimuth";
                 case Reading.ELE: return "Elevation";
+                case Reading.CUSTOM_PK: return "Custom(pk)";
+                case Reading.CUSTOM_AV: return "Custom(av)";
 
                 // not used
                 case (Reading)(int)22: return "";
@@ -2832,6 +2840,7 @@ namespace Thetis
             _console.CWPitchChangedHandlers += OnCWPitchChanged;
 
             _console.WaterfallRXGradientChangedHandlers += OnWaterfallRXGradientChanged;
+            _console.WaterfallTXGradientChangedHandlers += OnWaterfallTXGradientChanged;
 
             _delegatesAdded = true;
         }
@@ -2909,6 +2918,7 @@ namespace Thetis
             _console.CWPitchChangedHandlers -= OnCWPitchChanged;
 
             _console.WaterfallRXGradientChangedHandlers -= OnWaterfallRXGradientChanged;
+            _console.WaterfallTXGradientChangedHandlers -= OnWaterfallTXGradientChanged;
 
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
@@ -2978,6 +2988,18 @@ namespace Thetis
                     clsMeter m = ms.Value;
 
                     m.WaterfallRXGradient = colours;
+                }
+            }
+        }
+        private static void OnWaterfallTXGradientChanged(System.Drawing.Color[] colours)
+        {
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+
+                    m.WaterfallTXGradient = colours;
                 }
             }
         }
@@ -3767,6 +3789,7 @@ namespace Thetis
             m.TXWaterfallMax = Display.TXWFAmpMax;
 
             m.WaterfallRXGradient = _console.WaterfallRXGradient();
+            m.WaterfallTXGradient = _console.WaterfallTXGradient();
 
             m.TuneStepIndex = _console.TuneStepIndex;
 
@@ -4913,6 +4936,13 @@ namespace Thetis
 
             private bool _visible;
 
+            private float _custom_min;
+            private float _custom_max;
+            private float _custom_high;
+            private string _custom_units;
+            private string _custom_title;
+            private bool _is_custom;
+
             public clsMeterItem(clsMeter owningMeter = null)
             {
                 // constructor
@@ -4951,6 +4981,13 @@ namespace Thetis
                 _disabled = false;
                 _mox_fade_toggle = false;
                 _visible = true;
+
+                _custom_min = 0;
+                _custom_max = 10;
+                _custom_high = 7.5f;
+                _custom_units = "?";
+                _custom_title = "Title";
+                _is_custom = false;
 
                 //_mmio_guid = new Guid[10];
                 //_mmio_variable = new string[10];
@@ -5409,6 +5446,10 @@ namespace Thetis
             {
 
             }
+            public virtual void WaterfallTXGradient(System.Drawing.Color[] colours)
+            {
+
+            }
             public virtual bool MOX
             {
                 get { return false; }
@@ -5433,6 +5474,36 @@ namespace Thetis
             {
                 get { return 100; }
                 set { }
+            }
+            public virtual bool IsCustom
+            {
+                get { return _is_custom; }
+                set { _is_custom = value; }
+            }
+            public virtual float CustomMin
+            {
+                get { return _custom_min; }
+                set { _custom_min = value; }
+            }
+            public virtual float CustomMax
+            {
+                get { return _custom_max; }
+                set { _custom_max = value; }
+            }
+            public virtual float CustomHigh
+            {
+                get { return _custom_high; }
+                set { _custom_high = value; }
+            }
+            public virtual string CustomUnits
+            {
+                get { return _custom_units; }
+                set { _custom_units = value; }
+            }
+            public virtual string CustomTitle
+            {
+                get { return _custom_title; }
+                set { _custom_title = value; }
             }
         }
         //
@@ -12179,7 +12250,8 @@ namespace Thetis
             private bool _show_characteristic;
             private float _characteristic_low;
 
-            private float _waterfall_min_agc;
+            private float _waterfall_min_agc_rx;
+            private float _waterfall_min_agc_tx;
             private bool _enabled;
             private bool _snap_lines;
             private bool _snap_lines_ignore;
@@ -12189,8 +12261,10 @@ namespace Thetis
 
             private HiPerfTimer _hiperf_timer;
 
-            private System.Drawing.Color[] _waterfall_colours;
-            private bool _waterfall_gradient_ok;
+            private System.Drawing.Color[] _waterfall_rx_colours;
+            private bool _waterfall_rx_gradient_ok;
+            private System.Drawing.Color[] _waterfall_tx_colours;
+            private bool _waterfall_tx_gradient_ok;
 
             public clsFilterItem(clsMeter owning_meter, clsItemGroup item_group)
             {
@@ -12298,10 +12372,13 @@ namespace Thetis
 
                 _tnf_active = _owningmeter.TNFActive;
 
-                _waterfall_min_agc = -200;
+                _waterfall_min_agc_rx = 20;
+                _waterfall_min_agc_tx = 20;
 
-                _waterfall_colours = new System.Drawing.Color[101];
-                _waterfall_gradient_ok = false;
+                _waterfall_rx_colours = new System.Drawing.Color[101];
+                _waterfall_rx_gradient_ok = false;
+                _waterfall_tx_colours = new System.Drawing.Color[101];
+                _waterfall_tx_gradient_ok = false;
 
                 _dataline_colour = System.Drawing.Color.LimeGreen;
                 _datafill_colour = System.Drawing.Color.LimeGreen;
@@ -12397,20 +12474,39 @@ namespace Thetis
             {
                 if (colours.Length != 101) return;
 
-                _waterfall_gradient_ok = false;
+                _waterfall_rx_gradient_ok = false;
                 for(int perc = 0;perc <= 100; perc++)
                 {
-                    _waterfall_colours[perc] = System.Drawing.Color.FromArgb(255, colours[perc]);
+                    _waterfall_rx_colours[perc] = System.Drawing.Color.FromArgb(255, colours[perc]);
                 }
-                _waterfall_gradient_ok = true;
+                _waterfall_rx_gradient_ok = true;
             }
-            public bool WaterfallGradientOK
+            public override void WaterfallTXGradient(System.Drawing.Color[] colours)
             {
-                get { return _waterfall_gradient_ok; }
+                if (colours.Length != 101) return;
+
+                _waterfall_tx_gradient_ok = false;
+                for (int perc = 0; perc <= 100; perc++)
+                {
+                    _waterfall_tx_colours[perc] = System.Drawing.Color.FromArgb(255, colours[perc]);
+                }
+                _waterfall_tx_gradient_ok = true;
+            }
+            public bool WaterfallRXGradientOK
+            {
+                get { return _waterfall_rx_gradient_ok; }
             }
             public System.Drawing.Color[] WaterfallRXGradient()
             {
-                return _waterfall_colours;
+                return _waterfall_rx_colours;
+            }
+            public bool WaterfallTXGradientOK
+            {
+                get { return _waterfall_tx_gradient_ok; }
+            }
+            public System.Drawing.Color[] WaterfallTXGradient()
+            {
+                return _waterfall_tx_colours;
             }
             public override bool Enabled
             {
@@ -13696,9 +13792,19 @@ namespace Thetis
                                         }
                                         else
                                         {
-                                            float calc = (((_waterfall_min_agc * 8) + (_spec_raw_min * 2)) / 10) + 1;
-                                            _waterfall_min_agc = calc;
-                                            min = (int)_waterfall_min_agc;
+                                            if (_owningmeter.MOX)
+                                            {
+                                                float calc = (_waterfall_min_agc_tx * 0.6F) + (_spec_raw_min * 0.4F);
+                                                _waterfall_min_agc_tx = calc;
+                                                min = (int)_waterfall_min_agc_tx;
+                                            }
+                                            else
+                                            {
+                                                //float calc = (((_waterfall_min_agc * 8) + (_spec_raw_min * 2)) / 10) + 1;
+                                                float calc = (_waterfall_min_agc_rx * 0.6F) + (_spec_raw_min * 0.4F);
+                                                _waterfall_min_agc_rx = calc;
+                                                min = (int)_waterfall_min_agc_rx;
+                                            }
                                         }
 
                                         min -= (int)Display.WaterfallAGCOffsetRX1;
@@ -13725,9 +13831,19 @@ namespace Thetis
                                         }
                                         else
                                         {
-                                            float calc = (((_waterfall_min_agc * 8) + (_spec_raw_min * 2)) / 10) + 1;
-                                            _waterfall_min_agc = calc;
-                                            min = (int)_waterfall_min_agc;
+                                            if (_owningmeter.MOX)
+                                            {
+                                                float calc = (_waterfall_min_agc_tx * 0.6F) + (_spec_raw_min * 0.4F);
+                                                _waterfall_min_agc_tx = calc;
+                                                min = (int)_waterfall_min_agc_tx;
+                                            }
+                                            else
+                                            {
+                                                //float calc = (((_waterfall_min_agc * 8) + (_spec_raw_min * 2)) / 10) + 1;
+                                                float calc = (_waterfall_min_agc_rx * 0.6F) + (_spec_raw_min * 0.4F);
+                                                _waterfall_min_agc_rx = calc;
+                                                min = (int)_waterfall_min_agc_rx;
+                                            }
                                         }
 
                                         min -= (int)Display.WaterfallAGCOffsetRX2;
@@ -16343,6 +16459,7 @@ namespace Thetis
             private int _tx_waterfall_max;
 
             private System.Drawing.Color[] _waterfall_rx_colours;
+            private System.Drawing.Color[] _waterfall_tx_colours;
 
             private bool _vfoA_lock;
             private bool _vfoB_lock;
@@ -16409,6 +16526,7 @@ namespace Thetis
                     case MeterType.DISCORD_BUTTONS: ret = Reading.NONE.ToString(); break;
                     case MeterType.FILTER_DISPLAY: ret = Reading.NONE.ToString(); break;
                     case MeterType.DIAL_DISPLAY: ret = Reading.NONE.ToString(); break;
+                    case MeterType.CUSTOM_METER_BAR: ret = variable_index == 0 ? "Primary" : "Secondary"; break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg).ToString(); break; break.ToString(); break;
                 }
                 return ret;
@@ -16458,6 +16576,7 @@ namespace Thetis
                     case MeterType.DISCORD_BUTTONS: return 0;
                     case MeterType.FILTER_DISPLAY: return 0;
                     case MeterType.DIAL_DISPLAY: return 0;
+                    case MeterType.CUSTOM_METER_BAR: return 2;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
                 return 0;
@@ -16512,6 +16631,7 @@ namespace Thetis
                     case MeterType.DISCORD_BUTTONS: AddDiscordButtons(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.FILTER_DISPLAY: AddFilterDisplay(nDelay, 0, out bBottom, 0.2f, restoreIg); break;
                     case MeterType.DIAL_DISPLAY: AddDial(nDelay, 0, out bBottom, 1f, restoreIg); break;
+                    case MeterType.CUSTOM_METER_BAR: AddCustomBar(nDelay, 0, out bBottom, restoreIg); break;
                         //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
@@ -17009,6 +17129,98 @@ namespace Thetis
                 clsFadeCover fc = getFadeCover(ig.ID);
                 if (fc != null) addMeterItem(fc);
                 
+                addMeterItem(ig);
+
+                return cb.ID;
+            }
+            public string AddCustomBar(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                clsItemGroup ig = new clsItemGroup();
+                if (restoreIg != null) ig.ID = restoreIg.ID;
+                ig.ParentID = ID;
+
+                clsBarItem cb = new clsBarItem();
+                cb.IsCustom = true;
+                cb.ParentID = ig.ID;
+                cb.Primary = true;
+                cb.TopLeft = new PointF(_fPadX, fTop + _fPadY);
+                cb.Size = new SizeF(1f - _fPadX * 2f, _fHeight);
+                cb.ReadingSource = Reading.CUSTOM_PK;
+                cb.MMIOVariableIndex = 0;
+                cb.AttackRatio = 0.8f;
+                cb.DecayRatio = 0.2f;
+                cb.UpdateInterval = nMSupdate;
+                cb.HistoryDuration = 4000;
+                cb.ShowHistory = true;
+                cb.PeakHold = false;
+                cb.Colour = System.Drawing.Color.DarkCyan;
+                cb.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Violet);
+                cb.Style = clsBarItem.BarStyle.Line;
+                cb.ScaleCalibration.Add(0, new PointF(0, 0)); // just a percent for this custom bar
+                cb.ScaleCalibration.Add(100, new PointF(0.99f, 0));
+                cb.FontColour = System.Drawing.Color.Yellow;
+                cb.ZOrder = 2;
+                cb.Value = cb.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb.HighPoint = new PointF(75, (0.99f / 100f) * 75f);
+                addMeterItem(cb);
+
+                clsBarItem cb2 = new clsBarItem();
+                cb.IsCustom = true;
+                cb2.ParentID = ig.ID;
+                cb2.TopLeft = cb.TopLeft;
+                cb2.Size = cb.Size;
+                cb2.ReadingSource = Reading.CUSTOM_AV;
+                cb2.MMIOVariableIndex = 1;
+                cb2.ShowPeakValue = false;
+                cb2.AttackRatio = 0.8f;
+                cb2.DecayRatio = 0.2f;
+                cb2.UpdateInterval = nMSupdate;
+                cb2.HistoryDuration = 0;
+                cb2.ShowHistory = false;
+                cb2.PeakHold = false;
+                cb2.Colour = System.Drawing.Color.DarkCyan;
+                cb2.HistoryColour = System.Drawing.Color.FromArgb(128, System.Drawing.Color.Violet);
+                cb2.MarkerColour = System.Drawing.Color.DarkGray;
+                cb2.Style = clsBarItem.BarStyle.Line;
+                cb2.ScaleCalibration.Add(0, new PointF(0, 0)); // just a percent for this custom bar
+                cb2.ScaleCalibration.Add(100, new PointF(0.99f, 0));
+                cb2.FontColour = System.Drawing.Color.Yellow;
+                cb2.ShowValue = false;
+                cb2.ZOrder = 3;
+                cb2.Value = cb2.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+                cb2.HighPoint = new PointF(75, (0.99f / 100f) * 75f);
+                cb2.PostDrawItem = cb;
+                addMeterItem(cb2);
+
+                clsScaleItem cs = new clsScaleItem();
+                cs.IsCustom = true;
+                cs.ParentID = ig.ID;
+                cs.TopLeft = cb.TopLeft;
+                cs.Size = cb.Size;
+                cs.ReadingSource = cb.ReadingSource;
+                cs.ZOrder = 4;
+                cs.ShowType = true;
+                addMeterItem(cs);
+
+                clsSolidColour sc = new clsSolidColour();
+                sc.IsCustom = true;
+                sc.ParentID = ig.ID;
+                sc.TopLeft = new PointF(cb.TopLeft.X, cb.TopLeft.Y - _fHeight * 0.75f);
+                sc.Size = new SizeF(cb.Size.Width, _fHeight + _fHeight * 0.75f);
+                sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                sc.ZOrder = 1;
+                addMeterItem(sc);
+
+                fBottom = cb.TopLeft.Y + cb.Size.Height;
+
+                ig.TopLeft = cb.TopLeft;
+                ig.Size = new SizeF(cb.Size.Width, fBottom);
+                ig.MeterType = MeterType.CUSTOM_METER_BAR;
+                ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
+
+                clsFadeCover fc = getFadeCover(ig.ID);
+                if (fc != null) addMeterItem(fc);
+
                 addMeterItem(ig);
 
                 return cb.ID;
@@ -19425,6 +19637,7 @@ namespace Thetis
                 _tx_waterfall_max = -200;
 
                 _waterfall_rx_colours = new System.Drawing.Color[101];
+                _waterfall_tx_colours = new System.Drawing.Color[101];
 
                 _tnf_active = false;
 
@@ -19713,6 +19926,35 @@ namespace Thetis
                             clsMeterItem mi = mis.Value;
 
                             mi.WaterfallRXGradient(_waterfall_rx_colours);
+                        }
+                    }
+                }
+            }
+            public System.Drawing.Color[] WaterfallTXGradient
+            {
+                get
+                {
+                    lock (_meterItemsLock)
+                    {
+                        return _waterfall_tx_colours;
+                    }
+                }
+                set
+                {
+                    if (value.Length != 101) return; // we do not have 101 elements passed in
+
+                    lock (_meterItemsLock)
+                    {
+                        for (int perc = 0; perc <= 100; perc++)
+                        {
+                            _waterfall_tx_colours[perc] = System.Drawing.Color.FromArgb(255, value[perc]);
+                        }
+
+                        foreach (KeyValuePair<string, clsMeterItem> mis in _meterItems)
+                        {
+                            clsMeterItem mi = mis.Value;
+
+                            mi.WaterfallTXGradient(_waterfall_tx_colours);
                         }
                     }
                 }
@@ -21370,6 +21612,15 @@ namespace Thetis
 
                                             if (bi.Primary)
                                             {
+                                                if (mt == MeterType.CUSTOM_METER_BAR)
+                                                {
+                                                    bi.CustomMin = igs.GetSetting<float>("meter_custom_min", true, -5000f, 5000f, 0);
+                                                    bi.CustomMax = igs.GetSetting<float>("meter_custom_max", true, -5000f, 5000f, 10);
+                                                    bi.CustomHigh = igs.GetSetting<float>("meter_custom_high", true, -5000f, 5000f, 7.5f);
+                                                    bi.CustomUnits = igs.GetSetting<string>("meter_custom_units", false, "", "", "?");
+                                                    bi.CustomTitle = igs.GetSetting<string>("meter_custom_title", false, "", "", "Title");
+                                                }
+
                                                 //primary bar, as has been added first
                                                 bi.UpdateInterval = igs.UpdateInterval;
                                                 bi.AttackRatio = igs.AttackRatio;
@@ -21427,6 +21678,15 @@ namespace Thetis
                                             scaleItem.FontColourLow = igs.LowColor;
                                             scaleItem.FontColourHigh = igs.HighColor;
                                             if(scaleItem.ReadingSource == Reading.PWR || scaleItem.ReadingSource == Reading.REVERSE_PWR) scaleItem.MaxPower = igs.MaxPower;
+
+                                            if (mt == MeterType.CUSTOM_METER_BAR) // only on the apply
+                                            {
+                                                scaleItem.CustomMin = igs.GetSetting<float>("meter_custom_min", true, -5000f, 5000f, 0);
+                                                scaleItem.CustomMax = igs.GetSetting<float>("meter_custom_max", true, -5000f, 5000f, 10);
+                                                scaleItem.CustomHigh = igs.GetSetting<float>("meter_custom_high", true, -5000f, 5000f, 7.5f);
+                                                scaleItem.CustomUnits = igs.GetSetting<string>("meter_custom_units", false, "", "", "?");
+                                                scaleItem.CustomTitle = igs.GetSetting<string>("meter_custom_title", false, "", "", "Title");
+                                            }
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
                                         {
@@ -22243,6 +22503,15 @@ namespace Thetis
 
                                             if (bi.Primary)
                                             {
+                                                if (mt == MeterType.CUSTOM_METER_BAR) // also needed in the scale item
+                                                {
+                                                    igs.SetSetting<float>("meter_custom_min", bi.CustomMin);
+                                                    igs.SetSetting<float>("meter_custom_max", bi.CustomMax);
+                                                    igs.SetSetting<float>("meter_custom_high", bi.CustomHigh);
+                                                    igs.SetSetting<string>("meter_custom_units", bi.CustomUnits);
+                                                    igs.SetSetting<string>("meter_custom_title", bi.CustomTitle);
+                                                }
+
                                                 //primary bar, as has been added first
                                                 igs.UpdateInterval = bi.UpdateInterval;
                                                 igs.AttackRatio = bi.AttackRatio;
@@ -25074,7 +25343,8 @@ namespace Thetis
                     if (scale.ShowType)
                     {
                         // meter type text
-                        string sText = scale.ReadingName;//MeterManager.ReadingName(scale.ReadingSource);
+                        //string sText = scale.ReadingName;//MeterManager.ReadingName(scale.ReadingSource);
+                        string sText = scale.IsCustom ? scale.CustomTitle : scale.ReadingName;
                         szTextSize = measureString(sText, scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
                         SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x + (w * 0.5f) - (szTextSize.Width / 2f), y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
                         _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, getDXBrushForColour(scale.FontColourType, 255));
@@ -25288,16 +25558,6 @@ namespace Thetis
                                     _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
                                 }
 
-                                //low markers
-                                for (int i = 1; i < 15; i++)
-                                {
-                                    // short ticks
-                                    startPoint.X = x + (i * spacing);
-                                    endPoint.X = startPoint.X;
-                                    endPoint.Y = fLineBaseY - (h * 0.15f);
-
-                                    _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
-                                }
                                 for (int i = 1; i < 3; i++)
                                 {
                                     spacing = (w * 0.5f) / 2.0f;
@@ -25351,6 +25611,75 @@ namespace Thetis
                         case Reading.CFC_G:
                             {
                                 generalScale(x, y, w, h, scale, 5, 1, 0, 25, 5, 5, fLineBaseY, fontSizeEmScaled, 255, -1, true);                                
+                            }
+                            break;
+                        case Reading.CUSTOM_AV:
+                        case Reading.CUSTOM_PK:
+                            {
+                                SharpDX.Direct2D1.Brush lowColour = getDXBrushForColour(scale.LowColour, 255);
+                                SharpDX.Direct2D1.Brush highColour = getDXBrushForColour(scale.HighColour, 255);
+                                SharpDX.Direct2D1.Brush col;
+
+                                float range = scale.CustomMax - scale.CustomMin;
+                                float highperc = (scale.CustomHigh - scale.CustomMin) / range;
+                                float markers = 20;
+                                float step = range / markers;
+
+                                // horiz line
+                                startPoint.X = x;
+                                startPoint.Y = fLineBaseY;
+                                endPoint.X = x + ((w * 0.99f) * highperc);
+                                endPoint.Y = startPoint.Y;
+                                _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
+
+                                startPoint.X = endPoint.X;
+                                endPoint.X = x + (w * 0.99f);
+                                _renderTarget.DrawLine(startPoint, endPoint, highColour, 2f);
+
+                                //markers
+                                float spacing = (w * 0.99f) / markers;
+                                float high_start = startPoint.X;
+                                float val;
+                                string sText;
+                                SharpDX.RectangleF txtrect;
+                                for (int i = 1; i < (int)markers; i++)
+                                {
+                                    startPoint.X = x + (i * spacing);
+                                    endPoint.X = startPoint.X;
+                                    val = scale.CustomMin + (step * (float)i);
+
+                                    col = (val < scale.CustomHigh ? lowColour : highColour);
+
+                                    if ((i-1) % 2 == 0)
+                                    {
+                                        //short
+                                        endPoint.Y = fLineBaseY - (h * 0.15f);
+                                    }
+                                    else
+                                    {
+                                        //long, include text
+                                        endPoint.Y = fLineBaseY - (h * 0.3f);
+
+                                        sText = val.ToString(val % 1 == 0 || val < -100 || val > 100 ? "F0" : "F1");
+                                        szTextSize = measureString(sText, scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
+                                        txtrect = new SharpDX.RectangleF(startPoint.X - (szTextSize.Width / 2f), endPoint.Y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
+                                        _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, col);
+                                    }
+
+                                    _renderTarget.DrawLine(startPoint, endPoint, col, 2f);
+                                }
+
+                                //last marker, always on end
+                                startPoint.X = x + (w * 0.99f);
+                                endPoint.X = startPoint.X;
+                                endPoint.Y = fLineBaseY - (h * 0.3f);
+                                col = highColour;
+                                _renderTarget.DrawLine(startPoint, endPoint, col, 2f);
+                                val = scale.CustomMax;
+                                sText = val.ToString(val % 1 == 0 || val < -100 || val > 100 ? "F0" : "F1");
+                                szTextSize = measureString(sText, scale.FontFamily, scale.FntStyle, fontSizeEmScaled);
+                                txtrect = new SharpDX.RectangleF(x + w - szTextSize.Width, endPoint.Y - szTextSize.Height - (h * 0.1f), szTextSize.Width, szTextSize.Height);
+                                _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, fontSizeEmScaled, scale.FntStyle), txtrect, col);
                             }
                             break;
                         default:
@@ -25464,7 +25793,7 @@ namespace Thetis
                     }
                 }
             }
-            private void generalScale(float x,float y,float w,float h,clsScaleItem scale, int lowLongTicks, int highLongTicks, int lowStartNumner, int highEndNumber, int lowIncrement, int highIngrement, float fLineBaseY, float newSize, int nFade, float centrePerc = -1, bool addTrailingPlus = false, bool addAllTrailingPlus = false)
+            private void generalScale(float x,float y,float w,float h,clsScaleItem scale, int lowLongTicks, int highLongTicks, int lowStartNumber, int highEndNumber, int lowIncrement, int highIngrement, float fLineBaseY, float newSize, int nFade, float centrePerc = -1, bool addTrailingPlus = false, bool addAllTrailingPlus = false)
             {
                 float lowToHighPoint = (float)(lowLongTicks - 1) / (float)(lowLongTicks + highLongTicks - 1);
 
@@ -25514,7 +25843,7 @@ namespace Thetis
                     if (scale.ShowMarkers) _renderTarget.DrawLine(startPoint, endPoint, lowColour, 2f);
 
                     // text
-                    string sText = (lowStartNumner + i * lowIncrement).ToString();
+                    string sText = (lowStartNumber + i * lowIncrement).ToString();
                     SizeF szTextSize = measureString(sText, scale.FontFamily, scale.FntStyle, newSize);
                     SharpDX.RectangleF txtrect = new SharpDX.RectangleF(startPoint.X - (szTextSize.Width / 2f), endPoint.Y - szTextSize.Height, szTextSize.Width, szTextSize.Height);
                     _renderTarget.DrawText(sText, getDXTextFormatForFont(scale.FontFamily, newSize, scale.FntStyle), txtrect, fontLowColour);
@@ -25911,9 +26240,17 @@ namespace Thetis
                 {
                     case (clsFilterItem.WaterfallPalette.CUSTOM):
                         {
-                            if (!filter.WaterfallGradientOK) return (null, null, false);
-
-                            System.Drawing.Color[] cols = filter.WaterfallRXGradient();
+                            System.Drawing.Color[] cols;
+                            if (filter.MOX)
+                            {
+                                if (!filter.WaterfallTXGradientOK) return (null, null, false);
+                                cols = filter.WaterfallTXGradient();
+                            }
+                            else
+                            {
+                                if (!filter.WaterfallRXGradientOK) return (null, null, false);
+                                cols = filter.WaterfallRXGradient();
+                            }
 
                             for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
                             {
@@ -29032,7 +29369,7 @@ namespace Thetis
             private clsMeterItem renderHBar(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsBarItem cbi = (clsBarItem)mi;
-
+                
                 float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
                 float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
@@ -29043,7 +29380,7 @@ namespace Thetis
 
                 PointF min, max;
                 float percX, percY;
-
+                
                 getPerc(cbi, cbi.Value, out percX, out percY, out min, out max);
 
                 float xPos = x + (min.X * w) + (percX * ((max.X - min.X) * w));
@@ -29079,7 +29416,16 @@ namespace Thetis
 
                     if (!cbi.HighPoint.IsEmpty)
                     {
-                        fHighXPosTransition = x + (w * cbi.HighPoint.X);
+                        if (cbi.IsCustom)
+                        {
+                            float range = cbi.CustomMax - cbi.CustomMin;
+                            float highperc = (cbi.CustomHigh - cbi.CustomMin) / range;
+                            fHighXPosTransition = x + (w * highperc);
+                        }
+                        else
+                        {
+                            fHighXPosTransition = x + (w * cbi.HighPoint.X);
+                        }
                     }
                 }
                 SharpDX.Direct2D1.Brush markerColour = getDXBrushForColour(cbi.MarkerColour, 255);
@@ -29222,7 +29568,14 @@ namespace Thetis
                             sText = Common.UVfromDBM(cbi.Value).ToString("f2") + "uV";
                             break;
                         default:
-                            sText = cbi.Value.ToString("f1") + MeterManager.ReadingUnits(cbi.ReadingSource);
+                            if (cbi.IsCustom)
+                            {
+                                sText = cbi.Value.ToString("f1") + cbi.CustomUnits;
+                            }
+                            else
+                            {
+                                sText = cbi.Value.ToString("f1") + MeterManager.ReadingUnits(cbi.ReadingSource);
+                            }
                             break;
                     }
 
@@ -29247,7 +29600,14 @@ namespace Thetis
                             sText = Common.UVfromDBM(cbi.MaxHistory).ToString("f2") + "uV";
                             break;
                         default:
-                            sText = cbi.MaxHistory.ToString("f1") + MeterManager.ReadingUnits(cbi.ReadingSource);
+                            if (cbi.IsCustom) 
+                            {
+                                sText = cbi.MaxHistory.ToString("f1") + cbi.CustomUnits;
+                            }
+                            else
+                            {
+                                sText = cbi.MaxHistory.ToString("f1") + MeterManager.ReadingUnits(cbi.ReadingSource);
+                            }
                             break;
                     }
                     SizeF szTextSize = measureString(sText, cbi.FontFamily, cbi.FntStyle, fontSizeEmScaled);
@@ -31591,12 +31951,18 @@ namespace Thetis
                 // adjust for >= 30mhz
                 if (mi.ReadingSource == Reading.SIGNAL_STRENGTH || mi.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
                     value += MeterManager.dbmOffsetForAboveS9Frequency(_rx);
-
                 // normalise to 100w
                 else if (mi.NormaliseTo100W)
                 {
                     //value *= MeterManager.normalisePower();
                     value *= (100 / mi.MaxPower);
+                }
+                // custom bar, will always have range 0-100 scale, so convert value
+                else if (mi.IsCustom)
+                {
+                    float clamped_value = Math.Max(mi.CustomMin, Math.Min(mi.CustomMax, value));
+                    float range = mi.CustomMax - mi.CustomMin;
+                    value = range != 0 ? (clamped_value - mi.CustomMin) / range * 100f : 0;
                 }
 
                 clsMeterItem.clsPercCache pc = mi.GetPerc(value);

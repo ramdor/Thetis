@@ -13332,30 +13332,40 @@ namespace Thetis
             set { quick_qsy = value; }
         }
 
-        private ColorScheme color_palette = ColorScheme.enhanced;
-        public ColorScheme _color_scheme
+        private ColorScheme _rx1_color_palette = ColorScheme.enhanced;
+        public ColorScheme RX1ColourScheme
         {
-            get { return color_palette; }
+            get { return _rx1_color_palette; }
 
             set
             {
-                Display.ColorScheme = value;
-                color_palette = value;
+                Display.RX1ColorScheme = value;
+                _rx1_color_palette = value;
             }
         }
 
-        private ColorScheme rx2_color_palette = ColorScheme.enhanced;
-        public ColorScheme rx2_color_scheme
+        private ColorScheme _rx2_color_palette = ColorScheme.enhanced;
+        public ColorScheme RX2ColourScheme
         {
-            get { return rx2_color_palette; }
+            get { return _rx2_color_palette; }
 
             set
             {
                 Display.RX2ColorScheme = value;
-                rx2_color_palette = value;
+                _rx2_color_palette = value;
             }
         }
+        private ColorScheme _tx_color_palette = ColorScheme.enhanced;
+        public ColorScheme TXColourScheme
+        {
+            get { return _tx_color_palette; }
 
+            set
+            {
+                Display.TXColorScheme = value;
+                _tx_color_palette = value;
+            }
+        }
         public SIOListenerII Siolisten { get; set; } = null;
         public SIO2ListenerII Sio2listen { get; set; } = null;
         public SIO3ListenerII Sio3listen { get; set; } = null;
@@ -39838,10 +39848,9 @@ namespace Thetis
             update_rx2_display = true;
 
             //MW0LGE_21d linear gradient rebuild
-            Display.RebuildLinearGradientBrushRX1 = true;
+            Display.RebuildLinearGradientBrushRX = true;
             if (RX2Enabled)
             {
-                Display.RebuildLinearGradientBrushRX2 = true;
                 Display.FastAttackNoiseFloorRX2 = true; // MW0LGE_21k
             }
 
@@ -47197,6 +47206,7 @@ namespace Thetis
         public delegate void CWPitchChanged(int old_pitch, int new_pitch, bool show_cwzero);
 
         public delegate void WaterfallRXGradientChanged(int rx, Color[] colours); // colours is a 101 element array, each index is 0-100 represent a percent from LOW to HIGH
+        public delegate void WaterfallTXGradientChanged(Color[] colours); // colours is a 101 element array, each index is 0-100 represent a percent from LOW to HIGH
 
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
@@ -47301,6 +47311,7 @@ namespace Thetis
         public CWPitchChanged CWPitchChangedHandlers;
 
         public WaterfallRXGradientChanged WaterfallRXGradientChangedHandlers;
+        public WaterfallTXGradientChanged WaterfallTXGradientChangedHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
@@ -50810,6 +50821,12 @@ namespace Thetis
             //used by multimeter to get the initial state for the waterfall gradient
             if (IsSetupFormNull) return null;
             return SetupForm.WaterfallRXGradient();
+        }
+        public Color[] WaterfallTXGradient()
+        {
+            //used by multimeter to get the initial state for the TX waterfall gradient
+            if (IsSetupFormNull) return null;
+            return SetupForm.WaterfallTXGradient();
         }
     }
 

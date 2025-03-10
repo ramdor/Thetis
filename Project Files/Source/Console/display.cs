@@ -216,14 +216,14 @@ namespace Thetis
         private static Brush m_bTextCallOutActive = new SolidBrush(notch_callout_active_color);
         private static Brush m_bTextCallOutInactive = new SolidBrush(notch_callout_inactive_color);
 
-        private static ColorScheme _color_scheme = ColorScheme.enhanced;
-        public static ColorScheme ColorScheme
+        private static ColorScheme _rx1_color_scheme = ColorScheme.enhanced;
+        public static ColorScheme RX1ColorScheme
         {
-            get { return _color_scheme; }
+            get { return _rx1_color_scheme; }
 
             set 
             {
-                _color_scheme = value; 
+                _rx1_color_scheme = value; 
             }
         }
 
@@ -237,7 +237,16 @@ namespace Thetis
                 _rx2_color_scheme = value; 
             }
         }
+        private static ColorScheme _tx_color_scheme = ColorScheme.enhanced;
+        public static ColorScheme TXColorScheme
+        {
+            get { return _tx_color_scheme; }
 
+            set
+            {
+                _tx_color_scheme = value;
+            }
+        }
         private static bool reverse_waterfall = false;
         public static bool ReverseWaterfall
         {
@@ -578,6 +587,7 @@ namespace Thetis
             console.MinimumTXNotchWidthChangedHandlers += OnMinTXNotchWidthChanged;
 
             console.WaterfallRXGradientChangedHandlers += OnWaterfallRXGradientChanged;
+            console.WaterfallTXGradientChangedHandlers += OnWaterfallTXGradientChanged;
         }
         public static void RemoveDelegates()
         {
@@ -591,6 +601,7 @@ namespace Thetis
             console.MinimumTXNotchWidthChangedHandlers -= OnMinTXNotchWidthChanged;
 
             console.WaterfallRXGradientChangedHandlers -= OnWaterfallRXGradientChanged;
+            console.WaterfallTXGradientChangedHandlers -= OnWaterfallTXGradientChanged;
         }
         private static void OnMinRXNotchWidthChanged(int rx, double width)
         {
@@ -1375,22 +1386,22 @@ namespace Thetis
             set { _rx2_enabled = value; }
         }
 
-        private static bool _bRebuildRX1LinearGradBrush = true;
-        public static bool RebuildLinearGradientBrushRX1
+        private static bool _bRebuildRXLinearGradBrush = true;
+        public static bool RebuildLinearGradientBrushRX
         {
-            get { return _bRebuildRX1LinearGradBrush; }
+            get { return _bRebuildRXLinearGradBrush; }
             set
             {
-                _bRebuildRX1LinearGradBrush = value;
+                _bRebuildRXLinearGradBrush = value;
             }
         }
-        private static bool _bRebuildRX2LinearGradBrush = true;
-        public static bool RebuildLinearGradientBrushRX2
+        private static bool _bRebuildTXLinearGradBrush = true;
+        public static bool RebuildLinearGradientBrushTX
         {
-            get { return _bRebuildRX2LinearGradBrush; }
+            get { return _bRebuildTXLinearGradBrush; }
             set
             {
-                _bRebuildRX2LinearGradBrush = value;
+                _bRebuildTXLinearGradBrush = value;
             }
         }
         private static bool data_ready;					// True when there is new display data ready from the DSP
@@ -1426,7 +1437,7 @@ namespace Thetis
             get { return spectrum_grid_max; }
             set
             {
-                if (value != spectrum_grid_max) _bRebuildRX1LinearGradBrush = true;
+                if (value != spectrum_grid_max) _bRebuildRXLinearGradBrush = true;
                 spectrum_grid_max = value;
             }
         }
@@ -1437,7 +1448,7 @@ namespace Thetis
             get { return spectrum_grid_min; }
             set
             {
-                if (value != spectrum_grid_min) _bRebuildRX1LinearGradBrush = true;
+                if (value != spectrum_grid_min) _bRebuildRXLinearGradBrush = true;
                 spectrum_grid_min = value;
             }
         }
@@ -1448,7 +1459,7 @@ namespace Thetis
             get { return spectrum_grid_step; }
             set
             {
-                if (value != spectrum_grid_step) _bRebuildRX1LinearGradBrush = true;
+                if (value != spectrum_grid_step) _bRebuildRXLinearGradBrush = true;
                 spectrum_grid_step = value;
             }
         }
@@ -1531,7 +1542,7 @@ namespace Thetis
             get { return rx2_spectrum_grid_max; }
             set
             {
-                if (value != rx2_spectrum_grid_max) _bRebuildRX2LinearGradBrush = true;
+                if (value != rx2_spectrum_grid_max) _bRebuildRXLinearGradBrush = true;
                 rx2_spectrum_grid_max = value;
             }
         }
@@ -1542,7 +1553,7 @@ namespace Thetis
             get { return rx2_spectrum_grid_min; }
             set
             {
-                if (value != rx2_spectrum_grid_min) _bRebuildRX2LinearGradBrush = true;
+                if (value != rx2_spectrum_grid_min) _bRebuildRXLinearGradBrush = true;
                 rx2_spectrum_grid_min = value;
             }
         }
@@ -1553,7 +1564,7 @@ namespace Thetis
             get { return rx2_spectrum_grid_step; }
             set
             {
-                if (value != rx2_spectrum_grid_step) _bRebuildRX2LinearGradBrush = true;
+                if (value != rx2_spectrum_grid_step) _bRebuildRXLinearGradBrush = true;
                 rx2_spectrum_grid_step = value;
             }
         }
@@ -1816,8 +1827,10 @@ namespace Thetis
         private static Pen peak_blob_pen = new Pen(Color.OrangeRed);
         private static Pen peak_blob_text_pen = new Pen(Color.YellowGreen);
         private static Color data_fill_color = Color.FromArgb(128, Color.Blue);
+        private static Color data_fill_color_tx = Color.FromArgb(128, Color.DarkRed);
         private static Color dataPeaks_fill_color = Color.FromArgb(128, Color.Gray);
         private static Pen data_fill_fpen = new Pen(data_fill_color);
+        private static Pen data_fill_fpen_tx = new Pen(data_fill_color_tx);
         private static Pen dataPeaks_fill_fpen = new Pen(dataPeaks_fill_color);
         public static Color DataFillColor
         {
@@ -1828,6 +1841,19 @@ namespace Thetis
                 {
                     data_fill_color = value;
                     data_fill_fpen.Color = data_fill_color;
+                    buildDX2Resources();
+                }
+            }
+        }
+        public static Color DataFillColorTX
+        {
+            get { return data_fill_color_tx; }
+            set
+            {
+                lock (_objDX2Lock)
+                {
+                    data_fill_color_tx = value;
+                    data_fill_fpen_tx.Color = data_fill_color_tx;
                     buildDX2Resources();
                 }
             }
@@ -2159,7 +2185,12 @@ namespace Thetis
             get { return waterfall_low_color; }
             set { waterfall_low_color = value; }
         }
-
+        private static Color waterfall_low_color_tx = Color.Black;
+        public static Color WaterfallLowColorTX
+        {
+            get { return waterfall_low_color_tx; }
+            set { waterfall_low_color_tx = value; }
+        }
         private static float waterfall_high_threshold = -80.0F;
         public static float WaterfallHighThreshold
         {
@@ -3325,7 +3356,7 @@ namespace Thetis
                     }
 
                     // LINEAR BRUSH BUILDING
-                    if (_bRebuildRX1LinearGradBrush || _bRebuildRX2LinearGradBrush)
+                    if (_bRebuildRXLinearGradBrush || _bRebuildTXLinearGradBrush)
                     {
                         int tmpHeightRX1 = displayTargetHeight;
                         int tmpHeightRX2 = displayTargetHeight;
@@ -3367,14 +3398,10 @@ namespace Thetis
 
                         }
 
-                        if (_bRebuildRX1LinearGradBrush)
+                        if (_bRebuildRXLinearGradBrush)
                         {
                             buildLinearGradientBrush(0, tmpHeightRX1, 1);
 
-                            _bRebuildRX1LinearGradBrush = false;
-                        }
-                        if (_bRebuildRX2LinearGradBrush)
-                        {
                             int nVertShift = 0;
 
                             if (split_display)
@@ -3393,7 +3420,32 @@ namespace Thetis
 
                             buildLinearGradientBrush(nVertShift, tmpHeightRX2 + nVertShift, 2);
 
-                            _bRebuildRX2LinearGradBrush = false;
+                            _bRebuildRXLinearGradBrush = false;
+                        }
+                        if (_bRebuildTXLinearGradBrush)
+                        {
+                            // build both, use rx1/rx2 heights
+                            buildLinearGradientBrushTX(0, tmpHeightRX1, 1);
+
+                            int nVertShift = 0;
+
+                            if (split_display)
+                            {
+                                switch (current_display_mode_bottom)
+                                {
+                                    case DisplayMode.PANADAPTER:
+                                    case DisplayMode.WATERFALL:
+                                        nVertShift = tmpHeightRX2;
+                                        break;
+                                    case DisplayMode.PANAFALL:
+                                        nVertShift = tmpHeightRX2 * 2;
+                                        break;
+                                }
+                            }
+
+                            buildLinearGradientBrushTX(nVertShift, tmpHeightRX2 + nVertShift, 2);
+
+                            _bRebuildTXLinearGradBrush = false;
                         }
                     }
                     //
@@ -3520,12 +3572,14 @@ namespace Thetis
                     if (m_nRX1DisplayHeight != _nOldHeightRX1)
                     {
                         _nOldHeightRX1 = m_nRX1DisplayHeight;
-                        _bRebuildRX1LinearGradBrush = true;
+                        _bRebuildRXLinearGradBrush = true;
+                        _bRebuildTXLinearGradBrush = true;
                     }
                     if (m_nRX2DisplayHeight != _nOldHeightRX2)
                     {
                         _nOldHeightRX2 = m_nRX2DisplayHeight;
-                        _bRebuildRX2LinearGradBrush = true;
+                        _bRebuildRXLinearGradBrush = true;
+                        _bRebuildTXLinearGradBrush = true;
                     }
 
                     // HIGH swr display warning
@@ -4348,8 +4402,19 @@ namespace Thetis
 
             if (local_mox)
             {
-                lineBrush = m_bDX2_tx_data_line_pen_brush;
-                fillBrush = m_bDX2_tx_data_line_fpen_brush;
+                //lineBrush = m_bDX2_tx_data_line_pen_brush;
+                //fillBrush = m_bDX2_tx_data_line_fpen_brush;
+                if (rx == 1)
+                {
+                    lineBrush = m_bUseLinearGradientForDataLineTX && m_bUseLinearGradientTX ? m_brushLGDataLineTX_RX1 : m_bDX2_data_line_pen_brush_tx;
+                    fillBrush = m_bUseLinearGradientTX ? m_brushLGDataFillTX_RX1 : m_bDX2_data_fill_fpen_brush_tx;
+                }
+                else
+                {
+                    lineBrush = m_bUseLinearGradientForDataLineTX && m_bUseLinearGradientTX ? m_brushLGDataLineTX_RX2 : m_bDX2_data_line_pen_brush_tx;
+                    fillBrush = m_bUseLinearGradientTX ? m_brushLGDataFillTX_RX2 : m_bDX2_data_fill_fpen_brush_tx;
+                }
+
                 fillPeaksBrush = m_bDX2_dataPeaks_fill_fpen_brush; //todo
                 line_width = _tx_display_line_width;
             }
@@ -5096,6 +5161,9 @@ namespace Thetis
         private static Color[] _rx2_waterfall_grad = new Color[101];
         private static bool _rx1_waterfall_grad_ok = false;
         private static bool _rx2_waterfall_grad_ok = false;
+        private static Color[] _tx_waterfall_grad = new Color[101];
+        private static bool _tx_waterfall_grad_ok = false;
+
         private static void OnWaterfallRXGradientChanged(int rx, Color[] colours)
         {
             if (colours.Length != 101) return;
@@ -5128,7 +5196,18 @@ namespace Thetis
                 _rx2_waterfall_grad_ok = true;
             }
         }
+        private static void OnWaterfallTXGradientChanged(Color[] colours)
+        {
+            if (colours.Length != 101) return;
 
+            _tx_waterfall_grad_ok = false;
+            Color[] cols = _tx_waterfall_grad;
+            for (int perc = 0; perc <= 100; perc++)
+            {
+                cols[perc] = Color.FromArgb(255, colours[perc]);
+            }
+            _tx_waterfall_grad_ok = true;
+        }
         private static bool _old_power = false;
         unsafe static private bool DrawWaterfallDX2D(int nVerticalShift, int W, int H, int rx, bool bottom)
         {
@@ -5171,6 +5250,8 @@ namespace Thetis
                 {
                     low_threshold = (float)TXWFAmpMin;
                     high_threshold = (float)TXWFAmpMax;
+                    cScheme = _tx_color_scheme;
+                    low_color = waterfall_low_color_tx;
                 }
                 else
                 {
@@ -5200,9 +5281,9 @@ namespace Thetis
                     {
                         low_threshold = rx2_waterfall_low_threshold;
                     }
-                }
-                cScheme = _rx2_color_scheme;
-                low_color = rx2_waterfall_low_color;
+                    cScheme = _rx2_color_scheme;
+                    low_color = rx2_waterfall_low_color;
+                }                                
             }
             else
             {
@@ -5210,6 +5291,8 @@ namespace Thetis
                 {
                     low_threshold = (float)TXWFAmpMin;
                     high_threshold = (float)TXWFAmpMax;
+                    cScheme = _tx_color_scheme;
+                    low_color = waterfall_low_color_tx;
                 }
                 else
                 {
@@ -5239,9 +5322,9 @@ namespace Thetis
                     {
                         low_threshold = waterfall_low_threshold;
                     }
-                }
-                cScheme = _color_scheme;
-                low_color = waterfall_low_color;
+                    cScheme = _rx1_color_scheme;
+                    low_color = waterfall_low_color;
+                }                                
             }           
 
             if (console.PowerOn)
@@ -5436,15 +5519,23 @@ namespace Thetis
                         case (ColorScheme.Custom):
                             {
                                 Color[] cols;
-                                if (rx == 1)
+                                if (local_mox)
                                 {
-                                    if (!_rx1_waterfall_grad_ok) break;
-                                    cols = _rx1_waterfall_grad;
+                                    if (!_tx_waterfall_grad_ok) break;
+                                    cols = _tx_waterfall_grad;
                                 }
                                 else
                                 {
-                                    if (!_rx2_waterfall_grad_ok) break;
-                                    cols = _rx2_waterfall_grad;
+                                    if (rx == 1)
+                                    {
+                                        if (!_rx1_waterfall_grad_ok) break;
+                                        cols = _rx1_waterfall_grad;
+                                    }
+                                    else
+                                    {
+                                        if (!_rx2_waterfall_grad_ok) break;
+                                        cols = _rx2_waterfall_grad;
+                                    }
                                 }
                                 
                                 for (int i = 0; i < nDecimatedWidth; i++)   // for each pixel in the new line
@@ -6353,8 +6444,8 @@ namespace Thetis
                     Utilities.Dispose(ref topPixels);
                     topPixels = null;
 
-                    bool bIgnoreAgc = (rx == 1 && _ignore_waterfall_rx1_agc && m_objFrameStartTimer.ElapsedMsec < _rx1_no_agc_duration) ||
-                                        (rx == 2 && _ignore_waterfall_rx2_agc && m_objFrameStartTimer.ElapsedMsec < _rx2_no_agc_duration);
+                    bool bIgnoreAgc = (rx == 1 && _ignore_waterfall_rx1_agc && (m_objFrameStartTimer.ElapsedMsec < _rx1_no_agc_duration)) ||
+                                        (rx == 2 && _ignore_waterfall_rx2_agc && (m_objFrameStartTimer.ElapsedMsec < _rx2_no_agc_duration));
                     
                     if (!bIgnoreAgc)
                     {
@@ -6497,7 +6588,9 @@ namespace Thetis
 
         private static SharpDX.Direct2D1.Brush m_bDX2_dataPeaks_fill_fpen_brush;
         private static SharpDX.Direct2D1.Brush m_bDX2_data_fill_fpen_brush;
+        private static SharpDX.Direct2D1.Brush m_bDX2_data_fill_fpen_brush_tx;
         private static SharpDX.Direct2D1.Brush m_bDX2_data_line_pen_brush;
+        private static SharpDX.Direct2D1.Brush m_bDX2_data_line_pen_brush_tx;
         private static SharpDX.Direct2D1.Brush m_bDX2_tx_data_line_fpen_brush;
         private static SharpDX.Direct2D1.Brush m_bDX2_tx_data_line_pen_brush;
 
@@ -6571,9 +6664,16 @@ namespace Thetis
         private static SharpDX.Direct2D1.LinearGradientBrush m_brushLGDataLineRX1 = null;
         private static SharpDX.Direct2D1.LinearGradientBrush m_brushLGDataFillRX2 = null;
         private static SharpDX.Direct2D1.LinearGradientBrush m_brushLGDataLineRX2 = null;
+
+        private static SharpDX.Direct2D1.LinearGradientBrush m_brushLGDataFillTX_RX1 = null;
+        private static SharpDX.Direct2D1.LinearGradientBrush m_brushLGDataLineTX_RX1 = null;
+        private static SharpDX.Direct2D1.LinearGradientBrush m_brushLGDataFillTX_RX2 = null;
+        private static SharpDX.Direct2D1.LinearGradientBrush m_brushLGDataLineTX_RX2 = null;
         //
         private static bool m_bUseLinearGradient = false;
         private static bool m_bUseLinearGradientForDataLine = false;
+        private static bool m_bUseLinearGradientTX = false;
+        private static bool m_bUseLinearGradientForDataLineTX = false;
         public static bool UseLinearGradient
         {
             get { return m_bUseLinearGradient; }
@@ -6582,8 +6682,7 @@ namespace Thetis
                 m_bUseLinearGradient = value;
                 if (m_bUseLinearGradient)
                 {
-                    _bRebuildRX1LinearGradBrush = true;
-                    _bRebuildRX2LinearGradBrush = true;
+                    _bRebuildRXLinearGradBrush = true;
                 }
             }
         }
@@ -6593,6 +6692,26 @@ namespace Thetis
             set
             {
                 m_bUseLinearGradientForDataLine = value;
+            }
+        }
+        public static bool UseLinearGradientTX
+        {
+            get { return m_bUseLinearGradientTX; }
+            set
+            {
+                m_bUseLinearGradientTX = value;
+                if (m_bUseLinearGradientTX)
+                {
+                    _bRebuildTXLinearGradBrush = true;
+                }
+            }
+        }
+        public static bool UseLinearGradientForDataLineTX
+        {
+            get { return m_bUseLinearGradientForDataLineTX; }
+            set
+            {
+                m_bUseLinearGradientForDataLineTX = value;
             }
         }
         private static void buildLinearGradientBrush(int top, int bottom, int rx)
@@ -6682,7 +6801,85 @@ namespace Thetis
             fill = null;
             line = null;
         }
+        private static void buildLinearGradientBrushTX(int top, int bottom, int rx)
+        {
+            int grid_min, grid_max;
+            grid_min = tx_spectrum_grid_min;
+            grid_max = tx_spectrum_grid_max;
 
+            List<ucLGPicker.ColourGradientData> lst = console.SetupForm.TXGradPicker.GetColourGradientDataForDBMRange(grid_min, grid_max);
+
+            GradientStop[] gradientStopsDataFill = new GradientStop[lst.Count];
+            GradientStop[] gradientStopsDataLine = new GradientStop[lst.Count];
+            for (int n = 0; n < lst.Count; n++)
+            {
+                Color dataFillColour = Color.FromArgb(data_fill_color_tx.A, lst[n].color.R, lst[n].color.G, lst[n].color.B);
+                Color dataLineColour = Color.FromArgb(tx_data_line_color.A, lst[n].color.R, lst[n].color.G, lst[n].color.B);
+
+                gradientStopsDataFill[n] = new GradientStop() { Color = convertColour(dataFillColour), Position = lst[n].percent };
+                gradientStopsDataLine[n] = new GradientStop() { Color = convertColour(dataLineColour), Position = lst[n].percent };
+            }
+            SharpDX.Direct2D1.GradientStopCollection fill = new SharpDX.Direct2D1.GradientStopCollection(_d2dRenderTarget, gradientStopsDataFill);
+            SharpDX.Direct2D1.GradientStopCollection line = new SharpDX.Direct2D1.GradientStopCollection(_d2dRenderTarget, gradientStopsDataLine);
+
+            if (rx == 1)
+            {
+                if (m_brushLGDataFillTX_RX1 != null)
+                {
+                    Utilities.Dispose(ref m_brushLGDataFillTX_RX1);
+                    m_brushLGDataFillTX_RX1 = null;
+                }
+                m_brushLGDataFillTX_RX1 = new SharpDX.Direct2D1.LinearGradientBrush(_d2dRenderTarget, new SharpDX.Direct2D1.LinearGradientBrushProperties()
+                {
+                    StartPoint = new Vector2(0, bottom),
+                    EndPoint = new Vector2(0, top)
+                },
+                fill);
+                if (m_brushLGDataLineTX_RX1 != null)
+                {
+                    Utilities.Dispose(ref m_brushLGDataLineTX_RX1);
+                    m_brushLGDataLineTX_RX1 = null;
+                }
+                m_brushLGDataLineTX_RX1 = new SharpDX.Direct2D1.LinearGradientBrush(_d2dRenderTarget, new SharpDX.Direct2D1.LinearGradientBrushProperties()
+                {
+                    StartPoint = new Vector2(0, bottom),
+                    EndPoint = new Vector2(0, top)
+                },
+                line);
+            }
+            else
+            {
+                if (m_brushLGDataFillTX_RX2 != null)
+                {
+                    Utilities.Dispose(ref m_brushLGDataFillTX_RX2);
+                    m_brushLGDataFillTX_RX2 = null;
+                }
+                m_brushLGDataFillTX_RX2 = new SharpDX.Direct2D1.LinearGradientBrush(_d2dRenderTarget, new SharpDX.Direct2D1.LinearGradientBrushProperties()
+                {
+                    StartPoint = new Vector2(0, bottom),
+                    EndPoint = new Vector2(0, top)
+                },
+                fill);
+                if (m_brushLGDataLineTX_RX2 != null)
+                {
+                    Utilities.Dispose(ref m_brushLGDataLineTX_RX2);
+                    m_brushLGDataLineTX_RX2 = null;
+                }
+                m_brushLGDataLineTX_RX2 = new SharpDX.Direct2D1.LinearGradientBrush(_d2dRenderTarget, new SharpDX.Direct2D1.LinearGradientBrushProperties()
+                {
+                    StartPoint = new Vector2(0, bottom),
+                    EndPoint = new Vector2(0, top)
+                },
+                line);
+            }
+
+            // clear up
+            Utilities.Dispose(ref fill);
+            Utilities.Dispose(ref line);
+
+            fill = null;
+            line = null;
+        }
         private static void releaseDX2Resources()
         {
             clearAllDynamicBrushes();
@@ -6691,12 +6888,19 @@ namespace Thetis
             if (m_brushLGDataFillRX2 != null) Utilities.Dispose(ref m_brushLGDataFillRX2);
             if (m_brushLGDataLineRX1 != null) Utilities.Dispose(ref m_brushLGDataLineRX1);
             if (m_brushLGDataLineRX2 != null) Utilities.Dispose(ref m_brushLGDataLineRX2);
-            _bRebuildRX1LinearGradBrush = false;
-            _bRebuildRX2LinearGradBrush = false;
+            _bRebuildRXLinearGradBrush = false;
+
+            if (m_brushLGDataFillTX_RX1 != null) Utilities.Dispose(ref m_brushLGDataFillTX_RX1);
+            if (m_brushLGDataLineTX_RX1 != null) Utilities.Dispose(ref m_brushLGDataLineTX_RX1);
+            if (m_brushLGDataFillTX_RX2 != null) Utilities.Dispose(ref m_brushLGDataFillTX_RX2);
+            if (m_brushLGDataLineTX_RX2 != null) Utilities.Dispose(ref m_brushLGDataLineTX_RX2);
+            _bRebuildTXLinearGradBrush = false;
 
             if (m_bDX2_dataPeaks_fill_fpen_brush != null) Utilities.Dispose(ref m_bDX2_dataPeaks_fill_fpen_brush);
             if (m_bDX2_data_fill_fpen_brush != null) Utilities.Dispose(ref m_bDX2_data_fill_fpen_brush);
+            if (m_bDX2_data_fill_fpen_brush_tx != null) Utilities.Dispose(ref m_bDX2_data_fill_fpen_brush_tx);
             if (m_bDX2_data_line_pen_brush != null) Utilities.Dispose(ref m_bDX2_data_line_pen_brush);
+            if (m_bDX2_data_line_pen_brush_tx != null) Utilities.Dispose(ref m_bDX2_data_line_pen_brush_tx);
             if (m_bDX2_tx_data_line_fpen_brush != null) Utilities.Dispose(ref m_bDX2_tx_data_line_fpen_brush);
             if (m_bDX2_tx_data_line_pen_brush != null) Utilities.Dispose(ref m_bDX2_tx_data_line_pen_brush);
 
@@ -6752,9 +6956,16 @@ namespace Thetis
             m_brushLGDataLineRX1 = null;
             m_brushLGDataLineRX2 = null;
 
+            m_brushLGDataFillTX_RX1 = null;
+            m_brushLGDataLineTX_RX1 = null;
+            m_brushLGDataFillTX_RX2 = null;
+            m_brushLGDataLineTX_RX2 = null;
+
             m_bDX2_dataPeaks_fill_fpen_brush = null;
             m_bDX2_data_fill_fpen_brush = null;
+            m_bDX2_data_fill_fpen_brush_tx = null;
             m_bDX2_data_line_pen_brush = null;
+            m_bDX2_data_line_pen_brush_tx = null;
             m_bDX2_tx_data_line_fpen_brush = null;
             m_bDX2_tx_data_line_pen_brush = null;
 
@@ -6835,12 +7046,14 @@ namespace Thetis
 
                 releaseDX2Resources();
 
-                _bRebuildRX1LinearGradBrush = true;
-                _bRebuildRX2LinearGradBrush = true;
+                _bRebuildRXLinearGradBrush = true;
+                _bRebuildTXLinearGradBrush = true;
 
                 m_bDX2_dataPeaks_fill_fpen_brush = convertBrush((SolidBrush)dataPeaks_fill_fpen.Brush);
                 m_bDX2_data_fill_fpen_brush = convertBrush((SolidBrush)data_fill_fpen.Brush);
+                m_bDX2_data_fill_fpen_brush_tx = convertBrush((SolidBrush)data_fill_fpen_tx.Brush);
                 m_bDX2_data_line_pen_brush = convertBrush((SolidBrush)data_line_pen.Brush);
+                m_bDX2_data_line_pen_brush_tx = convertBrush((SolidBrush)tx_data_line_pen.Brush);
                 m_bDX2_tx_data_line_fpen_brush = convertBrush((SolidBrush)tx_data_line_fpen.Brush);
                 m_bDX2_tx_data_line_pen_brush = convertBrush((SolidBrush)tx_data_line_pen.Brush);
 

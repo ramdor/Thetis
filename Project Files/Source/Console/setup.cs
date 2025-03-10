@@ -58,11 +58,6 @@ namespace Thetis
 
     public partial class Setup : Form
     {
-        private const string s_DEFAULT_GRADIENT = "9|1|0.000|-2147418368|1|0.494|-2130771968|1|0.341|-2147418368|1|0.432|-2130745856|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-2130771968|";
-        //"9|1|0.000|-1509884160|1|0.339|-1493237760|1|0.234|-1509884160|1|0.294|-1493211648|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1493237760|";
-
-        private const string s_DEFAULT_GRADIENT_WATERFALL = "9|1|0.000|-16777216|0|0.678|-65536|1|0.545|-16711936|1|0.746|-39424|1|0.223|-13395610|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-65536|";
-
         // for these callsigns always show cmasio tab, as a perk to the testers from discord
         private readonly List<string> CMASIO_ALWAYS_SHOW = new List<string>() {    "dl5tt", "ea8djr", "kc1lko", "k1lsb", "k1sr", "k2gx", "k2tc", "kb2uka",
                                                                                     "ki4tga", "ko6dlv", "kw4ex", "m0cke", "mw0lge", "n6mud", "nc3z", "nj2us",
@@ -192,6 +187,7 @@ namespace Thetis
             comboDisplayLabelAlign.Text = "Auto";
             comboColorPalette.Text = "enhanced";
             comboRX2ColorPalette.Text = "enhanced";
+            comboColorPalette_tx.Text = "enhanced";
             comboTXLabelAlign.Text = "Cntr";
             //MW0LGE_21g comboDisplayDriver.Text = "DirectX";
 
@@ -445,7 +441,8 @@ namespace Thetis
 
             defaultAlexSettings();
 
-            defaultLinearGradients(true, true);
+            defaultLinearGradients(true, true, false);
+            defaultLinearGradients(true, true, true);
 
             getOptions();
 
@@ -969,6 +966,7 @@ namespace Thetis
             if (needsRecovering(recoveryList, "udRX2DisplayGridStep")) udRX2DisplayGridStep.Value = Display.RX2SpectrumGridStep;
             if (needsRecovering(recoveryList, "udDisplayFPS")) udDisplayFPS.Value = console.DisplayFPS;
             if (needsRecovering(recoveryList, "clrbtnWaterfallLow")) clrbtnWaterfallLow.Color = Display.WaterfallLowColor;
+            if (needsRecovering(recoveryList, "clrbtnWaterfallLow_tx")) clrbtnWaterfallLow_tx.Color = Display.WaterfallLowColorTX;
             if (needsRecovering(recoveryList, "clrbtnRX2WaterfallLow")) clrbtnRX2WaterfallLow.Color = Display.RX2WaterfallLowColor;
             if (needsRecovering(recoveryList, "udDisplayWaterfallLowLevel")) udDisplayWaterfallLowLevel.Value = (decimal)Display.WaterfallLowThreshold;
             if (needsRecovering(recoveryList, "udDisplayWaterfallHighLevel")) udDisplayWaterfallHighLevel.Value = (decimal)Display.WaterfallHighThreshold;
@@ -993,11 +991,19 @@ namespace Thetis
 
             if (needsRecovering(recoveryList, "lgLinearGradientRX1"))
             {
-                defaultLinearGradients(true, false);
+                defaultLinearGradients(true, false, false);
             }
             if (needsRecovering(recoveryList, "lgLinearGradient_waterfall"))
             {
-                defaultLinearGradients(false, true);
+                defaultLinearGradients(false, true, false);
+            }
+            if (needsRecovering(recoveryList, "lgLinearGradientTX"))
+            {
+                defaultLinearGradients(true, false, true);
+            }
+            if (needsRecovering(recoveryList, "lgLinearGradient_waterfall_tx"))
+            {
+                defaultLinearGradients(false, true, true);
             }
         }
 
@@ -1295,21 +1301,24 @@ namespace Thetis
 
         private void getControlList(Control c, ref Dictionary<string, Control> a)
         {
-            if (c.Controls.Count > 0)
+            // we dont want to recurse into user controls
+            if (c.Controls.Count > 0 && !(c.GetType() == typeof(ucLGPicker) || c.GetType() == typeof(ucGradientDefault)))
             {
                 foreach (Control c2 in c.Controls)
                     getControlList(c2, ref a);
             }
 
-            if (c.GetType() == typeof(CheckBoxTS) || c.GetType() == typeof(CheckBox) ||
-                c.GetType() == typeof(ComboBoxTS) || c.GetType() == typeof(ComboBox) ||
-                c.GetType() == typeof(NumericUpDownTS) || c.GetType() == typeof(NumericUpDown) ||
-                c.GetType() == typeof(RadioButtonTS) || c.GetType() == typeof(RadioButton) ||
-                c.GetType() == typeof(TextBoxTS) || c.GetType() == typeof(TextBox) ||
-                c.GetType() == typeof(TrackBarTS) || c.GetType() == typeof(TrackBar) ||
-                c.GetType() == typeof(ColorButton) ||
-                c.GetType() == typeof(ucLGPicker))
+            Type t = c.GetType();
+            if (t == typeof(CheckBoxTS) || t == typeof(CheckBox) ||
+                t == typeof(ComboBoxTS) || t == typeof(ComboBox) ||
+                t == typeof(NumericUpDownTS) || t == typeof(NumericUpDown) ||
+                t == typeof(RadioButtonTS) || t == typeof(RadioButton) ||
+                t == typeof(TextBoxTS) || t == typeof(TextBox) ||
+                t == typeof(TrackBarTS) || t == typeof(TrackBar) ||
+                t == typeof(ColorButton) || t == typeof(ucLGPicker) || t == typeof(ucGradientDefault))
+            {
                 a.Add(c.Name, c);
+            }
         }
 
         //MW0LGE_21d
@@ -1608,6 +1617,8 @@ namespace Thetis
             //a.Add("chkRadioProtocolSelect_checkstate", chkRadioProtocolSelect.CheckState.ToString()); //[2.10.3.5]MW0LGE not used anymore
             a.Add("lgLinearGradientRX1", lgLinearGradientRX1.Text);
             a.Add("lgLinearGradient_waterfall", lgLinearGradient_waterfall.Text);
+            a.Add("lgLinearGradientTX", lgLinearGradientTX.Text);
+            a.Add("lgLinearGradientTX_waterfall", lgLinearGradientTX_waterfall.Text);
 
             // store PA profiles
             if (_PAProfiles != null)
@@ -1881,6 +1892,15 @@ namespace Thetis
                         {
                             lgLinearGradient_waterfall.Text = val;
                             lgLinearGradient_waterfall.ApplyGlobalAlpha(255);
+                        }
+                        else if (name == "lgLinearGradientTX")
+                        {
+                            lgLinearGradientTX.Text = val;
+                        }
+                        else if (name == "lgLinearGradientTX_waterfall")
+                        {
+                            lgLinearGradientTX_waterfall.Text = val;
+                            lgLinearGradientTX_waterfall.ApplyGlobalAlpha(255);
                         }
                     }
                     else if (name == "UsbBCDSerialNumber") // [2.10.3.5]MW0LGE recover this as the usbbcd combo box will not have any entries at this point
@@ -2297,6 +2317,7 @@ namespace Thetis
             udDisplayWaterfallLowLevel_ValueChanged(this, e);
             udDisplayWaterfallHighLevel_ValueChanged(this, e);
             clrbtnWaterfallLow_Changed(this, e);
+            clrbtnWaterfallLow_tx_Changed(this, e);
             udDisplayMultiPeakHoldTime_ValueChanged(this, e);
             udDisplayMultiTextHoldTime_ValueChanged(this, e);
             udRX2DisplayGridMax_ValueChanged(this, e);
@@ -2349,6 +2370,7 @@ namespace Thetis
             setQSOTimerDuration();
 
             chkPanadpatorGradient_CheckedChanged(this, e);
+            chkPanadpatorGradient_tx_CheckedChanged(this, e);
             chkSpecWarningLEDRenderDelay_CheckedChanged(this, e);
             chkSpecWarningLEDGetPixels_CheckedChanged(this, e);
 
@@ -9830,14 +9852,13 @@ namespace Thetis
         private void rebuildLGBrushes()
         {
             //lg brushes use the line alpha and lgPickerRX1_Changed
-            //may have independant LGs at some point
-            Display.RebuildLinearGradientBrushRX1 = true;
-            Display.RebuildLinearGradientBrushRX2 = true;
+            Display.RebuildLinearGradientBrushRX = true;
         }
         private void clrbtnTXDataLine_Changed(object sender, System.EventArgs e)
         {
             if (initializing) return;
-            Display.TXDataLineColor = clrbtnTXDataLine.Color;
+            Display.TXDataLineColor = Color.FromArgb(tbDataLineAlpha_tx.Value, clrbtnTXDataLine.Color);
+            rebuildTXLGBrushes();
         }
 
         private void clrbtnFilter_Changed(object sender, System.EventArgs e)
@@ -11993,42 +12014,42 @@ namespace Thetis
 
             if (comboColorPalette.Text == "original")
             {
-                console._color_scheme = ColorScheme.original;
+                console.RX1ColourScheme = ColorScheme.original;
                 clrbtnWaterfallLow.Visible = true;
             }
             else if (comboColorPalette.Text == "Enhanced")
             {
-                console._color_scheme = ColorScheme.enhanced;
+                console.RX1ColourScheme = ColorScheme.enhanced;
                 clrbtnWaterfallLow.Visible = true;
             }
             else if (comboColorPalette.Text == "Spectran")
-            {
+            {                
+                console.RX1ColourScheme = ColorScheme.SPECTRAN;
                 clrbtnWaterfallLow.Visible = false;
-                console._color_scheme = ColorScheme.SPECTRAN;
             }
             else if (comboColorPalette.Text == "BlackWhite")
             {
-                console._color_scheme = ColorScheme.BLACKWHITE;
+                console.RX1ColourScheme = ColorScheme.BLACKWHITE;
                 clrbtnWaterfallLow.Visible = false;
             }
             else if (comboColorPalette.Text == "LinLog")
             {
-                console._color_scheme = ColorScheme.LinLog;
+                console.RX1ColourScheme = ColorScheme.LinLog;
                 clrbtnWaterfallLow.Visible = false;
             }
             else if (comboColorPalette.Text == "LinRad")
             {
-                console._color_scheme = ColorScheme.LinRad;
+                console.RX1ColourScheme = ColorScheme.LinRad;
                 clrbtnWaterfallLow.Visible = false;
             }
             else if (comboColorPalette.Text == "LinAuto")
             {
-                console._color_scheme = ColorScheme.LinAuto;
+                console.RX1ColourScheme = ColorScheme.LinAuto;
                 clrbtnWaterfallLow.Visible = false;
             }
             else if (comboColorPalette.Text == "Custom")
             {
-                console._color_scheme = ColorScheme.Custom;
+                console.RX1ColourScheme = ColorScheme.Custom;
                 clrbtnWaterfallLow.Visible = false;
             }
         }
@@ -12062,42 +12083,42 @@ namespace Thetis
 
             if (comboRX2ColorPalette.Text == "original")
             {
-                console.rx2_color_scheme = ColorScheme.original;
+                console.RX2ColourScheme = ColorScheme.original;
                 clrbtnRX2WaterfallLow.Visible = true;
             }
             else if (comboRX2ColorPalette.Text == "Enhanced")
             {
-                console.rx2_color_scheme = ColorScheme.enhanced;
+                console.RX2ColourScheme = ColorScheme.enhanced;
                 clrbtnRX2WaterfallLow.Visible = true;
             }
             else if (comboRX2ColorPalette.Text == "Spectran")
             {
-                console.rx2_color_scheme = ColorScheme.SPECTRAN;
+                console.RX2ColourScheme = ColorScheme.SPECTRAN;
                 clrbtnRX2WaterfallLow.Visible = false;
             }
             else if (comboRX2ColorPalette.Text == "BlackWhite")
             {
-                console.rx2_color_scheme = ColorScheme.BLACKWHITE;
+                console.RX2ColourScheme = ColorScheme.BLACKWHITE;
                 clrbtnRX2WaterfallLow.Visible = false;
             }
             else if (comboRX2ColorPalette.Text == "LinLog")
             {
-                console.rx2_color_scheme = ColorScheme.LinLog;
+                console.RX2ColourScheme = ColorScheme.LinLog;
                 clrbtnRX2WaterfallLow.Visible = false;
             }
             else if (comboRX2ColorPalette.Text == "LinRad")
             {
-                console.rx2_color_scheme = ColorScheme.LinRad;
+                console.RX2ColourScheme = ColorScheme.LinRad;
                 clrbtnRX2WaterfallLow.Visible = false;
             }
             else if (comboRX2ColorPalette.Text == "LinAuto")
             {
-                console.rx2_color_scheme = ColorScheme.LinAuto;
+                console.RX2ColourScheme = ColorScheme.LinAuto;
                 clrbtnRX2WaterfallLow.Visible = false;
             }
             else if (comboRX2ColorPalette.Text == "Custom")
             {
-                console.rx2_color_scheme = ColorScheme.Custom;
+                console.RX2ColourScheme = ColorScheme.Custom;
                 clrbtnRX2WaterfallLow.Visible = false;
             }
         }
@@ -19049,7 +19070,7 @@ namespace Thetis
         {
             toolTip1.SetToolTip(tbDataFillAlpha, tbDataFillAlpha.Value.ToString());
             clrbtnDataFill_Changed(this, EventArgs.Empty);
-            if (!initializing) lgLinearGradientRX1.ApplyGlobalAlpha(tbDataFillAlpha.Value); // also adjust LG alpha values, always do this even if disabled MW0LGE_21a
+            if (!initializing) lgLinearGradientRX1.ApplyGlobalAlpha(tbDataFillAlpha.Value); // also adjust LG alpha values, always do this even if disabled
         }
         #region RawInput
         ///--- RAWINPUT
@@ -20918,6 +20939,11 @@ namespace Thetis
             get { return lgLinearGradientRX1; }
             set { }
         }
+        public ucLGPicker TXGradPicker
+        {
+            get { return lgLinearGradientTX; }
+            set { }
+        }
         //public ucLGPicker WaterfallGradPicker
         //{
         //    get { return lgLinearGradient_waterfall; }
@@ -20955,21 +20981,26 @@ namespace Thetis
         private void chkPanadpatorGradient_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            lgLinearGradientRX1.Enabled = chkPanadpatorGradient.Checked;
-            btnClearColourGrippers.Enabled = chkPanadpatorGradient.Checked;
-            btnDeleteColourGripper.Enabled = chkPanadpatorGradient.Checked;
-            clrbtnGripperColour.Enabled = chkPanadpatorGradient.Checked;
-            btnDefaultGradient.Enabled = chkPanadpatorGradient.Checked;
-            chkDataLineGradient.Enabled = chkPanadpatorGradient.Checked;
-            btnLoadGradient.Enabled = chkPanadpatorGradient.Checked;
-            btnSaveGradient.Enabled = chkPanadpatorGradient.Checked;
 
-            clrbtnDataFill.Enabled = !chkPanadpatorGradient.Checked;
-            lblDisplayDataFill.Enabled = !chkPanadpatorGradient.Checked;
+            bool enabled = chkPanadpatorGradient.Checked;
 
-            clrbtnDataLine.Enabled = !chkPanadpatorGradient.Checked || !(chkPanadpatorGradient.Checked && chkDataLineGradient.Checked);
+            lgLinearGradientRX1.Enabled = enabled;
+            btnClearColourGrippers.Enabled = enabled;
+            btnDeleteColourGripper.Enabled = enabled;
+            clrbtnGripperColour.Enabled = enabled;
+            btnDefaultGradient.Enabled = enabled;
+            chkDataLineGradient.Enabled = enabled;
+            btnLoadGradient.Enabled = enabled;
+            btnSaveGradient.Enabled = enabled;
 
-            Display.UseLinearGradient = chkPanadpatorGradient.Checked;
+            clrbtnDataFill.Enabled = !enabled;
+            lblDisplayDataFill.Enabled = !enabled;
+
+            ucGradientDefault_rx_pana.Enabled = enabled;
+
+            clrbtnDataLine.Enabled = !enabled || !(enabled && chkDataLineGradient.Checked);
+
+            Display.UseLinearGradient = enabled;
             Display.UseLinearGradientForDataLine = chkDataLineGradient.Checked;
         }
 
@@ -20987,7 +21018,7 @@ namespace Thetis
 
         private void btnDefaultGradient_Click(object sender, EventArgs e)
         {
-            lgLinearGradientRX1.Text = s_DEFAULT_GRADIENT;
+            lgLinearGradientRX1.Text = ucGradientDefault.DEFAULT_GRADIENT_PANADAPTOR;
             lgLinearGradientRX1.ApplyGlobalAlpha(tbDataFillAlpha.Value);
         }
 
@@ -25582,6 +25613,17 @@ namespace Thetis
             }
             else
             {
+                //custom meter bar
+                if (mt == MeterType.CUSTOM_METER_BAR)
+                {
+                    igs.SetSetting<float>("meter_custom_min", (float)nudMeterItem_custom_min.Value);
+                    igs.SetSetting<float>("meter_custom_max", (float)nudMeterItem_custom_max.Value);
+                    igs.SetSetting<float>("meter_custom_high", (float)nudMeterItem_custom_high.Value);
+                    igs.SetSetting<string>("meter_custom_units", txtMeterItem_custom_units.Text);
+                    igs.SetSetting<string>("meter_custom_title", txtMeterItem_custom_title.Text);
+                }
+                //
+
                 igs.LowColor = Color.FromArgb(255, clrbtnMeterItemLow.Color);
                 igs.HighColor = Color.FromArgb(255, clrbtnMeterItemHigh.Color);
                 igs.MarkerColour = Color.FromArgb(255, clrbtnMeterItemIndicator.Color);
@@ -26232,6 +26274,21 @@ namespace Thetis
             }
             else
             {
+                //custom meter bar
+                radMeterItemSettings.Visible = mt == MeterType.CUSTOM_METER_BAR;
+                radMeterItemSettings_custom.Visible = mt == MeterType.CUSTOM_METER_BAR;
+                radMeterItemSettings.Checked = true;
+                radMeterItemSettings_CheckedChanged(this, EventArgs.Empty);
+                if(mt == MeterType.CUSTOM_METER_BAR)
+                {
+                    nudMeterItem_custom_min.Value = (decimal)igs.GetSetting<float>("meter_custom_min", true, -5000f, 5000f, 0);
+                    nudMeterItem_custom_max.Value = (decimal)igs.GetSetting<float>("meter_custom_max", true, -5000f, 5000f, 10);
+                    nudMeterItem_custom_high.Value = (decimal)igs.GetSetting<float>("meter_custom_high", true, -5000f, 5000f, 7.5f);
+                    txtMeterItem_custom_units.Text = igs.GetSetting<string>("meter_custom_units", false, "","","?");
+                    txtMeterItem_custom_title.Text = igs.GetSetting<string>("meter_custom_title", false, "", "", "Title");
+                }
+                //
+
                 clrbtnMeterItemLow.Color = igs.LowColor;
                 clrbtnMeterItemHigh.Color = igs.HighColor;
                 clrbtnMeterItemIndicator.Color = igs.MarkerColour;
@@ -26926,7 +26983,7 @@ namespace Thetis
             Focus();
             WindowState = FormWindowState.Normal;
             TabSetup.SelectedIndex = 6; // appearance
-            TabAppearance.SelectedIndex = 3; // multimeter
+            TabAppearance.SelectedIndex = 5; // multimeter
         }
         #endregion
 
@@ -32956,7 +33013,7 @@ namespace Thetis
         //LG waterfall
         private void btnDefaultGradient_waterfall_Click(object sender, EventArgs e)
         {
-            lgLinearGradient_waterfall.Text = s_DEFAULT_GRADIENT_WATERFALL;
+            lgLinearGradient_waterfall.Text = ucGradientDefault.DEFAULT_GRADIENT_WATERFALL;
             lgLinearGradient_waterfall.ApplyGlobalAlpha(255);
         }
 
@@ -33025,7 +33082,16 @@ namespace Thetis
             }
             return waterfall_grad;
         }
-
+        public Color[] WaterfallTXGradient()
+        {
+            Color[] waterfall_grad = new Color[101];
+            for (int perc = 0; perc <= 100; perc++)
+            {
+                Color c = lgLinearGradientTX_waterfall.GetColourAtPercent(perc / 100f);
+                waterfall_grad[perc] = c;
+            }
+            return waterfall_grad;
+        }
         private void lgLinearGradient_waterfall_GripperDBMChanged(object sender, GripperEventArgs e)
         {
             toolTip1.SetToolTip(lgLinearGradient_waterfall, ((int)(e.Percent * 100f)).ToString());
@@ -33056,19 +33122,36 @@ namespace Thetis
             lgLinearGradient_waterfall.ColourForSelectedGripper = clrbtnGripperColour_waterfall.Color;
             lgLinearGradient_waterfall.ApplyGlobalAlpha(255);
         }
-        private void defaultLinearGradients(bool pana, bool waterfall)
+        private void defaultLinearGradients(bool pana, bool waterfall, bool tx)
         {
             if (pana)
             {
-                lgLinearGradientRX1.Text = s_DEFAULT_GRADIENT;
-                lgLinearGradientRX1.HighlightFirstGripper();
+                if (tx)
+                {
+                    lgLinearGradientTX.Text = ucGradientDefault.DEFAULT_GRADIENT_PANADAPTOR;
+                    lgLinearGradientTX.HighlightFirstGripper();
+                }
+                else
+                {
+                    lgLinearGradientRX1.Text = ucGradientDefault.DEFAULT_GRADIENT_PANADAPTOR;
+                    lgLinearGradientRX1.HighlightFirstGripper();
+                }
             }
 
             if (waterfall)
             {
-                lgLinearGradient_waterfall.Text = s_DEFAULT_GRADIENT_WATERFALL;
-                lgLinearGradient_waterfall.ApplyGlobalAlpha(255);
-                lgLinearGradient_waterfall.HighlightFirstGripper();
+                if (tx)
+                {
+                    lgLinearGradientTX_waterfall.Text = ucGradientDefault.DEFAULT_GRADIENT_WATERFALL;
+                    lgLinearGradientTX_waterfall.ApplyGlobalAlpha(255);
+                    lgLinearGradientTX_waterfall.HighlightFirstGripper();
+                }
+                else
+                {
+                    lgLinearGradient_waterfall.Text = ucGradientDefault.DEFAULT_GRADIENT_WATERFALL;
+                    lgLinearGradient_waterfall.ApplyGlobalAlpha(255);
+                    lgLinearGradient_waterfall.HighlightFirstGripper();
+                }
             }
         }
 
@@ -33079,34 +33162,441 @@ namespace Thetis
 
         private void btnWaterfallDefaultLG_Colours_Click(object sender, EventArgs e)
         {
-            ButtonTS b = sender as ButtonTS;
-            if (b == null) return;
+            //ButtonTS b = sender as ButtonTS;
+            //if (b == null) return;
 
-            string config;
+            //string config;
 
-            switch(b.Text.ToLower())
+            //switch(b.Text.ToLower())
+            //{
+            //    case "graphite":
+            //        config = "9|1|0.000|-16777216|1|0.181|-8421505|0|0.644|-256|0|0.144|-16777216|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1|";
+            //        break;
+            //    case "lemon":
+            //        config = "9|1|0.000|-16777216|1|0.181|-8421632|1|0.644|-256|0|0.144|-16777216|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1|";
+            //        break;
+            //    case "ice":
+            //        config = "9|1|0.000|-16777216|1|0.262|-13408513|1|0.877|-1|1|0.458|-16724737|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1|";
+            //        break;
+            //    case "fire":
+            //        config = "9|1|0.000|-16777216|1|0.332|-39424|1|0.539|-52480|0|0.569|-19841|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-256|";
+            //        break;
+            //    case "rainbow":
+            //        config = "9|1|0.000|-16777216|1|0.419|-16711681|1|0.168|-5279256|1|0.712|-256|1|0.859|-39424|1|0.558|-16711936|1|0.288|-6697729|1|0.097|-16777216|1|1.000|-65536|";
+            //        break;
+            //    default:
+            //        config = s_DEFAULT_GRADIENT_WATERFALL;
+            //        break;
+            //}
+
+            //lgLinearGradient_waterfall.Text = config;
+        }
+
+        private void lgLinearGradientTX_Changed(object sender, EventArgs e)
+        {
+            rebuildTXLGBrushes();
+        }
+
+        private void lgLinearGradientTX_GripperDBMChanged(object sender, GripperEventArgs e)
+        {
+            toolTip1.SetToolTip(lgLinearGradientTX, e.DBM.ToString());
+
+            rebuildTXLGBrushes(); //moving a dbm blob also causes rebuild so we have instant update
+        }
+
+        private void lgLinearGradientTX_GripperMouseEnter(object sender, GripperEventArgs e)
+        {
+            toolTip1.SetToolTip(lgLinearGradientTX, e.DBM.ToString());
+        }
+
+        private void lgLinearGradientTX_GripperMouseLeave(object sender, GripperEventArgs e)
+        {
+            toolTip1.SetToolTip(lgLinearGradientTX, "");
+        }
+
+        private void lgLinearGradientTX_GripperSelected(object sender, ColourEventArgs e)
+        {
+            btnDeleteColourGripper_tx.Enabled = true;
+            clrbtnGripperColour_tx.Color = Color.FromArgb(255, e.Colour);
+        }
+
+        private void clrbtnGripperColour_tx_Changed(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            lgLinearGradientTX.ColourForSelectedGripper = clrbtnGripperColour_tx.Color;
+            lgLinearGradientTX.ApplyGlobalAlpha(tbDataFillAlpha_tx.Value);
+        }
+
+        private void chkDataLineGradient_tx_CheckedChanged(object sender, EventArgs e)
+        {
+            clrbtnTXDataLine.Enabled = !chkPanadpatorGradient_tx.Checked || !(chkPanadpatorGradient_tx.Checked && chkDataLineGradient_tx.Checked);
+
+            Display.UseLinearGradientForDataLineTX = chkDataLineGradient_tx.Checked;
+        }
+
+        private void btnDefaultGradient_tx_Click(object sender, EventArgs e)
+        {
+            lgLinearGradientTX.Text = ucGradientDefault.DEFAULT_GRADIENT_PANADAPTOR;
+            lgLinearGradientTX.ApplyGlobalAlpha(tbDataFillAlpha_tx.Value);
+        }
+
+        private void btnDeleteColourGripper_tx_Click(object sender, EventArgs e)
+        {
+            lgLinearGradientTX.RemoveSelectedGripper(true);
+            btnDeleteColourGripper_tx.Enabled = false;
+        }
+
+        private void btnClearColourGrippers_tx_Click(object sender, EventArgs e)
+        {
+            lgLinearGradientTX.Clear();
+        }
+
+        private async void btnLoadGradient_tx_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                case "graphite":
-                    config = "9|1|0.000|-16777216|1|0.181|-8421505|0|0.644|-256|0|0.144|-16777216|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1|";
-                    break;
-                case "lemon":
-                    config = "9|1|0.000|-16777216|1|0.181|-8421632|1|0.644|-256|0|0.144|-16777216|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1|";
-                    break;
-                case "ice":
-                    config = "9|1|0.000|-16777216|1|0.262|-13408513|1|0.877|-1|1|0.458|-16724737|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1|";
-                    break;
-                case "fire":
-                    config = "9|1|0.000|-16777216|1|0.332|-39424|1|0.539|-52480|0|0.569|-19841|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-256|";
-                    break;
-                case "rainbow":
-                    config = "9|1|0.000|-16777216|1|0.419|-16711681|1|0.168|-5279256|1|0.712|-256|1|0.859|-39424|1|0.558|-16711936|1|0.288|-6697729|1|0.097|-16777216|1|1.000|-65536|";
-                    break;
-                default:
-                    config = s_DEFAULT_GRADIENT_WATERFALL;
-                    break;
+                ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                ofd.Filter = "Gradient|*.grad";
+                ofd.Title = "Load Gradient File";
+                ofd.FilterIndex = 1;
+                ofd.RestoreDirectory = true;
+                DialogResult dr = ofd.ShowDialog();
+
+                if (ofd.FileName != "" && dr == DialogResult.OK)
+                {
+                    if (File.Exists(ofd.FileName))
+                    {
+                        await Task.Run(() => lgLinearGradientTX.EncodedText = File.ReadAllText(ofd.FileName, Encoding.UTF8));
+                    }
+                }
+            }
+        }
+
+        private async void btnSaveGradient_tx_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "Gradient|*.grad";
+                sfd.Title = "Save Gradient File";
+                DialogResult dr = sfd.ShowDialog();
+
+                if (sfd.FileName != "" && dr == DialogResult.OK)
+                {
+                    await Task.Run(() => File.WriteAllText(sfd.FileName, lgLinearGradientTX.EncodedText, Encoding.UTF8));
+                }
+            }
+        }
+
+        private void clrbtnDataFill_tx_Changed(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            Display.DataFillColorTX = Color.FromArgb(tbDataFillAlpha_tx.Value, clrbtnDataFill_tx.Color);
+        }
+
+        private void tbDataFillAlpha_tx_Scroll(object sender, EventArgs e)
+        {
+            toolTip1.SetToolTip(tbDataFillAlpha_tx, tbDataFillAlpha_tx.Value.ToString());
+            clrbtnDataFill_tx_Changed(this, EventArgs.Empty);
+            if (!initializing) lgLinearGradientTX.ApplyGlobalAlpha(tbDataFillAlpha_tx.Value); // also adjust LG alpha values, always do this even if disabled
+        }
+        private void rebuildTXLGBrushes()
+        {
+            Display.RebuildLinearGradientBrushTX = true;
+        }
+
+        private void tbDataLineAlpha_tx_Scroll(object sender, EventArgs e)
+        {
+            toolTip1.SetToolTip(tbDataLineAlpha_tx, tbDataLineAlpha_tx.Value.ToString());
+            clrbtnTXDataLine_Changed(this, EventArgs.Empty);
+        }
+
+        private void chkPanadpatorGradient_tx_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            bool enabled = chkPanadpatorGradient_tx.Checked;
+
+            lgLinearGradientTX.Enabled = enabled;
+            btnClearColourGrippers_tx.Enabled = enabled;
+            btnDeleteColourGripper_tx.Enabled = enabled;
+            clrbtnGripperColour_tx.Enabled = enabled;
+            btnDefaultGradient_tx.Enabled = enabled;
+            chkDataLineGradient_tx.Enabled = enabled;
+            btnLoadGradient_tx.Enabled = enabled;
+            btnSaveGradient_tx.Enabled = enabled;
+
+            clrbtnDataFill_tx.Enabled = !enabled;
+            lblDisplayDataFill_tx.Enabled = !enabled;
+
+            ucGradientDefault_tx_pana.Enabled = enabled;
+
+            clrbtnTXDataLine.Enabled = !enabled || !(enabled && chkDataLineGradient_tx.Checked);
+
+            Display.UseLinearGradientTX = enabled;
+            Display.UseLinearGradientForDataLineTX = chkDataLineGradient_tx.Checked;
+        }
+
+        private void lgLinearGradientTX_waterfall_Changed(object sender, EventArgs e)
+        {
+            Color[] waterfall_grad = WaterfallTXGradient();
+
+            console.WaterfallTXGradientChangedHandlers?.Invoke(waterfall_grad);
+        }
+
+        private void lgLinearGradientTX_waterfall_GripperDBMChanged(object sender, GripperEventArgs e)
+        {
+            toolTip1.SetToolTip(lgLinearGradientTX_waterfall, ((int)(e.Percent * 100f)).ToString());
+
+            //when dragging also rebuild, so we have instant update
+            lgLinearGradientTX_waterfall_Changed(this, EventArgs.Empty);
+        }
+
+        private void lgLinearGradientTX_waterfall_GripperMouseEnter(object sender, GripperEventArgs e)
+        {
+            toolTip1.SetToolTip(lgLinearGradientTX_waterfall, ((int)(e.Percent * 100f)).ToString());
+        }
+
+        private void lgLinearGradientTX_waterfall_GripperMouseLeave(object sender, GripperEventArgs e)
+        {
+            toolTip1.SetToolTip(lgLinearGradientTX_waterfall, "");
+        }
+
+        private void lgLinearGradientTX_waterfall_GripperSelected(object sender, ColourEventArgs e)
+        {
+            btnDeleteColourGripper_waterfall_tx.Enabled = true;
+            clrbtnGripperColour_waterfall_tx.Color = Color.FromArgb(255, e.Colour);
+        }
+
+        private void clrbtnGripperColour_waterfall_tx_Changed(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            lgLinearGradientTX_waterfall.ColourForSelectedGripper = clrbtnGripperColour_waterfall_tx.Color;
+            lgLinearGradientTX_waterfall.ApplyGlobalAlpha(255);
+        }
+
+        private void btnDefaultGradient_waterfall_tx_Click(object sender, EventArgs e)
+        {
+            lgLinearGradientTX_waterfall.Text = ucGradientDefault.DEFAULT_GRADIENT_WATERFALL;
+            lgLinearGradientTX_waterfall.ApplyGlobalAlpha(255);
+        }
+
+        private void btnDeleteColourGripper_waterfall_tx_Click(object sender, EventArgs e)
+        {
+            lgLinearGradientTX_waterfall.RemoveSelectedGripper(true);
+            btnDeleteColourGripper_waterfall_tx.Enabled = false;
+        }
+
+        private void btnClearColourGrippers_waterfall_tx_Click(object sender, EventArgs e)
+        {
+            lgLinearGradientTX_waterfall.Clear();
+        }
+
+        private async void btnLoadGradient_waterfall_tx_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                ofd.Filter = "Gradient|*.grad";
+                ofd.Title = "Load Gradient File";
+                ofd.FilterIndex = 1;
+                ofd.RestoreDirectory = true;
+                DialogResult dr = ofd.ShowDialog();
+
+                if (ofd.FileName != "" && dr == DialogResult.OK)
+                {
+                    if (File.Exists(ofd.FileName))
+                    {
+                        await Task.Run(() => lgLinearGradientTX_waterfall.EncodedText = File.ReadAllText(ofd.FileName, Encoding.UTF8));
+                    }
+                }
+            }
+        }
+
+        private async void btnSaveGradient_waterfall_tx_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "Gradient|*.grad";
+                sfd.Title = "Save Gradient File";
+                DialogResult dr = sfd.ShowDialog();
+
+                if (sfd.FileName != "" && dr == DialogResult.OK)
+                {
+                    await Task.Run(() => File.WriteAllText(sfd.FileName, lgLinearGradientTX_waterfall.EncodedText, Encoding.UTF8));
+                }
+            }
+        }
+
+        private void comboColorPalette_tx_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboColorPalette_tx.Text == "original")
+            {
+                console.TXColourScheme = ColorScheme.original;
+                clrbtnWaterfallLow_tx.Visible = true;
+            }
+            else if (comboColorPalette_tx.Text == "Enhanced")
+            {
+                console.TXColourScheme = ColorScheme.enhanced;
+                clrbtnWaterfallLow_tx.Visible = true;
+            }
+            else if (comboColorPalette_tx.Text == "Spectran")
+            {
+                console.TXColourScheme = ColorScheme.SPECTRAN;
+                clrbtnWaterfallLow_tx.Visible = false;
+            }
+            else if (comboColorPalette_tx.Text == "BlackWhite")
+            {
+                console.TXColourScheme = ColorScheme.BLACKWHITE;
+                clrbtnWaterfallLow_tx.Visible = false;
+            }
+            else if (comboColorPalette_tx.Text == "LinLog")
+            {
+                console.TXColourScheme = ColorScheme.LinLog;
+                clrbtnWaterfallLow_tx.Visible = false;
+            }
+            else if (comboColorPalette_tx.Text == "LinRad")
+            {
+                console.TXColourScheme = ColorScheme.LinRad;
+                clrbtnWaterfallLow_tx.Visible = false;
+            }
+            else if (comboColorPalette_tx.Text == "LinAuto")
+            {
+                console.TXColourScheme = ColorScheme.LinAuto;
+                clrbtnWaterfallLow_tx.Visible = false;
+            }
+            else if (comboColorPalette_tx.Text == "Custom")
+            {
+                console.TXColourScheme = ColorScheme.Custom;
+                clrbtnWaterfallLow_tx.Visible = false;
+            }
+        }
+
+        private void clrbtnWaterfallLow_tx_Changed(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            Display.WaterfallLowColorTX = clrbtnWaterfallLow_tx.Color;
+        }
+
+        private void ucGradientDefault_rx_pana_SetGradient(bool arg1, string arg2)
+        {
+            lgLinearGradientRX1.Text = arg2;
+        }
+
+        private void ucGradientDefault_rx_waterfall_SetGradient(bool arg1, string arg2)
+        {
+            lgLinearGradient_waterfall.Text = arg2;
+        }
+
+        private void ucGradientDefault_tx_pana_SetGradient(bool arg1, string arg2)
+        {
+            lgLinearGradientTX.Text = arg2;
+        }
+
+        private void ucGradientDefault_tx_waterfall_SetGradient(bool arg1, string arg2)
+        {
+            lgLinearGradientTX_waterfall.Text = arg2;
+        }
+
+        private void radMeterItemSettings_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radMeterItemSettings.Checked) return;
+            setupCustomItemSettings(true);
+        }
+        private void radMeterItemSettings_custom_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radMeterItemSettings_custom.Checked) return;
+            setupCustomItemSettings(false);
+        }
+        private void setupCustomItemSettings(bool show_settings)
+        {
+            if (show_settings)
+            {
+                pnlMeterItemSettings.Visible = true;
+                pnlMeterItemSettings_custom.Visible = false;
+            }
+            else
+            {
+                pnlMeterItemSettings_custom.Parent = pnlMeterItemSettings.Parent;
+                pnlMeterItemSettings_custom.Location = pnlMeterItemSettings.Location;
+                pnlMeterItemSettings_custom.Visible = true;
+                pnlMeterItemSettings.Visible = false;
+            }
+        }
+
+        private bool _suppressEvents = false;
+        private void nudMeterItem_custom_min_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents || initializing) return;
+
+            _suppressEvents = true;
+
+            if (nudMeterItem_custom_min.Value > nudMeterItem_custom_max.Value - (decimal)0.1f)
+            {
+                nudMeterItem_custom_min.Value = nudMeterItem_custom_max.Value - (decimal)0.1f;
             }
 
-            lgLinearGradient_waterfall.Text = config;
+            if (nudMeterItem_custom_high.Value < nudMeterItem_custom_min.Value)
+            {
+                nudMeterItem_custom_high.Value = nudMeterItem_custom_min.Value;
+            }
+
+            _suppressEvents = false;
+
+            updateMeterType();
+        }
+
+        private void nudMeterItem_custom_max_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents || initializing) return;
+
+            _suppressEvents = true;
+
+            if (nudMeterItem_custom_max.Value < nudMeterItem_custom_min.Value + (decimal)0.1f)
+            {
+                nudMeterItem_custom_max.Value = nudMeterItem_custom_min.Value + (decimal)0.1f;
+            }
+
+            if (nudMeterItem_custom_high.Value > nudMeterItem_custom_max.Value)
+            {
+                nudMeterItem_custom_high.Value = nudMeterItem_custom_max.Value;
+            }
+
+            _suppressEvents = false;
+
+            updateMeterType();
+        }
+
+        private void nudMeterItem_custom_high_ValueChanged(object sender, EventArgs e)
+        {
+            if (_suppressEvents || initializing) return;
+
+            _suppressEvents = true;
+
+            if (nudMeterItem_custom_high.Value > nudMeterItem_custom_max.Value)
+            {
+                nudMeterItem_custom_high.Value = nudMeterItem_custom_max.Value;
+            }
+
+            if (nudMeterItem_custom_high.Value < nudMeterItem_custom_min.Value)
+            {
+                nudMeterItem_custom_high.Value = nudMeterItem_custom_min.Value;
+            }
+
+            _suppressEvents = false;
+
+            updateMeterType();
+        }
+
+        private void txtMeterItem_custom_units_TextChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void txtMeterItem_custom_title_TextChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
         }
     }
 

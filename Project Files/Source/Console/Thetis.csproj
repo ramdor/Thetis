@@ -514,6 +514,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ucGradientDefault.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucGradientDefault.Designer.cs">
+      <DependentUpon>ucGradientDefault.cs</DependentUpon>
+    </Compile>
     <Compile Include="ucMeter.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -946,6 +952,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmVariablePicker.resx">
       <DependentUpon>frmVariablePicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucGradientDefault.resx">
+      <DependentUpon>ucGradientDefault.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ucMeter.resx">
       <DependentUpon>ucMeter.cs</DependentUpon>
