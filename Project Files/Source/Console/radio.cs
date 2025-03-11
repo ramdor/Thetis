@@ -33,10 +33,8 @@ namespace Thetis
     using System.Collections.Generic;
     using System.Threading;
     using System.Diagnostics;
-    using System.Security.Policy;
-    using System.Text.RegularExpressions;
-
-
+    using System.IO;
+    using System.Windows.Forms;
 
     #region Radio Class 
     public class Radio
@@ -93,6 +91,33 @@ namespace Thetis
             //String app_data_path = "";
             //app_data_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
             //    + "\\OpenHPSDR\\Thetis\\";
+
+            //check for old wdspWisdom00 file - [2.10.3.9]MW0LGE
+            string filePath = Path.Combine(Path.GetDirectoryName(app_data_path), "wdspWisdom00");
+            if (File.Exists(filePath))
+            {
+                if (File.GetLastWriteTime(filePath) < DateTime.Now.AddMonths(-3))
+                {
+                    // at least 3 months old
+                    DialogResult result = MessageBox.Show("The fft wisdom file is older than 3 months.\n\nIt can yeild performance improvements if rebuilt, especially if the Thetis version/install has changed.\n\nIt can take quie a while to rebuild. Do you want to rebuild it?\n\nnote: you will not be asked again for another 3 months", "Wisdom File", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+                    if (result == DialogResult.No)
+                    {
+                        // touch it
+                        File.SetLastWriteTime(filePath, DateTime.Now);
+                    }
+                    else
+                    {
+                        // delete it
+                        try
+                        {
+                            File.Delete(filePath);
+                        }
+                        catch { }
+                    }
+                }
+            }
+            //
+
             WDSP.WDSPwisdom(app_data_path);
             cmaster.CMCreateCMaster();            
 		}
