@@ -377,7 +377,7 @@ namespace Thetis
         public static extern void destroy_resampleFV(void* ptr);
 
         [DllImport("wdsp.dll", EntryPoint = "WDSPwisdom", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void WDSPwisdom(string directory);
+        public static extern int WDSPwisdom(string directory);
 
         [DllImport("wdsp.dll", EntryPoint = "SetRXAPreGenRun", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXAPreGenRun(int channel, int run);
