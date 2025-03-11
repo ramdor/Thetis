@@ -24,6 +24,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] datafill colour/alpha, and dataline alpha added for TX panadaptor
 - [add] low colour added to tx waterfall
 - [add] custom meter bar for use with % variables, min/max/high/title/units
+- [add] ui popups during the wdspWisdom00 file generation. Also notified if wisdom file is older than 3 months at startup
 - [change] exporting a tx profile will now ask for destination location and filename. It will complain if filename already exists
 - [change] restored step attenuator RX1 if HERMES is used. Unsure why I disabled it a few years ago
 - [change] the bespoke TCI command tx_frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; . There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;
