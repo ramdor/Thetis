@@ -615,7 +615,6 @@ namespace Thetis
             //model known, update anything that might have been initialsed without this being known
             if (console.psform != null) console.psform.UpdateWarningSetPk();
 
-
             EventArgs e = EventArgs.Empty;
             tbRX1FilterAlpha_Scroll(this, e);
             tbTXFilterAlpha_Scroll(this, e);
@@ -674,6 +673,8 @@ namespace Thetis
 
             //MW0LGE_21e
             UpdateDDCTab();
+            updateAttenuationInfo(); //MW0LGE [2.10.3.9]
+
             chkHighlightTXProfileSaveItems.Checked = false;
 
             if (chkKWAI.Checked)
@@ -15827,19 +15828,33 @@ namespace Thetis
             set { lblADCLinked.Visible = value; }
         }
 
-        private void updateConsoleWithAttenuationInfo()
+        private void updateAttenuationInfo()
         {
-            if (initializing) return;
+            int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+            console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
 
+            int nRX1ADCinUse = console.GetADCInUse(rx1);
+            int nRX2ADCinUse = console.GetADCInUse(rx2);
+
+            //setup rx1
             chkHermesStepAttenuator_CheckedChanged(this, EventArgs.Empty);
-            udHermesStepAttenuatorData_ValueChanged(this, EventArgs.Empty);
 
-            chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
-            udHermesStepAttenuatorDataRX2_ValueChanged(this, EventArgs.Empty);
+            //adc's the same, always use the state of RX1
+            if (nRX1ADCinUse == nRX2ADCinUse && chkRX2StepAtt.Checked != chkHermesStepAttenuator.Checked)
+            {
+                //different settings
+                chkRX2StepAtt.Checked = chkHermesStepAttenuator.Checked; //will cause update event
+            }
+            else
+            {
+                chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
+            }
         }
 
         private void chkHermesStepAttenuator_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
+
             console.RX1StepAttPresent = chkHermesStepAttenuator.Checked;
 
             if (chkHermesStepAttenuator.Checked)
@@ -15862,6 +15877,8 @@ namespace Thetis
         private bool _updatingRX1HermesStepAttData = false;
         private void udHermesStepAttenuatorData_ValueChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
+
             if (_updatingRX1HermesStepAttData) return;
             _updatingRX1HermesStepAttData = true;
             console.RX1AttenuatorData = (int)udHermesStepAttenuatorData.Value;
@@ -15884,6 +15901,8 @@ namespace Thetis
 
         private void chkRX2StepAtt_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
+
             console.RX2StepAttPresent = chkRX2StepAtt.Checked;
 
             if (chkRX2StepAtt.Checked)
@@ -15905,6 +15924,8 @@ namespace Thetis
         private bool _updatingRX2HermesStepAttData = false;
         private void udHermesStepAttenuatorDataRX2_ValueChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
+
             if (_updatingRX2HermesStepAttData) return;
             _updatingRX2HermesStepAttData = true;
             console.RX2AttenuatorData = (int)udHermesStepAttenuatorDataRX2.Value;
