@@ -10685,6 +10685,9 @@ namespace Thetis
                 if (_updatingTxAtt) return;
                 _updatingTxAtt = true;
                 tx_attenuator_data = value;
+
+                tx_attenuator_data = validateTXStepAttData(tx_attenuator_data); //[2.10.3.9]MW0LGE validated
+
                 if (!initializing)
                 {
                     setTXstepAttenuatorForBand(tx_band, tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes #399
@@ -10967,6 +10970,27 @@ namespace Thetis
 
         public bool DisplayVoltsAmps { get; set; }
 
+        //[2.10.3.9]MW0LGE validate step attenuator values, so many HL2 issues with these being out of range
+        private int validateRX1StepAttData(int att)
+        {
+            if (att > udRX1StepAttData.Maximum) att = (int)udRX1StepAttData.Maximum;
+            if (att < udRX1StepAttData.Minimum) att = (int)udRX1StepAttData.Minimum;
+            return att;
+        }
+        private int validateRX2StepAttData(int att)
+        {
+            if (att > udRX2StepAttData.Maximum) att = (int)udRX2StepAttData.Maximum;
+            if (att < udRX2StepAttData.Minimum) att = (int)udRX2StepAttData.Minimum;
+            return att;
+        }
+        private int validateTXStepAttData(int att)
+        {
+            if (att > udTXStepAttData.Maximum) att = (int)udTXStepAttData.Maximum;
+            if (att < udRX1StepAttData.Minimum) att = (int)udTXStepAttData.Minimum;
+            return att;
+        }        
+        //
+
         private bool rx1_step_att_present = false;
         public bool RX1StepAttPresent
         {
@@ -10976,7 +11000,7 @@ namespace Thetis
                 rx1_step_att_present = value;
                 if (rx1_step_att_present)
                 {
-                    udRX1StepAttData.Value = getRX1stepAttenuatorForBand(rx1_band); //MW0LGE [2.10.3.6] added
+                    udRX1StepAttData.Value = validateRX1StepAttData(getRX1stepAttenuatorForBand(rx1_band)); //MW0LGE [2.10.3.6] added //[2.10.3.9]MW0LGE validated
                     udRX1StepAttData_ValueChanged(this, EventArgs.Empty);
                 }
                 else
@@ -11022,6 +11046,8 @@ namespace Thetis
                     HardwareSpecific.Model != HPSDRModel.REDPITAYA) //DH1KLM
                     udRX1StepAttData.Maximum = (decimal)61;
                 else udRX1StepAttData.Maximum = (decimal)31;
+
+                rx1_attenuator_data = validateRX1StepAttData(rx1_attenuator_data); //[2.10.3.9]MW0LGE validated
 
                 //MW0LGE_22b step atten
                 int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
@@ -11115,7 +11141,7 @@ namespace Thetis
                 {
                     if (rx2_step_att_present)
                     {
-                        udRX2StepAttData.Value = getRX2stepAttenuatorForBand(rx2_band);
+                        udRX2StepAttData.Value = validateRX2StepAttData(getRX2stepAttenuatorForBand(rx2_band)); //[2.10.3.9]MW0LGE validated
                         udRX2StepAttData_ValueChanged(this, EventArgs.Empty);
                     }
                     else
@@ -11172,6 +11198,8 @@ namespace Thetis
                     udRX2StepAttData.Maximum = (decimal)61; //MW0LGE_[2.9.0.7]  changed to udRX2
                 else udRX2StepAttData.Maximum = (decimal)31;
 
+                rx2_attenuator_data = validateRX2StepAttData(rx2_attenuator_data); //[2.10.3.9]MW0LGE validated
+
                 //MW0LGE_22b step atten
                 int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
                 GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
@@ -11215,7 +11243,7 @@ namespace Thetis
 
                 if (!_mox)
                     setRX2stepAttenuatorForBand(rx2_band, rx2_attenuator_data);
-
+                
                 udRX2StepAttData.Value = rx2_attenuator_data;
                 lblRX2AttenLabel.Text = rx2_attenuator_data.ToString() + " dB";
 
