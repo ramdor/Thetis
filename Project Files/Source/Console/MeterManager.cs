@@ -6438,11 +6438,16 @@ namespace Thetis
             {
                 bool valid = false;
 
-                bool valid_rx = (rx1_band >= Band.B160M && rx1_band <= Band.B6M) || (rx1_band >= Band.VHF0 && rx1_band <= Band.VHF13);
-                bool valid_tx = (tx_band >= Band.B160M && tx_band <= Band.B6M) || (tx_band >= Band.VHF0 && tx_band <= Band.VHF13);
+                //bool valid_rx = (rx1_band >= Band.B160M && rx1_band <= Band.B6M) || (rx1_band >= Band.VHF0 && rx1_band <= Band.VHF13);
+                //bool valid_tx = (tx_band >= Band.B160M && tx_band <= Band.B6M) || (tx_band >= Band.VHF0 && tx_band <= Band.VHF13);
 
-                valid = valid_rx || valid_tx || (rx1_band == Band.FIRST && tx_band == Band.FIRST && vfoa_freq == -1 && tx_freq == -1)
-                    || rx1_band == Band.WWV;
+                //valid = valid_rx || valid_tx || (rx1_band == Band.FIRST && tx_band == Band.FIRST && vfoa_freq == -1 && tx_freq == -1)
+                //    || rx1_band == Band.WWV;
+
+                bool valid_rx = (rx1_band >= Band.B160M && rx1_band <= Band.B6M) || (rx1_band >= Band.VHF0 && rx1_band <= Band.VHF13) || (rx1_band == Band.FIRST && vfoa_freq == -1);
+                bool valid_tx = (tx_band >= Band.B160M && tx_band <= Band.B6M) || (tx_band >= Band.VHF0 && tx_band <= Band.VHF13) || (tx_band == Band.FIRST && tx_freq == -1);
+
+                valid = valid_rx || valid_tx || rx1_band == Band.WWV;
 
                 if (!valid_rx && vfoa_freq != -1)
                 {
@@ -6573,7 +6578,7 @@ namespace Thetis
                     setAuxAntenna(index, _rx1_band, index == 3, index == 4, index == 5);
 
                 if (index >= 6 && index <= 8)
-                    setTXAntenna(index - 6, _rx1_band);
+                    setTXAntenna(index - 6, _tx_band);//[2.10.3.9]MW0LGE fix, was using _rx1_band
 
                 if (index == 9)
                     toggleTxRxAnt();
