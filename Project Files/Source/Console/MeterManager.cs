@@ -6444,10 +6444,11 @@ namespace Thetis
                 //valid = valid_rx || valid_tx || (rx1_band == Band.FIRST && tx_band == Band.FIRST && vfoa_freq == -1 && tx_freq == -1)
                 //    || rx1_band == Band.WWV;
 
-                bool valid_rx = (rx1_band >= Band.B160M && rx1_band <= Band.B6M) || (rx1_band >= Band.VHF0 && rx1_band <= Band.VHF13) || (rx1_band == Band.FIRST && vfoa_freq == -1);
-                bool valid_tx = (tx_band >= Band.B160M && tx_band <= Band.B6M) || (tx_band >= Band.VHF0 && tx_band <= Band.VHF13) || (tx_band == Band.FIRST && tx_freq == -1);
+                bool update = rx1_band == Band.FIRST && tx_band == Band.FIRST && vfoa_freq == -1 && tx_freq == -1;
+                bool valid_rx = (rx1_band >= Band.B160M && rx1_band <= Band.B6M) || (rx1_band >= Band.VHF0 && rx1_band <= Band.VHF13);
+                bool valid_tx = (tx_band >= Band.B160M && tx_band <= Band.B6M) || (tx_band >= Band.VHF0 && tx_band <= Band.VHF13);
 
-                valid = valid_rx || valid_tx || rx1_band == Band.WWV;
+                valid = valid_rx || valid_tx || update;// || rx1_band == Band.WWV;
 
                 if (!valid_rx && vfoa_freq != -1)
                 {

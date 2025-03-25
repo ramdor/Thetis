@@ -58,6 +58,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] cwu above 10mhz will now be used by tciserver on restart if configured to do so
 - [fix] s-add/att state will behave as expected when the adcs are linked, and rx2 was previously saved with a different state to rx1. If the adc's are linked then RX2 will use setting from RX1
 - [fix] antenna button box now uses tx band to determine antenna. Now operates as expected when running a x-band transmit
+- [fix] issue where WWV was selected when in a ham band the associated selected rx antenna would not be shown correctly in the antenna button box
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked
