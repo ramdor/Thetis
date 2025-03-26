@@ -636,6 +636,7 @@ namespace Thetis
             chkAlexAntCtrl_CheckedChanged(this, e);
             initializing = true; //MW0LGE_21d stop the lg from notifying changed events
             TbDataFillAlpha_Scroll(this, e);
+            tbDataFillAlpha_tx_Scroll(this, e);
             initializing = false;
 
             for (int i = 0; i < 2; i++)
@@ -2589,6 +2590,7 @@ namespace Thetis
             udDisplayLineWidth_ValueChanged(this, e);
             udTXLineWidth_ValueChanged(this, e);
             clrbtnTXDataLine_Changed(this, e);
+            clrbtnDataFill_tx_Changed(this, e);
             clrbtnMeterLeft_Changed(this, e);
             clrbtnMeterRight_Changed(this, e);
             chkGridControl_CheckedChanged(this, e);
