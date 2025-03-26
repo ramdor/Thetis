@@ -58,7 +58,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] cwu above 10mhz will now be used by tciserver on restart if configured to do so
 - [fix] s-add/att state will behave as expected when the adcs are linked, and rx2 was previously saved with a different state to rx1. If the adc's are linked then RX2 will use setting from RX1
 - [fix] antenna button box now uses tx band to determine antenna. Now operates as expected when running a x-band transmit
-- [fix] issue where WWV was selected when in a ham band the associated selected rx antenna would not be shown correctly in the antenna button box
+- [fix] issue where WWV was selected when in a ham band the associated selected rx antenna would not be shown correctly in the antenna button box when the switch to the WWV was made
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked
@@ -93,7 +93,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 	- duplex mode is used for these displays, duplex off will not be provided
 	- show filter characteristic option in Setup->DSP->Options that will show the actual filter characteristics
 	- uses new spectrum duplication system from Warren
-- [add] right click setup menu item from the menubar will show setup instantly. To prevent all those repetitive strain injuries and to free up the doctors ! ;)
+- [add] right click setup menu item from the menu bar will show setup instantly. To prevent all those repetitive strain injuries and to free up the doctors ! ;)
 - [add] added -nospec command line option to prevent the use of analysers when the filter item is in use
 - [add] webimage item can now be configured to apply the image to the spectral area, and can be used to implement slide shows with the use of 4charID
 - [add] right click on a CTUN button will re-centre the associated rx
