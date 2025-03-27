@@ -3295,7 +3295,20 @@ namespace Thetis
                         Audio.LastRadioProtocol = (RadioProtocol)Enum.Parse(typeof(RadioProtocol), val);
                         break;
                     case "last_radio_hardware":
-                        Audio.LastRadioHardware = (HPSDRHW)Enum.Parse(typeof(HPSDRHW), val);
+                        //Audio.LastRadioHardware = (HPSDRHW)Enum.Parse(typeof(HPSDRHW), val);
+                        if (Enum.TryParse<HPSDRHW>(val, out HPSDRHW hw))
+                        {
+                            Audio.LastRadioHardware = hw;
+                        }
+                        else
+                        {
+                            DialogResult dr = MessageBox.Show($"The version of hardware stored in the database is not known by this version of Thetis [{hw.ToString()}]. Are you using the correct version ?",
+                            "Hardware version issue",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                            Audio.LastRadioHardware = HPSDRHW.Unknown;
+                        }
                         break;
                     case "wheel_tune_index":
                         tune_step_index = Int32.Parse(val);

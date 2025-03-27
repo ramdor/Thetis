@@ -1814,6 +1814,21 @@ namespace Thetis
             }
             //
 
+            //[2.10.3.9]MW0LGE special check for radio model not being supported, default to HERMES
+            if (sortedList.Contains("comboRadioModel") && controls.ContainsKey("comboRadioModel"))
+            {
+                string val = a["comboRadioModel"];
+                if (!comboRadioModel.Items.Contains(val))
+                {
+                    DialogResult dr = MessageBox.Show($"The radio model stored in the database is not known by this version of Thetis [{val}]. \n\nAre you using the correct version ? It will be reset back to HERMES.",
+                    "Model version issue",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                    a["comboRadioModel"] = HPSDRModel.HERMES.ToString();
+                }
+            }
+
             foreach (string sKey in sortedList)
             {
                 string name = sKey;

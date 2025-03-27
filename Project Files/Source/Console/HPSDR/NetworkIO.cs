@@ -290,6 +290,12 @@ namespace Thetis
                 case HPSDRModel.REDPITAYA:
                     board_is_expected_for_model = BoardID == HPSDRHW.Hermes || BoardID == HPSDRHW.OrionMKII; // can be these two
                     break;
+                case HPSDRModel.ANAN10:
+                case HPSDRModel.ANAN10E:
+                case HPSDRModel.ANAN100:
+                case HPSDRModel.ANAN100B:
+                    board_is_expected_for_model = BoardID == HPSDRHW.Hermes || BoardID == HPSDRHW.HermesII; // can be these two
+                    break;
                 default:
                     board_is_expected_for_model = BoardID == HardwareSpecific.Hardware;
                     break;
@@ -298,7 +304,7 @@ namespace Thetis
             if(!board_is_expected_for_model)
             {
                 // the board returned in the packet, does not match the expected board for the Model selected
-                _board_mismatch = $"The board returned from network query was:\n\n{BoardID.ToString()}\n\nExpected board for model selected is:\n\n{HardwareSpecific.Hardware.ToString()}";                
+                _board_mismatch = $"The board returned from network query was:\n\n{BoardID.ToString()}\n\nExpected board for model selected is:\n\n{HardwareSpecific.Hardware.ToString()}\n\nIf this is expected you can ignore this warning";                
             }
             else
             {
