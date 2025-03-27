@@ -10680,26 +10680,29 @@ namespace Thetis
         {
             set { udTXStepAttData.BackColor = value; }
         }
-        private int tx_attenuator_data = 31;
+        private int _tx_attenuator_data = 31;
         private bool _updatingTxAtt = false;
         public int TxAttenData
         {
-            get { return tx_attenuator_data; }
+            get { return _tx_attenuator_data; }
             set
             {
                 if (_updatingTxAtt) return;
                 _updatingTxAtt = true;
 
-                tx_attenuator_data = validateTXStepAttData(value); //[2.10.3.9]MW0LGE validated
+                _tx_attenuator_data = validateTXStepAttData(value); //[2.10.3.9]MW0LGE validated
 
                 if (!initializing)
                 {
-                    setTXstepAttenuatorForBand(_tx_band, tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes #399
+                    setTXstepAttenuatorForBand(_tx_band, _tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes #399
                     if (m_bAttontx)
                     {
-                        int txatt = getTXstepAttenuatorForBand(_tx_band);
-                        NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
-                        Display.TXAttenuatorOffset = txatt; //[2.10.3.6]MW0LGE att_fixes
+                        //int txatt = getTXstepAttenuatorForBand(_tx_band);
+                        //NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
+                        //Display.TXAttenuatorOffset = txatt; //[2.10.3.6]MW0LGE att_fixes
+
+                        NetworkIO.SetTxAttenData(_tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes
+                        Display.TXAttenuatorOffset = _tx_attenuator_data; //[2.10.3.6]MW0LGE att_fixes
                     }
                     else
                     {
@@ -10716,14 +10719,15 @@ namespace Thetis
                     //It seems the firmware does not seem to use the tx_atten data, instead it relies on rx attenuation perhaps?
                     if (_mox && m_bAttontx && HardwareSpecific.Model == HPSDRModel.REDPITAYA)
                     {
-                        if(RX2Enabled && VFOBTX)
-                        {
-                            udRX2StepAttData.Value = value;
-                        }
-                        else
-                        {
+                        //Seems like the RP only considers rx1 for tx att
+                        //if(RX2Enabled && VFOBTX)
+                        //{
+                        //    udRX2StepAttData.Value = value;
+                        //}
+                        //else
+                        //{
                             udRX1StepAttData.Value = value;
-                        }
+                        //}
                     }
                     //******END BODGE*******
                 }
@@ -29861,8 +29865,8 @@ namespace Thetis
                                          radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) txAtt = 31; // reset when PS is OFF or in CW mode
 
                         SetupForm.ATTOnRX1 = getRX1stepAttenuatorForBand(rx1_band); //[2.10.3.6]MW0LGE att_fixes
-                        SetupForm.ATTOnTX = txAtt; //[2.10.3.6]MW0LGE att_fixes NOTE: this will eventually call Display.TXAttenuatorOffset with the value
-                        NetworkIO.SetTxAttenData(txAtt); //[2.10.3.6]MW0LGE att_fixes
+                        SetupForm.ATTOnTX = txAtt; //[2.10.3.6]MW0LGE att_fixes NOTE: this will eventually call Display.TXAttenuatorOffset with the value                        
+                        //NetworkIO.SetTxAttenData(txAtt); //[2.10.3.6]MW0LGE att_fixes  //[2.10.3.9]MW0LGE note: this is done by line above
 
                         //SetupForm.RX1EnableAtt = true; //[2.10.3.6]MW0LGE att_fixes
                         //comboRX2Preamp.Enabled = false; //[2.10.3.6]MW0LGE att_fixes
