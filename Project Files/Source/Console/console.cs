@@ -11278,7 +11278,7 @@ namespace Thetis
                     }
                 }
 
-                if (!_mox)
+                if (!_mox || (_mox && VFOATX)) //[2.10.3.9]MW0LGE we should be able to do this if txing on rx1
                     setRX2stepAttenuatorForBand(rx2_band, rx2_attenuator_data);
                 
                 udRX2StepAttData.Value = rx2_attenuator_data;
