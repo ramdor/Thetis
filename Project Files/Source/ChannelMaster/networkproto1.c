@@ -602,6 +602,7 @@ void WriteMainLoop(char* bufp)
 			if (XmitBit)
 				//This is existing code, so it has been left untouched, but it will apply 31dB attenuation
 				//to any receiver that is using ADC[1] (adc2 in the setup form) when in a TX state (XmitBit set)
+				//Unsure why this is forced, as it is not for oher adc's
 				C1 = 0x1F;
 			else
 			{
