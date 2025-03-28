@@ -599,18 +599,18 @@ void WriteMainLoop(char* bufp)
 
 		case 12: // Step ATT control
 			C0 |= 0x16; //C0 0001 011x
-			if (XmitBit)
-				//This is existing code, so it has been left untouched, but it will apply 31dB attenuation
-				//to any receiver that is using ADC[1] (adc2 in the setup form) when in a TX state (XmitBit set)
-				//Unsure why this is forced, as it is not for oher adc's
-				C1 = 0x1F;
-			else
-			{
+			//if (XmitBit)
+			//	//This is existing code, but it will apply 31dB attenuation
+			//	//to any receiver that is using ADC[1] (adc2 in the setup form) when in a TX state (XmitBit set)
+			//	//Unsure why this is forced, as it is not for oher adc's
+			//	C1 = 0x1F;
+			//else
+			//{
 				if (HPSDRModel == HPSDRModel_REDPITAYA) //[2.10.3.9]DH1KLM  //model needed as board type (prn->discovery.BoardType) is an OrionII
 					C1 = (prn->adc[1].rx_step_attn & 0b00011111); //truncate the lower 5 bits, allowing a max value of 31
 				else
 					C1 = (prn->adc[1].rx_step_attn);
-			}
+			//}
 			C1 |= 0b00100000; //this enables the rx attenuation
 			C2 = (prn->adc[2].rx_step_attn & 0b00011111) | 0b00100000 |
 				((prn->cw.rev_paddle & 1) << 6);

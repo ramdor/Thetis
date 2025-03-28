@@ -10729,10 +10729,11 @@ namespace Thetis
 
                     //******Red Pitaya BODGE*******
                     //[2.10.3.9]MW0LGE This is not ideal, but a bodge to get the PedPitaya to TX attenuate correctly
-                    //It seems the firmware does not seem to use the tx_atten data, instead it relies on rx attenuation perhaps?
+                    //I am not entirely sure why this is needed, perhaps an issue in the RP firmware
                     if (_mox && m_bAttontx && HardwareSpecific.Model == HPSDRModel.REDPITAYA)
                     {
-                        //Seems like the RP only considers rx1 for tx att
+                        //note: I am usure if the RP would handle rx2 being changed as below, but it is here for completeness
+
                         //if(RX2Enabled && VFOBTX)
                         //{
                         //    udRX2StepAttData.Value = value;
@@ -12355,7 +12356,8 @@ namespace Thetis
                     HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
                     HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
                     HardwareSpecific.Model != HPSDRModel.REDPITAYA && //DH1KLM
-                    !rx2_preamp_present || _mox)
+                    !rx2_preamp_present)// || _mox) //[2.10.3.9]MW0LGE er, why mox? why do we want to change RX2 offset when we are moxing?
+                                        // Surely rx2 should be left alone unless rx2 doesnt have a preamp in which case we can use rx1 data
                     Display.RX2PreampOffset = rx1_attenuator_data;
             }
             else
@@ -28037,6 +28039,7 @@ namespace Thetis
                         case HPSDRModel.ORIONMKII:
                         case HPSDRModel.ANAN7000D:
                         case HPSDRModel.ANAN8000D:
+                        case HPSDRModel.REDPITAYA: //DH1KLM
                             cmaster.SetAAudioMixStates((void*)0, 0, RX1 + RX1S + RX2 + MON, RX1 + RX1S + RX2 + MON);
                             cmaster.SetAntiVOXSourceStates(0, RX1 + RX1S + RX2, RX1 + RX1S + RX2);
                             break;
