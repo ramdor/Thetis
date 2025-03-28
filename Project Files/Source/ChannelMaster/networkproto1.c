@@ -600,9 +600,8 @@ void WriteMainLoop(char* bufp)
 		case 12: // Step ATT control
 			C0 |= 0x16; //C0 0001 011x
 			//if (XmitBit)
-			//	//This is existing code, but it will apply 31dB attenuation
-			//	//to any receiver that is using ADC[1] (adc2 in the setup form) when in a TX state (XmitBit set)
-			//	//Unsure why this is forced, as it is not for oher adc's
+			//	//This is existing code. It used to apply 31dB attenuation to any receiver that is using ADC[1] (adc2 in the setup form) when in a TX state (XmitBit set)
+			//	//Unsure why this was forced, as it is not for oher adc's
 			//	C1 = 0x1F;
 			//else
 			//{
