@@ -20,5 +20,23 @@
       "Description": "DH1KLM's big collection",
       "BypassRootFolderCheck": false
     }
+    {
+  "AuthorName": "Mike",
+  "AuthorCallsign": "N2MDX",
+  "AuthorNickname": "N2MDX Skins and Meters!",
+  "SkinsHomepageUrl": "https://miken2mdx.weebly.com",
+  "DonateUrl": "",
+  "ThetisSkins": [
+    {
+      "SkinName": "Bike Meters",
+      "SkinUrl": "https://github.com/N2MDX/N2MDX-Meter-Skins/raw/refs/heads/main/Vcars%20Meter%20skins.zip",
+      "SkinVersion": "1.0",
+      "FromThetisVersion": "2.10.3",
+      "ThumbnailUrl": "",
+      "SkinHomepageUrl": "",
+      "DateReleased": "03/28/25",
+      "Overview": "",
+      "IsMeterSkin": true
+    }
   ]
 }
