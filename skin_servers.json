@@ -19,11 +19,6 @@
       "SkinServerUrl": "http://www.die-jetzis.de/skins/thetis_skins.json",
       "Description": "DH1KLM's big collection",
       "BypassRootFolderCheck": false
-    },
-    {
-      "SkinServerUrl": "https://raw.githubusercontent.com/N2MDX/N2MDX-Meter-Skins/refs/heads/main/n2mdx_skin_server.json",
-      "Description": "N2MDX's skin collection",
-      "BypassRootFolderCheck": false
     }
   ]
 }
