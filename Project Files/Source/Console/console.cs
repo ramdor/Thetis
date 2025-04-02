@@ -2722,10 +2722,12 @@ namespace Thetis
             a.Add("chkSquelch_checkstate/" + chkSquelch.CheckState.ToString()); //MW0LGE [2.9.0.8]
             a.Add("chkRX2Squelch_checkstate/" + chkRX2Squelch.CheckState.ToString());
 
-            a.Add("rx1_display_cal_offset/" + rx1_display_cal_offset.ToString("f4")); //MW0LGE [2.9.0.7] change to same float precision format as display cal by radio model
+            //a.Add("rx1_display_cal_offset/" + rx1_display_cal_offset.ToString("f4")); //MW0LGE [2.9.0.7] change to same float precision format as display cal by radio model
+            a.Add("rx1_display_cal_offset/" + rx1_display_cal_offset.ToString()); //[2.10.3.9]MW0LGE maintaining max precision
             a.Add("rx1_meter_cal_offset/" + rx1_meter_cal_offset);
 
-            a.Add("rx2_display_cal_offset/" + rx2_display_cal_offset.ToString("f4"));
+            //a.Add("rx2_display_cal_offset/" + rx2_display_cal_offset.ToString("f4")); //[2.10.3.9]MW0LGE maintaining max precision
+            a.Add("rx2_display_cal_offset/" + rx2_display_cal_offset.ToString());
             a.Add("rx2_meter_cal_offset/" + rx2_meter_cal_offset);
 
             a.Add("txtMemoryQuick/" + txtMemoryQuick.Text);		// save quick memory settings
@@ -3075,13 +3077,15 @@ namespace Thetis
 
             s = "rx_meter_cal_offset_by_radio/";
             for (int i = 0; i < (int)HPSDRModel.LAST; i++)
-                s += (rx_meter_cal_offset_by_radio[i]).ToString("f4") + "|";
+                //s += (rx_meter_cal_offset_by_radio[i]).ToString("f4") + "|";  //[2.10.3.9]MW0LGE maintaining max precision
+                s += (rx_meter_cal_offset_by_radio[i]).ToString() + "|";
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
             s = "rx_display_cal_offset_by_radio/";
             for (int i = 0; i < (int)HPSDRModel.LAST; i++)
-                s += (rx_display_cal_offset_by_radio[i]).ToString("f4") + "|";
+                //s += (rx_display_cal_offset_by_radio[i]).ToString("f4") + "|";  //[2.10.3.9]MW0LGE maintaining max precision
+                s += (rx_display_cal_offset_by_radio[i]).ToString() + "|";
             s = s.Substring(0, s.Length - 1);
             a.Add(s);
 
@@ -20835,7 +20839,7 @@ namespace Thetis
         }
 
         // Added 6/11/05 BT to support CAT
-        public float MultiMeterCalOffset
+        public float RX1MeterCalOffset
         {
             get { return rx1_meter_cal_offset; }
         }
@@ -24216,6 +24220,8 @@ namespace Thetis
                             "RX1DisplayCalOffset : " + Display.RX1DisplayCalOffset.ToString() + Environment.NewLine +
                             "RX2DisplayCalOffset : " + Display.RX2DisplayCalOffset.ToString() + Environment.NewLine +
                             "TXDisplayCalOffset : " + Display.TXDisplayCalOffset.ToString() + Environment.NewLine +
+                            "RX1MeterCalOffset : " + rx1_meter_cal_offset.ToString() + Environment.NewLine +
+                            "RX2MeterCalOffset : " + rx2_meter_cal_offset.ToString() + Environment.NewLine +                                                       
                             "mon_recall : " + mon_recall.ToString();
                     }
                     #endregion
