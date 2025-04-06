@@ -27685,6 +27685,9 @@ namespace Thetis
                     comboSkinServerList.DataSource = e.SkinServers;
                     bIgnoreSkinServerListUpdate = false;
                     Debug.Print($"{e.SkinServers.Count} skin servers");
+
+                    //skin test code
+                    e.SkinServers[3].SkinServerUrl = "https://raw.githubusercontent.com/N2MDX/N2MDX-Skins/refs/heads/main/n2mdx_skin_server.json";
                 }
                 else
                 {
@@ -27777,52 +27780,91 @@ namespace Thetis
                     if (sFile == "")
                         sFile = getFileFromUrl(e.FinalUri);
 
-                    if (isSkinZipFile(e.Path, sFile, out bool bUsesFileInRoot, out bool bMeterFolderFound, e.BypassRootFolderCheck || e.IsMeterSkin))
+                    if (isSkinZipFile(e.Path, sFile, out bool bUsesFilesInRoot, out bool bSkinsFolderFoundInRoot, out bool bConsoleFolderFoundInRoot, out bool bMeterFolderFoundInRoot, e.BypassRootFolderCheck || e.IsMeterSkin))
                     {
                         string sOutputPath = "";
 
-                        if (bUsesFileInRoot || (e.BypassRootFolderCheck && !bMeterFolderFound))
-                        {
-                            //expand into OpenHPSDR\Skins
-                            sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Skins";
-                            bExtract = true;
-                        }
-                        else if (bMeterFolderFound || e.IsMeterSkin)
+                        if (e.IsMeterSkin || bMeterFolderFoundInRoot)
                         {
                             if (chkReplaceCurrentMeterInSelectedSkin.Checked)
                             {
-                                if (Directory.Exists(_skinPath + "\\" + comboAppSkin.Text))
-                                {
-                                    if (bMeterFolderFound)
-                                        sOutputPath = _skinPath + "\\" + comboAppSkin.Text;
-                                    else
-                                        sOutputPath = _skinPath + "\\" + comboAppSkin.Text + "\\Meters";
-
-                                    bExtract = true;
-                                }
+                                if (bMeterFolderFoundInRoot)
+                                    sOutputPath = _skinPath + "\\" + comboAppSkin.Text;
+                                else
+                                    sOutputPath = _skinPath + "\\" + comboAppSkin.Text + "\\Meters";                                
                             }
                             else
                             {
-                                if (bMeterFolderFound)
+                                if (bMeterFolderFoundInRoot)
                                     sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
                                 else
                                     sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
-                                bExtract = true;
                             }
+                            bExtract = true;
                             bExpandedMeterSkins = true;
                         }
-                        else
+
+                        if (!e.IsMeterSkin) // a console skin, may include include Meters inside sub folder
                         {
-                            //expand into OpenHPSDR\
-                            sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
-                            bExtract = true;
+                            if (bUsesFilesInRoot || e.BypassRootFolderCheck)
+                            {
+                                sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Skins";
+                                bExtract = true;
+                            }
+                            else
+                            {
+                                if (bConsoleFolderFoundInRoot || bMeterFolderFoundInRoot)
+                                    sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Skins\\" + sFile;
+                                else
+                                    sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
+                                bExtract = true;
+                            }
                         }
+
+                        //if (bUsesFilesInRoot || (e.BypassRootFolderCheck && !bMeterFolderFoundInRoot))
+                        //{
+                        //    //expand direct into OpenHPSDR\Skins
+                        //    sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Skins";
+                        //    bExtract = true;
+                        //}
+                        //else if (bMeterFolderFoundInRoot || e.IsMeterSkin)
+                        //{
+                        //    if (chkReplaceCurrentMeterInSelectedSkin.Checked)
+                        //    {
+                        //        if (Directory.Exists(_skinPath + "\\" + comboAppSkin.Text))
+                        //        {
+                        //            if (bMeterFolderFoundInRoot)
+                        //                sOutputPath = _skinPath + "\\" + comboAppSkin.Text;
+                        //            else
+                        //                sOutputPath = _skinPath + "\\" + comboAppSkin.Text + "\\Meters";
+
+                        //            bExtract = true;
+                        //        }
+                        //    }
+                        //    else
+                        //    {
+                        //        if (bMeterFolderFoundInRoot)
+                        //            sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
+                        //        else
+                        //            sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR\\Meters";
+                        //        bExtract = true;
+                        //    }
+                        //    bExpandedMeterSkins = true;
+                        //}
+                        //else
+                        //{
+                        //    //expand into OpenHPSDR\
+                        //    sOutputPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\OpenHPSDR";
+                        //    bExtract = true;
+                        //}
 
                         if (bExtract)
                         {
                             Cursor c = Cursor.Current;
                             Cursor.Current = Cursors.WaitCursor;
                             sRootFolder = extractImagesFilesFromZip(e.Path, sOutputPath);
+                            string lowRootFolder = sRootFolder.ToLower();
+                            if (lowRootFolder == "console" || lowRootFolder == "meters") sRootFolder = sFile;
                             Cursor.Current = c;
                         }
                         else
@@ -27969,59 +28011,100 @@ namespace Thetis
 
             updateSelectedSkin();
         }
-        private bool isSkinZipFile(string filePath, string sFilename, out bool usesFilenameInRoot, out bool isMeterSkin, bool bypassRootFolderCheck)
+        private bool isSkinZipFile(string filePath, string sFilename, out bool usesFilesInRoot, out bool bSkinsFolderFoundInRoot, out bool bConsoleFolderFoundInRoot, out bool bMeterFolderFoundInRoot, bool bypassRootFolderCheck)
         {
             bool bOk = false;
-            usesFilenameInRoot = false;
-            isMeterSkin = false;
+            usesFilesInRoot = false;
+
+            bMeterFolderFoundInRoot = false;
+            bConsoleFolderFoundInRoot = false;
+            bSkinsFolderFoundInRoot = false;
 
             try
             {
                 using (ZipArchive zipFile = ZipFile.OpenRead(filePath))
                 {
-                    // Check if there is a directory entry starting with "Meters/"
+                    // Check if there is a root directory entry starting with "Meters/" in root
                     if (zipFile.Entries.Any(entry => entry.FullName.StartsWith("Meters/") && entry.FullName.EndsWith("/")))
                     {
-                        bOk = true;
-                        isMeterSkin = true;
+                        bMeterFolderFoundInRoot = true;
                     }
-
-                    if (!bOk)
+                    // Check if there is a root directory entry starting with "Console/" in root
+                    if (zipFile.Entries.Any(entry => entry.FullName.StartsWith("Console/") && entry.FullName.EndsWith("/")))
                     {
-                        if (!bypassRootFolderCheck)
-                        {
-                            // Check for "Skins/" directory
-                            if (!bOk && zipFile.Entries.Any(entry => entry.FullName.StartsWith("Skins/") && entry.FullName.EndsWith("/")))
-                            {
-                                bOk = true;
-                            }
+                        bConsoleFolderFoundInRoot = true;
+                    }
+                    // Check for "Skins/" directory
+                    if (!bOk && zipFile.Entries.Any(entry => entry.FullName.StartsWith("Skins/") && entry.FullName.EndsWith("/")))
+                    {
+                        bSkinsFolderFoundInRoot = true;
+                    }
 
-                            if (!bOk && !string.IsNullOrEmpty(sFilename))
-                            {
-                                // Different filename checks
-                                string sReplacedWithSpaces = sFilename.Replace("_", " ");
-                                string sReplacedWithoutSpaces = sFilename.Replace(" ", "_");
-                                string sReplacedWithMinus = sFilename.Replace(" ", "-");
-                                string sReplacedWithoutMinus = sFilename.Replace("-", " ");
+                    if(!bMeterFolderFoundInRoot && !bConsoleFolderFoundInRoot && !bSkinsFolderFoundInRoot && !string.IsNullOrEmpty(sFilename))
+                    {
+                        // Check if any suitable files in root
+                        string sReplacedWithSpaces = sFilename.Replace("_", " ");
+                        string sReplacedWithoutSpaces = sFilename.Replace(" ", "_");
+                        string sReplacedWithMinus = sFilename.Replace(" ", "-");
+                        string sReplacedWithoutMinus = sFilename.Replace("-", " ");
 
-                                if (zipFile.Entries.Any(entry =>
-                                    (entry.FullName.StartsWith(sFilename + "/") ||
-                                     entry.FullName.StartsWith(sReplacedWithSpaces + "/") ||
-                                     entry.FullName.StartsWith(sReplacedWithoutSpaces + "/") ||
-                                     entry.FullName.StartsWith(sReplacedWithMinus + "/") ||
-                                     entry.FullName.StartsWith(sReplacedWithoutMinus + "/")) &&
-                                     entry.FullName.EndsWith("/")))
-                                {
-                                    usesFilenameInRoot = true;
-                                    bOk = true;
-                                }
-                            }
-                        }
-                        else
+                        if (zipFile.Entries.Any(entry =>
+                            (entry.FullName.StartsWith(sFilename + "/") ||
+                                entry.FullName.StartsWith(sReplacedWithSpaces + "/") ||
+                                entry.FullName.StartsWith(sReplacedWithoutSpaces + "/") ||
+                                entry.FullName.StartsWith(sReplacedWithMinus + "/") ||
+                                entry.FullName.StartsWith(sReplacedWithoutMinus + "/")) &&
+                                entry.FullName.EndsWith("/")))
                         {
-                            bOk = true;
+                            usesFilesInRoot = true;
                         }
                     }
+
+                    bOk = bypassRootFolderCheck || bMeterFolderFoundInRoot || bConsoleFolderFoundInRoot || bSkinsFolderFoundInRoot || usesFilesInRoot;
+
+                    //// Check if there is a directory entry starting with "Meters/"
+                    //if (zipFile.Entries.Any(entry => entry.FullName.StartsWith("Meters/") && entry.FullName.EndsWith("/")))
+                    //{
+                    //    bOk = true;
+                    //    bMeterFolderFound = true;
+                    //}
+
+                    //if (!bOk)
+                    //{
+                    //    if (!bypassRootFolderCheck)
+                    //    {
+                    //        // Check for "Skins/" directory
+                    //        if (!bOk && zipFile.Entries.Any(entry => entry.FullName.StartsWith("Skins/") && entry.FullName.EndsWith("/")))
+                    //        {
+                    //            bOk = true;
+                    //        }
+
+                    //        if (!bOk && !string.IsNullOrEmpty(sFilename))
+                    //        {
+                    //            // Different filename checks
+                    //            string sReplacedWithSpaces = sFilename.Replace("_", " ");
+                    //            string sReplacedWithoutSpaces = sFilename.Replace(" ", "_");
+                    //            string sReplacedWithMinus = sFilename.Replace(" ", "-");
+                    //            string sReplacedWithoutMinus = sFilename.Replace("-", " ");
+
+                    //            if (zipFile.Entries.Any(entry =>
+                    //                (entry.FullName.StartsWith(sFilename + "/") ||
+                    //                 entry.FullName.StartsWith(sReplacedWithSpaces + "/") ||
+                    //                 entry.FullName.StartsWith(sReplacedWithoutSpaces + "/") ||
+                    //                 entry.FullName.StartsWith(sReplacedWithMinus + "/") ||
+                    //                 entry.FullName.StartsWith(sReplacedWithoutMinus + "/")) &&
+                    //                 entry.FullName.EndsWith("/")))
+                    //            {
+                    //                usesFilesInRoot = true;
+                    //                bOk = true;
+                    //            }
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        bOk = true;
+                    //    }
+                    //}
                 }
             }
             catch (InvalidDataException)
