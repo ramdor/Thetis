@@ -27687,7 +27687,7 @@ namespace Thetis
                     Debug.Print($"{e.SkinServers.Count} skin servers");
 
                     //skin test code
-                    e.SkinServers[3].SkinServerUrl = "https://raw.githubusercontent.com/N2MDX/N2MDX-Skins/refs/heads/main/n2mdx_skin_server.json";
+                    //e.SkinServers[3].SkinServerUrl = "https://raw.githubusercontent.com/N2MDX/N2MDX-Skins/refs/heads/main/n2mdx_skin_server.json";
                 }
                 else
                 {
