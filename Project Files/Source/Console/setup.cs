@@ -18586,7 +18586,8 @@ namespace Thetis
         private int _oldVAC2InOverflows = 0;
         private int _oldVAC2InUnderflows = 0;
 
-        //[2.10.3.9]MW0LGE this attribue, together with the app.config change 'legacyCorruptedStateExceptionsPolicy' enables the catch of address acceptions inside the try/catch block
+        //[2.10.3.9]MW0LGE this attribue, together with the app.config change 'legacyCorruptedStateExceptionsPolicy' enables
+        //the catch of address acceptions inside the try/catch block which is in an unsafe block
         [HandleProcessCorruptedStateExceptions]
         private void timer_VAC_Monitor_Tick(object sender, EventArgs e)
         {
@@ -18595,7 +18596,7 @@ namespace Thetis
 
             if (!lblVAC1ovfl.Visible && !lblVAC2ovfl.Visible && !lblAdvancedAudioWarning.Visible)
             {
-                // set audio controls not visible, so update slower. We need this as front end will show the overflow/underflow 4box icon if there is an issue
+                // setup audio controls not visible, so update slower. We need this as front end will show the overflow/underflow 4box icon if there is an issue
                 timer_VAC_Monitor.Interval = 100;
                 updateUI = false;
             }
