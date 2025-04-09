@@ -62,6 +62,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] antenna button box now uses tx band to determine antenna. Now operates as expected when running a x-band transmit
 - [fix] issue where WWV was selected when in a ham band the associated selected rx antenna would not be shown correctly in the antenna button box when the switch to the WWV was made
 - [fix] a RedPitaya 'bodge' was has been added to fix issue where tx attenuation had no effect. It seems the RP firmware needs RX attenuation to be adjusted, until the Anan's etc. Note: Radio Model needs to be Red Pitaya for this to take effect
+- [fix] infrequent access violation and crash/shutdown prevented when enabling and disabling VACs via TCI (line_out command) or CAT (ZZVA)
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked
