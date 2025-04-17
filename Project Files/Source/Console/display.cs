@@ -7702,8 +7702,7 @@ namespace Thetis
             // Calculate horizontal step size
             while (width / freq_step_size > 10)
             {
-                //freq_step_size = step_list[step_index] * (int)Math.Pow(10.0, step_power);
-                freq_step_size = step_list[step_index] * (int)FastPow10Raw(step_power);
+                freq_step_size = step_list[step_index] * (int)Math.Pow(10.0, step_power);
                 step_index = (step_index + 1) % 4;
                 if (step_index == 0) step_power++;
             }
@@ -9337,8 +9336,7 @@ namespace Thetis
                 // Calculate horizontal step size
                 while (f / freq_step_size > 7)
                 {
-                    //freq_step_size = step_list[step_index] * (int)Math.Pow(10.0, step_power);
-                    freq_step_size = step_list[step_index] * (int)FastPow10Raw(step_power);
+                    freq_step_size = step_list[step_index] * (int)Math.Pow(10.0, step_power);
                     step_index = (step_index + 1) % 4;
                     if (step_index == 0) step_power++;
                 }
@@ -9441,8 +9439,7 @@ namespace Thetis
                 // Calculate horizontal step size
                 while (f / freq_step_size > 7)
                 {
-                    //freq_step_size = step_list[step_index] * (int)Math.Pow(10.0, step_power);
-                    freq_step_size = step_list[step_index] * (int)FastPow10Raw(step_power);
+                    freq_step_size = step_list[step_index] * (int)Math.Pow(10.0, step_power);
                     step_index = (step_index + 1) % 4;
                     if (step_index == 0) step_power++;
                 }
@@ -9545,8 +9542,7 @@ namespace Thetis
                 // Calculate horizontal step size
                 while (f / freq_step_size > 4)
                 {
-                    //freq_step_size = step_list[step_index] * (int)Math.Pow(10.0, step_power);
-                    freq_step_size = step_list[step_index] * (int)FastPow10Raw(step_power);
+                    freq_step_size = step_list[step_index] * (int)Math.Pow(10.0, step_power);
                     step_index = (step_index + 1) % 4;
                     if (step_index == 0) step_power++;
                 }
