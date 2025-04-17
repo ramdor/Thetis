@@ -7079,7 +7079,8 @@ namespace Thetis
             if (_ignore_rx1_filter_update) return;
 
             int oldLow, oldHigh;
-            if (rx1_filter == Filter.FIRST || rx1_filter == Filter.LAST || rx1_dsp_mode == DSPMode.FIRST || rx1_dsp_mode == DSPMode.LAST)
+            
+            if(!filterAndDspModeValid(1))
             {
                 oldLow = 0;
                 oldHigh = 0;
@@ -7123,28 +7124,16 @@ namespace Thetis
                     break;
             }
 
-            //MW0LGE_21k9
-            LimitFilterToSidebands(ref low, ref high, 1);
+            clampFilterMinMax(1, rx1_dsp_mode == DSPMode.FM, low, high); // FM clamp the filter ud boxes etc to this new size
 
-            if (rx1_dsp_mode != DSPMode.FM) //[2.10.3.4]MW0LGE bypass for FM
-            {
-                if (low < -max_filter_width)
-                    low = -max_filter_width;
-                if (high > max_filter_width)
-                    high = max_filter_width;
-                if (high < -max_filter_width)
-                    high = -max_filter_width;
-                if (low > max_filter_width)
-                    low = max_filter_width;
-            }
+            //MW0LGE_21k9
+            ConstrainFilter(ref low, ref high, 1);
+
+            if (low == high) return; // not a good idea to have a 0hz width filter
 
             // send the settings to the DSP
-            if (low == high) return;
-
-            {
-                radio.GetDSPRX(0, 0).SetRXFilter(low, high);
-                radio.GetDSPRX(0, 1).SetRXFilter(low, high);
-            }
+            radio.GetDSPRX(0, 0).SetRXFilter(low, high);
+            radio.GetDSPRX(0, 1).SetRXFilter(low, high);
 
             // send the setting to the display
             Display.RX1FilterLow = low;
@@ -7201,7 +7190,7 @@ namespace Thetis
 
             if (filterAndDspModeValid(1) && (force || (oldLow != low || oldHigh != high)))
             {
-                FilterEdgesChangedHandlers?.Invoke(1, rx1_filter, RX1Band, low, high, rx1_filters[(int)rx1_dsp_mode].GetName(rx1_filter), max_filter_width, max_filter_shift); //MW0LGE [2.9.0.7]
+                FilterEdgesChangedHandlers?.Invoke(1, rx1_filter, RX1Band, low, high, rx1_filters[(int)rx1_dsp_mode].GetName(rx1_filter), _max_filter_width, _max_filter_shift); //MW0LGE [2.9.0.7]
             }
 
             m_nLowOutRX1 = low;
@@ -7211,6 +7200,7 @@ namespace Thetis
         public void UpdateRX2Filters(int low, int high, bool force = false, bool from_change_event = false)
         {
             if (_ignore_rx2_filter_update) return;
+
             int oldLow, oldHigh;
             if (!filterAndDspModeValid(2))
             {
@@ -7254,23 +7244,12 @@ namespace Thetis
                     break;
             }
 
+            clampFilterMinMax(2, rx2_dsp_mode == DSPMode.FM, low, high); // FM clamp the filter ud boxes etc to this new size
+
             //MW0LGE_21k9
-            LimitFilterToSidebands(ref low, ref high, 2);
+            ConstrainFilter(ref low, ref high, 2);
 
-            if (rx1_dsp_mode != DSPMode.FM) //[2.10.3.4]MW0LGE bypass for FM
-            {
-                if (low < -max_filter_width)
-                    low = -max_filter_width;
-                if (high > max_filter_width)
-                    high = max_filter_width;
-                if (high < -max_filter_width)
-                    high = -max_filter_width;
-                if (low > max_filter_width)
-                    low = max_filter_width;
-            }
-
-            // send the settings to the DSP
-            if (low == high) return;
+            if (low == high) return; // not a good idea to have a 0hz width filter
 
             // send the settings to the DSP
             radio.GetDSPRX(1, 0).SetRXFilter(low, high);
@@ -7309,7 +7288,7 @@ namespace Thetis
 
             if (filterAndDspModeValid(2) && (force || (oldLow != low || oldHigh != high)))
             {
-                FilterEdgesChangedHandlers?.Invoke(2, rx2_filter, RX2Band, low, high, rx2_filters[(int)rx2_dsp_mode].GetName(rx2_filter), max_filter_width, max_filter_shift); //MW0LGE [2.9.0.7]
+                FilterEdgesChangedHandlers?.Invoke(2, rx2_filter, RX2Band, low, high, rx2_filters[(int)rx2_dsp_mode].GetName(rx2_filter), _max_filter_width, _max_filter_shift); //MW0LGE [2.9.0.7]
             }
 
             m_nLowOutRX2 = low;
@@ -13304,25 +13283,28 @@ namespace Thetis
             set { save_filter_changes = value; }
         }
 
-        private int max_filter_shift = 10000;
+        private int _max_filter_shift = 10000;
         public int MaxFilterShift
         {
-            get { return max_filter_shift; }
+            get { return _max_filter_shift; }
             set
             {
-                max_filter_shift = value;
+                _max_filter_shift = value;
+                clampFilterShift(1);
                 UpdateRX1Filters(radio.GetDSPRX(0, 0).RXFilterLow, radio.GetDSPRX(0, 0).RXFilterHigh, true);                
                 UpdateRX2Filters(radio.GetDSPRX(1, 0).RXFilterLow, radio.GetDSPRX(1, 0).RXFilterHigh, true);
             }
         }
 
-        private int max_filter_width = 10000;
+        private int _max_filter_width = 10000;
         public int MaxFilterWidth
         {
-            get { return max_filter_width; }
+            get { return _max_filter_width; }
             set
             {
-                max_filter_width = value;
+                _max_filter_width = value;
+                clampFilterMinMax(1);
+                clampFilterMinMax(2);
                 UpdateRX1Filters(radio.GetDSPRX(0, 0).RXFilterLow, radio.GetDSPRX(0, 0).RXFilterHigh, true);
                 UpdateRX2Filters(radio.GetDSPRX(1, 0).RXFilterLow, radio.GetDSPRX(1, 0).RXFilterHigh, true);
             }
@@ -16619,7 +16601,7 @@ namespace Thetis
             set
             {
                 value = Math.Max(1, value);
-                value = Math.Min(10000, value);
+                value = Math.Min(_max_filter_width, value);
                 ptbFilterWidth.Value = value;
                 ptbFilterWidth_Scroll(this.ptbFilterWidth, EventArgs.Empty);	// added
             }
@@ -16633,10 +16615,16 @@ namespace Thetis
             }
             set
             {
-                value = Math.Max(-1000, value);
-                value = Math.Min(1000, value);
-                ptbFilterShift.Value = value;
-                ptbFilterShift_Scroll(this.ptbFilterShift, EventArgs.Empty);
+                value = Math.Max(-_max_filter_shift, value);
+                value = Math.Min(_max_filter_shift, value);
+                if (ptbFilterShift.Value != value)
+                {
+                    ptbFilterShift.Value = value;
+                }
+                else
+                {
+                    ptbFilterShift_Scroll(this.ptbFilterShift, EventArgs.Empty);
+                }
             }
         }
 
@@ -18741,15 +18729,15 @@ namespace Thetis
             set { udRX2FilterHigh.Value = value; }
         }
 
-        public int FilterShiftValue
-        {
-            get { return ptbFilterShift.Value; }
-            set 
-            {
-                ptbFilterShift.Value = value;
-                ptbFilterShift_Scroll(this, EventArgs.Empty);
-            }
-        }
+        //public int FilterShiftValue
+        //{
+        //    get { return ptbFilterShift.Value; }
+        //    set 
+        //    {
+        //        ptbFilterShift.Value = value;
+        //        ptbFilterShift_Scroll(this, EventArgs.Empty);
+        //    }
+        //}
 
         private static List<Channel> channels_60m;
         public static List<Channel> Channels60m
@@ -33376,7 +33364,7 @@ namespace Thetis
         }
 
         //NOTCH MW0LGE
-        private Point drag_notch_start_point;
+        private Point _drag_notch_start_point;
         private double drag_notch_start_data = 0;
         private bool m_bDraggingNotch = false;
         private bool m_bDraggingNotchBW = false;
@@ -33405,7 +33393,7 @@ namespace Thetis
             }
 
             if (tmp < 0) tmp = 0;
-            if (tmp > max_filter_width) tmp = max_filter_width;
+            if (tmp > _max_filter_width) tmp = _max_filter_width;
 
             // check to see if outside frequency limits
             bool bOk = true;
@@ -33606,7 +33594,7 @@ namespace Thetis
                         {
                             // ok are we over the top of a notch?
                             // we pad it with 1pixel worth of hz to make it selectable at low zoom
-                            SelectedNotch = MNotchDB.NotchThatSurroundsFrequencyInBW(dCentreFreq, nL - max_filter_width, nH + max_filter_width, dVfo, HzInNPixels(1, nRX));
+                            SelectedNotch = MNotchDB.NotchThatSurroundsFrequencyInBW(dCentreFreq, nL - _max_filter_width, nH + _max_filter_width, dVfo, HzInNPixels(1, nRX));
                         }
                         else
                         {
@@ -33616,7 +33604,7 @@ namespace Thetis
                     else if (m_bDraggingNotch && nRX != 0)
                     {
                         // drag the whole notch
-                        double diff = PixelToHz(e.X, nRX) - PixelToHz(drag_notch_start_point.X, nRX);
+                        double diff = PixelToHz(e.X, nRX) - PixelToHz(_drag_notch_start_point.X, nRX);
 
                         //MW0LGE_21e XVTR
                         double f = drag_notch_start_data + diff;
@@ -33662,17 +33650,17 @@ namespace Thetis
                         double diff = 0;
                         if (m_BDragginNotchBWRightSide)
                         {
-                            diff = PixelToHz(e.X, nRX) - PixelToHz(drag_notch_start_point.X, nRX);
+                            diff = PixelToHz(e.X, nRX) - PixelToHz(_drag_notch_start_point.X, nRX);
                         }
                         else
                         {
-                            diff = PixelToHz(drag_notch_start_point.X, nRX) - PixelToHz(e.X, nRX);
+                            diff = PixelToHz(_drag_notch_start_point.X, nRX) - PixelToHz(e.X, nRX);
                         }
 
                         double tmp = drag_notch_start_data + (diff * 2); // we want double the diff, as we are doing 'both sides'
 
                         if (tmp < 0) tmp = 0;
-                        if (tmp > max_filter_width) tmp = max_filter_width;
+                        if (tmp > _max_filter_width) tmp = _max_filter_width;
 
                         //MW0LGE_21e XVTR
                         double tmpMin = min_freq;
@@ -34188,8 +34176,8 @@ namespace Thetis
                                 break;
                         }
 
-                        bool bOkToChangeRX1 = bOverRX1 && rx1_enabled && !rx1_click_tune_drag && !rx1_spectrum_drag && (rx1_dsp_mode != DSPMode.DRM && rx1_dsp_mode != DSPMode.SPEC) && !(_mox && (VFOATX || (RX2Enabled && VFOSplit))); //[2.10.1.0] MW0LGE prevent highlight when MOX
-                        bool bOkToChangeRX2 = bOverRX2 && rx2_enabled && !rx2_click_tune_drag && !rx2_spectrum_drag && (rx2_dsp_mode != DSPMode.DRM && rx2_dsp_mode != DSPMode.SPEC) && !(_mox && RX2Enabled && VFOBTX);
+                        bool bOkToChangeRX1 = bOverRX1 && rx1_enabled && !rx1_click_tune_drag && !rx1_spectrum_drag && (rx1_dsp_mode != DSPMode.DRM && rx1_dsp_mode != DSPMode.SPEC && rx1_dsp_mode != DSPMode.FM) && !(_mox && (VFOATX || (RX2Enabled && VFOSplit))); //[2.10.1.0] MW0LGE prevent highlight when MOX
+                        bool bOkToChangeRX2 = bOverRX2 && rx2_enabled && !rx2_click_tune_drag && !rx2_spectrum_drag && (rx2_dsp_mode != DSPMode.DRM && rx2_dsp_mode != DSPMode.SPEC && rx2_dsp_mode != DSPMode.FM) && !(_mox && RX2Enabled && VFOBTX);
 
                         if (bOkToChangeRX1 || bOkToChangeRX2)
                         {
@@ -34317,7 +34305,7 @@ namespace Thetis
                                 int diff = (int)(PixelToHz(e.X) - PixelToHz(whole_filter_start_x));
                                 int nLow = whole_filter_start_low + diff;
                                 int nHigh = whole_filter_start_high + diff;
-                                LimitFilterToSidebands(ref nLow, ref nHigh, 1, true);
+                                ConstrainFilter(ref nLow, ref nHigh, 1, true);
                                 UpdateRX1Filters(nLow, nHigh);
                             }
                             else if (rx1_sub_drag)
@@ -34377,9 +34365,9 @@ namespace Thetis
                                     new_high = radio.GetDSPRX(1, 0).RXFilterHigh;
 
                                 SelectRX2VarFilter(false, true);
-
+                                
                                 UpdateRX2Filters(new_low, new_high);
-
+                                
                                 //update VAR1 low to be new low
                                 rx2_filters[(int)rx2_dsp_mode].SetLow(Filter.VAR1, m_nLowOutRX2);
                                 //update VAR1 high to be current high
@@ -34393,7 +34381,7 @@ namespace Thetis
                                 int diff = (int)(PixelToHz(e.X, 2) - PixelToHz(whole_filter_start_x, 2));
                                 int nLow = whole_filter_start_low + diff;
                                 int nHigh = whole_filter_start_high + diff;
-                                LimitFilterToSidebands(ref nLow, ref nHigh, 2, true);
+                                ConstrainFilter(ref nLow, ref nHigh, 2, true);
                                 UpdateRX2Filters(nLow, nHigh);
                             }
                             else if (tx_high_filter_drag)
@@ -34889,7 +34877,7 @@ namespace Thetis
                         if (nRX != 0)
                         {
                             // the inital click point, delta is worked in mouse_move
-                            drag_notch_start_point = new Point(e.X, e.Y);
+                            _drag_notch_start_point = new Point(e.X, e.Y);
 
                             double dMouseVFO = 0;
                             double dCentreFreq = 0;
@@ -37350,80 +37338,71 @@ namespace Thetis
                 rx1_filters[(int)rx1_dsp_mode].SetHigh(rx1_filter, (int)udFilterHigh.Value);
         }
 
-        private void DoFilterShift(int shift, bool redraw)
+        //private void DoFilterShift(int shift, bool redraw)
+        //{
+        //    // VK6APH: Does the Filter Shift function, alters the filter low and high frequency values 
+        //    // as the Filter Shift slider is moved. We need to keep the last Filter Shift values
+        //    // that the variable filters use since, unlike the other filters, there are 
+        //    // no pre-set bandwidths that they can default to when the Filter Shift is 
+        //    // turned off. These values are stored in the public variables last_var1_shift and
+        //    // last_var2_shift. 
+        //    int IFShift;
+        //    int low;
+        //    int high;
+        //    int bandwidth;
+        //    int max_shift = 10000;		// needed when using variable filters so we can't exceed +/- 10kHz DSP limits
+
+        //    if (rx1_dsp_mode == DSPMode.SPEC ||
+        //        rx1_dsp_mode == DSPMode.DRM)
+        //        return;
+
+        //    bandwidth = (int)Math.Abs(udFilterHigh.Value - udFilterLow.Value); // calculate current filter bandwidth 
+
+        //    // set the maximum IF Shift depending on filter bandwidth in use 
+        //    if (bandwidth > 800)
+        //    {
+        //        ptbFilterShift.Maximum = 1000;  // max IF Shift +/- 1kHz for filters > 800Hz wide
+        //        ptbFilterShift.Minimum = -1000;
+        //    }
+        //    else
+        //    {
+        //        ptbFilterShift.Maximum = 500;	// max IF Shift +/- 500Hz for filters < 800Hz wide
+        //        ptbFilterShift.Minimum = -500;
+        //    }
+        //    // calculate how far the IF Shift slider has moved
+        //    // if we are using variable bandwidth filters need to use their last shift value
+        //    if (rx1_filter == Filter.VAR1)
+        //        IFShift = shift - last_var1_shift;
+        //    else if (rx1_filter == Filter.VAR2)
+        //        IFShift = shift - last_var2_shift;
+        //    else
+        //        IFShift = shift - last_filter_shift;
+
+        //    high = (int)Math.Min(udFilterHigh.Value + IFShift, max_shift);	// limit high shift to maximum value
+        //    low = (int)Math.Max(udFilterLow.Value + IFShift, -max_shift);	// limit low shift to maximum value
+
+        //    radio.GetDSPRX(0, 0).SetRXFilter(low, high);			// select new filters
+        //    udFilterLow.Value = low;						// display new low value 
+        //    udFilterHigh.Value = high;						// display new high value
+
+        //    // store the last IF Shift applied for use next time
+        //    if (rx1_filter == Filter.VAR1)
+        //        last_var1_shift = last_var1_shift + IFShift;
+        //    else if (rx1_filter == Filter.VAR2)
+        //        last_var2_shift = last_var2_shift + IFShift;
+        //    else
+        //        last_filter_shift = last_filter_shift + IFShift;
+        //    // show the IF Shift is active by setting the zero button colour
+        //    if (shift != 0)
+        //        btnFilterShiftReset.BackColor = button_selected_color;
+        //}
+        public bool ConstrainFilter(ref int nNewLow, ref int nNewHigh, int rx, bool filterShift = false)
         {
-            // VK6APH: Does the Filter Shift function, alters the filter low and high frequency values 
-            // as the Filter Shift slider is moved. We need to keep the last Filter Shift values
-            // that the variable filters use since, unlike the other filters, there are 
-            // no pre-set bandwidths that they can default to when the Filter Shift is 
-            // turned off. These values are stored in the public variables last_var1_shift and
-            // last_var2_shift. 
-            int IFShift;
-            int low;
-            int high;
-            int bandwidth;
-            int max_shift = 10000;		// needed when using variable filters so we can't exceed +/- 10kHz DSP limits
+            DSPMode dsp_mode = (rx == 1) ? rx1_dsp_mode : rx2_dsp_mode;
+            int original_low = nNewLow;
+            int original_high = nNewHigh;
 
-            if (rx1_dsp_mode == DSPMode.SPEC ||
-                rx1_dsp_mode == DSPMode.DRM)
-                return;
-
-            bandwidth = (int)Math.Abs(udFilterHigh.Value - udFilterLow.Value); // calculate current filter bandwidth 
-
-            // set the maximum IF Shift depending on filter bandwidth in use 
-            if (bandwidth > 800)
-            {
-                ptbFilterShift.Maximum = 1000;  // max IF Shift +/- 1kHz for filters > 800Hz wide
-                ptbFilterShift.Minimum = -1000;
-            }
-            else
-            {
-                ptbFilterShift.Maximum = 500;	// max IF Shift +/- 500Hz for filters < 800Hz wide
-                ptbFilterShift.Minimum = -500;
-            }
-            // calculate how far the IF Shift slider has moved
-            // if we are using variable bandwidth filters need to use their last shift value
-            if (rx1_filter == Filter.VAR1)
-                IFShift = shift - last_var1_shift;
-            else if (rx1_filter == Filter.VAR2)
-                IFShift = shift - last_var2_shift;
-            else
-                IFShift = shift - last_filter_shift;
-
-            high = (int)Math.Min(udFilterHigh.Value + IFShift, max_shift);	// limit high shift to maximum value
-            low = (int)Math.Max(udFilterLow.Value + IFShift, -max_shift);	// limit low shift to maximum value
-
-            radio.GetDSPRX(0, 0).SetRXFilter(low, high);			// select new filters
-            udFilterLow.Value = low;						// display new low value 
-            udFilterHigh.Value = high;						// display new high value
-
-            // store the last IF Shift applied for use next time
-            if (rx1_filter == Filter.VAR1)
-                last_var1_shift = last_var1_shift + IFShift;
-            else if (rx1_filter == Filter.VAR2)
-                last_var2_shift = last_var2_shift + IFShift;
-            else
-                last_filter_shift = last_filter_shift + IFShift;
-            // show the IF Shift is active by setting the zero button colour
-            if (shift != 0)
-                btnFilterShiftReset.BackColor = button_selected_color;
-        }
-        public void LimitFilterToSidebands(ref int nNewLow, ref int nNewHigh, int rx, bool filterShift = false)
-        {
-
-            //if (!m_bLimitFiltersToSidebands) return;
-
-            DSPMode dspMode;
-            if (rx == 1)
-            {
-                dspMode = rx1_dsp_mode;
-            }
-            else
-            {
-                dspMode = rx2_dsp_mode;
-            }
-
-            switch (dspMode)
+            switch (dsp_mode)
             {
                 case DSPMode.LSB:
                 case DSPMode.DIGL:
@@ -37433,15 +37412,15 @@ namespace Thetis
                         if (filterShift) nNewLow -= nNewHigh;
                         nNewHigh = 0;
                     }
-                    if (nNewLow < -max_filter_shift)
+                    if (nNewLow < -_max_filter_shift)
                     {
-                        int n = -max_filter_shift - nNewLow;
+                        int n = -_max_filter_shift - nNewLow;
                         nNewLow += n;
                         if (filterShift) nNewHigh += n;
                     }
-                    if (nNewHigh > max_filter_shift)
+                    if (nNewHigh > _max_filter_shift)
                     {
-                        int n = nNewHigh - max_filter_shift;
+                        int n = nNewHigh - _max_filter_shift;
                         nNewHigh -= n;
                         if (filterShift) nNewLow -= n;
                     }
@@ -37454,15 +37433,15 @@ namespace Thetis
                         if (filterShift) nNewHigh += nNewLow * -1;
                         nNewLow = 0;
                     }
-                    if (nNewLow < -max_filter_shift)
+                    if (nNewLow < -_max_filter_shift)
                     {
-                        int n = -max_filter_shift - nNewLow;
+                        int n = -_max_filter_shift - nNewLow;
                         nNewLow += n;
                         if (filterShift) nNewHigh += n;
                     }
-                    if (nNewHigh > max_filter_shift)
+                    if (nNewHigh > _max_filter_shift)
                     {
-                        int n = nNewHigh - max_filter_shift;
+                        int n = nNewHigh - _max_filter_shift;
                         nNewHigh -= n;
                         if (filterShift) nNewLow -= n;
                     }
@@ -37481,15 +37460,15 @@ namespace Thetis
                         if (filterShift) nNewLow += nNewHigh * -1;
                         nNewHigh = 0;
                     }
-                    if (nNewLow < -max_filter_shift)
+                    if (nNewLow < -_max_filter_shift)
                     {
-                        int n = -max_filter_shift - nNewLow;
+                        int n = -_max_filter_shift - nNewLow;
                         nNewLow += n;
                         if (filterShift) nNewHigh += n;
                     }
-                    if (nNewHigh > max_filter_shift)
+                    if (nNewHigh > _max_filter_shift)
                     {
-                        int n = nNewHigh - max_filter_shift;
+                        int n = nNewHigh - _max_filter_shift;
                         nNewHigh -= n;
                         if (filterShift) nNewLow -= n;
                     }
@@ -37497,13 +37476,24 @@ namespace Thetis
                 case DSPMode.FM:
                     break;
             }
+
+            if (dsp_mode != DSPMode.FM)
+            {
+                if (nNewLow < -_max_filter_width) nNewLow = -_max_filter_width;
+                if (nNewLow > _max_filter_width) nNewLow = _max_filter_width;
+                if (nNewHigh > _max_filter_width) nNewHigh = _max_filter_width;
+                if (nNewHigh < -_max_filter_width) nNewHigh = -_max_filter_width;
+            }
+
+            return (nNewLow != original_low) || (nNewHigh != original_high);
         }
+        private bool _ignore_filter_shift_update = false;
         private int _oldFilterShiftCentre = -1;
         private void ptbFilterShift_Scroll(object sender, System.EventArgs e)
         {
-            MouseEventArgs mouseEvent = e as MouseEventArgs;
-            bool bScrollUp = mouseEvent != null ? mouseEvent.Delta >= 0 : false;
+            if (rx1_dsp_mode == DSPMode.DRM || rx1_dsp_mode == DSPMode.SPEC || rx1_dsp_mode == DSPMode.FM) return; // unable to shift in these modes
 
+            _ignore_filter_shift_update = true;
             SelectRX1VarFilter();
 
             int bw = (int)udFilterHigh.Value - (int)udFilterLow.Value;
@@ -37531,36 +37521,40 @@ namespace Thetis
                     break;
             }
 
-            int adjusted_max = max_filter_shift;
+            int adjusted_max = _max_filter_shift;
             if (default_center > 0)
             {
                 if (ptbFilterShift.Value > 0)
                 {
-                    adjusted_max = Math.Min(max_filter_shift, 10000 - (Math.Abs(default_center) + bw / 2));
+                    adjusted_max = Math.Min(_max_filter_shift, _max_filter_shift - (Math.Abs(default_center) + bw / 2));
                 }
             }
             else if (default_center < 0)
             {
                 if (ptbFilterShift.Value < 0)
                 {
-                    adjusted_max = Math.Min(max_filter_shift, 10000 - (Math.Abs(default_center) + bw / 2));
+                    adjusted_max = Math.Min(_max_filter_shift, _max_filter_shift - (Math.Abs(default_center) + bw / 2));
                 }
             }
             else //default_center == 0
             {
-                adjusted_max = Math.Min(max_filter_shift, 10000 - bw / 2);
+                adjusted_max = Math.Min(_max_filter_shift, _max_filter_shift - bw / 2);
             }
 
             int range = ptbFilterShift.Maximum - ptbFilterShift.Minimum;
             int new_center = default_center + (int)((float)ptbFilterShift.Value / (range / 2) * adjusted_max);
 
-            if (new_center == _oldFilterShiftCentre) return; // if the new_center hasnt changed, ignore it MW0LGE_[2.9.0.6]
+            if (new_center == _oldFilterShiftCentre)  // if the new_center hasnt changed, ignore it MW0LGE_[2.9.0.6]
+            {
+                _ignore_filter_shift_update = false;
+                return;
+            }
             _oldFilterShiftCentre = new_center;
 
             // stop filter moving over 0 MW0LGE_21k9
             int nNewLow = new_center - bw / 2;
             int nNewHigh = new_center + bw / 2;
-            LimitFilterToSidebands(ref nNewLow, ref nNewHigh, 1, true);
+            ConstrainFilter(ref nNewLow, ref nNewHigh, 1, true);
 
             UpdateRX1Filters(nNewLow, nNewHigh);
 
@@ -37570,10 +37564,13 @@ namespace Thetis
             {
                 ptbFilterShift.Focus();
             }
+            _ignore_filter_shift_update = false;
         }
 
         private void ptbFilterShift_Update(int low, int high)
         {
+            if (_ignore_filter_shift_update) return;
+
             int bw = (int)udFilterHigh.Value - (int)udFilterLow.Value;
             int default_center = 0;
             int current_center = (low + high) / 2;
@@ -37600,24 +37597,24 @@ namespace Thetis
                     break;
             }
 
-            int adjusted_max = max_filter_shift;
+            int adjusted_max = _max_filter_shift;
             if (default_center > 0)
             {
                 if (current_center > default_center)
                 {
-                    adjusted_max = Math.Min(max_filter_shift, 10000 - (Math.Abs(default_center) + bw / 2));
+                    adjusted_max = Math.Min(_max_filter_shift, _max_filter_shift - (Math.Abs(default_center) + bw / 2));
                 }
             }
             else if (default_center < 0)
             {
                 if (current_center < default_center)
                 {
-                    adjusted_max = Math.Min(max_filter_shift, 10000 - (Math.Abs(default_center) + bw / 2));
+                    adjusted_max = Math.Min(_max_filter_shift, _max_filter_shift - (Math.Abs(default_center) + bw / 2));
                 }
             }
             else //default_center == 0
             {
-                adjusted_max = Math.Min(max_filter_shift, 10000 - bw / 2);
+                adjusted_max = Math.Min(_max_filter_shift, _max_filter_shift - bw / 2);
             }
 
             int range = ptbFilterShift.Maximum - ptbFilterShift.Minimum;
@@ -37629,97 +37626,104 @@ namespace Thetis
         }
         private void btnFilterShiftReset_Click(object sender, System.EventArgs e)
         {
-            int bw = (int)udFilterHigh.Value - (int)udFilterLow.Value;
-            int low, high;
-            switch (rx1_dsp_mode)
-            {
-                case DSPMode.AM:
-                case DSPMode.SAM:
-                case DSPMode.FM:
-                case DSPMode.DSB:
-                    ptbFilterShift.Value = 0;
-                    ptbFilterShift_Scroll(this, EventArgs.Empty);
-                    break;
-                case DSPMode.USB:
-                    low = default_low_cut;
-                    high = low + bw;
-                    UpdateRX1Filters(low, high);
-                    break;
-                case DSPMode.CWU:
-                    low = cw_pitch - bw / 2;
-                    high = cw_pitch + bw / 2;
-                    if (low < 0)
-                    {
-                        int delta = -low;
-                        low += delta;
-                        high += delta;
-                    }
-                    else if (high > 10000)
-                    {
-                        int delta = high - 10000;
-                        high -= delta;
-                        low -= delta;
-                    }
-                    UpdateRX1Filters(low, high);
-                    break;
-                case DSPMode.DIGU:
-                    low = digu_click_tune_offset - bw / 2;
-                    high = digu_click_tune_offset + bw / 2;
-                    if (low < 0)
-                    {
-                        int delta = -low;
-                        low += delta;
-                        high += delta;
-                    }
-                    else if (high > 10000)
-                    {
-                        int delta = high - 10000;
-                        high -= delta;
-                        low -= delta;
-                    }
-                    UpdateRX1Filters(low, high);
-                    break;
-                case DSPMode.LSB:
-                    high = -default_low_cut;
-                    low = high - bw;
-                    UpdateRX1Filters(low, high);
-                    break;
-                case DSPMode.CWL:
-                    high = -cw_pitch + bw / 2;
-                    low = -cw_pitch - bw / 2;
-                    if (high > 0)
-                    {
-                        int delta = -high;
-                        low -= delta;
-                        high -= delta;
-                    }
-                    else if (low < -10000)
-                    {
-                        int delta = low + 10000;
-                        high += delta;
-                        low += delta;
-                    }
-                    UpdateRX1Filters(low, high);
-                    break;
-                case DSPMode.DIGL:
-                    high = -digl_click_tune_offset + bw / 2;
-                    low = -digl_click_tune_offset - bw / 2;
-                    if (high > 0)
-                    {
-                        int delta = -high;
-                        low -= delta;
-                        high -= delta;
-                    }
-                    else if (low < -10000)
-                    {
-                        int delta = low + 10000;
-                        high += delta;
-                        low += delta;
-                    }
-                    UpdateRX1Filters(low, high);
-                    break;
-            }
+            if (rx1_dsp_mode == DSPMode.DRM || rx1_dsp_mode == DSPMode.SPEC || rx1_dsp_mode == DSPMode.FM) return; // unable to shift in these modes
+
+            ptbFilterShift.Value = 0;
+            ptbFilterShift_Scroll(this, EventArgs.Empty);
             btnFilterShiftReset.BackColor = SystemColors.Control;	// make button grey
+
+            //refactor
+            //int bw = (int)udFilterHigh.Value - (int)udFilterLow.Value;
+            //int low, high;
+            //switch (rx1_dsp_mode)
+            //{
+            //    case DSPMode.AM:
+            //    case DSPMode.SAM:
+            //    case DSPMode.FM:
+            //    case DSPMode.DSB:
+            //        ptbFilterShift.Value = 0;
+            //        ptbFilterShift_Scroll(this, EventArgs.Empty);
+            //        break;
+            //    case DSPMode.USB:
+            //        low = default_low_cut;
+            //        high = low + bw;
+            //        UpdateRX1Filters(low, high);
+            //        break;
+            //    case DSPMode.CWU:
+            //        low = cw_pitch - bw / 2;
+            //        high = cw_pitch + bw / 2;
+            //        if (low < 0)
+            //        {
+            //            int delta = -low;
+            //            low += delta;
+            //            high += delta;
+            //        }
+            //        else if (high > 10000)
+            //        {
+            //            int delta = high - 10000;
+            //            high -= delta;
+            //            low -= delta;
+            //        }
+            //        UpdateRX1Filters(low, high);
+            //        break;
+            //    case DSPMode.DIGU:
+            //        low = digu_click_tune_offset - bw / 2;
+            //        high = digu_click_tune_offset + bw / 2;
+            //        if (low < 0)
+            //        {
+            //            int delta = -low;
+            //            low += delta;
+            //            high += delta;
+            //        }
+            //        else if (high > 10000)
+            //        {
+            //            int delta = high - 10000;
+            //            high -= delta;
+            //            low -= delta;
+            //        }
+            //        UpdateRX1Filters(low, high);
+            //        break;
+            //    case DSPMode.LSB:
+            //        high = -default_low_cut;
+            //        low = high - bw;
+            //        UpdateRX1Filters(low, high);
+            //        break;
+            //    case DSPMode.CWL:
+            //        high = -cw_pitch + bw / 2;
+            //        low = -cw_pitch - bw / 2;
+            //        if (high > 0)
+            //        {
+            //            int delta = -high;
+            //            low -= delta;
+            //            high -= delta;
+            //        }
+            //        else if (low < -10000)
+            //        {
+            //            int delta = low + 10000;
+            //            high += delta;
+            //            low += delta;
+            //        }
+            //        UpdateRX1Filters(low, high);
+            //        break;
+            //    case DSPMode.DIGL:
+            //        high = -digl_click_tune_offset + bw / 2;
+            //        low = -digl_click_tune_offset - bw / 2;
+            //        if (high > 0)
+            //        {
+            //            int delta = -high;
+            //            low -= delta;
+            //            high -= delta;
+            //        }
+            //        else if (low < -10000)
+            //        {
+            //            int delta = low + 10000;
+            //            high += delta;
+            //            low += delta;
+            //        }
+            //        UpdateRX1Filters(low, high);
+            //        break;
+            //}
+            //btnFilterShiftReset.BackColor = SystemColors.Control;	// make button grey
         }
 
         private FilterWidthMode current_filter_width_mode = FilterWidthMode.Linear;
@@ -37752,16 +37756,16 @@ namespace Thetis
             switch (current_filter_width_mode)
             {
                 case FilterWidthMode.Linear:
-                    new_val = ptbFilterWidth.Minimum + (int)((float)bw / max_filter_width * range);
+                    new_val = ptbFilterWidth.Minimum + (int)((float)bw / _max_filter_width * range);
                     break;
                 case FilterWidthMode.Log:
                     double max_log = Math.Log(ptbFilterWidth.Maximum);
-                    double temp = max_log - (float)bw / max_filter_width * max_log;
+                    double temp = max_log - (float)bw / _max_filter_width * max_log;
                     new_val = ptbFilterWidth.Maximum - (int)Math.Pow(Math.E, temp);
                     break;
                 case FilterWidthMode.Log10:
                     max_log = Math.Log10(ptbFilterWidth.Maximum);
-                    temp = max_log - (float)bw / max_filter_width * max_log;
+                    temp = max_log - (float)bw / _max_filter_width * max_log;
                     new_val = ptbFilterWidth.Maximum - (int)Math.Pow(10, temp);
                     break;
             }
@@ -37771,28 +37775,25 @@ namespace Thetis
             ptbFilterWidth.Value = new_val;
         }
 
-        //-W2PA Remember the width when the Width slider last hit the image limit.  Used by ptbFilterWidth_Scroll.
-        private int _var1WidthAtLimit = 0;
-        private int Var1WidthAtLimit
-        {
-            get
-            {
-                return _var1WidthAtLimit;
-            }
-            set
-            {
-                _var1WidthAtLimit = value;
-            }
-        }
+        ////-W2PA Remember the width when the Width slider last hit the image limit.  Used by ptbFilterWidth_Scroll.
+        //private int _var1WidthAtLimit = 0;
+        //private int Var1WidthAtLimit
+        //{
+        //    get
+        //    {
+        //        return _var1WidthAtLimit;
+        //    }
+        //    set
+        //    {
+        //        _var1WidthAtLimit = value;
+        //    }
+        //}
 
-        private bool beyondLimit = false;
+        //private bool beyondLimit = false;
         private int _oldFilterBW = -1;
         private void ptbFilterWidth_Scroll(object sender, System.EventArgs e)
         {
-            if (rx1_dsp_mode == DSPMode.DRM || rx1_dsp_mode == DSPMode.SPEC)
-            {
-                return;  // no good in this mode 
-            }
+            if (rx1_dsp_mode == DSPMode.DRM || rx1_dsp_mode == DSPMode.SPEC || rx1_dsp_mode == DSPMode.FM) return; // unable to shift in these modes
 
             MouseEventArgs mouseEvent = e as MouseEventArgs;
             bool bScrollUp = mouseEvent != null ? mouseEvent.Delta >= 0 : false;
@@ -37800,36 +37801,37 @@ namespace Thetis
             SelectRX1VarFilter();
 
             int range = ptbFilterWidth.Maximum - ptbFilterWidth.Minimum;
-            int new_bw = 0;
+            int new_bw;
             double tmp = 0;
             switch (current_filter_width_mode)
             {
                 case FilterWidthMode.Linear:
-                    tmp = (float)(ptbFilterWidth.Value - ptbFilterWidth.Minimum) / range * max_filter_width;
+                    tmp = (float)(ptbFilterWidth.Value - ptbFilterWidth.Minimum) / range * _max_filter_width;
                     break;
                 case FilterWidthMode.Log:
                     double max_log = Math.Log(ptbFilterWidth.Maximum);
                     double temp = Math.Log(Math.Max((ptbFilterWidth.Maximum - ptbFilterWidth.Value), 1.0));
                     temp = max_log - temp;
-                    tmp = (float)(temp / max_log * max_filter_width);
+                    tmp = (float)(temp / max_log * _max_filter_width);
                     break;
                 case FilterWidthMode.Log10:
                     max_log = Math.Log10(ptbFilterWidth.Maximum);
                     temp = Math.Log10(Math.Max((ptbFilterWidth.Maximum - ptbFilterWidth.Value), 1.0));
                     temp = max_log - temp;
-                    tmp = (float)(temp / max_log * max_filter_width);
+                    tmp = (float)(temp / max_log * _max_filter_width);
                     break;
             }
-            tmp = bScrollUp ? Math.Ceiling(tmp + 0.5f) : Math.Ceiling(tmp - 0.5); // MW0LGE_[2.9.0.6]  fix for mouse wheel
+            tmp = bScrollUp ? Math.Ceiling(tmp + 0.5f) : Math.Ceiling(tmp - 0.5);
             new_bw = (int)tmp;
 
-            new_bw = Math.Max(new_bw, 10);
+            new_bw = Math.Max(new_bw, 10); //10 step minimum
 
-            if (new_bw == _oldFilterBW) return; // if the new_center hasnt changed, ignore it MW0LGE_[2.9.0.6]
+            if (new_bw == _oldFilterBW) return; // ignore if not changed
             _oldFilterBW = new_bw;
 
             int current_center = ((int)udFilterLow.Value + (int)udFilterHigh.Value) / 2;
             int low = 0, high = 0;
+
             switch (rx1_dsp_mode)
             {
                 case DSPMode.AM:
@@ -37838,19 +37840,6 @@ namespace Thetis
                 case DSPMode.DSB:
                     low = current_center - new_bw;
                     high = current_center + new_bw;
-                    if (rx1_dsp_mode != DSPMode.FM) //[2.10.3.4]MW0LGE bypass for FM
-                    {
-                        if (low < -max_filter_width)
-                        {
-                            low += (-max_filter_width - low);
-                            high += (-max_filter_width - low);
-                        }
-                        else if (high > max_filter_width)
-                        {
-                            high -= (high - max_filter_width);
-                            low -= (high - max_filter_width);
-                        }
-                    }
                     break;
                 case DSPMode.LSB:
                     high = -default_low_cut;
@@ -37858,51 +37847,8 @@ namespace Thetis
                     break;
                 case DSPMode.CWL:
                 case DSPMode.DIGL:
-                    if ((int)udFilterHigh.Value > 0) // If we're already starting out of bounds, suspend trying to stay on the correct side.
-                    {
-                        low = current_center - new_bw / 2;
-                        high = current_center + new_bw / 2;
-                        beyondLimit = true;
-                    }
-                    else
-                    {
-                        //-W2PA Stop shifting the passband when it hits the image limit, while allowing width to continue to increa                   
-                        if (!beyondLimit)
-                        {
-                            if ((current_center + new_bw / 2) < 0) // new bw doesn't put us beyond limit
-                            {
-                                low = current_center - new_bw / 2;
-                                high = current_center + new_bw / 2;
-                            }
-                            else  // new bw puts us beyond limit
-                            {
-                                Var1WidthAtLimit = Math.Abs(-current_center) * 2;
-                                beyondLimit = true;
-                                high = 0;
-                                low = -new_bw;
-                            }
-                        }
-                        else  // currently beyond limit
-                        {
-                            if (new_bw < Var1WidthAtLimit)  // new bw will go below limit
-                            {
-                                beyondLimit = false;
-                                low = current_center - new_bw / 2;
-                                high = current_center + new_bw / 2;
-                            }
-                            else  // new bw will still be above limit
-                            {
-                                high = 0;
-                                low = -new_bw;
-                            }
-                        }
-                    }
-
-                    if (low < -10000)
-                    {
-                        low = -10000;
-                        high = low + new_bw;
-                    }
+                    low = current_center - new_bw / 2;
+                    high = current_center + new_bw / 2;
                     break;
                 case DSPMode.USB:
                     low = default_low_cut;
@@ -37910,59 +37856,155 @@ namespace Thetis
                     break;
                 case DSPMode.CWU:
                 case DSPMode.DIGU:
-                    if ((int)udFilterLow.Value < 0) // If we're already starting out of bounds, suspend trying to stay on the correct side.
-                    {
-                        low = current_center - new_bw / 2;
-                        high = current_center + new_bw / 2;
-                        beyondLimit = true;
-                    }
-                    else
-                    {
-                        //-W2PA Stop shifting the passband when it hits the image limit, while allowing width to continue to increa                   
-                        if (!beyondLimit)
-                        {
-                            if ((current_center - new_bw / 2) > 0) // new bw doesn't put us beyond limit
-                            {
-                                low = current_center - new_bw / 2;
-                                high = current_center + new_bw / 2;
-                            }
-                            else  // new bw puts us beyond limit
-                            {
-                                Var1WidthAtLimit = Math.Abs(current_center) * 2;
-                                beyondLimit = true;
-                                low = 0;
-                                high = new_bw;
-                            }
-                        }
-                        else  // currently beyond limit
-                        {
-                            if (new_bw < Var1WidthAtLimit)  // new bw will go below limit
-                            {
-                                beyondLimit = false;
-                                low = current_center - new_bw / 2;
-                                high = current_center + new_bw / 2;
-                            }
-                            else  // new bw will still be above limit
-                            {
-                                low = 0;
-                                high = new_bw;
-                            }
-                        }
-                    }
-
-                    if (high > 10000)
-                    {
-                        high = 10000;
-                        low = high - new_bw;
-                    }
+                    low = current_center - new_bw / 2;
+                    high = current_center + new_bw / 2;
                     break;
             }
+
+            ConstrainFilter(ref low, ref high, 1, true);
             UpdateRX1Filters(low, high);
 
             if (sender.GetType() == typeof(PrettyTrackBar))
             {
                 ptbFilterWidth.Focus();
             }
+
+            //refactor
+            //int current_center = ((int)udFilterLow.Value + (int)udFilterHigh.Value) / 2;
+            //int low = 0, high = 0;
+            //switch (rx1_dsp_mode)
+            //{
+            //    case DSPMode.AM:
+            //    case DSPMode.SAM:
+            //    case DSPMode.FM:
+            //    case DSPMode.DSB:
+            //        low = current_center - new_bw;
+            //        high = current_center + new_bw;
+            //        if (rx1_dsp_mode != DSPMode.FM) //[2.10.3.4]MW0LGE bypass for FM
+            //        {
+            //            if (low < -max_filter_width)
+            //            {
+            //                low += (-max_filter_width - low);
+            //                high += (-max_filter_width - low);
+            //            }
+            //            else if (high > max_filter_width)
+            //            {
+            //                high -= (high - max_filter_width);
+            //                low -= (high - max_filter_width);
+            //            }
+            //        }
+            //        break;
+            //    case DSPMode.LSB:
+            //        high = -default_low_cut;
+            //        low = high - new_bw;
+            //        break;
+            //    case DSPMode.CWL:
+            //    case DSPMode.DIGL:
+            //        if ((int)udFilterHigh.Value > 0) // If we're already starting out of bounds, suspend trying to stay on the correct side.
+            //        {
+            //            low = current_center - new_bw / 2;
+            //            high = current_center + new_bw / 2;
+            //            beyondLimit = true;
+            //        }
+            //        else
+            //        {
+            //            //-W2PA Stop shifting the passband when it hits the image limit, while allowing width to continue to increa                   
+            //            if (!beyondLimit)
+            //            {
+            //                if ((current_center + new_bw / 2) < 0) // new bw doesn't put us beyond limit
+            //                {
+            //                    low = current_center - new_bw / 2;
+            //                    high = current_center + new_bw / 2;
+            //                }
+            //                else  // new bw puts us beyond limit
+            //                {
+            //                    Var1WidthAtLimit = Math.Abs(-current_center) * 2;
+            //                    beyondLimit = true;
+            //                    high = 0;
+            //                    low = -new_bw;
+            //                }
+            //            }
+            //            else  // currently beyond limit
+            //            {
+            //                if (new_bw < Var1WidthAtLimit)  // new bw will go below limit
+            //                {
+            //                    beyondLimit = false;
+            //                    low = current_center - new_bw / 2;
+            //                    high = current_center + new_bw / 2;
+            //                }
+            //                else  // new bw will still be above limit
+            //                {
+            //                    high = 0;
+            //                    low = -new_bw;
+            //                }
+            //            }
+            //        }
+
+            //        if (low < -10000)
+            //        {
+            //            low = -10000;
+            //            high = low + new_bw;
+            //        }
+            //        break;
+            //    case DSPMode.USB:
+            //        low = default_low_cut;
+            //        high = low + new_bw;
+            //        break;
+            //    case DSPMode.CWU:
+            //    case DSPMode.DIGU:
+            //        if ((int)udFilterLow.Value < 0) // If we're already starting out of bounds, suspend trying to stay on the correct side.
+            //        {
+            //            low = current_center - new_bw / 2;
+            //            high = current_center + new_bw / 2;
+            //            beyondLimit = true;
+            //        }
+            //        else
+            //        {
+            //            //-W2PA Stop shifting the passband when it hits the image limit, while allowing width to continue to increa                   
+            //            if (!beyondLimit)
+            //            {
+            //                if ((current_center - new_bw / 2) > 0) // new bw doesn't put us beyond limit
+            //                {
+            //                    low = current_center - new_bw / 2;
+            //                    high = current_center + new_bw / 2;
+            //                }
+            //                else  // new bw puts us beyond limit
+            //                {
+            //                    Var1WidthAtLimit = Math.Abs(current_center) * 2;
+            //                    beyondLimit = true;
+            //                    low = 0;
+            //                    high = new_bw;
+            //                }
+            //            }
+            //            else  // currently beyond limit
+            //            {
+            //                if (new_bw < Var1WidthAtLimit)  // new bw will go below limit
+            //                {
+            //                    beyondLimit = false;
+            //                    low = current_center - new_bw / 2;
+            //                    high = current_center + new_bw / 2;
+            //                }
+            //                else  // new bw will still be above limit
+            //                {
+            //                    low = 0;
+            //                    high = new_bw;
+            //                }
+            //            }
+            //        }
+
+            //        if (high > 10000)
+            //        {
+            //            high = 10000;
+            //            low = high - new_bw;
+            //        }
+            //        break;
+            //}
+            //UpdateRX1Filters(low, high);
+
+            //if (sender.GetType() == typeof(PrettyTrackBar))
+            //{
+            //    ptbFilterWidth.Focus();
+            //}
         }
 
         private void tbFilterWidthScroll_newMode()
@@ -47691,8 +47733,8 @@ namespace Thetis
                 double dH = Math.Round(centreFrequency + ((bandWidth / 2) * 1e-6), 6);
 
                 // extend out to max filter, prevents overlays dropping off until they have moved off the display
-                dL -= max_filter_width * 1e-6;
-                dH += max_filter_width * 1e-6;
+                dL -= _max_filter_width * 1e-6;
+                dH += _max_filter_width * 1e-6;
                 //
 
                 BandStackEntry[] bsesArray = bsf.FindForFrequencyRange(dL, dH).ToArray();
@@ -50901,6 +50943,45 @@ namespace Thetis
             //used by multimeter to get the initial state for the TX waterfall gradient
             if (IsSetupFormNull) return null;
             return SetupForm.WaterfallTXGradient();
+        }
+
+        private void clampFilterMinMax(int rx, bool use_lowHigh = false, int low = 0, int high = 0)
+        {
+            bool old_state;
+            if (rx == 1)
+            {
+                old_state = _ignore_rx1_filter_update;
+                _ignore_rx1_filter_update = true;
+                udFilterLow.Minimum = use_lowHigh ? low : - MaxFilterWidth;
+                udFilterLow.Maximum = use_lowHigh ? high : MaxFilterWidth;
+                udFilterHigh.Minimum = use_lowHigh ? low : -MaxFilterWidth;
+                udFilterHigh.Maximum = use_lowHigh ? high : MaxFilterWidth;
+                ptbFilterWidth.Minimum = use_lowHigh ? low : -MaxFilterWidth;
+                ptbFilterWidth.Maximum = use_lowHigh ? high : MaxFilterWidth;
+                _ignore_rx1_filter_update = old_state;
+            }
+            else if (rx == 2)
+            {
+                old_state = _ignore_rx2_filter_update;
+                _ignore_rx2_filter_update = true;
+                udRX2FilterLow.Minimum = use_lowHigh ? low : -MaxFilterWidth;
+                udRX2FilterLow.Maximum = use_lowHigh ? high : MaxFilterWidth;
+                udRX2FilterHigh.Minimum = use_lowHigh ? low : -MaxFilterWidth;
+                udRX2FilterHigh.Maximum = use_lowHigh ? high : MaxFilterWidth;
+                _ignore_rx2_filter_update = old_state;
+            }
+        }
+        private void clampFilterShift(int rx)
+        {
+            bool old_state;
+            if (rx == 1) 
+            {
+                old_state = _ignore_rx1_filter_update;
+                _ignore_rx1_filter_update = true;
+                ptbFilterShift.Minimum = -MaxFilterShift;
+                ptbFilterShift.Maximum = MaxFilterShift;
+                _ignore_rx1_filter_update = old_state;
+            }
         }
     }
 

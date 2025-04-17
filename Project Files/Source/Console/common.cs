@@ -1699,5 +1699,14 @@ namespace Thetis
 
             return new Rectangle(new Point(newX, newY), formBounds.Size);
         }
+
+        [DllImport("kernel32.dll")]
+        private static extern bool SetProcessPriorityBoost(IntPtr processHandle, bool disablePriorityBoost);
+        public static void DisableForegroundPriorityBoost()
+        {
+            // Prevent Windows from downgrading app CPU time when it loses focus
+            Process process = Process.GetCurrentProcess();
+            SetProcessPriorityBoost(process.Handle, true);
+        }
     }
 }

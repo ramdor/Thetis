@@ -13377,7 +13377,7 @@ namespace Thetis
                     int high = (int)fHigh;
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
-                        _console.LimitFilterToSidebands(ref low, ref high, _owningmeter.RX, true);
+                        _console.ConstrainFilter(ref low, ref high, _owningmeter.RX, true);
                         if (_owningmeter.RX == 1)
                         {
                             _console.SelectRX1VarFilter(true, true);

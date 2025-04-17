@@ -2306,6 +2306,8 @@ namespace Thetis
             chkLogVoltsAmps_CheckedChanged(this, e);
 
             // Filter tab
+            udOptMaxFilterWidth_ValueChanged(this, e); //[2.10.3.9]MW0LGE
+            udOptMaxFilterShift_ValueChanged(this, e); //[2.10.3.9]MW0LGE
             udFilterDefaultLowCut_ValueChanged(this, e); //MW0LGE_21d5
             udRX2FilterDefaultLowCut_ValueChanged(this, e);
 
@@ -6642,6 +6644,7 @@ namespace Thetis
 
         private void udOptMaxFilterWidth_ValueChanged(object sender, System.EventArgs e)
         {
+            if (initializing) return;
             console.MaxFilterWidth = (int)udOptMaxFilterWidth.Value;
         }
 
@@ -6663,6 +6666,7 @@ namespace Thetis
 
         private void udOptMaxFilterShift_ValueChanged(object sender, System.EventArgs e)
         {
+            if (initializing) return;
             console.MaxFilterShift = (int)udOptMaxFilterShift.Value;
         }
 
