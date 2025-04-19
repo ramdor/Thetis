@@ -8200,13 +8200,16 @@ namespace Thetis
 
         private string AddLeadingZeros(int n)
 		{
-			string num = n.ToString();
+			//string num = n.ToString();
 
-			while(num.Length < parser.nAns)
-				num = num.Insert(0,"0");
-			
-			return num;
-		}
+			//while(num.Length < parser.nAns)
+			//	num = num.Insert(0,"0");
+
+			//return num;
+
+			//[2.10.3.9]MW0LGE refcator for speed
+            return n.ToString().PadLeft(parser.nAns, '0');
+        }
 
         private string JustSuffix(string s)
         {

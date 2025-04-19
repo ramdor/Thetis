@@ -50240,7 +50240,7 @@ namespace Thetis
             get { return _s9Frequency; }
             set {
                 _s9Frequency = value;
-                MeterManager.UpdateS9();
+                MeterManager.UpdateS9(_s9Frequency);
             }
         }
         #region AutoStartCode
