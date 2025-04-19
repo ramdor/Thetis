@@ -35,6 +35,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] spectrum gradient change. Now -150 to +10 dBm.  NOTE: all gradients will need to be adjusted
 - [change] cursor/peak readout colours moved to Appearance-General
 - [change] float precision maintained for display/meter calibration offsets
+- [change] limit setPan to filter display spectrum to 1/8 of framerate (~266ms update interval when vfo is changing causing the spectrum pan)
 - [fix] mic disable/enable button on front end will now disable the mic at startup if set as off. Note: its state is saved as part of the tx profile
 - [fix] fixed rare out of bounds issue in memory ScheduleUpdate
 - [fix] cat IF command fix where an error (O;) message would be returned if an unsupported TuneStep was in use. This bug has existed since 25/02/2007

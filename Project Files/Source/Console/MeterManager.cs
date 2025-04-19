@@ -34265,6 +34265,7 @@ namespace Thetis
                 _console.CWPitchChangedHandlers += OnCWPitchChanged;
                 _console.ModeChangeHandlers += OnModeChanged;
                 _console.PowerChangeHanders += OnPowerChanged;
+                _console.CTUNChangedHandlers += OnCTUNChanged;
 
                 //get all the notches
                 lock (_notch_locker)
@@ -34562,6 +34563,7 @@ namespace Thetis
                 _console.CWPitchChangedHandlers -= OnCWPitchChanged;
                 _console.ModeChangeHandlers -= OnModeChanged;
                 _console.PowerChangeHanders -= OnPowerChanged;
+                _console.CTUNChangedHandlers -= OnCTUNChanged;
             }
 
             List<int> ids = _mini_spec.Keys.ToList();
@@ -34580,6 +34582,14 @@ namespace Thetis
                     clsMiniSpec mrx = kvp.Value;
                     mrx.ClearData();
                 }
+            }
+        }
+        private static void OnCTUNChanged(int rx, bool oldCTUN, bool newCTUN, Band band)
+        {
+            foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Value.RX == rx))
+            {
+                clsMiniSpec mrx = kvp.Value;
+                mrx.Ctun = newCTUN;
             }
         }
         private static void OnModeChanged(int rx, DSPMode oldMode, DSPMode newMode, Band oldBand, Band newBand)
@@ -34733,11 +34743,19 @@ namespace Thetis
 
             private int _cw_pitch;
             private DSPMode _mode;
+            private bool _ctun;
 
             private bool _sub_receiver;
 
             private readonly object _data_lock = new object();
             private readonly object _new_data_lock = new object();
+
+            //set pan rate limit, 1/8 of frame rate
+            private readonly Stopwatch _pan_stopwatch = Stopwatch.StartNew();
+            private System.Threading.Timer _pan_final_timer;
+            private bool _pan_pending;
+            private readonly object _pan_lock = new object();
+            //
 
             public clsMiniSpec(int rx, int id, bool sub_receiver, Console console)
             {
@@ -34751,6 +34769,7 @@ namespace Thetis
                 _max_filter_width = _console.MaxFilterWidth;
                 _mode = _rx == 1 ? _console.RX1DSPMode : _console.RX2DSPMode;
                 _cw_pitch = _console.CWPitch;
+                _ctun = _rx == 1 ? _console.ClickTuneDisplay : _console.ClickTuneRX2Display;
 
                 _centre_freq = _rx == 1 ? _console.CentreFrequency : _console.CentreRX2Frequency;
                 _rx_frequency = _rx == 1 ? _console.VFOAFreq : _console.VFOBFreq;
@@ -34839,6 +34858,13 @@ namespace Thetis
                 set
                 {
                     _mode = value;
+                }
+            }
+            public bool Ctun
+            {
+                set
+                {
+                    _ctun = value;
                 }
             }
             public int CWPitchOffset
@@ -35142,16 +35168,8 @@ namespace Thetis
 
                     if (!_mox)
                     {
-                        bool clickTune = _rx == 1 ? _console.ClickTuneDisplay : _console.ClickTuneRX2Display;
-                        if (!clickTune)
-                        {
-                            //if ctun is off, 0.5 is the centre, always
-                            _spec.PanSlider = 0.5;
-                        }
-                        else
-                        {
-                            setPan();
-                        }
+                        //setPan();
+                        rateLimitSetPan();
                     }
                 }
             }
@@ -35166,7 +35184,7 @@ namespace Thetis
 
                     if (_mox)
                     {
-                        bool clickTune = _rx == 1 ? _console.ClickTuneDisplay : _console.ClickTuneRX2Display;
+                        //bool clickTune = _rx == 1 ? _console.ClickTuneDisplay : _console.ClickTuneRX2Display;
                         //CTUN does not play a part in tx
                         //if (!clickTune)
                         //{
@@ -35175,45 +35193,93 @@ namespace Thetis
                         //}
                         //else
                         //{
-                            setPan();
+                            //setPan();
+                            rateLimitSetPan();
                         //}
                     }
                 }
             }
+            // rate limit setPan() to 1/8 frame rate
+            public void rateLimitSetPan()
+            {
+                lock (_pan_lock)
+                {
+                    long limit = 1000 / (FRAME_RATE / 8);
+                    if (_pan_stopwatch.ElapsedMilliseconds >= limit)
+                    {
+                        _pan_stopwatch.Restart();
+                        setPan();
+                        _pan_pending = false;
+                        _pan_final_timer?.Dispose();
+                        _pan_final_timer = null;
+                    }
+                    else
+                    {
+                        _pan_pending = true;
+
+                        if (_pan_final_timer == null)
+                        {
+                            long delay = limit - _pan_stopwatch.ElapsedMilliseconds;
+                            _pan_final_timer = new System.Threading.Timer(_ => {
+                                lock (_pan_lock)
+                                {
+                                    if (_pan_pending)
+                                    {
+                                        _pan_stopwatch.Restart();
+                                        setPan();
+                                        _pan_pending = false;
+                                        _pan_final_timer.Dispose();
+                                        _pan_final_timer = null;
+                                    }
+                                }
+                            }, null, delay, Timeout.Infinite);
+                        }
+                    }
+                }
+            }
+            //
             private void setPan()
             {
-                int centre_freq_hz = (int)(_centre_freq * 1e6);
-
-                int freq_hz;
-                if (_mox)
+                if (!_mox && !_ctun)
                 {
-                    freq_hz = (int)(_tx_frequency * 1e6);
+                    //if ctun is off, 0.5 is the centre, always
+                    _spec.PanSlider = 0.5;
                 }
                 else
                 {
-                    freq_hz = (int)(_rx_frequency * 1e6);
-                }
+                    int centre_freq_hz = (int)(_centre_freq * 1e6);
 
-                (int spec_low_hz, int spec_high_hz) = _spec.GetFrequencyExtents(0, 0.5); // get the full extents using 0 zoom slider, 0.5 pan (centre)
+                    int freq_hz;
+                    if (_mox)
+                    {
+                        freq_hz = (int)(_tx_frequency * 1e6);
+                    }
+                    else
+                    {
+                        freq_hz = (int)(_rx_frequency * 1e6);
+                    }
 
-                int bw_hz = spec_high_hz - spec_low_hz;
-                int low_freq_hz = centre_freq_hz - (bw_hz / 2);
-                int high_freq_hz = centre_freq_hz + (bw_hz / 2);
+                    (int spec_low_hz, int spec_high_hz) = _spec.GetFrequencyExtents(0, 0.5); // get the full extents using 0 zoom slider, 0.5 pan (centre)
 
-                if (freq_hz >= low_freq_hz && freq_hz <= high_freq_hz)
-                {
-                    // the frequency as a ratio through the entire spctrum view, from 0 to 1.0
-                    //double ratio_in_source = (freq_hz - low_freq_hz) / (double)bw_hz;
+                    int bw_hz = spec_high_hz - spec_low_hz;
+                    int low_freq_hz = centre_freq_hz - (bw_hz / 2);
+                    int high_freq_hz = centre_freq_hz + (bw_hz / 2);
 
-                    // adjust for destination, we need to drag the edges in, so that the edge becomes centre
-                    // the limit edges of the source spectrum become centre in the mini spectrum
-                    low_freq_hz += _mox ? TX_BANDWIDTH : _max_filter_width;
-                    high_freq_hz -= _mox ? TX_BANDWIDTH : _max_filter_width;
-                    bw_hz = high_freq_hz - low_freq_hz;
+                    if (freq_hz >= low_freq_hz && freq_hz <= high_freq_hz)
+                    {
+                        // the frequency as a ratio through the entire spctrum view, from 0 to 1.0
+                        //double ratio_in_source = (freq_hz - low_freq_hz) / (double)bw_hz;
 
-                    double ratio_in_dest = (freq_hz - low_freq_hz) / (double)bw_hz;
+                        // adjust for destination, we need to drag the edges in, so that the edge becomes centre
+                        // the limit edges of the source spectrum become centre in the mini spectrum
+                        low_freq_hz += _mox ? TX_BANDWIDTH : _max_filter_width;
+                        high_freq_hz -= _mox ? TX_BANDWIDTH : _max_filter_width;
+                        bw_hz = high_freq_hz - low_freq_hz;
 
-                    _spec.PanSlider = ratio_in_dest;
+                        double ratio_in_dest = (freq_hz - low_freq_hz) / (double)bw_hz;
+
+                        _spec.PanSlider = ratio_in_dest;
+                    }
                 }
             }
             private void zoom()
@@ -35252,7 +35318,8 @@ namespace Thetis
                     double rounded = Math.Round(value, 6);
                     if (rounded == _centre_freq) return;
                     _centre_freq = rounded;
-                    setPan();
+                    //setPan();
+                    rateLimitSetPan();
                 }
             }
         }
