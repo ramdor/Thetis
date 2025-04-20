@@ -5059,6 +5059,9 @@ namespace Thetis
                 _scales_calibKeys = new float[count];
                 _scales_calibValues = new PointF[count];
                 int i = 0;
+
+                //note we need this prefilled array to be ordered/sorted otherwise the binary search will not be valid if item not found
+                //ie: it wont return closest
                 foreach (KeyValuePair<float, PointF> kvp in ScaleCalibration.OrderBy(p => p.Key))
                 {
                     _scales_calibKeys[i] = kvp.Key;
@@ -32071,21 +32074,19 @@ namespace Thetis
                 PointF pHigh = vals[highIdx];
                 float vLow = keys[lowIdx];
                 float vHigh = keys[highIdx];
+                bool singlePoint = lowIdx == highIdx;
                 float rangeX = mi._scales_maxX - mi._scales_minX;
                 float rangeY = mi._scales_maxY - mi._scales_minY;
 
-                float interpX = exact
+                float interpX = singlePoint
                     ? pLow.X
                     : pLow.X + (pHigh.X - pLow.X) * ((value - vLow) / (vHigh - vLow));
-                float interpY = exact
+                float interpY = singlePoint
                     ? pLow.Y
                     : pLow.Y + (pHigh.Y - pLow.Y) * ((value - vLow) / (vHigh - vLow));
 
                 percX = rangeX > 0f ? (interpX - mi._scales_minX) / rangeX : 0f;
                 percY = rangeY > 0f ? (interpY - mi._scales_minY) / rangeY : 0f;
-                percX = (float)Math.Round(percX, 3);
-                percY = (float)Math.Round(percY, 3);
-
                 min = new PointF(mi._scales_minX, mi._scales_minY);
                 max = new PointF(mi._scales_maxX, mi._scales_maxY);
 
