@@ -4214,6 +4214,8 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.pnlP2_adcs = new System.Windows.Forms.PanelTS();
+            this.pnlP1_adcs = new System.Windows.Forms.PanelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -5279,6 +5281,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
+            this.pnlP2_adcs.SuspendLayout();
+            this.pnlP1_adcs.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -12997,24 +13001,8 @@
             // tpADC
             // 
             this.tpADC.BackColor = System.Drawing.SystemColors.Control;
-            this.tpADC.Controls.Add(this.lblP2assignment);
-            this.tpADC.Controls.Add(this.grpP1DDC6ADC);
-            this.tpADC.Controls.Add(this.grpDDC6ADC);
-            this.tpADC.Controls.Add(this.lblP1assignment);
-            this.tpADC.Controls.Add(this.grpP1DDC5ADC);
-            this.tpADC.Controls.Add(this.btnResetP2ADC);
-            this.tpADC.Controls.Add(this.grpDDC0ADC);
-            this.tpADC.Controls.Add(this.grpP1DDC4ADC);
-            this.tpADC.Controls.Add(this.grpDDC1ADC);
-            this.tpADC.Controls.Add(this.grpDDC5ADC);
-            this.tpADC.Controls.Add(this.grpP1DDC3ADC);
-            this.tpADC.Controls.Add(this.grpDDC2ADC);
-            this.tpADC.Controls.Add(this.grpDDC3ADC);
-            this.tpADC.Controls.Add(this.grpP1DDC2ADC);
-            this.tpADC.Controls.Add(this.grpDDC4ADC);
-            this.tpADC.Controls.Add(this.grpP1DDC0ADC);
-            this.tpADC.Controls.Add(this.grpP1DDC1ADC);
-            this.tpADC.Controls.Add(this.btnResetP1ADC);
+            this.tpADC.Controls.Add(this.pnlP1_adcs);
+            this.tpADC.Controls.Add(this.pnlP2_adcs);
             this.tpADC.Controls.Add(this.lblRxDDC6);
             this.tpADC.Controls.Add(this.lblRxDDC5);
             this.tpADC.Controls.Add(this.lblRxDDC4);
@@ -13032,7 +13020,7 @@
             // lblP2assignment
             // 
             this.lblP2assignment.Image = null;
-            this.lblP2assignment.Location = new System.Drawing.Point(29, 95);
+            this.lblP2assignment.Location = new System.Drawing.Point(3, 62);
             this.lblP2assignment.Name = "lblP2assignment";
             this.lblP2assignment.Size = new System.Drawing.Size(99, 50);
             this.lblP2assignment.TabIndex = 29;
@@ -13044,7 +13032,7 @@
             this.grpP1DDC6ADC.Controls.Add(this.radP1DDC6ADC2);
             this.grpP1DDC6ADC.Controls.Add(this.radP1DDC6ADC1);
             this.grpP1DDC6ADC.Controls.Add(this.radP1DDC6ADC0);
-            this.grpP1DDC6ADC.Location = new System.Drawing.Point(554, 233);
+            this.grpP1DDC6ADC.Location = new System.Drawing.Point(528, 3);
             this.grpP1DDC6ADC.Name = "grpP1DDC6ADC";
             this.grpP1DDC6ADC.Size = new System.Drawing.Size(60, 136);
             this.grpP1DDC6ADC.TabIndex = 19;
@@ -13095,7 +13083,7 @@
             this.grpDDC6ADC.Controls.Add(this.radDDC6ADC2);
             this.grpDDC6ADC.Controls.Add(this.radDDC6ADC1);
             this.grpDDC6ADC.Controls.Add(this.radDDC6ADC0);
-            this.grpDDC6ADC.Location = new System.Drawing.Point(555, 38);
+            this.grpDDC6ADC.Location = new System.Drawing.Point(529, 5);
             this.grpDDC6ADC.Name = "grpDDC6ADC";
             this.grpDDC6ADC.Size = new System.Drawing.Size(60, 136);
             this.grpDDC6ADC.TabIndex = 13;
@@ -13144,7 +13132,7 @@
             // lblP1assignment
             // 
             this.lblP1assignment.Image = null;
-            this.lblP1assignment.Location = new System.Drawing.Point(29, 290);
+            this.lblP1assignment.Location = new System.Drawing.Point(3, 60);
             this.lblP1assignment.Name = "lblP1assignment";
             this.lblP1assignment.Size = new System.Drawing.Size(99, 50);
             this.lblP1assignment.TabIndex = 16;
@@ -13156,7 +13144,7 @@
             this.grpP1DDC5ADC.Controls.Add(this.radP1DDC5ADC2);
             this.grpP1DDC5ADC.Controls.Add(this.radP1DDC5ADC1);
             this.grpP1DDC5ADC.Controls.Add(this.radP1DDC5ADC0);
-            this.grpP1DDC5ADC.Location = new System.Drawing.Point(484, 233);
+            this.grpP1DDC5ADC.Location = new System.Drawing.Point(458, 3);
             this.grpP1DDC5ADC.Name = "grpP1DDC5ADC";
             this.grpP1DDC5ADC.Size = new System.Drawing.Size(60, 136);
             this.grpP1DDC5ADC.TabIndex = 19;
@@ -13205,7 +13193,7 @@
             // btnResetP2ADC
             // 
             this.btnResetP2ADC.Image = null;
-            this.btnResetP2ADC.Location = new System.Drawing.Point(627, 95);
+            this.btnResetP2ADC.Location = new System.Drawing.Point(601, 62);
             this.btnResetP2ADC.Name = "btnResetP2ADC";
             this.btnResetP2ADC.Selectable = true;
             this.btnResetP2ADC.Size = new System.Drawing.Size(68, 37);
@@ -13219,7 +13207,7 @@
             this.grpDDC0ADC.Controls.Add(this.radDDC0ADC2);
             this.grpDDC0ADC.Controls.Add(this.radDDC0ADC1);
             this.grpDDC0ADC.Controls.Add(this.radDDC0ADC0);
-            this.grpDDC0ADC.Location = new System.Drawing.Point(134, 38);
+            this.grpDDC0ADC.Location = new System.Drawing.Point(108, 5);
             this.grpDDC0ADC.Name = "grpDDC0ADC";
             this.grpDDC0ADC.Size = new System.Drawing.Size(60, 136);
             this.grpDDC0ADC.TabIndex = 7;
@@ -13270,7 +13258,7 @@
             this.grpP1DDC4ADC.Controls.Add(this.radP1DDC4ADC2);
             this.grpP1DDC4ADC.Controls.Add(this.radP1DDC4ADC1);
             this.grpP1DDC4ADC.Controls.Add(this.radP1DDC4ADC0);
-            this.grpP1DDC4ADC.Location = new System.Drawing.Point(414, 233);
+            this.grpP1DDC4ADC.Location = new System.Drawing.Point(388, 3);
             this.grpP1DDC4ADC.Name = "grpP1DDC4ADC";
             this.grpP1DDC4ADC.Size = new System.Drawing.Size(60, 136);
             this.grpP1DDC4ADC.TabIndex = 19;
@@ -13321,7 +13309,7 @@
             this.grpDDC1ADC.Controls.Add(this.radDDC1ADC2);
             this.grpDDC1ADC.Controls.Add(this.radDDC1ADC1);
             this.grpDDC1ADC.Controls.Add(this.radDDC1ADC0);
-            this.grpDDC1ADC.Location = new System.Drawing.Point(204, 38);
+            this.grpDDC1ADC.Location = new System.Drawing.Point(178, 5);
             this.grpDDC1ADC.Name = "grpDDC1ADC";
             this.grpDDC1ADC.Size = new System.Drawing.Size(60, 136);
             this.grpDDC1ADC.TabIndex = 8;
@@ -13372,7 +13360,7 @@
             this.grpDDC5ADC.Controls.Add(this.radDDC5ADC2);
             this.grpDDC5ADC.Controls.Add(this.radDDC5ADC1);
             this.grpDDC5ADC.Controls.Add(this.radDDC5ADC0);
-            this.grpDDC5ADC.Location = new System.Drawing.Point(484, 38);
+            this.grpDDC5ADC.Location = new System.Drawing.Point(458, 5);
             this.grpDDC5ADC.Name = "grpDDC5ADC";
             this.grpDDC5ADC.Size = new System.Drawing.Size(60, 136);
             this.grpDDC5ADC.TabIndex = 12;
@@ -13423,7 +13411,7 @@
             this.grpP1DDC3ADC.Controls.Add(this.radP1DDC3ADC2);
             this.grpP1DDC3ADC.Controls.Add(this.radP1DDC3ADC1);
             this.grpP1DDC3ADC.Controls.Add(this.radP1DDC3ADC0);
-            this.grpP1DDC3ADC.Location = new System.Drawing.Point(344, 233);
+            this.grpP1DDC3ADC.Location = new System.Drawing.Point(318, 3);
             this.grpP1DDC3ADC.Name = "grpP1DDC3ADC";
             this.grpP1DDC3ADC.Size = new System.Drawing.Size(60, 136);
             this.grpP1DDC3ADC.TabIndex = 21;
@@ -13474,7 +13462,7 @@
             this.grpDDC2ADC.Controls.Add(this.radDDC2ADC2);
             this.grpDDC2ADC.Controls.Add(this.radDDC2ADC1);
             this.grpDDC2ADC.Controls.Add(this.radDDC2ADC0);
-            this.grpDDC2ADC.Location = new System.Drawing.Point(274, 38);
+            this.grpDDC2ADC.Location = new System.Drawing.Point(248, 5);
             this.grpDDC2ADC.Name = "grpDDC2ADC";
             this.grpDDC2ADC.Size = new System.Drawing.Size(60, 136);
             this.grpDDC2ADC.TabIndex = 9;
@@ -13525,7 +13513,7 @@
             this.grpDDC3ADC.Controls.Add(this.radDDC3ADC2);
             this.grpDDC3ADC.Controls.Add(this.radDDC3ADC1);
             this.grpDDC3ADC.Controls.Add(this.radDDC3ADC0);
-            this.grpDDC3ADC.Location = new System.Drawing.Point(344, 38);
+            this.grpDDC3ADC.Location = new System.Drawing.Point(318, 5);
             this.grpDDC3ADC.Name = "grpDDC3ADC";
             this.grpDDC3ADC.Size = new System.Drawing.Size(60, 136);
             this.grpDDC3ADC.TabIndex = 10;
@@ -13576,7 +13564,7 @@
             this.grpP1DDC2ADC.Controls.Add(this.radP1DDC2ADC2);
             this.grpP1DDC2ADC.Controls.Add(this.radP1DDC2ADC1);
             this.grpP1DDC2ADC.Controls.Add(this.radP1DDC2ADC0);
-            this.grpP1DDC2ADC.Location = new System.Drawing.Point(274, 233);
+            this.grpP1DDC2ADC.Location = new System.Drawing.Point(248, 3);
             this.grpP1DDC2ADC.Name = "grpP1DDC2ADC";
             this.grpP1DDC2ADC.Size = new System.Drawing.Size(60, 136);
             this.grpP1DDC2ADC.TabIndex = 20;
@@ -13627,7 +13615,7 @@
             this.grpDDC4ADC.Controls.Add(this.radDDC4ADC2);
             this.grpDDC4ADC.Controls.Add(this.radDDC4ADC1);
             this.grpDDC4ADC.Controls.Add(this.radDDC4ADC0);
-            this.grpDDC4ADC.Location = new System.Drawing.Point(414, 38);
+            this.grpDDC4ADC.Location = new System.Drawing.Point(388, 5);
             this.grpDDC4ADC.Name = "grpDDC4ADC";
             this.grpDDC4ADC.Size = new System.Drawing.Size(60, 136);
             this.grpDDC4ADC.TabIndex = 11;
@@ -13678,7 +13666,7 @@
             this.grpP1DDC0ADC.Controls.Add(this.radP1DDC0ADC2);
             this.grpP1DDC0ADC.Controls.Add(this.radP1DDC0ADC1);
             this.grpP1DDC0ADC.Controls.Add(this.radP1DDC0ADC0);
-            this.grpP1DDC0ADC.Location = new System.Drawing.Point(134, 233);
+            this.grpP1DDC0ADC.Location = new System.Drawing.Point(108, 3);
             this.grpP1DDC0ADC.Name = "grpP1DDC0ADC";
             this.grpP1DDC0ADC.Size = new System.Drawing.Size(60, 136);
             this.grpP1DDC0ADC.TabIndex = 18;
@@ -13729,7 +13717,7 @@
             this.grpP1DDC1ADC.Controls.Add(this.radP1DDC1ADC2);
             this.grpP1DDC1ADC.Controls.Add(this.radP1DDC1ADC1);
             this.grpP1DDC1ADC.Controls.Add(this.radP1DDC1ADC0);
-            this.grpP1DDC1ADC.Location = new System.Drawing.Point(204, 233);
+            this.grpP1DDC1ADC.Location = new System.Drawing.Point(178, 3);
             this.grpP1DDC1ADC.Name = "grpP1DDC1ADC";
             this.grpP1DDC1ADC.Size = new System.Drawing.Size(60, 136);
             this.grpP1DDC1ADC.TabIndex = 19;
@@ -13778,7 +13766,7 @@
             // btnResetP1ADC
             // 
             this.btnResetP1ADC.Image = null;
-            this.btnResetP1ADC.Location = new System.Drawing.Point(627, 290);
+            this.btnResetP1ADC.Location = new System.Drawing.Point(601, 60);
             this.btnResetP1ADC.Name = "btnResetP1ADC";
             this.btnResetP1ADC.Selectable = true;
             this.btnResetP1ADC.Size = new System.Drawing.Size(68, 37);
@@ -13791,7 +13779,7 @@
             // 
             this.lblRxDDC6.BackColor = System.Drawing.SystemColors.ControlDark;
             this.lblRxDDC6.Image = null;
-            this.lblRxDDC6.Location = new System.Drawing.Point(555, 160);
+            this.lblRxDDC6.Location = new System.Drawing.Point(547, 160);
             this.lblRxDDC6.Name = "lblRxDDC6";
             this.lblRxDDC6.Size = new System.Drawing.Size(59, 85);
             this.lblRxDDC6.TabIndex = 28;
@@ -13802,7 +13790,7 @@
             // 
             this.lblRxDDC5.BackColor = System.Drawing.SystemColors.ControlDark;
             this.lblRxDDC5.Image = null;
-            this.lblRxDDC5.Location = new System.Drawing.Point(484, 160);
+            this.lblRxDDC5.Location = new System.Drawing.Point(476, 160);
             this.lblRxDDC5.Name = "lblRxDDC5";
             this.lblRxDDC5.Size = new System.Drawing.Size(60, 85);
             this.lblRxDDC5.TabIndex = 27;
@@ -13813,7 +13801,7 @@
             // 
             this.lblRxDDC4.BackColor = System.Drawing.SystemColors.ControlDark;
             this.lblRxDDC4.Image = null;
-            this.lblRxDDC4.Location = new System.Drawing.Point(414, 160);
+            this.lblRxDDC4.Location = new System.Drawing.Point(406, 160);
             this.lblRxDDC4.Name = "lblRxDDC4";
             this.lblRxDDC4.Size = new System.Drawing.Size(60, 85);
             this.lblRxDDC4.TabIndex = 26;
@@ -13824,7 +13812,7 @@
             // 
             this.lblRxDDC3.BackColor = System.Drawing.SystemColors.ControlDark;
             this.lblRxDDC3.Image = null;
-            this.lblRxDDC3.Location = new System.Drawing.Point(344, 160);
+            this.lblRxDDC3.Location = new System.Drawing.Point(336, 160);
             this.lblRxDDC3.Name = "lblRxDDC3";
             this.lblRxDDC3.Size = new System.Drawing.Size(60, 85);
             this.lblRxDDC3.TabIndex = 25;
@@ -13835,7 +13823,7 @@
             // 
             this.lblRxDDC2.BackColor = System.Drawing.SystemColors.ControlDark;
             this.lblRxDDC2.Image = null;
-            this.lblRxDDC2.Location = new System.Drawing.Point(274, 160);
+            this.lblRxDDC2.Location = new System.Drawing.Point(266, 160);
             this.lblRxDDC2.Name = "lblRxDDC2";
             this.lblRxDDC2.Size = new System.Drawing.Size(60, 85);
             this.lblRxDDC2.TabIndex = 24;
@@ -13846,7 +13834,7 @@
             // 
             this.lblRxDDC1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.lblRxDDC1.Image = null;
-            this.lblRxDDC1.Location = new System.Drawing.Point(204, 160);
+            this.lblRxDDC1.Location = new System.Drawing.Point(196, 160);
             this.lblRxDDC1.Name = "lblRxDDC1";
             this.lblRxDDC1.Size = new System.Drawing.Size(60, 85);
             this.lblRxDDC1.TabIndex = 23;
@@ -13857,7 +13845,7 @@
             // 
             this.lblRxDDC0.BackColor = System.Drawing.SystemColors.ControlDark;
             this.lblRxDDC0.Image = null;
-            this.lblRxDDC0.Location = new System.Drawing.Point(134, 160);
+            this.lblRxDDC0.Location = new System.Drawing.Point(126, 160);
             this.lblRxDDC0.Name = "lblRxDDC0";
             this.lblRxDDC0.Size = new System.Drawing.Size(60, 85);
             this.lblRxDDC0.TabIndex = 22;
@@ -66930,6 +66918,42 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // pnlP2_adcs
+            // 
+            this.pnlP2_adcs.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlP2_adcs.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlP2_adcs.Controls.Add(this.lblP2assignment);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC0ADC);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC4ADC);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC6ADC);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC3ADC);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC2ADC);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC5ADC);
+            this.pnlP2_adcs.Controls.Add(this.btnResetP2ADC);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC1ADC);
+            this.pnlP2_adcs.Location = new System.Drawing.Point(19, 9);
+            this.pnlP2_adcs.Name = "pnlP2_adcs";
+            this.pnlP2_adcs.Size = new System.Drawing.Size(676, 148);
+            this.pnlP2_adcs.TabIndex = 112;
+            // 
+            // pnlP1_adcs
+            // 
+            this.pnlP1_adcs.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlP1_adcs.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC0ADC);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC6ADC);
+            this.pnlP1_adcs.Controls.Add(this.btnResetP1ADC);
+            this.pnlP1_adcs.Controls.Add(this.lblP1assignment);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC1ADC);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC5ADC);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC2ADC);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC4ADC);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC3ADC);
+            this.pnlP1_adcs.Location = new System.Drawing.Point(19, 248);
+            this.pnlP1_adcs.Name = "pnlP1_adcs";
+            this.pnlP1_adcs.Size = new System.Drawing.Size(676, 148);
+            this.pnlP1_adcs.TabIndex = 112;
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -68249,6 +68273,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
+            this.pnlP2_adcs.ResumeLayout(false);
+            this.pnlP1_adcs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -72466,5 +72492,7 @@
         private LabelTS labelTS428;
         private RadioButtonTS radMeterItemSettings_custom;
         private RadioButtonTS radMeterItemSettings;
+        private PanelTS pnlP2_adcs;
+        private PanelTS pnlP1_adcs;
     }
 }

@@ -86,6 +86,8 @@ namespace Thetis
         {
             InitializeComponent();
 
+            _original_pnlP1_adcs_location = pnlP1_adcs.Location;
+
             Common.DoubleBufferAll(this, true);
 
             MaximumSize = MinimumSize;
@@ -20851,8 +20853,6 @@ namespace Thetis
             }
         }
 
-        public static RadioProtocol RadioProtocolSelected { get; set; } = RadioProtocol.ETH;
-
         private void btnResetP2ADC_Click(object sender, EventArgs e)
         {
             switch (HardwareSpecific.Model)
@@ -21279,8 +21279,29 @@ namespace Thetis
             console.EnableControlDebug = chkShowControlDebug.Checked;
         }
 
+        private Point _original_pnlP1_adcs_location;
         public void UpdateDDCTab()
         {
+            // if we are connected, use current, else use selected
+            RadioProtocol protocol = NetworkIO.getHaveSync() == 1 ? NetworkIO.CurrentRadioProtocol : NetworkIO.RadioProtocolSelected;
+            switch (protocol)
+            {
+                case RadioProtocol.USB: //p1
+                    pnlP1_adcs.Location = pnlP2_adcs.Location; // move to the same spot
+                    pnlP1_adcs.Visible = true;
+                    pnlP2_adcs.Visible = false;
+                    break;
+                case RadioProtocol.ETH: //p2
+                    pnlP2_adcs.Visible = true;
+                    pnlP1_adcs.Visible = false;
+                    break;
+                default: // auto
+                    pnlP1_adcs.Location = _original_pnlP1_adcs_location;
+                    pnlP1_adcs.Visible = true;
+                    pnlP2_adcs.Visible = true;
+                    break;
+            }
+
             lblRxDDC0.Text = "";
             lblRxDDC1.Text = "";
             lblRxDDC2.Text = "";
@@ -21322,17 +21343,8 @@ namespace Thetis
                     LabelTS l = c as LabelTS;
                     if (l != null)
                     {
-                        if (l.Name.StartsWith("lblRxDDC") && l.Name.EndsWith(rx1.ToString()))
-                        {
-                            l.Text = "RX1";
-                            l.BackColor = SystemColors.ControlDark;
-                        }
-                        else if (l.Name.StartsWith("lblRxDDC") && l.Name.EndsWith(rx2.ToString()))
-                        {
-                            l.Text = "RX2";
-                            l.BackColor = SystemColors.ControlDark;
-                        }
-                        else if (l.Name.StartsWith("lblRxDDC") && l.Name.EndsWith(sync1.ToString()))
+                        //[2.10.3.9]MW0LGE show the syncs first
+                        if (l.Name.StartsWith("lblRxDDC") && l.Name.EndsWith(sync1.ToString()))
                         {
                             l.Text = "RX1 Sync1";
                             l.BackColor = SystemColors.ControlDark;
@@ -21340,6 +21352,16 @@ namespace Thetis
                         else if (l.Name.StartsWith("lblRxDDC") && l.Name.EndsWith(sync2.ToString()))
                         {
                             l.Text = "RX1 Sync2";
+                            l.BackColor = SystemColors.ControlDark;
+                        }
+                        else if (l.Name.StartsWith("lblRxDDC") && l.Name.EndsWith(rx1.ToString()))
+                        {
+                            l.Text = "RX1";
+                            l.BackColor = SystemColors.ControlDark;
+                        }
+                        else if (l.Name.StartsWith("lblRxDDC") && l.Name.EndsWith(rx2.ToString()))
+                        {
+                            l.Text = "RX2";
                             l.BackColor = SystemColors.ControlDark;
                         }
                         else if (l.Name.StartsWith("lblRxDDC") && l.Name.EndsWith(psrx.ToString()))
@@ -28563,17 +28585,14 @@ namespace Thetis
 
             if (radRadioProtocol1Select.Checked)
             {
-                RadioProtocolSelected = RadioProtocol.USB;
                 NetworkIO.RadioProtocolSelected = RadioProtocol.USB;
             }
             else if (radRadioProtocol2Select.Checked)
             {
-                RadioProtocolSelected = RadioProtocol.ETH;
                 NetworkIO.RadioProtocolSelected = RadioProtocol.ETH;
             }
             else if (radRadioProtocolAutoSelect.Checked)
             {
-                RadioProtocolSelected = RadioProtocol.Auto;
                 NetworkIO.RadioProtocolSelected = RadioProtocol.Auto;
             }
             else
@@ -28582,6 +28601,8 @@ namespace Thetis
                 radRadioProtocolAutoSelect.Checked = true;
                 return;
             }
+
+            UpdateDDCTab();
 
             InitAudioTab();
         }

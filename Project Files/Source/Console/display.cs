@@ -5080,7 +5080,8 @@ namespace Thetis
                     //float oldLinear = (float)Math.Pow(10f, m_fFFTBinAverageRX1 / 10f);
                     float oldLinear = FastPow10Raw(m_fFFTBinAverageRX1);
                     float newLinear = (linearAverage + oldLinear) / 2f;
-                    m_fFFTBinAverageRX1 = (float)(10f * Math.Log10(newLinear));
+                    float tmp = (float)(10f * Math.Log10(newLinear));
+                    if (!float.IsNaN(tmp)) m_fFFTBinAverageRX1 = tmp;
                 }
                 else
                 {
@@ -5114,7 +5115,8 @@ namespace Thetis
                     //float oldLinear = (float)Math.Pow(10f, m_fFFTBinAverageRX2 / 10f);
                     float oldLinear = FastPow10Raw(m_fFFTBinAverageRX2);
                     float newLinear = (linearAverage + oldLinear) / 2f;
-                    m_fFFTBinAverageRX2 = (float)(10f * Math.Log10(newLinear));
+                    float tmp = (float)(10f * Math.Log10(newLinear));
+                    if (!float.IsNaN(tmp)) m_fFFTBinAverageRX2 = tmp;
                 }
                 else
                 {
@@ -7519,11 +7521,14 @@ namespace Thetis
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static unsafe float FastPow10Shifted(float dBdiv10)
         {
+            if (dBdiv10 < -20 || dBdiv10 > 20) // mathematical limit calculated: ~ -38.2 to +38.5
+                return (float)Math.Pow(10.0, dBdiv10);
+
             int bits = (int)(dBdiv10 * Scale10) + Bias;
             float ret = *(float*)&bits;
 
             if (float.IsNaN(ret))
-                ret = (float)Math.Pow(dBdiv10, 10.0);
+                ret = (float)Math.Pow(10.0, dBdiv10);
 
             return ret;
         }
@@ -7531,12 +7536,15 @@ namespace Thetis
         // version that takes the raw dB value (no /10 at call site)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static unsafe float FastPow10Raw(float dB)
-        {
+        {            
+            if(dB < -200 || dB > 200)  // mathematical limit calculated: ~ -382.3 to +385.3
+                return (float)Math.Pow(10.0, dB / 10.0);
+
             int bits = (int)(dB * Scale) + Bias;
             float ret = *(float*)&bits;
 
             if (float.IsNaN(ret))
-                ret = (float)Math.Pow(dB / 10f, 10.0);
+                ret = (float)Math.Pow(10.0, dB / 10.0);
 
             return ret;
         }
