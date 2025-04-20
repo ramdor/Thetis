@@ -4915,8 +4915,10 @@ namespace Thetis
             internal float _scales_maxX;
             internal float _scales_minY;
             internal float _scales_maxY;
-            private Dictionary<float, clsPercCache> _percCache;
-            private Queue<float> _percCacheKey;
+
+            private const int MAX_PERC_CACHE_ENTRIES = 500;
+            private Dictionary<int, clsPercCache> _percCache;
+            private Queue<int> _percCacheKey;
             //
 
             private string _sId;
@@ -5004,8 +5006,8 @@ namespace Thetis
                 _bFadeOnTx = false;
                 _bPrimary = false;
                 _maxPower = CurrentPowerRating;//100f;
-                _percCache = new Dictionary<float, clsPercCache>();
-                _percCacheKey = new Queue<float>();
+                _percCache = new Dictionary<int, clsPercCache>(MAX_PERC_CACHE_ENTRIES + 1);
+                _percCacheKey = new Queue<int>(MAX_PERC_CACHE_ENTRIES + 1);
                 _updateStopwatch = new Stopwatch();
                 _fadeValue = 255;
                 _disabled = false;
@@ -5122,31 +5124,38 @@ namespace Thetis
                 get { return _disabled; }
                 set { _disabled = value; }
             }
+            //[2.10.30.9]MW0LGE this perc cache code totally refactored, and only caches to 2 decimal precision for the dB value, and is keyed on the int version of that
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void AddPerc(clsPercCache pc)
             {
-                if (_percCache.TryGetValue(pc._value, out _))
+                float f = pc._value * 100f;
+                int i = (int)(f + (f >= 0f ? 0.5f : -0.5f));
+                if (_percCache.TryGetValue(i, out _))
                     return;
-
-                _percCache[pc._value] = pc;
-                _percCacheKey.Enqueue(pc._value);
-
-                if (_percCache.Count > 500)
+                _percCache[i] = pc;
+                _percCacheKey.Enqueue(i);
+                if (_percCache.Count > MAX_PERC_CACHE_ENTRIES)
                 {
-                    float sOldestKey = _percCacheKey.Dequeue();
-                    _percCache.Remove(sOldestKey);
+                    int oldest_key = _percCacheKey.Dequeue();
+                    _percCache.Remove(oldest_key);
                 }
             }
+
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public clsPercCache GetPerc(float value)
             {
-                _percCache.TryGetValue(value, out clsPercCache cached);
+                float f = value * 100f;
+                int i = (int)(f + (f >= 0f ? 0.5f : -0.5f));
+                _percCache.TryGetValue(i, out clsPercCache cached);
                 return cached;
             }
+
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool HasPerc(float value)
             {
-                return _percCache.TryGetValue(value, out _);
+                float f = value * 100f;
+                int i = (int)(f + (f >= 0f ? 0.5f : -0.5f));
+                return _percCache.TryGetValue(i, out _);
             }
             //
             public string ID {
