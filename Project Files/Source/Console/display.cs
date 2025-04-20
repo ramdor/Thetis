@@ -5086,8 +5086,7 @@ namespace Thetis
                 {
                     m_fFFTBinAverageRX1 += m_bFastAttackNoiseFloorRX1 ? 3f : 1f;
                 }
-                if (m_fFFTBinAverageRX1 > 200) m_fFFTBinAverageRX1 = 200;
-                if (m_fFFTBinAverageRX1 < -200) m_fFFTBinAverageRX1 = -200;
+                m_fFFTBinAverageRX1 = m_fFFTBinAverageRX1.Clamp(-200f, 200f);
 
                 // so in attackTime period we need to have moved to where we want
                 int framesInAttackTime = m_bFastAttackNoiseFloorRX1 ? 0 : (int)((fps / 1000f) * (double)m_fAttackTimeInMSForRX1);
@@ -5121,8 +5120,7 @@ namespace Thetis
                 {
                     m_fFFTBinAverageRX2 += m_bFastAttackNoiseFloorRX2 ? 3f : 1f;
                 }
-                if (m_fFFTBinAverageRX2 > 200) m_fFFTBinAverageRX2 = 200;
-                if (m_fFFTBinAverageRX2 < -200) m_fFFTBinAverageRX2 = -200;
+                m_fFFTBinAverageRX2 = m_fFFTBinAverageRX2.Clamp(-200f, 200f);
 
                 // so in attackTime period we need to have moved to where we want
                 int framesInAttackTime = m_bFastAttackNoiseFloorRX2 ? 0 : (int)((fps / 1000f) * (double)m_fAttackTimeInMSForRX2);
@@ -7522,14 +7520,25 @@ namespace Thetis
         static unsafe float FastPow10Shifted(float dBdiv10)
         {
             int bits = (int)(dBdiv10 * Scale10) + Bias;
-            return *(float*)&bits;
+            float ret = *(float*)&bits;
+
+            if (float.IsNaN(ret))
+                ret = (float)Math.Pow(dBdiv10, 10.0);
+
+            return ret;
         }
-        // version that takes the raw dB value (no “/10” at call site)
+
+        // version that takes the raw dB value (no /10 at call site)
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static unsafe float FastPow10Raw(float dB)
         {
             int bits = (int)(dB * Scale) + Bias;
-            return *(float*)&bits;
+            float ret = *(float*)&bits;
+
+            if (float.IsNaN(ret))
+                ret = (float)Math.Pow(dB / 10f, 10.0);
+
+            return ret;
         }
 
         private static int drawPanadapterAndWaterfallGridDX2D(int nVerticalShift, int W, int H, int rx, bool bottom, out long left_edge, out long right_edge, bool bIsWaterfall = false)
