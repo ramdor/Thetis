@@ -7212,83 +7212,57 @@ namespace Thetis
                 }
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void drawLineDX2D(SharpDX.Direct2D1.Brush b, float x1, float y1, float x2, float y2, float strokeWidth = 1f)
         {
-            //0.5f's to move into 'centre' of desired pixel
             _d2dRenderTarget.DrawLine(new SharpDX.Vector2(x1, y1), new SharpDX.Vector2(x2, y2), b, strokeWidth);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void drawLineDX2D(SharpDX.Direct2D1.Brush b, float x1, float y1, float x2, float y2, StrokeStyle strokeStyle, float strokeWidth = 1f)
         {
-            //0.5f's to move into 'centre' of desired pixel
             _d2dRenderTarget.DrawLine(new SharpDX.Vector2(x1, y1), new SharpDX.Vector2(x2, y2), b, strokeWidth, strokeStyle);
         }
-        private static RectangleF _rectCache = new RectangleF();
-        private static Ellipse _elipseCache = new Ellipse();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void drawFillRectangleDX2D(SharpDX.Direct2D1.Brush b, float x, float y, float w, float h)
         {
-            //RectangleF rect = new RectangleF(x, y, w, h);
-            _rectCache.Left = x;
-            _rectCache.Top = y;
-            _rectCache.Width = w;
-            _rectCache.Height = h;
-            //_d2dRenderTarget.FillRectangle(rect, b);
-            _d2dRenderTarget.FillRectangle(_rectCache, b);
+            RectangleF rect = new RectangleF(x, y, w, h);
+            _d2dRenderTarget.FillRectangle(rect, b);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void drawRectangleDX2D(SharpDX.Direct2D1.Brush b, float x, float y, float w, float h)
         {
-            //RectangleF rect = new RectangleF(x, y, w, h);
-            _rectCache.Left = x;
-            _rectCache.Top = y;
-            _rectCache.Width = w;
-            _rectCache.Height = h;
-            //_d2dRenderTarget.DrawRectangle(rect, b);
-            _d2dRenderTarget.DrawRectangle(_rectCache, b);
+            RectangleF rect = new RectangleF(x, y, w, h);
+            _d2dRenderTarget.DrawRectangle(rect, b);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void drawElipseDX2D(SharpDX.Direct2D1.Brush b, float xMiddle, float yMiddle, float w, float h)
         {
-            //Ellipse e = new Ellipse(new SharpDX.Vector2(xMiddle, yMiddle), w / 2, h / 2);
-            _elipseCache.Point.X = xMiddle;
-            _elipseCache.Point.Y = yMiddle;
-            _elipseCache.RadiusX = w / 2;
-            _elipseCache.RadiusY = h / 2;
-            //_d2dRenderTarget.DrawEllipse(e, b);
-            _d2dRenderTarget.DrawEllipse(_elipseCache, b);
+            Ellipse e = new Ellipse(new SharpDX.Vector2(xMiddle, yMiddle), w / 2, h / 2);
+            _d2dRenderTarget.DrawEllipse(e, b);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void drawFillElipseDX2D(SharpDX.Direct2D1.Brush b, float xMiddle, float yMiddle, float w, float h)
         {
-            //Ellipse e = new Ellipse(new SharpDX.Vector2(xMiddle, yMiddle), w / 2, h / 2);
-            _elipseCache.Point.X = xMiddle;
-            _elipseCache.Point.Y = yMiddle;
-            _elipseCache.RadiusX = w / 2;
-            _elipseCache.RadiusY = h / 2;
-            //_d2dRenderTarget.FillEllipse(e, b);
-            _d2dRenderTarget.DrawEllipse(_elipseCache, b);
+            Ellipse e = new Ellipse(new SharpDX.Vector2(xMiddle, yMiddle), w / 2, h / 2);
+            _d2dRenderTarget.FillEllipse(e, b);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void drawRectangleDX2D(SharpDX.Direct2D1.Brush b, Rectangle r, float lineWidth = 1)
         {
-            //RectangleF rect = new RectangleF(r.X, r.Y, r.Width, r.Height);
-            _rectCache.Left = r.X;
-            _rectCache.Top = r.Y;
-            _rectCache.Width = r.Width;
-            _rectCache.Height = r.Height;
-            //_d2dRenderTarget.DrawRectangle(rect, b, lineWidth);
-            _d2dRenderTarget.DrawRectangle(_rectCache, b, lineWidth);
+            RectangleF rect = new RectangleF(r.X, r.Y, r.Width, r.Height);
+            _d2dRenderTarget.DrawRectangle(rect, b, lineWidth);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void drawFillRectangleDX2D(SharpDX.Direct2D1.Brush b, Rectangle r)
         {
-            //RectangleF rect = new RectangleF(r.X, r.Y, r.Width, r.Height);
-
-            _d2dRenderTarget.FillRectangle(_rectCache, b);
-        }        
+            RectangleF rect = new RectangleF(r.X, r.Y, r.Width, r.Height);
+            _d2dRenderTarget.FillRectangle(rect, b);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void drawStringDX2D(string s, SharpDX.DirectWrite.TextFormat tf, SharpDX.Direct2D1.Brush b, float x, float y)
         {
-            //RectangleF rect = new RectangleF(x, y, float.PositiveInfinity, float.PositiveInfinity);
-            _rectCache.Left = x;
-            _rectCache.Top = y;
-            _rectCache.Width = float.PositiveInfinity;
-            _rectCache.Height = float.PositiveInfinity;
-            //_d2dRenderTarget.DrawText(s, tf, rect, b, DrawTextOptions.None);
-            _d2dRenderTarget.DrawText(s, tf, _rectCache, b, DrawTextOptions.None);
+            RectangleF rect = new RectangleF(x, y, float.PositiveInfinity, float.PositiveInfinity);
+            _d2dRenderTarget.DrawText(s, tf, rect, b, DrawTextOptions.None);
         }
         private static void drawFilterOverlayDX2D(SharpDX.Direct2D1.Brush brush, int filter_left_x, int filter_right_x, int W, int H, int rx, int top, bool bottom, int nVerticalShfit)
         {
@@ -7318,20 +7292,27 @@ namespace Thetis
                 }
             }
         }
-        private static Dictionary<string, System.Drawing.SizeF> m_stringSizeCache = new Dictionary<string, System.Drawing.SizeF>();
-        private static Queue<string> _stringMeasureKeys = new Queue<string>();
-        
+
+        private const int MAX_STRING_CACHE_ENTRIES = 500;
+        private static readonly Dictionary<(string Text, string FontFamily, float Size), System.Drawing.SizeF> m_stringSizeCache = new Dictionary<(string Text, string FontFamily, float Size), System.Drawing.SizeF>(MAX_STRING_CACHE_ENTRIES + 1);
+        private static readonly Queue<(string Text, string FontFamily, float Size)> _stringMeasureKeys = new Queue<(string Text, string FontFamily, float Size)>(MAX_STRING_CACHE_ENTRIES + 1);
+
         private static System.Drawing.SizeF measureStringDX2D(string s, SharpDX.DirectWrite.TextFormat tf, bool cacheStringLength = false)
         {
             // keep cache of calced sizes as this is quite a slow process
-            string key;
 
+            (string Text, string FontFamily, float Size) key;
             if (cacheStringLength)
-                key = s.Length.ToString() + tf.FontFamilyName + tf.FontSize.ToString();
+            {
+                key = (s.Length.ToString(), tf.FontFamilyName, tf.FontSize);
+            }
             else
-                key = s + tf.FontFamilyName + tf.FontSize.ToString();
+            {
+                key = (s, tf.FontFamilyName, tf.FontSize);
+            }
 
-            if (m_stringSizeCache.ContainsKey(key)) return m_stringSizeCache[key];
+            if (m_stringSizeCache.TryGetValue(key, out SizeF cached))
+                return cached;
 
             SharpDX.DirectWrite.TextLayout layout = new SharpDX.DirectWrite.TextLayout(fontFactory, s, tf, float.PositiveInfinity, float.PositiveInfinity);
             System.Drawing.SizeF sz = new System.Drawing.SizeF(layout.Metrics.Width, layout.Metrics.Height);
@@ -7340,9 +7321,9 @@ namespace Thetis
 
             m_stringSizeCache.Add(key, sz);
             _stringMeasureKeys.Enqueue(key);
-            if (m_stringSizeCache.Count > 500)
+            if (m_stringSizeCache.Count > MAX_STRING_CACHE_ENTRIES)
             {
-                string oldKey = _stringMeasureKeys.Dequeue();
+                (string Text, string FontFamily, float Size) oldKey = _stringMeasureKeys.Dequeue();
                 m_stringSizeCache.Remove(oldKey); // [2.10.1.0] MW0LGE dictionary is not ordered
             }
 
@@ -10196,8 +10177,7 @@ namespace Thetis
 
         private static List<int> _spotLayerRightRX1 = new List<int>();
         private static List<int> _spotLayerRightRX2 = new List<int>();
-        private static Dictionary<Color, SharpDX.Direct2D1.Brush> _DX2Brushes = null;
-
+        private static readonly Dictionary<int, SharpDX.Direct2D1.Brush> _DX2Brushes = new Dictionary<int, SharpDX.Direct2D1.Brush>(256);
 
         private static int getSpotLayer(int rx, int leftX)
         {
@@ -10486,7 +10466,7 @@ namespace Thetis
         {
             if (!_bDX2Setup || _DX2Brushes == null) return;
 
-            foreach (KeyValuePair<Color, SharpDX.Direct2D1.Brush> kvp in _DX2Brushes)
+            foreach (KeyValuePair<int, SharpDX.Direct2D1.Brush> kvp in _DX2Brushes)
             {
                 SharpDX.Direct2D1.Brush b = kvp.Value;
                 Utilities.Dispose(ref b);
@@ -10494,7 +10474,6 @@ namespace Thetis
             }
 
             _DX2Brushes.Clear();
-            _DX2Brushes = null;
         }
         public static int CachedDXBrushes
         {
@@ -10504,23 +10483,29 @@ namespace Thetis
         {
             if (!_bDX2Setup) return null;
 
-            if (_DX2Brushes == null) _DX2Brushes = new Dictionary<Color, SharpDX.Direct2D1.Brush>();
+            int alpha = (replaceAlpha >= 0 && replaceAlpha <= 255) ? replaceAlpha : c.A;
+            int key = Color.FromArgb(alpha, c.R, c.G, c.B).ToArgb();
 
-            Color newC;
-            if (replaceAlpha >= 0 && replaceAlpha <= 255)
-                newC = Color.FromArgb(replaceAlpha, c.R, c.G, c.B); // override the alpha
-            else
-                newC = c;
+            SharpDX.Direct2D1.Brush existingBrush;
+            if (_DX2Brushes.TryGetValue(key, out existingBrush))
+            {
+                return existingBrush;
+            }
 
-            if (_DX2Brushes.ContainsKey(newC)) return _DX2Brushes[newC];
+            SharpDX.Mathematics.Interop.RawColor4 rawColor = new SharpDX.Mathematics.Interop.RawColor4(
+                (float)c.R / 255.0f,
+                (float)c.G / 255.0f,
+                (float)c.B / 255.0f,
+                (float)alpha / 255.0f
+            );
 
-            SolidBrush sb = new SolidBrush(newC);
-            SharpDX.Direct2D1.Brush b = convertBrush(sb);
-            sb.Dispose();
+            SolidColorBrush newBrush = new SharpDX.Direct2D1.SolidColorBrush(
+                _d2dRenderTarget,
+                rawColor
+            );
 
-            _DX2Brushes.Add(newC, b);
-
-            return b;
+            _DX2Brushes.Add(key, newBrush);
+            return newBrush;
         }
 
         private static bool _showTCISpots = false;

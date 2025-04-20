@@ -48,6 +48,7 @@ using System.Xml;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.IO.Ports;
+using System.Runtime.CompilerServices;
 
 //directX
 using SharpDX;
@@ -4906,8 +4907,17 @@ namespace Thetis
                 public PointF _min;
                 public PointF _max;
             }
+
+            //
+            internal float[] _scales_calibKeys;
+            internal PointF[] _scales_calibValues;
+            internal float _scales_minX;
+            internal float _scales_maxX;
+            internal float _scales_minY;
+            internal float _scales_maxY;
             private Dictionary<float, clsPercCache> _percCache;
             private Queue<float> _percCacheKey;
+            //
 
             private string _sId;
             private string _sParentId;
@@ -4921,7 +4931,6 @@ namespace Thetis
             private SizeF _size;  // 0-1,0-1
             private int _zOrder; // lower first
             private int _msUpdateInterval; //ms
-            private bool _update_always;
             private float _attackRatio; // 0f - 1f
             private float _decayRatio; // 0f - 1f
             private float _value;
@@ -4980,7 +4989,6 @@ namespace Thetis
                 _displayTopLeft.Y = _topLeft.Y;
                 _zOrder = 0;
                 _msUpdateInterval = 5000; //ms
-                _update_always = false;
                 _attackRatio = 0.8f;
                 _decayRatio = 0.2f;
                 _value = -200f;
@@ -5029,7 +5037,39 @@ namespace Thetis
                 _mouse_entered = false;
                 _mouseButtonDown = false;
                 _mouseButton = MouseButtons.None;
+
+                _scales_calibKeys = Array.Empty<float>();
+                _scales_calibValues = Array.Empty<PointF>();
+                _scales_minX = _scales_minY = _scales_maxX = _scales_maxY = 0f;
             }
+            public void PrepareCalibration()
+            {
+                //[2.10.3.9]MW0LGE order these once, pointless doing it every time we get a percentage !
+                if (ScaleCalibration == null || ScaleCalibration.Count == 0)
+                {
+                    _scales_calibKeys = Array.Empty<float>();
+                    _scales_calibValues = Array.Empty<PointF>();
+                    _scales_minX = _scales_minY = _scales_maxX = _scales_maxY = 0f;
+                    return;
+                }
+
+                int count = ScaleCalibration.Count;
+                _scales_calibKeys = new float[count];
+                _scales_calibValues = new PointF[count];
+                int i = 0;
+                foreach (KeyValuePair<float, PointF> kvp in ScaleCalibration.OrderBy(p => p.Key))
+                {
+                    _scales_calibKeys[i] = kvp.Key;
+                    _scales_calibValues[i] = kvp.Value;
+                    i++;
+                }
+                
+                _scales_minX = _scales_calibValues.Min(p => p.X);
+                _scales_maxX = _scales_calibValues.Max(p => p.X);
+                _scales_minY = _scales_calibValues.Min(p => p.Y);
+                _scales_maxY = _scales_calibValues.Max(p => p.Y);
+            }
+
             //public Guid GetMMIOGuid(int index)
             //{
             //    return _mmio_guid[index];
@@ -5082,27 +5122,33 @@ namespace Thetis
                 get { return _disabled; }
                 set { _disabled = value; }
             }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void AddPerc(clsPercCache pc)
             {
-                if (_percCache.ContainsKey(pc._value)) return;
+                if (_percCache.TryGetValue(pc._value, out _))
+                    return;
 
-                _percCache.Add(pc._value, pc);
+                _percCache[pc._value] = pc;
                 _percCacheKey.Enqueue(pc._value);
+
                 if (_percCache.Count > 500)
                 {
                     float sOldestKey = _percCacheKey.Dequeue();
                     _percCache.Remove(sOldestKey);
                 }
             }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public clsPercCache GetPerc(float value)
             {
-                if (!_percCache.ContainsKey(value)) return null;
-                return _percCache[value];
+                _percCache.TryGetValue(value, out clsPercCache cached);
+                return cached;
             }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool HasPerc(float value)
             {
-                return _percCache.ContainsKey(value);
+                return _percCache.TryGetValue(value, out _);
             }
+            //
             public string ID {
                 get { return _sId; }
                 set { _sId = value; }
@@ -16504,6 +16550,7 @@ namespace Thetis
             {
                 lock (_meterItemsLock)
                 {
+                    mi.PrepareCalibration(); // pre calc the scale ranges, if this meter item has any
                     _meterItems.Add(mi.ID, mi);
                 }
             }
@@ -31967,135 +32014,212 @@ namespace Thetis
             {
                 return rad * (180f / Math.PI);
             }
-            private void getPerc(clsMeterItem mi, float value, out float percX, out float percY, out PointF min, out PointF max)
+            private void getPerc(clsMeterItem mi, float rawValue, out float percX, out float percY, out PointF min, out PointF max)
             {
-                percX = 0;
-                percY = 0;
+                percX = 0f;
+                percY = 0f;
                 min = new PointF(0f, 0f);
                 max = new PointF(0f, 0f);
 
-                value = (float)Math.Round(value, 2); // NOTE: this will limit the finding of keys in the scale calibration below
-
-                // adjust for >= 30mhz
+                float value = (float)Math.Round(rawValue, 2);
                 if (mi.ReadingSource == Reading.SIGNAL_STRENGTH || mi.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
                     value += MeterManager.dbmOffsetForAboveS9Frequency(_rx);
-                // normalise to 100w
                 else if (mi.NormaliseTo100W)
-                {
-                    //value *= MeterManager.normalisePower();
-                    value *= (100 / mi.MaxPower);
-                }
-                // custom bar, will always have range 0-100 scale, so convert value
+                    value *= 100f / mi.MaxPower;
                 else if (mi.IsCustom)
                 {
-                    float clamped_value = Math.Max(mi.CustomMin, Math.Min(mi.CustomMax, value));
-                    float range = mi.CustomMax - mi.CustomMin;
-                    value = range != 0 ? (clamped_value - mi.CustomMin) / range * 100f : 0;
+                    float c = Math.Max(mi.CustomMin, Math.Min(mi.CustomMax, value));
+                    float r = mi.CustomMax - mi.CustomMin;
+                    value = r != 0f ? (c - mi.CustomMin) / r * 100f : 0f;
                 }
 
-                clsMeterItem.clsPercCache pc = mi.GetPerc(value);
-                if (pc != null)
-                {                    
-                    percX = pc._percX;
-                    percY = pc._percY;
-                    min = pc._min;
-                    max = pc._max;
+                //[2.10.3.9]MW0LGE refactor for speed
+                clsMeterItem.clsPercCache cacheEntry = mi.GetPerc(value);
+                if (cacheEntry != null)
+                {
+                    percX = cacheEntry._percX;
+                    percY = cacheEntry._percY;
+                    min = cacheEntry._min;
+                    max = cacheEntry._max;
                     return;
                 }
 
-                if (mi.ScaleCalibration.Count > 0)
+                if (mi._scales_calibKeys.Length == 0)
+                    return;
+
+                float[] keys = mi._scales_calibKeys;
+                PointF[] vals = mi._scales_calibValues;
+                int idx = Array.BinarySearch(keys, value);
+                bool exact = idx >= 0;
+                int lowIdx = exact ? idx : ~idx - 1;
+                int highIdx = exact ? idx : ~idx;
+                if (lowIdx < 0) lowIdx = 0;
+                if (highIdx < 0) highIdx = 0;
+                if (lowIdx >= keys.Length) lowIdx = keys.Length - 1;
+                if (highIdx >= keys.Length) highIdx = keys.Length - 1;
+
+                PointF pLow = vals[lowIdx];
+                PointF pHigh = vals[highIdx];
+                float vLow = keys[lowIdx];
+                float vHigh = keys[highIdx];
+                float rangeX = mi._scales_maxX - mi._scales_minX;
+                float rangeY = mi._scales_maxY - mi._scales_minY;
+
+                float interpX = exact
+                    ? pLow.X
+                    : pLow.X + (pHigh.X - pLow.X) * ((value - vLow) / (vHigh - vLow));
+                float interpY = exact
+                    ? pLow.Y
+                    : pLow.Y + (pHigh.Y - pLow.Y) * ((value - vLow) / (vHigh - vLow));
+
+                percX = rangeX > 0f ? (interpX - mi._scales_minX) / rangeX : 0f;
+                percY = rangeY > 0f ? (interpY - mi._scales_minY) / rangeY : 0f;
+                percX = (float)Math.Round(percX, 3);
+                percY = (float)Math.Round(percY, 3);
+
+                min = new PointF(mi._scales_minX, mi._scales_minY);
+                max = new PointF(mi._scales_maxX, mi._scales_maxY);
+
+                clsMeterItem.clsPercCache newCacheEntry = new clsMeterItem.clsPercCache
                 {
-                    // todo, only implemented for clockwise needles atm
-                    PointF p_low = PointF.Empty;
-                    PointF p_high = PointF.Empty;
-                    float value_low = -200f;
-                    float value_high = -200f;
-                    bool bEqual = false;
+                    _value = value,
+                    _percX = percX,
+                    _percY = percY,
+                    _min = min,
+                    _max = max
+                };
+                mi.AddPerc(newCacheEntry);
+            }
 
-                    if (mi.ScaleCalibration.ContainsKey(value))
-                    {
-                        p_low = mi.ScaleCalibration[value];
-                        p_high = mi.ScaleCalibration[value];
-                        value_low = value;
-                        value_high = value;
-                        bEqual = true;
-                    }
-                    else if (value < mi.ScaleCalibration.OrderBy(p => p.Key).First().Key) // below lowest
-                    {
-                        p_low = p_high = mi.ScaleCalibration.OrderBy(p => p.Key).First().Value;
-                        value_low = value_high = mi.ScaleCalibration.OrderBy(p => p.Key).First().Key;
-                        bEqual = true;
-                    }
-                    else if (value > mi.ScaleCalibration.OrderBy(p => p.Key).Last().Key) // above highest
-                    {
-                        p_low = p_high = mi.ScaleCalibration.OrderBy(p => p.Key).Last().Value;
-                        value_low = value_high = mi.ScaleCalibration.OrderBy(p => p.Key).Last().Key;
-                        bEqual = true;
-                    }
-                    else
-                    {
-                        //low side
-                        foreach (KeyValuePair<float, PointF> kvp in mi.ScaleCalibration.OrderByDescending(p => p.Key))
-                        {
-                            if (kvp.Key <= value)
-                            {
-                                p_low = kvp.Value;
-                                value_low = kvp.Key;
-                                break;
-                            }
-                        }
+            //private void getPerc(clsMeterItem mi, float value, out float percX, out float percY, out PointF min, out PointF max)
+            //{
+            //    percX = 0;
+            //    percY = 0;
+            //    min = new PointF(0f, 0f);
+            //    max = new PointF(0f, 0f);
 
-                        // high
-                        foreach (KeyValuePair<float, PointF> kvp in mi.ScaleCalibration.OrderBy(p => p.Key))
-                        {
-                            if (kvp.Key >= value)
-                            {
-                                p_high = kvp.Value;
-                                value_high = kvp.Key;
-                                break;
-                            }
-                        }
-                    }
-                    //get mins/maxs
-                    float minX = (float)Math.Round(mi.ScaleCalibration.OrderBy(p => p.Value.X).First().Value.X, 3);
-                    float maxX = (float)Math.Round(mi.ScaleCalibration.OrderByDescending(p => p.Value.X).First().Value.X, 3);
+            //    value = (float)Math.Round(value, 2); // NOTE: this will limit the finding of keys in the scale calibration below
 
-                    float minY = (float)Math.Round(mi.ScaleCalibration.OrderBy(p => p.Value.Y).First().Value.Y, 3);
-                    float maxY = (float)Math.Round(mi.ScaleCalibration.OrderByDescending(p => p.Value.Y).First().Value.Y, 3);
+            //    // adjust for >= 30mhz
+            //    if (mi.ReadingSource == Reading.SIGNAL_STRENGTH || mi.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
+            //        value += MeterManager.dbmOffsetForAboveS9Frequency(_rx);
+            //    // normalise to 100w
+            //    else if (mi.NormaliseTo100W)
+            //    {
+            //        //value *= MeterManager.normalisePower();
+            //        value *= (100 / mi.MaxPower);
+            //    }
+            //    // custom bar, will always have range 0-100 scale, so convert value
+            //    else if (mi.IsCustom)
+            //    {
+            //        float clamped_value = Math.Max(mi.CustomMin, Math.Min(mi.CustomMax, value));
+            //        float range = mi.CustomMax - mi.CustomMin;
+            //        value = range != 0 ? (clamped_value - mi.CustomMin) / range * 100f : 0;
+            //    }
 
-                    float rangeX = maxX - minX;
-                    float rangeY = maxY - minY;
-                    percX = 0;
-                    percY = 0;
-                    if (bEqual)
-                    {
-                        if (rangeX > 0) percX = (p_low.X - minX) / rangeX;
-                        if (rangeY > 0) percY = (p_low.Y - minY) / rangeY;
-                    }
-                    else
-                    {
-                        float value_range = value_high - value_low;
-                        float ratio = (value - value_low) / value_range;
-                        float newRangeX = p_high.X - p_low.X;
-                        float newRangeY = p_high.Y - p_low.Y;
+            //    clsMeterItem.clsPercCache pc = mi.GetPerc(value);
+            //    if (pc != null)
+            //    {                    
+            //        percX = pc._percX;
+            //        percY = pc._percY;
+            //        min = pc._min;
+            //        max = pc._max;
+            //        return;
+            //    }
 
-                        if (rangeX > 0) percX = ((p_low.X - minX) + (newRangeX * ratio)) / rangeX;
-                        if (rangeY > 0) percY = ((p_low.Y - minY) + (newRangeY * ratio)) / rangeY;
-                    }
+            //    if (mi.ScaleCalibration.Count > 0)
+            //    {
+            //        // todo, only implemented for clockwise needles atm
+            //        PointF p_low = PointF.Empty;
+            //        PointF p_high = PointF.Empty;
+            //        float value_low = -200f;
+            //        float value_high = -200f;
+            //        bool bEqual = false;
 
-                    percX = (float)Math.Round(percX, 3);
-                    percY = (float)Math.Round(percY, 3);
-                    min = new PointF(minX, minY);
-                    max = new PointF(maxX, maxY);
+            //        if (mi.ScaleCalibration.ContainsKey(value))
+            //        {
+            //            p_low = mi.ScaleCalibration[value];
+            //            p_high = mi.ScaleCalibration[value];
+            //            value_low = value;
+            //            value_high = value;
+            //            bEqual = true;
+            //        }
+            //        else if (value < mi.ScaleCalibration.OrderBy(p => p.Key).First().Key) // below lowest
+            //        {
+            //            p_low = p_high = mi.ScaleCalibration.OrderBy(p => p.Key).First().Value;
+            //            value_low = value_high = mi.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+            //            bEqual = true;
+            //        }
+            //        else if (value > mi.ScaleCalibration.OrderBy(p => p.Key).Last().Key) // above highest
+            //        {
+            //            p_low = p_high = mi.ScaleCalibration.OrderBy(p => p.Key).Last().Value;
+            //            value_low = value_high = mi.ScaleCalibration.OrderBy(p => p.Key).Last().Key;
+            //            bEqual = true;
+            //        }
+            //        else
+            //        {
+            //            //low side
+            //            foreach (KeyValuePair<float, PointF> kvp in mi.ScaleCalibration.OrderByDescending(p => p.Key))
+            //            {
+            //                if (kvp.Key <= value)
+            //                {
+            //                    p_low = kvp.Value;
+            //                    value_low = kvp.Key;
+            //                    break;
+            //                }
+            //            }
 
-                    pc = new clsMeterItem.clsPercCache() { _value = value,
-                                                            _percX = percX,
-                                                            _percY = percY,
-                                                            _min = min,
-                                                            _max = max };
-                    mi.AddPerc(pc);
-                }
-            }            
+            //            // high
+            //            foreach (KeyValuePair<float, PointF> kvp in mi.ScaleCalibration.OrderBy(p => p.Key))
+            //            {
+            //                if (kvp.Key >= value)
+            //                {
+            //                    p_high = kvp.Value;
+            //                    value_high = kvp.Key;
+            //                    break;
+            //                }
+            //            }
+            //        }
+            //        //get mins/maxs
+            //        float minX = (float)Math.Round(mi.ScaleCalibration.OrderBy(p => p.Value.X).First().Value.X, 3);
+            //        float maxX = (float)Math.Round(mi.ScaleCalibration.OrderByDescending(p => p.Value.X).First().Value.X, 3);
+
+            //        float minY = (float)Math.Round(mi.ScaleCalibration.OrderBy(p => p.Value.Y).First().Value.Y, 3);
+            //        float maxY = (float)Math.Round(mi.ScaleCalibration.OrderByDescending(p => p.Value.Y).First().Value.Y, 3);
+
+            //        float rangeX = maxX - minX;
+            //        float rangeY = maxY - minY;
+            //        percX = 0;
+            //        percY = 0;
+            //        if (bEqual)
+            //        {
+            //            if (rangeX > 0) percX = (p_low.X - minX) / rangeX;
+            //            if (rangeY > 0) percY = (p_low.Y - minY) / rangeY;
+            //        }
+            //        else
+            //        {
+            //            float value_range = value_high - value_low;
+            //            float ratio = (value - value_low) / value_range;
+            //            float newRangeX = p_high.X - p_low.X;
+            //            float newRangeY = p_high.Y - p_low.Y;
+
+            //            if (rangeX > 0) percX = ((p_low.X - minX) + (newRangeX * ratio)) / rangeX;
+            //            if (rangeY > 0) percY = ((p_low.Y - minY) + (newRangeY * ratio)) / rangeY;
+            //        }
+
+            //        percX = (float)Math.Round(percX, 3);
+            //        percY = (float)Math.Round(percY, 3);
+            //        min = new PointF(minX, minY);
+            //        max = new PointF(maxX, maxY);
+
+            //        pc = new clsMeterItem.clsPercCache() { _value = value,
+            //                                                _percX = percX,
+            //                                                _percY = percY,
+            //                                                _min = min,
+            //                                                _max = max };
+            //        mi.AddPerc(pc);
+            //    }
+            //}            
             private SharpDX.Direct2D1.Bitmap bitmapFromSystemBitmap(RenderTarget rt, System.Drawing.Bitmap bitmap, string sId)
             {
                 //[2.10.3.6]MW0LGE refactored to use Windows Imaging Component (WIC)

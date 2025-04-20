@@ -83,10 +83,11 @@ namespace Midi2Cat.IO
         public enum MidiUniqueDevices
         {
             Default = 0,
-            CMDPL1,
-            CMDMicro,
+            BehringerCMDPL1,
+            BehringerCMDMicro,
             DJStarlight,
-            NumarkDJ2GO2Touch
+            NumarkDJ2GO2Touch,
+            BehringerGeneric
         }
 
         int DeviceIndex = 0;
@@ -103,13 +104,15 @@ namespace Midi2Cat.IO
             MidiUniqueDevices mudRet;
             string sLower = sDeviceName.ToLower();
 
+            // device message strings returned by each device
             //"DJ2GO2 Touch MIDI" // NumarkDJ2GO2Touch
             //"DJControl Starlight" // DJStarlight
 
             if (sLower.Contains("djcontrol") && sLower.Contains("starlight")) mudRet = MidiUniqueDevices.DJStarlight;
             else if (sLower.Contains("dj2go2") && sLower.Contains("touch") && sLower.Contains("midi")) mudRet = MidiUniqueDevices.NumarkDJ2GO2Touch;
-            else if (sLower.Contains("cmd") && sLower.Contains("pl-1")) mudRet = MidiUniqueDevices.CMDPL1;
-            else if (sLower.Contains("cmd") && sLower.Contains("micro")) mudRet = MidiUniqueDevices.CMDMicro;
+            else if (sLower.Contains("cmd") && sLower.Contains("pl-1")) mudRet = MidiUniqueDevices.BehringerCMDPL1;
+            else if (sLower.Contains("cmd") && sLower.Contains("micro")) mudRet = MidiUniqueDevices.BehringerCMDMicro;
+            else if (sLower.Contains("cmd")) mudRet = MidiUniqueDevices.BehringerGeneric;
             else mudRet = MidiUniqueDevices.Default;
 
             return mudRet;
