@@ -23625,7 +23625,7 @@ namespace Thetis
             private object _DXlock = new object();
             //
             private Dictionary<System.Drawing.Color, SharpDX.Direct2D1.Brush> _DXBrushes;
-            private Color4 _backColour;
+            private Color4 _backColour_clear_colour;
             private System.Drawing.Color _backgroundColour;
             private Dictionary<string, SharpDX.Direct2D1.Bitmap> _images;
             private Dictionary<string, BitmapBrush> _bitmap_brushes;
@@ -23721,8 +23721,8 @@ namespace Thetis
                 //
 
                 _backgroundColour = System.Drawing.Color.Black;
-                _backColour = convertColour(_backgroundColour);
-                
+                _backColour_clear_colour = convertColour(System.Drawing.Color.FromArgb(255, System.Drawing.Color.Black));
+
                 _images = new Dictionary<string, SharpDX.Direct2D1.Bitmap>();
                 _bitmap_brushes = new Dictionary<string, BitmapBrush>();
                 
@@ -23805,7 +23805,6 @@ namespace Thetis
                 set 
                 {
                     _backgroundColour = value;
-                    _backColour = convertColour(_backgroundColour);
                 }
             }
             internal void RemoveAnySkinImages()
@@ -24318,16 +24317,19 @@ namespace Thetis
                                 t.TranslationVector = _pixelShift;
                                 _renderTarget.Transform = t;
 
-                                // background for entire form/area?
-                                _renderTarget.Clear(_backColour);
+                                // ensure background for entire form/area is cleared in black, without alpha
+                                _renderTarget.Clear(_backColour_clear_colour);
+
+                                // overlay background colour
+                                SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, targetWidth - 1f, targetHeight - 1f);
+                                _renderTarget.FillRectangle(rect, getDXBrushForColour(_backgroundColour));
 
                                 nSleepTime = drawMeters(out height);
                                 if (nSleepTime > 250) nSleepTime = 250; // sleep max of 250ms for some sensible redraw
                                                                         // maxint can be returned if no meteritem entries
 
                                 if (_highlightEdge)
-                                {
-                                    SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, targetWidth - 1f, targetHeight - 1f);
+                                {                                    
                                     rect.Inflate(-8, -8);
                                     _renderTarget.DrawRectangle(rect, getDXBrushForColour(System.Drawing.Color.FromArgb(192, System.Drawing.Color.DarkOrange)), 16f);
                                 }

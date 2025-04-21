@@ -70,7 +70,7 @@ namespace Thetis
     {
         #region Variable Declaration
 
-        private const AlphaMode _ALPHA_MODE = AlphaMode.Premultiplied; //21k9
+        private const AlphaMode ALPHA_MODE = AlphaMode.Premultiplied; //21k9
 
         public const float CLEAR_FLAG = -999.999F;				// for resetting buffers
         public const int BUFFER_SIZE = 16384;
@@ -2420,6 +2420,7 @@ namespace Thetis
         #endregion
 
         #region General Routines
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool localMox(int rx)
         {
             if (rx == 1)
@@ -2716,7 +2717,7 @@ namespace Thetis
                             int h = Math.Min(H - 20, (int)_waterfall_bmp_dx2d.Size.Height);
 
                             tmp = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)_waterfall_bmp_dx2d.Size.Width, h),
-                                    new BitmapProperties(new SDXPixelFormat(Format.B8G8R8A8_UNorm, _ALPHA_MODE)));
+                                    new BitmapProperties(new SDXPixelFormat(Format.B8G8R8A8_UNorm, ALPHA_MODE)));
 
                             tmp.CopyFromBitmap(_waterfall_bmp_dx2d, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)tmp.Size.Width, (int)tmp.Size.Height));
                             //
@@ -2728,7 +2729,7 @@ namespace Thetis
                         Utilities.Dispose(ref _waterfall_bmp_dx2d);
                         _waterfall_bmp_dx2d = null;
                     }
-                    _waterfall_bmp_dx2d = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2(displayTargetWidth, H - 20), new BitmapProperties(new SDXPixelFormat(_swapChain.Description.ModeDescription.Format, _ALPHA_MODE)));
+                    _waterfall_bmp_dx2d = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2(displayTargetWidth, H - 20), new BitmapProperties(new SDXPixelFormat(_swapChain.Description.ModeDescription.Format, ALPHA_MODE)));
 
                     if (tmp != null)
                     {
@@ -2768,7 +2769,7 @@ namespace Thetis
                             int h = Math.Min(H - 20, (int)_waterfall_bmp2_dx2d.Size.Height);
 
                             tmp = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)_waterfall_bmp2_dx2d.Size.Width, h),
-                                    new BitmapProperties(new SDXPixelFormat(Format.B8G8R8A8_UNorm, _ALPHA_MODE)));
+                                    new BitmapProperties(new SDXPixelFormat(Format.B8G8R8A8_UNorm, ALPHA_MODE)));
 
                             tmp.CopyFromBitmap(_waterfall_bmp2_dx2d, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)tmp.Size.Width, (int)tmp.Size.Height));
                             //
@@ -2780,7 +2781,7 @@ namespace Thetis
                         Utilities.Dispose(ref _waterfall_bmp2_dx2d);
                         _waterfall_bmp2_dx2d = null;
                     }
-                    _waterfall_bmp2_dx2d = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2(displayTargetWidth, H - 20), new BitmapProperties(new SDXPixelFormat(_swapChain.Description.ModeDescription.Format, _ALPHA_MODE)));
+                    _waterfall_bmp2_dx2d = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2(displayTargetWidth, H - 20), new BitmapProperties(new SDXPixelFormat(_swapChain.Description.ModeDescription.Format, ALPHA_MODE)));
 
                     if (tmp != null)
                     {
@@ -3086,7 +3087,7 @@ namespace Thetis
 
                     _surface = _swapChain1.GetBackBuffer<Surface>(0);
 
-                    RenderTargetProperties rtp = new RenderTargetProperties(new SDXPixelFormat(_swapChain.Description.ModeDescription.Format, _ALPHA_MODE));
+                    RenderTargetProperties rtp = new RenderTargetProperties(new SDXPixelFormat(_swapChain.Description.ModeDescription.Format, ALPHA_MODE));
                     _d2dRenderTarget = new RenderTarget(_d2dFactory, _surface, rtp);
 
                     if (debug == DeviceCreationFlags.Debug)
@@ -3189,7 +3190,7 @@ namespace Thetis
 
                     _surface = _swapChain1.GetBackBuffer<Surface>(0);
 
-                    RenderTargetProperties rtp = new RenderTargetProperties(new SDXPixelFormat(_swapChain.Description.ModeDescription.Format, _ALPHA_MODE));
+                    RenderTargetProperties rtp = new RenderTargetProperties(new SDXPixelFormat(_swapChain.Description.ModeDescription.Format, ALPHA_MODE));
                     _d2dRenderTarget = new RenderTarget(_d2dFactory, _surface, rtp);
 
                     setupAliasing();
@@ -3313,16 +3314,14 @@ namespace Thetis
                     t.TranslationVector = m_pixelShift;
                     _d2dRenderTarget.Transform = t;
 
-                    if (_bitmapBackground == null)
-                    {
-                        _d2dRenderTarget.Clear(m_cDX2_display_background_colour);
-                    }
-                    else
-                    {
-                        // draw background image
-                        //RectangleF rectDest = new RectangleF(0, 0, displayTargetWidth, displayTargetHeight);
-                        RectangleF rectDest;
+                    //always clear without using alpha
+                    _d2dRenderTarget.Clear(m_cDX2_display_background_clear_colour);
 
+                    RectangleF rectDest;
+
+                    if (_bitmapBackground != null) 
+                    { 
+                        // draw background image                        
                         if (_maintain_background_aspectratio && _bitmapBackground != null)
                         {
                             float imageWidth = _bitmapBackground.PixelSize.Width;
@@ -3341,18 +3340,20 @@ namespace Thetis
                                 float scaledWidth = displayTargetHeight * aspectRatio;
                                 rectDest = new RectangleF((displayTargetWidth - scaledWidth) / 2, 0, scaledWidth, displayTargetHeight);
                             }
-
-                            _d2dRenderTarget.Clear(m_cDX2_display_background_colour);
                         }
                         else
                         {
                             rectDest = new RectangleF(0, 0, displayTargetWidth, displayTargetHeight);
                         }
-                        //
 
-                        _d2dRenderTarget.DrawBitmap(_bitmapBackground, rectDest, 1f, BitmapInterpolationMode.Linear);
-                        _d2dRenderTarget.FillRectangle(rectDest, m_bDX2_display_background_brush); // used for the transparency
+                        _d2dRenderTarget.DrawBitmap(_bitmapBackground, rectDest, 1f, BitmapInterpolationMode.Linear);                        
                     }
+                    else
+                    {
+                        rectDest = new RectangleF(0, 0, displayTargetWidth, displayTargetHeight);
+                    }
+
+                    _d2dRenderTarget.FillRectangle(rectDest, m_bDX2_display_background_brush);
 
                     // LINEAR BRUSH BUILDING
                     if (_bRebuildRXLinearGradBrush || _bRebuildTXLinearGradBrush)
@@ -3899,6 +3900,7 @@ namespace Thetis
             set { m_bBlobPeakHoldDrop = value; }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static private bool isRxDuplex(int rx)
         {
             bool displayduplex;
@@ -4524,7 +4526,7 @@ namespace Thetis
                     max_copy = dataCopy[i] + fOffset;
 
                     // noise floor
-                    if (!local_mox && (max_copy < currentAverage))
+                    if (max_copy < currentAverage)
                     {
                         //averageSum += (float)Math.Pow(10f, max_copy / 10f);
                         averageSum += FastPow10Raw(max_copy);
@@ -4542,18 +4544,10 @@ namespace Thetis
                         local_max_Pixel_y = Y;
                     }
 
-                    if (bSpectralPeakHold && max >= spectralPeaks[i].max_dBm)
-                    {
-                        spectralPeaks[i].max_dBm = max;
-                        spectralPeaks[i].Time = m_dElapsedFrameStart;
-                    }
-
-                    ///
-                    /// new peak blob code MW0LGE_21b
-                    ///
+                    // peak blobs
                     if (peaks_imds)
                     {
-                        bool bInsideFilter =  m_bInsideFilterOnly && (point.X >= filter_left_x) && (point.X <= filter_right_x);
+                        bool bInsideFilter = m_bInsideFilterOnly && (point.X >= filter_left_x) && (point.X <= filter_right_x);
                         if (!m_bInsideFilterOnly || bInsideFilter || show_imd_measurements)
                         {
                             if (max > dbm_max)
@@ -4603,9 +4597,8 @@ namespace Thetis
                             }
                         }
                     }
-                    ///
 
-                    if (pan_fill) // 0 is top
+                    if (pan_fill)
                     {
                         // draw vertical line, this is so much faster than FillGeometry as the geo created would be so complex any fill alogorthm would struggle
                         bottomPoint.X = point.X;
@@ -4615,6 +4608,12 @@ namespace Thetis
                     //spectral peak
                     if (bSpectralPeakHold)
                     {
+                        if (max >= spectralPeaks[i].max_dBm)
+                        {
+                            spectralPeaks[i].max_dBm = max;
+                            spectralPeaks[i].Time = m_dElapsedFrameStart;
+                        }
+
                         if (spectralPeaks[i].max_dBm >= max)
                         {
                             // draw to peak, but re-work Y as we might rescale the spectrum vertically
@@ -5498,14 +5497,14 @@ namespace Thetis
                     if (rx == 1)
                     {
                         topPixels = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)_waterfall_bmp_dx2d.Size.Width, (int)_waterfall_bmp_dx2d.Size.Height - 1),
-                            new BitmapProperties(new SDXPixelFormat(_waterfall_bmp_dx2d.PixelFormat.Format, _ALPHA_MODE)));
+                            new BitmapProperties(new SDXPixelFormat(_waterfall_bmp_dx2d.PixelFormat.Format, ALPHA_MODE)));
 
                         topPixels.CopyFromBitmap(_waterfall_bmp_dx2d, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)topPixels.Size.Width, (int)topPixels.Size.Height));
                     }
                     else //rx2
                     {
                         topPixels = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, new Size2((int)_waterfall_bmp2_dx2d.Size.Width, (int)_waterfall_bmp2_dx2d.Size.Height - 1),
-                            new BitmapProperties(new SDXPixelFormat(_waterfall_bmp2_dx2d.PixelFormat.Format, _ALPHA_MODE)));
+                            new BitmapProperties(new SDXPixelFormat(_waterfall_bmp2_dx2d.PixelFormat.Format, ALPHA_MODE)));
 
                         topPixels.CopyFromBitmap(_waterfall_bmp2_dx2d, new SharpDX.Point(0, 0), new SharpDX.Rectangle(0, 0, (int)topPixels.Size.Width, (int)topPixels.Size.Height));
                     }
@@ -6543,7 +6542,7 @@ namespace Thetis
         private static SharpDX.Direct2D1.Bitmap SDXBitmapFromSysBitmap(RenderTarget rt, System.Drawing.Bitmap bitmap)
         {
             Rectangle sourceArea = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
-            BitmapProperties bitmapProperties = new BitmapProperties(new SDXPixelFormat(Format.B8G8R8A8_UNorm, _ALPHA_MODE)); //was R8G8B8A8_UNorm  //MW0LGE_21k9
+            BitmapProperties bitmapProperties = new BitmapProperties(new SDXPixelFormat(Format.B8G8R8A8_UNorm, ALPHA_MODE)); //was R8G8B8A8_UNorm  //MW0LGE_21k9
             Size2 size = new Size2(bitmap.Width, bitmap.Height);
 
             // Transform pixels from BGRA to RGBA
@@ -6640,6 +6639,7 @@ namespace Thetis
         private static SharpDX.Direct2D1.Brush m_bDX2_display_background_brush;
 
         private static SharpDX.Color4 m_cDX2_display_background_colour;
+        private static SharpDX.Color4 m_cDX2_display_background_clear_colour;
 
         private static SharpDX.Direct2D1.Brush m_bDX2_y1_brush;
         private static SharpDX.Direct2D1.Brush m_bDX2_y2_brush;
@@ -7058,6 +7058,7 @@ namespace Thetis
                 m_bDX2_display_background_brush = convertBrush((SolidBrush)display_background_brush);
 
                 m_cDX2_display_background_colour = convertColour(display_background_brush.Color); // does not need dispose as it is a type
+                m_cDX2_display_background_clear_colour = convertColour(Color.FromArgb(255, Color.Black)); // does not need dispose as it is a type
 
                 m_bDX2_m_bHightlightNumbers = getDXBrushForColour(Color.FromArgb(255, 255, 255));
                 m_bDX2_m_bHightlightNumberScale = getDXBrushForColour(Color.FromArgb(192, 64, 64, 64));
