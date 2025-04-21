@@ -7761,6 +7761,7 @@ namespace Thetis
             Display.ResetDX2DModeDescription();
 
             udDisplayAVGTime_ValueChanged(this, EventArgs.Empty);
+            udRX2DisplayAVGTime_ValueChanged(this, EventArgs.Empty);
 
             setWaterFallCalculatedDelayText();
         }

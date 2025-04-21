@@ -397,5 +397,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# Thetis version cs file
+# ----Thetis Specific (c) 2025 MW0LGE - Richard Samphire----
 Project Files/Source/Console/VersionInfo.cs
+!Project Files/Source/Thetis-Installer/Microsoft_VC*.msm
