@@ -74,6 +74,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] fixed issue with DB manager, where dbman.json would not be loaded correctly if a radio model was added/removed from the code. Now defaults to HERMES if model not found, ie HL2
 - [fix] vac tx gains are min/max validated. To prevent crash/error with the HL2 modified version that is able to assign mic gain to tx vac gain
 - [fix] fixed vfoB frequency limit issue and potential crash issue when using xvtr slot vhf0
+- [fix] vfo band text now updated when frequency changes for the multimeter vfo item. Note: rate limited to 250ms unlike legacy meter
 
 ## v2.10.3.7 Change Log
 - [add] new auto attenuate TX when PS is off options in Setup->Ant/Filters->Antenna
