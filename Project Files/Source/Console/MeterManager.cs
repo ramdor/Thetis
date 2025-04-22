@@ -3816,6 +3816,9 @@ namespace Thetis
 
             m.TuneStepIndex = _console.TuneStepIndex;
 
+            m.UpdateBandText(true);
+            m.UpdateBandText(false);
+
             m.AntennasChanged(_console.RX1Band, _console.TXBand, _console.VFOAFreq, _console.TXFreq);
 
             // update any filter meter items and setupbuttons to update filter text
@@ -6327,6 +6330,7 @@ namespace Thetis
                 _tx_freq = -1;
                 _rxtx_swap = false;
                 _ig = ig;
+                _timer = null;
 
                 ItemType = MeterItemType.ANTENNA_BUTTONS;
 
@@ -9434,23 +9438,6 @@ namespace Thetis
                 get { return _fontSize; }
                 set { _fontSize = value; }
             }
-
-            //public override string ToString()
-            //{
-            //    string sRet;
-
-            //    sRet = ID + "|" +
-            //        ParentID + "|" +
-            //        ItemType.ToString() + "|" +
-            //        TopLeft.X.ToString("f4") + "|" +
-            //        TopLeft.Y.ToString("f4") + "|" +
-            //        Size.Width.ToString("f4") + "|" +
-            //        Size.Height.ToString("f4") + "|" +
-            //        //
-            //        _colour.ToString();
-
-            //    return sRet;
-            //}
         }
         internal class clsClock : clsMeterItem
         {
@@ -16491,6 +16478,15 @@ namespace Thetis
             private double _vfoB;
             private double _vfoSub;
             private bool _txVfoB;
+
+            private const int BAND_TEXT_RATE_LIMIT = 250; // limit the band text update to 250 ms
+            private System.Threading.Timer _timer_band_text_vfoA;
+            private System.Threading.Timer _timer_band_text_vfoB;
+            private readonly object _timerLock_vfoA = new object();
+            private readonly object _timerLock_vfoB = new object();
+            private DateTime _last_band_text_update_vfoA;
+            private DateTime _last_band_text_update_vfoB;
+
             private DSPMode _modeVfoA;
             private DSPMode _modeVfoB;
             private Band _bandVfoA;
@@ -19659,6 +19655,10 @@ namespace Thetis
                 _vfoB = 0;
                 _vfoSub = 0;
                 _txVfoB = false;
+                _timer_band_text_vfoA = null;
+                _timer_band_text_vfoB = null;
+                _last_band_text_update_vfoA = DateTime.UtcNow;
+                _last_band_text_update_vfoB = DateTime.UtcNow;
                 _bandVfoA = Band.FIRST;
                 _bandVfoB = Band.FIRST;
                 _bandVfoASub = Band.FIRST;
@@ -23055,10 +23055,54 @@ namespace Thetis
             public double VfoA
             {
                 get { return _vfoA; }
-                set 
-                { 
+                set
+                {
                     _vfoA = value;
-                    if(_rx == 1) _rx1VHForAbove = _vfoA >= _s9Frequency;
+                    if (_rx == 1) _rx1VHForAbove = _vfoA >= _s9Frequency;
+
+                    // band text on vfo change
+                    lock (_timerLock_vfoA)
+                    {
+                        DateTime now = DateTime.UtcNow;
+                        
+                        if ((now - _last_band_text_update_vfoA).TotalMilliseconds > BAND_TEXT_RATE_LIMIT)
+                        {
+                            // always update, at least every 500ms
+                            UpdateBandText(true);
+                            _last_band_text_update_vfoA = now;
+
+                            // cancel timer if one running
+                            if (_timer_band_text_vfoA != null)
+                            {
+                                System.Threading.Timer timer = _timer_band_text_vfoA;
+                                _timer_band_text_vfoA = null;
+                                timer.Dispose();
+                            }
+                        }
+                        else
+                        {
+                            if (_timer_band_text_vfoA == null)
+                            {
+                                // start a time if one not already running
+                                _timer_band_text_vfoA = new System.Threading.Timer(_ =>
+                                {
+                                    lock (_timerLock_vfoA)
+                                    {
+                                        UpdateBandText(true);
+                                        _last_band_text_update_vfoA = DateTime.UtcNow;
+                                        System.Threading.Timer timer = _timer_band_text_vfoA;
+                                        _timer_band_text_vfoA = null;
+                                        timer.Dispose();
+                                    }
+                                }, null, BAND_TEXT_RATE_LIMIT, System.Threading.Timeout.Infinite);
+                            }
+                            else
+                            {
+                                //postpone by BAND_TEXT_RATE_LIMIT ms
+                                _timer_band_text_vfoA.Change(BAND_TEXT_RATE_LIMIT, System.Threading.Timeout.Infinite);
+                            }
+                        }
+                    }
                 }
             }
             public double VfoB
@@ -23068,6 +23112,50 @@ namespace Thetis
                 { 
                     _vfoB = value;
                     if (_rx == 2) _rx2VHForAbove = _vfoB >= _s9Frequency;
+
+                    // band text on vfo change
+                    lock (_timerLock_vfoB)
+                    {
+                        DateTime now = DateTime.UtcNow;
+
+                        if ((now - _last_band_text_update_vfoB).TotalMilliseconds > BAND_TEXT_RATE_LIMIT)
+                        {
+                            // always update, at least every BAND_TEXT_RATE_LIMIT ms
+                            UpdateBandText(false);
+                            _last_band_text_update_vfoB = now;
+
+                            // cancel timer if one running
+                            if (_timer_band_text_vfoB != null)
+                            {
+                                System.Threading.Timer timer = _timer_band_text_vfoB;
+                                _timer_band_text_vfoB = null;
+                                timer.Dispose();
+                            }
+                        }
+                        else
+                        {
+                            if (_timer_band_text_vfoB == null)
+                            {
+                                // start a time if one not already running
+                                _timer_band_text_vfoB = new System.Threading.Timer(_ =>
+                                {
+                                    lock (_timerLock_vfoB)
+                                    {
+                                        UpdateBandText(false);
+                                        _last_band_text_update_vfoB = DateTime.UtcNow;
+                                        System.Threading.Timer timer = _timer_band_text_vfoB;
+                                        _timer_band_text_vfoB = null;
+                                        timer.Dispose();
+                                    }
+                                }, null, BAND_TEXT_RATE_LIMIT, System.Threading.Timeout.Infinite);
+                            }
+                            else
+                            {
+                                // postpone by BAND_TEXT_RATE_LIMIT ms
+                                _timer_band_text_vfoB.Change(BAND_TEXT_RATE_LIMIT, System.Threading.Timeout.Infinite);
+                            }
+                        }
+                    }
                 }
             }
             public double VfoSub
@@ -23091,7 +23179,7 @@ namespace Thetis
                 set 
                 { 
                     _bandVfoA = value;
-                    updateBandText(true);
+                    UpdateBandText(true);
                 }
             }
             public Band BandVfoB
@@ -23100,7 +23188,7 @@ namespace Thetis
                 set 
                 { 
                     _bandVfoB = value;
-                    updateBandText(false);
+                    UpdateBandText(false);
                 }
             }
             public Band BandVfoASub
@@ -23234,7 +23322,7 @@ namespace Thetis
                 get { return _txeqEnabled; }
                 set { _txeqEnabled = value; }
             }
-            private void updateBandText(bool is_vfoA)
+            public void UpdateBandText(bool is_vfoA)
             {
                 bool ok;
                 if(_rx == 1)
