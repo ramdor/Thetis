@@ -1160,6 +1160,7 @@ namespace Thetis
                                   int mode,
                                   bool is_vfo_a)
         {
+            //helpers, to prevent branching
             Func<Func<string>, string> safe_get = f => console.InvokeRequired
                 ? (string)console.Invoke((Func<string>)(() => f()))
                 : f();
@@ -1175,7 +1176,8 @@ namespace Thetis
                 else
                     send_frequency_raw(s);
             };
-
+            
+            //refactor main
             string rtty_offset_raw = safe_get(() => is_vfo_a
                 ? commands.ZZRA(string.Empty)
                 : commands.ZZRB(string.Empty));
@@ -1214,16 +1216,9 @@ namespace Thetis
 
             if (rtty_offset_enabled && (mode == 7 || mode == 9))
             {
-                if (mode == 7)
-                {
-                    offset = Convert.ToInt32(safe_get(() => commands.ZZRH(string.Empty)));
-                    offset_dir = -1;
-                }
-                else
-                {
-                    offset = Convert.ToInt32(safe_get(() => commands.ZZRL(string.Empty)));
-                    offset_dir = 1;
-                }
+                string val = mode == 7 ? safe_get(() => commands.ZZRH(string.Empty)) : safe_get(() => commands.ZZRL(string.Empty));
+                if (!int.TryParse(val, out offset)) return;
+                offset_dir = mode == 7 ? -1 : 1;
                 working_freq += offset_dir * offset;
             }
 
