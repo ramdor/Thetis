@@ -463,7 +463,7 @@ void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 	// check for previous in the cache
 	// hash of fir array
 	size_t arr_len = N * sizeof(complex);
-	uint32_t hash = fnv1a_hash64((uint8_t*)fir, arr_len);
+	HASH_T hash = fnv1a_hash((uint8_t*)fir, arr_len);
 
 	for (mp_cache_entry_t* e = mp_cache_head; e; e = e->next) {
 		if (e->N == N &&

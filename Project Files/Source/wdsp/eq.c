@@ -105,10 +105,9 @@ double* eq_impulse(int N,
 	// check for previous in the cache
 	// hash of F and G arrays
 	size_t arr_len = (nfreqs + 1) * sizeof(double);
-	uint32_t hashF = fnv1a_hash64(F, arr_len);
-	arr_len = (nfreqs + 1) * sizeof(double);
-	uint32_t hashG = fnv1a_hash64(G, arr_len);
-	uint32_t fg_hash = hashF ^ (hashG + GOLDEN_RATIO_64 + (hashF << 6) + (hashF >> 2));
+	HASH_T hashF = fnv1a_hash((uint8_t*)F, arr_len);
+	HASH_T hashG = fnv1a_hash((uint8_t*)G, arr_len);
+	HASH_T fg_hash = hashF ^ (hashG	+ GOLDEN_RATIO + (hashF << 6) + (hashF >> 2));
 
 	for (eq_cache_entry_t* e = eq_cache_head; e; e = e->next) {
 		if (e->N == N &&
