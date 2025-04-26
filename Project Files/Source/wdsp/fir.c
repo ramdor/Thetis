@@ -251,10 +251,12 @@ double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int
 			
 			double* c_impulse = (double*)malloc0(N * sizeof(complex));
 			memcpy(c_impulse, e->impulse, N * sizeof(complex));
+			//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "FIR CACHE\n");
 			return c_impulse;
 		}
 	}
 
+	//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "FIR CREATE\n");
 	double *c_impulse = (double *) malloc0 (N * sizeof (complex));
 	double ft = (f_high - f_low) / (2.0 * samplerate);
 	double ft_rad = TWOPI * ft;
@@ -460,8 +462,8 @@ void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 {
 	// check for previous in the cache
 	// hash of fir array
-	size_t arr_len = (N + 1) * sizeof(complex);
-	uint32_t hash = fnv1a_hash32(fir, arr_len);
+	size_t arr_len = N * sizeof(complex);
+	uint32_t hash = fnv1a_hash64((uint8_t*)fir, arr_len);
 
 	for (mp_cache_entry_t* e = mp_cache_head; e; e = e->next) {
 		if (e->N == N &&
@@ -469,10 +471,12 @@ void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 			e->pfactor == pfactor &&
 			e->polarity == polarity) {
 			memcpy(mpfir, e->mpfir, N * sizeof(complex) );
+			//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "MP CACHE\n");
 			return;
 		}
 	}
 
+	//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "MP CREATE\n");
 	int i;
 	int size = N * pfactor;
 	double inv_PN = 1.0 / (double)size;

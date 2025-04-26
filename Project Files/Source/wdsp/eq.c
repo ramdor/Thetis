@@ -104,11 +104,11 @@ double* eq_impulse(int N,
 {
 	// check for previous in the cache
 	// hash of F and G arrays
-	size_t arr_len = (nfreqs + 1) * sizeof(*(F));
-	uint32_t hashF = fnv1a_hash32(F, arr_len);
-	arr_len = (nfreqs + 1) * sizeof(*(G));
-	uint32_t hashG = fnv1a_hash32(G, arr_len);
-	uint32_t fg_hash = hashF ^ (hashG + GOLDEN_RATIO_32	+ (hashF << 6) + (hashF >> 2));
+	size_t arr_len = (nfreqs + 1) * sizeof(double);
+	uint32_t hashF = fnv1a_hash64(F, arr_len);
+	arr_len = (nfreqs + 1) * sizeof(double);
+	uint32_t hashG = fnv1a_hash64(G, arr_len);
+	uint32_t fg_hash = hashF ^ (hashG + GOLDEN_RATIO_64 + (hashF << 6) + (hashF >> 2));
 
 	for (eq_cache_entry_t* e = eq_cache_head; e; e = e->next) {
 		if (e->N == N &&
@@ -120,10 +120,12 @@ double* eq_impulse(int N,
 			e->wintype == wintype) {
 			double* imp = (double*)malloc0(N * sizeof(complex));
 			memcpy(imp, e->impulse, N * sizeof(complex));
+			//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "EQ CACHE\n");
 			return imp;
 		}
 	}
 
+	//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "EQ CREATE\n");
 	double* fp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
 	double* gp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
 	double* A  = (double *) malloc0 ((N / 2 + 1) * sizeof (double));
