@@ -551,66 +551,68 @@
             this.lblOptMaxFilter = new System.Windows.Forms.LabelTS();
             this.chkOptFilterSaveChanges = new System.Windows.Forms.CheckBoxTS();
             this.tpADC = new System.Windows.Forms.TabPage();
-            this.lblP2assignment = new System.Windows.Forms.LabelTS();
-            this.grpP1DDC6ADC = new System.Windows.Forms.GroupBoxTS();
-            this.radP1DDC6ADC2 = new System.Windows.Forms.RadioButtonTS();
-            this.radP1DDC6ADC1 = new System.Windows.Forms.RadioButtonTS();
-            this.radP1DDC6ADC0 = new System.Windows.Forms.RadioButtonTS();
-            this.grpDDC6ADC = new System.Windows.Forms.GroupBoxTS();
-            this.radDDC6ADC2 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC6ADC1 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC6ADC0 = new System.Windows.Forms.RadioButtonTS();
-            this.lblP1assignment = new System.Windows.Forms.LabelTS();
-            this.grpP1DDC5ADC = new System.Windows.Forms.GroupBoxTS();
-            this.radP1DDC5ADC2 = new System.Windows.Forms.RadioButtonTS();
-            this.radP1DDC5ADC1 = new System.Windows.Forms.RadioButtonTS();
-            this.radP1DDC5ADC0 = new System.Windows.Forms.RadioButtonTS();
-            this.btnResetP2ADC = new System.Windows.Forms.ButtonTS();
-            this.grpDDC0ADC = new System.Windows.Forms.GroupBoxTS();
-            this.radDDC0ADC2 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC0ADC1 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC0ADC0 = new System.Windows.Forms.RadioButtonTS();
-            this.grpP1DDC4ADC = new System.Windows.Forms.GroupBoxTS();
-            this.radP1DDC4ADC2 = new System.Windows.Forms.RadioButtonTS();
-            this.radP1DDC4ADC1 = new System.Windows.Forms.RadioButtonTS();
-            this.radP1DDC4ADC0 = new System.Windows.Forms.RadioButtonTS();
-            this.grpDDC1ADC = new System.Windows.Forms.GroupBoxTS();
-            this.radDDC1ADC2 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC1ADC1 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC1ADC0 = new System.Windows.Forms.RadioButtonTS();
-            this.grpDDC5ADC = new System.Windows.Forms.GroupBoxTS();
-            this.radDDC5ADC2 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC5ADC1 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC5ADC0 = new System.Windows.Forms.RadioButtonTS();
-            this.grpP1DDC3ADC = new System.Windows.Forms.GroupBoxTS();
-            this.radP1DDC3ADC2 = new System.Windows.Forms.RadioButtonTS();
-            this.radP1DDC3ADC1 = new System.Windows.Forms.RadioButtonTS();
-            this.radP1DDC3ADC0 = new System.Windows.Forms.RadioButtonTS();
-            this.grpDDC2ADC = new System.Windows.Forms.GroupBoxTS();
-            this.radDDC2ADC2 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC2ADC1 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC2ADC0 = new System.Windows.Forms.RadioButtonTS();
-            this.grpDDC3ADC = new System.Windows.Forms.GroupBoxTS();
-            this.radDDC3ADC2 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC3ADC1 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC3ADC0 = new System.Windows.Forms.RadioButtonTS();
-            this.grpP1DDC2ADC = new System.Windows.Forms.GroupBoxTS();
-            this.radP1DDC2ADC2 = new System.Windows.Forms.RadioButtonTS();
-            this.radP1DDC2ADC1 = new System.Windows.Forms.RadioButtonTS();
-            this.radP1DDC2ADC0 = new System.Windows.Forms.RadioButtonTS();
-            this.grpDDC4ADC = new System.Windows.Forms.GroupBoxTS();
-            this.radDDC4ADC2 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC4ADC1 = new System.Windows.Forms.RadioButtonTS();
-            this.radDDC4ADC0 = new System.Windows.Forms.RadioButtonTS();
+            this.pnlP1_adcs = new System.Windows.Forms.PanelTS();
             this.grpP1DDC0ADC = new System.Windows.Forms.GroupBoxTS();
             this.radP1DDC0ADC2 = new System.Windows.Forms.RadioButtonTS();
             this.radP1DDC0ADC1 = new System.Windows.Forms.RadioButtonTS();
             this.radP1DDC0ADC0 = new System.Windows.Forms.RadioButtonTS();
+            this.grpP1DDC6ADC = new System.Windows.Forms.GroupBoxTS();
+            this.radP1DDC6ADC2 = new System.Windows.Forms.RadioButtonTS();
+            this.radP1DDC6ADC1 = new System.Windows.Forms.RadioButtonTS();
+            this.radP1DDC6ADC0 = new System.Windows.Forms.RadioButtonTS();
+            this.btnResetP1ADC = new System.Windows.Forms.ButtonTS();
+            this.lblP1assignment = new System.Windows.Forms.LabelTS();
             this.grpP1DDC1ADC = new System.Windows.Forms.GroupBoxTS();
             this.radP1DDC1ADC2 = new System.Windows.Forms.RadioButtonTS();
             this.radP1DDC1ADC1 = new System.Windows.Forms.RadioButtonTS();
             this.radP1DDC1ADC0 = new System.Windows.Forms.RadioButtonTS();
-            this.btnResetP1ADC = new System.Windows.Forms.ButtonTS();
+            this.grpP1DDC5ADC = new System.Windows.Forms.GroupBoxTS();
+            this.radP1DDC5ADC2 = new System.Windows.Forms.RadioButtonTS();
+            this.radP1DDC5ADC1 = new System.Windows.Forms.RadioButtonTS();
+            this.radP1DDC5ADC0 = new System.Windows.Forms.RadioButtonTS();
+            this.grpP1DDC2ADC = new System.Windows.Forms.GroupBoxTS();
+            this.radP1DDC2ADC2 = new System.Windows.Forms.RadioButtonTS();
+            this.radP1DDC2ADC1 = new System.Windows.Forms.RadioButtonTS();
+            this.radP1DDC2ADC0 = new System.Windows.Forms.RadioButtonTS();
+            this.grpP1DDC4ADC = new System.Windows.Forms.GroupBoxTS();
+            this.radP1DDC4ADC2 = new System.Windows.Forms.RadioButtonTS();
+            this.radP1DDC4ADC1 = new System.Windows.Forms.RadioButtonTS();
+            this.radP1DDC4ADC0 = new System.Windows.Forms.RadioButtonTS();
+            this.grpP1DDC3ADC = new System.Windows.Forms.GroupBoxTS();
+            this.radP1DDC3ADC2 = new System.Windows.Forms.RadioButtonTS();
+            this.radP1DDC3ADC1 = new System.Windows.Forms.RadioButtonTS();
+            this.radP1DDC3ADC0 = new System.Windows.Forms.RadioButtonTS();
+            this.pnlP2_adcs = new System.Windows.Forms.PanelTS();
+            this.lblP2assignment = new System.Windows.Forms.LabelTS();
+            this.grpDDC0ADC = new System.Windows.Forms.GroupBoxTS();
+            this.radDDC0ADC2 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC0ADC1 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC0ADC0 = new System.Windows.Forms.RadioButtonTS();
+            this.grpDDC4ADC = new System.Windows.Forms.GroupBoxTS();
+            this.radDDC4ADC2 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC4ADC1 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC4ADC0 = new System.Windows.Forms.RadioButtonTS();
+            this.grpDDC6ADC = new System.Windows.Forms.GroupBoxTS();
+            this.radDDC6ADC2 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC6ADC1 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC6ADC0 = new System.Windows.Forms.RadioButtonTS();
+            this.grpDDC3ADC = new System.Windows.Forms.GroupBoxTS();
+            this.radDDC3ADC2 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC3ADC1 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC3ADC0 = new System.Windows.Forms.RadioButtonTS();
+            this.grpDDC2ADC = new System.Windows.Forms.GroupBoxTS();
+            this.radDDC2ADC2 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC2ADC1 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC2ADC0 = new System.Windows.Forms.RadioButtonTS();
+            this.grpDDC5ADC = new System.Windows.Forms.GroupBoxTS();
+            this.radDDC5ADC2 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC5ADC1 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC5ADC0 = new System.Windows.Forms.RadioButtonTS();
+            this.btnResetP2ADC = new System.Windows.Forms.ButtonTS();
+            this.grpDDC1ADC = new System.Windows.Forms.GroupBoxTS();
+            this.radDDC1ADC2 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC1ADC1 = new System.Windows.Forms.RadioButtonTS();
+            this.radDDC1ADC0 = new System.Windows.Forms.RadioButtonTS();
             this.lblRxDDC6 = new System.Windows.Forms.LabelTS();
             this.lblRxDDC5 = new System.Windows.Forms.LabelTS();
             this.lblRxDDC4 = new System.Windows.Forms.LabelTS();
@@ -4214,8 +4216,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.pnlP2_adcs = new System.Windows.Forms.PanelTS();
-            this.pnlP1_adcs = new System.Windows.Forms.PanelTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4373,20 +4373,22 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptMaxFilterShift)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptMaxFilterWidth)).BeginInit();
             this.tpADC.SuspendLayout();
-            this.grpP1DDC6ADC.SuspendLayout();
-            this.grpDDC6ADC.SuspendLayout();
-            this.grpP1DDC5ADC.SuspendLayout();
-            this.grpDDC0ADC.SuspendLayout();
-            this.grpP1DDC4ADC.SuspendLayout();
-            this.grpDDC1ADC.SuspendLayout();
-            this.grpDDC5ADC.SuspendLayout();
-            this.grpP1DDC3ADC.SuspendLayout();
-            this.grpDDC2ADC.SuspendLayout();
-            this.grpDDC3ADC.SuspendLayout();
-            this.grpP1DDC2ADC.SuspendLayout();
-            this.grpDDC4ADC.SuspendLayout();
+            this.pnlP1_adcs.SuspendLayout();
             this.grpP1DDC0ADC.SuspendLayout();
+            this.grpP1DDC6ADC.SuspendLayout();
             this.grpP1DDC1ADC.SuspendLayout();
+            this.grpP1DDC5ADC.SuspendLayout();
+            this.grpP1DDC2ADC.SuspendLayout();
+            this.grpP1DDC4ADC.SuspendLayout();
+            this.grpP1DDC3ADC.SuspendLayout();
+            this.pnlP2_adcs.SuspendLayout();
+            this.grpDDC0ADC.SuspendLayout();
+            this.grpDDC4ADC.SuspendLayout();
+            this.grpDDC6ADC.SuspendLayout();
+            this.grpDDC3ADC.SuspendLayout();
+            this.grpDDC2ADC.SuspendLayout();
+            this.grpDDC5ADC.SuspendLayout();
+            this.grpDDC1ADC.SuspendLayout();
             this.tpPennyCtrl.SuspendLayout();
             this.grpTransmitPinActionSWL.SuspendLayout();
             this.tpOCHFControl.SuspendLayout();
@@ -5281,8 +5283,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
-            this.pnlP2_adcs.SuspendLayout();
-            this.pnlP1_adcs.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -13017,649 +13017,23 @@
             this.tpADC.TabIndex = 12;
             this.tpADC.Text = "ADC";
             // 
-            // lblP2assignment
-            // 
-            this.lblP2assignment.Image = null;
-            this.lblP2assignment.Location = new System.Drawing.Point(3, 62);
-            this.lblP2assignment.Name = "lblP2assignment";
-            this.lblP2assignment.Size = new System.Drawing.Size(99, 50);
-            this.lblP2assignment.TabIndex = 29;
-            this.lblP2assignment.Text = "Protocol 2 ADC assignments";
-            this.lblP2assignment.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // grpP1DDC6ADC
-            // 
-            this.grpP1DDC6ADC.Controls.Add(this.radP1DDC6ADC2);
-            this.grpP1DDC6ADC.Controls.Add(this.radP1DDC6ADC1);
-            this.grpP1DDC6ADC.Controls.Add(this.radP1DDC6ADC0);
-            this.grpP1DDC6ADC.Location = new System.Drawing.Point(528, 3);
-            this.grpP1DDC6ADC.Name = "grpP1DDC6ADC";
-            this.grpP1DDC6ADC.Size = new System.Drawing.Size(60, 136);
-            this.grpP1DDC6ADC.TabIndex = 19;
-            this.grpP1DDC6ADC.TabStop = false;
-            this.grpP1DDC6ADC.Text = "DDC6";
-            // 
-            // radP1DDC6ADC2
-            // 
-            this.radP1DDC6ADC2.AutoSize = true;
-            this.radP1DDC6ADC2.Image = null;
-            this.radP1DDC6ADC2.Location = new System.Drawing.Point(6, 100);
-            this.radP1DDC6ADC2.Name = "radP1DDC6ADC2";
-            this.radP1DDC6ADC2.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC6ADC2.TabIndex = 3;
-            this.radP1DDC6ADC2.Text = "ADC2";
-            this.radP1DDC6ADC2.UseVisualStyleBackColor = true;
-            this.radP1DDC6ADC2.Visible = false;
-            this.radP1DDC6ADC2.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // radP1DDC6ADC1
-            // 
-            this.radP1DDC6ADC1.AutoSize = true;
-            this.radP1DDC6ADC1.Image = null;
-            this.radP1DDC6ADC1.Location = new System.Drawing.Point(6, 67);
-            this.radP1DDC6ADC1.Name = "radP1DDC6ADC1";
-            this.radP1DDC6ADC1.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC6ADC1.TabIndex = 2;
-            this.radP1DDC6ADC1.Text = "ADC1";
-            this.radP1DDC6ADC1.UseVisualStyleBackColor = true;
-            this.radP1DDC6ADC1.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // radP1DDC6ADC0
-            // 
-            this.radP1DDC6ADC0.AutoSize = true;
-            this.radP1DDC6ADC0.Checked = true;
-            this.radP1DDC6ADC0.Image = null;
-            this.radP1DDC6ADC0.Location = new System.Drawing.Point(6, 37);
-            this.radP1DDC6ADC0.Name = "radP1DDC6ADC0";
-            this.radP1DDC6ADC0.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC6ADC0.TabIndex = 1;
-            this.radP1DDC6ADC0.TabStop = true;
-            this.radP1DDC6ADC0.Text = "ADC0";
-            this.radP1DDC6ADC0.UseVisualStyleBackColor = true;
-            this.radP1DDC6ADC0.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // grpDDC6ADC
-            // 
-            this.grpDDC6ADC.Controls.Add(this.radDDC6ADC2);
-            this.grpDDC6ADC.Controls.Add(this.radDDC6ADC1);
-            this.grpDDC6ADC.Controls.Add(this.radDDC6ADC0);
-            this.grpDDC6ADC.Location = new System.Drawing.Point(529, 5);
-            this.grpDDC6ADC.Name = "grpDDC6ADC";
-            this.grpDDC6ADC.Size = new System.Drawing.Size(60, 136);
-            this.grpDDC6ADC.TabIndex = 13;
-            this.grpDDC6ADC.TabStop = false;
-            this.grpDDC6ADC.Text = "DDC6";
-            // 
-            // radDDC6ADC2
-            // 
-            this.radDDC6ADC2.AutoSize = true;
-            this.radDDC6ADC2.Image = null;
-            this.radDDC6ADC2.Location = new System.Drawing.Point(6, 100);
-            this.radDDC6ADC2.Name = "radDDC6ADC2";
-            this.radDDC6ADC2.Size = new System.Drawing.Size(53, 17);
-            this.radDDC6ADC2.TabIndex = 3;
-            this.radDDC6ADC2.Text = "ADC2";
-            this.radDDC6ADC2.UseVisualStyleBackColor = true;
-            this.radDDC6ADC2.Visible = false;
-            this.radDDC6ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC6ADC1
-            // 
-            this.radDDC6ADC1.AutoSize = true;
-            this.radDDC6ADC1.Image = null;
-            this.radDDC6ADC1.Location = new System.Drawing.Point(6, 67);
-            this.radDDC6ADC1.Name = "radDDC6ADC1";
-            this.radDDC6ADC1.Size = new System.Drawing.Size(53, 17);
-            this.radDDC6ADC1.TabIndex = 2;
-            this.radDDC6ADC1.Text = "ADC1";
-            this.radDDC6ADC1.UseVisualStyleBackColor = true;
-            this.radDDC6ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC6ADC0
-            // 
-            this.radDDC6ADC0.AutoSize = true;
-            this.radDDC6ADC0.Checked = true;
-            this.radDDC6ADC0.Image = null;
-            this.radDDC6ADC0.Location = new System.Drawing.Point(6, 37);
-            this.radDDC6ADC0.Name = "radDDC6ADC0";
-            this.radDDC6ADC0.Size = new System.Drawing.Size(53, 17);
-            this.radDDC6ADC0.TabIndex = 1;
-            this.radDDC6ADC0.TabStop = true;
-            this.radDDC6ADC0.Text = "ADC0";
-            this.radDDC6ADC0.UseVisualStyleBackColor = true;
-            this.radDDC6ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // lblP1assignment
-            // 
-            this.lblP1assignment.Image = null;
-            this.lblP1assignment.Location = new System.Drawing.Point(3, 60);
-            this.lblP1assignment.Name = "lblP1assignment";
-            this.lblP1assignment.Size = new System.Drawing.Size(99, 50);
-            this.lblP1assignment.TabIndex = 16;
-            this.lblP1assignment.Text = "Protocol 1 ADC assignments";
-            this.lblP1assignment.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // grpP1DDC5ADC
-            // 
-            this.grpP1DDC5ADC.Controls.Add(this.radP1DDC5ADC2);
-            this.grpP1DDC5ADC.Controls.Add(this.radP1DDC5ADC1);
-            this.grpP1DDC5ADC.Controls.Add(this.radP1DDC5ADC0);
-            this.grpP1DDC5ADC.Location = new System.Drawing.Point(458, 3);
-            this.grpP1DDC5ADC.Name = "grpP1DDC5ADC";
-            this.grpP1DDC5ADC.Size = new System.Drawing.Size(60, 136);
-            this.grpP1DDC5ADC.TabIndex = 19;
-            this.grpP1DDC5ADC.TabStop = false;
-            this.grpP1DDC5ADC.Text = "DDC5";
-            // 
-            // radP1DDC5ADC2
-            // 
-            this.radP1DDC5ADC2.AutoSize = true;
-            this.radP1DDC5ADC2.Image = null;
-            this.radP1DDC5ADC2.Location = new System.Drawing.Point(6, 100);
-            this.radP1DDC5ADC2.Name = "radP1DDC5ADC2";
-            this.radP1DDC5ADC2.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC5ADC2.TabIndex = 3;
-            this.radP1DDC5ADC2.Text = "ADC2";
-            this.radP1DDC5ADC2.UseVisualStyleBackColor = true;
-            this.radP1DDC5ADC2.Visible = false;
-            this.radP1DDC5ADC2.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // radP1DDC5ADC1
-            // 
-            this.radP1DDC5ADC1.AutoSize = true;
-            this.radP1DDC5ADC1.Image = null;
-            this.radP1DDC5ADC1.Location = new System.Drawing.Point(6, 67);
-            this.radP1DDC5ADC1.Name = "radP1DDC5ADC1";
-            this.radP1DDC5ADC1.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC5ADC1.TabIndex = 2;
-            this.radP1DDC5ADC1.Text = "ADC1";
-            this.radP1DDC5ADC1.UseVisualStyleBackColor = true;
-            this.radP1DDC5ADC1.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // radP1DDC5ADC0
-            // 
-            this.radP1DDC5ADC0.AutoSize = true;
-            this.radP1DDC5ADC0.Checked = true;
-            this.radP1DDC5ADC0.Image = null;
-            this.radP1DDC5ADC0.Location = new System.Drawing.Point(6, 37);
-            this.radP1DDC5ADC0.Name = "radP1DDC5ADC0";
-            this.radP1DDC5ADC0.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC5ADC0.TabIndex = 1;
-            this.radP1DDC5ADC0.TabStop = true;
-            this.radP1DDC5ADC0.Text = "ADC0";
-            this.radP1DDC5ADC0.UseVisualStyleBackColor = true;
-            this.radP1DDC5ADC0.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // btnResetP2ADC
-            // 
-            this.btnResetP2ADC.Image = null;
-            this.btnResetP2ADC.Location = new System.Drawing.Point(601, 62);
-            this.btnResetP2ADC.Name = "btnResetP2ADC";
-            this.btnResetP2ADC.Selectable = true;
-            this.btnResetP2ADC.Size = new System.Drawing.Size(68, 37);
-            this.btnResetP2ADC.TabIndex = 14;
-            this.btnResetP2ADC.Text = "Reset To Default";
-            this.btnResetP2ADC.UseVisualStyleBackColor = true;
-            this.btnResetP2ADC.Click += new System.EventHandler(this.btnResetP2ADC_Click);
-            // 
-            // grpDDC0ADC
-            // 
-            this.grpDDC0ADC.Controls.Add(this.radDDC0ADC2);
-            this.grpDDC0ADC.Controls.Add(this.radDDC0ADC1);
-            this.grpDDC0ADC.Controls.Add(this.radDDC0ADC0);
-            this.grpDDC0ADC.Location = new System.Drawing.Point(108, 5);
-            this.grpDDC0ADC.Name = "grpDDC0ADC";
-            this.grpDDC0ADC.Size = new System.Drawing.Size(60, 136);
-            this.grpDDC0ADC.TabIndex = 7;
-            this.grpDDC0ADC.TabStop = false;
-            this.grpDDC0ADC.Text = "DDC0";
-            // 
-            // radDDC0ADC2
-            // 
-            this.radDDC0ADC2.AutoSize = true;
-            this.radDDC0ADC2.Image = null;
-            this.radDDC0ADC2.Location = new System.Drawing.Point(6, 100);
-            this.radDDC0ADC2.Name = "radDDC0ADC2";
-            this.radDDC0ADC2.Size = new System.Drawing.Size(53, 17);
-            this.radDDC0ADC2.TabIndex = 3;
-            this.radDDC0ADC2.Text = "ADC2";
-            this.radDDC0ADC2.UseVisualStyleBackColor = true;
-            this.radDDC0ADC2.Visible = false;
-            this.radDDC0ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC0ADC1
-            // 
-            this.radDDC0ADC1.AutoSize = true;
-            this.radDDC0ADC1.Image = null;
-            this.radDDC0ADC1.Location = new System.Drawing.Point(6, 67);
-            this.radDDC0ADC1.Name = "radDDC0ADC1";
-            this.radDDC0ADC1.Size = new System.Drawing.Size(53, 17);
-            this.radDDC0ADC1.TabIndex = 2;
-            this.radDDC0ADC1.Text = "ADC1";
-            this.radDDC0ADC1.UseVisualStyleBackColor = true;
-            this.radDDC0ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC0ADC0
-            // 
-            this.radDDC0ADC0.AutoSize = true;
-            this.radDDC0ADC0.Checked = true;
-            this.radDDC0ADC0.Image = null;
-            this.radDDC0ADC0.Location = new System.Drawing.Point(6, 37);
-            this.radDDC0ADC0.Name = "radDDC0ADC0";
-            this.radDDC0ADC0.Size = new System.Drawing.Size(53, 17);
-            this.radDDC0ADC0.TabIndex = 1;
-            this.radDDC0ADC0.TabStop = true;
-            this.radDDC0ADC0.Text = "ADC0";
-            this.radDDC0ADC0.UseVisualStyleBackColor = true;
-            this.radDDC0ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // grpP1DDC4ADC
-            // 
-            this.grpP1DDC4ADC.Controls.Add(this.radP1DDC4ADC2);
-            this.grpP1DDC4ADC.Controls.Add(this.radP1DDC4ADC1);
-            this.grpP1DDC4ADC.Controls.Add(this.radP1DDC4ADC0);
-            this.grpP1DDC4ADC.Location = new System.Drawing.Point(388, 3);
-            this.grpP1DDC4ADC.Name = "grpP1DDC4ADC";
-            this.grpP1DDC4ADC.Size = new System.Drawing.Size(60, 136);
-            this.grpP1DDC4ADC.TabIndex = 19;
-            this.grpP1DDC4ADC.TabStop = false;
-            this.grpP1DDC4ADC.Text = "DDC4";
-            // 
-            // radP1DDC4ADC2
-            // 
-            this.radP1DDC4ADC2.AutoSize = true;
-            this.radP1DDC4ADC2.Image = null;
-            this.radP1DDC4ADC2.Location = new System.Drawing.Point(6, 100);
-            this.radP1DDC4ADC2.Name = "radP1DDC4ADC2";
-            this.radP1DDC4ADC2.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC4ADC2.TabIndex = 3;
-            this.radP1DDC4ADC2.Text = "ADC2";
-            this.radP1DDC4ADC2.UseVisualStyleBackColor = true;
-            this.radP1DDC4ADC2.Visible = false;
-            this.radP1DDC4ADC2.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // radP1DDC4ADC1
-            // 
-            this.radP1DDC4ADC1.AutoSize = true;
-            this.radP1DDC4ADC1.Image = null;
-            this.radP1DDC4ADC1.Location = new System.Drawing.Point(6, 67);
-            this.radP1DDC4ADC1.Name = "radP1DDC4ADC1";
-            this.radP1DDC4ADC1.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC4ADC1.TabIndex = 2;
-            this.radP1DDC4ADC1.Text = "ADC1";
-            this.radP1DDC4ADC1.UseVisualStyleBackColor = true;
-            this.radP1DDC4ADC1.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // radP1DDC4ADC0
-            // 
-            this.radP1DDC4ADC0.AutoSize = true;
-            this.radP1DDC4ADC0.Checked = true;
-            this.radP1DDC4ADC0.Image = null;
-            this.radP1DDC4ADC0.Location = new System.Drawing.Point(6, 37);
-            this.radP1DDC4ADC0.Name = "radP1DDC4ADC0";
-            this.radP1DDC4ADC0.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC4ADC0.TabIndex = 1;
-            this.radP1DDC4ADC0.TabStop = true;
-            this.radP1DDC4ADC0.Text = "ADC0";
-            this.radP1DDC4ADC0.UseVisualStyleBackColor = true;
-            this.radP1DDC4ADC0.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // grpDDC1ADC
-            // 
-            this.grpDDC1ADC.Controls.Add(this.radDDC1ADC2);
-            this.grpDDC1ADC.Controls.Add(this.radDDC1ADC1);
-            this.grpDDC1ADC.Controls.Add(this.radDDC1ADC0);
-            this.grpDDC1ADC.Location = new System.Drawing.Point(178, 5);
-            this.grpDDC1ADC.Name = "grpDDC1ADC";
-            this.grpDDC1ADC.Size = new System.Drawing.Size(60, 136);
-            this.grpDDC1ADC.TabIndex = 8;
-            this.grpDDC1ADC.TabStop = false;
-            this.grpDDC1ADC.Text = "DDC1";
-            // 
-            // radDDC1ADC2
-            // 
-            this.radDDC1ADC2.AutoSize = true;
-            this.radDDC1ADC2.Image = null;
-            this.radDDC1ADC2.Location = new System.Drawing.Point(6, 100);
-            this.radDDC1ADC2.Name = "radDDC1ADC2";
-            this.radDDC1ADC2.Size = new System.Drawing.Size(53, 17);
-            this.radDDC1ADC2.TabIndex = 3;
-            this.radDDC1ADC2.Text = "ADC2";
-            this.radDDC1ADC2.UseVisualStyleBackColor = true;
-            this.radDDC1ADC2.Visible = false;
-            this.radDDC1ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC1ADC1
-            // 
-            this.radDDC1ADC1.AutoSize = true;
-            this.radDDC1ADC1.Checked = true;
-            this.radDDC1ADC1.Image = null;
-            this.radDDC1ADC1.Location = new System.Drawing.Point(6, 67);
-            this.radDDC1ADC1.Name = "radDDC1ADC1";
-            this.radDDC1ADC1.Size = new System.Drawing.Size(53, 17);
-            this.radDDC1ADC1.TabIndex = 2;
-            this.radDDC1ADC1.TabStop = true;
-            this.radDDC1ADC1.Text = "ADC1";
-            this.radDDC1ADC1.UseVisualStyleBackColor = true;
-            this.radDDC1ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC1ADC0
-            // 
-            this.radDDC1ADC0.AutoSize = true;
-            this.radDDC1ADC0.Image = null;
-            this.radDDC1ADC0.Location = new System.Drawing.Point(6, 37);
-            this.radDDC1ADC0.Name = "radDDC1ADC0";
-            this.radDDC1ADC0.Size = new System.Drawing.Size(53, 17);
-            this.radDDC1ADC0.TabIndex = 1;
-            this.radDDC1ADC0.Text = "ADC0";
-            this.radDDC1ADC0.UseVisualStyleBackColor = true;
-            this.radDDC1ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // grpDDC5ADC
-            // 
-            this.grpDDC5ADC.Controls.Add(this.radDDC5ADC2);
-            this.grpDDC5ADC.Controls.Add(this.radDDC5ADC1);
-            this.grpDDC5ADC.Controls.Add(this.radDDC5ADC0);
-            this.grpDDC5ADC.Location = new System.Drawing.Point(458, 5);
-            this.grpDDC5ADC.Name = "grpDDC5ADC";
-            this.grpDDC5ADC.Size = new System.Drawing.Size(60, 136);
-            this.grpDDC5ADC.TabIndex = 12;
-            this.grpDDC5ADC.TabStop = false;
-            this.grpDDC5ADC.Text = "DDC5";
-            // 
-            // radDDC5ADC2
-            // 
-            this.radDDC5ADC2.AutoSize = true;
-            this.radDDC5ADC2.Image = null;
-            this.radDDC5ADC2.Location = new System.Drawing.Point(6, 100);
-            this.radDDC5ADC2.Name = "radDDC5ADC2";
-            this.radDDC5ADC2.Size = new System.Drawing.Size(53, 17);
-            this.radDDC5ADC2.TabIndex = 3;
-            this.radDDC5ADC2.Text = "ADC2";
-            this.radDDC5ADC2.UseVisualStyleBackColor = true;
-            this.radDDC5ADC2.Visible = false;
-            this.radDDC5ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC5ADC1
-            // 
-            this.radDDC5ADC1.AutoSize = true;
-            this.radDDC5ADC1.Image = null;
-            this.radDDC5ADC1.Location = new System.Drawing.Point(6, 67);
-            this.radDDC5ADC1.Name = "radDDC5ADC1";
-            this.radDDC5ADC1.Size = new System.Drawing.Size(53, 17);
-            this.radDDC5ADC1.TabIndex = 2;
-            this.radDDC5ADC1.Text = "ADC1";
-            this.radDDC5ADC1.UseVisualStyleBackColor = true;
-            this.radDDC5ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC5ADC0
-            // 
-            this.radDDC5ADC0.AutoSize = true;
-            this.radDDC5ADC0.Checked = true;
-            this.radDDC5ADC0.Image = null;
-            this.radDDC5ADC0.Location = new System.Drawing.Point(6, 37);
-            this.radDDC5ADC0.Name = "radDDC5ADC0";
-            this.radDDC5ADC0.Size = new System.Drawing.Size(53, 17);
-            this.radDDC5ADC0.TabIndex = 1;
-            this.radDDC5ADC0.TabStop = true;
-            this.radDDC5ADC0.Text = "ADC0";
-            this.radDDC5ADC0.UseVisualStyleBackColor = true;
-            this.radDDC5ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // grpP1DDC3ADC
-            // 
-            this.grpP1DDC3ADC.Controls.Add(this.radP1DDC3ADC2);
-            this.grpP1DDC3ADC.Controls.Add(this.radP1DDC3ADC1);
-            this.grpP1DDC3ADC.Controls.Add(this.radP1DDC3ADC0);
-            this.grpP1DDC3ADC.Location = new System.Drawing.Point(318, 3);
-            this.grpP1DDC3ADC.Name = "grpP1DDC3ADC";
-            this.grpP1DDC3ADC.Size = new System.Drawing.Size(60, 136);
-            this.grpP1DDC3ADC.TabIndex = 21;
-            this.grpP1DDC3ADC.TabStop = false;
-            this.grpP1DDC3ADC.Text = "DDC3";
-            // 
-            // radP1DDC3ADC2
-            // 
-            this.radP1DDC3ADC2.AutoSize = true;
-            this.radP1DDC3ADC2.Image = null;
-            this.radP1DDC3ADC2.Location = new System.Drawing.Point(6, 100);
-            this.radP1DDC3ADC2.Name = "radP1DDC3ADC2";
-            this.radP1DDC3ADC2.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC3ADC2.TabIndex = 3;
-            this.radP1DDC3ADC2.Text = "ADC2";
-            this.radP1DDC3ADC2.UseVisualStyleBackColor = true;
-            this.radP1DDC3ADC2.Visible = false;
-            this.radP1DDC3ADC2.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // radP1DDC3ADC1
-            // 
-            this.radP1DDC3ADC1.AutoSize = true;
-            this.radP1DDC3ADC1.Image = null;
-            this.radP1DDC3ADC1.Location = new System.Drawing.Point(6, 67);
-            this.radP1DDC3ADC1.Name = "radP1DDC3ADC1";
-            this.radP1DDC3ADC1.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC3ADC1.TabIndex = 2;
-            this.radP1DDC3ADC1.Text = "ADC1";
-            this.radP1DDC3ADC1.UseVisualStyleBackColor = true;
-            this.radP1DDC3ADC1.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // radP1DDC3ADC0
-            // 
-            this.radP1DDC3ADC0.AutoSize = true;
-            this.radP1DDC3ADC0.Checked = true;
-            this.radP1DDC3ADC0.Image = null;
-            this.radP1DDC3ADC0.Location = new System.Drawing.Point(6, 37);
-            this.radP1DDC3ADC0.Name = "radP1DDC3ADC0";
-            this.radP1DDC3ADC0.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC3ADC0.TabIndex = 1;
-            this.radP1DDC3ADC0.TabStop = true;
-            this.radP1DDC3ADC0.Text = "ADC0";
-            this.radP1DDC3ADC0.UseVisualStyleBackColor = true;
-            this.radP1DDC3ADC0.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // grpDDC2ADC
-            // 
-            this.grpDDC2ADC.Controls.Add(this.radDDC2ADC2);
-            this.grpDDC2ADC.Controls.Add(this.radDDC2ADC1);
-            this.grpDDC2ADC.Controls.Add(this.radDDC2ADC0);
-            this.grpDDC2ADC.Location = new System.Drawing.Point(248, 5);
-            this.grpDDC2ADC.Name = "grpDDC2ADC";
-            this.grpDDC2ADC.Size = new System.Drawing.Size(60, 136);
-            this.grpDDC2ADC.TabIndex = 9;
-            this.grpDDC2ADC.TabStop = false;
-            this.grpDDC2ADC.Text = "DDC2";
-            // 
-            // radDDC2ADC2
-            // 
-            this.radDDC2ADC2.AutoSize = true;
-            this.radDDC2ADC2.Image = null;
-            this.radDDC2ADC2.Location = new System.Drawing.Point(6, 100);
-            this.radDDC2ADC2.Name = "radDDC2ADC2";
-            this.radDDC2ADC2.Size = new System.Drawing.Size(53, 17);
-            this.radDDC2ADC2.TabIndex = 3;
-            this.radDDC2ADC2.Text = "ADC2";
-            this.radDDC2ADC2.UseVisualStyleBackColor = true;
-            this.radDDC2ADC2.Visible = false;
-            this.radDDC2ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC2ADC1
-            // 
-            this.radDDC2ADC1.AutoSize = true;
-            this.radDDC2ADC1.Image = null;
-            this.radDDC2ADC1.Location = new System.Drawing.Point(6, 67);
-            this.radDDC2ADC1.Name = "radDDC2ADC1";
-            this.radDDC2ADC1.Size = new System.Drawing.Size(53, 17);
-            this.radDDC2ADC1.TabIndex = 2;
-            this.radDDC2ADC1.Text = "ADC1";
-            this.radDDC2ADC1.UseVisualStyleBackColor = true;
-            this.radDDC2ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC2ADC0
-            // 
-            this.radDDC2ADC0.AutoSize = true;
-            this.radDDC2ADC0.Checked = true;
-            this.radDDC2ADC0.Image = null;
-            this.radDDC2ADC0.Location = new System.Drawing.Point(6, 37);
-            this.radDDC2ADC0.Name = "radDDC2ADC0";
-            this.radDDC2ADC0.Size = new System.Drawing.Size(53, 17);
-            this.radDDC2ADC0.TabIndex = 1;
-            this.radDDC2ADC0.TabStop = true;
-            this.radDDC2ADC0.Text = "ADC0";
-            this.radDDC2ADC0.UseVisualStyleBackColor = true;
-            this.radDDC2ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // grpDDC3ADC
-            // 
-            this.grpDDC3ADC.Controls.Add(this.radDDC3ADC2);
-            this.grpDDC3ADC.Controls.Add(this.radDDC3ADC1);
-            this.grpDDC3ADC.Controls.Add(this.radDDC3ADC0);
-            this.grpDDC3ADC.Location = new System.Drawing.Point(318, 5);
-            this.grpDDC3ADC.Name = "grpDDC3ADC";
-            this.grpDDC3ADC.Size = new System.Drawing.Size(60, 136);
-            this.grpDDC3ADC.TabIndex = 10;
-            this.grpDDC3ADC.TabStop = false;
-            this.grpDDC3ADC.Text = "DDC3";
-            // 
-            // radDDC3ADC2
-            // 
-            this.radDDC3ADC2.AutoSize = true;
-            this.radDDC3ADC2.Image = null;
-            this.radDDC3ADC2.Location = new System.Drawing.Point(6, 100);
-            this.radDDC3ADC2.Name = "radDDC3ADC2";
-            this.radDDC3ADC2.Size = new System.Drawing.Size(53, 17);
-            this.radDDC3ADC2.TabIndex = 3;
-            this.radDDC3ADC2.Text = "ADC2";
-            this.radDDC3ADC2.UseVisualStyleBackColor = true;
-            this.radDDC3ADC2.Visible = false;
-            this.radDDC3ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC3ADC1
-            // 
-            this.radDDC3ADC1.AutoSize = true;
-            this.radDDC3ADC1.Checked = true;
-            this.radDDC3ADC1.Image = null;
-            this.radDDC3ADC1.Location = new System.Drawing.Point(6, 67);
-            this.radDDC3ADC1.Name = "radDDC3ADC1";
-            this.radDDC3ADC1.Size = new System.Drawing.Size(53, 17);
-            this.radDDC3ADC1.TabIndex = 2;
-            this.radDDC3ADC1.TabStop = true;
-            this.radDDC3ADC1.Text = "ADC1";
-            this.radDDC3ADC1.UseVisualStyleBackColor = true;
-            this.radDDC3ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC3ADC0
-            // 
-            this.radDDC3ADC0.AutoSize = true;
-            this.radDDC3ADC0.Image = null;
-            this.radDDC3ADC0.Location = new System.Drawing.Point(6, 37);
-            this.radDDC3ADC0.Name = "radDDC3ADC0";
-            this.radDDC3ADC0.Size = new System.Drawing.Size(53, 17);
-            this.radDDC3ADC0.TabIndex = 1;
-            this.radDDC3ADC0.Text = "ADC0";
-            this.radDDC3ADC0.UseVisualStyleBackColor = true;
-            this.radDDC3ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // grpP1DDC2ADC
-            // 
-            this.grpP1DDC2ADC.Controls.Add(this.radP1DDC2ADC2);
-            this.grpP1DDC2ADC.Controls.Add(this.radP1DDC2ADC1);
-            this.grpP1DDC2ADC.Controls.Add(this.radP1DDC2ADC0);
-            this.grpP1DDC2ADC.Location = new System.Drawing.Point(248, 3);
-            this.grpP1DDC2ADC.Name = "grpP1DDC2ADC";
-            this.grpP1DDC2ADC.Size = new System.Drawing.Size(60, 136);
-            this.grpP1DDC2ADC.TabIndex = 20;
-            this.grpP1DDC2ADC.TabStop = false;
-            this.grpP1DDC2ADC.Text = "DDC2";
-            // 
-            // radP1DDC2ADC2
-            // 
-            this.radP1DDC2ADC2.AutoSize = true;
-            this.radP1DDC2ADC2.Image = null;
-            this.radP1DDC2ADC2.Location = new System.Drawing.Point(6, 100);
-            this.radP1DDC2ADC2.Name = "radP1DDC2ADC2";
-            this.radP1DDC2ADC2.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC2ADC2.TabIndex = 3;
-            this.radP1DDC2ADC2.Text = "ADC2";
-            this.radP1DDC2ADC2.UseVisualStyleBackColor = true;
-            this.radP1DDC2ADC2.Visible = false;
-            this.radP1DDC2ADC2.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // radP1DDC2ADC1
-            // 
-            this.radP1DDC2ADC1.AutoSize = true;
-            this.radP1DDC2ADC1.Checked = true;
-            this.radP1DDC2ADC1.Image = null;
-            this.radP1DDC2ADC1.Location = new System.Drawing.Point(6, 67);
-            this.radP1DDC2ADC1.Name = "radP1DDC2ADC1";
-            this.radP1DDC2ADC1.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC2ADC1.TabIndex = 2;
-            this.radP1DDC2ADC1.TabStop = true;
-            this.radP1DDC2ADC1.Text = "ADC1";
-            this.radP1DDC2ADC1.UseVisualStyleBackColor = true;
-            this.radP1DDC2ADC1.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // radP1DDC2ADC0
-            // 
-            this.radP1DDC2ADC0.AutoSize = true;
-            this.radP1DDC2ADC0.Image = null;
-            this.radP1DDC2ADC0.Location = new System.Drawing.Point(6, 37);
-            this.radP1DDC2ADC0.Name = "radP1DDC2ADC0";
-            this.radP1DDC2ADC0.Size = new System.Drawing.Size(53, 17);
-            this.radP1DDC2ADC0.TabIndex = 1;
-            this.radP1DDC2ADC0.Text = "ADC0";
-            this.radP1DDC2ADC0.UseVisualStyleBackColor = true;
-            this.radP1DDC2ADC0.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
-            // 
-            // grpDDC4ADC
-            // 
-            this.grpDDC4ADC.Controls.Add(this.radDDC4ADC2);
-            this.grpDDC4ADC.Controls.Add(this.radDDC4ADC1);
-            this.grpDDC4ADC.Controls.Add(this.radDDC4ADC0);
-            this.grpDDC4ADC.Location = new System.Drawing.Point(388, 5);
-            this.grpDDC4ADC.Name = "grpDDC4ADC";
-            this.grpDDC4ADC.Size = new System.Drawing.Size(60, 136);
-            this.grpDDC4ADC.TabIndex = 11;
-            this.grpDDC4ADC.TabStop = false;
-            this.grpDDC4ADC.Text = "DDC4";
-            // 
-            // radDDC4ADC2
-            // 
-            this.radDDC4ADC2.AutoSize = true;
-            this.radDDC4ADC2.Image = null;
-            this.radDDC4ADC2.Location = new System.Drawing.Point(6, 100);
-            this.radDDC4ADC2.Name = "radDDC4ADC2";
-            this.radDDC4ADC2.Size = new System.Drawing.Size(53, 17);
-            this.radDDC4ADC2.TabIndex = 3;
-            this.radDDC4ADC2.Text = "ADC2";
-            this.radDDC4ADC2.UseVisualStyleBackColor = true;
-            this.radDDC4ADC2.Visible = false;
-            this.radDDC4ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC4ADC1
-            // 
-            this.radDDC4ADC1.AutoSize = true;
-            this.radDDC4ADC1.Image = null;
-            this.radDDC4ADC1.Location = new System.Drawing.Point(6, 67);
-            this.radDDC4ADC1.Name = "radDDC4ADC1";
-            this.radDDC4ADC1.Size = new System.Drawing.Size(53, 17);
-            this.radDDC4ADC1.TabIndex = 2;
-            this.radDDC4ADC1.Text = "ADC1";
-            this.radDDC4ADC1.UseVisualStyleBackColor = true;
-            this.radDDC4ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
-            // 
-            // radDDC4ADC0
-            // 
-            this.radDDC4ADC0.AutoSize = true;
-            this.radDDC4ADC0.Checked = true;
-            this.radDDC4ADC0.Image = null;
-            this.radDDC4ADC0.Location = new System.Drawing.Point(6, 37);
-            this.radDDC4ADC0.Name = "radDDC4ADC0";
-            this.radDDC4ADC0.Size = new System.Drawing.Size(53, 17);
-            this.radDDC4ADC0.TabIndex = 1;
-            this.radDDC4ADC0.TabStop = true;
-            this.radDDC4ADC0.Text = "ADC0";
-            this.radDDC4ADC0.UseVisualStyleBackColor = true;
-            this.radDDC4ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // pnlP1_adcs
+            // 
+            this.pnlP1_adcs.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlP1_adcs.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC0ADC);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC6ADC);
+            this.pnlP1_adcs.Controls.Add(this.btnResetP1ADC);
+            this.pnlP1_adcs.Controls.Add(this.lblP1assignment);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC1ADC);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC5ADC);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC2ADC);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC4ADC);
+            this.pnlP1_adcs.Controls.Add(this.grpP1DDC3ADC);
+            this.pnlP1_adcs.Location = new System.Drawing.Point(19, 248);
+            this.pnlP1_adcs.Name = "pnlP1_adcs";
+            this.pnlP1_adcs.Size = new System.Drawing.Size(676, 148);
+            this.pnlP1_adcs.TabIndex = 112;
             // 
             // grpP1DDC0ADC
             // 
@@ -13712,6 +13086,79 @@
             this.radP1DDC0ADC0.UseVisualStyleBackColor = true;
             this.radP1DDC0ADC0.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
             // 
+            // grpP1DDC6ADC
+            // 
+            this.grpP1DDC6ADC.Controls.Add(this.radP1DDC6ADC2);
+            this.grpP1DDC6ADC.Controls.Add(this.radP1DDC6ADC1);
+            this.grpP1DDC6ADC.Controls.Add(this.radP1DDC6ADC0);
+            this.grpP1DDC6ADC.Location = new System.Drawing.Point(528, 3);
+            this.grpP1DDC6ADC.Name = "grpP1DDC6ADC";
+            this.grpP1DDC6ADC.Size = new System.Drawing.Size(60, 136);
+            this.grpP1DDC6ADC.TabIndex = 19;
+            this.grpP1DDC6ADC.TabStop = false;
+            this.grpP1DDC6ADC.Text = "DDC6";
+            // 
+            // radP1DDC6ADC2
+            // 
+            this.radP1DDC6ADC2.AutoSize = true;
+            this.radP1DDC6ADC2.Image = null;
+            this.radP1DDC6ADC2.Location = new System.Drawing.Point(6, 100);
+            this.radP1DDC6ADC2.Name = "radP1DDC6ADC2";
+            this.radP1DDC6ADC2.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC6ADC2.TabIndex = 3;
+            this.radP1DDC6ADC2.Text = "ADC2";
+            this.radP1DDC6ADC2.UseVisualStyleBackColor = true;
+            this.radP1DDC6ADC2.Visible = false;
+            this.radP1DDC6ADC2.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // radP1DDC6ADC1
+            // 
+            this.radP1DDC6ADC1.AutoSize = true;
+            this.radP1DDC6ADC1.Image = null;
+            this.radP1DDC6ADC1.Location = new System.Drawing.Point(6, 67);
+            this.radP1DDC6ADC1.Name = "radP1DDC6ADC1";
+            this.radP1DDC6ADC1.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC6ADC1.TabIndex = 2;
+            this.radP1DDC6ADC1.Text = "ADC1";
+            this.radP1DDC6ADC1.UseVisualStyleBackColor = true;
+            this.radP1DDC6ADC1.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // radP1DDC6ADC0
+            // 
+            this.radP1DDC6ADC0.AutoSize = true;
+            this.radP1DDC6ADC0.Checked = true;
+            this.radP1DDC6ADC0.Image = null;
+            this.radP1DDC6ADC0.Location = new System.Drawing.Point(6, 37);
+            this.radP1DDC6ADC0.Name = "radP1DDC6ADC0";
+            this.radP1DDC6ADC0.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC6ADC0.TabIndex = 1;
+            this.radP1DDC6ADC0.TabStop = true;
+            this.radP1DDC6ADC0.Text = "ADC0";
+            this.radP1DDC6ADC0.UseVisualStyleBackColor = true;
+            this.radP1DDC6ADC0.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // btnResetP1ADC
+            // 
+            this.btnResetP1ADC.Image = null;
+            this.btnResetP1ADC.Location = new System.Drawing.Point(601, 60);
+            this.btnResetP1ADC.Name = "btnResetP1ADC";
+            this.btnResetP1ADC.Selectable = true;
+            this.btnResetP1ADC.Size = new System.Drawing.Size(68, 37);
+            this.btnResetP1ADC.TabIndex = 17;
+            this.btnResetP1ADC.Text = "Reset to Default";
+            this.btnResetP1ADC.UseVisualStyleBackColor = true;
+            this.btnResetP1ADC.Click += new System.EventHandler(this.btnResetP1ADC_Click);
+            // 
+            // lblP1assignment
+            // 
+            this.lblP1assignment.Image = null;
+            this.lblP1assignment.Location = new System.Drawing.Point(3, 60);
+            this.lblP1assignment.Name = "lblP1assignment";
+            this.lblP1assignment.Size = new System.Drawing.Size(99, 50);
+            this.lblP1assignment.TabIndex = 16;
+            this.lblP1assignment.Text = "Protocol 1 ADC assignments";
+            this.lblP1assignment.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // grpP1DDC1ADC
             // 
             this.grpP1DDC1ADC.Controls.Add(this.radP1DDC1ADC2);
@@ -13763,17 +13210,606 @@
             this.radP1DDC1ADC0.UseVisualStyleBackColor = true;
             this.radP1DDC1ADC0.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
             // 
-            // btnResetP1ADC
+            // grpP1DDC5ADC
             // 
-            this.btnResetP1ADC.Image = null;
-            this.btnResetP1ADC.Location = new System.Drawing.Point(601, 60);
-            this.btnResetP1ADC.Name = "btnResetP1ADC";
-            this.btnResetP1ADC.Selectable = true;
-            this.btnResetP1ADC.Size = new System.Drawing.Size(68, 37);
-            this.btnResetP1ADC.TabIndex = 17;
-            this.btnResetP1ADC.Text = "Reset to Default";
-            this.btnResetP1ADC.UseVisualStyleBackColor = true;
-            this.btnResetP1ADC.Click += new System.EventHandler(this.btnResetP1ADC_Click);
+            this.grpP1DDC5ADC.Controls.Add(this.radP1DDC5ADC2);
+            this.grpP1DDC5ADC.Controls.Add(this.radP1DDC5ADC1);
+            this.grpP1DDC5ADC.Controls.Add(this.radP1DDC5ADC0);
+            this.grpP1DDC5ADC.Location = new System.Drawing.Point(458, 3);
+            this.grpP1DDC5ADC.Name = "grpP1DDC5ADC";
+            this.grpP1DDC5ADC.Size = new System.Drawing.Size(60, 136);
+            this.grpP1DDC5ADC.TabIndex = 19;
+            this.grpP1DDC5ADC.TabStop = false;
+            this.grpP1DDC5ADC.Text = "DDC5";
+            // 
+            // radP1DDC5ADC2
+            // 
+            this.radP1DDC5ADC2.AutoSize = true;
+            this.radP1DDC5ADC2.Image = null;
+            this.radP1DDC5ADC2.Location = new System.Drawing.Point(6, 100);
+            this.radP1DDC5ADC2.Name = "radP1DDC5ADC2";
+            this.radP1DDC5ADC2.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC5ADC2.TabIndex = 3;
+            this.radP1DDC5ADC2.Text = "ADC2";
+            this.radP1DDC5ADC2.UseVisualStyleBackColor = true;
+            this.radP1DDC5ADC2.Visible = false;
+            this.radP1DDC5ADC2.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // radP1DDC5ADC1
+            // 
+            this.radP1DDC5ADC1.AutoSize = true;
+            this.radP1DDC5ADC1.Image = null;
+            this.radP1DDC5ADC1.Location = new System.Drawing.Point(6, 67);
+            this.radP1DDC5ADC1.Name = "radP1DDC5ADC1";
+            this.radP1DDC5ADC1.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC5ADC1.TabIndex = 2;
+            this.radP1DDC5ADC1.Text = "ADC1";
+            this.radP1DDC5ADC1.UseVisualStyleBackColor = true;
+            this.radP1DDC5ADC1.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // radP1DDC5ADC0
+            // 
+            this.radP1DDC5ADC0.AutoSize = true;
+            this.radP1DDC5ADC0.Checked = true;
+            this.radP1DDC5ADC0.Image = null;
+            this.radP1DDC5ADC0.Location = new System.Drawing.Point(6, 37);
+            this.radP1DDC5ADC0.Name = "radP1DDC5ADC0";
+            this.radP1DDC5ADC0.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC5ADC0.TabIndex = 1;
+            this.radP1DDC5ADC0.TabStop = true;
+            this.radP1DDC5ADC0.Text = "ADC0";
+            this.radP1DDC5ADC0.UseVisualStyleBackColor = true;
+            this.radP1DDC5ADC0.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // grpP1DDC2ADC
+            // 
+            this.grpP1DDC2ADC.Controls.Add(this.radP1DDC2ADC2);
+            this.grpP1DDC2ADC.Controls.Add(this.radP1DDC2ADC1);
+            this.grpP1DDC2ADC.Controls.Add(this.radP1DDC2ADC0);
+            this.grpP1DDC2ADC.Location = new System.Drawing.Point(248, 3);
+            this.grpP1DDC2ADC.Name = "grpP1DDC2ADC";
+            this.grpP1DDC2ADC.Size = new System.Drawing.Size(60, 136);
+            this.grpP1DDC2ADC.TabIndex = 20;
+            this.grpP1DDC2ADC.TabStop = false;
+            this.grpP1DDC2ADC.Text = "DDC2";
+            // 
+            // radP1DDC2ADC2
+            // 
+            this.radP1DDC2ADC2.AutoSize = true;
+            this.radP1DDC2ADC2.Image = null;
+            this.radP1DDC2ADC2.Location = new System.Drawing.Point(6, 100);
+            this.radP1DDC2ADC2.Name = "radP1DDC2ADC2";
+            this.radP1DDC2ADC2.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC2ADC2.TabIndex = 3;
+            this.radP1DDC2ADC2.Text = "ADC2";
+            this.radP1DDC2ADC2.UseVisualStyleBackColor = true;
+            this.radP1DDC2ADC2.Visible = false;
+            this.radP1DDC2ADC2.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // radP1DDC2ADC1
+            // 
+            this.radP1DDC2ADC1.AutoSize = true;
+            this.radP1DDC2ADC1.Checked = true;
+            this.radP1DDC2ADC1.Image = null;
+            this.radP1DDC2ADC1.Location = new System.Drawing.Point(6, 67);
+            this.radP1DDC2ADC1.Name = "radP1DDC2ADC1";
+            this.radP1DDC2ADC1.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC2ADC1.TabIndex = 2;
+            this.radP1DDC2ADC1.TabStop = true;
+            this.radP1DDC2ADC1.Text = "ADC1";
+            this.radP1DDC2ADC1.UseVisualStyleBackColor = true;
+            this.radP1DDC2ADC1.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // radP1DDC2ADC0
+            // 
+            this.radP1DDC2ADC0.AutoSize = true;
+            this.radP1DDC2ADC0.Image = null;
+            this.radP1DDC2ADC0.Location = new System.Drawing.Point(6, 37);
+            this.radP1DDC2ADC0.Name = "radP1DDC2ADC0";
+            this.radP1DDC2ADC0.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC2ADC0.TabIndex = 1;
+            this.radP1DDC2ADC0.Text = "ADC0";
+            this.radP1DDC2ADC0.UseVisualStyleBackColor = true;
+            this.radP1DDC2ADC0.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // grpP1DDC4ADC
+            // 
+            this.grpP1DDC4ADC.Controls.Add(this.radP1DDC4ADC2);
+            this.grpP1DDC4ADC.Controls.Add(this.radP1DDC4ADC1);
+            this.grpP1DDC4ADC.Controls.Add(this.radP1DDC4ADC0);
+            this.grpP1DDC4ADC.Location = new System.Drawing.Point(388, 3);
+            this.grpP1DDC4ADC.Name = "grpP1DDC4ADC";
+            this.grpP1DDC4ADC.Size = new System.Drawing.Size(60, 136);
+            this.grpP1DDC4ADC.TabIndex = 19;
+            this.grpP1DDC4ADC.TabStop = false;
+            this.grpP1DDC4ADC.Text = "DDC4";
+            // 
+            // radP1DDC4ADC2
+            // 
+            this.radP1DDC4ADC2.AutoSize = true;
+            this.radP1DDC4ADC2.Image = null;
+            this.radP1DDC4ADC2.Location = new System.Drawing.Point(6, 100);
+            this.radP1DDC4ADC2.Name = "radP1DDC4ADC2";
+            this.radP1DDC4ADC2.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC4ADC2.TabIndex = 3;
+            this.radP1DDC4ADC2.Text = "ADC2";
+            this.radP1DDC4ADC2.UseVisualStyleBackColor = true;
+            this.radP1DDC4ADC2.Visible = false;
+            this.radP1DDC4ADC2.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // radP1DDC4ADC1
+            // 
+            this.radP1DDC4ADC1.AutoSize = true;
+            this.radP1DDC4ADC1.Image = null;
+            this.radP1DDC4ADC1.Location = new System.Drawing.Point(6, 67);
+            this.radP1DDC4ADC1.Name = "radP1DDC4ADC1";
+            this.radP1DDC4ADC1.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC4ADC1.TabIndex = 2;
+            this.radP1DDC4ADC1.Text = "ADC1";
+            this.radP1DDC4ADC1.UseVisualStyleBackColor = true;
+            this.radP1DDC4ADC1.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // radP1DDC4ADC0
+            // 
+            this.radP1DDC4ADC0.AutoSize = true;
+            this.radP1DDC4ADC0.Checked = true;
+            this.radP1DDC4ADC0.Image = null;
+            this.radP1DDC4ADC0.Location = new System.Drawing.Point(6, 37);
+            this.radP1DDC4ADC0.Name = "radP1DDC4ADC0";
+            this.radP1DDC4ADC0.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC4ADC0.TabIndex = 1;
+            this.radP1DDC4ADC0.TabStop = true;
+            this.radP1DDC4ADC0.Text = "ADC0";
+            this.radP1DDC4ADC0.UseVisualStyleBackColor = true;
+            this.radP1DDC4ADC0.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // grpP1DDC3ADC
+            // 
+            this.grpP1DDC3ADC.Controls.Add(this.radP1DDC3ADC2);
+            this.grpP1DDC3ADC.Controls.Add(this.radP1DDC3ADC1);
+            this.grpP1DDC3ADC.Controls.Add(this.radP1DDC3ADC0);
+            this.grpP1DDC3ADC.Location = new System.Drawing.Point(318, 3);
+            this.grpP1DDC3ADC.Name = "grpP1DDC3ADC";
+            this.grpP1DDC3ADC.Size = new System.Drawing.Size(60, 136);
+            this.grpP1DDC3ADC.TabIndex = 21;
+            this.grpP1DDC3ADC.TabStop = false;
+            this.grpP1DDC3ADC.Text = "DDC3";
+            // 
+            // radP1DDC3ADC2
+            // 
+            this.radP1DDC3ADC2.AutoSize = true;
+            this.radP1DDC3ADC2.Image = null;
+            this.radP1DDC3ADC2.Location = new System.Drawing.Point(6, 100);
+            this.radP1DDC3ADC2.Name = "radP1DDC3ADC2";
+            this.radP1DDC3ADC2.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC3ADC2.TabIndex = 3;
+            this.radP1DDC3ADC2.Text = "ADC2";
+            this.radP1DDC3ADC2.UseVisualStyleBackColor = true;
+            this.radP1DDC3ADC2.Visible = false;
+            this.radP1DDC3ADC2.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // radP1DDC3ADC1
+            // 
+            this.radP1DDC3ADC1.AutoSize = true;
+            this.radP1DDC3ADC1.Image = null;
+            this.radP1DDC3ADC1.Location = new System.Drawing.Point(6, 67);
+            this.radP1DDC3ADC1.Name = "radP1DDC3ADC1";
+            this.radP1DDC3ADC1.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC3ADC1.TabIndex = 2;
+            this.radP1DDC3ADC1.Text = "ADC1";
+            this.radP1DDC3ADC1.UseVisualStyleBackColor = true;
+            this.radP1DDC3ADC1.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // radP1DDC3ADC0
+            // 
+            this.radP1DDC3ADC0.AutoSize = true;
+            this.radP1DDC3ADC0.Checked = true;
+            this.radP1DDC3ADC0.Image = null;
+            this.radP1DDC3ADC0.Location = new System.Drawing.Point(6, 37);
+            this.radP1DDC3ADC0.Name = "radP1DDC3ADC0";
+            this.radP1DDC3ADC0.Size = new System.Drawing.Size(53, 17);
+            this.radP1DDC3ADC0.TabIndex = 1;
+            this.radP1DDC3ADC0.TabStop = true;
+            this.radP1DDC3ADC0.Text = "ADC0";
+            this.radP1DDC3ADC0.UseVisualStyleBackColor = true;
+            this.radP1DDC3ADC0.CheckedChanged += new System.EventHandler(this.radP1DDCADC_CheckedChanged);
+            // 
+            // pnlP2_adcs
+            // 
+            this.pnlP2_adcs.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlP2_adcs.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlP2_adcs.Controls.Add(this.lblP2assignment);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC0ADC);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC4ADC);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC6ADC);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC3ADC);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC2ADC);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC5ADC);
+            this.pnlP2_adcs.Controls.Add(this.btnResetP2ADC);
+            this.pnlP2_adcs.Controls.Add(this.grpDDC1ADC);
+            this.pnlP2_adcs.Location = new System.Drawing.Point(19, 9);
+            this.pnlP2_adcs.Name = "pnlP2_adcs";
+            this.pnlP2_adcs.Size = new System.Drawing.Size(676, 148);
+            this.pnlP2_adcs.TabIndex = 112;
+            // 
+            // lblP2assignment
+            // 
+            this.lblP2assignment.Image = null;
+            this.lblP2assignment.Location = new System.Drawing.Point(3, 62);
+            this.lblP2assignment.Name = "lblP2assignment";
+            this.lblP2assignment.Size = new System.Drawing.Size(99, 50);
+            this.lblP2assignment.TabIndex = 29;
+            this.lblP2assignment.Text = "Protocol 2 ADC assignments";
+            this.lblP2assignment.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // grpDDC0ADC
+            // 
+            this.grpDDC0ADC.Controls.Add(this.radDDC0ADC2);
+            this.grpDDC0ADC.Controls.Add(this.radDDC0ADC1);
+            this.grpDDC0ADC.Controls.Add(this.radDDC0ADC0);
+            this.grpDDC0ADC.Location = new System.Drawing.Point(108, 5);
+            this.grpDDC0ADC.Name = "grpDDC0ADC";
+            this.grpDDC0ADC.Size = new System.Drawing.Size(60, 136);
+            this.grpDDC0ADC.TabIndex = 7;
+            this.grpDDC0ADC.TabStop = false;
+            this.grpDDC0ADC.Text = "DDC0";
+            // 
+            // radDDC0ADC2
+            // 
+            this.radDDC0ADC2.AutoSize = true;
+            this.radDDC0ADC2.Image = null;
+            this.radDDC0ADC2.Location = new System.Drawing.Point(6, 100);
+            this.radDDC0ADC2.Name = "radDDC0ADC2";
+            this.radDDC0ADC2.Size = new System.Drawing.Size(53, 17);
+            this.radDDC0ADC2.TabIndex = 3;
+            this.radDDC0ADC2.Text = "ADC2";
+            this.radDDC0ADC2.UseVisualStyleBackColor = true;
+            this.radDDC0ADC2.Visible = false;
+            this.radDDC0ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC0ADC1
+            // 
+            this.radDDC0ADC1.AutoSize = true;
+            this.radDDC0ADC1.Image = null;
+            this.radDDC0ADC1.Location = new System.Drawing.Point(6, 67);
+            this.radDDC0ADC1.Name = "radDDC0ADC1";
+            this.radDDC0ADC1.Size = new System.Drawing.Size(53, 17);
+            this.radDDC0ADC1.TabIndex = 2;
+            this.radDDC0ADC1.Text = "ADC1";
+            this.radDDC0ADC1.UseVisualStyleBackColor = true;
+            this.radDDC0ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC0ADC0
+            // 
+            this.radDDC0ADC0.AutoSize = true;
+            this.radDDC0ADC0.Checked = true;
+            this.radDDC0ADC0.Image = null;
+            this.radDDC0ADC0.Location = new System.Drawing.Point(6, 37);
+            this.radDDC0ADC0.Name = "radDDC0ADC0";
+            this.radDDC0ADC0.Size = new System.Drawing.Size(53, 17);
+            this.radDDC0ADC0.TabIndex = 1;
+            this.radDDC0ADC0.TabStop = true;
+            this.radDDC0ADC0.Text = "ADC0";
+            this.radDDC0ADC0.UseVisualStyleBackColor = true;
+            this.radDDC0ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // grpDDC4ADC
+            // 
+            this.grpDDC4ADC.Controls.Add(this.radDDC4ADC2);
+            this.grpDDC4ADC.Controls.Add(this.radDDC4ADC1);
+            this.grpDDC4ADC.Controls.Add(this.radDDC4ADC0);
+            this.grpDDC4ADC.Location = new System.Drawing.Point(388, 5);
+            this.grpDDC4ADC.Name = "grpDDC4ADC";
+            this.grpDDC4ADC.Size = new System.Drawing.Size(60, 136);
+            this.grpDDC4ADC.TabIndex = 11;
+            this.grpDDC4ADC.TabStop = false;
+            this.grpDDC4ADC.Text = "DDC4";
+            // 
+            // radDDC4ADC2
+            // 
+            this.radDDC4ADC2.AutoSize = true;
+            this.radDDC4ADC2.Image = null;
+            this.radDDC4ADC2.Location = new System.Drawing.Point(6, 100);
+            this.radDDC4ADC2.Name = "radDDC4ADC2";
+            this.radDDC4ADC2.Size = new System.Drawing.Size(53, 17);
+            this.radDDC4ADC2.TabIndex = 3;
+            this.radDDC4ADC2.Text = "ADC2";
+            this.radDDC4ADC2.UseVisualStyleBackColor = true;
+            this.radDDC4ADC2.Visible = false;
+            this.radDDC4ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC4ADC1
+            // 
+            this.radDDC4ADC1.AutoSize = true;
+            this.radDDC4ADC1.Image = null;
+            this.radDDC4ADC1.Location = new System.Drawing.Point(6, 67);
+            this.radDDC4ADC1.Name = "radDDC4ADC1";
+            this.radDDC4ADC1.Size = new System.Drawing.Size(53, 17);
+            this.radDDC4ADC1.TabIndex = 2;
+            this.radDDC4ADC1.Text = "ADC1";
+            this.radDDC4ADC1.UseVisualStyleBackColor = true;
+            this.radDDC4ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC4ADC0
+            // 
+            this.radDDC4ADC0.AutoSize = true;
+            this.radDDC4ADC0.Checked = true;
+            this.radDDC4ADC0.Image = null;
+            this.radDDC4ADC0.Location = new System.Drawing.Point(6, 37);
+            this.radDDC4ADC0.Name = "radDDC4ADC0";
+            this.radDDC4ADC0.Size = new System.Drawing.Size(53, 17);
+            this.radDDC4ADC0.TabIndex = 1;
+            this.radDDC4ADC0.TabStop = true;
+            this.radDDC4ADC0.Text = "ADC0";
+            this.radDDC4ADC0.UseVisualStyleBackColor = true;
+            this.radDDC4ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // grpDDC6ADC
+            // 
+            this.grpDDC6ADC.Controls.Add(this.radDDC6ADC2);
+            this.grpDDC6ADC.Controls.Add(this.radDDC6ADC1);
+            this.grpDDC6ADC.Controls.Add(this.radDDC6ADC0);
+            this.grpDDC6ADC.Location = new System.Drawing.Point(529, 5);
+            this.grpDDC6ADC.Name = "grpDDC6ADC";
+            this.grpDDC6ADC.Size = new System.Drawing.Size(60, 136);
+            this.grpDDC6ADC.TabIndex = 13;
+            this.grpDDC6ADC.TabStop = false;
+            this.grpDDC6ADC.Text = "DDC6";
+            // 
+            // radDDC6ADC2
+            // 
+            this.radDDC6ADC2.AutoSize = true;
+            this.radDDC6ADC2.Image = null;
+            this.radDDC6ADC2.Location = new System.Drawing.Point(6, 100);
+            this.radDDC6ADC2.Name = "radDDC6ADC2";
+            this.radDDC6ADC2.Size = new System.Drawing.Size(53, 17);
+            this.radDDC6ADC2.TabIndex = 3;
+            this.radDDC6ADC2.Text = "ADC2";
+            this.radDDC6ADC2.UseVisualStyleBackColor = true;
+            this.radDDC6ADC2.Visible = false;
+            this.radDDC6ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC6ADC1
+            // 
+            this.radDDC6ADC1.AutoSize = true;
+            this.radDDC6ADC1.Image = null;
+            this.radDDC6ADC1.Location = new System.Drawing.Point(6, 67);
+            this.radDDC6ADC1.Name = "radDDC6ADC1";
+            this.radDDC6ADC1.Size = new System.Drawing.Size(53, 17);
+            this.radDDC6ADC1.TabIndex = 2;
+            this.radDDC6ADC1.Text = "ADC1";
+            this.radDDC6ADC1.UseVisualStyleBackColor = true;
+            this.radDDC6ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC6ADC0
+            // 
+            this.radDDC6ADC0.AutoSize = true;
+            this.radDDC6ADC0.Checked = true;
+            this.radDDC6ADC0.Image = null;
+            this.radDDC6ADC0.Location = new System.Drawing.Point(6, 37);
+            this.radDDC6ADC0.Name = "radDDC6ADC0";
+            this.radDDC6ADC0.Size = new System.Drawing.Size(53, 17);
+            this.radDDC6ADC0.TabIndex = 1;
+            this.radDDC6ADC0.TabStop = true;
+            this.radDDC6ADC0.Text = "ADC0";
+            this.radDDC6ADC0.UseVisualStyleBackColor = true;
+            this.radDDC6ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // grpDDC3ADC
+            // 
+            this.grpDDC3ADC.Controls.Add(this.radDDC3ADC2);
+            this.grpDDC3ADC.Controls.Add(this.radDDC3ADC1);
+            this.grpDDC3ADC.Controls.Add(this.radDDC3ADC0);
+            this.grpDDC3ADC.Location = new System.Drawing.Point(318, 5);
+            this.grpDDC3ADC.Name = "grpDDC3ADC";
+            this.grpDDC3ADC.Size = new System.Drawing.Size(60, 136);
+            this.grpDDC3ADC.TabIndex = 10;
+            this.grpDDC3ADC.TabStop = false;
+            this.grpDDC3ADC.Text = "DDC3";
+            // 
+            // radDDC3ADC2
+            // 
+            this.radDDC3ADC2.AutoSize = true;
+            this.radDDC3ADC2.Image = null;
+            this.radDDC3ADC2.Location = new System.Drawing.Point(6, 100);
+            this.radDDC3ADC2.Name = "radDDC3ADC2";
+            this.radDDC3ADC2.Size = new System.Drawing.Size(53, 17);
+            this.radDDC3ADC2.TabIndex = 3;
+            this.radDDC3ADC2.Text = "ADC2";
+            this.radDDC3ADC2.UseVisualStyleBackColor = true;
+            this.radDDC3ADC2.Visible = false;
+            this.radDDC3ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC3ADC1
+            // 
+            this.radDDC3ADC1.AutoSize = true;
+            this.radDDC3ADC1.Checked = true;
+            this.radDDC3ADC1.Image = null;
+            this.radDDC3ADC1.Location = new System.Drawing.Point(6, 67);
+            this.radDDC3ADC1.Name = "radDDC3ADC1";
+            this.radDDC3ADC1.Size = new System.Drawing.Size(53, 17);
+            this.radDDC3ADC1.TabIndex = 2;
+            this.radDDC3ADC1.TabStop = true;
+            this.radDDC3ADC1.Text = "ADC1";
+            this.radDDC3ADC1.UseVisualStyleBackColor = true;
+            this.radDDC3ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC3ADC0
+            // 
+            this.radDDC3ADC0.AutoSize = true;
+            this.radDDC3ADC0.Image = null;
+            this.radDDC3ADC0.Location = new System.Drawing.Point(6, 37);
+            this.radDDC3ADC0.Name = "radDDC3ADC0";
+            this.radDDC3ADC0.Size = new System.Drawing.Size(53, 17);
+            this.radDDC3ADC0.TabIndex = 1;
+            this.radDDC3ADC0.Text = "ADC0";
+            this.radDDC3ADC0.UseVisualStyleBackColor = true;
+            this.radDDC3ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // grpDDC2ADC
+            // 
+            this.grpDDC2ADC.Controls.Add(this.radDDC2ADC2);
+            this.grpDDC2ADC.Controls.Add(this.radDDC2ADC1);
+            this.grpDDC2ADC.Controls.Add(this.radDDC2ADC0);
+            this.grpDDC2ADC.Location = new System.Drawing.Point(248, 5);
+            this.grpDDC2ADC.Name = "grpDDC2ADC";
+            this.grpDDC2ADC.Size = new System.Drawing.Size(60, 136);
+            this.grpDDC2ADC.TabIndex = 9;
+            this.grpDDC2ADC.TabStop = false;
+            this.grpDDC2ADC.Text = "DDC2";
+            // 
+            // radDDC2ADC2
+            // 
+            this.radDDC2ADC2.AutoSize = true;
+            this.radDDC2ADC2.Image = null;
+            this.radDDC2ADC2.Location = new System.Drawing.Point(6, 100);
+            this.radDDC2ADC2.Name = "radDDC2ADC2";
+            this.radDDC2ADC2.Size = new System.Drawing.Size(53, 17);
+            this.radDDC2ADC2.TabIndex = 3;
+            this.radDDC2ADC2.Text = "ADC2";
+            this.radDDC2ADC2.UseVisualStyleBackColor = true;
+            this.radDDC2ADC2.Visible = false;
+            this.radDDC2ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC2ADC1
+            // 
+            this.radDDC2ADC1.AutoSize = true;
+            this.radDDC2ADC1.Image = null;
+            this.radDDC2ADC1.Location = new System.Drawing.Point(6, 67);
+            this.radDDC2ADC1.Name = "radDDC2ADC1";
+            this.radDDC2ADC1.Size = new System.Drawing.Size(53, 17);
+            this.radDDC2ADC1.TabIndex = 2;
+            this.radDDC2ADC1.Text = "ADC1";
+            this.radDDC2ADC1.UseVisualStyleBackColor = true;
+            this.radDDC2ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC2ADC0
+            // 
+            this.radDDC2ADC0.AutoSize = true;
+            this.radDDC2ADC0.Checked = true;
+            this.radDDC2ADC0.Image = null;
+            this.radDDC2ADC0.Location = new System.Drawing.Point(6, 37);
+            this.radDDC2ADC0.Name = "radDDC2ADC0";
+            this.radDDC2ADC0.Size = new System.Drawing.Size(53, 17);
+            this.radDDC2ADC0.TabIndex = 1;
+            this.radDDC2ADC0.TabStop = true;
+            this.radDDC2ADC0.Text = "ADC0";
+            this.radDDC2ADC0.UseVisualStyleBackColor = true;
+            this.radDDC2ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // grpDDC5ADC
+            // 
+            this.grpDDC5ADC.Controls.Add(this.radDDC5ADC2);
+            this.grpDDC5ADC.Controls.Add(this.radDDC5ADC1);
+            this.grpDDC5ADC.Controls.Add(this.radDDC5ADC0);
+            this.grpDDC5ADC.Location = new System.Drawing.Point(458, 5);
+            this.grpDDC5ADC.Name = "grpDDC5ADC";
+            this.grpDDC5ADC.Size = new System.Drawing.Size(60, 136);
+            this.grpDDC5ADC.TabIndex = 12;
+            this.grpDDC5ADC.TabStop = false;
+            this.grpDDC5ADC.Text = "DDC5";
+            // 
+            // radDDC5ADC2
+            // 
+            this.radDDC5ADC2.AutoSize = true;
+            this.radDDC5ADC2.Image = null;
+            this.radDDC5ADC2.Location = new System.Drawing.Point(6, 100);
+            this.radDDC5ADC2.Name = "radDDC5ADC2";
+            this.radDDC5ADC2.Size = new System.Drawing.Size(53, 17);
+            this.radDDC5ADC2.TabIndex = 3;
+            this.radDDC5ADC2.Text = "ADC2";
+            this.radDDC5ADC2.UseVisualStyleBackColor = true;
+            this.radDDC5ADC2.Visible = false;
+            this.radDDC5ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC5ADC1
+            // 
+            this.radDDC5ADC1.AutoSize = true;
+            this.radDDC5ADC1.Image = null;
+            this.radDDC5ADC1.Location = new System.Drawing.Point(6, 67);
+            this.radDDC5ADC1.Name = "radDDC5ADC1";
+            this.radDDC5ADC1.Size = new System.Drawing.Size(53, 17);
+            this.radDDC5ADC1.TabIndex = 2;
+            this.radDDC5ADC1.Text = "ADC1";
+            this.radDDC5ADC1.UseVisualStyleBackColor = true;
+            this.radDDC5ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC5ADC0
+            // 
+            this.radDDC5ADC0.AutoSize = true;
+            this.radDDC5ADC0.Checked = true;
+            this.radDDC5ADC0.Image = null;
+            this.radDDC5ADC0.Location = new System.Drawing.Point(6, 37);
+            this.radDDC5ADC0.Name = "radDDC5ADC0";
+            this.radDDC5ADC0.Size = new System.Drawing.Size(53, 17);
+            this.radDDC5ADC0.TabIndex = 1;
+            this.radDDC5ADC0.TabStop = true;
+            this.radDDC5ADC0.Text = "ADC0";
+            this.radDDC5ADC0.UseVisualStyleBackColor = true;
+            this.radDDC5ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // btnResetP2ADC
+            // 
+            this.btnResetP2ADC.Image = null;
+            this.btnResetP2ADC.Location = new System.Drawing.Point(601, 62);
+            this.btnResetP2ADC.Name = "btnResetP2ADC";
+            this.btnResetP2ADC.Selectable = true;
+            this.btnResetP2ADC.Size = new System.Drawing.Size(68, 37);
+            this.btnResetP2ADC.TabIndex = 14;
+            this.btnResetP2ADC.Text = "Reset To Default";
+            this.btnResetP2ADC.UseVisualStyleBackColor = true;
+            this.btnResetP2ADC.Click += new System.EventHandler(this.btnResetP2ADC_Click);
+            // 
+            // grpDDC1ADC
+            // 
+            this.grpDDC1ADC.Controls.Add(this.radDDC1ADC2);
+            this.grpDDC1ADC.Controls.Add(this.radDDC1ADC1);
+            this.grpDDC1ADC.Controls.Add(this.radDDC1ADC0);
+            this.grpDDC1ADC.Location = new System.Drawing.Point(178, 5);
+            this.grpDDC1ADC.Name = "grpDDC1ADC";
+            this.grpDDC1ADC.Size = new System.Drawing.Size(60, 136);
+            this.grpDDC1ADC.TabIndex = 8;
+            this.grpDDC1ADC.TabStop = false;
+            this.grpDDC1ADC.Text = "DDC1";
+            // 
+            // radDDC1ADC2
+            // 
+            this.radDDC1ADC2.AutoSize = true;
+            this.radDDC1ADC2.Image = null;
+            this.radDDC1ADC2.Location = new System.Drawing.Point(6, 100);
+            this.radDDC1ADC2.Name = "radDDC1ADC2";
+            this.radDDC1ADC2.Size = new System.Drawing.Size(53, 17);
+            this.radDDC1ADC2.TabIndex = 3;
+            this.radDDC1ADC2.Text = "ADC2";
+            this.radDDC1ADC2.UseVisualStyleBackColor = true;
+            this.radDDC1ADC2.Visible = false;
+            this.radDDC1ADC2.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC1ADC1
+            // 
+            this.radDDC1ADC1.AutoSize = true;
+            this.radDDC1ADC1.Checked = true;
+            this.radDDC1ADC1.Image = null;
+            this.radDDC1ADC1.Location = new System.Drawing.Point(6, 67);
+            this.radDDC1ADC1.Name = "radDDC1ADC1";
+            this.radDDC1ADC1.Size = new System.Drawing.Size(53, 17);
+            this.radDDC1ADC1.TabIndex = 2;
+            this.radDDC1ADC1.TabStop = true;
+            this.radDDC1ADC1.Text = "ADC1";
+            this.radDDC1ADC1.UseVisualStyleBackColor = true;
+            this.radDDC1ADC1.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
+            // 
+            // radDDC1ADC0
+            // 
+            this.radDDC1ADC0.AutoSize = true;
+            this.radDDC1ADC0.Image = null;
+            this.radDDC1ADC0.Location = new System.Drawing.Point(6, 37);
+            this.radDDC1ADC0.Name = "radDDC1ADC0";
+            this.radDDC1ADC0.Size = new System.Drawing.Size(53, 17);
+            this.radDDC1ADC0.TabIndex = 1;
+            this.radDDC1ADC0.Text = "ADC0";
+            this.radDDC1ADC0.UseVisualStyleBackColor = true;
+            this.radDDC1ADC0.CheckedChanged += new System.EventHandler(this.radDDCADC_CheckedChanged);
             // 
             // lblRxDDC6
             // 
@@ -66918,42 +66954,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // pnlP2_adcs
-            // 
-            this.pnlP2_adcs.AutoScrollMargin = new System.Drawing.Size(0, 0);
-            this.pnlP2_adcs.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.pnlP2_adcs.Controls.Add(this.lblP2assignment);
-            this.pnlP2_adcs.Controls.Add(this.grpDDC0ADC);
-            this.pnlP2_adcs.Controls.Add(this.grpDDC4ADC);
-            this.pnlP2_adcs.Controls.Add(this.grpDDC6ADC);
-            this.pnlP2_adcs.Controls.Add(this.grpDDC3ADC);
-            this.pnlP2_adcs.Controls.Add(this.grpDDC2ADC);
-            this.pnlP2_adcs.Controls.Add(this.grpDDC5ADC);
-            this.pnlP2_adcs.Controls.Add(this.btnResetP2ADC);
-            this.pnlP2_adcs.Controls.Add(this.grpDDC1ADC);
-            this.pnlP2_adcs.Location = new System.Drawing.Point(19, 9);
-            this.pnlP2_adcs.Name = "pnlP2_adcs";
-            this.pnlP2_adcs.Size = new System.Drawing.Size(676, 148);
-            this.pnlP2_adcs.TabIndex = 112;
-            // 
-            // pnlP1_adcs
-            // 
-            this.pnlP1_adcs.AutoScrollMargin = new System.Drawing.Size(0, 0);
-            this.pnlP1_adcs.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.pnlP1_adcs.Controls.Add(this.grpP1DDC0ADC);
-            this.pnlP1_adcs.Controls.Add(this.grpP1DDC6ADC);
-            this.pnlP1_adcs.Controls.Add(this.btnResetP1ADC);
-            this.pnlP1_adcs.Controls.Add(this.lblP1assignment);
-            this.pnlP1_adcs.Controls.Add(this.grpP1DDC1ADC);
-            this.pnlP1_adcs.Controls.Add(this.grpP1DDC5ADC);
-            this.pnlP1_adcs.Controls.Add(this.grpP1DDC2ADC);
-            this.pnlP1_adcs.Controls.Add(this.grpP1DDC4ADC);
-            this.pnlP1_adcs.Controls.Add(this.grpP1DDC3ADC);
-            this.pnlP1_adcs.Location = new System.Drawing.Point(19, 248);
-            this.pnlP1_adcs.Name = "pnlP1_adcs";
-            this.pnlP1_adcs.Size = new System.Drawing.Size(676, 148);
-            this.pnlP1_adcs.TabIndex = 112;
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -67162,34 +67162,36 @@
             ((System.ComponentModel.ISupportInitialize)(this.udOptMaxFilterShift)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udOptMaxFilterWidth)).EndInit();
             this.tpADC.ResumeLayout(false);
-            this.grpP1DDC6ADC.ResumeLayout(false);
-            this.grpP1DDC6ADC.PerformLayout();
-            this.grpDDC6ADC.ResumeLayout(false);
-            this.grpDDC6ADC.PerformLayout();
-            this.grpP1DDC5ADC.ResumeLayout(false);
-            this.grpP1DDC5ADC.PerformLayout();
-            this.grpDDC0ADC.ResumeLayout(false);
-            this.grpDDC0ADC.PerformLayout();
-            this.grpP1DDC4ADC.ResumeLayout(false);
-            this.grpP1DDC4ADC.PerformLayout();
-            this.grpDDC1ADC.ResumeLayout(false);
-            this.grpDDC1ADC.PerformLayout();
-            this.grpDDC5ADC.ResumeLayout(false);
-            this.grpDDC5ADC.PerformLayout();
-            this.grpP1DDC3ADC.ResumeLayout(false);
-            this.grpP1DDC3ADC.PerformLayout();
-            this.grpDDC2ADC.ResumeLayout(false);
-            this.grpDDC2ADC.PerformLayout();
-            this.grpDDC3ADC.ResumeLayout(false);
-            this.grpDDC3ADC.PerformLayout();
-            this.grpP1DDC2ADC.ResumeLayout(false);
-            this.grpP1DDC2ADC.PerformLayout();
-            this.grpDDC4ADC.ResumeLayout(false);
-            this.grpDDC4ADC.PerformLayout();
+            this.pnlP1_adcs.ResumeLayout(false);
             this.grpP1DDC0ADC.ResumeLayout(false);
             this.grpP1DDC0ADC.PerformLayout();
+            this.grpP1DDC6ADC.ResumeLayout(false);
+            this.grpP1DDC6ADC.PerformLayout();
             this.grpP1DDC1ADC.ResumeLayout(false);
             this.grpP1DDC1ADC.PerformLayout();
+            this.grpP1DDC5ADC.ResumeLayout(false);
+            this.grpP1DDC5ADC.PerformLayout();
+            this.grpP1DDC2ADC.ResumeLayout(false);
+            this.grpP1DDC2ADC.PerformLayout();
+            this.grpP1DDC4ADC.ResumeLayout(false);
+            this.grpP1DDC4ADC.PerformLayout();
+            this.grpP1DDC3ADC.ResumeLayout(false);
+            this.grpP1DDC3ADC.PerformLayout();
+            this.pnlP2_adcs.ResumeLayout(false);
+            this.grpDDC0ADC.ResumeLayout(false);
+            this.grpDDC0ADC.PerformLayout();
+            this.grpDDC4ADC.ResumeLayout(false);
+            this.grpDDC4ADC.PerformLayout();
+            this.grpDDC6ADC.ResumeLayout(false);
+            this.grpDDC6ADC.PerformLayout();
+            this.grpDDC3ADC.ResumeLayout(false);
+            this.grpDDC3ADC.PerformLayout();
+            this.grpDDC2ADC.ResumeLayout(false);
+            this.grpDDC2ADC.PerformLayout();
+            this.grpDDC5ADC.ResumeLayout(false);
+            this.grpDDC5ADC.PerformLayout();
+            this.grpDDC1ADC.ResumeLayout(false);
+            this.grpDDC1ADC.PerformLayout();
             this.tpPennyCtrl.ResumeLayout(false);
             this.grpTransmitPinActionSWL.ResumeLayout(false);
             this.tpOCHFControl.ResumeLayout(false);
@@ -68273,8 +68275,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
-            this.pnlP2_adcs.ResumeLayout(false);
-            this.pnlP1_adcs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -704,6 +704,14 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "destroy_bfcu", CallingConvention = CallingConvention.Cdecl)]
         public static extern void destroy_bfcu(int id);
 
+        // cleanup
+        [DllImport("wdsp.dll", EntryPoint = "clear_fir_bandpass_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void clear_fir_bandpass_cache();
+        [DllImport("wdsp.dll", EntryPoint = "clear_eq_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void clear_eq_impulse_cache();
+        [DllImport("wdsp.dll", EntryPoint = "clear_fc_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void clear_fc_impulse_cache();        
+
         #endregion
 
         #region Enums

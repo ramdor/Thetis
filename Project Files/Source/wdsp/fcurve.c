@@ -26,8 +26,53 @@ warren@wpratt.com
 
 #include "comm.h"
 
+//[2.10.3.9]MW9LGE cache
+typedef struct fc_impulse_cache_entry {
+	int    nc;
+	double f0, f1;
+	double g0, g1;
+	int    curve;
+	double samplerate;
+	double scale;
+	int    ctfmode;
+	int    wintype;
+	double* impulse;
+	struct fc_impulse_cache_entry* next;
+} fc_impulse_cache_entry_t;
+
+static fc_impulse_cache_entry_t* fc_cache_head = NULL;
+
+PORT
+void clear_fc_impulse_cache(void) {
+	fc_impulse_cache_entry_t* e = fc_cache_head;
+	while (e) {
+		fc_impulse_cache_entry_t* next = e->next;
+		free(e->impulse);
+		free(e);
+		e = next;
+	}
+	fc_cache_head = NULL;
+}
+//
+
 double* fc_impulse (int nc, double f0, double f1, double g0, double g1, int curve, double samplerate, double scale, int ctfmode, int wintype)
 {
+	// check for previous in the cache
+	for (fc_impulse_cache_entry_t* e = fc_cache_head; e; e = e->next) {
+		if (e->nc == nc &&
+			e->f0 == f0 && e->f1 == f1 &&
+			e->g0 == g0 && e->g1 == g1 &&
+			e->curve == curve &&
+			e->samplerate == samplerate &&
+			e->scale == scale &&
+			e->ctfmode == ctfmode &&
+			e->wintype == wintype) {			
+			double* imp = (double*)malloc0(nc * sizeof(complex));
+			memcpy(imp, e->impulse, nc * sizeof(complex));
+			return imp;
+		}
+	}
+
 	double* A  = (double *) malloc0 ((nc / 2 + 1) * sizeof (double));
 	int i;
 	double fn, f;
@@ -141,6 +186,24 @@ double* fc_impulse (int nc, double f0, double f1, double g0, double g1, int curv
 		impulse = fir_fsamp(nc, A, 1, 1.0, wintype);
 	// print_impulse ("emph.txt", size + 1, impulse, 1, 0);
 	_aligned_free (A);
+
+	// store in cache
+	fc_impulse_cache_entry_t* entry = (fc_impulse_cache_entry_t*)malloc(sizeof(fc_impulse_cache_entry_t));
+	entry->nc = nc;
+	entry->f0 = f0;
+	entry->f1 = f1;
+	entry->g0 = g0;
+	entry->g1 = g1;
+	entry->curve = curve;
+	entry->samplerate = samplerate;
+	entry->scale = scale;
+	entry->ctfmode = ctfmode;
+	entry->wintype = wintype;
+	entry->impulse = (double*)malloc(nc * sizeof(complex));
+	memcpy(entry->impulse, impulse, nc * sizeof(complex));
+	entry->next = fc_cache_head;
+	fc_cache_head = entry;
+
 	return impulse;
 }
 

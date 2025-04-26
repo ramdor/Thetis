@@ -61,7 +61,8 @@ namespace Thetis
     using System.Windows.Forms;
     using System.Xml.Linq;
     using System.Collections.Concurrent;
-    
+    using System.Management;
+
     public partial class Console : Form
     {
         public const bool CHECK_DEV_VERSION = true; // this will check github for dev versions, set to false when performing a release
@@ -2578,6 +2579,11 @@ namespace Thetis
             shutdownLogStringToPath("Before radio.Shutdown()");
             if (radio != null)
                 radio.Shutdown();
+
+            shutdownLogStringToPath("Before WDSP cache clears");
+            WDSP.clear_fir_bandpass_cache();
+            WDSP.clear_eq_impulse_cache();
+            WDSP.clear_fc_impulse_cache();
 
             shutdownLogStringToPath("Before Win32.TimeEndPeriod(1)");
             Win32.TimeEndPeriod(1); // return to previous timing precision
@@ -5117,27 +5123,27 @@ namespace Thetis
 
             Graphics g = txtVFOAFreq.CreateGraphics();
 
-            SizeF size = g.MeasureString("0", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic);
+            SizeF size = measureStringFromCache("0", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_char_width = (int)Math.Round(size.Width - 2.0f, 0);	// subtract 2 since measure string includes 1 pixel border on each side
             float float_char_width = size.Width - 2.0f;
 
-            size = g.MeasureString("00", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("00", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_char_space = (int)Math.Round(size.Width - 2.0f - 2 * float_char_width, 0);
 
-            size = g.MeasureString(separator, txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache(separator, txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_decimal_width = (int)(size.Width - 2.0f);
 
-            size = g.MeasureString("0" + separator + "0", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("0" + separator + "0", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_decimal_space = (int)Math.Round(size.Width - 2.0f - 2 * float_char_width, 0);
 
-            size = g.MeasureString("1234.678901", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("1234.678901", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_pixel_offset = (int)Math.Round(size.Width - 2.0f, 0);
 
-            size = g.MeasureString("0", txtVFOALSD.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("0", txtVFOALSD.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_small_char_width = (int)Math.Round(size.Width - 2.0f, 0);
             float_char_width = size.Width - 2.0f;
 
-            size = g.MeasureString("00", txtVFOALSD.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("00", txtVFOALSD.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_small_char_space = (int)Math.Round(size.Width - 2.0f - 2 * float_char_width, 0);
 
             g.Dispose();
@@ -5150,20 +5156,20 @@ namespace Thetis
 
             Graphics g = txtVFOABand.CreateGraphics();
 
-            SizeF size = g.MeasureString("0", txtVFOABand.Font, 1000, StringFormat.GenericTypographic);
+            SizeF size = measureStringFromCache("0", txtVFOABand.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_sub_char_width = (int)Math.Round(size.Width - 2.0f, 0);	// subtract 2 since measure string includes 1 pixel border on each side
             float float_char_width = size.Width - 2.0f;
 
-            size = g.MeasureString("00", txtVFOABand.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("00", txtVFOABand.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_sub_char_space = (int)Math.Round(size.Width - 2.0f - 2 * float_char_width, 0);
 
-            size = g.MeasureString(separator, txtVFOABand.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache(separator, txtVFOABand.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_sub_decimal_width = (int)(size.Width - 2.0f);
 
-            size = g.MeasureString("0" + separator + "0", txtVFOABand.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("0" + separator + "0", txtVFOABand.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_sub_decimal_space = (int)Math.Round(size.Width - 2.0f - 2 * float_char_width, 0);
 
-            size = g.MeasureString("1234.678901", txtVFOABand.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("1234.678901", txtVFOABand.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_sub_pixel_offset = (int)Math.Round(size.Width - 2.0f, 0);
 
             g.Dispose();
@@ -22267,6 +22273,54 @@ namespace Thetis
         #endregion
 
         #region Paint Event Handlers
+        readonly struct MeasureKey : IEquatable<MeasureKey>
+        {
+            public readonly string Text;
+            public readonly Font Font;
+            public readonly int Width;
+            public readonly StringFormatFlags Flags;
+
+            public MeasureKey(string text, Font font, int width, StringFormat fmt)
+            {
+                Text = text;
+                Font = font;
+                Width = width;
+                Flags = fmt.FormatFlags;
+            }
+
+            public bool Equals(MeasureKey other) =>
+                Text == other.Text
+             && Font.Equals(other.Font)
+             && Width == other.Width
+             && Flags == other.Flags;
+
+            public override bool Equals(object obj) =>
+                obj is MeasureKey mk && Equals(mk);
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    int hash = 17;
+                    hash = hash * 31 + (Text?.GetHashCode() ?? 0);
+                    hash = hash * 31 + Font.GetHashCode();
+                    hash = hash * 31 + Width;
+                    hash = hash * 31 + ((int)Flags).GetHashCode();
+                    return hash;
+                }
+            }
+        }
+        private readonly Dictionary<MeasureKey, SizeF> _measureCache = new Dictionary<MeasureKey, SizeF>();
+        private SizeF measureStringFromCache(string str, Font font, int width,
+                                             StringFormat format, Graphics g)
+        {
+            MeasureKey key = new MeasureKey(str, font, width, format);
+            if (_measureCache.TryGetValue(key, out var cached)) return cached;
+
+            SizeF sz = g.MeasureString(str, font, width, format);
+            _measureCache[key] = sz;
+            return sz;
+        }
         private void getMeterPixelPosAndDrawScales(int rx, Graphics g, int H, int W, double num, out int pixel_x, out int pixel_x_swr, int nStringOffsetY, bool bDrawMarkers)
         {
             //MW0LGE 
@@ -22307,7 +22361,7 @@ namespace Thetis
                                 g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 4 - 3, 1, 3); // short tic marks
                                 g.FillRectangle(low_brush, (int)(i * spacing), H - 4 - 6, 2, 6); // long tic marks
                             }
-                            SizeF size = g.MeasureString((-1 + i * 2).ToString(), font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache((-1 + i * 2).ToString(), font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
 
@@ -22322,7 +22376,7 @@ namespace Thetis
                                 g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing - spacing * 0.5), H - 4 - 3, 1, 3); // short tic marks
                                 g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing), H - 4 - 6, 2, 6); // long tic marks
                             }
-                            SizeF size = g.MeasureString("+" + (i * 20).ToString(), font7, 3, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("+" + (i * 20).ToString(), font7, 3, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
 
                             g.DrawString("+" + (i * 20).ToString(), font7, high_brush, (float)((double)W * 0.5 + i * spacing - string_width * 3 - (double)i / 3 * 2), (float)((double)H - nStringOffsetY - string_height));
@@ -22372,9 +22426,9 @@ namespace Thetis
                                 g.FillRectangle(b, (int)(i * spacing), H - 4 - 6, 2, 8);
                             }
                             string s = (-120 + i * 20).ToString();
-                            SizeF size = g.MeasureString(s, font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache(s, font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
-                            size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                            size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                             string_height = size.Height - 2.0;
 
                             g.DrawString(s, font7, b, (int)(i * spacing - (int)string_width * (s.Length)), (int)(H - nStringOffsetY - string_height));
@@ -22412,7 +22466,7 @@ namespace Thetis
                             }
 
                             string s = (-30 + i * 10).ToString();
-                            SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
 
@@ -22427,7 +22481,7 @@ namespace Thetis
                                 g.FillRectangle(high_brush, (int)((double)W * 0.665 + i * spacing), H - 4 - 6, 2, 6);
                             }
                             string s = (i * 4).ToString();
-                            SizeF size = g.MeasureString(s, font7, 3, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache(s, font7, 3, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
 
                             g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -22461,7 +22515,7 @@ namespace Thetis
                                 g.FillRectangle(low_brush, (int)(i * spacing), H - 4 - 6, 2, 6); // long tic marks
                             }
                             string s = (-30 + i * 10).ToString();
-                            SizeF size = g.MeasureString("0", font7, 100, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 100, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
 
@@ -22479,7 +22533,7 @@ namespace Thetis
                                 g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing), H - 4 - 6, 2, 6); // short tic marks
                             }
                             string s = g_list[i - 1];
-                            SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
                             if (i == 5) spacing = (W * 0.50 - 2.0 - 6.0) / 5.0; // pull text back in on right edge if
@@ -22520,7 +22574,7 @@ namespace Thetis
                                     g.FillRectangle(low_brush, (int)(i * spacing), H - 4 - 6, 2, 6);
                                 }
                                 string s = list[i - 1];
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -22534,7 +22588,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 4 - 3, 1, 3);
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
                                 }
-                                SizeF size = g.MeasureString("0", font7, 3, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 3, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -22584,7 +22638,7 @@ namespace Thetis
                                     g.FillRectangle(low_brush, (int)(i * spacing), H - 4 - 6, 2, 6);
                                 }
                                 string s = list[i - 1];
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -22599,7 +22653,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
                                 }
 
-                                SizeF size = g.MeasureString("0", font7, 3, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 3, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -22647,7 +22701,7 @@ namespace Thetis
                                 }
                                 string s = list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -22661,7 +22715,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 4 - 3, 1, 3);
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
                                 }
-                                SizeF size = g.MeasureString("0", font7, 2, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 2, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -22708,7 +22762,7 @@ namespace Thetis
                                 }
                                 string s = list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -22722,7 +22776,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 4 - 3, 1, 3);
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
                                 }
-                                SizeF size = g.MeasureString("0", font7, 2, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 2, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -22770,7 +22824,7 @@ namespace Thetis
                                 }
                                 string s = list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -22785,7 +22839,7 @@ namespace Thetis
                                     g.FillRectangle(low_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
                                 }
 
-                                SizeF size = g.MeasureString("0", font7, 3, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 3, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.DrawString("1000", font7, low_brush, (int)(W * 0.75 + 2 + i * spacing - (int)4.0 * string_width), (int)(H - nStringOffsetY - string_height));
@@ -22843,7 +22897,7 @@ namespace Thetis
                                 }
                                 string s = swrx_list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -22867,7 +22921,7 @@ namespace Thetis
 
                                 string s = swrx_hi_list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -22910,7 +22964,7 @@ namespace Thetis
                                 }
                                 string s = list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -22925,7 +22979,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), (H / 2) + 3, 2, 6);
                                 }
 
-                                SizeF size = g.MeasureString("0", font7, 2, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 2, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -22983,7 +23037,7 @@ namespace Thetis
                                 }
                                 string s = swrx_list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23007,7 +23061,7 @@ namespace Thetis
 
                                 string s = swrx_hi_list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23051,7 +23105,7 @@ namespace Thetis
                                 }
                                 string s = list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23066,7 +23120,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), (H / 2) + 3, 2, 6);
                                 }
 
-                                SizeF size = g.MeasureString("0", font7, 2, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 2, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -23123,7 +23177,7 @@ namespace Thetis
                                 }
                                 string s = swrx_list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23147,7 +23201,7 @@ namespace Thetis
 
                                 string s = swrx_hi_list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23190,7 +23244,7 @@ namespace Thetis
                                 }
                                 string s = list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23205,7 +23259,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), (H / 2) + 3, 2, 6);
                                 }
 
-                                SizeF size = g.MeasureString("0", font7, 2, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 2, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -23261,7 +23315,7 @@ namespace Thetis
                             }
                             string s = swr_list[i - 1];
 
-                            SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
 
@@ -23285,7 +23339,7 @@ namespace Thetis
 
                             string s = swr_hi_list[i - 1];
 
-                            SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
 
@@ -23336,7 +23390,7 @@ namespace Thetis
 
                             string s = gain_list[i - 1];
 
-                            SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
 
@@ -23351,7 +23405,7 @@ namespace Thetis
                                 g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
                             }
 
-                            SizeF size = g.MeasureString("0", font7, 3, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 3, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
 
                             g.DrawString("25+", font7, high_brush, (float)((double)W * 0.75 + i * spacing - 2.5 * string_width), (float)((double)H - nStringOffsetY - string_height));
@@ -41387,6 +41441,11 @@ namespace Thetis
                     break;
             }
 
+            //ensure filter can not be smaller than buffer
+            if (filtsizerx1 < bufsizerx1) bufsizerx1 = filtsizerx1;
+            if (filtsizerx2 < bufsizerx2) bufsizerx2 = filtsizerx2;
+            if (filtsizetx < bufsizetx) bufsizetx = filtsizetx;
+
             Cursor c = Cursor.Current;
             Cursor.Current = Cursors.WaitCursor;
 
@@ -41518,9 +41577,10 @@ namespace Thetis
         {
             try
             {
-                int points = (int)Math.Max(1024, filter_size) * (hi_res ? 8 : 1); // points must be power of 2
+                int size = (int)Math.Max(512, filter_size);
+                int points = (int)Math.Max(size, hi_res ? 8192 : 1024); // points must be power of 2, and must be no smaller than size
 
-                WDSP.create_bfcu(id, 1024, points, rate, corner_freq, points);
+                WDSP.create_bfcu(id, size, size, rate, corner_freq, points);
 
                 int lower_corner, upper_corner;
                 unsafe

@@ -184,8 +184,49 @@ double* fir_fsamp (int N, double* A, int rtype, double scale, int wintype)
 	return c_impulse;
 }
 
+//[2.10.3.9]MW0LGE cache
+typedef struct fir_cache_entry {
+	int N;
+	double f_low, f_high, samplerate, scale;
+	int wintype, rtype;
+	double* impulse;
+	struct fir_cache_entry* next;
+} fir_cache_entry_t;
+
+static fir_cache_entry_t* fir_cache_head = NULL;
+
+PORT
+void clear_fir_bandpass_cache ()
+{
+	fir_cache_entry_t* e = fir_cache_head;
+	while (e) {
+		fir_cache_entry_t* next = e->next;
+		free(e->impulse);
+		free(e);
+		e = next;
+	}
+	fir_cache_head = NULL;
+}
+//
+
 double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int wintype, int rtype, double scale)
 {
+	// check for previous in the cache
+	for (fir_cache_entry_t* e = fir_cache_head; e; e = e->next) {
+		if (e->N == N &&
+			e->f_low == f_low &&
+			e->f_high == f_high &&
+			e->samplerate == samplerate &&
+			e->wintype == wintype &&
+			e->rtype == rtype &&
+			e->scale == scale) {
+			
+			double* c_impulse = (double*)malloc0(N * sizeof(complex));
+			memcpy(c_impulse, e->impulse, N * sizeof(complex));
+			return c_impulse;
+		}
+	}
+
 	double *c_impulse = (double *) malloc0 (N * sizeof (complex));
 	double ft = (f_high - f_low) / (2.0 * samplerate);
 	double ft_rad = TWOPI * ft;
@@ -250,6 +291,21 @@ double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int
 			break;
 		}
 	}
+
+	// store in cache
+	fir_cache_entry_t* entry = (fir_cache_entry_t*)malloc(sizeof(fir_cache_entry_t));
+	entry->N = N;
+	entry->f_low = f_low;
+	entry->f_high = f_high;
+	entry->samplerate = samplerate;
+	entry->wintype = wintype;
+	entry->rtype = rtype;
+	entry->scale = scale;
+	entry->impulse = (double*)malloc(N * sizeof(complex));
+	memcpy(entry->impulse, c_impulse, N * sizeof(complex));
+	entry->next = fir_cache_head;
+	fir_cache_head = entry;
+
 	return c_impulse;
 }
 

@@ -146,28 +146,32 @@ namespace Thetis
         private bool _bPSRunning = false;
         private void PSLoop()
         {
+            _bPSRunning = true;
             int nCount = 0;
 
-            _bPSRunning = true;
             while (_bPSRunning)
             {
+                int sleepDuration;
+
                 if (console.PowerOn)
                 {
                     timer1code();
-                    if (nCount == 0) timer2code();
+                    if (nCount == 0)
+                        timer2code();
 
                     nCount++;
-                    if (m_bQuckAttenuate) 
+                    if (m_bQuckAttenuate || nCount == 10)
                         nCount = 0;
-                    else if(nCount == 10) nCount = 0;
 
-                    Thread.Sleep(10);
+                    sleepDuration = 10;
                 }
                 else
                 {
                     nCount = 0;
-                    Thread.Sleep(100);
+                    sleepDuration = 100;
                 }
+
+                Thread.Sleep(sleepDuration);
             }
         }
 
