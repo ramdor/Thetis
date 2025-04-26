@@ -37,20 +37,6 @@ int fEQcompare (const void * a, const void * b)
 }
 
 //[2.10.3.9]MW0LGE cache the eq
-static const uint32_t FNV_OFFSET_BASIS_32 = 2166136261U;      // 0x811C9DC5
-static const uint32_t FNV_PRIME_32 = 16777619U;               // 0x01000193
-static const uint32_t GOLDEN_RATIO_32 = 0x9e3779b9U;          // 32-bit golden ratio
-
-static uint32_t fnv1a_hash32(const void* data, size_t len) {
-	const uint8_t* bytes = (const uint8_t*)data;
-	uint32_t hash = FNV_OFFSET_BASIS_32;
-	for (size_t i = 0; i < len; i++) {
-		hash ^= bytes[i];
-		hash *= FNV_PRIME_32;
-	}
-	return hash;
-}
-
 typedef struct eq_cache_entry {
 	int N;
 	int nfreqs;
@@ -66,7 +52,7 @@ typedef struct eq_cache_entry {
 static eq_cache_entry_t* eq_cache_head = NULL;
 
 PORT
-void clear_eq_impulse_cache()
+void clear_eq_cache()
 {
 	eq_cache_entry_t* e = eq_cache_head;
 	while (e) {
@@ -90,10 +76,12 @@ double* eq_impulse(int N,
 {
 	// check for previous in the cache
 	// hash of F and G arrays
-	size_t arr_len = (nfreqs + 1) * sizeof(double);
+	size_t arr_len = (nfreqs + 1) * sizeof(*(F));
 	uint32_t hashF = fnv1a_hash32(F, arr_len);
+	arr_len = (nfreqs + 1) * sizeof(*(G));
 	uint32_t hashG = fnv1a_hash32(G, arr_len);
 	uint32_t fg_hash = hashF ^ (hashG + GOLDEN_RATIO_32	+ (hashF << 6) + (hashF >> 2));
+
 	for (eq_cache_entry_t* e = eq_cache_head; e; e = e->next) {
 		if (e->N == N &&
 			e->nfreqs == nfreqs &&

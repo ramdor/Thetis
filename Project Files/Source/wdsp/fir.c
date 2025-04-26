@@ -372,8 +372,49 @@ void analytic (int N, double* in, double* out)
 	_aligned_free (x);
 }
 
+//[2.10.3.9]MW0LGE cache the mp
+typedef struct mp_cache_entry {
+	int N;
+	uint64_t mp_hash;
+	int pfactor;
+	int polarity;
+	double* impulse;
+	struct mp_cache_entry* next;
+} mp_cache_entry_t;
+
+static mp_cache_entry_t* mp_cache_head = NULL;
+
+PORT
+void clear_mp_cache()
+{
+	mp_cache_entry_t* e = mp_cache_head;
+	while (e) {
+		mp_cache_entry_t* next = e->next;
+		free(e->impulse);
+		free(e);
+		e = next;
+	}
+	mp_cache_head = NULL;
+}
+//
+
 void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 {
+	// check for previous in the cache
+	// hash of fir array
+	size_t arr_len = (N + 1) * sizeof(*(fir));
+	uint32_t hash = fnv1a_hash32(fir, arr_len);
+
+	for (mp_cache_entry_t* e = mp_cache_head; e; e = e->next) {
+		if (e->N == N &&
+			e->mp_hash == hash &&
+			e->pfactor == pfactor &&
+			e->polarity == polarity) {
+			memcpy(mpfir, e->impulse, N * sizeof(*(e->impulse)) );
+			return;
+		}
+	}
+
 	int i;
 	int size = N * pfactor;
 	double inv_PN = 1.0 / (double)size;
@@ -421,6 +462,17 @@ void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 	_aligned_free (mag);
 	_aligned_free (firfreq);
 	_aligned_free (firpad);
+
+	// store in cache
+	mp_cache_entry_t* entry = malloc(sizeof(mp_cache_entry_t));
+	entry->N = N;
+	entry->mp_hash = hash;
+	entry->pfactor = pfactor;
+	entry->polarity = polarity;
+	entry->impulse = malloc(N * sizeof(*(entry->impulse)));
+	memcpy(entry->impulse, mpfir, N * sizeof(*(entry->impulse)));
+	entry->next = mp_cache_head;
+	mp_cache_head = entry;
 }
 
 // impulse response of a zero frequency filter comprising a cascade of two resonators, 

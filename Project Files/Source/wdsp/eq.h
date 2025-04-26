@@ -75,7 +75,7 @@ __declspec (dllexport) void SetTXAEQNC (int channel, int nc);
 
 __declspec (dllexport) void SetTXAEQMP (int channel, int mp);
 
-__declspec (dllexport) void clear_eq_impulse_cache();
+__declspec (dllexport) void clear_eq_cache();
 
 #endif
 

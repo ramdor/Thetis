@@ -16334,7 +16334,7 @@ namespace Thetis
             private string _fontFamily;
             private FontStyle _fontStyle;
             private System.Drawing.Color _color;
-            private bool _fixedSize;
+            private bool _centred;
             private float _fontSize;
             public clsText()
             {
@@ -16342,7 +16342,7 @@ namespace Thetis
                 _fontFamily = "Trebuchet MS";
                 _fontStyle = FontStyle.Regular;
                 _color = System.Drawing.Color.White;
-                _fixedSize = false;
+                _centred = false;
                 _fontSize = 9f;
                 _readingText = "";
 
@@ -16414,10 +16414,10 @@ namespace Thetis
                 get { return _color; }
                 set { _color = value; }
             }
-            public bool FixedSize
+            public bool Centre
             {
-                get { return _fixedSize; }
-                set { _fixedSize = value; }
+                get { return _centred; }
+                set { _centred = value; }
             }
             public float FontSize
             {
@@ -17747,7 +17747,7 @@ namespace Thetis
                 clsClickBox clb = new clsClickBox();
                 clb.ParentID = ig.ID;
                 clb.TopLeft = new PointF(ni.TopLeft.X + 0.76f, ni.TopLeft.Y + 0.46f); // tl;
-                clb.Size = new SizeF(0.18f, 0.044f);
+                clb.Size = new SizeF(0.148f, 0.036f);
                 clb.OnlyWhenTX = true;
                 clb.Button = MouseButtons.Left;
                 addMeterItem(clb);
@@ -17770,8 +17770,8 @@ namespace Thetis
                 tx.ZOrder = 10;
                 tx.Style = FontStyle.Bold;
                 tx.Colour = System.Drawing.Color.DarkGray;
-                tx.FixedSize = true;
-                tx.FontSize = 8f;
+                tx.Centre = true;
+                tx.FontSize = 18f;
                 addMeterItem(tx);
 
                 clsNeedleItem ni4 = new clsNeedleItem();
@@ -23719,8 +23719,12 @@ namespace Thetis
             private Dictionary<string, SharpDX.Direct2D1.Bitmap> _images;
             private Dictionary<string, BitmapBrush> _bitmap_brushes;
             //
-            private float _dpiScale_width;
-            private float _dpiScale_height;
+
+            private float _dpi_width;
+            private float _dpi_height;
+            private float _pixels_per_point_width;
+            private float _pixels_per_point_height;
+
             private Dictionary<(string, float, FontStyle), SharpDX.DirectWrite.TextFormat> _textFormats; // fonts
             private SharpDX.DirectWrite.Factory _fontFactory;
             private readonly Dictionary<(string, float, FontStyle, string), SizeF> _stringMeasure;
@@ -24130,8 +24134,10 @@ namespace Thetis
                     };
                     _dash_style = new StrokeStyle(_factory, stroke_style_dash);
 
-                    _dpiScale_width = _renderTarget.DotsPerInch.Width / 72f;
-                    _dpiScale_height = _renderTarget.DotsPerInch.Height / 72f;
+                    _dpi_width = _renderTarget.DotsPerInch.Width;
+                    _dpi_height = _renderTarget.DotsPerInch.Width;
+                    _pixels_per_point_width = _dpi_width / 72f;
+                    _pixels_per_point_height = _dpi_height / 72f;
 
                     _bDXSetup = true;
 
@@ -24649,7 +24655,7 @@ namespace Thetis
                     else
                         fontStyleValue = SharpDX.DirectWrite.FontStyle.Normal;
 
-                    tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyleValue, roundedSize * _dpiScale_width);
+                    tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyleValue, roundedSize * _pixels_per_point_width);
                     tf.WordWrapping = SharpDX.DirectWrite.WordWrapping.NoWrap;
                     _textFormats.Add(key, tf);
                 }
@@ -25241,8 +25247,9 @@ namespace Thetis
                 Utilities.Dispose(ref tf);
 
                 sizeValue = new System.Drawing.SizeF(
-                    width * _dpiScale_width,
-                    height * _dpiScale_height);
+                    width * _pixels_per_point_width,
+                    height * _pixels_per_point_height);
+
                 if (ignore_caching)
                 {
                     if (_stringMeasure.ContainsKey(key)) _stringMeasure[key] = sizeValue;
@@ -25937,7 +25944,7 @@ namespace Thetis
                     float fontSize = 8f;
                     SizeF adjustedFontSize = measureString("0", scale.FontFamily, scale.FntStyle, fontSize);
                     float ratio = w / adjustedFontSize.Width;
-                    float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _dpiScale_width), 1);
+                    float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _dpi_width), 1);
 
                     if (scale.ShowType)
                     {
@@ -25950,7 +25957,7 @@ namespace Thetis
                     fontSize = 10f;
                     adjustedFontSize = measureString("0", scale.FontFamily, scale.FntStyle, fontSize);
                     ratio = w / adjustedFontSize.Width;
-                    newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _dpiScale_width), 1);
+                    newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _dpi_width), 1);
 
                     float fBottomY = y + h;
                     float xCentreLine = x + (w * 0.5f);                    
@@ -29543,6 +29550,9 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
+                //SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
+                //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Red));
+
                 string sText;
                 switch (txt.Text.ToLower())
                 {
@@ -29557,24 +29567,10 @@ namespace Thetis
                         break;
                 }
 
-                float fontSize;
-                SizeF size;
-                if (txt.FixedSize)
-                {
-                    fontSize = txt.FontSize;
-                    size = measureString("0", txt.FontFamily, txt.Style, fontSize);
-                }
-                else
-                {
-                    fontSize = 72f;
-                    size = measureString(sText, txt.FontFamily, txt.Style, fontSize);
-                }
+                float xx = txt.Centre ? x + (w / 2) : x;
+                float yy = txt.Centre ? y + (h / 2) : y;
 
-                float ratio = w / size.Width;
-                float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _dpiScale_width), 1);
-
-                SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y, w, h);
-                _renderTarget.DrawText(sText, getDXTextFormatForFont(txt.FontFamily, newSize, txt.Style), txtrect, getDXBrushForColour(txt.Colour, 255));
+                plotText(sText, xx, yy, rect.Width, txt.FontSize, txt.Colour, 255, txt.FontFamily, txt.Style, false, txt.Centre, w, false, 0, 0, false, null, true);
             }
             private void renderHBarMarkersOnly(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {

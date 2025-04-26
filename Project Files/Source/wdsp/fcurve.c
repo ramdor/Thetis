@@ -43,7 +43,7 @@ typedef struct fc_impulse_cache_entry {
 static fc_impulse_cache_entry_t* fc_cache_head = NULL;
 
 PORT
-void clear_fc_impulse_cache(void) {
+void clear_fc_cache(void) {
 	fc_impulse_cache_entry_t* e = fc_cache_head;
 	while (e) {
 		fc_impulse_cache_entry_t* next = e->next;

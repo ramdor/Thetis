@@ -87,4 +87,7 @@ extern __declspec (dllexport) void getFilterCurve(int id, int size, int w_type, 
 
 extern void test_bfcu();
 
+#define GOLDEN_RATIO_32 0x9e3779b9U								// 32-bit golden ratio
+extern uint32_t fnv1a_hash32(const void* data, size_t len);		//32 bit fnv1a hashing algo
+
 #endif

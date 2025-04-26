@@ -31,6 +31,6 @@ extern double* fc_impulse (int nc, double f0, double f1, double g0, double g1, i
 
 extern double* fc_mults (int size, double f0, double f1, double g0, double g1, int curve, double samplerate, double scale, int ctfmode, int wintype);
 
-extern __declspec (dllexport) void clear_fc_impulse_cache ();
+extern __declspec (dllexport) void clear_fc_cache ();
 
 #endif

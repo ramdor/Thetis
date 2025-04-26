@@ -2582,8 +2582,9 @@ namespace Thetis
 
             shutdownLogStringToPath("Before WDSP cache clears");
             WDSP.clear_fir_bandpass_cache();
-            WDSP.clear_eq_impulse_cache();
-            WDSP.clear_fc_impulse_cache();
+            WDSP.clear_mp_cache();
+            WDSP.clear_eq_cache();
+            WDSP.clear_fc_cache();
 
             shutdownLogStringToPath("Before Win32.TimeEndPeriod(1)");
             Win32.TimeEndPeriod(1); // return to previous timing precision

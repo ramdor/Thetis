@@ -41,3 +41,4 @@ extern void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity
 extern double* zff_impulse(int nc, double scale);
 
 extern __declspec (dllexport) void clear_fir_bandpass_cache();
+extern __declspec (dllexport) void clear_mp_cache();
