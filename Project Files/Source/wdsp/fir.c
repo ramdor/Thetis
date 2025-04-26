@@ -185,7 +185,9 @@ double* fir_fsamp (int N, double* A, int rtype, double scale, int wintype)
 }
 
 //[2.10.3.9]MW0LGE cache
-typedef struct fir_cache_entry {
+#define MAX_FIR_CACHE 500
+typedef struct fir_cache_entry 
+{
 	int N;
 	double f_low, f_high, samplerate, scale;
 	int wintype, rtype;
@@ -194,6 +196,7 @@ typedef struct fir_cache_entry {
 } fir_cache_entry_t;
 
 static fir_cache_entry_t* fir_cache_head = NULL;
+static size_t			  fir_cache_count = 0;
 
 PORT
 void clear_fir_bandpass_cache ()
@@ -206,6 +209,31 @@ void clear_fir_bandpass_cache ()
 		e = next;
 	}
 	fir_cache_head = NULL;
+}
+
+void remove_fir_tail(void)
+{
+	if (!fir_cache_head) return;
+
+	if (!fir_cache_head->next)
+	{
+		free(fir_cache_head->impulse);
+		free(fir_cache_head);
+		fir_cache_head = NULL;
+		fir_cache_count = 0;
+		return;
+	}
+
+	fir_cache_entry_t* prev = fir_cache_head;
+	while (prev->next && prev->next->next) {
+		prev = prev->next;
+	}
+
+	fir_cache_entry_t* tail = prev->next;
+	prev->next = NULL;
+	free(tail->impulse);
+	free(tail);
+	fir_cache_count--;
 }
 //
 
@@ -293,6 +321,7 @@ double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int
 	}
 
 	// store in cache
+	if (fir_cache_count >= MAX_FIR_CACHE) remove_fir_tail();
 	fir_cache_entry_t* entry = (fir_cache_entry_t*)malloc(sizeof(fir_cache_entry_t));
 	entry->N = N;
 	entry->f_low = f_low;
@@ -305,6 +334,7 @@ double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int
 	memcpy(entry->impulse, c_impulse, N * sizeof(complex));
 	entry->next = fir_cache_head;
 	fir_cache_head = entry;
+	fir_cache_count++;
 
 	return c_impulse;
 }
@@ -373,16 +403,19 @@ void analytic (int N, double* in, double* out)
 }
 
 //[2.10.3.9]MW0LGE cache the mp
-typedef struct mp_cache_entry {
+#define MAX_MP_CACHE 500
+typedef struct mp_cache_entry 
+{
 	int N;
 	uint64_t mp_hash;
 	int pfactor;
 	int polarity;
-	double* impulse;
+	double* mpfir;
 	struct mp_cache_entry* next;
 } mp_cache_entry_t;
 
 static mp_cache_entry_t* mp_cache_head = NULL;
+static size_t            mp_cache_count = 0;
 
 PORT
 void clear_mp_cache()
@@ -390,11 +423,36 @@ void clear_mp_cache()
 	mp_cache_entry_t* e = mp_cache_head;
 	while (e) {
 		mp_cache_entry_t* next = e->next;
-		free(e->impulse);
+		free(e->mpfir);
 		free(e);
 		e = next;
 	}
 	mp_cache_head = NULL;
+}
+
+void remove_mp_tail(void)
+{
+	if (!mp_cache_head) return;
+
+	if (!mp_cache_head->next)
+	{
+		free(mp_cache_head->mpfir);
+		free(mp_cache_head);
+		mp_cache_head = NULL;
+		mp_cache_count = 0;
+		return;
+	}
+
+	mp_cache_entry_t* prev = mp_cache_head;
+	while (prev->next && prev->next->next) {
+		prev = prev->next;
+	}
+
+	mp_cache_entry_t* tail = prev->next;
+	prev->next = NULL;
+	free(tail->mpfir);
+	free(tail);
+	mp_cache_count--;
 }
 //
 
@@ -402,7 +460,7 @@ void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 {
 	// check for previous in the cache
 	// hash of fir array
-	size_t arr_len = (N + 1) * sizeof(*(fir));
+	size_t arr_len = (N + 1) * sizeof(complex);
 	uint32_t hash = fnv1a_hash32(fir, arr_len);
 
 	for (mp_cache_entry_t* e = mp_cache_head; e; e = e->next) {
@@ -410,7 +468,7 @@ void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 			e->mp_hash == hash &&
 			e->pfactor == pfactor &&
 			e->polarity == polarity) {
-			memcpy(mpfir, e->impulse, N * sizeof(*(e->impulse)) );
+			memcpy(mpfir, e->mpfir, N * sizeof(complex) );
 			return;
 		}
 	}
@@ -464,15 +522,17 @@ void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 	_aligned_free (firpad);
 
 	// store in cache
+	if (mp_cache_count >= MAX_MP_CACHE) remove_mp_tail();
 	mp_cache_entry_t* entry = malloc(sizeof(mp_cache_entry_t));
 	entry->N = N;
 	entry->mp_hash = hash;
 	entry->pfactor = pfactor;
 	entry->polarity = polarity;
-	entry->impulse = malloc(N * sizeof(*(entry->impulse)));
-	memcpy(entry->impulse, mpfir, N * sizeof(*(entry->impulse)));
+	entry->mpfir = malloc(N * sizeof(complex));
+	memcpy(entry->mpfir, mpfir, N * sizeof(complex));
 	entry->next = mp_cache_head;
 	mp_cache_head = entry;
+	mp_cache_count++;
 }
 
 // impulse response of a zero frequency filter comprising a cascade of two resonators, 

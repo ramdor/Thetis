@@ -2580,12 +2580,6 @@ namespace Thetis
             if (radio != null)
                 radio.Shutdown();
 
-            shutdownLogStringToPath("Before WDSP cache clears");
-            WDSP.clear_fir_bandpass_cache();
-            WDSP.clear_mp_cache();
-            WDSP.clear_eq_cache();
-            WDSP.clear_fc_cache();
-
             shutdownLogStringToPath("Before Win32.TimeEndPeriod(1)");
             Win32.TimeEndPeriod(1); // return to previous timing precision
             Thread.Sleep(100);

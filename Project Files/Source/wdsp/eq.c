@@ -37,7 +37,9 @@ int fEQcompare (const void * a, const void * b)
 }
 
 //[2.10.3.9]MW0LGE cache the eq
-typedef struct eq_cache_entry {
+#define MAX_EQ_CACHE 500
+typedef struct eq_cache_entry
+{
 	int N;
 	int nfreqs;
 	double samplerate;
@@ -50,6 +52,7 @@ typedef struct eq_cache_entry {
 } eq_cache_entry_t;
 
 static eq_cache_entry_t* eq_cache_head = NULL;
+static size_t            eq_cache_count = 0;
 
 PORT
 void clear_eq_cache()
@@ -62,6 +65,31 @@ void clear_eq_cache()
 		e = next;
 	}
 	eq_cache_head = NULL;
+}
+
+void remove_eq_tail(void)
+{
+	if (!eq_cache_head) return;
+
+	if (!eq_cache_head->next) 
+	{
+		free(eq_cache_head->impulse);
+		free(eq_cache_head);
+		eq_cache_head = NULL;
+		eq_cache_count = 0;
+		return;
+	}
+	
+	eq_cache_entry_t* prev = eq_cache_head;
+	while (prev->next && prev->next->next) {
+		prev = prev->next;
+	}
+	
+	eq_cache_entry_t* tail = prev->next;
+	prev->next = NULL;
+	free(tail->impulse);
+	free(tail);
+	eq_cache_count--;
 }
 //
 
@@ -214,6 +242,7 @@ double* eq_impulse(int N,
 	_aligned_free (fp);
 
 	// store in cache
+	if (eq_cache_count >= MAX_EQ_CACHE) remove_eq_tail();
 	eq_cache_entry_t* entry = malloc(sizeof(eq_cache_entry_t));
 	entry->N = N;
 	entry->nfreqs = nfreqs;
@@ -226,6 +255,7 @@ double* eq_impulse(int N,
 	memcpy(entry->impulse, impulse, N * sizeof(complex));
 	entry->next = eq_cache_head;
 	eq_cache_head = entry;
+	eq_cache_count++;
 
 	return impulse;
 }

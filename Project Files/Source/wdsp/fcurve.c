@@ -27,7 +27,9 @@ warren@wpratt.com
 #include "comm.h"
 
 //[2.10.3.9]MW9LGE cache
-typedef struct fc_impulse_cache_entry {
+#define MAX_FC_CACHE 500
+typedef struct fc_impulse_cache_entry 
+{
 	int    nc;
 	double f0, f1;
 	double g0, g1;
@@ -41,9 +43,11 @@ typedef struct fc_impulse_cache_entry {
 } fc_impulse_cache_entry_t;
 
 static fc_impulse_cache_entry_t* fc_cache_head = NULL;
+static size_t					 fc_cache_count = 0;
 
 PORT
-void clear_fc_cache(void) {
+void clear_fc_cache(void) 
+{
 	fc_impulse_cache_entry_t* e = fc_cache_head;
 	while (e) {
 		fc_impulse_cache_entry_t* next = e->next;
@@ -52,6 +56,31 @@ void clear_fc_cache(void) {
 		e = next;
 	}
 	fc_cache_head = NULL;
+}
+
+void remove_fc_tail(void)
+{
+	if (!fc_cache_head) return;
+
+	if (!fc_cache_head->next)
+	{
+		free(fc_cache_head->impulse);
+		free(fc_cache_head);
+		fc_cache_head = NULL;
+		fc_cache_count = 0;
+		return;
+	}
+
+	fc_impulse_cache_entry_t* prev = fc_cache_head;
+	while (prev->next && prev->next->next) {
+		prev = prev->next;
+	}
+
+	fc_impulse_cache_entry_t* tail = prev->next;
+	prev->next = NULL;
+	free(tail->impulse);
+	free(tail);
+	fc_cache_count--;
 }
 //
 
@@ -188,6 +217,7 @@ double* fc_impulse (int nc, double f0, double f1, double g0, double g1, int curv
 	_aligned_free (A);
 
 	// store in cache
+	if (fc_cache_count >= MAX_FC_CACHE) remove_fc_tail();
 	fc_impulse_cache_entry_t* entry = (fc_impulse_cache_entry_t*)malloc(sizeof(fc_impulse_cache_entry_t));
 	entry->nc = nc;
 	entry->f0 = f0;
@@ -203,6 +233,7 @@ double* fc_impulse (int nc, double f0, double f1, double g0, double g1, int curv
 	memcpy(entry->impulse, impulse, nc * sizeof(complex));
 	entry->next = fc_cache_head;
 	fc_cache_head = entry;
+	fc_cache_count++;
 
 	return impulse;
 }
