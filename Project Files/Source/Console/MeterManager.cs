@@ -20360,12 +20360,25 @@ namespace Thetis
             {
                 lock (_meterItemsLock)
                 {
-                    if (_meterItems == null) return 0;
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    if (meterItems == null) return 0;
 
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    int count = 0;
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
+                    {
+                        if (entry.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP) count++;
+                    }
 
-                    return items.Count;
+                    return count;
                 }
+                //lock (_meterItemsLock)
+                //{
+                //    if (_meterItems == null) return 0;
+
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+
+                //    return items.Count;
+                //}
             }
             private void removeMeterItem(string sId, bool bRebuild = false)
             {
@@ -20441,75 +20454,131 @@ namespace Thetis
                 lock (_meterItemsLock)
                 {
                     if (_meterItems == null) return;
-
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    List<string> groupIds = new List<string>();
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
                     {
-                        clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null)
-                        {
-                            removeMeterItem(ig.ID, false);
-                        }
+                        clsItemGroup group = entry.Value as clsItemGroup;
+                        if (group != null) groupIds.Add(group.ID);
                     }
-
+                    foreach (string id in groupIds) removeMeterItem(id, false);
                     if (bRebuild) Rebuild();
                 }
+
+                //lock (_meterItemsLock)
+                //{
+                //    if (_meterItems == null) return;
+
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                //    {
+                //        clsItemGroup ig = kvp.Value as clsItemGroup;
+                //        if (ig != null)
+                //        {
+                //            removeMeterItem(ig.ID, false);
+                //        }
+                //    }
+
+                //    if (bRebuild) Rebuild();
+                //}
             }
             public bool HasMeterType(MeterType mt)
             {
                 lock (_meterItemsLock)
-                { 
+                {
                     if (_meterItems == null) return false;
-
-                    //IEnumerable<KeyValuePair<string, clsMeterItem>> items = _meterItems.Where(o => o.Value.ItemType == MeterItemType.ITEM_GROUP);
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
                     {
-                        clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null && ig.MeterType == mt) return true;
+                        if (entry.Value is clsItemGroup group && group.MeterType == mt) return true;
                     }
-
                     return false;
                 }
+                //lock (_meterItemsLock)
+                //{ 
+                //    if (_meterItems == null) return false;
+
+                //    //IEnumerable<KeyValuePair<string, clsMeterItem>> items = _meterItems.Where(o => o.Value.ItemType == MeterItemType.ITEM_GROUP);
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                //    {
+                //        clsItemGroup ig = kvp.Value as clsItemGroup;
+                //        if (ig != null && ig.MeterType == mt) return true;
+                //    }
+
+                //    return false;
+                //}
             }
             public void DisableMeterType(MeterType mt, bool bDisable)
             {
                 lock (_meterItemsLock)
                 {
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    bool disableFlag = bDisable;
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
                     {
-                        clsItemGroup ig = kvp.Value as clsItemGroup;
-
-                        if (ig.MeterType == mt)
+                        clsItemGroup group = entry.Value as clsItemGroup;
+                        if (group != null && group.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP && group.MeterType == mt)
                         {
-                            Dictionary<string, clsMeterItem> mtItems = itemsFromID(ig.ID, false, true);
-
-                            foreach (KeyValuePair<string, clsMeterItem> kvpmi in mtItems)
+                            Dictionary<string, clsMeterItem> groupItems = itemsFromID(group.ID, false, true);
+                            Dictionary<string, clsMeterItem>.ValueCollection values = groupItems.Values;
+                            foreach (clsMeterItem item in values)
                             {
-                                clsMeterItem mi = kvpmi.Value as clsMeterItem;
-                                mi.Disabled = bDisable;
+                                item.Disabled = disableFlag;
                             }
                         }
                     }
                 }
+                //lock (_meterItemsLock)
+                //{
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                //    {
+                //        clsItemGroup ig = kvp.Value as clsItemGroup;
+
+                //        if (ig.MeterType == mt)
+                //        {
+                //            Dictionary<string, clsMeterItem> mtItems = itemsFromID(ig.ID, false, true);
+
+                //            foreach (KeyValuePair<string, clsMeterItem> kvpmi in mtItems)
+                //            {
+                //                clsMeterItem mi = kvpmi.Value as clsMeterItem;
+                //                mi.Disabled = bDisable;
+                //            }
+                //        }
+                //    }
+                //}
             }
             public string MeterGroupID(MeterType mt = MeterType.NONE, int order = -1)
             {
                 lock (_meterItemsLock)
                 {
-                    if (_meterItems == null) return "";
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    if (meterItems == null) return string.Empty;
 
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
                     {
-                        clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null && (ig.MeterType == mt || mt == MeterType.NONE) && (order == -1 || ig.Order == order)) return ig.ID;
+                        clsItemGroup group = entry.Value as clsItemGroup;
+                        if (group != null && (mt == MeterType.NONE || group.MeterType == mt) && (order == -1 || group.Order == order)) return group.ID;
                     }
 
-                    return "";
+                    return string.Empty;
                 }
+
+                //lock (_meterItemsLock)
+                //{
+                //    if (_meterItems == null) return "";
+
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                //    {
+                //        clsItemGroup ig = kvp.Value as clsItemGroup;
+                //        if (ig != null && (ig.MeterType == mt || mt == MeterType.NONE) && (order == -1 || ig.Order == order)) return ig.ID;
+                //    }
+
+                //    return "";
+                //}
             }
             public void ApplySettingsForMeterGroup(MeterType mt, clsIGSettings igs, int order = -1)
             {
@@ -22679,19 +22748,31 @@ namespace Thetis
             {
                 lock (_meterItemsLock)
                 {
-                    List<int> orders = new List<int>();
-
-                    if (_meterItems == null) return orders;
-
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    if (meterItems == null) return new List<int>();
+                    List<int> orders = new List<int>(meterItems.Count);
+                    foreach (clsMeterItem mi in meterItems.Values)
                     {
-                        clsItemGroup ig = kvp.Value as clsItemGroup;
+                        clsItemGroup ig = mi as clsItemGroup;
                         if (ig != null && ig.MeterType == mt) orders.Add(ig.Order);
                     }
-
                     return orders;
                 }
+                //lock (_meterItemsLock)
+                //{
+                //    List<int> orders = new List<int>();
+
+                //    if (_meterItems == null) return orders;
+
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                //    {
+                //        clsItemGroup ig = kvp.Value as clsItemGroup;
+                //        if (ig != null && ig.MeterType == mt) orders.Add(ig.Order);
+                //    }
+
+                //    return orders;
+                //}
             }
             public void SetOrderForMeterType(MeterType mt, int nOrder, bool bRebuild, bool bUp, int order = -1)
             {
@@ -22699,34 +22780,67 @@ namespace Thetis
                 lock (_meterItemsLock)
                 {
                     if (_meterItems == null) return;
-
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
                     if (nOrder < 0) nOrder = 0;
-                    int nTmp = numberOfMeterGroups() - 1;
-                    if (nOrder > nTmp) nOrder = nTmp;
-                    bool done = false;
-
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    int groupCount = 0;
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
                     {
-                        clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null)
+                        if (entry.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP) groupCount++;
+                    }
+                    int maxOrder = groupCount > 0 ? groupCount - 1 : 0;
+                    if (nOrder > maxOrder) nOrder = maxOrder;
+                    bool done = false;
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
+                    {
+                        clsItemGroup group = entry.Value as clsItemGroup;
+                        if (group != null)
                         {
-                            if (ig.MeterType == mt && (order == -1 || ig.Order == order) && !done)
+                            if (!done && group.MeterType == mt && (order == -1 || group.Order == order))
                             {
-                                ig.Order = nOrder;
+                                group.Order = nOrder;
                                 done = true;
                             }
-                            else if (ig.Order == nOrder)
+                            else if (group.Order == nOrder)
                             {
-                                if (bUp)
-                                    ig.Order++;
-                                else
-                                    ig.Order--;
+                                if (bUp) group.Order++;
+                                else group.Order--;
                             }
                         }
                     }
                 }
                 if (bRebuild) Rebuild();
+
+                //lock (_meterItemsLock)
+                //{
+                //    if (_meterItems == null) return;
+
+                //    if (nOrder < 0) nOrder = 0;
+                //    int nTmp = numberOfMeterGroups() - 1;
+                //    if (nOrder > nTmp) nOrder = nTmp;
+                //    bool done = false;
+
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                //    {
+                //        clsItemGroup ig = kvp.Value as clsItemGroup;
+                //        if (ig != null)
+                //        {
+                //            if (ig.MeterType == mt && (order == -1 || ig.Order == order) && !done)
+                //            {
+                //                ig.Order = nOrder;
+                //                done = true;
+                //            }
+                //            else if (ig.Order == nOrder)
+                //            {
+                //                if (bUp)
+                //                    ig.Order++;
+                //                else
+                //                    ig.Order--;
+                //            }
+                //        }
+                //    }
+                //}
+                //if (bRebuild) Rebuild();
             }
             public bool Enabled
             {
@@ -22889,15 +23003,28 @@ namespace Thetis
             {
                 lock (_meterItemsLock)
                 {
-                    Dictionary<string, clsMeterItem> meterItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    Dictionary<string, clsItemGroup> groupItems = new Dictionary<string, clsItemGroup>();
-
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in meterItems)
+                    Dictionary<string, clsItemGroup> groupItems = new Dictionary<string, clsItemGroup>(_meterItems.Count);
+                    foreach (KeyValuePair<string, clsMeterItem> entry in _meterItems)
                     {
-                        groupItems.Add(kvp.Value.ID, (clsItemGroup)kvp.Value);
+                        if (entry.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP)
+                        {
+                            clsItemGroup group = (clsItemGroup)entry.Value;
+                            groupItems.Add(group.ID, group);
+                        }
                     }
                     return groupItems;
-                }                
+                }
+                //lock (_meterItemsLock)
+                //{
+                //    Dictionary<string, clsMeterItem> meterItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                //    Dictionary<string, clsItemGroup> groupItems = new Dictionary<string, clsItemGroup>();
+
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in meterItems)
+                //    {
+                //        groupItems.Add(kvp.Value.ID, (clsItemGroup)kvp.Value);
+                //    }
+                //    return groupItems;
+                //}                
             }
             public void UpdateIntervals()
             {
@@ -22913,7 +23040,6 @@ namespace Thetis
                 lock (_meterItemsLock)
                 {
                     // shift top
-                    //Dictionary<string, clsMeterItem> meterItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
                     Dictionary<string, clsItemGroup> groupItems = getMeterGroups();
 
                     float fTop = 0;
@@ -22943,9 +23069,20 @@ namespace Thetis
             {
                 lock (_meterItemsLock)
                 {
-                    //_sortedMeterItemsForZOrder = _meterItems.OrderBy(o => o.Value.ZOrder).ToDictionary(x => x.Key, x => x.Value);
-                    _sortedMeterItemsForZOrder = _meterItems.OrderBy(o => o.Value.ZOrder).Select(x => x.Value).ToList();
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    List<clsMeterItem> sortedList = new List<clsMeterItem>(meterItems.Count);
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
+                    {
+                        sortedList.Add(entry.Value);
+                    }
+                    sortedList.Sort((clsMeterItem a, clsMeterItem b) => a.ZOrder.CompareTo(b.ZOrder));
+                    _sortedMeterItemsForZOrder = sortedList;
                 }
+                //lock (_meterItemsLock)
+                //{
+                //    //_sortedMeterItemsForZOrder = _meterItems.OrderBy(o => o.Value.ZOrder).ToDictionary(x => x.Key, x => x.Value);
+                //    _sortedMeterItemsForZOrder = _meterItems.OrderBy(o => o.Value.ZOrder).Select(x => x.Value).ToList();
+                //}
             }
             internal void MouseUp(System.Windows.Forms.MouseEventArgs e, clsMeter m, clsClickBox cb)
             {
