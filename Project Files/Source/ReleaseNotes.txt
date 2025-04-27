@@ -38,6 +38,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] limit setPan to filter display spectrum to 1/8 of framerate (~266ms update interval when vfo is changing the spectrum pan)
 - [change] refactored midi wheel code to try and remove the lag when spinning a wheel very fast. Slider/knob will still have same issue. Behringer devices PL-1/Micro/etc do not use this new code
 - [change] rx filter can now be +-20kHz wide to mirror TX filter widths. Shift also needs to be set as that will (at the moment) imply a width limit
+- [change] WDSP has had some optimisations and caching added. For example if you change the filter size to something that has been calculated before it will be much faster the second time. Has improved start up time, mode switching etc etc.
 - [fix] mic disable/enable button on front end will now disable the mic at startup if set as off. Note: its state is saved as part of the tx profile
 - [fix] fixed rare out of bounds issue in memory ScheduleUpdate
 - [fix] cat IF command fix where an error (O;) message would be returned if an unsupported TuneStep was in use. This bug has existed since 25/02/2007
