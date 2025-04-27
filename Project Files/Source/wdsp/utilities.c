@@ -594,28 +594,30 @@ void test_bfcu()
 *																										*
 ********************************************************************************************************/
 
-static const uint32_t FNV_OFFSET_BASIS_32 = 2166136261U;      // 0x811C9DC5
-static const uint32_t FNV_PRIME_32 = 16777619U;               // 0x01000193
+#if defined(_WIN64)
+	static const uint64_t FNV_OFFSET_BASIS_64 = 14695981039346656037ULL;  // 0xcbf29ce484222325
+	static const uint64_t FNV_PRIME_64 = 1099511628211ULL;				  // 0x100000001b3
 
-uint32_t fnv1a_hash32(const void* data, size_t len) {
-	const uint8_t* bytes = (const uint8_t*)data;
-	uint32_t hash = FNV_OFFSET_BASIS_32;
-	for (size_t i = 0; i < len; i++) {
-		hash ^= bytes[i];
-		hash *= FNV_PRIME_32;
+	uint64_t fnv1a_hash64(const void* data, size_t len) {
+		const uint8_t* bytes = (const uint8_t*)data;
+		uint64_t hash = FNV_OFFSET_BASIS_64;
+		for (size_t i = 0; i < len; ++i) {
+			hash ^= bytes[i];
+			hash *= FNV_PRIME_64;
+		}
+		return hash;
 	}
-	return hash;
-}
+#else
+	static const uint32_t FNV_OFFSET_BASIS_32 = 2166136261U;      // 0x811C9DC5
+	static const uint32_t FNV_PRIME_32 = 16777619U;               // 0x01000193
 
-static const uint64_t FNV_OFFSET_BASIS_64 = 14695981039346656037ULL;  // 0xcbf29ce484222325
-static const uint64_t FNV_PRIME_64 = 1099511628211ULL;				  // 0x100000001b3
-
-uint64_t fnv1a_hash64(const void* data, size_t len) {
-	const uint8_t* bytes = (const uint8_t*)data;
-	uint64_t hash = FNV_OFFSET_BASIS_64;
-	for (size_t i = 0; i < len; ++i) {
-		hash ^= bytes[i];
-		hash *= FNV_PRIME_64;
+	uint32_t fnv1a_hash32(const void* data, size_t len) {
+		const uint8_t* bytes = (const uint8_t*)data;
+		uint32_t hash = FNV_OFFSET_BASIS_32;
+		for (size_t i = 0; i < len; i++) {
+			hash ^= bytes[i];
+			hash *= FNV_PRIME_32;
+		}
+		return hash;
 	}
-	return hash;
-}
+#endif
