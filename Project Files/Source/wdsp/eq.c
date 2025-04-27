@@ -46,7 +46,7 @@ typedef struct eq_cache_entry
 	double scale;
 	int ctfmode;
 	int wintype;
-	uint64_t fg_hash;
+	HASH_T fg_hash;
 	double* impulse;
 	struct eq_cache_entry* next;
 } eq_cache_entry_t;
@@ -119,12 +119,10 @@ double* eq_impulse(int N,
 			e->wintype == wintype) {
 			double* imp = (double*)malloc0(N * sizeof(complex));
 			memcpy(imp, e->impulse, N * sizeof(complex));
-			//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "EQ CACHE\n");
 			return imp;
 		}
 	}
 
-	//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "EQ CREATE\n");
 	double* fp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
 	double* gp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
 	double* A  = (double *) malloc0 ((N / 2 + 1) * sizeof (double));

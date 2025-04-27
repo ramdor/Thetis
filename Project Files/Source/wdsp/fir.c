@@ -251,12 +251,10 @@ double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int
 			
 			double* c_impulse = (double*)malloc0(N * sizeof(complex));
 			memcpy(c_impulse, e->impulse, N * sizeof(complex));
-			//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "FIR CACHE\n");
 			return c_impulse;
 		}
 	}
 
-	//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "FIR CREATE\n");
 	double *c_impulse = (double *) malloc0 (N * sizeof (complex));
 	double ft = (f_high - f_low) / (2.0 * samplerate);
 	double ft_rad = TWOPI * ft;
@@ -409,7 +407,7 @@ void analytic (int N, double* in, double* out)
 typedef struct mp_cache_entry 
 {
 	int N;
-	uint64_t mp_hash;
+	HASH_T mp_hash;
 	int pfactor;
 	int polarity;
 	double* mpfir;
@@ -471,12 +469,10 @@ void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 			e->pfactor == pfactor &&
 			e->polarity == polarity) {
 			memcpy(mpfir, e->mpfir, N * sizeof(complex) );
-			//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "MP CACHE\n");
 			return;
 		}
 	}
 
-	//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "MP CREATE\n");
 	int i;
 	int size = N * pfactor;
 	double inv_PN = 1.0 / (double)size;

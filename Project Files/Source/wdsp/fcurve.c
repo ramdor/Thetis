@@ -98,12 +98,10 @@ double* fc_impulse (int nc, double f0, double f1, double g0, double g1, int curv
 			e->wintype == wintype) {			
 			double* imp = (double*)malloc0(nc * sizeof(complex));
 			memcpy(imp, e->impulse, nc * sizeof(complex));
-			//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "FC CACHE\n");
 			return imp;
 		}
 	}
 
-	//for (FILE* f = fopen("D:\\log.txt", "a"); f; fclose(f), f = NULL) fprintf(f, "FC CREATE\n");
 	double* A  = (double *) malloc0 ((nc / 2 + 1) * sizeof (double));
 	int i;
 	double fn, f;
