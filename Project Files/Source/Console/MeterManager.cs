@@ -2572,7 +2572,7 @@ namespace Thetis
             _meterThread.Start();
         }
         private static Dictionary<string, DXRenderer> _DXrenderers = new Dictionary<string, DXRenderer>();
-        private static void addRenderer(string sId, int rx, PictureBox target, clsMeter meter, System.Drawing.Color backColour)
+        private static void addRenderer(string sId, int rx, Panel target, clsMeter meter, System.Drawing.Color backColour)
         {
             DXRenderer renderer = new DXRenderer(sId, rx, target, _console, meter);
             renderer.BackgroundColour = backColour;
@@ -9685,7 +9685,7 @@ namespace Thetis
                                         {
                                             setimage = !_console.SpotForm.TrackingAndMapShown; // do not set if the spot tracking is being used
                                         }
-                                        if (setimage) _console.PicDisplayBackgroundImage = bmp;
+                                        if (setimage) _console.PnlDisplayBackgroundImage = bmp;
                                         bmp.Dispose();
                                     }));
                                 }
@@ -9837,7 +9837,7 @@ namespace Thetis
                         {
                             setimage = !_console.SpotForm.TrackingAndMapShown; // do not set if the spot tracking is being used
                         }
-                        if (setimage) _console.PicDisplayBackgroundImage = null;
+                        if (setimage) _console.PnlDisplayBackgroundImage = null;
                     }));
                 }
 
@@ -23846,7 +23846,7 @@ namespace Thetis
             private bool _bAntiAlias;
             private Vector2 _pixelShift;
             private int _nVBlanks;
-            private PictureBox _displayTarget;
+            private Panel _displayTarget;
             private int _oldRedrawDelay;
             private object _DXlock = new object();
             //
@@ -23903,7 +23903,7 @@ namespace Thetis
 
             private Guid _touch_guid;
 
-            public DXRenderer(string sId, int rx, PictureBox target, Console c, clsMeter meter)
+            public DXRenderer(string sId, int rx, Panel target, Console c, clsMeter meter)
             {
                 if (c == null || target == null) return;
 
@@ -24861,7 +24861,7 @@ namespace Thetis
             }
             private void OnMouseEnter(object sender, System.EventArgs e)
             {
-                PictureBox pb = sender as PictureBox;
+                Panel pb = sender as Panel;
                 if (pb == null) return;
                 string sId = pb.Tag.ToString();
                 if (!_meters.ContainsKey(sId)) return;
@@ -24881,7 +24881,7 @@ namespace Thetis
             }
             private void OnMouseLeave(object sender, System.EventArgs e)
             {
-                PictureBox pb = sender as PictureBox;
+                Panel pb = sender as Panel;
                 if (pb == null) return;
                 string sId = pb.Tag.ToString();
                 if (!_meters.ContainsKey(sId)) return;
@@ -24902,7 +24902,7 @@ namespace Thetis
             }
             private void OnMouseCaptureChanged(object sender, System.EventArgs e)
             {
-                PictureBox pb = sender as PictureBox;
+                Panel pb = sender as Panel;
                 if (pb == null) return;
                 string sId = pb.Tag.ToString();
                 if (!_meters.ContainsKey(sId)) return;
@@ -24925,7 +24925,7 @@ namespace Thetis
             {
                 lock (_metersLock)
                 {
-                    PictureBox pb = sender as PictureBox;
+                    Panel pb = sender as Panel;
                     if (pb == null) return;
                     string sId = pb.Tag.ToString();
                     if (!_meters.ContainsKey(sId)) return;
@@ -24975,7 +24975,7 @@ namespace Thetis
             {
                 lock (_metersLock)
                 {
-                    PictureBox pb = sender as PictureBox;
+                    Panel pb = sender as Panel;
                     if (pb == null) return;
                     string sId = pb.Tag.ToString();
                     if (!_meters.ContainsKey(sId)) return;
@@ -25025,7 +25025,7 @@ namespace Thetis
             {
                 lock (_metersLock)
                 {
-                    PictureBox pb = sender as PictureBox;
+                    Panel pb = sender as Panel;
                     if (pb == null) return;
                     string sId = pb.Tag.ToString();
                     if (!_meters.ContainsKey(sId)) return;
@@ -25079,7 +25079,7 @@ namespace Thetis
             {
                 lock (_metersLock)
                 {
-                    PictureBox pb = sender as PictureBox;
+                    Panel pb = sender as Panel;
                     if (pb == null) return;
                     string sId = pb.Tag.ToString();
                     if (!_meters.ContainsKey(sId)) return;
@@ -25133,7 +25133,7 @@ namespace Thetis
             {
                 lock (_metersLock)
                 {
-                    PictureBox pb = sender as PictureBox;
+                    Panel pb = sender as Panel;
                     if (pb == null) return;
                     string sId = pb.Tag.ToString();
                     if (!_meters.ContainsKey(sId)) return;

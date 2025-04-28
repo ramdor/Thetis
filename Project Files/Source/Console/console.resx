@@ -15150,40 +15150,28 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblDisplayPan.ZOrder" xml:space="preserve">
     <value>10</value>
   </data>
-  <metadata name="picDisplay.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="picDisplay.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="pnlDisplay.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
-  <data name="picDisplay.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="picDisplay.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="picDisplay.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="pnlDisplay.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
-  <data name="picDisplay.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
-  </data>
-  <data name="picDisplay.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="pnlDisplay.Size" type="System.Drawing.Size, System.Drawing">
     <value>710, 245</value>
   </data>
-  <data name="picDisplay.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="pnlDisplay.TabIndex" type="System.Int32, mscorlib">
+    <value>69</value>
   </data>
-  <data name="&gt;&gt;picDisplay.Name" xml:space="preserve">
-    <value>picDisplay</value>
+  <data name="&gt;&gt;pnlDisplay.Name" xml:space="preserve">
+    <value>pnlDisplay</value>
   </data>
-  <data name="&gt;&gt;picDisplay.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;pnlDisplay.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;picDisplay.Parent" xml:space="preserve">
+  <data name="&gt;&gt;pnlDisplay.Parent" xml:space="preserve">
     <value>panelDisplay</value>
   </data>
-  <data name="&gt;&gt;picDisplay.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;pnlDisplay.ZOrder" xml:space="preserve">
     <value>11</value>
   </data>
   <data name="panelDisplay.Location" type="System.Drawing.Point, System.Drawing">

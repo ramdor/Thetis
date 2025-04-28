@@ -1856,19 +1856,31 @@ namespace Thetis
         {
             Image objImg;
 
-            if (File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext))
-            {
-                objImg = loadImage(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext);
-            }
-            else if (File.Exists(path + "\\" + "Console" + "\\" + c.Name + pic_file_ext))
-            {
-                objImg = loadImage(path + "\\" + "Console" + "\\" + c.Name + pic_file_ext);
-            }
+            string ctrl_name = c.Name;            
+
+            if (File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + ctrl_name + pic_file_ext))
+                objImg = loadImage(path + "\\" + c.TopLevelControl.Name + "\\" + ctrl_name + pic_file_ext);
+            else if (File.Exists(path + "\\" + "Console" + "\\" + ctrl_name + pic_file_ext))
+                objImg = loadImage(path + "\\" + "Console" + "\\" + ctrl_name + pic_file_ext);
             else objImg = null;
 
-            if (c.Name.Equals("picDisplay")) // special case
+            bool pnlDisplayControl = ctrl_name.Equals("pnlDisplay");
+            if (pnlDisplayControl && objImg == null)
             {
-                m_objConsole.PicDisplayBackgroundImage = objImg;
+                // [2.10.3.9]MW0LGE
+                // look for image called picDisplay instead, as we have moved from picDisplay to pnlDisplay
+                ctrl_name = "picDisplay";
+
+                if (File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + ctrl_name + pic_file_ext))
+                    objImg = loadImage(path + "\\" + c.TopLevelControl.Name + "\\" + ctrl_name + pic_file_ext);
+                else if (File.Exists(path + "\\" + "Console" + "\\" + ctrl_name + pic_file_ext))
+                    objImg = loadImage(path + "\\" + "Console" + "\\" + ctrl_name + pic_file_ext);
+                else objImg = null;
+            }
+
+            if (pnlDisplayControl) // special case
+            {
+                m_objConsole.PnlDisplayBackgroundImage = objImg;
             }
             else
             {

@@ -3112,7 +3112,7 @@ namespace Thetis
                     buildDX2Resources();
                     buildFontsDX2D();
 
-                    SetDX2BackgoundImage(console.PicDisplayBackgroundImage);
+                    SetDX2BackgoundImage(console.PnlDisplayBackgroundImage);
                 }
                 catch (Exception e)
                 {
