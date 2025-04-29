@@ -8940,18 +8940,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <metadata name="contextMenuStripFilterRX1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>305, 17</value>
   </metadata>
-  <data name="toolStripMenuItemRX1FilterConfigure.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
-  </data>
-  <data name="toolStripMenuItemRX1FilterConfigure.Text" xml:space="preserve">
-    <value>Configure...</value>
-  </data>
-  <data name="toolStripMenuItemRX1FilterReset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
-  </data>
-  <data name="toolStripMenuItemRX1FilterReset.Text" xml:space="preserve">
-    <value>Reset to Defaults</value>
-  </data>
   <data name="contextMenuStripFilterRX1.Size" type="System.Drawing.Size, System.Drawing">
     <value>163, 48</value>
   </data>
@@ -8964,9 +8952,30 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;contextMenuStripFilterRX1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="toolStripMenuItemRX1FilterConfigure.Size" type="System.Drawing.Size, System.Drawing">
+    <value>162, 22</value>
+  </data>
+  <data name="toolStripMenuItemRX1FilterConfigure.Text" xml:space="preserve">
+    <value>Configure...</value>
+  </data>
+  <data name="toolStripMenuItemRX1FilterReset.Size" type="System.Drawing.Size, System.Drawing">
+    <value>162, 22</value>
+  </data>
+  <data name="toolStripMenuItemRX1FilterReset.Text" xml:space="preserve">
+    <value>Reset to Defaults</value>
+  </data>
   <metadata name="contextMenuStripFilterRX2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>500, 17</value>
   </metadata>
+  <data name="contextMenuStripFilterRX2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>163, 48</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStripFilterRX2.Name" xml:space="preserve">
+    <value>contextMenuStripFilterRX2</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStripFilterRX2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="toolStripMenuItemRX2FilterConfigure.Size" type="System.Drawing.Size, System.Drawing">
     <value>162, 22</value>
   </data>
@@ -8979,18 +8988,18 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="toolStripMenuItemRX2FilterReset.Text" xml:space="preserve">
     <value>Reset to Defaults</value>
   </data>
-  <data name="contextMenuStripFilterRX2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>163, 48</value>
-  </data>
-  <data name="&gt;&gt;contextMenuStripFilterRX2.Name" xml:space="preserve">
-    <value>contextMenuStripFilterRX2</value>
-  </data>
-  <data name="&gt;&gt;contextMenuStripFilterRX2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <metadata name="contextMenuStripNotch.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>1044, 17</value>
   </metadata>
+  <data name="contextMenuStripNotch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>149, 120</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStripNotch.Name" xml:space="preserve">
+    <value>contextMenuStripNotch</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStripNotch.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="toolStripNotchDelete.Size" type="System.Drawing.Size, System.Drawing">
     <value>148, 22</value>
   </data>
@@ -9024,20 +9033,41 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="toolStripNotchVeryDeep.Text" xml:space="preserve">
     <value>Very Deep (x3)</value>
   </data>
-  <data name="contextMenuStripNotch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>149, 120</value>
-  </data>
-  <data name="&gt;&gt;contextMenuStripNotch.Name" xml:space="preserve">
-    <value>contextMenuStripNotch</value>
-  </data>
-  <data name="&gt;&gt;contextMenuStripNotch.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>190, 17</value>
   </metadata>
   <data name="menuStrip1.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 9pt</value>
+  </data>
+  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1018, 24</value>
+  </data>
+  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>136</value>
+  </data>
+  <data name="menuStrip1.Text" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
+    <value>16</value>
+  </data>
+  <data name="setupToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>49, 20</value>
+  </data>
+  <data name="setupToolStripMenuItem.Text" xml:space="preserve">
+    <value>Setup</value>
   </data>
   <data name="setupToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>172, 22</value>
@@ -9053,12 +9083,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="databaseManagerToolStripMenuItem.Text" xml:space="preserve">
     <value>Database Manager</value>
-  </data>
-  <data name="setupToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>49, 20</value>
-  </data>
-  <data name="setupToolStripMenuItem.Text" xml:space="preserve">
-    <value>Setup</value>
   </data>
   <data name="memoryToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 20</value>
@@ -9113,6 +9137,15 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
 
  from a cluster</value>
   </data>
+  <data name="displayControlsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>105, 20</value>
+  </data>
+  <data name="displayControlsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Display Controls</value>
+  </data>
+  <data name="displayControlsToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="topControlsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>208, 22</value>
   </data>
@@ -9143,13 +9176,13 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="andromedaButtonBarToolStripMenuItem.Text" xml:space="preserve">
     <value>Andromeda Button Bar</value>
   </data>
-  <data name="displayControlsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>105, 20</value>
+  <data name="dSPToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>40, 20</value>
   </data>
-  <data name="displayControlsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Display Controls</value>
+  <data name="dSPToolStripMenuItem.Text" xml:space="preserve">
+    <value>DSP</value>
   </data>
-  <data name="displayControlsToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
+  <data name="dSPToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
   <data name="NRToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
@@ -9212,13 +9245,13 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="RX1PeakToolStripMenuItem.Text" xml:space="preserve">
     <value>Peak</value>
   </data>
-  <data name="dSPToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>40, 20</value>
+  <data name="bandToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>46, 20</value>
   </data>
-  <data name="dSPToolStripMenuItem.Text" xml:space="preserve">
-    <value>DSP</value>
+  <data name="bandToolStripMenuItem.Text" xml:space="preserve">
+    <value>Band</value>
   </data>
-  <data name="dSPToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
+  <data name="bandToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
   <data name="bandtoolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
@@ -9299,13 +9332,13 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="bandtoolStripMenuItem13.Text" xml:space="preserve">
     <value>GEN</value>
   </data>
-  <data name="bandToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>46, 20</value>
+  <data name="modeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 20</value>
   </data>
-  <data name="bandToolStripMenuItem.Text" xml:space="preserve">
-    <value>Band</value>
+  <data name="modeToolStripMenuItem.Text" xml:space="preserve">
+    <value>Mode</value>
   </data>
-  <data name="bandToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
+  <data name="modeToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
   <data name="lSBToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
@@ -9380,13 +9413,13 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="dRMToolStripMenuItem.Text" xml:space="preserve">
     <value>DRM</value>
   </data>
-  <data name="modeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 20</value>
+  <data name="filterToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>45, 20</value>
   </data>
-  <data name="modeToolStripMenuItem.Text" xml:space="preserve">
-    <value>Mode</value>
+  <data name="filterToolStripMenuItem.Text" xml:space="preserve">
+    <value>Filter</value>
   </data>
-  <data name="modeToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
+  <data name="filterToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
   <data name="FilterToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
@@ -9449,14 +9482,20 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="FilterToolStripMenuItem10.Text" xml:space="preserve">
     <value>25</value>
   </data>
-  <data name="filterToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>45, 20</value>
+  <data name="rX2ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 20</value>
   </data>
-  <data name="filterToolStripMenuItem.Text" xml:space="preserve">
-    <value>Filter</value>
+  <data name="rX2ToolStripMenuItem.Text" xml:space="preserve">
+    <value>RX2</value>
   </data>
-  <data name="filterToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
+  <data name="rX2ToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
+  </data>
+  <data name="bandToolStripMenuItem6.Size" type="System.Drawing.Size, System.Drawing">
+    <value>105, 22</value>
+  </data>
+  <data name="bandToolStripMenuItem6.Text" xml:space="preserve">
+    <value>Band</value>
   </data>
   <data name="toolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
     <value>103, 22</value>
@@ -9536,11 +9575,11 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="gENToolStripMenuItem.Text" xml:space="preserve">
     <value>GEN</value>
   </data>
-  <data name="bandToolStripMenuItem6.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="modeToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>105, 22</value>
   </data>
-  <data name="bandToolStripMenuItem6.Text" xml:space="preserve">
-    <value>Band</value>
+  <data name="modeToolStripMenuItem1.Text" xml:space="preserve">
+    <value>Mode</value>
   </data>
   <data name="lSBToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>101, 22</value>
@@ -9608,11 +9647,11 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="dRMToolStripMenuItem1.Text" xml:space="preserve">
     <value>DRM</value>
   </data>
-  <data name="modeToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="filterToolStripMenuItem11.Size" type="System.Drawing.Size, System.Drawing">
     <value>105, 22</value>
   </data>
-  <data name="modeToolStripMenuItem1.Text" xml:space="preserve">
-    <value>Mode</value>
+  <data name="filterToolStripMenuItem11.Text" xml:space="preserve">
+    <value>Filter</value>
   </data>
   <data name="kToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>95, 22</value>
@@ -9656,11 +9695,11 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="toolStripMenuItem14.Text" xml:space="preserve">
     <value>250</value>
   </data>
-  <data name="filterToolStripMenuItem11.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="dSPToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>105, 22</value>
   </data>
-  <data name="filterToolStripMenuItem11.Text" xml:space="preserve">
-    <value>Filter</value>
+  <data name="dSPToolStripMenuItem1.Text" xml:space="preserve">
+    <value>DSP</value>
   </data>
   <data name="nR2ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>99, 22</value>
@@ -9716,21 +9755,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="RX2PeakToolStripMenuItem.Text" xml:space="preserve">
     <value>Peak</value>
   </data>
-  <data name="dSPToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>105, 22</value>
-  </data>
-  <data name="dSPToolStripMenuItem1.Text" xml:space="preserve">
-    <value>DSP</value>
-  </data>
-  <data name="rX2ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 20</value>
-  </data>
-  <data name="rX2ToolStripMenuItem.Text" xml:space="preserve">
-    <value>RX2</value>
-  </data>
-  <data name="rX2ToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="linearityToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 20</value>
   </data>
@@ -9758,6 +9782,12 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="pIToolStripMenuItem.Text" xml:space="preserve">
     <value>PI</value>
   </data>
+  <data name="BPFToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 20</value>
+  </data>
+  <data name="BPFToolStripMenuItem.Text" xml:space="preserve">
+    <value>BPF</value>
+  </data>
   <data name="BPF1ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>158, 22</value>
   </data>
@@ -9776,12 +9806,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="BPF2ToolStripMenuItem.ToolTipText" xml:space="preserve">
     <value>BandPass Filter #2 ByPass Mode</value>
   </data>
-  <data name="BPFToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 20</value>
-  </data>
-  <data name="BPFToolStripMenuItem.Text" xml:space="preserve">
-    <value>BPF</value>
-  </data>
   <data name="finderMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>52, 20</value>
   </data>
@@ -9794,30 +9818,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="miAbout.Text" xml:space="preserve">
     <value>About</value>
   </data>
-  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1018, 24</value>
-  </data>
-  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>136</value>
-  </data>
-  <data name="menuStrip1.Text" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
-    <value>16</value>
-  </data>
   <metadata name="statusStripMain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>1226, 17</value>
   </metadata>
@@ -9828,160 +9828,70 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>False</value>
   </data>
   <data name="includeBordersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="includeBordersToolStripMenuItem.Text" xml:space="preserve">
     <value>Include borders</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>159, 6</value>
-  </data>
-  <data name="x768ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
-  </data>
-  <data name="x768ToolStripMenuItem.Text" xml:space="preserve">
-    <value>1024 x 768</value>
-  </data>
-  <data name="x864ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
-  </data>
-  <data name="x864ToolStripMenuItem.Text" xml:space="preserve">
-    <value>1152 x 864</value>
-  </data>
-  <data name="x960ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
-  </data>
-  <data name="x960ToolStripMenuItem.Text" xml:space="preserve">
-    <value>1280 x 960</value>
-  </data>
-  <data name="x1050ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
-  </data>
-  <data name="x1050ToolStripMenuItem.Text" xml:space="preserve">
-    <value>1400 x 1050</value>
-  </data>
-  <data name="x1200ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
-  </data>
-  <data name="x1200ToolStripMenuItem.Text" xml:space="preserve">
-    <value>1600 x 1200</value>
+    <value>177, 6</value>
   </data>
   <data name="toolStripMenuItem_4by3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="toolStripMenuItem_4by3.Text" xml:space="preserve">
     <value>4:3</value>
   </data>
   <data name="x720ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="x720ToolStripMenuItem.Text" xml:space="preserve">
     <value>1280 x 720</value>
   </data>
   <data name="x768ToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="x768ToolStripMenuItem1.Text" xml:space="preserve">
     <value>1365 x 768</value>
   </data>
   <data name="x900ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="x900ToolStripMenuItem.Text" xml:space="preserve">
     <value>1600 x 900</value>
   </data>
   <data name="x1080ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="x1080ToolStripMenuItem.Text" xml:space="preserve">
     <value>1920 x 1080</value>
   </data>
   <data name="x1440ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="x1440ToolStripMenuItem.Text" xml:space="preserve">
     <value>2560 x 1440</value>
   </data>
   <data name="x2160ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="x2160ToolStripMenuItem.Text" xml:space="preserve">
     <value>3840 x 2160</value>
   </data>
   <data name="toolStripMenuItem_16by9.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="toolStripMenuItem_16by9.Text" xml:space="preserve">
     <value>16:9</value>
   </data>
-  <data name="x800ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
-  </data>
-  <data name="x800ToolStripMenuItem.Text" xml:space="preserve">
-    <value>1280 x 800</value>
-  </data>
-  <data name="x900ToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
-  </data>
-  <data name="x900ToolStripMenuItem1.Text" xml:space="preserve">
-    <value>1440 x 900</value>
-  </data>
-  <data name="x1050ToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
-  </data>
-  <data name="x1050ToolStripMenuItem1.Text" xml:space="preserve">
-    <value>1680 x1050</value>
-  </data>
-  <data name="x1200ToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
-  </data>
-  <data name="x1200ToolStripMenuItem1.Text" xml:space="preserve">
-    <value>1920 x 1200</value>
-  </data>
-  <data name="x1600ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
-  </data>
-  <data name="x1600ToolStripMenuItem.Text" xml:space="preserve">
-    <value>2560 x 1600</value>
-  </data>
-  <data name="x2400ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
-  </data>
-  <data name="x2400ToolStripMenuItem.Text" xml:space="preserve">
-    <value>3840 x 2400</value>
-  </data>
   <data name="toolStripMenuItem_16by10.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="toolStripMenuItem_16by10.Text" xml:space="preserve">
     <value>16:10</value>
   </data>
-  <data name="pToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 22</value>
-  </data>
-  <data name="pToolStripMenuItem.Text" xml:space="preserve">
-    <value>720p</value>
-  </data>
-  <data name="pToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 22</value>
-  </data>
-  <data name="pToolStripMenuItem1.Text" xml:space="preserve">
-    <value>1080p</value>
-  </data>
-  <data name="pToolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 22</value>
-  </data>
-  <data name="pToolStripMenuItem2.Text" xml:space="preserve">
-    <value>1440p</value>
-  </data>
-  <data name="pToolStripMenuItem3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 22</value>
-  </data>
-  <data name="pToolStripMenuItem3.Text" xml:space="preserve">
-    <value>2160p</value>
-  </data>
   <data name="youTubeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="youTubeToolStripMenuItem.Text" xml:space="preserve">
     <value>YouTube</value>
@@ -10015,18 +9925,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="toolStripDropDownButton_CPU.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
-  </data>
-  <data name="systemToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 22</value>
-  </data>
-  <data name="systemToolStripMenuItem.Text" xml:space="preserve">
-    <value>System</value>
-  </data>
-  <data name="thetisOnlyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 22</value>
-  </data>
-  <data name="thetisOnlyToolStripMenuItem.Text" xml:space="preserve">
-    <value>Thetis Only</value>
   </data>
   <data name="toolStripDropDownButton_CPU.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
@@ -10103,24 +10001,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="toolStripStatusLabelRXAnt.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="toolStripMenuItem20.Size" type="System.Drawing.Size, System.Drawing">
-    <value>81, 22</value>
-  </data>
-  <data name="toolStripMenuItem20.Text" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="toolStripMenuItem19.Size" type="System.Drawing.Size, System.Drawing">
-    <value>81, 22</value>
-  </data>
-  <data name="toolStripMenuItem19.Text" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="toolStripMenuItem18.Size" type="System.Drawing.Size, System.Drawing">
-    <value>81, 22</value>
-  </data>
-  <data name="toolStripMenuItem18.Text" xml:space="preserve">
-    <value>3</value>
-  </data>
   <data name="toolStripStatusLabelRXAnt.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
   </data>
@@ -10138,24 +10018,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="toolStripStatusLabelTXAnt.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
-  </data>
-  <data name="toolStripMenuItem16.Size" type="System.Drawing.Size, System.Drawing">
-    <value>81, 22</value>
-  </data>
-  <data name="toolStripMenuItem16.Text" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="toolStripMenuItem15.Size" type="System.Drawing.Size, System.Drawing">
-    <value>81, 22</value>
-  </data>
-  <data name="toolStripMenuItem15.Text" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="toolStripMenuItem17.Size" type="System.Drawing.Size, System.Drawing">
-    <value>81, 22</value>
-  </data>
-  <data name="toolStripMenuItem17.Text" xml:space="preserve">
-    <value>3</value>
   </data>
   <data name="toolStripStatusLabelTXAnt.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
@@ -10200,7 +10062,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>None</value>
   </data>
   <data name="toolStripStatusLabel_Fill.Size" type="System.Drawing.Size, System.Drawing">
-    <value>221, 15</value>
+    <value>87, 15</value>
   </data>
   <data name="toolStripStatusLabel_N1MM.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -10371,6 +10233,144 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;statusStripMain.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
+  <data name="x768ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 22</value>
+  </data>
+  <data name="x768ToolStripMenuItem.Text" xml:space="preserve">
+    <value>1024 x 768</value>
+  </data>
+  <data name="x864ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 22</value>
+  </data>
+  <data name="x864ToolStripMenuItem.Text" xml:space="preserve">
+    <value>1152 x 864</value>
+  </data>
+  <data name="x960ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 22</value>
+  </data>
+  <data name="x960ToolStripMenuItem.Text" xml:space="preserve">
+    <value>1280 x 960</value>
+  </data>
+  <data name="x1050ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 22</value>
+  </data>
+  <data name="x1050ToolStripMenuItem.Text" xml:space="preserve">
+    <value>1400 x 1050</value>
+  </data>
+  <data name="x1200ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 22</value>
+  </data>
+  <data name="x1200ToolStripMenuItem.Text" xml:space="preserve">
+    <value>1600 x 1200</value>
+  </data>
+  <data name="x800ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 22</value>
+  </data>
+  <data name="x800ToolStripMenuItem.Text" xml:space="preserve">
+    <value>1280 x 800</value>
+  </data>
+  <data name="x900ToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 22</value>
+  </data>
+  <data name="x900ToolStripMenuItem1.Text" xml:space="preserve">
+    <value>1440 x 900</value>
+  </data>
+  <data name="x1050ToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 22</value>
+  </data>
+  <data name="x1050ToolStripMenuItem1.Text" xml:space="preserve">
+    <value>1680 x1050</value>
+  </data>
+  <data name="x1200ToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 22</value>
+  </data>
+  <data name="x1200ToolStripMenuItem1.Text" xml:space="preserve">
+    <value>1920 x 1200</value>
+  </data>
+  <data name="x1600ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 22</value>
+  </data>
+  <data name="x1600ToolStripMenuItem.Text" xml:space="preserve">
+    <value>2560 x 1600</value>
+  </data>
+  <data name="x2400ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 22</value>
+  </data>
+  <data name="x2400ToolStripMenuItem.Text" xml:space="preserve">
+    <value>3840 x 2400</value>
+  </data>
+  <data name="pToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>109, 22</value>
+  </data>
+  <data name="pToolStripMenuItem.Text" xml:space="preserve">
+    <value>720p</value>
+  </data>
+  <data name="pToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>109, 22</value>
+  </data>
+  <data name="pToolStripMenuItem1.Text" xml:space="preserve">
+    <value>1080p</value>
+  </data>
+  <data name="pToolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>109, 22</value>
+  </data>
+  <data name="pToolStripMenuItem2.Text" xml:space="preserve">
+    <value>1440p</value>
+  </data>
+  <data name="pToolStripMenuItem3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>109, 22</value>
+  </data>
+  <data name="pToolStripMenuItem3.Text" xml:space="preserve">
+    <value>2160p</value>
+  </data>
+  <data name="systemToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 22</value>
+  </data>
+  <data name="systemToolStripMenuItem.Text" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="thetisOnlyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 22</value>
+  </data>
+  <data name="thetisOnlyToolStripMenuItem.Text" xml:space="preserve">
+    <value>Thetis Only</value>
+  </data>
+  <data name="toolStripMenuItem20.Size" type="System.Drawing.Size, System.Drawing">
+    <value>81, 22</value>
+  </data>
+  <data name="toolStripMenuItem20.Text" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="toolStripMenuItem19.Size" type="System.Drawing.Size, System.Drawing">
+    <value>81, 22</value>
+  </data>
+  <data name="toolStripMenuItem19.Text" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="toolStripMenuItem18.Size" type="System.Drawing.Size, System.Drawing">
+    <value>81, 22</value>
+  </data>
+  <data name="toolStripMenuItem18.Text" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="toolStripMenuItem16.Size" type="System.Drawing.Size, System.Drawing">
+    <value>81, 22</value>
+  </data>
+  <data name="toolStripMenuItem16.Text" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="toolStripMenuItem15.Size" type="System.Drawing.Size, System.Drawing">
+    <value>81, 22</value>
+  </data>
+  <data name="toolStripMenuItem15.Text" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="toolStripMenuItem17.Size" type="System.Drawing.Size, System.Drawing">
+    <value>81, 22</value>
+  </data>
+  <data name="toolStripMenuItem17.Text" xml:space="preserve">
+    <value>3</value>
+  </data>
   <metadata name="tmrAutoAGC.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>1362, 17</value>
   </metadata>
@@ -10421,6 +10421,66 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;nudPwrTemp.ZOrder" xml:space="preserve">
     <value>6</value>
+  </data>
+  <data name="&gt;&gt;pnlResizeMeter.Name" xml:space="preserve">
+    <value>pnlResizeMeter</value>
+  </data>
+  <data name="&gt;&gt;pnlResizeMeter.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;pnlResizeMeter.Parent" xml:space="preserve">
+    <value>grpMultimeter</value>
+  </data>
+  <data name="&gt;&gt;pnlResizeMeter.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;picMultiMeterDigital.Name" xml:space="preserve">
+    <value>picMultiMeterDigital</value>
+  </data>
+  <data name="&gt;&gt;picMultiMeterDigital.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;picMultiMeterDigital.Parent" xml:space="preserve">
+    <value>grpMultimeter</value>
+  </data>
+  <data name="&gt;&gt;picMultiMeterDigital.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;txtMultiText.Name" xml:space="preserve">
+    <value>txtMultiText</value>
+  </data>
+  <data name="&gt;&gt;txtMultiText.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;txtMultiText.Parent" xml:space="preserve">
+    <value>grpMultimeter</value>
+  </data>
+  <data name="&gt;&gt;txtMultiText.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="grpMultimeter.Location" type="System.Drawing.Point, System.Drawing">
+    <value>841, 24</value>
+  </data>
+  <data name="grpMultimeter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>172, 88</value>
+  </data>
+  <data name="grpMultimeter.TabIndex" type="System.Int32, mscorlib">
+    <value>54</value>
+  </data>
+  <data name="grpMultimeter.Text" xml:space="preserve">
+    <value>RX1 Meter       TX Meter</value>
+  </data>
+  <data name="&gt;&gt;grpMultimeter.Name" xml:space="preserve">
+    <value>grpMultimeter</value>
+  </data>
+  <data name="&gt;&gt;grpMultimeter.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;grpMultimeter.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;grpMultimeter.ZOrder" xml:space="preserve">
+    <value>8</value>
   </data>
   <data name="pnlResizeMeter.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -10505,30 +10565,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;txtMultiText.ZOrder" xml:space="preserve">
     <value>2</value>
-  </data>
-  <data name="grpMultimeter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>841, 24</value>
-  </data>
-  <data name="grpMultimeter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>172, 88</value>
-  </data>
-  <data name="grpMultimeter.TabIndex" type="System.Int32, mscorlib">
-    <value>54</value>
-  </data>
-  <data name="grpMultimeter.Text" xml:space="preserve">
-    <value>RX1 Meter       TX Meter</value>
-  </data>
-  <data name="&gt;&gt;grpMultimeter.Name" xml:space="preserve">
-    <value>grpMultimeter</value>
-  </data>
-  <data name="&gt;&gt;grpMultimeter.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;grpMultimeter.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;grpMultimeter.ZOrder" xml:space="preserve">
-    <value>8</value>
   </data>
   <data name="panelFilter.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -11292,6 +11328,42 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="panelOptions.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="&gt;&gt;checkBoxTS1.Name" xml:space="preserve">
+    <value>checkBoxTS1</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTS1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTS1.Parent" xml:space="preserve">
+    <value>panelOptions</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTS1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="panelOptions.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="panelOptions.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 65</value>
+  </data>
+  <data name="panelOptions.Size" type="System.Drawing.Size, System.Drawing">
+    <value>117, 133</value>
+  </data>
+  <data name="panelOptions.TabIndex" type="System.Int32, mscorlib">
+    <value>116</value>
+  </data>
+  <data name="&gt;&gt;panelOptions.Name" xml:space="preserve">
+    <value>panelOptions</value>
+  </data>
+  <data name="&gt;&gt;panelOptions.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelOptions.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelOptions.ZOrder" xml:space="preserve">
+    <value>18</value>
+  </data>
   <data name="checkBoxTS1.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
   </data>
@@ -11337,35 +11409,200 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;checkBoxTS1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="panelOptions.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
-  </data>
-  <data name="panelOptions.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 65</value>
-  </data>
-  <data name="panelOptions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>117, 133</value>
-  </data>
-  <data name="panelOptions.TabIndex" type="System.Int32, mscorlib">
-    <value>116</value>
-  </data>
-  <data name="&gt;&gt;panelOptions.Name" xml:space="preserve">
-    <value>panelOptions</value>
-  </data>
-  <data name="&gt;&gt;panelOptions.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelOptions.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelOptions.ZOrder" xml:space="preserve">
-    <value>18</value>
-  </data>
   <data name="panelModeSpecificPhone.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="panelModeSpecificPhone.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;lblTXHigh.Name" xml:space="preserve">
+    <value>lblTXHigh</value>
+  </data>
+  <data name="&gt;&gt;lblTXHigh.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblTXHigh.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;lblTXHigh.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblTXLow.Name" xml:space="preserve">
+    <value>lblTXLow</value>
+  </data>
+  <data name="&gt;&gt;lblTXLow.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblTXLow.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;lblTXLow.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;picNoiseGate.Name" xml:space="preserve">
+    <value>picNoiseGate</value>
+  </data>
+  <data name="&gt;&gt;picNoiseGate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;picNoiseGate.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;picNoiseGate.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;lblNoiseGateVal.Name" xml:space="preserve">
+    <value>lblNoiseGateVal</value>
+  </data>
+  <data name="&gt;&gt;lblNoiseGateVal.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblNoiseGateVal.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;lblNoiseGateVal.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;ptbNoiseGate.Name" xml:space="preserve">
+    <value>ptbNoiseGate</value>
+  </data>
+  <data name="&gt;&gt;ptbNoiseGate.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbNoiseGate.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;ptbNoiseGate.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;picVOX.Name" xml:space="preserve">
+    <value>picVOX</value>
+  </data>
+  <data name="&gt;&gt;picVOX.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;picVOX.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;picVOX.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;ptbVOX.Name" xml:space="preserve">
+    <value>ptbVOX</value>
+  </data>
+  <data name="&gt;&gt;ptbVOX.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbVOX.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;ptbVOX.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;lblVOXVal.Name" xml:space="preserve">
+    <value>lblVOXVal</value>
+  </data>
+  <data name="&gt;&gt;lblVOXVal.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblVOXVal.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;lblVOXVal.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;ptbCPDR.Name" xml:space="preserve">
+    <value>ptbCPDR</value>
+  </data>
+  <data name="&gt;&gt;ptbCPDR.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbCPDR.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;ptbCPDR.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;lblCPDRVal.Name" xml:space="preserve">
+    <value>lblCPDRVal</value>
+  </data>
+  <data name="&gt;&gt;lblCPDRVal.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCPDRVal.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;lblCPDRVal.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;lblMicVal.Name" xml:space="preserve">
+    <value>lblMicVal</value>
+  </data>
+  <data name="&gt;&gt;lblMicVal.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblMicVal.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;lblMicVal.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="&gt;&gt;ptbMic.Name" xml:space="preserve">
+    <value>ptbMic</value>
+  </data>
+  <data name="&gt;&gt;ptbMic.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbMic.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;ptbMic.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="&gt;&gt;lblMIC.Name" xml:space="preserve">
+    <value>lblMIC</value>
+  </data>
+  <data name="&gt;&gt;lblMIC.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblMIC.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;lblMIC.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="&gt;&gt;lblTransmitProfile.Name" xml:space="preserve">
+    <value>lblTransmitProfile</value>
+  </data>
+  <data name="&gt;&gt;lblTransmitProfile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblTransmitProfile.Parent" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;lblTransmitProfile.ZOrder" xml:space="preserve">
+    <value>17</value>
+  </data>
+  <data name="panelModeSpecificPhone.Location" type="System.Drawing.Point, System.Drawing">
+    <value>499, 420</value>
+  </data>
+  <data name="panelModeSpecificPhone.Size" type="System.Drawing.Size, System.Drawing">
+    <value>336, 165</value>
+  </data>
+  <data name="panelModeSpecificPhone.TabIndex" type="System.Int32, mscorlib">
+    <value>125</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificPhone.Name" xml:space="preserve">
+    <value>panelModeSpecificPhone</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificPhone.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificPhone.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificPhone.ZOrder" xml:space="preserve">
+    <value>52</value>
   </data>
   <data name="lblTXHigh.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -11868,32 +12105,131 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblTransmitProfile.ZOrder" xml:space="preserve">
     <value>17</value>
   </data>
-  <data name="panelModeSpecificPhone.Location" type="System.Drawing.Point, System.Drawing">
-    <value>499, 420</value>
-  </data>
-  <data name="panelModeSpecificPhone.Size" type="System.Drawing.Size, System.Drawing">
-    <value>336, 165</value>
-  </data>
-  <data name="panelModeSpecificPhone.TabIndex" type="System.Int32, mscorlib">
-    <value>125</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificPhone.Name" xml:space="preserve">
-    <value>panelModeSpecificPhone</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificPhone.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificPhone.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificPhone.ZOrder" xml:space="preserve">
-    <value>52</value>
-  </data>
   <data name="panelButtonBar.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="panelButtonBar.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar8.Name" xml:space="preserve">
+    <value>btnAndrBar8</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar8.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar8.Parent" xml:space="preserve">
+    <value>panelButtonBar</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar8.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar7.Name" xml:space="preserve">
+    <value>btnAndrBar7</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar7.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar7.Parent" xml:space="preserve">
+    <value>panelButtonBar</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar7.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar6.Name" xml:space="preserve">
+    <value>btnAndrBar6</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar6.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar6.Parent" xml:space="preserve">
+    <value>panelButtonBar</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar6.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar5.Name" xml:space="preserve">
+    <value>btnAndrBar5</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar5.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar5.Parent" xml:space="preserve">
+    <value>panelButtonBar</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar5.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar4.Name" xml:space="preserve">
+    <value>btnAndrBar4</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar4.Parent" xml:space="preserve">
+    <value>panelButtonBar</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar4.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar3.Name" xml:space="preserve">
+    <value>btnAndrBar3</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar3.Parent" xml:space="preserve">
+    <value>panelButtonBar</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar3.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar2.Name" xml:space="preserve">
+    <value>btnAndrBar2</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar2.Parent" xml:space="preserve">
+    <value>panelButtonBar</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar2.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar1.Name" xml:space="preserve">
+    <value>btnAndrBar1</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar1.Parent" xml:space="preserve">
+    <value>panelButtonBar</value>
+  </data>
+  <data name="&gt;&gt;btnAndrBar1.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="panelButtonBar.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 650</value>
+  </data>
+  <data name="panelButtonBar.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1012, 50</value>
+  </data>
+  <data name="panelButtonBar.TabIndex" type="System.Int32, mscorlib">
+    <value>71</value>
+  </data>
+  <data name="panelButtonBar.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;panelButtonBar.Name" xml:space="preserve">
+    <value>panelButtonBar</value>
+  </data>
+  <data name="&gt;&gt;panelButtonBar.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelButtonBar.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelButtonBar.ZOrder" xml:space="preserve">
+    <value>46</value>
   </data>
   <data name="btnAndrBar8.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 10pt</value>
@@ -12159,35 +12495,131 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;btnAndrBar1.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
-  <data name="panelButtonBar.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 650</value>
-  </data>
-  <data name="panelButtonBar.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1012, 50</value>
-  </data>
-  <data name="panelButtonBar.TabIndex" type="System.Int32, mscorlib">
-    <value>71</value>
-  </data>
-  <data name="panelButtonBar.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;panelButtonBar.Name" xml:space="preserve">
-    <value>panelButtonBar</value>
-  </data>
-  <data name="&gt;&gt;panelButtonBar.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelButtonBar.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelButtonBar.ZOrder" xml:space="preserve">
-    <value>46</value>
-  </data>
   <data name="panelVFOLabels.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="panelVFOLabels.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;lblStepValue.Name" xml:space="preserve">
+    <value>lblStepValue</value>
+  </data>
+  <data name="&gt;&gt;lblStepValue.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblStepValue.Parent" xml:space="preserve">
+    <value>panelVFOLabels</value>
+  </data>
+  <data name="&gt;&gt;lblStepValue.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblStep.Name" xml:space="preserve">
+    <value>lblStep</value>
+  </data>
+  <data name="&gt;&gt;lblStep.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblStep.Parent" xml:space="preserve">
+    <value>panelVFOLabels</value>
+  </data>
+  <data name="&gt;&gt;lblStep.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lblVFOSplit.Name" xml:space="preserve">
+    <value>lblVFOSplit</value>
+  </data>
+  <data name="&gt;&gt;lblVFOSplit.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblVFOSplit.Parent" xml:space="preserve">
+    <value>panelVFOLabels</value>
+  </data>
+  <data name="&gt;&gt;lblVFOSplit.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;lblXITValue.Name" xml:space="preserve">
+    <value>lblXITValue</value>
+  </data>
+  <data name="&gt;&gt;lblXITValue.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblXITValue.Parent" xml:space="preserve">
+    <value>panelVFOLabels</value>
+  </data>
+  <data name="&gt;&gt;lblXITValue.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;lblRITValue.Name" xml:space="preserve">
+    <value>lblRITValue</value>
+  </data>
+  <data name="&gt;&gt;lblRITValue.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRITValue.Parent" xml:space="preserve">
+    <value>panelVFOLabels</value>
+  </data>
+  <data name="&gt;&gt;lblRITValue.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;lblRITLabel.Name" xml:space="preserve">
+    <value>lblRITLabel</value>
+  </data>
+  <data name="&gt;&gt;lblRITLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRITLabel.Parent" xml:space="preserve">
+    <value>panelVFOLabels</value>
+  </data>
+  <data name="&gt;&gt;lblRITLabel.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;lblXITLabel.Name" xml:space="preserve">
+    <value>lblXITLabel</value>
+  </data>
+  <data name="&gt;&gt;lblXITLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblXITLabel.Parent" xml:space="preserve">
+    <value>panelVFOLabels</value>
+  </data>
+  <data name="&gt;&gt;lblXITLabel.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;lblVFOSyncLabel.Name" xml:space="preserve">
+    <value>lblVFOSyncLabel</value>
+  </data>
+  <data name="&gt;&gt;lblVFOSyncLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblVFOSyncLabel.Parent" xml:space="preserve">
+    <value>panelVFOLabels</value>
+  </data>
+  <data name="&gt;&gt;lblVFOSyncLabel.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="panelVFOLabels.Location" type="System.Drawing.Point, System.Drawing">
+    <value>846, 123</value>
+  </data>
+  <data name="panelVFOLabels.Size" type="System.Drawing.Size, System.Drawing">
+    <value>97, 121</value>
+  </data>
+  <data name="panelVFOLabels.TabIndex" type="System.Int32, mscorlib">
+    <value>143</value>
+  </data>
+  <data name="panelVFOLabels.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;panelVFOLabels.Name" xml:space="preserve">
+    <value>panelVFOLabels</value>
+  </data>
+  <data name="&gt;&gt;panelVFOLabels.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelVFOLabels.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelVFOLabels.ZOrder" xml:space="preserve">
+    <value>50</value>
   </data>
   <data name="lblStepValue.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 9pt</value>
@@ -12459,35 +12891,131 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblVFOSyncLabel.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
-  <data name="panelVFOLabels.Location" type="System.Drawing.Point, System.Drawing">
-    <value>846, 123</value>
-  </data>
-  <data name="panelVFOLabels.Size" type="System.Drawing.Size, System.Drawing">
-    <value>97, 121</value>
-  </data>
-  <data name="panelVFOLabels.TabIndex" type="System.Int32, mscorlib">
-    <value>143</value>
-  </data>
-  <data name="panelVFOLabels.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;panelVFOLabels.Name" xml:space="preserve">
-    <value>panelVFOLabels</value>
-  </data>
-  <data name="&gt;&gt;panelVFOLabels.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelVFOLabels.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelVFOLabels.ZOrder" xml:space="preserve">
-    <value>50</value>
-  </data>
   <data name="panelVFOALabels.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="panelVFOALabels.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;lblLockLabel.Name" xml:space="preserve">
+    <value>lblLockLabel</value>
+  </data>
+  <data name="&gt;&gt;lblLockLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblLockLabel.Parent" xml:space="preserve">
+    <value>panelVFOALabels</value>
+  </data>
+  <data name="&gt;&gt;lblLockLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblAGCLabel.Name" xml:space="preserve">
+    <value>lblAGCLabel</value>
+  </data>
+  <data name="&gt;&gt;lblAGCLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblAGCLabel.Parent" xml:space="preserve">
+    <value>panelVFOALabels</value>
+  </data>
+  <data name="&gt;&gt;lblAGCLabel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lblAttenLabel.Name" xml:space="preserve">
+    <value>lblAttenLabel</value>
+  </data>
+  <data name="&gt;&gt;lblAttenLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblAttenLabel.Parent" xml:space="preserve">
+    <value>panelVFOALabels</value>
+  </data>
+  <data name="&gt;&gt;lblAttenLabel.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;lblANFLabel.Name" xml:space="preserve">
+    <value>lblANFLabel</value>
+  </data>
+  <data name="&gt;&gt;lblANFLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblANFLabel.Parent" xml:space="preserve">
+    <value>panelVFOALabels</value>
+  </data>
+  <data name="&gt;&gt;lblANFLabel.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;lblSNBLabel.Name" xml:space="preserve">
+    <value>lblSNBLabel</value>
+  </data>
+  <data name="&gt;&gt;lblSNBLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblSNBLabel.Parent" xml:space="preserve">
+    <value>panelVFOALabels</value>
+  </data>
+  <data name="&gt;&gt;lblSNBLabel.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;lblNBLabel.Name" xml:space="preserve">
+    <value>lblNBLabel</value>
+  </data>
+  <data name="&gt;&gt;lblNBLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblNBLabel.Parent" xml:space="preserve">
+    <value>panelVFOALabels</value>
+  </data>
+  <data name="&gt;&gt;lblNBLabel.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;lblNRLabel.Name" xml:space="preserve">
+    <value>lblNRLabel</value>
+  </data>
+  <data name="&gt;&gt;lblNRLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblNRLabel.Parent" xml:space="preserve">
+    <value>panelVFOALabels</value>
+  </data>
+  <data name="&gt;&gt;lblNRLabel.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;lblCtunLabel.Name" xml:space="preserve">
+    <value>lblCtunLabel</value>
+  </data>
+  <data name="&gt;&gt;lblCtunLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCtunLabel.Parent" xml:space="preserve">
+    <value>panelVFOALabels</value>
+  </data>
+  <data name="&gt;&gt;lblCtunLabel.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="panelVFOALabels.Location" type="System.Drawing.Point, System.Drawing">
+    <value>846, 81</value>
+  </data>
+  <data name="panelVFOALabels.Size" type="System.Drawing.Size, System.Drawing">
+    <value>232, 40</value>
+  </data>
+  <data name="panelVFOALabels.TabIndex" type="System.Int32, mscorlib">
+    <value>142</value>
+  </data>
+  <data name="panelVFOALabels.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;panelVFOALabels.Name" xml:space="preserve">
+    <value>panelVFOALabels</value>
+  </data>
+  <data name="&gt;&gt;panelVFOALabels.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelVFOALabels.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelVFOALabels.ZOrder" xml:space="preserve">
+    <value>49</value>
   </data>
   <data name="lblLockLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -12765,35 +13293,131 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblCtunLabel.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
-  <data name="panelVFOALabels.Location" type="System.Drawing.Point, System.Drawing">
-    <value>846, 81</value>
-  </data>
-  <data name="panelVFOALabels.Size" type="System.Drawing.Size, System.Drawing">
-    <value>232, 40</value>
-  </data>
-  <data name="panelVFOALabels.TabIndex" type="System.Int32, mscorlib">
-    <value>142</value>
-  </data>
-  <data name="panelVFOALabels.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;panelVFOALabels.Name" xml:space="preserve">
-    <value>panelVFOALabels</value>
-  </data>
-  <data name="&gt;&gt;panelVFOALabels.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelVFOALabels.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelVFOALabels.ZOrder" xml:space="preserve">
-    <value>49</value>
-  </data>
   <data name="panelVFOBLabels.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="panelVFOBLabels.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;lblRX2AttenLabel.Name" xml:space="preserve">
+    <value>lblRX2AttenLabel</value>
+  </data>
+  <data name="&gt;&gt;lblRX2AttenLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2AttenLabel.Parent" xml:space="preserve">
+    <value>panelVFOBLabels</value>
+  </data>
+  <data name="&gt;&gt;lblRX2AttenLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblRX2LockLabel.Name" xml:space="preserve">
+    <value>lblRX2LockLabel</value>
+  </data>
+  <data name="&gt;&gt;lblRX2LockLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2LockLabel.Parent" xml:space="preserve">
+    <value>panelVFOBLabels</value>
+  </data>
+  <data name="&gt;&gt;lblRX2LockLabel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lblRX2AGCLabel.Name" xml:space="preserve">
+    <value>lblRX2AGCLabel</value>
+  </data>
+  <data name="&gt;&gt;lblRX2AGCLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2AGCLabel.Parent" xml:space="preserve">
+    <value>panelVFOBLabels</value>
+  </data>
+  <data name="&gt;&gt;lblRX2AGCLabel.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;lblRX2CtunLabel.Name" xml:space="preserve">
+    <value>lblRX2CtunLabel</value>
+  </data>
+  <data name="&gt;&gt;lblRX2CtunLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2CtunLabel.Parent" xml:space="preserve">
+    <value>panelVFOBLabels</value>
+  </data>
+  <data name="&gt;&gt;lblRX2CtunLabel.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;lblRX2NRLabel.Name" xml:space="preserve">
+    <value>lblRX2NRLabel</value>
+  </data>
+  <data name="&gt;&gt;lblRX2NRLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2NRLabel.Parent" xml:space="preserve">
+    <value>panelVFOBLabels</value>
+  </data>
+  <data name="&gt;&gt;lblRX2NRLabel.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;lblRX2NBLabel.Name" xml:space="preserve">
+    <value>lblRX2NBLabel</value>
+  </data>
+  <data name="&gt;&gt;lblRX2NBLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2NBLabel.Parent" xml:space="preserve">
+    <value>panelVFOBLabels</value>
+  </data>
+  <data name="&gt;&gt;lblRX2NBLabel.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;lblRX2SNBLabel.Name" xml:space="preserve">
+    <value>lblRX2SNBLabel</value>
+  </data>
+  <data name="&gt;&gt;lblRX2SNBLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2SNBLabel.Parent" xml:space="preserve">
+    <value>panelVFOBLabels</value>
+  </data>
+  <data name="&gt;&gt;lblRX2SNBLabel.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;lblRX2ANFLabel.Name" xml:space="preserve">
+    <value>lblRX2ANFLabel</value>
+  </data>
+  <data name="&gt;&gt;lblRX2ANFLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2ANFLabel.Parent" xml:space="preserve">
+    <value>panelVFOBLabels</value>
+  </data>
+  <data name="&gt;&gt;lblRX2ANFLabel.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="panelVFOBLabels.Location" type="System.Drawing.Point, System.Drawing">
+    <value>840, 36</value>
+  </data>
+  <data name="panelVFOBLabels.Size" type="System.Drawing.Size, System.Drawing">
+    <value>232, 40</value>
+  </data>
+  <data name="panelVFOBLabels.TabIndex" type="System.Int32, mscorlib">
+    <value>142</value>
+  </data>
+  <data name="panelVFOBLabels.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;panelVFOBLabels.Name" xml:space="preserve">
+    <value>panelVFOBLabels</value>
+  </data>
+  <data name="&gt;&gt;panelVFOBLabels.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelVFOBLabels.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelVFOBLabels.ZOrder" xml:space="preserve">
+    <value>47</value>
   </data>
   <data name="lblRX2AttenLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -13071,35 +13695,56 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblRX2ANFLabel.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
-  <data name="panelVFOBLabels.Location" type="System.Drawing.Point, System.Drawing">
-    <value>840, 36</value>
-  </data>
-  <data name="panelVFOBLabels.Size" type="System.Drawing.Size, System.Drawing">
-    <value>232, 40</value>
-  </data>
-  <data name="panelVFOBLabels.TabIndex" type="System.Int32, mscorlib">
-    <value>142</value>
-  </data>
-  <data name="panelVFOBLabels.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;panelVFOBLabels.Name" xml:space="preserve">
-    <value>panelVFOBLabels</value>
-  </data>
-  <data name="&gt;&gt;panelVFOBLabels.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelVFOBLabels.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelVFOBLabels.ZOrder" xml:space="preserve">
-    <value>47</value>
-  </data>
   <data name="panelRX2Power.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="panelRX2Power.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Band.Name" xml:space="preserve">
+    <value>lblRX2Band</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Band.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Band.Parent" xml:space="preserve">
+    <value>panelRX2Power</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Band.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Preamp.Name" xml:space="preserve">
+    <value>lblRX2Preamp</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Preamp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Preamp.Parent" xml:space="preserve">
+    <value>panelRX2Power</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Preamp.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="panelRX2Power.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 591</value>
+  </data>
+  <data name="panelRX2Power.Size" type="System.Drawing.Size, System.Drawing">
+    <value>70, 108</value>
+  </data>
+  <data name="panelRX2Power.TabIndex" type="System.Int32, mscorlib">
+    <value>138</value>
+  </data>
+  <data name="&gt;&gt;panelRX2Power.Name" xml:space="preserve">
+    <value>panelRX2Power</value>
+  </data>
+  <data name="&gt;&gt;panelRX2Power.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelRX2Power.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelRX2Power.ZOrder" xml:space="preserve">
+    <value>40</value>
   </data>
   <data name="lblRX2Band.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -13166,27 +13811,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;lblRX2Preamp.ZOrder" xml:space="preserve">
     <value>3</value>
-  </data>
-  <data name="panelRX2Power.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 591</value>
-  </data>
-  <data name="panelRX2Power.Size" type="System.Drawing.Size, System.Drawing">
-    <value>70, 108</value>
-  </data>
-  <data name="panelRX2Power.TabIndex" type="System.Int32, mscorlib">
-    <value>138</value>
-  </data>
-  <data name="&gt;&gt;panelRX2Power.Name" xml:space="preserve">
-    <value>panelRX2Power</value>
-  </data>
-  <data name="&gt;&gt;panelRX2Power.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelRX2Power.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelRX2Power.ZOrder" xml:space="preserve">
-    <value>40</value>
   </data>
   <data name="chkRX2.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -13365,6 +13989,135 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="panelModeSpecificCW.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="&gt;&gt;grpCWAPF.Name" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;grpCWAPF.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;grpCWAPF.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;grpCWAPF.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblCWSpeed.Name" xml:space="preserve">
+    <value>lblCWSpeed</value>
+  </data>
+  <data name="&gt;&gt;lblCWSpeed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCWSpeed.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;lblCWSpeed.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;grpSemiBreakIn.Name" xml:space="preserve">
+    <value>grpSemiBreakIn</value>
+  </data>
+  <data name="&gt;&gt;grpSemiBreakIn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;grpSemiBreakIn.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;grpSemiBreakIn.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;lblCWPitchFreq.Name" xml:space="preserve">
+    <value>lblCWPitchFreq</value>
+  </data>
+  <data name="&gt;&gt;lblCWPitchFreq.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCWPitchFreq.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;lblCWPitchFreq.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="panelModeSpecificCW.Location" type="System.Drawing.Point, System.Drawing">
+    <value>499, 420</value>
+  </data>
+  <data name="panelModeSpecificCW.Size" type="System.Drawing.Size, System.Drawing">
+    <value>336, 165</value>
+  </data>
+  <data name="panelModeSpecificCW.TabIndex" type="System.Int32, mscorlib">
+    <value>124</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificCW.Name" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificCW.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificCW.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificCW.ZOrder" xml:space="preserve">
+    <value>55</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFGain.Name" xml:space="preserve">
+    <value>lblCWAPFGain</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFGain.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFGain.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFGain.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFBandwidth.Name" xml:space="preserve">
+    <value>lblCWAPFBandwidth</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFBandwidth.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFBandwidth.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFBandwidth.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFTune.Name" xml:space="preserve">
+    <value>lblCWAPFTune</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFTune.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFTune.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFTune.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="grpCWAPF.Location" type="System.Drawing.Point, System.Drawing">
+    <value>115, 5</value>
+  </data>
+  <data name="grpCWAPF.Size" type="System.Drawing.Size, System.Drawing">
+    <value>215, 89</value>
+  </data>
+  <data name="grpCWAPF.TabIndex" type="System.Int32, mscorlib">
+    <value>121</value>
+  </data>
+  <data name="grpCWAPF.Text" xml:space="preserve">
+    <value>APF</value>
+  </data>
+  <data name="&gt;&gt;grpCWAPF.Name" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;grpCWAPF.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;grpCWAPF.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;grpCWAPF.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="lblCWAPFGain.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -13455,30 +14208,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblCWAPFTune.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="grpCWAPF.Location" type="System.Drawing.Point, System.Drawing">
-    <value>115, 5</value>
-  </data>
-  <data name="grpCWAPF.Size" type="System.Drawing.Size, System.Drawing">
-    <value>215, 89</value>
-  </data>
-  <data name="grpCWAPF.TabIndex" type="System.Int32, mscorlib">
-    <value>121</value>
-  </data>
-  <data name="grpCWAPF.Text" xml:space="preserve">
-    <value>APF</value>
-  </data>
-  <data name="&gt;&gt;grpCWAPF.Name" xml:space="preserve">
-    <value>grpCWAPF</value>
-  </data>
-  <data name="&gt;&gt;grpCWAPF.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;grpCWAPF.Parent" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;grpCWAPF.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="lblCWSpeed.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -13508,27 +14237,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;lblCWSpeed.ZOrder" xml:space="preserve">
     <value>4</value>
-  </data>
-  <data name="lblCWBreakInDelay.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="lblCWBreakInDelay.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="lblCWBreakInDelay.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="lblCWBreakInDelay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>108, 22</value>
-  </data>
-  <data name="lblCWBreakInDelay.Size" type="System.Drawing.Size, System.Drawing">
-    <value>59, 13</value>
-  </data>
-  <data name="lblCWBreakInDelay.TabIndex" type="System.Int32, mscorlib">
-    <value>34</value>
-  </data>
-  <data name="lblCWBreakInDelay.Text" xml:space="preserve">
-    <value>Delay (ms):</value>
   </data>
   <data name="&gt;&gt;lblCWBreakInDelay.Name" xml:space="preserve">
     <value>lblCWBreakInDelay</value>
@@ -13566,6 +14274,39 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;grpSemiBreakIn.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
+  <data name="lblCWBreakInDelay.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblCWBreakInDelay.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="lblCWBreakInDelay.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="lblCWBreakInDelay.Location" type="System.Drawing.Point, System.Drawing">
+    <value>108, 22</value>
+  </data>
+  <data name="lblCWBreakInDelay.Size" type="System.Drawing.Size, System.Drawing">
+    <value>59, 13</value>
+  </data>
+  <data name="lblCWBreakInDelay.TabIndex" type="System.Int32, mscorlib">
+    <value>34</value>
+  </data>
+  <data name="lblCWBreakInDelay.Text" xml:space="preserve">
+    <value>Delay (ms):</value>
+  </data>
+  <data name="&gt;&gt;lblCWBreakInDelay.Name" xml:space="preserve">
+    <value>lblCWBreakInDelay</value>
+  </data>
+  <data name="&gt;&gt;lblCWBreakInDelay.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCWBreakInDelay.Parent" xml:space="preserve">
+    <value>grpSemiBreakIn</value>
+  </data>
+  <data name="&gt;&gt;lblCWBreakInDelay.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
   <data name="lblCWPitchFreq.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -13598,27 +14339,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;lblCWPitchFreq.ZOrder" xml:space="preserve">
     <value>6</value>
-  </data>
-  <data name="panelModeSpecificCW.Location" type="System.Drawing.Point, System.Drawing">
-    <value>499, 420</value>
-  </data>
-  <data name="panelModeSpecificCW.Size" type="System.Drawing.Size, System.Drawing">
-    <value>336, 165</value>
-  </data>
-  <data name="panelModeSpecificCW.TabIndex" type="System.Int32, mscorlib">
-    <value>124</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificCW.Name" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificCW.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificCW.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificCW.ZOrder" xml:space="preserve">
-    <value>55</value>
   </data>
   <data name="panelRX2Filter.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -14151,6 +14871,51 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="panelRX2Mixer.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="&gt;&gt;lblRX2Pan.Name" xml:space="preserve">
+    <value>lblRX2Pan</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Pan.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Pan.Parent" xml:space="preserve">
+    <value>panelRX2Mixer</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Pan.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Vol.Name" xml:space="preserve">
+    <value>lblRX2Vol</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Vol.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Vol.Parent" xml:space="preserve">
+    <value>panelRX2Mixer</value>
+  </data>
+  <data name="&gt;&gt;lblRX2Vol.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="panelRX2Mixer.Location" type="System.Drawing.Point, System.Drawing">
+    <value>79, 595</value>
+  </data>
+  <data name="panelRX2Mixer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 104</value>
+  </data>
+  <data name="panelRX2Mixer.TabIndex" type="System.Int32, mscorlib">
+    <value>127</value>
+  </data>
+  <data name="&gt;&gt;panelRX2Mixer.Name" xml:space="preserve">
+    <value>panelRX2Mixer</value>
+  </data>
+  <data name="&gt;&gt;panelRX2Mixer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelRX2Mixer.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelRX2Mixer.ZOrder" xml:space="preserve">
+    <value>22</value>
+  </data>
   <data name="lblRX2Pan.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 6.75pt</value>
   </data>
@@ -14214,32 +14979,68 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblRX2Vol.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="panelRX2Mixer.Location" type="System.Drawing.Point, System.Drawing">
-    <value>79, 595</value>
-  </data>
-  <data name="panelRX2Mixer.Size" type="System.Drawing.Size, System.Drawing">
-    <value>72, 104</value>
-  </data>
-  <data name="panelRX2Mixer.TabIndex" type="System.Int32, mscorlib">
-    <value>127</value>
-  </data>
-  <data name="&gt;&gt;panelRX2Mixer.Name" xml:space="preserve">
-    <value>panelRX2Mixer</value>
-  </data>
-  <data name="&gt;&gt;panelRX2Mixer.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelRX2Mixer.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelRX2Mixer.ZOrder" xml:space="preserve">
-    <value>22</value>
-  </data>
   <data name="panelMultiRX.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="panelMultiRX.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;lblRX1SubVol.Name" xml:space="preserve">
+    <value>lblRX1SubVol</value>
+  </data>
+  <data name="&gt;&gt;lblRX1SubVol.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRX1SubVol.Parent" xml:space="preserve">
+    <value>panelMultiRX</value>
+  </data>
+  <data name="&gt;&gt;lblRX1SubVol.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+    <value>panelMultiRX</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lblRX1Vol.Name" xml:space="preserve">
+    <value>lblRX1Vol</value>
+  </data>
+  <data name="&gt;&gt;lblRX1Vol.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRX1Vol.Parent" xml:space="preserve">
+    <value>panelMultiRX</value>
+  </data>
+  <data name="&gt;&gt;lblRX1Vol.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="panelMultiRX.Location" type="System.Drawing.Point, System.Drawing">
+    <value>264, 516</value>
+  </data>
+  <data name="panelMultiRX.Size" type="System.Drawing.Size, System.Drawing">
+    <value>232, 72</value>
+  </data>
+  <data name="panelMultiRX.TabIndex" type="System.Int32, mscorlib">
+    <value>123</value>
+  </data>
+  <data name="&gt;&gt;panelMultiRX.Name" xml:space="preserve">
+    <value>panelMultiRX</value>
+  </data>
+  <data name="&gt;&gt;panelMultiRX.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelMultiRX.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelMultiRX.ZOrder" xml:space="preserve">
+    <value>23</value>
   </data>
   <data name="lblRX1SubVol.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 6.75pt</value>
@@ -14331,27 +15132,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblRX1Vol.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="panelMultiRX.Location" type="System.Drawing.Point, System.Drawing">
-    <value>264, 516</value>
-  </data>
-  <data name="panelMultiRX.Size" type="System.Drawing.Size, System.Drawing">
-    <value>232, 72</value>
-  </data>
-  <data name="panelMultiRX.TabIndex" type="System.Int32, mscorlib">
-    <value>123</value>
-  </data>
-  <data name="&gt;&gt;panelMultiRX.Name" xml:space="preserve">
-    <value>panelMultiRX</value>
-  </data>
-  <data name="&gt;&gt;panelMultiRX.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelMultiRX.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelMultiRX.ZOrder" xml:space="preserve">
-    <value>23</value>
-  </data>
   <data name="panelDisplay2.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
@@ -14418,6 +15198,54 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="panelVFO.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="&gt;&gt;ucVAC2UnderOver.Name" xml:space="preserve">
+    <value>ucVAC2UnderOver</value>
+  </data>
+  <data name="&gt;&gt;ucVAC2UnderOver.Type" xml:space="preserve">
+    <value>Thetis.ucUnderOverFlowWarningViewer, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ucVAC2UnderOver.Parent" xml:space="preserve">
+    <value>panelVFO</value>
+  </data>
+  <data name="&gt;&gt;ucVAC2UnderOver.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;ucVAC1UnderOver.Name" xml:space="preserve">
+    <value>ucVAC1UnderOver</value>
+  </data>
+  <data name="&gt;&gt;ucVAC1UnderOver.Type" xml:space="preserve">
+    <value>Thetis.ucUnderOverFlowWarningViewer, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ucVAC1UnderOver.Parent" xml:space="preserve">
+    <value>panelVFO</value>
+  </data>
+  <data name="&gt;&gt;ucVAC1UnderOver.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="panelVFO.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="panelVFO.Location" type="System.Drawing.Point, System.Drawing">
+    <value>128, 420</value>
+  </data>
+  <data name="panelVFO.Size" type="System.Drawing.Size, System.Drawing">
+    <value>130, 168</value>
+  </data>
+  <data name="panelVFO.TabIndex" type="System.Int32, mscorlib">
+    <value>120</value>
+  </data>
+  <data name="&gt;&gt;panelVFO.Name" xml:space="preserve">
+    <value>panelVFO</value>
+  </data>
+  <data name="&gt;&gt;panelVFO.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelVFO.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelVFO.ZOrder" xml:space="preserve">
+    <value>28</value>
+  </data>
   <data name="ucVAC2UnderOver.Location" type="System.Drawing.Point, System.Drawing">
     <value>82, 144</value>
   </data>
@@ -14478,35 +15306,104 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;ucVAC1UnderOver.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="panelVFO.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
-  </data>
-  <data name="panelVFO.Location" type="System.Drawing.Point, System.Drawing">
-    <value>128, 420</value>
-  </data>
-  <data name="panelVFO.Size" type="System.Drawing.Size, System.Drawing">
-    <value>130, 168</value>
-  </data>
-  <data name="panelVFO.TabIndex" type="System.Int32, mscorlib">
-    <value>120</value>
-  </data>
-  <data name="&gt;&gt;panelVFO.Name" xml:space="preserve">
-    <value>panelVFO</value>
-  </data>
-  <data name="&gt;&gt;panelVFO.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelVFO.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelVFO.ZOrder" xml:space="preserve">
-    <value>28</value>
-  </data>
   <data name="panelSoundControls.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="panelSoundControls.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;lblTune.Name" xml:space="preserve">
+    <value>lblTune</value>
+  </data>
+  <data name="&gt;&gt;lblTune.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblTune.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;lblTune.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;lblRX2AF.Name" xml:space="preserve">
+    <value>lblRX2AF</value>
+  </data>
+  <data name="&gt;&gt;lblRX2AF.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2AF.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;lblRX2AF.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;lblRX1AF.Name" xml:space="preserve">
+    <value>lblRX1AF</value>
+  </data>
+  <data name="&gt;&gt;lblRX1AF.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX1AF.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;lblRX1AF.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;lblAF.Name" xml:space="preserve">
+    <value>lblAF</value>
+  </data>
+  <data name="&gt;&gt;lblAF.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblAF.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;lblAF.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;lblPWR.Name" xml:space="preserve">
+    <value>lblPWR</value>
+  </data>
+  <data name="&gt;&gt;lblPWR.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblPWR.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;lblPWR.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="&gt;&gt;lblPreamp.Name" xml:space="preserve">
+    <value>lblPreamp</value>
+  </data>
+  <data name="&gt;&gt;lblPreamp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblPreamp.Parent" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;lblPreamp.ZOrder" xml:space="preserve">
+    <value>16</value>
+  </data>
+  <data name="panelSoundControls.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 204</value>
+  </data>
+  <data name="panelSoundControls.Size" type="System.Drawing.Size, System.Drawing">
+    <value>117, 319</value>
+  </data>
+  <data name="panelSoundControls.TabIndex" type="System.Int32, mscorlib">
+    <value>117</value>
+  </data>
+  <data name="&gt;&gt;panelSoundControls.Name" xml:space="preserve">
+    <value>panelSoundControls</value>
+  </data>
+  <data name="&gt;&gt;panelSoundControls.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelSoundControls.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelSoundControls.ZOrder" xml:space="preserve">
+    <value>29</value>
   </data>
   <data name="lblTune.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -14706,27 +15603,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblPreamp.ZOrder" xml:space="preserve">
     <value>16</value>
   </data>
-  <data name="panelSoundControls.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 204</value>
-  </data>
-  <data name="panelSoundControls.Size" type="System.Drawing.Size, System.Drawing">
-    <value>117, 319</value>
-  </data>
-  <data name="panelSoundControls.TabIndex" type="System.Int32, mscorlib">
-    <value>117</value>
-  </data>
-  <data name="&gt;&gt;panelSoundControls.Name" xml:space="preserve">
-    <value>panelSoundControls</value>
-  </data>
-  <data name="&gt;&gt;panelSoundControls.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelSoundControls.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelSoundControls.ZOrder" xml:space="preserve">
-    <value>29</value>
-  </data>
   <data name="lblAF2.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
@@ -14807,6 +15683,114 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="panelModeSpecificDigital.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;lblVACTXIndicator.Name" xml:space="preserve">
+    <value>lblVACTXIndicator</value>
+  </data>
+  <data name="&gt;&gt;lblVACTXIndicator.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblVACTXIndicator.Parent" xml:space="preserve">
+    <value>panelModeSpecificDigital</value>
+  </data>
+  <data name="&gt;&gt;lblVACTXIndicator.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblDigTXProfile.Name" xml:space="preserve">
+    <value>lblDigTXProfile</value>
+  </data>
+  <data name="&gt;&gt;lblDigTXProfile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblDigTXProfile.Parent" xml:space="preserve">
+    <value>panelModeSpecificDigital</value>
+  </data>
+  <data name="&gt;&gt;lblDigTXProfile.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lblVACRXIndicator.Name" xml:space="preserve">
+    <value>lblVACRXIndicator</value>
+  </data>
+  <data name="&gt;&gt;lblVACRXIndicator.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblVACRXIndicator.Parent" xml:space="preserve">
+    <value>panelModeSpecificDigital</value>
+  </data>
+  <data name="&gt;&gt;lblVACRXIndicator.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;lblRXGain.Name" xml:space="preserve">
+    <value>lblRXGain</value>
+  </data>
+  <data name="&gt;&gt;lblRXGain.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRXGain.Parent" xml:space="preserve">
+    <value>panelModeSpecificDigital</value>
+  </data>
+  <data name="&gt;&gt;lblRXGain.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;grpVACStereo.Name" xml:space="preserve">
+    <value>grpVACStereo</value>
+  </data>
+  <data name="&gt;&gt;grpVACStereo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;grpVACStereo.Parent" xml:space="preserve">
+    <value>panelModeSpecificDigital</value>
+  </data>
+  <data name="&gt;&gt;grpVACStereo.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;lblTXGain.Name" xml:space="preserve">
+    <value>lblTXGain</value>
+  </data>
+  <data name="&gt;&gt;lblTXGain.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblTXGain.Parent" xml:space="preserve">
+    <value>panelModeSpecificDigital</value>
+  </data>
+  <data name="&gt;&gt;lblTXGain.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;grpDIGSampleRate.Name" xml:space="preserve">
+    <value>grpDIGSampleRate</value>
+  </data>
+  <data name="&gt;&gt;grpDIGSampleRate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;grpDIGSampleRate.Parent" xml:space="preserve">
+    <value>panelModeSpecificDigital</value>
+  </data>
+  <data name="&gt;&gt;grpDIGSampleRate.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="panelModeSpecificDigital.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="panelModeSpecificDigital.Location" type="System.Drawing.Point, System.Drawing">
+    <value>499, 420</value>
+  </data>
+  <data name="panelModeSpecificDigital.Size" type="System.Drawing.Size, System.Drawing">
+    <value>336, 165</value>
+  </data>
+  <data name="panelModeSpecificDigital.TabIndex" type="System.Int32, mscorlib">
+    <value>126</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificDigital.Name" xml:space="preserve">
+    <value>panelModeSpecificDigital</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificDigital.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificDigital.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificDigital.ZOrder" xml:space="preserve">
+    <value>54</value>
   </data>
   <data name="lblVACTXIndicator.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -15009,31 +15993,16 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;grpDIGSampleRate.ZOrder" xml:space="preserve">
     <value>11</value>
   </data>
-  <data name="panelModeSpecificDigital.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
-  </data>
-  <data name="panelModeSpecificDigital.Location" type="System.Drawing.Point, System.Drawing">
-    <value>499, 420</value>
-  </data>
-  <data name="panelModeSpecificDigital.Size" type="System.Drawing.Size, System.Drawing">
-    <value>336, 165</value>
-  </data>
-  <data name="panelModeSpecificDigital.TabIndex" type="System.Int32, mscorlib">
-    <value>126</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificDigital.Name" xml:space="preserve">
-    <value>panelModeSpecificDigital</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificDigital.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificDigital.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificDigital.ZOrder" xml:space="preserve">
-    <value>54</value>
-  </data>
   <metadata name="panelDisplay.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="infoBar.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="lblDisplayZoom.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="lblDisplayPan.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <data name="panelDisplay.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
@@ -15041,6 +16010,78 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="panelDisplay.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;infoBar.Name" xml:space="preserve">
+    <value>infoBar</value>
+  </data>
+  <data name="&gt;&gt;infoBar.Type" xml:space="preserve">
+    <value>Thetis.ucInfoBar, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;infoBar.Parent" xml:space="preserve">
+    <value>panelDisplay</value>
+  </data>
+  <data name="&gt;&gt;infoBar.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblDisplayZoom.Name" xml:space="preserve">
+    <value>lblDisplayZoom</value>
+  </data>
+  <data name="&gt;&gt;lblDisplayZoom.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblDisplayZoom.Parent" xml:space="preserve">
+    <value>panelDisplay</value>
+  </data>
+  <data name="&gt;&gt;lblDisplayZoom.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;lblDisplayPan.Name" xml:space="preserve">
+    <value>lblDisplayPan</value>
+  </data>
+  <data name="&gt;&gt;lblDisplayPan.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblDisplayPan.Parent" xml:space="preserve">
+    <value>panelDisplay</value>
+  </data>
+  <data name="&gt;&gt;lblDisplayPan.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;pnlDisplay.Name" xml:space="preserve">
+    <value>pnlDisplay</value>
+  </data>
+  <data name="&gt;&gt;pnlDisplay.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pnlDisplay.Parent" xml:space="preserve">
+    <value>panelDisplay</value>
+  </data>
+  <data name="&gt;&gt;pnlDisplay.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="panelDisplay.Location" type="System.Drawing.Point, System.Drawing">
+    <value>124, 118</value>
+  </data>
+  <data name="panelDisplay.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="panelDisplay.Size" type="System.Drawing.Size, System.Drawing">
+    <value>710, 300</value>
+  </data>
+  <data name="panelDisplay.TabIndex" type="System.Int32, mscorlib">
+    <value>115</value>
+  </data>
+  <data name="&gt;&gt;panelDisplay.Name" xml:space="preserve">
+    <value>panelDisplay</value>
+  </data>
+  <data name="&gt;&gt;panelDisplay.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelDisplay.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelDisplay.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <metadata name="infoBar.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -15174,30 +16215,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;pnlDisplay.ZOrder" xml:space="preserve">
     <value>11</value>
   </data>
-  <data name="panelDisplay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>124, 118</value>
-  </data>
-  <data name="panelDisplay.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
-  </data>
-  <data name="panelDisplay.Size" type="System.Drawing.Size, System.Drawing">
-    <value>710, 300</value>
-  </data>
-  <data name="panelDisplay.TabIndex" type="System.Int32, mscorlib">
-    <value>115</value>
-  </data>
-  <data name="&gt;&gt;panelDisplay.Name" xml:space="preserve">
-    <value>panelDisplay</value>
-  </data>
-  <data name="&gt;&gt;panelDisplay.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelDisplay.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelDisplay.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
   <data name="panelMode.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
@@ -15290,6 +16307,153 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;txtVFOAFreq.ZOrder" xml:space="preserve">
     <value>11</value>
+  </data>
+  <data name="&gt;&gt;panelVFOAHover.Name" xml:space="preserve">
+    <value>panelVFOAHover</value>
+  </data>
+  <data name="&gt;&gt;panelVFOAHover.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panelVFOAHover.Parent" xml:space="preserve">
+    <value>grpVFOA</value>
+  </data>
+  <data name="&gt;&gt;panelVFOAHover.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblModeBigLabel.Name" xml:space="preserve">
+    <value>lblModeBigLabel</value>
+  </data>
+  <data name="&gt;&gt;lblModeBigLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblModeBigLabel.Parent" xml:space="preserve">
+    <value>grpVFOA</value>
+  </data>
+  <data name="&gt;&gt;lblModeBigLabel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lblRX1APF.Name" xml:space="preserve">
+    <value>lblRX1APF</value>
+  </data>
+  <data name="&gt;&gt;lblRX1APF.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX1APF.Parent" xml:space="preserve">
+    <value>grpVFOA</value>
+  </data>
+  <data name="&gt;&gt;lblRX1APF.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;lblRX1MuteVFOA.Name" xml:space="preserve">
+    <value>lblRX1MuteVFOA</value>
+  </data>
+  <data name="&gt;&gt;lblRX1MuteVFOA.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX1MuteVFOA.Parent" xml:space="preserve">
+    <value>grpVFOA</value>
+  </data>
+  <data name="&gt;&gt;lblRX1MuteVFOA.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;lblFilterLabel.Name" xml:space="preserve">
+    <value>lblFilterLabel</value>
+  </data>
+  <data name="&gt;&gt;lblFilterLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblFilterLabel.Parent" xml:space="preserve">
+    <value>grpVFOA</value>
+  </data>
+  <data name="&gt;&gt;lblFilterLabel.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;lblModeLabel.Name" xml:space="preserve">
+    <value>lblModeLabel</value>
+  </data>
+  <data name="&gt;&gt;lblModeLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblModeLabel.Parent" xml:space="preserve">
+    <value>grpVFOA</value>
+  </data>
+  <data name="&gt;&gt;lblModeLabel.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;txtVFOALSD.Name" xml:space="preserve">
+    <value>txtVFOALSD</value>
+  </data>
+  <data name="&gt;&gt;txtVFOALSD.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;txtVFOALSD.Parent" xml:space="preserve">
+    <value>grpVFOA</value>
+  </data>
+  <data name="&gt;&gt;txtVFOALSD.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;txtVFOAMSD.Name" xml:space="preserve">
+    <value>txtVFOAMSD</value>
+  </data>
+  <data name="&gt;&gt;txtVFOAMSD.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;txtVFOAMSD.Parent" xml:space="preserve">
+    <value>grpVFOA</value>
+  </data>
+  <data name="&gt;&gt;txtVFOAMSD.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;panelVFOASubHover.Name" xml:space="preserve">
+    <value>panelVFOASubHover</value>
+  </data>
+  <data name="&gt;&gt;panelVFOASubHover.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panelVFOASubHover.Parent" xml:space="preserve">
+    <value>grpVFOA</value>
+  </data>
+  <data name="&gt;&gt;panelVFOASubHover.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;txtVFOABand.Name" xml:space="preserve">
+    <value>txtVFOABand</value>
+  </data>
+  <data name="&gt;&gt;txtVFOABand.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;txtVFOABand.Parent" xml:space="preserve">
+    <value>grpVFOA</value>
+  </data>
+  <data name="&gt;&gt;txtVFOABand.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="grpVFOA.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="grpVFOA.Location" type="System.Drawing.Point, System.Drawing">
+    <value>125, 24</value>
+  </data>
+  <data name="grpVFOA.Size" type="System.Drawing.Size, System.Drawing">
+    <value>232, 88</value>
+  </data>
+  <data name="grpVFOA.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="grpVFOA.Text" xml:space="preserve">
+    <value>VFO A</value>
+  </data>
+  <data name="&gt;&gt;grpVFOA.Name" xml:space="preserve">
+    <value>grpVFOA</value>
+  </data>
+  <data name="&gt;&gt;grpVFOA.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;grpVFOA.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;grpVFOA.ZOrder" xml:space="preserve">
+    <value>33</value>
   </data>
   <data name="panelVFOAHover.Location" type="System.Drawing.Point, System.Drawing">
     <value>63, 49</value>
@@ -15621,32 +16785,164 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;txtVFOABand.ZOrder" xml:space="preserve">
     <value>10</value>
   </data>
-  <data name="grpVFOA.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="&gt;&gt;lblRX2ModeBigLabel.Name" xml:space="preserve">
+    <value>lblRX2ModeBigLabel</value>
+  </data>
+  <data name="&gt;&gt;lblRX2ModeBigLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2ModeBigLabel.Parent" xml:space="preserve">
+    <value>grpVFOB</value>
+  </data>
+  <data name="&gt;&gt;lblRX2ModeBigLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblRX2APF.Name" xml:space="preserve">
+    <value>lblRX2APF</value>
+  </data>
+  <data name="&gt;&gt;lblRX2APF.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2APF.Parent" xml:space="preserve">
+    <value>grpVFOB</value>
+  </data>
+  <data name="&gt;&gt;lblRX2APF.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;panelVFOBHover.Name" xml:space="preserve">
+    <value>panelVFOBHover</value>
+  </data>
+  <data name="&gt;&gt;panelVFOBHover.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panelVFOBHover.Parent" xml:space="preserve">
+    <value>grpVFOB</value>
+  </data>
+  <data name="&gt;&gt;panelVFOBHover.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBBand.Name" xml:space="preserve">
+    <value>txtVFOBBand</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBBand.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBBand.Parent" xml:space="preserve">
+    <value>grpVFOB</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBBand.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBLSD.Name" xml:space="preserve">
+    <value>txtVFOBLSD</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBLSD.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBLSD.Parent" xml:space="preserve">
+    <value>grpVFOB</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBLSD.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;lblRX2FilterLabel.Name" xml:space="preserve">
+    <value>lblRX2FilterLabel</value>
+  </data>
+  <data name="&gt;&gt;lblRX2FilterLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2FilterLabel.Parent" xml:space="preserve">
+    <value>grpVFOB</value>
+  </data>
+  <data name="&gt;&gt;lblRX2FilterLabel.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;lblRX2MuteVFOB.Name" xml:space="preserve">
+    <value>lblRX2MuteVFOB</value>
+  </data>
+  <data name="&gt;&gt;lblRX2MuteVFOB.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2MuteVFOB.Parent" xml:space="preserve">
+    <value>grpVFOB</value>
+  </data>
+  <data name="&gt;&gt;lblRX2MuteVFOB.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;lblRX2ModeLabel.Name" xml:space="preserve">
+    <value>lblRX2ModeLabel</value>
+  </data>
+  <data name="&gt;&gt;lblRX2ModeLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRX2ModeLabel.Parent" xml:space="preserve">
+    <value>grpVFOB</value>
+  </data>
+  <data name="&gt;&gt;lblRX2ModeLabel.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBMSD.Name" xml:space="preserve">
+    <value>txtVFOBMSD</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBMSD.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBMSD.Parent" xml:space="preserve">
+    <value>grpVFOB</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBMSD.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;lblVFOBLSD.Name" xml:space="preserve">
+    <value>lblVFOBLSD</value>
+  </data>
+  <data name="&gt;&gt;lblVFOBLSD.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblVFOBLSD.Parent" xml:space="preserve">
+    <value>grpVFOB</value>
+  </data>
+  <data name="&gt;&gt;lblVFOBLSD.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBFreq.Name" xml:space="preserve">
+    <value>txtVFOBFreq</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBFreq.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBFreq.Parent" xml:space="preserve">
+    <value>grpVFOB</value>
+  </data>
+  <data name="&gt;&gt;txtVFOBFreq.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="grpVFOB.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
   </data>
-  <data name="grpVFOA.Location" type="System.Drawing.Point, System.Drawing">
-    <value>125, 24</value>
+  <data name="grpVFOB.Location" type="System.Drawing.Point, System.Drawing">
+    <value>603, 24</value>
   </data>
-  <data name="grpVFOA.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="grpVFOB.Size" type="System.Drawing.Size, System.Drawing">
     <value>232, 88</value>
   </data>
-  <data name="grpVFOA.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+  <data name="grpVFOB.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
   </data>
-  <data name="grpVFOA.Text" xml:space="preserve">
-    <value>VFO A</value>
+  <data name="grpVFOB.Text" xml:space="preserve">
+    <value>VFO B</value>
   </data>
-  <data name="&gt;&gt;grpVFOA.Name" xml:space="preserve">
-    <value>grpVFOA</value>
+  <data name="&gt;&gt;grpVFOB.Name" xml:space="preserve">
+    <value>grpVFOB</value>
   </data>
-  <data name="&gt;&gt;grpVFOA.Type" xml:space="preserve">
+  <data name="&gt;&gt;grpVFOB.Type" xml:space="preserve">
     <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;grpVFOA.Parent" xml:space="preserve">
+  <data name="&gt;&gt;grpVFOB.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;grpVFOA.ZOrder" xml:space="preserve">
-    <value>33</value>
+  <data name="&gt;&gt;grpVFOB.ZOrder" xml:space="preserve">
+    <value>35</value>
   </data>
   <data name="lblRX2ModeBigLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -16026,33 +17322,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;txtVFOBFreq.ZOrder" xml:space="preserve">
     <value>11</value>
   </data>
-  <data name="grpVFOB.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
-  </data>
-  <data name="grpVFOB.Location" type="System.Drawing.Point, System.Drawing">
-    <value>603, 24</value>
-  </data>
-  <data name="grpVFOB.Size" type="System.Drawing.Size, System.Drawing">
-    <value>232, 88</value>
-  </data>
-  <data name="grpVFOB.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="grpVFOB.Text" xml:space="preserve">
-    <value>VFO B</value>
-  </data>
-  <data name="&gt;&gt;grpVFOB.Name" xml:space="preserve">
-    <value>grpVFOB</value>
-  </data>
-  <data name="&gt;&gt;grpVFOB.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;grpVFOB.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;grpVFOB.ZOrder" xml:space="preserve">
-    <value>35</value>
-  </data>
   <data name="btnBandHF.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
   </data>
@@ -16119,6 +17388,51 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblTuneStep.ZOrder" xml:space="preserve">
     <value>8</value>
   </data>
+  <data name="&gt;&gt;ucQuickRecallPad.Name" xml:space="preserve">
+    <value>ucQuickRecallPad</value>
+  </data>
+  <data name="&gt;&gt;ucQuickRecallPad.Type" xml:space="preserve">
+    <value>Thetis.ucQuickRecall, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ucQuickRecallPad.Parent" xml:space="preserve">
+    <value>grpVFOBetween</value>
+  </data>
+  <data name="&gt;&gt;ucQuickRecallPad.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;labelTS1.Name" xml:space="preserve">
+    <value>labelTS1</value>
+  </data>
+  <data name="&gt;&gt;labelTS1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;labelTS1.Parent" xml:space="preserve">
+    <value>grpVFOBetween</value>
+  </data>
+  <data name="&gt;&gt;labelTS1.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="grpVFOBetween.Location" type="System.Drawing.Point, System.Drawing">
+    <value>360, 24</value>
+  </data>
+  <data name="grpVFOBetween.Size" type="System.Drawing.Size, System.Drawing">
+    <value>240, 88</value>
+  </data>
+  <data name="grpVFOBetween.TabIndex" type="System.Int32, mscorlib">
+    <value>67</value>
+  </data>
+  <data name="&gt;&gt;grpVFOBetween.Name" xml:space="preserve">
+    <value>grpVFOBetween</value>
+  </data>
+  <data name="&gt;&gt;grpVFOBetween.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;grpVFOBetween.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;grpVFOBetween.ZOrder" xml:space="preserve">
+    <value>32</value>
+  </data>
   <data name="ucQuickRecallPad.Location" type="System.Drawing.Point, System.Drawing">
     <value>177, 62</value>
   </data>
@@ -16169,27 +17483,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;labelTS1.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="grpVFOBetween.Location" type="System.Drawing.Point, System.Drawing">
-    <value>360, 24</value>
-  </data>
-  <data name="grpVFOBetween.Size" type="System.Drawing.Size, System.Drawing">
-    <value>240, 88</value>
-  </data>
-  <data name="grpVFOBetween.TabIndex" type="System.Int32, mscorlib">
-    <value>67</value>
-  </data>
-  <data name="&gt;&gt;grpVFOBetween.Name" xml:space="preserve">
-    <value>grpVFOBetween</value>
-  </data>
-  <data name="&gt;&gt;grpVFOBetween.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;grpVFOBetween.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;grpVFOBetween.ZOrder" xml:space="preserve">
-    <value>32</value>
   </data>
   <data name="lblDisplayModeTop.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -16278,6 +17571,54 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;grpDisplaySplit.ZOrder" xml:space="preserve">
     <value>31</value>
   </data>
+  <data name="&gt;&gt;picRX2Meter.Name" xml:space="preserve">
+    <value>picRX2Meter</value>
+  </data>
+  <data name="&gt;&gt;picRX2Meter.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;picRX2Meter.Parent" xml:space="preserve">
+    <value>grpRX2Meter</value>
+  </data>
+  <data name="&gt;&gt;picRX2Meter.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;txtRX2Meter.Name" xml:space="preserve">
+    <value>txtRX2Meter</value>
+  </data>
+  <data name="&gt;&gt;txtRX2Meter.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;txtRX2Meter.Parent" xml:space="preserve">
+    <value>grpRX2Meter</value>
+  </data>
+  <data name="&gt;&gt;txtRX2Meter.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="grpRX2Meter.Location" type="System.Drawing.Point, System.Drawing">
+    <value>841, 588</value>
+  </data>
+  <data name="grpRX2Meter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>172, 108</value>
+  </data>
+  <data name="grpRX2Meter.TabIndex" type="System.Int32, mscorlib">
+    <value>90</value>
+  </data>
+  <data name="grpRX2Meter.Text" xml:space="preserve">
+    <value>RX2 Meter</value>
+  </data>
+  <data name="&gt;&gt;grpRX2Meter.Name" xml:space="preserve">
+    <value>grpRX2Meter</value>
+  </data>
+  <data name="&gt;&gt;grpRX2Meter.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;grpRX2Meter.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;grpRX2Meter.ZOrder" xml:space="preserve">
+    <value>30</value>
+  </data>
   <data name="picRX2Meter.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
   </data>
@@ -16335,35 +17676,200 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;txtRX2Meter.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="grpRX2Meter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>841, 588</value>
-  </data>
-  <data name="grpRX2Meter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>172, 108</value>
-  </data>
-  <data name="grpRX2Meter.TabIndex" type="System.Int32, mscorlib">
-    <value>90</value>
-  </data>
-  <data name="grpRX2Meter.Text" xml:space="preserve">
-    <value>RX2 Meter</value>
-  </data>
-  <data name="&gt;&gt;grpRX2Meter.Name" xml:space="preserve">
-    <value>grpRX2Meter</value>
-  </data>
-  <data name="&gt;&gt;grpRX2Meter.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;grpRX2Meter.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;grpRX2Meter.ZOrder" xml:space="preserve">
-    <value>30</value>
-  </data>
   <data name="panelBandVHF.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="panelBandVHF.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF13.Name" xml:space="preserve">
+    <value>radBandVHF13</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF13.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF13.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF13.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF12.Name" xml:space="preserve">
+    <value>radBandVHF12</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF12.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF12.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF12.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF11.Name" xml:space="preserve">
+    <value>radBandVHF11</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF11.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF11.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF11.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF10.Name" xml:space="preserve">
+    <value>radBandVHF10</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF10.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF10.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF10.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF9.Name" xml:space="preserve">
+    <value>radBandVHF9</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF9.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF9.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF9.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF8.Name" xml:space="preserve">
+    <value>radBandVHF8</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF8.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF8.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF8.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF7.Name" xml:space="preserve">
+    <value>radBandVHF7</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF7.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF7.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF7.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF6.Name" xml:space="preserve">
+    <value>radBandVHF6</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF6.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF6.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF6.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF5.Name" xml:space="preserve">
+    <value>radBandVHF5</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF5.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF5.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF5.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF4.Name" xml:space="preserve">
+    <value>radBandVHF4</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF4.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF4.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF3.Name" xml:space="preserve">
+    <value>radBandVHF3</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF3.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF3.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF2.Name" xml:space="preserve">
+    <value>radBandVHF2</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF2.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF2.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF1.Name" xml:space="preserve">
+    <value>radBandVHF1</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF1.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF1.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF0.Name" xml:space="preserve">
+    <value>radBandVHF0</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF0.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF0.Parent" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;radBandVHF0.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="panelBandVHF.Location" type="System.Drawing.Point, System.Drawing">
+    <value>840, 150</value>
+  </data>
+  <data name="panelBandVHF.Size" type="System.Drawing.Size, System.Drawing">
+    <value>173, 128</value>
+  </data>
+  <data name="panelBandVHF.TabIndex" type="System.Int32, mscorlib">
+    <value>114</value>
+  </data>
+  <data name="&gt;&gt;panelBandVHF.Name" xml:space="preserve">
+    <value>panelBandVHF</value>
+  </data>
+  <data name="&gt;&gt;panelBandVHF.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelBandVHF.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelBandVHF.ZOrder" xml:space="preserve">
+    <value>43</value>
   </data>
   <data name="radBandVHF13.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -16995,32 +18501,116 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;radBandVHF0.ZOrder" xml:space="preserve">
     <value>13</value>
   </data>
-  <data name="panelBandVHF.Location" type="System.Drawing.Point, System.Drawing">
-    <value>840, 150</value>
-  </data>
-  <data name="panelBandVHF.Size" type="System.Drawing.Size, System.Drawing">
-    <value>173, 128</value>
-  </data>
-  <data name="panelBandVHF.TabIndex" type="System.Int32, mscorlib">
-    <value>114</value>
-  </data>
-  <data name="&gt;&gt;panelBandVHF.Name" xml:space="preserve">
-    <value>panelBandVHF</value>
-  </data>
-  <data name="&gt;&gt;panelBandVHF.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelBandVHF.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelBandVHF.ZOrder" xml:space="preserve">
-    <value>43</value>
-  </data>
   <data name="panelModeSpecificFM.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="panelModeSpecificFM.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;ptbFMMic.Name" xml:space="preserve">
+    <value>ptbFMMic</value>
+  </data>
+  <data name="&gt;&gt;ptbFMMic.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbFMMic.Parent" xml:space="preserve">
+    <value>panelModeSpecificFM</value>
+  </data>
+  <data name="&gt;&gt;ptbFMMic.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblMicValFM.Name" xml:space="preserve">
+    <value>lblMicValFM</value>
+  </data>
+  <data name="&gt;&gt;lblMicValFM.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblMicValFM.Parent" xml:space="preserve">
+    <value>panelModeSpecificFM</value>
+  </data>
+  <data name="&gt;&gt;lblMicValFM.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;labelTS7.Name" xml:space="preserve">
+    <value>labelTS7</value>
+  </data>
+  <data name="&gt;&gt;labelTS7.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;labelTS7.Parent" xml:space="preserve">
+    <value>panelModeSpecificFM</value>
+  </data>
+  <data name="&gt;&gt;labelTS7.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;lblFMOffset.Name" xml:space="preserve">
+    <value>lblFMOffset</value>
+  </data>
+  <data name="&gt;&gt;lblFMOffset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblFMOffset.Parent" xml:space="preserve">
+    <value>panelModeSpecificFM</value>
+  </data>
+  <data name="&gt;&gt;lblFMOffset.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;lblFMDeviation.Name" xml:space="preserve">
+    <value>lblFMDeviation</value>
+  </data>
+  <data name="&gt;&gt;lblFMDeviation.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblFMDeviation.Parent" xml:space="preserve">
+    <value>panelModeSpecificFM</value>
+  </data>
+  <data name="&gt;&gt;lblFMDeviation.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;comboFMMemory.Name" xml:space="preserve">
+    <value>comboFMMemory</value>
+  </data>
+  <data name="&gt;&gt;comboFMMemory.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBoxTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;comboFMMemory.Parent" xml:space="preserve">
+    <value>panelModeSpecificFM</value>
+  </data>
+  <data name="&gt;&gt;comboFMMemory.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="&gt;&gt;lblFMMic.Name" xml:space="preserve">
+    <value>lblFMMic</value>
+  </data>
+  <data name="&gt;&gt;lblFMMic.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblFMMic.Parent" xml:space="preserve">
+    <value>panelModeSpecificFM</value>
+  </data>
+  <data name="&gt;&gt;lblFMMic.ZOrder" xml:space="preserve">
+    <value>19</value>
+  </data>
+  <data name="panelModeSpecificFM.Location" type="System.Drawing.Point, System.Drawing">
+    <value>498, 420</value>
+  </data>
+  <data name="panelModeSpecificFM.Size" type="System.Drawing.Size, System.Drawing">
+    <value>336, 165</value>
+  </data>
+  <data name="panelModeSpecificFM.TabIndex" type="System.Int32, mscorlib">
+    <value>135</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificFM.Name" xml:space="preserve">
+    <value>panelModeSpecificFM</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificFM.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificFM.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificFM.ZOrder" xml:space="preserve">
+    <value>53</value>
   </data>
   <data name="ptbFMMic.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -17265,32 +18855,44 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;lblFMMic.ZOrder" xml:space="preserve">
     <value>19</value>
   </data>
-  <data name="panelModeSpecificFM.Location" type="System.Drawing.Point, System.Drawing">
-    <value>498, 420</value>
-  </data>
-  <data name="panelModeSpecificFM.Size" type="System.Drawing.Size, System.Drawing">
-    <value>336, 165</value>
-  </data>
-  <data name="panelModeSpecificFM.TabIndex" type="System.Int32, mscorlib">
-    <value>135</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificFM.Name" xml:space="preserve">
-    <value>panelModeSpecificFM</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificFM.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificFM.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificFM.ZOrder" xml:space="preserve">
-    <value>53</value>
-  </data>
   <data name="panelBandGEN.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="panelBandGEN.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;btnBandHF1.Name" xml:space="preserve">
+    <value>btnBandHF1</value>
+  </data>
+  <data name="&gt;&gt;btnBandHF1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ButtonTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btnBandHF1.Parent" xml:space="preserve">
+    <value>panelBandGEN</value>
+  </data>
+  <data name="&gt;&gt;btnBandHF1.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="panelBandGEN.Location" type="System.Drawing.Point, System.Drawing">
+    <value>840, 150</value>
+  </data>
+  <data name="panelBandGEN.Size" type="System.Drawing.Size, System.Drawing">
+    <value>173, 128</value>
+  </data>
+  <data name="panelBandGEN.TabIndex" type="System.Int32, mscorlib">
+    <value>141</value>
+  </data>
+  <data name="&gt;&gt;panelBandGEN.Name" xml:space="preserve">
+    <value>panelBandGEN</value>
+  </data>
+  <data name="&gt;&gt;panelBandGEN.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelBandGEN.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelBandGEN.ZOrder" xml:space="preserve">
+    <value>44</value>
   </data>
   <data name="btnBandHF1.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
@@ -17328,56 +18930,11 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;btnBandHF1.ZOrder" xml:space="preserve">
     <value>14</value>
   </data>
-  <data name="panelBandGEN.Location" type="System.Drawing.Point, System.Drawing">
-    <value>840, 150</value>
-  </data>
-  <data name="panelBandGEN.Size" type="System.Drawing.Size, System.Drawing">
-    <value>173, 128</value>
-  </data>
-  <data name="panelBandGEN.TabIndex" type="System.Int32, mscorlib">
-    <value>141</value>
-  </data>
-  <data name="&gt;&gt;panelBandGEN.Name" xml:space="preserve">
-    <value>panelBandGEN</value>
-  </data>
-  <data name="&gt;&gt;panelBandGEN.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelBandGEN.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelBandGEN.ZOrder" xml:space="preserve">
-    <value>44</value>
-  </data>
   <data name="panelMeterLabels.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="panelMeterLabels.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
-  </data>
-  <data name="lblRXMeter.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 9pt</value>
-  </data>
-  <data name="lblRXMeter.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="lblRXMeter.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="lblRXMeter.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="lblRXMeter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 1</value>
-  </data>
-  <data name="lblRXMeter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>70, 15</value>
-  </data>
-  <data name="lblRXMeter.TabIndex" type="System.Int32, mscorlib">
-    <value>134</value>
-  </data>
-  <data name="lblRXMeter.Text" xml:space="preserve">
-    <value>Step</value>
   </data>
   <data name="&gt;&gt;lblRXMeter.Name" xml:space="preserve">
     <value>lblRXMeter</value>
@@ -17415,6 +18972,42 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;panelMeterLabels.ZOrder" xml:space="preserve">
     <value>45</value>
   </data>
+  <data name="lblRXMeter.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 9pt</value>
+  </data>
+  <data name="lblRXMeter.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="lblRXMeter.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="lblRXMeter.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="lblRXMeter.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 1</value>
+  </data>
+  <data name="lblRXMeter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>70, 15</value>
+  </data>
+  <data name="lblRXMeter.TabIndex" type="System.Int32, mscorlib">
+    <value>134</value>
+  </data>
+  <data name="lblRXMeter.Text" xml:space="preserve">
+    <value>Step</value>
+  </data>
+  <data name="&gt;&gt;lblRXMeter.Name" xml:space="preserve">
+    <value>lblRXMeter</value>
+  </data>
+  <data name="&gt;&gt;lblRXMeter.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblRXMeter.Parent" xml:space="preserve">
+    <value>panelMeterLabels</value>
+  </data>
+  <data name="&gt;&gt;lblRXMeter.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="grpMultimeterMenus.Location" type="System.Drawing.Point, System.Drawing">
     <value>841, 105</value>
   </data>
@@ -17441,6 +19034,63 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="panelAndromedaMisc.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="&gt;&gt;tbAndromedaEncoderSlider.Name" xml:space="preserve">
+    <value>tbAndromedaEncoderSlider</value>
+  </data>
+  <data name="&gt;&gt;tbAndromedaEncoderSlider.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TrackBarTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;tbAndromedaEncoderSlider.Parent" xml:space="preserve">
+    <value>panelAndromedaMisc</value>
+  </data>
+  <data name="&gt;&gt;tbAndromedaEncoderSlider.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lblAndromedaEncoderSlider.Name" xml:space="preserve">
+    <value>lblAndromedaEncoderSlider</value>
+  </data>
+  <data name="&gt;&gt;lblAndromedaEncoderSlider.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblAndromedaEncoderSlider.Parent" xml:space="preserve">
+    <value>panelAndromedaMisc</value>
+  </data>
+  <data name="&gt;&gt;lblAndromedaEncoderSlider.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;lblATUTuneLabel.Name" xml:space="preserve">
+    <value>lblATUTuneLabel</value>
+  </data>
+  <data name="&gt;&gt;lblATUTuneLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblATUTuneLabel.Parent" xml:space="preserve">
+    <value>panelAndromedaMisc</value>
+  </data>
+  <data name="&gt;&gt;lblATUTuneLabel.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="panelAndromedaMisc.Location" type="System.Drawing.Point, System.Drawing">
+    <value>65, 0</value>
+  </data>
+  <data name="panelAndromedaMisc.Size" type="System.Drawing.Size, System.Drawing">
+    <value>97, 121</value>
+  </data>
+  <data name="panelAndromedaMisc.TabIndex" type="System.Int32, mscorlib">
+    <value>71</value>
+  </data>
+  <data name="&gt;&gt;panelAndromedaMisc.Name" xml:space="preserve">
+    <value>panelAndromedaMisc</value>
+  </data>
+  <data name="&gt;&gt;panelAndromedaMisc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelAndromedaMisc.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelAndromedaMisc.ZOrder" xml:space="preserve">
+    <value>51</value>
   </data>
   <data name="tbAndromedaEncoderSlider.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -17543,27 +19193,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;lblATUTuneLabel.ZOrder" xml:space="preserve">
     <value>2</value>
-  </data>
-  <data name="panelAndromedaMisc.Location" type="System.Drawing.Point, System.Drawing">
-    <value>65, 0</value>
-  </data>
-  <data name="panelAndromedaMisc.Size" type="System.Drawing.Size, System.Drawing">
-    <value>97, 121</value>
-  </data>
-  <data name="panelAndromedaMisc.TabIndex" type="System.Int32, mscorlib">
-    <value>71</value>
-  </data>
-  <data name="&gt;&gt;panelAndromedaMisc.Name" xml:space="preserve">
-    <value>panelAndromedaMisc</value>
-  </data>
-  <data name="&gt;&gt;panelAndromedaMisc.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.9, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelAndromedaMisc.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelAndromedaMisc.ZOrder" xml:space="preserve">
-    <value>51</value>
   </data>
   <data name="picRX2Squelch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>Off</value>

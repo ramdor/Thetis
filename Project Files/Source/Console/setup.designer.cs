@@ -4216,6 +4216,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.btnFPSProfile = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -57973,12 +57974,13 @@
             // 
             // groupBoxTS30
             // 
+            this.groupBoxTS30.Controls.Add(this.btnFPSProfile);
             this.groupBoxTS30.Controls.Add(this.btnShowSeqLog);
             this.groupBoxTS30.Controls.Add(this.chkShowDisplayDebug);
             this.groupBoxTS30.Controls.Add(this.chkShowControlDebug);
             this.groupBoxTS30.Location = new System.Drawing.Point(11, 340);
             this.groupBoxTS30.Name = "groupBoxTS30";
-            this.groupBoxTS30.Size = new System.Drawing.Size(211, 82);
+            this.groupBoxTS30.Size = new System.Drawing.Size(354, 82);
             this.groupBoxTS30.TabIndex = 120;
             this.groupBoxTS30.TabStop = false;
             this.groupBoxTS30.Text = "Debug";
@@ -66954,6 +66956,18 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // btnFPSProfile
+            // 
+            this.btnFPSProfile.Image = null;
+            this.btnFPSProfile.Location = new System.Drawing.Point(227, 19);
+            this.btnFPSProfile.Name = "btnFPSProfile";
+            this.btnFPSProfile.Selectable = true;
+            this.btnFPSProfile.Size = new System.Drawing.Size(109, 52);
+            this.btnFPSProfile.TabIndex = 120;
+            this.btnFPSProfile.Text = "FPS Profile";
+            this.btnFPSProfile.UseVisualStyleBackColor = true;
+            this.btnFPSProfile.Click += new System.EventHandler(this.btnFPSProfile_Click);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -72494,5 +72508,6 @@
         private RadioButtonTS radMeterItemSettings;
         private PanelTS pnlP2_adcs;
         private PanelTS pnlP1_adcs;
+        private ButtonTS btnFPSProfile;
     }
 }

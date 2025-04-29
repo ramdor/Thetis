@@ -946,8 +946,9 @@ namespace Thetis
                     CentreFrequency = bse.CentreFrequency;
                     if (bse.ZoomSlider != ptbDisplayZoom.Value)
                     {
-                        ptbDisplayZoom.Value = bse.ZoomSlider;
-                        ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                        //ptbDisplayZoom.Value = bse.ZoomSlider;
+                        //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                        Zoom = bse.ZoomSlider;
                     }
 
                     if (RX1Filter != bse.Filter)
@@ -1849,7 +1850,7 @@ namespace Thetis
             quick_save_filter = Filter.F3;
             quick_save_mode = DSPMode.LSB;
             ptbPWR.Value = 100;
-            btnDisplayPanCenter_Click(this, EventArgs.Empty);
+            PanCentre();
 
             comboFMCTCSS.Text = "100.0";
 
@@ -5171,9 +5172,8 @@ namespace Thetis
 
             g.Dispose();
         }
-
         private bool m_bSetBandRunning = false; // so we know if any events raised are caused by SetBand
-        public void SetBand(string mode, string filter, double freq, bool CTUN, int ZoomFactor, double CenterFreq)
+        public void SetBand(string mode, string filter, double freq, bool CTUN, int zoomFactor, double centerFreq)
         {
             //MW0LGE_21d
             Band oldBand = RX1Band;
@@ -5204,15 +5204,16 @@ namespace Thetis
             ClickTuneDisplay = false;                               // Set CTUN off to restore center frequency - G3OQD
             chkFWCATU.Checked = ClickTuneDisplay;
 
-            ptbDisplayZoom.Value = ZoomFactor;
-            ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+            //ptbDisplayZoom.Value = zoomFactor;
+            //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+            Zoom = zoomFactor;
 
             //MW0LGE_21c
             //it repositions everything at centre frequency by setting the CF and then setting VFOA to that CF
             //Lower down VFAFreq is then assigned to the required frequency
             if (CTUN)
             {
-                CentreFrequency = CenterFreq;                      // Restore centre frequency if CTUN enabled - G3OQD
+                CentreFrequency = centerFreq;                      // Restore centre frequency if CTUN enabled - G3OQD
                 VFOAFreq = CentreFrequency;
             }
 
@@ -19626,6 +19627,14 @@ namespace Thetis
                 ptbDisplayPan_Scroll(this, EventArgs.Empty);
             }
         }
+        public void PanCentre()
+        {
+            btnDisplayPanCenter_Click(this, EventArgs.Empty);
+        }
+        public void ZoomFullyOut()
+        {
+            Zoom = ptbDisplayZoom.Value = ptbDisplayZoom.Minimum;
+        }
         private AGCMode m_RX1agcMode = AGCMode.FIRST;
         public AGCMode RX1AGCMode
         {
@@ -21307,6 +21316,7 @@ namespace Thetis
             get { return _auto_undoTXatt; }
             set { _auto_undoTXatt = value; }
         }
+        private bool _check_for_bad_adc = true;
         private async void checkOverloads()
         {
             string sWarning = "";
@@ -21342,12 +21352,29 @@ namespace Thetis
 
             string[] adc_names = { "ADC0", "ADC1", "ADC2" }; // adc2 not used for anything atm, but here for completeness
 
-            int adc_oload_num = NetworkIO.getAndResetADC_Overload();
-            if(adc_oload_num > 0)
+            int adc_oload_num;
+            try
             {
-                // if there is an overload, then call it again, as a subsequent call to getAndResetADC_Overload would always return a 0 as the above getAndResetADC_Overload resets it
-                NetworkIO.getAndResetADC_Overload();
+                adc_oload_num = NetworkIO.getAndResetADC_Overload();
+                if (adc_oload_num > 0)
+                {
+                    // if there is an overload, then call it again, as a subsequent call to getAndResetADC_Overload would always return a 0 as the above getAndResetADC_Overload resets it
+                    NetworkIO.getAndResetADC_Overload();
+                }
             }
+            catch { adc_oload_num = -1; }
+
+            if(_check_for_bad_adc && adc_oload_num == -1)
+            {
+                MessageBox.Show("There has been an issue obtaining the ADC overload state. This will not be performed until the power is turned off/on inside Thetis.",
+                    "ADC Overload Issue",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                _check_for_bad_adc = false;
+            }
+            if (!_check_for_bad_adc) return;
+
             /*
                     overload adc_oload_num
             | adc[0] | adc[1] | adc[2] |          |
@@ -21712,6 +21739,8 @@ namespace Thetis
         {
             int count = 0;
             bool run = false;
+
+            _check_for_bad_adc = true;
 
             try
             {
@@ -26132,7 +26161,7 @@ namespace Thetis
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button1,
-                            (MessageBoxOptions)0x40000); // MB_TOPMOST
+                            Common.MB_TOPMOST);
 
                             goto end;
                         }
@@ -28536,7 +28565,18 @@ namespace Thetis
 
         private ShutdownForm _frmShutDownForm = null;
         private void Console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {            
+        {
+            if (Display.RunningFPSProfile)
+            {
+                MessageBox.Show("Stop the FPS profile test first !",
+                "FPS Profile Test",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                e.Cancel = true;
+                return;
+            }
+
             shutdownLogStringToPath("Inside Console_Closing()");
 
             shutdownLogStringToPath("Before ThetisBotDiscord.Disconnect()");
@@ -30213,7 +30253,28 @@ namespace Thetis
 
             return bRet;
         }
-
+        public bool RX1DisplayAVG
+        {
+            get { return chkDisplayAVG.Checked; }
+            set
+            {
+                if (value == chkDisplayAVG.Checked)
+                    chkDisplayAVG_CheckedChanged(this, EventArgs.Empty);
+                else
+                    chkDisplayAVG.Checked = value;
+            }
+        }
+        public bool RX2DisplayAVG
+        {
+            get { return chkRX2DisplayAVG.Checked; }
+            set
+            {
+                if (value == chkRX2DisplayAVG.Checked)
+                    chkRX2DisplayAVG_CheckedChanged(this, EventArgs.Empty);
+                else
+                    chkRX2DisplayAVG.Checked = value;
+            }
+        }
         private void chkDisplayAVG_CheckedChanged(object sender, System.EventArgs e)
         {
             bool old_on = specRX.GetSpecRX(0).AverageOn;
@@ -33772,8 +33833,9 @@ namespace Thetis
             int offset = low - abs_low;
 
             int new_val = (int)((double)offset * (double)ptbDisplayPan.Maximum / (double)max_pan_width);
-            ptbDisplayPan.Value = Math.Min(Math.Max(ptbDisplayPan.Minimum, new_val), ptbDisplayPan.Maximum);
-            ptbDisplayPan_Scroll(btnDisplayPanCenter, EventArgs.Empty);
+            //ptbDisplayPan.Value = Math.Min(Math.Max(ptbDisplayPan.Minimum, new_val), ptbDisplayPan.Maximum);
+            //ptbDisplayPan_Scroll(btnDisplayPanCenter, EventArgs.Empty);
+            Pan = Math.Min(Math.Max(ptbDisplayPan.Minimum, new_val), ptbDisplayPan.Maximum);
         }
         private bool m_bIgnoreZoomCentre = false;
         private bool m_bIgnoreLimitsForZTB = false;
@@ -33809,8 +33871,9 @@ namespace Thetis
             if ((int)(spanMHz * 1e6) > spec.SampleRate)
             {
                 // can't fit, so max zoom out
-                ptbDisplayZoom.Value = ptbDisplayZoom.Minimum;
-                ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                //ptbDisplayZoom.Value = ptbDisplayZoom.Minimum;
+                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                Zoom = ptbDisplayZoom.Minimum;
             }
             else
             {
@@ -33828,9 +33891,12 @@ namespace Thetis
                 zoom /= 9.0;
 
                 m_bIgnoreZoomCentre = true; //[2.10.3.5]MW0LGE used in ptbDisplayZoom_Scroll to ignore the shift key which might be held for RX2
-                btnDisplayPanCenter_Click(this, EventArgs.Empty);
-                ptbDisplayZoom.Value = (int)((zoom * 230.0) + 10.0);
-                ptbDisplayZoom_Scroll(this, EventArgs.Empty); //force (not ideal)
+                PanCentre();
+
+                //ptbDisplayZoom.Value = (int)((zoom * 230.0) + 10.0);
+                //ptbDisplayZoom_Scroll(this, EventArgs.Empty); //force (not ideal)
+                Zoom = (int)((zoom * 230.0) + 10.0);
+
                 m_bIgnoreZoomCentre = false;
 
                 m_bIgnoreLimitsForZTB = true;
@@ -33924,9 +33990,10 @@ namespace Thetis
         {
             if (radDisplayZoom05.Checked)
             {
-                btnDisplayPanCenter_Click(this, EventArgs.Empty); //MW0LGE_[2.9.0.7] centre before the zoom
-                ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 0.5);
-                ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                PanCentre();
+                //ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 0.5);
+                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 0.5);
             }
         }
 
@@ -33934,9 +34001,10 @@ namespace Thetis
         {
             if (radDisplayZoom1x.Checked)
             {
-                btnDisplayPanCenter_Click(this, EventArgs.Empty); //MW0LGE_[2.9.0.7] centre before the zoom
-                ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 1.0);
-                ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                PanCentre();
+                //ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 1.0);
+                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 1.0);
             }
         }
 
@@ -33944,9 +34012,10 @@ namespace Thetis
         {
             if (radDisplayZoom2x.Checked)
             {
-                btnDisplayPanCenter_Click(this, EventArgs.Empty); //MW0LGE_[2.9.0.7] centre before the zoom
-                ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 2.0);
-                ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                PanCentre();
+                //ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 2.0);
+                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 2.0);
             }
         }
 
@@ -33954,9 +34023,10 @@ namespace Thetis
         {
             if (radDisplayZoom4x.Checked)
             {
-                btnDisplayPanCenter_Click(this, EventArgs.Empty); //MW0LGE_[2.9.0.7] centre before the zoom
-                ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 4.0);
-                ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                PanCentre();
+                //ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 4.0);
+                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 4.0);
             }
         }
 
@@ -41618,12 +41688,14 @@ namespace Thetis
             //
 
             // :NOTE: Force update on pan control
-            ptbDisplayPan.Value = ptbDisplayPan.Value;
-            ptbDisplayPan_Scroll(this, EventArgs.Empty);
+            //ptbDisplayPan.Value = ptbDisplayPan.Value;
+            //ptbDisplayPan_Scroll(this, EventArgs.Empty);
+            Pan = ptbDisplayPan.Value;
 
             // :NOTE: Force update on zoom control
-            ptbDisplayZoom.Value = ptbDisplayZoom.Value;
-            ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+            //ptbDisplayZoom.Value = ptbDisplayZoom.Value;
+            //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+            Zoom = ptbDisplayZoom.Value;
 
             panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta, gr_BandHF_basis_location.Y + (v_delta / 4));
             panelBandHF.Size = gr_BandHF_basis_size;
@@ -42558,8 +42630,9 @@ namespace Thetis
             btnDisplayPanCenter.Location = new Point(ptbDisplayPan.Location.X + ptbDisplayPan.Width, top);
 
             // :NOTE: Force update on pan control
-            ptbDisplayPan.Value = ptbDisplayPan.Value;
-            ptbDisplayPan_Scroll(this, EventArgs.Empty);
+            //ptbDisplayPan.Value = ptbDisplayPan.Value;
+            //ptbDisplayPan_Scroll(this, EventArgs.Empty);
+            Pan = ptbDisplayPan.Value;
 
             comboDisplayMode.Parent = panelDisplay;
             comboDisplayMode.Location = new Point(btnDisplayPanCenter.Location.X + btnDisplayPanCenter.Width + 5, top);
@@ -42571,8 +42644,9 @@ namespace Thetis
             ptbDisplayZoom.Size = new Size(btnDisplayZTB.Location.X - (lblDisplayZoom.Location.X + lblDisplayZoom.Size.Width), tb_display_zoom_size_basis.Height);
 
             // :NOTE: Force update on zoom control
-            ptbDisplayZoom.Value = ptbDisplayZoom.Value;
-            ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+            //ptbDisplayZoom.Value = ptbDisplayZoom.Value;
+            //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+            Zoom = ptbDisplayZoom.Value;
 
             top = panelDisplay.Location.Y + panelDisplay.Height;
             // G8NJJ to add new Andromeda button bar in place of band, mode controls
@@ -44295,25 +44369,24 @@ namespace Thetis
 
         private void toolStripMenuItem_4by3_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            setResolution(e.ClickedItem.Text);
+            SetResolution(e.ClickedItem.Text);
         }
 
         private void toolStripMenuItem_16by9_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            setResolution(e.ClickedItem.Text);
+            SetResolution(e.ClickedItem.Text);
         }
 
         private void toolStripMenuItem_16by10_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            setResolution(e.ClickedItem.Text);
+            SetResolution(e.ClickedItem.Text);
         }
 
         private void youTubeToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            setResolution(e.ClickedItem.Text);
+            SetResolution(e.ClickedItem.Text);
         }
-
-        private void setResolution(string resolutionString)
+        public void SetResolution(string resolutionString)
         {
             if (resolutionString.Length < 1) return;
 
@@ -46303,12 +46376,10 @@ namespace Thetis
                         centre += (double)cw_pitch * 0.0000010;
 
                     m_bIgnoreLimitsForZTB = true;
+
                     if (Pan != ztb.PanSliderPosition) Pan = ztb.PanSliderPosition;
-                    if (ptbDisplayZoom.Value != ztb.ZoomSliderPosition)
-                    {
-                        ptbDisplayZoom.Value = ztb.ZoomSliderPosition;
-                        ptbDisplayZoom_Scroll(this, EventArgs.Empty);
-                    }
+                    if (Zoom != ztb.ZoomSliderPosition) Zoom = ztb.ZoomSliderPosition;
+
                     if (rx == 0)
                     {
                         if (CentreFrequency != centre)

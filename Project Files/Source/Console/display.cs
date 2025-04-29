@@ -63,8 +63,7 @@ namespace Thetis
     using AlphaMode = SharpDX.Direct2D1.AlphaMode;
     using Device = SharpDX.Direct3D11.Device;
     using RectangleF = SharpDX.RectangleF;
-    using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
-   
+    using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;   
 
     class Display
     {
@@ -827,6 +826,12 @@ namespace Thetis
             get { return m_bShowFPS; }
             set { m_bShowFPS = value; }
         }
+        private static bool _runningFPSProfile = false;
+        public static bool RunningFPSProfile
+        {
+            get { return _runningFPSProfile; }
+            set { _runningFPSProfile = value; }
+        }
         private static bool m_bShowVisualNotch = false;
         public static bool ShowVisualNotch
         {
@@ -845,6 +850,12 @@ namespace Thetis
         private static Control displayTarget = null;
         private static double _mnfMinSizeRX = 100;
         private static double _mnfMinSizeTX = 100;
+
+        private static string _cpu;
+        private static string _gpus;
+        private static string _ram;
+        private static string _installed_ram;
+
         public static Control Target
         {
             get { return displayTarget; }
@@ -852,6 +863,12 @@ namespace Thetis
             {
                 lock (_objDX2Lock)
                 {
+                    _cpu = Common.GetCpuName();
+                    List<string> gpus = Common.GetGpuNames();
+                    _gpus = gpus[0]; // assume we are using the first
+                    _ram = Common.GetTotalRam();
+                    _installed_ram = Common.GetInstalledRam();
+
                     displayTarget = value;
 
                     displayTargetHeight = displayTarget.Height;
@@ -3600,7 +3617,31 @@ namespace Thetis
                     if (m_bShowGetPixelsIssue && (_bGetPixelsIssueRX1 || _bGetPixelsIssueRX2)) _d2dRenderTarget.FillRectangle(new RectangleF(0, 8, 8, 8), m_bDX2_Yellow);
 
                     calcFps();
-                    if (m_bShowFPS) _d2dRenderTarget.DrawText(m_nFps.ToString(), fontDX2d_callout, new RectangleF(10, 0, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_m_bTextCallOutActive, DrawTextOptions.None);
+                    if (m_bShowFPS)
+                    {
+                        if (_runningFPSProfile)
+                        {
+                            RoundedRectangle rr = new RoundedRectangle();
+                            rr.Rect = new RectangleF(20, 20, 260, 156);
+                            rr.RadiusX = 14f;
+                            rr.RadiusY = 14f;
+                            _d2dRenderTarget.FillRoundedRectangle(rr, m_bDX2_m_bHightlightNumberScale);
+                            _d2dRenderTarget.DrawRoundedRectangle(rr, m_bDX2_Yellow);
+
+                            SharpDX.RectangleF clipRect = new SharpDX.RectangleF(21, 21, 248, 154);
+                            _d2dRenderTarget.PushAxisAlignedClip(clipRect, AntialiasMode.Aliased);
+
+                            _d2dRenderTarget.DrawText($"{m_nFps}", fontDX2d_fps_profile, new RectangleF(50, 20, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
+                            _d2dRenderTarget.DrawText($"{_cpu}", fontDX2d_callout, new RectangleF(30, 104, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
+                            _d2dRenderTarget.DrawText($"{_gpus}", fontDX2d_callout, new RectangleF(30, 118, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
+                            _d2dRenderTarget.DrawText($"Available Physical Ram : {_ram}", fontDX2d_callout, new RectangleF(30, 132, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
+                            _d2dRenderTarget.DrawText($"Installed Ram : {_installed_ram}", fontDX2d_callout, new RectangleF(30, 146, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
+
+                            _d2dRenderTarget.PopAxisAlignedClip();
+                        }
+
+                        _d2dRenderTarget.DrawText(m_nFps.ToString(), fontDX2d_callout, new RectangleF(10, 0, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_m_bTextCallOutActive, DrawTextOptions.None);
+                    }
 
                     //MW0LGE_21k8
                     processBlobsActivePeakDisplayDelay();
@@ -7136,6 +7177,7 @@ namespace Thetis
         private static SharpDX.DirectWrite.TextFormat fontDX2d_font14;
         private static SharpDX.DirectWrite.TextFormat fontDX2d_font32;
         private static SharpDX.DirectWrite.TextFormat fontDX2d_font1;
+        private static SharpDX.DirectWrite.TextFormat fontDX2d_fps_profile;
         //--------------------------
         private static void releaseFonts()
         {
@@ -7148,6 +7190,7 @@ namespace Thetis
             if (fontDX2d_font14 != null) Utilities.Dispose(ref fontDX2d_font14);
             if (fontDX2d_font32 != null) Utilities.Dispose(ref fontDX2d_font32);
             if (fontDX2d_font1 != null) Utilities.Dispose(ref fontDX2d_font1);
+            if (fontDX2d_fps_profile != null) Utilities.Dispose(ref fontDX2d_fps_profile);
 
             if (fontFactory != null) Utilities.Dispose(ref fontFactory);
 
@@ -7160,6 +7203,8 @@ namespace Thetis
             fontDX2d_font14 = null;
             fontDX2d_font32 = null;
             fontDX2d_font1 = null;
+            fontDX2d_fps_profile = null;
+
             fontFactory = null;
         }
         private static void buildFontsDX2D()
@@ -7181,6 +7226,7 @@ namespace Thetis
                 fontDX2d_font14 = new SharpDX.DirectWrite.TextFormat(fontFactory, font14.FontFamily.Name, (font14.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
                 fontDX2d_font32 = new SharpDX.DirectWrite.TextFormat(fontFactory, font32b.FontFamily.Name, (font32b.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
                 fontDX2d_font1 = new SharpDX.DirectWrite.TextFormat(fontFactory, font1.FontFamily.Name, (font1.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
+                fontDX2d_fps_profile = new SharpDX.DirectWrite.TextFormat(fontFactory, m_fntCallOutFont.FontFamily.Name, (64f / 72) * _d2dRenderTarget.DotsPerInch.Width);
             }
         }
         static void clearBackgroundDX2D(int rx, int W, int H, bool bottom)
