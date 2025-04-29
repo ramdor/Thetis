@@ -56,6 +56,7 @@ namespace Thetis
     using System.Timers;
     using System.Runtime.InteropServices;
     using System.Runtime.ExceptionServices;
+    using System.Security.Cryptography;
     public partial class Setup : Form
     {
         // for these callsigns always show cmasio tab, as a perk to the testers from discord
@@ -33795,6 +33796,7 @@ namespace Thetis
             if(_fps_profile_settings != null)
             {
                 udDisplayFPS.Value = (decimal)_fps_profile_settings["udDisplayFPS"];
+                chkDisplayPanFill.Checked = (bool)_fps_profile_settings["chkDisplayPanFill"];
                 chkShowFPS.Checked = (bool)_fps_profile_settings["chkShowFPS"];
                 chkVSyncDX.Checked = (bool)_fps_profile_settings["chkVSyncDX"];
                 chkAntiAlias.Checked = (bool)_fps_profile_settings["chkAntiAlias"];
@@ -33898,6 +33900,7 @@ namespace Thetis
             // copy settings
             _fps_profile_settings = new Dictionary<string, object>();
             _fps_profile_settings.Add("udDisplayFPS", udDisplayFPS.Value);
+            _fps_profile_settings.Add("chkDisplayPanFill", chkDisplayPanFill.Checked);
             _fps_profile_settings.Add("chkShowFPS", chkShowFPS.Checked);
             _fps_profile_settings.Add("chkVSyncDX", chkVSyncDX.Checked);
             _fps_profile_settings.Add("chkAntiAlias", chkAntiAlias.Checked);
@@ -33976,6 +33979,7 @@ namespace Thetis
 
             // apply settings            
             udDisplayFPS.Value = 640;
+            chkDisplayPanFill.Checked = true;
             chkShowFPS.Checked = true;
             chkVSyncDX.Checked = false;
             chkAntiAlias.Checked = true;
@@ -34013,7 +34017,7 @@ namespace Thetis
             console.PowerOn = true;
             VACEnable = false;
             VAC2Enable = false;
-            console.MOX = false; // this mox state will not be recovered
+            console.MOX = false;
             console.CTuneDisplay = false;
             console.CTuneRX2Display = false;
             console.VFOSync = false;
@@ -34056,6 +34060,104 @@ namespace Thetis
             Display.RunningFPSProfile = true;
 
             btnFPSProfile.Text = "STOP FPS Profile";
+        }
+        public bool ValidFpsProfile()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(udDisplayFPS.Value).Append("|");
+            sb.Append(udDisplayDecimation.Value).Append("|");
+            sb.Append(udPeakBlobs.Value).Append("|");
+            sb.Append(udPeakBlobDropDBMs.Value).Append("|");
+            sb.Append(udDisplayGridMax.Value).Append("|");
+            sb.Append(udRX2DisplayGridMax.Value).Append("|");
+            sb.Append(udDisplayGridMin.Value).Append("|");
+            sb.Append(udRX2DisplayGridMin.Value).Append("|");
+            sb.Append(udDisplayGridStep.Value).Append("|");
+            sb.Append(udRX2DisplayGridStep.Value).Append("|");
+
+            CheckBox[] checkboxes = new CheckBox[]
+            {
+            chkDisplayPanFill,
+            chkShowFPS,
+            chkVSyncDX,
+            chkAntiAlias,
+            chkAccurateFrameTiming,
+            chkSpecWarningLEDRenderDelay,
+            chkSpecWarningLEDGetPixels,
+            chkActivePeakHoldRX1,
+            chkActivePeakHoldRX2,
+            chkPeakBlobsEnabled,
+            chkPeakBlobInsideFilterOnly,
+            chkPeakHoldDrop,
+            chkBlobPeakHold,
+            chkPanadpatorGradient,
+            chkDataLineGradient,
+            chkPanadpatorGradient_tx,
+            chkDataLineGradient_tx,
+            chkDisablePicDisplayBackgroundImage,
+            chkMaintainBackgroundAspectRatio,
+            chkNoiseFloorShowDBM,
+            chkNFShowDecimal,
+            chkShowRX1NoiseFloor,
+            chkShowRX2NoiseFloor,
+            chkAdjustGridMinToNFRX1,
+            chkAdjustGridMinToNFRX2,
+            chkLegacyMeters,
+            chkLegacyItems_band,
+            chkLegacyItems_mode,
+            chkLegacyItems_filter,
+            chkLegacyItems_expand_spectral,
+            chkLegacyItems_expand_spectral_top,
+            chkLegacyItems_vfoa,
+            chkLegacyItems_vfob,
+            chkLegacyItems_vfosync
+            };
+            foreach (CheckBox cb in checkboxes)
+            {
+                sb.Append(cb.Checked).Append("|");
+            }
+
+            sb.Append(comboDisplayThreadPriority.Text).Append("|");
+            sb.Append(comboGeneralProcessPriority.Text).Append("|");
+            sb.Append(comboAudioSampleRate1.Text).Append("|");
+            sb.Append(comboAudioSampleRateRX2.Text).Append("|");
+            sb.Append(comboDispWinType.Text).Append("|");
+            sb.Append(comboRX2DispWinType.Text).Append("|");
+            sb.Append(comboColorPalette.Text).Append("|");
+            sb.Append(comboRX2ColorPalette.Text).Append("|");
+
+            sb.Append(console.Size.Width).Append(",").Append(console.Size.Height).Append("|");
+            sb.Append(console.Location.X).Append(",").Append(console.Location.Y).Append("|");
+            sb.Append(console.RX2Enabled).Append("|");
+            sb.Append(console.PowerOn).Append("|");
+            sb.Append(VACEnable).Append("|");
+            sb.Append(VAC2Enable).Append("|");
+            sb.Append(console.MOX).Append("|");
+            sb.Append(console.CTuneDisplay).Append("|");
+            sb.Append(console.CTuneRX2Display).Append("|");
+            sb.Append(console.VFOSync).Append("|");
+            sb.Append(console.RX1DSPMode).Append("|");
+            sb.Append(console.RX2DSPMode).Append("|");
+            sb.Append(console.RX1Filter).Append("|");
+            sb.Append(console.RX2Filter).Append("|");
+            sb.Append(console.VFOAFreq).Append("|");
+            sb.Append(console.VFOBFreq).Append("|");
+            sb.Append(console.RX1DisplayAVG).Append("|");
+            sb.Append(console.RX2DisplayAVG).Append("|");
+            sb.Append(console.DisplayModeText).Append("|");
+            sb.Append(console.DisplayRX2ModeText).Append("|");
+            sb.Append(console.ClickTuneDisplay).Append("|");
+            sb.Append(console.ClickTuneRX2Display).Append("|");
+
+            sb.Append(console.Pan).Append("|");
+            sb.Append(console.Zoom).Append("|");
+
+            MD5 md5 = MD5.Create();
+            byte[] data = Encoding.UTF8.GetBytes(sb.ToString());
+            byte[] hash = md5.ComputeHash(data);
+
+            return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant().Equals("c78ac0608e91f12c1472886a8f843a7f");
         }
     }
 
