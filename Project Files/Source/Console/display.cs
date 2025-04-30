@@ -852,7 +852,7 @@ namespace Thetis
         private static double _mnfMinSizeTX = 100;
 
         private static string _cpu;
-        private static string _gpus;
+        private static string _gpu;
         private static string _ram;
         private static string _installed_ram;
 
@@ -864,8 +864,8 @@ namespace Thetis
                 lock (_objDX2Lock)
                 {
                     _cpu = Common.GetCpuName();
-                    List<string> gpus = Common.GetGpuNames();
-                    _gpus = gpus[0]; // assume we are using the first
+                    //List<string> gpus = Common.GetGpuNames();
+                    //_gpu = gpus[0]; // assume we are using the first
                     _ram = Common.GetTotalRam();
                     _installed_ram = Common.GetInstalledRam();
 
@@ -889,7 +889,7 @@ namespace Thetis
                         resizeDX2D();
                         ResetWaterfallBmp();
                         ResetWaterfallBmp2();
-                    }
+                    }                    
 
                     Audio.ScopePixelWidth = displayTargetWidth;
 
@@ -2956,6 +2956,25 @@ namespace Thetis
             factory1 = null;
             return adaptors;
         }
+        private static string getGPUNameInUse()
+        {
+            lock (_objDX2Lock)
+            {
+                if (_bDX2Setup)
+                {
+                    //SharpDX.Direct3D11.Device device = new Device(DriverType.Hardware, DeviceCreationFlags.None);
+                    SharpDX.DXGI.Device dxgiDevice = _device.QueryInterface<SharpDX.DXGI.Device>();
+                    SharpDX.DXGI.Adapter adapter = dxgiDevice.Adapter;
+                    string name = adapter.Description.Description;
+                    Utilities.Dispose(ref adapter);
+                    Utilities.Dispose(ref dxgiDevice);
+                    //Utilities.Dispose(ref device);
+                    return name;
+                }
+                else
+                    return "Unkown GPU";
+            }
+        }
 
         public static bool IsDX2DSetup
         {
@@ -3031,7 +3050,7 @@ namespace Thetis
                     _factory1 = new SharpDX.DXGI.Factory1();
 
                     _device = new Device(driverType, debug | DeviceCreationFlags.PreventAlteringLayerSettingsFromRegistry | DeviceCreationFlags.BgraSupport/* | DeviceCreationFlags.SingleThreaded*/, featureLevels);
-                    
+
                     SharpDX.DXGI.Device1 device1 = _device.QueryInterfaceOrNull<SharpDX.DXGI.Device1>();
                     if (device1 != null)
                     {
@@ -3120,6 +3139,8 @@ namespace Thetis
                     }
 
                     _bDX2Setup = true;
+
+                    _gpu = getGPUNameInUse(); // get the directX gpu
 
                     setupAliasing();
 
@@ -3704,7 +3725,7 @@ namespace Thetis
                 _d2dRenderTarget.DrawText($"{m_nFps}*", fontDX2d_fps_profile, new RectangleF(50, 20, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
 
             _d2dRenderTarget.DrawText($"{_cpu}", fontDX2d_callout, new RectangleF(30, 104, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
-            _d2dRenderTarget.DrawText($"{_gpus}", fontDX2d_callout, new RectangleF(30, 118, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
+            _d2dRenderTarget.DrawText($"{_gpu}", fontDX2d_callout, new RectangleF(30, 118, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
             _d2dRenderTarget.DrawText($"Available Physical Ram : {_ram}", fontDX2d_callout, new RectangleF(30, 132, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
             _d2dRenderTarget.DrawText($"Installed Ram : {_installed_ram}", fontDX2d_callout, new RectangleF(30, 146, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
             if(!_valid_fps_profile) _d2dRenderTarget.DrawText("* Settings have deviated from expected !", fontDX2d_callout, new RectangleF(30, 160, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Red, DrawTextOptions.None);
