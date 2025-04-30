@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Xml;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Threading;
+using System.Diagnostics;
 
 namespace Thetis
 {
@@ -282,20 +284,28 @@ namespace Thetis
         //}
         
         private bool _init = true;
+        private bool _is_closing = false;
+        private bool _in_timer = false;
 
         private void chkStayOnTop_CheckedChanged(object sender, EventArgs e)
         {
             this.TopMost = chkStayOnTop.Checked;
         }
 
+        public void CloseDown()
+        {
+            _is_closing = true;
+            timer1.Stop();
+            this.Close();
+            Application.ExitThread();
+        }
         private int _oldIntsSpi = -1;
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (psform.DismissAmpv)
-            {
-                Common.SaveForm(this, "AmpView");
-                Application.ExitThread();
-            }
+            timer1.Stop();
+
+            if (_is_closing) return;
+
             disp_setup();
 
             puresignal.GetPSDisp(WDSP.id(1, 0),
@@ -344,11 +354,7 @@ namespace Thetis
                 chart1.Invalidate();
             }
 
-            if (psform.DismissAmpv)
-            {
-                Common.SaveForm(this, "AmpView");
-                Application.ExitThread();
-            }
+            if(!_is_closing) timer1.Start();
         }
 
         private void chkAVShowGain_CheckedChanged(object sender, EventArgs e)

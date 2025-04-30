@@ -33828,14 +33828,15 @@ namespace Thetis
                 chkNFShowDecimal.Checked = (bool)_fps_profile_settings["chkNFShowDecimal"];
                 chkShowRX1NoiseFloor.Checked = (bool)_fps_profile_settings["chkShowRX1NoiseFloor"];
                 chkShowRX2NoiseFloor.Checked = (bool)_fps_profile_settings["chkShowRX2NoiseFloor"];
+                console.IncludeWindowBorders = (bool)_fps_profile_settings["IncludeWindowBorders"];
+                console.Top = (int)_fps_profile_settings["console_top"];
+                console.Left = (int)_fps_profile_settings["console_left"];
                 console.Width = (int)_fps_profile_settings["console_width"];
                 console.Height = (int)_fps_profile_settings["console_height"];
                 console.RX2Enabled = (bool)_fps_profile_settings["rx2"];
                 console.PowerOn = (bool)_fps_profile_settings["power"];
                 VACEnable = (bool)_fps_profile_settings["vac1"];
                 VAC2Enable = (bool)_fps_profile_settings["vac2"];
-                console.Top = (int)_fps_profile_settings["console_top"];
-                console.Left = (int)_fps_profile_settings["console_left"];
                 //console.MOX = (bool)_fps_profile_settings["mox"];
                 console.CTuneDisplay = (bool)_fps_profile_settings["CTuneDisplay"];
                 console.CTuneRX2Display = (bool)_fps_profile_settings["CTuneRX2Display"];
@@ -33858,7 +33859,6 @@ namespace Thetis
                 udRX2DisplayGridStep.Value = (decimal)_fps_profile_settings["udRX2DisplayGridStep"];
                 chkAdjustGridMinToNFRX1.Checked = (bool)_fps_profile_settings["chkAdjustGridMinToNFRX1"];
                 chkAdjustGridMinToNFRX2.Checked = (bool)_fps_profile_settings["chkAdjustGridMinToNFRX2"];
-                console.IncludeWindowBorders = (bool)_fps_profile_settings["IncludeWindowBorders"];
                 console.Zoom = (int)_fps_profile_settings["Zoom"];
                 console.Pan = (int)_fps_profile_settings["Pan"];
                 console.DisplayModeText = (string)_fps_profile_settings["DisplayModeText"];
@@ -34011,6 +34011,7 @@ namespace Thetis
             chkNFShowDecimal.Checked = true;
             chkShowRX1NoiseFloor.Checked = true;
             chkShowRX2NoiseFloor.Checked = true;
+            console.IncludeWindowBorders = true;
             console.SetResolution("1080p");
             console.Location = new Point(0, 0);
             console.RX2Enabled = true;
@@ -34127,8 +34128,9 @@ namespace Thetis
             sb.Append(comboColorPalette.Text).Append("|");
             sb.Append(comboRX2ColorPalette.Text).Append("|");
 
-            sb.Append(console.Size.Width).Append(",").Append(console.Size.Height).Append("|");
+            sb.Append(console.IncludeWindowBorders).Append("|");
             sb.Append(console.Location.X).Append(",").Append(console.Location.Y).Append("|");
+            sb.Append(console.Size.Width).Append(",").Append(console.Size.Height).Append("|");
             sb.Append(console.RX2Enabled).Append("|");
             sb.Append(console.PowerOn).Append("|");
             sb.Append(VACEnable).Append("|");
@@ -34149,7 +34151,6 @@ namespace Thetis
             sb.Append(console.DisplayRX2ModeText).Append("|");
             sb.Append(console.ClickTuneDisplay).Append("|");
             sb.Append(console.ClickTuneRX2Display).Append("|");
-
             sb.Append(console.Pan).Append("|");
             sb.Append(console.Zoom).Append("|");
 
@@ -34157,7 +34158,11 @@ namespace Thetis
             byte[] data = Encoding.UTF8.GetBytes(sb.ToString());
             byte[] hash = md5.ComputeHash(data);
 
-            return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant().Equals("c78ac0608e91f12c1472886a8f843a7f");
+            string ret = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+
+            Debug.Print(ret);
+
+            return ret.Equals("f266f84ecf761040d3cd9135d035d8f8");
         }
     }
 

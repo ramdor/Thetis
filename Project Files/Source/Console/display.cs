@@ -3681,16 +3681,6 @@ namespace Thetis
         }
         private static void showFPSProfile()
         {
-            RoundedRectangle rr = new RoundedRectangle();
-            rr.Rect = new RectangleF(20, 20, 260, 156);
-            rr.RadiusX = 14f;
-            rr.RadiusY = 14f;
-            _d2dRenderTarget.FillRoundedRectangle(rr, m_bDX2_m_bHightlightNumberScale);
-            _d2dRenderTarget.DrawRoundedRectangle(rr, m_bDX2_Yellow);
-
-            SharpDX.RectangleF clipRect = new SharpDX.RectangleF(21, 21, 248, 154);
-            _d2dRenderTarget.PushAxisAlignedClip(clipRect, AntialiasMode.Aliased);
-
             if (m_objFrameStartTimer.ElapsedMsec - _last_valid_check >= 5000)
             {
                 //recheck every 5 seconds
@@ -3698,15 +3688,26 @@ namespace Thetis
                 _last_valid_check = m_objFrameStartTimer.ElapsedMsec;
             }
 
+            RoundedRectangle rr = new RoundedRectangle();
+            rr.Rect = new RectangleF(20, 20, 300, _valid_fps_profile ? 156 : 170);
+            rr.RadiusX = 14f;
+            rr.RadiusY = 14f;
+            _d2dRenderTarget.FillRoundedRectangle(rr, m_bDX2_m_bHightlightNumberScale);
+            _d2dRenderTarget.DrawRoundedRectangle(rr, m_bDX2_Yellow);
+
+            SharpDX.RectangleF clipRect = new SharpDX.RectangleF(21, 21, 288, 154);
+            _d2dRenderTarget.PushAxisAlignedClip(clipRect, AntialiasMode.Aliased);
+
             if (_valid_fps_profile)
                 _d2dRenderTarget.DrawText($"{m_nFps}", fontDX2d_fps_profile, new RectangleF(50, 20, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
             else
-                _d2dRenderTarget.DrawText("Settings are different to expected.\nInvalid fps profile !\n\nPlease stop & restart.", fontDX2d_callout, new RectangleF(50, 40, float.PositiveInfinity, float.PositiveInfinity), _valid_fps_profile ? m_bDX2_Yellow : m_bDX2_Red, DrawTextOptions.None);
+                _d2dRenderTarget.DrawText($"{m_nFps}*", fontDX2d_fps_profile, new RectangleF(50, 20, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
 
             _d2dRenderTarget.DrawText($"{_cpu}", fontDX2d_callout, new RectangleF(30, 104, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
             _d2dRenderTarget.DrawText($"{_gpus}", fontDX2d_callout, new RectangleF(30, 118, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
             _d2dRenderTarget.DrawText($"Available Physical Ram : {_ram}", fontDX2d_callout, new RectangleF(30, 132, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
             _d2dRenderTarget.DrawText($"Installed Ram : {_installed_ram}", fontDX2d_callout, new RectangleF(30, 146, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
+            if(!_valid_fps_profile) _d2dRenderTarget.DrawText("* Settings have deviated from expected !", fontDX2d_callout, new RectangleF(30, 160, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Red, DrawTextOptions.None);
 
             _d2dRenderTarget.PopAxisAlignedClip();
         }
