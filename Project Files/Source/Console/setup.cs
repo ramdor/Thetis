@@ -33887,11 +33887,34 @@ namespace Thetis
             }
             // ask user
             DialogResult dr = MessageBox.Show("This test will change lots of settings, modes, band, resolution, sample rates, etc etc, to maintain consistancy between tests.\n\nPlease use a FRESH database using the DB manager for this test, with just radio model, region and connection details changed. You should be able to connect and power on/off using Thetis. Failure to do so may result in unexpected changes to configuration. No transmissions will be made.\n\nDo you want to perform this test?",
-            "FPS Profile Test",
-            MessageBoxButtons.OKCancel,
-            MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
-
+                "FPS Profile Test",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
             if (dr != DialogResult.OK) return;
+
+            if (Display.Target != null && Display.Target.IsHandleCreated)
+            {
+                int scaling = Common.GetScalingForWindow(Display.Target.Handle);
+                if (scaling == -1)
+                {
+                    dr = MessageBox.Show($"Unable to detect the scaling for the monitor that the console window sits on. Please ensure this is set to 100% if the results are to be compared against other systems.\n\nContinue anyway?",
+                        "100% scaling issue",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+                    if (dr != DialogResult.Yes) return;
+                }
+                else
+                {
+                    if (scaling != 100)
+                    {
+                        dr = MessageBox.Show($"The console window is on a monitor that is not at 100% scaling. The scaling will need to be reset to 100% if these results are to be compared against other systems. It is currently set to {scaling}%\n\nContinue anyway?",
+                            "100% scaling issue",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+                        if (dr != DialogResult.Yes) return;
+                    }
+                }
+            }
 
             btnOK.Enabled = false;
             btnCancel.Enabled = false;
@@ -34131,6 +34154,7 @@ namespace Thetis
             sb.Append(console.IncludeWindowBorders).Append("|");
             sb.Append(console.Location.X).Append(",").Append(console.Location.Y).Append("|");
             sb.Append(console.Size.Width).Append(",").Append(console.Size.Height).Append("|");
+            sb.Append(Display.TargetSize.Width).Append(",").Append(Display.TargetSize.Height).Append("|");
             sb.Append(console.RX2Enabled).Append("|");
             sb.Append(console.PowerOn).Append("|");
             sb.Append(VACEnable).Append("|");
@@ -34154,15 +34178,23 @@ namespace Thetis
             sb.Append(console.Pan).Append("|");
             sb.Append(console.Zoom).Append("|");
 
+            int scaling;
+            if (Display.Target != null && Display.Target.IsHandleCreated)
+                scaling = Common.GetScalingForWindow(Display.Target.Handle);
+            else
+                scaling = -1;
+
+            sb.Append(scaling).Append("|");
+
             MD5 md5 = MD5.Create();
             byte[] data = Encoding.UTF8.GetBytes(sb.ToString());
             byte[] hash = md5.ComputeHash(data);
 
             string ret = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
 
-            Debug.Print(ret);
+            Debug.Print($"FPS profile settings hash : {ret}");
 
-            return ret.Equals("f266f84ecf761040d3cd9135d035d8f8");
+            return ret.Equals("998cafaf3331a9a111366f41ff3ed6ce");
         }
     }
 

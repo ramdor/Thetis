@@ -1811,5 +1811,60 @@ namespace Thetis
             }
             catch { return "Unknown"; }
         }
+
+        // form scale
+        private const uint MONITOR_DEFAULTTONEAREST = 2;
+        private enum MonitorDpiType
+        {
+            MDT_EFFECTIVE_DPI = 0,
+            MDT_ANGULAR_DPI = 1,
+            MDT_RAW_DPI = 2
+        }
+
+        [DllImport("Shcore.dll")]
+        private static extern int GetDpiForMonitor(
+            IntPtr hmonitor,
+            MonitorDpiType dpiType,
+            out uint dpiX,
+            out uint dpiY);
+
+        [DllImport("User32.dll")]
+        private static extern IntPtr MonitorFromWindow(
+            IntPtr hwnd,
+            uint dwFlags);
+
+        public static int GetScalingForWindow(IntPtr hwnd)
+        {
+            OperatingSystem os = Environment.OSVersion;
+            Version version = os.Version;
+            bool isWin81OrLater =
+                os.Platform == PlatformID.Win32NT &&
+                (version.Major > 6 || (version.Major == 6 && version.Minor >= 3));
+
+            if (isWin81OrLater)
+            {
+                try
+                {
+                    IntPtr monitorHandle = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+                    uint dpiX;
+                    uint dpiY;
+                    int result = GetDpiForMonitor(
+                        monitorHandle,
+                        MonitorDpiType.MDT_EFFECTIVE_DPI,
+                        out dpiX,
+                        out dpiY);
+
+                    if (result == 0) return (int)(dpiX * 100 / 96);
+                }
+                catch (DllNotFoundException) { }
+                catch (EntryPointNotFoundException) { }
+            }
+
+            using (Graphics graphics = Graphics.FromHwnd(hwnd))
+            {
+                return (int)(graphics.DpiX * 100 / 96);
+            }
+        }
+        //
     }
 }

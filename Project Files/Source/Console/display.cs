@@ -913,7 +913,20 @@ namespace Thetis
                 }
             }
         }
-
+        public static Size TargetSize
+        {
+            get
+            {
+                if(displayTarget == null)
+                {
+                    return Size.Empty;
+                }
+                else
+                {
+                    return new Size(displayTargetWidth, displayTargetHeight);
+                }
+            }
+        }
         //public static void UpdateMNFminWidth()
         //{
         //    unsafe
@@ -3710,13 +3723,15 @@ namespace Thetis
             }
 
             RoundedRectangle rr = new RoundedRectangle();
-            rr.Rect = new RectangleF(20, 20, 300, _valid_fps_profile ? 156 : 170);
+            RectangleF r = new RectangleF(20, 20, 300, _valid_fps_profile ? 170 : 184);
+            rr.Rect = r;
             rr.RadiusX = 14f;
             rr.RadiusY = 14f;
             _d2dRenderTarget.FillRoundedRectangle(rr, m_bDX2_m_bHightlightNumberScale);
             _d2dRenderTarget.DrawRoundedRectangle(rr, m_bDX2_Yellow);
 
-            SharpDX.RectangleF clipRect = new SharpDX.RectangleF(21, 21, 288, 154);
+            r.Inflate(-6, -6);
+            SharpDX.RectangleF clipRect = new SharpDX.RectangleF(r.X, r.Y, r.Width, r.Height);
             _d2dRenderTarget.PushAxisAlignedClip(clipRect, AntialiasMode.Aliased);
 
             if (_valid_fps_profile)
@@ -3726,9 +3741,10 @@ namespace Thetis
 
             _d2dRenderTarget.DrawText($"{_cpu}", fontDX2d_callout, new RectangleF(30, 104, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
             _d2dRenderTarget.DrawText($"{_gpu}", fontDX2d_callout, new RectangleF(30, 118, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
-            _d2dRenderTarget.DrawText($"Available Physical Ram : {_ram}", fontDX2d_callout, new RectangleF(30, 132, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
-            _d2dRenderTarget.DrawText($"Installed Ram : {_installed_ram}", fontDX2d_callout, new RectangleF(30, 146, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
-            if(!_valid_fps_profile) _d2dRenderTarget.DrawText("* Settings have deviated from expected !", fontDX2d_callout, new RectangleF(30, 160, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Red, DrawTextOptions.None);
+            _d2dRenderTarget.DrawText($"Render Target Dimensions : {displayTargetWidth} x {displayTargetHeight}", fontDX2d_callout, new RectangleF(30, 132, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
+            _d2dRenderTarget.DrawText($"Available Physical Ram : {_ram}", fontDX2d_callout, new RectangleF(30, 146, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
+            _d2dRenderTarget.DrawText($"Installed Ram : {_installed_ram}", fontDX2d_callout, new RectangleF(30, 160, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
+            if(!_valid_fps_profile) _d2dRenderTarget.DrawText("* Settings have deviated from expected !", fontDX2d_callout, new RectangleF(30, 174, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Red, DrawTextOptions.None);
 
             _d2dRenderTarget.PopAxisAlignedClip();
         }
