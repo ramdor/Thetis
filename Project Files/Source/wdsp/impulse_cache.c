@@ -65,6 +65,8 @@ mw0lge@grange-lane.co.uk
 
 static size_t _cache_counts[CACHE_BUCKETS] = { 0 };
 static _cache_entry_t* _cache_heads[CACHE_BUCKETS] = { NULL };
+static int _use_cache = 1;
+static CRITICAL_SECTION _cs_use_cache;
 
 void remove_impulse_cache_tail(size_t bucket)
 {
@@ -88,7 +90,12 @@ void remove_impulse_cache_tail(size_t bucket)
 
 double* get_impulse_cache_entry(size_t bucket, HASH_T hash)
 {
-	if (bucket >= CACHE_BUCKETS) return NULL;
+	int use;
+	EnterCriticalSection(&_cs_use_cache);
+	use = _use_cache;
+	LeaveCriticalSection(&_cs_use_cache);
+
+	if (!use || bucket >= CACHE_BUCKETS) return NULL;
 
 	for (_cache_entry_t* e = _cache_heads[bucket]; e; e = e->next) {
 		if (e->hash == hash)
@@ -103,7 +110,12 @@ double* get_impulse_cache_entry(size_t bucket, HASH_T hash)
 
 void add_impulse_to_cache(size_t bucket, HASH_T hash, int N, double* impulse)
 {
-	if (bucket >= CACHE_BUCKETS) return;
+	int use;
+	EnterCriticalSection(&_cs_use_cache);
+	use = _use_cache;
+	LeaveCriticalSection(&_cs_use_cache);
+
+	if (!use || bucket >= CACHE_BUCKETS) return;
 
 	if (_cache_counts[bucket] >= MAX_CACHE_ENTRIES) remove_impulse_cache_tail(bucket);
 
@@ -117,7 +129,6 @@ void add_impulse_to_cache(size_t bucket, HASH_T hash, int N, double* impulse)
 	++_cache_counts[bucket];
 }
 
-PORT
 void free_impulse_cache(void)
 {
 	for (size_t b = 0; b < CACHE_BUCKETS; ++b) {
@@ -136,6 +147,12 @@ void free_impulse_cache(void)
 PORT
 int save_impulse_cache(const char* path)
 {
+	int use;
+	EnterCriticalSection(&_cs_use_cache);
+	use = _use_cache;
+	LeaveCriticalSection(&_cs_use_cache);
+	if (!use) return 0;
+
 	FILE* fp = fopen(path, "wb");
 	if (!fp) return -1;
 	uint32_t buckets = CACHE_BUCKETS;
@@ -157,12 +174,18 @@ int save_impulse_cache(const char* path)
 PORT
 int read_impulse_cache(const char* path)
 {
+	free_impulse_cache();
+	int use;
+	EnterCriticalSection(&_cs_use_cache);
+	use = _use_cache;
+	LeaveCriticalSection(&_cs_use_cache);
+	if (!use) return 0;
+
 	FILE* fp = fopen(path, "rb");
 	if (!fp) return -1;
 	uint32_t buckets;
 	if (fread(&buckets, sizeof(buckets), 1, fp) != 1) { fclose(fp); return -1; }
 	if (buckets != CACHE_BUCKETS) { fclose(fp); return -1; }
-	free_impulse_cache();
 	for (size_t b = 0; b < buckets; b++) {
 		uint32_t count;
 		if (fread(&count, sizeof(count), 1, fp) != 1) { fclose(fp); return -1; }
@@ -189,4 +212,30 @@ int read_impulse_cache(const char* path)
 	}
 	fclose(fp);
 	return 0;
+}
+
+PORT
+void use_impulse_cache(int use) 
+{
+	EnterCriticalSection(&_cs_use_cache);
+	_use_cache = use;
+	LeaveCriticalSection(&_cs_use_cache);
+}
+
+PORT
+void init_impulse_cache(int use)
+{
+	InitializeCriticalSection(&_cs_use_cache);
+
+	EnterCriticalSection(&_cs_use_cache);
+	_use_cache = use;
+	LeaveCriticalSection(&_cs_use_cache);
+}
+
+PORT
+void destroy_impulse_cache(void)
+{
+	DeleteCriticalSection(&_cs_use_cache);
+
+	free_impulse_cache();
 }

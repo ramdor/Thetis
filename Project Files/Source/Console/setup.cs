@@ -2427,6 +2427,9 @@ namespace Thetis
             chkAdjustGridMinToNFRX2_CheckedChanged(this, e);
 
             // DSP Tab
+            chkWDSP_cache_impulse_CheckedChanged(this, e);
+            chkWDSP_save_restore_cache_impulse_CheckedChanged(this, e);
+
             udLMSANF_ValueChanged(this, e);
             udLMSNR_ValueChanged(this, e);
             udLMSANF2_ValueChanged(this, e);
@@ -34195,6 +34198,18 @@ namespace Thetis
             Debug.Print($"FPS profile settings hash : {ret}");
 
             return ret.Equals("998cafaf3331a9a111366f41ff3ed6ce");
+        }
+
+        private void chkWDSP_cache_impulse_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            RadioDSP.CacheImpulse = chkWDSP_cache_impulse.Checked;
+        }
+
+        private void chkWDSP_save_restore_cache_impulse_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            RadioDSP.CacheImpulseSaveRestore = chkWDSP_save_restore_cache_impulse.Checked;
         }
     }
 

@@ -29,6 +29,9 @@ mw0lge@grange-lane.co.uk
 #ifndef _impulse_cache_h
 #define _impulse_cache_h
 
+#include <stdint.h>
+#include <stddef.h>
+
 #if defined(_WIN64)
 	// 64-bit build
 	extern uint64_t fnv1a_hash64(const void* data, size_t len);		// 64 bit fnv1a hashing algo
@@ -65,8 +68,11 @@ typedef struct _cache_entry {
 double* get_impulse_cache_entry(size_t bucket, HASH_T hash);
 void add_impulse_to_cache(size_t bucket, HASH_T hash, int N, double* impulse);
 
-__declspec (dllexport) void free_impulse_cache(void);
 __declspec (dllexport) int save_impulse_cache(const char* path);
 __declspec (dllexport) int read_impulse_cache(const char* path);
+__declspec (dllexport) void use_impulse_cache(int use);
+
+__declspec (dllexport) void init_impulse_cache(int use);
+__declspec (dllexport) void destroy_impulse_cache(void);
 
 #endif

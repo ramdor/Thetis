@@ -76,7 +76,7 @@ namespace Thetis
 		{
 			return dsp_tx[thread];
 		}
-	}
+    }
 
 	#endregion
 
@@ -124,17 +124,56 @@ namespace Thetis
                 // wisdom has been rebuilt, pop a message
                 MessageBox.Show("The fft wisdom file has been rebuilt.\n\nIt is now safe to close the output console window.", "Wisdom File", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
-            //
+            
+            WDSP.init_impulse_cache(_cache_impulse ? 1 : 0);
+            if (_cache_impulse_save_restore)
+            {
+                // read any impulse cache if we have previously saved it. Ignore if wisdom00 is rebuilt
+                WDSP.read_impulse_cache(Path.Combine(app_data_path, "impulse_cache.dat"));
+            }
 
             cmaster.CMCreateCMaster();            
 		}
 
 		public static void DestroyDSP()
 		{
-            WDSP.free_impulse_cache();
+            if (_cache_impulse && _cache_impulse_save_restore)
+            {
+                WDSP.save_impulse_cache(Path.Combine(app_data_path, "impulse_cache.dat"));
+            }
+            else
+            {
+                // try to remove file if exists
+                try
+                {
+                    string file = Path.Combine(app_data_path, "impulse_cache.dat");
+                    if (File.Exists(file)) File.Delete(file);
+                }
+                catch { }
+            }
+
+            WDSP.destroy_impulse_cache();
 
             cmaster.DestroyRadio();
 		}
+
+        private static bool _cache_impulse = true;
+        public static bool CacheImpulse
+        {
+            get { return _cache_impulse; }
+            set
+            {
+                _cache_impulse = value;
+                WDSP.use_impulse_cache(_cache_impulse ? 1 : 0);
+            }
+        }
+
+        private static bool _cache_impulse_save_restore = true;
+        public static bool CacheImpulseSaveRestore
+        {
+            get { return _cache_impulse_save_restore; }
+            set { _cache_impulse_save_restore = value; }
+        }
 
         private static DSPMode rx1_dsp_mode = DSPMode.FIRST;
         public static DSPMode RX1DSPMode

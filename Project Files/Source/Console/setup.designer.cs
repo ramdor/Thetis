@@ -2195,6 +2195,9 @@
             this.tpDSP = new System.Windows.Forms.TabPage();
             this.tcDSP = new System.Windows.Forms.TabControl();
             this.tpDSPOptions = new System.Windows.Forms.TabPage();
+            this.groupBoxTS54 = new System.Windows.Forms.GroupBoxTS();
+            this.chkWDSP_save_restore_cache_impulse = new System.Windows.Forms.CheckBoxTS();
+            this.chkWDSP_cache_impulse = new System.Windows.Forms.CheckBoxTS();
             this.chkFilter_high_resolution_characteristics = new System.Windows.Forms.CheckBoxTS();
             this.lblWarningBufferType = new System.Windows.Forms.LabelTS();
             this.lblWarningFilterSize = new System.Windows.Forms.LabelTS();
@@ -3648,6 +3651,7 @@
             this.chkDiscordEnabled = new System.Windows.Forms.CheckBoxTS();
             this.tpTests = new System.Windows.Forms.TabPage();
             this.groupBoxTS30 = new System.Windows.Forms.GroupBoxTS();
+            this.btnFPSProfile = new System.Windows.Forms.ButtonTS();
             this.btnShowSeqLog = new System.Windows.Forms.ButtonTS();
             this.chkShowDisplayDebug = new System.Windows.Forms.CheckBoxTS();
             this.chkShowControlDebug = new System.Windows.Forms.CheckBoxTS();
@@ -4216,7 +4220,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.btnFPSProfile = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4670,6 +4673,7 @@
             this.tpDSP.SuspendLayout();
             this.tcDSP.SuspendLayout();
             this.tpDSPOptions.SuspendLayout();
+            this.groupBoxTS54.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbWarningBufferType)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbWarningFilterSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbWarningBufferSize)).BeginInit();
@@ -36240,6 +36244,7 @@
             // 
             // tpDSPOptions
             // 
+            this.tpDSPOptions.Controls.Add(this.groupBoxTS54);
             this.tpDSPOptions.Controls.Add(this.chkFilter_high_resolution_characteristics);
             this.tpDSPOptions.Controls.Add(this.lblWarningBufferType);
             this.tpDSPOptions.Controls.Add(this.lblWarningFilterSize);
@@ -36258,6 +36263,47 @@
             this.tpDSPOptions.Size = new System.Drawing.Size(724, 414);
             this.tpDSPOptions.TabIndex = 2;
             this.tpDSPOptions.Text = "Options";
+            // 
+            // groupBoxTS54
+            // 
+            this.groupBoxTS54.Controls.Add(this.chkWDSP_save_restore_cache_impulse);
+            this.groupBoxTS54.Controls.Add(this.chkWDSP_cache_impulse);
+            this.groupBoxTS54.Location = new System.Drawing.Point(455, 228);
+            this.groupBoxTS54.Name = "groupBoxTS54";
+            this.groupBoxTS54.Size = new System.Drawing.Size(200, 76);
+            this.groupBoxTS54.TabIndex = 57;
+            this.groupBoxTS54.TabStop = false;
+            this.groupBoxTS54.Text = "Filter Impulse Cache";
+            // 
+            // chkWDSP_save_restore_cache_impulse
+            // 
+            this.chkWDSP_save_restore_cache_impulse.AutoSize = true;
+            this.chkWDSP_save_restore_cache_impulse.Image = null;
+            this.chkWDSP_save_restore_cache_impulse.Location = new System.Drawing.Point(16, 49);
+            this.chkWDSP_save_restore_cache_impulse.Name = "chkWDSP_save_restore_cache_impulse";
+            this.chkWDSP_save_restore_cache_impulse.Size = new System.Drawing.Size(142, 17);
+            this.chkWDSP_save_restore_cache_impulse.TabIndex = 1;
+            this.chkWDSP_save_restore_cache_impulse.Text = "Save/Restore cache file";
+            this.toolTip1.SetToolTip(this.chkWDSP_save_restore_cache_impulse, "Save/Load cache data on startup/shutdown.\r\nWARNING : this file can become very la" +
+        "rge\r\n~400 MBytes or more !\r\n(default off)");
+            this.chkWDSP_save_restore_cache_impulse.UseVisualStyleBackColor = true;
+            this.chkWDSP_save_restore_cache_impulse.CheckedChanged += new System.EventHandler(this.chkWDSP_save_restore_cache_impulse_CheckedChanged);
+            // 
+            // chkWDSP_cache_impulse
+            // 
+            this.chkWDSP_cache_impulse.AutoSize = true;
+            this.chkWDSP_cache_impulse.Checked = true;
+            this.chkWDSP_cache_impulse.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkWDSP_cache_impulse.Image = null;
+            this.chkWDSP_cache_impulse.Location = new System.Drawing.Point(16, 26);
+            this.chkWDSP_cache_impulse.Name = "chkWDSP_cache_impulse";
+            this.chkWDSP_cache_impulse.Size = new System.Drawing.Size(158, 17);
+            this.chkWDSP_cache_impulse.TabIndex = 0;
+            this.chkWDSP_cache_impulse.Text = "WDSP Cache Impulse Data";
+            this.toolTip1.SetToolTip(this.chkWDSP_cache_impulse, "WDSP will use caching to recover previously calculated\r\nimpulse data if available" +
+        ". (default on)");
+            this.chkWDSP_cache_impulse.UseVisualStyleBackColor = true;
+            this.chkWDSP_cache_impulse.CheckedChanged += new System.EventHandler(this.chkWDSP_cache_impulse_CheckedChanged);
             // 
             // chkFilter_high_resolution_characteristics
             // 
@@ -57985,6 +58031,18 @@
             this.groupBoxTS30.TabStop = false;
             this.groupBoxTS30.Text = "Debug";
             // 
+            // btnFPSProfile
+            // 
+            this.btnFPSProfile.Image = null;
+            this.btnFPSProfile.Location = new System.Drawing.Point(227, 19);
+            this.btnFPSProfile.Name = "btnFPSProfile";
+            this.btnFPSProfile.Selectable = true;
+            this.btnFPSProfile.Size = new System.Drawing.Size(109, 52);
+            this.btnFPSProfile.TabIndex = 120;
+            this.btnFPSProfile.Text = "FPS Profile";
+            this.btnFPSProfile.UseVisualStyleBackColor = true;
+            this.btnFPSProfile.Click += new System.EventHandler(this.btnFPSProfile_Click);
+            // 
             // btnShowSeqLog
             // 
             this.btnShowSeqLog.Image = null;
@@ -66956,18 +67014,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // btnFPSProfile
-            // 
-            this.btnFPSProfile.Image = null;
-            this.btnFPSProfile.Location = new System.Drawing.Point(227, 19);
-            this.btnFPSProfile.Name = "btnFPSProfile";
-            this.btnFPSProfile.Selectable = true;
-            this.btnFPSProfile.Size = new System.Drawing.Size(109, 52);
-            this.btnFPSProfile.TabIndex = 120;
-            this.btnFPSProfile.Text = "FPS Profile";
-            this.btnFPSProfile.UseVisualStyleBackColor = true;
-            this.btnFPSProfile.Click += new System.EventHandler(this.btnFPSProfile_Click);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -67552,6 +67598,8 @@
             this.tcDSP.ResumeLayout(false);
             this.tpDSPOptions.ResumeLayout(false);
             this.tpDSPOptions.PerformLayout();
+            this.groupBoxTS54.ResumeLayout(false);
+            this.groupBoxTS54.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbWarningBufferType)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbWarningFilterSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbWarningBufferSize)).EndInit();
@@ -72509,5 +72557,8 @@
         private PanelTS pnlP2_adcs;
         private PanelTS pnlP1_adcs;
         private ButtonTS btnFPSProfile;
+        private GroupBoxTS groupBoxTS54;
+        private CheckBoxTS chkWDSP_save_restore_cache_impulse;
+        private CheckBoxTS chkWDSP_cache_impulse;
     }
 }

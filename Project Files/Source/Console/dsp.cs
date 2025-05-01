@@ -704,9 +704,21 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "destroy_bfcu", CallingConvention = CallingConvention.Cdecl)]
         public static extern void destroy_bfcu(int id);
 
-        // WDSP cache cleanup - MW0LGE
-        [DllImport("wdsp.dll", EntryPoint = "free_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void free_impulse_cache();
+        // WDSP impulse cache - MW0LGE
+        [DllImport("wdsp.dll", EntryPoint = "save_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void save_impulse_cache(string file);
+
+        [DllImport("wdsp.dll", EntryPoint = "read_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void read_impulse_cache(string file);
+
+        [DllImport("wdsp.dll", EntryPoint = "use_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void use_impulse_cache(int use);
+
+        [DllImport("wdsp.dll", EntryPoint = "init_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void init_impulse_cache(int use);
+
+        [DllImport("wdsp.dll", EntryPoint = "destroy_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void destroy_impulse_cache();
         //
 
         #endregion
