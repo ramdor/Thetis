@@ -229,6 +229,7 @@
     <ClInclude Include="gen.h" />
     <ClInclude Include="icfir.h" />
     <ClInclude Include="iir.h" />
+    <ClInclude Include="impulse_cache.h" />
     <ClInclude Include="iobuffs.h" />
     <ClInclude Include="iqc.h" />
     <ClInclude Include="lmath.h" />
@@ -286,6 +287,7 @@
     <ClCompile Include="gen.c" />
     <ClCompile Include="icfir.c" />
     <ClCompile Include="iir.c" />
+    <ClCompile Include="impulse_cache.c" />
     <ClCompile Include="iqc.c" />
     <ClCompile Include="lmath.c" />
     <ClCompile Include="meterlog10.c" />

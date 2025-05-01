@@ -184,76 +184,23 @@ double* fir_fsamp (int N, double* A, int rtype, double scale, int wintype)
 	return c_impulse;
 }
 
-//[2.10.3.9]MW0LGE cache
-#define MAX_FIR_CACHE 500
-typedef struct fir_cache_entry 
-{
-	int N;
-	double f_low, f_high, samplerate, scale;
-	int wintype, rtype;
-	double* impulse;
-	struct fir_cache_entry* next;
-} fir_cache_entry_t;
-
-static fir_cache_entry_t* fir_cache_head = NULL;
-static size_t			  fir_cache_count = 0;
-
-PORT
-void clear_fir_bandpass_cache ()
-{
-	fir_cache_entry_t* e = fir_cache_head;
-	while (e) {
-		fir_cache_entry_t* next = e->next;
-		free(e->impulse);
-		free(e);
-		e = next;
-	}
-	fir_cache_head = NULL;
-}
-
-void remove_fir_tail(void)
-{
-	if (!fir_cache_head) return;
-
-	if (!fir_cache_head->next)
-	{
-		free(fir_cache_head->impulse);
-		free(fir_cache_head);
-		fir_cache_head = NULL;
-		fir_cache_count = 0;
-		return;
-	}
-
-	fir_cache_entry_t* prev = fir_cache_head;
-	while (prev->next && prev->next->next) {
-		prev = prev->next;
-	}
-
-	fir_cache_entry_t* tail = prev->next;
-	prev->next = NULL;
-	free(tail->impulse);
-	free(tail);
-	fir_cache_count--;
-}
-//
-
 double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int wintype, int rtype, double scale)
 {
 	// check for previous in the cache
-	for (fir_cache_entry_t* e = fir_cache_head; e; e = e->next) {
-		if (e->N == N &&
-			e->f_low == f_low &&
-			e->f_high == f_high &&
-			e->samplerate == samplerate &&
-			e->wintype == wintype &&
-			e->rtype == rtype &&
-			e->scale == scale) {
-			
-			double* c_impulse = (double*)malloc0(N * sizeof(complex));
-			memcpy(c_impulse, e->impulse, N * sizeof(complex));
-			return c_impulse;
-		}
-	}
+	struct {
+		int N;
+		int wintype;
+		int rtype;
+		double f_low;
+		double f_high;
+		double samplerate;
+		double scale;
+	} params = { N, wintype, rtype, f_low, f_high, samplerate, scale };
+
+	HASH_T h = fnv1a_hash(&params, sizeof(params));
+	double* imp = get_impulse_cache_entry(FIR_CACHE, h);
+	if (imp) return imp;
+	//
 
 	double *c_impulse = (double *) malloc0 (N * sizeof (complex));
 	double ft = (f_high - f_low) / (2.0 * samplerate);
@@ -321,20 +268,7 @@ double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int
 	}
 
 	// store in cache
-	if (fir_cache_count >= MAX_FIR_CACHE) remove_fir_tail();
-	fir_cache_entry_t* entry = (fir_cache_entry_t*)malloc(sizeof(fir_cache_entry_t));
-	entry->N = N;
-	entry->f_low = f_low;
-	entry->f_high = f_high;
-	entry->samplerate = samplerate;
-	entry->wintype = wintype;
-	entry->rtype = rtype;
-	entry->scale = scale;
-	entry->impulse = (double*)malloc(N * sizeof(complex));
-	memcpy(entry->impulse, c_impulse, N * sizeof(complex));
-	entry->next = fir_cache_head;
-	fir_cache_head = entry;
-	fir_cache_count++;
+	add_impulse_to_cache(FIR_CACHE, h, N, c_impulse);
 
 	return c_impulse;
 }
@@ -402,76 +336,24 @@ void analytic (int N, double* in, double* out)
 	_aligned_free (x);
 }
 
-//[2.10.3.9]MW0LGE cache the mp
-#define MAX_MP_CACHE 500
-typedef struct mp_cache_entry 
-{
-	int N;
-	HASH_T mp_hash;
-	int pfactor;
-	int polarity;
-	double* mpfir;
-	struct mp_cache_entry* next;
-} mp_cache_entry_t;
-
-static mp_cache_entry_t* mp_cache_head = NULL;
-static size_t            mp_cache_count = 0;
-
-PORT
-void clear_mp_cache()
-{
-	mp_cache_entry_t* e = mp_cache_head;
-	while (e) {
-		mp_cache_entry_t* next = e->next;
-		free(e->mpfir);
-		free(e);
-		e = next;
-	}
-	mp_cache_head = NULL;
-}
-
-void remove_mp_tail(void)
-{
-	if (!mp_cache_head) return;
-
-	if (!mp_cache_head->next)
-	{
-		free(mp_cache_head->mpfir);
-		free(mp_cache_head);
-		mp_cache_head = NULL;
-		mp_cache_count = 0;
-		return;
-	}
-
-	mp_cache_entry_t* prev = mp_cache_head;
-	while (prev->next && prev->next->next) {
-		prev = prev->next;
-	}
-
-	mp_cache_entry_t* tail = prev->next;
-	prev->next = NULL;
-	free(tail->mpfir);
-	free(tail);
-	mp_cache_count--;
-}
-//
-
 void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 {
 	// check for previous in the cache
-	// hash of fir array
-	size_t arr_len = N * sizeof(complex);
-	HASH_T hash = fnv1a_hash((uint8_t*)fir, arr_len);
+	struct {
+		int N;
+		int pfactor;
+		int polarity;
+	} params = { N, pfactor, polarity };
 
-	for (mp_cache_entry_t* e = mp_cache_head; e; e = e->next) {
-		if (e->N == N &&
-			e->mp_hash == hash &&
-			e->pfactor == pfactor &&
-			e->polarity == polarity) {
-			memcpy(mpfir, e->mpfir, N * sizeof(complex) );
-			return;
-		}
-	}
+	HASH_T h = fnv1a_hash(&params, sizeof(params));
+
+	size_t arr_len = N * sizeof(complex);
+	HASH_T hf = fnv1a_hash((uint8_t*)fir, arr_len);
+	h ^= hf + GOLDEN_RATIO + (h << 6) + (h >> 2);
+
+	double* imp = get_impulse_cache_entry(MP_CACHE, h);
+	if (imp) return imp;
+	//
 
 	int i;
 	int size = N * pfactor;
@@ -522,17 +404,7 @@ void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 	_aligned_free (firpad);
 
 	// store in cache
-	if (mp_cache_count >= MAX_MP_CACHE) remove_mp_tail();
-	mp_cache_entry_t* entry = malloc(sizeof(mp_cache_entry_t));
-	entry->N = N;
-	entry->mp_hash = hash;
-	entry->pfactor = pfactor;
-	entry->polarity = polarity;
-	entry->mpfir = malloc(N * sizeof(complex));
-	memcpy(entry->mpfir, mpfir, N * sizeof(complex));
-	entry->next = mp_cache_head;
-	mp_cache_head = entry;
-	mp_cache_count++;
+	add_impulse_to_cache(MP_CACHE, h, N, mpfir);
 }
 
 // impulse response of a zero frequency filter comprising a cascade of two resonators, 

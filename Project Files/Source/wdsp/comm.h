@@ -63,6 +63,7 @@ warren@wpratt.com
 #include "gen.h"
 #include "icfir.h"
 #include "iir.h"
+#include "impulse_cache.h"
 #include "iobuffs.h"
 #include "iqc.h"
 #include "lmath.h"

@@ -36,63 +36,6 @@ int fEQcompare (const void * a, const void * b)
 		return 1;
 }
 
-//[2.10.3.9]MW0LGE cache the eq
-#define MAX_EQ_CACHE 500
-typedef struct eq_cache_entry
-{
-	int N;
-	int nfreqs;
-	double samplerate;
-	double scale;
-	int ctfmode;
-	int wintype;
-	HASH_T fg_hash;
-	double* impulse;
-	struct eq_cache_entry* next;
-} eq_cache_entry_t;
-
-static eq_cache_entry_t* eq_cache_head = NULL;
-static size_t            eq_cache_count = 0;
-
-PORT
-void clear_eq_cache()
-{
-	eq_cache_entry_t* e = eq_cache_head;
-	while (e) {
-		eq_cache_entry_t* next = e->next;
-		free(e->impulse);
-		free(e);
-		e = next;
-	}
-	eq_cache_head = NULL;
-}
-
-void remove_eq_tail(void)
-{
-	if (!eq_cache_head) return;
-
-	if (!eq_cache_head->next) 
-	{
-		free(eq_cache_head->impulse);
-		free(eq_cache_head);
-		eq_cache_head = NULL;
-		eq_cache_count = 0;
-		return;
-	}
-	
-	eq_cache_entry_t* prev = eq_cache_head;
-	while (prev->next && prev->next->next) {
-		prev = prev->next;
-	}
-	
-	eq_cache_entry_t* tail = prev->next;
-	prev->next = NULL;
-	free(tail->impulse);
-	free(tail);
-	eq_cache_count--;
-}
-//
-
 double* eq_impulse(int N,
 	int nfreqs,
 	double* F,
@@ -103,25 +46,26 @@ double* eq_impulse(int N,
 	int wintype)
 {
 	// check for previous in the cache
-	// hash of F and G arrays
-	size_t arr_len = (nfreqs + 1) * sizeof(double);
-	HASH_T hashF = fnv1a_hash((uint8_t*)F, arr_len);
-	HASH_T hashG = fnv1a_hash((uint8_t*)G, arr_len);
-	HASH_T fg_hash = hashF ^ (hashG	+ GOLDEN_RATIO + (hashF << 6) + (hashF >> 2));
+	struct {
+		int N;
+		int nfreqs;
+		int ctfmode;
+		int wintype;
+		double samplerate;
+		double scale;
+	} params = { N, nfreqs, ctfmode, wintype, samplerate, scale };
 
-	for (eq_cache_entry_t* e = eq_cache_head; e; e = e->next) {
-		if (e->N == N &&
-			e->nfreqs == nfreqs &&
-			e->fg_hash == fg_hash &&
-			e->samplerate == samplerate &&
-			e->scale == scale &&
-			e->ctfmode == ctfmode &&
-			e->wintype == wintype) {
-			double* imp = (double*)malloc0(N * sizeof(complex));
-			memcpy(imp, e->impulse, N * sizeof(complex));
-			return imp;
-		}
-	}
+	HASH_T h = fnv1a_hash(&params, sizeof(params));
+
+	size_t arr_len = (nfreqs + 1) * sizeof(double);
+	HASH_T hf = fnv1a_hash((uint8_t*)F, arr_len);
+	h ^= hf + GOLDEN_RATIO + (h << 6) + (h >> 2);
+	HASH_T hg = fnv1a_hash((uint8_t*)G, arr_len);
+	h ^= hg + GOLDEN_RATIO + (h << 6) + (h >> 2);
+
+	double* imp = get_impulse_cache_entry(EQ_CACHE, h);
+	if (imp) return imp;
+	//
 
 	double* fp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
 	double* gp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
@@ -241,20 +185,7 @@ double* eq_impulse(int N,
 	_aligned_free (fp);
 
 	// store in cache
-	if (eq_cache_count >= MAX_EQ_CACHE) remove_eq_tail();
-	eq_cache_entry_t* entry = malloc(sizeof(eq_cache_entry_t));
-	entry->N = N;
-	entry->nfreqs = nfreqs;
-	entry->samplerate = samplerate;
-	entry->scale = scale;
-	entry->ctfmode = ctfmode;
-	entry->wintype = wintype;
-	entry->fg_hash = fg_hash;
-	entry->impulse = malloc(N * sizeof(complex));
-	memcpy(entry->impulse, impulse, N * sizeof(complex));
-	entry->next = eq_cache_head;
-	eq_cache_head = entry;
-	eq_cache_count++;
+	add_impulse_to_cache(EQ_CACHE, h, N, impulse);
 
 	return impulse;
 }

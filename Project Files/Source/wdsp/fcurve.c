@@ -26,81 +26,26 @@ warren@wpratt.com
 
 #include "comm.h"
 
-//[2.10.3.9]MW9LGE cache
-#define MAX_FC_CACHE 500
-typedef struct fc_impulse_cache_entry 
-{
-	int    nc;
-	double f0, f1;
-	double g0, g1;
-	int    curve;
-	double samplerate;
-	double scale;
-	int    ctfmode;
-	int    wintype;
-	double* impulse;
-	struct fc_impulse_cache_entry* next;
-} fc_impulse_cache_entry_t;
-
-static fc_impulse_cache_entry_t* fc_cache_head = NULL;
-static size_t					 fc_cache_count = 0;
-
-PORT
-void clear_fc_cache(void) 
-{
-	fc_impulse_cache_entry_t* e = fc_cache_head;
-	while (e) {
-		fc_impulse_cache_entry_t* next = e->next;
-		free(e->impulse);
-		free(e);
-		e = next;
-	}
-	fc_cache_head = NULL;
-}
-
-void remove_fc_tail(void)
-{
-	if (!fc_cache_head) return;
-
-	if (!fc_cache_head->next)
-	{
-		free(fc_cache_head->impulse);
-		free(fc_cache_head);
-		fc_cache_head = NULL;
-		fc_cache_count = 0;
-		return;
-	}
-
-	fc_impulse_cache_entry_t* prev = fc_cache_head;
-	while (prev->next && prev->next->next) {
-		prev = prev->next;
-	}
-
-	fc_impulse_cache_entry_t* tail = prev->next;
-	prev->next = NULL;
-	free(tail->impulse);
-	free(tail);
-	fc_cache_count--;
-}
-//
-
 double* fc_impulse (int nc, double f0, double f1, double g0, double g1, int curve, double samplerate, double scale, int ctfmode, int wintype)
 {
 	// check for previous in the cache
-	for (fc_impulse_cache_entry_t* e = fc_cache_head; e; e = e->next) {
-		if (e->nc == nc &&
-			e->f0 == f0 && e->f1 == f1 &&
-			e->g0 == g0 && e->g1 == g1 &&
-			e->curve == curve &&
-			e->samplerate == samplerate &&
-			e->scale == scale &&
-			e->ctfmode == ctfmode &&
-			e->wintype == wintype) {			
-			double* imp = (double*)malloc0(nc * sizeof(complex));
-			memcpy(imp, e->impulse, nc * sizeof(complex));
-			return imp;
-		}
-	}
+	struct {
+		int nc;
+		int curve;
+		int ctfmode;
+		int wintype;
+		double f0;
+		double f1;
+		double g0;
+		double g1;
+		double samplerate;
+		double scale;
+	} params = { nc, curve, ctfmode, wintype, f0, f1, g0, g1, samplerate, scale };
+
+	HASH_T h = fnv1a_hash(&params, sizeof(params));
+	double* imp = get_impulse_cache_entry(FC_CACHE, h);
+	if (imp) return imp;
+	//
 
 	double* A  = (double *) malloc0 ((nc / 2 + 1) * sizeof (double));
 	int i;
@@ -217,23 +162,7 @@ double* fc_impulse (int nc, double f0, double f1, double g0, double g1, int curv
 	_aligned_free (A);
 
 	// store in cache
-	if (fc_cache_count >= MAX_FC_CACHE) remove_fc_tail();
-	fc_impulse_cache_entry_t* entry = (fc_impulse_cache_entry_t*)malloc(sizeof(fc_impulse_cache_entry_t));
-	entry->nc = nc;
-	entry->f0 = f0;
-	entry->f1 = f1;
-	entry->g0 = g0;
-	entry->g1 = g1;
-	entry->curve = curve;
-	entry->samplerate = samplerate;
-	entry->scale = scale;
-	entry->ctfmode = ctfmode;
-	entry->wintype = wintype;
-	entry->impulse = (double*)malloc(nc * sizeof(complex));
-	memcpy(entry->impulse, impulse, nc * sizeof(complex));
-	entry->next = fc_cache_head;
-	fc_cache_head = entry;
-	fc_cache_count++;
+	add_impulse_to_cache(FC_CACHE, h, nc, impulse);
 
 	return impulse;
 }

@@ -705,17 +705,8 @@ namespace Thetis
         public static extern void destroy_bfcu(int id);
 
         // WDSP cache cleanup - MW0LGE
-        [DllImport("wdsp.dll", EntryPoint = "clear_fir_bandpass_cache", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void clear_fir_bandpass_cache();
-
-        [DllImport("wdsp.dll", EntryPoint = "clear_mp_cache", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void clear_mp_cache();
-
-        [DllImport("wdsp.dll", EntryPoint = "clear_eq_cache", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void clear_eq_cache();
-
-        [DllImport("wdsp.dll", EntryPoint = "clear_fc_cache", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void clear_fc_cache();
+        [DllImport("wdsp.dll", EntryPoint = "free_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void free_impulse_cache();
         //
 
         #endregion

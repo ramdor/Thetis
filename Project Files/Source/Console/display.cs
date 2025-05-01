@@ -826,11 +826,23 @@ namespace Thetis
             get { return m_bShowFPS; }
             set { m_bShowFPS = value; }
         }
+        private static double _fps_profile_start = double.MinValue;
         private static bool _runningFPSProfile = false;
         public static bool RunningFPSProfile
         {
             get { return _runningFPSProfile; }
-            set { _runningFPSProfile = value; }
+            set 
+            {
+                _runningFPSProfile = value;
+                if (_runningFPSProfile)
+                {
+                    _fps_profile_start = m_dElapsedFrameStart;
+                }
+                else
+                {
+                    _fps_profile_start = double.MinValue;
+                }
+            }
         }
         private static bool m_bShowVisualNotch = false;
         public static bool ShowVisualNotch
@@ -3716,6 +3728,7 @@ namespace Thetis
                 MessageBox.Show("Problem in DirectX Renderer !" + System.Environment.NewLine + System.Environment.NewLine + "[ " + e.ToString() + " ]", "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
         }
+        private static readonly List<int> _fps_profile_data = new List<int>();
         private static void showFPSProfile()
         {
             if (m_objFrameStartTimer.ElapsedMsec - _last_valid_check >= 5000)
@@ -3748,6 +3761,14 @@ namespace Thetis
             _d2dRenderTarget.DrawText($"Available Physical Ram : {_ram}", fontDX2d_callout, new RectangleF(30, 146, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
             _d2dRenderTarget.DrawText($"Installed Ram : {_installed_ram}", fontDX2d_callout, new RectangleF(30, 160, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
             if(!_valid_fps_profile) _d2dRenderTarget.DrawText("* Settings have deviated from expected !", fontDX2d_callout, new RectangleF(30, 174, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Red, DrawTextOptions.None);
+
+            if (_fps_profile_data.Count > 0)
+            {
+                bool ok = (m_dElapsedFrameStart - _fps_profile_start) >= 10000;
+                _d2dRenderTarget.DrawText($"10 seconds", fontDX2d_callout, new RectangleF(220, 40, float.PositiveInfinity, float.PositiveInfinity), ok ? m_bDX2_Yellow : m_bDX2_Gray, DrawTextOptions.None);
+                _d2dRenderTarget.DrawText($"Min : {_fps_profile_data.Min()}", fontDX2d_callout, new RectangleF(220, 58, float.PositiveInfinity, float.PositiveInfinity), ok ? m_bDX2_Yellow : m_bDX2_Gray, DrawTextOptions.None);
+                _d2dRenderTarget.DrawText($"Max : {_fps_profile_data.Max()}", fontDX2d_callout, new RectangleF(220, 74, float.PositiveInfinity, float.PositiveInfinity), ok ? m_bDX2_Yellow: m_bDX2_Gray, DrawTextOptions.None);
+            }
 
             _d2dRenderTarget.PopAxisAlignedClip();
         }
@@ -3786,6 +3807,14 @@ namespace Thetis
                 m_nFps = frames;// m_nFrameCount;
                 m_nFrameCount = m_nFrameCount - frames;//0;
                 m_fLastTime = m_dElapsedFrameStart - late;
+
+                if (_runningFPSProfile)
+                {
+                    // for fps_profile
+                    _fps_profile_data.Add(m_nFps);
+                    if (_fps_profile_data.Count > 10) _fps_profile_data.RemoveAt(0);
+                }
+                else if (_fps_profile_data.Count > 0) _fps_profile_data.Clear();
             }
         }
 
