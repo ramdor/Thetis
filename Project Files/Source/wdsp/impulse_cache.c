@@ -68,18 +68,18 @@ typedef struct _cache_entry {
 	int		N;							// N complex entries in impulse. Leave as signed int as that is used everywhere
 	double* impulse;
 	struct _cache_entry* next;
-} _cache_entry_t;
+} cache_entry;
 
-static size_t _cache_counts[CACHE_BUCKETS] = { 0 };
-static _cache_entry_t* _cache_heads[CACHE_BUCKETS] = { NULL };
 static int _use_cache = 1;
+static size_t _cache_counts[CACHE_BUCKETS] = { 0 };
+static cache_entry* _cache_heads[CACHE_BUCKETS] = { NULL };
 static CRITICAL_SECTION _cs_use_cache;
 
 void remove_impulse_cache_tail(size_t bucket)
 {
 	if (bucket >= CACHE_BUCKETS) return;
 
-	_cache_entry_t** pp = &_cache_heads[bucket];
+	cache_entry** pp = &_cache_heads[bucket];
 
 	while (*pp && (*pp)->next) 
 	{
@@ -105,8 +105,8 @@ double* get_impulse_cache_entry(size_t bucket, HASH_T hash)
 	if (!use || bucket >= CACHE_BUCKETS) return NULL;
 
 	// lru, least recently used, moves cache hit to head
-	_cache_entry_t* prev = NULL;
-	_cache_entry_t* e = _cache_heads[bucket];
+	cache_entry* prev = NULL;
+	cache_entry* e = _cache_heads[bucket];
 	
 	while (e) {
 		if (e->hash == hash) {
@@ -138,7 +138,7 @@ void add_impulse_to_cache(size_t bucket, HASH_T hash, int N, double* impulse)
 
 	if (_cache_counts[bucket] >= MAX_CACHE_ENTRIES) remove_impulse_cache_tail(bucket);
 
-	_cache_entry_t* e = malloc0(sizeof(_cache_entry_t));
+	cache_entry* e = malloc0(sizeof(cache_entry));
 	e->hash = hash;
 	e->N = N;
 	e->impulse = (double *) malloc0(N * sizeof(complex));
@@ -151,9 +151,9 @@ void add_impulse_to_cache(size_t bucket, HASH_T hash, int N, double* impulse)
 void free_impulse_cache(void)
 {
 	for (size_t b = 0; b < CACHE_BUCKETS; ++b) {
-		_cache_entry_t* e = _cache_heads[b];
+		cache_entry* e = _cache_heads[b];
 		while (e) {
-			_cache_entry_t* next = e->next;
+			cache_entry* next = e->next;
 			_aligned_free(e->impulse);
 			_aligned_free(e);
 			e = next;
@@ -178,9 +178,9 @@ int save_impulse_cache(const char* path)
 	if (fwrite(&buckets, sizeof(buckets), 1, fp) != 1) { fclose(fp); return -1; }
 	for (size_t b = 0; b < CACHE_BUCKETS; b++) {
 		uint32_t count = 0;
-		for (_cache_entry_t* e = _cache_heads[b]; e; e = e->next) count++;
+		for (cache_entry* e = _cache_heads[b]; e; e = e->next) count++;
 		if (fwrite(&count, sizeof(count), 1, fp) != 1) { fclose(fp); return -1; }
-		for (_cache_entry_t* e = _cache_heads[b]; e; e = e->next) {
+		for (cache_entry* e = _cache_heads[b]; e; e = e->next) {
 			if (fwrite(&e->hash, sizeof(HASH_T), 1, fp) != 1) { fclose(fp); return -1; }
 			if (fwrite(&e->N, sizeof(e->N), 1, fp) != 1) { fclose(fp); return -1; }
 			if (fwrite(e->impulse, sizeof(complex), e->N, fp) != (size_t)e->N) { fclose(fp); return -1; }
@@ -194,6 +194,7 @@ PORT
 int read_impulse_cache(const char* path)
 {
 	free_impulse_cache();
+
 	int use;
 	EnterCriticalSection(&_cs_use_cache);
 	use = _use_cache;
@@ -208,7 +209,7 @@ int read_impulse_cache(const char* path)
 	for (size_t b = 0; b < buckets; b++) {
 		uint32_t count;
 		if (fread(&count, sizeof(count), 1, fp) != 1) { fclose(fp); return -1; }
-		_cache_entry_t* tail = NULL;
+		cache_entry* tail = NULL;
 		for (uint32_t i = 0; i < count; i++) {
 			HASH_T hash;
 			int    N;
@@ -216,7 +217,7 @@ int read_impulse_cache(const char* path)
 			if (fread(&N, sizeof(N), 1, fp) != 1) { fclose(fp); return -1; }
 			double* data = (double*)malloc0(N * sizeof(complex));
 			if (fread(data, sizeof(complex), N, fp) != (size_t)N) { _aligned_free(data); fclose(fp); return -1; }
-			_cache_entry_t* e = (_cache_entry_t*)malloc0(sizeof(_cache_entry_t));
+			cache_entry* e = (cache_entry*)malloc0(sizeof(cache_entry));
 			e->hash = hash;
 			e->N = N;
 			e->impulse = data;
