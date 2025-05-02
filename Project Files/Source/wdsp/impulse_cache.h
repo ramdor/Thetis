@@ -34,36 +34,29 @@ mw0lge@grange-lane.co.uk
 
 #if defined(_WIN64)
 	// 64-bit build
-	extern uint64_t fnv1a_hash64(const void* data, size_t len);		// 64 bit fnv1a hashing algo
-	#define GOLDEN_RATIO_64 0x9E3779B97F4A7C15ULL					// 64-bit golden ratio
+	extern uint64_t fnv1a_hash64(const void* data, size_t len);
+	#define GOLDEN_RATIO_64 0x9E3779B97F4A7C15ULL
 
 	#define HASH_T       uint64_t
 	#define fnv1a_hash   fnv1a_hash64
 	#define GOLDEN_RATIO GOLDEN_RATIO_64
 #else
 	// 32-bit build
-	extern uint32_t fnv1a_hash32(const void* data, size_t len);		// 32 bit fnv1a hashing algo
-	#define GOLDEN_RATIO_32 0x9e3779b9U								// 32-bit golden ratio
+	extern uint32_t fnv1a_hash32(const void* data, size_t len);
+	#define GOLDEN_RATIO_32 0x9e3779b9U
 
 	#define HASH_T       uint32_t
 	#define fnv1a_hash   fnv1a_hash32
 	#define GOLDEN_RATIO GOLDEN_RATIO_32
 #endif
 
-#define MAX_CACHE_ENTRIES		1024	// max number of cache entires per bucket
-#define CACHE_BUCKETS			4		// 4 cache buckets, one for fir_bandpass, mp, eq and fc. Unique indexes in the #defines below
+#define MAX_CACHE_ENTRIES		4096	// max number of cache entires per cache bucket
+#define CACHE_BUCKETS			4		// 4 cache buckets, for fir_bandpass, mp, eq, fc. Unique indexes in the #defines below
 
 #define FIR_CACHE	0
 #define MP_CACHE	1
 #define EQ_CACHE	2
 #define FC_CACHE	3
-
-typedef struct _cache_entry {
-	HASH_T  hash;
-	int		N;							// N complex entries in impulse. Leave as signed in as that is used everywhere
-	double* impulse;
-	struct _cache_entry* next;
-} _cache_entry_t;
 
 double* get_impulse_cache_entry(size_t bucket, HASH_T hash);
 void add_impulse_to_cache(size_t bucket, HASH_T hash, int N, double* impulse);

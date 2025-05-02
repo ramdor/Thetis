@@ -63,6 +63,13 @@ mw0lge@grange-lane.co.uk
 	}
 #endif
 
+typedef struct _cache_entry {
+	HASH_T  hash;
+	int		N;							// N complex entries in impulse. Leave as signed int as that is used everywhere
+	double* impulse;
+	struct _cache_entry* next;
+} _cache_entry_t;
+
 static size_t _cache_counts[CACHE_BUCKETS] = { 0 };
 static _cache_entry_t* _cache_heads[CACHE_BUCKETS] = { NULL };
 static int _use_cache = 1;
