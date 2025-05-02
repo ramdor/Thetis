@@ -97,14 +97,26 @@ double* get_impulse_cache_entry(size_t bucket, HASH_T hash)
 
 	if (!use || bucket >= CACHE_BUCKETS) return NULL;
 
-	for (_cache_entry_t* e = _cache_heads[bucket]; e; e = e->next) {
-		if (e->hash == hash)
-		{
-			double* imp = (double*)malloc0(e->N * sizeof(complex));
+	// lru, least recently used, moves cache hit to head
+	_cache_entry_t* prev = NULL;
+	_cache_entry_t* e = _cache_heads[bucket];
+	
+	while (e) {
+		if (e->hash == hash) {
+			if (prev)
+			{
+				prev->next = e->next;
+				e->next = _cache_heads[bucket];
+				_cache_heads[bucket] = e;
+			}
+			double* imp = malloc0(e->N * sizeof(complex));
 			memcpy(imp, e->impulse, e->N * sizeof(complex));
 			return imp;
 		}
+		prev = e;
+		e = e->next;
 	}
+
 	return NULL;
 }
 
