@@ -7544,18 +7544,13 @@ namespace Thetis
         }        
         private static List<clsNotchCoords> handleNotches(int rx, bool bottom, int cwSideToneShift, int Low, int High, int nVerticalShift, int top, int width, int W, int H, bool bDraw)//, int expandHz = 0)
         {
-            long rf_freq = vfoa_hz;
-            int localRit;
+            long rf_freq = rx == 1 ? vfoa_hz : vfob_hz;
 
+            int localRit;
             if (rx == 1)
                 localRit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
             else
                 localRit = 0; // no rit rx2
-
-            if (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2) // MW0LGE
-            {
-                rf_freq = vfob_hz;
-            }
 
             rf_freq += cwSideToneShift;
 
