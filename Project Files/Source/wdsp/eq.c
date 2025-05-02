@@ -46,14 +46,23 @@ double* eq_impulse(int N,
 	int wintype)
 {
 	// check for previous in the cache
-	struct {
-		int N;
-		int nfreqs;
-		int ctfmode;
-		int wintype;
-		double samplerate;
-		double scale;
-	} params = { N, nfreqs, ctfmode, wintype, samplerate, scale };
+	struct Params {
+		int     N;
+		int     nfreqs;
+		int     ctfmode;
+		int     wintype;
+		double  samplerate;
+		double  scale;
+	};
+
+	struct Params params;
+	memset(&params, 0, sizeof(params));
+	params.N = N;
+	params.nfreqs = nfreqs;
+	params.ctfmode = ctfmode;
+	params.wintype = wintype;
+	params.samplerate = samplerate;
+	params.scale = scale;
 
 	HASH_T h = fnv1a_hash(&params, sizeof(params));
 

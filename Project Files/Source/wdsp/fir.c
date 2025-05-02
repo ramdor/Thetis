@@ -187,7 +187,7 @@ double* fir_fsamp (int N, double* A, int rtype, double scale, int wintype)
 double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int wintype, int rtype, double scale)
 {
 	// check for previous in the cache
-	struct {
+	struct Params {
 		int N;
 		int wintype;
 		int rtype;
@@ -195,7 +195,17 @@ double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int
 		double f_high;
 		double samplerate;
 		double scale;
-	} params = { N, wintype, rtype, f_low, f_high, samplerate, scale };
+	};
+
+	struct Params params;
+	memset(&params, 0, sizeof params);
+	params.N = N;
+	params.wintype = wintype;
+	params.rtype = rtype;
+	params.f_low = f_low;
+	params.f_high = f_high;
+	params.samplerate = samplerate;
+	params.scale = scale;
 
 	HASH_T h = fnv1a_hash(&params, sizeof(params));
 	double* imp = get_impulse_cache_entry(FIR_CACHE, h);
@@ -339,11 +349,17 @@ void analytic (int N, double* in, double* out)
 void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 {
 	// check for previous in the cache
-	struct {
+	struct Params {
 		int N;
 		int pfactor;
 		int polarity;
-	} params = { N, pfactor, polarity };
+	};
+
+	struct Params params;
+	memset(&params, 0, sizeof(params));
+	params.N = N;
+	params.pfactor = pfactor;
+	params.polarity = polarity;
 
 	HASH_T h = fnv1a_hash(&params, sizeof(params));
 

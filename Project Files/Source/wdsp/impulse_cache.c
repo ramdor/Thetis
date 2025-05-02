@@ -109,7 +109,7 @@ double* get_impulse_cache_entry(size_t bucket, HASH_T hash)
 				e->next = _cache_heads[bucket];
 				_cache_heads[bucket] = e;
 			}
-			double* imp = malloc0(e->N * sizeof(complex));
+			double* imp = (double*) malloc0(e->N * sizeof(complex));
 			memcpy(imp, e->impulse, e->N * sizeof(complex));
 			return imp;
 		}

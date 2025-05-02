@@ -29,18 +29,31 @@ warren@wpratt.com
 double* fc_impulse (int nc, double f0, double f1, double g0, double g1, int curve, double samplerate, double scale, int ctfmode, int wintype)
 {
 	// check for previous in the cache
-	struct {
-		int nc;
-		int curve;
-		int ctfmode;
-		int wintype;
-		double f0;
-		double f1;
-		double g0;
-		double g1;
-		double samplerate;
-		double scale;
-	} params = { nc, curve, ctfmode, wintype, f0, f1, g0, g1, samplerate, scale };
+	struct Params {
+		int     nc;
+		int     curve;
+		int     ctfmode;
+		int     wintype;
+		double  f0;
+		double  f1;
+		double  g0;
+		double  g1;
+		double  samplerate;
+		double  scale;
+	};
+
+	struct Params params;
+	memset(&params, 0, sizeof(params));
+	params.nc = nc;
+	params.curve = curve;
+	params.ctfmode = ctfmode;
+	params.wintype = wintype;
+	params.f0 = f0;
+	params.f1 = f1;
+	params.g0 = g0;
+	params.g1 = g1;
+	params.samplerate = samplerate;
+	params.scale = scale;
 
 	HASH_T h = fnv1a_hash(&params, sizeof(params));
 	double* imp = get_impulse_cache_entry(FC_CACHE, h);
