@@ -352,7 +352,11 @@ void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 	h ^= hf + GOLDEN_RATIO + (h << 6) + (h >> 2);
 
 	double* imp = get_impulse_cache_entry(MP_CACHE, h);
-	if (imp) return imp;
+	if (imp) 
+	{
+		memcpy(mpfir, imp, N * sizeof(complex)); // need to copy into mpfir
+		return;
+	}
 	//
 
 	int i;

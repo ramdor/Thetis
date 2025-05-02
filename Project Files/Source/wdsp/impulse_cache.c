@@ -84,7 +84,7 @@ void remove_impulse_cache_tail(size_t bucket)
 		_aligned_free((*pp)->impulse);
 		_aligned_free(*pp);
 		*pp = NULL;
-		--_cache_counts[bucket];
+		_cache_counts[bucket]--;
 	}
 }
 
@@ -126,7 +126,7 @@ void add_impulse_to_cache(size_t bucket, HASH_T hash, int N, double* impulse)
 	memcpy(e->impulse, impulse, N * sizeof(complex));
 	e->next = _cache_heads[bucket];
 	_cache_heads[bucket] = e;
-	++_cache_counts[bucket];
+	_cache_counts[bucket]++;
 }
 
 void free_impulse_cache(void)
