@@ -2048,7 +2048,8 @@ namespace Thetis
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.Leveler, SetupForm.TXLevelerOn, false);
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.CFCeq, SetupForm.CFCPEQEnabled, false);
                 infoBar.UpdateButtonState(ucInfoBar.ActionTypes.ShowSpots, SetupForm.ShowTCISpots /*| other spots*/, false);
-                infoBar.UpdateButtonState(ucInfoBar.ActionTypes.DisplayFill, SetupForm.DisplayPanFill, true); // <- last one needs to be true
+                infoBar.UpdateButtonState(ucInfoBar.ActionTypes.DisplayFill, SetupForm.DisplayPanFill, false); 
+                infoBar.UpdateButtonState(ucInfoBar.ActionTypes.DisplayPause, Display.PausedDisplay, true); // <- last one needs to be true ****** NOTE *************
             }
 
             // tooltips
@@ -46490,6 +46491,9 @@ namespace Thetis
                 case ucInfoBar.ActionTypes.DisplayFill:
                     SetupForm.DisplayPanFill = e.ButtonState;
                     break;
+                case ucInfoBar.ActionTypes.DisplayPause:
+                    Display.PausedDisplay = !Display.PausedDisplay;
+                    break;
             }
         }
 
@@ -48883,6 +48887,8 @@ namespace Thetis
 
         private void pnlDisplay_DoubleClick(object sender, EventArgs e)
         {
+            if (Display.PausedDisplay) return;
+
             int new_val = (int)PixelToDb(display_cursor_y);
             if (!(rx1_grid_adjust || gridmaxadjust))
             {
@@ -48909,6 +48915,8 @@ namespace Thetis
 
         private void pnlDisplay_MouseDown(object sender, MouseEventArgs e)
         {
+            if (Display.PausedDisplay) return;
+
             if (m_frmNotchPopup.Visible) return;
             if (_highlightedSpot != null)
             {
@@ -49722,6 +49730,8 @@ namespace Thetis
 
         private void pnlDisplay_MouseLeave(object sender, EventArgs e)
         {
+            if (Display.PausedDisplay) return;
+
             if (!m_frmNotchPopup.Visible) SelectedNotch = null; // clear the selected notch (if there was one)
             m_bDraggingPanafallSplit = false;
 
@@ -49746,6 +49756,8 @@ namespace Thetis
 
         unsafe private void pnlDisplay_MouseMove(object sender, MouseEventArgs e)
         {
+            if (Display.PausedDisplay) return;
+
             try
             {
                 Cursor next_cursor = _useOutlinedCrossCursor ? _cross_outlined : Cursors.Cross;
@@ -50967,6 +50979,8 @@ namespace Thetis
 
         private void pnlDisplay_MouseUp(object sender, MouseEventArgs e)
         {
+            if (Display.PausedDisplay) return;
+
             if (e.Button == MouseButtons.Left)
             {
                 switch (Display.CurrentDisplayMode)
@@ -51121,6 +51135,11 @@ namespace Thetis
             }
 
             _pause_DisplayThread = false;
+        }
+
+        private void buttonTS1_Click(object sender, EventArgs e)
+        {
+            Display.PausedDisplay = !Display.PausedDisplay;
         }
     }
 

@@ -2917,6 +2917,12 @@ namespace Thetis
                     Utilities.Dispose(ref _waterfall_bmp_dx2d);
                     Utilities.Dispose(ref _waterfall_bmp2_dx2d);
 
+                    if (_pause_bitmap != null)
+                    {
+                        Utilities.Dispose(ref _pause_bitmap);
+                        _pause_bitmap = null;
+                    }
+
                     Utilities.Dispose(ref _d2dRenderTarget);
                     Utilities.Dispose(ref _swapChain1);
                     Utilities.Dispose(ref _swapChain);
@@ -3360,6 +3366,68 @@ namespace Thetis
             get { return _maintain_background_aspectratio; }
             set { _maintain_background_aspectratio = value; }
         }
+
+        private static SharpDX.Direct2D1.Bitmap _pause_bitmap = null;
+        private static bool _paused_display = false;
+        private static bool _old_paused_display = false;
+        public static bool PausedDisplay
+        {
+            get { return _paused_display; }
+            set 
+            {
+                lock (_objDX2Lock)
+                {
+                    _old_paused_display = _paused_display;
+                    _paused_display = value;
+                    console.SetupInfoBarButton(ucInfoBar.ActionTypes.DisplayPause, _paused_display);
+                    pauseDisplay();
+
+                    if (_old_paused_display && !_paused_display)
+                    {
+                        //was on, now off
+                        FastAttackNoiseFloorRX1 = true;
+                        FastAttackNoiseFloorRX2 = true;
+                    }
+                }
+            }
+        }
+        private static void pauseDisplay()
+        {
+            // free up old
+            if(_pause_bitmap != null)
+            {
+                Utilities.Dispose(ref _pause_bitmap);
+                _pause_bitmap = null;
+            }
+
+            if (_paused_display)
+            {
+                // take snap
+                Texture2D sourceTexture = _swapChain1.GetBackBuffer<Texture2D>(0);
+                Texture2DDescription desc = sourceTexture.Description;
+                desc.CpuAccessFlags = CpuAccessFlags.Read;
+                desc.Usage = ResourceUsage.Default;
+                desc.BindFlags = BindFlags.ShaderResource;
+                desc.CpuAccessFlags = CpuAccessFlags.None;
+                Texture2D stagingTexture = new Texture2D(_device, desc);
+
+                SharpDX.Direct3D11.DeviceContext context = _device.ImmediateContext;
+                context.CopyResource(sourceTexture, stagingTexture);
+
+                Surface dxgiSurface = stagingTexture.QueryInterface<Surface>();
+                Size2F dpi = _d2dRenderTarget.DotsPerInch;
+
+                SharpDX.Direct2D1.PixelFormat pixelFormat = new SharpDX.Direct2D1.PixelFormat(Format.B8G8R8A8_UNorm, ALPHA_MODE);
+                BitmapProperties props = new BitmapProperties(pixelFormat, dpi.Width, dpi.Height);
+
+                _pause_bitmap = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, dxgiSurface, props);
+
+                Utilities.Dispose(ref dxgiSurface);
+                Utilities.Dispose(ref stagingTexture);
+                Utilities.Dispose(ref sourceTexture);
+            }
+        }
+
         private static bool _valid_fps_profile = false;
         private static double _last_valid_check = double.MinValue;
         public static void RenderDX2D()
@@ -3376,6 +3444,13 @@ namespace Thetis
                     _bNoiseFloorAlreadyCalculatedRX2 = false;
 
                     _d2dRenderTarget.BeginDraw();
+
+                    if (_paused_display && _pause_bitmap != null)
+                    {
+                        RectangleF pr = new RectangleF(0, 0, displayTargetWidth, displayTargetHeight);
+                        _d2dRenderTarget.DrawBitmap(_pause_bitmap, pr, 1f, BitmapInterpolationMode.Linear);
+                        goto jump;
+                    }
 
                     // middle pixel align shift, NOTE: waterfall will switch internally to identity, and then restore
                     Matrix3x2 t = _d2dRenderTarget.Transform;
@@ -3649,11 +3724,11 @@ namespace Thetis
                         _bRebuildRXLinearGradBrush = true;
                         _bRebuildTXLinearGradBrush = true;
                     }
-
+                
                     // HIGH swr display warning
                     if (high_swr || _power_folded_back)
                     {
-                        if(_power_folded_back)
+                        if (_power_folded_back)
                         {
                             drawStringDX2D("HIGH SWR\n\nPOWER FOLD BACK", fontDX2d_font14, m_bDX2_Red, 245, 20);
                         }
@@ -3698,6 +3773,8 @@ namespace Thetis
 
                     // undo the translate
                     _d2dRenderTarget.Transform = Matrix3x2.Identity;
+
+                jump:
 
                     _d2dRenderTarget.EndDraw();
 

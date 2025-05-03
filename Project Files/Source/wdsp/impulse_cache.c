@@ -31,7 +31,7 @@ mw0lge@grange-lane.co.uk
 
 /********************************************************************************************************
 *																										*
-*								Hashing Algo MW0LGE														*
+*								Impulse Cache implementation											*
 *																										*
 ********************************************************************************************************/
 
@@ -70,10 +70,11 @@ typedef struct _cache_entry {
 	struct _cache_entry* next;
 } cache_entry;
 
-static int _use_cache = 1;
 static size_t _cache_counts[CACHE_BUCKETS] = { 0 };
 static cache_entry* _cache_heads[CACHE_BUCKETS] = { NULL };
 static CRITICAL_SECTION _cs_use_cache;
+static int _run = 0;
+static int _use_cache = 1;
 
 void remove_impulse_cache_tail(size_t bucket)
 {
@@ -95,8 +96,25 @@ void remove_impulse_cache_tail(size_t bucket)
 	}
 }
 
+void free_impulse_cache(void)
+{
+	for (size_t b = 0; b < CACHE_BUCKETS; ++b) {
+		cache_entry* e = _cache_heads[b];
+		while (e) {
+			cache_entry* next = e->next;
+			_aligned_free(e->impulse);
+			_aligned_free(e);
+			e = next;
+		}
+		_cache_heads[b] = NULL;
+		_cache_counts[b] = 0;
+	}
+}
+
 double* get_impulse_cache_entry(size_t bucket, HASH_T hash)
 {
+	if (!_run) return;
+
 	int use;
 	EnterCriticalSection(&_cs_use_cache);
 	use = _use_cache;
@@ -105,6 +123,7 @@ double* get_impulse_cache_entry(size_t bucket, HASH_T hash)
 	if (!use || bucket >= CACHE_BUCKETS) return NULL;
 
 	// lru, least recently used, moves cache hit to head
+	// old cache entries will move towards the tail and eventually be dumped
 	cache_entry* prev = NULL;
 	cache_entry* e = _cache_heads[bucket];
 	
@@ -129,6 +148,8 @@ double* get_impulse_cache_entry(size_t bucket, HASH_T hash)
 
 void add_impulse_to_cache(size_t bucket, HASH_T hash, int N, double* impulse)
 {
+	if (!_run) return;
+
 	int use;
 	EnterCriticalSection(&_cs_use_cache);
 	use = _use_cache;
@@ -148,24 +169,11 @@ void add_impulse_to_cache(size_t bucket, HASH_T hash, int N, double* impulse)
 	_cache_counts[bucket]++;
 }
 
-void free_impulse_cache(void)
-{
-	for (size_t b = 0; b < CACHE_BUCKETS; ++b) {
-		cache_entry* e = _cache_heads[b];
-		while (e) {
-			cache_entry* next = e->next;
-			_aligned_free(e->impulse);
-			_aligned_free(e);
-			e = next;
-		}
-		_cache_heads[b] = NULL;
-		_cache_counts[b] = 0;
-	}
-}
-
 PORT
 int save_impulse_cache(const char* path)
 {
+	if (!_run) return;
+
 	int use;
 	EnterCriticalSection(&_cs_use_cache);
 	use = _use_cache;
@@ -193,6 +201,8 @@ int save_impulse_cache(const char* path)
 PORT
 int read_impulse_cache(const char* path)
 {
+	if (!_run) return;
+
 	free_impulse_cache();
 
 	int use;
@@ -250,11 +260,15 @@ void init_impulse_cache(int use)
 	EnterCriticalSection(&_cs_use_cache);
 	_use_cache = use;
 	LeaveCriticalSection(&_cs_use_cache);
+
+	_run = 1;
 }
 
 PORT
 void destroy_impulse_cache(void)
 {
+	_run = 0;
+
 	DeleteCriticalSection(&_cs_use_cache);
 
 	free_impulse_cache();
