@@ -406,28 +406,61 @@ void flush_fircore (FIRCORE a)
 	a->buffidx = 0;
 }
 
-void xfircore (FIRCORE a)
+void xfircore(FIRCORE a)
 {
+	//[2.10.3.9]MW0LGE refactor to remove pointer chase in the loops
 	int i, j, k;
-	memcpy (&(a->fftin[2 * a->size]), a->in, a->size * sizeof (complex));
-	fftw_execute (a->pcfor[a->buffidx]);
+	memcpy(&(a->fftin[2 * a->size]), a->in, a->size * sizeof(complex));
+	fftw_execute(a->pcfor[a->buffidx]);
 	k = a->buffidx;
-	memset (a->accum, 0, 2 * a->size * sizeof (complex));
-	EnterCriticalSection (&a->update);
-	for (j = 0; j < a->nfor; j++)
+	memset(a->accum, 0, 2 * a->size * sizeof(complex));
+
+	EnterCriticalSection(&a->update);
+	double* accum = a->accum;
+	double** fftout = a->fftout;
+	double*** fmask = a->fmask;
+	int cset = a->cset;
+	int idxmask = a->idxmask;
+	int sz = a->size;
+	int nfor = a->nfor;
+	for (j = 0; j < nfor; j++)
 	{
-		for (i = 0; i < 2 * a->size; i++)
+		for (i = 0; i < 2 * sz; i++)
 		{
-			a->accum[2 * i + 0] += a->fftout[k][2 * i + 0] * a->fmask[a->cset][j][2 * i + 0] - a->fftout[k][2 * i + 1] * a->fmask[a->cset][j][2 * i + 1];
-			a->accum[2 * i + 1] += a->fftout[k][2 * i + 0] * a->fmask[a->cset][j][2 * i + 1] + a->fftout[k][2 * i + 1] * a->fmask[a->cset][j][2 * i + 0];
+			accum[2 * i + 0] += fftout[k][2 * i + 0] * fmask[cset][j][2 * i + 0] - fftout[k][2 * i + 1] * fmask[cset][j][2 * i + 1];
+			accum[2 * i + 1] += fftout[k][2 * i + 0] * fmask[cset][j][2 * i + 1] + fftout[k][2 * i + 1] * fmask[cset][j][2 * i + 0];
 		}
-		k = (k + a->idxmask) & a->idxmask;
+		k = (k + idxmask) & idxmask;
 	}
-	LeaveCriticalSection (&a->update);
-	a->buffidx = (a->buffidx + 1) & a->idxmask;
-	fftw_execute (a->crev);
-	memcpy (a->fftin, &(a->fftin[2 * a->size]), a->size * sizeof(complex));
+	LeaveCriticalSection(&a->update);
+
+	a->buffidx = (a->buffidx + 1) & idxmask;
+	fftw_execute(a->crev);
+	memcpy(a->fftin, &(a->fftin[2 * a->size]), a->size * sizeof(complex));
 }
+
+//void xfircore (FIRCORE a)
+//{
+//	int i, j, k;
+//	memcpy (&(a->fftin[2 * a->size]), a->in, a->size * sizeof (complex));
+//	fftw_execute (a->pcfor[a->buffidx]);
+//	k = a->buffidx;
+//	memset (a->accum, 0, 2 * a->size * sizeof (complex));
+//	EnterCriticalSection (&a->update);
+//	for (j = 0; j < a->nfor; j++)
+//	{
+//		for (i = 0; i < 2 * a->size; i++)
+//		{
+//			a->accum[2 * i + 0] += a->fftout[k][2 * i + 0] * a->fmask[a->cset][j][2 * i + 0] - a->fftout[k][2 * i + 1] * a->fmask[a->cset][j][2 * i + 1];
+//			a->accum[2 * i + 1] += a->fftout[k][2 * i + 0] * a->fmask[a->cset][j][2 * i + 1] + a->fftout[k][2 * i + 1] * a->fmask[a->cset][j][2 * i + 0];
+//		}
+//		k = (k + a->idxmask) & a->idxmask;
+//	}
+//	LeaveCriticalSection (&a->update);
+//	a->buffidx = (a->buffidx + 1) & a->idxmask;
+//	fftw_execute (a->crev);
+//	memcpy (a->fftin, &(a->fftin[2 * a->size]), a->size * sizeof(complex));
+//}
 
 void setBuffers_fircore (FIRCORE a, double* in, double* out)
 {
