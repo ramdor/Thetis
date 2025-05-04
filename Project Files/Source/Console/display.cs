@@ -10729,7 +10729,7 @@ namespace Thetis
             if (!_bDX2Setup) return null;
 
             int alpha = (replaceAlpha >= 0 && replaceAlpha <= 255) ? replaceAlpha : c.A;
-            int key = Color.FromArgb(alpha, c.R, c.G, c.B).ToArgb();
+            int key = (alpha << 24) | (c.R << 16) | (c.G << 8) | c.B; //Color.FromArgb(alpha, c.R, c.G, c.B).ToArgb();
 
             SharpDX.Direct2D1.Brush existingBrush;
             if (_DX2Brushes.TryGetValue(key, out existingBrush))

@@ -24747,7 +24747,7 @@ namespace Thetis
                 else if (replaceAlpha >= 0 && replaceAlpha <= 255)
                     a = replaceAlpha;
 
-                int key = c.ToArgb(); //(a << 24) | (c.R << 16) | (c.G << 8) | c.B;
+                int key = (a << 24) | (c.R << 16) | (c.G << 8) | c.B; //System.Drawing.Color.FromArgb(a, c.R, c.G, c.B).ToArgb();
 
                 SharpDX.Direct2D1.Brush existingBrush;
                 if (_DXBrushes.TryGetValue(key, out existingBrush))
