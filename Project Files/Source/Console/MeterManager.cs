@@ -9886,7 +9886,8 @@ namespace Thetis
                         MeterManager.ImgFetch.UpdateInterval(_image_fetcher_guid, _secs_interval);
                     }
                 }
-            } public bool BypassCache
+            } 
+            public bool BypassCache
             {
                 get { return _bypass_cache; }
                 set
@@ -25389,7 +25390,8 @@ namespace Thetis
 
                 if (ignore_caching)
                 {
-                    if (_stringMeasure.ContainsKey(key)) _stringMeasure[key] = sizeValue;
+                    if (_stringMeasure.ContainsKey(key)) 
+                        _stringMeasure[key] = sizeValue;
                     else
                     {
                         _stringMeasure.Add(key, sizeValue);

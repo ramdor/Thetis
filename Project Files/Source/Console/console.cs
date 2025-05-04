@@ -575,11 +575,6 @@ namespace Thetis
         // ======================================================
         public Console(string[] args)
         {
-            //run high, until we have completed, then set to configured value, see near end of function
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
-            ThreadPriority original_thread_priority = Thread.CurrentThread.Priority;
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
-
             //#error version
             this.Opacity = 0f; // FadeIn below. Note: console form has 0% set in form designer
 
@@ -1030,10 +1025,8 @@ namespace Thetis
             if (bShowReleaseNotes) ShowReleaseNotes();
             //
 
-            //now set the prio class as we have been running flat out up to this point
             //this used to be called in SetupForm ForceAllEvents, but moved here now
             if (!IsSetupFormNull) SetupForm.SetPriorityClass();
-            Thread.CurrentThread.Priority = original_thread_priority;
 
             //autostart
             if (Common.HasArg(args, "-autostart") || m_bAutoPowerOn)
