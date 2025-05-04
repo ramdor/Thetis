@@ -1740,6 +1740,7 @@ namespace Thetis
                     cpuName = mo["Name"] != null ? mo["Name"].ToString().Trim() : string.Empty;
                     break;
                 }
+                results.Dispose();
                 searcher.Dispose();
                 return cpuName;
             }
@@ -1752,18 +1753,20 @@ namespace Thetis
 
             try
             {
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_VideoController");
-                ManagementObjectCollection results = searcher.Get();
-                foreach (ManagementObject mo in results)
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_VideoController"))
+                using (ManagementObjectCollection results = searcher.Get())
                 {
-                    string name = mo["Name"] != null ? mo["Name"].ToString().Trim() : string.Empty;
-                    if (name != string.Empty)
+                    foreach (ManagementObject mo in results)
                     {
-                        names.Add(name);
+                        string name = mo["Name"] != null ? mo["Name"].ToString().Trim() : string.Empty;
+                        if (name != string.Empty)
+                        {
+                            names.Add(name);
+                        }
                     }
                 }
-                searcher.Dispose();
-                if(names.Count == 0) names.Add("Unknown GPU(s)");
+                if (names.Count == 0)
+                    names.Add("Unknown GPU(s)");
                 return names;
             }
             catch
@@ -1776,38 +1779,40 @@ namespace Thetis
 
         public static string GetTotalRam()
         {
-            // note mo["TotalPhysicalMemory"] might sometimes be a string on some os versions, so just handle as string
             try
             {
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem");
-                ManagementObjectCollection results = searcher.Get();
-                string totalMemory = "0";
-                foreach (ManagementObject mo in results)
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem"))
+                using (ManagementObjectCollection results = searcher.Get())
                 {
-                    totalMemory = mo["TotalPhysicalMemory"] != null ? mo["TotalPhysicalMemory"].ToString() : "0";
-                    break;
+                    foreach (ManagementObject mo in results)
+                    {
+                        string totalMemory = mo["TotalPhysicalMemory"] != null ? mo["TotalPhysicalMemory"].ToString() : "0";
+                        if (ulong.TryParse(totalMemory, out ulong bytes))
+                        {
+                            double gib = bytes / 1024.0 / 1024.0 / 1024.0;
+                            return gib.ToString("F2") + " GiB";
+                        }
+                        break;
+                    }
                 }
-                searcher.Dispose();
-                ulong bytes = 0;
-                ulong.TryParse(totalMemory, out bytes);
-                double gib = bytes / 1024.0 / 1024.0 / 1024.0;
-                return gib.ToString("F2") + " GiB";
             }
-            catch { return "Unknown"; }
+            catch { }
+            return "Unknown";
         }
 
         public static string GetInstalledRam()
         {
             try
             {
-                ManagementObjectSearcher s = new ManagementObjectSearcher(
-                    "SELECT Capacity FROM Win32_PhysicalMemory");
-                ulong totalBytes = 0;
-                foreach (ManagementObject mo in s.Get())
-                    totalBytes += (ulong)mo["Capacity"];
-                s.Dispose();
-                double gib = totalBytes / 1024.0 / 1024.0 / 1024.0;
-                return gib.ToString("F2") + " GiB";
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Capacity FROM Win32_PhysicalMemory"))
+                using (ManagementObjectCollection results = searcher.Get())
+                {
+                    ulong totalBytes = 0;
+                    foreach (ManagementObject mo in results)
+                        totalBytes += (ulong)mo["Capacity"];
+                    double gib = totalBytes / 1024.0 / 1024.0 / 1024.0;
+                    return gib.ToString("F2") + " GiB";
+                }
             }
             catch { return "Unknown"; }
         }

@@ -34189,9 +34189,12 @@ namespace Thetis
 
             sb.Append(scaling).Append("|");
 
-            MD5 md5 = MD5.Create();
-            byte[] data = Encoding.UTF8.GetBytes(sb.ToString());
-            byte[] hash = md5.ComputeHash(data);
+            byte[] hash;
+            using (MD5 md5 = MD5.Create())
+            {
+                byte[] data = Encoding.UTF8.GetBytes(sb.ToString());
+                hash = md5.ComputeHash(data);
+            }
 
             string ret = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
 
