@@ -1871,5 +1871,18 @@ namespace Thetis
             }
         }
         //
+        private static TimeSpan previous_cpu_time = Process.GetCurrentProcess().TotalProcessorTime;
+        private static DateTime previous_time = DateTime.UtcNow;
+        public static double ProcessCPUUsage()
+        {
+            Process process = Process.GetCurrentProcess();
+            TimeSpan current_cpu_time = process.TotalProcessorTime;
+            DateTime current_time = DateTime.UtcNow;
+            TimeSpan cpu_delta = current_cpu_time - previous_cpu_time;
+            TimeSpan time_delta = current_time - previous_time;
+            previous_cpu_time = current_cpu_time;
+            previous_time = current_time;
+            return (cpu_delta.TotalMilliseconds / (time_delta.TotalMilliseconds * Environment.ProcessorCount)) * 100.0;
+        }
     }
 }

@@ -701,16 +701,16 @@ namespace Thetis
             portAudioThread.Start();
             //
 
-            // Instance name - done as early as possible as very slow
-            _getInstanceNameComplete = false;
-            Thread instanceNameThread = new Thread(new ThreadStart(getInstanceName))
-            {
-                Name = "getInstanceNameThread",
-                Priority = ThreadPriority.Highest,
-                IsBackground = true,
-            };
-            instanceNameThread.Start();
-            //
+            //// Instance name - done as early as possible as very slow
+            //_getInstanceNameComplete = false;
+            //Thread instanceNameThread = new Thread(new ThreadStart(getInstanceName))
+            //{
+            //    Name = "getInstanceNameThread",
+            //    Priority = ThreadPriority.Highest,
+            //    IsBackground = true,
+            //};
+            //instanceNameThread.Start();
+            ////
 
             Splash.SetStatus("Initializing Components");        // Set progress point
 
@@ -881,13 +881,13 @@ namespace Thetis
             //            
             if (!IsSetupFormNull) SetupForm.SetupCMAsio(_portAudioIssue, Common.HasArg(args, "-cmasioconfig"));
 
-            // still waiting cpu
-            if (!_getInstanceNameComplete && instanceNameThread != null && instanceNameThread.IsAlive)
-            {
-                Splash.SetStatus("Waiting for CPU GetInstance");
-                bool bOk = instanceNameThread.Join(5000);
-                if (!bOk) MessageBox.Show("There was an issue initialising CPU usage", "CPU Usage. This will not be available on the status bar.", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-            }
+            //// still waiting cpu
+            //if (!_getInstanceNameComplete && instanceNameThread != null && instanceNameThread.IsAlive)
+            //{
+            //    Splash.SetStatus("Waiting for CPU GetInstance");
+            //    bool bOk = instanceNameThread.Join(5000);
+            //    if (!bOk) MessageBox.Show("There was an issue initialising CPU usage", "CPU Usage. This will not be available on the status bar.", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+            //}
             CpuUsage(); //[2.10.1.0] MW0LGE initial call to setup check marks in status bar as a minimum
 
             Splash.SetStatus("Processing Finder Info");
@@ -20723,57 +20723,56 @@ namespace Thetis
 
         private bool m_bShowSystemCPUUsage = true;
         public volatile PerformanceCounter _total_cpu_usage = null;
-        public volatile PerformanceCounter _total_thetis_usage = null;
-        private volatile string _sInstanceName = "";
-        private volatile bool _getInstanceNameComplete = false;
+        //public volatile PerformanceCounter _total_thetis_usage = null;
+        //private volatile string _sInstanceName = "";
+        //private volatile bool _getInstanceNameComplete = false;
 
-        private void getInstanceName()
-        {
-            //MW0LGE_21k9 updated to get actual process name used by perf counter
-            //moved to thread, as GetInstanceNames is very very slow
+        //private void getInstanceName()
+        //{
+        //    //MW0LGE_21k9 updated to get actual process name used by perf counter
+        //    //moved to thread, as GetInstanceNames is very very slow
 
-            _getInstanceNameComplete = false;
-            _sInstanceName = "";
+        //    _getInstanceNameComplete = false;
+        //    _sInstanceName = "";
 
-            try
-            {
-                string sMachineName = System.Environment.MachineName;
+        //    try
+        //    {
+        //        string sMachineName = System.Environment.MachineName;
 
-                Process p = Process.GetCurrentProcess();
+        //        Process p = Process.GetCurrentProcess();
 
-                PerformanceCounterCategory pcc = new PerformanceCounterCategory("Process", sMachineName);
-                string[] sInstanceNames = pcc.GetInstanceNames();
+        //        PerformanceCounterCategory pcc = new PerformanceCounterCategory("Process", sMachineName);
+        //        string[] sInstanceNames = pcc.GetInstanceNames();
 
-                foreach (string sName in sInstanceNames.Where(o => o.StartsWith(p.ProcessName)))
-                {
-                    using (PerformanceCounter processId = new PerformanceCounter("Process", "ID Process", sName, true))
-                    {
-                        if (p.Id == (int)processId.RawValue)
-                        {
-                            _sInstanceName = sName;
-                            break;
-                        }
-                    }
-                }
+        //        foreach (string sName in sInstanceNames.Where(o => o.StartsWith(p.ProcessName)))
+        //        {
+        //            using (PerformanceCounter processId = new PerformanceCounter("Process", "ID Process", sName, true))
+        //            {
+        //                if (p.Id == (int)processId.RawValue)
+        //                {
+        //                    _sInstanceName = sName;
+        //                    break;
+        //                }
+        //            }
+        //        }
 
-                _getInstanceNameComplete = true;
-            }
-            catch
-            {
+        //        _getInstanceNameComplete = true;
+        //    }
+        //    catch
+        //    {
 
-            }
-            Debug.Print("Get instance name done");
-        }
+        //    }
+        //    Debug.Print("Get instance name done");
+        //}
         private bool _cpu_usage_setup = false;
         private void CpuUsage()
         {
-            _cpu_usage_setup = false;
-
-            if (!_getInstanceNameComplete)
-            {
-                disableCpuVoltsUsage();
-                return; // thread has not finished getting the process counter related instance name            
-            }
+            //_cpu_usage_setup = false;
+            //if (!_getInstanceNameComplete)
+            //{
+            //    disableCpuVoltsUsage();
+            //    return; // thread has not finished getting the process counter related instance name            
+            //}
 
             try
             {
@@ -20789,12 +20788,12 @@ namespace Thetis
                     _total_cpu_usage = null;
                 }
 
-                if (_total_thetis_usage != null)
-                {
-                    _total_thetis_usage.Close();
-                    _total_thetis_usage.Dispose(); //MW0LGE_21k8
-                    _total_thetis_usage = null;
-                }
+                //if (_total_thetis_usage != null)
+                //{
+                //    _total_thetis_usage.Close();
+                //    _total_thetis_usage.Dispose(); //MW0LGE_21k8
+                //    _total_thetis_usage = null;
+                //}
 
                 //NOTE: run 'lodctr /R' on admin command prompt to rebuild performance counters
 
@@ -20811,11 +20810,11 @@ namespace Thetis
                 }
                 float tmp = _total_cpu_usage.NextValue();
 
-                if (!string.IsNullOrEmpty(_sInstanceName))
-                {
-                    _total_thetis_usage = new PerformanceCounter("Process", "% Processor Time", _sInstanceName, sMachineName);
-                    tmp = _total_thetis_usage.NextValue();
-                }
+                //if (!string.IsNullOrEmpty(_sInstanceName))
+                //{
+                //    _total_thetis_usage = new PerformanceCounter("Process", "% Processor Time", _sInstanceName, sMachineName);
+                //    tmp = _total_thetis_usage.NextValue();
+                //}
 
                 _cpu_usage_setup = true;
             }
@@ -26346,7 +26345,7 @@ namespace Thetis
             // cpu ussage
             if (_cpu_usage_setup && Environment.ProcessorCount > 0)
             {
-                if ((_total_cpu_usage != null && m_bShowSystemCPUUsage) || (_total_thetis_usage != null && !m_bShowSystemCPUUsage))
+                if ((_total_cpu_usage != null && m_bShowSystemCPUUsage) || !m_bShowSystemCPUUsage) //(_total_thetis_usage != null && !m_bShowSystemCPUUsage))
                 {
                     if (!toolStripDropDownButton_CPU.Visible) toolStripDropDownButton_CPU.Visible = true;
 
@@ -26361,32 +26360,33 @@ namespace Thetis
                     }
                     else
                     {
-                        if (_total_thetis_usage != null)
-                        {
-                            try
-                            {
-                                cpuPerc = _total_thetis_usage.NextValue() / (float)Environment.ProcessorCount;
-                            }
-                            catch (Exception ex)
-                            {
-                                //[2.10.3.9]MW0LGE handle an instance name change
-                                try
-                                {
-                                    _total_thetis_usage.Close();
-                                    _total_thetis_usage.Dispose();
-                                }
-                                catch { }
-                                _total_thetis_usage = null;
+                        cpuPerc = (float)Common.ProcessCPUUsage();
+                        //if (_total_thetis_usage != null)
+                        //{
+                        //    try
+                        //    {
+                        //        cpuPerc = _total_thetis_usage.NextValue() / (float)Environment.ProcessorCount;
+                        //    }
+                        //    catch (Exception ex)
+                        //    {
+                        //        //[2.10.3.9]MW0LGE handle an instance name change
+                        //        try
+                        //        {
+                        //            _total_thetis_usage.Close();
+                        //            _total_thetis_usage.Dispose();
+                        //        }
+                        //        catch { }
+                        //        _total_thetis_usage = null;
 
-                                if(ex.HResult == unchecked((int)0x80131509)) // Instance 'XYZ' does not exist in the specified Category.
-                                {
-                                    // need to get the instance again
-                                    // this can be a slow process, ideally should be in another thread, but we can live with this
-                                    getInstanceName();
-                                    CpuUsage();
-                                }
-                            }
-                        }
+                        //        if(ex.HResult == unchecked((int)0x80131509)) // Instance 'XYZ' does not exist in the specified Category.
+                        //        {
+                        //            // need to get the instance again
+                        //            // this can be a slow process, ideally should be in another thread, but we can live with this
+                        //            getInstanceName();
+                        //            CpuUsage();
+                        //        }
+                        //    }
+                        //}
                     }
 
                     _cpu_perc_smoothed = (_cpu_perc_smoothed * 0.8f) + (cpuPerc * 0.2f);
@@ -26394,7 +26394,6 @@ namespace Thetis
                 }
             }
         }
-
         private void timer_peak_text_Tick(object sender, System.EventArgs e)
         {
             UpdatePeakText();
