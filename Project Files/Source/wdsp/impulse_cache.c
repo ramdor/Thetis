@@ -255,7 +255,8 @@ void use_impulse_cache(int use)
 PORT
 void init_impulse_cache(int use)
 {
-	InitializeCriticalSection(&_cs_use_cache);
+	//InitializeCriticalSection(&_cs_use_cache);
+	InitializeCriticalSectionAndSpinCount(&_cs_use_cache, 2500);
 
 	EnterCriticalSection(&_cs_use_cache);
 	_use_cache = use;
