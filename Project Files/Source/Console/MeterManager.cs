@@ -15010,6 +15010,7 @@ namespace Thetis
                                                                     .AddReferences(typeof(object).Assembly)
                                                                     .AddReferences(typeof(string).Assembly);
                                                                     //.AddImports("System");
+                            Debug.Print($"bool result = (bool)({script_expression});");
                             _script = CSharpScript.Create($"bool result = (bool)({script_expression});", options, typeof(Globals));
                             _script.Compile();                            
 
@@ -24015,7 +24016,7 @@ namespace Thetis
                     Priority = ThreadPriority.Lowest,
                     IsBackground = false
                 };
-                _dxRenderThread.SetApartmentState(ApartmentState.STA); //[2.10.3]
+                //_dxRenderThread.SetApartmentState(ApartmentState.STA); //[2.10.3]
                 _dxRenderThread.Start();
             }
             public string ID

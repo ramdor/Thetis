@@ -1006,7 +1006,7 @@ namespace Thetis
                     Priority = m_tpDisplayThreadPriority, //MW0LGE now defaulted with m_tpDisplayThreadPriority, and updated by setupform
                     IsBackground = false//true MW0LGE_21b rundisplay now stops nicely, ensuring dx gpu resources are released                    
                 };
-                draw_display_thread.SetApartmentState(ApartmentState.STA);
+                //draw_display_thread.SetApartmentState(ApartmentState.STA);
                 draw_display_thread.Start();
             }
             _pause_DisplayThread = false;
