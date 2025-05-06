@@ -118,16 +118,16 @@ namespace Thetis
             }
 
             // restore or rebuild wisdom as needed
-            int rebuilt = WDSP.WDSPwisdom(app_data_path);
+            bool rebuilt = WDSP.WDSPwisdom(app_data_path) == 1 ? true : false;
             
-            if (rebuilt == 1)
+            if (rebuilt)
             {
                 // wisdom has been rebuilt, pop a message
                 MessageBox.Show("The fft wisdom file has been rebuilt.\n\nIt is now safe to close the output console window.", "Wisdom File", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
 
             WDSP.init_impulse_cache(_cache_impulse ? 1 : 0);
-            if (_cache_impulse_save_restore && rebuilt == 0)
+            if (_cache_impulse_save_restore && !rebuilt)
             {
                 // read any impulse cache if we have previously saved it. Ignore if wisdom00 is rebuilt
                 WDSP.read_impulse_cache(Path.Combine(app_data_path, "impulse_cache.dat"));
