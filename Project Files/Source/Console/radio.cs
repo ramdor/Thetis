@@ -118,7 +118,7 @@ namespace Thetis
             }
 
             // restore or rebuild wisdom as needed
-            bool rebuilt = WDSP.WDSPwisdom(app_data_path) == 1 ? true : false;
+            bool rebuilt = WDSP.WDSPwisdom(app_data_path) == 1;
             
             if (rebuilt)
             {
