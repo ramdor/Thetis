@@ -1999,7 +1999,44 @@ namespace Thetis
 
                         switch (mode_filtered)
                         {
-							case "ssb":
+							case "lsb":
+								mode = DSPMode.LSB;
+								break;
+							case "usb":
+								mode = DSPMode.USB;
+								break;
+							case "am":
+								mode = DSPMode.AM;
+								break;
+							case "fm":
+                            case "nfm":
+                                mode = DSPMode.FM;
+								break;
+							case "dsb":
+								mode = DSPMode.DSB;
+								break;
+							case "drm":
+								mode = DSPMode.DRM;
+								break;
+							case "spec":
+								mode = DSPMode.SPEC;
+								break;
+							case "sam":
+								mode = DSPMode.SAM;
+								break;
+							case "cwl":
+								mode = DSPMode.CWL;
+								break;
+							case "cwu":
+								mode = DSPMode.CWU;
+                                break;
+                            case "digu":
+								mode = DSPMode.DIGU;
+                                break;
+                            case "digl":
+								mode = DSPMode.DIGL;
+                                break;
+                            case "ssb":
 								if(isFreqencyNormallyUSB)
 									mode = DSPMode.USB;
 								else
