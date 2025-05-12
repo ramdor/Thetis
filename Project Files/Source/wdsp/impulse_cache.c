@@ -113,7 +113,7 @@ void free_impulse_cache(void)
 
 double* get_impulse_cache_entry(size_t bucket, HASH_T hash)
 {
-	if (!_run) return;
+	if (!_run) return NULL;
 
 	int use;
 	EnterCriticalSection(&_cs_use_cache);
@@ -201,7 +201,7 @@ int save_impulse_cache(const char* path)
 PORT
 int read_impulse_cache(const char* path)
 {
-	if (!_run) return;
+	if (!_run) return 0;
 
 	free_impulse_cache();
 
