@@ -7,12 +7,12 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
 ## v2.10.3.9 development - Change Log
-- [add] [or decreased] option added to "Force ATT on Tx to 31 when Drive or Tune power is increased and PS-A is on"
-- [add] tool tips added to fields and options in the linearity form
+- [add] an [or decreased] option added to "Force ATT on Tx to 31 when Drive or Tune power is increased and PS-A is on"
+- [add] many tool tips added to fields and options in the linearity form
 - [add] many tool tips added to DSP setup form
-- [add] software sidetone option added. New options in Setup->DSP->CW. Audio via cmASIO + VAC
+- [add] software sidetone option added. New options in Setup->DSP->CW. Audio via cmASIO + VAC. Note: this only works from cwx form and external rts/cts cw switching
 - [add] tx filter edge colour for the filter view item
-- [add] show/hide option for frequency numbers in Setup->Appearance->RX Display->Text
+- [add] show/hide option for grid frequency numbers in Setup->Appearance->RX Display->Text
 - [add] options to show/hide major/minor grid lines in Setup->Appearance->RX Display
 - [add] option to show two tone measurements in the linearity form. Note: suitable spectrum scale etc required. Code attempts to find peaks at expected locations
 - [add] added fft size display to the rx display settings
@@ -24,13 +24,13 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] datafill colour/alpha, and dataline alpha added for TX panadaptor
 - [add] low colour added to tx waterfall
 - [add] custom meter bar for use with % variables, min/max/high/title/units
-- [add] ui popups during the wdspWisdom00 file generation. Also notified if wisdom file is older than 3 months at startup
-- [add] FPS profiler in Setup->Tests. Use on a fresh database, with just region, model, and ip configured, so that you can connect + power up the radio through Thetis.
+- [add] ui popups during the wdsp wisdom00 file generation. Also notified if wisdom file is older than 3 months at startup
+- [add] FPS profiler in Setup->Tests. Use on a fresh database, with just region, model, and ip configured, so that you can connect + power up the radio through Thetis. Leave window position/size and do not change any settings
 - [add] options to cache WDSP filter impulse data in Setup-DSP. Can also store this data to a .dat file. Read the tool tips. Improves mode switch speed and Thetis start up time
 - [add] tci spot message now supports far more modes
 - [change] exporting a tx profile will now ask for destination location and filename. It will complain if filename already exists
 - [change] restored step attenuator RX1 if HERMES is used. Unsure why I disabled it a few years ago
-- [change] the bespoke TCI command tx_frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; . There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;
+- [change] the bespoke TCI command tx_frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; .There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;
 - [change] refactor serial port pin change detection code for slight performance improvements
 - [change] display vsync defaulted to on for new databases. I would advise turning this on if not already
 - [change] all RX display offsets are now done in one place in the code
@@ -38,7 +38,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] spectrum gradient change. Now -150 to +10 dBm.  NOTE: all gradients will need to be adjusted
 - [change] cursor/peak readout colours moved to Appearance-General
 - [change] float precision maintained for display/meter calibration offsets
-- [change] limit setPan to filter display spectrum to 1/8 of framerate (~266ms update interval when vfo is changing the spectrum pan)
+- [change] limit setPan to filter item display spectrum to 1/8 of framerate (~266ms update interval when vfo is changing the spectrum pan)
 - [change] refactored midi wheel code to try and remove the lag when spinning a wheel very fast. Slider/knob will still have same issue. Behringer devices PL-1/Micro/etc do not use this new code
 - [change] rx filter can now be +-20kHz wide to mirror TX filter widths. Shift also needs to be set as that will (at the moment) imply a width limit
 - [change] WDSP has had some optimisations and caching added. For example if you change the filter size to something that has been calculated before it will be much faster the second time. Has improved start up time, mode switching etc etc.
