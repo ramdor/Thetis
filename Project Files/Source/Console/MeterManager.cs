@@ -11255,13 +11255,10 @@ namespace Thetis
                 else
                 {
                     reading = 0;
-                    //if (MultiMeterIO.Data.ContainsKey(GetMMIOGuid(0)))
                     if (MultiMeterIO.Data.ContainsKey(MMIOGuid))
                     {
-                        //MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[GetMMIOGuid(0)];
                         MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[MMIOGuid];
 
-                        //object val = mmio.GetVariable(GetMMIOVariable(0));
                         object val = mmio.GetVariable(MMIOVariable);
                         if (val is int)
                         {
@@ -15328,13 +15325,10 @@ namespace Thetis
                 else
                 {
                     reading = 0;
-                    //if (MultiMeterIO.Data.ContainsKey(GetMMIOGuid(0)))
                     if (MultiMeterIO.Data.ContainsKey(MMIOGuid))
                     {
-                        //MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[GetMMIOGuid(0)];
                         MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[MMIOGuid];
 
-                        //object val = mmio.GetVariable(GetMMIOVariable(0));
                         object val = mmio.GetVariable(MMIOVariable);
                         if (val is int)
                         {
@@ -16064,13 +16058,10 @@ namespace Thetis
                 else
                 {
                     reading = 0;
-                    //if (MultiMeterIO.Data.ContainsKey(GetMMIOGuid(0)))
                     if (MultiMeterIO.Data.ContainsKey(MMIOGuid))
                     {
-                        //MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[GetMMIOGuid(0)];
                         MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[MMIOGuid];
 
-                        //object val = mmio.GetVariable(GetMMIOVariable(0));
                         object val = mmio.GetVariable(MMIOVariable);
                         if (val is int)
                         {

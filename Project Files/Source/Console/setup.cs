@@ -30001,8 +30001,8 @@ namespace Thetis
 
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
-
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
             MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
 
             _MMIO_ignore_change_events = true;
@@ -30600,6 +30600,7 @@ namespace Thetis
             if (initializing) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             bool ok = Enum.TryParse<MultiMeterIO.MMIOFormat>(comboMMIO_network_format_in.Text, out MultiMeterIO.MMIOFormat fmt);
 
@@ -30809,6 +30810,7 @@ namespace Thetis
             if (lstMMIO_network_list.SelectedIndex < 0) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             bool old_state = MultiMeterIO.Data[mmioci.Guid].Enabled;
             MultiMeterIO.Data[mmioci.Guid].Enabled = !old_state;
@@ -30899,6 +30901,7 @@ namespace Thetis
             if (initializing) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             bool ok = Enum.TryParse<MultiMeterIO.MMIOTerminator>(comboMMIO_network_terminator_in.Text, out MultiMeterIO.MMIOTerminator term);
 
@@ -31008,6 +31011,7 @@ namespace Thetis
             if (initializing) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             bool ok = Enum.TryParse<MultiMeterIO.MMIOTerminator>(comboMMIO_network_terminator_out.Text, out MultiMeterIO.MMIOTerminator term);
 
@@ -31022,6 +31026,7 @@ namespace Thetis
             if (initializing) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             bool ok = Enum.TryParse<MultiMeterIO.MMIOFormat>(comboMMIO_network_format_out.Text, out MultiMeterIO.MMIOFormat fmt);
 
@@ -31033,6 +31038,7 @@ namespace Thetis
             if (_MMIO_ignore_change_events) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             MultiMeterIO.Data[mmioci.Guid].CustomTerminatorIn = txtMMIO_network_terminator_in_custom.Text;
         }
@@ -31043,6 +31049,7 @@ namespace Thetis
             if (_MMIO_ignore_change_events) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             MultiMeterIO.Data[mmioci.Guid].CustomTerminatorOut = txtMMIO_network_terminator_out_custom.Text;
         }
@@ -31050,8 +31057,8 @@ namespace Thetis
         {
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
-
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
             MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
 
             frmIPv4Picker f = new frmIPv4Picker();
@@ -31187,8 +31194,8 @@ namespace Thetis
         {
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
-
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
             MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
 
             foreach (ListViewItem lvi in lstMMIO_network_variables.Items)
