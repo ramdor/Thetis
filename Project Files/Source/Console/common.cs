@@ -1871,18 +1871,31 @@ namespace Thetis
             }
         }
         //
-        private static TimeSpan _previous_cpu_time = Process.GetCurrentProcess().TotalProcessorTime;
-        private static DateTime _previous_time = DateTime.UtcNow;
+
+        private static HiPerfTimer _timer = null;
+        private static TimeSpan _previousCpuTime;
+        private static double _previousElapsedSeconds;
         public static double ProcessCPUUsage()
         {
+            if (_timer == null)
+            {
+                _timer = new HiPerfTimer();
+                _timer.Start();
+                _previousCpuTime = Process.GetCurrentProcess().TotalProcessorTime;
+                _previousElapsedSeconds = _timer.Elapsed;
+            }
+
             Process process = Process.GetCurrentProcess();
-            TimeSpan current_cpu_time = process.TotalProcessorTime;
-            DateTime current_time = DateTime.UtcNow;
-            TimeSpan cpu_delta = current_cpu_time - _previous_cpu_time;
-            TimeSpan time_delta = current_time - _previous_time;
-            _previous_cpu_time = current_cpu_time;
-            _previous_time = current_time;
-            return (cpu_delta.TotalMilliseconds / (time_delta.TotalMilliseconds * Environment.ProcessorCount)) * 100.0;
+            TimeSpan currentCpuTime = process.TotalProcessorTime;
+            double currentElapsedSeconds = _timer.Elapsed;
+            TimeSpan cpuDelta = currentCpuTime - _previousCpuTime;
+            double elapsedDelta = currentElapsedSeconds - _previousElapsedSeconds;
+            _previousCpuTime = currentCpuTime;
+            _previousElapsedSeconds = currentElapsedSeconds;
+
+            if (elapsedDelta <= 0.0) return 0.0;
+
+            return (cpuDelta.TotalSeconds / (elapsedDelta * Environment.ProcessorCount)) * 100.0;
         }
     }
 }

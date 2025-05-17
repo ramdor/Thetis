@@ -1520,8 +1520,7 @@ namespace Thetis
         }
         public static CustomReadings ReadingsCustom(int rx)
         {
-            rx -= 1;
-            return _custom_readings[rx];
+            return _custom_readings[rx - 1];
         }
         // zero reading
         public static void ZeroReading(out float value, int rx, Reading reading)
