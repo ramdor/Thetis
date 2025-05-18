@@ -32933,8 +32933,9 @@ namespace Thetis
             {
                 if (!_enabled || _direction == MMIODirection.IN) return;
 
-                // limit to max. Not nice, but it is not expected for this to ever happen
-                if (_outbound_queue.Count >= 500) _outbound_queue.TryDequeue(out _);
+                // limit to a max of 50. Not nice, but this will only happen if the sink/client is not available
+                // and this mmio is enabled
+                if (_outbound_queue.Count >= 50) _outbound_queue.TryDequeue(out _);
 
                 _outbound_queue.Enqueue(data);
             }
