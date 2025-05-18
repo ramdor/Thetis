@@ -10405,8 +10405,8 @@ namespace Thetis
         private static bool _merged = false;
         public static bool Merged
         {
-            //This is used by Console.SaveState and SetupForm.SaveOptions functions so that after a merge settings are not re-read
-            //from setup form and consol. This prevents the values that have just been merged from being over-written during
+            //This is used by Console.SaveState and SetupForm.SaveOptions functions so that after a merge, settings are not re-read
+            //from setup form and console. This prevents the values that have just been merged from being over-written during
             //the shutdown
             get { return _merged; }
         }

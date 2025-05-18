@@ -28712,6 +28712,7 @@ namespace Thetis
                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
                 Debug.Write("done...");
+                shutdownLogStringToPath("Before SetupForm.SaveOptions()");
                 SetupForm.SaveOptions();
                 Debug.WriteLine("Saved!");
                 shutdownLogStringToPath("Before MultiMeterIOStopTimers()");

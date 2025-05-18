@@ -49,6 +49,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.IO.Ports;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 
 //directX
 using SharpDX;
@@ -23866,8 +23867,8 @@ namespace Thetis
             private int _rx;
             private Console _console;
 
-            private HiPerfTimer _objFrameStartTimer = new HiPerfTimer();
-            private double _dElapsedFrameStart;
+            //private HiPerfTimer _objFrameStartTimer = new HiPerfTimer();
+            //private double _dElapsedFrameStart;
             private double _delta_time_ms;
 
             //fps          
@@ -23900,8 +23901,8 @@ namespace Thetis
                 if (c == null || target == null) return;
 
                 _delta_time_ms = 0;
-                _dElapsedFrameStart = 0;
-                _objFrameStartTimer.Start();
+                //_dElapsedFrameStart = 0;
+                //_objFrameStartTimer.Start();
 
                 _waterfall_row_added = false;
 
@@ -32695,7 +32696,6 @@ namespace Thetis
             private bool _listener_active;
             private string _four_char;
             private bool _enabled;
-            private bool _connector_running;
             private MMIOTerminator _terminator_in;
             private MMIOTerminator _terminator_out;
             private string _custom_terminator_in;
@@ -32713,12 +32713,20 @@ namespace Thetis
             //
 
             private ConcurrentDictionary<string, object> _io_variables;
+            [NonSerialized]
             private ConcurrentQueue<string> _outbound_queue;
             public clsMMIO()
             {
                 init();
 
                 _four_char = Common.FourChar(_ip, _port, _guid);
+            }
+            [OnDeserialized]
+            private void OnDeserialized(StreamingContext context)
+            {
+                // This runs after Deserialize. We need to init the outbound queue as it is now not serialised/deserialised.
+                // Deserialising bypasses the constructor
+                _outbound_queue = new ConcurrentQueue<string>();
             }
             private void init()
             {
@@ -32923,12 +32931,13 @@ namespace Thetis
             }
             public void EnqueueOutbound(string data)
             {
-                if (_direction == MMIODirection.IN) return;
+                if (!_enabled || _direction == MMIODirection.IN) return;
+                
                 _outbound_queue.Enqueue(data);
             }
             public string DequeueOutbound()
             {
-                if (_direction == MMIODirection.IN) return "";
+                if (!_enabled || _direction == MMIODirection.IN) return "";
 
                 bool ok = _outbound_queue.TryDequeue(out string data);
                 if (ok) return data;
