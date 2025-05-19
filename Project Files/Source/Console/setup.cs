@@ -34221,6 +34221,18 @@ namespace Thetis
             if (initializing) return;
             RadioDSP.CacheImpulseSaveRestore = chkWDSP_save_restore_cache_impulse.Checked;
         }
+
+        private void btnTwoToneF_defaults_Click(object sender, EventArgs e)
+        {
+            udTestIMDFreq1.Value = 700;
+            udTestIMDFreq2.Value = 1900;
+        }
+
+        private void btnTwoToneF_stealth_Click(object sender, EventArgs e)
+        {
+            udTestIMDFreq1.Value = 70;
+            udTestIMDFreq2.Value = 190;
+        }
     }
 
     #region PADeviceInfo Helper Class

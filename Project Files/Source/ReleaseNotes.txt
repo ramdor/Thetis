@@ -28,6 +28,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] FPS profiler in Setup->Tests. Use on a fresh database, with just region, model, and ip configured, so that you can connect + power up the radio through Thetis. Leave window position/size and do not change any settings
 - [add] options to cache WDSP filter impulse data in Setup-DSP. Can also store this data to a .dat file. Read the tool tips. Improves mode switch speed and Thetis start up time
 - [add] tci spot message now supports far more modes
+- [add] defaults and 'stealth' mode for two tone frequencies in setup->tests
 - [change] exporting a tx profile will now ask for destination location and filename. It will complain if filename already exists
 - [change] restored step attenuator RX1 if HERMES is used. Unsure why I disabled it a few years ago
 - [change] the bespoke TCI command tx_frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; .There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;

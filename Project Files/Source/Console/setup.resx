@@ -141,51 +141,7 @@
   <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>302, 17</value>
-  </metadata>
-  <data name="chkFilter_high_resolution_characteristics.ToolTip" xml:space="preserve">
-    <value>Generates additional data (x8) for the filter item to enhance the display of filter characteristics.
-Enabling this option will slightly increase processing time for filter Size/Window changes and alter
-the appearance of the filter passband display.</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="pbWarningBufferType.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWZJREFUOE+l
-        kc8rRGEYhZ+yQaREksZ/YKtIZKvs2MxfwMLKgoWyVsQCWwvKzlLJLHTHj9gMQ9e4QxQ7Gr9jDHN17o25
-        8ykzxqmn3t73nNPtu/CLFmchEWU+EWVOc8mKrcN1jIzQXJJGh8C2iL47vAnbwtLuT6qsgP0IpA64d09x
-        hWbtdCtK1ZVldLV5X3OXcUgvTuEuTOBqti1udZOnoDrb4Gyb0F2cC30J+Gh+OORSN3kKKrFRjrNJNpsk
-        axZpp9vaMvR115vRnDpavd/dk07w9PU2wSKhmzwr0yEznpMTqeV8h/RXSDTU+QR38sjb3lJjVkBTo/fA
-        o882qWBoIIw7GM4vkse2GJkZbjZrILkFl3vcBgMim/Qx91d73CuTp8lxOI6y9OGQMQPVVT7mXl5llP3W
-        7irc7PNimoX52EGUUdZTf6/3NvHMCa+mUcyM+Zh7oYxtcaAOlfB49NNULMqqQ0Ua/s0n0OWyxKRb9V4A
-        AAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="pbWarningFilterSize.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWZJREFUOE+l
-        kc8rRGEYhZ+yQaREksZ/YKtIZKvs2MxfwMLKgoWyVsQCWwvKzlLJLHTHj9gMQ9e4QxQ7Gr9jDHN17o25
-        8ykzxqmn3t73nNPtu/CLFmchEWU+EWVOc8mKrcN1jIzQXJJGh8C2iL47vAnbwtLuT6qsgP0IpA64d09x
-        hWbtdCtK1ZVldLV5X3OXcUgvTuEuTOBqti1udZOnoDrb4Gyb0F2cC30J+Gh+OORSN3kKKrFRjrNJNpsk
-        axZpp9vaMvR115vRnDpavd/dk07w9PU2wSKhmzwr0yEznpMTqeV8h/RXSDTU+QR38sjb3lJjVkBTo/fA
-        o882qWBoIIw7GM4vkse2GJkZbjZrILkFl3vcBgMim/Qx91d73CuTp8lxOI6y9OGQMQPVVT7mXl5llP3W
-        7irc7PNimoX52EGUUdZTf6/3NvHMCa+mUcyM+Zh7oYxtcaAOlfB49NNULMqqQ0Ua/s0n0OWyxKRb9V4A
-        AAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="pbWarningBufferSize.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWZJREFUOE+l
-        kc8rRGEYhZ+yQaREksZ/YKtIZKvs2MxfwMLKgoWyVsQCWwvKzlLJLHTHj9gMQ9e4QxQ7Gr9jDHN17o25
-        8ykzxqmn3t73nNPtu/CLFmchEWU+EWVOc8mKrcN1jIzQXJJGh8C2iL47vAnbwtLuT6qsgP0IpA64d09x
-        hWbtdCtK1ZVldLV5X3OXcUgvTuEuTOBqti1udZOnoDrb4Gyb0F2cC30J+Gh+OORSN3kKKrFRjrNJNpsk
-        axZpp9vaMvR115vRnDpavd/dk07w9PU2wSKhmzwr0yEznpMTqeV8h/RXSDTU+QR38sjb3lJjVkBTo/fA
-        o882qWBoIIw7GM4vkse2GJkZbjZrILkFl3vcBgMim/Qx91d73CuTp8lxOI6y9OGQMQPVVT7mXl5llP3W
-        7irc7PNimoX52EGUUdZTf6/3NvHMCa+mUcyM+Zh7oYxtcaAOlfB49NNULMqqQ0Ua/s0n0OWyxKRb9V4A
-        AAAASUVORK5CYII=
-</value>
-  </data>
   <data name="picModelBoardWarning.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWZJREFUOE+l
@@ -272,6 +228,47 @@ the appearance of the filter passband display.</value>
 This is not spurious RF but a side effect of the FFT bins and averages.
 This setting will reset the WDSP analyzer pixel/average buffers.
 They will take a time to 're-fill' and is determined by sample rate and bin size.</value>
+  </data>
+  <data name="chkFilter_high_resolution_characteristics.ToolTip" xml:space="preserve">
+    <value>Generates additional data (x8) for the filter item to enhance the display of filter characteristics.
+Enabling this option will slightly increase processing time for filter Size/Window changes and alter
+the appearance of the filter passband display.</value>
+  </data>
+  <data name="pbWarningBufferType.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWZJREFUOE+l
+        kc8rRGEYhZ+yQaREksZ/YKtIZKvs2MxfwMLKgoWyVsQCWwvKzlLJLHTHj9gMQ9e4QxQ7Gr9jDHN17o25
+        8ykzxqmn3t73nNPtu/CLFmchEWU+EWVOc8mKrcN1jIzQXJJGh8C2iL47vAnbwtLuT6qsgP0IpA64d09x
+        hWbtdCtK1ZVldLV5X3OXcUgvTuEuTOBqti1udZOnoDrb4Gyb0F2cC30J+Gh+OORSN3kKKrFRjrNJNpsk
+        axZpp9vaMvR115vRnDpavd/dk07w9PU2wSKhmzwr0yEznpMTqeV8h/RXSDTU+QR38sjb3lJjVkBTo/fA
+        o882qWBoIIw7GM4vkse2GJkZbjZrILkFl3vcBgMim/Qx91d73CuTp8lxOI6y9OGQMQPVVT7mXl5llP3W
+        7irc7PNimoX52EGUUdZTf6/3NvHMCa+mUcyM+Zh7oYxtcaAOlfB49NNULMqqQ0Ua/s0n0OWyxKRb9V4A
+        AAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="pbWarningFilterSize.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWZJREFUOE+l
+        kc8rRGEYhZ+yQaREksZ/YKtIZKvs2MxfwMLKgoWyVsQCWwvKzlLJLHTHj9gMQ9e4QxQ7Gr9jDHN17o25
+        8ykzxqmn3t73nNPtu/CLFmchEWU+EWVOc8mKrcN1jIzQXJJGh8C2iL47vAnbwtLuT6qsgP0IpA64d09x
+        hWbtdCtK1ZVldLV5X3OXcUgvTuEuTOBqti1udZOnoDrb4Gyb0F2cC30J+Gh+OORSN3kKKrFRjrNJNpsk
+        axZpp9vaMvR115vRnDpavd/dk07w9PU2wSKhmzwr0yEznpMTqeV8h/RXSDTU+QR38sjb3lJjVkBTo/fA
+        o882qWBoIIw7GM4vkse2GJkZbjZrILkFl3vcBgMim/Qx91d73CuTp8lxOI6y9OGQMQPVVT7mXl5llP3W
+        7irc7PNimoX52EGUUdZTf6/3NvHMCa+mUcyM+Zh7oYxtcaAOlfB49NNULMqqQ0Ua/s0n0OWyxKRb9V4A
+        AAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="pbWarningBufferSize.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWZJREFUOE+l
+        kc8rRGEYhZ+yQaREksZ/YKtIZKvs2MxfwMLKgoWyVsQCWwvKzlLJLHTHj9gMQ9e4QxQ7Gr9jDHN17o25
+        8ykzxqmn3t73nNPtu/CLFmchEWU+EWVOc8mKrcN1jIzQXJJGh8C2iL47vAnbwtLuT6qsgP0IpA64d09x
+        hWbtdCtK1ZVldLV5X3OXcUgvTuEuTOBqti1udZOnoDrb4Gyb0F2cC30J+Gh+OORSN3kKKrFRjrNJNpsk
+        axZpp9vaMvR115vRnDpavd/dk07w9PU2wSKhmzwr0yEznpMTqeV8h/RXSDTU+QR38sjb3lJjVkBTo/fA
+        o882qWBoIIw7GM4vkse2GJkZbjZrILkFl3vcBgMim/Qx91d73CuTp8lxOI6y9OGQMQPVVT7mXl5llP3W
+        7irc7PNimoX52EGUUdZTf6/3NvHMCa+mUcyM+Zh7oYxtcaAOlfB49NNULMqqQ0Ua/s0n0OWyxKRb9V4A
+        AAAASUVORK5CYII=
+</value>
   </data>
   <data name="comboDSPNOBmode.ToolTip" xml:space="preserve">
     <value>NB2 mode: Set mode in which NB2 deals with impulses

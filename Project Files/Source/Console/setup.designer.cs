@@ -3696,6 +3696,8 @@
             this.lblSigGenRXMode = new System.Windows.Forms.LabelTS();
             this.cmboSigGenRXMode = new System.Windows.Forms.ComboBoxTS();
             this.grpTestTXIMD = new System.Windows.Forms.GroupBoxTS();
+            this.btnTwoToneF_stealth = new System.Windows.Forms.ButtonTS();
+            this.btnTwoToneF_defaults = new System.Windows.Forms.ButtonTS();
             this.radUseFixedDrive2Tone = new System.Windows.Forms.RadioButtonTS();
             this.radUseDriveSlider2Tone = new System.Windows.Forms.RadioButtonTS();
             this.radUseTuneSlider2Tone = new System.Windows.Forms.RadioButtonTS();
@@ -58801,6 +58803,8 @@
             // 
             // grpTestTXIMD
             // 
+            this.grpTestTXIMD.Controls.Add(this.btnTwoToneF_stealth);
+            this.grpTestTXIMD.Controls.Add(this.btnTwoToneF_defaults);
             this.grpTestTXIMD.Controls.Add(this.radUseFixedDrive2Tone);
             this.grpTestTXIMD.Controls.Add(this.radUseDriveSlider2Tone);
             this.grpTestTXIMD.Controls.Add(this.radUseTuneSlider2Tone);
@@ -58819,10 +58823,34 @@
             this.grpTestTXIMD.Controls.Add(this.udTestIMDFreq1);
             this.grpTestTXIMD.Location = new System.Drawing.Point(8, 8);
             this.grpTestTXIMD.Name = "grpTestTXIMD";
-            this.grpTestTXIMD.Size = new System.Drawing.Size(162, 326);
+            this.grpTestTXIMD.Size = new System.Drawing.Size(208, 326);
             this.grpTestTXIMD.TabIndex = 83;
             this.grpTestTXIMD.TabStop = false;
             this.grpTestTXIMD.Text = "Two Tone Test";
+            // 
+            // btnTwoToneF_stealth
+            // 
+            this.btnTwoToneF_stealth.Image = null;
+            this.btnTwoToneF_stealth.Location = new System.Drawing.Point(135, 73);
+            this.btnTwoToneF_stealth.Name = "btnTwoToneF_stealth";
+            this.btnTwoToneF_stealth.Selectable = true;
+            this.btnTwoToneF_stealth.Size = new System.Drawing.Size(67, 23);
+            this.btnTwoToneF_stealth.TabIndex = 127;
+            this.btnTwoToneF_stealth.Text = "\'Stealth\'";
+            this.btnTwoToneF_stealth.UseVisualStyleBackColor = true;
+            this.btnTwoToneF_stealth.Click += new System.EventHandler(this.btnTwoToneF_stealth_Click);
+            // 
+            // btnTwoToneF_defaults
+            // 
+            this.btnTwoToneF_defaults.Image = null;
+            this.btnTwoToneF_defaults.Location = new System.Drawing.Point(135, 49);
+            this.btnTwoToneF_defaults.Name = "btnTwoToneF_defaults";
+            this.btnTwoToneF_defaults.Selectable = true;
+            this.btnTwoToneF_defaults.Size = new System.Drawing.Size(67, 23);
+            this.btnTwoToneF_defaults.TabIndex = 126;
+            this.btnTwoToneF_defaults.Text = "Defaults";
+            this.btnTwoToneF_defaults.UseVisualStyleBackColor = true;
+            this.btnTwoToneF_defaults.Click += new System.EventHandler(this.btnTwoToneF_defaults_Click);
             // 
             // radUseFixedDrive2Tone
             // 
@@ -72560,5 +72588,7 @@
         private GroupBoxTS groupBoxTS54;
         private CheckBoxTS chkWDSP_save_restore_cache_impulse;
         private CheckBoxTS chkWDSP_cache_impulse;
+        private ButtonTS btnTwoToneF_stealth;
+        private ButtonTS btnTwoToneF_defaults;
     }
 }
