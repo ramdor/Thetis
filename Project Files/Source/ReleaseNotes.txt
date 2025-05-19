@@ -73,6 +73,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] rx2 mnf position now correctly located when in panadaptor view
 - [fix] fix issue that could cause repeated errors in mmio when a key is not found, perhaps caused by old db
 - [fix] outbound mmio queue fix for data node
+- [fix] fixed issue where rotator control item would sometimes miss the stop command on click. Note. mouse up+down will trigger this when the red circle is shown
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked
