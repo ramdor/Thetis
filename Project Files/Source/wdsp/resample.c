@@ -120,12 +120,12 @@ void flush_resample (RESAMPLE a)
 PORT
 int xresample(RESAMPLE a)
 {
-	//[2.10.3.9]MW0LGE refactor to remove pointer chase in the lopps
+	//[2.10.3.9]MW0LGE refactor to remove pointer chase in the loops
 	int outsamps = 0;
 	double* in = a->in;
 	double* out = a->out;
 	int     idx_in = a->idx_in;
-	int     ringsz = a->ringsize;
+	int     ringsize = a->ringsize;
 	double* ring = a->ring;
 	int     cpp = a->cpp;
 	int     phnum = a->phnum;
@@ -155,7 +155,7 @@ int xresample(RESAMPLE a)
 			n = cpp * phnum;
 			for (j = 0; j < cpp; j++)
 			{
-				if ((idx_out = idx_in + j) >= ringsz) idx_out -= ringsz;
+				if ((idx_out = idx_in + j) >= ringsize) idx_out -= ringsize;
 				I += h[n + j] * ring[2 * idx_out + 0];
 				Q += h[n + j] * ring[2 * idx_out + 1];
 			}
@@ -165,7 +165,7 @@ int xresample(RESAMPLE a)
 			phnum += M;
 		}
 		phnum -= L;
-		if (--idx_in < 0) idx_in = ringsz - 1;
+		if (--idx_in < 0) idx_in = ringsize - 1;
 	}
 
 	a->phnum = phnum;

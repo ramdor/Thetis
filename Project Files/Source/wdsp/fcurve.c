@@ -29,7 +29,8 @@ warren@wpratt.com
 double* fc_impulse (int nc, double f0, double f1, double g0, double g1, int curve, double samplerate, double scale, int ctfmode, int wintype)
 {
 	// check for previous in the cache
-	struct Params {
+	struct Params 
+	{
 		int     nc;
 		int     curve;
 		int     ctfmode;

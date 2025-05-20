@@ -36,17 +36,11 @@ int fEQcompare (const void * a, const void * b)
 		return 1;
 }
 
-double* eq_impulse(int N,
-	int nfreqs,
-	double* F,
-	double* G,
-	double samplerate,
-	double scale,
-	int ctfmode,
-	int wintype)
+double* eq_impulse(int N, int nfreqs, double* F, double* G, double samplerate, double scale, int ctfmode, int wintype)
 {
 	// check for previous in the cache
-	struct Params {
+	struct Params 
+	{
 		int     N;
 		int     nfreqs;
 		int     ctfmode;

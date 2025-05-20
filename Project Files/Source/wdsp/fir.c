@@ -187,7 +187,8 @@ double* fir_fsamp (int N, double* A, int rtype, double scale, int wintype)
 double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int wintype, int rtype, double scale)
 {
 	// check for previous in the cache
-	struct Params {
+	struct Params 
+	{
 		int N;
 		int wintype;
 		int rtype;
@@ -198,7 +199,7 @@ double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int
 	};
 
 	struct Params params;
-	memset(&params, 0, sizeof params);
+	memset(&params, 0, sizeof(params));
 	params.N = N;
 	params.wintype = wintype;
 	params.rtype = rtype;
@@ -349,7 +350,8 @@ void analytic (int N, double* in, double* out)
 void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 {
 	// check for previous in the cache
-	struct Params {
+	struct Params 
+	{
 		int N;
 		int pfactor;
 		int polarity;
