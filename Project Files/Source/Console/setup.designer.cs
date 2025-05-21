@@ -58837,6 +58837,7 @@
             this.btnTwoToneF_stealth.Size = new System.Drawing.Size(67, 23);
             this.btnTwoToneF_stealth.TabIndex = 127;
             this.btnTwoToneF_stealth.Text = "\'Stealth\'";
+            this.toolTip1.SetToolTip(this.btnTwoToneF_stealth, "A \'stealth\' 70Hz and 190Hz");
             this.btnTwoToneF_stealth.UseVisualStyleBackColor = true;
             this.btnTwoToneF_stealth.Click += new System.EventHandler(this.btnTwoToneF_stealth_Click);
             // 
@@ -58849,6 +58850,7 @@
             this.btnTwoToneF_defaults.Size = new System.Drawing.Size(67, 23);
             this.btnTwoToneF_defaults.TabIndex = 126;
             this.btnTwoToneF_defaults.Text = "Defaults";
+            this.toolTip1.SetToolTip(this.btnTwoToneF_defaults, "Default 700Hz and 1900Hz");
             this.btnTwoToneF_defaults.UseVisualStyleBackColor = true;
             this.btnTwoToneF_defaults.Click += new System.EventHandler(this.btnTwoToneF_defaults_Click);
             // 

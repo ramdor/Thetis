@@ -11100,6 +11100,8 @@ namespace Thetis
                 udTestIMDPower.Enabled = false;
                 chkInvertTones.Enabled = false;
                 udFreq2Delay.Enabled = false; //MW0LGE_21
+                btnTwoToneF_defaults.Enabled = false;
+                btnTwoToneF_stealth.Enabled = false;
                 double ttfreq1 = (double)udTestIMDFreq1.Value;
                 double ttfreq2 = (double)udTestIMDFreq2.Value;
                 double ttmag = (double)udTwoToneLevel.Value;
@@ -11200,6 +11202,8 @@ namespace Thetis
                 udTestIMDPower.Enabled = true;
                 chkInvertTones.Enabled = true;
                 udFreq2Delay.Enabled = true;
+                btnTwoToneF_defaults.Enabled = true;
+                btnTwoToneF_stealth.Enabled = true;
 
                 chkTestIMD.Text = "Start";
             }
