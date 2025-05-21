@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2014, 2016, 2017, 2021 Warren Pratt, NR0V
+Copyright (C) 2013, 2014, 2016, 2017, 2021, 2023 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

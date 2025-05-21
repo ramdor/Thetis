@@ -3,7 +3,7 @@
 This file is part of a program that implements a Spectrum Analyzer
 used in conjunction with software-defined-radio hardware.
 
-Copyright (C) 2012, 2013, 2014, 2016 Warren Pratt, NR0V
+Copyright (C) 2012, 2013, 2014, 2016, 2023 Warren Pratt, NR0V
 Copyright (C) 2012 David McQuate, WA8YWQ - Kaiser window & Bessel function added.
 
 This program is free software; you can redistribute it and/or

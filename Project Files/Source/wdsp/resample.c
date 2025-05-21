@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013 Warren Pratt, NR0V
+Copyright (C) 2013, 2025 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -120,98 +120,48 @@ void flush_resample (RESAMPLE a)
 PORT
 int xresample(RESAMPLE a)
 {
-	//[2.10.3.9]MW0LGE refactor to remove pointer chase in the loops
 	int outsamps = 0;
-	double* in = a->in;
-	double* out = a->out;
-	int     idx_in = a->idx_in;
-	int     ringsize = a->ringsize;
-	double* ring = a->ring;
-	int     cpp = a->cpp;
-	int     phnum = a->phnum;
-	double* h = a->h;
-	int		sz = a->size;
-	int		L = a->L;
-	int		M = a->M;
-
-	if (!a->run) {
-		if (in != out)
-			memcpy(out, in, sz * sizeof(complex));
-		return 0;
-	}
-
+	if (a->run)
+	{
 	int i, j, n;
 	int idx_out;
 	double I, Q;
 
-	for (i = 0; i < sz; i++)
+		int cpp = a->cpp;
+		int idx_in = a->idx_in;
+		int ringsize = a->ringsize;
+		double* h = a->h;
+		double* ring = a->ring;
+
+		for (i = 0; i < a->size; i++)
 	{
-		ring[2 * idx_in + 0] = in[2 * i + 0];
-		ring[2 * idx_in + 1] = in[2 * i + 1];
-		while (phnum < L)
+			ring[2 * idx_in + 0] = a->in[2 * i + 0];
+			ring[2 * idx_in + 1] = a->in[2 * i + 1];
+			while (a->phnum < a->L)
 		{
 			I = 0.0;
 			Q = 0.0;
-			n = cpp * phnum;
+				n = cpp * a->phnum;
 			for (j = 0; j < cpp; j++)
 			{
 				if ((idx_out = idx_in + j) >= ringsize) idx_out -= ringsize;
 				I += h[n + j] * ring[2 * idx_out + 0];
 				Q += h[n + j] * ring[2 * idx_out + 1];
 			}
-			out[2 * outsamps + 0] = I;
-			out[2 * outsamps + 1] = Q;
+				a->out[2 * outsamps + 0] = I;
+				a->out[2 * outsamps + 1] = Q;
 			outsamps++;
-			phnum += M;
+				a->phnum += a->M;
 		}
-		phnum -= L;
-		if (--idx_in < 0) idx_in = ringsize - 1;
+			a->phnum -= a->L;
+			if (--idx_in < 0) idx_in = a->ringsize - 1;
 	}
-
-	a->phnum = phnum;
 	a->idx_in = idx_in;
-
+	}
+	else if (a->in != a->out)
+		memcpy (a->out, a->in, a->size * sizeof (complex));
 	return outsamps;
 }
-
-//PORT
-//int xresample (RESAMPLE a)
-//{
-//	int outsamps = 0;
-//	if (a->run)
-//	{
-//		int i, j, n;
-//		int idx_out;
-//		double I, Q;
-//
-//		for (i = 0; i < a->size; i++)
-//		{
-//			a->ring[2 * a->idx_in + 0] = a->in[2 * i + 0];
-//			a->ring[2 * a->idx_in + 1] = a->in[2 * i + 1];
-//			while (a->phnum < a->L)
-//			{
-//				I = 0.0;
-//				Q = 0.0;
-//				n = a->cpp * a->phnum;
-//				for (j = 0; j < a->cpp; j++)
-//				{
-//					if ((idx_out = a->idx_in + j) >= a->ringsize) idx_out -= a->ringsize;
-//					I += a->h[n + j] * a->ring[2 * idx_out + 0];
-//					Q += a->h[n + j] * a->ring[2 * idx_out + 1];
-//				}
-//				a->out[2 * outsamps + 0] = I;
-//				a->out[2 * outsamps + 1] = Q;
-//				outsamps++;
-//				a->phnum += a->M;
-//			}
-//			a->phnum -= a->L;
-//			if (--a->idx_in < 0) a->idx_in = a->ringsize - 1;
-//		}
-//	}
-//	else if (a->in != a->out)
-//		memcpy (a->out, a->in, a->size * sizeof (complex));
-//	return outsamps;
-//}
 
 void setBuffers_resample(RESAMPLE a, double* in, double* out)
 {

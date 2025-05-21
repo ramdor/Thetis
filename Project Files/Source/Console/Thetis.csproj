@@ -1226,7 +1226,7 @@ echo } &gt;&gt; "$(ProjectDir)VersionInfo.cs"
     <PostBuildEvent>copy /Y "..\..\..\lib\fftw_$(PlatformName)\libfftw3-3.dll" "$(ProjectDir)$(OutDir)";
 copy /Y "$(ProjectDir)CAT\CATStructs.xml" "$(ProjectDir)$(OutDir)";
 copy /Y "..\..\..\lib\Thetis-resources\calculus" "$(ProjectDir)$(OutDir)"
-copy /Y "..\..\..\lib\Thetis-resources\zetaHat.bin" "$(ProjectDir)$(OutDir)"
+:: copy /Y "..\..\..\lib\Thetis-resources\zetaHat.bin" "$(ProjectDir)$(OutDir)"
 copy /Y "..\..\..\Source\packages\SkiaSharp.NativeAssets.Win32.3.119.0\runtimes\win-x64\native\libSkiaSharp.dll" "$(ProjectDir)$(OutDir)"
 </PostBuildEvent>
   </PropertyGroup>

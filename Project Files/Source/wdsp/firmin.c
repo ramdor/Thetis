@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2016 Warren Pratt, NR0V
+Copyright (C) 2016, 2025 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -438,29 +438,6 @@ void xfircore(FIRCORE a)
 	fftw_execute(a->crev);
 	memcpy(a->fftin, &(a->fftin[2 * a->size]), a->size * sizeof(complex));
 }
-
-//void xfircore (FIRCORE a)
-//{
-//	int i, j, k;
-//	memcpy (&(a->fftin[2 * a->size]), a->in, a->size * sizeof (complex));
-//	fftw_execute (a->pcfor[a->buffidx]);
-//	k = a->buffidx;
-//	memset (a->accum, 0, 2 * a->size * sizeof (complex));
-//	EnterCriticalSection (&a->update);
-//	for (j = 0; j < a->nfor; j++)
-//	{
-//		for (i = 0; i < 2 * a->size; i++)
-//		{
-//			a->accum[2 * i + 0] += a->fftout[k][2 * i + 0] * a->fmask[a->cset][j][2 * i + 0] - a->fftout[k][2 * i + 1] * a->fmask[a->cset][j][2 * i + 1];
-//			a->accum[2 * i + 1] += a->fftout[k][2 * i + 0] * a->fmask[a->cset][j][2 * i + 1] + a->fftout[k][2 * i + 1] * a->fmask[a->cset][j][2 * i + 0];
-//		}
-//		k = (k + a->idxmask) & a->idxmask;
-//	}
-//	LeaveCriticalSection (&a->update);
-//	a->buffidx = (a->buffidx + 1) & a->idxmask;
-//	fftw_execute (a->crev);
-//	memcpy (a->fftin, &(a->fftin[2 * a->size]), a->size * sizeof(complex));
-//}
 
 void setBuffers_fircore (FIRCORE a, double* in, double* out)
 {

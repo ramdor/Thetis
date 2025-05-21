@@ -30357,6 +30357,13 @@ namespace Thetis
 
         private MeterTXMode old_meter_tx_mode_before_tune;
         private DSPMode old_dsp_mode;
+
+        private int _tune_pulse_window_ms = 100;
+        private float _tune_pulse_duty = 0.25f;
+        private bool _tune_pulse_enabled = false;
+        private CancellationTokenSource _tune_pulse_cts = null;
+        private const double MAX_TONE_MAG = 0.99999f; // why not 1?  clipping?
+
         private async void chkTUN_CheckedChanged(object sender, System.EventArgs e)
         {
             bool oldTune = tuning; //MW0LGE_21k9d
@@ -30409,7 +30416,34 @@ namespace Thetis
                         break;
                 }
 
-                radio.GetDSPTX(0).TXPostGenToneMag = 0.99999;
+                if (_tune_pulse_cts != null)
+                {
+                    _tune_pulse_cts.Cancel();
+                    _tune_pulse_cts.Dispose();
+                    _tune_pulse_cts = null;
+                }
+                if (_tune_pulse_enabled)
+                {
+                    _tune_pulse_cts = new CancellationTokenSource();
+                    CancellationToken token = _tune_pulse_cts.Token;
+                    Task.Run(async () =>
+                    {
+                        int highMs = (int)(_tune_pulse_window_ms * _tune_pulse_duty);
+                        int lowMs = _tune_pulse_window_ms - highMs;
+                        while (!token.IsCancellationRequested && tuning)
+                        {
+                            radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG;
+                            await Task.Delay(highMs, token);
+                            radio.GetDSPTX(0).TXPostGenToneMag = 0f;
+                            await Task.Delay(lowMs, token);
+                        }
+                    }, token);
+                }
+                else
+                {
+                    radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG;
+                }
+
                 radio.GetDSPTX(0).TXPostGenMode = 0;
                 radio.GetDSPTX(0).TXPostGenRun = 1;
 
@@ -30474,6 +30508,13 @@ namespace Thetis
             }
             else
             {
+                if (_tune_pulse_cts != null)
+                {
+                    _tune_pulse_cts.Cancel();
+                    _tune_pulse_cts.Dispose();
+                    _tune_pulse_cts = null;
+                }
+
                 chkMOX.Checked = false;                                         // we're done
                 await Task.Delay(100);
                 radio.GetDSPTX(0).TXPostGenRun = 0;
@@ -45001,7 +45042,7 @@ namespace Thetis
         }
         private async void chk2TONE_CheckedChanged(object sender, EventArgs e)
         {
-            if (SetupForm.TestIMD == chk2TONE.Checked) return; // same state ignore
+            if (IsSetupFormNull || SetupForm.TestIMD == chk2TONE.Checked) return; // same state ignore
 
             // stop tune if currently running and we want to run 2tone
             if (chk2TONE.Checked && chkTUN.Checked)
