@@ -30436,27 +30436,81 @@ namespace Thetis
                     _tune_pulse_cts.Dispose();
                     _tune_pulse_cts = null;
                 }
+
                 if (_tune_pulse_enabled)
                 {
                     _tune_pulse_cts = new CancellationTokenSource();
                     CancellationToken token = _tune_pulse_cts.Token;
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     Task.Run(async () =>
                     {
-                        int highMs = (int)(_tune_pulse_window_ms * _tune_pulse_duty);
-                        int lowMs = _tune_pulse_window_ms - highMs;
+                        int highMsTotal = (int)(_tune_pulse_window_ms * _tune_pulse_duty);
+                        int lowMs = _tune_pulse_window_ms - highMsTotal;
+
+                        float rampFraction = 0.1f; // 10 percent either end is used for the ramp
+                        int maxRampMs = 20;        // clamps any ramp to at most 20 ms
+                        int rampUpMs = Math.Min((int)(highMsTotal * rampFraction), maxRampMs);
+                        int rampDownMs = rampUpMs;
+                        int plateauMs = highMsTotal - rampUpMs - rampDownMs;
+                        if (plateauMs < 0) plateauMs = 0;
+
+                        const int rampSteps = 20;
+                        float stepTimeUp = rampUpMs / (float)rampSteps;
+                        float stepTimeDown = rampDownMs / (float)rampSteps;
+
                         while (!token.IsCancellationRequested && tuning)
                         {
-                            radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG;
-                            await Task.Delay(highMs, token);
+                            // ramp up
+                            for (int step = 1; step <= rampSteps; step++)
+                            {
+                                radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG * step / (float)rampSteps;
+                                await Task.Delay((int)stepTimeUp, token);
+                            }
+                            // plateau
+                            if (plateauMs > 0)
+                            {
+                                radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG;
+                                await Task.Delay(plateauMs, token);
+                            }
+                            // ramp down
+                            for (int step = rampSteps; step >= 1; step--)
+                            {
+                                radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG * step / (float)rampSteps;
+                                await Task.Delay((int)stepTimeDown, token);
+                            }
+                            // off period
                             radio.GetDSPTX(0).TXPostGenToneMag = 0f;
                             await Task.Delay(lowMs, token);
                         }
                     }, token);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 }
                 else
                 {
                     radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG;
                 }
+
+                //if (_tune_pulse_enabled)
+                //{
+                //    _tune_pulse_cts = new CancellationTokenSource();
+                //    CancellationToken token = _tune_pulse_cts.Token;
+                //    Task.Run(async () =>
+                //    {
+                //        int highMs = (int)(_tune_pulse_window_ms * _tune_pulse_duty);
+                //        int lowMs = _tune_pulse_window_ms - highMs;
+                //        while (!token.IsCancellationRequested && tuning)
+                //        {
+                //            radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG;
+                //            await Task.Delay(highMs, token);
+                //            radio.GetDSPTX(0).TXPostGenToneMag = 0f;
+                //            await Task.Delay(lowMs, token);
+                //        }
+                //    }, token);
+                //}
+                //else
+                //{
+                //    radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG;
+                //}
 
                 radio.GetDSPTX(0).TXPostGenMode = 0;
                 radio.GetDSPTX(0).TXPostGenRun = 1;
