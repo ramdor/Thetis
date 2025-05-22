@@ -30363,7 +30363,21 @@ namespace Thetis
         private bool _tune_pulse_enabled = false;
         private CancellationTokenSource _tune_pulse_cts = null;
         private const double MAX_TONE_MAG = 0.99999f; // why not 1?  clipping?
-
+        public int TunePulseWindowMS
+        {
+            get { return _tune_pulse_window_ms; }
+            set { _tune_pulse_window_ms =  value; }
+        }
+        public float TunePulseDuty
+        {
+            get { return _tune_pulse_duty; }
+            set { _tune_pulse_duty = value; }
+        }
+        public bool TunePulseEnabled
+        {
+            get { return _tune_pulse_enabled; }
+            set { _tune_pulse_enabled = value; }
+        }
         private async void chkTUN_CheckedChanged(object sender, System.EventArgs e)
         {
             bool oldTune = tuning; //MW0LGE_21k9d

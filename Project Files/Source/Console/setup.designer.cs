@@ -2695,6 +2695,14 @@
             this.tbCFC2 = new System.Windows.Forms.TrackBarTS();
             this.picCFC = new System.Windows.Forms.PictureBox();
             this.tpTransmit = new System.Windows.Forms.TabPage();
+            this.chkPulsedTune = new System.Windows.Forms.CheckBoxTS();
+            this.grpPulsedTune = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS435 = new System.Windows.Forms.LabelTS();
+            this.labelTS436 = new System.Windows.Forms.LabelTS();
+            this.nudPulsedTune_percent = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS434 = new System.Windows.Forms.LabelTS();
+            this.labelTS430 = new System.Windows.Forms.LabelTS();
+            this.nudPulsedTune_window = new System.Windows.Forms.NumericUpDownTS();
             this.chkRecoverPAProfileFromTXProfile = new System.Windows.Forms.CheckBoxTS();
             this.chkHighlightTXProfileSaveItems = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC2DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
@@ -4885,6 +4893,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picCFC)).BeginInit();
             this.tpTransmit.SuspendLayout();
+            this.grpPulsedTune.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPulsedTune_percent)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPulsedTune_window)).BeginInit();
             this.grpDSPSpeechProcessor.SuspendLayout();
             this.grpExtTXInhibit.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLowSave)).BeginInit();
@@ -37985,8 +37996,8 @@
             this.udDSPLevelerThreshold.Size = new System.Drawing.Size(40, 20);
             this.udDSPLevelerThreshold.TabIndex = 6;
             this.udDSPLevelerThreshold.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPLevelerThreshold, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
-        "in over this Max Gain is applied.");
+            this.toolTip1.SetToolTip(this.udDSPLevelerThreshold, "This provides for a \'threshold\' ALC. Irrespective of how weak the input is, no ga" +
+        "in over this max is applied.");
             this.udDSPLevelerThreshold.Value = new decimal(new int[] {
             15,
             0,
@@ -38017,7 +38028,8 @@
             this.udDSPLevelerDecay.Size = new System.Drawing.Size(48, 20);
             this.udDSPLevelerDecay.TabIndex = 12;
             this.udDSPLevelerDecay.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPLevelerDecay, "Time-constant to increase gain after strong transmit audio");
+            this.toolTip1.SetToolTip(this.udDSPLevelerDecay, "Decay time‐constant in ms.  Note that this is a time‐constant for an exponential " +
+        "curve, not an absolute time.");
             this.udDSPLevelerDecay.Value = new decimal(new int[] {
             100,
             0,
@@ -38111,7 +38123,8 @@
             this.udDSPALCDecay.Size = new System.Drawing.Size(48, 20);
             this.udDSPALCDecay.TabIndex = 12;
             this.udDSPALCDecay.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPALCDecay, "Time-constant to increase gain after strong transmit signal");
+            this.toolTip1.SetToolTip(this.udDSPALCDecay, "Decay time‐constant in ms.  Note that this is a time‐constant for an exponential " +
+        "curve, not an absolute time.\r\n\r\n");
             this.udDSPALCDecay.Value = new decimal(new int[] {
             10,
             0,
@@ -44260,6 +44273,8 @@
             // 
             // tpTransmit
             // 
+            this.tpTransmit.Controls.Add(this.chkPulsedTune);
+            this.tpTransmit.Controls.Add(this.grpPulsedTune);
             this.tpTransmit.Controls.Add(this.chkRecoverPAProfileFromTXProfile);
             this.tpTransmit.Controls.Add(this.chkHighlightTXProfileSaveItems);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC2DeviceDetailsFromTXProfile);
@@ -44285,6 +44300,134 @@
             this.tpTransmit.Size = new System.Drawing.Size(728, 436);
             this.tpTransmit.TabIndex = 5;
             this.tpTransmit.Text = "Transmit";
+            // 
+            // chkPulsedTune
+            // 
+            this.chkPulsedTune.AutoSize = true;
+            this.chkPulsedTune.Image = null;
+            this.chkPulsedTune.Location = new System.Drawing.Point(283, 355);
+            this.chkPulsedTune.Name = "chkPulsedTune";
+            this.chkPulsedTune.Size = new System.Drawing.Size(15, 14);
+            this.chkPulsedTune.TabIndex = 0;
+            this.chkPulsedTune.UseVisualStyleBackColor = true;
+            this.chkPulsedTune.CheckedChanged += new System.EventHandler(this.chkPulsedTune_CheckedChanged);
+            // 
+            // grpPulsedTune
+            // 
+            this.grpPulsedTune.Controls.Add(this.labelTS435);
+            this.grpPulsedTune.Controls.Add(this.labelTS434);
+            this.grpPulsedTune.Controls.Add(this.nudPulsedTune_window);
+            this.grpPulsedTune.Controls.Add(this.labelTS436);
+            this.grpPulsedTune.Controls.Add(this.labelTS430);
+            this.grpPulsedTune.Controls.Add(this.nudPulsedTune_percent);
+            this.grpPulsedTune.Enabled = false;
+            this.grpPulsedTune.Location = new System.Drawing.Point(274, 355);
+            this.grpPulsedTune.Name = "grpPulsedTune";
+            this.grpPulsedTune.Size = new System.Drawing.Size(200, 72);
+            this.grpPulsedTune.TabIndex = 78;
+            this.grpPulsedTune.TabStop = false;
+            this.grpPulsedTune.Text = "      Pulsed Tune (experimental)";
+            // 
+            // labelTS435
+            // 
+            this.labelTS435.AutoSize = true;
+            this.labelTS435.Image = null;
+            this.labelTS435.Location = new System.Drawing.Point(34, 51);
+            this.labelTS435.Name = "labelTS435";
+            this.labelTS435.Size = new System.Drawing.Size(32, 13);
+            this.labelTS435.TabIndex = 6;
+            this.labelTS435.Text = "Duty:";
+            // 
+            // labelTS436
+            // 
+            this.labelTS436.AutoSize = true;
+            this.labelTS436.Image = null;
+            this.labelTS436.Location = new System.Drawing.Point(134, 51);
+            this.labelTS436.Name = "labelTS436";
+            this.labelTS436.Size = new System.Drawing.Size(15, 13);
+            this.labelTS436.TabIndex = 5;
+            this.labelTS436.Text = "%";
+            // 
+            // nudPulsedTune_percent
+            // 
+            this.nudPulsedTune_percent.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_percent.Location = new System.Drawing.Point(72, 47);
+            this.nudPulsedTune_percent.Maximum = new decimal(new int[] {
+            95,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_percent.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_percent.Name = "nudPulsedTune_percent";
+            this.nudPulsedTune_percent.Size = new System.Drawing.Size(56, 20);
+            this.nudPulsedTune_percent.TabIndex = 4;
+            this.nudPulsedTune_percent.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudPulsedTune_percent, "% duty cycle");
+            this.nudPulsedTune_percent.Value = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_percent.ValueChanged += new System.EventHandler(this.nudPulsedTune_percent_ValueChanged);
+            // 
+            // labelTS434
+            // 
+            this.labelTS434.AutoSize = true;
+            this.labelTS434.Image = null;
+            this.labelTS434.Location = new System.Drawing.Point(17, 25);
+            this.labelTS434.Name = "labelTS434";
+            this.labelTS434.Size = new System.Drawing.Size(49, 13);
+            this.labelTS434.TabIndex = 3;
+            this.labelTS434.Text = "Window:";
+            // 
+            // labelTS430
+            // 
+            this.labelTS430.AutoSize = true;
+            this.labelTS430.Image = null;
+            this.labelTS430.Location = new System.Drawing.Point(134, 25);
+            this.labelTS430.Name = "labelTS430";
+            this.labelTS430.Size = new System.Drawing.Size(26, 13);
+            this.labelTS430.TabIndex = 2;
+            this.labelTS430.Text = "(ms)";
+            // 
+            // nudPulsedTune_window
+            // 
+            this.nudPulsedTune_window.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_window.Location = new System.Drawing.Point(72, 21);
+            this.nudPulsedTune_window.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_window.Minimum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_window.Name = "nudPulsedTune_window";
+            this.nudPulsedTune_window.Size = new System.Drawing.Size(56, 20);
+            this.nudPulsedTune_window.TabIndex = 1;
+            this.nudPulsedTune_window.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudPulsedTune_window, "The time window for the duty% to be applied to. 25% duty for a 100ms window witll" +
+        " give 25ms of signal, 75ms of no signal.");
+            this.nudPulsedTune_window.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_window.ValueChanged += new System.EventHandler(this.nudPulsedTune_window_ValueChanged);
             // 
             // chkRecoverPAProfileFromTXProfile
             // 
@@ -44317,7 +44460,7 @@
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Image = null;
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 284);
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Name = "chkRestoreVAC2DeviceDetailsFromTXProfile";
-            this.chkRestoreVAC2DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(321, 18);
+            this.chkRestoreVAC2DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(259, 18);
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.TabIndex = 75;
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Text = "Restore VAC2 device details from TX Profile";
             this.toolTip1.SetToolTip(this.chkRestoreVAC2DeviceDetailsFromTXProfile, "Restore VAC device details that were stored against a TX Profile");
@@ -44327,7 +44470,7 @@
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Image = null;
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 260);
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Name = "chkRestoreVAC1DeviceDetailsFromTXProfile";
-            this.chkRestoreVAC1DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(321, 18);
+            this.chkRestoreVAC1DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(259, 18);
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.TabIndex = 74;
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Text = "Restore VAC1 device details from TX Profile";
             this.toolTip1.SetToolTip(this.chkRestoreVAC1DeviceDetailsFromTXProfile, "Restore VAC device details that were stored against a TX Profile");
@@ -44418,7 +44561,7 @@
             this.chkSaveTXProfileOnExit.Image = null;
             this.chkSaveTXProfileOnExit.Location = new System.Drawing.Point(23, 349);
             this.chkSaveTXProfileOnExit.Name = "chkSaveTXProfileOnExit";
-            this.chkSaveTXProfileOnExit.Size = new System.Drawing.Size(235, 18);
+            this.chkSaveTXProfileOnExit.Size = new System.Drawing.Size(215, 18);
             this.chkSaveTXProfileOnExit.TabIndex = 67;
             this.chkSaveTXProfileOnExit.Text = "Auto Save TX Profile on Thetis close";
             this.toolTip1.SetToolTip(this.chkSaveTXProfileOnExit, "Automatically saves the current TX Profile when Thetis is closed");
@@ -44441,7 +44584,7 @@
             0,
             0,
             0});
-            this.udTXFilterLowSave.Location = new System.Drawing.Point(528, 381);
+            this.udTXFilterLowSave.Location = new System.Drawing.Point(655, 403);
             this.udTXFilterLowSave.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -44471,7 +44614,7 @@
             0,
             0,
             0});
-            this.udTXFilterHighSave.Location = new System.Drawing.Point(466, 381);
+            this.udTXFilterHighSave.Location = new System.Drawing.Point(593, 403);
             this.udTXFilterHighSave.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -67879,6 +68022,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.picCFC)).EndInit();
             this.tpTransmit.ResumeLayout(false);
             this.tpTransmit.PerformLayout();
+            this.grpPulsedTune.ResumeLayout(false);
+            this.grpPulsedTune.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPulsedTune_percent)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPulsedTune_window)).EndInit();
             this.grpDSPSpeechProcessor.ResumeLayout(false);
             this.grpDSPSpeechProcessor.PerformLayout();
             this.grpExtTXInhibit.ResumeLayout(false);
@@ -72592,5 +72739,13 @@
         private CheckBoxTS chkWDSP_cache_impulse;
         private ButtonTS btnTwoToneF_stealth;
         private ButtonTS btnTwoToneF_defaults;
+        private CheckBoxTS chkPulsedTune;
+        private GroupBoxTS grpPulsedTune;
+        private LabelTS labelTS435;
+        private LabelTS labelTS436;
+        private NumericUpDownTS nudPulsedTune_percent;
+        private LabelTS labelTS434;
+        private LabelTS labelTS430;
+        private NumericUpDownTS nudPulsedTune_window;
     }
 }

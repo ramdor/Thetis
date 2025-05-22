@@ -2575,6 +2575,7 @@ namespace Thetis
             chkSaveTXProfileOnExit_CheckedChanged(this, e);
             chkRecoverPAProfileFromTXProfile_CheckedChanged(this, e);
             ForceTXProfileUpdate();
+            chkPulsedTune_CheckedChanged(this, e);
 
             // Keyboard Tab
             comboKBTuneUp1_SelectedIndexChanged(this, e);
@@ -34236,6 +34237,27 @@ namespace Thetis
         {
             udTestIMDFreq1.Value = 70;
             udTestIMDFreq2.Value = 190;
+        }
+
+        private void nudPulsedTune_window_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.TunePulseWindowMS = (int)nudPulsedTune_window.Value;
+        }
+
+        private void nudPulsedTune_percent_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.TunePulseDuty = (float)(nudPulsedTune_percent.Value) / 100f;
+        }
+
+        private void chkPulsedTune_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            nudPulsedTune_window_ValueChanged(this, EventArgs.Empty);
+            nudPulsedTune_percent_ValueChanged(this, EventArgs.Empty);
+            console.TunePulseEnabled = chkPulsedTune.Checked;
+            grpPulsedTune.Enabled = chkPulsedTune.Checked;
         }
     }
 
