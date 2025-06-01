@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013 Warren Pratt, NR0V
+Copyright (C) 2013, 2025 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -143,10 +143,11 @@ GEN create_gen (int run, int size, double* in, double* out, int rate, int mode)
 	a->tri.f = 500.0;
 	// pulse
 	a->pulse.mag = 1.0;
-	a->pulse.pf = 0.25;
+	a->pulse.pf = 2.0;
 	a->pulse.pdutycycle = 0.25;
-	a->pulse.ptranstime = 0.002;
-	a->pulse.tf = 1000.0;
+	a->pulse.ptranstime = 0.005;
+	a->pulse.tf = 600.0;
+	a->pulse.IQout = 0;
 	calc_gen (a);
 	return a;
 }
@@ -285,7 +286,7 @@ void xgen (GEN a)
 				}
 			}
 			break;
-		case 6:  // pulse (audio only)
+		case 6:  // pulse (audio or IQ output)
 			{
 				int i;
 				double t1, t2;
@@ -294,10 +295,12 @@ void xgen (GEN a)
 				for (i = 0; i < a->size; i++)
 				{
 					if (a->pulse.pnoff != 0)
+					{
 						switch (a->pulse.state)
 						{
 						case OFF:
 							a->out[2 * i + 0] = 0.0;
+							a->out[2 * i + 1] = 0.0;
 							if (--a->pulse.pcount == 0)
 							{
 								a->pulse.state = UP;
@@ -305,7 +308,17 @@ void xgen (GEN a)
 							}
 							break;
 						case UP:
-							a->out[2 * i + 0] = a->pulse.mag * cosphase * a->pulse.ctrans[a->pulse.pntrans - a->pulse.pcount];
+
+							if (a->pulse.IQout)
+							{
+								a->out[2 * i + 0] = +a->pulse.mag * cosphase * a->pulse.ctrans[a->pulse.pntrans - a->pulse.pcount];
+								a->out[2 * i + 1] = -a->pulse.mag * sinphase * a->pulse.ctrans[a->pulse.pntrans - a->pulse.pcount];
+							}
+							else
+							{
+								a->out[2 * i + 0] = +a->pulse.mag * cosphase * a->pulse.ctrans[a->pulse.pntrans - a->pulse.pcount];
+								a->out[2 * i + 1] = 0.0;
+							}
 							if (--a->pulse.pcount == 0)
 							{
 								a->pulse.state = ON;
@@ -313,7 +326,17 @@ void xgen (GEN a)
 							}
 							break;
 						case ON:
-							a->out[2 * i + 0] = a->pulse.mag * cosphase;
+
+							if (a->pulse.IQout)
+							{
+								a->out[2 * i + 0] = +a->pulse.mag * cosphase;
+								a->out[2 * i + 1] = -a->pulse.mag * sinphase;
+							}
+							else
+							{
+								a->out[2 * i + 0] = +a->pulse.mag * cosphase;
+								a->out[2 * i + 1] = 0.0;
+							}
 							if (--a->pulse.pcount == 0)
 							{
 								a->pulse.state = DOWN;
@@ -321,7 +344,16 @@ void xgen (GEN a)
 							}
 							break;
 						case DOWN:
-							a->out[2 * i + 0] = a->pulse.mag * cosphase * a->pulse.ctrans[a->pulse.pcount];
+							if (a->pulse.IQout)
+							{
+								a->out[2 * i + 0] = +a->pulse.mag * cosphase * a->pulse.ctrans[a->pulse.pcount];
+								a->out[2 * i + 1] = -a->pulse.mag * sinphase * a->pulse.ctrans[a->pulse.pcount];
+							}
+							else
+							{
+								a->out[2 * i + 0] = +a->pulse.mag * cosphase * a->pulse.ctrans[a->pulse.pcount];
+								a->out[2 * i + 1] = 0.0;
+							}
 							if (--a->pulse.pcount == 0)
 							{
 								a->pulse.state = OFF;
@@ -329,9 +361,12 @@ void xgen (GEN a)
 							}
 							break;
 						}
+					}
 					else
+					{
 						a->out[2 * i + 0] = 0.0;
-					a->out[2 * i + 1] = 0.0;
+						a->out[2 * i + 1] = 0.0;
+					}
 					t1 = cosphase;
 					t2 = sinphase;
 					cosphase = t1 * a->pulse.tcosdelta - t2 * a->pulse.tsindelta;
@@ -683,4 +718,56 @@ void SetTXAPostGenSweepRate (int channel, double rate)
 	txa[channel].gen1.p->sweep.sweeprate = rate;
 	calc_sweep (txa[channel].gen1.p);
 	LeaveCriticalSection (&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenPulseMag(int channel, double mag)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->pulse.mag = mag;
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenPulseFreq(int channel, double freq)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->pulse.pf = freq;
+	calc_pulse(txa[channel].gen1.p);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenPulseDutyCycle(int channel, double dc)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->pulse.pdutycycle = dc;
+	calc_pulse(txa[channel].gen1.p);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenPulseToneFreq(int channel, double freq)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->pulse.tf = freq;
+	calc_pulse(txa[channel].gen1.p);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenPulseTransition(int channel, double transtime)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->pulse.ptranstime = transtime;
+	calc_pulse(txa[channel].gen1.p);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenPulseIQout(int channel, int IQout)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->pulse.IQout = IQout;
+	LeaveCriticalSection(&ch[channel].csDSP);
 }

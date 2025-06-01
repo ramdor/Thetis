@@ -34242,13 +34242,17 @@ namespace Thetis
         private void nudPulsedTune_window_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            console.TunePulseWindowMS = (int)nudPulsedTune_window.Value;
+            console.TunePulseCount = (int)nudPulsedTune_window.Value;
+            console.SetupTunePulse();
+            updatePulseInfo();
         }
 
         private void nudPulsedTune_percent_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;
             console.TunePulseDuty = (float)(nudPulsedTune_percent.Value) / 100f;
+            console.SetupTunePulse();
+            updatePulseInfo();
         }
 
         private void chkPulsedTune_CheckedChanged(object sender, EventArgs e)
@@ -34256,8 +34260,42 @@ namespace Thetis
             if (initializing) return;
             nudPulsedTune_window_ValueChanged(this, EventArgs.Empty);
             nudPulsedTune_percent_ValueChanged(this, EventArgs.Empty);
+            nudPulsedTune_ramp_ValueChanged(this, EventArgs.Empty);
+
             console.TunePulseEnabled = chkPulsedTune.Checked;
             grpPulsedTune.Enabled = chkPulsedTune.Checked;
+            lblTunedPulse_info.Enabled = chkPulsedTune.Checked;
+        }
+
+        private void nudPulsedTune_ramp_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.TunePulseRamp = (int)nudPulsedTune_ramp.Value;
+            console.SetupTunePulse();
+            updatePulseInfo();
+        }
+
+        private void updatePulseInfo()
+        {
+            float window = 1000f / (float)nudPulsedTune_window.Value;
+            float duty = window * ((float)nudPulsedTune_percent.Value / 100f);
+            int totalRamp = (int)nudPulsedTune_ramp.Value * 2;
+            float total = duty + totalRamp;
+
+            string info = $"Window = {window:F2}ms\nDuty = {duty:F2}ms\nTotal Ramp = {totalRamp}ms\nTotal Pulse = {total:F2}ms\n";
+
+            if (window >= total)
+            {
+                info += "Will fit window";
+                lblTunedPulse_info.ForeColor = Color.Green;
+            }
+            else
+            {
+                info += "Will NOT fit window";
+                lblTunedPulse_info.ForeColor = Color.Red;
+            }
+
+            lblTunedPulse_info.Text = info;
         }
     }
 

@@ -30358,20 +30358,27 @@ namespace Thetis
         private MeterTXMode old_meter_tx_mode_before_tune;
         private DSPMode old_dsp_mode;
 
-        private int _tune_pulse_window_ms = 100;
+        private int _tune_pulse_count = 10; // 10 per second
         private float _tune_pulse_duty = 0.25f;
         private bool _tune_pulse_enabled = false;
-        private CancellationTokenSource _tune_pulse_cts = null;
         private const double MAX_TONE_MAG = 0.99999f; // why not 1?  clipping?
-        public int TunePulseWindowMS
+        private int _tune_pulse_ramp = 9; // 9ms
+        private bool _tune_pulse_on = false;
+
+        public int TunePulseCount
         {
-            get { return _tune_pulse_window_ms; }
-            set { _tune_pulse_window_ms =  value; }
+            get { return _tune_pulse_count; }
+            set { _tune_pulse_count =  value; }
         }
         public float TunePulseDuty
         {
             get { return _tune_pulse_duty; }
             set { _tune_pulse_duty = value; }
+        }
+        public int TunePulseRamp
+        {
+            get { return _tune_pulse_ramp; }
+            set { _tune_pulse_ramp = value; }
         }
         public bool TunePulseEnabled
         {
@@ -30418,102 +30425,30 @@ namespace Thetis
                     comboMeterTXMode_SelectedIndexChanged(this, EventArgs.Empty);
                 }
 
-                switch (Audio.TXDSPMode)                                        // put tone in opposite sideband
-                {
-                    case DSPMode.LSB:
-                    case DSPMode.CWL:
-                    case DSPMode.DIGL:
-                        radio.GetDSPTX(0).TXPostGenToneFreq = -cw_pitch;
-                        break;
-                    default:
-                        radio.GetDSPTX(0).TXPostGenToneFreq = +cw_pitch;
-                        break;
-                }
-
-                if (_tune_pulse_cts != null)
-                {
-                    _tune_pulse_cts.Cancel();
-                    _tune_pulse_cts.Dispose();
-                    _tune_pulse_cts = null;
-                }
-
                 if (_tune_pulse_enabled)
                 {
-                    _tune_pulse_cts = new CancellationTokenSource();
-                    CancellationToken token = _tune_pulse_cts.Token;
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    Task.Run(async () =>
-                    {
-                        int highMsTotal = (int)(_tune_pulse_window_ms * _tune_pulse_duty);
-                        int lowMs = _tune_pulse_window_ms - highMsTotal;
-
-                        float rampFraction = 0.1f; // 10 percent either end is used for the ramp
-                        int maxRampMs = 20;        // clamps any ramp to at most 20 ms
-                        int rampUpMs = Math.Min((int)(highMsTotal * rampFraction), maxRampMs);
-                        int rampDownMs = rampUpMs;
-                        int plateauMs = highMsTotal - rampUpMs - rampDownMs;
-                        if (plateauMs < 0) plateauMs = 0;
-
-                        const int rampSteps = 20;
-                        float stepTimeUp = rampUpMs / (float)rampSteps;
-                        float stepTimeDown = rampDownMs / (float)rampSteps;
-
-                        while (!token.IsCancellationRequested && tuning)
-                        {
-                            // ramp up
-                            for (int step = 1; step <= rampSteps; step++)
-                            {
-                                radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG * step / (float)rampSteps;
-                                await Task.Delay((int)stepTimeUp, token);
-                            }
-                            // plateau
-                            if (plateauMs > 0)
-                            {
-                                radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG;
-                                await Task.Delay(plateauMs, token);
-                            }
-                            // ramp down
-                            for (int step = rampSteps; step >= 1; step--)
-                            {
-                                radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG * step / (float)rampSteps;
-                                await Task.Delay((int)stepTimeDown, token);
-                            }
-                            // off period
-                            radio.GetDSPTX(0).TXPostGenToneMag = 0f;
-                            await Task.Delay(lowMs, token);
-                        }
-                    }, token);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    _tune_pulse_on = true;
+                    SetupTunePulse();
                 }
                 else
                 {
+                    _tune_pulse_on = false;
+                    switch (Audio.TXDSPMode)                                        // put tone in opposite sideband
+                    {
+                        case DSPMode.LSB:
+                        case DSPMode.CWL:
+                        case DSPMode.DIGL:
+                            radio.GetDSPTX(0).TXPostGenToneFreq = -cw_pitch;
+                            break;
+                        default:
+                            radio.GetDSPTX(0).TXPostGenToneFreq = +cw_pitch;
+                            break;
+                    }
+
+                    radio.GetDSPTX(0).TXPostGenMode = 0;
                     radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG;
+                    radio.GetDSPTX(0).TXPostGenRun = 1;
                 }
-
-                //if (_tune_pulse_enabled)
-                //{
-                //    _tune_pulse_cts = new CancellationTokenSource();
-                //    CancellationToken token = _tune_pulse_cts.Token;
-                //    Task.Run(async () =>
-                //    {
-                //        int highMs = (int)(_tune_pulse_window_ms * _tune_pulse_duty);
-                //        int lowMs = _tune_pulse_window_ms - highMs;
-                //        while (!token.IsCancellationRequested && tuning)
-                //        {
-                //            radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG;
-                //            await Task.Delay(highMs, token);
-                //            radio.GetDSPTX(0).TXPostGenToneMag = 0f;
-                //            await Task.Delay(lowMs, token);
-                //        }
-                //    }, token);
-                //}
-                //else
-                //{
-                //    radio.GetDSPTX(0).TXPostGenToneMag = MAX_TONE_MAG;
-                //}
-
-                radio.GetDSPTX(0).TXPostGenMode = 0;
-                radio.GetDSPTX(0).TXPostGenRun = 1;
 
                 // remember old power //MW0LGE_22b
                 if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
@@ -30576,16 +30511,11 @@ namespace Thetis
             }
             else
             {
-                if (_tune_pulse_cts != null)
-                {
-                    _tune_pulse_cts.Cancel();
-                    _tune_pulse_cts.Dispose();
-                    _tune_pulse_cts = null;
-                }
-
                 chkMOX.Checked = false;                                         // we're done
                 await Task.Delay(100);
+
                 radio.GetDSPTX(0).TXPostGenRun = 0;
+
                 chkTUN.BackColor = SystemColors.Control;
 
                 switch (old_dsp_mode)                                           // restore old mode if it was changed
@@ -30634,6 +30564,33 @@ namespace Thetis
 
             if (oldTune != tuning) TuneChangedHandlers?.Invoke(1, oldTune, tuning); //MW0LGE_21kd9 // just rx1
         }
+        public void SetupTunePulse()
+        {
+            if (!_tune_pulse_on) return;
+
+            radio.GetDSPTX(0).TXPostGenRun = 0; // turn off
+
+            switch (Audio.TXDSPMode)    // tone to relevant sideband
+            {
+                case DSPMode.LSB:
+                case DSPMode.CWL:
+                case DSPMode.DIGL:
+                    radio.GetDSPTX(0).TXPostGenPulseToneFreq = -cw_pitch;
+                    break;
+                default:
+                    radio.GetDSPTX(0).TXPostGenPulseToneFreq = +cw_pitch;
+                    break;
+            }
+
+            radio.GetDSPTX(0).TXPostGenMode = 6; // pulse
+            radio.GetDSPTX(0).TXPostGenPulseIQOut = true;
+            radio.GetDSPTX(0).TXPostGenPulseMag = MAX_TONE_MAG;
+            radio.GetDSPTX(0).TXPostGenPulseFreq = _tune_pulse_count; // in hz, the occurance
+            radio.GetDSPTX(0).TXPostGenPulseDutyCycle = _tune_pulse_duty;
+            radio.GetDSPTX(0).TXPostGenPulseTransition = _tune_pulse_ramp / 1000f; // off to on, and on to off duration, in seconds
+            radio.GetDSPTX(0).TXPostGenRun = 1;
+        }
+
         public bool PWRSliderLimitEnabled
         {
             get { return ptbPWR.LimitEnabled; }
