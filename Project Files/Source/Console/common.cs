@@ -1719,15 +1719,22 @@ namespace Thetis
             return new Rectangle(new Point(newX, newY), formBounds.Size);
         }
 
+        //[2.10.3.9]MW0LGE performance related
         [DllImport("kernel32.dll")]
         private static extern bool SetProcessPriorityBoost(IntPtr processHandle, bool disablePriorityBoost);
         public static void DisableForegroundPriorityBoost()
         {
-            // Prevent Windows from downgrading app CPU time when it loses focus
-            Process process = Process.GetCurrentProcess();
-            SetProcessPriorityBoost(process.Handle, true);
+            try
+            {
+                // Prevent Windows from downgrading app CPU time when it loses focus
+                Process process = Process.GetCurrentProcess();
+                SetProcessPriorityBoost(process.Handle, true);
+            }
+            catch { }
         }
+        //
 
+        //[2.10.3.9]MW0LGE cpu/memory details
         public static string GetCpuName()
         {
             try
@@ -1816,8 +1823,9 @@ namespace Thetis
             }
             catch { return "Unknown"; }
         }
+        //
 
-        // form scale
+        //[2.10.3.9]MW0LGE form scaling
         private const uint MONITOR_DEFAULTTONEAREST = 2;
         private enum MonitorDpiType
         {
@@ -1872,6 +1880,7 @@ namespace Thetis
         }
         //
 
+        //[2.10.3.9]MW0LGE cpu usage for this process
         private static HiPerfTimer _timer = null;
         private static TimeSpan _previousCpuTime;
         private static double _previousElapsedSeconds;
@@ -1897,5 +1906,110 @@ namespace Thetis
 
             return (cpuDelta.TotalSeconds / (elapsedDelta * Environment.ProcessorCount)) * 100.0;
         }
+        //
+
+        //[2.10.3.9]MW0LGE screensave/powersave prevention
+        [Flags]
+        public enum ExecutionState : uint
+        {
+            ES_CONTINUOUS = 0x80000000,
+            ES_SYSTEM_REQUIRED = 0x00000001,
+            ES_DISPLAY_REQUIRED = 0x00000002
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern ExecutionState SetThreadExecutionState(ExecutionState esFlags);
+
+        private static ExecutionState _previous_sleep_state;
+        private static ExecutionState _previous_display_state;
+        private static bool _sleep_prevented = false;
+        private static bool _display_prevented = false;
+
+        public static void PreventSleep()
+        {
+            try
+            {
+                ExecutionState result = SetThreadExecutionState(ExecutionState.ES_CONTINUOUS | ExecutionState.ES_SYSTEM_REQUIRED);
+                _previous_sleep_state = result;
+                _sleep_prevented = true;
+            }
+            catch { }
+        }
+
+        public static void PreventScreenSaver()
+        {
+            try
+            {
+                ExecutionState result = SetThreadExecutionState(ExecutionState.ES_CONTINUOUS | ExecutionState.ES_DISPLAY_REQUIRED);
+                _previous_display_state = result;
+                _display_prevented = true;
+            }
+            catch { }
+        }
+
+        public static ExecutionState ResumeSleep()
+        {
+            try
+            {
+                if (!_sleep_prevented)
+                {
+                    return default(ExecutionState);
+                }
+
+                ExecutionState result = SetThreadExecutionState(_previous_sleep_state);
+                _previous_sleep_state = default(ExecutionState);
+                _sleep_prevented = false;
+                return result;
+            }
+            catch
+            {
+                return default(ExecutionState);
+            }
+        }
+
+        public static ExecutionState ResumeScreenSaver()
+        {
+            try
+            {
+                if (!_display_prevented)
+                {
+                    return default(ExecutionState);
+                }
+
+                ExecutionState result = SetThreadExecutionState(_previous_display_state);
+                _previous_display_state = default(ExecutionState);
+                _display_prevented = false;
+                return result;
+            }
+            catch
+            {
+                return default(ExecutionState);
+            }
+        }
+
+        public static bool IsSleepPrevented()
+        {
+            try
+            {
+                return _sleep_prevented;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool IsScreenSaverPrevented()
+        {
+            try
+            {
+                return _display_prevented;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        //
     }
 }

@@ -2844,6 +2844,8 @@ namespace Thetis
             chkAutoPowerOn_CheckedChanged(this, e);
             nudPBsnrShiftRx1_ValueChanged(this, e);
             nudPBsnrShiftRx2_ValueChanged(this, e);
+            chkPreventSleep_CheckedChanged(this, e);
+            chkPreventScreenSaver_CheckedChanged(this, e);
 
             // auto start tab
             updateAutoLaunchControls();
@@ -34296,6 +34298,26 @@ namespace Thetis
             }
 
             lblTunedPulse_info.Text = info;
+        }
+
+        private void chkPreventSleep_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            if (chkPreventSleep.Checked)
+                Common.PreventSleep();
+            else
+                Common.ResumeSleep();
+        }
+
+        private void chkPreventScreenSaver_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            if (chkPreventScreenSaver.Checked)
+                Common.PreventScreenSaver();
+            else
+                Common.ResumeScreenSaver();
         }
     }
 

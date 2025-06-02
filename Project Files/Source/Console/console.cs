@@ -1035,6 +1035,8 @@ namespace Thetis
             Thread.CurrentThread.Priority = original_thread_priority;
             if (!IsSetupFormNull) SetupForm.SetPriorityClass();
 
+            Common.DisableForegroundPriorityBoost(); // prevent process from becoming lower priority when focus is lost
+
             //autostart
             if (Common.HasArg(args, "-autostart") || m_bAutoPowerOn)
             {
@@ -2583,6 +2585,10 @@ namespace Thetis
             shutdownLogStringToPath("Before radio.Shutdown()");
             if (radio != null)
                 radio.Shutdown();
+
+            shutdownLogStringToPath("Before resume sleep/screensave");
+            Common.ResumeSleep();
+            Common.ResumeScreenSaver();
 
             shutdownLogStringToPath("Before Win32.TimeEndPeriod(1)");
             Win32.TimeEndPeriod(1); // return to previous timing precision

@@ -4234,6 +4234,8 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.chkPreventSleep = new System.Windows.Forms.CheckBoxTS();
+            this.chkPreventScreenSaver = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -10803,7 +10805,7 @@
             this.groupBoxTS23.Controls.Add(this.chkSwapREDBluePSAColours);
             this.groupBoxTS23.Location = new System.Drawing.Point(180, 8);
             this.groupBoxTS23.Name = "groupBoxTS23";
-            this.groupBoxTS23.Size = new System.Drawing.Size(252, 132);
+            this.groupBoxTS23.Size = new System.Drawing.Size(252, 119);
             this.groupBoxTS23.TabIndex = 34;
             this.groupBoxTS23.TabStop = false;
             this.groupBoxTS23.Text = "Info Bar (below spectrum)";
@@ -10862,10 +10864,12 @@
             // 
             // groupBoxTS22
             // 
+            this.groupBoxTS22.Controls.Add(this.chkPreventScreenSaver);
+            this.groupBoxTS22.Controls.Add(this.chkPreventSleep);
             this.groupBoxTS22.Controls.Add(this.chkUseOutlinedCross);
-            this.groupBoxTS22.Location = new System.Drawing.Point(180, 149);
+            this.groupBoxTS22.Location = new System.Drawing.Point(180, 130);
             this.groupBoxTS22.Name = "groupBoxTS22";
-            this.groupBoxTS22.Size = new System.Drawing.Size(252, 85);
+            this.groupBoxTS22.Size = new System.Drawing.Size(252, 104);
             this.groupBoxTS22.TabIndex = 12;
             this.groupBoxTS22.TabStop = false;
             this.groupBoxTS22.Text = "Other";
@@ -67254,6 +67258,32 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // chkPreventSleep
+            // 
+            this.chkPreventSleep.AutoSize = true;
+            this.chkPreventSleep.Image = null;
+            this.chkPreventSleep.Location = new System.Drawing.Point(18, 46);
+            this.chkPreventSleep.Name = "chkPreventSleep";
+            this.chkPreventSleep.Size = new System.Drawing.Size(150, 17);
+            this.chkPreventSleep.TabIndex = 35;
+            this.chkPreventSleep.Text = "Prevent system auto sleep";
+            this.toolTip1.SetToolTip(this.chkPreventSleep, "Prevents the system from going to sleep");
+            this.chkPreventSleep.UseVisualStyleBackColor = true;
+            this.chkPreventSleep.CheckedChanged += new System.EventHandler(this.chkPreventSleep_CheckedChanged);
+            // 
+            // chkPreventScreenSaver
+            // 
+            this.chkPreventScreenSaver.AutoSize = true;
+            this.chkPreventScreenSaver.Image = null;
+            this.chkPreventScreenSaver.Location = new System.Drawing.Point(17, 69);
+            this.chkPreventScreenSaver.Name = "chkPreventScreenSaver";
+            this.chkPreventScreenSaver.Size = new System.Drawing.Size(127, 17);
+            this.chkPreventScreenSaver.TabIndex = 36;
+            this.chkPreventScreenSaver.Text = "Prevent screen saver";
+            this.toolTip1.SetToolTip(this.chkPreventScreenSaver, "Prevents the display screen saver from starting");
+            this.chkPreventScreenSaver.UseVisualStyleBackColor = true;
+            this.chkPreventScreenSaver.CheckedChanged += new System.EventHandler(this.chkPreventScreenSaver_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -72819,5 +72849,7 @@
         private LabelTS labelTS437;
         private NumericUpDownTS nudPulsedTune_ramp;
         private LabelTS lblTunedPulse_info;
+        private CheckBoxTS chkPreventSleep;
+        private CheckBoxTS chkPreventScreenSaver;
     }
 }
