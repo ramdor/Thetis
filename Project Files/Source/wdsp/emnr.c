@@ -212,16 +212,16 @@ int readZetaHat(const char* zeta_file, int* rows, int* cols,
 	FILE* pzetaBinary;
 	if (pzetaBinary = fopen (zetaBinary, "rb")) 
 	{
-	fread(rows, sizeof(int), 1, pzetaBinary);
-	fread(cols, sizeof(int), 1, pzetaBinary);
-	fread(gmin, sizeof(double), 1, pzetaBinary);
-	fread(gmax, sizeof(double), 1, pzetaBinary);
-	fread(ximin, sizeof(double), 1, pzetaBinary);
-	fread(ximax, sizeof(double), 1, pzetaBinary);
-	int nvals = (*rows) * (*cols);
-	fread(zetaHat, sizeof(double), nvals, pzetaBinary);
-	fread(zetaValid, sizeof(int), nvals, pzetaBinary);
-	fclose(pzetaBinary);
+		fread(rows, sizeof(int), 1, pzetaBinary);
+		fread(cols, sizeof(int), 1, pzetaBinary);
+		fread(gmin, sizeof(double), 1, pzetaBinary);
+		fread(gmax, sizeof(double), 1, pzetaBinary);
+		fread(ximin, sizeof(double), 1, pzetaBinary);
+		fread(ximax, sizeof(double), 1, pzetaBinary);
+		int nvals = (*rows) * (*cols);
+		fread(zetaHat, sizeof(double), nvals, pzetaBinary);
+		fread(zetaValid, sizeof(int), nvals, pzetaBinary);
+		fclose(pzetaBinary);
 	}
 	else
 	{
