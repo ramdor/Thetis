@@ -8740,7 +8740,7 @@ namespace Thetis
                                 VFOARenderState = renderState.MODE;
                         }
                         break;
-                    //////////
+                    //
                     case buttonState.BAND:
                         {
                             if (abortForLockedVFO()) break;
@@ -8996,7 +8996,7 @@ namespace Thetis
                     if (f < 0) return true;
                     Filter fltr = (Filter)((int)Filter.F1 + f);
 
-                    if (_owningmeter.RX2Enabled)
+                    if (_owningmeter.RX2Enabled && !(_owningmeter.RX == 1 && (_owningmeter.MultiRxEnabled || _owningmeter.Split)))
                     {
                         // special for rx2 as only F1-F7 + VAR1 + VAR2, so, 0,1,2,3,4,5,6,7,8
                         if (f > 8) return true;
@@ -9041,7 +9041,7 @@ namespace Thetis
                     DSPModeForModeDisplay dm = (DSPModeForModeDisplay)((int)DSPModeForModeDisplay.LSB + m);
                     Enum.TryParse<DSPMode>(dm.ToString(), out DSPMode dspMode);
 
-                    if (_owningmeter.RX2Enabled)
+                    if (_owningmeter.RX2Enabled && !(_owningmeter.RX == 1 && (_owningmeter.MultiRxEnabled || _owningmeter.Split)))
                     {
                         _console.BeginInvoke(new MethodInvoker(() =>
                         {
@@ -9207,10 +9207,21 @@ namespace Thetis
                     else
                         return true;
 
-                    _console.BeginInvoke(new MethodInvoker(() =>
+                    if (_owningmeter.RX == 1 && (_owningmeter.MultiRxEnabled || _owningmeter.Split))
                     {
-                        _console.SetupRX2Band(band, !_owningmeter.RX2Enabled); // we tell setuprx2band that we only want to change freq for vfob if only rx1
-                    }));
+                        // need to update subvfo, which is linked to rx1, so update rx1 instead
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.BandPreChangeHandlers?.Invoke(1, band);
+                        }));
+                    }
+                    else
+                    {
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.SetupRX2Band(band, !_owningmeter.RX2Enabled); // we tell setuprx2band that we only want to change freq for vfob if only rx1
+                        }));
+                    }
                 }
                 else
                 {
@@ -23521,6 +23532,14 @@ namespace Thetis
                 set { _sId = value; }
             }
             public int RX { get { return _rx; } set { _rx = value; } }
+
+            public bool IsVfoASub
+            {
+                get
+                {
+                    return _rx == 1 && _rx2Enabled && (_multiRxEnabled || _split) && _vfoSub >= 0; //[2.10.3.6]MW0LGE added m.vfosub >= 0
+                }
+            }
             public int QuickestUpdateInterval(bool mox)
             {
                 lock (_meterItemsLock)
@@ -30761,7 +30780,7 @@ namespace Thetis
 
                     t_xB = xB + (gap / 2f) + (nx * gap);
                     t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
-                    plotText(filter, t_xB, t_yB, rect.Width * x_multy, 16f, filter_colour, 255, vfo.FontFamily, vfo.Style, false, true, gap, true);
+                    plotText(filter, t_xB, t_yB, rect.Width * x_multy, 16f, filter_colour, 255, vfo.FontFamily, vfo.Style, false, true, 0/*gap*/, true);
                     nx++;
                     if (nx > 5)
                     {
@@ -31602,14 +31621,12 @@ namespace Thetis
 
                 // 0.50 difference in x between vfoa/b on both mode
 
-                bool vfo_sub = false; // are we showing vfo sub, used to hide the vfosub band text
                 if (disp_b)
                 {
-                    if (m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split) && m.VfoSub >= 0) //[2.10.3.6]MW0LGE added m.vfosub >= 0
+                    if (m.IsVfoASub)
                     {
                         // vfoa sub
                         plotText("VFO Sub", x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.03f), rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
-                        vfo_sub = true;
                     }
                     else
                         plotText("VFO B", x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.03f), rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
@@ -31765,7 +31782,7 @@ namespace Thetis
                         rct = new SharpDX.RectangleF(x + (w * 0.250f) * x_multy, y + (bt_h * 0.85f), w * 0.08f, bt_h * 0.03f);
                         plotText(m.VFOABandText, rct.X, rct.Y, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoAFade, vfo.FontFamily, vfo.Style, false, true);
                     }
-                    if (disp_b && !vfo_sub)
+                    if (disp_b && !m.IsVfoASub) // no band text for vfo_sub
                     {
                         rct = new SharpDX.RectangleF(x + (w * 0.250f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (bt_h * 0.85f), w * 0.08f, bt_h * 0.03f);
                         plotText(m.VFOBBandText, rct.X, rct.Y, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoBFade, vfo.FontFamily, vfo.Style, false, true);
