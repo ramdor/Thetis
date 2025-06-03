@@ -3340,28 +3340,6 @@ namespace Thetis
                 }
             }
         }
-        //private static void OnFilterNameChanged(int rx, Filter f, string old_name, string new_name)
-        //{
-        //    lock (_metersLock)
-        //    {
-        //        foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
-        //        {
-        //            clsMeter m = ms.Value;
-
-        //            if (rx == 1)
-        //            {
-        //                m.FilterVfoAName = new_name;
-        //            }
-        //            else
-        //            {
-        //                m.FilterVfoBName = new_name;
-        //            }
-
-        //            if (old_name != new_name)
-        //                m.FilterNameDetails(f, new_name);
-        //        }
-        //    }
-        //}
         private static void OnMinimumNotchWidthChangedRX(int rx, double width)
         {
             foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
@@ -3534,20 +3512,26 @@ namespace Thetis
         {
             lock (_metersLock)
             {
-                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                if (update_band)
                 {
-                    clsMeter m = ms.Value;
-
-                    if (update_band)
+                    foreach (KeyValuePair<string, clsMeter> ms in _meters)
                     {
-                        if (rx == 1)
-                            m.BandVfoA = new_band;
-                        else
-                            m.BandVfoB = new_band;
+                        clsMeter m = ms.Value;
 
-                        m.BandChanged(old_band, new_band);
+                        //this is needed in the case of vfoB change on rx1 when rx2 is disabled. It will still be identified as rx2
+                        bool update = (rx == m.RX) || (!m.RX2Enabled && m.RX == 1 && rx == 2);
 
-                        m.ZeroOut(true, false);
+                        if (update)
+                        {
+                            if (rx == 1)
+                                m.BandVfoA = new_band;
+                            else
+                                m.BandVfoB = new_band;
+
+                            m.BandChanged(old_band, new_band);
+
+                            m.ZeroOut(true, false);
+                        }
                     }
                 }
 
@@ -31618,12 +31602,14 @@ namespace Thetis
 
                 // 0.50 difference in x between vfoa/b on both mode
 
+                bool vfo_sub = false; // are we showing vfo sub, used to hide the vfosub band text
                 if (disp_b)
                 {
                     if (m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split) && m.VfoSub >= 0) //[2.10.3.6]MW0LGE added m.vfosub >= 0
                     {
                         // vfoa sub
                         plotText("VFO Sub", x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.03f), rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                        vfo_sub = true;
                     }
                     else
                         plotText("VFO B", x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.03f), rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
@@ -31779,7 +31765,7 @@ namespace Thetis
                         rct = new SharpDX.RectangleF(x + (w * 0.250f) * x_multy, y + (bt_h * 0.85f), w * 0.08f, bt_h * 0.03f);
                         plotText(m.VFOABandText, rct.X, rct.Y, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoAFade, vfo.FontFamily, vfo.Style, false, true);
                     }
-                    if (disp_b)
+                    if (disp_b && !vfo_sub)
                     {
                         rct = new SharpDX.RectangleF(x + (w * 0.250f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (bt_h * 0.85f), w * 0.08f, bt_h * 0.03f);
                         plotText(m.VFOBBandText, rct.X, rct.Y, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoBFade, vfo.FontFamily, vfo.Style, false, true);

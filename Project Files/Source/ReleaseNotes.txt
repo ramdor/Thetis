@@ -79,6 +79,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] fix issue that could cause repeated errors in mmio when a key is not found, perhaps caused by old db
 - [fix] outbound mmio queue fix for data node, data out queues are not saved to db, and limits have been placed on max queue size
 - [fix] fixed issue where rotator control item would sometimes miss the stop command on click. Note. mouse up+down will trigger this when the red circle is shown
+= [fix] fixed issue where an rx1 container with a vfo item would sometimes display the incorrect band for vfoB
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked
