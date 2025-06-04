@@ -8960,10 +8960,20 @@ namespace Thetis
                 if (_console == null) return;
                 if (vfoB)
                 {
-                    _console.BeginInvoke(new MethodInvoker(() =>
+                    if (_owningmeter.RX2Enabled && (_owningmeter.RX == 1 && (_owningmeter.MultiRxEnabled || _owningmeter.Split)))
                     {
-                        _console.VFOBTX = true;
-                    }));
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.VFOSplit = !_console.VFOSplit;
+                        }));
+                    }
+                    else
+                    {
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.VFOBTX = true;
+                        }));
+                    }
                 }
                 else
                 {

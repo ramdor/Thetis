@@ -34264,9 +34264,11 @@ namespace Thetis
             nudPulsedTune_percent_ValueChanged(this, EventArgs.Empty);
             nudPulsedTune_ramp_ValueChanged(this, EventArgs.Empty);
 
-            console.TunePulseEnabled = chkPulsedTune.Checked;
             grpPulsedTune.Enabled = chkPulsedTune.Checked;
             lblTunedPulse_info.Enabled = chkPulsedTune.Checked;
+
+            //done last so pulse will only apply if tune is toggled
+            console.TunePulseEnabled = chkPulsedTune.Checked;
         }
 
         private void nudPulsedTune_ramp_ValueChanged(object sender, EventArgs e)
