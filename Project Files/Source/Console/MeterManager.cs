@@ -2318,7 +2318,6 @@ namespace Thetis
                 m.ZeroOut(true, true);
 
                 // need to update custom readings for text overlay and led
-
                 m.UpdateCustomReadings();
             }
         }
@@ -4640,6 +4639,12 @@ namespace Thetis
 
                         if (_lstMeterDisplayForms.ContainsKey(ucM.ID) && ucM.MeterEnabled)
                         {
+                            if (_meters.ContainsKey(ucM.ID))
+                            {
+                                clsMeter m = _meters[ucM.ID];
+                                m.ZeroOut(true, true);
+                            }
+
                             if (ucM.Floating)
                                 setMeterFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
                             else
@@ -4661,7 +4666,7 @@ namespace Thetis
                     {
                         ucMeter ucM = kvp.Value;
 
-                        if (!_lstMeterDisplayForms.ContainsKey(ucM.ID)) return;
+                        if (!_lstMeterDisplayForms.ContainsKey(ucM.ID)) continue;
 
                         if (ucM.ContainerHidesWhenRXNotUsed)
                         {
@@ -4672,6 +4677,12 @@ namespace Thetis
                                 ucM.Hide();
                                 ucM.Repaint();
                             }
+                        }
+
+                        if (_meters.ContainsKey(ucM.ID))
+                        {
+                            clsMeter m = _meters[ucM.ID];
+                            m.ZeroOut(true, true);
                         }
                     }
                 }

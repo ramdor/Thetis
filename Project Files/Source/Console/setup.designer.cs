@@ -52424,7 +52424,7 @@
             this.chkContainer_hidewhennotused.Size = new System.Drawing.Size(123, 17);
             this.chkContainer_hidewhennotused.TabIndex = 114;
             this.chkContainer_hidewhennotused.Text = "Hide if RX not in use";
-            this.toolTip1.SetToolTip(this.chkContainer_hidewhennotused, "Hide if RX is not in use");
+            this.toolTip1.SetToolTip(this.chkContainer_hidewhennotused, "Hide this container if RX is not in use");
             this.chkContainer_hidewhennotused.UseVisualStyleBackColor = true;
             this.chkContainer_hidewhennotused.CheckedChanged += new System.EventHandler(this.chkContainer_hidewhennotused_CheckedChanged);
             // 
@@ -52438,6 +52438,7 @@
             this.radContainer_rx2_data.TabIndex = 113;
             this.radContainer_rx2_data.TabStop = true;
             this.radContainer_rx2_data.Text = "RX2 data";
+            this.toolTip1.SetToolTip(this.radContainer_rx2_data, "This container will use RX2 data");
             this.radContainer_rx2_data.UseVisualStyleBackColor = true;
             this.radContainer_rx2_data.CheckedChanged += new System.EventHandler(this.radContainer_rx2_data_CheckedChanged);
             // 
@@ -52451,6 +52452,7 @@
             this.radContainer_rx1_data.TabIndex = 112;
             this.radContainer_rx1_data.TabStop = true;
             this.radContainer_rx1_data.Text = "RX1 data";
+            this.toolTip1.SetToolTip(this.radContainer_rx1_data, "This container will use RX1 data");
             this.radContainer_rx1_data.UseVisualStyleBackColor = true;
             this.radContainer_rx1_data.CheckedChanged += new System.EventHandler(this.radContainer_rx1_data_CheckedChanged);
             // 
