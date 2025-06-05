@@ -24856,10 +24856,11 @@ namespace Thetis
         {
             public string Text { get; set; }
             public string ID { get; set; }
+            public int ListIndex { get; set; }
 
             public override string ToString()
             {
-                return Text;
+                return ListIndex.ToString() + " - " + Text;
             }
         }
         private class clsMeterTypeComboboxItem
@@ -24915,19 +24916,37 @@ namespace Thetis
             bool bEnableAdd = MeterManager.TotalMeterContainers < MAX_CONTAINERS;
 
             btnAddRX1Container.Enabled = bEnableAdd;
-            btnAddRX2Container.Enabled = bEnableAdd && console.RX2Enabled;
 
-            comboContainerSelect.Text = "";
             comboContainerSelect.Items.Clear();
             int i = 0;
             int nSelect = 0;
 
             // add the containers to the list
-            foreach (KeyValuePair<string, ucMeter> kvp in MeterManager.MeterContainers)
+            foreach (KeyValuePair<string, ucMeter> kvp in MeterManager.MeterContainers.OrderBy((KeyValuePair<string, ucMeter> kvp2) => kvp2.Value.Sequence))
             {
                 clsContainerComboboxItem cci = new clsContainerComboboxItem();
-                cci.Text = "Container " + (i + 1).ToString() + " TRX" + kvp.Value.RX.ToString();
+                
                 cci.ID = kvp.Value.ID;
+                cci.ListIndex = i + 1;
+
+                string notes = MeterManager.GetContainerNotes(cci.ID).Trim();
+                int newlineIndex = notes.IndexOf('\n');
+                if (newlineIndex >= 0)
+                {
+                    notes = notes.Substring(0, newlineIndex);
+                }
+                if (notes.Length > 40)
+                {
+                    notes = notes.Substring(0, 40);
+                }
+                if (string.IsNullOrEmpty(notes))
+                {
+                    cci.Text = "Container";
+                }
+                else
+                {
+                    cci.Text = notes;
+                }
 
                 comboContainerSelect.Items.Add(cci);
 
@@ -24936,17 +24955,17 @@ namespace Thetis
                 i++;
             }
 
-            bool bEnableControls = false;
-
+            bool bEnableControls;
             if (comboContainerSelect.Items.Count > 0)
             {
                 comboContainerSelect.SelectedIndex = nSelect;
-
                 bEnableControls = true;
             }
             else
             {
-                comboContainerSelect.Text = "";
+                comboContainerSelect.SelectedIndex = -1;
+                comboContainerSelect.Refresh(); // neeed as disabling the controls causes the update/invalidate to fail sometimes
+                bEnableControls = false;
             }
 
             bool locked = chkLockContainer.Checked;
@@ -24974,6 +24993,11 @@ namespace Thetis
 
             btnMeterCopySettings.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
             btnMeterPasteSettings.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
+
+            radContainer_rx1_data.Enabled = bEnableControls;
+            radContainer_rx2_data.Enabled = bEnableControls;
+
+            chkContainer_hidewhennotused.Enabled = bEnableControls;
 
             if (!bEnableControls) txtContainerNotes.Text = "";
             if (!bEnableControls) comboContainerSelect.Text = "";
@@ -25072,6 +25096,21 @@ namespace Thetis
 
             chkLockContainer.Checked = MeterManager.ContainerLocked(cci.ID);
             chkLockContainer_CheckedChanged(this, EventArgs.Empty); // force it
+            
+            chkContainer_hidewhennotused.Checked = MeterManager.ContainerHidesWhenRXNotUsed(cci.ID); //needs to be before the rx2/rx1 data radios below
+
+            int rx = MeterManager.GetContainerRX(cci.ID);
+            switch (rx)
+            {
+                case 2:
+                    radContainer_rx2_data.Checked = true;
+                    radContainer_rx2_data_CheckedChanged(this, EventArgs.Empty); // force it
+                    break;
+                default:
+                    radContainer_rx1_data.Checked = true;
+                    radContainer_rx1_data_CheckedChanged(this, EventArgs.Empty); // force it
+                    break;
+            }
 
             chkContainerShowRX.Checked = MeterManager.ContainerShowOnRX(cci.ID);
             chkContainerShowTX.Checked = MeterManager.ContainerShowOnTX(cci.ID);
@@ -25124,7 +25163,37 @@ namespace Thetis
             {
                 string sTmp = MeterManager.GetContainerNotes(cci.ID);
                 if (txtContainerNotes.Text != sTmp)
+                {
                     MeterManager.ContainerNotes(cci.ID, txtContainerNotes.Text);
+
+                    //update the cci if required, similar code as in updateMeter2Controls()
+
+                    string notes = MeterManager.GetContainerNotes(cci.ID).Trim();
+                    int newlineIndex = notes.IndexOf('\n');
+                    if (newlineIndex >= 0)
+                    {
+                        notes = notes.Substring(0, newlineIndex);
+                    }
+                    if (notes.Length > 40)
+                    {
+                        notes = notes.Substring(0, 40);
+                    }
+                    if (string.IsNullOrEmpty(notes))
+                    {
+                        cci.Text = "Container";
+                    }
+                    else
+                    {
+                        cci.Text = notes;
+                    }
+
+                    // update it
+                    int index = comboContainerSelect.SelectedIndex;
+                    if (index >= 0)
+                    {
+                        comboContainerSelect.Items[comboContainerSelect.SelectedIndex] = cci;
+                    }
+                }
             }
         }
         private void btnAddMeterItem_Click(object sender, EventArgs e)
@@ -34320,6 +34389,44 @@ namespace Thetis
                 Common.PreventScreenSaver();
             else
                 Common.ResumeScreenSaver();
+        }
+
+        private void radContainer_rx1_data_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radContainer_rx1_data.Checked) return;
+
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.SetContainerRX(cci.ID, 1);
+            }
+
+            chkContainer_hidewhennotused_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void radContainer_rx2_data_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radContainer_rx2_data.Checked) return;
+
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.SetContainerRX(cci.ID, 2);
+            }
+
+            chkContainer_hidewhennotused_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void chkContainer_hidewhennotused_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.ContainerHidesWhenRXNotUsed(cci.ID, chkContainer_hidewhennotused.Checked);
+            }
         }
     }
 

@@ -407,6 +407,8 @@
             this.chkHideFeebackLevel = new System.Windows.Forms.CheckBoxTS();
             this.chkSwapREDBluePSAColours = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS22 = new System.Windows.Forms.GroupBoxTS();
+            this.chkPreventScreenSaver = new System.Windows.Forms.CheckBoxTS();
+            this.chkPreventSleep = new System.Windows.Forms.CheckBoxTS();
             this.chkUseOutlinedCross = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS15 = new System.Windows.Forms.GroupBoxTS();
             this.chkQSOTimerFlashTimerIfResetOnExpiry = new System.Windows.Forms.CheckBoxTS();
@@ -3216,6 +3218,9 @@
             this.comboMeterType = new System.Windows.Forms.ComboBoxTS();
             this.tpAppearanceMeter2 = new System.Windows.Forms.TabPage();
             this.grpMultiMeterHolder = new System.Windows.Forms.GroupBoxTS();
+            this.chkContainer_hidewhennotused = new System.Windows.Forms.CheckBoxTS();
+            this.radContainer_rx2_data = new System.Windows.Forms.RadioButtonTS();
+            this.radContainer_rx1_data = new System.Windows.Forms.RadioButtonTS();
             this.chkLockContainer = new System.Windows.Forms.CheckBoxTS();
             this.chkContainerShowTX = new System.Windows.Forms.CheckBoxTS();
             this.chkMultiMeter_auto_container_height = new System.Windows.Forms.CheckBoxTS();
@@ -3295,7 +3300,6 @@
             this.chkContainerHighlight = new System.Windows.Forms.CheckBoxTS();
             this.btnContainerDelete = new System.Windows.Forms.ButtonTS();
             this.comboContainerSelect = new System.Windows.Forms.ComboBoxTS();
-            this.btnAddRX2Container = new System.Windows.Forms.ButtonTS();
             this.btnAddRX1Container = new System.Windows.Forms.ButtonTS();
             this.tpAppearanceCollapsible = new System.Windows.Forms.TabPage();
             this.txtCollapsedHeight = new System.Windows.Forms.TextBoxTS();
@@ -4234,8 +4238,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.chkPreventSleep = new System.Windows.Forms.CheckBoxTS();
-            this.chkPreventScreenSaver = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -10873,6 +10875,32 @@
             this.groupBoxTS22.TabIndex = 12;
             this.groupBoxTS22.TabStop = false;
             this.groupBoxTS22.Text = "Other";
+            // 
+            // chkPreventScreenSaver
+            // 
+            this.chkPreventScreenSaver.AutoSize = true;
+            this.chkPreventScreenSaver.Image = null;
+            this.chkPreventScreenSaver.Location = new System.Drawing.Point(17, 69);
+            this.chkPreventScreenSaver.Name = "chkPreventScreenSaver";
+            this.chkPreventScreenSaver.Size = new System.Drawing.Size(127, 17);
+            this.chkPreventScreenSaver.TabIndex = 36;
+            this.chkPreventScreenSaver.Text = "Prevent screen saver";
+            this.toolTip1.SetToolTip(this.chkPreventScreenSaver, "Prevents the display screen saver from starting");
+            this.chkPreventScreenSaver.UseVisualStyleBackColor = true;
+            this.chkPreventScreenSaver.CheckedChanged += new System.EventHandler(this.chkPreventScreenSaver_CheckedChanged);
+            // 
+            // chkPreventSleep
+            // 
+            this.chkPreventSleep.AutoSize = true;
+            this.chkPreventSleep.Image = null;
+            this.chkPreventSleep.Location = new System.Drawing.Point(18, 46);
+            this.chkPreventSleep.Name = "chkPreventSleep";
+            this.chkPreventSleep.Size = new System.Drawing.Size(150, 17);
+            this.chkPreventSleep.TabIndex = 35;
+            this.chkPreventSleep.Text = "Prevent system auto sleep";
+            this.toolTip1.SetToolTip(this.chkPreventSleep, "Prevents the system from going to sleep");
+            this.chkPreventSleep.UseVisualStyleBackColor = true;
+            this.chkPreventSleep.CheckedChanged += new System.EventHandler(this.chkPreventSleep_CheckedChanged);
             // 
             // chkUseOutlinedCross
             // 
@@ -52354,6 +52382,9 @@
             // 
             // grpMultiMeterHolder
             // 
+            this.grpMultiMeterHolder.Controls.Add(this.chkContainer_hidewhennotused);
+            this.grpMultiMeterHolder.Controls.Add(this.radContainer_rx2_data);
+            this.grpMultiMeterHolder.Controls.Add(this.radContainer_rx1_data);
             this.grpMultiMeterHolder.Controls.Add(this.chkLockContainer);
             this.grpMultiMeterHolder.Controls.Add(this.chkContainerShowTX);
             this.grpMultiMeterHolder.Controls.Add(this.chkMultiMeter_auto_container_height);
@@ -52377,13 +52408,51 @@
             this.grpMultiMeterHolder.Controls.Add(this.chkContainerHighlight);
             this.grpMultiMeterHolder.Controls.Add(this.btnContainerDelete);
             this.grpMultiMeterHolder.Controls.Add(this.comboContainerSelect);
-            this.grpMultiMeterHolder.Controls.Add(this.btnAddRX2Container);
             this.grpMultiMeterHolder.Controls.Add(this.btnAddRX1Container);
             this.grpMultiMeterHolder.Location = new System.Drawing.Point(8, 8);
             this.grpMultiMeterHolder.Name = "grpMultiMeterHolder";
             this.grpMultiMeterHolder.Size = new System.Drawing.Size(710, 395);
             this.grpMultiMeterHolder.TabIndex = 86;
             this.grpMultiMeterHolder.TabStop = false;
+            // 
+            // chkContainer_hidewhennotused
+            // 
+            this.chkContainer_hidewhennotused.AutoSize = true;
+            this.chkContainer_hidewhennotused.Image = null;
+            this.chkContainer_hidewhennotused.Location = new System.Drawing.Point(246, 60);
+            this.chkContainer_hidewhennotused.Name = "chkContainer_hidewhennotused";
+            this.chkContainer_hidewhennotused.Size = new System.Drawing.Size(123, 17);
+            this.chkContainer_hidewhennotused.TabIndex = 114;
+            this.chkContainer_hidewhennotused.Text = "Hide if RX not in use";
+            this.toolTip1.SetToolTip(this.chkContainer_hidewhennotused, "Hide if RX is not in use");
+            this.chkContainer_hidewhennotused.UseVisualStyleBackColor = true;
+            this.chkContainer_hidewhennotused.CheckedChanged += new System.EventHandler(this.chkContainer_hidewhennotused_CheckedChanged);
+            // 
+            // radContainer_rx2_data
+            // 
+            this.radContainer_rx2_data.AutoSize = true;
+            this.radContainer_rx2_data.Image = null;
+            this.radContainer_rx2_data.Location = new System.Drawing.Point(286, 33);
+            this.radContainer_rx2_data.Name = "radContainer_rx2_data";
+            this.radContainer_rx2_data.Size = new System.Drawing.Size(70, 17);
+            this.radContainer_rx2_data.TabIndex = 113;
+            this.radContainer_rx2_data.TabStop = true;
+            this.radContainer_rx2_data.Text = "RX2 data";
+            this.radContainer_rx2_data.UseVisualStyleBackColor = true;
+            this.radContainer_rx2_data.CheckedChanged += new System.EventHandler(this.radContainer_rx2_data_CheckedChanged);
+            // 
+            // radContainer_rx1_data
+            // 
+            this.radContainer_rx1_data.AutoSize = true;
+            this.radContainer_rx1_data.Image = null;
+            this.radContainer_rx1_data.Location = new System.Drawing.Point(286, 15);
+            this.radContainer_rx1_data.Name = "radContainer_rx1_data";
+            this.radContainer_rx1_data.Size = new System.Drawing.Size(70, 17);
+            this.radContainer_rx1_data.TabIndex = 112;
+            this.radContainer_rx1_data.TabStop = true;
+            this.radContainer_rx1_data.Text = "RX1 data";
+            this.radContainer_rx1_data.UseVisualStyleBackColor = true;
+            this.radContainer_rx1_data.CheckedChanged += new System.EventHandler(this.radContainer_rx1_data_CheckedChanged);
             // 
             // chkLockContainer
             // 
@@ -53564,29 +53633,16 @@
             this.toolTip1.SetToolTip(this.comboContainerSelect, "Selected container. Note: each will get own id in the title text when undocked");
             this.comboContainerSelect.SelectedIndexChanged += new System.EventHandler(this.comboContainerSelect_SelectedIndexChanged);
             // 
-            // btnAddRX2Container
-            // 
-            this.btnAddRX2Container.Image = null;
-            this.btnAddRX2Container.Location = new System.Drawing.Point(298, 21);
-            this.btnAddRX2Container.Name = "btnAddRX2Container";
-            this.btnAddRX2Container.Selectable = true;
-            this.btnAddRX2Container.Size = new System.Drawing.Size(70, 56);
-            this.btnAddRX2Container.TabIndex = 1;
-            this.btnAddRX2Container.Text = "Add TRX2 Container";
-            this.toolTip1.SetToolTip(this.btnAddRX2Container, "Add a meter item container that uses RX2 readings");
-            this.btnAddRX2Container.UseVisualStyleBackColor = true;
-            this.btnAddRX2Container.Click += new System.EventHandler(this.btnAddRX2Container_Click);
-            // 
             // btnAddRX1Container
             // 
             this.btnAddRX1Container.Image = null;
-            this.btnAddRX1Container.Location = new System.Drawing.Point(225, 21);
+            this.btnAddRX1Container.Location = new System.Drawing.Point(209, 13);
             this.btnAddRX1Container.Name = "btnAddRX1Container";
             this.btnAddRX1Container.Selectable = true;
-            this.btnAddRX1Container.Size = new System.Drawing.Size(70, 56);
+            this.btnAddRX1Container.Size = new System.Drawing.Size(71, 44);
             this.btnAddRX1Container.TabIndex = 0;
-            this.btnAddRX1Container.Text = "Add TRX1 Container";
-            this.toolTip1.SetToolTip(this.btnAddRX1Container, "Add a meter item container that uses RX1 readings");
+            this.btnAddRX1Container.Text = "Add\r\nContainer";
+            this.toolTip1.SetToolTip(this.btnAddRX1Container, "Add a meter item container");
             this.btnAddRX1Container.UseVisualStyleBackColor = true;
             this.btnAddRX1Container.Click += new System.EventHandler(this.btnAddRX1Container_Click);
             // 
@@ -67258,32 +67314,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // chkPreventSleep
-            // 
-            this.chkPreventSleep.AutoSize = true;
-            this.chkPreventSleep.Image = null;
-            this.chkPreventSleep.Location = new System.Drawing.Point(18, 46);
-            this.chkPreventSleep.Name = "chkPreventSleep";
-            this.chkPreventSleep.Size = new System.Drawing.Size(150, 17);
-            this.chkPreventSleep.TabIndex = 35;
-            this.chkPreventSleep.Text = "Prevent system auto sleep";
-            this.toolTip1.SetToolTip(this.chkPreventSleep, "Prevents the system from going to sleep");
-            this.chkPreventSleep.UseVisualStyleBackColor = true;
-            this.chkPreventSleep.CheckedChanged += new System.EventHandler(this.chkPreventSleep_CheckedChanged);
-            // 
-            // chkPreventScreenSaver
-            // 
-            this.chkPreventScreenSaver.AutoSize = true;
-            this.chkPreventScreenSaver.Image = null;
-            this.chkPreventScreenSaver.Location = new System.Drawing.Point(17, 69);
-            this.chkPreventScreenSaver.Name = "chkPreventScreenSaver";
-            this.chkPreventScreenSaver.Size = new System.Drawing.Size(127, 17);
-            this.chkPreventScreenSaver.TabIndex = 36;
-            this.chkPreventScreenSaver.Text = "Prevent screen saver";
-            this.toolTip1.SetToolTip(this.chkPreventScreenSaver, "Prevents the display screen saver from starting");
-            this.chkPreventScreenSaver.UseVisualStyleBackColor = true;
-            this.chkPreventScreenSaver.CheckedChanged += new System.EventHandler(this.chkPreventScreenSaver_CheckedChanged);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -71895,7 +71925,6 @@
         private ButtonTS btnRX1PBsnr;
         private ButtonTS btnResetNFShift;
         private GroupBoxTS grpMultiMeterHolder;
-        private ButtonTS btnAddRX2Container;
         private ButtonTS btnAddRX1Container;
         private CheckBoxTS chkContainerHighlight;
         private ButtonTS btnContainerDelete;
@@ -72851,5 +72880,8 @@
         private LabelTS lblTunedPulse_info;
         private CheckBoxTS chkPreventSleep;
         private CheckBoxTS chkPreventScreenSaver;
+        private RadioButtonTS radContainer_rx2_data;
+        private RadioButtonTS radContainer_rx1_data;
+        private CheckBoxTS chkContainer_hidewhennotused;
     }
 }
