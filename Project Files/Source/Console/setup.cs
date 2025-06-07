@@ -11136,8 +11136,8 @@ namespace Thetis
 
                 if (pulsed)
                 {
+                    setupTwoTonePulse();
                     console.radio.GetDSPTX(0).TXPostGenMode = 7; // pulsed two tone
-
                     console.radio.GetDSPTX(0).TXPostGenTTPulseToneFreq1 = ttfreq1;
                     console.radio.GetDSPTX(0).TXPostGenTTPulseToneFreq2 = ttfreq2;
                     console.radio.GetDSPTX(0).TXPostGenTTPulseMag1 = ttmag1;
