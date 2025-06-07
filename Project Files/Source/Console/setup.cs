@@ -11132,17 +11132,34 @@ namespace Thetis
                     await Task.Delay(200); //MW0LGE_21a
                 }
 
-                console.radio.GetDSPTX(0).TXPostGenMode = 1;
-                console.radio.GetDSPTX(0).TXPostGenTTFreq1 = ttfreq1;
-                console.radio.GetDSPTX(0).TXPostGenTTFreq2 = ttfreq2;
-                console.radio.GetDSPTX(0).TXPostGenTTMag1 = ttmag1;
+                bool pulsed = chkPulsed_TwoTone.Checked;
 
-                //MW0LGE_21a change to delay Freq2 output. Fixes problems with some Amps frequency counters
-                if ((int)udFreq2Delay.Value == 0)
-                    console.radio.GetDSPTX(0).TXPostGenTTMag2 = ttmag2;
+                if (pulsed)
+                {
+                    console.radio.GetDSPTX(0).TXPostGenMode = 7; // pulsed two tone
+
+                    console.radio.GetDSPTX(0).TXPostGenTTPulseToneFreq1 = ttfreq1;
+                    console.radio.GetDSPTX(0).TXPostGenTTPulseToneFreq2 = ttfreq2;
+                    console.radio.GetDSPTX(0).TXPostGenTTPulseMag1 = ttmag1;
+
+                    if ((int)udFreq2Delay.Value == 0)
+                        console.radio.GetDSPTX(0).TXPostGenTTPulseMag2 = ttmag2;
+                    else
+                        console.radio.GetDSPTX(0).TXPostGenTTPulseMag2 = 0.0;
+                }
                 else
-                    console.radio.GetDSPTX(0).TXPostGenTTMag2 = 0.0;
+                {
+                    console.radio.GetDSPTX(0).TXPostGenMode = 1;
+                    console.radio.GetDSPTX(0).TXPostGenTTFreq1 = ttfreq1;
+                    console.radio.GetDSPTX(0).TXPostGenTTFreq2 = ttfreq2;
+                    console.radio.GetDSPTX(0).TXPostGenTTMag1 = ttmag1;
 
+                    //MW0LGE_21a change to delay Freq2 output. Fixes problems with some Amps frequency counters
+                    if ((int)udFreq2Delay.Value == 0)
+                        console.radio.GetDSPTX(0).TXPostGenTTMag2 = ttmag2;
+                    else
+                        console.radio.GetDSPTX(0).TXPostGenTTMag2 = 0.0;                    
+                }
                 console.radio.GetDSPTX(0).TXPostGenRun = 1;
 
                 //MW0LGE_22b
@@ -11169,11 +11186,15 @@ namespace Thetis
                     return;
                 }
 
+                // set magnitude after a delay for freq2 
                 if ((int)udFreq2Delay.Value > 0)
                 {
-                    // set magnitude after a delay for freq2 
                     await Task.Delay((int)udFreq2Delay.Value);
-                    console.radio.GetDSPTX(0).TXPostGenTTMag2 = ttmag2;
+
+                    if (pulsed)
+                        console.radio.GetDSPTX(0).TXPostGenTTPulseMag2 = ttmag2;
+                    else
+                        console.radio.GetDSPTX(0).TXPostGenTTMag2 = ttmag2;
                 }
 
                 chkTestIMD.BackColor = console.ButtonSelectedColor;
@@ -34315,7 +34336,7 @@ namespace Thetis
             if (initializing) return;
             console.TunePulseCount = (int)nudPulsedTune_window.Value;
             console.SetupTunePulse();
-            updatePulseInfo();
+            updateTunePulseInfo();
         }
 
         private void nudPulsedTune_percent_ValueChanged(object sender, EventArgs e)
@@ -34323,7 +34344,7 @@ namespace Thetis
             if (initializing) return;
             console.TunePulseDuty = (float)(nudPulsedTune_percent.Value) / 100f;
             console.SetupTunePulse();
-            updatePulseInfo();
+            updateTunePulseInfo();
         }
 
         private void chkPulsedTune_CheckedChanged(object sender, EventArgs e)
@@ -34345,10 +34366,10 @@ namespace Thetis
             if (initializing) return;
             console.TunePulseRamp = (int)nudPulsedTune_ramp.Value;
             console.SetupTunePulse();
-            updatePulseInfo();
+            updateTunePulseInfo();
         }
 
-        private void updatePulseInfo()
+        private void updateTunePulseInfo()
         {
             float window = 1000f / (float)nudPulsedTune_window.Value;
             float duty = window * ((float)nudPulsedTune_percent.Value / 100f);
@@ -34427,6 +34448,71 @@ namespace Thetis
             {
                 MeterManager.ContainerHidesWhenRXNotUsed(cci.ID, chkContainer_hidewhennotused.Checked);
             }
+        }
+
+        private void chkPulsed_TwoTone_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            nudPulsed_TwoTone_window_ValueChanged(this, EventArgs.Empty);
+            nudPulsed_TwoTone_percent_ValueChanged(this, EventArgs.Empty);
+            nudPulsed_TwoTone_ramp_ValueChanged(this, EventArgs.Empty);
+
+            grpPulsedTwoTone.Enabled = chkPulsed_TwoTone.Checked;
+            lblTwoTonePulse_info.Enabled = chkPulsed_TwoTone.Checked;
+        }
+
+        private void nudPulsed_TwoTone_window_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupTwoTonePulse();
+            updateTwoTonePulseInfo();
+        }
+
+        private void nudPulsed_TwoTone_percent_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupTwoTonePulse();
+            updateTwoTonePulseInfo();
+        }
+
+        private void nudPulsed_TwoTone_ramp_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupTwoTonePulse();
+            updateTwoTonePulseInfo();
+        }
+
+        private void updateTwoTonePulseInfo()
+        {
+            float window = 1000f / (float)nudPulsed_TwoTone_window.Value;
+            float duty = window * ((float)nudPulsed_TwoTone_percent.Value / 100f);
+            int totalRamp = (int)nudPulsed_TwoTone_ramp.Value * 2;
+            float total = duty + totalRamp;
+
+            string info = $"Window = {window:F2}ms\nDuty = {duty:F2}ms\nTotal Ramp = {totalRamp}ms\nTotal Pulse = {total:F2}ms\n";
+
+            if (window >= total)
+            {
+                info += "Will fit window";
+                lblTwoTonePulse_info.ForeColor = Color.Green;
+            }
+            else
+            {
+                info += "Will NOT fit window";
+                lblTwoTonePulse_info.ForeColor = Color.Red;
+            }
+
+            lblTwoTonePulse_info.Text = info;
+        }
+        private void setupTwoTonePulse()
+        {
+            if (!chkPulsed_TwoTone.Checked) return;
+
+            //console.radio.GetDSPTX(0).TXPostGenMode = 7; // two tone pulse
+            console.radio.GetDSPTX(0).TXPostGenTTPulseIQOut = true;
+            console.radio.GetDSPTX(0).TXPostGenTTPulseFreq = (int)nudPulsed_TwoTone_window.Value;
+            console.radio.GetDSPTX(0).TXPostGenTTPulseDutyCycle = (float)(nudPulsed_TwoTone_percent.Value) / 100f;
+            console.radio.GetDSPTX(0).TXPostGenTTPulseTransition = (float)(nudPulsed_TwoTone_ramp.Value) / 1000f;
         }
     }
 

@@ -481,7 +481,7 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenSweepRate", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAPostGenSweepRate(int channel, double rate);
 
-        // post pulse
+        // post tune pulse
         [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenPulseMag", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAPostGenPulseMag(int channel, double mag);
 
@@ -499,6 +499,26 @@ namespace Thetis
 
         [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenPulseIQout", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAPostGenPulseIQout(int channel, int IQout);
+        //
+
+        // post two tone pulse
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenTTPulseMag", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenTTPulseMag(int channel, double mag1, double mag2);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenTTPulseFreq", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenTTPulseFreq(int channel, double freq1);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenTTPulseDutyCycle", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenTTPulseDutyCycle(int channel, double dc);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenTTPulseToneFreq", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenTTPulseToneFreq(int channel, double freq1, double freq2);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenTTPulseTransition", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenTTPulseTransition(int channel, double transtime);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenTTPulseIQout", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenTTPulseIQout(int channel, int IQout);
         //
 
         [DllImport("wdsp.dll", EntryPoint = "GetWDSPVersion", CallingConvention = CallingConvention.Cdecl)]
