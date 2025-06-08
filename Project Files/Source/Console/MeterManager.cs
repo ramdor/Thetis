@@ -2317,8 +2317,8 @@ namespace Thetis
 
                 m.ZeroOut(true, true);
 
-                // need to update custom readings for text overlay and led
-                m.UpdateCustomReadings();
+                // need to update items
+                m.UpdateItems();
             }
         }
         public static int GetContainerRX(string sId)
@@ -3615,20 +3615,53 @@ namespace Thetis
                     {
                         clsMeter m = ms.Value;
 
-                        //this is needed in the case of vfoB change on rx1 when rx2 is disabled. It will still be identified as rx2
-                        bool update = (rx == m.RX) || (!m.RX2Enabled && m.RX == 1 && rx == 2);
+                        ////this is needed in the case of vfoB change on rx1 when rx2 is disabled. It will still be identified as rx2
+                        //bool update = (rx == m.RX) || (!m.RX2Enabled && m.RX == 1 && rx == 2);
 
-                        if (update)
+                        //if (update)
+                        //{
+                        //    if (rx == 1)
+                        //        m.BandVfoA = new_band;
+                        //    else
+                        //        m.BandVfoB = new_band;
+
+                        //    m.BandChanged(old_band, new_band);
+
+                        //    m.ZeroOut(true, false);
+                        //}
+
+                        if(rx == 1)
                         {
-                            if (rx == 1)
+                            if (m.RX == 1)
+                            {
+                                // rx1 will always be vfoA
                                 m.BandVfoA = new_band;
-                            else
-                                m.BandVfoB = new_band;
-
-                            m.BandChanged(old_band, new_band);
-
-                            m.ZeroOut(true, false);
+                                m.BandChanged(old_band, new_band);
+                            }
                         }
+                        else
+                        {
+                            // rx2 could be dedicated to rx2, or vfoB on rx1
+                            if(!m.RX2Enabled)
+                            {
+                                if (m.RX == 1)
+                                {
+                                    // rx1 vfoB
+                                    m.BandVfoB = new_band;
+                                    //m.BandChanged(old_band, new_band); // this is not done, as the band buttons only relate to vfoA
+                                }
+                            }
+                            else
+                            {
+                                if (m.RX == 2)
+                                {
+                                    // rx2
+                                    m.BandVfoB = new_band;
+                                    m.BandChanged(old_band, new_band);
+                                }
+                            }
+                        }
+                        m.ZeroOut(true, false);
                     }
                 }
 
@@ -5570,6 +5603,10 @@ namespace Thetis
             {
 
             }
+            public virtual void Initialise()
+            {
+                //override to perform specific/late initialisation
+            }
             public virtual void ModeChanged(DSPMode oldMode, DSPMode newMode)
             {
 
@@ -5879,6 +5916,11 @@ namespace Thetis
             public clsFilterButtonBox(clsMeter owningmeter)
             {
                 _owningmeter = owningmeter;
+
+                Initialise();
+            }
+            public override void Initialise()
+            {
                 _click_highlight = false;
 
                 if (_owningmeter.RX == 1)
@@ -6864,6 +6906,11 @@ namespace Thetis
             public clsModeButtonBox(clsMeter owningmeter)
             {
                 _owningmeter = owningmeter;
+
+                Initialise();
+            }
+            public override void Initialise()
+            {
                 _click_highlight = false;
 
                 if (_owningmeter.RX == 1)
@@ -7131,6 +7178,10 @@ namespace Thetis
             {
                 _owningmeter = owningmeter;
 
+                Initialise();
+            }
+            public override void Initialise()
+            {
                 if (_owningmeter.RX == 1)
                 {
                     _band = _owningmeter.BandVfoA;
@@ -23127,8 +23178,10 @@ namespace Thetis
             //        return null;
             //    }
             //}
-            public void UpdateCustomReadings()
+            public void UpdateItems()
             {
+                // this function updates anything that might need it due to rx number change
+
                 // itterate through all _meterItems that are text overlay or leds, and set text1/2 and condition to itself to update the customreadings
                 // we dont worry that we might be leaving some cusom readings behind if the rx number changes, this will be cleared next restart
                 lock (_meterItemsLock)
@@ -23154,7 +23207,15 @@ namespace Thetis
                                 break;
                         }
                     }
-                }
+
+                    // itterate through all _meteritems and re-init any that require it
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS || 
+                                                                                         o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS ||
+                                                                                         o.Value.ItemType == clsMeterItem.MeterItemType.MODE_BUTTONS))
+                    {
+                        kvp.Value.Initialise();
+                    }
+                }                
             }
             public int QuickestRXUpdate
             {

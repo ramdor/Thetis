@@ -32613,7 +32613,8 @@ namespace Thetis
             }
             else
             {
-                oldBand = RX1Band;
+                //oldBand = RX1Band;  //[2.10.3.9]MW0LGE now done below for rx2 as RX1Band is obviously wrong
+                oldBand = Band.FIRST;
                 oldMode = RX1DSPMode;
                 oldFilter = RX1Filter;
                 oldCentreFreq = CentreFrequency;
@@ -33228,7 +33229,7 @@ namespace Thetis
             //last_tx_xvtr_index = tx_xvtr_index;
             //last_rx2_xvtr_index = rx2_xvtr_index;
 
-            if(RX2Enabled)
+            if(rx2_enabled)
             {
                 if (dOldFreq != VFOBFreq)
                     VFOBFrequencyChangeHandlers?.Invoke(oldBand, RX2Band, oldMode, RX2DSPMode, oldFilter, RX2Filter, dOldFreq, VFOBFreq,
@@ -33238,6 +33239,7 @@ namespace Thetis
             {
                 if (dOldFreq != VFOBFreq)
                 {
+                    oldBand = BandByFreq(dOldFreq, rx1_xvtr_index, current_region);
                     Band tmpBand = BandByFreq(VFOBFreq, rx1_xvtr_index, current_region);
 
                     VFOBFrequencyChangeHandlers?.Invoke(oldBand, tmpBand, oldMode, RX1DSPMode, oldFilter, RX1Filter, dOldFreq, VFOBFreq,
