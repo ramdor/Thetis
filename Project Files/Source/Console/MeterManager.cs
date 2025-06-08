@@ -3857,7 +3857,7 @@ namespace Thetis
 
             m.TNFActive = _console.TNFActive;
 
-            if (!_console.RX2Enabled)
+            if (!_console.RX2Enabled && m.RX == 1)
             {
                 // same as rx1 unless rx2 enabled
                 m.ModeVfoB = _console.RX1DSPMode;
@@ -3936,8 +3936,7 @@ namespace Thetis
 
             m.AntennasChanged(_console.RX1Band, _console.TXBand, _console.VFOAFreq, _console.TXFreq);
 
-            // update any filter meter items and setupbuttons to update filter text
-            m.InitFilterButtons();
+            m.UpdateItems();
         }
         private static void initConsoleData(int rx)
         {
@@ -6140,6 +6139,8 @@ namespace Thetis
 
                 setupClick(true);
 
+                if (_owningmeter.RX == 2 && !_owningmeter.RX2Enabled) return; // prevent any change when rx2 is disabled, but this container is for rx2
+
                 if (e.Button == MouseButtons.Right)
                 {
                     if (_console != null)
@@ -7081,6 +7082,8 @@ namespace Thetis
 
                 setupClick(true);
 
+                if (_owningmeter.RX == 2 && !_owningmeter.RX2Enabled) return; // prevent any change when rx2 is disabled, but this container is for rx2
+
                 DSPMode m = (DSPMode)((int)DSPMode.LSB + index);
 
                 setMode(m);
@@ -7516,6 +7519,8 @@ namespace Thetis
                 if (FadeOnTx && _owningmeter.MOX) return;
 
                 setupClick(true);
+
+                if (_owningmeter.RX == 2 && !_owningmeter.RX2Enabled) return; // prevent any change when rx2 is disabled, but this container is for rx2
 
                 if (_console == null) return;
                 int index = base.ButtonIndex;
@@ -23215,7 +23220,7 @@ namespace Thetis
                     {
                         kvp.Value.Initialise();
                     }
-                }                
+                }
             }
             public int QuickestRXUpdate
             {
@@ -31520,7 +31525,7 @@ namespace Thetis
                     shift = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH && mx >= 0.5f ? 0.510f : 0; //vfoA to B shift
                     mouse_over_good = true;
                     bool left = (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_A) && vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && (shift == 0) && (m.RX == 1);
-                    bool right = (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B) && vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO && (shift != 0 || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B) && ((m.RX == 1 && (!m.RX2Enabled || (m.Split || m.MultiRxEnabled))) || (m.RX == 2));
+                    bool right = (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B) && vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO && (shift != 0 || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B) && ((m.RX == 1 && (!m.RX2Enabled || (m.Split || m.MultiRxEnabled))) || (m.RX == 2 && m.RX2Enabled));
 
                     // band
                     if (my >= 0.555 && my <= 0.900 && (((mx >= 0.333 && mx <= 0.480) & left) || ((mx >= 0.333 + shift && mx <= 0.480 + shift) & right)))

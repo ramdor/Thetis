@@ -793,15 +793,15 @@ namespace Thetis
             InitCTCSS();
 
             //TODO !!!!!!!!!!!!!!
-            bool RX2Enabled = false;
+            bool local_rx2Enabled = false;
             if (File.Exists(DB.FileName))
             {
                 Dictionary<string, string> d = DB.GetVarsDictionary("State");
 
                 if (d.ContainsKey("chkRX2"))
-                    RX2Enabled = bool.Parse(d["chkRX2"]);
+                    local_rx2Enabled = bool.Parse(d["chkRX2"]);
                 else
-                    RX2Enabled = false;
+                    local_rx2Enabled = false;
             }
             //END_TODO !!!!!!!!!!!!!!
 
@@ -816,7 +816,7 @@ namespace Thetis
             Midi2Cat = new Midi2CatCommands(this);
 
             // resize events are caused by this
-            if (RX2Enabled)
+            if (local_rx2Enabled)
             {
                 this.MinimumSize = new Size(this.MinimumSize.Width, this.MinimumSize.Height - (panelRX2Filter.Height + 8));
             }
@@ -976,7 +976,7 @@ namespace Thetis
 
             //resize N1MM //MW0LGE_21k9c
             N1MM.Resize(1);
-            if (RX2Enabled) N1MM.Resize(2);
+            if (local_rx2Enabled) N1MM.Resize(2);
 
             // go for multimeter launch -- display forms, or user controls in thetis
             MeterManager.FinishSetupAndDisplay();
