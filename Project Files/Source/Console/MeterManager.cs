@@ -5928,6 +5928,8 @@ namespace Thetis
             {
                 _owningmeter = owningmeter;
 
+                ItemType = MeterItemType.FILTER_BUTTONS;
+
                 Initialise();
             }
             public override void Initialise()
@@ -5943,9 +5945,7 @@ namespace Thetis
                 {
                     _filter = _owningmeter.FilterVfoB;
                     Buttons = 9;
-                }
-
-                ItemType = MeterItemType.FILTER_BUTTONS;
+                }                
 
                 setupButtons();
             }
@@ -6919,7 +6919,7 @@ namespace Thetis
             public clsModeButtonBox(clsMeter owningmeter)
             {
                 _owningmeter = owningmeter;
-
+                ItemType = MeterItemType.MODE_BUTTONS;                
                 Initialise();
             }
             public override void Initialise()
@@ -6930,8 +6930,6 @@ namespace Thetis
                     _mode = _owningmeter.ModeVfoA;
                 else if (_owningmeter.RX == 2)
                     _mode = _owningmeter.ModeVfoB;
-
-                ItemType = MeterItemType.MODE_BUTTONS;
 
                 Buttons = 12;
 
@@ -7192,7 +7190,7 @@ namespace Thetis
             public clsBandButtonBox(clsMeter owningmeter)
             {
                 _owningmeter = owningmeter;
-
+                ItemType = MeterItemType.BAND_BUTTONS;                
                 Initialise();
             }
             public override void Initialise()
@@ -7225,8 +7223,6 @@ namespace Thetis
 
                 _click_highlight = false;
                 _force_update = false;
-
-                ItemType = MeterItemType.BAND_BUTTONS;
 
                 Buttons = 15;
 
@@ -8027,6 +8023,9 @@ namespace Thetis
 
                 LAST = 99
             }
+
+            private const int MAX_BUTTONS = 50;
+
             private int _number_of_buttons;
             private int _columns;
             private float _margin;
@@ -8121,34 +8120,42 @@ namespace Thetis
                 // 0 is settings, 1 is active
                 for (int n = 0; n < 2; n++)
                 {
-                    _fill_colour[n] = new System.Drawing.Color[_number_of_buttons];
-                    _hover_colour[n] = new System.Drawing.Color[_number_of_buttons];
-                    _border_colour[n] = new System.Drawing.Color[_number_of_buttons];
+                    _fill_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
+                    _hover_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
+                    _border_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
 
-                    _click_colour[n] = new System.Drawing.Color[_number_of_buttons];
+                    _click_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
 
-                    _use_off_colour[n] = new bool[_number_of_buttons];
-                    _use_indicator[n] = new bool[_number_of_buttons];
-                    _indicator_width[n] = new float[_number_of_buttons];
+                    _use_off_colour[n] = new bool[MAX_BUTTONS];
+                    _use_indicator[n] = new bool[MAX_BUTTONS];
+                    _indicator_width[n] = new float[MAX_BUTTONS];
 
-                    _on_colour[n] = new System.Drawing.Color[_number_of_buttons];
-                    _off_colour[n] = new System.Drawing.Color[_number_of_buttons];
-                    _on[n] = new bool[_number_of_buttons];
+                    _on_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
+                    _off_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
+                    _on[n] = new bool[MAX_BUTTONS];
 
-                    _fontFamily[n] = new string[_number_of_buttons];
-                    _fontStyle[n] = new FontStyle[_number_of_buttons];
-                    _fontSize[n] = new float[_number_of_buttons];
-                    _font_colour[n] = new System.Drawing.Color[_number_of_buttons];
+                    _fontFamily[n] = new string[MAX_BUTTONS];
+                    _fontStyle[n] = new FontStyle[MAX_BUTTONS];
+                    _fontSize[n] = new float[MAX_BUTTONS];
+                    _font_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
 
-                    _text[n] = new string[_number_of_buttons];
+                    _text[n] = new string[MAX_BUTTONS];
 
-                    _enabled[n] = new bool[_number_of_buttons];
-                    _visible[n] = new bool[_number_of_buttons];
+                    _enabled[n] = new bool[MAX_BUTTONS];
+                    _visible[n] = new bool[MAX_BUTTONS];
 
-                    _indicator_type[n] = new IndicatorType[_number_of_buttons];
+                    _indicator_type[n] = new IndicatorType[MAX_BUTTONS];
+                }
 
-                    _total_buttons_visible = 0;
-                    for (int b = 0; b < _number_of_buttons; b++) {
+                ResetButtons();
+            }
+            public void ResetButtons()
+            {
+                // 0 is settings, 1 is active
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 0; b < MAX_BUTTONS; b++)
+                    {
                         _fill_colour[n][b] = System.Drawing.Color.Black;
                         _hover_colour[n][b] = System.Drawing.Color.LightGray;
                         _border_colour[n][b] = System.Drawing.Color.White;
@@ -8172,11 +8179,12 @@ namespace Thetis
 
                         _enabled[n][b] = true;
                         _visible[n][b] = true;
-                        _total_buttons_visible++;
 
                         _indicator_type[n][b] = IndicatorType.RING;
                     }
                 }
+
+                _total_buttons_visible = _number_of_buttons;
             }
             public bool RebuildButtons
             {
@@ -8209,7 +8217,7 @@ namespace Thetis
                 set
                 {
                     _number_of_buttons = value;
-                    setupArrays();
+                    if (_number_of_buttons > MAX_BUTTONS) _number_of_buttons = MAX_BUTTONS;                    
                 }
             }
             public virtual int VisibleBits
