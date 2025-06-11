@@ -37096,6 +37096,11 @@ namespace Thetis
 
         }
         private bool _oldMultiRX = false;
+        private bool _sub_rx_enabled = false;
+        private bool SubRXEnabled
+        {
+            get { return _sub_rx_enabled; }
+        }
         unsafe private void chkEnableMultiRX_CheckedChanged(object sender, System.EventArgs e)
         {
             //[2.10.3.5]MW0LGE
@@ -37171,6 +37176,7 @@ namespace Thetis
                     CurrentClickTuneMode = ClickTuneMode.VFOA;
 
             }
+            _sub_rx_enabled = chkEnableMultiRX.Checked;
             Display.SubRX1Enabled = chkEnableMultiRX.Checked;
             MultiRXToolStripMenuItem.Checked = chkEnableMultiRX.Checked;
 
@@ -47014,7 +47020,6 @@ namespace Thetis
                     }
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_PK)) _RX1MeterValues[Reading.ADC_PK] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_REAL);
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_AV)) _RX1MeterValues[Reading.ADC_AV] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
-
                     if (MeterManager.RequiresUpdate(1, Reading.AGC_PK)) _RX1MeterValues[Reading.AGC_PK] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AGC_PK);
                     if (MeterManager.RequiresUpdate(1, Reading.AGC_AV)) _RX1MeterValues[Reading.AGC_AV] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AGC_AV);
                     if (MeterManager.RequiresUpdate(1, Reading.AGC_GAIN)) _RX1MeterValues[Reading.AGC_GAIN] = 0 - WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AGC_GAIN);
@@ -47030,6 +47035,35 @@ namespace Thetis
                         else
                             _RX1MeterValues[Reading.ESTIMATED_PBSNR] = 0f;
                     }
+
+                    ////[2.10.3.9]<W0LGE sub rx
+                    //if (SubRXEnabled)
+                    //{
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_SIGNAL_STRENGTH)) _RX1MeterValues[Reading.SUB_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
+                    //    bNeedAvg = true;
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_AVG_SIGNAL_STRENGTH))
+                    //    {
+                    //        _RX1MeterValues[Reading.SUB_AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
+                    //        bNeedAvg = false;
+                    //    }
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_ADC_PK)) _RX1MeterValues[Reading.SUB_ADC_PK] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.ADC_REAL);
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_ADC_AV)) _RX1MeterValues[Reading.SUB_ADC_AV] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.ADC_IMAG);
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_AGC_PK)) _RX1MeterValues[Reading.SUB_AGC_PK] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.AGC_PK);
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_AGC_AV)) _RX1MeterValues[Reading.SUB_AGC_AV] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.AGC_AV);
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_AGC_GAIN)) _RX1MeterValues[Reading.SUB_AGC_GAIN] = 0 - WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.AGC_GAIN);
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_ESTIMATED_PBSNR))
+                    //    {
+                    //        if (!Display.FastAttackNoiseFloorRX1 && _lastRX1NoiseFloorGood)
+                    //        {
+                    //            float avg = bNeedAvg ? WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset : _RX1MeterValues[Reading.SUB_AVG_SIGNAL_STRENGTH];
+                    //            spectralCalculations(1, avg, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
+                    //            _RX1MeterValues[Reading.SUB_ESTIMATED_PBSNR] = (float)estimated_snr;
+                    //        }
+                    //        else
+                    //            _RX1MeterValues[Reading.SUB_ESTIMATED_PBSNR] = 0f;
+                    //    }
+                    //}
+                    ////
 
                     updateRX = true;
                 }

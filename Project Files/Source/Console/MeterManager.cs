@@ -75,15 +75,14 @@ namespace Thetis
         AGC_PK,
         AGC_AV,
         AGC_GAIN,
-        ESTIMATED_PBSNR,
+        ESTIMATED_PBSNR, //7
         //TX
-        MIC,
+        MIC, //8
         PWR,
         ALC,
         EQ,
         LEVELER,
         COMP,
-        //CPDR, //CPDR is the same as comp
         ALC_G,
         ALC_GROUP,
         LVL_G,
@@ -91,18 +90,19 @@ namespace Thetis
         ALC_PK,
         EQ_PK,
         LEVELER_PK,
-        COMP_PK,
-        //CPDR_PK, //CPDR is the same as comp
+        COMP_PK, //21
+        //CPDR, //CPDR is the same as comp  //22
+        //CPDR_PK, //CPDR is the same as comp  //23
         CFC_PK = 24,
         CFC_AV,
-        CFC_G,
+        CFC_G, //26
 
         //additional to MeterRXMode & MeterTXMode
-        REVERSE_PWR,
-        SWR,
+        REVERSE_PWR, //27
+        SWR, //28
 
         //pa
-        DRIVE_FWD_ADC,
+        DRIVE_FWD_ADC, //29
         FWD_ADC,
         REV_ADC,
         DRIVE_PWR,
@@ -110,29 +110,18 @@ namespace Thetis
         PA_REV_PWR,
         CAL_FWD_PWR,
         REV_VOLT,
-        FWD_VOLT,
+        FWD_VOLT, //37
 
         // volts/amps
-        VOLTS,
-        AMPS,
+        VOLTS, //38
+        AMPS, //39
 
-        AZ,
-        ELE,
+        // rotator
+        AZ, //40
+        ELE, //41
 
-        // special
-        //EYE_PERCENT,
-        //// private used in metermanager only
-        //VFOA,
-        //VFOB,
-        //VFOSUB,
-        //DSPMODE,
-        //BANDVFOA,
-        //BANDVFOB,
-        //SPLIT,
-        //TXVFOB,
-
-        //special these are not floats, only used by clsDataOut
-        VFOA_FREQ,
+        // special these are not floats, only used by clsDataOut
+        VFOA_FREQ, //42
         VFOB_FREQ,
         VFOSUBA_FREQ,
         TX_FREQ,
@@ -151,11 +140,21 @@ namespace Thetis
         SPLIT,
         RX2_ENABLED,
         VFOB_TX,
-        SUB_RX,
-        //
+        SUB_RX, //61
 
-        CUSTOM_PK,
-        CUSTOM_AV,
+        // custom meter
+        CUSTOM_PK, //62
+        CUSTOM_AV, //63
+
+        //// sub RX meter
+        //SUB_SIGNAL_STRENGTH, //64
+        //SUB_AVG_SIGNAL_STRENGTH,
+        //SUB_ADC_PK,
+        //SUB_ADC_AV,
+        //SUB_AGC_PK,
+        //SUB_AGC_AV,
+        //SUB_AGC_GAIN,
+        //SUB_ESTIMATED_PBSNR, //71
 
         LAST
     }
@@ -618,7 +617,7 @@ namespace Thetis
                         }
                         else
                         {
-                            return 0;
+                            return (float)0;
                         }
                     }
                 }
@@ -859,6 +858,10 @@ namespace Thetis
                 addReading(Reading.SWR, text);
                 addReading(Reading.SIGNAL_STRENGTH, text);
                 addReading(Reading.AVG_SIGNAL_STRENGTH, text);
+                ////sub rx
+                //addReading(Reading.SUB_SIGNAL_STRENGTH, text);
+                //addReading(Reading.SUB_AVG_SIGNAL_STRENGTH, text);
+                ////
                 addReading(Reading.PWR, text);
                 addReading(Reading.REVERSE_PWR, text);
                 addReading(Reading.MIC, text);
@@ -4259,8 +4262,17 @@ namespace Thetis
                     setReading(rx, Reading.AGC_AV, ref readings);
                     setReading(rx, Reading.AGC_GAIN, ref readings);
                     //setReading(rx, Reading.EYE_PERCENT, ref readings);
-
                     setReading(rx, Reading.ESTIMATED_PBSNR, ref readings);
+
+                    ////sub rx data
+                    //setReading(rx, Reading.SUB_SIGNAL_STRENGTH, ref readings);
+                    //setReading(rx, Reading.SUB_AVG_SIGNAL_STRENGTH, ref readings);
+                    //setReading(rx, Reading.SUB_ADC_PK, ref readings);
+                    //setReading(rx, Reading.SUB_ADC_AV, ref readings);
+                    //setReading(rx, Reading.SUB_AGC_PK, ref readings);
+                    //setReading(rx, Reading.SUB_AGC_AV, ref readings);
+                    //setReading(rx, Reading.SUB_AGC_GAIN, ref readings);
+                    //setReading(rx, Reading.SUB_ESTIMATED_PBSNR, ref readings);
                 }
                 else
                 {
