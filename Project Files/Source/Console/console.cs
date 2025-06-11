@@ -41252,6 +41252,7 @@ namespace Thetis
                     break;
                 case HPSDRModel.ANAN100D:
                 case HPSDRModel.ANAN200D:
+                case HPSDRModel.REDPITAYA: // DH1KLM: changed to enable on_off_preamp_settings for OpenHPSDR compat. DIY PA/Filter boards
                     if (alexpresent)
                     {
                         comboPreamp.Items.AddRange(on_off_preamp_settings);
@@ -41266,7 +41267,7 @@ namespace Thetis
                 case HPSDRModel.ANAN_G2:
                 case HPSDRModel.ANAN_G2_1K:
                 case HPSDRModel.ANVELINAPRO3:
-                case HPSDRModel.REDPITAYA: //DH1KLM
+                // case HPSDRModel.REDPITAYA: // DH1KLM: removed for compatibility reasons
                     comboPreamp.Items.AddRange(anan100d_preamp_settings);
                     break;
             }
