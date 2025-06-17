@@ -3238,6 +3238,7 @@
             this.radMeterItemSettings_custom = new System.Windows.Forms.RadioButtonTS();
             this.radMeterItemSettings = new System.Windows.Forms.RadioButtonTS();
             this.pnlMeterItemSettings = new System.Windows.Forms.PanelTS();
+            this.ucMeterItemSignalType = new Thetis.ucSignalSelect();
             this.clrbtnMeterItemLow = new Thetis.ColorButton();
             this.lblMMIndicator = new System.Windows.Forms.LabelTS();
             this.lblMMsegSolHigh = new System.Windows.Forms.LabelTS();
@@ -3276,7 +3277,6 @@
             this.chkMeterItemDarkMode = new System.Windows.Forms.CheckBoxTS();
             this.lblMMLow = new System.Windows.Forms.LabelTS();
             this.clrbtnMeterItemHigh = new Thetis.ColorButton();
-            this.chkMeterItemSignalAverage = new System.Windows.Forms.CheckBoxTS();
             this.nudMeterItemEyeScale = new System.Windows.Forms.NumericUpDownTS();
             this.clrbtnMeterItemPeakHold = new Thetis.ColorButton();
             this.pnlVariableInUse_2 = new System.Windows.Forms.PanelTS();
@@ -52700,6 +52700,7 @@
             // 
             this.pnlMeterItemSettings.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlMeterItemSettings.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlMeterItemSettings.Controls.Add(this.ucMeterItemSignalType);
             this.pnlMeterItemSettings.Controls.Add(this.clrbtnMeterItemLow);
             this.pnlMeterItemSettings.Controls.Add(this.lblMMIndicator);
             this.pnlMeterItemSettings.Controls.Add(this.lblMMsegSolHigh);
@@ -52738,13 +52739,21 @@
             this.pnlMeterItemSettings.Controls.Add(this.chkMeterItemDarkMode);
             this.pnlMeterItemSettings.Controls.Add(this.lblMMLow);
             this.pnlMeterItemSettings.Controls.Add(this.clrbtnMeterItemHigh);
-            this.pnlMeterItemSettings.Controls.Add(this.chkMeterItemSignalAverage);
             this.pnlMeterItemSettings.Controls.Add(this.nudMeterItemEyeScale);
             this.pnlMeterItemSettings.Controls.Add(this.clrbtnMeterItemPeakHold);
             this.pnlMeterItemSettings.Location = new System.Drawing.Point(9, 98);
             this.pnlMeterItemSettings.Name = "pnlMeterItemSettings";
             this.pnlMeterItemSettings.Size = new System.Drawing.Size(308, 273);
             this.pnlMeterItemSettings.TabIndex = 112;
+            // 
+            // ucMeterItemSignalType
+            // 
+            this.ucMeterItemSignalType.Location = new System.Drawing.Point(137, 195);
+            this.ucMeterItemSignalType.Name = "ucMeterItemSignalType";
+            this.ucMeterItemSignalType.SignalType = Thetis.Reading.SIGNAL_STRENGTH;
+            this.ucMeterItemSignalType.Size = new System.Drawing.Size(162, 24);
+            this.ucMeterItemSignalType.TabIndex = 87;
+            this.ucMeterItemSignalType.SignalTypeChanged += new System.EventHandler<Thetis.ucSignalSelect.SignalTypeChangedEventArgs>(this.ucMeterItemSignalType_SignalTypeChanged);
             // 
             // clrbtnMeterItemLow
             // 
@@ -53290,19 +53299,6 @@
             this.clrbtnMeterItemHigh.TabIndex = 77;
             this.toolTip1.SetToolTip(this.clrbtnMeterItemHigh, "High scale colour");
             this.clrbtnMeterItemHigh.Changed += new System.EventHandler(this.clrbtnMeterItemHigh_Changed);
-            // 
-            // chkMeterItemSignalAverage
-            // 
-            this.chkMeterItemSignalAverage.AutoSize = true;
-            this.chkMeterItemSignalAverage.Image = null;
-            this.chkMeterItemSignalAverage.Location = new System.Drawing.Point(183, 195);
-            this.chkMeterItemSignalAverage.Name = "chkMeterItemSignalAverage";
-            this.chkMeterItemSignalAverage.Size = new System.Drawing.Size(98, 17);
-            this.chkMeterItemSignalAverage.TabIndex = 111;
-            this.chkMeterItemSignalAverage.Text = "Signal Average";
-            this.toolTip1.SetToolTip(this.chkMeterItemSignalAverage, "Use sig average instead of sig");
-            this.chkMeterItemSignalAverage.UseVisualStyleBackColor = true;
-            this.chkMeterItemSignalAverage.CheckedChanged += new System.EventHandler(this.chkMeterItemSignalAverage_CheckedChanged);
             // 
             // nudMeterItemEyeScale
             // 
@@ -62809,19 +62805,6 @@
             this.comboHistory_reading_1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboHistory_reading_1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboHistory_reading_1.FormattingEnabled = true;
-            this.comboHistory_reading_1.Items.AddRange(new object[] {
-            "HERMES",
-            "ANAN-10",
-            "ANAN-10E",
-            "ANAN-100",
-            "ANAN-100B",
-            "ANAN-100D",
-            "ANAN-200D",
-            "ANAN-7000DLE",
-            "ANAN-8000DLE",
-            "ANAN-G2",
-            "ANAN-G2-1K",
-            "ANVELINA-PRO3"});
             this.comboHistory_reading_1.Location = new System.Drawing.Point(73, 21);
             this.comboHistory_reading_1.Name = "comboHistory_reading_1";
             this.comboHistory_reading_1.Size = new System.Drawing.Size(136, 23);
@@ -62892,19 +62875,6 @@
             this.comboHistory_reading_0.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboHistory_reading_0.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboHistory_reading_0.FormattingEnabled = true;
-            this.comboHistory_reading_0.Items.AddRange(new object[] {
-            "HERMES",
-            "ANAN-10",
-            "ANAN-10E",
-            "ANAN-100",
-            "ANAN-100B",
-            "ANAN-100D",
-            "ANAN-200D",
-            "ANAN-7000DLE",
-            "ANAN-8000DLE",
-            "ANAN-G2",
-            "ANAN-G2-1K",
-            "ANVELINA-PRO3"});
             this.comboHistory_reading_0.Location = new System.Drawing.Point(73, 21);
             this.comboHistory_reading_0.Name = "comboHistory_reading_0";
             this.comboHistory_reading_0.Size = new System.Drawing.Size(136, 23);
@@ -72187,7 +72157,6 @@
         private ColorButton clrbtnMeterItemSegmentedSolidColourLow;
         private NumericUpDownTS nudMeterItemEyeScale;
         private LabelTS lblMMEyeSize;
-        private CheckBoxTS chkMeterItemSignalAverage;
         private CheckBoxTS chkMeterItemDarkMode;
         private Label label14;
         private CheckBoxTS chkMaintainNFAdjustDeltaRX1;
@@ -73112,5 +73081,6 @@
         private LabelTS labelTS444;
         private LabelTS labelTS445;
         private NumericUpDownTS nudPulsed_TwoTone_percent;
+        private ucSignalSelect ucMeterItemSignalType;
     }
 }

@@ -34,7 +34,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] pulsed/pecker two tone available in Setup->Test
 - [add] options to prevent sleep/screen saver in Setup->Options->Options2
 - [add] top line of meter/gadget notes are used in the dropdown list to make identification easier
-- [add] signal meter based on peak bin in the passband to mirror Simon Brown's implementation in SDRconsole. Can only be used in a horizontal bar meter atm. %signal_max_bin% for text overlay
+- [add] signal meter based on peak bin in the passband to mirror Simon Brown's implementation in SDRconsole. %signal_iaru_r1% for text overlay
 - [change] exporting a tx profile will now ask for destination location and filename. It will complain if filename already exists
 - [change] restored step attenuator RX1 if HERMES is used. Unsure why I disabled it a few years ago
 - [change] the bespoke TCI command Tx frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; .There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;

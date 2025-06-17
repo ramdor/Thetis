@@ -200,6 +200,7 @@ namespace Thetis
             "%swr%" + System.Environment.NewLine +
             "%signal_strength%" + System.Environment.NewLine +
             "%avg_signal_strength%" + System.Environment.NewLine +
+            "%signal_iaru_r1%" + System.Environment.NewLine +
             "%pwr%" + System.Environment.NewLine +
             "%reverse_pwr%" + System.Environment.NewLine +
             "%mic%" + System.Environment.NewLine +
@@ -25636,7 +25637,21 @@ namespace Thetis
                 igs.ShowSubMarker = chkMeterItemShowSubIndicator.Checked;
                 igs.PeakValueColour = clrbtnMeterItemPeakValueColour.Color;
                 igs.PeakValue = chkMeterItemPeakValue.Checked;
-                igs.Average = chkMeterItemSignalAverage.Checked;
+                switch (ucMeterItemSignalType.SignalType)
+                {
+                    case Reading.AVG_SIGNAL_STRENGTH:
+                        igs.Average = true;
+                        igs.IARUR1 = false;
+                        break;
+                    case Reading.SIGNAL_IARU_R1:
+                        igs.Average = false;
+                        igs.IARUR1 = true;
+                        break;
+                    default:
+                        igs.Average = false;
+                        igs.IARUR1 = false;
+                        break;
+                }
                 igs.HistoryDuration = (int)nudMeterItemHistoryDuration.Value;
                 igs.IgnoreHistoryDuration = (int)nudMeterItemIgnoreHistoryDuration.Value;
             }
@@ -25872,7 +25887,24 @@ namespace Thetis
                 igs.MaxPower = (float)nudMeterItemsPowerLimit.Value;
                 igs.PowerScaleColour = clrbtnMeterItemPowerScale.Color;
 
-                if (mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE) igs.Average = chkMeterItemSignalAverage.Checked;
+                if (mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE)
+                {
+                    switch (ucMeterItemSignalType.SignalType)
+                    {
+                        case Reading.AVG_SIGNAL_STRENGTH:
+                            igs.Average = true;
+                            igs.IARUR1 = false;
+                            break;
+                        case Reading.SIGNAL_IARU_R1:
+                            igs.Average = false;
+                            igs.IARUR1 = true;
+                            break;
+                        default:
+                            igs.Average = false;
+                            igs.IARUR1 = false;
+                            break;
+                    }
+                }
                 if (mt == MeterType.ANANMM || mt == MeterType.CROSS) igs.DarkMode = chkMeterItemDarkMode.Checked;
             }
 
@@ -26238,7 +26270,21 @@ namespace Thetis
                 clrbtnMeterItemSubIndicator.Color = igs.SubMarkerColour;
                 clrbtnMeterItemPeakValueColour.Color = igs.PeakValueColour;
                 chkMeterItemPeakValue.Checked = igs.PeakValue;
-                chkMeterItemSignalAverage.Checked = igs.Average;
+                if (igs.IARUR1)
+                {
+                    ucMeterItemSignalType.SignalType = Reading.SIGNAL_IARU_R1;
+                }
+                else
+                {
+                    if (igs.Average)
+                    {
+                        ucMeterItemSignalType.SignalType = Reading.AVG_SIGNAL_STRENGTH;
+                    }
+                    else
+                    {
+                        ucMeterItemSignalType.SignalType = Reading.SIGNAL_STRENGTH;
+                    }
+                }
                 chkMeterItemShowSubIndicator.Checked = igs.ShowSubMarker;
 
                 nudMeterItemHistoryDuration.Value = igs.HistoryDuration < nudMeterItemHistoryDuration.Minimum ? nudMeterItemHistoryDuration.Minimum : igs.HistoryDuration;
@@ -26284,7 +26330,7 @@ namespace Thetis
                 clrbtnMeterItemHistory.Enabled = false;
                 chkMeterItemPeakHold.Enabled = false;
                 clrbtnMeterItemPeakHold.Enabled = false;
-                chkMeterItemSignalAverage.Enabled = true;
+                ucMeterItemSignalType.Enabled = true;
                 chkMeterItemDarkMode.Enabled = false;
                 lblMMPowerLimit.Enabled = false;
                 nudMeterItemsPowerLimit.Enabled = false;
@@ -26597,8 +26643,25 @@ namespace Thetis
                 chkMeterItemShowSubIndicator.Enabled = !bEnable && igs.SubIndicators;
                 //
 
-                chkMeterItemSignalAverage.Enabled = mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE;
-                if (mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE) chkMeterItemSignalAverage.Checked = igs.Average;
+                ucMeterItemSignalType.Enabled = mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE;
+                if (mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE)
+                {
+                    if (igs.IARUR1)
+                    {
+                        ucMeterItemSignalType.SignalType = Reading.SIGNAL_IARU_R1;
+                    }
+                    else
+                    {
+                        if (igs.Average)
+                        {
+                            ucMeterItemSignalType.SignalType = Reading.AVG_SIGNAL_STRENGTH;
+                        }
+                        else
+                        {
+                            ucMeterItemSignalType.SignalType = Reading.SIGNAL_STRENGTH;
+                        }
+                    }
+                }
                 if (mt == MeterType.ANANMM || mt == MeterType.CROSS) chkMeterItemDarkMode.Checked = igs.DarkMode;
                 //
             }
@@ -26753,11 +26816,6 @@ namespace Thetis
         }
 
         private void nudMeterItemEyeScale_ValueChanged(object sender, EventArgs e)
-        {
-            updateMeterType();
-        }
-
-        private void chkMeterItemSignalAverage_CheckedChanged(object sender, EventArgs e)
         {
             updateMeterType();
         }
@@ -32358,9 +32416,10 @@ namespace Thetis
             List<clsComboHistoryItem> items = new List<clsComboHistoryItem>();
             comboHistory_reading_0.Items.Clear();
             comboHistory_reading_1.Items.Clear();
-            for (int i = (int)Reading.SIGNAL_STRENGTH; i <= (int)Reading.SWR; i++)
+            for (int i = (int)Reading.SIGNAL_STRENGTH; i <= (int)Reading.SIGNAL_IARU_R1; i++)
             {
                 if (i == 22 || i == 23) continue; // skip these as not used
+                if (i >= 29 && i <= 71) continue; // skip
 
                 Reading r = (Reading)i;
                 clsComboHistoryItem chi = new clsComboHistoryItem(r);
@@ -34513,6 +34572,11 @@ namespace Thetis
             console.radio.GetDSPTX(0).TXPostGenTTPulseFreq = (int)nudPulsed_TwoTone_window.Value;
             console.radio.GetDSPTX(0).TXPostGenTTPulseDutyCycle = (float)(nudPulsed_TwoTone_percent.Value) / 100f;
             console.radio.GetDSPTX(0).TXPostGenTTPulseTransition = (float)(nudPulsed_TwoTone_ramp.Value) / 1000f;
+        }
+
+        private void ucMeterItemSignalType_SignalTypeChanged(object sender, ucSignalSelect.SignalTypeChangedEventArgs e)
+        {
+            updateMeterType();
         }
     }
 

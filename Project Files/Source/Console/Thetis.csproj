@@ -765,6 +765,12 @@
     <Compile Include="ucQuickRecall.Designer.cs">
       <DependentUpon>ucQuickRecall.cs</DependentUpon>
     </Compile>
+    <Compile Include="ucSignalSelect.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucSignalSelect.Designer.cs">
+      <DependentUpon>ucSignalSelect.cs</DependentUpon>
+    </Compile>
     <Compile Include="ucTunestepOptionsGrid.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1096,6 +1102,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ucQuickRecall.resx">
       <DependentUpon>ucQuickRecall.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucSignalSelect.resx">
+      <DependentUpon>ucSignalSelect.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ucTunestepOptionsGrid.resx">
       <DependentUpon>ucTunestepOptionsGrid.cs</DependentUpon>

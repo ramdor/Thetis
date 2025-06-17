@@ -19626,6 +19626,10 @@ namespace Thetis
             {
                 ptbDisplayZoom.Value = value;
                 ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+
+                //max bin detect
+                if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(0, false, true);
+                if (_display_max_bin_enabled[1]) setupDisplayMaxBinDetect(1, false, true);
             }
         }
 
@@ -19636,6 +19640,10 @@ namespace Thetis
             {
                 ptbDisplayPan.Value = value;
                 ptbDisplayPan_Scroll(this, EventArgs.Empty);
+
+                //max bin detect
+                if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(0, false, true);
+                if (_display_max_bin_enabled[1]) setupDisplayMaxBinDetect(1, false, true);
             }
         }
         public void PanCentre()
@@ -45699,6 +45707,10 @@ namespace Thetis
             //MW0LGE_21h
             if (rx == 1) updateBandstackOverlay(rx);
 
+            //max bin detect
+            if (_display_max_bin_enabled[rx - 1]) setupDisplayMaxBinDetect(rx, false, true);
+
+            //bandstack
             if (m_bSetBandRunning) return;
             if (rx != 1) return;
             if (!BandStackManager.Ready) return;
@@ -47098,11 +47110,11 @@ namespace Thetis
                     //    }
                     //}
 
-                    if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_MAX_BIN))
+                    if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_IARU_R1))
                     {
                         if (!_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(1, false, true);
                         float max_bin = (float)WDSP.GetDetectMaxBin(0);
-                        if (max_bin > -400f) _RX1MeterValues[Reading.SIGNAL_MAX_BIN] = max_bin + offset;
+                        if (max_bin > -400f) _RX1MeterValues[Reading.SIGNAL_IARU_R1] = max_bin + offset;
                     }
 
                     updateRX = true;
@@ -47261,11 +47273,11 @@ namespace Thetis
                             _RX2MeterValues[Reading.ESTIMATED_PBSNR] = 0f;
                     }
 
-                    if(MeterManager.RequiresUpdate(2, Reading.SIGNAL_MAX_BIN))
+                    if(MeterManager.RequiresUpdate(2, Reading.SIGNAL_IARU_R1))
                     {
                         if (!_display_max_bin_enabled[1]) setupDisplayMaxBinDetect(2, false, true);
                         float max_bin = (float)WDSP.GetDetectMaxBin(1);
-                        if (max_bin > -400f) _RX2MeterValues[Reading.SIGNAL_MAX_BIN] = max_bin + offset;
+                        if (max_bin > -400f) _RX2MeterValues[Reading.SIGNAL_IARU_R1] = max_bin + offset;
                     }
 
                     updateRX = true;
