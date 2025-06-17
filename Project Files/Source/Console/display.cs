@@ -4729,19 +4729,24 @@ namespace Thetis
 
                 float averageSum = 0;
                 int averageCount = 1;
-                float currentAverage = rx == 1 ? m_fFFTBinAverageRX1 + 2 : m_fFFTBinAverageRX2 + 2; // +2db to add some extras above the average
+                float currentAverage = rx == 1 ? m_fFFTBinAverageRX1 + 2 : m_fFFTBinAverageRX2 + 2; // +2 so we dont include samples close to our current average, this perhaps should be configurable, buffer?
 
                 bool peaks_imds = bPeakBlobs || show_imd_measurements;
-                
+
+                // make locals
+                int local_Decimation = m_nDecimation;
+                double local_frame_start = m_dElapsedFrameStart;
+                //
+
                 for (int i = 0; i < nDecimatedWidth; i++)
                 {
-                    point.X = i * m_nDecimation;
+                    point.X = i * local_Decimation;
 
                     max = data[i] + fOffset;
                     max_copy = dataCopy[i] + fOffset;
 
                     // noise floor
-                    if (max_copy < currentAverage)
+                    if (!local_mox && (max_copy < currentAverage))
                     {
                         //averageSum += (float)Math.Pow(10f, max_copy / 10f);
                         averageSum += fastPow10Raw(max_copy);
@@ -4784,7 +4789,7 @@ namespace Thetis
                                     mm.X = dbm_max_xpos;
                                     mm.Enabled = true;
                                     mm.MaxY_pixel = dbm_max_ypos;
-                                    mm.Time = m_dElapsedFrameStart;
+                                    mm.Time = local_frame_start;
 
                                     imd_measurements.Add(mm);
                                 }
@@ -4811,7 +4816,7 @@ namespace Thetis
                     {
                         // draw vertical line, this is so much faster than FillGeometry as the geo created would be so complex any fill alogorthm would struggle
                         bottomPoint.X = point.X;
-                        _d2dRenderTarget.DrawLine(bottomPoint, point, fillBrush, m_nDecimation);
+                        _d2dRenderTarget.DrawLine(bottomPoint, point, fillBrush, local_Decimation);
                     }
 
                     //spectral peak
@@ -4822,7 +4827,7 @@ namespace Thetis
                         if (max >= peak.max_dBm)
                         {
                             peak.max_dBm = max;
-                            peak.Time = m_dElapsedFrameStart;
+                            peak.Time = local_frame_start;
                         }
 
                         if (peak.max_dBm >= max)
@@ -4833,7 +4838,7 @@ namespace Thetis
 
                             if (bActivePeakFill)
                             {
-                                _d2dRenderTarget.DrawLine(point, spectralPeakPoint, fillPeaksBrush, m_nDecimation);
+                                _d2dRenderTarget.DrawLine(point, spectralPeakPoint, fillPeaksBrush, local_Decimation);
                             }
                             else
                             {
@@ -4841,7 +4846,7 @@ namespace Thetis
                                 oldSpectralPeakPoint = spectralPeakPoint;
                             }
 
-                            double dElapsed = m_dElapsedFrameStart - peak.Time;
+                            double dElapsed = local_frame_start - peak.Time;
                             if (dElapsed > dSpectralPeakHoldDelay)
                             {
                                 peak.max_dBm -= dBmSpectralPeakFall;
@@ -4968,7 +4973,7 @@ namespace Thetis
                             if (blob_drop)
                             {
                                 //drop
-                                double dElapsed = m_dElapsedFrameStart - entry.Time;
+                                double dElapsed = local_frame_start - entry.Time;
                                 if (entry.max_dBm > -200.0 && (dElapsed > m_fBlobPeakHoldMS))
                                 {
                                     entry.max_dBm -= m_dBmPerSecondPeakBlobFall / (float)m_nFps;
@@ -4983,7 +4988,7 @@ namespace Thetis
                                 }
                             }
 
-                            m_objEllipse.Point.X = entry.X * m_nDecimation;
+                            m_objEllipse.Point.X = entry.X * local_Decimation;
                             m_objEllipse.Point.Y = entry.MaxY_pixel;
 
                             string sAppend;

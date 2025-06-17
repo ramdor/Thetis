@@ -34,9 +34,10 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] pulsed/pecker two tone available in Setup->Test
 - [add] options to prevent sleep/screen saver in Setup->Options->Options2
 - [add] top line of meter/gadget notes are used in the dropdown list to make identification easier
+- [add] signal meter based on peak bin in the passband to mirror Simon Brown's implementation in SDRconsole. Can only be used in a horizontal bar meter atm. %signal_max_bin% for text overlay
 - [change] exporting a tx profile will now ask for destination location and filename. It will complain if filename already exists
 - [change] restored step attenuator RX1 if HERMES is used. Unsure why I disabled it a few years ago
-- [change] the bespoke TCI command tx_frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; .There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;
+- [change] the bespoke TCI command Tx frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; .There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;
 - [change] refactor serial port pin change detection code for slight performance improvements
 - [change] display vsync defaulted to on for new databases. I would advise turning this on if not already
 - [change] all RX display offsets are now done in one place in the code
@@ -82,7 +83,8 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] fix issue that could cause repeated errors in mmio when a key is not found, perhaps caused by old db
 - [fix] outbound mmio queue fix for data node, data out queues are not saved to db, and limits have been placed on max queue size
 - [fix] fixed issue where rotator control item would sometimes miss the stop command on click. Note. mouse up+down will trigger this when the red circle is shown
-= [fix] fixed issue where an rx1 container with a vfo item would sometimes display the incorrect band for vfoB
+- [fix] fixed issue where an rx1 container with a vfo item would sometimes display the incorrect band for vfoB
+- [fix] frequency calibration now waits for the spectrum to build before taking readings. This is based on fft size and sample rate. For example, the delay for 48k sample and 262144 sample size is ~5.5 seconds
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked
