@@ -123,14 +123,18 @@
   <data name="radSigIARUr1.ToolTip" xml:space="preserve">
     <value>Signal based on IARU R1 - Peak bin value  in passband
 
-This is a literal implementation of the IARU R1 recommendataion.
-It mirrors Simon Brown's S-Meter implementation in SDRconsole.
-The original Thetis meters are 'signal power meters', which take
-the integrated passband power and display it as a dBm/Signal value, where as
-this IARU.R1 meter takes a litteral approach where a peak bin in the passband
-is used.
+This is a direct implementation of the IARU Region 1 recommendation which
+is somewhat vague in details. It replicates Simon Brown's S-meter approach
+in SDR Console. The original Thetis meters are signal power meters that
+display the integrated passband power as a dBm signal level. In contrast,
+this IARU R1 meter implementation follows a literal interpretation, only using
+the peak bin within the passband for its reading.
 
-Note: this can lead to innacuracy due to signal to fft bin grid alignment,
-windowing and will ignore any other power in the passband other than the peak bin.</value>
+Note: This method may introduce inaccuracy due to misalignment between
+the signal and the FFT bin grid, and may result in an unstable S-meter.
+Windowing will affect the reading, and only the peak bin is considered, ignoring
+all other power within the passband. In contrast, the standard meters integrate
+total power across the passband, which is equivalent to a DC detector measuring
+filtered RF bandwidth in an analogue radio.</value>
   </data>
 </root>
