@@ -200,7 +200,7 @@ namespace Thetis
             "%swr%" + System.Environment.NewLine +
             "%signal_strength%" + System.Environment.NewLine +
             "%avg_signal_strength%" + System.Environment.NewLine +
-            "%signal_iaru_r1%" + System.Environment.NewLine +
+            "%signal_max_bin%" + System.Environment.NewLine +
             "%pwr%" + System.Environment.NewLine +
             "%reverse_pwr%" + System.Environment.NewLine +
             "%mic%" + System.Environment.NewLine +
