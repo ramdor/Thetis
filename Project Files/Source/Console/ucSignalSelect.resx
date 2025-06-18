@@ -120,4 +120,17 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="radSigIARUr1.ToolTip" xml:space="preserve">
+    <value>Signal based on IARU R1 - Peak bin value  in passband
+
+This is a literal implementation of the IARU R1 recommendataion.
+It mirrors Simon Brown's S-Meter implementation in SDRconsole.
+The original Thetis meters are 'signal power meters', which take
+the integrated passband power and display it as a dBm/Signal value, where as
+this IARU.R1 meter takes a litteral approach where a peak bin in the passband
+is used.
+
+Note: this can lead to innacuracy due to signal to fft bin grid alignment,
+windowing and will ignore any other power in the passband other than the peak bin.</value>
+  </data>
 </root>

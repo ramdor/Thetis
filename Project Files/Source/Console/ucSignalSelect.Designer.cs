@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ucSignalSelect));
             this.radSig = new System.Windows.Forms.RadioButtonTS();
             this.radSigAvg = new System.Windows.Forms.RadioButtonTS();
             this.radSigIARUr1 = new System.Windows.Forms.RadioButtonTS();
@@ -73,7 +74,7 @@
             this.radSigIARUr1.TabIndex = 2;
             this.radSigIARUr1.TabStop = true;
             this.radSigIARUr1.Text = "IARU.r1";
-            this.toolTip1.SetToolTip(this.radSigIARUr1, "Signal based on IARU R1 - Peak bin value  in bandpass");
+            this.toolTip1.SetToolTip(this.radSigIARUr1, resources.GetString("radSigIARUr1.ToolTip"));
             this.radSigIARUr1.UseVisualStyleBackColor = true;
             this.radSigIARUr1.CheckedChanged += new System.EventHandler(this.radSigIARUr1_CheckedChanged);
             // 
