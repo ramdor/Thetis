@@ -19628,8 +19628,8 @@ namespace Thetis
                 ptbDisplayZoom_Scroll(this, EventArgs.Empty);
 
                 //max bin detect
-                if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(0, false, true);
-                if (_display_max_bin_enabled[1]) setupDisplayMaxBinDetect(1, false, true);
+                if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(1, false, true);
+                if (_display_max_bin_enabled[1]) setupDisplayMaxBinDetect(2, false, true);
             }
         }
 
@@ -19642,8 +19642,8 @@ namespace Thetis
                 ptbDisplayPan_Scroll(this, EventArgs.Empty);
 
                 //max bin detect
-                if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(0, false, true);
-                if (_display_max_bin_enabled[1]) setupDisplayMaxBinDetect(1, false, true);
+                if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(1, false, true);
+                if (_display_max_bin_enabled[1]) setupDisplayMaxBinDetect(2, false, true);
             }
         }
         public void PanCentre()
@@ -36368,16 +36368,16 @@ namespace Thetis
                 }
             }
 
-            //[2.10.3.5]MW0LGE TOREMOVE
-#if false
-			// wjtFIXME! 
-			// if we're doing soft rock stuff may need to update osc (tx mainly) when split is on
-			if ( current_model ==  Model.SOFTROCK40 )
+//            //[2.10.3.5]MW0LGE TOREMOVE
+//#if false
+//			// wjtFIXME! 
+//			// if we're doing soft rock stuff may need to update osc (tx mainly) when split is on
+//			if ( current_model ==  Model.SOFTROCK40 )
 			
-			{
-				SetSoftRockOscFreqs();
-			}
-#endif
+//			{
+//				SetSoftRockOscFreqs();
+//			}
+//#endif
 
             AndromedaIndicatorCheck(EIndicatorActions.eINSplit, false, chkVFOSplit.Checked);
 
@@ -36521,14 +36521,14 @@ namespace Thetis
             }
             AndromedaIndicatorCheck(EIndicatorActions.eINXIT, false, chkXIT.Checked);
 
-            //[2.10.3.5]MW0LGE TOREMOVE
-#if false
-			// wjtFIXME!
-			if ( current_model == Model.SOFTROCK40 )			
-			{
-				SetSoftRockOscFreqs();
-			}
-#endif
+//            //[2.10.3.5]MW0LGE TOREMOVE
+//#if false
+//			// wjtFIXME!
+//			if ( current_model == Model.SOFTROCK40 )			
+//			{
+//				SetSoftRockOscFreqs();
+//			}
+//#endif
 
             updateVFOFreqs(_mox); //[2.10.1.0] MW0LGE we might need to update everything if tx'ing on sub, use std function
         }
@@ -36576,6 +36576,9 @@ namespace Thetis
                 udXIT.Value = udRIT.Value;
                 setXIT_LEDs();
             }
+
+            //max bin detect
+            if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(1, false, true);
         }
 
         private void udXIT_ValueChanged(object sender, System.EventArgs e)
@@ -36586,14 +36589,14 @@ namespace Thetis
             }
             lblXITValue.Text = udXIT.Value.ToString();
 
-            //[2.10.3.5]MW0LGE TOREMOVE
-#if false
-			//wjtFIXME
-			else if ( current_model == Model.SOFTROCK40 )			
-			{
-				SetSoftRockOscFreqs();
-			}
-#endif
+//            //[2.10.3.5]MW0LGE TOREMOVE
+//#if false
+//			//wjtFIXME
+//			else if ( current_model == Model.SOFTROCK40 )			
+//			{
+//				SetSoftRockOscFreqs();
+//			}
+//#endif
 
 
             if (chkXIT.Checked) Display.XIT = (int)udXIT.Value;
@@ -51354,6 +51357,7 @@ namespace Thetis
                     high = radio.GetDSPRX(1, sub_rx ? 1 : 0).RXFilterHigh + diff;
                     break;
                 default:
+                    int rit_offset = RITOn ? RITValue : 0;
                     disp = 0;
                     sample_rate = SampleRateRX1;
                     if (click_tune_display)
@@ -51364,6 +51368,7 @@ namespace Thetis
                     {
                         diff = 0;
                     }
+                    diff += rit_offset;
                     low = radio.GetDSPRX(0, sub_rx ? 1 : 0).RXFilterLow + diff;
                     high = radio.GetDSPRX(0, sub_rx ? 1 : 0).RXFilterHigh + diff;
                     break;
