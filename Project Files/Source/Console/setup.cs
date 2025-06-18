@@ -25627,7 +25627,7 @@ namespace Thetis
             else if (mt == MeterType.SIGNAL_TEXT)
             {
                 igs.UpdateInterval = (int)nudMeterItemUpdateRate.Value;
-                igs.AttackRatio = (float)nudMeterItemAttackRate.Value;
+                igs.AttackRatio = (float)Math.Round(nudMeterItemAttackRate.Value, 3);
                 igs.DecayRatio = (float)nudMeterItemDecayRate.Value;
                 igs.FadeOnRx = chkMeterItemFadeOnRx.Checked;
                 igs.FadeOnTx = chkMeterItemFadeOnTx.Checked;
@@ -25855,7 +25855,7 @@ namespace Thetis
                 igs.ShowSubMarker = chkMeterItemShowSubIndicator.Checked;
                 igs.Colour = Color.FromArgb(255, clrbtnMeterItemHBackground.Color);
                 igs.UpdateInterval = (int)nudMeterItemUpdateRate.Value;
-                igs.AttackRatio = (float)nudMeterItemAttackRate.Value;
+                igs.AttackRatio = (float)Math.Round(nudMeterItemAttackRate.Value, 3);
                 igs.DecayRatio = (float)nudMeterItemDecayRate.Value;
                 igs.ShowHistory = chkMeterItemHistory.Checked;
                 igs.HistoryColor = Color.FromArgb(tbMeterItemHistoryAlpha.Value, clrbtnMeterItemHistory.Color);

@@ -45466,7 +45466,7 @@ namespace Thetis
             SampleRateChangedHandlers += OnSampleRateChanged;
             FSPChangedHandlers += OnFSPChanged;
 
-        Display.SetupDelegates();
+            Display.SetupDelegates();
             
             TimeOutTimerManager.SetCallback(timeOutTimer);
         }
@@ -46030,6 +46030,18 @@ namespace Thetis
 
         private void OnMoxChangeHandler(int rx, bool oldMox, bool newMox)
         {
+            //max bin detect
+            if (newMox)
+            {
+                // if on switch off to prevent pulse when coming out of TX
+                if (_display_max_bin_enabled[rx - 1]) setupDisplayMaxBinDetect(rx, false, false, false);
+            }
+            else
+            {
+                // turn back on if required
+                if (_display_max_bin_enabled[rx - 1]) setupDisplayMaxBinDetect(rx, false, true, false);
+            }
+
             //MW0LGE_21k disable xPA if not permitted to hot switch
             if (newMox)
                 chkExternalPA.Enabled = m_bHotSwitchOCTXPins;
@@ -51313,7 +51325,7 @@ namespace Thetis
 
         //
         private volatile bool[] _display_max_bin_enabled = new bool[] { false, false };
-        private void setupDisplayMaxBinDetect(int rx, bool sub_rx, bool enabled)
+        private void setupDisplayMaxBinDetect(int rx, bool sub_rx, bool enabled, bool update_enabled_state = true)
         {
             if (rx < 1 || rx > 2) return;
 
@@ -51359,7 +51371,7 @@ namespace Thetis
 
             WDSP.SetupDetectMaxBin(enabled ? 1 : 0, disp, 0, 0, sample_rate, low, high, 0.5, frame_rate);
 
-            _display_max_bin_enabled[rx - 1] = enabled;
+            if(update_enabled_state) _display_max_bin_enabled[rx - 1] = enabled;
         }
         private void OnFilterEdgesChanged(int rx, Filter newFilter, Band band, int low, int high, string sName, int max_width, int max_shift)
         {

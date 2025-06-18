@@ -53383,7 +53383,7 @@
             // 
             // nudMeterItemDecayRate
             // 
-            this.nudMeterItemDecayRate.DecimalPlaces = 2;
+            this.nudMeterItemDecayRate.DecimalPlaces = 3;
             this.nudMeterItemDecayRate.Increment = new decimal(new int[] {
             5,
             0,
@@ -53424,7 +53424,7 @@
             // 
             // nudMeterItemAttackRate
             // 
-            this.nudMeterItemAttackRate.DecimalPlaces = 2;
+            this.nudMeterItemAttackRate.DecimalPlaces = 3;
             this.nudMeterItemAttackRate.Increment = new decimal(new int[] {
             5,
             0,
