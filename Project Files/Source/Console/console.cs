@@ -47122,11 +47122,11 @@ namespace Thetis
                     //    }
                     //}
 
-                    if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_IARU_R1))
+                    if (MeterManager.RequiresUpdate(1, Reading.SIGNAL_MAX_BIN))
                     {
                         if (!_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(1, false, true);
                         float max_bin = (float)WDSP.GetDetectMaxBin(0);
-                        if (max_bin > -400f) _RX1MeterValues[Reading.SIGNAL_IARU_R1] = max_bin + offset;
+                        if (max_bin > -400f) _RX1MeterValues[Reading.SIGNAL_MAX_BIN] = max_bin + offset;
                     }
 
                     updateRX = true;
@@ -47285,11 +47285,11 @@ namespace Thetis
                             _RX2MeterValues[Reading.ESTIMATED_PBSNR] = 0f;
                     }
 
-                    if(MeterManager.RequiresUpdate(2, Reading.SIGNAL_IARU_R1))
+                    if(MeterManager.RequiresUpdate(2, Reading.SIGNAL_MAX_BIN))
                     {
                         if (!_display_max_bin_enabled[1]) setupDisplayMaxBinDetect(2, false, true);
                         float max_bin = (float)WDSP.GetDetectMaxBin(1);
-                        if (max_bin > -400f) _RX2MeterValues[Reading.SIGNAL_IARU_R1] = max_bin + offset;
+                        if (max_bin > -400f) _RX2MeterValues[Reading.SIGNAL_MAX_BIN] = max_bin + offset;
                     }
 
                     updateRX = true;

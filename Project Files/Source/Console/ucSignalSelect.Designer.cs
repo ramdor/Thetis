@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ucSignalSelect));
             this.radSig = new System.Windows.Forms.RadioButtonTS();
             this.radSigAvg = new System.Windows.Forms.RadioButtonTS();
-            this.radSigIARUr1 = new System.Windows.Forms.RadioButtonTS();
+            this.radSigMaxBin = new System.Windows.Forms.RadioButtonTS();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
@@ -64,25 +64,25 @@
             this.radSigAvg.UseVisualStyleBackColor = true;
             this.radSigAvg.CheckedChanged += new System.EventHandler(this.radSigAvg_CheckedChanged);
             // 
-            // radSigIARUr1
+            // radSigMaxBin
             // 
-            this.radSigIARUr1.AutoSize = true;
-            this.radSigIARUr1.Image = null;
-            this.radSigIARUr1.Location = new System.Drawing.Point(99, 3);
-            this.radSigIARUr1.Name = "radSigIARUr1";
-            this.radSigIARUr1.Size = new System.Drawing.Size(63, 17);
-            this.radSigIARUr1.TabIndex = 2;
-            this.radSigIARUr1.TabStop = true;
-            this.radSigIARUr1.Text = "IARU.r1";
-            this.toolTip1.SetToolTip(this.radSigIARUr1, resources.GetString("radSigIARUr1.ToolTip"));
-            this.radSigIARUr1.UseVisualStyleBackColor = true;
-            this.radSigIARUr1.CheckedChanged += new System.EventHandler(this.radSigIARUr1_CheckedChanged);
+            this.radSigMaxBin.AutoSize = true;
+            this.radSigMaxBin.Image = null;
+            this.radSigMaxBin.Location = new System.Drawing.Point(99, 3);
+            this.radSigMaxBin.Name = "radSigMaxBin";
+            this.radSigMaxBin.Size = new System.Drawing.Size(63, 17);
+            this.radSigMaxBin.TabIndex = 2;
+            this.radSigMaxBin.TabStop = true;
+            this.radSigMaxBin.Text = "Max Bin";
+            this.toolTip1.SetToolTip(this.radSigMaxBin, resources.GetString("radSigMaxBin.ToolTip"));
+            this.radSigMaxBin.UseVisualStyleBackColor = true;
+            this.radSigMaxBin.CheckedChanged += new System.EventHandler(this.radSigMaxBin_CheckedChanged);
             // 
             // ucSignalSelect
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.radSigIARUr1);
+            this.Controls.Add(this.radSigMaxBin);
             this.Controls.Add(this.radSigAvg);
             this.Controls.Add(this.radSig);
             this.Name = "ucSignalSelect";
@@ -96,7 +96,7 @@
 
         private System.Windows.Forms.RadioButtonTS radSig;
         private System.Windows.Forms.RadioButtonTS radSigAvg;
-        private System.Windows.Forms.RadioButtonTS radSigIARUr1;
+        private System.Windows.Forms.RadioButtonTS radSigMaxBin;
         private System.Windows.Forms.ToolTip toolTip1;
     }
 }

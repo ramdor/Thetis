@@ -7,23 +7,23 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
 
-## Notes on the new IARU.R1 meter implementation
+## Notes on the new meter implementation
 
-Signal based on IARU R1 - Peak bin value in passband
+Peak bin value in passband
 
-This is a direct implementation of the IARU Region 1 recommendation which
-is somewhat vague in details. It replicates Simon Brown's S-meter approach
+This is implementation replicates Simon Brown's S-meter approach
 in SDR Console. The original Thetis meters are signal power meters that
-display the integrated passband power as a dBm signal level. In contrast,
-this IARU R1 meter implementation follows a literal interpretation, only using
-the peak bin within the passband for its reading.
+display the integrated (total) passband power. In contrast, this meter
+implementation only uses the max FFT bin within the passband for its reading.
 
-Note: This method may introduce inaccuracy due to misalignment between
+Consequently, this method may introduce inaccuracy due to misalignment between
 the signal and the FFT bin grid, and may result in an unstable S-meter.
 Windowing will affect the reading, and only the peak bin is considered, ignoring
 all other power within the passband. In contrast, the standard meters integrate
 total power across the passband, which is equivalent to a DC detector measuring
-filtered RF bandwidth in an analogue radio.
+filtered RF bandwidth in an analogue radio. Note: notches are not considered
+with this meter.
+
 
 
 ## v2.10.3.9 development - Change Log
@@ -54,7 +54,8 @@ filtered RF bandwidth in an analogue radio.
 - [add] pulsed/pecker two tone available in Setup->Test
 - [add] options to prevent sleep/screen saver in Setup->Options->Options2
 - [add] top line of meter/gadget notes are used in the dropdown list to make identification easier
-- [add] signal meter based on peak bin in the passband to mirror Simon Brown's implementation in SDRconsole. %signal_iaru_r1% for text overlay
+- [add] signal meter based on peak bin in the passband to mirror Simon Brown's implementation in SDRconsole. %signal_max_bin% for text overlay. Note: notches are not considered
+with this meter.
 - [change] exporting a tx profile will now ask for destination location and filename. It will complain if filename already exists
 - [change] restored step attenuator RX1 if HERMES is used. Unsure why I disabled it a few years ago
 - [change] the bespoke TCI command Tx frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; .There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;

@@ -25641,15 +25641,15 @@ namespace Thetis
                 {
                     case Reading.AVG_SIGNAL_STRENGTH:
                         igs.Average = true;
-                        igs.IARUR1 = false;
+                        igs.MaxBin = false;
                         break;
-                    case Reading.SIGNAL_IARU_R1:
+                    case Reading.SIGNAL_MAX_BIN:
                         igs.Average = false;
-                        igs.IARUR1 = true;
+                        igs.MaxBin = true;
                         break;
                     default:
                         igs.Average = false;
-                        igs.IARUR1 = false;
+                        igs.MaxBin = false;
                         break;
                 }
                 igs.HistoryDuration = (int)nudMeterItemHistoryDuration.Value;
@@ -25893,15 +25893,15 @@ namespace Thetis
                     {
                         case Reading.AVG_SIGNAL_STRENGTH:
                             igs.Average = true;
-                            igs.IARUR1 = false;
+                            igs.MaxBin = false;
                             break;
-                        case Reading.SIGNAL_IARU_R1:
+                        case Reading.SIGNAL_MAX_BIN:
                             igs.Average = false;
-                            igs.IARUR1 = true;
+                            igs.MaxBin = true;
                             break;
                         default:
                             igs.Average = false;
-                            igs.IARUR1 = false;
+                            igs.MaxBin = false;
                             break;
                     }
                 }
@@ -26270,9 +26270,9 @@ namespace Thetis
                 clrbtnMeterItemSubIndicator.Color = igs.SubMarkerColour;
                 clrbtnMeterItemPeakValueColour.Color = igs.PeakValueColour;
                 chkMeterItemPeakValue.Checked = igs.PeakValue;
-                if (igs.IARUR1)
+                if (igs.MaxBin)
                 {
-                    ucMeterItemSignalType.SignalType = Reading.SIGNAL_IARU_R1;
+                    ucMeterItemSignalType.SignalType = Reading.SIGNAL_MAX_BIN;
                 }
                 else
                 {
@@ -26646,9 +26646,9 @@ namespace Thetis
                 ucMeterItemSignalType.Enabled = mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE;
                 if (mt == MeterType.ANANMM || mt == MeterType.MAGIC_EYE)
                 {
-                    if (igs.IARUR1)
+                    if (igs.MaxBin)
                     {
-                        ucMeterItemSignalType.SignalType = Reading.SIGNAL_IARU_R1;
+                        ucMeterItemSignalType.SignalType = Reading.SIGNAL_MAX_BIN;
                     }
                     else
                     {
@@ -32416,7 +32416,7 @@ namespace Thetis
             List<clsComboHistoryItem> items = new List<clsComboHistoryItem>();
             comboHistory_reading_0.Items.Clear();
             comboHistory_reading_1.Items.Clear();
-            for (int i = (int)Reading.SIGNAL_STRENGTH; i <= (int)Reading.SIGNAL_IARU_R1; i++)
+            for (int i = (int)Reading.SIGNAL_STRENGTH; i <= (int)Reading.SIGNAL_MAX_BIN; i++)
             {
                 if (i == 22 || i == 23) continue; // skip these as not used
                 if (i >= 29 && i <= 71) continue; // skip

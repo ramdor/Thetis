@@ -5383,11 +5383,12 @@ namespace Thetis
                 float linearAverage = averageSum / (float)averageCount;
                 float oldLinear = fastPow10Raw(fftBinAverage);
                 float newLinear = (linearAverage + oldLinear) * 0.5f;
-                float tmpResult = 10f * (float)Math.Log10(newLinear);
-                if (!float.IsNaN(tmpResult))
-                {
-                    fftBinAverage = tmpResult;
-                }
+                //float tmpResult = 10f * (float)Math.Log10(newLinear);
+                //if (!float.IsNaN(tmpResult))
+                //{
+                //    fftBinAverage = tmpResult;
+                //}
+                fftBinAverage = 10f * (float)Math.Log10(newLinear + 1e-60); // 1e-60 fix potential NaN
             }
             else
             {

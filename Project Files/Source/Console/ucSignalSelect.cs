@@ -74,19 +74,10 @@ namespace Thetis
             }
         }
 
-        private void radSigIARUr1_CheckedChanged(object sender, EventArgs e)
-        {
-            RadioButton rb = sender as RadioButton;
-            if (rb != null && rb.Checked)
-            {
-                onSignalTypeChanged(getSignalTypeFromSelection());
-            }
-        }
-
         private Reading getSignalTypeFromSelection()
         {
             if (radSigAvg.Checked) return Reading.AVG_SIGNAL_STRENGTH;
-            if (radSigIARUr1.Checked) return Reading.SIGNAL_IARU_R1;
+            if (radSigMaxBin.Checked) return Reading.SIGNAL_MAX_BIN;
             return Reading.SIGNAL_STRENGTH;
         }
 
@@ -113,13 +104,22 @@ namespace Thetis
                     case Reading.AVG_SIGNAL_STRENGTH:
                         radSigAvg.Checked = true;
                         break;
-                    case Reading.SIGNAL_IARU_R1:
-                        radSigIARUr1.Checked = true;
+                    case Reading.SIGNAL_MAX_BIN:
+                        radSigMaxBin.Checked = true;
                         break;
                     default:
                         radSig.Checked = true;
                         break;
                 }
+            }
+        }
+
+        private void radSigMaxBin_CheckedChanged(object sender, EventArgs e)
+        {
+            RadioButton rb = sender as RadioButton;
+            if (rb != null && rb.Checked)
+            {
+                onSignalTypeChanged(getSignalTypeFromSelection());
             }
         }
     }

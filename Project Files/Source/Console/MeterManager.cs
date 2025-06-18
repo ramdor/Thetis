@@ -155,7 +155,7 @@ namespace Thetis
         //SUB_AGC_GAIN,
         //SUB_ESTIMATED_PBSNR, //71
 
-        SIGNAL_IARU_R1 = 72,
+        SIGNAL_MAX_BIN = 72,
 
         LAST
     }
@@ -167,7 +167,7 @@ namespace Thetis
         SIGNAL_STRENGTH,
         AVG_SIGNAL_STRENGTH,
         SIGNAL_TEXT,
-        SIGNAL_IARU_R1,
+        SIGNAL_MAX_BIN,
         ADC,
         AGC,
         AGC_GAIN,
@@ -888,7 +888,7 @@ namespace Thetis
                 addReading(Reading.ESTIMATED_PBSNR, text);
                 addReading(Reading.VOLTS, text);
                 addReading(Reading.AMPS, text);
-                addReading(Reading.SIGNAL_IARU_R1, text);
+                addReading(Reading.SIGNAL_MAX_BIN, text);
 
                 addReadingText("time_utc", text);
                 addReadingText("time_loc", text);
@@ -1432,7 +1432,7 @@ namespace Thetis
             public bool BackPanel { get { return (bool)GetSetting("_back_panel", typeof(bool)); } set { SetSetting("_back_panel", value); } }
             public float EyeBezelScale { get { return (float)GetSetting("_eyeBezelScale", typeof(float)); } set { SetSetting("_eyeBezelScale", value); } }
             public bool Average { get { return (bool)GetSetting("_average", typeof(bool)); } set { SetSetting("_average", value); } }
-            public bool IARUR1 { get { return (bool)GetSetting("_iaru_r1", typeof(bool)); } set { SetSetting("_iaru_r1", value); } }
+            public bool MaxBin { get { return (bool)GetSetting("_max_bin", typeof(bool)); } set { SetSetting("_max_bin", value); } }
             public bool DarkMode { get { return (bool)GetSetting("_darkMode", typeof(bool)); } set { SetSetting("_darkMode", value); } }
             public float MaxPower { get { return (float)GetSetting("_maxPower", typeof(float)); } set { SetSetting("_maxPower", value); } }
             public System.Drawing.Color PowerScaleColour { get { return (System.Drawing.Color)GetSetting("_powerScaleColour", typeof(System.Drawing.Color)); } set { SetSetting("_powerScaleColour", value); } }
@@ -1542,7 +1542,7 @@ namespace Thetis
             {
                 case Reading.SIGNAL_STRENGTH:
                 case Reading.AVG_SIGNAL_STRENGTH:
-                case Reading.SIGNAL_IARU_R1:
+                case Reading.SIGNAL_MAX_BIN:
                 {
                         if (IsAboveS9Frequency(rx))
                             value = -153; //S0
@@ -1748,7 +1748,7 @@ namespace Thetis
                 case MeterType.CUSTOM_METER_BAR: return 2;
                 //case MeterType.SPECTRUM: return 2;
 
-                case MeterType.SIGNAL_IARU_R1: return 0;
+                case MeterType.SIGNAL_MAX_BIN: return 0;
             }
 
             return 0;
@@ -1799,7 +1799,7 @@ namespace Thetis
                 case MeterType.FILTER_DISPLAY: return "Filter Display";
                 case MeterType.DIAL_DISPLAY: return "Dial Display";
                 case MeterType.CUSTOM_METER_BAR: return "Custom Meter Bar";
-                case MeterType.SIGNAL_IARU_R1: return "Signal IARU.R1";
+                case MeterType.SIGNAL_MAX_BIN: return "Signal Max FFT Bin";
             }
 
             return meter.ToString();
@@ -1854,7 +1854,7 @@ namespace Thetis
                 case Reading.CUSTOM_PK: return "Custom(pk)";
                 case Reading.CUSTOM_AV: return "Custom(av)";
 
-                case Reading.SIGNAL_IARU_R1: return "Signal IARU.R1";
+                case Reading.SIGNAL_MAX_BIN: return "Signal Max FFT Bin";
 
                 // not used
                 case (Reading)(int)22: return "";
@@ -1910,7 +1910,7 @@ namespace Thetis
                 case Reading.VOLTS: return "V";
                 case Reading.AZ: return "°";
                 case Reading.ELE: return "°";
-                case Reading.SIGNAL_IARU_R1: return "dBm";
+                case Reading.SIGNAL_MAX_BIN: return "dBm";
             }
 
             return reading.ToString();
@@ -4285,7 +4285,7 @@ namespace Thetis
                     //setReading(rx, Reading.SUB_AGC_GAIN, ref readings);
                     //setReading(rx, Reading.SUB_ESTIMATED_PBSNR, ref readings);
 
-                    setReading(rx, Reading.SIGNAL_IARU_R1, ref readings);
+                    setReading(rx, Reading.SIGNAL_MAX_BIN, ref readings);
                 }
                 else
                 {
@@ -16740,7 +16740,7 @@ namespace Thetis
                     case MeterType.DIAL_DISPLAY: ret = Reading.NONE.ToString(); break;
                     case MeterType.CUSTOM_METER_BAR: ret = variable_index == 0 ? "Primary" : "Secondary"; break;
                     //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg).ToString(); break; break.ToString(); break;
-                    case MeterType.SIGNAL_IARU_R1: ret = Reading.SIGNAL_IARU_R1.ToString(); break;
+                    case MeterType.SIGNAL_MAX_BIN: ret = Reading.SIGNAL_MAX_BIN.ToString(); break;
                 }
                 return ret;
             }
@@ -16791,7 +16791,7 @@ namespace Thetis
                     case MeterType.DIAL_DISPLAY: return 0;
                     case MeterType.CUSTOM_METER_BAR: return 2;
                     //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
-                    case MeterType.SIGNAL_IARU_R1: return 1;
+                    case MeterType.SIGNAL_MAX_BIN: return 1;
                 }
                 return 0;
             }
@@ -16847,7 +16847,7 @@ namespace Thetis
                     case MeterType.DIAL_DISPLAY: AddDial(nDelay, 0, out bBottom, 1f, restoreIg); break;
                     case MeterType.CUSTOM_METER_BAR: AddCustomBar(nDelay, 0, out bBottom, restoreIg); break;
                     //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
-                    case MeterType.SIGNAL_IARU_R1: AddSMeterBarMaxBin(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.SIGNAL_MAX_BIN: AddSMeterBarMaxBin(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
                 // update the console data for the meter if we are not recovering
@@ -16884,7 +16884,7 @@ namespace Thetis
             }
             public string AddSMeterBarMaxBin(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
-                return addSMeterBar(nMSupdate, Reading.SIGNAL_IARU_R1, fTop, out fBottom, restoreIg);
+                return addSMeterBar(nMSupdate, Reading.SIGNAL_MAX_BIN, fTop, out fBottom, restoreIg);
             }
             private clsFadeCover getFadeCover(string sId)
             {
@@ -16975,8 +16975,8 @@ namespace Thetis
                     case Reading.AVG_SIGNAL_STRENGTH:
                         ig.MeterType = MeterType.AVG_SIGNAL_STRENGTH;
                         break;
-                    case Reading.SIGNAL_IARU_R1:
-                        ig.MeterType = MeterType.SIGNAL_IARU_R1;
+                    case Reading.SIGNAL_MAX_BIN:
+                        ig.MeterType = MeterType.SIGNAL_MAX_BIN;
                         break;
                 }
 
@@ -21540,9 +21540,9 @@ namespace Thetis
                                             //bi.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
                                             magicEye.Colour = igs.MarkerColour;
                                             //magicEye.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
-                                            if (igs.IARUR1)
+                                            if (igs.MaxBin)
                                             {
-                                                magicEye.ReadingSource = Reading.SIGNAL_IARU_R1;
+                                                magicEye.ReadingSource = Reading.SIGNAL_MAX_BIN;
                                             }
                                             else
                                             {
@@ -21631,14 +21631,14 @@ namespace Thetis
                                                 ni.Shadow = igs.Shadow;
                                                 if (mt == MeterType.ANANMM) 
                                                 {
-                                                    if (ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH || ni.ReadingSource == Reading.SIGNAL_STRENGTH || ni.ReadingSource == Reading.SIGNAL_IARU_R1)
+                                                    if (ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH || ni.ReadingSource == Reading.SIGNAL_STRENGTH || ni.ReadingSource == Reading.SIGNAL_MAX_BIN)
                                                     {
                                                         ni.PeakHold = igs.PeakHold;
                                                         ni.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
                                                         //ni.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
-                                                        if (igs.IARUR1)
+                                                        if (igs.MaxBin)
                                                         {
-                                                            ni.ReadingSource = Reading.SIGNAL_IARU_R1;
+                                                            ni.ReadingSource = Reading.SIGNAL_MAX_BIN;
                                                         }
                                                         else
                                                         {
@@ -21871,9 +21871,9 @@ namespace Thetis
                                             cst.PeakValueColour = igs.PeakValueColour;
                                             cst.ShowPeakValue = igs.PeakValue;
                                             //cst.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
-                                            if (igs.IARUR1)
+                                            if (igs.MaxBin)
                                             {
-                                                cst.ReadingSource = Reading.SIGNAL_IARU_R1;
+                                                cst.ReadingSource = Reading.SIGNAL_MAX_BIN;
                                             }
                                             else
                                             {
@@ -22578,15 +22578,15 @@ namespace Thetis
                                             {
                                                 case Reading.AVG_SIGNAL_STRENGTH:
                                                     igs.Average = true;
-                                                    igs.IARUR1 = false;
+                                                    igs.MaxBin = false;
                                                     break;
-                                                case Reading.SIGNAL_IARU_R1:
+                                                case Reading.SIGNAL_MAX_BIN:
                                                     igs.Average = false;
-                                                    igs.IARUR1 = true;
+                                                    igs.MaxBin = true;
                                                     break;
                                                 default:
                                                     igs.Average = false;
-                                                    igs.IARUR1 = false;
+                                                    igs.MaxBin = false;
                                                     break;
                                             }
                                         }
@@ -22648,7 +22648,7 @@ namespace Thetis
                                                 igs.Shadow = ni.Shadow;
                                                 igs.MarkerColour = ni.Colour;
                                                 if (mt == MeterType.ANANMM) {
-                                                    if (ni.ReadingSource == Reading.SIGNAL_STRENGTH || ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH || ni.ReadingSource == Reading.SIGNAL_IARU_R1)
+                                                    if (ni.ReadingSource == Reading.SIGNAL_STRENGTH || ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH || ni.ReadingSource == Reading.SIGNAL_MAX_BIN)
                                                     {
                                                         igs.PeakHold = ni.PeakHold;
                                                         igs.PeakHoldMarkerColor = ni.PeakHoldMarkerColour;
@@ -22657,15 +22657,15 @@ namespace Thetis
                                                         {
                                                             case Reading.AVG_SIGNAL_STRENGTH:
                                                                 igs.Average = true;
-                                                                igs.IARUR1 = false;
+                                                                igs.MaxBin = false;
                                                                 break;
-                                                            case Reading.SIGNAL_IARU_R1:
+                                                            case Reading.SIGNAL_MAX_BIN:
                                                                 igs.Average = false;
-                                                                igs.IARUR1 = true;
+                                                                igs.MaxBin = true;
                                                                 break;
                                                             default:
                                                                 igs.Average = false;
-                                                                igs.IARUR1 = false;
+                                                                igs.MaxBin = false;
                                                                 break;
                                                         }
                                                     }
@@ -22828,15 +22828,15 @@ namespace Thetis
                                             {
                                                 case Reading.AVG_SIGNAL_STRENGTH:
                                                     igs.Average = true;
-                                                    igs.IARUR1 = false;
+                                                    igs.MaxBin = false;
                                                     break;
-                                                case Reading.SIGNAL_IARU_R1:
+                                                case Reading.SIGNAL_MAX_BIN:
                                                     igs.Average = false;
-                                                    igs.IARUR1 = true;
+                                                    igs.MaxBin = true;
                                                     break;
                                                 default:
                                                     igs.Average = false;
-                                                    igs.IARUR1 = false;
+                                                    igs.MaxBin = false;
                                                     break;
                                             }
                                             igs.ShowSubMarker = cst.ShowSubMarker;
@@ -26034,7 +26034,7 @@ namespace Thetis
                             break;
                         case Reading.SIGNAL_STRENGTH:
                         case Reading.AVG_SIGNAL_STRENGTH:
-                        case Reading.SIGNAL_IARU_R1:
+                        case Reading.SIGNAL_MAX_BIN:
                             {
                                 generalScale(x,y,w,h, scale, 6, 3, -1, 60, 2, 20, fLineBaseY, fontSizeEmScaled, 255, 0.5f, true, true);
                             }
