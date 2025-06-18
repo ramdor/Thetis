@@ -36557,6 +36557,8 @@ namespace Thetis
 
             AndromedaIndicatorCheck(EIndicatorActions.eINRIT, false, chkRIT.Checked);
 
+            //max bin detect
+            if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(1, false, true);
         }
 
         private void udRIT_ValueChanged(object sender, System.EventArgs e)
