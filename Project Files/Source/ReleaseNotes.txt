@@ -11,7 +11,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 
 Peak bin value in passband
 
-This is implementation replicates Simon Brown's S-meter approach
+This implementation replicates Simon Brown's S-meter approach
 in SDR Console. The original Thetis meters are signal power meters that
 display the integrated (total) passband power. In contrast, this meter
 implementation only uses the max FFT bin within the passband for its reading.
@@ -55,7 +55,8 @@ with this meter.
 - [add] options to prevent sleep/screen saver in Setup->Options->Options2
 - [add] top line of meter/gadget notes are used in the dropdown list to make identification easier
 - [add] signal meter based on peak bin in the passband to mirror Simon Brown's implementation in SDRconsole. %signal_max_bin% for text overlay. Note: notches are not considered
-with this meter.
+with this meter
+- [add] if an ALT key is held at startup 'auto launch at startup' will be bypassed. This will prevent apps from auto launching if configured to do so
 - [change] exporting a tx profile will now ask for destination location and filename. It will complain if filename already exists
 - [change] restored step attenuator RX1 if HERMES is used. Unsure why I disabled it a few years ago
 - [change] the bespoke TCI command Tx frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; .There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;

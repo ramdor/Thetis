@@ -48465,6 +48465,7 @@ namespace Thetis
         private List<Process> _started_processes = new List<Process>();
         private void handleLaunchOnStartUp()
         {
+            if (Common.AltlKeyDown) return;
             if (IsSetupFormNull) return;
             string[] files = SetupForm.GetAutoLaunchFiles();
             foreach (string file in files)
