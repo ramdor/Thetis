@@ -687,6 +687,8 @@ namespace Thetis
             }
             Splash.ShowSplashScreen(Common.GetVerNum(true, true), splash_screen_folder);							// Start splash screen with version number
 
+            bool alt_key_down = Common.AltlKeyDown;
+
             // PA init thread - from G7KLJ changes - done as early as possible
             Splash.SetStatus("Initializing PortAudio");			// Set progress point as early as possible
             _portAudioInitalising = true;
@@ -987,7 +989,7 @@ namespace Thetis
 
             // start up options and applications
             handleShowOnStartWindowsForms();
-            handleLaunchOnStartUp();
+            if(!(alt_key_down || Common.AltlKeyDown)) handleLaunchOnStartUp(); // twice to make sure it is captured at start before lengthy init process
             
             //legacy items controller
             LegacyItemController.Init(this);
@@ -48465,7 +48467,6 @@ namespace Thetis
         private List<Process> _started_processes = new List<Process>();
         private void handleLaunchOnStartUp()
         {
-            if (Common.AltlKeyDown) return;
             if (IsSetupFormNull) return;
             string[] files = SetupForm.GetAutoLaunchFiles();
             foreach (string file in files)
