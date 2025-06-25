@@ -57,6 +57,7 @@ with this meter.
 - [add] signal meter based on peak bin in the passband to mirror Simon Brown's implementation in SDRconsole. %signal_max_bin% for text overlay. Note: notches are not considered
 with this meter
 - [add] if an ALT key is held at startup 'auto launch at startup' will be bypassed. This will prevent apps from auto launching if configured to do so
+- [add] fpga and p2app version shown in titlebar and setup if using a G2 with p2app v39 or later
 - [change] exporting a tx profile will now ask for destination location and filename. It will complain if filename already exists
 - [change] restored step attenuator RX1 if HERMES is used. Unsure why I disabled it a few years ago
 - [change] the bespoke TCI command Tx frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; .There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;

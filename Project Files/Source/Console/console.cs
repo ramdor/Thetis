@@ -47169,7 +47169,7 @@ namespace Thetis
                             _RX1MeterValues[Reading.ESTIMATED_PBSNR] = 0f;
                     }
 
-                    ////[2.10.3.9]<W0LGE sub rx
+                    ////[2.10.3.9]MW0LGE sub rx (future)
                     //if (SubRXEnabled)
                     //{
                     //    if (MeterManager.RequiresUpdate(1, Reading.SUB_SIGNAL_STRENGTH)) _RX1MeterValues[Reading.SUB_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
