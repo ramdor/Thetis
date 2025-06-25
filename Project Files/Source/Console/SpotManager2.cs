@@ -31,6 +31,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Timers;
+using System.Globalization;
 
 namespace Thetis
 {
@@ -52,6 +53,10 @@ namespace Thetis
             public DateTime timeAdded;
             public string additionalText;
             public string spotter;
+            public int heading;
+            public string continent;
+            public string country;
+            public DateTime spot_time;
 
             public bool[] Visible;
             public SizeF Size;
@@ -96,10 +101,10 @@ namespace Thetis
                 //}
 
                 //remove any old spots, that are not swl
-                _spots.RemoveAll(o => !o.IsSWL && (DateTime.Now - o.timeAdded).TotalMinutes > _lifeTime);
+                _spots.RemoveAll(o => !o.IsSWL && (DateTime.UtcNow - o.timeAdded).TotalMinutes > _lifeTime);
 
                 //remove timeout swl, leave ones with 0
-                _spots.RemoveAll(o => o.IsSWL && o.SwlSecondsToLive != 0 && DateTime.Now > (o.timeAdded + TimeSpan.FromSeconds(o.SwlSecondsToLive)));
+                _spots.RemoveAll(o => o.IsSWL && o.SwlSecondsToLive != 0 && DateTime.UtcNow > (o.timeAdded + TimeSpan.FromSeconds(o.SwlSecondsToLive)));
             }
         }
 
@@ -229,8 +234,17 @@ namespace Thetis
 
             return raw_mode;
         }
-        public static void AddSpot(string callsign, DSPMode mode, long frequencyHz, Color colour, string additionalText, string spotter = "", string raw_mode = "")
-        {           
+        public static void AddSpot(string callsign, DSPMode mode, long frequencyHz, Color colour, string additionalText, string spotter = "", string raw_mode = "", int beam_heading = -1, string spot_continent = "", string spot_country = "", string date_time = "")
+        {
+            DateTime spotted_time = DateTime.UtcNow;
+            if (!string.IsNullOrEmpty(date_time))
+            {
+                const string format = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'"; // "2025-06-25T16:45:30Z"
+
+                bool success = DateTime.TryParseExact(date_time, format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out DateTime result);
+                if (success) spotted_time = result;
+            }
+
             //[2.10.3.7]MW0LGE added raw_mode which is the raw mode string that came in with the spot
             //can be used as a filter, and in the case below handles swl[N] or -swl[N] where N is seconds to live
             long time_to_live = getSwlTimeToLive(raw_mode);
@@ -242,7 +256,11 @@ namespace Thetis
                 colour = colour,
                 additionalText = additionalText.Trim(),
                 spotter = spotter.Trim(),
-                timeAdded = DateTime.Now,
+                heading = beam_heading,
+                continent = spot_continent,
+                country = spot_country,
+                timeAdded = DateTime.UtcNow,
+                spot_time = spotted_time,
 
                 IsSWL = time_to_live != -1,
                 SwlSecondsToLive = time_to_live
@@ -256,7 +274,12 @@ namespace Thetis
             if (spot.spotter.Length > 20)
                 spot.spotter = spot.spotter.Substring(0, 20);
             if (spot.additionalText.Length > 30)
-                spot.additionalText = spot.additionalText.Substring(0, 30);            
+                spot.additionalText = spot.additionalText.Substring(0, 30);
+            if (spot.continent.Length > 30)
+                spot.continent = spot.continent.Substring(0, 30);
+            if (spot.country.Length > 30)
+                spot.country = spot.country.Substring(0, 30);
+            if (spot.heading < 0 || spot.heading > 360) spot.heading = -1; //should idealy be 359, but we will accept 360 as the same as 0
 
             spot.Highlight = new bool[MAX_RX];
             spot.BoundingBoxInPixels = new Rectangle[MAX_RX];

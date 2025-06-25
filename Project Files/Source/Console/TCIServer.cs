@@ -147,6 +147,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace Thetis
 {
@@ -1969,22 +1970,40 @@ namespace Thetis
                 }
             }
         }
-        private void handleSpot(string[] args)
+		private void handleSpot(string[] args, bool is_json, string msg)
         {
 			if (args.Length >= 4) // 4 as argument 5 may contain commas
 			{
 				long freq = 0;
 				uint argb = 0;
 				DSPMode mode = DSPMode.FIRST;
+				bool json_found = false;
 
-				// join 5+ arguments back together
-				string sAdditional = "";
-				for(int i = 4; i < args.Length; i++)
-                {
-					sAdditional += args[i] + ",";
+                string sAdditional = "";
+				if (!is_json)
+				{
+                    // join 5+ arguments back together
+                    for (int i = 4; i < args.Length; i++)
+					{
+						sAdditional += args[i] + ",";
+					}
+					if (sAdditional.EndsWith(",")) sAdditional = sAdditional.Substring(0, sAdditional.Length - 1);
 				}
-				if(sAdditional.EndsWith(",")) sAdditional = sAdditional.Substring(0, sAdditional.Length - 1);
-				
+				else
+				{
+					int thetis_tag = msg.ToLower().IndexOf("[thetis]{");
+					if (thetis_tag > -1)
+					{
+						sAdditional = msg.Substring(thetis_tag + 8);
+                        json_found = true;
+					}
+					else
+					{
+						// we should have found a [thetis] tag, ignore if not
+						return;
+					}
+                }
+
 				bool bOK = long.TryParse(args[2], out freq);
                 if (bOK)
 					bOK = uint.TryParse(args[3], out argb);
@@ -2083,14 +2102,51 @@ namespace Thetis
 					string sAdditionalConvertedText = Encoding.Unicode.GetString(converted, 0, converted.Length);
 
 					if (sAdditionalConvertedText.ToLower() == "nil") sAdditionalConvertedText = ""; //[2.10.3.6]MW0LGE rumlog fills arg5 with Nil - spotted buy GW3JVB
-																							//downside is that any additional text that is the string 'nil'
-																							//will be removed, not that it is too much of an issue
-					string callsign = args[0];
-                    SpotManager2.AddSpot(callsign, mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText, "", args[1]);
+																									//downside is that any additional text that is the string 'nil'
+																									//will be removed, not that it is too much of an issue
+
+					string spotter = "";
+                    int heading = -1;
+					string continent = "";
+					string country = "";
+					string spot_time = "";
+
+                    if (json_found)
+					{
+						try
+						{
+                            JsonSpotData spotData = JsonConvert.DeserializeObject<JsonSpotData>(sAdditionalConvertedText);
+
+							spotter = spotData.Spotter;
+							heading = spotData.Heading;
+							continent = spotData.Continent;
+							country = spotData.Country;
+							spot_time = spotData.UtcTime;
+
+                            sAdditionalConvertedText = spotData.Comment;
+                        }
+                        catch 
+						{
+							// json failed in some way, ignore
+							return;
+						}
+					}
+
+                    SpotManager2.AddSpot(args[0], mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText, spotter, args[1], heading, continent, country, spot_time);
 				}
 			}
 		}
-		private void handleTune(string[] args)
+        private class JsonSpotData
+        {
+            public string Spotter { get; set; } = "";
+            public string Comment { get; set; } = "";
+            public int Heading { get; set; } = -1; // -1 = no heading
+            public string Continent { get; set; } = "";
+            public string Country { get; set; } = "";
+            public string UtcTime { get; set; } = "";
+
+        }
+        private void handleTune(string[] args)
         {
 			int rx = 0;
 			bool tune = false;
@@ -2156,7 +2212,9 @@ namespace Thetis
 
 			string[] parts = msg.Split(':');
 
-            if (parts.Length == 2)
+			bool json_spot = parts.Length >= 2 && parts[0].ToLower().Trim() == "spot" && msg.ToLower().IndexOf("[thetis]{") >= 0; // a spot with some json info
+
+            if (parts.Length == 2 || json_spot)
             {
 				string cmd = parts[0].ToLower().Trim();
 				string[] args = parts[1].Split(',');
@@ -2188,7 +2246,7 @@ namespace Thetis
 						handleIF(args);
 						break;
 					case "spot":
-						handleSpot(args);
+						handleSpot(args, json_spot, msg);
 						break;
 					case "spot_delete":
 						handleDeleteSpot(args);
