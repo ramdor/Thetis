@@ -24836,10 +24836,10 @@ namespace Thetis
 
         private void btnRX1PBsnr_Click(object sender, EventArgs e)
         {
-            float snr = console.RXPBsnr(1);
+            double snr = console.RXPBsnr(1);
             if (snr == -999) return;
 
-            float t = (float)nudPBsnrShiftRx1.Value - snr;
+            double t = (double)nudPBsnrShiftRx1.Value - snr;
 
             // limit to 24 for the shift
             if (t < -24) t = -24;
@@ -24850,10 +24850,10 @@ namespace Thetis
 
         private void btnRX2PBsnr_Click(object sender, EventArgs e)
         {
-            float snr = console.RXPBsnr(2);
+            double snr = console.RXPBsnr(2);
             if (snr == -999) return;
 
-            float t = (float)nudPBsnrShiftRx2.Value - snr;
+            double t = (double)nudPBsnrShiftRx2.Value - snr;
 
             // limit to 12 for the shift
             if (t < -24) t = -24;

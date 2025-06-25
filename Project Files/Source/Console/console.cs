@@ -21241,16 +21241,18 @@ namespace Thetis
         //    }
         //    return fOffset;
         //}
-        public float RXPBsnr(int rx)
+        public double RXPBsnr(int rx)
         {
+            // note, we check for good noise floor here so that if user hits button in setup (from where this function is used)
+            // bad data will not be returned. It doesnt matter too much for the infobar as that time slice of bad data will not be long
             float offset = RXOffset(rx);
             if (rx == 1)
             {
                 if (!Display.FastAttackNoiseFloorRX1 && _lastRX1NoiseFloorGood)
                 {
                     float num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
-                    spectralCalculations(1, num, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
-                    return (float)estimated_snr;
+                    SpectralResult result = spectralCalculations(1, num);
+                    return result.estimated_snr;
                 }
                 else
                     return -999;
@@ -21260,8 +21262,8 @@ namespace Thetis
                 if (!Display.FastAttackNoiseFloorRX2 && _lastRX2NoiseFloorGood)
                 {
                     float num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
-                    spectralCalculations(2, num, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
-                    return (float)estimated_snr;
+                    SpectralResult result = spectralCalculations(2, num);
+                    return result.estimated_snr;
                 }
                 else
                     return -999;
@@ -21285,41 +21287,101 @@ namespace Thetis
                 m_fRX2_PBSNR_shift = value;
             }
         }
-        private void spectralCalculations(int rx, double signal, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz)
+        //
+        private struct SpectralResult
         {
-            estimated_snr = 0;
+            public double bin_width;
+            public double rbw;
+            public int passband_bandwidth;
+            public double noise_floor_power_spectral_density;
+            public double estimated_passband_noise_power;
+            public double estimated_snr;
+            public double rx_dBHz;
+            public double rbw_dBHz;
+        }
+        private SpectralResult spectralCalculations(int rx, double signal)
+        {
+            SpectralResult result = new SpectralResult();
+            result.estimated_snr = 0;
 
             if (rx == 1)
             {
-                bin_width = (double)specRX.GetSpecRX(0).SampleRate / (double)specRX.GetSpecRX(0).FFTSize;
-                dRWB = specRX.GetSpecRX(0).DisplayENB * bin_width;
-                passbandWidth = Display.RX1FilterHigh - Display.RX1FilterLow;
+                result.bin_width = (double)specRX.GetSpecRX(0).SampleRate / (double)specRX.GetSpecRX(0).FFTSize;
+                result.rbw = specRX.GetSpecRX(0).DisplayENB * result.bin_width;
+                result.passband_bandwidth = Display.RX1FilterHigh - Display.RX1FilterLow;
 
-                noise_floor_power_spectral_density = _lastRX1NoiseFloor - (10 * Math.Log10(dRWB));
-                estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
+                result.noise_floor_power_spectral_density = _lastRX1NoiseFloor - (10 * Math.Log10(result.rbw));
+                result.estimated_passband_noise_power = result.noise_floor_power_spectral_density + (10 * Math.Log10(result.passband_bandwidth));
 
                 if (!MOX)
                 {
-                    estimated_snr = signal - estimated_passband_noise_power + m_fRX1_PBSNR_shift;
+                    result.estimated_snr = signal - result.estimated_passband_noise_power + m_fRX1_PBSNR_shift;
+                }
+                else
+                {
+                    result.estimated_snr = -999;
                 }
             }
-            else//rx2
+            else
             {
-                bin_width = (double)specRX.GetSpecRX(1).SampleRate / (double)specRX.GetSpecRX(1).FFTSize;
-                dRWB = specRX.GetSpecRX(1).DisplayENB * bin_width;
-                passbandWidth = Display.RX2FilterHigh - Display.RX2FilterLow;
+                result.bin_width = (double)specRX.GetSpecRX(1).SampleRate / (double)specRX.GetSpecRX(1).FFTSize;
+                result.rbw = specRX.GetSpecRX(1).DisplayENB * result.bin_width;
+                result.passband_bandwidth = Display.RX2FilterHigh - Display.RX2FilterLow;
 
-                noise_floor_power_spectral_density = _lastRX2NoiseFloor - (10 * Math.Log10(dRWB));
-                estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
+                result.noise_floor_power_spectral_density = _lastRX2NoiseFloor - (10 * Math.Log10(result.rbw));
+                result.estimated_passband_noise_power = result.noise_floor_power_spectral_density + (10 * Math.Log10(result.passband_bandwidth));
 
                 if (!MOX)
                 {
-                    estimated_snr = signal - estimated_passband_noise_power + m_fRX2_PBSNR_shift;
+                    result.estimated_snr = signal - result.estimated_passband_noise_power + m_fRX2_PBSNR_shift;
+                }
+                else
+                {
+                    result.estimated_snr = -999;
                 }
             }
-            rx_dBHz = 10 * Math.Log10((double)passbandWidth);
-            rbw_dBHz = 10 * Math.Log10(dRWB);
+
+            result.rx_dBHz = 10 * Math.Log10((double)result.passband_bandwidth);
+            result.rbw_dBHz = 10 * Math.Log10(result.rbw);
+
+            return result;
         }
+        //
+        //private void spectralCalculations(int rx, double signal, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz)
+        //{
+        //    estimated_snr = 0;
+
+        //    if (rx == 1)
+        //    {
+        //        bin_width = (double)specRX.GetSpecRX(0).SampleRate / (double)specRX.GetSpecRX(0).FFTSize;
+        //        dRWB = specRX.GetSpecRX(0).DisplayENB * bin_width;
+        //        passbandWidth = Display.RX1FilterHigh - Display.RX1FilterLow;
+
+        //        noise_floor_power_spectral_density = _lastRX1NoiseFloor - (10 * Math.Log10(dRWB));
+        //        estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
+
+        //        if (!MOX)
+        //        {
+        //            estimated_snr = signal - estimated_passband_noise_power + m_fRX1_PBSNR_shift;
+        //        }
+        //    }
+        //    else//rx2
+        //    {
+        //        bin_width = (double)specRX.GetSpecRX(1).SampleRate / (double)specRX.GetSpecRX(1).FFTSize;
+        //        dRWB = specRX.GetSpecRX(1).DisplayENB * bin_width;
+        //        passbandWidth = Display.RX2FilterHigh - Display.RX2FilterLow;
+
+        //        noise_floor_power_spectral_density = _lastRX2NoiseFloor - (10 * Math.Log10(dRWB));
+        //        estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
+
+        //        if (!MOX)
+        //        {
+        //            estimated_snr = signal - estimated_passband_noise_power + m_fRX2_PBSNR_shift;
+        //        }
+        //    }
+        //    rx_dBHz = 10 * Math.Log10((double)passbandWidth);
+        //    rbw_dBHz = 10 * Math.Log10(dRWB);
+        //}
         private class HistoricAttenuatorReading
         {
             public int stepAttenuator = -1;
@@ -21945,8 +22007,8 @@ namespace Thetis
                 if (_bInfoBarShowSEQErrors) infoBar.Warning("Sequence error : " + ooo.ToString() + " (" + s.Trim() + ")"); //MW0LGE_21k9c show/hide flag
             }
         }
-        private float _RX1_smoothed_sig_avg_estimated_snr = -200;
-        private float _RX2_smoothed_sig_avg_estimated_snr = -200;
+        private float _RX1_smoothed_sig_avg_for_estimated_snr = -200;
+        private float _RX2_smoothed_sig_avg_for_estimated_snr = -200;
         private void UpdatePeakText()
         {
             if (string.IsNullOrEmpty(txtVFOAFreq.Text) ||
@@ -22035,17 +22097,10 @@ namespace Thetis
 
             if (bOverRX1 || bOverRX2)
             {
-                double bin_width;
-                double dRWB;
-                double rx_dBHz;
-                int passbandWidth;
-                double rbw_dBHz;
-                double noise_floor_power_spectral_density;
-                double estimated_passband_noise_power;
-                double estimated_snr;
-
                 string sEstimated_snr = "";
                 string sEstimated_passband_noise_power = "";
+
+                SpectralResult result;
 
                 if (bOverRX1)
                 {
@@ -22055,25 +22110,23 @@ namespace Thetis
                         num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
                         num += RXOffset(1);
 
-                        if (num > _RX1_smoothed_sig_avg_estimated_snr) // quick rise
-                            num = _RX1_smoothed_sig_avg_estimated_snr = num * 0.8f + _RX1_smoothed_sig_avg_estimated_snr * 0.2f;
+                        if (num > _RX1_smoothed_sig_avg_for_estimated_snr) // quick rise
+                            num = _RX1_smoothed_sig_avg_for_estimated_snr = num * 0.8f + _RX1_smoothed_sig_avg_for_estimated_snr * 0.2f;
                         else // slow fall
-                            num = _RX1_smoothed_sig_avg_estimated_snr = num * 0.2f + _RX1_smoothed_sig_avg_estimated_snr * 0.8f;
+                            num = _RX1_smoothed_sig_avg_for_estimated_snr = num * 0.2f + _RX1_smoothed_sig_avg_for_estimated_snr * 0.8f;
                     }
-                    spectralCalculations(1, num, out bin_width, out dRWB, out passbandWidth, out noise_floor_power_spectral_density, out estimated_passband_noise_power, out estimated_snr, out rx_dBHz, out rbw_dBHz);
+                    result = spectralCalculations(1, num);
                     if (!MOX)
                     {
-                        estimated_snr = _RX1_smoothed_sig_avg_estimated_snr - estimated_passband_noise_power + m_fRX1_PBSNR_shift;
-
                         if (_UseSUnitsForPBNPPBSNR)
                         {
-                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOAFreq >= S9Frequency).ToString("N1") + "su";
-                            sEstimated_snr = (estimated_snr / 6f).ToString("N1") + "su";
+                            sEstimated_passband_noise_power = Common.GetSMeterUnits(result.estimated_passband_noise_power, VFOAFreq >= S9Frequency).ToString("N1") + "su";
+                            sEstimated_snr = (result.estimated_snr / 6f).ToString("N1") + "su";
                         }
                         else
                         {
-                            sEstimated_passband_noise_power = estimated_passband_noise_power.ToString("N1") + "dBm";
-                            sEstimated_snr = estimated_snr.ToString("N1") + "dB";
+                            sEstimated_passband_noise_power = result.estimated_passband_noise_power.ToString("N1") + "dBm";
+                            sEstimated_snr = result.estimated_snr.ToString("N1") + "dB";
                         }
                     }
                 }
@@ -22085,37 +22138,33 @@ namespace Thetis
                         num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
                         num += RXOffset(2);
 
-                        if (num > _RX2_smoothed_sig_avg_estimated_snr) // quick rise
-                            num = _RX2_smoothed_sig_avg_estimated_snr = num * 0.8f + _RX2_smoothed_sig_avg_estimated_snr * 0.2f;
+                        if (num > _RX2_smoothed_sig_avg_for_estimated_snr) // quick rise
+                            num = _RX2_smoothed_sig_avg_for_estimated_snr = num * 0.8f + _RX2_smoothed_sig_avg_for_estimated_snr * 0.2f;
                         else // slow fall
-                            num = _RX2_smoothed_sig_avg_estimated_snr = num * 0.2f + _RX2_smoothed_sig_avg_estimated_snr * 0.8f;
+                            num = _RX2_smoothed_sig_avg_for_estimated_snr = num * 0.2f + _RX2_smoothed_sig_avg_for_estimated_snr * 0.8f;
                     }
-                    spectralCalculations(2, num, out bin_width, out dRWB, out passbandWidth, out noise_floor_power_spectral_density, out estimated_passband_noise_power, out estimated_snr, out rx_dBHz, out rbw_dBHz);
+                    result = spectralCalculations(2, num);
                     if (!MOX)
                     {
-                        estimated_snr = _RX2_smoothed_sig_avg_estimated_snr - estimated_passband_noise_power + m_fRX2_PBSNR_shift;
-
                         if (_UseSUnitsForPBNPPBSNR)
                         {
-                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOBFreq >= S9Frequency).ToString("N1") + "su";
-                            sEstimated_snr = (estimated_snr / 6f).ToString("N1") + "sU";
+                            sEstimated_passband_noise_power = Common.GetSMeterUnits(result.estimated_passband_noise_power, VFOBFreq >= S9Frequency).ToString("N1") + "su";
+                            sEstimated_snr = (result.estimated_snr / 6f).ToString("N1") + "sU";
                         }
                         else
                         {
-                            sEstimated_passband_noise_power = estimated_passband_noise_power.ToString("N1") + "dBm";
-                            sEstimated_snr = estimated_snr.ToString("N1") + "dBm";
+                            sEstimated_passband_noise_power = result.estimated_passband_noise_power.ToString("N1") + "dBm";
+                            sEstimated_snr = result.estimated_snr.ToString("N1") + "dBm";
                         }
                     }
                 }
-                rx_dBHz = 10 * Math.Log10((double)passbandWidth);//MW0LGE_22b
-                rbw_dBHz = 10 * Math.Log10(dRWB);
 
-                infoBar.Left1(1, "RBW " + dRWB.ToString("N1") + "Hz (" + rbw_dBHz.ToString("N1") + "dBHz)", 160);
-                infoBar.Left2(1, "PB " + passbandWidth.ToString() + "Hz (" + rx_dBHz.ToString("N1") + "dBHz)", 160);
+                infoBar.Left1(1, "RBW " + result.rbw.ToString("N1") + "Hz (" + result.rbw_dBHz.ToString("N1") + "dBHz)", 160);
+                infoBar.Left2(1, "PB " + result.passband_bandwidth.ToString() + "Hz (" + result.rx_dBHz.ToString("N1") + "dBHz)", 160);
 
                 if (!MOX)
                 {
-                    infoBar.Right1(1, "NPSD " + noise_floor_power_spectral_density.ToString("N1") + "dBm/Hz", 140);
+                    infoBar.Right1(1, "NPSD " + result.noise_floor_power_spectral_density.ToString("N1") + "dBm/Hz", 140);
                     infoBar.Right2(1, "PBNP " + sEstimated_passband_noise_power, 120);
                     infoBar.Right3(1, "PBSNR " + sEstimated_snr, 120);
                 }
@@ -47113,8 +47162,8 @@ namespace Thetis
                         if (!Display.FastAttackNoiseFloorRX1 && _lastRX1NoiseFloorGood)
                         {
                             float avg = bNeedAvg ? WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset : _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH];
-                            spectralCalculations(1, avg, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
-                            _RX1MeterValues[Reading.ESTIMATED_PBSNR] = (float)estimated_snr;
+                            SpectralResult result = spectralCalculations(1, avg);
+                            _RX1MeterValues[Reading.ESTIMATED_PBSNR] = (float)result.estimated_snr;
                         }
                         else
                             _RX1MeterValues[Reading.ESTIMATED_PBSNR] = 0f;
@@ -47304,8 +47353,8 @@ namespace Thetis
                         if (!Display.FastAttackNoiseFloorRX2 && _lastRX2NoiseFloorGood)
                         {
                             float avg = bNeedAvg ? WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset : _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH];
-                            spectralCalculations(2, avg, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
-                            _RX2MeterValues[Reading.ESTIMATED_PBSNR] = (float)estimated_snr;
+                            SpectralResult result = spectralCalculations(2, avg);
+                            _RX2MeterValues[Reading.ESTIMATED_PBSNR] = (float)result.estimated_snr;
                         }
                         else
                             _RX2MeterValues[Reading.ESTIMATED_PBSNR] = 0f;
