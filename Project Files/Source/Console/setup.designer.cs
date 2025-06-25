@@ -32478,6 +32478,7 @@
             this.chkAccurateFrameTiming.Text = "Accurate frame timing";
             this.toolTip1.SetToolTip(this.chkAccurateFrameTiming, "Use accurate frame timing but could impact performance");
             this.chkAccurateFrameTiming.UseVisualStyleBackColor = true;
+            this.chkAccurateFrameTiming.Visible = false;
             this.chkAccurateFrameTiming.CheckedChanged += new System.EventHandler(this.chkAccurateFrameTiming_CheckedChanged);
             // 
             // chkAntiAlias

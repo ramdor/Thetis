@@ -19546,7 +19546,7 @@ namespace Thetis
         private void chkAccurateFrameTiming_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            console.UseAccurateFramingTiming = chkAccurateFrameTiming.Checked;
+            console.UseAccurateFramingTiming = false;// chkAccurateFrameTiming.Checked; //[2.10.3.9]MW0LGE disabled as primarily for testing
         }
 
         public bool PeakBlobsEnabled
