@@ -3,7 +3,7 @@
 This file is part of a program that implements a Spectrum Analyzer
 used in conjunction with software-defined-radio hardware.
 
-Copyright (C) 2012, 2013, 2014, 2016 Warren Pratt, NR0V
+Copyright (C) 2012, 2013, 2014, 2016, 2023, 2025 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -135,6 +135,26 @@ typedef struct _dp
 	double norm_oneHz;										// dB factor to normalize to one Hz bandwidth
 	int sample_rate;										// sample rate; used for normalization calculations
 	int normalize[dMAX_PIXOUTS];
+
+	// BEGIN CODE TO GET MAX FFT_BIN WITHIN A FREQUENCY RANGE
+	int dmb_run;
+	int dmb_disp;
+	int dmb_ss;
+	int dmb_LO;
+	double dmb_rate;
+	double dmb_fLow;
+	double dmb_fHigh;
+	double dmb_tau;
+	int dmb_frame_rate;
+	int dmb_begin0;
+	int dmb_end0;
+	int dmb_begin1;
+	int dmb_end1;
+	double dmb_decay;
+	double dmb_max_dB;
+	CRITICAL_SECTION cs_dmb;
+	// END CODE TO GET MAX FFT_BIN WITHIN A FREQUENCY RANGE
+
 }  dp, *DP;
 
 extern DP pdisp[];

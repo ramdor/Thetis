@@ -13,7 +13,7 @@ namespace Thetis
         public static extern void DeInitMetisSockets();
 
         [DllImport("ChannelMaster.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int nativeInitMetis(String netaddr, String localaddr, int localport, int protocol);
+        public static extern int nativeInitMetis(String netaddr, String localaddr, int localport, int protocol, int model_id);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int SetXVTREnable(int enable);
@@ -265,6 +265,12 @@ namespace Thetis
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void EnableCWKeyer(int enable);
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetSidetoneRun(int id, int enable);
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetSidetoneVolume(int id, double volume);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetCWSidetoneVolume(int vol);

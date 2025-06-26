@@ -932,6 +932,7 @@ namespace Thetis
 
             if (dataGridView1.Rows.Count < 1) return; // dont update if you have no memories to update
             if (RIndex < 0) return; // dont update if your clicking on the headers and not a memory
+            if (RIndex >= dataGridView1.Rows.Count) return; //[2.10.3.9]MW0LGE
 
             MemComments.Text = (string)dataGridView1["comments", RIndex].Value; // ke9ns add put comments selected in field box
 

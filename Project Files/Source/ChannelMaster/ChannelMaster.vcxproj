@@ -228,6 +228,7 @@
     <ClInclude Include="resource1.h" />
     <ClInclude Include="ring.h" />
     <ClInclude Include="router.h" />
+    <ClInclude Include="sidetone.h" />
     <ClInclude Include="sync.h" />
     <ClInclude Include="cmUtilities.h" />
     <ClInclude Include="txgain.h" />
@@ -255,6 +256,7 @@
     <ClCompile Include="pro.c" />
     <ClCompile Include="ring.c" />
     <ClCompile Include="router.c" />
+    <ClCompile Include="sidetone.c" />
     <ClCompile Include="sync.c" />
     <ClCompile Include="cmUtilities.c" />
     <ClCompile Include="txgain.c" />

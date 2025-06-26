@@ -446,7 +446,7 @@ void WriteMainLoop(char* bufp)
 		case 0:						// C0=0: general settings
 			C1 = (SampleRateIn2Bits & 3);
 			C2 = (prn->cw.eer & 1) | ((prn->oc_output << 1) & 0xFE);
-			C3 = (prbpfilter->_10_dB_Atten & 1) | ((prbpfilter->_20_dB_Atten << 1) & 2) | 
+			C3 = (prbpfilter->_10_dB_Atten & 1) | ((prbpfilter->_20_dB_Atten << 1) & 2) |
 				((prn->rx[0].preamp << 2) & 0b00000100) | ((prn->adc[0].dither << 3) & 0b00001000) |
 				((prn->adc[0].random << 4) & 0b00010000) | ((prbpfilter->_Rx_1_Out << 7) & 0b10000000);
 			if (prbpfilter->_XVTR_Rx_In)
@@ -521,7 +521,7 @@ void WriteMainLoop(char* bufp)
 		case 5: //RX3 VFO (DDC2)
 			C0 |= 8;
 			// if Orion, DDC2 is RX2 frequency; else TX frequency for Hermes
-			if(nddc == 5)
+			if (nddc == 5)
 				ddc_freq = prn->rx[3].frequency;
 			else
 				ddc_freq = prn->tx[0].frequency;
@@ -592,18 +592,25 @@ void WriteMainLoop(char* bufp)
 				((prn->rx[2].preamp & 1) << 2) | ((prn->rx[0].preamp & 1) << 3) |
 				((prn->mic.mic_trs & 1) << 4) | ((prn->mic.mic_bias & 1) << 5) |
 				((prn->mic.mic_ptt & 1) << 6);
-			C2 = (prn->mic.line_in_gain & 0b00011111) | ((prn->puresignal_run & 1) << 6);				
+			C2 = (prn->mic.line_in_gain & 0b00011111) | ((prn->puresignal_run & 1) << 6);
 			C3 = prn->user_dig_out & 0b00001111;
 			C4 = (prn->adc[0].rx_step_attn & 0b00011111) | 0b00100000;
 			break;
 
 		case 12: // Step ATT control
 			C0 |= 0x16; //C0 0001 011x
-			if (XmitBit)
+			if (XmitBit && HPSDRModel != HPSDRModel_REDPITAYA)
+				//This is existing code. It used to apply 31dB attenuation to any receiver that is using ADC[1] (adc2 in the setup form) when in a TX state (XmitBit set)
+				//Unsure why this was forced, as it is not for oher adc's, however it has been left 'as is' for all radios other than the Red Pitaya
 				C1 = 0x1F;
 			else
-				C1 = (prn->adc[1].rx_step_attn);
-			C1 |= 0b00100000;
+			{
+				if (HPSDRModel == HPSDRModel_REDPITAYA) //[2.10.3.9]DH1KLM  //model needed as board type (prn->discovery.BoardType) is an OrionII
+					C1 = (prn->adc[1].rx_step_attn & 0b00011111); //truncate the lower 5 bits, allowing a max value of 31
+				else
+					C1 = (prn->adc[1].rx_step_attn);
+			}
+			C1 |= 0b00100000; //this enables the rx attenuation
 			C2 = (prn->adc[2].rx_step_attn & 0b00011111) | 0b00100000 |
 				((prn->cw.rev_paddle & 1) << 6);
 

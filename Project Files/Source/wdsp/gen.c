@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013 Warren Pratt, NR0V
+Copyright (C) 2013, 2025 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -95,6 +95,35 @@ void calc_pulse (GEN a)
 	}
 }
 
+void calc_ttpulse(GEN a)
+{
+	int i;
+	double delta, theta;
+	a->ttpulse.pperiod = 1.0 / a->ttpulse.pf;
+	a->ttpulse.tphs1 = 0.0;
+	a->ttpulse.tphs2 = 0.0;
+	a->ttpulse.tdelta1 = TWOPI * a->ttpulse.tf1 / a->rate;
+	a->ttpulse.tdelta2 = TWOPI * a->ttpulse.tf2 / a->rate;
+	a->ttpulse.tcosdelta1 = cos(a->ttpulse.tdelta1);
+	a->ttpulse.tcosdelta2 = cos(a->ttpulse.tdelta2);
+	a->ttpulse.tsindelta1 = sin(a->ttpulse.tdelta1);
+	a->ttpulse.tsindelta2 = sin(a->ttpulse.tdelta2);
+	a->ttpulse.pntrans = (int)(a->ttpulse.ptranstime * a->rate);
+	a->ttpulse.pnon = (int)(a->ttpulse.pdutycycle * a->ttpulse.pperiod * a->rate);
+	a->ttpulse.pnoff = (int)(a->ttpulse.pperiod * a->rate) - a->ttpulse.pnon - 2 * a->ttpulse.pntrans;
+	if (a->ttpulse.pnoff < 0) a->ttpulse.pnoff = 0;
+	a->ttpulse.pcount = a->ttpulse.pnoff;
+	a->ttpulse.state = 0;
+	a->ttpulse.ctrans = (double*)malloc0((a->ttpulse.pntrans + 1) * sizeof(double));
+	delta = PI / (double)a->ttpulse.pntrans;
+	theta = 0.0;
+	for (i = 0; i <= a->ttpulse.pntrans; i++)
+	{
+		a->ttpulse.ctrans[i] = 0.5 * (1.0 - cos(theta));
+		theta += delta;
+	}
+}
+
 void calc_gen (GEN a)
 {
 	calc_tone (a);
@@ -103,10 +132,12 @@ void calc_gen (GEN a)
 	calc_sawtooth (a);
 	calc_triangle (a);
 	calc_pulse (a);
+	calc_ttpulse (a);
 }
 
 void decalc_gen (GEN a)
 {
+	_aligned_free (a->ttpulse.ctrans);
 	_aligned_free (a->pulse.ctrans);
 }
 
@@ -143,10 +174,20 @@ GEN create_gen (int run, int size, double* in, double* out, int rate, int mode)
 	a->tri.f = 500.0;
 	// pulse
 	a->pulse.mag = 1.0;
-	a->pulse.pf = 0.25;
+	a->pulse.pf = 2.0;
 	a->pulse.pdutycycle = 0.25;
-	a->pulse.ptranstime = 0.002;
-	a->pulse.tf = 1000.0;
+	a->pulse.ptranstime = 0.005;
+	a->pulse.tf = 600.0;
+	a->pulse.IQout = 0;
+	// two-tone pulse
+	a->ttpulse.mag1 = 0.5;
+	a->ttpulse.mag2 = 0.5;
+	a->ttpulse.pf = 2.0;
+	a->ttpulse.pdutycycle = 0.25;
+	a->ttpulse.ptranstime = 0.005;
+	a->ttpulse.tf1 = 900.0;
+	a->ttpulse.tf2 = 1700.0;
+	a->ttpulse.IQout = 0;
 	calc_gen (a);
 	return a;
 }
@@ -160,6 +201,7 @@ void destroy_gen (GEN a)
 void flush_gen (GEN a)
 {
 	a->pulse.state = 0;
+	a->ttpulse.state = 0;
 }
 
 enum pstate 
@@ -285,7 +327,7 @@ void xgen (GEN a)
 				}
 			}
 			break;
-		case 6:  // pulse (audio only)
+		case 6:  // pulse (audio or IQ output)
 			{
 				int i;
 				double t1, t2;
@@ -294,10 +336,12 @@ void xgen (GEN a)
 				for (i = 0; i < a->size; i++)
 				{
 					if (a->pulse.pnoff != 0)
+					{
 						switch (a->pulse.state)
 						{
 						case OFF:
 							a->out[2 * i + 0] = 0.0;
+							a->out[2 * i + 1] = 0.0;
 							if (--a->pulse.pcount == 0)
 							{
 								a->pulse.state = UP;
@@ -305,7 +349,17 @@ void xgen (GEN a)
 							}
 							break;
 						case UP:
-							a->out[2 * i + 0] = a->pulse.mag * cosphase * a->pulse.ctrans[a->pulse.pntrans - a->pulse.pcount];
+
+							if (a->pulse.IQout)
+							{
+								a->out[2 * i + 0] = +a->pulse.mag * cosphase * a->pulse.ctrans[a->pulse.pntrans - a->pulse.pcount];
+								a->out[2 * i + 1] = -a->pulse.mag * sinphase * a->pulse.ctrans[a->pulse.pntrans - a->pulse.pcount];
+							}
+							else
+							{
+								a->out[2 * i + 0] = +a->pulse.mag * cosphase * a->pulse.ctrans[a->pulse.pntrans - a->pulse.pcount];
+								a->out[2 * i + 1] = 0.0;
+							}
 							if (--a->pulse.pcount == 0)
 							{
 								a->pulse.state = ON;
@@ -313,7 +367,17 @@ void xgen (GEN a)
 							}
 							break;
 						case ON:
-							a->out[2 * i + 0] = a->pulse.mag * cosphase;
+
+							if (a->pulse.IQout)
+							{
+								a->out[2 * i + 0] = +a->pulse.mag * cosphase;
+								a->out[2 * i + 1] = -a->pulse.mag * sinphase;
+							}
+							else
+							{
+								a->out[2 * i + 0] = +a->pulse.mag * cosphase;
+								a->out[2 * i + 1] = 0.0;
+							}
 							if (--a->pulse.pcount == 0)
 							{
 								a->pulse.state = DOWN;
@@ -321,7 +385,16 @@ void xgen (GEN a)
 							}
 							break;
 						case DOWN:
-							a->out[2 * i + 0] = a->pulse.mag * cosphase * a->pulse.ctrans[a->pulse.pcount];
+							if (a->pulse.IQout)
+							{
+								a->out[2 * i + 0] = +a->pulse.mag * cosphase * a->pulse.ctrans[a->pulse.pcount];
+								a->out[2 * i + 1] = -a->pulse.mag * sinphase * a->pulse.ctrans[a->pulse.pcount];
+							}
+							else
+							{
+								a->out[2 * i + 0] = +a->pulse.mag * cosphase * a->pulse.ctrans[a->pulse.pcount];
+								a->out[2 * i + 1] = 0.0;
+							}
 							if (--a->pulse.pcount == 0)
 							{
 								a->pulse.state = OFF;
@@ -329,9 +402,12 @@ void xgen (GEN a)
 							}
 							break;
 						}
+					}
 					else
+					{
 						a->out[2 * i + 0] = 0.0;
-					a->out[2 * i + 1] = 0.0;
+						a->out[2 * i + 1] = 0.0;
+					}
 					t1 = cosphase;
 					t2 = sinphase;
 					cosphase = t1 * a->pulse.tcosdelta - t2 * a->pulse.tsindelta;
@@ -339,6 +415,104 @@ void xgen (GEN a)
 					a->pulse.tphs += a->pulse.tdelta;
 					if (a->pulse.tphs >= TWOPI) a->pulse.tphs -= TWOPI;
 					if (a->pulse.tphs <   0.0 ) a->pulse.tphs += TWOPI;
+				}
+			}
+			break;
+		case 7:		// two-tone pulse (audio or IQ)
+			{
+				int i;
+				double t1a, t1b, t2a, t2b;
+				double cosphase1 = cos(a->ttpulse.tphs1);
+				double cosphase2 = cos(a->ttpulse.tphs2);
+				double sinphase1 = sin(a->ttpulse.tphs1);
+				double sinphase2 = sin(a->ttpulse.tphs2);
+				for (i = 0; i < a->size; i++)
+				{
+					if (a->ttpulse.pnoff != 0)
+					{
+						switch (a->ttpulse.state)
+						{
+						case OFF:
+							a->out[2 * i + 0] = 0.0;
+							a->out[2 * i + 1] = 0.0;
+							if (--a->ttpulse.pcount == 0)
+							{
+								a->ttpulse.state = UP;
+								a->ttpulse.pcount = a->ttpulse.pntrans;
+							}
+							break;
+						case UP:
+							if (a->ttpulse.IQout)
+							{
+								a->out[2 * i + 0] = +(a->ttpulse.mag1 * cosphase1 + a->ttpulse.mag2 * cosphase2) * a->ttpulse.ctrans[a->ttpulse.pntrans - a->ttpulse.pcount];
+								a->out[2 * i + 1] = -(a->ttpulse.mag1 * sinphase1 + a->ttpulse.mag2 * sinphase2) * a->ttpulse.ctrans[a->ttpulse.pntrans - a->ttpulse.pcount];
+							}
+							else
+							{
+								a->out[2 * i + 0] = +(a->ttpulse.mag1 * cosphase1 + a->ttpulse.mag2 * cosphase2) * a->ttpulse.ctrans[a->ttpulse.pntrans - a->ttpulse.pcount];
+								a->out[2 * i + 1] = 0.0;
+							}
+							if (--a->ttpulse.pcount == 0)
+							{
+								a->ttpulse.state = ON;
+								a->ttpulse.pcount = a->ttpulse.pnon;
+							}
+							break;
+						case ON:
+							if (a->ttpulse.IQout)
+							{
+								a->out[2 * i + 0] = +(a->ttpulse.mag1 * cosphase1 + a->ttpulse.mag2 * cosphase2);
+								a->out[2 * i + 1] = -(a->ttpulse.mag1 * sinphase1 + a->ttpulse.mag2 * sinphase2);
+							}
+							else
+							{
+								a->out[2 * i + 0] = +(a->ttpulse.mag1 * cosphase1 + a->ttpulse.mag2 * cosphase2);
+								a->out[2 * i + 1] = 0.0;
+							}
+							if (--a->ttpulse.pcount == 0)
+							{
+								a->ttpulse.state = DOWN;
+								a->ttpulse.pcount = a->ttpulse.pntrans;
+							}
+							break;
+						case DOWN:
+							if (a->ttpulse.IQout)
+							{
+								a->out[2 * i + 0] = +(a->ttpulse.mag1 * cosphase1 + a->ttpulse.mag2 * cosphase2) * a->ttpulse.ctrans[a->ttpulse.pcount];
+								a->out[2 * i + 1] = -(a->ttpulse.mag1 * sinphase1 + a->ttpulse.mag2 * sinphase2) * a->ttpulse.ctrans[a->ttpulse.pcount];
+							}
+							else
+							{
+								a->out[2 * i + 0] = +(a->ttpulse.mag1 * cosphase1 + a->ttpulse.mag2 * cosphase2) * a->ttpulse.ctrans[a->ttpulse.pcount];
+								a->out[2 * i + 1] = 0.0;
+							}
+							if (--a->ttpulse.pcount == 0)
+							{
+								a->ttpulse.state = OFF;
+								a->ttpulse.pcount = a->ttpulse.pnoff;
+							}
+							break;
+						}
+					}
+					else
+					{
+						a->out[2 * i + 0] = 0.0;
+						a->out[2 * i + 1] = 0.0;
+					}
+					t1a = cosphase1;
+					t1b = sinphase1;
+					cosphase1 = t1a * a->ttpulse.tcosdelta1 - t1b * a->ttpulse.tsindelta1;
+					sinphase1 = t1a * a->ttpulse.tsindelta1 + t1b * a->ttpulse.tcosdelta1;
+					a->ttpulse.tphs1 += a->ttpulse.tdelta1;
+					if (a->ttpulse.tphs1 >= TWOPI) a->ttpulse.tphs1 -= TWOPI;
+					if (a->ttpulse.tphs1 <  0.0)   a->ttpulse.tphs1 += TWOPI;
+					t2a = cosphase2;
+					t2b = sinphase2;
+					cosphase2 = t2a * a->ttpulse.tcosdelta2 - t2b * a->ttpulse.tsindelta2;
+					sinphase2 = t2a * a->ttpulse.tsindelta2 + t2b * a->ttpulse.tcosdelta2;
+					a->ttpulse.tphs2 += a->ttpulse.tdelta2;
+					if (a->ttpulse.tphs2 >= TWOPI) a->ttpulse.tphs2 -= TWOPI;
+					if (a->ttpulse.tphs2 <  0.0)   a->ttpulse.tphs2 += TWOPI;
 				}
 			}
 			break;
@@ -683,4 +857,113 @@ void SetTXAPostGenSweepRate (int channel, double rate)
 	txa[channel].gen1.p->sweep.sweeprate = rate;
 	calc_sweep (txa[channel].gen1.p);
 	LeaveCriticalSection (&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenPulseMag(int channel, double mag)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->pulse.mag = mag;
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenPulseFreq(int channel, double freq)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->pulse.pf = freq;
+	calc_pulse(txa[channel].gen1.p);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenPulseDutyCycle(int channel, double dc)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->pulse.pdutycycle = dc;
+	calc_pulse(txa[channel].gen1.p);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenPulseToneFreq(int channel, double freq)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->pulse.tf = freq;
+	calc_pulse(txa[channel].gen1.p);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenPulseTransition(int channel, double transtime)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->pulse.ptranstime = transtime;
+	calc_pulse(txa[channel].gen1.p);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenPulseIQout(int channel, int IQout)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->pulse.IQout = IQout;
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenTTPulseMag(int channel, double mag1, double mag2)
+{
+	// defaults are 0.5/0.5
+	// total must not exceed 1.0
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->ttpulse.mag1 = mag1;
+	txa[channel].gen1.p->ttpulse.mag2 = mag2;
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenTTPulseFreq(int channel, double freq)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->ttpulse.pf = freq;
+	calc_ttpulse(txa[channel].gen1.p);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenTTPulseDutyCycle(int channel, double dc)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->ttpulse.pdutycycle = dc;
+	calc_ttpulse(txa[channel].gen1.p);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenTTPulseToneFreq(int channel, double freq1, double freq2)
+{
+	GEN a = txa[channel].gen1.p;
+	EnterCriticalSection(&ch[channel].csDSP);
+	a->ttpulse.tf1 = freq1;
+	a->ttpulse.tf2 = freq2;
+	calc_ttpulse(a);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenTTPulseTransition(int channel, double transtime)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->ttpulse.ptranstime = transtime;
+	calc_ttpulse(txa[channel].gen1.p);
+	LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetTXAPostGenTTPulseIQout(int channel, int IQout)
+{
+	EnterCriticalSection(&ch[channel].csDSP);
+	txa[channel].gen1.p->ttpulse.IQout = IQout;
+	LeaveCriticalSection(&ch[channel].csDSP);
 }

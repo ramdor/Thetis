@@ -4,7 +4,7 @@ This file is part of a program that implements a Software-Defined Radio.
 
 This code/file can be found on GitHub : https://github.com/ramdor/Thetis
 
-Copyright (C) 2020-2024 Richard Samphire MW0LGE
+Copyright (C) 2020-2025 Richard Samphire MW0LGE
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -147,6 +147,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace Thetis
 {
@@ -707,13 +708,16 @@ namespace Thetis
         }
 		private void sendTXFrequencyChanged(long new_frequency, Band new_band, bool rx2_enabled, bool tx_vfob)
 		{
+            string s = $"tx_frequency:{new_frequency};";
+            sendTextFrame(s.ToLower());
+
             // bespoke TCI command for anan to make life easier determining active TX frequency
-            // format is : tx_frequency:3700000,b80m,false,false;
-			// arg1 freq (long)
-			// arg2 band b80m, b40m etc
-			// arg3 rx2 enabled  true/false
-			// arg4 tx on vfoB  true/false
-            string s = $"tx_frequency:{new_frequency},{new_band.ToString()},{rx2_enabled.ToString()},{tx_vfob.ToString()};";
+            // format is : tx_frequency_thetis:3700000,b80m,false,false;
+            // arg1 freq (long)
+            // arg2 band b80m, b40m etc
+            // arg3 rx2 enabled  true/false
+            // arg4 tx on vfoB  true/false
+            s = $"tx_frequency_thetis:{new_frequency},{new_band.ToString()},{rx2_enabled.ToString()},{tx_vfob.ToString()};";
             sendTextFrame(s.ToLower());
         }
         private void sendTunePower(int rx, int drive)
@@ -875,7 +879,7 @@ namespace Thetis
 			if (m_server != null && m_server.EmulateSunSDR2Pro)
 				sDevice = "SunSDR2PRO";
 			else
-				sDevice = console.ThreadSafeTCIAccessor.CurrentHPSDRModel.ToString();
+				sDevice = HardwareSpecific.Model.ToString();
 			sendTextFrame("device:" + sDevice + ";");
 			sendTextFrame("receive_only:false;");
 			sendTextFrame("trx_count:2;");
@@ -1966,22 +1970,40 @@ namespace Thetis
                 }
             }
         }
-        private void handleSpot(string[] args)
+		private void handleSpot(string[] args, bool is_json, string msg)
         {
 			if (args.Length >= 4) // 4 as argument 5 may contain commas
 			{
 				long freq = 0;
 				uint argb = 0;
 				DSPMode mode = DSPMode.FIRST;
+				bool json_found = false;
 
-				// join 5+ arguments back together
-				string sAdditional = "";
-				for(int i = 4; i < args.Length; i++)
-                {
-					sAdditional += args[i] + ",";
+                string sAdditional = "";
+				if (!is_json)
+				{
+                    // join 5+ arguments back together
+                    for (int i = 4; i < args.Length; i++)
+					{
+						sAdditional += args[i] + ",";
+					}
+					if (sAdditional.EndsWith(",")) sAdditional = sAdditional.Substring(0, sAdditional.Length - 1);
 				}
-				if(sAdditional.EndsWith(",")) sAdditional = sAdditional.Substring(0, sAdditional.Length - 1);
-				
+				else
+				{
+					int thetis_tag = msg.ToLower().IndexOf("[json]{");
+					if (thetis_tag > -1)
+					{
+						sAdditional = msg.Substring(thetis_tag + 6); // +8  =  the len of [json]
+                        json_found = true;
+					}
+					else
+					{
+                        // we should have found a [json] tag, ignore if not
+                        return;
+					}
+                }
+
 				bool bOK = long.TryParse(args[2], out freq);
                 if (bOK)
 					bOK = uint.TryParse(args[3], out argb);
@@ -1996,7 +2018,44 @@ namespace Thetis
 
                         switch (mode_filtered)
                         {
-							case "ssb":
+							case "lsb":
+								mode = DSPMode.LSB;
+								break;
+							case "usb":
+								mode = DSPMode.USB;
+								break;
+							case "am":
+								mode = DSPMode.AM;
+								break;
+							case "fm":
+                            case "nfm":
+                                mode = DSPMode.FM;
+								break;
+							case "dsb":
+								mode = DSPMode.DSB;
+								break;
+							case "drm":
+								mode = DSPMode.DRM;
+								break;
+							case "spec":
+								mode = DSPMode.SPEC;
+								break;
+							case "sam":
+								mode = DSPMode.SAM;
+								break;
+							case "cwl":
+								mode = DSPMode.CWL;
+								break;
+							case "cwu":
+								mode = DSPMode.CWU;
+                                break;
+                            case "digu":
+								mode = DSPMode.DIGU;
+                                break;
+                            case "digl":
+								mode = DSPMode.DIGL;
+                                break;
+                            case "ssb":
 								if(isFreqencyNormallyUSB)
 									mode = DSPMode.USB;
 								else
@@ -2043,14 +2102,51 @@ namespace Thetis
 					string sAdditionalConvertedText = Encoding.Unicode.GetString(converted, 0, converted.Length);
 
 					if (sAdditionalConvertedText.ToLower() == "nil") sAdditionalConvertedText = ""; //[2.10.3.6]MW0LGE rumlog fills arg5 with Nil - spotted buy GW3JVB
-																							//downside is that any additional text that is the string 'nil'
-																							//will be removed, not that it is too much of an issue
-					string callsign = args[0];
-                    SpotManager2.AddSpot(callsign, mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText, "", args[1]);
+																									//downside is that any additional text that is the string 'nil'
+																									//will be removed, not that it is too much of an issue
+
+					string spotter = "";
+                    int heading = -1;
+					string continent = "";
+					string country = "";
+					string spot_time = "";
+
+                    if (json_found)
+					{
+						try
+						{
+                            JsonSpotData spotData = JsonConvert.DeserializeObject<JsonSpotData>(sAdditionalConvertedText);
+
+							spotter = spotData.Spotter;
+							heading = spotData.Heading;
+							continent = spotData.Continent;
+							country = spotData.Country;
+							spot_time = spotData.UtcTime;
+
+                            sAdditionalConvertedText = spotData.Comment;
+                        }
+                        catch 
+						{
+							// json failed in some way, ignore
+							return;
+						}
+					}
+
+                    SpotManager2.AddSpot(args[0], mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText, spotter, args[1], heading, continent, country, spot_time);
 				}
 			}
 		}
-		private void handleTune(string[] args)
+        private class JsonSpotData
+        {
+            public string Spotter { get; set; } = "";
+            public string Comment { get; set; } = "";
+            public int Heading { get; set; } = -1; // -1 = no heading
+            public string Continent { get; set; } = "";
+            public string Country { get; set; } = "";
+            public string UtcTime { get; set; } = "";
+
+        }
+        private void handleTune(string[] args)
         {
 			int rx = 0;
 			bool tune = false;
@@ -2116,7 +2212,9 @@ namespace Thetis
 
 			string[] parts = msg.Split(':');
 
-            if (parts.Length == 2)
+			bool json_spot = parts.Length >= 2 && parts[0].ToLower().Trim() == "spot" && msg.ToLower().IndexOf("[json]{") >= 0; // a spot with some json info
+
+            if (parts.Length == 2 || json_spot)
             {
 				string cmd = parts[0].ToLower().Trim();
 				string[] args = parts[1].Split(',');
@@ -2148,7 +2246,7 @@ namespace Thetis
 						handleIF(args);
 						break;
 					case "spot":
-						handleSpot(args);
+						handleSpot(args, json_spot, msg);
 						break;
 					case "spot_delete":
 						handleDeleteSpot(args);
@@ -2414,8 +2512,8 @@ namespace Thetis
         private bool _replace_if_copy_RX2VFObToVFOa = false;
         public bool ReplaceRX2VFObToVFOa
         {
-            get { return _replace_if_copy_RX2VFObToVFOa; }
-            set { _replace_if_copy_RX2VFObToVFOa = value; }
+			get { return _replace_if_copy_RX2VFObToVFOa; }
+			set { _replace_if_copy_RX2VFObToVFOa = value; }
         }
         private bool m_bCWLUbecomesCW = false;
 		public bool CWLUbecomesCW
@@ -2451,17 +2549,22 @@ namespace Thetis
 			get { return m_bEmulateExpertSDR3Protocol; }
 			set { m_bEmulateExpertSDR3Protocol = value; }
 		}
-		public void StartServer(Console c, int rateLimit = 0, bool bCopyRX2VFObToVFOa = false, bool bTCIuseRX1vfoaForRX2vfoa = false, bool bSentInitialStateOnConnect = true, bool bCWLUbecomesCW = false, bool bEmulateSunSDR2Pro = false, bool bEmulateExpertSDR3Protocol = false, bool bReplaceRX2VFObToVFOa = false)
+		public void StartServer(Console c, int rateLimit = 0, bool bCopyRX2VFObToVFOa = false, bool bTCIuseRX1vfoaForRX2vfoa = false, bool bSentInitialStateOnConnect = true, bool bCWLUbecomesCW = false, bool bEmulateSunSDR2Pro = false, bool bEmulateExpertSDR3Protocol = false, bool bReplaceRX2VFObToVFOa = false, bool bTCICWbecomesCWUabove10mhz = false)
 		{
 			if (m_server != null)
 			{
 				m_nRateLimit = rateLimit;
+
+                m_bSendInitialStateOnConnect = bSentInitialStateOnConnect;
+                
 				m_bCopyRX2VFObToVFOa = bCopyRX2VFObToVFOa;
 				_replace_if_copy_RX2VFObToVFOa = bReplaceRX2VFObToVFOa;
                 m_bUseRX1VFOaForRX2VFOa = bTCIuseRX1vfoaForRX2vfoa;
-				m_bSendInitialStateOnConnect = bSentInitialStateOnConnect;
+
 				m_bCWLUbecomesCW = bCWLUbecomesCW;
-				m_bEmulateSunSDR2Pro = bEmulateSunSDR2Pro;
+                m_bCWbecomesCWUabove10mhz = bTCICWbecomesCWUabove10mhz; //[2.10.3.9]MW0LGE fixes issue #559
+
+                m_bEmulateSunSDR2Pro = bEmulateSunSDR2Pro;
 				m_bEmulateExpertSDR3Protocol = bEmulateExpertSDR3Protocol;
 
 				_console = c;
@@ -3045,6 +3148,7 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
 					socketListener.ClickedOnSpot(callsign, freq);
+                    socketListener.ClickedOnSpot(callsign, freq, 1, 0); //[2.10.3.9]MW0LGE also send out RX_CLICKED_ON_SPOT defaults to rx1 and vfoA
                 }
             }
 		}

@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2016, 2017 Warren Pratt, NR0V
+Copyright (C) 2013, 2016, 2017, 2025 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -36,8 +36,40 @@ int fEQcompare (const void * a, const void * b)
 		return 1;
 }
 
-double* eq_impulse (int N, int nfreqs, double* F, double* G, double samplerate, double scale, int ctfmode, int wintype)
+double* eq_impulse(int N, int nfreqs, double* F, double* G, double samplerate, double scale, int ctfmode, int wintype)
 {
+	// check for previous in the cache
+	struct Params 
+	{
+		int     N;
+		int     nfreqs;
+		int     ctfmode;
+		int     wintype;
+		double  samplerate;
+		double  scale;
+	};
+
+	struct Params params;
+	memset(&params, 0, sizeof(params));
+	params.N = N;
+	params.nfreqs = nfreqs;
+	params.ctfmode = ctfmode;
+	params.wintype = wintype;
+	params.samplerate = samplerate;
+	params.scale = scale;
+
+	HASH_T h = fnv1a_hash(&params, sizeof(params));
+
+	size_t arr_len = (nfreqs + 1) * sizeof(double);
+	HASH_T hf = fnv1a_hash((uint8_t*)F, arr_len);
+	h ^= hf + GOLDEN_RATIO + (h << 6) + (h >> 2);
+	HASH_T hg = fnv1a_hash((uint8_t*)G, arr_len);
+	h ^= hg + GOLDEN_RATIO + (h << 6) + (h >> 2);
+
+	double* imp = get_impulse_cache_entry(EQ_CACHE, h);
+	if (imp) return imp;
+	//
+
 	double* fp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
 	double* gp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
 	double* A  = (double *) malloc0 ((N / 2 + 1) * sizeof (double));
@@ -154,6 +186,10 @@ double* eq_impulse (int N, int nfreqs, double* F, double* G, double samplerate, 
 	_aligned_free (A);
 	_aligned_free (gp);
 	_aligned_free (fp);
+
+	// store in cache
+	add_impulse_to_cache(EQ_CACHE, h, N, impulse);
+
 	return impulse;
 }
 

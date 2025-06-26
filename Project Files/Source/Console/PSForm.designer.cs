@@ -84,6 +84,7 @@
             this.chkAdvancedViewHidden = new System.Windows.Forms.CheckBoxTS();
             this.pbWarningSetPk = new System.Windows.Forms.PictureBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.chkShow2ToneMeasurements = new System.Windows.Forms.CheckBoxTS();
             ((System.ComponentModel.ISupportInitialize)(this.udPSMoxDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udPSPhnum)).BeginInit();
             this.grpPSInfo.SuspendLayout();
@@ -169,6 +170,7 @@
             this.comboPSTint.Size = new System.Drawing.Size(57, 21);
             this.comboPSTint.TabIndex = 45;
             this.comboPSTint.Text = "0.5";
+            this.toolTip1.SetToolTip(this.comboPSTint, "FOR EXPERIMENTATION. – LEAVE AT 0.5dB.");
             this.comboPSTint.SelectedIndexChanged += new System.EventHandler(this.comboPSTint_SelectedIndexChanged);
             // 
             // chkPSStbl
@@ -181,6 +183,7 @@
             this.chkPSStbl.Size = new System.Drawing.Size(53, 17);
             this.chkPSStbl.TabIndex = 44;
             this.chkPSStbl.Text = "STBL";
+            this.toolTip1.SetToolTip(this.chkPSStbl, "Averages multiple collections of calibration samples.");
             this.chkPSStbl.UseVisualStyleBackColor = true;
             this.chkPSStbl.CheckedChanged += new System.EventHandler(this.chkPSStbl_CheckedChanged);
             // 
@@ -196,6 +199,8 @@
             this.chkPSMap.Size = new System.Drawing.Size(49, 17);
             this.chkPSMap.TabIndex = 43;
             this.chkPSMap.Text = "MAP";
+            this.toolTip1.SetToolTip(this.chkPSMap, "Optimally re-map the sample collection intervals based upon amplifier characteris" +
+        "tic.  (Recommended)");
             this.chkPSMap.UseVisualStyleBackColor = true;
             this.chkPSMap.CheckedChanged += new System.EventHandler(this.chkPSMap_CheckedChanged);
             // 
@@ -211,6 +216,8 @@
             this.chkPSPin.Size = new System.Drawing.Size(44, 17);
             this.chkPSPin.TabIndex = 42;
             this.chkPSPin.Text = "PIN";
+            this.toolTip1.SetToolTip(this.chkPSPin, "Manually ‘pin’ the upper-end of the gain curve; compensates for overshoots, etc. " +
+        "(Recommended)");
             this.chkPSPin.UseVisualStyleBackColor = true;
             this.chkPSPin.CheckedChanged += new System.EventHandler(this.chkPSPin_CheckedChanged);
             // 
@@ -227,6 +234,7 @@
             this.chkPSAutoAttenuate.Size = new System.Drawing.Size(97, 17);
             this.chkPSAutoAttenuate.TabIndex = 41;
             this.chkPSAutoAttenuate.Text = "Auto-Attenuate";
+            this.toolTip1.SetToolTip(this.chkPSAutoAttenuate, "Automatically adjust attenuator for optimum feedback level. (Recommended)");
             this.chkPSAutoAttenuate.UseVisualStyleBackColor = true;
             this.chkPSAutoAttenuate.CheckedChanged += new System.EventHandler(this.chkPSAutoAttenuate_CheckedChanged);
             // 
@@ -255,6 +263,7 @@
             this.chkPSRelaxPtol.Size = new System.Drawing.Size(104, 17);
             this.chkPSRelaxPtol.TabIndex = 39;
             this.chkPSRelaxPtol.Text = "Relax Tolerance";
+            this.toolTip1.SetToolTip(this.chkPSRelaxPtol, "Allow for more dynamic variation in feedback; e.g., for memory-effects");
             this.chkPSRelaxPtol.UseVisualStyleBackColor = true;
             this.chkPSRelaxPtol.CheckedChanged += new System.EventHandler(this.chkPSRelaxPtol_CheckedChanged);
             // 
@@ -269,6 +278,7 @@
             this.btnPSTwoToneGen.Size = new System.Drawing.Size(71, 20);
             this.btnPSTwoToneGen.TabIndex = 37;
             this.btnPSTwoToneGen.Text = "Two-tone";
+            this.toolTip1.SetToolTip(this.btnPSTwoToneGen, "Generate and TX a Two Tone Signal");
             this.btnPSTwoToneGen.UseVisualStyleBackColor = false;
             this.btnPSTwoToneGen.Click += new System.EventHandler(this.btnPSTwoToneGen_Click);
             // 
@@ -282,6 +292,7 @@
             this.labelTS8.Size = new System.Drawing.Size(84, 13);
             this.labelTS8.TabIndex = 10;
             this.labelTS8.Text = "Feedback Level";
+            this.toolTip1.SetToolTip(this.labelTS8, "Indicates, by color, correct/incorrect RF feedback level");
             // 
             // lblPSInfoFB
             // 
@@ -293,6 +304,7 @@
             this.lblPSInfoFB.Name = "lblPSInfoFB";
             this.lblPSInfoFB.Size = new System.Drawing.Size(12, 12);
             this.lblPSInfoFB.TabIndex = 11;
+            this.toolTip1.SetToolTip(this.lblPSInfoFB, "Indicates, by color, correct/incorrect RF feedback level");
             // 
             // lblPSInfoCO
             // 
@@ -304,6 +316,7 @@
             this.lblPSInfoCO.Name = "lblPSInfoCO";
             this.lblPSInfoCO.Size = new System.Drawing.Size(12, 12);
             this.lblPSInfoCO.TabIndex = 13;
+            this.toolTip1.SetToolTip(this.lblPSInfoCO, "If green, a correction solution is in place and PureSignal is correcting");
             // 
             // labelTS9
             // 
@@ -315,6 +328,7 @@
             this.labelTS9.Size = new System.Drawing.Size(55, 13);
             this.labelTS9.TabIndex = 12;
             this.labelTS9.Text = "Correcting";
+            this.toolTip1.SetToolTip(this.labelTS9, "If green, a correction solution is in place and PureSignal is correcting");
             // 
             // labelTS4
             // 
@@ -350,6 +364,7 @@
             this.udPSMoxDelay.Size = new System.Drawing.Size(51, 20);
             this.udPSMoxDelay.TabIndex = 29;
             this.udPSMoxDelay.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udPSMoxDelay, "Settling time between assertion of MOX and collection of feedback");
             this.udPSMoxDelay.Value = new decimal(new int[] {
             2,
             0,
@@ -390,6 +405,7 @@
             this.udPSPhnum.Size = new System.Drawing.Size(80, 20);
             this.udPSPhnum.TabIndex = 25;
             this.udPSPhnum.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udPSPhnum, "Compensation delay for the analog PA chain");
             this.udPSPhnum.Value = new decimal(new int[] {
             150,
             0,
@@ -442,6 +458,8 @@
             this.btnDefaultPeaks.Size = new System.Drawing.Size(67, 23);
             this.btnDefaultPeaks.TabIndex = 41;
             this.btnDefaultPeaks.Text = "Default";
+            this.toolTip1.SetToolTip(this.btnDefaultPeaks, "Set the default peak level of expected digital TX feedback for the current hardwa" +
+        "re");
             this.btnDefaultPeaks.UseVisualStyleBackColor = false;
             this.btnDefaultPeaks.Click += new System.EventHandler(this.btnDefaultPeaks_Click);
             // 
@@ -456,6 +474,7 @@
             this.checkLoopback.Size = new System.Drawing.Size(188, 17);
             this.checkLoopback.TabIndex = 40;
             this.checkLoopback.Text = "Display PS-RX and PS-TX spectra";
+            this.toolTip1.SetToolTip(this.checkLoopback, "Use top and bottom panadapters to display the two feedback streams.");
             this.checkLoopback.UseVisualStyleBackColor = true;
             this.checkLoopback.CheckedChanged += new System.EventHandler(this.checkLoopback_CheckedChanged);
             // 
@@ -470,6 +489,7 @@
             this.lblPSInfo5.Name = "lblPSInfo5";
             this.lblPSInfo5.Size = new System.Drawing.Size(2, 15);
             this.lblPSInfo5.TabIndex = 21;
+            this.toolTip1.SetToolTip(this.lblPSInfo5, "Indicator:  cumulative number of new correction solutions.");
             // 
             // labelTS13
             // 
@@ -480,6 +500,7 @@
             this.labelTS13.Size = new System.Drawing.Size(40, 13);
             this.labelTS13.TabIndex = 20;
             this.labelTS13.Text = "cor.cnt";
+            this.toolTip1.SetToolTip(this.labelTS13, "Indicator:  cumulative number of new correction solutions.");
             // 
             // lblPSInfo13
             // 
@@ -492,6 +513,7 @@
             this.lblPSInfo13.Name = "lblPSInfo13";
             this.lblPSInfo13.Size = new System.Drawing.Size(2, 15);
             this.lblPSInfo13.TabIndex = 19;
+            this.toolTip1.SetToolTip(this.lblPSInfo13, "Indicator:  number of rejected sample sets (Normal <= 2)");
             // 
             // labelTS11
             // 
@@ -502,6 +524,7 @@
             this.labelTS11.Size = new System.Drawing.Size(37, 13);
             this.labelTS11.TabIndex = 18;
             this.labelTS11.Text = "dg.cnt";
+            this.toolTip1.SetToolTip(this.labelTS11, "Indicator:  number of rejected sample sets (Normal <= 2)");
             // 
             // lblPSInfo6
             // 
@@ -514,6 +537,7 @@
             this.lblPSInfo6.Name = "lblPSInfo6";
             this.lblPSInfo6.Size = new System.Drawing.Size(2, 15);
             this.lblPSInfo6.TabIndex = 17;
+            this.toolTip1.SetToolTip(this.lblPSInfo6, "Indicator:  code indicating evaluation of correction solution. (Normal = 0)");
             // 
             // labelTS7
             // 
@@ -524,6 +548,7 @@
             this.labelTS7.Size = new System.Drawing.Size(41, 13);
             this.labelTS7.TabIndex = 16;
             this.labelTS7.Text = "sln.chk";
+            this.toolTip1.SetToolTip(this.labelTS7, "Indicator:  code indicating evaluation of correction solution. (Normal = 0)");
             // 
             // GetPSpeak
             // 
@@ -533,6 +558,7 @@
             this.GetPSpeak.ReadOnly = true;
             this.GetPSpeak.Size = new System.Drawing.Size(57, 20);
             this.GetPSpeak.TabIndex = 15;
+            this.toolTip1.SetToolTip(this.GetPSpeak, "Indicator:  Peak level of measured digital TX feedback.");
             // 
             // labelTS3
             // 
@@ -551,6 +577,8 @@
             this.txtPSpeak.Name = "txtPSpeak";
             this.txtPSpeak.Size = new System.Drawing.Size(57, 20);
             this.txtPSpeak.TabIndex = 13;
+            this.toolTip1.SetToolTip(this.txtPSpeak, "Indicator:  Peak level of expected digital TX feedback.  (Should be close to GetP" +
+        "k; Can be set manually for non-recognized hardware/firmware.)");
             this.txtPSpeak.TextChanged += new System.EventHandler(this.PSpeak_TextChanged);
             // 
             // labelTS5
@@ -574,6 +602,7 @@
             this.lblPSfb2.Name = "lblPSfb2";
             this.lblPSfb2.Size = new System.Drawing.Size(2, 15);
             this.lblPSfb2.TabIndex = 11;
+            this.toolTip1.SetToolTip(this.lblPSfb2, "Indicator:  RF feedback level; drives red/yellow/green indicator.");
             // 
             // labelTS1
             // 
@@ -584,6 +613,7 @@
             this.labelTS1.Size = new System.Drawing.Size(40, 13);
             this.labelTS1.TabIndex = 10;
             this.labelTS1.Text = "feedbk";
+            this.toolTip1.SetToolTip(this.labelTS1, "Indicator:  RF feedback level; drives red/yellow/green indicator.");
             // 
             // lblPSInfo15
             // 
@@ -596,6 +626,7 @@
             this.lblPSInfo15.Name = "lblPSInfo15";
             this.lblPSInfo15.Size = new System.Drawing.Size(2, 15);
             this.lblPSInfo15.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.lblPSInfo15, "Indicator:  indicates what PureSignal is doing at the present time.");
             // 
             // labelTS146
             // 
@@ -606,6 +637,7 @@
             this.labelTS146.Size = new System.Drawing.Size(30, 13);
             this.labelTS146.TabIndex = 8;
             this.labelTS146.Text = "state";
+            this.toolTip1.SetToolTip(this.labelTS146, "Indicator:  indicates what PureSignal is doing at the present time.");
             // 
             // lblPSInfo3
             // 
@@ -618,6 +650,7 @@
             this.lblPSInfo3.Name = "lblPSInfo3";
             this.lblPSInfo3.Size = new System.Drawing.Size(2, 15);
             this.lblPSInfo3.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.lblPSInfo3, "Indicator:  build of sine correction curve.  (Normal = 0)");
             // 
             // lblPSInfo2
             // 
@@ -630,6 +663,7 @@
             this.lblPSInfo2.Name = "lblPSInfo2";
             this.lblPSInfo2.Size = new System.Drawing.Size(2, 15);
             this.lblPSInfo2.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.lblPSInfo2, "Indicator:  build of cosine correction curve.  (Normal = 0)");
             // 
             // lblPSInfo1
             // 
@@ -642,6 +676,7 @@
             this.lblPSInfo1.Name = "lblPSInfo1";
             this.lblPSInfo1.Size = new System.Drawing.Size(2, 15);
             this.lblPSInfo1.TabIndex = 5;
+            this.toolTip1.SetToolTip(this.lblPSInfo1, "Indicator:  build of magnitude correction curve.  (Normal = 0)");
             // 
             // lblPSInfo0
             // 
@@ -654,6 +689,7 @@
             this.lblPSInfo0.Name = "lblPSInfo0";
             this.lblPSInfo0.Size = new System.Drawing.Size(2, 15);
             this.lblPSInfo0.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.lblPSInfo0, "Indicator:  build of feedback magnitude curve.  (Normal = 0)");
             // 
             // labelTS143
             // 
@@ -664,6 +700,7 @@
             this.labelTS143.Size = new System.Drawing.Size(38, 13);
             this.labelTS143.TabIndex = 3;
             this.labelTS143.Text = "bldr.cs";
+            this.toolTip1.SetToolTip(this.labelTS143, "Indicator:  build of sine correction curve.  (Normal = 0)");
             // 
             // labelTS144
             // 
@@ -674,6 +711,7 @@
             this.labelTS144.Size = new System.Drawing.Size(39, 13);
             this.labelTS144.TabIndex = 2;
             this.labelTS144.Text = "bldr.cc";
+            this.toolTip1.SetToolTip(this.labelTS144, "Indicator:  build of cosine correction curve.  (Normal = 0)");
             // 
             // labelTS142
             // 
@@ -684,6 +722,7 @@
             this.labelTS142.Size = new System.Drawing.Size(41, 13);
             this.labelTS142.TabIndex = 1;
             this.labelTS142.Text = "bldr.cm";
+            this.toolTip1.SetToolTip(this.labelTS142, "Indicator:  build of magnitude correction curve.  (Normal = 0)");
             // 
             // labelTS141
             // 
@@ -694,6 +733,7 @@
             this.labelTS141.Size = new System.Drawing.Size(35, 13);
             this.labelTS141.TabIndex = 0;
             this.labelTS141.Text = "bldr.rx";
+            this.toolTip1.SetToolTip(this.labelTS141, "Indicator:  build of feedback magnitude curve.  (Normal = 0)");
             // 
             // btnPSReset
             // 
@@ -718,6 +758,7 @@
             this.btnPSCalibrate.Size = new System.Drawing.Size(71, 20);
             this.btnPSCalibrate.TabIndex = 19;
             this.btnPSCalibrate.Text = "Single Cal";
+            this.toolTip1.SetToolTip(this.btnPSCalibrate, "Perform a singal calibration. This will happen up to 5 times in a row");
             this.btnPSCalibrate.UseVisualStyleBackColor = false;
             this.btnPSCalibrate.Click += new System.EventHandler(this.btnPSCalibrate_Click);
             // 
@@ -755,6 +796,8 @@
             this.udPSCalWait.Size = new System.Drawing.Size(51, 20);
             this.udPSCalWait.TabIndex = 16;
             this.udPSCalWait.TinyStep = false;
+            this.toolTip1.SetToolTip(this.udPSCalWait, "Time to wait between calculating correction solutions.  (Zero for fastest respons" +
+        "e.)");
             this.udPSCalWait.Value = new decimal(new int[] {
             0,
             0,
@@ -772,6 +815,7 @@
             this.chkQuickAttenuate.Size = new System.Drawing.Size(154, 17);
             this.chkQuickAttenuate.TabIndex = 49;
             this.chkQuickAttenuate.Text = "Quick Attenuate Response";
+            this.toolTip1.SetToolTip(this.chkQuickAttenuate, "Apply auto attenuation changes at a faster interval");
             this.chkQuickAttenuate.UseVisualStyleBackColor = true;
             this.chkQuickAttenuate.CheckedChanged += new System.EventHandler(this.chkQuickAttenuate_CheckedChanged);
             // 
@@ -791,7 +835,7 @@
             // pbWarningSetPk
             // 
             this.pbWarningSetPk.Image = ((System.Drawing.Image)(resources.GetObject("pbWarningSetPk.Image")));
-            this.pbWarningSetPk.Location = new System.Drawing.Point(501, 38);
+            this.pbWarningSetPk.Location = new System.Drawing.Point(323, 35);
             this.pbWarningSetPk.Name = "pbWarningSetPk";
             this.pbWarningSetPk.Size = new System.Drawing.Size(20, 20);
             this.pbWarningSetPk.TabIndex = 51;
@@ -799,12 +843,26 @@
             this.toolTip1.SetToolTip(this.pbWarningSetPk, resources.GetString("pbWarningSetPk.ToolTip"));
             this.pbWarningSetPk.Visible = false;
             // 
+            // chkShow2ToneMeasurements
+            // 
+            this.chkShow2ToneMeasurements.AutoSize = true;
+            this.chkShow2ToneMeasurements.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkShow2ToneMeasurements.Image = null;
+            this.chkShow2ToneMeasurements.Location = new System.Drawing.Point(389, 38);
+            this.chkShow2ToneMeasurements.Name = "chkShow2ToneMeasurements";
+            this.chkShow2ToneMeasurements.Size = new System.Drawing.Size(158, 17);
+            this.chkShow2ToneMeasurements.TabIndex = 52;
+            this.chkShow2ToneMeasurements.Text = "Show 2Tone measurements";
+            this.chkShow2ToneMeasurements.UseVisualStyleBackColor = true;
+            this.chkShow2ToneMeasurements.CheckedChanged += new System.EventHandler(this.chkShow2ToneMeasurements_CheckedChanged);
+            // 
             // PSForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(560, 303);
+            this.Controls.Add(this.chkShow2ToneMeasurements);
             this.Controls.Add(this.pbWarningSetPk);
             this.Controls.Add(this.chkAdvancedViewHidden);
             this.Controls.Add(this.chkQuickAttenuate);
@@ -907,5 +965,6 @@
         private System.Windows.Forms.CheckBoxTS chkAdvancedViewHidden;
         private System.Windows.Forms.PictureBox pbWarningSetPk;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.CheckBoxTS chkShow2ToneMeasurements;
     }
 }

@@ -222,6 +222,7 @@
             this.Name = "AmpView";
             this.Text = "AmpView 1.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AmpView_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AmpView_FormClosed);
             this.Load += new System.EventHandler(this.AmpView_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);

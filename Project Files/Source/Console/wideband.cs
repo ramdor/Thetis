@@ -16,6 +16,9 @@ namespace Thetis
         public wideband(int i)
         {
             InitializeComponent();
+
+            this.MaximumSize = new Size(4096, 4096);
+
             Common.DoubleBufferAll(this, true);
             wbdisplay.init = true;
             wbdisplay.ADC = i;

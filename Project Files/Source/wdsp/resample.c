@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013 Warren Pratt, NR0V
+Copyright (C) 2013, 2025 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -118,38 +118,45 @@ void flush_resample (RESAMPLE a)
 }
 
 PORT
-int xresample (RESAMPLE a)
+int xresample(RESAMPLE a)
 {
 	int outsamps = 0;
 	if (a->run)
 	{
-		int i, j, n;
-		int idx_out;
-		double I, Q;
+	int i, j, n;
+	int idx_out;
+	double I, Q;
+
+		int cpp = a->cpp;
+		int idx_in = a->idx_in;
+		int ringsize = a->ringsize;
+		double* h = a->h;
+		double* ring = a->ring;
 
 		for (i = 0; i < a->size; i++)
-		{
-			a->ring[2 * a->idx_in + 0] = a->in[2 * i + 0];
-			a->ring[2 * a->idx_in + 1] = a->in[2 * i + 1];
+	{
+			ring[2 * idx_in + 0] = a->in[2 * i + 0];
+			ring[2 * idx_in + 1] = a->in[2 * i + 1];
 			while (a->phnum < a->L)
+		{
+			I = 0.0;
+			Q = 0.0;
+				n = cpp * a->phnum;
+			for (j = 0; j < cpp; j++)
 			{
-				I = 0.0;
-				Q = 0.0;
-				n = a->cpp * a->phnum;
-				for (j = 0; j < a->cpp; j++)
-				{
-					if ((idx_out = a->idx_in + j) >= a->ringsize) idx_out -= a->ringsize;
-					I += a->h[n + j] * a->ring[2 * idx_out + 0];
-					Q += a->h[n + j] * a->ring[2 * idx_out + 1];
-				}
+				if ((idx_out = idx_in + j) >= ringsize) idx_out -= ringsize;
+				I += h[n + j] * ring[2 * idx_out + 0];
+				Q += h[n + j] * ring[2 * idx_out + 1];
+			}
 				a->out[2 * outsamps + 0] = I;
 				a->out[2 * outsamps + 1] = Q;
-				outsamps++;
+			outsamps++;
 				a->phnum += a->M;
-			}
-			a->phnum -= a->L;
-			if (--a->idx_in < 0) a->idx_in = a->ringsize - 1;
 		}
+			a->phnum -= a->L;
+			if (--idx_in < 0) idx_in = a->ringsize - 1;
+	}
+	a->idx_in = idx_in;
 	}
 	else if (a->in != a->out)
 		memcpy (a->out, a->in, a->size * sizeof (complex));

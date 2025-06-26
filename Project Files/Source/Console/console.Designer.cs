@@ -10,7 +10,6 @@
         public System.Windows.Forms.TextBoxTS txtVFOAFreq;
         private System.Windows.Forms.TextBoxTS txtVFOABand;
         private System.Windows.Forms.TextBoxTS txtVFOBFreq;
-        public System.Windows.Forms.PictureBox picDisplay;
         private System.Windows.Forms.GroupBoxTS grpVFOA;
         private System.Windows.Forms.GroupBoxTS grpVFOB;
         private System.Windows.Forms.TextBoxTS txtVFOBBand;
@@ -1059,7 +1058,7 @@
             this.infoBar = new Thetis.ucInfoBar();
             this.lblDisplayZoom = new System.Windows.Forms.LabelTS();
             this.lblDisplayPan = new System.Windows.Forms.LabelTS();
-            this.picDisplay = new System.Windows.Forms.PictureBox();
+            this.pnlDisplay = new System.Windows.Forms.Panel();
             this.panelMode = new System.Windows.Forms.PanelTS();
             this.panelBandHF = new System.Windows.Forms.PanelTS();
             this.txtVFOAFreq = new System.Windows.Forms.TextBoxTS();
@@ -1214,7 +1213,6 @@
             this.grpVACStereo.SuspendLayout();
             this.grpDIGSampleRate.SuspendLayout();
             this.panelDisplay.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picDisplay)).BeginInit();
             this.panelMode.SuspendLayout();
             this.panelBandHF.SuspendLayout();
             this.grpVFOA.SuspendLayout();
@@ -1467,7 +1465,6 @@
             this.chkMON.Name = "chkMON";
             this.toolTip1.SetToolTip(this.chkMON, resources.GetString("chkMON.ToolTip"));
             this.chkMON.CheckedChanged += new System.EventHandler(this.chkMON_CheckedChanged);
-            this.chkMON.Click += new System.EventHandler(this.chkMON_Click);
             // 
             // ckQuickRec
             // 
@@ -6729,7 +6726,7 @@
             this.panelDisplay.Controls.Add(this.lblDisplayZoom);
             this.panelDisplay.Controls.Add(this.btnDisplayPanCenter);
             this.panelDisplay.Controls.Add(this.lblDisplayPan);
-            this.panelDisplay.Controls.Add(this.picDisplay);
+            this.panelDisplay.Controls.Add(this.pnlDisplay);
             this.panelDisplay.Name = "panelDisplay";
             // 
             // infoBar
@@ -6762,19 +6759,17 @@
             this.lblDisplayPan.ForeColor = System.Drawing.Color.White;
             this.lblDisplayPan.Name = "lblDisplayPan";
             // 
-            // picDisplay
+            // pnlDisplay
             // 
-            resources.ApplyResources(this.picDisplay, "picDisplay");
-            this.picDisplay.BackColor = System.Drawing.Color.Black;
-            this.picDisplay.Cursor = System.Windows.Forms.Cursors.Default;
-            this.picDisplay.Name = "picDisplay";
-            this.picDisplay.TabStop = false;
-            this.picDisplay.DoubleClick += new System.EventHandler(this.picDisplay_DoubleClick);
-            this.picDisplay.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picDisplay_MouseDown);
-            this.picDisplay.MouseLeave += new System.EventHandler(this.picDisplay_MouseLeave);
-            this.picDisplay.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDisplay_MouseMove);
-            this.picDisplay.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDisplay_MouseUp);
-            this.picDisplay.Resize += new System.EventHandler(this.picDisplay_Resize);
+            resources.ApplyResources(this.pnlDisplay, "pnlDisplay");
+            this.pnlDisplay.BackColor = System.Drawing.Color.Black;
+            this.pnlDisplay.Name = "pnlDisplay";
+            this.pnlDisplay.DoubleClick += new System.EventHandler(this.pnlDisplay_DoubleClick);
+            this.pnlDisplay.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlDisplay_MouseDown);
+            this.pnlDisplay.MouseLeave += new System.EventHandler(this.pnlDisplay_MouseLeave);
+            this.pnlDisplay.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlDisplay_MouseMove);
+            this.pnlDisplay.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlDisplay_MouseUp);
+            this.pnlDisplay.Resize += new System.EventHandler(this.pnlDisplay_Resize);
             // 
             // panelMode
             // 
@@ -7713,7 +7708,6 @@
             this.grpVACStereo.ResumeLayout(false);
             this.grpDIGSampleRate.ResumeLayout(false);
             this.panelDisplay.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picDisplay)).EndInit();
             this.panelMode.ResumeLayout(false);
             this.panelBandHF.ResumeLayout(false);
             this.grpVFOA.ResumeLayout(false);
@@ -7887,5 +7881,6 @@
         private ToolStripMenuItem miAbout;
         private PictureBox pbAutoAttWarningRX1;
         private PictureBox pbAutoAttWarningRX2;
+        private Panel pnlDisplay;
     }
 }

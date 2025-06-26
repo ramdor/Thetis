@@ -121,7 +121,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;WDSP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WIN32;_DEBUG;_WINDOWS;_USRDLL;WDSP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <AdditionalIncludeDirectories>.;../../lib/portaudio_VS2008/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -185,6 +185,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
       <FloatingPointModel>Precise</FloatingPointModel>
+      <OmitFramePointers>true</OmitFramePointers>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -194,6 +195,7 @@
       <OutputFile>$(SolutionDir)..\bin\$(HPSDR_PLATFORM)\$(Configuration)\wdsp.dll</OutputFile>
       <AdditionalDependencies>../../lib/fftw_$(HPSDR_PLATFORM)/libfftw3-3.lib;avrt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../lib/fftw_$(HPSDR_PLATFORM)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -229,6 +231,7 @@
     <ClInclude Include="gen.h" />
     <ClInclude Include="icfir.h" />
     <ClInclude Include="iir.h" />
+    <ClInclude Include="impulse_cache.h" />
     <ClInclude Include="iobuffs.h" />
     <ClInclude Include="iqc.h" />
     <ClInclude Include="lmath.h" />
@@ -256,6 +259,7 @@
     <ClInclude Include="utilities.h" />
     <ClInclude Include="varsamp.h" />
     <ClInclude Include="wcpAGC.h" />
+    <ClInclude Include="zetaHat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="amd.c" />
@@ -286,6 +290,7 @@
     <ClCompile Include="gen.c" />
     <ClCompile Include="icfir.c" />
     <ClCompile Include="iir.c" />
+    <ClCompile Include="impulse_cache.c" />
     <ClCompile Include="iqc.c" />
     <ClCompile Include="lmath.c" />
     <ClCompile Include="meterlog10.c" />
@@ -316,6 +321,7 @@
     <ClCompile Include="version.c" />
     <ClCompile Include="wcpAGC.c" />
     <ClCompile Include="wisdom.c" />
+    <ClCompile Include="zetaHat.c" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="wdsp.rc" />

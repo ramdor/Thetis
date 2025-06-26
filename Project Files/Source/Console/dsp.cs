@@ -377,7 +377,7 @@ namespace Thetis
         public static extern void destroy_resampleFV(void* ptr);
 
         [DllImport("wdsp.dll", EntryPoint = "WDSPwisdom", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void WDSPwisdom(string directory);
+        public static extern int WDSPwisdom(string directory);
 
         [DllImport("wdsp.dll", EntryPoint = "SetRXAPreGenRun", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXAPreGenRun(int channel, int run);
@@ -480,7 +480,47 @@ namespace Thetis
 
         [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenSweepRate", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTXAPostGenSweepRate(int channel, double rate);
-        
+
+        // post tune pulse
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenPulseMag", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenPulseMag(int channel, double mag);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenPulseFreq", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenPulseFreq(int channel, double freq);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenPulseDutyCycle", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenPulseDutyCycle(int channel, double dc);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenPulseToneFreq", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenPulseToneFreq(int channel, double freq);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenPulseTransition", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenPulseTransition(int channel, double transtime);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenPulseIQout", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenPulseIQout(int channel, int IQout);
+        //
+
+        // post two tone pulse
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenTTPulseMag", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenTTPulseMag(int channel, double mag1, double mag2);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenTTPulseFreq", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenTTPulseFreq(int channel, double freq1);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenTTPulseDutyCycle", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenTTPulseDutyCycle(int channel, double dc);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenTTPulseToneFreq", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenTTPulseToneFreq(int channel, double freq1, double freq2);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenTTPulseTransition", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenTTPulseTransition(int channel, double transtime);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetTXAPostGenTTPulseIQout", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetTXAPostGenTTPulseIQout(int channel, int IQout);
+        //
+
         [DllImport("wdsp.dll", EntryPoint = "GetWDSPVersion", CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetWDSPVersion();
 
@@ -704,6 +744,31 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "destroy_bfcu", CallingConvention = CallingConvention.Cdecl)]
         public static extern void destroy_bfcu(int id);
 
+        // WDSP impulse cache - MW0LGE
+        [DllImport("wdsp.dll", EntryPoint = "save_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void save_impulse_cache(string file);
+
+        [DllImport("wdsp.dll", EntryPoint = "read_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void read_impulse_cache(string file);
+
+        [DllImport("wdsp.dll", EntryPoint = "use_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void use_impulse_cache(int use);
+
+        [DllImport("wdsp.dll", EntryPoint = "init_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void init_impulse_cache(int use);
+
+        [DllImport("wdsp.dll", EntryPoint = "destroy_impulse_cache", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void destroy_impulse_cache();
+        //
+
+        // WDSP peak display bin
+        [DllImport("wdsp.dll", EntryPoint = "SetupDetectMaxBin", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetupDetectMaxBin(int run, int disp, int ss, int LO, double rate, double fLow, double fHigh, double tau, int frame_rate);
+
+        [DllImport("wdsp.dll", EntryPoint = "GetDetectMaxBin", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double GetDetectMaxBin(int disp);
+        //
+
         #endregion
 
         #region Enums
@@ -820,15 +885,13 @@ namespace Thetis
 	        case MeterType.AGC_GAIN:
                 val = GetRXAMeter(channel, rxaMeterType.RXA_AGC_GAIN);
 		        break;
-            //
             case MeterType.AGC_PK:
                 val = GetRXAMeter(channel, rxaMeterType.RXA_AGC_PK);
                 break;
             case MeterType.AGC_AV:
                 val = GetRXAMeter(channel, rxaMeterType.RXA_AGC_AV);
                 break;
-                //
-                default:
+            default:
 		        val = -400.0;
 		        break;
 	        }

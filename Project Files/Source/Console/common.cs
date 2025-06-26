@@ -26,13 +26,12 @@
 //    USA
 //
 //=================================================================
-// Continual modifications Copyright (C) 2019-2024 Richard Samphire (MW0LGE)
+// Continual modifications Copyright (C) 2019-2025 Richard Samphire (MW0LGE)
 //=================================================================
 
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
@@ -50,12 +49,29 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
+using System.Runtime.CompilerServices;
+using System.Management;
 
 namespace Thetis
 {
+    public static class FloatExtensions
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Clamp(this float v, float min, float max) => (v < min) ? min : (v > max) ? max : v;
+    }
 	public static class StringExtensions
 	{
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string Truncate(this string source, int maxLength)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (source.Length <= maxLength)
+                return source;
+            return source.Substring(0, maxLength);
+        }
         // extend contains to be able to ignore case etc MW0LGE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Contains(this string source, string toCheck, StringComparison comp)
 		{
             if (source == null)
@@ -69,7 +85,7 @@ namespace Thetis
 
             return source?.IndexOf(toCheck, comp) >= 0;
 		}
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string Left(this string source, int length)
         {
             if (source == null)
@@ -84,6 +100,7 @@ namespace Thetis
 
             return source.Length > length ? source.Substring(0, length) : source;
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string Right(this string source, int length)
         {
             if (source == null)
@@ -101,6 +118,7 @@ namespace Thetis
     }
     public static class ControlExtentions
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string GetFullName(this Control control)
         {
             if (control == null)
@@ -961,8 +979,7 @@ namespace Thetis
 				return principal.IsInRole(WindowsBuiltInRole.Administrator);
 			}
 		}
-
-		public static bool ShiftKeyDown
+        public static bool ShiftKeyDown
 		{
 			get
 			{
@@ -1125,6 +1142,53 @@ namespace Thetis
                 else sRet = "S 9 + 60";
             }
             return "    " + sRet;
+        }
+        public static string SMeterFromDBM_Spaceless(double dbm, bool bAboveS9Frequency)
+        {
+            // same as above, but without spaces. Used by MultiMeter display
+
+            if (bAboveS9Frequency)
+            {
+                if (dbm <= -144.0f) return "S0";
+                else if (dbm > -144.0f & dbm <= -138.0f) return "S1";
+                else if (dbm > -138.0f & dbm <= -132.0f) return "S2";
+                else if (dbm > -132.0f & dbm <= -126.0f) return "S3";
+                else if (dbm > -126.0f & dbm <= -120.0f) return "S4";
+                else if (dbm > -120.0f & dbm <= -114.0f) return "S5";
+                else if (dbm > -114.0f & dbm <= -108.0f) return "S6";
+                else if (dbm > -108.0f & dbm <= -102.0f) return "S7";
+                else if (dbm > -102.0f & dbm <= -96.0f) return "S8";
+                else if (dbm > -96.0f & dbm <= -90.0f) return "S9";
+                else if (dbm > -90.0f & dbm <= -86.0f) return "S9+5";
+                else if (dbm > -86.0f & dbm <= -80.0f) return "S9+10";
+                else if (dbm > -80.0f & dbm <= -76.0f) return "S9+15";
+                else if (dbm > -76.0f & dbm <= -66.0f) return "S9+20";
+                else if (dbm > -66.0f & dbm <= -56.0f) return "S9+30";
+                else if (dbm > -56.0f & dbm <= -46.0f) return "S9+40";
+                else if (dbm > -46.0f & dbm <= -36.0f) return "S9+50";
+                else return "S9+60";
+            }
+            else
+            {
+                if (dbm <= -124.0f) return "S0";
+                else if (dbm > -124.0f & dbm <= -118.0f) return "S1";
+                else if (dbm > -118.0f & dbm <= -112.0f) return "S2";
+                else if (dbm > -112.0f & dbm <= -106.0f) return "S3";
+                else if (dbm > -106.0f & dbm <= -100.0f) return "S4";
+                else if (dbm > -100.0f & dbm <= -94.0f) return "S5";
+                else if (dbm > -94.0f & dbm <= -88.0f) return "S6";
+                else if (dbm > -88.0f & dbm <= -82.0f) return "S7";
+                else if (dbm > -82.0f & dbm <= -76.0f) return "S8";
+                else if (dbm > -76.0f & dbm <= -70.0f) return "S9";
+                else if (dbm > -70.0f & dbm <= -66.0f) return "S9+5";
+                else if (dbm > -66.0f & dbm <= -60.0f) return "S9+10";
+                else if (dbm > -60.0f & dbm <= -56.0f) return "S9+15";
+                else if (dbm > -56.0f & dbm <= -46.0f) return "S9+20";
+                else if (dbm > -46.0f & dbm <= -36.0f) return "S9+30";
+                else if (dbm > -36.0f & dbm <= -26.0f) return "S9+40";
+                else if (dbm > -26.0f & dbm <= -16.0f) return "S9+50";
+                else return "S9+60";
+            }
         }
         public static double GetSMeterUnits(double dbm, bool bAboveS9Frequency)
         {
@@ -1399,39 +1463,7 @@ namespace Thetis
             }
             return false;
         }
-
-        public static HPSDRModel StringModelToEnum(string sModel)
-        {
-            switch (sModel.ToUpper())
-            {
-                case "HERMES":
-                    return HPSDRModel.HERMES;
-                case "ANAN-10":
-                    return HPSDRModel.ANAN10;
-                case "ANAN-10E":
-                    return HPSDRModel.ANAN10E;
-                case "ANAN-100":
-                    return HPSDRModel.ANAN100;
-                case "ANAN-100B":
-                    return HPSDRModel.ANAN100B;
-                case "ANAN-100D":
-                    return HPSDRModel.ANAN100D;
-                case "ANAN-200D":
-                    return HPSDRModel.ANAN200D;
-                case "ANAN-7000DLE":
-                    return HPSDRModel.ANAN7000D;
-                case "ANAN-8000DLE":
-                    return HPSDRModel.ANAN8000D;
-                case "ANAN-G2":
-                    return HPSDRModel.ANAN_G2;
-                case "ANAN-G2-1K":
-                    return HPSDRModel.ANAN_G2_1K;
-                case "ANVELINA-PRO3":
-                    return HPSDRModel.ANVELINAPRO3;
-            }
-
-            return HPSDRModel.FIRST;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetLuminance(Color c)
         {
             //https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
@@ -1441,6 +1473,7 @@ namespace Thetis
             int b = rGBtoLin(c.B);
             return (r + r + b + g + g + g) / 6; //(fast)
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int rGBtoLin(int col)
         {
             float colorChannel = col / 255f;
@@ -1531,5 +1564,452 @@ namespace Thetis
             }
             return new string(result);
         }
+
+        public static bool CanCreateFile(string filePath)
+        {
+            try
+            {
+                string directoryPath = Path.GetDirectoryName(filePath);
+
+                if (!Directory.Exists(directoryPath))
+                {
+                    return false;
+                }
+
+                if (!hasWritePermissionOnDir(directoryPath))
+                {
+                    return false;
+                }
+
+                if (File.Exists(filePath))
+                {
+                    FileInfo fileInfo = new FileInfo(filePath);
+                    if (fileInfo.IsReadOnly)
+                    {
+                        return false;
+                    }
+
+                    if (!isFileWritable(filePath))
+                    {
+                        return false;
+                    }
+                }
+
+                string tempFile = Path.Combine(directoryPath, Path.GetRandomFileName());
+                FileStream tempStream = File.Create(tempFile);
+                tempStream.Close();
+                File.Delete(tempFile);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        private static bool hasWritePermissionOnDir(string path)
+        {
+            try
+            {
+                string tempFile = Path.Combine(path, Path.GetRandomFileName());
+                FileStream fs = File.Create(tempFile, 1, FileOptions.DeleteOnClose);
+                fs.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool isFileWritable(string filePath)
+        {
+            try
+            {
+                FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Write);
+                stream.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool GetComPortNumber(string comport, out int portNumber)
+        {
+            string lower_comport = comport.ToLower();
+
+            if (!lower_comport.StartsWith("com"))
+            {
+                portNumber = 0;
+                return false;
+            }
+
+            return int.TryParse(lower_comport.Substring(3), out portNumber);
+        }
+
+        private static int getIntersectionArea(Rectangle rect1, Rectangle rect2)
+        {
+            Rectangle intersection = Rectangle.Intersect(rect1, rect2);
+            return intersection.Width > 0 && intersection.Height > 0 ? intersection.Width * intersection.Height : 0;
+        }
+        public static bool EnsureFormIsOnScreen(Form frm, bool entirely_on_screen, bool prioritizeCursorScreen = false)
+        {
+            bool shifted = false;
+            Rectangle formBounds = frm.Bounds;
+
+            if (entirely_on_screen)
+            {
+                Screen targetScreen = null;
+
+                if (prioritizeCursorScreen)
+                {
+                    Screen cursorScreen = Screen.FromPoint(Cursor.Position);
+
+                    Rectangle cursorWorkingArea = cursorScreen.WorkingArea;
+                    Rectangle newBoundsOnCursorScreen = getAdjustedBounds(formBounds, cursorWorkingArea);
+
+                    if (cursorWorkingArea.Contains(newBoundsOnCursorScreen))
+                    {
+                        targetScreen = cursorScreen;
+                    }
+                }
+
+                if (targetScreen == null)
+                {
+                    targetScreen = Screen.AllScreens
+                    .OrderByDescending(screen => getIntersectionArea(screen.WorkingArea, formBounds))
+                    .First();
+                }
+
+                Rectangle targetWorkingArea = targetScreen.WorkingArea;
+
+                int newX = Math.Max(targetWorkingArea.X, Math.Min(formBounds.X, targetWorkingArea.Right - formBounds.Width));
+                int newY = Math.Max(targetWorkingArea.Y, Math.Min(formBounds.Y, targetWorkingArea.Bottom - formBounds.Height));
+
+                shifted = frm.Location.X != newX || frm.Location.Y != newY;
+                frm.Location = new Point(newX, newY);
+            }
+            else
+            {
+                bool isOnScreen = Screen.AllScreens.Any(screen => screen.WorkingArea.IntersectsWith(formBounds));
+
+                if (!isOnScreen)
+                {
+                    Screen primaryScreen = Screen.PrimaryScreen;
+                    Rectangle primaryWorkingArea = primaryScreen.WorkingArea;
+
+                    int newX = Math.Max(primaryWorkingArea.X, Math.Min(formBounds.X, primaryWorkingArea.Right - formBounds.Width));
+                    int newY = Math.Max(primaryWorkingArea.Y, Math.Min(formBounds.Y, primaryWorkingArea.Bottom - formBounds.Height));
+
+                    shifted = frm.Location.X != newX || frm.Location.Y != newY;
+                    frm.Location = new Point(newX, newY);
+                }
+            }
+            return shifted;
+        }
+        private static Rectangle getAdjustedBounds(Rectangle formBounds, Rectangle screenWorkingArea)
+        {
+            int newX = Math.Max(screenWorkingArea.X,
+                Math.Min(formBounds.X, screenWorkingArea.Right - formBounds.Width));
+            int newY = Math.Max(screenWorkingArea.Y,
+                Math.Min(formBounds.Y, screenWorkingArea.Bottom - formBounds.Height));
+
+            return new Rectangle(new Point(newX, newY), formBounds.Size);
+        }
+
+        //[2.10.3.9]MW0LGE performance related
+        [DllImport("kernel32.dll")]
+        private static extern bool SetProcessPriorityBoost(IntPtr processHandle, bool disablePriorityBoost);
+        public static void DisableForegroundPriorityBoost()
+        {
+            try
+            {
+                // Prevent Windows from downgrading app CPU time when it loses focus
+                Process process = Process.GetCurrentProcess();
+                SetProcessPriorityBoost(process.Handle, true);
+            }
+            catch { }
+        }
+        //
+
+        //[2.10.3.9]MW0LGE cpu/memory details
+        public static string GetCpuName()
+        {
+            try
+            {
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_Processor");
+                ManagementObjectCollection results = searcher.Get();
+                string cpuName = "Unknown CPU";
+                foreach (ManagementObject mo in results)
+                {
+                    cpuName = mo["Name"] != null ? mo["Name"].ToString().Trim() : string.Empty;
+                    break;
+                }
+                results.Dispose();
+                searcher.Dispose();
+                return cpuName;
+            }
+            catch { return "Unknown CPU"; }
+        }
+
+        public static List<string> GetGpuNames()
+        {
+            List<string> names = new List<string>();
+
+            try
+            {
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_VideoController"))
+                using (ManagementObjectCollection results = searcher.Get())
+                {
+                    foreach (ManagementObject mo in results)
+                    {
+                        string name = mo["Name"] != null ? mo["Name"].ToString().Trim() : string.Empty;
+                        if (name != string.Empty)
+                        {
+                            names.Add(name);
+                        }
+                    }
+                }
+                if (names.Count == 0)
+                    names.Add("Unknown GPU(s)");
+                return names;
+            }
+            catch
+            {
+                names.Clear();
+                names.Add("Unknown GPU(s)");
+                return names;
+            }
+        }
+
+        public static string GetTotalRam()
+        {
+            try
+            {
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem"))
+                using (ManagementObjectCollection results = searcher.Get())
+                {
+                    foreach (ManagementObject mo in results)
+                    {
+                        string totalMemory = mo["TotalPhysicalMemory"] != null ? mo["TotalPhysicalMemory"].ToString() : "0";
+                        if (ulong.TryParse(totalMemory, out ulong bytes))
+                        {
+                            double gib = bytes / 1024.0 / 1024.0 / 1024.0;
+                            return gib.ToString("F2") + " GiB";
+                        }
+                        break;
+                    }
+                }
+            }
+            catch { }
+            return "Unknown";
+        }
+
+        public static string GetInstalledRam()
+        {
+            try
+            {
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Capacity FROM Win32_PhysicalMemory"))
+                using (ManagementObjectCollection results = searcher.Get())
+                {
+                    ulong totalBytes = 0;
+                    foreach (ManagementObject mo in results)
+                        totalBytes += (ulong)mo["Capacity"];
+                    double gib = totalBytes / 1024.0 / 1024.0 / 1024.0;
+                    return gib.ToString("F2") + " GiB";
+                }
+            }
+            catch { return "Unknown"; }
+        }
+        //
+
+        //[2.10.3.9]MW0LGE form scaling
+        private const uint MONITOR_DEFAULTTONEAREST = 2;
+        private enum MonitorDpiType
+        {
+            MDT_EFFECTIVE_DPI = 0,
+            MDT_ANGULAR_DPI = 1,
+            MDT_RAW_DPI = 2
+        }
+
+        [DllImport("Shcore.dll")]
+        private static extern int GetDpiForMonitor(
+            IntPtr hmonitor,
+            MonitorDpiType dpiType,
+            out uint dpiX,
+            out uint dpiY);
+
+        [DllImport("User32.dll")]
+        private static extern IntPtr MonitorFromWindow(
+            IntPtr hwnd,
+            uint dwFlags);
+
+        public static int GetScalingForWindow(IntPtr hwnd)
+        {
+            OperatingSystem os = Environment.OSVersion;
+            Version version = os.Version;
+            bool isWin81OrLater =
+                os.Platform == PlatformID.Win32NT &&
+                (version.Major > 6 || (version.Major == 6 && version.Minor >= 3));
+
+            if (isWin81OrLater)
+            {
+                try
+                {
+                    IntPtr monitorHandle = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+                    uint dpiX;
+                    uint dpiY;
+                    int result = GetDpiForMonitor(
+                        monitorHandle,
+                        MonitorDpiType.MDT_EFFECTIVE_DPI,
+                        out dpiX,
+                        out dpiY);
+
+                    if (result == 0) return (int)(dpiX * 100 / 96);
+                }
+                catch (DllNotFoundException) { }
+                catch (EntryPointNotFoundException) { }
+            }
+
+            using (Graphics graphics = Graphics.FromHwnd(hwnd))
+            {
+                return (int)(graphics.DpiX * 100 / 96);
+            }
+        }
+        //
+
+        //[2.10.3.9]MW0LGE cpu usage for this process
+        private static HiPerfTimer _timer = null;
+        private static TimeSpan _previousCpuTime;
+        private static double _previousElapsedSeconds;
+        public static double ProcessCPUUsage()
+        {
+            if (_timer == null)
+            {
+                _timer = new HiPerfTimer();
+                _timer.Start();
+                _previousCpuTime = Process.GetCurrentProcess().TotalProcessorTime;
+                _previousElapsedSeconds = _timer.Elapsed;
+            }
+
+            Process process = Process.GetCurrentProcess();
+            TimeSpan currentCpuTime = process.TotalProcessorTime;
+            double currentElapsedSeconds = _timer.Elapsed;
+            TimeSpan cpuDelta = currentCpuTime - _previousCpuTime;
+            double elapsedDelta = currentElapsedSeconds - _previousElapsedSeconds;
+            _previousCpuTime = currentCpuTime;
+            _previousElapsedSeconds = currentElapsedSeconds;
+
+            if (elapsedDelta <= 0.0) return 0.0;
+
+            return (cpuDelta.TotalSeconds / (elapsedDelta * Environment.ProcessorCount)) * 100.0;
+        }
+        //
+
+        //[2.10.3.9]MW0LGE screensave/powersave prevention
+        [Flags]
+        public enum ExecutionState : uint
+        {
+            ES_CONTINUOUS = 0x80000000,
+            ES_SYSTEM_REQUIRED = 0x00000001,
+            ES_DISPLAY_REQUIRED = 0x00000002
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern ExecutionState SetThreadExecutionState(ExecutionState esFlags);
+
+        private static ExecutionState _previous_sleep_state;
+        private static ExecutionState _previous_display_state;
+        private static bool _sleep_prevented = false;
+        private static bool _display_prevented = false;
+
+        public static void PreventSleep()
+        {
+            try
+            {
+                ExecutionState result = SetThreadExecutionState(ExecutionState.ES_CONTINUOUS | ExecutionState.ES_SYSTEM_REQUIRED);
+                _previous_sleep_state = result;
+                _sleep_prevented = true;
+            }
+            catch { }
+        }
+
+        public static void PreventScreenSaver()
+        {
+            try
+            {
+                ExecutionState result = SetThreadExecutionState(ExecutionState.ES_CONTINUOUS | ExecutionState.ES_DISPLAY_REQUIRED);
+                _previous_display_state = result;
+                _display_prevented = true;
+            }
+            catch { }
+        }
+
+        public static ExecutionState ResumeSleep()
+        {
+            try
+            {
+                if (!_sleep_prevented)
+                {
+                    return default(ExecutionState);
+                }
+
+                ExecutionState result = SetThreadExecutionState(_previous_sleep_state);
+                _previous_sleep_state = default(ExecutionState);
+                _sleep_prevented = false;
+                return result;
+            }
+            catch
+            {
+                return default(ExecutionState);
+            }
+        }
+
+        public static ExecutionState ResumeScreenSaver()
+        {
+            try
+            {
+                if (!_display_prevented)
+                {
+                    return default(ExecutionState);
+                }
+
+                ExecutionState result = SetThreadExecutionState(_previous_display_state);
+                _previous_display_state = default(ExecutionState);
+                _display_prevented = false;
+                return result;
+            }
+            catch
+            {
+                return default(ExecutionState);
+            }
+        }
+
+        public static bool IsSleepPrevented()
+        {
+            try
+            {
+                return _sleep_prevented;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool IsScreenSaverPrevented()
+        {
+            try
+            {
+                return _display_prevented;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        //
     }
 }

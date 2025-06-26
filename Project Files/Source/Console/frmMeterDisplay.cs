@@ -4,7 +4,7 @@ This file is part of a program that implements a Software-Defined Radio.
 
 This code/file can be found on GitHub : https://github.com/ramdor/Thetis
 
-Copyright (C) 2020-2024 Richard Samphire MW0LGE
+Copyright (C) 2020-2025 Richard Samphire MW0LGE
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -44,6 +44,7 @@ namespace Thetis
         private int _rx;
         private string _id;
         private bool _container_minimises = true;
+        private bool _container_hides_when_rx_not_used = true;
         private bool _is_enabled = true;
         private bool _floating = false;
         private bool _rx2_enabled;
@@ -66,6 +67,11 @@ namespace Thetis
 
             setTitle();
         }
+        public int RX
+        {
+            get { return _rx; }
+            set { _rx = value; }
+        }
         private void OnRX2Enabled(bool enabled)
         {
             _rx2_enabled = enabled;
@@ -85,6 +91,11 @@ namespace Thetis
             get { return _container_minimises; }
             set { _container_minimises = value; }
         }
+        public bool ContainerHidesWhenRXNotUsed
+        {
+            get { return _container_hides_when_rx_not_used; }
+            set { _container_hides_when_rx_not_used = value; }
+        }
         private void OnWindowStateChanged(FormWindowState state)
         {
             if (this.Disposing || this.IsDisposed) return;
@@ -92,16 +103,18 @@ namespace Thetis
             if (_is_enabled && _floating && _container_minimises)
             {
                 if (state == FormWindowState.Minimized)
+                {
                     this.Hide();
+                }
                 else
                 {
-                    switch(_rx)
+                    switch (_rx)
                     {
                         case 1:
                             this.Show();
                             break;
                         case 2:
-                            if (_rx2_enabled) this.Show();
+                            if (_rx2_enabled || !_container_hides_when_rx_not_used) this.Show();
                             break;
                     }
                 }

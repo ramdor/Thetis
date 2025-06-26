@@ -167,35 +167,32 @@ namespace Thetis
 		}
 		private void ParseReceiveBuffer(Byte[] byteBuffer, int size)
 		{
-			string data = Encoding.ASCII.GetString(byteBuffer, 0, size);
-			int lineEndIndex = 0;
+			//[2.10.3.9]MW0LGE fixed to handle multiple messages ending in ;
+            string data = Encoding.ASCII.GetString(byteBuffer, 0, size);
+            m_oneLineBuf.Append(data);
+            m_oneLineBuf.Replace(Environment.NewLine, ""); // so can be used a by raw telnet client
 
-			do
-			{
-				lineEndIndex = data.IndexOf(";");
-				if (lineEndIndex != -1)
-				{
-					m_oneLineBuf = m_oneLineBuf.Append(data, 0, lineEndIndex + 1);
-					processClientData(m_oneLineBuf.ToString());
-					m_oneLineBuf.Remove(0, m_oneLineBuf.Length);
-					data = data.Substring(lineEndIndex + 1,
-						data.Length - lineEndIndex - 1);
-				}
-				else
-				{
-					m_oneLineBuf = m_oneLineBuf.Append(data);
-					if (m_oneLineBuf.Length > 255) m_oneLineBuf.Clear(); // Just clear it out, likely not to be CAT command being over 255 chars long
-				}
-			} while (lineEndIndex != -1);
-		}
+            string bufferStr = m_oneLineBuf.ToString();
+            int lineEndIndex = bufferStr.IndexOf(";");
+
+            while (lineEndIndex > -1)
+            {
+                string msg = bufferStr.Substring(0, lineEndIndex + 1);
+                processClientData(msg);
+
+                m_oneLineBuf.Remove(0, lineEndIndex + 1);
+                bufferStr = m_oneLineBuf.ToString();
+                lineEndIndex = bufferStr.IndexOf(";");
+            }
+
+            if (m_oneLineBuf.Length > 255) m_oneLineBuf.Clear();
+        }
 
 		private void processClientData(string sInboundCatCommand)
 		{
-			string sCatParseMessage = sInboundCatCommand.Replace(Environment.NewLine, "");// so can be used a by raw telnet client
+			if (m_server != null && m_server.LogForm != null) m_server.LogForm.Log(true, sInboundCatCommand);
 
-			if (m_server != null && m_server.LogForm != null) m_server.LogForm.Log(true, sCatParseMessage);
-
-			string sCatAnswer = console.ThreadSafeCatParse(sCatParseMessage);
+			string sCatAnswer = console.ThreadSafeCatParse(sInboundCatCommand);
 			if (sCatAnswer.Length > 0)
 				SendClientData(sCatAnswer);
 		}

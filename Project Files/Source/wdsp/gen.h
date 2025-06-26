@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013 Warren Pratt, NR0V
+Copyright (C) 2013, 2025 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -110,7 +110,34 @@ typedef struct _gen
 		double tcosdelta;
 		double tsindelta;
 		int state;
+		int IQout;
 	} pulse;
+	struct _ttpulse
+	{
+		double mag1;
+		double mag2;
+		double pf;
+		double pdutycycle;
+		double ptranstime;
+		double* ctrans;
+		int pcount;
+		int pnon;
+		int pntrans;
+		int pnoff;
+		double pperiod;
+		double tf1;
+		double tf2;
+		double tphs1;
+		double tphs2;
+		double tdelta1;
+		double tdelta2;
+		double tcosdelta1;
+		double tcosdelta2;
+		double tsindelta1;
+		double tsindelta2;
+		int state;
+		int IQout;
+	} ttpulse;
 } gen, *GEN;
 
 extern GEN create_gen (int run, int size, double* in, double* out, int rate, int mode);
@@ -129,6 +156,5 @@ extern void setSize_gen (GEN a, int size);
 
 // TXA Properties
 
-extern __declspec (dllexport) void SetTXAgenRun (int channel, int run);
 
 #endif

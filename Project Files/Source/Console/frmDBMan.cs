@@ -4,7 +4,7 @@ This file is part of a program that implements a Software-Defined Radio.
 
 This code/file can be found on GitHub : https://github.com/ramdor/Thetis
 
-Copyright (C) 2020-2024 Richard Samphire MW0LGE
+Copyright (C) 2020-2025 Richard Samphire MW0LGE
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -144,7 +144,7 @@ namespace Thetis
 
                 lvi.Checked = dbi.GUID == active_guid;
 
-                lvi.SubItems.Add(dbi.Model.ToString());
+                lvi.SubItems.Add(HardwareSpecific.EnumModelToString(dbi.Model));
                 lvi.SubItems.Add(localDateTimeFormat(dbi.LastChanged));
 
                 TimeSpan difference = DateTime.Now - dbi.CreationTime;

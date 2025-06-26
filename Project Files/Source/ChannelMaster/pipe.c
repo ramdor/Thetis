@@ -219,11 +219,11 @@ void xpipe (int stream, int pos, double** buffs)
 			xrecordwave(1, 1, 0, buff);															// wav recorder 1
 			break;
 		case 1: // IQ data
-			xscope(0, 1, buffs[0]);																// scope
-			xvacOUT(0, 2, buffs[0]);															// data to VAC 0
-			xvacOUT(1, 2, buffs[0]);															// data to VAC 1
-			xrecordwave(0, 1, 1, buffs[0]);														// wav recorder 0
-			xrecordwave(1, 1, 1, buffs[0]);														// wav recorder 1
+			xscope(0, 1, buffs[2]);																// scope
+			xvacOUT(0, 2, buffs[2]);															// data to VAC 0
+			xvacOUT(1, 2, buffs[2]);															// data to VAC 1
+			xrecordwave(0, 1, 1, buffs[2]);														// wav recorder 0
+			xrecordwave(1, 1, 1, buffs[2]);														// wav recorder 1
 			break;
 		}
 	}

@@ -18,7 +18,7 @@
 //
 // You may contact the author via email at: k5kdn@arrl.net
 //=================================================================
-// Continual modifications Copyright (C) 2019-2024 Richard Samphire (MW0LGE)
+// Continual modifications Copyright (C) 2019-2025 Richard Samphire (MW0LGE)
 /*
 Modifications to support the Behringer Midi controllers
 by Chris Codella, W2PA, April 2017.  Indicated by //-W2PA comment lines.
@@ -904,7 +904,7 @@ namespace Thetis
 				float num = 0f;
 				if(console.PowerOn)
 					num = WDSP.CalculateRXMeter(0, 0,WDSP.MeterType.SIGNAL_STRENGTH);
-				num = num+console.MultiMeterCalOffset+console.PreampOffset;
+				num = num+console.RX1MeterCalOffset+console.PreampOffset;
 
 				num = Math.Max(-140, num);
 				num = Math.Min(-10, num);
@@ -1545,7 +1545,7 @@ namespace Thetis
 		//Sets or reads the BCI Rejection button status
 		public string ZZBR(string s)
 		{
-			if(console.CurrentHPSDRModel == HPSDRModel.HPSDR)
+			if(HardwareSpecific.Model == HPSDRModel.HPSDR)
 			{
 				int sx = 0;
 
@@ -1751,14 +1751,14 @@ namespace Thetis
 			if(s.Length == parser.nSet && (s == "0" || s == "1"))
 			{
 				if(s == "1")
-					console.CWSidetone = false;
+					console.CWHWSidetone = false;
 				else
-					console.CWSidetone = true;
+					console.CWHWSidetone = true;
 				return "";
 			}
 			else if(s.Length == parser.nGet)
 			{
-				if(console.CWSidetone)
+				if(console.CWHWSidetone)
 					return "0";
 				else
 					return "1";
@@ -1903,7 +1903,7 @@ namespace Thetis
 		{
 			//return parser.Error1;
 			if (console.initializing) return "";
-            return String.Format("{0:000.00}", console.total_cpu_usage.NextValue());
+            return String.Format("{0:000.00}", console._total_cpu_usage.NextValue());
 		}
 
 		// Sets or reads the Display Average status
@@ -2860,7 +2860,7 @@ namespace Thetis
 
 		public string ZZFM()
 		{
-			string radio = console.CurrentHPSDRModel.ToString();
+			string radio = HardwareSpecific.Model.ToString();
             bool alex_att = console.AlexPresent;
 
             if (radio == "HPSDR" || radio == "HERMES")
@@ -5578,13 +5578,13 @@ namespace Thetis
         public string ZZRV()
         {
             //MW0LGE [2.10.1.0]
-            if (console.CurrentHPSDRModel == HPSDRModel.ANAN7000D || console.CurrentHPSDRModel == HPSDRModel.ANAN8000D ||
-                   console.CurrentHPSDRModel == HPSDRModel.ANVELINAPRO3 || console.CurrentHPSDRModel == HPSDRModel.ANAN_G2 ||
-				   console.CurrentHPSDRModel == HPSDRModel.ANAN_G2_1K)
+            if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+                   HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+				   HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K)
             {
 				return String.Format("{0:00.0}", console.MKIIPAVolts);
             }
-            else if (console.CurrentHPSDRModel != HPSDRModel.HPSDR)
+            else if (HardwareSpecific.Model != HPSDRModel.HPSDR)
             {
 				//int val = 0;
 				//decimal volts = 0.0m;
@@ -5744,11 +5744,11 @@ namespace Thetis
                     else
                         num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.SIGNAL_STRENGTH);
 
-                switch (console.CurrentHPSDRModel)
+                switch (HardwareSpecific.Model)
                 {
                      case HPSDRModel.HPSDR:
                         num = num +
-                        console.MultiMeterCalOffset +
+                        console.RX1MeterCalOffset +
                         Display.RX1PreampOffset +
                             //console.RX1FilterSizeCalOffset +
                         console.RX1XVTRGainOffset;
@@ -5757,7 +5757,7 @@ namespace Thetis
                         if (s == "0")
                         {
                             num = num +
-                            console.MultiMeterCalOffset +
+                            console.RX1MeterCalOffset +
                             Display.RX1PreampOffset +
                                 //console.RX1FilterSizeCalOffset +
                             console.RX1XVTRGainOffset;
@@ -6324,7 +6324,7 @@ namespace Thetis
 		// Reads the Flex 5000 temperature sensor
         public string ZZTS()
         {
-            if (console.CurrentHPSDRModel == HPSDRModel.HERMES)
+            if (HardwareSpecific.Model == HPSDRModel.HERMES)
             {
                 int val = 0;
                 float volts = 0.0f;
@@ -8090,7 +8090,7 @@ namespace Thetis
 			if (s.Length == parser.nGet)
 			{
 				// add command to the return string and terminator, because it is variable length answer
-				return "ZZZM" + console.CurrentHPSDRModel.ToString() + ";";
+				return "ZZZM" + HardwareSpecific.Model.ToString() + ";";
 			}
 			else
 				return parser.Error1;
@@ -8200,13 +8200,16 @@ namespace Thetis
 
         private string AddLeadingZeros(int n)
 		{
-			string num = n.ToString();
+			//string num = n.ToString();
 
-			while(num.Length < parser.nAns)
-				num = num.Insert(0,"0");
-			
-			return num;
-		}
+			//while(num.Length < parser.nAns)
+			//	num = num.Insert(0,"0");
+
+			//return num;
+
+			//[2.10.3.9]MW0LGE refcator for speed
+            return n.ToString().PadLeft(parser.nAns, '0');
+        }
 
         private string JustSuffix(string s)
         {
@@ -9821,59 +9824,95 @@ namespace Thetis
 
 		private string Step2String(int pSize)
 		{
-			// Modified 2/25/07 to accomodate changes to console where odd step sizes added.  BT
-			string stepval = "";
-			int step = pSize;
-			switch(step)
+            //[2.10.3.9]MW0LGE refactored, and tweaked for special cases to match original
+            List<string> binaryMapping = new List<string>
 			{
-				case 0:
-					stepval = "0000";	//10e0 = 1 hz
-					break;
-				case 1:
-					stepval = "0001";	//10e1 = 10 hz
-					break;
-				case 2:
-					stepval = "1000";	//special default for 50 hz
-					break;
-				case 3:
-					stepval = "0010";	//10e2 = 100 hz
-					break;
-				case 4:
-					stepval = "1001";	//special default for 250 hz
-					break;
-				case 5:
-					stepval = "1010";	//10e3 = 1 kHz default for 500 hz
-					break;
-				case 6:
-					stepval = "0011";	//10e3 = 1 kHz
-					break;
-				case 7:
-					stepval = "1011";	//special default for 5 kHz
-					break;
-				case 8:
-					stepval = "1100";	//special default for 9 kHz
-					break;
-				case 9:
-					stepval = "0100";	//10e4 = 10 khZ
-					break;
-				case 10:
-					stepval = "0101";	//10e5 = 100 kHz
-					break;
-                case 11:
-                    stepval = "1101";   //special default for 250 kHz
-                    break;
-                case 12:
-                    stepval = "1110";   //special default for 500 kHz
-                    break;
-				case 13:
-					stepval = "0110";	//10e6 = 1 mHz
-					break;
-				case 14:
-					stepval = "0111";	//10e7 = 10 mHz
-					break;
+				"0000", // 10e0 (1Hz)
+				"0000", // 10e0 (2Hz)
+				"0001", // 10e1 (10Hz)
+				"0001", // 10e1 (25Hz)
+				"1000", //"0001", // 10e1 (50Hz)
+				"0010", // 10e2 (100Hz)
+				"1001", //"0010", // 10e2 (250Hz)
+				"1010", //"0010", // 10e2 (500Hz)
+				"0011", // 10e3 (1kHz)
+				"0011", // 10e3 (2kHz)
+				"0011", // 10e3 (2.5kHz)
+				"1011", //"0011", // 10e3 (5kHz)
+				"0011", // 10e3 (6.25kHz)
+				"1100", //"0011", // 10e3 (9kHz)
+				"0100", // 10e4 (10kHz)
+				"0100", // 10e4 (12.5kHz)
+				"0100", // 10e4 (15kHz)
+				"0100", // 10e4 (20kHz)
+				"0100", // 10e4 (25kHz)
+				"0100", // 10e4 (30kHz)
+				"0100", // 10e4 (50kHz)
+				"0101", // 10e5 (100kHz)
+				"1101", //"0101", // 10e5 (250kHz)
+				"1110", //"0101", // 10e5 (500kHz)
+				"0110", // 10e6 (1MHz)
+				"0111"  // 10e7 (10MHz)
+			};
+            if (pSize < 0 || pSize >= binaryMapping.Count)
+            {
+                return "0000"; // some default
+            }
+            return binaryMapping[pSize];
+
+			//// Modified 2/25/07 to accomodate changes to console where odd step sizes added.  BT
+			//string stepval = "";
+			//int step = pSize;
+			//switch(step)
+			//{
+			//	case 0:
+			//		stepval = "0000";	//10e0 = 1 hz
+			//		break;
+			//	case 1:
+			//		stepval = "0001";	//10e1 = 10 hz
+			//		break;
+			//	case 2:
+			//		stepval = "1000";	//special default for 50 hz
+			//		break;
+			//	case 3:
+			//		stepval = "0010";	//10e2 = 100 hz
+			//		break;
+			//	case 4:
+			//		stepval = "1001";	//special default for 250 hz
+			//		break;
+			//	case 5:
+			//		stepval = "1010";	//10e3 = 1 kHz default for 500 hz
+			//		break;
+			//	case 6:
+			//		stepval = "0011";	//10e3 = 1 kHz
+			//		break;
+			//	case 7:
+			//		stepval = "1011";	//special default for 5 kHz
+			//		break;
+			//	case 8:
+			//		stepval = "1100";	//special default for 9 kHz
+			//		break;
+			//	case 9:
+			//		stepval = "0100";	//10e4 = 10 khZ
+			//		break;
+			//	case 10:
+			//		stepval = "0101";	//10e5 = 100 kHz
+			//		break;
+			//	case 11:
+			//	stepval = "1101";   //special default for 250 kHz
+			//	break;
+			//case 12:
+			//	stepval = "1110";   //special default for 500 kHz
+			//	break;
+			//	case 13:
+			//		stepval = "0110";	//10e6 = 1 mHz
+			//		break;
+			//	case 14:
+			//		stepval = "0111";	//10e7 = 10 mHz
+			//		break;
+			//}
+			//return stepval;
 			}
-			return stepval;
-		}
 
 		#endregion Step Methods
 

@@ -7,7 +7,7 @@
     <ProjectGuid>{831AEB2F-CA78-4057-85D7-32B4816ED6AE}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>Thetis2_256.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Thetis2_256.ico</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>Thetis</AssemblyName>
@@ -209,23 +209,23 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Discord.Net.Commands, Version=3.16.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Commands.3.16.0\lib\net461\Discord.Net.Commands.dll</HintPath>
+    <Reference Include="Discord.Net.Commands, Version=3.17.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Discord.Net.Commands.3.17.4\lib\net461\Discord.Net.Commands.dll</HintPath>
     </Reference>
-    <Reference Include="Discord.Net.Core, Version=3.16.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Core.3.16.0\lib\net461\Discord.Net.Core.dll</HintPath>
+    <Reference Include="Discord.Net.Core, Version=3.17.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Discord.Net.Core.3.17.4\lib\net461\Discord.Net.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Discord.Net.Interactions, Version=3.16.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Interactions.3.16.0\lib\net461\Discord.Net.Interactions.dll</HintPath>
+    <Reference Include="Discord.Net.Interactions, Version=3.17.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Discord.Net.Interactions.3.17.4\lib\net461\Discord.Net.Interactions.dll</HintPath>
     </Reference>
-    <Reference Include="Discord.Net.Rest, Version=3.16.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Rest.3.16.0\lib\net461\Discord.Net.Rest.dll</HintPath>
+    <Reference Include="Discord.Net.Rest, Version=3.17.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Discord.Net.Rest.3.17.4\lib\net461\Discord.Net.Rest.dll</HintPath>
     </Reference>
-    <Reference Include="Discord.Net.Webhook, Version=3.16.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Webhook.3.16.0\lib\netstandard2.0\Discord.Net.Webhook.dll</HintPath>
+    <Reference Include="Discord.Net.Webhook, Version=3.17.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Discord.Net.Webhook.3.17.4\lib\netstandard2.0\Discord.Net.Webhook.dll</HintPath>
     </Reference>
-    <Reference Include="Discord.Net.WebSocket, Version=3.16.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.WebSocket.3.16.0\lib\net461\Discord.Net.WebSocket.dll</HintPath>
+    <Reference Include="Discord.Net.WebSocket, Version=3.17.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Discord.Net.WebSocket.3.17.4\lib\net461\Discord.Net.WebSocket.dll</HintPath>
     </Reference>
     <Reference Include="ExCSS, Version=4.3.0.0, Culture=neutral, PublicKeyToken=bdbe16be9b936b9a, processorArchitecture=MSIL">
       <HintPath>..\packages\ExCSS.4.3.0\lib\net48\ExCSS.dll</HintPath>
@@ -233,30 +233,30 @@
     <Reference Include="FTDI2XX, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FTD2XX.Net.1.2.1\lib\net45\FTDI2XX.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.11.71.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.11.71\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.12.1.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.12.1\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
-    <Reference Include="Markdig, Version=0.38.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Markdig.0.38.0\lib\net462\Markdig.dll</HintPath>
+    <Reference Include="Markdig, Version=0.41.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Markdig.0.41.3\lib\net462\Markdig.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=9.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.9.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=9.0.0.6, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.9.0.6\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis, Version=4.12.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.4.12.0\lib\netstandard2.0\Microsoft.CodeAnalysis.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis, Version=4.14.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.4.14.0\lib\netstandard2.0\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=4.12.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.4.12.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=4.14.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.4.14.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting, Version=4.12.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Scripting.4.12.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting, Version=4.14.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Scripting.4.14.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Scripting, Version=4.12.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.4.12.0\lib\netstandard2.0\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.Scripting, Version=4.14.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.4.14.0\lib\netstandard2.0\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=9.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.9.0.0\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=9.0.0.6, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.9.0.6\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Win32.Registry, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Win32.Registry.5.0.0\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
@@ -282,8 +282,8 @@
     <Reference Include="SharpDX.Mathematics, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.Mathematics.4.2.0\lib\net45\SharpDX.Mathematics.dll</HintPath>
     </Reference>
-    <Reference Include="SkiaSharp, Version=3.116.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\packages\SkiaSharp.3.116.0\lib\net462\SkiaSharp.dll</HintPath>
+    <Reference Include="SkiaSharp, Version=3.119.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkiaSharp.3.119.0\lib\net462\SkiaSharp.dll</HintPath>
     </Reference>
     <Reference Include="Svg, Version=3.4.0.0, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
       <HintPath>..\packages\Svg.3.4.7\lib\net472\Svg.dll</HintPath>
@@ -291,14 +291,14 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Buffers, Version=4.0.4.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.6.0\lib\net462\System.Buffers.dll</HintPath>
+    <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
     </Reference>
-    <Reference Include="System.CodeDom, Version=9.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.CodeDom.9.0.0\lib\net462\System.CodeDom.dll</HintPath>
+    <Reference Include="System.CodeDom, Version=9.0.0.6, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.CodeDom.9.0.6\lib\net462\System.CodeDom.dll</HintPath>
     </Reference>
-    <Reference Include="System.Collections.Immutable, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.9.0.0\lib\net462\System.Collections.Immutable.dll</HintPath>
+    <Reference Include="System.Collections.Immutable, Version=9.0.0.6, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.9.0.6\lib\net462\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core">
@@ -311,10 +311,10 @@
       <Name>System.Drawing</Name>
     </Reference>
     <Reference Include="System.Drawing.Common, Version=9.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Drawing.Common.9.0.0\lib\net462\System.Drawing.Common.dll</HintPath>
+      <HintPath>..\packages\System.Drawing.Common.9.0.6\lib\net462\System.Drawing.Common.dll</HintPath>
     </Reference>
     <Reference Include="System.Interactive.Async, Version=6.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Interactive.Async.6.0.1\lib\net48\System.Interactive.Async.dll</HintPath>
+      <HintPath>..\packages\System.Interactive.Async.6.0.3\lib\net48\System.Interactive.Async.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
@@ -328,26 +328,26 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Linq.Async, Version=6.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Linq.Async.6.0.1\lib\net48\System.Linq.Async.dll</HintPath>
+      <HintPath>..\packages\System.Linq.Async.6.0.3\lib\net48\System.Linq.Async.dll</HintPath>
     </Reference>
     <Reference Include="System.Management" />
-    <Reference Include="System.Memory, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.6.0\lib\net462\System.Memory.dll</HintPath>
+    <Reference Include="System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.6.0\lib\net462\System.Numerics.Vectors.dll</HintPath>
+    <Reference Include="System.Numerics.Vectors, Version=4.1.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive, Version=6.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Reactive.6.0.1\lib\net472\System.Reactive.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reflection.Metadata.9.0.0\lib\net462\System.Reflection.Metadata.dll</HintPath>
+    <Reference Include="System.Reflection.Metadata, Version=9.0.0.6, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.Metadata.9.0.6\lib\net462\System.Reflection.Metadata.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.1.0\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Security.AccessControl, Version=6.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.AccessControl.6.0.1\lib\net461\System.Security.AccessControl.dll</HintPath>
@@ -356,14 +356,11 @@
       <HintPath>..\packages\System.Security.Principal.Windows.5.0.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Text.Encoding.CodePages, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Encoding.CodePages.9.0.0\lib\net462\System.Text.Encoding.CodePages.dll</HintPath>
+    <Reference Include="System.Text.Encoding.CodePages, Version=9.0.0.6, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encoding.CodePages.9.0.6\lib\net462\System.Text.Encoding.CodePages.dll</HintPath>
     </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.6.0\lib\net462\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.4.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.6.3\lib\net462\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Windows" />
@@ -513,6 +510,12 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ucGradientDefault.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucGradientDefault.Designer.cs">
+      <DependentUpon>ucGradientDefault.cs</DependentUpon>
     </Compile>
     <Compile Include="ucMeter.cs">
       <SubType>UserControl</SubType>
@@ -762,6 +765,12 @@
     <Compile Include="ucQuickRecall.Designer.cs">
       <DependentUpon>ucQuickRecall.cs</DependentUpon>
     </Compile>
+    <Compile Include="ucSignalSelect.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucSignalSelect.Designer.cs">
+      <DependentUpon>ucSignalSelect.cs</DependentUpon>
+    </Compile>
     <Compile Include="ucTunestepOptionsGrid.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -813,8 +822,8 @@
       <SubType>Form</SubType>
     </Compile>
     <None Include="Resources\thetis-logo2.png" />
-    <Content Include="Thetis2_256.ico" />
-    <Content Include="Thetis2_48.ico" />
+    <Content Include="Resources\Thetis2_256.ico" />
+    <Content Include="Resources\Thetis2_48.ico" />
     <None Include="Resources\resizegrab.png" />
     <None Include="Resources\dockIcon_float.png" />
     <None Include="Resources\dockIcon_dock.png" />
@@ -873,7 +882,7 @@
     <None Include="Resources\Link-64.png" />
     <None Include="Resources\Data-Active-32.png" />
     <None Include="Resources\cty.txt" />
-    <Content Include="thetis-icon.ico" />
+    <Content Include="Resources\thetis-icon.ico" />
     <None Include="Resources\thetis-logo1.png" />
     <None Include="Resources\cross_rl.cur" />
     <None Include="Resources\info.png" />
@@ -946,6 +955,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmVariablePicker.resx">
       <DependentUpon>frmVariablePicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucGradientDefault.resx">
+      <DependentUpon>ucGradientDefault.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ucMeter.resx">
       <DependentUpon>ucMeter.cs</DependentUpon>
@@ -1091,6 +1103,9 @@
     <EmbeddedResource Include="ucQuickRecall.resx">
       <DependentUpon>ucQuickRecall.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ucSignalSelect.resx">
+      <DependentUpon>ucSignalSelect.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ucTunestepOptionsGrid.resx">
       <DependentUpon>ucTunestepOptionsGrid.cs</DependentUpon>
     </EmbeddedResource>
@@ -1193,8 +1208,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.11.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.11.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.4.14.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.4.14.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -1220,8 +1235,8 @@ echo } &gt;&gt; "$(ProjectDir)VersionInfo.cs"
     <PostBuildEvent>copy /Y "..\..\..\lib\fftw_$(PlatformName)\libfftw3-3.dll" "$(ProjectDir)$(OutDir)";
 copy /Y "$(ProjectDir)CAT\CATStructs.xml" "$(ProjectDir)$(OutDir)";
 copy /Y "..\..\..\lib\Thetis-resources\calculus" "$(ProjectDir)$(OutDir)"
-copy /Y "..\..\..\lib\Thetis-resources\zetaHat.bin" "$(ProjectDir)$(OutDir)"
-copy /Y "..\..\..\Source\packages\SkiaSharp.NativeAssets.Win32.3.116.0\runtimes\win-x64\native\libSkiaSharp.dll" "$(ProjectDir)$(OutDir)"
+:: copy /Y "..\..\..\lib\Thetis-resources\zetaHat.bin" "$(ProjectDir)$(OutDir)"
+copy /Y "..\..\..\Source\packages\SkiaSharp.NativeAssets.Win32.3.119.0\runtimes\win-x64\native\libSkiaSharp.dll" "$(ProjectDir)$(OutDir)"
 </PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -1230,7 +1245,13 @@ copy /Y "..\..\..\Source\packages\SkiaSharp.NativeAssets.Win32.3.116.0\runtimes\
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.NETFramework.ReferenceAssemblies.net48.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net48.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NETFramework.ReferenceAssemblies.net48.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net48.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.NETFramework.ReferenceAssemblies.net35.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net35.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NETFramework.ReferenceAssemblies.net35.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net35.targets'))" />
+    <Error Condition="!Exists('..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets'))" />
+    <Error Condition="!Exists('..\packages\SkiaSharp.NativeAssets.macOS.3.119.0\build\net462\SkiaSharp.NativeAssets.macOS.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SkiaSharp.NativeAssets.macOS.3.119.0\build\net462\SkiaSharp.NativeAssets.macOS.targets'))" />
+    <Error Condition="!Exists('..\packages\SkiaSharp.NativeAssets.Win32.3.119.0\build\net462\SkiaSharp.NativeAssets.Win32.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SkiaSharp.NativeAssets.Win32.3.119.0\build\net462\SkiaSharp.NativeAssets.Win32.targets'))" />
   </Target>
   <Import Project="..\packages\Microsoft.NETFramework.ReferenceAssemblies.net48.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net48.targets" Condition="Exists('..\packages\Microsoft.NETFramework.ReferenceAssemblies.net48.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net48.targets')" />
   <Import Project="..\packages\Microsoft.NETFramework.ReferenceAssemblies.net35.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net35.targets" Condition="Exists('..\packages\Microsoft.NETFramework.ReferenceAssemblies.net35.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net35.targets')" />
+  <Import Project="..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets" Condition="Exists('..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" />
+  <Import Project="..\packages\SkiaSharp.NativeAssets.macOS.3.119.0\build\net462\SkiaSharp.NativeAssets.macOS.targets" Condition="Exists('..\packages\SkiaSharp.NativeAssets.macOS.3.119.0\build\net462\SkiaSharp.NativeAssets.macOS.targets')" />
+  <Import Project="..\packages\SkiaSharp.NativeAssets.Win32.3.119.0\build\net462\SkiaSharp.NativeAssets.Win32.targets" Condition="Exists('..\packages\SkiaSharp.NativeAssets.Win32.3.119.0\build\net462\SkiaSharp.NativeAssets.Win32.targets')" />
 </Project>

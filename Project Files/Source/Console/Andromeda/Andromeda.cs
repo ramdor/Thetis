@@ -3698,7 +3698,7 @@ namespace Thetis
                     break;
 
                 case EButtonBarActions.eBBCentreDisplay:           // centre the display
-                    btnDisplayPanCenter_Click(null, null);
+                    PanCentre();
                     break;
 
                 case EButtonBarActions.eBBZoomStep:                // step between the zoom step buttons

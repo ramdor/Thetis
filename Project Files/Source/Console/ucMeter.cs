@@ -4,7 +4,7 @@ This file is part of a program that implements a Software-Defined Radio.
 
 This code/file can be found on GitHub : https://github.com/ramdor/Thetis
 
-Copyright (C) 2020-2024 Richard Samphire MW0LGE
+Copyright (C) 2020-2025 Richard Samphire MW0LGE
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -58,6 +58,7 @@ namespace Thetis
 
         public event EventHandler DockedMoved;
 
+        private int _sequence;
         private bool _dragging = false;
         private bool _resizing = false;
         private bool _floating = false;
@@ -81,6 +82,7 @@ namespace Thetis
         private bool _show_on_rx;
         private bool _show_on_tx;
         private bool _container_minimises;
+        private bool _container_hides_when_rx_not_used;
         private string _notes;
         private int _height;
         private bool _autoHeight;
@@ -94,8 +96,10 @@ namespace Thetis
 
             Common.DoubleBufferAll(this, true);
 
-            picContainer.Location = new Point(0, 0);
-            picContainer.Size = new Size(ClientSize.Width, ClientSize.Height);
+            _sequence = 0;
+
+            pnlContainer.Location = new Point(0, 0);
+            pnlContainer.Size = new Size(ClientSize.Width, ClientSize.Height);
 
             _height = MIN_CONTAINER_HEIGHT;
             _autoHeight = false;
@@ -109,6 +113,7 @@ namespace Thetis
             _show_on_rx = true;
             _show_on_tx = true;
             _container_minimises = true;
+            _container_hides_when_rx_not_used = true;
             _notes = "";
 
             _tool_tip = new ToolTip();
@@ -161,9 +166,9 @@ namespace Thetis
             {
                 lblRX_MouseDown(this, new MouseEventArgs(MouseButtons.Left, 0, x, y, 0));
             }
-            else if (picContainer.Bounds.Contains(x, y))
+            else if (pnlContainer.Bounds.Contains(x, y))
             {
-                picContainer_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+                pnlContainer_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
             }
         }
         private void HandleTouchMove(int x, int y)
@@ -180,9 +185,9 @@ namespace Thetis
             {
                 lblRX_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
             }
-            if (picContainer.Bounds.Contains(x, y))
+            if (pnlContainer.Bounds.Contains(x, y))
             {
-                picContainer_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+                pnlContainer_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
             }
         }
         private void HandleTouchUp(int x, int y)
@@ -202,9 +207,9 @@ namespace Thetis
                 lblRX_MouseUp(this, new MouseEventArgs(MouseButtons.Left, 0, x, y, 0));
                 lblRX_MouseLeave(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
             }
-            else if (picContainer.Bounds.Contains(x, y))
+            else if (pnlContainer.Bounds.Contains(x, y))
             {
-                picContainer_MouseLeave(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+                pnlContainer_MouseLeave(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
@@ -218,7 +223,7 @@ namespace Thetis
                 if (_touch_guid != Guid.Empty) TouchHandler.DisableTouchSupport(_touch_guid);
 
                 if (_console.TouchSupport)
-                    _touch_guid = TouchHandler.EnableTouchSupport(picContainer, HandleTouchDown, HandleTouchMove, HandleTouchUp, TouchHandler.TOUCHEVENTF_DOWN | TouchHandler.TOUCHEVENTF_MOVE | TouchHandler.TOUCHEVENTF_UP);
+                    _touch_guid = TouchHandler.EnableTouchSupport(pnlContainer, HandleTouchDown, HandleTouchMove, HandleTouchUp, TouchHandler.TOUCHEVENTF_DOWN | TouchHandler.TOUCHEVENTF_MOVE | TouchHandler.TOUCHEVENTF_UP);
                 else
                     _touch_guid = Guid.Empty;
 
@@ -227,6 +232,11 @@ namespace Thetis
 
                 addDelegates();
             }
+        }
+        public int Sequence
+        {
+            get { return _sequence; }
+            set { _sequence = value; }
         }
         public string ID
         {
@@ -366,9 +376,9 @@ namespace Thetis
             return ((number + 5) / 10) * 10;
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public PictureBox DisplayContainer
+        public Panel DisplayContainer
         {
-            get { return picContainer; }
+            get { return pnlContainer; }
         }
 
         private void pbGrab_MouseDown(object sender, MouseEventArgs e)
@@ -635,44 +645,6 @@ namespace Thetis
                 mouseLeave();
         }
 
-        private void picContainer_MouseMove(object sender, MouseEventArgs e)
-        {
-            bool no_controls = _no_controls && !Common.ShiftKeyDown; //[2.10.3.6]MW0LGE no title or resize grabber, override by holding shift
-
-            if (!_dragging)
-            {
-                bool bContains = !no_controls && pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition));
-                if (bContains && !pnlBar.Visible)
-                {
-                    pnlBar.BringToFront();
-                    pnlBar.Show();
-                }
-                else if (!bContains && pnlBar.Visible)
-                {
-                    pnlBar.Hide();
-                }
-            }
-
-            if (!_resizing)
-            {
-                bool bContains = !no_controls && pbGrab.ClientRectangle.Contains(pbGrab.PointToClient(Control.MousePosition));
-                if (bContains && !pbGrab.Visible)
-                {
-                    pbGrab.BringToFront();
-                    pbGrab.Show();
-                }
-                else if (!bContains && pbGrab.Visible)
-                {
-                    pbGrab.Hide();
-                }
-            }
-        }
-
-        private void picContainer_MouseLeave(object sender, EventArgs e)
-        {
-            if (!(_dragging || _resizing) && !picContainer.ClientRectangle.Contains(picContainer.PointToClient(Control.MousePosition)))
-                mouseLeave();
-        }
         private void mouseLeave()
         {
             if (pnlBar.Visible)
@@ -875,6 +847,15 @@ namespace Thetis
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public bool ContainerHidesWhenRXNotUsed
+        {
+            get { return _container_hides_when_rx_not_used; }
+            set
+            {
+                _container_hides_when_rx_not_used = value;
+            }
+        }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public string Notes
         {
             get { return _notes; }
@@ -1012,21 +993,22 @@ namespace Thetis
                 DockedLocation.Y.ToString() + "|" +
                 DockedSize.Width.ToString() + "|" +
                 DockedSize.Height.ToString() + "|" +
-                Floating.ToString() + "|" +
+                Floating.ToString().ToLower() + "|" +
                 Delta.X.ToString() + "|" +
                 Delta.Y.ToString() + "|" +
                 AxisLock.ToString() + "|" +
-                PinOnTop.ToString() + "|" +
-                UCBorder.ToString() + "|" +
+                PinOnTop.ToString().ToLower() + "|" +
+                UCBorder.ToString().ToLower() + "|" +
                 Common.ColourToString(this.BackColor) + "|" +
-                NoControls.ToString() + "|" +
-                MeterEnabled.ToString() + "|" +
+                NoControls.ToString().ToLower() + "|" +
+                MeterEnabled.ToString().ToLower() + "|" +
                 Notes + "|" +
                 ContainerMinimises.ToString().ToLower() + "|" +
                 AutoHeight.ToString().ToLower() + "|" +
                 ShowOnRX.ToString().ToLower() + "|" +
                 ShowOnTX.ToString().ToLower() + "|" +
-                Locked.ToString().ToLower();
+                Locked.ToString().ToLower() + "|" +
+                ContainerHidesWhenRXNotUsed.ToString().ToLower();
         }
         public bool TryParse(string str)
         {
@@ -1042,6 +1024,7 @@ namespace Thetis
             bool show_on_rx = true;
             bool show_on_tx = true;
             bool locked = false;
+            bool hides_when_not_used = true;
 
             if (str != "")
             {
@@ -1131,6 +1114,12 @@ namespace Thetis
                         bOk = bool.TryParse(tmp[20], out locked);
                         if (bOk) Locked = locked;
                     }
+
+                    if (bOk && tmp.Length > 21) // for [2.10.3.9]
+                    {
+                        bOk = bool.TryParse(tmp[21], out hides_when_not_used);
+                        if (bOk) ContainerHidesWhenRXNotUsed = hides_when_not_used;
+                    }
                 }
             }
 
@@ -1169,10 +1158,48 @@ namespace Thetis
 
         private void ucMeter_MouseLeave(object sender, EventArgs e)
         {
-            if (!(_dragging || _resizing) && !picContainer.ClientRectangle.Contains(this.PointToClient(Control.MousePosition)))
+            if (!(_dragging || _resizing) && !pnlContainer.ClientRectangle.Contains(this.PointToClient(Control.MousePosition)))
                 mouseLeave();
         }
 
+        private void pnlContainer_MouseMove(object sender, MouseEventArgs e)
+        {
+            bool no_controls = _no_controls && !Common.ShiftKeyDown; //[2.10.3.6]MW0LGE no title or resize grabber, override by holding shift
+
+            if (!_dragging)
+            {
+                bool bContains = !no_controls && pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition));
+                if (bContains && !pnlBar.Visible)
+                {
+                    pnlBar.BringToFront();
+                    pnlBar.Show();
+                }
+                else if (!bContains && pnlBar.Visible)
+                {
+                    pnlBar.Hide();
+                }
+            }
+
+            if (!_resizing)
+            {
+                bool bContains = !no_controls && pbGrab.ClientRectangle.Contains(pbGrab.PointToClient(Control.MousePosition));
+                if (bContains && !pbGrab.Visible)
+                {
+                    pbGrab.BringToFront();
+                    pbGrab.Show();
+                }
+                else if (!bContains && pbGrab.Visible)
+                {
+                    pbGrab.Hide();
+                }
+            }
+        }
+
+        private void pnlContainer_MouseLeave(object sender, EventArgs e)
+        {
+            if (!(_dragging || _resizing) && !pnlContainer.ClientRectangle.Contains(pnlContainer.PointToClient(Control.MousePosition)))
+                mouseLeave();
+        }
     }
 }
 

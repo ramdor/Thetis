@@ -179,12 +179,12 @@
             this.wbdisplay.BackColor = System.Drawing.Color.Black;
             this.wbdisplay.BandEdgeColor = System.Drawing.Color.Red;
             this.wbdisplay.ClickTuneFilter = true;
-            this.wbdisplay.ColorSheme = Thetis.ColorSheme.enhanced;
+            this.wbdisplay.ColorScheme = Thetis.ColorScheme.enhanced;
             this.wbdisplay.cOnsole = null;
             this.wbdisplay.ContextMenuStrip = this.contextMenuStripWideBand;
             this.wbdisplay.CurrentClickTuneMode = Thetis.ClickTuneMode.Off;
             this.wbdisplay.CurrentDisplayMode = Thetis.DisplayMode.PANADAPTER;
-            this.wbdisplay.CurrentModel = Thetis.Model.HERMES;
+            this.wbdisplay.CurrentModel = Thetis.HPSDRModel.HERMES;
             this.wbdisplay.CurrentRegion = Thetis.FRSRegion.US;
             this.wbdisplay.CWPitch = 600;
             this.wbdisplay.DataLineColor = System.Drawing.Color.White;

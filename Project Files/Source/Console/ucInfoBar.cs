@@ -4,7 +4,7 @@ This file is part of a program that implements a Software-Defined Radio.
 
 This code/file can be found on GitHub : https://github.com/ramdor/Thetis
 
-Copyright (C) 2020-2024 Richard Samphire MW0LGE
+Copyright (C) 2020-2025 Richard Samphire MW0LGE
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -52,6 +52,7 @@ namespace Thetis
             CFC,
             CFCeq,
             Leveler,
+            DisplayPause,
             LAST
         }
 
@@ -146,6 +147,8 @@ namespace Thetis
                             return "Spots";
                         case ActionTypes.DisplayFill:
                             return "Fill";
+                        case ActionTypes.DisplayPause:
+                            return "Pause";
 
                     }
                     return "?";
@@ -174,6 +177,8 @@ namespace Thetis
                             return "Show spots";
                         case ActionTypes.DisplayFill:
                             return "Fill the panadaptor";
+                        case ActionTypes.DisplayPause:
+                            return "Pause the display";
                     }
                     return "";
                 }

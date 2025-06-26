@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Xml;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Threading;
+using System.Diagnostics;
 
 namespace Thetis
 {
@@ -23,7 +25,7 @@ namespace Thetis
             psform = ps;
         }
 
-        GCHandle hx, hym, hyc, hys, hcm, hcc, hcs;
+        //GCHandle hx, hym, hyc, hys, hcm, hcc, hcs;
         const int max_ints = 16;
         const int max_samps = 4096;
         const int np = 512;
@@ -45,13 +47,13 @@ namespace Thetis
 
             PSForm.ampv.ClientSize = new System.Drawing.Size(560, 445); //
             Common.RestoreForm(this, "AmpView", true); //[2.10.3.5]MW0LGE  #292
-            hx  = GCHandle.Alloc(x,  GCHandleType.Pinned);
-            hym = GCHandle.Alloc(ym, GCHandleType.Pinned);
-            hyc = GCHandle.Alloc(yc, GCHandleType.Pinned);
-            hys = GCHandle.Alloc(ys, GCHandleType.Pinned);
-            hcm = GCHandle.Alloc(cm, GCHandleType.Pinned);
-            hcc = GCHandle.Alloc(cc, GCHandleType.Pinned);
-            hcs = GCHandle.Alloc(cs, GCHandleType.Pinned);
+            //hx  = GCHandle.Alloc(x,  GCHandleType.Pinned);
+            //hym = GCHandle.Alloc(ym, GCHandleType.Pinned);
+            //hyc = GCHandle.Alloc(yc, GCHandleType.Pinned);
+            //hys = GCHandle.Alloc(ys, GCHandleType.Pinned);
+            //hcm = GCHandle.Alloc(cm, GCHandleType.Pinned);
+            //hcc = GCHandle.Alloc(cc, GCHandleType.Pinned);
+            //hcs = GCHandle.Alloc(cs, GCHandleType.Pinned);
             double delta = 1.0 / (double)psform.Ints;
             t[0] = 0.0;
             for (int i = 1; i <= psform.Ints; i++)
@@ -61,7 +63,6 @@ namespace Thetis
             chkAVLowRes_CheckedChanged(this, ex);
             chkAVPhaseZoom_CheckedChanged(this, ex);
         }
-
         private void disp_setup()
         {
             chart1.ChartAreas[0].AxisX.Minimum = 0.0;
@@ -280,32 +281,75 @@ namespace Thetis
         //        chart1.Series["PhsAmp"].Points.AddXY(x[i], phs);
         //    }
         //}
-        
+
         private bool _init = true;
+        private bool _is_closing = false;
+        private bool _in_timer = false;
 
         private void chkStayOnTop_CheckedChanged(object sender, EventArgs e)
         {
             this.TopMost = chkStayOnTop.Checked;
         }
 
+        public void CloseDown()
+        {
+            _is_closing = true;
+            timer1.Stop();
+            this.Close();
+            Application.ExitThread();
+        }
+
+        //private void AmpView_FormClosed(object sender, FormClosedEventArgs e)
+        //{
+        //    if (hx.IsAllocated) hx.Free();
+        //    if (hym.IsAllocated) hym.Free();
+        //    if (hyc.IsAllocated) hyc.Free();
+        //    if (hys.IsAllocated) hys.Free();
+        //    if (hcm.IsAllocated) hcm.Free();
+        //    if (hcc.IsAllocated) hcc.Free();
+        //    if (hcs.IsAllocated) hcs.Free();
+        //}
+
         private int _oldIntsSpi = -1;
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (psform.DismissAmpv)
-            {
-                Common.SaveForm(this, "AmpView");
-                Application.ExitThread();
-            }
+            timer1.Stop();
+
+            if (_is_closing) return;
+
             disp_setup();
 
-            puresignal.GetPSDisp(WDSP.id(1, 0),
-                hx.AddrOfPinnedObject(),
-                hym.AddrOfPinnedObject(),
-                hyc.AddrOfPinnedObject(),
-                hys.AddrOfPinnedObject(),
-                hcm.AddrOfPinnedObject(),
-                hcc.AddrOfPinnedObject(),
-                hcs.AddrOfPinnedObject());
+            //puresignal.GetPSDisp(WDSP.id(1, 0),
+            //    hx.AddrOfPinnedObject(),
+            //    hym.AddrOfPinnedObject(),
+            //    hyc.AddrOfPinnedObject(),
+            //    hys.AddrOfPinnedObject(),
+            //    hcm.AddrOfPinnedObject(),
+            //    hcc.AddrOfPinnedObject(),
+            //    hcs.AddrOfPinnedObject());
+            unsafe
+            {
+                fixed (double* px = x)
+                fixed (double* pym = ym)
+                fixed (double* pyc = yc)
+                fixed (double* pys = ys)
+                fixed (double* pcm = cm)
+                fixed (double* pcc = cc)
+                fixed (double* pcs = cs)
+                {
+                    puresignal.GetPSDisp(
+                        WDSP.id(1, 0),
+                        new IntPtr(px),
+                        new IntPtr(pym),
+                        new IntPtr(pyc),
+                        new IntPtr(pys),
+                        new IntPtr(pcm),
+                        new IntPtr(pcc),
+                        new IntPtr(pcs)
+                    );
+                }
+            }
+            //
 
             lock (intslock)
             {
@@ -344,11 +388,7 @@ namespace Thetis
                 chart1.Invalidate();
             }
 
-            if (psform.DismissAmpv)
-            {
-                Common.SaveForm(this, "AmpView");
-                Application.ExitThread();
-            }
+            if(!_is_closing) timer1.Start();
         }
 
         private void chkAVShowGain_CheckedChanged(object sender, EventArgs e)
@@ -398,6 +438,11 @@ namespace Thetis
                 chart1.ChartAreas[0].AxisY2.Minimum = -180.0;
                 chart1.ChartAreas[0].AxisY2.Maximum = +180.0;
             }
+        }
+
+        private void AmpView_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            PSForm.ampv = null;
         }
     }
 }

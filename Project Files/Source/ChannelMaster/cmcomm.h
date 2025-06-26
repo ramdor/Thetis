@@ -43,6 +43,7 @@ warren@pratt.one
 #include "pipe.h"
 #include "ring.h"
 #include "router.h"
+#include "sidetone.h"
 #include "sync.h"
 #include "txgain.h"
 #include "cmUtilities.h"

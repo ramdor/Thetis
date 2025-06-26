@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2016 Warren Pratt, NR0V
+Copyright (C) 2013, 2016, 2025 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -28,6 +28,39 @@ warren@wpratt.com
 
 double* fc_impulse (int nc, double f0, double f1, double g0, double g1, int curve, double samplerate, double scale, int ctfmode, int wintype)
 {
+	// check for previous in the cache
+	struct Params 
+	{
+		int     nc;
+		int     curve;
+		int     ctfmode;
+		int     wintype;
+		double  f0;
+		double  f1;
+		double  g0;
+		double  g1;
+		double  samplerate;
+		double  scale;
+	};
+
+	struct Params params;
+	memset(&params, 0, sizeof(params));
+	params.nc = nc;
+	params.curve = curve;
+	params.ctfmode = ctfmode;
+	params.wintype = wintype;
+	params.f0 = f0;
+	params.f1 = f1;
+	params.g0 = g0;
+	params.g1 = g1;
+	params.samplerate = samplerate;
+	params.scale = scale;
+
+	HASH_T h = fnv1a_hash(&params, sizeof(params));
+	double* imp = get_impulse_cache_entry(FC_CACHE, h);
+	if (imp) return imp;
+	//
+
 	double* A  = (double *) malloc0 ((nc / 2 + 1) * sizeof (double));
 	int i;
 	double fn, f;
@@ -141,6 +174,10 @@ double* fc_impulse (int nc, double f0, double f1, double g0, double g1, int curv
 		impulse = fir_fsamp(nc, A, 1, 1.0, wintype);
 	// print_impulse ("emph.txt", size + 1, impulse, 1, 0);
 	_aligned_free (A);
+
+	// store in cache
+	add_impulse_to_cache(FC_CACHE, h, nc, impulse);
+
 	return impulse;
 }
 

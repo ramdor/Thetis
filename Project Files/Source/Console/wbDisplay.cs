@@ -210,12 +210,12 @@ namespace Thetis
         private Color channel_background_off = Color.FromArgb(100, Color.RoyalBlue);
         private Color channel_foreground = Color.Cyan;
 
-        private ColorSheme color_sheme = ColorSheme.enhanced;
-        public ColorSheme ColorSheme
+        private ColorScheme color_scheme = ColorScheme.enhanced;
+        public ColorScheme ColorScheme
         {
-            get { return color_sheme; }
+            get { return color_scheme; }
 
-            set { color_sheme = value; }
+            set { color_scheme = value; }
         }
 
         private bool reverse_waterfall = false;
@@ -443,8 +443,8 @@ namespace Thetis
             }
         }
 
-        private Model current_model = Model.HERMES;
-        public Model CurrentModel
+        private HPSDRModel current_model = HPSDRModel.HERMES;
+        public HPSDRModel CurrentModel
         {
             get { return current_model; }
             set { current_model = value; }
@@ -2211,7 +2211,7 @@ namespace Thetis
         //    float waterfall_minimum = 0.0f;
         //    float rx1_waterfall_minimum = 0.0f;
         //    //  float rx2_waterfall_minimum = 0.0f;
-        //    ColorSheme cSheme = ColorSheme.enhanced;
+        //    ColorSheme cScheme = ColorScheme.enhanced;
         //    Color low_color = Color.Black;
         //    Color mid_color = Color.Red;
         //    Color high_color = Color.Blue;
@@ -2220,7 +2220,7 @@ namespace Thetis
         //        (CurrentDisplayMode == DisplayMode.PANAFALL && nreceivers > 2) ||
         //       (CurrentDisplayMode == DisplayMode.PANADAPTER && display_duplex)) displayduplex = true;
 
-        //    cSheme = color_sheme;
+        //    ccScheme = color_scheme;
         //    low_color = waterfall_low_color;
         //    mid_color = waterfall_mid_color;
         //    high_color = waterfall_high_color;
@@ -2351,9 +2351,9 @@ namespace Thetis
         //            row = (byte*)bitmapData.Scan0;
 
         //            //int i = 0;
-        //            switch (cSheme)
+        //            switch (cScheme)
         //            {
-        //                case (ColorSheme.original):
+        //                case (ColorScheme.original):
         //                    {
         //                        // draw new data
         //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
@@ -2401,7 +2401,7 @@ namespace Thetis
         //                    //waterfall_data[i] = (float)i/W*(high_threshold - low_threshold) + low_threshold;
         //                    break;
 
-        //                case (ColorSheme.enhanced):
+        //                case (ColorScheme.enhanced):
         //                    {
         //                        // draw new data
         //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
@@ -2486,7 +2486,7 @@ namespace Thetis
         //                    }
         //                    break;
 
-        //                case (ColorSheme.SPECTRAN):
+        //                case (ColorScheme.SPECTRAN):
         //                    {
         //                        // draw new data
         //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
@@ -2567,7 +2567,7 @@ namespace Thetis
         //                    }
         //                    break;
 
-        //                case (ColorSheme.BLACKWHITE):
+        //                case (ColorScheme.BLACKWHITE):
         //                    {
         //                        // draw new data
         //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
@@ -2605,7 +2605,7 @@ namespace Thetis
         //                    }
         //                    break;
 
-        //                case (ColorSheme.LinLog):
+        //                case (ColorScheme.LinLog):
         //                    {
         //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
         //                        {
@@ -2816,7 +2816,7 @@ namespace Thetis
 
         //                //  now Linrad palette without log
 
-        //                case (ColorSheme.LinRad):
+        //                case (ColorScheme.LinRad):
         //                    {
         //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
         //                        {
@@ -3020,7 +3020,7 @@ namespace Thetis
 
         //                //  now Linrad palette without log
 
-        //                case (ColorSheme.LinAuto):
+        //                case (ColorScheme.LinAuto):
         //                    {
         //                        for (int i = 0; i < W; i++)	// for each pixel in the new line
         //                        {
