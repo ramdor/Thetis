@@ -85,7 +85,7 @@ namespace Thetis
             {
                 Common.OpenUri("https://www.qrz.com/db/" + callsign.ToUpper().Trim());
             }
-            public void BrowseHamLib()
+            public void BrowseHamQTH()
             {
                 Common.OpenUri("https://www.hamqth.com/" + callsign.ToUpper().Trim());
             }
