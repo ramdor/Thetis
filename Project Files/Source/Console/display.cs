@@ -10740,61 +10740,59 @@ namespace Thetis
                 drawRectangleDX2D(brightBorder, r, 2);
                 drawStringDX2D(sDisplayString, fontDX2d_font9, textBrush, highLightedSpot.BoundingBoxInPixels[rx - 1].X + 1, highLightedSpot.BoundingBoxInPixels[rx - 1].Y + 1);
 
-                if (!string.IsNullOrEmpty(highLightedSpot.additionalText))
+                // show additional text in bubble below, and concat parts if available
+                string bubble_text = highLightedSpot.additionalText;
+
+                if (!string.IsNullOrEmpty(highLightedSpot.spotter)) bubble_text += "\nSpotter: " + highLightedSpot.spotter;
+                if (highLightedSpot.heading >= 0) bubble_text += "\nHeading: " + highLightedSpot.heading.ToString();
+                if (!string.IsNullOrEmpty(highLightedSpot.continent)) bubble_text += "\nContinent: " + highLightedSpot.continent;
+                if (!string.IsNullOrEmpty(highLightedSpot.country)) bubble_text += "\nCountry: " + highLightedSpot.country;
+                // age
+                TimeSpan age = DateTime.UtcNow - highLightedSpot.spot_time;
+                string ageText;
+                if (age.TotalDays > 2)
                 {
-                    // show additional text in bubble below, and concat parts if available
-                    string bubble_text = highLightedSpot.additionalText;
-
-                    if (!string.IsNullOrEmpty(highLightedSpot.spotter)) bubble_text += "\nSpotter: " + highLightedSpot.spotter;
-                    if (highLightedSpot.heading >= 0) bubble_text += "\nHeading: " + highLightedSpot.heading.ToString();
-                    if (!string.IsNullOrEmpty(highLightedSpot.continent)) bubble_text += "\nContinent: " + highLightedSpot.continent;
-                    if (!string.IsNullOrEmpty(highLightedSpot.country)) bubble_text += "\nCountry: " + highLightedSpot.country;
-                    //bubble_text += "\nTime: " + highLightedSpot.spot_time.ToString();
-                    // age
-                    TimeSpan age = DateTime.UtcNow - highLightedSpot.spot_time;
-                    string ageText;
-                    if (age.TotalDays > 2)
-                    {
-                        ageText = "Old spot";
-                    }
-                    else if (age.TotalDays >= 1)
-                    {
-                        int days = (int)age.TotalDays;
-                        ageText = days + " day" + (days == 1 ? "" : "s");
-                    }
-                    else if (age.TotalHours >= 1)
-                    {
-                        int hours = (int)age.TotalHours;
-                        ageText = hours + " hour" + (hours == 1 ? "" : "s");
-                    }
-                    else if (age.TotalMinutes >= 1)
-                    {
-                        int minutes = (int)age.TotalMinutes;
-                        ageText = minutes + " minute" + (minutes == 1 ? "" : "s");
-                    }
-                    else
-                    {
-                        int seconds = (int)age.TotalSeconds;
-                        ageText = seconds + " second" + (seconds == 1 ? "" : "s");
-                    }
-                    bubble_text += "\nAge: " + ageText;
-                    //
-
-                    SizeF additionalTextSize = measureStringDX2D(bubble_text, fontDX2d_font10);
-
-                    int left = (r.X + (r.Width / 2)) - (int)(additionalTextSize.Width / 2);
-                    int top = r.Y + r.Height + 6;
-
-                    Rectangle additionalTextRect = new Rectangle(left - 2,
-                                                top - 2,
-                                                (int)(additionalTextSize.Width + 4),
-                                                (int)(additionalTextSize.Height + 4)
-                                               );
-
-                    drawFillRectangleDX2D(getDXBrushForColour(Color.LightGray), additionalTextRect);
-                    drawRectangleDX2D(getDXBrushForColour(Color.Black), additionalTextRect, 2);
-                    drawStringDX2D(bubble_text, fontDX2d_font10, getDXBrushForColour(Color.Black), additionalTextRect.X + 2, additionalTextRect.Y + 2);
+                    ageText = "Old spot (>2 days)";
                 }
+                else if (age.TotalDays >= 1)
+                {
+                    int days = (int)age.TotalDays;
+                    ageText = days + " day" + (days == 1 ? "" : "s");
+                }
+                else if (age.TotalHours >= 1)
+                {
+                    int hours = (int)age.TotalHours;
+                    ageText = hours + " hour" + (hours == 1 ? "" : "s");
+                }
+                else if (age.TotalMinutes >= 1)
+                {
+                    int minutes = (int)age.TotalMinutes;
+                    ageText = minutes + " minute" + (minutes == 1 ? "" : "s");
+                }
+                else
+                {
+                    int seconds = (int)age.TotalSeconds;
+                    ageText = seconds + " second" + (seconds == 1 ? "" : "s");
+                }
+                bubble_text += "\nAge: " + ageText;
+                //
+
+                bubble_text = bubble_text.Trim();
+
+                SizeF additionalTextSize = measureStringDX2D(bubble_text, fontDX2d_font10);
+
+                int left = (r.X + (r.Width / 2)) - (int)(additionalTextSize.Width / 2);
+                int top = r.Y + r.Height + 6;
+
+                Rectangle additionalTextRect = new Rectangle(left - 2,
+                                            top - 2,
+                                            (int)(additionalTextSize.Width + 4),
+                                            (int)(additionalTextSize.Height + 4)
+                                            );
+
+                drawFillRectangleDX2D(getDXBrushForColour(Color.LightGray), additionalTextRect);
+                drawRectangleDX2D(getDXBrushForColour(Color.Black), additionalTextRect, 2);
+                drawStringDX2D(bubble_text, fontDX2d_font10, getDXBrushForColour(Color.Black), additionalTextRect.X + 2, additionalTextRect.Y + 2);
             }
         }
         private static void clearAllDynamicBrushes()

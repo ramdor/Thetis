@@ -1991,16 +1991,16 @@ namespace Thetis
 				}
 				else
 				{
-					int thetis_tag = msg.ToLower().IndexOf("[thetis]{");
+					int thetis_tag = msg.ToLower().IndexOf("[json]{");
 					if (thetis_tag > -1)
 					{
-						sAdditional = msg.Substring(thetis_tag + 8);
+						sAdditional = msg.Substring(thetis_tag + 6); // +8  =  the len of [json]
                         json_found = true;
 					}
 					else
 					{
-						// we should have found a [thetis] tag, ignore if not
-						return;
+                        // we should have found a [json] tag, ignore if not
+                        return;
 					}
                 }
 
@@ -2212,7 +2212,7 @@ namespace Thetis
 
 			string[] parts = msg.Split(':');
 
-			bool json_spot = parts.Length >= 2 && parts[0].ToLower().Trim() == "spot" && msg.ToLower().IndexOf("[thetis]{") >= 0; // a spot with some json info
+			bool json_spot = parts.Length >= 2 && parts[0].ToLower().Trim() == "spot" && msg.ToLower().IndexOf("[json]{") >= 0; // a spot with some json info
 
             if (parts.Length == 2 || json_spot)
             {

@@ -57,18 +57,37 @@ namespace Thetis
             public string continent;
             public string country;
             public DateTime spot_time;
+            public bool IsSWL;
+            public long SwlSecondsToLive;
 
             public bool[] Visible;
             public SizeF Size;
             public Rectangle[] BoundingBoxInPixels;
             public bool[] Highlight;
 
-            public bool IsSWL;
-            public long SwlSecondsToLive;
-
+            public smSpot()
+            {
+                callsign = "";
+                mode = DSPMode.FIRST;
+                frequencyHZ = 0;
+                colour = Color.White;
+                timeAdded = DateTime.UtcNow;
+                additionalText = "";
+                spotter = "";
+                heading = -1;
+                continent = "";
+                country = "";
+                spot_time = DateTime.UtcNow;
+                IsSWL = false;
+                SwlSecondsToLive = 0;
+            }
             public void BrowseQRZ()
             {
                 Common.OpenUri("https://www.qrz.com/db/" + callsign.ToUpper().Trim());
+            }
+            public void BrowseHamLib()
+            {
+                Common.OpenUri("https://www.hamqth.com/" + callsign.ToUpper().Trim());
             }
         }
 

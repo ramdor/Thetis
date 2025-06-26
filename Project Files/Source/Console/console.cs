@@ -49194,7 +49194,10 @@ namespace Thetis
             {
                 if (e.Button == MouseButtons.Right)
                 {
-                    _highlightedSpot.BrowseQRZ();
+                    if (Common.CtrlKeyDown)
+                        _highlightedSpot.BrowseHamLib();
+                    else
+                        _highlightedSpot.BrowseQRZ();
                 }
                 else if (_highlightedSpot.Highlight[0])
                 {
