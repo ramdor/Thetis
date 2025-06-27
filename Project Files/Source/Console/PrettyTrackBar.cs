@@ -123,7 +123,7 @@ namespace Thetis
             switch (orientation)
             {
                 case Orientation.Horizontal:
-                    int headWidth = _head_image != null ? _head_rect.Width : 1;
+                    int headWidth = _head_rect.Width;// _head_image != null ? _head_rect.Width : 1;
                     
                     width = this.Width - headWidth - Padding.Horizontal;
                     startPos = (int)Math.Round((_nLimitValue - min) / (double)(max - min) * width);
@@ -138,7 +138,7 @@ namespace Thetis
 
                     break;
                 case Orientation.Vertical:
-                    int headHeight = _head_image != null ? _head_rect.Height : 0;
+                    int headHeight = _head_rect.Height;// _head_image != null ? _head_rect.Height : 0;
 
                     height = this.Height - headHeight - Padding.Vertical;
                     startPos = (int)((_nLimitValue - min) / (double)(max - min) * height);
@@ -390,7 +390,7 @@ namespace Thetis
                     switch (orientation)
                     {
                         case Orientation.Horizontal:
-                            int headWidth = _head_image != null ? _head_rect.Width : 1;
+                            int headWidth = _head_rect.Width;// _head_image != null ? _head_rect.Width : 1;
                             width = this.Width - headWidth - Padding.Horizontal;
 
                             if (down_x < Padding.Left + (headWidth / 2)) down_x = Padding.Left + (headWidth / 2);
@@ -403,7 +403,7 @@ namespace Thetis
 
                             break;
                         case Orientation.Vertical:
-                            int headHeight = _head_image != null ? _head_rect.Height : 0;
+                            int headHeight = _head_rect.Height;// _head_image != null ? _head_rect.Height : 0;
                             height = this.Height - headHeight - Padding.Vertical;
 
                             if (down_y < Padding.Top + (headHeight / 2)) down_y = Padding.Top + (headHeight / 2);
@@ -508,7 +508,7 @@ namespace Thetis
                     switch (orientation)
                     {
                         case Orientation.Horizontal:
-                            int headWidth = _head_image != null ? _head_rect.Width : 1;
+                            int headWidth = _head_rect.Width;// _head_image != null ? _head_rect.Width : 1;
 
                             delta = e.X - down_x;                            
                             width = this.Width - headWidth - Padding.Horizontal;
@@ -527,7 +527,7 @@ namespace Thetis
 
                             break;
                         case Orientation.Vertical:
-                            int headHeight = _head_image != null ? _head_rect.Height : 0;
+                            int headHeight = _head_rect.Height;// _head_image != null ? _head_rect.Height : 0;
 
                             delta = e.Y - down_y;
                             height = this.Height - headHeight - Padding.Vertical;
