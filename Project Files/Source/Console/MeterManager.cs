@@ -32141,6 +32141,29 @@ namespace Thetis
                 float fontSizeEmScaled;
                 SizeF szTextSize;
 
+                // signal type symbol top right
+                float fDiag = (float)Math.Sqrt((w * w) + (h * h));
+                float fScale = fDiag / 450f;
+                float fStrokeWidth = 2 * fScale;
+                switch (st.ReadingSource)
+                {
+                    case Reading.SIGNAL_STRENGTH:
+                        // arrow
+                        _renderTarget.DrawLine(new Vector2(x + (w * 0.95f), y + (h * 0.2f)), new Vector2(x + (w * 0.965f), y + (h * 0.1f)), getDXBrushForColour(st.HistoryColour, 255), fStrokeWidth);
+                        _renderTarget.DrawLine(new Vector2(x + (w * 0.98f), y + (h * 0.2f)), new Vector2(x + (w * 0.965f), y + (h * 0.1f)), getDXBrushForColour(st.HistoryColour, 255), fStrokeWidth);
+                        break;
+                    case Reading.AVG_SIGNAL_STRENGTH:
+                        // circle
+                        //x + (w * 0.5f) - (szTextSize.Width * 0.5f), y
+                        float circ_rad = fStrokeWidth * 2.5f;
+                        _renderTarget.DrawEllipse(new Ellipse(new Vector2(x + (w * 0.965f), y + (h * 0.16f)), circ_rad, circ_rad), getDXBrushForColour(st.HistoryColour, 255), fStrokeWidth);
+                        break;
+                    case Reading.SIGNAL_MAX_BIN:
+                        // line
+                        _renderTarget.DrawLine(new Vector2(x + (w * 0.95f), y + (h * 0.16f)), new Vector2(x + (w * 0.98f), y + (h * 0.16f)), getDXBrushForColour(st.HistoryColour, 255), fStrokeWidth);
+                        break;
+                }
+
                 // s-reading
                 fontSizeEmScaled = (st.FontSize / 16f) * (w / 52f);
                 Common.SMeterFromDBM2(st.Value, MeterManager.IsAboveS9Frequency(_rx), out int S, out int dBmOver);
@@ -32492,7 +32515,74 @@ namespace Thetis
                     }
                 }
 
+                //needle
                 _renderTarget.DrawLine(new SharpDX.Vector2(startX, startY), new SharpDX.Vector2(endX, endY), getDXBrushForColour(ni.Colour, 255), fStrokeWidth);
+                //marker
+                switch(ni.ReadingSource)
+                {
+                    case Reading.SIGNAL_STRENGTH:
+                        // arrow
+                        float angleRad = (float)(ang + degToRad(rotation));
+                        float cosA = (float)Math.Cos(angleRad);
+                        float sinA = (float)Math.Sin(angleRad);
+
+                        float dirX = cosA * radiusX;
+                        float dirY = sinA * radiusY;
+
+                        float perpX = -dirY;
+                        float perpY = dirX;
+                        float perpLen = (float)Math.Sqrt(perpX * perpX + perpY * perpY);
+                        perpX /= perpLen;
+                        perpY /= perpLen;
+
+                        float tipX = startX + dirX * 0.31f;
+                        float tipY = startY + dirY * 0.31f;
+                        float baseX = startX + dirX * 0.26f;
+                        float baseY = startY + dirY * 0.26f;
+
+                        float wingHalfWidth = radiusX * 0.026f;
+                        float leftWingX = baseX - perpX * wingHalfWidth;
+                        float leftWingY = baseY - perpY * wingHalfWidth;
+                        float rightWingX = baseX + perpX * wingHalfWidth;
+                        float rightWingY = baseY + perpY * wingHalfWidth;
+
+                        _renderTarget.DrawLine(new SharpDX.Vector2(leftWingX, leftWingY), new SharpDX.Vector2(tipX, tipY), getDXBrushForColour(ni.Colour, 255), fStrokeWidth);
+                        _renderTarget.DrawLine(new SharpDX.Vector2(rightWingX, rightWingY), new SharpDX.Vector2(tipX, tipY), getDXBrushForColour(ni.Colour, 255), fStrokeWidth);
+                        break;
+                    case Reading.AVG_SIGNAL_STRENGTH:
+                        // circle
+                        float circ_rad = fStrokeWidth * 2.5f;
+                        float mid_markerX = startX + (float)(Math.Cos(ang + degToRad(rotation)) * radiusX * 0.29);
+                        float mid_markerY = startY + (float)(Math.Sin(ang + degToRad(rotation)) * radiusY * 0.29);
+                        _renderTarget.DrawEllipse(new Ellipse(new SharpDX.Vector2(mid_markerX, mid_markerY), circ_rad, circ_rad), getDXBrushForColour(ni.Colour, 255), fStrokeWidth);
+                        break;
+                    case Reading.SIGNAL_MAX_BIN:
+                        // line
+                        float angleRad2 = (float)(ang + degToRad(rotation));
+                        float cosA2 = (float)Math.Cos(angleRad2);
+                        float sinA2 = (float)Math.Sin(angleRad2);
+
+                        float dirX2 = cosA2 * radiusX;
+                        float dirY2 = sinA2 * radiusY;
+
+                        float perpX2 = -dirY2;
+                        float perpY2 = dirX2;
+                        float perpLen2 = (float)Math.Sqrt(perpX2 * perpX2 + perpY2 * perpY2);
+                        perpX2 /= perpLen2;
+                        perpY2 /= perpLen2;
+
+                        float midXL = startX + dirX2 * 0.29f;
+                        float midYL = startY + dirY2 * 0.29f;
+                        float halfLine = fStrokeWidth * 3.0f;
+
+                        float leftX = midXL - perpX2 * halfLine;
+                        float leftY = midYL - perpY2 * halfLine;
+                        float rightX = midXL + perpX2 * halfLine;
+                        float rightY = midYL + perpY2 * halfLine;
+
+                        _renderTarget.DrawLine(new SharpDX.Vector2(leftX, leftY), new SharpDX.Vector2(rightX, rightY), getDXBrushForColour(ni.Colour, 255), fStrokeWidth);
+                        break;
+                }
 
                 if (ni.Setup)
                 {

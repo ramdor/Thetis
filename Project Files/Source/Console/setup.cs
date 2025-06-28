@@ -2751,6 +2751,7 @@ namespace Thetis
             udTCISpotLifetime_ValueChanged(this, EventArgs.Empty);
             chkShowTCISpots_CheckedChanged(this, EventArgs.Empty);
             chkSpotOwnCallAppearance_CheckedChanged(this, EventArgs.Empty);
+            chkFlashNewTCISpots_CheckedChanged(this, EventArgs.Empty);
 
             //MIDI
             chkIgnore14bitMidiMessages_CheckedChanged(this, EventArgs.Empty);
@@ -22833,6 +22834,11 @@ namespace Thetis
 
             //
             console.SetupInfoBarButton(ucInfoBar.ActionTypes.ShowSpots, chkShowTCISpots.Checked/* || console.SpotForm*/);
+        }
+        private void chkFlashNewTCISpots_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            Display.FlashNewTCISpots = chkFlashNewTCISpots.Checked;
         }
         public bool ShowTCISpots
         {
