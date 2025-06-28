@@ -9361,6 +9361,8 @@ namespace Thetis
 
         private static void DrawCursorInfo(int W)
         {
+            if (_spot_highlighted) return; // ignore if highlighting a spot
+
             //MHzCursor Display
             if ((m_bAlwaysShowCursorInfo || Common.ShiftKeyDown) && display_cursor_x != -1)
             {
@@ -10555,6 +10557,7 @@ namespace Thetis
             }
             return sDisplayString;
         }
+        private static bool _spot_highlighted = false;
         public static void drawSpots(int rx, int nVerticalShift, int W, bool bottom)
         {
             if (bottom) return;
@@ -10765,6 +10768,7 @@ namespace Thetis
 
             if (highLightedSpot != null)
             {
+                _spot_highlighted = true;
                 sDisplayString = getCallsignString(highLightedSpot);
 
                 int nLuminance = Common.GetLuminance(highLightedSpot.colour);
@@ -10841,9 +10845,13 @@ namespace Thetis
                 rr.RadiusY = 8f;
 
                 _d2dRenderTarget.FillRoundedRectangle(rr, getDXBrushForColour(Color.LightGray));
-                _d2dRenderTarget.DrawRoundedRectangle(rr, getDXBrushForColour(Color.White));
+                _d2dRenderTarget.DrawRoundedRectangle(rr, getDXBrushForColour(Color.White), 2f);
 
                 drawStringDX2D(bubble_text, fontDX2d_font12, getDXBrushForColour(Color.Black), additionalTextRect.X + 2, additionalTextRect.Y + 2);
+            }
+            else
+            {
+                _spot_highlighted = false;
             }
         }
         private static void clearAllDynamicBrushes()
