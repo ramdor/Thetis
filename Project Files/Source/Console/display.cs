@@ -2451,9 +2451,10 @@ namespace Thetis
                            dhp2 = new Pen(Color.FromArgb(150, 255, 0, 0));
 
         private static Font
-                            font1 = new Font("Microsft Sans Serif", 9, FontStyle.Regular),
+                            font1r = new Font("Microsft Sans Serif", 9, FontStyle.Regular),
                             font10 = new Font("Arial", 10),
-                            font14 = new Font("Arial", 14, FontStyle.Bold),
+                            font12 = new Font("Arial", 12),
+                            font14b = new Font("Arial", 14, FontStyle.Bold),
                             font9 = new Font("Arial", 9),
                             font9b = new Font("Arial", 9, FontStyle.Bold),
                             font95 = new Font("Arial", 9.5f),
@@ -7400,6 +7401,7 @@ namespace Thetis
         private static SharpDX.DirectWrite.TextFormat fontDX2d_font9c;
         private static SharpDX.DirectWrite.TextFormat fontDX2d_panafont;
         private static SharpDX.DirectWrite.TextFormat fontDX2d_font10;
+        private static SharpDX.DirectWrite.TextFormat fontDX2d_font12;
         private static SharpDX.DirectWrite.TextFormat fontDX2d_font14;
         private static SharpDX.DirectWrite.TextFormat fontDX2d_font32;
         private static SharpDX.DirectWrite.TextFormat fontDX2d_font1;
@@ -7413,6 +7415,7 @@ namespace Thetis
             if (fontDX2d_font9c != null) Utilities.Dispose(ref fontDX2d_font9c);
             if (fontDX2d_panafont != null) Utilities.Dispose(ref fontDX2d_panafont);
             if (fontDX2d_font10 != null) Utilities.Dispose(ref fontDX2d_font10);
+            if (fontDX2d_font12 != null) Utilities.Dispose(ref fontDX2d_font12);
             if (fontDX2d_font14 != null) Utilities.Dispose(ref fontDX2d_font14);
             if (fontDX2d_font32 != null) Utilities.Dispose(ref fontDX2d_font32);
             if (fontDX2d_font1 != null) Utilities.Dispose(ref fontDX2d_font1);
@@ -7426,6 +7429,7 @@ namespace Thetis
             fontDX2d_font9c = null;
             fontDX2d_panafont = null;
             fontDX2d_font10 = null;
+            fontDX2d_font12 = null;
             fontDX2d_font14 = null;
             fontDX2d_font32 = null;
             fontDX2d_font1 = null;
@@ -7449,9 +7453,10 @@ namespace Thetis
                 fontDX2d_font9c = new SharpDX.DirectWrite.TextFormat(fontFactory, font95.FontFamily.Name, (font95.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
                 fontDX2d_panafont = new SharpDX.DirectWrite.TextFormat(fontFactory, pana_font.FontFamily.Name, (pana_font.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
                 fontDX2d_font10 = new SharpDX.DirectWrite.TextFormat(fontFactory, font10.FontFamily.Name, (font10.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
-                fontDX2d_font14 = new SharpDX.DirectWrite.TextFormat(fontFactory, font14.FontFamily.Name, (font14.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
+                fontDX2d_font12 = new SharpDX.DirectWrite.TextFormat(fontFactory, font12.FontFamily.Name, (font12.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
+                fontDX2d_font14 = new SharpDX.DirectWrite.TextFormat(fontFactory, font14b.FontFamily.Name, (font14b.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
                 fontDX2d_font32 = new SharpDX.DirectWrite.TextFormat(fontFactory, font32b.FontFamily.Name, (font32b.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
-                fontDX2d_font1 = new SharpDX.DirectWrite.TextFormat(fontFactory, font1.FontFamily.Name, (font1.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
+                fontDX2d_font1 = new SharpDX.DirectWrite.TextFormat(fontFactory, font1r.FontFamily.Name, (font1r.Size / 72) * _d2dRenderTarget.DotsPerInch.Width);
                 fontDX2d_fps_profile = new SharpDX.DirectWrite.TextFormat(fontFactory, m_fntCallOutFont.FontFamily.Name, (64f / 72) * _d2dRenderTarget.DotsPerInch.Width);
             }
         }
@@ -9356,6 +9361,8 @@ namespace Thetis
 
         private static void DrawCursorInfo(int W)
         {
+            if (_spot_highlighted) return; // ignore if highlighting a spot
+
             //MHzCursor Display
             if ((m_bAlwaysShowCursorInfo || Common.ShiftKeyDown) && display_cursor_x != -1)
             {
@@ -10467,6 +10474,9 @@ namespace Thetis
         // spot draw2
 
         private static bool _NFDecimal = false;
+        private static int _new_spot_fade = 255;
+        private static double _pulsePhase;
+        private static double _lastRenderTime;
         public static bool NoiseFloorDecimal
         {
             get { return _NFDecimal; }
@@ -10547,6 +10557,7 @@ namespace Thetis
             }
             return sDisplayString;
         }
+        private static bool _spot_highlighted = false;
         public static void drawSpots(int rx, int nVerticalShift, int W, bool bottom)
         {
             if (bottom) return;
@@ -10703,11 +10714,23 @@ namespace Thetis
             SharpDX.Direct2D1.Brush whiteBrush = getDXBrushForColour(Color.White, 255);
             SharpDX.Direct2D1.Brush blackBrush = getDXBrushForColour(Color.Black, 255);
             SharpDX.Direct2D1.Brush brightBorder = getDXBrushForColour(Color.Yellow, 255);
+            //SharpDX.Direct2D1.Brush brightBorder_new_spot = getDXBrushForColour(Color.Yellow, _new_spot_fade);
+
+            // adjust fade
+            double currentTime = m_dElapsedFrameStart;
+            double deltaMs = currentTime - _lastRenderTime;
+            _lastRenderTime = currentTime;
+            _pulsePhase = (_pulsePhase + (Math.PI * 2.0) * deltaMs / 1000.0) % (2.0 * Math.PI);
+            double normalised = (Math.Cos(_pulsePhase) + 1.0) * 0.5;
+            _new_spot_fade = (int)(normalised * 255.0);
+            //
 
             List<SpotManager2.smSpot> visibleSpots = sortedSpots.Where(o => o.Visible[rx - 1]).ToList();
             SpotManager2.smSpot highLightedSpot = null;
             foreach (SpotManager2.smSpot spot in visibleSpots)
             {
+                SharpDX.Direct2D1.Brush brightBorder_new_spot = getDXBrushForColour(spot.colour, _new_spot_fade);
+
                 sDisplayString = getCallsignString(spot);
 
                 int nLuminance = Common.GetLuminance(spot.colour);
@@ -10717,16 +10740,35 @@ namespace Thetis
                 if (spot.Highlight[rx - 1])
                 {
                     highLightedSpot = spot;
+                    spot.previously_highlighted = true;
+                    spot.flashing = false;
                 }
                 else
                 {
                     drawFillRectangleDX2D(spotColour, spot.BoundingBoxInPixels[rx - 1]);
                     drawStringDX2D(sDisplayString, fontDX2d_font9, textBrush, spot.BoundingBoxInPixels[rx - 1].X + 1, spot.BoundingBoxInPixels[rx - 1].Y + 1);
+
+                    if (!_flashNewTCISpots) continue;
+
+                    // now draw a border around any spot that is <= 2 mins
+                    TimeSpan age = DateTime.UtcNow - spot.utc_spot_time;
+                    if (age.TotalSeconds <= 120) spot.flashing = true;
+
+                    if (spot.flashing && !spot.IsSWL && !spot.previously_highlighted)
+                    {
+                        Rectangle r = new Rectangle(spot.BoundingBoxInPixels[rx - 1].X - 2, spot.BoundingBoxInPixels[rx - 1].Y - 2,
+                            spot.BoundingBoxInPixels[rx - 1].Width + 4, spot.BoundingBoxInPixels[rx - 1].Height + 4);
+
+                        drawRectangleDX2D(brightBorder_new_spot, r, 4);
+
+                        if (age.TotalSeconds > 120 && _new_spot_fade < 20) spot.flashing = false; // stop flashing when dim
+                    }
                 }
             }
 
             if (highLightedSpot != null)
             {
+                _spot_highlighted = true;
                 sDisplayString = getCallsignString(highLightedSpot);
 
                 int nLuminance = Common.GetLuminance(highLightedSpot.colour);
@@ -10748,7 +10790,7 @@ namespace Thetis
                 if (!string.IsNullOrEmpty(highLightedSpot.continent)) bubble_text += "\nContinent: " + highLightedSpot.continent;
                 if (!string.IsNullOrEmpty(highLightedSpot.country)) bubble_text += "\nCountry: " + highLightedSpot.country;
                 // age
-                TimeSpan age = DateTime.UtcNow - highLightedSpot.spot_time;
+                TimeSpan age = DateTime.UtcNow - highLightedSpot.utc_spot_time;
                 string ageText;
                 if (age.TotalDays > 2)
                 {
@@ -10779,20 +10821,37 @@ namespace Thetis
 
                 bubble_text = bubble_text.Trim();
 
-                SizeF additionalTextSize = measureStringDX2D(bubble_text, fontDX2d_font10);
+                SizeF additionalTextSize = measureStringDX2D(bubble_text, fontDX2d_font12);
 
                 int left = (r.X + (r.Width / 2)) - (int)(additionalTextSize.Width / 2);
                 int top = r.Y + r.Height + 6;
 
-                Rectangle additionalTextRect = new Rectangle(left - 2,
-                                            top - 2,
-                                            (int)(additionalTextSize.Width + 4),
-                                            (int)(additionalTextSize.Height + 4)
-                                            );
+                int rectWidth = (int)(additionalTextSize.Width + 8);
+                int rectHeight = (int)(additionalTextSize.Height + 8);
+                int adjustedLeft = left - 4;
+                if (adjustedLeft < 0) adjustedLeft = 0;
+                else if (adjustedLeft + rectWidth > W) adjustedLeft = W - rectWidth;
 
-                drawFillRectangleDX2D(getDXBrushForColour(Color.LightGray), additionalTextRect);
-                drawRectangleDX2D(getDXBrushForColour(Color.Black), additionalTextRect, 2);
-                drawStringDX2D(bubble_text, fontDX2d_font10, getDXBrushForColour(Color.Black), additionalTextRect.X + 2, additionalTextRect.Y + 2);
+                Rectangle additionalTextRect = new Rectangle(
+                    adjustedLeft,
+                    top - 4,
+                    rectWidth,
+                    rectHeight
+                );
+
+                RoundedRectangle rr = new RoundedRectangle();
+                rr.Rect = new RectangleF(additionalTextRect.Left, additionalTextRect.Top, additionalTextRect.Width, additionalTextRect.Height);
+                rr.RadiusX = 8f;
+                rr.RadiusY = 8f;
+
+                _d2dRenderTarget.FillRoundedRectangle(rr, getDXBrushForColour(Color.LightGray));
+                _d2dRenderTarget.DrawRoundedRectangle(rr, getDXBrushForColour(Color.White), 2f);
+
+                drawStringDX2D(bubble_text, fontDX2d_font12, getDXBrushForColour(Color.Black), additionalTextRect.X + 2, additionalTextRect.Y + 2);
+            }
+            else
+            {
+                _spot_highlighted = false;
             }
         }
         private static void clearAllDynamicBrushes()
@@ -10846,6 +10905,12 @@ namespace Thetis
         {
             get { return _showTCISpots; }
             set { _showTCISpots = value; }
+        }
+        private static bool _flashNewTCISpots = false;
+        public static bool FlashNewTCISpots
+        {
+            get { return _flashNewTCISpots; }
+            set { _flashNewTCISpots= value; }
         }
 
         private static bool _bUseLegacyBuffers = false;

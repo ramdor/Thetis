@@ -41,7 +41,7 @@ namespace Thetis
     {
         #region Variable Declaration
 
-        private Rectangle head_rect;
+        private Rectangle _head_rect;
         private bool sliding = false;
         private bool _limitSliding = false;
         private int down_x;
@@ -62,6 +62,7 @@ namespace Thetis
 
             this.SetStyle(ControlStyles.Selectable, true);
             this.TabStop = true;
+            _head_rect = new Rectangle(0, 0, 1, 1);
         }
 
         #endregion
@@ -77,7 +78,7 @@ namespace Thetis
             {
                 case Orientation.Horizontal:
                     int width;
-                    if (head_image == null)
+                    if (_head_image == null)
                     {
                         width = this.Width;
                         head_x = (int)((val - min) / (double)(max - min) * width);
@@ -85,14 +86,14 @@ namespace Thetis
                     }
                     else
                     {
-                        width = this.Width - head_image.Width - Padding.Horizontal;
+                        width = this.Width - _head_rect.Width - Padding.Horizontal;
                         head_x = (int)Math.Round((val - min) / (double)(max - min) * width) + Padding.Left;
-                        head_y = (int)((this.Height - Padding.Vertical) / 2 - head_image.Height / 2) + Padding.Top;
+                        head_y = (int)((this.Height - Padding.Vertical) / 2 - _head_rect.Height / 2) + Padding.Top;
                     }
                     break;
                 case Orientation.Vertical:
                     int height;
-                    if (head_image == null)
+                    if (_head_image == null)
                     {
                         height = this.Height;
                         head_x = (int)(this.Width / 2);
@@ -100,15 +101,15 @@ namespace Thetis
                     }
                     else
                     {
-                        height = this.Height - head_image.Height - Padding.Vertical;
-                        head_x = (int)((this.Width - Padding.Horizontal) / 2 - head_image.Width / 2) + Padding.Top;
+                        height = this.Height - _head_rect.Height - Padding.Vertical;
+                        head_x = (int)((this.Width - Padding.Horizontal) / 2 - _head_rect.Width / 2) + Padding.Top;
                         head_y = (int)(height - (val - min) / (double)(max - min) * height) + Padding.Top;
                     }
                     break;
             }
 
-            head_rect.X = head_x;
-            head_rect.Y = head_y;
+            _head_rect.X = head_x;
+            _head_rect.Y = head_y;
         }
         private void UpdateLimitBar()
         {
@@ -122,7 +123,7 @@ namespace Thetis
             switch (orientation)
             {
                 case Orientation.Horizontal:
-                    int headWidth = head_image != null ? head_image.Width : 1;
+                    int headWidth = _head_rect.Width;// _head_image != null ? _head_rect.Width : 1;
                     
                     width = this.Width - headWidth - Padding.Horizontal;
                     startPos = (int)Math.Round((_nLimitValue - min) / (double)(max - min) * width);
@@ -137,7 +138,7 @@ namespace Thetis
 
                     break;
                 case Orientation.Vertical:
-                    int headHeight = head_image != null ? head_image.Height : 0;
+                    int headHeight = _head_rect.Height;// _head_image != null ? _head_rect.Height : 0;
 
                     height = this.Height - headHeight - Padding.Vertical;
                     startPos = (int)((_nLimitValue - min) / (double)(max - min) * height);
@@ -158,22 +159,22 @@ namespace Thetis
 
         #region Properties
 
-        private Image head_image = null;
+        private Image _head_image = null;
         public Image HeadImage
         {
-            get { return head_image; }
+            get { return _head_image; }
             set
             {
-                head_image = value;
-                if (head_image != null)
+                _head_image = value;
+                if (_head_image != null)
                 {
-                    head_rect.Width = head_image.Width;
-                    head_rect.Height = head_image.Height;
+                    _head_rect.Width = _head_image.Width;
+                    _head_rect.Height = _head_image.Height;
                 }
                 else
                 {
-                    head_rect.Width = 1;
-                    head_rect.Height = 1;
+                    _head_rect.Width = 1;
+                    _head_rect.Height = 1;
                 }
                 UpdateHeadRectPos();
                 UpdateLimitBar();
@@ -324,13 +325,13 @@ namespace Thetis
             base.OnMouseDown(e); // MW0LGE_21k8, so we can use this if needed
 
             if (!(e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)) return;
-            if (head_rect.IsEmpty) return;
+            if (_head_rect.IsEmpty) return;
 
             if (this.Enabled)
             {
                 if (e.Button == MouseButtons.Left) // the regular thumb/head control
                 {
-                    if (head_rect.Contains(e.X, e.Y))
+                    if (_head_rect.Contains(e.X, e.Y))
                     {
                         down_x = e.X;
                         down_y = e.Y;
@@ -343,9 +344,9 @@ namespace Thetis
                         switch (orientation)
                         {
                             case Orientation.Horizontal:
-                                if (e.Y >= head_rect.Y && e.Y <= head_rect.Y + head_rect.Height)
+                                if (e.Y >= _head_rect.Y && e.Y <= _head_rect.Y + _head_rect.Height)
                                 {
-                                    if (e.X < head_rect.X) new_val = old_val - large_change;
+                                    if (e.X < _head_rect.X) new_val = old_val - large_change;
                                     else new_val = old_val + large_change;
 
                                     if (new_val < min) new_val = min;
@@ -356,9 +357,9 @@ namespace Thetis
                                 }
                                 break;
                             case Orientation.Vertical:
-                                if (e.X >= head_rect.X && e.X <= head_rect.X + head_rect.Width)
+                                if (e.X >= _head_rect.X && e.X <= _head_rect.X + _head_rect.Width)
                                 {
-                                    if (e.Y > head_rect.Y) new_val = old_val - large_change;
+                                    if (e.Y > _head_rect.Y) new_val = old_val - large_change;
                                     else new_val = old_val + large_change;
 
                                     if (new_val < min) new_val = min;
@@ -389,7 +390,7 @@ namespace Thetis
                     switch (orientation)
                     {
                         case Orientation.Horizontal:
-                            int headWidth = head_image != null ? head_image.Width : 1;
+                            int headWidth = _head_rect.Width;// _head_image != null ? _head_rect.Width : 1;
                             width = this.Width - headWidth - Padding.Horizontal;
 
                             if (down_x < Padding.Left + (headWidth / 2)) down_x = Padding.Left + (headWidth / 2);
@@ -402,7 +403,7 @@ namespace Thetis
 
                             break;
                         case Orientation.Vertical:
-                            int headHeight = head_image != null ? head_image.Height : 0;
+                            int headHeight = _head_rect.Height;// _head_image != null ? _head_rect.Height : 0;
                             height = this.Height - headHeight - Padding.Vertical;
 
                             if (down_y < Padding.Top + (headHeight / 2)) down_y = Padding.Top + (headHeight / 2);
@@ -431,7 +432,7 @@ namespace Thetis
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (head_rect.IsEmpty) return;
+            if (_head_rect.IsEmpty) return;
 
             if (this.Enabled)
             {
@@ -451,43 +452,43 @@ namespace Thetis
                     {
                         case Orientation.Horizontal:
                             delta = e.X - down_x;
-                            width = this.Width - head_image.Width - Padding.Horizontal;
+                            width = this.Width - _head_rect.Width - Padding.Horizontal;
 
-                            if (head_rect.X <= Padding.Left && delta < 0) return;
-                            else if (head_rect.X >= (width + Padding.Left) && delta > 0) return;
+                            if (_head_rect.X <= Padding.Left && delta < 0) return;
+                            else if (_head_rect.X >= (width + Padding.Left) && delta > 0) return;
 
-                            percent = (head_rect.X - Padding.Left + delta) / (double)width;
+                            percent = (_head_rect.X - Padding.Left + delta) / (double)width;
                             new_val = min + (int)Math.Round((percent * (max - min)));
                             if (new_val < min) new_val = min;
                             if (new_val > max) new_val = max;
 
                             down_x = e.X;
                             if (down_x < Padding.Left) down_x = Padding.Left;
-                            if (down_x > width + Padding.Left + head_image.Width) down_x = width + Padding.Left + head_image.Width;
+                            if (down_x > width + Padding.Left + _head_rect.Width) down_x = width + Padding.Left + _head_rect.Width;
 
-                            head_rect.X += delta;
-                            if (head_rect.X < Padding.Left) head_rect.X = Padding.Left;
-                            if (head_rect.X > width + Padding.Left) head_rect.X = width + Padding.Left;
+                            _head_rect.X += delta;
+                            if (_head_rect.X < Padding.Left) _head_rect.X = Padding.Left;
+                            if (_head_rect.X > width + Padding.Left) _head_rect.X = width + Padding.Left;
                             break;
                         case Orientation.Vertical:
                             delta = e.Y - down_y;
-                            height = this.Height - head_image.Height - Padding.Vertical;
+                            height = this.Height - _head_rect.Height - Padding.Vertical;
 
-                            if (head_rect.Y <= Padding.Top && delta < 0) return;
-                            else if (head_rect.Y >= (height + Padding.Top) && delta > 0) return;
+                            if (_head_rect.Y <= Padding.Top && delta < 0) return;
+                            else if (_head_rect.Y >= (height + Padding.Top) && delta > 0) return;
 
-                            percent = 1.0 - (head_rect.Y - Padding.Top + delta) / (double)height;
+                            percent = 1.0 - (_head_rect.Y - Padding.Top + delta) / (double)height;
                             new_val = min + (int)(percent * (max - min));
                             if (new_val < min) new_val = min;
                             if (new_val > max) new_val = max;
 
                             down_y = e.Y;
                             if (down_y < Padding.Top) down_y = Padding.Top;
-                            if (down_y > height + Padding.Top + head_image.Height) down_y = height + Padding.Top + head_image.Height;
+                            if (down_y > height + Padding.Top + _head_rect.Height) down_y = height + Padding.Top + _head_rect.Height;
 
-                            head_rect.Y += delta;
-                            if (head_rect.Y < Padding.Top) head_rect.Y = Padding.Top;
-                            if (head_rect.Y > height + Padding.Top) head_rect.Y = height + Padding.Top;
+                            _head_rect.Y += delta;
+                            if (_head_rect.Y < Padding.Top) _head_rect.Y = Padding.Top;
+                            if (_head_rect.Y > height + Padding.Top) _head_rect.Y = height + Padding.Top;
                             break;
                     }
 
@@ -507,7 +508,7 @@ namespace Thetis
                     switch (orientation)
                     {
                         case Orientation.Horizontal:
-                            int headWidth = head_image != null ? head_image.Width : 1;
+                            int headWidth = _head_rect.Width;// _head_image != null ? _head_rect.Width : 1;
 
                             delta = e.X - down_x;                            
                             width = this.Width - headWidth - Padding.Horizontal;
@@ -526,7 +527,7 @@ namespace Thetis
 
                             break;
                         case Orientation.Vertical:
-                            int headHeight = head_image != null ? head_image.Height : 0;
+                            int headHeight = _head_rect.Height;// _head_image != null ? _head_rect.Height : 0;
 
                             delta = e.Y - down_y;
                             height = this.Height - headHeight - Padding.Vertical;
@@ -561,7 +562,7 @@ namespace Thetis
         protected override void OnMouseUp(MouseEventArgs e)
         {
             if (!(e.Button == MouseButtons.Left || e.Button == MouseButtons.Right)) return;
-            if (head_rect.IsEmpty) return;
+            if (_head_rect.IsEmpty) return;
 
             sliding = false;
             _limitSliding = false;
@@ -627,11 +628,11 @@ namespace Thetis
                 //
 
                 // draw head
-                if (head_image != null)
+                if (_head_image != null)
                     //g.DrawImage(head_image, head_rect.X, head_rect.Y, head_image.Width, head_image.Height);
-                    g.DrawImage(head_image,
-                        new Rectangle(head_rect.X, head_rect.Y, head_image.Width, head_image.Height),
-                        0, 0, head_image.Width, head_image.Height,
+                    g.DrawImage(_head_image,
+                        new Rectangle(_head_rect.X, _head_rect.Y, _head_rect.Width, _head_rect.Height),
+                        0, 0, _head_rect.Width, _head_rect.Height,
                         GraphicsUnit.Pixel,
                         imageAttributes);
 
@@ -675,10 +676,10 @@ namespace Thetis
                 }
 
                 // draw head
-                if (head_image != null)
-                    g.DrawImage(head_image,
-                        new Rectangle(head_rect.X, head_rect.Y, head_image.Width, head_image.Height),
-                        0, 0, head_image.Width, head_image.Height,
+                if (_head_image != null)
+                    g.DrawImage(_head_image,
+                        new Rectangle(_head_rect.X, _head_rect.Y, _head_rect.Width, _head_rect.Height),
+                        0, 0, _head_rect.Width, _head_rect.Height,
                         GraphicsUnit.Pixel,
                         imageAttributes);
 

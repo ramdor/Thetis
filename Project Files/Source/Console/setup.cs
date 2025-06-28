@@ -2751,6 +2751,7 @@ namespace Thetis
             udTCISpotLifetime_ValueChanged(this, EventArgs.Empty);
             chkShowTCISpots_CheckedChanged(this, EventArgs.Empty);
             chkSpotOwnCallAppearance_CheckedChanged(this, EventArgs.Empty);
+            chkFlashNewTCISpots_CheckedChanged(this, EventArgs.Empty);
 
             //MIDI
             chkIgnore14bitMidiMessages_CheckedChanged(this, EventArgs.Empty);
@@ -22834,6 +22835,11 @@ namespace Thetis
             //
             console.SetupInfoBarButton(ucInfoBar.ActionTypes.ShowSpots, chkShowTCISpots.Checked/* || console.SpotForm*/);
         }
+        private void chkFlashNewTCISpots_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            Display.FlashNewTCISpots = chkFlashNewTCISpots.Checked;
+        }
         public bool ShowTCISpots
         {
             get { return chkShowTCISpots.Checked; }
@@ -25673,6 +25679,8 @@ namespace Thetis
                 igs.ShowSubMarker = chkMeterItemShowSubIndicator.Checked;
                 igs.PeakValueColour = clrbtnMeterItemPeakValueColour.Color;
                 igs.PeakValue = chkMeterItemPeakValue.Checked;
+                igs.ShowType = chkMeterItemTitle.Checked;
+                igs.TitleColor = clrbtnMeterItemMeterTitle.Color;
                 switch (ucMeterItemSignalType.SignalType)
                 {
                     case Reading.AVG_SIGNAL_STRENGTH:
@@ -26306,6 +26314,8 @@ namespace Thetis
                 clrbtnMeterItemSubIndicator.Color = igs.SubMarkerColour;
                 clrbtnMeterItemPeakValueColour.Color = igs.PeakValueColour;
                 chkMeterItemPeakValue.Checked = igs.PeakValue;
+                chkMeterItemTitle.Checked = igs.ShowType;
+                clrbtnMeterItemMeterTitle.Color = igs.TitleColor;
                 if (igs.MaxBin)
                 {
                     ucMeterItemSignalType.SignalType = Reading.SIGNAL_MAX_BIN;
@@ -26338,6 +26348,8 @@ namespace Thetis
                 lblMMIndicatorSub.Enabled = true;
                 clrbtnMeterItemSubIndicator.Enabled = true;
                 chkMeterItemShowSubIndicator.Enabled = true;
+                chkMeterItemTitle.Enabled = true;
+                clrbtnMeterItemMeterTitle.Enabled = true;
 
                 lblMMBackground.Enabled = true;
                 clrbtnMeterItemHBackground.Enabled = true;
@@ -26349,8 +26361,6 @@ namespace Thetis
                 lblMMsegSolHigh.Enabled = false;
                 clrbtnMeterItemSegmentedSolidColourLow.Enabled = false;
                 clrbtnMeterItemSegmentedSolidColourHigh.Enabled = false;
-                chkMeterItemTitle.Enabled = false;
-                clrbtnMeterItemMeterTitle.Enabled = false;
                 chkMeterItemPeakValue.Enabled = true;
                 updatePeakValueControls();
                 lblMMEyeSize.Enabled = false;
@@ -27243,7 +27253,7 @@ namespace Thetis
                 mt == MeterType.SPACER || mt == MeterType.TEXT_OVERLAY ||
                 mt == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
                 mt == MeterType.VFO_DISPLAY || mt == MeterType.CLOCK ||
-                mt == MeterType.FILTER_DISPLAY
+                mt == MeterType.FILTER_DISPLAY || _itemGroupSettingsMeterType == MeterType.CUSTOM_METER_BAR
                 )
             {
                 bPaste = _itemGroupSettingsMeterType == mt;
@@ -27253,7 +27263,7 @@ namespace Thetis
                 _itemGroupSettingsMeterType == MeterType.SPACER || _itemGroupSettingsMeterType == MeterType.TEXT_OVERLAY ||
                 _itemGroupSettingsMeterType == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
                 _itemGroupSettingsMeterType == MeterType.VFO_DISPLAY || _itemGroupSettingsMeterType == MeterType.CLOCK ||
-                _itemGroupSettingsMeterType == MeterType.FILTER_DISPLAY
+                _itemGroupSettingsMeterType == MeterType.FILTER_DISPLAY || _itemGroupSettingsMeterType == MeterType.CUSTOM_METER_BAR
                 )
             {
                 bPaste = mt == _itemGroupSettingsMeterType;
