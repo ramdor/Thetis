@@ -18,7 +18,7 @@
         // For easy comparison with expected version values, the value returned by this function is
         //    version_number * 1000.  E.g., Version 1.899 will return 1899.
 
-        public const int _CMASTER_VERSION = 1000;
+        public const int _CMASTER_VERSION = 1010;
         public const int _CMASTER_ASIO_VERSION = 1000;
         public const int _WDSP_VERSION = 1260; // from wdsp\version.c
         public const int _PORTAUDIO_VERSION = 1970;  // from pa_front.c
