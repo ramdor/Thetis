@@ -4994,7 +4994,7 @@ static void WaspiHostProcessingLoop( void *inputBuffer,  long inputFrames,
         else
             pending_time = (PaTime)stream->in.latencySeconds;
 
-        timeInfo.inputBufferAdcTime = timeInfo.currentTime - pending_time; //#850
+        timeInfo.inputBufferAdcTime = timeInfo.currentTime - pending_time; //#850 //[2.10.3]MW0LGE changed this as it seemed important. #850 is a portaudio github index 
     }
     // Query output current latency
     if (stream->out.clientProc != NULL)

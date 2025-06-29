@@ -119,7 +119,7 @@ PaSampleFormat PaUtil_SelectClosestAvailableFormat(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3]MW0LGE
 #define PA_SELECT_FORMAT_( format, float64, float32, int32, int24, int16, int8, uint8 ) \
     switch( format & ~paNonInterleaved ){                                      \
 	case paFloat64:                                                            \
@@ -181,7 +181,7 @@ PaUtilConverter* PaUtil_SelectConverter(PaSampleFormat sourceFormat,
     PaSampleFormat destinationFormat, PaStreamFlags flags)
 {
     PA_SELECT_FORMAT_(sourceFormat,
-        /* paFloat64: */
+        /* paFloat64: */ //[2.10.3]MW0LGE
         PA_SELECT_FORMAT_(destinationFormat,
             /* paFloat64: */        PA_UNITY_CONVERSION_(64),
             /* paFloat32: */        PA_USE_CONVERTER_(Float64, Float32),
@@ -193,7 +193,7 @@ PaUtilConverter* PaUtil_SelectConverter(PaSampleFormat sourceFormat,
         ),
         /* paFloat32: */
         PA_SELECT_FORMAT_(destinationFormat,
-            /* paFloat64: */        PA_USE_CONVERTER_(Float32, Float64),
+            /* paFloat64: */        PA_USE_CONVERTER_(Float32, Float64), //[2.10.3]MW0LGE
             /* paFloat32: */        PA_UNITY_CONVERSION_(32),
             /* paInt32: */          PA_SELECT_CONVERTER_DITHER_CLIP_(flags, Float32, Int32),
             /* paInt24: */          PA_SELECT_CONVERTER_DITHER_CLIP_(flags, Float32, Int24),
@@ -203,7 +203,7 @@ PaUtilConverter* PaUtil_SelectConverter(PaSampleFormat sourceFormat,
         ),
         /* paInt32: */
         PA_SELECT_FORMAT_(destinationFormat,
-            /* paFloat64: */        PA_USE_CONVERTER_(Int32, Float64),
+            /* paFloat64: */        PA_USE_CONVERTER_(Int32, Float64), //[2.10.3]MW0LGE
             /* paFloat32: */        PA_USE_CONVERTER_(Int32, Float32),
             /* paInt32: */          PA_UNITY_CONVERSION_(32),
             /* paInt24: */          PA_SELECT_CONVERTER_DITHER_(flags, Int32, Int24),
@@ -213,7 +213,7 @@ PaUtilConverter* PaUtil_SelectConverter(PaSampleFormat sourceFormat,
         ),
         /* paInt24: */
         PA_SELECT_FORMAT_(destinationFormat,
-            /* paFloat64: */        PA_USE_CONVERTER_(Int24, Float64),
+            /* paFloat64: */        PA_USE_CONVERTER_(Int24, Float64), //[2.10.3]MW0LGE
             /* paFloat32: */        PA_USE_CONVERTER_(Int24, Float32),
             /* paInt32: */          PA_USE_CONVERTER_(Int24, Int32),
             /* paInt24: */          PA_UNITY_CONVERSION_(24),
@@ -223,7 +223,7 @@ PaUtilConverter* PaUtil_SelectConverter(PaSampleFormat sourceFormat,
         ),
         /* paInt16: */
         PA_SELECT_FORMAT_(destinationFormat,
-            /* paFloat64: */        PA_USE_CONVERTER_(Int16, Float64),
+            /* paFloat64: */        PA_USE_CONVERTER_(Int16, Float64), //[2.10.3]MW0LGE
             /* paFloat32: */        PA_USE_CONVERTER_(Int16, Float32),
             /* paInt32: */          PA_USE_CONVERTER_(Int16, Int32),
             /* paInt24: */          PA_USE_CONVERTER_(Int16, Int24),
@@ -233,7 +233,7 @@ PaUtilConverter* PaUtil_SelectConverter(PaSampleFormat sourceFormat,
         ),
         /* paInt8: */
         PA_SELECT_FORMAT_(destinationFormat,
-            /* paFloat64: */        PA_USE_CONVERTER_(Int8, Float64),
+            /* paFloat64: */        PA_USE_CONVERTER_(Int8, Float64), //[2.10.3]MW0LGE
             /* paFloat32: */        PA_USE_CONVERTER_(Int8, Float32),
             /* paInt32: */          PA_USE_CONVERTER_(Int8, Int32),
             /* paInt24: */          PA_USE_CONVERTER_(Int8, Int24),
@@ -243,7 +243,7 @@ PaUtilConverter* PaUtil_SelectConverter(PaSampleFormat sourceFormat,
         ),
         /* paUInt8: */
         PA_SELECT_FORMAT_(destinationFormat,
-            /* paFloat64: */        PA_USE_CONVERTER_(UInt8, Float64),
+            /* paFloat64: */        PA_USE_CONVERTER_(UInt8, Float64), //[2.10.3]MW0LGE
             /* paFloat32: */        PA_USE_CONVERTER_(UInt8, Float32),
             /* paInt32: */          PA_USE_CONVERTER_(UInt8, Int32),
             /* paInt24: */          PA_USE_CONVERTER_(UInt8, Int24),
@@ -261,7 +261,7 @@ PaUtilConverter* PaUtil_SelectConverter(PaSampleFormat sourceFormat,
 /* -------------------------------------------------------------------------- */
 
 PaUtilConverterTable paConverters = {
-    0, /* PaUtilConverter *Float64_To_Float32; */
+    0, /* PaUtilConverter *Float64_To_Float32; */ //[2.10.3]MW0LGE start
     0, /* PaUtilConverter *Float64_To_Int32; */
     0, /* PaUtilConverter *Float64_To_Int24; */
     0, /* PaUtilConverter *Float64_To_Int16; */
@@ -271,7 +271,7 @@ PaUtilConverterTable paConverters = {
     0, /* PaUtilConverter *Float64_To_Int8; */
     0, /* PaUtilConverter *Float64_To_UInt8; */
 
-    0, /* PaUtilConverter *Float32_To_Float64; */
+    0, /* PaUtilConverter *Float32_To_Float64; */ //[2.10.3]MW0LGE end
 
     0, /* PaUtilConverter *Float32_To_Int32; */
     0, /* PaUtilConverter *Float32_To_Int32_Dither; */
@@ -298,7 +298,7 @@ PaUtilConverterTable paConverters = {
     0, /* PaUtilConverter *Float32_To_UInt8_Clip; */
     0, /* PaUtilConverter *Float32_To_UInt8_DitherClip; */
 
-    0, /* PaUtilConverter *Int32_To_Float64; */
+    0, /* PaUtilConverter *Int32_To_Float64; */ //[2.10.3]MW0LGE
     0, /* PaUtilConverter *Int32_To_Float32; */
     0, /* PaUtilConverter *Int32_To_Int24; */
     0, /* PaUtilConverter *Int32_To_Int24_Dither; */
@@ -309,7 +309,7 @@ PaUtilConverterTable paConverters = {
     0, /* PaUtilConverter *Int32_To_UInt8; */
     0, /* PaUtilConverter *Int32_To_UInt8_Dither; */
 
-    0, /* PaUtilConverter *Int24_To_Float64; */
+    0, /* PaUtilConverter *Int24_To_Float64; */ //[2.10.3]MW0LGE
     0, /* PaUtilConverter *Int24_To_Float32; */
     0, /* PaUtilConverter *Int24_To_Int32; */
     0, /* PaUtilConverter *Int24_To_Int16; */
@@ -319,7 +319,7 @@ PaUtilConverterTable paConverters = {
     0, /* PaUtilConverter *Int24_To_UInt8; */
     0, /* PaUtilConverter *Int24_To_UInt8_Dither; */
 
-    0, /* PaUtilConverter *Int16_To_Float64; */
+    0, /* PaUtilConverter *Int16_To_Float64; */ //[2.10.3]MW0LGE
     0, /* PaUtilConverter *Int16_To_Float32; */
     0, /* PaUtilConverter *Int16_To_Int32; */
     0, /* PaUtilConverter *Int16_To_Int24; */
@@ -328,14 +328,14 @@ PaUtilConverterTable paConverters = {
     0, /* PaUtilConverter *Int16_To_UInt8; */
     0, /* PaUtilConverter *Int16_To_UInt8_Dither; */
 
-    0, /* PaUtilConverter *Int8_To_Float64; */
+    0, /* PaUtilConverter *Int8_To_Float64; */ //[2.10.3]MW0LGE
     0, /* PaUtilConverter *Int8_To_Float32; */
     0, /* PaUtilConverter *Int8_To_Int32; */
     0, /* PaUtilConverter *Int8_To_Int24 */
     0, /* PaUtilConverter *Int8_To_Int16; */
     0, /* PaUtilConverter *Int8_To_UInt8; */
 
-    0, /* PaUtilConverter *UInt8_To_Float64; */
+    0, /* PaUtilConverter *UInt8_To_Float64; */ //[2.10.3]MW0LGE
     0, /* PaUtilConverter *UInt8_To_Float32; */
     0, /* PaUtilConverter *UInt8_To_Int32; */
     0, /* PaUtilConverter *UInt8_To_Int24; */
@@ -345,8 +345,8 @@ PaUtilConverterTable paConverters = {
     0, /* PaUtilConverter *Copy_8_To_8; */
     0, /* PaUtilConverter *Copy_16_To_16; */
     0, /* PaUtilConverter *Copy_24_To_24; */
-    0,  /* PaUtilConverter *Copy_32_To_32; */
-    0  /* PaUtilConverter *Copy_64_To_64; */
+    0, /* PaUtilConverter *Copy_32_To_32; */
+    0  /* PaUtilConverter *Copy_64_To_64; */ //[2.10.3]MW0LGE
 };
 
 /* -------------------------------------------------------------------------- */
@@ -366,7 +366,7 @@ static const float const_1_div_32768_ = 1.0f / 32768.f; /* 16 bit multiplier */
 static const double const_1_div_2147483648_ = 1.0 / 2147483648.0; /* 32 bit multiplier */
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Float64_To_Float32(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -386,7 +386,7 @@ static void Float64_To_Float32(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Float64_To_Int32(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -413,7 +413,7 @@ static void Float64_To_Int32(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Float64_To_Int24(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -447,7 +447,7 @@ static void Float64_To_Int24(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Float64_To_Int16(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -473,7 +473,7 @@ static void Float64_To_Int16(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Float64_To_Int16_Dither(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -501,7 +501,7 @@ static void Float64_To_Int16_Dither(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Float64_To_Int16_Clip(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -527,7 +527,7 @@ static void Float64_To_Int16_Clip(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Float64_To_Int16_DitherClip(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -557,7 +557,7 @@ static void Float64_To_Int16_DitherClip(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Float64_To_Int8(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -578,7 +578,7 @@ static void Float64_To_Int8(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Float64_To_UInt8(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -599,7 +599,7 @@ static void Float64_To_UInt8(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Float32_To_Float64(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -1170,7 +1170,7 @@ static void Float32_To_UInt8_DitherClip(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Int32_To_Float64(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -1378,7 +1378,7 @@ static void Int32_To_UInt8_Dither(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Int24_To_Float64(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -1656,7 +1656,7 @@ static void Int24_To_UInt8_Dither(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Int16_To_Float64(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -1834,7 +1834,7 @@ static void Int16_To_UInt8_Dither(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void Int8_To_Float64(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -1965,7 +1965,7 @@ static void Int8_To_UInt8(
 }
 
 /* -------------------------------------------------------------------------- */
-
+ //[2.10.3]MW0LGE
 static void UInt8_To_Float64(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -2205,7 +2205,7 @@ static void Copy_64_To_64(
 /* -------------------------------------------------------------------------- */
 
 PaUtilConverterTable paConverters = {
-    Float64_To_Float32,           /* PaUtilConverter *Float64_To_Float32; */
+    Float64_To_Float32,           /* PaUtilConverter *Float64_To_Float32; */ //[2.10.3]MW0LGE start
     Float64_To_Int32,             /* PaUtilConverter *Float64_To_Int32; */
 
     Float64_To_Int24,             /* PaUtilConverter *Float64_To_Int24; */
@@ -2218,7 +2218,7 @@ PaUtilConverterTable paConverters = {
     Float64_To_Int8,              /* PaUtilConverter *Float64_To_Int8; */
     Float64_To_UInt8,             /* PaUtilConverter *Float64_To_UInt8; */
 
-    Float32_To_Float64,           /* PaUtilConverter *Float32_To_Float64; */
+    Float32_To_Float64,           /* PaUtilConverter *Float32_To_Float64; */ //[2.10.3]MW0LGE end
 
     Float32_To_Int32,              /* PaUtilConverter *Float32_To_Int32; */
     Float32_To_Int32_Dither,       /* PaUtilConverter *Float32_To_Int32_Dither; */
@@ -2245,7 +2245,7 @@ PaUtilConverterTable paConverters = {
     Float32_To_UInt8_Clip,         /* PaUtilConverter *Float32_To_UInt8_Clip; */
     Float32_To_UInt8_DitherClip,   /* PaUtilConverter *Float32_To_UInt8_DitherClip; */
 
-    Int32_To_Float64,             /* PaUtilConverter *Int32_To_Float64; */
+    Int32_To_Float64,              /* PaUtilConverter *Int32_To_Float64; */ //[2.10.3]MW0LGE
     Int32_To_Float32,              /* PaUtilConverter *Int32_To_Float32; */
     Int32_To_Int24,                /* PaUtilConverter *Int32_To_Int24; */
     Int32_To_Int24_Dither,         /* PaUtilConverter *Int32_To_Int24_Dither; */
@@ -2256,7 +2256,7 @@ PaUtilConverterTable paConverters = {
     Int32_To_UInt8,                /* PaUtilConverter *Int32_To_UInt8; */
     Int32_To_UInt8_Dither,         /* PaUtilConverter *Int32_To_UInt8_Dither; */
 
-    Int24_To_Float64,             /* PaUtilConverter *Int24_To_Float64; */
+    Int24_To_Float64,              /* PaUtilConverter *Int24_To_Float64; */ //[2.10.3]MW0LGE
     Int24_To_Float32,              /* PaUtilConverter *Int24_To_Float32; */
     Int24_To_Int32,                /* PaUtilConverter *Int24_To_Int32; */
     Int24_To_Int16,                /* PaUtilConverter *Int24_To_Int16; */
@@ -2266,7 +2266,7 @@ PaUtilConverterTable paConverters = {
     Int24_To_UInt8,                /* PaUtilConverter *Int24_To_UInt8; */
     Int24_To_UInt8_Dither,         /* PaUtilConverter *Int24_To_UInt8_Dither; */
 
-    Int16_To_Float64,             /* PaUtilConverter *Int16_To_Float64; */
+    Int16_To_Float64,              /* PaUtilConverter *Int16_To_Float64; */ //[2.10.3]MW0LGE
     Int16_To_Float32,              /* PaUtilConverter *Int16_To_Float32; */
     Int16_To_Int32,                /* PaUtilConverter *Int16_To_Int32; */
     Int16_To_Int24,                /* PaUtilConverter *Int16_To_Int24; */
@@ -2275,14 +2275,14 @@ PaUtilConverterTable paConverters = {
     Int16_To_UInt8,                /* PaUtilConverter *Int16_To_UInt8; */
     Int16_To_UInt8_Dither,         /* PaUtilConverter *Int16_To_UInt8_Dither; */
 
-    Int8_To_Float64,              /* PaUtilConverter *Int8_To_Float64; */
+    Int8_To_Float64,               /* PaUtilConverter *Int8_To_Float64; */ //[2.10.3]MW0LGE
     Int8_To_Float32,               /* PaUtilConverter *Int8_To_Float32; */
     Int8_To_Int32,                 /* PaUtilConverter *Int8_To_Int32; */
     Int8_To_Int24,                 /* PaUtilConverter *Int8_To_Int24 */
     Int8_To_Int16,                 /* PaUtilConverter *Int8_To_Int16; */
     Int8_To_UInt8,                 /* PaUtilConverter *Int8_To_UInt8; */
 
-    UInt8_To_Float64,             /* PaUtilConverter *Int8_To_Float64; */
+    UInt8_To_Float64,              /* PaUtilConverter *Int8_To_Float64; */ //[2.10.3]MW0LGE
     UInt8_To_Float32,              /* PaUtilConverter *UInt8_To_Float32; */
     UInt8_To_Int32,                /* PaUtilConverter *UInt8_To_Int32; */
     UInt8_To_Int24,                /* PaUtilConverter *UInt8_To_Int24; */
@@ -2293,7 +2293,7 @@ PaUtilConverterTable paConverters = {
     Copy_16_To_16,                 /* PaUtilConverter *Copy_16_To_16; */
     Copy_24_To_24,                 /* PaUtilConverter *Copy_24_To_24; */
     Copy_32_To_32,                 /* PaUtilConverter *Copy_32_To_32; */
-    Copy_64_To_64                  /* PaUtilConverter *Copy_64_To_64; */
+    Copy_64_To_64                  /* PaUtilConverter *Copy_64_To_64; */ //[2.10.3]MW0LGE
 };
 
 /* -------------------------------------------------------------------------- */
@@ -2305,7 +2305,7 @@ PaUtilConverterTable paConverters = {
 PaUtilZeroer* PaUtil_SelectZeroer(PaSampleFormat destinationFormat)
 {
     switch (destinationFormat & ~paNonInterleaved) {
-    case paFloat64:
+    case paFloat64: //[2.10.3]MW0LGE
         return paZeroers.Zero64;
     case paFloat32:
         return paZeroers.Zero32;
@@ -2335,7 +2335,7 @@ PaUtilZeroerTable paZeroers = {
     0,  /* PaUtilZeroer *Zero16; */
     0,  /* PaUtilZeroer *Zero24; */
     0,  /* PaUtilZeroer *Zero32; */
-    0,  /* PaUtilZeroer *Zero64; */
+    0,  /* PaUtilZeroer *Zero64; */ //[2.10.3]MW0LGE
 };
 
 /* -------------------------------------------------------------------------- */
@@ -2421,7 +2421,7 @@ static void Zero32(void* destinationBuffer, signed int destinationStride,
 
 /* -------------------------------------------------------------------------- */
 
-
+ //[2.10.3]MW0LGE
 static void Zero64(void* destinationBuffer, signed int destinationStride,
     unsigned int count)
 {
@@ -2443,7 +2443,7 @@ PaUtilZeroerTable paZeroers = {
     Zero16,  /* PaUtilZeroer *Zero16; */
     Zero24,  /* PaUtilZeroer *Zero24; */
     Zero32,  /* PaUtilZeroer *Zero32; */
-    Zero64,  /* PaUtilZeroer *Zero64; */
+    Zero64,  /* PaUtilZeroer *Zero64; */ //[2.10.3]MW0LGE
 };
 
 /* -------------------------------------------------------------------------- */

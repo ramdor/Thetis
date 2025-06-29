@@ -1283,6 +1283,7 @@ PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex
 
         IsDebuggerPresent_ = (IsDebuggerPresentPtr)GetProcAddress( LoadLibraryA( "Kernel32.dll" ), "IsDebuggerPresent" );
 
+		//[2.10.3]MW0LGE W4WMT
         // check to see if cmASIO will be using a driver
         const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
         const LPCSTR valueName = "ASIOdrivername";
@@ -1313,7 +1314,7 @@ PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex
                 || strcmp (names[i],"ASIO Multimedia Driver")          == 0
                 || strncmp(names[i],"Premiere",8)                      == 0   //"Premiere Elements Windows Sound 1.0"
                 || strncmp(names[i],"Adobe",5)                         == 0   //"Adobe Default Windows Sound 1.5"
-                || strcmp(names[i], szData)                            == 0   //driver that cmASIO is using, if there is one
+                || strcmp(names[i], szData)                            == 0   //driver that cmASIO is using, if there is one //[2.10.3]MW0LGE W4WMT
                 )
             {
                 PA_DEBUG(("BLACKLISTED!!!\n"));

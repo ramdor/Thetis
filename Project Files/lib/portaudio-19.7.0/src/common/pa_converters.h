@@ -136,7 +136,7 @@ PaUtilZeroer* PaUtil_SelectZeroer( PaSampleFormat destinationFormat );
     @see paConverters;
 */
 typedef struct {
-    PaUtilConverter* Float64_To_Float32;
+    PaUtilConverter* Float64_To_Float32; //[2.10.3]MW0LGE start
     PaUtilConverter* Float64_To_Int32;
     PaUtilConverter* Float64_To_Int24;
     PaUtilConverter* Float64_To_Int16;
@@ -147,7 +147,7 @@ typedef struct {
     PaUtilConverter* Float64_To_Int8;
     PaUtilConverter* Float64_To_UInt8;
 
-    PaUtilConverter* Float32_To_Float64;
+    PaUtilConverter* Float32_To_Float64; //[2.10.3]MW0LGE end
 
     PaUtilConverter* Float32_To_Int32;
     PaUtilConverter* Float32_To_Int32_Dither;
@@ -174,7 +174,7 @@ typedef struct {
     PaUtilConverter* Float32_To_UInt8_Clip;
     PaUtilConverter* Float32_To_UInt8_DitherClip;
 
-    PaUtilConverter* Int32_To_Float64;
+    PaUtilConverter* Int32_To_Float64;//[2.10.3]MW0LGE
     PaUtilConverter* Int32_To_Float32;
     PaUtilConverter* Int32_To_Int24;
     PaUtilConverter* Int32_To_Int24_Dither;
@@ -185,7 +185,7 @@ typedef struct {
     PaUtilConverter* Int32_To_UInt8;
     PaUtilConverter* Int32_To_UInt8_Dither;
 
-    PaUtilConverter* Int24_To_Float64;
+    PaUtilConverter* Int24_To_Float64;//[2.10.3]MW0LGE
     PaUtilConverter* Int24_To_Float32;
     PaUtilConverter* Int24_To_Int32;
     PaUtilConverter* Int24_To_Int16;
@@ -195,7 +195,7 @@ typedef struct {
     PaUtilConverter* Int24_To_UInt8;
     PaUtilConverter* Int24_To_UInt8_Dither;
 
-    PaUtilConverter* Int16_To_Float64;
+    PaUtilConverter* Int16_To_Float64;//[2.10.3]MW0LGE
     PaUtilConverter* Int16_To_Float32;
     PaUtilConverter* Int16_To_Int32;
     PaUtilConverter* Int16_To_Int24;
@@ -204,14 +204,14 @@ typedef struct {
     PaUtilConverter* Int16_To_UInt8;
     PaUtilConverter* Int16_To_UInt8_Dither;
 
-    PaUtilConverter* Int8_To_Float64;
+    PaUtilConverter* Int8_To_Float64;//[2.10.3]MW0LGE
     PaUtilConverter* Int8_To_Float32;
     PaUtilConverter* Int8_To_Int32;
     PaUtilConverter* Int8_To_Int24;
     PaUtilConverter* Int8_To_Int16;
     PaUtilConverter* Int8_To_UInt8;
 
-    PaUtilConverter* UInt8_To_Float64;
+    PaUtilConverter* UInt8_To_Float64;//[2.10.3]MW0LGE
     PaUtilConverter* UInt8_To_Float32;
     PaUtilConverter* UInt8_To_Int32;
     PaUtilConverter* UInt8_To_Int24;
@@ -222,7 +222,7 @@ typedef struct {
     PaUtilConverter* Copy_16_To_16;     /* copy without any conversion */
     PaUtilConverter* Copy_24_To_24;     /* copy without any conversion */
     PaUtilConverter* Copy_32_To_32;     /* copy without any conversion */
-    PaUtilConverter* Copy_64_To_64;     /* copy without any conversion */
+    PaUtilConverter* Copy_64_To_64;     /* copy without any conversion */ //[2.10.3]MW0LGE
 } PaUtilConverterTable;
 
 
@@ -255,7 +255,7 @@ typedef struct{
     PaUtilZeroer *Zero16;
     PaUtilZeroer *Zero24;
     PaUtilZeroer *Zero32;
-    PaUtilZeroer *Zero64;
+    PaUtilZeroer *Zero64; //[2.10.3]MW0LGE
 } PaUtilZeroerTable;
 
 
