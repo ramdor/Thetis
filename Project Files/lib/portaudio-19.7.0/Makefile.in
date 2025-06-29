@@ -44,7 +44,7 @@ PALIB = libportaudio.la
 PAINC = include/portaudio.h
 
 PA_LDFLAGS = $(LDFLAGS) $(SHARED_FLAGS) -rpath $(libdir) -no-undefined \
-	     -export-symbols-regex "(Pa|PaMacCore|PaJack|PaAlsa|PaAsio|PaOSS|PaWasapi|PaWasapiWinrt)_.*" \
+	     -export-symbols-regex "(Pa|PaMacCore|PaPulseAudio|PaJack|PaAlsa|PaAsio|PaOSS|PaWasapi|PaWasapiWinrt|PaWinMME)_.*" \
 	     -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 COMMON_OBJS = \
@@ -66,7 +66,12 @@ LOOPBACK_OBJS = \
 	qa/loopback/src/test_audio_analyzer.o \
 	qa/loopback/src/write_wav.o \
 	qa/loopback/src/paqa.o
-	
+
+PATEST_CONVERTER_OBJS = \
+	src/common/pa_converters.o \
+	src/common/pa_dither.o \
+	test/patest_converters.o
+
 EXAMPLES = \
 	bin/pa_devs \
 	bin/pa_fuzz \
@@ -82,12 +87,13 @@ SELFTESTS = \
 	bin/paqa_devs \
 	bin/paqa_errs \
 	bin/paqa_latency
-	
+
 TESTS = \
 	bin/patest1 \
 	bin/patest_buffer \
 	bin/patest_callbackstop \
 	bin/patest_clip \
+	bin/patest_converters \
 	bin/patest_dither \
 	bin/patest_hang \
 	bin/patest_in_overflow \
@@ -142,11 +148,14 @@ SRC_DIRS = \
 	src/hostapi/alsa \
 	src/hostapi/asihpi \
 	src/hostapi/asio \
+	src/hostapi/audioio \
 	src/hostapi/coreaudio \
 	src/hostapi/dsound \
 	src/hostapi/jack \
+	src/hostapi/pulseaudio \
 	src/hostapi/oss \
 	src/hostapi/skeleton \
+	src/hostapi/sndio \
 	src/hostapi/wasapi \
 	src/hostapi/wdmks \
 	src/hostapi/wmme \
@@ -187,6 +196,10 @@ bin/paloopback: lib/$(PALIB) $(MAKEFILE) $(PAINC) $(LOOPBACK_OBJS)
 	@WITH_ASIO_FALSE@ $(LIBTOOL) --mode=link $(CC) -o $@ $(CFLAGS) $(LOOPBACK_OBJS) lib/$(PALIB) $(LIBS)
 	@WITH_ASIO_TRUE@ $(LIBTOOL) --mode=link --tag=CXX $(CXX) -o $@ $(CXXFLAGS)  $(LOOPBACK_OBJS) lib/$(PALIB) $(LIBS)
 
+bin/patest_converters: lib/$(PALIB) $(MAKEFILE) $(PAINC) $(PATEST_CONVERTER_OBJS)
+	@WITH_ASIO_FALSE@ $(LIBTOOL) --mode=link $(CC) -o $@ $(CFLAGS) $(PATEST_CONVERTER_OBJS) lib/$(PALIB) $(LIBS)
+	@WITH_ASIO_TRUE@ $(LIBTOOL) --mode=link --tag=CXX $(CXX) -o $@ $(CXXFLAGS)  $(PATEST_CONVERTER_OBJS) lib/$(PALIB) $(LIBS)
+
 install: lib/$(PALIB) portaudio-2.0.pc
 	$(INSTALL) -d $(DESTDIR)$(libdir)
 	$(LIBTOOL) --mode=install $(INSTALL) lib/$(PALIB) $(DESTDIR)$(libdir)
@@ -210,8 +223,12 @@ install: lib/$(PALIB) portaudio-2.0.pc
 
 uninstall:
 	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(libdir)/$(PALIB)
-	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(includedir)/portaudio.h
+	for include in $(INCLUDES); do \
+		$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(includedir)/$$include; \
+	done
+	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(libdir)/pkgconfig/portaudio-2.0.pc
 	$(MAKE) uninstall-recursive
+
 
 clean:
 	$(LIBTOOL) --mode=clean rm -f $(LTOBJS) $(LOOPBACK_OBJS) $(ALL_TESTS) lib/$(PALIB)

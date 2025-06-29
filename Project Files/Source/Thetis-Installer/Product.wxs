@@ -253,10 +253,13 @@
               />
       </Component>
 
+	  <!-- attempt to get the MSI installer package to use a Checksum for the PA19 dll, as we
+	  dont update the version number for this, but want to install it -->
       <Component Guid="*">
         <File Id="PA19DLL"
               Source="$(var.FilesPath)PA19.dll"
               KeyPath="yes"
+			  Checksum="yes" 
               />
       </Component>
 
