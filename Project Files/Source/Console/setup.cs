@@ -2747,16 +2747,19 @@ namespace Thetis
             udN1MMSendRate_ValueChanged(this, e);
             udN1MMRX1Scaling_ValueChanged(this, e);
             udN1MMRX2Scaling_ValueChanged(this, e);
-            udMaxTCISpots_ValueChanged(this, EventArgs.Empty);
-            udTCISpotLifetime_ValueChanged(this, EventArgs.Empty);
-            chkShowTCISpots_CheckedChanged(this, EventArgs.Empty);
-            chkSpotOwnCallAppearance_CheckedChanged(this, EventArgs.Empty);
-            chkFlashNewTCISpots_CheckedChanged(this, EventArgs.Empty);
+
+            //network tci ect tab
+            udMaxTCISpots_ValueChanged(this, e);
+            udTCISpotLifetime_ValueChanged(this, e);
+            chkShowTCISpots_CheckedChanged(this, e);
+            chkSpotOwnCallAppearance_CheckedChanged(this, e);
+            chkFlashNewTCISpots_CheckedChanged(this, e);
+            chkOverrideSpotFlashColour_CheckedChanged(this, e);
 
             //MIDI
-            chkIgnore14bitMidiMessages_CheckedChanged(this, EventArgs.Empty);
-            chkMidiControlIDincludesChannel_CheckedChanged(this, EventArgs.Empty);
-            chkMidiControlIDincludesStatus_CheckedChanged(this, EventArgs.Empty);
+            chkIgnore14bitMidiMessages_CheckedChanged(this, e);
+            chkMidiControlIDincludesChannel_CheckedChanged(this, e);
+            chkMidiControlIDincludesStatus_CheckedChanged(this, e);
 
             // SNB
             udDSPSNBThresh1_ValueChanged(this, e);
@@ -2825,7 +2828,6 @@ namespace Thetis
             //PA
             comboPAProfile_SelectedIndexChanged(this, e); //MW0LGE_22b
 
-            //
             chkForceATTwhenPSAoff_CheckedChanged(this, e); //MW0LGE [2.9.0.7]
             chkForceATTwhenOutPowerChanges_CheckedChanged(this, e);
             chkForceATTwhenOutPowerChanges_decreased_CheckedChanged(this, e);
@@ -22838,6 +22840,8 @@ namespace Thetis
         private void chkFlashNewTCISpots_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            chkOverrideSpotFlashColour.Enabled = chkFlashNewTCISpots.Checked;
+            clrbtnSpotFlashColour.Enabled = chkFlashNewTCISpots.Checked && chkOverrideSpotFlashColour.Checked;
             Display.FlashNewTCISpots = chkFlashNewTCISpots.Checked;
         }
         public bool ShowTCISpots
@@ -34623,6 +34627,20 @@ namespace Thetis
         private void ucMeterItemSignalType_SignalTypeChanged(object sender, ucSignalSelect.SignalTypeChangedEventArgs e)
         {
             updateMeterType();
+        }
+
+        private void chkOverrideSpotFlashColour_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            clrbtnSpotFlashColour.Enabled = chkOverrideSpotFlashColour.Checked;
+            Display.OverrideSpotFlashColour = chkOverrideSpotFlashColour.Checked;
+            clrbtnSpotFlashColour_Changed(this, EventArgs.Empty);
+        }
+
+        private void clrbtnSpotFlashColour_Changed(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            Display.SpotFlashColour = clrbtnSpotFlashColour.Color;
         }
     }
 

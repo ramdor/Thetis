@@ -5195,13 +5195,13 @@ namespace Thetis
                                 else
                                 {
                                     _two_tone_readings_X_offset = 50;
-                                    _d2dRenderTarget.DrawText("Peaks not found !\n\nEnsure that IMD3 lower/upper and\nIMD5 lower/upper are in the display.", fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 10, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                    _d2dRenderTarget.DrawText("Peaks not found !\n\nEnsure that IMD3 lower/upper and\nIMD5 lower/upper are in the display.\n\nTry changing FFT windowing method.", fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 10, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                                 }
                             }
                             else
                             {
                                 _two_tone_readings_X_offset = 50;
-                                _d2dRenderTarget.DrawText("Peaks not found !\n\nTry increasing zoom and/or\nchanging sample rate.\n\nFundamental peak separation needs to be increased.", fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 10, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                                _d2dRenderTarget.DrawText("Peaks not found !\n\nTry increasing zoom and/or\nchanging sample rate.\n\nFundamental peak separation needs to be increased.\n\nTry changing FFT windowing method.", fontDX2d_callout, new RectangleF(_two_tone_readings_X_offset + 10, 54, 200, 120), m_bDX2_PeakBlobText, DrawTextOptions.None);
                             }
                         }
                     }
@@ -10684,7 +10684,7 @@ namespace Thetis
                         // used for mouse over + rectangle tag
                         spot.BoundingBoxInPixels[rx - 1].X = leftX - 1;
                         spot.BoundingBoxInPixels[rx - 1].Y = textY - 1;
-                        spot.BoundingBoxInPixels[rx - 1].Width = (int)(spot.Size.Width + 2);
+                        spot.BoundingBoxInPixels[rx - 1].Width = (int)(spot.Size.Width + 4);
                         spot.BoundingBoxInPixels[rx - 1].Height = (int)(spot.Size.Height + 2);
 
                         if (spot.Highlight[rx - 1])
@@ -10729,7 +10729,7 @@ namespace Thetis
             SpotManager2.smSpot highLightedSpot = null;
             foreach (SpotManager2.smSpot spot in visibleSpots)
             {
-                SharpDX.Direct2D1.Brush brightBorder_new_spot = getDXBrushForColour(spot.colour, _new_spot_fade);
+                SharpDX.Direct2D1.Brush brightBorder_new_spot = _override_spot_flash_colour ? getDXBrushForColour(_spot_flash_colour, _new_spot_fade) : getDXBrushForColour(spot.colour, _new_spot_fade);
 
                 sDisplayString = getCallsignString(spot);
 
@@ -10751,9 +10751,6 @@ namespace Thetis
                     if (!_flashNewTCISpots) continue;
 
                     // now draw a border around any spot that is <= 2 mins
-                    TimeSpan age = DateTime.UtcNow - spot.utc_spot_time;
-                    if (age.TotalSeconds <= 120) spot.flashing = true;
-
                     if (spot.flashing && !spot.IsSWL && !spot.previously_highlighted)
                     {
                         Rectangle r = new Rectangle(spot.BoundingBoxInPixels[rx - 1].X - 2, spot.BoundingBoxInPixels[rx - 1].Y - 2,
@@ -10761,6 +10758,7 @@ namespace Thetis
 
                         drawRectangleDX2D(brightBorder_new_spot, r, 4);
 
+                        TimeSpan age = DateTime.UtcNow - spot.flash_start_time;
                         if (age.TotalSeconds > 120 && _new_spot_fade < 20) spot.flashing = false; // stop flashing when dim
                     }
                 }
@@ -10912,7 +10910,18 @@ namespace Thetis
             get { return _flashNewTCISpots; }
             set { _flashNewTCISpots= value; }
         }
-
+        private static bool _override_spot_flash_colour = false;
+        public static bool OverrideSpotFlashColour
+        {
+            get { return _override_spot_flash_colour; }
+            set { _override_spot_flash_colour = value; }
+        }
+        private static Color _spot_flash_colour = Color.Yellow;
+        public static Color SpotFlashColour
+        {
+            get { return _spot_flash_colour; }
+            set { _spot_flash_colour = value; }
+        }
         private static bool _bUseLegacyBuffers = false;
         public static bool UseLegacyBuffers
         {

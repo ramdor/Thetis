@@ -8,6 +8,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 
 ## v2.10.3.11 - Dev Change Log
 - [change] updated PortAudio from the Release 19.7.0 to the latest code as of 29/06/25. Version number has not changed. Last commit was 13/06/25 #87e35e7
+- [change] for new TCI spots without the [json] tag they will always flash for 2 mins if the option is selected. If the spot comes in again and already exists in the display then it will not flash if this 2 min has elapsed
 
 ## v2.10.3.10 - Change Log
 - [add] flash new TCI spots option in Setup->Serial/Network/MidiCat->Network. Spots that are <2 mins old will flash. Hovering over them will stop the flashing

@@ -3478,6 +3478,7 @@
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
             this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.chkFlashNewTCISpots = new System.Windows.Forms.CheckBoxTS();
             this.btnClearTCISpotsSWL = new System.Windows.Forms.ButtonTS();
             this.chkForgetRX2VfoBVFOinfo = new System.Windows.Forms.CheckBoxTS();
             this.chkCWbecomesCWUabove10mhz = new System.Windows.Forms.CheckBoxTS();
@@ -4250,7 +4251,8 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.chkFlashNewTCISpots = new System.Windows.Forms.CheckBoxTS();
+            this.clrbtnSpotFlashColour = new Thetis.ColorButton();
+            this.chkOverrideSpotFlashColour = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -55796,6 +55798,8 @@
             // 
             // grpTCIServer
             // 
+            this.grpTCIServer.Controls.Add(this.chkOverrideSpotFlashColour);
+            this.grpTCIServer.Controls.Add(this.clrbtnSpotFlashColour);
             this.grpTCIServer.Controls.Add(this.chkFlashNewTCISpots);
             this.grpTCIServer.Controls.Add(this.btnClearTCISpotsSWL);
             this.grpTCIServer.Controls.Add(this.chkForgetRX2VfoBVFOinfo);
@@ -55831,6 +55835,19 @@
             this.grpTCIServer.TabIndex = 98;
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
+            // 
+            // chkFlashNewTCISpots
+            // 
+            this.chkFlashNewTCISpots.AutoSize = true;
+            this.chkFlashNewTCISpots.Image = null;
+            this.chkFlashNewTCISpots.Location = new System.Drawing.Point(221, 289);
+            this.chkFlashNewTCISpots.Name = "chkFlashNewTCISpots";
+            this.chkFlashNewTCISpots.Size = new System.Drawing.Size(74, 17);
+            this.chkFlashNewTCISpots.TabIndex = 103;
+            this.chkFlashNewTCISpots.Text = "Flash new";
+            this.toolTip1.SetToolTip(this.chkFlashNewTCISpots, "New spots will flash (newer than 2 mins)");
+            this.chkFlashNewTCISpots.UseVisualStyleBackColor = true;
+            this.chkFlashNewTCISpots.CheckedChanged += new System.EventHandler(this.chkFlashNewTCISpots_CheckedChanged);
             // 
             // btnClearTCISpotsSWL
             // 
@@ -67499,18 +67516,31 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // chkFlashNewTCISpots
+            // clrbtnSpotFlashColour
             // 
-            this.chkFlashNewTCISpots.AutoSize = true;
-            this.chkFlashNewTCISpots.Image = null;
-            this.chkFlashNewTCISpots.Location = new System.Drawing.Point(237, 289);
-            this.chkFlashNewTCISpots.Name = "chkFlashNewTCISpots";
-            this.chkFlashNewTCISpots.Size = new System.Drawing.Size(102, 17);
-            this.chkFlashNewTCISpots.TabIndex = 103;
-            this.chkFlashNewTCISpots.Text = "Flash new spots";
-            this.toolTip1.SetToolTip(this.chkFlashNewTCISpots, "New spots will flash (newer than 2 mins)");
-            this.chkFlashNewTCISpots.UseVisualStyleBackColor = true;
-            this.chkFlashNewTCISpots.CheckedChanged += new System.EventHandler(this.chkFlashNewTCISpots_CheckedChanged);
+            this.clrbtnSpotFlashColour.Automatic = "Automatic";
+            this.clrbtnSpotFlashColour.Color = System.Drawing.Color.Yellow;
+            this.clrbtnSpotFlashColour.Image = null;
+            this.clrbtnSpotFlashColour.Location = new System.Drawing.Point(329, 285);
+            this.clrbtnSpotFlashColour.MoreColors = "More Colors...";
+            this.clrbtnSpotFlashColour.Name = "clrbtnSpotFlashColour";
+            this.clrbtnSpotFlashColour.Selectable = true;
+            this.clrbtnSpotFlashColour.Size = new System.Drawing.Size(40, 23);
+            this.clrbtnSpotFlashColour.TabIndex = 104;
+            this.toolTip1.SetToolTip(this.clrbtnSpotFlashColour, "The colour of your callsign if it appears as a spot");
+            this.clrbtnSpotFlashColour.Changed += new System.EventHandler(this.clrbtnSpotFlashColour_Changed);
+            // 
+            // chkOverrideSpotFlashColour
+            // 
+            this.chkOverrideSpotFlashColour.AutoSize = true;
+            this.chkOverrideSpotFlashColour.Image = null;
+            this.chkOverrideSpotFlashColour.Location = new System.Drawing.Point(308, 290);
+            this.chkOverrideSpotFlashColour.Name = "chkOverrideSpotFlashColour";
+            this.chkOverrideSpotFlashColour.Size = new System.Drawing.Size(15, 14);
+            this.chkOverrideSpotFlashColour.TabIndex = 112;
+            this.toolTip1.SetToolTip(this.chkOverrideSpotFlashColour, "Override the flash colour");
+            this.chkOverrideSpotFlashColour.UseVisualStyleBackColor = true;
+            this.chkOverrideSpotFlashColour.CheckedChanged += new System.EventHandler(this.chkOverrideSpotFlashColour_CheckedChanged);
             // 
             // Setup
             // 
@@ -73099,5 +73129,7 @@
         private NumericUpDownTS nudPulsed_TwoTone_percent;
         private ucSignalSelect ucMeterItemSignalType;
         private CheckBoxTS chkFlashNewTCISpots;
+        private CheckBoxTS chkOverrideSpotFlashColour;
+        private ColorButton clrbtnSpotFlashColour;
     }
 }
