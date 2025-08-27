@@ -130,6 +130,7 @@ namespace Thetis
             get { return m_bQuckAttenuate; }
             set { m_bQuckAttenuate = value; }
         }
+<<<<<<< Project Files/Source/Console/PSForm.cs
         public ToolTip ToolTip //[2.10.3.9]MW0LGE used by finder
         {
             get
@@ -137,6 +138,9 @@ namespace Thetis
                 return toolTip1;
             }
         }
+=======
+
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
         public void StopPSThread()
         {
             _bPSRunning = false;
@@ -173,6 +177,7 @@ namespace Thetis
 
                 Thread.Sleep(sleepDuration);
             }
+<<<<<<< Project Files/Source/Console/PSForm.cs
         }
 
         //private volatile bool _dismissAmpv = false;
@@ -191,6 +196,26 @@ namespace Thetis
             get { return _psenabled; }
             set
             {
+=======
+        }
+
+        private bool _dismissAmpv = false;
+        public bool DismissAmpv
+        {
+            get { return _dismissAmpv; }
+            set
+            {
+                _dismissAmpv = value;
+            }
+        }
+
+        private static bool _psenabled = false;
+        public bool PSEnabled
+        {
+            get { return _psenabled; }
+            set
+            {
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
                 _psenabled = value;
 
                 if (_psenabled)
@@ -299,6 +324,7 @@ namespace Thetis
             {
                 _mox = value;
                 puresignal.SetPSMox(_txachannel, value);
+<<<<<<< Project Files/Source/Console/PSForm.cs
             }
         }
 
@@ -323,6 +349,32 @@ namespace Thetis
         }
 
         private void psdefpeak(double value)
+=======
+            }
+        }
+
+        private int _ints = 16;
+        public int Ints
+        {
+            get { return _ints; }
+            set
+            {
+                _ints = value;
+            }
+        }
+
+        private int _spi = 256;
+        public int Spi
+        {
+            get { return _spi; }
+            set
+            {
+                _spi = value;
+            }
+        }
+
+        public void PSdefpeak(double value)
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
         {
             // note : PSpeak_TextChanged will fire if db recovers value into text box
             string sVal = value.ToString();
@@ -337,11 +389,34 @@ namespace Thetis
         #endregion
 
         #region event handlers
+<<<<<<< Project Files/Source/Console/PSForm.cs
         private void PSForm_Load(object sender, EventArgs e)
         {
             SetupForm();
         }
 
+=======
+        private void PSForm_Load(object sender, EventArgs e)
+        {
+            SetupForm();// e); // all moved into function that can be used outside as we now do not dispose the form each time   //MW0LGE_[2.9.0.7]
+
+            //if (ttgenON == true)
+            //    btnPSTwoToneGen.BackColor = Color.FromArgb(gcolor);
+
+            //MW0LGE_21k9d5 (rc3)
+            //unsafe
+            //{
+            //    fixed (double* ptr = &PShwpeak)
+            //        puresignal.GetPSHWPeak(txachannel, ptr);
+            //}
+            //
+            //PSpeak.Text = PShwpeak.ToString();
+
+
+            //btnPSAdvanced_Click(this, e);
+        }
+
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
         public void SetupForm()//EventArgs e)  //MW0LGE_[2.9.0.7]
         {
             if (_ttgenON == true)
@@ -356,6 +431,7 @@ namespace Thetis
             txtPSpeak.Text = _PShwpeak.ToString();
 
             setAdvancedView();  //MW0LGE_[2.9.0.7]
+<<<<<<< Project Files/Source/Console/PSForm.cs
         }
 
         private void PSForm_Closing(object sender, FormClosingEventArgs e)
@@ -376,6 +452,26 @@ namespace Thetis
         }
 
         private readonly ManualResetEventSlim _ampViewDone = new ManualResetEventSlim(false);
+=======
+        }
+
+        private void PSForm_Closing(object sender, FormClosingEventArgs e)
+        {
+            //[2.10.3.4]]MW0LGE leave it there until thetis closes
+            //if (ampv != null)
+            //{
+            //    _dismissAmpv = true;
+            //    ampvThread.Join();
+            //    ampv.Close();
+            //    ampv = null;
+            //}
+            //_advancedON = true;//MW0LGE_[2.9.0.7]
+            //btnPSAdvanced_Click(this, e); //MW0LGE_[2.9.0.7]
+            this.Hide();
+            e.Cancel = true;
+            Common.SaveForm(this, "PureSignal");
+        }
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
         public void CloseAmpView()
         {
             if (ampv != null)
@@ -396,6 +492,7 @@ namespace Thetis
                 ampvThread = null;
                 ampv = null;
             }
+<<<<<<< Project Files/Source/Console/PSForm.cs
         }
         public void RunAmpv()
         {
@@ -419,6 +516,30 @@ namespace Thetis
 
         private void btnPSCalibrate_Click(object sender, EventArgs e)
         {
+=======
+        }
+        public void RunAmpv()
+        {
+            ampv = new AmpView(this);
+            ampv.Opacity = 0;
+            Application.Run(ampv);            
+        }
+
+        private void btnPSAmpView_Click(object sender, EventArgs e)
+        {
+            if (ampv == null || (ampv != null && ampv.IsDisposed))
+            {
+                _dismissAmpv = false;
+                ampvThread = new Thread(RunAmpv);
+                ampvThread.SetApartmentState(ApartmentState.STA);
+                ampvThread.Name = "Ampv Thread";
+                ampvThread.Start();
+            }
+        }
+
+        private void btnPSCalibrate_Click(object sender, EventArgs e)
+        {
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
             if (_singlecalON)
             {
                 // need this incase single cal is unable to complete do to bad feedback level
@@ -498,6 +619,29 @@ namespace Thetis
                 _restoreON = true;
             }
         }
+<<<<<<< Project Files/Source/Console/PSForm.cs
+=======
+        public double GetDefaultPeak()
+        {
+            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB)
+            {
+                // MI0BOT: HL2 has a different PSdefpeak 
+                //protocol 1
+                if (console.CurrentHPSDRHardware == HPSDRHW.HermesLite)
+                    return 0.233;
+                else
+                    return 0.4072;
+            }
+            else
+            {
+                //protocol 2
+                if (console.CurrentHPSDRHardware == HPSDRHW.Saturn)
+                    return 0.6121;
+                else
+                    return 0.2899;
+            }
+        }
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
         public void SetDefaultPeaks()
         {
             psdefpeak(HardwareSpecific.PSDefaultPeak);
@@ -578,7 +722,7 @@ namespace Thetis
                     puresignal.GetPSMaxTX(_txachannel, ptr);
             }
             string s = _GetPSpeakval.ToString();
-            if (GetPSpeak.Text != s) GetPSpeak.Text = s;
+            if(txtGetPSpeak.Text != s) txtGetPSpeak.Text = s;
 
             // Command State-Machine
             switch (_cmdstate)
@@ -686,8 +830,10 @@ namespace Thetis
             switch (_autoAttenuateState)
             {
                 case eAAState.Monitor:// 0: // monitor
-                    if (_autoattenuate && puresignal.CalibrationAttemptsChanged
-                        && puresignal.NeedToRecalibrate(console.SetupForm.ATTOnTX))
+                    if (_autoattenuate &&
+                        puresignal.CalibrationAttemptsChanged &&
+                        ((HPSDRModel.HERMESLITE != console.CurrentHPSDRModel && puresignal.NeedToRecalibrate(console.SetupForm.ATTOnTX)) ||
+                        (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel && puresignal.NeedToRecalibrate_HL2(console.SetupForm.ATTOnTX))))
                     {
                         if (!console.ATTOnTX) AutoAttenuate = true; //MW0LGE
 
@@ -697,12 +843,28 @@ namespace Thetis
                         if (puresignal.IsFeedbackLevelOK)
                         {
                             ddB = 20.0 * Math.Log10((double)puresignal.FeedbackLevel / 152.293);
-                            if (Double.IsNaN(ddB)) ddB = 31.1;
-                            if (ddB < -100.0) ddB = -100.0;
-                            if (ddB > +100.0) ddB = +100.0;
+
+
+                            if (HPSDRModel.HERMESLITE != console.CurrentHPSDRModel)
+                            {
+                                if (Double.IsNaN(ddB)) ddB = 31.1;
+                                if (ddB < -100.0) ddB = -100.0;
+                                if (ddB > +100.0) ddB = +100.0;
+                            }
+                            else
+                            {
+                                if (Double.IsNaN(ddB)) ddB = 10.0;  // MI0BOT: Handle the Not A Number situation
+                                if (ddB < -100.0) ddB = -10.0;      // MI0BOT: Handle - infinity 
+                                if (ddB > +100.0) ddB = 10.0;       // MI0BOT: Handle + infinity 
+                            }
                         }
                         else
-                            ddB = 31.1;
+                        {
+                            if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                                ddB = 10.0;
+                            else
+                                ddB = 31.1;
+                        }
 
                         _deltadB = Convert.ToInt32(ddB);
 
@@ -717,10 +879,19 @@ namespace Thetis
                     _autoAttenuateState = eAAState.RestoreOperation;//2;
                     int newAtten;
                     int oldAtten = console.SetupForm.ATTOnTX;
-                    if ((oldAtten + _deltadB) > 0)
-                        newAtten = oldAtten + _deltadB;
+
+                    if (HPSDRModel.HERMESLITE == console.CurrentHPSDRModel)
+                    {
+                        newAtten = oldAtten + _deltadB;     //MI0BOT: HL2 can handle negative up to -28, just let it be handled in ATTOnTx section
+                    }
                     else
-                        newAtten = 0;
+                    {
+                        if ((oldAtten + _deltadB) > 0)
+                            newAtten = oldAtten + _deltadB;
+                        else
+                            newAtten = 0;
+                    }
+
                     if (console.SetupForm.ATTOnTX != newAtten)
                     {
                         console.SetupForm.ATTOnTX = newAtten;
@@ -749,6 +920,7 @@ namespace Thetis
                 //double set_pk = GetDefaultPeak();
                 UpdateWarningSetPk();
             }                       
+<<<<<<< Project Files/Source/Console/PSForm.cs
         }
         public void UpdateWarningSetPk()
         {
@@ -757,6 +929,12 @@ namespace Thetis
 
         private void chkPSRelaxPtol_CheckedChanged(object sender, EventArgs e)
         {
+=======
+        }
+
+        private void chkPSRelaxPtol_CheckedChanged(object sender, EventArgs e)
+        {
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
             if (chkPSRelaxPtol.Checked)
                 puresignal.SetPSPtol(_txachannel, 0.400);
             else
@@ -884,6 +1062,7 @@ namespace Thetis
             else
             {
                 puresignal.SetPSControl(_txachannel, 0, 0, 1, 0);
+<<<<<<< Project Files/Source/Console/PSForm.cs
             }
             if (!_ttgenON)
                 WDSP.SetTXAPostGenRun(_txachannel, 0);
@@ -907,6 +1086,30 @@ namespace Thetis
         }
 
         #endregion
+=======
+            }
+            if (!_ttgenON)
+                WDSP.SetTXAPostGenRun(_txachannel, 0);
+            else
+            {
+                WDSP.SetTXAPostGenMode(_txachannel, 1);
+                WDSP.SetTXAPostGenRun(_txachannel, 1);
+            }
+            udPSCalWait_ValueChanged(this, e);
+            udPSPhnum_ValueChanged(this, e);
+            udPSMoxDelay_ValueChanged(this, e);
+            chkPSRelaxPtol_CheckedChanged(this, e);
+            chkPSAutoAttenuate_CheckedChanged(this, e);
+            chkPSPin_CheckedChanged(this, e);
+            chkPSMap_CheckedChanged(this, e);
+            chkPSStbl_CheckedChanged(this, e);
+            comboPSTint_SelectedIndexChanged(this, e);
+            chkPSOnTop_CheckedChanged(this, e);
+            chkQuickAttenuate_CheckedChanged(this, e);
+        }
+
+        #endregion
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
 
         private void chkQuickAttenuate_CheckedChanged(object sender, EventArgs e)
         {
@@ -917,6 +1120,7 @@ namespace Thetis
         {
             SetDefaultPeaks();
         }
+<<<<<<< Project Files/Source/Console/PSForm.cs
 
         private void chkShow2ToneMeasurements_CheckedChanged(object sender, EventArgs e)
         {
@@ -1007,6 +1211,93 @@ namespace Thetis
         private static int[] oldInfo = new int[16];
         private static bool _bInvertRedBlue = false;
         private static bool _validGetInfo = false;
+=======
+    }
+
+    unsafe static class puresignal
+    {
+        #region DllImport - Main
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSRunCal", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSRunCal(int channel, bool run);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSMox", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSMox(int channel, bool mox);
+
+        [DllImport("wdsp.dll", EntryPoint = "GetPSInfo", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetPSInfo(int channel, int* info);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSReset", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSReset(int channel, int reset);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSMancal", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSMancal(int channel, int mancal);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSAutomode", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSAutomode(int channel, int automode);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSTurnon", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSTurnon(int channel, int turnon);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSControl", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSControl(int channel, int reset, int mancal, int automode, int turnon);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSLoopDelay", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSLoopDelay(int channel, double delay);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSMoxDelay", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSMoxDelay(int channel, double delay);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSTXDelay", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double SetPSTXDelay(int channel, double delay);
+
+        [DllImport("wdsp.dll", EntryPoint = "psccF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void psccF(int channel, int size, float* Itxbuff, float* Qtxbuff, float* Irxbuff, float* Qrxbuff, bool mox, bool solidmox);
+
+        [DllImport("wdsp.dll", EntryPoint = "PSSaveCorr", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void PSSaveCorr(int channel, string filename);
+
+        [DllImport("wdsp.dll", EntryPoint = "PSRestoreCorr", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void PSRestoreCorr(int channel, string filename);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSHWPeak", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSHWPeak(int channel, double peak);
+
+        [DllImport("wdsp.dll", EntryPoint = "GetPSHWPeak", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetPSHWPeak(int channel, double* peak);
+
+        [DllImport("wdsp.dll", EntryPoint = "GetPSMaxTX", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetPSMaxTX(int channel, double* maxtx);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSPtol", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSPtol(int channel, double ptol);
+
+        [DllImport("wdsp.dll", EntryPoint = "GetPSDisp", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetPSDisp(int channel, IntPtr x, IntPtr ym, IntPtr yc, IntPtr ys, IntPtr cm, IntPtr cc, IntPtr cs);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSFeedbackRate", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSFeedbackRate(int channel, int rate);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSPinMode", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSPinMode(int channel, int pin);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSMapMode", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSMapMode(int channel, int map);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSStabilize", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSStabilize(int channel, int stbl);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetPSIntsAndSpi", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetPSIntsAndSpi(int channel, int ints, int spi);
+
+        #endregion
+
+        #region public methods
+        public static int[] Info = new int[16];
+        private static int[] oldInfo = new int[16];
+        private static bool _bInvertRedBlue = false;
+        private static bool _validGetInfo = false;
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
         static puresignal()
         {
             for(int i = 0; i < 16; i++)
@@ -1054,6 +1345,11 @@ namespace Thetis
             //note: for reference (puresignal.Info[4] > 181 || (puresignal.Info[4] <= 128 && console.SetupForm.ATTOnTX > 0))
              return (FeedbackLevel > 181 || (FeedbackLevel <= 128 && nCurrentATTonTX > 0));            
         }
+        
+        public static bool NeedToRecalibrate_HL2(int nCurrentATTonTX) {
+            //note: for reference (puresignal.Info[4] > 181 || (puresignal.Info[4] <= 128 && console.SetupForm.ATTOnTX > 0))
+            return (FeedbackLevel > 181 || (FeedbackLevel <= 128 && nCurrentATTonTX > -28));    // MI0BOT: Needed seperate function for HL2 as           
+        }                                                                                       //         great range in attenuation           
         public static bool IsFeedbackLevelOK {
             get { return FeedbackLevel <= 256; }
         }

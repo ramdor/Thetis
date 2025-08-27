@@ -60,7 +60,7 @@
             this.labelTS11 = new System.Windows.Forms.LabelTS();
             this.lblPSInfo6 = new System.Windows.Forms.LabelTS();
             this.labelTS7 = new System.Windows.Forms.LabelTS();
-            this.GetPSpeak = new System.Windows.Forms.TextBoxTS();
+            this.txtGetPSpeak = new System.Windows.Forms.TextBoxTS();
             this.labelTS3 = new System.Windows.Forms.LabelTS();
             this.txtPSpeak = new System.Windows.Forms.TextBoxTS();
             this.labelTS5 = new System.Windows.Forms.LabelTS();
@@ -423,7 +423,7 @@
             this.grpPSInfo.Controls.Add(this.labelTS11);
             this.grpPSInfo.Controls.Add(this.lblPSInfo6);
             this.grpPSInfo.Controls.Add(this.labelTS7);
-            this.grpPSInfo.Controls.Add(this.GetPSpeak);
+            this.grpPSInfo.Controls.Add(this.txtGetPSpeak);
             this.grpPSInfo.Controls.Add(this.labelTS3);
             this.grpPSInfo.Controls.Add(this.txtPSpeak);
             this.grpPSInfo.Controls.Add(this.labelTS5);
@@ -550,8 +550,9 @@
             this.labelTS7.Text = "sln.chk";
             this.toolTip1.SetToolTip(this.labelTS7, "Indicator:  code indicating evaluation of correction solution. (Normal = 0)");
             // 
-            // GetPSpeak
+            // txtGetPSpeak
             // 
+<<<<<<< Project Files/Source/Console/PSForm.designer.cs
             this.GetPSpeak.BackColor = System.Drawing.Color.Bisque;
             this.GetPSpeak.Location = new System.Drawing.Point(287, 69);
             this.GetPSpeak.Name = "GetPSpeak";
@@ -559,6 +560,15 @@
             this.GetPSpeak.Size = new System.Drawing.Size(57, 20);
             this.GetPSpeak.TabIndex = 15;
             this.toolTip1.SetToolTip(this.GetPSpeak, "Indicator:  Peak level of measured digital TX feedback.");
+=======
+            this.txtGetPSpeak.BackColor = System.Drawing.Color.Bisque;
+            this.txtGetPSpeak.Location = new System.Drawing.Point(287, 69);
+            this.txtGetPSpeak.Name = "txtGetPSpeak";
+            this.txtGetPSpeak.ReadOnly = true;
+            this.txtGetPSpeak.Size = new System.Drawing.Size(57, 20);            
+            this.txtGetPSpeak.TabIndex = 15;
+            this.toolTip1.SetToolTip(this.txtGetPSpeak, "Indicator:  Peak level of measured digital TX feedback.");
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
             // 
             // labelTS3
             // 
@@ -941,7 +951,7 @@
         private System.Windows.Forms.LabelTS labelTS1;
         private System.Windows.Forms.LabelTS labelTS5;
         private System.Windows.Forms.TextBoxTS txtPSpeak;
-        private System.Windows.Forms.TextBoxTS GetPSpeak;
+        private System.Windows.Forms.TextBoxTS txtGetPSpeak;
         private System.Windows.Forms.LabelTS labelTS3;
         private System.Windows.Forms.CheckBoxTS chkPSRelaxPtol;
         private System.Windows.Forms.ButtonTS btnPSAmpView;
@@ -965,6 +975,10 @@
         private System.Windows.Forms.CheckBoxTS chkAdvancedViewHidden;
         private System.Windows.Forms.PictureBox pbWarningSetPk;
         private System.Windows.Forms.ToolTip toolTip1;
+<<<<<<< Project Files/Source/Console/PSForm.designer.cs
         private System.Windows.Forms.CheckBoxTS chkShow2ToneMeasurements;
     }
+=======
+    }
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
 }

@@ -228,8 +228,13 @@ namespace Thetis
             set
             {
                 monitor_volume = value;
+<<<<<<< Project Files/Source/Console/audio.cs
                 cmaster.CMSetAudioVolume(value);
                 ivac.SetIVACmonVol(0, monitor_volume);
+=======
+                cmaster.CMSetAudioVolume(value);
+                ivac.SetIVACmonVol(0, monitor_volume);
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
             }
         }
 
@@ -401,6 +406,9 @@ namespace Thetis
         private static bool vfob_tx = false;
         public static bool VFOBTX
         {
+            get
+            { return vfob_tx; }
+
             set
             {
                 vfob_tx = value;
@@ -1859,6 +1867,7 @@ namespace Thetis
                 console.SampleRateTX = 48000; // set tx audio sampling rate  
                 WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), false);
             }
+<<<<<<< Project Files/Source/Console/audio.cs
             else
             {
                 console.SampleRateTX = 192000;
@@ -1885,6 +1894,39 @@ namespace Thetis
             }
             if(bSetDefaultPeaks) console.psform.SetDefaultPeaks(); // if false, will use the psform recovered values
 
+=======
+            else
+            {
+                console.SampleRateTX = 192000;
+                WDSP.SetTXACFIRRun(cmaster.chid(cmaster.inid(1, 0), 0), true);
+                //if(console.CurrentHPSDRHardware == HPSDRHW.Saturn)                              // G8NJJ  // MW0LGE note, we do this below by calling SetDefaultPeaks if needed
+                //    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.6121);
+                //else
+                //    puresignal.SetPSHWPeak(cmaster.chid(cmaster.inid(1, 0), 0), 0.2899);
+                //console.psform.PSdefpeak = "0.2899"; //moved to psform.SetDefaultPeaks(), called below
+            }
+
+            //console.psform.SetDefaultPeaks(NetworkIO.CurrentRadioProtocol != oldProto); // if the procol changed, force it MW0LGE_21k9rc6
+            ////MW0LGE [2.9.0.8] fix if protocol is changed at some point
+            //
+            //note: setdefaultpeaks will only be called if fresh DB, or if at some point the protcol changes ie user has flashed the radio with different protocol
+            //we dont recover or assign here as psform stores the peak data in the form save/close. Those values can be tweaked by end user and are store/recovered
+            //against the form. This is to enable the reset of peaks for a new install or new protocol
+            bool bSetDefaultPeaks = false;
+            if (LastRadioHardware == HPSDRHW.Unknown || (LastRadioHardware != HPSDRHW.Unknown && LastRadioHardware != NetworkIO.BoardID))
+            {
+                bSetDefaultPeaks = true;
+                LastRadioHardware = NetworkIO.BoardID; // saved in db
+            }
+
+            if (LastRadioProtocol == RadioProtocol.None || (LastRadioProtocol != RadioProtocol.None && LastRadioProtocol != NetworkIO.CurrentRadioProtocol))
+            {
+                bSetDefaultPeaks = true;                
+                LastRadioProtocol = NetworkIO.CurrentRadioProtocol; // saved in db
+            }
+            if(bSetDefaultPeaks) console.psform.SetDefaultPeaks(); // if false, will use the psform recovered values
+
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
             c.SetupForm.InitAudioTab();
             c.SetupForm.ForceAudioReset();
             cmaster.PSLoopback = cmaster.PSLoopback;

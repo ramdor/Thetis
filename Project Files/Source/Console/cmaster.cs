@@ -441,8 +441,22 @@ namespace Thetis
 
         public static void CMLoadRouterAll(HPSDRModel model)
         {
+            int txinid = cmaster.inid(1, 0);        // stream id
+            int txch = cmaster.chid(txinid, 0);     // wdsp channel
+
+            // MI0BOT: Set correct SetPSHWPeak for HL2 and different model for reduced bandwidth
+
+            if (model != HPSDRModel.HERMESLITE)
+                puresignal.SetPSHWPeak(txch, 0.2899);
+
+            if (model == HPSDRModel.HERMESLITE && Audio.console.ReduceEthernetBW)
+            {
+                model = HPSDRModel.ANAN10E;
+            }
+
             switch (NetworkIO.CurrentRadioProtocol)
             {
+<<<<<<< Project Files/Source/Console/cmaster.cs
                 case RadioProtocol.USB: //Protocol 1
                     if (ps_loopback)
                     {
@@ -451,6 +465,16 @@ namespace Thetis
                             case HPSDRModel.ANAN10E:
                             case HPSDRModel.ANAN100B:
                                 int[] TWO_DDC_Function = new int[16]
+=======
+                case RadioProtocol.USB:
+                    if (ps_loopback)
+                    {
+                        switch (model)
+                        {
+                            case HPSDRModel.ANAN10E:
+                            case HPSDRModel.ANAN100B:
+                                int[] TWO_DDC_Function = new int[16]
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
                                     {
                                     2, 2, 2, 2, 2, 2, 2, 2,     // DDC0+DDC1, port 1035, Call 0
                                     0, 0, 0, 0, 0, 2, 0, 2      // DDC0+DDC1, port 1035, Call 1
@@ -468,6 +492,7 @@ namespace Thetis
                                     LoadRouterAll((void*)0, 0, 1, 2, 8, pstreams, pfunction, pcallid);
                                 break;
                             case HPSDRModel.HERMES:
+                            case HPSDRModel.HERMESLITE: // MI0BOT: HL2
                             case HPSDRModel.ANAN10:
                             case HPSDRModel.ANAN100:
                                 int[] FOUR_DDC_Function = new int[48]
@@ -492,6 +517,7 @@ namespace Thetis
                                     {
                                     1,                          // DDC0,      port 1035
                                     2,                          // DDC2+DDC3, port 1036
+<<<<<<< Project Files/Source/Console/cmaster.cs
                                     1                           // DDC1,      port 1037
                                     };
                                 fixed (int* pstreams = &FOUR_DDC_nstreams[0], pfunction = &FOUR_DDC_Function[0], pcallid = &FOUR_DDC_Callid[0])
@@ -505,6 +531,20 @@ namespace Thetis
                             case HPSDRModel.ANVELINAPRO3:
                             case HPSDRModel.REDPITAYA: //DH1KLM
                                 int[] FIVE_DDC_Function = new int[48]
+=======
+                                    1                           // DDC1,      port 1037
+                                    };
+                                fixed (int* pstreams = &FOUR_DDC_nstreams[0], pfunction = &FOUR_DDC_Function[0], pcallid = &FOUR_DDC_Callid[0])
+                                    LoadRouterAll((void*)0, 0, 3, 2, 8, pstreams, pfunction, pcallid);
+                                break;
+                            case HPSDRModel.ANAN100D:
+                            case HPSDRModel.ANAN200D:
+                            case HPSDRModel.ORIONMKII:
+                            case HPSDRModel.ANAN7000D:
+                            case HPSDRModel.ANAN8000D:
+                            case HPSDRModel.ANVELINAPRO3:
+                                int[] FIVE_DDC_Function = new int[48]
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
                                     {
                                     2, 2, 2, 2, 2, 0, 2, 0,     // DDC0+DDC1, port 1035, Call 0
                                     0, 0, 0, 0, 0, 0, 0, 0,     // DDC0+DDC1, port 1035, Call 1
@@ -557,6 +597,7 @@ namespace Thetis
                                     LoadRouterAll((void*)0, 0, 1, /*1*/2, 8, pstreams, pfunction, pcallid); //MW0LGE_21d DUP on top panadaptor (Warren provided info)
                                 break;
                             case HPSDRModel.HERMES:
+                            case HPSDRModel.HERMESLITE: // MI0BOT: HL2
                             case HPSDRModel.ANAN10:
                             case HPSDRModel.ANAN100:
                                 int[] FOUR_DDC_Function = new int[24]
@@ -575,6 +616,7 @@ namespace Thetis
                                     {
                                     1,                          // DDC0,      port 1035
                                     2,                          // DDC2+DDC3, port 1036
+<<<<<<< Project Files/Source/Console/cmaster.cs
                                     1                           // DDC1,      port 1037
                                     };
                                 fixed (int* pstreams = &FOUR_DDC_nstreams[0], pfunction = &FOUR_DDC_Function[0], pcallid = &FOUR_DDC_Callid[0])
@@ -588,6 +630,20 @@ namespace Thetis
                             case HPSDRModel.ANVELINAPRO3:
                             case HPSDRModel.REDPITAYA: //DH1KLM
                                 int[] FIVE_DDC_Function = new int[24]
+=======
+                                    1                           // DDC1,      port 1037
+                                    };
+                                fixed (int* pstreams = &FOUR_DDC_nstreams[0], pfunction = &FOUR_DDC_Function[0], pcallid = &FOUR_DDC_Callid[0])
+                                    LoadRouterAll((void*)0, 0, 3, 1, 8, pstreams, pfunction, pcallid);
+                                break;
+                            case HPSDRModel.ANAN100D:
+                            case HPSDRModel.ANAN200D:
+                            case HPSDRModel.ORIONMKII:
+                            case HPSDRModel.ANAN7000D:
+                            case HPSDRModel.ANAN8000D:
+                            case HPSDRModel.ANVELINAPRO3:
+                                int[] FIVE_DDC_Function = new int[24]
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
                                     {
                                     2, 2, 2, 2, 2, 2, 2, 2,     // DDC0+DDC1, port 1035, Call 0
                                     0, 0, 0, 0, 0, 2, 0, 2,     // DDC3+DDC4, port 1036, Call 0
@@ -620,9 +676,14 @@ namespace Thetis
                             case HPSDRModel.ANAN200D:
                             case HPSDRModel.ORIONMKII:
                             case HPSDRModel.ANAN7000D:
+<<<<<<< Project Files/Source/Console/cmaster.cs
                             case HPSDRModel.ANAN8000D:
                             case HPSDRModel.ANVELINAPRO3:
                             case HPSDRModel.REDPITAYA: //DH1KLM
+=======
+                            case HPSDRModel.ANAN8000D:
+                            case HPSDRModel.ANVELINAPRO3:
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
                             case HPSDRModel.ANAN_G2:
                             case HPSDRModel.ANAN_G2_1K:
                                 // This ANGELIA table is for test purposes and it routes DDC0 and DDC1 to RX1 and RX2, 
@@ -678,6 +739,7 @@ namespace Thetis
                                 break;
 
                             case HPSDRModel.HERMES:
+                            case HPSDRModel.HERMESLITE: // MI0BOT: HL2
                             case HPSDRModel.ANAN10:
                             case HPSDRModel.ANAN100:
                             case HPSDRModel.ANAN10E:
@@ -715,8 +777,12 @@ namespace Thetis
                             case HPSDRModel.ORIONMKII:
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
+<<<<<<< Project Files/Source/Console/cmaster.cs
                             case HPSDRModel.ANVELINAPRO3:
                             case HPSDRModel.REDPITAYA: //DH1KLM
+=======
+                            case HPSDRModel.ANVELINAPRO3:
+>>>>>>> C:/thetisupgrade/3way/theirs.cs
                             case HPSDRModel.ANAN_G2:
                             case HPSDRModel.ANAN_G2_1K:
                                 // control bits are { MOX, Diversity_Enabled, PureSignal_Enabled }
@@ -755,6 +821,7 @@ namespace Thetis
                                 break;
 
                             case HPSDRModel.HERMES:
+                            case HPSDRModel.HERMESLITE: // MI0BOT: HL2
                             case HPSDRModel.ANAN10:
                             case HPSDRModel.ANAN100:
                             case HPSDRModel.ANAN10E:
