@@ -1,4 +1,3 @@
-<<<<<<< Project Files/Source/Console/Midi2CatCommands.cs
 ﻿/*  Midi2Cat
 
 Description: A subsystem that facilitates mapping Windows MIDI devices to CAT commands.
@@ -39,48 +38,6 @@ namespace Thetis
     {
         private CATParser parser;
         private CATCommands commands;
-=======
-﻿/*  Midi2Cat
-
-Description: A subsystem that facilitates mapping Windows MIDI devices to CAT commands.
- 
-Copyright (C) 2016 Andrew Mansfield, M0YGG
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-The author can be reached by email at:  midi2cat@cametrix.com
-
-Modifications to support the Behringer Midi controllers
-by Chris Codella, W2PA, April 2017.  Indicated by //-W2PA comment lines.
-// Modfied - Copyright (C) 2019-2025 Richard Samphire (MW0LGE)
-
- */
-
-using Midi2Cat;
-using Midi2Cat.Data; 
-using System;
-using Midi2Cat.IO; //-W2PA Necessary for changes to support Behringer PL-1 (and others)
-using System.Diagnostics;
-
-namespace Thetis
-{
-    public class Midi2CatCommands
-    {
-        private CATParser parser;
-        private CATCommands commands;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
         private MidiMessageManager midiManager = null;
         private Console console;
 
@@ -1193,134 +1150,211 @@ namespace Thetis
             set { _swapVFOWheels = value; }
         }
 
-        //-W2PA  Routine to implement MIDI wheel VFO tuning using the original code from Midi2Cat
-        private void ProcessStdMIDIWheelAsVFO(int direction, int step, bool RoundToStepSize, long freq, int mode, string vfo)
+        //[2.10.3.9]MW0LGE refactor for speed, as other implemation was just a complete mess
+        //also using invoke and begininvoke with func/actions instead of helper functions.
+        //I am not interested in changing the code for the Behringer P1/micro etc.
+        private void ProcessStdMIDIWheelAsVFO(int direction,
+                                  int step,
+                                  bool round_to_step_size,
+                                  long freq,
+                                  int mode,
+                                  bool is_vfo_a)
         {
-            int ico;
-            if (vfo == "a") ico = Convert.ToInt16(commands.ZZRA("")); else ico = Convert.ToInt16(commands.ZZRB(""));
+            //helpers, to prevent branching
+            Func<Func<string>, string> safe_get = f => console.InvokeRequired
+                ? (string)console.Invoke((Func<string>)(() => f()))
+                : f();
 
-            //-W2PA Check granularity of MIDI messages - i.e. rotation amount - to cause an increment
-            // For testing:
-            // Console.getConsole().MidiMessagesPerTuneStep = 16;
+            Action<string> send_frequency_raw = is_vfo_a
+                ? new Action<string>(s => commands.ZZFA(s))
+                : new Action<string>(s => commands.ZZFB(s));
 
-            if (current_tuning_direction == 0) // First time tuning
+            Action<string> safe_send = s =>
             {
-                msgs_since_reversal = 0;
-                if (direction > 125) current_tuning_direction = 1;
-                else current_tuning_direction = -1;
-            }
-
-            if ((direction > 125 && current_tuning_direction == 1) ||
-                (direction < 3 && current_tuning_direction == -1))
-            {  // continuing in same direction
-                msgs_since_reversal++;
-                int mpts = console.MidiMessagesPerTuneStep;
-                if (msgs_since_reversal < mpts)
-                    return; // Not enough rotation to act
+                if (console.InvokeRequired)
+                    console.BeginInvoke((Action)(() => send_frequency_raw(s)));
                 else
-                {   // ok to tune, reset the counter then go tune
-                    msgs_since_reversal = 0;
-                }
-            }
-            else // direction has reversed 
+                    send_frequency_raw(s);
+            };
+            
+            //refactor main
+            string rtty_offset_raw = safe_get(() => is_vfo_a
+                ? commands.ZZRA(string.Empty)
+                : commands.ZZRB(string.Empty));
+            bool rtty_offset_enabled = rtty_offset_raw.Length > 0 && rtty_offset_raw[0] == '1';
+
+            int msgs_per_step = console.MidiMessagesPerTuneStep;
+            if (current_tuning_direction == 0)
             {
-                msgs_since_reversal = 1;
+                current_tuning_direction = direction > 125 ? 1 : -1;
+                msgs_since_reversal = 0;
+            }
+
+            bool clockwise = direction > 125;
+            bool anticlockwise = direction < 3;
+            if (!clockwise && !anticlockwise) return;
+
+            bool same_dir = (clockwise && current_tuning_direction == 1)
+                          || (anticlockwise && current_tuning_direction == -1);
+
+            if (same_dir)
+            {
+                if (++msgs_since_reversal < msgs_per_step) return;
+                msgs_since_reversal = 0;
+            }
+            else
+            {
                 current_tuning_direction = -current_tuning_direction;
-                int mpts = console.MidiMessagesPerTuneStep;
-                if (msgs_since_reversal < mpts)  // i.e. if msgs/step isn't 1                
-                    return;
+                msgs_since_reversal = 1;
+                if (msgs_since_reversal < msgs_per_step) return;
             }
 
-            switch (mode)
+            int dir_sign = clockwise ? -1 : 1;
+            long working_freq = freq;
+            int offset = 0;
+            int offset_dir = 0;
+
+            if (rtty_offset_enabled && (mode == 7 || mode == 9))
             {
-                case 7: //DIGU
-                    {
-                        if (ico == 1) //eliminate CAT Offset for DIGU in case selected
-                        {
-                            int offsetDIGU = Convert.ToInt16(commands.ZZRH(""));
-
-                            if (direction == 127 || direction == 126)
-                            {
-                                freq -= offsetDIGU;
-                                long x = SnapTune(freq, step, -1, RoundToStepSize) + offsetDIGU;
-                                if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
-                            }
-                            if (direction == 1 || direction == 2)
-                            {
-                                freq -= offsetDIGU;
-                                long x = SnapTune(freq, step, 1, RoundToStepSize) + offsetDIGU;
-                                if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
-                            }
-
-                        }
-                        else
-                        {
-                            if (direction == 127 || direction == 126)
-                            {
-                                if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-                                else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-                            }
-                            if (direction == 1 || direction == 2)
-                            {
-                                if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-                                else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-                            }
-                        }
-                        break;
-                    }
-                case 9: //DIGL
-                    {
-                        if (ico == 1) //elminate CAT Offset for DIGL in case selected
-                        {
-                            int offsetDIGL = Convert.ToInt16(commands.ZZRL(""));
-
-                            if (direction == 127 || direction == 126)
-                            {
-                                freq += offsetDIGL;
-                                long x = SnapTune(freq, step, -1, RoundToStepSize) - offsetDIGL;
-                                if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
-                            }
-                            if (direction == 1 || direction == 2)
-                            {
-                                freq += offsetDIGL;
-                                long x = SnapTune(freq, step, 1, RoundToStepSize) - offsetDIGL;
-                                if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
-                            }
-
-                        }
-                        else
-                        {
-                            if (direction == 127 || direction == 126)
-                            {
-                                if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-                                else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-                            }
-                            if (direction == 1 || direction == 2)
-                            {
-                                if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-                                else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-                            }
-                        }
-                        break;
-                    }
-                default: //for all other modes
-                    {
-
-                        if (direction == 127 || direction == 126)
-                        {
-                            if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-                            else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-                        }
-                        if (direction == 1 || direction == 2)
-                        {
-                            if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-                            else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-                        }
-                        break;
-                    }
+                string val = mode == 7 ? safe_get(() => commands.ZZRH(string.Empty)) : safe_get(() => commands.ZZRL(string.Empty));
+                if (!int.TryParse(val, out offset)) return;
+                offset_dir = mode == 7 ? -1 : 1;
+                working_freq += offset_dir * offset;
             }
 
+            long tuned = SnapTune(working_freq, step, dir_sign, round_to_step_size);
+            tuned -= offset_dir * offset;
+            safe_send(tuned.ToString("D11"));
         }
+
+
+        //-W2PA  Routine to implement MIDI wheel VFO tuning using the original code from Midi2Cat
+        //private void ProcessStdMIDIWheelAsVFO(int direction, int step, bool RoundToStepSize, long freq, int mode, string vfo)
+        //{
+        //    int ico;
+        //    if (vfo == "a") ico = Convert.ToInt16(commands.ZZRA("")); else ico = Convert.ToInt16(commands.ZZRB(""));
+
+        //    //-W2PA Check granularity of MIDI messages - i.e. rotation amount - to cause an increment
+        //    // For testing:
+        //    // Console.getConsole().MidiMessagesPerTuneStep = 16;
+
+        //    if (current_tuning_direction == 0) // First time tuning
+        //    {
+        //        msgs_since_reversal = 0;
+        //        if (direction > 125) current_tuning_direction = 1;
+        //        else current_tuning_direction = -1;
+        //    }
+
+        //    if ((direction > 125 && current_tuning_direction == 1) ||
+        //        (direction < 3 && current_tuning_direction == -1))
+        //    {  // continuing in same direction
+        //        msgs_since_reversal++;
+        //        int mpts = console.MidiMessagesPerTuneStep;
+        //        if (msgs_since_reversal < mpts)
+        //            return; // Not enough rotation to act
+        //        else
+        //        {   // ok to tune, reset the counter then go tune
+        //            msgs_since_reversal = 0;
+        //        }
+        //    }
+        //    else // direction has reversed 
+        //    {
+        //        msgs_since_reversal = 1;
+        //        current_tuning_direction = -current_tuning_direction;
+        //        int mpts = console.MidiMessagesPerTuneStep;
+        //        if (msgs_since_reversal < mpts)  // i.e. if msgs/step isn't 1                
+        //            return;
+        //    }
+
+        //    switch (mode)
+        //    {
+        //        case 7: //DIGU
+        //            {
+        //                if (ico == 1) //eliminate CAT Offset for DIGU in case selected
+        //                {
+        //                    int offsetDIGU = Convert.ToInt16(commands.ZZRH(""));
+
+        //                    if (direction == 127 || direction == 126)
+        //                    {
+        //                        freq -= offsetDIGU;
+        //                        long x = SnapTune(freq, step, -1, RoundToStepSize) + offsetDIGU;
+        //                        if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
+        //                    }
+        //                    if (direction == 1 || direction == 2)
+        //                    {
+        //                        freq -= offsetDIGU;
+        //                        long x = SnapTune(freq, step, 1, RoundToStepSize) + offsetDIGU;
+        //                        if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
+        //                    }
+
+        //                }
+        //                else
+        //                {
+        //                    if (direction == 127 || direction == 126)
+        //                    {
+        //                        if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
+        //                        else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
+        //                    }
+        //                    if (direction == 1 || direction == 2)
+        //                    {
+        //                        if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
+        //                        else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
+        //                    }
+        //                }
+        //                break;
+        //            }
+        //        case 9: //DIGL
+        //            {
+        //                if (ico == 1) //elminate CAT Offset for DIGL in case selected
+        //                {
+        //                    int offsetDIGL = Convert.ToInt16(commands.ZZRL(""));
+
+        //                    if (direction == 127 || direction == 126)
+        //                    {
+        //                        freq += offsetDIGL;
+        //                        long x = SnapTune(freq, step, -1, RoundToStepSize) - offsetDIGL;
+        //                        if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
+        //                    }
+        //                    if (direction == 1 || direction == 2)
+        //                    {
+        //                        freq += offsetDIGL;
+        //                        long x = SnapTune(freq, step, 1, RoundToStepSize) - offsetDIGL;
+        //                        if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
+        //                    }
+
+        //                }
+        //                else
+        //                {
+        //                    if (direction == 127 || direction == 126)
+        //                    {
+        //                        if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
+        //                        else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
+        //                    }
+        //                    if (direction == 1 || direction == 2)
+        //                    {
+        //                        if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
+        //                        else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
+        //                    }
+        //                }
+        //                break;
+        //            }
+        //        default: //for all other modes
+        //            {
+
+        //                if (direction == 127 || direction == 126)
+        //                {
+        //                    if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
+        //                    else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
+        //                }
+        //                if (direction == 1 || direction == 2)
+        //                {
+        //                    if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
+        //                    else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
+        //                }
+        //                break;
+        //            }
+        //    }
+        //}
 
         //-W2PA  Routine to implement variable speed tuning using the Behringer CMD PL-1 (and others) MIDI controller main wheel
         private void ProcessBehringerMainWheelAsVFO(int direction, int step, bool RoundToStepSize, long freq, int mode, string vfo, string deviceName)
@@ -1629,45 +1663,65 @@ namespace Thetis
         //-W2PA Modified to select Behringer PL-1, Micro, or original code
         private void ChangeFreqVfoA(int direction, int step, bool RoundToStepSize, MidiDevice device)  
         {
-
             parser.nGet = 0;
             parser.nSet = 11;
-            //long freq = Convert.ToInt64(commands.ZZFA(""));
-            //MW0LGE [2.9.0.7]
             long freq;
-            string sVfo;
+            bool is_vfo_a;
             if (_swapVFOWheels)
             {
-                sVfo = "b";
+                is_vfo_a = false;
                 freq = Convert.ToInt64(commands.ZZFB(""));
             }
             else
             {
-                sVfo = "a";
+                is_vfo_a = true;
                 freq = Convert.ToInt64(commands.ZZFA(""));
             }
-            //
-            parser.nAns = 11;
+
+            //parser.nAns = 11;
             int mode = Convert.ToInt16(commands.ZZMD(""));
+
             commands.isMidi = true;
             //System.Diagnostics.Debug.WriteLine("Msg=" + msg);
 
+            //string devName = device.GetDeviceName();
+            //if (devName == "CMD PL-1")  
+            //{
+            //    ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD PL-1");
+            //}
+            //else if (devName == "CMD Micro")
+            //{
+            //    ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD Micro");
+            //}
+            //else if (devName.Contains("CMD"))
+            //{
+            //    ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD");
+            //}
+            //else
+            //{
+            //    ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo);  // Original handler
+            //}
+
+            //[2.10.3.9]MW0LGE refactor for speed
             string devName = device.GetDeviceName();
-            if (devName == "CMD PL-1")  
+            if (!string.IsNullOrEmpty(devName) && devName.Contains("CMD", StringComparison.Ordinal))
             {
-                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD PL-1");
-            }
-            else if (devName == "CMD Micro")
-            {
-                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD Micro");
-            }
-            else if (devName.Contains("CMD"))
-            {
-                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD");
+                string is_vfo_a_string = is_vfo_a ? "a" : "b";
+
+                switch (devName)
+                {
+                    case "CMD PL-1":
+                    case "CMD Micro":
+                        ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, is_vfo_a_string, devName);
+                        break;
+                    default:
+                        ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, is_vfo_a_string, "CMD");
+                        break;
+                }
             }
             else
             {
-                ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo);  // Original handler
+                ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, is_vfo_a);
             }
 
             commands.isMidi = false;
@@ -1816,49 +1870,73 @@ namespace Thetis
         public void ChangeFreqVfoB(int msg, MidiDevice device)
         {
             bool RoundToStepSize = true;
-            parser.nSet = 2;
-            parser.nGet = 0;
-            int mode;
             int direction = msg;
-            if (int.TryParse(commands.ZZMD(""), out mode) == false)
+
+            parser.nGet = 0;
+            parser.nSet = 2;
+
+            if (int.TryParse(commands.ZZMD(""), out int mode) == false)
                 return;
+
             int step = StringToFreq(commands.ZZAC(""));
             parser.nSet = 11;
-            //long freq = Convert.ToInt64(commands.ZZFB(""));
-            //MW0LGE [2.9.0.7]
+
             long freq;
-            string sVfo;
+            bool is_vfo_a;
             if (_swapVFOWheels)
             {
-                sVfo = "a";
+                is_vfo_a = true;
                 freq = Convert.ToInt64(commands.ZZFA(""));
             }
             else
             {
-                sVfo = "b";
+                is_vfo_a = false;
                 freq = Convert.ToInt64(commands.ZZFB(""));
             }
-            //
-            parser.nAns = 11;
 
-            commands.isMidi2 = true;
+            //parser.nAns = 11;
 
+            commands.isMidi = true;
+            //System.Diagnostics.Debug.WriteLine("Msg=" + msg);
+
+            //string devName = device.GetDeviceName();
+            //if (devName == "CMD PL-1")  //W2PA- Special handling for Behringer 
+            //{
+            //    ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD PL-1");
+            //}
+            //else if (devName == "CMD Micro")
+            //{
+            //    ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD Micro");
+            //}
+            //else if (devName.Contains("CMD"))
+            //{
+            //    ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD");
+            //}
+            //else
+            //{
+            //    ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo);
+            //}
+
+            //[2.10.3.9]MW0LGE refactor for speed
             string devName = device.GetDeviceName();
-            if (devName == "CMD PL-1")  //W2PA- Special handling for Behringer 
+            if (!string.IsNullOrEmpty(devName) && devName.Contains("CMD", StringComparison.Ordinal))
             {
-                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD PL-1");
-            }
-            else if (devName == "CMD Micro")
-            {
-                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD Micro");
-            }
-            else if (devName.Contains("CMD"))
-            {
-                ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD");
+                string is_vfo_a_string = is_vfo_a ? "a" : "b";
+
+                switch (devName)
+                {
+                    case "CMD PL-1":
+                    case "CMD Micro":
+                        ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, is_vfo_a_string, devName);
+                        break;
+                    default:
+                        ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, is_vfo_a_string, "CMD");
+                        break;
+                }
             }
             else
             {
-                ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo);
+                ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, is_vfo_a);
             }
 
             commands.isMidi2 = false;
@@ -1934,6 +2012,22 @@ namespace Thetis
             return CmdState.NoChange;
         }
 
+        public void NoiseReduction4Amount(int msg, MidiDevice device)
+        {
+            parser.nSet = 3;
+            parser.nGet = 0;
+
+            try
+            {
+                double amount = msg * (100f / 127f);
+                commands.ZZNG(amount.ToString("000"));
+                return;
+            }
+            catch
+            {
+                return;
+            }
+        }
 
         public CmdState NoiseReductionOnOff(int msg, MidiDevice device)
         {
@@ -1942,9 +2036,9 @@ namespace Thetis
                 parser.nGet = 0;
                 parser.nSet = 1;
 
-                int NRState = Convert.ToInt16(commands.ZZNR(""));
+                int NRState = Convert.ToInt16(commands.ZZNE(""));
 
-                if (NRState == 0)
+                if (NRState != 1)
                 {
                     commands.ZZNR("1");
                     return CmdState.On;
@@ -1965,20 +2059,80 @@ namespace Thetis
                 parser.nGet = 0;
                 parser.nSet = 1;
 
-                int NRState = Convert.ToInt16(commands.ZZNS(""));
+                int NRState = Convert.ToInt16(commands.ZZNE(""));
 
-                if (NRState == 0)
+                if (NRState != 2)
                 {
                     commands.ZZNS("1");
                     return CmdState.On;
                 }
-                if (NRState == 1)
+                if (NRState == 2)
                 {
                     commands.ZZNS("0");
                     return CmdState.Off;
                 }
             }
             return CmdState.NoChange;
+        }
+        public CmdState NoiseReduction3OnOff(int msg, MidiDevice device)  //-W2PA Corrected name to appropriate one for ZZNS
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int NRState = Convert.ToInt16(commands.ZZNE(""));
+
+                if (NRState != 3)
+                {
+                    commands.ZZNE("3");
+                    return CmdState.On;
+                }
+                if (NRState == 3)
+                {
+                    commands.ZZNE("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+        public CmdState NoiseReduction4OnOff(int msg, MidiDevice device)  //-W2PA Corrected name to appropriate one for ZZNS
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int NRState = Convert.ToInt16(commands.ZZNE(""));
+
+                if (NRState != 4)
+                {
+                    commands.ZZNE("4");
+                    return CmdState.On;
+                }
+                if (NRState == 4)
+                {
+                    commands.ZZNE("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+        public void Rx2NoiseReduction4Amount(int msg, MidiDevice device)
+        {
+            parser.nSet = 3;
+            parser.nGet = 0;
+
+            try
+            {
+                double amount = msg * (100f / 127f);
+                commands.ZZNH(amount.ToString("000"));
+                return;
+            }
+            catch
+            {
+                return;
+            }
         }
 
         public CmdState Rx2NoiseReductionOnOff(int msg, MidiDevice device)  //-W2PA Corrected to calling ZZNV instead of ZZNS as above
@@ -1988,9 +2142,9 @@ namespace Thetis
                 parser.nGet = 0;
                 parser.nSet = 1;
 
-                int NRState = Convert.ToInt16(commands.ZZNS(""));
+                int NRState = Convert.ToInt16(commands.ZZNF(""));
 
-                if (NRState == 0)
+                if (NRState != 1)
                 {
                     commands.ZZNV("1");
                     return CmdState.On;
@@ -2003,7 +2157,6 @@ namespace Thetis
             }
             return CmdState.NoChange;
         }
-
         public CmdState Rx2NoiseReduction2OnOff(int msg, MidiDevice device)  //-W2PA Added function to call ZZNW
         {
             if (msg == 127)
@@ -2011,16 +2164,60 @@ namespace Thetis
                 parser.nGet = 0;
                 parser.nSet = 1;
 
-                int NRState = Convert.ToInt16(commands.ZZNS(""));
+                int NRState = Convert.ToInt16(commands.ZZNF(""));
 
-                if (NRState == 0)
+                if (NRState != 2)
                 {
                     commands.ZZNW("1");
                     return CmdState.On;
                 }
-                if (NRState == 1)
+                if (NRState == 2)
                 {
                     commands.ZZNW("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+        public CmdState Rx2NoiseReduction3OnOff(int msg, MidiDevice device)  //-W2PA Corrected name to appropriate one for ZZNS
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int NRState = Convert.ToInt16(commands.ZZNF(""));
+
+                if (NRState != 3)
+                {
+                    commands.ZZNF("3");
+                    return CmdState.On;
+                }
+                if (NRState == 3)
+                {
+                    commands.ZZNF("0");
+                    return CmdState.Off;
+                }
+            }
+            return CmdState.NoChange;
+        }
+        public CmdState Rx2NoiseReduction4OnOff(int msg, MidiDevice device)  //-W2PA Corrected name to appropriate one for ZZNS
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                int NRState = Convert.ToInt16(commands.ZZNF(""));
+
+                if (NRState != 4)
+                {
+                    commands.ZZNF("4");
+                    return CmdState.On;
+                }
+                if (NRState == 4)
+                {
+                    commands.ZZNF("0");
                     return CmdState.Off;
                 }
             }
@@ -6167,1429 +6364,9 @@ namespace Thetis
             }
             return CmdState.NoChange;
         }
-        
-        public void CWXKey(int msg, MidiDevice device)  //MI0BOT: CW keying via MIDI
-        {
-<<<<<<< Project Files/Source/Console/Midi2CatCommands.cs
-            get { return _swapVFOWheels; }
-            set { _swapVFOWheels = value; }
-        }
-
-        //[2.10.3.9]MW0LGE refactor for speed, as other implemation was just a complete mess
-        //also using invoke and begininvoke with func/actions instead of helper functions.
-        //I am not interested in changing the code for the Behringer P1/micro etc.
-        private void ProcessStdMIDIWheelAsVFO(int direction,
-                                  int step,
-                                  bool round_to_step_size,
-                                  long freq,
-                                  int mode,
-                                  bool is_vfo_a)
-        {
-            //helpers, to prevent branching
-            Func<Func<string>, string> safe_get = f => console.InvokeRequired
-                ? (string)console.Invoke((Func<string>)(() => f()))
-                : f();
-
-            Action<string> send_frequency_raw = is_vfo_a
-                ? new Action<string>(s => commands.ZZFA(s))
-                : new Action<string>(s => commands.ZZFB(s));
-
-            Action<string> safe_send = s =>
-            {
-                if (console.InvokeRequired)
-                    console.BeginInvoke((Action)(() => send_frequency_raw(s)));
-                else
-                    send_frequency_raw(s);
-            };
-            
-            //refactor main
-            string rtty_offset_raw = safe_get(() => is_vfo_a
-                ? commands.ZZRA(string.Empty)
-                : commands.ZZRB(string.Empty));
-            bool rtty_offset_enabled = rtty_offset_raw.Length > 0 && rtty_offset_raw[0] == '1';
-
-            int msgs_per_step = console.MidiMessagesPerTuneStep;
-            if (current_tuning_direction == 0)
-            {
-                current_tuning_direction = direction > 125 ? 1 : -1;
-                msgs_since_reversal = 0;
-            }
-
-            bool clockwise = direction > 125;
-            bool anticlockwise = direction < 3;
-            if (!clockwise && !anticlockwise) return;
-
-            bool same_dir = (clockwise && current_tuning_direction == 1)
-                          || (anticlockwise && current_tuning_direction == -1);
-
-            if (same_dir)
-            {
-                if (++msgs_since_reversal < msgs_per_step) return;
-                msgs_since_reversal = 0;
-            }
-            else
-            {
-                current_tuning_direction = -current_tuning_direction;
-                msgs_since_reversal = 1;
-                if (msgs_since_reversal < msgs_per_step) return;
-            }
-
-            int dir_sign = clockwise ? -1 : 1;
-            long working_freq = freq;
-            int offset = 0;
-            int offset_dir = 0;
-
-            if (rtty_offset_enabled && (mode == 7 || mode == 9))
-            {
-                string val = mode == 7 ? safe_get(() => commands.ZZRH(string.Empty)) : safe_get(() => commands.ZZRL(string.Empty));
-                if (!int.TryParse(val, out offset)) return;
-                offset_dir = mode == 7 ? -1 : 1;
-                working_freq += offset_dir * offset;
-            }
-
-            long tuned = SnapTune(working_freq, step, dir_sign, round_to_step_size);
-            tuned -= offset_dir * offset;
-            safe_send(tuned.ToString("D11"));
-        }
-
-
-        //-W2PA  Routine to implement MIDI wheel VFO tuning using the original code from Midi2Cat
-        //private void ProcessStdMIDIWheelAsVFO(int direction, int step, bool RoundToStepSize, long freq, int mode, string vfo)
-        //{
-        //    int ico;
-        //    if (vfo == "a") ico = Convert.ToInt16(commands.ZZRA("")); else ico = Convert.ToInt16(commands.ZZRB(""));
-
-        //    //-W2PA Check granularity of MIDI messages - i.e. rotation amount - to cause an increment
-        //    // For testing:
-        //    // Console.getConsole().MidiMessagesPerTuneStep = 16;
-
-        //    if (current_tuning_direction == 0) // First time tuning
-        //    {
-        //        msgs_since_reversal = 0;
-        //        if (direction > 125) current_tuning_direction = 1;
-        //        else current_tuning_direction = -1;
-        //    }
-
-        //    if ((direction > 125 && current_tuning_direction == 1) ||
-        //        (direction < 3 && current_tuning_direction == -1))
-        //    {  // continuing in same direction
-        //        msgs_since_reversal++;
-        //        int mpts = console.MidiMessagesPerTuneStep;
-        //        if (msgs_since_reversal < mpts)
-        //            return; // Not enough rotation to act
-        //        else
-        //        {   // ok to tune, reset the counter then go tune
-        //            msgs_since_reversal = 0;
-        //        }
-        //    }
-        //    else // direction has reversed 
-        //    {
-        //        msgs_since_reversal = 1;
-        //        current_tuning_direction = -current_tuning_direction;
-        //        int mpts = console.MidiMessagesPerTuneStep;
-        //        if (msgs_since_reversal < mpts)  // i.e. if msgs/step isn't 1                
-        //            return;
-        //    }
-
-        //    switch (mode)
-        //    {
-        //        case 7: //DIGU
-        //            {
-        //                if (ico == 1) //eliminate CAT Offset for DIGU in case selected
-        //                {
-        //                    int offsetDIGU = Convert.ToInt16(commands.ZZRH(""));
-
-        //                    if (direction == 127 || direction == 126)
-        //                    {
-        //                        freq -= offsetDIGU;
-        //                        long x = SnapTune(freq, step, -1, RoundToStepSize) + offsetDIGU;
-        //                        if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
-        //                    }
-        //                    if (direction == 1 || direction == 2)
-        //                    {
-        //                        freq -= offsetDIGU;
-        //                        long x = SnapTune(freq, step, 1, RoundToStepSize) + offsetDIGU;
-        //                        if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
-        //                    }
-
-        //                }
-        //                else
-        //                {
-        //                    if (direction == 127 || direction == 126)
-        //                    {
-        //                        if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-        //                        else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-        //                    }
-        //                    if (direction == 1 || direction == 2)
-        //                    {
-        //                        if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-        //                        else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-        //                    }
-        //                }
-        //                break;
-        //            }
-        //        case 9: //DIGL
-        //            {
-        //                if (ico == 1) //elminate CAT Offset for DIGL in case selected
-        //                {
-        //                    int offsetDIGL = Convert.ToInt16(commands.ZZRL(""));
-
-        //                    if (direction == 127 || direction == 126)
-        //                    {
-        //                        freq += offsetDIGL;
-        //                        long x = SnapTune(freq, step, -1, RoundToStepSize) - offsetDIGL;
-        //                        if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
-        //                    }
-        //                    if (direction == 1 || direction == 2)
-        //                    {
-        //                        freq += offsetDIGL;
-        //                        long x = SnapTune(freq, step, 1, RoundToStepSize) - offsetDIGL;
-        //                        if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
-        //                    }
-
-        //                }
-        //                else
-        //                {
-        //                    if (direction == 127 || direction == 126)
-        //                    {
-        //                        if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-        //                        else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-        //                    }
-        //                    if (direction == 1 || direction == 2)
-        //                    {
-        //                        if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-        //                        else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-        //                    }
-        //                }
-        //                break;
-        //            }
-        //        default: //for all other modes
-        //            {
-
-        //                if (direction == 127 || direction == 126)
-        //                {
-        //                    if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-        //                    else commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-        //                }
-        //                if (direction == 1 || direction == 2)
-        //                {
-        //                    if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-        //                    else commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-        //                }
-        //                break;
-        //            }
-        //    }
-        //}
-
-        //-W2PA  Routine to implement variable speed tuning using the Behringer CMD PL-1 (and others) MIDI controller main wheel
-        private void ProcessBehringerMainWheelAsVFO(int direction, int step, bool RoundToStepSize, long freq, int mode, string vfo, string deviceName)
-        {
-            int stepMult = 1;
-
-            //-W2PA Check granularity of MIDI messages - i.e. rotation amount - to cause an increment
-            // For testing:
-            // Console.getConsole().MidiMessagesPerTuneStep = 16;
-
-            if (current_tuning_direction == 0) // First time tuning
-            {
-                msgs_since_reversal = 0;
-                if (direction > 64) current_tuning_direction = 1;
-                else current_tuning_direction = -1;
-            }
-            
-            if ((direction > 64 && current_tuning_direction == 1) ||
-                (direction < 64 && current_tuning_direction == -1)) 
-            {  // continuing in same direction
-                msgs_since_reversal++;
-                int mpts = console.MidiMessagesPerTuneStep;
-                if (msgs_since_reversal < mpts)
-                    return; // Not enough rotation to act
-                else
-                {   // ok to tune, reset the counter then go tune
-                    msgs_since_reversal = 0;
-                }
-            }
-            else // direction has reversed 
-            {
-                msgs_since_reversal = 1;
-                current_tuning_direction = -current_tuning_direction;
-                int mpts = console.MidiMessagesPerTuneStep;
-                if (msgs_since_reversal < mpts)  // i.e. if msgs/step isn't 1                
-                    return;                    
-            }
-
-                // Handle the PL-1 and Micro slightly different due to the different behavior of their large wheels
-                if (deviceName == "CMD PL-1")
-            {
-                if ((direction <= 58 && direction >= 10) || (direction >= 70 && direction <= 117)) //-W2PA Fast spin of Behringer wheel, multiply steps
-                {
-                    stepMult = 3;
-                }
-                if ((direction <= 57 && direction >= 10) || (direction >= 71 && direction <= 117)) //-W2PA Faster spin of Behringer wheel, multiply steps
-                {
-                    stepMult = 7;
-                }
-                if ((direction <= 56 && direction >= 10) || (direction >= 72 && direction <= 117)) //-W2PA Faster spin of Behringer wheel, multiply steps
-                {
-                    stepMult = 11;
-                }
-                if ((direction <= 52 && direction >= 10) || (direction >= 76 && direction <= 117)) //-W2PA Fastest spin of Behringer wheel, multiply steps more
-                {
-                    stepMult = 200;
-                }
-            }
-            else if (deviceName == "CMD Micro")  // These wheels need more spinning to get to higher numbers than the PL-1, so start increasing earlier.
-            {
-                if ((direction <= 62 && direction >= 10) || (direction >= 66 && direction <= 117)) //-W2PA Fast spin of Behringer wheel, multiply steps
-                {
-                    stepMult = 3;
-                }
-                if ((direction <= 61 && direction >= 10) || (direction >= 67 && direction <= 117)) //-W2PA Faster spin of Behringer wheel, multiply steps
-                {
-                    stepMult = 7;
-                }
-                if ((direction <= 60 && direction >= 10) || (direction >= 68 && direction <= 117)) //-W2PA Faster spin of Behringer wheel, multiply steps
-                {
-                    stepMult = 11;
-                }
-                if ((direction <= 58 && direction >= 10) || (direction >= 70 && direction <= 117)) //-W2PA Fastest spin of Behringer PL-1 wheel, multiply steps more
-                {
-                    stepMult = 200;
-                }
-            }
-            else if (deviceName.Contains("CMD"))  // Try handling all other Behringer controllers
-            {
-                if ((direction <= 62 && direction >= 10) || (direction >= 66 && direction <= 117)) //-W2PA Fast spin of Behringer wheel, multiply steps
-                {
-                    stepMult = 3;
-                }
-                if ((direction <= 61 && direction >= 10) || (direction >= 67 && direction <= 117)) //-W2PA Faster spin of Behringer wheel, multiply steps
-                {
-                    stepMult = 7;
-                }
-                if ((direction <= 60 && direction >= 10) || (direction >= 68 && direction <= 117)) //-W2PA Faster spin of Behringer wheel, multiply steps
-                {
-                    stepMult = 11;
-                }
-                if ((direction <= 58 && direction >= 10) || (direction >= 70 && direction <= 117)) //-W2PA Fastest spin of Behringer PL-1 wheel, multiply steps more
-                {
-                    stepMult = 200;
-                }
-            }
-            else return;         
-
-            int ico;
-            if (vfo == "a") ico = Convert.ToInt16(commands.ZZRA("")); else ico = Convert.ToInt16(commands.ZZRB(""));
-            switch (mode)
-            {
-                case 7: //DIGU
-                    {
-                        if (ico == 1) //elminate CAT Offset for DIGU in case selected
-                        {
-                            int offsetDIGU = Convert.ToInt16(commands.ZZRH(""));
-
-                            //if (direction == 127)
-                            if (direction < 64 && direction >= 25) //-W2PA Make Behringer wheel work for tuning
-                            {
-                                freq -= offsetDIGU;
-                                long x = SnapTune(freq, step, -1 * stepMult, RoundToStepSize) + offsetDIGU;
-                                if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
-                            }
-                            //if (direction == 1)
-                            if (direction > 64 && direction <= 105) //-W2PA Make Behringer wheel work for tuning
-                            {
-                                freq -= offsetDIGU;
-                                long x = SnapTune(freq, step, 1 * stepMult, RoundToStepSize) + offsetDIGU;
-                                if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
-                            }
-
-
-                        }
-                        else
-                        {
-                            //if (direction == 127)
-                            if (direction < 64 && direction >= 25) //-W2PA Make Behringer wheel work for tuning
-                            {
-                                if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1 * stepMult, RoundToStepSize).ToString("D11")));
-                                else commands.ZZFB((SnapTune(freq, step, -1 * stepMult, RoundToStepSize).ToString("D11")));
-                            }
-                            //if (direction == 1)
-                            if (direction > 64 && direction <= 105) //-W2PA Make Behringer wheel work for tuning
-                            {
-                                if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1 * stepMult, RoundToStepSize).ToString("D11")));
-                                else commands.ZZFB((SnapTune(freq, step, 1 * stepMult, RoundToStepSize).ToString("D11")));
-                            }
-                        }
-                        break;
-                    }
-                case 9: //DIGL
-                    {
-                        if (ico == 1) //elminate CAT Offset for DIGL in case selected
-                        {
-                            int offsetDIGL = Convert.ToInt16(commands.ZZRL(""));
-
-                            //if (direction == 127)
-                            if (direction < 64 && direction >= 25) //-W2PA Make Behringer wheel work for tuning
-                            {
-                                freq += offsetDIGL;
-                                long x = SnapTune(freq, step, -1 * stepMult, RoundToStepSize) - offsetDIGL;
-                                if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
-                            }
-                            //if (direction == 1)
-                            if (direction > 64 && direction <= 105) //-W2PA Make Behringer wheel work for tuning
-                            {
-                                freq += offsetDIGL;
-                                long x = SnapTune(freq, step, 1 * stepMult, RoundToStepSize) - offsetDIGL;
-                                if (vfo == "a") commands.ZZFA(x.ToString("D11")); else commands.ZZFB(x.ToString("D11"));
-                            }
-
-                        }
-                        else
-                        {
-                            //if (direction == 127)
-                            if (direction < 64 && direction >= 25) //-W2PA Make Behringer wheel work for tuning
-                            {
-                                if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1 * stepMult, RoundToStepSize).ToString("D11")));
-                                else commands.ZZFB((SnapTune(freq, step, -1 * stepMult, RoundToStepSize).ToString("D11")));
-                            }
-                            //if (direction == 1)
-                            if (direction > 64 && direction <= 105) //-W2PA Make Behringer wheel work for tuning
-                            {
-                                if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1 * stepMult, RoundToStepSize).ToString("D11")));
-                                else commands.ZZFB((SnapTune(freq, step, 1 * stepMult, RoundToStepSize).ToString("D11")));
-                            }
-                        }
-                        break;
-                    }
-                default: //for all other modes
-                    {
-
-                        //if (direction == 127)
-                        if (direction < 64 && direction >= 25) //-W2PA Make Behringer wheel work for tuning
-                        {
-                            if (vfo == "a") commands.ZZFA((SnapTune(freq, step, -1 * stepMult, RoundToStepSize).ToString("D11")));
-                            else commands.ZZFB((SnapTune(freq, step, -1 * stepMult, RoundToStepSize).ToString("D11")));
-                        }
-                        //if (direction == 1)
-                        if (direction > 64 && direction <= 105) //-W2PA Make Behringer wheel work for tuning
-                        {
-                            if (vfo == "a") commands.ZZFA((SnapTune(freq, step, 1 * stepMult, RoundToStepSize).ToString("D11")));
-                            else commands.ZZFB((SnapTune(freq, step, 1 * stepMult, RoundToStepSize).ToString("D11")));
-                        }
-                        break;
-                    }
-            }
-
-        }
-
-        public void ChangeFreqVfoA(int msg, MidiDevice device)
-        {
-            parser.nSet = 2;
-            parser.nGet = 0;
-            int step = StringToFreq(commands.ZZAC(""));
-            ChangeFreqVfoA(msg, step, true, device);
-        }
-
-        //private void ChangeFreqVfoA(int direction, int step, bool RoundToStepSize)
-        //{
-        //    parser.nGet = 0;
-        //    parser.nSet = 11;
-        //    long freq = Convert.ToInt64(commands.ZZFA(""));
-        //    parser.nAns = 11;
-        //    int mode = Convert.ToInt16(commands.ZZMD(""));
-        //    commands.isMidi = true;
-        //    //System.Diagnostics.Debug.WriteLine("Msg=" + msg);
-        //    switch (mode)
-        //    {
-        //        case 7: //DIGU
-        //            {
-        //                if (Convert.ToInt16(commands.ZZRA("")) == 1) //elminate CAT Offset for DIGU in case selected
-        //                {
-        //                    int offsetDIGU = Convert.ToInt16(commands.ZZRH(""));
-
-        //                    if (direction == 127)
-        //                    {
-        //                        freq -= offsetDIGU;
-        //                        long x = SnapTune(freq, step, -1, RoundToStepSize) + offsetDIGU;
-        //                        commands.ZZFA(x.ToString("D11"));
-        //                    }
-        //                    if (direction == 1)
-        //                    {
-        //                        freq -= offsetDIGU;
-        //                        long x = SnapTune(freq, step, 1, RoundToStepSize) + offsetDIGU;
-        //                        commands.ZZFA(x.ToString("D11"));
-        //                    }
-
-        //                }
-        //                else
-        //                {
-        //                    if (direction == 127)
-        //                    {
-        //                        commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-        //                    }
-        //                    if (direction == 1)
-        //                    {
-        //                        commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-        //                    }
-        //                }
-        //                break;
-        //            }
-        //        case 9: //DIGL
-        //            {
-        //                if (Convert.ToInt16(commands.ZZRA("")) == 1) //elminate CAT Offset for DIGL in case selected
-        //                {
-        //                    int offsetDIGL = Convert.ToInt16(commands.ZZRL(""));
-
-        //                    if (direction == 127)
-        //                    {
-        //                        freq += offsetDIGL;
-        //                        long x = SnapTune(freq, step, -1, RoundToStepSize) - offsetDIGL;
-        //                        commands.ZZFA(x.ToString("D11"));
-        //                    }
-        //                    if (direction == 1)
-        //                    {
-        //                        freq += offsetDIGL;
-        //                        long x = SnapTune(freq, step, 1, RoundToStepSize) - offsetDIGL;
-        //                        commands.ZZFA(x.ToString("D11"));
-        //                    }
-
-        //                }
-        //                else
-        //                {
-        //                    if (direction == 127)
-        //                    {
-        //                        commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-        //                    }
-        //                    if (direction == 1)
-        //                    {
-        //                        commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-        //                    }
-        //                }
-        //                break;
-        //            }
-        //        default: //for all other modes
-        //            {
-
-        //                if (direction == 127)
-        //                {
-        //                    commands.ZZFA((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-        //                }
-        //                if (direction == 1)
-        //                {
-        //                    commands.ZZFA((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-        //                }
-        //                break;
-        //            }
-        //    }
-        //    commands.isMidi = false;
-        //}
-
-
-        //-W2PA Modified to select Behringer PL-1, Micro, or original code
-        private void ChangeFreqVfoA(int direction, int step, bool RoundToStepSize, MidiDevice device)  
-        {
-            parser.nGet = 0;
-            parser.nSet = 11;
-            long freq;
-            bool is_vfo_a;
-            if (_swapVFOWheels)
-            {
-                is_vfo_a = false;
-                freq = Convert.ToInt64(commands.ZZFB(""));
-            }
-            else
-            {
-                is_vfo_a = true;
-                freq = Convert.ToInt64(commands.ZZFA(""));
-            }
-
-            //parser.nAns = 11;
-            int mode = Convert.ToInt16(commands.ZZMD(""));
-
-            commands.isMidi = true;
-            //System.Diagnostics.Debug.WriteLine("Msg=" + msg);
-
-            //string devName = device.GetDeviceName();
-            //if (devName == "CMD PL-1")  
-            //{
-            //    ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD PL-1");
-            //}
-            //else if (devName == "CMD Micro")
-            //{
-            //    ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD Micro");
-            //}
-            //else if (devName.Contains("CMD"))
-            //{
-            //    ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD");
-            //}
-            //else
-            //{
-            //    ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo);  // Original handler
-            //}
-
-            //[2.10.3.9]MW0LGE refactor for speed
-            string devName = device.GetDeviceName();
-            if (!string.IsNullOrEmpty(devName) && devName.Contains("CMD", StringComparison.Ordinal))
-            {
-                string is_vfo_a_string = is_vfo_a ? "a" : "b";
-
-                switch (devName)
-                {
-                    case "CMD PL-1":
-                    case "CMD Micro":
-                        ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, is_vfo_a_string, devName);
-                        break;
-                    default:
-                        ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, is_vfo_a_string, "CMD");
-                        break;
-                }
-            }
-            else
-            {
-                ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, is_vfo_a);
-            }
-
-            commands.isMidi = false;
-        }
-
-
-        public long SnapTune(long freq, int step, int num_steps, bool RoundToStepSize)
-        {
-            long temp;
-
-            if (step == 0) //catch to avoid division by zero
-            {
-                return freq;
-            }
-
-            if (RoundToStepSize)
-            {
-                try
-                {
-                    temp = freq / step; // do integer division to end up on a step size boundary
-                }
-                catch
-                {
-                    return freq;
-                }
-
-                // handle when starting frequency was already on a step size boundary and tuning down
-                if (num_steps < 0 && freq % step != 0)
-                    num_steps++; // off boundary -- add one as the divide takes care of one step
-
-                temp += num_steps; // increment by the number of steps (positive or negative)
-
-                freq = temp * step; // multiply back up to get hz
-                return freq; // return freq in MHz
-            }
-            else
-            {
-                if (num_steps > 0)
-                    return freq + step;
-                else
-                    return freq - step;
-            }
-        }
-
-        //public void ChangeFreqVfoB(int msg, MidiDevice device)
-        //{
-        //    bool RoundToStepSize = true;
-        //    parser.nSet = 2;
-        //    parser.nGet = 0;
-        //    int mode;
-        //    if (int.TryParse(commands.ZZMD(""), out mode) == false)
-        //        return;
-        //    int step = StringToFreq(commands.ZZAC(""));
-        //    parser.nSet = 11;
-        //    long freq = Convert.ToInt64(commands.ZZFB(""));
-        //    parser.nAns = 11;
-
-        //    commands.isMidi2 = true;
-
-        //    switch (mode)
-        //    {
-        //        case 7: //DIGU
-        //            {
-        //                if (Convert.ToInt16(commands.ZZRB("")) == 1) //elminate CAT Offset for DIGU in case selected
-        //                {
-        //                    int offsetDIGU = Convert.ToInt16(commands.ZZRH(""));
-
-        //                    if (msg == 127)
-        //                    {
-        //                        freq -= offsetDIGU;
-        //                        long x = SnapTune(freq, step, -1, RoundToStepSize) + offsetDIGU;
-        //                        commands.ZZFB(x.ToString("D11"));
-        //                    }
-        //                    if (msg == 1)
-        //                    {
-        //                        freq -= offsetDIGU;
-        //                        long x = SnapTune(freq, step, 1, RoundToStepSize) + offsetDIGU;
-        //                        commands.ZZFB(x.ToString("D11"));
-        //                    }
-
-        //                }
-        //                else
-        //                {
-        //                    if (msg == 127)
-        //                    {
-        //                        commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-        //                    }
-        //                    if (msg == 1)
-        //                    {
-        //                        commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-        //                    }
-        //                }
-        //                break;
-        //            }
-        //        case 9: //DIGL
-        //            {
-        //                if (Convert.ToInt16(commands.ZZRB("")) == 1) //elminate CAT Offset for DIGL in case selected
-        //                {
-        //                    int offsetDIGL = Convert.ToInt16(commands.ZZRL(""));
-
-        //                    if (msg == 127)
-        //                    {
-        //                        freq += offsetDIGL;
-        //                        long x = SnapTune(freq, step, -1, RoundToStepSize) - offsetDIGL;
-        //                        commands.ZZFB(x.ToString("D11"));
-        //                    }
-        //                    if (msg == 1)
-        //                    {
-        //                        freq += offsetDIGL;
-        //                        long x = SnapTune(freq, step, 1, RoundToStepSize) - offsetDIGL;
-        //                        commands.ZZFB(x.ToString("D11"));
-        //                    }
-
-        //                }
-        //                else
-        //                {
-        //                    if (msg == 127)
-        //                    {
-        //                        commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-        //                    }
-        //                    if (msg == 1)
-        //                    {
-        //                        commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-        //                    }
-        //                }
-        //                break;
-        //            }
-        //        default:
-        //            {
-
-        //                if (msg == 127)
-        //                {
-        //                    commands.ZZFB((SnapTune(freq, step, -1, RoundToStepSize).ToString("D11")));
-        //                }
-        //                if (msg == 1)
-        //                {
-        //                    commands.ZZFB((SnapTune(freq, step, 1, RoundToStepSize).ToString("D11")));
-        //                }
-        //                break;
-        //            }
-        //    }
-        //    commands.isMidi2 = false;
-        //}
-
-        //-W2PA Modified to select Behringer PL-1, Micro, or original code
-        public void ChangeFreqVfoB(int msg, MidiDevice device)
-        {
-            bool RoundToStepSize = true;
-            int direction = msg;
-
-            parser.nGet = 0;
-            parser.nSet = 2;
-
-            if (int.TryParse(commands.ZZMD(""), out int mode) == false)
-                return;
-
-            int step = StringToFreq(commands.ZZAC(""));
-            parser.nSet = 11;
-
-            long freq;
-            bool is_vfo_a;
-            if (_swapVFOWheels)
-            {
-                is_vfo_a = true;
-                freq = Convert.ToInt64(commands.ZZFA(""));
-            }
-            else
-            {
-                is_vfo_a = false;
-                freq = Convert.ToInt64(commands.ZZFB(""));
-            }
-
-            //parser.nAns = 11;
-
-            commands.isMidi = true;
-            //System.Diagnostics.Debug.WriteLine("Msg=" + msg);
-
-            //string devName = device.GetDeviceName();
-            //if (devName == "CMD PL-1")  //W2PA- Special handling for Behringer 
-            //{
-            //    ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD PL-1");
-            //}
-            //else if (devName == "CMD Micro")
-            //{
-            //    ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD Micro");
-            //}
-            //else if (devName.Contains("CMD"))
-            //{
-            //    ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo, "CMD");
-            //}
-            //else
-            //{
-            //    ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, sVfo);
-            //}
-
-            //[2.10.3.9]MW0LGE refactor for speed
-            string devName = device.GetDeviceName();
-            if (!string.IsNullOrEmpty(devName) && devName.Contains("CMD", StringComparison.Ordinal))
-            {
-                string is_vfo_a_string = is_vfo_a ? "a" : "b";
-
-                switch (devName)
-                {
-                    case "CMD PL-1":
-                    case "CMD Micro":
-                        ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, is_vfo_a_string, devName);
-                        break;
-                    default:
-                        ProcessBehringerMainWheelAsVFO(direction, step, RoundToStepSize, freq, mode, is_vfo_a_string, "CMD");
-                        break;
-                }
-            }
-            else
-            {
-                ProcessStdMIDIWheelAsVFO(direction, step, RoundToStepSize, freq, mode, is_vfo_a);
-            }
-
-            commands.isMidi2 = false;
-        }
-
-
-        public CmdState BinauralOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int BINState = Convert.ToInt16(commands.ZZBI(""));
-
-                if (BINState == 0)
-                {
-                    commands.ZZBI("1");
-                    return CmdState.On;
-                }
-                if (BINState == 1)
-                {
-                    commands.ZZBI("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState MuteOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int MuteState = Convert.ToInt16(commands.ZZMA(""));
-
-                if (MuteState == 0)
-                {
-                    commands.ZZMA("1");
-                    return CmdState.On;
-                }
-                if (MuteState == 1)
-                {
-                    commands.ZZMA("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState SpurReductionOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int SRState = Convert.ToInt16(commands.ZZSR(""));
-
-                if (SRState == 0)
-                {
-                    commands.ZZSR("1");
-                    return CmdState.On;
-                }
-                if (SRState == 1)
-                {
-                    commands.ZZSR("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public void NoiseReduction4Amount(int msg, MidiDevice device)
-        {
-            parser.nSet = 3;
-            parser.nGet = 0;
-
-            try
-            {
-                double amount = msg * (100f / 127f);
-                commands.ZZNG(amount.ToString("000"));
-                return;
-            }
-            catch
-            {
-                return;
-            }
-        }
-
-        public CmdState NoiseReductionOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int NRState = Convert.ToInt16(commands.ZZNE(""));
-
-                if (NRState != 1)
-                {
-                    commands.ZZNR("1");
-                    return CmdState.On;
-                }
-                if (NRState == 1)
-                {
-                    commands.ZZNR("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState NoiseReduction2OnOff(int msg, MidiDevice device)  //-W2PA Corrected name to appropriate one for ZZNS
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int NRState = Convert.ToInt16(commands.ZZNE(""));
-
-                if (NRState != 2)
-                {
-                    commands.ZZNS("1");
-                    return CmdState.On;
-                }
-                if (NRState == 2)
-                {
-                    commands.ZZNS("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-        public CmdState NoiseReduction3OnOff(int msg, MidiDevice device)  //-W2PA Corrected name to appropriate one for ZZNS
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int NRState = Convert.ToInt16(commands.ZZNE(""));
-
-                if (NRState != 3)
-                {
-                    commands.ZZNE("3");
-                    return CmdState.On;
-                }
-                if (NRState == 3)
-                {
-                    commands.ZZNE("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-        public CmdState NoiseReduction4OnOff(int msg, MidiDevice device)  //-W2PA Corrected name to appropriate one for ZZNS
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int NRState = Convert.ToInt16(commands.ZZNE(""));
-
-                if (NRState != 4)
-                {
-                    commands.ZZNE("4");
-                    return CmdState.On;
-                }
-                if (NRState == 4)
-                {
-                    commands.ZZNE("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-        public void Rx2NoiseReduction4Amount(int msg, MidiDevice device)
-        {
-            parser.nSet = 3;
-            parser.nGet = 0;
-
-            try
-            {
-                double amount = msg * (100f / 127f);
-                commands.ZZNH(amount.ToString("000"));
-                return;
-            }
-            catch
-            {
-                return;
-            }
-        }
-
-        public CmdState Rx2NoiseReductionOnOff(int msg, MidiDevice device)  //-W2PA Corrected to calling ZZNV instead of ZZNS as above
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int NRState = Convert.ToInt16(commands.ZZNF(""));
-
-                if (NRState != 1)
-                {
-                    commands.ZZNV("1");
-                    return CmdState.On;
-                }
-                if (NRState == 1)
-                {
-                    commands.ZZNV("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-        public CmdState Rx2NoiseReduction2OnOff(int msg, MidiDevice device)  //-W2PA Added function to call ZZNW
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int NRState = Convert.ToInt16(commands.ZZNF(""));
-
-                if (NRState != 2)
-                {
-                    commands.ZZNW("1");
-                    return CmdState.On;
-                }
-                if (NRState == 2)
-                {
-                    commands.ZZNW("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-        public CmdState Rx2NoiseReduction3OnOff(int msg, MidiDevice device)  //-W2PA Corrected name to appropriate one for ZZNS
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int NRState = Convert.ToInt16(commands.ZZNF(""));
-
-                if (NRState != 3)
-                {
-                    commands.ZZNF("3");
-                    return CmdState.On;
-                }
-                if (NRState == 3)
-                {
-                    commands.ZZNF("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-        public CmdState Rx2NoiseReduction4OnOff(int msg, MidiDevice device)  //-W2PA Corrected name to appropriate one for ZZNS
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int NRState = Convert.ToInt16(commands.ZZNF(""));
-
-                if (NRState != 4)
-                {
-                    commands.ZZNF("4");
-                    return CmdState.On;
-                }
-                if (NRState == 4)
-                {
-                    commands.ZZNF("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-        public CmdState Rx2PreAmpOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                try
-                {
-                    int PreAmpState = Convert.ToInt16(commands.ZZPB(""));
-
-                    if (PreAmpState == 0)
-                    {
-                        commands.ZZPB("1");
-                        return CmdState.On;
-                    }
-                    if (PreAmpState == 1)
-                    {
-                        commands.ZZPB("0");
-                        return CmdState.Off;
-                    }
-                }
-                catch
-                {
-                    return CmdState.NoChange;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState VfoSyncOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int SyncState = Convert.ToInt16(commands.ZZSY(""));
-
-                if (SyncState == 0)
-                {
-                    commands.ZZSY("1");
-                    return CmdState.On;
-                }
-                if (SyncState == 1)
-                {
-                    commands.ZZSY("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState SplitOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int SplitState = Convert.ToInt16(commands.ZZSP(""));
-
-                if (SplitState == 0)
-                {
-                    commands.ZZSP("1");
-                    return CmdState.On;
-                }
-                if (SplitState == 1)
-                {
-                    commands.ZZSP("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState MOXOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int MOXState = Convert.ToInt16(commands.ZZTX(""));
-
-                if (MOXState == 0)
-                {
-                    commands.ZZTX("1");
-                    return CmdState.On;
-                }
-                if (MOXState == 1)
-                {
-                    commands.ZZTX("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState VOXOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int VOXState = Convert.ToInt16(commands.ZZVE(""));
-
-                if (VOXState == 0)
-                {
-                    commands.ZZVE("1");
-                    return CmdState.On;
-                }
-                if (VOXState == 1)
-                {
-                    commands.ZZVE("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState CompanderOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int CMPRState = Convert.ToInt16(commands.ZZCP(""));
-
-                if (CMPRState == 0)
-                {
-                    commands.ZZCP("1");
-                    return CmdState.On;
-                }
-                if (CMPRState == 1)
-                {
-                    commands.ZZCP("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState StereoDiversityOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int DXState = Convert.ToInt16(commands.ZZDX(""));
-
-                if (DXState == 0)
-                {
-                    commands.ZZDX("1");
-                    return CmdState.On;
-                }
-                if (DXState == 1)
-                {
-                    commands.ZZDX("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState DEXPOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                int DEXPState = Convert.ToInt16(commands.ZZGE(""));
-
-                if (DEXPState == 0)
-                {
-                    commands.ZZGE("1");
-                    return CmdState.On;
-                }
-                if (DEXPState == 1)
-                {
-                    commands.ZZGE("0");
-                    return CmdState.Off;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState RX2OnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                try
-                {
-                    int RX2State = Convert.ToInt16(commands.ZZRS(""));
-                    if (RX2State == 0)
-                    {
-                        commands.ZZRS("1");
-                        return CmdState.On;
-                    }
-                    if (RX2State == 1)
-                    {
-                        commands.ZZRS("0");
-                        return CmdState.Off;
-                    }
-                }
-                catch
-                {
-                    return CmdState.NoChange;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState StartOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 2;
-                try
-                {
-                    int StartState = Convert.ToInt16(commands.ZZPS(""));
-
-                    parser.nSet = 1;
-
-                    if (StartState == 0)
-                    {
-                        commands.ZZPS("1");
-                        return CmdState.On;
-                    }
-                    if (StartState == 1)
-                    {
-                        commands.ZZPS("0");
-                        return CmdState.Off;
-                    }
-                }
-                catch
-                {
-                    return CmdState.NoChange;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState TunerOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                try
-                {
-                    int TunerState = Convert.ToInt16(commands.ZZOV(""));
-
-                    if (TunerState == 0)
-                    {
-                        commands.ZZOV("1");
-                        return CmdState.On;
-                    }
-                    if (TunerState == 1)
-                    {
-                        commands.ZZOV("0");
-                        return CmdState.Off;
-                    }
-                }
-                catch
-                {
-                    return CmdState.NoChange;
-                }
-            }
-            return CmdState.NoChange;
-        }
-
-        public CmdState TunOnOff(int msg, MidiDevice device)
-        {
-            if (msg == 127)
-            {
-                parser.nGet = 0;
-                parser.nSet = 1;
-
-                try
-                {
-                    int TunerState = Convert.ToInt16(commands.ZZTU(""));
-
-                    if (TunerState == 0)
-                    {
-                        commands.ZZTU("1");
-                        return CmdState.On;
-                    }
-                    if (TunerState == 1)
-                    {
-                        commands.ZZTU("0");
-                        return CmdState.Off;
-                    }
-                }
-                catch
-                {
-                    return CmdState.NoChange;
-                }
-            }
-            return CmdState.NoChange;
-        }
-        //MW0LGE_21g
-        public CmdState TwoToneOnOff(int msg, MidiDevice device)
-=======
-            if (127 == msg)
-            {
-                NetworkIO.SetCWX(1);
-            }
-            else
-            {
-                NetworkIO.SetCWX(0);
-            }
-
-            return;
-        }
-
-        public void CWXPTT(int msg, MidiDevice device)  //MI0BOT: CW PTT via MIDI
-        {
-            if (127 == msg)
-            {
-                NetworkIO.SetCWXPTT(1);
-            }
-            else
-            {
-                NetworkIO.SetCWXPTT(0);
-            }
-
-            return;
-        }
 
         //MW0LGE_21k9d
         public void ZoomToBandRecall(int msg, MidiDevice device)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
         {
             if (msg == 127)
             {

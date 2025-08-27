@@ -103,9 +103,6 @@ namespace Thetis
         private Thread noise_gate_update_thread;			// polls the mic input during TX
         private Thread _overload_thread;
         public bool _pause_DisplayThread = true;             // MW0LGE_21d initally paused
-        private Thread IOBoard_update_thread;		    	// updates the HL2 I/O board (MI0BOT)
-
-
         private bool calibration_running = false;
         private bool displaydidit = false;
         public Mutex calibration_mutex = new Mutex();
@@ -781,6 +778,13 @@ namespace Thetis
 
             Splash.SetStatus("Initializing Database");          // Set progress point
 
+            //Uncomment for HL2 build
+            //bool dbid_exists = args.Any(arg => arg.IndexOf("-dbid", StringComparison.OrdinalIgnoreCase) >= 0);
+            //if (!dbid_exists)
+            //{
+            //    Array.Resize(ref args, args.Length + 1);
+            //    args[args.Length - 1] = "-dbid:HL2";
+            //}
             bool ok = DBMan.LoadDB(args, out string broken_folder);
             if (!ok)
             {
@@ -886,7 +890,6 @@ namespace Thetis
             //            
             if (!IsSetupFormNull) SetupForm.SetupCMAsio(_portAudioIssue, Common.HasArg(args, "-cmasioconfig"));
 
-<<<<<<< Project Files/Source/Console/console.cs
             //// still waiting cpu
             //if (!_getInstanceNameComplete && instanceNameThread != null && instanceNameThread.IsAlive)
             //{
@@ -894,15 +897,6 @@ namespace Thetis
             //    bool bOk = instanceNameThread.Join(5000);
             //    if (!bOk) MessageBox.Show("There was an issue initialising CPU usage", "CPU Usage. This will not be available on the status bar.", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             //}
-=======
-            // still waiting cpu
-            if (!_getInstanceNameComplete && instanceNameThread != null && instanceNameThread.IsAlive)
-            {
-                Splash.SetStatus("Waiting for CPU GetInstance");
-                bool bOk = instanceNameThread.Join(5000);
-                if (!bOk) MessageBox.Show("There was an issue initialising CPU usage", "CPU Usage. This will not be available on the status bar.", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-            }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             CpuUsage(); //[2.10.1.0] MW0LGE initial call to setup check marks in status bar as a minimum
 
             Splash.SetStatus("Processing Finder Info");
@@ -1199,8 +1193,8 @@ namespace Thetis
                 if (new_szie != _error_log_initial_size)
                 {
                     //log file has changed
-                    MessageBox.Show("The ErrorLog.txt has been updated during this session.\n\n" +
-                    "Please email it to MI0BOT at : [mi0bot@trom.uk].\n\n" +
+                    MessageBox.Show("The ErrorLog.txt has been updated during this sesson.\n\n" +
+                    "Please email it to MW0LGE at : [mw0lge@grange-lane.co.uk].\n\n" +
                     "It is located in this folder : [" + AppDataPath + "].",
                     "Error Log Change",
                     MessageBoxButtons.OK,
@@ -1303,36 +1297,6 @@ namespace Thetis
             if (Common.HasArg(args, "-help"))
             {
                 if (showHelpInfo()) return;  // if we can show, instantly exit
-            }
-
-            string buildName = TitleBar.BUILD_NAME;
-            var parts = VersionInfo.BuildDate.Split('/');
-            int month = Convert.ToInt32(parts[0]);
-            int day = Convert.ToInt32(parts[1]);
-            int year = Convert.ToInt32(parts[2]) + 2000;
-
-            DateTime oldDate = new DateTime(year, month, day);
-            DateTime currentDate = DateTime.Today;
-
-            int daysElapsed = (currentDate - oldDate).Days;
-
-            if (100 < daysElapsed &&
-                buildName.Contains("eta") &&
-                !(Keyboard.IsKeyDown(Keys.Alt)))
-            {
-                // Exceeded beta trail period
-
-                if (MessageBox.Show("Sorry, but this beta's time limit has expired. " + "Download the latest version?",
-                    "Beta Timeout",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Asterisk) == DialogResult.Yes)
-                {
-                    System.Diagnostics.Process.Start("https://github.com/mi0bot/OpenHPSDR-Thetis/releases/");
-                }
-
-                // Shut down the current process
-                Application.Exit();
-                return;
             }
 
             string app_data_path = "";
@@ -1922,37 +1886,6 @@ namespace Thetis
                 //MiniSpec.Add(1, 0, true); // rx1 sub //not used yet
             }
             //
-
-            if (HPSDRHW.HermesLite == Audio.LastRadioHardware ||
-                HPSDRModel.HERMESLITE == CurrentHPSDRModel)     // MI0BOT: Need an early indication of hardware type due to HL2 rx attenuator can be negative  
-            {
-                ptbPWR.Maximum = 90;        // MI0BOT: Changes for HL2 only having a 16 step output attenuator 
-                ptbPWR.Value = 0;
-                ptbPWR.LargeChange = 6;
-                ptbPWR.SmallChange = 6;
-                ptbTune.Maximum = 99;
-                ptbTune.Value = 0;
-                ptbTune.LargeChange = 3;
-                ptbTune.SmallChange = 3;
-
-                // MI0BOT: Changes for HL2 having a greater range of LNA 
-                udRX1StepAttData.Maximum = 32;
-                udRX2StepAttData.Maximum = 32;
-                udRX1StepAttData.Minimum = -28;
-                udRX2StepAttData.Minimum = -28;
-                udTXStepAttData.Minimum = -28;
-
-                comboRX2Preamp.Enabled = false;
-                udRX2StepAttData.Enabled = false;
-                lblRX2Preamp.Enabled = false;
-
-                // MI0BOT: Remove items from main menu that are currently not used
-
-                this.menuStrip1.Items.Remove(pIToolStripMenuItem);
-                this.menuStrip1.Items.Remove(wBToolStripMenuItem);
-                this.menuStrip1.Items.Remove(eSCToolStripMenuItem);
-                this.menuStrip1.Items.Remove(BPFToolStripMenuItem);
-             }
 
             UpdateTXProfile(SetupForm.TXProfile); // now update the combos
 
@@ -6316,7 +6249,6 @@ namespace Thetis
                 case HPSDRModel.ANAN8000D:
                     interval = 20.0f;
                     break;
-                case HPSDRModel.HERMESLITE:     // MI0BOT: HL2
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                     interval = 1.0f;
@@ -7896,18 +7828,7 @@ namespace Thetis
             if (diversity2)
                 P1_diversity = 1;
 
-<<<<<<< Project Files/Source/Console/console.cs
             switch (HardwareSpecific.Model)
-=======
-            HPSDRModel hpsdr_model = current_hpsdr_model;
-
-            if (hpsdr_model == HPSDRModel.HERMESLITE && ReduceEthernetBW)       // MI0BOT: Change to low bandwidth model for the HL2 for use over WAN
-            {
-                hpsdr_model = HPSDRModel.ANAN10E;
-            }
-
-            switch (hpsdr_model)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             {
                 case HPSDRModel.ANAN100D:
                 case HPSDRModel.ANAN200D:
@@ -8075,7 +7996,6 @@ namespace Thetis
                     }
                     break;
                 case HPSDRModel.HERMES:
-                case HPSDRModel.HERMESLITE:     // MI0BOT: HL2
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN100:
                     P1_rxcount = 4;                     // RX4 used for puresignal feedback
@@ -8298,7 +8218,6 @@ namespace Thetis
                         break;
                     //case HPSDRHW.Atlas: /// ???
                     case HPSDRHW.Hermes: // ANAN-10 ANAN-100 Heremes
-                    case HPSDRHW.HermesLite: // HL2 does support P2 but need to have entry to correcly ID hardware
                     case HPSDRHW.HermesII: // ANAN-10E ANAN-100B HeremesII
                         switch (tot)
                         {
@@ -8392,7 +8311,6 @@ namespace Thetis
                         break;
                     //                    case HPSDRHW.Atlas: /// ???
                     case HPSDRHW.Hermes: // ANAN-10 ANAN-100 Heremes (4 adc)
-                    case HPSDRHW.HermesLite: // Hermes Lite 2
                         switch (tot)
                         {
                             case 0: // off off off
@@ -10826,23 +10744,12 @@ namespace Thetis
                     setTXstepAttenuatorForBand(_tx_band, _tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes #399
                     if (m_bAttontx)
                     {
-<<<<<<< Project Files/Source/Console/console.cs
                         //int txatt = getTXstepAttenuatorForBand(_tx_band);
                         //NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
                         //Display.TXAttenuatorOffset = txatt; //[2.10.3.6]MW0LGE att_fixes
 
                         NetworkIO.SetTxAttenData(_tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes
                         Display.TXAttenuatorOffset = _tx_attenuator_data; //[2.10.3.6]MW0LGE att_fixes
-=======
-                        int txatt = getTXstepAttenuatorForBand(tx_band);
-                        
-                        if (current_hpsdr_model == HPSDRModel.HERMESLITE) 
-                           NetworkIO.SetTxAttenData(32 - txatt); // MI0BOT: Greater range for HL2
-                        else
-                           NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
-                        
-                        Display.TXAttenuatorOffset = txatt; //[2.10.3.6]MW0LGE att_fixes
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                     }
                     else
                     {
@@ -11195,7 +11102,6 @@ namespace Thetis
             get { return _rx1_attenuator_data; }
             set
             {
-<<<<<<< Project Files/Source/Console/console.cs
                 int oldData = _rx1_attenuator_data;
                 _rx1_attenuator_data = value;
                 if (initializing)
@@ -11214,30 +11120,8 @@ namespace Thetis
                     HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
                     HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
                     HardwareSpecific.Model != HPSDRModel.REDPITAYA) //DH1KLM
-=======
-                int oldData = rx1_attenuator_data;
-                rx1_attenuator_data = value;
-                if (initializing) return;
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 LNA has wider range
-                {
-                    udRX1StepAttData.Maximum = (decimal)32;
-                    udRX1StepAttData.Minimum = (decimal)-28;
-                }
-                else if (alexpresent &&
-                    current_hpsdr_model != HPSDRModel.ANAN10 &&
-                    current_hpsdr_model != HPSDRModel.ANAN10E &&
-                    current_hpsdr_model != HPSDRModel.ANAN7000D &&
-                    current_hpsdr_model != HPSDRModel.ANAN8000D &&
-                    current_hpsdr_model != HPSDRModel.ORIONMKII &&
-                    current_hpsdr_model != HPSDRModel.ANAN_G2 &&
-                    current_hpsdr_model != HPSDRModel.ANAN_G2_1K &&
-                    current_hpsdr_model != HPSDRModel.ANVELINAPRO3)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                     udRX1StepAttData.Maximum = (decimal)61;
-                else
-                {
-                    udRX1StepAttData.Maximum = (decimal)31;
-                }
+                else udRX1StepAttData.Maximum = (decimal)31;
 
                 _rx1_attenuator_data = validateRX1StepAttData(_rx1_attenuator_data); //[2.10.3.9]MW0LGE validated
 
@@ -11250,7 +11134,6 @@ namespace Thetis
 
                 if (_rx1_step_att_enabled)
                 {
-<<<<<<< Project Files/Source/Console/console.cs
                     if (alexpresent &&
                         HardwareSpecific.Model != HPSDRModel.ANAN10 &&
                         HardwareSpecific.Model != HPSDRModel.ANAN10E &&
@@ -11263,24 +11146,6 @@ namespace Thetis
                         HardwareSpecific.Model != HPSDRModel.REDPITAYA) //DH1KLM
                     {
                         if (_rx1_attenuator_data <= 31)
-=======
-                    if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 wider  LNA range
-                    {
-                        NetworkIO.SetAlexAtten(0);
-                        NetworkIO.SetADC1StepAttenData(32 - rx1_attenuator_data);
-                    }
-                    else if (alexpresent &&
-                        current_hpsdr_model != HPSDRModel.ANAN10 &&
-                        current_hpsdr_model != HPSDRModel.ANAN10E &&
-                        current_hpsdr_model != HPSDRModel.ANAN7000D &&
-                        current_hpsdr_model != HPSDRModel.ANAN8000D &&
-                        current_hpsdr_model != HPSDRModel.ORIONMKII &&
-                        current_hpsdr_model != HPSDRModel.ANAN_G2 &&
-                        current_hpsdr_model != HPSDRModel.ANAN_G2_1K &&
-                        current_hpsdr_model != HPSDRModel.ANVELINAPRO3)
-                    {
-                        if (rx1_attenuator_data <= 31)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                         {
                             NetworkIO.SetAlexAtten(0); // 0dB Alex Attenuator
                             if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(_rx1_attenuator_data);
@@ -11400,7 +11265,6 @@ namespace Thetis
                     return;
                 }
 
-<<<<<<< Project Files/Source/Console/console.cs
                 if (alexpresent &&
                     HardwareSpecific.Model != HPSDRModel.ANAN10 &&
                     HardwareSpecific.Model != HPSDRModel.ANAN10E &&
@@ -11411,22 +11275,6 @@ namespace Thetis
                     HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
                     HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
                     HardwareSpecific.Model != HPSDRModel.REDPITAYA) //DH1KLM
-=======
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 LNA has wider range
-                {
-                    udRX2StepAttData.Maximum = (decimal)32;
-                    udRX2StepAttData.Minimum = (decimal)-28;
-                }
-                else if (alexpresent &&
-                    current_hpsdr_model != HPSDRModel.ANAN10 &&
-                    current_hpsdr_model != HPSDRModel.ANAN10E &&
-                    current_hpsdr_model != HPSDRModel.ANAN7000D &&
-                    current_hpsdr_model != HPSDRModel.ANAN8000D &&
-                    current_hpsdr_model != HPSDRModel.ORIONMKII &&
-                    current_hpsdr_model != HPSDRModel.ANAN_G2 &&
-                    current_hpsdr_model != HPSDRModel.ANAN_G2_1K &&
-                    current_hpsdr_model != HPSDRModel.ANVELINAPRO3)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                     udRX2StepAttData.Maximum = (decimal)61; //MW0LGE_[2.9.0.7]  changed to udRX2
                 else udRX2StepAttData.Maximum = (decimal)31;
 
@@ -11441,7 +11289,6 @@ namespace Thetis
 
                 if (_rx2_step_att_enabled)
                 {
-<<<<<<< Project Files/Source/Console/console.cs
                     if (alexpresent &&
                         HardwareSpecific.Model != HPSDRModel.ANAN10 &&
                         HardwareSpecific.Model != HPSDRModel.ANAN10E &&
@@ -11452,22 +11299,6 @@ namespace Thetis
                         HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
                         HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
                         HardwareSpecific.Model != HPSDRModel.REDPITAYA) //DH1KLM
-=======
-                    if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 wider  LNA range
-                    {
-                        NetworkIO.SetAlexAtten(0);
-                        NetworkIO.SetADC1StepAttenData(32 - rx1_attenuator_data);
-                    }
-                    else if (alexpresent &&
-                        current_hpsdr_model != HPSDRModel.ANAN10 &&
-                        current_hpsdr_model != HPSDRModel.ANAN10E &&
-                        current_hpsdr_model != HPSDRModel.ANAN7000D &&
-                        current_hpsdr_model != HPSDRModel.ANAN8000D &&
-                        current_hpsdr_model != HPSDRModel.ORIONMKII &&
-                        current_hpsdr_model != HPSDRModel.ANAN_G2 &&
-                        current_hpsdr_model != HPSDRModel.ANAN_G2_1K &&
-                        current_hpsdr_model != HPSDRModel.ANVELINAPRO3)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                     {
                         if (rx2_attenuator_data <= 31)
                         {
@@ -11521,7 +11352,7 @@ namespace Thetis
         }
 
         private int[] m_nTuneStepsByMode; //MW0LGE_21j
-        
+
         private List<TuneStep> tune_step_list;				// A list of available tuning steps
         public List<TuneStep> TuneStepList
         {
@@ -13387,11 +13218,7 @@ namespace Thetis
                     }
                     else
                     {
-<<<<<<< Project Files/Source/Console/console.cs
                         if (_current_breakin_mode == BreakIn.Manual)
-=======
-                        if (_current_breakin_mode == BreakIn.Manual && current_hpsdr_model != HPSDRModel.HERMESLITE)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                         {
                             vol = (int)(txaf * 0.73);
                         }
@@ -13407,11 +13234,7 @@ namespace Thetis
                 else
                     NetworkIO.SetCWSidetoneVolume(0);
 
-<<<<<<< Project Files/Source/Console/console.cs
                 if (_cw_sw_sidetone)
-=======
-                if (_cw_sw_sidetone) 
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                     NetworkIO.SetSidetoneVolume(0, vol / 100f);
                 else
                     NetworkIO.SetSidetoneVolume(0, 0);
@@ -15105,211 +14928,10 @@ namespace Thetis
             }
         }
 
-<<<<<<< Project Files/Source/Console/console.cs
         public void SetupForHPSDRModel()
         {
             chkFullDuplex.Visible = false;
             NetworkIO.fwVersionsChecked = false;
-=======
-        private HPSDRModel current_hpsdr_model = HPSDRModel.HERMES;
-        public HPSDRModel CurrentHPSDRModel
-        {
-            get { return current_hpsdr_model; }
-            set
-            {
-                HPSDRModel saved_hpsdr_model = current_hpsdr_model;
-                current_hpsdr_model = value;
-
-                Display.CurrentHPSDRModel = value;
-                chkFullDuplex.Visible = false;
-                NetworkIO.fwVersionsChecked = false;
-
-                switch (current_hpsdr_model)
-                {
-                    case HPSDRModel.HERMES:
-                        chkDX.Checked = false;
-                        chkDX.Visible = false;
-                        rx2_preamp_present = false;
-                        NetworkIO.SetRxADC(1);
-                        NetworkIO.SetMKIIBPF(0);
-                        cmaster.SetADCSupply(0, 33);
-                        NetworkIO.LRAudioSwap(1);
-                        CurrentHPSDRHardware = HPSDRHW.Hermes;
-                        break;
-                    case HPSDRModel.HERMESLITE:     // MI0BOT: HL2
-                        chkDX.Checked = false;
-                        chkDX.Visible = false;
-                        rx2_preamp_present = false;
-                        NetworkIO.SetRxADC(1);
-                        NetworkIO.SetMKIIBPF(0);
-                        cmaster.SetADCSupply(0, 33);
-                        NetworkIO.LRAudioSwap(1);
-                        CurrentHPSDRHardware = HPSDRHW.HermesLite;
-                        break;
-                    case HPSDRModel.ANAN10:
-                        chkDX.Checked = false;
-                        chkDX.Visible = false;
-                        rx2_preamp_present = false;
-                        NetworkIO.SetRxADC(1);
-                        NetworkIO.SetMKIIBPF(0);
-                        cmaster.SetADCSupply(0, 33);
-                        NetworkIO.LRAudioSwap(1);
-                        CurrentHPSDRHardware = HPSDRHW.Hermes;
-                        break;
-                    case HPSDRModel.ANAN10E:
-                        chkDX.Checked = false;
-                        chkDX.Visible = false;
-                        rx2_preamp_present = false;
-                        NetworkIO.SetRxADC(1);
-                        NetworkIO.SetMKIIBPF(0);
-                        cmaster.SetADCSupply(0, 33);
-                        NetworkIO.LRAudioSwap(1);
-                        CurrentHPSDRHardware = HPSDRHW.HermesII;
-                        break;
-                    case HPSDRModel.ANAN100:
-                        chkDX.Checked = false;
-                        chkDX.Visible = false;
-                        rx2_preamp_present = false;
-                        NetworkIO.SetRxADC(1);
-                        NetworkIO.SetMKIIBPF(0);
-                        cmaster.SetADCSupply(0, 33);
-                        NetworkIO.LRAudioSwap(1);
-                        CurrentHPSDRHardware = HPSDRHW.Hermes;
-                        break;
-                    case HPSDRModel.ANAN100B:
-                        chkDX.Checked = false;
-                        chkDX.Visible = false;
-                        rx2_preamp_present = false;
-                        NetworkIO.SetRxADC(1);
-                        NetworkIO.SetMKIIBPF(0);
-                        cmaster.SetADCSupply(0, 33);
-                        NetworkIO.LRAudioSwap(1);
-                        CurrentHPSDRHardware = HPSDRHW.HermesII;
-                        break;
-                    case HPSDRModel.ANAN100D:
-                        //chkDX.Visible = true; //[2.10.3.6]MW0LGE stereo diversity set as invisible until re-implemented
-                        chkDX.Visible = false;
-                        rx2_preamp_present = true;
-                        NetworkIO.SetRxADC(2);
-                        NetworkIO.SetMKIIBPF(0);
-                        cmaster.SetADCSupply(0, 33);
-                        NetworkIO.LRAudioSwap(0);
-                        CurrentHPSDRHardware = HPSDRHW.Angelia;
-                        break;
-                    case HPSDRModel.ANAN200D:
-                        //chkDX.Visible = true; //[2.10.3.6]MW0LGE stereo diversity set as invisible until re-implemented
-                        chkDX.Visible = false;
-                        rx2_preamp_present = true;
-                        NetworkIO.SetRxADC(2);
-                        NetworkIO.SetMKIIBPF(0);
-                        cmaster.SetADCSupply(0, 50);
-                        NetworkIO.LRAudioSwap(0);
-                        CurrentHPSDRHardware = HPSDRHW.Orion;
-                        break;
-                    case HPSDRModel.ORIONMKII:
-                        //chkDX.Visible = true; //[2.10.3.6]MW0LGE stereo diversity set as invisible until re-implemented
-                        chkDX.Visible = false;
-                        rx2_preamp_present = true;
-                        NetworkIO.SetRxADC(2);
-                        NetworkIO.SetMKIIBPF(1);
-                        cmaster.SetADCSupply(0, 50);
-                        NetworkIO.LRAudioSwap(0);
-                        CurrentHPSDRHardware = HPSDRHW.OrionMKII;
-                        break;
-                    case HPSDRModel.ANAN7000D:
-                        //chkDX.Visible = true; //[2.10.3.6]MW0LGE stereo diversity set as invisible until re-implemented
-                        chkDX.Visible = false;
-                        rx2_preamp_present = true;
-                        NetworkIO.SetRxADC(2);
-                        NetworkIO.SetMKIIBPF(1);
-                        cmaster.SetADCSupply(0, 50);
-                        NetworkIO.LRAudioSwap(0);
-                        CurrentHPSDRHardware = HPSDRHW.OrionMKII;
-                        break;
-                    case HPSDRModel.ANAN8000D:
-                        //chkDX.Visible = true; //[2.10.3.6]MW0LGE stereo diversity set as invisible until re-implemented
-                        chkDX.Visible = false;
-                        rx2_preamp_present = true;
-                        NetworkIO.SetRxADC(2);
-                        NetworkIO.SetMKIIBPF(1);
-                        cmaster.SetADCSupply(0, 50);
-                        NetworkIO.LRAudioSwap(0);
-                        CurrentHPSDRHardware = HPSDRHW.OrionMKII;
-                        break;
-                    case HPSDRModel.ANAN_G2:
-                        //chkDX.Visible = true; //[2.10.3.6]MW0LGE stereo diversity set as invisible until re-implemented
-                        chkDX.Visible = false;
-                        rx2_preamp_present = true;
-                        NetworkIO.SetRxADC(2);
-                        NetworkIO.SetMKIIBPF(1);
-                        cmaster.SetADCSupply(0, 50);
-                        NetworkIO.LRAudioSwap(0);
-                        CurrentHPSDRHardware = HPSDRHW.Saturn;
-                        AmpSens = 66.23f;                                // current reading sensitivity
-                        AmpVoff = 0.0f;                                  // current sensor voltage offset
-                        break;
-                    case HPSDRModel.ANAN_G2_1K:             // G8NJJ: likely to need further changes for PA
-                        //chkDX.Visible = true; //[2.10.3.6]MW0LGE stereo diversity set as invisible until re-implemented
-                        chkDX.Visible = false;
-                        rx2_preamp_present = true;
-                        NetworkIO.SetRxADC(2);
-                        NetworkIO.SetMKIIBPF(1);
-                        cmaster.SetADCSupply(0, 50);
-                        NetworkIO.LRAudioSwap(0);
-                        CurrentHPSDRHardware = HPSDRHW.Saturn;
-                        AmpSens = 66.23f;                                // current reading sensitivity
-                        AmpVoff = 0.0f;                                  // current sensor voltage offset
-                        break;
-                    case HPSDRModel.ANVELINAPRO3:
-                        //chkDX.Visible = true; //[2.10.3.6]MW0LGE stereo diversity set as invisible until re-implemented
-                        chkDX.Visible = false;
-                        rx2_preamp_present = true;
-                        NetworkIO.SetRxADC(2);
-                        NetworkIO.SetMKIIBPF(1);
-                        cmaster.SetADCSupply(0, 50);
-                        NetworkIO.LRAudioSwap(0);
-                        CurrentHPSDRHardware = HPSDRHW.OrionMKII;
-                        break;
-                }
-
-                switch (current_hpsdr_model)
-                {
-                    case HPSDRModel.HPSDR:
-                        break;
-                    case HPSDRModel.HERMES:
-                    case HPSDRModel.HERMESLITE:     // MI0BOT: HL2
-                    case HPSDRModel.ANAN10:
-                    case HPSDRModel.ANAN10E:
-                    case HPSDRModel.ANAN100:
-                    case HPSDRModel.ANAN100B:
-                    case HPSDRModel.ANAN100D:
-                    case HPSDRModel.ANAN200D:
-                    case HPSDRModel.ORIONMKII:
-                    case HPSDRModel.ANAN7000D:
-                    case HPSDRModel.ANAN8000D:
-                    case HPSDRModel.ANAN_G2:
-                    case HPSDRModel.ANAN_G2_1K:
-                    case HPSDRModel.ANVELINAPRO3:
-                        if (!comboMeterTXMode.Items.Contains("Ref Pwr"))
-                            comboMeterTXMode.Items.Insert(1, "Ref Pwr");
-                        if (!comboMeterTXMode.Items.Contains("SWR"))
-                            comboMeterTXMode.Items.Insert(2, "SWR");
-                        if (!comboMeterTXMode.Items.Contains("Fwd SWR"))
-                            comboMeterTXMode.Items.Insert(3, "Fwd SWR");
-                        break;
-                }
-
-                SetComboPreampForHPSDR();
-                UpdateDDCs(rx2_enabled);
-
-                if (!initializing)
-                {
-                    rx1_meter_cal_offset = rx_meter_cal_offset_by_radio[(int)current_hpsdr_model];
-                    RX1DisplayCalOffset = rx_display_cal_offset_by_radio[(int)current_hpsdr_model];
-                    rx2_meter_cal_offset = rx_meter_cal_offset_by_radio[(int)current_hpsdr_model];
-                    RX2DisplayCalOffset = rx_display_cal_offset_by_radio[(int)current_hpsdr_model];
-                }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
             switch (HardwareSpecific.Model)
             {
@@ -15502,23 +15124,11 @@ namespace Thetis
         {
             if (chkRxAnt.Checked)
             {
-                if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)
+                if (!Alex.trx_ant_different && !initializing)
                 {
-                    // MI0BOT:  Just return out to preserve the state of the rx antenna over reboots     
-                    if (initializing)
-                    {
-                        return;
-                    }
+                    chkRxAnt.Checked = false;
+                    return;
                 }
-                else
-                {
-                    if (!Alex.trx_ant_different && !initializing)
-                    {
-                        chkRxAnt.Checked = false;
-                        return;
-                    }
-                }
-
                 Alex.TRxAnt = true;
                 chkRxAnt.Text = "Tx Ant";
                 chkRxAnt.ForeColor = Color.Yellow;
@@ -15547,20 +15157,14 @@ namespace Thetis
 
         private void enableMONForCW()
         {
-<<<<<<< Project Files/Source/Console/console.cs
             DSPMode tx_mode = _rx1_dsp_mode;
             if (chkVFOBTX.Checked && chkRX2.Checked) tx_mode = _rx2_dsp_mode;
-=======
-            DSPMode tx_mode = rx1_dsp_mode;
-            if (chkVFOBTX.Checked && chkRX2.Checked) tx_mode = rx2_dsp_mode;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
             if (tx_mode == DSPMode.CWL || tx_mode == DSPMode.CWU)
                 chkMON.Checked = _cw_sidetones && (_cw_hw_sidetone || _cw_sw_sidetone);
         }
         private bool _cw_sidetones = false;
         public bool CWSidetones
-<<<<<<< Project Files/Source/Console/console.cs
         {
             get { return _cw_sidetones; }
             set
@@ -15605,52 +15209,6 @@ namespace Thetis
 
                 setCWSideToneVolume();
                 enableMONForCW();
-=======
-        {
-            get { return _cw_sidetones; }
-            set
-            {
-                _cw_sidetones = value;
-                chkCWSidetone.Checked = _cw_sidetones;
-
-                // force update
-                CWSWSidetone = CWSWSidetone;
-                CWHWSidetone = CWHWSidetone;
-            }
-        }
-        private bool _cw_sw_sidetone = false;
-        public bool CWSWSidetone
-        {
-            //software side tone
-            get { return _cw_sw_sidetone; }
-            set
-            {
-                _cw_sw_sidetone = value;
-
-                bool is_cw = VFOBTX && RX2Enabled ? RX2DSPMode == DSPMode.CWL || RX2DSPMode == DSPMode.CWU : RX1DSPMode == DSPMode.CWL || RX1DSPMode == DSPMode.CWU;
-                NetworkIO.SetSidetoneRun(0, is_cw && _cw_sidetones && _cw_sw_sidetone ? 1 : 0);
-
-                setCWSideToneVolume();
-                enableMONForCW();
-            }
-        }
-        private bool _cw_hw_sidetone = false;
-        public bool CWHWSidetone
-        {
-            //hardware side tone
-            get { return _cw_hw_sidetone; }
-            set
-            {
-                _cw_hw_sidetone = value;
-
-                if (_cw_sidetones && _cw_hw_sidetone)
-                    NetworkIO.SetCWSidetone(1);
-                else
-                    NetworkIO.SetCWSidetone(0);
-
-                setCWSideToneVolume();
-                enableMONForCW();
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             }
         }
 
@@ -15990,7 +15548,6 @@ namespace Thetis
             switch (HardwareSpecific.Model)
             {
                 case HPSDRModel.HERMES:
-                case HPSDRModel.HERMESLITE:     // MI0BOT: HL2
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                 case HPSDRModel.ANAN100:
@@ -16027,7 +15584,6 @@ namespace Thetis
             switch (HardwareSpecific.Model)
             {
                 case HPSDRModel.HERMES:
-                case HPSDRModel.HERMESLITE:     // MI0BOT: HL2
                 case HPSDRModel.ANAN10:
                 case HPSDRModel.ANAN10E:
                 case HPSDRModel.ANAN100:
@@ -17503,18 +17059,8 @@ namespace Thetis
             get { return cat_enabled; }
         }
 
-        private bool cat_to_vfo_b = false;  // MI0BOT: Flag used to identify that CAT commands should operate on VFO B
-        public bool CATtoVFOB
-        {
-            set
-            { cat_to_vfo_b = value; }
-            get
-            { return cat_to_vfo_b; }
-        }
-
         // property set when An Andromeda panel is connected via a serial CAT port.
         // NOT used for G2 panel accessed via TCP/IP
-
         private bool andromeda_cat_enabled;
         public bool AndromedaCATEnabled
         {
@@ -19067,11 +18613,7 @@ namespace Thetis
             set
             {
                 value = Math.Max(0, value);			// lower bound
-
-                if (CurrentHPSDRModel == HPSDRModel.HERMESLITE) // Mi0BOT: Limit upper bound for HL2
-                    value = Math.Min(90, value);		// upper bound
-                else
-                    value = Math.Min(100, value);		// upper bound
+                value = Math.Min(100, value);		// upper bound
 
                 ptbPWR.Value = value;
                 ptbPWR_Scroll(this, EventArgs.Empty);
@@ -19083,7 +18625,6 @@ namespace Thetis
             set
             {
                 value = Math.Max(0, value);			// lower bound
-
                 value = Math.Min(100, value);		// upper bound
 
                 ptbTune.Value = value;
@@ -19701,18 +19242,8 @@ namespace Thetis
                 {
                     if (m_bAttontx)
                     {
-<<<<<<< Project Files/Source/Console/console.cs
                         int txatt = getTXstepAttenuatorForBand(_tx_band);
                         NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
-=======
-                        int txatt = getTXstepAttenuatorForBand(tx_band);
-                        
-                        if (current_hpsdr_model == HPSDRModel.HERMESLITE) 
-                           NetworkIO.SetTxAttenData(32 - txatt); // MI0BOT: Greater range for HL2
-                        else
-                           NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
-
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                         Display.TXAttenuatorOffset = txatt; //[2.10.3.6]MW0LGE att_fixes
                     }
                     else
@@ -19721,6 +19252,7 @@ namespace Thetis
                         Display.TXAttenuatorOffset = 0;
                     }
                 }
+
             }
         }
 
@@ -19813,18 +19345,6 @@ namespace Thetis
             set
             {
                 hpsdr_network_ip_addr = value;
-            }
-        }
-
-        // MI0BOT: Flag to reduce bandwidth when using a WAN connection 
-
-        private bool reduce_ethernet_bandwidth;
-        public bool ReduceEthernetBW 
-        {
-            get { return reduce_ethernet_bandwidth; }
-            set
-            {
-                reduce_ethernet_bandwidth = value;
             }
         }
 
@@ -19942,9 +19462,7 @@ namespace Thetis
                 {
                     if (!_rx1_step_att_enabled)
                     {
-                        if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: Adjustment for HL2 LNA range 
-                            NetworkIO.SetADC1StepAttenData(32 - rx1_att_value);
-                        else if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_att_value);
+                        if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_att_value);
                         else if (nRX1ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx1_att_value);
                         else if (nRX1ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx1_att_value);
                     }
@@ -21328,28 +20846,17 @@ namespace Thetis
 
         private bool m_bShowSystemCPUUsage = true;
         public volatile PerformanceCounter _total_cpu_usage = null;
-<<<<<<< Project Files/Source/Console/console.cs
         //public volatile PerformanceCounter _total_thetis_usage = null;
         //private volatile string _sInstanceName = "";
         //private volatile bool _getInstanceNameComplete = false;
-=======
-        public volatile PerformanceCounter _total_thetis_usage = null;
-        private volatile string _sInstanceName = "";
-        private volatile bool _getInstanceNameComplete = false;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
         //private void getInstanceName()
         //{
         //    //MW0LGE_21k9 updated to get actual process name used by perf counter
         //    //moved to thread, as GetInstanceNames is very very slow
 
-<<<<<<< Project Files/Source/Console/console.cs
         //    _getInstanceNameComplete = false;
         //    _sInstanceName = "";
-=======
-            _getInstanceNameComplete = false;
-            _sInstanceName = "";
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
         //    try
         //    {
@@ -21404,21 +20911,12 @@ namespace Thetis
                     _total_cpu_usage = null;
                 }
 
-<<<<<<< Project Files/Source/Console/console.cs
                 //if (_total_thetis_usage != null)
                 //{
                 //    _total_thetis_usage.Close();
                 //    _total_thetis_usage.Dispose(); //MW0LGE_21k8
                 //    _total_thetis_usage = null;
                 //}
-=======
-                if (_total_thetis_usage != null)
-                {
-                    _total_thetis_usage.Close();
-                    _total_thetis_usage.Dispose(); //MW0LGE_21k8
-                    _total_thetis_usage = null;
-                }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
                 //NOTE: run 'lodctr /R' on admin command prompt to rebuild performance counters
 
@@ -21435,19 +20933,11 @@ namespace Thetis
                 }
                 float tmp = _total_cpu_usage.NextValue();
 
-<<<<<<< Project Files/Source/Console/console.cs
                 //if (!string.IsNullOrEmpty(_sInstanceName))
                 //{
                 //    _total_thetis_usage = new PerformanceCounter("Process", "% Processor Time", _sInstanceName, sMachineName);
                 //    tmp = _total_thetis_usage.NextValue();
                 //}
-=======
-                if (!string.IsNullOrEmpty(_sInstanceName))
-                {
-                    _total_thetis_usage = new PerformanceCounter("Process", "% Processor Time", _sInstanceName, sMachineName);
-                    tmp = _total_thetis_usage.NextValue();
-                }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
                 _cpu_usage_setup = true;
             }
@@ -22041,35 +21531,10 @@ namespace Thetis
         private int _auto_att_hold_delay_rx2 = 5;
         private DateTime _auto_att_last_hold_time_rx1 = DateTime.Now;
         private DateTime _auto_att_last_hold_time_rx2 = DateTime.Now;
-        private bool _band_change = false;
         public bool AutoAttRX1
         {
-<<<<<<< Project Files/Source/Console/console.cs
             get { return _auto_att_rx1; }
             set { _auto_att_rx1 = value; }
-=======
-            get { 
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                    if (_auto_attTX_rx1)
-                        lblPreamp.Text = "A-ATT";
-                    else
-                        lblPreamp.Text = "S-ATT";
-            
-                return _auto_attTX_rx1; 
-            }
-            set
-            {
-                _auto_attTX_rx1 = value;
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                    if (_auto_attTX_rx1)
-                    {
-                        lblPreamp.Text = "A-ATT";
-                        _band_change = true;
-                    }
-                    else
-                        lblPreamp.Text = "S-ATT";
-            }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
         }
         public bool AutoAttUndoRX1
         {
@@ -22227,10 +21692,7 @@ namespace Thetis
             if (!string.IsNullOrEmpty(sWarning))
             {
                 sWarning = sWarning.Trim();
-
-                if (current_hpsdr_model != HPSDRModel.HERMESLITE ||
-                    AutoAttRX1 == false)
-                    infoBar.Warning(sWarning, red_warning, overload_only ? 1000 : 2000);
+                infoBar.Warning(sWarning, red_warning, overload_only ? 1000 : 2000);
             }
 
             //adjust s-att offset
@@ -22376,21 +21838,12 @@ namespace Thetis
 
                 DateTime now = DateTime.Now;
 
-<<<<<<< Project Files/Source/Console/console.cs
                 bool radioHasRx1Att = HardwareSpecific.Model == HPSDRModel.ANAN10 || HardwareSpecific.Model == HPSDRModel.ANAN10E ||
                             HardwareSpecific.Model == HPSDRModel.ANAN100 || HardwareSpecific.Model == HPSDRModel.ANAN100B ||
                             HardwareSpecific.Model == HPSDRModel.ANAN100D || HardwareSpecific.Model == HPSDRModel.ANAN200D ||
                             HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
                             HardwareSpecific.Model == HPSDRModel.ANAN_G2 || HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
                             HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.REDPITAYA;
-=======
-                bool radioHasRx1Att = current_hpsdr_model == HPSDRModel.ANAN10 || current_hpsdr_model == HPSDRModel.ANAN10E ||
-                            current_hpsdr_model == HPSDRModel.ANAN100 || current_hpsdr_model == HPSDRModel.ANAN100B ||
-                            current_hpsdr_model == HPSDRModel.ANAN100D || current_hpsdr_model == HPSDRModel.ANAN200D ||
-                            current_hpsdr_model == HPSDRModel.ANAN7000D || current_hpsdr_model == HPSDRModel.ANAN8000D ||
-                            current_hpsdr_model == HPSDRModel.ANAN_G2 || current_hpsdr_model == HPSDRModel.ANAN_G2_1K ||
-                            current_hpsdr_model == HPSDRModel.ANVELINAPRO3 || current_hpsdr_model == HPSDRModel.HERMESLITE;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
                 if (_auto_att_rx1 && radioHasRx1Att)
                 {
@@ -22404,30 +21857,18 @@ namespace Thetis
 
                         if (_rx1_step_att_enabled)
                         {
-                            if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                            {
-                                _band_change = false;
+                            har.stepAttenuator = RX1AttenuatorData;
 
-                                if (RX1AttenuatorData < (31 - 3))
-                                    RX1AttenuatorData += 3;
-                                    
+                            int att = har.stepAttenuator + (_adc_overloaded[0] ? _adc_step_shift[0] : _adc_step_shift[1]);
+                            if (att > 31) att = 31;
+
+                            if (att != har.stepAttenuator)
+                            {
+                                RX1AttenuatorData = att;
                                 _auto_att_last_hold_time_rx1 = now;
-                            }
-                            else
-                            {
-                                har.stepAttenuator = RX1AttenuatorData;
-
-                                int att = har.stepAttenuator + (_adc_overloaded[0] ? _adc_step_shift[0] : _adc_step_shift[1]);
-                                if (att > 31) att = 31;
-
-                                if (att != har.stepAttenuator)
-                                {
-                                    RX1AttenuatorData = att;
-                                    _auto_att_last_hold_time_rx1 = now;
-                                    _historic_attenuator_readings_rx1.Push(har);
+                                _historic_attenuator_readings_rx1.Push(har);
 
                                 AutoAttAppliedRX1 = true;
-                                }
                             }
                         }
                         else
@@ -22456,17 +21897,6 @@ namespace Thetis
 
                                 AutoAttAppliedRX1 = true;
                             }
-                        }
-                    }
-                    else if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                    {
-                        if (_band_change ||
-                        (_auto_att_undo_rx1 && (((now - _auto_att_last_hold_time_rx1).TotalSeconds > _auto_att_hold_delay_rx1))))
-                        {
-                            if (RX1AttenuatorData > -28)
-                                RX1AttenuatorData--;
-
-                            _auto_att_last_hold_time_rx1 = now;
                         }
                     }
                     else if ((nRX1ADCinUse == 0 || nRX1ADCinUse == 1) && _historic_attenuator_readings_rx1.Any()) // no overload rx1
@@ -23434,14 +22864,8 @@ namespace Thetis
                         }
 
                         else if ((alexpresent || pa_present) &&
-<<<<<<< Project Files/Source/Console/console.cs
                                 (HardwareSpecific.Model != HPSDRModel.ANAN10 &&
                                  HardwareSpecific.Model != HPSDRModel.ANAN10E &&
-=======
-                                (current_hpsdr_model != HPSDRModel.ANAN10 &&
-                                 current_hpsdr_model != HPSDRModel.ANAN10E &&
-                                 current_hpsdr_model != HPSDRModel.HERMESLITE &&        // MI0BOT: HL2
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                                 !apollopresent))
                         {
                             if (bDrawMarkers)
@@ -23503,14 +22927,8 @@ namespace Thetis
                                     pixel_x = (int)(W * 0.75 + spacing + (num - 120.0) / 60.0 * spacing);
                             }
                         }
-<<<<<<< Project Files/Source/Console/console.cs
                         else if (HardwareSpecific.Model == HPSDRModel.ANAN10 ||
                                  HardwareSpecific.Model == HPSDRModel.ANAN10E)
-=======
-                        else if (current_hpsdr_model == HPSDRModel.ANAN10 ||
-                                 current_hpsdr_model == HPSDRModel.ANAN10E ||
-                                 current_hpsdr_model == HPSDRModel.HERMESLITE)          // MI0BOT: HL2
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                         {
                             if (bDrawMarkers)
                             {
@@ -23696,14 +23114,8 @@ namespace Thetis
                     case MeterTXMode.SWR_POWER:
 
                         if ((alexpresent || pa_present) &&
-<<<<<<< Project Files/Source/Console/console.cs
                             (HardwareSpecific.Model != HPSDRModel.ANAN10 &&
                              HardwareSpecific.Model != HPSDRModel.ANAN10E &&
-=======
-                            (current_hpsdr_model != HPSDRModel.ANAN10 &&
-                             current_hpsdr_model != HPSDRModel.ANAN10E &&
-                             current_hpsdr_model != HPSDRModel.HERMESLITE &&        // MI0BOT: HL2
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                             !apollopresent))
                         {
                             if (bDrawMarkers)
@@ -23842,14 +23254,8 @@ namespace Thetis
                             }
                         }
 
-<<<<<<< Project Files/Source/Console/console.cs
                         else if (HardwareSpecific.Model == HPSDRModel.ANAN10 ||
                                  HardwareSpecific.Model == HPSDRModel.ANAN10E)
-=======
-                        else if (current_hpsdr_model == HPSDRModel.ANAN10 ||
-                                 current_hpsdr_model == HPSDRModel.ANAN10E ||
-                                 current_hpsdr_model == HPSDRModel.HERMESLITE)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                         {
                             if (bDrawMarkers)
                             {
@@ -24619,14 +24025,8 @@ namespace Thetis
                         case MeterTXMode.FORWARD_POWER:
                         case MeterTXMode.REVERSE_POWER:
                         case MeterTXMode.SWR_POWER:
-<<<<<<< Project Files/Source/Console/console.cs
                             if (HardwareSpecific.Model == HPSDRModel.ANAN10 ||
                                 HardwareSpecific.Model == HPSDRModel.ANAN10E ||
-=======
-                            if (current_hpsdr_model == HPSDRModel.ANAN10 ||
-                                current_hpsdr_model == HPSDRModel.ANAN10E ||
-                                current_hpsdr_model == HPSDRModel.HERMESLITE ||     // MI0BOT: HL2
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                                 apollopresent) output = num.ToString(format) + " W";
                             else if (alexpresent || pa_present) output = num.ToString(format) + " W";
                             else output = num.ToString(format) + " mW";
@@ -25751,10 +25151,8 @@ namespace Thetis
 
         private float _MKIIPAVolts = 0f;
         private float _MKIIPAAmps = 0f;
-        private float _MKIIHL2Temp = 0f;                                        // MI0BOT: HL2 temperature
         private ConcurrentQueue<int> _voltsQueue = new ConcurrentQueue<int>();
         private ConcurrentQueue<int> _ampsQueue = new ConcurrentQueue<int>();
-        private ConcurrentQueue<int> _tempQueue = new ConcurrentQueue<int>();   // MI0BOT: HL2 temperature
         public float MKIIPAVolts
         {
             get { return _MKIIPAVolts; }
@@ -25768,34 +25166,12 @@ namespace Thetis
             // new method takes two readings every 8ms into a threadsafe fifo queue, so those 100 of each will be spread over 800ms
             // MW0LGE [2.9.0.7] changed volts to 150
             //G8NJJ need similar code for Saturn here, but rates from Ssaturn will be different
-<<<<<<< Project Files/Source/Console/console.cs
             while (chkPower.Checked && HardwareSpecific.HasVolts && HardwareSpecific.HasAmps)
-=======
-            while (chkPower.Checked &&
-                  (current_hpsdr_model == HPSDRModel.ANAN7000D    ||
-                   current_hpsdr_model == HPSDRModel.ANAN8000D    ||
-                   current_hpsdr_model == HPSDRModel.ANAN_G2      ||
-                   current_hpsdr_model == HPSDRModel.ANAN_G2_1K   ||
-                   current_hpsdr_model == HPSDRModel.ANVELINAPRO3 ||
-                   current_hpsdr_model == HPSDRModel.HERMESLITE))
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             {
-
-                int adc0 = 0;
-                int adc1 = 0;
-
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 temperature & current
-                {
-                    _ampsQueue.Enqueue(NetworkIO.getUserADC0());
-                    _tempQueue.Enqueue(NetworkIO.getExciterPower());
-                }
-                else
-                {
-                    adc0 = NetworkIO.getUserADC0();
-                    adc1 = NetworkIO.getUserADC1();
-                    _voltsQueue.Enqueue(adc0);
-                    _ampsQueue.Enqueue(adc1);
-                }
+                int adc0 = NetworkIO.getUserADC0();
+                int adc1 = NetworkIO.getUserADC1();
+                _voltsQueue.Enqueue(adc0);
+                _ampsQueue.Enqueue(adc1);
 
                 bool bOk;
                 int nTries = 0;
@@ -25817,20 +25193,6 @@ namespace Thetis
                     {
                         await Task.Delay(1);
                         nTries++;
-                    }
-                }
-
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                { 
-                    nTries = 0;
-                    while (_tempQueue.Count > 100 && nTries < 100) //  MI0BOT: HL2 temperature, keep max 100 in the queue 
-                    {
-                        bOk = _tempQueue.TryDequeue(out int tmp);
-                        if (!bOk)
-                        {
-                            await Task.Delay(1);
-                            nTries++;
-                        }
                     }
                 }
 
@@ -25868,8 +25230,7 @@ namespace Thetis
                 //
             }
             _MKIIPAVolts = 0f;
-            _MKIIPAAmps  = 0f;
-            _MKIIHL2Temp = 0f;      // MI0BOT: HL2 temperature
+            _MKIIPAAmps = 0;
 
             //there is no clear for ConcurrentQueues, we need to dequeue to clear
             int tries;
@@ -25920,13 +25281,9 @@ namespace Thetis
         {
             float voltAverage = _voltsQueue.Count > 0 ? (float)_voltsQueue.Average() : 0;
             float ampAverage = _ampsQueue.Count > 0 ? (float)_ampsQueue.Average() : 0;
-            float tempAverage = _tempQueue.Count > 0 ? (float)_tempQueue.Average() : 0;     // MI0BOT: HL2 temperature
 
             //volts
             _MKIIPAVolts = convertToVolts(voltAverage);
-
-            // MI0BOT: temp for HL2
-            _MKIIHL2Temp = (3.26f * (tempAverage / 4096.0f) - 0.5f) / 0.01f;
 
             //amps
             _MKIIPAAmps = convertToAmps(ampAverage);
@@ -25971,28 +25328,11 @@ namespace Thetis
             //}
             float voff = _amp_voff;
             float sens = _amp_sens;
-            float amps = 0f;
-
             float fwdvolts = (IOreading * 5000.0f) / 4095.0f;
-            if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 current
-            {
-                // 3.26 Ref voltage
-                // 4096 steps in ADC
-                // Gain of x50 for sense amp
-                // Sense resistor is 0.04 Ohms
-                amps = ((3.26f * (IOreading / 4096.0f)) / 50.0f) / 0.04f;
-
-                // Scale by resistor voltage divider 1000/(1000+270) at input of slow ADC
-                amps = amps / (1000.0f / 1270.0f);
-            }
-            else
-            {
-            	if (fwdvolts < 0) fwdvolts = 0.0f;
-            	amps = ((fwdvolts - voff) / sens);
-            	//  float amps = (0.01f * adc - 2.91f);
-            	if (amps < 0) amps = 0.0f;
-            }
-
+            if (fwdvolts < 0) fwdvolts = 0.0f;
+            float amps = ((fwdvolts - voff) / sens);
+            //  float amps = (0.01f * adc - 2.91f);
+            if (amps < 0) amps = 0.0f;
             return amps;
         }
 
@@ -26047,11 +25387,6 @@ namespace Thetis
                         bridge_volt = 0.08f;
                     refvoltage = 5.0f;
                     adc_cal_offset = 16;
-                    break;
-                case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
-                    bridge_volt = 1.5f;
-                    refvoltage = 3.3f;
-                    adc_cal_offset = 6;
                     break;
                 default:
                     bridge_volt = 0.09f;
@@ -26122,11 +25457,6 @@ namespace Thetis
                     bridge_volt = 0.08f;
                     refvoltage = 5.0f;
                     adc_cal_offset = 18;
-                    break;
-                case HPSDRModel.HERMESLITE:     // MI0BOT: HL2
-                    bridge_volt = 1.5f;
-                    refvoltage = 3.3f;
-                    adc_cal_offset = 6;
                     break;
                 default:
                     bridge_volt = 0.09f;
@@ -26391,36 +25721,6 @@ namespace Thetis
             return (float)result;
         }
 
-        public void computeHermesLiteTemp()         // MI0BOT: HL2
-        {
-            float adc = 0;
-            float addadc = 0;
-
-            for (int count = 0; count < 100; count++)
-            {
-                adc = NetworkIO.getExciterPower(); // This method returns temp for HL2
-                addadc += adc;
-                Thread.Sleep(1);
-            }
-
-            adc = addadc / 100.0f;
-        }
-
-        public void computeHermesLitePAAmps()       // MI0BOT: HL2
-        {
-            float adc = 0;
-            float addadc = 0;
-
-            for (int count = 0; count < 100; count++)
-            {
-                adc = NetworkIO.getUserADC0(); // This method returns PA current for HL2
-                addadc += adc;
-                Thread.Sleep(1);
-            }
-
-            adc = addadc / 100.0f;      // Average counts
-        }
-
         private float sql_data = -200.0f;
         private async void UpdateSQL()
         {
@@ -26482,344 +25782,6 @@ namespace Thetis
                 }
                 await Task.Delay(100);
             }
-        }
-
-        public void SetIOBoardAerialPorts(int rx_only_ant, int rx_ant, int tx_ant, bool tx) // MI0BOT: Control I/O Board's aerial capabilities 
-        {
-            SetIOBoardAerialPorts(rx_only_ant);
-
-            IOBoardAerialPorts = (byte) (rx_ant & 0x0f);
-            IOBoardAerialPorts |= (byte) (tx_ant << 4);
-        }
-
-        public void SetIOBoardAerialPorts(int rx_only_ant) // MI0BOT: Control I/O Board's Alt Rx aerial facility
-        {
-            switch (rx_only_ant)
-            {
-                case 1:
-                    IOBoardAerialMode = 2;
-                    break;
-
-                case 0:
-                default:
-                    IOBoardAerialMode = 0;
-                    break;
-            }
-        }
-
-        private byte IOBoardAerialMode = 0;
-        private byte IOBoardAerialPorts = 0;
-        private bool I2CPollingPause = false;
-        
-        public void SetI2CPollingPause( bool pause )
-        {
-            I2CPollingPause = pause;
-            if (pause) Thread.Sleep(45);
-        }
-
-        public enum AutoTuneState
-        {
-            Disabled = 0,
-            Idle,
-            StartTune,
-            WaitRF,
-            Tuning,
-            Fault,
-        }
-
-        public enum ProtocolEvent
-        {
-            Start = -1,             // MI0BOT: Not strictly a protocol event but used to start the whole process
-            Idle = 0x00,
-            RequestTune = 0x01,
-            RequestRF = 0xEE,
-            Fault = 0xF0,
-        }
-
-        private AutoTuneState auto_tuning = AutoTuneState.Disabled; // MI0BOT: Holds state when the Auto TUN button is active
-        private int tune_timeout = 0;                               // MI0BOT: Auto tune timeout
-        private int fault_timeout = 0;                              
-        const byte TIMEOUT = 50;
-        bool AutoTuningHL2(ProtocolEvent protocolEvent)
-        {
-            bool returnCode = false;
-            //Debug.WriteLine("State: " + state.ToString());
-
-            switch (protocolEvent)  // Event information of the protocol
-            { 
-
-                case ProtocolEvent.Start:                            // The tune key has been pressed
-                    if (Control.ModifierKeys == Keys.Control &&
-                    SetupForm.HL2IOBoardPresent == true &&
-                    (AutoTuneState.Idle == auto_tuning ||
-                    AutoTuneState.Fault == auto_tuning))
-                    {
-                        auto_tuning = AutoTuneState.StartTune;
-                        returnCode = true;
-                    }
-                    break;
-
-                case ProtocolEvent.Idle:                            // Protocol is idle
-                    switch (auto_tuning)
-                    {
-                        case AutoTuneState.Idle:
-                            break;
-
-                        case AutoTuneState.StartTune:               // Auto tune has been instigated from UI
-                            NetworkIO.I2CWrite(1, 0x1d, 7, (int) ProtocolEvent.RequestTune);   // Start the tune via the protocol
-                            auto_tuning = AutoTuneState.WaitRF;
-                            tune_timeout = 0;
-                            fault_timeout = 0;
-                            chkTUN.Text = "AUTO";
-                            break;
-
-                        case AutoTuneState.Fault:                  // Auto tune has had a fault time out the message
-                            if (fault_timeout++ >= TIMEOUT)
-                            {
-                                infoBar.Warning("");
-                                auto_tuning = AutoTuneState.Idle;
-                                fault_timeout = 0;
-                            }
-                            break;
-
-                        default: 
-                            tune_timeout = TIMEOUT;
-                            break;
-                    }
-                    break;
-
-                case ProtocolEvent.RequestTune:                            // There has been no advance of protocol state, just advance timeout
-                    switch (auto_tuning)
-                    {
-                        case AutoTuneState.WaitRF:
-                            tune_timeout++;
-                            break;
-
-                        default: 
-                            tune_timeout = TIMEOUT;
-                            break;
-                    }
-                    break;
-
-                case ProtocolEvent.RequestRF:                               // Protocol has requested RF
-                    switch (auto_tuning)
-                    {
-                        case AutoTuneState.WaitRF:
-                            auto_tuning = AutoTuneState.Tuning;
-                            chkTUN_CheckedChanged(this, EventArgs.Empty);   // Call CheckedChanged directly as the check flag is already true
-                            break;
-
-                        case AutoTuneState.Tuning:
-                            tune_timeout++;
-                            break;
-
-                        default: 
-                            tune_timeout = TIMEOUT;
-                            break;
-                    }
-                    break;
-
-                default:
-                    // Unexpected return, cancel tuning by setting timeout
-
-                    if(protocolEvent >= ProtocolEvent.Fault)
-                    {
-                        auto_tuning = AutoTuneState.Fault;
-                        fault_timeout = 0;
-                        infoBar.Warning("I/O Board: Auto Tune Fault Code 0x" + ((byte)protocolEvent).ToString("X"));
-                    }
-                    
-                    tune_timeout = TIMEOUT;
-                    break;
-            }
-
-            if (tune_timeout >= TIMEOUT)
-            {                                       // Time out 
-                tune_timeout = 0;
-                NetworkIO.I2CWrite(1, 0x1d, 7, (int) ProtocolEvent.Idle);
-                
-                if (auto_tuning != AutoTuneState.Fault)
-                    auto_tuning = AutoTuneState.Idle;
-
-                chkTUN.Text = "TUN";
-                chkTUN.Checked = false;             // Stop the tuning activity
-            }
-
-            return returnCode;
-        }
-
-        private async void UpdateIOBoard()
-        {
-            long currentFreq, lastFreq = 0;
-            byte[] read_data = new byte[4];
-            byte state = 0;
-            byte old_IOBoardAerialPorts = 0;
-            byte old_IOBoardAerialMode = 0;
-            byte old_IOBoardMode = (Byte) DSPMode.LAST;
-            byte timeout = 0;
-            int status = 0;
-
-            // Read the hardware revision on bus 2 at address 0x41, register 0
-
-            while (0 != NetworkIO.I2CReadInitiate(1, 0x41, 0))
-            {
-                await Task.Delay(1);
-                if (timeout++ >= 20) return;
-            }
-
-            timeout = 0;
-
-            do
-            {
-                await Task.Delay(1);
-                if (timeout++ >= 20) return;
-            } while (1 == NetworkIO.I2CResponse(read_data));
-
-            if (read_data[0] == 0xf1)   // Expect to find version 1 of the IO board
-            {
-                if (!SetupForm.HL2IOBoardPresent)
-                {
-                    if (this.InvokeRequired)
-                        this.Invoke((Action)(() => SetupForm.HL2IOBoardPresent = true));
-                    else
-                        auto_tuning = AutoTuneState.Disabled;
-                }
-
-                lastFreq = 0;   // Force update if restarted
-
-                bool reset = true;
-
-                auto_tuning = AutoTuneState.Idle;
-
-                while (chkPower.Checked && SetupForm.HL2IOBoardPresent)
-                {
-                    if (reset)
-                    {
-                        reset = false;
-                        NetworkIO.I2CWrite(1, 0x1d, 5, 1);
-                        await Task.Delay(1);
-                    }
-
-                    if (chkVFOATX.Checked)  // Get the frequency of the current VFO select for transmision
-                    {
-                        currentFreq = (long)(VFOAFreq * 1000000.0);
-                    }
-                    else
-                    {
-                        currentFreq = (long)(VFOBFreq * 1000000.0);
-                    }
-
-                    switch (state++)
-                    {
-                        case 3:
-                        case 6: // Secondary receive selection
-                            if (IOBoardAerialMode != old_IOBoardAerialMode)
-                            {
-                                NetworkIO.I2CWrite(1, 0x1d, 11, (IOBoardAerialMode));
-                                old_IOBoardAerialMode = IOBoardAerialMode;
-                            }
-                            break;
-
-                        case 1:
-                        case 4:
-                        case 7:
-                        case 10:
-                            // Read the input at register 6
-                            NetworkIO.I2CReadInitiate(1, 0x1d, 6);
-
-                            timeout = 0;
-                            do
-                            {
-                                await Task.Delay(1);
-                                status = NetworkIO.I2CResponse(read_data);      // [3] Input pins, [2] Ant tuner, [1] Fault, [0] Major Version
-                                if (timeout++ >= 20) break;
-                            } while (1 == status);    
-
-                            if (status == 0)
-                            {
-                                if (0 != read_data[1])
-                                {
-                                    TXInhibit = true;
-                                    infoBar.Warning("I/O Board: Fault Code " + read_data[1].ToString());
-                                    AutoTuningHL2(ProtocolEvent.Idle);
-                                }
-                                else
-                                {
-                                    AutoTuningHL2((ProtocolEvent) read_data[2]);
-                                }
-
-                                SetupForm.UpdateIOLedStrip(MOX, read_data[3]);
-                            }
-                            break;
-
-                        case 8:
-                        case 2: // Write current transmission frequency
-                            if (currentFreq != lastFreq)
-                            {
-                                // Write frequency on bus 2 at address 0x1d into the five registers
-                                NetworkIO.I2CWrite(1, 0x1d, 0, 0xff & (byte)(currentFreq >> 32));
-                                await Task.Delay(1);
-                                NetworkIO.I2CWrite(1, 0x1d, 1, 0xff & (byte)(currentFreq >> 24));
-                                await Task.Delay(1);
-                                NetworkIO.I2CWrite(1, 0x1d, 2, 0xff & (byte)(currentFreq >> 16));
-                                await Task.Delay(1);
-                                NetworkIO.I2CWrite(1, 0x1d, 3, 0xff & (byte)(currentFreq >> 08));
-                                await Task.Delay(1);
-                                NetworkIO.I2CWrite(1, 0x1d, 4, 0xff & (byte)(currentFreq >> 00));
-
-                                lastFreq = currentFreq;
-                            }
-                            break;
-
-                        case 9:
-                        case 5: // Aerial selection
-                            if (IOBoardAerialPorts != old_IOBoardAerialPorts)
-                            {
-                                NetworkIO.I2CWrite(1, 0x1d, 31, IOBoardAerialPorts);
-                                old_IOBoardAerialPorts = IOBoardAerialPorts;
-                            }
-                            break;
-
-                        case 0: // Mode selection
-                            Byte CurrentMode;
-
-                            if (VFOATX)
-                            {
-                                CurrentMode = (Byte) rx1_dsp_mode;
-                            }
-                            else
-                            {
-                                CurrentMode = (Byte) rx2_dsp_mode;
-                            }
-
-                            if (CurrentMode != old_IOBoardMode)
-                            {
-                                NetworkIO.I2CWrite(1, 0x1d, 32, CurrentMode);
-                                old_IOBoardMode = CurrentMode;
-                            }
-                            break;
-
-                        case 11:
-                        default:
-                            state = 0;
-                            break;
-                    }
-
-                    // Delay and continue to delay if we have been paused
-                    do
-                    {
-                        await Task.Delay(40);
-                    }
-                    while (I2CPollingPause);
-                }
-            }
-
-            if (this.InvokeRequired)
-                this.Invoke((Action)(() => SetupForm.HL2IOBoardPresent = false));
-            else
-                auto_tuning = AutoTuneState.Disabled;
-
-            return;
         }
 
         private async void UpdateVOX()
@@ -27006,11 +25968,7 @@ namespace Thetis
                 if ((dotdashptt & 0x04) != (last_dot & 0x04))
                 {
                     FWDot = state_dot;
-<<<<<<< Project Files/Source/Console/console.cs
                     if ((_rx1_dsp_mode == DSPMode.CWL || _rx1_dsp_mode == DSPMode.CWU) &&
-=======
-                    if ((rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU) &&
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                      _current_breakin_mode == BreakIn.Manual)
                         AudioMOXChanged(state_dot);
                 }
@@ -27019,11 +25977,7 @@ namespace Thetis
                 if ((dotdashptt & 0x02) != (last_dash & 0x02))
                 {
                     FWDash = state_dash;
-<<<<<<< Project Files/Source/Console/console.cs
                     if ((_rx1_dsp_mode == DSPMode.CWL || _rx1_dsp_mode == DSPMode.CWU) &&
-=======
-                    if ((rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU) &&
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                      _current_breakin_mode == BreakIn.Manual)
                         AudioMOXChanged(state_dash);
                 }
@@ -27573,29 +26527,15 @@ namespace Thetis
         private float _cpu_perc_smoothed = 0;
         private void timer_cpu_volts_meter_Tick(object sender, System.EventArgs e)
         {
-<<<<<<< Project Files/Source/Console/console.cs
             if (DisplayVoltsAmps && HardwareSpecific.HasVolts && HardwareSpecific.HasAmps) //DH1KLM
-=======
-            if ((current_hpsdr_model == HPSDRModel.ANAN7000D    ||
-                 current_hpsdr_model == HPSDRModel.ANAN8000D    ||
-                 current_hpsdr_model == HPSDRModel.ANAN_G2      ||
-                 current_hpsdr_model == HPSDRModel.ANAN_G2_1K   ||
-                 current_hpsdr_model == HPSDRModel.ANVELINAPRO3 ||
-                 current_hpsdr_model == HPSDRModel.HERMESLITE) &&
-                 ANAN8000DLEDisplayVoltsAmps)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             {
                 computeMKIIPAVoltsAmps(); //MW0LGE_21k9c
 
                 if (!toolStripStatusLabel_Volts.Visible) toolStripStatusLabel_Volts.Visible = true;
                 if (!toolStripStatusLabel_Amps.Visible) toolStripStatusLabel_Amps.Visible = true;
 
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                {
-                    toolStripStatusLabel_Volts.Text = String.Format("{0:#0.0}C", _MKIIHL2Temp);
-                    toolStripStatusLabel_Amps.Text = String.Format("{0:#0.00}A", _MKIIPAAmps);
-                }
-                else if (Math.Abs(_MKIIPAVolts - _oldMKIIPAVolts) >= 0.1f)  //MW0LGE [2.9.0.7] added to prevent edge case flicker due to rounding
+                //MW0LGE [2.9.0.7] added to prevent edge case flicker due to rounding
+                if (Math.Abs(_MKIIPAVolts - _oldMKIIPAVolts) >= 0.1f)
                 {
                     toolStripStatusLabel_Volts.Text = String.Format("{0:#0.0}V", _MKIIPAVolts);
                     _oldMKIIPAVolts = _MKIIPAVolts;
@@ -27625,11 +26565,7 @@ namespace Thetis
             // cpu ussage
             if (_cpu_usage_setup && Environment.ProcessorCount > 0)
             {
-<<<<<<< Project Files/Source/Console/console.cs
                 if ((_total_cpu_usage != null && m_bShowSystemCPUUsage) || !m_bShowSystemCPUUsage) //(_total_thetis_usage != null && !m_bShowSystemCPUUsage))
-=======
-                if ((_total_cpu_usage != null && m_bShowSystemCPUUsage) || (_total_thetis_usage != null && !m_bShowSystemCPUUsage))
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                 {
                     if (!toolStripDropDownButton_CPU.Visible) toolStripDropDownButton_CPU.Visible = true;
 
@@ -27644,7 +26580,6 @@ namespace Thetis
                     }
                     else
                     {
-<<<<<<< Project Files/Source/Console/console.cs
                         cpuPerc = (float)Common.ProcessCPUUsage();
                         //if (_total_thetis_usage != null)
                         //{
@@ -27672,34 +26607,6 @@ namespace Thetis
                         //        }
                         //    }
                         //}
-=======
-                        if (_total_thetis_usage != null)
-                        {
-                            try
-                            {
-                                cpuPerc = _total_thetis_usage.NextValue() / (float)Environment.ProcessorCount;
-                            }
-                            catch (Exception ex)
-                            {
-                                //[2.10.3.9]MW0LGE handle an instance name change
-                                try
-                                {
-                                    _total_thetis_usage.Close();
-                                    _total_thetis_usage.Dispose();
-                                }
-                                catch { }
-                                _total_thetis_usage = null;
-
-                                if(ex.HResult == unchecked((int)0x80131509)) // Instance 'XYZ' does not exist in the specified Category.
-                                {
-                                    // need to get the instance again
-                                    // this can be a slow process, ideally should be in another thread, but we can live with this
-                                    getInstanceName();
-                                    CpuUsage();
-                                }
-                            }
-                        }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                     }
 
                     _cpu_perc_smoothed = (_cpu_perc_smoothed * 0.8f) + (cpuPerc * 0.2f);
@@ -29054,18 +27961,8 @@ namespace Thetis
 
                 if (m_bAttontx)
                 {
-<<<<<<< Project Files/Source/Console/console.cs
                     int txatt = getTXstepAttenuatorForBand(_tx_band);
                     NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
-=======
-                    int txatt = getTXstepAttenuatorForBand(tx_band);
-                    
-                    if (current_hpsdr_model == HPSDRModel.HERMESLITE) 
-                       NetworkIO.SetTxAttenData(32 - txatt); //MI0BOT: Greater range for HL2
-                    else
-                       NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
-
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                     Display.TXAttenuatorOffset = txatt;
                 }
                 else
@@ -29102,22 +27999,6 @@ namespace Thetis
                     };
                     multimeter2_thread_rx1.Start();
                 }
-
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: I/O Board handler
-                {
-                        // MI0BOT: I/O board thread
-                        if (IOBoard_update_thread == null || !IOBoard_update_thread.IsAlive)
-                    {
-                        IOBoard_update_thread = new Thread(new ThreadStart(UpdateIOBoard))
-                        {
-                            Name = "I/O Board Thread",
-                            Priority = ThreadPriority.Normal,
-                            IsBackground = true
-                        };
-                        IOBoard_update_thread.Start();
-                    }
-                }
-
                 //
 
                 if (rx2_enabled)
@@ -29237,16 +28118,7 @@ namespace Thetis
                     poll_tx_inhibit_thead.Start();
                 }
 
-<<<<<<< Project Files/Source/Console/console.cs
                 if (HardwareSpecific.HasVolts && HardwareSpecific.HasAmps && (display_volts_amps_thead == null || !display_volts_amps_thead.IsAlive))
-=======
-                if ((display_volts_amps_thead == null || !display_volts_amps_thead.IsAlive) &&
-                    (current_hpsdr_model == HPSDRModel.ANAN8000D    ||
-                    current_hpsdr_model == HPSDRModel.ANAN_G2      ||
-                    current_hpsdr_model == HPSDRModel.ANAN_G2_1K   ||
-                    current_hpsdr_model == HPSDRModel.ANVELINAPRO3 ||
-                    current_hpsdr_model == HPSDRModel.HERMESLITE))
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                 {
                     display_volts_amps_thead = new Thread(new ThreadStart(readMKIIPAVoltsAmps))
                     {
@@ -29287,18 +28159,6 @@ namespace Thetis
 
                 if (andromeda_cat_enabled) NetworkIO.ATU_Tune(1); // set default state of J16 pin 10 to high for Andromeda
                 else NetworkIO.ATU_Tune(0);
-        
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE) 
-                {
-                    if (SetupForm.Ext10MHzChecked)          // MI0BOT: HL2 external 10 MHz input
-                        SetupForm.EnableCl1_10MHz();
-    
-                    if (SetupForm.Cl2Checked)               // MI0BOT: HL2 CL2 clock output
-                        SetupForm.ControlCl2(SetupForm.Cl2Checked);
-
-                    chkCWSidetone.Checked = !chkCWSidetone.Checked;     // Fudge to get the software side tone sounding right
-                    chkCWSidetone.Checked = !chkCWSidetone.Checked;     // Hopefully a correct fix will come out in the wash
-                }
             }
             else
             {
@@ -29370,14 +28230,6 @@ namespace Thetis
                 {
                     if (!rx2_meter_thread.Join(/*500*/Math.Max(meter_delay, meter_dig_delay) + 50)) //MW0LGE change to meter delay
                         rx2_meter_thread.Abort();
-                }
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                {
-                    if (IOBoard_update_thread != null)  // MI0BOT: Tidy up the IO board thread
-                    {
-                        if (!IOBoard_update_thread.Join(500))
-                            IOBoard_update_thread.Abort();
-                    }
                 }
                 //MW0LGE_[2.9.0.7]
                 if (multimeter2_thread_rx1 != null)
@@ -29492,7 +28344,6 @@ namespace Thetis
                             break;
                         // 4 & 5 DDC Models
                         case HPSDRModel.HERMES:
-                        case HPSDRModel.HERMESLITE:     // MI0BOT: HL2
                         case HPSDRModel.ANAN10:
                         case HPSDRModel.ANAN100:
                         case HPSDRModel.ANAN100D:
@@ -29511,7 +28362,6 @@ namespace Thetis
                     {
                         // 2-DDC Models
                         case HPSDRModel.HERMES:
-                        case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                         case HPSDRModel.ANAN10E:
                         case HPSDRModel.ANAN10:
                         case HPSDRModel.ANAN100B:
@@ -30378,10 +29228,6 @@ namespace Thetis
             if (HardwareSpecific.Model == HPSDRModel.HERMES)
             {
                 return true;
-            }            
-            if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2
-            {
-                return true;
             }
             return false;
         }
@@ -30440,53 +29286,18 @@ namespace Thetis
                 sValue = drv.ToString();
             }
 
-            if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 has only 15 output power levels
+            if (!bShowLimitValue)
             {
-                if (4 > drv)
-                {
-                    drv = 0;
-                }
-                else if (3 < drv && 6 > drv)
-                {
-                    drv = 6;
-                }
-                else if (87 < drv)
-                {
-                    drv = 90;
-                }
-                else if (84 < drv && 88 > drv)
-                {
-                    drv = 84;
-                }
-
-                lblPWR.Text = "Drive:  " + ((Math.Round(drv / 6.0) / 2) - 7.5).ToString() + "dB";
-
-                if (!bShowLimitValue)
-                {
-                    if (ptbPWR.IsConstrained)
-                        lblPWR.Text = "Drive:  (" + ((Math.Round(drv / 6.0) / 2) - 7.5).ToString() + "dB)";
-                }
+                if (ptbPWR.IsConstrained)
+                    lblPWR.Text = "Drive:  (" + sValue + ")";
                 else
-                {
-                    lblPWR.Text = "Limit:  " + ((Math.Round(drv / 6.0) / 2) - 7.5).ToString() + "dB";
-                }
+                    lblPWR.Text = "Drive:  " + sValue;
             }
             else
             {
-                if (!bShowLimitValue)
-                {
-                    if (ptbPWR.IsConstrained)
-                        lblPWR.Text = "Drive:  (" + sValue + ")";
-                    else
-                        lblPWR.Text = "Drive:  " + sValue;
-                }
-                else
-                {
-                    lblPWR.Text = "Limit: " + sValue;
-                }
+                lblPWR.Text = "Limit: " + sValue;
             }
-        }    
-            
+        }
         private string _pa_profile_name = "";
         public string PAProfileName
         {
@@ -30616,14 +29427,10 @@ namespace Thetis
         }
         private void chkMicMute_CheckedChanged(object sender, System.EventArgs e)
         {
-<<<<<<< Project Files/Source/Console/console.cs
             //if (chkMicMute.Checked)  //[2.10.3.9]MW0LGE mic_scroll now handles all of this
             ptbMic_Scroll(this, EventArgs.Empty);
             //else 
             //    Audio.MicPreamp = 0.0;
-=======
-            ptbMic_Scroll(this, EventArgs.Empty);
->>>>>>> C:/thetisupgrade/3way/theirs.cs
         }
 
         private void ptbMic_Scroll(object sender, System.EventArgs e)
@@ -30648,32 +29455,6 @@ namespace Thetis
 
                 //[2.10.3.9]MW0LGE fix for when mic is disabled
                 setAudioMicGain((double)ptbMic.Value);
-<<<<<<< Project Files/Source/Console/console.cs
-=======
-
-                // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                if (!IsSetupFormNull && CurrentHPSDRModel == HPSDRModel.HERMESLITE)
-                {
-                    if (!(chkRX2.Checked && chkVAC2.Checked && chkVFOBTX.Checked))
-                    {
-                        if (rx1_dsp_mode != DSPMode.DIGU && rx1_dsp_mode != DSPMode.DIGU)
-                        {
-                            lblMicVal.Text = "A " + ptbMic.Value.ToString() + " dB";
-                            SetupForm.VACTXGain = ptbMic.Value;
-                            vac_tx_gain = ptbMic.Value;
-                        }
-                    }
-                    else
-                    {
-                        if (rx2_dsp_mode != DSPMode.DIGU && rx1_dsp_mode != DSPMode.DIGU)
-                        {
-                            lblMicVal.Text = "B " + ptbMic.Value.ToString() + " dB";
-                            SetupForm.VAC2TXGain = ptbMic.Value;
-                            vac2_tx_gain = ptbMic.Value;
-                        }
-                    }
-                }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             }
 
             if (sender.GetType() == typeof(PrettyTrackBar))
@@ -30685,38 +29466,10 @@ namespace Thetis
         }
         private void setAudioMicGain(double gain_db)
         {
-<<<<<<< Project Files/Source/Console/console.cs
             if (chkMicMute.Checked) // although it is called chkMicMute, checked = mic in use
                 Audio.MicPreamp = Math.Pow(10.0, gain_db / 20.0); // convert to scalar 
             else
                 Audio.MicPreamp = 0.0;
-=======
-            if (chkMicMute.Checked)  // although it is called chkMicMute, checked = mic in use
-            {
-                if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)      // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                {
-                    if (ptbMic.Tag != null)
-                    {
-                        Audio.VACPreamp = (double)ptbMic.Tag;
-                        ptbMic.Tag = null;
-                    }
-                    ptbMic.Enabled = true;
-                }
-                
-                Audio.MicPreamp = Math.Pow(10.0, gain_db / 20.0); // convert to scalar 
-            }
-            else
-            {
-                if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)      // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                {
-                    ptbMic.Enabled = false;
-                    ptbMic.Tag = Audio.VACPreamp;
-                    Audio.VACPreamp = 0.0;
-                }
-                
-                Audio.MicPreamp = 0.0;
-            }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
         }
         private void ptbCWSpeed_Scroll(object sender, System.EventArgs e)
         {
@@ -30892,11 +29645,7 @@ namespace Thetis
 
             if (Audio.MON != oldMON)
             {
-<<<<<<< Project Files/Source/Console/console.cs
                 if (!_ignore_sidetone_change && (_rx1_dsp_mode == DSPMode.CWL || _rx1_dsp_mode == DSPMode.CWU))
-=======
-                if (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                 {
                     chkCWSidetone.Checked = chkMON.Checked;
                 }
@@ -31128,36 +29877,15 @@ namespace Thetis
                     //if txing on rx1 (split or non-split), then the att combo and nud will be disabled for rx1
                     comboPreamp.Enabled = false;
                     udRX1StepAttData.Enabled = false;
-
-                    if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                    {
-                        comboRX2Preamp.Enabled = false;
-                        udRX2StepAttData.Enabled = false;
-                    }
-                    else
-                    {
-                        comboRX2Preamp.Enabled = true;
-                        udRX2StepAttData.Enabled = true;
-                    }
+                    comboRX2Preamp.Enabled = true;
+                    udRX2StepAttData.Enabled = true;
 
                     //move it to rx1
                     udTXStepAttData.Location = udRX1StepAttData.Location;
                     udTXStepAttData.Parent = udRX1StepAttData.Parent;
                     udTXStepAttData.BringToFront();
                     udTXStepAttData.Visible = m_bAttontx;
-<<<<<<< Project Files/Source/Console/console.cs
                     lblPreamp.Text = m_bAttontx ? "[S-ATT]" : (_rx1_step_att_enabled ? "S-ATT" : "ATT");
-=======
-
-                    if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                    {
-                        lblPreamp.Text = m_bAttontx ? "Tx-ATT" : (AutoAttRX1 ? "A-ATT" : "S-ATT");
-                    }
-                    else
-                    {
-                        lblPreamp.Text = m_bAttontx ? "Tx-ATT" : (rx1_step_att_present ? "S-ATT" : "ATT");
-                    }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                 }
                 else if (VFOBTX && rx2_enabled)
                 {
@@ -31172,20 +29900,7 @@ namespace Thetis
                     udTXStepAttData.Parent = udRX2StepAttData.Parent;
                     udTXStepAttData.BringToFront();
                     udTXStepAttData.Visible = m_bAttontx;
-<<<<<<< Project Files/Source/Console/console.cs
                     lblRX2Preamp.Text = m_bAttontx ? "[S-ATT]" : (_rx2_step_att_enabled ? "S-ATT" : "ATT");
-=======
-
-                    if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                    {
-                        if (m_bAttontx)
-                            lblRX2Preamp.Enabled = true;
-                        else
-                            lblRX2Preamp.Enabled = false;
-                    }
-                    
-                    lblRX2Preamp.Text = m_bAttontx ? "Tx-ATT" : (rx2_step_att_present ? "S-ATT" : "ATT");
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                 }
                 else
                 {
@@ -31199,30 +29914,8 @@ namespace Thetis
                 comboRX2Preamp.Enabled = _rx2_preamp_present;
                 udRX2StepAttData.Enabled = _rx2_preamp_present;
                 udTXStepAttData.Visible = false;
-<<<<<<< Project Files/Source/Console/console.cs
                 lblPreamp.Text = _rx1_step_att_enabled ? "S-ATT" : "ATT";
                 lblRX2Preamp.Text = _rx2_step_att_enabled ? "S-ATT" : (_rx2_preamp_present ? "ATT" : "");
-=======
-
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                {
-                    lblPreamp.Text = AutoAttRX1 ? "A-ATT" : "S-ATT";
-                }
-                else
-                {
-                    lblPreamp.Text = rx1_step_att_present ? "S-ATT" : "ATT";
-                }
-
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                {
-                    if (m_bAttontx)
-                        lblRX2Preamp.Enabled = true;
-                    else
-                        lblRX2Preamp.Enabled = false;
-                }
-
-                lblRX2Preamp.Text = rx2_step_att_present ? "S-ATT" : (rx2_preamp_present ? "ATT" : "");
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             }
 
             if (_iscollapsed && !_isexpanded)
@@ -31512,22 +30205,8 @@ namespace Thetis
                                          radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) txAtt = 31; // reset when PS is OFF or in CW mode
 
                         SetupForm.ATTOnRX1 = getRX1stepAttenuatorForBand(rx1_band); //[2.10.3.6]MW0LGE att_fixes
-<<<<<<< Project Files/Source/Console/console.cs
                         SetupForm.ATTOnTX = txAtt; //[2.10.3.6]MW0LGE att_fixes NOTE: this will eventually call Display.TXAttenuatorOffset with the value                        
                         //NetworkIO.SetTxAttenData(txAtt); //[2.10.3.6]MW0LGE att_fixes  //[2.10.3.9]MW0LGE note: this is done by line above
-=======
-                        SetupForm.ATTOnTX = txAtt; //[2.10.3.6]MW0LGE att_fixes NOTE: this will eventually call Display.TXAttenuatorOffset with the value
-
-                        if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 LNA has wider range
-                        {
-                            NetworkIO.SetTxAttenData(32 - txAtt); //[2.10.3.6]MW0LGE att_fixes
-                        }
-                        else
-                        {
-                            NetworkIO.SetTxAttenData(txAtt); //[2.10.3.6]MW0LGE att_fixes
-                        }
-
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
                         //SetupForm.RX1EnableAtt = true; //[2.10.3.6]MW0LGE att_fixes
                         //comboRX2Preamp.Enabled = false; //[2.10.3.6]MW0LGE att_fixes
@@ -31598,9 +30277,6 @@ namespace Thetis
                     WDSP.SetChannelState(WDSP.id(0, 1), 1, 0);
 
                 Audio.RX1BlankDisplayTX = blank_rx1_on_vfob_tx;
-
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                    AutoTuningHL2(ProtocolEvent.Idle);  // MI0BOT: Stop the auto tune
 
                 if (m_bAttontx)
                 {
@@ -31965,12 +30641,7 @@ namespace Thetis
                     chk2TONE.CheckedChanged += new System.EventHandler(chk2TONE_CheckedChanged);
                     await Task.Delay(300);
                 }
-
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                {
-                    if (AutoTuningHL2(ProtocolEvent.Start))                     // MI0BOT: If true, control is handed to Auto Tune routine
-                    return;
-                }
+                //
 
                 tuning = true;                                                  // used for a few things
                 chkTUN.BackColor = button_selected_color;
@@ -32008,14 +30679,12 @@ namespace Thetis
                 }
 
                 // remember old power //MW0LGE_22b
-                if (_tuneDrivePowerSource == DrivePowerSource.FIXED ||
-                   (current_hpsdr_model == HPSDRModel.HERMESLITE && auto_tuning == AutoTuneState.Tuning))   // MI0BOT:
+                if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
                     PreviousPWR = ptbPWR.Value;
                 // set power
                 int new_pwr = SetPowerUsingTargetDBM(out bool bUseConstrain, out double targetdBm, true, true, false);
                 //
-                if (_tuneDrivePowerSource == DrivePowerSource.FIXED ||
-                   (current_hpsdr_model == HPSDRModel.HERMESLITE && auto_tuning == AutoTuneState.Tuning))   // MI0BOT:
+                if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
                 {
                     PWRSliderLimitEnabled = false;
                     PWR = new_pwr;
@@ -32065,21 +30734,12 @@ namespace Thetis
                 NetworkIO.SetUserOut0(1);       // why this?? CHECK
                 NetworkIO.SetUserOut2(1);
 
-                if ((apollopresent && apollo_tuner_enabled) ||
-                    ((current_hpsdr_model == HPSDRModel.HERMESLITE) && AriesStandalone))
+                if (apollopresent && apollo_tuner_enabled)
                     NetworkIO.EnableApolloAutoTune(1);
             }
             else
             {
-<<<<<<< Project Files/Source/Console/console.cs
                 _tune_pulse_on = false;
-=======
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)   // MI0BOT: Switch of the tone gen before releasing PTT
-                {
-                    radio.GetDSPTX(0).TXPostGenRun = 0;
-                    await Task.Delay(MoxDelay);
-                }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
                 chkMOX.Checked = false;                                         // we're done
                 await Task.Delay(100);
@@ -32101,13 +30761,11 @@ namespace Thetis
 
                 updateVFOFreqs(chkTUN.Checked, true);
 
-                if (apollopresent ||
-                   (current_hpsdr_model == HPSDRModel.HERMESLITE))      // MI0BOT:
+                if (apollopresent)
                     NetworkIO.EnableApolloAutoTune(0);
 
                 //MW0LGE_22b
-                if (_tuneDrivePowerSource == DrivePowerSource.FIXED ||
-                    (current_hpsdr_model == HPSDRModel.HERMESLITE && auto_tuning == AutoTuneState.Tuning))   // MI0BOT:
+                if (_tuneDrivePowerSource == DrivePowerSource.FIXED)
                 {
                     PWRSliderLimitEnabled = true;
                     PWR = PreviousPWR;
@@ -33824,43 +32482,29 @@ namespace Thetis
             if (!IsSetupFormNull)
             {
                 int required_ant = XVTRForm.GetRXAntenna(rx_xvtr_index);
-
-                if (CurrentHPSDRHardware == HPSDRHW.HermesLite &&
-                    required_ant == 4)                              // MI0BOT: HL2, setting for Alt Rx, so assume we must have an I/O Board
+                if (required_ant >= 1 && required_ant <= 3)
                 {
-                    chkRxAnt.Enabled = false;   // MI0BOT: It doesn't make sense to have a abilty to switch Alt Rx, so disable
-                    SetIOBoardAerialPorts(1);   // MI0BOT: Switch to Alt Rx
+                    Band xvtr_rx_band = BandByFreq(XVTRForm.TranslateFreq(freq), -1, current_region);
+                    int xvtr_rx_band_ant = SetupForm.GetRXAntenna(xvtr_rx_band);
+                    if (required_ant != xvtr_rx_band_ant)
+                    {
+                        //Debug.Print("Change xvtr rx antenna to : " + required_ant.ToString());
+                        undoXVTRantennaModify(rx);
+                        xvtr_rx_band_ant = SetupForm.GetRXAntenna(xvtr_rx_band); // this needs to re-obtained as the undo above might adjust revert the antennas back
+                        _ant_before_xvtr_modify[rx] = xvtr_rx_band_ant;
+                        _band_used_for_xvtr_modify[rx] = xvtr_rx_band;
+                        SetupForm.SetRXAntenna(required_ant, xvtr_rx_band);
+                    }
                 }
                 else
                 {
-                    chkRxAnt.Enabled = true;
-
-                    if (required_ant >= 1 && required_ant <= 3)
-                    {
-                    Band xvtr_rx_band = BandByFreq(XVTRForm.TranslateFreq(freq), -1, current_region);
-                        int xvtr_rx_band_ant = SetupForm.GetRXAntenna(xvtr_rx_band);
-                        if (required_ant != xvtr_rx_band_ant)
-                        {
-                            //Debug.Print("Change xvtr rx antenna to : " + required_ant.ToString());
-                            undoXVTRantennaModify(rx);
-                            xvtr_rx_band_ant = SetupForm.GetRXAntenna(xvtr_rx_band); // this needs to re-obtained as the undo above might adjust revert the antennas back
-                            _ant_before_xvtr_modify[rx] = xvtr_rx_band_ant;
-                            _band_used_for_xvtr_modify[rx] = xvtr_rx_band;
-                            SetupForm.SetRXAntenna(required_ant, xvtr_rx_band);
-                        }
-                    }
-                    else
-                    {
-                        // return to default
-                        undoXVTRantennaModify(rx);
-                    }
+                    // return to default
+                    undoXVTRantennaModify(rx);
                 }
             }
         }
         private void undoXVTRantennaModify(int rx)
         {
-            chkRxAnt.Enabled = true;    // MI0BOT: Re-enable Alt Rx 
-
             if (rx < 0 || rx > 1) return;
             if (_band_used_for_xvtr_modify[rx] != Band.LAST)
             {
@@ -34422,14 +33066,8 @@ namespace Thetis
                     }
                 }
 
-<<<<<<< Project Files/Source/Console/console.cs
                 if (_mox && (HardwareSpecific.Hardware == HPSDRHW.Hermes ||
                             HardwareSpecific.Hardware == HPSDRHW.HermesII))
-=======
-                if (_mox && (CurrentHPSDRHardware == HPSDRHW.Hermes ||
-                            CurrentHPSDRHardware == HPSDRHW.HermesLite ||
-                            CurrentHPSDRHardware == HPSDRHW.HermesII))
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                 {
                     if (chkVFOSplit.Checked)
                     {
@@ -34459,14 +33097,8 @@ namespace Thetis
             {
                 if (_mox)
                 {
-<<<<<<< Project Files/Source/Console/console.cs
                     if (HardwareSpecific.Hardware == HPSDRHW.Hermes ||
                          HardwareSpecific.Hardware == HPSDRHW.HermesII)
-=======
-                    if (CurrentHPSDRHardware == HPSDRHW.Hermes ||
-                         CurrentHPSDRHardware == HPSDRHW.HermesLite ||
-                         CurrentHPSDRHardware == HPSDRHW.HermesII)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                     {
                         if (chkVFOSplit.Checked)
                         {
@@ -37415,65 +36047,17 @@ namespace Thetis
                     break;
                 case DSPMode.CWL:
                 case DSPMode.DIGL:
-<<<<<<< Project Files/Source/Console/console.cs
                     low = current_center - new_bw / 2;
                     high = current_center + new_bw / 2;
                     break;
                 case DSPMode.USB:
                     low = default_low_cut;
                     high = low + new_bw;
-=======
-                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                    {
-                        ptbRX1AF.Enabled = true;
-                        ptbRX1AF.SmallChange = 1;
-                        ptbRX1AF.LargeChange = 1;
-                        ptbRX0Gain.Enabled = true;
-                        ptbRX0Gain.SmallChange = 1;
-                        ptbRX0Gain.LargeChange = 1;
-
-                        chkMUT_CheckedChanged(this, EventArgs.Empty);
-                    }
-
-                    radModeDIGL.BackColor = SystemColors.Control;
-                    if (vac_auto_enable &&
-                        new_mode != DSPMode.DIGU &&
-                        new_mode != DSPMode.DRM)
-                    {
-                        SetupForm.VACEnable = false;
-                    }
-
-                    if (new_mode != DSPMode.DIGU) bRecallDigiModeSettings = true; // see comment below
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                     break;
                 case DSPMode.CWU:
                 case DSPMode.DIGU:
-<<<<<<< Project Files/Source/Console/console.cs
                     low = current_center - new_bw / 2;
                     high = current_center + new_bw / 2;
-=======
-                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                    {
-                        ptbRX1AF.Enabled = true;
-                        ptbRX1AF.SmallChange = 1;
-                        ptbRX1AF.LargeChange = 1;
-                        ptbRX0Gain.Enabled = true;
-                        ptbRX0Gain.SmallChange = 1;
-                        ptbRX0Gain.LargeChange = 1;
-
-                        chkMUT_CheckedChanged(this, EventArgs.Empty);
-                    }
-
-                    radModeDIGU.BackColor = SystemColors.Control;
-                    if (vac_auto_enable &&
-                        new_mode != DSPMode.DIGL &&
-                        new_mode != DSPMode.DRM)
-                    {
-                        SetupForm.VACEnable = false;
-                    }
-
-                    if (new_mode != DSPMode.DIGL) bRecallDigiModeSettings = true; //[2.10.3]MW0LGE done below after tx profile change
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                     break;
             }
 
@@ -37674,7 +36258,6 @@ namespace Thetis
             btnVFOAtoB_Click(this, EventArgs.Empty);
         }
 
-<<<<<<< Project Files/Source/Console/console.cs
         private void btnVFOAtoB_Click(object sender, System.EventArgs e)
         {
             if (rx2_enabled)
@@ -37700,16 +36283,6 @@ namespace Thetis
                 }
                 vfob_dsp_mode = _rx1_dsp_mode;
                 vfob_filter = rx1_filter;
-=======
-                        if (old_mode != DSPMode.CWL && old_mode != DSPMode.CWU)
-                        {
-                            if (!initializing)
-                                mon_recall = chkMON.Checked;
-                            chkMON.Checked = _cw_sidetones && (_cw_hw_sidetone || _cw_sidetones);
-                        }
-                        SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
-                    }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
                 comboRX2AGC.Text = comboAGC.Text;
             }
@@ -37760,26 +36333,10 @@ namespace Thetis
             }
         }
 
-<<<<<<< Project Files/Source/Console/console.cs
         public void VFOSwap()
         {
             btnVFOSwap_Click(this, EventArgs.Empty);
         }
-=======
-                        if (!rx_only && chkPower.Checked)
-                        {
-                            chkMOX.Enabled = true;
-                        }
-                        
-                        if (old_mode != DSPMode.CWL && old_mode != DSPMode.CWU)//[2.10.3]MW0LGE fixes #59 mon issue, did not consider old_mode and igmored CWU
-                        {
-                            if (!initializing)
-                                mon_recall = chkMON.Checked;
-                            chkMON.Checked = _cw_sidetones && (_cw_hw_sidetone || _cw_sw_sidetone);
-                        }
-                        SetTXFilters(new_mode, tx_filter_low, tx_filter_high);
-                    }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
         private void btnVFOSwap_Click(object sender, System.EventArgs e)
         {
@@ -37858,7 +36415,6 @@ namespace Thetis
 
                     VFOASubFreq = saved_vfoa_sub_freq;
 
-<<<<<<< Project Files/Source/Console/console.cs
                     tx_xvtr_index = XVTRForm.XVTRFreq(VFOASubFreq);
                     TXBand = BandByFreq(VFOASubFreq, tx_xvtr_index, current_region);
                     if (chkPower.Checked) txtVFOABand.ForeColor = Color.Red;
@@ -37867,40 +36423,6 @@ namespace Thetis
                     txtVFOABand.ReadOnly = false;
                     txtVFOABand_LostFocus(this, EventArgs.Empty);
                     panelVFOASubHover.Visible = true;
-=======
-                    if_shift = false;
-                    radio.GetDSPRX(0, 0).RXOsc = 0.0;
-                    DisableAllFilters();
-                    ptbFilterShift.Enabled = false;
-                    btnFilterShiftReset.Enabled = false;
-                    bool save_pan = (Display.CurrentDisplayMode == DisplayMode.PANADAPTER);
-                    bool save_water = (Display.CurrentDisplayMode == DisplayMode.WATERFALL);
-                    if (save_pan || save_water)
-                    {
-                        comboDisplayMode.Text = "Spectrum";
-                    }
-                    comboDisplayMode.Items.Remove("Panadapter");
-                    comboDisplayMode.Items.Remove("Waterfall");
-                    was_panadapter = save_pan;
-                    was_waterfall = save_water;
-                    radio.GetDSPRX(0, 0).SpectrumPreFilter = true;
-                    Display.RXDisplayLow = -(int)sample_rate_rx1 / 2;
-                    Display.RXDisplayHigh = (int)sample_rate_rx1 / 2;
-                    break;
-                case DSPMode.DIGL:
-                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                    {
-                        ptbRX1AF.Enabled = false;
-                        ptbRX1AF.SmallChange = 0;
-                        ptbRX1AF.LargeChange = 0;
-                        ptbRX0Gain.Enabled = false;
-                        ptbRX0Gain.SmallChange = 0;
-                        ptbRX0Gain.LargeChange = 0;
-                        radio.GetDSPRX(0, 0).RXOutputGain = 0.1;
-                    }
-
-                    radModeDIGL.BackColor = button_selected_color;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
                     bIgnore = true;
                 }
@@ -37908,29 +36430,7 @@ namespace Thetis
                 {
                     txtVFOABand.Font = new Font("Microsoft Sans Sarif", 14.0f, FontStyle.Regular);
 
-<<<<<<< Project Files/Source/Console/console.cs
                     VFOASubFreq = saved_vfoa_sub_freq;
-=======
-                    if (old_mode != DSPMode.DIGU)
-                    {
-                        bStoreDigiModeSettings = true; //[2.10.3]MW0LGE done after tx profile change at end as we will overwrite existng tx profile if auto save is on
-                        bTurnOffSettingsForDigimode = true;
-                    }
-                    break;
-                case DSPMode.DIGU:
-                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                    {
-                        ptbRX1AF.Enabled = false;
-                        ptbRX1AF.SmallChange = 0;
-                        ptbRX1AF.LargeChange = 0;
-                        ptbRX0Gain.Enabled = false;
-                        ptbRX0Gain.SmallChange = 0;
-                        ptbRX0Gain.LargeChange = 0;
-                        radio.GetDSPRX(0, 0).RXOutputGain = 0.1;
-                    }
-
-                    radModeDIGU.BackColor = button_selected_color;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
                     if (chkPower.Checked) txtVFOABand.ForeColor = vfo_text_light_color;
                     else txtVFOABand.ForeColor = vfo_text_dark_color;
@@ -39318,19 +37818,8 @@ namespace Thetis
             pic_multi_meter_digital_basis = this.picMultiMeterDigital.Location;
             pic_multi_meter_size_basis = this.picMultiMeterDigital.Size;
 
-<<<<<<< Project Files/Source/Console/console.cs
             pic_rx2meter_basis = this.picRX2Meter.Location;
             pic_rx2meter_size_basis = this.picRX2Meter.Size;
-=======
-                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  Start with the two VFOs on the same frequency
-                    {
-                        VFOASubFreq = VFOAFreq;
-                    }
-                    else
-                    {
-                        VFOASubFreq = saved_vfoa_sub_freq;
-                    }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
             txt_multi_text_basis = this.txtMultiText.Location;
             txt_rx2meter_basis = this.txtRX2Meter.Location;
@@ -41140,7 +39629,6 @@ namespace Thetis
                 bMadeAChange = true;
             }
 
-<<<<<<< Project Files/Source/Console/console.cs
             if (radio.GetDSPRX(1, 0).FilterSize != filtsizerx2 ||
                 radio.GetDSPRX(1, 1).FilterSize != filtsizerx2)
             {
@@ -41148,58 +39636,6 @@ namespace Thetis
                 radio.GetDSPRX(1, 1).FilterSize = filtsizerx2;
                 bMadeAChange = true;
             }
-=======
-                        if (chkVFOBTX.Checked)
-                            ptbMic_Scroll(this, EventArgs.Empty);
-                    }
-                    break;
-                case DSPMode.DIGL:
-                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                    {
-                        ptbRX2AF.Enabled = true;
-                        ptbRX2AF.SmallChange = 1;
-                        ptbRX2AF.LargeChange = 1;
-                        ptbRX2Gain.Enabled = true;
-                        ptbRX2Gain.SmallChange = 1;
-                        ptbRX2Gain.LargeChange = 1;
-                        chkRX2Mute_CheckedChanged(this, EventArgs.Empty);
-                        radio.GetDSPRX(1, 0).RXOutputGain = 0.1;
-                    }
-
-                    radRX2ModeDIGL.BackColor = SystemColors.Control;
-                    if (rx2_enabled && vac2_auto_enable &&
-                        new_mode != DSPMode.DIGU &&
-                        new_mode != DSPMode.DRM)
-                    {
-                        SetupForm.VAC2Enable = false;
-                    }
-                    if (new_mode != DSPMode.DIGU) SetDigiMode(2, DigiMode.DigiModeSettingState.dmssRecall);
-                    break;
-                case DSPMode.DIGU:
-                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                    {
-                        ptbRX2AF.Enabled = true;
-                        ptbRX2AF.SmallChange = 1;
-                        ptbRX2AF.LargeChange = 1;
-                        ptbRX2Gain.Enabled = true;
-                        ptbRX2Gain.SmallChange = 1;
-                        ptbRX2Gain.LargeChange = 1;
-                        chkRX2Mute_CheckedChanged(this, EventArgs.Empty);
-                        radio.GetDSPRX(1, 0).RXOutputGain = 0.1;
-                    }
-
-                    radRX2ModeDIGU.BackColor = SystemColors.Control;
-                    if (rx2_enabled && vac2_auto_enable &&
-                        new_mode != DSPMode.DIGL &&
-                        new_mode != DSPMode.DRM)
-                    {
-                        SetupForm.VAC2Enable = false;
-                    }
-                    if (new_mode != DSPMode.DIGL) SetDigiMode(2, DigiMode.DigiModeSettingState.dmssRecall);
-                    break;
-                case DSPMode.DRM:
-                    radRX2ModeDRM.BackColor = SystemColors.Control;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
             if (radio.GetDSPTX(0).FilterSize != filtsizetx)
             {
@@ -41471,7 +39907,6 @@ namespace Thetis
             }
         }
 
-<<<<<<< Project Files/Source/Console/console.cs
         private DSPFilterType dsp_filt_type_phone_tx = DSPFilterType.Low_Latency;
         public DSPFilterType DSPFiltTypePhoneTX
         {
@@ -41482,24 +39917,6 @@ namespace Thetis
                 UpdateDSP();
             }
         }
-=======
-                    chkRX2BIN.Checked = false;
-                    chkRX2BIN.Enabled = false;
-                    break;
-                case DSPMode.DIGL:
-                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                    {
-                        ptbRX2AF.Enabled = false;
-                        ptbRX2AF.SmallChange = 0;
-                        ptbRX2AF.LargeChange = 0;
-                        ptbRX2Gain.Enabled = false;
-                        ptbRX2Gain.SmallChange = 0;
-                        ptbRX2Gain.LargeChange = 0;
-                        radio.GetDSPRX(1, 0).RXOutputGain = 0.1;
-                    }
-
-                    radRX2ModeDIGL.BackColor = button_selected_color;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
         private DSPFilterType dsp_filt_type_fm_rx = DSPFilterType.Low_Latency;
         public DSPFilterType DSPFiltTypeFMRX
@@ -41534,7 +39951,6 @@ namespace Thetis
             }
         }
 
-<<<<<<< Project Files/Source/Console/console.cs
         private DSPFilterType dsp_filt_type_dig_rx = DSPFilterType.Low_Latency;
         public DSPFilterType DSPFiltTypeDigRX
         {
@@ -41545,22 +39961,6 @@ namespace Thetis
                 UpdateDSP();
             }
         }
-=======
-                    break;
-                case DSPMode.DIGU:
-                    if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                    {
-                        ptbRX2AF.Enabled = false;
-                        ptbRX2AF.SmallChange = 0;
-                        ptbRX2AF.LargeChange = 0;
-                        ptbRX2Gain.Enabled = false;
-                        ptbRX2Gain.SmallChange = 0;
-                        ptbRX2Gain.LargeChange = 0;
-                        radio.GetDSPRX(1, 0).RXOutputGain = 0.1;
-                    }
-
-                    radRX2ModeDIGU.BackColor = button_selected_color;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
         private DSPFilterType dsp_filt_type_dig_tx = DSPFilterType.Low_Latency;
         public DSPFilterType DSPFiltTypeDigTX
@@ -41642,21 +40042,12 @@ namespace Thetis
                     m_szDropShadowSize = Common.DropShadowSize(this);
                 }
 
-<<<<<<< Project Files/Source/Console/console.cs
                 return m_szDropShadowSize;
             }
         }
         private void updateResolutionStatusBarText()
         {
             if (m_bIncludeWindowBorders)
-=======
-            if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)
-                SelectModeDependentPanel();     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-
-
-
-            if (rx2_dsp_mode != DSPMode.FM && rx2_dsp_mode != DSPMode.DRM)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             {
                 Size sz = this.Size - DropShadowSize; // Form.Size now includes drop shadow size, this gets removed so we see values we expect in the statusbar
                 toolStripDropDownButton_ScreenSize.Text = sz.Width.ToString() + " x " + sz.Height.ToString();
@@ -43037,22 +41428,10 @@ namespace Thetis
                 if (_rx1_dsp_mode != DSPMode.CWL &&
                     _rx1_dsp_mode != DSPMode.CWU)
                 {
-<<<<<<< Project Files/Source/Console/console.cs
                     MessageBox.Show("Ideally the radio should be in CWL or CWU mode.",
                     "CWX : Mode warning",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-=======
-                    if (this.SetupForm.CollapsedWidth == 0)
-                        this.SetupForm.CollapsedWidth = console_basis_size.Width;
-                    if (this.SetupForm.CollapsedHeight == 0)
-                        this.SetupForm.CollapsedHeight =
-                            (current_hpsdr_model == HPSDRModel.HPSDR ||
-                            current_hpsdr_model == HPSDRModel.HERMES ||
-                            current_hpsdr_model == HPSDRModel.HERMESLITE) ?
-                                console_basis_size.Height - (panelRX2Filter.Height + 8) :
-                                console_basis_size.Height;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                 }
             }
 
@@ -43376,7 +41755,6 @@ namespace Thetis
             ptbSquelch.Show();
             picSquelch.Show();
 
-<<<<<<< Project Files/Source/Console/console.cs
             panelVFO.Show();
             panelDSP.Show();
             panelDisplay2.Show();
@@ -43398,13 +41776,6 @@ namespace Thetis
             else if (BandGENSelected)
             {
                 btnBandGEN_Click(radBandGEN, EventArgs.Empty);
-=======
-                    chkVACStereo.Checked = vac_stereo;
-                }
-
-                if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                    ptbMic_Scroll(sender, e);
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             }
             else
             {
@@ -43424,7 +41795,6 @@ namespace Thetis
                 lblRX2FilterLabel.Show();
             }
 
-<<<<<<< Project Files/Source/Console/console.cs
             picMultiMeterDigital.Show();
             ptbAF.Show();
             ptbRF.Show();
@@ -43433,13 +41803,6 @@ namespace Thetis
             comboPreamp.Show();
             udRX1StepAttData.Show();
             comboAGC.Show();
-=======
-            m_bLastVFOATXsetting = chkVFOATX.Checked; // MW0LGE_21k9d rc3
-
-            if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                Alex.getAlex().UpdateAlexAntSelection(Band.LAST, MOX, alex_ant_ctrl_enabled, false);    // MI0BOT: Need to let Alex know in case there is a different band ant
-        }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
             txtMultiText.Show();
             chkFWCATU.Show();
@@ -43604,7 +41967,6 @@ namespace Thetis
             //    comboPreamp.BringToFront();
             //}
 
-<<<<<<< Project Files/Source/Console/console.cs
             //if (rx2_step_att_present)
             //{
             //    udRX2StepAttData.BringToFront();
@@ -43613,26 +41975,6 @@ namespace Thetis
             //{
             //    comboRX2Preamp.BringToFront();
             //}
-=======
-            if (m_tcpCATServer != null && ken["tcp"])
-                m_tcpCATServer.SendToClients(cmd);
-        }
-
-        private bool m_bLastVFOATXsetting = false;
-        private bool m_bLastVFOBTXsetting = false;
-        private void chkVFOBTX_CheckedChanged(object sender, System.EventArgs e)
-        {
-            if (chkVFOBTX.Focused && !chkVFOBTX.Checked) chkVFOBTX.Checked = true;
-            Display.TXOnVFOB = chkVFOBTX.Checked;
-
-            if (CurrentHPSDRModel == HPSDRModel.HERMESLITE)
-                Penny.getPenny().VFOBTX = chkVFOBTX.Checked; // MI0BOT: Needs to be set early
-
-            if (chkVFOBTX.Checked)
-            {
-                if (chkVFOATX.Checked) chkVFOATX.Checked = false;
-                chkVFOBTX.BackColor = button_selected_color;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
             // G8NJJ
             comboDisplayMode.Parent = panelDisplay2;
@@ -43781,16 +42123,8 @@ namespace Thetis
 
             updateLegacyMeterControls(true);// [2.10.1.0] MW0LGE
 
-<<<<<<< Project Files/Source/Console/console.cs
             SelectModeDependentPanel(); //MW0LGE [2.9.0.7] moved here
             setPAProfileLabelPos(); //[2.10.1.0] MW0LGE
-=======
-            m_bLastVFOBTXsetting = chkVFOBTX.Checked; // MW0LGE_21k9d rc3
-
-            if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                Alex.getAlex().UpdateAlexAntSelection(Band.LAST, MOX, alex_ant_ctrl_enabled, false);    // MI0BOT: Need to let Alex know in case there is a different band ant
-        }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
             LegacyItemController.Update();
 
@@ -44292,12 +42626,8 @@ namespace Thetis
             }
             else if (this.m_bShowBandControls)
             {
-<<<<<<< Project Files/Source/Console/console.cs
                 panelButtonBar.Hide();
                 if (_bands_VHF_selected)
-=======
-                if (mic_boost)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                 {
                     panelBandVHF.Show();
                 }
@@ -44310,7 +42640,6 @@ namespace Thetis
                     panelBandGEN.Show();
                 }
 
-<<<<<<< Project Files/Source/Console/console.cs
                 lblRX2Band.Show();
                 comboRX2Band.Show();
                 lblRX2Band.Parent = this;
@@ -44321,10 +42650,6 @@ namespace Thetis
                 panelBandVHF.Hide();
                 panelBandHF.Hide();
                 panelBandGEN.Hide();
-=======
-                //[2.10.3.9]MW0LGE fix for when mic is disabled
-                setAudioMicGain((double)ptbFMMic.Value);
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             }
 
             if (this.m_bShowModeControls)
@@ -44865,24 +43190,13 @@ namespace Thetis
                         SelectNR(1, true, is_on ? 0 : 1);
                     }
                     break;
-<<<<<<< Project Files/Source/Console/console.cs
                 case "NR2":
                     //if (chkNR.CheckState == CheckState.Unchecked || chkNR.CheckState == CheckState.Checked) chkNR.CheckState = CheckState.Indeterminate;
                     //else if (chkNR.CheckState == CheckState.Indeterminate) chkNR.CheckState = CheckState.Unchecked;
-=======
-                case HPSDRModel.HERMES:
-                case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
-                    if (alexpresent)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                     {
                         bool is_on = _nr_selected[0] == 2;
                         SelectNR(1, true, is_on ? 0 : 2);
                     }
-<<<<<<< Project Files/Source/Console/console.cs
-=======
-                    else
-                        comboPreamp.Items.AddRange(anan100d_preamp_settings);
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                     break;
                 case "NR3":
                     {
@@ -46156,7 +44470,6 @@ namespace Thetis
             return new Font(fontCol.Families[0], size, style);
         }
 
-<<<<<<< Project Files/Source/Console/console.cs
         #region SunTrackingEct_KE9NS
         //=========================================================
         // ke9ns add open up bandstack window when you click on the bandstack index
@@ -46164,24 +44477,6 @@ namespace Thetis
         {
             showBandStack();
         }// regBox1_Click
-=======
-                    // changed G8NJJ to pick up RX1 or RX2 mode
-                    if (this.m_bShowModeControls)
-                    {
-                        panelMode.Show();
-                        panelButtonBar.Hide();
-                    }
-                    else
-                        panelMode.Hide();
-
-                    panelRX2Mode.Hide();
-                }
-                if (show_rx2)
-                {
-                    // G8NJJ
-                    comboDisplayMode.Hide();
-                    comboRX2DisplayMode.Show();
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
         //==============================================================
         // ke9ns add  open up bandstack window when you click on the bandstack index
@@ -46300,21 +44595,7 @@ namespace Thetis
             //Bottom Edge
             p.AddLine(xwr, yh, xr, yh);
 
-<<<<<<< Project Files/Source/Console/console.cs
             //Bottom Left Corner           
-=======
-                    // changed G8NJJ to pick up RX1 or RX2 mode
-                    if (this.m_bShowModeControls)
-                    {
-                        panelRX2Mode.Show();
-                        panelButtonBar.Hide();
-                    }
-                    else
-                        panelRX2Mode.Hide();
-
-                    panelMode.Hide();
-                }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
             if (RoundBottomLeft)
             {
@@ -47095,32 +45376,7 @@ namespace Thetis
         }
         private void chkVAC1_MouseDown(object sender, MouseEventArgs e)
         {
-<<<<<<< Project Files/Source/Console/console.cs
             if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.VAC1_Tab);
-=======
-            if ((sender == null) ||
-                (sender.GetType() != typeof(RadioButtonTS))) return;
-            RadioButtonTS radioBtnTS = (RadioButtonTS)sender;
-            if (!radioBtnTS.Checked) return;
-
-            bandtoolStripMenuItem1.Checked = radBand160.Checked;
-            bandtoolStripMenuItem2.Checked = radBand80.Checked;
-            bandtoolStripMenuItem3.Checked = radBand60.Checked;
-            bandtoolStripMenuItem4.Checked = radBand40.Checked;
-            bandtoolStripMenuItem5.Checked = radBand30.Checked;
-            bandtoolStripMenuItem14.Checked = radBand20.Checked;
-            bandtoolStripMenuItem7.Checked = radBand17.Checked;
-            bandtoolStripMenuItem8.Checked = radBand15.Checked;
-            bandtoolStripMenuItem9.Checked = radBand12.Checked;
-            bandtoolStripMenuItem10.Checked = radBand10.Checked;
-            bandtoolStripMenuItem11.Checked = radBand6.Checked;
-            bandtoolStripMenuItem12.Checked = radBandWWV.Checked;
-            bandtoolStripMenuItem13.Checked = radBandGEN.Checked;
-
-            repopulateForms();
-
-            _band_change = true;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
         }
         private void chkVAC2_MouseDown(object sender, MouseEventArgs e)
         {
@@ -47319,29 +45575,7 @@ namespace Thetis
 
         private void ToolStripMenuItem19_Click(object sender, EventArgs e)
         {
-<<<<<<< Project Files/Source/Console/console.cs
             SetNewRXAntenna(2);
-=======
-            if (current_hpsdr_model != HPSDRModel.HPSDR)
-            {
-                if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                {
-                    if (AutoAttRX1)
-                    {
-                        AutoAttRX1 = false;
-                    }
-                    else
-                    {
-                        AutoAttRX1 = true;
-                    }
-                }
-                else
-                {
-                    SetupForm.RX1EnableAtt = !SetupForm.RX1EnableAtt;
-                    if (RX1RX2usingSameADC) SetupForm.RX2EnableAtt = SetupForm.RX1EnableAtt; //MW0LGE_22b
-                }
-            }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
         }
 
         private void ToolStripMenuItem20_Click(object sender, EventArgs e)
@@ -47477,7 +45711,6 @@ namespace Thetis
                 if (m_sOverControlName != sTmp) Display.DebugText = m_sOverControlName;
             }
         }
-<<<<<<< Project Files/Source/Console/console.cs
         private bool m_bEnableControlDebug = false;
         public bool EnableControlDebug
         {
@@ -47501,20 +45734,6 @@ namespace Thetis
                 m_bEnableDisplayDebug = value;
             }
         }
-=======
-
-        //private void CAT2port_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        //{
-        //}
-
-        //private void chkMON_Click(object sender, EventArgs e)
-        //{
-        //    if (rx1_dsp_mode == DSPMode.CWL || rx1_dsp_mode == DSPMode.CWU)
-        //    {
-        //        chkCWSidetone.Checked = chkMON.Checked;
-        //    }
-        //}
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
         #region NewDelegateSystem
         //-------------------------------
@@ -51131,34 +49350,10 @@ namespace Thetis
                 sAndromG2Verson = sOriginalAndromG2Verson.Contains("G2") ? "G2 Panel Version: " + sAndromG2Verson : "Andromeda Panel Version: " + sAndromG2Verson;
             }
 
-<<<<<<< Project Files/Source/Console/console.cs
             int dx_version = Display.DXVersion();
             string sdxversion;
             if (dx_version != -1)
                 sdxversion = (dx_version / 10f).ToString("f1");
-=======
-            if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-            {
-                if (3 > drv)
-                {
-                    drv = 0;
-                }
-                else if (96 < drv)
-                {
-                    drv = 99;
-                }
-
-                sValue = ((Math.Round(drv / 3.0) / 2) - 16.5).ToString() + "dB";
-            }
-
-            if (!bShowLimitValue)
-            {                
-                if (ptbTune.IsConstrained)
-                    lblTune.Text = sHeader + ":  (" + sValue + ")";
-                else
-                    lblTune.Text = sHeader + ":  " + sValue;
-            }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             else
                 sdxversion = "";
 
@@ -51318,91 +49513,11 @@ namespace Thetis
 
             if (chan != -1)
             {
-<<<<<<< Project Files/Source/Console/console.cs
                 double min_notch_width = 0;
                 unsafe
                 {
                     WDSP.RXANBPGetMinNotchWidth(chan, &min_notch_width);
                 }
-=======
-                case 0: //normal
-                    new_pwr = ptbPWR.Value;
-                    power_by_band[(int)tx_band] = new_pwr;
-                    break;
-                case 1: //tune
-                    DrivePowerSource tuneDrive = _tuneDrivePowerSource;
-                    if (current_hpsdr_model == HPSDRModel.HERMESLITE && auto_tuning == AutoTuneState.Tuning)    // MI0BOT: Auto tune
-                        tuneDrive = DrivePowerSource.FIXED;
-
-                    switch (tuneDrive)
-                    {
-                        case DrivePowerSource.DRIVE_SLIDER:
-                            new_pwr = ptbPWR.Value;
-                            break;
-                        case DrivePowerSource.TUNE_SLIDER:
-                            slider = ptbTune;
-
-                            if (current_hpsdr_model == HPSDRModel.HERMESLITE)       // MI0BOT: As HL2 only has 15 step output attenuator,
-                            {                                                       //         reduce the level further 
-                                if (bConstrain) new_pwr = slider.ConstrainAValue(ptbTune.Value);
-
-                                if (new_pwr <= 51)
-                                {
-                                    radio.GetDSPTX(0).TXPostGenToneMag = (double)(new_pwr + 40) / 100;
-                                    new_pwr = 0;
-                                }
-                                else
-                                {
-                                    radio.GetDSPTX(0).TXPostGenToneMag = 0.9999;
-                                    new_pwr = (new_pwr - 54) * 2;
-                                }
-                            }
-                            else
-                            {
-                                new_pwr = ptbTune.Value;
-                            }
-
-                            break;
-                        case DrivePowerSource.FIXED:
-                            if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-                            {
-                                if (tune_power <= 51)
-                                {
-                                    radio.GetDSPTX(0).TXPostGenToneMag = (double)(tune_power + 40) / 100;
-                                    new_pwr = 0;
-                                }
-                                else
-                                {
-                                    radio.GetDSPTX(0).TXPostGenToneMag = 0.9999;
-                                    new_pwr = (tune_power - 54) * 2;
-                                }
-                            }
-                            else
-                            {
-                                new_pwr = tune_power;
-                            }
-                            bConstrain = false;
-                            break;
-                    }
-                    break;
-                case 2: //2tone
-                    switch (_2ToneDrivePowerSource)
-                    {
-                        case DrivePowerSource.DRIVE_SLIDER:
-                            new_pwr = ptbPWR.Value;
-                            break;
-                        case DrivePowerSource.TUNE_SLIDER:
-                            slider = ptbTune;
-                            new_pwr = ptbTune.Value;
-                            break;
-                        case DrivePowerSource.FIXED:
-                            new_pwr = twotone_tune_power;
-                            bConstrain = false;
-                            break;
-                    }
-                    break;
-            }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
                 string key = rx.ToString();
                 if (_minimum_rx_notch_width.ContainsKey(key))
@@ -51437,15 +49552,8 @@ namespace Thetis
             //        break;
             //}
 
-<<<<<<< Project Files/Source/Console/console.cs
             double min_notch_width;
             int sample_rate = radio.GetDSPTX(0).CurrentDSPMode == DSPMode.FM ? 192000 : 96000;
-=======
-            //constrain power
-            if(bConstrain) new_pwr = slider.ConstrainAValue(new_pwr);
-            //
-            double hl2Power = (double)new_pwr;  // MI0BOT: Just use the slider value for HL2
->>>>>>> C:/thetisupgrade/3way/theirs.cs
 
             switch (radio.GetDSPTX(0).TXBandpassWindow)
             {
@@ -51467,19 +49575,11 @@ namespace Thetis
         {
             if(e.Button == MouseButtons.Right && ClickTuneDisplay)
             {
-<<<<<<< Project Files/Source/Console/console.cs
                 chkFWCATU.Checked = false; // recentre
                 chkFWCATU.Checked = true; // restore setting
-=======
-                if(new_pwr > _lastPower || _forceATTwhenPowerChangesWhenPSAon_anddecreased)
-                    SetupForm.ATTOnTX = 31;
-
-                _lastPower = new_pwr;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             }
         }
 
-<<<<<<< Project Files/Source/Console/console.cs
         private void chkX2TR_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right && ClickTuneRX2Display)
@@ -51500,30 +49600,6 @@ namespace Thetis
             //used by multimeter to get the initial state for the TX waterfall gradient
             if (IsSetupFormNull) return null;
             return SetupForm.WaterfallTXGradient();
-=======
-            if (new_pwr == 0 && CurrentHPSDRModel != HPSDRModel.HERMESLITE)     // MI0BOT: HL2 always does the else
-            {
-                Audio.RadioVolume = 0.0;
-                if (chkTUN.Checked)
-                    radio.GetDSPTX(0).TXPostGenRun = 0;
-            }
-            else
-            {
-                if (chkTUN.Checked)
-                    radio.GetDSPTX(0).TXPostGenRun = 1;
-
-                if (CurrentHPSDRModel != HPSDRModel.HERMESLITE)
-                {
-                    Audio.RadioVolume = (double)Math.Min((target_volts / 0.8), 1.0);
-                }
-                else
-                {
-                    Audio.RadioVolume = (double)Math.Min((hl2Power * (gbb / 100)) / 93.75, 1.0);  // MI0BOT: We want to jump in steps of 16 but getting 6.
-                }                                                                                 // Drive value is 0-255 but only top 4 bits used.
-            }                                                                                     // Need to correct for multiplication of 1.02 in Radio volume  
-                                                                                                  // Formula - 1/((16/6)/(255/1.02))
-            return new_pwr;
->>>>>>> C:/thetisupgrade/3way/theirs.cs
         }
 
         private void clampFilterMinMax(int rx, bool use_lowHigh = false, int low = 0, int high = 0)
@@ -51629,39 +49705,7 @@ namespace Thetis
 
             Cursor next_cursor = _useOutlinedCrossCursor ? _cross_outlined : Cursors.Cross;
 
-<<<<<<< Project Files/Source/Console/console.cs
             switch (e.Button)
-=======
-            UpdateRX1DisplayOffsets();
-            UpdateRX2DisplayOffsets();
-        }
-
-        private void chkEnableMultiRX_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (current_hpsdr_model == HPSDRModel.HERMESLITE)
-            {
-                if (chkEnableMultiRX.Checked && IsRightButton(e))
-                {
-                    if (rx2_enabled)
-                    {
-                        double VFOA = VFOAFreq;
-                        VFOAFreq = VFOASubFreq;
-                        VFOASubFreq = VFOA;
-                    }
-                    else
-                    {
-                        double VFOA = VFOAFreq;
-                        VFOAFreq = VFOBFreq;
-                        VFOBFreq = VFOA;
-                    }
-                }
-            }
-        }
-        private async void MultiMeter2UpdateRX1()
-        {
-            HiPerfTimer meterDelay = new HiPerfTimer();
-            while (chkPower.Checked)
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             {
                 case MouseButtons.Left:
 
@@ -53746,18 +51790,8 @@ namespace Thetis
 
                 if (rx1_spectrum_drag)
                 {
-<<<<<<< Project Files/Source/Console/console.cs
                     rx1_spectrum_drag = false;
                     txtVFOAFreq_LostFocus(this, EventArgs.Empty);
-=======
-                    if (HPSDRModel.HERMESLITE == current_hpsdr_model)
-                        sFW = NetworkIO.FWCodeVersion.ToString("0\\.0") + NetworkIO.FWCodeVersionMinor.ToString("\\.0");
-                    else
-                        sFW = NetworkIO.FWCodeVersion.ToString("0\\.0");
-
-                    sProto = "1";
-                    sSupportedProtocol = "";
->>>>>>> C:/thetisupgrade/3way/theirs.cs
                 }
                 rx2_spectrum_drag = false;
 

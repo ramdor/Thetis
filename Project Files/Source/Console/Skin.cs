@@ -1954,7 +1954,6 @@ namespace Thetis
                     return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
                 }
             }
-<<<<<<< Project Files/Source/Console/Skin.cs
         }
         //private static byte[] imageToByteArray(Image image)
         //{
@@ -1964,9 +1963,6 @@ namespace Thetis
         //        return memoryStream.ToArray();
         //    }
         //}
-=======
-        }
->>>>>>> C:/thetisupgrade/3way/theirs.cs
         #endregion
 
         private static Image resizeImage(Image image, Control c)

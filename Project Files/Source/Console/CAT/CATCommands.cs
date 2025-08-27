@@ -364,12 +364,7 @@ namespace Thetis
 			//				temp = " ";
 
 			string f = ZZFA("");
-            
-            // MI0BOT: Redirect CAT to VFO B
-            if (console.CATtoVFOB && Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE)
-                f = ZZFB("");
-
-            if (f.Length > 11)
+			if(f.Length > 11)
 			{
 				f = f.Substring(f.Length-11,11);
 			}
@@ -380,15 +375,10 @@ namespace Thetis
 			rtn += rit;									// RIT status				 1 byte
 			rtn += xit;									// XIT status				 1 byte
 			rtn += "000";								// dummy for memory bank	 3 bytes
-			rtn += tx;                                  // tx-rx status				 1 byte
-                                                        //			rtn += temp;
-                                                        //			rtn += Mode2KString(console.RX1DSPMode);	// current mode			 1 bytes
-            // MI0BOT: Redirect CAT to VFO B
-            if (console.CATtoVFOB && Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE)
-                tempmode = Mode2KString(console.RX2DSPMode);
-			else
-                tempmode = Mode2KString(console.RX1DSPMode);
-
+			rtn += tx;									// tx-rx status				 1 byte
+			//			rtn += temp;
+//			rtn += Mode2KString(console.RX1DSPMode);	// current mode			 1 bytes
+			tempmode = Mode2KString(console.RX1DSPMode);
 			if(tempmode == "?;")
 				rtn += "2";
 			else
@@ -594,11 +584,8 @@ namespace Thetis
 			}
 			else if(s.Length == parser.nGet)
 			{
-				// MI0BOT: Redirect CAT to VFO B
-                if (console.CATtoVFOB && Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE)
-                    return Mode2KString(console.RX2DSPMode);
-				else
-                    return Mode2KString(console.RX1DSPMode);
+
+				return Mode2KString(console.RX1DSPMode);
 
 			}
 			else
@@ -6517,14 +6504,8 @@ namespace Thetis
 
 		// Reads the Flex 5000 temperature sensor
         public string ZZTS()
-<<<<<<< Project Files/Source/Console/CAT/CATCommands.cs
         {
             if (HardwareSpecific.Model == HPSDRModel.HERMES)
-=======
-        {
-            if ((console.CurrentHPSDRModel == HPSDRModel.HERMES) ||
-                (console.CurrentHPSDRModel == HPSDRModel.HERMESLITE))		// MI0BOT: HL2
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             {
                 int val = 0;
                 float volts = 0.0f;
@@ -9591,53 +9572,45 @@ namespace Thetis
 		// converts Kenwood single digit mode code to SDR mode
 		public void KString2Mode(string pIndex)
 		{
-			// MI0BOT: Redirect CAT to VFO B
 			string s = pIndex;
-			DSPMode newMode;
 
 			switch(s)
 			{
 				case "1":
                     if (console.SetupForm.DigUIsUSB)
-                        newMode = DSPMode.DIGL;
+                        console.RX1DSPMode = DSPMode.DIGL;
                     else
-                        newMode = DSPMode.LSB;
+                        console.RX1DSPMode = DSPMode.LSB;
 					break;
 				case "2":
                     if (console.SetupForm.DigUIsUSB)
-                        newMode = DSPMode.DIGU;
+                        console.RX1DSPMode = DSPMode.DIGU;
                     else
-    					newMode = DSPMode.USB;
+    					console.RX1DSPMode = DSPMode.USB;
 					break;
 				case "3":
-					newMode = DSPMode.CWU;
+					console.RX1DSPMode = DSPMode.CWU;
 					break;
 				case "4":
-					newMode = DSPMode.FM;
+					console.RX1DSPMode = DSPMode.FM;
 					break;
 				case "5":
-					newMode = DSPMode.AM;
+					console.RX1DSPMode = DSPMode.AM;
 					break;
 				case "6":
-					newMode = DSPMode.DIGL;
+					console.RX1DSPMode = DSPMode.DIGL;
 					break;
 				case "7":
-					newMode = DSPMode.CWL;
+					console.RX1DSPMode = DSPMode.CWL;
 					break;
 				case "9":
-					newMode = DSPMode.DIGU;
+					console.RX1DSPMode = DSPMode.DIGU;
 					break;
 				default:
-					newMode = DSPMode.USB;
+					console.RX1DSPMode = DSPMode.USB;
 					break;
 			}
-			
-            // MI0BOT: Redirect CAT to VFO B
-			if (console.CATtoVFOB && Console.getConsole().CurrentHPSDRModel == HPSDRModel.HERMESLITE)
-				console.RX2DSPMode = newMode;
-			else
-				console.RX1DSPMode = newMode;
-        }
+		}
 
 		// converts SDR mode to Kenwood single digit mode code
 		public string Mode2KString(DSPMode pMode)
@@ -10031,11 +10004,7 @@ namespace Thetis
         }
 
 		private string Step2String(int pSize)
-<<<<<<< Project Files/Source/Console/CAT/CATCommands.cs
 		{
-=======
-		{
->>>>>>> C:/thetisupgrade/3way/theirs.cs
             //[2.10.3.9]MW0LGE refactored, and tweaked for special cases to match original
             List<string> binaryMapping = new List<string>
 			{
