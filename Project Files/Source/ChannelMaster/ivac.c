@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2015-2019 Warren Pratt, NR0V
+Copyright (C) 2015-2025 Warren Pratt, NR0V
 Copyright (C) 2015-2016 Doug Wigley, W5WC
 
 This program is free software; you can redistribute it and/or
@@ -90,6 +90,7 @@ PORT void create_ivac(
 	a->swapIQout = 0;
 	a->exclusive_in = 0;
 	a->exclusive_out = 0;
+	InitializeCriticalSectionAndSpinCount(&a->cs_ivac, 2500);
 	create_resamps(a);
 	{
 		int inrate[2] = { a->audio_rate, a->txmon_rate };
@@ -109,6 +110,7 @@ PORT void destroy_ivac(int id)
 {
 	IVAC a = pvac[id];
 	destroy_resamps(a);
+	DeleteCriticalSection(&a->cs_ivac);
 	free (a);
 }
 
@@ -278,12 +280,14 @@ PORT void SetIVACrun(int id, int run)
 PORT void SetIVACiqType(int id, int type)
 {
 	IVAC a = pvac[id];
+	EnterCriticalSection(&a->cs_ivac);
 	if (type != a->iq_type)
 	{
 		a->iq_type = type;
 		destroy_resamps(a);
 		create_resamps(a);
 	}
+	LeaveCriticalSection(&a->cs_ivac);
 }
 
 PORT void SetIVACstereo(int id, int stereo)
@@ -295,28 +299,33 @@ PORT void SetIVACstereo(int id, int stereo)
 PORT void SetIVACvacRate(int id, int rate)
 {
 	IVAC a = pvac[id];
+	EnterCriticalSection(&a->cs_ivac);
 	if (rate != a->vac_rate)
 	{
 		a->vac_rate = rate;
 		destroy_resamps(a);
 		create_resamps(a);
 	}
+	LeaveCriticalSection(&a->cs_ivac);
 }
 
 PORT void SetIVACmicRate(int id, int rate)
 {
 	IVAC a = pvac[id];
+	EnterCriticalSection(&a->cs_ivac);
 	if (rate != a->mic_rate)
 	{
 		a->mic_rate = rate;
 		destroy_resamps(a);
 		create_resamps(a);
 	}
+	LeaveCriticalSection(&a->cs_ivac);
 }
 
 PORT void SetIVACaudioRate(int id, int rate)
 {
 	IVAC a = pvac[id];
+	EnterCriticalSection(&a->cs_ivac);
 	if (rate != a->audio_rate)
 	{
 		a->audio_rate = rate;
@@ -328,11 +337,13 @@ PORT void SetIVACaudioRate(int id, int rate)
 		destroy_resamps(a);
 		create_resamps(a);
 	}
+	LeaveCriticalSection(&a->cs_ivac);
 }
 
 void SetIVACtxmonRate(int id, int rate)
 {
 	IVAC a = pvac[id];
+	EnterCriticalSection(&a->cs_ivac);
 	if (rate != a->txmon_rate)
 	{
 		a->txmon_rate = rate;
@@ -342,33 +353,39 @@ void SetIVACtxmonRate(int id, int rate)
 			a->mixer = create_aamix(-1, id, a->audio_size, a->audio_size, 2, 3, 3, 1.0, 4096, inrate, a->audio_rate, xvac_out, 0.0, 0.0, 0.0, 0.0);
 		}
 	}
+	LeaveCriticalSection(&a->cs_ivac);
 }
 
 PORT void SetIVACvacSize(int id, int size)
 {
 	IVAC a = pvac[id];
+	EnterCriticalSection(&a->cs_ivac);
 	if (size != a->vac_size)
 	{
 		a->vac_size = size;
 		destroy_resamps(a);
 		create_resamps(a);
 	}
+	LeaveCriticalSection(&a->cs_ivac);
 }
 
 PORT void SetIVACmicSize(int id, int size)
 {
 	IVAC a = pvac[id];
+	EnterCriticalSection(&a->cs_ivac);
 	if (size != a->mic_size)
 	{
 		a->mic_size = (unsigned int)size;
 		destroy_resamps(a);
 		create_resamps(a);
 	}
+	LeaveCriticalSection(&a->cs_ivac);
 }
 
 PORT void SetIVACiqSizeAndRate(int id, int size, int rate)
 {
 	IVAC a = pvac[id];
+	EnterCriticalSection(&a->cs_ivac);
 	if (size != a->iq_size || rate != a->iq_rate)
 	{
 		a->iq_size = size;
@@ -379,11 +396,13 @@ PORT void SetIVACiqSizeAndRate(int id, int size, int rate)
 			create_resamps(a);
 		}
 	}
+	LeaveCriticalSection(&a->cs_ivac);
 }
 
 PORT void SetIVACaudioSize(int id, int size)
 {
 	IVAC a = pvac[id];
+	EnterCriticalSection(&a->cs_ivac);
 	a->audio_size = (unsigned int)size;
 	destroy_aamix(a->mixer, 0);
 	{
@@ -392,6 +411,7 @@ PORT void SetIVACaudioSize(int id, int size)
 	}
 	destroy_resamps(a);
 	create_resamps(a);
+	LeaveCriticalSection(&a->cs_ivac);
 }
 
 void SetIVACtxmonSize(int id, int size)
@@ -427,25 +447,27 @@ PORT void SetIVACnumChannels(int id, int n)
 PORT void SetIVACInLatency(int id, double lat, int reset)
 {
 	IVAC a = pvac[id];
-
+	EnterCriticalSection(&a->cs_ivac);
 	if (a->in_latency != lat)
 	{
 		a->in_latency = lat;
 		destroy_resamps (a);
 		create_resamps (a);
 	}
+	LeaveCriticalSection(&a->cs_ivac);
 }
 
 PORT void SetIVACOutLatency(int id, double lat, int reset)
 {
 	IVAC a = pvac[id];
-
+	EnterCriticalSection(&a->cs_ivac);
 	if (a->out_latency != lat)
 	{
 		a->out_latency = lat;
 		destroy_resamps (a);
 		create_resamps (a);
 	}
+	LeaveCriticalSection(&a->cs_ivac);
 }
 
 PORT void SetIVACPAInLatency(int id, double lat, int reset)
@@ -593,7 +615,9 @@ void getIVACdiags (int id, int type, int* underflows, int* overflows, double* va
 		a = pvac[id]->rmatchOUT;
 	else
 		a = pvac[id]->rmatchIN;
+	//EnterCriticalSection(&pvac[id]->cs_ivac);
 	getRMatchDiags (a, underflows, overflows, var, ringsize, nring);
+	//LeaveCriticalSection(&pvac[id]->cs_ivac);
 }
 
 PORT
@@ -625,7 +649,9 @@ void resetIVACdiags(int id, int type)
 		a = pvac[id]->rmatchOUT;
 	else
 		a = pvac[id]->rmatchIN;
+	EnterCriticalSection(&pvac[id]->cs_ivac);
 	resetRMatchDiags(a);
+	LeaveCriticalSection(&pvac[id]->cs_ivac);
 }
 
 //MW0LGE_21h
@@ -638,7 +664,9 @@ PORT void SetIVACFeedbackGain(int id, int type, double feedback_gain)
 		a = b->rmatchOUT;
 	else
 		a = b->rmatchIN;
+	EnterCriticalSection(&b->cs_ivac);
 	setRMatchFeedbackGain(a, feedback_gain);
+	LeaveCriticalSection(&b->cs_ivac);
 }
 PORT void SetIVACSlewTime(int id, int type, double slew_time)
 {
@@ -650,7 +678,9 @@ PORT void SetIVACSlewTime(int id, int type, double slew_time)
 	else
 		a = b->rmatchIN;
 	//setRMatchSlewTime(a, slew_time);
+	EnterCriticalSection(&b->cs_ivac);
 	setRMatchSlewTime1(a, slew_time); // preserve all data in various buffers
+	LeaveCriticalSection(&b->cs_ivac);
 }
 //MW0LGE_21j
 PORT void SetIVACPropRingMin(int id, int type, int prop_min)
@@ -662,7 +692,9 @@ PORT void SetIVACPropRingMin(int id, int type, int prop_min)
 		a = b->rmatchOUT;
 	else
 		a = b->rmatchIN;
+	EnterCriticalSection(&b->cs_ivac);
 	setRMatchPropRingMin(a, prop_min);
+	LeaveCriticalSection(&b->cs_ivac);
 }
 PORT void SetIVACPropRingMax(int id, int type, int prop_max)
 {
@@ -673,7 +705,9 @@ PORT void SetIVACPropRingMax(int id, int type, int prop_max)
 		a = b->rmatchOUT;
 	else
 		a = b->rmatchIN;
+	EnterCriticalSection(&b->cs_ivac);
 	setRMatchPropRingMax(a, prop_max);
+	LeaveCriticalSection(&b->cs_ivac);
 }
 PORT void SetIVACFFRingMin(int id, int type, int ff_ringmin)
 {
@@ -684,7 +718,9 @@ PORT void SetIVACFFRingMin(int id, int type, int ff_ringmin)
 		a = b->rmatchOUT;
 	else
 		a = b->rmatchIN;
+	EnterCriticalSection(&b->cs_ivac);
 	setRMatchFFRingMin(a, ff_ringmin);
+	LeaveCriticalSection(&b->cs_ivac);
 }
 PORT void SetIVACFFRingMax(int id, int type, int ff_ringmax)
 {
@@ -695,7 +731,9 @@ PORT void SetIVACFFRingMax(int id, int type, int ff_ringmax)
 		a = b->rmatchOUT;
 	else
 		a = b->rmatchIN;
+	EnterCriticalSection(&b->cs_ivac);
 	setRMatchFFRingMax(a, ff_ringmax);
+	LeaveCriticalSection(&b->cs_ivac);
 }
 PORT void SetIVACFFAlpha(int id, int type, double ff_alpha)
 {
@@ -706,7 +744,9 @@ PORT void SetIVACFFAlpha(int id, int type, double ff_alpha)
 		a = b->rmatchOUT;
 	else
 		a = b->rmatchIN;
+	EnterCriticalSection(&b->cs_ivac);
 	setRMatchFFAlpha(a, ff_alpha);
+	LeaveCriticalSection(&b->cs_ivac);
 }
 //PORT void SetIVACvar(int id, int type, double var)
 //{
@@ -728,7 +768,9 @@ void GetIVACControlFlag(int id, int type, int* control_flag)
 		a = pvac[id]->rmatchOUT;
 	else
 		a = pvac[id]->rmatchIN;
+	//EnterCriticalSection(&pvac[id]->cs_ivac);
 	getControlFlag(a, control_flag);
+	//LeaveCriticalSection(&pvac[id]->cs_ivac);
 }
 PORT 
 void SetIVACinitialVars(int id, double INvar, double OUTvar)
@@ -748,8 +790,10 @@ void SetIVACinitialVars(int id, double INvar, double OUTvar)
 	}
 	if (change)
 	{
+		EnterCriticalSection(&a->cs_ivac);
 		destroy_resamps(a);
 		create_resamps(a);
+		LeaveCriticalSection(&a->cs_ivac);
 	}
 }
 

@@ -79,9 +79,9 @@ void DeInitMetisSockets() {
 	}
 }
 
-/* returns 0 on success, != 0 otherwise */	// MI0BOT: Added remotePort to allow remote access to several HL2s by different port number
+/* returns 0 on success, != 0 otherwise */
 PORT
-int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol, int remotePort) {
+int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol, int model_id) {
 	IPAddr DestIp = 0;
 	IPAddr SrcIp = 0;       /* default for src ip */
 	ULONG MacAddr[2];       /* for 6-byte hardware addresses */
@@ -91,6 +91,7 @@ int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol,
 	struct sockaddr_in local = { 0 };
 
 	RadioProtocol = protocol;
+	HPSDRModel = model_id;
 
 	//if (!WSA_inited) {
 	//	rc = initWSA();
@@ -166,8 +167,6 @@ int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol,
 	if (DestIp != 0) {
 		printf("destination addr: 0x%08x\n", DestIp);
 		fflush(stdout);
-
-		RemotePort = remotePort;	// MI0BOT: Remote access over WAN using different port
 
 		//add to ARP table
 		memset(&MacAddr, 0xff, sizeof(MacAddr));
@@ -684,7 +683,7 @@ void CmdGeneral() { // port 1024
 	// sendto port 1024
 	if (listenSock != INVALID_SOCKET &&
 		RadioProtocol == ETH)
-		sendPacket(listenSock, packetbuf, sizeof(packetbuf), RemotePort);	// MI0BOT: Now selectable port
+		sendPacket(listenSock, packetbuf, sizeof(packetbuf), 1024);
 }
 
 void CmdHighPriority() { // port 1027
@@ -1219,19 +1218,7 @@ int IOThreadStop() {
 	}
 	io_keep_running = 0;  // flag to stop
 
-	if (prn->discovery.BoardType == HermesLite)
-	{
-		// MI0BOT: Thread locking up, so timeout added.
-		if (WAIT_TIMEOUT == WaitForSingleObject(prn->hReadThreadMain, 1000))
-		{
-			// Thread has stopped, so let everybody know
-			IOThreadRunning = 0;
-		}
-	}
-	else
-	{
-		WaitForSingleObject(prn->hReadThreadMain, INFINITE);
-	}
+	WaitForSingleObject(prn->hReadThreadMain, INFINITE);
 
 	CloseHandle(prn->hReadThreadMain);
 	CloseHandle(prn->hReadThreadInitSem);
