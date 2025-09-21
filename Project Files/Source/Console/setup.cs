@@ -603,6 +603,10 @@ namespace Thetis
 
             ForceAllEvents();
 
+            //model known, update anything that might have been initialsed without this being known
+            if (console.psform != null) console.psform.UpdateWarningSetPk();
+            //
+
             EventArgs e = EventArgs.Empty;
             tbRX1FilterAlpha_Scroll(this, e);
             tbTXFilterAlpha_Scroll(this, e);
@@ -2138,6 +2142,7 @@ namespace Thetis
 
             // General Tab
             comboRadioModel_SelectedIndexChanged(this, e);
+
             udGeneralLPTDelay_ValueChanged(this, e);
             chkGeneralRXOnly_CheckedChanged(this, e);
             comboGeneralXVTR_SelectedIndexChanged(this, e);
@@ -20091,6 +20096,12 @@ namespace Thetis
             // MI0BOT: Remove the HL2 option and only add back if HL2
             tcOptions.Controls.Remove(tpHL2Options);          
 
+            groupBoxRXOptions.Text = HardwareSpecific.ModelString + " Options";
+            grpMetisAddr.Text = HardwareSpecific.ModelString + " Address";
+            grpHermesStepAttenuator.Text = HardwareSpecific.ModelString + " Step Atten";
+
+            console.UpdatePIVisibilty();
+
             switch (HardwareSpecific.Model)
             
             {
@@ -20106,9 +20117,9 @@ namespace Thetis
                     chkRX2StepAtt.Checked = false;
                     chkRX2StepAtt.Enabled = false;
                     udHermesStepAttenuatorDataRX2.Enabled = false;
-                    groupBoxRXOptions.Text = "Hermes Options";
-                    grpMetisAddr.Text = "Hermes Address";
-                    grpHermesStepAttenuator.Text = "Hermes Step Attenuator";
+                    //groupBoxRXOptions.Text = "Hermes Options";
+                    //grpMetisAddr.Text = "Hermes Address";
+                    //grpHermesStepAttenuator.Text = "Hermes Step Attenuator";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
                     labelRXAntControl.Text = "  RX1   RX2    XVTR";
@@ -20416,9 +20427,9 @@ namespace Thetis
                     chkRX2StepAtt.Checked = false;
                     chkRX2StepAtt.Enabled = false;
                     udHermesStepAttenuatorDataRX2.Enabled = false;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     tpAlexControl.Text = "Ant/Filters";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
@@ -20464,9 +20475,9 @@ namespace Thetis
                     chkRX2StepAtt.Checked = false;
                     chkRX2StepAtt.Enabled = false;
                     udHermesStepAttenuatorDataRX2.Enabled = false;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     tpAlexControl.Text = "Ant/Filters";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
@@ -20508,9 +20519,9 @@ namespace Thetis
                     chkRX2StepAtt.Checked = false;
                     chkRX2StepAtt.Enabled = false;
                     udHermesStepAttenuatorDataRX2.Enabled = false;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -20560,9 +20571,9 @@ namespace Thetis
                     chkRX2StepAtt.Checked = false;
                     chkRX2StepAtt.Enabled = false;
                     udHermesStepAttenuatorDataRX2.Enabled = false;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -20607,9 +20618,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -20660,9 +20671,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
                     chkBypassANANPASettings.Visible = true;
@@ -20712,9 +20723,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -20776,9 +20787,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -20843,9 +20854,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -20907,9 +20918,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -20971,9 +20982,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "ANAN Options";
-                    grpMetisAddr.Text = "ANAN Address";
-                    grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
+                    //groupBoxRXOptions.Text = "ANAN Options";
+                    //grpMetisAddr.Text = "ANAN Address";
+                    //grpHermesStepAttenuator.Text = "ANAN Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -21035,9 +21046,9 @@ namespace Thetis
                     udHermesStepAttenuatorData.Enabled = true;
                     chkRX2StepAtt.Enabled = true;
                     udHermesStepAttenuatorDataRX2.Enabled = true;
-                    groupBoxRXOptions.Text = "RED-PITAYA Options";
-                    grpMetisAddr.Text = "RED-PITAYA Address";
-                    grpHermesStepAttenuator.Text = "Step Attenuator";
+                    //groupBoxRXOptions.Text = "RED-PITAYA Options";
+                    //grpMetisAddr.Text = "RED-PITAYA Address";
+                    //grpHermesStepAttenuator.Text = "Step Attenuator";
                     chkAlexPresent_CheckedChanged(this, EventArgs.Empty);
                     chkAlexAntCtrl_CheckedChanged(this, EventArgs.Empty);
                     chkAutoPACalibrate.Checked = false;
@@ -25040,6 +25051,8 @@ namespace Thetis
                 _model = model;
 
                 //reset
+                float[] pa_default_gains = HardwareSpecific.DefaultPAGainsForBands(_model);
+
                 for (int n = 0; n < (int)Band.LAST; n++)
                 {
                     for (int i = 0; i < 9; i++)
@@ -25049,328 +25062,297 @@ namespace Thetis
 
                     _maxPower[n] = 0;
                     _bUseMaxPower[n] = false;
-                }
-                //
 
-                if (model == HPSDRModel.FIRST || model == HPSDRModel.HERMES || model == HPSDRModel.HPSDR || model == HPSDRModel.ORIONMKII) //note: first is special case for the pa bypass (part of calibrate)
-                {
-                    SetGainForBand(Band.B160M, 41.0f);
-                    SetGainForBand(Band.B80M, 41.2f);
-                    SetGainForBand(Band.B60M, 41.3f);
-                    SetGainForBand(Band.B40M, 41.3f);
-                    SetGainForBand(Band.B30M, 41.0f);
-                    SetGainForBand(Band.B20M, 40.5f);
-                    SetGainForBand(Band.B17M, 39.9f);
-                    SetGainForBand(Band.B15M, 38.8f);
-                    SetGainForBand(Band.B12M, 38.8f);
-                    SetGainForBand(Band.B10M, 38.8f);
-                    SetGainForBand(Band.B6M, 38.8f);
+                    SetGainForBand((Band)n, pa_default_gains[n]);
+                }                
 
-                    SetGainForBand(Band.VHF0, 56.2f);
-                    SetGainForBand(Band.VHF1, 56.2f);
-                    SetGainForBand(Band.VHF2, 56.2f);
-                    SetGainForBand(Band.VHF3, 56.2f);
-                    SetGainForBand(Band.VHF4, 56.2f);
-                    SetGainForBand(Band.VHF5, 56.2f);
-                    SetGainForBand(Band.VHF6, 56.2f);
-                    SetGainForBand(Band.VHF7, 56.2f);
-                    SetGainForBand(Band.VHF8, 56.2f);
-                    SetGainForBand(Band.VHF9, 56.2f);
-                    SetGainForBand(Band.VHF10, 56.2f);
-                    SetGainForBand(Band.VHF11, 56.2f);
-                    SetGainForBand(Band.VHF12, 56.2f);
-                    SetGainForBand(Band.VHF13, 56.2f);
+                //if (model == HPSDRModel.FIRST || model == HPSDRModel.HERMES || model == HPSDRModel.HPSDR || model == HPSDRModel.ORIONMKII) //note: FIRST is special case for the pa bypass (part of calibrate)
+                //{
+                //    SetGainForBand(Band.B160M, 41.0f);
+                //    SetGainForBand(Band.B80M, 41.2f);
+                //    SetGainForBand(Band.B60M, 41.3f);
+                //    SetGainForBand(Band.B40M, 41.3f);
+                //    SetGainForBand(Band.B30M, 41.0f);
+                //    SetGainForBand(Band.B20M, 40.5f);
+                //    SetGainForBand(Band.B17M, 39.9f);
+                //    SetGainForBand(Band.B15M, 38.8f);
+                //    SetGainForBand(Band.B12M, 38.8f);
+                //    SetGainForBand(Band.B10M, 38.8f);
+                //    SetGainForBand(Band.B6M, 38.8f);
 
-                    return;
-                }
+                //    SetGainForBand(Band.VHF0, 56.2f);
+                //    SetGainForBand(Band.VHF1, 56.2f);
+                //    SetGainForBand(Band.VHF2, 56.2f);
+                //    SetGainForBand(Band.VHF3, 56.2f);
+                //    SetGainForBand(Band.VHF4, 56.2f);
+                //    SetGainForBand(Band.VHF5, 56.2f);
+                //    SetGainForBand(Band.VHF6, 56.2f);
+                //    SetGainForBand(Band.VHF7, 56.2f);
+                //    SetGainForBand(Band.VHF8, 56.2f);
+                //    SetGainForBand(Band.VHF9, 56.2f);
+                //    SetGainForBand(Band.VHF10, 56.2f);
+                //    SetGainForBand(Band.VHF11, 56.2f);
+                //    SetGainForBand(Band.VHF12, 56.2f);
+                //    SetGainForBand(Band.VHF13, 56.2f);
 
-                if (model == HPSDRModel.ANAN10 || model == HPSDRModel.ANAN10E)
-                {
-                    SetGainForBand(Band.B160M, 41.0f);
-                    SetGainForBand(Band.B80M, 41.2f);
-                    SetGainForBand(Band.B60M, 41.3f);
-                    SetGainForBand(Band.B40M, 41.3f);
-                    SetGainForBand(Band.B30M, 41.0f);
-                    SetGainForBand(Band.B20M, 40.5f);
-                    SetGainForBand(Band.B17M, 39.9f);
-                    SetGainForBand(Band.B15M, 38.8f);
-                    SetGainForBand(Band.B12M, 38.8f);
-                    SetGainForBand(Band.B10M, 38.8f);
-                    SetGainForBand(Band.B6M, 38.8f);
+                //    return;
+                //}
 
-                    SetGainForBand(Band.VHF0, 56.2f);
-                    SetGainForBand(Band.VHF1, 56.2f);
-                    SetGainForBand(Band.VHF2, 56.2f);
-                    SetGainForBand(Band.VHF3, 56.2f);
-                    SetGainForBand(Band.VHF4, 56.2f);
-                    SetGainForBand(Band.VHF5, 56.2f);
-                    SetGainForBand(Band.VHF6, 56.2f);
-                    SetGainForBand(Band.VHF7, 56.2f);
-                    SetGainForBand(Band.VHF8, 56.2f);
-                    SetGainForBand(Band.VHF9, 56.2f);
-                    SetGainForBand(Band.VHF10, 56.2f);
-                    SetGainForBand(Band.VHF11, 56.2f);
-                    SetGainForBand(Band.VHF12, 56.2f);
-                    SetGainForBand(Band.VHF13, 56.2f);
+                //if (model == HPSDRModel.ANAN10 || model == HPSDRModel.ANAN10E)
+                //{
+                //    SetGainForBand(Band.B160M, 41.0f);
+                //    SetGainForBand(Band.B80M, 41.2f);
+                //    SetGainForBand(Band.B60M, 41.3f);
+                //    SetGainForBand(Band.B40M, 41.3f);
+                //    SetGainForBand(Band.B30M, 41.0f);
+                //    SetGainForBand(Band.B20M, 40.5f);
+                //    SetGainForBand(Band.B17M, 39.9f);
+                //    SetGainForBand(Band.B15M, 38.8f);
+                //    SetGainForBand(Band.B12M, 38.8f);
+                //    SetGainForBand(Band.B10M, 38.8f);
+                //    SetGainForBand(Band.B6M, 38.8f);
 
-                    return;
-                }
+                //    SetGainForBand(Band.VHF0, 56.2f);
+                //    SetGainForBand(Band.VHF1, 56.2f);
+                //    SetGainForBand(Band.VHF2, 56.2f);
+                //    SetGainForBand(Band.VHF3, 56.2f);
+                //    SetGainForBand(Band.VHF4, 56.2f);
+                //    SetGainForBand(Band.VHF5, 56.2f);
+                //    SetGainForBand(Band.VHF6, 56.2f);
+                //    SetGainForBand(Band.VHF7, 56.2f);
+                //    SetGainForBand(Band.VHF8, 56.2f);
+                //    SetGainForBand(Band.VHF9, 56.2f);
+                //    SetGainForBand(Band.VHF10, 56.2f);
+                //    SetGainForBand(Band.VHF11, 56.2f);
+                //    SetGainForBand(Band.VHF12, 56.2f);
+                //    SetGainForBand(Band.VHF13, 56.2f);
 
-                if (model == HPSDRModel.ANAN100)
-                {
-                    SetGainForBand(Band.B160M, 50.0f);
-                    SetGainForBand(Band.B80M, 50.5f);
-                    SetGainForBand(Band.B60M, 50.5f);
-                    SetGainForBand(Band.B40M, 50.0f);
-                    SetGainForBand(Band.B30M, 49.5f);
-                    SetGainForBand(Band.B20M, 48.5f);
-                    SetGainForBand(Band.B17M, 48.0f);
-                    SetGainForBand(Band.B15M, 47.5f);
-                    SetGainForBand(Band.B12M, 46.5f);
-                    SetGainForBand(Band.B10M, 42.0f);
-                    SetGainForBand(Band.B6M, 43.0f);
+                //    return;
+                //}
 
-                    SetGainForBand(Band.VHF0, 56.2f);
-                    SetGainForBand(Band.VHF1, 56.2f);
-                    SetGainForBand(Band.VHF2, 56.2f);
-                    SetGainForBand(Band.VHF3, 56.2f);
-                    SetGainForBand(Band.VHF4, 56.2f);
-                    SetGainForBand(Band.VHF5, 56.2f);
-                    SetGainForBand(Band.VHF6, 56.2f);
-                    SetGainForBand(Band.VHF7, 56.2f);
-                    SetGainForBand(Band.VHF8, 56.2f);
-                    SetGainForBand(Band.VHF9, 56.2f);
-                    SetGainForBand(Band.VHF10, 56.2f);
-                    SetGainForBand(Band.VHF11, 56.2f);
-                    SetGainForBand(Band.VHF12, 56.2f);
-                    SetGainForBand(Band.VHF13, 56.2f);
+                //if (model == HPSDRModel.ANAN100)
+                //{
+                //    SetGainForBand(Band.B160M, 50.0f);
+                //    SetGainForBand(Band.B80M, 50.5f);
+                //    SetGainForBand(Band.B60M, 50.5f);
+                //    SetGainForBand(Band.B40M, 50.0f);
+                //    SetGainForBand(Band.B30M, 49.5f);
+                //    SetGainForBand(Band.B20M, 48.5f);
+                //    SetGainForBand(Band.B17M, 48.0f);
+                //    SetGainForBand(Band.B15M, 47.5f);
+                //    SetGainForBand(Band.B12M, 46.5f);
+                //    SetGainForBand(Band.B10M, 42.0f);
+                //    SetGainForBand(Band.B6M, 43.0f);S-ATT
 
-                    return;
-                }
+                //    SetGainForBand(Band.VHF0, 56.2f);
+                //    SetGainForBand(Band.VHF1, 56.2f);
+                //    SetGainForBand(Band.VHF2, 56.2f);
+                //    SetGainForBand(Band.VHF3, 56.2f);
+                //    SetGainForBand(Band.VHF4, 56.2f);
+                //    SetGainForBand(Band.VHF5, 56.2f);
+                //    SetGainForBand(Band.VHF6, 56.2f);
+                //    SetGainForBand(Band.VHF7, 56.2f);
+                //    SetGainForBand(Band.VHF8, 56.2f);
+                //    SetGainForBand(Band.VHF9, 56.2f);
+                //    SetGainForBand(Band.VHF10, 56.2f);
+                //    SetGainForBand(Band.VHF11, 56.2f);
+                //    SetGainForBand(Band.VHF12, 56.2f);
+                //    SetGainForBand(Band.VHF13, 56.2f);
 
-                if (model == HPSDRModel.ANAN100B)
-                {
-                    SetGainForBand(Band.B160M, 50.0f);
-                    SetGainForBand(Band.B80M, 50.5f);
-                    SetGainForBand(Band.B60M, 50.5f);
-                    SetGainForBand(Band.B40M, 50.0f);
-                    SetGainForBand(Band.B30M, 49.5f);
-                    SetGainForBand(Band.B20M, 48.5f);
-                    SetGainForBand(Band.B17M, 48.0f);
-                    SetGainForBand(Band.B15M, 47.5f);
-                    SetGainForBand(Band.B12M, 46.5f);
-                    SetGainForBand(Band.B10M, 42.0f);
-                    SetGainForBand(Band.B6M, 43.0f);
+                //    return;
+                //}
 
-                    SetGainForBand(Band.VHF0, 56.2f);
-                    SetGainForBand(Band.VHF1, 56.2f);
-                    SetGainForBand(Band.VHF2, 56.2f);
-                    SetGainForBand(Band.VHF3, 56.2f);
-                    SetGainForBand(Band.VHF4, 56.2f);
-                    SetGainForBand(Band.VHF5, 56.2f);
-                    SetGainForBand(Band.VHF6, 56.2f);
-                    SetGainForBand(Band.VHF7, 56.2f);
-                    SetGainForBand(Band.VHF8, 56.2f);
-                    SetGainForBand(Band.VHF9, 56.2f);
-                    SetGainForBand(Band.VHF10, 56.2f);
-                    SetGainForBand(Band.VHF11, 56.2f);
-                    SetGainForBand(Band.VHF12, 56.2f);
-                    SetGainForBand(Band.VHF13, 56.2f);
+                //if (model == HPSDRModel.ANAN100B)
+                //{
+                //    SetGainForBand(Band.B160M, 50.0f);
+                //    SetGainForBand(Band.B80M, 50.5f);
+                //    SetGainForBand(Band.B60M, 50.5f);
+                //    SetGainForBand(Band.B40M, 50.0f);
+                //    SetGainForBand(Band.B30M, 49.5f);
+                //    SetGainForBand(Band.B20M, 48.5f);
+                //    SetGainForBand(Band.B17M, 48.0f);
+                //    SetGainForBand(Band.B15M, 47.5f);
+                //    SetGainForBand(Band.B12M, 46.5f);
+                //    SetGainForBand(Band.B10M, 42.0f);
+                //    SetGainForBand(Band.B6M, 43.0f);
 
-                    return;
-                }
+                //    SetGainForBand(Band.VHF0, 56.2f);
+                //    SetGainForBand(Band.VHF1, 56.2f);
+                //    SetGainForBand(Band.VHF2, 56.2f);
+                //    SetGainForBand(Band.VHF3, 56.2f);
+                //    SetGainForBand(Band.VHF4, 56.2f);
+                //    SetGainForBand(Band.VHF5, 56.2f);
+                //    SetGainForBand(Band.VHF6, 56.2f);
+                //    SetGainForBand(Band.VHF7, 56.2f);
+                //    SetGainForBand(Band.VHF8, 56.2f);
+                //    SetGainForBand(Band.VHF9, 56.2f);
+                //    SetGainForBand(Band.VHF10, 56.2f);
+                //    SetGainForBand(Band.VHF11, 56.2f);
+                //    SetGainForBand(Band.VHF12, 56.2f);
+                //    SetGainForBand(Band.VHF13, 56.2f);
 
-                if (model == HPSDRModel.ANAN100D)// && !bypasPASettings)
-                {
-                    SetGainForBand(Band.B160M, 49.5f);
-                    SetGainForBand(Band.B80M, 50.5f);
-                    SetGainForBand(Band.B60M, 50.5f);
-                    SetGainForBand(Band.B40M, 50.0f);
-                    SetGainForBand(Band.B30M, 49.0f);
-                    SetGainForBand(Band.B20M, 48.0f);
-                    SetGainForBand(Band.B17M, 47.0f);
-                    SetGainForBand(Band.B15M, 46.5f);
-                    SetGainForBand(Band.B12M, 46.0f);
-                    SetGainForBand(Band.B10M, 43.5f);
-                    SetGainForBand(Band.B6M, 43.0f);
+                //    return;
+                //}
 
-                    SetGainForBand(Band.VHF0, 56.2f);
-                    SetGainForBand(Band.VHF1, 56.2f);
-                    SetGainForBand(Band.VHF2, 56.2f);
-                    SetGainForBand(Band.VHF3, 56.2f);
-                    SetGainForBand(Band.VHF4, 56.2f);
-                    SetGainForBand(Band.VHF5, 56.2f);
-                    SetGainForBand(Band.VHF6, 56.2f);
-                    SetGainForBand(Band.VHF7, 56.2f);
-                    SetGainForBand(Band.VHF8, 56.2f);
-                    SetGainForBand(Band.VHF9, 56.2f);
-                    SetGainForBand(Band.VHF10, 56.2f);
-                    SetGainForBand(Band.VHF11, 56.2f);
-                    SetGainForBand(Band.VHF12, 56.2f);
-                    SetGainForBand(Band.VHF13, 56.2f);
+                //if (model == HPSDRModel.ANAN100D)// && !bypasPASettings)
+                //{
+                //    SetGainForBand(Band.B160M, 49.5f);
+                //    SetGainForBand(Band.B80M, 50.5f);
+                //    SetGainForBand(Band.B60M, 50.5f);
+                //    SetGainForBand(Band.B40M, 50.0f);
+                //    SetGainForBand(Band.B30M, 49.0f);
+                //    SetGainForBand(Band.B20M, 48.0f);
+                //    SetGainForBand(Band.B17M, 47.0f);
+                //    SetGainForBand(Band.B15M, 46.5f);
+                //    SetGainForBand(Band.B12M, 46.0f);
+                //    SetGainForBand(Band.B10M, 43.5f);
+                //    SetGainForBand(Band.B6M, 43.0f);
 
-                    return;
-                }
+                //    SetGainForBand(Band.VHF0, 56.2f);
+                //    SetGainForBand(Band.VHF1, 56.2f);
+                //    SetGainForBand(Band.VHF2, 56.2f);
+                //    SetGainForBand(Band.VHF3, 56.2f);
+                //    SetGainForBand(Band.VHF4, 56.2f);
+                //    SetGainForBand(Band.VHF5, 56.2f);
+                //    SetGainForBand(Band.VHF6, 56.2f);
+                //    SetGainForBand(Band.VHF7, 56.2f);
+                //    SetGainForBand(Band.VHF8, 56.2f);
+                //    SetGainForBand(Band.VHF9, 56.2f);
+                //    SetGainForBand(Band.VHF10, 56.2f);
+                //    SetGainForBand(Band.VHF11, 56.2f);
+                //    SetGainForBand(Band.VHF12, 56.2f);
+                //    SetGainForBand(Band.VHF13, 56.2f);
 
-                if (model == HPSDRModel.ANAN200D)// && !bypasPASettings)
-                {
-                    SetGainForBand(Band.B160M, 49.5f);
-                    SetGainForBand(Band.B80M, 50.5f);
-                    SetGainForBand(Band.B60M, 50.5f);
-                    SetGainForBand(Band.B40M, 50.0f);
-                    SetGainForBand(Band.B30M, 49.0f);
-                    SetGainForBand(Band.B20M, 48.0f);
-                    SetGainForBand(Band.B17M, 47.0f);
-                    SetGainForBand(Band.B15M, 46.5f);
-                    SetGainForBand(Band.B12M, 46.0f);
-                    SetGainForBand(Band.B10M, 43.5f);
-                    SetGainForBand(Band.B6M, 43.0f);
+                //    return;
+                //}
 
-                    SetGainForBand(Band.VHF0, 56.2f);
-                    SetGainForBand(Band.VHF1, 56.2f);
-                    SetGainForBand(Band.VHF2, 56.2f);
-                    SetGainForBand(Band.VHF3, 56.2f);
-                    SetGainForBand(Band.VHF4, 56.2f);
-                    SetGainForBand(Band.VHF5, 56.2f);
-                    SetGainForBand(Band.VHF6, 56.2f);
-                    SetGainForBand(Band.VHF7, 56.2f);
-                    SetGainForBand(Band.VHF8, 56.2f);
-                    SetGainForBand(Band.VHF9, 56.2f);
-                    SetGainForBand(Band.VHF10, 56.2f);
-                    SetGainForBand(Band.VHF11, 56.2f);
-                    SetGainForBand(Band.VHF12, 56.2f);
-                    SetGainForBand(Band.VHF13, 56.2f);
+                //if (model == HPSDRModel.ANAN200D)// && !bypasPASettings)
+                //{
+                //    SetGainForBand(Band.B160M, 49.5f);
+                //    SetGainForBand(Band.B80M, 50.5f);
+                //    SetGainForBand(Band.B60M, 50.5f);
+                //    SetGainForBand(Band.B40M, 50.0f);
+                //    SetGainForBand(Band.B30M, 49.0f);
+                //    SetGainForBand(Band.B20M, 48.0f);
+                //    SetGainForBand(Band.B17M, 47.0f);
+                //    SetGainForBand(Band.B15M, 46.5f);
+                //    SetGainForBand(Band.B12M, 46.0f);
+                //    SetGainForBand(Band.B10M, 43.5f);
+                //    SetGainForBand(Band.B6M, 43.0f);
 
-                    return;
-                }
+                //    SetGainForBand(Band.VHF0, 56.2f);
+                //    SetGainForBand(Band.VHF1, 56.2f);
+                //    SetGainForBand(Band.VHF2, 56.2f);
+                //    SetGainForBand(Band.VHF3, 56.2f);
+                //    SetGainForBand(Band.VHF4, 56.2f);
+                //    SetGainForBand(Band.VHF5, 56.2f);
+                //    SetGainForBand(Band.VHF6, 56.2f);
+                //    SetGainForBand(Band.VHF7, 56.2f);
+                //    SetGainForBand(Band.VHF8, 56.2f);
+                //    SetGainForBand(Band.VHF9, 56.2f);
+                //    SetGainForBand(Band.VHF10, 56.2f);
+                //    SetGainForBand(Band.VHF11, 56.2f);
+                //    SetGainForBand(Band.VHF12, 56.2f);
+                //    SetGainForBand(Band.VHF13, 56.2f);
 
-                if (model == HPSDRModel.ANAN8000D)
-                {
-                    SetGainForBand(Band.B160M, 50.0f);
-                    SetGainForBand(Band.B80M, 50.5f);
-                    SetGainForBand(Band.B60M, 50.5f);
-                    SetGainForBand(Band.B40M, 50.0f);
-                    SetGainForBand(Band.B30M, 49.5f);
-                    SetGainForBand(Band.B20M, 48.5f);
-                    SetGainForBand(Band.B17M, 48.0f);
-                    SetGainForBand(Band.B15M, 47.5f);
-                    SetGainForBand(Band.B12M, 46.5f);
-                    SetGainForBand(Band.B10M, 42.0f);
-                    SetGainForBand(Band.B6M, 43.0f);
+                //    return;
+                //}
 
-                    SetGainForBand(Band.VHF0, 56.2f);
-                    SetGainForBand(Band.VHF1, 56.2f);
-                    SetGainForBand(Band.VHF2, 56.2f);
-                    SetGainForBand(Band.VHF3, 56.2f);
-                    SetGainForBand(Band.VHF4, 56.2f);
-                    SetGainForBand(Band.VHF5, 56.2f);
-                    SetGainForBand(Band.VHF6, 56.2f);
-                    SetGainForBand(Band.VHF7, 56.2f);
-                    SetGainForBand(Band.VHF8, 56.2f);
-                    SetGainForBand(Band.VHF9, 56.2f);
-                    SetGainForBand(Band.VHF10, 56.2f);
-                    SetGainForBand(Band.VHF11, 56.2f);
-                    SetGainForBand(Band.VHF12, 56.2f);
-                    SetGainForBand(Band.VHF13, 56.2f);
+                //if (model == HPSDRModel.ANAN8000D)
+                //{
+                //    SetGainForBand(Band.B160M, 50.0f);
+                //    SetGainForBand(Band.B80M, 50.5f);
+                //    SetGainForBand(Band.B60M, 50.5f);
+                //    SetGainForBand(Band.B40M, 50.0f);
+                //    SetGainForBand(Band.B30M, 49.5f);
+                //    SetGainForBand(Band.B20M, 48.5f);
+                //    SetGainForBand(Band.B17M, 48.0f);
+                //    SetGainForBand(Band.B15M, 47.5f);
+                //    SetGainForBand(Band.B12M, 46.5f);
+                //    SetGainForBand(Band.B10M, 42.0f);
+                //    SetGainForBand(Band.B6M, 43.0f);
 
-                    return;
-                }
+                //    SetGainForBand(Band.VHF0, 56.2f);
+                //    SetGainForBand(Band.VHF1, 56.2f);
+                //    SetGainForBand(Band.VHF2, 56.2f);
+                //    SetGainForBand(Band.VHF3, 56.2f);
+                //    SetGainForBand(Band.VHF4, 56.2f);
+                //    SetGainForBand(Band.VHF5, 56.2f);
+                //    SetGainForBand(Band.VHF6, 56.2f);
+                //    SetGainForBand(Band.VHF7, 56.2f);
+                //    SetGainForBand(Band.VHF8, 56.2f);
+                //    SetGainForBand(Band.VHF9, 56.2f);
+                //    SetGainForBand(Band.VHF10, 56.2f);
+                //    SetGainForBand(Band.VHF11, 56.2f);
+                //    SetGainForBand(Band.VHF12, 56.2f);
+                //    SetGainForBand(Band.VHF13, 56.2f);
 
-                if (model == HPSDRModel.ANAN7000D || model == HPSDRModel.ANAN_G2 || model == HPSDRModel.ANVELINAPRO3 || model == HPSDRModel.REDPITAYA)//DH1KLM
-                {
-                    SetGainForBand(Band.B160M, 47.9f);
-                    SetGainForBand(Band.B80M, 50.5f);
-                    SetGainForBand(Band.B60M, 50.8f);
-                    SetGainForBand(Band.B40M, 50.8f);
-                    SetGainForBand(Band.B30M, 50.9f);
-                    SetGainForBand(Band.B20M, 50.9f);
-                    SetGainForBand(Band.B17M, 50.5f);
-                    SetGainForBand(Band.B15M, 47.0f);
-                    SetGainForBand(Band.B12M, 47.9f);
-                    SetGainForBand(Band.B10M, 46.5f);
-                    SetGainForBand(Band.B6M, 44.6f);
+                //    return;
+                //}
 
-                    SetGainForBand(Band.VHF0, 63.1f);
-                    SetGainForBand(Band.VHF1, 63.1f);
-                    SetGainForBand(Band.VHF2, 63.1f);
-                    SetGainForBand(Band.VHF3, 63.1f);
-                    SetGainForBand(Band.VHF4, 63.1f);
-                    SetGainForBand(Band.VHF5, 63.1f);
-                    SetGainForBand(Band.VHF6, 63.1f);
-                    SetGainForBand(Band.VHF7, 63.1f);
-                    SetGainForBand(Band.VHF8, 63.1f);
-                    SetGainForBand(Band.VHF9, 63.1f);
-                    SetGainForBand(Band.VHF10, 63.1f);
-                    SetGainForBand(Band.VHF11, 63.1f);
-                    SetGainForBand(Band.VHF12, 63.1f);
-                    SetGainForBand(Band.VHF13, 63.1f);
+                //if (model == HPSDRModel.ANAN7000D || model == HPSDRModel.ANAN_G2 || model == HPSDRModel.ANVELINAPRO3 || model == HPSDRModel.REDPITAYA)//DH1KLM
+                //{
+                //    SetGainForBand(Band.B160M, 47.9f);
+                //    SetGainForBand(Band.B80M, 50.5f);
+                //    SetGainForBand(Band.B60M, 50.8f);
+                //    SetGainForBand(Band.B40M, 50.8f);
+                //    SetGainForBand(Band.B30M, 50.9f);
+                //    SetGainForBand(Band.B20M, 50.9f);
+                //    SetGainForBand(Band.B17M, 50.5f);
+                //    SetGainForBand(Band.B15M, 47.0f);
+                //    SetGainForBand(Band.B12M, 47.9f);
+                //    SetGainForBand(Band.B10M, 46.5f);
+                //    SetGainForBand(Band.B6M, 44.6f);
 
-                    return;
-                }
+                //    SetGainForBand(Band.VHF0, 63.1f);
+                //    SetGainForBand(Band.VHF1, 63.1f);
+                //    SetGainForBand(Band.VHF2, 63.1f);
+                //    SetGainForBand(Band.VHF3, 63.1f);
+                //    SetGainForBand(Band.VHF4, 63.1f);
+                //    SetGainForBand(Band.VHF5, 63.1f);
+                //    SetGainForBand(Band.VHF6, 63.1f);
+                //    SetGainForBand(Band.VHF7, 63.1f);
+                //    SetGainForBand(Band.VHF8, 63.1f);
+                //    SetGainForBand(Band.VHF9, 63.1f);
+                //    SetGainForBand(Band.VHF10, 63.1f);
+                //    SetGainForBand(Band.VHF11, 63.1f);
+                //    SetGainForBand(Band.VHF12, 63.1f);
+                //    SetGainForBand(Band.VHF13, 63.1f);
 
-                if (model == HPSDRModel.ANAN_G2_1K)                 // G8NJJ will need changing when PA detail known
-                {
-                    SetGainForBand(Band.B160M, 47.9f);
-                    SetGainForBand(Band.B80M, 50.5f);
-                    SetGainForBand(Band.B60M, 50.8f);
-                    SetGainForBand(Band.B40M, 50.8f);
-                    SetGainForBand(Band.B30M, 50.9f);
-                    SetGainForBand(Band.B20M, 50.9f);
-                    SetGainForBand(Band.B17M, 50.5f);
-                    SetGainForBand(Band.B15M, 47.0f);
-                    SetGainForBand(Band.B12M, 47.9f);
-                    SetGainForBand(Band.B10M, 46.5f);
-                    SetGainForBand(Band.B6M, 44.6f);
+                //    return;
+                //}
 
-                    SetGainForBand(Band.VHF0, 63.1f);
-                    SetGainForBand(Band.VHF1, 63.1f);
-                    SetGainForBand(Band.VHF2, 63.1f);
-                    SetGainForBand(Band.VHF3, 63.1f);
-                    SetGainForBand(Band.VHF4, 63.1f);
-                    SetGainForBand(Band.VHF5, 63.1f);
-                    SetGainForBand(Band.VHF6, 63.1f);
-                    SetGainForBand(Band.VHF7, 63.1f);
-                    SetGainForBand(Band.VHF8, 63.1f);
-                    SetGainForBand(Band.VHF9, 63.1f);
-                    SetGainForBand(Band.VHF10, 63.1f);
-                    SetGainForBand(Band.VHF11, 63.1f);
-                    SetGainForBand(Band.VHF12, 63.1f);
-                    SetGainForBand(Band.VHF13, 63.1f);
+                //if (model == HPSDRModel.ANAN_G2_1K)                 // G8NJJ will need changing when PA detail known
+                //{
+                //    SetGainForBand(Band.B160M, 47.9f);
+                //    SetGainForBand(Band.B80M, 50.5f);
+                //    SetGainForBand(Band.B60M, 50.8f);
+                //    SetGainForBand(Band.B40M, 50.8f);
+                //    SetGainForBand(Band.B30M, 50.9f);
+                //    SetGainForBand(Band.B20M, 50.9f);
+                //    SetGainForBand(Band.B17M, 50.5f);
+                //    SetGainForBand(Band.B15M, 47.0f);
+                //    SetGainForBand(Band.B12M, 47.9f);
+                //    SetGainForBand(Band.B10M, 46.5f);
+                //    SetGainForBand(Band.B6M, 44.6f);
 
-					return;
-                }
-                
-                if (model == HPSDRModel.HERMESLITE)
-                { 
-                    SetGainForBand(Band.B160M, 100f);
-                    SetGainForBand(Band.B80M, 100f);
-                    SetGainForBand(Band.B60M, 100f);
-                    SetGainForBand(Band.B40M, 100f);
-                    SetGainForBand(Band.B30M, 100f);
-                    SetGainForBand(Band.B20M, 100f);
-                    SetGainForBand(Band.B17M, 100f);
-                    SetGainForBand(Band.B15M, 100f);
-                    SetGainForBand(Band.B12M, 100f);
-                    SetGainForBand(Band.B10M, 100f);
-                    SetGainForBand(Band.B6M, 38.8f);
+                //    SetGainForBand(Band.VHF0, 63.1f);
+                //    SetGainForBand(Band.VHF1, 63.1f);
+                //    SetGainForBand(Band.VHF2, 63.1f);
+                //    SetGainForBand(Band.VHF3, 63.1f);
+                //    SetGainForBand(Band.VHF4, 63.1f);
+                //    SetGainForBand(Band.VHF5, 63.1f);
+                //    SetGainForBand(Band.VHF6, 63.1f);
+                //    SetGainForBand(Band.VHF7, 63.1f);
+                //    SetGainForBand(Band.VHF8, 63.1f);
+                //    SetGainForBand(Band.VHF9, 63.1f);
+                //    SetGainForBand(Band.VHF10, 63.1f);
+                //    SetGainForBand(Band.VHF11, 63.1f);
+                //    SetGainForBand(Band.VHF12, 63.1f);
+                //    SetGainForBand(Band.VHF13, 63.1f);
 
-
-                    SetGainForBand(Band.VHF0, 38.8f);
-                    SetGainForBand(Band.VHF1, 38.8f);
-                    SetGainForBand(Band.VHF2, 38.8f);
-                    SetGainForBand(Band.VHF3, 38.8f);
-                    SetGainForBand(Band.VHF4, 38.8f);
-                    SetGainForBand(Band.VHF5, 38.8f);
-                    SetGainForBand(Band.VHF6, 38.8f);
-                    SetGainForBand(Band.VHF7, 38.8f);
-                    SetGainForBand(Band.VHF8, 38.8f);
-                    SetGainForBand(Band.VHF9, 38.8f);
-                    SetGainForBand(Band.VHF10, 38.8f);
-                    SetGainForBand(Band.VHF11, 38.8f);
-                    SetGainForBand(Band.VHF12, 38.8f);
-                    SetGainForBand(Band.VHF13, 38.8f);
-
-                    return;
+                //    return;
+                //}
                 }
             }
         }

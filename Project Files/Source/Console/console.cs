@@ -63,6 +63,7 @@ namespace Thetis
     using System.Collections.Concurrent;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using System.Diagnostics.Contracts;
+    using Newtonsoft.Json.Bson;
 
     public partial class Console : Form
     {
@@ -6373,126 +6374,132 @@ namespace Thetis
             return BandStackManager.IsOKToTX(f, extended, r);
         }
 
-        public void SetAlexHPF(double freq)
+        private void setAlex1HPF(double freq)
         {
-            if ((HardwareSpecific.Hardware == HPSDRHW.OrionMKII) || (HardwareSpecific.Hardware == HPSDRHW.Saturn)) SetBPF1(freq);     //G8NJJ
+            if ((HardwareSpecific.Hardware == HPSDRHW.OrionMKII) || (HardwareSpecific.Hardware == HPSDRHW.Saturn))
+            {
+                setBPF1ForOrionIISaturn(freq);
+            }
             else
             {
-                if (alexpresent && !initializing)
+                setAlexHPF(freq);
+            }
+        }
+        private void setAlexHPF(double freq)
+        {
+            if (alexpresent && !initializing)
+            {
+                if (_mox && disable_hpf_on_tx)
                 {
-                    if (_mox && disable_hpf_on_tx)
-                    {
-                        NetworkIO.SetAlexHPFBits(0x20);
-                        SetupForm.radDHPFTXled.Checked = true;
-                        return;
-                    }
+                    NetworkIO.SetAlexHPFBits(0x20);
+                    SetupForm.radDHPFTXled.Checked = true;
+                    return;
+                }
 
-                    if (alex_hpf_bypass)
+                if (alex_hpf_bypass)
+                {
+                    NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
+                    SetupForm.radBPHPFled.Checked = true;
+                    return;
+                }
+
+                if ((decimal)freq >= SetupForm.udAlex1_5HPFStart.Value && // 1.5 MHz HPF
+                     (decimal)freq <= SetupForm.udAlex1_5HPFEnd.Value)
+                {
+                    if (alex1_5bphpf_bypass)
                     {
                         NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
                         SetupForm.radBPHPFled.Checked = true;
-                        return;
-                    }
-
-                    if ((decimal)freq >= SetupForm.udAlex1_5HPFStart.Value && // 1.5 MHz HPF
-                         (decimal)freq <= SetupForm.udAlex1_5HPFEnd.Value)
-                    {
-                        if (alex1_5bphpf_bypass)
-                        {
-                            NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
-                            SetupForm.radBPHPFled.Checked = true;
-                        }
-                        else
-                        {
-                            NetworkIO.SetAlexHPFBits(0x10);
-                            SetupForm.rad1_5HPFled.Checked = true;
-                        }
-                    }
-
-                    else if ((decimal)freq >= SetupForm.udAlex6_5HPFStart.Value && // 6.5 MHz HPF
-                             (decimal)freq <= SetupForm.udAlex6_5HPFEnd.Value)
-                    {
-                        if (alex6_5bphpf_bypass)
-                        {
-                            NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
-                            SetupForm.radBPHPFled.Checked = true;
-                        }
-                        else
-                        {
-                            NetworkIO.SetAlexHPFBits(0x08);
-                            SetupForm.rad6_5HPFled.Checked = true;
-                        }
-                    }
-
-                    else if ((decimal)freq >= SetupForm.udAlex9_5HPFStart.Value && // 9.5 MHz HPF
-                             (decimal)freq <= SetupForm.udAlex9_5HPFEnd.Value)
-                    {
-                        if (alex9_5bphpf_bypass)
-                        {
-                            NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
-                            SetupForm.radBPHPFled.Checked = true;
-                        }
-                        else
-                        {
-                            NetworkIO.SetAlexHPFBits(0x04);
-                            SetupForm.rad9_5HPFled.Checked = true;
-                        }
-                    }
-
-                    else if ((decimal)freq >= SetupForm.udAlex13HPFStart.Value && // 13 MHz HPF
-                             (decimal)freq <= SetupForm.udAlex13HPFEnd.Value)
-                    {
-                        if (alex13bphpf_bypass)
-                        {
-                            NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
-                            SetupForm.radBPHPFled.Checked = true;
-                        }
-                        else
-                        {
-                            NetworkIO.SetAlexHPFBits(0x01);
-                            SetupForm.rad13HPFled.Checked = true;
-                        }
-                    }
-
-                    else if ((decimal)freq >= SetupForm.udAlex20HPFStart.Value && // 20 MHz HPF
-                             (decimal)freq <= SetupForm.udAlex20HPFEnd.Value)
-                    {
-                        if (alex20bphpf_bypass)
-                        {
-                            NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
-                            SetupForm.radBPHPFled.Checked = true;
-                        }
-                        else
-                        {
-                            NetworkIO.SetAlexHPFBits(0x02);
-                            SetupForm.rad20HPFled.Checked = true;
-                        }
-                    }
-
-                    else if ((decimal)freq >= SetupForm.udAlex6BPFStart.Value && // 6m BPF/LNA
-                             (decimal)freq <= SetupForm.udAlex6BPFEnd.Value)
-                    {
-                        if (alex6bphpf_bypass || disable_6m_lna_on_rx || (_mox && disable_6m_lna_on_tx))
-                        {
-                            NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
-                            SetupForm.radBPHPFled.Checked = true;
-                        }
-                        else
-                        {
-                            NetworkIO.SetAlexHPFBits(0x40);
-                            SetupForm.rad6BPFled.Checked = true;
-                        }
                     }
                     else
                     {
+                        NetworkIO.SetAlexHPFBits(0x10);
+                        SetupForm.rad1_5HPFled.Checked = true;
+                    }
+                }
+
+                else if ((decimal)freq >= SetupForm.udAlex6_5HPFStart.Value && // 6.5 MHz HPF
+                         (decimal)freq <= SetupForm.udAlex6_5HPFEnd.Value)
+                {
+                    if (alex6_5bphpf_bypass)
+                    {
                         NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
                         SetupForm.radBPHPFled.Checked = true;
                     }
+                    else
+                    {
+                        NetworkIO.SetAlexHPFBits(0x08);
+                        SetupForm.rad6_5HPFled.Checked = true;
+                    }
+                }
+
+                else if ((decimal)freq >= SetupForm.udAlex9_5HPFStart.Value && // 9.5 MHz HPF
+                         (decimal)freq <= SetupForm.udAlex9_5HPFEnd.Value)
+                {
+                    if (alex9_5bphpf_bypass)
+                    {
+                        NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
+                        SetupForm.radBPHPFled.Checked = true;
+                    }
+                    else
+                    {
+                        NetworkIO.SetAlexHPFBits(0x04);
+                        SetupForm.rad9_5HPFled.Checked = true;
+                    }
+                }
+
+                else if ((decimal)freq >= SetupForm.udAlex13HPFStart.Value && // 13 MHz HPF
+                         (decimal)freq <= SetupForm.udAlex13HPFEnd.Value)
+                {
+                    if (alex13bphpf_bypass)
+                    {
+                        NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
+                        SetupForm.radBPHPFled.Checked = true;
+                    }
+                    else
+                    {
+                        NetworkIO.SetAlexHPFBits(0x01);
+                        SetupForm.rad13HPFled.Checked = true;
+                    }
+                }
+
+                else if ((decimal)freq >= SetupForm.udAlex20HPFStart.Value && // 20 MHz HPF
+                         (decimal)freq <= SetupForm.udAlex20HPFEnd.Value)
+                {
+                    if (alex20bphpf_bypass)
+                    {
+                        NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
+                        SetupForm.radBPHPFled.Checked = true;
+                    }
+                    else
+                    {
+                        NetworkIO.SetAlexHPFBits(0x02);
+                        SetupForm.rad20HPFled.Checked = true;
+                    }
+                }
+
+                else if ((decimal)freq >= SetupForm.udAlex6BPFStart.Value && // 6m BPF/LNA
+                         (decimal)freq <= SetupForm.udAlex6BPFEnd.Value)
+                {
+                    if (alex6bphpf_bypass || disable_6m_lna_on_rx || (_mox && disable_6m_lna_on_tx))
+                    {
+                        NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
+                        SetupForm.radBPHPFled.Checked = true;
+                    }
+                    else
+                    {
+                        NetworkIO.SetAlexHPFBits(0x40);
+                        SetupForm.rad6BPFled.Checked = true;
+                    }
+                }
+                else
+                {
+                    NetworkIO.SetAlexHPFBits(0x20); // Bypass HPF
+                    SetupForm.radBPHPFled.Checked = true;
                 }
             }
         }
-
-        public void SetBPF1(double freq)
+        private void setBPF1ForOrionIISaturn(double freq)
         {
             if (alexpresent && !initializing)
             {
@@ -6608,7 +6615,7 @@ namespace Thetis
             }
         }
 
-        public void SetAlex2HPF(double freq)
+        private void setAlex2HPF(double freq)
         {
             if (alexpresent && !initializing)
             {
@@ -6716,7 +6723,7 @@ namespace Thetis
             }
         }
 
-        public void SetAlexLPF(double freq, bool freqIsTX)
+        private void setAlexLPF(double freq, bool freqIsTX)
         {
             //Debug.Print("lpf : " + freq.ToString() + " -- freq is tx : " + freqIsTX.ToString());
             if (!_mox && lpf_bypass)
@@ -6785,7 +6792,7 @@ namespace Thetis
             }
         }
 
-        public void SetAlex2LPF(double freq)
+        private void setAlex2LPF(double freq)
         {
             if (alexpresent && !initializing)
             {
@@ -15478,7 +15485,7 @@ namespace Thetis
         private void UpdateRX1DDSFreq()
         {
             if (initializing) return;
-            SetAlexHPF(fwc_dds_freq);
+            setAlex1HPF(fwc_dds_freq);
             UpdateAlexTXFilter();
             UpdateAlexRXFilter();
 
@@ -15516,7 +15523,7 @@ namespace Thetis
                 HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
                 HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
             {
-                SetAlex2HPF(rx2_dds_freq_mhz);
+                setAlex2HPF(rx2_dds_freq_mhz);
             }
 
             switch (HardwareSpecific.Model)
@@ -15540,9 +15547,9 @@ namespace Thetis
         private void UpdateTXDDSFreq()
         {
             if (initializing) return;
-            SetAlexLPF(tx_dds_freq_mhz, true);
+            setAlexLPF(tx_dds_freq_mhz, true);
             if (_mox)
-                SetAlexHPF(fwc_dds_freq);
+                setAlex1HPF(fwc_dds_freq);
             NetworkIO.VFOfreq(0, tx_dds_freq_mhz, 1);
         }
 
@@ -15552,10 +15559,10 @@ namespace Thetis
             {
                 if (!rx2_preamp_present && chkRX2.Checked)
                 {
-                    if (rx1_dds_freq_mhz > rx2_dds_freq_mhz) SetAlexLPF(rx1_dds_freq_mhz, false);
-                    else SetAlexLPF(rx2_dds_freq_mhz, false);
+                    if (rx1_dds_freq_mhz > rx2_dds_freq_mhz) setAlexLPF(rx1_dds_freq_mhz, false);
+                    else setAlexLPF(rx2_dds_freq_mhz, false);
                 }
-                else SetAlexLPF(rx1_dds_freq_mhz, false);
+                else setAlexLPF(rx1_dds_freq_mhz, false);
             }
         }
 
@@ -15565,8 +15572,8 @@ namespace Thetis
             {
                 if (!rx2_preamp_present && chkRX2.Checked)
                 {
-                    if (rx1_dds_freq_mhz < rx2_dds_freq_mhz) SetAlexHPF(rx1_dds_freq_mhz);
-                    else SetAlexHPF(rx2_dds_freq_mhz);
+                    if (rx1_dds_freq_mhz < rx2_dds_freq_mhz) setAlex1HPF(rx1_dds_freq_mhz);
+                    else setAlex1HPF(rx2_dds_freq_mhz);
                 }
             }
         }
@@ -18774,12 +18781,12 @@ namespace Thetis
                 disable_6m_lna_on_rx = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                 double freq2 = VFOBFreq;// Double.Parse(txtVFOBFreq.Text);
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
                 if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
                     HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
                     HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K || HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
                 {
-                    SetAlex2HPF(freq2);
+                    setAlex2HPF(freq2);
                     txtVFOBFreq_LostFocus(this, EventArgs.Empty);
                 }
 
@@ -18795,7 +18802,7 @@ namespace Thetis
             {
                 disable_6m_lna_on_tx = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
 
@@ -18807,7 +18814,7 @@ namespace Thetis
             {
                 disable_hpf_on_tx = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
         private bool disable_hpf_on_ps = false;
@@ -18818,7 +18825,7 @@ namespace Thetis
             {
                 disable_hpf_on_ps = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
         private bool lpf_bypass = false;
@@ -18832,7 +18839,7 @@ namespace Thetis
                 {
                     double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
                     if (_mox) freq = tx_dds_freq_mhz;
-                    SetAlexLPF(freq, _mox);
+                    setAlexLPF(freq, _mox);
                     if (!initializing)
                         txtVFOAFreq_LostFocus(this, EventArgs.Empty);
                 }
@@ -18847,7 +18854,7 @@ namespace Thetis
             {
                 alex_hpf_bypass = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
                 if (!initializing)
                     txtVFOAFreq_LostFocus(this, EventArgs.Empty);
                 BPF1ToolStripMenuItem.Checked = value;
@@ -18862,7 +18869,7 @@ namespace Thetis
             {
                 alex2_hpf_bypass = value;
                 double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
-                SetAlex2HPF(freq);
+                setAlex2HPF(freq);
                 if (!initializing)
                     txtVFOBFreq_LostFocus(this, EventArgs.Empty);
                 BPF2ToolStripMenuItem.Checked = value;
@@ -18877,7 +18884,7 @@ namespace Thetis
             {
                 alex1_5bphpf_bypass = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
 
@@ -18889,7 +18896,7 @@ namespace Thetis
             {
                 bpf1_1_5bp_bypass = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
 
@@ -18901,7 +18908,7 @@ namespace Thetis
             {
                 alex21_5bphpf_bypass = value;
                 double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
-                SetAlex2HPF(freq);
+                setAlex2HPF(freq);
             }
         }
 
@@ -18913,7 +18920,7 @@ namespace Thetis
             {
                 alex6_5bphpf_bypass = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
 
@@ -18925,7 +18932,7 @@ namespace Thetis
             {
                 bpf1_6_5bp_bypass = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
 
@@ -18937,7 +18944,7 @@ namespace Thetis
             {
                 alex26_5bphpf_bypass = value;
                 double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
-                SetAlex2HPF(freq);
+                setAlex2HPF(freq);
             }
         }
 
@@ -18949,7 +18956,7 @@ namespace Thetis
             {
                 alex9_5bphpf_bypass = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
 
@@ -18961,7 +18968,7 @@ namespace Thetis
             {
                 bpf1_9_5bp_bypass = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
 
@@ -18973,7 +18980,7 @@ namespace Thetis
             {
                 alex29_5bphpf_bypass = value;
                 double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
-                SetAlex2HPF(freq);
+                setAlex2HPF(freq);
             }
         }
 
@@ -18985,7 +18992,7 @@ namespace Thetis
             {
                 alex13bphpf_bypass = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
 
@@ -18997,7 +19004,7 @@ namespace Thetis
             {
                 bpf1_13bp_bypass = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
 
@@ -19009,7 +19016,7 @@ namespace Thetis
             {
                 alex213bphpf_bypass = value;
                 double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
-                SetAlex2HPF(freq);
+                setAlex2HPF(freq);
             }
         }
 
@@ -19021,7 +19028,7 @@ namespace Thetis
             {
                 alex20bphpf_bypass = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
 
@@ -19033,7 +19040,7 @@ namespace Thetis
             {
                 bpf1_20bp_bypass = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
 
@@ -19045,7 +19052,7 @@ namespace Thetis
             {
                 alex220bphpf_bypass = value;
                 double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
-                SetAlex2HPF(freq);
+                setAlex2HPF(freq);
             }
         }
 
@@ -19057,7 +19064,7 @@ namespace Thetis
             {
                 alex6bphpf_bypass = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
                 txtVFOAFreq_LostFocus(this, EventArgs.Empty);
             }
         }
@@ -19070,7 +19077,7 @@ namespace Thetis
             {
                 bpf1_6bp_bypass = value;
                 double freq = VFOAFreq;// Double.Parse(txtVFOAFreq.Text); //[2.10.3.6]freq changes.
-                SetAlexHPF(freq);
+                setAlex1HPF(freq);
             }
         }
 
@@ -19082,7 +19089,7 @@ namespace Thetis
             {
                 alex26bphpf_bypass = value;
                 double freq = VFOBFreq;// Double.Parse(txtVFOBFreq.Text); //[2.10.3.6]freq changes.
-                SetAlex2HPF(freq);
+                setAlex2HPF(freq);
             }
         }
 
@@ -19204,9 +19211,9 @@ namespace Thetis
                     if (comboMeterTXMode.SelectedIndex < 0)
                         comboMeterTXMode.SelectedIndex = 0;
 
-                    SetAlexHPF(fwc_dds_freq);
-                    SetAlexLPF(tx_dds_freq_mhz, true);
-                    SetAlex2HPF(rx2_dds_freq_mhz);
+                    setAlex1HPF(fwc_dds_freq);
+                    setAlexLPF(tx_dds_freq_mhz, true);
+                    setAlex2HPF(rx2_dds_freq_mhz);
                 }
                 else
                 {
@@ -26358,7 +26365,7 @@ namespace Thetis
                         // protocol 2
                         if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
                             HardwareSpecific.Model == HPSDRModel.ANAN_G2 || HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
-                            HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3)
+                            HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.REDPITAYA)
                             inhibit_input = !NetworkIO.getUserI05_p2(); // bit[1] of byte 59 from the HPSP 1025 packet
                         else
                             inhibit_input = !NetworkIO.getUserI04_p2(); // bit[0] of byte 59 from the HPSP 1025 packet
@@ -40552,11 +40559,12 @@ namespace Thetis
         }
 
         private bool update_rx2_display = false;
+        private bool _old_rx2_checked = false;
         private void chkRX2_CheckedChanged(object sender, System.EventArgs e)
         {
             _pause_DisplayThread = true; //MW0LGE_21k8 hide the changes
 
-            bool oldRX2Enabled = RX2Enabled;
+            bool oldRX2Enabled = _old_rx2_checked;// RX2Enabled;
 
             if (oldRX2Enabled != chkRX2.Checked) RX2EnabledPreChangedHandlers?.Invoke(chkRX2.Checked);
 
@@ -40648,6 +40656,7 @@ namespace Thetis
             {
                 SetQuickSplit(); //[2.10.1.0] MW0LGE
                 RX2EnabledChangedHandlers?.Invoke(RX2Enabled);
+                _old_rx2_checked = chkRX2.Checked;
             }
         }
 
@@ -46526,7 +46535,17 @@ namespace Thetis
                 SetupForm.AlexHPFBypass = true;
             }
         }
+        public void UpdatePIVisibilty()
+        {
+            pIToolStripMenuItem.Visible = HardwareSpecific.SupportsPathIllustrator;
 
+            if(!HardwareSpecific.SupportsPathIllustrator && path_Illustrator != null)
+            {
+                path_Illustrator.Close();
+                path_Illustrator.Dispose();
+                path_Illustrator = null;
+            }
+        }
         private void pIToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (path_Illustrator == null || path_Illustrator.IsDisposed)
@@ -49771,10 +49790,7 @@ namespace Thetis
         }
         private void enableAudioAmplfier()
         {
-            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH && //only protocol 2
-                (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
-                HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
-                HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K || HardwareSpecific.Model == HPSDRModel.REDPITAYA)) //DH1KLM
+            if (HardwareSpecific.HasAudioAmplifier)
             {
                 NetworkIO.SetAudioAmpEnable(_bEnableAudioAmplifier);
             }
@@ -49788,26 +49804,8 @@ namespace Thetis
         {
             for (int i = 0; i < (int)HPSDRModel.LAST; i++)
             {
-                switch ((HPSDRModel)i)
-                {
-                    case HPSDRModel.ANAN7000D:
-                    case HPSDRModel.ANAN8000D:
-                    case HPSDRModel.ORIONMKII:
-                    case HPSDRModel.ANVELINAPRO3:
-                    case HPSDRModel.REDPITAYA: //DH1KLM
-                        rx_meter_cal_offset_by_radio[i] = 4.841644f;
-                        rx_display_cal_offset_by_radio[i] = 5.259f;
-                        break;
-                    case HPSDRModel.ANAN_G2:
-                    case HPSDRModel.ANAN_G2_1K:
-                        rx_meter_cal_offset_by_radio[i] = -4.476f;
-                        rx_display_cal_offset_by_radio[i] = -4.4005f;
-                        break;
-                    default:
-                        rx_meter_cal_offset_by_radio[i] = 0.98f;
-                        rx_display_cal_offset_by_radio[i] = -2.1f;
-                        break;
-                }
+                rx_meter_cal_offset_by_radio[i] = HardwareSpecific.RXMeterCalbrationOffsetDefaults((HPSDRModel)i);
+                rx_display_cal_offset_by_radio[i] = HardwareSpecific.RXDisplayCalbrationOffsetDefauls((HPSDRModel)i);
             }
 
             if (ignoreSet) return;
