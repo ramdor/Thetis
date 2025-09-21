@@ -312,7 +312,7 @@ namespace Thetis
             }
         }
 
-        public void PSdefpeak(double value)
+        private void psdefpeak(double value)
         {
             // note : PSpeak_TextChanged will fire if db recovers value into text box
             string sVal = value.ToString();
@@ -320,6 +320,8 @@ namespace Thetis
                 txtPSpeak.Text = value.ToString(); // causes text change event
             else
                 PSpeak_TextChanged(this, EventArgs.Empty); // there would be no event as text the same, so fire it here
+
+            UpdateWarningSetPk();
         }
 
         #endregion
@@ -327,22 +329,7 @@ namespace Thetis
         #region event handlers
         private void PSForm_Load(object sender, EventArgs e)
         {
-            SetupForm();// e); // all moved into function that can be used outside as we now do not dispose the form each time   //MW0LGE_[2.9.0.7]
-
-            //if (ttgenON == true)
-            //    btnPSTwoToneGen.BackColor = Color.FromArgb(gcolor);
-
-            //MW0LGE_21k9d5 (rc3)
-            //unsafe
-            //{
-            //    fixed (double* ptr = &PShwpeak)
-            //        puresignal.GetPSHWPeak(txachannel, ptr);
-            //}
-            //
-            //PSpeak.Text = PShwpeak.ToString();
-
-
-            //btnPSAdvanced_Click(this, e);
+            SetupForm();
         }
 
         public void SetupForm()//EventArgs e)  //MW0LGE_[2.9.0.7]
@@ -489,7 +476,7 @@ namespace Thetis
         }
         public void SetDefaultPeaks()
         {
-            PSdefpeak(HardwareSpecific.PSDefaultPeak);
+            psdefpeak(HardwareSpecific.PSDefaultPeak);
         }
         #region PSLoops
 
