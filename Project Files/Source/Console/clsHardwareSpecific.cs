@@ -226,19 +226,24 @@ namespace Thetis
         {
             get
             {
-                return _model == HPSDRModel.ANAN7000D || _model == HPSDRModel.ANAN8000D ||
-                       _model == HPSDRModel.ANVELINAPRO3 || _model == HPSDRModel.ANAN_G2 ||
-                       _model == HPSDRModel.ANAN_G2_1K || _model == HPSDRModel.REDPITAYA ||
-                       _model == HPSDRModel.HERMESLITE;
+                return _model == HPSDRModel.ANAN7000D ||
+                       _model == HPSDRModel.ANAN8000D ||
+                       _model == HPSDRModel.ANVELINAPRO3 ||
+                       _model == HPSDRModel.ANAN_G2 ||
+                       _model == HPSDRModel.ANAN_G2_1K ||
+                       _model == HPSDRModel.REDPITAYA;
             }
         }
         public static bool HasAmps
         {
             get
             {
-                return _model == HPSDRModel.ANAN7000D || _model == HPSDRModel.ANAN8000D ||
-                       _model == HPSDRModel.ANVELINAPRO3 || _model == HPSDRModel.ANAN_G2 ||
-                       _model == HPSDRModel.ANAN_G2_1K || _model == HPSDRModel.REDPITAYA ||
+                return _model == HPSDRModel.ANAN7000D || 
+                       _model == HPSDRModel.ANAN8000D ||
+                       _model == HPSDRModel.ANVELINAPRO3 || 
+                       _model == HPSDRModel.ANAN_G2 ||
+                       _model == HPSDRModel.ANAN_G2_1K || 
+                       _model == HPSDRModel.REDPITAYA ||
                        _model == HPSDRModel.HERMESLITE;
             }
         }
@@ -277,6 +282,8 @@ namespace Thetis
                 { //protocol 1
                     switch (_hardware)
                     {
+                        case HPSDRHW.HermesLite:
+                            return 0.233;
                         default:
                             return 0.4072;
                     }
@@ -323,7 +330,9 @@ namespace Thetis
                     return HPSDRModel.ANAN_G2_1K;
                 case "ANVELINA-PRO3":
                     return HPSDRModel.ANVELINAPRO3;
-                case "HERMESLITE":
+                case "HERMES LITE":
+                    return HPSDRModel.HERMESLITE;
+                case "HERMES-LITE":
                     return HPSDRModel.HERMESLITE;
                 case "RED-PITAYA":
                     return HPSDRModel.REDPITAYA;
