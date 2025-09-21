@@ -3048,6 +3048,7 @@ namespace Thetis
                 foreach (TCPIPtciSocketListener socketListener in m_socketListenersList)
                 {
 					socketListener.ClickedOnSpot(callsign, freq);
+                    socketListener.ClickedOnSpot(callsign, freq, 1, 0); //[2.10.3.9]MW0LGE also send out RX_CLICKED_ON_SPOT defaults to rx1 and vfoA
                 }
             }
 		}
