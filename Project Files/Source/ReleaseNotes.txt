@@ -14,6 +14,8 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] tx filter edge colour for the filter view item
 - [add] show/hide option for frequency numbers in Setup->Appearance->RX Display->Text
 - [add] options to show/hide major/minor grid lines in Setup->Appearance->RX Display
+- [add] option to show two tone measurements in the linearity form. Note: suitable spectrum scale etc required. Code attempts to find peaks at expected locations within 1/4 the bw of the space between f1+f2
+- [add] added fft size display to the rx display settings
 - [change] exporting a tx profile will now ask for destination location and filename. It will complain if filename already exists
 - [change] restored step attenuator RX1 if HERMES is used. Unsure why I disabled it a few years ago
 - [change] the bespoke TCI command tx_frequency has changed back to the following as per the TCI protocol, tx_frequency:3700000; . There is now a bespoke Thetis message also sent out at the same time, tx_frequency_thetis:3700000,b80m,false,false;
