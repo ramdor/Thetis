@@ -25353,7 +25353,6 @@ namespace Thetis
 
                 //    return;
                 //}
-                }
             }
         }
         private void enabledPAAdjust(bool bEnabled)

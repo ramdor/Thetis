@@ -746,6 +746,36 @@ namespace Thetis
 
                     return gains;
 
+                case HPSDRModel.HERMESLITE:
+                    gains[(int)Band.B160M] = 100f;
+                    gains[(int)Band.B80M] = 100f;
+                    gains[(int)Band.B60M] = 100f;
+                    gains[(int)Band.B40M] = 100f;
+                    gains[(int)Band.B30M] = 100f;
+                    gains[(int)Band.B20M] = 100f;
+                    gains[(int)Band.B17M] = 100f;
+                    gains[(int)Band.B15M] = 100f;
+                    gains[(int)Band.B12M] = 100f;
+                    gains[(int)Band.B10M] = 100f;
+                    gains[(int)Band.B6M] = 38.8f;
+
+                    gains[(int)Band.VHF0] = 38.8f;
+                    gains[(int)Band.VHF1] = 38.8f;
+                    gains[(int)Band.VHF2] = 38.8f;
+                    gains[(int)Band.VHF3] = 38.8f;
+                    gains[(int)Band.VHF4] = 38.8f;
+                    gains[(int)Band.VHF5] = 38.8f;
+                    gains[(int)Band.VHF6] = 38.8f;
+                    gains[(int)Band.VHF7] = 38.8f;
+                    gains[(int)Band.VHF8] = 38.8f;
+                    gains[(int)Band.VHF9] = 38.8f;
+                    gains[(int)Band.VHF10] = 38.8f;
+                    gains[(int)Band.VHF11] = 38.8f;
+                    gains[(int)Band.VHF12] = 38.8f;
+                    gains[(int)Band.VHF13] = 38.8f;
+
+                    return gains;
+
                 default:
                     return gains;
             }
