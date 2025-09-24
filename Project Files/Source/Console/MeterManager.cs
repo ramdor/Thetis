@@ -58,7 +58,6 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
-using Newtonsoft.Json.Bson;
 
 namespace Thetis
 {
@@ -156,6 +155,8 @@ namespace Thetis
         //SUB_AGC_GAIN,
         //SUB_ESTIMATED_PBSNR, //71
 
+        SIGNAL_MAX_BIN = 72,
+
         LAST
     }
 
@@ -166,6 +167,7 @@ namespace Thetis
         SIGNAL_STRENGTH,
         AVG_SIGNAL_STRENGTH,
         SIGNAL_TEXT,
+        SIGNAL_MAX_BIN,
         ADC,
         AGC,
         AGC_GAIN,
@@ -208,7 +210,7 @@ namespace Thetis
         FILTER_DISPLAY,
         DIAL_DISPLAY,
         CUSTOM_METER_BAR,
-        //SPECTRUM,
+        //SPECTRUM,        
         LAST
     }
     public enum BandGroups
@@ -886,6 +888,7 @@ namespace Thetis
                 addReading(Reading.ESTIMATED_PBSNR, text);
                 addReading(Reading.VOLTS, text);
                 addReading(Reading.AMPS, text);
+                addReading(Reading.SIGNAL_MAX_BIN, text);
 
                 addReadingText("time_utc", text);
                 addReadingText("time_loc", text);
@@ -1533,12 +1536,13 @@ namespace Thetis
         public static void ZeroReading(out float value, int rx, Reading reading)
         {
             value = 0;
-
+            
             switch (reading)
             {
                 case Reading.SIGNAL_STRENGTH:
                 case Reading.AVG_SIGNAL_STRENGTH:
-                    {
+                case Reading.SIGNAL_MAX_BIN:
+                {
                         if (IsAboveS9Frequency(rx))
                             value = -153; //S0
                         else
@@ -1741,7 +1745,9 @@ namespace Thetis
                 case MeterType.FILTER_DISPLAY: return 2;
                 case MeterType.DIAL_DISPLAY: return 2;
                 case MeterType.CUSTOM_METER_BAR: return 2;
-                    //case MeterType.SPECTRUM: return 2;
+                //case MeterType.SPECTRUM: return 2;
+
+                case MeterType.SIGNAL_MAX_BIN: return 0;
             }
 
             return 0;
@@ -1792,6 +1798,7 @@ namespace Thetis
                 case MeterType.FILTER_DISPLAY: return "Filter Display";
                 case MeterType.DIAL_DISPLAY: return "Dial Display";
                 case MeterType.CUSTOM_METER_BAR: return "Custom Meter Bar";
+                case MeterType.SIGNAL_MAX_BIN: return "Signal Bin Peak";
             }
 
             return meter.ToString();
@@ -1845,6 +1852,8 @@ namespace Thetis
                 case Reading.ELE: return "Elevation";
                 case Reading.CUSTOM_PK: return "Custom(pk)";
                 case Reading.CUSTOM_AV: return "Custom(av)";
+
+                case Reading.SIGNAL_MAX_BIN: return "Signal Bin Peak";
 
                 // not used
                 case (Reading)(int)22: return "";
@@ -1900,6 +1909,7 @@ namespace Thetis
                 case Reading.VOLTS: return "V";
                 case Reading.AZ: return "°";
                 case Reading.ELE: return "°";
+                case Reading.SIGNAL_MAX_BIN: return "dBm";
             }
 
             return reading.ToString();
@@ -4273,6 +4283,8 @@ namespace Thetis
                     //setReading(rx, Reading.SUB_AGC_AV, ref readings);
                     //setReading(rx, Reading.SUB_AGC_GAIN, ref readings);
                     //setReading(rx, Reading.SUB_ESTIMATED_PBSNR, ref readings);
+
+                    setReading(rx, Reading.SIGNAL_MAX_BIN, ref readings);
                 }
                 else
                 {
@@ -5928,6 +5940,8 @@ namespace Thetis
             {
                 _owningmeter = owningmeter;
 
+                ItemType = MeterItemType.FILTER_BUTTONS;
+
                 Initialise();
             }
             public override void Initialise()
@@ -5943,9 +5957,7 @@ namespace Thetis
                 {
                     _filter = _owningmeter.FilterVfoB;
                     Buttons = 9;
-                }
-
-                ItemType = MeterItemType.FILTER_BUTTONS;
+                }                
 
                 setupButtons();
             }
@@ -6919,7 +6931,7 @@ namespace Thetis
             public clsModeButtonBox(clsMeter owningmeter)
             {
                 _owningmeter = owningmeter;
-
+                ItemType = MeterItemType.MODE_BUTTONS;                
                 Initialise();
             }
             public override void Initialise()
@@ -6930,8 +6942,6 @@ namespace Thetis
                     _mode = _owningmeter.ModeVfoA;
                 else if (_owningmeter.RX == 2)
                     _mode = _owningmeter.ModeVfoB;
-
-                ItemType = MeterItemType.MODE_BUTTONS;
 
                 Buttons = 12;
 
@@ -7192,7 +7202,7 @@ namespace Thetis
             public clsBandButtonBox(clsMeter owningmeter)
             {
                 _owningmeter = owningmeter;
-
+                ItemType = MeterItemType.BAND_BUTTONS;                
                 Initialise();
             }
             public override void Initialise()
@@ -7225,8 +7235,6 @@ namespace Thetis
 
                 _click_highlight = false;
                 _force_update = false;
-
-                ItemType = MeterItemType.BAND_BUTTONS;
 
                 Buttons = 15;
 
@@ -8027,6 +8035,9 @@ namespace Thetis
 
                 LAST = 99
             }
+
+            private const int MAX_BUTTONS = 50;
+
             private int _number_of_buttons;
             private int _columns;
             private float _margin;
@@ -8121,34 +8132,42 @@ namespace Thetis
                 // 0 is settings, 1 is active
                 for (int n = 0; n < 2; n++)
                 {
-                    _fill_colour[n] = new System.Drawing.Color[_number_of_buttons];
-                    _hover_colour[n] = new System.Drawing.Color[_number_of_buttons];
-                    _border_colour[n] = new System.Drawing.Color[_number_of_buttons];
+                    _fill_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
+                    _hover_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
+                    _border_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
 
-                    _click_colour[n] = new System.Drawing.Color[_number_of_buttons];
+                    _click_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
 
-                    _use_off_colour[n] = new bool[_number_of_buttons];
-                    _use_indicator[n] = new bool[_number_of_buttons];
-                    _indicator_width[n] = new float[_number_of_buttons];
+                    _use_off_colour[n] = new bool[MAX_BUTTONS];
+                    _use_indicator[n] = new bool[MAX_BUTTONS];
+                    _indicator_width[n] = new float[MAX_BUTTONS];
 
-                    _on_colour[n] = new System.Drawing.Color[_number_of_buttons];
-                    _off_colour[n] = new System.Drawing.Color[_number_of_buttons];
-                    _on[n] = new bool[_number_of_buttons];
+                    _on_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
+                    _off_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
+                    _on[n] = new bool[MAX_BUTTONS];
 
-                    _fontFamily[n] = new string[_number_of_buttons];
-                    _fontStyle[n] = new FontStyle[_number_of_buttons];
-                    _fontSize[n] = new float[_number_of_buttons];
-                    _font_colour[n] = new System.Drawing.Color[_number_of_buttons];
+                    _fontFamily[n] = new string[MAX_BUTTONS];
+                    _fontStyle[n] = new FontStyle[MAX_BUTTONS];
+                    _fontSize[n] = new float[MAX_BUTTONS];
+                    _font_colour[n] = new System.Drawing.Color[MAX_BUTTONS];
 
-                    _text[n] = new string[_number_of_buttons];
+                    _text[n] = new string[MAX_BUTTONS];
 
-                    _enabled[n] = new bool[_number_of_buttons];
-                    _visible[n] = new bool[_number_of_buttons];
+                    _enabled[n] = new bool[MAX_BUTTONS];
+                    _visible[n] = new bool[MAX_BUTTONS];
 
-                    _indicator_type[n] = new IndicatorType[_number_of_buttons];
+                    _indicator_type[n] = new IndicatorType[MAX_BUTTONS];
+                }
 
-                    _total_buttons_visible = 0;
-                    for (int b = 0; b < _number_of_buttons; b++) {
+                ResetButtons();
+            }
+            public void ResetButtons()
+            {
+                // 0 is settings, 1 is active
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int b = 0; b < MAX_BUTTONS; b++)
+                    {
                         _fill_colour[n][b] = System.Drawing.Color.Black;
                         _hover_colour[n][b] = System.Drawing.Color.LightGray;
                         _border_colour[n][b] = System.Drawing.Color.White;
@@ -8172,11 +8191,12 @@ namespace Thetis
 
                         _enabled[n][b] = true;
                         _visible[n][b] = true;
-                        _total_buttons_visible++;
 
                         _indicator_type[n][b] = IndicatorType.RING;
                     }
                 }
+
+                _total_buttons_visible = _number_of_buttons;
             }
             public bool RebuildButtons
             {
@@ -8209,7 +8229,7 @@ namespace Thetis
                 set
                 {
                     _number_of_buttons = value;
-                    setupArrays();
+                    if (_number_of_buttons > MAX_BUTTONS) _number_of_buttons = MAX_BUTTONS;                    
                 }
             }
             public virtual int VisibleBits
@@ -15798,103 +15818,6 @@ namespace Thetis
                     return true;
                 }
                 return false;
-                //    //switch (ReadingSource)
-                //    //{
-                //    //    case Reading.SIGNAL_STRENGTH:
-                //    //    case Reading.AVG_SIGNAL_STRENGTH:
-                //    //        {
-                //    //            if (IsAboveS9Frequency(rx))
-                //    //                value = -153; //S0
-                //    //            else
-                //    //                value = -133; //S0
-                //    //        }
-                //    //        break;
-                //    //    case Reading.ADC_PK:
-                //    //    case Reading.ADC_AV:
-                //    //        {
-                //    //            value = -120.0f;
-                //    //        }
-                //    //        break;
-                //    //    case Reading.AGC_AV:
-                //    //    case Reading.AGC_PK:
-                //    //        value = -125.0f;
-                //    //        break;
-                //    //    case Reading.AGC_GAIN:
-                //    //        {
-                //    //            value = -50.0f;
-                //    //        }
-                //    //        break;
-                //    //    case Reading.MIC:
-                //    //    case Reading.MIC_PK:
-                //    //        {
-                //    //            value = -120.0f;
-                //    //        }
-                //    //        break;
-                //    //    case Reading.LEVELER:
-                //    //    case Reading.LEVELER_PK:
-                //    //        {
-                //    //            value = -30.0f;
-                //    //        }
-                //    //        break;
-                //    //    case Reading.LVL_G:
-                //    //        {
-                //    //            value = 0f;
-                //    //        }
-                //    //        break;
-                //    //    case Reading.ALC:
-                //    //    case Reading.ALC_PK:
-                //    //        {
-                //    //            value = -120.0f;
-                //    //        }
-                //    //        break;
-                //    //    case Reading.ALC_G: //alc comp
-                //    //        {
-                //    //            value = 0f;
-                //    //        }
-                //    //        break;
-                //    //    case Reading.ALC_GROUP:
-                //    //        {
-                //    //            value = -30.0f;
-                //    //        }
-                //    //        break;
-                //    //    case Reading.CFC_AV:
-                //    //    case Reading.CFC_PK:
-                //    //        {
-                //    //            value = -30.0f;
-                //    //        }
-                //    //        break;
-                //    //    case Reading.CFC_G:
-                //    //        {
-                //    //            value = 0f;
-                //    //        }
-                //    //        break;
-                //    //    case Reading.COMP:
-                //    //    case Reading.COMP_PK:
-                //    //        {
-                //    //            value = -30.0f;
-                //    //        }
-                //    //        break;
-                //    //    case Reading.PWR:
-                //    //    case Reading.REVERSE_PWR:
-                //    //        {
-                //    //            value = 0f;
-                //    //        }
-                //    //        break;
-                //    //    case Reading.SWR:
-                //    //        {
-                //    //            value = 1.0f;
-                //    //        }
-                //    //        break;
-                //    //    case Reading.ESTIMATED_PBSNR:
-                //    //        {
-                //    //            value = 0f;
-                //    //        }
-                //    //        break;
-                //    //}                    
-                //    return true;
-                //}
-                //value = 0;
-                //return false;
             }
             public PointF HighPoint
             {
@@ -16815,7 +16738,8 @@ namespace Thetis
                     case MeterType.FILTER_DISPLAY: ret = Reading.NONE.ToString(); break;
                     case MeterType.DIAL_DISPLAY: ret = Reading.NONE.ToString(); break;
                     case MeterType.CUSTOM_METER_BAR: ret = variable_index == 0 ? "Primary" : "Secondary"; break;
-                        //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg).ToString(); break; break.ToString(); break;
+                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg).ToString(); break; break.ToString(); break;
+                    case MeterType.SIGNAL_MAX_BIN: ret = Reading.SIGNAL_MAX_BIN.ToString(); break;
                 }
                 return ret;
             }
@@ -16865,7 +16789,8 @@ namespace Thetis
                     case MeterType.FILTER_DISPLAY: return 0;
                     case MeterType.DIAL_DISPLAY: return 0;
                     case MeterType.CUSTOM_METER_BAR: return 2;
-                        //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
+                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.SIGNAL_MAX_BIN: return 1;
                 }
                 return 0;
             }
@@ -16920,7 +16845,8 @@ namespace Thetis
                     case MeterType.FILTER_DISPLAY: AddFilterDisplay(nDelay, 0, out bBottom, 0.2f, restoreIg); break;
                     case MeterType.DIAL_DISPLAY: AddDial(nDelay, 0, out bBottom, 1f, restoreIg); break;
                     case MeterType.CUSTOM_METER_BAR: AddCustomBar(nDelay, 0, out bBottom, restoreIg); break;
-                        //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
+                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
+                    case MeterType.SIGNAL_MAX_BIN: AddSMeterBarMaxBin(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
                 // update the console data for the meter if we are not recovering
@@ -16954,6 +16880,10 @@ namespace Thetis
             public string AddSMeterBarSignalAvg(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
             {
                 return addSMeterBar(nMSupdate, Reading.AVG_SIGNAL_STRENGTH, fTop, out fBottom, restoreIg);
+            }
+            public string AddSMeterBarMaxBin(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
+            {
+                return addSMeterBar(nMSupdate, Reading.SIGNAL_MAX_BIN, fTop, out fBottom, restoreIg);
             }
             private clsFadeCover getFadeCover(string sId)
             {
@@ -17032,10 +16962,23 @@ namespace Thetis
 
                 ig.TopLeft = cb.TopLeft;
                 ig.Size = new SizeF(cb.Size.Width, fBottom);
-                if (reading == Reading.SIGNAL_STRENGTH)
-                    ig.MeterType = MeterType.SIGNAL_STRENGTH;
-                else
-                    ig.MeterType = MeterType.AVG_SIGNAL_STRENGTH;
+                //if (reading == Reading.SIGNAL_STRENGTH)
+                //    ig.MeterType = MeterType.SIGNAL_STRENGTH;
+                //else
+                //    ig.MeterType = MeterType.AVG_SIGNAL_STRENGTH;
+                switch (reading)
+                {
+                    case Reading.SIGNAL_STRENGTH:
+                        ig.MeterType = MeterType.SIGNAL_STRENGTH;
+                        break;
+                    case Reading.AVG_SIGNAL_STRENGTH:
+                        ig.MeterType = MeterType.AVG_SIGNAL_STRENGTH;
+                        break;
+                    case Reading.SIGNAL_MAX_BIN:
+                        ig.MeterType = MeterType.SIGNAL_MAX_BIN;
+                        break;
+                }
+
                 //lock (_meterItemLock)
                 //{
                     ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
@@ -26022,6 +25965,7 @@ namespace Thetis
                             break;
                         case Reading.SIGNAL_STRENGTH:
                         case Reading.AVG_SIGNAL_STRENGTH:
+                        case Reading.SIGNAL_MAX_BIN:
                             {
                                 generalScale(x,y,w,h, scale, 6, 3, -1, 60, 2, 20, fLineBaseY, fontSizeEmScaled, 255, 0.5f, true, true);
                             }

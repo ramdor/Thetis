@@ -761,6 +761,14 @@ namespace Thetis
         public static extern void destroy_impulse_cache();
         //
 
+        // WDSP peak display bin
+        [DllImport("wdsp.dll", EntryPoint = "SetupDetectMaxBin", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetupDetectMaxBin(int run, int disp, int ss, int LO, double rate, double fLow, double fHigh, double tau, int frame_rate);
+
+        [DllImport("wdsp.dll", EntryPoint = "GetDetectMaxBin", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double GetDetectMaxBin(int disp);
+        //
+
         #endregion
 
         #region Enums
@@ -877,15 +885,13 @@ namespace Thetis
 	        case MeterType.AGC_GAIN:
                 val = GetRXAMeter(channel, rxaMeterType.RXA_AGC_GAIN);
 		        break;
-            //
             case MeterType.AGC_PK:
                 val = GetRXAMeter(channel, rxaMeterType.RXA_AGC_PK);
                 break;
             case MeterType.AGC_AV:
                 val = GetRXAMeter(channel, rxaMeterType.RXA_AGC_AV);
                 break;
-                //
-                default:
+            default:
 		        val = -400.0;
 		        break;
 	        }
