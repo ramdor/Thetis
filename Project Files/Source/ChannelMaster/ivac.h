@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2015-2017 Warren Pratt, NR0V
+Copyright (C) 2015-2025 Warren Pratt, NR0V
 Copyright (C) 2015-2016 Doug Wigley, W5WC
 
 This program is free software; you can redistribute it and/or
@@ -88,6 +88,8 @@ typedef struct _ivac
 
 	int exclusive_in;				// only use with wasapi right now
 	int exclusive_out;				// only use with wasapi right now
+
+	CRITICAL_SECTION cs_ivac;
 } ivac, *IVAC;
 
 void combinebuff (int n, double* a, double* combined);

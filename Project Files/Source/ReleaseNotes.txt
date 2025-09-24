@@ -35,7 +35,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] spectrum gradient change. Now -150 to +10 dBm.  NOTE: all gradients will need to be adjusted
 - [change] cursor/peak readout colours moved to Appearance-General
 - [change] float precision maintained for display/meter calibration offsets
-- [change] limit setPan to filter display spectrum to 1/8 of framerate (~266ms update interval when vfo is changing causing the spectrum pan)
+- [change] limit setPan to filter display spectrum to 1/8 of framerate (~266ms update interval when vfo is changing the spectrum pan)
 - [change] refactored midi wheel code to try and remove the lag when spinning a wheel very fast. Slider/knob will still have same issue. Behringer devices PL-1/Micro/etc do not use this new code
 - [change] rx filter can now be +-20kHz wide to mirror TX filter widths. Shift also needs to be set as that will (at the moment) imply a width limit
 - [fix] mic disable/enable button on front end will now disable the mic at startup if set as off. Note: its state is saved as part of the tx profile
@@ -65,6 +65,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] issue where WWV was selected when in a ham band the associated selected rx antenna would not be shown correctly in the antenna button box when the switch to the WWV was made
 - [fix] a RedPitaya 'bodge' has been added to fix issue where tx attenuation had no effect. It seems the RP firmware needs RX attenuation to be adjusted, unlike the Anan's etc. Note: Radio Model needs to be Red Pitaya for this to take effect
 - [fix] infrequent access violation and crash/shutdown prevented when enabling and disabling VACs via TCI (line_out command) or CAT (ZZVA)
+- [fix] vfo band text now updated when frequency changes for the multimeter vfo item. Note: rate limited to 250ms unlike legacy meter
 
 ## v2.10.3.8 - Change Log
 - [fix] maintain delta checkbox now greyed if adjust min to noise floor is unchecked

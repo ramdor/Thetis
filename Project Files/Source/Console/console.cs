@@ -66,7 +66,7 @@ namespace Thetis
     {
         public const bool CHECK_DEV_VERSION = true; // this will check github for dev versions, set to false when performing a release
 
-        public const int MAX_FPS = 360;
+        public const int MAX_FPS = 640;
 
         #region Variable Declarations
         // ======================================================

@@ -48,6 +48,7 @@ using System.Xml;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.IO.Ports;
+using System.Runtime.CompilerServices;
 
 //directX
 using SharpDX;
@@ -3815,6 +3816,9 @@ namespace Thetis
 
             m.TuneStepIndex = _console.TuneStepIndex;
 
+            m.UpdateBandText(true);
+            m.UpdateBandText(false);
+
             m.AntennasChanged(_console.RX1Band, _console.TXBand, _console.VFOAFreq, _console.TXFreq);
 
             // update any filter meter items and setupbuttons to update filter text
@@ -4906,8 +4910,19 @@ namespace Thetis
                 public PointF _min;
                 public PointF _max;
             }
-            private Dictionary<float, clsPercCache> _percCache;
-            private Queue<float> _percCacheKey;
+
+            //
+            internal float[] _scales_calibKeys;
+            internal PointF[] _scales_calibValues;
+            internal float _scales_minX;
+            internal float _scales_maxX;
+            internal float _scales_minY;
+            internal float _scales_maxY;
+
+            private const int MAX_PERC_CACHE_ENTRIES = 500;
+            private Dictionary<int, clsPercCache> _percCache;
+            private Queue<int> _percCacheKey;
+            //
 
             private string _sId;
             private string _sParentId;
@@ -4921,7 +4936,6 @@ namespace Thetis
             private SizeF _size;  // 0-1,0-1
             private int _zOrder; // lower first
             private int _msUpdateInterval; //ms
-            private bool _update_always;
             private float _attackRatio; // 0f - 1f
             private float _decayRatio; // 0f - 1f
             private float _value;
@@ -4980,7 +4994,6 @@ namespace Thetis
                 _displayTopLeft.Y = _topLeft.Y;
                 _zOrder = 0;
                 _msUpdateInterval = 5000; //ms
-                _update_always = false;
                 _attackRatio = 0.8f;
                 _decayRatio = 0.2f;
                 _value = -200f;
@@ -4996,8 +5009,8 @@ namespace Thetis
                 _bFadeOnTx = false;
                 _bPrimary = false;
                 _maxPower = CurrentPowerRating;//100f;
-                _percCache = new Dictionary<float, clsPercCache>();
-                _percCacheKey = new Queue<float>();
+                _percCache = new Dictionary<int, clsPercCache>(MAX_PERC_CACHE_ENTRIES + 1);
+                _percCacheKey = new Queue<int>(MAX_PERC_CACHE_ENTRIES + 1);
                 _updateStopwatch = new Stopwatch();
                 _fadeValue = 255;
                 _disabled = false;
@@ -5029,7 +5042,42 @@ namespace Thetis
                 _mouse_entered = false;
                 _mouseButtonDown = false;
                 _mouseButton = MouseButtons.None;
+
+                _scales_calibKeys = Array.Empty<float>();
+                _scales_calibValues = Array.Empty<PointF>();
+                _scales_minX = _scales_minY = _scales_maxX = _scales_maxY = 0f;
             }
+            public void PrepareCalibration()
+            {
+                //[2.10.3.9]MW0LGE order these once, pointless doing it every time we get a percentage !
+                if (ScaleCalibration == null || ScaleCalibration.Count == 0)
+                {
+                    _scales_calibKeys = Array.Empty<float>();
+                    _scales_calibValues = Array.Empty<PointF>();
+                    _scales_minX = _scales_minY = _scales_maxX = _scales_maxY = 0f;
+                    return;
+                }
+
+                int count = ScaleCalibration.Count;
+                _scales_calibKeys = new float[count];
+                _scales_calibValues = new PointF[count];
+                int i = 0;
+
+                //note we need this prefilled array to be ordered/sorted otherwise the binary search will not be valid if item not found
+                //ie: it wont return closest
+                foreach (KeyValuePair<float, PointF> kvp in ScaleCalibration.OrderBy(p => p.Key))
+                {
+                    _scales_calibKeys[i] = kvp.Key;
+                    _scales_calibValues[i] = kvp.Value;
+                    i++;
+                }
+                
+                _scales_minX = _scales_calibValues.Min(p => p.X);
+                _scales_maxX = _scales_calibValues.Max(p => p.X);
+                _scales_minY = _scales_calibValues.Min(p => p.Y);
+                _scales_maxY = _scales_calibValues.Max(p => p.Y);
+            }
+
             //public Guid GetMMIOGuid(int index)
             //{
             //    return _mmio_guid[index];
@@ -5082,27 +5130,40 @@ namespace Thetis
                 get { return _disabled; }
                 set { _disabled = value; }
             }
+            //[2.10.30.9]MW0LGE this perc cache code totally refactored, and only caches to 2 decimal precision for the dB value, and is keyed on the int version of that
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void AddPerc(clsPercCache pc)
             {
-                if (_percCache.ContainsKey(pc._value)) return;
-
-                _percCache.Add(pc._value, pc);
-                _percCacheKey.Enqueue(pc._value);
-                if (_percCache.Count > 500)
+                float f = pc._value * 100f;
+                int i = (int)(f + (f >= 0f ? 0.5f : -0.5f));
+                if (_percCache.TryGetValue(i, out _))
+                    return;
+                _percCache[i] = pc;
+                _percCacheKey.Enqueue(i);
+                if (_percCache.Count > MAX_PERC_CACHE_ENTRIES)
                 {
-                    float sOldestKey = _percCacheKey.Dequeue();
-                    _percCache.Remove(sOldestKey);
+                    int oldest_key = _percCacheKey.Dequeue();
+                    _percCache.Remove(oldest_key);
                 }
             }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public clsPercCache GetPerc(float value)
             {
-                if (!_percCache.ContainsKey(value)) return null;
-                return _percCache[value];
+                float f = value * 100f;
+                int i = (int)(f + (f >= 0f ? 0.5f : -0.5f));
+                _percCache.TryGetValue(i, out clsPercCache cached);
+                return cached;
             }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool HasPerc(float value)
             {
-                return _percCache.ContainsKey(value);
+                float f = value * 100f;
+                int i = (int)(f + (f >= 0f ? 0.5f : -0.5f));
+                return _percCache.TryGetValue(i, out _);
             }
+            //
             public string ID {
                 get { return _sId; }
                 set { _sId = value; }
@@ -6269,6 +6330,7 @@ namespace Thetis
                 _tx_freq = -1;
                 _rxtx_swap = false;
                 _ig = ig;
+                _timer = null;
 
                 ItemType = MeterItemType.ANTENNA_BUTTONS;
 
@@ -9376,23 +9438,6 @@ namespace Thetis
                 get { return _fontSize; }
                 set { _fontSize = value; }
             }
-
-            //public override string ToString()
-            //{
-            //    string sRet;
-
-            //    sRet = ID + "|" +
-            //        ParentID + "|" +
-            //        ItemType.ToString() + "|" +
-            //        TopLeft.X.ToString("f4") + "|" +
-            //        TopLeft.Y.ToString("f4") + "|" +
-            //        Size.Width.ToString("f4") + "|" +
-            //        Size.Height.ToString("f4") + "|" +
-            //        //
-            //        _colour.ToString();
-
-            //    return sRet;
-            //}
         }
         internal class clsClock : clsMeterItem
         {
@@ -16433,6 +16478,15 @@ namespace Thetis
             private double _vfoB;
             private double _vfoSub;
             private bool _txVfoB;
+
+            private const int BAND_TEXT_RATE_LIMIT = 250; // limit the band text update to 250 ms
+            private System.Threading.Timer _timer_band_text_vfoA;
+            private System.Threading.Timer _timer_band_text_vfoB;
+            private readonly object _timerLock_vfoA = new object();
+            private readonly object _timerLock_vfoB = new object();
+            private DateTime _last_band_text_update_vfoA;
+            private DateTime _last_band_text_update_vfoB;
+
             private DSPMode _modeVfoA;
             private DSPMode _modeVfoB;
             private Band _bandVfoA;
@@ -16504,6 +16558,7 @@ namespace Thetis
             {
                 lock (_meterItemsLock)
                 {
+                    mi.PrepareCalibration(); // pre calc the scale ranges, if this meter item has any
                     _meterItems.Add(mi.ID, mi);
                 }
             }
@@ -19600,6 +19655,10 @@ namespace Thetis
                 _vfoB = 0;
                 _vfoSub = 0;
                 _txVfoB = false;
+                _timer_band_text_vfoA = null;
+                _timer_band_text_vfoB = null;
+                _last_band_text_update_vfoA = DateTime.UtcNow;
+                _last_band_text_update_vfoB = DateTime.UtcNow;
                 _bandVfoA = Band.FIRST;
                 _bandVfoB = Band.FIRST;
                 _bandVfoASub = Band.FIRST;
@@ -22996,10 +23055,54 @@ namespace Thetis
             public double VfoA
             {
                 get { return _vfoA; }
-                set 
-                { 
+                set
+                {
                     _vfoA = value;
-                    if(_rx == 1) _rx1VHForAbove = _vfoA >= _s9Frequency;
+                    if (_rx == 1) _rx1VHForAbove = _vfoA >= _s9Frequency;
+
+                    // band text on vfo change
+                    lock (_timerLock_vfoA)
+                    {
+                        DateTime now = DateTime.UtcNow;
+                        
+                        if ((now - _last_band_text_update_vfoA).TotalMilliseconds > BAND_TEXT_RATE_LIMIT)
+                        {
+                            // always update, at least every 500ms
+                            UpdateBandText(true);
+                            _last_band_text_update_vfoA = now;
+
+                            // cancel timer if one running
+                            if (_timer_band_text_vfoA != null)
+                            {
+                                System.Threading.Timer timer = _timer_band_text_vfoA;
+                                _timer_band_text_vfoA = null;
+                                timer.Dispose();
+                            }
+                        }
+                        else
+                        {
+                            if (_timer_band_text_vfoA == null)
+                            {
+                                // start a time if one not already running
+                                _timer_band_text_vfoA = new System.Threading.Timer(_ =>
+                                {
+                                    lock (_timerLock_vfoA)
+                                    {
+                                        UpdateBandText(true);
+                                        _last_band_text_update_vfoA = DateTime.UtcNow;
+                                        System.Threading.Timer timer = _timer_band_text_vfoA;
+                                        _timer_band_text_vfoA = null;
+                                        timer.Dispose();
+                                    }
+                                }, null, BAND_TEXT_RATE_LIMIT, System.Threading.Timeout.Infinite);
+                            }
+                            else
+                            {
+                                //postpone by BAND_TEXT_RATE_LIMIT ms
+                                _timer_band_text_vfoA.Change(BAND_TEXT_RATE_LIMIT, System.Threading.Timeout.Infinite);
+                            }
+                        }
+                    }
                 }
             }
             public double VfoB
@@ -23009,6 +23112,50 @@ namespace Thetis
                 { 
                     _vfoB = value;
                     if (_rx == 2) _rx2VHForAbove = _vfoB >= _s9Frequency;
+
+                    // band text on vfo change
+                    lock (_timerLock_vfoB)
+                    {
+                        DateTime now = DateTime.UtcNow;
+
+                        if ((now - _last_band_text_update_vfoB).TotalMilliseconds > BAND_TEXT_RATE_LIMIT)
+                        {
+                            // always update, at least every BAND_TEXT_RATE_LIMIT ms
+                            UpdateBandText(false);
+                            _last_band_text_update_vfoB = now;
+
+                            // cancel timer if one running
+                            if (_timer_band_text_vfoB != null)
+                            {
+                                System.Threading.Timer timer = _timer_band_text_vfoB;
+                                _timer_band_text_vfoB = null;
+                                timer.Dispose();
+                            }
+                        }
+                        else
+                        {
+                            if (_timer_band_text_vfoB == null)
+                            {
+                                // start a time if one not already running
+                                _timer_band_text_vfoB = new System.Threading.Timer(_ =>
+                                {
+                                    lock (_timerLock_vfoB)
+                                    {
+                                        UpdateBandText(false);
+                                        _last_band_text_update_vfoB = DateTime.UtcNow;
+                                        System.Threading.Timer timer = _timer_band_text_vfoB;
+                                        _timer_band_text_vfoB = null;
+                                        timer.Dispose();
+                                    }
+                                }, null, BAND_TEXT_RATE_LIMIT, System.Threading.Timeout.Infinite);
+                            }
+                            else
+                            {
+                                // postpone by BAND_TEXT_RATE_LIMIT ms
+                                _timer_band_text_vfoB.Change(BAND_TEXT_RATE_LIMIT, System.Threading.Timeout.Infinite);
+                            }
+                        }
+                    }
                 }
             }
             public double VfoSub
@@ -23032,7 +23179,7 @@ namespace Thetis
                 set 
                 { 
                     _bandVfoA = value;
-                    updateBandText(true);
+                    UpdateBandText(true);
                 }
             }
             public Band BandVfoB
@@ -23041,7 +23188,7 @@ namespace Thetis
                 set 
                 { 
                     _bandVfoB = value;
-                    updateBandText(false);
+                    UpdateBandText(false);
                 }
             }
             public Band BandVfoASub
@@ -23175,7 +23322,7 @@ namespace Thetis
                 get { return _txeqEnabled; }
                 set { _txeqEnabled = value; }
             }
-            private void updateBandText(bool is_vfoA)
+            public void UpdateBandText(bool is_vfoA)
             {
                 bool ok;
                 if(_rx == 1)
@@ -23566,7 +23713,7 @@ namespace Thetis
             private object _DXlock = new object();
             //
             private Dictionary<System.Drawing.Color, SharpDX.Direct2D1.Brush> _DXBrushes;
-            private Color4 _backColour;
+            private Color4 _backColour_clear_colour;
             private System.Drawing.Color _backgroundColour;
             private Dictionary<string, SharpDX.Direct2D1.Bitmap> _images;
             private Dictionary<string, BitmapBrush> _bitmap_brushes;
@@ -23662,8 +23809,8 @@ namespace Thetis
                 //
 
                 _backgroundColour = System.Drawing.Color.Black;
-                _backColour = convertColour(_backgroundColour);
-                
+                _backColour_clear_colour = convertColour(System.Drawing.Color.FromArgb(255, System.Drawing.Color.Black));
+
                 _images = new Dictionary<string, SharpDX.Direct2D1.Bitmap>();
                 _bitmap_brushes = new Dictionary<string, BitmapBrush>();
                 
@@ -23746,7 +23893,6 @@ namespace Thetis
                 set 
                 {
                     _backgroundColour = value;
-                    _backColour = convertColour(_backgroundColour);
                 }
             }
             internal void RemoveAnySkinImages()
@@ -24259,16 +24405,19 @@ namespace Thetis
                                 t.TranslationVector = _pixelShift;
                                 _renderTarget.Transform = t;
 
-                                // background for entire form/area?
-                                _renderTarget.Clear(_backColour);
+                                // ensure background for entire form/area is cleared in black, without alpha
+                                _renderTarget.Clear(_backColour_clear_colour);
+
+                                // overlay background colour
+                                SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, targetWidth - 1f, targetHeight - 1f);
+                                _renderTarget.FillRectangle(rect, getDXBrushForColour(_backgroundColour));
 
                                 nSleepTime = drawMeters(out height);
                                 if (nSleepTime > 250) nSleepTime = 250; // sleep max of 250ms for some sensible redraw
                                                                         // maxint can be returned if no meteritem entries
 
                                 if (_highlightEdge)
-                                {
-                                    SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, targetWidth - 1f, targetHeight - 1f);
+                                {                                    
                                     rect.Inflate(-8, -8);
                                     _renderTarget.DrawRectangle(rect, getDXBrushForColour(System.Drawing.Color.FromArgb(192, System.Drawing.Color.DarkOrange)), 16f);
                                 }
@@ -31967,135 +32116,210 @@ namespace Thetis
             {
                 return rad * (180f / Math.PI);
             }
-            private void getPerc(clsMeterItem mi, float value, out float percX, out float percY, out PointF min, out PointF max)
+            private void getPerc(clsMeterItem mi, float rawValue, out float percX, out float percY, out PointF min, out PointF max)
             {
-                percX = 0;
-                percY = 0;
+                percX = 0f;
+                percY = 0f;
                 min = new PointF(0f, 0f);
                 max = new PointF(0f, 0f);
 
-                value = (float)Math.Round(value, 2); // NOTE: this will limit the finding of keys in the scale calibration below
-
-                // adjust for >= 30mhz
+                float value = (float)Math.Round(rawValue, 2);
                 if (mi.ReadingSource == Reading.SIGNAL_STRENGTH || mi.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
                     value += MeterManager.dbmOffsetForAboveS9Frequency(_rx);
-                // normalise to 100w
                 else if (mi.NormaliseTo100W)
-                {
-                    //value *= MeterManager.normalisePower();
-                    value *= (100 / mi.MaxPower);
-                }
-                // custom bar, will always have range 0-100 scale, so convert value
+                    value *= 100f / mi.MaxPower;
                 else if (mi.IsCustom)
                 {
-                    float clamped_value = Math.Max(mi.CustomMin, Math.Min(mi.CustomMax, value));
-                    float range = mi.CustomMax - mi.CustomMin;
-                    value = range != 0 ? (clamped_value - mi.CustomMin) / range * 100f : 0;
+                    float c = Math.Max(mi.CustomMin, Math.Min(mi.CustomMax, value));
+                    float r = mi.CustomMax - mi.CustomMin;
+                    value = r != 0f ? (c - mi.CustomMin) / r * 100f : 0f;
                 }
 
-                clsMeterItem.clsPercCache pc = mi.GetPerc(value);
-                if (pc != null)
-                {                    
-                    percX = pc._percX;
-                    percY = pc._percY;
-                    min = pc._min;
-                    max = pc._max;
+                //[2.10.3.9]MW0LGE refactor for speed
+                clsMeterItem.clsPercCache cacheEntry = mi.GetPerc(value);
+                if (cacheEntry != null)
+                {
+                    percX = cacheEntry._percX;
+                    percY = cacheEntry._percY;
+                    min = cacheEntry._min;
+                    max = cacheEntry._max;
                     return;
                 }
 
-                if (mi.ScaleCalibration.Count > 0)
+                if (mi._scales_calibKeys.Length == 0)
+                    return;
+
+                float[] keys = mi._scales_calibKeys;
+                PointF[] vals = mi._scales_calibValues;
+                int idx = Array.BinarySearch(keys, value);
+                bool exact = idx >= 0;
+                int lowIdx = exact ? idx : ~idx - 1;
+                int highIdx = exact ? idx : ~idx;
+                if (lowIdx < 0) lowIdx = 0;
+                if (highIdx < 0) highIdx = 0;
+                if (lowIdx >= keys.Length) lowIdx = keys.Length - 1;
+                if (highIdx >= keys.Length) highIdx = keys.Length - 1;
+
+                PointF pLow = vals[lowIdx];
+                PointF pHigh = vals[highIdx];
+                float vLow = keys[lowIdx];
+                float vHigh = keys[highIdx];
+                bool singlePoint = lowIdx == highIdx;
+                float rangeX = mi._scales_maxX - mi._scales_minX;
+                float rangeY = mi._scales_maxY - mi._scales_minY;
+
+                float interpX = singlePoint
+                    ? pLow.X
+                    : pLow.X + (pHigh.X - pLow.X) * ((value - vLow) / (vHigh - vLow));
+                float interpY = singlePoint
+                    ? pLow.Y
+                    : pLow.Y + (pHigh.Y - pLow.Y) * ((value - vLow) / (vHigh - vLow));
+
+                percX = rangeX > 0f ? (interpX - mi._scales_minX) / rangeX : 0f;
+                percY = rangeY > 0f ? (interpY - mi._scales_minY) / rangeY : 0f;
+                min = new PointF(mi._scales_minX, mi._scales_minY);
+                max = new PointF(mi._scales_maxX, mi._scales_maxY);
+
+                clsMeterItem.clsPercCache newCacheEntry = new clsMeterItem.clsPercCache
                 {
-                    // todo, only implemented for clockwise needles atm
-                    PointF p_low = PointF.Empty;
-                    PointF p_high = PointF.Empty;
-                    float value_low = -200f;
-                    float value_high = -200f;
-                    bool bEqual = false;
+                    _value = value,
+                    _percX = percX,
+                    _percY = percY,
+                    _min = min,
+                    _max = max
+                };
+                mi.AddPerc(newCacheEntry);
+            }
 
-                    if (mi.ScaleCalibration.ContainsKey(value))
-                    {
-                        p_low = mi.ScaleCalibration[value];
-                        p_high = mi.ScaleCalibration[value];
-                        value_low = value;
-                        value_high = value;
-                        bEqual = true;
-                    }
-                    else if (value < mi.ScaleCalibration.OrderBy(p => p.Key).First().Key) // below lowest
-                    {
-                        p_low = p_high = mi.ScaleCalibration.OrderBy(p => p.Key).First().Value;
-                        value_low = value_high = mi.ScaleCalibration.OrderBy(p => p.Key).First().Key;
-                        bEqual = true;
-                    }
-                    else if (value > mi.ScaleCalibration.OrderBy(p => p.Key).Last().Key) // above highest
-                    {
-                        p_low = p_high = mi.ScaleCalibration.OrderBy(p => p.Key).Last().Value;
-                        value_low = value_high = mi.ScaleCalibration.OrderBy(p => p.Key).Last().Key;
-                        bEqual = true;
-                    }
-                    else
-                    {
-                        //low side
-                        foreach (KeyValuePair<float, PointF> kvp in mi.ScaleCalibration.OrderByDescending(p => p.Key))
-                        {
-                            if (kvp.Key <= value)
-                            {
-                                p_low = kvp.Value;
-                                value_low = kvp.Key;
-                                break;
-                            }
-                        }
+            //private void getPerc(clsMeterItem mi, float value, out float percX, out float percY, out PointF min, out PointF max)
+            //{
+            //    percX = 0;
+            //    percY = 0;
+            //    min = new PointF(0f, 0f);
+            //    max = new PointF(0f, 0f);
 
-                        // high
-                        foreach (KeyValuePair<float, PointF> kvp in mi.ScaleCalibration.OrderBy(p => p.Key))
-                        {
-                            if (kvp.Key >= value)
-                            {
-                                p_high = kvp.Value;
-                                value_high = kvp.Key;
-                                break;
-                            }
-                        }
-                    }
-                    //get mins/maxs
-                    float minX = (float)Math.Round(mi.ScaleCalibration.OrderBy(p => p.Value.X).First().Value.X, 3);
-                    float maxX = (float)Math.Round(mi.ScaleCalibration.OrderByDescending(p => p.Value.X).First().Value.X, 3);
+            //    value = (float)Math.Round(value, 2); // NOTE: this will limit the finding of keys in the scale calibration below
 
-                    float minY = (float)Math.Round(mi.ScaleCalibration.OrderBy(p => p.Value.Y).First().Value.Y, 3);
-                    float maxY = (float)Math.Round(mi.ScaleCalibration.OrderByDescending(p => p.Value.Y).First().Value.Y, 3);
+            //    // adjust for >= 30mhz
+            //    if (mi.ReadingSource == Reading.SIGNAL_STRENGTH || mi.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
+            //        value += MeterManager.dbmOffsetForAboveS9Frequency(_rx);
+            //    // normalise to 100w
+            //    else if (mi.NormaliseTo100W)
+            //    {
+            //        //value *= MeterManager.normalisePower();
+            //        value *= (100 / mi.MaxPower);
+            //    }
+            //    // custom bar, will always have range 0-100 scale, so convert value
+            //    else if (mi.IsCustom)
+            //    {
+            //        float clamped_value = Math.Max(mi.CustomMin, Math.Min(mi.CustomMax, value));
+            //        float range = mi.CustomMax - mi.CustomMin;
+            //        value = range != 0 ? (clamped_value - mi.CustomMin) / range * 100f : 0;
+            //    }
 
-                    float rangeX = maxX - minX;
-                    float rangeY = maxY - minY;
-                    percX = 0;
-                    percY = 0;
-                    if (bEqual)
-                    {
-                        if (rangeX > 0) percX = (p_low.X - minX) / rangeX;
-                        if (rangeY > 0) percY = (p_low.Y - minY) / rangeY;
-                    }
-                    else
-                    {
-                        float value_range = value_high - value_low;
-                        float ratio = (value - value_low) / value_range;
-                        float newRangeX = p_high.X - p_low.X;
-                        float newRangeY = p_high.Y - p_low.Y;
+            //    clsMeterItem.clsPercCache pc = mi.GetPerc(value);
+            //    if (pc != null)
+            //    {                    
+            //        percX = pc._percX;
+            //        percY = pc._percY;
+            //        min = pc._min;
+            //        max = pc._max;
+            //        return;
+            //    }
 
-                        if (rangeX > 0) percX = ((p_low.X - minX) + (newRangeX * ratio)) / rangeX;
-                        if (rangeY > 0) percY = ((p_low.Y - minY) + (newRangeY * ratio)) / rangeY;
-                    }
+            //    if (mi.ScaleCalibration.Count > 0)
+            //    {
+            //        // todo, only implemented for clockwise needles atm
+            //        PointF p_low = PointF.Empty;
+            //        PointF p_high = PointF.Empty;
+            //        float value_low = -200f;
+            //        float value_high = -200f;
+            //        bool bEqual = false;
 
-                    percX = (float)Math.Round(percX, 3);
-                    percY = (float)Math.Round(percY, 3);
-                    min = new PointF(minX, minY);
-                    max = new PointF(maxX, maxY);
+            //        if (mi.ScaleCalibration.ContainsKey(value))
+            //        {
+            //            p_low = mi.ScaleCalibration[value];
+            //            p_high = mi.ScaleCalibration[value];
+            //            value_low = value;
+            //            value_high = value;
+            //            bEqual = true;
+            //        }
+            //        else if (value < mi.ScaleCalibration.OrderBy(p => p.Key).First().Key) // below lowest
+            //        {
+            //            p_low = p_high = mi.ScaleCalibration.OrderBy(p => p.Key).First().Value;
+            //            value_low = value_high = mi.ScaleCalibration.OrderBy(p => p.Key).First().Key;
+            //            bEqual = true;
+            //        }
+            //        else if (value > mi.ScaleCalibration.OrderBy(p => p.Key).Last().Key) // above highest
+            //        {
+            //            p_low = p_high = mi.ScaleCalibration.OrderBy(p => p.Key).Last().Value;
+            //            value_low = value_high = mi.ScaleCalibration.OrderBy(p => p.Key).Last().Key;
+            //            bEqual = true;
+            //        }
+            //        else
+            //        {
+            //            //low side
+            //            foreach (KeyValuePair<float, PointF> kvp in mi.ScaleCalibration.OrderByDescending(p => p.Key))
+            //            {
+            //                if (kvp.Key <= value)
+            //                {
+            //                    p_low = kvp.Value;
+            //                    value_low = kvp.Key;
+            //                    break;
+            //                }
+            //            }
 
-                    pc = new clsMeterItem.clsPercCache() { _value = value,
-                                                            _percX = percX,
-                                                            _percY = percY,
-                                                            _min = min,
-                                                            _max = max };
-                    mi.AddPerc(pc);
-                }
-            }            
+            //            // high
+            //            foreach (KeyValuePair<float, PointF> kvp in mi.ScaleCalibration.OrderBy(p => p.Key))
+            //            {
+            //                if (kvp.Key >= value)
+            //                {
+            //                    p_high = kvp.Value;
+            //                    value_high = kvp.Key;
+            //                    break;
+            //                }
+            //            }
+            //        }
+            //        //get mins/maxs
+            //        float minX = (float)Math.Round(mi.ScaleCalibration.OrderBy(p => p.Value.X).First().Value.X, 3);
+            //        float maxX = (float)Math.Round(mi.ScaleCalibration.OrderByDescending(p => p.Value.X).First().Value.X, 3);
+
+            //        float minY = (float)Math.Round(mi.ScaleCalibration.OrderBy(p => p.Value.Y).First().Value.Y, 3);
+            //        float maxY = (float)Math.Round(mi.ScaleCalibration.OrderByDescending(p => p.Value.Y).First().Value.Y, 3);
+
+            //        float rangeX = maxX - minX;
+            //        float rangeY = maxY - minY;
+            //        percX = 0;
+            //        percY = 0;
+            //        if (bEqual)
+            //        {
+            //            if (rangeX > 0) percX = (p_low.X - minX) / rangeX;
+            //            if (rangeY > 0) percY = (p_low.Y - minY) / rangeY;
+            //        }
+            //        else
+            //        {
+            //            float value_range = value_high - value_low;
+            //            float ratio = (value - value_low) / value_range;
+            //            float newRangeX = p_high.X - p_low.X;
+            //            float newRangeY = p_high.Y - p_low.Y;
+
+            //            if (rangeX > 0) percX = ((p_low.X - minX) + (newRangeX * ratio)) / rangeX;
+            //            if (rangeY > 0) percY = ((p_low.Y - minY) + (newRangeY * ratio)) / rangeY;
+            //        }
+
+            //        percX = (float)Math.Round(percX, 3);
+            //        percY = (float)Math.Round(percY, 3);
+            //        min = new PointF(minX, minY);
+            //        max = new PointF(maxX, maxY);
+
+            //        pc = new clsMeterItem.clsPercCache() { _value = value,
+            //                                                _percX = percX,
+            //                                                _percY = percY,
+            //                                                _min = min,
+            //                                                _max = max };
+            //        mi.AddPerc(pc);
+            //    }
+            //}            
             private SharpDX.Direct2D1.Bitmap bitmapFromSystemBitmap(RenderTarget rt, System.Drawing.Bitmap bitmap, string sId)
             {
                 //[2.10.3.6]MW0LGE refactored to use Windows Imaging Component (WIC)

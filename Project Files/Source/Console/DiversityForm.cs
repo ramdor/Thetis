@@ -147,6 +147,8 @@ namespace Thetis
             InitializeComponent();
             Common.DoubleBufferAll(this, true);
 
+            setNewNaming(true);
+
             console = c;
 
             udR1.Maximum = udGainMulti.Maximum; //[2.10.3.6]MW0LGE these need to be high so that restore form can recover values
@@ -207,7 +209,7 @@ namespace Thetis
             // create timer for autohide and attach callback
             AutoHideTimer = new System.Timers.Timer();
             AutoHideTimer.Elapsed += new ElapsedEventHandler(Callback);
-            AutoHideTimer.Enabled = false;               
+            AutoHideTimer.Enabled = false;
         }
 
         /// <summary>
@@ -314,8 +316,8 @@ namespace Thetis
             // 
             // picRadar
             // 
-            this.picRadar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.picRadar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picRadar.BackColor = System.Drawing.SystemColors.Control;
             this.picRadar.Location = new System.Drawing.Point(4, 272);
@@ -1490,7 +1492,7 @@ namespace Thetis
 
         private void picRadar_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if(_initalising) return;
+            if (_initalising) return;
             // if(!mouse_down) return;
 
             int W = picRadar.Width;
@@ -1894,7 +1896,7 @@ namespace Thetis
             {
                 r_A = locked_r;
                 if (udR2.Value != (decimal)locked_r) udR2.Value = (decimal)Math.Round(locked_r * m_dGainMulti, 3); // MW0LGE_21b only assign if different
-                                                                                     // fix endless event loop and crash
+                                                                                                                   // fix endless event loop and crash
             }
             udR.Value = (decimal)Math.Round(udR2.Value / (decimal)m_dGainMulti, 3); //MW0LGE_21c;
             UpdateDiversity();
@@ -1964,7 +1966,7 @@ namespace Thetis
             {
                 r_A = locked_r;
                 if ((decimal)locked_r != udR1.Value) udR1.Value = (decimal)Math.Round(locked_r * m_dGainMulti, 3); // MW0LGE_21b only assign if different
-                                                                                     // fix endless event loop and crash
+                                                                                                                   // fix endless event loop and crash
             }
             udR.Value = (decimal)Math.Round(udR1.Value / (decimal)m_dGainMulti, 3); //MW0LGE_21c
             UpdateDiversity();
@@ -2095,7 +2097,7 @@ namespace Thetis
             {
                 bool bOldLock = chkLockR.Checked; //[2.10.3.5]MW0LGE fixes #324
                 chkLockR.Checked = false;
-                
+
                 decimal v = Math.Min(value, udR1.Maximum);
                 v = Math.Max(v, udR1.Minimum); //MW0LGE_[2.9.0.7] not really needed as min is 0, belts/braces
                 _initalising = true;
@@ -2114,7 +2116,7 @@ namespace Thetis
             {
                 bool bOldLock = chkLockR.Checked; //[2.10.3.5]MW0LGE fixes #324
                 chkLockR.Checked = false;
-                
+
                 decimal v = Math.Min(value, udR2.Maximum);
                 v = Math.Max(v, udR2.Minimum); //MW0LGE_[2.9.0.7] not really needed as min is 0, belts/braces
                 _initalising = true;
@@ -2129,7 +2131,7 @@ namespace Thetis
 
         public decimal DiversityPhase
         {
-            set 
+            set
             {
                 bool bOldLockAngle = chkLockAngle.Checked; //[2.10.3.5]MW0LGE fixes #324
                 chkLockAngle.Checked = false;
@@ -2356,6 +2358,8 @@ namespace Thetis
                 _extDivOutput = 0;
                 //JanusAudio.SetMercSource(1);
                 WDSP.SetEXTDIVOutput(0, 0);
+
+                if (!console.IsSetupFormNull) console.SetupForm.UpdateDDCTab(); //[2.10.3.0]MW0LGE
             }
         }
 
@@ -2368,6 +2372,8 @@ namespace Thetis
                 _extDivOutput = 1;
                 //JanusAudio.SetMercSource(2);
                 WDSP.SetEXTDIVOutput(0, 1);
+
+                if (!console.IsSetupFormNull) console.SetupForm.UpdateDDCTab(); //[2.10.3.0]MW0LGE
             }
         }
 
@@ -2380,6 +2386,8 @@ namespace Thetis
                 _extDivOutput = 2;
                 //JanusAudio.SetMercSource(3);
                 WDSP.SetEXTDIVOutput(0, 2);
+
+                if (!console.IsSetupFormNull) console.SetupForm.UpdateDDCTab(); //[2.10.3.0]MW0LGE
             }
         }
 
@@ -2430,7 +2438,7 @@ namespace Thetis
         // check if we want portrait or landscape format. If landscape change form size and panel positions
         private void DiversityForm_Load(object sender, EventArgs e)
         {
-            if (console.SetupForm != null)
+            if (!console.IsSetupFormNull)
             {
                 if (console.SetupForm.AndromedaDiversityFormLandscape)
                 {
@@ -2456,7 +2464,7 @@ namespace Thetis
 
             if (chkLockR.Checked)
             {
-                if(udGainMulti.Value != (decimal)m_dGainMulti) udGainMulti.Value = (decimal)m_dGainMulti;
+                if (udGainMulti.Value != (decimal)m_dGainMulti) udGainMulti.Value = (decimal)m_dGainMulti;
                 return;
             }
 
@@ -2538,7 +2546,7 @@ namespace Thetis
                 _memories[index].enabled = false;
                 picRadar.Invalidate();
             }
-            else if(_memories[index].enabled)
+            else if (_memories[index].enabled)
             {
                 //recall
                 memorySettings ms = _memories[index];
@@ -2634,5 +2642,31 @@ namespace Thetis
         //    console.VFOSync = true;
         //    console.radio.GetDSPRX(1, 0).Copy(console.radio.GetDSPRX(0, 0));
         //}
+
+        private void setNewNaming(bool new_naming)
+        {
+            if(new_naming)
+            {            
+                grpRxSource.Text = "RX1 Source";
+
+                radRxSourceRx1Rx2.Text = "Sync 1 + 2";
+                radRxSource1.Text = "Sync 1";
+                radRxSource2.Text = "Sync 2";
+
+                radioButtonMerc1.Text = "Sync 1";
+                radioButtonMerc2.Text = "Sync 2";
+            }
+            else
+            {
+                grpRxSource.Text = "Receiver Source";
+
+                radRxSourceRx1Rx2.Text = "Rx1 + Rx2";
+                radRxSource1.Text = "Receiver 1";
+                radRxSource2.Text = "Receiver 2";
+
+                radioButtonMerc1.Text = "Receiver 1";
+                radioButtonMerc2.Text = "Receiver 2";
+            }
+        }
     }
 }
