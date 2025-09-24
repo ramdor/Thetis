@@ -56,9 +56,12 @@ namespace Thetis
             public int heading;
             public string continent;
             public string country;
-            public DateTime spot_time;
+            public DateTime utc_spot_time;
             public bool IsSWL;
             public long SwlSecondsToLive;
+
+            public bool previously_highlighted;
+            public bool flashing;
 
             public bool[] Visible;
             public SizeF Size;
@@ -77,9 +80,11 @@ namespace Thetis
                 heading = -1;
                 continent = "";
                 country = "";
-                spot_time = DateTime.UtcNow;
+                utc_spot_time = DateTime.UtcNow;
                 IsSWL = false;
                 SwlSecondsToLive = 0;
+                previously_highlighted = false;
+                flashing = false;
             }
             public void BrowseQRZ()
             {
@@ -279,10 +284,13 @@ namespace Thetis
                 continent = spot_continent,
                 country = spot_country,
                 timeAdded = DateTime.UtcNow,
-                spot_time = spotted_time,
+                utc_spot_time = spotted_time,
 
                 IsSWL = time_to_live != -1,
-                SwlSecondsToLive = time_to_live
+                SwlSecondsToLive = time_to_live,
+
+                previously_highlighted = false,
+                flashing = false
             };
 
             if (_replaceOwnCallAppearance && spot.callsign == _replaceCall)

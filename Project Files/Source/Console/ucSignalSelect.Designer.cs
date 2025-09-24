@@ -46,7 +46,7 @@
             this.radSig.TabIndex = 0;
             this.radSig.TabStop = true;
             this.radSig.Text = "Sig";
-            this.toolTip1.SetToolTip(this.radSig, "Signal");
+            this.toolTip1.SetToolTip(this.radSig, "Signal Peak");
             this.radSig.UseVisualStyleBackColor = true;
             this.radSig.CheckedChanged += new System.EventHandler(this.radSig_CheckedChanged);
             // 

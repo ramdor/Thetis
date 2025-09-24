@@ -1714,8 +1714,8 @@ namespace Thetis
         {
             switch (meter)
             {
-                case MeterType.SIGNAL_STRENGTH: return "Signal Strength";
-                case MeterType.AVG_SIGNAL_STRENGTH: return "Avg Signal Strength";
+                case MeterType.SIGNAL_STRENGTH: return "Signal Strength Peak";
+                case MeterType.AVG_SIGNAL_STRENGTH: return "Signal Strength Avg";
                 case MeterType.SIGNAL_TEXT: return "Signal Strength Text";
                 case MeterType.ADC: return "ADC";
                 case MeterType.AGC: return "AGC";
@@ -1803,7 +1803,7 @@ namespace Thetis
                 case Reading.REVERSE_PWR: return "Reverse Power";
                 case Reading.REV_ADC: return "Reverse ADC";
                 case Reading.REV_VOLT: return "Reverse VOLT";
-                case Reading.SIGNAL_STRENGTH: return "Signal";
+                case Reading.SIGNAL_STRENGTH: return "Signal Peak";
                 case Reading.SWR: return "SWR";
                 case Reading.VOLTS: return "Volts";
                 case Reading.AZ: return "Azimuth";
@@ -15803,10 +15803,12 @@ namespace Thetis
             private int _msIgnoreHistoryDuration;
             private bool _showValue;
             private bool _showPeakValue;
+            private bool _showType;
             private readonly object _historyLock = new object();
             private System.Drawing.Color _colour;
             private System.Drawing.Color _markerColour;
             private System.Drawing.Color _peakValueColour;
+            private System.Drawing.Color _typeColor;
             private bool _peakHold;
             private bool _showMarker;
             private bool _showSubMarker;
@@ -15838,8 +15840,11 @@ namespace Thetis
 
                 _fontFamily = "Trebuchet MS";
                 _fontStyle = FontStyle.Regular;
-                _fontColor = System.Drawing.Color.DarkGray;
+                _fontColor = System.Drawing.Color.Gray;
                 _fontSize = 20f;
+
+                _showType = true;
+                _typeColor = System.Drawing.Color.Gray;
 
                 ItemType = MeterItemType.SIGNAL_TEXT_DISPLAY;
                 ReadingSource = Reading.SIGNAL_STRENGTH;
@@ -15877,6 +15882,16 @@ namespace Thetis
                 // this reading has been used
                 if (!readingsUsed.Contains(ReadingSource))
                     readingsUsed.Add(ReadingSource);
+            }
+            public System.Drawing.Color TypeColour
+            {
+                get { return _typeColor; }
+                set { _typeColor = value; }
+            }
+            public bool ShowType
+            {
+                get { return _showType; }
+                set { _showType = value; }
             }
             public bool ShowValue
             {
@@ -21760,6 +21775,8 @@ namespace Thetis
                                             cst.FadeOnRx = igs.FadeOnRx;
                                             cst.FadeOnTx = igs.FadeOnTx;
                                             //cst.Colour = igs.Colour;
+                                            cst.ShowType = igs.ShowType;
+                                            cst.TypeColour = igs.TitleColor;
                                             cst.FontColour = igs.MarkerColour;
                                             cst.HistoryColour = igs.SubMarkerColour;
                                             cst.PeakValueColour = igs.PeakValueColour;
@@ -22713,6 +22730,8 @@ namespace Thetis
                                             //igs.FadeOnRx = cst.FadeOnRx;
                                             //igs.FadeOnTx = cst.FadeOnTx;
                                             //igs.Colour = cst.Colour;
+                                            igs.TitleColor = cst.TypeColour;
+                                            igs.ShowType = cst.ShowType;
                                             igs.MarkerColour = cst.FontColour;
                                             igs.SubMarkerColour = cst.HistoryColour;
                                             igs.PeakValueColour = cst.PeakValueColour;
@@ -32141,6 +32160,36 @@ namespace Thetis
                 float fontSizeEmScaled;
                 SizeF szTextSize;
 
+                if (st.ShowType)
+                {
+                    // signal type symbol top right
+                    float fDiag = (float)Math.Sqrt((w * w) + (h * h));
+                    float fScale = fDiag / 450f;
+                    float fStrokeWidth = 1.5f * fScale;
+                    switch (st.ReadingSource)
+                    {
+                        case Reading.SIGNAL_STRENGTH:
+                            // arrow
+                            _renderTarget.DrawLine(new Vector2(x + (w * 0.95f), y + (h * 0.09f)), new Vector2(x + (w * 0.98f), y + (h * 0.09f)), getDXBrushForColour(st.TypeColour, 255), fStrokeWidth);
+                            _renderTarget.DrawLine(new Vector2(x + (w * 0.95f), y + (h * 0.2f)), new Vector2(x + (w * 0.965f), y + (h * 0.1f)), getDXBrushForColour(st.TypeColour, 255), fStrokeWidth);
+                            _renderTarget.DrawLine(new Vector2(x + (w * 0.98f), y + (h * 0.2f)), new Vector2(x + (w * 0.965f), y + (h * 0.1f)), getDXBrushForColour(st.TypeColour, 255), fStrokeWidth);
+                            plotText("PK", x + (w * 0.94f), y + (h * 0.025f), rect.Width, st.FontSize * 0.32f, st.TypeColour, 255, st.FontFamily, st.FntStyle, true);
+                            break;
+                        case Reading.AVG_SIGNAL_STRENGTH:
+                            // circle
+                            float circ_rad = fStrokeWidth * 2.5f;
+                            _renderTarget.DrawEllipse(new Ellipse(new Vector2(x + (w * 0.965f), y + (h * 0.16f)), circ_rad, circ_rad), getDXBrushForColour(st.TypeColour, 255), fStrokeWidth);
+                            plotText("AVG", x + (w * 0.94f), y + (h * 0.025f), rect.Width, st.FontSize * 0.32f, st.TypeColour, 255, st.FontFamily, st.FntStyle, true);
+                            break;
+                        case Reading.SIGNAL_MAX_BIN:
+                            // line
+                            _renderTarget.DrawLine(new Vector2(x + (w * 0.95f), y + (h * 0.2f)), new Vector2(x + (w * 0.965f), y + (h * 0.1f)), getDXBrushForColour(st.TypeColour, 255), fStrokeWidth);
+                            _renderTarget.DrawLine(new Vector2(x + (w * 0.98f), y + (h * 0.2f)), new Vector2(x + (w * 0.965f), y + (h * 0.1f)), getDXBrushForColour(st.TypeColour, 255), fStrokeWidth);
+                            plotText("FFT", x + (w * 0.94f), y + (h * 0.025f), rect.Width, st.FontSize * 0.32f, st.TypeColour, 255, st.FontFamily, st.FntStyle, true);
+                            break;
+                    }
+                }
+
                 // s-reading
                 fontSizeEmScaled = (st.FontSize / 16f) * (w / 52f);
                 Common.SMeterFromDBM2(st.Value, MeterManager.IsAboveS9Frequency(_rx), out int S, out int dBmOver);
@@ -32492,7 +32541,95 @@ namespace Thetis
                     }
                 }
 
+                //needle
                 _renderTarget.DrawLine(new SharpDX.Vector2(startX, startY), new SharpDX.Vector2(endX, endY), getDXBrushForColour(ni.Colour, 255), fStrokeWidth);
+                //marker
+                switch(ni.ReadingSource)
+                {
+                    case Reading.SIGNAL_STRENGTH:
+                        {
+                            // arrow
+                            float angleRad = (float)(ang + degToRad(rotation));
+                            float cosA = (float)Math.Cos(angleRad);
+                            float sinA = (float)Math.Sin(angleRad);
+
+                            float dirX = cosA * radiusX;
+                            float dirY = sinA * radiusY;
+
+                            float perpX = -dirY;
+                            float perpY = dirX;
+                            float perpLen = (float)Math.Sqrt(perpX * perpX + perpY * perpY);
+                            perpX /= perpLen;
+                            perpY /= perpLen;
+
+                            float tipX = startX + dirX * 0.31f;
+                            float tipY = startY + dirY * 0.31f;
+                            float baseX = startX + dirX * 0.26f;
+                            float baseY = startY + dirY * 0.26f;
+
+                            float wingHalfWidth = radiusX * 0.026f;
+                            float leftWingX = baseX - perpX * wingHalfWidth;
+                            float leftWingY = baseY - perpY * wingHalfWidth;
+                            float rightWingX = baseX + perpX * wingHalfWidth;
+                            float rightWingY = baseY + perpY * wingHalfWidth;
+
+                            _renderTarget.DrawLine(new Vector2(leftWingX, leftWingY), new Vector2(tipX, tipY), getDXBrushForColour(ni.Colour, 255), fStrokeWidth);
+                            _renderTarget.DrawLine(new Vector2(rightWingX, rightWingY), new Vector2(tipX, tipY), getDXBrushForColour(ni.Colour, 255), fStrokeWidth);
+
+                            // line
+                            float midXL = startX + dirX * 0.315f;
+                            float midYL = startY + dirY * 0.315f;
+                            float halfLine = fStrokeWidth * 3.0f;
+
+                            float leftX = midXL - perpX * halfLine;
+                            float leftY = midYL - perpY * halfLine;
+                            float rightX = midXL + perpX * halfLine;
+                            float rightY = midYL + perpY * halfLine;
+
+                            _renderTarget.DrawLine(new Vector2(leftX, leftY), new Vector2(rightX, rightY), getDXBrushForColour(ni.Colour, 255), fStrokeWidth);
+                            break;
+                        }
+                    case Reading.AVG_SIGNAL_STRENGTH:
+                        {
+                            // circle
+                            float circ_rad = fStrokeWidth * 2.5f;
+                            float mid_markerX = startX + (float)(Math.Cos(ang + degToRad(rotation)) * radiusX * 0.29);
+                            float mid_markerY = startY + (float)(Math.Sin(ang + degToRad(rotation)) * radiusY * 0.29);
+                            _renderTarget.DrawEllipse(new Ellipse(new Vector2(mid_markerX, mid_markerY), circ_rad, circ_rad), getDXBrushForColour(ni.Colour, 255), fStrokeWidth);
+                            break;
+                        }
+                    case Reading.SIGNAL_MAX_BIN:
+                        {
+                            // arrow
+                            float angleRad = (float)(ang + degToRad(rotation));
+                            float cosA = (float)Math.Cos(angleRad);
+                            float sinA = (float)Math.Sin(angleRad);
+
+                            float dirX = cosA * radiusX;
+                            float dirY = sinA * radiusY;
+
+                            float perpX = -dirY;
+                            float perpY = dirX;
+                            float perpLen = (float)Math.Sqrt(perpX * perpX + perpY * perpY);
+                            perpX /= perpLen;
+                            perpY /= perpLen;
+
+                            float tipX = startX + dirX * 0.31f;
+                            float tipY = startY + dirY * 0.31f;
+                            float baseX = startX + dirX * 0.26f;
+                            float baseY = startY + dirY * 0.26f;
+
+                            float wingHalfWidth = radiusX * 0.026f;
+                            float leftWingX = baseX - perpX * wingHalfWidth;
+                            float leftWingY = baseY - perpY * wingHalfWidth;
+                            float rightWingX = baseX + perpX * wingHalfWidth;
+                            float rightWingY = baseY + perpY * wingHalfWidth;
+
+                            _renderTarget.DrawLine(new Vector2(leftWingX, leftWingY), new Vector2(tipX, tipY), getDXBrushForColour(ni.Colour, 255), fStrokeWidth);
+                            _renderTarget.DrawLine(new Vector2(rightWingX, rightWingY), new Vector2(tipX, tipY), getDXBrushForColour(ni.Colour, 255), fStrokeWidth);
+                        }
+                        break;
+                }
 
                 if (ni.Setup)
                 {
