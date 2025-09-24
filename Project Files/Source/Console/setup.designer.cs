@@ -13871,7 +13871,7 @@
             0});
             this.udOptMaxFilterShift.Location = new System.Drawing.Point(128, 70);
             this.udOptMaxFilterShift.Maximum = new decimal(new int[] {
-            10000,
+            20000,
             0,
             0,
             0});
@@ -13936,7 +13936,7 @@
             0});
             this.udOptMaxFilterWidth.Location = new System.Drawing.Point(128, 22);
             this.udOptMaxFilterWidth.Maximum = new decimal(new int[] {
-            10000,
+            20000,
             0,
             0,
             0});

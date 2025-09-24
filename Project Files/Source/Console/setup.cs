@@ -55,7 +55,7 @@ namespace Thetis
     using System.IO.Compression;
     using System.Timers;
     using System.Runtime.InteropServices;
-
+    using System.Runtime.ExceptionServices;
     public partial class Setup : Form
     {
         // for these callsigns always show cmasio tab, as a perk to the testers from discord
@@ -155,7 +155,7 @@ namespace Thetis
             GetTxProfileDefs();
             RefreshCOMPortLists();
 
-            InitAudioTab();
+            InitAudioTab(null, true);
 
             initComboHistoryReadings0();
 
@@ -826,7 +826,7 @@ namespace Thetis
             if (needsRecovering(recoveryList, "radP1DDC6ADC2")) radP1DDC6ADC2.Checked = false;
         }
 
-        public void InitAudioTab(List<string> recoveryList = null)
+        public void InitAudioTab(List<string> recoveryList = null, bool only_rates = false)
         {
             // refactored 2.10.3.7
             int selected_rate1_index = comboAudioSampleRate1.SelectedIndex;
@@ -852,16 +852,23 @@ namespace Thetis
                 comboAudioSampleRateRX2.Items.Add(rate);
             }
 
+            if (only_rates) return; // exit as we dont want to select anything, this is only used in AfterConstructor
+
+            int rx1_index;
             if (selected_rate1_index >= 0 && selected_rate1_index < comboAudioSampleRate1.Items.Count)
-                comboAudioSampleRate1.SelectedIndex = selected_rate1_index;
+                rx1_index = selected_rate1_index;
             else
-                comboAudioSampleRate1.SelectedIndex = Array.IndexOf(rates, 192000);
+                rx1_index = Array.IndexOf(rates, 192000);
 
+            comboAudioSampleRate1.SelectedIndex = rx1_index; // this will always cause a changed event because we removed everything
 
+            int rx2_index;
             if (selected_rate2_index >= 0 && selected_rate2_index < comboAudioSampleRateRX2.Items.Count)
-                comboAudioSampleRateRX2.SelectedIndex = selected_rate2_index;
+                rx2_index = selected_rate2_index;
             else
-                comboAudioSampleRateRX2.SelectedIndex = Array.IndexOf(rates, 192000);
+                rx2_index = Array.IndexOf(rates, 192000);
+
+            comboAudioSampleRateRX2.SelectedIndex = rx2_index; // this will always cause a changed event because we removed everything
 
             //if (!comboAudioSampleRate1.Items.Contains(96000))
             //    comboAudioSampleRate1.Items.Add(96000);
@@ -2203,7 +2210,10 @@ namespace Thetis
                 this.txtCollapsedHeight.Text = value.ToString();
             }
         }
-
+        public void SetPriorityClass()
+        {
+            comboGeneralProcessPriority_SelectedIndexChanged(this, EventArgs.Empty);
+        }
         private void ForceAllEvents()
         {
             EventArgs e = EventArgs.Empty;
@@ -2215,7 +2225,6 @@ namespace Thetis
             chkGeneralRXOnly_CheckedChanged(this, e);
             comboGeneralXVTR_SelectedIndexChanged(this, e);
             chkGeneralDisablePTT_CheckedChanged(this, e);
-            comboGeneralProcessPriority_SelectedIndexChanged(this, e);
             chkFullDiscovery_CheckedChanged(this, e);
             btnSetIPAddr_Click(this, e);
             radOrionPTTOff_CheckedChanged(this, e);
@@ -2234,10 +2243,13 @@ namespace Thetis
 
             // Audio Tab
             comboAudioBuffer2_SelectedIndexChanged(this, e);
-            comboAudioSampleRate1_SelectedIndexChanged(this, e);
+            comboAudioBuffer3_SelectedIndexChanged(this, e);
+
+            //comboAudioSampleRate1_SelectedIndexChanged(this, e); // not needed, as done by InitAudioTab() which is part of radRadioProtocolSelect_CheckedChanged called a few lines above
+            //comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
 
             comboAudioSampleRate2_SelectedIndexChanged(this, e);
-            comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
+            comboAudioSampleRate3_SelectedIndexChanged(this, e);
 
             udAudioLatency2_ValueChanged(this, e);
             udAudioLatency2_Out_ValueChanged(this, e);
@@ -2328,6 +2340,8 @@ namespace Thetis
             chkLogVoltsAmps_CheckedChanged(this, e);
 
             // Filter tab
+            udOptMaxFilterWidth_ValueChanged(this, e); //[2.10.3.9]MW0LGE
+            udOptMaxFilterShift_ValueChanged(this, e); //[2.10.3.9]MW0LGE
             udFilterDefaultLowCut_ValueChanged(this, e); //MW0LGE_21d5
             udRX2FilterDefaultLowCut_ValueChanged(this, e);
 
@@ -6809,6 +6823,7 @@ namespace Thetis
 
         private void udOptMaxFilterWidth_ValueChanged(object sender, System.EventArgs e)
         {
+            if (initializing) return;
             console.MaxFilterWidth = (int)udOptMaxFilterWidth.Value;
         }
 
@@ -6830,6 +6845,7 @@ namespace Thetis
 
         private void udOptMaxFilterShift_ValueChanged(object sender, System.EventArgs e)
         {
+            if (initializing) return;
             console.MaxFilterShift = (int)udOptMaxFilterShift.Value;
         }
 
@@ -18958,7 +18974,6 @@ namespace Thetis
         private double m_dVAC1Perc2 = 0;
         private double m_dVAC2Perc1 = 0;
         private double m_dVAC2Perc2 = 0;
-        private int m_nAverageCount = 0;
 
         private int _oldVAC1OutOverflows = 0;
         private int _oldVAC1OutUnderflows = 0;
@@ -18970,25 +18985,32 @@ namespace Thetis
         private int _oldVAC2InOverflows = 0;
         private int _oldVAC2InUnderflows = 0;
 
+        //[2.10.3.9]MW0LGE this attribue, together with the app.config change 'legacyCorruptedStateExceptionsPolicy' enables
+        //the catch of address acceptions inside the try/catch block which is in an unsafe block
+        [HandleProcessCorruptedStateExceptions]
         private void timer_VAC_Monitor_Tick(object sender, EventArgs e)
         {
-            bool updateUI = true;
+            bool updateUI;
+            double alpha = 0.05; //smothing to use on the % ringbuffer display
 
             if (!lblVAC1ovfl.Visible && !lblVAC2ovfl.Visible && !lblAdvancedAudioWarning.Visible)
             {
+                // setup audio controls not visible, so update slower. We need this as front end will show the overflow/underflow 4box icon if there is an issue
                 timer_VAC_Monitor.Interval = 100;
                 updateUI = false;
             }
             else
             {
                 timer_VAC_Monitor.Interval = 50;
+                updateUI = true;
             }
 
             int underflows = 0, overflows = 0, ringsize = 0, nring = 0;
             double var = 0, dP = 0;
 
+            //VAC 1
             bool ok = true;
-            try //[2.10.3.7]MW0LGE this can fail if the vac is turned on/off. Mostly seen when TCI server does it via line_out command
+            try //[2.10.3.7]MW0LGE this can fail if the vac is turned on/off. Mostly seen when TCI server does it via line_out command, and when ZZVA is used via CAT
             {
                 unsafe
                 {
@@ -18999,6 +19021,9 @@ namespace Thetis
 
             if (ok)
             {
+                dP = (nring / (double)ringsize) * 100.0;
+                m_dVAC1Perc1 = (alpha * dP) + ((1 - alpha) * m_dVAC1Perc1);
+
                 // front end isplay of overflow/underflow MW0LGE_21k9rc5
                 if (overflows != _oldVAC1OutOverflows)
                 {
@@ -19010,7 +19035,6 @@ namespace Thetis
                     if (underflows != 0) console.VAC1UnderOver.OutUnderflow = true;
                     _oldVAC1OutUnderflows = underflows;
                 }
-                //
 
                 if (updateUI)
                 {
@@ -19019,17 +19043,25 @@ namespace Thetis
                     lblVAC1var.Text = var.ToString("F6");
                     lblVAC1NRing1.Text = nring.ToString("00000");
                     lblVAC1RingSize1.Text = ringsize.ToString("00000");
-                    dP = (nring / (double)ringsize) * 100.0;
-                    m_dVAC1Perc1 += dP;
                     lblVAC1RingPerc1.Text = dP.ToString("000");
-                    if (chkAudioEnableVAC.Checked) ucVAC1VARGrapherOut.AddDataPoint(var - 1f);
+                    lblVAC1RingPercAV1.Text = m_dVAC1Perc1.ToString("000");
+                    if (chkAudioEnableVAC.Checked)
+                    {
+                        ucVAC1VARGrapherOut.AddDataPoint(var - 1f);
+                        ucVAC1VARGrapherOut.RingBufferPerc = m_dVAC1Perc1;
+                    }
+                    try
+                    {
+                        if (Audio.VAC1ControlFlagOut)
+                            txtVAC1OldVarOut.Text = var.ToString("F6");
+                    }
+                    catch { }
                 }
-                if (Audio.VAC1ControlFlagOut)
-                    txtVAC1OldVarOut.Text = var.ToString("F6");
             }
+            else
 
             ok = true;
-            try //[2.10.3.7]MW0LGE this can fail if the vac is turned on/off. Mostly seen when TCI server does it via line_out command
+            try //[2.10.3.7]MW0LGE this can fail if the vac is turned on/off. Mostly seen when TCI server does it via line_out command, and when ZZVA is used via CAT
             {
                 unsafe
                 {
@@ -19040,6 +19072,9 @@ namespace Thetis
 
             if (ok)
             {
+                dP = (nring / (double)ringsize) * 100.0;
+                m_dVAC1Perc2 = (alpha * dP) + ((1 - alpha) * m_dVAC1Perc2);
+
                 // front end isplay of overflow/underflow MW0LGE_21k9rc5
                 if (overflows != _oldVAC1InOverflows)
                 {
@@ -19051,7 +19086,6 @@ namespace Thetis
                     if (underflows != 0) console.VAC1UnderOver.InUnderflow = true;
                     _oldVAC1InUnderflows = underflows;
                 }
-                //
 
                 if (updateUI)
                 {
@@ -19060,17 +19094,25 @@ namespace Thetis
                     lblVAC1var2.Text = var.ToString("F6");
                     lblVAC1NRing2.Text = nring.ToString("00000");
                     lblVAC1RingSize2.Text = ringsize.ToString("00000");
-                    dP = (nring / (double)ringsize) * 100.0;
-                    m_dVAC1Perc2 += dP;
                     lblVAC1RingPerc2.Text = dP.ToString("000");
-                    if (chkAudioEnableVAC.Checked) ucVAC1VARGrapherIn.AddDataPoint(var - 1f);
+                    lblVAC1RingPercAV2.Text = m_dVAC1Perc2.ToString("000");
+                    if (chkAudioEnableVAC.Checked)
+                    {
+                        ucVAC1VARGrapherIn.AddDataPoint(var - 1f);
+                        ucVAC1VARGrapherIn.RingBufferPerc = m_dVAC1Perc2;
+                    }
+                    try
+                    {
+                        if (Audio.VAC1ControlFlagIn)
+                            txtVAC1OldVarIn.Text = var.ToString("F6");
+                    }
+                    catch { }
                 }
-                if (Audio.VAC1ControlFlagIn)
-                    txtVAC1OldVarIn.Text = var.ToString("F6");
             }
 
+            //VAC 2
             ok = true;
-            try //[2.10.3.7]MW0LGE this can fail if the vac is turned on/off. Mostly seen when TCI server does it via line_out command
+            try //[2.10.3.7]MW0LGE this can fail if the vac is turned on/off. Mostly seen when TCI server does it via line_out command, and when ZZVA is used via CAT
             {
                 unsafe
                 {
@@ -19081,6 +19123,9 @@ namespace Thetis
 
             if (ok)
             {
+                dP = (nring / (double)ringsize) * 100.0;
+                m_dVAC2Perc1 = (alpha * dP) + ((1 - alpha) * m_dVAC2Perc1);
+
                 // front end isplay of overflow/underflow MW0LGE_21k9rc5
                 if (overflows != _oldVAC2OutOverflows)
                 {
@@ -19092,7 +19137,6 @@ namespace Thetis
                     if (underflows != 0) console.VAC2UnderOver.OutUnderflow = true;
                     _oldVAC2OutUnderflows = underflows;
                 }
-                //
 
                 if (updateUI)
                 {
@@ -19101,15 +19145,24 @@ namespace Thetis
                     lblVAC2var.Text = var.ToString("F6");
                     lblVAC2NRing1.Text = nring.ToString("00000");
                     lblVAC2RingSize1.Text = ringsize.ToString("00000");
-                    dP = (nring / (double)ringsize) * 100.0;
-                    m_dVAC2Perc1 += dP;
                     lblVAC2RingPerc1.Text = dP.ToString("000");
-                    if (chkVAC2Enable.Checked) ucVAC2VARGrapherOut.AddDataPoint(var - 1f);
+                    lblVAC2RingPercAV1.Text = m_dVAC2Perc1.ToString("000");
+                    if (chkVAC2Enable.Checked)
+                    {
+                        ucVAC2VARGrapherOut.AddDataPoint(var - 1f);
+                        ucVAC2VARGrapherOut.RingBufferPerc = m_dVAC2Perc1;
+                    }
+                    try
+                    {
+                        if (Audio.VAC2ControlFlagOut)
+                            txtVAC2OldVarOut.Text = var.ToString("F6");
+                    }
+                    catch { }
                 }
             }
 
             ok = true;
-            try //[2.10.3.7]MW0LGE this can fail if the vac is turned on/off. Mostly seen when TCI server does it via line_out command
+            try //[2.10.3.7]MW0LGE this can fail if the vac is turned on/off. Mostly seen when TCI server does it via line_out command, and when ZZVA is used via CAT
             {
                 unsafe
                 {
@@ -19120,6 +19173,9 @@ namespace Thetis
 
             if (ok)
             {
+                dP = (nring / (double)ringsize) * 100.0;
+                m_dVAC2Perc2 = (alpha * dP) + ((1 - alpha) * m_dVAC2Perc2);
+
                 // front end isplay of overflow/underflow MW0LGE_21k9rc5
                 if (overflows != _oldVAC2InOverflows)
                 {
@@ -19131,7 +19187,6 @@ namespace Thetis
                     if (underflows != 0) console.VAC2UnderOver.InUnderflow = true;
                     _oldVAC2InUnderflows = underflows;
                 }
-                //
 
                 if (updateUI)
                 {
@@ -19140,40 +19195,19 @@ namespace Thetis
                     lblVAC2var2.Text = var.ToString("F6");
                     lblVAC2NRing2.Text = nring.ToString("00000");
                     lblVAC2RingSize2.Text = ringsize.ToString("00000");
-                    dP = (nring / (double)ringsize) * 100.0;
-                    m_dVAC2Perc2 += dP;
                     lblVAC2RingPerc2.Text = dP.ToString("000");
-                    if (chkVAC2Enable.Checked) ucVAC2VARGrapherIn.AddDataPoint(var - 1f);
-                }
-
-                if (updateUI)
-                {
-                    m_nAverageCount++;
-                    if (m_nAverageCount > 9)
+                    lblVAC2RingPercAV2.Text = m_dVAC2Perc2.ToString("000");
+                    if (chkVAC2Enable.Checked)
                     {
-                        m_dVAC1Perc1 /= (m_nAverageCount + 1);
-                        m_dVAC1Perc2 /= (m_nAverageCount + 1);
-                        m_dVAC2Perc1 /= (m_nAverageCount + 1);
-                        m_dVAC2Perc2 /= (m_nAverageCount + 1);
-
-                        lblVAC1RingPercAV1.Text = m_dVAC1Perc1.ToString("000");
-                        lblVAC1RingPercAV2.Text = m_dVAC1Perc2.ToString("000");
-                        lblVAC2RingPercAV1.Text = m_dVAC2Perc1.ToString("000");
-                        lblVAC2RingPercAV2.Text = m_dVAC2Perc2.ToString("000");
-
-                        if (chkAudioEnableVAC.Checked)
-                        {
-                            ucVAC1VARGrapherOut.RingBufferPerc = m_dVAC1Perc1;
-                            ucVAC1VARGrapherIn.RingBufferPerc = m_dVAC1Perc2;
-                        }
-                        if (chkVAC2Enable.Checked)
-                        {
-                            ucVAC2VARGrapherOut.RingBufferPerc = m_dVAC2Perc1;
-                            ucVAC2VARGrapherIn.RingBufferPerc = m_dVAC2Perc2;
-                        }
-
-                        m_nAverageCount = 0;
+                        ucVAC2VARGrapherIn.AddDataPoint(var - 1f);
+                        ucVAC2VARGrapherIn.RingBufferPerc = m_dVAC2Perc2;
                     }
+                    try
+                    {
+                        if (Audio.VAC2ControlFlagIn)
+                            txtVAC2OldVarIn.Text = var.ToString("F6");
+                    }
+                    catch { }
                 }
             }
         }

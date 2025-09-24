@@ -243,7 +243,9 @@ namespace Thetis
         private static Dictionary<int, bool> _readingIgnore;
         private static Thread _meterThread;
         private static bool _meterThreadRunning;
-        //private static object _readingsLock = new object();        
+        //private static object _readingsLock = new object();
+
+        private static double _s9Frequency;
         private static bool _rx1VHForAbove;
         private static bool _rx2VHForAbove;
 
@@ -296,6 +298,7 @@ namespace Thetis
             _image_fetcher = new ImageFetcher();
 
             // static constructor
+            _s9Frequency = 30.0;
             _rx1VHForAbove = false;
             _rx2VHForAbove = false;
             _delegatesAdded = false;
@@ -2547,8 +2550,8 @@ namespace Thetis
             _console = c;
             _image_fetcher.Version = c.ProductVersion;
 
-            _rx1VHForAbove = _console.VFOAFreq >= _console.S9Frequency;
-            _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= _console.S9Frequency;
+            _rx1VHForAbove = _console.VFOAFreq >= _s9Frequency;
+            _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= _s9Frequency;
             _currentHPSDRmodel = HardwareSpecific.Model;
             _apolloPresent = _console.ApolloPresent;
             _alexPresent = _console.AlexPresent;
@@ -2574,10 +2577,13 @@ namespace Thetis
 
             _DXrenderers.Add(sId, renderer);
         }
-        public static void UpdateS9()
+        public static void UpdateS9(double s9freq)
         {
-            _rx1VHForAbove = _console.VFOAFreq >= _console.S9Frequency;
-            _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= _console.S9Frequency;
+            _s9Frequency = s9freq;
+
+            _rx1VHForAbove = _console.VFOAFreq >= _s9Frequency;
+            _rx2VHForAbove = _console.RX2Enabled && _console.VFOBFreq >= _s9Frequency;
+
             zeroAllMeters();
         }
         public static void RefreshAllImages()
@@ -3136,6 +3142,8 @@ namespace Thetis
         }
         private static void OnTXFrequencyChanged(double old_frequency, double new_frequency, Band old_band, Band new_band, bool rx2_enabled, bool tx_vfob, double centre_freq)
         {
+            if (old_frequency == new_frequency && old_band == new_band) return; // pointless if no change, note, we can not check c_f here as we are not provided with old
+
             MiniSpec.clsMiniSpec miniRx;
             if (rx2_enabled && tx_vfob)
             {
@@ -3584,68 +3592,82 @@ namespace Thetis
         {
             if (rx == 1)
             {
-                _rx1VHForAbove = newFreq >= _console.S9Frequency;
+                _rx1VHForAbove = newFreq >= _s9Frequency;
 
-                MiniSpec.clsMiniSpec miniRx = MiniSpec.GetMiniRX(0, false);
-                if (miniRx != null)
+                if (oldFreq != newFreq)
                 {
-                    miniRx.RXFrequency = newFreq;
-                }
-            }
-
-            lock (_metersLock)
-            {
-                foreach (KeyValuePair<string, clsMeter> mkvp in _meters.Where(o => o.Value.RX == rx))
-                {
-                    clsMeter m = mkvp.Value;
-                    m.VfoA = newFreq;
-                    m.ModeVfoA = newMode;
-                    m.BandVfoA = newBand;
-                }
-
-                if (oldFreq != newFreq) // do all meters, as same data for all
-                {
-                    foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                    MiniSpec.clsMiniSpec miniRx = MiniSpec.GetMiniRX(0, false);
+                    if (miniRx != null)
                     {
-                        clsMeter m = ms.Value;
-                        m.AntennasChanged(newBand, Band.FIRST, newFreq, -1);
+                        miniRx.RXFrequency = newFreq;
                     }
                 }
             }
-            bandChange(rx, oldBand, newBand, true, false);
+
+            if (oldFreq != newFreq || oldMode != newMode || oldBand != newBand)
+            {
+                lock (_metersLock)
+                {
+                    foreach (KeyValuePair<string, clsMeter> mkvp in _meters.Where(o => o.Value.RX == rx))
+                    {
+                        clsMeter m = mkvp.Value;
+                        if (oldFreq != newFreq) m.VfoA = newFreq;
+                        if (oldMode != newMode) m.ModeVfoA = newMode;
+                        if (oldBand != newBand) m.BandVfoA = newBand;
+                    }
+
+                    if (oldFreq != newFreq) // do all meters, as same data for all
+                    {
+                        foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                        {
+                            clsMeter m = ms.Value;
+                            m.AntennasChanged(newBand, Band.FIRST, newFreq, -1);
+                        }
+                    }
+                }
+            }
+
+            if (oldBand != newBand) bandChange(rx, oldBand, newBand, true, false);
         }
         private static void OnVFOB(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
             //_rx2VHForAbove = _console.RX2Enabled && newFreq/*_console.VFOBFreq*/ >= 30;
             if (rx == 2)
             {
-                _rx2VHForAbove = _console.RX2Enabled && newFreq >= _console.S9Frequency;
+                _rx2VHForAbove = _console.RX2Enabled && newFreq >= _s9Frequency;
 
-                MiniSpec.clsMiniSpec miniRx = MiniSpec.GetMiniRX(1, false);
-                if (miniRx != null)
+                if (oldFreq != newFreq)
                 {
-                    miniRx.RXFrequency = newFreq;
+                    MiniSpec.clsMiniSpec miniRx = MiniSpec.GetMiniRX(1, false);
+                    if (miniRx != null)
+                    {
+                        miniRx.RXFrequency = newFreq;
+                    }
                 }
             }
 
-            lock (_metersLock)
+            if (oldFreq != newFreq || oldMode != newMode || oldBand != newBand)
             {
-                foreach (KeyValuePair<string, clsMeter> mkvp in _meters.Where(o => o.Value.RX == rx))
+                lock (_metersLock)
                 {
-                    clsMeter m = mkvp.Value;
-                    m.VfoB = newFreq;
-                    m.ModeVfoB = newMode;
-                    m.BandVfoB = newBand;
+                    foreach (KeyValuePair<string, clsMeter> mkvp in _meters.Where(o => o.Value.RX == rx))
+                    {
+                        clsMeter m = mkvp.Value;
+                        if (oldFreq != newFreq) m.VfoB = newFreq;
+                        if (oldMode != newMode) m.ModeVfoB = newMode;
+                        if (oldBand != newBand) m.BandVfoB = newBand;
+                    }
                 }
             }
-            bandChange(rx, oldBand, newBand, true, false);
+
+            if (oldBand != newBand) bandChange(rx, oldBand, newBand, true, false);
         }
         public static void OnVFOASub(Band oldBand, Band newBand, DSPMode newMode, Filter newFilter, double oldFreq, double newFreq, double newCentreF, bool newCTUN, int newZoomSlider, double offset, int rx)
         {
             MiniSpec.clsMiniSpec miniRx = MiniSpec.GetMiniRX(0, true);
             if (miniRx != null)
             {
-                miniRx.RXFrequency = newFreq;
+                if (oldFreq != newFreq) miniRx.RXFrequency = newFreq;
             }
 
             lock (_metersLock)
@@ -3653,9 +3675,9 @@ namespace Thetis
                 foreach (KeyValuePair<string, clsMeter> mkvp in _meters.Where(o => o.Value.RX == 1)) // only applies to rx1
                 {
                     clsMeter m = mkvp.Value;
-                    m.VfoSub = newFreq;
+                    if (oldFreq != newFreq) m.VfoSub = newFreq;
                     //m.ModeVfoA = newMode;
-                    m.BandVfoASub = newBand;
+                    if (oldBand != newBand) m.BandVfoASub = newBand;
                 }
             }
         }
@@ -13377,7 +13399,7 @@ namespace Thetis
                     int high = (int)fHigh;
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
-                        _console.LimitFilterToSidebands(ref low, ref high, _owningmeter.RX, true);
+                        _console.ConstrainFilter(ref low, ref high, _owningmeter.RX, true);
                         if (_owningmeter.RX == 1)
                         {
                             _console.SelectRX1VarFilter(true, true);
@@ -22977,7 +22999,7 @@ namespace Thetis
                 set 
                 { 
                     _vfoA = value;
-                    if(_rx == 1) _rx1VHForAbove = _vfoA >= _console.S9Frequency;
+                    if(_rx == 1) _rx1VHForAbove = _vfoA >= _s9Frequency;
                 }
             }
             public double VfoB
@@ -22986,7 +23008,7 @@ namespace Thetis
                 set 
                 { 
                     _vfoB = value;
-                    if (_rx == 2) _rx2VHForAbove = _vfoB >= _console.S9Frequency;
+                    if (_rx == 2) _rx2VHForAbove = _vfoB >= _s9Frequency;
                 }
             }
             public double VfoSub
@@ -34189,6 +34211,7 @@ namespace Thetis
         public const int TX_BANDWIDTH = 20000;
         public const int PIXELS = 1024;
         public const int FRAME_RATE = 30;
+        public const int PAN_RATE_LIMIT_MS = 1000 / (FRAME_RATE / 8);
         public const int SUB_RX_OFFSET = 1024; // there can be 1024 regular, before the subrx's start
 
         public class FilterCharacteristics
@@ -34265,6 +34288,7 @@ namespace Thetis
                 _console.CWPitchChangedHandlers += OnCWPitchChanged;
                 _console.ModeChangeHandlers += OnModeChanged;
                 _console.PowerChangeHanders += OnPowerChanged;
+                _console.CTUNChangedHandlers += OnCTUNChanged;
 
                 //get all the notches
                 lock (_notch_locker)
@@ -34562,6 +34586,7 @@ namespace Thetis
                 _console.CWPitchChangedHandlers -= OnCWPitchChanged;
                 _console.ModeChangeHandlers -= OnModeChanged;
                 _console.PowerChangeHanders -= OnPowerChanged;
+                _console.CTUNChangedHandlers -= OnCTUNChanged;
             }
 
             List<int> ids = _mini_spec.Keys.ToList();
@@ -34580,6 +34605,14 @@ namespace Thetis
                     clsMiniSpec mrx = kvp.Value;
                     mrx.ClearData();
                 }
+            }
+        }
+        private static void OnCTUNChanged(int rx, bool oldCTUN, bool newCTUN, Band band)
+        {
+            foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Value.RX == rx))
+            {
+                clsMiniSpec mrx = kvp.Value;
+                mrx.Ctun = newCTUN;
             }
         }
         private static void OnModeChanged(int rx, DSPMode oldMode, DSPMode newMode, Band oldBand, Band newBand)
@@ -34616,10 +34649,13 @@ namespace Thetis
         }
         private static void OnCentreFrequency(int rx, double oldFreq, double newFreq, Band band, double offset)
         {
-            foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Value.RX == rx))
+            if (oldFreq != newFreq)
             {
-                clsMiniSpec mrx = kvp.Value;
-                mrx.CentreFreq = newFreq;
+                foreach (KeyValuePair<int, clsMiniSpec> kvp in _mini_spec.Where(minispec => minispec.Value.RX == rx))
+                {
+                    clsMiniSpec mrx = kvp.Value;
+                    mrx.CentreFreq = newFreq;
+                }
             }
         }
         private static void OnNotchChanged(int notch_index, double old_bw, double new_bw, bool active, double old_centre_freq, double new_centre_freq, bool added, bool removed)
@@ -34733,11 +34769,18 @@ namespace Thetis
 
             private int _cw_pitch;
             private DSPMode _mode;
+            private bool _ctun;
 
             private bool _sub_receiver;
 
             private readonly object _data_lock = new object();
             private readonly object _new_data_lock = new object();
+
+            //set pan rate limit, 1/8 of frame rate
+            private readonly Stopwatch _pan_stopwatch = Stopwatch.StartNew();
+            private System.Threading.Timer _pan_final_timer;
+            private bool _pan_pending;
+            private readonly object _pan_lock = new object();
 
             public clsMiniSpec(int rx, int id, bool sub_receiver, Console console)
             {
@@ -34751,6 +34794,7 @@ namespace Thetis
                 _max_filter_width = _console.MaxFilterWidth;
                 _mode = _rx == 1 ? _console.RX1DSPMode : _console.RX2DSPMode;
                 _cw_pitch = _console.CWPitch;
+                _ctun = _rx == 1 ? _console.ClickTuneDisplay : _console.ClickTuneRX2Display;
 
                 _centre_freq = _rx == 1 ? _console.CentreFrequency : _console.CentreRX2Frequency;
                 _rx_frequency = _rx == 1 ? _console.VFOAFreq : _console.VFOBFreq;
@@ -34839,6 +34883,13 @@ namespace Thetis
                 set
                 {
                     _mode = value;
+                }
+            }
+            public bool Ctun
+            {
+                set
+                {
+                    _ctun = value;
                 }
             }
             public int CWPitchOffset
@@ -35142,16 +35193,8 @@ namespace Thetis
 
                     if (!_mox)
                     {
-                        bool clickTune = _rx == 1 ? _console.ClickTuneDisplay : _console.ClickTuneRX2Display;
-                        if (!clickTune)
-                        {
-                            //if ctun is off, 0.5 is the centre, always
-                            _spec.PanSlider = 0.5;
-                        }
-                        else
-                        {
-                            setPan();
-                        }
+                        //setPan();
+                        rateLimitSetPan();
                     }
                 }
             }
@@ -35166,7 +35209,7 @@ namespace Thetis
 
                     if (_mox)
                     {
-                        bool clickTune = _rx == 1 ? _console.ClickTuneDisplay : _console.ClickTuneRX2Display;
+                        //bool clickTune = _rx == 1 ? _console.ClickTuneDisplay : _console.ClickTuneRX2Display;
                         //CTUN does not play a part in tx
                         //if (!clickTune)
                         //{
@@ -35175,45 +35218,92 @@ namespace Thetis
                         //}
                         //else
                         //{
-                            setPan();
+                            //setPan();
+                            rateLimitSetPan();
                         //}
                     }
                 }
             }
+            // rate limit setPan() to 1/8 frame rate
+            public void rateLimitSetPan()
+            {
+                lock (_pan_lock)
+                {
+                    if (_pan_stopwatch.ElapsedMilliseconds >= PAN_RATE_LIMIT_MS)
+                    {
+                        _pan_stopwatch.Restart();
+                        setPan();
+                        _pan_pending = false;
+                        _pan_final_timer?.Dispose();
+                        _pan_final_timer = null;
+                    }
+                    else
+                    {
+                        _pan_pending = true;
+
+                        if (_pan_final_timer == null)
+                        {
+                            long delay = PAN_RATE_LIMIT_MS - _pan_stopwatch.ElapsedMilliseconds;
+                            _pan_final_timer = new System.Threading.Timer(_ => {
+                                lock (_pan_lock)
+                                {
+                                    if (_pan_pending)
+                                    {
+                                        _pan_stopwatch.Restart();
+                                        setPan();
+                                        _pan_pending = false;
+                                        _pan_final_timer.Dispose();
+                                        _pan_final_timer = null;
+                                    }
+                                }
+                            }, null, delay, Timeout.Infinite);
+                        }
+                    }
+                }
+            }
+            //
             private void setPan()
             {
-                int centre_freq_hz = (int)(_centre_freq * 1e6);
-
-                int freq_hz;
-                if (_mox)
+                if (!_mox && !_ctun)
                 {
-                    freq_hz = (int)(_tx_frequency * 1e6);
+                    //if ctun is off, 0.5 is the centre, always
+                    _spec.PanSlider = 0.5;
                 }
                 else
                 {
-                    freq_hz = (int)(_rx_frequency * 1e6);
-                }
+                    int centre_freq_hz = (int)(_centre_freq * 1e6);
 
-                (int spec_low_hz, int spec_high_hz) = _spec.GetFrequencyExtents(0, 0.5); // get the full extents using 0 zoom slider, 0.5 pan (centre)
+                    int freq_hz;
+                    if (_mox)
+                    {
+                        freq_hz = (int)(_tx_frequency * 1e6);
+                    }
+                    else
+                    {
+                        freq_hz = (int)(_rx_frequency * 1e6);
+                    }
 
-                int bw_hz = spec_high_hz - spec_low_hz;
-                int low_freq_hz = centre_freq_hz - (bw_hz / 2);
-                int high_freq_hz = centre_freq_hz + (bw_hz / 2);
+                    (int spec_low_hz, int spec_high_hz) = _spec.GetFrequencyExtents(0, 0.5); // get the full extents using 0 zoom slider, 0.5 pan (centre)
 
-                if (freq_hz >= low_freq_hz && freq_hz <= high_freq_hz)
-                {
-                    // the frequency as a ratio through the entire spctrum view, from 0 to 1.0
-                    //double ratio_in_source = (freq_hz - low_freq_hz) / (double)bw_hz;
+                    int bw_hz = spec_high_hz - spec_low_hz;
+                    int low_freq_hz = centre_freq_hz - (bw_hz / 2);
+                    int high_freq_hz = centre_freq_hz + (bw_hz / 2);
 
-                    // adjust for destination, we need to drag the edges in, so that the edge becomes centre
-                    // the limit edges of the source spectrum become centre in the mini spectrum
-                    low_freq_hz += _mox ? TX_BANDWIDTH : _max_filter_width;
-                    high_freq_hz -= _mox ? TX_BANDWIDTH : _max_filter_width;
-                    bw_hz = high_freq_hz - low_freq_hz;
+                    if (freq_hz >= low_freq_hz && freq_hz <= high_freq_hz)
+                    {
+                        // the frequency as a ratio through the entire spctrum view, from 0 to 1.0
+                        //double ratio_in_source = (freq_hz - low_freq_hz) / (double)bw_hz;
 
-                    double ratio_in_dest = (freq_hz - low_freq_hz) / (double)bw_hz;
+                        // adjust for destination, we need to drag the edges in, so that the edge becomes centre
+                        // the limit edges of the source spectrum become centre in the mini spectrum
+                        low_freq_hz += _mox ? TX_BANDWIDTH : _max_filter_width;
+                        high_freq_hz -= _mox ? TX_BANDWIDTH : _max_filter_width;
+                        bw_hz = high_freq_hz - low_freq_hz;
 
-                    _spec.PanSlider = ratio_in_dest;
+                        double ratio_in_dest = (freq_hz - low_freq_hz) / (double)bw_hz;
+
+                        _spec.PanSlider = ratio_in_dest;
+                    }
                 }
             }
             private void zoom()
@@ -35252,7 +35342,8 @@ namespace Thetis
                     double rounded = Math.Round(value, 6);
                     if (rounded == _centre_freq) return;
                     _centre_freq = rounded;
-                    setPan();
+                    //setPan();
+                    rateLimitSetPan();
                 }
             }
         }
