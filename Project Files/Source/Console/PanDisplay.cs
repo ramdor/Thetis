@@ -186,12 +186,12 @@ namespace Thetis
         private Color channel_background_off = Color.FromArgb(100, Color.RoyalBlue);
         private Color channel_foreground = Color.Cyan;
 
-        private ColorScheme color_sheme = ColorScheme.enhanced;
-        public ColorScheme ColorSheme
+        private ColorScheme color_scheme = ColorScheme.enhanced;
+        public ColorScheme ColorScheme
         {
-            get { return color_sheme; }
+            get { return color_scheme; }
 
-            set { color_sheme = value; }
+            set { color_scheme = value; }
         }
 
         private bool reverse_waterfall = false;
@@ -2277,7 +2277,7 @@ namespace Thetis
             float waterfall_minimum = 0.0f;
             float rx1_waterfall_minimum = 0.0f;
             //  float rx2_waterfall_minimum = 0.0f;
-            ColorScheme cSheme = ColorScheme.enhanced;
+            ColorScheme cScheme = ColorScheme.enhanced;
             Color low_color = Color.Black;
             Color mid_color = Color.Red;
             Color high_color = Color.Blue;
@@ -2286,7 +2286,7 @@ namespace Thetis
                 (CurrentDisplayMode == DisplayMode.PANAFALL && nreceivers > 2) ||
                (CurrentDisplayMode == DisplayMode.PANADAPTER && display_duplex)) displayduplex = true;
 
-            cSheme = color_sheme;
+            cScheme = color_scheme;
             low_color = waterfall_low_color;
             mid_color = waterfall_mid_color;
             high_color = waterfall_high_color;
@@ -2417,7 +2417,7 @@ namespace Thetis
                     row = (byte*)bitmapData.Scan0;
 
                     //int i = 0;
-                    switch (cSheme)
+                    switch (cScheme)
                     {
                         case (ColorScheme.original):
                             {

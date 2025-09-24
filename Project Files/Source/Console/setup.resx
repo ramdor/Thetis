@@ -141,9 +141,6 @@
   <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <data name="lgLinearGradientRX1.EncodedText" xml:space="preserve">
-    <value>OXwxfDAuMDAwfC0xNjc3NzIxNnwwfDEyNTAwMDAwMDAwMDAwMDAwMC4wMDB8LTE0NzM3NjMzfDB8MjUwMDAwMDAwMDAwMDAwMDAwLjAwMHwtMTI2OTgwNTB8MHwzNzUwMDAwMDAwMDAwMDAwMDAuMDAwfC0xMDY1ODQ2N3wwfDUwMDAwMDAwMDAwMDAwMDAwMC4wMDB8LTg2MTg4ODR8MHw2MjUwMDAwMDAwMDAwMDAwMDAuMDAwfC02NTc5MzAxfDB8NzUwMDAwMDAwMDAwMDAwMDAwLjAwMHwtNDUzOTcxOHwwfDg3NTAwMDAwMDAwMDAwMDAwMC4wMDB8LTI1MDAxMzV8MXwxMDAwMDAwMDAwMDAwMDAwMDAwLjAwMHwtMXw=</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="picModelBoardWarning.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -306,6 +303,9 @@ POWER EXCEEDING THE RATING OF YOUR RADIO!
   <data name="lgLinearGradient_waterfall.EncodedText" xml:space="preserve">
     <value>OXwxfDAuMDAwfC0xNjc3NzIxNnwwfDEyNTAwMDAwMDAwMDAwMDAwMC4wMDB8LTE0NzM3NjMzfDB8MjUwMDAwMDAwMDAwMDAwMDAwLjAwMHwtMTI2OTgwNTB8MHwzNzUwMDAwMDAwMDAwMDAwMDAuMDAwfC0xMDY1ODQ2N3wwfDUwMDAwMDAwMDAwMDAwMDAwMC4wMDB8LTg2MTg4ODR8MHw2MjUwMDAwMDAwMDAwMDAwMDAuMDAwfC02NTc5MzAxfDB8NzUwMDAwMDAwMDAwMDAwMDAwLjAwMHwtNDUzOTcxOHwwfDg3NTAwMDAwMDAwMDAwMDAwMC4wMDB8LTI1MDAxMzV8MXwxMDAwMDAwMDAwMDAwMDAwMDAwLjAwMHwtMXw=</value>
   </data>
+  <data name="lgLinearGradientRX1.EncodedText" xml:space="preserve">
+    <value>OXwxfDAuMDAwfC0xNjc3NzIxNnwwfDEyNTAwMDAwMDAwMDAwMDAwMC4wMDB8LTE0NzM3NjMzfDB8MjUwMDAwMDAwMDAwMDAwMDAwLjAwMHwtMTI2OTgwNTB8MHwzNzUwMDAwMDAwMDAwMDAwMDAuMDAwfC0xMDY1ODQ2N3wwfDUwMDAwMDAwMDAwMDAwMDAwMC4wMDB8LTg2MTg4ODR8MHw2MjUwMDAwMDAwMDAwMDAwMDAuMDAwfC02NTc5MzAxfDB8NzUwMDAwMDAwMDAwMDAwMDAwLjAwMHwtNDUzOTcxOHwwfDg3NTAwMDAwMDAwMDAwMDAwMC4wMDB8LTI1MDAxMzV8MXwxMDAwMDAwMDAwMDAwMDAwMDAwLjAwMHwtMXw=</value>
+  </data>
   <data name="chkReplaceCurrentMeterInSelectedSkin.ToolTip" xml:space="preserve">
     <value>If this is checked, the downloaded meter skins
 will be added to the current selected skin. Unchecked
@@ -385,9 +385,6 @@ You do not need to be a member of discord to use this functionality but there ar
 of us there and you can interact with many channles and actively view the
 #thetis-bot channel to see what is going on.</value>
   </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>302, 17</value>
-  </metadata>
   <data name="pbTextOverlay_variables.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
