@@ -1547,15 +1547,20 @@ namespace Thetis
 
             for (int i = 0; i < (int)Band.LAST; i++)
             {
-                switch ((Band)i)
-                {
-                    default:
-                        rx1_preamp_by_band[i] = PreampMode.HPSDR_ON;
-                        rx2_preamp_by_band[i] = PreampMode.HPSDR_ON;
-                        setRX1stepAttenuatorForBand((Band)i, 0);
-                        setRX2stepAttenuatorForBand((Band)i, 0);
-                        break;
-                }
+                //switch ((Band)i)
+                //{
+                //    default:
+                //        rx1_preamp_by_band[i] = PreampMode.HPSDR_ON;
+                //        rx2_preamp_by_band[i] = PreampMode.HPSDR_ON;
+                //        setRX1stepAttenuatorForBand((Band)i, 0);
+                //        setRX2stepAttenuatorForBand((Band)i, 0);
+                //        break;
+                //}
+
+                rx1_preamp_by_band[i] = PreampMode.HPSDR_ON;
+                rx2_preamp_by_band[i] = PreampMode.HPSDR_ON;
+                setRX1stepAttenuatorForBand((Band)i, 0);
+                setRX2stepAttenuatorForBand((Band)i, 0);
 
                 setTXstepAttenuatorForBand((Band)i, 31);
             }
@@ -2727,7 +2732,7 @@ namespace Thetis
                 }
             }
 
-            a.Remove("udRX1StepAttData/" + udRX1StepAttData.Value.ToString());
+            a.Remove("udRX1StepAttData/" + udRX1StepAttData.Value.ToString()); // removed from saved data as restored from att per band
             a.Remove("udRX2StepAttData/" + udRX2StepAttData.Value.ToString());
             a.Remove("udTXStepAttData/" + udTXStepAttData.Value.ToString()); //[2.3.6.10]MW0LGE            
 
@@ -5855,7 +5860,7 @@ namespace Thetis
                 }
             }
 
-            Band old_band = tx_band;
+            Band old_band = _tx_band;
             TXBand = b;
             if (old_band != b)
                 UpdateBandButtonColors();
@@ -6082,7 +6087,7 @@ namespace Thetis
         {
             double v_det = adc * 0.062963;			// scale factor in V/bit including pot ratio
             double v_out = v_det * 10.39853;		// scale factor in V/V for bridge output to detector voltage
-            return v_out * PABandOffset(tx_band);
+            return v_out * PABandOffset(_tx_band);
             //double v_det = adc * 0.0304;
             //			double v_out = 0;
             //			if(v_det >= 1.6)
@@ -6097,7 +6102,7 @@ namespace Thetis
             if (adc_data == 0)
                 return 0;
 
-            double mult = 100000 / Math.Pow(225 / PABandOffset(tx_band), 2);
+            double mult = 100000 / Math.Pow(225 / PABandOffset(_tx_band), 2);
             return 10 * Math.Log10(mult * Math.Pow(adc_data, 2));
         }
 
@@ -10711,29 +10716,37 @@ namespace Thetis
         {
             set { udTXStepAttData.BackColor = value; }
         }
-        private int tx_attenuator_data = 31;
+        private int _tx_attenuator_data = 31;
         private bool _updatingTxAtt = false;
         public int TxAttenData
         {
-            get { return tx_attenuator_data; }
+            get { return _tx_attenuator_data; }
             set
             {
                 if (_updatingTxAtt) return;
                 _updatingTxAtt = true;
-                tx_attenuator_data = value;
+
+                _tx_attenuator_data = validateTXStepAttData(value); //[2.10.3.9]MW0LGE validated
+
                 if (!initializing)
                 {
-                    setTXstepAttenuatorForBand(tx_band, tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes #399
+                    setTXstepAttenuatorForBand(_tx_band, _tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes #399
                     if (m_bAttontx)
                     {
-                        int txatt = getTXstepAttenuatorForBand(tx_band);
+                        //int txatt = getTXstepAttenuatorForBand(_tx_band);
                         
                         if (HardwareSpecific.Model == HPSDRModel.HERMESLITE) 
-                           NetworkIO.SetTxAttenData(32 - txatt); // MI0BOT: Greater range for HL2
+                           NetworkIO.SetTxAttenData(32 - _tx_attenuator_data); // MI0BOT: Greater range for HL2
                         else
-                           NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
+                        {
+                            //NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
+                            //Display.TXAttenuatorOffset = txatt; //[2.10.3.6]MW0LGE att_fixes
+
+                            NetworkIO.SetTxAttenData(_tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes                        
+                        }
+
+                        Display.TXAttenuatorOffset = _tx_attenuator_data; //[2.10.3.6]MW0LGE att_fixes
                         
-                        Display.TXAttenuatorOffset = txatt; //[2.10.3.6]MW0LGE att_fixes
                     }
                     else
                     {
@@ -10744,6 +10757,23 @@ namespace Thetis
                     //if (m_bAttontx && _mox) //[2.10.3.6]MW0LGE att_fixes
                     //udRX1StepAttData.Value = value; //[2.10.3.6]MW0LGE att_fixes
                     udTXStepAttData.Value = value;
+
+                    //******Red Pitaya BODGE*******
+                    //[2.10.3.9]MW0LGE This is not ideal, but a bodge to get the PedPitaya to TX attenuate correctly
+                    //It seems the firmware does not seem to use the tx_atten data, instead it relies on rx attenuation perhaps?
+                    if (_mox && m_bAttontx && HardwareSpecific.Model == HPSDRModel.REDPITAYA)
+                    {
+                        //Seems like the RP only considers rx1 for tx att
+                        //if(RX2Enabled && VFOBTX)
+                        //{
+                        //    udRX2StepAttData.Value = value;
+                        //}
+                        //else
+                        //{
+                            udRX1StepAttData.Value = value;
+                        //}
+                    }
+                    //******END BODGE*******
                 }
                 _updatingTxAtt = false;
             }
@@ -11008,6 +11038,27 @@ namespace Thetis
 
         public bool DisplayVoltsAmps { get; set; }
 
+        //[2.10.3.9]MW0LGE validate step attenuator values, so many HL2 issues with these being out of range
+        private int validateRX1StepAttData(int att)
+        {
+            if (att > udRX1StepAttData.Maximum) att = (int)udRX1StepAttData.Maximum;
+            if (att < udRX1StepAttData.Minimum) att = (int)udRX1StepAttData.Minimum;
+            return att;
+        }
+        private int validateRX2StepAttData(int att)
+        {
+            if (att > udRX2StepAttData.Maximum) att = (int)udRX2StepAttData.Maximum;
+            if (att < udRX2StepAttData.Minimum) att = (int)udRX2StepAttData.Minimum;
+            return att;
+        }
+        private int validateTXStepAttData(int att)
+        {
+            if (att > udTXStepAttData.Maximum) att = (int)udTXStepAttData.Maximum;
+            if (att < udRX1StepAttData.Minimum) att = (int)udTXStepAttData.Minimum;
+            return att;
+        }        
+        //
+
         private bool rx1_step_att_present = false;
         public bool RX1StepAttPresent
         {
@@ -11017,7 +11068,7 @@ namespace Thetis
                 rx1_step_att_present = value;
                 if (rx1_step_att_present)
                 {
-                    udRX1StepAttData.Value = getRX1stepAttenuatorForBand(rx1_band); //MW0LGE [2.10.3.6] added
+                    udRX1StepAttData.Value = validateRX1StepAttData(getRX1stepAttenuatorForBand(rx1_band)); //MW0LGE [2.10.3.6] added //[2.10.3.9]MW0LGE validated
                     udRX1StepAttData_ValueChanged(this, EventArgs.Empty);
                 }
                 else
@@ -11071,6 +11122,8 @@ namespace Thetis
                     udRX1StepAttData.Maximum = (decimal)31;
                 }
 
+                rx1_attenuator_data = validateRX1StepAttData(rx1_attenuator_data); //[2.10.3.9]MW0LGE validated
+
                 //MW0LGE_22b step atten
                 int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
                 GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
@@ -11120,7 +11173,7 @@ namespace Thetis
                     }
                 }
 
-                if (!_mox)
+                if (!_mox) //[2.10.3.9]MW0LGE note, this is not technically required for all radios except for the RedPitaya. See BODGE
                     setRX1stepAttenuatorForBand(rx1_band, rx1_attenuator_data);
 
                 udRX1StepAttData.Value = rx1_attenuator_data;
@@ -11168,7 +11221,7 @@ namespace Thetis
                 {
                     if (rx2_step_att_present)
                     {
-                        udRX2StepAttData.Value = getRX2stepAttenuatorForBand(rx2_band);
+                        udRX2StepAttData.Value = validateRX2StepAttData(getRX2stepAttenuatorForBand(rx2_band)); //[2.10.3.9]MW0LGE validated
                         udRX2StepAttData_ValueChanged(this, EventArgs.Empty);
                     }
                     else
@@ -11230,6 +11283,8 @@ namespace Thetis
                     udRX2StepAttData.Maximum = (decimal)61; //MW0LGE_[2.9.0.7]  changed to udRX2
                 else udRX2StepAttData.Maximum = (decimal)31;
 
+                rx2_attenuator_data = validateRX2StepAttData(rx2_attenuator_data); //[2.10.3.9]MW0LGE validated
+
                 //MW0LGE_22b step atten
                 int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
                 GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
@@ -11278,7 +11333,7 @@ namespace Thetis
 
                 if (!_mox)
                     setRX2stepAttenuatorForBand(rx2_band, rx2_attenuator_data);
-
+                
                 udRX2StepAttData.Value = rx2_attenuator_data;
                 lblRX2AttenLabel.Text = rx2_attenuator_data.ToString() + " dB";
 
@@ -12182,7 +12237,7 @@ namespace Thetis
         public void SetPower(Band b, int pwr)
         {
             power_by_band[(int)b] = pwr;
-            if (tx_band == b) PWR = pwr;
+            if (_tx_band == b) PWR = pwr;
         }
 
         public int GetPower(Band b)
@@ -17373,7 +17428,7 @@ namespace Thetis
                     // save values for old band
                     rx1_agcm_by_band[(int)old_band] = (AGCMode)comboAGC.SelectedIndex;
                     rx1_agct_by_band[(int)old_band] = ptbRF.Value;
-                    SetupForm.ATTOnTX = getTXstepAttenuatorForBand(tx_band); //[2.10.3.6]MW0LGE att_fixes
+                    SetupForm.ATTOnTX = getTXstepAttenuatorForBand(_tx_band); //[2.10.3.6]MW0LGE att_fixes
                     RX1PreampMode = rx1_preamp_by_band[(int)rx1_band];
                     RX1AttenuatorData = getRX1stepAttenuatorForBand(rx1_band);
                     //[2.10.3.6]MW0LGE this tmp is needed because RX1AGCMode causes an update to the setup form
@@ -17568,26 +17623,26 @@ namespace Thetis
             }
         }
 
-        private Band tx_band;
+        private Band _tx_band;
         public Band TXBand
         {
-            get { return tx_band; }
+            get { return _tx_band; }
             set
             {
                 //[2.10.3.6]MW0LGE no band change on TX fix
                 if (MOX) return;
 
-                Band old_band = tx_band;
+                Band old_band = _tx_band;
                 if (initializing) old_band = value; // we cant use tx_band, because it is unset (GEN), unless we save it out it is irrelevant MW0LGE
 
-                tx_band = value;
+                _tx_band = value;
 
                 Band lo_band = Band.FIRST;
                 if (tx_xvtr_index >= 0)
                     // Fix Penny O/C VHF control Vk4xv
                     lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, current_region);
 
-                if (tx_band != old_band || initializing)
+                if (_tx_band != old_band || initializing)
                 {
                     // save values for old band
                     int old_pwr = ptbPWR.Value;
@@ -17616,7 +17671,7 @@ namespace Thetis
                     SetupForm.TXFilterLowSave = tx_filter_low;
                 }
 
-                if (tx_band == Band.B60M)
+                if (_tx_band == Band.B60M)
                 {
                     if (tx_filter_high > 2900)
                         SetupForm.TXFilterHigh = 2900;
@@ -17624,7 +17679,7 @@ namespace Thetis
                         SetupForm.TXFilterLow = 100;
                 }
 
-                if (tx_band != old_band || initializing)
+                if (_tx_band != old_band || initializing)
                 {
                     if (old_band == Band.B60M)
                     {
@@ -17636,7 +17691,7 @@ namespace Thetis
                 }
                 DisplayAriesTXAntenna();
 
-                if (tx_band != old_band) TXBandChangeHandlers?.Invoke(old_band, tx_band, TXFreq); //MW0LGE_22b
+                if (_tx_band != old_band) TXBandChangeHandlers?.Invoke(old_band, _tx_band, TXFreq); //MW0LGE_22b
             }
         }
 
@@ -19166,7 +19221,7 @@ namespace Thetis
                 {
                     if (m_bAttontx)
                     {
-                        int txatt = getTXstepAttenuatorForBand(tx_band);
+                        int txatt = getTXstepAttenuatorForBand(_tx_band);
                         
                         if (HardwareSpecific.Model == HPSDRModel.HERMESLITE) 
                            NetworkIO.SetTxAttenData(32 - txatt); // MI0BOT: Greater range for HL2
@@ -25197,21 +25252,21 @@ namespace Thetis
                 case HPSDRModel.ANAN100:
                 case HPSDRModel.ANAN100B:
                     bridge_volt = 0.095f;
-                    if (tx_band == Band.B6M)
+                    if (_tx_band == Band.B6M)
                         bridge_volt = 0.5f;
                     refvoltage = 3.3f;
                     adc_cal_offset = 3;
                     break;
                 case HPSDRModel.ANAN100D:
                     bridge_volt = 0.095f;
-                    if (tx_band == Band.B6M)
+                    if (_tx_band == Band.B6M)
                         bridge_volt = 0.5f;
                     refvoltage = 3.3f;
                     adc_cal_offset = 3;
                     break;
                 case HPSDRModel.ANAN200D:
                     bridge_volt = 0.108f;
-                    if (tx_band == Band.B6M)
+                    if (_tx_band == Band.B6M)
                         bridge_volt = 0.5f;
                     refvoltage = 5.0f;
                     adc_cal_offset = 2;
@@ -25222,7 +25277,7 @@ namespace Thetis
                 case HPSDRModel.ANAN_G2_1K:                 // will need to be edited for scaling
                 case HPSDRModel.REDPITAYA: //DH1KLM
                     bridge_volt = 0.15f;
-                    if (tx_band == Band.B6M)
+                    if (_tx_band == Band.B6M)
                         bridge_volt = 0.7f;
                     refvoltage = 5.0f;
                     adc_cal_offset = 28;
@@ -25230,7 +25285,7 @@ namespace Thetis
                 case HPSDRModel.ORIONMKII:
                 case HPSDRModel.ANAN8000D:
                     bridge_volt = 0.08f;
-                    if (tx_band == Band.B6M)
+                    if (_tx_band == Band.B6M)
                         bridge_volt = 0.08f;
                     refvoltage = 5.0f;
                     adc_cal_offset = 16;
@@ -25242,7 +25297,7 @@ namespace Thetis
                     break;
                 default:
                     bridge_volt = 0.09f;
-                    if (tx_band == Band.B6M)
+                    if (_tx_band == Band.B6M)
                         bridge_volt = 0.09f;
                     refvoltage = 3.3f;
                     adc_cal_offset = 3;
@@ -28178,7 +28233,7 @@ namespace Thetis
 
                 if (m_bAttontx)
                 {
-                    int txatt = getTXstepAttenuatorForBand(tx_band);
+                    int txatt = getTXstepAttenuatorForBand(_tx_band);
                     
                     if (HardwareSpecific.Model == HPSDRModel.HERMESLITE) 
                        NetworkIO.SetTxAttenData(32 - txatt); //MI0BOT: Greater range for HL2
@@ -29605,10 +29660,10 @@ namespace Thetis
             PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint; // the event args will contain a LimitConstraint if we are using the right click/drag of a limit
 
             if (lc != null)
-                limitPower_by_band[(int)tx_band] = lc.LimitValue; // store the adjusted limit level
+                limitPower_by_band[(int)_tx_band] = lc.LimitValue; // store the adjusted limit level
 
             int new_pwr = setPowerFromDriveSlider(out bool bUseConstrain, e != EventArgs.Empty);
-            power_by_band[(int)tx_band] = ptbPWR.Value;
+            power_by_band[(int)_tx_band] = ptbPWR.Value;
 
             UpdateDriveLabel(lc != null && bUseConstrain, e);
 
@@ -30030,7 +30085,7 @@ namespace Thetis
                 }
                 else
                 {
-                    Alex.getAlex().UpdateAlexAntSelection(tx_band, _mox, alex_ant_ctrl_enabled, false);
+                    Alex.getAlex().UpdateAlexAntSelection(_tx_band, _mox, alex_ant_ctrl_enabled, false);
                 }
                 UpdateTRXAnt(); //[2.3.10.6]MW0LGE added
 
@@ -30417,7 +30472,7 @@ namespace Thetis
                         return;
                     }
 
-                    if (tx_band == Band.B60M && current_region == FRSRegion.US && !extended)
+                    if (_tx_band == Band.B60M && current_region == FRSRegion.US && !extended)
                     {
                         switch (radio.GetDSPTX(0).CurrentDSPMode)
                         {
@@ -30438,7 +30493,7 @@ namespace Thetis
 
                     if (!CheckValidTXFreq(current_region, freq, radio.GetDSPTX(0).CurrentDSPMode, chkTUN.Checked))	// out of band
                     {
-                        if (tx_band == Band.B60M && current_region == FRSRegion.US &&
+                        if (_tx_band == Band.B60M && current_region == FRSRegion.US &&
                             CheckValidTXFreq_Private(current_region, freq) && !extended)
                         {
                             MessageBox.Show("The transmit filter you have selected exceeds the bandwidth\n" +
@@ -30568,22 +30623,16 @@ namespace Thetis
                         //                 radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) SetupForm.ATTOnTX = 31; // reset when PS is OFF or in CW mode
 
                         //MW0LGE [2.9.0.7] added option to always apply 31 att from setup form when not in ps
-                        int txAtt = getTXstepAttenuatorForBand(tx_band);
+                        int txAtt = getTXstepAttenuatorForBand(_tx_band);
                         if ((!chkFWCATUBypass.Checked && _forceATTwhenPSAoff) ||
                                         (radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWL ||
                                          radio.GetDSPTX(0).CurrentDSPMode == DSPMode.CWU)) txAtt = 31; // reset when PS is OFF or in CW mode
 
                         SetupForm.ATTOnRX1 = getRX1stepAttenuatorForBand(rx1_band); //[2.10.3.6]MW0LGE att_fixes
-                        SetupForm.ATTOnTX = txAtt; //[2.10.3.6]MW0LGE att_fixes NOTE: this will eventually call Display.TXAttenuatorOffset with the value
+                        SetupForm.ATTOnTX = txAtt; //[2.10.3.6]MW0LGE att_fixes NOTE: this will eventually call Display.TXAttenuatorOffset with the value                        
+                        //NetworkIO.SetTxAttenData(txAtt); //[2.10.3.6]MW0LGE att_fixes  //[2.10.3.9]MW0LGE note: this is done by line above
 
-                        if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 LNA has wider range
-                        {
-                            NetworkIO.SetTxAttenData(32 - txAtt); //[2.10.3.6]MW0LGE att_fixes
-                        }
-                        else
-                        {
-                            NetworkIO.SetTxAttenData(txAtt); //[2.10.3.6]MW0LGE att_fixes
-                        }
+
 
 
                         //SetupForm.RX1EnableAtt = true; //[2.10.3.6]MW0LGE att_fixes
@@ -32477,13 +32526,13 @@ namespace Thetis
             if (b != rx1_band)
                 SetRX1Band(b);
 
-            Band old_tx_band = tx_band;
+            Band old_tx_band = _tx_band;
             if (!chkVFOSplit.Checked && !chkVFOBTX.Checked)
             {
                 b = BandByFreq(freq, tx_xvtr_index, current_region);
 
                 Band b1 = getTXBandWhenExtended(b, freq);
-                if (b1 != tx_band)
+                if (b1 != _tx_band)
                     SetTXBand(b1, b != b1);
             }
 
@@ -32524,9 +32573,9 @@ namespace Thetis
                 UpdateTRXAnt();
             }
 
-            if (tx_band != old_tx_band)
+            if (_tx_band != old_tx_band)
             {
-                if (tx_band == Band.B60M)
+                if (_tx_band == Band.B60M)
                 {
                     chkXIT.Enabled = false;
                     chkXIT.Checked = false;
@@ -33031,7 +33080,7 @@ namespace Thetis
             if (chkVFOSplit.Checked)
             {
                 tx_xvtr_index = XVTRForm.XVTRFreq(freq);
-                Band old_tx_band = tx_band;
+                Band old_tx_band = _tx_band;
                 Band b = BandByFreq(freq, tx_xvtr_index, current_region);
 
                 Band b1 = getTXBandWhenExtended(b, freq);
@@ -33051,9 +33100,9 @@ namespace Thetis
                 if (tx_xvtr_index >= 0)
                     freq = XVTRForm.TranslateFreq(freq);
 
-                if (old_tx_band != tx_band)
+                if (old_tx_band != _tx_band)
                 {
-                    if (tx_band == Band.B60M)
+                    if (_tx_band == Band.B60M)
                     {
                         chkXIT.Enabled = false;
                         chkXIT.Checked = false;
@@ -33534,7 +33583,7 @@ namespace Thetis
             set_tx_freq:
             tx_xvtr_index = rx2_xvtr_index;
             double tx_freq = freq;
-            Band old_tx_band = tx_band;
+            Band old_tx_band = _tx_band;
             Band b = BandByFreq(tx_freq, tx_xvtr_index, current_region);
 
             Band b1 = getTXBandWhenExtended(b, tx_freq);
@@ -33598,9 +33647,9 @@ namespace Thetis
                     NetworkIO.SetXVTREnable(0); // disable
             }
 
-            if (old_tx_band != tx_band)
+            if (old_tx_band != _tx_band)
             {
-                if (tx_band == Band.B60M)
+                if (_tx_band == Band.B60M)
                 {
                     chkXIT.Enabled = false;
                     chkXIT.Checked = false;
@@ -46243,7 +46292,7 @@ namespace Thetis
         {
             if (_updatingRX1StepAttData) return;
             _updatingRX1StepAttData = true;
-            if (!IsSetupFormNull) SetupForm.ATTOnRX1 = (int)udRX1StepAttData.Value; //[2.10.3.6]MW0LGE
+            if (!IsSetupFormNull) SetupForm.ATTOnRX1 = (int)udRX1StepAttData.Value; //[2.10.3.6]MW0LGE att_fixes
             if (udRX1StepAttData.Focused) btnHidden.Focus();
             if (sliderForm != null) sliderForm.RX1Atten = (int)udRX1StepAttData.Value;
             lblAttenLabel.Text = udRX1StepAttData.Value.ToString() + " dB";
@@ -46255,7 +46304,7 @@ namespace Thetis
         {
             if (_updatingRX2StepAttData) return;
             _updatingRX2StepAttData = true;
-            if (!IsSetupFormNull) SetupForm.ATTOnRX2 = (int)udRX2StepAttData.Value; //[2.10.3.6]MW0LGE
+            if (!IsSetupFormNull) SetupForm.ATTOnRX2 = (int)udRX2StepAttData.Value; //[2.10.3.6]MW0LGE att_fixes
             if (udRX2StepAttData.Focused) btnHidden.Focus();
             if (sliderForm != null) sliderForm.RX2Atten = (int)udRX2StepAttData.Value;
             lblRX2AttenLabel.Text = udRX2StepAttData.Value.ToString() + " dB";
@@ -49579,10 +49628,10 @@ namespace Thetis
             PrettyTrackBar.LimitConstraint lc = e as PrettyTrackBar.LimitConstraint; // the event args will contain a LimitConstraint if we are using the right click/drag of a limit
 
             if (lc != null)
-                    limitTunePower_by_band[(int)tx_band] = lc.LimitValue; // store the adjusted limit level
+                    limitTunePower_by_band[(int)_tx_band] = lc.LimitValue; // store the adjusted limit level
 
             int new_pwr = setPowerFromTuneSlider(out bool bUseConstrain, e != EventArgs.Empty);
-            tunePower_by_band[(int)tx_band] = ptbTune.Value;
+            tunePower_by_band[(int)_tx_band] = ptbTune.Value;
 
             UpdateTuneLabel(lc != null && bUseConstrain, e);
 
@@ -49718,7 +49767,7 @@ namespace Thetis
             {
                 case 0: //normal
                     new_pwr = ptbPWR.Value;
-                    power_by_band[(int)tx_band] = new_pwr;
+                    power_by_band[(int)_tx_band] = new_pwr;
                     break;
                 case 1: //tune
                     DrivePowerSource tuneDrive = _tuneDrivePowerSource;
