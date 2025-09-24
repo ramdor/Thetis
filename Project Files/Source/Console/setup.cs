@@ -16100,17 +16100,22 @@ namespace Thetis
                 udHermesStepAttenuatorDataRX2_ValueChanged(this, EventArgs.Empty);
             }
 
-            CheckBoxTS chk = sender as CheckBoxTS;
-            if (chk != null) // only if we click it //MW0LGE [2.9.0.6]
+            if (HardwareSpecific.Model != HPSDRModel.HERMESLITE)
             {
-                int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
-                console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
+                CheckBoxTS chk = sender as CheckBoxTS;
 
-                int nRX1ADCinUse = console.GetADCInUse(rx1);
-                int nRX2ADCinUse = console.GetADCInUse(rx2);
-                if (nRX1ADCinUse == nRX2ADCinUse && chkHermesStepAttenuator.Checked != chkRX2StepAtt.Checked) chkHermesStepAttenuator.Checked = chkRX2StepAtt.Checked;
+                if (chk != null) // only if we click it //MW0LGE [2.9.0.6]
+                {
+                    int rx1 = -1, rx2 = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
+                    console.GetDDC(out rx1, out rx2, out sync1, out sync2, out psrx, out pstx);
+
+                    int nRX1ADCinUse = console.GetADCInUse(rx1);
+                    int nRX2ADCinUse = console.GetADCInUse(rx2);
+                    if (nRX1ADCinUse == nRX2ADCinUse && chkHermesStepAttenuator.Checked != chkRX2StepAtt.Checked) chkHermesStepAttenuator.Checked = chkRX2StepAtt.Checked;
+                }
             }
         }
+
         private bool _updatingRX2HermesStepAttData = false;
         private void udHermesStepAttenuatorDataRX2_ValueChanged(object sender, EventArgs e)
         {
@@ -20180,6 +20185,7 @@ namespace Thetis
                     udHermesStepAttenuatorDataRX2.Visible = false;
                     udHermesStepAttenuatorDataRX2.Minimum = (decimal)-28;
                     udHermesStepAttenuatorData.Maximum = 32;
+                    udHermesStepAttenuatorDataRX2.Maximum = 32;
                     grpMetisAddr.Text = "Hermes Lite Address";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;

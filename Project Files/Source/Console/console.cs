@@ -30207,13 +30207,13 @@ namespace Thetis
                     
                     lblRX2Preamp.Text = m_bAttontx ? "[S-ATT]" : (rx2_step_att_present ? "S-ATT" : "ATT");
 
-                    if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
-                    {
-                        if (m_bAttontx)
-                            lblRX2Preamp.Enabled = true;
-                        else
-                            lblRX2Preamp.Enabled = false;
-                    }
+                    //if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
+                    //{
+                    //    if (m_bAttontx)
+                    //        lblRX2Preamp.Enabled = true;
+                    //    else
+                    //        lblRX2Preamp.Enabled = false;
+                    //}
                     
                 }
                 else
@@ -30238,13 +30238,13 @@ namespace Thetis
                     lblPreamp.Text = rx1_step_att_present ? "S-ATT" : "ATT";
                 }
 
-                if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
-                {
-                    if (m_bAttontx)
-                        lblRX2Preamp.Enabled = true;
-                    else
-                        lblRX2Preamp.Enabled = false;
-                }
+                //if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
+                //{
+                //    if (m_bAttontx)
+                //        lblRX2Preamp.Enabled = true;
+                //    else
+                //        lblRX2Preamp.Enabled = false;
+                //}
 
                 lblRX2Preamp.Text = rx2_step_att_present ? "S-ATT" : (rx2_preamp_present ? "ATT" : "");
             }
