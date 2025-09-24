@@ -19745,6 +19745,10 @@ namespace Thetis
             {
                 ptbDisplayZoom.Value = value;
                 ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+
+                //max bin detect
+                if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(1, false, true);
+                if (_display_max_bin_enabled[1]) setupDisplayMaxBinDetect(2, false, true);
             }
         }
 
@@ -19755,6 +19759,10 @@ namespace Thetis
             {
                 ptbDisplayPan.Value = value;
                 ptbDisplayPan_Scroll(this, EventArgs.Empty);
+
+                //max bin detect
+                if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(1, false, true);
+                if (_display_max_bin_enabled[1]) setupDisplayMaxBinDetect(2, false, true);
             }
         }
         public void PanCentre()
@@ -37215,16 +37223,16 @@ namespace Thetis
                 }
             }
 
-            //[2.10.3.5]MW0LGE TOREMOVE
-#if false
-			// wjtFIXME! 
-			// if we're doing soft rock stuff may need to update osc (tx mainly) when split is on
-			if ( current_model ==  Model.SOFTROCK40 )
+//            //[2.10.3.5]MW0LGE TOREMOVE
+//#if false
+//			// wjtFIXME! 
+//			// if we're doing soft rock stuff may need to update osc (tx mainly) when split is on
+//			if ( current_model ==  Model.SOFTROCK40 )
 			
-			{
-				SetSoftRockOscFreqs();
-			}
-#endif
+//			{
+//				SetSoftRockOscFreqs();
+//			}
+//#endif
 
             AndromedaIndicatorCheck(EIndicatorActions.eINSplit, false, chkVFOSplit.Checked);
 
@@ -37368,14 +37376,14 @@ namespace Thetis
             }
             AndromedaIndicatorCheck(EIndicatorActions.eINXIT, false, chkXIT.Checked);
 
-            //[2.10.3.5]MW0LGE TOREMOVE
-#if false
-			// wjtFIXME!
-			if ( current_model == Model.SOFTROCK40 )			
-			{
-				SetSoftRockOscFreqs();
-			}
-#endif
+//            //[2.10.3.5]MW0LGE TOREMOVE
+//#if false
+//			// wjtFIXME!
+//			if ( current_model == Model.SOFTROCK40 )			
+//			{
+//				SetSoftRockOscFreqs();
+//			}
+//#endif
 
             updateVFOFreqs(_mox); //[2.10.1.0] MW0LGE we might need to update everything if tx'ing on sub, use std function
         }
@@ -37404,6 +37412,8 @@ namespace Thetis
 
             AndromedaIndicatorCheck(EIndicatorActions.eINRIT, false, chkRIT.Checked);
 
+            //max bin detect
+            if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(1, false, true);
         }
 
         private void udRIT_ValueChanged(object sender, System.EventArgs e)
@@ -37423,6 +37433,9 @@ namespace Thetis
                 udXIT.Value = udRIT.Value;
                 setXIT_LEDs();
             }
+
+            //max bin detect
+            if (_display_max_bin_enabled[0]) setupDisplayMaxBinDetect(1, false, true);
         }
 
         private void udXIT_ValueChanged(object sender, System.EventArgs e)
@@ -37433,14 +37446,14 @@ namespace Thetis
             }
             lblXITValue.Text = udXIT.Value.ToString();
 
-            //[2.10.3.5]MW0LGE TOREMOVE
-#if false
-			//wjtFIXME
-			else if ( current_model == Model.SOFTROCK40 )			
-			{
-				SetSoftRockOscFreqs();
-			}
-#endif
+//            //[2.10.3.5]MW0LGE TOREMOVE
+//#if false
+//			//wjtFIXME
+//			else if ( current_model == Model.SOFTROCK40 )			
+//			{
+//				SetSoftRockOscFreqs();
+//			}
+//#endif
 
 
             if (chkXIT.Checked) Display.XIT = (int)udXIT.Value;
@@ -46395,7 +46408,7 @@ namespace Thetis
             SampleRateChangedHandlers += OnSampleRateChanged;
             FSPChangedHandlers += OnFSPChanged;
 
-        Display.SetupDelegates();
+            Display.SetupDelegates();
             
             TimeOutTimerManager.SetCallback(timeOutTimer);
         }
@@ -46636,6 +46649,10 @@ namespace Thetis
             //MW0LGE_21h
             if (rx == 1) updateBandstackOverlay(rx);
 
+            //max bin detect
+            if (_display_max_bin_enabled[rx - 1]) setupDisplayMaxBinDetect(rx, false, true);
+
+            //bandstack
             if (m_bSetBandRunning) return;
             if (rx != 1) return;
             if (!BandStackManager.Ready) return;
@@ -46955,6 +46972,18 @@ namespace Thetis
 
         private void OnMoxChangeHandler(int rx, bool oldMox, bool newMox)
         {
+            //max bin detect
+            if (newMox)
+            {
+                // if on switch off to prevent pulse when coming out of TX
+                if (_display_max_bin_enabled[rx - 1]) setupDisplayMaxBinDetect(rx, false, false, false);
+            }
+            else
+            {
+                // turn back on if required
+                if (_display_max_bin_enabled[rx - 1]) setupDisplayMaxBinDetect(rx, false, true, false);
+            }
+
             //MW0LGE_21k disable xPA if not permitted to hot switch
             if (newMox)
                 chkExternalPA.Enabled = m_bHotSwitchOCTXPins;
@@ -52327,7 +52356,7 @@ namespace Thetis
 
         //
         private volatile bool[] _display_max_bin_enabled = new bool[] { false, false };
-        private void setupDisplayMaxBinDetect(int rx, bool sub_rx, bool enabled)
+        private void setupDisplayMaxBinDetect(int rx, bool sub_rx, bool enabled, bool update_enabled_state = true)
         {
             if (rx < 1 || rx > 2) return;
 
@@ -52356,6 +52385,7 @@ namespace Thetis
                     high = radio.GetDSPRX(1, sub_rx ? 1 : 0).RXFilterHigh + diff;
                     break;
                 default:
+                    int rit_offset = RITOn ? RITValue : 0;
                     disp = 0;
                     sample_rate = SampleRateRX1;
                     if (click_tune_display)
@@ -52366,6 +52396,7 @@ namespace Thetis
                     {
                         diff = 0;
                     }
+                    diff += rit_offset;
                     low = radio.GetDSPRX(0, sub_rx ? 1 : 0).RXFilterLow + diff;
                     high = radio.GetDSPRX(0, sub_rx ? 1 : 0).RXFilterHigh + diff;
                     break;
@@ -52373,7 +52404,7 @@ namespace Thetis
 
             WDSP.SetupDetectMaxBin(enabled ? 1 : 0, disp, 0, 0, sample_rate, low, high, 0.5, frame_rate);
 
-            _display_max_bin_enabled[rx - 1] = enabled;
+            if(update_enabled_state) _display_max_bin_enabled[rx - 1] = enabled;
         }
         private void OnFilterEdgesChanged(int rx, Filter newFilter, Band band, int low, int high, string sName, int max_width, int max_shift)
         {

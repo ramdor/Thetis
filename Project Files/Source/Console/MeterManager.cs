@@ -1432,6 +1432,7 @@ namespace Thetis
             public bool BackPanel { get { return (bool)GetSetting("_back_panel", typeof(bool)); } set { SetSetting("_back_panel", value); } }
             public float EyeBezelScale { get { return (float)GetSetting("_eyeBezelScale", typeof(float)); } set { SetSetting("_eyeBezelScale", value); } }
             public bool Average { get { return (bool)GetSetting("_average", typeof(bool)); } set { SetSetting("_average", value); } }
+            public bool MaxBin { get { return (bool)GetSetting("_max_bin", typeof(bool)); } set { SetSetting("_max_bin", value); } }
             public bool DarkMode { get { return (bool)GetSetting("_darkMode", typeof(bool)); } set { SetSetting("_darkMode", value); } }
             public float MaxPower { get { return (float)GetSetting("_maxPower", typeof(float)); } set { SetSetting("_maxPower", value); } }
             public System.Drawing.Color PowerScaleColour { get { return (System.Drawing.Color)GetSetting("_powerScaleColour", typeof(System.Drawing.Color)); } set { SetSetting("_powerScaleColour", value); } }
@@ -1798,7 +1799,7 @@ namespace Thetis
                 case MeterType.FILTER_DISPLAY: return "Filter Display";
                 case MeterType.DIAL_DISPLAY: return "Dial Display";
                 case MeterType.CUSTOM_METER_BAR: return "Custom Meter Bar";
-                case MeterType.SIGNAL_MAX_BIN: return "Signal Bin Peak";
+                case MeterType.SIGNAL_MAX_BIN: return "Signal Max FFT Bin";
             }
 
             return meter.ToString();
@@ -1853,7 +1854,7 @@ namespace Thetis
                 case Reading.CUSTOM_PK: return "Custom(pk)";
                 case Reading.CUSTOM_AV: return "Custom(av)";
 
-                case Reading.SIGNAL_MAX_BIN: return "Signal Bin Peak";
+                case Reading.SIGNAL_MAX_BIN: return "Signal Max FFT Bin";
 
                 // not used
                 case (Reading)(int)22: return "";
@@ -21538,8 +21539,15 @@ namespace Thetis
                                             //bi.PeakHold = igs.PeakHold;
                                             //bi.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
                                             magicEye.Colour = igs.MarkerColour;
-                                            magicEye.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
-
+                                            //magicEye.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
+                                            if (igs.MaxBin)
+                                            {
+                                                magicEye.ReadingSource = Reading.SIGNAL_MAX_BIN;
+                                            }
+                                            else
+                                            {
+                                                magicEye.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
+                                            }
                                             magicEye.TopLeft = new PointF(0.5f - (igs.EyeScale / 2f), _fPadY - (_fHeight * 0.75f) + ((fLargest - igs.EyeScale) * 0.5f));
                                             magicEye.Size = new SizeF(igs.EyeScale, igs.EyeScale);
                                         }
@@ -21623,11 +21631,19 @@ namespace Thetis
                                                 ni.Shadow = igs.Shadow;
                                                 if (mt == MeterType.ANANMM) 
                                                 {
-                                                    if (ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH || ni.ReadingSource == Reading.SIGNAL_STRENGTH)
+                                                    if (ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH || ni.ReadingSource == Reading.SIGNAL_STRENGTH || ni.ReadingSource == Reading.SIGNAL_MAX_BIN)
                                                     {
                                                         ni.PeakHold = igs.PeakHold;
                                                         ni.PeakHoldMarkerColour = igs.PeakHoldMarkerColor;
-                                                        ni.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
+                                                        //ni.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
+                                                        if (igs.MaxBin)
+                                                        {
+                                                            ni.ReadingSource = Reading.SIGNAL_MAX_BIN;
+                                                        }
+                                                        else
+                                                        {
+                                                            ni.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
+                                                        }
                                                     }
                                                     else if(ni.ReadingSource == Reading.PWR)
                                                     {
@@ -21854,7 +21870,15 @@ namespace Thetis
                                             cst.HistoryColour = igs.SubMarkerColour;
                                             cst.PeakValueColour = igs.PeakValueColour;
                                             cst.ShowPeakValue = igs.PeakValue;
-                                            cst.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
+                                            //cst.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
+                                            if (igs.MaxBin)
+                                            {
+                                                cst.ReadingSource = Reading.SIGNAL_MAX_BIN;
+                                            }
+                                            else
+                                            {
+                                                cst.ReadingSource = igs.Average ? Reading.AVG_SIGNAL_STRENGTH : Reading.SIGNAL_STRENGTH;
+                                            }
                                             cst.ShowSubMarker = igs.ShowSubMarker;
 
                                             ig.TopLeft = new PointF(ig.TopLeft.X, _fPadY - (_fHeight * 0.75f));
@@ -22548,8 +22572,23 @@ namespace Thetis
                                             //igs.PeakHoldMarkerColor = bi.PeakHoldMarkerColour;
                                             igs.MarkerColour = magicEye.Colour;
                                             igs.EyeScale = magicEye.Size.Height;
-                                            
-                                            igs.Average = magicEye.ReadingSource == Reading.AVG_SIGNAL_STRENGTH;
+
+                                            //igs.Average = magicEye.ReadingSource == Reading.AVG_SIGNAL_STRENGTH;
+                                            switch (magicEye.ReadingSource)
+                                            {
+                                                case Reading.AVG_SIGNAL_STRENGTH:
+                                                    igs.Average = true;
+                                                    igs.MaxBin = false;
+                                                    break;
+                                                case Reading.SIGNAL_MAX_BIN:
+                                                    igs.Average = false;
+                                                    igs.MaxBin = true;
+                                                    break;
+                                                default:
+                                                    igs.Average = false;
+                                                    igs.MaxBin = false;
+                                                    break;
+                                            }
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> img in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.IMAGE))
                                         {
@@ -22609,11 +22648,26 @@ namespace Thetis
                                                 igs.Shadow = ni.Shadow;
                                                 igs.MarkerColour = ni.Colour;
                                                 if (mt == MeterType.ANANMM) {
-                                                    if (ni.ReadingSource == Reading.SIGNAL_STRENGTH || ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH)
+                                                    if (ni.ReadingSource == Reading.SIGNAL_STRENGTH || ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH || ni.ReadingSource == Reading.SIGNAL_MAX_BIN)
                                                     {
                                                         igs.PeakHold = ni.PeakHold;
                                                         igs.PeakHoldMarkerColor = ni.PeakHoldMarkerColour;
-                                                        igs.Average = ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH;
+                                                        //igs.Average = ni.ReadingSource == Reading.AVG_SIGNAL_STRENGTH;
+                                                        switch (ni.ReadingSource)
+                                                        {
+                                                            case Reading.AVG_SIGNAL_STRENGTH:
+                                                                igs.Average = true;
+                                                                igs.MaxBin = false;
+                                                                break;
+                                                            case Reading.SIGNAL_MAX_BIN:
+                                                                igs.Average = false;
+                                                                igs.MaxBin = true;
+                                                                break;
+                                                            default:
+                                                                igs.Average = false;
+                                                                igs.MaxBin = false;
+                                                                break;
+                                                        }
                                                     }
                                                 }
                                                 igs.MaxPower = ni.MaxPower;
@@ -22769,7 +22823,22 @@ namespace Thetis
                                             igs.SubMarkerColour = cst.HistoryColour;
                                             igs.PeakValueColour = cst.PeakValueColour;
                                             igs.PeakValue = cst.ShowPeakValue;
-                                            igs.Average = cst.ReadingSource == Reading.AVG_SIGNAL_STRENGTH;
+                                            //igs.Average = cst.ReadingSource == Reading.AVG_SIGNAL_STRENGTH;
+                                            switch (cst.ReadingSource)
+                                            {
+                                                case Reading.AVG_SIGNAL_STRENGTH:
+                                                    igs.Average = true;
+                                                    igs.MaxBin = false;
+                                                    break;
+                                                case Reading.SIGNAL_MAX_BIN:
+                                                    igs.Average = false;
+                                                    igs.MaxBin = true;
+                                                    break;
+                                                default:
+                                                    igs.Average = false;
+                                                    igs.MaxBin = false;
+                                                    break;
+                                            }
                                             igs.ShowSubMarker = cst.ShowSubMarker;
                                         }
                                         foreach (KeyValuePair<string, clsMeterItem> fcs in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.FADE_COVER))
