@@ -834,7 +834,7 @@ namespace Thetis
             //[2.10.3.4]MW0LGE shutdown log remove
             removeShutdownLog();
 
-            addDelegates();
+            //addDelegates(); // moved to init console
 
             CWFWKeyer = true;            
 
@@ -889,7 +889,7 @@ namespace Thetis
             _frmFinder.GatherSearchData(SetupForm, SetupForm.ToolTip);
             _frmFinder.GatherSearchData(EQForm, EQForm.ToolTip);
             _frmFinder.GatherSearchData(BandStack2Form, BandStack2Form.ToolTip);
-            _frmFinder.GatherSearchData(psform, null);
+            _frmFinder.GatherSearchData(psform, psform.ToolTip);
             _frmFinder.WriteXmlFinderFile(AppDataPath); // note: this will only happen if not already there
 
             Splash.SetStatus("Finished");
@@ -1514,8 +1514,9 @@ namespace Thetis
             m_frmNotchPopup = new frmNotchPopup();
             m_frmSeqLog = new frmSeqLog();
             _frmFinder = new frmFinder();
-
             psform = new PSForm(this);
+
+            addDelegates();
 
             Audio.console = this;
 
@@ -6382,7 +6383,7 @@ namespace Thetis
 
         private void setAlex1HPF(double freq)
         {
-            if ((HardwareSpecific.Hardware == HPSDRHW.OrionMKII) || (HardwareSpecific.Hardware == HPSDRHW.Saturn))
+            if ((HardwareSpecific.Hardware == HPSDRHW.OrionMKII) || (HardwareSpecific.Hardware == HPSDRHW.Saturn)) //DK1HLM
             {
                 setBPF1ForOrionIISaturn(freq);
             }
@@ -11227,7 +11228,8 @@ namespace Thetis
                     HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
                     HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
                     HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
-                    HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3)
+                    HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+                    HardwareSpecific.Model != HPSDRModel.REDPITAYA) //DH1KLM
                     udRX2StepAttData.Maximum = (decimal)61; //MW0LGE_[2.9.0.7]  changed to udRX2
                 else udRX2StepAttData.Maximum = (decimal)31;
 
@@ -11253,7 +11255,8 @@ namespace Thetis
                         HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
                         HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
                         HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
-                        HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3)
+                        HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+                        HardwareSpecific.Model != HPSDRModel.REDPITAYA) //DH1KLM
                     {
                         if (rx2_attenuator_data <= 31)
                         {
@@ -21391,8 +21394,7 @@ namespace Thetis
             int adc_oload_num = NetworkIO.getAndResetADC_Overload();
             if(adc_oload_num > 0)
             {
-                // this is done so that if in a constant overload state, the above call to getAndResetADC_Overload would return 0,
-                // this call below will 'use' this up just like amp overload above
+                // if there is an overload, then call it again, as a subsequent call to getAndResetADC_Overload would always return a 0 as the above getAndResetADC_Overload resets it
                 NetworkIO.getAndResetADC_Overload();
             }
             /*
@@ -21551,10 +21553,29 @@ namespace Thetis
                         AutoAttAppliedRX1 = false;
                 }
             }
+            else if (_historic_attenuator_readings_tx.Any()) _historic_attenuator_readings_tx.Clear();
 
             // deal with RX
             if (!_mox)
             {
+                if(!_auto_att_rx1)
+                {
+                    if (_historic_attenuator_readings_rx1.Any())
+                    {
+                        _historic_attenuator_readings_rx1.Clear();
+                        AutoAttAppliedRX1 = false;
+                    }
+                }
+                if (!_auto_att_rx2)
+                {
+                    if (_historic_attenuator_readings_rx2.Any())
+                    {
+                        _historic_attenuator_readings_rx2.Clear();
+                        AutoAttAppliedRX2 = false;
+                    }
+                }
+                if (!_auto_att_rx1 && !_auto_att_rx2) return;
+
                 // clear any for different band
                 keep_att_entries_for_band(_historic_attenuator_readings_rx1, RX1Band);
                 keep_att_entries_for_band(_historic_attenuator_readings_rx2, RX2Band);
@@ -21562,7 +21583,7 @@ namespace Thetis
                 if (_historic_attenuator_readings_rx2.Count == 0 && AutoAttAppliedRX2) AutoAttAppliedRX2 = false;
 
                 int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
-                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);                               
+                GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
 
                 DateTime now = DateTime.Now;
 
@@ -21614,7 +21635,7 @@ namespace Thetis
                         }
                         else
                         {
-                            har.preampMode = RX1PreampMode;                            
+                            har.preampMode = RX1PreampMode;
 
                             PreampMode pam = har.preampMode;
                             switch (pam)
@@ -21638,7 +21659,7 @@ namespace Thetis
 
                                 AutoAttAppliedRX1 = true;
                             }
-                        }                        
+                        }
                     }
                     else if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
                     {
@@ -21656,22 +21677,22 @@ namespace Thetis
                         if (!_auto_att_undo_rx1 || (_auto_att_undo_rx1 && ((now - _auto_att_last_hold_time_rx1).TotalSeconds >= _auto_att_hold_delay_rx1)))
                         {
                             // unwind
-                            HistoricAttenuatorReading har = _historic_attenuator_readings_rx1.Pop();                            
+                            HistoricAttenuatorReading har = _historic_attenuator_readings_rx1.Pop();
                             if (har != null && _auto_att_undo_rx1)
                             {
                                 if (RX1StepAttPresent && har.stepAttenuator != -1)
                                 {
-                                    if (har.stepAttenuator != RX1AttenuatorData) RX1AttenuatorData = har.stepAttenuator;                                    
+                                    if (har.stepAttenuator != RX1AttenuatorData) RX1AttenuatorData = har.stepAttenuator;
                                 }
                                 else if (har.preampMode != PreampMode.FIRST)
                                 {
                                     if (har.preampMode != RX1PreampMode) RX1PreampMode = har.preampMode;
-                                }                                
+                                }
                             }
                             _auto_att_last_hold_time_rx1 = now;
 
                             AutoAttAppliedRX1 = _historic_attenuator_readings_rx1.Any();
-                        }                        
+                        }
                     }
                 }
 
@@ -21727,7 +21748,7 @@ namespace Thetis
                             if (pam != har.preampMode)
                             {
                                 RX2PreampMode = pam;
-                               _auto_att_last_hold_time_rx2 = now;
+                                _auto_att_last_hold_time_rx2 = now;
                                 _historic_attenuator_readings_rx2.Push(har);
 
                                 AutoAttAppliedRX2 = true;
@@ -21753,13 +21774,13 @@ namespace Thetis
                                 else if (har.preampMode != PreampMode.FIRST)
                                 {
                                     if (har.preampMode != RX2PreampMode) RX2PreampMode = har.preampMode;
-                                }                                
+                                }
                             }
                             _auto_att_last_hold_time_rx2 = now;
 
                             AutoAttAppliedRX2 = _historic_attenuator_readings_rx2.Any();
                         }
-                    }                    
+                    }
                 }
             }            
         }
@@ -28160,11 +28181,13 @@ namespace Thetis
 
                 enableAudioAmplfier(); // MW0LGE_22b
 
+                if (!IsSetupFormNull) SetupForm.BoardWarning = ""; // no board warning
                 if (!Audio.Start())   // starts JanusAudio running
                 {
                     chkPower.Checked = false;
                     return;
                 }
+                if (!IsSetupFormNull) SetupForm.BoardWarning = Audio.BoardMismatch; //[2.10.3.9]MW0LGE show warning in setup if board does not match expected
 
                 //MW0LGE_21k9 these two moved after the audio start
                 //seems to fix issue that was causing multiRX to be silent when starting up and it was switched on
@@ -28342,7 +28365,7 @@ namespace Thetis
                 chkVFOLock.Enabled = true;
                 chkVFOBLock.Enabled = true;
                 timer_peak_text.Enabled = true;
-                HardwareSpecific.Hardware = NetworkIO.BoardID; // [2.10.3.9]MW0LGE check this, dont like it here !
+                //HardwareSpecific.Hardware = NetworkIO.BoardID; // [2.10.3.9]MW0LGE check this, dont like it here ! //[2.10.3.9]MW0LGE - REMOVED !!!
                 UpdateDDCs(rx2_enabled);
                 UpdateAAudioMixerStates();
 
@@ -35796,6 +35819,40 @@ namespace Thetis
                         else if (bOverRX2 && agc_knee_drag) AutoAGCRX2 = false;
                     }
 
+                    //BAND STACK OVERLAY
+                    //only do this if not doing something else
+                    if (m_bShowBandStackOverlays && bOverRX1 && !(rx1_sub_drag || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit ||
+                        gridminmaxadjust || agc_knee_drag || agc_hang_drag || rx1_spectrum_tune_drag || rx1_click_tune_drag || rx2_spectrum_tune_drag || rx2_click_tune_drag ||
+                        tx_high_filter_drag || tx_low_filter_drag || rx1_low_filter_drag || rx1_high_filter_drag || rx2_low_filter_drag || rx1_high_filter_drag))
+                    {
+                        if (Display.BandStackOverlays != null && Display.BandStackOverlays.Length > 0)
+                        {
+                            bool panafall_check = Display.CurrentDisplayMode == DisplayMode.PANAFALL && ((!rx2_enabled && e.Y < Display.PanafallSplitBarPos) || (rx2_enabled && e.Y < picDisplay.Height / 4)); //[2.10.3.6]MW0LGE fixes issue where you could try to qsy click on the waterfall
+                            if (bOverRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || panafall_check))                                                                                          //under a band stack entry that was shown on the panadaptor area in a panafall display
+                            {                                                                                                                                                                                  //and it would not qsy             
+                                // convert mouse pos into HZ
+                                double nMousePosHZ = (CentreFrequency * 1e6) + PixelToHz(e.X, 1); // only rx1
+
+                                m_bBandStackOverlayClicked = false;
+
+                                for (int n = 0; n < Display.BandStackOverlays.Length; n++)
+                                {
+                                    BandStackEntry bse = Display.BandStackOverlays[n];
+
+                                    double dL = (bse.Frequency * 1e6) + bse.LowFilter;
+                                    double dH = (bse.Frequency * 1e6) + bse.HighFilter;
+
+                                    if (dL <= nMousePosHZ && dH >= nMousePosHZ)
+                                    {
+                                        m_bBandStackOverlayClicked = true;
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //
+
                     if (Display.HightlightFilterEdgeRX1 == 0 && Display.HightlightFilterEdgeRX2 == 0 &&
                         !agc_knee_drag &&
                         !agc_hang_drag &&
@@ -36163,37 +36220,6 @@ namespace Thetis
                         }
                     }
 
-                    //BandstackOverlay click MW0LGE_21h //[2.10.3.7]MW0LGE moved down here so as not to 'fight' with all other UI
-                    //only do this if not doing something else
-                    if (m_bShowBandStackOverlays && bOverRX1 && !(rx1_sub_drag || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit))
-                    {
-                        if (Display.BandStackOverlays != null && Display.BandStackOverlays.Length > 0)
-                        {
-                            bool panafall_check = Display.CurrentDisplayMode == DisplayMode.PANAFALL && ((!rx2_enabled && e.Y < Display.PanafallSplitBarPos) || (rx2_enabled && e.Y < picDisplay.Height / 4)); //[2.10.3.6]MW0LGE fixes issue where you could try to qsy click on the waterfall
-                            if (bOverRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || panafall_check))                                                                                          //under a band stack entry that was shown on the panadaptor area in a panafall display
-                            {                                                                                                                                                                                  //and it would not qsy             
-                                // convert mouse pos into HZ
-                                double nMousePosHZ = (CentreFrequency * 1e6) + PixelToHz(e.X, 1); // only rx1
-
-                                m_bBandStackOverlayClicked = false;
-
-                                for (int n = 0; n < Display.BandStackOverlays.Length; n++)
-                                {
-                                    BandStackEntry bse = Display.BandStackOverlays[n];
-
-                                    double dL = (bse.Frequency * 1e6) + bse.LowFilter;
-                                    double dH = (bse.Frequency * 1e6) + bse.HighFilter;
-
-                                    if (dL <= nMousePosHZ && dH >= nMousePosHZ)
-                                    {
-                                        m_bBandStackOverlayClicked = true;
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    //
                     break;
                 case MouseButtons.Right:
                     // if we have a notch highlighted, then all other right click is ignored

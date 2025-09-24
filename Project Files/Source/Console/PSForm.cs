@@ -130,7 +130,13 @@ namespace Thetis
             get { return m_bQuckAttenuate; }
             set { m_bQuckAttenuate = value; }
         }
-
+        public ToolTip ToolTip //[2.10.3.9]MW0LGE used by finder
+        {
+            get
+            {
+                return toolTip1;
+            }
+        }
         public void StopPSThread()
         {
             _bPSRunning = false;

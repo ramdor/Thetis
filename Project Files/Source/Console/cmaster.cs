@@ -637,6 +637,7 @@ namespace Thetis
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
                             case HPSDRModel.ANVELINAPRO3:
+                            case HPSDRModel.REDPITAYA: //DH1KLM
                             case HPSDRModel.ANAN_G2:
                             case HPSDRModel.ANAN_G2_1K:
                                 // This ANGELIA table is for test purposes and it routes DDC0 and DDC1 to RX1 and RX2, 
@@ -731,6 +732,7 @@ namespace Thetis
                             case HPSDRModel.ANAN7000D:
                             case HPSDRModel.ANAN8000D:
                             case HPSDRModel.ANVELINAPRO3:
+                            case HPSDRModel.REDPITAYA: //DH1KLM
                             case HPSDRModel.ANAN_G2:
                             case HPSDRModel.ANAN_G2_1K:
                                 // control bits are { MOX, Diversity_Enabled, PureSignal_Enabled }

@@ -350,7 +350,6 @@
         Orion = 4,          // ANAN-200D
         OrionMKII = 5,      // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII Anvelina-Pro3 RedPitaya
         HermesLite = 6,     // MI0BOT
-        RedPitaya = 7,      // DH1KLM RedPitaya - Matches network.h (channelmaster)
         Saturn = 10,        // ANAN-G2: added G8NJJ
         Unknown = 999,      // MW0LGE
     }

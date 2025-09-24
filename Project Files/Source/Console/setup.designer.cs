@@ -271,6 +271,7 @@
             this.chkExtended = new System.Windows.Forms.CheckBoxTS();
             this.comboFRSRegion = new System.Windows.Forms.ComboBoxTS();
             this.grpGeneralModel = new System.Windows.Forms.GroupBoxTS();
+            this.picModelBoardWarning = new System.Windows.Forms.PictureBox();
             this.comboRadioModel = new System.Windows.Forms.ComboBoxTS();
             this.chkGeneralRXOnly = new System.Windows.Forms.CheckBoxTS();
             this.grpMetisAddr = new System.Windows.Forms.GroupBoxTS();
@@ -2210,6 +2211,8 @@
             this.udTXDisplayAVTime = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS388 = new System.Windows.Forms.LabelTS();
             this.groupBoxTS8 = new System.Windows.Forms.GroupBoxTS();
+            this.lblTXFFT_size = new System.Windows.Forms.LabelTS();
+            this.labelTS427 = new System.Windows.Forms.LabelTS();
             this.comboTXDispWinType = new System.Windows.Forms.ComboBoxTS();
             this.labelTS381 = new System.Windows.Forms.LabelTS();
             this.labelTS382 = new System.Windows.Forms.LabelTS();
@@ -4283,6 +4286,7 @@
             this.grpFRSRegion.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picWarningRegionExtended)).BeginInit();
             this.grpGeneralModel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picModelBoardWarning)).BeginInit();
             this.grpMetisAddr.SuspendLayout();
             this.groupBoxHPSDRHW.SuspendLayout();
             this.grpGeneralHardwareORION.SuspendLayout();
@@ -8861,6 +8865,7 @@
             // 
             // grpGeneralModel
             // 
+            this.grpGeneralModel.Controls.Add(this.picModelBoardWarning);
             this.grpGeneralModel.Controls.Add(this.comboRadioModel);
             this.grpGeneralModel.Controls.Add(this.chkGeneralRXOnly);
             this.grpGeneralModel.Location = new System.Drawing.Point(8, 8);
@@ -8869,6 +8874,18 @@
             this.grpGeneralModel.TabIndex = 25;
             this.grpGeneralModel.TabStop = false;
             this.grpGeneralModel.Text = "Radio Model";
+            // 
+            // picModelBoardWarning
+            // 
+            this.picModelBoardWarning.BackColor = System.Drawing.Color.Red;
+            this.picModelBoardWarning.Image = ((System.Drawing.Image)(resources.GetObject("picModelBoardWarning.Image")));
+            this.picModelBoardWarning.Location = new System.Drawing.Point(120, 48);
+            this.picModelBoardWarning.Name = "picModelBoardWarning";
+            this.picModelBoardWarning.Size = new System.Drawing.Size(22, 22);
+            this.picModelBoardWarning.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.picModelBoardWarning.TabIndex = 51;
+            this.picModelBoardWarning.TabStop = false;
+            this.picModelBoardWarning.Visible = false;
             // 
             // comboRadioModel
             // 
@@ -36568,6 +36585,8 @@
             // 
             // groupBoxTS8
             // 
+            this.groupBoxTS8.Controls.Add(this.lblTXFFT_size);
+            this.groupBoxTS8.Controls.Add(this.labelTS427);
             this.groupBoxTS8.Controls.Add(this.comboTXDispWinType);
             this.groupBoxTS8.Controls.Add(this.labelTS381);
             this.groupBoxTS8.Controls.Add(this.labelTS382);
@@ -36582,6 +36601,29 @@
             this.groupBoxTS8.TabIndex = 83;
             this.groupBoxTS8.TabStop = false;
             this.groupBoxTS8.Text = "Fast Fourier Transform";
+            // 
+            // lblTXFFT_size
+            // 
+            this.lblTXFFT_size.AutoSize = true;
+            this.lblTXFFT_size.BackColor = System.Drawing.Color.Bisque;
+            this.lblTXFFT_size.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblTXFFT_size.Image = null;
+            this.lblTXFFT_size.Location = new System.Drawing.Point(196, 79);
+            this.lblTXFFT_size.MinimumSize = new System.Drawing.Size(35, 0);
+            this.lblTXFFT_size.Name = "lblTXFFT_size";
+            this.lblTXFFT_size.Size = new System.Drawing.Size(45, 15);
+            this.lblTXFFT_size.TabIndex = 61;
+            this.lblTXFFT_size.Text = "000000";
+            // 
+            // labelTS427
+            // 
+            this.labelTS427.AutoSize = true;
+            this.labelTS427.Image = null;
+            this.labelTS427.Location = new System.Drawing.Point(143, 79);
+            this.labelTS427.Name = "labelTS427";
+            this.labelTS427.Size = new System.Drawing.Size(49, 13);
+            this.labelTS427.TabIndex = 60;
+            this.labelTS427.Text = "FFT Size";
             // 
             // comboTXDispWinType
             // 
@@ -67134,6 +67176,7 @@
             this.grpFRSRegion.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picWarningRegionExtended)).EndInit();
             this.grpGeneralModel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picModelBoardWarning)).EndInit();
             this.grpMetisAddr.ResumeLayout(false);
             this.groupBoxHPSDRHW.ResumeLayout(false);
             this.groupBoxHPSDRHW.PerformLayout();
@@ -72560,5 +72603,8 @@
         private LabelTS labelTS425;
         private LabelTS lblRX2FFT_size;
         private LabelTS labelTS426;
+        private LabelTS lblTXFFT_size;
+        private LabelTS labelTS427;
+        private PictureBox picModelBoardWarning;
     }
 }

@@ -18484,6 +18484,7 @@ namespace Thetis
             console.UpdateTXSpectrumDisplayVars();
             double bin_width = (double)console.specRX.GetSpecRX(cmaster.inid(1, 0)).SampleRate / (double)console.specRX.GetSpecRX(cmaster.inid(1, 0)).FFTSize;
             lblTXDispBinWidth.Text = bin_width.ToString("N3");
+            lblTXFFT_size.Text = console.specRX.GetSpecRX(cmaster.inid(1, 0)).FFTSize.ToString();
         }
 
         private void comboTXDispWinType_SelectedIndexChanged(object sender, EventArgs e)
@@ -33968,6 +33969,23 @@ namespace Thetis
             bool p2 = NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH;
             chkShowLedMirror.Visible = p2;
             grpLEDMirror.Visible = p2 && chkShowLedMirror.Checked;
+        }
+
+        public string BoardWarning
+        {
+            get { return ""; }
+            set
+            {
+                if(string.IsNullOrEmpty(value))
+                {
+                    picModelBoardWarning.Visible = false;
+                }
+                else
+                {
+                    toolTip1.SetToolTip(picModelBoardWarning, value);
+                    picModelBoardWarning.Visible = true;
+                }
+            }
         }
     }
 
