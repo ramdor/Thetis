@@ -26,9 +26,6 @@ namespace Thetis
     using System.Net.Sockets;
     using System.Net.NetworkInformation;
     using System.Windows.Forms;
-    using System.Diagnostics;
-    using System.Reflection;
-    using System.Windows.Forms;
 
     partial class NetworkIO
     {
@@ -311,7 +308,19 @@ namespace Thetis
                 }
             }
 
-            if(BoardID != HardwareSpecific.Hardware) //[2.10.3.9]MW0LGE
+            //[2.10.3.9]MW0LGE added board check, issue icon shown in setup
+            bool board_is_expected_for_model;
+            switch (HardwareSpecific.Model)
+            {
+                case HPSDRModel.REDPITAYA:
+                    board_is_expected_for_model = BoardID == HPSDRHW.Hermes || BoardID == HPSDRHW.OrionMKII; // can be these two
+                    break;
+                default:
+                    board_is_expected_for_model = BoardID == HardwareSpecific.Hardware;
+                    break;
+            }
+
+            if(!board_is_expected_for_model)
             {
                 // the board returned in the packet, does not match the expected board for the Model selected
                 _board_mismatch = $"The board returned from network query was:\n\n{BoardID.ToString()}\n\nExpected board for model selected is:\n\n{HardwareSpecific.Hardware.ToString()}";                
@@ -320,6 +329,7 @@ namespace Thetis
             {
                 _board_mismatch = "";
             }    
+            //
 
             rc = nativeInitMetis(HpSdrHwIpAddress, EthernetHostIPAddress, EthernetHostPort, (int)CurrentRadioProtocol, (int)HardwareSpecific.Model, EthernetRemotePort);
             return -rc;

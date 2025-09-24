@@ -36,8 +36,9 @@ char* wisdom_get_status()
 }
 
 PORT
-void WDSPwisdom (char* directory)
+int WDSPwisdom (char* directory)
 {
+	int wisdom_return = 0; // 0 from existing, 1 rebuilt
 	fftw_plan tplan;
 	int psize;
 	FILE *stream;
@@ -106,5 +107,7 @@ void WDSPwisdom (char* directory)
 		_aligned_free (fftout);
 		_aligned_free (fftin);
 		FreeConsole();							// dismiss console
+		wisdom_return = 1;
 	}
+	return wisdom_return;
 }

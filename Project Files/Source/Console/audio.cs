@@ -1822,10 +1822,6 @@ namespace Thetis
                 _lastRadiohadware = value;
             }
         }
-        public static string BoardMismatch
-        {
-            get { return NetworkIO.BoardMismatch; }
-        }
         public static bool Start()
         {
             //RadioProtocol oldProto = NetworkIO.CurrentRadioProtocol;

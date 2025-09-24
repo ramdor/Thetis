@@ -2417,8 +2417,8 @@ namespace Thetis
         private bool _replace_if_copy_RX2VFObToVFOa = false;
         public bool ReplaceRX2VFObToVFOa
         {
-            get { return _replace_if_copy_RX2VFObToVFOa; }
-            set { _replace_if_copy_RX2VFObToVFOa = value; }
+			get { return _replace_if_copy_RX2VFObToVFOa; }
+			set { _replace_if_copy_RX2VFObToVFOa = value; }
         }
         private bool m_bCWLUbecomesCW = false;
 		public bool CWLUbecomesCW
@@ -2454,17 +2454,22 @@ namespace Thetis
 			get { return m_bEmulateExpertSDR3Protocol; }
 			set { m_bEmulateExpertSDR3Protocol = value; }
 		}
-		public void StartServer(Console c, int rateLimit = 0, bool bCopyRX2VFObToVFOa = false, bool bTCIuseRX1vfoaForRX2vfoa = false, bool bSentInitialStateOnConnect = true, bool bCWLUbecomesCW = false, bool bEmulateSunSDR2Pro = false, bool bEmulateExpertSDR3Protocol = false, bool bReplaceRX2VFObToVFOa = false)
+		public void StartServer(Console c, int rateLimit = 0, bool bCopyRX2VFObToVFOa = false, bool bTCIuseRX1vfoaForRX2vfoa = false, bool bSentInitialStateOnConnect = true, bool bCWLUbecomesCW = false, bool bEmulateSunSDR2Pro = false, bool bEmulateExpertSDR3Protocol = false, bool bReplaceRX2VFObToVFOa = false, bool bTCICWbecomesCWUabove10mhz = false)
 		{
 			if (m_server != null)
 			{
 				m_nRateLimit = rateLimit;
+
+                m_bSendInitialStateOnConnect = bSentInitialStateOnConnect;
+                
 				m_bCopyRX2VFObToVFOa = bCopyRX2VFObToVFOa;
 				_replace_if_copy_RX2VFObToVFOa = bReplaceRX2VFObToVFOa;
                 m_bUseRX1VFOaForRX2VFOa = bTCIuseRX1vfoaForRX2vfoa;
-				m_bSendInitialStateOnConnect = bSentInitialStateOnConnect;
+
 				m_bCWLUbecomesCW = bCWLUbecomesCW;
-				m_bEmulateSunSDR2Pro = bEmulateSunSDR2Pro;
+                m_bCWbecomesCWUabove10mhz = bTCICWbecomesCWUabove10mhz; //[2.10.3.9]MW0LGE fixes issue #559
+
+                m_bEmulateSunSDR2Pro = bEmulateSunSDR2Pro;
 				m_bEmulateExpertSDR3Protocol = bEmulateExpertSDR3Protocol;
 
 				_console = c;
