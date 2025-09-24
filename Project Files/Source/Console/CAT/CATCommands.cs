@@ -917,7 +917,7 @@ namespace Thetis
 				float num = 0f;
 				if(console.PowerOn)
 					num = WDSP.CalculateRXMeter(0, 0,WDSP.MeterType.SIGNAL_STRENGTH);
-				num = num+console.MultiMeterCalOffset+console.PreampOffset;
+				num = num+console.RX1MeterCalOffset+console.PreampOffset;
 
 				num = Math.Max(-140, num);
 				num = Math.Min(-10, num);
@@ -5761,7 +5761,7 @@ namespace Thetis
                 {
                      case HPSDRModel.HPSDR:
                         num = num +
-                        console.MultiMeterCalOffset +
+                        console.RX1MeterCalOffset +
                         Display.RX1PreampOffset +
                             //console.RX1FilterSizeCalOffset +
                         console.RX1XVTRGainOffset;
@@ -5770,7 +5770,7 @@ namespace Thetis
                         if (s == "0")
                         {
                             num = num +
-                            console.MultiMeterCalOffset +
+                            console.RX1MeterCalOffset +
                             Display.RX1PreampOffset +
                                 //console.RX1FilterSizeCalOffset +
                             console.RX1XVTRGainOffset;
