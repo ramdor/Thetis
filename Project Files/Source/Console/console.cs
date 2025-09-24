@@ -61,7 +61,8 @@ namespace Thetis
     using System.Windows.Forms;
     using System.Xml.Linq;
     using System.Collections.Concurrent;
-    
+    using System.Management;
+
     public partial class Console : Form
     {
         public const bool CHECK_DEV_VERSION = true; // this will check github for dev versions, set to false when performing a release
@@ -286,7 +287,7 @@ namespace Thetis
         private int previous_delta = 0;
 
         private Size console_basis_size = new Size(100, 100);
-        private Size picdisplay_basis_size = new Size(100, 100);
+        private Size pnldisplay_basis_size = new Size(100, 100);
         private Point gr_filter_basis_location = new Point(100, 100);
         private Point gr_Multimeter_basis_location = new Point(100, 100);
         private Point gr_BandHF_basis_location = new Point(100, 100);
@@ -530,6 +531,8 @@ namespace Thetis
         private bool _restart;
 
         private bool _force_vfo_update = false; // used to always apply vfo change, mostly in initialisation
+
+        private bool m_bResizeDX2Display = false; // flag to say that dx2 is in middle of resize, drawing will be prevented
 
         private bool _check_error_log = true;
         private long _error_log_initial_size = -1;
@@ -939,8 +942,9 @@ namespace Thetis
                     CentreFrequency = bse.CentreFrequency;
                     if (bse.ZoomSlider != ptbDisplayZoom.Value)
                     {
-                        ptbDisplayZoom.Value = bse.ZoomSlider;
-                        ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                        //ptbDisplayZoom.Value = bse.ZoomSlider;
+                        //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                        Zoom = bse.ZoomSlider;
                     }
 
                     if (RX1Filter != bse.Filter)
@@ -1777,7 +1781,7 @@ namespace Thetis
 
             this.ActiveControl = chkPower;		// Power has focus initially
 
-            //MW0LGE_21d Display.Target = picDisplay;
+            //MW0LGE_21d Display.Target = pnlDisplay;
             InitDisplayModes();					// Initialize Display Modes
             InitAGCModes();						// Initialize AGC Modes
             InitMultiMeterModes();              // Initialize MultiMeter Modes
@@ -1842,7 +1846,7 @@ namespace Thetis
             quick_save_filter = Filter.F3;
             quick_save_mode = DSPMode.LSB;
             ptbPWR.Value = 100;
-            btnDisplayPanCenter_Click(this, EventArgs.Empty);
+            PanCentre();
 
             comboFMCTCSS.Text = "100.0";
 
@@ -2004,7 +2008,7 @@ namespace Thetis
                 rX2ToolStripMenuItem.Visible = false;
             }
 
-            //MW0LGE duped from above Display.Target = picDisplay;
+            //MW0LGE duped from above Display.Target = pnlDisplay;
             update_rx2_display = true;
 
             if (startdiversity)
@@ -5142,27 +5146,27 @@ namespace Thetis
 
             Graphics g = txtVFOAFreq.CreateGraphics();
 
-            SizeF size = g.MeasureString("0", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic);
+            SizeF size = measureStringFromCache("0", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_char_width = (int)Math.Round(size.Width - 2.0f, 0);	// subtract 2 since measure string includes 1 pixel border on each side
             float float_char_width = size.Width - 2.0f;
 
-            size = g.MeasureString("00", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("00", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_char_space = (int)Math.Round(size.Width - 2.0f - 2 * float_char_width, 0);
 
-            size = g.MeasureString(separator, txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache(separator, txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_decimal_width = (int)(size.Width - 2.0f);
 
-            size = g.MeasureString("0" + separator + "0", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("0" + separator + "0", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_decimal_space = (int)Math.Round(size.Width - 2.0f - 2 * float_char_width, 0);
 
-            size = g.MeasureString("1234.678901", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("1234.678901", txtVFOAFreq.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_pixel_offset = (int)Math.Round(size.Width - 2.0f, 0);
 
-            size = g.MeasureString("0", txtVFOALSD.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("0", txtVFOALSD.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_small_char_width = (int)Math.Round(size.Width - 2.0f, 0);
             float_char_width = size.Width - 2.0f;
 
-            size = g.MeasureString("00", txtVFOALSD.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("00", txtVFOALSD.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_small_char_space = (int)Math.Round(size.Width - 2.0f - 2 * float_char_width, 0);
 
             g.Dispose();
@@ -5175,27 +5179,26 @@ namespace Thetis
 
             Graphics g = txtVFOABand.CreateGraphics();
 
-            SizeF size = g.MeasureString("0", txtVFOABand.Font, 1000, StringFormat.GenericTypographic);
+            SizeF size = measureStringFromCache("0", txtVFOABand.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_sub_char_width = (int)Math.Round(size.Width - 2.0f, 0);	// subtract 2 since measure string includes 1 pixel border on each side
             float float_char_width = size.Width - 2.0f;
 
-            size = g.MeasureString("00", txtVFOABand.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("00", txtVFOABand.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_sub_char_space = (int)Math.Round(size.Width - 2.0f - 2 * float_char_width, 0);
 
-            size = g.MeasureString(separator, txtVFOABand.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache(separator, txtVFOABand.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_sub_decimal_width = (int)(size.Width - 2.0f);
 
-            size = g.MeasureString("0" + separator + "0", txtVFOABand.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("0" + separator + "0", txtVFOABand.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_sub_decimal_space = (int)Math.Round(size.Width - 2.0f - 2 * float_char_width, 0);
 
-            size = g.MeasureString("1234.678901", txtVFOABand.Font, 1000, StringFormat.GenericTypographic);
+            size = measureStringFromCache("1234.678901", txtVFOABand.Font, 1000, StringFormat.GenericTypographic, g);
             vfo_sub_pixel_offset = (int)Math.Round(size.Width - 2.0f, 0);
 
             g.Dispose();
         }
-
         private bool m_bSetBandRunning = false; // so we know if any events raised are caused by SetBand
-        public void SetBand(string mode, string filter, double freq, bool CTUN, int ZoomFactor, double CenterFreq)
+        public void SetBand(string mode, string filter, double freq, bool CTUN, int zoomFactor, double centerFreq)
         {
             //MW0LGE_21d
             Band oldBand = RX1Band;
@@ -5226,15 +5229,16 @@ namespace Thetis
             ClickTuneDisplay = false;                               // Set CTUN off to restore center frequency - G3OQD
             chkFWCATU.Checked = ClickTuneDisplay;
 
-            ptbDisplayZoom.Value = ZoomFactor;
-            ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+            //ptbDisplayZoom.Value = zoomFactor;
+            //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+            Zoom = zoomFactor;
 
             //MW0LGE_21c
             //it repositions everything at centre frequency by setting the CF and then setting VFOA to that CF
             //Lower down VFAFreq is then assigned to the required frequency
             if (CTUN)
             {
-                CentreFrequency = CenterFreq;                      // Restore centre frequency if CTUN enabled - G3OQD
+                CentreFrequency = centerFreq;                      // Restore centre frequency if CTUN enabled - G3OQD
                 VFOAFreq = CentreFrequency;
             }
 
@@ -6069,7 +6073,7 @@ namespace Thetis
             //    HighSWR = true;
             //   swr = 5.0;
             //   if (current_display_engine == DisplayEngine.GDI_PLUS)
-            //      picDisplay.Invalidate();
+            //      pnlDisplay.Invalidate();
 
             //  }
             //  else
@@ -6084,14 +6088,14 @@ namespace Thetis
                 HighSWR = true;
                 if (swr > 3) JanusAudio.SetSWRProtect(0.25f);
                 if (current_display_engine == DisplayEngine.GDI_PLUS)
-                    picDisplay.Invalidate();
+                    pnlDisplay.Invalidate();
             }
             else
             {
                 JanusAudio.SetSWRProtect(1.0f);
                 HighSWR = false;
                 if (current_display_engine == DisplayEngine.GDI_PLUS)
-                    picDisplay.Invalidate();
+                    pnlDisplay.Invalidate();
             }
             return swr;
         }
@@ -13710,7 +13714,7 @@ namespace Thetis
         {
             _pause_DisplayThread = true;
 
-            Display.Target = picDisplay;
+            Display.Target = pnlDisplay;
 
             if (resizeN1MM)
             {
@@ -19742,6 +19746,14 @@ namespace Thetis
                 ptbDisplayPan_Scroll(this, EventArgs.Empty);
             }
         }
+        public void PanCentre()
+        {
+            btnDisplayPanCenter_Click(this, EventArgs.Empty);
+        }
+        public void ZoomFullyOut()
+        {
+            Zoom = ptbDisplayZoom.Value = ptbDisplayZoom.Minimum;
+        }
         private AGCMode m_RX1agcMode = AGCMode.FIRST;
         public AGCMode RX1AGCMode
         {
@@ -21443,6 +21455,7 @@ namespace Thetis
             get { return _auto_undoTXatt; }
             set { _auto_undoTXatt = value; }
         }
+        private bool _check_for_bad_adc = true;
         private async void checkOverloads()
         {
             string sWarning = "";
@@ -21478,12 +21491,29 @@ namespace Thetis
 
             string[] adc_names = { "ADC0", "ADC1", "ADC2" }; // adc2 not used for anything atm, but here for completeness
 
-            int adc_oload_num = NetworkIO.getAndResetADC_Overload();
-            if(adc_oload_num > 0)
+            int adc_oload_num;
+            try
             {
-                // if there is an overload, then call it again, as a subsequent call to getAndResetADC_Overload would always return a 0 as the above getAndResetADC_Overload resets it
-                NetworkIO.getAndResetADC_Overload();
+                adc_oload_num = NetworkIO.getAndResetADC_Overload();
+                if (adc_oload_num > 0)
+                {
+                    // if there is an overload, then call it again, as a subsequent call to getAndResetADC_Overload would always return a 0 as the above getAndResetADC_Overload resets it
+                    NetworkIO.getAndResetADC_Overload();
+                }
             }
+            catch { adc_oload_num = -1; }
+
+            if(_check_for_bad_adc && adc_oload_num == -1)
+            {
+                MessageBox.Show("There has been an issue obtaining the ADC overload state. This will not be performed until the power is turned off/on inside Thetis.",
+                    "ADC Overload Issue",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                _check_for_bad_adc = false;
+            }
+            if (!_check_for_bad_adc) return;
+
             /*
                     overload adc_oload_num
             | adc[0] | adc[1] | adc[2] |          |
@@ -21876,6 +21906,8 @@ namespace Thetis
             int count = 0;
             bool run = false;
 
+            _check_for_bad_adc = true;
+
             try
             {
                 if (this.InvokeRequired)
@@ -22236,7 +22268,7 @@ namespace Thetis
             getLowHighForRXn(rx, out int low, out int high);
 
             int width = high - low;
-            return (int)((double)nPixelCount / (double)picDisplay.Width * (double)width);
+            return (int)((double)nPixelCount / (double)pnlDisplay.Width * (double)width);
         }
 
         private void getLowHighForRXn(int rx, out int low, out int high, bool bIncludeRitXit = true)
@@ -22344,7 +22376,7 @@ namespace Thetis
             getLowHighForRXn(rx, out int low, out int high);
 
             int width = high - low;
-            return (float)(low + ((double)x / (double)picDisplay.Width) * (double)width);
+            return (float)(low + ((double)x / (double)pnlDisplay.Width) * (double)width);
         }
 
         private int HzToPixel(float freq)
@@ -22376,7 +22408,7 @@ namespace Thetis
             }
 
             int width = high - low;
-            return (int)((double)(freq - low + localRit + localXit) / (double)width * (double)picDisplay.Width);
+            return (int)((double)(freq - low + localRit + localXit) / (double)width * (double)pnlDisplay.Width);
         }
 
         private float PixelToDb(float y)
@@ -22409,7 +22441,7 @@ namespace Thetis
             }
             else
             {
-                if (y > picDisplay.Height / 2) y -= picDisplay.Height / 2;
+                if (y > pnlDisplay.Height / 2) y -= pnlDisplay.Height / 2;
 
                 h = Display.RX2DisplayHeight;
                 localWaterFallUpdatePeriod = Display.RX2WaterfallUpdatePeriod;
@@ -22433,6 +22465,54 @@ namespace Thetis
         #endregion
 
         #region Paint Event Handlers
+        readonly struct MeasureKey : IEquatable<MeasureKey>
+        {
+            public readonly string Text;
+            public readonly Font Font;
+            public readonly int Width;
+            public readonly StringFormatFlags Flags;
+
+            public MeasureKey(string text, Font font, int width, StringFormat fmt)
+            {
+                Text = text;
+                Font = font;
+                Width = width;
+                Flags = fmt.FormatFlags;
+            }
+
+            public bool Equals(MeasureKey other) =>
+                Text == other.Text
+             && Font.Equals(other.Font)
+             && Width == other.Width
+             && Flags == other.Flags;
+
+            public override bool Equals(object obj) =>
+                obj is MeasureKey mk && Equals(mk);
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    int hash = 17;
+                    hash = hash * 31 + (Text?.GetHashCode() ?? 0);
+                    hash = hash * 31 + Font.GetHashCode();
+                    hash = hash * 31 + Width;
+                    hash = hash * 31 + ((int)Flags).GetHashCode();
+                    return hash;
+                }
+            }
+        }
+        private readonly Dictionary<MeasureKey, SizeF> _measureCache = new Dictionary<MeasureKey, SizeF>();
+        private SizeF measureStringFromCache(string str, Font font, int width,
+                                             StringFormat format, Graphics g)
+        {
+            MeasureKey key = new MeasureKey(str, font, width, format);
+            if (_measureCache.TryGetValue(key, out var cached)) return cached;
+
+            SizeF sz = g.MeasureString(str, font, width, format);
+            _measureCache[key] = sz;
+            return sz;
+        }
         private void getMeterPixelPosAndDrawScales(int rx, Graphics g, int H, int W, double num, out int pixel_x, out int pixel_x_swr, int nStringOffsetY, bool bDrawMarkers)
         {
             //MW0LGE 
@@ -22473,7 +22553,7 @@ namespace Thetis
                                 g.FillRectangle(low_brush, (int)(i * spacing - spacing * 0.5), H - 4 - 3, 1, 3); // short tic marks
                                 g.FillRectangle(low_brush, (int)(i * spacing), H - 4 - 6, 2, 6); // long tic marks
                             }
-                            SizeF size = g.MeasureString((-1 + i * 2).ToString(), font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache((-1 + i * 2).ToString(), font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
 
@@ -22488,7 +22568,7 @@ namespace Thetis
                                 g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing - spacing * 0.5), H - 4 - 3, 1, 3); // short tic marks
                                 g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing), H - 4 - 6, 2, 6); // long tic marks
                             }
-                            SizeF size = g.MeasureString("+" + (i * 20).ToString(), font7, 3, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("+" + (i * 20).ToString(), font7, 3, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
 
                             g.DrawString("+" + (i * 20).ToString(), font7, high_brush, (float)((double)W * 0.5 + i * spacing - string_width * 3 - (double)i / 3 * 2), (float)((double)H - nStringOffsetY - string_height));
@@ -22538,9 +22618,9 @@ namespace Thetis
                                 g.FillRectangle(b, (int)(i * spacing), H - 4 - 6, 2, 8);
                             }
                             string s = (-120 + i * 20).ToString();
-                            SizeF size = g.MeasureString(s, font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache(s, font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
-                            size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                            size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                             string_height = size.Height - 2.0;
 
                             g.DrawString(s, font7, b, (int)(i * spacing - (int)string_width * (s.Length)), (int)(H - nStringOffsetY - string_height));
@@ -22578,7 +22658,7 @@ namespace Thetis
                             }
 
                             string s = (-30 + i * 10).ToString();
-                            SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
 
@@ -22593,7 +22673,7 @@ namespace Thetis
                                 g.FillRectangle(high_brush, (int)((double)W * 0.665 + i * spacing), H - 4 - 6, 2, 6);
                             }
                             string s = (i * 4).ToString();
-                            SizeF size = g.MeasureString(s, font7, 3, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache(s, font7, 3, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
 
                             g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -22627,7 +22707,7 @@ namespace Thetis
                                 g.FillRectangle(low_brush, (int)(i * spacing), H - 4 - 6, 2, 6); // long tic marks
                             }
                             string s = (-30 + i * 10).ToString();
-                            SizeF size = g.MeasureString("0", font7, 100, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 100, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
 
@@ -22645,7 +22725,7 @@ namespace Thetis
                                 g.FillRectangle(high_brush, (int)((double)W * 0.5 + i * spacing), H - 4 - 6, 2, 6); // short tic marks
                             }
                             string s = g_list[i - 1];
-                            SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
                             if (i == 5) spacing = (W * 0.50 - 2.0 - 6.0) / 5.0; // pull text back in on right edge if
@@ -22686,7 +22766,7 @@ namespace Thetis
                                     g.FillRectangle(low_brush, (int)(i * spacing), H - 4 - 6, 2, 6);
                                 }
                                 string s = list[i - 1];
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -22700,7 +22780,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 4 - 3, 1, 3);
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
                                 }
-                                SizeF size = g.MeasureString("0", font7, 3, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 3, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -22751,7 +22831,7 @@ namespace Thetis
                                     g.FillRectangle(low_brush, (int)(i * spacing), H - 4 - 6, 2, 6);
                                 }
                                 string s = list[i - 1];
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -22766,7 +22846,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
                                 }
 
-                                SizeF size = g.MeasureString("0", font7, 3, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 3, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -22815,7 +22895,7 @@ namespace Thetis
                                 }
                                 string s = list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -22829,7 +22909,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 4 - 3, 1, 3);
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
                                 }
-                                SizeF size = g.MeasureString("0", font7, 2, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 2, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -22876,7 +22956,7 @@ namespace Thetis
                                 }
                                 string s = list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -22890,7 +22970,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing - spacing * 0.5), H - 4 - 3, 1, 3);
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
                                 }
-                                SizeF size = g.MeasureString("0", font7, 2, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 2, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -22938,7 +23018,7 @@ namespace Thetis
                                 }
                                 string s = list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -22953,7 +23033,7 @@ namespace Thetis
                                     g.FillRectangle(low_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
                                 }
 
-                                SizeF size = g.MeasureString("0", font7, 3, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 3, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.DrawString("1000", font7, low_brush, (int)(W * 0.75 + 2 + i * spacing - (int)4.0 * string_width), (int)(H - nStringOffsetY - string_height));
@@ -23012,7 +23092,7 @@ namespace Thetis
                                 }
                                 string s = swrx_list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23036,7 +23116,7 @@ namespace Thetis
 
                                 string s = swrx_hi_list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23079,7 +23159,7 @@ namespace Thetis
                                 }
                                 string s = list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23094,7 +23174,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), (H / 2) + 3, 2, 6);
                                 }
 
-                                SizeF size = g.MeasureString("0", font7, 2, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 2, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -23153,7 +23233,7 @@ namespace Thetis
                                 }
                                 string s = swrx_list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23177,7 +23257,7 @@ namespace Thetis
 
                                 string s = swrx_hi_list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23221,7 +23301,7 @@ namespace Thetis
                                 }
                                 string s = list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23236,7 +23316,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), (H / 2) + 3, 2, 6);
                                 }
 
-                                SizeF size = g.MeasureString("0", font7, 2, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 2, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -23293,7 +23373,7 @@ namespace Thetis
                                 }
                                 string s = swrx_list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23317,7 +23397,7 @@ namespace Thetis
 
                                 string s = swrx_hi_list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23360,7 +23440,7 @@ namespace Thetis
                                 }
                                 string s = list[i - 1];
 
-                                SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
                                 string_height = size.Height - 2.0;
 
@@ -23375,7 +23455,7 @@ namespace Thetis
                                     g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), (H / 2) + 3, 2, 6);
                                 }
 
-                                SizeF size = g.MeasureString("0", font7, 2, StringFormat.GenericTypographic);
+                                SizeF size = measureStringFromCache("0", font7, 2, StringFormat.GenericTypographic, g);
                                 double string_width = size.Width - 2.0;
 
                                 g.TextRenderingHint = TextRenderingHint.SystemDefault;
@@ -23431,7 +23511,7 @@ namespace Thetis
                             }
                             string s = swr_list[i - 1];
 
-                            SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
 
@@ -23455,7 +23535,7 @@ namespace Thetis
 
                             string s = swr_hi_list[i - 1];
 
-                            SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
 
@@ -23506,7 +23586,7 @@ namespace Thetis
 
                             string s = gain_list[i - 1];
 
-                            SizeF size = g.MeasureString("0", font7, 1, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 1, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
                             string_height = size.Height - 2.0;
 
@@ -23521,7 +23601,7 @@ namespace Thetis
                                 g.FillRectangle(high_brush, (int)((double)W * 0.75 + i * spacing), H - 4 - 6, 2, 6);
                             }
 
-                            SizeF size = g.MeasureString("0", font7, 3, StringFormat.GenericTypographic);
+                            SizeF size = measureStringFromCache("0", font7, 3, StringFormat.GenericTypographic, g);
                             double string_width = size.Width - 2.0;
 
                             g.DrawString("25+", font7, high_brush, (float)((double)W * 0.75 + i * spacing - 2.5 * string_width), (float)((double)H - nStringOffsetY - string_height));
@@ -24352,8 +24432,8 @@ namespace Thetis
                             //"DisplayVFOBsub : " + Display.VFOBSub.ToString() + Environment.NewLine + // not used for anything
                             "DisplayFreqDiff : " + Display.FreqDiff.ToString() + Environment.NewLine +
                             "DisplayRX2FreqDiff : " + Display.RX2FreqDiff.ToString() + Environment.NewLine +
-                            "Xpixels : " + picDisplay.Width.ToString() + Environment.NewLine +
-                            "Ypixels : " + picDisplay.Height.ToString() + Environment.NewLine +
+                            "Xpixels : " + pnlDisplay.Width.ToString() + Environment.NewLine +
+                            "Ypixels : " + pnlDisplay.Height.ToString() + Environment.NewLine +
                             "rx1_click_tune_drag : " + rx1_click_tune_drag.ToString() + Environment.NewLine +
                             "rx1_spectrum_tune_drag : " + rx1_spectrum_tune_drag.ToString() + Environment.NewLine +
                             "rx1_spectrum_drag : " + rx1_spectrum_drag.ToString() + Environment.NewLine +
@@ -24369,7 +24449,7 @@ namespace Thetis
                             //"AttackFastFramesRX1 : " + Display.AttackFastFramesRX1.ToString() + Environment.NewLine +
                             //"AttackFastFramesRX2 : " + Display.AttackFastFramesRX2.ToString() + Environment.NewLine +
                             "CurrentClickTuneMode : " + CurrentClickTuneMode.ToString() + Environment.NewLine +
-                            "Cursor : " + picDisplay.Cursor.ToString() + Environment.NewLine +
+                            "Cursor : " + pnlDisplay.Cursor.ToString() + Environment.NewLine +
                             "rx1_squelch_state : " + rx1_squelch_state.ToString() + Environment.NewLine +
                             "rx1_fm_squelch_state : " + rx1_fm_squelch_state.ToString() + Environment.NewLine +
                             "rx1_squelch_threshold_scroll : " + rx1_squelch_threshold_scroll.ToString() + Environment.NewLine +
@@ -24399,7 +24479,7 @@ namespace Thetis
 
                     if (m_bResizeDX2Display)
                     {
-                        Display.Target = picDisplay;
+                        Display.Target = pnlDisplay;
                         m_bResizeDX2Display = false;
                     }
 
@@ -26676,7 +26756,7 @@ namespace Thetis
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Warning,
                             MessageBoxDefaultButton.Button1,
-                            (MessageBoxOptions)0x40000); // MB_TOPMOST
+                            Common.MB_TOPMOST);
 
                             goto end;
                         }
@@ -27023,16 +27103,16 @@ namespace Thetis
                     int y = DX_Y;
                     //======================================================================================================    
 
-                    int xx = picDisplay.Width;  // size of picdisplay as user scales it to their screen
-                    int yy = picDisplay.Height;
+                    int xx = pnlDisplay.Width;  // size of pnldisplay as user scales it to their screen
+                    int yy = pnlDisplay.Height;
 
-                    int xxx = 1000; // actuall unscaled size of map in picdisplay
+                    int xxx = 1000; // actuall unscaled size of map in pnldisplay
                     int yyy = 507;
 
                     Debug.WriteLine(" width " + xx);
                     Debug.WriteLine(" Height " + yy);
 
-                    Point p = picDisplay.PointToClient(Cursor.Position); // mouse cursor when you hit the ctrl key
+                    Point p = pnlDisplay.PointToClient(Cursor.Position); // mouse cursor when you hit the ctrl key
 
                     int XX = 0;
                     int YY = 0;
@@ -28921,7 +29001,7 @@ namespace Thetis
                     radio.GetDSPRX(0, 0).SpectrumPreFilter = true;
                     radio.GetDSPRX(1, 0).SpectrumPreFilter = true;
 
-                    picDisplay.BringToFront();
+                    pnlDisplay.BringToFront();
 
                     break;
                 case DisplayMode.PANADAPTER:
@@ -28935,7 +29015,7 @@ namespace Thetis
                     radio.GetDSPRX(0, 0).SpectrumPreFilter = true;
                     radio.GetDSPRX(1, 0).SpectrumPreFilter = true;
 
-                    picDisplay.BringToFront();
+                    pnlDisplay.BringToFront();
 
                     break;
                 case DisplayMode.SPECTRUM:
@@ -29125,7 +29205,18 @@ namespace Thetis
 
         private ShutdownForm _frmShutDownForm = null;
         private void Console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {            
+        {
+            if (Display.RunningFPSProfile)
+            {
+                MessageBox.Show("Stop the FPS profile test first !",
+                "FPS Profile Test",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                e.Cancel = true;
+                return;
+            }
+
             shutdownLogStringToPath("Inside Console_Closing()");
 
             shutdownLogStringToPath("Before ThetisBotDiscord.Disconnect()");
@@ -30932,7 +31023,28 @@ namespace Thetis
 
             return bRet;
         }
-
+        public bool RX1DisplayAVG
+        {
+            get { return chkDisplayAVG.Checked; }
+            set
+            {
+                if (value == chkDisplayAVG.Checked)
+                    chkDisplayAVG_CheckedChanged(this, EventArgs.Empty);
+                else
+                    chkDisplayAVG.Checked = value;
+            }
+        }
+        public bool RX2DisplayAVG
+        {
+            get { return chkRX2DisplayAVG.Checked; }
+            set
+            {
+                if (value == chkRX2DisplayAVG.Checked)
+                    chkRX2DisplayAVG_CheckedChanged(this, EventArgs.Empty);
+                else
+                    chkRX2DisplayAVG.Checked = value;
+            }
+        }
         private void chkDisplayAVG_CheckedChanged(object sender, System.EventArgs e)
         {
             bool old_on = specRX.GetSpecRX(0).AverageOn;
@@ -31966,17 +32078,17 @@ namespace Thetis
             if (x > left && x < right && y > top && y < bottom)
                 return TuneLocation.VFOASub;
 
-            left = panelDisplay.Left + picDisplay.Left;
-            right = left + picDisplay.Width;
-            top = panelDisplay.Top + picDisplay.Top + picDisplay.Height / 2;
-            bottom = top + picDisplay.Height / 2;
+            left = panelDisplay.Left + pnlDisplay.Left;
+            right = left + pnlDisplay.Width;
+            top = panelDisplay.Top + pnlDisplay.Top + pnlDisplay.Height / 2;
+            bottom = top + pnlDisplay.Height / 2;
             if (x > left && x < right && y > top && y < bottom)
                 return TuneLocation.DisplayBottom;
 
-            left = panelDisplay.Left + picDisplay.Left;
-            right = left + picDisplay.Width;
-            top = panelDisplay.Top + picDisplay.Top;
-            bottom = top + picDisplay.Height;
+            left = panelDisplay.Left + pnlDisplay.Left;
+            right = left + pnlDisplay.Width;
+            top = panelDisplay.Top + pnlDisplay.Top;
+            bottom = top + pnlDisplay.Height;
             if (x > left && x < right && y > top && y < bottom)
                 return TuneLocation.DisplayTop;
 
@@ -34100,19 +34212,19 @@ namespace Thetis
         private bool overRX(int x, int y, int rx, bool bIgnorePanafallWaterfall = true)
         {
             int nMinHeightRX1 = 0;
-            int nMaxHeightRX1 = picDisplay.Height;
-            int nMinHeightRX2 = picDisplay.Height / 2;
-            int nMaxHeightRX2 = picDisplay.Height;
+            int nMaxHeightRX1 = pnlDisplay.Height;
+            int nMinHeightRX2 = pnlDisplay.Height / 2;
+            int nMaxHeightRX2 = pnlDisplay.Height;
 
             if (rx2_enabled)
             {
                 // top half only
-                nMaxHeightRX1 = picDisplay.Height / 2;
+                nMaxHeightRX1 = pnlDisplay.Height / 2;
 
                 if (Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL && bIgnorePanafallWaterfall)
                 {
                     //top half, of bottom half is available only
-                    nMaxHeightRX2 = (picDisplay.Height / 4) * 3;
+                    nMaxHeightRX2 = (pnlDisplay.Height / 4) * 3;
                 }
             }
 
@@ -34121,12 +34233,12 @@ namespace Thetis
                 if (!rx2_enabled)
                 {
                     // top half is available only
-                    nMaxHeightRX1 = Display.PanafallSplitBarPos;//picDisplay.Height / 2;
+                    nMaxHeightRX1 = Display.PanafallSplitBarPos;//pnlDisplay.Height / 2;
                 }
                 else
                 {
                     // top half, of top half is available only
-                    nMaxHeightRX1 = picDisplay.Height / 4;
+                    nMaxHeightRX1 = pnlDisplay.Height / 4;
                 }
             }
 
@@ -34142,7 +34254,7 @@ namespace Thetis
                     case DisplayMode.PANASCOPE:
                     case DisplayMode.SPECTRASCOPE:
                         // check if we are anywhere over area that filters etc can be adjusted
-                        if ((x >= 0 && x < picDisplay.Width) &&
+                        if ((x >= 0 && x < pnlDisplay.Width) &&
                          (y < nMaxHeightRX1 && y >= nMinHeightRX1)) // + 10))
                         {
                             return true;
@@ -34163,7 +34275,7 @@ namespace Thetis
                     case DisplayMode.PANASCOPE:
                     case DisplayMode.SPECTRASCOPE:
                         // check if we are anywhere over area that filters etc can be adjusted
-                        if ((x >= 0 && x < picDisplay.Width) &&
+                        if ((x >= 0 && x < pnlDisplay.Width) &&
                          (y < nMaxHeightRX2 && y >= nMinHeightRX2)) // + 10))
                         {
                             return true;
@@ -34269,1229 +34381,9 @@ namespace Thetis
             }
             return agc_cal_offset;
         }
-        unsafe private void picDisplay_MouseMove(object sender, MouseEventArgs e)
-        {
-            try
-            {
-                Cursor next_cursor = _useOutlinedCrossCursor ? _cross_outlined : Cursors.Cross;
-
-                // get filter location information
-                int filt_low_x = 0;
-                int filt_high_x = 0;
-
-                //MW0LGE_21h
-                int RX1diff = HzToPixel((float)((VFOAFreq - CentreFrequency) * 1e6));
-                int RX2diff = HzToPixel((float)((VFOBFreq - CentreRX2Frequency) * 1e6), 2);
-
-                if (rx2_enabled && e.Y > picDisplay.Height / 2) // if RX2 is enabled and the cursor is in the lower half of the display
-                {
-                    if (_mox)
-                    {
-                        filt_low_x = HzToPixel(radio.GetDSPTX(0).TXFilterLow, 2);
-                        filt_high_x = HzToPixel(radio.GetDSPTX(0).TXFilterHigh, 2);
-                    }
-                    else
-                    {
-                        //MW0LGE_21h changes so that CTUN on works for filter drag                        
-                        filt_low_x = RX2diff + HzToPixel(radio.GetDSPRX(1, 0).RXFilterLow, 2) - HzToPixel(0.0f, 2);
-                        filt_high_x = RX2diff + HzToPixel(radio.GetDSPRX(1, 0).RXFilterHigh, 2) - HzToPixel(0.0f, 2);
-                    }
-                }
-                else
-                {
-                    if (_mox)
-                    {
-                        if (display_duplex) //[2.10.1.0] MW0LGE support duplex
-                        {
-                            filt_low_x = RX1diff + HzToPixel(radio.GetDSPTX(0).TXFilterLow) - HzToPixel(0.0f);
-                            filt_high_x = RX1diff + HzToPixel(radio.GetDSPTX(0).TXFilterHigh) - HzToPixel(0.0f);
-                        }
-                        else
-                        {
-                            filt_low_x = HzToPixel(radio.GetDSPTX(0).TXFilterLow);
-                            filt_high_x = HzToPixel(radio.GetDSPTX(0).TXFilterHigh);
-                        }
-                    }
-                    else
-                    {
-                        //MW0LGE_21h changes so that CTUN on works for filter drag
-                        filt_low_x = RX1diff + HzToPixel(radio.GetDSPRX(0, 0).RXFilterLow) - HzToPixel(0.0f);
-                        filt_high_x = RX1diff + HzToPixel(radio.GetDSPRX(0, 0).RXFilterHigh) - HzToPixel(0.0f);
-                    }
-                }
-
-                // get VFO A Sub + Filter location information
-                int vfoa_sub_x = 0;
-                int vfoa_sub_low_x = 0;
-                int vfoa_sub_high_x = 0;
-                if (chkEnableMultiRX.Checked && !_mox)
-                {
-                    if (!rx2_enabled)
-                    {
-                        vfoa_sub_x = HzToPixel((float)((VFOBFreq - VFOAFreq) * 1e6));
-                        vfoa_sub_low_x = vfoa_sub_x + (HzToPixel(radio.GetDSPRX(0, 0).RXFilterLow) - HzToPixel(0.0f));
-                        vfoa_sub_high_x = vfoa_sub_x + (HzToPixel(radio.GetDSPRX(0, 0).RXFilterHigh) - HzToPixel(0.0f));
-                    }
-                    else
-                    {
-                        vfoa_sub_x = HzToPixel((float)((VFOASubFreq - VFOAFreq) * 1e6));
-                        vfoa_sub_low_x = vfoa_sub_x + (HzToPixel(radio.GetDSPRX(0, 1).RXFilterLow) - HzToPixel(0.0f));
-                        vfoa_sub_high_x = vfoa_sub_x + (HzToPixel(radio.GetDSPRX(0, 1).RXFilterHigh) - HzToPixel(0.0f));
-                    }
-                }
-
-                // get VFO B filter location information
-                int vfob_low_x = 0;
-                int vfob_high_x = 0;
-                if (rx2_enabled)
-                {
-                    vfob_low_x = RX2diff + (HzToPixel(radio.GetDSPRX(1, 0).RXFilterLow, 2) - HzToPixel(0.0f, 2));
-                    vfob_high_x = RX2diff + (HzToPixel(radio.GetDSPRX(1, 0).RXFilterHigh, 2) - HzToPixel(0.0f, 2));
-                }
-
-                rx1_grid_adjust = false;
-                rx2_grid_adjust = false;
-
-                bool bOverRX1 = overRX(e.X, e.Y, 1, true);
-                bool bOverRX2 = overRX(e.X, e.Y, 2, true);
-                #region Notches
-                //NOTCH MW0LGE
-                bool bDraggingAFilter = rx1_high_filter_drag || rx1_low_filter_drag || rx2_high_filter_drag || rx2_low_filter_drag ||
-                    rx1_sub_drag || rx1_whole_filter_drag || rx2_whole_filter_drag || tx_low_filter_drag || tx_high_filter_drag || tx_whole_filter_drag ||
-                    rx1_click_tune_drag || rx2_click_tune_drag;
-
-                if (!SetupForm.NotchAdminBusy && !m_frmNotchPopup.Visible & !bDraggingAFilter) // only highlight/select if we are not actively adding/edditing via setup form, or the popup is hidden
-                {
-                    int nRX = 0;
-                    if (bOverRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANAFALL))
-                    {
-                        nRX = 1;
-                    }
-                    else if (bOverRX2 && (Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER || Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL))
-                    {
-                        nRX = 2;
-                    }
-
-                    if (!m_bDraggingNotch && !m_bDraggingNotchBW && nRX != 0)
-                    {
-                        double dVfo = 0;
-                        double dCentreFreq = 0;
-                        int nL = 0;
-                        int nH = 0;
-
-                        if (nRX == 1)
-                        {
-                            dCentreFreq = CentreFrequency * 1e6;
-                            dVfo = dCentreFreq + PixelToHz(e.X, 1);
-                            nL = Display.RXDisplayLow;
-                            nH = Display.RXDisplayHigh;
-                            if (rx1_dsp_mode == DSPMode.CWL)
-                                dVfo += (double)cw_pitch;
-                            else if (rx1_dsp_mode == DSPMode.CWU)
-                                dVfo -= (double)cw_pitch;
-                        }
-                        else if (nRX == 2)
-                        {
-                            dCentreFreq = CentreRX2Frequency * 1e6;
-                            dVfo = dCentreFreq + PixelToHz(e.X, 2);
-                            nL = Display.RX2DisplayLow;
-                            nH = Display.RX2DisplayHigh;
-                            if (rx2_dsp_mode == DSPMode.CWL)
-                                dVfo += (double)cw_pitch;
-                            else if (rx2_dsp_mode == DSPMode.CWU)
-                                dVfo -= (double)cw_pitch;
-                        }
-
-                        if (nRX != 0)  // we are over a RX with the mouse
-                        {
-                            // ok are we over the top of a notch?
-                            // we pad it with 1pixel worth of hz to make it selectable at low zoom
-                            SelectedNotch = MNotchDB.NotchThatSurroundsFrequencyInBW(dCentreFreq, nL - _max_filter_width, nH + _max_filter_width, dVfo, HzInNPixels(1, nRX));
-                        }
-                        else
-                        {
-                            if (SelectedNotch != null) SelectedNotch = null;
-                        }
-                    }
-                    else if (m_bDraggingNotch && nRX != 0)
-                    {
-                        // drag the whole notch
-                        double diff = PixelToHz(e.X, nRX) - PixelToHz(_drag_notch_start_point.X, nRX);
-
-                        //MW0LGE_21e XVTR
-                        double f = drag_notch_start_data + diff;
-                        double tmpMin = min_freq;
-                        double tmpMax = max_freq;
-                        if (nRX == 1 && rx1_xvtr_index >= 0)
-                        {
-                            int nIndex = XVTRForm.XVTRFreq(f * 1e-6);
-                            if (nIndex == rx1_xvtr_index)
-                            {
-                                tmpMin = XVTRForm.GetBegin(nIndex);
-                                tmpMax = XVTRForm.GetEnd(nIndex);
-                            }
-                        }
-                        else if (nRX == 2 && rx2_xvtr_index >= 0)
-                        {
-                            int nIndex = XVTRForm.XVTRFreq(f * 1e-6);
-                            if (nIndex == rx2_xvtr_index)
-                            {
-                                tmpMin = XVTRForm.GetBegin(nIndex);
-                                tmpMax = XVTRForm.GetEnd(nIndex);
-                            }
-                        }
-                        //
-
-                        if (SelectedNotch != null)
-                        {
-                            // check to see if outside frequency limits
-                            bool bOk = true;
-                            if (f - (SelectedNotch.FWidth / 2) < tmpMin * 1e6) bOk = false;
-                            if (f + (SelectedNotch.FWidth / 2) > tmpMax * 1e6) bOk = false;
-
-                            if (bOk)
-                            {
-                                SelectedNotch.FCenter = drag_notch_start_data + diff;
-                                ChangeNotchCentreFrequency(SelectedNotch, SelectedNotch.FCenter, m_nNotchRX); //MW0LGE [2.9.0.7] update on drag
-                            }
-                        }
-                    }
-                    else if (m_bDraggingNotchBW && nRX != 0)
-                    {
-                        // drag the bw edges of the notch
-                        double diff = 0;
-                        if (m_BDragginNotchBWRightSide)
-                        {
-                            diff = PixelToHz(e.X, nRX) - PixelToHz(_drag_notch_start_point.X, nRX);
-                        }
-                        else
-                        {
-                            diff = PixelToHz(_drag_notch_start_point.X, nRX) - PixelToHz(e.X, nRX);
-                        }
-
-                        double tmp = drag_notch_start_data + (diff * 2); // we want double the diff, as we are doing 'both sides'
-
-                        if (tmp < 0) tmp = 0;
-                        if (tmp > _max_filter_width) tmp = _max_filter_width;
-
-                        //MW0LGE_21e XVTR
-                        double tmpMin = min_freq;
-                        double tmpMax = max_freq;
-                        if (nRX == 1 && rx1_xvtr_index >= 0)
-                        {
-                            int nIndex = XVTRForm.XVTRFreq(SelectedNotch.FCenter * 1e-6);
-                            if (nIndex == rx1_xvtr_index)
-                            {
-                                tmpMin = XVTRForm.GetBegin(nIndex);
-                                tmpMax = XVTRForm.GetEnd(nIndex);
-                            }
-                        }
-                        else if (nRX == 2 && rx2_xvtr_index >= 0)
-                        {
-                            int nIndex = XVTRForm.XVTRFreq(SelectedNotch.FCenter * 1e-6);
-                            if (nIndex == rx2_xvtr_index)
-                            {
-                                tmpMin = XVTRForm.GetBegin(nIndex);
-                                tmpMax = XVTRForm.GetEnd(nIndex);
-                            }
-                        }
-                        //
-                        // check to see if outside frequency limits
-                        bool bOk = true;
-                        if (SelectedNotch.FCenter - (tmp / 2) < tmpMin * 1e6) bOk = false;
-                        if (SelectedNotch.FCenter + (tmp / 2) > tmpMax * 1e6) bOk = false;
-
-                        if (bOk)
-                        {
-                            SelectedNotch.FWidth = tmp;
-                            ChangeNotchBW(SelectedNotch, SelectedNotch.FWidth);
-                        }
-                    }
-                }
-                //END NOTCH
-                #endregion
-                bool bHighlightNumberScaleRX1 = false;
-                bool bHighlightNumberScaleRX2 = false;
-                int nHighlightedBandStackEntryIndex = -1; // no bandstackoverlay highlighted
-
-                if (bOverRX1 && !bDraggingAFilter)
-                {
-                    switch (Display.CurrentDisplayMode)
-                    {
-                        case DisplayMode.PANADAPTER:
-                        case DisplayMode.SPECTRUM:
-                        case DisplayMode.HISTOGRAM:
-                        case DisplayMode.PANAFALL:
-                        case DisplayMode.PANASCOPE:
-                        case DisplayMode.SPECTRASCOPE:
-                            // check if we are over scale on left
-                            if (e.X > RX1display_grid_x && e.X < RX1display_grid_w)
-                            {
-                                if (gridminmaxadjust || gridmaxadjust) next_cursor = grabbing;
-                                else next_cursor = grab;
-                                rx1_grid_adjust = true;
-                                bHighlightNumberScaleRX1 = true;
-                            }
-                            break;
-                    }
-
-                    #region BandStackHighlight
-                    //BandstackOverlay highlight MW0LGE_21h
-                    //only do this if not doing something else
-                    if (m_bShowBandStackOverlays && bOverRX1 && !(rx1_sub_drag || bHighlightNumberScaleRX1 || bDraggingAFilter || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit))
-                    {
-                        if (Display.BandStackOverlays != null && Display.BandStackOverlays.Length > 0)
-                        {
-                            if (bOverRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANAFALL))
-                            {
-                                // convert mouse pos into HZ
-                                double nMousePosHZ = (CentreFrequency * 1e6) + PixelToHz(e.X, 1); // only rx1
-
-                                for (int n = 0; n < Display.BandStackOverlays.Length; n++)
-                                {
-                                    BandStackEntry bse = Display.BandStackOverlays[n];
-
-                                    double dL = (bse.Frequency * 1e6) + bse.LowFilter;
-                                    double dH = (bse.Frequency * 1e6) + bse.HighFilter;
-
-                                    if (dL <= nMousePosHZ && dH >= nMousePosHZ)
-                                    {
-                                        nHighlightedBandStackEntryIndex = n;
-                                        break; // use first hit
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    //
-                    #endregion
-                }
-
-                if (rx2_enabled && bOverRX2 && !(bHighlightNumberScaleRX2 || bDraggingAFilter || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit))
-                {
-                    switch (Display.CurrentDisplayModeBottom)
-                    {
-                        case DisplayMode.PANADAPTER:
-                        case DisplayMode.SPECTRUM:
-                        case DisplayMode.HISTOGRAM:
-                        case DisplayMode.PANAFALL:
-                        case DisplayMode.PANASCOPE:
-                        case DisplayMode.SPECTRASCOPE:
-                            // check if we are over scale on left
-                            if (e.X > RX2display_grid_x && e.X < RX2display_grid_w)
-                            {
-                                if (gridminmaxadjust || gridmaxadjust) next_cursor = grabbing;
-                                else next_cursor = grab;
-                                rx2_grid_adjust = true;
-                                bHighlightNumberScaleRX2 = true;
-                            }
-                            break;
-                    }
-                }
-
-                // update the display
-                Display.HighlightNumberScaleRX1 = bHighlightNumberScaleRX1;
-                Display.HighlightNumberScaleRX2 = bHighlightNumberScaleRX2;
-                Display.HighlightedBandStackEntryIndex = nHighlightedBandStackEntryIndex;
-
-                //MIDDLE OF PANAFALL MOVEUPDOWN MW0LGE
-                if (!rx2_enabled && Display.CurrentDisplayMode == DisplayMode.PANAFALL)
-                {
-                    if (m_bDraggingPanafallSplit)
-                    {
-                        float f = (float)e.Y / (float)picDisplay.Height;
-                        f = Math.Max(0.1f, f);
-                        f = Math.Min(0.9f, f);
-                        Display.PanafallSplitBarPerc = f;
-                    }
-                }
-                //END SPLITTER DRAG
-
-                #region GridAdjust
-                if (rx1_grid_adjust || rx2_grid_adjust)
-                {
-                    if (rx1_grid_adjust)
-                    {
-                        if (gridminmaxadjust)
-                        {
-                            int delta_y = e.Y - grid_minmax_drag_start_point.Y;
-                            double delta_db = (delta_y / 10) * Display.SpectrumGridStep;
-                            float val = grid_minmax_max_y;
-                            val += (float)delta_db;
-                            float min_val = grid_minmax_min_y;
-                            min_val += (float)delta_db;
-
-                            if (min_val < -200)
-                            {
-                                min_val = -200;
-                                if (val - min_val < 24) val = min_val + 24;
-                            }
-
-                            if (val > 200)
-                            {
-                                val = 200;
-                                if (val - min_val < 24) min_val = val - 24;
-                            }
-
-                            if (!tx1_grid_adjust)
-                            {
-                                SetupForm.DisplayGridMax = val;
-                                SetupForm.DisplayGridMin = min_val;
-
-                                //MW0LGE
-                                if (m_bWaterfallUseRX1SpectrumMinMax)
-                                {
-                                    // use display directly so we dont change any band based thresholds in setupform
-                                    Display.WaterfallHighThreshold = val;
-                                    Display.WaterfallLowThreshold = min_val;
-                                }
-
-                                //MW0LGE_21d set rx2 grid - change to shift key
-                                if (Common.ShiftKeyDown && RX2Enabled)
-                                {
-                                    SetupForm.RX2DisplayGridMax = val;
-                                    SetupForm.RX2DisplayGridMin = min_val;
-
-                                    if (m_bWaterfallUseRX2SpectrumMinMax)
-                                    {
-                                        // use display directly so we dont change any band based thresholds in setupform
-                                        Display.RX2WaterfallHighThreshold = val;
-                                        Display.RX2WaterfallLowThreshold = min_val;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                SetupForm.TXGridMax = val;
-                                SetupForm.TXGridMin = min_val;
-                            }
-                        }
-
-                        if (gridmaxadjust)
-                        {
-                            int delta_y = e.Y - grid_minmax_drag_start_point.Y;
-                            double delta_db = (delta_y / 10) * Display.SpectrumGridStep;
-                            float val = grid_minmax_max_y;
-                            val += (float)delta_db;
-
-                            if (!tx1_grid_adjust)
-                            {
-                                if (val - SetupForm.DisplayGridMin < 24) val = SetupForm.DisplayGridMin + 24;
-
-                                SetupForm.DisplayGridMax = val;
-
-                                //MW0LGE
-                                if (m_bWaterfallUseRX1SpectrumMinMax)
-                                {
-                                    // use display directly so we dont change any band based thresholds in setupform
-                                    Display.WaterfallHighThreshold = val;
-                                }
-
-                                //MW0LGE_21d set rx2 grid - changed to shift key
-                                if (Common.ShiftKeyDown && RX2Enabled)
-                                {
-                                    SetupForm.RX2DisplayGridMax = val;
-
-                                    if (m_bWaterfallUseRX2SpectrumMinMax)
-                                    {
-                                        // use display directly so we dont change any band based thresholds in setupform
-                                        Display.RX2WaterfallHighThreshold = val;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (val - SetupForm.TXGridMin < 24) val = SetupForm.TXGridMin + 24;
-
-                                SetupForm.TXGridMax = val;
-                            }
-                        }
-                    }
-                    else if (rx2_grid_adjust)
-                    {
-                        if (gridminmaxadjust)
-                        {
-                            int delta_y = e.Y - grid_minmax_drag_start_point.Y;
-                            double delta_db = (delta_y / 10) * Display.SpectrumGridStep;
-                            float val = grid_minmax_max_y;
-                            val += (float)delta_db;
-                            float min_val = grid_minmax_min_y;
-                            min_val += (float)delta_db;
-
-                            if (min_val < -200)
-                            {
-                                min_val = -200;
-                                if (val - min_val < 24) val = min_val + 24;
-                            }
-
-                            if (val > 200)
-                            {
-                                val = 200;
-                                if (val - min_val < 24) min_val = val - 24;
-                            }
-
-                            if (!tx2_grid_adjust)
-                            {
-                                SetupForm.RX2DisplayGridMax = val;
-                                SetupForm.RX2DisplayGridMin = min_val;
-
-                                //MW0LGE
-                                if (m_bWaterfallUseRX2SpectrumMinMax)
-                                {
-                                    // use display directly so we dont change any band based thresholds in setupform
-                                    Display.RX2WaterfallHighThreshold = val;
-                                    Display.RX2WaterfallLowThreshold = min_val;
-                                }
-
-                                //MW0LGE_21d set rx1 grid - changed to shift key
-                                if (Common.ShiftKeyDown)
-                                {
-                                    SetupForm.DisplayGridMax = val;
-                                    SetupForm.DisplayGridMin = min_val;
-
-                                    if (m_bWaterfallUseRX2SpectrumMinMax)
-                                    {
-                                        // use display directly so we dont change any band based thresholds in setupform
-                                        Display.WaterfallHighThreshold = val;
-                                        Display.WaterfallLowThreshold = min_val;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                SetupForm.TXGridMax = val;
-                                SetupForm.TXGridMin = min_val;
-                            }
-                        }
-                        if (gridmaxadjust)
-                        {
-                            int delta_y = e.Y - grid_minmax_drag_start_point.Y;
-                            double delta_db = (delta_y / 10) * Display.SpectrumGridStep;
-                            float val = grid_minmax_max_y;
-                            val += (float)delta_db;
-
-                            if (!tx2_grid_adjust)
-                            {
-                                if (val - SetupForm.RX2DisplayGridMin < 24) val = SetupForm.RX2DisplayGridMin + 24;
-
-                                SetupForm.RX2DisplayGridMax = val;
-
-                                //MW0LGE
-                                if (m_bWaterfallUseRX2SpectrumMinMax)
-                                {
-                                    // use display directly so we dont change any band based thresholds in setupform
-                                    Display.RX2WaterfallHighThreshold = val;
-                                }
-
-                                //MW0LGE_21d set rx1 grid - changed to shift key
-                                if (Common.ShiftKeyDown)
-                                {
-                                    SetupForm.DisplayGridMax = val;
-
-                                    if (m_bWaterfallUseRX2SpectrumMinMax)
-                                    {
-                                        // use display directly so we dont change any band based thresholds in setupform
-                                        Display.WaterfallHighThreshold = val;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (val - SetupForm.TXGridMin < 24) val = SetupForm.TXGridMin + 24;
-
-                                SetupForm.TXGridMax = val;
-                            }
-                        }
-                    }
-                }
-                #endregion
-
-                //MW0LGE_21k9
-                bool bShowCursorData = false;
-                //
-
-                // TCI SPOTS
-                _highlightedSpot = SpotManager2.HighlightSpot(e.X, e.Y);
-                //
-
-                #region AGC, Filter Dragging and edge highlighting
-                switch (Display.CurrentDisplayMode)
-                {
-                    case DisplayMode.HISTOGRAM:
-                    case DisplayMode.SPECTRUM:
-                        bShowCursorData = true;
-                        break;
-                    case DisplayMode.PANADAPTER:
-                    case DisplayMode.WATERFALL:
-                    case DisplayMode.PANAFALL:
-                    case DisplayMode.PANASCOPE:
-                        bShowCursorData = true;
-                        switch (Display.CurrentDisplayMode)
-                        {
-                            case DisplayMode.PANAFALL:
-                            case DisplayMode.PANASCOPE:
-                            case DisplayMode.PANADAPTER:
-                                float cal_offset = 0.0f;
-                                if (rx2_enabled && e.Y > picDisplay.Height / 2)
-                                    cal_offset = agcCalOffset(2);
-                                else
-                                    cal_offset = agcCalOffset(1);
-
-                                if (!_mox)
-                                {
-                                    if (show_agc)
-                                    {
-                                        if (rx2_enabled && e.Y > picDisplay.Height / 2)
-                                        {
-                                            if (Display.AGCRX2Knee.Contains(e.X, e.Y))
-                                            {
-                                                if (agc_knee_drag) next_cursor = grabbing;
-                                                else next_cursor = grab;
-                                            }
-                                            if (Display.AGCRX2Hang.Contains(e.X, e.Y))
-                                            {
-                                                if (agc_hang_drag) next_cursor = grabbing;
-                                                else next_cursor = grab;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (Display.AGCKnee.Contains(e.X, e.Y))
-                                            {
-                                                if (agc_knee_drag) next_cursor = grabbing;
-                                                else next_cursor = grab;
-                                            }
-                                            if (Display.AGCHang.Contains(e.X, e.Y))
-                                            {
-                                                if (agc_hang_drag) next_cursor = grabbing;
-                                                else next_cursor = grab;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (agc_knee_drag && show_agc)
-                                {
-                                    if (rx2_enabled && e.Y > picDisplay.Height / 2)
-                                    {
-                                        double agc_rx2_thresh_point = (double)PixelToRx2Db(e.Y + 4);
-                                        agc_rx2_thresh_point -= (double)cal_offset;
-                                        if (agc_rx2_thresh_point > 2) agc_rx2_thresh_point = 2;
-                                        if (agc_rx2_thresh_point < -143.0) agc_rx2_thresh_point = -143.0;
-
-                                        double agc_rx2_top = 0.0;
-
-                                        double size = (double)specRX.GetSpecRX(1).FFTSize; // MW0LGE_21k7
-                                        WDSP.SetRXAAGCThresh(WDSP.id(2, 0), agc_rx2_thresh_point, size/*4096.0*/, sample_rate_rx2); //MW0LGE_21k5 was sample_rate_rx1
-
-                                        WDSP.GetRXAAGCTop(WDSP.id(2, 0), &agc_rx2_top);
-
-                                        agc_rx2_top = Math.Round(agc_rx2_top);
-
-                                        switch (RX2AGCMode)
-                                        {
-                                            case AGCMode.FIXD:
-                                                if (agc_rx2_top > 120) agc_rx2_top = 120;
-                                                if (agc_rx2_top < -20.0) agc_rx2_top = -20.0;
-
-                                                if (!IsSetupFormNull) SetupForm.AGCRX2FixedGain = (int)agc_rx2_top;// agc_top;
-                                                break;
-                                            default:
-                                                if (agc_rx2_top > 120) agc_rx2_top = 120;
-                                                if (agc_rx2_top < -20.0) agc_rx2_top = -20.0;
-
-                                                if (!IsSetupFormNull) SetupForm.AGCRX2MaxGain = (int)agc_rx2_top;
-                                                break;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        double agc_thresh_point = (double)PixelToDb(e.Y + 4);
-                                        agc_thresh_point -= (double)cal_offset;
-                                        if (agc_thresh_point > 2) agc_thresh_point = 2;
-                                        if (agc_thresh_point < -160.0) agc_thresh_point = -160.0; //[2.10.3.6]MW0LGE changed from -143
-
-                                        double agc_top = 0.0;
-
-                                        double size = (double)specRX.GetSpecRX(0).FFTSize; // MW0LGE_21k7
-                                        WDSP.SetRXAAGCThresh(WDSP.id(0, 0), agc_thresh_point, size, sample_rate_rx1);
-
-                                        WDSP.GetRXAAGCTop(WDSP.id(0, 0), &agc_top);
-                                        agc_top = Math.Round(agc_top);
-
-                                        switch (RX1AGCMode)
-                                        {
-                                            case AGCMode.FIXD:
-                                                if (agc_top > 120) agc_top = 120;
-                                                if (agc_top < -20.0) agc_top = -20.0;
-
-                                                if (!IsSetupFormNull) SetupForm.AGCFixedGain = (int)agc_top;
-                                                break;
-                                            default:
-                                                if (agc_top > 120) agc_top = 120;
-                                                if (agc_top < -20.0) agc_top = -20.0;
-
-                                                if (!IsSetupFormNull) SetupForm.AGCMaxGain = (int)agc_top;
-                                                break;
-                                        }
-                                    }
-                                }
-
-                                if (agc_hang_drag && show_agc)
-                                {
-                                    if (rx2_enabled && e.Y > picDisplay.Height / 2)
-                                    {
-                                        double agc_hang_point = (double)PixelToRx2Db(e.Y + 4);
-                                        agc_hang_point -= (double)cal_offset;
-
-                                        if (agc_hang_point > 4.0) agc_hang_point = 4.0;
-                                        if (agc_hang_point < -121.0) agc_hang_point = -121.0;
-
-                                        int hang_threshold = 0;
-
-                                        WDSP.SetRXAAGCHangLevel(WDSP.id(2, 0), agc_hang_point);
-
-                                        WDSP.GetRXAAGCHangThreshold(WDSP.id(2, 0), &hang_threshold);
-                                        if (hang_threshold > 100)
-                                        {
-                                            hang_threshold = 100;
-                                        }
-                                        if (hang_threshold < 0) hang_threshold = 0;
-
-                                        if (!IsSetupFormNull) SetupForm.AGCRX2HangThreshold = hang_threshold;
-                                    }
-                                    else
-                                    {
-                                        double agc_hang_point = (double)PixelToDb(e.Y + 4);
-                                        agc_hang_point -= (double)cal_offset;
- 
-                                        if (agc_hang_point > 4.0) agc_hang_point = 4.0;
-                                        if (agc_hang_point < -121.0) agc_hang_point = -121.0;
-
-                                        int hang_threshold = 0;
-
-                                        WDSP.SetRXAAGCHangLevel(WDSP.id(0, 0), agc_hang_point);
-
-                                        WDSP.GetRXAAGCHangThreshold(WDSP.id(0, 0), &hang_threshold);
-                                        if (hang_threshold > 100)
-                                        {
-                                            hang_threshold = 100;
-
-                                        }
-                                        if (hang_threshold < 0) hang_threshold = 0;
-
-                                        if (!IsSetupFormNull) SetupForm.AGCRX1HangThreshold = hang_threshold;
-                                    }
-                                }
-                                break;
-                            case DisplayMode.WATERFALL:
-                                break;
-                        }
-
-                        bool bOkToChangeRX1 = bOverRX1 && rx1_enabled && !rx1_click_tune_drag && !rx1_spectrum_drag && (rx1_dsp_mode != DSPMode.DRM && rx1_dsp_mode != DSPMode.SPEC && rx1_dsp_mode != DSPMode.FM) && !(_mox && (VFOATX || (RX2Enabled && VFOSplit))); //[2.10.1.0] MW0LGE prevent highlight when MOX
-                        bool bOkToChangeRX2 = bOverRX2 && rx2_enabled && !rx2_click_tune_drag && !rx2_spectrum_drag && (rx2_dsp_mode != DSPMode.DRM && rx2_dsp_mode != DSPMode.SPEC && rx2_dsp_mode != DSPMode.FM) && !(_mox && RX2Enabled && VFOBTX);
-
-                        if (bOkToChangeRX1 || bOkToChangeRX2)
-                        {
-                            if (!rx1_spectrum_tune_drag && !rx2_spectrum_tune_drag && current_click_tune_mode == ClickTuneMode.Off)
-                            {
-                                bool bLowEdge = (bOkToChangeRX1 && (!rx1_whole_filter_drag && (Math.Abs(e.X - filt_low_x) < 3 || rx1_low_filter_drag))) ||
-                                                (bOkToChangeRX2 && (!rx2_whole_filter_drag && (Math.Abs(e.X - vfob_low_x) < 3 || rx2_low_filter_drag)));
-
-                                bool bHighEdge = (bOkToChangeRX1 && (!rx1_whole_filter_drag && (Math.Abs(e.X - filt_high_x) < 3 || rx1_high_filter_drag))) ||
-                                                 (bOkToChangeRX2 && (!rx2_whole_filter_drag && (Math.Abs(e.X - vfob_high_x) < 3 || rx2_high_filter_drag)));
-
-                                int highlightRX1 = 0;
-                                int highlightRX2 = 0;
-
-                                if (bLowEdge || bHighEdge)
-                                {
-                                    next_cursor = Cursors.SizeWE;
-
-                                    //MW0LGE_21h
-                                    if (bOkToChangeRX1)
-                                    {
-                                        if (bLowEdge && !bHighEdge) highlightRX1 = -1;
-                                        else if (!bLowEdge && bHighEdge) highlightRX1 = 1;
-                                    }
-                                    else if (bOkToChangeRX2)
-                                    {
-                                        if (bLowEdge && !bHighEdge) highlightRX2 = -1;
-                                        else if (!bLowEdge && bHighEdge) highlightRX2 = 1;
-                                    }
-                                }
-                                else if (bOverRX1 && e.X > filt_low_x && e.X < filt_high_x)
-                                {
-                                    // middle of the filter, but only when in CTUN on, or holding shift
-                                    if ((click_tune_display || Common.ShiftKeyDown) && _highlightedSpot == null)
-                                        next_cursor = Cursors.NoMoveHoriz;
-                                }
-                                else if (bOverRX2 && e.X > vfob_low_x && e.X < vfob_high_x)
-                                {
-                                    // middle of the filter, but only when in CTUN on, or holding shift
-                                    if ((click_tune_rx2_display || Common.ShiftKeyDown) && _highlightedSpot == null)
-                                        next_cursor = Cursors.NoMoveHoriz;
-                                }
-
-                                //MW0LGE_21k9 added the filter info onto the cursor info, also done below on the filter drags
-                                if (highlightRX1 == -1)
-                                    Display.OtherData2CursorDisplay = radio.GetDSPRX(0, 0).RXFilterLow.ToString();
-                                else if (highlightRX1 == 1)
-                                    Display.OtherData2CursorDisplay = radio.GetDSPRX(0, 0).RXFilterHigh.ToString();
-
-                                if (highlightRX2 == -1)
-                                    Display.OtherData2CursorDisplay = radio.GetDSPRX(1, 0).RXFilterLow.ToString();
-                                else if (highlightRX2 == 1)
-                                    Display.OtherData2CursorDisplay = radio.GetDSPRX(1, 0).RXFilterHigh.ToString();
-
-                                if (highlightRX1 == 0 && highlightRX2 == 0) Display.OtherData2CursorDisplay = "";
-                                //
-
-                                Display.HightlightFilterEdgeRX1 = highlightRX1;
-                                Display.HightlightFilterEdgeRX2 = highlightRX2;
-                            }
-
-                            if (rx1_high_filter_drag)
-                            {
-                                int lowerLimit;
-                                int new_low;
-
-                                bool bMirrorSidebands = CurrentDSPhasTwoSidebands(1) && !Common.ShiftKeyDown;
-
-                                if (bMirrorSidebands)
-                                    lowerLimit = 10;
-                                else
-                                    lowerLimit = radio.GetDSPRX(0, 0).RXFilterLow + 10;
-
-                                int new_high = (int)Math.Max(HzInNPixels(e.X - RX1diff, 1), lowerLimit);
-
-                                if (bMirrorSidebands)
-                                    new_low = -new_high;
-                                else
-                                    new_low = radio.GetDSPRX(0, 0).RXFilterLow;
-
-                                SelectRX1VarFilter(false, true);
-
-                                UpdateRX1Filters(new_low, new_high);
-
-                                //update VAR1 low to be current low
-                                rx1_filters[(int)rx1_dsp_mode].SetLow(Filter.VAR1, m_nLowOutRX1);
-                                //update VAR1 high to be new high
-                                rx1_filters[(int)rx1_dsp_mode].SetHigh(Filter.VAR1, m_nHighOutRX1);
-
-                                Display.OtherData2CursorDisplay = radio.GetDSPRX(0, 0).RXFilterHigh.ToString();
-                            }
-                            else if (rx1_low_filter_drag)
-                            {
-                                int upperLimit;
-                                int new_high;
-
-                                bool bMirrorSidebands = CurrentDSPhasTwoSidebands(1) && !Common.ShiftKeyDown;
-
-                                if (bMirrorSidebands)
-                                    upperLimit = -10;
-                                else
-                                    upperLimit = radio.GetDSPRX(0, 0).RXFilterHigh - 10;
-
-                                int new_low = (int)Math.Min(HzInNPixels(e.X - RX1diff, 1), upperLimit);
-
-                                if (bMirrorSidebands)
-                                    new_high = new_low * -1;
-                                else
-                                    new_high = radio.GetDSPRX(0, 0).RXFilterHigh;
-
-                                SelectRX1VarFilter(false, true);
-
-                                UpdateRX1Filters(new_low, new_high);
-
-                                //update VAR1 low to be new low
-                                rx1_filters[(int)rx1_dsp_mode].SetLow(Filter.VAR1, m_nLowOutRX1);
-                                //update VAR1 high to be current high
-                                rx1_filters[(int)rx1_dsp_mode].SetHigh(Filter.VAR1, m_nHighOutRX1);
-
-                                Display.OtherData2CursorDisplay = radio.GetDSPRX(0, 0).RXFilterLow.ToString();
-                            }
-                            else if (rx1_whole_filter_drag)
-                            {
-                                SelectRX1VarFilter(false, true);
-                                int diff = (int)(PixelToHz(e.X) - PixelToHz(whole_filter_start_x));
-                                int nLow = whole_filter_start_low + diff;
-                                int nHigh = whole_filter_start_high + diff;
-                                ConstrainFilter(ref nLow, ref nHigh, 1, true);
-                                UpdateRX1Filters(nLow, nHigh);
-                            }
-                            else if (rx1_sub_drag)
-                            {
-                                int diff = (int)(PixelToHz(e.X) - PixelToHz(sub_drag_last_x));
-                                if (rx2_enabled)
-                                    VFOASubFreq = sub_drag_start_freq + diff * 1e-6;
-                                else VFOBFreq = sub_drag_start_freq + diff * 1e-6;
-                            }
-                            else if (rx2_high_filter_drag)
-                            {
-                                int lowerLimit;
-                                int new_low;
-
-                                bool bMirrorSidebands = CurrentDSPhasTwoSidebands(2) && !Common.ShiftKeyDown;
-
-                                if (bMirrorSidebands)
-                                    lowerLimit = 10;
-                                else
-                                    lowerLimit = radio.GetDSPRX(1, 0).RXFilterLow + 10;
-
-                                int new_high = (int)Math.Max(HzInNPixels(e.X - RX2diff, 2), lowerLimit);
-
-                                if (bMirrorSidebands)
-                                    new_low = -new_high;
-                                else
-                                    new_low = radio.GetDSPRX(1, 0).RXFilterLow;
-
-                                SelectRX2VarFilter(false, true);
-
-                                UpdateRX2Filters(new_low, new_high);
-
-                                //update VAR1 low to be current low
-                                rx2_filters[(int)rx2_dsp_mode].SetLow(Filter.VAR1, m_nLowOutRX2);
-                                //update VAR1 high to be new high
-                                rx2_filters[(int)rx2_dsp_mode].SetHigh(Filter.VAR1, m_nHighOutRX2);
-
-                                Display.OtherData2CursorDisplay = radio.GetDSPRX(1, 0).RXFilterHigh.ToString();
-                            }
-                            else if (rx2_low_filter_drag)
-                            {
-                                int upperLimit;
-                                int new_high;
-
-                                bool bMirrorSidebands = CurrentDSPhasTwoSidebands(2) && !Common.ShiftKeyDown;
-
-                                if (bMirrorSidebands)
-                                    upperLimit = -10;
-                                else
-                                    upperLimit = radio.GetDSPRX(1, 0).RXFilterHigh - 10;
-
-                                int new_low = (int)Math.Min(HzInNPixels(e.X - RX2diff, 2), upperLimit);
-
-                                if (bMirrorSidebands)
-                                    new_high = new_low * -1;
-                                else
-                                    new_high = radio.GetDSPRX(1, 0).RXFilterHigh;
-
-                                SelectRX2VarFilter(false, true);
-                                
-                                UpdateRX2Filters(new_low, new_high);
-                                
-                                //update VAR1 low to be new low
-                                rx2_filters[(int)rx2_dsp_mode].SetLow(Filter.VAR1, m_nLowOutRX2);
-                                //update VAR1 high to be current high
-                                rx2_filters[(int)rx2_dsp_mode].SetHigh(Filter.VAR1, m_nHighOutRX2);
-
-                                Display.OtherData2CursorDisplay = radio.GetDSPRX(1, 0).RXFilterLow.ToString();
-                            }
-                            else if (rx2_whole_filter_drag)
-                            {
-                                SelectRX2VarFilter(false, true);
-                                int diff = (int)(PixelToHz(e.X, 2) - PixelToHz(whole_filter_start_x, 2));
-                                int nLow = whole_filter_start_low + diff;
-                                int nHigh = whole_filter_start_high + diff;
-                                ConstrainFilter(ref nLow, ref nHigh, 2, true);
-                                UpdateRX2Filters(nLow, nHigh);
-                            }
-                            else if (tx_high_filter_drag)
-                            {
-                                int new_high = (int)Math.Max(Math.Abs(PixelToHz(e.X)), tx_filter_low + 10);
-                                SetupForm.TXFilterHigh = new_high;
-                            }
-                            else if (tx_low_filter_drag)
-                            {
-                                int new_low = (int)(Math.Min(Math.Abs(PixelToHz(e.X)), tx_filter_high - 10));
-                                SetupForm.TXFilterLow = new_low;
-                            }
-                            else if (tx_whole_filter_drag)
-                            {
-                                int diff = (int)(PixelToHz(e.X) - PixelToHz(whole_filter_start_x));
-                                switch (rx1_dsp_mode)
-                                {
-                                    case DSPMode.LSB:
-                                    case DSPMode.DIGL:
-                                        SetupForm.TXFilterLow = whole_filter_start_low - diff;
-                                        SetupForm.TXFilterHigh = whole_filter_start_high - diff;
-                                        break;
-                                    case DSPMode.USB:
-                                    case DSPMode.DIGU:
-                                        SetupForm.TXFilterLow = whole_filter_start_low + diff;
-                                        SetupForm.TXFilterHigh = whole_filter_start_high + diff;
-                                        break;
-                                    case DSPMode.AM:
-                                    case DSPMode.SAM:
-                                    case DSPMode.FM:
-                                    case DSPMode.DSB:
-                                        SetupForm.TXFilterHigh = whole_filter_start_high + diff;
-                                        break;
-                                }
-                            }
-                        }
-
-                        break;
-                    default:
-
-                        break;
-                }
-                #endregion
-
-                #region Cursor and Info bar data
-                //re-implemented cursor info MW0LGE_21k9
-                if (bShowCursorData)
-                {
-                    float xposHz = 0;
-                    float y = 0;
-                    double rf_freq;
-                    string temp_text;
-                    int jper;
-
-                    double localFreq;
-                    double loclCentreFrequency;
-                    bool localClickTuneDisplay;
-                    DSPMode localDSPMode;
-                    bool bShowDBM = false;
-                    bool bShowWaterfallSeconds = false;
-
-                    bool bOn60mChan;
-                    bool bRx2 = rx2_enabled && e.Y > picDisplay.Height / 2; // if RX2 is enabled and the cursor is in the lower half of the display
-
-                    if (bRx2)
-                    {
-                        localDSPMode = RX2DSPMode;
-                        bOn60mChan = RX2IsOn60mChannel();
-                        xposHz = PixelToHz(e.X, 2);
-                        double localVFOfreq = Display.VFOB * 1e-6; //[2.10.1.0] MW0LGE change to use the display VFO as that is what we are considering
-                        rf_freq = localVFOfreq + (double)xposHz * 1e-6;
-                        localFreq = localVFOfreq;
-                        loclCentreFrequency = CentreRX2Frequency;
-                        localClickTuneDisplay = click_tune_rx2_display;
-
-                        switch (Display.CurrentDisplayModeBottom)
-                        {
-                            case DisplayMode.PANADAPTER:
-                                bShowDBM = true;
-                                bShowWaterfallSeconds = false;
-                                break;
-                            case DisplayMode.PANAFALL:
-                                bShowDBM = e.Y > ((picDisplay.Height / 2) + 8) && e.Y < ((picDisplay.Height / 2) + (picDisplay.Height / 4)); // +8 for the splitter, which is normally 16 pixels, but is now half height as we are displaying rx1+rx2
-                                bShowWaterfallSeconds = e.Y >= ((picDisplay.Height / 2) + (picDisplay.Height / 4)) + 16;
-                                break;
-                            case DisplayMode.WATERFALL:
-                                bShowDBM = false;
-                                bShowWaterfallSeconds = e.Y > (picDisplay.Height / 2) + 16;
-                                break;
-                        }
-
-                        if (bShowDBM) y = PixelToRx2Db(e.Y);
-                        else if (bShowWaterfallSeconds) y = WaterfallPixelToTime(e.Y, 2);
-                    }
-                    else
-                    {
-                        localDSPMode = RX1DSPMode;
-                        bOn60mChan = RX1IsOn60mChannel();
-                        xposHz = PixelToHz(e.X, 1);
-                        double localVFOfreq = Display.VFOA * 1e-6; //[2.10.1.0] MW0LGE change to use the display VFO as that is what we are considering
-                        rf_freq = localVFOfreq + (double)xposHz * 1e-6;
-                        localFreq = localVFOfreq;
-                        loclCentreFrequency = CentreFrequency;
-                        localClickTuneDisplay = click_tune_display;
-
-                        switch (Display.CurrentDisplayMode)
-                        {
-                            case DisplayMode.HISTOGRAM:
-                            case DisplayMode.SPECTRASCOPE:
-                            case DisplayMode.SPECTRUM:
-                            case DisplayMode.PANADAPTER:
-                                bShowDBM = true;
-                                bShowWaterfallSeconds = false;
-                                break;
-                            case DisplayMode.PANAFALL:
-                                bShowDBM = !rx2_enabled ? e.Y < Display.PanafallSplitBarPos : e.Y < picDisplay.Height / 4;
-                                bShowWaterfallSeconds = !rx2_enabled ? e.Y >= Display.PanafallSplitBarPos + 16 : e.Y < picDisplay.Height / 2 && e.Y >= (picDisplay.Height / 4) + 16;
-                                break;
-                            case DisplayMode.PANASCOPE:
-                                bShowDBM = e.Y < picDisplay.Height / 2;
-                                bShowWaterfallSeconds = false;
-                                break;
-                            case DisplayMode.WATERFALL:
-                                bShowDBM = false;
-                                bShowWaterfallSeconds = e.Y > 16;
-                                break;
-                        }
-
-                        if (bShowDBM) y = PixelToDb(e.Y);
-                        else if (bShowWaterfallSeconds) y = WaterfallPixelToTime(e.Y, 1);
-                    }
-
-                    DisplayCursorX = e.X; // update display cursor position (crosshairs)
-                    DisplayCursorY = e.Y;
-                    Display.MouseFrequency = xposHz; // for the filter overlay
-
-                    switch (localDSPMode)
-                    {
-                        case DSPMode.CWL:
-                            rf_freq += cw_pitch * 1e-6;
-                            break;
-                        case DSPMode.CWU:
-                            rf_freq -= cw_pitch * 1e-6;
-                            break;
-                        case DSPMode.AM:
-                        case DSPMode.SAM:
-                        case DSPMode.FM:
-                            break;
-                        case DSPMode.USB:
-                        case DSPMode.DIGU:
-                        case DSPMode.DSB:
-                            break;
-                        case DSPMode.LSB:
-                        case DSPMode.DIGL:
-                            break;
-                    }
-
-                    infoBar.Left1(0, xposHz.ToString("f1") + "Hz");
-
-                    bool localMox = _mox && ((RX2Enabled && (!bRx2 && VFOATX) || (bRx2 && VFOBTX)) || !RX2Enabled); //[2.10.1.0] MW0LGE consider if we are over the RX that is in mox
-                    if ((localClickTuneDisplay && !localMox) || (localClickTuneDisplay && (display_duplex && !bRx2)))    // Correct cursor frequency when CTUN on -G3OQD  // MW0LGE_21a also when in CTD and DUP //[2.10.1.0] MW0LGE ignore rx2 if dup
-                        rf_freq += (loclCentreFrequency - localFreq);
-
-                    temp_text = rf_freq.ToString("f6") + " MHz";      // Disply cursor frequency under Spectrum  
-                    jper = temp_text.IndexOf(separator) + 4;
-
-                    string sTmp = temp_text.Insert(jper, " ");
-
-                    infoBar.Left3(0, sTmp);
-
-                    Display.MHzCursorDisplay = sTmp;
-
-                    if (bShowDBM)
-                        sTmp = y.ToString("f1") + "dBm";
-                    else if (bShowWaterfallSeconds)
-                        sTmp = (y / 1000.0f).ToString("f1") + "sec";
-                    else
-                        sTmp = "";
-
-                    infoBar.Left2(0, sTmp);
-
-                    Display.OtherData1CursorDisplay = sTmp;
-                }
-                else
-                {
-                    infoBar.Left1(0, "");
-                    infoBar.Left2(0, "");
-                    infoBar.Left3(0, "");
-                }
-                #endregion
-
-                #region Dragging
-                if (rx1_spectrum_tune_drag)
-                {
-                    if (!_mox || (rx2_enabled && chkVFOBTX.Checked))
-                    {
-                        float start_freq = PixelToHz(spectrum_drag_last_x);
-                        float end_freq = PixelToHz(e.X);
-                        spectrum_drag_last_x = e.X;
-                        float delta = end_freq - start_freq;
-                        CentreFrequency -= delta * 0.0000010;
-                        txtVFOAFreq_LostFocus(this, EventArgs.Empty);
-                    }
-                }
-
-                if (rx2_spectrum_tune_drag)
-                {
-                    if (rx2_enabled && (!_mox || chkVFOATX.Checked))
-                    {
-                        float start_freq = PixelToHz(spectrum_drag_last_x, 2);
-                        float end_freq = PixelToHz(e.X, 2);
-                        spectrum_drag_last_x = e.X;
-                        float delta = end_freq - start_freq;
-                        CentreRX2Frequency -= delta * 0.0000010;
-                        txtVFOBFreq_LostFocus(this, EventArgs.Empty);
-                    }
-                }
-
-
-                if (rx1_spectrum_drag)
-                {
-                    if (!_mox || (rx2_enabled && chkVFOBTX.Checked))
-                    {
-                        float start_freq = PixelToHz(spectrum_drag_last_x);
-                        float end_freq = PixelToHz(e.X);
-                        spectrum_drag_last_x = e.X;
-                        float delta = end_freq - start_freq;
-                        VFOAFreq -= delta * 0.0000010;
-                    }
-                }
-
-                if (rx2_spectrum_drag)
-                {
-                    if (rx2_enabled && (!_mox || chkVFOATX.Checked))
-                    {
-                        float start_freq = PixelToHz(spectrum_drag_last_x, 2);
-                        float end_freq = PixelToHz(e.X, 2);
-                        spectrum_drag_last_x = e.X;
-                        float delta = end_freq - start_freq;
-                        VFOBFreq -= delta * 0.0000010;
-                    }
-                }
-
-                if (rx1_click_tune_drag)
-                {
-                    if (!_mox || (rx2_enabled && chkVFOBTX.Checked))
-                    {
-                        float start_freq = PixelToHz(spectrum_drag_last_x);
-                        float end_freq = PixelToHz(e.X);
-                        spectrum_drag_last_x = e.X;
-                        float delta = start_freq - end_freq;
-                        VFOAFreq -= delta * 0.0000010;
-                    }
-                }
-
-                if (rx2_click_tune_drag)
-                {
-                    if (rx2_enabled && (!_mox || chkVFOATX.Checked))
-                    {
-                        float start_freq = PixelToHz(spectrum_drag_last_x, 2);
-                        float end_freq = PixelToHz(e.X, 2);
-                        spectrum_drag_last_x = e.X;
-                        float delta = start_freq - end_freq;
-                        VFOBFreq -= delta * 0.0000010;
-                    }
-                }
-                #endregion
-
-                // top drag area - this will override hover over filter
-                if (bOverRX2 && e.Y < ((picDisplay.Height / 2) + 15))
-                    next_cursor = Cursors.SizeWE;
-                else if (bOverRX1 && e.Y < 15)
-                    next_cursor = Cursors.SizeWE;
-                //
-
-                if ((!rx2_enabled && Display.CurrentDisplayMode == DisplayMode.PANAFALL) && m_bDraggingPanafallSplit) //MW0LGE_21k9c changes to this and below
-                    next_cursor = Cursors.SizeNS; // down here so we catch moving out of the splitter bar, but is still enabled
-                                                  // otherwise we get flickering
-
-                // nothing applied yet
-                if (next_cursor == Cursors.Cross || next_cursor == _cross_outlined)
-                {
-                    if (agc_knee_drag || agc_hang_drag) next_cursor = grabbing; // agc grab handles
-                    else if (rx1_spectrum_drag || rx2_spectrum_drag || rx1_spectrum_tune_drag || rx2_spectrum_tune_drag) next_cursor = Cursors.SizeWE; // dragging the spectrum
-                    else if (rx1_click_tune_drag || rx2_click_tune_drag) next_cursor = grabbing; // dragging the tune in CTUN on mode
-                    else if ((!rx2_enabled && Display.CurrentDisplayMode == DisplayMode.PANAFALL) && e.Y >= Display.PanafallSplitBarPos && e.Y < Display.PanafallSplitBarPos + 20) next_cursor = Cursors.SizeNS; // over the splitter
-                }
-
-                picDisplay.Cursor = next_cursor;
-            }
-            catch (Exception)
-            {
-
-            }
-        }
         private void getFilterEdgesInPixels(MouseEventArgs e, ref int low_x, ref int high_x, ref int vfoa_sub_x, ref int vfoa_sub_low_x, ref int vfoa_sub_high_x)
         {
-            if (rx2_enabled && e.Y > picDisplay.Height / 2)//rx2
+            if (rx2_enabled && e.Y > pnlDisplay.Height / 2)//rx2
             {
                 if (_mox)
                 {
@@ -35548,33 +34440,10 @@ namespace Thetis
                 }
             }
         }
-        private void picDisplay_MouseLeave(object sender, System.EventArgs e)
-        {
-            if (!m_frmNotchPopup.Visible) SelectedNotch = null; // clear the selected notch (if there was one)
-            m_bDraggingPanafallSplit = false;
-
-            Display.HighlightNumberScaleRX1 = false;
-            Display.HighlightNumberScaleRX2 = false;
-
-            Display.HighlightedBandStackEntryIndex = -1; //MW0LGE_21h
-            m_bBandStackOverlayClicked = false;
-
-            Display.HightlightFilterEdgeRX1 = 0;
-            Display.HightlightFilterEdgeRX2 = 0;
-
-            infoBar.Left1(0, "");
-            infoBar.Left2(0, "");
-            infoBar.Left3(0, "");
-
-            DisplayCursorX = -1;
-            DisplayCursorY = -1;
-            Cursor = Cursors.Default;
-        }
-
         private void dragWholeFilter(MouseEventArgs e)
         {
             whole_filter_start_x = e.X;
-            if (rx2_enabled && e.Y > picDisplay.Height / 2)
+            if (rx2_enabled && e.Y > pnlDisplay.Height / 2)
             {
                 if (_mox && chkVFOBTX.Checked)
                 {
@@ -35633,820 +34502,6 @@ namespace Thetis
             return freq;
         }
         private SpotManager2.smSpot _highlightedSpot = null;
-
-        private void picDisplay_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (m_frmNotchPopup.Visible) return;
-            if (_highlightedSpot != null)
-            {
-                if (e.Button == MouseButtons.Right)
-                {
-                    _highlightedSpot.BrowseQRZ();
-                }
-                else if (_highlightedSpot.Highlight[0])
-                {
-
-                    // rx1
-                    if (_highlightedSpot.mode != DSPMode.FIRST && RX1DSPMode != _highlightedSpot.mode) RX1DSPMode = _highlightedSpot.mode;
-                    if (VFOAFreq != _highlightedSpot.frequencyHZ * 1e-6) VFOAFreq = _highlightedSpot.frequencyHZ * 1e-6;
-
-                    SpotClickedHandlers?.Invoke(_highlightedSpot.callsign, _highlightedSpot.frequencyHZ, 1, false);
-                }
-                else if (_highlightedSpot.Highlight[1] && rx2_enabled)
-                {
-                    // rx2
-                    if (_highlightedSpot.mode != DSPMode.FIRST && RX2DSPMode != _highlightedSpot.mode) RX2DSPMode = _highlightedSpot.mode;
-                    if (VFOBFreq != _highlightedSpot.frequencyHZ * 1e-6) VFOBFreq = _highlightedSpot.frequencyHZ * 1e-6;
-
-                    SpotClickedHandlers?.Invoke(_highlightedSpot.callsign, _highlightedSpot.frequencyHZ, 2, false);
-                }
-                return;
-            }
-
-            Cursor next_cursor = _useOutlinedCrossCursor ? _cross_outlined : Cursors.Cross;
-
-            switch (e.Button)
-            {
-                case MouseButtons.Left:
-
-                    bool bOverRX1 = overRX(e.X, e.Y, 1, false);  //MW0LGE
-                    bool bOverRX2 = overRX(e.X, e.Y, 2, false);
-
-                    //NOTCH MW0LGE
-                    if (SelectedNotch != null)
-                    {
-                        // this will be the notch we have mouse over                        
-
-                        int nRX = 0;
-                        if (bOverRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANAFALL))
-                        {
-                            nRX = 1;
-                        }
-                        else if (bOverRX2 && (Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER || Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL))
-                        {
-                            nRX = 2;
-                        }
-                        if (nRX != 0)
-                        {
-                            // the inital click point, delta is worked in mouse_move
-                            _drag_notch_start_point = new Point(e.X, e.Y);
-
-                            double dMouseVFO = 0;
-                            double dCentreFreq = 0;
-                            double dCWoffset = 0;
-
-                            if (nRX == 1)
-                            {
-                                dCentreFreq = CentreFrequency * 1e6;
-                                dMouseVFO = dCentreFreq + PixelToHz(e.X, 1);
-                                if (rx1_dsp_mode == DSPMode.CWL)
-                                    dCWoffset = (double)cw_pitch;
-                                else if (rx1_dsp_mode == DSPMode.CWU)
-                                    dCWoffset = -(double)cw_pitch;
-                            }
-                            else
-                            {
-                                dCentreFreq = CentreRX2Frequency * 1e6;
-                                dMouseVFO = dCentreFreq + PixelToHz(e.X, 2);
-                                if (rx2_dsp_mode == DSPMode.CWL)
-                                    dCWoffset = (double)cw_pitch;
-                                else if (rx2_dsp_mode == DSPMode.CWU)
-                                    dCWoffset = -(double)cw_pitch;
-                            }
-                            dMouseVFO += dCWoffset;
-
-                            // upper and lower sides of the notch
-                            double dL = SelectedNotch.FCenter - (SelectedNotch.FWidth / 2);
-                            double dH = SelectedNotch.FCenter + (SelectedNotch.FWidth / 2);
-
-                            // convert the upper and lower sides into pixels from left edge of picDispay
-                            int nLpx = HzToPixel((float)(dL - dCentreFreq - dCWoffset), nRX);
-                            int nHpx = HzToPixel((float)(dH - dCentreFreq - dCWoffset), nRX);
-
-                            bool bNearEdge = false;
-
-                            // default this based on which side of middle the mouse is
-                            // so that we get inuative feeling when using shift modifier to resize
-                            // ie we are not draggin an edge
-                            m_BDragginNotchBWRightSide = (dMouseVFO >= SelectedNotch.FCenter);
-
-                            if (nHpx - nLpx > 8)
-                            {
-                                // ok, the edges are far enough appart in pixels to actually check to see if we are over low or high side
-                                if (Math.Abs(e.X - nLpx) < 4)
-                                {
-                                    m_BDragginNotchBWRightSide = false;
-                                    bNearEdge = true;
-                                }
-                                else if (Math.Abs(e.X - nHpx) < 4)
-                                {
-                                    m_BDragginNotchBWRightSide = true;
-                                    bNearEdge = true;
-                                }
-                            }
-
-                            m_nNotchRX = nRX; // MW0LGE_21e
-
-                            if (bNearEdge || Common.ShiftKeyDown) // can also hold shift drag to resize the notch
-                            {
-                                // near edge of notch, let us drag the width
-                                drag_notch_start_data = SelectedNotch.FWidth;
-                                m_bDraggingNotchBW = true;
-                            }
-                            else
-                            {
-                                // drag whole notch, as we are not near the edge
-                                drag_notch_start_data = SelectedNotch.FCenter;
-                                m_bDraggingNotch = true;
-                            }
-                            return;
-                        }
-                    }
-                    //END NOTCH
-
-                    //MIDDLE OF PANAFALL MOVEUPDOWN MW0LGE
-                    if (!rx2_enabled && Display.CurrentDisplayMode == DisplayMode.PANAFALL)
-                    {
-                        m_bDraggingPanafallSplit = (e.Y >= Display.PanafallSplitBarPos && e.Y < Display.PanafallSplitBarPos + 20);
-                        if (m_bDraggingPanafallSplit) return;
-                    }
-                    //END SPLITTER DRAG
-
-                    // if (!mox)
-                    // {
-                    switch (Display.CurrentDisplayMode)
-                    {
-                        case DisplayMode.PANADAPTER:
-                        case DisplayMode.PANAFALL:
-                        case DisplayMode.HISTOGRAM:
-                        case DisplayMode.SPECTRUM:
-                        case DisplayMode.PANASCOPE:
-                        case DisplayMode.SPECTRASCOPE:
-                            if (!_mox)
-                            {
-                                if (rx1_grid_adjust)
-                                {
-                                    grid_minmax_drag_start_point = new Point(e.X, e.Y);
-                                    gridminmaxadjust = true;
-                                    tx1_grid_adjust = false;
-                                    grid_minmax_max_y = Display.SpectrumGridMax;
-                                    grid_minmax_min_y = Display.SpectrumGridMin;
-                                    next_cursor = grabbing;
-                                }
-
-                                if (rx2_grid_adjust)
-                                {
-                                    grid_minmax_drag_start_point = new Point(e.X, e.Y);
-                                    gridminmaxadjust = true;
-                                    tx1_grid_adjust = false;
-                                    grid_minmax_max_y = Display.RX2SpectrumGridMax;
-                                    grid_minmax_min_y = Display.RX2SpectrumGridMin;
-                                    next_cursor = grabbing;
-                                }
-                            }
-                            else
-                            {
-                                if ((rx1_grid_adjust && !Display.TXOnVFOB) ||
-                                    (rx1_grid_adjust && Display.TXOnVFOB && !RX2Enabled))
-                                {
-                                    grid_minmax_drag_start_point = new Point(e.X, e.Y);
-                                    gridminmaxadjust = true;
-                                    tx1_grid_adjust = true;
-                                    grid_minmax_max_y = Display.TXSpectrumGridMax;
-                                    grid_minmax_min_y = Display.TXSpectrumGridMin;
-                                    next_cursor = grabbing;
-                                }
-                                else if (rx1_grid_adjust && Display.TXOnVFOB)
-                                {
-                                    grid_minmax_drag_start_point = new Point(e.X, e.Y);
-                                    gridminmaxadjust = true;
-                                    tx1_grid_adjust = false;
-                                    grid_minmax_max_y = Display.SpectrumGridMax;
-                                    grid_minmax_min_y = Display.SpectrumGridMin;
-                                    next_cursor = grabbing;
-                                }
-
-                                if (rx2_grid_adjust && Display.TXOnVFOB)
-                                {
-                                    grid_minmax_drag_start_point = new Point(e.X, e.Y);
-                                    gridminmaxadjust = true;
-                                    tx2_grid_adjust = true;
-                                    grid_minmax_max_y = Display.TXSpectrumGridMax;
-                                    grid_minmax_min_y = Display.TXSpectrumGridMin;
-                                    next_cursor = grabbing;
-                                }
-                                else if (rx2_grid_adjust && !Display.TXOnVFOB)
-                                {
-                                    grid_minmax_drag_start_point = new Point(e.X, e.Y);
-                                    gridminmaxadjust = true;
-                                    tx2_grid_adjust = false;
-                                    grid_minmax_max_y = Display.RX2SpectrumGridMax;
-                                    grid_minmax_min_y = Display.RX2SpectrumGridMin;
-                                    next_cursor = grabbing;
-                                }
-                            }
-                            break;
-                        case DisplayMode.WATERFALL:
-                            break;
-                    }
-                    // }
-
-                    if (!_mox)
-                    {
-                        switch (Display.CurrentDisplayMode)
-                        {
-                            case DisplayMode.PANAFALL:
-                            case DisplayMode.PANASCOPE:
-                            case DisplayMode.PANADAPTER:
-                                if (rx2_enabled && e.Y > picDisplay.Height / 2)
-                                {
-                                    if (Display.AGCRX2Knee.Contains(e.X, e.Y) && show_agc)
-                                    {
-                                        agc_knee_drag = true;
-                                        next_cursor = grabbing;
-                                    }
-                                    else
-                                        if (Display.AGCRX2Hang.Contains(e.X, e.Y) && show_agc)
-                                    {
-                                        agc_hang_drag = true;
-                                        next_cursor = grabbing;
-                                    }
-                                    else
-                                    {
-                                        agc_knee_drag = false;
-                                        agc_hang_drag = false;
-                                    }
-                                }
-                                else
-                                {
-                                    if (Display.AGCKnee.Contains(e.X, e.Y) && show_agc)
-                                    {
-                                        agc_knee_drag = true;
-                                        next_cursor = grabbing;
-                                    }
-                                    else
-                                        if (Display.AGCHang.Contains(e.X, e.Y) && show_agc)
-                                    {
-                                        agc_hang_drag = true;
-                                        next_cursor = grabbing;
-                                    }
-                                    else
-                                    {
-                                        agc_knee_drag = false;
-                                        agc_hang_drag = false;
-                                    }
-                                }
-                                break;
-                        }
-
-                        if (bOverRX1 && agc_knee_drag) AutoAGCRX1 = false; // MW0LGE_21k8 turn of auto agc if we click knee
-                        else if (bOverRX2 && agc_knee_drag) AutoAGCRX2 = false;
-                    }
-
-                    //BAND STACK OVERLAY
-                    //only do this if not doing something else
-                    if (m_bShowBandStackOverlays && bOverRX1 && !(rx1_sub_drag || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit ||
-                        gridminmaxadjust || agc_knee_drag || agc_hang_drag || rx1_spectrum_tune_drag || rx1_click_tune_drag || rx2_spectrum_tune_drag || rx2_click_tune_drag ||
-                        tx_high_filter_drag || tx_low_filter_drag || rx1_low_filter_drag || rx1_high_filter_drag || rx2_low_filter_drag || rx1_high_filter_drag))
-                    {
-                        if (Display.BandStackOverlays != null && Display.BandStackOverlays.Length > 0)
-                        {
-                            bool panafall_check = Display.CurrentDisplayMode == DisplayMode.PANAFALL && ((!rx2_enabled && e.Y < Display.PanafallSplitBarPos) || (rx2_enabled && e.Y < picDisplay.Height / 4)); //[2.10.3.6]MW0LGE fixes issue where you could try to qsy click on the waterfall
-                            if (bOverRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || panafall_check))                                                                                          //under a band stack entry that was shown on the panadaptor area in a panafall display
-                            {                                                                                                                                                                                  //and it would not qsy             
-                                // convert mouse pos into HZ
-                                double nMousePosHZ = (CentreFrequency * 1e6) + PixelToHz(e.X, 1); // only rx1
-
-                                m_bBandStackOverlayClicked = false;
-
-                                for (int n = 0; n < Display.BandStackOverlays.Length; n++)
-                                {
-                                    BandStackEntry bse = Display.BandStackOverlays[n];
-
-                                    double dL = (bse.Frequency * 1e6) + bse.LowFilter;
-                                    double dH = (bse.Frequency * 1e6) + bse.HighFilter;
-
-                                    if (dL <= nMousePosHZ && dH >= nMousePosHZ)
-                                    {
-                                        m_bBandStackOverlayClicked = true;
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    //
-
-                    if (Display.HightlightFilterEdgeRX1 == 0 && Display.HightlightFilterEdgeRX2 == 0 &&
-                        !agc_knee_drag &&
-                        !agc_hang_drag &&
-                        !gridminmaxadjust &&
-                        !gridmaxadjust &&
-                        (current_click_tune_mode != ClickTuneMode.Off || (click_tune_display && bOverRX1) || (click_tune_rx2_display && bOverRX2)))
-                    {
-                        switch (Display.CurrentDisplayMode)
-                        {
-                            case DisplayMode.SPECTRUM:
-                            case DisplayMode.WATERFALL:
-                            case DisplayMode.HISTOGRAM:
-                            case DisplayMode.PANADAPTER:
-                            case DisplayMode.PANAFALL:
-                            case DisplayMode.PANASCOPE:
-                                float x = PixelToHz(e.X);
-                                double freq;
-                                if (rx2_enabled && e.Y > picDisplay.Height / 2) //RX2
-                                {
-                                    x = PixelToHz(e.X, 2);
-
-                                    bool bShift = true;
-                                    if (click_tune_rx2_display && current_click_tune_mode != ClickTuneMode.Off)
-                                        freq = CentreRX2Frequency + (double)x * 0.0000010;
-                                    else if (current_click_tune_mode != ClickTuneMode.Off)
-                                        freq = /*double.Parse(txtVFOBFreq.Text)*/ VFOBFreq + (double)x * 0.0000010; // click tune w/x-hairs //[2.10.3.6]freq changes.
-                                    else if (click_tune_drag)
-                                        freq = CentreRX2Frequency + (double)x * 0.0000010; // click tune & drag vfo
-                                    else
-                                    {
-                                        bShift = false; // the shift is already applied to the vfo, we dont want to do it again ! MW0LGE_21k9rc6
-                                        freq = /*double.Parse(txtVFOBFreq.Text);*/ VFOBFreq; // click & drag vfo //[2.10.3.6]freq changes.
-                                    }
-
-                                    if (bShift)
-                                    {
-                                        switch (rx2_dsp_mode)
-                                        {
-                                            case DSPMode.CWL:
-                                                freq += (float)cw_pitch * 0.0000010;
-                                                break;
-                                            case DSPMode.CWU:
-                                                freq -= (float)cw_pitch * 0.0000010;
-                                                break;
-                                            case DSPMode.DIGL:
-                                                freq += (float)digl_click_tune_offset * 0.0000010;
-                                                break;
-                                            case DSPMode.DIGU:
-                                                freq -= (float)digu_click_tune_offset * 0.0000010;
-                                                break;
-                                        }
-                                    }
-
-                                    freq = adjustForSnapClickTuning(2, freq);
-                                }
-                                else
-                                {
-                                    bool bShift = true;
-                                    if (click_tune_display && current_click_tune_mode != ClickTuneMode.Off)
-                                        freq = CentreFrequency + (double)x * 0.0000010;
-                                    else if (current_click_tune_mode != ClickTuneMode.Off)
-                                        freq = /*double.Parse(txtVFOAFreq.Text)*/ VFOAFreq + (double)x * 0.0000010; // click tune w/x-hairs //[2.10.3.6]freq changes.
-                                    else if (click_tune_drag)
-                                        freq = CentreFrequency + (double)x * 0.0000010; // click tune & drag vfo
-                                    else
-                                    {
-                                        bShift = false; // the shift is already applied to the vfo, we dont want to do it again ! MW0LGE_21k9rc6
-                                        freq = /*double.Parse(txtVFOAFreq.Text);*/ VFOAFreq; // click & drag vfo //[2.10.3.6]freq changes.
-                                    }
-
-                                    if (bShift)
-                                    {
-                                        switch (rx1_dsp_mode)
-                                        {
-                                            case DSPMode.CWL:
-                                                freq += (float)cw_pitch * 0.0000010;
-                                                break;
-                                            case DSPMode.CWU:
-                                                freq -= (float)cw_pitch * 0.0000010;
-                                                break;
-                                            case DSPMode.DIGL:
-                                                if (!ClickTuneFilter) freq += (float)digl_click_tune_offset * 0.0000010;
-                                                break;
-                                            case DSPMode.DIGU:
-                                                if (!ClickTuneFilter) freq -= (float)digu_click_tune_offset * 0.0000010;
-                                                break;
-                                        }
-                                    }
-
-                                    freq = adjustForSnapClickTuning(1, freq);
-                                }
-
-                                // MW0LGE block below handles dragging top frequency bars
-
-                                int low_x = 0, high_x = 0;
-                                int vfoa_sub_x = 0;
-                                int vfoa_sub_low_x = 0;
-                                int vfoa_sub_high_x = 0;
-                                getFilterEdgesInPixels(e, ref low_x, ref high_x, ref vfoa_sub_x, ref vfoa_sub_low_x, ref vfoa_sub_high_x);
-
-                                bool bOverTopOfDragSpectrum = false;
-                                if (bOverRX2 && e.Y < ((picDisplay.Height / 2) + 15))
-                                    bOverTopOfDragSpectrum = true;
-                                else if (bOverRX1 && e.Y < 15)
-                                    bOverTopOfDragSpectrum = true;
-
-                                if (current_click_tune_mode == ClickTuneMode.Off || bOverTopOfDragSpectrum)
-                                {
-                                    if (rx2_enabled && e.Y > picDisplay.Height / 2)
-                                    {
-                                        spectrum_drag_last_x = e.X;
-                                        if (click_tune_rx2_display)
-                                        {
-                                            if (e.Y < ((picDisplay.Height / 2) + 15))
-                                            {
-                                                rx2_spectrum_tune_drag = true;
-                                                next_cursor = Cursors.SizeWE;
-                                            }
-                                            else
-                                            {
-                                                if (!(Common.ShiftKeyDown && (e.X > low_x && e.X < high_x))) // ignore if shift down, so that we move the filter, and not the frequency MW0LGE_21k9d
-                                                {
-                                                    rx2_click_tune_drag = true;
-                                                    next_cursor = grabbing;
-                                                }
-                                                else
-                                                {
-                                                    next_cursor = Cursors.SizeWE;
-                                                }
-                                            }
-                                        }
-                                        else rx2_spectrum_drag = true;
-                                    }
-                                    else
-                                    {
-                                        spectrum_drag_last_x = e.X;
-                                        if (click_tune_display)
-                                        {
-                                            if (e.Y < 15)
-                                            {
-                                                rx1_spectrum_tune_drag = true;
-                                                next_cursor = Cursors.SizeWE;
-                                            }
-                                            else
-                                            {
-                                                if (!(Common.ShiftKeyDown && (e.X > low_x && e.X < high_x))) // ignore if shift down, so that we move the filter, and not the frequency MW0LGE_21k9d
-                                                {
-                                                    rx1_click_tune_drag = true;
-                                                    next_cursor = grabbing;
-                                                }
-                                                else
-                                                {
-                                                    next_cursor = Cursors.SizeWE;
-                                                }
-                                            }
-                                        }
-                                        else rx1_spectrum_drag = true;
-                                    }
-                                }
-                                // }
-
-                                //set freq to where you click as part of the ctun off dragging
-                                if (!rx1_spectrum_drag && !rx2_spectrum_drag)
-                                {
-                                    if (!rx2_enabled)
-                                    {
-                                        if (!rx1_spectrum_tune_drag)
-                                        {
-                                            if (!(Common.ShiftKeyDown && (e.X > low_x && e.X < high_x))) //MW0LGE_21k9d do not set freq, so we can shift the filter instead
-                                            {
-                                                if (!(!m_bCTUNputsZeroOnMouse && (e.X > low_x && e.X < high_x)) || current_click_tune_mode != ClickTuneMode.Off)
-                                                {
-                                                    if (current_click_tune_mode == ClickTuneMode.VFOA ||
-                                                        (click_tune_display && current_click_tune_mode != ClickTuneMode.VFOB))
-                                                    {
-                                                        VFOAFreq = Math.Round(freq, 6);
-                                                    }
-                                                    else
-                                                        VFOBFreq = Math.Round(freq, 6);
-                                                }
-                                            }
-                                            else
-                                            {
-                                                // shift filter MW0LGE_21k9d
-                                                dragWholeFilter(e);
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (current_click_tune_mode == ClickTuneMode.VFOB && // red cross hairs
-                                            (chkVFOSplit.Checked || chkEnableMultiRX.Checked))
-                                        {
-                                            VFOASubFreq = Math.Round(freq, 6);
-                                        }
-                                        else
-                                        {
-                                            if (!(Common.ShiftKeyDown && (e.X > low_x && e.X < high_x))) //MW0LGE_21k9d do not set freq, so we can shift the filter instead
-                                            {
-                                                if (!(!m_bCTUNputsZeroOnMouse && (e.X > low_x && e.X < high_x)) || current_click_tune_mode != ClickTuneMode.Off)
-                                                {
-                                                    if (e.Y <= picDisplay.Height / 2)
-                                                    {
-                                                        if (!rx1_spectrum_tune_drag)
-                                                            VFOAFreq = Math.Round(freq, 6);
-                                                    }
-
-                                                    else
-                                                    {
-                                                        if (!rx2_spectrum_tune_drag)
-                                                            VFOBFreq = Math.Round(freq, 6);
-                                                    }
-                                                }
-                                            }
-                                            else
-                                            {
-                                                // shift filter MW0LGE_21k9d
-                                                dragWholeFilter(e);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (chkMOX.Checked && chkXIT.Checked && current_click_tune_mode == ClickTuneMode.VFOB)
-                                    udXIT.Value = 0;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    // resize filter code
-                    else if ( !agc_knee_drag &&
-                              !agc_hang_drag &&
-                              !gridminmaxadjust &&
-                              !gridmaxadjust)
-                    {
-                        switch (Display.CurrentDisplayMode)
-                        {
-                            case DisplayMode.PANADAPTER:
-                            case DisplayMode.WATERFALL:
-                            case DisplayMode.PANAFALL:
-                            case DisplayMode.PANASCOPE:
-                                int low_x = 0, high_x = 0;
-                                int vfoa_sub_x = 0;
-                                int vfoa_sub_low_x = 0;
-                                int vfoa_sub_high_x = 0;
-                                getFilterEdgesInPixels(e, ref low_x, ref high_x, ref vfoa_sub_x, ref vfoa_sub_low_x, ref vfoa_sub_high_x);
-
-                                if (Math.Abs(e.X - low_x) < 3 && e.X < high_x)
-                                {
-                                    if (rx2_enabled && e.Y > picDisplay.Height / 2)
-                                    {
-                                        if (_mox && chkVFOBTX.Checked)
-                                        {
-                                            if (!click_tune_rx2_display) //[2.10.1.0] not when in ctun
-                                            {
-                                                switch (radio.GetDSPTX(0).CurrentDSPMode)
-                                                {
-                                                    case DSPMode.LSB:
-                                                    case DSPMode.CWL:
-                                                    case DSPMode.DIGL:
-                                                    case DSPMode.AM:
-                                                    case DSPMode.SAM:
-                                                    case DSPMode.FM:
-                                                    case DSPMode.DSB:
-                                                        tx_high_filter_drag = true;
-                                                        break;
-                                                    default:
-                                                        tx_low_filter_drag = true;
-                                                        break;
-                                                }
-                                            }
-                                        }
-                                        else rx2_low_filter_drag = true;
-                                    }
-                                    else
-                                    {
-                                        if (_mox && (!chkSplitDisplay.Checked || chkVFOATX.Checked))
-                                        {
-                                            if (!click_tune_display) //[2.10.1.0] not when in ctun
-                                            {
-                                                switch (radio.GetDSPTX(0).CurrentDSPMode)
-                                                {
-                                                    case DSPMode.LSB:
-                                                    case DSPMode.CWL:
-                                                    case DSPMode.DIGL:
-                                                    case DSPMode.AM:
-                                                    case DSPMode.SAM:
-                                                    case DSPMode.FM:
-                                                    case DSPMode.DSB:
-                                                        tx_high_filter_drag = true;
-                                                        break;
-                                                    default:
-                                                        tx_low_filter_drag = true;
-                                                        break;
-                                                }
-                                            }
-                                        }
-                                        else rx1_low_filter_drag = true;
-                                    }
-                                }
-                                else if (Math.Abs(e.X - high_x) < 3)
-                                {
-                                    if (rx2_enabled && e.Y > picDisplay.Height / 2)
-                                    {
-                                        if (_mox && chkVFOBTX.Checked)
-                                        {
-                                            if (!click_tune_rx2_display) //[2.10.1.0] not when in ctun
-                                            {
-                                                switch (radio.GetDSPTX(0).CurrentDSPMode)
-                                                {
-                                                    case DSPMode.LSB:
-                                                    case DSPMode.CWL:
-                                                    case DSPMode.DIGL:
-                                                        tx_low_filter_drag = true;
-                                                        break;
-                                                    default:
-                                                        tx_high_filter_drag = true;
-                                                        break;
-                                                }
-                                            }
-                                        }
-                                        else rx2_high_filter_drag = true;
-                                    }
-                                    else if (_mox && (!chkSplitDisplay.Checked || (chkSplitDisplay.Checked && chkVFOATX.Checked)))
-                                    {
-                                        if (!click_tune_display) //[2.10.1.0] not when in ctun
-                                        {
-                                            switch (radio.GetDSPTX(0).CurrentDSPMode)
-                                            {
-                                                case DSPMode.LSB:
-                                                case DSPMode.CWL:
-                                                case DSPMode.DIGL:
-                                                    tx_low_filter_drag = true;
-                                                    break;
-                                                default:
-                                                    tx_high_filter_drag = true;
-                                                    break;
-                                            }
-                                        }
-                                    }
-                                    else rx1_high_filter_drag = true;
-                                }
-                                else if (e.X > low_x && e.X < high_x && Common.ShiftKeyDown) // need shift held to drag the filter in ctun off mode MW0LGE_21k9d
-                                {
-                                    dragWholeFilter(e);
-                                }
-                                else if (chkEnableMultiRX.Checked && !_mox &&
-                                    (e.X > vfoa_sub_low_x - 3 && e.X < vfoa_sub_high_x + 3))
-                                {
-                                    sub_drag_last_x = e.X;
-                                    if (rx2_enabled) sub_drag_start_freq = VFOASubFreq;
-                                    else sub_drag_start_freq = VFOBFreq;
-                                    rx1_sub_drag = true;
-                                }
-                                else
-                                {
-                                    spectrum_drag_last_x = e.X;
-                                    if (rx2_enabled && e.Y > picDisplay.Height / 2) rx2_spectrum_drag = true;
-                                    else rx1_spectrum_drag = true;
-                                    next_cursor = Cursors.SizeWE;
-                                }
-
-                                break;
-                        }
-                    }
-
-                    break;
-                case MouseButtons.Right:
-                    // if we have a notch highlighted, then all other right click is ignored
-                    if (SelectedNotch != null) return;
-
-                    // right click in the middle splitter bar will recentre it
-                    if (!rx2_enabled && Display.CurrentDisplayMode == DisplayMode.PANAFALL)
-                    {
-                        if (e.Y >= Display.PanafallSplitBarPos && e.Y < Display.PanafallSplitBarPos + 20)
-                        {
-                            Display.PanafallSplitBarPerc = 0.5f;
-                            return;
-                        }
-                    }
-
-                    //
-                    if (Common.CtrlKeyDown)
-                    {
-                        int rx;
-                        double dFreq;
-                        // add notch from cross hair mode with middle mouse
-                        if (rx2_enabled && e.Y > picDisplay.Height / 2)
-                        {
-                            dFreq = getFrequencyAtPixel(e.X, 2);
-                            rx = 2;
-                        }
-                        else
-                        {
-                            dFreq = getFrequencyAtPixel(e.X, 1);
-                            rx = 1;
-                        }
-                        AddNotch(dFreq, rx);
-                        return;
-                    }
-                    //
-
-                    if (!_mox && (rx1_grid_adjust || rx2_grid_adjust))
-                    {
-                        if (rx1_grid_adjust)
-                        {
-                            grid_minmax_drag_start_point = new Point(e.X, e.Y);
-                            gridmaxadjust = true;
-                            tx1_grid_adjust = false;
-                            grid_minmax_max_y = Display.SpectrumGridMax;
-                            next_cursor = grabbing;
-                        }
-
-                        if (rx2_grid_adjust)
-                        {
-                            grid_minmax_drag_start_point = new Point(e.X, e.Y);
-                            gridmaxadjust = true;
-                            tx1_grid_adjust = false;
-                            grid_minmax_max_y = Display.RX2SpectrumGridMax;
-                            next_cursor = grabbing;
-                        }
-                    }
-                    else if (_mox && (rx1_grid_adjust || rx2_grid_adjust))
-                    {
-                        if ((rx1_grid_adjust && !Display.TXOnVFOB) ||
-                            (rx1_grid_adjust && Display.TXOnVFOB && !RX2Enabled))
-                        {
-                            grid_minmax_drag_start_point = new Point(e.X, e.Y);
-                            gridmaxadjust = true;
-                            tx1_grid_adjust = true;
-                            grid_minmax_max_y = Display.TXSpectrumGridMax;
-                            next_cursor = grabbing;
-                        }
-                        else if (rx1_grid_adjust && Display.TXOnVFOB)
-                        {
-                            grid_minmax_drag_start_point = new Point(e.X, e.Y);
-                            gridmaxadjust = true;
-                            tx1_grid_adjust = false;
-                            grid_minmax_max_y = Display.SpectrumGridMax;
-                            next_cursor = grabbing;
-                        }
-
-                        if (rx2_grid_adjust && Display.TXOnVFOB)
-                        {
-                            grid_minmax_drag_start_point = new Point(e.X, e.Y);
-                            gridmaxadjust = true;
-                            tx2_grid_adjust = true;
-                            grid_minmax_max_y = Display.TXSpectrumGridMax;
-                            next_cursor = grabbing;
-                        }
-                        else if (rx2_grid_adjust && !Display.TXOnVFOB)
-                        {
-                            grid_minmax_drag_start_point = new Point(e.X, e.Y);
-                            gridmaxadjust = true;
-                            tx2_grid_adjust = false;
-                            grid_minmax_max_y = Display.RX2SpectrumGridMax;
-                            next_cursor = grabbing;
-                        }
-                    }
-                    else
-                    {
-                        switch (current_click_tune_mode)
-                        {
-                            case ClickTuneMode.Off:
-                                CurrentClickTuneMode = ClickTuneMode.VFOA;
-                                break;
-                            case ClickTuneMode.VFOA:
-                                if (chkVFOSplit.Checked || chkEnableMultiRX.Checked)
-                                    CurrentClickTuneMode = ClickTuneMode.VFOB;
-                                else
-                                    CurrentClickTuneMode = ClickTuneMode.Off;
-                                break;
-                            case ClickTuneMode.VFOB:
-                                CurrentClickTuneMode = ClickTuneMode.Off;
-                                break;
-                        }
-                    }
-                    break;
-                case MouseButtons.Middle:
-                    if (SelectedNotch != null)
-                    {
-                        // move or toggle notch
-                        if (Common.ShiftKeyDown)
-                        {
-                            if (removeNotch(SelectedNotch)) SelectedNotch = null; // remove the notch, and if ok clear selected MW0LGE
-                        }
-                        else
-                        {
-                            toggleNotchActive(SelectedNotch);
-                        }
-                    }
-                    
-                    // carry onto the tune step, but give notch priority
-                    else if (mouse_tune_step)
-                    {
-                        if (Common.ShiftKeyDown) ChangeTuneStepDown(); //MW0LGE
-                        else ChangeTuneStepUp();
-                    }
-                    break;
-            }
-
-            if (next_cursor == Cursors.Cross || next_cursor == _cross_outlined)
-            {
-                // nothing happened
-            }
-
-            picDisplay.Cursor = next_cursor;
-        }
-
         private double getFrequencyAtPixel(int x, int nRX)
         {
             //MW0LGE returns the frequecny (Hz) at a given pixel
@@ -36497,15 +34552,15 @@ namespace Thetis
         public static int[] SXW = new int[200]; //
         public static int[] SXH = new int[200]; //  
         public static string[] SXS = new string[200]; // ties it back to the real DX_Index
-        public static int SXK = 0;               // number of spots on picdisplay
+        public static int SXK = 0;               // number of spots on pnldisplay
 
         public static int[] DXX = new int[200]; // ke9ns add used for qrz hyperlinking(these are the callsign locations on the screen)
         public static int[] DXY = new int[200]; // 
         public static int[] DXW = new int[200]; //
         public static int[] DXH = new int[200]; //  
         public static string[] DXS = new string[200]; // ties it back to the real DX_Index
-        public static int DXK = 0;               // number of spots on picdisplay
-        public static int DXK2 = 0;               // number of spots on picdisplay
+        public static int DXK = 0;               // number of spots on pnldisplay
+        public static int DXK2 = 0;               // number of spots on pnldisplay
 
 
 
@@ -36515,144 +34570,16 @@ namespace Thetis
         public static int[] MMH = new int[200]; //           H
         public static int[] MMM = new int[200]; //           Index postion in Memory.xml file
 
-        public static int MMK3 = 0;               // number of MEMORY spots on picdisplay
-        public static int MMK4 = 0;               // number of spots on picdisplay
+        public static int MMK3 = 0;               // number of MEMORY spots on pnldisplay
+        public static int MMK4 = 0;               // number of spots on pnldisplay
 
         public static bool DisplaySpot = true;               // true displays spot, false displays spotter
 
-        public static int DX_X = 0;               //x cursor pos inside picdisplay 
-        public static int DX_Y = 0;               //y  cursor pos inside picdisplay
+        public static int DX_X = 0;               //x cursor pos inside pnldisplay 
+        public static int DX_Y = 0;               //y  cursor pos inside pnldisplay
 
         private bool m_bDraggingPanafallSplit = false;
 
-        private void picDisplay_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                switch (Display.CurrentDisplayMode)
-                {
-                    case DisplayMode.SPECTRUM:
-                    case DisplayMode.PANADAPTER:
-                    case DisplayMode.WATERFALL:
-                    case DisplayMode.PANAFALL:
-                    case DisplayMode.PANASCOPE:
-                    case DisplayMode.HISTOGRAM:
-                    case DisplayMode.SPECTRASCOPE:
-                        rx1_low_filter_drag = false;
-                        rx1_high_filter_drag = false;
-                        rx1_whole_filter_drag = false;
-                        rx2_low_filter_drag = false;
-                        rx2_high_filter_drag = false;
-                        rx2_whole_filter_drag = false;
-                        tx_low_filter_drag = false;
-                        tx_high_filter_drag = false;
-                        tx_whole_filter_drag = false;
-                        rx1_click_tune_drag = false;
-                        rx2_click_tune_drag = false;
-                        rx1_spectrum_tune_drag = false;
-                        rx2_spectrum_tune_drag = false;
-
-                        agc_knee_drag = false;
-                        agc_hang_drag = false;
-
-                        gridminmaxadjust = false;
-                        rx1_grid_adjust = false;
-                        rx2_grid_adjust = false;
-                        tx1_grid_adjust = false;
-                        tx2_grid_adjust = false;
-
-                        //MW0LGE_21i
-                        Display.HightlightFilterEdgeRX1 = 0;
-                        Display.HightlightFilterEdgeRX2 = 0;
-
-                        break;
-                }
-
-                if (rx1_sub_drag)
-                {
-                    rx1_sub_drag = false;
-                    if (rx2_enabled) txtVFOABand_LostFocus(this, EventArgs.Empty);
-                    else txtVFOBFreq_LostFocus(this, EventArgs.Empty);
-                }
-
-                if (rx1_spectrum_drag)
-                {
-                    rx1_spectrum_drag = false;
-                    txtVFOAFreq_LostFocus(this, EventArgs.Empty);
-                }
-                rx2_spectrum_drag = false;
-
-                //BandStack overlay MW0LGE_21h
-                if (m_bBandStackOverlayClicked)
-                {
-                    if ((Display.HighlightedBandStackEntryIndex != -1) && (Display.BandStackOverlays != null))
-                    {
-                        if (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANAFALL)
-                        {
-                            if (Display.HighlightedBandStackEntryIndex < Display.BandStackOverlays.Length) // belts/braces
-                            {
-                                BandStackEntry bse = Display.BandStackOverlays[Display.HighlightedBandStackEntryIndex];
-                                if (bse != null)
-                                {
-                                    BandStackFilter bsf = BandStackManager.GetFilter(RX1Band, false);
-                                    if (bsf != null) OnEntryClicked(bsf, bse, false);
-                                }
-                            }
-                        }
-                    }
-                    m_bBandStackOverlayClicked = false;
-                }
-                //
-
-                if (m_bDraggingNotch)
-                {
-                    // finished dragging a notch, let use change its frequency MW0LGE
-                    m_bDraggingNotch = false;
-                    double tmp = SelectedNotch.FCenter;
-                    ChangeNotchCentreFrequency(SelectedNotch, tmp, m_nNotchRX);
-                }
-                else if (m_bDraggingNotchBW) // can only do one or the other
-                {
-                    // finished dragging notch BW, lets us change it
-                    m_bDraggingNotchBW = false;
-                    double tmp = SelectedNotch.FWidth;
-                    ChangeNotchBW(SelectedNotch, tmp);
-                }
-
-                if (m_bDraggingPanafallSplit)
-                {
-                    m_bDraggingPanafallSplit = false;
-                }
-            }
-
-            if (e.Button == MouseButtons.Right)
-            {
-                switch (Display.CurrentDisplayMode)
-                {
-                    case DisplayMode.PANADAPTER:
-                    case DisplayMode.PANAFALL:
-                    case DisplayMode.HISTOGRAM:
-                    case DisplayMode.SPECTRUM:
-                    case DisplayMode.PANASCOPE:
-                    case DisplayMode.SPECTRASCOPE:
-                        gridminmaxadjust = false;
-                        gridmaxadjust = false;
-                        rx1_grid_adjust = false;
-                        rx2_grid_adjust = false;
-                        tx1_grid_adjust = false;
-                        tx2_grid_adjust = false;
-                        break;
-                }
-
-                if (SelectedNotch != null && !Common.CtrlKeyDown) //MW0LGE_21f only if ctrl not down, as was randomly showing when adding a new one
-                {
-                    Point p = new Point(e.X, e.Y);
-                    int x = picDisplay.PointToScreen(p).X - 16;
-                    int y = picDisplay.PointToScreen(p).Y - 16;
-                    ShowNotchPopup(x, y, SelectedNotch, 0, 1000, AlwaysOnTop);
-                }
-            }
-        }
         public void ShowNotchPopup(int x, int y, MNotch notch, int min_width, int max_width, bool on_top, int notch_index = -1)
         {
             if (m_frmNotchPopup == null) return;
@@ -36672,63 +34599,7 @@ namespace Thetis
                 return m_frmNotchPopup.DeactivateTime;
             }
         }
-        private void picDisplay_DoubleClick(object sender, EventArgs e)
-        {
-            int new_val = (int)PixelToDb(display_cursor_y);
-            if (!(rx1_grid_adjust || gridmaxadjust))
-            {
-                if (!_mox) //RX1
-                {
-                    if (rx1_dsp_mode == DSPMode.FM)
-                        return;
-
-                    if (new_val > ptbSquelch.Maximum) new_val = ptbSquelch.Maximum;
-                    if (new_val < ptbSquelch.Minimum) new_val = ptbSquelch.Minimum;
-                    ptbSquelch.Value = new_val;
-                    ptbSquelch_Scroll(this, EventArgs.Empty);
-                }
-                else // TX
-                {
-                    new_val += 24;
-                    if (new_val > ptbNoiseGate.Maximum) new_val = ptbNoiseGate.Maximum;
-                    if (new_val < ptbNoiseGate.Minimum) new_val = ptbNoiseGate.Minimum;
-                    ptbNoiseGate.Value = new_val;
-                    ptbNoiseGate_Scroll(this, EventArgs.Empty);
-                }
-            }
-
-        }
         //
-        private bool m_bResizeDX2Display = false;
-        private async void picDisplay_Resize(object sender, System.EventArgs e)
-        {
-            _pause_DisplayThread = true;
-
-            // tell display thread to resize DX2
-            m_bResizeDX2Display = true;
-
-            // wait for the resize to happen in the display thread
-            while (m_bResizeDX2Display && m_bDisplayLoopRunning)
-            {
-                await Task.Delay(1);
-            }
-
-            if (!initializing)
-            {
-                //MW0LGE_21d N1MM
-                N1MM.Resize(1);
-                if (RX2Enabled) N1MM.Resize(2);
-
-                //MW0LGE_21h
-                updateBandstackOverlay(1);
-
-                UpdateRXSpectrumDisplayVars();
-                UpdateTXSpectrumDisplayVars();
-            }
-
-            _pause_DisplayThread = false;
-        }
-
         private void ptbDisplayPan_Scroll(object sender, System.EventArgs e)
         {
             specRX.GetSpecRX(0).PanSlider = (double)ptbDisplayPan.Value / 1000.0;
@@ -36764,8 +34635,9 @@ namespace Thetis
             int offset = low - abs_low;
 
             int new_val = (int)((double)offset * (double)ptbDisplayPan.Maximum / (double)max_pan_width);
-            ptbDisplayPan.Value = Math.Min(Math.Max(ptbDisplayPan.Minimum, new_val), ptbDisplayPan.Maximum);
-            ptbDisplayPan_Scroll(btnDisplayPanCenter, EventArgs.Empty);
+            //ptbDisplayPan.Value = Math.Min(Math.Max(ptbDisplayPan.Minimum, new_val), ptbDisplayPan.Maximum);
+            //ptbDisplayPan_Scroll(btnDisplayPanCenter, EventArgs.Empty);
+            Pan = Math.Min(Math.Max(ptbDisplayPan.Minimum, new_val), ptbDisplayPan.Maximum);
         }
         private bool m_bIgnoreZoomCentre = false;
         private bool m_bIgnoreLimitsForZTB = false;
@@ -36801,8 +34673,9 @@ namespace Thetis
             if ((int)(spanMHz * 1e6) > spec.SampleRate)
             {
                 // can't fit, so max zoom out
-                ptbDisplayZoom.Value = ptbDisplayZoom.Minimum;
-                ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                //ptbDisplayZoom.Value = ptbDisplayZoom.Minimum;
+                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                Zoom = ptbDisplayZoom.Minimum;
             }
             else
             {
@@ -36820,9 +34693,12 @@ namespace Thetis
                 zoom /= 9.0;
 
                 m_bIgnoreZoomCentre = true; //[2.10.3.5]MW0LGE used in ptbDisplayZoom_Scroll to ignore the shift key which might be held for RX2
-                btnDisplayPanCenter_Click(this, EventArgs.Empty);
-                ptbDisplayZoom.Value = (int)((zoom * 230.0) + 10.0);
-                ptbDisplayZoom_Scroll(this, EventArgs.Empty); //force (not ideal)
+                PanCentre();
+
+                //ptbDisplayZoom.Value = (int)((zoom * 230.0) + 10.0);
+                //ptbDisplayZoom_Scroll(this, EventArgs.Empty); //force (not ideal)
+                Zoom = (int)((zoom * 230.0) + 10.0);
+
                 m_bIgnoreZoomCentre = false;
 
                 m_bIgnoreLimitsForZTB = true;
@@ -36916,9 +34792,10 @@ namespace Thetis
         {
             if (radDisplayZoom05.Checked)
             {
-                btnDisplayPanCenter_Click(this, EventArgs.Empty); //MW0LGE_[2.9.0.7] centre before the zoom
-                ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 0.5);
-                ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                PanCentre();
+                //ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 0.5);
+                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 0.5);
             }
         }
 
@@ -36926,9 +34803,10 @@ namespace Thetis
         {
             if (radDisplayZoom1x.Checked)
             {
-                btnDisplayPanCenter_Click(this, EventArgs.Empty); //MW0LGE_[2.9.0.7] centre before the zoom
-                ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 1.0);
-                ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                PanCentre();
+                //ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 1.0);
+                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 1.0);
             }
         }
 
@@ -36936,9 +34814,10 @@ namespace Thetis
         {
             if (radDisplayZoom2x.Checked)
             {
-                btnDisplayPanCenter_Click(this, EventArgs.Empty); //MW0LGE_[2.9.0.7] centre before the zoom
-                ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 2.0);
-                ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                PanCentre();
+                //ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 2.0);
+                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 2.0);
             }
         }
 
@@ -36946,9 +34825,10 @@ namespace Thetis
         {
             if (radDisplayZoom4x.Checked)
             {
-                btnDisplayPanCenter_Click(this, EventArgs.Empty); //MW0LGE_[2.9.0.7] centre before the zoom
-                ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 4.0);
-                ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                PanCentre();
+                //ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 4.0);
+                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+                Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 4.0);
             }
         }
 
@@ -40395,7 +38275,7 @@ namespace Thetis
         public void GrabConsoleSizeBasis()
         {
             console_basis_size = this.Size;
-            picdisplay_basis_size = picDisplay.Size;
+            pnldisplay_basis_size = pnlDisplay.Size;
             gr_filter_basis_location = this.panelFilter.Location;
 
             gr_Multimeter_basis_location = this.grpMultimeter.Location;
@@ -42293,6 +40173,11 @@ namespace Thetis
                     break;
             }
 
+            //ensure filter can not be smaller than buffer
+            if (filtsizerx1 < bufsizerx1) bufsizerx1 = filtsizerx1;
+            if (filtsizerx2 < bufsizerx2) bufsizerx2 = filtsizerx2;
+            if (filtsizetx < bufsizetx) bufsizetx = filtsizetx;
+
             Cursor c = Cursor.Current;
             Cursor.Current = Cursors.WaitCursor;
 
@@ -42424,9 +40309,10 @@ namespace Thetis
         {
             try
             {
-                int points = (int)Math.Max(1024, filter_size) * (hi_res ? 8 : 1); // points must be power of 2
+                int size = (int)Math.Max(512, filter_size);
+                int points = (int)Math.Max(size, hi_res ? 8192 : 1024); // points must be power of 2, and must be no smaller than size
 
-                WDSP.create_bfcu(id, 1024, points, rate, corner_freq, points);
+                WDSP.create_bfcu(id, size, size, rate, corner_freq, points);
 
                 int lower_corner, upper_corner;
                 unsafe
@@ -42778,7 +40664,7 @@ namespace Thetis
             //MW0LGE_21k5 pause_DisplayThread = true;
 
             if (dpi == 0)
-                dpi = (int)picDisplay.CreateGraphics().DpiX;
+                dpi = (int)pnlDisplay.CreateGraphics().DpiX;
             if (dpi > 96 && !dpi_resize_done)
             {
                 if (base_size.Width == 0)
@@ -44723,12 +42609,14 @@ namespace Thetis
             //
 
             // :NOTE: Force update on pan control
-            ptbDisplayPan.Value = ptbDisplayPan.Value;
-            ptbDisplayPan_Scroll(this, EventArgs.Empty);
+            //ptbDisplayPan.Value = ptbDisplayPan.Value;
+            //ptbDisplayPan_Scroll(this, EventArgs.Empty);
+            Pan = ptbDisplayPan.Value;
 
             // :NOTE: Force update on zoom control
-            ptbDisplayZoom.Value = ptbDisplayZoom.Value;
-            ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+            //ptbDisplayZoom.Value = ptbDisplayZoom.Value;
+            //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+            Zoom = ptbDisplayZoom.Value;
 
             panelBandHF.Location = new Point(gr_BandHF_basis_location.X + h_delta, gr_BandHF_basis_location.Y + (v_delta / 4));
             panelBandHF.Size = gr_BandHF_basis_size;
@@ -45655,16 +43543,17 @@ namespace Thetis
             panelDisplay.Size = new Size(this.ClientSize.Width, height);
 
             top = infoBar.Location.Y + infoBar.Size.Height + 5;
-            int dynamicWidth = picDisplay.Width - (lblDisplayPan.Width + btnDisplayPanCenter.Width + 5 + comboDisplayMode.Width + 5 + lblDisplayZoom.Width + (btnDisplayZTB.Width * 5)); // *5 buttons
+            int dynamicWidth = pnlDisplay.Width - (lblDisplayPan.Width + btnDisplayPanCenter.Width + 5 + comboDisplayMode.Width + 5 + lblDisplayZoom.Width + (btnDisplayZTB.Width * 5)); // *5 buttons
 
-            lblDisplayPan.Location = new Point(picDisplay.Location.X, top);
+            lblDisplayPan.Location = new Point(pnlDisplay.Location.X, top);
             ptbDisplayPan.Location = new Point(lblDisplayPan.Location.X + lblDisplayPan.Width, top);
             ptbDisplayPan.Size = new Size(dynamicWidth / 2, tb_display_pan_size_basis.Height);
             btnDisplayPanCenter.Location = new Point(ptbDisplayPan.Location.X + ptbDisplayPan.Width, top);
 
             // :NOTE: Force update on pan control
-            ptbDisplayPan.Value = ptbDisplayPan.Value;
-            ptbDisplayPan_Scroll(this, EventArgs.Empty);
+            //ptbDisplayPan.Value = ptbDisplayPan.Value;
+            //ptbDisplayPan_Scroll(this, EventArgs.Empty);
+            Pan = ptbDisplayPan.Value;
 
             comboDisplayMode.Parent = panelDisplay;
             comboDisplayMode.Location = new Point(btnDisplayPanCenter.Location.X + btnDisplayPanCenter.Width + 5, top);
@@ -45676,8 +43565,9 @@ namespace Thetis
             ptbDisplayZoom.Size = new Size(btnDisplayZTB.Location.X - (lblDisplayZoom.Location.X + lblDisplayZoom.Size.Width), tb_display_zoom_size_basis.Height);
 
             // :NOTE: Force update on zoom control
-            ptbDisplayZoom.Value = ptbDisplayZoom.Value;
-            ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+            //ptbDisplayZoom.Value = ptbDisplayZoom.Value;
+            //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
+            Zoom = ptbDisplayZoom.Value;
 
             top = panelDisplay.Location.Y + panelDisplay.Height;
             // G8NJJ to add new Andromeda button bar in place of band, mode controls
@@ -47139,7 +45029,7 @@ namespace Thetis
                 setBackground();
             }
         }
-        public Image PicDisplayBackgroundImage
+        public Image PnlDisplayBackgroundImage
         {
             get {
                 return m_imgBackground;
@@ -47416,25 +45306,24 @@ namespace Thetis
 
         private void toolStripMenuItem_4by3_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            setResolution(e.ClickedItem.Text);
+            SetResolution(e.ClickedItem.Text);
         }
 
         private void toolStripMenuItem_16by9_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            setResolution(e.ClickedItem.Text);
+            SetResolution(e.ClickedItem.Text);
         }
 
         private void toolStripMenuItem_16by10_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            setResolution(e.ClickedItem.Text);
+            SetResolution(e.ClickedItem.Text);
         }
 
         private void youTubeToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            setResolution(e.ClickedItem.Text);
+            SetResolution(e.ClickedItem.Text);
         }
-
-        private void setResolution(string resolutionString)
+        public void SetResolution(string resolutionString)
         {
             if (resolutionString.Length < 1) return;
 
@@ -49424,12 +47313,10 @@ namespace Thetis
                         centre += (double)cw_pitch * 0.0000010;
 
                     m_bIgnoreLimitsForZTB = true;
+
                     if (Pan != ztb.PanSliderPosition) Pan = ztb.PanSliderPosition;
-                    if (ptbDisplayZoom.Value != ztb.ZoomSliderPosition)
-                    {
-                        ptbDisplayZoom.Value = ztb.ZoomSliderPosition;
-                        ptbDisplayZoom_Scroll(this, EventArgs.Empty);
-                    }
+                    if (Zoom != ztb.ZoomSliderPosition) Zoom = ztb.ZoomSliderPosition;
+
                     if (rx == 0)
                     {
                         if (CentreFrequency != centre)
@@ -52018,6 +49905,2248 @@ namespace Thetis
                 ptbFilterShift.Maximum = MaxFilterShift;
                 _ignore_rx1_filter_update = old_state;
             }
+        }
+
+        private void pnlDisplay_DoubleClick(object sender, EventArgs e)
+        {
+            int new_val = (int)PixelToDb(display_cursor_y);
+            if (!(rx1_grid_adjust || gridmaxadjust))
+            {
+                if (!_mox) //RX1
+                {
+                    if (rx1_dsp_mode == DSPMode.FM)
+                        return;
+
+                    if (new_val > ptbSquelch.Maximum) new_val = ptbSquelch.Maximum;
+                    if (new_val < ptbSquelch.Minimum) new_val = ptbSquelch.Minimum;
+                    ptbSquelch.Value = new_val;
+                    ptbSquelch_Scroll(this, EventArgs.Empty);
+                }
+                else // TX
+                {
+                    new_val += 24;
+                    if (new_val > ptbNoiseGate.Maximum) new_val = ptbNoiseGate.Maximum;
+                    if (new_val < ptbNoiseGate.Minimum) new_val = ptbNoiseGate.Minimum;
+                    ptbNoiseGate.Value = new_val;
+                    ptbNoiseGate_Scroll(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        private void pnlDisplay_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (m_frmNotchPopup.Visible) return;
+            if (_highlightedSpot != null)
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    _highlightedSpot.BrowseQRZ();
+                }
+                else if (_highlightedSpot.Highlight[0])
+                {
+
+                    // rx1
+                    if (_highlightedSpot.mode != DSPMode.FIRST && RX1DSPMode != _highlightedSpot.mode) RX1DSPMode = _highlightedSpot.mode;
+                    if (VFOAFreq != _highlightedSpot.frequencyHZ * 1e-6) VFOAFreq = _highlightedSpot.frequencyHZ * 1e-6;
+
+                    SpotClickedHandlers?.Invoke(_highlightedSpot.callsign, _highlightedSpot.frequencyHZ, 1, false);
+                }
+                else if (_highlightedSpot.Highlight[1] && rx2_enabled)
+                {
+                    // rx2
+                    if (_highlightedSpot.mode != DSPMode.FIRST && RX2DSPMode != _highlightedSpot.mode) RX2DSPMode = _highlightedSpot.mode;
+                    if (VFOBFreq != _highlightedSpot.frequencyHZ * 1e-6) VFOBFreq = _highlightedSpot.frequencyHZ * 1e-6;
+
+                    SpotClickedHandlers?.Invoke(_highlightedSpot.callsign, _highlightedSpot.frequencyHZ, 2, false);
+                }
+                return;
+            }
+
+            Cursor next_cursor = _useOutlinedCrossCursor ? _cross_outlined : Cursors.Cross;
+
+            switch (e.Button)
+            {
+                case MouseButtons.Left:
+
+                    bool bOverRX1 = overRX(e.X, e.Y, 1, false);  //MW0LGE
+                    bool bOverRX2 = overRX(e.X, e.Y, 2, false);
+
+                    //NOTCH MW0LGE
+                    if (SelectedNotch != null)
+                    {
+                        // this will be the notch we have mouse over                        
+
+                        int nRX = 0;
+                        if (bOverRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANAFALL))
+                        {
+                            nRX = 1;
+                        }
+                        else if (bOverRX2 && (Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER || Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL))
+                        {
+                            nRX = 2;
+                        }
+                        if (nRX != 0)
+                        {
+                            // the inital click point, delta is worked in mouse_move
+                            _drag_notch_start_point = new Point(e.X, e.Y);
+
+                            double dMouseVFO = 0;
+                            double dCentreFreq = 0;
+                            double dCWoffset = 0;
+
+                            if (nRX == 1)
+                            {
+                                dCentreFreq = CentreFrequency * 1e6;
+                                dMouseVFO = dCentreFreq + PixelToHz(e.X, 1);
+                                if (rx1_dsp_mode == DSPMode.CWL)
+                                    dCWoffset = (double)cw_pitch;
+                                else if (rx1_dsp_mode == DSPMode.CWU)
+                                    dCWoffset = -(double)cw_pitch;
+                            }
+                            else
+                            {
+                                dCentreFreq = CentreRX2Frequency * 1e6;
+                                dMouseVFO = dCentreFreq + PixelToHz(e.X, 2);
+                                if (rx2_dsp_mode == DSPMode.CWL)
+                                    dCWoffset = (double)cw_pitch;
+                                else if (rx2_dsp_mode == DSPMode.CWU)
+                                    dCWoffset = -(double)cw_pitch;
+                            }
+                            dMouseVFO += dCWoffset;
+
+                            // upper and lower sides of the notch
+                            double dL = SelectedNotch.FCenter - (SelectedNotch.FWidth / 2);
+                            double dH = SelectedNotch.FCenter + (SelectedNotch.FWidth / 2);
+
+                            // convert the upper and lower sides into pixels from left edge of pnlDisplay
+                            int nLpx = HzToPixel((float)(dL - dCentreFreq - dCWoffset), nRX);
+                            int nHpx = HzToPixel((float)(dH - dCentreFreq - dCWoffset), nRX);
+
+                            bool bNearEdge = false;
+
+                            // default this based on which side of middle the mouse is
+                            // so that we get inuative feeling when using shift modifier to resize
+                            // ie we are not draggin an edge
+                            m_BDragginNotchBWRightSide = (dMouseVFO >= SelectedNotch.FCenter);
+
+                            if (nHpx - nLpx > 8)
+                            {
+                                // ok, the edges are far enough appart in pixels to actually check to see if we are over low or high side
+                                if (Math.Abs(e.X - nLpx) < 4)
+                                {
+                                    m_BDragginNotchBWRightSide = false;
+                                    bNearEdge = true;
+                                }
+                                else if (Math.Abs(e.X - nHpx) < 4)
+                                {
+                                    m_BDragginNotchBWRightSide = true;
+                                    bNearEdge = true;
+                                }
+                            }
+
+                            m_nNotchRX = nRX; // MW0LGE_21e
+
+                            if (bNearEdge || Common.ShiftKeyDown) // can also hold shift drag to resize the notch
+                            {
+                                // near edge of notch, let us drag the width
+                                drag_notch_start_data = SelectedNotch.FWidth;
+                                m_bDraggingNotchBW = true;
+                            }
+                            else
+                            {
+                                // drag whole notch, as we are not near the edge
+                                drag_notch_start_data = SelectedNotch.FCenter;
+                                m_bDraggingNotch = true;
+                            }
+                            return;
+                        }
+                    }
+                    //END NOTCH
+
+                    //MIDDLE OF PANAFALL MOVEUPDOWN MW0LGE
+                    if (!rx2_enabled && Display.CurrentDisplayMode == DisplayMode.PANAFALL)
+                    {
+                        m_bDraggingPanafallSplit = (e.Y >= Display.PanafallSplitBarPos && e.Y < Display.PanafallSplitBarPos + 20);
+                        if (m_bDraggingPanafallSplit) return;
+                    }
+                    //END SPLITTER DRAG
+
+                    // if (!mox)
+                    // {
+                    switch (Display.CurrentDisplayMode)
+                    {
+                        case DisplayMode.PANADAPTER:
+                        case DisplayMode.PANAFALL:
+                        case DisplayMode.HISTOGRAM:
+                        case DisplayMode.SPECTRUM:
+                        case DisplayMode.PANASCOPE:
+                        case DisplayMode.SPECTRASCOPE:
+                            if (!_mox)
+                            {
+                                if (rx1_grid_adjust)
+                                {
+                                    grid_minmax_drag_start_point = new Point(e.X, e.Y);
+                                    gridminmaxadjust = true;
+                                    tx1_grid_adjust = false;
+                                    grid_minmax_max_y = Display.SpectrumGridMax;
+                                    grid_minmax_min_y = Display.SpectrumGridMin;
+                                    next_cursor = grabbing;
+                                }
+
+                                if (rx2_grid_adjust)
+                                {
+                                    grid_minmax_drag_start_point = new Point(e.X, e.Y);
+                                    gridminmaxadjust = true;
+                                    tx1_grid_adjust = false;
+                                    grid_minmax_max_y = Display.RX2SpectrumGridMax;
+                                    grid_minmax_min_y = Display.RX2SpectrumGridMin;
+                                    next_cursor = grabbing;
+                                }
+                            }
+                            else
+                            {
+                                if ((rx1_grid_adjust && !Display.TXOnVFOB) ||
+                                    (rx1_grid_adjust && Display.TXOnVFOB && !RX2Enabled))
+                                {
+                                    grid_minmax_drag_start_point = new Point(e.X, e.Y);
+                                    gridminmaxadjust = true;
+                                    tx1_grid_adjust = true;
+                                    grid_minmax_max_y = Display.TXSpectrumGridMax;
+                                    grid_minmax_min_y = Display.TXSpectrumGridMin;
+                                    next_cursor = grabbing;
+                                }
+                                else if (rx1_grid_adjust && Display.TXOnVFOB)
+                                {
+                                    grid_minmax_drag_start_point = new Point(e.X, e.Y);
+                                    gridminmaxadjust = true;
+                                    tx1_grid_adjust = false;
+                                    grid_minmax_max_y = Display.SpectrumGridMax;
+                                    grid_minmax_min_y = Display.SpectrumGridMin;
+                                    next_cursor = grabbing;
+                                }
+
+                                if (rx2_grid_adjust && Display.TXOnVFOB)
+                                {
+                                    grid_minmax_drag_start_point = new Point(e.X, e.Y);
+                                    gridminmaxadjust = true;
+                                    tx2_grid_adjust = true;
+                                    grid_minmax_max_y = Display.TXSpectrumGridMax;
+                                    grid_minmax_min_y = Display.TXSpectrumGridMin;
+                                    next_cursor = grabbing;
+                                }
+                                else if (rx2_grid_adjust && !Display.TXOnVFOB)
+                                {
+                                    grid_minmax_drag_start_point = new Point(e.X, e.Y);
+                                    gridminmaxadjust = true;
+                                    tx2_grid_adjust = false;
+                                    grid_minmax_max_y = Display.RX2SpectrumGridMax;
+                                    grid_minmax_min_y = Display.RX2SpectrumGridMin;
+                                    next_cursor = grabbing;
+                                }
+                            }
+                            break;
+                        case DisplayMode.WATERFALL:
+                            break;
+                    }
+                    // }
+
+                    if (!_mox)
+                    {
+                        switch (Display.CurrentDisplayMode)
+                        {
+                            case DisplayMode.PANAFALL:
+                            case DisplayMode.PANASCOPE:
+                            case DisplayMode.PANADAPTER:
+                                if (rx2_enabled && e.Y > pnlDisplay.Height / 2)
+                                {
+                                    if (Display.AGCRX2Knee.Contains(e.X, e.Y) && show_agc)
+                                    {
+                                        agc_knee_drag = true;
+                                        next_cursor = grabbing;
+                                    }
+                                    else
+                                        if (Display.AGCRX2Hang.Contains(e.X, e.Y) && show_agc)
+                                    {
+                                        agc_hang_drag = true;
+                                        next_cursor = grabbing;
+                                    }
+                                    else
+                                    {
+                                        agc_knee_drag = false;
+                                        agc_hang_drag = false;
+                                    }
+                                }
+                                else
+                                {
+                                    if (Display.AGCKnee.Contains(e.X, e.Y) && show_agc)
+                                    {
+                                        agc_knee_drag = true;
+                                        next_cursor = grabbing;
+                                    }
+                                    else
+                                        if (Display.AGCHang.Contains(e.X, e.Y) && show_agc)
+                                    {
+                                        agc_hang_drag = true;
+                                        next_cursor = grabbing;
+                                    }
+                                    else
+                                    {
+                                        agc_knee_drag = false;
+                                        agc_hang_drag = false;
+                                    }
+                                }
+                                break;
+                        }
+
+                        if (bOverRX1 && agc_knee_drag) AutoAGCRX1 = false; // MW0LGE_21k8 turn of auto agc if we click knee
+                        else if (bOverRX2 && agc_knee_drag) AutoAGCRX2 = false;
+                    }
+
+                    //BAND STACK OVERLAY
+                    //only do this if not doing something else
+                    if (m_bShowBandStackOverlays && bOverRX1 && !(rx1_sub_drag || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit ||
+                        gridminmaxadjust || agc_knee_drag || agc_hang_drag || rx1_spectrum_tune_drag || rx1_click_tune_drag || rx2_spectrum_tune_drag || rx2_click_tune_drag ||
+                        tx_high_filter_drag || tx_low_filter_drag || rx1_low_filter_drag || rx1_high_filter_drag || rx2_low_filter_drag || rx1_high_filter_drag))
+                    {
+                        if (Display.BandStackOverlays != null && Display.BandStackOverlays.Length > 0)
+                        {
+                            bool panafall_check = Display.CurrentDisplayMode == DisplayMode.PANAFALL && ((!rx2_enabled && e.Y < Display.PanafallSplitBarPos) || (rx2_enabled && e.Y < pnlDisplay.Height / 4)); //[2.10.3.6]MW0LGE fixes issue where you could try to qsy click on the waterfall
+                            if (bOverRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || panafall_check))                                                                                          //under a band stack entry that was shown on the panadaptor area in a panafall display
+                            {                                                                                                                                                                                  //and it would not qsy             
+                                // convert mouse pos into HZ
+                                double nMousePosHZ = (CentreFrequency * 1e6) + PixelToHz(e.X, 1); // only rx1
+
+                                m_bBandStackOverlayClicked = false;
+
+                                for (int n = 0; n < Display.BandStackOverlays.Length; n++)
+                                {
+                                    BandStackEntry bse = Display.BandStackOverlays[n];
+
+                                    double dL = (bse.Frequency * 1e6) + bse.LowFilter;
+                                    double dH = (bse.Frequency * 1e6) + bse.HighFilter;
+
+                                    if (dL <= nMousePosHZ && dH >= nMousePosHZ)
+                                    {
+                                        m_bBandStackOverlayClicked = true;
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //
+
+                    if (Display.HightlightFilterEdgeRX1 == 0 && Display.HightlightFilterEdgeRX2 == 0 &&
+                        !agc_knee_drag &&
+                        !agc_hang_drag &&
+                        !gridminmaxadjust &&
+                        !gridmaxadjust &&
+                        (current_click_tune_mode != ClickTuneMode.Off || (click_tune_display && bOverRX1) || (click_tune_rx2_display && bOverRX2)))
+                    {
+                        switch (Display.CurrentDisplayMode)
+                        {
+                            case DisplayMode.SPECTRUM:
+                            case DisplayMode.WATERFALL:
+                            case DisplayMode.HISTOGRAM:
+                            case DisplayMode.PANADAPTER:
+                            case DisplayMode.PANAFALL:
+                            case DisplayMode.PANASCOPE:
+                                float x = PixelToHz(e.X);
+                                double freq;
+                                if (rx2_enabled && e.Y > pnlDisplay.Height / 2) //RX2
+                                {
+                                    x = PixelToHz(e.X, 2);
+
+                                    bool bShift = true;
+                                    if (click_tune_rx2_display && current_click_tune_mode != ClickTuneMode.Off)
+                                        freq = CentreRX2Frequency + (double)x * 0.0000010;
+                                    else if (current_click_tune_mode != ClickTuneMode.Off)
+                                        freq = /*double.Parse(txtVFOBFreq.Text)*/ VFOBFreq + (double)x * 0.0000010; // click tune w/x-hairs //[2.10.3.6]freq changes.
+                                    else if (click_tune_drag)
+                                        freq = CentreRX2Frequency + (double)x * 0.0000010; // click tune & drag vfo
+                                    else
+                                    {
+                                        bShift = false; // the shift is already applied to the vfo, we dont want to do it again ! MW0LGE_21k9rc6
+                                        freq = /*double.Parse(txtVFOBFreq.Text);*/ VFOBFreq; // click & drag vfo //[2.10.3.6]freq changes.
+                                    }
+
+                                    if (bShift)
+                                    {
+                                        switch (rx2_dsp_mode)
+                                        {
+                                            case DSPMode.CWL:
+                                                freq += (float)cw_pitch * 0.0000010;
+                                                break;
+                                            case DSPMode.CWU:
+                                                freq -= (float)cw_pitch * 0.0000010;
+                                                break;
+                                            case DSPMode.DIGL:
+                                                freq += (float)digl_click_tune_offset * 0.0000010;
+                                                break;
+                                            case DSPMode.DIGU:
+                                                freq -= (float)digu_click_tune_offset * 0.0000010;
+                                                break;
+                                        }
+                                    }
+
+                                    freq = adjustForSnapClickTuning(2, freq);
+                                }
+                                else
+                                {
+                                    bool bShift = true;
+                                    if (click_tune_display && current_click_tune_mode != ClickTuneMode.Off)
+                                        freq = CentreFrequency + (double)x * 0.0000010;
+                                    else if (current_click_tune_mode != ClickTuneMode.Off)
+                                        freq = /*double.Parse(txtVFOAFreq.Text)*/ VFOAFreq + (double)x * 0.0000010; // click tune w/x-hairs //[2.10.3.6]freq changes.
+                                    else if (click_tune_drag)
+                                        freq = CentreFrequency + (double)x * 0.0000010; // click tune & drag vfo
+                                    else
+                                    {
+                                        bShift = false; // the shift is already applied to the vfo, we dont want to do it again ! MW0LGE_21k9rc6
+                                        freq = /*double.Parse(txtVFOAFreq.Text);*/ VFOAFreq; // click & drag vfo //[2.10.3.6]freq changes.
+                                    }
+
+                                    if (bShift)
+                                    {
+                                        switch (rx1_dsp_mode)
+                                        {
+                                            case DSPMode.CWL:
+                                                freq += (float)cw_pitch * 0.0000010;
+                                                break;
+                                            case DSPMode.CWU:
+                                                freq -= (float)cw_pitch * 0.0000010;
+                                                break;
+                                            case DSPMode.DIGL:
+                                                if (!ClickTuneFilter) freq += (float)digl_click_tune_offset * 0.0000010;
+                                                break;
+                                            case DSPMode.DIGU:
+                                                if (!ClickTuneFilter) freq -= (float)digu_click_tune_offset * 0.0000010;
+                                                break;
+                                        }
+                                    }
+
+                                    freq = adjustForSnapClickTuning(1, freq);
+                                }
+
+                                // MW0LGE block below handles dragging top frequency bars
+
+                                int low_x = 0, high_x = 0;
+                                int vfoa_sub_x = 0;
+                                int vfoa_sub_low_x = 0;
+                                int vfoa_sub_high_x = 0;
+                                getFilterEdgesInPixels(e, ref low_x, ref high_x, ref vfoa_sub_x, ref vfoa_sub_low_x, ref vfoa_sub_high_x);
+
+                                bool bOverTopOfDragSpectrum = false;
+                                if (bOverRX2 && e.Y < ((pnlDisplay.Height / 2) + 15))
+                                    bOverTopOfDragSpectrum = true;
+                                else if (bOverRX1 && e.Y < 15)
+                                    bOverTopOfDragSpectrum = true;
+
+                                if (current_click_tune_mode == ClickTuneMode.Off || bOverTopOfDragSpectrum)
+                                {
+                                    if (rx2_enabled && e.Y > pnlDisplay.Height / 2)
+                                    {
+                                        spectrum_drag_last_x = e.X;
+                                        if (click_tune_rx2_display)
+                                        {
+                                            if (e.Y < ((pnlDisplay.Height / 2) + 15))
+                                            {
+                                                rx2_spectrum_tune_drag = true;
+                                                next_cursor = Cursors.SizeWE;
+                                            }
+                                            else
+                                            {
+                                                if (!(Common.ShiftKeyDown && (e.X > low_x && e.X < high_x))) // ignore if shift down, so that we move the filter, and not the frequency MW0LGE_21k9d
+                                                {
+                                                    rx2_click_tune_drag = true;
+                                                    next_cursor = grabbing;
+                                                }
+                                                else
+                                                {
+                                                    next_cursor = Cursors.SizeWE;
+                                                }
+                                            }
+                                        }
+                                        else rx2_spectrum_drag = true;
+                                    }
+                                    else
+                                    {
+                                        spectrum_drag_last_x = e.X;
+                                        if (click_tune_display)
+                                        {
+                                            if (e.Y < 15)
+                                            {
+                                                rx1_spectrum_tune_drag = true;
+                                                next_cursor = Cursors.SizeWE;
+                                            }
+                                            else
+                                            {
+                                                if (!(Common.ShiftKeyDown && (e.X > low_x && e.X < high_x))) // ignore if shift down, so that we move the filter, and not the frequency MW0LGE_21k9d
+                                                {
+                                                    rx1_click_tune_drag = true;
+                                                    next_cursor = grabbing;
+                                                }
+                                                else
+                                                {
+                                                    next_cursor = Cursors.SizeWE;
+                                                }
+                                            }
+                                        }
+                                        else rx1_spectrum_drag = true;
+                                    }
+                                }
+                                // }
+
+                                //set freq to where you click as part of the ctun off dragging
+                                if (!rx1_spectrum_drag && !rx2_spectrum_drag)
+                                {
+                                    if (!rx2_enabled)
+                                    {
+                                        if (!rx1_spectrum_tune_drag)
+                                        {
+                                            if (!(Common.ShiftKeyDown && (e.X > low_x && e.X < high_x))) //MW0LGE_21k9d do not set freq, so we can shift the filter instead
+                                            {
+                                                if (!(!m_bCTUNputsZeroOnMouse && (e.X > low_x && e.X < high_x)) || current_click_tune_mode != ClickTuneMode.Off)
+                                                {
+                                                    if (current_click_tune_mode == ClickTuneMode.VFOA ||
+                                                        (click_tune_display && current_click_tune_mode != ClickTuneMode.VFOB))
+                                                    {
+                                                        VFOAFreq = Math.Round(freq, 6);
+                                                    }
+                                                    else
+                                                        VFOBFreq = Math.Round(freq, 6);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                // shift filter MW0LGE_21k9d
+                                                dragWholeFilter(e);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (current_click_tune_mode == ClickTuneMode.VFOB && // red cross hairs
+                                            (chkVFOSplit.Checked || chkEnableMultiRX.Checked))
+                                        {
+                                            VFOASubFreq = Math.Round(freq, 6);
+                                        }
+                                        else
+                                        {
+                                            if (!(Common.ShiftKeyDown && (e.X > low_x && e.X < high_x))) //MW0LGE_21k9d do not set freq, so we can shift the filter instead
+                                            {
+                                                if (!(!m_bCTUNputsZeroOnMouse && (e.X > low_x && e.X < high_x)) || current_click_tune_mode != ClickTuneMode.Off)
+                                                {
+                                                    if (e.Y <= pnlDisplay.Height / 2)
+                                                    {
+                                                        if (!rx1_spectrum_tune_drag)
+                                                            VFOAFreq = Math.Round(freq, 6);
+                                                    }
+
+                                                    else
+                                                    {
+                                                        if (!rx2_spectrum_tune_drag)
+                                                            VFOBFreq = Math.Round(freq, 6);
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                // shift filter MW0LGE_21k9d
+                                                dragWholeFilter(e);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (chkMOX.Checked && chkXIT.Checked && current_click_tune_mode == ClickTuneMode.VFOB)
+                                    udXIT.Value = 0;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    // resize filter code
+                    else if (!agc_knee_drag &&
+                              !agc_hang_drag &&
+                              !gridminmaxadjust &&
+                              !gridmaxadjust)
+                    {
+                        switch (Display.CurrentDisplayMode)
+                        {
+                            case DisplayMode.PANADAPTER:
+                            case DisplayMode.WATERFALL:
+                            case DisplayMode.PANAFALL:
+                            case DisplayMode.PANASCOPE:
+                                int low_x = 0, high_x = 0;
+                                int vfoa_sub_x = 0;
+                                int vfoa_sub_low_x = 0;
+                                int vfoa_sub_high_x = 0;
+                                getFilterEdgesInPixels(e, ref low_x, ref high_x, ref vfoa_sub_x, ref vfoa_sub_low_x, ref vfoa_sub_high_x);
+
+                                if (Math.Abs(e.X - low_x) < 3 && e.X < high_x)
+                                {
+                                    if (rx2_enabled && e.Y > pnlDisplay.Height / 2)
+                                    {
+                                        if (_mox && chkVFOBTX.Checked)
+                                        {
+                                            if (!click_tune_rx2_display) //[2.10.1.0] not when in ctun
+                                            {
+                                                switch (radio.GetDSPTX(0).CurrentDSPMode)
+                                                {
+                                                    case DSPMode.LSB:
+                                                    case DSPMode.CWL:
+                                                    case DSPMode.DIGL:
+                                                    case DSPMode.AM:
+                                                    case DSPMode.SAM:
+                                                    case DSPMode.FM:
+                                                    case DSPMode.DSB:
+                                                        tx_high_filter_drag = true;
+                                                        break;
+                                                    default:
+                                                        tx_low_filter_drag = true;
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                        else rx2_low_filter_drag = true;
+                                    }
+                                    else
+                                    {
+                                        if (_mox && (!chkSplitDisplay.Checked || chkVFOATX.Checked))
+                                        {
+                                            if (!click_tune_display) //[2.10.1.0] not when in ctun
+                                            {
+                                                switch (radio.GetDSPTX(0).CurrentDSPMode)
+                                                {
+                                                    case DSPMode.LSB:
+                                                    case DSPMode.CWL:
+                                                    case DSPMode.DIGL:
+                                                    case DSPMode.AM:
+                                                    case DSPMode.SAM:
+                                                    case DSPMode.FM:
+                                                    case DSPMode.DSB:
+                                                        tx_high_filter_drag = true;
+                                                        break;
+                                                    default:
+                                                        tx_low_filter_drag = true;
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                        else rx1_low_filter_drag = true;
+                                    }
+                                }
+                                else if (Math.Abs(e.X - high_x) < 3)
+                                {
+                                    if (rx2_enabled && e.Y > pnlDisplay.Height / 2)
+                                    {
+                                        if (_mox && chkVFOBTX.Checked)
+                                        {
+                                            if (!click_tune_rx2_display) //[2.10.1.0] not when in ctun
+                                            {
+                                                switch (radio.GetDSPTX(0).CurrentDSPMode)
+                                                {
+                                                    case DSPMode.LSB:
+                                                    case DSPMode.CWL:
+                                                    case DSPMode.DIGL:
+                                                        tx_low_filter_drag = true;
+                                                        break;
+                                                    default:
+                                                        tx_high_filter_drag = true;
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                        else rx2_high_filter_drag = true;
+                                    }
+                                    else if (_mox && (!chkSplitDisplay.Checked || (chkSplitDisplay.Checked && chkVFOATX.Checked)))
+                                    {
+                                        if (!click_tune_display) //[2.10.1.0] not when in ctun
+                                        {
+                                            switch (radio.GetDSPTX(0).CurrentDSPMode)
+                                            {
+                                                case DSPMode.LSB:
+                                                case DSPMode.CWL:
+                                                case DSPMode.DIGL:
+                                                    tx_low_filter_drag = true;
+                                                    break;
+                                                default:
+                                                    tx_high_filter_drag = true;
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    else rx1_high_filter_drag = true;
+                                }
+                                else if (e.X > low_x && e.X < high_x && Common.ShiftKeyDown) // need shift held to drag the filter in ctun off mode MW0LGE_21k9d
+                                {
+                                    dragWholeFilter(e);
+                                }
+                                else if (chkEnableMultiRX.Checked && !_mox &&
+                                    (e.X > vfoa_sub_low_x - 3 && e.X < vfoa_sub_high_x + 3))
+                                {
+                                    sub_drag_last_x = e.X;
+                                    if (rx2_enabled) sub_drag_start_freq = VFOASubFreq;
+                                    else sub_drag_start_freq = VFOBFreq;
+                                    rx1_sub_drag = true;
+                                }
+                                else
+                                {
+                                    spectrum_drag_last_x = e.X;
+                                    if (rx2_enabled && e.Y > pnlDisplay.Height / 2) rx2_spectrum_drag = true;
+                                    else rx1_spectrum_drag = true;
+                                    next_cursor = Cursors.SizeWE;
+                                }
+
+                                break;
+                        }
+                    }
+
+                    break;
+                case MouseButtons.Right:
+                    // if we have a notch highlighted, then all other right click is ignored
+                    if (SelectedNotch != null) return;
+
+                    // right click in the middle splitter bar will recentre it
+                    if (!rx2_enabled && Display.CurrentDisplayMode == DisplayMode.PANAFALL)
+                    {
+                        if (e.Y >= Display.PanafallSplitBarPos && e.Y < Display.PanafallSplitBarPos + 20)
+                        {
+                            Display.PanafallSplitBarPerc = 0.5f;
+                            return;
+                        }
+                    }
+
+                    //
+                    if (Common.CtrlKeyDown)
+                    {
+                        int rx;
+                        double dFreq;
+                        // add notch from cross hair mode with middle mouse
+                        if (rx2_enabled && e.Y > pnlDisplay.Height / 2)
+                        {
+                            dFreq = getFrequencyAtPixel(e.X, 2);
+                            rx = 2;
+                        }
+                        else
+                        {
+                            dFreq = getFrequencyAtPixel(e.X, 1);
+                            rx = 1;
+                        }
+                        AddNotch(dFreq, rx);
+                        return;
+                    }
+                    //
+
+                    if (!_mox && (rx1_grid_adjust || rx2_grid_adjust))
+                    {
+                        if (rx1_grid_adjust)
+                        {
+                            grid_minmax_drag_start_point = new Point(e.X, e.Y);
+                            gridmaxadjust = true;
+                            tx1_grid_adjust = false;
+                            grid_minmax_max_y = Display.SpectrumGridMax;
+                            next_cursor = grabbing;
+                        }
+
+                        if (rx2_grid_adjust)
+                        {
+                            grid_minmax_drag_start_point = new Point(e.X, e.Y);
+                            gridmaxadjust = true;
+                            tx1_grid_adjust = false;
+                            grid_minmax_max_y = Display.RX2SpectrumGridMax;
+                            next_cursor = grabbing;
+                        }
+                    }
+                    else if (_mox && (rx1_grid_adjust || rx2_grid_adjust))
+                    {
+                        if ((rx1_grid_adjust && !Display.TXOnVFOB) ||
+                            (rx1_grid_adjust && Display.TXOnVFOB && !RX2Enabled))
+                        {
+                            grid_minmax_drag_start_point = new Point(e.X, e.Y);
+                            gridmaxadjust = true;
+                            tx1_grid_adjust = true;
+                            grid_minmax_max_y = Display.TXSpectrumGridMax;
+                            next_cursor = grabbing;
+                        }
+                        else if (rx1_grid_adjust && Display.TXOnVFOB)
+                        {
+                            grid_minmax_drag_start_point = new Point(e.X, e.Y);
+                            gridmaxadjust = true;
+                            tx1_grid_adjust = false;
+                            grid_minmax_max_y = Display.SpectrumGridMax;
+                            next_cursor = grabbing;
+                        }
+
+                        if (rx2_grid_adjust && Display.TXOnVFOB)
+                        {
+                            grid_minmax_drag_start_point = new Point(e.X, e.Y);
+                            gridmaxadjust = true;
+                            tx2_grid_adjust = true;
+                            grid_minmax_max_y = Display.TXSpectrumGridMax;
+                            next_cursor = grabbing;
+                        }
+                        else if (rx2_grid_adjust && !Display.TXOnVFOB)
+                        {
+                            grid_minmax_drag_start_point = new Point(e.X, e.Y);
+                            gridmaxadjust = true;
+                            tx2_grid_adjust = false;
+                            grid_minmax_max_y = Display.RX2SpectrumGridMax;
+                            next_cursor = grabbing;
+                        }
+                    }
+                    else
+                    {
+                        switch (current_click_tune_mode)
+                        {
+                            case ClickTuneMode.Off:
+                                CurrentClickTuneMode = ClickTuneMode.VFOA;
+                                break;
+                            case ClickTuneMode.VFOA:
+                                if (chkVFOSplit.Checked || chkEnableMultiRX.Checked)
+                                    CurrentClickTuneMode = ClickTuneMode.VFOB;
+                                else
+                                    CurrentClickTuneMode = ClickTuneMode.Off;
+                                break;
+                            case ClickTuneMode.VFOB:
+                                CurrentClickTuneMode = ClickTuneMode.Off;
+                                break;
+                        }
+                    }
+                    break;
+                case MouseButtons.Middle:
+                    if (SelectedNotch != null)
+                    {
+                        // move or toggle notch
+                        if (Common.ShiftKeyDown)
+                        {
+                            if (removeNotch(SelectedNotch)) SelectedNotch = null; // remove the notch, and if ok clear selected MW0LGE
+                        }
+                        else
+                        {
+                            toggleNotchActive(SelectedNotch);
+                        }
+                    }
+
+                    // carry onto the tune step, but give notch priority
+                    else if (mouse_tune_step)
+                    {
+                        if (Common.ShiftKeyDown) ChangeTuneStepDown(); //MW0LGE
+                        else ChangeTuneStepUp();
+                    }
+                    break;
+            }
+
+            if (next_cursor == Cursors.Cross || next_cursor == _cross_outlined)
+            {
+                // nothing happened
+            }
+
+            pnlDisplay.Cursor = next_cursor;
+        }
+
+        private void pnlDisplay_MouseLeave(object sender, EventArgs e)
+        {
+            if (!m_frmNotchPopup.Visible) SelectedNotch = null; // clear the selected notch (if there was one)
+            m_bDraggingPanafallSplit = false;
+
+            Display.HighlightNumberScaleRX1 = false;
+            Display.HighlightNumberScaleRX2 = false;
+
+            Display.HighlightedBandStackEntryIndex = -1; //MW0LGE_21h
+            m_bBandStackOverlayClicked = false;
+
+            Display.HightlightFilterEdgeRX1 = 0;
+            Display.HightlightFilterEdgeRX2 = 0;
+
+            infoBar.Left1(0, "");
+            infoBar.Left2(0, "");
+            infoBar.Left3(0, "");
+
+            DisplayCursorX = -1;
+            DisplayCursorY = -1;
+            Cursor = Cursors.Default;
+
+        }
+
+        unsafe private void pnlDisplay_MouseMove(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Cursor next_cursor = _useOutlinedCrossCursor ? _cross_outlined : Cursors.Cross;
+
+                // get filter location information
+                int filt_low_x = 0;
+                int filt_high_x = 0;
+
+                //MW0LGE_21h
+                int RX1diff = HzToPixel((float)((VFOAFreq - CentreFrequency) * 1e6));
+                int RX2diff = HzToPixel((float)((VFOBFreq - CentreRX2Frequency) * 1e6), 2);
+
+                if (rx2_enabled && e.Y > pnlDisplay.Height / 2) // if RX2 is enabled and the cursor is in the lower half of the display
+                {
+                    if (_mox)
+                    {
+                        filt_low_x = HzToPixel(radio.GetDSPTX(0).TXFilterLow, 2);
+                        filt_high_x = HzToPixel(radio.GetDSPTX(0).TXFilterHigh, 2);
+                    }
+                    else
+                    {
+                        //MW0LGE_21h changes so that CTUN on works for filter drag                        
+                        filt_low_x = RX2diff + HzToPixel(radio.GetDSPRX(1, 0).RXFilterLow, 2) - HzToPixel(0.0f, 2);
+                        filt_high_x = RX2diff + HzToPixel(radio.GetDSPRX(1, 0).RXFilterHigh, 2) - HzToPixel(0.0f, 2);
+                    }
+                }
+                else
+                {
+                    if (_mox)
+                    {
+                        if (display_duplex) //[2.10.1.0] MW0LGE support duplex
+                        {
+                            filt_low_x = RX1diff + HzToPixel(radio.GetDSPTX(0).TXFilterLow) - HzToPixel(0.0f);
+                            filt_high_x = RX1diff + HzToPixel(radio.GetDSPTX(0).TXFilterHigh) - HzToPixel(0.0f);
+                        }
+                        else
+                        {
+                            filt_low_x = HzToPixel(radio.GetDSPTX(0).TXFilterLow);
+                            filt_high_x = HzToPixel(radio.GetDSPTX(0).TXFilterHigh);
+                        }
+                    }
+                    else
+                    {
+                        //MW0LGE_21h changes so that CTUN on works for filter drag
+                        filt_low_x = RX1diff + HzToPixel(radio.GetDSPRX(0, 0).RXFilterLow) - HzToPixel(0.0f);
+                        filt_high_x = RX1diff + HzToPixel(radio.GetDSPRX(0, 0).RXFilterHigh) - HzToPixel(0.0f);
+                    }
+                }
+
+                // get VFO A Sub + Filter location information
+                int vfoa_sub_x = 0;
+                int vfoa_sub_low_x = 0;
+                int vfoa_sub_high_x = 0;
+                if (chkEnableMultiRX.Checked && !_mox)
+                {
+                    if (!rx2_enabled)
+                    {
+                        vfoa_sub_x = HzToPixel((float)((VFOBFreq - VFOAFreq) * 1e6));
+                        vfoa_sub_low_x = vfoa_sub_x + (HzToPixel(radio.GetDSPRX(0, 0).RXFilterLow) - HzToPixel(0.0f));
+                        vfoa_sub_high_x = vfoa_sub_x + (HzToPixel(radio.GetDSPRX(0, 0).RXFilterHigh) - HzToPixel(0.0f));
+                    }
+                    else
+                    {
+                        vfoa_sub_x = HzToPixel((float)((VFOASubFreq - VFOAFreq) * 1e6));
+                        vfoa_sub_low_x = vfoa_sub_x + (HzToPixel(radio.GetDSPRX(0, 1).RXFilterLow) - HzToPixel(0.0f));
+                        vfoa_sub_high_x = vfoa_sub_x + (HzToPixel(radio.GetDSPRX(0, 1).RXFilterHigh) - HzToPixel(0.0f));
+                    }
+                }
+
+                // get VFO B filter location information
+                int vfob_low_x = 0;
+                int vfob_high_x = 0;
+                if (rx2_enabled)
+                {
+                    vfob_low_x = RX2diff + (HzToPixel(radio.GetDSPRX(1, 0).RXFilterLow, 2) - HzToPixel(0.0f, 2));
+                    vfob_high_x = RX2diff + (HzToPixel(radio.GetDSPRX(1, 0).RXFilterHigh, 2) - HzToPixel(0.0f, 2));
+                }
+
+                rx1_grid_adjust = false;
+                rx2_grid_adjust = false;
+
+                bool bOverRX1 = overRX(e.X, e.Y, 1, true);
+                bool bOverRX2 = overRX(e.X, e.Y, 2, true);
+                #region Notches
+                //NOTCH MW0LGE
+                bool bDraggingAFilter = rx1_high_filter_drag || rx1_low_filter_drag || rx2_high_filter_drag || rx2_low_filter_drag ||
+                    rx1_sub_drag || rx1_whole_filter_drag || rx2_whole_filter_drag || tx_low_filter_drag || tx_high_filter_drag || tx_whole_filter_drag ||
+                    rx1_click_tune_drag || rx2_click_tune_drag;
+
+                if (!SetupForm.NotchAdminBusy && !m_frmNotchPopup.Visible & !bDraggingAFilter) // only highlight/select if we are not actively adding/edditing via setup form, or the popup is hidden
+                {
+                    int nRX = 0;
+                    if (bOverRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANAFALL))
+                    {
+                        nRX = 1;
+                    }
+                    else if (bOverRX2 && (Display.CurrentDisplayModeBottom == DisplayMode.PANADAPTER || Display.CurrentDisplayModeBottom == DisplayMode.PANAFALL))
+                    {
+                        nRX = 2;
+                    }
+
+                    if (!m_bDraggingNotch && !m_bDraggingNotchBW && nRX != 0)
+                    {
+                        double dVfo = 0;
+                        double dCentreFreq = 0;
+                        int nL = 0;
+                        int nH = 0;
+
+                        if (nRX == 1)
+                        {
+                            dCentreFreq = CentreFrequency * 1e6;
+                            dVfo = dCentreFreq + PixelToHz(e.X, 1);
+                            nL = Display.RXDisplayLow;
+                            nH = Display.RXDisplayHigh;
+                            if (rx1_dsp_mode == DSPMode.CWL)
+                                dVfo += (double)cw_pitch;
+                            else if (rx1_dsp_mode == DSPMode.CWU)
+                                dVfo -= (double)cw_pitch;
+                        }
+                        else if (nRX == 2)
+                        {
+                            dCentreFreq = CentreRX2Frequency * 1e6;
+                            dVfo = dCentreFreq + PixelToHz(e.X, 2);
+                            nL = Display.RX2DisplayLow;
+                            nH = Display.RX2DisplayHigh;
+                            if (rx2_dsp_mode == DSPMode.CWL)
+                                dVfo += (double)cw_pitch;
+                            else if (rx2_dsp_mode == DSPMode.CWU)
+                                dVfo -= (double)cw_pitch;
+                        }
+
+                        if (nRX != 0)  // we are over a RX with the mouse
+                        {
+                            // ok are we over the top of a notch?
+                            // we pad it with 1pixel worth of hz to make it selectable at low zoom
+                            SelectedNotch = MNotchDB.NotchThatSurroundsFrequencyInBW(dCentreFreq, nL - _max_filter_width, nH + _max_filter_width, dVfo, HzInNPixels(1, nRX));
+                        }
+                        else
+                        {
+                            if (SelectedNotch != null) SelectedNotch = null;
+                        }
+                    }
+                    else if (m_bDraggingNotch && nRX != 0)
+                    {
+                        // drag the whole notch
+                        double diff = PixelToHz(e.X, nRX) - PixelToHz(_drag_notch_start_point.X, nRX);
+
+                        //MW0LGE_21e XVTR
+                        double f = drag_notch_start_data + diff;
+                        double tmpMin = min_freq;
+                        double tmpMax = max_freq;
+                        if (nRX == 1 && rx1_xvtr_index >= 0)
+                        {
+                            int nIndex = XVTRForm.XVTRFreq(f * 1e-6);
+                            if (nIndex == rx1_xvtr_index)
+                            {
+                                tmpMin = XVTRForm.GetBegin(nIndex);
+                                tmpMax = XVTRForm.GetEnd(nIndex);
+                            }
+                        }
+                        else if (nRX == 2 && rx2_xvtr_index >= 0)
+                        {
+                            int nIndex = XVTRForm.XVTRFreq(f * 1e-6);
+                            if (nIndex == rx2_xvtr_index)
+                            {
+                                tmpMin = XVTRForm.GetBegin(nIndex);
+                                tmpMax = XVTRForm.GetEnd(nIndex);
+                            }
+                        }
+                        //
+
+                        if (SelectedNotch != null)
+                        {
+                            // check to see if outside frequency limits
+                            bool bOk = true;
+                            if (f - (SelectedNotch.FWidth / 2) < tmpMin * 1e6) bOk = false;
+                            if (f + (SelectedNotch.FWidth / 2) > tmpMax * 1e6) bOk = false;
+
+                            if (bOk)
+                            {
+                                SelectedNotch.FCenter = drag_notch_start_data + diff;
+                                ChangeNotchCentreFrequency(SelectedNotch, SelectedNotch.FCenter, m_nNotchRX); //MW0LGE [2.9.0.7] update on drag
+                            }
+                        }
+                    }
+                    else if (m_bDraggingNotchBW && nRX != 0)
+                    {
+                        // drag the bw edges of the notch
+                        double diff = 0;
+                        if (m_BDragginNotchBWRightSide)
+                        {
+                            diff = PixelToHz(e.X, nRX) - PixelToHz(_drag_notch_start_point.X, nRX);
+                        }
+                        else
+                        {
+                            diff = PixelToHz(_drag_notch_start_point.X, nRX) - PixelToHz(e.X, nRX);
+                        }
+
+                        double tmp = drag_notch_start_data + (diff * 2); // we want double the diff, as we are doing 'both sides'
+
+                        if (tmp < 0) tmp = 0;
+                        if (tmp > _max_filter_width) tmp = _max_filter_width;
+
+                        //MW0LGE_21e XVTR
+                        double tmpMin = min_freq;
+                        double tmpMax = max_freq;
+                        if (nRX == 1 && rx1_xvtr_index >= 0)
+                        {
+                            int nIndex = XVTRForm.XVTRFreq(SelectedNotch.FCenter * 1e-6);
+                            if (nIndex == rx1_xvtr_index)
+                            {
+                                tmpMin = XVTRForm.GetBegin(nIndex);
+                                tmpMax = XVTRForm.GetEnd(nIndex);
+                            }
+                        }
+                        else if (nRX == 2 && rx2_xvtr_index >= 0)
+                        {
+                            int nIndex = XVTRForm.XVTRFreq(SelectedNotch.FCenter * 1e-6);
+                            if (nIndex == rx2_xvtr_index)
+                            {
+                                tmpMin = XVTRForm.GetBegin(nIndex);
+                                tmpMax = XVTRForm.GetEnd(nIndex);
+                            }
+                        }
+                        //
+                        // check to see if outside frequency limits
+                        bool bOk = true;
+                        if (SelectedNotch.FCenter - (tmp / 2) < tmpMin * 1e6) bOk = false;
+                        if (SelectedNotch.FCenter + (tmp / 2) > tmpMax * 1e6) bOk = false;
+
+                        if (bOk)
+                        {
+                            SelectedNotch.FWidth = tmp;
+                            ChangeNotchBW(SelectedNotch, SelectedNotch.FWidth);
+                        }
+                    }
+                }
+                //END NOTCH
+                #endregion
+                bool bHighlightNumberScaleRX1 = false;
+                bool bHighlightNumberScaleRX2 = false;
+                int nHighlightedBandStackEntryIndex = -1; // no bandstackoverlay highlighted
+
+                if (bOverRX1 && !bDraggingAFilter)
+                {
+                    switch (Display.CurrentDisplayMode)
+                    {
+                        case DisplayMode.PANADAPTER:
+                        case DisplayMode.SPECTRUM:
+                        case DisplayMode.HISTOGRAM:
+                        case DisplayMode.PANAFALL:
+                        case DisplayMode.PANASCOPE:
+                        case DisplayMode.SPECTRASCOPE:
+                            // check if we are over scale on left
+                            if (e.X > RX1display_grid_x && e.X < RX1display_grid_w)
+                            {
+                                if (gridminmaxadjust || gridmaxadjust) next_cursor = grabbing;
+                                else next_cursor = grab;
+                                rx1_grid_adjust = true;
+                                bHighlightNumberScaleRX1 = true;
+                            }
+                            break;
+                    }
+
+                    #region BandStackHighlight
+                    //BandstackOverlay highlight MW0LGE_21h
+                    //only do this if not doing something else
+                    if (m_bShowBandStackOverlays && bOverRX1 && !(rx1_sub_drag || bHighlightNumberScaleRX1 || bDraggingAFilter || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit))
+                    {
+                        if (Display.BandStackOverlays != null && Display.BandStackOverlays.Length > 0)
+                        {
+                            if (bOverRX1 && (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANAFALL))
+                            {
+                                // convert mouse pos into HZ
+                                double nMousePosHZ = (CentreFrequency * 1e6) + PixelToHz(e.X, 1); // only rx1
+
+                                for (int n = 0; n < Display.BandStackOverlays.Length; n++)
+                                {
+                                    BandStackEntry bse = Display.BandStackOverlays[n];
+
+                                    double dL = (bse.Frequency * 1e6) + bse.LowFilter;
+                                    double dH = (bse.Frequency * 1e6) + bse.HighFilter;
+
+                                    if (dL <= nMousePosHZ && dH >= nMousePosHZ)
+                                    {
+                                        nHighlightedBandStackEntryIndex = n;
+                                        break; // use first hit
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //
+                    #endregion
+                }
+
+                if (rx2_enabled && bOverRX2 && !(bHighlightNumberScaleRX2 || bDraggingAFilter || m_bDraggingNotch || m_bDraggingNotchBW || m_bDraggingPanafallSplit))
+                {
+                    switch (Display.CurrentDisplayModeBottom)
+                    {
+                        case DisplayMode.PANADAPTER:
+                        case DisplayMode.SPECTRUM:
+                        case DisplayMode.HISTOGRAM:
+                        case DisplayMode.PANAFALL:
+                        case DisplayMode.PANASCOPE:
+                        case DisplayMode.SPECTRASCOPE:
+                            // check if we are over scale on left
+                            if (e.X > RX2display_grid_x && e.X < RX2display_grid_w)
+                            {
+                                if (gridminmaxadjust || gridmaxadjust) next_cursor = grabbing;
+                                else next_cursor = grab;
+                                rx2_grid_adjust = true;
+                                bHighlightNumberScaleRX2 = true;
+                            }
+                            break;
+                    }
+                }
+
+                // update the display
+                Display.HighlightNumberScaleRX1 = bHighlightNumberScaleRX1;
+                Display.HighlightNumberScaleRX2 = bHighlightNumberScaleRX2;
+                Display.HighlightedBandStackEntryIndex = nHighlightedBandStackEntryIndex;
+
+                //MIDDLE OF PANAFALL MOVEUPDOWN MW0LGE
+                if (!rx2_enabled && Display.CurrentDisplayMode == DisplayMode.PANAFALL)
+                {
+                    if (m_bDraggingPanafallSplit)
+                    {
+                        float f = (float)e.Y / (float)pnlDisplay.Height;
+                        f = Math.Max(0.1f, f);
+                        f = Math.Min(0.9f, f);
+                        Display.PanafallSplitBarPerc = f;
+                    }
+                }
+                //END SPLITTER DRAG
+
+                #region GridAdjust
+                if (rx1_grid_adjust || rx2_grid_adjust)
+                {
+                    if (rx1_grid_adjust)
+                    {
+                        if (gridminmaxadjust)
+                        {
+                            int delta_y = e.Y - grid_minmax_drag_start_point.Y;
+                            double delta_db = (delta_y / 10) * Display.SpectrumGridStep;
+                            float val = grid_minmax_max_y;
+                            val += (float)delta_db;
+                            float min_val = grid_minmax_min_y;
+                            min_val += (float)delta_db;
+
+                            if (min_val < -200)
+                            {
+                                min_val = -200;
+                                if (val - min_val < 24) val = min_val + 24;
+                            }
+
+                            if (val > 200)
+                            {
+                                val = 200;
+                                if (val - min_val < 24) min_val = val - 24;
+                            }
+
+                            if (!tx1_grid_adjust)
+                            {
+                                SetupForm.DisplayGridMax = val;
+                                SetupForm.DisplayGridMin = min_val;
+
+                                //MW0LGE
+                                if (m_bWaterfallUseRX1SpectrumMinMax)
+                                {
+                                    // use display directly so we dont change any band based thresholds in setupform
+                                    Display.WaterfallHighThreshold = val;
+                                    Display.WaterfallLowThreshold = min_val;
+                                }
+
+                                //MW0LGE_21d set rx2 grid - change to shift key
+                                if (Common.ShiftKeyDown && RX2Enabled)
+                                {
+                                    SetupForm.RX2DisplayGridMax = val;
+                                    SetupForm.RX2DisplayGridMin = min_val;
+
+                                    if (m_bWaterfallUseRX2SpectrumMinMax)
+                                    {
+                                        // use display directly so we dont change any band based thresholds in setupform
+                                        Display.RX2WaterfallHighThreshold = val;
+                                        Display.RX2WaterfallLowThreshold = min_val;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                SetupForm.TXGridMax = val;
+                                SetupForm.TXGridMin = min_val;
+                            }
+                        }
+
+                        if (gridmaxadjust)
+                        {
+                            int delta_y = e.Y - grid_minmax_drag_start_point.Y;
+                            double delta_db = (delta_y / 10) * Display.SpectrumGridStep;
+                            float val = grid_minmax_max_y;
+                            val += (float)delta_db;
+
+                            if (!tx1_grid_adjust)
+                            {
+                                if (val - SetupForm.DisplayGridMin < 24) val = SetupForm.DisplayGridMin + 24;
+
+                                SetupForm.DisplayGridMax = val;
+
+                                //MW0LGE
+                                if (m_bWaterfallUseRX1SpectrumMinMax)
+                                {
+                                    // use display directly so we dont change any band based thresholds in setupform
+                                    Display.WaterfallHighThreshold = val;
+                                }
+
+                                //MW0LGE_21d set rx2 grid - changed to shift key
+                                if (Common.ShiftKeyDown && RX2Enabled)
+                                {
+                                    SetupForm.RX2DisplayGridMax = val;
+
+                                    if (m_bWaterfallUseRX2SpectrumMinMax)
+                                    {
+                                        // use display directly so we dont change any band based thresholds in setupform
+                                        Display.RX2WaterfallHighThreshold = val;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (val - SetupForm.TXGridMin < 24) val = SetupForm.TXGridMin + 24;
+
+                                SetupForm.TXGridMax = val;
+                            }
+                        }
+                    }
+                    else if (rx2_grid_adjust)
+                    {
+                        if (gridminmaxadjust)
+                        {
+                            int delta_y = e.Y - grid_minmax_drag_start_point.Y;
+                            double delta_db = (delta_y / 10) * Display.SpectrumGridStep;
+                            float val = grid_minmax_max_y;
+                            val += (float)delta_db;
+                            float min_val = grid_minmax_min_y;
+                            min_val += (float)delta_db;
+
+                            if (min_val < -200)
+                            {
+                                min_val = -200;
+                                if (val - min_val < 24) val = min_val + 24;
+                            }
+
+                            if (val > 200)
+                            {
+                                val = 200;
+                                if (val - min_val < 24) min_val = val - 24;
+                            }
+
+                            if (!tx2_grid_adjust)
+                            {
+                                SetupForm.RX2DisplayGridMax = val;
+                                SetupForm.RX2DisplayGridMin = min_val;
+
+                                //MW0LGE
+                                if (m_bWaterfallUseRX2SpectrumMinMax)
+                                {
+                                    // use display directly so we dont change any band based thresholds in setupform
+                                    Display.RX2WaterfallHighThreshold = val;
+                                    Display.RX2WaterfallLowThreshold = min_val;
+                                }
+
+                                //MW0LGE_21d set rx1 grid - changed to shift key
+                                if (Common.ShiftKeyDown)
+                                {
+                                    SetupForm.DisplayGridMax = val;
+                                    SetupForm.DisplayGridMin = min_val;
+
+                                    if (m_bWaterfallUseRX2SpectrumMinMax)
+                                    {
+                                        // use display directly so we dont change any band based thresholds in setupform
+                                        Display.WaterfallHighThreshold = val;
+                                        Display.WaterfallLowThreshold = min_val;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                SetupForm.TXGridMax = val;
+                                SetupForm.TXGridMin = min_val;
+                            }
+                        }
+                        if (gridmaxadjust)
+                        {
+                            int delta_y = e.Y - grid_minmax_drag_start_point.Y;
+                            double delta_db = (delta_y / 10) * Display.SpectrumGridStep;
+                            float val = grid_minmax_max_y;
+                            val += (float)delta_db;
+
+                            if (!tx2_grid_adjust)
+                            {
+                                if (val - SetupForm.RX2DisplayGridMin < 24) val = SetupForm.RX2DisplayGridMin + 24;
+
+                                SetupForm.RX2DisplayGridMax = val;
+
+                                //MW0LGE
+                                if (m_bWaterfallUseRX2SpectrumMinMax)
+                                {
+                                    // use display directly so we dont change any band based thresholds in setupform
+                                    Display.RX2WaterfallHighThreshold = val;
+                                }
+
+                                //MW0LGE_21d set rx1 grid - changed to shift key
+                                if (Common.ShiftKeyDown)
+                                {
+                                    SetupForm.DisplayGridMax = val;
+
+                                    if (m_bWaterfallUseRX2SpectrumMinMax)
+                                    {
+                                        // use display directly so we dont change any band based thresholds in setupform
+                                        Display.WaterfallHighThreshold = val;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (val - SetupForm.TXGridMin < 24) val = SetupForm.TXGridMin + 24;
+
+                                SetupForm.TXGridMax = val;
+                            }
+                        }
+                    }
+                }
+                #endregion
+
+                //MW0LGE_21k9
+                bool bShowCursorData = false;
+                //
+
+                // TCI SPOTS
+                _highlightedSpot = SpotManager2.HighlightSpot(e.X, e.Y);
+                //
+
+                #region AGC, Filter Dragging and edge highlighting
+                switch (Display.CurrentDisplayMode)
+                {
+                    case DisplayMode.HISTOGRAM:
+                    case DisplayMode.SPECTRUM:
+                        bShowCursorData = true;
+                        break;
+                    case DisplayMode.PANADAPTER:
+                    case DisplayMode.WATERFALL:
+                    case DisplayMode.PANAFALL:
+                    case DisplayMode.PANASCOPE:
+                        bShowCursorData = true;
+                        switch (Display.CurrentDisplayMode)
+                        {
+                            case DisplayMode.PANAFALL:
+                            case DisplayMode.PANASCOPE:
+                            case DisplayMode.PANADAPTER:
+                                float cal_offset = 0.0f;
+                                if (rx2_enabled && e.Y > pnlDisplay.Height / 2)
+                                    cal_offset = agcCalOffset(2);
+                                else
+                                    cal_offset = agcCalOffset(1);
+
+                                if (!_mox)
+                                {
+                                    if (show_agc)
+                                    {
+                                        if (rx2_enabled && e.Y > pnlDisplay.Height / 2)
+                                        {
+                                            if (Display.AGCRX2Knee.Contains(e.X, e.Y))
+                                            {
+                                                if (agc_knee_drag) next_cursor = grabbing;
+                                                else next_cursor = grab;
+                                            }
+                                            if (Display.AGCRX2Hang.Contains(e.X, e.Y))
+                                            {
+                                                if (agc_hang_drag) next_cursor = grabbing;
+                                                else next_cursor = grab;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (Display.AGCKnee.Contains(e.X, e.Y))
+                                            {
+                                                if (agc_knee_drag) next_cursor = grabbing;
+                                                else next_cursor = grab;
+                                            }
+                                            if (Display.AGCHang.Contains(e.X, e.Y))
+                                            {
+                                                if (agc_hang_drag) next_cursor = grabbing;
+                                                else next_cursor = grab;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (agc_knee_drag && show_agc)
+                                {
+                                    if (rx2_enabled && e.Y > pnlDisplay.Height / 2)
+                                    {
+                                        double agc_rx2_thresh_point = (double)PixelToRx2Db(e.Y + 4);
+                                        agc_rx2_thresh_point -= (double)cal_offset;
+                                        if (agc_rx2_thresh_point > 2) agc_rx2_thresh_point = 2;
+                                        if (agc_rx2_thresh_point < -143.0) agc_rx2_thresh_point = -143.0;
+
+                                        double agc_rx2_top = 0.0;
+
+                                        double size = (double)specRX.GetSpecRX(1).FFTSize; // MW0LGE_21k7
+                                        WDSP.SetRXAAGCThresh(WDSP.id(2, 0), agc_rx2_thresh_point, size/*4096.0*/, sample_rate_rx2); //MW0LGE_21k5 was sample_rate_rx1
+
+                                        WDSP.GetRXAAGCTop(WDSP.id(2, 0), &agc_rx2_top);
+
+                                        agc_rx2_top = Math.Round(agc_rx2_top);
+
+                                        switch (RX2AGCMode)
+                                        {
+                                            case AGCMode.FIXD:
+                                                if (agc_rx2_top > 120) agc_rx2_top = 120;
+                                                if (agc_rx2_top < -20.0) agc_rx2_top = -20.0;
+
+                                                if (!IsSetupFormNull) SetupForm.AGCRX2FixedGain = (int)agc_rx2_top;// agc_top;
+                                                break;
+                                            default:
+                                                if (agc_rx2_top > 120) agc_rx2_top = 120;
+                                                if (agc_rx2_top < -20.0) agc_rx2_top = -20.0;
+
+                                                if (!IsSetupFormNull) SetupForm.AGCRX2MaxGain = (int)agc_rx2_top;
+                                                break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        double agc_thresh_point = (double)PixelToDb(e.Y + 4);
+                                        agc_thresh_point -= (double)cal_offset;
+                                        if (agc_thresh_point > 2) agc_thresh_point = 2;
+                                        if (agc_thresh_point < -160.0) agc_thresh_point = -160.0; //[2.10.3.6]MW0LGE changed from -143
+
+                                        double agc_top = 0.0;
+
+                                        double size = (double)specRX.GetSpecRX(0).FFTSize; // MW0LGE_21k7
+                                        WDSP.SetRXAAGCThresh(WDSP.id(0, 0), agc_thresh_point, size, sample_rate_rx1);
+
+                                        WDSP.GetRXAAGCTop(WDSP.id(0, 0), &agc_top);
+                                        agc_top = Math.Round(agc_top);
+
+                                        switch (RX1AGCMode)
+                                        {
+                                            case AGCMode.FIXD:
+                                                if (agc_top > 120) agc_top = 120;
+                                                if (agc_top < -20.0) agc_top = -20.0;
+
+                                                if (!IsSetupFormNull) SetupForm.AGCFixedGain = (int)agc_top;
+                                                break;
+                                            default:
+                                                if (agc_top > 120) agc_top = 120;
+                                                if (agc_top < -20.0) agc_top = -20.0;
+
+                                                if (!IsSetupFormNull) SetupForm.AGCMaxGain = (int)agc_top;
+                                                break;
+                                        }
+                                    }
+                                }
+
+                                if (agc_hang_drag && show_agc)
+                                {
+                                    if (rx2_enabled && e.Y > pnlDisplay.Height / 2)
+                                    {
+                                        double agc_hang_point = (double)PixelToRx2Db(e.Y + 4);
+                                        agc_hang_point -= (double)cal_offset;
+
+                                        if (agc_hang_point > 4.0) agc_hang_point = 4.0;
+                                        if (agc_hang_point < -121.0) agc_hang_point = -121.0;
+
+                                        int hang_threshold = 0;
+
+                                        WDSP.SetRXAAGCHangLevel(WDSP.id(2, 0), agc_hang_point);
+
+                                        WDSP.GetRXAAGCHangThreshold(WDSP.id(2, 0), &hang_threshold);
+                                        if (hang_threshold > 100)
+                                        {
+                                            hang_threshold = 100;
+                                        }
+                                        if (hang_threshold < 0) hang_threshold = 0;
+
+                                        if (!IsSetupFormNull) SetupForm.AGCRX2HangThreshold = hang_threshold;
+                                    }
+                                    else
+                                    {
+                                        double agc_hang_point = (double)PixelToDb(e.Y + 4);
+                                        agc_hang_point -= (double)cal_offset;
+
+                                        if (agc_hang_point > 4.0) agc_hang_point = 4.0;
+                                        if (agc_hang_point < -121.0) agc_hang_point = -121.0;
+
+                                        int hang_threshold = 0;
+
+                                        WDSP.SetRXAAGCHangLevel(WDSP.id(0, 0), agc_hang_point);
+
+                                        WDSP.GetRXAAGCHangThreshold(WDSP.id(0, 0), &hang_threshold);
+                                        if (hang_threshold > 100)
+                                        {
+                                            hang_threshold = 100;
+
+                                        }
+                                        if (hang_threshold < 0) hang_threshold = 0;
+
+                                        if (!IsSetupFormNull) SetupForm.AGCRX1HangThreshold = hang_threshold;
+                                    }
+                                }
+                                break;
+                            case DisplayMode.WATERFALL:
+                                break;
+                        }
+
+                        bool bOkToChangeRX1 = bOverRX1 && rx1_enabled && !rx1_click_tune_drag && !rx1_spectrum_drag && (rx1_dsp_mode != DSPMode.DRM && rx1_dsp_mode != DSPMode.SPEC && rx1_dsp_mode != DSPMode.FM) && !(_mox && (VFOATX || (RX2Enabled && VFOSplit))); //[2.10.1.0] MW0LGE prevent highlight when MOX
+                        bool bOkToChangeRX2 = bOverRX2 && rx2_enabled && !rx2_click_tune_drag && !rx2_spectrum_drag && (rx2_dsp_mode != DSPMode.DRM && rx2_dsp_mode != DSPMode.SPEC && rx2_dsp_mode != DSPMode.FM) && !(_mox && RX2Enabled && VFOBTX);
+
+                        if (bOkToChangeRX1 || bOkToChangeRX2)
+                        {
+                            if (!rx1_spectrum_tune_drag && !rx2_spectrum_tune_drag && current_click_tune_mode == ClickTuneMode.Off)
+                            {
+                                bool bLowEdge = (bOkToChangeRX1 && (!rx1_whole_filter_drag && (Math.Abs(e.X - filt_low_x) < 3 || rx1_low_filter_drag))) ||
+                                                (bOkToChangeRX2 && (!rx2_whole_filter_drag && (Math.Abs(e.X - vfob_low_x) < 3 || rx2_low_filter_drag)));
+
+                                bool bHighEdge = (bOkToChangeRX1 && (!rx1_whole_filter_drag && (Math.Abs(e.X - filt_high_x) < 3 || rx1_high_filter_drag))) ||
+                                                 (bOkToChangeRX2 && (!rx2_whole_filter_drag && (Math.Abs(e.X - vfob_high_x) < 3 || rx2_high_filter_drag)));
+
+                                int highlightRX1 = 0;
+                                int highlightRX2 = 0;
+
+                                if (bLowEdge || bHighEdge)
+                                {
+                                    next_cursor = Cursors.SizeWE;
+
+                                    //MW0LGE_21h
+                                    if (bOkToChangeRX1)
+                                    {
+                                        if (bLowEdge && !bHighEdge) highlightRX1 = -1;
+                                        else if (!bLowEdge && bHighEdge) highlightRX1 = 1;
+                                    }
+                                    else if (bOkToChangeRX2)
+                                    {
+                                        if (bLowEdge && !bHighEdge) highlightRX2 = -1;
+                                        else if (!bLowEdge && bHighEdge) highlightRX2 = 1;
+                                    }
+                                }
+                                else if (bOverRX1 && e.X > filt_low_x && e.X < filt_high_x)
+                                {
+                                    // middle of the filter, but only when in CTUN on, or holding shift
+                                    if ((click_tune_display || Common.ShiftKeyDown) && _highlightedSpot == null)
+                                        next_cursor = Cursors.NoMoveHoriz;
+                                }
+                                else if (bOverRX2 && e.X > vfob_low_x && e.X < vfob_high_x)
+                                {
+                                    // middle of the filter, but only when in CTUN on, or holding shift
+                                    if ((click_tune_rx2_display || Common.ShiftKeyDown) && _highlightedSpot == null)
+                                        next_cursor = Cursors.NoMoveHoriz;
+                                }
+
+                                //MW0LGE_21k9 added the filter info onto the cursor info, also done below on the filter drags
+                                if (highlightRX1 == -1)
+                                    Display.OtherData2CursorDisplay = radio.GetDSPRX(0, 0).RXFilterLow.ToString();
+                                else if (highlightRX1 == 1)
+                                    Display.OtherData2CursorDisplay = radio.GetDSPRX(0, 0).RXFilterHigh.ToString();
+
+                                if (highlightRX2 == -1)
+                                    Display.OtherData2CursorDisplay = radio.GetDSPRX(1, 0).RXFilterLow.ToString();
+                                else if (highlightRX2 == 1)
+                                    Display.OtherData2CursorDisplay = radio.GetDSPRX(1, 0).RXFilterHigh.ToString();
+
+                                if (highlightRX1 == 0 && highlightRX2 == 0) Display.OtherData2CursorDisplay = "";
+                                //
+
+                                Display.HightlightFilterEdgeRX1 = highlightRX1;
+                                Display.HightlightFilterEdgeRX2 = highlightRX2;
+                            }
+
+                            if (rx1_high_filter_drag)
+                            {
+                                int lowerLimit;
+                                int new_low;
+
+                                bool bMirrorSidebands = CurrentDSPhasTwoSidebands(1) && !Common.ShiftKeyDown;
+
+                                if (bMirrorSidebands)
+                                    lowerLimit = 10;
+                                else
+                                    lowerLimit = radio.GetDSPRX(0, 0).RXFilterLow + 10;
+
+                                int new_high = (int)Math.Max(HzInNPixels(e.X - RX1diff, 1), lowerLimit);
+
+                                if (bMirrorSidebands)
+                                    new_low = -new_high;
+                                else
+                                    new_low = radio.GetDSPRX(0, 0).RXFilterLow;
+
+                                SelectRX1VarFilter(false, true);
+
+                                UpdateRX1Filters(new_low, new_high);
+
+                                //update VAR1 low to be current low
+                                rx1_filters[(int)rx1_dsp_mode].SetLow(Filter.VAR1, m_nLowOutRX1);
+                                //update VAR1 high to be new high
+                                rx1_filters[(int)rx1_dsp_mode].SetHigh(Filter.VAR1, m_nHighOutRX1);
+
+                                Display.OtherData2CursorDisplay = radio.GetDSPRX(0, 0).RXFilterHigh.ToString();
+                            }
+                            else if (rx1_low_filter_drag)
+                            {
+                                int upperLimit;
+                                int new_high;
+
+                                bool bMirrorSidebands = CurrentDSPhasTwoSidebands(1) && !Common.ShiftKeyDown;
+
+                                if (bMirrorSidebands)
+                                    upperLimit = -10;
+                                else
+                                    upperLimit = radio.GetDSPRX(0, 0).RXFilterHigh - 10;
+
+                                int new_low = (int)Math.Min(HzInNPixels(e.X - RX1diff, 1), upperLimit);
+
+                                if (bMirrorSidebands)
+                                    new_high = new_low * -1;
+                                else
+                                    new_high = radio.GetDSPRX(0, 0).RXFilterHigh;
+
+                                SelectRX1VarFilter(false, true);
+
+                                UpdateRX1Filters(new_low, new_high);
+
+                                //update VAR1 low to be new low
+                                rx1_filters[(int)rx1_dsp_mode].SetLow(Filter.VAR1, m_nLowOutRX1);
+                                //update VAR1 high to be current high
+                                rx1_filters[(int)rx1_dsp_mode].SetHigh(Filter.VAR1, m_nHighOutRX1);
+
+                                Display.OtherData2CursorDisplay = radio.GetDSPRX(0, 0).RXFilterLow.ToString();
+                            }
+                            else if (rx1_whole_filter_drag)
+                            {
+                                SelectRX1VarFilter(false, true);
+                                int diff = (int)(PixelToHz(e.X) - PixelToHz(whole_filter_start_x));
+                                int nLow = whole_filter_start_low + diff;
+                                int nHigh = whole_filter_start_high + diff;
+                                ConstrainFilter(ref nLow, ref nHigh, 1, true);
+                                UpdateRX1Filters(nLow, nHigh);
+                            }
+                            else if (rx1_sub_drag)
+                            {
+                                int diff = (int)(PixelToHz(e.X) - PixelToHz(sub_drag_last_x));
+                                if (rx2_enabled)
+                                    VFOASubFreq = sub_drag_start_freq + diff * 1e-6;
+                                else VFOBFreq = sub_drag_start_freq + diff * 1e-6;
+                            }
+                            else if (rx2_high_filter_drag)
+                            {
+                                int lowerLimit;
+                                int new_low;
+
+                                bool bMirrorSidebands = CurrentDSPhasTwoSidebands(2) && !Common.ShiftKeyDown;
+
+                                if (bMirrorSidebands)
+                                    lowerLimit = 10;
+                                else
+                                    lowerLimit = radio.GetDSPRX(1, 0).RXFilterLow + 10;
+
+                                int new_high = (int)Math.Max(HzInNPixels(e.X - RX2diff, 2), lowerLimit);
+
+                                if (bMirrorSidebands)
+                                    new_low = -new_high;
+                                else
+                                    new_low = radio.GetDSPRX(1, 0).RXFilterLow;
+
+                                SelectRX2VarFilter(false, true);
+
+                                UpdateRX2Filters(new_low, new_high);
+
+                                //update VAR1 low to be current low
+                                rx2_filters[(int)rx2_dsp_mode].SetLow(Filter.VAR1, m_nLowOutRX2);
+                                //update VAR1 high to be new high
+                                rx2_filters[(int)rx2_dsp_mode].SetHigh(Filter.VAR1, m_nHighOutRX2);
+
+                                Display.OtherData2CursorDisplay = radio.GetDSPRX(1, 0).RXFilterHigh.ToString();
+                            }
+                            else if (rx2_low_filter_drag)
+                            {
+                                int upperLimit;
+                                int new_high;
+
+                                bool bMirrorSidebands = CurrentDSPhasTwoSidebands(2) && !Common.ShiftKeyDown;
+
+                                if (bMirrorSidebands)
+                                    upperLimit = -10;
+                                else
+                                    upperLimit = radio.GetDSPRX(1, 0).RXFilterHigh - 10;
+
+                                int new_low = (int)Math.Min(HzInNPixels(e.X - RX2diff, 2), upperLimit);
+
+                                if (bMirrorSidebands)
+                                    new_high = new_low * -1;
+                                else
+                                    new_high = radio.GetDSPRX(1, 0).RXFilterHigh;
+
+                                SelectRX2VarFilter(false, true);
+
+                                UpdateRX2Filters(new_low, new_high);
+
+                                //update VAR1 low to be new low
+                                rx2_filters[(int)rx2_dsp_mode].SetLow(Filter.VAR1, m_nLowOutRX2);
+                                //update VAR1 high to be current high
+                                rx2_filters[(int)rx2_dsp_mode].SetHigh(Filter.VAR1, m_nHighOutRX2);
+
+                                Display.OtherData2CursorDisplay = radio.GetDSPRX(1, 0).RXFilterLow.ToString();
+                            }
+                            else if (rx2_whole_filter_drag)
+                            {
+                                SelectRX2VarFilter(false, true);
+                                int diff = (int)(PixelToHz(e.X, 2) - PixelToHz(whole_filter_start_x, 2));
+                                int nLow = whole_filter_start_low + diff;
+                                int nHigh = whole_filter_start_high + diff;
+                                ConstrainFilter(ref nLow, ref nHigh, 2, true);
+                                UpdateRX2Filters(nLow, nHigh);
+                            }
+                            else if (tx_high_filter_drag)
+                            {
+                                int new_high = (int)Math.Max(Math.Abs(PixelToHz(e.X)), tx_filter_low + 10);
+                                SetupForm.TXFilterHigh = new_high;
+                            }
+                            else if (tx_low_filter_drag)
+                            {
+                                int new_low = (int)(Math.Min(Math.Abs(PixelToHz(e.X)), tx_filter_high - 10));
+                                SetupForm.TXFilterLow = new_low;
+                            }
+                            else if (tx_whole_filter_drag)
+                            {
+                                int diff = (int)(PixelToHz(e.X) - PixelToHz(whole_filter_start_x));
+                                switch (rx1_dsp_mode)
+                                {
+                                    case DSPMode.LSB:
+                                    case DSPMode.DIGL:
+                                        SetupForm.TXFilterLow = whole_filter_start_low - diff;
+                                        SetupForm.TXFilterHigh = whole_filter_start_high - diff;
+                                        break;
+                                    case DSPMode.USB:
+                                    case DSPMode.DIGU:
+                                        SetupForm.TXFilterLow = whole_filter_start_low + diff;
+                                        SetupForm.TXFilterHigh = whole_filter_start_high + diff;
+                                        break;
+                                    case DSPMode.AM:
+                                    case DSPMode.SAM:
+                                    case DSPMode.FM:
+                                    case DSPMode.DSB:
+                                        SetupForm.TXFilterHigh = whole_filter_start_high + diff;
+                                        break;
+                                }
+                            }
+                        }
+
+                        break;
+                    default:
+
+                        break;
+                }
+                #endregion
+
+                #region Cursor and Info bar data
+                //re-implemented cursor info MW0LGE_21k9
+                if (bShowCursorData)
+                {
+                    float xposHz = 0;
+                    float y = 0;
+                    double rf_freq;
+                    string temp_text;
+                    int jper;
+
+                    double localFreq;
+                    double loclCentreFrequency;
+                    bool localClickTuneDisplay;
+                    DSPMode localDSPMode;
+                    bool bShowDBM = false;
+                    bool bShowWaterfallSeconds = false;
+
+                    bool bOn60mChan;
+                    bool bRx2 = rx2_enabled && e.Y > pnlDisplay.Height / 2; // if RX2 is enabled and the cursor is in the lower half of the display
+
+                    if (bRx2)
+                    {
+                        localDSPMode = RX2DSPMode;
+                        bOn60mChan = RX2IsOn60mChannel();
+                        xposHz = PixelToHz(e.X, 2);
+                        double localVFOfreq = Display.VFOB * 1e-6; //[2.10.1.0] MW0LGE change to use the display VFO as that is what we are considering
+                        rf_freq = localVFOfreq + (double)xposHz * 1e-6;
+                        localFreq = localVFOfreq;
+                        loclCentreFrequency = CentreRX2Frequency;
+                        localClickTuneDisplay = click_tune_rx2_display;
+
+                        switch (Display.CurrentDisplayModeBottom)
+                        {
+                            case DisplayMode.PANADAPTER:
+                                bShowDBM = true;
+                                bShowWaterfallSeconds = false;
+                                break;
+                            case DisplayMode.PANAFALL:
+                                bShowDBM = e.Y > ((pnlDisplay.Height / 2) + 8) && e.Y < ((pnlDisplay.Height / 2) + (pnlDisplay.Height / 4)); // +8 for the splitter, which is normally 16 pixels, but is now half height as we are displaying rx1+rx2
+                                bShowWaterfallSeconds = e.Y >= ((pnlDisplay.Height / 2) + (pnlDisplay.Height / 4)) + 16;
+                                break;
+                            case DisplayMode.WATERFALL:
+                                bShowDBM = false;
+                                bShowWaterfallSeconds = e.Y > (pnlDisplay.Height / 2) + 16;
+                                break;
+                        }
+
+                        if (bShowDBM) y = PixelToRx2Db(e.Y);
+                        else if (bShowWaterfallSeconds) y = WaterfallPixelToTime(e.Y, 2);
+                    }
+                    else
+                    {
+                        localDSPMode = RX1DSPMode;
+                        bOn60mChan = RX1IsOn60mChannel();
+                        xposHz = PixelToHz(e.X, 1);
+                        double localVFOfreq = Display.VFOA * 1e-6; //[2.10.1.0] MW0LGE change to use the display VFO as that is what we are considering
+                        rf_freq = localVFOfreq + (double)xposHz * 1e-6;
+                        localFreq = localVFOfreq;
+                        loclCentreFrequency = CentreFrequency;
+                        localClickTuneDisplay = click_tune_display;
+
+                        switch (Display.CurrentDisplayMode)
+                        {
+                            case DisplayMode.HISTOGRAM:
+                            case DisplayMode.SPECTRASCOPE:
+                            case DisplayMode.SPECTRUM:
+                            case DisplayMode.PANADAPTER:
+                                bShowDBM = true;
+                                bShowWaterfallSeconds = false;
+                                break;
+                            case DisplayMode.PANAFALL:
+                                bShowDBM = !rx2_enabled ? e.Y < Display.PanafallSplitBarPos : e.Y < pnlDisplay.Height / 4;
+                                bShowWaterfallSeconds = !rx2_enabled ? e.Y >= Display.PanafallSplitBarPos + 16 : e.Y < pnlDisplay.Height / 2 && e.Y >= (pnlDisplay.Height / 4) + 16;
+                                break;
+                            case DisplayMode.PANASCOPE:
+                                bShowDBM = e.Y < pnlDisplay.Height / 2;
+                                bShowWaterfallSeconds = false;
+                                break;
+                            case DisplayMode.WATERFALL:
+                                bShowDBM = false;
+                                bShowWaterfallSeconds = e.Y > 16;
+                                break;
+                        }
+
+                        if (bShowDBM) y = PixelToDb(e.Y);
+                        else if (bShowWaterfallSeconds) y = WaterfallPixelToTime(e.Y, 1);
+                    }
+
+                    DisplayCursorX = e.X; // update display cursor position (crosshairs)
+                    DisplayCursorY = e.Y;
+                    Display.MouseFrequency = xposHz; // for the filter overlay
+
+                    switch (localDSPMode)
+                    {
+                        case DSPMode.CWL:
+                            rf_freq += cw_pitch * 1e-6;
+                            break;
+                        case DSPMode.CWU:
+                            rf_freq -= cw_pitch * 1e-6;
+                            break;
+                        case DSPMode.AM:
+                        case DSPMode.SAM:
+                        case DSPMode.FM:
+                            break;
+                        case DSPMode.USB:
+                        case DSPMode.DIGU:
+                        case DSPMode.DSB:
+                            break;
+                        case DSPMode.LSB:
+                        case DSPMode.DIGL:
+                            break;
+                    }
+
+                    infoBar.Left1(0, xposHz.ToString("f1") + "Hz");
+
+                    bool localMox = _mox && ((RX2Enabled && (!bRx2 && VFOATX) || (bRx2 && VFOBTX)) || !RX2Enabled); //[2.10.1.0] MW0LGE consider if we are over the RX that is in mox
+                    if ((localClickTuneDisplay && !localMox) || (localClickTuneDisplay && (display_duplex && !bRx2)))    // Correct cursor frequency when CTUN on -G3OQD  // MW0LGE_21a also when in CTD and DUP //[2.10.1.0] MW0LGE ignore rx2 if dup
+                        rf_freq += (loclCentreFrequency - localFreq);
+
+                    temp_text = rf_freq.ToString("f6") + " MHz";      // Disply cursor frequency under Spectrum  
+                    jper = temp_text.IndexOf(separator) + 4;
+
+                    string sTmp = temp_text.Insert(jper, " ");
+
+                    infoBar.Left3(0, sTmp);
+
+                    Display.MHzCursorDisplay = sTmp;
+
+                    if (bShowDBM)
+                        sTmp = y.ToString("f1") + "dBm";
+                    else if (bShowWaterfallSeconds)
+                        sTmp = (y / 1000.0f).ToString("f1") + "sec";
+                    else
+                        sTmp = "";
+
+                    infoBar.Left2(0, sTmp);
+
+                    Display.OtherData1CursorDisplay = sTmp;
+                }
+                else
+                {
+                    infoBar.Left1(0, "");
+                    infoBar.Left2(0, "");
+                    infoBar.Left3(0, "");
+                }
+                #endregion
+
+                #region Dragging
+                if (rx1_spectrum_tune_drag)
+                {
+                    if (!_mox || (rx2_enabled && chkVFOBTX.Checked))
+                    {
+                        float start_freq = PixelToHz(spectrum_drag_last_x);
+                        float end_freq = PixelToHz(e.X);
+                        spectrum_drag_last_x = e.X;
+                        float delta = end_freq - start_freq;
+                        CentreFrequency -= delta * 0.0000010;
+                        txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+                    }
+                }
+
+                if (rx2_spectrum_tune_drag)
+                {
+                    if (rx2_enabled && (!_mox || chkVFOATX.Checked))
+                    {
+                        float start_freq = PixelToHz(spectrum_drag_last_x, 2);
+                        float end_freq = PixelToHz(e.X, 2);
+                        spectrum_drag_last_x = e.X;
+                        float delta = end_freq - start_freq;
+                        CentreRX2Frequency -= delta * 0.0000010;
+                        txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+                    }
+                }
+
+
+                if (rx1_spectrum_drag)
+                {
+                    if (!_mox || (rx2_enabled && chkVFOBTX.Checked))
+                    {
+                        float start_freq = PixelToHz(spectrum_drag_last_x);
+                        float end_freq = PixelToHz(e.X);
+                        spectrum_drag_last_x = e.X;
+                        float delta = end_freq - start_freq;
+                        VFOAFreq -= delta * 0.0000010;
+                    }
+                }
+
+                if (rx2_spectrum_drag)
+                {
+                    if (rx2_enabled && (!_mox || chkVFOATX.Checked))
+                    {
+                        float start_freq = PixelToHz(spectrum_drag_last_x, 2);
+                        float end_freq = PixelToHz(e.X, 2);
+                        spectrum_drag_last_x = e.X;
+                        float delta = end_freq - start_freq;
+                        VFOBFreq -= delta * 0.0000010;
+                    }
+                }
+
+                if (rx1_click_tune_drag)
+                {
+                    if (!_mox || (rx2_enabled && chkVFOBTX.Checked))
+                    {
+                        float start_freq = PixelToHz(spectrum_drag_last_x);
+                        float end_freq = PixelToHz(e.X);
+                        spectrum_drag_last_x = e.X;
+                        float delta = start_freq - end_freq;
+                        VFOAFreq -= delta * 0.0000010;
+                    }
+                }
+
+                if (rx2_click_tune_drag)
+                {
+                    if (rx2_enabled && (!_mox || chkVFOATX.Checked))
+                    {
+                        float start_freq = PixelToHz(spectrum_drag_last_x, 2);
+                        float end_freq = PixelToHz(e.X, 2);
+                        spectrum_drag_last_x = e.X;
+                        float delta = start_freq - end_freq;
+                        VFOBFreq -= delta * 0.0000010;
+                    }
+                }
+                #endregion
+
+                // top drag area - this will override hover over filter
+                if (bOverRX2 && e.Y < ((pnlDisplay.Height / 2) + 15))
+                    next_cursor = Cursors.SizeWE;
+                else if (bOverRX1 && e.Y < 15)
+                    next_cursor = Cursors.SizeWE;
+                //
+
+                if ((!rx2_enabled && Display.CurrentDisplayMode == DisplayMode.PANAFALL) && m_bDraggingPanafallSplit) //MW0LGE_21k9c changes to this and below
+                    next_cursor = Cursors.SizeNS; // down here so we catch moving out of the splitter bar, but is still enabled
+                                                  // otherwise we get flickering
+
+                // nothing applied yet
+                if (next_cursor == Cursors.Cross || next_cursor == _cross_outlined)
+                {
+                    if (agc_knee_drag || agc_hang_drag) next_cursor = grabbing; // agc grab handles
+                    else if (rx1_spectrum_drag || rx2_spectrum_drag || rx1_spectrum_tune_drag || rx2_spectrum_tune_drag) next_cursor = Cursors.SizeWE; // dragging the spectrum
+                    else if (rx1_click_tune_drag || rx2_click_tune_drag) next_cursor = grabbing; // dragging the tune in CTUN on mode
+                    else if ((!rx2_enabled && Display.CurrentDisplayMode == DisplayMode.PANAFALL) && e.Y >= Display.PanafallSplitBarPos && e.Y < Display.PanafallSplitBarPos + 20) next_cursor = Cursors.SizeNS; // over the splitter
+                }
+
+                pnlDisplay.Cursor = next_cursor;
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private void pnlDisplay_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                switch (Display.CurrentDisplayMode)
+                {
+                    case DisplayMode.SPECTRUM:
+                    case DisplayMode.PANADAPTER:
+                    case DisplayMode.WATERFALL:
+                    case DisplayMode.PANAFALL:
+                    case DisplayMode.PANASCOPE:
+                    case DisplayMode.HISTOGRAM:
+                    case DisplayMode.SPECTRASCOPE:
+                        rx1_low_filter_drag = false;
+                        rx1_high_filter_drag = false;
+                        rx1_whole_filter_drag = false;
+                        rx2_low_filter_drag = false;
+                        rx2_high_filter_drag = false;
+                        rx2_whole_filter_drag = false;
+                        tx_low_filter_drag = false;
+                        tx_high_filter_drag = false;
+                        tx_whole_filter_drag = false;
+                        rx1_click_tune_drag = false;
+                        rx2_click_tune_drag = false;
+                        rx1_spectrum_tune_drag = false;
+                        rx2_spectrum_tune_drag = false;
+
+                        agc_knee_drag = false;
+                        agc_hang_drag = false;
+
+                        gridminmaxadjust = false;
+                        rx1_grid_adjust = false;
+                        rx2_grid_adjust = false;
+                        tx1_grid_adjust = false;
+                        tx2_grid_adjust = false;
+
+                        //MW0LGE_21i
+                        Display.HightlightFilterEdgeRX1 = 0;
+                        Display.HightlightFilterEdgeRX2 = 0;
+
+                        break;
+                }
+
+                if (rx1_sub_drag)
+                {
+                    rx1_sub_drag = false;
+                    if (rx2_enabled) txtVFOABand_LostFocus(this, EventArgs.Empty);
+                    else txtVFOBFreq_LostFocus(this, EventArgs.Empty);
+                }
+
+                if (rx1_spectrum_drag)
+                {
+                    rx1_spectrum_drag = false;
+                    txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+                }
+                rx2_spectrum_drag = false;
+
+                //BandStack overlay MW0LGE_21h
+                if (m_bBandStackOverlayClicked)
+                {
+                    if ((Display.HighlightedBandStackEntryIndex != -1) && (Display.BandStackOverlays != null))
+                    {
+                        if (Display.CurrentDisplayMode == DisplayMode.PANADAPTER || Display.CurrentDisplayMode == DisplayMode.PANAFALL)
+                        {
+                            if (Display.HighlightedBandStackEntryIndex < Display.BandStackOverlays.Length) // belts/braces
+                            {
+                                BandStackEntry bse = Display.BandStackOverlays[Display.HighlightedBandStackEntryIndex];
+                                if (bse != null)
+                                {
+                                    BandStackFilter bsf = BandStackManager.GetFilter(RX1Band, false);
+                                    if (bsf != null) OnEntryClicked(bsf, bse, false);
+                                }
+                            }
+                        }
+                    }
+                    m_bBandStackOverlayClicked = false;
+                }
+                //
+
+                if (m_bDraggingNotch)
+                {
+                    // finished dragging a notch, let use change its frequency MW0LGE
+                    m_bDraggingNotch = false;
+                    double tmp = SelectedNotch.FCenter;
+                    ChangeNotchCentreFrequency(SelectedNotch, tmp, m_nNotchRX);
+                }
+                else if (m_bDraggingNotchBW) // can only do one or the other
+                {
+                    // finished dragging notch BW, lets us change it
+                    m_bDraggingNotchBW = false;
+                    double tmp = SelectedNotch.FWidth;
+                    ChangeNotchBW(SelectedNotch, tmp);
+                }
+
+                if (m_bDraggingPanafallSplit)
+                {
+                    m_bDraggingPanafallSplit = false;
+                }
+            }
+
+            if (e.Button == MouseButtons.Right)
+            {
+                switch (Display.CurrentDisplayMode)
+                {
+                    case DisplayMode.PANADAPTER:
+                    case DisplayMode.PANAFALL:
+                    case DisplayMode.HISTOGRAM:
+                    case DisplayMode.SPECTRUM:
+                    case DisplayMode.PANASCOPE:
+                    case DisplayMode.SPECTRASCOPE:
+                        gridminmaxadjust = false;
+                        gridmaxadjust = false;
+                        rx1_grid_adjust = false;
+                        rx2_grid_adjust = false;
+                        tx1_grid_adjust = false;
+                        tx2_grid_adjust = false;
+                        break;
+                }
+
+                if (SelectedNotch != null && !Common.CtrlKeyDown) //MW0LGE_21f only if ctrl not down, as was randomly showing when adding a new one
+                {
+                    Point p = new Point(e.X, e.Y);
+                    int x = pnlDisplay.PointToScreen(p).X - 16;
+                    int y = pnlDisplay.PointToScreen(p).Y - 16;
+                    ShowNotchPopup(x, y, SelectedNotch, 0, 1000, AlwaysOnTop);
+                }
+            }
+        }
+
+        private async void pnlDisplay_Resize(object sender, EventArgs e)
+        {
+            _pause_DisplayThread = true;
+
+            // tell display thread to resize DX2
+            m_bResizeDX2Display = true;
+
+            // wait for the resize to happen in the display thread
+            while (m_bResizeDX2Display && m_bDisplayLoopRunning)
+            {
+                await Task.Delay(1);
+            }
+
+            if (!initializing)
+            {
+                //MW0LGE_21d N1MM
+                N1MM.Resize(1);
+                if (RX2Enabled) N1MM.Resize(2);
+
+                //MW0LGE_21h
+                updateBandstackOverlay(1);
+
+                UpdateRXSpectrumDisplayVars();
+                UpdateTXSpectrumDisplayVars();
+            }
+
+            _pause_DisplayThread = false;
         }
     }
 

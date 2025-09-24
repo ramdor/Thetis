@@ -32,7 +32,6 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
@@ -51,6 +50,7 @@ using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 using System.Runtime.CompilerServices;
+using System.Management;
 
 namespace Thetis
 {
@@ -61,6 +61,15 @@ namespace Thetis
     }
 	public static class StringExtensions
 	{
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string Truncate(this string source, int maxLength)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (source.Length <= maxLength)
+                return source;
+            return source.Substring(0, maxLength);
+        }
         // extend contains to be able to ignore case etc MW0LGE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Contains(this string source, string toCheck, StringComparison comp)
@@ -970,8 +979,7 @@ namespace Thetis
 				return principal.IsInRole(WindowsBuiltInRole.Administrator);
 			}
 		}
-
-		public static bool ShiftKeyDown
+        public static bool ShiftKeyDown
 		{
 			get
 			{
@@ -1454,8 +1462,8 @@ namespace Thetis
                 if (s.Contains(arg, StringComparison.OrdinalIgnoreCase)) return true;
             }
             return false;
-        }       
-
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetLuminance(Color c)
         {
             //https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
@@ -1465,6 +1473,7 @@ namespace Thetis
             int b = rGBtoLin(c.B);
             return (r + r + b + g + g + g) / 6; //(fast)
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int rGBtoLin(int col)
         {
             float colorChannel = col / 255f;
@@ -1718,5 +1727,144 @@ namespace Thetis
             Process process = Process.GetCurrentProcess();
             SetProcessPriorityBoost(process.Handle, true);
         }
+
+        public static string GetCpuName()
+        {
+            try
+            {
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_Processor");
+                ManagementObjectCollection results = searcher.Get();
+                string cpuName = "Unknown CPU";
+                foreach (ManagementObject mo in results)
+                {
+                    cpuName = mo["Name"] != null ? mo["Name"].ToString().Trim() : string.Empty;
+                    break;
+                }
+                searcher.Dispose();
+                return cpuName;
+            }
+            catch { return "Unknown CPU"; }
+        }
+
+        public static List<string> GetGpuNames()
+        {
+            List<string> names = new List<string>();
+
+            try
+            {
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_VideoController");
+                ManagementObjectCollection results = searcher.Get();
+                foreach (ManagementObject mo in results)
+                {
+                    string name = mo["Name"] != null ? mo["Name"].ToString().Trim() : string.Empty;
+                    if (name != string.Empty)
+                    {
+                        names.Add(name);
+                    }
+                }
+                searcher.Dispose();
+                if(names.Count == 0) names.Add("Unknown GPU(s)");
+                return names;
+            }
+            catch
+            {
+                names.Clear();
+                names.Add("Unknown GPU(s)");
+                return names;
+            }
+        }
+
+        public static string GetTotalRam()
+        {
+            // note mo["TotalPhysicalMemory"] might sometimes be a string on some os versions, so just handle as string
+            try
+            {
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem");
+                ManagementObjectCollection results = searcher.Get();
+                string totalMemory = "0";
+                foreach (ManagementObject mo in results)
+                {
+                    totalMemory = mo["TotalPhysicalMemory"] != null ? mo["TotalPhysicalMemory"].ToString() : "0";
+                    break;
+                }
+                searcher.Dispose();
+                ulong bytes = 0;
+                ulong.TryParse(totalMemory, out bytes);
+                double gib = bytes / 1024.0 / 1024.0 / 1024.0;
+                return gib.ToString("F2") + " GiB";
+            }
+            catch { return "Unknown"; }
+        }
+
+        public static string GetInstalledRam()
+        {
+            try
+            {
+                ManagementObjectSearcher s = new ManagementObjectSearcher(
+                    "SELECT Capacity FROM Win32_PhysicalMemory");
+                ulong totalBytes = 0;
+                foreach (ManagementObject mo in s.Get())
+                    totalBytes += (ulong)mo["Capacity"];
+                s.Dispose();
+                double gib = totalBytes / 1024.0 / 1024.0 / 1024.0;
+                return gib.ToString("F2") + " GiB";
+            }
+            catch { return "Unknown"; }
+        }
+
+        // form scale
+        private const uint MONITOR_DEFAULTTONEAREST = 2;
+        private enum MonitorDpiType
+        {
+            MDT_EFFECTIVE_DPI = 0,
+            MDT_ANGULAR_DPI = 1,
+            MDT_RAW_DPI = 2
+        }
+
+        [DllImport("Shcore.dll")]
+        private static extern int GetDpiForMonitor(
+            IntPtr hmonitor,
+            MonitorDpiType dpiType,
+            out uint dpiX,
+            out uint dpiY);
+
+        [DllImport("User32.dll")]
+        private static extern IntPtr MonitorFromWindow(
+            IntPtr hwnd,
+            uint dwFlags);
+
+        public static int GetScalingForWindow(IntPtr hwnd)
+        {
+            OperatingSystem os = Environment.OSVersion;
+            Version version = os.Version;
+            bool isWin81OrLater =
+                os.Platform == PlatformID.Win32NT &&
+                (version.Major > 6 || (version.Major == 6 && version.Minor >= 3));
+
+            if (isWin81OrLater)
+            {
+                try
+                {
+                    IntPtr monitorHandle = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+                    uint dpiX;
+                    uint dpiY;
+                    int result = GetDpiForMonitor(
+                        monitorHandle,
+                        MonitorDpiType.MDT_EFFECTIVE_DPI,
+                        out dpiX,
+                        out dpiY);
+
+                    if (result == 0) return (int)(dpiX * 100 / 96);
+                }
+                catch (DllNotFoundException) { }
+                catch (EntryPointNotFoundException) { }
+            }
+
+            using (Graphics graphics = Graphics.FromHwnd(hwnd))
+            {
+                return (int)(graphics.DpiX * 100 / 96);
+            }
+        }
+        //
     }
 }

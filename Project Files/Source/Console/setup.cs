@@ -56,6 +56,7 @@ namespace Thetis
     using System.Timers;
     using System.Runtime.InteropServices;
     using System.Runtime.ExceptionServices;
+    using System.Security.Cryptography;
     public partial class Setup : Form
     {
         // for these callsigns always show cmasio tab, as a perk to the testers from discord
@@ -11663,6 +11664,17 @@ namespace Thetis
 
         private void Setup_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (Display.RunningFPSProfile)
+            {
+                MessageBox.Show("Stop the FPS profile test first !",
+                "FPS Profile Test",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                e.Cancel = true;
+                return;
+            }
+
             console.SetFocusMaster(true);
             this.Hide();
             e.Cancel = true;
@@ -34904,6 +34916,414 @@ namespace Thetis
         private void txtMeterItem_custom_title_TextChanged(object sender, EventArgs e)
         {
             updateMeterType();
+        }
+
+        private Dictionary<string, object> _fps_profile_settings = null;
+        private void btnFPSProfile_Click(object sender, EventArgs e)
+        {
+            // if running, revert settings
+            if(_fps_profile_settings != null)
+            {
+                udDisplayFPS.Value = (decimal)_fps_profile_settings["udDisplayFPS"];
+                chkDisplayPanFill.Checked = (bool)_fps_profile_settings["chkDisplayPanFill"];
+                chkShowFPS.Checked = (bool)_fps_profile_settings["chkShowFPS"];
+                chkVSyncDX.Checked = (bool)_fps_profile_settings["chkVSyncDX"];
+                chkAntiAlias.Checked = (bool)_fps_profile_settings["chkAntiAlias"];
+                chkAccurateFrameTiming.Checked = (bool)_fps_profile_settings["chkAccurateFrameTiming"];
+                chkSpecWarningLEDRenderDelay.Checked = (bool)_fps_profile_settings["chkSpecWarningLEDRenderDelay"];
+                chkSpecWarningLEDGetPixels.Checked = (bool)_fps_profile_settings["chkSpecWarningLEDGetPixels"];
+                udDisplayDecimation.Value = (decimal)_fps_profile_settings["udDisplayDecimation"];
+                comboDisplayThreadPriority.Text = (string)_fps_profile_settings["comboDisplayThreadPriority"];
+                comboGeneralProcessPriority.Text = (string)_fps_profile_settings["comboGeneralProcessPriority"];
+                comboAudioSampleRate1.Text = (string)_fps_profile_settings["comboAudioSampleRate1"];
+                comboAudioSampleRateRX2.Text = (string)_fps_profile_settings["comboAudioSampleRateRX2"];
+                comboDispWinType.Text = (string)_fps_profile_settings["comboDispWinType"];
+                comboRX2DispWinType.Text = (string)_fps_profile_settings["comboRX2DispWinType"];
+                chkActivePeakHoldRX1.Checked = (bool)_fps_profile_settings["chkActivePeakHoldRX1"];
+                chkActivePeakHoldRX2.Checked = (bool)_fps_profile_settings["chkActivePeakHoldRX2"];
+                chkPeakBlobsEnabled.Checked = (bool)_fps_profile_settings["chkPeakBlobsEnabled"];
+                udPeakBlobs.Value = (decimal)_fps_profile_settings["udPeakBlobs"];
+                chkPeakBlobInsideFilterOnly.Checked = (bool)_fps_profile_settings["chkPeakBlobInsideFilterOnly"];
+                chkPeakHoldDrop.Checked = (bool)_fps_profile_settings["chkPeakHoldDrop"];
+                udPeakBlobDropDBMs.Value = (decimal)_fps_profile_settings["udPeakBlobDropDBMs"];
+                chkBlobPeakHold.Checked = (bool)_fps_profile_settings["chkBlobPeakHold"];
+                chkPanadpatorGradient.Checked = (bool)_fps_profile_settings["chkPanadpatorGradient"];
+                chkDataLineGradient.Checked = (bool)_fps_profile_settings["chkDataLineGradient"];
+                chkPanadpatorGradient_tx.Checked = (bool)_fps_profile_settings["chkPanadpatorGradient_tx"];
+                chkDataLineGradient_tx.Checked = (bool)_fps_profile_settings["chkDataLineGradient_tx"];
+                chkDisablePicDisplayBackgroundImage.Checked = (bool)_fps_profile_settings["chkDisablePicDisplayBackgroundImage"];
+                chkMaintainBackgroundAspectRatio.Checked = (bool)_fps_profile_settings["chkMaintainBackgroundAspectRatio"];
+                chkNoiseFloorShowDBM.Checked = (bool)_fps_profile_settings["chkNoiseFloorShowDBM"];
+                chkNFShowDecimal.Checked = (bool)_fps_profile_settings["chkNFShowDecimal"];
+                chkShowRX1NoiseFloor.Checked = (bool)_fps_profile_settings["chkShowRX1NoiseFloor"];
+                chkShowRX2NoiseFloor.Checked = (bool)_fps_profile_settings["chkShowRX2NoiseFloor"];
+                console.IncludeWindowBorders = (bool)_fps_profile_settings["IncludeWindowBorders"];
+                console.Top = (int)_fps_profile_settings["console_top"];
+                console.Left = (int)_fps_profile_settings["console_left"];
+                console.Width = (int)_fps_profile_settings["console_width"];
+                console.Height = (int)_fps_profile_settings["console_height"];
+                console.RX2Enabled = (bool)_fps_profile_settings["rx2"];
+                console.PowerOn = (bool)_fps_profile_settings["power"];
+                VACEnable = (bool)_fps_profile_settings["vac1"];
+                VAC2Enable = (bool)_fps_profile_settings["vac2"];
+                //console.MOX = (bool)_fps_profile_settings["mox"];
+                console.CTuneDisplay = (bool)_fps_profile_settings["CTuneDisplay"];
+                console.CTuneRX2Display = (bool)_fps_profile_settings["CTuneRX2Display"];
+                console.VFOSync = (bool)_fps_profile_settings["VFOSync"];
+                console.RX1DSPMode = (DSPMode)_fps_profile_settings["rx1Mode"];
+                console.RX2DSPMode = (DSPMode)_fps_profile_settings["rx2Mode"];
+                console.RX1Filter = (Filter)_fps_profile_settings["rx1Filter"];
+                console.RX2Filter = (Filter)_fps_profile_settings["rx2Filter"];
+                console.VFOAFreq = (double)_fps_profile_settings["vfoA"];
+                console.VFOBFreq = (double)_fps_profile_settings["vfoB"];
+                console.RX1DisplayAVG = (bool)_fps_profile_settings["rx1dispavg"];
+                console.RX2DisplayAVG = (bool)_fps_profile_settings["rx2dispavg"];
+                comboColorPalette.Text = (string)_fps_profile_settings["comboColorPalette"];
+                comboRX2ColorPalette.Text = (string)_fps_profile_settings["comboRX2ColorPalette"];
+                udDisplayGridMax.Value = (decimal)_fps_profile_settings["udDisplayGridMax"];
+                udRX2DisplayGridMax.Value = (decimal)_fps_profile_settings["udRX2DisplayGridMax"];
+                udDisplayGridMin.Value = (decimal)_fps_profile_settings["udDisplayGridMin"];
+                udRX2DisplayGridMin.Value = (decimal)_fps_profile_settings["udRX2DisplayGridMin"];
+                udDisplayGridStep.Value = (decimal)_fps_profile_settings["udDisplayGridStep"];
+                udRX2DisplayGridStep.Value = (decimal)_fps_profile_settings["udRX2DisplayGridStep"];
+                chkAdjustGridMinToNFRX1.Checked = (bool)_fps_profile_settings["chkAdjustGridMinToNFRX1"];
+                chkAdjustGridMinToNFRX2.Checked = (bool)_fps_profile_settings["chkAdjustGridMinToNFRX2"];
+                console.Zoom = (int)_fps_profile_settings["Zoom"];
+                console.Pan = (int)_fps_profile_settings["Pan"];
+                console.DisplayModeText = (string)_fps_profile_settings["DisplayModeText"];
+                console.DisplayRX2ModeText = (string)_fps_profile_settings["DisplayRX2ModeText"];
+                chkLegacyMeters.Checked = (bool)_fps_profile_settings["chkLegacyMeters"];
+                chkLegacyItems_band.Checked = (bool)_fps_profile_settings["chkLegacyItems_band"];
+                chkLegacyItems_mode.Checked = (bool)_fps_profile_settings["chkLegacyItems_mode"];
+                chkLegacyItems_filter.Checked = (bool)_fps_profile_settings["chkLegacyItems_filter"];
+                chkLegacyItems_expand_spectral.Checked = (bool)_fps_profile_settings["chkLegacyItems_expand_spectral"];
+                chkLegacyItems_expand_spectral_top.Checked = (bool)_fps_profile_settings["chkLegacyItems_expand_spectral_top"];
+                chkLegacyItems_vfoa.Checked = (bool)_fps_profile_settings["chkLegacyItems_vfoa"];
+                chkLegacyItems_vfob.Checked = (bool)_fps_profile_settings["chkLegacyItems_vfob"];
+                chkLegacyItems_vfosync.Checked = (bool)_fps_profile_settings["chkLegacyItems_vfosync"];
+
+                Display.RunningFPSProfile = false;
+
+                _fps_profile_settings.Clear();
+                _fps_profile_settings = null;
+                btnFPSProfile.Text = "FPS Profile";
+
+                btnOK.Enabled = true;
+                btnCancel.Enabled = true;
+                btnApply.Enabled = true;
+
+                return;
+            }
+            // ask user
+            DialogResult dr = MessageBox.Show("This test will change lots of settings, modes, band, resolution, sample rates, etc etc, to maintain consistancy between tests.\n\nPlease use a FRESH database using the DB manager for this test, with just radio model, region and connection details changed. You should be able to connect and power on/off using Thetis. Failure to do so may result in unexpected changes to configuration. No transmissions will be made.\n\nDo you want to perform this test?",
+                "FPS Profile Test",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+            if (dr != DialogResult.OK) return;
+
+            if (Display.Target != null && Display.Target.IsHandleCreated)
+            {
+                int scaling = Common.GetScalingForWindow(Display.Target.Handle);
+                if (scaling == -1)
+                {
+                    dr = MessageBox.Show($"Unable to detect the scaling for the monitor that the console window sits on. Please ensure this is set to 100% if the results are to be compared against other systems.\n\nContinue anyway?",
+                        "100% scaling issue",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+                    if (dr != DialogResult.Yes) return;
+                }
+                else
+                {
+                    if (scaling != 100)
+                    {
+                        dr = MessageBox.Show($"The console window is on a monitor that is not at 100% scaling. The scaling will need to be reset to 100% if these results are to be compared against other systems. It is currently set to {scaling}%\n\nContinue anyway?",
+                            "100% scaling issue",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+                        if (dr != DialogResult.Yes) return;
+                    }
+                }
+            }
+
+            btnOK.Enabled = false;
+            btnCancel.Enabled = false;
+            btnApply.Enabled = false;
+
+            // copy settings
+            _fps_profile_settings = new Dictionary<string, object>();
+            _fps_profile_settings.Add("udDisplayFPS", udDisplayFPS.Value);
+            _fps_profile_settings.Add("chkDisplayPanFill", chkDisplayPanFill.Checked);
+            _fps_profile_settings.Add("chkShowFPS", chkShowFPS.Checked);
+            _fps_profile_settings.Add("chkVSyncDX", chkVSyncDX.Checked);
+            _fps_profile_settings.Add("chkAntiAlias", chkAntiAlias.Checked);
+            _fps_profile_settings.Add("chkAccurateFrameTiming", chkAccurateFrameTiming.Checked);
+            _fps_profile_settings.Add("chkSpecWarningLEDRenderDelay", chkSpecWarningLEDRenderDelay.Checked);
+            _fps_profile_settings.Add("chkSpecWarningLEDGetPixels", chkSpecWarningLEDGetPixels.Checked);
+            _fps_profile_settings.Add("udDisplayDecimation", udDisplayDecimation.Value);
+            _fps_profile_settings.Add("comboDisplayThreadPriority", comboDisplayThreadPriority.Text);
+            _fps_profile_settings.Add("comboGeneralProcessPriority", comboGeneralProcessPriority.Text);
+            _fps_profile_settings.Add("comboAudioSampleRate1", comboAudioSampleRate1.Text);
+            _fps_profile_settings.Add("comboAudioSampleRateRX2", comboAudioSampleRateRX2.Text);
+            _fps_profile_settings.Add("comboDispWinType", comboDispWinType.Text);
+            _fps_profile_settings.Add("comboRX2DispWinType", comboRX2DispWinType.Text);
+            _fps_profile_settings.Add("chkActivePeakHoldRX1", chkActivePeakHoldRX1.Checked);
+            _fps_profile_settings.Add("chkActivePeakHoldRX2", chkActivePeakHoldRX2.Checked);
+            _fps_profile_settings.Add("chkPeakBlobsEnabled", chkPeakBlobsEnabled.Checked);
+            _fps_profile_settings.Add("udPeakBlobs", udPeakBlobs.Value);
+            _fps_profile_settings.Add("chkPeakBlobInsideFilterOnly", chkPeakBlobInsideFilterOnly.Checked);
+            _fps_profile_settings.Add("chkPeakHoldDrop", chkPeakHoldDrop.Checked);
+            _fps_profile_settings.Add("udPeakBlobDropDBMs", udPeakBlobDropDBMs.Value);
+            _fps_profile_settings.Add("chkBlobPeakHold", chkBlobPeakHold.Checked);
+            _fps_profile_settings.Add("chkPanadpatorGradient", chkPanadpatorGradient.Checked);
+            _fps_profile_settings.Add("chkDataLineGradient", chkDataLineGradient.Checked);
+            _fps_profile_settings.Add("chkPanadpatorGradient_tx", chkPanadpatorGradient_tx.Checked);
+            _fps_profile_settings.Add("chkDataLineGradient_tx", chkDataLineGradient_tx.Checked);
+            _fps_profile_settings.Add("chkDisablePicDisplayBackgroundImage", chkDisablePicDisplayBackgroundImage.Checked);
+            _fps_profile_settings.Add("chkMaintainBackgroundAspectRatio", chkMaintainBackgroundAspectRatio.Checked);
+            _fps_profile_settings.Add("chkNoiseFloorShowDBM", chkNoiseFloorShowDBM.Checked);
+            _fps_profile_settings.Add("chkNFShowDecimal", chkNFShowDecimal.Checked);
+            _fps_profile_settings.Add("chkShowRX1NoiseFloor", chkShowRX1NoiseFloor.Checked);
+            _fps_profile_settings.Add("chkShowRX2NoiseFloor", chkShowRX2NoiseFloor.Checked);
+            _fps_profile_settings.Add("console_width", console.Width);
+            _fps_profile_settings.Add("console_height", console.Height);
+            _fps_profile_settings.Add("console_top", console.Top);
+            _fps_profile_settings.Add("console_left", console.Left);
+            _fps_profile_settings.Add("rx2", console.RX2Enabled);
+            _fps_profile_settings.Add("power", console.PowerOn);
+            _fps_profile_settings.Add("vac1", VACEnable);
+            _fps_profile_settings.Add("vac2", VAC2Enable);
+            _fps_profile_settings.Add("mox", console.MOX);
+            _fps_profile_settings.Add("CTuneDisplay", console.CTuneDisplay);
+            _fps_profile_settings.Add("CTuneRX2Display", console.CTuneRX2Display);
+            _fps_profile_settings.Add("VFOSync", console.VFOSync);
+            _fps_profile_settings.Add("rx1Mode", console.RX1DSPMode);
+            _fps_profile_settings.Add("rx2Mode", console.RX2DSPMode);
+            _fps_profile_settings.Add("rx1Filter", console.RX1Filter);
+            _fps_profile_settings.Add("rx2Filter", console.RX2Filter);
+            _fps_profile_settings.Add("vfoA", console.VFOAFreq);
+            _fps_profile_settings.Add("vfoB", console.VFOBFreq);
+            _fps_profile_settings.Add("rx1dispavg", console.RX1DisplayAVG);
+            _fps_profile_settings.Add("rx2dispavg", console.RX2DisplayAVG);
+            _fps_profile_settings.Add("comboColorPalette", comboColorPalette.Text);
+            _fps_profile_settings.Add("comboRX2ColorPalette", comboRX2ColorPalette.Text);
+            _fps_profile_settings.Add("udDisplayGridMax", udDisplayGridMax.Value);
+            _fps_profile_settings.Add("udRX2DisplayGridMax", udRX2DisplayGridMax.Value);
+            _fps_profile_settings.Add("udDisplayGridMin", udDisplayGridMin.Value);
+            _fps_profile_settings.Add("udRX2DisplayGridMin", udRX2DisplayGridMin.Value);
+            _fps_profile_settings.Add("udDisplayGridStep", udDisplayGridStep.Value);
+            _fps_profile_settings.Add("udRX2DisplayGridStep", udRX2DisplayGridStep.Value);
+            _fps_profile_settings.Add("chkAdjustGridMinToNFRX1", chkAdjustGridMinToNFRX1.Checked);
+            _fps_profile_settings.Add("chkAdjustGridMinToNFRX2", chkAdjustGridMinToNFRX2.Checked);
+            _fps_profile_settings.Add("IncludeWindowBorders", console.IncludeWindowBorders);
+            _fps_profile_settings.Add("Zoom", console.Zoom);
+            _fps_profile_settings.Add("Pan", console.Pan);
+            _fps_profile_settings.Add("DisplayModeText", console.DisplayModeText);
+            _fps_profile_settings.Add("DisplayRX2ModeText", console.DisplayRX2ModeText);
+            _fps_profile_settings.Add("chkLegacyMeters", chkLegacyMeters.Checked);
+            _fps_profile_settings.Add("chkLegacyItems_band", chkLegacyItems_band.Checked);
+            _fps_profile_settings.Add("chkLegacyItems_mode", chkLegacyItems_mode.Checked);
+            _fps_profile_settings.Add("chkLegacyItems_filter", chkLegacyItems_filter.Checked);
+            _fps_profile_settings.Add("chkLegacyItems_expand_spectral", chkLegacyItems_expand_spectral.Checked);
+            _fps_profile_settings.Add("chkLegacyItems_expand_spectral_top", chkLegacyItems_expand_spectral_top.Checked);
+            _fps_profile_settings.Add("chkLegacyItems_vfoa", chkLegacyItems_vfoa.Checked);
+            _fps_profile_settings.Add("chkLegacyItems_vfob", chkLegacyItems_vfob.Checked);
+            _fps_profile_settings.Add("chkLegacyItems_vfosync", chkLegacyItems_vfosync.Checked);
+
+            // apply settings            
+            udDisplayFPS.Value = 640;
+            chkDisplayPanFill.Checked = true;
+            chkShowFPS.Checked = true;
+            chkVSyncDX.Checked = false;
+            chkAntiAlias.Checked = true;
+            chkAccurateFrameTiming.Checked = false;
+            chkSpecWarningLEDRenderDelay.Checked = true;
+            chkSpecWarningLEDGetPixels.Checked = false;
+            udDisplayDecimation.Value = 1;
+            comboDisplayThreadPriority.Text = "Above Normal";
+            comboGeneralProcessPriority.Text = "Normal";
+            comboAudioSampleRate1.Text = "192000";
+            comboAudioSampleRateRX2.Text = "192000";
+            comboDispWinType.Text = "Hann";
+            comboRX2DispWinType.Text = "Hann";
+            chkActivePeakHoldRX1.Checked = true;
+            chkActivePeakHoldRX2.Checked = true;
+            chkPeakBlobsEnabled.Checked = true;
+            udPeakBlobs.Value = 20;
+            chkPeakBlobInsideFilterOnly.Checked = false;
+            chkPeakHoldDrop.Checked = false;
+            udPeakBlobDropDBMs.Value = 0;
+            chkBlobPeakHold.Checked = false;
+            chkPanadpatorGradient.Checked = true;
+            chkDataLineGradient.Checked = true;
+            chkPanadpatorGradient_tx.Checked = true;
+            chkDataLineGradient_tx.Checked = true;
+            chkDisablePicDisplayBackgroundImage.Checked = false;
+            chkMaintainBackgroundAspectRatio.Checked = false;
+            chkNoiseFloorShowDBM.Checked = true;
+            chkNFShowDecimal.Checked = true;
+            chkShowRX1NoiseFloor.Checked = true;
+            chkShowRX2NoiseFloor.Checked = true;
+            console.IncludeWindowBorders = true;
+            console.SetResolution("1080p");
+            console.Location = new Point(0, 0);
+            console.RX2Enabled = true;
+            console.PowerOn = true;
+            VACEnable = false;
+            VAC2Enable = false;
+            console.MOX = false;
+            console.CTuneDisplay = false;
+            console.CTuneRX2Display = false;
+            console.VFOSync = false;
+            console.RX1DSPMode = DSPMode.LSB;
+            console.RX2DSPMode = DSPMode.LSB;
+            console.RX1Filter = Filter.F3;
+            console.RX2Filter = Filter.F3;
+            console.VFOAFreq = 7.1;
+            console.VFOBFreq = 7.1;
+            console.RX1DisplayAVG = false;
+            console.RX2DisplayAVG = false;
+            comboColorPalette.Text = "Custom";
+            comboRX2ColorPalette.Text = "Custom";
+            udDisplayGridMax.Value = 200;
+            udRX2DisplayGridMax.Value = 200;
+            udDisplayGridMin.Value = -200;
+            udRX2DisplayGridMin.Value = -200;
+            udDisplayGridStep.Value = 10;
+            udRX2DisplayGridStep.Value = 10;
+            chkAdjustGridMinToNFRX1.Checked = false;
+            chkAdjustGridMinToNFRX2.Checked = false;
+            console.PanCentre();
+            console.ZoomFullyOut();
+            console.DisplayModeText = "Panafall";
+            console.DisplayRX2ModeText = "Panafall";
+            console.ClickTuneDisplay = false;
+            console.ClickTuneRX2Display = false;
+            chkLegacyMeters.Checked = true;
+            chkLegacyItems_band.Checked = false;
+            chkLegacyItems_mode.Checked = false;
+            chkLegacyItems_filter.Checked = false;
+            chkLegacyItems_expand_spectral.Checked = false;
+            chkLegacyItems_expand_spectral_top.Checked = false;
+            chkLegacyItems_vfoa.Checked = false;
+            chkLegacyItems_vfob.Checked = false;
+            chkLegacyItems_vfosync.Checked = false;
+
+            console.Focus();
+
+            Display.RunningFPSProfile = true;
+
+            btnFPSProfile.Text = "STOP FPS Profile";
+        }
+        public bool ValidFpsProfile()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(udDisplayFPS.Value).Append("|");
+            sb.Append(udDisplayDecimation.Value).Append("|");
+            sb.Append(udPeakBlobs.Value).Append("|");
+            sb.Append(udPeakBlobDropDBMs.Value).Append("|");
+            sb.Append(udDisplayGridMax.Value).Append("|");
+            sb.Append(udRX2DisplayGridMax.Value).Append("|");
+            sb.Append(udDisplayGridMin.Value).Append("|");
+            sb.Append(udRX2DisplayGridMin.Value).Append("|");
+            sb.Append(udDisplayGridStep.Value).Append("|");
+            sb.Append(udRX2DisplayGridStep.Value).Append("|");
+
+            CheckBox[] checkboxes = new CheckBox[]
+            {
+            chkDisplayPanFill,
+            chkShowFPS,
+            chkVSyncDX,
+            chkAntiAlias,
+            chkAccurateFrameTiming,
+            chkSpecWarningLEDRenderDelay,
+            chkSpecWarningLEDGetPixels,
+            chkActivePeakHoldRX1,
+            chkActivePeakHoldRX2,
+            chkPeakBlobsEnabled,
+            chkPeakBlobInsideFilterOnly,
+            chkPeakHoldDrop,
+            chkBlobPeakHold,
+            chkPanadpatorGradient,
+            chkDataLineGradient,
+            chkPanadpatorGradient_tx,
+            chkDataLineGradient_tx,
+            chkDisablePicDisplayBackgroundImage,
+            chkMaintainBackgroundAspectRatio,
+            chkNoiseFloorShowDBM,
+            chkNFShowDecimal,
+            chkShowRX1NoiseFloor,
+            chkShowRX2NoiseFloor,
+            chkAdjustGridMinToNFRX1,
+            chkAdjustGridMinToNFRX2,
+            chkLegacyMeters,
+            chkLegacyItems_band,
+            chkLegacyItems_mode,
+            chkLegacyItems_filter,
+            chkLegacyItems_expand_spectral,
+            chkLegacyItems_expand_spectral_top,
+            chkLegacyItems_vfoa,
+            chkLegacyItems_vfob,
+            chkLegacyItems_vfosync
+            };
+            foreach (CheckBox cb in checkboxes)
+            {
+                sb.Append(cb.Checked).Append("|");
+            }
+
+            sb.Append(comboDisplayThreadPriority.Text).Append("|");
+            sb.Append(comboGeneralProcessPriority.Text).Append("|");
+            sb.Append(comboAudioSampleRate1.Text).Append("|");
+            sb.Append(comboAudioSampleRateRX2.Text).Append("|");
+            sb.Append(comboDispWinType.Text).Append("|");
+            sb.Append(comboRX2DispWinType.Text).Append("|");
+            sb.Append(comboColorPalette.Text).Append("|");
+            sb.Append(comboRX2ColorPalette.Text).Append("|");
+
+            sb.Append(console.IncludeWindowBorders).Append("|");
+            sb.Append(console.Location.X).Append(",").Append(console.Location.Y).Append("|");
+            sb.Append(console.Size.Width).Append(",").Append(console.Size.Height).Append("|");
+            sb.Append(Display.TargetSize.Width).Append(",").Append(Display.TargetSize.Height).Append("|");
+            sb.Append(console.RX2Enabled).Append("|");
+            sb.Append(console.PowerOn).Append("|");
+            sb.Append(VACEnable).Append("|");
+            sb.Append(VAC2Enable).Append("|");
+            sb.Append(console.MOX).Append("|");
+            sb.Append(console.CTuneDisplay).Append("|");
+            sb.Append(console.CTuneRX2Display).Append("|");
+            sb.Append(console.VFOSync).Append("|");
+            sb.Append(console.RX1DSPMode).Append("|");
+            sb.Append(console.RX2DSPMode).Append("|");
+            sb.Append(console.RX1Filter).Append("|");
+            sb.Append(console.RX2Filter).Append("|");
+            sb.Append(console.VFOAFreq).Append("|");
+            sb.Append(console.VFOBFreq).Append("|");
+            sb.Append(console.RX1DisplayAVG).Append("|");
+            sb.Append(console.RX2DisplayAVG).Append("|");
+            sb.Append(console.DisplayModeText).Append("|");
+            sb.Append(console.DisplayRX2ModeText).Append("|");
+            sb.Append(console.ClickTuneDisplay).Append("|");
+            sb.Append(console.ClickTuneRX2Display).Append("|");
+            sb.Append(console.Pan).Append("|");
+            sb.Append(console.Zoom).Append("|");
+
+            int scaling;
+            if (Display.Target != null && Display.Target.IsHandleCreated)
+                scaling = Common.GetScalingForWindow(Display.Target.Handle);
+            else
+                scaling = -1;
+
+            sb.Append(scaling).Append("|");
+
+            MD5 md5 = MD5.Create();
+            byte[] data = Encoding.UTF8.GetBytes(sb.ToString());
+            byte[] hash = md5.ComputeHash(data);
+
+            string ret = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+
+            Debug.Print($"FPS profile settings hash : {ret}");
+
+            return ret.Equals("998cafaf3331a9a111366f41ff3ed6ce");
         }
     }
 

@@ -35,10 +35,9 @@
             this.lblRX = new System.Windows.Forms.LabelTS();
             this.btnFloat = new System.Windows.Forms.ButtonTS();
             this.pbGrab = new System.Windows.Forms.PictureBox();
-            this.picContainer = new System.Windows.Forms.PictureBox();
+            this.pnlContainer = new System.Windows.Forms.Panel();
             this.pnlBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbGrab)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picContainer)).BeginInit();
             this.SuspendLayout();
             // 
             // pnlBar
@@ -187,20 +186,17 @@
             this.pbGrab.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseMove);
             this.pbGrab.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pbGrab_MouseUp);
             // 
-            // picContainer
+            // pnlContainer
             // 
-            this.picContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.pnlContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.picContainer.BackColor = System.Drawing.Color.Black;
-            this.picContainer.Location = new System.Drawing.Point(33, 31);
-            this.picContainer.Margin = new System.Windows.Forms.Padding(0);
-            this.picContainer.Name = "picContainer";
-            this.picContainer.Size = new System.Drawing.Size(334, 150);
-            this.picContainer.TabIndex = 1;
-            this.picContainer.TabStop = false;
-            this.picContainer.MouseLeave += new System.EventHandler(this.picContainer_MouseLeave);
-            this.picContainer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picContainer_MouseMove);
+            this.pnlContainer.Location = new System.Drawing.Point(102, 75);
+            this.pnlContainer.Name = "pnlContainer";
+            this.pnlContainer.Size = new System.Drawing.Size(200, 67);
+            this.pnlContainer.TabIndex = 2;
+            this.pnlContainer.MouseLeave += new System.EventHandler(this.pnlContainer_MouseLeave);
+            this.pnlContainer.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlContainer_MouseMove);
             // 
             // ucMeter
             // 
@@ -208,9 +204,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this.pnlContainer);
             this.Controls.Add(this.pbGrab);
             this.Controls.Add(this.pnlBar);
-            this.Controls.Add(this.picContainer);
             this.Name = "ucMeter";
             this.Size = new System.Drawing.Size(400, 200);
             this.LocationChanged += new System.EventHandler(this.ucMeter_LocationChanged);
@@ -219,7 +215,6 @@
             this.pnlBar.ResumeLayout(false);
             this.pnlBar.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbGrab)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picContainer)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -229,10 +224,10 @@
         private System.Windows.Forms.Panel pnlBar;
         private System.Windows.Forms.ButtonTS btnFloat;
         private System.Windows.Forms.PictureBox pbGrab;
-        private System.Windows.Forms.PictureBox picContainer;
         private System.Windows.Forms.LabelTS lblRX;
         private System.Windows.Forms.ButtonTS btnAxis;
         private System.Windows.Forms.ButtonTS btnPin;
         private System.Windows.Forms.ButtonTS btnSettings;
+        private System.Windows.Forms.Panel pnlContainer;
     }
 }

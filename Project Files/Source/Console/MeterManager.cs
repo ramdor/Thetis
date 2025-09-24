@@ -57,6 +57,7 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
+using Newtonsoft.Json.Bson;
 
 namespace Thetis
 {
@@ -2571,7 +2572,7 @@ namespace Thetis
             _meterThread.Start();
         }
         private static Dictionary<string, DXRenderer> _DXrenderers = new Dictionary<string, DXRenderer>();
-        private static void addRenderer(string sId, int rx, PictureBox target, clsMeter meter, System.Drawing.Color backColour)
+        private static void addRenderer(string sId, int rx, Panel target, clsMeter meter, System.Drawing.Color backColour)
         {
             DXRenderer renderer = new DXRenderer(sId, rx, target, _console, meter);
             renderer.BackgroundColour = backColour;
@@ -9684,7 +9685,7 @@ namespace Thetis
                                         {
                                             setimage = !_console.SpotForm.TrackingAndMapShown; // do not set if the spot tracking is being used
                                         }
-                                        if (setimage) _console.PicDisplayBackgroundImage = bmp;
+                                        if (setimage) _console.PnlDisplayBackgroundImage = bmp;
                                         bmp.Dispose();
                                     }));
                                 }
@@ -9836,7 +9837,7 @@ namespace Thetis
                         {
                             setimage = !_console.SpotForm.TrackingAndMapShown; // do not set if the spot tracking is being used
                         }
-                        if (setimage) _console.PicDisplayBackgroundImage = null;
+                        if (setimage) _console.PnlDisplayBackgroundImage = null;
                     }));
                 }
 
@@ -16333,7 +16334,7 @@ namespace Thetis
             private string _fontFamily;
             private FontStyle _fontStyle;
             private System.Drawing.Color _color;
-            private bool _fixedSize;
+            private bool _centred;
             private float _fontSize;
             public clsText()
             {
@@ -16341,7 +16342,7 @@ namespace Thetis
                 _fontFamily = "Trebuchet MS";
                 _fontStyle = FontStyle.Regular;
                 _color = System.Drawing.Color.White;
-                _fixedSize = false;
+                _centred = false;
                 _fontSize = 9f;
                 _readingText = "";
 
@@ -16413,10 +16414,10 @@ namespace Thetis
                 get { return _color; }
                 set { _color = value; }
             }
-            public bool FixedSize
+            public bool Centre
             {
-                get { return _fixedSize; }
-                set { _fixedSize = value; }
+                get { return _centred; }
+                set { _centred = value; }
             }
             public float FontSize
             {
@@ -17746,7 +17747,7 @@ namespace Thetis
                 clsClickBox clb = new clsClickBox();
                 clb.ParentID = ig.ID;
                 clb.TopLeft = new PointF(ni.TopLeft.X + 0.76f, ni.TopLeft.Y + 0.46f); // tl;
-                clb.Size = new SizeF(0.18f, 0.044f);
+                clb.Size = new SizeF(0.148f, 0.036f);
                 clb.OnlyWhenTX = true;
                 clb.Button = MouseButtons.Left;
                 addMeterItem(clb);
@@ -17769,8 +17770,8 @@ namespace Thetis
                 tx.ZOrder = 10;
                 tx.Style = FontStyle.Bold;
                 tx.Colour = System.Drawing.Color.DarkGray;
-                tx.FixedSize = true;
-                tx.FontSize = 8f;
+                tx.Centre = true;
+                tx.FontSize = 18f;
                 addMeterItem(tx);
 
                 clsNeedleItem ni4 = new clsNeedleItem();
@@ -20359,12 +20360,25 @@ namespace Thetis
             {
                 lock (_meterItemsLock)
                 {
-                    if (_meterItems == null) return 0;
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    if (meterItems == null) return 0;
 
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    int count = 0;
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
+                    {
+                        if (entry.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP) count++;
+                    }
 
-                    return items.Count;
+                    return count;
                 }
+                //lock (_meterItemsLock)
+                //{
+                //    if (_meterItems == null) return 0;
+
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+
+                //    return items.Count;
+                //}
             }
             private void removeMeterItem(string sId, bool bRebuild = false)
             {
@@ -20440,75 +20454,131 @@ namespace Thetis
                 lock (_meterItemsLock)
                 {
                     if (_meterItems == null) return;
-
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    List<string> groupIds = new List<string>();
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
                     {
-                        clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null)
-                        {
-                            removeMeterItem(ig.ID, false);
-                        }
+                        clsItemGroup group = entry.Value as clsItemGroup;
+                        if (group != null) groupIds.Add(group.ID);
                     }
-
+                    foreach (string id in groupIds) removeMeterItem(id, false);
                     if (bRebuild) Rebuild();
                 }
+
+                //lock (_meterItemsLock)
+                //{
+                //    if (_meterItems == null) return;
+
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                //    {
+                //        clsItemGroup ig = kvp.Value as clsItemGroup;
+                //        if (ig != null)
+                //        {
+                //            removeMeterItem(ig.ID, false);
+                //        }
+                //    }
+
+                //    if (bRebuild) Rebuild();
+                //}
             }
             public bool HasMeterType(MeterType mt)
             {
                 lock (_meterItemsLock)
-                { 
+                {
                     if (_meterItems == null) return false;
-
-                    //IEnumerable<KeyValuePair<string, clsMeterItem>> items = _meterItems.Where(o => o.Value.ItemType == MeterItemType.ITEM_GROUP);
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
                     {
-                        clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null && ig.MeterType == mt) return true;
+                        if (entry.Value is clsItemGroup group && group.MeterType == mt) return true;
                     }
-
                     return false;
                 }
+                //lock (_meterItemsLock)
+                //{ 
+                //    if (_meterItems == null) return false;
+
+                //    //IEnumerable<KeyValuePair<string, clsMeterItem>> items = _meterItems.Where(o => o.Value.ItemType == MeterItemType.ITEM_GROUP);
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                //    {
+                //        clsItemGroup ig = kvp.Value as clsItemGroup;
+                //        if (ig != null && ig.MeterType == mt) return true;
+                //    }
+
+                //    return false;
+                //}
             }
             public void DisableMeterType(MeterType mt, bool bDisable)
             {
                 lock (_meterItemsLock)
                 {
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    bool disableFlag = bDisable;
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
                     {
-                        clsItemGroup ig = kvp.Value as clsItemGroup;
-
-                        if (ig.MeterType == mt)
+                        clsItemGroup group = entry.Value as clsItemGroup;
+                        if (group != null && group.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP && group.MeterType == mt)
                         {
-                            Dictionary<string, clsMeterItem> mtItems = itemsFromID(ig.ID, false, true);
-
-                            foreach (KeyValuePair<string, clsMeterItem> kvpmi in mtItems)
+                            Dictionary<string, clsMeterItem> groupItems = itemsFromID(group.ID, false, true);
+                            Dictionary<string, clsMeterItem>.ValueCollection values = groupItems.Values;
+                            foreach (clsMeterItem item in values)
                             {
-                                clsMeterItem mi = kvpmi.Value as clsMeterItem;
-                                mi.Disabled = bDisable;
+                                item.Disabled = disableFlag;
                             }
                         }
                     }
                 }
+                //lock (_meterItemsLock)
+                //{
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                //    {
+                //        clsItemGroup ig = kvp.Value as clsItemGroup;
+
+                //        if (ig.MeterType == mt)
+                //        {
+                //            Dictionary<string, clsMeterItem> mtItems = itemsFromID(ig.ID, false, true);
+
+                //            foreach (KeyValuePair<string, clsMeterItem> kvpmi in mtItems)
+                //            {
+                //                clsMeterItem mi = kvpmi.Value as clsMeterItem;
+                //                mi.Disabled = bDisable;
+                //            }
+                //        }
+                //    }
+                //}
             }
             public string MeterGroupID(MeterType mt = MeterType.NONE, int order = -1)
             {
                 lock (_meterItemsLock)
                 {
-                    if (_meterItems == null) return "";
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    if (meterItems == null) return string.Empty;
 
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
                     {
-                        clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null && (ig.MeterType == mt || mt == MeterType.NONE) && (order == -1 || ig.Order == order)) return ig.ID;
+                        clsItemGroup group = entry.Value as clsItemGroup;
+                        if (group != null && (mt == MeterType.NONE || group.MeterType == mt) && (order == -1 || group.Order == order)) return group.ID;
                     }
 
-                    return "";
+                    return string.Empty;
                 }
+
+                //lock (_meterItemsLock)
+                //{
+                //    if (_meterItems == null) return "";
+
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                //    {
+                //        clsItemGroup ig = kvp.Value as clsItemGroup;
+                //        if (ig != null && (ig.MeterType == mt || mt == MeterType.NONE) && (order == -1 || ig.Order == order)) return ig.ID;
+                //    }
+
+                //    return "";
+                //}
             }
             public void ApplySettingsForMeterGroup(MeterType mt, clsIGSettings igs, int order = -1)
             {
@@ -22678,19 +22748,31 @@ namespace Thetis
             {
                 lock (_meterItemsLock)
                 {
-                    List<int> orders = new List<int>();
-
-                    if (_meterItems == null) return orders;
-
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    if (meterItems == null) return new List<int>();
+                    List<int> orders = new List<int>(meterItems.Count);
+                    foreach (clsMeterItem mi in meterItems.Values)
                     {
-                        clsItemGroup ig = kvp.Value as clsItemGroup;
+                        clsItemGroup ig = mi as clsItemGroup;
                         if (ig != null && ig.MeterType == mt) orders.Add(ig.Order);
                     }
-
                     return orders;
                 }
+                //lock (_meterItemsLock)
+                //{
+                //    List<int> orders = new List<int>();
+
+                //    if (_meterItems == null) return orders;
+
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                //    {
+                //        clsItemGroup ig = kvp.Value as clsItemGroup;
+                //        if (ig != null && ig.MeterType == mt) orders.Add(ig.Order);
+                //    }
+
+                //    return orders;
+                //}
             }
             public void SetOrderForMeterType(MeterType mt, int nOrder, bool bRebuild, bool bUp, int order = -1)
             {
@@ -22698,34 +22780,67 @@ namespace Thetis
                 lock (_meterItemsLock)
                 {
                     if (_meterItems == null) return;
-
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
                     if (nOrder < 0) nOrder = 0;
-                    int nTmp = numberOfMeterGroups() - 1;
-                    if (nOrder > nTmp) nOrder = nTmp;
-                    bool done = false;
-
-                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    int groupCount = 0;
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
                     {
-                        clsItemGroup ig = kvp.Value as clsItemGroup;
-                        if (ig != null)
+                        if (entry.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP) groupCount++;
+                    }
+                    int maxOrder = groupCount > 0 ? groupCount - 1 : 0;
+                    if (nOrder > maxOrder) nOrder = maxOrder;
+                    bool done = false;
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
+                    {
+                        clsItemGroup group = entry.Value as clsItemGroup;
+                        if (group != null)
                         {
-                            if (ig.MeterType == mt && (order == -1 || ig.Order == order) && !done)
+                            if (!done && group.MeterType == mt && (order == -1 || group.Order == order))
                             {
-                                ig.Order = nOrder;
+                                group.Order = nOrder;
                                 done = true;
                             }
-                            else if (ig.Order == nOrder)
+                            else if (group.Order == nOrder)
                             {
-                                if (bUp)
-                                    ig.Order++;
-                                else
-                                    ig.Order--;
+                                if (bUp) group.Order++;
+                                else group.Order--;
                             }
                         }
                     }
                 }
                 if (bRebuild) Rebuild();
+
+                //lock (_meterItemsLock)
+                //{
+                //    if (_meterItems == null) return;
+
+                //    if (nOrder < 0) nOrder = 0;
+                //    int nTmp = numberOfMeterGroups() - 1;
+                //    if (nOrder > nTmp) nOrder = nTmp;
+                //    bool done = false;
+
+                //    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                //    {
+                //        clsItemGroup ig = kvp.Value as clsItemGroup;
+                //        if (ig != null)
+                //        {
+                //            if (ig.MeterType == mt && (order == -1 || ig.Order == order) && !done)
+                //            {
+                //                ig.Order = nOrder;
+                //                done = true;
+                //            }
+                //            else if (ig.Order == nOrder)
+                //            {
+                //                if (bUp)
+                //                    ig.Order++;
+                //                else
+                //                    ig.Order--;
+                //            }
+                //        }
+                //    }
+                //}
+                //if (bRebuild) Rebuild();
             }
             public bool Enabled
             {
@@ -22888,15 +23003,28 @@ namespace Thetis
             {
                 lock (_meterItemsLock)
                 {
-                    Dictionary<string, clsMeterItem> meterItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    Dictionary<string, clsItemGroup> groupItems = new Dictionary<string, clsItemGroup>();
-
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in meterItems)
+                    Dictionary<string, clsItemGroup> groupItems = new Dictionary<string, clsItemGroup>(_meterItems.Count);
+                    foreach (KeyValuePair<string, clsMeterItem> entry in _meterItems)
                     {
-                        groupItems.Add(kvp.Value.ID, (clsItemGroup)kvp.Value);
+                        if (entry.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP)
+                        {
+                            clsItemGroup group = (clsItemGroup)entry.Value;
+                            groupItems.Add(group.ID, group);
+                        }
                     }
                     return groupItems;
-                }                
+                }
+                //lock (_meterItemsLock)
+                //{
+                //    Dictionary<string, clsMeterItem> meterItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                //    Dictionary<string, clsItemGroup> groupItems = new Dictionary<string, clsItemGroup>();
+
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in meterItems)
+                //    {
+                //        groupItems.Add(kvp.Value.ID, (clsItemGroup)kvp.Value);
+                //    }
+                //    return groupItems;
+                //}                
             }
             public void UpdateIntervals()
             {
@@ -22912,7 +23040,6 @@ namespace Thetis
                 lock (_meterItemsLock)
                 {
                     // shift top
-                    //Dictionary<string, clsMeterItem> meterItems = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
                     Dictionary<string, clsItemGroup> groupItems = getMeterGroups();
 
                     float fTop = 0;
@@ -22942,9 +23069,20 @@ namespace Thetis
             {
                 lock (_meterItemsLock)
                 {
-                    //_sortedMeterItemsForZOrder = _meterItems.OrderBy(o => o.Value.ZOrder).ToDictionary(x => x.Key, x => x.Value);
-                    _sortedMeterItemsForZOrder = _meterItems.OrderBy(o => o.Value.ZOrder).Select(x => x.Value).ToList();
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    List<clsMeterItem> sortedList = new List<clsMeterItem>(meterItems.Count);
+                    foreach (KeyValuePair<string, clsMeterItem> entry in meterItems)
+                    {
+                        sortedList.Add(entry.Value);
+                    }
+                    sortedList.Sort((clsMeterItem a, clsMeterItem b) => a.ZOrder.CompareTo(b.ZOrder));
+                    _sortedMeterItemsForZOrder = sortedList;
                 }
+                //lock (_meterItemsLock)
+                //{
+                //    //_sortedMeterItemsForZOrder = _meterItems.OrderBy(o => o.Value.ZOrder).ToDictionary(x => x.Key, x => x.Value);
+                //    _sortedMeterItemsForZOrder = _meterItems.OrderBy(o => o.Value.ZOrder).Select(x => x.Value).ToList();
+                //}
             }
             internal void MouseUp(System.Windows.Forms.MouseEventArgs e, clsMeter m, clsClickBox cb)
             {
@@ -23062,39 +23200,18 @@ namespace Thetis
 
                     // band text on vfo change
                     lock (_timerLock_vfoA)
-                    {
-                        DateTime now = DateTime.UtcNow;
-                        
-                        if ((now - _last_band_text_update_vfoA).TotalMilliseconds > BAND_TEXT_RATE_LIMIT)
+                    {                       
+                        if ((DateTime.UtcNow - _last_band_text_update_vfoA).TotalMilliseconds > BAND_TEXT_RATE_LIMIT)
                         {
                             // always update, at least every 500ms
-                            UpdateBandText(true);
-                            _last_band_text_update_vfoA = now;
-
-                            // cancel timer if one running
-                            if (_timer_band_text_vfoA != null)
-                            {
-                                System.Threading.Timer timer = _timer_band_text_vfoA;
-                                _timer_band_text_vfoA = null;
-                                timer.Dispose();
-                            }
+                            updateVfoABandText(null);
                         }
                         else
                         {
                             if (_timer_band_text_vfoA == null)
                             {
                                 // start a time if one not already running
-                                _timer_band_text_vfoA = new System.Threading.Timer(_ =>
-                                {
-                                    lock (_timerLock_vfoA)
-                                    {
-                                        UpdateBandText(true);
-                                        _last_band_text_update_vfoA = DateTime.UtcNow;
-                                        System.Threading.Timer timer = _timer_band_text_vfoA;
-                                        _timer_band_text_vfoA = null;
-                                        timer.Dispose();
-                                    }
-                                }, null, BAND_TEXT_RATE_LIMIT, System.Threading.Timeout.Infinite);
+                                _timer_band_text_vfoA = new System.Threading.Timer(updateVfoABandText, null, BAND_TEXT_RATE_LIMIT, System.Threading.Timeout.Infinite);
                             }
                             else
                             {
@@ -23102,6 +23219,46 @@ namespace Thetis
                                 _timer_band_text_vfoA.Change(BAND_TEXT_RATE_LIMIT, System.Threading.Timeout.Infinite);
                             }
                         }
+                    }
+                }
+            }
+            private void updateVfoABandText(object _)
+            {
+                lock (_timerLock_vfoA)
+                {
+                    System.Threading.Timer toDispose = null;
+                    try
+                    {
+                        UpdateBandText(true);
+                        _last_band_text_update_vfoA = DateTime.UtcNow;
+
+                        toDispose = _timer_band_text_vfoA;
+                        _timer_band_text_vfoA = null;
+                    }
+                    catch { }
+                    finally
+                    {
+                        if (toDispose != null) toDispose.Dispose();
+                    }
+                }
+            }
+            private void updateVfoBBandText(object _)
+            {
+                lock (_timerLock_vfoB)
+                {
+                    System.Threading.Timer toDispose = null;
+                    try
+                    {
+                        UpdateBandText(false);
+                        _last_band_text_update_vfoB = DateTime.UtcNow;
+
+                        toDispose = _timer_band_text_vfoB;
+                        _timer_band_text_vfoB = null;
+                    }
+                    catch { }
+                    finally 
+                    {
+                        if (toDispose != null) toDispose.Dispose();
                     }
                 }
             }
@@ -23121,33 +23278,14 @@ namespace Thetis
                         if ((now - _last_band_text_update_vfoB).TotalMilliseconds > BAND_TEXT_RATE_LIMIT)
                         {
                             // always update, at least every BAND_TEXT_RATE_LIMIT ms
-                            UpdateBandText(false);
-                            _last_band_text_update_vfoB = now;
-
-                            // cancel timer if one running
-                            if (_timer_band_text_vfoB != null)
-                            {
-                                System.Threading.Timer timer = _timer_band_text_vfoB;
-                                _timer_band_text_vfoB = null;
-                                timer.Dispose();
-                            }
+                            updateVfoBBandText(null);
                         }
                         else
                         {
                             if (_timer_band_text_vfoB == null)
                             {
                                 // start a time if one not already running
-                                _timer_band_text_vfoB = new System.Threading.Timer(_ =>
-                                {
-                                    lock (_timerLock_vfoB)
-                                    {
-                                        UpdateBandText(false);
-                                        _last_band_text_update_vfoB = DateTime.UtcNow;
-                                        System.Threading.Timer timer = _timer_band_text_vfoB;
-                                        _timer_band_text_vfoB = null;
-                                        timer.Dispose();
-                                    }
-                                }, null, BAND_TEXT_RATE_LIMIT, System.Threading.Timeout.Infinite);
+                                _timer_band_text_vfoB = new System.Threading.Timer(updateVfoBBandText, null, BAND_TEXT_RATE_LIMIT, System.Threading.Timeout.Infinite);
                             }
                             else
                             {
@@ -23708,20 +23846,26 @@ namespace Thetis
             private bool _bAntiAlias;
             private Vector2 _pixelShift;
             private int _nVBlanks;
-            private PictureBox _displayTarget;
+            private Panel _displayTarget;
             private int _oldRedrawDelay;
             private object _DXlock = new object();
             //
-            private Dictionary<System.Drawing.Color, SharpDX.Direct2D1.Brush> _DXBrushes;
+            private Dictionary<int, SharpDX.Direct2D1.Brush> _DXBrushes;
             private Color4 _backColour_clear_colour;
             private System.Drawing.Color _backgroundColour;
             private Dictionary<string, SharpDX.Direct2D1.Bitmap> _images;
             private Dictionary<string, BitmapBrush> _bitmap_brushes;
             //
-            private Dictionary<string, SharpDX.DirectWrite.TextFormat> _textFormats; // fonts
+
+            private float _dpi_width;
+            private float _dpi_height;
+            private float _pixels_per_point_width;
+            private float _pixels_per_point_height;
+
+            private Dictionary<(string, float, FontStyle), SharpDX.DirectWrite.TextFormat> _textFormats; // fonts
             private SharpDX.DirectWrite.Factory _fontFactory;
-            private Dictionary<string, SizeF> _stringMeasure;
-            private Queue<string> _stringMeasureKeys;
+            private readonly Dictionary<(string, float, FontStyle, string), SizeF> _stringMeasure;
+            private readonly Queue<(string, float, FontStyle, string)> _stringMeasureKeys;
             //
             private SharpDX.Direct2D1.Bitmap _filter_display_waterfall_bmp;
             private SharpDX.Direct2D1.Bitmap _filter_display_waterfall_bmp_tx;
@@ -23759,7 +23903,7 @@ namespace Thetis
 
             private Guid _touch_guid;
 
-            public DXRenderer(string sId, int rx, PictureBox target, Console c, clsMeter meter)
+            public DXRenderer(string sId, int rx, Panel target, Console c, clsMeter meter)
             {
                 if (c == null || target == null) return;
 
@@ -23785,10 +23929,10 @@ namespace Thetis
                 _filter_display_waterfall_bmp = null;
                 _filter_display_waterfall_bmp_tx = null;
 
-                _DXBrushes = new Dictionary<System.Drawing.Color, SharpDX.Direct2D1.Brush>();
-                _textFormats = new Dictionary<string, SharpDX.DirectWrite.TextFormat>();
-                _stringMeasure = new Dictionary<string, SizeF>();
-                _stringMeasureKeys = new Queue<string>();
+                _DXBrushes = new Dictionary<int, SharpDX.Direct2D1.Brush>();
+                _textFormats = new Dictionary<(string, float, FontStyle), SharpDX.DirectWrite.TextFormat>();
+                _stringMeasure = new Dictionary<(string, float, FontStyle, string), SizeF>();
+                _stringMeasureKeys = new Queue<(string, float, FontStyle, string)>();
 
                 _dxDisplayThreadRunning = false;
                 _bAntiAlias = true;
@@ -24127,6 +24271,11 @@ namespace Thetis
                     };
                     _dash_style = new StrokeStyle(_factory, stroke_style_dash);
 
+                    _dpi_width = _renderTarget.DotsPerInch.Width;
+                    _dpi_height = _renderTarget.DotsPerInch.Width;
+                    _pixels_per_point_width = _dpi_width / 72f;
+                    _pixels_per_point_height = _dpi_height / 72f;
+
                     _bDXSetup = true;
 
                     setupAliasing();
@@ -24409,7 +24558,7 @@ namespace Thetis
                                 _renderTarget.Clear(_backColour_clear_colour);
 
                                 // overlay background colour
-                                SharpDX.RectangleF rect = new SharpDX.RectangleF(0, 0, targetWidth - 1f, targetHeight - 1f);
+                                SharpDX.RectangleF rect = new SharpDX.RectangleF(-0.5f, -0.5f, targetWidth + 1, targetHeight + 1);
                                 _renderTarget.FillRectangle(rect, getDXBrushForColour(_backgroundColour));
 
                                 nSleepTime = drawMeters(out height);
@@ -24559,7 +24708,7 @@ namespace Thetis
             {
                 if (!_bDXSetup || _DXBrushes == null) return;
 
-                foreach (KeyValuePair<System.Drawing.Color, SharpDX.Direct2D1.Brush> kvp in _DXBrushes)
+                foreach (KeyValuePair<int, SharpDX.Direct2D1.Brush> kvp in _DXBrushes)
                 {
                     SharpDX.Direct2D1.Brush b = kvp.Value;
                     Utilities.Dispose(ref b);
@@ -24573,7 +24722,7 @@ namespace Thetis
             {
                 if (!_bDXSetup || _textFormats == null) return;
 
-                foreach (KeyValuePair<string, SharpDX.DirectWrite.TextFormat> kvp in _textFormats)
+                foreach (KeyValuePair<(string, float, FontStyle), SharpDX.DirectWrite.TextFormat> kvp in _textFormats)
                 {
                     SharpDX.DirectWrite.TextFormat tf = kvp.Value;
                     Utilities.Dispose(ref tf);
@@ -24586,62 +24735,73 @@ namespace Thetis
                 if (_fontFactory != null) Utilities.Dispose(ref _fontFactory);
                 _fontFactory = null;
             }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private SharpDX.Direct2D1.Brush getDXBrushForColour(System.Drawing.Color c, int replaceAlpha = -1)
             {
                 if (!_bDXSetup) return null;
-                if (c == System.Drawing.Color.Transparent) replaceAlpha = 0;
 
-                System.Drawing.Color newC;
-                if (replaceAlpha >= 0 && replaceAlpha <= 255)
-                    newC = System.Drawing.Color.FromArgb(replaceAlpha, c.R, c.G, c.B); // override the alpha
-                else
-                    newC = c;
+                int a = c.A;
+                if (c == System.Drawing.Color.Transparent)
+                    a = 0;
+                else if (replaceAlpha >= 0 && replaceAlpha <= 255)
+                    a = replaceAlpha;
 
-                if (_DXBrushes.ContainsKey(newC)) return _DXBrushes[newC];
+                int key = (a << 24) | (c.R << 16) | (c.G << 8) | c.B;
 
-                SolidBrush sb = new SolidBrush(newC);
-                SharpDX.Direct2D1.Brush b = convertBrush(sb);
-                sb.Dispose();
+                SharpDX.Direct2D1.Brush existingBrush;
+                if (_DXBrushes.TryGetValue(key, out existingBrush))
+                    return existingBrush;
 
-                _DXBrushes.Add(newC, b);
+                float fa = a / 255f;
+                float fr = c.R / 255f;
+                float fg = c.G / 255f;
+                float fb = c.B / 255f;
 
-                return b;
+                SharpDX.Mathematics.Interop.RawColor4 color4 = new SharpDX.Mathematics.Interop.RawColor4(fr, fg, fb, fa);
+                SharpDX.Direct2D1.SolidColorBrush newBrush = new SharpDX.Direct2D1.SolidColorBrush(_renderTarget, color4);
+
+                _DXBrushes.Add(key, newBrush);
+                return newBrush;
             }
-            private SharpDX.Direct2D1.SolidColorBrush convertBrush(SolidBrush b)
-            {
-                return new SharpDX.Direct2D1.SolidColorBrush(_renderTarget, convertColour(b.Color));
-            }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private SharpDX.Color4 convertColour(System.Drawing.Color c)
             {
                 return new SharpDX.Color4(c.R / 255f, c.G / 255f, c.B / 255f, c.A / 255f);
             }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private SharpDX.DirectWrite.TextFormat getDXTextFormatForFont(string sFontFamily, float emSize, FontStyle style, bool bAlignRight = false)
             {
                 if (!_bDXSetup) return null;
 
-                string sKey = sFontFamily + emSize.ToString("0.0") + style.ToString();
+                float roundedSize = (float)Math.Round(emSize, 1);
 
-                if (_textFormats.ContainsKey(sKey)) return _textFormats[sKey];
-
-                try
+                SharpDX.DirectWrite.TextFormat tf;
+                (string, float, FontStyle) key = (sFontFamily, roundedSize, style);
+                
+                if (!_textFormats.TryGetValue(key, out tf))
                 {
-                    SharpDX.DirectWrite.FontWeight fontWeight = SharpDX.DirectWrite.FontWeight.Regular;
-                    SharpDX.DirectWrite.FontStyle fontStyle = SharpDX.DirectWrite.FontStyle.Normal;
-                    if (((int)style & (int)FontStyle.Bold) == (int)FontStyle.Bold) fontWeight = SharpDX.DirectWrite.FontWeight.Bold;
-                    if (((int)style & (int)FontStyle.Italic) == (int)FontStyle.Italic) fontStyle = SharpDX.DirectWrite.FontStyle.Italic;
+                    SharpDX.DirectWrite.FontWeight fontWeight;
+                    if ((style & FontStyle.Bold) != 0)
+                        fontWeight = SharpDX.DirectWrite.FontWeight.Bold;
+                    else
+                        fontWeight = SharpDX.DirectWrite.FontWeight.Regular;
 
-                    SharpDX.DirectWrite.TextFormat tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyle, (emSize / 72) * _renderTarget.DotsPerInch.Width);
+                    SharpDX.DirectWrite.FontStyle fontStyleValue;
+                    if ((style & FontStyle.Italic) != 0)
+                        fontStyleValue = SharpDX.DirectWrite.FontStyle.Italic;
+                    else
+                        fontStyleValue = SharpDX.DirectWrite.FontStyle.Normal;
+
+                    tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyleValue, roundedSize * _pixels_per_point_width);
                     tf.WordWrapping = SharpDX.DirectWrite.WordWrapping.NoWrap;
-                    if(bAlignRight)
-                        tf.TextAlignment = SharpDX.DirectWrite.TextAlignment.Trailing;
-
-                    _textFormats.Add(sKey, tf);
-
-                    return tf;                    
+                    _textFormats.Add(key, tf);
                 }
-                catch { }
 
-                return null;
+                tf.TextAlignment = bAlignRight
+                    ? SharpDX.DirectWrite.TextAlignment.Trailing
+                    : SharpDX.DirectWrite.TextAlignment.Leading;
+
+                return tf;
             }
             private bool resizeDX()
             {
@@ -24701,7 +24861,7 @@ namespace Thetis
             }
             private void OnMouseEnter(object sender, System.EventArgs e)
             {
-                PictureBox pb = sender as PictureBox;
+                Panel pb = sender as Panel;
                 if (pb == null) return;
                 string sId = pb.Tag.ToString();
                 if (!_meters.ContainsKey(sId)) return;
@@ -24721,7 +24881,7 @@ namespace Thetis
             }
             private void OnMouseLeave(object sender, System.EventArgs e)
             {
-                PictureBox pb = sender as PictureBox;
+                Panel pb = sender as Panel;
                 if (pb == null) return;
                 string sId = pb.Tag.ToString();
                 if (!_meters.ContainsKey(sId)) return;
@@ -24742,7 +24902,7 @@ namespace Thetis
             }
             private void OnMouseCaptureChanged(object sender, System.EventArgs e)
             {
-                PictureBox pb = sender as PictureBox;
+                Panel pb = sender as Panel;
                 if (pb == null) return;
                 string sId = pb.Tag.ToString();
                 if (!_meters.ContainsKey(sId)) return;
@@ -24765,7 +24925,7 @@ namespace Thetis
             {
                 lock (_metersLock)
                 {
-                    PictureBox pb = sender as PictureBox;
+                    Panel pb = sender as Panel;
                     if (pb == null) return;
                     string sId = pb.Tag.ToString();
                     if (!_meters.ContainsKey(sId)) return;
@@ -24815,7 +24975,7 @@ namespace Thetis
             {
                 lock (_metersLock)
                 {
-                    PictureBox pb = sender as PictureBox;
+                    Panel pb = sender as Panel;
                     if (pb == null) return;
                     string sId = pb.Tag.ToString();
                     if (!_meters.ContainsKey(sId)) return;
@@ -24865,7 +25025,7 @@ namespace Thetis
             {
                 lock (_metersLock)
                 {
-                    PictureBox pb = sender as PictureBox;
+                    Panel pb = sender as Panel;
                     if (pb == null) return;
                     string sId = pb.Tag.ToString();
                     if (!_meters.ContainsKey(sId)) return;
@@ -24919,7 +25079,7 @@ namespace Thetis
             {
                 lock (_metersLock)
                 {
-                    PictureBox pb = sender as PictureBox;
+                    Panel pb = sender as Panel;
                     if (pb == null) return;
                     string sId = pb.Tag.ToString();
                     if (!_meters.ContainsKey(sId)) return;
@@ -24973,7 +25133,7 @@ namespace Thetis
             {
                 lock (_metersLock)
                 {
-                    PictureBox pb = sender as PictureBox;
+                    Panel pb = sender as Panel;
                     if (pb == null) return;
                     string sId = pb.Tag.ToString();
                     if (!_meters.ContainsKey(sId)) return;
@@ -25195,67 +25355,120 @@ namespace Thetis
                 }
                 return nRedrawDelay;
             }
-            private SizeF measureString(string sText, string sFontFamily, FontStyle style, float emSize, bool ignore_caching = false)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private System.Drawing.SizeF measureString(string sText, string sFontFamily, FontStyle style, float emSize, bool ignore_caching = false)
             {
-                if (!_bDXSetup) return SizeF.Empty;                
-                if (string.IsNullOrEmpty(sText)) return SizeF.Empty;
-                emSize = (float)Math.Round(emSize, 2);
-                if (emSize == 0) return SizeF.Empty; // zero size text is zero measurement
+                if (!_bDXSetup || sText == null || sText.Length == 0) return System.Drawing.SizeF.Empty;
+                float roundedSize = (float)Math.Round(emSize, 2);
+                if (roundedSize == 0) return System.Drawing.SizeF.Empty;
 
-                string sKey = sFontFamily + "_" + style + "_" + sText + "_" + emSize.ToString("0.00");
+                (string, float, FontStyle, string) key = (sFontFamily, roundedSize, style, sText);
+                System.Drawing.SizeF sizeValue;
 
-                if (!ignore_caching && _stringMeasure.ContainsKey(sKey)) return _stringMeasure[sKey];
+                if (!ignore_caching && _stringMeasure.TryGetValue(key, out sizeValue)) return sizeValue;
 
-                SharpDX.DirectWrite.FontWeight fontWeight = SharpDX.DirectWrite.FontWeight.Regular;
-                SharpDX.DirectWrite.FontStyle fontStyle = SharpDX.DirectWrite.FontStyle.Normal;
-                if (((int)style & (int)FontStyle.Bold) == (int)FontStyle.Bold) fontWeight = SharpDX.DirectWrite.FontWeight.Bold;
-                if (((int)style & (int)FontStyle.Italic) == (int)FontStyle.Italic) fontStyle = SharpDX.DirectWrite.FontStyle.Italic;
+                SharpDX.DirectWrite.FontWeight fontWeight = (style & FontStyle.Bold) != 0
+                    ? SharpDX.DirectWrite.FontWeight.Bold
+                    : SharpDX.DirectWrite.FontWeight.Regular;
+                SharpDX.DirectWrite.FontStyle fontStyle = (style & FontStyle.Italic) != 0
+                    ? SharpDX.DirectWrite.FontStyle.Italic
+                    : SharpDX.DirectWrite.FontStyle.Normal;
 
-                // calculate how big the string would be @ emSize pt
-                SharpDX.DirectWrite.TextFormat tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyle, emSize);
+                SharpDX.DirectWrite.TextFormat tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyle, roundedSize);
                 tf.WordWrapping = SharpDX.DirectWrite.WordWrapping.NoWrap;
 
                 SharpDX.DirectWrite.TextLayout layout = new SharpDX.DirectWrite.TextLayout(_fontFactory, sText, tf, float.MaxValue, float.MaxValue);
                 float width = layout.Metrics.Width;
                 float height = layout.Metrics.Height;
                 Utilities.Dispose(ref layout);
-                layout = null;
                 Utilities.Dispose(ref tf);
-                tf = null;
 
-                SizeF size = new SizeF(width, height);
+                sizeValue = new System.Drawing.SizeF(
+                    width * _pixels_per_point_width,
+                    height * _pixels_per_point_height);
 
-                //this is a 96 to 72 scaling factor for text to screen dpi
-                size.Width *= _renderTarget.DotsPerInch.Width / 72f;
-                size.Height *= _renderTarget.DotsPerInch.Height / 72f;
-
-                bool bAdd = true;
                 if (ignore_caching)
                 {
-                    // try to update existing
-                    if(_stringMeasure.ContainsKey(sKey))
+                    if (_stringMeasure.ContainsKey(key)) _stringMeasure[key] = sizeValue;
+                    else
                     {
-                        SizeF f = _stringMeasure[sKey];
-                        f.Width = size.Width;
-                        f.Height = size.Height;
-                        _stringMeasure[sKey] = f;
-                        bAdd = false;
+                        _stringMeasure.Add(key, sizeValue);
+                        _stringMeasureKeys.Enqueue(key);
                     }
                 }
-                if (bAdd)
+                else
                 {
-                    // keys are also stored in a queue, this ensures order, oldest get removed first
-                    _stringMeasure.Add(sKey, size);
-                    _stringMeasureKeys.Enqueue(sKey);
-                    if (_stringMeasure.Count > 2000)
-                    {
-                        string oldKey = _stringMeasureKeys.Dequeue();
-                        _stringMeasure.Remove(oldKey);
-                    }
+                    _stringMeasure.Add(key, sizeValue);
+                    _stringMeasureKeys.Enqueue(key);
                 }
-
-                return size;
+                if (_stringMeasure.Count > 2000)
+                {
+                    (string, float, FontStyle, string) oldKey = _stringMeasureKeys.Dequeue();
+                    _stringMeasure.Remove(oldKey);
+                }
+                return sizeValue;
             }
+            //private SizeF measureString(string sText, string sFontFamily, FontStyle style, float emSize, bool ignore_caching = false)
+            //{
+            //    if (!_bDXSetup) return SizeF.Empty;                
+            //    if (string.IsNullOrEmpty(sText)) return SizeF.Empty;
+            //    emSize = (float)Math.Round(emSize, 2);
+            //    if (emSize == 0) return SizeF.Empty; // zero size text is zero measurement
+
+            //    string sKey = sFontFamily + "_" + style + "_" + sText + "_" + emSize.ToString("0.00");
+
+            //    if (!ignore_caching && _stringMeasure.ContainsKey(sKey)) return _stringMeasure[sKey];
+
+            //    SharpDX.DirectWrite.FontWeight fontWeight = SharpDX.DirectWrite.FontWeight.Regular;
+            //    SharpDX.DirectWrite.FontStyle fontStyle = SharpDX.DirectWrite.FontStyle.Normal;
+            //    if (((int)style & (int)FontStyle.Bold) == (int)FontStyle.Bold) fontWeight = SharpDX.DirectWrite.FontWeight.Bold;
+            //    if (((int)style & (int)FontStyle.Italic) == (int)FontStyle.Italic) fontStyle = SharpDX.DirectWrite.FontStyle.Italic;
+
+            //    // calculate how big the string would be @ emSize pt
+            //    SharpDX.DirectWrite.TextFormat tf = new SharpDX.DirectWrite.TextFormat(_fontFactory, sFontFamily, fontWeight, fontStyle, emSize);
+            //    tf.WordWrapping = SharpDX.DirectWrite.WordWrapping.NoWrap;
+
+            //    SharpDX.DirectWrite.TextLayout layout = new SharpDX.DirectWrite.TextLayout(_fontFactory, sText, tf, float.MaxValue, float.MaxValue);
+            //    float width = layout.Metrics.Width;
+            //    float height = layout.Metrics.Height;
+            //    Utilities.Dispose(ref layout);
+            //    layout = null;
+            //    Utilities.Dispose(ref tf);
+            //    tf = null;
+
+            //    SizeF size = new SizeF(width, height);
+
+            //    //this is a 96 to 72 scaling factor for text to screen dpi
+            //    size.Width *= _dpiScale_width / 72f;
+            //    size.Height *= _dpiScale_height / 72f;
+
+            //    bool bAdd = true;
+            //    if (ignore_caching)
+            //    {
+            //        // try to update existing
+            //        if(_stringMeasure.ContainsKey(sKey))
+            //        {
+            //            SizeF f = _stringMeasure[sKey];
+            //            f.Width = size.Width;
+            //            f.Height = size.Height;
+            //            _stringMeasure[sKey] = f;
+            //            bAdd = false;
+            //        }
+            //    }
+            //    if (bAdd)
+            //    {
+            //        // keys are also stored in a queue, this ensures order, oldest get removed first
+            //        _stringMeasure.Add(sKey, size);
+            //        _stringMeasureKeys.Enqueue(sKey);
+            //        if (_stringMeasure.Count > 2000)
+            //        {
+            //            string oldKey = _stringMeasureKeys.Dequeue();
+            //            _stringMeasure.Remove(oldKey);
+            //        }
+            //    }
+
+            //    return size;
+            //}
             // [2.10.1.0] MW0LGE
             private int fade(clsMeterItem mi, clsMeter m)
             {
@@ -25868,7 +26081,7 @@ namespace Thetis
                     float fontSize = 8f;
                     SizeF adjustedFontSize = measureString("0", scale.FontFamily, scale.FntStyle, fontSize);
                     float ratio = w / adjustedFontSize.Width;
-                    float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
+                    float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _dpi_width), 1);
 
                     if (scale.ShowType)
                     {
@@ -25881,7 +26094,7 @@ namespace Thetis
                     fontSize = 10f;
                     adjustedFontSize = measureString("0", scale.FontFamily, scale.FntStyle, fontSize);
                     ratio = w / adjustedFontSize.Width;
-                    newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
+                    newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _dpi_width), 1);
 
                     float fBottomY = y + h;
                     float xCentreLine = x + (w * 0.5f);                    
@@ -28295,8 +28508,8 @@ namespace Thetis
                 plotText(" FIT " + "\u200B", zoom_rect.X, text_y, rect.Width, font_size_scaled, extent_text_colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, 0, false, 0, 0, true, filter.AutoZoom ? zoom_on_colour : zoom_highlight);
 
                 //filter edge values
-                SizeF lowSize = measureString(local_low.ToString(), "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, false);
-                SizeF highSize = measureString((local_high > 0 ? "+" : "") + local_high.ToString(), "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled, false);
+                SizeF lowSize = measureString(local_low.ToString(), "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled);
+                SizeF highSize = measureString((local_high > 0 ? "+" : "") + local_high.ToString(), "Trebuchet MS", FontStyle.Regular, fontSizeEmScaled);
 
                 int collide_count = 0;
                 if ((filter_l + (lowSize.Width / 2f) >= filter_h - (highSize.Width / 2f)) && (filter_l - (lowSize.Width / 2f) <= filter_h + (highSize.Width / 2f))) collide_count++;
@@ -28503,7 +28716,7 @@ namespace Thetis
                             {
                                 //right numbers
                                 float val = min1 + (i * number_step1);
-                                plotText(val.ToString("f1"), x + w - spacer + quarter_spacer, t_y, rect.Width, 11f, his.Axis1Colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, spacer);
+                                plotText(val.ToString("f1"), x + w - spacer + quarter_spacer, t_y, rect.Width, 18f, his.Axis1Colour, 255, "Trebuchet MS", FontStyle.Regular, false, false, spacer - quarter_spacer, false, 0, 0, false, null, true);
                             }
 
                             //ticks/grid line
@@ -28555,7 +28768,7 @@ namespace Thetis
 
                             //left numbers
                             float val = min0 + (i * number_step0);
-                            plotText(val.ToString("f1"), x + spacer - quarter_spacer, t_y, rect.Width, 11f, his.Axis0Colour, 255, "Trebuchet MS", FontStyle.Regular, true, false, spacer);
+                            plotText(val.ToString("f1"), x + spacer - quarter_spacer, t_y, rect.Width, 18f, his.Axis0Colour, 255, "Trebuchet MS", FontStyle.Regular, true, false, spacer - quarter_spacer, false, 0, 0, false, null, true);
 
                             //ticks/grid line
                             if (i > 0)
@@ -29474,6 +29687,9 @@ namespace Thetis
                 float w = rect.Width * (mi.Size.Width / m.XRatio);
                 float h = rect.Height * (mi.Size.Height / m.YRatio);
 
+                //SharpDX.RectangleF mirect = new SharpDX.RectangleF(x, y, w, h);
+                //_renderTarget.DrawRectangle(mirect, getDXBrushForColour(System.Drawing.Color.Red));
+
                 string sText;
                 switch (txt.Text.ToLower())
                 {
@@ -29488,24 +29704,10 @@ namespace Thetis
                         break;
                 }
 
-                float fontSize;
-                SizeF size;
-                if (txt.FixedSize)
-                {
-                    fontSize = txt.FontSize;
-                    size = measureString("0", txt.FontFamily, txt.Style, fontSize);
-                }
-                else
-                {
-                    fontSize = 72f;
-                    size = measureString(sText, txt.FontFamily, txt.Style, fontSize);
-                }
+                float xx = txt.Centre ? x + (w / 2) : x;
+                float yy = txt.Centre ? y + (h / 2) : y;
 
-                float ratio = w / size.Width;
-                float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
-
-                SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y, w, h);
-                _renderTarget.DrawText(sText, getDXTextFormatForFont(txt.FontFamily, newSize, txt.Style), txtrect, getDXBrushForColour(txt.Colour, 255));
+                plotText(sText, xx, yy, rect.Width, txt.FontSize, txt.Colour, 255, txt.FontFamily, txt.Style, false, txt.Centre, w, false, 0, 0, false, null, true);
             }
             private void renderHBarMarkersOnly(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
@@ -29926,7 +30128,7 @@ namespace Thetis
             //        float fontSize = 38f;//cbi.FontSize; //38f;
             //        SizeF adjustedFontSize = measureString("0", cbi.FontFamily, cbi.FntStyle, fontSize);
             //        float ratio = h / adjustedFontSize.Height;
-            //        float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _renderTarget.DotsPerInch.Width), 1);
+            //        float newSize = (float)Math.Round((fontSize * ratio) * (fontSize / _dpiScale_width), 1);
 
             //        SharpDX.RectangleF txtrect = new SharpDX.RectangleF(x, y + (h * 0.2f), w, h);
             //        _renderTarget.DrawText(sText, getDXTextFormatForFont(cbi.FontFamily, newSize, cbi.FntStyle), txtrect, getDXBrushForColour(cbi.FontColour));
@@ -29974,87 +30176,130 @@ namespace Thetis
                 kHz = vfo.Substring(index + 1, 3);
                 hz = vfo.Substring(index + 4, 3);
             }
-            private (float, float) plotText(string sText, float x, float y, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fit_size_width = 0, bool ignore_cache = false, float fit_size_height = 0, float rotate_deg = 0, bool fill_background = false, object back_colour = null)
+            private (float, float) plotText(string sText, float x, float y, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fitSizeWidth = 0, bool ignoreCache = false, float fitSizeHeight = 0, float rotateDeg = 0, bool fillBackground = false, object backColour = null, bool only_shrink = false)
             {
-                if (string.IsNullOrEmpty(sText)) return (0, 0);
+                if (string.IsNullOrEmpty(sText)) return (0f, 0f);
 
-                float fontSizeEmScaled = (fTextSize / 16f) * (containerWidth / 52f);
-                SizeF szTextSize;
+                float fontSizeEm = (fTextSize / 16f) * (containerWidth / 52f);
+                SizeF sz = measureString(sText, sFontFamily, style, fontSizeEm, ignoreCache);
 
-                float ratio_w = 1f;
-                float ratio_h = 1f;
-                float ratio;
-                szTextSize = measureString(sText, sFontFamily, style, fontSizeEmScaled, ignore_cache);
-                if (fit_size_width > 0)
-                {
-                    // need to adjust the size by some ratio?
-                    ratio_w = fit_size_width / szTextSize.Width;
-                }
-                if (fit_size_height > 0)
-                {
-                    // need to adjust the size by some ratio?
-                    ratio_h = fit_size_height / szTextSize.Height;
-                }
+                float ratio = 1f;
+                if (fitSizeWidth > 0f && fitSizeHeight > 0f)
+                    ratio = (float)Math.Min(fitSizeWidth / sz.Width, fitSizeHeight / sz.Height);
+                else if (fitSizeWidth > 0f)
+                    ratio = fitSizeWidth / sz.Width;
+                else if (fitSizeHeight > 0f)
+                    ratio = fitSizeHeight / sz.Height;
 
-                if ((Math.Abs(1f - ratio_w)) > (Math.Abs(1f - ratio_h)))
+                if ((only_shrink && ratio < 1f) || (!only_shrink && ratio != 1f))
                 {
-                    if(szTextSize.Height * ratio_w <= fit_size_height)
-                        ratio = ratio_w;
-                    else
-                        ratio = ratio_h;
-                }
-                else
-                {
-                    if (szTextSize.Width * ratio_h <= fit_size_width)
-                        ratio = ratio_h;
-                    else
-                        ratio = ratio_w;
-                }
-
-                if (ratio != 1f) {
                     fTextSize *= ratio;
-                    fontSizeEmScaled = (fTextSize / 16f) * (containerWidth / 52f);
-                    szTextSize = measureString(sText, sFontFamily, style, fontSizeEmScaled, ignore_cache);
+                    fontSizeEm = (fTextSize / 16f) * (containerWidth / 52f);
+                    sz = measureString(sText, sFontFamily, style, fontSizeEm, ignoreCache);
                 }
 
-
-                SharpDX.RectangleF txtrect;
-                if (!bAlignRight)
+                float left = bAlignRight ? x - sz.Width : bAlignCentre ? x - sz.Width * 0.5f : x;
+                float top = bAlignCentre ? y - sz.Height * 0.5f : y;
+                SharpDX.RectangleF rect = new SharpDX.RectangleF(left, top, sz.Width, sz.Height);
+                Matrix3x2 oldTransform = _renderTarget.Transform;
+                
+                if (rotateDeg != 0f)
                 {
-                    if (bAlignCentre)
-                    {
-                        txtrect = new SharpDX.RectangleF(x - szTextSize.Width / 2f, y - szTextSize.Height / 2f, szTextSize.Width, szTextSize.Height);
-                    }
-                    else
-                    {
-                        txtrect = new SharpDX.RectangleF(x, y, szTextSize.Width, szTextSize.Height);
-                    }
-                }
-                else
-                {
-                    // use x is now right edge
-                    txtrect = new SharpDX.RectangleF(x - szTextSize.Width, y, szTextSize.Width, szTextSize.Height);
+                    const float DEG2RAD = SharpDX.MathUtil.Pi / 180f;
+                    float rad = rotateDeg * DEG2RAD;
+                    Vector2 center = new Vector2(rect.Left + rect.Width * 0.5f, rect.Top + rect.Height * 0.5f);
+                    _renderTarget.Transform = oldTransform * Matrix3x2.Rotation(rad, center);
                 }
 
-                Matrix3x2 originalTransform = Matrix3x2.Identity;
-                if (rotate_deg != 0) 
-                {
-                    Vector2 textCenter = new Vector2(txtrect.Width / 2, txtrect.Height / 2);
-                    originalTransform = _renderTarget.Transform;
-                    _renderTarget.Transform = originalTransform * Matrix3x2.Rotation(MathUtil.DegreesToRadians(rotate_deg), new Vector2(txtrect.Left, txtrect.Top) + textCenter);
-                }
-                if (fill_background)
-                    _renderTarget.FillRectangle(txtrect, getDXBrushForColour((System.Drawing.Color)back_colour, nFade));
+                if (fillBackground) _renderTarget.FillRectangle(rect, getDXBrushForColour((System.Drawing.Color)backColour, nFade));
 
-                _renderTarget.DrawText(sText, getDXTextFormatForFont(sFontFamily, fontSizeEmScaled, style), txtrect, getDXBrushForColour(c, nFade));
-                if(rotate_deg != 0)
-                {
-                    _renderTarget.Transform = originalTransform;
-                }
-                //_renderTarget.DrawRectangle(txtrect, getDXBrushForColour(System.Drawing.Color.Red));
+                _renderTarget.DrawText(sText, getDXTextFormatForFont(sFontFamily, fontSizeEm, style), rect, getDXBrushForColour(c, nFade));
 
-                return (szTextSize.Width, szTextSize.Height);
+                if (rotateDeg != 0f) _renderTarget.Transform = oldTransform;
+
+                return (sz.Width, sz.Height);
             }
+            //private (float, float) plotText(string sText, float x, float y, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fit_size_width = 0, bool ignore_cache = false, float fit_size_height = 0, float rotate_deg = 0, bool fill_background = false, object back_colour = null)
+            //{
+            //    if (string.IsNullOrEmpty(sText)) return (0, 0);
+
+            //    float fontSizeEmScaled = (fTextSize / 16f) * (containerWidth / 52f);
+            //    SizeF szTextSize;
+
+            //    float ratio_w = 1f;
+            //    float ratio_h = 1f;
+            //    float ratio;
+            //    szTextSize = measureString(sText, sFontFamily, style, fontSizeEmScaled, ignore_cache);
+            //    if (fit_size_width > 0)
+            //    {
+            //        // need to adjust the size by some ratio?
+            //        ratio_w = fit_size_width / szTextSize.Width;
+            //    }
+            //    if (fit_size_height > 0)
+            //    {
+            //        // need to adjust the size by some ratio?
+            //        ratio_h = fit_size_height / szTextSize.Height;
+            //    }
+
+            //    if ((Math.Abs(1f - ratio_w)) > (Math.Abs(1f - ratio_h)))
+            //    {
+            //        if(szTextSize.Height * ratio_w <= fit_size_height)
+            //            ratio = ratio_w;
+            //        else
+            //            ratio = ratio_h;
+            //    }
+            //    else
+            //    {
+            //        if (szTextSize.Width * ratio_h <= fit_size_width)
+            //            ratio = ratio_h;
+            //        else
+            //            ratio = ratio_w;
+            //    }
+
+            //    if (ratio != 1f) {
+            //        fTextSize *= ratio;
+            //        fontSizeEmScaled = (fTextSize / 16f) * (containerWidth / 52f);
+            //        szTextSize = measureString(sText, sFontFamily, style, fontSizeEmScaled, ignore_cache);
+            //    }
+
+
+            //    SharpDX.RectangleF txtrect;
+            //    if (!bAlignRight)
+            //    {
+            //        if (bAlignCentre)
+            //        {
+            //            txtrect = new SharpDX.RectangleF(x - szTextSize.Width / 2f, y - szTextSize.Height / 2f, szTextSize.Width, szTextSize.Height);
+            //        }
+            //        else
+            //        {
+            //            txtrect = new SharpDX.RectangleF(x, y, szTextSize.Width, szTextSize.Height);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        // use x is now right edge
+            //        txtrect = new SharpDX.RectangleF(x - szTextSize.Width, y, szTextSize.Width, szTextSize.Height);
+            //    }
+
+            //    Matrix3x2 originalTransform = Matrix3x2.Identity;
+            //    if (rotate_deg != 0) 
+            //    {
+            //        Vector2 textCenter = new Vector2(txtrect.Width / 2, txtrect.Height / 2);
+            //        originalTransform = _renderTarget.Transform;
+            //        _renderTarget.Transform = originalTransform * Matrix3x2.Rotation(MathUtil.DegreesToRadians(rotate_deg), new Vector2(txtrect.Left, txtrect.Top) + textCenter);
+            //    }
+            //    if (fill_background)
+            //        _renderTarget.FillRectangle(txtrect, getDXBrushForColour((System.Drawing.Color)back_colour, nFade));
+
+            //    _renderTarget.DrawText(sText, getDXTextFormatForFont(sFontFamily, fontSizeEmScaled, style), txtrect, getDXBrushForColour(c, nFade));
+            //    if(rotate_deg != 0)
+            //    {
+            //        _renderTarget.Transform = originalTransform;
+            //    }
+            //    //_renderTarget.DrawRectangle(txtrect, getDXBrushForColour(System.Drawing.Color.Red));
+
+            //    return (szTextSize.Width, szTextSize.Height);
+            //}
             private void highlightBox(float x, float y, float w, float h, SharpDX.RectangleF rect, clsVfoDisplay vfo, int bx, int by, float gap, clsMeter m, float shift)
             {
                 SharpDX.RectangleF rct;
@@ -35001,13 +35246,14 @@ namespace Thetis
             private readonly object _new_data_lock = new object();
 
             //set pan rate limit, 1/8 of frame rate
-            private readonly Stopwatch _pan_stopwatch = Stopwatch.StartNew();
+            private readonly Stopwatch _pan_stopwatch;
             private System.Threading.Timer _pan_final_timer;
-            private bool _pan_pending;
             private readonly object _pan_lock = new object();
 
             public clsMiniSpec(int rx, int id, bool sub_receiver, Console console)
             {
+                _pan_stopwatch = Stopwatch.StartNew();
+
                 _enabled = UsingAFilter(id, sub_receiver);
 
                 _hwsample_rate = 0; // updated by setupSpecDetails()
@@ -35158,7 +35404,10 @@ namespace Thetis
                         _max_filter_width = value;
 
                         zoom();
-                        setPan();
+                        lock (_pan_lock)
+                        {
+                            setPan();
+                        }
                     }
                 }
             }
@@ -35336,7 +35585,10 @@ namespace Thetis
             {
                 setupSpecDetails();
                 zoom();
-                setPan();
+                lock (_pan_lock)
+                {
+                    setPan();
+                }
             }
             public int HWSampleRate
             {
@@ -35455,33 +35707,40 @@ namespace Thetis
                 {
                     if (_pan_stopwatch.ElapsedMilliseconds >= PAN_RATE_LIMIT_MS)
                     {
-                        _pan_stopwatch.Restart();
-                        setPan();
-                        _pan_pending = false;
-                        _pan_final_timer?.Dispose();
-                        _pan_final_timer = null;
+                        updatePan(null);
                     }
                     else
                     {
-                        _pan_pending = true;
-
                         if (_pan_final_timer == null)
                         {
                             long delay = PAN_RATE_LIMIT_MS - _pan_stopwatch.ElapsedMilliseconds;
-                            _pan_final_timer = new System.Threading.Timer(_ => {
-                                lock (_pan_lock)
-                                {
-                                    if (_pan_pending)
-                                    {
-                                        _pan_stopwatch.Restart();
-                                        setPan();
-                                        _pan_pending = false;
-                                        _pan_final_timer.Dispose();
-                                        _pan_final_timer = null;
-                                    }
-                                }
-                            }, null, delay, Timeout.Infinite);
+                            if (delay <= 0)
+                                updatePan(null);
+                            else
+                                _pan_final_timer = new System.Threading.Timer(updatePan, null, delay, Timeout.Infinite);
                         }
+                    }
+                }
+            }
+            private void updatePan(object _)
+            {
+                lock (_pan_lock)
+                {
+                    System.Threading.Timer toDispose = null;
+                    try
+                    {
+                        _pan_stopwatch.Restart();
+                        setPan();
+
+                        toDispose = _pan_final_timer;
+                        _pan_final_timer = null;
+                    }
+                    catch
+                    {
+                    }
+                    finally
+                    {
+                        if (toDispose != null) toDispose.Dispose();
                     }
                 }
             }

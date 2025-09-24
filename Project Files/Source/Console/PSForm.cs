@@ -146,40 +146,44 @@ namespace Thetis
         private bool _bPSRunning = false;
         private void PSLoop()
         {
+            _bPSRunning = true;
             int nCount = 0;
 
-            _bPSRunning = true;
             while (_bPSRunning)
             {
+                int sleepDuration;
+
                 if (console.PowerOn)
                 {
                     timer1code();
-                    if (nCount == 0) timer2code();
+                    if (nCount == 0)
+                        timer2code();
 
                     nCount++;
-                    if (m_bQuckAttenuate) 
+                    if (m_bQuckAttenuate || nCount == 10)
                         nCount = 0;
-                    else if(nCount == 10) nCount = 0;
 
-                    Thread.Sleep(10);
+                    sleepDuration = 10;
                 }
                 else
                 {
                     nCount = 0;
-                    Thread.Sleep(100);
+                    sleepDuration = 100;
                 }
+
+                Thread.Sleep(sleepDuration);
             }
         }
 
-        private bool _dismissAmpv = false;
-        public bool DismissAmpv
-        {
-            get { return _dismissAmpv; }
-            set
-            {
-                _dismissAmpv = value;
-            }
-        }
+        //private volatile bool _dismissAmpv = false;
+        //public bool DismissAmpv
+        //{
+        //    get { return _dismissAmpv; }
+        //    set
+        //    {
+        //        _dismissAmpv = value;
+        //    }
+        //}
 
         private static bool _psenabled = false;
         public bool PSEnabled
@@ -370,28 +374,42 @@ namespace Thetis
             e.Cancel = true;
             Common.SaveForm(this, "PureSignal");
         }
+
+        private readonly ManualResetEventSlim _ampViewDone = new ManualResetEventSlim(false);
         public void CloseAmpView()
         {
             if (ampv != null)
             {
-                _dismissAmpv = true;
-                ampvThread.Join();
-                ampv.Close();
+                _ampViewDone.Reset();
+                ampv.Invoke((Action)(() => ampv.CloseDown() ));
+
+                _ampViewDone.Wait();
+
+                if (ampvThread != null && ampvThread.IsAlive)
+                {
+                    if (!ampvThread.Join(1000))
+                    {
+                        ampvThread.Abort();
+                    }
+                }
+
+                ampvThread = null;
                 ampv = null;
             }
         }
         public void RunAmpv()
         {
             ampv = new AmpView(this);
-            ampv.Opacity = 0;
-            Application.Run(ampv);            
+            ampv.Opacity = 0f;
+            Application.Run(ampv);
+            _ampViewDone.Set();
         }
 
         private void btnPSAmpView_Click(object sender, EventArgs e)
         {
             if (ampv == null || (ampv != null && ampv.IsDisposed))
             {
-                _dismissAmpv = false;
+                //_dismissAmpv = false;
                 ampvThread = new Thread(RunAmpv);
                 ampvThread.SetApartmentState(ApartmentState.STA);
                 ampvThread.Name = "Ampv Thread";

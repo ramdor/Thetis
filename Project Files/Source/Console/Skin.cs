@@ -1856,19 +1856,31 @@ namespace Thetis
         {
             Image objImg;
 
-            if (File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext))
-            {
-                objImg = loadImage(path + "\\" + c.TopLevelControl.Name + "\\" + c.Name + pic_file_ext);
-            }
-            else if (File.Exists(path + "\\" + "Console" + "\\" + c.Name + pic_file_ext))
-            {
-                objImg = loadImage(path + "\\" + "Console" + "\\" + c.Name + pic_file_ext);
-            }
+            string ctrl_name = c.Name;            
+
+            if (File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + ctrl_name + pic_file_ext))
+                objImg = loadImage(path + "\\" + c.TopLevelControl.Name + "\\" + ctrl_name + pic_file_ext);
+            else if (File.Exists(path + "\\" + "Console" + "\\" + ctrl_name + pic_file_ext))
+                objImg = loadImage(path + "\\" + "Console" + "\\" + ctrl_name + pic_file_ext);
             else objImg = null;
 
-            if (c.Name.Equals("picDisplay")) // special case
+            bool pnlDisplayControl = ctrl_name.Equals("pnlDisplay");
+            if (pnlDisplayControl && objImg == null)
             {
-                m_objConsole.PicDisplayBackgroundImage = objImg;
+                // [2.10.3.9]MW0LGE
+                // look for image called picDisplay instead, as we have moved from picDisplay to pnlDisplay
+                ctrl_name = "picDisplay";
+
+                if (File.Exists(path + "\\" + c.TopLevelControl.Name + "\\" + ctrl_name + pic_file_ext))
+                    objImg = loadImage(path + "\\" + c.TopLevelControl.Name + "\\" + ctrl_name + pic_file_ext);
+                else if (File.Exists(path + "\\" + "Console" + "\\" + ctrl_name + pic_file_ext))
+                    objImg = loadImage(path + "\\" + "Console" + "\\" + ctrl_name + pic_file_ext);
+                else objImg = null;
+            }
+
+            if (pnlDisplayControl) // special case
+            {
+                m_objConsole.PnlDisplayBackgroundImage = objImg;
             }
             else
             {
@@ -1892,17 +1904,16 @@ namespace Thetis
                 using (Image imgFile = Image.FromFile(path))
                 {
                     string hash = computeHashFromImage(imgFile);
-                    if (_image_cache.ContainsKey(hash))
+
+                    if (_image_cache.TryGetValue(hash, out img))
                     {
-                        if (!_image_cache_map.ContainsKey(path))
-                            _image_cache_map.Add(path, hash);
-                        return _image_cache[hash];
+                        if (!_image_cache_map.TryGetValue(path, out _)) _image_cache_map[path] = hash;
+                        return img;
                     }
 
                     img = new Bitmap(imgFile);
-                    _image_cache.Add(hash, img);
-                    if (!_image_cache_map.ContainsKey(path))
-                        _image_cache_map.Add(path, hash);
+                    _image_cache[hash] = img;
+                    if (!_image_cache_map.TryGetValue(path, out _)) _image_cache_map[path] = hash;
                 }
             }
             catch (Exception ex)
@@ -1920,26 +1931,38 @@ namespace Thetis
         }
         private static string computeHashFromImage(Image image)
         {
-            byte[] imageBytes = imageToByteArray(image);
-            using (SHA256 sha256 = SHA256.Create())
+            //byte[] imageBytes = imageToByteArray(image);
+            //using (SHA256 sha256 = SHA256.Create())
+            //{
+            //    byte[] hashBytes = sha256.ComputeHash(imageBytes);
+            //    StringBuilder hashStringBuilder = new StringBuilder();
+            //    foreach (byte b in hashBytes)
+            //    {
+            //        hashStringBuilder.Append(b.ToString("x2"));
+            //    }
+            //    return hashStringBuilder.ToString();
+            //}
+
+            //[2.10.3.9]MW0LGE change to md5
+            using (MemoryStream ms = new MemoryStream())
             {
-                byte[] hashBytes = sha256.ComputeHash(imageBytes);
-                StringBuilder hashStringBuilder = new StringBuilder();
-                foreach (byte b in hashBytes)
+                image.Save(ms, image.RawFormat);
+                ms.Position = 0;
+                using (MD5 md5 = MD5.Create())
                 {
-                    hashStringBuilder.Append(b.ToString("x2"));
+                    Byte[] hashBytes = md5.ComputeHash(ms);
+                    return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
                 }
-                return hashStringBuilder.ToString();
             }
         }
-        private static byte[] imageToByteArray(Image image)
-        {
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                image.Save(memoryStream, ImageFormat.Png);
-                return memoryStream.ToArray();
-            }
-        }
+        //private static byte[] imageToByteArray(Image image)
+        //{
+        //    using (MemoryStream memoryStream = new MemoryStream())
+        //    {
+        //        image.Save(memoryStream, ImageFormat.Png);
+        //        return memoryStream.ToArray();
+        //    }
+        //}
         #endregion
 
         private static Image resizeImage(Image image, Control c)

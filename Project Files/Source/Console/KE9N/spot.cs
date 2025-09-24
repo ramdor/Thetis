@@ -4890,16 +4890,16 @@ namespace Thetis
         private void returnOriginalSkin()
         {
             if (m_imgOriginalSkin == null) return;
-            console.PicDisplayBackgroundImage = m_imgOriginalSkin; // put back original image                
+            console.PnlDisplayBackgroundImage = m_imgOriginalSkin; // put back original image                
             m_imgOriginalSkin.Dispose();
             m_imgOriginalSkin = null;
         }
         private void storeOriginalSkin()
         {
             if (m_imgOriginalSkin != null) return;
-            if (console.PicDisplayBackgroundImage == null) return;
+            if (console.PnlDisplayBackgroundImage == null) return;
 
-            m_imgOriginalSkin = console.PicDisplayBackgroundImage.Clone() as Image;
+            m_imgOriginalSkin = console.PnlDisplayBackgroundImage.Clone() as Image;
         }
         //=========================================================================================
         private void chkSUN_CheckedChanged(object sender, EventArgs e)
@@ -4921,11 +4921,11 @@ namespace Thetis
                     if (MAP == null)
                     {
                         if (Console.DisplaySpot)
-                            console.PicDisplayBackgroundImage = Image.FromStream(Map_image);
-                        else console.PicDisplayBackgroundImage = Image.FromStream(Map_image2);
+                            console.PnlDisplayBackgroundImage = Image.FromStream(Map_image);
+                        else console.PnlDisplayBackgroundImage = Image.FromStream(Map_image2);
 
                     }
-                    else console.PicDisplayBackgroundImage = MAP;
+                    else console.PnlDisplayBackgroundImage = MAP;
  
                 } // SUN or GRAY LINE checked
 
@@ -4955,12 +4955,12 @@ namespace Thetis
 
                     if (MAP == null)
                     {
-                        if (Console.DisplaySpot) console.PicDisplayBackgroundImage = Image.FromStream(Map_image);
-                        else console.PicDisplayBackgroundImage = Image.FromStream(Map_image2);
+                        if (Console.DisplaySpot) console.PnlDisplayBackgroundImage = Image.FromStream(Map_image);
+                        else console.PnlDisplayBackgroundImage = Image.FromStream(Map_image2);
 
                         //  console.SetPicDisplayBackgroundImage(Image.FromStream(Map_image));
                     }
-                    else console.PicDisplayBackgroundImage = MAP;
+                    else console.PnlDisplayBackgroundImage = MAP;
       
                 } // only do if SUN or GRAY LINE checked
 
@@ -5013,11 +5013,11 @@ namespace Thetis
 
                     if (MAP == null)
                     {
-                        if (Console.DisplaySpot) console.PicDisplayBackgroundImage = Image.FromStream(Map_image);
-                        else console.PicDisplayBackgroundImage = Image.FromStream(Map_image2);
+                        if (Console.DisplaySpot) console.PnlDisplayBackgroundImage = Image.FromStream(Map_image);
+                        else console.PnlDisplayBackgroundImage = Image.FromStream(Map_image2);
                         //  console.SetPicDisplayBackgroundImage(Image.FromStream(Map_image));
                     }
-                    else console.PicDisplayBackgroundImage = MAP;
+                    else console.PnlDisplayBackgroundImage = MAP;
 
                 }
 
@@ -6472,7 +6472,7 @@ namespace Thetis
 
                         //console.picDisplay.SizeMode = PictureBoxSizeMode.StretchImage;           // put image back onto picDisplay background image
                         storeOriginalSkin(); //[2.10.3.4]MW0LGE added because line below might happen first
-                        console.PicDisplayBackgroundImage = MAP;                                  // MAP.Save("test.bmp");  save modified map_image to actual file on hard drive
+                        console.PnlDisplayBackgroundImage = MAP;                                  // MAP.Save("test.bmp");  save modified map_image to actual file on hard drive
 
 
                         beacon4 = false; // reset the beacon scanner flag (you just updated the map)
@@ -7274,11 +7274,11 @@ namespace Thetis
 
                         if (MAP == null)
                         {
-                            if (Console.DisplaySpot) console.PicDisplayBackgroundImage = Image.FromStream(Map_image);
-                            else console.PicDisplayBackgroundImage = Image.FromStream(Map_image2);
+                            if (Console.DisplaySpot) console.PnlDisplayBackgroundImage = Image.FromStream(Map_image);
+                            else console.PnlDisplayBackgroundImage = Image.FromStream(Map_image2);
                             //  console.SetPicDisplayBackgroundImage(Image.FromStream(Map_image));
                         }
-                        else console.PicDisplayBackgroundImage = MAP;
+                        else console.PnlDisplayBackgroundImage = MAP;
 
                     }
 

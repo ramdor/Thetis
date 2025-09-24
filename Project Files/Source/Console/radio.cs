@@ -131,6 +131,11 @@ namespace Thetis
 
 		public static void DestroyDSP()
 		{
+            WDSP.clear_fir_bandpass_cache();
+            WDSP.clear_mp_cache();
+            WDSP.clear_eq_cache();
+            WDSP.clear_fc_cache();
+
             cmaster.DestroyRadio();
 		}
 

@@ -94,8 +94,8 @@ namespace Thetis
 
             Common.DoubleBufferAll(this, true);
 
-            picContainer.Location = new Point(0, 0);
-            picContainer.Size = new Size(ClientSize.Width, ClientSize.Height);
+            pnlContainer.Location = new Point(0, 0);
+            pnlContainer.Size = new Size(ClientSize.Width, ClientSize.Height);
 
             _height = MIN_CONTAINER_HEIGHT;
             _autoHeight = false;
@@ -161,9 +161,9 @@ namespace Thetis
             {
                 lblRX_MouseDown(this, new MouseEventArgs(MouseButtons.Left, 0, x, y, 0));
             }
-            else if (picContainer.Bounds.Contains(x, y))
+            else if (pnlContainer.Bounds.Contains(x, y))
             {
-                picContainer_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+                pnlContainer_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
             }
         }
         private void HandleTouchMove(int x, int y)
@@ -180,9 +180,9 @@ namespace Thetis
             {
                 lblRX_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
             }
-            if (picContainer.Bounds.Contains(x, y))
+            if (pnlContainer.Bounds.Contains(x, y))
             {
-                picContainer_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+                pnlContainer_MouseMove(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
             }
         }
         private void HandleTouchUp(int x, int y)
@@ -202,9 +202,9 @@ namespace Thetis
                 lblRX_MouseUp(this, new MouseEventArgs(MouseButtons.Left, 0, x, y, 0));
                 lblRX_MouseLeave(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
             }
-            else if (picContainer.Bounds.Contains(x, y))
+            else if (pnlContainer.Bounds.Contains(x, y))
             {
-                picContainer_MouseLeave(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
+                pnlContainer_MouseLeave(this, new MouseEventArgs(MouseButtons.None, 0, x, y, 0));
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
@@ -218,7 +218,7 @@ namespace Thetis
                 if (_touch_guid != Guid.Empty) TouchHandler.DisableTouchSupport(_touch_guid);
 
                 if (_console.TouchSupport)
-                    _touch_guid = TouchHandler.EnableTouchSupport(picContainer, HandleTouchDown, HandleTouchMove, HandleTouchUp, TouchHandler.TOUCHEVENTF_DOWN | TouchHandler.TOUCHEVENTF_MOVE | TouchHandler.TOUCHEVENTF_UP);
+                    _touch_guid = TouchHandler.EnableTouchSupport(pnlContainer, HandleTouchDown, HandleTouchMove, HandleTouchUp, TouchHandler.TOUCHEVENTF_DOWN | TouchHandler.TOUCHEVENTF_MOVE | TouchHandler.TOUCHEVENTF_UP);
                 else
                     _touch_guid = Guid.Empty;
 
@@ -366,9 +366,9 @@ namespace Thetis
             return ((number + 5) / 10) * 10;
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public PictureBox DisplayContainer
+        public Panel DisplayContainer
         {
-            get { return picContainer; }
+            get { return pnlContainer; }
         }
 
         private void pbGrab_MouseDown(object sender, MouseEventArgs e)
@@ -635,44 +635,6 @@ namespace Thetis
                 mouseLeave();
         }
 
-        private void picContainer_MouseMove(object sender, MouseEventArgs e)
-        {
-            bool no_controls = _no_controls && !Common.ShiftKeyDown; //[2.10.3.6]MW0LGE no title or resize grabber, override by holding shift
-
-            if (!_dragging)
-            {
-                bool bContains = !no_controls && pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition));
-                if (bContains && !pnlBar.Visible)
-                {
-                    pnlBar.BringToFront();
-                    pnlBar.Show();
-                }
-                else if (!bContains && pnlBar.Visible)
-                {
-                    pnlBar.Hide();
-                }
-            }
-
-            if (!_resizing)
-            {
-                bool bContains = !no_controls && pbGrab.ClientRectangle.Contains(pbGrab.PointToClient(Control.MousePosition));
-                if (bContains && !pbGrab.Visible)
-                {
-                    pbGrab.BringToFront();
-                    pbGrab.Show();
-                }
-                else if (!bContains && pbGrab.Visible)
-                {
-                    pbGrab.Hide();
-                }
-            }
-        }
-
-        private void picContainer_MouseLeave(object sender, EventArgs e)
-        {
-            if (!(_dragging || _resizing) && !picContainer.ClientRectangle.Contains(picContainer.PointToClient(Control.MousePosition)))
-                mouseLeave();
-        }
         private void mouseLeave()
         {
             if (pnlBar.Visible)
@@ -1169,10 +1131,48 @@ namespace Thetis
 
         private void ucMeter_MouseLeave(object sender, EventArgs e)
         {
-            if (!(_dragging || _resizing) && !picContainer.ClientRectangle.Contains(this.PointToClient(Control.MousePosition)))
+            if (!(_dragging || _resizing) && !pnlContainer.ClientRectangle.Contains(this.PointToClient(Control.MousePosition)))
                 mouseLeave();
         }
 
+        private void pnlContainer_MouseMove(object sender, MouseEventArgs e)
+        {
+            bool no_controls = _no_controls && !Common.ShiftKeyDown; //[2.10.3.6]MW0LGE no title or resize grabber, override by holding shift
+
+            if (!_dragging)
+            {
+                bool bContains = !no_controls && pnlBar.ClientRectangle.Contains(pnlBar.PointToClient(Control.MousePosition));
+                if (bContains && !pnlBar.Visible)
+                {
+                    pnlBar.BringToFront();
+                    pnlBar.Show();
+                }
+                else if (!bContains && pnlBar.Visible)
+                {
+                    pnlBar.Hide();
+                }
+            }
+
+            if (!_resizing)
+            {
+                bool bContains = !no_controls && pbGrab.ClientRectangle.Contains(pbGrab.PointToClient(Control.MousePosition));
+                if (bContains && !pbGrab.Visible)
+                {
+                    pbGrab.BringToFront();
+                    pbGrab.Show();
+                }
+                else if (!bContains && pbGrab.Visible)
+                {
+                    pbGrab.Hide();
+                }
+            }
+        }
+
+        private void pnlContainer_MouseLeave(object sender, EventArgs e)
+        {
+            if (!(_dragging || _resizing) && !pnlContainer.ClientRectangle.Contains(pnlContainer.PointToClient(Control.MousePosition)))
+                mouseLeave();
+        }
     }
 }
 
