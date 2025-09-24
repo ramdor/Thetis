@@ -352,6 +352,7 @@
         OrionMKII = 5,      // AMAM-7000DLE 7000DLEMkII ANAN-8000DLE OrionMkII Anvelina-Pro3 RedPitaya
         HermesLite = 6,     // MI0BOT
         Saturn = 10,        // ANAN-G2: added G8NJJ
+        SaturnMKII = 11,    // ANAN-G2: MKII board
         Unknown = 999,      // MW0LGE
     }
 

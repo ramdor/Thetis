@@ -123,7 +123,7 @@
   <data name="radSigMaxBin.ToolTip" xml:space="preserve">
     <value>Peak bin value in passband
 
-This is implementation replicates Simon Brown's S-meter approach
+This implementation replicates Simon Brown's S-meter approach
 in SDR Console. The original Thetis meters are signal power meters that
 display the integrated (total) passband power. In contrast, this meter
 implementation only uses the max bin within the passband for its reading.

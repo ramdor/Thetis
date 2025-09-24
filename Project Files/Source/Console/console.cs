@@ -690,6 +690,8 @@ namespace Thetis
             }
             Splash.ShowSplashScreen(Common.GetVerNum(true, true), splash_screen_folder);							// Start splash screen with version number
 
+            bool alt_key_down = Common.AltlKeyDown;
+
             // PA init thread - from G7KLJ changes - done as early as possible
             Splash.SetStatus("Initializing PortAudio");			// Set progress point as early as possible
             _portAudioInitalising = true;
@@ -983,7 +985,7 @@ namespace Thetis
 
             // start up options and applications
             handleShowOnStartWindowsForms();
-            handleLaunchOnStartUp();
+            if(!(alt_key_down || Common.AltlKeyDown)) handleLaunchOnStartUp(); // twice to make sure it is captured at start before lengthy init process
             
             //legacy items controller
             LegacyItemController.Init(this);
@@ -12418,80 +12420,87 @@ namespace Thetis
         {
             if (initializing) return;
 
-            if (rx1_step_att_present)
-            {
-                Display.RX1PreampOffset = rx1_attenuator_data;
-                if (HardwareSpecific.Model != HPSDRModel.ANAN100D &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN200D &&
-                    HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
-                    HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
-                    HardwareSpecific.Model != HPSDRModel.REDPITAYA && //DH1KLM
-                    !rx2_preamp_present)// || _mox) //[2.10.3.9]MW0LGE er, why mox? why do we want to change RX2 offset when we are moxing?
-                                        // Surely rx2 should be left alone unless rx2 doesnt have a preamp in which case we can use rx1 data
-                    Display.RX2PreampOffset = rx1_attenuator_data;
-            }
-            else
-            {
-                Display.RX1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+            Display.RX1PreampOffset = RXPreampOffset(1);
+            Display.RX1DisplayCalOffset = RXCalibrationOffset(1);
 
-                if (HardwareSpecific.Model != HPSDRModel.ANAN100D &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN200D &&
-                    HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
-                    HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
-                    HardwareSpecific.Model != HPSDRModel.REDPITAYA && //DH1KLM
-                    !rx2_preamp_present)
-                    Display.RX2PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
-            }
+            //if (rx1_step_att_present)
+            //{
+            //    Display.RX1PreampOffset = rx1_attenuator_data;
 
-            Display.RX1DisplayCalOffset = rx1_display_cal_offset + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
+            //    if (HardwareSpecific.Model != HPSDRModel.ANAN100D &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN200D &&
+            //        HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
+            //        HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+            //        HardwareSpecific.Model != HPSDRModel.REDPITAYA && //DH1KLM
+            //        !rx2_preamp_present)// || _mox) //[2.10.3.9]MW0LGE er, why mox? why do we want to change RX2 offset when we are moxing?
+            //                            // Surely rx2 should be left alone unless rx2 doesnt have a preamp in which case we can use rx1 data
+            //        Display.RX2PreampOffset = rx1_attenuator_data;
+            //}
+            //else
+            //{
+            //    Display.RX1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+
+            //    if (HardwareSpecific.Model != HPSDRModel.ANAN100D &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN200D &&
+            //        HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
+            //        HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+            //        HardwareSpecific.Model != HPSDRModel.REDPITAYA && //DH1KLM
+            //        !rx2_preamp_present)
+            //        Display.RX2PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+            //}
+
+            //Display.RX1DisplayCalOffset = rx1_display_cal_offset + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
         }
 
         private void UpdateRX2DisplayOffsets()
         {
             if (initializing) return;
 
-            if (rx2_step_att_present)
-            {
-                Display.RX2PreampOffset = rx2_attenuator_data;
+            Display.RX2PreampOffset = RXPreampOffset(2);
+            Display.RX2DisplayCalOffset = RXCalibrationOffset(2);
 
-                if (HardwareSpecific.Model != HPSDRModel.ANAN100D &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN200D &&
-                    HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
-                    HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
-                    HardwareSpecific.Model != HPSDRModel.REDPITAYA && //DH1KLM
-                    !rx2_preamp_present)
-                    Display.RX2PreampOffset = rx1_attenuator_data;
-            }
-            else
-            {
-                Display.RX2PreampOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
+            //if (rx2_step_att_present)
+            //{
+            //    Display.RX2PreampOffset = rx2_attenuator_data;
 
-                if (HardwareSpecific.Model != HPSDRModel.ANAN100D &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN200D &&
-                    HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
-                    HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
-                    HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
-                    HardwareSpecific.Model != HPSDRModel.REDPITAYA && //DH1KLM
-                    !rx2_preamp_present)
-                    Display.RX2PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
-            }
+            //    if (HardwareSpecific.Model != HPSDRModel.ANAN100D &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN200D &&
+            //        HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
+            //        HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+            //        HardwareSpecific.Model != HPSDRModel.REDPITAYA && //DH1KLM
+            //        !rx2_preamp_present)
+            //        Display.RX2PreampOffset = rx1_attenuator_data;
+            //}
+            //else
+            //{
+            //    Display.RX2PreampOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
 
-            Display.RX2DisplayCalOffset = rx2_display_cal_offset + rx2_xvtr_gain_offset + rx2_6m_gain_offset; //MW0LGE_21k5
+            //    if (HardwareSpecific.Model != HPSDRModel.ANAN100D &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN200D &&
+            //        HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
+            //        HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
+            //        HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+            //        HardwareSpecific.Model != HPSDRModel.REDPITAYA && //DH1KLM
+            //        !rx2_preamp_present)
+            //        Display.RX2PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+            //}
+
+            //Display.RX2DisplayCalOffset = rx2_display_cal_offset + rx2_xvtr_gain_offset + rx2_6m_gain_offset; //MW0LGE_21k5
         }
 
 
@@ -21249,16 +21258,12 @@ namespace Thetis
             m_frmSeqLog.BringToFront();
         }
 
-        private float _avNumRX1 = -200;
-        private float _avNumRX2 = -200;
-
-        public float RXOffset(int rx)
+        public float RXPreampOffset(int rx)
         {
-            float fOffset = 0;
+            float fOffset;
             if (rx == 1)
             {
                 fOffset = rx1_step_att_present ? (float)rx1_attenuator_data : rx1_preamp_offset[(int)rx1_preamp_mode];
-                fOffset += rx1_meter_cal_offset + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
             }
             else //rx2
             {
@@ -21286,26 +21291,87 @@ namespace Thetis
                     else
                         fOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
                 }
-
-                fOffset += rx2_meter_cal_offset + rx2_xvtr_gain_offset;
+            }
+            return fOffset;
+        }
+        public float RXCalibrationOffset(int rx)
+        {
+            float fOffset;
+            if (rx == 1)
+            {
+                fOffset = rx1_meter_cal_offset + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
+            }
+            else //rx2
+            {
+                fOffset = rx2_meter_cal_offset + rx2_xvtr_gain_offset;
 
                 if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
                     HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
                     HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K || HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
-                        fOffset += rx2_6m_gain_offset;
+                    fOffset += rx2_6m_gain_offset;
             }
             return fOffset;
         }
-        public float RXPBsnr(int rx)
+        public float RXOffset(int rx)
         {
+            return RXPreampOffset(rx) + RXCalibrationOffset(rx);
+        }
+        //public float RXOffset(int rx)
+        //{
+        //    float fOffset = 0;
+        //    if (rx == 1)
+        //    {
+        //        fOffset = rx1_step_att_present ? (float)rx1_attenuator_data : rx1_preamp_offset[(int)rx1_preamp_mode];
+        //        fOffset += rx1_meter_cal_offset + rx1_xvtr_gain_offset + rx1_6m_gain_offset;
+        //    }
+        //    else //rx2
+        //    {
+        //        if (HardwareSpecific.Model == HPSDRModel.ANAN100D ||
+        //            HardwareSpecific.Model == HPSDRModel.ANAN200D ||
+        //            HardwareSpecific.Model == HPSDRModel.ORIONMKII ||
+        //            HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
+        //            HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+        //            HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+        //            HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
+        //            HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
+        //            HardwareSpecific.Model == HPSDRModel.REDPITAYA || //DH1KLM
+        //            rx2_preamp_present)
+        //        {
+        //            if (rx2_step_att_present)
+        //                fOffset = (float)rx2_attenuator_data;
+        //            else
+        //                fOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
+        //        }
+        //        else
+        //        {
+        //            // use rx1 offsets
+        //            if (rx1_step_att_present)
+        //                fOffset = (float)rx1_attenuator_data;
+        //            else
+        //                fOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+        //        }
+
+        //        fOffset += rx2_meter_cal_offset + rx2_xvtr_gain_offset;
+
+        //        if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+        //            HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+        //            HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K || HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
+        //                fOffset += rx2_6m_gain_offset;
+        //    }
+        //    return fOffset;
+        //}
+        public double RXPBsnr(int rx)
+        {
+            // note, we check for good noise floor here so that if user hits button in setup (from where this function is used)
+            // bad data will not be returned. It doesnt matter too much for the infobar as that time slice of bad data will not be long
             float offset = RXOffset(rx);
             if (rx == 1)
             {
                 if (!Display.FastAttackNoiseFloorRX1 && _lastRX1NoiseFloorGood)
                 {
                     float num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
-                    spectralCalculations(1, num, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
-                    return (float)estimated_snr;
+                    SpectralResult result = spectralCalculations(1, num);
+                    return result.estimated_snr;
                 }
                 else
                     return -999;
@@ -21315,8 +21381,8 @@ namespace Thetis
                 if (!Display.FastAttackNoiseFloorRX2 && _lastRX2NoiseFloorGood)
                 {
                     float num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
-                    spectralCalculations(2, num, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
-                    return (float)estimated_snr;
+                    SpectralResult result = spectralCalculations(2, num);
+                    return result.estimated_snr;
                 }
                 else
                     return -999;
@@ -21340,41 +21406,101 @@ namespace Thetis
                 m_fRX2_PBSNR_shift = value;
             }
         }
-        private void spectralCalculations(int rx, double signal, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz)
+        //
+        private struct SpectralResult
         {
-            estimated_snr = 0;
+            public double bin_width;
+            public double rbw;
+            public int passband_bandwidth;
+            public double noise_floor_power_spectral_density;
+            public double estimated_passband_noise_power;
+            public double estimated_snr;
+            public double rx_dBHz;
+            public double rbw_dBHz;
+        }
+        private SpectralResult spectralCalculations(int rx, double signal)
+        {
+            SpectralResult result = new SpectralResult();
+            result.estimated_snr = 0;
 
             if (rx == 1)
             {
-                bin_width = (double)specRX.GetSpecRX(0).SampleRate / (double)specRX.GetSpecRX(0).FFTSize;
-                dRWB = specRX.GetSpecRX(0).DisplayENB * bin_width;
-                passbandWidth = Display.RX1FilterHigh - Display.RX1FilterLow;
+                result.bin_width = (double)specRX.GetSpecRX(0).SampleRate / (double)specRX.GetSpecRX(0).FFTSize;
+                result.rbw = specRX.GetSpecRX(0).DisplayENB * result.bin_width;
+                result.passband_bandwidth = Display.RX1FilterHigh - Display.RX1FilterLow;
 
-                noise_floor_power_spectral_density = _lastRX1NoiseFloor - (10 * Math.Log10(dRWB));
-                estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
+                result.noise_floor_power_spectral_density = _lastRX1NoiseFloor - (10 * Math.Log10(result.rbw));
+                result.estimated_passband_noise_power = result.noise_floor_power_spectral_density + (10 * Math.Log10(result.passband_bandwidth));
 
                 if (!MOX)
                 {
-                    estimated_snr = signal - estimated_passband_noise_power + m_fRX1_PBSNR_shift;
+                    result.estimated_snr = signal - result.estimated_passband_noise_power + m_fRX1_PBSNR_shift;
+                }
+                else
+                {
+                    result.estimated_snr = -999;
                 }
             }
-            else//rx2
+            else
             {
-                bin_width = (double)specRX.GetSpecRX(1).SampleRate / (double)specRX.GetSpecRX(1).FFTSize;
-                dRWB = specRX.GetSpecRX(1).DisplayENB * bin_width;
-                passbandWidth = Display.RX2FilterHigh - Display.RX2FilterLow;
+                result.bin_width = (double)specRX.GetSpecRX(1).SampleRate / (double)specRX.GetSpecRX(1).FFTSize;
+                result.rbw = specRX.GetSpecRX(1).DisplayENB * result.bin_width;
+                result.passband_bandwidth = Display.RX2FilterHigh - Display.RX2FilterLow;
 
-                noise_floor_power_spectral_density = _lastRX2NoiseFloor - (10 * Math.Log10(dRWB));
-                estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
+                result.noise_floor_power_spectral_density = _lastRX2NoiseFloor - (10 * Math.Log10(result.rbw));
+                result.estimated_passband_noise_power = result.noise_floor_power_spectral_density + (10 * Math.Log10(result.passband_bandwidth));
 
                 if (!MOX)
                 {
-                    estimated_snr = signal - estimated_passband_noise_power + m_fRX2_PBSNR_shift;
+                    result.estimated_snr = signal - result.estimated_passband_noise_power + m_fRX2_PBSNR_shift;
+                }
+                else
+                {
+                    result.estimated_snr = -999;
                 }
             }
-            rx_dBHz = 10 * Math.Log10((double)passbandWidth);//MW0LGE_22b
-            rbw_dBHz = 10 * Math.Log10(dRWB);
+
+            result.rx_dBHz = 10 * Math.Log10((double)result.passband_bandwidth);
+            result.rbw_dBHz = 10 * Math.Log10(result.rbw);
+
+            return result;
         }
+        //
+        //private void spectralCalculations(int rx, double signal, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz)
+        //{
+        //    estimated_snr = 0;
+
+        //    if (rx == 1)
+        //    {
+        //        bin_width = (double)specRX.GetSpecRX(0).SampleRate / (double)specRX.GetSpecRX(0).FFTSize;
+        //        dRWB = specRX.GetSpecRX(0).DisplayENB * bin_width;
+        //        passbandWidth = Display.RX1FilterHigh - Display.RX1FilterLow;
+
+        //        noise_floor_power_spectral_density = _lastRX1NoiseFloor - (10 * Math.Log10(dRWB));
+        //        estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
+
+        //        if (!MOX)
+        //        {
+        //            estimated_snr = signal - estimated_passband_noise_power + m_fRX1_PBSNR_shift;
+        //        }
+        //    }
+        //    else//rx2
+        //    {
+        //        bin_width = (double)specRX.GetSpecRX(1).SampleRate / (double)specRX.GetSpecRX(1).FFTSize;
+        //        dRWB = specRX.GetSpecRX(1).DisplayENB * bin_width;
+        //        passbandWidth = Display.RX2FilterHigh - Display.RX2FilterLow;
+
+        //        noise_floor_power_spectral_density = _lastRX2NoiseFloor - (10 * Math.Log10(dRWB));
+        //        estimated_passband_noise_power = noise_floor_power_spectral_density + (10 * Math.Log10(passbandWidth));
+
+        //        if (!MOX)
+        //        {
+        //            estimated_snr = signal - estimated_passband_noise_power + m_fRX2_PBSNR_shift;
+        //        }
+        //    }
+        //    rx_dBHz = 10 * Math.Log10((double)passbandWidth);
+        //    rbw_dBHz = 10 * Math.Log10(dRWB);
+        //}
         private class HistoricAttenuatorReading
         {
             public int stepAttenuator = -1;
@@ -22047,6 +22173,8 @@ namespace Thetis
                 if (_bInfoBarShowSEQErrors) infoBar.Warning("Sequence error : " + ooo.ToString() + " (" + s.Trim() + ")"); //MW0LGE_21k9c show/hide flag
             }
         }
+        private float _RX1_smoothed_sig_avg_for_estimated_snr = -200;
+        private float _RX2_smoothed_sig_avg_for_estimated_snr = -200;
         private void UpdatePeakText()
         {
             if (string.IsNullOrEmpty(txtVFOAFreq.Text) ||
@@ -22135,56 +22263,36 @@ namespace Thetis
 
             if (bOverRX1 || bOverRX2)
             {
-                double bin_width;
-                double dRWB;
-                double rx_dBHz;
-                int passbandWidth;
-                double rbw_dBHz;
-                double noise_floor_power_spectral_density;
-                double estimated_passband_noise_power;
-                double estimated_snr;
-
                 string sEstimated_snr = "";
                 string sEstimated_passband_noise_power = "";
+
+                SpectralResult result;
 
                 if (bOverRX1)
                 {
                     float num = -200f;
                     if (!MOX)
                     {
-                        //
-                        //float rx1PreampOffset;
-                        //if (rx1_step_att_present) rx1PreampOffset = (float)rx1_attenuator_data;
-                        //else rx1PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
-
                         num = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
-                        //num = num +
-                        //rx1_meter_cal_offset +
-                        //rx1PreampOffset +
-                        //rx1_xvtr_gain_offset +
-                        //rx1_6m_gain_offset;
                         num += RXOffset(1);
 
-                        if (num > _avNumRX1) // quick rise
-                            num = _avNumRX1 = num * 0.8f + _avNumRX1 * 0.2f;
+                        if (num > _RX1_smoothed_sig_avg_for_estimated_snr) // quick rise
+                            num = _RX1_smoothed_sig_avg_for_estimated_snr = num * 0.8f + _RX1_smoothed_sig_avg_for_estimated_snr * 0.2f;
                         else // slow fall
-                            num = _avNumRX1 = num * 0.2f + _avNumRX1 * 0.8f;
-                        //
+                            num = _RX1_smoothed_sig_avg_for_estimated_snr = num * 0.2f + _RX1_smoothed_sig_avg_for_estimated_snr * 0.8f;
                     }
-                    spectralCalculations(1, num, out bin_width, out dRWB, out passbandWidth, out noise_floor_power_spectral_density, out estimated_passband_noise_power, out estimated_snr, out rx_dBHz, out rbw_dBHz);
+                    result = spectralCalculations(1, num);
                     if (!MOX)
                     {
-                        estimated_snr = _avNumRX1 - estimated_passband_noise_power + m_fRX1_PBSNR_shift;
-
                         if (_UseSUnitsForPBNPPBSNR)
                         {
-                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOAFreq >= S9Frequency).ToString("N1") + "su";
-                            sEstimated_snr = (estimated_snr / 6f).ToString("N1") + "su";
+                            sEstimated_passband_noise_power = Common.GetSMeterUnits(result.estimated_passband_noise_power, VFOAFreq >= S9Frequency).ToString("N1") + "su";
+                            sEstimated_snr = (result.estimated_snr / 6f).ToString("N1") + "su";
                         }
                         else
                         {
-                            sEstimated_passband_noise_power = estimated_passband_noise_power.ToString("N1") + "dBm";
-                            sEstimated_snr = estimated_snr.ToString("N1") + "dB";
+                            sEstimated_passband_noise_power = result.estimated_passband_noise_power.ToString("N1") + "dBm";
+                            sEstimated_snr = result.estimated_snr.ToString("N1") + "dB";
                         }
                     }
                 }
@@ -22193,74 +22301,36 @@ namespace Thetis
                     float num = -200f;
                     if (!MOX)
                     {
-                        //
-                        //float rx2PreampOffset;
-                        //if (HardwareSpecific.Model == HPSDRModel.ANAN100D ||
-                        //    HardwareSpecific.Model == HPSDRModel.ANAN200D ||
-                        //    HardwareSpecific.Model == HPSDRModel.ORIONMKII ||
-                        //    HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
-                        //    HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
-                        //    HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
-                        //    HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
-                        //    HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
-                        //    HardwareSpecific.Model == HPSDRModel.REDPITAYA || //DH1KLM
-                        //    rx2_preamp_present)
-                        //{
-                        //    if (rx2_step_att_present)
-                        //        rx2PreampOffset = (float)rx2_attenuator_data;
-                        //    else
-                        //        rx2PreampOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
-                        //}
-                        //else
-                        //{
-                        //    if (rx1_step_att_present)
-                        //        rx2PreampOffset = (float)rx1_attenuator_data;
-                        //    else
-                        //        rx2PreampOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
-                        //}
                         num = WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
-                        //num = num +
-                        //rx2_meter_cal_offset +
-                        //rx2PreampOffset +
-                        //rx2_xvtr_gain_offset;
                         num += RXOffset(2);
-                        //if (HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
-                        //    HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
-                        //    HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K || HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
-                        //        num += rx2_6m_gain_offset;
 
-                        if (num > _avNumRX2) // quick rise
-                            num = _avNumRX2 = num * 0.8f + _avNumRX2 * 0.2f;
+                        if (num > _RX2_smoothed_sig_avg_for_estimated_snr) // quick rise
+                            num = _RX2_smoothed_sig_avg_for_estimated_snr = num * 0.8f + _RX2_smoothed_sig_avg_for_estimated_snr * 0.2f;
                         else // slow fall
-                            num = _avNumRX2 = num * 0.2f + _avNumRX2 * 0.8f;
-                        //
+                            num = _RX2_smoothed_sig_avg_for_estimated_snr = num * 0.2f + _RX2_smoothed_sig_avg_for_estimated_snr * 0.8f;
                     }
-                    spectralCalculations(2, num, out bin_width, out dRWB, out passbandWidth, out noise_floor_power_spectral_density, out estimated_passband_noise_power, out estimated_snr, out rx_dBHz, out rbw_dBHz);
+                    result = spectralCalculations(2, num);
                     if (!MOX)
                     {
-                        estimated_snr = _avNumRX2 - estimated_passband_noise_power + m_fRX2_PBSNR_shift;
-
                         if (_UseSUnitsForPBNPPBSNR)
                         {
-                            sEstimated_passband_noise_power = Common.GetSMeterUnits(estimated_passband_noise_power, VFOBFreq >= S9Frequency).ToString("N1") + "su";
-                            sEstimated_snr = (estimated_snr / 6f).ToString("N1") + "sU";
+                            sEstimated_passband_noise_power = Common.GetSMeterUnits(result.estimated_passband_noise_power, VFOBFreq >= S9Frequency).ToString("N1") + "su";
+                            sEstimated_snr = (result.estimated_snr / 6f).ToString("N1") + "sU";
                         }
                         else
                         {
-                            sEstimated_passband_noise_power = estimated_passband_noise_power.ToString("N1") + "dBm";
-                            sEstimated_snr = estimated_snr.ToString("N1") + "dBm";
+                            sEstimated_passband_noise_power = result.estimated_passband_noise_power.ToString("N1") + "dBm";
+                            sEstimated_snr = result.estimated_snr.ToString("N1") + "dBm";
                         }
                     }
                 }
-                rx_dBHz = 10 * Math.Log10((double)passbandWidth);//MW0LGE_22b
-                rbw_dBHz = 10 * Math.Log10(dRWB);
 
-                infoBar.Left1(1, "RBW " + dRWB.ToString("N1") + "Hz (" + rbw_dBHz.ToString("N1") + "dBHz)", 160);
-                infoBar.Left2(1, "PB " + passbandWidth.ToString() + "Hz (" + rx_dBHz.ToString("N1") + "dBHz)", 160);
+                infoBar.Left1(1, "RBW " + result.rbw.ToString("N1") + "Hz (" + result.rbw_dBHz.ToString("N1") + "dBHz)", 160);
+                infoBar.Left2(1, "PB " + result.passband_bandwidth.ToString() + "Hz (" + result.rx_dBHz.ToString("N1") + "dBHz)", 160);
 
                 if (!MOX)
                 {
-                    infoBar.Right1(1, "NPSD " + noise_floor_power_spectral_density.ToString("N1") + "dBm/Hz", 140);
+                    infoBar.Right1(1, "NPSD " + result.noise_floor_power_spectral_density.ToString("N1") + "dBm/Hz", 140);
                     infoBar.Right2(1, "PBNP " + sEstimated_passband_noise_power, 120);
                     infoBar.Right3(1, "PBSNR " + sEstimated_snr, 120);
                 }
@@ -48114,14 +48184,14 @@ namespace Thetis
                         if (!Display.FastAttackNoiseFloorRX1 && _lastRX1NoiseFloorGood)
                         {
                             float avg = bNeedAvg ? WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset : _RX1MeterValues[Reading.AVG_SIGNAL_STRENGTH];
-                            spectralCalculations(1, avg, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
-                            _RX1MeterValues[Reading.ESTIMATED_PBSNR] = (float)estimated_snr;
+                            SpectralResult result = spectralCalculations(1, avg);
+                            _RX1MeterValues[Reading.ESTIMATED_PBSNR] = (float)result.estimated_snr;
                         }
                         else
                             _RX1MeterValues[Reading.ESTIMATED_PBSNR] = 0f;
                     }
 
-                    ////[2.10.3.9]<W0LGE sub rx
+                    ////[2.10.3.9]MW0LGE sub rx (future)
                     //if (SubRXEnabled)
                     //{
                     //    if (MeterManager.RequiresUpdate(1, Reading.SUB_SIGNAL_STRENGTH)) _RX1MeterValues[Reading.SUB_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
@@ -48305,8 +48375,8 @@ namespace Thetis
                         if (!Display.FastAttackNoiseFloorRX2 && _lastRX2NoiseFloorGood)
                         {
                             float avg = bNeedAvg ? WDSP.CalculateRXMeter(2, 0, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset : _RX2MeterValues[Reading.AVG_SIGNAL_STRENGTH];
-                            spectralCalculations(2, avg, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
-                            _RX2MeterValues[Reading.ESTIMATED_PBSNR] = (float)estimated_snr;
+                            SpectralResult result = spectralCalculations(2, avg);
+                            _RX2MeterValues[Reading.ESTIMATED_PBSNR] = (float)result.estimated_snr;
                         }
                         else
                             _RX2MeterValues[Reading.ESTIMATED_PBSNR] = 0f;
@@ -48445,80 +48515,80 @@ namespace Thetis
             ivac.resetIVACdiags(1, 1);
         }
 
-        private float[] getPassbandSpectrum(int rx, int fft_size, double[,] spectrum_data)
-        {
-            int lo_cut_hz;
-            int hi_cut_hz;
-            double hz_per_bucket;
-            int zero_hz_bucket = fft_size / 2;
-            int nExpand = 0;
+        //private float[] getPassbandSpectrum(int rx, int fft_size, double[,] spectrum_data)
+        //{
+        //    int lo_cut_hz;
+        //    int hi_cut_hz;
+        //    double hz_per_bucket;
+        //    int zero_hz_bucket = fft_size / 2;
+        //    int nExpand = 0;
 
-            if (rx == 1)
-            {
-                hz_per_bucket = sample_rate_rx1 / (double)fft_size;
-                lo_cut_hz = RX1FilterLow - nExpand;
-                hi_cut_hz = RX1FilterHigh + nExpand;
-            }
-            else
-            {
-                hz_per_bucket = sample_rate_rx2 / (double)fft_size;
-                lo_cut_hz = RX2FilterLow - nExpand;
-                hi_cut_hz = RX2FilterHigh + nExpand;
-            }
+        //    if (rx == 1)
+        //    {
+        //        hz_per_bucket = sample_rate_rx1 / (double)fft_size;
+        //        lo_cut_hz = RX1FilterLow - nExpand;
+        //        hi_cut_hz = RX1FilterHigh + nExpand;
+        //    }
+        //    else
+        //    {
+        //        hz_per_bucket = sample_rate_rx2 / (double)fft_size;
+        //        lo_cut_hz = RX2FilterLow - nExpand;
+        //        hi_cut_hz = RX2FilterHigh + nExpand;
+        //    }
 
-            bool bIgnoreCtun;
-            if (rx == 1)
-            {
-                bIgnoreCtun = Display.CurrentDisplayMode == DisplayMode.SPECTRUM ||
-                            Display.CurrentDisplayMode == DisplayMode.SPECTRASCOPE ||
-                            Display.CurrentDisplayMode == DisplayMode.HISTOGRAM;
-            }
-            else
-            {
-                bIgnoreCtun = Display.CurrentDisplayModeBottom == DisplayMode.SPECTRUM ||
-                            Display.CurrentDisplayModeBottom == DisplayMode.SPECTRASCOPE ||
-                            Display.CurrentDisplayModeBottom == DisplayMode.HISTOGRAM;
+        //    bool bIgnoreCtun;
+        //    if (rx == 1)
+        //    {
+        //        bIgnoreCtun = Display.CurrentDisplayMode == DisplayMode.SPECTRUM ||
+        //                    Display.CurrentDisplayMode == DisplayMode.SPECTRASCOPE ||
+        //                    Display.CurrentDisplayMode == DisplayMode.HISTOGRAM;
+        //    }
+        //    else
+        //    {
+        //        bIgnoreCtun = Display.CurrentDisplayModeBottom == DisplayMode.SPECTRUM ||
+        //                    Display.CurrentDisplayModeBottom == DisplayMode.SPECTRASCOPE ||
+        //                    Display.CurrentDisplayModeBottom == DisplayMode.HISTOGRAM;
 
-            }
-            if (!bIgnoreCtun && click_tune_display) //MW0LGE_21d
-            {
-                // need to calc zero hz bucket point for freq as it wont be in the middle of FFT as above
-                double dBucketOffset;
-                if (rx == 1)
-                    dBucketOffset = ((VFOAFreq - CentreFrequency) * 1e6) / hz_per_bucket;
-                else
-                    dBucketOffset = ((VFOBFreq - CentreRX2Frequency) * 1e6) / hz_per_bucket;
+        //    }
+        //    if (!bIgnoreCtun && click_tune_display) //MW0LGE_21d
+        //    {
+        //        // need to calc zero hz bucket point for freq as it wont be in the middle of FFT as above
+        //        double dBucketOffset;
+        //        if (rx == 1)
+        //            dBucketOffset = ((VFOAFreq - CentreFrequency) * 1e6) / hz_per_bucket;
+        //        else
+        //            dBucketOffset = ((VFOBFreq - CentreRX2Frequency) * 1e6) / hz_per_bucket;
 
-                zero_hz_bucket += (int)dBucketOffset;
-            }
+        //        zero_hz_bucket += (int)dBucketOffset;
+        //    }
 
-            int lo_bucket = (int)(lo_cut_hz / hz_per_bucket) + zero_hz_bucket;
-            int hi_bucket = (int)(hi_cut_hz / hz_per_bucket) + zero_hz_bucket;
+        //    int lo_bucket = (int)(lo_cut_hz / hz_per_bucket) + zero_hz_bucket;
+        //    int hi_bucket = (int)(hi_cut_hz / hz_per_bucket) + zero_hz_bucket;
 
-            if (lo_bucket < 0 || hi_bucket > fft_size - 1)
-            {
-                return null;
-            }
+        //    if (lo_bucket < 0 || hi_bucket > fft_size - 1)
+        //    {
+        //        return null;
+        //    }
 
-            double mag_sqr;
-            float[] dbm = new float[hi_bucket - lo_bucket + 1];
-            double pow2fft = Math.Pow(fft_size, 2);
+        //    double mag_sqr;
+        //    float[] dbm = new float[hi_bucket - lo_bucket + 1];
+        //    double pow2fft = Math.Pow(fft_size, 2);
 
-            // all the offsets, use display
-            float fOffset;
-            if (rx == 1)
-                fOffset = Display.RX1Offset;
-            else
-                fOffset = Display.RX2Offset;
+        //    // all the offsets, use display
+        //    float fOffset;
+        //    if (rx == 1)
+        //        fOffset = Display.RX1Offset;
+        //    else
+        //        fOffset = Display.RX2Offset;
 
-            for (int i = lo_bucket; i <= hi_bucket; i++)
-            {
-                mag_sqr = spectrum_data[i, 0] * spectrum_data[i, 0] + spectrum_data[i, 1] * spectrum_data[i, 1];
-                dbm[i - lo_bucket] = (float)(10.0f * Math.Log10(mag_sqr / pow2fft)) + fOffset;
-            }
+        //    for (int i = lo_bucket; i <= hi_bucket; i++)
+        //    {
+        //        mag_sqr = spectrum_data[i, 0] * spectrum_data[i, 0] + spectrum_data[i, 1] * spectrum_data[i, 1];
+        //        dbm[i - lo_bucket] = (float)(10.0f * Math.Log10(mag_sqr / pow2fft)) + fOffset;
+        //    }
 
-            return dbm;
-        }
+        //    return dbm;
+        //}
         private bool _bIgnoreSqlUpdate = false;// used by chkSquelch_CheckStateChanged
         private void ptbSquelch_Scroll(object sender, System.EventArgs e)
         {
@@ -49763,7 +49833,23 @@ namespace Thetis
 
                 if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
                 {
-                    sFW = NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString();
+                    switch (HardwareSpecific.Model)
+                    {
+                        case HPSDRModel.ANAN_G2:
+                        case HPSDRModel.ANAN_G2_1K:
+                            if (NetworkIO.BetaVersion >= 39) // added for p2app v39
+                            {
+                                sFW = "fpga(v" + NetworkIO.FWCodeVersion.ToString() + ") p2app(v" + NetworkIO.BetaVersion.ToString() + ")";
+                            }
+                            else
+                            {
+                                sFW = NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString();
+                            }
+                            break;
+                        default:
+                            sFW = NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString();
+                            break;
+                    }                    
                     sProto = "2";
                     sSupportedProtocol = NetworkIO.ProtocolSupported.ToString("0\\.0");
                 }
@@ -50134,7 +50220,10 @@ namespace Thetis
             {
                 if (e.Button == MouseButtons.Right)
                 {
-                    _highlightedSpot.BrowseQRZ();
+                    if (Common.CtrlKeyDown)
+                        _highlightedSpot.BrowseHamQTH();
+                    else
+                        _highlightedSpot.BrowseQRZ();
                 }
                 else if (_highlightedSpot.Highlight[0])
                 {

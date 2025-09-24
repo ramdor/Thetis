@@ -60,10 +60,10 @@ namespace Thetis
     public partial class Setup : Form
     {
         // for these callsigns always show cmasio tab, as a perk to the testers from discord
-        private readonly List<string> CMASIO_ALWAYS_SHOW = new List<string>() {    "dl5tt", "ea8djr", "kc1lko", "k1lsb", "k1sr", "k2gx", "k2tc", "kb2uka",
-                                                                                    "ki4tga", "ko6dlv", "kw4ex", "m0cke", "mw0lge", "n6mud", "nc3z", "nj2us",
-                                                                                    "nr0v", "ny8t", "oe3ide", "oz1ct", "sa3atf", "ve2jn", "ve9iou", "vk6ia",
-                                                                                    "w1aex", "w1rs", "w2pa", "w3ub", "w9ez" };
+        private readonly List<string> CMASIO_ALWAYS_SHOW = new List<string>() {  "dl5tt", "ea8djr", "ei7bmb", "kc1lko", "k1lsb", "k1sr", "k2gx", "k2tc", "kb2uka",
+                                                                                 "ki4tga", "ko6dlv", "kw4ex", "m0cke", "mw0lge", "n6mud", "nc3z", "nj2us",
+                                                                                 "nr0v", "ny8t", "oe3ide", "oz1ct", "sa3atf", "ve2jn", "ve9iou", "vk6ia",
+                                                                                 "w1aex", "w1izz", "wr1s", "w2pa", "w3ub", "w9ac", "w9ez" };
         #region Variable Declaration
 
         private Console console;
@@ -200,7 +200,7 @@ namespace Thetis
             "%swr%" + System.Environment.NewLine +
             "%signal_strength%" + System.Environment.NewLine +
             "%avg_signal_strength%" + System.Environment.NewLine +
-            "%signal_iaru_r1%" + System.Environment.NewLine +
+            "%signal_max_bin%" + System.Environment.NewLine +
             "%pwr%" + System.Environment.NewLine +
             "%reverse_pwr%" + System.Environment.NewLine +
             "%mic%" + System.Environment.NewLine +
@@ -14431,11 +14431,27 @@ namespace Thetis
 
             if (NetworkIO.getHaveSync() == 1)
             {
-                //MW0LGE_21d
                 if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
                 {
-                    sProtocolInfo = "Protocol 2 (v" + NetworkIO.ProtocolSupported.ToString("0\\.0") + ")";
-                    sMetisCodeVersion = NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString();
+                    switch (HardwareSpecific.Model)
+                    {
+                        case HPSDRModel.ANAN_G2:
+                        case HPSDRModel.ANAN_G2_1K:
+                            if (NetworkIO.BetaVersion >= 39) // added for p2app v39
+                            {
+                                sMetisCodeVersion = "fpga(v" + NetworkIO.FWCodeVersion.ToString() + ") p2app(v" + NetworkIO.BetaVersion.ToString() + ")";
+                            }
+                            else
+                            {
+                                sMetisCodeVersion = NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString();
+                            }
+                            break;
+                        default:
+                            sMetisCodeVersion = NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString();
+                            break;
+                    }
+
+                    sProtocolInfo = "Protocol 2 (v" + NetworkIO.ProtocolSupported.ToString("0\\.0") + ")";                    
                 }
                 else
                 {
@@ -14462,18 +14478,38 @@ namespace Thetis
         {
             string sRet = "";
 
+            Debug.Print(NetworkIO.FWCodeVersion.ToString());
+            Debug.Print(NetworkIO.BetaVersion.ToString());
+
             if (NetworkIO.getHaveSync() == 1)
             {
                 if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH)
                 {
-                    sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString() + " Protocol 2";
+                    switch(HardwareSpecific.Model)
+                    {
+                        case HPSDRModel.ANAN_G2:
+                        case HPSDRModel.ANAN_G2_1K:
+                            if (NetworkIO.BetaVersion >= 39) // added for p2app v39
+                            {
+                                sRet = "fpga(v" + NetworkIO.FWCodeVersion.ToString() + ") p2app(v" + NetworkIO.BetaVersion.ToString() + ")";
+                            }
+                            else
+                            {
+                                sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString();
+                            }
+                            break;
+                        default:
+                            sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + "." + NetworkIO.BetaVersion.ToString();
+                            break;
+                    }
+                    sRet += " Protocol_2";
                 }
                 else
                 {
                     if(HPSDRModel.HERMESLITE == HardwareSpecific.Model)
                         sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + NetworkIO.FWCodeVersionMinor.ToString("\\.0") + " Protocol 1";
-                    else
-                        sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + " Protocol 1";
+                    else                
+                    sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + " Protocol_1";
                 }
             }
 
@@ -19892,7 +19928,7 @@ namespace Thetis
         private void chkAccurateFrameTiming_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-            console.UseAccurateFramingTiming = chkAccurateFrameTiming.Checked;
+            console.UseAccurateFramingTiming = false;// chkAccurateFrameTiming.Checked; //[2.10.3.9]MW0LGE disabled as primarily for testing
         }
 
         public bool PeakBlobsEnabled
@@ -25869,10 +25905,10 @@ namespace Thetis
 
         private void btnRX1PBsnr_Click(object sender, EventArgs e)
         {
-            float snr = console.RXPBsnr(1);
+            double snr = console.RXPBsnr(1);
             if (snr == -999) return;
 
-            float t = (float)nudPBsnrShiftRx1.Value - snr;
+            double t = (double)nudPBsnrShiftRx1.Value - snr;
 
             // limit to 24 for the shift
             if (t < -24) t = -24;
@@ -25883,10 +25919,10 @@ namespace Thetis
 
         private void btnRX2PBsnr_Click(object sender, EventArgs e)
         {
-            float snr = console.RXPBsnr(2);
+            double snr = console.RXPBsnr(2);
             if (snr == -999) return;
 
-            float t = (float)nudPBsnrShiftRx2.Value - snr;
+            double t = (double)nudPBsnrShiftRx2.Value - snr;
 
             // limit to 12 for the shift
             if (t < -24) t = -24;

@@ -210,7 +210,6 @@ namespace Thetis
         FILTER_DISPLAY,
         DIAL_DISPLAY,
         CUSTOM_METER_BAR,
-        //SPECTRUM,        
         LAST
     }
     public enum BandGroups
@@ -289,9 +288,6 @@ namespace Thetis
         private static Dictionary<string, frmMeterDisplay> _lstMeterDisplayForms = new Dictionary<string, frmMeterDisplay>();
         private static Dictionary<string, ucMeter> _lstUCMeters = new Dictionary<string, ucMeter>();
 
-        //public static float[] _newSpectrumPassband;
-        //public static float[] _currentSpectrumPassband;
-        //private static bool _spectrumReady;
         static MeterManager()
         {
             _uc_sequence = 0; // to order the uc's when returned to setup
@@ -321,7 +317,6 @@ namespace Thetis
             _paPresent = false;
             _apolloPresent = false;
             _transverterIndex = -1; // no transverter
-            //_spectrumReady = false;
 
             _image_cache = new Dictionary<string, System.Drawing.Bitmap>();
             _image_streamdata_cache = new Dictionary<string, MemoryStream>();
@@ -1657,44 +1652,7 @@ namespace Thetis
             setReadingForced(rx, reading, value);
         }
         //
-
-        //private static object _spectrumArrayLock = new object();
-        //public static void ResizeSpectrum(int len)
-        //{
-        //    lock (_spectrumArrayLock)
-        //    {
-        //        if (_newSpectrumPassband == null || _newSpectrumPassband.Length != len)
-        //        {
-        //            _newSpectrumPassband = new float[len];
-
-        //            if (_currentSpectrumPassband == null)
-        //            {
-        //                _currentSpectrumPassband = new float[len];
-        //            }
-        //            else
-        //            {
-        //                float[] tmp = new float[len];
-        //                int stop = Math.Min(tmp.Length, _currentSpectrumPassband.Length);
-
-        //                for (int i = 0; i < stop; i++)
-        //                {
-        //                    tmp[i] = _currentSpectrumPassband[i];
-        //                }
-        //                for (int i = stop; i < len; i++)
-        //                {
-        //                    tmp[i] = Display.SpectrumGridMin;
-        //                }
-
-        //                _currentSpectrumPassband = tmp;
-        //            }
-        //        }
-        //    }
-        //}
-        //public static bool SpectrumReady
-        //{
-        //    get { return _spectrumReady; }
-        //    set { _spectrumReady = value; }
-        //}
+     
         public static int GetMeterTXRXType(MeterType meter)
         {
             // 0 - rx
@@ -1746,7 +1704,6 @@ namespace Thetis
                 case MeterType.FILTER_DISPLAY: return 2;
                 case MeterType.DIAL_DISPLAY: return 2;
                 case MeterType.CUSTOM_METER_BAR: return 2;
-                //case MeterType.SPECTRUM: return 2;
 
                 case MeterType.SIGNAL_MAX_BIN: return 0;
             }
@@ -4349,7 +4306,7 @@ namespace Thetis
             {
                 foreach (KeyValuePair<string, clsMeter> kvp in _meters.Where(kvp => kvp.Value.RX == rx))
                 {
-                    int ui = kvp.Value.QuickestUpdateInterval(mox);
+                    int ui = kvp.Value.QuickestUpdateInterval(mox, true);
                     if (ui < updateRate) updateRate = ui;
                 }
             }
@@ -5057,7 +5014,6 @@ namespace Thetis
                 DISCORD_BUTTONS,
                 FILTER_DISPLAY,
                 DIAL_DISPLAY
-                //SPECTRUM
             }
 
             public class clsPercCache
@@ -16561,18 +16517,6 @@ namespace Thetis
                 }
             }
         }
-        //internal class clsSpectrum : clsMeterItem
-        //{
-        //    private System.Drawing.Color _color;
-
-        //    public clsSpectrum()
-        //    {
-        //        ItemType = MeterItemType.SPECTRUM;
-        //        ReadingSource = Reading.NONE;
-        //        UpdateInterval = 50;
-        //        StoreSettings = false;
-        //    }
-        //}
 
         #endregion
         #region clsMeterItems
@@ -16739,7 +16683,6 @@ namespace Thetis
                     case MeterType.FILTER_DISPLAY: ret = Reading.NONE.ToString(); break;
                     case MeterType.DIAL_DISPLAY: ret = Reading.NONE.ToString(); break;
                     case MeterType.CUSTOM_METER_BAR: ret = variable_index == 0 ? "Primary" : "Secondary"; break;
-                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg).ToString(); break; break.ToString(); break;
                     case MeterType.SIGNAL_MAX_BIN: ret = Reading.SIGNAL_MAX_BIN.ToString(); break;
                 }
                 return ret;
@@ -16790,7 +16733,6 @@ namespace Thetis
                     case MeterType.FILTER_DISPLAY: return 0;
                     case MeterType.DIAL_DISPLAY: return 0;
                     case MeterType.CUSTOM_METER_BAR: return 2;
-                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.SIGNAL_MAX_BIN: return 1;
                 }
                 return 0;
@@ -16846,7 +16788,6 @@ namespace Thetis
                     case MeterType.FILTER_DISPLAY: AddFilterDisplay(nDelay, 0, out bBottom, 0.2f, restoreIg); break;
                     case MeterType.DIAL_DISPLAY: AddDial(nDelay, 0, out bBottom, 1f, restoreIg); break;
                     case MeterType.CUSTOM_METER_BAR: AddCustomBar(nDelay, 0, out bBottom, restoreIg); break;
-                    //case MeterType.SPECTRUM: AddSpectrum(nDelay, 0, out bBottom, restoreIg); break;
                     case MeterType.SIGNAL_MAX_BIN: AddSMeterBarMaxBin(nDelay, 0, out bBottom, restoreIg); break;
                 }
 
@@ -19740,53 +19681,6 @@ namespace Thetis
 
                 return sc.ID;
             }
-            //public string AddSpectrum(int nMSupdate, float fTop, out float fBottom, clsItemGroup restoreIg = null)
-            //{
-            //    clsItemGroup ig = new clsItemGroup();
-            //    if (restoreIg != null) ig.ID = restoreIg.ID;
-            //    ig.ParentID = ID;
-
-            //    clsSolidColour sc;
-            //    sc = new clsSolidColour();
-            //    sc.ParentID = ig.ID;
-            //    sc.TopLeft = new PointF(_fPadX, fTop + _fPadY - _fHeight * 0.75f);
-            //    sc.Size = new SizeF(1f - _fPadX * 2f, (_fHeight + _fHeight * 0.75f) * 8f);
-            //    sc.Colour = System.Drawing.Color.FromArgb(32, 32, 32);
-            //    sc.ZOrder = 1;
-            //    addMeterItem(sc);
-
-            //    clsSpectrum cst = new clsSpectrum();
-            //    cst.ParentID = ig.ID;
-            //    cst.Primary = true;
-            //    cst.TopLeft = sc.TopLeft;
-            //    cst.Size = sc.Size;
-            //    cst.UpdateInterval = nMSupdate;
-            //    cst.ZOrder = 2;
-            //    addMeterItem(cst);
-
-            //    //clsClickBox clb = new clsClickBox();
-            //    //clb.ParentID = ig.ID;
-            //    //clb.TopLeft = sc.TopLeft;
-            //    //clb.Size = sc.Size;
-            //    //clb.ChangesGroup = false;
-            //    //clb.PerformsIncDec = true;
-            //    //clb.RelatedMeterItem = cst;
-            //    //addMeterItem(clb);
-
-            //    fBottom = sc.TopLeft.Y + sc.Size.Height;
-
-            //    ig.TopLeft = sc.TopLeft;
-            //    ig.Size = new SizeF(sc.Size.Width, fBottom);
-            //    ig.MeterType = MeterType.SPECTRUM;
-            //    ig.Order = restoreIg == null ? numberOfMeterGroups() : restoreIg.Order;
-
-            //    clsFadeCover fc = getFadeCover(ig.ID);
-            //    if (fc != null) addMeterItem(fc);
-
-            //    addMeterItem(ig);
-
-            //    return sc.ID;
-            //}
             #endregion
             public clsMeter(int rx, string sName, float XRatio = 1f, float YRatio = 1f)
             {
@@ -23283,8 +23177,8 @@ namespace Thetis
             }
             public void UpdateIntervals()
             {
-                _quickestRXUpdate = QuickestUpdateInterval(false);
-                _quickestTXUpdate = QuickestUpdateInterval(true);
+                _quickestRXUpdate = QuickestUpdateInterval(false, false);
+                _quickestTXUpdate = QuickestUpdateInterval(true, false);
             }
             public void Rebuild()
             {
@@ -23785,38 +23679,109 @@ namespace Thetis
                     return _rx == 1 && _rx2Enabled && (_multiRxEnabled || _split) && _vfoSub >= 0; //[2.10.3.6]MW0LGE added m.vfosub >= 0
                 }
             }
-            public int QuickestUpdateInterval(bool mox)
+            public int QuickestUpdateInterval(bool mox, bool console_only_refresh)
             {
                 lock (_meterItemsLock)
                 {
-                    int updateInterval = int.MaxValue;
-                    foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems.Where(o => (o.Value.ItemType == clsMeterItem.MeterItemType.NEEDLE || 
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.H_BAR ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.MAGIC_EYE ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.CLOCK ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.SIGNAL_TEXT_DISPLAY ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.SPACER ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.TEXT_OVERLAY ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.LED ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.WEB_IMAGE ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.MODE_BUTTONS ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.ANTENNA_BUTTONS ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.TUNESTEP_BUTTONS ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.DISCORD_BUTTONS ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_DISPLAY ||
-                                                                o.Value.ItemType == clsMeterItem.MeterItemType.DIAL_DISPLAY
-                                                                ) && ( ((mox && o.Value.OnlyWhenTX) || (!mox && o.Value.OnlyWhenRX)) || (!o.Value.OnlyWhenTX && !o.Value.OnlyWhenRX) ) ))
+                    int update_interval = int.MaxValue;
+
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems)
                     {
                         clsMeterItem mi = kvp.Value;
-                        if (mi.UpdateInterval < updateInterval) updateInterval = mi.UpdateInterval;
+
+                        bool visible = (mox && mi.OnlyWhenTX) || (!mox && mi.OnlyWhenRX) || (!mi.OnlyWhenTX && !mi.OnlyWhenRX);
+                        if (!visible) continue;
+
+                        if (console_only_refresh)
+                        {
+                            // this is used by console, and items that use the meter data obtained from wdsp in console will be
+                            // handled by this
+                            bool uses_wdsp_reading = false;
+
+                            int source = (int)mi.ReadingSource;
+
+                            if (!_mox)
+                            {
+                                uses_wdsp_reading = (source >= (int)Reading.SIGNAL_STRENGTH && source <= (int)Reading.ESTIMATED_PBSNR)
+                                                  || source == (int)Reading.SIGNAL_MAX_BIN;
+                            }
+                            else
+                            {
+                                uses_wdsp_reading = source >= (int)Reading.MIC && source <= (int)Reading.CAL_FWD_PWR;                                
+                            }
+
+                            if (!uses_wdsp_reading)
+                            {
+                                uses_wdsp_reading = source == (int)Reading.VOLTS || source == (int)Reading.AMPS;
+                            }
+                            
+                            if (!uses_wdsp_reading)
+                            {
+                                clsMeterItem.MeterItemType type = mi.ItemType;
+                                uses_wdsp_reading = type == clsMeterItem.MeterItemType.TEXT_OVERLAY
+                                                 || type == clsMeterItem.MeterItemType.LED
+                                                 || type == clsMeterItem.MeterItemType.HISTORY;
+                            }
+
+                            if (!uses_wdsp_reading) continue;
+                        }
+                        else
+                        {
+                            clsMeterItem.MeterItemType type = mi.ItemType;
+
+                            // ignore these, we dont refresh based on the update interval of these
+                            if (type == clsMeterItem.MeterItemType.BASE
+                             || type == clsMeterItem.MeterItemType.CLICKBOX
+                             || type == clsMeterItem.MeterItemType.DATA_OUT
+                             || type == clsMeterItem.MeterItemType.FADE_COVER
+                             || type == clsMeterItem.MeterItemType.H_SCALE
+                             || type == clsMeterItem.MeterItemType.V_SCALE
+                             || type == clsMeterItem.MeterItemType.IMAGE
+                             || type == clsMeterItem.MeterItemType.ITEM_GROUP
+                             || type == clsMeterItem.MeterItemType.NEEDLE_SCALE_PWR
+                             || type == clsMeterItem.MeterItemType.SOLID_COLOUR
+                             || type == clsMeterItem.MeterItemType.TEXT)
+                            {
+                                continue;
+                            }
+                        }
+
+                        if (mi.UpdateInterval < update_interval) update_interval = mi.UpdateInterval;
                     }
-                    return updateInterval;
+
+                    return update_interval;
                 }
+                //lock (_meterItemsLock)
+                //{
+                //    int updateInterval = int.MaxValue;
+                //    foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems.Where(o => (
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.NEEDLE || 
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.H_BAR ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.MAGIC_EYE ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.VFO_DISPLAY ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.CLOCK ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.SIGNAL_TEXT_DISPLAY ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.SPACER ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.TEXT_OVERLAY ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.LED ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.WEB_IMAGE ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.MODE_BUTTONS ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.ANTENNA_BUTTONS ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.ROTATOR ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.HISTORY ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.TUNESTEP_BUTTONS ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.DISCORD_BUTTONS ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_DISPLAY ||
+                //                                                o.Value.ItemType == clsMeterItem.MeterItemType.DIAL_DISPLAY
+                //                                                ) && ( ((mox && o.Value.OnlyWhenTX) || (!mox && o.Value.OnlyWhenRX)) || (!o.Value.OnlyWhenTX && !o.Value.OnlyWhenRX) ) ))
+                //    {
+                //        clsMeterItem mi = kvp.Value;
+                //        if (mi.UpdateInterval < updateInterval) updateInterval = mi.UpdateInterval;
+                //    }
+                //    return updateInterval;
+                //}
             }
             private void addUpdateReading(ref Dictionary<Reading, object> all_readings, Reading reading, object value)
             {
@@ -25593,9 +25558,6 @@ namespace Thetis
                                     case clsMeterItem.MeterItemType.DISCORD_BUTTONS:
                                         renderButtonBox(rect, mi, m);
                                         break;                                    
-                                    //case clsMeterItem.MeterItemType.SPECTRUM:
-                                    //    renderSpectrum(rect, mi, m);
-                                    //    break;
                                     case clsMeterItem.MeterItemType.FADE_COVER:
                                         renderFadeCover(rect, mi, m);
                                         break;
@@ -25751,7 +25713,7 @@ namespace Thetis
                 if (!mi.Disabled && !mi.FadeOnTx && m.MOX && mi.FadeValue == 255) return 255;
                 if (!mi.Disabled && !mi.FadeOnRx && !m.MOX && mi.FadeValue == 255) return 255;
 
-                int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                int updateInterval = m.QuickestUpdateInterval(m.MOX, false);
                 updateInterval = Math.Min(updateInterval, 500);
                 // fade to take half a second
                 int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
@@ -26616,7 +26578,7 @@ namespace Thetis
                     }
                     else
                     {
-                        int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                        int updateInterval = m.QuickestUpdateInterval(m.MOX, false);
                         updateInterval = Math.Min(updateInterval, 500);
                         // fade to take half a second
                         int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
@@ -26693,7 +26655,7 @@ namespace Thetis
                         }
                     }
 
-                    int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                    int updateInterval = m.QuickestUpdateInterval(m.MOX, false);
                     updateInterval = Math.Min(updateInterval, intervalSpeed);
                     int steps_needed = (int)Math.Ceiling(intervalSpeed / (float)updateInterval);
                     float stepSize = 1 / (float)steps_needed;
@@ -26743,7 +26705,7 @@ namespace Thetis
                     }
                     else
                     {
-                        int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                        int updateInterval = m.QuickestUpdateInterval(m.MOX, false);
                         updateInterval = Math.Min(updateInterval, 500);
                         // fade to take half a second
                         int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
@@ -28917,7 +28879,7 @@ namespace Thetis
                     }
                     else
                     {
-                        int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                        int updateInterval = m.QuickestUpdateInterval(m.MOX, false);
                         updateInterval = Math.Min(updateInterval, 500);
                         // fade to take half a second
                         int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
@@ -29146,7 +29108,7 @@ namespace Thetis
                     }
                     else
                     {
-                        int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                        int updateInterval = m.QuickestUpdateInterval(m.MOX, false);
                         updateInterval = Math.Min(updateInterval, 500);
                         // fade to take half a second
                         int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
@@ -29180,7 +29142,7 @@ namespace Thetis
                     }
                     else
                     {
-                        int updateInterval = m.QuickestUpdateInterval(m.MOX);
+                        int updateInterval = m.QuickestUpdateInterval(m.MOX, false);
                         updateInterval = Math.Min(updateInterval, 500);
                         // fade to take half a second
                         int steps_needed = (int)Math.Ceiling(500 / (float)updateInterval);
@@ -32228,78 +32190,6 @@ namespace Thetis
                     }
                 }
             }
-            //private void renderSpectrum(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
-            //{
-            //    lock (_spectrumArrayLock)
-            //    {
-            //        if (_newSpectrumPassband == null || _currentSpectrumPassband == null) return;
-
-            //        clsSpectrum spect = (clsSpectrum)mi;
-
-            //        float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
-            //        float y = (mi.DisplayTopLeft.Y / m.YRatio) * rect.Height;
-            //        float w = rect.Width * (mi.Size.Width / m.XRatio);
-            //        float h = rect.Height * (mi.Size.Height / m.YRatio);
-
-            //        int nFade = 255;
-
-            //        float top = Display.SpectrumGridMax; //dbm
-            //        float bottom = Display.SpectrumGridMin; //-150; //dbm
-
-            //        float yRange = top - bottom;
-            //        float dbmToPixel = h / yRange;
-
-            //        if (_spectrumReady)
-            //        {
-            //            unsafe
-            //            {
-            //                // copy to current
-            //                fixed (void* srcptr = &_newSpectrumPassband[0])
-            //                fixed (void* destptr = &_currentSpectrumPassband[0])
-            //                    Win32.memcpy(destptr, srcptr, _currentSpectrumPassband.Length * sizeof(float));
-
-            //                //for (int i = 0; i < _newSpectrumPassband.Length; i++)
-            //                //{
-            //                //    _currentSpectrumPassband[i] = (_newSpectrumPassband[i] * 0.3f) + (_currentSpectrumPassband[i] * 0.7f);
-            //                //}
-            //            }
-            //            _spectrumReady = false;
-            //        }
-
-            //        if (_currentSpectrumPassband != null)
-            //        {
-            //            SharpDX.RectangleF rct = new SharpDX.RectangleF(x, y, w, h);
-            //            _renderTarget.PushAxisAlignedClip(rct, AntialiasMode.Aliased);
-
-            //            float xPos = x;
-            //            float increment = w / _currentSpectrumPassband.Length;
-            //            Vector2 oldPoint = new Vector2();
-            //            Vector2 newPoint = new Vector2();
-
-            //            oldPoint.X = x;
-            //            oldPoint.Y = y + ((top - (float)_currentSpectrumPassband[0]) * dbmToPixel);
-
-            //            SharpDX.Direct2D1.Brush b = getDXBrushForColour(System.Drawing.Color.White, nFade);
-
-            //            for (int i = 0; i < _currentSpectrumPassband.Length; i++)
-            //            {
-            //                float yPos = y + ((top - (float)_currentSpectrumPassband[i]) * dbmToPixel);
-
-            //                newPoint.X = xPos;
-            //                newPoint.Y = yPos;
-
-            //                _renderTarget.DrawLine(oldPoint, newPoint, b);
-
-            //                oldPoint.X = newPoint.X;
-            //                oldPoint.Y = newPoint.Y;
-
-            //                xPos += increment;
-            //            }
-
-            //            _renderTarget.PopAxisAlignedClip();
-            //        }
-            //    }
-            //}
             private void renderImage(SharpDX.RectangleF rect, clsMeterItem mi, clsMeter m)
             {
                 clsImage img = (clsImage)mi;
