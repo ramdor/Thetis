@@ -20,7 +20,7 @@
 
         public const int _CMASTER_VERSION = 1000;
         public const int _CMASTER_ASIO_VERSION = 1000;
-        public const int _WDSP_VERSION = 1250; // from wdsp\version.c
+        public const int _WDSP_VERSION = 1260; // from wdsp\version.c
         public const int _PORTAUDIO_VERSION = 1970;  // from pa_front.c
 
 #if WIN32

@@ -298,14 +298,16 @@
 				KeyPath="yes"
             />
 	</Component>
-
+		
+		<!-- not used as baked into wdsp. Note: the post compile copy has the zetaHat.bin file copy commented with ::
       <Component Guid="*">
         <File Id="zetaHat.bin"
               Source="$(var.FilesPath)zetaHat.bin"
               KeyPath="yes"
               />
       </Component>
-
+        -->
+		
       <Component Guid="*">
         <File Id="Midi2CatDLL"
               Source="$(var.FilesPath)Midi2Cat.dll"

@@ -172,7 +172,7 @@ void add_impulse_to_cache(size_t bucket, HASH_T hash, int N, double* impulse)
 PORT
 int save_impulse_cache(const char* path)
 {
-	if (!_run) return;
+	if (!_run) return 0;
 
 	int use;
 	EnterCriticalSection(&_cs_use_cache);

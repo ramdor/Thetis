@@ -195,6 +195,9 @@
     <ClInclude Include="impulse_cache.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="zetaHat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="channel.c">
@@ -372,6 +375,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="impulse_cache.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zetaHat.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

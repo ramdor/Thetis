@@ -2596,6 +2596,7 @@ namespace Thetis
             chkSaveTXProfileOnExit_CheckedChanged(this, e);
             chkRecoverPAProfileFromTXProfile_CheckedChanged(this, e);
             ForceTXProfileUpdate();
+            chkPulsedTune_CheckedChanged(this, e);
 
             // Keyboard Tab
             comboKBTuneUp1_SelectedIndexChanged(this, e);
@@ -2872,6 +2873,8 @@ namespace Thetis
             chkAutoPowerOn_CheckedChanged(this, e);
             nudPBsnrShiftRx1_ValueChanged(this, e);
             nudPBsnrShiftRx2_ValueChanged(this, e);
+            chkPreventSleep_CheckedChanged(this, e);
+            chkPreventScreenSaver_CheckedChanged(this, e);
 
             // auto start tab
             updateAutoLaunchControls();
@@ -11285,6 +11288,8 @@ namespace Thetis
                 udTestIMDPower.Enabled = false;
                 chkInvertTones.Enabled = false;
                 udFreq2Delay.Enabled = false; //MW0LGE_21
+                btnTwoToneF_defaults.Enabled = false;
+                btnTwoToneF_stealth.Enabled = false;
                 double ttfreq1 = (double)udTestIMDFreq1.Value;
                 double ttfreq2 = (double)udTestIMDFreq2.Value;
                 double ttmag = (double)udTwoToneLevel.Value;
@@ -11391,6 +11396,8 @@ namespace Thetis
                 udTestIMDPower.Enabled = true;
                 chkInvertTones.Enabled = true;
                 udFreq2Delay.Enabled = true;
+                btnTwoToneF_defaults.Enabled = true;
+                btnTwoToneF_stealth.Enabled = true;
 
                 chkTestIMD.Text = "Start";
             }
@@ -31130,8 +31137,8 @@ namespace Thetis
 
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
-
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
             MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
 
             _MMIO_ignore_change_events = true;
@@ -31729,6 +31736,7 @@ namespace Thetis
             if (initializing) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             bool ok = Enum.TryParse<MultiMeterIO.MMIOFormat>(comboMMIO_network_format_in.Text, out MultiMeterIO.MMIOFormat fmt);
 
@@ -31938,6 +31946,7 @@ namespace Thetis
             if (lstMMIO_network_list.SelectedIndex < 0) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             bool old_state = MultiMeterIO.Data[mmioci.Guid].Enabled;
             MultiMeterIO.Data[mmioci.Guid].Enabled = !old_state;
@@ -32028,6 +32037,7 @@ namespace Thetis
             if (initializing) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             bool ok = Enum.TryParse<MultiMeterIO.MMIOTerminator>(comboMMIO_network_terminator_in.Text, out MultiMeterIO.MMIOTerminator term);
 
@@ -32137,6 +32147,7 @@ namespace Thetis
             if (initializing) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             bool ok = Enum.TryParse<MultiMeterIO.MMIOTerminator>(comboMMIO_network_terminator_out.Text, out MultiMeterIO.MMIOTerminator term);
 
@@ -32151,6 +32162,7 @@ namespace Thetis
             if (initializing) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             bool ok = Enum.TryParse<MultiMeterIO.MMIOFormat>(comboMMIO_network_format_out.Text, out MultiMeterIO.MMIOFormat fmt);
 
@@ -32162,6 +32174,7 @@ namespace Thetis
             if (_MMIO_ignore_change_events) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             MultiMeterIO.Data[mmioci.Guid].CustomTerminatorIn = txtMMIO_network_terminator_in_custom.Text;
         }
@@ -32172,6 +32185,7 @@ namespace Thetis
             if (_MMIO_ignore_change_events) return;
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
+            if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
 
             MultiMeterIO.Data[mmioci.Guid].CustomTerminatorOut = txtMMIO_network_terminator_out_custom.Text;
         }
@@ -32179,8 +32193,8 @@ namespace Thetis
         {
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
-
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
             MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
 
             frmIPv4Picker f = new frmIPv4Picker();
@@ -32316,8 +32330,8 @@ namespace Thetis
         {
             clsMultiMeterIOComboboxItem mmioci = lstMMIO_network_list.SelectedItem as clsMultiMeterIOComboboxItem;
             if (mmioci == null) return;
-
             if (!MultiMeterIO.Data.ContainsKey(mmioci.Guid)) return;
+
             MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[mmioci.Guid];
 
             foreach (ListViewItem lvi in lstMMIO_network_variables.Items)
@@ -35342,6 +35356,97 @@ namespace Thetis
         {
             if (initializing) return;
             RadioDSP.CacheImpulseSaveRestore = chkWDSP_save_restore_cache_impulse.Checked;
+        }
+
+        private void btnTwoToneF_defaults_Click(object sender, EventArgs e)
+        {
+            udTestIMDFreq1.Value = 700;
+            udTestIMDFreq2.Value = 1900;
+        }
+
+        private void btnTwoToneF_stealth_Click(object sender, EventArgs e)
+        {
+            udTestIMDFreq1.Value = 70;
+            udTestIMDFreq2.Value = 190;
+        }
+
+        private void nudPulsedTune_window_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.TunePulseCount = (int)nudPulsedTune_window.Value;
+            console.SetupTunePulse();
+            updatePulseInfo();
+        }
+
+        private void nudPulsedTune_percent_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.TunePulseDuty = (float)(nudPulsedTune_percent.Value) / 100f;
+            console.SetupTunePulse();
+            updatePulseInfo();
+        }
+
+        private void chkPulsedTune_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            nudPulsedTune_window_ValueChanged(this, EventArgs.Empty);
+            nudPulsedTune_percent_ValueChanged(this, EventArgs.Empty);
+            nudPulsedTune_ramp_ValueChanged(this, EventArgs.Empty);
+
+            console.TunePulseEnabled = chkPulsedTune.Checked;
+            grpPulsedTune.Enabled = chkPulsedTune.Checked;
+            lblTunedPulse_info.Enabled = chkPulsedTune.Checked;
+        }
+
+        private void nudPulsedTune_ramp_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.TunePulseRamp = (int)nudPulsedTune_ramp.Value;
+            console.SetupTunePulse();
+            updatePulseInfo();
+        }
+
+        private void updatePulseInfo()
+        {
+            float window = 1000f / (float)nudPulsedTune_window.Value;
+            float duty = window * ((float)nudPulsedTune_percent.Value / 100f);
+            int totalRamp = (int)nudPulsedTune_ramp.Value * 2;
+            float total = duty + totalRamp;
+
+            string info = $"Window = {window:F2}ms\nDuty = {duty:F2}ms\nTotal Ramp = {totalRamp}ms\nTotal Pulse = {total:F2}ms\n";
+
+            if (window >= total)
+            {
+                info += "Will fit window";
+                lblTunedPulse_info.ForeColor = Color.Green;
+            }
+            else
+            {
+                info += "Will NOT fit window";
+                lblTunedPulse_info.ForeColor = Color.Red;
+            }
+
+            lblTunedPulse_info.Text = info;
+        }
+
+        private void chkPreventSleep_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            if (chkPreventSleep.Checked)
+                Common.PreventSleep();
+            else
+                Common.ResumeSleep();
+        }
+
+        private void chkPreventScreenSaver_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            if (chkPreventScreenSaver.Checked)
+                Common.PreventScreenSaver();
+            else
+                Common.ResumeScreenSaver();
         }
     }
 

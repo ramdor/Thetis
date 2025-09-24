@@ -2749,6 +2749,18 @@
             this.tbCFC2 = new System.Windows.Forms.TrackBarTS();
             this.picCFC = new System.Windows.Forms.PictureBox();
             this.tpTransmit = new System.Windows.Forms.TabPage();
+            this.chkPulsedTune = new System.Windows.Forms.CheckBoxTS();
+            this.grpPulsedTune = new System.Windows.Forms.GroupBoxTS();
+            this.lblTunedPulse_info = new System.Windows.Forms.LabelTS();
+            this.labelTS438 = new System.Windows.Forms.LabelTS();
+            this.labelTS437 = new System.Windows.Forms.LabelTS();
+            this.nudPulsedTune_ramp = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS435 = new System.Windows.Forms.LabelTS();
+            this.labelTS434 = new System.Windows.Forms.LabelTS();
+            this.nudPulsedTune_window = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS436 = new System.Windows.Forms.LabelTS();
+            this.labelTS430 = new System.Windows.Forms.LabelTS();
+            this.nudPulsedTune_percent = new System.Windows.Forms.NumericUpDownTS();
             this.chkRecoverPAProfileFromTXProfile = new System.Windows.Forms.CheckBoxTS();
             this.chkHighlightTXProfileSaveItems = new System.Windows.Forms.CheckBoxTS();
             this.chkRestoreVAC2DeviceDetailsFromTXProfile = new System.Windows.Forms.CheckBoxTS();
@@ -3751,6 +3763,8 @@
             this.lblSigGenRXMode = new System.Windows.Forms.LabelTS();
             this.cmboSigGenRXMode = new System.Windows.Forms.ComboBoxTS();
             this.grpTestTXIMD = new System.Windows.Forms.GroupBoxTS();
+            this.btnTwoToneF_stealth = new System.Windows.Forms.ButtonTS();
+            this.btnTwoToneF_defaults = new System.Windows.Forms.ButtonTS();
             this.radUseFixedDrive2Tone = new System.Windows.Forms.RadioButtonTS();
             this.radUseDriveSlider2Tone = new System.Windows.Forms.RadioButtonTS();
             this.radUseTuneSlider2Tone = new System.Windows.Forms.RadioButtonTS();
@@ -4275,6 +4289,8 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.chkPreventSleep = new System.Windows.Forms.CheckBoxTS();
+            this.chkPreventScreenSaver = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4952,6 +4968,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbCFC2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picCFC)).BeginInit();
             this.tpTransmit.SuspendLayout();
+            this.grpPulsedTune.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPulsedTune_ramp)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPulsedTune_window)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPulsedTune_percent)).BeginInit();
             this.grpDSPSpeechProcessor.SuspendLayout();
             this.grpExtTXInhibit.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLowSave)).BeginInit();
@@ -11140,7 +11160,7 @@
             this.groupBoxTS23.Controls.Add(this.chkSwapREDBluePSAColours);
             this.groupBoxTS23.Location = new System.Drawing.Point(180, 8);
             this.groupBoxTS23.Name = "groupBoxTS23";
-            this.groupBoxTS23.Size = new System.Drawing.Size(252, 132);
+            this.groupBoxTS23.Size = new System.Drawing.Size(252, 119);
             this.groupBoxTS23.TabIndex = 34;
             this.groupBoxTS23.TabStop = false;
             this.groupBoxTS23.Text = "Info Bar (below spectrum)";
@@ -11199,10 +11219,12 @@
             // 
             // groupBoxTS22
             // 
+            this.groupBoxTS22.Controls.Add(this.chkPreventScreenSaver);
+            this.groupBoxTS22.Controls.Add(this.chkPreventSleep);
             this.groupBoxTS22.Controls.Add(this.chkUseOutlinedCross);
-            this.groupBoxTS22.Location = new System.Drawing.Point(180, 149);
+            this.groupBoxTS22.Location = new System.Drawing.Point(180, 130);
             this.groupBoxTS22.Name = "groupBoxTS22";
-            this.groupBoxTS22.Size = new System.Drawing.Size(252, 85);
+            this.groupBoxTS22.Size = new System.Drawing.Size(252, 104);
             this.groupBoxTS22.TabIndex = 12;
             this.groupBoxTS22.TabStop = false;
             this.groupBoxTS22.Text = "Other";
@@ -38969,8 +38991,8 @@
             this.udDSPLevelerThreshold.Size = new System.Drawing.Size(40, 20);
             this.udDSPLevelerThreshold.TabIndex = 6;
             this.udDSPLevelerThreshold.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPLevelerThreshold, "This provides for a “threshold” AGC.  Irrespective of how weak a signal is, no ga" +
-        "in over this Max Gain is applied.");
+            this.toolTip1.SetToolTip(this.udDSPLevelerThreshold, "This provides for a \'threshold\' ALC. Irrespective of how weak the input is, no ga" +
+        "in over this max is applied.");
             this.udDSPLevelerThreshold.Value = new decimal(new int[] {
             15,
             0,
@@ -39001,7 +39023,8 @@
             this.udDSPLevelerDecay.Size = new System.Drawing.Size(48, 20);
             this.udDSPLevelerDecay.TabIndex = 12;
             this.udDSPLevelerDecay.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPLevelerDecay, "Time-constant to increase gain after strong transmit audio");
+            this.toolTip1.SetToolTip(this.udDSPLevelerDecay, "Decay time‐constant in ms.  Note that this is a time‐constant for an exponential " +
+        "curve, not an absolute time.");
             this.udDSPLevelerDecay.Value = new decimal(new int[] {
             100,
             0,
@@ -39095,7 +39118,8 @@
             this.udDSPALCDecay.Size = new System.Drawing.Size(48, 20);
             this.udDSPALCDecay.TabIndex = 12;
             this.udDSPALCDecay.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udDSPALCDecay, "Time-constant to increase gain after strong transmit signal");
+            this.toolTip1.SetToolTip(this.udDSPALCDecay, "Decay time‐constant in ms.  Note that this is a time‐constant for an exponential " +
+        "curve, not an absolute time.\r\n\r\n");
             this.udDSPALCDecay.Value = new decimal(new int[] {
             10,
             0,
@@ -45244,6 +45268,8 @@
             // 
             // tpTransmit
             // 
+            this.tpTransmit.Controls.Add(this.chkPulsedTune);
+            this.tpTransmit.Controls.Add(this.grpPulsedTune);
             this.tpTransmit.Controls.Add(this.chkRecoverPAProfileFromTXProfile);
             this.tpTransmit.Controls.Add(this.chkHighlightTXProfileSaveItems);
             this.tpTransmit.Controls.Add(this.chkRestoreVAC2DeviceDetailsFromTXProfile);
@@ -45269,6 +45295,196 @@
             this.tpTransmit.Size = new System.Drawing.Size(728, 436);
             this.tpTransmit.TabIndex = 5;
             this.tpTransmit.Text = "Transmit";
+            // 
+            // chkPulsedTune
+            // 
+            this.chkPulsedTune.AutoSize = true;
+            this.chkPulsedTune.Image = null;
+            this.chkPulsedTune.Location = new System.Drawing.Point(290, 328);
+            this.chkPulsedTune.Name = "chkPulsedTune";
+            this.chkPulsedTune.Size = new System.Drawing.Size(15, 14);
+            this.chkPulsedTune.TabIndex = 0;
+            this.chkPulsedTune.UseVisualStyleBackColor = true;
+            this.chkPulsedTune.CheckedChanged += new System.EventHandler(this.chkPulsedTune_CheckedChanged);
+            // 
+            // grpPulsedTune
+            // 
+            this.grpPulsedTune.Controls.Add(this.lblTunedPulse_info);
+            this.grpPulsedTune.Controls.Add(this.labelTS438);
+            this.grpPulsedTune.Controls.Add(this.labelTS437);
+            this.grpPulsedTune.Controls.Add(this.nudPulsedTune_ramp);
+            this.grpPulsedTune.Controls.Add(this.labelTS435);
+            this.grpPulsedTune.Controls.Add(this.labelTS434);
+            this.grpPulsedTune.Controls.Add(this.nudPulsedTune_window);
+            this.grpPulsedTune.Controls.Add(this.labelTS436);
+            this.grpPulsedTune.Controls.Add(this.labelTS430);
+            this.grpPulsedTune.Controls.Add(this.nudPulsedTune_percent);
+            this.grpPulsedTune.Enabled = false;
+            this.grpPulsedTune.Location = new System.Drawing.Point(281, 328);
+            this.grpPulsedTune.Name = "grpPulsedTune";
+            this.grpPulsedTune.Size = new System.Drawing.Size(335, 100);
+            this.grpPulsedTune.TabIndex = 78;
+            this.grpPulsedTune.TabStop = false;
+            this.grpPulsedTune.Text = "      Pulsed Tune (experimental)";
+            // 
+            // lblTunedPulse_info
+            // 
+            this.lblTunedPulse_info.Image = null;
+            this.lblTunedPulse_info.Location = new System.Drawing.Point(174, 23);
+            this.lblTunedPulse_info.Name = "lblTunedPulse_info";
+            this.lblTunedPulse_info.Size = new System.Drawing.Size(155, 69);
+            this.lblTunedPulse_info.TabIndex = 10;
+            this.lblTunedPulse_info.Text = "Window = 1000ms\r\nDuty = 1000ms\r\nTotal Ramp = 200ms\r\nWill NOT fit window\r\n\r\n";
+            // 
+            // labelTS438
+            // 
+            this.labelTS438.AutoSize = true;
+            this.labelTS438.Image = null;
+            this.labelTS438.Location = new System.Drawing.Point(134, 79);
+            this.labelTS438.Name = "labelTS438";
+            this.labelTS438.Size = new System.Drawing.Size(26, 13);
+            this.labelTS438.TabIndex = 9;
+            this.labelTS438.Text = "(ms)";
+            // 
+            // labelTS437
+            // 
+            this.labelTS437.AutoSize = true;
+            this.labelTS437.Image = null;
+            this.labelTS437.Location = new System.Drawing.Point(28, 75);
+            this.labelTS437.Name = "labelTS437";
+            this.labelTS437.Size = new System.Drawing.Size(38, 13);
+            this.labelTS437.TabIndex = 8;
+            this.labelTS437.Text = "Ramp:";
+            // 
+            // nudPulsedTune_ramp
+            // 
+            this.nudPulsedTune_ramp.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_ramp.Location = new System.Drawing.Point(72, 73);
+            this.nudPulsedTune_ramp.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_ramp.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_ramp.Name = "nudPulsedTune_ramp";
+            this.nudPulsedTune_ramp.Size = new System.Drawing.Size(56, 20);
+            this.nudPulsedTune_ramp.TabIndex = 7;
+            this.nudPulsedTune_ramp.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudPulsedTune_ramp, "ms it takes to ramp up/down");
+            this.nudPulsedTune_ramp.Value = new decimal(new int[] {
+            9,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_ramp.ValueChanged += new System.EventHandler(this.nudPulsedTune_ramp_ValueChanged);
+            // 
+            // labelTS435
+            // 
+            this.labelTS435.AutoSize = true;
+            this.labelTS435.Image = null;
+            this.labelTS435.Location = new System.Drawing.Point(34, 51);
+            this.labelTS435.Name = "labelTS435";
+            this.labelTS435.Size = new System.Drawing.Size(32, 13);
+            this.labelTS435.TabIndex = 6;
+            this.labelTS435.Text = "Duty:";
+            // 
+            // labelTS434
+            // 
+            this.labelTS434.AutoSize = true;
+            this.labelTS434.Image = null;
+            this.labelTS434.Location = new System.Drawing.Point(6, 25);
+            this.labelTS434.Name = "labelTS434";
+            this.labelTS434.Size = new System.Drawing.Size(60, 13);
+            this.labelTS434.TabIndex = 3;
+            this.labelTS434.Text = "Pulse Freq:";
+            // 
+            // nudPulsedTune_window
+            // 
+            this.nudPulsedTune_window.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_window.Location = new System.Drawing.Point(72, 21);
+            this.nudPulsedTune_window.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_window.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_window.Name = "nudPulsedTune_window";
+            this.nudPulsedTune_window.Size = new System.Drawing.Size(56, 20);
+            this.nudPulsedTune_window.TabIndex = 1;
+            this.nudPulsedTune_window.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudPulsedTune_window, "Pulses per second");
+            this.nudPulsedTune_window.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_window.ValueChanged += new System.EventHandler(this.nudPulsedTune_window_ValueChanged);
+            // 
+            // labelTS436
+            // 
+            this.labelTS436.AutoSize = true;
+            this.labelTS436.Image = null;
+            this.labelTS436.Location = new System.Drawing.Point(134, 51);
+            this.labelTS436.Name = "labelTS436";
+            this.labelTS436.Size = new System.Drawing.Size(15, 13);
+            this.labelTS436.TabIndex = 5;
+            this.labelTS436.Text = "%";
+            // 
+            // labelTS430
+            // 
+            this.labelTS430.AutoSize = true;
+            this.labelTS430.Image = null;
+            this.labelTS430.Location = new System.Drawing.Point(134, 25);
+            this.labelTS430.Name = "labelTS430";
+            this.labelTS430.Size = new System.Drawing.Size(30, 13);
+            this.labelTS430.TabIndex = 2;
+            this.labelTS430.Text = "(pps)";
+            // 
+            // nudPulsedTune_percent
+            // 
+            this.nudPulsedTune_percent.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_percent.Location = new System.Drawing.Point(72, 47);
+            this.nudPulsedTune_percent.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_percent.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_percent.Name = "nudPulsedTune_percent";
+            this.nudPulsedTune_percent.Size = new System.Drawing.Size(56, 20);
+            this.nudPulsedTune_percent.TabIndex = 4;
+            this.nudPulsedTune_percent.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudPulsedTune_percent, "% duty cycle in each pulse \'window\'");
+            this.nudPulsedTune_percent.Value = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+            this.nudPulsedTune_percent.ValueChanged += new System.EventHandler(this.nudPulsedTune_percent_ValueChanged);
             // 
             // chkRecoverPAProfileFromTXProfile
             // 
@@ -45301,7 +45517,7 @@
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Image = null;
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 284);
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Name = "chkRestoreVAC2DeviceDetailsFromTXProfile";
-            this.chkRestoreVAC2DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(321, 18);
+            this.chkRestoreVAC2DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(259, 18);
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.TabIndex = 75;
             this.chkRestoreVAC2DeviceDetailsFromTXProfile.Text = "Restore VAC2 device details from TX Profile";
             this.toolTip1.SetToolTip(this.chkRestoreVAC2DeviceDetailsFromTXProfile, "Restore VAC device details that were stored against a TX Profile");
@@ -45311,7 +45527,7 @@
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Image = null;
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Location = new System.Drawing.Point(23, 260);
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Name = "chkRestoreVAC1DeviceDetailsFromTXProfile";
-            this.chkRestoreVAC1DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(321, 18);
+            this.chkRestoreVAC1DeviceDetailsFromTXProfile.Size = new System.Drawing.Size(259, 18);
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.TabIndex = 74;
             this.chkRestoreVAC1DeviceDetailsFromTXProfile.Text = "Restore VAC1 device details from TX Profile";
             this.toolTip1.SetToolTip(this.chkRestoreVAC1DeviceDetailsFromTXProfile, "Restore VAC device details that were stored against a TX Profile");
@@ -45331,7 +45547,7 @@
             // 
             this.chkLimitExtAmpOnOverload.AutoSize = true;
             this.chkLimitExtAmpOnOverload.Image = null;
-            this.chkLimitExtAmpOnOverload.Location = new System.Drawing.Point(386, 317);
+            this.chkLimitExtAmpOnOverload.Location = new System.Drawing.Point(386, 300);
             this.chkLimitExtAmpOnOverload.Name = "chkLimitExtAmpOnOverload";
             this.chkLimitExtAmpOnOverload.Size = new System.Drawing.Size(184, 17);
             this.chkLimitExtAmpOnOverload.TabIndex = 72;
@@ -45402,7 +45618,7 @@
             this.chkSaveTXProfileOnExit.Image = null;
             this.chkSaveTXProfileOnExit.Location = new System.Drawing.Point(23, 349);
             this.chkSaveTXProfileOnExit.Name = "chkSaveTXProfileOnExit";
-            this.chkSaveTXProfileOnExit.Size = new System.Drawing.Size(235, 18);
+            this.chkSaveTXProfileOnExit.Size = new System.Drawing.Size(215, 18);
             this.chkSaveTXProfileOnExit.TabIndex = 67;
             this.chkSaveTXProfileOnExit.Text = "Auto Save TX Profile on Thetis close";
             this.toolTip1.SetToolTip(this.chkSaveTXProfileOnExit, "Automatically saves the current TX Profile when Thetis is closed");
@@ -45425,7 +45641,7 @@
             0,
             0,
             0});
-            this.udTXFilterLowSave.Location = new System.Drawing.Point(528, 381);
+            this.udTXFilterLowSave.Location = new System.Drawing.Point(655, 403);
             this.udTXFilterLowSave.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -45455,7 +45671,7 @@
             0,
             0,
             0});
-            this.udTXFilterHighSave.Location = new System.Drawing.Point(466, 381);
+            this.udTXFilterHighSave.Location = new System.Drawing.Point(655, 378);
             this.udTXFilterHighSave.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -59801,6 +60017,8 @@
             // 
             // grpTestTXIMD
             // 
+            this.grpTestTXIMD.Controls.Add(this.btnTwoToneF_stealth);
+            this.grpTestTXIMD.Controls.Add(this.btnTwoToneF_defaults);
             this.grpTestTXIMD.Controls.Add(this.radUseFixedDrive2Tone);
             this.grpTestTXIMD.Controls.Add(this.radUseDriveSlider2Tone);
             this.grpTestTXIMD.Controls.Add(this.radUseTuneSlider2Tone);
@@ -59819,10 +60037,36 @@
             this.grpTestTXIMD.Controls.Add(this.udTestIMDFreq1);
             this.grpTestTXIMD.Location = new System.Drawing.Point(8, 8);
             this.grpTestTXIMD.Name = "grpTestTXIMD";
-            this.grpTestTXIMD.Size = new System.Drawing.Size(162, 326);
+            this.grpTestTXIMD.Size = new System.Drawing.Size(208, 326);
             this.grpTestTXIMD.TabIndex = 83;
             this.grpTestTXIMD.TabStop = false;
             this.grpTestTXIMD.Text = "Two Tone Test";
+            // 
+            // btnTwoToneF_stealth
+            // 
+            this.btnTwoToneF_stealth.Image = null;
+            this.btnTwoToneF_stealth.Location = new System.Drawing.Point(135, 73);
+            this.btnTwoToneF_stealth.Name = "btnTwoToneF_stealth";
+            this.btnTwoToneF_stealth.Selectable = true;
+            this.btnTwoToneF_stealth.Size = new System.Drawing.Size(67, 23);
+            this.btnTwoToneF_stealth.TabIndex = 127;
+            this.btnTwoToneF_stealth.Text = "\'Stealth\'";
+            this.toolTip1.SetToolTip(this.btnTwoToneF_stealth, "A \'stealth\' 70Hz and 190Hz");
+            this.btnTwoToneF_stealth.UseVisualStyleBackColor = true;
+            this.btnTwoToneF_stealth.Click += new System.EventHandler(this.btnTwoToneF_stealth_Click);
+            // 
+            // btnTwoToneF_defaults
+            // 
+            this.btnTwoToneF_defaults.Image = null;
+            this.btnTwoToneF_defaults.Location = new System.Drawing.Point(135, 49);
+            this.btnTwoToneF_defaults.Name = "btnTwoToneF_defaults";
+            this.btnTwoToneF_defaults.Selectable = true;
+            this.btnTwoToneF_defaults.Size = new System.Drawing.Size(67, 23);
+            this.btnTwoToneF_defaults.TabIndex = 126;
+            this.btnTwoToneF_defaults.Text = "Defaults";
+            this.toolTip1.SetToolTip(this.btnTwoToneF_defaults, "Default 700Hz and 1900Hz");
+            this.btnTwoToneF_defaults.UseVisualStyleBackColor = true;
+            this.btnTwoToneF_defaults.Click += new System.EventHandler(this.btnTwoToneF_defaults_Click);
             // 
             // radUseFixedDrive2Tone
             // 
@@ -68014,6 +68258,32 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // chkPreventSleep
+            // 
+            this.chkPreventSleep.AutoSize = true;
+            this.chkPreventSleep.Image = null;
+            this.chkPreventSleep.Location = new System.Drawing.Point(18, 46);
+            this.chkPreventSleep.Name = "chkPreventSleep";
+            this.chkPreventSleep.Size = new System.Drawing.Size(150, 17);
+            this.chkPreventSleep.TabIndex = 35;
+            this.chkPreventSleep.Text = "Prevent system auto sleep";
+            this.toolTip1.SetToolTip(this.chkPreventSleep, "Prevents the system from going to sleep");
+            this.chkPreventSleep.UseVisualStyleBackColor = true;
+            this.chkPreventSleep.CheckedChanged += new System.EventHandler(this.chkPreventSleep_CheckedChanged);
+            // 
+            // chkPreventScreenSaver
+            // 
+            this.chkPreventScreenSaver.AutoSize = true;
+            this.chkPreventScreenSaver.Image = null;
+            this.chkPreventScreenSaver.Location = new System.Drawing.Point(17, 69);
+            this.chkPreventScreenSaver.Name = "chkPreventScreenSaver";
+            this.chkPreventScreenSaver.Size = new System.Drawing.Size(127, 17);
+            this.chkPreventScreenSaver.TabIndex = 36;
+            this.chkPreventScreenSaver.Text = "Prevent screen saver";
+            this.toolTip1.SetToolTip(this.chkPreventScreenSaver, "Prevents the display screen saver from starting");
+            this.chkPreventScreenSaver.UseVisualStyleBackColor = true;
+            this.chkPreventScreenSaver.CheckedChanged += new System.EventHandler(this.chkPreventScreenSaver_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -68867,6 +69137,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.picCFC)).EndInit();
             this.tpTransmit.ResumeLayout(false);
             this.tpTransmit.PerformLayout();
+            this.grpPulsedTune.ResumeLayout(false);
+            this.grpPulsedTune.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPulsedTune_ramp)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPulsedTune_window)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudPulsedTune_percent)).EndInit();
             this.grpDSPSpeechProcessor.ResumeLayout(false);
             this.grpDSPSpeechProcessor.PerformLayout();
             this.grpExtTXInhibit.ResumeLayout(false);
@@ -73633,5 +73908,21 @@
         private GroupBoxTS groupBoxTS54;
         private CheckBoxTS chkWDSP_save_restore_cache_impulse;
         private CheckBoxTS chkWDSP_cache_impulse;
+        private ButtonTS btnTwoToneF_stealth;
+        private ButtonTS btnTwoToneF_defaults;
+        private CheckBoxTS chkPulsedTune;
+        private GroupBoxTS grpPulsedTune;
+        private LabelTS labelTS435;
+        private LabelTS labelTS436;
+        private NumericUpDownTS nudPulsedTune_percent;
+        private LabelTS labelTS434;
+        private LabelTS labelTS430;
+        private NumericUpDownTS nudPulsedTune_window;
+        private LabelTS labelTS438;
+        private LabelTS labelTS437;
+        private NumericUpDownTS nudPulsedTune_ramp;
+        private LabelTS lblTunedPulse_info;
+        private CheckBoxTS chkPreventSleep;
+        private CheckBoxTS chkPreventScreenSaver;
     }
 }

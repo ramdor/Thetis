@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2015 Warren Pratt, NR0V
+Copyright (C) 2015, 2025 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@ warren@wpratt.com
 #define _CRT_SECURE_NO_WARNINGS
 #include "comm.h"
 #include "calculus.h"
+#include "zetaHat.h"
 
 /********************************************************************************************************
 *																										*
@@ -208,19 +209,82 @@ int readZetaHat(const char* zeta_file, int* rows, int* cols,
 	char zetaBinary[256];
 	char bin[50] = ".bin";
 	sprintf(zetaBinary, "%s%s", zeta_file, bin);
-	FILE* pzetaBinary = fopen(zetaBinary, "rb");
-	if (pzetaBinary == NULL) return -1;
-	fread(rows, sizeof(int), 1, pzetaBinary);
-	fread(cols, sizeof(int), 1, pzetaBinary);
-	fread(gmin, sizeof(double), 1, pzetaBinary);
-	fread(gmax, sizeof(double), 1, pzetaBinary);
-	fread(ximin, sizeof(double), 1, pzetaBinary);
-	fread(ximax, sizeof(double), 1, pzetaBinary);
-	int nvals = (*rows) * (*cols);
-	fread(zetaHat, sizeof(double), nvals, pzetaBinary);
-	fread(zetaValid, sizeof(int), nvals, pzetaBinary);
-	fclose(pzetaBinary);
+	FILE* pzetaBinary;
+	if (pzetaBinary = fopen (zetaBinary, "rb")) 
+	{
+		fread(rows, sizeof(int), 1, pzetaBinary);
+		fread(cols, sizeof(int), 1, pzetaBinary);
+		fread(gmin, sizeof(double), 1, pzetaBinary);
+		fread(gmax, sizeof(double), 1, pzetaBinary);
+		fread(ximin, sizeof(double), 1, pzetaBinary);
+		fread(ximax, sizeof(double), 1, pzetaBinary);
+		int nvals = (*rows) * (*cols);
+		fread(zetaHat, sizeof(double), nvals, pzetaBinary);
+		fread(zetaValid, sizeof(int), nvals, pzetaBinary);
+		fclose(pzetaBinary);
+	}
+	else
+	{
+		*rows = CzetaRows;
+		*cols = CzetaCols;
+		*gmin = CzetaGmin;
+		*gmax = CzetaGmax;
+		*ximin = CzetaXimin;
+		*ximax = CzetaXimax;
+		int nvals = (*rows) * (*cols);
+		memcpy (zetaHat,   CzetaHat,   nvals * sizeof (double));
+		memcpy (zetaValid, CzetaValid, nvals * sizeof (int));
+	}
 	return 0;
+}
+
+void CwriteZetaHat(const char* cfile, int zetaHat_rows, int zetaHat_cols,
+	double zetaHat_gmin, double zetaHat_gmax, double zetaHat_ximin, double zetaHat_ximax, double* zetaHat, int* zetaValid)
+{
+	int n, i, j;
+	char cfilename[256];
+	char dot_c[50] = ".c";
+	sprintf(cfilename, "%s%s", cfile, dot_c);
+	FILE* pcfile = fopen(cfilename, "w");
+	fprintf(pcfile, "int CzetaRows = %d;\n", zetaHat_rows);
+	fprintf(pcfile, "int CzetaCols = %d;\n", zetaHat_cols);
+	fprintf(pcfile, "double CzetaGmin = %lf;\n", zetaHat_gmin);
+	fprintf(pcfile, "double CzetaGmax = %lf;\n", zetaHat_gmax);
+	fprintf(pcfile, "double CzetaXimin = %lf;\n", zetaHat_ximin);
+	fprintf(pcfile, "double CzetaXimax = %lf;\n\n", zetaHat_ximax);
+	n = zetaHat_rows * zetaHat_cols;
+	fprintf(pcfile, "double CzetaHat [%d] =\n", n);
+	fprintf(pcfile, "{\n");
+	i = 0;
+	j = 0;
+	while (i < n)
+	{
+		fprintf(pcfile, "%.17e,  ", zetaHat[i++]);
+		if (++j == 4)
+		{
+			fprintf(pcfile, "\n");
+			j = 0;
+		}
+	}
+	if (j != 0) fprintf(pcfile, "\n");
+	fprintf(pcfile, "};\n\n");
+	fprintf(pcfile, "double CzetaValid [%d] =\n", n);
+	fprintf(pcfile, "{\n");
+	i = 0;
+	j = 0;
+	while (i < n)
+	{
+		fprintf(pcfile, "%d,  ", zetaValid[i++]);
+		if (++j == 4)
+		{
+			fprintf(pcfile, "\n");
+			j = 0;
+		}
+	}
+	if (j != 0) fprintf(pcfile, "\n");
+	fprintf(pcfile, "};\n");
+	fflush(pcfile);
+	fclose(pcfile);
 }
 
 
@@ -317,6 +381,7 @@ void calc_emnr(EMNR a)
 	a->g.zeta_thresh = -2.0;
 	int rows, cols;
 	readZetaHat("zetaHat", &rows, &cols, &a->g.z_gamma_min, &a->g.z_gamma_max, &a->g.z_xihat_min, &a->g.z_xihat_max, a->g.zeta_hat, a->g.zeta_true);
+	// CwriteZetaHat("zetaHat", rows, cols, a->g.z_gamma_min, a->g.z_gamma_max, a->g.z_xihat_min, a->g.z_xihat_max, a->g.zeta_hat, a->g.zeta_true);
 	// np
 	a->np.incr = a->incr;
 	a->np.rate = a->rate;

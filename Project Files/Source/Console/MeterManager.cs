@@ -49,6 +49,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.IO.Ports;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 
 //directX
 using SharpDX;
@@ -1520,8 +1521,7 @@ namespace Thetis
         }
         public static CustomReadings ReadingsCustom(int rx)
         {
-            rx -= 1;
-            return _custom_readings[rx];
+            return _custom_readings[rx - 1];
         }
         // zero reading
         public static void ZeroReading(out float value, int rx, Reading reading)
@@ -3340,28 +3340,6 @@ namespace Thetis
                 }
             }
         }
-        //private static void OnFilterNameChanged(int rx, Filter f, string old_name, string new_name)
-        //{
-        //    lock (_metersLock)
-        //    {
-        //        foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
-        //        {
-        //            clsMeter m = ms.Value;
-
-        //            if (rx == 1)
-        //            {
-        //                m.FilterVfoAName = new_name;
-        //            }
-        //            else
-        //            {
-        //                m.FilterVfoBName = new_name;
-        //            }
-
-        //            if (old_name != new_name)
-        //                m.FilterNameDetails(f, new_name);
-        //        }
-        //    }
-        //}
         private static void OnMinimumNotchWidthChangedRX(int rx, double width)
         {
             foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
@@ -3534,20 +3512,26 @@ namespace Thetis
         {
             lock (_metersLock)
             {
-                foreach (KeyValuePair<string, clsMeter> ms in _meters.Where(o => o.Value.RX == rx))
+                if (update_band)
                 {
-                    clsMeter m = ms.Value;
-
-                    if (update_band)
+                    foreach (KeyValuePair<string, clsMeter> ms in _meters)
                     {
-                        if (rx == 1)
-                            m.BandVfoA = new_band;
-                        else
-                            m.BandVfoB = new_band;
+                        clsMeter m = ms.Value;
 
-                        m.BandChanged(old_band, new_band);
+                        //this is needed in the case of vfoB change on rx1 when rx2 is disabled. It will still be identified as rx2
+                        bool update = (rx == m.RX) || (!m.RX2Enabled && m.RX == 1 && rx == 2);
 
-                        m.ZeroOut(true, false);
+                        if (update)
+                        {
+                            if (rx == 1)
+                                m.BandVfoA = new_band;
+                            else
+                                m.BandVfoB = new_band;
+
+                            m.BandChanged(old_band, new_band);
+
+                            m.ZeroOut(true, false);
+                        }
                     }
                 }
 
@@ -10456,6 +10440,8 @@ namespace Thetis
             private float _beam_width_alpha;
             private float _padding;
 
+            private bool _mouse_over_stop;
+
             public clsRotatorItem()
             {
                 _fontFamily = "Trebuchet MS";
@@ -10490,6 +10476,8 @@ namespace Thetis
                 ReadingSource = Reading.AZ;
                 UpdateInterval = 1000;
                 StoreSettings = false;
+
+                _mouse_over_stop = false;
             }
             public RotatorMode ViewMode
             {
@@ -10750,6 +10738,24 @@ namespace Thetis
             public override bool ZeroOut(ref Dictionary<Reading, float> values, int rx)
             {
                 return false;
+            }
+            public bool MouseOverStop
+            {
+                set { _mouse_over_stop = value; }
+            }
+            public override void MouseUp(MouseEventArgs e)
+            {
+                if (_alow_control && _mouse_over_stop)
+                {
+                    SendRotatorMessage(false, -1, true);
+                }
+            }
+            public override void MouseDown(MouseEventArgs e)
+            {
+                if (_alow_control && _mouse_over_stop)
+                {
+                    SendRotatorMessage(false, -1, true);
+                }
             }
         }
         internal class clsDialDisplay : clsMeterItem
@@ -11255,13 +11261,10 @@ namespace Thetis
                 else
                 {
                     reading = 0;
-                    //if (MultiMeterIO.Data.ContainsKey(GetMMIOGuid(0)))
                     if (MultiMeterIO.Data.ContainsKey(MMIOGuid))
                     {
-                        //MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[GetMMIOGuid(0)];
                         MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[MMIOGuid];
 
-                        //object val = mmio.GetVariable(GetMMIOVariable(0));
                         object val = mmio.GetVariable(MMIOVariable);
                         if (val is int)
                         {
@@ -15328,13 +15331,10 @@ namespace Thetis
                 else
                 {
                     reading = 0;
-                    //if (MultiMeterIO.Data.ContainsKey(GetMMIOGuid(0)))
                     if (MultiMeterIO.Data.ContainsKey(MMIOGuid))
                     {
-                        //MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[GetMMIOGuid(0)];
                         MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[MMIOGuid];
 
-                        //object val = mmio.GetVariable(GetMMIOVariable(0));
                         object val = mmio.GetVariable(MMIOVariable);
                         if (val is int)
                         {
@@ -16064,13 +16064,10 @@ namespace Thetis
                 else
                 {
                     reading = 0;
-                    //if (MultiMeterIO.Data.ContainsKey(GetMMIOGuid(0)))
                     if (MultiMeterIO.Data.ContainsKey(MMIOGuid))
                     {
-                        //MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[GetMMIOGuid(0)];
                         MultiMeterIO.clsMMIO mmio = MultiMeterIO.Data[MMIOGuid];
 
-                        //object val = mmio.GetVariable(GetMMIOVariable(0));
                         object val = mmio.GetVariable(MMIOVariable);
                         if (val is int)
                         {
@@ -23876,8 +23873,8 @@ namespace Thetis
             private int _rx;
             private Console _console;
 
-            private HiPerfTimer _objFrameStartTimer = new HiPerfTimer();
-            private double _dElapsedFrameStart;
+            //private HiPerfTimer _objFrameStartTimer = new HiPerfTimer();
+            //private double _dElapsedFrameStart;
             private double _delta_time_ms;
 
             //fps          
@@ -23910,8 +23907,8 @@ namespace Thetis
                 if (c == null || target == null) return;
 
                 _delta_time_ms = 0;
-                _dElapsedFrameStart = 0;
-                _objFrameStartTimer.Start();
+                //_dElapsedFrameStart = 0;
+                //_objFrameStartTimer.Start();
 
                 _waterfall_row_added = false;
 
@@ -29009,7 +29006,7 @@ namespace Thetis
             }
             private bool _showing_rotator_ele_drag = false;
             private bool _rotator_was_dragging = false;
-            private float _dragging_rotator_degrees = -1;
+            private float _dragging_rotator_degrees = -999;
             private bool _dragging_rotator_ele = false;
             private int _dragging_old_update_rate = -1;
             private float _rotator_az_angle_deg = -999;
@@ -29032,8 +29029,8 @@ namespace Thetis
                 SharpDX.Direct2D1.Brush beam_widh_br = getDXBrushForColour(rotator.BeamWidthColour, (int)(255 * rotator.BeamWidthAlpha));
 
                 float xShift = rotator.ViewMode == clsRotatorItem.RotatorMode.BOTH ? 2f * (w * 0.0125f) : 0;
-                bool send_stop = false;
                 float radius_stop_circle = rotator.ViewMode == clsRotatorItem.RotatorMode.ELE ? (h * 0.09f) / 2f : (h * 0.15f) / 2f; // to include the numbers when clicking to move the rotator
+                bool mouse_over_stop = false;
 
                 if (rotator.Primary)
                 {
@@ -29229,12 +29226,10 @@ namespace Thetis
                     }
 
                     // check if arrow at desination
-                    if (degrees_az >= _rotator_az_angle_deg - 3 && degrees_az <= _rotator_az_angle_deg + 3)
-                        _rotator_az_angle_deg = -999;
+                    if (degrees_az >= _rotator_az_angle_deg - 3 && degrees_az <= _rotator_az_angle_deg + 3) _rotator_az_angle_deg = -999;
 
                     if (rotator.AllowControl)
-                    {
-                        bool stop_drawn = false;
+                    {                        
                         if (rotator.MouseEntered)
                         {
                             // draw red circle at centre for stop command                            
@@ -29248,16 +29243,11 @@ namespace Thetis
                                 elipse.Point.Y = centre.Y;
                                 elipse.RadiusX = radius_stop_circle; elipse.RadiusY = radius_stop_circle;
                                 _renderTarget.FillEllipse(elipse, getDXBrushForColour(System.Drawing.Color.Red));
-                                stop_drawn = true;
-
-                                if (rotator.MouseButtonDown)
-                                {
-                                    send_stop = true;
-                                    _rotator_az_angle_deg = -999;
-                                }
+                                mouse_over_stop = true;
+                                _dragging_rotator_degrees = -999;
                             }
 
-                            if (!stop_drawn && rotator.MouseButtonDown)
+                            if (!mouse_over_stop && rotator.MouseButtonDown)
                             {
                                 float temp_degrees = 0;
                                 SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, 255);
@@ -29317,7 +29307,7 @@ namespace Thetis
 
                             _renderTarget.DrawLine(centre, new Vector2(cx, cy), rotator_control_br, h * 0.01f);
 
-                            if (stop_drawn) //draw over the top again
+                            if (mouse_over_stop) //draw over the top again
                             {
                                 elipse.Point.X = centre.X;
                                 elipse.Point.Y = centre.Y;
@@ -29425,12 +29415,10 @@ namespace Thetis
                     }
 
                     // check if arrow at desination
-                    if (degrees_ele >= _rotator_ele_angle_deg - 3 && degrees_ele <= _rotator_ele_angle_deg + 3)
-                        _rotator_ele_angle_deg = -999;
+                    if (degrees_ele >= _rotator_ele_angle_deg - 3 && degrees_ele <= _rotator_ele_angle_deg + 3) _rotator_ele_angle_deg = -999;
 
                     if (rotator.AllowControl)
                     {
-                        bool stop_drawn = false;
                         if (rotator.MouseEntered)
                         {
                             // draw red circle at pointer origin for stop command                            
@@ -29444,16 +29432,11 @@ namespace Thetis
                                 elipse.Point.Y = centre.Y;
                                 elipse.RadiusX = radius_stop_circle; elipse.RadiusY = radius_stop_circle;
                                 _renderTarget.FillEllipse(elipse, getDXBrushForColour(System.Drawing.Color.Red));
-                                stop_drawn = true;
-
-                                if (rotator.MouseButtonDown)
-                                {
-                                    send_stop = true;
-                                    _rotator_ele_angle_deg = -999;
-                                }
+                                mouse_over_stop = true;
+                                _dragging_rotator_degrees = -999;
                             }
 
-                            if (!stop_drawn && rotator.MouseButtonDown)
+                            if (!mouse_over_stop && rotator.MouseButtonDown)
                             {
                                 float temp_degrees = 0;
                                 SharpDX.Direct2D1.Brush rotator_control_br = getDXBrushForColour(rotator.ControlColour, 255);
@@ -29517,7 +29500,7 @@ namespace Thetis
 
                             _renderTarget.DrawLine(centre, new Vector2(cx, cy), rotator_control_br, h * 0.01f);
 
-                            if(stop_drawn) // draw over the top again
+                            if (mouse_over_stop) // draw over the top again
                             {
                                 elipse.Point.X = centre.X;
                                 elipse.Point.Y = centre.Y;
@@ -29529,26 +29512,26 @@ namespace Thetis
                 }
 
                 //send rotator position message
-                if (rotator.AllowControl && !rotator.MouseButtonDown && _rotator_was_dragging && _dragging_rotator_degrees >= 0)
+                rotator.MouseOverStop = mouse_over_stop;
+                if (rotator.AllowControl)
                 {
-                    _rotator_was_dragging = false;
+                    if (!mouse_over_stop && !rotator.MouseButtonDown && _rotator_was_dragging && _dragging_rotator_degrees >= 0)
+                    {
+                        _rotator_was_dragging = false;
 
-                    if (_dragging_rotator_ele)
-                        _rotator_ele_angle_deg = _dragging_rotator_degrees;
-                    else
-                        _rotator_az_angle_deg = _dragging_rotator_degrees;
+                        if (_dragging_rotator_ele)
+                            _rotator_ele_angle_deg = _dragging_rotator_degrees;
+                        else
+                            _rotator_az_angle_deg = _dragging_rotator_degrees;
 
-                    rotator.SendRotatorMessage(_dragging_rotator_ele, _dragging_rotator_degrees, send_stop);
+                        rotator.SendRotatorMessage(_dragging_rotator_ele, _dragging_rotator_degrees, false);
 
-                    _dragging_rotator_ele = false;
-                    _dragging_rotator_degrees = -1;
-                    rotator.UpdateInterval = _dragging_old_update_rate;
-                    _dragging_old_update_rate = -1;
-                    m.UpdateIntervals();
-                }
-                if(rotator.AllowControl && send_stop)
-                {
-                    rotator.SendRotatorMessage(false, -1, true);
+                        _dragging_rotator_ele = false;
+                        _dragging_rotator_degrees = -1;
+                        rotator.UpdateInterval = _dragging_old_update_rate;
+                        _dragging_old_update_rate = -1;
+                        m.UpdateIntervals();
+                    }
                 }
             }
             private float calculateDistance(PointF point1, PointF point2)
@@ -31619,12 +31602,14 @@ namespace Thetis
 
                 // 0.50 difference in x between vfoa/b on both mode
 
+                bool vfo_sub = false; // are we showing vfo sub, used to hide the vfosub band text
                 if (disp_b)
                 {
                     if (m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split) && m.VfoSub >= 0) //[2.10.3.6]MW0LGE added m.vfosub >= 0
                     {
                         // vfoa sub
                         plotText("VFO Sub", x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.03f), rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
+                        vfo_sub = true;
                     }
                     else
                         plotText("VFO B", x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.03f), rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
@@ -31780,7 +31765,7 @@ namespace Thetis
                         rct = new SharpDX.RectangleF(x + (w * 0.250f) * x_multy, y + (bt_h * 0.85f), w * 0.08f, bt_h * 0.03f);
                         plotText(m.VFOABandText, rct.X, rct.Y, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoAFade, vfo.FontFamily, vfo.Style, false, true);
                     }
-                    if (disp_b)
+                    if (disp_b && !vfo_sub)
                     {
                         rct = new SharpDX.RectangleF(x + (w * 0.250f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (bt_h * 0.85f), w * 0.08f, bt_h * 0.03f);
                         plotText(m.VFOBBandText, rct.X, rct.Y, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoBFade, vfo.FontFamily, vfo.Style, false, true);
@@ -32705,7 +32690,6 @@ namespace Thetis
             private bool _listener_active;
             private string _four_char;
             private bool _enabled;
-            private bool _connector_running;
             private MMIOTerminator _terminator_in;
             private MMIOTerminator _terminator_out;
             private string _custom_terminator_in;
@@ -32723,12 +32707,20 @@ namespace Thetis
             //
 
             private ConcurrentDictionary<string, object> _io_variables;
+            [NonSerialized]
             private ConcurrentQueue<string> _outbound_queue;
             public clsMMIO()
             {
                 init();
 
                 _four_char = Common.FourChar(_ip, _port, _guid);
+            }
+            [OnDeserialized]
+            private void OnDeserialized(StreamingContext context)
+            {
+                // This runs after Deserialize. We need to init the outbound queue as it is now not serialised/deserialised.
+                // Deserialising bypasses the constructor
+                _outbound_queue = new ConcurrentQueue<string>();
             }
             private void init()
             {
@@ -32932,13 +32924,18 @@ namespace Thetis
                 }
             }
             public void EnqueueOutbound(string data)
-            {
-                if (_direction == MMIODirection.IN) return;
+            {                
+                if (!_enabled || _direction == MMIODirection.IN) return;
+
+                // limit to a max of 1000. Not nice, but this will only happen if the sink/client is not available
+                // and this mmio is enabled and we trying to send data
+                if (_outbound_queue.Count >= 1000) _outbound_queue.TryDequeue(out _);
+
                 _outbound_queue.Enqueue(data);
             }
             public string DequeueOutbound()
             {
-                if (_direction == MMIODirection.IN) return "";
+                if (!_enabled || _direction == MMIODirection.IN) return "";
 
                 bool ok = _outbound_queue.TryDequeue(out string data);
                 if (ok) return data;
@@ -33457,14 +33454,13 @@ namespace Thetis
             {
                 get
                 {
+                    bool connected = false;
                     try
                     {
-                        return _tcpClient.Connected;
+                        connected = _tcpClient.Connected;
                     }
-                    catch
-                    {
-                        return false;
-                    }
+                    catch { }
+                    return connected;
                 }
             }
             private void Connect()

@@ -507,7 +507,7 @@ int create_bfcu(int id, int min_size, int max_size, double rate, double corner, 
 {
 	// id - from 0 through 3
 	// min_size = minimum impulse response size for filters (power of two)
-	// max_size = maximum impulse response size for filters (power of two
+	// max_size = maximum impulse response size for filters (power of two)
 	// rate = sample-rate at which filters run
 	// corner = -6dB corner frequency; bandpass filter is symmetrical about zero
 	//    two corners, one at +corner and the other at -corner
