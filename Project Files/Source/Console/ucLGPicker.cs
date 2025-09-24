@@ -52,6 +52,7 @@ namespace Thetis
         private bool m_bChangedDueToDrag = false;           // have we made a drag change (used by changed event)
         private bool m_bIncludeAlphaInPreview = false;      // alphas not used in preview, but they are included in color data
         private int m_nMouseOverIndex = -1;
+        private bool _show_percent = false;
         public struct ColourGradientData
         {
             public Color color;
@@ -100,6 +101,23 @@ namespace Thetis
             rebuildSortedColours();
         }
 
+        public int Low
+        {
+            get { return -LOW; }
+        }
+        public int High
+        {
+            get { return HIGH; }
+        }
+        public bool ShowAsPercent
+        {
+            get { return _show_percent; }
+            set 
+            { 
+                _show_percent = value;
+                this.Invalidate();
+            }
+        }
         private void rebuildSortedColours()
         {
             // need to have a sorted list used for drawing the linear grad line in paint event
@@ -159,13 +177,23 @@ namespace Thetis
             int zeroPoint = LOW;
             int span = SPAN;
 
-            drawTextCentre(g, (-LOW).ToString(), m_nPadding);
-            drawTextCentre(g, (HIGH).ToString(), m_nPadding + actualWidth);
+            if (_show_percent)
+            {
+                drawTextCentre(g, "LOW", m_nPadding);
+                drawTextCentre(g, "HIGH", m_nPadding + actualWidth);
 
-            drawTextCentre(g, "0", m_nPadding + (int)((actualWidth / (float)span) * (float)(zeroPoint)));
+                drawTextCentre(g, "MID", m_nPadding + (actualWidth / 2));
+            }
+            else
+            {
+                drawTextCentre(g, (-LOW).ToString(), m_nPadding);
+                drawTextCentre(g, (HIGH).ToString(), m_nPadding + actualWidth);
 
-            drawTextCentre(g, "-93", m_nPadding + (int)((actualWidth / (float)span) * (float)(zeroPoint - 93)));
-            drawTextCentre(g, "-73", m_nPadding + (int)((actualWidth / (float)span) * (float)(zeroPoint - 73)));
+                drawTextCentre(g, "0", m_nPadding + (int)((actualWidth / (float)span) * (float)(zeroPoint)));
+
+                drawTextCentre(g, "-93", m_nPadding + (int)((actualWidth / (float)span) * (float)(zeroPoint - 93)));
+                drawTextCentre(g, "-73", m_nPadding + (int)((actualWidth / (float)span) * (float)(zeroPoint - 73)));
+            }
         }
 
         private void LGPicker_Paint(object sender, PaintEventArgs e)
@@ -287,7 +315,7 @@ namespace Thetis
 
                 Invalidate();
 
-                OnGripperDBMChanged(-LOW + (int)(SPAN * percPos));
+                OnGripperDBMChanged(-LOW + (int)(SPAN * percPos), percPos);
             }
             else
             {
@@ -299,12 +327,12 @@ namespace Thetis
                     {
                         if (m_nMouseOverIndex != -1)
                         {
-                            OnGripperMouseLeave(0);
+                            OnGripperMouseLeave(0, 0);
                         }
 
                         int dBm = -LOW + (int)(SPAN * m_dictColours[index].percent);
 
-                        OnGripperMouseEnter(dBm); // TODO
+                        OnGripperMouseEnter(dBm, m_dictColours[index].percent); // TODO
                         m_nMouseOverIndex = index;
                     }
                 }
@@ -312,7 +340,7 @@ namespace Thetis
                 {
                     if (m_nMouseOverIndex != -1)
                     {
-                        OnGripperMouseLeave(0);
+                        OnGripperMouseLeave(0, 0);
                         m_nMouseOverIndex = -1;
                     }
                 }
@@ -503,7 +531,7 @@ namespace Thetis
         {
             if (m_nMouseOverIndex != -1)
             {
-                OnGripperMouseLeave(0);
+                OnGripperMouseLeave(0, 0);
                 m_nMouseOverIndex = -1;
             }
         }
@@ -703,17 +731,17 @@ namespace Thetis
         {
             GripperSelected?.Invoke(this, new ColourEventArgs(c));
         }
-        private void OnGripperMouseEnter(int dbm)
+        private void OnGripperMouseEnter(int dbm, float percent)
         {
-            GripperMouseEnter?.Invoke(this, new GripperEventArgs(dbm));
+            GripperMouseEnter?.Invoke(this, new GripperEventArgs(dbm, percent));
         }
-        private void OnGripperMouseLeave(int dbm)
+        private void OnGripperMouseLeave(int dbm, float percent)
         {
-            GripperMouseLeave?.Invoke(this, new GripperEventArgs(dbm));
+            GripperMouseLeave?.Invoke(this, new GripperEventArgs(dbm, percent));
         }
-        private void OnGripperDBMChanged(int dbm)
+        private void OnGripperDBMChanged(int dbm, float percent)
         {
-            GripperDBMChanged?.Invoke(this, new GripperEventArgs(dbm));
+            GripperDBMChanged?.Invoke(this, new GripperEventArgs(dbm, percent));
         }
         private void LGPicker_EnabledChanged(object sender, EventArgs e)
         {
@@ -920,8 +948,9 @@ namespace Thetis
     }
     public class GripperEventArgs
     {
-        public GripperEventArgs(int dBm) { DBM = dBm; }
+        public GripperEventArgs(int dBm, float percent) { DBM = dBm; Percent = percent; }
         public int DBM { get; } // read only
+        public float Percent { get; }
     }
 
     // based on : https://stackoverflow.com/questions/1236683/color-interpolation-between-3-colors-in-net

@@ -57,8 +57,6 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
 
-using System.Runtime.InteropServices;
-
 namespace Thetis
 {
     // this enum is similar to MeterRXMode & MeterTXMode

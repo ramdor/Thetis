@@ -179,7 +179,7 @@
             this.wbdisplay.BackColor = System.Drawing.Color.Black;
             this.wbdisplay.BandEdgeColor = System.Drawing.Color.Red;
             this.wbdisplay.ClickTuneFilter = true;
-            this.wbdisplay.ColorSheme = Thetis.ColorSheme.enhanced;
+            this.wbdisplay.ColorSheme = Thetis.ColorScheme.enhanced;
             this.wbdisplay.cOnsole = null;
             this.wbdisplay.ContextMenuStrip = this.contextMenuStripWideBand;
             this.wbdisplay.CurrentClickTuneMode = Thetis.ClickTuneMode.Off;

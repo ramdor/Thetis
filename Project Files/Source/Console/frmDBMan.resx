@@ -130,6 +130,17 @@ Monthly backups: Retain 1 backup per month (the last one of the month)
 Yearly backups: Retain 1 backup per year (the last one of the year)</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="picTick.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAShJREFUOE+t
+        k7tKg0EQhT9vlemUoIhvkCLEwsInMGBtkdLWB1CQdGl9DkHwDYIE4l2x8AHSKhYWXkAb5SxnZLMBL5CB
+        wz87O3PmsvPDGKRqzAHz/uYIW/hNOm4q9GfgDfj8Be/AA7BkggkjXb4A58AFcGVIFy6BUyf6AJZNsAY0
+        gkABwVpKlHwC3AEVoO04ESflOguoAXXr6nPGxBtAE7h1zDGwEgQ3DpgF7p1pOsuurB37al7bticpK9ix
+        bc/ndWBg22E2A1UnjBAoq86vwIHvn4AWsAks2O97XjmBypaseuK6O3Jr+z7HM0Z7QwQyamiSXWArnICe
+        faOCIYK/PGPXvouFPRm1SHpTLdOZoQUSsWz9bJFGWvjPKj8Wq5wk/5l+QvkzjUe+AJxPXI+6yjVdAAAA
+        AElFTkSuQmCC
+</value>
+  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAEAEBAAAAEAGABoAwAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAaAMAAAAAAAAAAAAAAAAAAAAA

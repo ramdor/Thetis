@@ -61,10 +61,7 @@ namespace Thetis
     using System.Windows.Forms;
     using System.Xml.Linq;
     using System.Collections.Concurrent;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using System.Diagnostics.Contracts;
-    using Newtonsoft.Json.Bson;
-
+    
     public partial class Console : Form
     {
         public const bool CHECK_DEV_VERSION = true; // this will check github for dev versions, set to false when performing a release
@@ -13398,8 +13395,8 @@ namespace Thetis
             set { quick_qsy = value; }
         }
 
-        private ColorSheme color_palette = ColorSheme.enhanced;
-        public ColorSheme color_sheme
+        private ColorScheme color_palette = ColorScheme.enhanced;
+        public ColorScheme color_sheme
         {
             get { return color_palette; }
 
@@ -13410,8 +13407,8 @@ namespace Thetis
             }
         }
 
-        private ColorSheme rx2_color_palette = ColorSheme.enhanced;
-        public ColorSheme rx2_color_sheme
+        private ColorScheme rx2_color_palette = ColorScheme.enhanced;
+        public ColorScheme rx2_color_sheme
         {
             get { return rx2_color_palette; }
 
@@ -17882,7 +17879,11 @@ namespace Thetis
                         r = radModeDRM;
                         break;
                 }
-                r.Checked = true;
+
+                if (r != null)
+                {
+                    r.Checked = true;
+                }
 
                 if (modePopupForm != null) modePopupForm.RepopulateForm();
                 if (filterPopupForm != null) filterPopupForm.RepopulateForm();
@@ -17936,7 +17937,11 @@ namespace Thetis
                         break;
                 }
 
-                r.Checked = true;
+                if (r != null)
+                {
+                    r.Checked = true;
+                }
+
                 if (modePopupForm != null) modePopupForm.RepopulateForm();
                 if (filterPopupForm != null) filterPopupForm.RepopulateForm();
             }

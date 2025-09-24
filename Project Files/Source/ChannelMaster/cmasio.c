@@ -33,7 +33,7 @@ int cmaError = 0;
 
 void create_cmasio()
 {
-	pcma->protocol = 1;
+	pcma->protocol = 1; // default Protocol 2
 	pcma->blocksize = pcm->audio_outsize;
 	int samplerate = pcm->audio_outrate;
 	char* asioDriverName = (char*)calloc(32, sizeof(char));
