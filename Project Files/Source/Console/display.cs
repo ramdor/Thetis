@@ -826,11 +826,23 @@ namespace Thetis
             get { return m_bShowFPS; }
             set { m_bShowFPS = value; }
         }
+        private static double _fps_profile_start = double.MinValue;
         private static bool _runningFPSProfile = false;
         public static bool RunningFPSProfile
         {
             get { return _runningFPSProfile; }
-            set { _runningFPSProfile = value; }
+            set 
+            {
+                _runningFPSProfile = value;
+                if (_runningFPSProfile)
+                {
+                    _fps_profile_start = m_dElapsedFrameStart;
+                }
+                else
+                {
+                    _fps_profile_start = double.MinValue;
+                }
+            }
         }
         private static bool m_bShowVisualNotch = false;
         public static bool ShowVisualNotch
@@ -2592,10 +2604,12 @@ namespace Thetis
         private static int VFOHigh = 0;                                      // ke9ns high freq (right side of screen) in HZ
         private static int VFODiff = 0;                                      // ke9ns diff high-low
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Color changeAlpha(Color c, int A)
         {
             return Color.FromArgb(A, c.R, c.G, c.B);
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static float dBToPixel(float dB, int H, bool tx = false)
         {
             if (!tx)
@@ -2607,6 +2621,7 @@ namespace Thetis
                 return (float)(tx_spectrum_grid_max - dB) * H / (tx_spectrum_grid_max - tx_spectrum_grid_min);
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static float dBToRX2Pixel(float dB, int H, bool tx = false)
         {
             if (!tx)
@@ -2901,6 +2916,12 @@ namespace Thetis
 
                     Utilities.Dispose(ref _waterfall_bmp_dx2d);
                     Utilities.Dispose(ref _waterfall_bmp2_dx2d);
+
+                    if (_pause_bitmap != null)
+                    {
+                        Utilities.Dispose(ref _pause_bitmap);
+                        _pause_bitmap = null;
+                    }
 
                     Utilities.Dispose(ref _d2dRenderTarget);
                     Utilities.Dispose(ref _swapChain1);
@@ -3345,6 +3366,68 @@ namespace Thetis
             get { return _maintain_background_aspectratio; }
             set { _maintain_background_aspectratio = value; }
         }
+
+        private static SharpDX.Direct2D1.Bitmap _pause_bitmap = null;
+        private static bool _paused_display = false;
+        private static bool _old_paused_display = false;
+        public static bool PausedDisplay
+        {
+            get { return _paused_display; }
+            set 
+            {
+                lock (_objDX2Lock)
+                {
+                    _old_paused_display = _paused_display;
+                    _paused_display = value;
+                    console.SetupInfoBarButton(ucInfoBar.ActionTypes.DisplayPause, _paused_display);
+                    pauseDisplay();
+
+                    if (_old_paused_display && !_paused_display)
+                    {
+                        //was on, now off
+                        FastAttackNoiseFloorRX1 = true;
+                        FastAttackNoiseFloorRX2 = true;
+                    }
+                }
+            }
+        }
+        private static void pauseDisplay()
+        {
+            // free up old
+            if(_pause_bitmap != null)
+            {
+                Utilities.Dispose(ref _pause_bitmap);
+                _pause_bitmap = null;
+            }
+
+            if (_paused_display)
+            {
+                // take snap
+                Texture2D sourceTexture = _swapChain1.GetBackBuffer<Texture2D>(0);
+                Texture2DDescription desc = sourceTexture.Description;
+                desc.CpuAccessFlags = CpuAccessFlags.Read;
+                desc.Usage = ResourceUsage.Default;
+                desc.BindFlags = BindFlags.ShaderResource;
+                desc.CpuAccessFlags = CpuAccessFlags.None;
+                Texture2D stagingTexture = new Texture2D(_device, desc);
+
+                SharpDX.Direct3D11.DeviceContext context = _device.ImmediateContext;
+                context.CopyResource(sourceTexture, stagingTexture);
+
+                Surface dxgiSurface = stagingTexture.QueryInterface<Surface>();
+                Size2F dpi = _d2dRenderTarget.DotsPerInch;
+
+                SharpDX.Direct2D1.PixelFormat pixelFormat = new SharpDX.Direct2D1.PixelFormat(Format.B8G8R8A8_UNorm, ALPHA_MODE);
+                BitmapProperties props = new BitmapProperties(pixelFormat, dpi.Width, dpi.Height);
+
+                _pause_bitmap = new SharpDX.Direct2D1.Bitmap(_d2dRenderTarget, dxgiSurface, props);
+
+                Utilities.Dispose(ref dxgiSurface);
+                Utilities.Dispose(ref stagingTexture);
+                Utilities.Dispose(ref sourceTexture);
+            }
+        }
+
         private static bool _valid_fps_profile = false;
         private static double _last_valid_check = double.MinValue;
         public static void RenderDX2D()
@@ -3361,6 +3444,13 @@ namespace Thetis
                     _bNoiseFloorAlreadyCalculatedRX2 = false;
 
                     _d2dRenderTarget.BeginDraw();
+
+                    if (_paused_display && _pause_bitmap != null)
+                    {
+                        RectangleF pr = new RectangleF(0, 0, displayTargetWidth, displayTargetHeight);
+                        _d2dRenderTarget.DrawBitmap(_pause_bitmap, pr, 1f, BitmapInterpolationMode.Linear);
+                        goto jump;
+                    }
 
                     // middle pixel align shift, NOTE: waterfall will switch internally to identity, and then restore
                     Matrix3x2 t = _d2dRenderTarget.Transform;
@@ -3634,11 +3724,11 @@ namespace Thetis
                         _bRebuildRXLinearGradBrush = true;
                         _bRebuildTXLinearGradBrush = true;
                     }
-
+                
                     // HIGH swr display warning
                     if (high_swr || _power_folded_back)
                     {
-                        if(_power_folded_back)
+                        if (_power_folded_back)
                         {
                             drawStringDX2D("HIGH SWR\n\nPOWER FOLD BACK", fontDX2d_font14, m_bDX2_Red, 245, 20);
                         }
@@ -3684,6 +3774,8 @@ namespace Thetis
                     // undo the translate
                     _d2dRenderTarget.Transform = Matrix3x2.Identity;
 
+                jump:
+
                     _d2dRenderTarget.EndDraw();
 
                     // render
@@ -3713,6 +3805,7 @@ namespace Thetis
                 MessageBox.Show("Problem in DirectX Renderer !" + System.Environment.NewLine + System.Environment.NewLine + "[ " + e.ToString() + " ]", "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }
         }
+        private static readonly List<int> _fps_profile_data = new List<int>();
         private static void showFPSProfile()
         {
             if (m_objFrameStartTimer.ElapsedMsec - _last_valid_check >= 5000)
@@ -3746,6 +3839,14 @@ namespace Thetis
             _d2dRenderTarget.DrawText($"Installed Ram : {_installed_ram}", fontDX2d_callout, new RectangleF(30, 160, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Yellow, DrawTextOptions.None);
             if(!_valid_fps_profile) _d2dRenderTarget.DrawText("* Settings have deviated from expected !", fontDX2d_callout, new RectangleF(30, 174, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_Red, DrawTextOptions.None);
 
+            if (_fps_profile_data.Count > 0)
+            {
+                bool ok = (m_dElapsedFrameStart - _fps_profile_start) >= 10000;
+                _d2dRenderTarget.DrawText($"10 seconds", fontDX2d_callout, new RectangleF(220, 40, float.PositiveInfinity, float.PositiveInfinity), ok ? m_bDX2_Yellow : m_bDX2_Gray, DrawTextOptions.None);
+                _d2dRenderTarget.DrawText($"Min : {_fps_profile_data.Min()}", fontDX2d_callout, new RectangleF(220, 58, float.PositiveInfinity, float.PositiveInfinity), ok ? m_bDX2_Yellow : m_bDX2_Gray, DrawTextOptions.None);
+                _d2dRenderTarget.DrawText($"Max : {_fps_profile_data.Max()}", fontDX2d_callout, new RectangleF(220, 74, float.PositiveInfinity, float.PositiveInfinity), ok ? m_bDX2_Yellow: m_bDX2_Gray, DrawTextOptions.None);
+            }
+
             _d2dRenderTarget.PopAxisAlignedClip();
         }
 
@@ -3774,9 +3875,23 @@ namespace Thetis
             {
                 double late = m_dElapsedFrameStart - (m_fLastTime + 1000);
                 if (late > 2000 || late < 0) late = 0; // ignore if too late
-                m_nFps = m_nFrameCount;
-                m_nFrameCount = 0;
+
+                //technically, we have nframes in 1000+late ms, so we should refactor down to 1000
+                double frames_per_ms = m_nFrameCount / (1000 + late);
+                double frames_in_1000ms = frames_per_ms * 1000;
+                int frames = (int)frames_in_1000ms;
+
+                m_nFps = frames;// m_nFrameCount;
+                m_nFrameCount = m_nFrameCount - frames;//0;
                 m_fLastTime = m_dElapsedFrameStart - late;
+
+                if (_runningFPSProfile)
+                {
+                    // for fps_profile
+                    _fps_profile_data.Add(m_nFps);
+                    if (_fps_profile_data.Count > 10) _fps_profile_data.RemoveAt(0);
+                }
+                else if (_fps_profile_data.Count > 0) _fps_profile_data.Clear();
             }
         }
 
@@ -3821,20 +3936,19 @@ namespace Thetis
             public bool Enabled;
             public double Time;
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static private int isOccupied(int rx, int nX)
         {
-            Maximums[] maximums;
-            if (rx == 1)
-                maximums = m_nRX1Maximums;
-            else
-                maximums = m_nRX2Maximums;
+            Maximums[] maximums = rx == 1 ? m_nRX1Maximums : m_nRX2Maximums;
 
             int nRet = -1; // -1 returned if nothing in this area
             for (int n = 0; n < m_nNumberOfMaximums; n++)
             {
-                int p1 = Math.Abs(nX - maximums[n].X);
+                ref Maximums entry = ref maximums[n];
 
-                if (maximums[n].Enabled && p1 < 10) // 10 being the radius of the ellipse/circle
+                int p1 = Math.Abs(nX - entry.X);
+
+                if (entry.Enabled && p1 < 10) // 10 being the radius of the ellipse/circle
                 {
                     nRet = n;
                     break;
@@ -3852,48 +3966,61 @@ namespace Thetis
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static private void processMaximums(int rx, float dbm, int nX, int nY)
         {
-            Maximums[] maximums;
-            if (rx == 1)
-                maximums = m_nRX1Maximums;
-            else
-                maximums = m_nRX2Maximums;
+            Maximums[] maximums = rx == 1 ? m_nRX1Maximums : m_nRX2Maximums;
 
             int nOccupiedIndex = isOccupied(rx, nX);
 
             if (nOccupiedIndex >= 0)
             {
-                if (dbm >= maximums[nOccupiedIndex].max_dBm)
+                ref Maximums entry = ref maximums[nOccupiedIndex];
+
+                if (dbm >= entry.max_dBm)
                 {
-                    maximums[nOccupiedIndex].Enabled = true;
-                    maximums[nOccupiedIndex].max_dBm = dbm;
-                    maximums[nOccupiedIndex].X = nX;
-                    maximums[nOccupiedIndex].MaxY_pixel = nY;
-                    maximums[nOccupiedIndex].Time = m_dElapsedFrameStart;
-                    Array.Sort<Maximums>(maximums, (x, y) => y.max_dBm.CompareTo(x.max_dBm));
+                    entry.Enabled = true;
+                    entry.max_dBm = dbm;
+                    entry.X = nX;
+                    entry.MaxY_pixel = nY;
+                    entry.Time = m_dElapsedFrameStart;
+                    //Array.Sort<Maximums>(maximums, (x, y) => y.max_dBm.CompareTo(x.max_dBm));
+
+                    //bubble up
+                    int pos = nOccupiedIndex;
+                    while (pos > 0 && maximums[pos].max_dBm > maximums[pos - 1].max_dBm)
+                    {
+                        Maximums temp = maximums[pos - 1];
+                        maximums[pos - 1] = maximums[pos];
+                        maximums[pos] = temp;
+                        pos--;
+                    }
                 }
                 return;
             }
 
             for (int n = 0; n < m_nNumberOfMaximums; n++)
             {
+                ref Maximums entry = ref maximums[n];
+
                 if (dbm > maximums[n].max_dBm)
                 {
                     //move them down
                     for (int nn = m_nNumberOfMaximums - 1; nn > n; nn--)
                     {
-                        maximums[nn].Enabled = maximums[nn - 1].Enabled;
-                        maximums[nn].max_dBm = maximums[nn - 1].max_dBm;
-                        maximums[nn].X = maximums[nn - 1].X;
-                        maximums[nn].MaxY_pixel = maximums[nn - 1].MaxY_pixel;
-                        maximums[nn].Time = maximums[nn - 1].Time;
+                        ref Maximums entryNN = ref maximums[nn];
+                        ref Maximums entryNNN = ref maximums[nn - 1];
+
+                        entryNN.Enabled = entryNNN.Enabled;
+                        entryNN.max_dBm = entryNNN.max_dBm;
+                        entryNN.X = entryNNN.X;
+                        entryNN.MaxY_pixel = entryNNN.MaxY_pixel;
+                        entryNN.Time = entryNNN.Time;
                     }
 
                     //add new
-                    maximums[n].Enabled = true;
-                    maximums[n].max_dBm = dbm;
-                    maximums[n].X = nX;
-                    maximums[n].MaxY_pixel = nY;
-                    maximums[n].Time = m_dElapsedFrameStart;
+                    entry.Enabled = true;
+                    entry.max_dBm = dbm;
+                    entry.X = nX;
+                    entry.MaxY_pixel = nY;
+                    entry.Time = m_dElapsedFrameStart;
 
                     break;
                 }
@@ -4347,6 +4474,7 @@ namespace Thetis
             float local_max_x = float.MinValue;
 
             bool displayduplex = isRxDuplex(rx);
+            bool local_mox = localMox(rx);
 
             int grid_max = 0;
             int grid_min = 0;
@@ -4357,8 +4485,6 @@ namespace Thetis
             bool bPeakBlobs;
             float dBmSpectralPeakFall;
             bool bActivePeakFill;
-
-            bool local_mox = localMox(rx);
 
             int nDecimatedWidth = W / m_nDecimation;
 
@@ -4375,7 +4501,7 @@ namespace Thetis
                 bSpectralPeakHold = !local_mox && m_bSpectralPeakHoldRX1 && !m_bDelayRX1SpectrumPeaks;
                 dSpectralPeakHoldDelay = m_dSpecralPeakHoldDelayRX1;
                 bPeakBlobs = m_bPeakBlobMaximums && !m_bDelayRX1Blobs;
-                show_imd_measurements = local_mox && _testing_imd && _show_imd_measurements && isRxDuplex(1);
+                show_imd_measurements = local_mox && _testing_imd && _show_imd_measurements && displayduplex;
                 dBmSpectralPeakFall = m_dBmPerSecondSpectralPeakFallRX1;
                 bActivePeakFill = m_bActivePeakFillRX1;
 
@@ -4474,10 +4600,7 @@ namespace Thetis
             float max_copy;
             float fOffset;
 
-            if (rx == 1)
-                fOffset = RX1Offset;
-            else
-                fOffset = RX2Offset;
+            fOffset = rx == 1 ? RX1Offset : RX2Offset;
 
             //MW0LGE not used, as filling vertically with lines is faster than a filled very detailed
             //geometry. Just kept for reference
@@ -4609,7 +4732,7 @@ namespace Thetis
                 float currentAverage = rx == 1 ? m_fFFTBinAverageRX1 + 2 : m_fFFTBinAverageRX2 + 2; // +2db to add some extras above the average
 
                 bool peaks_imds = bPeakBlobs || show_imd_measurements;
-
+                
                 for (int i = 0; i < nDecimatedWidth; i++)
                 {
                     point.X = i * m_nDecimation;
@@ -4637,59 +4760,53 @@ namespace Thetis
                     }
 
                     // peak blobs
-                    if (peaks_imds)
+                    if (peaks_imds && (!m_bInsideFilterOnly || point.X >= filter_left_x && point.X <= filter_right_x || show_imd_measurements))
                     {
-                        bool bInsideFilter = m_bInsideFilterOnly && (point.X >= filter_left_x) && (point.X <= filter_right_x);
-                        if (!m_bInsideFilterOnly || bInsideFilter || show_imd_measurements)
+                        if (max > dbm_max)
                         {
-                            if (max > dbm_max)
+                            dbm_max = max;
+                            dbm_max_ypos = Y;
+                            dbm_max_xpos = i;
+                        }
+                        if (max < dbm_min)
+                        {
+                            dbm_min = max;
+                            dbm_min_xpos = i;
+                        }
+                        if (look_for_max)
+                        {
+                            if (max < dbm_max - trigger_delta)
                             {
-                                dbm_max = max;
-                                dbm_max_ypos = Y;
-                                dbm_max_xpos = i;
-                            }
-                            if (max < dbm_min)
-                            {
+                                if (show_imd_measurements)
+                                {
+                                    Maximums mm = new Maximums();
+                                    mm.max_dBm = dbm_max;
+                                    mm.X = dbm_max_xpos;
+                                    mm.Enabled = true;
+                                    mm.MaxY_pixel = dbm_max_ypos;
+                                    mm.Time = m_dElapsedFrameStart;
+
+                                    imd_measurements.Add(mm);
+                                }
+                                else
+                                {
+                                    processMaximums(rx, dbm_max, dbm_max_xpos, dbm_max_ypos);
+                                }
                                 dbm_min = max;
                                 dbm_min_xpos = i;
+                                look_for_max = false;
                             }
-                            if (look_for_max)
-                            {
-                                if (max < dbm_max - trigger_delta)
-                                {
-                                    if (show_imd_measurements)
-                                    {
-                                        Maximums mm = new Maximums();
-                                        mm.max_dBm = dbm_max;
-                                        mm.X = dbm_max_xpos;
-                                        mm.Enabled = true;
-                                        mm.MaxY_pixel = dbm_max_ypos;
-                                        mm.Time = m_dElapsedFrameStart;
-
-                                        imd_measurements.Add(mm);
-                                    }
-                                    else
-                                    {
-                                        processMaximums(rx, dbm_max, dbm_max_xpos, dbm_max_ypos);
-                                    }
-                                    dbm_min = max;
-                                    dbm_min_xpos = i;
-                                    look_for_max = false;
-                                }
-                            }
-                            else
-                            {
-                                if (max > dbm_min + trigger_delta)
-                                {
-                                    dbm_max = max;
-                                    dbm_max_ypos = Y;
-                                    dbm_max_xpos = i;
-                                    look_for_max = true;
-                                }
-                            }
+                        }
+                        else if (max > dbm_min + trigger_delta)
+                        {
+                            dbm_max = max;
+                            dbm_max_ypos = Y;
+                            dbm_max_xpos = i;
+                            look_for_max = true;
                         }
                     }
 
+                    //pana fill
                     if (pan_fill)
                     {
                         // draw vertical line, this is so much faster than FillGeometry as the geo created would be so complex any fill alogorthm would struggle
@@ -4700,17 +4817,19 @@ namespace Thetis
                     //spectral peak
                     if (bSpectralPeakHold)
                     {
-                        if (max >= spectralPeaks[i].max_dBm)
+                        ref Maximums peak = ref spectralPeaks[i];
+
+                        if (max >= peak.max_dBm)
                         {
-                            spectralPeaks[i].max_dBm = max;
-                            spectralPeaks[i].Time = m_dElapsedFrameStart;
+                            peak.max_dBm = max;
+                            peak.Time = m_dElapsedFrameStart;
                         }
 
-                        if (spectralPeaks[i].max_dBm >= max)
+                        if (peak.max_dBm >= max)
                         {
                             // draw to peak, but re-work Y as we might rescale the spectrum vertically
                             spectralPeakPoint.X = point.X;
-                            spectralPeakPoint.Y = (int)((grid_max - spectralPeaks[i].max_dBm) * dbmToPixel - 0.5f) + nVerticalShift;// -0.5 to mimic floor
+                            spectralPeakPoint.Y = (int)((grid_max - peak.max_dBm) * dbmToPixel - 0.5f) + nVerticalShift;// -0.5 to mimic floor
 
                             if (bActivePeakFill)
                             {
@@ -4722,34 +4841,31 @@ namespace Thetis
                                 oldSpectralPeakPoint = spectralPeakPoint;
                             }
 
-                            double dElapsed = m_dElapsedFrameStart - spectralPeaks[i].Time;
+                            double dElapsed = m_dElapsedFrameStart - peak.Time;
                             if (dElapsed > dSpectralPeakHoldDelay)
                             {
-                                spectralPeaks[i].max_dBm -= dBmSpectralPeakFall;
+                                peak.max_dBm -= dBmSpectralPeakFall;
                             }
                         }
                     }
 
                     // ignore point if same Y as last point
                     // lines will get longer if flat, reducing number of total points
-                    bool bIncludeLinePoint = true;
-                    if (point.Y == previousPoint.Y && i > 0 && i < nDecimatedWidth - 1)
+                    bool isInteriorDuplicate = (i > 0 && i < nDecimatedWidth - 1) && point.Y == previousPoint.Y;
+                    if (isInteriorDuplicate)
                     {
-                        bIncludeLinePoint = false;
                         lastIgnoredPoint = point;
                         bIgnoringPoints = true;
+                        continue;
                     }
-                    else if (bIgnoringPoints)
+                    if (bIgnoringPoints)
                     {
                         _d2dRenderTarget.DrawLine(previousPoint, lastIgnoredPoint, lineBrush, line_width);
                         previousPoint = lastIgnoredPoint;
                         bIgnoringPoints = false;
                     }
-                    if (bIncludeLinePoint)
-                    {
-                        _d2dRenderTarget.DrawLine(previousPoint, point, lineBrush, line_width);
-                        previousPoint = point;
-                    }
+                    _d2dRenderTarget.DrawLine(previousPoint, point, lineBrush, line_width);
+                    previousPoint = point;
                 }
 
                 //noise floor
@@ -4762,6 +4878,7 @@ namespace Thetis
                     int yPixelLerp;
                     int yPixelActual;
                     float lerp;
+                    bool show_noise_floor;
 
                     if (rx == 1)
                     {
@@ -4775,6 +4892,8 @@ namespace Thetis
 
                         yPixelLerp = (int)dBToPixel(lerp, H);
                         yPixelActual = (int)dBToPixel(m_fFFTBinAverageRX1 + _fNFshiftDBM, H);
+
+                        show_noise_floor = m_bShowRX1NoiseFloor;
                     }
                     else
                     {
@@ -4787,10 +4906,12 @@ namespace Thetis
                         lerp = m_fLerpAverageRX2 + _fNFshiftDBM;
 
                         yPixelLerp = (int)dBToRX2Pixel(lerp, H);
-                        yPixelActual = (int)dBToRX2Pixel(m_fFFTBinAverageRX2 + _fNFshiftDBM, H);                        
+                        yPixelActual = (int)dBToRX2Pixel(m_fFFTBinAverageRX2 + _fNFshiftDBM, H);
+
+                        show_noise_floor = m_bShowRX2NoiseFloor;
                     }                    
 
-                    if ((rx == 1 && m_bShowRX1NoiseFloor) || (rx == 2 && m_bShowRX2NoiseFloor))
+                    if (show_noise_floor)
                     {
                         yPixelLerp += nVerticalShift;
 
@@ -4832,49 +4953,50 @@ namespace Thetis
                     }
                     else
                     {
-                        if (rx == 1)
-                            maximums = m_nRX1Maximums;
-                        else
-                            maximums = m_nRX2Maximums;
+                        maximums = rx == 1 ? m_nRX1Maximums : m_nRX2Maximums;
                     }
 
                     int maxblobs = show_imd_measurements ? maximums.Length : m_nNumberOfMaximums;
+                    bool blob_drop = m_bBlobPeakHold && m_bBlobPeakHoldDrop;
+
                     for (int n = 0; n < maxblobs; n++)
                     {
-                        if (maximums[n].Enabled)
+                        ref Maximums entry = ref maximums[n];
+
+                        if (entry.Enabled)
                         {
-                            if (m_bBlobPeakHold && m_bBlobPeakHoldDrop)
+                            if (blob_drop)
                             {
                                 //drop
-                                double dElapsed = m_dElapsedFrameStart - maximums[n].Time;
-                                if (maximums[n].max_dBm > -200.0 && (dElapsed > m_fBlobPeakHoldMS))
+                                double dElapsed = m_dElapsedFrameStart - entry.Time;
+                                if (entry.max_dBm > -200.0 && (dElapsed > m_fBlobPeakHoldMS))
                                 {
-                                    maximums[n].max_dBm -= m_dBmPerSecondPeakBlobFall / (float)m_nFps;
+                                    entry.max_dBm -= m_dBmPerSecondPeakBlobFall / (float)m_nFps;
 
                                     // recalc Y
-                                    maximums[n].MaxY_pixel = (int)(((grid_max - maximums[n].max_dBm) * dbmToPixel) - 0.5f);// -0.5 to mimic floor
+                                    entry.MaxY_pixel = (int)(((grid_max - entry.max_dBm) * dbmToPixel) - 0.5f);// -0.5 to mimic floor
                                 }
-                                else if (maximums[n].max_dBm <= -200.0)
+                                else if (entry.max_dBm <= -200.0)
                                 {
-                                    maximums[n].Enabled = false; // switch any off that fall off the bottom same as resetmaximums
-                                    maximums[n].max_dBm = float.MinValue;
+                                    entry.Enabled = false; // switch any off that fall off the bottom same as resetmaximums
+                                    entry.max_dBm = float.MinValue;
                                 }
                             }
 
-                            m_objEllipse.Point.X = maximums[n].X * m_nDecimation;
-                            m_objEllipse.Point.Y = maximums[n].MaxY_pixel;
+                            m_objEllipse.Point.X = entry.X * m_nDecimation;
+                            m_objEllipse.Point.Y = entry.MaxY_pixel;
 
                             string sAppend;
                             if (rx == 1)
                             {
-                                sAppend = m_bShowRX1NoiseFloor && !local_mox ? " (" + (maximums[n].max_dBm - m_fLerpAverageRX1).ToString("f1") + ")" : "";// " (" + (n + 1).ToString() + ")";
+                                sAppend = m_bShowRX1NoiseFloor && !local_mox ? " (" + (entry.max_dBm - m_fLerpAverageRX1).ToString("f1") + ")" : "";// " (" + (n + 1).ToString() + ")";
                             }
                             else
                             {
-                                sAppend = m_bShowRX2NoiseFloor && !local_mox ? " (" + (maximums[n].max_dBm - m_fLerpAverageRX2).ToString("f1") + ")" : "";// " (" + (n + 1).ToString() + ")";
+                                sAppend = m_bShowRX2NoiseFloor && !local_mox ? " (" + (entry.max_dBm - m_fLerpAverageRX2).ToString("f1") + ")" : "";// " (" + (n + 1).ToString() + ")";
                             }
                             _d2dRenderTarget.DrawEllipse(m_objEllipse, m_bDX2_PeakBlob);
-                            _d2dRenderTarget.DrawText(maximums[n].max_dBm.ToString("f1") + sAppend, fontDX2d_callout, new RectangleF(m_objEllipse.Point.X + 6, m_objEllipse.Point.Y - 8, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_PeakBlobText, DrawTextOptions.None);
+                            _d2dRenderTarget.DrawText(entry.max_dBm.ToString("f1") + sAppend, fontDX2d_callout, new RectangleF(m_objEllipse.Point.X + 6, m_objEllipse.Point.Y - 8, float.PositiveInfinity, float.PositiveInfinity), m_bDX2_PeakBlobText, DrawTextOptions.None);
                         }
                     }
 
@@ -7499,18 +7621,13 @@ namespace Thetis
         }        
         private static List<clsNotchCoords> handleNotches(int rx, bool bottom, int cwSideToneShift, int Low, int High, int nVerticalShift, int top, int width, int W, int H, bool bDraw)//, int expandHz = 0)
         {
-            long rf_freq = vfoa_hz;
-            int localRit;
+            long rf_freq = rx == 1 ? vfoa_hz : vfob_hz;
 
+            int localRit;
             if (rx == 1)
                 localRit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
             else
                 localRit = 0; // no rit rx2
-
-            if (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2) // MW0LGE
-            {
-                rf_freq = vfob_hz;
-            }
 
             rf_freq += cwSideToneShift;
 
@@ -7616,35 +7733,48 @@ namespace Thetis
         private const int Bias = 0x3f800000;
 
         // version that expects (dB / 10)
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //static unsafe float FastPow10Shifted(float dBdiv10)
+        //{
+        //    if (dBdiv10 < -20 || dBdiv10 > 20) // mathematical limit calculated: ~ -38.2 to +38.5
+        //        return (float)Math.Pow(10.0, dBdiv10);
+
+        //    int bits = (int)(dBdiv10 * Scale10) + Bias;
+        //    float ret = *(float*)&bits;
+
+        //    if (float.IsNaN(ret))
+        //        ret = (float)Math.Pow(10.0, dBdiv10);
+
+        //    return ret;
+        //}
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static unsafe float FastPow10Shifted(float dBdiv10)
         {
-            if (dBdiv10 < -20 || dBdiv10 > 20) // mathematical limit calculated: ~ -38.2 to +38.5
-                return (float)Math.Pow(10.0, dBdiv10);
-
+            if (dBdiv10 <= -20f || dBdiv10 >= 20f) return (float)Math.Pow(10.0, dBdiv10);
             int bits = (int)(dBdiv10 * Scale10) + Bias;
-            float ret = *(float*)&bits;
-
-            if (float.IsNaN(ret))
-                ret = (float)Math.Pow(10.0, dBdiv10);
-
-            return ret;
+            return *(float*)&bits;
         }
-
         // version that takes the raw dB value (no /10 at call site)
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //static unsafe float FastPow10Raw(float dB)
+        //{            
+        //    if(dB < -200 || dB > 200)  // mathematical limit calculated: ~ -382.3 to +385.3
+        //        return (float)Math.Pow(10.0, dB / 10.0);
+
+        //    int bits = (int)(dB * Scale) + Bias;
+        //    float ret = *(float*)&bits;
+
+        //    if (float.IsNaN(ret))
+        //        ret = (float)Math.Pow(10.0, dB / 10.0);
+
+        //    return ret;
+        //}
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static unsafe float FastPow10Raw(float dB)
-        {            
-            if(dB < -200 || dB > 200)  // mathematical limit calculated: ~ -382.3 to +385.3
-                return (float)Math.Pow(10.0, dB / 10.0);
-
+        {
+            if (dB <= -200f || dB >= 200f) return (float)Math.Pow(10.0, dB / 10.0);
             int bits = (int)(dB * Scale) + Bias;
-            float ret = *(float*)&bits;
-
-            if (float.IsNaN(ret))
-                ret = (float)Math.Pow(10.0, dB / 10.0);
-
-            return ret;
+            return *(float*)&bits;
         }
 
         private static int drawPanadapterAndWaterfallGridDX2D(int nVerticalShift, int W, int H, int rx, bool bottom, out long left_edge, out long right_edge, bool bIsWaterfall = false)
@@ -10599,7 +10729,7 @@ namespace Thetis
             if (!_bDX2Setup) return null;
 
             int alpha = (replaceAlpha >= 0 && replaceAlpha <= 255) ? replaceAlpha : c.A;
-            int key = Color.FromArgb(alpha, c.R, c.G, c.B).ToArgb();
+            int key = (alpha << 24) | (c.R << 16) | (c.G << 8) | c.B; //Color.FromArgb(alpha, c.R, c.G, c.B).ToArgb();
 
             SharpDX.Direct2D1.Brush existingBrush;
             if (_DX2Brushes.TryGetValue(key, out existingBrush))

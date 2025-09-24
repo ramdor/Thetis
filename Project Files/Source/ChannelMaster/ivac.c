@@ -615,9 +615,9 @@ void getIVACdiags (int id, int type, int* underflows, int* overflows, double* va
 		a = pvac[id]->rmatchOUT;
 	else
 		a = pvac[id]->rmatchIN;
-	EnterCriticalSection(&pvac[id]->cs_ivac);
+	//EnterCriticalSection(&pvac[id]->cs_ivac);
 	getRMatchDiags (a, underflows, overflows, var, ringsize, nring);
-	LeaveCriticalSection(&pvac[id]->cs_ivac);
+	//LeaveCriticalSection(&pvac[id]->cs_ivac);
 }
 
 PORT
@@ -768,9 +768,9 @@ void GetIVACControlFlag(int id, int type, int* control_flag)
 		a = pvac[id]->rmatchOUT;
 	else
 		a = pvac[id]->rmatchIN;
-	EnterCriticalSection(&pvac[id]->cs_ivac);
+	//EnterCriticalSection(&pvac[id]->cs_ivac);
 	getControlFlag(a, control_flag);
-	LeaveCriticalSection(&pvac[id]->cs_ivac);
+	//LeaveCriticalSection(&pvac[id]->cs_ivac);
 }
 PORT 
 void SetIVACinitialVars(int id, double INvar, double OUTvar)

@@ -9886,7 +9886,8 @@ namespace Thetis
                         MeterManager.ImgFetch.UpdateInterval(_image_fetcher_guid, _secs_interval);
                     }
                 }
-            } public bool BypassCache
+            } 
+            public bool BypassCache
             {
                 get { return _bypass_cache; }
                 set
@@ -15009,6 +15010,7 @@ namespace Thetis
                                                                     .AddReferences(typeof(object).Assembly)
                                                                     .AddReferences(typeof(string).Assembly);
                                                                     //.AddImports("System");
+                            Debug.Print($"bool result = (bool)({script_expression});");
                             _script = CSharpScript.Create($"bool result = (bool)({script_expression});", options, typeof(Globals));
                             _script.Compile();                            
 
@@ -24014,7 +24016,7 @@ namespace Thetis
                     Priority = ThreadPriority.Lowest,
                     IsBackground = false
                 };
-                _dxRenderThread.SetApartmentState(ApartmentState.STA); //[2.10.3]
+                //_dxRenderThread.SetApartmentState(ApartmentState.STA); //[2.10.3]
                 _dxRenderThread.Start();
             }
             public string ID
@@ -24746,7 +24748,7 @@ namespace Thetis
                 else if (replaceAlpha >= 0 && replaceAlpha <= 255)
                     a = replaceAlpha;
 
-                int key = (a << 24) | (c.R << 16) | (c.G << 8) | c.B;
+                int key = (a << 24) | (c.R << 16) | (c.G << 8) | c.B; //System.Drawing.Color.FromArgb(a, c.R, c.G, c.B).ToArgb();
 
                 SharpDX.Direct2D1.Brush existingBrush;
                 if (_DXBrushes.TryGetValue(key, out existingBrush))
@@ -25389,7 +25391,8 @@ namespace Thetis
 
                 if (ignore_caching)
                 {
-                    if (_stringMeasure.ContainsKey(key)) _stringMeasure[key] = sizeValue;
+                    if (_stringMeasure.ContainsKey(key)) 
+                        _stringMeasure[key] = sizeValue;
                     else
                     {
                         _stringMeasure.Add(key, sizeValue);

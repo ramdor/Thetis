@@ -117,7 +117,8 @@ void flush_resample (RESAMPLE a)
 	a->phnum = 0;
 }
 
-int xresample(RESAMPLE a) 
+PORT
+int xresample(RESAMPLE a)
 {
 	//[2.10.3.9]MW0LGE refactor to remove pointer chase in the lopps
 	int outsamps = 0;
@@ -142,7 +143,7 @@ int xresample(RESAMPLE a)
 	int i, j, n;
 	int idx_out;
 	double I, Q;
-	
+
 	for (i = 0; i < sz; i++)
 	{
 		ring[2 * idx_in + 0] = in[2 * i + 0];

@@ -52,6 +52,7 @@ namespace Thetis
             CFC,
             CFCeq,
             Leveler,
+            DisplayPause,
             LAST
         }
 
@@ -146,6 +147,8 @@ namespace Thetis
                             return "Spots";
                         case ActionTypes.DisplayFill:
                             return "Fill";
+                        case ActionTypes.DisplayPause:
+                            return "Pause";
 
                     }
                     return "?";
@@ -174,6 +177,8 @@ namespace Thetis
                             return "Show spots";
                         case ActionTypes.DisplayFill:
                             return "Fill the panadaptor";
+                        case ActionTypes.DisplayPause:
+                            return "Pause the display";
                     }
                     return "";
                 }

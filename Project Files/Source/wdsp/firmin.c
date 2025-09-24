@@ -405,6 +405,7 @@ void flush_fircore (FIRCORE a)
 		memset (a->fftout[i], 0, 2 * a->size * sizeof (complex));
 	a->buffidx = 0;
 }
+
 void xfircore(FIRCORE a)
 {
 	//[2.10.3.9]MW0LGE refactor to remove pointer chase in the loops
@@ -437,6 +438,7 @@ void xfircore(FIRCORE a)
 	fftw_execute(a->crev);
 	memcpy(a->fftin, &(a->fftin[2 * a->size]), a->size * sizeof(complex));
 }
+
 //void xfircore (FIRCORE a)
 //{
 //	int i, j, k;
