@@ -26139,11 +26139,11 @@ namespace Thetis
 
                             if (VFOATX)
                             {
-                                CurrentMode = (Byte) rx1_dsp_mode;
+                                CurrentMode = (Byte) _rx1_dsp_mode;
                             }
                             else
                             {
-                                CurrentMode = (Byte) rx2_dsp_mode;
+                                CurrentMode = (Byte) _rx2_dsp_mode;
                             }
 
                             if (CurrentMode != old_IOBoardMode)
@@ -29926,7 +29926,7 @@ namespace Thetis
                 {
                     if (!(chkRX2.Checked && chkVAC2.Checked && chkVFOBTX.Checked))
                     {
-                        if (rx1_dsp_mode != DSPMode.DIGU && rx1_dsp_mode != DSPMode.DIGU)
+                        if (_rx1_dsp_mode != DSPMode.DIGU && _rx1_dsp_mode != DSPMode.DIGU)
                         {
                             lblMicVal.Text = "A " + ptbMic.Value.ToString() + " dB";
                             SetupForm.VACTXGain = ptbMic.Value;
@@ -29935,7 +29935,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if (rx2_dsp_mode != DSPMode.DIGU && rx1_dsp_mode != DSPMode.DIGU)
+                        if (_rx2_dsp_mode != DSPMode.DIGU && _rx1_dsp_mode != DSPMode.DIGU)
                         {
                             lblMicVal.Text = "B " + ptbMic.Value.ToString() + " dB";
                             SetupForm.VAC2TXGain = ptbMic.Value;
