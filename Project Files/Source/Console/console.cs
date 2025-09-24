@@ -789,15 +789,15 @@ namespace Thetis
             InitCTCSS();
 
             //TODO !!!!!!!!!!!!!!
-            bool RX2Enabled = false;
+            bool local_rx2Enabled = false;
             if (File.Exists(DB.FileName))
             {
                 Dictionary<string, string> d = DB.GetVarsDictionary("State");
 
                 if (d.ContainsKey("chkRX2"))
-                    RX2Enabled = bool.Parse(d["chkRX2"]);
+                    local_rx2Enabled = bool.Parse(d["chkRX2"]);
                 else
-                    RX2Enabled = false;
+                    local_rx2Enabled = false;
             }
             //END_TODO !!!!!!!!!!!!!!
 
@@ -812,7 +812,7 @@ namespace Thetis
             Midi2Cat = new Midi2CatCommands(this);
 
             // resize events are caused by this
-            if (RX2Enabled)
+            if (local_rx2Enabled)
             {
                 this.MinimumSize = new Size(this.MinimumSize.Width, this.MinimumSize.Height - (panelRX2Filter.Height + 8));
             }
@@ -972,7 +972,7 @@ namespace Thetis
 
             //resize N1MM //MW0LGE_21k9c
             N1MM.Resize(1);
-            if (RX2Enabled) N1MM.Resize(2);
+            if (local_rx2Enabled) N1MM.Resize(2);
 
             // go for multimeter launch -- display forms, or user controls in thetis
             MeterManager.FinishSetupAndDisplay();
@@ -33413,7 +33413,8 @@ namespace Thetis
             }
             else
             {
-                oldBand = RX1Band;
+                //oldBand = RX1Band;  //[2.10.3.9]MW0LGE now done below for rx2 as RX1Band is obviously wrong
+                oldBand = Band.FIRST;
                 oldMode = RX1DSPMode;
                 oldFilter = RX1Filter;
                 oldCentreFreq = CentreFrequency;
@@ -34030,7 +34031,7 @@ namespace Thetis
             //last_tx_xvtr_index = tx_xvtr_index;
             //last_rx2_xvtr_index = rx2_xvtr_index;
 
-            if(RX2Enabled)
+            if(rx2_enabled)
             {
                 if (dOldFreq != VFOBFreq)
                     VFOBFrequencyChangeHandlers?.Invoke(oldBand, RX2Band, oldMode, RX2DSPMode, oldFilter, RX2Filter, dOldFreq, VFOBFreq,
@@ -34040,6 +34041,7 @@ namespace Thetis
             {
                 if (dOldFreq != VFOBFreq)
                 {
+                    oldBand = BandByFreq(dOldFreq, rx1_xvtr_index, current_region);
                     Band tmpBand = BandByFreq(VFOBFreq, rx1_xvtr_index, current_region);
 
                     VFOBFrequencyChangeHandlers?.Invoke(oldBand, tmpBand, oldMode, RX1DSPMode, oldFilter, RX1Filter, dOldFreq, VFOBFreq,
@@ -37949,6 +37951,11 @@ namespace Thetis
 
         }
         private bool _oldMultiRX = false;
+        private bool _sub_rx_enabled = false;
+        private bool SubRXEnabled
+        {
+            get { return _sub_rx_enabled; }
+        }
         unsafe private void chkEnableMultiRX_CheckedChanged(object sender, System.EventArgs e)
         {
             //[2.10.3.5]MW0LGE
@@ -38024,6 +38031,7 @@ namespace Thetis
                     CurrentClickTuneMode = ClickTuneMode.VFOA;
 
             }
+            _sub_rx_enabled = chkEnableMultiRX.Checked;
             Display.SubRX1Enabled = chkEnableMultiRX.Checked;
             MultiRXToolStripMenuItem.Checked = chkEnableMultiRX.Checked;
 
@@ -48034,7 +48042,6 @@ namespace Thetis
                     }
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_PK)) _RX1MeterValues[Reading.ADC_PK] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_REAL);
                     if (MeterManager.RequiresUpdate(1, Reading.ADC_AV)) _RX1MeterValues[Reading.ADC_AV] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.ADC_IMAG);
-
                     if (MeterManager.RequiresUpdate(1, Reading.AGC_PK)) _RX1MeterValues[Reading.AGC_PK] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AGC_PK);
                     if (MeterManager.RequiresUpdate(1, Reading.AGC_AV)) _RX1MeterValues[Reading.AGC_AV] = WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AGC_AV);
                     if (MeterManager.RequiresUpdate(1, Reading.AGC_GAIN)) _RX1MeterValues[Reading.AGC_GAIN] = 0 - WDSP.CalculateRXMeter(0, 0, WDSP.MeterType.AGC_GAIN);
@@ -48050,6 +48057,35 @@ namespace Thetis
                         else
                             _RX1MeterValues[Reading.ESTIMATED_PBSNR] = 0f;
                     }
+
+                    ////[2.10.3.9]<W0LGE sub rx
+                    //if (SubRXEnabled)
+                    //{
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_SIGNAL_STRENGTH)) _RX1MeterValues[Reading.SUB_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.SIGNAL_STRENGTH) + offset;
+                    //    bNeedAvg = true;
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_AVG_SIGNAL_STRENGTH))
+                    //    {
+                    //        _RX1MeterValues[Reading.SUB_AVG_SIGNAL_STRENGTH] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset;
+                    //        bNeedAvg = false;
+                    //    }
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_ADC_PK)) _RX1MeterValues[Reading.SUB_ADC_PK] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.ADC_REAL);
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_ADC_AV)) _RX1MeterValues[Reading.SUB_ADC_AV] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.ADC_IMAG);
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_AGC_PK)) _RX1MeterValues[Reading.SUB_AGC_PK] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.AGC_PK);
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_AGC_AV)) _RX1MeterValues[Reading.SUB_AGC_AV] = WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.AGC_AV);
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_AGC_GAIN)) _RX1MeterValues[Reading.SUB_AGC_GAIN] = 0 - WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.AGC_GAIN);
+                    //    if (MeterManager.RequiresUpdate(1, Reading.SUB_ESTIMATED_PBSNR))
+                    //    {
+                    //        if (!Display.FastAttackNoiseFloorRX1 && _lastRX1NoiseFloorGood)
+                    //        {
+                    //            float avg = bNeedAvg ? WDSP.CalculateRXMeter(0, 1, WDSP.MeterType.AVG_SIGNAL_STRENGTH) + offset : _RX1MeterValues[Reading.SUB_AVG_SIGNAL_STRENGTH];
+                    //            spectralCalculations(1, avg, out double bin_width, out double dRWB, out int passbandWidth, out double noise_floor_power_spectral_density, out double estimated_passband_noise_power, out double estimated_snr, out double rx_dBHz, out double rbw_dBHz);
+                    //            _RX1MeterValues[Reading.SUB_ESTIMATED_PBSNR] = (float)estimated_snr;
+                    //        }
+                    //        else
+                    //            _RX1MeterValues[Reading.SUB_ESTIMATED_PBSNR] = 0f;
+                    //    }
+                    //}
+                    ////
 
                     updateRX = true;
                 }

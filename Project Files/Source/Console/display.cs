@@ -4744,7 +4744,7 @@ namespace Thetis
                     if (max_copy < currentAverage)
                     {
                         //averageSum += (float)Math.Pow(10f, max_copy / 10f);
-                        averageSum += FastPow10Raw(max_copy);
+                        averageSum += fastPow10Raw(max_copy);
                         averageCount++;
                     }
 
@@ -4760,7 +4760,7 @@ namespace Thetis
                     }
 
                     // peak blobs
-                    if (peaks_imds && (!m_bInsideFilterOnly || point.X >= filter_left_x && point.X <= filter_right_x || show_imd_measurements))
+                    if (peaks_imds && (!m_bInsideFilterOnly || (point.X >= filter_left_x && point.X <= filter_right_x) || show_imd_measurements))
                     {
                         if (max > dbm_max)
                         {
@@ -5277,85 +5277,136 @@ namespace Thetis
                 _NFsensitivity = t;
             }
         }
+        //private static void processNoiseFloor(int rx, int averageCount, float averageSum, int width, bool waterfall)
+        //{
+        //    if (rx == 1 && _bNoiseFloorAlreadyCalculatedRX1) return; // already done, ignore
+        //    if (rx == 2 && _bNoiseFloorAlreadyCalculatedRX2) return; // already done, ignore
+
+        //    int fps = waterfall ? m_nFps / waterfall_update_period : m_nFps;
+
+        //    int requireSamples = (int)(width * (_NFsensitivity / 20f));
+        //    if (rx == 1)
+        //    {
+        //        if (averageCount >= requireSamples)
+        //        {
+        //            float linearAverage = averageSum / (float)averageCount;
+        //            //float oldLinear = (float)Math.Pow(10f, m_fFFTBinAverageRX1 / 10f);
+        //            float oldLinear = fastPow10Raw(m_fFFTBinAverageRX1);
+        //            float newLinear = (linearAverage + oldLinear) / 2f;
+        //            float tmp = (float)(10f * Math.Log10(newLinear));
+        //            if (!float.IsNaN(tmp)) m_fFFTBinAverageRX1 = tmp;
+        //        }
+        //        else
+        //        {
+        //            m_fFFTBinAverageRX1 += m_bFastAttackNoiseFloorRX1 ? 3f : 1f;
+        //        }
+        //        m_fFFTBinAverageRX1 = m_fFFTBinAverageRX1.Clamp(-200f, 200f);
+
+        //        // so in attackTime period we need to have moved to where we want
+        //        int framesInAttackTime = m_bFastAttackNoiseFloorRX1 ? 0 : (int)((fps / 1000f) * (double)m_fAttackTimeInMSForRX1);
+        //        framesInAttackTime += 1;
+
+        //        if (m_fLerpAverageRX1 > m_fFFTBinAverageRX1)
+        //            m_fLerpAverageRX1 -= (m_fLerpAverageRX1 - m_fFFTBinAverageRX1) / framesInAttackTime;
+        //        else if (m_fLerpAverageRX1 < m_fFFTBinAverageRX1)
+        //            m_fLerpAverageRX1 += (m_fFFTBinAverageRX1 - m_fLerpAverageRX1) / framesInAttackTime;
+
+        //        if (m_bFastAttackNoiseFloorRX1 && (Math.Abs(m_fFFTBinAverageRX1 - m_fLerpAverageRX1) < 1f))
+        //        {
+        //            float tmpDelay = Math.Max(1000f, _fft_fill_timeRX1 + (_wdsp_mox_transition_buffer_clear ? _fft_fill_timeRX1 : 0)); // extra
+        //            bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX1) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
+        //            if(bElapsed) m_bFastAttackNoiseFloorRX1 = false;
+        //        }
+
+        //        _bNoiseFloorAlreadyCalculatedRX1 = true;
+        //    }
+        //    else
+        //    {
+        //        if (averageCount >= requireSamples)
+        //        {
+        //            float linearAverage = averageSum / (float)averageCount;
+        //            //float oldLinear = (float)Math.Pow(10f, m_fFFTBinAverageRX2 / 10f);
+        //            float oldLinear = fastPow10Raw(m_fFFTBinAverageRX2);
+        //            float newLinear = (linearAverage + oldLinear) / 2f;
+        //            float tmp = (float)(10f * Math.Log10(newLinear));
+        //            if (!float.IsNaN(tmp)) m_fFFTBinAverageRX2 = tmp;
+        //        }
+        //        else
+        //        {
+        //            m_fFFTBinAverageRX2 += m_bFastAttackNoiseFloorRX2 ? 3f : 1f;
+        //        }
+        //        m_fFFTBinAverageRX2 = m_fFFTBinAverageRX2.Clamp(-200f, 200f);
+
+        //        // so in attackTime period we need to have moved to where we want
+        //        int framesInAttackTime = m_bFastAttackNoiseFloorRX2 ? 0 : (int)((fps / 1000f) * (double)m_fAttackTimeInMSForRX2);
+        //        framesInAttackTime += 1;
+
+        //        if (m_fLerpAverageRX2 > m_fFFTBinAverageRX2)
+        //            m_fLerpAverageRX2 -= (m_fLerpAverageRX2 - m_fFFTBinAverageRX2) / framesInAttackTime;
+        //        else if (m_fLerpAverageRX2 < m_fFFTBinAverageRX2)
+        //            m_fLerpAverageRX2 += (m_fFFTBinAverageRX2 - m_fLerpAverageRX2) / framesInAttackTime;
+
+        //        if (m_bFastAttackNoiseFloorRX2 && (Math.Abs(m_fFFTBinAverageRX2 - m_fLerpAverageRX2) < 1f))
+        //        {
+        //            float tmpDelay = Math.Max(1000f, _fft_fill_timeRX2 + (_wdsp_mox_transition_buffer_clear ? _fft_fill_timeRX2 : 0)); // extra
+        //            bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX2) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
+        //            if(bElapsed) m_bFastAttackNoiseFloorRX2 = false;
+        //        }
+
+        //        _bNoiseFloorAlreadyCalculatedRX2 = true;
+        //    }
+        //}
         private static void processNoiseFloor(int rx, int averageCount, float averageSum, int width, bool waterfall)
         {
-            if (rx == 1 && _bNoiseFloorAlreadyCalculatedRX1) return; // already done, ignore
-            if (rx == 2 && _bNoiseFloorAlreadyCalculatedRX2) return; // already done, ignore
+            //[2.10.3.9]MW0LGE refactor to use refs, simplifies the code, removes unnecessary branching, general speed improvements
+            if (rx != 1 && rx != 2) return;
+            ref bool bAlreadyCalculated = ref (rx == 1 ? ref _bNoiseFloorAlreadyCalculatedRX1 : ref _bNoiseFloorAlreadyCalculatedRX2);
+            if (bAlreadyCalculated) return;
 
-            int fps = waterfall ? m_nFps / waterfall_update_period : m_nFps;
-
+            int fpsComputed = waterfall ? m_nFps / waterfall_update_period : m_nFps;
             int requireSamples = (int)(width * (_NFsensitivity / 20f));
-            if (rx == 1)
+
+            ref bool fastAttack = ref (rx == 1 ? ref m_bFastAttackNoiseFloorRX1 : ref m_bFastAttackNoiseFloorRX2);
+            ref float fftBinAverage = ref (rx == 1 ? ref m_fFFTBinAverageRX1 : ref m_fFFTBinAverageRX2);
+            ref float lerpAverage = ref (rx == 1 ? ref m_fLerpAverageRX1 : ref m_fLerpAverageRX2);
+            ref float attackTimeInMs = ref (rx == 1 ? ref m_fAttackTimeInMSForRX1 : ref m_fAttackTimeInMSForRX2);
+            ref double lastFastAttackTime = ref (rx == 1 ? ref _fLastFastAttackEnabledTimeRX1 : ref _fLastFastAttackEnabledTimeRX2);
+            ref float fftFillTime = ref (rx == 1 ? ref _fft_fill_timeRX1 : ref _fft_fill_timeRX2);
+
+            if (averageCount >= requireSamples)
             {
-                if (averageCount >= requireSamples)
+                float linearAverage = averageSum / (float)averageCount;
+                float oldLinear = fastPow10Raw(fftBinAverage);
+                float newLinear = (linearAverage + oldLinear) * 0.5f;
+                float tmpResult = 10f * (float)Math.Log10(newLinear);
+                if (!float.IsNaN(tmpResult))
                 {
-                    float linearAverage = averageSum / (float)averageCount;
-                    //float oldLinear = (float)Math.Pow(10f, m_fFFTBinAverageRX1 / 10f);
-                    float oldLinear = FastPow10Raw(m_fFFTBinAverageRX1);
-                    float newLinear = (linearAverage + oldLinear) / 2f;
-                    float tmp = (float)(10f * Math.Log10(newLinear));
-                    if (!float.IsNaN(tmp)) m_fFFTBinAverageRX1 = tmp;
+                    fftBinAverage = tmpResult;
                 }
-                else
-                {
-                    m_fFFTBinAverageRX1 += m_bFastAttackNoiseFloorRX1 ? 3f : 1f;
-                }
-                m_fFFTBinAverageRX1 = m_fFFTBinAverageRX1.Clamp(-200f, 200f);
-
-                // so in attackTime period we need to have moved to where we want
-                int framesInAttackTime = m_bFastAttackNoiseFloorRX1 ? 0 : (int)((fps / 1000f) * (double)m_fAttackTimeInMSForRX1);
-                framesInAttackTime += 1;
-
-                if (m_fLerpAverageRX1 > m_fFFTBinAverageRX1)
-                    m_fLerpAverageRX1 -= (m_fLerpAverageRX1 - m_fFFTBinAverageRX1) / framesInAttackTime;
-                else if (m_fLerpAverageRX1 < m_fFFTBinAverageRX1)
-                    m_fLerpAverageRX1 += (m_fFFTBinAverageRX1 - m_fLerpAverageRX1) / framesInAttackTime;
-
-                if (m_bFastAttackNoiseFloorRX1 && (Math.Abs(m_fFFTBinAverageRX1 - m_fLerpAverageRX1) < 1f))
-                {
-                    float tmpDelay = Math.Max(1000f, _fft_fill_timeRX1 + (_wdsp_mox_transition_buffer_clear ? _fft_fill_timeRX1 : 0)); // extra
-                    bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX1) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
-                    if(bElapsed) m_bFastAttackNoiseFloorRX1 = false;
-                }
-
-                _bNoiseFloorAlreadyCalculatedRX1 = true;
             }
             else
             {
-                if (averageCount >= requireSamples)
-                {
-                    float linearAverage = averageSum / (float)averageCount;
-                    //float oldLinear = (float)Math.Pow(10f, m_fFFTBinAverageRX2 / 10f);
-                    float oldLinear = FastPow10Raw(m_fFFTBinAverageRX2);
-                    float newLinear = (linearAverage + oldLinear) / 2f;
-                    float tmp = (float)(10f * Math.Log10(newLinear));
-                    if (!float.IsNaN(tmp)) m_fFFTBinAverageRX2 = tmp;
-                }
-                else
-                {
-                    m_fFFTBinAverageRX2 += m_bFastAttackNoiseFloorRX2 ? 3f : 1f;
-                }
-                m_fFFTBinAverageRX2 = m_fFFTBinAverageRX2.Clamp(-200f, 200f);
-
-                // so in attackTime period we need to have moved to where we want
-                int framesInAttackTime = m_bFastAttackNoiseFloorRX2 ? 0 : (int)((fps / 1000f) * (double)m_fAttackTimeInMSForRX2);
-                framesInAttackTime += 1;
-
-                if (m_fLerpAverageRX2 > m_fFFTBinAverageRX2)
-                    m_fLerpAverageRX2 -= (m_fLerpAverageRX2 - m_fFFTBinAverageRX2) / framesInAttackTime;
-                else if (m_fLerpAverageRX2 < m_fFFTBinAverageRX2)
-                    m_fLerpAverageRX2 += (m_fFFTBinAverageRX2 - m_fLerpAverageRX2) / framesInAttackTime;
-
-                if (m_bFastAttackNoiseFloorRX2 && (Math.Abs(m_fFFTBinAverageRX2 - m_fLerpAverageRX2) < 1f))
-                {
-                    float tmpDelay = Math.Max(1000f, _fft_fill_timeRX2 + (_wdsp_mox_transition_buffer_clear ? _fft_fill_timeRX2 : 0)); // extra
-                    bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX2) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
-                    if(bElapsed) m_bFastAttackNoiseFloorRX2 = false;
-                }
-
-                _bNoiseFloorAlreadyCalculatedRX2 = true;
+                fftBinAverage += fastAttack ? 3f : 1f;
             }
+
+            fftBinAverage = fftBinAverage < -200f ? -200f : fftBinAverage > 200f ? 200f : fftBinAverage;
+
+            int framesInAttack = fastAttack ? 0 : (int)((fpsComputed / 1000f) * (double)attackTimeInMs);
+            framesInAttack++;
+
+            float difference = lerpAverage - fftBinAverage;
+            lerpAverage -= difference / framesInAttack;
+
+            if (fastAttack)
+            {
+                float tmpDelay = Math.Max(1000f, fftFillTime + (_wdsp_mox_transition_buffer_clear ? fftFillTime : 0f));
+                double elapsed = m_objFrameStartTimer.ElapsedMsec - lastFastAttackTime;
+                if (elapsed > tmpDelay) fastAttack = false;
+            }
+
+            bAlreadyCalculated = true;
         }
+
 
         public static void ResetWaterfallTimers()
         {
@@ -5653,7 +5704,7 @@ namespace Thetis
                         if (!local_mox && (max_copy < currentAverage))
                         {
                             //averageSum += (float)Math.Pow(10f, max_copy / 10f);
-                            averageSum += FastPow10Raw(max_copy);
+                            averageSum += fastPow10Raw(max_copy);
                             averageCount++;
                         }
                         //
@@ -7748,7 +7799,7 @@ namespace Thetis
         //    return ret;
         //}
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static unsafe float FastPow10Shifted(float dBdiv10)
+        static unsafe float fastPow10Shifted(float dBdiv10)
         {
             if (dBdiv10 <= -20f || dBdiv10 >= 20f) return (float)Math.Pow(10.0, dBdiv10);
             int bits = (int)(dBdiv10 * Scale10) + Bias;
@@ -7756,7 +7807,7 @@ namespace Thetis
         }
         // version that takes the raw dB value (no /10 at call site)
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //static unsafe float FastPow10Raw(float dB)
+        //static unsafe float fastPow10Raw(float dB)
         //{            
         //    if(dB < -200 || dB > 200)  // mathematical limit calculated: ~ -382.3 to +385.3
         //        return (float)Math.Pow(10.0, dB / 10.0);
@@ -7770,7 +7821,7 @@ namespace Thetis
         //    return ret;
         //}
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static unsafe float FastPow10Raw(float dB)
+        static unsafe float fastPow10Raw(float dB)
         {
             if (dB <= -200f || dB >= 200f) return (float)Math.Pow(10.0, dB / 10.0);
             int bits = (int)(dB * Scale) + Bias;

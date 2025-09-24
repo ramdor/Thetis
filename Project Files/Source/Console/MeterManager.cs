@@ -75,15 +75,14 @@ namespace Thetis
         AGC_PK,
         AGC_AV,
         AGC_GAIN,
-        ESTIMATED_PBSNR,
+        ESTIMATED_PBSNR, //7
         //TX
-        MIC,
+        MIC, //8
         PWR,
         ALC,
         EQ,
         LEVELER,
         COMP,
-        //CPDR, //CPDR is the same as comp
         ALC_G,
         ALC_GROUP,
         LVL_G,
@@ -91,18 +90,19 @@ namespace Thetis
         ALC_PK,
         EQ_PK,
         LEVELER_PK,
-        COMP_PK,
-        //CPDR_PK, //CPDR is the same as comp
+        COMP_PK, //21
+        //CPDR, //CPDR is the same as comp  //22
+        //CPDR_PK, //CPDR is the same as comp  //23
         CFC_PK = 24,
         CFC_AV,
-        CFC_G,
+        CFC_G, //26
 
         //additional to MeterRXMode & MeterTXMode
-        REVERSE_PWR,
-        SWR,
+        REVERSE_PWR, //27
+        SWR, //28
 
         //pa
-        DRIVE_FWD_ADC,
+        DRIVE_FWD_ADC, //29
         FWD_ADC,
         REV_ADC,
         DRIVE_PWR,
@@ -110,29 +110,18 @@ namespace Thetis
         PA_REV_PWR,
         CAL_FWD_PWR,
         REV_VOLT,
-        FWD_VOLT,
+        FWD_VOLT, //37
 
         // volts/amps
-        VOLTS,
-        AMPS,
+        VOLTS, //38
+        AMPS, //39
 
-        AZ,
-        ELE,
+        // rotator
+        AZ, //40
+        ELE, //41
 
-        // special
-        //EYE_PERCENT,
-        //// private used in metermanager only
-        //VFOA,
-        //VFOB,
-        //VFOSUB,
-        //DSPMODE,
-        //BANDVFOA,
-        //BANDVFOB,
-        //SPLIT,
-        //TXVFOB,
-
-        //special these are not floats, only used by clsDataOut
-        VFOA_FREQ,
+        // special these are not floats, only used by clsDataOut
+        VFOA_FREQ, //42
         VFOB_FREQ,
         VFOSUBA_FREQ,
         TX_FREQ,
@@ -151,11 +140,21 @@ namespace Thetis
         SPLIT,
         RX2_ENABLED,
         VFOB_TX,
-        SUB_RX,
-        //
+        SUB_RX, //61
 
-        CUSTOM_PK,
-        CUSTOM_AV,
+        // custom meter
+        CUSTOM_PK, //62
+        CUSTOM_AV, //63
+
+        //// sub RX meter
+        //SUB_SIGNAL_STRENGTH, //64
+        //SUB_AVG_SIGNAL_STRENGTH,
+        //SUB_ADC_PK,
+        //SUB_ADC_AV,
+        //SUB_AGC_PK,
+        //SUB_AGC_AV,
+        //SUB_AGC_GAIN,
+        //SUB_ESTIMATED_PBSNR, //71
 
         LAST
     }
@@ -618,7 +617,7 @@ namespace Thetis
                         }
                         else
                         {
-                            return 0;
+                            return (float)0;
                         }
                     }
                 }
@@ -859,6 +858,10 @@ namespace Thetis
                 addReading(Reading.SWR, text);
                 addReading(Reading.SIGNAL_STRENGTH, text);
                 addReading(Reading.AVG_SIGNAL_STRENGTH, text);
+                ////sub rx
+                //addReading(Reading.SUB_SIGNAL_STRENGTH, text);
+                //addReading(Reading.SUB_AVG_SIGNAL_STRENGTH, text);
+                ////
                 addReading(Reading.PWR, text);
                 addReading(Reading.REVERSE_PWR, text);
                 addReading(Reading.MIC, text);
@@ -2317,8 +2320,8 @@ namespace Thetis
 
                 m.ZeroOut(true, true);
 
-                // need to update custom readings for text overlay and led
-                m.UpdateCustomReadings();
+                // need to update items
+                m.UpdateItems();
             }
         }
         public static int GetContainerRX(string sId)
@@ -3615,20 +3618,53 @@ namespace Thetis
                     {
                         clsMeter m = ms.Value;
 
-                        //this is needed in the case of vfoB change on rx1 when rx2 is disabled. It will still be identified as rx2
-                        bool update = (rx == m.RX) || (!m.RX2Enabled && m.RX == 1 && rx == 2);
+                        ////this is needed in the case of vfoB change on rx1 when rx2 is disabled. It will still be identified as rx2
+                        //bool update = (rx == m.RX) || (!m.RX2Enabled && m.RX == 1 && rx == 2);
 
-                        if (update)
+                        //if (update)
+                        //{
+                        //    if (rx == 1)
+                        //        m.BandVfoA = new_band;
+                        //    else
+                        //        m.BandVfoB = new_band;
+
+                        //    m.BandChanged(old_band, new_band);
+
+                        //    m.ZeroOut(true, false);
+                        //}
+
+                        if(rx == 1)
                         {
-                            if (rx == 1)
+                            if (m.RX == 1)
+                            {
+                                // rx1 will always be vfoA
                                 m.BandVfoA = new_band;
-                            else
-                                m.BandVfoB = new_band;
-
-                            m.BandChanged(old_band, new_band);
-
-                            m.ZeroOut(true, false);
+                                m.BandChanged(old_band, new_band);
+                            }
                         }
+                        else
+                        {
+                            // rx2 could be dedicated to rx2, or vfoB on rx1
+                            if(!m.RX2Enabled)
+                            {
+                                if (m.RX == 1)
+                                {
+                                    // rx1 vfoB
+                                    m.BandVfoB = new_band;
+                                    //m.BandChanged(old_band, new_band); // this is not done, as the band buttons only relate to vfoA
+                                }
+                            }
+                            else
+                            {
+                                if (m.RX == 2)
+                                {
+                                    // rx2
+                                    m.BandVfoB = new_band;
+                                    m.BandChanged(old_band, new_band);
+                                }
+                            }
+                        }
+                        m.ZeroOut(true, false);
                     }
                 }
 
@@ -3824,7 +3860,7 @@ namespace Thetis
 
             m.TNFActive = _console.TNFActive;
 
-            if (!_console.RX2Enabled)
+            if (!_console.RX2Enabled && m.RX == 1)
             {
                 // same as rx1 unless rx2 enabled
                 m.ModeVfoB = _console.RX1DSPMode;
@@ -3903,8 +3939,7 @@ namespace Thetis
 
             m.AntennasChanged(_console.RX1Band, _console.TXBand, _console.VFOAFreq, _console.TXFreq);
 
-            // update any filter meter items and setupbuttons to update filter text
-            m.InitFilterButtons();
+            m.UpdateItems();
         }
         private static void initConsoleData(int rx)
         {
@@ -4227,8 +4262,17 @@ namespace Thetis
                     setReading(rx, Reading.AGC_AV, ref readings);
                     setReading(rx, Reading.AGC_GAIN, ref readings);
                     //setReading(rx, Reading.EYE_PERCENT, ref readings);
-
                     setReading(rx, Reading.ESTIMATED_PBSNR, ref readings);
+
+                    ////sub rx data
+                    //setReading(rx, Reading.SUB_SIGNAL_STRENGTH, ref readings);
+                    //setReading(rx, Reading.SUB_AVG_SIGNAL_STRENGTH, ref readings);
+                    //setReading(rx, Reading.SUB_ADC_PK, ref readings);
+                    //setReading(rx, Reading.SUB_ADC_AV, ref readings);
+                    //setReading(rx, Reading.SUB_AGC_PK, ref readings);
+                    //setReading(rx, Reading.SUB_AGC_AV, ref readings);
+                    //setReading(rx, Reading.SUB_AGC_GAIN, ref readings);
+                    //setReading(rx, Reading.SUB_ESTIMATED_PBSNR, ref readings);
                 }
                 else
                 {
@@ -5570,6 +5614,10 @@ namespace Thetis
             {
 
             }
+            public virtual void Initialise()
+            {
+                //override to perform specific/late initialisation
+            }
             public virtual void ModeChanged(DSPMode oldMode, DSPMode newMode)
             {
 
@@ -5879,6 +5927,11 @@ namespace Thetis
             public clsFilterButtonBox(clsMeter owningmeter)
             {
                 _owningmeter = owningmeter;
+
+                Initialise();
+            }
+            public override void Initialise()
+            {
                 _click_highlight = false;
 
                 if (_owningmeter.RX == 1)
@@ -6097,6 +6150,8 @@ namespace Thetis
                 if (index == -1) return;
 
                 setupClick(true);
+
+                if (_owningmeter.RX == 2 && !_owningmeter.RX2Enabled) return; // prevent any change when rx2 is disabled, but this container is for rx2
 
                 if (e.Button == MouseButtons.Right)
                 {
@@ -6864,6 +6919,11 @@ namespace Thetis
             public clsModeButtonBox(clsMeter owningmeter)
             {
                 _owningmeter = owningmeter;
+
+                Initialise();
+            }
+            public override void Initialise()
+            {
                 _click_highlight = false;
 
                 if (_owningmeter.RX == 1)
@@ -7034,6 +7094,8 @@ namespace Thetis
 
                 setupClick(true);
 
+                if (_owningmeter.RX == 2 && !_owningmeter.RX2Enabled) return; // prevent any change when rx2 is disabled, but this container is for rx2
+
                 DSPMode m = (DSPMode)((int)DSPMode.LSB + index);
 
                 setMode(m);
@@ -7131,6 +7193,10 @@ namespace Thetis
             {
                 _owningmeter = owningmeter;
 
+                Initialise();
+            }
+            public override void Initialise()
+            {
                 if (_owningmeter.RX == 1)
                 {
                     _band = _owningmeter.BandVfoA;
@@ -7465,6 +7531,8 @@ namespace Thetis
                 if (FadeOnTx && _owningmeter.MOX) return;
 
                 setupClick(true);
+
+                if (_owningmeter.RX == 2 && !_owningmeter.RX2Enabled) return; // prevent any change when rx2 is disabled, but this container is for rx2
 
                 if (_console == null) return;
                 int index = base.ButtonIndex;
@@ -23127,8 +23195,10 @@ namespace Thetis
             //        return null;
             //    }
             //}
-            public void UpdateCustomReadings()
+            public void UpdateItems()
             {
+                // this function updates anything that might need it due to rx number change
+
                 // itterate through all _meterItems that are text overlay or leds, and set text1/2 and condition to itself to update the customreadings
                 // we dont worry that we might be leaving some cusom readings behind if the rx number changes, this will be cleared next restart
                 lock (_meterItemsLock)
@@ -23153,6 +23223,14 @@ namespace Thetis
                                 }
                                 break;
                         }
+                    }
+
+                    // itterate through all _meteritems and re-init any that require it
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS || 
+                                                                                         o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS ||
+                                                                                         o.Value.ItemType == clsMeterItem.MeterItemType.MODE_BUTTONS))
+                    {
+                        kvp.Value.Initialise();
                     }
                 }
             }
@@ -31459,7 +31537,7 @@ namespace Thetis
                     shift = vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH && mx >= 0.5f ? 0.510f : 0; //vfoA to B shift
                     mouse_over_good = true;
                     bool left = (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_A) && vfo.VFOARenderState == clsVfoDisplay.renderState.VFO && (shift == 0) && (m.RX == 1);
-                    bool right = (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B) && vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO && (shift != 0 || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B) && ((m.RX == 1 && (!m.RX2Enabled || (m.Split || m.MultiRxEnabled))) || (m.RX == 2));
+                    bool right = (vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_BOTH || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B) && vfo.VFOBRenderState == clsVfoDisplay.renderState.VFO && (shift != 0 || vfo.VFODispMode == clsVfoDisplay.VFODisplayMode.VFO_B) && ((m.RX == 1 && (!m.RX2Enabled || (m.Split || m.MultiRxEnabled))) || (m.RX == 2 && m.RX2Enabled));
 
                     // band
                     if (my >= 0.555 && my <= 0.900 && (((mx >= 0.333 && mx <= 0.480) & left) || ((mx >= 0.333 + shift && mx <= 0.480 + shift) & right)))
