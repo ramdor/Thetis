@@ -58,7 +58,8 @@ namespace Thetis
 
     public partial class Setup : Form
     {
-        private const string s_DEFAULT_GRADIENT = "9|1|0.000|-1509884160|1|0.339|-1493237760|1|0.234|-1509884160|1|0.294|-1493211648|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1493237760|";
+        private const string s_DEFAULT_GRADIENT = "9|1|0.000|-2147418368|1|0.494|-2130771968|1|0.341|-2147418368|1|0.432|-2130745856|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-2130771968|";
+        //"9|1|0.000|-1509884160|1|0.339|-1493237760|1|0.234|-1509884160|1|0.294|-1493211648|0|0.669|-1493237760|0|0.159|-1|0|0.881|-65536|0|0.125|-32704|1|1.000|-1493237760|";
 
         // for these callsigns always show cmasio tab, as a perk to the testers from discord
         private readonly List<string> CALLSIGN_IGNORE = new List<string>() {    "dl5tt", "ea8djr", "kc1lko", "k1lsb", "k1sr", "k2gx", "k2tc", "kb2uka",
@@ -2011,8 +2012,8 @@ namespace Thetis
                 comboTXProfileName.Items.Count > 0)
                 comboTXProfileName.SelectedIndex = 0;
 
-            if (loadTXProfile(comboTXProfileName.Text)) current_profile = comboTXProfileName.Text;
-            else current_profile = "";
+            if (loadTXProfile(comboTXProfileName.Text)) _current_profile = comboTXProfileName.Text;
+            else _current_profile = "";
 
             _gettingOptions = false;
         }
@@ -2932,7 +2933,7 @@ namespace Thetis
             if (drToCheck == null)
             {
                 // check everything in the TX profile
-                DataRow[] rows = getDataRowsForTXProfile(current_profile);// DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); 
+                DataRow[] rows = getDataRowsForTXProfile(_current_profile);// DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); 
 
                 if (rows.Length != 1)
                     return "";
@@ -3134,7 +3135,7 @@ namespace Thetis
             if (drToCheck == null)
             {
                 // check everything in the TX profile
-                DataRow[] rows = getDataRowsForTXProfile(current_profile);// DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+                DataRow[] rows = getDataRowsForTXProfile(_current_profile);// DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
 
                 if (rows.Length != 1)
                     return false;
@@ -3714,7 +3715,7 @@ namespace Thetis
                 return;
             }
 
-            string name = current_profile;
+            string name = _current_profile;
 
             DataRow dr = null;
 
@@ -9353,6 +9354,33 @@ namespace Thetis
             }
         }
 
+        public int GetVACEnabledBitfield(string profile_name = "")
+        {
+            int bitfield = 0;            
+            if (string.IsNullOrEmpty(profile_name))
+            {
+                profile_name = _current_profile;
+            }
+            if (string.IsNullOrEmpty(profile_name))
+            {
+                profile_name = comboTXProfileName.Text;
+            }
+
+            if (string.IsNullOrEmpty(profile_name)) return bitfield;
+
+            DataRow[] rows = getDataRowsForTXProfile(profile_name);
+
+            if (rows.Length < 1) return bitfield;
+
+            DataRow row = rows[0];
+            for (int n = 0; n <= 1; n++) 
+            {
+                if ((bool)row[$"VAC{n + 1}_On"]) bitfield |= 1 << n;
+            }
+
+            return bitfield;
+        }
+
         private bool loadTXProfile(String sProfileName)
         {
             //
@@ -9605,7 +9633,7 @@ namespace Thetis
             comboTXProfileName_SelectedIndexChanged(this, EventArgs.Empty);
         }
 
-        private string current_profile = "";
+        private string _current_profile = "";
         private void comboTXProfileName_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             if (comboTXProfileName.SelectedIndex < 0 || initializing)
@@ -9638,18 +9666,18 @@ namespace Thetis
 
             if (loadTXProfile(comboTXProfileName.Text))
             {
-                current_profile = comboTXProfileName.Text;
+                _current_profile = comboTXProfileName.Text;
             }
             else
             {
-                current_profile = "";
+                _current_profile = "";
             }
         }
 
         private void btnTXProfileSave_Click(object sender, System.EventArgs e)
         {
             string name = InputBox.Show("Save Profile", "Please enter a profile name:",
-                current_profile);
+                _current_profile);
 
             if (string.IsNullOrEmpty(name))
             {
@@ -12654,7 +12682,7 @@ namespace Thetis
         //-W2PA Export a single TX Profile to send to someone else for importing.
         private void ExportCurrentTxProfile()
         {
-            string fileName = current_profile;
+            string fileName = _current_profile;
 
             string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
             foreach (char c in invalid)
@@ -12673,7 +12701,7 @@ namespace Thetis
 
             fileName = saveFileDialog.FileName;
 
-            DataRow[] rows = getDataRowsForTXProfile(current_profile);// DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
+            DataRow[] rows = getDataRowsForTXProfile(_current_profile);// DB.ds.Tables["TXProfile"].Select("Name = '" + current_profile.Replace("'", "''") + "'"); //MW0LGE_21k9rc6 replace ' for ''
             DataRow exportRow = null;
             if (rows.Length > 0)
             {
@@ -12681,7 +12709,7 @@ namespace Thetis
             }
             else
             {
-                MessageBox.Show("Can not locate " + current_profile + ".",  // This should never happen.
+                MessageBox.Show("Can not locate " + _current_profile + ".",  // This should never happen.
                     "Profile error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -12720,7 +12748,7 @@ namespace Thetis
                 return;
             }
 
-            MessageBox.Show("Profile [" + current_profile + "] has been saved to the file\n" + fileName,
+            MessageBox.Show("Profile [" + _current_profile + "] has been saved to the file\n" + fileName,
                     "Done",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);

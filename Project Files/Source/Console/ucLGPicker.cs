@@ -40,6 +40,10 @@ namespace Thetis
     [DefaultEvent("Changed")]
     public partial class ucLGPicker : UserControl
     {
+        private const int LOW = 150; // -150 dbm
+        private const int HIGH = 10; // +10 dbm
+        private const int SPAN = LOW + HIGH;
+
         private const int m_nPadding = 16;                // the gaps around left/right side
         private const int m_nGrippers = 8;                // must be at least 2
 
@@ -152,10 +156,11 @@ namespace Thetis
         private Font drawFont = new Font("Microsft Sans Serif", 8);
         private void drawScales(Graphics g)
         {
-            int zeroPoint = 200;
-            int span = 400;
-            drawTextCentre(g, "-200", m_nPadding);
-            drawTextCentre(g, "200", m_nPadding + actualWidth);
+            int zeroPoint = LOW;
+            int span = SPAN;
+
+            drawTextCentre(g, (-LOW).ToString(), m_nPadding);
+            drawTextCentre(g, (HIGH).ToString(), m_nPadding + actualWidth);
 
             drawTextCentre(g, "0", m_nPadding + (int)((actualWidth / (float)span) * (float)(zeroPoint)));
 
@@ -282,7 +287,7 @@ namespace Thetis
 
                 Invalidate();
 
-                OnGripperDBMChanged(-200 + (int)(400 * percPos));
+                OnGripperDBMChanged(-LOW + (int)(SPAN * percPos));
             }
             else
             {
@@ -297,7 +302,7 @@ namespace Thetis
                             OnGripperMouseLeave(0);
                         }
 
-                        int dBm = -200 + (int)(400 * m_dictColours[index].percent);
+                        int dBm = -LOW + (int)(SPAN * m_dictColours[index].percent);
 
                         OnGripperMouseEnter(dBm); // TODO
                         m_nMouseOverIndex = index;
@@ -745,10 +750,14 @@ namespace Thetis
         }
         public float GetPercForDBM(float dbm)
         {
-            float max = 400; // -200 through to 200
-            dbm += 200;
+            float max = SPAN; // LOW through to HIGH
+            dbm += LOW;
 
-            return dbm / max;
+            float perc = dbm / max;
+            if (perc < 0) perc = 0;
+            if (perc > 1) perc = 1;
+
+            return perc;
         }
         private void addColourGradientData(List<ColourGradientData> lst, Color color, float perc)
         {
