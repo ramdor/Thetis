@@ -112,6 +112,32 @@ typedef struct _gen
 		int state;
 		int IQout;
 	} pulse;
+	struct _ttpulse
+	{
+		double mag1;
+		double mag2;
+		double pf;
+		double pdutycycle;
+		double ptranstime;
+		double* ctrans;
+		int pcount;
+		int pnon;
+		int pntrans;
+		int pnoff;
+		double pperiod;
+		double tf1;
+		double tf2;
+		double tphs1;
+		double tphs2;
+		double tdelta1;
+		double tdelta2;
+		double tcosdelta1;
+		double tcosdelta2;
+		double tsindelta1;
+		double tsindelta2;
+		int state;
+		int IQout;
+	} ttpulse;
 } gen, *GEN;
 
 extern GEN create_gen (int run, int size, double* in, double* out, int rate, int mode);

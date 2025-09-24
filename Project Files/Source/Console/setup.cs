@@ -11317,17 +11317,34 @@ namespace Thetis
                     await Task.Delay(200); //MW0LGE_21a
                 }
 
-                console.radio.GetDSPTX(0).TXPostGenMode = 1;
-                console.radio.GetDSPTX(0).TXPostGenTTFreq1 = ttfreq1;
-                console.radio.GetDSPTX(0).TXPostGenTTFreq2 = ttfreq2;
-                console.radio.GetDSPTX(0).TXPostGenTTMag1 = ttmag1;
+                bool pulsed = chkPulsed_TwoTone.Checked;
 
-                //MW0LGE_21a change to delay Freq2 output. Fixes problems with some Amps frequency counters
-                if ((int)udFreq2Delay.Value == 0)
-                    console.radio.GetDSPTX(0).TXPostGenTTMag2 = ttmag2;
+                if (pulsed)
+                {
+                    setupTwoTonePulse();
+                    console.radio.GetDSPTX(0).TXPostGenMode = 7; // pulsed two tone
+                    console.radio.GetDSPTX(0).TXPostGenTTPulseToneFreq1 = ttfreq1;
+                    console.radio.GetDSPTX(0).TXPostGenTTPulseToneFreq2 = ttfreq2;
+                    console.radio.GetDSPTX(0).TXPostGenTTPulseMag1 = ttmag1;
+
+                    if ((int)udFreq2Delay.Value == 0)
+                        console.radio.GetDSPTX(0).TXPostGenTTPulseMag2 = ttmag2;
+                    else
+                        console.radio.GetDSPTX(0).TXPostGenTTPulseMag2 = 0.0;
+                }
                 else
-                    console.radio.GetDSPTX(0).TXPostGenTTMag2 = 0.0;
+                {
+                    console.radio.GetDSPTX(0).TXPostGenMode = 1;
+                    console.radio.GetDSPTX(0).TXPostGenTTFreq1 = ttfreq1;
+                    console.radio.GetDSPTX(0).TXPostGenTTFreq2 = ttfreq2;
+                    console.radio.GetDSPTX(0).TXPostGenTTMag1 = ttmag1;
 
+                    //MW0LGE_21a change to delay Freq2 output. Fixes problems with some Amps frequency counters
+                    if ((int)udFreq2Delay.Value == 0)
+                        console.radio.GetDSPTX(0).TXPostGenTTMag2 = ttmag2;
+                    else
+                        console.radio.GetDSPTX(0).TXPostGenTTMag2 = 0.0;                    
+                }
                 console.radio.GetDSPTX(0).TXPostGenRun = 1;
 
                 //MW0LGE_22b
@@ -11354,11 +11371,15 @@ namespace Thetis
                     return;
                 }
 
+                // set magnitude after a delay for freq2 
                 if ((int)udFreq2Delay.Value > 0)
                 {
-                    // set magnitude after a delay for freq2 
                     await Task.Delay((int)udFreq2Delay.Value);
-                    console.radio.GetDSPTX(0).TXPostGenTTMag2 = ttmag2;
+
+                    if (pulsed)
+                        console.radio.GetDSPTX(0).TXPostGenTTPulseMag2 = ttmag2;
+                    else
+                        console.radio.GetDSPTX(0).TXPostGenTTMag2 = ttmag2;
                 }
 
                 chkTestIMD.BackColor = console.ButtonSelectedColor;
@@ -25889,10 +25910,11 @@ namespace Thetis
         {
             public string Text { get; set; }
             public string ID { get; set; }
+            public int ListIndex { get; set; }
 
             public override string ToString()
             {
-                return Text;
+                return ListIndex.ToString() + " - " + Text;
             }
         }
         private class clsMeterTypeComboboxItem
@@ -25948,19 +25970,37 @@ namespace Thetis
             bool bEnableAdd = MeterManager.TotalMeterContainers < MAX_CONTAINERS;
 
             btnAddRX1Container.Enabled = bEnableAdd;
-            btnAddRX2Container.Enabled = bEnableAdd && console.RX2Enabled;
 
-            comboContainerSelect.Text = "";
             comboContainerSelect.Items.Clear();
             int i = 0;
             int nSelect = 0;
 
             // add the containers to the list
-            foreach (KeyValuePair<string, ucMeter> kvp in MeterManager.MeterContainers)
+            foreach (KeyValuePair<string, ucMeter> kvp in MeterManager.MeterContainers.OrderBy((KeyValuePair<string, ucMeter> kvp2) => kvp2.Value.Sequence))
             {
                 clsContainerComboboxItem cci = new clsContainerComboboxItem();
-                cci.Text = "Container " + (i + 1).ToString() + " TRX" + kvp.Value.RX.ToString();
+                
                 cci.ID = kvp.Value.ID;
+                cci.ListIndex = i + 1;
+
+                string notes = MeterManager.GetContainerNotes(cci.ID).Trim();
+                int newlineIndex = notes.IndexOf('\n');
+                if (newlineIndex >= 0)
+                {
+                    notes = notes.Substring(0, newlineIndex);
+                }
+                if (notes.Length > 40)
+                {
+                    notes = notes.Substring(0, 40);
+                }
+                if (string.IsNullOrEmpty(notes))
+                {
+                    cci.Text = "Container";
+                }
+                else
+                {
+                    cci.Text = notes;
+                }
 
                 comboContainerSelect.Items.Add(cci);
 
@@ -25969,17 +26009,17 @@ namespace Thetis
                 i++;
             }
 
-            bool bEnableControls = false;
-
+            bool bEnableControls;
             if (comboContainerSelect.Items.Count > 0)
             {
                 comboContainerSelect.SelectedIndex = nSelect;
-
                 bEnableControls = true;
             }
             else
             {
-                comboContainerSelect.Text = "";
+                comboContainerSelect.SelectedIndex = -1;
+                comboContainerSelect.Refresh(); // neeed as disabling the controls causes the update/invalidate to fail sometimes
+                bEnableControls = false;
             }
 
             bool locked = chkLockContainer.Checked;
@@ -26007,6 +26047,11 @@ namespace Thetis
 
             btnMeterCopySettings.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
             btnMeterPasteSettings.Enabled = bEnableControls && lstMetersInUse.Items.Count > 0;
+
+            radContainer_rx1_data.Enabled = bEnableControls;
+            radContainer_rx2_data.Enabled = bEnableControls;
+
+            chkContainer_hidewhennotused.Enabled = bEnableControls;
 
             if (!bEnableControls) txtContainerNotes.Text = "";
             if (!bEnableControls) comboContainerSelect.Text = "";
@@ -26105,6 +26150,21 @@ namespace Thetis
 
             chkLockContainer.Checked = MeterManager.ContainerLocked(cci.ID);
             chkLockContainer_CheckedChanged(this, EventArgs.Empty); // force it
+            
+            chkContainer_hidewhennotused.Checked = MeterManager.ContainerHidesWhenRXNotUsed(cci.ID); //needs to be before the rx2/rx1 data radios below
+
+            int rx = MeterManager.GetContainerRX(cci.ID);
+            switch (rx)
+            {
+                case 2:
+                    radContainer_rx2_data.Checked = true;
+                    radContainer_rx2_data_CheckedChanged(this, EventArgs.Empty); // force it
+                    break;
+                default:
+                    radContainer_rx1_data.Checked = true;
+                    radContainer_rx1_data_CheckedChanged(this, EventArgs.Empty); // force it
+                    break;
+            }
 
             chkContainerShowRX.Checked = MeterManager.ContainerShowOnRX(cci.ID);
             chkContainerShowTX.Checked = MeterManager.ContainerShowOnTX(cci.ID);
@@ -26157,7 +26217,37 @@ namespace Thetis
             {
                 string sTmp = MeterManager.GetContainerNotes(cci.ID);
                 if (txtContainerNotes.Text != sTmp)
+                {
                     MeterManager.ContainerNotes(cci.ID, txtContainerNotes.Text);
+
+                    //update the cci if required, similar code as in updateMeter2Controls()
+
+                    string notes = MeterManager.GetContainerNotes(cci.ID).Trim();
+                    int newlineIndex = notes.IndexOf('\n');
+                    if (newlineIndex >= 0)
+                    {
+                        notes = notes.Substring(0, newlineIndex);
+                    }
+                    if (notes.Length > 40)
+                    {
+                        notes = notes.Substring(0, 40);
+                    }
+                    if (string.IsNullOrEmpty(notes))
+                    {
+                        cci.Text = "Container";
+                    }
+                    else
+                    {
+                        cci.Text = notes;
+                    }
+
+                    // update it
+                    int index = comboContainerSelect.SelectedIndex;
+                    if (index >= 0)
+                    {
+                        comboContainerSelect.Items[comboContainerSelect.SelectedIndex] = cci;
+                    }
+                }
             }
         }
         private void btnAddMeterItem_Click(object sender, EventArgs e)
@@ -35375,7 +35465,7 @@ namespace Thetis
             if (initializing) return;
             console.TunePulseCount = (int)nudPulsedTune_window.Value;
             console.SetupTunePulse();
-            updatePulseInfo();
+            updateTunePulseInfo();
         }
 
         private void nudPulsedTune_percent_ValueChanged(object sender, EventArgs e)
@@ -35383,7 +35473,7 @@ namespace Thetis
             if (initializing) return;
             console.TunePulseDuty = (float)(nudPulsedTune_percent.Value) / 100f;
             console.SetupTunePulse();
-            updatePulseInfo();
+            updateTunePulseInfo();
         }
 
         private void chkPulsedTune_CheckedChanged(object sender, EventArgs e)
@@ -35393,9 +35483,11 @@ namespace Thetis
             nudPulsedTune_percent_ValueChanged(this, EventArgs.Empty);
             nudPulsedTune_ramp_ValueChanged(this, EventArgs.Empty);
 
-            console.TunePulseEnabled = chkPulsedTune.Checked;
             grpPulsedTune.Enabled = chkPulsedTune.Checked;
             lblTunedPulse_info.Enabled = chkPulsedTune.Checked;
+
+            //done last so pulse will only apply if tune is toggled
+            console.TunePulseEnabled = chkPulsedTune.Checked;
         }
 
         private void nudPulsedTune_ramp_ValueChanged(object sender, EventArgs e)
@@ -35403,10 +35495,10 @@ namespace Thetis
             if (initializing) return;
             console.TunePulseRamp = (int)nudPulsedTune_ramp.Value;
             console.SetupTunePulse();
-            updatePulseInfo();
+            updateTunePulseInfo();
         }
 
-        private void updatePulseInfo()
+        private void updateTunePulseInfo()
         {
             float window = 1000f / (float)nudPulsedTune_window.Value;
             float duty = window * ((float)nudPulsedTune_percent.Value / 100f);
@@ -35447,6 +35539,109 @@ namespace Thetis
                 Common.PreventScreenSaver();
             else
                 Common.ResumeScreenSaver();
+        }
+
+        private void radContainer_rx1_data_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radContainer_rx1_data.Checked) return;
+
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.SetContainerRX(cci.ID, 1);
+            }
+
+            chkContainer_hidewhennotused_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void radContainer_rx2_data_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radContainer_rx2_data.Checked) return;
+
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.SetContainerRX(cci.ID, 2);
+            }
+
+            chkContainer_hidewhennotused_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        private void chkContainer_hidewhennotused_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci != null)
+            {
+                MeterManager.ContainerHidesWhenRXNotUsed(cci.ID, chkContainer_hidewhennotused.Checked);
+            }
+        }
+
+        private void chkPulsed_TwoTone_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            nudPulsed_TwoTone_window_ValueChanged(this, EventArgs.Empty);
+            nudPulsed_TwoTone_percent_ValueChanged(this, EventArgs.Empty);
+            nudPulsed_TwoTone_ramp_ValueChanged(this, EventArgs.Empty);
+
+            grpPulsedTwoTone.Enabled = chkPulsed_TwoTone.Checked;
+            lblTwoTonePulse_info.Enabled = chkPulsed_TwoTone.Checked;
+        }
+
+        private void nudPulsed_TwoTone_window_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupTwoTonePulse();
+            updateTwoTonePulseInfo();
+        }
+
+        private void nudPulsed_TwoTone_percent_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupTwoTonePulse();
+            updateTwoTonePulseInfo();
+        }
+
+        private void nudPulsed_TwoTone_ramp_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupTwoTonePulse();
+            updateTwoTonePulseInfo();
+        }
+
+        private void updateTwoTonePulseInfo()
+        {
+            float window = 1000f / (float)nudPulsed_TwoTone_window.Value;
+            float duty = window * ((float)nudPulsed_TwoTone_percent.Value / 100f);
+            int totalRamp = (int)nudPulsed_TwoTone_ramp.Value * 2;
+            float total = duty + totalRamp;
+
+            string info = $"Window = {window:F2}ms\nDuty = {duty:F2}ms\nTotal Ramp = {totalRamp}ms\nTotal Pulse = {total:F2}ms\n";
+
+            if (window >= total)
+            {
+                info += "Will fit window";
+                lblTwoTonePulse_info.ForeColor = Color.Green;
+            }
+            else
+            {
+                info += "Will NOT fit window";
+                lblTwoTonePulse_info.ForeColor = Color.Red;
+            }
+
+            lblTwoTonePulse_info.Text = info;
+        }
+        private void setupTwoTonePulse()
+        {
+            if (!chkPulsed_TwoTone.Checked) return;
+
+            //console.radio.GetDSPTX(0).TXPostGenMode = 7; // two tone pulse
+            console.radio.GetDSPTX(0).TXPostGenTTPulseIQOut = true;
+            console.radio.GetDSPTX(0).TXPostGenTTPulseFreq = (int)nudPulsed_TwoTone_window.Value;
+            console.radio.GetDSPTX(0).TXPostGenTTPulseDutyCycle = (float)(nudPulsed_TwoTone_percent.Value) / 100f;
+            console.radio.GetDSPTX(0).TXPostGenTTPulseTransition = (float)(nudPulsed_TwoTone_ramp.Value) / 1000f;
         }
     }
 

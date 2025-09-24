@@ -237,6 +237,7 @@ namespace Thetis
         public static event EventHandler<string> ShowWebImageBackground;
 
         // member variables
+        private static int _uc_sequence;
         private static Console _console;
         private static bool _delegatesAdded;
         private static bool _finishedSetup;
@@ -292,6 +293,8 @@ namespace Thetis
         //private static bool _spectrumReady;
         static MeterManager()
         {
+            _uc_sequence = 0; // to order the uc's when returned to setup
+
             // readings used by varius meter items such as Text Overlay
             _custom_readings = new CustomReadings[2];
             _custom_readings[0] = new CustomReadings(1);
@@ -2237,6 +2240,46 @@ namespace Thetis
                 }
             }
         }
+        public static void ContainerHidesWhenRXNotUsed(string sId, bool hides)
+        {
+            lock (_metersLock)
+            {
+                if (_meters == null || !_meters.ContainsKey(sId)) return;
+                if (_lstUCMeters == null || !_lstUCMeters.ContainsKey(sId)) return;
+                if (_lstMeterDisplayForms == null || !_lstMeterDisplayForms.ContainsKey(sId)) return;
+
+                clsMeter m = _meters[sId];
+                ucMeter uc = _lstUCMeters[sId];
+                frmMeterDisplay f = _lstMeterDisplayForms[uc.ID];
+
+                uc.ContainerHidesWhenRXNotUsed = hides;
+                f.ContainerHidesWhenRXNotUsed = hides;
+
+                //hide if this is for an rx that is not in use, otherwise show it
+                //atm this is only a consideration for rx2
+                bool hide = m.RX == 2 && (!m.RX2Enabled && uc.ContainerHidesWhenRXNotUsed);
+                if (hide)
+                {
+                    if (uc.Floating)
+                        _lstMeterDisplayForms[uc.ID].Hide();
+                    else
+                    {
+                        uc.Hide();
+                        uc.Repaint();
+                    }
+                }
+                else
+                {
+                    if (uc.MeterEnabled && !uc.Visible)
+                    {
+                        if (uc.Floating)
+                            setMeterFloating(uc, _lstMeterDisplayForms[uc.ID]);
+                        else
+                            returnMeterFromFloating(uc, _lstMeterDisplayForms[uc.ID]);
+                    }
+                }
+            }
+        }
         public static void LockContainer(string sId, bool locked)
         {
             lock (_metersLock)
@@ -2246,6 +2289,49 @@ namespace Thetis
                 ucMeter uc = _lstUCMeters[sId];
                 uc.Locked = locked;
             }
+        }
+        public static void SetContainerRX(string sId, int rx)
+        {
+            lock (_metersLock)
+            {
+                if (_meters == null || !_meters.ContainsKey(sId)) return;
+                if (_lstUCMeters == null || !_lstUCMeters.ContainsKey(sId)) return;
+                if (_lstMeterDisplayForms == null || !_lstMeterDisplayForms.ContainsKey(sId)) return;
+                if (_DXrenderers == null || !_DXrenderers.ContainsKey(sId)) return;
+
+                clsMeter m = _meters[sId];
+
+                if (rx == m.RX) return;
+
+                m.RX = rx;
+
+                ucMeter uc = _lstUCMeters[sId];
+                uc.RX = m.RX;
+
+                frmMeterDisplay f = _lstMeterDisplayForms[sId];
+                f.RX = m.RX;
+
+                _DXrenderers[sId].RX = m.RX;
+
+                initConsoleData(m.RX);
+
+                m.ZeroOut(true, true);
+
+                // need to update custom readings for text overlay and led
+                m.UpdateCustomReadings();
+            }
+        }
+        public static int GetContainerRX(string sId)
+        {
+            int rx = 0;
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null || !_lstUCMeters.ContainsKey(sId)) return rx;
+
+                ucMeter uc = _lstUCMeters[sId];
+                rx = uc.RX;
+            }
+            return rx;
         }
         public static void ShowContainerOnRX(string sId, bool visible)
         {
@@ -2371,6 +2457,17 @@ namespace Thetis
 
                 ucMeter uc = _lstUCMeters[sId];
                 return uc.Locked;
+            }
+        }
+        public static bool ContainerHidesWhenRXNotUsed(string sId)
+        {
+            lock (_metersLock)
+            {
+                if (_lstUCMeters == null) return false;
+                if (!_lstUCMeters.ContainsKey(sId)) return false;
+
+                ucMeter uc = _lstUCMeters[sId];
+                return uc.ContainerHidesWhenRXNotUsed;
             }
         }
         public static bool ContainerShowOnRX(string sId)
@@ -4251,6 +4348,10 @@ namespace Thetis
 
             lock (_metersLock)
             {
+                // keep track of the number of ucM's added
+                ucM.Sequence = _uc_sequence;
+                _uc_sequence++;
+
                 bool bEnabled = ucM.MeterEnabled;
 
                 ucM.Console = _console;
@@ -4501,7 +4602,7 @@ namespace Thetis
             setPoisitionOfDockedMeter(m);
             m.BringToFront();
 
-            if (m.RX == 2 && !_console.RX2Enabled) return;
+            if (m.RX == 2 && (!_console.RX2Enabled && m.ContainerHidesWhenRXNotUsed)) return;
 
             if (!_finishedSetup) return;
             m.Show();
@@ -4510,7 +4611,7 @@ namespace Thetis
         {
             if (_console == null) return;
 
-            if (m.RX == 2 && !_console.RX2Enabled) return;
+            if (m.RX == 2 && (!_console.RX2Enabled && m.ContainerHidesWhenRXNotUsed)) return;
 
             m.Hide();
             m.Repaint();
@@ -4538,6 +4639,12 @@ namespace Thetis
 
                         if (_lstMeterDisplayForms.ContainsKey(ucM.ID) && ucM.MeterEnabled)
                         {
+                            if (_meters.ContainsKey(ucM.ID))
+                            {
+                                clsMeter m = _meters[ucM.ID];
+                                m.ZeroOut(true, true);
+                            }
+
                             if (ucM.Floating)
                                 setMeterFloating(ucM, _lstMeterDisplayForms[ucM.ID]);
                             else
@@ -4559,14 +4666,23 @@ namespace Thetis
                     {
                         ucMeter ucM = kvp.Value;
 
-                        if (!_lstMeterDisplayForms.ContainsKey(ucM.ID)) return;
+                        if (!_lstMeterDisplayForms.ContainsKey(ucM.ID)) continue;
 
-                        if (ucM.Floating)
-                            _lstMeterDisplayForms[ucM.ID].Hide();
-                        else
+                        if (ucM.ContainerHidesWhenRXNotUsed)
                         {
-                            ucM.Hide();
-                            ucM.Repaint();
+                            if (ucM.Floating)
+                                _lstMeterDisplayForms[ucM.ID].Hide();
+                            else
+                            {
+                                ucM.Hide();
+                                ucM.Repaint();
+                            }
+                        }
+
+                        if (_meters.ContainsKey(ucM.ID))
+                        {
+                            clsMeter m = _meters[ucM.ID];
+                            m.ZeroOut(true, true);
                         }
                     }
                 }
@@ -8740,7 +8856,7 @@ namespace Thetis
                                 VFOARenderState = renderState.MODE;
                         }
                         break;
-                    //////////
+                    //
                     case buttonState.BAND:
                         {
                             if (abortForLockedVFO()) break;
@@ -8960,10 +9076,20 @@ namespace Thetis
                 if (_console == null) return;
                 if (vfoB)
                 {
-                    _console.BeginInvoke(new MethodInvoker(() =>
+                    if (_owningmeter.RX2Enabled && (_owningmeter.RX == 1 && (_owningmeter.MultiRxEnabled || _owningmeter.Split)))
                     {
-                        _console.VFOBTX = true;
-                    }));
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.VFOSplit = !_console.VFOSplit;
+                        }));
+                    }
+                    else
+                    {
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.VFOBTX = true;
+                        }));
+                    }
                 }
                 else
                 {
@@ -8996,7 +9122,7 @@ namespace Thetis
                     if (f < 0) return true;
                     Filter fltr = (Filter)((int)Filter.F1 + f);
 
-                    if (_owningmeter.RX2Enabled)
+                    if (_owningmeter.RX2Enabled && !(_owningmeter.RX == 1 && (_owningmeter.MultiRxEnabled || _owningmeter.Split)))
                     {
                         // special for rx2 as only F1-F7 + VAR1 + VAR2, so, 0,1,2,3,4,5,6,7,8
                         if (f > 8) return true;
@@ -9041,7 +9167,7 @@ namespace Thetis
                     DSPModeForModeDisplay dm = (DSPModeForModeDisplay)((int)DSPModeForModeDisplay.LSB + m);
                     Enum.TryParse<DSPMode>(dm.ToString(), out DSPMode dspMode);
 
-                    if (_owningmeter.RX2Enabled)
+                    if (_owningmeter.RX2Enabled && !(_owningmeter.RX == 1 && (_owningmeter.MultiRxEnabled || _owningmeter.Split)))
                     {
                         _console.BeginInvoke(new MethodInvoker(() =>
                         {
@@ -9207,10 +9333,21 @@ namespace Thetis
                     else
                         return true;
 
-                    _console.BeginInvoke(new MethodInvoker(() =>
+                    if (_owningmeter.RX == 1 && (_owningmeter.MultiRxEnabled || _owningmeter.Split))
                     {
-                        _console.SetupRX2Band(band, !_owningmeter.RX2Enabled); // we tell setuprx2band that we only want to change freq for vfob if only rx1
-                    }));
+                        // need to update subvfo, which is linked to rx1, so update rx1 instead
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.BandPreChangeHandlers?.Invoke(1, band);
+                        }));
+                    }
+                    else
+                    {
+                        _console.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            _console.SetupRX2Band(band, !_owningmeter.RX2Enabled); // we tell setuprx2band that we only want to change freq for vfob if only rx1
+                        }));
+                    }
                 }
                 else
                 {
@@ -22990,6 +23127,35 @@ namespace Thetis
             //        return null;
             //    }
             //}
+            public void UpdateCustomReadings()
+            {
+                // itterate through all _meterItems that are text overlay or leds, and set text1/2 and condition to itself to update the customreadings
+                // we dont worry that we might be leaving some cusom readings behind if the rx number changes, this will be cleared next restart
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.TEXT_OVERLAY || o.Value.ItemType == clsMeterItem.MeterItemType.LED))
+                    {
+                        switch(kvp.Value.ItemType)
+                        {
+                            case clsMeterItem.MeterItemType.TEXT_OVERLAY:
+                                clsTextOverlay to = kvp.Value as clsTextOverlay;
+                                if(to != null)
+                                {
+                                    to.Text1 = to.Text1;
+                                    to.Text2 = to.Text2;
+                                }
+                                break;
+                            case clsMeterItem.MeterItemType.LED:
+                                clsLed l = kvp.Value as clsLed;
+                                if(l != null)
+                                {
+                                    l.Condition = l.Condition;
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
             public int QuickestRXUpdate
             {
                 get { return _quickestRXUpdate; }
@@ -23521,6 +23687,14 @@ namespace Thetis
                 set { _sId = value; }
             }
             public int RX { get { return _rx; } set { _rx = value; } }
+
+            public bool IsVfoASub
+            {
+                get
+                {
+                    return _rx == 1 && _rx2Enabled && (_multiRxEnabled || _split) && _vfoSub >= 0; //[2.10.3.6]MW0LGE added m.vfosub >= 0
+                }
+            }
             public int QuickestUpdateInterval(bool mox)
             {
                 lock (_meterItemsLock)
@@ -24019,6 +24193,17 @@ namespace Thetis
             public string ID
             {
                 get { return _sId; }
+            }
+            public int RX
+            {
+                get { return _rx; }
+                set 
+                {
+                    lock (_DXlock)
+                    {
+                        _rx = value;
+                    }
+                }
             }
             public bool HighlightEdge
             {
@@ -30761,7 +30946,7 @@ namespace Thetis
 
                     t_xB = xB + (gap / 2f) + (nx * gap);
                     t_yB = yB + (hB / 4f) + (ny * (hB / 2f));
-                    plotText(filter, t_xB, t_yB, rect.Width * x_multy, 16f, filter_colour, 255, vfo.FontFamily, vfo.Style, false, true, gap, true);
+                    plotText(filter, t_xB, t_yB, rect.Width * x_multy, 16f, filter_colour, 255, vfo.FontFamily, vfo.Style, false, true, 0/*gap*/, true);
                     nx++;
                     if (nx > 5)
                     {
@@ -31602,14 +31787,12 @@ namespace Thetis
 
                 // 0.50 difference in x between vfoa/b on both mode
 
-                bool vfo_sub = false; // are we showing vfo sub, used to hide the vfosub band text
                 if (disp_b)
                 {
-                    if (m.RX == 1 && m.RX2Enabled && (m.MultiRxEnabled || m.Split) && m.VfoSub >= 0) //[2.10.3.6]MW0LGE added m.vfosub >= 0
+                    if (m.IsVfoASub)
                     {
                         // vfoa sub
                         plotText("VFO Sub", x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.03f), rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
-                        vfo_sub = true;
                     }
                     else
                         plotText("VFO B", x + (w * 0.01f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.03f), rect.Width, vfo.FontSize, vfo.TypeColour, nVfoBFade, vfo.FontFamily, vfo.Style);
@@ -31765,7 +31948,7 @@ namespace Thetis
                         rct = new SharpDX.RectangleF(x + (w * 0.250f) * x_multy, y + (bt_h * 0.85f), w * 0.08f, bt_h * 0.03f);
                         plotText(m.VFOABandText, rct.X, rct.Y, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoAFade, vfo.FontFamily, vfo.Style, false, true);
                     }
-                    if (disp_b && !vfo_sub)
+                    if (disp_b && !m.IsVfoASub) // no band text for vfo_sub
                     {
                         rct = new SharpDX.RectangleF(x + (w * 0.250f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (bt_h * 0.85f), w * 0.08f, bt_h * 0.03f);
                         plotText(m.VFOBBandText, rct.X, rct.Y, rect.Width, vfo.FontSize * 1f, vfo.BandTextColour, nVfoBFade, vfo.FontFamily, vfo.Style, false, true);

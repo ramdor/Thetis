@@ -58,6 +58,7 @@ namespace Thetis
 
         public event EventHandler DockedMoved;
 
+        private int _sequence;
         private bool _dragging = false;
         private bool _resizing = false;
         private bool _floating = false;
@@ -81,6 +82,7 @@ namespace Thetis
         private bool _show_on_rx;
         private bool _show_on_tx;
         private bool _container_minimises;
+        private bool _container_hides_when_rx_not_used;
         private string _notes;
         private int _height;
         private bool _autoHeight;
@@ -93,6 +95,8 @@ namespace Thetis
             InitializeComponent();
 
             Common.DoubleBufferAll(this, true);
+
+            _sequence = 0;
 
             pnlContainer.Location = new Point(0, 0);
             pnlContainer.Size = new Size(ClientSize.Width, ClientSize.Height);
@@ -109,6 +113,7 @@ namespace Thetis
             _show_on_rx = true;
             _show_on_tx = true;
             _container_minimises = true;
+            _container_hides_when_rx_not_used = true;
             _notes = "";
 
             _tool_tip = new ToolTip();
@@ -227,6 +232,11 @@ namespace Thetis
 
                 addDelegates();
             }
+        }
+        public int Sequence
+        {
+            get { return _sequence; }
+            set { _sequence = value; }
         }
         public string ID
         {
@@ -837,6 +847,15 @@ namespace Thetis
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public bool ContainerHidesWhenRXNotUsed
+        {
+            get { return _container_hides_when_rx_not_used; }
+            set
+            {
+                _container_hides_when_rx_not_used = value;
+            }
+        }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public string Notes
         {
             get { return _notes; }
@@ -974,21 +993,22 @@ namespace Thetis
                 DockedLocation.Y.ToString() + "|" +
                 DockedSize.Width.ToString() + "|" +
                 DockedSize.Height.ToString() + "|" +
-                Floating.ToString() + "|" +
+                Floating.ToString().ToLower() + "|" +
                 Delta.X.ToString() + "|" +
                 Delta.Y.ToString() + "|" +
                 AxisLock.ToString() + "|" +
-                PinOnTop.ToString() + "|" +
-                UCBorder.ToString() + "|" +
+                PinOnTop.ToString().ToLower() + "|" +
+                UCBorder.ToString().ToLower() + "|" +
                 Common.ColourToString(this.BackColor) + "|" +
-                NoControls.ToString() + "|" +
-                MeterEnabled.ToString() + "|" +
+                NoControls.ToString().ToLower() + "|" +
+                MeterEnabled.ToString().ToLower() + "|" +
                 Notes + "|" +
                 ContainerMinimises.ToString().ToLower() + "|" +
                 AutoHeight.ToString().ToLower() + "|" +
                 ShowOnRX.ToString().ToLower() + "|" +
                 ShowOnTX.ToString().ToLower() + "|" +
-                Locked.ToString().ToLower();
+                Locked.ToString().ToLower() + "|" +
+                ContainerHidesWhenRXNotUsed.ToString().ToLower();
         }
         public bool TryParse(string str)
         {
@@ -1004,6 +1024,7 @@ namespace Thetis
             bool show_on_rx = true;
             bool show_on_tx = true;
             bool locked = false;
+            bool hides_when_not_used = true;
 
             if (str != "")
             {
@@ -1092,6 +1113,12 @@ namespace Thetis
                     {
                         bOk = bool.TryParse(tmp[20], out locked);
                         if (bOk) Locked = locked;
+                    }
+
+                    if (bOk && tmp.Length > 21) // for [2.10.3.9]
+                    {
+                        bOk = bool.TryParse(tmp[21], out hides_when_not_used);
+                        if (bOk) ContainerHidesWhenRXNotUsed = hides_when_not_used;
                     }
                 }
             }

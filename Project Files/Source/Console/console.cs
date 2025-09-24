@@ -31295,6 +31295,8 @@ namespace Thetis
             }
             else
             {
+                _tune_pulse_on = false;
+
                 if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)   // MI0BOT: Switch of the tone gen before releasing PTT
                 {
                     radio.GetDSPTX(0).TXPostGenRun = 0;
