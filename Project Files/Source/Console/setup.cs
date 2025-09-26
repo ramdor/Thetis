@@ -1138,11 +1138,13 @@ namespace Thetis
             {
                 udATTOnTX.Minimum = -28;
                 udMicGainMax.Maximum = 40;
+                chkHermesStepAttenuator.Checked = true;
                 udHermesStepAttenuatorData.Minimum = -28;
                 udHermesStepAttenuatorDataRX2.Minimum = -28;
                 udTXTunePower.Minimum = (Decimal)(-16.5);
                 chkEnableStaticIP_CheckedChanged(this, EventArgs.Empty);
                 chkHL2PsSync_CheckedChanged(this, EventArgs.Empty);
+                lblADCLinked.Visible = false;
             }
             else
             {
@@ -20397,6 +20399,11 @@ namespace Thetis
 
             console.UpdatePIVisibilty();
 
+            if (HardwareSpecific.Model != HPSDRModel.HERMESLITE)
+            {
+                removeHL2Options();
+            }
+
             switch (HardwareSpecific.Model)
             
             {
@@ -21425,6 +21432,47 @@ namespace Thetis
 
             MeterManager.SetAntennaAuxText(RXAntChk1Name, RXAntChk2Name, RXAntChk3Name);
         }
+        private void removeHL2Options()
+        {
+            // Switch off and hide HL2 options
+            chkCATtoVFOB.Enabled = false;
+            chkCATtoVFOB.Visible = false;
+
+            chkLimit2Subnet.Checked = true;
+            chkLimit2Subnet.Enabled = false;
+            chkLimit2Subnet.Visible = false;
+
+            chkReduceBW1.Checked = false;
+            chkReduceBW1.Enabled = false;
+            chkReduceBW1.Visible = false;
+            chkReduceBW2.Checked = false;
+            chkReduceBW2.Enabled = false;
+            chkReduceBW2.Visible = false;
+            chkReduceBW3.Checked = false;
+            chkReduceBW3.Enabled = false;
+            chkReduceBW3.Visible = false;
+            chkReduceBW4.Checked = false;
+            chkReduceBW4.Enabled = false;
+            chkReduceBW4.Visible = false;
+
+            udDiscoveryPort1.Value = 1024;
+            udDiscoveryPort1.Enabled = false;
+            udDiscoveryPort1.Visible = false;
+            udDiscoveryPort2.Value = 1024;
+            udDiscoveryPort2.Enabled = false;
+            udDiscoveryPort2.Visible = false;
+            udDiscoveryPort3.Value = 1024;
+            udDiscoveryPort3.Enabled = false;
+            udDiscoveryPort3.Visible = false;
+            udDiscoveryPort4.Value = 1024;
+            udDiscoveryPort4.Enabled = false;
+            udDiscoveryPort4.Visible = false;
+
+            txtIPAddress1.SendToBack();
+            txtIPAddress2.SendToBack();
+            txtIPAddress3.SendToBack();
+            txtIPAddress4.SendToBack();
+        }
         private void setupADCRadioButtions()
         {
             bool bADC0 = false;
@@ -22399,7 +22447,9 @@ namespace Thetis
 
             int nRX1ADCinUse = console.GetADCInUse(rx1);
             int nRX2ADCinUse = console.GetADCInUse(rx2);
-            ADCsLinked = nRX1ADCinUse == nRX2ADCinUse;
+
+            if (HardwareSpecific.Model != HPSDRModel.HERMESLITE)
+                ADCsLinked = nRX1ADCinUse == nRX2ADCinUse;
 
             if (NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH) // P2
             {
