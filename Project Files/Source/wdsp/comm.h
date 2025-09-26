@@ -51,6 +51,8 @@ warren@wpratt.com
 #include "div.h"
 #include "eer.h"
 #include "emnr.h"
+#include "rnnr.h"
+#include "sbnr.h"
 #include "emph.h"
 #include "eq.h"
 #include "fcurve.h"

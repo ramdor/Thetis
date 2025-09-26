@@ -93,6 +93,10 @@ namespace Midi2Cat.Data
         NoiseReductionOnOff = 19,
         [CatCommandAttribute("Noise Reduction 2 On Off", ControlType.Button, true)]  
         NoiseReduction2OnOff = 20,  //-W2PA Renamed function to reflect actual meaning
+        [CatCommandAttribute("Noise Reduction 3 On Off", ControlType.Button, true)]
+        NoiseReduction3OnOff = 113,
+        [CatCommandAttribute("Noise Reduction 4 On Off", ControlType.Button, true)]
+        NoiseReduction4OnOff = 114,
         [CatCommandAttribute("Binaural On Off", ControlType.Button, true)]  
         BinauralOnOff = 21,
         [CatCommandAttribute("Rx1 Filter Wider", ControlType.Button)]
@@ -393,6 +397,10 @@ namespace Midi2Cat.Data
         Rx2NoiseReductionOnOff = 250,
         [CatCommandAttribute("Rx2 Noise Reduction2 On Off", ControlType.Button, true)]
         Rx2NoiseReduction2OnOff = 251,
+        [CatCommandAttribute("Rx2 Noise Reduction 3 On Off", ControlType.Button, true)]
+        Rx2NoiseReduction3OnOff = 309,
+        [CatCommandAttribute("Rx2 Noise Reduction 4 On Off", ControlType.Button, true)]
+        Rx2NoiseReduction4OnOff = 310,
         [CatCommandAttribute("Increase wheel rotation per VFO tune step", ControlType.Button)] 
         MidiMessagesPerTuneStepUp = 252,
         [CatCommandAttribute("Decrease wheel rotation per VFO tune step", ControlType.Button)]
@@ -507,6 +515,7 @@ namespace Midi2Cat.Data
         QuickRecOnOff = 307,
         [CatCommandAttribute("Audio Amp On Off", ControlType.Button, true)] // [2.10.3.6]MW0LGE 
         AudioAmpOnOff = 308,
+        //309+310 used
         [CatCommandAttribute("Toggle Wheel to VFOA/VFOB ", ControlType.Button)]  //-W2PA Added a toggle between A/B for main wheel 
         ToggleVFOWheel = 700,
         [CatCommandAttribute("CWX Key ", ControlType.Button)]  //MI0BOT: Added ability to key via MIDI

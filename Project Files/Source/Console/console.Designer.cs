@@ -508,10 +508,24 @@
             this.timer_cpu_volts_meter = new System.Windows.Forms.Timer(this.components);
             this.timer_peak_text = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnDisplayZTB = new System.Windows.Forms.ButtonTS();
+            this.radDisplayZoom4x = new System.Windows.Forms.RadioButtonTS();
+            this.radDisplayZoom2x = new System.Windows.Forms.RadioButtonTS();
+            this.radDisplayZoom1x = new System.Windows.Forms.RadioButtonTS();
+            this.radDisplayZoom05 = new System.Windows.Forms.RadioButtonTS();
+            this.ptbDisplayZoom = new Thetis.PrettyTrackBar();
+            this.ptbDisplayPan = new Thetis.PrettyTrackBar();
+            this.btnDisplayPanCenter = new System.Windows.Forms.ButtonTS();
+            this.chkRX2Preamp = new System.Windows.Forms.CheckBoxTS();
+            this.chkRX1Preamp = new System.Windows.Forms.CheckBoxTS();
+            this.chkDX = new System.Windows.Forms.CheckBoxTS();
             this.lblPAProfile = new System.Windows.Forms.LabelTS();
+            this.ptbFilterShift = new Thetis.PrettyTrackBar();
+            this.ptbFilterWidth = new Thetis.PrettyTrackBar();
             this.btnFilterShiftReset = new System.Windows.Forms.ButtonTS();
             this.udFilterHigh = new System.Windows.Forms.NumericUpDownTS();
             this.udFilterLow = new System.Windows.Forms.NumericUpDownTS();
+            this.ptbRX2RF = new Thetis.PrettyTrackBar();
             this.lblRX2RF = new System.Windows.Forms.LabelTS();
             this.chkFullDuplex = new System.Windows.Forms.CheckBoxTS();
             this.chkRX2Squelch = new System.Windows.Forms.CheckBoxTS();
@@ -547,7 +561,6 @@
             this.chkX2TR = new System.Windows.Forms.CheckBoxTS();
             this.chkFWCATU = new System.Windows.Forms.CheckBoxTS();
             this.comboRX2Band = new System.Windows.Forms.ComboBoxTS();
-            this.chkRX2Preamp = new System.Windows.Forms.CheckBoxTS();
             this.chkPower = new System.Windows.Forms.CheckBoxTS();
             this.udCWPitch = new System.Windows.Forms.NumericUpDownTS();
             this.udCWBreakInDelay = new System.Windows.Forms.NumericUpDownTS();
@@ -591,17 +604,14 @@
             this.btnVFOBtoA = new System.Windows.Forms.ButtonTS();
             this.udXIT = new System.Windows.Forms.NumericUpDownTS();
             this.btnVFOAtoB = new System.Windows.Forms.ButtonTS();
-            this.chkRX1Preamp = new System.Windows.Forms.CheckBoxTS();
             this.comboAGC = new System.Windows.Forms.ComboBoxTS();
             this.lblAGC = new System.Windows.Forms.LabelTS();
             this.comboPreamp = new System.Windows.Forms.ComboBoxTS();
             this.lblRF = new System.Windows.Forms.LabelTS();
-            this.chkDX = new System.Windows.Forms.CheckBoxTS();
             this.chkVAC1 = new System.Windows.Forms.CheckBoxTS();
             this.comboDigTXProfile = new System.Windows.Forms.ComboBoxTS();
             this.chkVACStereo = new System.Windows.Forms.CheckBoxTS();
             this.comboVACSampleRate = new System.Windows.Forms.ComboBoxTS();
-            this.btnDisplayPanCenter = new System.Windows.Forms.ButtonTS();
             this.radModeAM = new System.Windows.Forms.RadioButtonTS();
             this.radModeLSB = new System.Windows.Forms.RadioButtonTS();
             this.radModeSAM = new System.Windows.Forms.RadioButtonTS();
@@ -646,10 +656,6 @@
             this.radBand40 = new System.Windows.Forms.RadioButtonTS();
             this.radBand60 = new System.Windows.Forms.RadioButtonTS();
             this.radBand80 = new System.Windows.Forms.RadioButtonTS();
-            this.radDisplayZoom05 = new System.Windows.Forms.RadioButtonTS();
-            this.radDisplayZoom4x = new System.Windows.Forms.RadioButtonTS();
-            this.radDisplayZoom2x = new System.Windows.Forms.RadioButtonTS();
-            this.radDisplayZoom1x = new System.Windows.Forms.RadioButtonTS();
             this.chkMUT = new System.Windows.Forms.CheckBoxTS();
             this.chkCWFWKeyer = new System.Windows.Forms.CheckBoxTS();
             this.chkShowCWZero = new System.Windows.Forms.CheckBoxTS();
@@ -694,13 +700,7 @@
             this.chkRxAnt = new System.Windows.Forms.CheckBoxTS();
             this.chkVFOBLock = new System.Windows.Forms.CheckBoxTS();
             this.chkQSK = new System.Windows.Forms.CheckBoxTS();
-            this.btnDisplayZTB = new System.Windows.Forms.ButtonTS();
-            this.ptbFilterShift = new Thetis.PrettyTrackBar();
-            this.ptbFilterWidth = new Thetis.PrettyTrackBar();
-            this.ptbRX2RF = new Thetis.PrettyTrackBar();
             this.ptbCWSpeed = new Thetis.PrettyTrackBar();
-            this.ptbDisplayZoom = new Thetis.PrettyTrackBar();
-            this.ptbDisplayPan = new Thetis.PrettyTrackBar();
             this.ptbPWR = new Thetis.PrettyTrackBar();
             this.ptbRF = new Thetis.PrettyTrackBar();
             this.ptbAF = new Thetis.PrettyTrackBar();
@@ -721,7 +721,6 @@
             this.udTXStepAttData = new System.Windows.Forms.NumericUpDownTS();
             this.pbAutoAttWarningRX1 = new System.Windows.Forms.PictureBox();
             this.pbAutoAttWarningRX2 = new System.Windows.Forms.PictureBox();
-            this.radBand2 = new System.Windows.Forms.RadioButtonTS();
             this.timer_clock = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStripFilterRX1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItemRX1FilterConfigure = new System.Windows.Forms.ToolStripMenuItem();
@@ -915,6 +914,14 @@
             this.toolStripStatusLabel_Date = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_LocalTime = new System.Windows.Forms.ToolStripStatusLabel();
             this.tmrAutoAGC = new System.Windows.Forms.Timer(this.components);
+            this.picRX2Squelch = new System.Windows.Forms.PictureBox();
+            this.picSquelch = new System.Windows.Forms.PictureBox();
+            this.nudRNnoiseGainTest = new System.Windows.Forms.NumericUpDownTS();
+            this.panelDisplay = new System.Windows.Forms.PanelTS();
+            this.infoBar = new Thetis.ucInfoBar();
+            this.lblDisplayZoom = new System.Windows.Forms.LabelTS();
+            this.lblDisplayPan = new System.Windows.Forms.LabelTS();
+            this.pnlDisplay = new System.Windows.Forms.Panel();
             this.nudPwrTemp2 = new System.Windows.Forms.NumericUpDownTS();
             this.nudPwrTemp = new System.Windows.Forms.NumericUpDownTS();
             this.grpMultimeter = new System.Windows.Forms.GroupBoxTS();
@@ -939,10 +946,12 @@
             this.radFilter5 = new System.Windows.Forms.RadioButtonTS();
             this.radFilter10 = new System.Windows.Forms.RadioButtonTS();
             this.panelRX2RF = new System.Windows.Forms.PanelTS();
+            this.ptbRX2Squelch = new Thetis.PrettyTrackBar();
             this.panelRX2DSP = new System.Windows.Forms.PanelTS();
             this.btnHidden = new System.Windows.Forms.ButtonTS();
             this.panelOptions = new System.Windows.Forms.PanelTS();
             this.checkBoxTS1 = new System.Windows.Forms.CheckBoxTS();
+            this.radBand2 = new System.Windows.Forms.RadioButtonTS();
             this.panelModeSpecificPhone = new System.Windows.Forms.PanelTS();
             this.lblTXHigh = new System.Windows.Forms.LabelTS();
             this.lblTXLow = new System.Windows.Forms.LabelTS();
@@ -1054,11 +1063,6 @@
             this.grpVACStereo = new System.Windows.Forms.GroupBoxTS();
             this.lblTXGain = new System.Windows.Forms.LabelTS();
             this.grpDIGSampleRate = new System.Windows.Forms.GroupBoxTS();
-            this.panelDisplay = new System.Windows.Forms.PanelTS();
-            this.infoBar = new Thetis.ucInfoBar();
-            this.lblDisplayZoom = new System.Windows.Forms.LabelTS();
-            this.lblDisplayPan = new System.Windows.Forms.LabelTS();
-            this.pnlDisplay = new System.Windows.Forms.Panel();
             this.panelMode = new System.Windows.Forms.PanelTS();
             this.panelBandHF = new System.Windows.Forms.PanelTS();
             this.txtVFOAFreq = new System.Windows.Forms.TextBoxTS();
@@ -1128,12 +1132,14 @@
             this.tbAndromedaEncoderSlider = new System.Windows.Forms.TrackBarTS();
             this.lblAndromedaEncoderSlider = new System.Windows.Forms.LabelTS();
             this.lblATUTuneLabel = new System.Windows.Forms.LabelTS();
-            this.picRX2Squelch = new System.Windows.Forms.PictureBox();
-            this.ptbRX2Squelch = new Thetis.PrettyTrackBar();
-            this.picSquelch = new System.Windows.Forms.PictureBox();
             this.ptbSquelch = new Thetis.PrettyTrackBar();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayZoom)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayPan)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterLow)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterHigh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWPitch)).BeginInit();
@@ -1145,12 +1151,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udFMOffset)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX1StepAttData)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2StepAttData)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWSpeed)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayZoom)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayPan)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbPWR)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRF)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbAF)).BeginInit();
@@ -1176,12 +1177,17 @@
             this.contextMenuStripNotch.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStripMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRNnoiseGainTest)).BeginInit();
+            this.panelDisplay.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp)).BeginInit();
             this.grpMultimeter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).BeginInit();
             this.panelFilter.SuspendLayout();
             this.panelRX2RF.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).BeginInit();
             this.panelRX2DSP.SuspendLayout();
             this.panelOptions.SuspendLayout();
             this.panelModeSpecificPhone.SuspendLayout();
@@ -1212,7 +1218,6 @@
             this.panelModeSpecificDigital.SuspendLayout();
             this.grpVACStereo.SuspendLayout();
             this.grpDIGSampleRate.SuspendLayout();
-            this.panelDisplay.SuspendLayout();
             this.panelMode.SuspendLayout();
             this.panelBandHF.SuspendLayout();
             this.grpVFOA.SuspendLayout();
@@ -1229,9 +1234,6 @@
             this.grpMultimeterMenus.SuspendLayout();
             this.panelAndromedaMisc.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbAndromedaEncoderSlider)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbSquelch)).BeginInit();
             this.SuspendLayout();
             // 
@@ -1246,6 +1248,143 @@
             this.timer_peak_text.Interval = 500;
             this.timer_peak_text.Tick += new System.EventHandler(this.timer_peak_text_Tick);
             // 
+            // btnDisplayZTB
+            // 
+            resources.ApplyResources(this.btnDisplayZTB, "btnDisplayZTB");
+            this.btnDisplayZTB.FlatAppearance.BorderSize = 0;
+            this.btnDisplayZTB.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnDisplayZTB.Name = "btnDisplayZTB";
+            this.btnDisplayZTB.Selectable = true;
+            this.btnDisplayZTB.Tag = "Zoom to band";
+            this.toolTip1.SetToolTip(this.btnDisplayZTB, resources.GetString("btnDisplayZTB.ToolTip"));
+            this.btnDisplayZTB.Click += new System.EventHandler(this.btnDisplayZTB_Click);
+            this.btnDisplayZTB.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnDisplayZTB_MouseUp);
+            // 
+            // radDisplayZoom4x
+            // 
+            resources.ApplyResources(this.radDisplayZoom4x, "radDisplayZoom4x");
+            this.radDisplayZoom4x.FlatAppearance.BorderSize = 0;
+            this.radDisplayZoom4x.ForeColor = System.Drawing.Color.White;
+            this.radDisplayZoom4x.Name = "radDisplayZoom4x";
+            this.radDisplayZoom4x.TabStop = true;
+            this.toolTip1.SetToolTip(this.radDisplayZoom4x, resources.GetString("radDisplayZoom4x.ToolTip"));
+            this.radDisplayZoom4x.UseVisualStyleBackColor = true;
+            this.radDisplayZoom4x.CheckedChanged += new System.EventHandler(this.radDisplayZoom4x_CheckedChanged);
+            this.radDisplayZoom4x.Click += new System.EventHandler(this.radDisplayZoom4x_Click);
+            // 
+            // radDisplayZoom2x
+            // 
+            resources.ApplyResources(this.radDisplayZoom2x, "radDisplayZoom2x");
+            this.radDisplayZoom2x.FlatAppearance.BorderSize = 0;
+            this.radDisplayZoom2x.ForeColor = System.Drawing.Color.White;
+            this.radDisplayZoom2x.Name = "radDisplayZoom2x";
+            this.radDisplayZoom2x.TabStop = true;
+            this.toolTip1.SetToolTip(this.radDisplayZoom2x, resources.GetString("radDisplayZoom2x.ToolTip"));
+            this.radDisplayZoom2x.UseVisualStyleBackColor = true;
+            this.radDisplayZoom2x.CheckedChanged += new System.EventHandler(this.radDisplayZoom2x_CheckedChanged);
+            this.radDisplayZoom2x.Click += new System.EventHandler(this.radDisplayZoom2x_Click);
+            // 
+            // radDisplayZoom1x
+            // 
+            resources.ApplyResources(this.radDisplayZoom1x, "radDisplayZoom1x");
+            this.radDisplayZoom1x.FlatAppearance.BorderSize = 0;
+            this.radDisplayZoom1x.ForeColor = System.Drawing.Color.White;
+            this.radDisplayZoom1x.Name = "radDisplayZoom1x";
+            this.radDisplayZoom1x.TabStop = true;
+            this.toolTip1.SetToolTip(this.radDisplayZoom1x, resources.GetString("radDisplayZoom1x.ToolTip"));
+            this.radDisplayZoom1x.UseVisualStyleBackColor = true;
+            this.radDisplayZoom1x.CheckedChanged += new System.EventHandler(this.radDisplayZoom1x_CheckedChanged);
+            this.radDisplayZoom1x.Click += new System.EventHandler(this.radDisplayZoom1x_Click);
+            // 
+            // radDisplayZoom05
+            // 
+            resources.ApplyResources(this.radDisplayZoom05, "radDisplayZoom05");
+            this.radDisplayZoom05.FlatAppearance.BorderSize = 0;
+            this.radDisplayZoom05.ForeColor = System.Drawing.Color.White;
+            this.radDisplayZoom05.Name = "radDisplayZoom05";
+            this.radDisplayZoom05.TabStop = true;
+            this.toolTip1.SetToolTip(this.radDisplayZoom05, resources.GetString("radDisplayZoom05.ToolTip"));
+            this.radDisplayZoom05.UseVisualStyleBackColor = true;
+            this.radDisplayZoom05.CheckedChanged += new System.EventHandler(this.radDisplayZoom05_CheckedChanged);
+            this.radDisplayZoom05.Click += new System.EventHandler(this.radDisplayZoom05_Click);
+            // 
+            // ptbDisplayZoom
+            // 
+            resources.ApplyResources(this.ptbDisplayZoom, "ptbDisplayZoom");
+            this.ptbDisplayZoom.GreenThumb = false;
+            this.ptbDisplayZoom.HeadImage = null;
+            this.ptbDisplayZoom.LargeChange = 1;
+            this.ptbDisplayZoom.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbDisplayZoom.LimitEnabled = false;
+            this.ptbDisplayZoom.LimitValue = 10;
+            this.ptbDisplayZoom.Maximum = 240;
+            this.ptbDisplayZoom.Minimum = 10;
+            this.ptbDisplayZoom.Name = "ptbDisplayZoom";
+            this.ptbDisplayZoom.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbDisplayZoom.SmallChange = 1;
+            this.ptbDisplayZoom.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbDisplayZoom, resources.GetString("ptbDisplayZoom.ToolTip"));
+            this.ptbDisplayZoom.Value = 150;
+            this.ptbDisplayZoom.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbDisplayZoom_Scroll);
+            // 
+            // ptbDisplayPan
+            // 
+            resources.ApplyResources(this.ptbDisplayPan, "ptbDisplayPan");
+            this.ptbDisplayPan.GreenThumb = false;
+            this.ptbDisplayPan.HeadImage = null;
+            this.ptbDisplayPan.LargeChange = 1;
+            this.ptbDisplayPan.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbDisplayPan.LimitEnabled = false;
+            this.ptbDisplayPan.LimitValue = 0;
+            this.ptbDisplayPan.Maximum = 1000;
+            this.ptbDisplayPan.Minimum = 0;
+            this.ptbDisplayPan.Name = "ptbDisplayPan";
+            this.ptbDisplayPan.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbDisplayPan.SmallChange = 1;
+            this.ptbDisplayPan.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbDisplayPan, resources.GetString("ptbDisplayPan.ToolTip"));
+            this.ptbDisplayPan.Value = 500;
+            this.ptbDisplayPan.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbDisplayPan_Scroll);
+            // 
+            // btnDisplayPanCenter
+            // 
+            resources.ApplyResources(this.btnDisplayPanCenter, "btnDisplayPanCenter");
+            this.btnDisplayPanCenter.FlatAppearance.BorderSize = 0;
+            this.btnDisplayPanCenter.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.btnDisplayPanCenter.Name = "btnDisplayPanCenter";
+            this.btnDisplayPanCenter.Selectable = true;
+            this.btnDisplayPanCenter.Tag = "";
+            this.toolTip1.SetToolTip(this.btnDisplayPanCenter, resources.GetString("btnDisplayPanCenter.ToolTip"));
+            this.btnDisplayPanCenter.UseVisualStyleBackColor = false;
+            this.btnDisplayPanCenter.Click += new System.EventHandler(this.btnDisplayPanCenter_Click);
+            // 
+            // chkRX2Preamp
+            // 
+            resources.ApplyResources(this.chkRX2Preamp, "chkRX2Preamp");
+            this.chkRX2Preamp.FlatAppearance.BorderSize = 0;
+            this.chkRX2Preamp.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkRX2Preamp.Name = "chkRX2Preamp";
+            this.toolTip1.SetToolTip(this.chkRX2Preamp, resources.GetString("chkRX2Preamp.ToolTip"));
+            this.chkRX2Preamp.CheckedChanged += new System.EventHandler(this.chkRX2Preamp_CheckedChanged);
+            // 
+            // chkRX1Preamp
+            // 
+            resources.ApplyResources(this.chkRX1Preamp, "chkRX1Preamp");
+            this.chkRX1Preamp.FlatAppearance.BorderSize = 0;
+            this.chkRX1Preamp.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkRX1Preamp.Name = "chkRX1Preamp";
+            this.toolTip1.SetToolTip(this.chkRX1Preamp, resources.GetString("chkRX1Preamp.ToolTip"));
+            this.chkRX1Preamp.CheckedChanged += new System.EventHandler(this.chkRX1Preamp_CheckedChanged);
+            // 
+            // chkDX
+            // 
+            resources.ApplyResources(this.chkDX, "chkDX");
+            this.chkDX.FlatAppearance.BorderSize = 0;
+            this.chkDX.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkDX.Name = "chkDX";
+            this.toolTip1.SetToolTip(this.chkDX, resources.GetString("chkDX.ToolTip"));
+            this.chkDX.CheckedChanged += new System.EventHandler(this.chkDX_CheckedChanged);
+            // 
             // lblPAProfile
             // 
             this.lblPAProfile.BackColor = System.Drawing.Color.Transparent;
@@ -1254,6 +1393,44 @@
             this.lblPAProfile.Name = "lblPAProfile";
             this.toolTip1.SetToolTip(this.lblPAProfile, resources.GetString("lblPAProfile.ToolTip"));
             this.lblPAProfile.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblPAProfile_MouseDown);
+            // 
+            // ptbFilterShift
+            // 
+            resources.ApplyResources(this.ptbFilterShift, "ptbFilterShift");
+            this.ptbFilterShift.GreenThumb = false;
+            this.ptbFilterShift.HeadImage = null;
+            this.ptbFilterShift.LargeChange = 1;
+            this.ptbFilterShift.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbFilterShift.LimitEnabled = false;
+            this.ptbFilterShift.LimitValue = 0;
+            this.ptbFilterShift.Maximum = 1000;
+            this.ptbFilterShift.Minimum = -1000;
+            this.ptbFilterShift.Name = "ptbFilterShift";
+            this.ptbFilterShift.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbFilterShift.SmallChange = 1;
+            this.ptbFilterShift.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbFilterShift, resources.GetString("ptbFilterShift.ToolTip"));
+            this.ptbFilterShift.Value = 0;
+            this.ptbFilterShift.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbFilterShift_Scroll);
+            // 
+            // ptbFilterWidth
+            // 
+            resources.ApplyResources(this.ptbFilterWidth, "ptbFilterWidth");
+            this.ptbFilterWidth.GreenThumb = false;
+            this.ptbFilterWidth.HeadImage = null;
+            this.ptbFilterWidth.LargeChange = 1;
+            this.ptbFilterWidth.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbFilterWidth.LimitEnabled = false;
+            this.ptbFilterWidth.LimitValue = 0;
+            this.ptbFilterWidth.Maximum = 15000;
+            this.ptbFilterWidth.Minimum = 0;
+            this.ptbFilterWidth.Name = "ptbFilterWidth";
+            this.ptbFilterWidth.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbFilterWidth.SmallChange = 1;
+            this.ptbFilterWidth.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbFilterWidth, resources.GetString("ptbFilterWidth.ToolTip"));
+            this.ptbFilterWidth.Value = 10;
+            this.ptbFilterWidth.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbFilterWidth_Scroll);
             // 
             // btnFilterShiftReset
             // 
@@ -1329,6 +1506,27 @@
             this.udFilterLow.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Console_KeyPress);
             this.udFilterLow.LostFocus += new System.EventHandler(this.udFilterLow_LostFocus);
             // 
+            // ptbRX2RF
+            // 
+            resources.ApplyResources(this.ptbRX2RF, "ptbRX2RF");
+            this.ptbRX2RF.GreenThumb = false;
+            this.ptbRX2RF.HeadImage = null;
+            this.ptbRX2RF.LargeChange = 1;
+            this.ptbRX2RF.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbRX2RF.LimitEnabled = false;
+            this.ptbRX2RF.LimitValue = 0;
+            this.ptbRX2RF.Maximum = 120;
+            this.ptbRX2RF.Minimum = -20;
+            this.ptbRX2RF.Name = "ptbRX2RF";
+            this.ptbRX2RF.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbRX2RF.SmallChange = 1;
+            this.ptbRX2RF.TabStop = false;
+            this.toolTip1.SetToolTip(this.ptbRX2RF, resources.GetString("ptbRX2RF.ToolTip"));
+            this.ptbRX2RF.Value = 90;
+            this.ptbRX2RF.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2RF_Scroll);
+            this.ptbRX2RF.Click += new System.EventHandler(this.ptbRX2RF_Click);
+            this.ptbRX2RF.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ptbRX2RF_MouseDown);
+            // 
             // lblRX2RF
             // 
             this.lblRX2RF.BackColor = System.Drawing.Color.Transparent;
@@ -1387,6 +1585,7 @@
             this.chkRX2NR.ThreeState = true;
             this.toolTip1.SetToolTip(this.chkRX2NR, resources.GetString("chkRX2NR.ToolTip"));
             this.chkRX2NR.CheckStateChanged += new System.EventHandler(this.chkRX2NR_CheckStateChanged);
+            this.chkRX2NR.Click += new System.EventHandler(this.chkRX2NR_Click);
             this.chkRX2NR.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkRX2NR_MouseDown);
             // 
             // chkRX2NB
@@ -1746,15 +1945,6 @@
             this.toolTip1.SetToolTip(this.comboRX2Band, resources.GetString("comboRX2Band.ToolTip"));
             this.comboRX2Band.SelectedIndexChanged += new System.EventHandler(this.comboRX2Band_SelectedIndexChanged);
             // 
-            // chkRX2Preamp
-            // 
-            resources.ApplyResources(this.chkRX2Preamp, "chkRX2Preamp");
-            this.chkRX2Preamp.FlatAppearance.BorderSize = 0;
-            this.chkRX2Preamp.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chkRX2Preamp.Name = "chkRX2Preamp";
-            this.toolTip1.SetToolTip(this.chkRX2Preamp, resources.GetString("chkRX2Preamp.ToolTip"));
-            this.chkRX2Preamp.CheckedChanged += new System.EventHandler(this.chkRX2Preamp_CheckedChanged);
-            // 
             // chkPower
             // 
             resources.ApplyResources(this.chkPower, "chkPower");
@@ -2096,6 +2286,7 @@
             this.chkNR.ThreeState = true;
             this.toolTip1.SetToolTip(this.chkNR, resources.GetString("chkNR.ToolTip"));
             this.chkNR.CheckStateChanged += new System.EventHandler(this.chkNR_CheckStateChanged);
+            this.chkNR.Click += new System.EventHandler(this.chkNR_Click);
             this.chkNR.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkNR_MouseDown);
             // 
             // chkDSPNB2
@@ -2297,15 +2488,6 @@
             this.toolTip1.SetToolTip(this.btnVFOAtoB, resources.GetString("btnVFOAtoB.ToolTip"));
             this.btnVFOAtoB.Click += new System.EventHandler(this.btnVFOAtoB_Click);
             // 
-            // chkRX1Preamp
-            // 
-            resources.ApplyResources(this.chkRX1Preamp, "chkRX1Preamp");
-            this.chkRX1Preamp.FlatAppearance.BorderSize = 0;
-            this.chkRX1Preamp.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chkRX1Preamp.Name = "chkRX1Preamp";
-            this.toolTip1.SetToolTip(this.chkRX1Preamp, resources.GetString("chkRX1Preamp.ToolTip"));
-            this.chkRX1Preamp.CheckedChanged += new System.EventHandler(this.chkRX1Preamp_CheckedChanged);
-            // 
             // comboAGC
             // 
             this.comboAGC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
@@ -2343,15 +2525,6 @@
             this.lblRF.Name = "lblRF";
             this.toolTip1.SetToolTip(this.lblRF, resources.GetString("lblRF.ToolTip"));
             this.lblRF.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblRF_MouseDown);
-            // 
-            // chkDX
-            // 
-            resources.ApplyResources(this.chkDX, "chkDX");
-            this.chkDX.FlatAppearance.BorderSize = 0;
-            this.chkDX.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chkDX.Name = "chkDX";
-            this.toolTip1.SetToolTip(this.chkDX, resources.GetString("chkDX.ToolTip"));
-            this.chkDX.CheckedChanged += new System.EventHandler(this.chkDX_CheckedChanged);
             // 
             // chkVAC1
             // 
@@ -2403,18 +2576,6 @@
             this.comboVACSampleRate.Name = "comboVACSampleRate";
             this.toolTip1.SetToolTip(this.comboVACSampleRate, resources.GetString("comboVACSampleRate.ToolTip"));
             this.comboVACSampleRate.SelectedIndexChanged += new System.EventHandler(this.comboVACSampleRate_SelectedIndexChanged);
-            // 
-            // btnDisplayPanCenter
-            // 
-            resources.ApplyResources(this.btnDisplayPanCenter, "btnDisplayPanCenter");
-            this.btnDisplayPanCenter.FlatAppearance.BorderSize = 0;
-            this.btnDisplayPanCenter.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnDisplayPanCenter.Name = "btnDisplayPanCenter";
-            this.btnDisplayPanCenter.Selectable = true;
-            this.btnDisplayPanCenter.Tag = "";
-            this.toolTip1.SetToolTip(this.btnDisplayPanCenter, resources.GetString("btnDisplayPanCenter.ToolTip"));
-            this.btnDisplayPanCenter.UseVisualStyleBackColor = false;
-            this.btnDisplayPanCenter.Click += new System.EventHandler(this.btnDisplayPanCenter_Click);
             // 
             // radModeAM
             // 
@@ -2901,54 +3062,6 @@
             this.radBand80.CheckedChanged += new System.EventHandler(this.radBand_CheckedChanged);
             this.radBand80.Click += new System.EventHandler(this.radBand80_Click);
             this.radBand80.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand80_MouseDown);
-            // 
-            // radDisplayZoom05
-            // 
-            resources.ApplyResources(this.radDisplayZoom05, "radDisplayZoom05");
-            this.radDisplayZoom05.FlatAppearance.BorderSize = 0;
-            this.radDisplayZoom05.ForeColor = System.Drawing.Color.White;
-            this.radDisplayZoom05.Name = "radDisplayZoom05";
-            this.radDisplayZoom05.TabStop = true;
-            this.toolTip1.SetToolTip(this.radDisplayZoom05, resources.GetString("radDisplayZoom05.ToolTip"));
-            this.radDisplayZoom05.UseVisualStyleBackColor = true;
-            this.radDisplayZoom05.CheckedChanged += new System.EventHandler(this.radDisplayZoom05_CheckedChanged);
-            this.radDisplayZoom05.Click += new System.EventHandler(this.radDisplayZoom05_Click);
-            // 
-            // radDisplayZoom4x
-            // 
-            resources.ApplyResources(this.radDisplayZoom4x, "radDisplayZoom4x");
-            this.radDisplayZoom4x.FlatAppearance.BorderSize = 0;
-            this.radDisplayZoom4x.ForeColor = System.Drawing.Color.White;
-            this.radDisplayZoom4x.Name = "radDisplayZoom4x";
-            this.radDisplayZoom4x.TabStop = true;
-            this.toolTip1.SetToolTip(this.radDisplayZoom4x, resources.GetString("radDisplayZoom4x.ToolTip"));
-            this.radDisplayZoom4x.UseVisualStyleBackColor = true;
-            this.radDisplayZoom4x.CheckedChanged += new System.EventHandler(this.radDisplayZoom4x_CheckedChanged);
-            this.radDisplayZoom4x.Click += new System.EventHandler(this.radDisplayZoom4x_Click);
-            // 
-            // radDisplayZoom2x
-            // 
-            resources.ApplyResources(this.radDisplayZoom2x, "radDisplayZoom2x");
-            this.radDisplayZoom2x.FlatAppearance.BorderSize = 0;
-            this.radDisplayZoom2x.ForeColor = System.Drawing.Color.White;
-            this.radDisplayZoom2x.Name = "radDisplayZoom2x";
-            this.radDisplayZoom2x.TabStop = true;
-            this.toolTip1.SetToolTip(this.radDisplayZoom2x, resources.GetString("radDisplayZoom2x.ToolTip"));
-            this.radDisplayZoom2x.UseVisualStyleBackColor = true;
-            this.radDisplayZoom2x.CheckedChanged += new System.EventHandler(this.radDisplayZoom2x_CheckedChanged);
-            this.radDisplayZoom2x.Click += new System.EventHandler(this.radDisplayZoom2x_Click);
-            // 
-            // radDisplayZoom1x
-            // 
-            resources.ApplyResources(this.radDisplayZoom1x, "radDisplayZoom1x");
-            this.radDisplayZoom1x.FlatAppearance.BorderSize = 0;
-            this.radDisplayZoom1x.ForeColor = System.Drawing.Color.White;
-            this.radDisplayZoom1x.Name = "radDisplayZoom1x";
-            this.radDisplayZoom1x.TabStop = true;
-            this.toolTip1.SetToolTip(this.radDisplayZoom1x, resources.GetString("radDisplayZoom1x.ToolTip"));
-            this.radDisplayZoom1x.UseVisualStyleBackColor = true;
-            this.radDisplayZoom1x.CheckedChanged += new System.EventHandler(this.radDisplayZoom1x_CheckedChanged);
-            this.radDisplayZoom1x.Click += new System.EventHandler(this.radDisplayZoom1x_Click);
             // 
             // chkMUT
             // 
@@ -3496,77 +3609,6 @@
             this.toolTip1.SetToolTip(this.chkQSK, resources.GetString("chkQSK.ToolTip"));
             this.chkQSK.CheckStateChanged += new System.EventHandler(this.chkQSK_CheckStateChanged);
             // 
-            // btnDisplayZTB
-            // 
-            resources.ApplyResources(this.btnDisplayZTB, "btnDisplayZTB");
-            this.btnDisplayZTB.FlatAppearance.BorderSize = 0;
-            this.btnDisplayZTB.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.btnDisplayZTB.Name = "btnDisplayZTB";
-            this.btnDisplayZTB.Selectable = true;
-            this.btnDisplayZTB.Tag = "Zoom to band";
-            this.toolTip1.SetToolTip(this.btnDisplayZTB, resources.GetString("btnDisplayZTB.ToolTip"));
-            this.btnDisplayZTB.Click += new System.EventHandler(this.btnDisplayZTB_Click);
-            this.btnDisplayZTB.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnDisplayZTB_MouseUp);
-            // 
-            // ptbFilterShift
-            // 
-            resources.ApplyResources(this.ptbFilterShift, "ptbFilterShift");
-            this.ptbFilterShift.GreenThumb = false;
-            this.ptbFilterShift.HeadImage = null;
-            this.ptbFilterShift.LargeChange = 1;
-            this.ptbFilterShift.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbFilterShift.LimitEnabled = false;
-            this.ptbFilterShift.LimitValue = 0;
-            this.ptbFilterShift.Maximum = 1000;
-            this.ptbFilterShift.Minimum = -1000;
-            this.ptbFilterShift.Name = "ptbFilterShift";
-            this.ptbFilterShift.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbFilterShift.SmallChange = 1;
-            this.ptbFilterShift.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbFilterShift, resources.GetString("ptbFilterShift.ToolTip"));
-            this.ptbFilterShift.Value = 0;
-            this.ptbFilterShift.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbFilterShift_Scroll);
-            // 
-            // ptbFilterWidth
-            // 
-            resources.ApplyResources(this.ptbFilterWidth, "ptbFilterWidth");
-            this.ptbFilterWidth.GreenThumb = false;
-            this.ptbFilterWidth.HeadImage = null;
-            this.ptbFilterWidth.LargeChange = 1;
-            this.ptbFilterWidth.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbFilterWidth.LimitEnabled = false;
-            this.ptbFilterWidth.LimitValue = 0;
-            this.ptbFilterWidth.Maximum = 15000;
-            this.ptbFilterWidth.Minimum = 0;
-            this.ptbFilterWidth.Name = "ptbFilterWidth";
-            this.ptbFilterWidth.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbFilterWidth.SmallChange = 1;
-            this.ptbFilterWidth.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbFilterWidth, resources.GetString("ptbFilterWidth.ToolTip"));
-            this.ptbFilterWidth.Value = 10;
-            this.ptbFilterWidth.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbFilterWidth_Scroll);
-            // 
-            // ptbRX2RF
-            // 
-            resources.ApplyResources(this.ptbRX2RF, "ptbRX2RF");
-            this.ptbRX2RF.GreenThumb = false;
-            this.ptbRX2RF.HeadImage = null;
-            this.ptbRX2RF.LargeChange = 1;
-            this.ptbRX2RF.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbRX2RF.LimitEnabled = false;
-            this.ptbRX2RF.LimitValue = 0;
-            this.ptbRX2RF.Maximum = 120;
-            this.ptbRX2RF.Minimum = -20;
-            this.ptbRX2RF.Name = "ptbRX2RF";
-            this.ptbRX2RF.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbRX2RF.SmallChange = 1;
-            this.ptbRX2RF.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbRX2RF, resources.GetString("ptbRX2RF.ToolTip"));
-            this.ptbRX2RF.Value = 90;
-            this.ptbRX2RF.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2RF_Scroll);
-            this.ptbRX2RF.Click += new System.EventHandler(this.ptbRX2RF_Click);
-            this.ptbRX2RF.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ptbRX2RF_MouseDown);
-            // 
             // ptbCWSpeed
             // 
             resources.ApplyResources(this.ptbCWSpeed, "ptbCWSpeed");
@@ -3585,44 +3627,6 @@
             this.toolTip1.SetToolTip(this.ptbCWSpeed, resources.GetString("ptbCWSpeed.ToolTip"));
             this.ptbCWSpeed.Value = 25;
             this.ptbCWSpeed.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbCWSpeed_Scroll);
-            // 
-            // ptbDisplayZoom
-            // 
-            resources.ApplyResources(this.ptbDisplayZoom, "ptbDisplayZoom");
-            this.ptbDisplayZoom.GreenThumb = false;
-            this.ptbDisplayZoom.HeadImage = null;
-            this.ptbDisplayZoom.LargeChange = 1;
-            this.ptbDisplayZoom.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbDisplayZoom.LimitEnabled = false;
-            this.ptbDisplayZoom.LimitValue = 10;
-            this.ptbDisplayZoom.Maximum = 240;
-            this.ptbDisplayZoom.Minimum = 10;
-            this.ptbDisplayZoom.Name = "ptbDisplayZoom";
-            this.ptbDisplayZoom.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbDisplayZoom.SmallChange = 1;
-            this.ptbDisplayZoom.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbDisplayZoom, resources.GetString("ptbDisplayZoom.ToolTip"));
-            this.ptbDisplayZoom.Value = 150;
-            this.ptbDisplayZoom.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbDisplayZoom_Scroll);
-            // 
-            // ptbDisplayPan
-            // 
-            resources.ApplyResources(this.ptbDisplayPan, "ptbDisplayPan");
-            this.ptbDisplayPan.GreenThumb = false;
-            this.ptbDisplayPan.HeadImage = null;
-            this.ptbDisplayPan.LargeChange = 1;
-            this.ptbDisplayPan.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbDisplayPan.LimitEnabled = false;
-            this.ptbDisplayPan.LimitValue = 0;
-            this.ptbDisplayPan.Maximum = 1000;
-            this.ptbDisplayPan.Minimum = 0;
-            this.ptbDisplayPan.Name = "ptbDisplayPan";
-            this.ptbDisplayPan.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbDisplayPan.SmallChange = 1;
-            this.ptbDisplayPan.TabStop = false;
-            this.toolTip1.SetToolTip(this.ptbDisplayPan, resources.GetString("ptbDisplayPan.ToolTip"));
-            this.ptbDisplayPan.Value = 500;
-            this.ptbDisplayPan.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbDisplayPan_Scroll);
             // 
             // ptbPWR
             // 
@@ -4000,15 +4004,6 @@
             this.pbAutoAttWarningRX2.Name = "pbAutoAttWarningRX2";
             this.pbAutoAttWarningRX2.TabStop = false;
             this.toolTip1.SetToolTip(this.pbAutoAttWarningRX2, resources.GetString("pbAutoAttWarningRX2.ToolTip"));
-            // 
-            // radBand2
-            // 
-            resources.ApplyResources(this.radBand2, "radBand2");
-            this.radBand2.FlatAppearance.BorderSize = 0;
-            this.radBand2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.radBand2.Name = "radBand2";
-            this.radBand2.TabStop = true;
-            this.radBand2.UseVisualStyleBackColor = true;
             // 
             // timer_clock
             // 
@@ -5412,6 +5407,109 @@
             this.tmrAutoAGC.Interval = 500;
             this.tmrAutoAGC.Tick += new System.EventHandler(this.tmrAutoAGC_Tick);
             // 
+            // picRX2Squelch
+            // 
+            this.picRX2Squelch.BackColor = System.Drawing.SystemColors.ControlText;
+            resources.ApplyResources(this.picRX2Squelch, "picRX2Squelch");
+            this.picRX2Squelch.Name = "picRX2Squelch";
+            this.picRX2Squelch.TabStop = false;
+            this.picRX2Squelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Squelch_Paint);
+            // 
+            // picSquelch
+            // 
+            this.picSquelch.BackColor = System.Drawing.SystemColors.ControlText;
+            resources.ApplyResources(this.picSquelch, "picSquelch");
+            this.picSquelch.Name = "picSquelch";
+            this.picSquelch.TabStop = false;
+            this.picSquelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picSquelch_Paint);
+            // 
+            // nudRNnoiseGainTest
+            // 
+            this.nudRNnoiseGainTest.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            resources.ApplyResources(this.nudRNnoiseGainTest, "nudRNnoiseGainTest");
+            this.nudRNnoiseGainTest.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.nudRNnoiseGainTest.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudRNnoiseGainTest.Name = "nudRNnoiseGainTest";
+            this.nudRNnoiseGainTest.TinyStep = false;
+            this.nudRNnoiseGainTest.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.nudRNnoiseGainTest.ValueChanged += new System.EventHandler(this.nudRNnoiseGainTest_ValueChanged);
+            // 
+            // panelDisplay
+            // 
+            resources.ApplyResources(this.panelDisplay, "panelDisplay");
+            this.panelDisplay.BackColor = System.Drawing.Color.Transparent;
+            this.panelDisplay.Controls.Add(this.infoBar);
+            this.panelDisplay.Controls.Add(this.btnDisplayZTB);
+            this.panelDisplay.Controls.Add(this.radDisplayZoom4x);
+            this.panelDisplay.Controls.Add(this.radDisplayZoom2x);
+            this.panelDisplay.Controls.Add(this.radDisplayZoom1x);
+            this.panelDisplay.Controls.Add(this.radDisplayZoom05);
+            this.panelDisplay.Controls.Add(this.ptbDisplayZoom);
+            this.panelDisplay.Controls.Add(this.ptbDisplayPan);
+            this.panelDisplay.Controls.Add(this.lblDisplayZoom);
+            this.panelDisplay.Controls.Add(this.btnDisplayPanCenter);
+            this.panelDisplay.Controls.Add(this.lblDisplayPan);
+            this.panelDisplay.Controls.Add(this.pnlDisplay);
+            this.panelDisplay.Name = "panelDisplay";
+            // 
+            // infoBar
+            // 
+            resources.ApplyResources(this.infoBar, "infoBar");
+            this.infoBar.BackColor = System.Drawing.Color.Black;
+            this.infoBar.Button1Action = Thetis.ucInfoBar.ActionTypes.Blobs;
+            this.infoBar.Button2Action = Thetis.ucInfoBar.ActionTypes.ActivePeaks;
+            this.infoBar.CurrentFlip = 0;
+            this.infoBar.HideFeedback = false;
+            this.infoBar.Name = "infoBar";
+            this.infoBar.SplitterRatio = 1F;
+            this.infoBar.SwapRedBlue = false;
+            this.infoBar.Button1Clicked += new System.EventHandler<Thetis.ucInfoBar.InfoBarAction>(this.infoBar_Button1Clicked);
+            this.infoBar.Button2Clicked += new System.EventHandler<Thetis.ucInfoBar.InfoBarAction>(this.infoBar_Button2Clicked);
+            this.infoBar.Button1MouseDown += new System.EventHandler<Thetis.ucInfoBar.InfoBarAction>(this.infoBar_Button1MouseDown);
+            this.infoBar.Button2MouseDown += new System.EventHandler<Thetis.ucInfoBar.InfoBarAction>(this.infoBar_Button2MouseDown);
+            this.infoBar.SwapRedBlueChanged += new System.EventHandler(this.infoBar_SwapRedBlueChanged);
+            this.infoBar.HideFeedbackChanged += new System.EventHandler(this.infoBar_HideFeedbackChanged);
+            // 
+            // lblDisplayZoom
+            // 
+            resources.ApplyResources(this.lblDisplayZoom, "lblDisplayZoom");
+            this.lblDisplayZoom.ForeColor = System.Drawing.Color.White;
+            this.lblDisplayZoom.Name = "lblDisplayZoom";
+            // 
+            // lblDisplayPan
+            // 
+            resources.ApplyResources(this.lblDisplayPan, "lblDisplayPan");
+            this.lblDisplayPan.ForeColor = System.Drawing.Color.White;
+            this.lblDisplayPan.Name = "lblDisplayPan";
+            // 
+            // pnlDisplay
+            // 
+            resources.ApplyResources(this.pnlDisplay, "pnlDisplay");
+            this.pnlDisplay.BackColor = System.Drawing.Color.Black;
+            this.pnlDisplay.Name = "pnlDisplay";
+            this.pnlDisplay.DoubleClick += new System.EventHandler(this.pnlDisplay_DoubleClick);
+            this.pnlDisplay.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlDisplay_MouseDown);
+            this.pnlDisplay.MouseLeave += new System.EventHandler(this.pnlDisplay_MouseLeave);
+            this.pnlDisplay.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlDisplay_MouseMove);
+            this.pnlDisplay.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlDisplay_MouseUp);
+            this.pnlDisplay.Resize += new System.EventHandler(this.pnlDisplay_Resize);
+            // 
             // nudPwrTemp2
             // 
             this.nudPwrTemp2.DecimalPlaces = 2;
@@ -5667,6 +5765,24 @@
             this.panelRX2RF.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panelRX2RF.Name = "panelRX2RF";
             // 
+            // ptbRX2Squelch
+            // 
+            resources.ApplyResources(this.ptbRX2Squelch, "ptbRX2Squelch");
+            this.ptbRX2Squelch.GreenThumb = false;
+            this.ptbRX2Squelch.HeadImage = null;
+            this.ptbRX2Squelch.LargeChange = 1;
+            this.ptbRX2Squelch.LimitBarColor = System.Drawing.Color.Red;
+            this.ptbRX2Squelch.LimitEnabled = false;
+            this.ptbRX2Squelch.LimitValue = 0;
+            this.ptbRX2Squelch.Maximum = 0;
+            this.ptbRX2Squelch.Minimum = -160;
+            this.ptbRX2Squelch.Name = "ptbRX2Squelch";
+            this.ptbRX2Squelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.ptbRX2Squelch.SmallChange = 1;
+            this.ptbRX2Squelch.TabStop = false;
+            this.ptbRX2Squelch.Value = 0;
+            this.ptbRX2Squelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2Squelch_Scroll);
+            // 
             // panelRX2DSP
             // 
             resources.ApplyResources(this.panelRX2DSP, "panelRX2DSP");
@@ -5714,6 +5830,15 @@
             this.checkBoxTS1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.checkBoxTS1.Name = "checkBoxTS1";
             this.checkBoxTS1.UseVisualStyleBackColor = false;
+            // 
+            // radBand2
+            // 
+            resources.ApplyResources(this.radBand2, "radBand2");
+            this.radBand2.FlatAppearance.BorderSize = 0;
+            this.radBand2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.radBand2.Name = "radBand2";
+            this.radBand2.TabStop = true;
+            this.radBand2.UseVisualStyleBackColor = true;
             // 
             // panelModeSpecificPhone
             // 
@@ -6709,66 +6834,6 @@
             this.grpDIGSampleRate.Name = "grpDIGSampleRate";
             this.grpDIGSampleRate.TabStop = false;
             // 
-            // panelDisplay
-            // 
-            resources.ApplyResources(this.panelDisplay, "panelDisplay");
-            this.panelDisplay.BackColor = System.Drawing.Color.Transparent;
-            this.panelDisplay.Controls.Add(this.infoBar);
-            this.panelDisplay.Controls.Add(this.btnDisplayZTB);
-            this.panelDisplay.Controls.Add(this.radDisplayZoom4x);
-            this.panelDisplay.Controls.Add(this.radDisplayZoom2x);
-            this.panelDisplay.Controls.Add(this.radDisplayZoom1x);
-            this.panelDisplay.Controls.Add(this.radDisplayZoom05);
-            this.panelDisplay.Controls.Add(this.ptbDisplayZoom);
-            this.panelDisplay.Controls.Add(this.ptbDisplayPan);
-            this.panelDisplay.Controls.Add(this.lblDisplayZoom);
-            this.panelDisplay.Controls.Add(this.btnDisplayPanCenter);
-            this.panelDisplay.Controls.Add(this.lblDisplayPan);
-            this.panelDisplay.Controls.Add(this.pnlDisplay);
-            this.panelDisplay.Name = "panelDisplay";
-            // 
-            // infoBar
-            // 
-            resources.ApplyResources(this.infoBar, "infoBar");
-            this.infoBar.BackColor = System.Drawing.Color.Black;
-            this.infoBar.Button1Action = Thetis.ucInfoBar.ActionTypes.Blobs;
-            this.infoBar.Button2Action = Thetis.ucInfoBar.ActionTypes.ActivePeaks;
-            this.infoBar.CurrentFlip = 0;
-            this.infoBar.HideFeedback = false;
-            this.infoBar.Name = "infoBar";
-            this.infoBar.SplitterRatio = 1F;
-            this.infoBar.SwapRedBlue = false;
-            this.infoBar.Button1Clicked += new System.EventHandler<Thetis.ucInfoBar.InfoBarAction>(this.infoBar_Button1Clicked);
-            this.infoBar.Button2Clicked += new System.EventHandler<Thetis.ucInfoBar.InfoBarAction>(this.infoBar_Button2Clicked);
-            this.infoBar.Button1MouseDown += new System.EventHandler<Thetis.ucInfoBar.InfoBarAction>(this.infoBar_Button1MouseDown);
-            this.infoBar.Button2MouseDown += new System.EventHandler<Thetis.ucInfoBar.InfoBarAction>(this.infoBar_Button2MouseDown);
-            this.infoBar.SwapRedBlueChanged += new System.EventHandler(this.infoBar_SwapRedBlueChanged);
-            this.infoBar.HideFeedbackChanged += new System.EventHandler(this.infoBar_HideFeedbackChanged);
-            // 
-            // lblDisplayZoom
-            // 
-            resources.ApplyResources(this.lblDisplayZoom, "lblDisplayZoom");
-            this.lblDisplayZoom.ForeColor = System.Drawing.Color.White;
-            this.lblDisplayZoom.Name = "lblDisplayZoom";
-            // 
-            // lblDisplayPan
-            // 
-            resources.ApplyResources(this.lblDisplayPan, "lblDisplayPan");
-            this.lblDisplayPan.ForeColor = System.Drawing.Color.White;
-            this.lblDisplayPan.Name = "lblDisplayPan";
-            // 
-            // pnlDisplay
-            // 
-            resources.ApplyResources(this.pnlDisplay, "pnlDisplay");
-            this.pnlDisplay.BackColor = System.Drawing.Color.Black;
-            this.pnlDisplay.Name = "pnlDisplay";
-            this.pnlDisplay.DoubleClick += new System.EventHandler(this.pnlDisplay_DoubleClick);
-            this.pnlDisplay.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlDisplay_MouseDown);
-            this.pnlDisplay.MouseLeave += new System.EventHandler(this.pnlDisplay_MouseLeave);
-            this.pnlDisplay.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pnlDisplay_MouseMove);
-            this.pnlDisplay.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pnlDisplay_MouseUp);
-            this.pnlDisplay.Resize += new System.EventHandler(this.pnlDisplay_Resize);
-            // 
             // panelMode
             // 
             resources.ApplyResources(this.panelMode, "panelMode");
@@ -7492,40 +7557,6 @@
             this.lblATUTuneLabel.ForeColor = System.Drawing.Color.White;
             this.lblATUTuneLabel.Name = "lblATUTuneLabel";
             // 
-            // picRX2Squelch
-            // 
-            this.picRX2Squelch.BackColor = System.Drawing.SystemColors.ControlText;
-            resources.ApplyResources(this.picRX2Squelch, "picRX2Squelch");
-            this.picRX2Squelch.Name = "picRX2Squelch";
-            this.picRX2Squelch.TabStop = false;
-            this.picRX2Squelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picRX2Squelch_Paint);
-            // 
-            // ptbRX2Squelch
-            // 
-            resources.ApplyResources(this.ptbRX2Squelch, "ptbRX2Squelch");
-            this.ptbRX2Squelch.GreenThumb = false;
-            this.ptbRX2Squelch.HeadImage = null;
-            this.ptbRX2Squelch.LargeChange = 1;
-            this.ptbRX2Squelch.LimitBarColor = System.Drawing.Color.Red;
-            this.ptbRX2Squelch.LimitEnabled = false;
-            this.ptbRX2Squelch.LimitValue = 0;
-            this.ptbRX2Squelch.Maximum = 0;
-            this.ptbRX2Squelch.Minimum = -160;
-            this.ptbRX2Squelch.Name = "ptbRX2Squelch";
-            this.ptbRX2Squelch.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ptbRX2Squelch.SmallChange = 1;
-            this.ptbRX2Squelch.TabStop = false;
-            this.ptbRX2Squelch.Value = 0;
-            this.ptbRX2Squelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbRX2Squelch_Scroll);
-            // 
-            // picSquelch
-            // 
-            this.picSquelch.BackColor = System.Drawing.SystemColors.ControlText;
-            resources.ApplyResources(this.picSquelch, "picSquelch");
-            this.picSquelch.Name = "picSquelch";
-            this.picSquelch.TabStop = false;
-            this.picSquelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picSquelch_Paint);
-            // 
             // ptbSquelch
             // 
             resources.ApplyResources(this.ptbSquelch, "ptbSquelch");
@@ -7549,6 +7580,7 @@
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.Controls.Add(this.nudRNnoiseGainTest);
             this.Controls.Add(this.panelDisplay);
             this.Controls.Add(this.chkRX2Preamp);
             this.Controls.Add(this.chkRX1Preamp);
@@ -7619,8 +7651,13 @@
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Console_KeyUp);
             this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.Console_MouseWheel);
             this.Resize += new System.EventHandler(this.Console_Resize);
+            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayZoom)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayPan)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterHigh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udFilterLow)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterLow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTXFilterHigh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udCWPitch)).EndInit();
@@ -7632,12 +7669,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udFMOffset)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX1StepAttData)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udRX2StepAttData)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbFilterWidth)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2RF)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWSpeed)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayZoom)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayPan)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbPWR)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbRF)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbAF)).EndInit();
@@ -7665,6 +7697,10 @@
             this.menuStrip1.PerformLayout();
             this.statusStripMain.ResumeLayout(false);
             this.statusStripMain.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRNnoiseGainTest)).EndInit();
+            this.panelDisplay.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp)).EndInit();
             this.grpMultimeter.ResumeLayout(false);
@@ -7672,6 +7708,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.picMultiMeterDigital)).EndInit();
             this.panelFilter.ResumeLayout(false);
             this.panelRX2RF.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).EndInit();
             this.panelRX2DSP.ResumeLayout(false);
             this.panelOptions.ResumeLayout(false);
             this.panelModeSpecificPhone.ResumeLayout(false);
@@ -7708,7 +7745,6 @@
             this.panelModeSpecificDigital.PerformLayout();
             this.grpVACStereo.ResumeLayout(false);
             this.grpDIGSampleRate.ResumeLayout(false);
-            this.panelDisplay.ResumeLayout(false);
             this.panelMode.ResumeLayout(false);
             this.panelBandHF.ResumeLayout(false);
             this.grpVFOA.ResumeLayout(false);
@@ -7730,9 +7766,6 @@
             this.grpMultimeterMenus.ResumeLayout(false);
             this.panelAndromedaMisc.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tbAndromedaEncoderSlider)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ptbRX2Squelch)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbSquelch)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -7883,5 +7916,6 @@
         private PictureBox pbAutoAttWarningRX1;
         private PictureBox pbAutoAttWarningRX2;
         private Panel pnlDisplay;
+        private NumericUpDownTS nudRNnoiseGainTest;
     }
 }

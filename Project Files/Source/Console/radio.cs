@@ -259,7 +259,7 @@ namespace Thetis
             this.FilterSize = rx.filter_size;
             this.FilterType = rx.filter_type;
             this.SetRXFilter(rx.rx_filter_low, rx.rx_filter_high);
-            this.NoiseReduction = rx.noise_reduction;
+            this.RXANR1Run = rx.noise_reduction;
             this.SetNRVals(rx.nr_taps, rx.nr_delay, rx.nr_gain, rx.nr_leak);
             this.AutoNotchFilter = rx.auto_notch_filter;
             this.SetANFVals(rx.anf_taps, rx.anf_delay, rx.anf_gain, rx.anf_leak);
@@ -339,7 +339,7 @@ namespace Thetis
             FilterSize = filter_size;
             FilterType = filter_type;
 			SetRXFilter(rx_filter_low, rx_filter_high);
-            NoiseReduction = noise_reduction;
+            RXANR1Run = noise_reduction;
 			SetNRVals(nr_taps, nr_delay, nr_gain, nr_leak);
 			AutoNotchFilter = auto_notch_filter;
 			SetANFVals(anf_taps, anf_delay, anf_gain, anf_leak);
@@ -407,6 +407,15 @@ namespace Thetis
             RXANR2AERun = rx_nr2_ae_run;
             RXANR2Run = rx_nr2_run;
             RXANR2Position = rx_nr2_position;
+            RXANR3Run = rx_nr3_run;
+            RXARNNRgain = rx_nr3_gain;
+            RXANR4Run = rx_nr4_run;
+            RXASBNRreductionAmount = rx_nr4_reductionAmount;
+            RXASBNRsmoothingFactor = rx_nr4_smoothingFactor;
+            RXASBNRwhiteningFactor = rx_nr4_whiteningFactor;
+            RXASBNRnoiseRescale = rx_nr4_noiseRescale;
+            RXASBNRpostFilterThreshold = rx_nr4_postFilterThreshold;
+            RXASBNRnoiseScalingType = rx_nr4_noiseScalingType;
             RXFMLowCut = rx_fm_lowcut;
             RXFMHighCut = rx_fm_highcut;
         }
@@ -576,9 +585,9 @@ namespace Thetis
 			}
 		}
 
-		private bool noise_reduction_dsp = false;
-		private bool noise_reduction = false;
-		public bool NoiseReduction
+		private int noise_reduction_dsp = 0;
+		private int noise_reduction = 0;
+		public int RXANR1Run
 		{
 			get { return noise_reduction; }
 			set
@@ -2035,14 +2044,188 @@ namespace Thetis
             }
         }
 
-		#endregion
-	}
+        //rnnoise
+        private int rx_nr3_run = 0;
+        private int rx_nr3_run_dsp = 0;
+        public int RXANR3Run
+        {
+            get { return rx_nr3_run; }
+            set
+            {
+                rx_nr3_run = value;
+                if (update)
+                {
+                    if (value != rx_nr3_run_dsp || force)
+                    {
+                        WDSP.SetRXARNNRRun(WDSP.id(thread, subrx), value);
+                        rx_nr3_run_dsp = value;
+                    }
+                }
+            }
+        }
 
-	#endregion
+        private float rx_nr3_gain = 5000000.0f; // large gain factor to get rnnoise to do its thing
+        private float rx_nr3_gain_dsp = 5000000.0f;
+        public float RXARNNRgain
+        {
+            get { return rx_nr3_gain; }
+            set
+            {
+                rx_nr3_gain = value;
+                if (update)
+                {
+                    if (value != rx_nr3_gain_dsp || force)
+                    {
+                        WDSP.SetRXARNNRgain(WDSP.id(thread, subrx), value);
+                        rx_nr3_gain_dsp = value;
+                    }
+                }
+            }
+        }
+        //
 
-	#region RadioDSPTX Class
+        //libspecbleach
+        private int rx_nr4_run = 0;
+        private int rx_nr4_run_dsp = 0;
+        public int RXANR4Run
+        {
+            get { return rx_nr4_run; }
+            set
+            {
+                rx_nr4_run = value;
+                if (update)
+                {
+                    if (value != rx_nr4_run_dsp || force)
+                    {
+                        WDSP.SetRXASBNRRun(WDSP.id(thread, subrx), value);
+                        rx_nr4_run_dsp = value;
+                    }
+                }
+            }
+        }
 
-	public class RadioDSPTX
+        private float rx_nr4_reductionAmount = 10;
+        private float rx_nr4_reductionAmount_dsp = 10;
+        public float RXASBNRreductionAmount
+        {
+            get { return rx_nr4_reductionAmount; }
+            set
+            {
+                rx_nr4_reductionAmount = value;
+                if (update)
+                {
+                    if (value != rx_nr4_reductionAmount_dsp || force)
+                    {
+                        WDSP.SetRXASBNRreductionAmount(WDSP.id(thread, subrx), value);
+                        rx_nr4_reductionAmount_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private float rx_nr4_smoothingFactor = 0;
+        private float rx_nr4_smoothingFactor_dsp = 0;
+        public float RXASBNRsmoothingFactor
+        {
+            get { return rx_nr4_smoothingFactor; }
+            set
+            {
+                rx_nr4_smoothingFactor = value;
+                if (update)
+                {
+                    if (value != rx_nr4_smoothingFactor_dsp || force)
+                    {
+                        WDSP.SetRXASBNRsmoothingFactor(WDSP.id(thread, subrx), value);
+                        rx_nr4_smoothingFactor_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private float rx_nr4_whiteningFactor = 0;
+        private float rx_nr4_whiteningFactor_dsp = 0;
+        public float RXASBNRwhiteningFactor
+        {
+            get { return rx_nr4_whiteningFactor; }
+            set
+            {
+                rx_nr4_whiteningFactor = value;
+                if (update)
+                {
+                    if (value != rx_nr4_whiteningFactor_dsp || force)
+                    {
+                        WDSP.SetRXASBNRwhiteningFactor(WDSP.id(thread, subrx), value);
+                        rx_nr4_whiteningFactor_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private float rx_nr4_noiseRescale = 2;
+        private float rx_nr4_noiseRescale_dsp = 2;
+        public float RXASBNRnoiseRescale
+        {
+            get { return rx_nr4_noiseRescale; }
+            set
+            {
+                rx_nr4_noiseRescale = value;
+                if (update)
+                {
+                    if (value != rx_nr4_noiseRescale_dsp || force)
+                    {
+                        WDSP.SetRXASBNRnoiseRescale(WDSP.id(thread, subrx), value);
+                        rx_nr4_noiseRescale_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private float rx_nr4_postFilterThreshold = 0;
+        private float rx_nr4_postFilterThreshold_dsp = 0;
+        public float RXASBNRpostFilterThreshold
+        {
+            get { return rx_nr4_postFilterThreshold; }
+            set
+            {
+                rx_nr4_postFilterThreshold = value;
+                if (update)
+                {
+                    if (value != rx_nr4_postFilterThreshold_dsp || force)
+                    {
+                        WDSP.SetRXASBNRpostFilterThreshold(WDSP.id(thread, subrx), value);
+                        rx_nr4_postFilterThreshold_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private int rx_nr4_noiseScalingType = 0;
+        private int rx_nr4_noiseScalingType_dsp = 0;
+        public int RXASBNRnoiseScalingType
+        {
+            get { return rx_nr4_noiseScalingType; }
+            set
+            {
+                rx_nr4_noiseScalingType = value;
+                if (update)
+                {
+                    if (value != rx_nr4_noiseScalingType_dsp || force)
+                    {
+                        WDSP.SetRXASBNRnoiseScalingType(WDSP.id(thread, subrx), value);
+                        rx_nr4_noiseScalingType_dsp = value;
+                    }
+                }
+            }
+        }
+        //
+        #endregion
+    }
+
+    #endregion
+
+    #region RadioDSPTX Class
+
+    public class RadioDSPTX
 	{
 		private uint thread;
 

@@ -1,0 +1,1 @@
+option('enable_examples', type : 'boolean', value : false, description : 'Enables building example application')

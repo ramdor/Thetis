@@ -325,22 +325,22 @@ namespace Thetis
 
             lock (_objLock)
             {
-                smSpot exists = _spots.Find(o => (o.callsign == spot.callsign) && (Math.Abs(o.frequencyHZ - frequencyHz) <= 5000));
+                smSpot exists = _spots.Find(o => string.Equals(o.callsign?.Trim(), spot.callsign?.Trim(), StringComparison.OrdinalIgnoreCase) && Math.Abs(o.frequencyHZ - frequencyHz) <= 5000);
                 if (exists != null)
                 {
                     spot.flash_start_time = exists.flash_start_time;
                     spot.flashing = exists.flashing;
 
                     //if the data is the same, use the original spot time
-                    if(spot.mode == exists.mode &&
-                        spot.frequencyHZ == exists.frequencyHZ &&
+                    if (spot.mode == exists.mode &&
+                        Math.Abs(spot.frequencyHZ - exists.frequencyHZ) <= 5000 &&
                         spot.colour == exists.colour &&
-                        spot.additionalText == exists.additionalText &&
-                        spot.spotter == exists.spotter &&
                         spot.heading == exists.heading &&
-                        spot.continent == exists.continent &&
-                        spot.country == exists.country)
-                    { 
+                        string.Equals(spot.additionalText?.Trim(), exists.additionalText?.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                        string.Equals(spot.spotter?.Trim(), exists.spotter?.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                        string.Equals(spot.continent?.Trim(), exists.continent?.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                        string.Equals(spot.country?.Trim(), exists.country?.Trim(), StringComparison.OrdinalIgnoreCase))
+                    {
                         spot.utc_spot_time = exists.utc_spot_time;
                     }
 

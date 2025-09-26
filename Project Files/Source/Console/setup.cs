@@ -2585,6 +2585,15 @@ namespace Thetis
             radDSPNR2TRNDRX2_CheckedChanged(this, e);
             chkDSPNR2AERX2_CheckedChanged(this, e);
 
+            //nr4
+            nudNR4_red_rx1_ValueChanged(this, e);
+            nudNR4_smo_rx1_ValueChanged(this, e);
+            nudNR4_whi_rx1_ValueChanged(this, e);
+            nudNR4_res_rx1_ValueChanged(this, e);
+            nudNR4_snr_rx1_ValueChanged(this, e);
+            setupNR4algorithm();
+            //
+
             // Transmit Tab
             udTXFilterHigh_ValueChanged(this, e);
             udTXFilterLow_ValueChanged(this, e);
@@ -35820,6 +35829,132 @@ namespace Thetis
         {
             if (initializing) return;
             Display.SpotFlashColour = clrbtnSpotFlashColour.Color;
+        }
+
+        private void nudNR4_red_rx1_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.radio.GetDSPRX(0, 0).RXASBNRreductionAmount = (float)nudNR4_red_rx1.Value;
+            console.radio.GetDSPRX(0, 1).RXASBNRreductionAmount = (float)nudNR4_red_rx1.Value;
+        }
+
+        private void nudNR4_smo_rx1_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.radio.GetDSPRX(0, 0).RXASBNRsmoothingFactor = (float)nudNR4_smo_rx1.Value;
+            console.radio.GetDSPRX(0, 1).RXASBNRsmoothingFactor = (float)nudNR4_smo_rx1.Value;
+        }
+
+        private void nudNR4_whi_rx1_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.radio.GetDSPRX(0, 0).RXASBNRwhiteningFactor = (float)nudNR4_whi_rx1.Value;
+            console.radio.GetDSPRX(0, 1).RXASBNRwhiteningFactor = (float)nudNR4_whi_rx1.Value;
+        }
+
+        private void nudNR4_res_rx1_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.radio.GetDSPRX(0, 0).RXASBNRnoiseRescale = (float)nudNR4_res_rx1.Value;
+            console.radio.GetDSPRX(0, 1).RXASBNRnoiseRescale = (float)nudNR4_res_rx1.Value;
+        }
+
+        private void nudNR4_snr_rx1_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.radio.GetDSPRX(0, 0).RXASBNRpostFilterThreshold = (float)nudNR4_snr_rx1.Value;
+            console.radio.GetDSPRX(0, 1).RXASBNRpostFilterThreshold = (float)nudNR4_snr_rx1.Value;
+        }
+        private void setupNR4algorithm()
+        {
+            radNR4_algo1_CheckedChanged(this, EventArgs.Empty);
+            radNR4_algo2_CheckedChanged(this, EventArgs.Empty);
+            radNR4_algo3_CheckedChanged(this, EventArgs.Empty);
+            radNR4_algo1_rx2_CheckedChanged(this, EventArgs.Empty);
+            radNR4_algo2_rx2_CheckedChanged(this, EventArgs.Empty);
+            radNR4_algo3_rx2_CheckedChanged(this, EventArgs.Empty);
+        }
+        private void radNR4_algo1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radNR4_algo1.Checked) return;
+            console.radio.GetDSPRX(0, 0).RXASBNRnoiseScalingType = 0;
+            console.radio.GetDSPRX(0, 1).RXASBNRnoiseScalingType = 0;
+        }
+
+        private void radNR4_algo2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radNR4_algo2.Checked) return;
+            console.radio.GetDSPRX(0, 0).RXASBNRnoiseScalingType = 1;
+            console.radio.GetDSPRX(0, 1).RXASBNRnoiseScalingType = 1;
+        }
+
+        private void radNR4_algo3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radNR4_algo3.Checked) return;
+            console.radio.GetDSPRX(0, 0).RXASBNRnoiseScalingType = 2;
+            console.radio.GetDSPRX(0, 1).RXASBNRnoiseScalingType = 2;
+        }
+
+        private void nudNR4_red_rx2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.radio.GetDSPRX(1, 0).RXASBNRreductionAmount = (float)nudNR4_red_rx2.Value;
+            console.radio.GetDSPRX(1, 1).RXASBNRreductionAmount = (float)nudNR4_red_rx2.Value;
+        }
+
+        private void nudNR4_smo_rx2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.radio.GetDSPRX(1, 0).RXASBNRsmoothingFactor = (float)nudNR4_smo_rx2.Value;
+            console.radio.GetDSPRX(1, 1).RXASBNRsmoothingFactor = (float)nudNR4_smo_rx2.Value;
+        }
+
+        private void nudNR4_whi_rx2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.radio.GetDSPRX(1, 0).RXASBNRwhiteningFactor = (float)nudNR4_whi_rx2.Value;
+            console.radio.GetDSPRX(1, 1).RXASBNRwhiteningFactor = (float)nudNR4_whi_rx2.Value;
+        }
+
+        private void nudNR4_res_rx2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.radio.GetDSPRX(1, 0).RXASBNRnoiseRescale = (float)nudNR4_res_rx2.Value;
+            console.radio.GetDSPRX(1, 1).RXASBNRnoiseRescale = (float)nudNR4_res_rx2.Value;
+        }
+
+        private void nudNR4_snr_rx2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.radio.GetDSPRX(1, 0).RXASBNRpostFilterThreshold = (float)nudNR4_snr_rx2.Value;
+            console.radio.GetDSPRX(1, 1).RXASBNRpostFilterThreshold = (float)nudNR4_snr_rx2.Value;
+        }
+
+        private void radNR4_algo1_rx2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radNR4_algo1_rx2.Checked) return;
+            console.radio.GetDSPRX(1, 0).RXASBNRnoiseScalingType = 0;
+            console.radio.GetDSPRX(1, 1).RXASBNRnoiseScalingType = 0;
+        }
+
+        private void radNR4_algo2_rx2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radNR4_algo2_rx2.Checked) return;
+            console.radio.GetDSPRX(1, 0).RXASBNRnoiseScalingType = 1;
+            console.radio.GetDSPRX(1, 1).RXASBNRnoiseScalingType = 1;
+        }
+
+        private void radNR4_algo3_rx2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            if (!radNR4_algo3_rx2.Checked) return;
+            console.radio.GetDSPRX(1, 0).RXASBNRnoiseScalingType = 2;
+            console.radio.GetDSPRX(1, 1).RXASBNRnoiseScalingType = 2;
         }
     }
 

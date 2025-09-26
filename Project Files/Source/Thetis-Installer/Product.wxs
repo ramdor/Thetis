@@ -270,6 +270,25 @@
               KeyPath="yes"
               />
       </Component>
+		<Component Guid="*">
+			<File Id="LibFFTWF33DLL"
+				  Source="$(var.FilesPath)libfftw3f-3.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+
+		<Component Guid="*">
+			<File Id="rnnoiseDLL"
+				  Source="$(var.FilesPath)rnnoise.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="specbleachDLL"
+				  Source="$(var.FilesPath)specbleach.dll"
+				  KeyPath="yes"
+              />
+		</Component>
 
 	  <!-- attempt to get the MSI installer package to use a Checksum for the PA19 dll, as we
 	  dont update the version number for this, but want to install it -->

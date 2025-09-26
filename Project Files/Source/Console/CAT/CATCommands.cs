@@ -2638,8 +2638,11 @@ namespace Thetis
 				else
 					s = s.Insert(5, separator);
 
-                if (!isMidi && console.CATChangesCenterFreq) // MW0LGE changed to take into consideration the flag
-                    console.UpdateCenterFreq = true;
+				if (!isMidi && console.CATChangesCenterFreq) // MW0LGE changed to take into consideration the flag
+				{
+					console.UpdateCenterFreq = true;
+				}
+
 				console.VFOAFreq = double.Parse(s);
 				return "";
 			}
@@ -2682,8 +2685,11 @@ namespace Thetis
 				else
 					s = s.Insert(5, separator);
 
-                if (!isMidi2 && console.CATChangesCenterFreq) // MW0LGE changed to take into consideration the flag
-                    console.UpdateRX2CenterFreq = true;
+				if (!isMidi2 && console.CATChangesCenterFreq) // MW0LGE changed to take into consideration the flag
+				{
+					console.UpdateRX2CenterFreq = true;
+				}
+
 				console.VFOBFreq = double.Parse(s);
 				return "";
 			}
@@ -4608,9 +4614,60 @@ namespace Thetis
                 return parser.Error1;
             }
         }
-        
+
+        // Sets or reads the RX1 Noise Reduction status
+		// returns 0 for off, 1,2,3,4 depending on NR in use
+        public string ZZNE(string s)
+        {
+            int sx = 0;
+
+            if (s != "")
+                sx = Convert.ToInt32(s);
+
+            if (s.Length == parser.nSet && (s == "0" || s == "1" || s == "2" || s == "3" || s == "4"))
+            {
+				console.SelectNR(1, false, sx);
+                console.SelectNR(1, true, sx);
+
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                return console.GetSelectedNR(1).ToString();
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+        // Sets or reads the RX2 Noise Reduction status
+        // returns 0 for off, 1,2,3,4 depending on NR in use
+        public string ZZNF(string s)
+        {
+            int sx = 0;
+
+            if (s != "")
+                sx = Convert.ToInt32(s);
+
+            if (s.Length == parser.nSet && (s == "0" || s == "1" || s == "2" || s == "3" || s == "4"))
+            {
+                console.SelectNR(2, false, sx);
+                console.SelectNR(2, true, sx);
+
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                return console.GetSelectedNR(2).ToString();
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+
         //Sets or reads the ANF button status
-		public string ZZNT(string s)
+        public string ZZNT(string s)
 		{
 			if(s.Length == parser.nSet && (s == "0" || s == "1"))
 			{
