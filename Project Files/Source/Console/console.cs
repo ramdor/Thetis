@@ -14989,7 +14989,7 @@ namespace Thetis
                 case HPSDRModel.HERMESLITE:     // MI0BOT: HL2
                     chkDX.Checked = false;
                     chkDX.Visible = false;
-                    rx2_preamp_present = false;
+                    _rx2_preamp_present = false;
                     break;
                 case HPSDRModel.ANAN10:
                     chkDX.Checked = false;
