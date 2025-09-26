@@ -11191,7 +11191,7 @@ namespace Thetis
                     if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 wider  LNA range
                     {
                         NetworkIO.SetAlexAtten(0);
-                        NetworkIO.SetADC1StepAttenData(32 - rx1_attenuator_data);
+                        NetworkIO.SetADC1StepAttenData(32 - _rx1_attenuator_data);
                     }
                     else if (alexpresent &&
                         HardwareSpecific.Model != HPSDRModel.ANAN10 &&
@@ -11356,7 +11356,7 @@ namespace Thetis
                     if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 wider  LNA range
                     {
                         NetworkIO.SetAlexAtten(0);
-                        NetworkIO.SetADC1StepAttenData(32 - rx1_attenuator_data);
+                        NetworkIO.SetADC1StepAttenData(32 - _rx1_attenuator_data);
                     }
                     else if (alexpresent &&
                         HardwareSpecific.Model != HPSDRModel.ANAN10 &&
