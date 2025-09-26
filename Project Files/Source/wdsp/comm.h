@@ -51,8 +51,8 @@ warren@wpratt.com
 #include "div.h"
 #include "eer.h"
 #include "emnr.h"
-#include "rnnr.h"
-#include "sbnr.h"
+#include "rnnr.h" // NR3 + NR4 support
+#include "sbnr.h" // NR3 + NR4 support
 #include "emph.h"
 #include "eq.h"
 #include "fcurve.h"

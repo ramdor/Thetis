@@ -136,14 +136,14 @@ struct _rxa
 	{
 		EMNR p;
 	} emnr;
-	        struct
-        {
-                RNNR p;
-        } rnnr;
-        struct
-        {
-                SBNR p;
-        } sbnr;
+	struct
+    {
+        RNNR p; // NR3 + NR4 support (nr3)
+    } rnnr;
+    struct
+    {
+        SBNR p; // NR3 + NR4 support (nr4)
+    } sbnr;
 	struct
 	{
 		WCPAGC p;
@@ -198,7 +198,7 @@ extern __declspec (dllexport) void SetRXAMode (int channel, int mode);
 
 extern void RXAResCheck (int channel);
 
-extern void RXAbp1Check (int channel, int amd_run, int snba_run, int emnr_run, int anf_run, int anr_run, int rnnr_run, int sbnr_run);
+extern void RXAbp1Check (int channel, int amd_run, int snba_run, int emnr_run, int anf_run, int anr_run, int rnnr_run, int sbnr_run); // NR3 + NR4 support
 
 extern void RXAbp1Set (int channel);
 

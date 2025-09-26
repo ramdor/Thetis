@@ -1,0 +1,46 @@
+##MW0LGE (c) 2025 - libspecbleach & rnnoise build instructions
+
+The CMakeLists.txt files need to be included in the package root folders.
+Then cd into each one and run the commands below from within a x64 Native Tools Command Prompt for VS 2022
+
+-------------------------------
+libspecbleach
+-------------------------------
+Download the repo from here : https://github.com/lucianodato/libspecbleach
+
+Then in a x64 Native Tools Command Prompt for VS 2022
+
+rmdir /s /q build
+cmake -S . -B build -G "Visual Studio 17 2022" -T ClangCL -A x64
+cmake --build build --config Release 
+
+dll + lib files in
+
+libspecbleach\build\bin\Release
+libspecbleach\build\lib
+-------------------------------
+
+
+-------------------------------
+rnnoise
+-------------------------------
+Download the repo from here : https://gitlab.xiph.org/xiph/rnnoise
+expand out to somewhere where MSYS2 MINGW64 can use it
+
+In MSYS2 MINGW64 run the following
+
+./autogen.sh
+./configure
+
+This will download/configure everything
+
+Then in a x64 Native Tools Command Prompt for VS 2022
+
+rmdir /s /q build
+cmake -S . -B build -G "Visual Studio 17 2022" -T ClangCL -A x64
+cmake --build build --config Release  
+
+dll + lib files in
+
+rnnoise\build\Release
+-------------------------------

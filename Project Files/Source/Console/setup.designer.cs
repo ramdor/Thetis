@@ -57999,7 +57999,7 @@
             this.grpTCPIPcatServer.Controls.Add(this.txtTCPIPCATServerBindIPPort);
             this.grpTCPIPcatServer.Location = new System.Drawing.Point(393, 8);
             this.grpTCPIPcatServer.Name = "grpTCPIPcatServer";
-            this.grpTCPIPcatServer.Size = new System.Drawing.Size(323, 169);
+            this.grpTCPIPcatServer.Size = new System.Drawing.Size(323, 139);
             this.grpTCPIPcatServer.TabIndex = 97;
             this.grpTCPIPcatServer.TabStop = false;
             this.grpTCPIPcatServer.Text = "TCP/IP CAT Server (0 clients)";
@@ -58020,7 +58020,7 @@
             // btnShowTCPIPCatLog
             // 
             this.btnShowTCPIPCatLog.Image = null;
-            this.btnShowTCPIPCatLog.Location = new System.Drawing.Point(21, 137);
+            this.btnShowTCPIPCatLog.Location = new System.Drawing.Point(21, 104);
             this.btnShowTCPIPCatLog.Name = "btnShowTCPIPCatLog";
             this.btnShowTCPIPCatLog.Selectable = true;
             this.btnShowTCPIPCatLog.Size = new System.Drawing.Size(82, 26);
@@ -58033,7 +58033,7 @@
             // 
             this.chkWelcomeMessageTCPIPCat.AutoSize = true;
             this.chkWelcomeMessageTCPIPCat.Image = null;
-            this.chkWelcomeMessageTCPIPCat.Location = new System.Drawing.Point(22, 91);
+            this.chkWelcomeMessageTCPIPCat.Location = new System.Drawing.Point(22, 58);
             this.chkWelcomeMessageTCPIPCat.Name = "chkWelcomeMessageTCPIPCat";
             this.chkWelcomeMessageTCPIPCat.Size = new System.Drawing.Size(173, 17);
             this.chkWelcomeMessageTCPIPCat.TabIndex = 16;
@@ -58049,7 +58049,7 @@
             this.lblToggleToUse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblToggleToUse.ForeColor = System.Drawing.Color.Red;
             this.lblToggleToUse.Image = null;
-            this.lblToggleToUse.Location = new System.Drawing.Point(136, 115);
+            this.lblToggleToUse.Location = new System.Drawing.Point(136, 82);
             this.lblToggleToUse.Name = "lblToggleToUse";
             this.lblToggleToUse.Size = new System.Drawing.Size(120, 13);
             this.lblToggleToUse.TabIndex = 15;
@@ -58071,7 +58071,7 @@
             this.chkTCPIPCatServerListening.AutoSize = true;
             this.chkTCPIPCatServerListening.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkTCPIPCatServerListening.Image = null;
-            this.chkTCPIPCatServerListening.Location = new System.Drawing.Point(22, 114);
+            this.chkTCPIPCatServerListening.Location = new System.Drawing.Point(22, 81);
             this.chkTCPIPCatServerListening.Name = "chkTCPIPCatServerListening";
             this.chkTCPIPCatServerListening.Size = new System.Drawing.Size(114, 17);
             this.chkTCPIPCatServerListening.TabIndex = 13;
@@ -58116,9 +58116,9 @@
             this.groupBoxTS16.Controls.Add(this.txtN1MMSendTo);
             this.groupBoxTS16.Controls.Add(this.chkN1MMEnableRX2);
             this.groupBoxTS16.Controls.Add(this.chkN1MMEnableRX1);
-            this.groupBoxTS16.Location = new System.Drawing.Point(393, 190);
+            this.groupBoxTS16.Location = new System.Drawing.Point(393, 153);
             this.groupBoxTS16.Name = "groupBoxTS16";
-            this.groupBoxTS16.Size = new System.Drawing.Size(323, 160);
+            this.groupBoxTS16.Size = new System.Drawing.Size(323, 139);
             this.groupBoxTS16.TabIndex = 57;
             this.groupBoxTS16.TabStop = false;
             this.groupBoxTS16.Text = "N1MM+ WaterfallBandmap";
@@ -58126,7 +58126,7 @@
             // btnIPv4N1MM
             // 
             this.btnIPv4N1MM.Image = null;
-            this.btnIPv4N1MM.Location = new System.Drawing.Point(262, 94);
+            this.btnIPv4N1MM.Location = new System.Drawing.Point(262, 80);
             this.btnIPv4N1MM.Name = "btnIPv4N1MM";
             this.btnIPv4N1MM.Selectable = true;
             this.btnIPv4N1MM.Size = new System.Drawing.Size(42, 26);
@@ -58139,7 +58139,7 @@
             // btnN1MMDefault
             // 
             this.btnN1MMDefault.Image = null;
-            this.btnN1MMDefault.Location = new System.Drawing.Point(219, 94);
+            this.btnN1MMDefault.Location = new System.Drawing.Point(219, 80);
             this.btnN1MMDefault.Name = "btnN1MMDefault";
             this.btnN1MMDefault.Selectable = true;
             this.btnN1MMDefault.Size = new System.Drawing.Size(37, 26);
@@ -58152,7 +58152,7 @@
             // 
             this.labelTS90.AutoSize = true;
             this.labelTS90.Image = null;
-            this.labelTS90.Location = new System.Drawing.Point(9, 124);
+            this.labelTS90.Location = new System.Drawing.Point(9, 110);
             this.labelTS90.Name = "labelTS90";
             this.labelTS90.Size = new System.Drawing.Size(61, 13);
             this.labelTS90.TabIndex = 9;
@@ -58165,7 +58165,7 @@
             0,
             0,
             0});
-            this.udN1MMSendRate.Location = new System.Drawing.Point(91, 122);
+            this.udN1MMSendRate.Location = new System.Drawing.Point(91, 108);
             this.udN1MMSendRate.Maximum = new decimal(new int[] {
             8,
             0,
@@ -58261,7 +58261,7 @@
             // 
             this.labelTS19.AutoSize = true;
             this.labelTS19.Image = null;
-            this.labelTS19.Location = new System.Drawing.Point(9, 100);
+            this.labelTS19.Location = new System.Drawing.Point(9, 86);
             this.labelTS19.Name = "labelTS19";
             this.labelTS19.Size = new System.Drawing.Size(73, 13);
             this.labelTS19.TabIndex = 3;
@@ -58269,7 +58269,7 @@
             // 
             // txtN1MMSendTo
             // 
-            this.txtN1MMSendTo.Location = new System.Drawing.Point(91, 97);
+            this.txtN1MMSendTo.Location = new System.Drawing.Point(91, 83);
             this.txtN1MMSendTo.Name = "txtN1MMSendTo";
             this.txtN1MMSendTo.Size = new System.Drawing.Size(122, 20);
             this.txtN1MMSendTo.TabIndex = 2;

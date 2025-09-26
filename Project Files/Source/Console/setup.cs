@@ -457,10 +457,6 @@ namespace Thetis
             chkLogVoltsAmps.Checked = false;
             //
 
-            // display setup
-            console.SetupDisplayEngine(false); //MW0LGE_21k9
-            //
-
             //MW0LGE_21j
             console.RepositionExternalPAButton(CheckForAnyExternalPACheckBoxes());
 
@@ -1022,7 +1018,7 @@ namespace Thetis
             if (needsRecovering(recoveryList, "lgLinearGradient_waterfall_tx"))
             {
                 defaultLinearGradients(false, true, true);
-            }
+            }            
         }
 
         public void SetMultiMeterMode(MultiMeterMeasureMode mode)
@@ -1741,7 +1737,7 @@ namespace Thetis
                 _oldSettings.Add("multimeter_io");
 
             if (getDict.ContainsKey("chkDisableHPFonPS")) // replaced by chkDisableHPFonPSb
-                _oldSettings.Add("chkDisableHPFonPS");            
+                _oldSettings.Add("chkDisableHPFonPS");   
 
             handleOldPAGainSettings(ref getDict);
         }
@@ -2360,6 +2356,7 @@ namespace Thetis
             setupTuneAnd2ToneRadios(); //MW0LGE_22b
 
             // Display Tab
+            udDisplayDecimation_ValueChanged(this, e);
             udDisplayGridMax_ValueChanged(this, e);
             udDisplayGridMin_ValueChanged(this, e);
             udDisplayGridStep_ValueChanged(this, e);
@@ -2591,6 +2588,13 @@ namespace Thetis
             nudNR4_whi_rx1_ValueChanged(this, e);
             nudNR4_res_rx1_ValueChanged(this, e);
             nudNR4_snr_rx1_ValueChanged(this, e);
+
+            nudNR4_red_rx2_ValueChanged(this, e);
+            nudNR4_smo_rx2_ValueChanged(this, e);
+            nudNR4_whi_rx2_ValueChanged(this, e);
+            nudNR4_res_rx2_ValueChanged(this, e);
+            nudNR4_snr_rx2_ValueChanged(this, e);
+
             setupNR4algorithm();
             //
 
@@ -10082,10 +10086,10 @@ namespace Thetis
         {
             if (initializing) return;
             Display.DataLineColor = Color.FromArgb(tbDataLineAlpha.Value, clrbtnDataLine.Color); // MW0LGE_21b
-            rebuildLGBrushes();
+            RebuildLGBrushes();
         }
 
-        private void rebuildLGBrushes()
+        public void RebuildLGBrushes()
         {
             //lg brushes use the line alpha and lgPickerRX1_Changed
             Display.RebuildLinearGradientBrushRX = true;
@@ -17848,7 +17852,7 @@ namespace Thetis
 
         private void ud6mLNAGainOffset_ValueChanged(object sender, EventArgs e)
         {
-            console.RX6mGainOffset = (float)ud6mLNAGainOffset.Value;
+            console.RX6mGainOffset_RX1 = (float)ud6mLNAGainOffset.Value;
         }
 
         private void udDSPEERpdelay_ValueChanged(object sender, EventArgs e)
@@ -18920,7 +18924,7 @@ namespace Thetis
 
         private void ud6mRx2LNAGainOffset_ValueChanged(object sender, EventArgs e)
         {
-            console.RX6mGainOffsetRx2 = (float)ud6mRx2LNAGainOffset.Value;
+            console.RX6mGainOffset_RX2 = (float)ud6mRx2LNAGainOffset.Value;
         }
 
         private void chkEnableXVTRHF_CheckedChanged(object sender, EventArgs e)
@@ -21849,7 +21853,7 @@ namespace Thetis
         //}
         private void lgPickerRX1_Changed(object sender, EventArgs e)
         {
-            rebuildLGBrushes();
+            RebuildLGBrushes();
         }
 
         private void btnDeleteColourGripper_Click(object sender, EventArgs e)
@@ -22269,7 +22273,7 @@ namespace Thetis
         {
             toolTip1.SetToolTip(lgLinearGradientRX1, e.DBM.ToString());
 
-            rebuildLGBrushes(); //moving a dbm blob also causes rebuild so we have instant update
+            RebuildLGBrushes(); //moving a dbm blob also causes rebuild so we have instant update
         }
 
         private void lgPickerRX1_GripperMouseLeave(object sender, GripperEventArgs e)
@@ -23684,8 +23688,8 @@ namespace Thetis
 
         private void udDisplayDecimation_ValueChanged(object sender, EventArgs e)
         {
-            Display.Decimation = (int)udDisplayDecimation.Value;
-            console.SetupDisplayEngine();
+            if (initializing) return;
+            console.SetupDisplayEngine((int)udDisplayDecimation.Value);
         }
 
         private void chkShowPhaseAngularMean_CheckedChanged(object sender, EventArgs e)
@@ -35830,7 +35834,36 @@ namespace Thetis
             if (initializing) return;
             Display.SpotFlashColour = clrbtnSpotFlashColour.Color;
         }
+        public float NR4RedcutionAmmountRX1
+        {
+            get 
+            {
+                return (float)nudNR4_red_rx1.Value;
+            }
+            set
+            {
+                //used by console/cat/midi to set the nr4 reduction
+                if (value < 0) value = 0;
+                if (value > 20) value = 20;
 
+                nudNR4_red_rx1.Value = (decimal)value;
+            }
+        }
+        public float NR4RedcutionAmmountRX2
+        {
+            get
+            {
+                return (float)nudNR4_red_rx2.Value;
+            }
+            set
+            {
+                //used by console/cat/midi to set the nr4 reduction
+                if (value < 0) value = 0;
+                if (value > 20) value = 20;
+
+                nudNR4_red_rx2.Value = (decimal)value;
+            }
+        }
         private void nudNR4_red_rx1_ValueChanged(object sender, EventArgs e)
         {
             if (initializing) return;

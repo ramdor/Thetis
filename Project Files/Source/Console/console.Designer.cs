@@ -757,6 +757,8 @@
             this.dSPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NRToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NR2ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.NR3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.NR4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ANFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NB2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1133,6 +1135,8 @@
             this.lblAndromedaEncoderSlider = new System.Windows.Forms.LabelTS();
             this.lblATUTuneLabel = new System.Windows.Forms.LabelTS();
             this.ptbSquelch = new Thetis.PrettyTrackBar();
+            this.NR3ToolStripMenuItem_rx2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.NR4ToolStripMenuItem_rx2 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayZoom)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayPan)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).BeginInit();
@@ -4264,6 +4268,8 @@
             this.dSPToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.NRToolStripMenuItem,
             this.NR2ToolStripMenuItem1,
+            this.NR3ToolStripMenuItem,
+            this.NR4ToolStripMenuItem,
             this.ANFToolStripMenuItem,
             this.NBToolStripMenuItem,
             this.NB2ToolStripMenuItem,
@@ -4288,6 +4294,18 @@
             this.NR2ToolStripMenuItem1.Name = "NR2ToolStripMenuItem1";
             resources.ApplyResources(this.NR2ToolStripMenuItem1, "NR2ToolStripMenuItem1");
             this.NR2ToolStripMenuItem1.Click += new System.EventHandler(this.mnuDSP_Click);
+            // 
+            // NR3ToolStripMenuItem
+            // 
+            this.NR3ToolStripMenuItem.Name = "NR3ToolStripMenuItem";
+            resources.ApplyResources(this.NR3ToolStripMenuItem, "NR3ToolStripMenuItem");
+            this.NR3ToolStripMenuItem.Click += new System.EventHandler(this.mnuDSP_Click);
+            // 
+            // NR4ToolStripMenuItem
+            // 
+            this.NR4ToolStripMenuItem.Name = "NR4ToolStripMenuItem";
+            resources.ApplyResources(this.NR4ToolStripMenuItem, "NR4ToolStripMenuItem");
+            this.NR4ToolStripMenuItem.Click += new System.EventHandler(this.mnuDSP_Click);
             // 
             // ANFToolStripMenuItem
             // 
@@ -4858,6 +4876,8 @@
             this.dSPToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.nR2ToolStripMenuItem,
             this.NR2StripMenuItem2,
+            this.NR3ToolStripMenuItem_rx2,
+            this.NR4ToolStripMenuItem_rx2,
             this.aNF2ToolStripMenuItem,
             this.nB2ToolStripMenuItem1,
             this.nBRX2ToolStripMenuItem,
@@ -7575,6 +7595,18 @@
             this.ptbSquelch.Value = 0;
             this.ptbSquelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbSquelch_Scroll);
             // 
+            // NR3ToolStripMenuItem_rx2
+            // 
+            this.NR3ToolStripMenuItem_rx2.Name = "NR3ToolStripMenuItem_rx2";
+            resources.ApplyResources(this.NR3ToolStripMenuItem_rx2, "NR3ToolStripMenuItem_rx2");
+            this.NR3ToolStripMenuItem_rx2.Click += new System.EventHandler(this.mnuDSPRX2_Click);
+            // 
+            // NR4ToolStripMenuItem_rx2
+            // 
+            this.NR4ToolStripMenuItem_rx2.Name = "NR4ToolStripMenuItem_rx2";
+            resources.ApplyResources(this.NR4ToolStripMenuItem_rx2, "NR4ToolStripMenuItem_rx2");
+            this.NR4ToolStripMenuItem_rx2.Click += new System.EventHandler(this.mnuDSPRX2_Click);
+            // 
             // Console
             // 
             resources.ApplyResources(this, "$this");
@@ -7917,5 +7949,9 @@
         private PictureBox pbAutoAttWarningRX2;
         private Panel pnlDisplay;
         private NumericUpDownTS nudRNnoiseGainTest;
+        private ToolStripMenuItem NR3ToolStripMenuItem;
+        private ToolStripMenuItem NR4ToolStripMenuItem;
+        private ToolStripMenuItem NR3ToolStripMenuItem_rx2;
+        private ToolStripMenuItem NR4ToolStripMenuItem_rx2;
     }
 }

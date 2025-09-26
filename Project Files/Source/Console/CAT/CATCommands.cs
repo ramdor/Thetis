@@ -33,7 +33,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Collections.Generic;
-using System.Windows.Forms;                           
+using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace Thetis
 {
@@ -4626,7 +4627,6 @@ namespace Thetis
 
             if (s.Length == parser.nSet && (s == "0" || s == "1" || s == "2" || s == "3" || s == "4"))
             {
-				console.SelectNR(1, false, sx);
                 console.SelectNR(1, true, sx);
 
                 return "";
@@ -4651,7 +4651,6 @@ namespace Thetis
 
             if (s.Length == parser.nSet && (s == "0" || s == "1" || s == "2" || s == "3" || s == "4"))
             {
-                console.SelectNR(2, false, sx);
                 console.SelectNR(2, true, sx);
 
                 return "";
@@ -4659,6 +4658,131 @@ namespace Thetis
             else if (s.Length == parser.nGet)
             {
                 return console.GetSelectedNR(2).ToString();
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+
+		// Sets the RX1 NR4 reduction amount, supplied as int from 0 to 100, then converted to 0-20dB
+        public string ZZNG(string s)
+        {
+            int val = 0;
+
+            if (s.Length == parser.nSet)
+            {
+				if (!console.IsSetupFormNull)
+				{
+                    val = Convert.ToInt32(s);
+					if (val < 0) val = 0;
+					if (val > 100) val = 100;
+					float dB = (20f / 100f) * val;
+
+                    if (console.SetupForm.InvokeRequired)
+                    {
+                        console.SetupForm.Invoke(
+                            new MethodInvoker(delegate
+                            {
+                                console.SetupForm.NR4RedcutionAmmountRX1 = dB;
+                            })
+                        );
+                    }
+                    else
+                    {
+                        console.SetupForm.NR4RedcutionAmmountRX1 = dB;
+                    }
+                }
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+				if (!console.IsSetupFormNull)
+				{
+					int perc;
+					float dB = 0;
+					if (console.SetupForm.InvokeRequired)
+					{
+						console.SetupForm.Invoke(
+							new MethodInvoker(delegate
+							{
+								dB = console.SetupForm.NR4RedcutionAmmountRX1;
+							})
+						);
+					}
+					else
+					{
+						dB = console.SetupForm.NR4RedcutionAmmountRX1;
+					}
+					perc = (int)((dB / 20f) * 100f);
+					return AddLeadingZeros(perc);
+				}
+				else
+				{
+                    return AddLeadingZeros(0);
+                }
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+        // Sets the RX1 NR4 reduction amount, supplied as int from 0 to 100, then converted to 0-20dB
+        public string ZZNH(string s)
+        {
+            int val = 0;
+
+            if (s.Length == parser.nSet)
+            {
+                if (!console.IsSetupFormNull)
+                {
+                    val = Convert.ToInt32(s);
+                    if (val < 0) val = 0;
+                    if (val > 100) val = 100;
+                    float dB = (20f / 100f) * val;
+
+                    if (console.SetupForm.InvokeRequired)
+                    {
+                        console.SetupForm.Invoke(
+                            new MethodInvoker(delegate
+                            {
+                                console.SetupForm.NR4RedcutionAmmountRX2 = dB;
+                            })
+                        );
+                    }
+                    else
+                    {
+                        console.SetupForm.NR4RedcutionAmmountRX2 = dB;
+                    }
+                }
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                if (!console.IsSetupFormNull)
+                {
+                    int perc;
+                    float dB = 0;
+                    if (console.SetupForm.InvokeRequired)
+                    {
+                        console.SetupForm.Invoke(
+                            new MethodInvoker(delegate
+                            {
+                                dB = console.SetupForm.NR4RedcutionAmmountRX2;
+                            })
+                        );
+                    }
+                    else
+                    {
+                        dB = console.SetupForm.NR4RedcutionAmmountRX2;
+                    }
+                    perc = (int)((dB / 20f) * 100f);
+                    return AddLeadingZeros(perc);
+                }
+                else
+                {
+                    return AddLeadingZeros(0);
+                }
             }
             else
             {

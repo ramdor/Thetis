@@ -833,6 +833,20 @@
 		<ngetparms>0</ngetparms>
 		<nansparms>1</nansparms>
 	</catstruct>
+	<catstruct code="ZZNG">
+		<desc>Rx1 NR4 reduction amount</desc>
+		<active>true</active>
+		<nsetparms>3</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>3</nansparms>
+	</catstruct>
+	<catstruct code="ZZNH">
+		<desc>Rx2 NR4 reduction amount</desc>
+		<active>true</active>
+		<nsetparms>3</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>3</nansparms>
+	</catstruct>
 	<catstruct code="ZZNR">
 		<desc>extended rx1 nr status</desc>
 		<active>true</active>

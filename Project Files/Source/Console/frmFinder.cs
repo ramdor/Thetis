@@ -34,6 +34,7 @@ using System.IO;
 using System.Xml;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace Thetis
 {
@@ -58,7 +59,8 @@ namespace Thetis
         private StringFormat _stringFormat;
         Dictionary<string, string> _xmlData = new Dictionary<string, string>();
         private bool _fullName;
-        private bool _highlightReusults;
+        private bool _highlightResults;
+        private bool _keywords;
 
         public frmFinder()
         {
@@ -75,8 +77,9 @@ namespace Thetis
             InitializeComponent();
 
             // match inital form state
-            _highlightReusults = chkHighlight.Checked;
+            _highlightResults = chkHighlight.Checked;
             _fullDetails = chkFullDetails.Checked;
+            _keywords = chkKeywords.Checked;
         }
         public void GatherSearchData(Form frm, ToolTip tt)
         {
@@ -99,6 +102,98 @@ namespace Thetis
 
             worker.Start();
         }
+        public void GatherCATStructData(string file_path)
+        {
+            string name = "CATSTRUCT_" + file_path;
+            if (_workerThreads.ContainsKey(name)) return;
+
+            Thread worker = new Thread(() =>
+            {
+                gatherCATStructSearchDataThread(file_path);
+            })
+            {
+                Name = "Finder Worker Thread for " + name,
+                Priority = ThreadPriority.Highest,
+                IsBackground = true,
+            };
+
+            lock (_objWTLocker)
+            {
+                _workerThreads.Add(name, worker);
+            }
+
+            worker.Start();
+        }
+
+        //
+        private class CatStructEntry
+        {
+            public string Code { get; set; }
+            public string Description { get; set; }
+        }
+        private void gatherCATStructSearchDataThread(string file_path)
+        {          
+            try
+            {
+                XDocument document = XDocument.Load(file_path);
+                XElement root = document.Element("catstructs");
+                List<CatStructEntry> result = new List<CatStructEntry>();
+
+                foreach (XElement element in root.Elements("catstruct"))
+                {
+                    XAttribute codeAttr = element.Attribute("code");
+                    XElement descElem = element.Element("desc");
+                    XElement activeElem = element.Element("active");
+                    XElement setElem = element.Element("nsetparms");
+                    XElement getElem = element.Element("ngetparms");
+                    XElement ansElem = element.Element("nansparms");
+
+                    if (codeAttr != null && descElem != null)
+                    {
+                        string code = codeAttr.Value;
+                        string description = descElem.Value;
+
+                        int set = -1;
+                        int.TryParse(setElem.Value, out set);
+                        int get = -1;
+                        int.TryParse(getElem.Value, out get);
+                        int ans = -1;
+                        int.TryParse(ansElem.Value, out ans);
+
+                        string sVars = "";
+                        if (set > 0) sVars += $" set[{set}]";
+                        if (get > 0) sVars += $" get[{get}]";
+                        if (ans > 0) sVars += $" ans[{ans}]";
+                        sVars = sVars.Trim();
+
+                        SearchData sd = new SearchData()
+                        {
+                            Control = null,
+                            Name = "CATcommand",
+                            ShortName = "",
+                            Text = code + " : " + description + "   " + sVars,
+                            ToolTip = code + " : " + description,
+                            XMLReplacement = "",
+                            FullName = code + " : " + description
+                        };
+
+                        lock (_objLocker)
+                        {
+                            _searchData.Add(Guid.NewGuid().ToString(), sd);
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            //done
+            string name = "CATSTRUCT_" + file_path;
+            lock (_objWTLocker)
+            {
+                _workerThreads.Remove(name);
+            }
+        }
+        //
         private void gatherSearchDataThread(Control frm, ToolTip tt)
         {
             getControlList(frm, tt);
@@ -173,7 +268,10 @@ namespace Thetis
                     };
                     lock (_objLocker)
                     {
-                        _searchData.Add(sKey, sd);
+                        if (!_searchData.ContainsKey(sKey))
+                        {
+                            _searchData.Add(sKey, sd);
+                        }
                     }
                 }
             }
@@ -190,16 +288,38 @@ namespace Thetis
 
             lock (_objLocker)
             {
-                string sSearch = txtSearch.Text.ToLower();
-                Dictionary<string, SearchData> filteredDictionary = _searchData
-                    .Where(kv => 
-                    kv.Value.Name.Contains(sSearch, StringComparison.OrdinalIgnoreCase) ||
-                    kv.Value.Text.Contains(sSearch, StringComparison.OrdinalIgnoreCase) ||
-                    kv.Value.ToolTip.Contains(sSearch, StringComparison.OrdinalIgnoreCase) ||
-                    kv.Value.XMLReplacement.Contains(sSearch, StringComparison.OrdinalIgnoreCase)
-                    ).ToDictionary(kv => kv.Key, kv => kv.Value);
+                List<SearchData> searchDataList;
+                if (!_keywords)
+                {
+                    string sSearch = txtSearch.Text.ToLower();
+                    Dictionary<string, SearchData> filteredDictionary = _searchData
+                        .Where(kv =>
+                        kv.Value.Name.Contains(sSearch, StringComparison.OrdinalIgnoreCase) ||
+                        kv.Value.Text.Contains(sSearch, StringComparison.OrdinalIgnoreCase) ||
+                        kv.Value.ToolTip.Contains(sSearch, StringComparison.OrdinalIgnoreCase) ||
+                        kv.Value.XMLReplacement.Contains(sSearch, StringComparison.OrdinalIgnoreCase)
+                        ).ToDictionary(kv => kv.Key, kv => kv.Value);
 
-                List<SearchData> searchDataList = filteredDictionary.Values.ToList();
+                    searchDataList = filteredDictionary.Values.ToList();
+                }
+                else
+                {
+                    string[] search = txtSearch.Text
+                        .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => s.ToLower())
+                        .ToArray();
+
+                    Dictionary<string, SearchData> filteredDictionary = _searchData
+                        .Where(kv => search.All(term =>
+                            kv.Value.Name.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            kv.Value.Text.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            kv.Value.ToolTip.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            kv.Value.XMLReplacement.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0
+                        ))
+                        .ToDictionary(kv => kv.Key, kv => kv.Value);
+
+                    searchDataList = filteredDictionary.Values.ToList();
+                }
 
                 _ignoreUpdateToList = true;
                 lstResults.DataSource = null;
@@ -215,7 +335,7 @@ namespace Thetis
         private SearchData _oldSelectedSearchResult = null;
         private void lstResults_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_oldSelectedSearchResult != null)
+            if (_oldSelectedSearchResult != null && _oldSelectedSearchResult.Control != null)
             {
                 //clear old one
                 Common.HightlightControl(_oldSelectedSearchResult.Control, false, true);
@@ -225,7 +345,7 @@ namespace Thetis
             if (lstResults.SelectedItems.Count == 0 || _ignoreUpdateToList) return;
 
             SearchData sd = lstResults.SelectedItem as SearchData;
-            if (sd != null)
+            if (sd != null && sd.Control != null)
             {
                 // take me to your leader
                 showControl(sd.Control);
@@ -298,10 +418,6 @@ namespace Thetis
                 {
                     sText = sd.ToolTip;
                 }
-                //else if (!string.IsNullOrEmpty(sd.Text))
-                //{
-                //    sText = sd.Text;
-                //}
                 else
                 {
                     string sTextAddition = "";
@@ -312,25 +428,31 @@ namespace Thetis
                 highlight(txtSearch.Text.ToLower(), sText, listBox, e.Bounds.X, e.Bounds.Y, g);
                 g.DrawString(sText, listBox.Font, new SolidBrush(textColor), e.Bounds.X, yPos, _stringFormat);
             }
-
-            //g.DrawRectangle(Pens.Gray, e.Bounds.X, e.Bounds.Y, e.Bounds.Width - 1, e.Bounds.Height - 1);
         }
         private void highlight(string sSearchText, string sLineText, ListBox listBox, int xPos, int yPos, Graphics g)
         {
-            if (!_highlightReusults) return;
+            if (!_highlightResults) return;
 
-            List<Tuple<int, int>> lst = findSubstringOccurrences(sLineText.ToLower(), txtSearch.Text.ToLower());
-            foreach (Tuple<int, int> t in lst)
+            string[] terms = _keywords
+                ? sSearchText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                : new string[] { sSearchText };
+
+            foreach (string term in terms)
             {
-                float start = g.MeasureString(sLineText.Substring(0, t.Item1), listBox.Font, int.MaxValue, _stringFormat).Width;
-                float width = g.MeasureString(sLineText.Substring(t.Item1, txtSearch.Text.Length), listBox.Font, int.MaxValue, _stringFormat).Width;
-                Rectangle newRect = new Rectangle(xPos + (int)start, yPos, (int)(width), 20);
-                CompositingMode oldMode = g.CompositingMode;
-                g.CompositingMode = CompositingMode.SourceOver;
-                g.FillRectangle(new SolidBrush(Color.FromArgb(102,Color.Yellow)), newRect);
-                g.CompositingMode = oldMode;
+                foreach (Tuple<int, int> t in findSubstringOccurrences(sLineText.ToLower(), term.ToLower()))
+                {
+                    float start = g.MeasureString(sLineText.Substring(0, t.Item1), listBox.Font, int.MaxValue, _stringFormat).Width;
+                    float width = g.MeasureString(sLineText.Substring(t.Item1, term.Length), listBox.Font, int.MaxValue, _stringFormat).Width;
+                    Rectangle newRect = new Rectangle(xPos + (int)start, yPos, (int)width, 20);
+                    CompositingMode oldMode = g.CompositingMode;
+                    g.CompositingMode = CompositingMode.SourceOver;
+                    using (SolidBrush brush = new SolidBrush(Color.FromArgb(102, Color.Yellow)))
+                        g.FillRectangle(brush, newRect);
+                    g.CompositingMode = oldMode;
+                }
             }
         }
+
         private List<Tuple<int, int>> findSubstringOccurrences(string inputString, string searchString)
         {
             List<Tuple<int, int>> occurrences = new List<Tuple<int, int>>();
@@ -514,6 +636,8 @@ namespace Thetis
                 {
                     foreach (KeyValuePair<string, SearchData> kvp in _searchData)
                     {
+                        if (kvp.Value.Control == null) continue;
+
                         XmlElement elementElement = xmlDoc.CreateElement("element");
                         XmlElement controlElement = xmlDoc.CreateElement("control");
                         controlElement.InnerText = kvp.Key;
@@ -565,10 +689,22 @@ namespace Thetis
             lock (_objLocker)
             {
                 SearchData sd = lstResults.SelectedItem as SearchData;
-                _highlightReusults = chkHighlight.Checked;                
+                _highlightResults = chkHighlight.Checked;                
                 txtSearch_TextChanged(this, EventArgs.Empty);
                 if(sd != null)
                     lstResults.SelectedItem = sd; 
+            }
+        }
+
+        private void chkKeywords_CheckedChanged(object sender, EventArgs e)
+        {
+            lock (_objLocker)
+            {
+                SearchData sd = lstResults.SelectedItem as SearchData;
+                _keywords = chkKeywords.Checked;
+                txtSearch_TextChanged(this, EventArgs.Empty);
+                if (sd != null)
+                    lstResults.SelectedItem = sd;
             }
         }
     }

@@ -1,3 +1,4 @@
+# MW0LGE (c) 2025
 cmake_minimum_required(VERSION 3.15)
 project(libspecbleach C)
 
@@ -15,7 +16,8 @@ endif()
 
 # 4) Where your FFTW3f lives
 set(FFTW3F_ROOT
-    "C:/Users/Richie/Documents/Coding/Thetis/Project Files/lib/fftw_x64"
+    #"C:/Users/Richie/Documents/Coding/Thetis/Project Files/lib/fftw_x64"
+	"${CMAKE_CURRENT_LIST_DIR}/../../../fftw_x64"
     CACHE PATH "Path to your fftw_x64 folder (with fftw3.h, libfftw3f-3.lib, etc.)")
 
 # 5) Collect all your .c files

@@ -1,3 +1,4 @@
+# MW0LGE (c) 2025
 cmake_minimum_required(VERSION 3.15)
 project(rnnoise C)
 

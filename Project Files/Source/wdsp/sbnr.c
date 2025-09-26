@@ -36,10 +36,6 @@ https://github.com/lucianodato/libspecbleach
 
 #include "comm.h"
 
-//#if defined(linux) || defined(__APPLE__)
-//#include "calculus.h"
-//#endif
-
 void setSize_sbnr (SBNR a, int size)
 {
     _aligned_free(a->input);
@@ -81,7 +77,6 @@ void xsbnr (SBNR a, int pos)
 {
     if (a->run && pos == a->position)
     {
-        // initialize and process
         SpectralBleachParameters parameters =
               (SpectralBleachParameters){.residual_listen = false,
                                  .reduction_amount = a->reduction_amount,
@@ -91,7 +86,6 @@ void xsbnr (SBNR a, int pos)
                                  .noise_rescale = a->noise_rescale,
                                  .post_filter_threshold = a->post_filter_threshold};
 
-        // Load the parameters before doing the denoising.
         specbleach_adaptive_load_parameters(a->st, parameters);
 
         double* in = a->in;
@@ -100,7 +94,6 @@ void xsbnr (SBNR a, int pos)
         float* proc_out = a->output;
         float* to_proc = a->input;
 
-        // complex input to real input
         for (size_t i = 0; i < bs; i++)
         {
             to_proc[i] = (float)in[2 * i];

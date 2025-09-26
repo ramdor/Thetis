@@ -35,10 +35,6 @@ https://github.com/lucianodato/libspecbleach
 
 #include "rnnoise.h"
 
-//#if defined(linux) || defined(__APPLE__)
-//#include "calculus.h"
-//#endif
-
 PORT
 void SetRXARNNRRun (int channel, int run)
 {
@@ -47,7 +43,8 @@ void SetRXARNNRRun (int channel, int run)
 	{
 		RXAbp1Check (channel, rxa[channel].amd.p->run, rxa[channel].snba.p->run, 
                              rxa[channel].emnr.p->run, rxa[channel].anf.p->run, rxa[channel].anr.p->run,
-                             run, rxa[channel].sbnr.p->run);
+                             run, rxa[channel].sbnr.p->run); // NR3 + NR4 support
+
 		EnterCriticalSection (&ch[channel].csDSP);
 		a->run = run;
 		RXAbp1Set (channel);
@@ -57,6 +54,7 @@ void SetRXARNNRRun (int channel, int run)
 
 void setSize_rnnr(RNNR a, int size)
 {
+    _aligned_free(a->output_buffer);
     a->buffer_size = size;
     a->output_buffer = (float*)malloc0(a->buffer_size * sizeof(float));
 }
@@ -74,11 +72,11 @@ RNNR create_rnnr (int run, int position, double *in, double *out)
     a->run = run;
     a->position = position;
     a->st = rnnoise_create(NULL);
-    a->frame_size = rnnoise_get_frame_size();// 2048;
+    a->frame_size = rnnoise_get_frame_size();
     a->in = in;
     a->out = out;
     a->buffer_size = 64;
-    a->gain = 5000000.0;// 500000.0; //large gain factor, seems to change with model
+    a->gain = 5000000.0;// 500000.0; // large gain factor, seems to change with model
 
     a->input_queue_head = NULL;
     a->input_queue_tail = NULL;
@@ -88,6 +86,7 @@ RNNR create_rnnr (int run, int position, double *in, double *out)
     a->output_queue_tail = NULL;
     a->output_queue_count = 0;
 
+    a->output_buffer = (float*)malloc0(a->buffer_size * sizeof(float));
     a->to_process_buffer = (float*)malloc0(a->frame_size * sizeof(float));
     a->processed_output_buffer = (float*)malloc0(a->frame_size * sizeof(float));
 
@@ -165,11 +164,11 @@ void xrnnr (RNNR a, int pos)
 
         double* in = a->in;
         double* out = a->out;
-        float     gain = a->gain;
-        int       bs = a->buffer_size;
-        int       fs = a->frame_size;
-        float* to_proc = a->to_process_buffer;
-        float* proc_out = a->processed_output_buffer;
+        float   gain = a->gain;
+        int     bs = a->buffer_size;
+        int     fs = a->frame_size;
+        float*  to_proc = a->to_process_buffer;
+        float*  proc_out = a->processed_output_buffer;
 
         for (int i = 0; i < bs; i++) 
         {
@@ -191,7 +190,7 @@ void xrnnr (RNNR a, int pos)
         if (a->output_queue_count >= bs)
         {
             output_dequeue_bulk(a, a->output_buffer, bs);
-            for (int i = 0; i < a->buffer_size; i++)
+            for (int i = 0; i < bs; i++)
             {
                 out[2 * i] = (double)a->output_buffer[i];
                 out[2 * i + 1] = 0;
@@ -206,34 +205,6 @@ void xrnnr (RNNR a, int pos)
     {
         memcpy(a->out, a->in, a->buffer_size * sizeof(complex));
     }
-
-    //if (a->run && pos == a->position)
-    //{
-    //    for (size_t i = 0; i < a->buffer_size; i++) {
-    //        a->input[i] = (float) a->in[2*i];
-    //    }
-
-    //    //rnnoise needs frames of minimum of 480 samples, which for our puposes means that we will need a dsp filter size of at least 512
-    //    //the remainer will be buffered in rnnoise to be used with the next block
-    //    //buffered_rnnoise_process_frame will return -1 if buffer size is not large enough
-    //    //NOTE: this is using a modified version of rn noise
-    //    float prob = buffered_rnnoise_process_frame(a->st, (float *)a->output, (float *)a->input, a->buffer_size);
-
-    //    if (prob > -1) 
-    //    {
-    //        for (size_t i = 0; i < a->buffer_size; i++) {
-    //            a->out[2 * i] = (double)a->output[i];
-    //            a->out[2 * i + 1] = 0.0;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        memcpy(a->out, a->in, a->buffer_size * sizeof(complex));
-    //    }
-    //}
-    //else if (a->out != a->in) {
-    //    memcpy (a->out, a->in, a->buffer_size * sizeof (complex));
-    //}
 }
 
 void destroy_rnnr (RNNR a)

@@ -6,14 +6,18 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
-## v2.10.3.11 - Dev Change Log
+## v2.10.3.11 - Change Log
 - [add] two new noise reduction methods added, NR3 and NR4. When starting up this version for the first time if NR was enabled, will now be set to off. Only support for nr/nr2 is available through cat and other systems that use cat such as midi. Settings in the normal NR settings page of Setup
-	NR3 - RNnoise - A noise suppression library based on a recurrent neural network. https://arxiv.org/pdf/1709.08243.pdf  https://gitlab.xiph.org/xiph/rnnoise
-	NR4 - SpectrumBleach - libspecbleach - This library is based on the algorithms that were used in noise-repellent. https://github.com/lucianodato/noise-repellent/wiki
-- [add] cat commands ZZNE and ZZNF (rx1+rx2) added to set/get NR config for each receiver. eg ZZNE; will return 0 if off, or 3 if NR3 selected. ZZNE,4; will select NR4
+    NR3 - RNnoise - A noise suppression library based on a recurrent neural network. Latest code here - https://gitlab.xiph.org/xiph/rnnoise . More info here - https://arxiv.org/pdf/1709.08243.pdf  
+    NR4 - SpectrumBleach - libspecbleach - This library is based on the algorithms that were used in noise-repellent. Source here - https://github.com/lucianodato/libspecbleach . More info here - https://github.com/lucianodato/noise-repellent/wiki
+- [add] cat commands ZZNE and ZZNF (rx1+rx2) added to set/get NR config for each receiver. eg ZZNE; will return 0 if off, or 3 if NR3 selected. ZZNE4; will select NR4
 - [add] midi commands added to select NR3 NR4
+- [add] cat commands ZZNG and ZZNH (rx1+rx2) added to set/get NR4 reduction amount as a percentage. eg ZZNG; will return 000 for 0dB, or 100 for 20dB. ZZNG050; will set NR4 reduction to 10dB. Note, must pad to 3 000
+- [add] midi commands added to assign rx1/rx2 NR4 reduction amount to a knob/slider
 - [add] override colour for flashing spot
-- [change] updated PortAudio from the Release 19.7.0 to the latest code as of 29/06/25. Version number has not changed. Last commit was 13/06/25 #87e35e7
+- [add] keyword option added to finder. It will split the search by the spaces and treat those as keywords. It will return any entry where all of those keywords exist
+- [add] CATstructs.xml data added to finder. You can also use the search term 'catcommand' to just return cat commands and especially useful with the keywords option
+- [change] updated PortAudio from existing Release 19.7.0 to the latest code as of 29/06/25. Version number has not changed. Last commit was 13/06/25 #87e35e7 in the version now used
 - [change] for new TCI spots without the [json] tag they will always flash for 2 mins if the option is selected. If the spot comes in again and already exists in the display then it will not flash if this 2 min has elapsed
 - [change] spot time is not updated if another spot arrives with the same data and that spot is currently being displayed
 

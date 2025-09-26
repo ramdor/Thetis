@@ -925,6 +925,12 @@ namespace Thetis
                 }
             }
         }
+        //radio server
+        public static int DisplayWidth
+        {
+            get { return displayTargetWidth; }
+        }
+        //
         public static Size TargetSize
         {
             get
