@@ -47,11 +47,15 @@
 */
 //#define PA_WIN_DS_USE_WMME_TIMER
 
+#if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0400)
+    #undef _WIN32_WINNT
+    #define _WIN32_WINNT 0x0400 /* required to get waitable timer APIs */
+#endif
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h> /* strlen() */
 
-#define _WIN32_WINNT 0x0400 /* required to get waitable timer APIs */
 #include <initguid.h> /* make sure ds guids get defined */
 #include <windows.h>
 #include <objbase.h>
@@ -83,11 +87,13 @@
 #include "pa_process.h"
 #include "pa_debugprint.h"
 
+#include "pa_win_util.h"
 #include "pa_win_ds.h"
 #include "pa_win_ds_dynlink.h"
 #include "pa_win_waveformat.h"
 #include "pa_win_wdmks_utils.h"
 #include "pa_win_coinitialize.h"
+#include "pa_win_version.h"
 
 #if (defined(WIN32) && (defined(_MSC_VER) && (_MSC_VER >= 1200))) /* MSC version 6 and above */
 #pragma comment( lib, "dsound.lib" )
@@ -100,7 +106,7 @@
 
 #if !defined(__CYGWIN__) && !defined(UNDER_CE)
 #define CREATE_THREAD (HANDLE)_beginthreadex
-#undef CLOSE_THREAD_HANDLE /* as per documentation we don't call CloseHandle on a thread created with _beginthreadex */
+#define CLOSE_THREAD_HANDLE CloseHandle /* NOTE: _beginthreadex requires handle to be closed with CloseHandle */
 #define PA_THREAD_FUNC static unsigned WINAPI
 #define PA_THREAD_ID unsigned
 #else
@@ -203,9 +209,14 @@ static signed long GetStreamReadAvailable( PaStream* stream );
 static signed long GetStreamWriteAvailable( PaStream* stream );
 
 
-/* FIXME: should convert hr to a string */
+#if _WIN32_WINNT >= 0x0602 // Windows 8 and above
+#define PA_DS_SET_LAST_DIRECTSOUND_ERROR( hr ) \
+    PaWinUtil_SetLastSystemErrorInfo( paDirectSound, hr )
+#else
+/* FIXME: should use DXGetErrorString/DXGetErrorDescription for Windows 7 and below */
 #define PA_DS_SET_LAST_DIRECTSOUND_ERROR( hr ) \
     PaUtil_SetLastHostErrorInfo( paDirectSound, hr, "DirectSound error" )
+#endif
 
 /************************************************* DX Prototypes **********/
 static BOOL CALLBACK CollectGUIDsProcW(LPGUID lpGUID,
@@ -307,7 +318,6 @@ typedef struct PaWinDsStream
 #endif
     HANDLE           processingThread;
     PA_THREAD_ID     processingThreadId;
-    HANDLE           processingThreadCompleted;
 #endif
 
 } PaWinDsStream;
@@ -318,43 +328,26 @@ typedef struct PaWinDsStream
  */
 static double PaWinDS_GetMinSystemLatencySeconds( void )
 {
-/*
-NOTE: GetVersionEx() is deprecated as of Windows 8.1 and can not be used to reliably detect
-versions of Windows higher than Windows 8 (due to manifest requirements for reporting higher versions).
-Microsoft recommends switching to VerifyVersionInfo (available on Win 2k and later), however GetVersionEx
-is faster, for now we just disable the deprecation warning.
-See: https://msdn.microsoft.com/en-us/library/windows/desktop/ms724451(v=vs.85).aspx
-See: http://www.codeproject.com/Articles/678606/Part-Overcoming-Windows-s-deprecation-of-GetVe
-*/
-#pragma warning (disable : 4996) /* use of GetVersionEx */
-
     double minLatencySeconds;
     /* Set minimal latency based on whether NT or other OS.
      * NT has higher latency.
      */
+    PaOsVersion version = PaWinUtil_GetOsVersion();
 
-    OSVERSIONINFO osvi;
-    osvi.dwOSVersionInfoSize = sizeof( osvi );
-    GetVersionEx( &osvi );
-    DBUG(("PA - PlatformId = 0x%x\n", osvi.dwPlatformId ));
-    DBUG(("PA - MajorVersion = 0x%x\n", osvi.dwMajorVersion ));
-    DBUG(("PA - MinorVersion = 0x%x\n", osvi.dwMinorVersion ));
-    /* Check for NT */
-    if( (osvi.dwMajorVersion == 4) && (osvi.dwPlatformId == 2) )
-    {
-        minLatencySeconds = PA_DS_WIN_NT_DEFAULT_LATENCY_;
-    }
-    else if(osvi.dwMajorVersion >= 5)
-    {
-        minLatencySeconds = PA_DS_WIN_WDM_DEFAULT_LATENCY_;
-    }
-    else
+    if(version <= paOsVersionWindows9x)
     {
         minLatencySeconds = PA_DS_WIN_9X_DEFAULT_LATENCY_;
     }
-    return minLatencySeconds;
+    else if(version == paOsVersionWindowsNT4)
+    {
+        minLatencySeconds = PA_DS_WIN_NT_DEFAULT_LATENCY_;
+    }
+    else if(version >= paOsVersionWindows2000)
+    {
+        minLatencySeconds = PA_DS_WIN_WDM_DEFAULT_LATENCY_;
+    }
 
-#pragma warning (default : 4996)
+    return minLatencySeconds;
 }
 
 
@@ -410,7 +403,7 @@ static char *DuplicateDeviceNameString( PaUtilAllocationGroup *allocations, cons
     {
         size_t len = WideCharToMultiByte(CP_UTF8, 0, src, -1, NULL, 0, NULL, NULL);
 
-        result = (char*)PaUtil_GroupAllocateMemory( allocations, (long)(len + 1) );
+        result = (char*)PaUtil_GroupAllocateZeroInitializedMemory( allocations, (long)(len + 1) );
         if( result ) {
             if (WideCharToMultiByte(CP_UTF8, 0, src, -1, result, (int)len, NULL, NULL) == 0) {
                 result = 0;
@@ -419,7 +412,7 @@ static char *DuplicateDeviceNameString( PaUtilAllocationGroup *allocations, cons
     }
     else
     {
-        result = (char*)PaUtil_GroupAllocateMemory( allocations, 1 );
+        result = (char*)PaUtil_GroupAllocateZeroInitializedMemory( allocations, 1 );
         if( result )
             result[0] = '\0';
     }
@@ -588,7 +581,7 @@ static void *DuplicateWCharString( PaUtilAllocationGroup *allocations, wchar_t *
     wchar_t *result;
 
     len = wcslen( source );
-    result = (wchar_t*)PaUtil_GroupAllocateMemory( allocations, (long) ((len+1) * sizeof(wchar_t)) );
+    result = (wchar_t*)PaUtil_GroupAllocateZeroInitializedMemory( allocations, (long) ((len+1) * sizeof(wchar_t)) );
     wcscpy( result, source );
     return result;
 }
@@ -1189,14 +1182,16 @@ PaError PaWinDs_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiInde
     deviceNamesAndGUIDs.inputNamesAndGUIDs.items = NULL;
     deviceNamesAndGUIDs.outputNamesAndGUIDs.items = NULL;
 
-    winDsHostApi = (PaWinDsHostApiRepresentation*)PaUtil_AllocateMemory( sizeof(PaWinDsHostApiRepresentation) );
+    winDsHostApi = (PaWinDsHostApiRepresentation*)
+            PaUtil_AllocateZeroInitializedMemory(sizeof(PaWinDsHostApiRepresentation) );
     if( !winDsHostApi )
     {
         result = paInsufficientMemory;
         goto error;
     }
 
-    memset( winDsHostApi, 0, sizeof(PaWinDsHostApiRepresentation) ); /* ensure all fields are zeroed. especially winDsHostApi->allocations */
+    /* NOTE: we depend on PaUtil_AllocateZeroInitializedMemory() ensuring that all
+       fields are set to zero. especially winDsHostApi->allocations */
 
     result = PaWinUtil_CoInitialize( paDirectSound, &winDsHostApi->comInitializationResult );
     if( result != paNoError )
@@ -1260,7 +1255,7 @@ PaError PaWinDs_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiInde
     if( deviceCount > 0 )
     {
         /* allocate array for pointers to PaDeviceInfo structs */
-        (*hostApi)->deviceInfos = (PaDeviceInfo**)PaUtil_GroupAllocateMemory(
+        (*hostApi)->deviceInfos = (PaDeviceInfo**)PaUtil_GroupAllocateZeroInitializedMemory(
                 winDsHostApi->allocations, sizeof(PaDeviceInfo*) * deviceCount );
         if( !(*hostApi)->deviceInfos )
         {
@@ -1269,7 +1264,7 @@ PaError PaWinDs_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiInde
         }
 
         /* allocate all PaDeviceInfo structs in a contiguous block */
-        deviceInfoArray = (PaWinDsDeviceInfo*)PaUtil_GroupAllocateMemory(
+        deviceInfoArray = (PaWinDsDeviceInfo*)PaUtil_GroupAllocateZeroInitializedMemory(
                 winDsHostApi->allocations, sizeof(PaWinDsDeviceInfo) * deviceCount );
         if( !deviceInfoArray )
         {
@@ -1729,7 +1724,7 @@ error:
 
 static void CalculateBufferSettings( unsigned long *hostBufferSizeFrames,
                                     unsigned long *pollingPeriodFrames,
-                                    int isFullDuplex,
+                                    int hasInput, int hasOutput,
                                     unsigned long suggestedInputLatencyFrames,
                                     unsigned long suggestedOutputLatencyFrames,
                                     double sampleRate, unsigned long userFramesPerBuffer )
@@ -1758,7 +1753,7 @@ static void CalculateBufferSettings( unsigned long *hostBufferSizeFrames,
     else
     {
         unsigned long targetBufferingLatencyFrames = suggestedInputLatencyFrames;
-        if( isFullDuplex )
+        if( hasInput && hasOutput )
         {
             /* In full duplex streams we know that the buffer adapter adds userFramesPerBuffer
                extra fixed latency. so we subtract it here as a fixed latency before computing
@@ -1794,6 +1789,21 @@ static void CalculateBufferSettings( unsigned long *hostBufferSizeFrames,
         {
             *pollingPeriodFrames = maximumPollingPeriodFrames;
         }
+    }
+
+    /* In some (most?) systems, DirectSound has an odd limitation where it always uses
+       a fixed 31.25 ms granularity for the read cursor, regardless of parameters.
+       This in turn means that if we allocate an input buffer that is less than 31.25 ms,
+       the read cursor will stay stuck at zero. See https://github.com/PortAudio/portaudio/issues/775
+       To work around this problem, ensure that the input host buffer is large enough
+       for at least two 31.25 ms buffer "halves".
+
+       On pre-Vista Windows, we don't do this because DirectSound is implemented very
+       differently, and is therefore unlikely to suffer from the same issue.
+    */
+    if( hasInput && PaWinUtil_GetOsVersion() >= paOsVersionWindowsVistaServer2008 )
+    {
+        *hostBufferSizeFrames = max( *hostBufferSizeFrames, 2 * 0.03125 * sampleRate );
     }
 }
 
@@ -2006,14 +2016,15 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
         return paInvalidFlag; /* unexpected platform specific flag */
 
 
-    stream = (PaWinDsStream*)PaUtil_AllocateMemory( sizeof(PaWinDsStream) );
+    stream = (PaWinDsStream*)PaUtil_AllocateZeroInitializedMemory( sizeof(PaWinDsStream) );
     if( !stream )
     {
         result = paInsufficientMemory;
         goto error;
     }
 
-    memset( stream, 0, sizeof(PaWinDsStream) ); /* initialize all stream variables to 0 */
+    /* NOTE: we depend on PaUtil_AllocateZeroInitializedMemory() ensuring that all
+       stream fields are set to zero. */
 
     if( streamCallback )
     {
@@ -2032,15 +2043,13 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
 
     PaUtil_InitializeCpuLoadMeasurer( &stream->cpuLoadMeasurer, sampleRate );
 
+    /* These are all the formats that can be represented in WAVEFORMATEX */
+    const PaSampleFormat nativeFormats = paUInt8 | paInt16 | paInt24 | paInt32 | paFloat32;
 
     if( inputParameters )
     {
-        /* IMPLEMENT ME - establish which  host formats are available */
-        PaSampleFormat nativeInputFormats = paInt16;
-        /* PaSampleFormat nativeFormats = paUInt8 | paInt16 | paInt24 | paInt32 | paFloat32; */
-
         hostInputSampleFormat =
-            PaUtil_SelectClosestAvailableFormat( nativeInputFormats, inputParameters->sampleFormat );
+            PaUtil_SelectClosestAvailableFormat( nativeFormats, inputParameters->sampleFormat );
     }
     else
     {
@@ -2049,12 +2058,8 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
 
     if( outputParameters )
     {
-        /* IMPLEMENT ME - establish which  host formats are available */
-        PaSampleFormat nativeOutputFormats = paInt16;
-        /* PaSampleFormat nativeOutputFormats = paUInt8 | paInt16 | paInt24 | paInt32 | paFloat32; */
-
         hostOutputSampleFormat =
-            PaUtil_SelectClosestAvailableFormat( nativeOutputFormats, outputParameters->sampleFormat );
+            PaUtil_SelectClosestAvailableFormat( nativeFormats, outputParameters->sampleFormat );
     }
     else
     {
@@ -2101,16 +2106,6 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
         }
 #endif
 
-#ifndef PA_WIN_DS_USE_WMME_TIMER
-        stream->processingThreadCompleted = CreateEvent( NULL, /* bManualReset = */ TRUE, /* bInitialState = */ FALSE, NULL );
-        if( stream->processingThreadCompleted == NULL )
-        {
-            result = paUnanticipatedHostError;
-            PA_DS_SET_LAST_DIRECTSOUND_ERROR( GetLastError() );
-            goto error;
-        }
-#endif
-
         /* set up i/o parameters */
 
         if( userRequestedHostInputBufferSizeFrames > 0 || userRequestedHostOutputBufferSizeFrames > 0 )
@@ -2129,7 +2124,8 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
         else
         {
             CalculateBufferSettings( (unsigned long*)&stream->hostBufferSizeFrames, &pollingPeriodFrames,
-                    /* isFullDuplex = */ (inputParameters && outputParameters),
+                    /* hasInput = */ !!inputParameters,
+                    /* hasOutput = */ !!outputParameters,
                     suggestedInputLatencyFrames,
                     suggestedOutputLatencyFrames,
                     sampleRate, framesPerBuffer );
@@ -2301,11 +2297,6 @@ error:
 #ifdef PA_WIN_DS_USE_WAITABLE_TIMER_OBJECT
         if( stream->waitableTimer != NULL )
             CloseHandle( stream->waitableTimer );
-#endif
-
-#ifndef PA_WIN_DS_USE_WMME_TIMER
-        if( stream->processingThreadCompleted != NULL )
-            CloseHandle( stream->processingThreadCompleted );
 #endif
 
         if( stream->pDirectSoundOutputBuffer )
@@ -2794,8 +2785,6 @@ PA_THREAD_FUNC ProcessingThreadProc( void *pArg )
     }
 #endif /* PA_WIN_DS_USE_WAITABLE_TIMER_OBJECT */
 
-    SetEvent( stream->processingThreadCompleted );
-
     return 0;
 }
 
@@ -2815,10 +2804,6 @@ static PaError CloseStream( PaStream* s )
 #ifdef PA_WIN_DS_USE_WAITABLE_TIMER_OBJECT
     if( stream->waitableTimer != NULL )
         CloseHandle( stream->waitableTimer );
-#endif
-
-#ifndef PA_WIN_DS_USE_WMME_TIMER
-    CloseHandle( stream->processingThreadCompleted );
 #endif
 
     // Cleanup the sound buffers
@@ -2914,10 +2899,6 @@ static PaError StartStream( PaStream *s )
     PaUtil_ResetBufferProcessor( &stream->bufferProcessor );
 
     ResetEvent( stream->processingCompleted );
-
-#ifndef PA_WIN_DS_USE_WMME_TIMER
-    ResetEvent( stream->processingThreadCompleted );
-#endif
 
     if( stream->bufferProcessor.inputChannelCount > 0 )
     {
@@ -3060,9 +3041,7 @@ error:
 #ifndef PA_WIN_DS_USE_WMME_TIMER
     if( stream->processingThread )
     {
-#ifdef CLOSE_THREAD_HANDLE
         CLOSE_THREAD_HANDLE( stream->processingThread ); /* Delete thread. */
-#endif
         stream->processingThread = NULL;
     }
 #endif
@@ -3098,13 +3077,11 @@ static PaError StopStream( PaStream *s )
 #else
     if( stream->processingThread )
     {
-        if( WaitForSingleObject( stream->processingThreadCompleted, 30*100 ) == WAIT_TIMEOUT )
+        if( WaitForSingleObject( stream->processingThread, 30*100 ) == WAIT_TIMEOUT )
             return paUnanticipatedHostError;
 
-#ifdef CLOSE_THREAD_HANDLE
-        CloseHandle( stream->processingThread ); /* Delete thread. */
+        CLOSE_THREAD_HANDLE( stream->processingThread ); /* Delete thread. */
         stream->processingThread = NULL;
-#endif
 
     }
 #endif

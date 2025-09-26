@@ -32,6 +32,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Timers;
 using System.Globalization;
+using System.Web.UI;
 
 namespace Thetis
 {
@@ -62,6 +63,7 @@ namespace Thetis
 
             public bool previously_highlighted;
             public bool flashing;
+            public DateTime flash_start_time;
 
             public bool[] Visible;
             public SizeF Size;
@@ -70,21 +72,23 @@ namespace Thetis
 
             public smSpot()
             {
+                DateTime now = DateTime.UtcNow;
                 callsign = "";
                 mode = DSPMode.FIRST;
                 frequencyHZ = 0;
                 colour = Color.White;
-                timeAdded = DateTime.UtcNow;
+                timeAdded = now;
                 additionalText = "";
                 spotter = "";
                 heading = -1;
                 continent = "";
                 country = "";
-                utc_spot_time = DateTime.UtcNow;
+                utc_spot_time = now;
                 IsSWL = false;
                 SwlSecondsToLive = 0;
                 previously_highlighted = false;
                 flashing = false;
+                flash_start_time = now;
             }
             public void BrowseQRZ()
             {
@@ -290,7 +294,7 @@ namespace Thetis
                 SwlSecondsToLive = time_to_live,
 
                 previously_highlighted = false,
-                flashing = false
+                flashing = (DateTime.UtcNow - spotted_time).TotalSeconds <= 120
             };
 
             if (_replaceOwnCallAppearance && spot.callsign == _replaceCall)
@@ -323,7 +327,25 @@ namespace Thetis
             {
                 smSpot exists = _spots.Find(o => (o.callsign == spot.callsign) && (Math.Abs(o.frequencyHZ - frequencyHz) <= 5000));
                 if (exists != null)
+                {
+                    spot.flash_start_time = exists.flash_start_time;
+                    spot.flashing = exists.flashing;
+
+                    //if the data is the same, use the original spot time
+                    if(spot.mode == exists.mode &&
+                        spot.frequencyHZ == exists.frequencyHZ &&
+                        spot.colour == exists.colour &&
+                        spot.additionalText == exists.additionalText &&
+                        spot.spotter == exists.spotter &&
+                        spot.heading == exists.heading &&
+                        spot.continent == exists.continent &&
+                        spot.country == exists.country)
+                    { 
+                        spot.utc_spot_time = exists.utc_spot_time;
+                    }
+
                     _spots.Remove(exists);
+                }
 
                 // Limit to max
                 int count_swl = _spots.Count(o => o.IsSWL);

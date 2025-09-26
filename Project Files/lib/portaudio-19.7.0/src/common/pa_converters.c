@@ -1,5 +1,5 @@
 /*
- * $Id: pa_converters.c 1748 2011-09-01 22:08:32Z philburk $
+ * $Id$
  * Portable Audio I/O Library sample conversion mechanism
  *
  * Based on the Open Source API proposed by Ross Bencina
@@ -25,40 +25,38 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
- /*
-  * The text above constitutes the entire PortAudio license; however,
-  * the PortAudio community also makes the following non-binding requests:
-  *
-  * Any person wishing to distribute modifications to the Software is
-  * requested to send the modifications to the original developer so that
-  * they can be incorporated into the canonical version. It is also
-  * requested that these non-binding requests be included along with the
-  * license above.
-  */
+/*
+ * The text above constitutes the entire PortAudio license; however,
+ * the PortAudio community also makes the following non-binding requests:
+ *
+ * Any person wishing to distribute modifications to the Software is
+ * requested to send the modifications to the original developer so that
+ * they can be incorporated into the canonical version. It is also
+ * requested that these non-binding requests be included along with the
+ * license above.
+ */
 
-  /** @file
-   @ingroup common_src
+/** @file
+ @ingroup common_src
 
-   @brief Conversion function implementations.
+ @brief Conversion function implementations.
 
-   If the C9x function lrintf() is available, define PA_USE_C99_LRINTF to use it
+ @todo Consider whether functions which dither but don't clip should exist,
+ V18 automatically enabled clipping whenever dithering was selected. Perhaps
+ we should do the same.
+    see: "require clipping for dithering sample conversion functions?"
+    http://www.portaudio.com/trac/ticket/112
 
-   @todo Consider whether functions which dither but don't clip should exist,
-   V18 automatically enabled clipping whenever dithering was selected. Perhaps
-   we should do the same.
-      see: "require clipping for dithering sample conversion functions?"
-      http://www.portaudio.com/trac/ticket/112
+ @todo implement the converters marked IMPLEMENT ME: Int32_To_Int24_Dither,
+ Int32_To_UInt8_Dither, Int24_To_Int16_Dither, Int24_To_Int8_Dither,
+ Int24_To_UInt8_Dither, Int16_To_Int8_Dither, Int16_To_UInt8_Dither
+    see: "some conversion functions are not implemented in pa_converters.c"
+    http://www.portaudio.com/trac/ticket/35
 
-   @todo implement the converters marked IMPLEMENT ME: Int32_To_Int24_Dither,
-   Int32_To_UInt8_Dither, Int24_To_Int16_Dither, Int24_To_Int8_Dither,
-   Int24_To_UInt8_Dither, Int16_To_Int8_Dither, Int16_To_UInt8_Dither
-      see: "some conversion functions are not implemented in pa_converters.c"
-      http://www.portaudio.com/trac/ticket/35
-
-   @todo review the converters marked REVIEW: Float32_To_Int32,
-   Float32_To_Int32_Dither, Float32_To_Int32_Clip, Float32_To_Int32_DitherClip,
-   Int32_To_Int16_Dither, Int32_To_Int8_Dither, Int16_To_Int32
-  */
+ @todo review the converters marked REVIEW: Float32_To_Int32,
+ Float32_To_Int32_Dither, Float32_To_Int32_Clip, Float32_To_Int32_DitherClip,
+ Int32_To_Int16_Dither, Int32_To_Int8_Dither, Int16_To_Int32
+*/
 
 
 #include "pa_converters.h"
@@ -68,14 +66,14 @@
 
 
 PaSampleFormat PaUtil_SelectClosestAvailableFormat(
-    PaSampleFormat availableFormats, PaSampleFormat format)
+        PaSampleFormat availableFormats, PaSampleFormat format )
 {
     PaSampleFormat result;
 
     format &= ~paNonInterleaved;
     availableFormats &= ~paNonInterleaved;
 
-    if ((format & availableFormats) == 0)
+    if( (format & availableFormats) == 0 )
     {
         /* NOTE: this code depends on the sample format constants being in
             descending order of quality - ie best quality is 0
@@ -83,7 +81,7 @@ PaSampleFormat PaUtil_SelectClosestAvailableFormat(
             known constants conform to that requirement.
         */
 
-        if (format != 0x01)
+        if( format != 0x01 )
         {
             /* scan for better formats */
             result = format;
@@ -98,7 +96,7 @@ PaSampleFormat PaUtil_SelectClosestAvailableFormat(
             result = 0;
         }
 
-        if (result == 0) {
+        if( result == 0 ){
             /* scan for worse formats */
             result = format;
             do
@@ -107,7 +105,7 @@ PaSampleFormat PaUtil_SelectClosestAvailableFormat(
             }
             while( (result & availableFormats) == 0 && result != paCustomFormat );
 
-            if ((result & availableFormats) == 0)
+            if( (result & availableFormats) == 0 )
                 result = paSampleFormatNotSupported;
         }
 
@@ -119,7 +117,7 @@ PaSampleFormat PaUtil_SelectClosestAvailableFormat(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 #define PA_SELECT_FORMAT_( format, float64, float32, int32, int24, int16, int8, uint8 ) \
     switch( format & ~paNonInterleaved ){                                      \
 	case paFloat64:                                                            \
@@ -177,81 +175,81 @@ PaSampleFormat PaUtil_SelectClosestAvailableFormat(
 
 /* -------------------------------------------------------------------------- */
 
-PaUtilConverter* PaUtil_SelectConverter(PaSampleFormat sourceFormat,
-    PaSampleFormat destinationFormat, PaStreamFlags flags)
+PaUtilConverter* PaUtil_SelectConverter( PaSampleFormat sourceFormat,
+        PaSampleFormat destinationFormat, PaStreamFlags flags )
 {
-    PA_SELECT_FORMAT_(sourceFormat,
-        /* paFloat64: */
-        PA_SELECT_FORMAT_(destinationFormat,
-            /* paFloat64: */        PA_UNITY_CONVERSION_(64),
-            /* paFloat32: */        PA_USE_CONVERTER_(Float64, Float32),
-            /* paInt32: */          PA_USE_CONVERTER_(Float64, Int32),
-            /* paInt24: */          PA_USE_CONVERTER_(Float64, Int24),
-            /* paInt16: */          PA_USE_CONVERTER_(Float64, Int16),
-            /* paInt8: */           PA_USE_CONVERTER_(Float64, Int8),
-            /* paUInt8: */          PA_USE_CONVERTER_(Float64, UInt8)
-        ),
-        /* paFloat32: */
-        PA_SELECT_FORMAT_(destinationFormat,
-            /* paFloat64: */        PA_USE_CONVERTER_(Float32, Float64),
-            /* paFloat32: */        PA_UNITY_CONVERSION_(32),
-            /* paInt32: */          PA_SELECT_CONVERTER_DITHER_CLIP_(flags, Float32, Int32),
-            /* paInt24: */          PA_SELECT_CONVERTER_DITHER_CLIP_(flags, Float32, Int24),
-            /* paInt16: */          PA_SELECT_CONVERTER_DITHER_CLIP_(flags, Float32, Int16),
-            /* paInt8: */           PA_SELECT_CONVERTER_DITHER_CLIP_(flags, Float32, Int8),
-            /* paUInt8: */          PA_SELECT_CONVERTER_DITHER_CLIP_(flags, Float32, UInt8)
-        ),
-        /* paInt32: */
-        PA_SELECT_FORMAT_(destinationFormat,
-            /* paFloat64: */        PA_USE_CONVERTER_(Int32, Float64),
-            /* paFloat32: */        PA_USE_CONVERTER_(Int32, Float32),
-            /* paInt32: */          PA_UNITY_CONVERSION_(32),
-            /* paInt24: */          PA_SELECT_CONVERTER_DITHER_(flags, Int32, Int24),
-            /* paInt16: */          PA_SELECT_CONVERTER_DITHER_(flags, Int32, Int16),
-            /* paInt8: */           PA_SELECT_CONVERTER_DITHER_(flags, Int32, Int8),
-            /* paUInt8: */          PA_SELECT_CONVERTER_DITHER_(flags, Int32, UInt8)
-        ),
-        /* paInt24: */
-        PA_SELECT_FORMAT_(destinationFormat,
-            /* paFloat64: */        PA_USE_CONVERTER_(Int24, Float64),
-            /* paFloat32: */        PA_USE_CONVERTER_(Int24, Float32),
-            /* paInt32: */          PA_USE_CONVERTER_(Int24, Int32),
-            /* paInt24: */          PA_UNITY_CONVERSION_(24),
-            /* paInt16: */          PA_SELECT_CONVERTER_DITHER_(flags, Int24, Int16),
-            /* paInt8: */           PA_SELECT_CONVERTER_DITHER_(flags, Int24, Int8),
-            /* paUInt8: */          PA_SELECT_CONVERTER_DITHER_(flags, Int24, UInt8)
-        ),
-        /* paInt16: */
-        PA_SELECT_FORMAT_(destinationFormat,
-            /* paFloat64: */        PA_USE_CONVERTER_(Int16, Float64),
-            /* paFloat32: */        PA_USE_CONVERTER_(Int16, Float32),
-            /* paInt32: */          PA_USE_CONVERTER_(Int16, Int32),
-            /* paInt24: */          PA_USE_CONVERTER_(Int16, Int24),
-            /* paInt16: */          PA_UNITY_CONVERSION_(16),
-            /* paInt8: */           PA_SELECT_CONVERTER_DITHER_(flags, Int16, Int8),
-            /* paUInt8: */          PA_SELECT_CONVERTER_DITHER_(flags, Int16, UInt8)
-        ),
-        /* paInt8: */
-        PA_SELECT_FORMAT_(destinationFormat,
-            /* paFloat64: */        PA_USE_CONVERTER_(Int8, Float64),
-            /* paFloat32: */        PA_USE_CONVERTER_(Int8, Float32),
-            /* paInt32: */          PA_USE_CONVERTER_(Int8, Int32),
-            /* paInt24: */          PA_USE_CONVERTER_(Int8, Int24),
-            /* paInt16: */          PA_USE_CONVERTER_(Int8, Int16),
-            /* paInt8: */           PA_UNITY_CONVERSION_(8),
-            /* paUInt8: */          PA_USE_CONVERTER_(Int8, UInt8)
-        ),
-        /* paUInt8: */
-        PA_SELECT_FORMAT_(destinationFormat,
-            /* paFloat64: */        PA_USE_CONVERTER_(UInt8, Float64),
-            /* paFloat32: */        PA_USE_CONVERTER_(UInt8, Float32),
-            /* paInt32: */          PA_USE_CONVERTER_(UInt8, Int32),
-            /* paInt24: */          PA_USE_CONVERTER_(UInt8, Int24),
-            /* paInt16: */          PA_USE_CONVERTER_(UInt8, Int16),
-            /* paInt8: */           PA_USE_CONVERTER_(UInt8, Int8),
-            /* paUInt8: */          PA_UNITY_CONVERSION_(8)
-        )
-    )
+    PA_SELECT_FORMAT_( sourceFormat,
+				        /* paFloat64: */ //[2.10.3.11]MW0LGE portaudio
+				        PA_SELECT_FORMAT_(destinationFormat,
+				            /* paFloat64: */        PA_UNITY_CONVERSION_(64),
+				            /* paFloat32: */        PA_USE_CONVERTER_(Float64, Float32),
+				            /* paInt32: */          PA_USE_CONVERTER_(Float64, Int32),
+				            /* paInt24: */          PA_USE_CONVERTER_(Float64, Int24),
+				            /* paInt16: */          PA_USE_CONVERTER_(Float64, Int16),
+				            /* paInt8: */           PA_USE_CONVERTER_(Float64, Int8),
+				            /* paUInt8: */          PA_USE_CONVERTER_(Float64, UInt8)
+				        ),
+                       /* paFloat32: */
+                       PA_SELECT_FORMAT_( destinationFormat,
+                                          /* paFloat64: */        PA_USE_CONVERTER_(Float32, Float64), //[2.10.3.11]MW0LGE portaudio
+                                          /* paFloat32: */        PA_UNITY_CONVERSION_( 32 ),
+                                          /* paInt32: */          PA_SELECT_CONVERTER_DITHER_CLIP_( flags, Float32, Int32 ),
+                                          /* paInt24: */          PA_SELECT_CONVERTER_DITHER_CLIP_( flags, Float32, Int24 ),
+                                          /* paInt16: */          PA_SELECT_CONVERTER_DITHER_CLIP_( flags, Float32, Int16 ),
+                                          /* paInt8: */           PA_SELECT_CONVERTER_DITHER_CLIP_( flags, Float32, Int8 ),
+                                          /* paUInt8: */          PA_SELECT_CONVERTER_DITHER_CLIP_( flags, Float32, UInt8 )
+                                        ),
+                       /* paInt32: */
+                       PA_SELECT_FORMAT_( destinationFormat,
+                                          /* paFloat64: */        PA_USE_CONVERTER_(Int32, Float64), //[2.10.3.11]MW0LGE portaudio
+                                          /* paFloat32: */        PA_USE_CONVERTER_( Int32, Float32 ),
+                                          /* paInt32: */          PA_UNITY_CONVERSION_( 32 ),
+                                          /* paInt24: */          PA_SELECT_CONVERTER_DITHER_( flags, Int32, Int24 ),
+                                          /* paInt16: */          PA_SELECT_CONVERTER_DITHER_( flags, Int32, Int16 ),
+                                          /* paInt8: */           PA_SELECT_CONVERTER_DITHER_( flags, Int32, Int8 ),
+                                          /* paUInt8: */          PA_SELECT_CONVERTER_DITHER_( flags, Int32, UInt8 )
+                                        ),
+                       /* paInt24: */
+                       PA_SELECT_FORMAT_( destinationFormat,
+										  /* paFloat64: */        PA_USE_CONVERTER_(Int24, Float64), //[2.10.3.11]MW0LGE portaudio
+                                          /* paFloat32: */        PA_USE_CONVERTER_( Int24, Float32 ),
+                                          /* paInt32: */          PA_USE_CONVERTER_( Int24, Int32 ),
+                                          /* paInt24: */          PA_UNITY_CONVERSION_( 24 ),
+                                          /* paInt16: */          PA_SELECT_CONVERTER_DITHER_( flags, Int24, Int16 ),
+                                          /* paInt8: */           PA_SELECT_CONVERTER_DITHER_( flags, Int24, Int8 ),
+                                          /* paUInt8: */          PA_SELECT_CONVERTER_DITHER_( flags, Int24, UInt8 )
+                                        ),
+                       /* paInt16: */
+                       PA_SELECT_FORMAT_( destinationFormat,
+										  /* paFloat64: */        PA_USE_CONVERTER_(Int16, Float64), //[2.10.3.11]MW0LGE portaudio
+                                          /* paFloat32: */        PA_USE_CONVERTER_( Int16, Float32 ),
+                                          /* paInt32: */          PA_USE_CONVERTER_( Int16, Int32 ),
+                                          /* paInt24: */          PA_USE_CONVERTER_( Int16, Int24 ),
+                                          /* paInt16: */          PA_UNITY_CONVERSION_( 16 ),
+                                          /* paInt8: */           PA_SELECT_CONVERTER_DITHER_( flags, Int16, Int8 ),
+                                          /* paUInt8: */          PA_SELECT_CONVERTER_DITHER_( flags, Int16, UInt8 )
+                                        ),
+                       /* paInt8: */
+                       PA_SELECT_FORMAT_( destinationFormat,
+										  /* paFloat64: */        PA_USE_CONVERTER_(Int8, Float64), //[2.10.3.11]MW0LGE portaudio
+                                          /* paFloat32: */        PA_USE_CONVERTER_( Int8, Float32 ),
+                                          /* paInt32: */          PA_USE_CONVERTER_( Int8, Int32 ),
+                                          /* paInt24: */          PA_USE_CONVERTER_( Int8, Int24 ),
+                                          /* paInt16: */          PA_USE_CONVERTER_( Int8, Int16 ),
+                                          /* paInt8: */           PA_UNITY_CONVERSION_( 8 ),
+                                          /* paUInt8: */          PA_USE_CONVERTER_( Int8, UInt8 )
+                                        ),
+                       /* paUInt8: */
+                       PA_SELECT_FORMAT_( destinationFormat,
+									      /* paFloat64: */        PA_USE_CONVERTER_(UInt8, Float64), //[2.10.3.11]MW0LGE portaudio
+                                          /* paFloat32: */        PA_USE_CONVERTER_( UInt8, Float32 ),
+                                          /* paInt32: */          PA_USE_CONVERTER_( UInt8, Int32 ),
+                                          /* paInt24: */          PA_USE_CONVERTER_( UInt8, Int24 ),
+                                          /* paInt16: */          PA_USE_CONVERTER_( UInt8, Int16 ),
+                                          /* paInt8: */           PA_USE_CONVERTER_( UInt8, Int8 ),
+                                          /* paUInt8: */          PA_UNITY_CONVERSION_( 8 )
+                                        )
+                     )
 }
 
 /* -------------------------------------------------------------------------- */
@@ -261,7 +259,7 @@ PaUtilConverter* PaUtil_SelectConverter(PaSampleFormat sourceFormat,
 /* -------------------------------------------------------------------------- */
 
 PaUtilConverterTable paConverters = {
-    0, /* PaUtilConverter *Float64_To_Float32; */
+    0, /* PaUtilConverter *Float64_To_Float32; */ //[2.10.3.11]MW0LGE portaudio start
     0, /* PaUtilConverter *Float64_To_Int32; */
     0, /* PaUtilConverter *Float64_To_Int24; */
     0, /* PaUtilConverter *Float64_To_Int16; */
@@ -271,8 +269,7 @@ PaUtilConverterTable paConverters = {
     0, /* PaUtilConverter *Float64_To_Int8; */
     0, /* PaUtilConverter *Float64_To_UInt8; */
 
-    0, /* PaUtilConverter *Float32_To_Float64; */
-
+    0, /* PaUtilConverter *Float32_To_Float64; */ //[2.10.3.11]MW0LGE portaudio end
     0, /* PaUtilConverter *Float32_To_Int32; */
     0, /* PaUtilConverter *Float32_To_Int32_Dither; */
     0, /* PaUtilConverter *Float32_To_Int32_Clip; */
@@ -298,7 +295,7 @@ PaUtilConverterTable paConverters = {
     0, /* PaUtilConverter *Float32_To_UInt8_Clip; */
     0, /* PaUtilConverter *Float32_To_UInt8_DitherClip; */
 
-    0, /* PaUtilConverter *Int32_To_Float64; */
+    0, /* PaUtilConverter *Int32_To_Float64; */ //[2.10.3.11]MW0LGE portaudio
     0, /* PaUtilConverter *Int32_To_Float32; */
     0, /* PaUtilConverter *Int32_To_Int24; */
     0, /* PaUtilConverter *Int32_To_Int24_Dither; */
@@ -309,7 +306,7 @@ PaUtilConverterTable paConverters = {
     0, /* PaUtilConverter *Int32_To_UInt8; */
     0, /* PaUtilConverter *Int32_To_UInt8_Dither; */
 
-    0, /* PaUtilConverter *Int24_To_Float64; */
+    0, /* PaUtilConverter *Int24_To_Float64; */ //[2.10.3.11]MW0LGE portaudio
     0, /* PaUtilConverter *Int24_To_Float32; */
     0, /* PaUtilConverter *Int24_To_Int32; */
     0, /* PaUtilConverter *Int24_To_Int16; */
@@ -319,7 +316,7 @@ PaUtilConverterTable paConverters = {
     0, /* PaUtilConverter *Int24_To_UInt8; */
     0, /* PaUtilConverter *Int24_To_UInt8_Dither; */
 
-    0, /* PaUtilConverter *Int16_To_Float64; */
+    0, /* PaUtilConverter *Int16_To_Float64; */ //[2.10.3.11]MW0LGE portaudio
     0, /* PaUtilConverter *Int16_To_Float32; */
     0, /* PaUtilConverter *Int16_To_Int32; */
     0, /* PaUtilConverter *Int16_To_Int24; */
@@ -328,14 +325,14 @@ PaUtilConverterTable paConverters = {
     0, /* PaUtilConverter *Int16_To_UInt8; */
     0, /* PaUtilConverter *Int16_To_UInt8_Dither; */
 
-    0, /* PaUtilConverter *Int8_To_Float64; */
+    0, /* PaUtilConverter *Int8_To_Float64; */ //[2.10.3.11]MW0LGE portaudio
     0, /* PaUtilConverter *Int8_To_Float32; */
     0, /* PaUtilConverter *Int8_To_Int32; */
     0, /* PaUtilConverter *Int8_To_Int24 */
     0, /* PaUtilConverter *Int8_To_Int16; */
     0, /* PaUtilConverter *Int8_To_UInt8; */
 
-    0, /* PaUtilConverter *UInt8_To_Float64; */
+    0, /* PaUtilConverter *UInt8_To_Float64; */ //[2.10.3.11]MW0LGE portaudio
     0, /* PaUtilConverter *UInt8_To_Float32; */
     0, /* PaUtilConverter *UInt8_To_Int32; */
     0, /* PaUtilConverter *UInt8_To_Int24; */
@@ -345,8 +342,8 @@ PaUtilConverterTable paConverters = {
     0, /* PaUtilConverter *Copy_8_To_8; */
     0, /* PaUtilConverter *Copy_16_To_16; */
     0, /* PaUtilConverter *Copy_24_To_24; */
-    0,  /* PaUtilConverter *Copy_32_To_32; */
-    0  /* PaUtilConverter *Copy_64_To_64; */
+    0, /* PaUtilConverter *Copy_32_To_32; */
+    0  /* PaUtilConverter *Copy_64_To_64; */ //[2.10.3.11]MW0LGE portaudio
 };
 
 /* -------------------------------------------------------------------------- */
@@ -366,7 +363,7 @@ static const float const_1_div_32768_ = 1.0f / 32768.f; /* 16 bit multiplier */
 static const double const_1_div_2147483648_ = 1.0 / 2147483648.0; /* 32 bit multiplier */
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Float64_To_Float32(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -386,7 +383,7 @@ static void Float64_To_Float32(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Float64_To_Int32(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -413,7 +410,7 @@ static void Float64_To_Int32(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Float64_To_Int24(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -447,7 +444,7 @@ static void Float64_To_Int24(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Float64_To_Int16(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -473,7 +470,7 @@ static void Float64_To_Int16(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Float64_To_Int16_Dither(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -501,7 +498,7 @@ static void Float64_To_Int16_Dither(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Float64_To_Int16_Clip(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -527,7 +524,7 @@ static void Float64_To_Int16_Clip(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Float64_To_Int16_DitherClip(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -557,7 +554,7 @@ static void Float64_To_Int16_DitherClip(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Float64_To_Int8(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -578,7 +575,7 @@ static void Float64_To_Int8(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Float64_To_UInt8(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -599,7 +596,7 @@ static void Float64_To_UInt8(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Float32_To_Float64(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -621,24 +618,19 @@ static void Float32_To_Float64(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int32(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    PaInt32* dest = (PaInt32*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    PaInt32 *dest =  (PaInt32*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         /* REVIEW */
-#ifdef PA_USE_C99_LRINTF
-        float scaled = *src * 0x7FFFFFFF;
-        *dest = lrintf(scaled - 0.5f);
-#else
-        double scaled = *src * 0x7FFFFFFF;
-        *dest = (PaInt32)scaled;
-#endif
+        double scaled = (double)*src * 0x7FFFFFFF;
+        *dest = (PaInt32) scaled;
 
         src += sourceStride;
         dest += destinationStride;
@@ -648,27 +640,21 @@ static void Float32_To_Int32(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int32_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    PaInt32* dest = (PaInt32*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    PaInt32 *dest =  (PaInt32*)destinationBuffer;
 
-    while (count--)
+    while( count-- )
     {
         /* REVIEW */
-#ifdef PA_USE_C99_LRINTF
-        float dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
-        /* use smaller scaler to prevent overflow when we add the dither */
-        float dithered = ((float)*src * (2147483646.0f)) + dither;
-        *dest = lrintf(dithered - 0.5f);
-#else
-        double dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
+        double dither  = PaUtil_GenerateFloatTriangularDither( ditherGenerator );
         /* use smaller scaler to prevent overflow when we add the dither */
         double dithered = ((double)*src * (2147483646.0)) + dither;
-        *dest = (PaInt32)dithered;
-#endif
+        *dest = (PaInt32) dithered;
+
         src += sourceStride;
         dest += destinationStride;
     }
@@ -677,26 +663,20 @@ static void Float32_To_Int32_Dither(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int32_Clip(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    PaInt32* dest = (PaInt32*)destinationBuffer;
-    (void)ditherGenerator; /* unused parameter */
+    float *src = (float*)sourceBuffer;
+    PaInt32 *dest =  (PaInt32*)destinationBuffer;
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         /* REVIEW */
-#ifdef PA_USE_C99_LRINTF
-        float scaled = *src * 0x7FFFFFFF;
-        PA_CLIP_(scaled, -2147483648.f, 2147483647.f);
-        *dest = lrintf(scaled - 0.5f);
-#else
-        double scaled = *src * 0x7FFFFFFF;
-        PA_CLIP_(scaled, -2147483648., 2147483647.);
-        *dest = (PaInt32)scaled;
-#endif
+        double scaled = (double)*src * 0x7FFFFFFF;
+        PA_CLIP_( scaled, -2147483648., 2147483647.  );
+        *dest = (PaInt32) scaled;
 
         src += sourceStride;
         dest += destinationStride;
@@ -706,29 +686,21 @@ static void Float32_To_Int32_Clip(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int32_DitherClip(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    PaInt32* dest = (PaInt32*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    PaInt32 *dest =  (PaInt32*)destinationBuffer;
 
-    while (count--)
+    while( count-- )
     {
         /* REVIEW */
-#ifdef PA_USE_C99_LRINTF
-        float dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
-        /* use smaller scaler to prevent overflow when we add the dither */
-        float dithered = ((float)*src * (2147483646.0f)) + dither;
-        PA_CLIP_(dithered, -2147483648.f, 2147483647.f);
-        *dest = lrintf(dithered - 0.5f);
-#else
-        double dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
+        double dither  = PaUtil_GenerateFloatTriangularDither( ditherGenerator );
         /* use smaller scaler to prevent overflow when we add the dither */
         double dithered = ((double)*src * (2147483646.0)) + dither;
-        PA_CLIP_(dithered, -2147483648., 2147483647.);
-        *dest = (PaInt32)dithered;
-#endif
+        PA_CLIP_( dithered, -2147483648., 2147483647.  );
+        *dest = (PaInt32) dithered;
 
         src += sourceStride;
         dest += destinationStride;
@@ -738,21 +710,21 @@ static void Float32_To_Int32_DitherClip(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int24(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
     PaInt32 temp;
 
-    (void)ditherGenerator; /* unused parameter */
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         /* convert to 32 bit and drop the low 8 bits */
         double scaled = (double)(*src) * 2147483647.0;
-        temp = (PaInt32)scaled;
+        temp = (PaInt32) scaled;
 
 #if defined(PA_LITTLE_ENDIAN)
         dest[0] = (unsigned char)(temp >> 8);
@@ -772,23 +744,23 @@ static void Float32_To_Int24(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int24_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
     PaInt32 temp;
 
-    while (count--)
+    while( count-- )
     {
         /* convert to 32 bit and drop the low 8 bits */
 
-        double dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
+        double dither  = PaUtil_GenerateFloatTriangularDither( ditherGenerator );
         /* use smaller scaler to prevent overflow when we add the dither */
         double dithered = ((double)*src * (2147483646.0)) + dither;
 
-        temp = (PaInt32)dithered;
+        temp = (PaInt32) dithered;
 
 #if defined(PA_LITTLE_ENDIAN)
         dest[0] = (unsigned char)(temp >> 8);
@@ -808,22 +780,22 @@ static void Float32_To_Int24_Dither(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int24_Clip(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
     PaInt32 temp;
 
-    (void)ditherGenerator; /* unused parameter */
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         /* convert to 32 bit and drop the low 8 bits */
-        double scaled = *src * 0x7FFFFFFF;
-        PA_CLIP_(scaled, -2147483648., 2147483647.);
-        temp = (PaInt32)scaled;
+        double scaled = (double)*src * 0x7FFFFFFF;
+        PA_CLIP_( scaled, -2147483648., 2147483647.  );
+        temp = (PaInt32) scaled;
 
 #if defined(PA_LITTLE_ENDIAN)
         dest[0] = (unsigned char)(temp >> 8);
@@ -843,24 +815,24 @@ static void Float32_To_Int24_Clip(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int24_DitherClip(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
     PaInt32 temp;
 
-    while (count--)
+    while( count-- )
     {
         /* convert to 32 bit and drop the low 8 bits */
 
-        double dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
+        double dither  = PaUtil_GenerateFloatTriangularDither( ditherGenerator );
         /* use smaller scaler to prevent overflow when we add the dither */
         double dithered = ((double)*src * (2147483646.0)) + dither;
-        PA_CLIP_(dithered, -2147483648., 2147483647.);
+        PA_CLIP_( dithered, -2147483648., 2147483647.  );
 
-        temp = (PaInt32)dithered;
+        temp = (PaInt32) dithered;
 
 #if defined(PA_LITTLE_ENDIAN)
         dest[0] = (unsigned char)(temp >> 8);
@@ -880,23 +852,18 @@ static void Float32_To_Int24_DitherClip(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int16(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    PaInt16* dest = (PaInt16*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    PaInt16 *dest =  (PaInt16*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
-#ifdef PA_USE_C99_LRINTF
-        float tempf = (*src * (32767.0f));
-        *dest = lrintf(tempf - 0.5f);
-#else
-        short samp = (short)(*src * (32767.0f));
+        short samp = (short) (*src * (32767.0f));
         *dest = samp;
-#endif
 
         src += sourceStride;
         dest += destinationStride;
@@ -906,25 +873,21 @@ static void Float32_To_Int16(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int16_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    PaInt16* dest = (PaInt16*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    PaInt16 *dest = (PaInt16*)destinationBuffer;
 
-    while (count--)
+    while( count-- )
     {
 
-        float dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
+        float dither  = PaUtil_GenerateFloatTriangularDither( ditherGenerator );
         /* use smaller scaler to prevent overflow when we add the dither */
         float dithered = (*src * (32766.0f)) + dither;
 
-#ifdef PA_USE_C99_LRINTF
-        * dest = lrintf(dithered - 0.5f);
-#else
-        * dest = (PaInt16)dithered;
-#endif
+        *dest = (PaInt16) dithered;
 
         src += sourceStride;
         dest += destinationStride;
@@ -934,23 +897,20 @@ static void Float32_To_Int16_Dither(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int16_Clip(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    PaInt16* dest = (PaInt16*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    PaInt16 *dest =  (PaInt16*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
-#ifdef PA_USE_C99_LRINTF
-        long samp = lrintf((*src * (32767.0f)) - 0.5f);
-#else
-        long samp = (PaInt32)(*src * (32767.0f));
-#endif
-        PA_CLIP_(samp, -0x8000, 0x7FFF);
-        *dest = (PaInt16)samp;
+        long samp = (PaInt32) (*src * (32767.0f));
+
+        PA_CLIP_( samp, -0x8000, 0x7FFF );
+        *dest = (PaInt16) samp;
 
         src += sourceStride;
         dest += destinationStride;
@@ -960,27 +920,23 @@ static void Float32_To_Int16_Clip(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int16_DitherClip(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    PaInt16* dest = (PaInt16*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    PaInt16 *dest =  (PaInt16*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
 
-        float dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
+        float dither  = PaUtil_GenerateFloatTriangularDither( ditherGenerator );
         /* use smaller scaler to prevent overflow when we add the dither */
         float dithered = (*src * (32766.0f)) + dither;
-        PaInt32 samp = (PaInt32)dithered;
-        PA_CLIP_(samp, -0x8000, 0x7FFF);
-#ifdef PA_USE_C99_LRINTF
-        * dest = lrintf(samp - 0.5f);
-#else
-        * dest = (PaInt16)samp;
-#endif
+        PaInt32 samp = (PaInt32) dithered;
+        PA_CLIP_( samp, -0x8000, 0x7FFF );
+        *dest = (PaInt16) samp;
 
         src += sourceStride;
         dest += destinationStride;
@@ -990,17 +946,17 @@ static void Float32_To_Int16_DitherClip(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int8(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    signed char* dest = (signed char*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    signed char *dest =  (signed char*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
-        signed char samp = (signed char)(*src * (127.0f));
+        signed char samp = (signed char) (*src * (127.0f));
         *dest = samp;
 
         src += sourceStride;
@@ -1011,20 +967,20 @@ static void Float32_To_Int8(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int8_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    signed char* dest = (signed char*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    signed char *dest =  (signed char*)destinationBuffer;
 
-    while (count--)
+    while( count-- )
     {
-        float dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
+        float dither  = PaUtil_GenerateFloatTriangularDither( ditherGenerator );
         /* use smaller scaler to prevent overflow when we add the dither */
         float dithered = (*src * (126.0f)) + dither;
-        PaInt32 samp = (PaInt32)dithered;
-        *dest = (signed char)samp;
+        PaInt32 samp = (PaInt32) dithered;
+        *dest = (signed char) samp;
 
         src += sourceStride;
         dest += destinationStride;
@@ -1034,19 +990,19 @@ static void Float32_To_Int8_Dither(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int8_Clip(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    signed char* dest = (signed char*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    signed char *dest =  (signed char*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         PaInt32 samp = (PaInt32)(*src * (127.0f));
-        PA_CLIP_(samp, -0x80, 0x7F);
-        *dest = (signed char)samp;
+        PA_CLIP_( samp, -0x80, 0x7F );
+        *dest = (signed char) samp;
 
         src += sourceStride;
         dest += destinationStride;
@@ -1056,22 +1012,22 @@ static void Float32_To_Int8_Clip(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_Int8_DitherClip(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    signed char* dest = (signed char*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    signed char *dest =  (signed char*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
-        float dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
+        float dither  = PaUtil_GenerateFloatTriangularDither( ditherGenerator );
         /* use smaller scaler to prevent overflow when we add the dither */
         float dithered = (*src * (126.0f)) + dither;
-        PaInt32 samp = (PaInt32)dithered;
-        PA_CLIP_(samp, -0x80, 0x7F);
-        *dest = (signed char)samp;
+        PaInt32 samp = (PaInt32) dithered;
+        PA_CLIP_( samp, -0x80, 0x7F );
+        *dest = (signed char) samp;
 
         src += sourceStride;
         dest += destinationStride;
@@ -1081,17 +1037,17 @@ static void Float32_To_Int8_DitherClip(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_UInt8(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    unsigned char *dest =  (unsigned char*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
-        unsigned char samp = (unsigned char)(128 + ((unsigned char)(*src * (127.0f))));
+        unsigned char samp = (unsigned char)(128 + ((unsigned char) (*src * (127.0f))));
         *dest = samp;
 
         src += sourceStride;
@@ -1102,20 +1058,20 @@ static void Float32_To_UInt8(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_UInt8_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    unsigned char *dest =  (unsigned char*)destinationBuffer;
 
-    while (count--)
+    while( count-- )
     {
-        float dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
+        float dither  = PaUtil_GenerateFloatTriangularDither( ditherGenerator );
         /* use smaller scaler to prevent overflow when we add the dither */
         float dithered = (*src * (126.0f)) + dither;
-        PaInt32 samp = (PaInt32)dithered;
-        *dest = (unsigned char)(128 + samp);
+        PaInt32 samp = (PaInt32) dithered;
+        *dest = (unsigned char) (128 + samp);
 
         src += sourceStride;
         dest += destinationStride;
@@ -1125,19 +1081,19 @@ static void Float32_To_UInt8_Dither(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_UInt8_Clip(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    unsigned char *dest =  (unsigned char*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         PaInt32 samp = 128 + (PaInt32)(*src * (127.0f));
-        PA_CLIP_(samp, 0x0000, 0x00FF);
-        *dest = (unsigned char)samp;
+        PA_CLIP_( samp, 0x0000, 0x00FF );
+        *dest = (unsigned char) samp;
 
         src += sourceStride;
         dest += destinationStride;
@@ -1147,22 +1103,22 @@ static void Float32_To_UInt8_Clip(
 /* -------------------------------------------------------------------------- */
 
 static void Float32_To_UInt8_DitherClip(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    float* src = (float*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    float *src = (float*)sourceBuffer;
+    unsigned char *dest =  (unsigned char*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
-        float dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
+        float dither  = PaUtil_GenerateFloatTriangularDither( ditherGenerator );
         /* use smaller scaler to prevent overflow when we add the dither */
         float dithered = (*src * (126.0f)) + dither;
-        PaInt32 samp = 128 + (PaInt32)dithered;
-        PA_CLIP_(samp, 0x0000, 0x00FF);
-        *dest = (unsigned char)samp;
+        PaInt32 samp = 128 + (PaInt32) dithered;
+        PA_CLIP_( samp, 0x0000, 0x00FF );
+        *dest = (unsigned char) samp;
 
         src += sourceStride;
         dest += destinationStride;
@@ -1170,7 +1126,7 @@ static void Float32_To_UInt8_DitherClip(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Int32_To_Float64(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -1192,17 +1148,17 @@ static void Int32_To_Float64(
 /* -------------------------------------------------------------------------- */
 
 static void Int32_To_Float32(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt32* src = (PaInt32*)sourceBuffer;
-    float* dest = (float*)destinationBuffer;
+    PaInt32 *src = (PaInt32*)sourceBuffer;
+    float *dest =  (float*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
-        *dest = (float)((double)*src * const_1_div_2147483648_);
+        *dest = (float) ((double)*src * const_1_div_2147483648_);
 
         src += sourceStride;
         dest += destinationStride;
@@ -1212,15 +1168,15 @@ static void Int32_To_Float32(
 /* -------------------------------------------------------------------------- */
 
 static void Int32_To_Int24(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt32* src = (PaInt32*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
-    (void)ditherGenerator; /* unused parameter */
+    PaInt32 *src    = (PaInt32*)sourceBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         /* REVIEW */
 #if defined(PA_LITTLE_ENDIAN)
@@ -1240,33 +1196,33 @@ static void Int32_To_Int24(
 /* -------------------------------------------------------------------------- */
 
 static void Int32_To_Int24_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    (void)destinationBuffer; /* unused parameters */
-    (void)destinationStride; /* unused parameters */
-    (void)sourceBuffer; /* unused parameters */
-    (void)sourceStride; /* unused parameters */
-    (void)count; /* unused parameters */
-    (void)ditherGenerator; /* unused parameters */
+    (void) destinationBuffer; /* unused parameters */
+    (void) destinationStride; /* unused parameters */
+    (void) sourceBuffer; /* unused parameters */
+    (void) sourceStride; /* unused parameters */
+    (void) count; /* unused parameters */
+    (void) ditherGenerator; /* unused parameters */
     /* IMPLEMENT ME */
 }
 
 /* -------------------------------------------------------------------------- */
 
 static void Int32_To_Int16(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt32* src = (PaInt32*)sourceBuffer;
-    PaInt16* dest = (PaInt16*)destinationBuffer;
+    PaInt32 *src = (PaInt32*)sourceBuffer;
+    PaInt16 *dest =  (PaInt16*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
-        *dest = (PaInt16)((*src) >> 16);
+        *dest = (PaInt16) ((*src) >> 16);
 
         src += sourceStride;
         dest += destinationStride;
@@ -1276,19 +1232,19 @@ static void Int32_To_Int16(
 /* -------------------------------------------------------------------------- */
 
 static void Int32_To_Int16_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt32* src = (PaInt32*)sourceBuffer;
-    PaInt16* dest = (PaInt16*)destinationBuffer;
+    PaInt32 *src = (PaInt32*)sourceBuffer;
+    PaInt16 *dest =  (PaInt16*)destinationBuffer;
     PaInt32 dither;
 
-    while (count--)
+    while( count-- )
     {
         /* REVIEW */
-        dither = PaUtil_Generate16BitTriangularDither(ditherGenerator);
-        *dest = (PaInt16)((((*src) >> 1) + dither) >> 15);
+        dither = PaUtil_Generate16BitTriangularDither( ditherGenerator );
+        *dest = (PaInt16) ((((*src)>>1) + dither) >> 15);
 
         src += sourceStride;
         dest += destinationStride;
@@ -1298,17 +1254,17 @@ static void Int32_To_Int16_Dither(
 /* -------------------------------------------------------------------------- */
 
 static void Int32_To_Int8(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt32* src = (PaInt32*)sourceBuffer;
-    signed char* dest = (signed char*)destinationBuffer;
+    PaInt32 *src = (PaInt32*)sourceBuffer;
+    signed char *dest =  (signed char*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
-        *dest = (signed char)((*src) >> 24);
+        *dest = (signed char) ((*src) >> 24);
 
         src += sourceStride;
         dest += destinationStride;
@@ -1318,19 +1274,21 @@ static void Int32_To_Int8(
 /* -------------------------------------------------------------------------- */
 
 static void Int32_To_Int8_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt32* src = (PaInt32*)sourceBuffer;
-    signed char* dest = (signed char*)destinationBuffer;
+    PaInt32 *src = (PaInt32*)sourceBuffer;
+    signed char *dest =  (signed char*)destinationBuffer;
     PaInt32 dither;
 
-    while (count--)
+    while( count-- )
     {
-        /* REVIEW */
-        dither = PaUtil_Generate16BitTriangularDither(ditherGenerator);
-        *dest = (signed char)((((*src) >> 1) + dither) >> 23);
+        /* increase dither scale to 24-bit value so that it would not be truncated completely when applied */
+        dither = PaUtil_Generate16BitTriangularDither( ditherGenerator ) << 8;
+
+        /* apply dither, truncate resulting 32-bit value to 8-bit */
+        *dest = (signed char) ((((*src) >> 1) + dither) >> 23);
 
         src += sourceStride;
         dest += destinationStride;
@@ -1340,15 +1298,15 @@ static void Int32_To_Int8_Dither(
 /* -------------------------------------------------------------------------- */
 
 static void Int32_To_UInt8(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt32* src = (PaInt32*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    PaInt32 *src = (PaInt32*)sourceBuffer;
+    unsigned char *dest =  (unsigned char*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         (*dest) = (unsigned char)(((*src) >> 24) + 128);
 
@@ -1360,17 +1318,22 @@ static void Int32_To_UInt8(
 /* -------------------------------------------------------------------------- */
 
 static void Int32_To_UInt8_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt32* src = (PaInt32*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
-    (void)ditherGenerator; /* unused parameter */
+    PaInt32 *src = (PaInt32*)sourceBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
 
-    while (count--)
+    PaInt32 dither;
+
+    while( count-- )
     {
-        /* IMPLEMENT ME */
+        /* increase dither scale to 24-bit value so that it would not be truncated completely when applied */
+        dither = PaUtil_Generate16BitTriangularDither( ditherGenerator ) << 8;
+
+        /* apply dither, truncate resulting 32-bit value to 8-bit and convert to unsigned */
+        *dest = (unsigned char) ((((src[0] >> 1) + dither) >> 23) + 128);
 
         src += sourceStride;
         dest += destinationStride;
@@ -1378,7 +1341,7 @@ static void Int32_To_UInt8_Dither(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Int24_To_Float64(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -1409,22 +1372,20 @@ static void Int24_To_Float64(
         dest += destinationStride;
     }
 }
-
 /* -------------------------------------------------------------------------- */
 
-
 static void Int24_To_Float32(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    float* dest = (float*)destinationBuffer;
+    unsigned char *src = (unsigned char*)sourceBuffer;
+    float *dest = (float*)destinationBuffer;
     PaInt32 temp;
 
-    (void)ditherGenerator; /* unused parameter */
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
 
 #if defined(PA_LITTLE_ENDIAN)
@@ -1437,7 +1398,7 @@ static void Int24_To_Float32(
         temp = temp | (((PaInt32)src[2]) << 8);
 #endif
 
-        * dest = (float)((double)temp * const_1_div_2147483648_);
+        *dest = (float) ((double)temp * const_1_div_2147483648_);
 
         src += sourceStride * 3;
         dest += destinationStride;
@@ -1447,17 +1408,17 @@ static void Int24_To_Float32(
 /* -------------------------------------------------------------------------- */
 
 static void Int24_To_Int32(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    PaInt32* dest = (PaInt32*)destinationBuffer;
+    unsigned char *src  = (unsigned char*)sourceBuffer;
+    PaInt32 *dest = (PaInt32*)  destinationBuffer;
     PaInt32 temp;
 
-    (void)ditherGenerator; /* unused parameter */
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
 
 #if defined(PA_LITTLE_ENDIAN)
@@ -1470,7 +1431,7 @@ static void Int24_To_Int32(
         temp = temp | (((PaInt32)src[2]) << 8);
 #endif
 
-        * dest = temp;
+        *dest = temp;
 
         src += sourceStride * 3;
         dest += destinationStride;
@@ -1480,18 +1441,18 @@ static void Int24_To_Int32(
 /* -------------------------------------------------------------------------- */
 
 static void Int24_To_Int16(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    PaInt16* dest = (PaInt16*)destinationBuffer;
+    unsigned char *src = (unsigned char*)sourceBuffer;
+    PaInt16 *dest = (PaInt16*)destinationBuffer;
 
     PaInt16 temp;
 
-    (void)ditherGenerator; /* unused parameter */
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
 
 #if defined(PA_LITTLE_ENDIAN)
@@ -1504,7 +1465,7 @@ static void Int24_To_Int16(
         temp = temp | (((PaInt16)src[1]));
 #endif
 
-        * dest = temp;
+        *dest = temp;
 
         src += sourceStride * 3;
         dest += destinationStride;
@@ -1514,16 +1475,16 @@ static void Int24_To_Int16(
 /* -------------------------------------------------------------------------- */
 
 static void Int24_To_Int16_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    PaInt16* dest = (PaInt16*)destinationBuffer;
+    unsigned char *src = (unsigned char*)sourceBuffer;
+    PaInt16 *dest = (PaInt16*)destinationBuffer;
 
     PaInt32 temp, dither;
 
-    while (count--)
+    while( count-- )
     {
 
 #if defined(PA_LITTLE_ENDIAN)
@@ -1537,10 +1498,10 @@ static void Int24_To_Int16_Dither(
 #endif
 
         /* REVIEW */
-        dither = PaUtil_Generate16BitTriangularDither(ditherGenerator);
-        *dest = (PaInt16)(((temp >> 1) + dither) >> 15);
+        dither = PaUtil_Generate16BitTriangularDither( ditherGenerator );
+        *dest = (PaInt16) (((temp >> 1) + dither) >> 15);
 
-        src += sourceStride * 3;
+        src  += sourceStride * 3;
         dest += destinationStride;
     }
 }
@@ -1548,16 +1509,16 @@ static void Int24_To_Int16_Dither(
 /* -------------------------------------------------------------------------- */
 
 static void Int24_To_Int8(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    signed char* dest = (signed char*)destinationBuffer;
+    unsigned char *src = (unsigned char*)sourceBuffer;
+    signed char  *dest = (signed char*)destinationBuffer;
 
-    (void)ditherGenerator; /* unused parameter */
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
 
 #if defined(PA_LITTLE_ENDIAN)
@@ -1578,18 +1539,18 @@ static void Int24_To_Int8(
 /* -------------------------------------------------------------------------- */
 
 static void Int24_To_Int8_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    signed char* dest = (signed char*)destinationBuffer;
+    unsigned char *src = (unsigned char*)sourceBuffer;
+    signed char  *dest = (signed char*)destinationBuffer;
 
     PaInt32 temp, dither;
 
-    while (count--)
+    while( count-- )
     {
-
+        /* convert 24-bit to 32-bit value */
 #if defined(PA_LITTLE_ENDIAN)
         temp = (((PaInt32)src[0]) << 8);
         temp = temp | (((PaInt32)src[1]) << 16);
@@ -1600,9 +1561,11 @@ static void Int24_To_Int8_Dither(
         temp = temp | (((PaInt32)src[2]) << 8);
 #endif
 
-        /* REVIEW */
-        dither = PaUtil_Generate16BitTriangularDither(ditherGenerator);
-        *dest = (signed char)(((temp >> 1) + dither) >> 23);
+        /* increase dither scale to 24-bit value so that it would not be truncated completely when applied */
+        dither = PaUtil_Generate16BitTriangularDither( ditherGenerator ) << 8;
+
+        /* apply dither, truncate resulting 32-bit value to 8-bit */
+        *dest = (signed char) (((temp >> 1) + dither) >> 23);
 
         src += sourceStride * 3;
         dest += destinationStride;
@@ -1612,16 +1575,16 @@ static void Int24_To_Int8_Dither(
 /* -------------------------------------------------------------------------- */
 
 static void Int24_To_UInt8(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    unsigned char *src = (unsigned char*)sourceBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
 
-    (void)ditherGenerator; /* unused parameter */
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
 
 #if defined(PA_LITTLE_ENDIAN)
@@ -1642,21 +1605,41 @@ static void Int24_To_UInt8(
 /* -------------------------------------------------------------------------- */
 
 static void Int24_To_UInt8_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    (void)destinationBuffer; /* unused parameters */
-    (void)destinationStride; /* unused parameters */
-    (void)sourceBuffer; /* unused parameters */
-    (void)sourceStride; /* unused parameters */
-    (void)count; /* unused parameters */
-    (void)ditherGenerator; /* unused parameters */
-    /* IMPLEMENT ME */
+    unsigned char *src = (unsigned char*)sourceBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
+
+    PaInt32 temp, dither;
+
+    while( count-- )
+    {
+        /* convert 24-bit to 32-bit value */
+#if defined(PA_LITTLE_ENDIAN)
+        temp = (((PaInt32)src[0]) << 8);
+        temp = temp | (((PaInt32)src[1]) << 16);
+        temp = temp | (((PaInt32)src[2]) << 24);
+#elif defined(PA_BIG_ENDIAN)
+        temp = (((PaInt32)src[0]) << 24);
+        temp = temp | (((PaInt32)src[1]) << 16);
+        temp = temp | (((PaInt32)src[2]) << 8);
+#endif
+
+        /* increase dither scale to 24-bit value so that it would not be truncated completely when applied */
+        dither = PaUtil_Generate16BitTriangularDither( ditherGenerator ) << 8;
+
+        /* apply dither, truncate resulting 32-bit value to 8-bit and convert to unsigned */
+        *dest = (unsigned char) ((((temp >> 1) + dither) >> 23) + 128);
+
+        src += sourceStride * 3;
+        dest += destinationStride;
+    }
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Int16_To_Float64(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -1679,17 +1662,17 @@ static void Int16_To_Float64(
 /* -------------------------------------------------------------------------- */
 
 static void Int16_To_Float32(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt16* src = (PaInt16*)sourceBuffer;
-    float* dest = (float*)destinationBuffer;
+    PaInt16 *src = (PaInt16*)sourceBuffer;
+    float *dest =  (float*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
-        float samp = *src * const_1_div_32768_; /* FIXME: i'm concerned about this being asymetrical with float->int16 -rb */
+        float samp = *src * const_1_div_32768_; /* FIXME: i'm concerned about this being asymmetrical with float->int16 -rb */
         *dest = samp;
 
         src += sourceStride;
@@ -1700,15 +1683,15 @@ static void Int16_To_Float32(
 /* -------------------------------------------------------------------------- */
 
 static void Int16_To_Int32(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt16* src = (PaInt16*)sourceBuffer;
-    PaInt32* dest = (PaInt32*)destinationBuffer;
+    PaInt16 *src = (PaInt16*)sourceBuffer;
+    PaInt32 *dest =  (PaInt32*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         /* REVIEW: we should consider something like
             (*src << 16) | (*src & 0xFFFF)
@@ -1724,17 +1707,17 @@ static void Int16_To_Int32(
 /* -------------------------------------------------------------------------- */
 
 static void Int16_To_Int24(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt16* src = (PaInt16*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    PaInt16 *src   = (PaInt16*) sourceBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
     PaInt16 temp;
 
-    (void)ditherGenerator; /* unused parameter */
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         temp = *src;
 
@@ -1756,15 +1739,15 @@ static void Int16_To_Int24(
 /* -------------------------------------------------------------------------- */
 
 static void Int16_To_Int8(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt16* src = (PaInt16*)sourceBuffer;
-    signed char* dest = (signed char*)destinationBuffer;
+    PaInt16 *src = (PaInt16*)sourceBuffer;
+    signed char *dest =  (signed char*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         (*dest) = (signed char)((*src) >> 8);
 
@@ -1776,17 +1759,25 @@ static void Int16_To_Int8(
 /* -------------------------------------------------------------------------- */
 
 static void Int16_To_Int8_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt16* src = (PaInt16*)sourceBuffer;
-    signed char* dest = (signed char*)destinationBuffer;
-    (void)ditherGenerator; /* unused parameter */
+    PaInt16 *src = (PaInt16*)sourceBuffer;
+    signed char *dest = (signed char*)destinationBuffer;
 
-    while (count--)
+    PaInt32 temp, dither;
+
+    while( count-- )
     {
-        /* IMPLEMENT ME */
+        /* convert 16-bit to 32-bit value */
+        temp = ((PaInt32)src[0]) << 16;
+
+        /* increase dither scale to 24-bit value so that it would not be truncated completely when applied */
+        dither = PaUtil_Generate16BitTriangularDither( ditherGenerator ) << 8;
+
+        /* apply dither, truncate resulting 32-bit value to 8-bit */
+        *dest = (signed char) (((temp >> 1) + dither) >> 23);
 
         src += sourceStride;
         dest += destinationStride;
@@ -1796,15 +1787,15 @@ static void Int16_To_Int8_Dither(
 /* -------------------------------------------------------------------------- */
 
 static void Int16_To_UInt8(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt16* src = (PaInt16*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    PaInt16 *src = (PaInt16*)sourceBuffer;
+    unsigned char *dest =  (unsigned char*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         (*dest) = (unsigned char)(((*src) >> 8) + 128);
 
@@ -1816,17 +1807,25 @@ static void Int16_To_UInt8(
 /* -------------------------------------------------------------------------- */
 
 static void Int16_To_UInt8_Dither(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaInt16* src = (PaInt16*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
-    (void)ditherGenerator; /* unused parameter */
+    PaInt16 *src = (PaInt16*)sourceBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
 
-    while (count--)
+    PaInt32 temp, dither;
+
+    while( count-- )
     {
-        /* IMPLEMENT ME */
+        /* convert 16-bit to 32-bit value */
+        temp = ((PaInt32)src[0]) << 16;
+
+        /* increase dither scale to 24-bit value so that it would not be truncated completely when applied */
+        dither = PaUtil_Generate16BitTriangularDither( ditherGenerator ) << 8;
+
+        /* apply dither, truncate resulting 32-bit value to 8-bit and convert to unsigned */
+        *dest = (unsigned char) ((((temp >> 1) + dither) >> 23) + 128);
 
         src += sourceStride;
         dest += destinationStride;
@@ -1834,7 +1833,7 @@ static void Int16_To_UInt8_Dither(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void Int8_To_Float64(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -1857,15 +1856,15 @@ static void Int8_To_Float64(
 /* -------------------------------------------------------------------------- */
 
 static void Int8_To_Float32(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    signed char* src = (signed char*)sourceBuffer;
-    float* dest = (float*)destinationBuffer;
+    signed char *src = (signed char*)sourceBuffer;
+    float *dest =  (float*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         float samp = *src * const_1_div_128_;
         *dest = samp;
@@ -1878,15 +1877,15 @@ static void Int8_To_Float32(
 /* -------------------------------------------------------------------------- */
 
 static void Int8_To_Int32(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    signed char* src = (signed char*)sourceBuffer;
-    PaInt32* dest = (PaInt32*)destinationBuffer;
+    signed char *src = (signed char*)sourceBuffer;
+    PaInt32 *dest =  (PaInt32*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         (*dest) = (*src) << 24;
 
@@ -1898,15 +1897,15 @@ static void Int8_To_Int32(
 /* -------------------------------------------------------------------------- */
 
 static void Int8_To_Int24(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    signed char* src = (signed char*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    signed char *src = (signed char*)sourceBuffer;
+    unsigned char *dest =  (unsigned char*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
 
 #if defined(PA_LITTLE_ENDIAN)
@@ -1927,15 +1926,15 @@ static void Int8_To_Int24(
 /* -------------------------------------------------------------------------- */
 
 static void Int8_To_Int16(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    signed char* src = (signed char*)sourceBuffer;
-    PaInt16* dest = (PaInt16*)destinationBuffer;
+    signed char *src = (signed char*)sourceBuffer;
+    PaInt16 *dest =  (PaInt16*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         (*dest) = (PaInt16)((*src) << 8);
 
@@ -1947,15 +1946,15 @@ static void Int8_To_Int16(
 /* -------------------------------------------------------------------------- */
 
 static void Int8_To_UInt8(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    signed char* src = (signed char*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    signed char *src = (signed char*)sourceBuffer;
+    unsigned char *dest =  (unsigned char*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         (*dest) = (unsigned char)(*src + 128);
 
@@ -1965,7 +1964,7 @@ static void Int8_To_UInt8(
 }
 
 /* -------------------------------------------------------------------------- */
-
+//[2.10.3.11]MW0LGE portaudio
 static void UInt8_To_Float64(
     void* destinationBuffer, signed int destinationStride,
     void* sourceBuffer, signed int sourceStride,
@@ -1988,15 +1987,15 @@ static void UInt8_To_Float64(
 /* -------------------------------------------------------------------------- */
 
 static void UInt8_To_Float32(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    float* dest = (float*)destinationBuffer;
+    unsigned char *src = (unsigned char*)sourceBuffer;
+    float *dest =  (float*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         float samp = (*src - 128) * const_1_div_128_;
         *dest = samp;
@@ -2009,15 +2008,15 @@ static void UInt8_To_Float32(
 /* -------------------------------------------------------------------------- */
 
 static void UInt8_To_Int32(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    PaInt32* dest = (PaInt32*)destinationBuffer;
+    unsigned char *src = (unsigned char*)sourceBuffer;
+    PaInt32 *dest = (PaInt32*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         (*dest) = (*src - 128) << 24;
 
@@ -2029,15 +2028,15 @@ static void UInt8_To_Int32(
 /* -------------------------------------------------------------------------- */
 
 static void UInt8_To_Int24(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
-    (void)ditherGenerator; /* unused parameters */
+    unsigned char *src  = (unsigned char*)sourceBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
+    (void) ditherGenerator; /* unused parameters */
 
-    while (count--)
+    while( count-- )
     {
 
 #if defined(PA_LITTLE_ENDIAN)
@@ -2058,15 +2057,15 @@ static void UInt8_To_Int24(
 /* -------------------------------------------------------------------------- */
 
 static void UInt8_To_Int16(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    PaInt16* dest = (PaInt16*)destinationBuffer;
+    unsigned char *src = (unsigned char*)sourceBuffer;
+    PaInt16 *dest =  (PaInt16*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         (*dest) = (PaInt16)((*src - 128) << 8);
 
@@ -2078,15 +2077,15 @@ static void UInt8_To_Int16(
 /* -------------------------------------------------------------------------- */
 
 static void UInt8_To_Int8(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    signed char* dest = (signed char*)destinationBuffer;
+    unsigned char *src = (unsigned char*)sourceBuffer;
+    signed char  *dest = (signed char*)destinationBuffer;
     (void)ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         (*dest) = (signed char)(*src - 128);
 
@@ -2098,16 +2097,16 @@ static void UInt8_To_Int8(
 /* -------------------------------------------------------------------------- */
 
 static void Copy_8_To_8(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    unsigned char *src = (unsigned char*)sourceBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
 
-    (void)ditherGenerator; /* unused parameter */
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         *dest = *src;
 
@@ -2119,16 +2118,16 @@ static void Copy_8_To_8(
 /* -------------------------------------------------------------------------- */
 
 static void Copy_16_To_16(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaUint16* src = (PaUint16*)sourceBuffer;
-    PaUint16* dest = (PaUint16*)destinationBuffer;
+    PaUint16 *src = (PaUint16 *)sourceBuffer;
+    PaUint16 *dest = (PaUint16 *)destinationBuffer;
 
-    (void)ditherGenerator; /* unused parameter */
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         *dest = *src;
 
@@ -2140,16 +2139,16 @@ static void Copy_16_To_16(
 /* -------------------------------------------------------------------------- */
 
 static void Copy_24_To_24(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    unsigned char* src = (unsigned char*)sourceBuffer;
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    unsigned char *src = (unsigned char*)sourceBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
 
-    (void)ditherGenerator; /* unused parameter */
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         dest[0] = src[0];
         dest[1] = src[1];
@@ -2163,16 +2162,16 @@ static void Copy_24_To_24(
 /* -------------------------------------------------------------------------- */
 
 static void Copy_32_To_32(
-    void* destinationBuffer, signed int destinationStride,
-    void* sourceBuffer, signed int sourceStride,
-    unsigned int count, struct PaUtilTriangularDitherGenerator* ditherGenerator)
+    void *destinationBuffer, signed int destinationStride,
+    void *sourceBuffer, signed int sourceStride,
+    unsigned int count, struct PaUtilTriangularDitherGenerator *ditherGenerator )
 {
-    PaUint32* dest = (PaUint32*)destinationBuffer;
-    PaUint32* src = (PaUint32*)sourceBuffer;
+    PaUint32 *dest = (PaUint32 *)destinationBuffer;
+    PaUint32 *src = (PaUint32 *)sourceBuffer;
 
-    (void)ditherGenerator; /* unused parameter */
+    (void) ditherGenerator; /* unused parameter */
 
-    while (count--)
+    while( count-- )
     {
         *dest = *src;
 
@@ -2203,9 +2202,8 @@ static void Copy_64_To_64(
 }
 
 /* -------------------------------------------------------------------------- */
-
 PaUtilConverterTable paConverters = {
-    Float64_To_Float32,           /* PaUtilConverter *Float64_To_Float32; */
+    Float64_To_Float32,           /* PaUtilConverter *Float64_To_Float32; */ //[2.10.3.11]MW0LGE portaudio start
     Float64_To_Int32,             /* PaUtilConverter *Float64_To_Int32; */
 
     Float64_To_Int24,             /* PaUtilConverter *Float64_To_Int24; */
@@ -2218,8 +2216,7 @@ PaUtilConverterTable paConverters = {
     Float64_To_Int8,              /* PaUtilConverter *Float64_To_Int8; */
     Float64_To_UInt8,             /* PaUtilConverter *Float64_To_UInt8; */
 
-    Float32_To_Float64,           /* PaUtilConverter *Float32_To_Float64; */
-
+    Float32_To_Float64,           /* PaUtilConverter *Float32_To_Float64; */ //[2.10.3.11]MW0LGE portaudio end
     Float32_To_Int32,              /* PaUtilConverter *Float32_To_Int32; */
     Float32_To_Int32_Dither,       /* PaUtilConverter *Float32_To_Int32_Dither; */
     Float32_To_Int32_Clip,         /* PaUtilConverter *Float32_To_Int32_Clip; */
@@ -2245,7 +2242,7 @@ PaUtilConverterTable paConverters = {
     Float32_To_UInt8_Clip,         /* PaUtilConverter *Float32_To_UInt8_Clip; */
     Float32_To_UInt8_DitherClip,   /* PaUtilConverter *Float32_To_UInt8_DitherClip; */
 
-    Int32_To_Float64,             /* PaUtilConverter *Int32_To_Float64; */
+	Int32_To_Float64,              /* PaUtilConverter *Int32_To_Float64; */ //[2.10.3.11]MW0LGE portaudio
     Int32_To_Float32,              /* PaUtilConverter *Int32_To_Float32; */
     Int32_To_Int24,                /* PaUtilConverter *Int32_To_Int24; */
     Int32_To_Int24_Dither,         /* PaUtilConverter *Int32_To_Int24_Dither; */
@@ -2256,7 +2253,7 @@ PaUtilConverterTable paConverters = {
     Int32_To_UInt8,                /* PaUtilConverter *Int32_To_UInt8; */
     Int32_To_UInt8_Dither,         /* PaUtilConverter *Int32_To_UInt8_Dither; */
 
-    Int24_To_Float64,             /* PaUtilConverter *Int24_To_Float64; */
+	Int24_To_Float64,              /* PaUtilConverter *Int24_To_Float64; */ //[2.10.3.11]MW0LGE portaudio
     Int24_To_Float32,              /* PaUtilConverter *Int24_To_Float32; */
     Int24_To_Int32,                /* PaUtilConverter *Int24_To_Int32; */
     Int24_To_Int16,                /* PaUtilConverter *Int24_To_Int16; */
@@ -2266,7 +2263,7 @@ PaUtilConverterTable paConverters = {
     Int24_To_UInt8,                /* PaUtilConverter *Int24_To_UInt8; */
     Int24_To_UInt8_Dither,         /* PaUtilConverter *Int24_To_UInt8_Dither; */
 
-    Int16_To_Float64,             /* PaUtilConverter *Int16_To_Float64; */
+	Int16_To_Float64,              /* PaUtilConverter *Int16_To_Float64; */ //[2.10.3.11]MW0LGE portaudio
     Int16_To_Float32,              /* PaUtilConverter *Int16_To_Float32; */
     Int16_To_Int32,                /* PaUtilConverter *Int16_To_Int32; */
     Int16_To_Int24,                /* PaUtilConverter *Int16_To_Int24; */
@@ -2275,14 +2272,14 @@ PaUtilConverterTable paConverters = {
     Int16_To_UInt8,                /* PaUtilConverter *Int16_To_UInt8; */
     Int16_To_UInt8_Dither,         /* PaUtilConverter *Int16_To_UInt8_Dither; */
 
-    Int8_To_Float64,              /* PaUtilConverter *Int8_To_Float64; */
+	Int8_To_Float64,               /* PaUtilConverter *Int8_To_Float64; */ //[2.10.3.11]MW0LGE portaudio
     Int8_To_Float32,               /* PaUtilConverter *Int8_To_Float32; */
     Int8_To_Int32,                 /* PaUtilConverter *Int8_To_Int32; */
     Int8_To_Int24,                 /* PaUtilConverter *Int8_To_Int24 */
     Int8_To_Int16,                 /* PaUtilConverter *Int8_To_Int16; */
     Int8_To_UInt8,                 /* PaUtilConverter *Int8_To_UInt8; */
 
-    UInt8_To_Float64,             /* PaUtilConverter *Int8_To_Float64; */
+	UInt8_To_Float64,              /* PaUtilConverter *Int8_To_Float64; */ //[2.10.3.11]MW0LGE portaudio
     UInt8_To_Float32,              /* PaUtilConverter *UInt8_To_Float32; */
     UInt8_To_Int32,                /* PaUtilConverter *UInt8_To_Int32; */
     UInt8_To_Int24,                /* PaUtilConverter *UInt8_To_Int24; */
@@ -2292,8 +2289,8 @@ PaUtilConverterTable paConverters = {
     Copy_8_To_8,                   /* PaUtilConverter *Copy_8_To_8; */
     Copy_16_To_16,                 /* PaUtilConverter *Copy_16_To_16; */
     Copy_24_To_24,                 /* PaUtilConverter *Copy_24_To_24; */
-    Copy_32_To_32,                 /* PaUtilConverter *Copy_32_To_32; */
-    Copy_64_To_64                  /* PaUtilConverter *Copy_64_To_64; */
+    Copy_32_To_32,                  /* PaUtilConverter *Copy_32_To_32; */
+	Copy_64_To_64                  /* PaUtilConverter *Copy_64_To_64; */ //[2.10.3.11]MW0LGE portaudio
 };
 
 /* -------------------------------------------------------------------------- */
@@ -2302,10 +2299,10 @@ PaUtilConverterTable paConverters = {
 
 /* -------------------------------------------------------------------------- */
 
-PaUtilZeroer* PaUtil_SelectZeroer(PaSampleFormat destinationFormat)
+PaUtilZeroer* PaUtil_SelectZeroer( PaSampleFormat destinationFormat )
 {
-    switch (destinationFormat & ~paNonInterleaved) {
-    case paFloat64:
+    switch( destinationFormat & ~paNonInterleaved ){
+    case paFloat64: //[2.10.3.11]MW0LGE portaudio
         return paZeroers.Zero64;
     case paFloat32:
         return paZeroers.Zero32;
@@ -2335,7 +2332,7 @@ PaUtilZeroerTable paZeroers = {
     0,  /* PaUtilZeroer *Zero16; */
     0,  /* PaUtilZeroer *Zero24; */
     0,  /* PaUtilZeroer *Zero32; */
-    0,  /* PaUtilZeroer *Zero64; */
+    0,  /* PaUtilZeroer *Zero64; */ //[2.10.3.11]MW0LGE portaudio
 };
 
 /* -------------------------------------------------------------------------- */
@@ -2344,12 +2341,12 @@ PaUtilZeroerTable paZeroers = {
 
 /* -------------------------------------------------------------------------- */
 
-static void ZeroU8(void* destinationBuffer, signed int destinationStride,
-    unsigned int count)
+static void ZeroU8( void *destinationBuffer, signed int destinationStride,
+        unsigned int count )
 {
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
 
-    while (count--)
+    while( count-- )
     {
         *dest = 128;
 
@@ -2359,12 +2356,12 @@ static void ZeroU8(void* destinationBuffer, signed int destinationStride,
 
 /* -------------------------------------------------------------------------- */
 
-static void Zero8(void* destinationBuffer, signed int destinationStride,
-    unsigned int count)
+static void Zero8( void *destinationBuffer, signed int destinationStride,
+        unsigned int count )
 {
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
 
-    while (count--)
+    while( count-- )
     {
         *dest = 0;
 
@@ -2374,12 +2371,12 @@ static void Zero8(void* destinationBuffer, signed int destinationStride,
 
 /* -------------------------------------------------------------------------- */
 
-static void Zero16(void* destinationBuffer, signed int destinationStride,
-    unsigned int count)
+static void Zero16( void *destinationBuffer, signed int destinationStride,
+        unsigned int count )
 {
-    PaUint16* dest = (PaUint16*)destinationBuffer;
+    PaUint16 *dest = (PaUint16 *)destinationBuffer;
 
-    while (count--)
+    while( count-- )
     {
         *dest = 0;
 
@@ -2389,12 +2386,12 @@ static void Zero16(void* destinationBuffer, signed int destinationStride,
 
 /* -------------------------------------------------------------------------- */
 
-static void Zero24(void* destinationBuffer, signed int destinationStride,
-    unsigned int count)
+static void Zero24( void *destinationBuffer, signed int destinationStride,
+        unsigned int count )
 {
-    unsigned char* dest = (unsigned char*)destinationBuffer;
+    unsigned char *dest = (unsigned char*)destinationBuffer;
 
-    while (count--)
+    while( count-- )
     {
         dest[0] = 0;
         dest[1] = 0;
@@ -2406,12 +2403,12 @@ static void Zero24(void* destinationBuffer, signed int destinationStride,
 
 /* -------------------------------------------------------------------------- */
 
-static void Zero32(void* destinationBuffer, signed int destinationStride,
-    unsigned int count)
+static void Zero32( void *destinationBuffer, signed int destinationStride,
+        unsigned int count )
 {
-    PaUint32* dest = (PaUint32*)destinationBuffer;
+    PaUint32 *dest = (PaUint32 *)destinationBuffer;
 
-    while (count--)
+    while( count-- )
     {
         *dest = 0;
 
@@ -2421,7 +2418,7 @@ static void Zero32(void* destinationBuffer, signed int destinationStride,
 
 /* -------------------------------------------------------------------------- */
 
-
+//[2.10.3.11]MW0LGE portaudio
 static void Zero64(void* destinationBuffer, signed int destinationStride,
     unsigned int count)
 {
@@ -2436,14 +2433,13 @@ static void Zero64(void* destinationBuffer, signed int destinationStride,
 }
 
 /* -------------------------------------------------------------------------- */
-
 PaUtilZeroerTable paZeroers = {
     ZeroU8,  /* PaUtilZeroer *ZeroU8; */
     Zero8,  /* PaUtilZeroer *Zero8; */
     Zero16,  /* PaUtilZeroer *Zero16; */
     Zero24,  /* PaUtilZeroer *Zero24; */
     Zero32,  /* PaUtilZeroer *Zero32; */
-    Zero64,  /* PaUtilZeroer *Zero64; */
+	Zero64,  /* PaUtilZeroer *Zero64; */ //[2.10.3.11]MW0LGE portaudio
 };
 
 /* -------------------------------------------------------------------------- */

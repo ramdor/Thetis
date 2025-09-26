@@ -6443,9 +6443,6 @@
             this.panelRX2Display.Controls.Add(this.comboRX2DisplayMode);
             this.panelRX2Display.Controls.Add(this.chkRX2DisplayAVG);
             this.panelRX2Display.Controls.Add(this.chkX2TR);
-            this.panelRX2Display.Controls.Add(this.chkDX);
-            this.panelRX2Display.Controls.Add(this.chkRX1Preamp);
-            this.panelRX2Display.Controls.Add(this.chkRX2Preamp);
             this.panelRX2Display.Name = "panelRX2Display";
             // 
             // panelRX2Mixer
@@ -7553,6 +7550,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.Controls.Add(this.panelDisplay);
+            this.Controls.Add(this.chkRX2Preamp);
+            this.Controls.Add(this.chkRX1Preamp);
+            this.Controls.Add(this.chkDX);
             this.Controls.Add(this.lblPAProfile);
             this.Controls.Add(this.nudPwrTemp2);
             this.Controls.Add(this.nudPwrTemp);
