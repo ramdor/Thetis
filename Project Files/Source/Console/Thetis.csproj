@@ -758,6 +758,10 @@
     <Compile Include="TCIServer.cs" />
     <Compile Include="titlebar.cs" />
     <Compile Include="TuneStep.cs" />
+    <Compile Include="ucOtherButtonsOptionsGrid.cs" />
+    <Compile Include="ucOtherButtonsOptionsGrid.Designer.cs">
+      <DependentUpon>ucOtherButtonsOptionsGrid.cs</DependentUpon>
+    </Compile>
     <Compile Include="ucProgress.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -827,6 +831,25 @@
       <SubType>Form</SubType>
     </Compile>
     <None Include="Resources\thetis-logo2.png" />
+    <None Include="Resources\ob_power.png" />
+    <None Include="Resources\ob_circle.png" />
+    <None Include="Resources\ob_square.png" />
+    <None Include="Resources\ob_play.png" />
+    <None Include="Resources\ob_histogram.png" />
+    <None Include="Resources\ob_phase.png" />
+    <None Include="Resources\ob_scope.png" />
+    <None Include="Resources\ob_mute_on.png" />
+    <None Include="Resources\ob_mute_off.png" />
+    <None Include="Resources\ob_mic_off.png" />
+    <None Include="Resources\ob_mic_on.png" />
+    <None Include="Resources\ob_scope2.png" />
+    <None Include="Resources\ob_spectrum.png" />
+    <None Include="Resources\ob_panadapter.png" />
+    <None Include="Resources\ob_waterfall.png" />
+    <None Include="Resources\ob_panascope.png" />
+    <None Include="Resources\ob_spectrascope.png" />
+    <None Include="Resources\ob_panafall.png" />
+    <None Include="Resources\ob_display_off.png" />
     <Content Include="Resources\Thetis2_256.ico" />
     <Content Include="Resources\Thetis2_48.ico" />
     <None Include="Resources\resizegrab.png" />
@@ -1101,6 +1124,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Andromeda\vfosettingspopup.resx">
       <DependentUpon>vfosettingspopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucOtherButtonsOptionsGrid.resx">
+      <DependentUpon>ucOtherButtonsOptionsGrid.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ucProgress.resx">
       <DependentUpon>ucProgress.cs</DependentUpon>

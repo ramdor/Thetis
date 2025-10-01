@@ -466,12 +466,14 @@ enum _RXPort
 enum HPSDRHW
 {
 	Atlas = 0,
-	Hermes = 1,     // ANAN-10/100
-	HermesII = 2,   // ANAN-10E/100B
-	Angelia = 3,    // ANAN-100D
-	Orion = 4,      // ANAN-200D
-	OrionMKII = 5,  // ANAN-7000DLE/8000DLE AnvelinaPro3
-	HermesLite = 6  // MI0BOT: HL2 allocated number
+	Hermes = 1,      // ANAN-10/100
+	HermesII = 2,    // ANAN-10E/100B
+	Angelia = 3,     // ANAN-100D
+	Orion = 4,       // ANAN-200D
+	OrionMKII = 5,   // ANAN-7000DLE/8000DLE AnvelinaPro3
+	HermesLite = 6,  // MI0BOT: HL2 allocated number
+	Saturn = 10,     // ANAN-G2: added G8NJJ
+	SaturnMKII = 11  // ANAN-G2: MKII board
 };
 
 enum _HPSDRModel //from enums.cs

@@ -3312,8 +3312,6 @@ namespace Thetis
                         //else if (chkNR.CheckState == CheckState.Checked) chkNR.CheckState = CheckState.Indeterminate;       // NR to NR2
                         //else chkNR.CheckState = CheckState.Unchecked;
                         incrementNR(1);
-                        setupNR(1, false);
-                        setupNR(1, true);
                     }
                     else
                     {
@@ -3321,8 +3319,6 @@ namespace Thetis
                         //else if (chkRX2NR.CheckState == CheckState.Checked) chkRX2NR.CheckState = CheckState.Indeterminate;       // NR to NR2
                         //else chkRX2NR.CheckState = CheckState.Unchecked;
                         incrementNR(2);
-                        setupNR(2, false);
-                        setupNR(2, true);
                     }
                     break;
 

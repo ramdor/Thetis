@@ -1291,7 +1291,8 @@ namespace Thetis
 
         public static int QAC = 0; // ke9ns add
  
-		private void chkQuickPlay_CheckedChanged(object sender, System.EventArgs e)
+        private bool _old_quick_play_state = false;
+        private void chkQuickPlay_CheckedChanged(object sender, System.EventArgs e)
 		{
             if (_restoring_controls) return;
 
@@ -1381,13 +1382,24 @@ namespace Thetis
                 }
 			}
             Audio.WavePlayback = chkQuickPlay.Checked;
-			console.WavePlayback = chkQuickPlay.Checked;			
-		}
+			console.WavePlayback = chkQuickPlay.Checked;
 
-      //  public static string quickmp3SR; // ke9ns add
+            console.UpdatedFromWaveForm = true; // let console know change came from here
+            console.QuickPlay = chkQuickPlay.Checked;
+            console.UpdatedFromWaveForm = false;
 
-       // public static string quickmp3; // ke9ns add
+            if (_old_quick_play_state != chkQuickPlay.Checked)
+            {
+                _old_quick_play_state = chkQuickPlay.Checked;
+                if (console != null) console.QuickPlayChangedHandlers?.Invoke(1, _old_quick_play_state, chkQuickPlay.Checked); // rx1 only atm
+            }
+        }
+
+        //  public static string quickmp3SR; // ke9ns add
+
+        // public static string quickmp3; // ke9ns add
         //============================================================================================
+        private bool _old_quick_record_state = false;
         private void chkQuickRec_CheckedChanged(object sender, System.EventArgs e)
         {
             if (_restoring_controls) return;
@@ -1487,6 +1499,16 @@ namespace Thetis
 //                 }
 
             } //   if (!chkQuickRec.Checked)
+
+            console.UpdatedFromWaveForm = true; // let console know change came from here
+            console.QuickRec = chkQuickRec.Checked;
+            console.UpdatedFromWaveForm = false;
+
+            if (_old_quick_record_state != chkQuickRec.Checked)
+            {
+                _old_quick_record_state = chkQuickRec.Checked;
+                if(console != null) console.QuickRecordChangedHandlers?.Invoke(1, _old_quick_record_state, chkQuickRec.Checked); // rx1 only atm
+            }
 
         } //  chkQuickRec_CheckedChanged
 

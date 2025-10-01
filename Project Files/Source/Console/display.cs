@@ -3503,6 +3503,11 @@ namespace Thetis
                         FastAttackNoiseFloorRX2 = true;
                     }
                 }
+
+                if(console != null)
+                {
+                    console.SetGeneralSetting(0, OtherButtonId.PAUSE, _paused_display);
+                }
             }
         }
         private static void pauseDisplay()

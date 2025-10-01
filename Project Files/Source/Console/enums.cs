@@ -462,7 +462,8 @@ namespace Thetis
     {
         OFF = 0,
         SQL = 1,
-        VSQL = 2
+        VSQL = 2,
+        LAST
     }
 
     public enum StatusBarIconGroup

@@ -12,6 +12,11 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] WDSP 1.27 post processing noise functionality added to NR2. Settings in Setup->DSP->NR/ANF
 - [add] added functionality to reposition 'lost' forms. This can be found in Setup->[Test->Reposition Forms]. Select the forms you want to move back to the primary monitor starting at 100, 100. The Z order of windows will not be changed so they may appear behind a window on the primary monitor
 - [add] you can now hold CTRL+ALT+SHIFT when starting Thetis to show a message to allow you to reset the locations of Thetis console and Setup if they become lost. You can then use Setup->Tests->[Reposition Forms] for any others missing
+- [add] %nr% and %rxn% added as script variables. %nr% returns NR number enabled 0-4, and %rxn% returns receiver number used by the container
+- [add] it is now possible to use the condition of a led indicator to show/hide text overlay
+- [add] new meter item, OtherButtons. Some buttons have icons associated with them. Also button style 13 uses active indicator colour for the text/icon colour. New [fix] option that ignores button size, and uses Scale instead. 
+- [add] more legacy items can be hidden
+- [change] available meter items are listed alphabetically per rx/tx/special group
 - [change] changed ZZIS cat command so that it takes/returns the actual filter width and not the slider width position. ZZIS; will return ZZISxxxxx; where xxxxx is 0 padded filter width. ZZIS00500; will set filter width to 500HZ. Symmetrical modes such as AM, SAM will take the full size width, so ZZIS20000; will be +-10k on AM. Note. FilterWdithMode is switched to linear whilst this is applied
 - [change] private scope added to in/out firewall rules when [Firewall Check] is used from Setup. Previously was only setting Domain + Public
 - [change] reimplemented the code that ensures a form is on screen as there had been occurrences where a form had got 'lost'. Note. this will still fail if a monitor is turned off and windows thinks it is still available as a display surface
