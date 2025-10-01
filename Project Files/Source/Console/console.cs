@@ -76,6 +76,7 @@ namespace Thetis
     using System.Collections.Concurrent;
     using System.Management;
     using System.Runtime.CompilerServices;
+    using System.Reflection.Metadata;
 
     public partial class Console : Form
     {
@@ -11208,17 +11209,22 @@ namespace Thetis
                     UpdatePreamps();
                 }
                 UpdateRX1DisplayOffsets();
+
+                setATTGeneralSetting(1);
             }
         }
 
         private bool _setFromOtherAttenuator = false; // used to prevent other attenuator from re-setting the caller
         private int _rx1_attenuator_data = 0;
         private int _sa_rx1_last_adjust = 0;
+        private bool[] _from_attenuatordata = new bool[2] { false, false };
         public int RX1AttenuatorData
         {
             get { return _rx1_attenuator_data; }
             set
             {
+                if (_from_attenuatordata[0]) return; //[2.10.3.12]MW0LGE prevent recalling this from inside here when the combotext changes, such basic 101
+
                 int oldData = _rx1_attenuator_data;
                 _rx1_attenuator_data = value;
                 if (initializing)
@@ -11226,6 +11232,8 @@ namespace Thetis
                     if (oldData != _rx1_attenuator_data) AttenuatorDataChangedHandlers?.Invoke(1, oldData, _rx1_attenuator_data);
                     return;
                 }
+                
+                _from_attenuatordata[0] = true;
                 
                 if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 LNA has wider range
                 {
@@ -11244,9 +11252,8 @@ namespace Thetis
                     HardwareSpecific.Model != HPSDRModel.REDPITAYA) //DH1KLM
                     udRX1StepAttData.Maximum = (decimal)61;
                 else
-                {
                     udRX1StepAttData.Maximum = (decimal)31;
-                }
+                _from_attenuatordata[0] = false;
 
                 _rx1_attenuator_data = validateRX1StepAttData(_rx1_attenuator_data); //[2.10.3.9]MW0LGE validated
 
@@ -11302,7 +11309,9 @@ namespace Thetis
                 if (!_mox) //[2.10.3.9]MW0LGE note, this is not technically required for all radios except for the RedPitaya. See BODGE
                     setRX1stepAttenuatorForBand(rx1_band, _rx1_attenuator_data);
 
+                _from_attenuatordata[0] = true;
                 udRX1StepAttData.Value = _rx1_attenuator_data;
+                _from_attenuatordata[0] = false;
                 lblAttenLabel.Text = _rx1_attenuator_data.ToString() + " dB";
 
                 if (!_mox)
@@ -11326,6 +11335,8 @@ namespace Thetis
                 UpdateRX1DisplayOffsets();
 
                 if (oldData != _rx1_attenuator_data) AttenuatorDataChangedHandlers?.Invoke(1, oldData, _rx1_attenuator_data);
+
+                setATTGeneralSetting(1);
             }
         }
 
@@ -11365,6 +11376,8 @@ namespace Thetis
                     UpdatePreamps();
                 }
                 UpdateRX2DisplayOffsets();
+
+                setATTGeneralSetting(2);
             }
         }
 
@@ -11387,6 +11400,8 @@ namespace Thetis
             get { return rx2_attenuator_data; }
             set
             {
+                if (_from_attenuatordata[1]) return; //[2.10.3.12]MW0LGE prevent recalling this from inside here when the combotext changes, such basic 101
+
                 int oldData = rx2_attenuator_data;
                 rx2_attenuator_data = value;
                 if (initializing)
@@ -11395,6 +11410,8 @@ namespace Thetis
                     return;
                 }
 
+                _from_attenuatordata[1] = true;
+                
                 if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 LNA has wider range
                 {
                     udRX2StepAttData.Maximum = (decimal)32;
@@ -11412,6 +11429,7 @@ namespace Thetis
                     HardwareSpecific.Model != HPSDRModel.REDPITAYA) //DH1KLM
                     udRX2StepAttData.Maximum = (decimal)61; //MW0LGE_[2.9.0.7]  changed to udRX2
                 else udRX2StepAttData.Maximum = (decimal)31;
+                _from_attenuatordata[1] = false;
 
                 rx2_attenuator_data = validateRX2StepAttData(rx2_attenuator_data); //[2.10.3.9]MW0LGE validated
 
@@ -11464,7 +11482,9 @@ namespace Thetis
                 if (!_mox || (_mox && VFOATX)) //[2.10.3.9]MW0LGE we should be able to do this if txing on rx1
                     setRX2stepAttenuatorForBand(rx2_band, rx2_attenuator_data);
 
+                _from_attenuatordata[1] = true;
                 udRX2StepAttData.Value = rx2_attenuator_data;
+                _from_attenuatordata[1] = false;
                 lblRX2AttenLabel.Text = rx2_attenuator_data.ToString() + " dB";
 
                 if (!_mox)
@@ -11488,6 +11508,8 @@ namespace Thetis
                 UpdateRX2DisplayOffsets();
 
                 if (oldData != rx2_attenuator_data) AttenuatorDataChangedHandlers?.Invoke(2, oldData, rx2_attenuator_data);
+
+                setATTGeneralSetting(2);
             }
         }
 
@@ -15527,6 +15549,8 @@ namespace Thetis
                     VfoALockChangedHandlers?.Invoke(1, old_state, vfoA_lock);
                     old_state = vfoA_lock;
                 }
+
+                SetGeneralSetting(0, OtherButtonId.LOCK_A, chkVFOLock.Checked);
             }
         }
 
@@ -15588,6 +15612,8 @@ namespace Thetis
                     VfoBLockChangedHandlers?.Invoke(RX2Enabled ? 2 : 1, old_state, vfoB_lock);
                     old_state = vfoB_lock;
                 }
+
+                SetGeneralSetting(0, OtherButtonId.LOCK_B, chkVFOBLock.Checked);
             }
         }
 
@@ -15961,7 +15987,7 @@ namespace Thetis
         private string safeCat(string msg)
         {
             string sRet;
-            if (m_objTCPIPCatParser == null) return "";
+            if (m_objTCPIPCatParser == null) m_objTCPIPCatParser = new CATParser(this);
 
             lock (m_objCatParseLocker)
             {
@@ -18256,6 +18282,48 @@ namespace Thetis
             }
         }
 
+        //
+        private Filter _tx_filter = Filter.FIRST;
+        public Filter GetTXFilter
+        {
+            get { return _tx_filter; }
+        }
+        public bool SetTXFilter(Filter filter)
+        {
+            // attempt to use an rx filter for tx
+            if (filter == Filter.FIRST || filter == Filter.NONE || filter == Filter.LAST) return false;
+
+            int low = 0;
+            int high = 0;
+            DSPMode mode = DSPMode.LAST;
+
+            int tx_rx = RX2Enabled && VFOBTX ? 2 : 1;
+
+            switch (tx_rx)
+            {
+                case 1:
+                    low = rx1_filters[(int)_rx1_dsp_mode].GetLow(filter);
+                    high = rx1_filters[(int)_rx1_dsp_mode].GetHigh(filter);
+                    mode = RX1DSPMode;
+                    break;
+                case 2:
+                    low = rx2_filters[(int)_rx1_dsp_mode].GetLow(filter);
+                    high = rx2_filters[(int)_rx1_dsp_mode].GetHigh(filter);
+                    mode = RX2DSPMode;
+                    break;
+            }
+            if (mode == DSPMode.LAST) return false;
+
+            //SetTXFilters(mode, Math.Abs(low), Math.Abs(high), true);
+            UpdateTXLowHighFilterForMode(mode, ref low, ref high);
+            TXFilterLow = low;
+            TXFilterHigh = high;
+
+            _tx_filter = filter;
+
+            return true;
+        }
+        //
         private Filter rx1_filter = Filter.FIRST;
         public Filter RX1Filter
         {
@@ -19611,11 +19679,14 @@ namespace Thetis
 
         private int alex_atten;
         private PreampMode rx1_preamp_mode = PreampMode.HPSDR_OFF;
+        private bool[] _from_preampmode = new bool[2] { false, false };
         public PreampMode RX1PreampMode
         {
             get { return rx1_preamp_mode; }
             set
             {
+                if (_from_preampmode[0]) return; //[2.10.3.12]MW0LGE prevent recalling this from inside here when the combotext changes, such basic 101
+
                 PreampMode oldMode = rx1_preamp_mode;
                 rx1_preamp_mode = value;
                 if (initializing)
@@ -19748,6 +19819,7 @@ namespace Thetis
 
                 rx1_preamp_by_band[(int)rx1_band] = rx1_preamp_mode;
 
+                _from_preampmode[0] = true;
                 switch (rx1_preamp_mode)
                 {
                     case PreampMode.HPSDR_ON:
@@ -19787,6 +19859,7 @@ namespace Thetis
                         comboPreamp.Text = "-30dB";
                         break;
                 }
+                _from_preampmode[0] = false;
 
                 if (!_mox && !_setFromOtherAttenuator)
                 {
@@ -19811,6 +19884,8 @@ namespace Thetis
                 UpdateRX1DisplayOffsets(); //MW0LGE_22b
 
                 if (oldMode != rx1_preamp_mode) PreampModeChangedHandlers?.Invoke(1, oldMode, rx1_preamp_mode);
+
+                setATTGeneralSetting(1);
             }
         }
 
@@ -19820,6 +19895,8 @@ namespace Thetis
             get { return rx2_preamp_mode; }
             set
             {
+                if (_from_preampmode[1]) return; //[2.10.3.12]MW0LGE prevent recalling this from inside here when the combotext changes, such basic 101
+
                 PreampMode oldMode = rx2_preamp_mode;
                 rx2_preamp_mode = value;
                 if (initializing)
@@ -19832,6 +19909,7 @@ namespace Thetis
                 int rx2_att_value = 0;
 
                 //MW0LGE_22b
+                _from_preampmode[1] = true;
                 switch (rx2_preamp_mode)
                 {
                     case PreampMode.HPSDR_ON:  //0dB
@@ -19875,6 +19953,7 @@ namespace Thetis
                         comboRX2Preamp.Text = "-30dB";
                         break;
                 }
+                _from_preampmode[1] = false;
 
                 //MW0LGE_22b
                 int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
@@ -19921,6 +20000,8 @@ namespace Thetis
                     ptbRX2Squelch_Scroll(this, EventArgs.Empty);
 
                 if (oldMode != rx2_preamp_mode) PreampModeChangedHandlers?.Invoke(2, oldMode, rx2_preamp_mode);
+
+                setATTGeneralSetting(2);
             }
         }
 
@@ -30049,6 +30130,8 @@ namespace Thetis
 
             if (bOldMute != Audio.MuteRX1)
                 MuteChangedHandlers?.Invoke(1, bOldMute, Audio.MuteRX1);
+
+            setMuteAllGeneralSettings();
         }
 
         public bool ModelIsHPSDRorHermes()
@@ -35319,16 +35402,34 @@ namespace Thetis
             specRX.GetSpecRX(cmaster.inid(1, 0)).ZoomSlider = ((double)ptbDisplayZoom.Value - 10.0) / 230.0;
             double zoom_factor = 1.0 / ((ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - ptbDisplayZoom.Value) * 0.01);
 
-            if (zoom_factor == 0.5) radDisplayZoom05.Checked = true;
-            else if (zoom_factor == 1.0) radDisplayZoom1x.Checked = true;
-            else if (zoom_factor == 2.0) radDisplayZoom2x.Checked = true;
-            else if (zoom_factor == 4.0) radDisplayZoom4x.Checked = true;
+            DisplayZoomButton dzb;
+
+            if (zoom_factor == 0.5) {
+                radDisplayZoom05.Checked = true;
+                dzb = DisplayZoomButton.B05;
+            }
+            else if (zoom_factor == 1.0)
+            {
+                radDisplayZoom1x.Checked = true;
+                dzb = DisplayZoomButton.B1;
+            }
+            else if (zoom_factor == 2.0)
+            {
+                radDisplayZoom2x.Checked = true;
+                dzb = DisplayZoomButton.B2;
+            }
+            else if (zoom_factor == 4.0) 
+            {
+                radDisplayZoom4x.Checked = true;
+                dzb = DisplayZoomButton.B4;
+            }
             else
             {
                 radDisplayZoom05.Checked = false;
                 radDisplayZoom1x.Checked = false;
                 radDisplayZoom2x.Checked = false;
                 radDisplayZoom4x.Checked = false;
+                dzb = DisplayZoomButton.NONE;
             }
 
             CalcDisplayFreq();
@@ -35363,52 +35464,60 @@ namespace Thetis
             }
 
             if (dOldZoomFactor != zoom_factor) ZoomFactorChangedHandlers?.Invoke(dOldZoomFactor, zoom_factor, ptbDisplayZoom.Value); //MW0LGE_21d
+
+            SetDisplayZoomGeneralSettings(0, dzb);
         }
 
         private void radDisplayZoom05_CheckedChanged(object sender, System.EventArgs e)
         {
             if (radDisplayZoom05.Checked)
             {
-                PanCentre();
-                //ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 0.5);
-                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
-                Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 0.5);
+                displayZoom05();
             }
+        }
+        private void displayZoom05()
+        {
+            PanCentre();
+            Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 0.5);
         }
 
         private void radDisplayZoom1x_CheckedChanged(object sender, System.EventArgs e)
         {
             if (radDisplayZoom1x.Checked)
             {
-                PanCentre();
-                //ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 1.0);
-                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
-                Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 1.0);
+                displayZoom1();
             }
+        }
+        private void displayZoom1()
+        {
+            PanCentre();
+            Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 1.0);
         }
 
         private void radDisplayZoom2x_CheckedChanged(object sender, System.EventArgs e)
         {
             if (radDisplayZoom2x.Checked)
             {
-                PanCentre();
-                //ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 2.0);
-                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
-                Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 2.0);
+                displayZoom2();
             }
         }
-
+        private void displayZoom2()
+        {
+            PanCentre();
+            Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 2.0);
+        }
         private void radDisplayZoom4x_CheckedChanged(object sender, System.EventArgs e)
         {
             if (radDisplayZoom4x.Checked)
             {
-                PanCentre();
-                //ptbDisplayZoom.Value = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 4.0);
-                //ptbDisplayZoom_Scroll(this, EventArgs.Empty);
-                Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 4.0);
+                displayZoom4();
             }
         }
-
+        private void displayZoom4()
+        {
+            PanCentre();
+            Zoom = ptbDisplayZoom.Maximum + ptbDisplayZoom.Minimum - (int)(100.0 / 4.0);
+        }
         #endregion
 
         #region Band Button Events
@@ -37764,9 +37873,9 @@ namespace Thetis
         {
             if (_ignoreQuickSplitSet)
             {
-                _ignoreQuickSplitSet = false;
                 return;
             }
+            _ignoreQuickSplitSet = true;
 
             bool bOldQuickSplitState = _quickSplitState;
             bool bRestore = false;
@@ -37849,17 +37958,23 @@ namespace Thetis
                 //do we have old settings?
                 if (_oldQuickSplitSettings != null)
                 {
-                    if (_oldQuickSplitSettings.ContainsKey("zoom")) Zoom = (int)_oldQuickSplitSettings["zoom"];
-                    if (_oldQuickSplitSettings.ContainsKey("multirx")) chkEnableMultiRX.Checked = (bool)_oldQuickSplitSettings["multirx"];
-                    if (_oldQuickSplitSettings.ContainsKey("txfl")) chkShowTXFilter.Checked = (bool)_oldQuickSplitSettings["txfl"];
-                    if (_oldQuickSplitSettings.ContainsKey("swapwheels")) Midi2Cat.SwapVFOWheelsProperty = (bool)_oldQuickSplitSettings["swapwheels"];
-                    if (_oldQuickSplitSettings.ContainsKey("VFOASubFreq")) VFOASubFreq = (double)_oldQuickSplitSettings["VFOASubFreq"];
-                    if (_oldQuickSplitSettings.ContainsKey("VFOBFreq")) VFOBFreq = (double)_oldQuickSplitSettings["VFOBFreq"];
-                    if (_oldQuickSplitSettings.ContainsKey("panmain")) PanMainRX = (int)_oldQuickSplitSettings["panmain"];
-                    if (_oldQuickSplitSettings.ContainsKey("pansub")) PanSubRX = (int)_oldQuickSplitSettings["pansub"];
-                    if (_oldQuickSplitSettings.ContainsKey("vfosync")) VFOSync = (bool)_oldQuickSplitSettings["vfosync"];
-                    _oldQuickSplitSettings.Clear();
-                    _oldQuickSplitSettings = null;
+                    //if (!_restoring_quick_split) // prevent multiple events fired from each of the changes below, coming back into setquicksplit and setting
+                    //                            // _oldQuickSplitSettings to null
+                    //{
+                        //_restoring_quick_split = true;
+                        if (_oldQuickSplitSettings.ContainsKey("zoom")) Zoom = (int)_oldQuickSplitSettings["zoom"];
+                        if (_oldQuickSplitSettings.ContainsKey("multirx")) chkEnableMultiRX.Checked = (bool)_oldQuickSplitSettings["multirx"];
+                        if (_oldQuickSplitSettings.ContainsKey("txfl")) chkShowTXFilter.Checked = (bool)_oldQuickSplitSettings["txfl"];
+                        if (_oldQuickSplitSettings.ContainsKey("swapwheels")) Midi2Cat.SwapVFOWheelsProperty = (bool)_oldQuickSplitSettings["swapwheels"];
+                        if (_oldQuickSplitSettings.ContainsKey("VFOASubFreq")) VFOASubFreq = (double)_oldQuickSplitSettings["VFOASubFreq"];
+                        if (_oldQuickSplitSettings.ContainsKey("VFOBFreq")) VFOBFreq = (double)_oldQuickSplitSettings["VFOBFreq"];
+                        if (_oldQuickSplitSettings.ContainsKey("panmain")) PanMainRX = (int)_oldQuickSplitSettings["panmain"];
+                        if (_oldQuickSplitSettings.ContainsKey("pansub")) PanSubRX = (int)_oldQuickSplitSettings["pansub"];
+                        if (_oldQuickSplitSettings.ContainsKey("vfosync")) VFOSync = (bool)_oldQuickSplitSettings["vfosync"];
+                        _oldQuickSplitSettings.Clear();
+                        _oldQuickSplitSettings = null;
+                        //_restoring_quick_split = false;
+                    //}
                 }
             }
 
@@ -37867,6 +37982,7 @@ namespace Thetis
             {
                 QuickSplitChangedHandlers?.Invoke(bOldQuickSplitState, _quickSplitState);
             }
+            _ignoreQuickSplitSet = false;
         }
 
         private void chkXIT_CheckedChanged(object sender, System.EventArgs e)
@@ -37897,6 +38013,8 @@ namespace Thetis
             //#endif
 
             updateVFOFreqs(_mox); //[2.10.1.0] MW0LGE we might need to update everything if tx'ing on sub, use std function
+
+            SetGeneralSetting(0, OtherButtonId.XIT, chkXIT.Checked);
         }
 
         private void chkRIT_CheckedChanged(object sender, System.EventArgs e)
@@ -38542,6 +38660,7 @@ namespace Thetis
                         {
                             _ignoreQuickSplitSet = true;
                             chkVFOSplit_CheckedChanged(this, EventArgs.Empty);
+                            _ignoreQuickSplitSet = false;
                         }
                         else
                         {
@@ -38573,6 +38692,7 @@ namespace Thetis
                     {
                         _ignoreQuickSplitSet = true;
                         chkVFOSplit_CheckedChanged(this, EventArgs.Empty);
+                        _ignoreQuickSplitSet = false;
                     }
                     //else if (rx2_enabled)
                     //{
@@ -40635,6 +40755,8 @@ namespace Thetis
 
             if (bOldMute != Audio.MuteRX2)
                 MuteChangedHandlers?.Invoke(2, bOldMute, Audio.MuteRX2);
+
+            setMuteAllGeneralSettings();
         }
 
         private void comboRX2DisplayMode_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -41531,6 +41653,8 @@ namespace Thetis
 
                 _old_vfo_sync_state = chkVFOSync.Checked;
             }
+
+            SetGeneralSetting(0, OtherButtonId.VFO_SYNC, chkVFOSync.Checked);
         }
 
         private bool mute_rx1_on_vfob_tx = true;
@@ -47215,6 +47339,7 @@ namespace Thetis
         public delegate void PSAChanged(int rx, bool old_state, bool new_state);
         public delegate void QuickRecordChanged(int rx, bool old_state, bool new_state);
         public delegate void QuickPlayChanged(int rx, bool old_state, bool new_state);
+        public delegate void WaveRecordChanged(int rx, bool old_state, bool new_state);
         public delegate void ANFChanged(int rx, bool old_state, bool new_state);
         public delegate void SNBChanged(int rx, bool old_state, bool new_state);
         public delegate void VACEnabledChanged(int rx, bool old_state, bool new_state);
@@ -47226,6 +47351,7 @@ namespace Thetis
         public delegate void AGCAutoModeChanged(int rx, bool old_state, bool new_state);
         public delegate void GeneralSettingsChanged(int rx, OtherButtonId setting, bool old_state, bool new_state, Dictionary<OtherButtonId, bool> settings);
         public delegate void SQLChanged(int rx, SquelchState old_state, SquelchState new_state);
+        public delegate void CWXShown(bool shown);
 
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
@@ -47349,6 +47475,7 @@ namespace Thetis
         public PSAChanged PSAChangedHandlers;
         public QuickRecordChanged QuickRecordChangedHandlers;
         public QuickPlayChanged QuickPlayChangedHandlers;
+        public WaveRecordChanged WaveRecordChangedHandlers;
         public ANFChanged ANFChangedHandlers;
         public SNBChanged SNBChangedHandlers;
         public VACEnabledChanged VACEnabledChangedHandlers;
@@ -47360,6 +47487,7 @@ namespace Thetis
         public AGCAutoModeChanged AGCAutoModeChangedHandlers;
         public GeneralSettingsChanged GeneralSettingsChangedHandlers;
         public SQLChanged SQLChangedHandlers;
+        public CWXShown CWXShownHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
@@ -47738,7 +47866,7 @@ namespace Thetis
             setRX1BandFromBandStackEntry(bse);
             updateStackNumberDisplay(bsf);
         }
-        private void OnBandBeforeChangeHandler(int rx, Band band)
+        private void preBandSelect(int rx, Band band, int dir = 0)
         {
             //[2.10.3.6]MW0LGE no band change on TX fix
             if (MOX && rx == 1 && (VFOATX || (!rx2_enabled && VFOBTX))) return;
@@ -47790,10 +47918,21 @@ namespace Thetis
 
                     bsf.UpdateCurrentWithLastVisitedData(m_bIgnoreFrequencyDupes); // store everything into current on current band filter                    
 
-                    if (Common.ShiftKeyDown)
-                        bse = bsf.Previous();
-                    else
+                    if (dir == 0)
+                    {
+                        if (Common.ShiftKeyDown)
+                            bse = bsf.Previous();
+                        else
+                            bse = bsf.Next();
+                    }
+                    else if(dir > 0)
+                    {
                         bse = bsf.Next();
+                    }
+                    else
+                    {
+                        bse = bsf.Previous();
+                    }
 
                     bsf.GenerateFilteredList(true); // this is done as current is updated above, this may cause that last entry to move ahead of where you area
                     BandStack2Form.InitBandStackFilter(bsf, false);
@@ -47825,7 +47964,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if(band >= Band.VHF0 && band <= Band.VHF13)
+                        if (band >= Band.VHF0 && band <= Band.VHF13)
                         {
                             // attempt to get freq ranges from xvtr form
                             int index = band - Band.VHF0;
@@ -47840,6 +47979,10 @@ namespace Thetis
                 setRX1BandFromBandStackEntry(bse);
             }
             updateStackNumberDisplay(bsf);
+        }
+        private void OnBandBeforeChangeHandler(int rx, Band band)
+        {
+            preBandSelect(rx, band);
         }
         private void setRX1BandFromBandStackEntry(in BandStackEntry bse)
         {
@@ -48038,11 +48181,13 @@ namespace Thetis
         }
         private bool _xpa_enabled = false;
         private void chkExternalPA_CheckedChanged(object sender, EventArgs e)
-        {           
+        {
             //MW0LGE_21j
-            if (!chkPower.Checked) return;
+            //if (!chkPower.Checked) return;//[2.10.3.12]MW0LGE commented this out, so that we actualy call the delegates if this is on at start up
+            //who cares if it makes no sense that we have not radi etc ocnnection. This code is duplicated everywhere,
+            //incuding VOFAfrequency change and HWMOX state change
 
-            bool old_enabled = _xpa_enabled;            
+            bool old_enabled = _xpa_enabled;
 
             Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, current_region);
             Band lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, current_region);
@@ -48056,8 +48201,8 @@ namespace Thetis
             _xpa_enabled = chkExternalPA.Checked;
 
             if (_xpa_enabled != old_enabled)
-            {                
-                XPAChangedHandlers?.Invoke(_xpa_in_use, old_enabled, chkExternalPA.Checked);
+            {
+                XPAChangedHandlers?.Invoke(_xpa_in_use, old_enabled, _xpa_enabled);
             }
         }
         public bool CATxPA
@@ -48318,22 +48463,6 @@ namespace Thetis
             }
         }
         #endregion
-
-        private void radDisplayZoom05_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void radDisplayZoom1x_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void radDisplayZoom2x_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void radDisplayZoom4x_Click(object sender, EventArgs e)
-        {
-        }
 
         private void ptbRF_Click(object sender, EventArgs e)
         {
@@ -53431,11 +53560,6 @@ namespace Thetis
             _pause_DisplayThread = false;
         }
 
-        private void buttonTS1_Click(object sender, EventArgs e)
-        {
-            Display.PausedDisplay = !Display.PausedDisplay;
-        }
-
         //
         private volatile bool[] _display_max_bin_enabled = new bool[] { false, false };
         private void setupDisplayMaxBinDetect(int rx, bool sub_rx, bool enabled, bool update_enabled_state = true)
@@ -53549,6 +53673,15 @@ namespace Thetis
 
         private void on_send_floodcontrol_message(string msg, string uid)
         {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new MethodInvoker(() =>
+                {
+                    on_send_floodcontrol_message(msg, uid);
+                }));
+                return;
+            }
+              
             bool send = false;
 
             switch (uid)
@@ -53577,8 +53710,16 @@ namespace Thetis
             }
         }
 
-        public void DoOtherButtonAction(int rx, OtherButtonId id)
+        //
+        private bool _busy_doing_otherbutton_action = false;
+        public bool BustDoingOtherbuttonAction
         {
+            get { return _busy_doing_otherbutton_action; }
+        }
+        public void DoOtherButtonAction(int rx, OtherButtonId id, MouseButtons button)
+        {
+            if (_busy_doing_otherbutton_action) return;
+            _busy_doing_otherbutton_action = true;
             switch (id)
             {
                 case OtherButtonId.POWER: PowerOn = !PowerOn; break;
@@ -53591,6 +53732,7 @@ namespace Thetis
                 case OtherButtonId.PS_A: PSA = !PSA; break;
                 case OtherButtonId.REC: QuickRec = !QuickRec; break;
                 case OtherButtonId.PLAY: QuickPlay = !QuickPlay; break;
+                case OtherButtonId.WAVE_RECORD: WaveRecord = !WaveRecord; break;
                 case OtherButtonId.NR: incrementNR(rx); break;
                 case OtherButtonId.ANF: SetANF(rx, !GetANF(rx)); break;
                 case OtherButtonId.NB:
@@ -53621,6 +53763,7 @@ namespace Thetis
                 case OtherButtonId.VAC1: if (!IsSetupFormNull) { SetupForm.VACEnable = !SetupForm.VACEnable; } break;
                 case OtherButtonId.VAC2: if (!IsSetupFormNull) { SetupForm.VAC2Enable = !SetupForm.VAC2Enable; } break;
                 case OtherButtonId.MUTE: SetMute(rx, !GetMute(rx)); break;
+                case OtherButtonId.MUTE_ALL: SetMute(0, !GetMute(0)); break;
                 case OtherButtonId.BIN: SetBin(rx, !GetBin(rx)); break;
                 case OtherButtonId.SUBRX: SetSubRX(rx, !GetSubRX(rx)); break;
                 case OtherButtonId.PAN_SWAP: chkPanSwap.Checked = !chkPanSwap.Checked; break; // no rx2
@@ -53694,6 +53837,7 @@ namespace Thetis
                 case OtherButtonId.CFC: DoGeneralSettingAction(rx, OtherButtonId.CFC, !GetGeneralSetting(rx, OtherButtonId.CFC)); break;
                 case OtherButtonId.CFC_EQ: DoGeneralSettingAction(rx, OtherButtonId.CFC_EQ, !GetGeneralSetting(rx, OtherButtonId.CFC_EQ)); break;
                 case OtherButtonId.LEVELER: DoGeneralSettingAction(rx, OtherButtonId.LEVELER, !GetGeneralSetting(rx, OtherButtonId.LEVELER)); break;
+                case OtherButtonId.PHASE_ROT: DoGeneralSettingAction(rx, OtherButtonId.PHASE_ROT, !GetGeneralSetting(rx, OtherButtonId.PHASE_ROT)); break;
 
                 case OtherButtonId.PAUSE: DoGeneralSettingAction(rx, OtherButtonId.PAUSE, !GetGeneralSetting(rx, OtherButtonId.PAUSE)); break;
                 case OtherButtonId.PEAK_BLOBS: DoGeneralSettingAction(rx, OtherButtonId.PEAK_BLOBS, !GetGeneralSetting(rx, OtherButtonId.PEAK_BLOBS)); break;
@@ -53718,7 +53862,339 @@ namespace Thetis
                 case OtherButtonId.SR_384000: DoGeneralSettingAction(rx, OtherButtonId.SR_384000, true); break;
                 case OtherButtonId.SR_768000: DoGeneralSettingAction(rx, OtherButtonId.SR_768000, true); break;
                 case OtherButtonId.SR_1536000: DoGeneralSettingAction(rx, OtherButtonId.SR_1536000, true); break;
+
+                case OtherButtonId.ATT_STEP: 
+                    {
+                        switch (rx)
+                        {
+                            case 1:
+                                SetupForm.RX1EnableAtt = !SetupForm.RX1EnableAtt;
+                                break;
+                            case 2:
+                                SetupForm.RX2EnableAtt = !SetupForm.RX2EnableAtt;
+                                break;
+                        }
+                    }
+                    break;
+                case OtherButtonId.ATT_P1: IncrementATT(rx); break;
+                case OtherButtonId.ATT_M1: DecrementATT(rx); break;
+                case OtherButtonId.ATT_0: SetATT(rx, 0, SetAttMode.CURRENT); break;
+                case OtherButtonId.ATT_10: SetATT(rx, 10, SetAttMode.CURRENT); break;
+                case OtherButtonId.ATT_20: SetATT(rx, 20, SetAttMode.CURRENT); break;
+                case OtherButtonId.ATT_30: SetATT(rx, 30, SetAttMode.CURRENT); break;
+                case OtherButtonId.ATT_40: SetATT(rx, 40, SetAttMode.CURRENT); break;
+                case OtherButtonId.ATT_50: SetATT(rx, 50, SetAttMode.CURRENT); break;
+
+                case OtherButtonId.PAN_P5: SetPanAdjust(5); break;
+                case OtherButtonId.PAN_M5: SetPanAdjust(-5); break;
+                case OtherButtonId.PAN_CENTRE: SetPanAdjust(0, true); break;
+
+                case OtherButtonId.ZTB: ZoomToBand(button == MouseButtons.Right); break;
+                case OtherButtonId.ZOOM_0P5: displayZoom05(); break;
+                case OtherButtonId.ZOOM_1: displayZoom1(); break;
+                case OtherButtonId.ZOOM_2: displayZoom2(); break;
+                case OtherButtonId.ZOOM_4: displayZoom4(); break;
+
+                case OtherButtonId.MAF_P5: AF += 5; break;
+                case OtherButtonId.MAF_M5: AF -= 5; break;
+                case OtherButtonId.AF_P5: SetAF(rx, GetAF(rx) + 5); break;
+                case OtherButtonId.AF_M5: SetAF(rx, GetAF(rx) - 5); break;
+                case OtherButtonId.BAL_P5: SetBal(rx, GetBal(rx) + 5); break;
+                case OtherButtonId.BAL_M5: SetBal(rx, GetBal(rx) - 5); break;
+                case OtherButtonId.SAF_P5: SetAF(1, GetAF(rx, true) + 5, true); break; //rx1 only, no sub rx for rx2
+                case OtherButtonId.SAF_M5: SetAF(1, GetAF(rx, true) - 5, true); break; //rx1 only, no sub rx for rx2
+                case OtherButtonId.SBAL_P5: SetBal(1, GetBal(rx, true) + 5, true); break; //rx1 only, no sub rx for rx2
+                case OtherButtonId.SBAL_M5: SetBal(1, GetBal(rx, true) - 5, true); break; //rx1 only, no sub rx for rx2
+                case OtherButtonId.SQL_P5: SetSql(rx, GetSql(rx) + 5); break;
+                case OtherButtonId.SQL_M5: SetSql(rx, GetSql(rx) - 5); break;
+                case OtherButtonId.MIC_P1: Mic += 1; break;
+                case OtherButtonId.MIC_M1: Mic -= 1; break;
+                case OtherButtonId.COMP_P1: CPDRLevel += 1; break;
+                case OtherButtonId.COMP_M1: CPDRLevel -= 1; break;
+                case OtherButtonId.VOX_P1: VOXSens += 1; break;
+                case OtherButtonId.VOX_M1: VOXSens -= 1; break;
+                case OtherButtonId.AGC_P5: SetAgcT(rx, GetAgcT(rx) + 5); break;
+                case OtherButtonId.AGC_M5: SetAgcT(rx, GetAgcT(rx) - 5); break;
+                case OtherButtonId.DRIVE_P5: PWR += 5; break;
+                case OtherButtonId.DRIVE_M5: PWR -= 5; break;
+                case OtherButtonId.TUNE_P5: TunePWR += 5; break;
+                case OtherButtonId.TUNE_M5: TunePWR -= 5; break;
+                case OtherButtonId.DRIVE_0: PWR = 0; break;
+                case OtherButtonId.TUN_0: TunePWR = 0; break;
+
+                case OtherButtonId.FORM_SETUP: setupToolStripMenuItem1_Click(this, EventArgs.Empty); break;
+                case OtherButtonId.FORM_DBMAN: databaseManagerToolStripMenuItem_Click(this, EventArgs.Empty); break;
+                case OtherButtonId.FORM_MEMORY: memoryToolStripMenuItem_Click(this, EventArgs.Empty); break;
+                case OtherButtonId.FORM_WAVE: waveToolStripMenuItem_Click(this, EventArgs.Empty); break;
+                case OtherButtonId.FORM_EQ: equalizerToolStripMenuItem_Click(this, EventArgs.Empty); break;
+                case OtherButtonId.FORM_XVTR: xVTRsToolStripMenuItem_Click(this, EventArgs.Empty); break;
+                case OtherButtonId.FORM_CWX: cWXToolStripMenuItem_Click(this, EventArgs.Empty); break;
+                case OtherButtonId.FORM_DIVERSITY: eSCToolStripMenuItem_Click(this, EventArgs.Empty); break;
+                case OtherButtonId.FORM_LINEARITY: linearityToolStripMenuItem_Click(this, EventArgs.Empty); break;
+                case OtherButtonId.FORM_WB: wBToolStripMenuItem_Click(this, EventArgs.Empty); break;
+
+                case OtherButtonId.CWX_KEY: CWXForm.KeyAction(); break;
+                case OtherButtonId.CWX_STOP: CWXForm.StopAction(); break;
+                case OtherButtonId.CWX_F1: CWXForm.PressFNkey(1); break;
+                case OtherButtonId.CWX_F2: CWXForm.PressFNkey(2); break;
+                case OtherButtonId.CWX_F3: CWXForm.PressFNkey(3); break;
+                case OtherButtonId.CWX_F4: CWXForm.PressFNkey(4); break;
+                case OtherButtonId.CWX_F5: CWXForm.PressFNkey(5); break;
+                case OtherButtonId.CWX_F6: CWXForm.PressFNkey(6); break;
+                case OtherButtonId.CWX_F7: CWXForm.PressFNkey(7); break;
+                case OtherButtonId.CWX_F8: CWXForm.PressFNkey(8); break;
+                case OtherButtonId.CWX_F9: CWXForm.PressFNkey(9); break;
+
+                case OtherButtonId.VFO_SYNC: VFOSync = !VFOSync; break;
+                case OtherButtonId.LOCK_A: VFOALock = !VFOALock; break;
+                case OtherButtonId.LOCK_B: VFOBLock = !VFOBLock; break;
+                case OtherButtonId.TUNE_STEP_U: TuneStepIndex += 1; break;
+                case OtherButtonId.TUNE_STEP_D: TuneStepIndex -= 1; break;
+                case OtherButtonId.STACK_U: SetBandStack(rx, 1); break;
+                case OtherButtonId.STACK_D: SetBandStack(rx, -1); break;
+
+                case OtherButtonId.NF: SetNFEnabled(rx, !GetNFEnabled(rx)); break;
             }
+
+            _busy_doing_otherbutton_action = false;
+        }
+        public void SetNFEnabled(int rx, bool state)
+        {
+            if (rx < 1 || rx > 2) return;
+            if (IsSetupFormNull) return;
+
+            switch (rx)
+            {
+                case 1:
+                    SetupForm.RX1ShowNF = state;
+                    break;
+                case 2:
+                    SetupForm.RX2ShowNF = state;
+                    break;
+            }
+        }
+        public bool GetNFEnabled(int rx)
+        {
+            if (rx < 1 || rx > 2) return false;
+            if (IsSetupFormNull) return false;
+
+            switch (rx)
+            {
+                case 1:
+                    return SetupForm.RX1ShowNF;
+                case 2:
+                    return SetupForm.RX2ShowNF;
+            }
+            return false;
+        }
+        public void SetBandStack(int rx, int dir)
+        {
+            if (rx < 1 || rx > 2) return;
+
+            switch (rx)
+            {
+                case 1:
+                    preBandSelect(rx, RX1Band, dir);
+                    break;
+                case 2:
+                    preBandSelect(rx, RX2Band, dir);
+                    break;
+            }
+        }
+        public int GetAgcT(int rx)
+        {
+            if (rx < 1 || rx > 2) return 0;
+
+            switch (rx)
+            {
+                case 1:
+                    return RF;
+                case 2:
+                    return RX2RF;
+            }
+            return 0;
+        }
+        public void SetAgcT(int rx, int value)
+        {
+            if (rx < 0 || rx > 2) return; // 0 is all rx
+            int start = rx == 0 ? 1 : rx;
+            int end = rx == 0 ? 2 : rx;
+
+            for (int n = start; n <= end; n++)
+            {
+                switch (n)
+                {
+                    case 1:
+                        RF = value;
+                        break;
+                    case 2:
+                        RX2RF = value;
+                        break;
+                }
+            }
+        }
+        public int GetSql(int rx)
+        {
+            if (rx < 1 || rx > 2) return 0;
+
+            switch (rx)
+            {
+                case 1:
+                    return Squelch;
+                case 2:
+                    return Squelch2;
+            }
+            return 0;
+        }
+        public void SetSql(int rx, int value)
+        {
+            if (rx < 0 || rx > 2) return; // 0 is all rx
+            int start = rx == 0 ? 1 : rx;
+            int end = rx == 0 ? 2 : rx;
+
+            for (int n = start; n <= end; n++)
+            {
+                switch (n)
+                {
+                    case 1:
+                        Squelch = value;
+                        break;
+                    case 2:
+                        Squelch2 = value;
+                        break;
+                }
+            }
+        }
+        public int GetBal(int rx, bool subrx = false)
+        {
+            if (rx < 1 || rx > 2) return 0;
+
+            switch (rx)
+            {
+                case 1:
+                    if (!subrx)
+                        return PanMainRX;
+                    else
+                        return PanSubRX;
+                case 2:
+                    return RX2Pan;
+            }
+            return 0;
+        }
+        public void SetBal(int rx, int value, bool subrx = false)
+        {
+            if (rx < 0 || rx > 2) return;// 0 is all rx
+            int start = rx == 0 ? 1 : rx;
+            int end = rx == 0 ? 2 : rx;
+
+            for (int n = start; n <= end; n++)
+            {
+                switch (n)
+                {
+                    case 1:
+                        if (!subrx)
+                            PanMainRX = value;
+                        else
+                            PanSubRX = value;
+                        break;
+                    case 2:
+                        RX2Pan = value;
+                        break;
+                }
+            }
+        }
+        public int GetAF(int rx, bool subrx = false)
+        {
+            if (rx < 1 || rx > 2) return 0;
+
+            switch (rx)
+            {
+                case 1:
+                    if (!subrx)
+                        return RX0Gain;
+                    else
+                        return RX1Gain;
+                case 2:
+                        return RX2Gain;
+            }
+            return 0;
+        }
+        public bool SetAF(int rx, int value, bool subrx = false)
+        {
+            if (rx < 0 || rx > 2) return false; // 0 is all rx
+            int start = rx == 0 ? 1 : rx;
+            int end = rx == 0 ? 2 : rx;
+
+            for(int n = start; n <= end; n++)
+            {
+                switch (n)
+                {
+                    case 1:
+                        if (!subrx)
+                            RX0Gain = value;
+                        else
+                            RX1Gain = value;
+                        break;
+                    case 2:
+                        RX2Gain = value;
+                        break;
+                }
+            }
+
+            return true;
+        }
+        public enum DisplayZoomButton
+        {
+            NONE = -1,
+            B05,
+            B1,
+            B2,
+            B4
+        }
+        public DisplayZoomButton GetDisplayZoomGeneralSettings(int rx)
+        {
+            if (Zoom == 0.5) return DisplayZoomButton.B05;
+            else if (Zoom == 1) return DisplayZoomButton.B1;
+            else if (Zoom == 2) return DisplayZoomButton.B2;
+            else if (Zoom == 4) return DisplayZoomButton.B4;
+            return DisplayZoomButton.NONE;
+        }
+
+        public void SetDisplayZoomGeneralSettings(int rx, DisplayZoomButton dzb)
+        {
+            if (rx < 0 || rx > 2) return; // 0 is all rx
+            int start = rx == 0 ? 1 : rx;
+            int end = rx == 0 ? 2 : rx;
+
+            for (int n = start; n <= end; n++)
+            {
+                //all off
+                SetGeneralSetting(n, OtherButtonId.ZOOM_0P5, false);
+                SetGeneralSetting(n, OtherButtonId.ZOOM_1, false);
+                SetGeneralSetting(n, OtherButtonId.ZOOM_2, false);
+                SetGeneralSetting(n, OtherButtonId.ZOOM_4, false);
+
+                switch (dzb)
+                {
+                    case DisplayZoomButton.B05:
+                        SetGeneralSetting(n, OtherButtonId.ZOOM_0P5, true);
+                        break;
+                    case DisplayZoomButton.B1:
+                        SetGeneralSetting(n, OtherButtonId.ZOOM_1, true);
+                        break;
+                    case DisplayZoomButton.B2:
+                        SetGeneralSetting(n, OtherButtonId.ZOOM_2, true);
+                        break;
+                    case DisplayZoomButton.B4:
+                        SetGeneralSetting(n, OtherButtonId.ZOOM_4, true);
+                        break;
+                }
+            }
+        }
+        private void SetPanAdjust(int adjust, bool centre = false)
+        {
+            if(centre) btnDisplayPanCenter_Click(this, EventArgs.Empty);
+            if(adjust != 0) Pan = Pan + adjust;
         }
         public bool GetOtherButtonState(OtherButtonId id, int rx)
         {
@@ -53734,6 +54210,7 @@ namespace Thetis
                 case OtherButtonId.PS_A: return PSA;
                 case OtherButtonId.REC: return QuickRec;
                 case OtherButtonId.PLAY: return QuickPlay;
+                case OtherButtonId.WAVE_RECORD: return WaveRecord;
                 case OtherButtonId.NR: return GetSelectedNR(rx) != 0;
                 case OtherButtonId.ANF: return GetANF(rx);
                 case OtherButtonId.NB: return GetSelectedNB(rx) != 0;
@@ -53746,6 +54223,7 @@ namespace Thetis
                 case OtherButtonId.VAC1: if (!IsSetupFormNull) { return SetupForm.VACEnable; } else { return false; }
                 case OtherButtonId.VAC2: if (!IsSetupFormNull) { return SetupForm.VAC2Enable; } else { return false; }
                 case OtherButtonId.MUTE: return GetMute(rx);
+                case OtherButtonId.MUTE_ALL: return GetMute(0);
                 case OtherButtonId.BIN: return GetBin(rx);
                 case OtherButtonId.SUBRX: return GetSubRX(rx);
                 case OtherButtonId.PAN_SWAP: return GetPanSwap(rx);
@@ -53790,6 +54268,7 @@ namespace Thetis
                 case OtherButtonId.CFC: return GetGeneralSetting(rx, OtherButtonId.CFC);
                 case OtherButtonId.CFC_EQ: return GetGeneralSetting(rx, OtherButtonId.CFC_EQ);
                 case OtherButtonId.LEVELER: return GetGeneralSetting(rx, OtherButtonId.LEVELER);
+                case OtherButtonId.PHASE_ROT: return GetGeneralSetting(rx, OtherButtonId.PHASE_ROT);
 
                 case OtherButtonId.PAUSE: return GetGeneralSetting(rx, OtherButtonId.PAUSE);
                 case OtherButtonId.PEAK_BLOBS: return GetGeneralSetting(rx, OtherButtonId.PEAK_BLOBS);
@@ -53812,6 +54291,25 @@ namespace Thetis
                 case OtherButtonId.SR_384000: return GetGeneralSetting(rx, OtherButtonId.SR_384000);
                 case OtherButtonId.SR_768000: return GetGeneralSetting(rx, OtherButtonId.SR_768000);
                 case OtherButtonId.SR_1536000: return GetGeneralSetting(rx, OtherButtonId.SR_1536000);
+
+                case OtherButtonId.ATT_STEP: return GetGeneralSetting(rx, OtherButtonId.ATT_STEP);
+                case OtherButtonId.ATT_0: return GetGeneralSetting(rx, OtherButtonId.ATT_0);
+                case OtherButtonId.ATT_10: return GetGeneralSetting(rx, OtherButtonId.ATT_10);
+                case OtherButtonId.ATT_20: return GetGeneralSetting(rx, OtherButtonId.ATT_20);
+                case OtherButtonId.ATT_30: return GetGeneralSetting(rx, OtherButtonId.ATT_30);
+                case OtherButtonId.ATT_40: return GetGeneralSetting(rx, OtherButtonId.ATT_40);
+                case OtherButtonId.ATT_50: return GetGeneralSetting(rx, OtherButtonId.ATT_50);
+
+                case OtherButtonId.ZOOM_0P5: return GetGeneralSetting(rx, OtherButtonId.ZOOM_0P5);
+                case OtherButtonId.ZOOM_1: return GetGeneralSetting(rx, OtherButtonId.ZOOM_1);
+                case OtherButtonId.ZOOM_2: return GetGeneralSetting(rx, OtherButtonId.ZOOM_2);
+                case OtherButtonId.ZOOM_4: return GetGeneralSetting(rx, OtherButtonId.ZOOM_2);
+
+                case OtherButtonId.VFO_SYNC: return GetGeneralSetting(rx, OtherButtonId.VFO_SYNC);
+                case OtherButtonId.LOCK_A: return GetGeneralSetting(rx, OtherButtonId.LOCK_A);
+                case OtherButtonId.LOCK_B: return GetGeneralSetting(rx, OtherButtonId.LOCK_B);
+
+                case OtherButtonId.NF: return GetGeneralSetting(rx, OtherButtonId.NF);
 
                 default: 
                     return false;
@@ -53905,15 +54403,42 @@ namespace Thetis
         }
         public bool GetMute(int rx)
         {
-            if (rx < 1 || rx > 2) return false;
-            switch (rx)
+            if (rx < 0 || rx > 2) return false; // 0 is all rx
+            int start = rx == 0 ? 1 : rx;
+            int end = rx == 0 ? 2 : rx;
+
+            bool ret = true;
+            for (int n = start; n <= end; n++)
             {
-                case 1:
-                    return MUT;
-                case 2:
-                    return MUT2;
-                default:
-                    return false;
+                switch (n)
+                {
+                    case 1:
+                        if (start == end) return MUT;
+                        ret &= MUT;
+                        break;
+                    case 2:
+                        if (start == end) return MUT2;
+                        ret &= MUT2;
+                        break;
+                }
+            }
+            return ret;
+        }
+        public bool WaveRecord
+        {
+            get
+            {
+                if (WaveForm == null || WaveForm.IsDisposed)
+                    WaveForm = new WaveControl(this);
+
+                return WaveForm.Recording;
+            }
+            set
+            {
+                if (WaveForm == null || WaveForm.IsDisposed)
+                    WaveForm = new WaveControl(this);
+
+                WaveForm.Recording = value;
             }
         }
         public int GetSelectedNB(int rx)
@@ -54247,21 +54772,41 @@ namespace Thetis
                     return false;
             }
         }
-
+        private void setMuteAllGeneralSettings()
+        {
+            SetGeneralSetting(0, OtherButtonId.MUTE_ALL, Audio.MuteRX1 && Audio.MuteRX2);
+        }
         public bool SetMute(int rx, bool state)
         {
-            if (rx < 1 || rx > 2) return false;
-            switch (rx)
+            if (rx < 0 || rx > 2) return false; // 0 is all rx
+            int start = rx == 0 ? 1 : rx;
+            int end = rx == 0 ? 2 : rx;
+
+            for (int n = start; n <= end; n++)
             {
-                case 1:
-                    MUT = state;
-                    return true;
-                case 2:
-                    MUT2 = state;
-                    return true;
-                default:
-                    return false;
+                switch (n)
+                {
+                    case 1:
+                        MUT = state;
+                        break;
+                    case 2:
+                        MUT2 = state;
+                        break;
+                }
             }
+
+            if (rx == 0)
+            {
+                bool all = GetMute(0);
+
+                //update mute all
+                for (int n = start; n <= end; n++)
+                {
+                    SetGeneralSetting(n, OtherButtonId.MUTE_ALL, all);
+                }
+            }
+
+            return true;
         }
         public (bool in_use, bool enabled) GetXPAStatus()
         {
@@ -54362,6 +54907,9 @@ namespace Thetis
                 case OtherButtonId.LEVELER:
                     if (!IsSetupFormNull) return SetupForm.TXLevelerOn;
                     break;
+                case OtherButtonId.PHASE_ROT:
+                    if (!IsSetupFormNull) return SetupForm.PhaseRotEnabled;
+                    break;
                 case OtherButtonId.PAUSE:
                     return Display.PausedDisplay;
                 case OtherButtonId.PEAK_BLOBS:
@@ -54392,6 +54940,37 @@ namespace Thetis
                 case OtherButtonId.SR_384000: if (!IsSetupFormNull) return SetupForm.GetHWSampleRate(rx) == 384000; break;
                 case OtherButtonId.SR_768000: if (!IsSetupFormNull) return SetupForm.GetHWSampleRate(rx) == 768000; break;
                 case OtherButtonId.SR_1536000: if (!IsSetupFormNull) return SetupForm.GetHWSampleRate(rx) == 1536000; break;
+
+                case OtherButtonId.ATT_STEP:
+                    {
+                        switch (rx)
+                        {
+                            case 1:
+                                if(!IsSetupFormNull) return SetupForm.RX1EnableAtt;
+                                break;
+                            case 2:
+                                if (!IsSetupFormNull) return SetupForm.RX2EnableAtt;
+                                break;
+                        }
+                    }
+                    break;
+                case OtherButtonId.ATT_0: return GetATT(rx) == 0;
+                case OtherButtonId.ATT_10: return GetATT(rx) == 10;
+                case OtherButtonId.ATT_20: return GetATT(rx) == 20;
+                case OtherButtonId.ATT_30: return GetATT(rx) == 30;
+                case OtherButtonId.ATT_40: return GetATT(rx) == 40;
+                case OtherButtonId.ATT_50: return GetATT(rx) == 50;
+
+                case OtherButtonId.ZOOM_0P5: return GetDisplayZoomGeneralSettings(rx) == DisplayZoomButton.B05;
+                case OtherButtonId.ZOOM_1: return GetDisplayZoomGeneralSettings(rx) == DisplayZoomButton.B1;
+                case OtherButtonId.ZOOM_2: return GetDisplayZoomGeneralSettings(rx) == DisplayZoomButton.B2;
+                case OtherButtonId.ZOOM_4: return GetDisplayZoomGeneralSettings(rx) == DisplayZoomButton.B4;
+
+                case OtherButtonId.VFO_SYNC: return VFOSync;
+                case OtherButtonId.LOCK_A: return VFOALock;
+                case OtherButtonId.LOCK_B: return VFOBLock;
+
+                case OtherButtonId.NF: return GetNFEnabled(rx);
             }
             return false;
         }
@@ -54410,6 +54989,7 @@ namespace Thetis
             SetGeneralSetting(0, OtherButtonId.COMP, GetGeneralSetting(tmp_rx, OtherButtonId.COMP));
             SetGeneralSetting(0, OtherButtonId.PAUSE, GetGeneralSetting(tmp_rx, OtherButtonId.PAUSE));
             SetGeneralSetting(0, OtherButtonId.LEVELER, GetGeneralSetting(tmp_rx, OtherButtonId.LEVELER));
+            SetGeneralSetting(0, OtherButtonId.PHASE_ROT, GetGeneralSetting(tmp_rx, OtherButtonId.PHASE_ROT));
             SetGeneralSetting(0, OtherButtonId.FILL_SPECTRUM, GetGeneralSetting(tmp_rx, OtherButtonId.FILL_SPECTRUM));
             SetGeneralSetting(0, OtherButtonId.CFC, GetGeneralSetting(tmp_rx, OtherButtonId.CFC));
             SetGeneralSetting(0, OtherButtonId.CFC_EQ, GetGeneralSetting(tmp_rx, OtherButtonId.CFC_EQ));
@@ -54418,6 +54998,10 @@ namespace Thetis
             SetGeneralSetting(0, OtherButtonId.SPOTS, GetGeneralSetting(tmp_rx, OtherButtonId.SPOTS));
             SetGeneralSetting(0, OtherButtonId.DITHER, GetGeneralSetting(tmp_rx, OtherButtonId.DITHER));
             SetGeneralSetting(0, OtherButtonId.RANDOM, GetGeneralSetting(tmp_rx, OtherButtonId.RANDOM));
+
+            SetGeneralSetting(0, OtherButtonId.VFO_SYNC, GetGeneralSetting(tmp_rx, OtherButtonId.VFO_SYNC));
+            SetGeneralSetting(0, OtherButtonId.LOCK_A, GetGeneralSetting(tmp_rx, OtherButtonId.LOCK_A));
+            SetGeneralSetting(0, OtherButtonId.LOCK_B, GetGeneralSetting(tmp_rx, OtherButtonId.LOCK_B));
 
             // per meter here
             int start = rx == 0 ? 1 : rx;
@@ -54430,6 +55014,9 @@ namespace Thetis
                 SetGeneralSetting(n, OtherButtonId.SR_384000, GetGeneralSetting(n, OtherButtonId.SR_384000));
                 SetGeneralSetting(n, OtherButtonId.SR_768000, GetGeneralSetting(n, OtherButtonId.SR_768000));                
                 SetGeneralSetting(n, OtherButtonId.SR_1536000, GetGeneralSetting(n, OtherButtonId.SR_1536000));
+
+                setATTGeneralSetting(n);
+                SetGeneralSetting(n, OtherButtonId.NF, GetGeneralSetting(n, OtherButtonId.NF));
             }
 
             // last
@@ -54493,6 +55080,9 @@ namespace Thetis
                     return true;
                 case OtherButtonId.LEVELER:
                     if (!IsSetupFormNull) SetupForm.TXLevelerOn = state;
+                    return true;
+                case OtherButtonId.PHASE_ROT:
+                    if (!IsSetupFormNull) SetupForm.PhaseRotEnabled = state;
                     return true;
                 case OtherButtonId.PAUSE:
                     Display.PausedDisplay = state;
@@ -54578,6 +55168,421 @@ namespace Thetis
                     break;
             }
         }
+        public int GetATT(int rx)
+        {
+            if (rx < 1 || rx > 2) return 0;
+
+            PreampMode pamode = PreampMode.FIRST;
+            bool step_att_enabled = false;
+            int att = 0;
+
+            switch (rx)
+            {
+                case 1:
+                    step_att_enabled = _rx1_step_att_enabled;
+                    pamode = RX1PreampMode;
+                    att = RX1AttenuatorData;
+                    break;
+                case 2:
+                    step_att_enabled = _rx2_step_att_enabled;
+                    pamode = RX2PreampMode;
+                    att = RX2AttenuatorData;
+                    break;
+            }
+
+            if (step_att_enabled)
+            {
+                return att;
+            }
+            else
+            {
+                switch(pamode)
+                {
+                    case PreampMode.HPSDR_OFF:
+                        return 0;
+                    case PreampMode.HPSDR_ON:
+                        return 0;
+                    case PreampMode.HPSDR_MINUS10:
+                        return 10;
+                    case PreampMode.HPSDR_MINUS20:
+                        return 20;
+                    case PreampMode.HPSDR_MINUS30:
+                        return 30;
+                    case PreampMode.HPSDR_MINUS40:
+                        return 40;
+                    case PreampMode.HPSDR_MINUS50:
+                        return 50;
+                    case PreampMode.SA_MINUS10:
+                        return 10;
+                    case PreampMode.SA_MINUS20:
+                        return 20;
+                    case PreampMode.SA_MINUS30:
+                        return 30;
+                }
+            }
+            return 0;
+        }
+        private int maxAtt()
+        {
+            int max_att;
+            if (alexpresent &&
+                HardwareSpecific.Model != HPSDRModel.ANAN10 &&
+                HardwareSpecific.Model != HPSDRModel.ANAN10E &&
+                HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
+                HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
+                HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
+                HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
+                HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
+                HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+                HardwareSpecific.Model != HPSDRModel.REDPITAYA)
+                max_att = 61;
+            else
+                max_att = 31;
+
+            return max_att;
+        }
+        public enum SetAttMode
+        {
+            CURRENT = 0,
+            PREAMP_MODE,
+            STEP_ATTEN
+        }
+        public bool SetATT(int rx, int att, SetAttMode mode)
+        {
+            if (rx < 1 || rx > 2) return false;
+
+            bool step_att = false;
+            switch (mode)
+            {
+                case SetAttMode.CURRENT:
+                    switch (rx)
+                    {
+                        case 1:
+                            if (!IsSetupFormNull) step_att = SetupForm.RX1EnableAtt;
+                            break;
+                        case 2:
+                            if (!IsSetupFormNull) step_att = SetupForm.RX2EnableAtt;
+                            break;
+                    }                    
+                    break;
+                case SetAttMode.PREAMP_MODE:
+                    step_att = false;
+                    break;
+                case SetAttMode.STEP_ATTEN:
+                    step_att = true;
+                    break;
+                default:
+                    return false;
+            }
+
+            if (step_att)
+            {
+                switch (rx)
+                {
+                    case 1:
+                        RX1AttenuatorData = att;
+                        break;
+                    case 2:
+                        RX2AttenuatorData = att;
+                        break;
+                }
+            }
+            else
+            {
+                PreampMode pamode = PreampMode.FIRST;
+
+                bool use_sa = HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+                                HardwareSpecific.Model == HPSDRModel.ORIONMKII || HardwareSpecific.Model == HPSDRModel.ANAN_G2 || HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
+                                HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN10 || HardwareSpecific.Model == HPSDRModel.ANAN10E ||
+                                (!alexpresent && (HardwareSpecific.Model == HPSDRModel.HERMES || HardwareSpecific.Model == HPSDRModel.ANAN100D ||
+                                HardwareSpecific.Model == HPSDRModel.ANAN200D || HardwareSpecific.Model == HPSDRModel.REDPITAYA
+                                ));
+
+                int max_att = maxAtt();
+                if (att > max_att) att = max_att;
+
+                if (att < 5) pamode = PreampMode.HPSDR_ON;
+                else if (att >= 5 && att < 15) pamode = use_sa ? PreampMode.SA_MINUS10 : PreampMode.HPSDR_MINUS10;
+                else if (att >= 15 && att < 25) pamode = use_sa ? PreampMode.SA_MINUS20 : PreampMode.HPSDR_MINUS20;
+                else if (att >= 25 && att < 35) pamode = use_sa ? PreampMode.SA_MINUS30 : PreampMode.HPSDR_MINUS30;
+                else if (att >= 35 && att < 45) pamode = PreampMode.HPSDR_MINUS40;
+                else if (att >= 45) pamode = PreampMode.HPSDR_MINUS50;
+
+                if (pamode == PreampMode.FIRST) return false;
+
+                switch(rx)
+                {
+                    case 1:
+                        RX1PreampMode = pamode;
+                        break;
+                    case 2:
+                        RX2PreampMode = pamode;
+                        break;
+                }
+            }
+
+            return true;
+        }
+        private void setATTGeneralSetting(int rx)
+        {
+            if (rx < 1 || rx > 2) return;
+
+            //all off
+            SetGeneralSetting(rx, OtherButtonId.ATT_0, false);
+            SetGeneralSetting(rx, OtherButtonId.ATT_10, false);
+            SetGeneralSetting(rx, OtherButtonId.ATT_20, false);
+            SetGeneralSetting(rx, OtherButtonId.ATT_30, false);
+            SetGeneralSetting(rx, OtherButtonId.ATT_40, false);
+            SetGeneralSetting(rx, OtherButtonId.ATT_50, false);
+
+            PreampMode pamode = PreampMode.FIRST;
+            bool step_att_enabled = false;
+            int att = 0;
+            switch (rx)
+            {
+                case 1:
+                    step_att_enabled = _rx1_step_att_enabled;
+                    pamode = RX1PreampMode;
+                    att = RX1AttenuatorData;
+                    SetGeneralSetting(rx, OtherButtonId.ATT_STEP, step_att_enabled);
+                    break;
+                case 2:
+                    step_att_enabled = _rx2_step_att_enabled;
+                    pamode = RX2PreampMode;
+                    att = RX2AttenuatorData;
+                    SetGeneralSetting(rx, OtherButtonId.ATT_STEP, step_att_enabled);
+                    break;            
+            }
+
+            if (step_att_enabled)
+            {
+                switch (att)
+                {
+                    case 0:
+                        SetGeneralSetting(rx, OtherButtonId.ATT_0, true);
+                        break;
+                    case 10:
+                        SetGeneralSetting(rx, OtherButtonId.ATT_10, true);
+                        break;
+                    case 20:
+                        SetGeneralSetting(rx, OtherButtonId.ATT_20, true);
+                        break;
+                    case 30:
+                        SetGeneralSetting(rx, OtherButtonId.ATT_30, true);
+                        break;
+                    case 40:
+                        SetGeneralSetting(rx, OtherButtonId.ATT_40, true);
+                        break;
+                    case 50:
+                        SetGeneralSetting(rx, OtherButtonId.ATT_50, true);
+                        break;
+                }
+            }
+            else
+            {
+                switch (pamode)
+                {
+                    case PreampMode.HPSDR_OFF:
+                        SetGeneralSetting(rx, OtherButtonId.ATT_0, true);
+                        break;
+                    case PreampMode.HPSDR_ON:
+                        SetGeneralSetting(rx, OtherButtonId.ATT_0, true);
+                        break;
+                    case PreampMode.SA_MINUS10:
+                    case PreampMode.HPSDR_MINUS10:
+                        SetGeneralSetting(rx, OtherButtonId.ATT_10, true);
+                        break;
+                    case PreampMode.SA_MINUS20:
+                    case PreampMode.HPSDR_MINUS20:
+                        SetGeneralSetting(rx, OtherButtonId.ATT_20, true);
+                        break;
+                    case PreampMode.SA_MINUS30:
+                    case PreampMode.HPSDR_MINUS30:
+                        SetGeneralSetting(rx, OtherButtonId.ATT_30, true);
+                        break;
+                    case PreampMode.HPSDR_MINUS40:
+                        SetGeneralSetting(rx, OtherButtonId.ATT_40, true);
+                        break;
+                    case PreampMode.HPSDR_MINUS50:
+                        SetGeneralSetting(rx, OtherButtonId.ATT_50, true);
+                        return;
+                }
+            }
+        }
+        public void IncrementATT(int rx)
+        {
+            if (rx < 1 || rx > 2) return;
+
+            PreampMode pamode = PreampMode.FIRST;
+            bool step_att_enabled = false;
+            int att = 0;
+            
+            switch (rx)
+            {
+                case 1:
+                    step_att_enabled = _rx1_step_att_enabled;
+                    pamode = RX1PreampMode;
+                    att = RX1AttenuatorData;
+                    break;
+                case 2:
+                    step_att_enabled = _rx2_step_att_enabled;
+                    pamode = RX2PreampMode;
+                    att = RX2AttenuatorData;
+                    break;
+            }
+
+            if (step_att_enabled)
+            {
+                int max_att = maxAtt();
+
+                att += 1;
+                if (att > max_att) att = max_att;
+
+                switch (rx)
+                {
+                    case 1:
+                        RX1AttenuatorData = att;
+                        break;
+                    case 2:
+                        RX2AttenuatorData = att;
+                        break;
+                }
+            }
+            else
+            {
+                bool use_sa = HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+                    HardwareSpecific.Model == HPSDRModel.ORIONMKII || HardwareSpecific.Model == HPSDRModel.ANAN_G2 || HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
+                    HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN10 || HardwareSpecific.Model == HPSDRModel.ANAN10E ||
+                    (!alexpresent && (HardwareSpecific.Model == HPSDRModel.HERMES || HardwareSpecific.Model == HPSDRModel.ANAN100D ||
+                    HardwareSpecific.Model == HPSDRModel.ANAN200D || HardwareSpecific.Model == HPSDRModel.REDPITAYA
+                    ));
+
+                switch (pamode)
+                {
+                    case PreampMode.HPSDR_OFF:
+                        pamode = use_sa ? PreampMode.SA_MINUS10 : PreampMode.HPSDR_MINUS10;
+                        break;
+                    case PreampMode.HPSDR_ON:
+                        pamode = use_sa ? PreampMode.SA_MINUS10 : PreampMode.HPSDR_MINUS10;
+                        break;
+                    case PreampMode.HPSDR_MINUS10:
+                        pamode = use_sa ? PreampMode.SA_MINUS20 : PreampMode.HPSDR_MINUS20;
+                        break;
+                    case PreampMode.HPSDR_MINUS20:
+                        pamode = use_sa ? PreampMode.SA_MINUS30 : PreampMode.HPSDR_MINUS30;
+                        break;
+                    case PreampMode.HPSDR_MINUS30:
+                        pamode = PreampMode.HPSDR_MINUS40;
+                        break;
+                    case PreampMode.HPSDR_MINUS40:
+                        pamode = PreampMode.HPSDR_MINUS50;
+                        break;
+                    case PreampMode.HPSDR_MINUS50:
+                        return;
+                    case PreampMode.SA_MINUS10:
+                        pamode = PreampMode.SA_MINUS20;
+                        break;
+                    case PreampMode.SA_MINUS20:
+                        pamode = PreampMode.SA_MINUS30;
+                        break;
+                    case PreampMode.SA_MINUS30:
+                        return;
+                }
+
+                switch (rx)
+                {
+                    case 1:
+                        RX1PreampMode = pamode;
+                        break;
+                    case 2:
+                        RX2PreampMode = pamode;
+                        break;
+                }
+            }
+        }
+        public void DecrementATT(int rx)
+        {
+            if (rx < 1 || rx > 2) return;
+
+            PreampMode pamode = PreampMode.FIRST;
+            bool step_att_enabled = false;
+            int att = 0;
+
+            switch (rx)
+            {
+                case 1:
+                    step_att_enabled = _rx1_step_att_enabled;
+                    pamode = RX1PreampMode;
+                    att = RX1AttenuatorData;
+                    break;
+                case 2:
+                    step_att_enabled = _rx2_step_att_enabled;
+                    pamode = RX2PreampMode;
+                    att = RX2AttenuatorData;
+                    break;
+            }
+
+            if (step_att_enabled)
+            {
+                att -= 1;
+                if (att < 0) att = 0;
+
+                switch (rx)
+                {
+                    case 1:
+                        RX1AttenuatorData = att;
+                        break;
+                    case 2:
+                        RX2AttenuatorData = att;
+                        break;
+                }
+            }
+            else
+            {
+                switch (pamode)
+                {
+                    case PreampMode.HPSDR_OFF:
+                        return;
+                    case PreampMode.HPSDR_ON:
+                        //pamode = PreampMode.HPSDR_OFF;
+                        break;
+                    case PreampMode.HPSDR_MINUS10:
+                        pamode = PreampMode.HPSDR_ON;
+                        break;
+                    case PreampMode.HPSDR_MINUS20:
+                        pamode = PreampMode.HPSDR_MINUS10;
+                        break;
+                    case PreampMode.HPSDR_MINUS30:
+                        pamode = PreampMode.HPSDR_MINUS20;
+                        break;
+                    case PreampMode.HPSDR_MINUS40:
+                        pamode = PreampMode.HPSDR_MINUS30;
+                        break;
+                    case PreampMode.HPSDR_MINUS50:
+                        pamode = PreampMode.HPSDR_MINUS40;
+                        break;
+                    case PreampMode.SA_MINUS10:
+                        pamode = PreampMode.HPSDR_ON;
+                        break;
+                    case PreampMode.SA_MINUS20:
+                        pamode = PreampMode.SA_MINUS10;
+                        break;
+                    case PreampMode.SA_MINUS30:
+                        pamode = PreampMode.SA_MINUS20;
+                        break;
+                }
+
+                switch (rx)
+                {
+                    case 1:
+                        RX1PreampMode = pamode;
+                        break;
+                    case 2:
+                        RX2PreampMode = pamode;
+                        break;
+                }
+            }
+        }
     }
 
     public class DigiMode
@@ -54625,21 +55630,30 @@ namespace Thetis
     #region FloodControl
     public static class MessageFloodControl
     {
+        private const int _max_interval = 200;
+
         public static event Action<string, string> SendMessage;
 
         static readonly object sync = new object();
         static readonly Dictionary<string, State> states = new Dictionary<string, State>();
-        static readonly TimeSpan interval = TimeSpan.FromMilliseconds(200);
+        static readonly TimeSpan interval = TimeSpan.FromMilliseconds(_max_interval);
         static volatile bool shutting_down = false;
 
-        public static void FloodControl(string message, string uid)
+        public static void FloodControl(string message, string uid, bool ignore_flood = false)
         {
             if (shutting_down) return;
             if (uid == null) throw new ArgumentNullException("uid");
-            if (message == null) message = string.Empty;
+            if (string.IsNullOrEmpty(message)) return;
 
             try
             {
+                if (ignore_flood)
+                {
+                    //totally ignore flood control
+                    raise_send_message(message, uid);
+                    return;
+                }
+
                 State state;
                 bool fire_now = false;
                 string to_send = null;

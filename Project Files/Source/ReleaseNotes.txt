@@ -14,15 +14,17 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] you can now hold CTRL+ALT+SHIFT when starting Thetis to show a message to allow you to reset the locations of Thetis console and Setup if they become lost. You can then use Setup->Tests->[Reposition Forms] for any others missing
 - [add] %nr% and %rxn% added as script variables. %nr% returns NR number enabled 0-4, and %rxn% returns receiver number used by the container
 - [add] it is now possible to use the condition of a led indicator to show/hide text overlay
-- [add] new meter item, OtherButtons. Some buttons have icons associated with them. Also button style 13 uses active indicator colour for the text/icon colour. New [fix] option that ignores button size, and uses Scale instead. 
+- [add] new meter item, OtherButtons. Some buttons have icons associated with them. Also button style 13 uses active indicator colour for the text/icon colour. New [fix] option that ignores button size, and uses Scale instead. You can use ALT click drag to move buttons around, let go of click to drop them. SHIFT+ALT will swap two.
 - [add] more legacy items can be hidden
-- [change] available meter items are listed alphabetically per rx/tx/special group
+- [add] it is now possible to save, load and duplicate containers. At the moment for various technical reasons it is a single container at a time. Note: items such as Led Indicator, WebImage will have their 4char(s) changed to prevent conflict if you were to re-import where they already exist. Meters that use %variables will also not display correctly if those variables are not present. You will have to edit them by hand. A warning is shown if a container being imported has a web image
 - [change] changed ZZIS cat command so that it takes/returns the actual filter width and not the slider width position. ZZIS; will return ZZISxxxxx; where xxxxx is 0 padded filter width. ZZIS00500; will set filter width to 500HZ. Symmetrical modes such as AM, SAM will take the full size width, so ZZIS20000; will be +-10k on AM. Note. FilterWdithMode is switched to linear whilst this is applied
 - [change] private scope added to in/out firewall rules when [Firewall Check] is used from Setup. Previously was only setting Domain + Public
 - [change] reimplemented the code that ensures a form is on screen as there had been occurrences where a form had got 'lost'. Note. this will still fail if a monitor is turned off and windows thinks it is still available as a display surface
 - [change] rework of samples provided to RNnoise to bring them into a range more suited to RNnoise. Handles lower signals better
 - [change] broadcast kenwood AI messages are now flood controlled to a max rate of 1 message per 200ms
 - [change] led indicator scripting has been totally reworked. Now a single script engine is used instead of one per led. Massive memory and performance improvements if you used lots of leds. Also, batches the re-compile until all leds are loaded
+- [change] available meter items are listed alphabetically per rx/tx/special group
+- [change] on DirectX errors RecreateTarget, DeviceRemoved and DeviceReset, the display engines will now attempt to restart, up to a total of 10 times
 - [fix] filter command line args to strip any unexpected characters/unicode
 - [fix] you can now enter values into the VAR1/VAR2 filters on the main console. Pressing enter or the box losing focus will set the value
 - [fix] issue where low/high values would sometimes not be stored when using the filter configuration settings window/form
@@ -30,6 +32,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] fixed a CAT tci/ip server issue where AI broadcast messages could get interleaved between a cat request and reply, which could cause issues for external systems that rely on a correct response, such as HamLib.
 - [fix] cw auto mode switch will now not return to previous non cw mode if activated from cw. The return delay now works as expected
 - [fix] text overlay now displays vfob mode correctly
+- [fix] unnecessary recursive calling when setting PreampMode and AttenuatorData
 
 ## v2.10.3.11 - Change Log
 - [add] two new noise reduction methods added, NR3 and NR4. When starting up this version for the first time if NR was enabled, will now be set to off. Settings in the normal NR settings page of Setup

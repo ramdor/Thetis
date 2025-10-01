@@ -61,7 +61,8 @@ namespace Thetis
         private bool _container_hides_when_rx_not_used = true;
         private bool _is_enabled = true;
         private bool _floating = false;
-        private bool _rx2_enabled;
+        private bool _rx2_enabled = false;
+        private bool _hidden_by_macro = false;
 
         public frmMeterDisplay(Console c, int rx)
         {
@@ -73,6 +74,7 @@ namespace Thetis
             _console = c;
             _rx = rx;
             _rx2_enabled = _console.RX2Enabled;
+            _hidden_by_macro = false;
 
             Common.DoubleBufferAll(this, true);
 
@@ -80,6 +82,11 @@ namespace Thetis
             _console.RX2EnabledChangedHandlers += OnRX2Enabled;
 
             setTitle();
+        }
+        public bool HiddenByMacro
+        {
+            get { return _hidden_by_macro; }
+            set {  _hidden_by_macro = value; }
         }
         public int RX
         {
@@ -122,15 +129,17 @@ namespace Thetis
                 }
                 else
                 {
+                    bool show = false;
                     switch (_rx)
                     {
                         case 1:
-                            this.Show();
+                            show = !_hidden_by_macro;
                             break;
                         case 2:
-                            if (_rx2_enabled || !_container_hides_when_rx_not_used) this.Show();
+                            if (_rx2_enabled || !_container_hides_when_rx_not_used) show = !_hidden_by_macro;
                             break;
                     }
+                    if(show) this.Show();
                 }
             }
         }

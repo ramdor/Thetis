@@ -61,7 +61,7 @@ namespace Thetis
 		{
             RadioDSP.AppDataPath = datapath;
 			RadioDSP.CreateDSP();
-            Thread.Sleep(100);
+            Thread.Sleep(100); //?
 
 			dsp_rx = new RadioDSPRX[NUM_RX_THREADS][];
 			for(int i=0; i<NUM_RX_THREADS; i++)

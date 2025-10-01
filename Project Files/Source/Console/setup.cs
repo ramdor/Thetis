@@ -70,6 +70,8 @@ namespace Thetis
     using System.Runtime.InteropServices;
     using System.Runtime.ExceptionServices;
     using System.Security.Cryptography;
+    using CatAtonic;
+
     public partial class Setup : Form
     {
         // for these callsigns always show cmasio tab, as a perk to the testers from discord
@@ -92,13 +94,14 @@ namespace Thetis
         private List<string> m_lstUpdatedControls;
         private List<string> m_lstUpdatedControlsClone;
         private bool m_bShown = false; // used by the selective restore system to know accurate window state
+
         #endregion
 
         #region Constructor and Destructor
 
         public Setup(Console c)
         {
-            InitializeComponent();
+            InitializeComponent();            
 
             _original_pnlP1_adcs_location = pnlP1_adcs.Location;
 
@@ -207,90 +210,8 @@ namespace Thetis
             comboTXLabelAlign.Text = "Cntr";
             //MW0LGE_21g comboDisplayDriver.Text = "DirectX";
 
-            string sTip =
-            "You can use the following variables anywhere in the text." + System.Environment.NewLine +
-            "%nl%" + System.Environment.NewLine +
-            "%swr%" + System.Environment.NewLine +
-            "%signal_strength%" + System.Environment.NewLine +
-            "%avg_signal_strength%" + System.Environment.NewLine +
-            "%signal_max_bin%" + System.Environment.NewLine +
-            "%pwr%" + System.Environment.NewLine +
-            "%reverse_pwr%" + System.Environment.NewLine +
-            "%mic%" + System.Environment.NewLine +
-            "%mic_pk%" + System.Environment.NewLine +
-            "%adc_pk%" + System.Environment.NewLine +
-            "%adc_av%" + System.Environment.NewLine +
-            "%agc_pk%" + System.Environment.NewLine +
-            "%agc_av%" + System.Environment.NewLine +
-            "%agc_gain%" + System.Environment.NewLine +
-            "%leveler%" + System.Environment.NewLine +
-            "%leveler_pk%" + System.Environment.NewLine +
-            "%lvl_g%" + System.Environment.NewLine +
-            "%alc%" + System.Environment.NewLine +
-            "%alc_pk%" + System.Environment.NewLine +
-            "%alc_g%" + System.Environment.NewLine +
-            "%alc_group%" + System.Environment.NewLine +
-            "%cfc_av%" + System.Environment.NewLine +
-            "%cfc_pk%" + System.Environment.NewLine +
-            "%cfc_g%" + System.Environment.NewLine +
-            "%comp%" + System.Environment.NewLine +
-            "%comp_pk%" + System.Environment.NewLine +
-            "%estimated_pbsnr%" + System.Environment.NewLine +
-            System.Environment.NewLine +
-            "%time_utc%" + System.Environment.NewLine +
-            "%time_loc%" + System.Environment.NewLine +
-            "%time_utc_int%" + System.Environment.NewLine +
-            "%time_loc_int%" + System.Environment.NewLine +
-            "%date_utc%" + System.Environment.NewLine +
-            "%date_loc%" + System.Environment.NewLine +
-            "%date_utc_int%" + System.Environment.NewLine +
-            "%date_loc_int%" + System.Environment.NewLine +
-            "%vfoa%" + System.Environment.NewLine +
-            "%vfob%" + System.Environment.NewLine +
-            "%vfoasub%" + System.Environment.NewLine +
-            "%vfoa_double%" + System.Environment.NewLine +
-            "%vfob_double%" + System.Environment.NewLine +
-            "%vfoasub_double%" + System.Environment.NewLine +
-            "%band_vfoa%" + System.Environment.NewLine +
-            "%band_vfob%" + System.Environment.NewLine +
-            "%band_vfoasub%" + System.Environment.NewLine +
-            "%mode_vfoa%" + System.Environment.NewLine +
-            "%mode_vfob%" + System.Environment.NewLine +
-            "%subrx%" + System.Environment.NewLine +
-            "%filter_vfoa%" + System.Environment.NewLine +
-            "%filter_vfob%" + System.Environment.NewLine +
-            "%filter_vfoa_name%" + System.Environment.NewLine +
-            "%filter_vfob_name%" + System.Environment.NewLine +
-            "%split%" + System.Environment.NewLine +
-            "%qso_time%" + System.Environment.NewLine +
-            "%qso_time_short%" + System.Environment.NewLine +
-            "%qso_time_int%" + System.Environment.NewLine +
-            "%tb_qso_time%" + System.Environment.NewLine +
-            "%tb_qso_time_short%" + System.Environment.NewLine +
-            "%tb_qso_time_int%" + System.Environment.NewLine +
-            "%volts%" + System.Environment.NewLine +
-            "%amps%" + System.Environment.NewLine +
-            "%mox%" + System.Environment.NewLine +
-            "%cfc%" + System.Environment.NewLine +
-            "%comp%" + System.Environment.NewLine +
-            "%lev%" + System.Environment.NewLine +
-            "%rx2%" + System.Environment.NewLine +
-            "%rxn%" + System.Environment.NewLine +
-            "%nr%" + System.Environment.NewLine +
-            "%tx_eq%" + System.Environment.NewLine +
-            "%bandtext_vfoa%" + System.Environment.NewLine +
-            "%bandtext_vfob%" + System.Environment.NewLine +
-            "%precis=1%" + System.Environment.NewLine +
-            "%nf%" + System.Environment.NewLine +
-            "%tune_step%" + System.Environment.NewLine +
-            "%pa_profile%" + System.Environment.NewLine +
-            "%discord_general=0%" + System.Environment.NewLine +
-            "%discord_bot=0%";// + System.Environment.NewLine +
-
-            toolTip1.SetToolTip(pbTextOverlay_variables, sTip);
-
             //MW0LGE_21h
-            sTip =
+            string sTip =
             "The feedback gain loop attempts to keep the sample buffer about � full." + System.Environment.NewLine +
             "This gives the maximum amount of margin before an overflow or underflow will occur." + System.Environment.NewLine +
             "If the gain is too high, the loop will respond too fast and strongly and we may " + System.Environment.NewLine +
@@ -2996,6 +2917,7 @@ namespace Thetis
             chkLegacyItems_hide_avg_peak_CheckedChanged(this, e);
             //
             chkDiscordEnabled_CheckedChanged(this, e);
+            chkDiscordTimeStamp_CheckedChanged(this, e);
 
             // filter item config
             txtFilter_sideband_frequencies_TextChanged(this, e);
@@ -7646,6 +7568,7 @@ namespace Thetis
 
         private void comboAudioBuffer3_SelectedIndexChanged(object sender, System.EventArgs e)
         {
+            if (initializing) return;
             if (comboAudioBuffer3.SelectedIndex < 0) return;
 
             int old_size = console.BlockSize3;
@@ -12611,7 +12534,14 @@ namespace Thetis
         {
             get { return txtGenCustomTitle.Text; }
         }
-
+        public string DiscordCallsign
+        {
+            get { return txtDiscordCallsign.Text; }
+        }
+        public string TCIOwnCallsign
+        {
+            get { return txtOwnCallsign.Text; }
+        }
         private void txtGenCustomTitle_TextChanged(object sender, System.EventArgs e)
         {
             if (HPSDRModel.HERMESLITE != HardwareSpecific.Model)
@@ -19158,6 +19088,8 @@ namespace Thetis
             if (chkPHROTEnable.Checked) run = 1;
             else run = 0;
             WDSP.SetTXAPHROTRun(WDSP.id(1, 0), run);
+
+            console.SetGeneralSetting(0, OtherButtonId.PHASE_ROT, chkPHROTEnable.Checked);
         }
 
         private void udPhRotFreq_ValueChanged(object sender, EventArgs e)
@@ -23411,17 +23343,30 @@ namespace Thetis
                     if (cb.Name.Length >= 9 && cb.Name.Substring(0, 9) == "chkOCxmit") cb.Enabled = enable;
             }
         }
-
+        public bool RX1ShowNF
+        {
+            get { return chkShowRX1NoiseFloor == null ? false : chkShowRX1NoiseFloor.Checked; }
+            set { if (chkShowRX1NoiseFloor != null) chkShowRX1NoiseFloor.Checked = value; }
+        }
+        public bool RX2ShowNF
+        {
+            get { return chkShowRX2NoiseFloor == null ? false : chkShowRX2NoiseFloor.Checked; }
+            set { if (chkShowRX2NoiseFloor != null) chkShowRX2NoiseFloor.Checked = value; }
+        }
         private void chkShowRX1NoiseFloor_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
             Display.ShowRX1NoiseFloor = chkShowRX1NoiseFloor.Checked;
+
+            if (console != null) console.SetGeneralSetting(1, OtherButtonId.NF, chkShowRX1NoiseFloor.Checked);
         }
 
         private void chkShowRX2NoiseFloor_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
             Display.ShowRX2NoiseFloor = chkShowRX2NoiseFloor.Checked;
+
+            if (console != null) console.SetGeneralSetting(2, OtherButtonId.NF, chkShowRX2NoiseFloor.Checked);
         }
 
         private void chkAutoAGCRX1_CheckedChanged(object sender, EventArgs e)
@@ -26208,6 +26153,27 @@ namespace Thetis
                 updateMeter2Controls(sId);
             }
         }
+        private string containerNameFromId(string id)
+        {
+            string notes = MeterManager.GetContainerNotes(id).Trim();
+            int newlineIndex = notes.IndexOf('\n');
+            if (newlineIndex >= 0)
+            {
+                notes = notes.Substring(0, newlineIndex);
+            }
+            if (notes.Length > 40)
+            {
+                notes = notes.Substring(0, 40);
+            }
+            if (string.IsNullOrEmpty(notes))
+            {
+                return "Container";
+            }
+            else
+            {
+                return notes;
+            }
+        }
         private void updateMeter2Controls(string sId = "")
         {
             bool bEnableAdd = MeterManager.TotalMeterContainers < MAX_CONTAINERS;
@@ -26226,24 +26192,7 @@ namespace Thetis
                 cci.ID = kvp.Value.ID;
                 cci.ListIndex = i + 1;
 
-                string notes = MeterManager.GetContainerNotes(cci.ID).Trim();
-                int newlineIndex = notes.IndexOf('\n');
-                if (newlineIndex >= 0)
-                {
-                    notes = notes.Substring(0, newlineIndex);
-                }
-                if (notes.Length > 40)
-                {
-                    notes = notes.Substring(0, 40);
-                }
-                if (string.IsNullOrEmpty(notes))
-                {
-                    cci.Text = "Container";
-                }
-                else
-                {
-                    cci.Text = notes;
-                }
+                cci.Text = containerNameFromId(cci.ID);
 
                 comboContainerSelect.Items.Add(cci);
 
@@ -26267,6 +26216,10 @@ namespace Thetis
 
             bool locked = chkLockContainer.Checked;
 
+            btnContainer_save.Enabled = bEnableControls;// MeterManager.TotalMeterContainers > 0 && comboContainerSelect.SelectedIndex > -1;
+            btnContainer_load.Enabled = bEnableAdd;// MeterManager.TotalMeterContainers < MAX_CONTAINERS;
+            btnContainer_dupe.Enabled = bEnableControls;// && comboContainerSelect.SelectedIndex > -1;
+            btnRecoverContainer.Enabled = bEnableControls && !locked;
             btnContainerDelete.Enabled = bEnableControls && !locked;
             chkContainerHighlight.Enabled = bEnableControls;
             comboContainerSelect.Enabled = bEnableControls;
@@ -26310,7 +26263,7 @@ namespace Thetis
             //lstMetersAvailable.SuspendLayout();
 
             lstMetersInUse.Items.Clear();
-            lstMetersAvailable.Items.Clear();
+            //lstMetersAvailable.Items.Clear();
 
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
@@ -26346,21 +26299,24 @@ namespace Thetis
             //mtci_tmp = new clsMeterTypeComboboxItem(MeterType.TEXT_OVERLAY, -1);
             //notinuse.Add(mtci_tmp);
 
-
-            foreach (clsMeterTypeComboboxItem mtci in notinuse)
+            if (lstMetersAvailable.Items.Count == 0)
             {
-                //if ((int)mtci.MeterType < (int)MeterType.MAGIC_EYE)
-                //{
-                //    // add directly as these are not special items
-                //    lstMetersAvailable.Items.Add(mtci);
-                //}
-                //else
-                //{
+                foreach (clsMeterTypeComboboxItem mtci in notinuse)
+                {
+                    //if ((int)mtci.MeterType < (int)MeterType.MAGIC_EYE)
+                    //{
+                    //    // add directly as these are not special items
+                    //    lstMetersAvailable.Items.Add(mtci);
+                    //}
+                    //else
+                    //{
                     // work out where to add it alphabetically, per block, rx, tx, special
                     int insert_pos = findIndexForInsertOfSpecialItem(mtci, lstMetersAvailable);
                     lstMetersAvailable.Items.Insert(insert_pos, mtci);
-                //}
+                    //}
+                }
             }
+
             foreach (clsMeterTypeComboboxItem mtci in inuse.OrderBy(o => o.Order))
             {
                 lstMetersInUse.Items.Add(mtci);
@@ -26422,18 +26378,22 @@ namespace Thetis
             if (cci != null)
             {
                 MeterManager.RemoveMeterContainer(cci.ID);
+                int selected = comboContainerSelect.SelectedIndex;
                 comboContainerSelect.Items.Remove(cci);
 
                 updateMeter2Controls();
 
                 setupMMSettingsGroupBoxes(MeterType.NONE);
+
+                if (selected > comboContainerSelect.Items.Count - 1) selected = comboContainerSelect.Items.Count - 1;
+                if (selected > -1) comboContainerSelect.SelectedIndex = selected;
             }
         }
 
         private void comboContainerSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (initializing) return;
-
+                
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
             if (cci == null) return;
 
@@ -26792,12 +26752,19 @@ namespace Thetis
             {
                 if (mt == MeterType.OTHER_BUTTONS)
                 {
+                    if (_reset_otherbutton_layout) igs.SetSetting<short[]>("buttonbox_button_map", null);
+
                     int max_buttons = 0;
-                    for (int n = 0; n < MeterManager.clsOtherButtons.BITFIELD_GROUPS; n++)
+                    for (int n = 0; n < OtherButtonIdHelpers.MAX_BITFIELD_GROUP; n++)
                     {
                         igs.SetSetting<int>("buttonbox_other_buttons_bitfield_" + n.ToString(), ucOtherButtonsOptionsGrid_buttons.GetBitfield(n));
                         max_buttons += ucOtherButtonsOptionsGrid_buttons.GetCheckedCount(n);
                     }
+                    for (int n = 0; n < OtherButtonIdHelpers.MACRO_BUTTONS_PERGROUP; n++)
+                    {
+                        igs.SetSetting<OtherButtonMacroSettings>("buttonbox_other_buttons_macro_settings_" + n.ToString(), ucOtherButtonsOptionsGrid_buttons.GetMacroSettings(n));
+                    }
+
                     max_buttons = Math.Max(1, max_buttons);
                     if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
                     if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
@@ -27074,6 +27041,7 @@ namespace Thetis
 
                 igs.SetSetting<bool>("led_notx_true", chkLed_notx_true.Checked);
                 igs.SetSetting<bool>("led_notx_false", chkLed_notx_false.Checked);
+                igs.SetSetting<bool>("led_process_when_hidden", chkLed_process_when_hidden.Checked);
             }
             else if (mt == MeterType.TEXT_OVERLAY)
             {
@@ -27261,7 +27229,8 @@ namespace Thetis
                 if (mt == MeterType.ANANMM || mt == MeterType.CROSS) igs.DarkMode = chkMeterItemDarkMode.Checked;
             }
 
-            m.ApplySettingsForMeterGroup(mt, igs, mtci.Order);
+            Dictionary<string, string> fcm = null;
+            m.ApplySettingsForMeterGroup(mt, igs, null, mtci.Order, true);
 
             updateLedValidControls();
             return igs;
@@ -27409,9 +27378,13 @@ namespace Thetis
 
                 if(mt == MeterType.OTHER_BUTTONS)
                 {
-                    for (int n = 0; n < MeterManager.clsOtherButtons.BITFIELD_GROUPS; n++)
+                    for (int n = 0; n < OtherButtonIdHelpers.MAX_BITFIELD_GROUP; n++)
                     {
                         ucOtherButtonsOptionsGrid_buttons.SetBitfield(n, igs.GetSetting<int>("buttonbox_other_buttons_bitfield_" + n.ToString(), true, 0, int.MaxValue, 0));
+                    }
+                    for (int n = 0; n < OtherButtonIdHelpers.MACRO_BUTTONS_PERGROUP; n++)
+                    {
+                        ucOtherButtonsOptionsGrid_buttons.SetMacroSettings(n, igs.GetSetting<OtherButtonMacroSettings>("buttonbox_other_buttons_macro_settings_" + n.ToString(), false, null, null, null));
                     }
                 }
                 else if (mt == MeterType.TUNESTEP_BUTTONS)
@@ -27472,7 +27445,7 @@ namespace Thetis
                         break;
                     case MeterType.OTHER_BUTTONS:
                         max_buttons = 0;
-                        for (int n = 0; n < MeterManager.clsOtherButtons.BITFIELD_GROUPS; n++)
+                        for (int n = 0; n < OtherButtonIdHelpers.MAX_BITFIELD_GROUP; n++)
                         {
                             max_buttons += ucOtherButtonsOptionsGrid_buttons.GetCheckedCount(n);
                         }
@@ -27801,6 +27774,7 @@ namespace Thetis
                 chkLed_notx_true.Checked = igs.GetSetting<bool>("led_notx_true", false, false, false, false);
                 chkLed_notx_false.Checked = igs.GetSetting<bool>("led_notx_false", false, false, false, false);
                 txtLedIndicator_4char.Text = igs.GetSetting<string>("led_4char", false, "", "", "");
+                chkLed_process_when_hidden.Checked = igs.GetSetting<bool>("led_process_when_hidden", false, false, false, false);
 
                 updateLedIndicatorPanelControls();
                 updateLedValidControls();
@@ -28358,6 +28332,8 @@ namespace Thetis
                 case MeterType.DISCORD_BUTTONS:
                     {
                         clrbtnButonBox_fontcolour.Visible = mt != MeterType.ANTENNA_BUTTONS;
+                        chkButtonBox_use_icons.Visible = mt == MeterType.OTHER_BUTTONS;
+
                         grpBandButtons.Parent = grpMultiMeterHolder;
                         grpBandButtons.Location = loc;
                         grpBandButtons.Visible = true;
@@ -28394,6 +28370,7 @@ namespace Thetis
                             default:
                                 pnlButtonBox_antenna_toggles.Visible = false;
                                 ucTunestepOptionsGrid_buttons.Visible = false;
+                                ucOtherButtonsOptionsGrid_buttons.Visible = false;
                                 break;
                         }
                     }
@@ -28564,9 +28541,13 @@ namespace Thetis
 
                 if(mt == MeterType.OTHER_BUTTONS)
                 {
-                    for (int n = 0; n < MeterManager.clsOtherButtons.BITFIELD_GROUPS; n++)
+                    for (int n = 0; n < OtherButtonIdHelpers.MAX_BITFIELD_GROUP; n++)
                     {
                         _itemGroupSettings.SetSetting<int>("buttonbox_other_buttons_bitfield_" + n.ToString(), currentSettings.GetSetting<int>("buttonbox_other_buttons_bitfield_" + n.ToString(), true, 0, int.MaxValue, 0));
+                    }
+                    for (int n = 0; n < OtherButtonIdHelpers.MACRO_BUTTONS_PERGROUP; n++)
+                    {
+                        _itemGroupSettings.SetSetting<OtherButtonMacroSettings>("buttonbox_other_buttons_macro_settings_" + n.ToString(), currentSettings.GetSetting<OtherButtonMacroSettings>("buttonbox_other_buttons_macro_settings_" + n.ToString(), false, null, null, null));
                     }
                 }
                 else if(mt == MeterType.TUNESTEP_BUTTONS)
@@ -28588,7 +28569,8 @@ namespace Thetis
                 }
                 //
 
-                m.ApplySettingsForMeterGroup(mt, _itemGroupSettings, mtci.Order);
+                Dictionary<string, string> fcm = null;
+                m.ApplySettingsForMeterGroup(mt, _itemGroupSettings, null, mtci.Order);
                 updateItemSettingsControlsForSelected();
             }
         }
@@ -31387,11 +31369,6 @@ namespace Thetis
             clrbtnTextOverlay_TextBackColour2.Enabled = chkTextOverlay_textback2.Checked;
         }
 
-        private void pbTextOverlay_variables_Click(object sender, EventArgs e)
-        {
-            toolTip1.Show(toolTip1.GetToolTip(pbTextOverlay_variables), pbTextOverlay_variables, 10 * 1000);
-        }
-
         #region MultiMeter IO
         // Code for the multimeter IO - MW0LGE [2.10.3.6]
         private bool _MMIO_ignore_change_events = false;
@@ -32622,7 +32599,8 @@ namespace Thetis
                 igs.SetMMIOGuid(variable, f.Guid);
                 igs.SetMMIOVariable(variable, f.Variable);
 
-                m.ApplySettingsForMeterGroup(mt, igs, mtci.Order);
+                Dictionary<string, string> fcm = null;
+                m.ApplySettingsForMeterGroup(mt, igs, null, mtci.Order);
 
                 switch(mt)
                 {
@@ -34068,6 +34046,7 @@ namespace Thetis
             if (cci != null)
             {
                 MeterManager.LockContainer(cci.ID, chkLockContainer.Checked);
+                btnRecoverContainer.Enabled = !chkLockContainer.Checked;
                 btnContainerDelete.Enabled = !chkLockContainer.Checked;
                 btnAddMeterItem.Enabled = !chkLockContainer.Checked;
                 btnRemoveMeterItem.Enabled = !chkLockContainer.Checked;
@@ -34461,7 +34440,34 @@ namespace Thetis
 
         private void chkDiscordTimeStamp_CheckedChanged(object sender, EventArgs e)
         {
-            ThetisBotDiscord.IncludeTimeStamp = chkDiscordTimeStamp.Checked;
+            if (initializing) return;
+            updateDiscordTimeStampVisibilty();
+        }
+        private void updateDiscordTimeStampVisibilty()
+        {
+            bool show = false;
+            string tmp;
+            string call = "mw0lge";
+
+            tmp = txtGenCustomTitle == null || string.IsNullOrEmpty(txtGenCustomTitle.Text) ? "" : txtGenCustomTitle.Text;
+            show |= tmp.Contains(call, StringComparison.OrdinalIgnoreCase);
+
+            tmp = txtOwnCallsign == null || string.IsNullOrEmpty(txtOwnCallsign.Text) ? "" : txtOwnCallsign.Text;
+            show |= tmp.Contains(call, StringComparison.OrdinalIgnoreCase);
+
+            tmp = txtDiscordCallsign == null || string.IsNullOrEmpty(txtDiscordCallsign.Text) ? "" : txtDiscordCallsign.Text;
+            show |= tmp.Contains(call, StringComparison.OrdinalIgnoreCase);
+
+            chkDiscordTimeStamp.Visible = show; // only let mw0lge see this for testing purposes
+
+            if (show)
+            {
+                ThetisBotDiscord.IncludeTimeStamp = chkDiscordTimeStamp.Checked;
+            }
+            else
+            {
+                ThetisBotDiscord.IncludeTimeStamp = true;
+            }
         }
 
         private void nudFilterItem_sidebands_scale_ValueChanged(object sender, EventArgs e)
@@ -36573,6 +36579,213 @@ namespace Thetis
         {
             if (initializing) return;
             LegacyItemController.HideDisplayControls = chkLegacyItems_hide_avg_peak.Checked;
+        }
+
+        private bool _reset_otherbutton_layout = false;
+        private void btnOtherButtons_reset_layout_Click(object sender, EventArgs e)
+        {
+            _reset_otherbutton_layout = true;
+            updateMeterType();
+            _reset_otherbutton_layout = false;
+        }
+
+        private void btnContainer_save_Click(object sender, EventArgs e)
+        {
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+
+            if (cci != null)
+            {             
+                using (SaveFileDialog sfd = new SaveFileDialog())
+                {
+                    sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    sfd.Filter = "Container Files|*.dat";
+                    sfd.Title = "Save Container";
+                    sfd.FilterIndex = 1;
+                    sfd.RestoreDirectory = true;
+                    DialogResult dr = sfd.ShowDialog();
+
+                    if (sfd.FileName != "" && dr == DialogResult.OK)
+                    {
+                        string data64 = MeterManager.ContainerToString(cci.ID);
+
+                        File.WriteAllText(sfd.FileName, data64, Encoding.UTF8);
+                    }
+                }
+            }
+        }
+
+        private void btnContainer_load_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                ofd.Filter = "Container Files|*.dat";
+                ofd.Title = "Load Container";
+                ofd.FilterIndex = 1;
+                ofd.RestoreDirectory = true;
+                DialogResult dr = ofd.ShowDialog();
+
+                if (ofd.FileName != "" && dr == DialogResult.OK)
+                {
+                    if (File.Exists(ofd.FileName))
+                    {
+                        string txt = txt = File.ReadAllText(ofd.FileName, Encoding.UTF8);
+
+                        List<string> webimages = new List<string>();
+                        MeterScriptEngine.BeginBatch();
+                        ucMeter ucm = MeterManager.ContainerFromString(txt, webimages);
+                        MeterScriptEngine.EndBatch();
+
+                        if (ucm == null)
+                        {
+                            MessageBox.Show("This doesnt seem to be a valid container file.",                                
+                                "Container file not recognised",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                            return;
+                        }
+                        if (webimages.Count > 0)
+                        {
+                            string msg = "This container file includes web image items(s).\nDo you want to load it?\n\nThe url(s) are as follows.\n\n\n";
+                            foreach(string s in webimages)
+                            {
+                                msg += s + "\n\n";
+                            }
+                            dr = MessageBox.Show(msg,
+                                "Container file contents warning",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+
+                            if (dr != DialogResult.Yes)
+                            {
+                                MeterManager.RemoveMeterContainer(ucm.ID);
+                                return;
+                            }
+                        }
+
+                        dr = MessageBox.Show("Do you want DBManager to take a backup of the database before loading this container?",
+                            "Database backup",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                        if(dr == DialogResult.Yes)
+                        {
+                            DBMan.TakeBackup(Guid.Empty, "Before container import", false);
+                        }
+
+                        MeterManager.RunRendererDisplay(ucm.ID);
+                        MeterManager.FinishSetupAndDisplay(ucm.ID);
+
+                        updateMeter2Controls(ucm.ID);
+
+                        btnContainer_save.Enabled = MeterManager.TotalMeterContainers < MAX_CONTAINERS;
+                    }
+                }
+            }
+        }
+
+        private void btnContainer_dupe_Click(object sender, EventArgs e)
+        {
+            if (MeterManager.TotalMeterContainers >= MAX_CONTAINERS) return;
+
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+            if (cci == null) return;
+
+            DialogResult dr = MessageBox.Show("Are you sure you want to duplicate the current container?",
+                "Container Duplicate",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+
+            if (dr != DialogResult.Yes) return;
+
+            if (MeterManager.TotalMeterContainers < MAX_CONTAINERS)
+            {
+                string data64 = MeterManager.ContainerToString(cci.ID);
+
+                MeterScriptEngine.BeginBatch();
+                ucMeter ucm = MeterManager.ContainerFromString(data64);
+                MeterScriptEngine.EndBatch();
+                MeterManager.RunRendererDisplay(ucm.ID);
+                MeterManager.FinishSetupAndDisplay(ucm.ID);
+
+                updateMeter2Controls(ucm.ID);
+
+                btnContainer_save.Enabled = MeterManager.TotalMeterContainers < MAX_CONTAINERS;
+            }
+        }
+
+        private void ucOtherButtonsOptionsGrid_buttons_MacroSetupClicked(object sender, ucOtherButtonsOptionsGrid.MacroButtonEventArgs e)
+        {
+            // get container names
+            Dictionary<string, string> containers = new Dictionary<string, string>();
+            foreach (KeyValuePair<string, ucMeter> kvp in MeterManager.MeterContainers.OrderBy((KeyValuePair<string, ucMeter> kvp2) => kvp2.Value.Sequence))
+            {
+                containers.Add(kvp.Value.ID, containerNameFromId(kvp.Value.ID));
+            }
+
+            //get settings from grid buttons control
+            int macro = e.BitNumber;
+            OtherButtonMacroSettings original_settings = ucOtherButtonsOptionsGrid_buttons.GetMacroSettings(macro);
+            OtherButtonMacroSettings changed_settings = new OtherButtonMacroSettings(original_settings);
+
+            CATScriptInterpreter si = new CATScriptInterpreter();
+
+            frmMacroButtonConfig frmConfig = new frmMacroButtonConfig(si);
+            DialogResult dr = frmConfig.InitAndShow(original_settings, containers, ref changed_settings, console);
+            if (dr == DialogResult.OK) 
+            {
+                // something changed, update uc
+                ucOtherButtonsOptionsGrid_buttons.SetMacroSettings(macro, changed_settings);
+                updateMeterType();
+
+                clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+                if (cci != null)
+                {
+                    MeterManager.RefreshContainerVisible(cci.ID);  //causes delegates to be called for any visible container
+                }
+            }
+        }
+
+        private void chkLed_process_when_hidden_CheckedChanged(object sender, EventArgs e)
+        {
+            updateMeterType();
+        }
+
+        private void btnRecoverContainer_Click(object sender, EventArgs e)
+        {
+            if (chkLockContainer.Checked) return;
+            clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
+
+            if (cci != null)
+            {
+                MeterManager.RecoverContainer(cci.ID);
+                chkContainerShowRX.Checked = true;
+                chkContainerShowTX.Checked = true;
+            }
+        }
+
+        private void btnTextOverlayVarPicker_Click(object sender, EventArgs e)
+        {
+            string var = showVarPickerForClipboard();
+        }
+        private string showVarPickerForClipboard()
+        {
+            frmVariablePicker f = new frmVariablePicker();
+            f.Init(0, Guid.Empty, "", true);
+            DialogResult dr = f.ShowDialog(this);
+            if (dr == DialogResult.OK)
+            {
+                string tmp = "%" + f.Variable.Trim('%') + "%";
+                Clipboard.SetText(tmp);
+                return tmp;
+            }
+            return "";
+        }
+
+        private void btnLedIndicatorVarPicker_Click(object sender, EventArgs e)
+        {
+            string var = showVarPickerForClipboard();
         }
     }
 

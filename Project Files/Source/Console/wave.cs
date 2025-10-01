@@ -634,6 +634,22 @@ namespace Thetis
 
 		#region Misc Routines
 
+        //
+        public bool Recording
+        {
+            get
+            {
+                return checkBoxRecord.Checked;
+            }
+            set
+            {
+                if (value == checkBoxRecord.Checked) return;
+
+                checkBoxRecord.Checked = value;
+            }
+        }
+        //
+
 
         // ke9ns add pass string from console play button right click
         private static string QPFile = null;
@@ -1013,6 +1029,7 @@ namespace Thetis
         public static string scheduleName1; // ke9ns add for saving file name of recording
         public static string scheduleName2; // ke9ns add for saving file name of recording
 
+        private bool _old_record_state = false;
         private void checkBoxRecord_CheckedChanged(object sender, System.EventArgs e)
 		{
             if (_restoring_controls) return;
@@ -1078,12 +1095,21 @@ namespace Thetis
                 }
 
                 if (WaveThing.wave_file_writer[0] != null) //[2.10.3.5]MW0LGE
+                {
+                    Thread.Sleep(100);
                     WaveThing.wave_file_writer[0].Stop();
+                }
 
 				checkBoxRecord.BackColor = SystemColors.Control;
 				//MessageBox.Show("The file has been written to the following location:\n"+file_name);
 			}
-		}
+
+            if (_old_record_state != checkBoxRecord.Checked)
+            {
+                _old_record_state = checkBoxRecord.Checked;
+                if (console != null) console.WaveRecordChangedHandlers?.Invoke(1, _old_record_state, checkBoxRecord.Checked); // rx1 only atm
+            }
+        }
 
 		private void btnAdd_Click(object sender, System.EventArgs e)
 		{

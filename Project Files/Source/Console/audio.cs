@@ -1857,14 +1857,14 @@ namespace Thetis
                     }
                     MessageBox.Show(fw_err, "Firmware Error",
                                     MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
+                                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                     return false;
                 }
                 else
                 {
                     MessageBox.Show("Error starting SDR hardware, is it connected and powered?", "Network Error",
                                     MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
+                                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                     return false;
                 }
             }

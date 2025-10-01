@@ -511,4 +511,28 @@
   <data name="ob_display_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ob_display_off.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ob_mute_all_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_mute_all_off.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_mute_all_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_mute_all_on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="grid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\grid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_disp_pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_disp_pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_disp_play" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_disp_play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cont_copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cont_copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cont_load" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cont_load.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cont_save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cont_save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

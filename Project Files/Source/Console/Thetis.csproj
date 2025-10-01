@@ -344,7 +344,7 @@
       <HintPath>..\packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive, Version=6.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reactive.6.0.1\lib\net472\System.Reactive.dll</HintPath>
+      <HintPath>..\packages\System.Reactive.6.0.2\lib\net472\System.Reactive.dll</HintPath>
     </Reference>
     <Reference Include="System.Reflection.Metadata, Version=9.0.0.8, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Reflection.Metadata.9.0.8\lib\net462\System.Reflection.Metadata.dll</HintPath>
@@ -404,6 +404,8 @@
     <Compile Include="CAT\UsbBCDCable.cs" />
     <Compile Include="Channel.cs" />
     <Compile Include="clsBandStackManager.cs" />
+    <Compile Include="clsCatAtonic.cs" />
+    <Compile Include="clsCATMessageQueue.cs" />
     <Compile Include="clsCMASIOConfig.cs" />
     <Compile Include="clsCountryData.cs" />
     <Compile Include="clsDBMan.cs" />
@@ -426,6 +428,12 @@
     </Compile>
     <Compile Include="frmDBMan.Designer.cs">
       <DependentUpon>frmDBMan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmMacroButtonConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMacroButtonConfig.Designer.cs">
+      <DependentUpon>frmMacroButtonConfig.cs</DependentUpon>
     </Compile>
     <Compile Include="frmSerialPortPicker.cs">
       <SubType>Form</SubType>
@@ -850,6 +858,14 @@
     <None Include="Resources\ob_spectrascope.png" />
     <None Include="Resources\ob_panafall.png" />
     <None Include="Resources\ob_display_off.png" />
+    <None Include="Resources\ob_mute_all_on.png" />
+    <None Include="Resources\ob_mute_all_off.png" />
+    <None Include="Resources\grid.png" />
+    <None Include="Resources\ob_disp_pause.png" />
+    <None Include="Resources\ob_disp_play.png" />
+    <None Include="Resources\cont_copy.png" />
+    <None Include="Resources\cont_save.png" />
+    <None Include="Resources\cont_load.png" />
     <Content Include="Resources\Thetis2_256.ico" />
     <Content Include="Resources\Thetis2_48.ico" />
     <None Include="Resources\resizegrab.png" />
@@ -962,6 +978,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmInfoBarPopup.resx">
       <DependentUpon>frmInfoBarPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmMacroButtonConfig.resx">
+      <DependentUpon>frmMacroButtonConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmMeterDisplay.resx">
       <DependentUpon>frmMeterDisplay.cs</DependentUpon>

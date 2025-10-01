@@ -3549,6 +3549,7 @@ namespace Thetis
 
         private static bool _valid_fps_profile = false;
         private static double _last_valid_check = double.MinValue;
+        private static int _dx_fail_retry = 0;
         public static void RenderDX2D()
         {
             try
@@ -3896,7 +3897,19 @@ namespace Thetis
 
                 jump:
 
-                    _d2dRenderTarget.EndDraw();
+                    try
+                    {
+                        _d2dRenderTarget.EndDraw();
+                    }
+                    catch (SharpDXException ex) when (ex.ResultCode == SharpDX.Direct2D1.ResultCode.RecreateTarget)
+                    {
+                        if (_dx_fail_retry < 10)
+                        {
+                            resizeDX2D();
+                            _dx_fail_retry++;
+                            return;
+                        }
+                    }
 
                     // render
                     // note: the only way to have Present non block when using vsync number of blanks 0 , is to use DoNotWait
@@ -3905,18 +3918,28 @@ namespace Thetis
                     PresentFlags pf = m_nVBlanks == 0 ? _NoVSYNCpresentFlag : PresentFlags.None;
                     Result r = _swapChain1.TryPresent(m_nVBlanks, pf);
 
-                    if (r != Result.Ok && r != 0x887A000A)
+                    if (r != Result.Ok && r != SharpDX.DXGI.ResultCode.WasStillDrawing)// //0x887A000A)
                     {
+                        if ((r == SharpDX.DXGI.ResultCode.DeviceRemoved || r == SharpDX.DXGI.ResultCode.DeviceReset) && _dx_fail_retry < 10)
+                        {
+                            resizeDX2D();
+                            _dx_fail_retry++;
+                            return;
+                        }
+
                         string sMsg = "";
                         if (r == 0x887A0001) sMsg = "Present Device Invalid Call" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";    //DXGI_ERROR_INVALID_CALL
                         if (r == 0x887A0007) sMsg = "Present Device Reset" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";           //DXGI_ERROR_DEVICE_RESET
                         if (r == 0x887A0005) sMsg = "Present Device Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";         //DXGI_ERROR_DEVICE_REMOVED
                         if (r == 0x88760870) sMsg = "Present Device DD3DDI Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";  //D3DDDIERR_DEVICEREMOVED
+
                         //if (r == 0x087A0001) sMsg = "Present Device Occluded" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";      //DXGI_STATUS_OCCLUDED
                         //(ignored in the preceding if statement) if (r == 0x887A000A) sMsg = "Present Device Still Drawping" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]"; //DXGI_ERROR_WAS_STILL_DRAWING
 
                         if (!string.IsNullOrEmpty(sMsg)) throw (new Exception(sMsg));
                     }
+
+                    _dx_fail_retry = 0;
                 }
             }
             catch (Exception e)

@@ -1844,5 +1844,49 @@ namespace Thetis
             }
         }
         //
+
+        //string compress
+        public static string Compress_gzip(string input)
+        {
+            if (input == null) return null;
+            byte[] input_bytes = Encoding.UTF8.GetBytes(input);
+            using (MemoryStream output_stream = new MemoryStream())
+            {
+                using (GZipStream gzip = new GZipStream(output_stream, CompressionLevel.Optimal, true))
+                {
+                    gzip.Write(input_bytes, 0, input_bytes.Length);
+                }
+                byte[] compressed_bytes = output_stream.ToArray();
+                string base64 = Convert.ToBase64String(compressed_bytes);
+                string base64url = base64.Replace('+', '-').Replace('/', '_').TrimEnd('=');
+                return base64url;
+            }
+        }
+
+        public static string Decompress_gzip(string base64url)
+        {
+            if (base64url == null) return null;
+            string base64 = base64url.Replace('-', '+').Replace('_', '/');
+            int pad = base64.Length % 4;
+            if (pad == 2) base64 += "==";
+            else if (pad == 3) base64 += "=";
+            else if (pad == 1) throw new FormatException("Invalid Base64URL length");
+            byte[] compressed_bytes = Convert.FromBase64String(base64);
+            using (MemoryStream input_stream = new MemoryStream(compressed_bytes))
+            using (GZipStream gzip = new GZipStream(input_stream, CompressionMode.Decompress))
+            using (MemoryStream decompressed_stream = new MemoryStream())
+            {
+                byte[] buffer = new byte[8192];
+                int read;
+                while ((read = gzip.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    decompressed_stream.Write(buffer, 0, read);
+                }
+                byte[] decompressed_bytes = decompressed_stream.ToArray();
+                string result = Encoding.UTF8.GetString(decompressed_bytes);
+                return result;
+            }
+        }
+        //
     }
 }

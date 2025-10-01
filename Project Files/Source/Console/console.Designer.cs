@@ -1272,7 +1272,6 @@
             this.toolTip1.SetToolTip(this.radDisplayZoom4x, resources.GetString("radDisplayZoom4x.ToolTip"));
             this.radDisplayZoom4x.UseVisualStyleBackColor = true;
             this.radDisplayZoom4x.CheckedChanged += new System.EventHandler(this.radDisplayZoom4x_CheckedChanged);
-            this.radDisplayZoom4x.Click += new System.EventHandler(this.radDisplayZoom4x_Click);
             // 
             // radDisplayZoom2x
             // 
@@ -1284,7 +1283,6 @@
             this.toolTip1.SetToolTip(this.radDisplayZoom2x, resources.GetString("radDisplayZoom2x.ToolTip"));
             this.radDisplayZoom2x.UseVisualStyleBackColor = true;
             this.radDisplayZoom2x.CheckedChanged += new System.EventHandler(this.radDisplayZoom2x_CheckedChanged);
-            this.radDisplayZoom2x.Click += new System.EventHandler(this.radDisplayZoom2x_Click);
             // 
             // radDisplayZoom1x
             // 
@@ -1296,7 +1294,6 @@
             this.toolTip1.SetToolTip(this.radDisplayZoom1x, resources.GetString("radDisplayZoom1x.ToolTip"));
             this.radDisplayZoom1x.UseVisualStyleBackColor = true;
             this.radDisplayZoom1x.CheckedChanged += new System.EventHandler(this.radDisplayZoom1x_CheckedChanged);
-            this.radDisplayZoom1x.Click += new System.EventHandler(this.radDisplayZoom1x_Click);
             // 
             // radDisplayZoom05
             // 
@@ -1308,7 +1305,6 @@
             this.toolTip1.SetToolTip(this.radDisplayZoom05, resources.GetString("radDisplayZoom05.ToolTip"));
             this.radDisplayZoom05.UseVisualStyleBackColor = true;
             this.radDisplayZoom05.CheckedChanged += new System.EventHandler(this.radDisplayZoom05_CheckedChanged);
-            this.radDisplayZoom05.Click += new System.EventHandler(this.radDisplayZoom05_Click);
             // 
             // ptbDisplayZoom
             // 
