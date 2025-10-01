@@ -26,6 +26,19 @@
 //    Austin, TX 78750
 //    USA
 //=================================================================
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 namespace Thetis
 {
@@ -328,7 +341,14 @@ namespace Thetis
             this.RXADollyFreq1 = rx.rx_dolly_freq1;
             this.RXANR2GainMethod = rx.rx_nr2_gain_method;
             this.RXANR2NPEMethod = rx.rx_nr2_npe_method;
+            //post
             this.RXANR2AERun = rx.rx_nr2_ae_run;
+            this.RXAEMNRpost2Run = rx.rx_nr2_ae_post2_run;
+            this.RXAEMNRpost2Nlevel = rx.rx_nr2_ae_post2_nlevel;
+            this.RXAEMNRpost2Factor = rx.rx_nr2_ae_post2_factor;
+            this.RXAEMNRpost2Rate = rx.rx_nr2_ae_post2_rate;
+            this.RXAEMNRpost2Taper = rx.rx_nr2_ae_post2_taper;
+            
             this.RXANR2Run = rx.rx_nr2_run;
             this.RXANR2Position = rx.rx_nr2_position;
             //
@@ -418,7 +438,14 @@ namespace Thetis
             RXADollyFreq1 = rx_dolly_freq1;
             RXANR2GainMethod = rx_nr2_gain_method;
             RXANR2NPEMethod = rx_nr2_npe_method;
+            //post
             RXANR2AERun = rx_nr2_ae_run;
+            RXAEMNRpost2Run = rx_nr2_ae_post2_run;
+            RXAEMNRpost2Nlevel = rx_nr2_ae_post2_nlevel;
+            RXAEMNRpost2Factor = rx_nr2_ae_post2_factor;
+            RXAEMNRpost2Rate = rx_nr2_ae_post2_rate;
+            RXAEMNRpost2Taper = rx_nr2_ae_post2_taper;
+
             RXANR2Run = rx_nr2_run;
             RXANR2Position = rx_nr2_position;
             //
@@ -2004,6 +2031,7 @@ namespace Thetis
             }
         }
 
+        //post processing
         private int rx_nr2_ae_run = 1;
         private int rx_nr2_ae_run_dsp = 1;
         public int RXANR2AERun
@@ -2022,6 +2050,102 @@ namespace Thetis
                 }
             }
         }
+
+        private int rx_nr2_ae_post2_run = 0;
+        private int rx_nr2_ae_post2_run_dsp = 0;
+        public int RXAEMNRpost2Run
+        {
+            get { return rx_nr2_ae_post2_run; }
+            set
+            {
+                rx_nr2_ae_post2_run = value;
+                if (update)
+                {
+                    if (value != rx_nr2_ae_post2_run_dsp || force)
+                    {
+                        WDSP.SetRXAEMNRpost2Run(WDSP.id(thread, subrx), value);
+                        rx_nr2_ae_post2_run_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private double rx_nr2_ae_post2_nlevel = 15.0;
+        private double rx_nr2_ae_post2_nlevel_dsp = 15.0;
+        public double RXAEMNRpost2Nlevel
+        {
+            get { return rx_nr2_ae_post2_nlevel; }
+            set
+            {
+                rx_nr2_ae_post2_nlevel = value;
+                if (update)
+                {
+                    if (value != rx_nr2_ae_post2_nlevel_dsp || force)
+                    {
+                        WDSP.SetRXAEMNRpost2Nlevel(WDSP.id(thread, subrx), value);
+                        rx_nr2_ae_post2_nlevel_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private double rx_nr2_ae_post2_factor = 15.0;
+        private double rx_nr2_ae_post2_factor_dsp = 15.0;
+        public double RXAEMNRpost2Factor
+        {
+            get { return rx_nr2_ae_post2_factor; }
+            set
+            {
+                rx_nr2_ae_post2_factor = value;
+                if (update)
+                {
+                    if (value != rx_nr2_ae_post2_factor_dsp || force)
+                    {
+                        WDSP.SetRXAEMNRpost2Factor(WDSP.id(thread, subrx), value);
+                        rx_nr2_ae_post2_factor_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private double rx_nr2_ae_post2_rate = 5.0;
+        private double rx_nr2_ae_post2_rate_dsp = 5.0;
+        public double RXAEMNRpost2Rate
+        {
+            get { return rx_nr2_ae_post2_rate; }
+            set
+            {
+                rx_nr2_ae_post2_rate = value;
+                if (update)
+                {
+                    if (value != rx_nr2_ae_post2_rate_dsp || force)
+                    {
+                        WDSP.SetRXAEMNRpost2Rate(WDSP.id(thread, subrx), value);
+                        rx_nr2_ae_post2_rate_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private int rx_nr2_ae_post2_taper = 12;
+        private int rx_nr2_ae_post2_taper_dsp = 12;
+        public int RXAEMNRpost2Taper
+        {
+            get { return rx_nr2_ae_post2_taper; }
+            set
+            {
+                rx_nr2_ae_post2_taper = value;
+                if (update)
+                {
+                    if (value != rx_nr2_ae_post2_taper_dsp || force)
+                    {
+                        WDSP.SetRXAEMNRpost2Taper(WDSP.id(thread, subrx), value);
+                        rx_nr2_ae_post2_taper_dsp = value;
+                    }
+                }
+            }
+        }
+        //
 
         private int rx_nr2_run = 0;
         private int rx_nr2_run_dsp = 0;

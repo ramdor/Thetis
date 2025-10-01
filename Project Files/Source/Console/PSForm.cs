@@ -4,6 +4,7 @@ This file is part of a program that implements a Software-Defined Radio.
 
 This code/file can be found on GitHub : https://github.com/ramdor/Thetis
 
+Copyright (C) 2000-2025 Original authors
 Copyright (C) 2020-2025 Richard Samphire MW0LGE
 
 This program is free software; you can redistribute it and/or
@@ -24,6 +25,20 @@ The author can be reached by email at
 
 mw0lge@grange-lane.co.uk
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -47,6 +62,8 @@ namespace Thetis
 
         public PSForm(Console c)
         {
+            Debug.Print(DateTime.UtcNow.Ticks.ToString() + " PSForm: Constructor Start");
+
             InitializeComponent();
             Common.DoubleBufferAll(this, true);
 
@@ -57,6 +74,11 @@ namespace Thetis
             Common.RestoreForm(this, "PureSignal", false); // will also restore txtPSpeak //MW0LGE_21k9rc5
 
             _advancedON = chkAdvancedViewHidden.Checked; //MW0LGE_[2.9.0.6]
+
+            console.PowerChangeHanders += onPowerOn;
+            console.ConsoleClosingHandlersAsync += onConsoleClosingAsync;
+
+            _power = console.PowerOn;
 
             startPSThread(); // MW0LGE_21k8 removed the winform timers, now using dedicated thread
         }
@@ -83,6 +105,8 @@ namespace Thetis
         private int _save_autoON = 0;
         private int _save_singlecalON = 0;
         private int _deltadB = 0;
+
+        private bool _power;
 
         private enum eCMDState
         {
@@ -139,11 +163,29 @@ namespace Thetis
         }
         public void StopPSThread()
         {
+            _ps_closing = true;
             _bPSRunning = false;
-            if (_ps_thread != null && _ps_thread.IsAlive) _ps_thread.Join(300);
-        }
+            Debug.Print(DateTime.UtcNow.Ticks.ToString() + " PSForm: Stopping PS Thread");
+            if (_ps_thread != null && _ps_thread.IsAlive) _ps_thread.Join(1000);
+            Debug.Print(DateTime.UtcNow.Ticks.ToString()  + " PSForm: PS Thread Stopped");
 
-        private bool _bPSRunning = false;
+            if (console != null)
+            {
+                console.PowerChangeHanders -= onPowerOn;
+                console.ConsoleClosingHandlersAsync -= onConsoleClosingAsync;
+            }
+        }
+        private async Task onConsoleClosingAsync()
+        {
+            _ps_closing = true;
+            await Task.Delay(100);
+        }
+        private void onPowerOn(bool oldPower, bool newPower)
+        {
+            _power = newPower;
+        }
+        private volatile bool _bPSRunning = false;
+        private volatile bool _ps_closing = false;
         private void PSLoop()
         {
             _bPSRunning = true;
@@ -151,9 +193,12 @@ namespace Thetis
 
             while (_bPSRunning)
             {
-                int sleepDuration;
+                if (_ps_closing) break; // gated
 
-                if (console.PowerOn)
+                int sleepDuration;
+                bool run = !_ps_closing && _power && !IsDisposed && IsHandleCreated;
+
+                if (run)
                 {
                     timer1code();
                     if (nCount == 0)
@@ -173,6 +218,7 @@ namespace Thetis
 
                 Thread.Sleep(sleepDuration);
             }
+            Debug.Print(DateTime.UtcNow.Ticks.ToString() + " PSForm: Exiting PS Thread");
         }
 
         //private volatile bool _dismissAmpv = false;

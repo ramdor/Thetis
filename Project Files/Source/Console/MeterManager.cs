@@ -24,6 +24,20 @@ The author can be reached by email at
 
 mw0lge@grange-lane.co.uk
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
@@ -8545,8 +8559,8 @@ namespace Thetis
 
                 _render_state_vfoA = renderState.VFO;
                 _render_state_vfoB = renderState.VFO;
-                _render_state_vfoA_change_time = DateTime.Now;
-                _render_state_vfoB_change_time = DateTime.Now;
+                _render_state_vfoA_change_time = DateTime.UtcNow;
+                _render_state_vfoB_change_time = DateTime.UtcNow;
                 _render_button_vfoA = buttonState.VFO_SCREEN;
                 _render_button_vfoB = buttonState.VFO_SCREEN;
                 _button_grid_index_vfoA = -1;
@@ -8829,7 +8843,7 @@ namespace Thetis
                 if (!MouseEntered) return;
 
                 _long_press_released = true;
-                _mouse_down_time = DateTime.Now;
+                _mouse_down_time = DateTime.UtcNow;
             }
             public bool MouseDownLong
             {
@@ -8837,7 +8851,7 @@ namespace Thetis
                 {
                     if (!MouseEntered) return false;
 
-                    bool long_pressed = (DateTime.Now - _mouse_down_time).TotalMilliseconds >= 1000;
+                    bool long_pressed = (DateTime.UtcNow - _mouse_down_time).TotalMilliseconds >= 1000;
                     if (long_pressed) _long_press_released = false;
                     return long_pressed;
                 }
@@ -8910,14 +8924,14 @@ namespace Thetis
                                 if (setBand(true))
                                     VFOBRenderState = renderState.VFO;
                                 else
-                                    _render_state_vfoB_change_time = DateTime.Now;
+                                    _render_state_vfoB_change_time = DateTime.UtcNow;
                             }
                             else
                             {
                                 if (setBand(false))
                                     VFOARenderState = renderState.VFO;
                                 else
-                                    _render_state_vfoA_change_time = DateTime.Now;
+                                    _render_state_vfoA_change_time = DateTime.UtcNow;
                             }
                         }
                         break;
@@ -8928,14 +8942,14 @@ namespace Thetis
                                 if (setMode(true))
                                     VFOBRenderState = renderState.VFO;
                                 else
-                                    _render_state_vfoB_change_time = DateTime.Now;
+                                    _render_state_vfoB_change_time = DateTime.UtcNow;
                             }
                             else
                             {
                                 if (setMode(false))
                                     VFOARenderState = renderState.VFO;
                                 else
-                                    _render_state_vfoA_change_time = DateTime.Now;
+                                    _render_state_vfoA_change_time = DateTime.UtcNow;
                             }
                         }
                         break;
@@ -8946,14 +8960,14 @@ namespace Thetis
                                 if (setFilter(true))
                                     VFOBRenderState = renderState.VFO;
                                 else
-                                    _render_state_vfoB_change_time = DateTime.Now;
+                                    _render_state_vfoB_change_time = DateTime.UtcNow;
                             }
                             else
                             {
                                 if (setFilter(false))
                                     VFOARenderState = renderState.VFO;
                                 else
-                                    _render_state_vfoA_change_time = DateTime.Now;
+                                    _render_state_vfoA_change_time = DateTime.UtcNow;
                             }
                         }
                         break;
@@ -9004,14 +9018,14 @@ namespace Thetis
                                     if (setTuneStep(true))
                                         VFOBRenderState = renderState.VFO;
                                     else
-                                        _render_state_vfoB_change_time = DateTime.Now;
+                                        _render_state_vfoB_change_time = DateTime.UtcNow;
                                 }
                                 else
                                 {
                                     if (setTuneStep(false))
                                         VFOARenderState = renderState.VFO;
                                     else
-                                        _render_state_vfoA_change_time = DateTime.Now;
+                                        _render_state_vfoA_change_time = DateTime.UtcNow;
                                 }
                             }
                         }
@@ -9493,12 +9507,12 @@ namespace Thetis
             {
                 get
                 {
-                    if (_render_state_vfoA != renderState.VFO && (DateTime.Now - _render_state_vfoA_change_time).Seconds > 5) VFOARenderState = renderState.VFO;
+                    if (_render_state_vfoA != renderState.VFO && (DateTime.UtcNow - _render_state_vfoA_change_time).Seconds > 5) VFOARenderState = renderState.VFO;
                     return _render_state_vfoA;
                 }
                 set
                 {
-                    if (_render_state_vfoA != value) _render_state_vfoA_change_time = DateTime.Now;
+                    if (_render_state_vfoA != value) _render_state_vfoA_change_time = DateTime.UtcNow;
                     _render_state_vfoA = value;
                 }
             }
@@ -9506,12 +9520,12 @@ namespace Thetis
             {
                 get
                 {
-                    if (_render_state_vfoB != renderState.VFO && (DateTime.Now - _render_state_vfoB_change_time).Seconds > 5) VFOBRenderState = renderState.VFO;
+                    if (_render_state_vfoB != renderState.VFO && (DateTime.UtcNow - _render_state_vfoB_change_time).Seconds > 5) VFOBRenderState = renderState.VFO;
                     return _render_state_vfoB;
                 }
                 set
                 {
-                    if (_render_state_vfoB != value) _render_state_vfoB_change_time = DateTime.Now;
+                    if (_render_state_vfoB != value) _render_state_vfoB_change_time = DateTime.UtcNow;
                     _render_state_vfoB = value;
                 }
             }
@@ -19733,8 +19747,8 @@ namespace Thetis
                 _min_notch_width_tx = 10; ;
                 _rx2Enabled = false;
                 _multiRxEnabled = false;
-                _qso_start = DateTime.Now;
-                _qso_end = DateTime.Now;
+                _qso_start = DateTime.UtcNow;
+                _qso_end = DateTime.UtcNow;
 
                 _txeqEnabled = true;
                 _levelerEnabled = true;
@@ -23301,9 +23315,9 @@ namespace Thetis
                     if (changed)
                     {
                         if (_mox)
-                            _qso_start = DateTime.Now;
+                            _qso_start = DateTime.UtcNow;
                         else
-                            _qso_end = DateTime.Now;
+                            _qso_end = DateTime.UtcNow;
                     }
                 }
             }
@@ -23311,7 +23325,7 @@ namespace Thetis
             {
                 get 
                 { 
-                    if (_mox) _qso_end = DateTime.Now;
+                    if (_mox) _qso_end = DateTime.UtcNow;
                     return (long)(_qso_end - _qso_start).TotalSeconds; 
                 }
             }
@@ -33533,7 +33547,7 @@ namespace Thetis
                 try
                 {
                     bool started = true;
-                    DateTime lastTimeActive = DateTime.Now;
+                    DateTime lastTimeActive = DateTime.UtcNow;
                     _tcpListener.Start();
                     while (_isRunning)
                     {
@@ -33572,7 +33586,7 @@ namespace Thetis
                                             int bytesRead = stream.Read(buffer, 0, buffer.Length);
                                             if (bytesRead > 0)
                                             {
-                                                lastTimeActive = DateTime.Now;
+                                                lastTimeActive = DateTime.UtcNow;
                                                 string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                                                 sleep = false;
                                                 string term = "";
@@ -33655,7 +33669,7 @@ namespace Thetis
                                         }
                                         if (outData.Length > 0)
                                         {
-                                            lastTimeActive = DateTime.Now;
+                                            lastTimeActive = DateTime.UtcNow;
                                             sleep = false;
 
                                             Byte[] sendBytes = Encoding.ASCII.GetBytes(outData);
@@ -33674,14 +33688,14 @@ namespace Thetis
                                 }
 
                                 // heatbeat connection connected checker
-                                if ((DateTime.Now - lastTimeActive).TotalMilliseconds > 5000 && clientConnected)
+                                if ((DateTime.UtcNow - lastTimeActive).TotalMilliseconds > 5000 && clientConnected)
                                 {
                                     // at least 5 seconds since an rx or a tx, we should tx a byte, just to check connection state
                                     Byte[] sendBytes = Encoding.ASCII.GetBytes("\0");
                                     try
                                     {
                                         stream.Write(sendBytes, 0, sendBytes.Length);
-                                        lastTimeActive = DateTime.Now;
+                                        lastTimeActive = DateTime.UtcNow;
                                     }
                                     catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
                                     {
@@ -33797,7 +33811,7 @@ namespace Thetis
                         _tcpClient.Connect(_ip, _port);
                         _networkStream = _tcpClient.GetStream();
 
-                        DateTime lastTimeActive = DateTime.Now;
+                        DateTime lastTimeActive = DateTime.UtcNow;
                         string bufferConcat = "";
 
                         while (_isRunning)
@@ -33821,7 +33835,7 @@ namespace Thetis
                                         int bytesRead = _networkStream.Read(buffer, 0, buffer.Length);
                                         if (bytesRead > 0)
                                         {
-                                            lastTimeActive = DateTime.Now;
+                                            lastTimeActive = DateTime.UtcNow;
                                             string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                                             sleep = false;
                                             string term = "";
@@ -33906,7 +33920,7 @@ namespace Thetis
                                     }
                                     if (outData.Length > 0)
                                     {
-                                        lastTimeActive = DateTime.Now;
+                                        lastTimeActive = DateTime.UtcNow;
                                         sleep = false;
 
                                         Byte[] sendBytes = Encoding.ASCII.GetBytes(outData);
@@ -33926,13 +33940,13 @@ namespace Thetis
                                 }
                             }
 
-                            if ((DateTime.Now - lastTimeActive).TotalMilliseconds > 5000 && clientConnected)
+                            if ((DateTime.UtcNow - lastTimeActive).TotalMilliseconds > 5000 && clientConnected)
                             {
                                 Byte[] sendBytes = Encoding.ASCII.GetBytes("\0");
                                 try
                                 {
                                     _networkStream.Write(sendBytes, 0, sendBytes.Length);
-                                    lastTimeActive = DateTime.Now;
+                                    lastTimeActive = DateTime.UtcNow;
                                 }
                                 catch (Exception ex) when (ex is SocketException || ex is IOException || ex is ObjectDisposedException)
                                 {
@@ -34215,7 +34229,7 @@ namespace Thetis
                 {
                     _serialPort.Open();
 
-                    DateTime lastTimeActive = DateTime.Now;
+                    DateTime lastTimeActive = DateTime.UtcNow;
                     string bufferConcat = "";
 
                     while (_isRunning)
@@ -34239,7 +34253,7 @@ namespace Thetis
                                     int bytesRead = _serialPort.Read(buffer, 0, buffer.Length);
                                     if (bytesRead > 0)
                                     {
-                                        lastTimeActive = DateTime.Now;
+                                        lastTimeActive = DateTime.UtcNow;
                                         string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                                         sleep = false;
                                         string term = "";
@@ -34321,7 +34335,7 @@ namespace Thetis
                                 }
                                 if (outData.Length > 0)
                                 {
-                                    lastTimeActive = DateTime.Now;
+                                    lastTimeActive = DateTime.UtcNow;
                                     sleep = false;
 
                                     Byte[] sendBytes = Encoding.ASCII.GetBytes(outData);
@@ -34338,13 +34352,13 @@ namespace Thetis
                             }
                         }
 
-                        if ((DateTime.Now - lastTimeActive).TotalMilliseconds > 5000 && _serialPort.IsOpen)
+                        if ((DateTime.UtcNow - lastTimeActive).TotalMilliseconds > 5000 && _serialPort.IsOpen)
                         {
                             Byte[] sendBytes = Encoding.ASCII.GetBytes("\0");
                             try
                             {
                                 _serialPort.Write(sendBytes, 0, sendBytes.Length);
-                                lastTimeActive = DateTime.Now;
+                                lastTimeActive = DateTime.UtcNow;
                             }
                             catch (Exception ex) when (ex is IOException || ex is InvalidOperationException)
                             {

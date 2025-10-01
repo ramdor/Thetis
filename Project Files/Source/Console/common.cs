@@ -28,6 +28,19 @@
 //=================================================================
 // Continual modifications Copyright (C) 2019-2025 Richard Samphire (MW0LGE)
 //=================================================================
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 using System;
 using System.Diagnostics;
@@ -482,324 +495,14 @@ namespace Thetis
             ForceFormOnScreen(form);
         }
 
-        //public static void RestoreForm(Form form, string tablename, bool restore_size)
-        //{
-        //          if (DB.ds == null) return;
-
-        //          ArrayList temp = new ArrayList();		// list of all first level controls
-        //	ControlList(form, ref temp);
-
-        //	//[2.10.2.3]MW0LGE change to single dictionary of controls
-        //	Dictionary<string, Control> ctrls = new Dictionary<string, Control>();
-
-        //	foreach(Control c in temp)
-        //	{
-        //              ctrls.Add(c.Name, c); //[2.10.2.3]MW0LGE yes, control names are unique per form, and to create and search each list is madness
-        //          }
-        //	temp.Clear();	// now that we have the controls we want, delete first list 
-
-        //	ArrayList a = DB.GetVars(tablename);						// Get the saved list of controls
-        //	a.Sort();
-
-        //	// restore saved values to the controls
-        //	foreach(string s in a)				// string is in the format "name,value"
-        //	{
-        //		string[] vals = s.Split('/');
-        //		if(vals.Length > 2)
-        //		{
-        //			for(int i=2; i<vals.Length; i++)
-        //				vals[1] += "/"+vals[i];
-        //		}
-
-        //		string name = vals[0];
-        //		string val = vals[1];
-
-        //		switch(name)
-        //		{
-        //			case "Top":
-        //				form.StartPosition = FormStartPosition.Manual;
-        //				int top = int.Parse(val);
-        //				form.Top = top;
-        //				break;
-        //			case "Left":
-        //				form.StartPosition = FormStartPosition.Manual;
-        //				int left = int.Parse(val);
-        //				form.Left = left;
-        //				break;
-        //			case "Width":
-        //				if(restore_size)
-        //				{
-        //					int width = int.Parse(val);
-        //					form.Width = width;
-        //				}
-        //				break;
-        //			case "Height":
-        //				if(restore_size)
-        //				{
-        //					int height = int.Parse(val);
-        //					form.Height = height;
-        //				}
-        //				break;
-        //		}
-
-        //		if(s.StartsWith("chk"))			// control is a CheckBoxTS
-        //		{
-        //			if (ctrls.ContainsKey(name)) ((CheckBoxTS)ctrls[name]).Checked = bool.Parse(val);
-        //              }
-        //		else if(s.StartsWith("combo"))	// control is a ComboBox
-        //		{
-        //			if (ctrls.ContainsKey(name)) ((ComboBoxTS)ctrls[name]).Text = val;
-        //              }
-        //		else if(s.StartsWith("ud"))
-        //		{
-        //                  if (ctrls.ContainsKey(name))
-        //                  {
-        //                      NumericUpDownTS c = (NumericUpDownTS)ctrls[name];
-        //                      decimal dnum = decimal.Parse(val);
-        //                      if (dnum > c.Maximum) dnum = c.Maximum;
-        //                      else if (dnum < c.Minimum) dnum = c.Minimum;
-        //                      c.Value = dnum;
-        //                  }
-        //              }
-        //		else if(s.StartsWith("rad"))
-        //		{
-        //                  if (ctrls.ContainsKey(name))
-        //                  {
-        //                      RadioButtonTS c = (RadioButtonTS)ctrls[name];
-        //                      if (!val.ToLower().Equals("true") && !val.ToLower().Equals("false")) val = "True";
-        //                      c.Checked = bool.Parse(val);
-        //                  }
-        //              }
-        //		else if(s.StartsWith("txt"))
-        //		{
-        //                  if (ctrls.ContainsKey(name)) ((TextBoxTS)ctrls[name]).Text = val;
-        //              }
-        //		else if(s.StartsWith("tb"))
-        //		{
-        //			if (ctrls.ContainsKey(name))
-        //			{
-        //				TrackBarTS c = (TrackBarTS)ctrls[name];
-        //				int num = int.Parse(val);
-        //				if (num > c.Maximum) num = c.Maximum;
-        //				if (num < c.Minimum) num = c.Minimum;
-        //                      c.Value = num;
-        //                  }
-        //              }
-        //		else if(s.StartsWith("clrbtn"))
-        //		{
-        //			if (ctrls.ContainsKey(name))
-        //			{
-        //                      string[] colors = val.Split('.');
-        //				if (colors.Length == 4)
-        //				{
-        //					int R, G, B, A;
-        //					R = Int32.Parse(colors[0]);
-        //					G = Int32.Parse(colors[1]);
-        //					B = Int32.Parse(colors[2]);
-        //					A = Int32.Parse(colors[3]);
-        //					ColorButton c = (ColorButton)ctrls[name];
-        //                          c.Color = Color.FromArgb(A, R, G, B);
-        //                      }
-        //			}
-        //		}
-        //	}
-
-        //	ForceFormOnScreen(form);
-        //}
-
         public static (bool resized, bool relocated) ForceFormOnScreen(Form f, bool shrink_to_fit = false, bool keep_on_screen = false)
         {
             if (f == null) return (false, false);
 
-            bool resized = false;
-            bool relocated = false;
-            Screen[] screens = Screen.AllScreens;
+            (Rectangle newPos, bool resized, bool repositioned) = SafeScreens.EnsureRectangleWithinNearestScreen(null, f, keep_on_screen, true);
 
-            if (screens.Length == 0)
-            {
-                f.Location = new Point(0, 0);
-                return (false, false);
-            }
-
-            if (keep_on_screen)
-            {
-                // Find the screen where the mouse cursor is currently located
-                Screen screen = Screen.FromPoint(Cursor.Position);
-                Rectangle screenBounds = screen.WorkingArea;
-
-                // Ensure the form is within the screen's bounds
-                if (f.Left < screenBounds.Left)
-                {
-                    f.Left = screenBounds.Left;
-                    relocated = true;
-                }
-                if (f.Top < screenBounds.Top)
-                {
-                    f.Top = screenBounds.Top;
-                    relocated = true;
-                }
-                if (f.Right > screenBounds.Right)
-                {
-                    f.Left = screenBounds.Right - f.Width;
-                    relocated = true;
-                }
-                if (f.Bottom > screenBounds.Bottom)
-                {
-                    f.Top = screenBounds.Bottom - f.Height;
-                    relocated = true;
-                }
-
-                // Shrink the form to fit within the screen's bounds
-                if (shrink_to_fit)
-                {
-                    int formWidth = f.Width;
-                    int formHeight = f.Height;
-
-                    if (f.Width > screenBounds.Width)
-                    {
-                        formWidth = screenBounds.Width;
-                        resized = true;
-                    }
-
-                    if (f.Height > screenBounds.Height)
-                    {
-                        formHeight = screenBounds.Height;
-                        resized = true;
-                    }
-
-                    f.Size = new Size(formWidth, formHeight);
-                }
-            }
-            else
-            {
-                // Calculate the full virtual screen area
-                int left = int.MaxValue, top = int.MaxValue;
-                int right = int.MinValue, bottom = int.MinValue;
-
-                foreach (Screen screen in screens)
-                {
-                    if (screen.Bounds.Left < left)
-                        left = screen.Bounds.Left;
-                    if (screen.Bounds.Top < top)
-                        top = screen.Bounds.Top;
-                    if (screen.Bounds.Right > right)
-                        right = screen.Bounds.Right;
-                    if (screen.Bounds.Bottom > bottom)
-                        bottom = screen.Bounds.Bottom;
-                }
-
-                bool onScreen = f.Left >= left &&
-                                f.Top >= top &&
-                                f.Right <= right &&
-                                f.Bottom <= bottom;
-
-                if (!onScreen)
-                {
-                    if (f.Left < left)
-                        f.Left = left;
-                    if (f.Top < top)
-                        f.Top = top;
-                    if (f.Right > right)
-                        f.Left = right - f.Width;
-                    if (f.Bottom > bottom)
-                        f.Top = bottom - f.Height;
-
-                    relocated = true;
-                }
-
-                if (shrink_to_fit)
-                {
-                    int formWidth = f.Width;
-                    int formHeight = f.Height;
-
-                    if (f.Width > right - left)
-                    {
-                        formWidth = right - left;
-                        resized = true;
-                    }
-
-                    if (f.Height > bottom - top)
-                    {
-                        formHeight = bottom - top;
-                        resized = true;
-                    }
-
-                    f.Size = new Size(formWidth, formHeight);
-                }
-            }
-
-            return (relocated, resized);
+            return (resized, repositioned);
         }
-
-
-        //public static (bool resized, bool shrunk) ForceFormOnScreen(Form f, bool shrink_to_fit = false)
-        //{
-        //          bool resized = false;
-        //          bool relocated = false;
-        //          Screen[] screens = Screen.AllScreens;
-
-        //          if (screens.Length == 0)
-        //          {
-        //              f.Location = new Point(0, 0);
-        //              return (false, false);
-        //          }
-
-        //          int left = int.MaxValue, top = int.MaxValue;
-        //          int right = int.MinValue, bottom = int.MinValue;
-
-        //          foreach (Screen screen in screens)
-        //          {
-        //              if (screen.Bounds.Left < left)
-        //                  left = screen.Bounds.Left;
-        //              if (screen.Bounds.Top < top)
-        //                  top = screen.Bounds.Top;
-        //              if (screen.Bounds.Right > right)
-        //                  right = screen.Bounds.Right;
-        //              if (screen.Bounds.Bottom > bottom)
-        //                  bottom = screen.Bounds.Bottom;
-        //          }
-
-        //          bool onScreen = f.Left >= left &&
-        //                          f.Top >= top &&
-        //                          f.Right <= right &&
-        //                          f.Bottom <= bottom;
-
-        //          if (!onScreen)
-        //          {
-        //              if (f.Left < left)
-        //                  f.Left = left;
-        //              if (f.Top < top)
-        //                  f.Top = top;
-        //              if (f.Right > right)
-        //                  f.Left = right - f.Width;
-        //              if (f.Bottom > bottom)
-        //                  f.Top = bottom - f.Height;
-
-        //              relocated = true;
-        //          }
-
-        //          if (shrink_to_fit)
-        //          {
-        //              int formWidth = f.Width;
-        //              int formHeight = f.Height;
-
-        //              if (f.Width > right - left)
-        //              {
-        //                  formWidth = right - left;
-        //                  resized = true;
-        //              }
-
-        //              if (f.Height > bottom - top)
-        //              {
-        //                  formHeight = bottom - top;
-        //                  resized = true;
-        //              }
-
-        //              f.Size = new Size(formWidth, formHeight);
-        //          }
-
-        //          return (relocated, resized);
-        //      }
 
         public static void TabControlInsert(TabControl tc, TabPage tp, int index)
 		{
@@ -997,7 +700,8 @@ namespace Thetis
         {
             get
             {
-                return (Control.ModifierKeys & Keys.Alt) == Keys.Alt;
+                //return (Control.ModifierKeys & Keys.Alt) == Keys.Alt;
+                return Keyboard.IsKeyDown(Keys.Menu) || Keyboard.IsKeyDown(Keys.LMenu) || Keyboard.IsKeyDown(Keys.RMenu);
             }
         }
         public static bool Is64Bit

@@ -6,17 +6,26 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
-## v2.10.3.12 - dev.7 Change Log
+## v2.10.3.12 - Dev Change Log
 - [add] you can pick a directx device using -adaptor:# from the command line. Use Thetis.exe -help for more information
 - [add] ability to load rnnoise model binary files added
-- [change] changed ZZIS cat command so that it takes/returns the actual filter width and not the slider width position. ZZIS; will return ZZISxxxxx; where xxxxx is 0 padded filter width. ZZIS00500; will set filter width to 500HZ. Symetrical modes such as AM, SAM will take the full size width, so ZZIS20000; will be +-10k on AM. Note. FilterWdithMode is switched to linear whilst this is applied
+- [add] WDSP 1.27 post processing noise functionality added to NR2. Settings in Setup->DSP->NR/ANF
+- [add] added functionality to reposition 'lost' forms. This can be found in Setup->[Test->Reposition Forms]. Select the forms you want to move back to the primary monitor starting at 100, 100. The Z order of windows will not be changed so they may appear behind a window on the primary monitor
+- [add] you can now hold CTRL+ALT+SHIFT when starting Thetis to show a message to allow you to reset the locations of Thetis console and Setup if they become lost. You can then use Setup->Tests->[Reposition Forms] for any others missing
+- [change] changed ZZIS cat command so that it takes/returns the actual filter width and not the slider width position. ZZIS; will return ZZISxxxxx; where xxxxx is 0 padded filter width. ZZIS00500; will set filter width to 500HZ. Symmetrical modes such as AM, SAM will take the full size width, so ZZIS20000; will be +-10k on AM. Note. FilterWdithMode is switched to linear whilst this is applied
 - [change] private scope added to in/out firewall rules when [Firewall Check] is used from Setup. Previously was only setting Domain + Public
+- [change] reimplemented the code that ensures a form is on screen as there had been occurrences where a form had got 'lost'. Note. this will still fail if a monitor is turned off and windows thinks it is still available as a display surface
+- [change] rework of samples provided to RNnoise to bring them into a range more suited to RNnoise. Handles lower signals better
+- [change] broadcast kenwood AI messages are now flood controlled to a max rate of 1 message per 200ms
+- [fix] filter command line args to strip any unexpected characters/unicode
 - [fix] you can now enter values into the VAR1/VAR2 filters on the main console. Pressing enter or the box losing focus will set the value
-- [fix] issue where low/high values would not sometimes be stored when using the filter configuration settings window/form
+- [fix] issue where low/high values would sometimes not be stored when using the filter configuration settings window/form
 - [fix] changing a filter edge in the filter settings config window will now notify all delegates. Fixes issue where filter container would not update
+- [fix] fixed a CAT tci/ip server issue where AI broadcast messages could get interleaved between a cat request and reply, which could cause issues for external systems that rely on a correct response, such as HamLib.
+- [fix] cw auto mode switch will now not return to previous non cw mode if activated from cw. The return delay now works as expected
 
 ## v2.10.3.11 - Change Log
-- [add] two new noise reduction methods added, NR3 and NR4. When starting up this version for the first time if NR was enabled, will now be set to off. Only support for nr/nr2 is available through cat and other systems that use cat such as midi. Settings in the normal NR settings page of Setup
+- [add] two new noise reduction methods added, NR3 and NR4. When starting up this version for the first time if NR was enabled, will now be set to off. Settings in the normal NR settings page of Setup
     NR3 - RNnoise - A noise suppression library based on a recurrent neural network. Latest code here - https://gitlab.xiph.org/xiph/rnnoise . More info here - https://arxiv.org/pdf/1709.08243.pdf  
     NR4 - SpectrumBleach - libspecbleach - This library is based on the algorithms that were used in noise-repellent. Source here - https://github.com/lucianodato/libspecbleach . More info here - https://github.com/lucianodato/noise-repellent/wiki
 - [add] cat commands ZZNE and ZZNF (rx1+rx2) added to set/get NR config for each receiver. eg ZZNE; will return 0 if off, or 3 if NR3 selected. ZZNE4; will select NR4

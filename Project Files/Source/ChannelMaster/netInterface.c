@@ -632,7 +632,6 @@ void SetAlex4HPFBits(int bits)
 	Alex4HPFMask = bits;
 }
 
-PORT
 // LPF bits can be used in older radioas as part of RX filtering too.
 // Change to protocol 2 from 4.3 onwards: TX settings are encoded in the Alex1 word
 // to remain comparible with older hardware, the logic will be:

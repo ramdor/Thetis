@@ -29,6 +29,19 @@
 //=================================================================
 // Continual modifications Copyright (C) 2019-2025 Richard Samphire (MW0LGE)
 //=================================================================
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 using System.Collections.Generic;
 using System.Linq;
@@ -2584,6 +2597,8 @@ namespace Thetis
             radDSPNR2NSTATRX2_CheckedChanged(this, e);
 
             chkDSPNR2AE_CheckedChanged(this, e);
+            setupNR2PostProcessing(1);
+            setupNR2PostProcessing(2);
             radDSPNR2LinearRX2_CheckedChanged(this, e);
             radDSPNR2LogRX2_CheckedChanged(this, e);
             radDSPNR2TRNDRX2_CheckedChanged(this, e);
@@ -28846,6 +28861,7 @@ namespace Thetis
         }
         private void nudAutoModeSwitchCWReturn_ValueChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             console.AutoModeSwitchCWReturnMs = (int)nudAutoModeSwitchCWReturn.Value;
         }
         private void btnZipDebug_Click(object sender, EventArgs e)
@@ -30751,6 +30767,10 @@ namespace Thetis
         private void radDSPNR2TRND_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+
+            udDSPNR2trainThresh.Enabled = radDSPNR2TRND.Checked;
+            udDSPNR2trainT2.Enabled = radDSPNR2TRND.Checked;
+
             if (radDSPNR2TRND.Checked)
             {
                 console.radio.GetDSPRX(0, 0).RXANR2GainMethod = 3;
@@ -30761,6 +30781,10 @@ namespace Thetis
         private void radDSPNR2TRNDRX2_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+
+            udDSPNR2trainThreshRX2.Enabled = radDSPNR2TRNDRX2.Checked;
+            udDSPNR2trainT2RX2.Enabled = radDSPNR2TRNDRX2.Checked;
+
             if (radDSPNR2TRNDRX2.Checked)
             {
                 console.radio.GetDSPRX(1, 0).RXANR2GainMethod = 3;
@@ -36101,7 +36125,272 @@ namespace Thetis
                 return remaining == 0;
             }
         }
+
+        #region nr2 post processing
+        private void setupNR2PostProcessing(int rx)
+        {
+            switch (rx)
+            {
+                case 1:
+                    {
+                        bool enabled = chkNR2PostProc_enable_rx1.Checked;
+
+                        nudNR2PostProc_level_rx1.Enabled = enabled;
+                        nudNR2PostProc_factor_rx1.Enabled = enabled;
+                        nudNR2PostProc_rate_rx1.Enabled = enabled;
+                        nudNR2PostProc_taper_rx1.Enabled = enabled;
+
+                        int thread = 0;
+
+                        if (enabled)
+                        {
+                            for (int subrx = 0; subrx < 2; subrx++)
+                            {
+                                console.radio.GetDSPRX(thread, subrx).RXAEMNRpost2Nlevel = (double)nudNR2PostProc_level_rx1.Value;
+                                console.radio.GetDSPRX(thread, subrx).RXAEMNRpost2Factor = (double)nudNR2PostProc_factor_rx1.Value;
+                                console.radio.GetDSPRX(thread, subrx).RXAEMNRpost2Rate = (double)nudNR2PostProc_rate_rx1.Value;
+                                console.radio.GetDSPRX(thread, subrx).RXAEMNRpost2Taper = (int)nudNR2PostProc_taper_rx1.Value;
+                            }
+                        }
+
+                        int run = enabled ? 1 : 0;
+                        console.radio.GetDSPRX(thread, 0).RXAEMNRpost2Run = run;
+                        console.radio.GetDSPRX(thread, 1).RXAEMNRpost2Run = run;
+                        break;
+                    }
+
+                case 2:
+                    {
+                        bool enabled = chkNR2PostProc_enable_rx2.Checked;
+
+                        nudNR2PostProc_level_rx2.Enabled = enabled;
+                        nudNR2PostProc_factor_rx2.Enabled = enabled;
+                        nudNR2PostProc_rate_rx2.Enabled = enabled;
+                        nudNR2PostProc_taper_rx2.Enabled = enabled;
+
+                        int thread = 1;
+
+                        if (enabled)
+                        {
+                            for (int subrx = 0; subrx < 2; subrx++)
+                            {
+                                console.radio.GetDSPRX(thread, subrx).RXAEMNRpost2Nlevel = (double)nudNR2PostProc_level_rx2.Value;
+                                console.radio.GetDSPRX(thread, subrx).RXAEMNRpost2Factor = (double)nudNR2PostProc_factor_rx2.Value;
+                                console.radio.GetDSPRX(thread, subrx).RXAEMNRpost2Rate = (double)nudNR2PostProc_rate_rx2.Value;
+                                console.radio.GetDSPRX(thread, subrx).RXAEMNRpost2Taper = (int)nudNR2PostProc_taper_rx2.Value;
+                            }
+                        }
+
+                        int run = enabled ? 1 : 0;
+                        console.radio.GetDSPRX(thread, 0).RXAEMNRpost2Run = run;
+                        console.radio.GetDSPRX(thread, 1).RXAEMNRpost2Run = run;
+                        break;
+                    }
+
+                default:
+                    break;
+            }
+        }
+        private void chkNR2PostProc_enable_rx1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupNR2PostProcessing(1);
+        }
+
+        private void nudNR2PostProc_level_rx1_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupNR2PostProcessing(1);
+        }
+
+        private void nudNR2PostProc_factor_rx1_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupNR2PostProcessing(1);
+        }
+
+        private void nudNR2PostProc_rate_rx1_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupNR2PostProcessing(1);
+        }
+
+        private void nudNR2PostProc_taper_rx1_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupNR2PostProcessing(1);
+        }
+
+        private void chkNR2PostProc_enable_rx2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupNR2PostProcessing(2);
+        }
+
+        private void nudNR2PostProc_level_rx2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupNR2PostProcessing(2);
+        }
+
+        private void nudNR2PostProc_factor_rx2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupNR2PostProcessing(2);
+        }
+
+        private void nudNR2PostProc_rate_rx2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupNR2PostProcessing(2);
+        }
+
+        private void nudNR2PostProc_taper_rx2_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            setupNR2PostProcessing(2);
+        }
+        #endregion
+
+        private void btnFormLocationHelper_Click(object sender, EventArgs e)
+        {
+            List<Form> forms = SelectFormsForReposition.getAllOpenForms();
+            SelectFormsForReposition dlg = new SelectFormsForReposition(forms, 100, 100, 20);
+            DialogResult dr = dlg.ShowDialog(this);
+        }
     }
+
+    #region FormLoactionHelper
+    //
+    public class SelectFormsForReposition : Form
+    {
+        private CheckedListBox _list_box;
+        private Button _ok_button;
+        private Button _cancel_button;
+        private List<Form> _source_forms;
+        private int _start_x;
+        private int _start_y;
+        private int _step;
+
+        public SelectFormsForReposition(List<Form> forms, int start_x = 100, int start_y = 100, int step = 20)
+        {
+            this._source_forms = new List<Form>(forms);
+            this._start_x = start_x;
+            this._start_y = start_y;
+            this._step = step;
+
+            this.Text = "Select Forms to Reposition:";
+            this.StartPosition = FormStartPosition.CenterParent;
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.MinimizeBox = false;
+            this.MaximizeBox = false;
+            this.ClientSize = new Size(420, 360);
+
+            this._list_box = new CheckedListBox();
+            this._list_box.Location = new Point(12, 12);
+            this._list_box.Size = new Size(396, 276);
+            this._list_box.CheckOnClick = true;
+
+            for (int i = 0; i < this._source_forms.Count; i++)
+            {
+                Form f = this._source_forms[i];
+                this._list_box.Items.Add(new RepositionItem(f), false);
+            }
+
+            this._ok_button = new Button();
+            this._ok_button.Text = "OK";
+            this._ok_button.Size = new Size(90, 28);
+            this._ok_button.Location = new Point(this.ClientSize.Width - 198, this.ClientSize.Height - 44);
+            this._ok_button.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            this._ok_button.Click += this.on_ok_clicked;
+
+            this._cancel_button = new Button();
+            this._cancel_button.Text = "Cancel";
+            this._cancel_button.Size = new Size(90, 28);
+            this._cancel_button.Location = new Point(this.ClientSize.Width - 96, this.ClientSize.Height - 44);
+            this._cancel_button.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            this._cancel_button.Click += this.on_cancel_clicked;
+
+            this.AcceptButton = this._ok_button;
+            this.CancelButton = this._cancel_button;
+
+            this.Controls.Add(this._list_box);
+            this.Controls.Add(this._ok_button);
+            this.Controls.Add(this._cancel_button);
+
+            this.TopMost = true;
+        }
+
+        public static List<Form> getAllOpenForms()
+        {
+            List<Form> forms = new List<Form>();
+            for (int i = 0; i < Application.OpenForms.Count; i++)
+            {
+                Form f = Application.OpenForms[i];
+
+                //ignore these
+                if (f.Name == "frmInfoBarPopup" ||
+                    f.Name == "frmQuickRecallPopupList")
+                    continue;
+
+                forms.Add(f);
+            }
+            return forms;
+        }
+
+        private static void repositionForms(List<Form> forms, int start_x = 100, int start_y = 100, int step = 20)
+        {
+            int x = start_x;
+            int y = start_y;
+            for (int i = 0; i < forms.Count; i++)
+            {
+                Form f = forms[i];
+                f.Location = new Point(x, y);
+                x += step;
+                y += step;
+            }
+        }
+
+        private void on_ok_clicked(object sender, EventArgs e)
+        {
+            List<Form> selected = new List<Form>();
+            for (int i = 0; i < this._list_box.CheckedItems.Count; i++)
+            {
+                RepositionItem item = (RepositionItem)this._list_box.CheckedItems[i];
+                if (item.form != null) selected.Add(item.form);
+            }
+            if (selected.Count > 0)
+            {
+                repositionForms(selected, this._start_x, this._start_y, this._step);
+            }
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+        private void on_cancel_clicked(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+
+        private class RepositionItem
+        {
+            public Form form;
+            public RepositionItem(Form form)
+            {
+                this.form = form;
+            }
+            public override string ToString()
+            {
+                if (this.form == null) return "";
+                string name = string.IsNullOrEmpty(this.form.Name) ? "(unnamed)" : this.form.Name;
+                string text = string.IsNullOrEmpty(this.form.Text) ? "" : this.form.Text;
+                return name + "  —  " + text;
+            }
+        }
+    }
+    //
+    #endregion
 
     #region PADeviceInfo Helper Class
 

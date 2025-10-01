@@ -33,7 +33,20 @@
 // Modifications for using the new database import function.  W2PA, 29 May 2017
 // Support QSK, possible with Protocol-2 firmware v1.7 (Orion-MkI and Orion-MkII), and later.  W2PA, 5 April 2019 
 // Modfied heavily - Copyright (C) 2019-2025 Richard Samphire (MW0LGE)
-//=================================================================
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
+
 
 using Midi2Cat.Data; //-W2PA Necessary for Behringer MIDI changes
 
@@ -580,11 +593,6 @@ namespace Thetis
         // ======================================================
         public Console(string[] args)
         {
-            ////Debug.Print(Common.GenerateKeyBase64());
-            //byte[] key = Convert.FromBase64String("LGu4GhrkboTvwiNTca2I9e3Z/3Jl3fZ6+qa+eMB/rGI=");
-            //string ss = Common.EncryptAndCombineIvToBase64("this is a test", key);
-            //Debug.Print(Common.DecryptFromCombinedIvBase64(ss, key));
-
             //run high, until we have completed, then set to configured value, see near end of function
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
             ThreadPriority original_thread_priority = Thread.CurrentThread.Priority;
@@ -628,6 +636,8 @@ namespace Thetis
                 return;
             }
             //
+
+            bool reposition_conosle_setup = requires_reposition(); // check for ctrl+alt+shift keycombo to reset console and setup position futher down
 
             string app_data_path = "";
 
@@ -991,7 +1001,7 @@ namespace Thetis
 
             // start up options and applications
             handleShowOnStartWindowsForms();
-            if (!(alt_key_down || Common.AltlKeyDown)) handleLaunchOnStartUp(); // twice to make sure it is captured at start before lengthy init process
+            if (!(alt_key_down || Common.AltlKeyDown)) handleLaunchOnStartUp(); // alt down at startup, or now down
 
             //legacy items controller
             LegacyItemController.Init(this);
@@ -1028,6 +1038,12 @@ namespace Thetis
             //    _spectrum_thread.Start();
             //}
             //
+
+            if (reposition_conosle_setup)
+            {
+                this.Location = new Point(100, 100);
+                if (!IsSetupFormNull) SetupForm.Location = new Point(160, 160);
+            }
 
             //release notes
             _frmReleaseNotes = new frmReleaseNotes();
@@ -1286,6 +1302,25 @@ namespace Thetis
             set { _restart = value; }
         }
 
+        static string cleanArg(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return string.Empty;
+
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in input.Normalize(NormalizationForm.FormC))
+            {
+                UnicodeCategory uc = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (uc != UnicodeCategory.Control &&
+                    uc != UnicodeCategory.Format &&
+                    uc != UnicodeCategory.OtherNotAssigned &&
+                    !(uc == UnicodeCategory.SpaceSeparator && c != ' '))
+                {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString().Trim();
+        }
+
         //[DllImport("shcore.dll")]
         //private static extern int SetProcessDpiAwareness(int awareness);
         // ======================================================
@@ -1298,13 +1333,19 @@ namespace Thetis
             Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
+            //tidy args, strip any junk from them
+            args = args
+                .Select(a => cleanArg(a))
+                .Where(a => !string.IsNullOrWhiteSpace(a))
+                .ToArray();
+
             if (Common.HasArg(args, "-help"))
             {
                 if (showHelpInfo()) return;  // if we can show, instantly exit
             }
 
             //[2.10.3.12]MW0LGE command line adaptor select
-            if (Common.HasArg(args, "-adaptor:"))
+            if (Common.HasArg(args, "-adaptor"))
             {
                 string param = Common.ArgParam(args, "-adaptor:");
                 if (!string.IsNullOrEmpty(param))
@@ -7578,26 +7619,28 @@ namespace Thetis
         {
             if (IsSetupFormNull) return;
 
-            Dictionary<string, bool> ken = SetupForm.KenwoodAISettings;
+            //Dictionary<string, bool> ken = SetupForm.KenwoodAISettings;
 
             string cmd = "F" + vfo + freq.ToString("f6").Replace(separator, "").PadLeft(11, '0') + ";"; //MW0LGE_22a
 
-            if (ken["port1"]) sioPut(Siolisten, cmd);
-            if (ken["port2"]) sioPut(Sio2listen, cmd);
-            if (ken["port3"]) sioPut(Sio3listen, cmd);
-            if (ken["port4"]) sioPut(Sio4listen, cmd);
+            MessageFloodControl.FloodControl(cmd, "freq_change_broadcast");
 
-            //if (Siolisten != null && Siolisten.SIO != null)
-            //{
-            //    try
-            //    {
-            //        if (Siolisten.SIO.IsOpen) Siolisten.SIO.put(cmd);
-            //    }
-            //    catch { }
-            //}
+            //if (ken["port1"]) sioPut(Siolisten, cmd);
+            //if (ken["port2"]) sioPut(Sio2listen, cmd);
+            //if (ken["port3"]) sioPut(Sio3listen, cmd);
+            //if (ken["port4"]) sioPut(Sio4listen, cmd);
 
-            if (m_tcpCATServer != null && ken["tcp"])
-                m_tcpCATServer.SendToClients(cmd);
+            ////if (Siolisten != null && Siolisten.SIO != null)
+            ////{
+            ////    try
+            ////    {
+            ////        if (Siolisten.SIO.IsOpen) Siolisten.SIO.put(cmd);
+            ////    }
+            ////    catch { }
+            ////}
+
+            //if (m_tcpCATServer != null && ken["tcp"])
+            //    m_tcpCATServer.SendToClients(cmd);                
         }
 
         public void UpdateVFOBFreq(string freq)
@@ -18941,13 +18984,13 @@ namespace Thetis
             }
         }
 
-        private bool cw_auto_mode_switch = false;
+        private bool _cw_auto_mode_switch = false;
         public bool CWAutoModeSwitch
         {
-            get { return cw_auto_mode_switch; }
+            get { return _cw_auto_mode_switch; }
             set
             {
-                cw_auto_mode_switch = value;
+                _cw_auto_mode_switch = value;
             }
         }
 
@@ -21724,8 +21767,8 @@ namespace Thetis
         private bool _auto_att_undo_rx2 = false;
         private int _auto_att_hold_delay_rx1 = 5;
         private int _auto_att_hold_delay_rx2 = 5;
-        private DateTime _auto_att_last_hold_time_rx1 = DateTime.Now;
-        private DateTime _auto_att_last_hold_time_rx2 = DateTime.Now;
+        private DateTime _auto_att_last_hold_time_rx1 = DateTime.UtcNow;
+        private DateTime _auto_att_last_hold_time_rx2 = DateTime.UtcNow;
         private bool _band_change = false;
         public bool AutoAttRX1
         {
@@ -22054,7 +22097,7 @@ namespace Thetis
                 int nRX1DDCinUse = -1, nRX2DDCinUse = -1, sync1 = -1, sync2 = -1, psrx = -1, pstx = -1;
                 GetDDC(out nRX1DDCinUse, out nRX2DDCinUse, out sync1, out sync2, out psrx, out pstx);
 
-                DateTime now = DateTime.Now;
+                DateTime now = DateTime.UtcNow;
 
                 bool radioHasRx1Att = HardwareSpecific.Model == HPSDRModel.ANAN10 || HardwareSpecific.Model == HPSDRModel.ANAN10E ||
                             HardwareSpecific.Model == HPSDRModel.ANAN100 || HardwareSpecific.Model == HPSDRModel.ANAN100B ||
@@ -25476,7 +25519,7 @@ namespace Thetis
                 // [2.10.1.0]MW0LGE log data to VALog.txt
                 if (_logVA)
                 {
-                    DateTime now = DateTime.Now;
+                    DateTime now = DateTime.UtcNow;
                     if (now.Subtract(_lastSaveTime).TotalSeconds >= 1)
                     {
                         try
@@ -25492,7 +25535,7 @@ namespace Thetis
                         }
                         finally
                         {
-                            _lastSaveTime = DateTime.Now;
+                            _lastSaveTime = DateTime.UtcNow;
                         }
 
                         if (now.Subtract(_firstSaveTime).TotalMinutes >= 60)
@@ -25542,7 +25585,7 @@ namespace Thetis
                             writer.WriteLine(ProductVersion + "\n" + BasicTitleBar);
                             writer.WriteLine($"Volts/Amps Log \t_amp_voff={_amp_voff}\t_amp_sens={_amp_sens}");
                         }
-                        _firstSaveTime = DateTime.Now;
+                        _firstSaveTime = DateTime.UtcNow;
                     }
 
                     _logVA = value;
@@ -26632,43 +26675,46 @@ namespace Thetis
             }
         }
 
-        private int last_dot = 0;
-        private int last_dash = 0;
+        //[2.10.3.12]MW0LGE changed from ints to bools
+        private bool _last_dot = false;
+        private bool _last_dash = false;
         private async void PollCW()
         {
             while (chkPower.Checked)
             {
                 int dotdashptt = NetworkIO.nativeGetDotDashPTT();
-                bool state_dot = (dotdashptt & 0x04) != 0; // dot                  
-                if ((dotdashptt & 0x04) != (last_dot & 0x04))
+
+                bool state_dot = (dotdashptt & 0x04) != 0;
+                update_for_auto_mode_return(state_dot);
+                if (state_dot != _last_dot)
                 {
                     FWDot = state_dot;
                     if ((_rx1_dsp_mode == DSPMode.CWL || _rx1_dsp_mode == DSPMode.CWU) &&
-                     _current_breakin_mode == BreakIn.Manual)
+                        _current_breakin_mode == BreakIn.Manual)
                         AudioMOXChanged(state_dot);
+                    _last_dot = state_dot;
                 }
 
-                bool state_dash = (dotdashptt & 0x02) != 0; // dash                   
-                if ((dotdashptt & 0x02) != (last_dash & 0x02))
+                bool state_dash = (dotdashptt & 0x02) != 0;
+                update_for_auto_mode_return(state_dash);
+                if (state_dash != _last_dash)
                 {
                     FWDash = state_dash;
                     if ((_rx1_dsp_mode == DSPMode.CWL || _rx1_dsp_mode == DSPMode.CWU) &&
-                     _current_breakin_mode == BreakIn.Manual)
+                        _current_breakin_mode == BreakIn.Manual)
                         AudioMOXChanged(state_dash);
+                    _last_dash = state_dash;
                 }
 
-                last_dash = last_dot = dotdashptt;
                 await Task.Delay(1);
             }
         }
 
         private void cwAutoModeTick(object o)
         {
-            bool bRx2 = (bool)o;
-
             if (_old_cw_auto_mode != DSPMode.FIRST)
-            {
-                if (bRx2)
+            {              
+                if (_cw_auto_mode_tx_on_rx2)
                 {
                     if (InvokeRequired)
                         Invoke(new Action(() => { RX2DSPMode = _old_cw_auto_mode; }));
@@ -26682,9 +26728,12 @@ namespace Thetis
                     else
                         RX1DSPMode = _old_cw_auto_mode;
                 }
+
+                _old_cw_auto_mode = DSPMode.FIRST; //[2.10.3.12]MW0LGE fix issue where if you key when in cw it would return to old non cw mode
             }
         }
         private DSPMode _old_cw_auto_mode = DSPMode.FIRST;
+        private bool _cw_auto_mode_tx_on_rx2 = false;
         private bool _return_from_cw_auto_mode_switch = false;
         private int _return_from_cw_auto_mode_switch_ms = 2000;
         private System.Threading.Timer _cwAutoModeTick = null;
@@ -26699,61 +26748,68 @@ namespace Thetis
             get { return _return_from_cw_auto_mode_switch_ms; }
             set { _return_from_cw_auto_mode_switch_ms = value; }
         }
+
+        private void update_for_auto_mode_return(bool enabled)
+        {
+            //[2.10.1.0]MW0LGE implements #70
+            //[2.10.3.12]MW0LGE modified to be called whenever dot/dash is present
+
+            if (_cw_auto_mode_switch && enabled)
+            {
+                bool bTxOnRx2 = RX2Enabled && VFOBTX;
+                DSPMode currentMode = bTxOnRx2 ? RX2DSPMode : RX1DSPMode;
+                bool bInCW = currentMode == DSPMode.CWL || currentMode == DSPMode.CWU;
+
+                if (!bInCW)
+                {
+                    switch (currentMode)
+                    {
+                        case DSPMode.CWL:
+                        case DSPMode.CWU:
+                            break;
+                        case DSPMode.LSB:
+                        case DSPMode.DIGL:
+                            if (bTxOnRx2)
+                                RX2DSPMode = DSPMode.CWL;
+                            else
+                                RX1DSPMode = DSPMode.CWL;
+                            break;
+                        default:
+                            if (bTxOnRx2)
+                                RX2DSPMode = DSPMode.CWU;
+                            else
+                                RX1DSPMode = DSPMode.CWU;
+                            break;
+                    }
+                }
+
+                // return after some time, start timer
+                if (_return_from_cw_auto_mode_switch)
+                {
+                    if(!bInCW) _old_cw_auto_mode = currentMode;
+
+                    _cw_auto_mode_tx_on_rx2 = bTxOnRx2;
+
+                    if (_cwAutoModeTick == null)
+                    {
+                        _cwAutoModeTick = new System.Threading.Timer(cwAutoModeTick, null, _return_from_cw_auto_mode_switch_ms, Timeout.Infinite);
+                    }
+                    else
+                    {
+                        _cwAutoModeTick.Change(_return_from_cw_auto_mode_switch_ms, Timeout.Infinite);
+                    }
+                }
+                else
+                    _old_cw_auto_mode = DSPMode.FIRST;
+            }
+        }
+
         public bool FWDot
         {
             get { return fw_dot; }
             set
             {
-                //[2.10.1.0] MW0LGE modified to implement #70
-                bool bTxOnRx2 = RX2Enabled && VFOBTX;
-                DSPMode currentMode = bTxOnRx2 ? RX2DSPMode : RX1DSPMode;
-                bool bInCW = currentMode == DSPMode.CWL || currentMode == DSPMode.CWU;
-
                 fw_dot = value;
-
-                if (value && cw_auto_mode_switch)
-                {
-                    if (!bInCW)
-                    {
-                        if (_return_from_cw_auto_mode_switch && _old_cw_auto_mode != currentMode)
-                            _old_cw_auto_mode = currentMode;
-
-                        switch (currentMode)
-                        {
-                            case DSPMode.CWL:
-                            case DSPMode.CWU:
-                                break;
-                            case DSPMode.LSB:
-                            case DSPMode.DIGL:
-                                if (bTxOnRx2)
-                                    RX2DSPMode = DSPMode.CWL;
-                                else
-                                    RX1DSPMode = DSPMode.CWL;
-                                break;
-                            default:
-                                if (bTxOnRx2)
-                                    RX2DSPMode = DSPMode.CWU;
-                                else
-                                    RX1DSPMode = DSPMode.CWU;
-                                break;
-                        }
-                    }
-
-                    // return after some time, start timer
-                    if (_return_from_cw_auto_mode_switch)
-                    {
-                        if (_cwAutoModeTick != null)
-                        {
-                            _cwAutoModeTick.Change(Timeout.Infinite, Timeout.Infinite);
-                            _cwAutoModeTick.Dispose();
-                            _cwAutoModeTick = null;
-                        }
-
-                        _cwAutoModeTick = new System.Threading.Timer(cwAutoModeTick, bTxOnRx2, _return_from_cw_auto_mode_switch_ms, Timeout.Infinite);
-                    }
-                    else
-                        _old_cw_auto_mode = DSPMode.FIRST;
-                }
             }
         }
 
@@ -26764,23 +26820,6 @@ namespace Thetis
             set
             {
                 fw_dash = value;
-
-                if (value && cw_auto_mode_switch)
-                {
-                    switch (_rx1_dsp_mode)
-                    {
-                        case DSPMode.CWL:
-                        case DSPMode.CWU:
-                            break;
-                        case DSPMode.LSB:
-                        case DSPMode.DIGL:
-                            RX1DSPMode = DSPMode.CWL;
-                            break;
-                        default:
-                            RX1DSPMode = DSPMode.CWU;
-                            break;
-                    }
-                }
             }
         }
 
@@ -29517,7 +29556,21 @@ namespace Thetis
                 btnHidden.Focus();
         }
 
+        public event Func<Task> ConsoleClosingHandlersAsync;
+        private Task run_console_closing_handlers_async()
+        {
+            if (ConsoleClosingHandlersAsync == null) return Task.CompletedTask;
+            Delegate[] delegates = ConsoleClosingHandlersAsync.GetInvocationList();
+            List<Task> tasks = new List<Task>(delegates.Length);
+            for (int i = 0; i < delegates.Length; i++)
+            {
+                Func<Task> handler = (Func<Task>)delegates[i];
+                tasks.Add(Task.Run(handler));
+            }
+            return Task.WhenAll(tasks);
+        }
         private ShutdownForm _frmShutDownForm = null;
+        private bool _is_shutting_down = false;
         private void Console_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (Display.RunningFPSProfile)
@@ -29531,17 +29584,36 @@ namespace Thetis
                 return;
             }
 
-            shutdownLogStringToPath("Inside Console_Closing()");
+            if (!_is_shutting_down)
+            {
+                shutdownLogStringToPath("Inside Console_Closing()");
+
+                //show the shutdown form and then restart the close process via BeginInvoke
+                //removes the doevents issue and allows the shutdown form to show properly
+                e.Cancel = true;
+                _is_shutting_down = true;
+
+                _frmShutDownForm = new ShutdownForm();
+                _frmShutDownForm.StartPosition = FormStartPosition.Manual;
+                _frmShutDownForm.Location = new Point(Location.X + Size.Width / 2 - _frmShutDownForm.Size.Width / 2, Location.Y + Size.Height / 2 - _frmShutDownForm.Size.Height / 2);
+                _frmShutDownForm.Show(this);
+                _frmShutDownForm.BringToFront();
+
+                BeginInvoke(new Action(async () =>
+                {
+                    //[2.10.3.12]MW0LGE added incase anything needs to close down instantly irrespective of console closing
+                    //PSform is an example of this, as the timer1/2 threads get blocked on UI calls as the main UI thread is busy closing down
+                    await run_console_closing_handlers_async();
+
+                    //then try again to close the console
+                    Close();
+                }));
+
+                return;
+            }
 
             shutdownLogStringToPath("Before ThetisBotDiscord.Disconnect()");
             ThetisBotDiscord.Shutdown();
-
-            // MW0LGE
-            // show a shutdown window
-            _frmShutDownForm = new ShutdownForm();
-            _frmShutDownForm.Location = new Point(this.Location.X + this.Size.Width / 2 - _frmShutDownForm.Size.Width / 2, this.Location.Y + this.Size.Height / 2 - _frmShutDownForm.Size.Height / 2);
-            _frmShutDownForm.Show();
-            Application.DoEvents();
 
             if (_autoLoadFormTimerFormTimer != null)
             {
@@ -29551,6 +29623,9 @@ namespace Thetis
 
             shutdownLogStringToPath("Before autoLaunchTryToClose()");
             autoLaunchTryToClose();
+
+            shutdownLogStringToPath("Before MessageFloodControl.Shutdown()");
+            MessageFloodControl.Shutdown();
 
             if (m_tcpTCIServer != null)
             {
@@ -29587,7 +29662,7 @@ namespace Thetis
             if (chkPower.Checked == true)  // If we're quitting without first clicking off the "Power" button            
                 chkPower.Checked = false;
 
-            Thread.Sleep(100);
+            Thread.Sleep(200); //[2.10.3.12]MW0LGE give some time for power down, increased to 200ms as psform loops were not detecting power off fast enough
 
             if (psform != null)
             {
@@ -41417,26 +41492,28 @@ namespace Thetis
         {
             if (IsSetupFormNull) return;
 
-            Dictionary<string, bool> ken = SetupForm.KenwoodAISettings;
+            //Dictionary<string, bool> ken = SetupForm.KenwoodAISettings;
 
             string cmd = "ZZSW" + ndx + ";";
 
-            if (ken["port1"]) sioPut(Siolisten, cmd);
-            if (ken["port2"]) sioPut(Sio2listen, cmd);
-            if (ken["port3"]) sioPut(Sio3listen, cmd);
-            if (ken["port4"]) sioPut(Sio4listen, cmd);
+            MessageFloodControl.FloodControl(cmd, "vfo_change_broadcast");
 
-            //if (Siolisten != null && Siolisten.SIO != null)
-            //{
-            //    try
-            //    {
-            //        if (Siolisten.SIO.IsOpen) Siolisten.SIO.put(cmd);
-            //    }
-            //    catch { }
-            //}
+            //if (ken["port1"]) sioPut(Siolisten, cmd);
+            //if (ken["port2"]) sioPut(Sio2listen, cmd);
+            //if (ken["port3"]) sioPut(Sio3listen, cmd);
+            //if (ken["port4"]) sioPut(Sio4listen, cmd);
 
-            if (m_tcpCATServer != null && ken["tcp"])
-                m_tcpCATServer.SendToClients(cmd);
+            ////if (Siolisten != null && Siolisten.SIO != null)
+            ////{
+            ////    try
+            ////    {
+            ////        if (Siolisten.SIO.IsOpen) Siolisten.SIO.put(cmd);
+            ////    }
+            ////    catch { }
+            ////}
+
+            //if (m_tcpCATServer != null && ken["tcp"])
+            //    m_tcpCATServer.SendToClients(cmd);                
         }
 
         private bool m_bLastVFOATXsetting = false;
@@ -47067,6 +47144,8 @@ namespace Thetis
             Display.SetupDelegates();
             
             TimeOutTimerManager.SetCallback(timeOutTimer);
+
+            MessageFloodControl.SendMessage += on_send_floodcontrol_message;
         }
         private void removeDelegates()
         {
@@ -47108,6 +47187,8 @@ namespace Thetis
 
             Display.RemoveDelegates();
             TimeOutTimerManager.RemoveCallback(timeOutTimer);
+
+            MessageFloodControl.SendMessage -= on_send_floodcontrol_message;
         }
         //
         private bool _stop_all_tx = false;
@@ -47566,6 +47647,12 @@ namespace Thetis
         }
         private void OnModeChangeHandler(int rx, DSPMode oldMode, DSPMode newMode, Band oldBand, Band newBand)
         {
+            //reset the cw auto mode return [2.10.3.12]MW0LGE
+            if(!(newMode == DSPMode.CWL || newMode == DSPMode.CWU))
+            {
+                _old_cw_auto_mode = DSPMode.FIRST;
+            }
+
             //reset smeter pixel history //MW0LGE_21a
             clearRXSignalPixels(rx);
 
@@ -53135,6 +53222,69 @@ namespace Thetis
             setupNR(2, false);
             setupNR(2, true);
         }
+
+        private bool requires_reposition()
+        {
+            bool reposition = false;
+            if (Common.AltlKeyDown && Common.ShiftKeyDown && Common.CtrlKeyDown)
+            {
+                Thread.Sleep(500); // make sure
+                Application.DoEvents();
+
+                if (Common.AltlKeyDown && Common.ShiftKeyDown && Common.CtrlKeyDown)
+                {
+                    DialogResult dr = MessageBox.Show("CTRL+ALT+SHIFT key combo has been detected.\n\n" +
+                    "The location of the main Thetis console window and Setup will be moved to the primary monitor.\n\n" +
+                    "If other forms are 'missing' you can use Setup->Tools->[Reposition Forms] to recover them.\n\n\n" +
+                    "Do you want to do this?\n\n\n" +
+                    "NOTE: release the keys",
+                    "Resposition detected",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+
+                    // wait for all these keys to be released
+                    while (Common.AltlKeyDown || Common.ShiftKeyDown || Common.CtrlKeyDown)
+                    {
+                        Thread.Sleep(100);
+                        Application.DoEvents();
+                    }
+
+                    // console and setup location reposition
+                    reposition = dr == DialogResult.Yes;
+                }
+            }
+            return reposition;
+        }
+
+        private void on_send_floodcontrol_message(string msg, string uid)
+        {
+            bool send = false;
+
+            switch (uid)
+            {
+                case "freq_change_broadcast":
+                    send = true;
+                    break;
+                case "vfo_change_broadcast":
+                    send = true;
+                    break;
+                default:
+                    break;
+            }
+
+            if (send)
+            {
+                Dictionary<string, bool> ken = SetupForm.KenwoodAISettings;
+
+                if (ken["port1"]) sioPut(Siolisten , msg);
+                if (ken["port2"]) sioPut(Sio2listen, msg);
+                if (ken["port3"]) sioPut(Sio3listen, msg);
+                if (ken["port4"]) sioPut(Sio4listen, msg);
+
+                if (m_tcpCATServer != null && ken["tcp"])
+                    m_tcpCATServer.SendToClients(msg);
+            }
+        }
     }
 
     public class DigiMode
@@ -53178,4 +53328,166 @@ namespace Thetis
             _semaphoreSlim.Release();
         }
     }
+
+    #region FloodControl
+    public static class MessageFloodControl
+    {
+        public static event Action<string, string> SendMessage;
+
+        static readonly object sync = new object();
+        static readonly Dictionary<string, State> states = new Dictionary<string, State>();
+        static readonly TimeSpan interval = TimeSpan.FromMilliseconds(200);
+        static volatile bool shutting_down = false;
+
+        public static void FloodControl(string message, string uid)
+        {
+            if (shutting_down) return;
+            if (uid == null) throw new ArgumentNullException("uid");
+            if (message == null) message = string.Empty;
+
+            try
+            {
+                State state;
+                bool fire_now = false;
+                string to_send = null;
+                DateTime now = DateTime.UtcNow;
+
+                lock (sync)
+                {
+                    if (shutting_down) return;
+
+                    if (!states.TryGetValue(uid, out state))
+                    {
+                        state = new State();
+                        state.timer = new System.Threading.Timer(timer_callback, uid, Timeout.Infinite, Timeout.Infinite);
+                        state.latest_message = string.Empty;
+                        state.last_fire_time = DateTime.MinValue;
+                        states[uid] = state;
+                    }
+
+                    state.latest_message = message;
+
+                    TimeSpan remaining = state.last_fire_time.Add(interval) - now;
+                    if (remaining <= TimeSpan.Zero)
+                    {
+                        state.last_fire_time = now;
+                        to_send = state.latest_message;
+                        fire_now = true;
+                        state.timer.Change(Timeout.Infinite, Timeout.Infinite);
+                    }
+                    else
+                    {
+                        int due_ms = (int)Math.Ceiling(remaining.TotalMilliseconds);
+                        if (due_ms < 1) due_ms = 1;
+                        state.timer.Change(due_ms, Timeout.Infinite);
+                    }
+                }
+
+                if (fire_now)
+                {
+                    raise_send_message(to_send, uid);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        public static void Shutdown()
+        {
+            shutting_down = true;
+            try
+            {
+                List<System.Threading.Timer> timers = new List<System.Threading.Timer>();
+                lock (sync)
+                {
+                    foreach (KeyValuePair<string, State> kv in states)
+                    {
+                        timers.Add(kv.Value.timer);
+                    }
+                    states.Clear();
+                }
+                for (int i = 0; i < timers.Count; i++)
+                {
+                    try
+                    {
+                        System.Threading.Timer t = timers[i];
+                        if (t != null) t.Dispose();
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        static void timer_callback(object state_obj)
+        {
+            if (shutting_down) return;
+
+            try
+            {
+                string uid = state_obj as string;
+                string to_send = null;
+                bool should_send = false;
+
+                lock (sync)
+                {
+                    if (shutting_down) return;
+
+                    State s;
+                    if (uid != null && states.TryGetValue(uid, out s))
+                    {
+                        s.last_fire_time = DateTime.UtcNow;
+                        to_send = s.latest_message;
+                        should_send = true;
+                    }
+                }
+
+                if (should_send)
+                {
+                    raise_send_message(to_send, uid);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        static void raise_send_message(string message, string uid)
+        {
+            try
+            {
+                Action<string, string> handler = SendMessage;
+                if (handler == null) return;
+
+                Delegate[] list = handler.GetInvocationList();
+                for (int i = 0; i < list.Length; i++)
+                {
+                    try
+                    {
+                        Action<string, string> single = (Action<string, string>)list[i];
+                        single(message, uid);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        class State
+        {
+            public System.Threading.Timer timer;
+            public string latest_message;
+            public DateTime last_fire_time;
+        }
+    }
+    #endregion
 }
