@@ -204,6 +204,9 @@
     <ClInclude Include="sbnr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FDnoiseIQ.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="channel.c">
@@ -390,6 +393,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sbnr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FDnoiseIQ.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

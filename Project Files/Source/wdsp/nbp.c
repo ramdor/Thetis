@@ -91,7 +91,7 @@ double min_notch_width (NBP a)
 		min_width = 2200.0 / (a->nc / 256) * (a->rate / 48000);
 		break;
 	default:
-		min_width = 0;
+		min_width = 2200.0 / (a->nc / 256) * (a->rate / 48000);
 		break;
 	}
 	return min_width;

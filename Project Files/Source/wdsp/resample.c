@@ -42,8 +42,8 @@ void calc_resample (RESAMPLE a)
 	double* impulse;
 	a->fc = a->fcin;
 	a->ncoef = a->ncoefin;
-	x = a->in_rate;
-	y = a->out_rate;
+	if ((x = a->in_rate)  <= 0) return;
+	if ((y = a->out_rate) <= 0) return;
 	while (y != 0)
 	{
 		z = y;
@@ -254,8 +254,8 @@ RESAMPLEF create_resampleF ( int run, int size, float* in, float* out, int in_ra
 	a->size = size;
 	a->in = in;
 	a->out = out;
-	x = in_rate;
-	y = out_rate;
+	if ((x = in_rate)  <= 0) return 0;
+	if ((y = out_rate) <= 0) return 0;
 	while (y != 0)
 	{
 		z = y;

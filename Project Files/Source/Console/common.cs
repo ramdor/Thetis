@@ -1456,12 +1456,31 @@ namespace Thetis
         {
             if (args == null || args.Length < 1 || string.IsNullOrEmpty(arg)) return false;
 
-            //return args[0].Contains(arg, StringComparison.OrdinalIgnoreCase);
             foreach (string s in args)
             {
                 if (s.Contains(arg, StringComparison.OrdinalIgnoreCase)) return true;
             }
             return false;
+        }
+        public static string ArgParam(string[] args, string arg)
+        {
+            string ret = string.Empty;
+            if (args == null || args.Length < 1 || string.IsNullOrEmpty(arg)) return ret;
+
+            foreach (string s in args)
+            {
+                if (s.Contains(arg, StringComparison.OrdinalIgnoreCase))
+                {
+                    string trimmed = s.Trim();
+                    int index = trimmed.IndexOf(":");
+                    if (index != -1)
+                    {
+                        ret = trimmed.Substring(index + 1);
+                    }
+                    break;
+                }
+            }
+            return ret;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetLuminance(Color c)

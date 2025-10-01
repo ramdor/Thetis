@@ -252,6 +252,7 @@ double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int
 					+ cosphi *  ( - 0.04672 )));
 			break;
 		case 1:	// Blackman-Harris 7-term
+		default:
 			cosphi = cos (delta * i);
 			window	=			  + 6.3964424114390378e-02
 					+ cosphi *  ( - 2.3993864599352804e-01
@@ -297,26 +298,32 @@ double *fir_read (int N, const char *filename, int rtype, double scale)
 	int i;
 	double I, Q;
 	double *c_impulse = (double *) malloc0 (N * sizeof (complex));
-	file = fopen (filename, "r");
-	for (i = 0; i < N; i++)
+	if (file = fopen(filename, "r"))
 	{
-		// read in the complex impulse response
-		// NOTE:  IF the freq response is symmetrical about 0, the imag coeffs will all be zero.
-		switch (rtype)
+		int error = 0;
+		for (i = 0; i < N; i++)
 		{
-		case 0:
-			fscanf (file, "%le", &I);
-			c_impulse[i] = + scale * I;
-			break;
-		case 1:
-			fscanf (file, "%le", &I);
-			fscanf (file, "%le", &Q);
-			c_impulse[2 * i + 0] = + scale * I;
-			c_impulse[2 * i + 1] = - scale * Q;
-			break;
+			// read in the complex impulse response
+			// NOTE:  IF the freq response is symmetrical about 0, the imag coeffs will all be zero.
+			switch (rtype)
+			{
+			case 0:
+				if (error == 0 && fscanf(file, "%le", &I) != 1) error = 1;
+				if (error == 0) 
+					c_impulse[i] = + scale * I;
+				break;
+			case 1:
+					if (error == 0 && (fscanf(file, "%le", &I) != 1 || fscanf(file, "%le", &Q) != 1)) error = 1;
+					if (error == 0)
+					{
+						c_impulse[2 * i + 0] = + scale * I;
+						c_impulse[2 * i + 1] = - scale * Q;
+					}
+				break;
+			}
 		}
+		fclose (file);
 	}
-	fclose (file);
 	return c_impulse;
 }
 

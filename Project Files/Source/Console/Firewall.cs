@@ -123,7 +123,7 @@ namespace Thetis
 
                 if (ifr != null) FirewallManager.Instance.Rules.Remove(ifr);
 
-                ifr = FirewallManager.Instance.CreateApplicationRule(FirewallProfiles.Public | FirewallProfiles.Domain, ruleName, FirewallAction.Allow, sPath);
+                ifr = FirewallManager.Instance.CreateApplicationRule(FirewallProfiles.Public | FirewallProfiles.Domain | FirewallProfiles.Private, ruleName, FirewallAction.Allow, sPath);
 
                 if (ifr != null)
                 {

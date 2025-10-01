@@ -843,6 +843,8 @@
             this.dSPToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.nR2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NR2StripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.NR3ToolStripMenuItem_rx2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.NR4ToolStripMenuItem_rx2 = new System.Windows.Forms.ToolStripMenuItem();
             this.aNF2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nB2ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.nBRX2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -918,7 +920,6 @@
             this.tmrAutoAGC = new System.Windows.Forms.Timer(this.components);
             this.picRX2Squelch = new System.Windows.Forms.PictureBox();
             this.picSquelch = new System.Windows.Forms.PictureBox();
-            this.nudRNnoiseGainTest = new System.Windows.Forms.NumericUpDownTS();
             this.panelDisplay = new System.Windows.Forms.PanelTS();
             this.infoBar = new Thetis.ucInfoBar();
             this.lblDisplayZoom = new System.Windows.Forms.LabelTS();
@@ -1135,8 +1136,6 @@
             this.lblAndromedaEncoderSlider = new System.Windows.Forms.LabelTS();
             this.lblATUTuneLabel = new System.Windows.Forms.LabelTS();
             this.ptbSquelch = new Thetis.PrettyTrackBar();
-            this.NR3ToolStripMenuItem_rx2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.NR4ToolStripMenuItem_rx2 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayZoom)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbDisplayPan)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbFilterShift)).BeginInit();
@@ -1183,7 +1182,6 @@
             this.statusStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudRNnoiseGainTest)).BeginInit();
             this.panelDisplay.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp)).BeginInit();
@@ -4908,6 +4906,18 @@
             resources.ApplyResources(this.NR2StripMenuItem2, "NR2StripMenuItem2");
             this.NR2StripMenuItem2.Click += new System.EventHandler(this.mnuDSPRX2_Click);
             // 
+            // NR3ToolStripMenuItem_rx2
+            // 
+            this.NR3ToolStripMenuItem_rx2.Name = "NR3ToolStripMenuItem_rx2";
+            resources.ApplyResources(this.NR3ToolStripMenuItem_rx2, "NR3ToolStripMenuItem_rx2");
+            this.NR3ToolStripMenuItem_rx2.Click += new System.EventHandler(this.mnuDSPRX2_Click);
+            // 
+            // NR4ToolStripMenuItem_rx2
+            // 
+            this.NR4ToolStripMenuItem_rx2.Name = "NR4ToolStripMenuItem_rx2";
+            resources.ApplyResources(this.NR4ToolStripMenuItem_rx2, "NR4ToolStripMenuItem_rx2");
+            this.NR4ToolStripMenuItem_rx2.Click += new System.EventHandler(this.mnuDSPRX2_Click);
+            // 
             // aNF2ToolStripMenuItem
             // 
             this.aNF2ToolStripMenuItem.Name = "aNF2ToolStripMenuItem";
@@ -5450,33 +5460,6 @@
             this.picSquelch.Name = "picSquelch";
             this.picSquelch.TabStop = false;
             this.picSquelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picSquelch_Paint);
-            // 
-            // nudRNnoiseGainTest
-            // 
-            this.nudRNnoiseGainTest.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            resources.ApplyResources(this.nudRNnoiseGainTest, "nudRNnoiseGainTest");
-            this.nudRNnoiseGainTest.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.nudRNnoiseGainTest.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudRNnoiseGainTest.Name = "nudRNnoiseGainTest";
-            this.nudRNnoiseGainTest.TinyStep = false;
-            this.nudRNnoiseGainTest.Value = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-            this.nudRNnoiseGainTest.ValueChanged += new System.EventHandler(this.nudRNnoiseGainTest_ValueChanged);
             // 
             // panelDisplay
             // 
@@ -7603,24 +7586,11 @@
             this.ptbSquelch.Value = 0;
             this.ptbSquelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbSquelch_Scroll);
             // 
-            // NR3ToolStripMenuItem_rx2
-            // 
-            this.NR3ToolStripMenuItem_rx2.Name = "NR3ToolStripMenuItem_rx2";
-            resources.ApplyResources(this.NR3ToolStripMenuItem_rx2, "NR3ToolStripMenuItem_rx2");
-            this.NR3ToolStripMenuItem_rx2.Click += new System.EventHandler(this.mnuDSPRX2_Click);
-            // 
-            // NR4ToolStripMenuItem_rx2
-            // 
-            this.NR4ToolStripMenuItem_rx2.Name = "NR4ToolStripMenuItem_rx2";
-            resources.ApplyResources(this.NR4ToolStripMenuItem_rx2, "NR4ToolStripMenuItem_rx2");
-            this.NR4ToolStripMenuItem_rx2.Click += new System.EventHandler(this.mnuDSPRX2_Click);
-            // 
             // Console
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.Controls.Add(this.nudRNnoiseGainTest);
             this.Controls.Add(this.panelDisplay);
             this.Controls.Add(this.chkRX2Preamp);
             this.Controls.Add(this.chkRX1Preamp);
@@ -7739,7 +7709,6 @@
             this.statusStripMain.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picRX2Squelch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picSquelch)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudRNnoiseGainTest)).EndInit();
             this.panelDisplay.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPwrTemp)).EndInit();
@@ -7956,7 +7925,6 @@
         private PictureBox pbAutoAttWarningRX1;
         private PictureBox pbAutoAttWarningRX2;
         private Panel pnlDisplay;
-        private NumericUpDownTS nudRNnoiseGainTest;
         private ToolStripMenuItem NR3ToolStripMenuItem;
         private ToolStripMenuItem NR4ToolStripMenuItem;
         private ToolStripMenuItem NR3ToolStripMenuItem_rx2;

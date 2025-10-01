@@ -222,6 +222,7 @@
     <ClInclude Include="channel.h" />
     <ClInclude Include="comm.h" />
     <ClInclude Include="fcurve.h" />
+    <ClInclude Include="FDnoiseIQ.h" />
     <ClInclude Include="fftw3.h" />
     <ClInclude Include="fir.h" />
     <ClInclude Include="firmin.h" />
@@ -286,6 +287,7 @@
     <ClCompile Include="eq.c" />
     <ClCompile Include="channel.c" />
     <ClCompile Include="fcurve.c" />
+    <ClCompile Include="FDnoiseIQ.c" />
     <ClCompile Include="firmin.c" />
     <ClCompile Include="fmd.c" />
     <ClCompile Include="gain.c" />

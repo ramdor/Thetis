@@ -49,16 +49,18 @@ typedef struct _sbnr
         float post_filter_threshold;
         SpectralBleachHandle st;
         int buffer_size;
+        int rate;
 
         float* input;
         float* output;
 } sbnr, *SBNR;
 
 // define the public api of this module
-extern SBNR create_sbnr(int run, int position, double *in, double *out);
+extern SBNR create_sbnr(int run, int position, int size, double *in, double *out, int rate);
 extern void destroy_sbnr(SBNR a);
 extern void setSize_sbnr(SBNR a, int size);
 extern void setBuffers_sbnr(SBNR a, double *in, double *out);
 extern void xsbnr(SBNR a, int pos);
+extern void setSamplerate_sbnr(SBNR a, int rate);
 
 #endif // _sbnr_h

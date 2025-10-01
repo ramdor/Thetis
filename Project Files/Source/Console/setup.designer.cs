@@ -2585,6 +2585,9 @@
             this.labelTS446 = new System.Windows.Forms.LabelTS();
             this.nudNR4_red_rx1 = new System.Windows.Forms.NumericUpDownTS();
             this.grpRNnoise = new System.Windows.Forms.GroupBoxTS();
+            this.btnNR3_model_default = new System.Windows.Forms.ButtonTS();
+            this.btnNR3_model_load = new System.Windows.Forms.ButtonTS();
+            this.lblNR3Model = new System.Windows.Forms.LabelTS();
             this.labelTS439 = new System.Windows.Forms.LabelTS();
             this.grpDSPNR2RX2 = new System.Windows.Forms.GroupBoxTS();
             this.grpDSPNR2NPEMethodRX2 = new System.Windows.Forms.GroupBoxTS();
@@ -41850,7 +41853,7 @@
             this.groupBoxTS56.Controls.Add(this.labelTS472);
             this.groupBoxTS56.Controls.Add(this.labelTS473);
             this.groupBoxTS56.Controls.Add(this.nudNR4_red_rx2);
-            this.groupBoxTS56.Location = new System.Drawing.Point(483, 242);
+            this.groupBoxTS56.Location = new System.Drawing.Point(483, 254);
             this.groupBoxTS56.Name = "groupBoxTS56";
             this.groupBoxTS56.Size = new System.Drawing.Size(235, 153);
             this.groupBoxTS56.TabIndex = 45;
@@ -42173,7 +42176,7 @@
             this.groupBoxTS55.Controls.Add(this.labelTS447);
             this.groupBoxTS55.Controls.Add(this.labelTS446);
             this.groupBoxTS55.Controls.Add(this.nudNR4_red_rx1);
-            this.groupBoxTS55.Location = new System.Drawing.Point(483, 83);
+            this.groupBoxTS55.Location = new System.Drawing.Point(483, 97);
             this.groupBoxTS55.Name = "groupBoxTS55";
             this.groupBoxTS55.Size = new System.Drawing.Size(235, 153);
             this.groupBoxTS55.TabIndex = 44;
@@ -42478,22 +42481,62 @@
             // 
             // grpRNnoise
             // 
+            this.grpRNnoise.Controls.Add(this.btnNR3_model_default);
+            this.grpRNnoise.Controls.Add(this.btnNR3_model_load);
+            this.grpRNnoise.Controls.Add(this.lblNR3Model);
             this.grpRNnoise.Controls.Add(this.labelTS439);
             this.grpRNnoise.Location = new System.Drawing.Point(483, 8);
             this.grpRNnoise.Name = "grpRNnoise";
-            this.grpRNnoise.Size = new System.Drawing.Size(235, 66);
+            this.grpRNnoise.Size = new System.Drawing.Size(235, 83);
             this.grpRNnoise.TabIndex = 43;
             this.grpRNnoise.TabStop = false;
             this.grpRNnoise.Text = "NR3";
             // 
+            // btnNR3_model_default
+            // 
+            this.btnNR3_model_default.Image = null;
+            this.btnNR3_model_default.Location = new System.Drawing.Point(95, 37);
+            this.btnNR3_model_default.Name = "btnNR3_model_default";
+            this.btnNR3_model_default.Selectable = true;
+            this.btnNR3_model_default.Size = new System.Drawing.Size(49, 23);
+            this.btnNR3_model_default.TabIndex = 3;
+            this.btnNR3_model_default.Text = "Def";
+            this.toolTip1.SetToolTip(this.btnNR3_model_default, "Default model, large");
+            this.btnNR3_model_default.UseVisualStyleBackColor = true;
+            this.btnNR3_model_default.Click += new System.EventHandler(this.btnNR3_model_default_Click);
+            // 
+            // btnNR3_model_load
+            // 
+            this.btnNR3_model_load.Image = null;
+            this.btnNR3_model_load.Location = new System.Drawing.Point(14, 37);
+            this.btnNR3_model_load.Name = "btnNR3_model_load";
+            this.btnNR3_model_load.Selectable = true;
+            this.btnNR3_model_load.Size = new System.Drawing.Size(75, 23);
+            this.btnNR3_model_load.TabIndex = 2;
+            this.btnNR3_model_load.Text = "Use Model";
+            this.toolTip1.SetToolTip(this.btnNR3_model_load, "Select a model that RNnoise will use. Note: if the format is bad, Thetis will pro" +
+        "bably crash !");
+            this.btnNR3_model_load.UseVisualStyleBackColor = true;
+            this.btnNR3_model_load.Click += new System.EventHandler(this.btnNR3_model_load_Click);
+            // 
+            // lblNR3Model
+            // 
+            this.lblNR3Model.Image = null;
+            this.lblNR3Model.Location = new System.Drawing.Point(52, 19);
+            this.lblNR3Model.Name = "lblNR3Model";
+            this.lblNR3Model.Size = new System.Drawing.Size(177, 13);
+            this.lblNR3Model.TabIndex = 1;
+            this.lblNR3Model.Text = "Default (large)";
+            // 
             // labelTS439
             // 
+            this.labelTS439.AutoSize = true;
             this.labelTS439.Image = null;
-            this.labelTS439.Location = new System.Drawing.Point(6, 23);
+            this.labelTS439.Location = new System.Drawing.Point(11, 19);
             this.labelTS439.Name = "labelTS439";
-            this.labelTS439.Size = new System.Drawing.Size(206, 27);
+            this.labelTS439.Size = new System.Drawing.Size(39, 13);
             this.labelTS439.TabIndex = 0;
-            this.labelTS439.Text = "No settings for RNnoise.";
+            this.labelTS439.Text = "Model:";
             // 
             // grpDSPNR2RX2
             // 
@@ -70010,6 +70053,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudNR4_smo_rx1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudNR4_red_rx1)).EndInit();
             this.grpRNnoise.ResumeLayout(false);
+            this.grpRNnoise.PerformLayout();
             this.grpDSPNR2RX2.ResumeLayout(false);
             this.grpDSPNR2RX2.PerformLayout();
             this.grpDSPNR2NPEMethodRX2.ResumeLayout(false);
@@ -74941,7 +74985,6 @@
         private CheckBoxTS chkOverrideSpotFlashColour;
         private ColorButton clrbtnSpotFlashColour;
         private GroupBoxTS grpRNnoise;
-        private LabelTS labelTS439;
         private GroupBoxTS groupBoxTS55;
         private LabelTS labelTS447;
         private LabelTS labelTS446;
@@ -74980,5 +75023,9 @@
         private LabelTS labelTS472;
         private LabelTS labelTS473;
         private NumericUpDownTS nudNR4_red_rx2;
+        private ButtonTS btnNR3_model_load;
+        private LabelTS lblNR3Model;
+        private LabelTS labelTS439;
+        private ButtonTS btnNR3_model_default;
     }
 }

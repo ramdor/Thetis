@@ -28,6 +28,8 @@ This code is based on code and ideas from  : https://github.com/vu3rdd/wdsp
 and and uses RNNoise and libspecbleach
 https://gitlab.xiph.org/xiph/rnnoise
 https://github.com/lucianodato/libspecbleach
+
+It uses a non modified version of rmnoise and implements a ringbuffer to handle input/output frame size differences.
 */
 
 #ifndef _rnnr_h
@@ -37,42 +39,47 @@ https://github.com/lucianodato/libspecbleach
 
 #define FRAME_SIZE
 
-typedef struct _queuenode {
-    float value;
-    struct _queuenode* next;
-} queuenode;
+typedef struct _rnnr_ring_buffer {
+    float* buf;
+    int capacity;
+    int head;
+    int tail;
+    int count;
+} rnnr_ring_buffer;
 
 typedef struct _rnnr
 {
 	int run;
-    	int position;
-        int frame_size;
-        DenoiseState *st;
-        double *in;
-        double *out;
+    int run_old; // used when loading a new model
+    int position;
+    int frame_size;
+    DenoiseState *st;
+    double *in;
+    double *out;
+    float gain;
+    float gain_db;
+    float agc_att_a;
+    float agc_rel_a;
 
-        //MW0LGE
-        int buffer_size;
-        float* output_buffer;
-        float gain;
+    int buffer_size;
+    int rate;
+    float* output_buffer;
 
-        float* to_process_buffer;
-        float* processed_output_buffer;
+    float* to_process_buffer;
+    float* processed_output_buffer;
 
-        queuenode* input_queue_head;
-        queuenode* input_queue_tail;
-        int input_queue_count;
+    rnnr_ring_buffer input_ring;
+    rnnr_ring_buffer output_ring;
 
-        queuenode* output_queue_head;
-        queuenode* output_queue_tail;
-        int output_queue_count;
+    CRITICAL_SECTION cs;
 
-}rnnr, *RNNR;
+} rnnr, *RNNR;
 
-extern RNNR create_rnnr (int run, int position, double *in, double *out);
+extern RNNR create_rnnr (int run, int position, int size, double *in, double *out, int rate);
 extern void setSize_rnnr(RNNR a, int size);
 extern void setBuffers_rnnr (RNNR a, double* in, double* out);
 extern void destroy_rnnr (RNNR a);
 extern void xrnnr (RNNR a, int pos);
+extern void setSamplerate_rnnr(RNNR a, int rate);
 
 #endif //_rnnr_h

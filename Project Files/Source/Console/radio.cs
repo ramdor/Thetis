@@ -156,6 +156,8 @@ namespace Thetis
 
             WDSP.destroy_impulse_cache();
 
+            WDSP.RNNRloadModel(""); // this will cause a clear up of a loaded model
+
             cmaster.DestroyRadio();
 		}
 
@@ -329,6 +331,18 @@ namespace Thetis
             this.RXANR2AERun = rx.rx_nr2_ae_run;
             this.RXANR2Run = rx.rx_nr2_run;
             this.RXANR2Position = rx.rx_nr2_position;
+            //
+            this.RXANR3Run = rx.rx_nr3_run;
+            this.RXANR3Position = rx.rx_nr3_position;
+            this.RXANR4Run = rx.rx_nr4_run;
+            this.RXANR4Position = rx.rx_nr4_position;
+            this.RXASBNRreductionAmount = rx.rx_nr4_reductionAmount;
+            this.RXASBNRsmoothingFactor = rx.rx_nr4_smoothingFactor;
+            this.RXASBNRwhiteningFactor = rx.rx_nr4_whiteningFactor;
+            this.RXASBNRnoiseRescale = rx.rx_nr4_noiseRescale;
+            this.RXASBNRpostFilterThreshold = rx.rx_nr4_postFilterThreshold;
+            this.RXASBNRnoiseScalingType = rx.rx_nr4_noiseScalingType;
+            //
             this.RXFilterLow = rx.rx_filter_low;
             this.RXFilterHigh = rx.rx_filter_high;
         }
@@ -407,15 +421,18 @@ namespace Thetis
             RXANR2AERun = rx_nr2_ae_run;
             RXANR2Run = rx_nr2_run;
             RXANR2Position = rx_nr2_position;
+            //
             RXANR3Run = rx_nr3_run;
-            RXARNNRgain = rx_nr3_gain;
+            RXANR3Position = rx_nr3_position;
             RXANR4Run = rx_nr4_run;
+            RXANR4Position = rx_nr4_position;
             RXASBNRreductionAmount = rx_nr4_reductionAmount;
             RXASBNRsmoothingFactor = rx_nr4_smoothingFactor;
             RXASBNRwhiteningFactor = rx_nr4_whiteningFactor;
             RXASBNRnoiseRescale = rx_nr4_noiseRescale;
             RXASBNRpostFilterThreshold = rx_nr4_postFilterThreshold;
             RXASBNRnoiseScalingType = rx_nr4_noiseScalingType;
+            //
             RXFMLowCut = rx_fm_lowcut;
             RXFMHighCut = rx_fm_highcut;
         }
@@ -2063,26 +2080,24 @@ namespace Thetis
                 }
             }
         }
-
-        private float rx_nr3_gain = 5000000.0f; // large gain factor to get rnnoise to do its thing
-        private float rx_nr3_gain_dsp = 5000000.0f;
-        public float RXARNNRgain
+        private int rx_nr3_position = 1;
+        private int rx_nr3_position_dsp = 1;
+        public int RXANR3Position
         {
-            get { return rx_nr3_gain; }
+            get { return rx_nr3_position; }
             set
             {
-                rx_nr3_gain = value;
+                rx_nr3_position = value;
                 if (update)
                 {
-                    if (value != rx_nr3_gain_dsp || force)
+                    if (value != rx_nr3_position_dsp || force)
                     {
-                        WDSP.SetRXARNNRgain(WDSP.id(thread, subrx), value);
-                        rx_nr3_gain_dsp = value;
+                        WDSP.SetRXARNNRPosition(WDSP.id(thread, subrx), value);
+                        rx_nr3_position_dsp = value;
                     }
                 }
             }
         }
-        //
 
         //libspecbleach
         private int rx_nr4_run = 0;
@@ -2099,6 +2114,25 @@ namespace Thetis
                     {
                         WDSP.SetRXASBNRRun(WDSP.id(thread, subrx), value);
                         rx_nr4_run_dsp = value;
+                    }
+                }
+            }
+        }
+
+        private int rx_nr4_position = 1;
+        private int rx_nr4_position_dsp = 1;
+        public int RXANR4Position
+        {
+            get { return rx_nr4_position; }
+            set
+            {
+                rx_nr4_position = value;
+                if (update)
+                {
+                    if (value != rx_nr4_position_dsp || force)
+                    {
+                        WDSP.SetRXASBNRPosition(WDSP.id(thread, subrx), value);
+                        rx_nr4_position_dsp = value;
                     }
                 }
             }

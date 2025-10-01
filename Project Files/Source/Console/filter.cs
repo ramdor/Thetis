@@ -76,7 +76,12 @@ namespace Thetis
 			return high[(int)f];
 		}
 
-		public string GetName(Filter f)
+        public int GetBW(Filter f)
+        {
+            return high[(int)f] - low[(int)f];
+        }
+
+        public string GetName(Filter f)
 		{
 			return name[(int)f];
 		}

@@ -147,6 +147,7 @@ void new_window(int disp, int type, int size, double PiAlpha)
 			break;
 		}
 	case 6:					// Blackman-Harris window (7-term)
+	default:
 		{
 			arg0 = 2.0 * PI / ((double)size - 1.0);
 			cgsum = 0.0;
@@ -675,7 +676,7 @@ DWORD WINAPI spectra (void *pargs)
 
 // Call in XCreateAnalyzer(...)
 // This gets initialized for each 'disp' that is set up.
-void Init_DetectMaxBin(disp)
+void Init_DetectMaxBin(int disp)
 {
 	DP a = pdisp[disp];
 	InitializeCriticalSectionAndSpinCount(&a->cs_dmb, 2500);
@@ -694,7 +695,7 @@ void Init_DetectMaxBin(disp)
 }
 
 // Call in DestroyAnalyzer(...)
-void Destroy_DetectMaxBin(disp)
+void Destroy_DetectMaxBin(int disp)
 {
 	DP a = pdisp[disp];
 	DeleteCriticalSection(&a->cs_dmb);
@@ -950,7 +951,7 @@ void interpolate(int disp, int set, double fmin, double fmax, int num_pixels)
 				kmax = min(n - 1, kmax + kdelta);
 				kdelta += kdelta;
 			}
-
+			k = (kmin + kmax) / 2;
 			while ((kmax - kmin) > 1)
 			{
 				k = (kmin + kmax) / 2;
@@ -966,6 +967,7 @@ void interpolate(int disp, int set, double fmin, double fmax, int num_pixels)
         mag = (((a->ac3[set][0])[k] * dx + (a->ac2[set][0])[k]) * dx + (a->ac1[set][0])[k]) * dx + (a->ac0[set][0])[k];
 		a->cd[i] = mag * mag;
 	}
+	return;
 }
 
 int build_interpolants(int disp, int set, int n, int m, double *x, double (*y)[dMAX_M])
@@ -982,7 +984,7 @@ int build_interpolants(int disp, int set, int n, int m, double *x, double (*y)[d
 	double v[dMAX_N][dMAX_M];
 	double tmp;
 	int i, j;
-
+	if (n < 3) return -1;
     for (i = 0; i < n - 1; i++)
     {
         dx[i] = x[i + 1] - x[i];

@@ -191,7 +191,6 @@ void calc_speak (SPEAK a)
 		default:
 			bw_parm = 1.0;
 			bw_corr  = 1.0;
-			g_corr = 1.0;
 			A = 2.5;
 			f_min = 50.0;
 			break;

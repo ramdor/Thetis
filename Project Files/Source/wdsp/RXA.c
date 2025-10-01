@@ -333,17 +333,21 @@ void create_rxa (int channel)
 
 	// RNNoise based noise reduction 	// NR3 + NR4 support (nr3)
 	rxa[channel].rnnr.p = create_rnnr (
-            0, 	            // run
-            0,	            // position
-            rxa[channel].midbuff,
-            rxa[channel].midbuff);
+		0, 												// run
+		0,												// position
+		ch[channel].dsp_size,							// buffer size
+        rxa[channel].midbuff,							// input buffer
+        rxa[channel].midbuff,							// output buffer
+		ch[channel].dsp_rate);							// samplerate
 
     // libspecbleach based noise reduction	// NR3 + NR4 support (nr4)
-	rxa[channel].sbnr.p = create_sbnr (
-            0, 	            // run
-            0,	            // position
-            rxa[channel].midbuff,
-            rxa[channel].midbuff);
+	rxa[channel].sbnr.p = create_sbnr(
+		0, 												// run
+		0,												// position
+		ch[channel].dsp_size,							// buffer size
+		rxa[channel].midbuff,							// input buffer
+		rxa[channel].midbuff,							// output buffer
+		ch[channel].dsp_rate);							// samplerate
 	
 	// AGC
 	rxa[channel].agc.p = create_wcpagc (
@@ -675,6 +679,8 @@ void setDSPSamplerate_rxa (int channel)
 	setSamplerate_anf (rxa[channel].anf.p, ch[channel].dsp_rate);
 	setSamplerate_anr (rxa[channel].anr.p, ch[channel].dsp_rate);
 	setSamplerate_emnr (rxa[channel].emnr.p, ch[channel].dsp_rate);
+	setSamplerate_rnnr(rxa[channel].rnnr.p, ch[channel].dsp_rate); // NR3 + NR4 support (nr3)
+	setSamplerate_sbnr(rxa[channel].sbnr.p, ch[channel].dsp_rate); // NR3 + NR4 support (nr4)
 	setSamplerate_bandpass (rxa[channel].bp1.p, ch[channel].dsp_rate);
 	setSamplerate_wcpagc (rxa[channel].agc.p, ch[channel].dsp_rate);
 	setSamplerate_meter (rxa[channel].agcmeter.p, ch[channel].dsp_rate);

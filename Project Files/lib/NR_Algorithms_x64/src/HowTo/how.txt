@@ -30,17 +30,37 @@ expand out to somewhere where MSYS2 MINGW64 can use it
 In MSYS2 MINGW64 run the following
 
 ./autogen.sh
-./configure
+./configure --enable-x86-rtcd
 
 This will download/configure everything
 
 Then in a x64 Native Tools Command Prompt for VS 2022
 
 rmdir /s /q build
+
 cmake -S . -B build -G "Visual Studio 17 2022" -T ClangCL -A x64
+or 
+cmake -S . -B build -G "Visual Studio 17 2022" -T ClangCL -A x64 -DCMAKE_C_FLAGS="-mavx2 -mfma"
+or
+cmake -S . -B build -G "Visual Studio 17 2022" -T ClangCL -A x64 -DCMAKE_C_FLAGS_RELEASE="/arch:AVX2"
+
 cmake --build build --config Release  
 
 dll + lib files in
 
 rnnoise\build\Release
 -------------------------------
+
+
+Additional info rnnnoise
+
+If you want to use MSYS2 MINGW64 to build the additional exes, then this can be used
+
+/autogen.sh
+export CFLAGS="-include process.h -D_spawnv=spawnv"
+./configure
+or
+./configure --enable-x86-rtcd
+make clean
+make
+

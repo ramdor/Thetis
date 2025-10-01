@@ -249,18 +249,23 @@
                       Profile="all" />
         </File>
       </Component>
-      
+
+	  <!-- [2.10.3.11]MW0LGE add checksum to some files that do not always have a version number or a version
+	  number update, but do have content or code changes from time to time. Using the timestamp is not always reliable. -->
+
       <Component Guid="*">
         <File Id="CATStructsXML"
               Source="$(var.FilesPath)CATStructs.xml"
               KeyPath="yes"
+			  Checksum="yes"
               />
       </Component>
 
-      <Component Guid="*">
+		<Component Guid="*">
         <File Id="wdspDLL"
               Source="$(var.FilesPath)wdsp.dll"
               KeyPath="yes"
+			  Checksum="yes"
               />
       </Component>
 
@@ -281,22 +286,31 @@
 			<File Id="rnnoiseDLL"
 				  Source="$(var.FilesPath)rnnoise.dll"
 				  KeyPath="yes"
+				  Checksum="yes"
               />
 		</Component>
+
+		<Component Guid="*">
+			<File Id="rnnoise_avx2DLL"
+				  Source="$(var.FilesPath)rnnoise_avx2.dll"
+				  KeyPath="yes"
+				  Checksum="yes"
+              />
+		</Component>
+		
 		<Component Guid="*">
 			<File Id="specbleachDLL"
 				  Source="$(var.FilesPath)specbleach.dll"
 				  KeyPath="yes"
+				  Checksum="yes"
               />
 		</Component>
 
-	  <!-- attempt to get the MSI installer package to use a Checksum for the PA19 dll, as we
-	  dont update the version number for this, but want to install it -->
       <Component Guid="*">
         <File Id="PA19DLL"
               Source="$(var.FilesPath)PA19.dll"
               KeyPath="yes"
-			  Checksum="yes" 
+			  Checksum="yes"
               />
       </Component>
 
@@ -304,6 +318,7 @@
         <File Id="ChannelMasterDLL"
               Source="$(var.FilesPath)ChannelMaster.dll"
               KeyPath="yes"
+			  Checksum="yes"
               />
       </Component>
 
@@ -311,6 +326,7 @@
         <File Id="cmASIODLL"
               Source="$(var.FilesPath)cmASIO.dll"
               KeyPath="yes"
+			  Checksum="yes"
               />
       </Component>
 
@@ -329,11 +345,28 @@
               />
       </Component>
         -->
+
+		<!-- rnnoise weights model binary files -->
+		<Component Guid="*">
+			<File Id="rnnoise_weights_small.bin"
+				  Source="$(var.FilesPath)rnnoise_weights_small.bin"
+				  KeyPath="yes"
+				  Checksum="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="rnnoise_weights_large.bin"
+				  Source="$(var.FilesPath)rnnoise_weights_large.bin"
+				  KeyPath="yes"
+				  Checksum="yes"
+              />
+		</Component>
 		
       <Component Guid="*">
         <File Id="Midi2CatDLL"
               Source="$(var.FilesPath)Midi2Cat.dll"
               KeyPath="yes"
+			  Checksum="yes"
               />
       </Component>
 
@@ -341,6 +374,7 @@
         <File Id="RawInputDLL"
               Source="$(var.FilesPath)RawInput.dll"
               KeyPath="yes"
+			  Checksum="yes"
               />
       </Component>
 
@@ -455,11 +489,14 @@
 
 		<!-- 
 		Binding Redirects in Thetis.exe.config
+		[2.10.3.12]MW0LGE also checksum this so it will always install if changed. There is no version number for it
+		for the installer to check against, as timestamps are not always reliable
 		-->
 		<Component Guid="*">
 			<File Id="Thetis.exe.config"
 				  Source="$(var.FilesPath)Thetis.exe.config"
 				  KeyPath="yes"
+				  Checksum="yes"
               />
 		</Component>
 		<!-- 
@@ -655,10 +692,12 @@
             KeyPath="yes"
               />
       </Component>
+		
       <Component Guid="*">
         <File Id="PureSignalPDF"
               Source="$(var.DocumentationPath)PureSignal.pdf"
               KeyPath="yes"
+			  Checksum="yes"
               />
       </Component>
 
@@ -666,6 +705,7 @@
         <File Id="ThetisManualPDF"
               Source="$(var.DocumentationPath)Thetis manual.pdf"
               KeyPath="yes"
+			  Checksum="yes"
               />
       </Component>
 
@@ -673,6 +713,7 @@
         <File Id="Midi2Cat_Instructions_V3PDF"
               Source="$(var.DocumentationPath)Midi2Cat_Instructions_V3.pdf"
               KeyPath="yes"
+			  Checksum="yes"
               />
       </Component>
 
@@ -680,6 +721,7 @@
         <File Id="BehringerMods_Midi2Cat__V2PDF"
               Source="$(var.DocumentationPath)BehringerMods_Midi2Cat_v2.pdf"
               KeyPath="yes"
+			  Checksum="yes"
               />
       </Component>
 
@@ -687,18 +729,21 @@
         <File Id="ThetisCATCommandReferenceGuideV3PDF"
               Source="$(var.DocumentationPath)Thetis-CAT-Command-Reference-Guide-V3.pdf"
               KeyPath="yes"
+			  Checksum="yes"
               />
 	  </Component>
 		<Component Guid="*">
 			<File Id="ThetisReleaseNotesTXT"
 				Source="$(var.SourcePath)ReleaseNotes.txt"
 				KeyPath="yes"
+				Checksum="yes"
             />			  
 		  </Component>
 		<Component Guid="*">
 			<File Id="cmASIOGuidePDF"
 				Source="$(var.DocumentationPath)cmASIO Guide.pdf"
 				KeyPath="yes"
+				Checksum="yes"
             />
 		</Component>
 	</ComponentGroup>
