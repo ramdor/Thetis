@@ -8254,7 +8254,7 @@ namespace Thetis
                         break;
                     //case HPSDRHW.Atlas: /// ???
                     case HPSDRHW.Hermes: // ANAN-10 ANAN-100 Heremes
-                    case HPSDRHW.HermesLite: // HL2 does support P2 but need to have entry to correcly ID hardware
+                    case HPSDRHW.HermesLite: // HL2 doesn't support P2 but need to have entry to correcly ID hardware
                     case HPSDRHW.HermesII: // ANAN-10E ANAN-100B HeremesII
                         switch (tot)
                         {
@@ -8348,7 +8348,7 @@ namespace Thetis
                         break;
                     //                    case HPSDRHW.Atlas: /// ???
                     case HPSDRHW.Hermes: // ANAN-10 ANAN-100 Heremes (4 adc)
-                    case HPSDRHW.HermesLite: // Hermes Lite 2
+                    case HPSDRHW.HermesLite: // MI0BOT: Hermes Lite 2
                         switch (tot)
                         {
                             case 0: // off off off
@@ -10785,7 +10785,7 @@ namespace Thetis
                         //int txatt = getTXstepAttenuatorForBand(_tx_band);
                         
                         if (HardwareSpecific.Model == HPSDRModel.HERMESLITE) 
-                           NetworkIO.SetTxAttenData(32 - _tx_attenuator_data); // MI0BOT: Greater range for HL2
+                           NetworkIO.SetTxAttenData(31 - _tx_attenuator_data); // MI0BOT: Greater range for HL2
                         else
                         {
                             //NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
@@ -11191,7 +11191,7 @@ namespace Thetis
                     if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 wider  LNA range
                     {
                         NetworkIO.SetAlexAtten(0);
-                        NetworkIO.SetADC1StepAttenData(32 - _rx1_attenuator_data);
+                        NetworkIO.SetADC1StepAttenData(31 - _rx1_attenuator_data);
                     }
                     else if (alexpresent &&
                         HardwareSpecific.Model != HPSDRModel.ANAN10 &&
@@ -11356,7 +11356,7 @@ namespace Thetis
                     if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)       // MI0BOT: HL2 wider  LNA range
                     {
                         NetworkIO.SetAlexAtten(0);
-                        NetworkIO.SetADC1StepAttenData(32 - _rx1_attenuator_data);
+                        NetworkIO.SetADC1StepAttenData(31 - _rx1_attenuator_data);
                     }
                     else if (alexpresent &&
                         HardwareSpecific.Model != HPSDRModel.ANAN10 &&
@@ -19349,7 +19349,7 @@ namespace Thetis
                         int txatt = getTXstepAttenuatorForBand(_tx_band);
                         
                         if (HardwareSpecific.Model == HPSDRModel.HERMESLITE) 
-                           NetworkIO.SetTxAttenData(32 - txatt); // MI0BOT: Greater range for HL2
+                           NetworkIO.SetTxAttenData(31 - txatt); // MI0BOT: Greater range for HL2
                         else
                            NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
 
@@ -19583,7 +19583,7 @@ namespace Thetis
                     if (!_rx1_step_att_enabled)
                     {
                         if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)       // MI0BOT: Adjustment for HL2 LNA range 
-                            NetworkIO.SetADC1StepAttenData(32 - rx1_att_value);
+                            NetworkIO.SetADC1StepAttenData(31 - rx1_att_value);
                         else if (nRX1ADCinUse == 0) NetworkIO.SetADC1StepAttenData(rx1_att_value);
                         else if (nRX1ADCinUse == 1) NetworkIO.SetADC2StepAttenData(rx1_att_value);
                         else if (nRX1ADCinUse == 2) NetworkIO.SetADC3StepAttenData(rx1_att_value);
@@ -26228,11 +26228,15 @@ namespace Thetis
             while (0 != NetworkIO.I2CReadInitiate(1, 0x41, 0))
             {
                 await Task.Delay(1);
+                if (timeout++ >= 20) return;
             }
+
+            timeout = 0;
 
             do
             {
                 await Task.Delay(1);
+                if (timeout++ >= 20) return;
             } while (1 == NetworkIO.I2CResponse(read_data));
 
             if (read_data[0] == 0xf1)   // Expect to find version 1 of the IO board
@@ -28566,7 +28570,7 @@ namespace Thetis
                     int txatt = getTXstepAttenuatorForBand(_tx_band);
                     
                     if (HardwareSpecific.Model == HPSDRModel.HERMESLITE) 
-                       NetworkIO.SetTxAttenData(32 - txatt); //MI0BOT: Greater range for HL2
+                       NetworkIO.SetTxAttenData(31 - txatt); //MI0BOT: Greater range for HL2
                     else
                        NetworkIO.SetTxAttenData(txatt); //[2.10.3.6]MW0LGE att_fixes
 
@@ -28791,6 +28795,12 @@ namespace Thetis
     
                     if (SetupForm.Cl2Checked)               // MI0BOT: HL2 CL2 clock output
                         SetupForm.ControlCl2(SetupForm.Cl2Checked);
+                }
+
+                if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)       // MI0BOT: Correct audio 
+                {
+                    Audio.VACRXScale = Math.Pow(10.0, VACRXGain / 20.0);
+                    Audio.VAC2RXScale = Math.Pow(10.0, VAC2RXGain / 20.0);
                 }
             }
             else
@@ -30634,21 +30644,24 @@ namespace Thetis
                     comboRX2Preamp.Enabled = false;
                     udRX2StepAttData.Enabled = false;
 
-                    //move it to rx2
-                    udTXStepAttData.Location = udRX2StepAttData.Location;
-                    udTXStepAttData.Parent = udRX2StepAttData.Parent;
-                    udTXStepAttData.BringToFront();
-                    udTXStepAttData.Visible = m_bAttontx;
-                    lblRX2Preamp.Text = m_bAttontx ? "[S-ATT]" : (_rx2_step_att_enabled ? "S-ATT" : "ATT");
-
-                    //if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
-                    //{
-                    //    if (m_bAttontx)
-                    //        lblRX2Preamp.Enabled = true;
-                    //    else
-                    //        lblRX2Preamp.Enabled = false;
-                    //}
-                    
+                    if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
+                    {
+                        // For the HL2 there is only one attenuator, so keep it to the RX1 control
+                        udTXStepAttData.Location = udRX1StepAttData.Location;
+                        udTXStepAttData.Parent = udRX1StepAttData.Parent;
+                        udTXStepAttData.BringToFront();
+                        udTXStepAttData.Visible = m_bAttontx;
+                        lblPreamp.Text = m_bAttontx ? "[S-ATT]" : (AutoAttRX1 ? "A-ATT" : "S-ATT");
+                    }
+                    else
+                    {
+                        //move it to rx2
+                        udTXStepAttData.Location = udRX2StepAttData.Location;
+                        udTXStepAttData.Parent = udRX2StepAttData.Parent;
+                        udTXStepAttData.BringToFront();
+                        udTXStepAttData.Visible = m_bAttontx;
+                        lblRX2Preamp.Text = m_bAttontx ? "[S-ATT]" : (_rx2_step_att_enabled ? "S-ATT" : "ATT");
+                    }
                 }
                 else
                 {
@@ -30669,15 +30682,6 @@ namespace Thetis
                 {
                     lblPreamp.Text = AutoAttRX1 ? "A-ATT" : "S-ATT";
                 }
-
-                //if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
-                //{
-                //    if (m_bAttontx)
-                //        lblRX2Preamp.Enabled = true;
-                //    else
-                //        lblRX2Preamp.Enabled = false;
-                //}
-
             }
 
             if (_iscollapsed && !_isexpanded)

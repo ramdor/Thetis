@@ -63,7 +63,7 @@ namespace Thetis
         private readonly List<string> CMASIO_ALWAYS_SHOW = new List<string>() {  "dl5tt", "ea8djr", "ei7bmb", "kc1lko", "k1lsb", "k1sr", "k2gx", "k2tc", "kb2uka",
                                                                                  "ki4tga", "ko6dlv", "kw4ex", "m0cke", "mw0lge", "n6mud", "nc3z", "nj2us",
                                                                                  "nr0v", "ny8t", "oe3ide", "oz1ct", "sa3atf", "ve2jn", "ve9iou", "vk6ia",
-                                                                                 "w1aex", "w1izz", "wr1s", "w2pa", "w3ub", "w9ac", "w9ez" };
+                                                                                 "w1aex", "w1izz", "wr1s", "w2pa", "w3ub", "w9ac", "w9ez", "mi0bot" };
         #region Variable Declaration
 
         private Console console;

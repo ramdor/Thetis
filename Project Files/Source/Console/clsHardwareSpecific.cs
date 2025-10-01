@@ -238,7 +238,8 @@ namespace Thetis
                        _model == HPSDRModel.ANVELINAPRO3 ||
                        _model == HPSDRModel.ANAN_G2 ||
                        _model == HPSDRModel.ANAN_G2_1K ||
-                       _model == HPSDRModel.REDPITAYA;
+                       _model == HPSDRModel.REDPITAYA ||
+                       _model == HPSDRModel.HERMESLITE;
             }
         }
         public static bool HasAmps
