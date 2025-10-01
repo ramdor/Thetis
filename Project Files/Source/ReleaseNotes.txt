@@ -6,6 +6,11 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
+## v2.10.3.12 - dev.1 Change Log
+- [fix] you can now enter values into the VAR1/VAR2 filters on the main console. Pressing enter or the box losing focus will set the value
+- [fix] issue where low/high values would not sometimes be stored when using the filter configuration settings window/form
+- [fix] changing a filter edge in the filter settings config window will now notify all delegates. Fixes issue where filter container would not update
+
 ## v2.10.3.11 - Change Log
 - [add] two new noise reduction methods added, NR3 and NR4. When starting up this version for the first time if NR was enabled, will now be set to off. Only support for nr/nr2 is available through cat and other systems that use cat such as midi. Settings in the normal NR settings page of Setup
     NR3 - RNnoise - A noise suppression library based on a recurrent neural network. Latest code here - https://gitlab.xiph.org/xiph/rnnoise . More info here - https://arxiv.org/pdf/1709.08243.pdf  

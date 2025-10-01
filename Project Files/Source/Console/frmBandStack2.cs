@@ -385,7 +385,9 @@ namespace Thetis
             e.Cancel = true;
             HideClose();
         }
+#pragma warning disable CS0109
         public new void Show(bool is_popup = false, Point? popup_location = null, bool on_top = false)
+#pragma warning restore CS0109
         { // shadow of show
             _is_popup = is_popup;
             _is_popup_on_top = on_top;

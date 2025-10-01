@@ -984,7 +984,6 @@ namespace Thetis
             private clsBarItem.Units _units;
             private bool _showMarker;
             private bool _showSubMarker;
-            private bool _hasSubIndicators;
             private int _ignoreHistoryDuration;
             private string _font_family_1;
             private FontStyle _font_style_1;
@@ -1002,7 +1001,6 @@ namespace Thetis
                 _settings = new ConcurrentDictionary<string, object>();
                 //
 
-                _hasSubIndicators = false;
                 _readingSource = Reading.NONE;
                 _barStyle = clsBarItem.BarStyle.None;
                 _maxPower = CurrentPowerRating;
@@ -7648,9 +7646,6 @@ namespace Thetis
         }
         internal class clsDiscordButtonBox : clsButtonBox
         {
-            private BandGroups _button_bands;
-            private Band _band;
-            private bool _force_update;
             clsMeter _owningmeter;
             private bool _ready;
             private bool _click_highlight;
@@ -7660,7 +7655,6 @@ namespace Thetis
                 _ready = ThetisBotDiscord.IsReady;
                 _owningmeter = owningmeter;
                 _click_highlight = false;
-                _force_update = false;
 
                 ItemType = MeterItemType.DISCORD_BUTTONS;
 
@@ -11700,7 +11694,6 @@ namespace Thetis
                 public int index;
             }
 
-            private float _padding;
             private float _vertical_ratio;
             private System.Drawing.Color _back_colour;
             private System.Drawing.Color _axis0_colour;
@@ -11750,7 +11743,6 @@ namespace Thetis
                 _owningmeter = owning_meter;
                 _ig = item_group;
 
-                _padding = 0.1f;
                 _vertical_ratio = 0.5f;
                 _back_colour = System.Drawing.Color.Black;
                 _axis0_colour = System.Drawing.Color.Red;
@@ -14908,8 +14900,6 @@ namespace Thetis
             private bool _notxtrue;
             private bool _notxfalse;
 
-            private Thread _thread;
-
             public clsLed(clsMeter owningMeter)
             {
                 _timer = null;
@@ -14986,7 +14976,7 @@ namespace Thetis
                     }
                     return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //MessageBox.Show($"Exception: {ex.Message}");
                     //MessageBox.Show($"String passed to Parse Text:\n{tmp}\n\nStack Trace: {ex.StackTrace}");
@@ -15016,7 +15006,7 @@ namespace Thetis
                         _error = true;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     _valid = false;
                     _script = null;
@@ -24141,7 +24131,6 @@ namespace Thetis
             private int _newTargetHeight;
             private bool _targetVisible;
             private bool _enabled;
-            private ColorInterpolator _color_interp;
 
             private bool _waterfall_row_added;
 
@@ -24603,7 +24592,7 @@ namespace Thetis
                         //resizeDX();
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
 
                 }
@@ -32930,7 +32919,7 @@ namespace Thetis
 
                     return dxBitmap;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return null;
                 }
@@ -33933,7 +33922,7 @@ namespace Thetis
                         if (_tcpClient != null && !clientConnected)
                             reconnect = true;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         if (_tcpClient != null && !clientConnected)
                             reconnect = true;
@@ -35513,8 +35502,8 @@ namespace Thetis
             private int _pixels;
             private int _hwsample_rate;
             private int _frame_rate;
-            private double _z_factor;
-            private double _p_slider;
+            //private double _z_factor;
+            //private double _p_slider;
             private double _rx_frequency;
             private double _tx_frequency;
 
@@ -35590,8 +35579,8 @@ namespace Thetis
                 
                 _pixels = PIXELS;
                 _frame_rate = FRAME_RATE;
-                _z_factor = 0; // range is 0.0 to 1.0, done UpdateSpecSettings
-                _p_slider = 0.5; // range is 0.0 to 1.0
+                //_z_factor = 0; // range is 0.0 to 1.0, done UpdateSpecSettings
+                //_p_slider = 0.5; // range is 0.0 to 1.0
 
                 _new_display_data = new float[_pixels];
                 _new_display_data_raw = new float[_pixels];

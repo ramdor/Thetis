@@ -2740,13 +2740,13 @@ namespace Thetis
 
                                 DX_Spotter[DX_Index1] = sb.ToString();
                             }
-                            catch (FormatException e)
+                            catch (FormatException)
                             {
                                 DX_Spotter[DX_Index1] = "NA";
                            
                             //    textBox1.Text = e.ToString();
                             }
-                            catch (ArgumentOutOfRangeException e)
+                            catch (ArgumentOutOfRangeException)
                             {
                            
                             //    textBox1.Text = e.ToString();
@@ -2830,12 +2830,12 @@ namespace Thetis
 
 
                             } // try to determine if in the cw portion or ssb portion of each band
-                            catch (FormatException e)
+                            catch (FormatException)
                             {
                                 DX_Freq[DX_Index1] = 0;
                                 DX_Mode[DX_Index1] = 0; // ssb mode
                             }
-                            catch (ArgumentOutOfRangeException e)
+                            catch (ArgumentOutOfRangeException)
                             {
                                 DX_Freq[DX_Index1] = 0;
                                 DX_Mode[DX_Index1] = 0; // ssb mode
@@ -7072,7 +7072,7 @@ namespace Thetis
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //   Debug.WriteLine("noaa fault=== " + ex);
                 textBox1.Text += "Failed to download Space Weather \r\n";
@@ -9999,7 +9999,7 @@ RT1:
                                     VOA_Index++;
 
                                 }
-                                catch(Exception a)
+                                catch(Exception)
                                 {
                                     Debug.WriteLine("fault> "+ result.ToString());
 

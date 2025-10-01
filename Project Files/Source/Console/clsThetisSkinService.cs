@@ -161,7 +161,7 @@ namespace Thetis
 
                 cp = null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Notify subscribers of the error.
                 ThetisSkinsData?.Invoke(null, null);
@@ -207,7 +207,7 @@ namespace Thetis
                 SkinServersData skinServersData = JsonConvert.DeserializeObject<SkinServersData>(jsonContent);
                 ThetisSkinServerData?.Invoke(null, skinServersData);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //MessageBox.Show(ex.ToString());
                 ThetisSkinServerData?.Invoke(null, null);
@@ -298,7 +298,7 @@ namespace Thetis
                     ImageLoaded?.Invoke(null, shi);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ImageLoaded?.Invoke(null, null);
             }
@@ -396,14 +396,14 @@ namespace Thetis
                     }
                 }
             }
-            catch (TaskCanceledException tex)
+            catch (TaskCanceledException)
             {
                 SkinFileDownload sfd = new SkinFileDownload();
                 sfd.Complete = false;
                 sfd.Cancelled = true;
                 FileDownload?.Invoke(null, sfd);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 FileDownload?.Invoke(null, null);
             }

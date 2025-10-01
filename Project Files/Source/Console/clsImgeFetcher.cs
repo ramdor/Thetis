@@ -314,7 +314,7 @@ namespace Thetis
                                                 // Attempt to decode with SkiaSharp
                                                 skBitmap = SKBitmap.Decode(memoryStream);
                                             }
-                                            catch (Exception ex) 
+                                            catch (Exception) 
                                             {
                                                 skBitmap = null;
                                             }
@@ -336,7 +336,7 @@ namespace Thetis
                                                             imagesAdded = true;
                                                             StateChanged?.Invoke(this, new StateEventArgs(id, State.OK));
                                                         }
-                                                        catch (Exception ex)
+                                                        catch (Exception)
                                                         {
                                                             StateChanged?.Invoke(this, new StateEventArgs(id, State.ERROR_IMAGE_CONVERSION_PROBLEM));
                                                         }
@@ -382,7 +382,7 @@ namespace Thetis
                                                 imagesAdded = true;
                                                 StateChanged?.Invoke(this, new StateEventArgs(id, State.OK));
                                             }
-                                            catch (Exception ex)
+                                            catch (Exception)
                                             {
                                                 StateChanged?.Invoke(this, new StateEventArgs(id, State.ERROR_IMAGE_CONVERSION_PROBLEM));
                                             }
@@ -514,7 +514,7 @@ namespace Thetis
                                 }
                             }
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             //Debug.Print("Exception: " + ex.Message);
                             StateChanged?.Invoke(this, new StateEventArgs(id, State.ERROR_IMAGE_CONVERSION_PROBLEM));
@@ -565,7 +565,7 @@ namespace Thetis
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 StateChanged?.Invoke(this, new StateEventArgs(id, State.ERROR_IMAGE_CONVERSION_PROBLEM));
             }

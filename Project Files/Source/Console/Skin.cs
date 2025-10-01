@@ -1916,7 +1916,7 @@ namespace Thetis
                     if (!_image_cache_map.TryGetValue(path, out _)) _image_cache_map[path] = hash;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 img = null;
             }

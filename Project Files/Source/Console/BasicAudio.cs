@@ -88,12 +88,12 @@ namespace Thetis
             {
                 m_objPlayer.LoadAsync();
             }
-            catch (FileNotFoundException ex)
+            catch (FileNotFoundException)
             {
                 m_bLoading = false;
                 loadCompleted?.Invoke(false);
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException)
             {
                 m_bLoading = false;
                 loadCompleted?.Invoke(false);

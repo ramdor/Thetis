@@ -29538,7 +29538,7 @@ namespace Thetis
             {
                 // Handle invalid ZIP file
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Handle other exceptions
             }
@@ -29662,7 +29662,7 @@ namespace Thetis
                     if (Directory.Exists(sSkinPath))
                         Directory.Delete(sSkinPath, true);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     dres = MessageBox.Show(
                                 "There was an isssue deleting [" + sSelectedSkin + "] from the skin folder.\n\nSome files would not delete.\n\nPlease remove manually.",
@@ -29687,7 +29687,7 @@ namespace Thetis
                 if (_skinPath != "")
                     Process.Start("explorer.exe", _skinPath);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

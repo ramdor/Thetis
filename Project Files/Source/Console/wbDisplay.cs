@@ -2130,7 +2130,7 @@ namespace Thetis
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Trace.WriteLine(ex);
             }
@@ -2154,7 +2154,7 @@ namespace Thetis
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 

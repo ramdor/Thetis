@@ -285,7 +285,7 @@ namespace Thetis
                     {
                         break;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                     }
 

@@ -1094,7 +1094,7 @@ namespace Thetis
 					}
 				}
 			}
-			catch(Exception ex)
+			catch(Exception)
 			{
 				Debug.Print("problem writing text frame");
 				m_stopClient = true;

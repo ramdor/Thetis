@@ -544,7 +544,7 @@ namespace Thetis
                 {
                     File.WriteAllText(json_file, jsonString);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                 }
             }
@@ -622,7 +622,7 @@ namespace Thetis
                 {
                     File.WriteAllText(db_folder + "\\dbman.json", jsonString);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     ok = false;
                 }
@@ -686,7 +686,7 @@ namespace Thetis
                         string dbman_settings_file = _db_data_path + _unique_instance_id + "dbman_settings.json";
                         File.WriteAllText(dbman_settings_file, jsonString);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         ok = false;
                     }
@@ -1516,7 +1516,7 @@ namespace Thetis
                                     {
                                         File.WriteAllText(json_file, jsonString);
                                     }
-                                    catch (Exception ex)
+                                    catch (Exception)
                                     {
                                         ok = false;
                                         DialogResult dr = MessageBox.Show("There was a problem writing the database info. Unable to copy the source database file.",
@@ -1853,7 +1853,7 @@ namespace Thetis
                     {
                         File.WriteAllText(json_file, jsonString);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                     }
 

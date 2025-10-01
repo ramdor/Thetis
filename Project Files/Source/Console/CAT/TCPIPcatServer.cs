@@ -314,7 +314,7 @@ namespace Thetis
 				_log = new frmLog();
 				m_server = new TcpListener(ipNport);
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				m_server = null;
 			}
@@ -367,7 +367,7 @@ namespace Thetis
 					}
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 			}
 		}

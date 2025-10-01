@@ -1778,6 +1778,8 @@
             0,
             0});
             this.udTXFilterLow.ValueChanged += new System.EventHandler(this.udTXFilterLow_ValueChanged);
+            this.udTXFilterLow.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Console_KeyPress);
+            this.udTXFilterLow.LostFocus += new System.EventHandler(this.udTXFilterLow_LostFocus);
             // 
             // udTXFilterHigh
             // 
@@ -1808,6 +1810,8 @@
             0,
             0});
             this.udTXFilterHigh.ValueChanged += new System.EventHandler(this.udTXFilterHigh_ValueChanged);
+            this.udTXFilterHigh.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Console_KeyPress);
+            this.udTXFilterHigh.LostFocus += new System.EventHandler(this.udTXFilterHigh_LostFocus);
             // 
             // chkMicMute
             // 
@@ -2067,6 +2071,8 @@
             0,
             0});
             this.udRX2FilterHigh.ValueChanged += new System.EventHandler(this.udRX2FilterHigh_ValueChanged);
+            this.udRX2FilterHigh.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Console_KeyPress);
+            this.udRX2FilterHigh.LostFocus += new System.EventHandler(this.udRX2FilterHigh_LostFocus);
             // 
             // udRX2FilterLow
             // 
@@ -2097,6 +2103,8 @@
             0,
             0});
             this.udRX2FilterLow.ValueChanged += new System.EventHandler(this.udRX2FilterLow_ValueChanged);
+            this.udRX2FilterLow.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Console_KeyPress);
+            this.udRX2FilterLow.LostFocus += new System.EventHandler(this.udRX2FilterLow_LostFocus);
             // 
             // radRX2ModeAM
             // 

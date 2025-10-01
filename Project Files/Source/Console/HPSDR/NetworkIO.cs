@@ -101,7 +101,7 @@ namespace Thetis
             {
                 addr = Dns.GetHostAddresses(Dns.GetHostName());
             }
-            catch (SocketException e)
+            catch (SocketException)
             {
                 Win32.WSAData data = new Win32.WSAData();
                 int result = 0;

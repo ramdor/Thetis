@@ -731,7 +731,7 @@ namespace Thetis
             set
             {
                 m_bNoiseFloorGoodRX1 = false;
-                if(value) _fLastFastAttackEnabledTimeRX1 = m_objFrameStartTimer.ElapsedMsec;
+                if(value) _fLastFastAttackEnabledTimeRX1 = _high_perf_timer.ElapsedMsec;
                 m_bFastAttackNoiseFloorRX1 = value;
             }
         }
@@ -741,7 +741,7 @@ namespace Thetis
             set
             {
                 m_bNoiseFloorGoodRX2 = false;
-                if(value) _fLastFastAttackEnabledTimeRX2 = m_objFrameStartTimer.ElapsedMsec;
+                if(value) _fLastFastAttackEnabledTimeRX2 = _high_perf_timer.ElapsedMsec;
                 m_bFastAttackNoiseFloorRX2 = value;
             }
         }
@@ -833,14 +833,18 @@ namespace Thetis
             get { return _runningFPSProfile; }
             set 
             {
-                _runningFPSProfile = value;
-                if (_runningFPSProfile)
+                if (value)
                 {
+                    _runningFPSProfile = false;
+                    _fps_profile_data.Clear();
                     _fps_profile_start = m_dElapsedFrameStart;
+                    _runningFPSProfile = value;
                 }
                 else
                 {
+                    _runningFPSProfile = false;
                     _fps_profile_start = double.MinValue;
+                    _fps_profile_data.Clear();
                 }
             }
         }
@@ -2512,7 +2516,7 @@ namespace Thetis
                 });
 
                 //delay waterfall agc
-                _rx1_no_agc_duration = m_objFrameStartTimer.ElapsedMsec + _fft_fill_timeRX1 + ((m_nFps / 1000f) * 2); // 2 extra frames
+                _rx1_no_agc_duration = _high_perf_timer.ElapsedMsec + _fft_fill_timeRX1 + ((m_nFps / 1000f) * 2); // 2 extra frames
                 _ignore_waterfall_rx1_agc = true;
             }
             else
@@ -2528,7 +2532,7 @@ namespace Thetis
                 });
 
                 //delay waterfall agc
-                _rx2_no_agc_duration = m_objFrameStartTimer.ElapsedMsec + _fft_fill_timeRX2 + ((m_nFps / 1000f) * 2); // 2 extra frames
+                _rx2_no_agc_duration = _high_perf_timer.ElapsedMsec + _fft_fill_timeRX2 + ((m_nFps / 1000f) * 2); // 2 extra frames
                 _ignore_waterfall_rx2_agc = true;
             }
         }
@@ -3243,7 +3247,7 @@ namespace Thetis
                     resizeDX2D();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
@@ -3445,7 +3449,8 @@ namespace Thetis
                 {
                     if (!_bDX2Setup) return; // moved inside the lock so that a change in state by shutdown becomes thread safe
 
-                    m_dElapsedFrameStart = m_objFrameStartTimer.ElapsedMsec;
+                    m_dElapsedFrameStart = _high_perf_timer.ElapsedMsec;
+                    calcFps();
 
                     _bNoiseFloorAlreadyCalculatedRX1 = false; // keeps track of noise floor processing, only want to do it once, even if pana + water shown
                     _bNoiseFloorAlreadyCalculatedRX2 = false;
@@ -3749,7 +3754,7 @@ namespace Thetis
                     if (m_bShowFrameRateIssue && m_bFrameRateIssue) _d2dRenderTarget.FillRectangle(new RectangleF(0, 0, 8, 8), m_bDX2_Red);
                     if (m_bShowGetPixelsIssue && (_bGetPixelsIssueRX1 || _bGetPixelsIssueRX2)) _d2dRenderTarget.FillRectangle(new RectangleF(0, 8, 8, 8), m_bDX2_Yellow);
 
-                    calcFps();
+                    //calcFps();
                     if (m_bShowFPS)
                     {
                         if (_runningFPSProfile) showFPSProfile();
@@ -3815,11 +3820,11 @@ namespace Thetis
         private static readonly List<int> _fps_profile_data = new List<int>();
         private static void showFPSProfile()
         {
-            if (m_objFrameStartTimer.ElapsedMsec - _last_valid_check >= 5000)
+            if (_high_perf_timer.ElapsedMsec - _last_valid_check >= 5000)
             {
                 //recheck every 5 seconds
                 _valid_fps_profile = !console.IsSetupFormNull ? console.SetupForm.ValidFpsProfile() : false;
-                _last_valid_check = m_objFrameStartTimer.ElapsedMsec;
+                _last_valid_check = _high_perf_timer.ElapsedMsec;
             }
 
             RoundedRectangle rr = new RoundedRectangle();
@@ -3872,33 +3877,35 @@ namespace Thetis
 
         private static int m_nFps = 0;
         private static int m_nFrameCount = 0;
-        private static HiPerfTimer m_objFrameStartTimer = new HiPerfTimer();
-        private static double m_fLastTime = m_objFrameStartTimer.ElapsedMsec;
-        private static double m_dElapsedFrameStart = m_objFrameStartTimer.ElapsedMsec;
+        private static HiPerfTimer _high_perf_timer = new HiPerfTimer();
+        private static double m_fLastTime = _high_perf_timer.ElapsedMsec;
+        private static double m_dElapsedFrameStart = _high_perf_timer.ElapsedMsec;
         private static void calcFps()
         {
             m_nFrameCount++;
-            if (m_dElapsedFrameStart >= m_fLastTime + 1000)
+            if (m_dElapsedFrameStart >= m_fLastTime + 1000.0)
             {
-                double late = m_dElapsedFrameStart - (m_fLastTime + 1000);
-                if (late > 2000 || late < 0) late = 0; // ignore if too late
+                double late = m_dElapsedFrameStart - (m_fLastTime + 1000.0);
+                if (late > 2000.0 || late < 0.0) late = 0.0; // ignore if too late
 
                 //technically, we have nframes in 1000+late ms, so we should refactor down to 1000
-                double frames_per_ms = m_nFrameCount / (1000 + late);
-                double frames_in_1000ms = frames_per_ms * 1000;
+                double frames_per_ms = m_nFrameCount / (1000.0 + late);
+                double frames_in_1000ms = frames_per_ms * 1000.0;
                 int frames = (int)frames_in_1000ms;
 
-                m_nFps = frames;// m_nFrameCount;
-                m_nFrameCount = m_nFrameCount - frames;//0;
+                m_nFps = frames;
+                m_nFrameCount = m_nFrameCount - frames;
                 m_fLastTime = m_dElapsedFrameStart - late;
 
                 if (_runningFPSProfile)
                 {
                     // for fps_profile
                     _fps_profile_data.Add(m_nFps);
-                    if (_fps_profile_data.Count > 10) _fps_profile_data.RemoveAt(0);
+                    if (_fps_profile_data.Count > 10)
+                    {
+                        _fps_profile_data.RemoveAt(0);
+                    }
                 }
-                else if (_fps_profile_data.Count > 0) _fps_profile_data.Clear();
             }
         }
 
@@ -5326,7 +5333,7 @@ namespace Thetis
         //        if (m_bFastAttackNoiseFloorRX1 && (Math.Abs(m_fFFTBinAverageRX1 - m_fLerpAverageRX1) < 1f))
         //        {
         //            float tmpDelay = Math.Max(1000f, _fft_fill_timeRX1 + (_wdsp_mox_transition_buffer_clear ? _fft_fill_timeRX1 : 0)); // extra
-        //            bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX1) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
+        //            bool bElapsed = (_high_perf_timer.ElapsedMsec - _fLastFastAttackEnabledTimeRX1) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
         //            if(bElapsed) m_bFastAttackNoiseFloorRX1 = false;
         //        }
 
@@ -5361,7 +5368,7 @@ namespace Thetis
         //        if (m_bFastAttackNoiseFloorRX2 && (Math.Abs(m_fFFTBinAverageRX2 - m_fLerpAverageRX2) < 1f))
         //        {
         //            float tmpDelay = Math.Max(1000f, _fft_fill_timeRX2 + (_wdsp_mox_transition_buffer_clear ? _fft_fill_timeRX2 : 0)); // extra
-        //            bool bElapsed = (m_objFrameStartTimer.ElapsedMsec - _fLastFastAttackEnabledTimeRX2) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
+        //            bool bElapsed = (_high_perf_timer.ElapsedMsec - _fLastFastAttackEnabledTimeRX2) > tmpDelay; //[2.10.1.0] MW0LGE change to time related, instead of frame related
         //            if(bElapsed) m_bFastAttackNoiseFloorRX2 = false;
         //        }
 
@@ -5409,7 +5416,7 @@ namespace Thetis
             if (fastAttack)
             {
                 float tmpDelay = Math.Max(1000f, fftFillTime + (_wdsp_mox_transition_buffer_clear ? fftFillTime : 0f));
-                double elapsed = m_objFrameStartTimer.ElapsedMsec - lastFastAttackTime;
+                double elapsed = _high_perf_timer.ElapsedMsec - lastFastAttackTime;
                 if (elapsed > tmpDelay) fastAttack = false;
             }
 
@@ -6714,8 +6721,8 @@ namespace Thetis
                     Utilities.Dispose(ref topPixels);
                     topPixels = null;
 
-                    bool bIgnoreAgc = (rx == 1 && _ignore_waterfall_rx1_agc && (m_objFrameStartTimer.ElapsedMsec < _rx1_no_agc_duration)) ||
-                                        (rx == 2 && _ignore_waterfall_rx2_agc && (m_objFrameStartTimer.ElapsedMsec < _rx2_no_agc_duration));
+                    bool bIgnoreAgc = (rx == 1 && _ignore_waterfall_rx1_agc && (_high_perf_timer.ElapsedMsec < _rx1_no_agc_duration)) ||
+                                        (rx == 2 && _ignore_waterfall_rx2_agc && (_high_perf_timer.ElapsedMsec < _rx2_no_agc_duration));
                     
                     if (!bIgnoreAgc)
                     {

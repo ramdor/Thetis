@@ -848,8 +848,6 @@ namespace Thetis
             //[2.10.3.4]MW0LGE shutdown log remove
             removeShutdownLog();
 
-            //addDelegates(); // moved to init console
-
             CWFWKeyer = true;
 
             // update titlebar
@@ -7421,12 +7419,12 @@ namespace Thetis
 
         public void UpdateRX1FilterPresetLow(int val)
         {
-            UpdateRX1Filters(val, (int)udFilterHigh.Value);
+            UpdateRX1Filters(val, (int)udFilterHigh.Value, true);
         }
 
         public void UpdateRX1FilterPresetHigh(int val)
         {
-            UpdateRX1Filters((int)udFilterLow.Value, val);
+            UpdateRX1Filters((int)udFilterLow.Value, val, true);
         }
 
         public void UpdateRX2FilterNames(Filter f, string old_name, string new_name)
@@ -7471,12 +7469,12 @@ namespace Thetis
 
         public void UpdateRX2FilterPresetLow(int val)
         {
-            UpdateRX2Filters(val, (int)udRX2FilterHigh.Value);
+            UpdateRX2Filters(val, (int)udRX2FilterHigh.Value, true);
         }
 
         public void UpdateRX2FilterPresetHigh(int val)
         {
-            UpdateRX2Filters((int)udRX2FilterLow.Value, val);
+            UpdateRX2Filters((int)udRX2FilterLow.Value, val, true);
         }
 
         public void UpdateVFOAFreq(string freq)
@@ -26842,7 +26840,7 @@ namespace Thetis
                         HandleXml(tmp);
                     }
                 }
-                catch (SocketException e) // handle blocking exception
+                catch (SocketException) // handle blocking exception
                 {
                     await Task.Delay(500);
                     continue;
@@ -31929,15 +31927,46 @@ namespace Thetis
             }
         }
         //
+
+        //[2.10.3.12]MW0LGE added this force so that the filter will get set if focus is lost, ie by the enter keypress being trapped in console.keypress
+        private bool _filter_console_controls_force_update = false;
         private void udFilterLow_LostFocus(object sender, EventArgs e)
         {
+            _filter_console_controls_force_update = true;
             udFilterLow_ValueChanged(sender, e);
+            _filter_console_controls_force_update = false;
         }
-
         private void udFilterHigh_LostFocus(object sender, EventArgs e)
         {
+            _filter_console_controls_force_update = true;
             udFilterHigh_ValueChanged(sender, e);
+            _filter_console_controls_force_update = false;
         }
+        private void udTXFilterLow_LostFocus(object sender, EventArgs e)
+        {
+            _filter_console_controls_force_update = true;
+            udTXFilterLow_ValueChanged(sender, e);
+            _filter_console_controls_force_update = false;
+        }
+        private void udTXFilterHigh_LostFocus(object sender, EventArgs e)
+        {
+            _filter_console_controls_force_update = true;
+            udTXFilterHigh_ValueChanged(sender, e);
+            _filter_console_controls_force_update = false;
+        }
+        private void udRX2FilterLow_LostFocus(object sender, EventArgs e)
+        {
+            _filter_console_controls_force_update = true;
+            udRX2FilterLow_ValueChanged(sender, e);
+            _filter_console_controls_force_update = false;
+        }
+        private void udRX2FilterHigh_LostFocus(object sender, EventArgs e)
+        {
+            _filter_console_controls_force_update = true;
+            udRX2FilterHigh_ValueChanged(sender, e);
+            _filter_console_controls_force_update = false;
+        }
+        //
 
         private void udRIT_LostFocus(object sender, EventArgs e)
         {
@@ -36349,7 +36378,7 @@ namespace Thetis
         private void udFilterLow_ValueChanged(object sender, System.EventArgs e)
         {
             //MW0LGE_21d filter - work if mouse over as well
-            if (udFilterLow.Focused || udFilterLow.ClientRectangle.Contains(udFilterLow.PointToClient(Control.MousePosition)))
+            if (_filter_console_controls_force_update || udFilterLow.Focused || udFilterLow.ClientRectangle.Contains(udFilterLow.PointToClient(Control.MousePosition)))
             {
                 if (udFilterLow.Value >= udFilterHigh.Value - 10)
                 {
@@ -36370,7 +36399,7 @@ namespace Thetis
         private void udFilterHigh_ValueChanged(object sender, System.EventArgs e)
         {
             //MW0LGE_21d filter - work if mouse over as well
-            if (udFilterHigh.Focused || udFilterHigh.ClientRectangle.Contains(udFilterHigh.PointToClient(Control.MousePosition)))
+            if (_filter_console_controls_force_update || udFilterHigh.Focused || udFilterHigh.ClientRectangle.Contains(udFilterHigh.PointToClient(Control.MousePosition)))
             {
                 if (udFilterHigh.Value <= udFilterLow.Value + 10)
                 {
@@ -40012,7 +40041,7 @@ namespace Thetis
         private void udRX2FilterLow_ValueChanged(object sender, System.EventArgs e)
         {
             //MW0LGE_21d filter
-            if (udRX2FilterLow.Focused || udRX2FilterLow.ClientRectangle.Contains(udRX2FilterLow.PointToClient(Control.MousePosition)))
+            if (_filter_console_controls_force_update || udRX2FilterLow.Focused || udRX2FilterLow.ClientRectangle.Contains(udRX2FilterLow.PointToClient(Control.MousePosition)))
             {
                 if (udRX2FilterLow.Value >= udRX2FilterHigh.Value - 10)
                 {
@@ -40039,7 +40068,7 @@ namespace Thetis
         private void udRX2FilterHigh_ValueChanged(object sender, System.EventArgs e)
         {
             //MW0LGE_21d filter
-            if (udRX2FilterHigh.Focused || udRX2FilterHigh.ClientRectangle.Contains(udRX2FilterHigh.PointToClient(Control.MousePosition)))
+            if (_filter_console_controls_force_update || udRX2FilterHigh.Focused || udRX2FilterHigh.ClientRectangle.Contains(udRX2FilterHigh.PointToClient(Control.MousePosition)))
             {
                 if (udRX2FilterHigh.Value <= udRX2FilterLow.Value + 10)
                 {
@@ -50433,7 +50462,7 @@ namespace Thetis
                 this.BackgroundImageLayout = ImageLayout.None;
                 this.BackgroundImage = resized_image;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 if (this.BackgroundImage == null)
                 {
