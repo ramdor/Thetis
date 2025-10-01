@@ -18330,6 +18330,8 @@ namespace Thetis
             get { return rx1_filter; }
             set
             {
+                if (_mode_changed_via_vsync) return;
+
                 RadioButtonTS r = null;
                 switch (value)
                 {
@@ -18395,6 +18397,8 @@ namespace Thetis
             get { return rx2_filter; }
             set
             {
+                if (_mode_changed_via_vsync) return;
+
                 RadioButtonTS r = null;
                 switch (value)
                 {
@@ -33565,16 +33569,15 @@ namespace Thetis
             else
                 FWCDDSFreq = CentreFrequency;
 
-            if (chkVFOSync.Checked) //MW0LGE_21k9  //[2.10.1.0] MW0LGE not used anymore
-            {
-                if (!initializing && RX2Enabled) // MW0LGE_21a
-                {
-                    if (RX2DSPMode != RX1DSPMode) RX2DSPMode = RX1DSPMode; // MW0LGE only set if different
-                    if (RX2Filter != RX1Filter) RX2Filter = RX1Filter; // MW0LGE only set if different
-                }
-                if (VFOBFreq != VFOAFreq) VFOBFreq = VFOAFreq; // MW0LGE_21k9 we only want to do if different, but we always want to align the filters.
-                                                               // Moved after the mode change due to freq change occuring which prevented mode change
-            }
+            //if (chkVFOSync.Checked)
+            //{
+            //    //if (!initializing && RX2Enabled) // MW0LGE_21a
+            //    //{
+            //    //    if (RX2DSPMode != RX1DSPMode) RX2DSPMode = RX1DSPMode; // MW0LGE only set if different
+            //    //    if (RX2Filter != RX1Filter) RX2Filter = RX1Filter; // MW0LGE only set if different
+            //    //}
+            //    if (VFOBFreq != VFOAFreq) VFOBFreq = VFOAFreq;                                                              
+            //}
 
             if (small_lsd)
             {
@@ -34595,16 +34598,15 @@ namespace Thetis
             }
 
 
-            if (chkVFOSync.Checked) //MW0LGE_21k9
-            {
-                if (!initializing && RX2Enabled) // MW0LGE_21a
-                {
-                    if (RX1DSPMode != RX2DSPMode) RX1DSPMode = RX2DSPMode;
-                    if (RX1Filter != RX2Filter) RX1Filter = RX2Filter;
-                }
-                if (VFOAFreq != VFOBFreq) VFOAFreq = VFOBFreq; // MW0LGE_21k9 we only want to do if different, but we always want to align the filters/
-                                                               // Moved after the mode change due to freq change occuring which prevented mode change
-            }
+            //if (chkVFOSync.Checked)
+            //{
+            //    //if (!initializing && RX2Enabled) // MW0LGE_21a
+            //    //{
+            //    //    if (RX1DSPMode != RX2DSPMode) RX1DSPMode = RX2DSPMode;
+            //    //    if (RX1Filter != RX2Filter) RX1Filter = RX2Filter;
+            //    //}
+            //    if (VFOAFreq != VFOBFreq) VFOAFreq = VFOBFreq;
+            //}
 
             if (small_lsd)
             {
@@ -46815,6 +46817,10 @@ namespace Thetis
         #endregion
 
         //-- RIGHT click on control shows related setup page // refactored
+        private void chkVFOSync_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.OPTIONS3_Tab);
+        }
         private void chkNR_MouseDown(object sender, MouseEventArgs e)
         {
             if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.NR_Tab);
@@ -47782,6 +47788,9 @@ namespace Thetis
         }
         private void OnFilterChanged(int rx, Filter oldFilter, Filter newFilter, Band band, int low, int high, string sName)
         {
+            //vfosync
+            handleVfoSyncFilter(rx, newFilter);
+
             if (m_bSetBandRunning) return;
             if (rx != 1) return;
             if (!BandStackManager.Ready) return;
@@ -48052,6 +48061,9 @@ namespace Thetis
             //recover the stepindex.
             updateStepIndexForMode(rx, newMode);
 
+            //vfosync
+            handleVfoSyncMode(rx, newMode);
+
             if (m_bSetBandRunning) return;
             if (rx != 1) return;
             if (!BandStackManager.Ready) return;
@@ -48083,6 +48095,8 @@ namespace Thetis
 
             //max bin display
             if (_display_max_bin_enabled[rx-1] && rx == 1) setupDisplayMaxBinDetect(rx, false, true);
+
+            handleVfoSyncFrequency(rx, newFreq, false);
         }
         private void OnVFOBFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
@@ -48098,6 +48112,8 @@ namespace Thetis
 
             //max bin display
             if (_display_max_bin_enabled[rx - 1] && rx == 2) setupDisplayMaxBinDetect(rx, false, true);
+
+            handleVfoSyncFrequency(rx, newFreq, true);
         }
 
         private void OnMoxChangeHandler(int rx, bool oldMox, bool newMox)
@@ -53716,10 +53732,20 @@ namespace Thetis
         {
             get { return _busy_doing_otherbutton_action; }
         }
-        public void DoOtherButtonAction(int rx, OtherButtonId id, MouseButtons button)
+        public void DoOtherButtonAction(int rx, OtherButtonId id, MouseButtons button, bool force = false)
         {
-            if (_busy_doing_otherbutton_action) return;
+            if (_busy_doing_otherbutton_action && !force) return;
             _busy_doing_otherbutton_action = true;
+
+            if(button == MouseButtons.Right)
+            {
+                if (handleDoOtherButtonActionRightClick(rx, id))
+                {
+                    _busy_doing_otherbutton_action = false;
+                    return;
+                }
+            }
+
             switch (id)
             {
                 case OtherButtonId.POWER: PowerOn = !PowerOn; break;
@@ -53758,7 +53784,7 @@ namespace Thetis
                 case OtherButtonId.IF_TO_V: btnIFtoVFO_Click(this, EventArgs.Empty); break; // no rx2
                 case OtherButtonId.SWAP_AB: btnVFOSwap_Click(this, EventArgs.Empty); break; // no rx2
                 case OtherButtonId.AVG: SetAVG(rx, !GetAVG(rx)); break;
-                case OtherButtonId.PEAK: SetPeak(rx, !GetPeak(rx)); break;
+                case OtherButtonId.PEAK_HOLD: SetPeak(rx, !GetPeak(rx)); break;
                 case OtherButtonId.CTUN: SetCTUN(rx, !GetCTUN(rx)); break;
                 case OtherButtonId.VAC1: if (!IsSetupFormNull) { SetupForm.VACEnable = !SetupForm.VACEnable; } break;
                 case OtherButtonId.VAC2: if (!IsSetupFormNull) { SetupForm.VAC2Enable = !SetupForm.VAC2Enable; } break;
@@ -53843,6 +53869,7 @@ namespace Thetis
                 case OtherButtonId.PEAK_BLOBS: DoGeneralSettingAction(rx, OtherButtonId.PEAK_BLOBS, !GetGeneralSetting(rx, OtherButtonId.PEAK_BLOBS)); break;
                 case OtherButtonId.CURSOR_INFO: DoGeneralSettingAction(rx, OtherButtonId.CURSOR_INFO, !GetGeneralSetting(rx, OtherButtonId.CURSOR_INFO)); break;
                 case OtherButtonId.SPOTS: DoGeneralSettingAction(rx, OtherButtonId.SPOTS, !GetGeneralSetting(rx, OtherButtonId.SPOTS)); break;
+                case OtherButtonId.ACTITVE_PEAK: DoGeneralSettingAction(rx, OtherButtonId.ACTITVE_PEAK, !GetGeneralSetting(rx, OtherButtonId.ACTITVE_PEAK)); break;
                 case OtherButtonId.FILL_SPECTRUM: DoGeneralSettingAction(rx, OtherButtonId.FILL_SPECTRUM, !GetGeneralSetting(rx, OtherButtonId.FILL_SPECTRUM)); break;
                 case OtherButtonId.RIT: DoGeneralSettingAction(rx, OtherButtonId.RIT, !GetGeneralSetting(rx, OtherButtonId.RIT)); break;
                 case OtherButtonId.XIT: DoGeneralSettingAction(rx, OtherButtonId.XIT, !GetGeneralSetting(rx, OtherButtonId.XIT)); break;
@@ -53957,6 +53984,138 @@ namespace Thetis
             }
 
             _busy_doing_otherbutton_action = false;
+        }
+        private bool handleDoOtherButtonActionRightClick(int rx, OtherButtonId id)
+        {
+            bool ret = true;
+            switch (id)
+            {
+                case OtherButtonId.NR:
+                case OtherButtonId.NR1:
+                case OtherButtonId.NR2:
+                case OtherButtonId.NR3:
+                case OtherButtonId.NR4:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.NR_Tab);
+                    break;
+                case OtherButtonId.NB:
+                case OtherButtonId.NB1:
+                case OtherButtonId.NB2:
+                case OtherButtonId.SNB:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.NB_Tab);
+                    break;
+                case OtherButtonId.VAC1:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.VAC1_Tab);
+                    break;
+                case OtherButtonId.VAC2:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.VAC2_Tab);
+                    break;
+                case OtherButtonId.MNF:
+                case OtherButtonId.MNF_PLUS:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.MNF_Tab);
+                    break;
+                case OtherButtonId.VOX:
+                case OtherButtonId.VOX_P1:
+                case OtherButtonId.VOX_M1:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.VOXDE_Tab);
+                    break;
+                case OtherButtonId.CFC:
+                case OtherButtonId.CFC_EQ:
+                case OtherButtonId.PHASE_ROT:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.CFC_Tab);
+                    break;
+                case OtherButtonId.ATT_0:
+                case OtherButtonId.ATT_10:
+                case OtherButtonId.ATT_20:
+                case OtherButtonId.ATT_30:
+                case OtherButtonId.ATT_40:
+                case OtherButtonId.ATT_50:
+                case OtherButtonId.ATT_STEP:
+                case OtherButtonId.ATT_P1:
+                case OtherButtonId.ATT_M1:
+                case OtherButtonId.AGC_FIXED:
+                case OtherButtonId.AGC_LONG:
+                case OtherButtonId.AGC_SLOW:
+                case OtherButtonId.AGC_MEDIUM:
+                case OtherButtonId.AGC_FAST:
+                case OtherButtonId.AGC_CUSTOM:
+                case OtherButtonId.AGC_AUTO:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.ALCAGC_Tab);
+                    break;
+                case OtherButtonId.TWOTON:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.TEST_Tab);
+                    break;
+                case OtherButtonId.MOX:
+                case OtherButtonId.TUN:                    
+                case OtherButtonId.DRIVE_0:
+                case OtherButtonId.DRIVE_P5:
+                case OtherButtonId.DRIVE_M5:
+                case OtherButtonId.TUN_0:
+                case OtherButtonId.TUNE_P5:
+                case OtherButtonId.TUNE_M5:
+                case OtherButtonId.MIC:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.Transmit_Tab);
+                    break;
+                case OtherButtonId.SQL:
+                case OtherButtonId.SQL_P5:
+                case OtherButtonId.SQL_M5:
+                case OtherButtonId.SQL_SQL:
+                case OtherButtonId.SQL_VSQL:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.AM_Tab);
+                    break;
+                case OtherButtonId.SPLT:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.OPTIONS2_Tab);
+                    break;
+                case OtherButtonId.SPOTS:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.SpotTCI);
+                    break;
+                case OtherButtonId.INFO_TEXT:
+                case OtherButtonId.PEAK_BLOBS:
+                case OtherButtonId.FILL_SPECTRUM:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.DISPGEN_Tab);
+                    break;
+                case OtherButtonId.ACTITVE_PEAK:
+                    switch (rx)
+                    {
+                        case 1:
+                            SetupForm.ShowSetupTab(Setup.SetupTab.DISPRX1_Tab); break;
+                        case 2:
+                            SetupForm.ShowSetupTab(Setup.SetupTab.DISPRX2_Tab); break;
+                    }
+                    break;
+                case OtherButtonId.LEVELER:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.ALCAGC_Tab);
+                    break;
+                case OtherButtonId.RX_EQ:
+                case OtherButtonId.TX_EQ:
+                    DoOtherButtonAction(rx, OtherButtonId.FORM_EQ, MouseButtons.Left, true);
+                    break;
+                case OtherButtonId.PS_A:
+                    DoOtherButtonAction(rx, OtherButtonId.FORM_LINEARITY, MouseButtons.Left, true);
+                    break;
+                case OtherButtonId.XPA:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.OC_Tab);
+                    break;
+                case OtherButtonId.WAVE_RECORD:
+                    DoOtherButtonAction(rx, OtherButtonId.FORM_WAVE, MouseButtons.Left, true);
+                    break;
+                case OtherButtonId.DITHER:
+                case OtherButtonId.RANDOM:
+                case OtherButtonId.SR_48000:
+                case OtherButtonId.SR_96000:
+                case OtherButtonId.SR_192000:
+                case OtherButtonId.SR_384000:
+                case OtherButtonId.SR_768000:
+                case OtherButtonId.SR_1536000:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.HWSET_Tab);
+                    break;
+                case OtherButtonId.VFO_SYNC:
+                    SetupForm.ShowSetupTab(Setup.SetupTab.OPTIONS3_Tab);
+                    break;
+                default:
+                    ret = false;
+                    break;
+            }
+            return ret;
         }
         public void SetNFEnabled(int rx, bool state)
         {
@@ -54218,7 +54377,7 @@ namespace Thetis
                 case OtherButtonId.MNF: return GetMNF(rx);
                 case OtherButtonId.SPLT: return GetSplit(rx);
                 case OtherButtonId.AVG: return GetAVG(rx);
-                case OtherButtonId.PEAK: return GetPeak(rx);
+                case OtherButtonId.PEAK_HOLD: return GetPeak(rx);
                 case OtherButtonId.CTUN: return GetCTUN(rx);
                 case OtherButtonId.VAC1: if (!IsSetupFormNull) { return SetupForm.VACEnable; } else { return false; }
                 case OtherButtonId.VAC2: if (!IsSetupFormNull) { return SetupForm.VAC2Enable; } else { return false; }
@@ -54274,6 +54433,7 @@ namespace Thetis
                 case OtherButtonId.PEAK_BLOBS: return GetGeneralSetting(rx, OtherButtonId.PEAK_BLOBS);
                 case OtherButtonId.CURSOR_INFO: return GetGeneralSetting(rx, OtherButtonId.CURSOR_INFO);
                 case OtherButtonId.SPOTS: return GetGeneralSetting(rx, OtherButtonId.SPOTS);
+                case OtherButtonId.ACTITVE_PEAK: return GetGeneralSetting(rx, OtherButtonId.ACTITVE_PEAK);
                 case OtherButtonId.FILL_SPECTRUM: return GetGeneralSetting(rx, OtherButtonId.FILL_SPECTRUM);
                 case OtherButtonId.RIT: return GetGeneralSetting(rx, OtherButtonId.RIT);
                 case OtherButtonId.XIT: return GetGeneralSetting(rx, OtherButtonId.XIT);
@@ -54921,6 +55081,9 @@ namespace Thetis
                 case OtherButtonId.SPOTS:
                     if (!IsSetupFormNull) return SetupForm.ShowTCISpots;
                     break;
+                case OtherButtonId.ACTITVE_PEAK:
+                    if (!IsSetupFormNull) return SetupForm.GetActivePeakHoldsEnabledRX(rx);
+                    break;
                 case OtherButtonId.FILL_SPECTRUM:
                     if (!IsSetupFormNull) return SetupForm.DisplayPanFill;
                     break;
@@ -54946,7 +55109,7 @@ namespace Thetis
                         switch (rx)
                         {
                             case 1:
-                                if(!IsSetupFormNull) return SetupForm.RX1EnableAtt;
+                                if (!IsSetupFormNull) return SetupForm.RX1EnableAtt;
                                 break;
                             case 2:
                                 if (!IsSetupFormNull) return SetupForm.RX2EnableAtt;
@@ -55003,7 +55166,7 @@ namespace Thetis
             SetGeneralSetting(0, OtherButtonId.LOCK_A, GetGeneralSetting(tmp_rx, OtherButtonId.LOCK_A));
             SetGeneralSetting(0, OtherButtonId.LOCK_B, GetGeneralSetting(tmp_rx, OtherButtonId.LOCK_B));
 
-            // per meter here
+            // per rx here
             int start = rx == 0 ? 1 : rx;
             int end = rx == 0 ? 2 : rx;
             for (int n = start; n <= end; n++)
@@ -55017,6 +55180,7 @@ namespace Thetis
 
                 setATTGeneralSetting(n);
                 SetGeneralSetting(n, OtherButtonId.NF, GetGeneralSetting(n, OtherButtonId.NF));
+                SetGeneralSetting(n, OtherButtonId.ACTITVE_PEAK, GetGeneralSetting(tmp_rx, OtherButtonId.ACTITVE_PEAK));
             }
 
             // last
@@ -55095,6 +55259,9 @@ namespace Thetis
                     return true;
                 case OtherButtonId.SPOTS:
                     if (!IsSetupFormNull) SetupForm.ShowTCISpots = state;
+                    return true;
+                case OtherButtonId.ACTITVE_PEAK:
+                    if (!IsSetupFormNull) SetupForm.SetActivePeakHoldsEnabledRX(rx, state);
                     return true;
                 case OtherButtonId.FILL_SPECTRUM:
                     if (!IsSetupFormNull) SetupForm.DisplayPanFill = state;
@@ -55582,6 +55749,114 @@ namespace Thetis
                         break;
                 }
             }
+        }
+        //
+
+        private bool _vfo_sync_frequency = false;
+        private bool _vfo_sync_mode = false;
+        private bool _vfo_sync_filter = false;
+        public bool VFOsyncFrequency
+        {
+            get { return _vfo_sync_frequency; }
+            set { _vfo_sync_frequency = value; }
+        }
+        public bool VFOsyncMode
+        {
+            get { return _vfo_sync_mode; }
+            set { _vfo_sync_mode = value; }
+        }
+        public bool VFOsyncFilter
+        {
+            get { return _vfo_sync_filter; }
+            set { _vfo_sync_filter = value; }
+        }
+        private bool _prevent_vsync_updates = false; // to prevent recursive updates
+        private void handleVfoSyncFrequency(int rx, double frequency, bool vfoB)
+        {
+            if (!VFOSync) return;
+            if (!_vfo_sync_frequency || _prevent_vsync_updates) return;
+            _prevent_vsync_updates = true;
+
+            switch (rx)
+            {
+                case 1:
+                    if (vfoB)
+                    {
+                        VFOAFreq = VFOBFreq;
+                    }
+                    else
+                    {
+                        VFOBFreq = VFOAFreq;
+                    }
+
+                    _prevent_vsync_updates = false;
+                    handleVfoSyncMode(1, RX1DSPMode);
+                    break;
+                case 2:
+                    if (vfoB)
+                    {
+                        VFOAFreq = VFOBFreq; //vfob will always be changing for rx2
+                        _prevent_vsync_updates = false;
+                        handleVfoSyncMode(2, RX2DSPMode);
+                    }
+                    break;
+            }
+
+            _prevent_vsync_updates = false;
+        }
+        private bool _mode_changed_via_vsync = false; // used to prevent filter changes happening when mode is changed due to vsync, we will sync filters ourselves
+        private void handleVfoSyncMode(int rx, DSPMode mode)
+        {
+            if (!VFOSync) return;
+            if (!_vfo_sync_mode || _prevent_vsync_updates) return;
+            _prevent_vsync_updates = true;
+            _mode_changed_via_vsync = _vfo_sync_filter; //prevent filter changes happening when mode is changed if we are syncing filters. Used in RX1Filter and RX2Filter
+
+            switch (rx)
+            {
+                case 1:
+                    RX2DSPMode = mode;
+                    if (_mode_changed_via_vsync)
+                    {
+                        // update filter?
+                        _mode_changed_via_vsync = false;
+                        _prevent_vsync_updates = false;
+                        handleVfoSyncFilter(1, RX1Filter);
+                    }
+                    break;
+                case 2:
+                    RX1DSPMode = mode;
+                    if (_mode_changed_via_vsync)
+                    {
+                        // update filter?
+                        _mode_changed_via_vsync = false;
+                        _prevent_vsync_updates = false;
+                        handleVfoSyncFilter(2, RX2Filter);
+                    }
+                    break;
+            }
+
+            _mode_changed_via_vsync = false;
+            _prevent_vsync_updates = false;
+        }
+        private void handleVfoSyncFilter(int rx, Filter newFilter)
+        {
+            if (!VFOSync || newFilter == Filter.VAR1 || newFilter == Filter.VAR2) return;
+            if (!_vfo_sync_filter || _prevent_vsync_updates) return;
+            _prevent_vsync_updates = true;
+
+            switch (rx)
+            {
+                case 1:
+                    if (newFilter == Filter.F8 || newFilter == Filter.F9 || newFilter == Filter.F10) break; // rx2 does not have these filters
+                    RX2Filter = newFilter;
+                    break;
+                case 2:
+                    RX1Filter = newFilter;
+                    break;
+            }
+
+            _prevent_vsync_updates = false;
         }
     }
 

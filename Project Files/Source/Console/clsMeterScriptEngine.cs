@@ -45,9 +45,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Thetis
 {
@@ -80,7 +81,34 @@ namespace Thetis
             public BankVars[] Variables;
         }
 
+        private sealed class CompileResult
+        {
+            public ScriptRunner<bool> Runner;
+            public string Diagnostics;
+            public bool Success;
+        }
+
+        private struct EvalResult
+        {
+            public int Index;
+            public bool Value;
+            public bool Error;
+            public string Diagnostic;
+        }
+
         private static readonly object _lock = new object();
+
+        private static readonly ScriptOptions _script_options =
+            ScriptOptions.Default
+                .AddReferences(typeof(object).Assembly)
+                .AddReferences(typeof(Dictionary<string, object>).Assembly)
+                .AddReferences(typeof(Microsoft.CSharp.RuntimeBinder.Binder).Assembly)
+                .AddReferences(typeof(Globals).Assembly)
+                .AddImports("System")
+                .AddImports("System.Collections.Generic")
+                .AddImports("System.Linq")
+                .AddImports("Microsoft.CSharp");
+
         private static List<string> _conditions = new List<string>();
         private static List<bool> _occupied = new List<bool>();
         private static List<int> _update_intervals_ms = new List<int>();
@@ -89,8 +117,13 @@ namespace Thetis
         private static List<bool> _errors = new List<bool>();
         private static List<string> _diagnostics = new List<string>();
         private static Queue<int> _free_indices = new Queue<int>();
-        private static ScriptRunner<bool[]> _runner = null;
+
+        private static List<ScriptRunner<bool>> _delegates = new List<ScriptRunner<bool>>();
+        private static List<bool> _needs_compile = new List<bool>();
+        private static Dictionary<string, ScriptRunner<bool>> _delegate_cache = new Dictionary<string, ScriptRunner<bool>>();
+
         private static bool _needs_recompile = false;
+
         private static Timer _timer = null;
         private static int _default_interval_ms = 100;
         private static int _loop_interval_ms = 100;
@@ -100,7 +133,12 @@ namespace Thetis
         private static int _batch_depth = 0;
         private static bool _loop_interval_dirty = false;
 
-        public static void start(Func<Snapshot> variable_provider_banked, int default_interval_ms, int bank_count)
+        private static Thread _compile_thread = null;
+        private static AutoResetEvent _compile_event = new AutoResetEvent(false);
+        private static bool _stopping = false;
+        private static int _compile_debounce_ms = 25;
+
+        public static void Start(Func<Snapshot> variable_provider_banked, int default_interval_ms, int bank_count)
         {
             lock (_lock)
             {
@@ -108,6 +146,7 @@ namespace Thetis
                 _bank_count = bank_count < 1 ? 1 : bank_count;
                 _default_interval_ms = default_interval_ms < 1 ? 1 : default_interval_ms;
                 _loop_interval_ms = _default_interval_ms;
+                _stopping = false;
                 if (_timer == null)
                 {
                     _timer = new Timer(_ => tick(), null, _loop_interval_ms, _loop_interval_ms);
@@ -116,20 +155,47 @@ namespace Thetis
                 {
                     _timer.Change(_loop_interval_ms, _loop_interval_ms);
                 }
+                if (_compile_thread == null || !_compile_thread.IsAlive)
+                {
+                    _compile_thread = new Thread(compile_worker_entry);
+                    _compile_thread.IsBackground = true;
+                    _compile_thread.Priority = ThreadPriority.BelowNormal;
+                    _compile_thread.Name = "MeterScriptEngine-Compiler";
+                    _compile_thread.Start();
+                }
             }
+            Thread warm = new Thread(warmup_roslyn_entry);
+            warm.IsBackground = true;
+            warm.Priority = ThreadPriority.BelowNormal;
+            warm.Name = "MeterScriptEngine-Warmup";
+            warm.Start();
         }
 
-        public static void stop()
+        public static void Stop()
         {
             lock (_lock)
             {
+                _stopping = true;
+                _compile_event.Set();
                 if (_timer != null)
                 {
                     _timer.Change(Timeout.Infinite, Timeout.Infinite);
                     _timer.Dispose();
                     _timer = null;
                 }
-                _runner = null;
+            }
+        }
+
+        public static bool IsInBatch
+        {
+            get
+            {
+                bool in_batch;
+                lock (_lock)
+                {
+                    in_batch = _batch_depth > 0;
+                }
+                return in_batch;
             }
         }
 
@@ -143,30 +209,18 @@ namespace Thetis
 
         public static void EndBatch()
         {
-            bool do_compile = false;
             bool do_recompute = false;
-
+            bool schedule_compile = false;
             lock (_lock)
             {
                 if (_batch_depth > 0) _batch_depth--;
                 if (_batch_depth == 0)
                 {
-                    if (_needs_recompile) do_compile = true;
+                    if (_needs_recompile) schedule_compile = true;
                     if (_loop_interval_dirty) do_recompute = true;
                     _loop_interval_dirty = false;
                 }
             }
-
-            if (do_compile)
-            {
-                ScriptRunner<bool[]> built = build_runner();
-                lock (_lock)
-                {
-                    _runner = built;
-                    _needs_recompile = false;
-                }
-            }
-
             if (do_recompute)
             {
                 lock (_lock)
@@ -174,9 +228,16 @@ namespace Thetis
                     recompute_loop_interval_nolock();
                 }
             }
+            if (schedule_compile)
+            {
+                lock (_lock)
+                {
+                    schedule_compile_if_needed_nolock();
+                }
+            }
         }
 
-        public static int register_led()
+        public static int RegisterLed()
         {
             lock (_lock)
             {
@@ -191,6 +252,8 @@ namespace Thetis
                     _results[index] = false;
                     _errors[index] = false;
                     _diagnostics[index] = string.Empty;
+                    _delegates[index] = null;
+                    _needs_compile[index] = false;
                 }
                 else
                 {
@@ -202,15 +265,19 @@ namespace Thetis
                     _results.Add(false);
                     _errors.Add(false);
                     _diagnostics.Add(string.Empty);
+                    _delegates.Add(null);
+                    _needs_compile.Add(false);
                 }
-                _needs_recompile = true;
                 _loop_interval_dirty = true;
-                if (_batch_depth == 0) recompute_loop_interval_nolock();
+                if (_batch_depth == 0)
+                {
+                    recompute_loop_interval_nolock();
+                }
                 return index;
             }
         }
 
-        public static void unregister_led(int index)
+        public static void UnregisterLed(int index)
         {
             lock (_lock)
             {
@@ -223,80 +290,75 @@ namespace Thetis
                 _diagnostics[index] = string.Empty;
                 _update_intervals_ms[index] = _default_interval_ms;
                 _next_due_ticks[index] = 0L;
+                _delegates[index] = null;
+                _needs_compile[index] = false;
                 _free_indices.Enqueue(index);
-                _needs_recompile = true;
                 _loop_interval_dirty = true;
-                if (_batch_depth == 0) recompute_loop_interval_nolock();
+                if (_batch_depth == 0)
+                {
+                    recompute_loop_interval_nolock();
+                }
             }
         }
 
-        public static bool set_condition(int index, string condition)
+        //public static bool SetCondition(int index, string condition)
+        //{
+        //    if (index < 0 || index >= _occupied.Count) return false;
+        //    if (!_occupied[index]) return false;
+        //    string expr = condition ?? string.Empty;
+        //    lock (_lock)
+        //    {
+        //        _conditions[index] = expr;
+        //        _diagnostics[index] = string.Empty;
+        //        _errors[index] = false;
+        //        _needs_compile[index] = true;
+        //        _needs_recompile = true;
+        //        if (_batch_depth == 0) schedule_compile_if_needed_nolock();
+        //    }
+        //    return true;
+        //}
+        public static bool SetCondition(int index, string condition)
         {
             if (index < 0 || index >= _occupied.Count) return false;
             if (!_occupied[index]) return false;
 
             string expr = condition ?? string.Empty;
+            string trimmed = expr.Trim();
 
-            bool fast_path = false;
-            lock (_lock)
+            if (trimmed.Length == 0)
             {
-                if (_batch_depth > 0)
+                lock (_lock)
                 {
-                    _conditions[index] = expr;
-                    _diagnostics[index] = string.Empty;
+                    _conditions[index] = string.Empty;
+                    _delegates[index] = null;
+                    _needs_compile[index] = false;
                     _errors[index] = false;
-                    _needs_recompile = true;
-                    fast_path = true;
+                    _diagnostics[index] = string.Empty;
                 }
+                return true;
             }
-            if (fast_path) return true;
 
-            string code = "return (bool)(" + expr + ");";
-
-            ScriptOptions options = ScriptOptions.Default
-                .AddReferences(typeof(object).Assembly)
-                .AddReferences(typeof(Dictionary<string, object>).Assembly)
-                .AddReferences(typeof(Microsoft.CSharp.RuntimeBinder.Binder).Assembly)
-                .AddReferences(typeof(Globals).Assembly)
-                .AddImports("System")
-                .AddImports("System.Collections.Generic")
-                .AddImports("Microsoft.CSharp");
-
-            Script<bool> script = CSharpScript.Create<bool>(code, options, typeof(Globals));
-            System.Collections.Immutable.ImmutableArray<Diagnostic> diags = script.Compile();
-
-            bool has_errors = false;
+            ExpressionSyntax node = SyntaxFactory.ParseExpression(trimmed);
+            bool has_error = false;
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            foreach (Diagnostic d in diags)
+            foreach (Diagnostic d in node.GetDiagnostics())
             {
                 if (d.Severity == DiagnosticSeverity.Error)
                 {
-                    has_errors = true;
+                    has_error = true;
                     sb.AppendLine(d.ToString());
                 }
             }
-            if (has_errors)
-            {
-                lock (_lock)
-                {
-                    _diagnostics[index] = sb.ToString();
-                    _errors[index] = true;
-                }
-                return false;
-            }
 
-            Globals g = build_globals_once();
-            try
-            {
-                ScriptState<bool> state = script.RunAsync(g).GetAwaiter().GetResult();
-                bool tmp = state.ReturnValue;
-            }
-            catch (Exception ex)
+            if (has_error)
             {
                 lock (_lock)
                 {
-                    _diagnostics[index] = ex.Message;
+                    _conditions[index] = expr;
+                    _delegates[index] = null;
+                    _needs_compile[index] = false;
                     _errors[index] = true;
+                    _diagnostics[index] = sb.ToString();
                 }
                 return false;
             }
@@ -306,14 +368,13 @@ namespace Thetis
                 _conditions[index] = expr;
                 _diagnostics[index] = string.Empty;
                 _errors[index] = false;
+                _needs_compile[index] = true;
                 _needs_recompile = true;
+                if (_batch_depth == 0) schedule_compile_if_needed_nolock();
             }
-
             return true;
         }
-
-
-        public static void set_update_interval(int index, int milliseconds)
+        public static void SetUpdateInterval(int index, int milliseconds)
         {
             lock (_lock)
             {
@@ -326,7 +387,7 @@ namespace Thetis
             }
         }
 
-        public static bool read_result(int index)
+        public static bool ReadResult(int index)
         {
             lock (_lock)
             {
@@ -336,7 +397,7 @@ namespace Thetis
             }
         }
 
-        public static bool read_error(int index)
+        public static bool ReadError(int index)
         {
             lock (_lock)
             {
@@ -346,7 +407,7 @@ namespace Thetis
             }
         }
 
-        public static string read_diagnostic(int index)
+        public static string ReadDiagnostic(int index)
         {
             lock (_lock)
             {
@@ -356,7 +417,7 @@ namespace Thetis
             }
         }
 
-        public static void set_loop_interval_floor(int milliseconds)
+        public static void SetLoopIntervalFloor(int milliseconds)
         {
             lock (_lock)
             {
@@ -368,76 +429,80 @@ namespace Thetis
 
         private static void tick()
         {
-            Globals globals = null;
-            ScriptRunner<bool[]> runner_local = null;
             List<int> due_indices = null;
-            bool compile_now = false;
+            List<ScriptRunner<bool>> due_delegates = null;
 
             lock (_lock)
             {
-                if (_needs_recompile && _batch_depth == 0)
-                {
-                    compile_now = true;
-                    _needs_recompile = false;
-                }
-                runner_local = _runner;
+                if (_needs_recompile && _batch_depth == 0) schedule_compile_if_needed_nolock();
                 due_indices = get_due_indices_nolock();
-            }
-
-            if (compile_now)
-            {
-                ScriptRunner<bool[]> built = build_runner();
-                lock (_lock)
+                int n = due_indices.Count;
+                due_delegates = new List<ScriptRunner<bool>>(n);
+                for (int i = 0; i < n; i++)
                 {
-                    _runner = built;
-                    runner_local = _runner;
+                    int idx = due_indices[i];
+                    ScriptRunner<bool> d = _delegates[idx];
+                    due_delegates.Add(d);
                 }
             }
 
-            if (runner_local == null) return;
+            if (due_indices == null || due_indices.Count == 0) return;
 
-            globals = build_globals_once();
+            Globals globals = build_globals_once();
 
-            bool[] eval_results = null;
-            try
+            List<EvalResult> outputs = new List<EvalResult>(due_indices.Count);
+            for (int i = 0; i < due_indices.Count; i++)
             {
-                eval_results = runner_local(globals).GetAwaiter().GetResult();
-            }
-            catch (Exception ex)
-            {
-                lock (_lock)
+                int idx = due_indices[i];
+                ScriptRunner<bool> del = due_delegates[i];
+                if (del == null)
                 {
-                    int countErr = _occupied.Count;
-                    for (int i = 0; i < countErr; i++)
-                    {
-                        if (_occupied[i])
-                        {
-                            _errors[i] = true;
-                            _diagnostics[i] = ex.Message;
-                        }
-                    }
+                    EvalResult er0 = new EvalResult();
+                    er0.Index = idx;
+                    er0.Value = false;
+                    er0.Error = false;
+                    er0.Diagnostic = string.Empty;
+                    outputs.Add(er0);
+                    continue;
                 }
-                return;
+                try
+                {
+                    bool r = del(globals).GetAwaiter().GetResult();
+                    EvalResult er1 = new EvalResult();
+                    er1.Index = idx;
+                    er1.Value = r;
+                    er1.Error = false;
+                    er1.Diagnostic = string.Empty;
+                    outputs.Add(er1);
+                }
+                catch (Exception ex)
+                {
+                    EvalResult er2 = new EvalResult();
+                    er2.Index = idx;
+                    er2.Value = false;
+                    er2.Error = true;
+                    er2.Diagnostic = ex.Message ?? string.Empty;
+                    outputs.Add(er2);
+                }
             }
-
-            if (eval_results == null) return;
 
             long now_ticks = DateTime.UtcNow.Ticks;
 
             lock (_lock)
             {
-                int count = Math.Min(eval_results.Length, _results.Count);
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < outputs.Count; i++)
                 {
-                    if (!_occupied[i]) continue;
-                    _results[i] = eval_results[i];
-                }
-                for (int i = 0; i < due_indices.Count; i++)
-                {
-                    int idx = due_indices[i];
-                    if (!_occupied[idx]) continue;
-                    long delay = (long)_update_intervals_ms[idx] * _ticks_per_millisecond;
-                    _next_due_ticks[idx] = now_ticks + delay;
+                    EvalResult er = outputs[i];
+                    if (er.Index < 0 || er.Index >= _occupied.Count) continue;
+                    if (!_occupied[er.Index]) continue;
+                    _results[er.Index] = er.Value;
+                    if (er.Error)
+                    {
+                        _errors[er.Index] = true;
+                        _diagnostics[er.Index] = er.Diagnostic;
+                    }
+                    long delay = (long)_update_intervals_ms[er.Index] * _ticks_per_millisecond;
+                    _next_due_ticks[er.Index] = now_ticks + delay;
                 }
             }
         }
@@ -489,22 +554,122 @@ namespace Thetis
             if (_timer != null) _timer.Change(_loop_interval_ms, _loop_interval_ms);
         }
 
-        private static ScriptRunner<bool[]> build_runner()
+        private static void schedule_compile_if_needed_nolock()
         {
-            string code = build_code();
+            if (_stopping) return;
+            if (_batch_depth > 0) return;
+            _compile_event.Set();
+        }
 
-            ScriptOptions options = ScriptOptions.Default
-                .AddReferences(typeof(object).Assembly)
-                .AddReferences(typeof(Dictionary<string, object>).Assembly)
-                .AddReferences(typeof(Microsoft.CSharp.RuntimeBinder.Binder).Assembly)
-                .AddReferences(typeof(Globals).Assembly)
-                .AddImports("System")
-                .AddImports("System.Collections.Generic")
-                .AddImports("System.Linq")
-                .AddImports("Microsoft.CSharp");
+        private static void compile_worker_entry()
+        {
+            while (true)
+            {
+                _compile_event.WaitOne();
+                if (_stopping) break;
+                if (_compile_debounce_ms > 0) Thread.Sleep(_compile_debounce_ms);
 
-            Script<bool[]> script = CSharpScript.Create<bool[]>(code, options, typeof(Globals));
+                while (true)
+                {
+                    int[] indices;
+                    string[] exprs;
 
+                    lock (_lock)
+                    {
+                        if (_stopping) return;
+                        if (_batch_depth > 0) break;
+                        List<int> list = new List<int>();
+                        List<string> exprlist = new List<string>();
+                        int count = _conditions.Count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            if (_occupied[i] && _needs_compile[i])
+                            {
+                                list.Add(i);
+                                exprlist.Add(_conditions[i]);
+                                _needs_compile[i] = false;
+                            }
+                        }
+                        if (list.Count == 0)
+                        {
+                            _needs_recompile = false;
+                            break;
+                        }
+                        indices = list.ToArray();
+                        exprs = exprlist.ToArray();
+                    }
+
+                    for (int k = 0; k < indices.Length; k++)
+                    {
+                        int idx = indices[k];
+                        string expr = exprs[k] ?? string.Empty;
+                        string trimmed = expr.Trim();
+
+                        if (trimmed.Length == 0)
+                        {
+                            lock (_lock)
+                            {
+                                if (idx >= 0 && idx < _delegates.Count)
+                                {
+                                    if (_occupied[idx] && _conditions[idx] == expr)
+                                    {
+                                        _delegates[idx] = null;
+                                        _errors[idx] = false;
+                                        _diagnostics[idx] = string.Empty;
+                                    }
+                                }
+                            }
+                            continue;
+                        }
+
+                        ScriptRunner<bool> cached;
+                        bool found = false;
+                        lock (_lock)
+                        {
+                            found = _delegate_cache.TryGetValue(trimmed, out cached);
+                        }
+                        if (found && cached != null)
+                        {
+                            lock (_lock)
+                            {
+                                if (_occupied[idx] && _conditions[idx] == expr)
+                                {
+                                    _delegates[idx] = cached;
+                                    _errors[idx] = false;
+                                    _diagnostics[idx] = string.Empty;
+                                }
+                            }
+                            continue;
+                        }
+
+                        CompileResult cr = compile_one(trimmed);
+
+                        lock (_lock)
+                        {
+                            if (!_occupied[idx]) continue;
+                            if (_conditions[idx] != expr) { _needs_compile[idx] = true; _needs_recompile = true; continue; }
+                            if (cr.Success && cr.Runner != null)
+                            {
+                                _delegates[idx] = cr.Runner;
+                                if (!_delegate_cache.ContainsKey(trimmed)) _delegate_cache[trimmed] = cr.Runner;
+                                _errors[idx] = false;
+                                _diagnostics[idx] = string.Empty;
+                            }
+                            else
+                            {
+                                _errors[idx] = true;
+                                _diagnostics[idx] = cr.Diagnostics ?? string.Empty;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static CompileResult compile_one(string expr_trimmed)
+        {
+            string code = "return (bool)(" + expr_trimmed + ");";
+            Script<bool> script = CSharpScript.Create<bool>(code, _script_options, typeof(Globals));
             System.Collections.Immutable.ImmutableArray<Diagnostic> diags = script.Compile();
             bool has_errors = false;
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -518,77 +683,45 @@ namespace Thetis
             }
             if (has_errors)
             {
-                lock (_lock)
-                {
-                    int countErr = _occupied.Count;
-                    for (int i = 0; i < countErr; i++)
-                    {
-                        if (_occupied[i])
-                        {
-                            _errors[i] = true;
-                            _diagnostics[i] = sb.ToString();
-                        }
-                    }
-                }
-                return null;
+                CompileResult cr1 = new CompileResult();
+                cr1.Runner = null;
+                cr1.Diagnostics = sb.ToString();
+                cr1.Success = false;
+                return cr1;
             }
-
             try
             {
-                ScriptRunner<bool[]> runner = script.CreateDelegate();
-                return runner;
+                ScriptRunner<bool> r = script.CreateDelegate();
+                CompileResult cr2 = new CompileResult();
+                cr2.Runner = r;
+                cr2.Diagnostics = string.Empty;
+                cr2.Success = true;
+                return cr2;
             }
             catch (CompilationErrorException ex)
             {
-                lock (_lock)
-                {
-                    int countErr = _occupied.Count;
-                    for (int i = 0; i < countErr; i++)
-                    {
-                        if (_occupied[i])
-                        {
-                            _errors[i] = true;
-                            _diagnostics[i] = string.Join(Environment.NewLine, ex.Diagnostics.Select(x => x.ToString()));
-                        }
-                    }
-                }
-                return null;
+                string diag = string.Join(Environment.NewLine, ex.Diagnostics.Select(x => x.ToString()));
+                CompileResult cr3 = new CompileResult();
+                cr3.Runner = null;
+                cr3.Diagnostics = diag;
+                cr3.Success = false;
+                return cr3;
             }
         }
 
-        private static string build_code()
+        private static void warmup_roslyn_entry()
         {
-            List<string> local_conditions;
-            List<bool> local_occupied;
-            lock (_lock)
+            try
             {
-                local_conditions = new List<string>(_conditions);
-                local_occupied = new List<bool>(_occupied);
+                Script<bool> s = CSharpScript.Create<bool>("return true;", _script_options, typeof(Globals));
+                s.Compile();
+                ScriptRunner<bool> r = s.CreateDelegate();
+                Globals g = new Globals();
+                g.Variables = new BankVars[0];
+                bool b = r(g).GetAwaiter().GetResult();
             }
-
-            int n = local_conditions.Count;
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            sb.Append("bool[] results = new bool[").Append(n.ToString()).Append("];");
-            for (int i = 0; i < n; i++)
-            {
-                if (!local_occupied[i])
-                {
-                    sb.Append("results[").Append(i.ToString()).Append("]=false;");
-                    continue;
-                }
-                string expr = local_conditions[i] ?? string.Empty;
-                string safe = expr.Trim();
-                if (safe.Length == 0)
-                {
-                    sb.Append("results[").Append(i.ToString()).Append("]=false;");
-                }
-                else
-                {
-                    sb.Append("try{results[").Append(i.ToString()).Append("]=(bool)(").Append(safe).Append(");}catch{results[").Append(i.ToString()).Append("]=false;}");
-                }
-            }
-            sb.Append("return results;");
-            return sb.ToString();
+            catch { }
         }
     }
 }
+

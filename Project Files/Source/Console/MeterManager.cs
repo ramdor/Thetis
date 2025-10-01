@@ -246,7 +246,7 @@ namespace Thetis
             CW
         }
 
-        public static event EventHandler LedIndicatorRemoved;
+        //public static event EventHandler LedIndicatorRemoved;
         public static event EventHandler<string> WebImageRemoved;
         public static event EventHandler<string> ShowWebImageBackground;
 
@@ -390,7 +390,7 @@ namespace Thetis
             _led_readings[0] = new ConcurrentDictionary<string, object>();
             _led_readings[1] = new ConcurrentDictionary<string, object>();
 
-            MeterScriptEngine.start(provide_variables, 100,2); //100ms update, which is enough for leds. Two banks of variables as 2 rx's            
+            MeterScriptEngine.Start(provide_variables, 100,2); //100ms update, which is enough for leds. Two banks of variables as 2 rx's            
         }
 
         // led variables and script engine callback
@@ -3465,7 +3465,7 @@ namespace Thetis
         {
             _cat_queue_system.stopAll(); // stop the cat queue
 
-            MeterScriptEngine.stop();
+            MeterScriptEngine.Stop();
 
             if (_image_fetcher != null)
                 _image_fetcher.Shutdown();
@@ -5022,6 +5022,7 @@ namespace Thetis
             general_settings.Add(OtherButtonId.PEAK_BLOBS, _console.GetGeneralSetting(m.RX, OtherButtonId.PEAK_BLOBS));
             general_settings.Add(OtherButtonId.CURSOR_INFO, _console.GetGeneralSetting(m.RX, OtherButtonId.CURSOR_INFO));
             general_settings.Add(OtherButtonId.SPOTS, _console.GetGeneralSetting(m.RX, OtherButtonId.SPOTS));
+            general_settings.Add(OtherButtonId.ACTITVE_PEAK, _console.GetGeneralSetting(m.RX, OtherButtonId.ACTITVE_PEAK));
             general_settings.Add(OtherButtonId.FILL_SPECTRUM, _console.GetGeneralSetting(m.RX, OtherButtonId.FILL_SPECTRUM));
             general_settings.Add(OtherButtonId.RIT, _console.GetGeneralSetting(m.RX, OtherButtonId.RIT));
             general_settings.Add(OtherButtonId.XIT, _console.GetGeneralSetting(m.RX, OtherButtonId.XIT));
@@ -5055,7 +5056,7 @@ namespace Thetis
 
             general_settings.Add(OtherButtonId.NF, _console.GetGeneralSetting(m.RX, OtherButtonId.NF));
 
-            m.GeneralSettings = new GeneralOtherButtonSettings() { _setting = OtherButtonId.UNKNOWN, _old_state = false, _new_state = false, _settings = general_settings };
+            m.GeneralSettings = new GeneralOtherButtonSettings() { _setting = OtherButtonId.INIT, _old_state = false, _new_state = false, _settings = general_settings };
             //
             m.SqlMode = _console.GetSqlMode(m.RX);
             m.CWXShown = _console.CWXForm.IsShown;
@@ -6186,6 +6187,7 @@ namespace Thetis
                                     }
                                 }
 
+                                //this first section is 
                                 IEnumerable<KeyValuePair<string, string>> meterIGData = data.Where(o => o.Key.StartsWith("ItemGroupData_", StringComparison.OrdinalIgnoreCase) && o.Value.Contains(old_ucm_id/*m.ID*/));
                                 foreach (KeyValuePair<string, string> kvp in meterIGData)
                                 {
@@ -6209,7 +6211,7 @@ namespace Thetis
                                             bool bIGSok = igs.TryParse2(meterIGSettings.First().Value);
                                             if (bIGSok)
                                             {
-                                                m.ApplySettingsForMeterGroup(ig.MeterType, igs, null, ig.Order);
+                                                m.ApplySettingsForMeterGroup(ig.MeterType, igs, null, ig.Order, false, true);
                                             }
 
                                             // TODO: use this to do some mapping?
@@ -8119,6 +8121,10 @@ namespace Thetis
             private int _last_draged_to;
             private bool _has_macro_buttons;
 
+            private bool _process_in_update;
+            private Dictionary<OtherButtonId, int> _process_in_update_buttons;
+            private readonly object _process_in_update_buttons_lock = new object();
+
             private short[] _map;
             private readonly object _map_lock = new object();
             private short[] _map_copy;
@@ -8140,6 +8146,9 @@ namespace Thetis
                 _ig = ig;
                 _dragging_index = -1;
                 _last_draged_to = -1;
+
+                _process_in_update = false;
+                _process_in_update_buttons = new Dictionary<OtherButtonId, int>();
 
                 ItemType = MeterItemType.OTHER_BUTTONS;
 
@@ -8277,7 +8286,7 @@ namespace Thetis
             public override bool SNB { get => base.SNB; set => updateOn(OtherButtonId.SNB, value); }
             public override bool TNFActive { get => base.TNFActive; set => updateOn(OtherButtonId.MNF, value); }
             public override bool AVG { get => base.AVG; set => updateOn(OtherButtonId.AVG, value); }
-            public override bool Peak { get => base.Peak; set => updateOn(OtherButtonId.PEAK, value); }
+            public override bool Peak { get => base.Peak; set => updateOn(OtherButtonId.PEAK_HOLD, value); }
             public override bool CTUN { get => base.CTUN; set => updateOn(OtherButtonId.CTUN, value); }
             public override bool Vac1 { get => base.Vac1; set => updateOn(OtherButtonId.VAC1, value); }
             public override bool Vac2 { get => base.Vac2; set => updateOn(OtherButtonId.VAC2, value); }
@@ -8408,7 +8417,17 @@ namespace Thetis
                 get => base.GeneralSettings;
                 set
                 {
-                    if (value._setting == OtherButtonId.UNKNOWN || !value._settings.ContainsKey(value._setting)) return;
+                    if (value._setting == OtherButtonId.INIT)
+                    {
+                        // special case, only called with init from initConsoleData. Need to setup all
+                        foreach(KeyValuePair<OtherButtonId, bool> kvp in value._settings)
+                        {
+                            updateOn(kvp.Key, kvp.Value);
+                        }
+                        return;
+                    }
+
+                    if (!value._settings.ContainsKey(value._setting)) return;
                     updateOn(value._setting, value._settings[value._setting]);
                 }
             }
@@ -8727,6 +8746,12 @@ namespace Thetis
 
                 _has_macro_buttons = false;
 
+                lock (_process_in_update_buttons_lock)
+                {
+                    _process_in_update = false; // buttons that rely on power state being on
+                    _process_in_update_buttons.Clear();
+                }
+
                 // copy from 0 to 1. 0 is settings bank, 1 is where renderer reads from
                 for (int i = 0; i < Buttons; i++)
                 {
@@ -8737,7 +8762,7 @@ namespace Thetis
                    
                     // skip 32nd bit in any group and any that are not defined
                     OtherButtonId id = OtherButtonIdHelpers.BitToID(bit_group, bit);
-                    if (bit == 32 || id == OtherButtonId.UNKNOWN)
+                    if (bit == 32 || id == OtherButtonId.UNKNOWN || !isVisible(bit_group, bit))
                     {
                         SetVisible(1, i, false);
                         continue;
@@ -8745,13 +8770,24 @@ namespace Thetis
 
                     //special states
                     string sText;
-                    bool skip_set_visible = false;
                     bool button_enabled = true;
+                    bool button_visible = isVisible(bit_group, bit);
                     bool macro_button = id >= OtherButtonId._MACRO_0 && id <= OtherButtonId._MACRO_30;
                     int macro = (int)id - (int)OtherButtonId._MACRO_0;
 
                     switch (id)
                     {
+                        case OtherButtonId.MOX:
+                        case OtherButtonId.TUN:
+                        case OtherButtonId.TWOTON:
+                            lock (_process_in_update_buttons_lock)
+                            {
+                                _process_in_update = true;
+                                _process_in_update_buttons[id] = i;
+                            }
+                            sText = OtherButtonIdHelpers.BitToText(bit_group, bit);
+                            button_enabled = _owningmeter.Power;
+                            break;
                         case OtherButtonId.NR:
                             int nr = _console.GetSelectedNR(_owningmeter.RX);
                             sText = nr > 1 ? "NR" + nr.ToString() : "NR";
@@ -8775,8 +8811,7 @@ namespace Thetis
                         case OtherButtonId.XPA:
                             sText = OtherButtonIdHelpers.BitToText(bit_group, bit);
                             (bool in_use, bool enabled) = _console.GetXPAStatus();
-                            SetVisible(1, i, in_use && isVisible(bit_group, bit));
-                            skip_set_visible = true;
+                            button_visible = in_use && isVisible(bit_group, bit);
                             break;
                         case OtherButtonId.SQL:
                             switch (_owningmeter.SqlMode)
@@ -8896,9 +8931,9 @@ namespace Thetis
                     SetFontStyle(1, i, GetFontStyle(0, i));
                     SetUseIndicator(1, i, GetUseIndicator(0, i));
                     SetIndicatorWidth(1, i, GetIndicatorWidth(0, i));
-                    SetEnabled(1, i, button_enabled);
 
-                    if(!skip_set_visible) SetVisible(1, i, isVisible(bit_group, bit));//GetVisible(0, i));  // skip if set above
+                    SetEnabled(1, i, button_enabled);
+                    SetVisible(1, i, button_visible);
 
                     //get the state from the console
                     //bool on = _console.GetOtherButtonState(id, _owningmeter.RX);
@@ -9125,6 +9160,8 @@ namespace Thetis
                 int index = base.ButtonIndex;
                 if (index == -1) return;
 
+                if (!GetEnabled(1, index)) return;
+
                 //use map to convert index
                 lock (_map_lock) 
                 {
@@ -9198,7 +9235,7 @@ namespace Thetis
                             Guid guid = MultiMeterIO.GuidfromFourChar(settings.MMICFourChar[n]);
                             if(guid != Guid.Empty)
                             {
-                                bool state = !GetOn(1, index);
+                                bool state = GetOn(1, index);
                                 if (state)
                                 {
                                     _text_overlay_to_use_parser.Text1 = settings.MMIOMessageON[n];
@@ -9291,7 +9328,7 @@ namespace Thetis
                                 clsLed led = MeterManager.GetLedFrom4Char(settings.LedIndiciatorFourChar);
                                 if(led != null)
                                 {
-                                    (int bit_group, int bit) = OtherButtonIdHelpers.BitFromID((OtherButtonId)(n + (int)OtherButtonId._MACRO_0));
+                                    (int bit_group, int bit) = OtherButtonIdHelpers.BitFromID((OtherButtonId)((int)OtherButtonId._MACRO_0 + n));
                                     bit = (bit_group * 32) + bit;
 
                                     bool on = led.ConditionResult;
@@ -9310,6 +9347,38 @@ namespace Thetis
                                     SetText(1, bit, sText);
                                 }
                             }
+                        }
+                    }
+                }
+
+                lock (_process_in_update_buttons_lock)
+                {
+                    foreach(KeyValuePair<OtherButtonId, int> kvp in _process_in_update_buttons)
+                    {
+                        bool enabled = GetEnabled(1, kvp.Value);
+
+                        if (enabled != _owningmeter.Power)
+                        {
+                            int i = kvp.Value;
+
+                            System.Drawing.Color text_colour = GetFontColour(0, i);
+                            System.Drawing.Color on_colour = GetOnColour(0, i);
+                            System.Drawing.Color off_colour = GetOffColour(0, i);
+
+                            if (_owningmeter.Power)
+                            {
+                                SetFontColour(1, i, text_colour);
+                                SetOnColour(1, i, on_colour);
+                                SetOffColour(1, i, off_colour);
+                            }
+                            else
+                            {
+                                SetFontColour(1, i, System.Drawing.Color.FromArgb(255, (int)(text_colour.R * 0.3f), (int)(text_colour.G * 0.3f), (int)(text_colour.B * 0.3f)));
+                                SetOnColour(1, i, System.Drawing.Color.FromArgb(255, (int)(on_colour.R * 0.3f), (int)(on_colour.G * 0.3f), (int)(on_colour.B * 0.3f)));
+                                SetOffColour(1, i, System.Drawing.Color.FromArgb(255, (int)(off_colour.R * 0.3f), (int)(off_colour.G * 0.3f), (int)(off_colour.B * 0.3f)));
+                            }
+
+                            SetEnabled(1, i, _owningmeter.Power);
                         }
                     }
                 }
@@ -18046,7 +18115,7 @@ namespace Thetis
                 if (!Guid.TryParse(ig.ID, out guid)) guid = Guid.NewGuid();
                 _four_char = Common.FourChar("ledindicator", 0, guid);
 
-                _led_id = MeterScriptEngine.register_led();
+                _led_id = MeterScriptEngine.RegisterLed();
 
                 _timer = null;
                 _delay_milliseconds = 1000;
@@ -18109,10 +18178,6 @@ namespace Thetis
                 get { return _notxtrue; }
                 set { _notxtrue = value; }
             }
-            public bool ScriptError
-            {
-                get { return false; } // retained for future use
-            }
             public bool ScriptValid
             {
                 get { return _valid; }
@@ -18158,9 +18223,9 @@ namespace Thetis
 
             public override void Removing()
             {
-                MeterScriptEngine.unregister_led(_led_id);
+                MeterScriptEngine.UnregisterLed(_led_id);
 
-                MeterManager.LedIndicatorRemoved?.Invoke(this, EventArgs.Empty);
+                //MeterManager.LedIndicatorRemoved?.Invoke(this, EventArgs.Empty);
             }
 
             private void onTimerElapsedCondition()
@@ -18178,7 +18243,7 @@ namespace Thetis
 
                 string cond = expand_placeholders(_condition, rx);
 
-                _valid = MeterScriptEngine.set_condition(_led_id, cond);
+                _valid = MeterScriptEngine.SetCondition(_led_id, cond);
 
                 Debug.Print($"COND = [{cond}] = {_valid.ToString()}");
             }
@@ -18312,7 +18377,7 @@ namespace Thetis
                 get { return _pending_condition; }
                 set
                 {
-                    //if (value == _condition) return;
+                    if (value == _condition) return;
 
                     _pending_condition = value;
 
@@ -18409,7 +18474,7 @@ namespace Thetis
                         add_readings();
 
                         _old_result = _result;
-                        _result = MeterScriptEngine.read_result(_led_id);
+                        _result = MeterScriptEngine.ReadResult(_led_id);
                         _led_results.AddOrUpdate(_four_char, _result, (a, b) => _result);
 
                         // mox
@@ -23642,11 +23707,14 @@ namespace Thetis
                     }
                     items.Clear();
 
+                    MeterScriptEngine.BeginBatch(); // removing a led, will cause script to recompile, so if this container has lots of leds,
+                                                    // that can take a while as every led will cause a recompile. Batch that process here.
                     foreach (string id in toRemove)
                     {
                         _meterItems[id].Removing();
                         _meterItems.Remove(id);
                     }
+                    MeterScriptEngine.EndBatch();
                     toRemove.Clear();
 
                     if (bRebuild) Rebuild();
@@ -23879,7 +23947,7 @@ namespace Thetis
                     }
                 }
             }
-            public void ApplySettingsForMeterGroup(MeterType mt, clsIGSettings igs, List<string> webimages = null, int order = -1, bool from_setup = false)
+            public void ApplySettingsForMeterGroup(MeterType mt, clsIGSettings igs, List<string> webimages = null, int order = -1, bool from_setup_form = false, bool ignore_led_condition = false)
             {
                 lock (_meterItemsLock)
                 {
@@ -24326,10 +24394,13 @@ namespace Thetis
                                             if (igs.UpdateInterval < 50) igs.UpdateInterval = 100; // when it hasnt been set
                                             led.UpdateInterval = igs.UpdateInterval;
 
-                                            if(from_setup)
-                                                led.Condition = igs.Text1;
-                                            else
-                                                led.ConditionLoad = igs.Text1;
+                                            if (!ignore_led_condition)
+                                            {
+                                                if (from_setup_form)
+                                                    led.Condition = igs.Text1;
+                                                else
+                                                    led.ConditionLoad = igs.Text1;
+                                            }
 
                                             led.Padding = igs.SpacerPadding;
 
@@ -25499,7 +25570,6 @@ namespace Thetis
 
                                             igs.SpacerPadding = led.Padding;
 
-                                            igs.ShowHistory = led.ScriptError;
                                             igs.ShowType = led.ScriptValid;
 
                                             igs.PeakHold = led.ShowTrue;
@@ -26450,6 +26520,8 @@ namespace Thetis
 
                 // itterate through all _meterItems that are text overlay or leds, and set text1/2 and condition to itself to update the customreadings
                 // we dont worry that we might be leaving some cusom readings behind if the rx number changes, this will be cleared next restart
+                bool engine_in_batch = MeterScriptEngine.IsInBatch;
+
                 lock (_meterItemsLock)
                 {
                     foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.TEXT_OVERLAY || o.Value.ItemType == clsMeterItem.MeterItemType.LED))
@@ -26465,10 +26537,13 @@ namespace Thetis
                                 }
                                 break;
                             case clsMeterItem.MeterItemType.LED:
-                                clsLed l = kvp.Value as clsLed;
-                                if(l != null)
+                                if (!engine_in_batch)
                                 {
-                                    l.Condition = l.Condition;
+                                    clsLed l = kvp.Value as clsLed;
+                                    if (l != null)
+                                    {
+                                        l.Condition = l.Condition;
+                                    }
                                 }
                                 break;
                         }

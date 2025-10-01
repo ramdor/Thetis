@@ -2824,6 +2824,7 @@
             this.chkVFOSync.Name = "chkVFOSync";
             this.toolTip1.SetToolTip(this.chkVFOSync, resources.GetString("chkVFOSync.ToolTip"));
             this.chkVFOSync.CheckedChanged += new System.EventHandler(this.chkVFOSync_CheckedChanged);
+            this.chkVFOSync.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkVFOSync_MouseDown);
             // 
             // btnTuneStepChangeLarger
             // 

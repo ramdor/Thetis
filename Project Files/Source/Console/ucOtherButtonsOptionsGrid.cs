@@ -77,7 +77,7 @@ namespace Thetis
         IF_TO_V,
         SWAP_AB,
         AVG,
-        PEAK,
+        PEAK_HOLD,
         CTUN,
         VAC1,
         VAC2,
@@ -214,6 +214,7 @@ namespace Thetis
         STACK_D,
         NF,
         WAVE_RECORD,
+        ACTITVE_PEAK,
 
         _MACRO_0,
         _MACRO_1,
@@ -250,7 +251,9 @@ namespace Thetis
         INFO_TEXT = 998,
         SPLITTER = 999,
 
-        UNKNOWN = 1000
+        INIT = 1000,
+
+        UNKNOWN = 2000
     }
 
     [Serializable]
@@ -537,8 +540,9 @@ namespace Thetis
             (OtherButtonId.DUP,            0,  6, "DUP", "", "", "Duplex mode, view the tx rx"),
             (OtherButtonId.PS_A,           0,  7, "PS-A", "", "", "Puresignal auto"),
             (OtherButtonId.XPA,            0,  8, "xPA", "", "", "Override OC pins with this"),
-            (OtherButtonId.REC,            0,  9, "Rec", "record", "", "Wave quick record"),
-            (OtherButtonId.PLAY,           0, 10, "Play", "play", "", "Wave quick playback"),
+            (OtherButtonId.REC,            0,  9, "Rec", "stop", "record", "Wave quick record"),
+            (OtherButtonId.PLAY,           0, 10, "Play", "stop", "play", "Wave quick playback"),
+
             (OtherButtonId.INFO_TEXT,     -1, -1, "Noise / ATT", "", "", ""),
             (OtherButtonId.SPLITTER,      -1, -1, "", "", "", ""),
             (OtherButtonId.NR,             1, 0, "NR", "", "", "Cycle through NR's"),
@@ -563,6 +567,7 @@ namespace Thetis
             (OtherButtonId.ATT_P1,         1, 19, "ATT+", "", "", "Increaase attenuation"),
             (OtherButtonId.ATT_M1,         1, 20, "ATT-", "", "", "Decrease attenuation"),
             (OtherButtonId.NF,             1, 21, "NF", "", "", "Noise floor display on/off"),
+
             (OtherButtonId.INFO_TEXT,     -1, -1, "VFOs", "", "", ""),
             (OtherButtonId.SPLITTER,      -1, -1, "", "", "", ""),
             (OtherButtonId.SPLT,           2, 0, "Split", "", "", "Split on/off"),
@@ -582,10 +587,11 @@ namespace Thetis
             (OtherButtonId.TUNE_STEP_D,    2, 14, "TS-", "", "", "Decrease tunestep"),
             (OtherButtonId.STACK_U,        2, 15, "STACK+", "", "", "Move up one bandstack entry"),
             (OtherButtonId.STACK_D,        2, 16, "STACK-", "", "", "Move down on bandstack entry"),
+
             (OtherButtonId.INFO_TEXT,     -1, -1, "Display", "", "", ""),
             (OtherButtonId.SPLITTER,      -1, -1, "", "", "", ""),
             (OtherButtonId.AVG,            3, 0, "Avg", "", "", "Display averaging on/off"),
-            (OtherButtonId.PEAK,           3, 1, "Peak", "", "", "Peak hold on/off"),
+            (OtherButtonId.PEAK_HOLD,           3, 1, "Peak", "", "", "Peak hold on/off"),
             (OtherButtonId.CTUN,           3, 2, "CTUN", "", "", "ClickTune on/off"),
             (OtherButtonId.SPECTRUM,       3, 3, "Spectrum", "spectrum", "", "Spectrum"),
             (OtherButtonId.PANADAPTER,     3, 4, "Panadapter", "panadapter", "", "Panadaptor"),
@@ -611,6 +617,8 @@ namespace Thetis
             (OtherButtonId.ZOOM_1,         3, 24, "1x", "", "", "1x zoom"),
             (OtherButtonId.ZOOM_2,         3, 25, "2x", "", "", "2x zoom"),
             (OtherButtonId.ZOOM_4,         3, 26, "4x", "", "", "4x zoom"),
+            (OtherButtonId.ACTITVE_PEAK,   3, 27, "A-Peak", "", "", "Active Peak"),
+
             (OtherButtonId.INFO_TEXT,     -1, -1, "Audio / DSP", "", "", ""),
             (OtherButtonId.SPLITTER,      -1, -1, "", "", "", ""),
             (OtherButtonId.VAC1,           4, 0, "Vac1", "", "", "Vac1 on/off"),
@@ -653,6 +661,7 @@ namespace Thetis
             (OtherButtonId.LEVELER,        5, 7, "Leveler", "", "", "Leveler on/off"),
             (OtherButtonId.PHASE_ROT,      5, 8, "PhaRot", "", "", "Phase rotator on/off"),
             (OtherButtonId.WAVE_RECORD,    5, 9, "Record", "stop", "record", "Wave record"),
+
             (OtherButtonId.INFO_TEXT,     -1, -1, "AGC", "", "", ""),
             (OtherButtonId.SPLITTER,      -1, -1, "", "", "", ""),
             (OtherButtonId.AGC_FIXED,      6, 0, "FIX", "", "", "Fixed agc"),
@@ -674,6 +683,7 @@ namespace Thetis
             (OtherButtonId.SR_384000,      7, 5, "384k", "", "", "384k hardware sample rate"),
             (OtherButtonId.SR_768000,      7, 6, "768k", "", "", "768k hardware sample rate"),
             (OtherButtonId.SR_1536000,     7, 7, "1536k", "", "", "1536k hardware sample rate"),
+
             (OtherButtonId.INFO_TEXT,     -1, -1, "RF Power", "", "", ""),
             (OtherButtonId.SPLITTER,      -1, -1, "", "", "", ""),
             (OtherButtonId.DRIVE_P5,       8, 0, "DRI+", "", "", "Increase drive"),
@@ -682,6 +692,7 @@ namespace Thetis
             (OtherButtonId.TUNE_M5,        8, 3, "TUN-", "", "", "Decrease tune power"),
             (OtherButtonId.DRIVE_0,        8, 4, "DRI-0", "", "", "Set drive power to 0"),
             (OtherButtonId.TUN_0,          8, 5, "TUN-0", "", "", "Set tune power to 0"),
+
             (OtherButtonId.INFO_TEXT,     -1, -1, "Forms", "", "", ""),
             (OtherButtonId.SPLITTER,      -1, -1, "", "", "", ""),
             (OtherButtonId.FORM_SETUP,     9, 0, "Setup", "", "", "Show setup"),
@@ -694,6 +705,7 @@ namespace Thetis
             (OtherButtonId.FORM_DIVERSITY, 9, 8, "Diversity", "", "", "Show diversity form"),
             (OtherButtonId.FORM_LINEARITY, 9, 9, "Linearity", "", "", "Show linearity form"),
             (OtherButtonId.FORM_WB,        9, 10, "Wideband", "", "", "Show wideband"),
+
             (OtherButtonId.INFO_TEXT,     -1, -1, "CWX", "", "", ""),
             (OtherButtonId.SPLITTER,      -1, -1, "", "", "", ""),
             (OtherButtonId.CWX_KEY,        10, 0, "KEY", "", "", "Key cwx"),
@@ -707,6 +719,7 @@ namespace Thetis
             (OtherButtonId.CWX_F7,         10, 8, "F7", "", "", "Function key 7"),
             (OtherButtonId.CWX_F8,         10, 9, "F8", "", "", "Function key 8"),
             (OtherButtonId.CWX_F9,         10, 10, "F9", "", "", "Function key 9"),
+
             (OtherButtonId.INFO_TEXT,     -1, -1, "Macros", "", "", ""),
             (OtherButtonId.SPLITTER,      -1, -1, "", "", "", ""),
             (OtherButtonId._MACRO_0,       11, 0, "M1", "", "", "Macro 1"),

@@ -129,6 +129,7 @@
 [VAR_%variable%]PS;   #write result of cat cmd to variable. Must use %
 [IF_%variable%]             #use MMIO variable (must be a bool !). Must use %
 [IF_$4char$]                   #use 4char LED indicator variable. Must use $
+[ELSEIF_xyz]                   #else if can be used on %vars and $4char
 [STATE]PS;                     #writes output of cat cmd into cat ON= state</value>
   </data>
   <data name="txtCatMacro.Text" xml:space="preserve">

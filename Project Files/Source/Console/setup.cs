@@ -2879,6 +2879,9 @@ namespace Thetis
             chkPreventSleep_CheckedChanged(this, e);
             chkPreventScreenSaver_CheckedChanged(this, e);
 
+            //options3 tab
+            chkVFOsync_settings_changed(this, e);
+
             // auto start tab
             updateAutoLaunchControls();
 
@@ -20014,11 +20017,37 @@ namespace Thetis
             set { chkPeakBlobsEnabled.Checked = value; }
         }
 
+        public bool GetActivePeakHoldsEnabledRX(int rx) 
+        {
+            switch (rx)
+            {
+                case 1:
+                    return chkActivePeakHoldRX1.Checked;
+                case 2:
+                    return chkActivePeakHoldRX2.Checked;
+                default:
+                    return false;
+            }
+        }
+        public void SetActivePeakHoldsEnabledRX(int rx, bool enabled)
+        {
+            switch (rx)
+            {
+                case 1:
+                    chkActivePeakHoldRX1.Checked = enabled;
+                    break;
+                case 2:
+                    chkActivePeakHoldRX2.Checked = enabled;
+                    break;
+                default:
+                    break;
+            }
+        }
         public bool ActivePeakHoldsEnabled
         {
             get
             {
-                return chkActivePeakHoldRX1.Checked || (chkActivePeakHoldRX2.Checked && console.RX2Enabled);
+                return GetActivePeakHoldsEnabledRX(1) || (GetActivePeakHoldsEnabledRX(2) && console.RX2Enabled);
             }
             set
             {
@@ -21617,7 +21646,9 @@ namespace Thetis
             DISPRX2_Tab,
             SpotTCI,
             OPTIONS2_Tab,
-            PA_Tab
+            OPTIONS3_Tab,
+            PA_Tab,
+            HWSET_Tab
         }
         public void ShowSetupTab(SetupTab eTab)
         {
@@ -21627,6 +21658,10 @@ namespace Thetis
 
             switch (eTab)
             {
+                case SetupTab.HWSET_Tab:
+                    TabSetup.SelectedIndex = 0;
+                    TabGeneral.SelectedIndex = 1; // dither/random/hw sample rate
+                    break;
                 case SetupTab.ALCAGC_Tab:
                     TabSetup.SelectedIndex = 3;
                     TabDSP.SelectedIndex = 2; // select AGC/ALC tab
@@ -21705,6 +21740,11 @@ namespace Thetis
                     TabSetup.SelectedIndex = 0; // general
                     TabGeneral.SelectedIndex = 2; // options
                     TabOptions.SelectedIndex = 1; // options2
+                    break;
+                case SetupTab.OPTIONS3_Tab:
+                    TabSetup.SelectedIndex = 0; // general
+                    TabGeneral.SelectedIndex = 2; // options
+                    TabOptions.SelectedIndex = 2; // options3
                     break;
                 case SetupTab.PA_Tab:
                     TabSetup.SelectedIndex = 5; // pa
@@ -21856,6 +21896,8 @@ namespace Thetis
             Display.SpectralPeakHoldRX1 = chkActivePeakHoldRX1.Checked;
             //
             console.SetupInfoBarButton(ucInfoBar.ActionTypes.ActivePeaks, chkActivePeakHoldRX1.Checked || (console.RX2Enabled && chkActivePeakHoldRX2.Checked));
+
+            console.SetGeneralSetting(1, OtherButtonId.ACTITVE_PEAK, chkActivePeakHoldRX1.Checked);
         }
 
         private void udActivePeakHoldDurationRX1_ValueChanged(object sender, EventArgs e)
@@ -21876,6 +21918,8 @@ namespace Thetis
             Display.SpectralPeakHoldRX2 = chkActivePeakHoldRX2.Checked;
 
             console.SetupInfoBarButton(ucInfoBar.ActionTypes.ActivePeaks, chkActivePeakHoldRX1.Checked || (console.RX2Enabled && chkActivePeakHoldRX2.Checked));
+
+            console.SetGeneralSetting(2, OtherButtonId.ACTITVE_PEAK, chkActivePeakHoldRX2.Checked);
         }
 
         private void udActivePeakHoldDurationRX2_ValueChanged(object sender, EventArgs e)
@@ -28333,6 +28377,7 @@ namespace Thetis
                     {
                         clrbtnButonBox_fontcolour.Visible = mt != MeterType.ANTENNA_BUTTONS;
                         chkButtonBox_use_icons.Visible = mt == MeterType.OTHER_BUTTONS;
+                        btnOtherButtons_reset_layout.Visible = mt == MeterType.OTHER_BUTTONS;
 
                         grpBandButtons.Parent = grpMultiMeterHolder;
                         grpBandButtons.Location = loc;
@@ -33103,9 +33148,7 @@ namespace Thetis
                 MeterManager.clsIGSettings igs = m.GetSettingsForMeterGroup(mt, mtci.Order);
                 if (igs == null) return;
 
-                lblLed_Error.ForeColor = Color.Red;
-                lblLed_Error.Visible = igs.ShowHistory;
-                lblLed_Valid.Text = igs.ShowType ? "Valid" : "Invalid";
+                lblLed_Valid.Text = "Syntax " + (igs.ShowType ? "Valid" : "Invalid");
                 lblLed_Valid.ForeColor = igs.ShowType ? Color.LimeGreen : Color.Red;
 
                 tmrLedValid.Enabled = true;
@@ -36632,9 +36675,10 @@ namespace Thetis
                         string txt = txt = File.ReadAllText(ofd.FileName, Encoding.UTF8);
 
                         List<string> webimages = new List<string>();
+                        
                         MeterScriptEngine.BeginBatch();
-                        ucMeter ucm = MeterManager.ContainerFromString(txt, webimages);
-                        MeterScriptEngine.EndBatch();
+                        
+                        ucMeter ucm = MeterManager.ContainerFromString(txt, webimages);                        
 
                         if (ucm == null)
                         {
@@ -36642,6 +36686,8 @@ namespace Thetis
                                 "Container file not recognised",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                            MeterScriptEngine.EndBatch();
 
                             return;
                         }
@@ -36660,6 +36706,9 @@ namespace Thetis
                             if (dr != DialogResult.Yes)
                             {
                                 MeterManager.RemoveMeterContainer(ucm.ID);
+
+                                MeterScriptEngine.EndBatch();
+
                                 return;
                             }
                         }
@@ -36678,6 +36727,8 @@ namespace Thetis
                         MeterManager.FinishSetupAndDisplay(ucm.ID);
 
                         updateMeter2Controls(ucm.ID);
+
+                        MeterScriptEngine.EndBatch();
 
                         btnContainer_save.Enabled = MeterManager.TotalMeterContainers < MAX_CONTAINERS;
                     }
@@ -36704,12 +36755,13 @@ namespace Thetis
                 string data64 = MeterManager.ContainerToString(cci.ID);
 
                 MeterScriptEngine.BeginBatch();
-                ucMeter ucm = MeterManager.ContainerFromString(data64);
-                MeterScriptEngine.EndBatch();
+                ucMeter ucm = MeterManager.ContainerFromString(data64);                
                 MeterManager.RunRendererDisplay(ucm.ID);
                 MeterManager.FinishSetupAndDisplay(ucm.ID);
 
                 updateMeter2Controls(ucm.ID);
+
+                MeterScriptEngine.EndBatch();
 
                 btnContainer_save.Enabled = MeterManager.TotalMeterContainers < MAX_CONTAINERS;
             }
@@ -36786,6 +36838,33 @@ namespace Thetis
         private void btnLedIndicatorVarPicker_Click(object sender, EventArgs e)
         {
             string var = showVarPickerForClipboard();
+        }
+
+        private bool _ignore_vfo_sync_settings = false;
+        private void chkVFOsync_settings_changed(object sender, EventArgs e)
+        {
+            if (initializing || console == null || _ignore_vfo_sync_settings) return;
+
+            CheckBox cb = sender as CheckBox;
+            if (cb != null) // will be null when called from ForceAllEvents
+            {                
+                if (!cb.Checked)
+                {
+                    //one must always be selected
+                    bool any_selected = chkVFOsync_freq.Checked || chkVFOsync_mode.Checked || chkVFOsync_filter.Checked;
+                    if (!any_selected)
+                    {
+                        _ignore_vfo_sync_settings = true;
+                        cb.Checked = true;
+                        _ignore_vfo_sync_settings = false;
+                        return;
+                    }
+                }
+            }
+
+            console.VFOsyncFrequency = chkVFOsync_freq.Checked;
+            console.VFOsyncMode = chkVFOsync_mode.Checked;
+            console.VFOsyncFilter = chkVFOsync_filter.Checked;
         }
     }
 
