@@ -17,12 +17,14 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] reimplemented the code that ensures a form is on screen as there had been occurrences where a form had got 'lost'. Note. this will still fail if a monitor is turned off and windows thinks it is still available as a display surface
 - [change] rework of samples provided to RNnoise to bring them into a range more suited to RNnoise. Handles lower signals better
 - [change] broadcast kenwood AI messages are now flood controlled to a max rate of 1 message per 200ms
+- [change] led indicator scripting has been totally reworked. Now a single script engine is used instead of one per led. Massive memory and performance improvements if you used lots of leds. Also, batches the re-compile until all leds are loaded
 - [fix] filter command line args to strip any unexpected characters/unicode
 - [fix] you can now enter values into the VAR1/VAR2 filters on the main console. Pressing enter or the box losing focus will set the value
 - [fix] issue where low/high values would sometimes not be stored when using the filter configuration settings window/form
 - [fix] changing a filter edge in the filter settings config window will now notify all delegates. Fixes issue where filter container would not update
 - [fix] fixed a CAT tci/ip server issue where AI broadcast messages could get interleaved between a cat request and reply, which could cause issues for external systems that rely on a correct response, such as HamLib.
 - [fix] cw auto mode switch will now not return to previous non cw mode if activated from cw. The return delay now works as expected
+- [fix] text overlay now displays vfob mode correctly
 
 ## v2.10.3.11 - Change Log
 - [add] two new noise reduction methods added, NR3 and NR4. When starting up this version for the first time if NR was enabled, will now be set to off. Settings in the normal NR settings page of Setup

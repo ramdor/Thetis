@@ -26685,7 +26685,6 @@ namespace Thetis
                 int dotdashptt = NetworkIO.nativeGetDotDashPTT();
 
                 bool state_dot = (dotdashptt & 0x04) != 0;
-                update_for_auto_mode_return(state_dot);
                 if (state_dot != _last_dot)
                 {
                     FWDot = state_dot;
@@ -26695,8 +26694,7 @@ namespace Thetis
                     _last_dot = state_dot;
                 }
 
-                bool state_dash = (dotdashptt & 0x02) != 0;
-                update_for_auto_mode_return(state_dash);
+                bool state_dash = (dotdashptt & 0x02) != 0;                
                 if (state_dash != _last_dash)
                 {
                     FWDash = state_dash;
@@ -26705,6 +26703,8 @@ namespace Thetis
                         AudioMOXChanged(state_dash);
                     _last_dash = state_dash;
                 }
+
+                update_for_auto_mode_return(state_dot || state_dash);
 
                 await Task.Delay(1);
             }
