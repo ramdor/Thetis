@@ -101,6 +101,7 @@ namespace Thetis
 
         public Setup(Console c)
         {
+            LogTool.AddLogEntry("      Setup init components...", "INITCOMPSETUP");
             InitializeComponent();            
 
             _original_pnlP1_adcs_location = pnlP1_adcs.Location;
@@ -113,10 +114,13 @@ namespace Thetis
             console = c;
             this.Owner = c;
 
+            LogTool.Completed("INITCOMPSETUP");            
+
             //everything here moved to AfterConstructor, which is called during singleton instance // G7KLJ's idea/implementation
         }
         internal void AfterConstructor()
         {
+            LogTool.AddLogEntry("      Setup setup controls...", "SETUP_CONT");
             Splash.SetStatus("Setting up controls");
 
             //[2.10.3.9]MW0LGE atempt to get the model as soon as possile, before the getoptions, so that everything that relies on it at least has a chance
@@ -192,6 +196,8 @@ namespace Thetis
             setup_comboWebImage_nasa();
             setup_comboWebImage_noaa();
             //
+
+            moveButtonBoxSettings();
 
             SetupDSPWarnings(false, false, false, false, false, false); // hide everything
 
@@ -384,7 +390,9 @@ namespace Thetis
             defaultLinearGradients(true, true, false);
             defaultLinearGradients(true, true, true);
 
+            LogTool.AddLogEntry("        Setup getting options...", "GETOPTIONS");
             getOptions();
+            LogTool.Completed("GETOPTIONS");
 
             selectSkin();
 
@@ -395,7 +403,7 @@ namespace Thetis
 
             //MW0LGE_21j
             console.RepositionExternalPAButton(CheckForAnyExternalPACheckBoxes());
-
+            
             if (comboDSPPhoneRXBuf.SelectedIndex < 0 || comboDSPPhoneRXBuf.SelectedIndex >= comboDSPPhoneRXBuf.Items.Count)
                 comboDSPPhoneRXBuf.SelectedIndex = comboDSPPhoneRXBuf.Items.Count - 1;
             if (comboDSPPhoneTXBuf.SelectedIndex < 0 || comboDSPPhoneTXBuf.SelectedIndex >= comboDSPPhoneTXBuf.Items.Count)
@@ -407,6 +415,20 @@ namespace Thetis
             if (comboDSPDigTXBuf.SelectedIndex < 0 || comboDSPDigTXBuf.SelectedIndex >= comboDSPDigTXBuf.Items.Count)
                 comboDSPDigTXBuf.SelectedIndex = comboDSPDigTXBuf.Items.Count - 1;
 
+            cmboSigGenRXMode.Text = "Radio";
+            cmboSigGenTXMode.Text = "Radio";
+
+            if (comboAudioDriver2.SelectedIndex < 0 &&
+                comboAudioDriver2.Items.Count > 0)
+                comboAudioDriver2.SelectedIndex = 0;
+
+            if (comboAudioDriver3.SelectedIndex < 0 &&
+                comboAudioDriver3.Items.Count > 0)
+                comboAudioDriver3.SelectedIndex = 0;
+
+            comboAudioBuffer1_SelectedIndexChanged(this, EventArgs.Empty);
+
+            LogTool.AddLogEntry("        Setup serial ports...", "SERIAL");
             if (comboCATPort.SelectedIndex < 0)
             {
                 if (comboCATPort.Items.Count > 0)
@@ -483,20 +505,21 @@ namespace Thetis
                     chkEnableGanymede.Checked = false;
                     chkEnableGanymede.Enabled = false;
                 }
-            }
+            }            
 
-            cmboSigGenRXMode.Text = "Radio";
-            cmboSigGenTXMode.Text = "Radio";
+            //moved above
+            //cmboSigGenRXMode.Text = "Radio";
+            //cmboSigGenTXMode.Text = "Radio";
 
-            if (comboAudioDriver2.SelectedIndex < 0 &&
-                comboAudioDriver2.Items.Count > 0)
-                comboAudioDriver2.SelectedIndex = 0;
+            //if (comboAudioDriver2.SelectedIndex < 0 &&
+            //    comboAudioDriver2.Items.Count > 0)
+            //    comboAudioDriver2.SelectedIndex = 0;
 
-            if (comboAudioDriver3.SelectedIndex < 0 &&
-                comboAudioDriver3.Items.Count > 0)
-                comboAudioDriver3.SelectedIndex = 0;
+            //if (comboAudioDriver3.SelectedIndex < 0 &&
+            //    comboAudioDriver3.Items.Count > 0)
+            //    comboAudioDriver3.SelectedIndex = 0;
 
-            comboAudioBuffer1_SelectedIndexChanged(this, EventArgs.Empty);
+            //comboAudioBuffer1_SelectedIndexChanged(this, EventArgs.Empty);
 
             initializing = false;
 
@@ -544,9 +567,12 @@ namespace Thetis
 
             comboKeyerConnSecondary_SelectedIndexChanged(this, EventArgs.Empty);
 
+            LogTool.Completed("SERIAL");
+
             chkConsoleDarkModeTitleBar.Visible = Common.IsWindows10OrGreater(); //MW0LGE [2.9.0.8]
 
-            ForceAllEvents();
+            LogTool.AddLogEntry("        Setup applying settings...", "FORCEALL");
+            ForceAllEvents();            
 
             //model known, update anything that might have been initialsed without this being known
             if (console.psform != null) console.psform.UpdateWarningSetPk();
@@ -570,16 +596,18 @@ namespace Thetis
             chkAlexPresent_CheckedChanged(this, e);
             chkApolloPresent_CheckedChanged(this, e);
             chkAlexAntCtrl_CheckedChanged(this, e);
+
             initializing = true; //MW0LGE_21d stop the lg from notifying changed events
             TbDataFillAlpha_Scroll(this, e);
             tbDataFillAlpha_tx_Scroll(this, e);
             initializing = false;
 
+            LogTool.Completed("FORCEALL");
+
             for (int i = 0; i < 2; i++)
                 for (int j = 0; j < 2; j++)
                     console.radio.GetDSPRX(i, j).Update = true;
 
-            console.DeferUpdateDSP = true;  //MW0LGE_21k9d need to set this again as it gets undone in load txprofile in ForceAllEvents (ForceTXProfile)
             comboDSPPhoneRXBuf_SelectedIndexChanged(this, EventArgs.Empty);
             comboDSPPhoneTXBuf_SelectedIndexChanged(this, EventArgs.Empty);
             comboDSPFMRXBuf_SelectedIndexChanged(this, EventArgs.Empty);
@@ -601,6 +629,7 @@ namespace Thetis
             comboDSPCWRXFiltType_SelectedIndexChanged(this, EventArgs.Empty);
             comboDSPDigRXFiltType_SelectedIndexChanged(this, EventArgs.Empty);
             comboDSPDigTXFiltType_SelectedIndexChanged(this, EventArgs.Empty);
+
             console.DeferUpdateDSP = false;  //MW0LGE_21k9d
 
             console.specRX.GetSpecRX(0).Update = true;
@@ -614,13 +643,14 @@ namespace Thetis
 
             chkHighlightTXProfileSaveItems.Checked = false;
 
-            if (chkKWAI.Checked)
-                AllowFreqBroadcast = true;
-            else
-                AllowFreqBroadcast = false;
+            AllowFreqBroadcast = chkKWAI.Checked;
 
             //MW0LGE_21h
-            updateNetworkThrottleCheckBox();            
+            updateNetworkThrottleCheckBox();
+
+            updateShowStartupLogCheckBox();
+
+            LogTool.Completed("SETUP_CONT");
         }
         private bool _bAddedDelegates = false;
         private void addDelegates()
@@ -1775,8 +1805,12 @@ namespace Thetis
             List<string> sortedList = a.Keys.ToList();
             sortedList.Sort();
 
+            //[2.10.3.12]MW0LGE this is bad, because many radios have tabs removed, alex-2 for example, and in those cases
+            //those controls will never be saved to the database, so when we recover, the count will be less than the number of controls as
+            //this is checked before tabs are removed. A complete recovery is then done, which resets everything to default every
+            //single time. TODO !!!!
             if (a.Count < controls.Count)		// some control values are not in the database
-            {								// so set all of them to the defaults
+            {								    // so set all of them to the defaults
                 InitGeneralTab(recoveryList);
                 InitAudioTab(recoveryList);
                 InitAdvancedAudioTab(recoveryList);
@@ -1789,6 +1823,7 @@ namespace Thetis
             }
 
             if (sortedList.Contains("comboPAProfile")) sortedList.Remove("comboPAProfile"); // this is done after the PA profiles are recovered // MW0LGE_22b
+            if (sortedList.Contains("chkShowStartupLog")) sortedList.Remove("chkShowStartupLog"); // this is done later, and is recovered from the registry
 
             // remove any that will be set by clicking on related item
             List<string> ignoreList = new List<string>();
@@ -1807,7 +1842,7 @@ namespace Thetis
             addToIgnore(ref ignoreList, grpTextOverlay);
             addToIgnore(ref ignoreList, grpMeterItemClockSettings);
             addToIgnore(ref ignoreList, grpMeterItemSpacerSettings);
-            addToIgnore(ref ignoreList, grpBandButtons);
+            addToIgnore(ref ignoreList, grpButtonBox);
             addToIgnore(ref ignoreList, ucTunestepOptionsGrid_buttons);
             addToIgnore(ref ignoreList, pnlButtonBox_antenna_toggles);
             addToIgnore(ref ignoreList, grpLedIndicator);
@@ -2595,7 +2630,9 @@ namespace Thetis
             chkLimitExtAmpOnOverload_CheckedChanged(this, e);
             chkSaveTXProfileOnExit_CheckedChanged(this, e);
             chkRecoverPAProfileFromTXProfile_CheckedChanged(this, e);
+            bool old_defer = console.DeferUpdateDSP;
             ForceTXProfileUpdate();
+            console.DeferUpdateDSP = old_defer;  //set this again as it gets undone by ForceTXProfile
             chkPulsedTune_CheckedChanged(this, e);
 
             // Keyboard Tab
@@ -2707,7 +2744,7 @@ namespace Thetis
             clrbtnBandBackground_Changed(this, e);
             clrbtnVFOBackground_Changed(this, e);
 
-            chkLegacyMeters_CheckedChanged(this, e);
+            chkHideLegacyMeters_CheckedChanged(this, e);
 
             chkJoinBandEdges_CheckedChanged(this, e);
             chkShowFrequencyNumbers_CheckedChanged(this, e);
@@ -2760,7 +2797,7 @@ namespace Thetis
             //MW0GLE [2.10.3.6_dev4]
             chkKWAI_CheckedChanged(this, e);
 
-            //MW0LGE_21d n1mm
+            //MW0LGE_21d n1mm            
             chkN1MMEnableRX1_CheckedChanged(this, e);
             chkN1MMEnableRX2_CheckedChanged(this, e);
             txtN1MMSendTo_TextChanged(this, e);
@@ -22445,19 +22482,24 @@ namespace Thetis
         {
             showRegionBandstackWarning(true);
         }
-
+        
         private void chkN1MMEnableRX1_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
 
+            txtN1MM_RXn_ID_TextChanged(txtN1MM_ID_RX_1, EventArgs.Empty); // note, _old_n1mm_state will be previous state when this is called
+
             N1MM.SetEnabled(1, chkN1MMEnableRX1.Checked);
             udN1MMRX1Scaling.Enabled = chkN1MMEnableRX1.Checked;
+            txtN1MM_ID_RX_1.Enabled = chkN1MMEnableRX1.Checked;
 
             N1MM.Resize(1);
 
             stopStartN1MMSpectrum();
 
             console.UpdateStatusBarStatusIcons(StatusBarIconGroup.N1MM);
+
+            _old_n1mm_state[0] = chkN1MMEnableRX1.Checked;
         }
 
         private void stopStartN1MMSpectrum()
@@ -22475,14 +22517,19 @@ namespace Thetis
         {
             if (initializing) return;
 
+            txtN1MM_RXn_ID_TextChanged(txtN1MM_ID_RX_2, EventArgs.Empty); // note, _old_n1mm_state will be previous state when this is called
+
             N1MM.SetEnabled(2, chkN1MMEnableRX2.Checked);
             udN1MMRX2Scaling.Enabled = chkN1MMEnableRX2.Checked;
+            txtN1MM_ID_RX_2.Enabled = chkN1MMEnableRX2.Checked;
 
             N1MM.Resize(2);
 
             stopStartN1MMSpectrum();
 
             console.UpdateStatusBarStatusIcons(StatusBarIconGroup.N1MM);
+
+            _old_n1mm_state[1] = chkN1MMEnableRX2.Checked;
         }
 
         private void txtN1MMSendTo_TextChanged(object sender, EventArgs e)
@@ -28289,25 +28336,52 @@ namespace Thetis
         {
             updateMeterType();
         }
-        private void setupMMSettingsGroupBoxes(MeterType mt)
+        private void moveButtonBoxSettings()
+        {
+            //move the buttonbox settings
+            //used just after init to move things where the should be
+            //so that finder can at least show items/gadget tab
+            setupMMSettingsGroupBoxes(MeterType.VFO_DISPLAY, false);
+            setupMMSettingsGroupBoxes(MeterType.CLOCK, false);
+            setupMMSettingsGroupBoxes(MeterType.SPACER, false);
+            setupMMSettingsGroupBoxes(MeterType.FILTER_DISPLAY, false);
+            setupMMSettingsGroupBoxes(MeterType.TEXT_OVERLAY, false);
+            setupMMSettingsGroupBoxes(MeterType.DATA_OUT, false);
+            setupMMSettingsGroupBoxes(MeterType.ROTATOR, false);
+            setupMMSettingsGroupBoxes(MeterType.LED, false);
+            setupMMSettingsGroupBoxes(MeterType.DIAL_DISPLAY, false);
+            setupMMSettingsGroupBoxes(MeterType.WEB_IMAGE, false);
+            setupMMSettingsGroupBoxes(MeterType.OTHER_BUTTONS, false);
+            setupMMSettingsGroupBoxes(MeterType.TUNESTEP_BUTTONS, false);
+            setupMMSettingsGroupBoxes(MeterType.ANTENNA_BUTTONS, false);
+            setupMMSettingsGroupBoxes(MeterType.FILTER_BUTTONS, false);
+            setupMMSettingsGroupBoxes(MeterType.MODE_BUTTONS, false);
+            setupMMSettingsGroupBoxes(MeterType.BAND_BUTTONS, false);
+            setupMMSettingsGroupBoxes(MeterType.DISCORD_BUTTONS, false);
+            setupMMSettingsGroupBoxes(MeterType.HISTORY, false);
+        }
+        private void setupMMSettingsGroupBoxes(MeterType mt, bool all = true)
         {
             // grpMeterItemSettings defines the x,y used by all
             Point loc = grpMeterItemSettings.Location;
 
-            grpMeterItemSettings.Visible = false;
-            grpMeterItemClockSettings.Visible = false;
-            grpMeterItemVfoDisplaySettings.Visible = false;
-            grpMeterItemSpacerSettings.Visible = false;
-            grpTextOverlay.Visible = false;
-            grpMeterItemDataOutNode.Visible = false;
-            grpMeterItemRotator.Visible = false;
-            grpLedIndicator.Visible = false;
-            grpWebImage.Visible = false;
-            grpBandButtons.Visible = false;
-            pnlButtonBox_antenna_toggles.Visible = false;
-            grpHistoryItem.Visible = false;
-            grpMeterItemFilterDisplay.Visible = false;
-            grpDialDisplay.Visible = false;
+            if (all)
+            {
+                grpMeterItemSettings.Visible = false;
+                grpMeterItemClockSettings.Visible = false;
+                grpMeterItemVfoDisplaySettings.Visible = false;
+                grpMeterItemSpacerSettings.Visible = false;
+                grpTextOverlay.Visible = false;
+                grpMeterItemDataOutNode.Visible = false;
+                grpMeterItemRotator.Visible = false;
+                grpLedIndicator.Visible = false;
+                grpWebImage.Visible = false;
+                grpButtonBox.Visible = false;
+                pnlButtonBox_antenna_toggles.Visible = false;
+                grpHistoryItem.Visible = false;
+                grpMeterItemFilterDisplay.Visible = false;
+                grpDialDisplay.Visible = false;
+            }
 
             switch (mt)
             {
@@ -28379,23 +28453,23 @@ namespace Thetis
                         chkButtonBox_use_icons.Visible = mt == MeterType.OTHER_BUTTONS;
                         btnOtherButtons_reset_layout.Visible = mt == MeterType.OTHER_BUTTONS;
 
-                        grpBandButtons.Parent = grpMultiMeterHolder;
-                        grpBandButtons.Location = loc;
-                        grpBandButtons.Visible = true;
+                        grpButtonBox.Parent = grpMultiMeterHolder;
+                        grpButtonBox.Location = loc;
+                        grpButtonBox.Visible = true;
 
                         Point pos = new Point(150, 194);
 
                         switch (mt)
                         {
                             case MeterType.ANTENNA_BUTTONS:
-                                pnlButtonBox_antenna_toggles.Parent = grpBandButtons;
+                                pnlButtonBox_antenna_toggles.Parent = grpButtonBox;
                                 pnlButtonBox_antenna_toggles.Location = pos;
                                 pnlButtonBox_antenna_toggles.Visible = true;
                                 ucTunestepOptionsGrid_buttons.Visible = false;
                                 ucOtherButtonsOptionsGrid_buttons.Visible = false;
                                 break;
                             case MeterType.TUNESTEP_BUTTONS:
-                                ucTunestepOptionsGrid_buttons.Parent = grpBandButtons;
+                                ucTunestepOptionsGrid_buttons.Parent = grpButtonBox;
                                 ucTunestepOptionsGrid_buttons.Location = pos;
                                 ucTunestepOptionsGrid_buttons.Visible = true;
                                 pnlButtonBox_antenna_toggles.Visible = false;
@@ -28406,7 +28480,7 @@ namespace Thetis
                                 }
                                 break;
                             case MeterType.OTHER_BUTTONS:
-                                ucOtherButtonsOptionsGrid_buttons.Parent = grpBandButtons;
+                                ucOtherButtonsOptionsGrid_buttons.Parent = grpButtonBox;
                                 ucOtherButtonsOptionsGrid_buttons.Location = pos;
                                 ucOtherButtonsOptionsGrid_buttons.Visible = true;
                                 ucTunestepOptionsGrid_buttons.Visible = false;
@@ -29028,11 +29102,14 @@ namespace Thetis
 
         private void chkLegacyMeters_CheckedChanged(object sender, EventArgs e)
         {
+
+        }
+        private void chkHideLegacyMeters_CheckedChanged(object sender, EventArgs e)
+        {
             if (initializing) return;
 
-            console.UseLegacyMeters = chkLegacyMeters.Checked;
+            console.HideLegacyMeters = chkHideLegacyMeters.Checked;
         }
-
         private void radSpaceBarVFOBTX_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
@@ -35586,7 +35663,7 @@ namespace Thetis
                 console.Pan = (int)_fps_profile_settings["Pan"];
                 console.DisplayModeText = (string)_fps_profile_settings["DisplayModeText"];
                 console.DisplayRX2ModeText = (string)_fps_profile_settings["DisplayRX2ModeText"];
-                chkLegacyMeters.Checked = (bool)_fps_profile_settings["chkLegacyMeters"];
+                chkHideLegacyMeters.Checked = (bool)_fps_profile_settings["chkHideLegacyMeters"];
                 chkLegacyItems_band.Checked = (bool)_fps_profile_settings["chkLegacyItems_band"];
                 chkLegacyItems_mode.Checked = (bool)_fps_profile_settings["chkLegacyItems_mode"];
                 chkLegacyItems_filter.Checked = (bool)_fps_profile_settings["chkLegacyItems_filter"];
@@ -35713,7 +35790,7 @@ namespace Thetis
             _fps_profile_settings.Add("Pan", console.Pan);
             _fps_profile_settings.Add("DisplayModeText", console.DisplayModeText);
             _fps_profile_settings.Add("DisplayRX2ModeText", console.DisplayRX2ModeText);
-            _fps_profile_settings.Add("chkLegacyMeters", chkLegacyMeters.Checked);
+            _fps_profile_settings.Add("chkHideLegacyMeters", chkHideLegacyMeters.Checked);
             _fps_profile_settings.Add("chkLegacyItems_band", chkLegacyItems_band.Checked);
             _fps_profile_settings.Add("chkLegacyItems_mode", chkLegacyItems_mode.Checked);
             _fps_profile_settings.Add("chkLegacyItems_filter", chkLegacyItems_filter.Checked);
@@ -35792,7 +35869,7 @@ namespace Thetis
             console.DisplayRX2ModeText = "Panafall";
             console.ClickTuneDisplay = false;
             console.ClickTuneRX2Display = false;
-            chkLegacyMeters.Checked = true;
+            chkHideLegacyMeters.Checked = false;
             chkLegacyItems_band.Checked = false;
             chkLegacyItems_mode.Checked = false;
             chkLegacyItems_filter.Checked = false;
@@ -35850,7 +35927,7 @@ namespace Thetis
             chkShowRX2NoiseFloor,
             chkAdjustGridMinToNFRX1,
             chkAdjustGridMinToNFRX2,
-            chkLegacyMeters,
+            chkHideLegacyMeters,
             chkLegacyItems_band,
             chkLegacyItems_mode,
             chkLegacyItems_filter,
@@ -35920,7 +35997,7 @@ namespace Thetis
 
             Debug.Print($"FPS profile settings hash : {ret}");
 
-            return ret.Equals("998cafaf3331a9a111366f41ff3ed6ce");
+            return ret.Equals("f8a6fa7f548a43a8c8d7aa6443fe73aa");
         }
 
         private void chkWDSP_cache_impulse_CheckedChanged(object sender, EventArgs e)
@@ -36865,6 +36942,98 @@ namespace Thetis
             console.VFOsyncFrequency = chkVFOsync_freq.Checked;
             console.VFOsyncMode = chkVFOsync_mode.Checked;
             console.VFOsyncFilter = chkVFOsync_filter.Checked;
+        }
+
+        private bool[] _old_n1mm_state = new bool[2] { false, false };
+        private void txtN1MM_RXn_ID_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            if (txtN1MM_ID_RX_1.Text.ToLower() == txtN1MM_ID_RX_2.Text.ToLower())
+            {
+                // cant be the same
+                lblN1MM_ids_warning.Text = "ID's can not be the same";
+                lblN1MM_ids_warning.Visible = true;
+                return; 
+            }
+            else
+            {
+                lblN1MM_ids_warning.Visible = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtN1MM_ID_RX_1.Text) || string.IsNullOrWhiteSpace(txtN1MM_ID_RX_2.Text))
+            {
+                // cant be empty
+                lblN1MM_ids_warning.Text = "ID's can not be empty";
+                lblN1MM_ids_warning.Visible = true;
+                return;
+            }
+            else
+            {
+                lblN1MM_ids_warning.Visible = false;
+            }
+
+            TextBoxTS text_box = sender as TextBoxTS;
+            if (text_box == null) return;
+
+            string control_name = text_box.Name;
+            int last_underscore = control_name.LastIndexOf('_');
+            if (last_underscore < 0 || last_underscore >= control_name.Length - 1) return;
+
+            string number_text = control_name.Substring(last_underscore + 1);
+            if (!int.TryParse(number_text, out int rx)) return;
+
+            bool bOn = false;
+            switch (rx)
+            {
+                case 1:
+                    bOn = chkN1MMEnableRX1.Checked;
+                    break;
+                case 2:
+                    bOn = chkN1MMEnableRX2.Checked;
+                    break;
+            }
+
+            if(_old_n1mm_state[rx - 1] && bOn && N1MM.GetID(rx) != text_box.Text)
+            {
+                lblN1MM_ids_warning.Text = "Toggle off/on to use";
+                lblN1MM_ids_warning.Visible = true;
+                return;
+            }
+            else
+            {
+                lblN1MM_ids_warning.Visible = false;
+                if(bOn) N1MM.SetID(rx, text_box.Text);
+            }
+        }
+
+        private void chkShowStartupLog_CheckedChanged(object sender, EventArgs e)
+        {
+            if(initializing) return;
+
+            LogTool.SetRegistryToShow(chkShowStartupLog.Checked);
+
+            if (chkShowStartupLog.Checked)
+            {
+                if(console != null) LogTool.ShowLog(console.Handle);
+            }
+            else
+            {
+                LogTool.HideAndSave();
+            }
+        }
+        private void updateShowStartupLogCheckBox()
+        {
+            bool ok = LogTool.GetRegistryToShow(out bool show);
+
+            if (ok)
+            {
+                chkShowStartupLog.Checked = show;
+            }
+            else
+            {
+                chkShowStartupLog.Visible = false; // hide it if there was a registry issue
+            }
         }
     }
 

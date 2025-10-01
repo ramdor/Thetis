@@ -438,11 +438,17 @@
             this.chkQSOTimerResetOnMOX = new System.Windows.Forms.CheckBoxTS();
             this.chkQSOTimerOnlyDuringMOX = new System.Windows.Forms.CheckBoxTS();
             this.chkQSOTimerEnabled = new System.Windows.Forms.CheckBoxTS();
+            this.tpOptions3 = new System.Windows.Forms.TabPage();
+            this.groupBoxTS57 = new System.Windows.Forms.GroupBoxTS();
+            this.chkVFOsync_filter = new System.Windows.Forms.CheckBoxTS();
+            this.chkVFOsync_mode = new System.Windows.Forms.CheckBoxTS();
+            this.chkVFOsync_freq = new System.Windows.Forms.CheckBoxTS();
             this.tpOptionsStartUp = new System.Windows.Forms.TabPage();
             this.groupBoxTS37 = new System.Windows.Forms.GroupBoxTS();
             this.chkAutoLaunchTryToClose = new System.Windows.Forms.CheckBoxTS();
             this.chkAutoLaunchNoStartIfRunning = new System.Windows.Forms.CheckBoxTS();
             this.grpAutoLaunchFiles = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS483 = new System.Windows.Forms.LabelTS();
             this.btnAutoLaunchSelectFile_9 = new System.Windows.Forms.ButtonTS();
             this.txtAutoLaunchFile_9 = new System.Windows.Forms.TextBoxTS();
             this.chkAutoLaunch_9 = new System.Windows.Forms.CheckBoxTS();
@@ -3453,6 +3459,7 @@
             this.lblSkinServersInfo = new System.Windows.Forms.LabelTS();
             this.tpLegacyItems = new System.Windows.Forms.TabPage();
             this.groupBoxTS44 = new System.Windows.Forms.GroupBoxTS();
+            this.chkHideLegacyMeters = new System.Windows.Forms.CheckBoxTS();
             this.chkLegacyItems_hide_avg_peak = new System.Windows.Forms.CheckBoxTS();
             this.chkLegacyItems_hide_mic_comp = new System.Windows.Forms.CheckBoxTS();
             this.chkLegacyItems_hide_noise_mnf = new System.Windows.Forms.CheckBoxTS();
@@ -3467,7 +3474,6 @@
             this.chkLegacyItems_filter = new System.Windows.Forms.CheckBoxTS();
             this.chkLegacyItems_mode = new System.Windows.Forms.CheckBoxTS();
             this.chkLegacyItems_band = new System.Windows.Forms.CheckBoxTS();
-            this.chkLegacyMeters = new System.Windows.Forms.CheckBoxTS();
             this.tpKeyboard = new System.Windows.Forms.TabPage();
             this.grpKBPTT = new System.Windows.Forms.GroupBoxTS();
             this.labelTS389 = new System.Windows.Forms.LabelTS();
@@ -3643,6 +3649,10 @@
             this.btnDefaultBindPortForTCPIPCat = new System.Windows.Forms.ButtonTS();
             this.txtTCPIPCATServerBindIPPort = new System.Windows.Forms.TextBoxTS();
             this.groupBoxTS16 = new System.Windows.Forms.GroupBoxTS();
+            this.lblN1MM_ids_warning = new System.Windows.Forms.LabelTS();
+            this.labelTS643 = new System.Windows.Forms.LabelTS();
+            this.txtN1MM_ID_RX_2 = new System.Windows.Forms.TextBoxTS();
+            this.txtN1MM_ID_RX_1 = new System.Windows.Forms.TextBoxTS();
             this.btnIPv4N1MM = new System.Windows.Forms.ButtonTS();
             this.btnN1MMDefault = new System.Windows.Forms.ButtonTS();
             this.labelTS90 = new System.Windows.Forms.LabelTS();
@@ -3794,6 +3804,7 @@
             this.chkDiscordEnabled = new System.Windows.Forms.CheckBoxTS();
             this.tpTests = new System.Windows.Forms.TabPage();
             this.groupBoxTS30 = new System.Windows.Forms.GroupBoxTS();
+            this.chkShowStartupLog = new System.Windows.Forms.CheckBoxTS();
             this.btnFormLocationHelper = new System.Windows.Forms.ButtonTS();
             this.btnFPSProfile = new System.Windows.Forms.ButtonTS();
             this.btnShowSeqLog = new System.Windows.Forms.ButtonTS();
@@ -4135,7 +4146,7 @@
             this.tabPage7 = new System.Windows.Forms.TabPage();
             this.ucOtherButtonsOptionsGrid_buttons = new Thetis.ucOtherButtonsOptionsGrid();
             this.ucTunestepOptionsGrid_buttons = new Thetis.ucTunestepOptionsGrid();
-            this.grpBandButtons = new System.Windows.Forms.GroupBoxTS();
+            this.grpButtonBox = new System.Windows.Forms.GroupBoxTS();
             this.labelTS292 = new System.Windows.Forms.LabelTS();
             this.pnlButtonBox_antenna_toggles = new System.Windows.Forms.PanelTS();
             this.chkButtonBox_antenna_rxtxant = new System.Windows.Forms.CheckBoxTS();
@@ -4389,11 +4400,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.tpOptions3 = new System.Windows.Forms.TabPage();
-            this.groupBoxTS57 = new System.Windows.Forms.GroupBoxTS();
-            this.chkVFOsync_freq = new System.Windows.Forms.CheckBoxTS();
-            this.chkVFOsync_mode = new System.Windows.Forms.CheckBoxTS();
-            this.chkVFOsync_filter = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4518,6 +4524,8 @@
             this.groupBoxTS15.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerSeconds)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerMinutes)).BeginInit();
+            this.tpOptions3.SuspendLayout();
+            this.groupBoxTS57.SuspendLayout();
             this.tpOptionsStartUp.SuspendLayout();
             this.groupBoxTS37.SuspendLayout();
             this.grpAutoLaunchFiles.SuspendLayout();
@@ -5448,7 +5456,7 @@
             this.tabPage6.SuspendLayout();
             this.grpMeterItemSpacerSettings.SuspendLayout();
             this.tabPage7.SuspendLayout();
-            this.grpBandButtons.SuspendLayout();
+            this.grpButtonBox.SuspendLayout();
             this.pnlButtonBox_antenna_toggles.SuspendLayout();
             this.tabPage8.SuspendLayout();
             this.grpLedIndicator.SuspendLayout();
@@ -5503,8 +5511,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
-            this.tpOptions3.SuspendLayout();
-            this.groupBoxTS57.SuspendLayout();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -11605,6 +11611,66 @@
             this.chkQSOTimerEnabled.UseVisualStyleBackColor = true;
             this.chkQSOTimerEnabled.CheckedChanged += new System.EventHandler(this.chkQSOTimerEnabled_CheckedChanged);
             // 
+            // tpOptions3
+            // 
+            this.tpOptions3.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOptions3.Controls.Add(this.groupBoxTS57);
+            this.tpOptions3.Location = new System.Drawing.Point(4, 22);
+            this.tpOptions3.Name = "tpOptions3";
+            this.tpOptions3.Size = new System.Drawing.Size(716, 384);
+            this.tpOptions3.TabIndex = 3;
+            this.tpOptions3.Text = "Options-3";
+            // 
+            // groupBoxTS57
+            // 
+            this.groupBoxTS57.Controls.Add(this.chkVFOsync_filter);
+            this.groupBoxTS57.Controls.Add(this.chkVFOsync_mode);
+            this.groupBoxTS57.Controls.Add(this.chkVFOsync_freq);
+            this.groupBoxTS57.Location = new System.Drawing.Point(8, 8);
+            this.groupBoxTS57.Name = "groupBoxTS57";
+            this.groupBoxTS57.Size = new System.Drawing.Size(190, 99);
+            this.groupBoxTS57.TabIndex = 32;
+            this.groupBoxTS57.TabStop = false;
+            this.groupBoxTS57.Text = "VFOsync will";
+            // 
+            // chkVFOsync_filter
+            // 
+            this.chkVFOsync_filter.AutoSize = true;
+            this.chkVFOsync_filter.Image = null;
+            this.chkVFOsync_filter.Location = new System.Drawing.Point(14, 69);
+            this.chkVFOsync_filter.Name = "chkVFOsync_filter";
+            this.chkVFOsync_filter.Size = new System.Drawing.Size(146, 17);
+            this.chkVFOsync_filter.TabIndex = 2;
+            this.chkVFOsync_filter.Text = "sync filter if not var1/var2";
+            this.chkVFOsync_filter.UseVisualStyleBackColor = true;
+            this.chkVFOsync_filter.CheckedChanged += new System.EventHandler(this.chkVFOsync_settings_changed);
+            // 
+            // chkVFOsync_mode
+            // 
+            this.chkVFOsync_mode.AutoSize = true;
+            this.chkVFOsync_mode.Image = null;
+            this.chkVFOsync_mode.Location = new System.Drawing.Point(14, 46);
+            this.chkVFOsync_mode.Name = "chkVFOsync_mode";
+            this.chkVFOsync_mode.Size = new System.Drawing.Size(77, 17);
+            this.chkVFOsync_mode.TabIndex = 1;
+            this.chkVFOsync_mode.Text = "sync mode";
+            this.chkVFOsync_mode.UseVisualStyleBackColor = true;
+            this.chkVFOsync_mode.CheckedChanged += new System.EventHandler(this.chkVFOsync_settings_changed);
+            // 
+            // chkVFOsync_freq
+            // 
+            this.chkVFOsync_freq.AutoSize = true;
+            this.chkVFOsync_freq.Checked = true;
+            this.chkVFOsync_freq.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkVFOsync_freq.Image = null;
+            this.chkVFOsync_freq.Location = new System.Drawing.Point(14, 23);
+            this.chkVFOsync_freq.Name = "chkVFOsync_freq";
+            this.chkVFOsync_freq.Size = new System.Drawing.Size(98, 17);
+            this.chkVFOsync_freq.TabIndex = 0;
+            this.chkVFOsync_freq.Text = "sync frequency";
+            this.chkVFOsync_freq.UseVisualStyleBackColor = true;
+            this.chkVFOsync_freq.CheckedChanged += new System.EventHandler(this.chkVFOsync_settings_changed);
+            // 
             // tpOptionsStartUp
             // 
             this.tpOptionsStartUp.BackColor = System.Drawing.SystemColors.Control;
@@ -11656,6 +11722,7 @@
             // 
             // grpAutoLaunchFiles
             // 
+            this.grpAutoLaunchFiles.Controls.Add(this.labelTS483);
             this.grpAutoLaunchFiles.Controls.Add(this.btnAutoLaunchSelectFile_9);
             this.grpAutoLaunchFiles.Controls.Add(this.txtAutoLaunchFile_9);
             this.grpAutoLaunchFiles.Controls.Add(this.chkAutoLaunch_9);
@@ -11692,6 +11759,17 @@
             this.grpAutoLaunchFiles.TabIndex = 36;
             this.grpAutoLaunchFiles.TabStop = false;
             this.grpAutoLaunchFiles.Text = "Auto Launch At Start Up";
+            // 
+            // labelTS483
+            // 
+            this.labelTS483.AutoSize = true;
+            this.labelTS483.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS483.Image = null;
+            this.labelTS483.Location = new System.Drawing.Point(10, 280);
+            this.labelTS483.Name = "labelTS483";
+            this.labelTS483.Size = new System.Drawing.Size(309, 12);
+            this.labelTS483.TabIndex = 50;
+            this.labelTS483.Text = "Note: holding ALT at startup will prevent these from starting";
             // 
             // btnAutoLaunchSelectFile_9
             // 
@@ -56292,6 +56370,7 @@
             // 
             // groupBoxTS44
             // 
+            this.groupBoxTS44.Controls.Add(this.chkHideLegacyMeters);
             this.groupBoxTS44.Controls.Add(this.chkLegacyItems_hide_avg_peak);
             this.groupBoxTS44.Controls.Add(this.chkLegacyItems_hide_mic_comp);
             this.groupBoxTS44.Controls.Add(this.chkLegacyItems_hide_noise_mnf);
@@ -56306,13 +56385,25 @@
             this.groupBoxTS44.Controls.Add(this.chkLegacyItems_filter);
             this.groupBoxTS44.Controls.Add(this.chkLegacyItems_mode);
             this.groupBoxTS44.Controls.Add(this.chkLegacyItems_band);
-            this.groupBoxTS44.Controls.Add(this.chkLegacyMeters);
             this.groupBoxTS44.Location = new System.Drawing.Point(21, 16);
             this.groupBoxTS44.Name = "groupBoxTS44";
             this.groupBoxTS44.Size = new System.Drawing.Size(563, 259);
             this.groupBoxTS44.TabIndex = 0;
             this.groupBoxTS44.TabStop = false;
             this.groupBoxTS44.Text = "Expanded Console UI";
+            // 
+            // chkHideLegacyMeters
+            // 
+            this.chkHideLegacyMeters.AutoSize = true;
+            this.chkHideLegacyMeters.Image = null;
+            this.chkHideLegacyMeters.Location = new System.Drawing.Point(19, 29);
+            this.chkHideLegacyMeters.Name = "chkHideLegacyMeters";
+            this.chkHideLegacyMeters.Size = new System.Drawing.Size(116, 17);
+            this.chkHideLegacyMeters.TabIndex = 101;
+            this.chkHideLegacyMeters.Text = "Hide legacy meters";
+            this.toolTip1.SetToolTip(this.chkHideLegacyMeters, "Show or hide the legacy meters");
+            this.chkHideLegacyMeters.UseVisualStyleBackColor = true;
+            this.chkHideLegacyMeters.CheckedChanged += new System.EventHandler(this.chkHideLegacyMeters_CheckedChanged);
             // 
             // chkLegacyItems_hide_avg_peak
             // 
@@ -56481,21 +56572,6 @@
             this.chkLegacyItems_band.Text = "Hide band button grid";
             this.chkLegacyItems_band.UseVisualStyleBackColor = true;
             this.chkLegacyItems_band.CheckedChanged += new System.EventHandler(this.chkLegacyItems_band_CheckedChanged);
-            // 
-            // chkLegacyMeters
-            // 
-            this.chkLegacyMeters.AutoSize = true;
-            this.chkLegacyMeters.Checked = true;
-            this.chkLegacyMeters.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkLegacyMeters.Image = null;
-            this.chkLegacyMeters.Location = new System.Drawing.Point(19, 29);
-            this.chkLegacyMeters.Name = "chkLegacyMeters";
-            this.chkLegacyMeters.Size = new System.Drawing.Size(113, 17);
-            this.chkLegacyMeters.TabIndex = 86;
-            this.chkLegacyMeters.Text = "Use legacy meters";
-            this.toolTip1.SetToolTip(this.chkLegacyMeters, "Show or hide the legacy meters");
-            this.chkLegacyMeters.UseVisualStyleBackColor = true;
-            this.chkLegacyMeters.CheckedChanged += new System.EventHandler(this.chkLegacyMeters_CheckedChanged);
             // 
             // tpKeyboard
             // 
@@ -58691,6 +58767,10 @@
             // 
             // groupBoxTS16
             // 
+            this.groupBoxTS16.Controls.Add(this.lblN1MM_ids_warning);
+            this.groupBoxTS16.Controls.Add(this.labelTS643);
+            this.groupBoxTS16.Controls.Add(this.txtN1MM_ID_RX_2);
+            this.groupBoxTS16.Controls.Add(this.txtN1MM_ID_RX_1);
             this.groupBoxTS16.Controls.Add(this.btnIPv4N1MM);
             this.groupBoxTS16.Controls.Add(this.btnN1MMDefault);
             this.groupBoxTS16.Controls.Add(this.labelTS90);
@@ -58708,6 +58788,51 @@
             this.groupBoxTS16.TabIndex = 57;
             this.groupBoxTS16.TabStop = false;
             this.groupBoxTS16.Text = "N1MM+ WaterfallBandmap";
+            // 
+            // lblN1MM_ids_warning
+            // 
+            this.lblN1MM_ids_warning.AutoSize = true;
+            this.lblN1MM_ids_warning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblN1MM_ids_warning.ForeColor = System.Drawing.Color.Red;
+            this.lblN1MM_ids_warning.Image = null;
+            this.lblN1MM_ids_warning.Location = new System.Drawing.Point(166, 119);
+            this.lblN1MM_ids_warning.Name = "lblN1MM_ids_warning";
+            this.lblN1MM_ids_warning.Size = new System.Drawing.Size(149, 13);
+            this.lblN1MM_ids_warning.TabIndex = 75;
+            this.lblN1MM_ids_warning.Text = "ID\'s can not be the same";
+            this.lblN1MM_ids_warning.Visible = false;
+            // 
+            // labelTS643
+            // 
+            this.labelTS643.AutoSize = true;
+            this.labelTS643.Image = null;
+            this.labelTS643.Location = new System.Drawing.Point(157, 13);
+            this.labelTS643.Name = "labelTS643";
+            this.labelTS643.Size = new System.Drawing.Size(18, 13);
+            this.labelTS643.TabIndex = 74;
+            this.labelTS643.Text = "ID";
+            // 
+            // txtN1MM_ID_RX_2
+            // 
+            this.txtN1MM_ID_RX_2.Location = new System.Drawing.Point(111, 51);
+            this.txtN1MM_ID_RX_2.MaxLength = 32;
+            this.txtN1MM_ID_RX_2.Name = "txtN1MM_ID_RX_2";
+            this.txtN1MM_ID_RX_2.Size = new System.Drawing.Size(110, 20);
+            this.txtN1MM_ID_RX_2.TabIndex = 73;
+            this.txtN1MM_ID_RX_2.Text = "Thetis_2";
+            this.toolTip1.SetToolTip(this.txtN1MM_ID_RX_2, "The unique ID for RX2 data");
+            this.txtN1MM_ID_RX_2.TextChanged += new System.EventHandler(this.txtN1MM_RXn_ID_TextChanged);
+            // 
+            // txtN1MM_ID_RX_1
+            // 
+            this.txtN1MM_ID_RX_1.Location = new System.Drawing.Point(111, 28);
+            this.txtN1MM_ID_RX_1.MaxLength = 32;
+            this.txtN1MM_ID_RX_1.Name = "txtN1MM_ID_RX_1";
+            this.txtN1MM_ID_RX_1.Size = new System.Drawing.Size(110, 20);
+            this.txtN1MM_ID_RX_1.TabIndex = 72;
+            this.txtN1MM_ID_RX_1.Text = "Thetis_1";
+            this.toolTip1.SetToolTip(this.txtN1MM_ID_RX_1, "The unique ID for RX1 data");
+            this.txtN1MM_ID_RX_1.TextChanged += new System.EventHandler(this.txtN1MM_RXn_ID_TextChanged);
             // 
             // btnIPv4N1MM
             // 
@@ -58777,7 +58902,7 @@
             // 
             this.labelTS89.AutoSize = true;
             this.labelTS89.Image = null;
-            this.labelTS89.Location = new System.Drawing.Point(152, 12);
+            this.labelTS89.Location = new System.Drawing.Point(228, 12);
             this.labelTS89.Name = "labelTS89";
             this.labelTS89.Size = new System.Drawing.Size(56, 13);
             this.labelTS89.TabIndex = 6;
@@ -58791,7 +58916,7 @@
             0,
             0,
             131072});
-            this.udN1MMRX2Scaling.Location = new System.Drawing.Point(155, 53);
+            this.udN1MMRX2Scaling.Location = new System.Drawing.Point(227, 51);
             this.udN1MMRX2Scaling.Maximum = new decimal(new int[] {
             5,
             0,
@@ -58821,7 +58946,7 @@
             0,
             0,
             131072});
-            this.udN1MMRX1Scaling.Location = new System.Drawing.Point(155, 30);
+            this.udN1MMRX1Scaling.Location = new System.Drawing.Point(227, 28);
             this.udN1MMRX1Scaling.Maximum = new decimal(new int[] {
             5,
             0,
@@ -60660,6 +60785,7 @@
             // 
             // groupBoxTS30
             // 
+            this.groupBoxTS30.Controls.Add(this.chkShowStartupLog);
             this.groupBoxTS30.Controls.Add(this.btnFormLocationHelper);
             this.groupBoxTS30.Controls.Add(this.btnFPSProfile);
             this.groupBoxTS30.Controls.Add(this.btnShowSeqLog);
@@ -60667,18 +60793,29 @@
             this.groupBoxTS30.Controls.Add(this.chkShowControlDebug);
             this.groupBoxTS30.Location = new System.Drawing.Point(11, 340);
             this.groupBoxTS30.Name = "groupBoxTS30";
-            this.groupBoxTS30.Size = new System.Drawing.Size(463, 82);
+            this.groupBoxTS30.Size = new System.Drawing.Size(545, 82);
             this.groupBoxTS30.TabIndex = 120;
             this.groupBoxTS30.TabStop = false;
             this.groupBoxTS30.Text = "Debug";
             // 
+            // chkShowStartupLog
+            // 
+            this.chkShowStartupLog.Image = null;
+            this.chkShowStartupLog.Location = new System.Drawing.Point(211, 17);
+            this.chkShowStartupLog.Name = "chkShowStartupLog";
+            this.chkShowStartupLog.Size = new System.Drawing.Size(130, 24);
+            this.chkShowStartupLog.TabIndex = 122;
+            this.chkShowStartupLog.Text = "Show Startup Log";
+            this.toolTip1.SetToolTip(this.chkShowStartupLog, "Show the startup log");
+            this.chkShowStartupLog.CheckedChanged += new System.EventHandler(this.chkShowStartupLog_CheckedChanged);
+            // 
             // btnFormLocationHelper
             // 
             this.btnFormLocationHelper.Image = null;
-            this.btnFormLocationHelper.Location = new System.Drawing.Point(343, 19);
+            this.btnFormLocationHelper.Location = new System.Drawing.Point(446, 19);
             this.btnFormLocationHelper.Name = "btnFormLocationHelper";
             this.btnFormLocationHelper.Selectable = true;
-            this.btnFormLocationHelper.Size = new System.Drawing.Size(110, 52);
+            this.btnFormLocationHelper.Size = new System.Drawing.Size(93, 52);
             this.btnFormLocationHelper.TabIndex = 121;
             this.btnFormLocationHelper.Text = "Reposition Forms";
             this.toolTip1.SetToolTip(this.btnFormLocationHelper, "Use this if you have lost a form off screen somewhere");
@@ -60688,10 +60825,10 @@
             // btnFPSProfile
             // 
             this.btnFPSProfile.Image = null;
-            this.btnFPSProfile.Location = new System.Drawing.Point(227, 19);
+            this.btnFPSProfile.Location = new System.Drawing.Point(347, 18);
             this.btnFPSProfile.Name = "btnFPSProfile";
             this.btnFPSProfile.Selectable = true;
-            this.btnFPSProfile.Size = new System.Drawing.Size(109, 52);
+            this.btnFPSProfile.Size = new System.Drawing.Size(93, 52);
             this.btnFPSProfile.TabIndex = 120;
             this.btnFPSProfile.Text = "FPS Profile";
             this.btnFPSProfile.UseVisualStyleBackColor = true;
@@ -65027,7 +65164,7 @@
             // 
             this.chkBandButtons_band_inactive_use.AutoSize = true;
             this.chkBandButtons_band_inactive_use.Image = null;
-            this.chkBandButtons_band_inactive_use.Location = new System.Drawing.Point(106, 235);
+            this.chkBandButtons_band_inactive_use.Location = new System.Drawing.Point(102, 235);
             this.chkBandButtons_band_inactive_use.Name = "chkBandButtons_band_inactive_use";
             this.chkBandButtons_band_inactive_use.Size = new System.Drawing.Size(45, 17);
             this.chkBandButtons_band_inactive_use.TabIndex = 157;
@@ -66277,7 +66414,7 @@
             // 
             this.tabPage7.Controls.Add(this.ucOtherButtonsOptionsGrid_buttons);
             this.tabPage7.Controls.Add(this.ucTunestepOptionsGrid_buttons);
-            this.tabPage7.Controls.Add(this.grpBandButtons);
+            this.tabPage7.Controls.Add(this.grpButtonBox);
             this.tabPage7.Location = new System.Drawing.Point(4, 22);
             this.tabPage7.Name = "tabPage7";
             this.tabPage7.Size = new System.Drawing.Size(726, 463);
@@ -66305,57 +66442,57 @@
             this.ucTunestepOptionsGrid_buttons.TabIndex = 111;
             this.ucTunestepOptionsGrid_buttons.CheckboxChanged += new System.EventHandler(this.ucTunestepOptionsGrid_buttons_checkbox_changed);
             // 
-            // grpBandButtons
+            // grpButtonBox
             // 
-            this.grpBandButtons.Controls.Add(this.btnOtherButtons_reset_layout);
-            this.grpBandButtons.Controls.Add(this.chkButtonBox_use_icons);
-            this.grpBandButtons.Controls.Add(this.chkButtonBox_fix_text_size);
-            this.grpBandButtons.Controls.Add(this.clrbtnButonBox_fontcolour);
-            this.grpBandButtons.Controls.Add(this.labelTS292);
-            this.grpBandButtons.Controls.Add(this.clrbtnButonBox_click);
-            this.grpBandButtons.Controls.Add(this.pnlButtonBox_antenna_toggles);
-            this.grpBandButtons.Controls.Add(this.nudButtonBox_font_y_shift);
-            this.grpBandButtons.Controls.Add(this.labelTS250);
-            this.grpBandButtons.Controls.Add(this.nudButtonBox_font_x_shift);
-            this.grpBandButtons.Controls.Add(this.labelTS247);
-            this.grpBandButtons.Controls.Add(this.nudButtonBox_font_scale);
-            this.grpBandButtons.Controls.Add(this.labelTS248);
-            this.grpBandButtons.Controls.Add(this.lblBandButtons_indicator_style);
-            this.grpBandButtons.Controls.Add(this.nudBandButtons_indicator_style);
-            this.grpBandButtons.Controls.Add(this.chkBandButtons_band_inactive_use);
-            this.grpBandButtons.Controls.Add(this.labelTS246);
-            this.grpBandButtons.Controls.Add(this.clrbtnBandButtons_hover);
-            this.grpBandButtons.Controls.Add(this.labelTS245);
-            this.grpBandButtons.Controls.Add(this.clrbtnBandButtons_fill);
-            this.grpBandButtons.Controls.Add(this.labelTS244);
-            this.grpBandButtons.Controls.Add(this.clrbtnBandButtons_border);
-            this.grpBandButtons.Controls.Add(this.labelTS243);
-            this.grpBandButtons.Controls.Add(this.clrbtnBandButtons_indicator_off);
-            this.grpBandButtons.Controls.Add(this.labelTS242);
-            this.grpBandButtons.Controls.Add(this.nudBandButtons_indicator_border);
-            this.grpBandButtons.Controls.Add(this.lblBandButtons_indicator_border);
-            this.grpBandButtons.Controls.Add(this.nudBandButtons_height_ratio);
-            this.grpBandButtons.Controls.Add(this.labelTS241);
-            this.grpBandButtons.Controls.Add(this.nudBandButtons_radius);
-            this.grpBandButtons.Controls.Add(this.labelTS240);
-            this.grpBandButtons.Controls.Add(this.nudBandButtons_margin);
-            this.grpBandButtons.Controls.Add(this.labelTS239);
-            this.grpBandButtons.Controls.Add(this.nudBandButtons_border);
-            this.grpBandButtons.Controls.Add(this.labelTS238);
-            this.grpBandButtons.Controls.Add(this.btnBandButtons_font);
-            this.grpBandButtons.Controls.Add(this.chkBandButtons_use_indicator);
-            this.grpBandButtons.Controls.Add(this.nudBandButtons_columns);
-            this.grpBandButtons.Controls.Add(this.labelTS249);
-            this.grpBandButtons.Controls.Add(this.clrbtnBandButtons_indicator_on);
-            this.grpBandButtons.Controls.Add(this.chkBandButtons_fade_tx);
-            this.grpBandButtons.Controls.Add(this.chkBandButtons_fade_rx);
-            this.grpBandButtons.Location = new System.Drawing.Point(12, 23);
-            this.grpBandButtons.Name = "grpBandButtons";
-            this.grpBandButtons.Size = new System.Drawing.Size(323, 376);
-            this.grpBandButtons.TabIndex = 109;
-            this.grpBandButtons.TabStop = false;
-            this.grpBandButtons.Text = "Button Box";
-            this.grpBandButtons.Visible = false;
+            this.grpButtonBox.Controls.Add(this.btnOtherButtons_reset_layout);
+            this.grpButtonBox.Controls.Add(this.chkButtonBox_use_icons);
+            this.grpButtonBox.Controls.Add(this.chkButtonBox_fix_text_size);
+            this.grpButtonBox.Controls.Add(this.clrbtnButonBox_fontcolour);
+            this.grpButtonBox.Controls.Add(this.labelTS292);
+            this.grpButtonBox.Controls.Add(this.clrbtnButonBox_click);
+            this.grpButtonBox.Controls.Add(this.pnlButtonBox_antenna_toggles);
+            this.grpButtonBox.Controls.Add(this.nudButtonBox_font_y_shift);
+            this.grpButtonBox.Controls.Add(this.labelTS250);
+            this.grpButtonBox.Controls.Add(this.nudButtonBox_font_x_shift);
+            this.grpButtonBox.Controls.Add(this.labelTS247);
+            this.grpButtonBox.Controls.Add(this.nudButtonBox_font_scale);
+            this.grpButtonBox.Controls.Add(this.labelTS248);
+            this.grpButtonBox.Controls.Add(this.lblBandButtons_indicator_style);
+            this.grpButtonBox.Controls.Add(this.nudBandButtons_indicator_style);
+            this.grpButtonBox.Controls.Add(this.chkBandButtons_band_inactive_use);
+            this.grpButtonBox.Controls.Add(this.labelTS246);
+            this.grpButtonBox.Controls.Add(this.clrbtnBandButtons_hover);
+            this.grpButtonBox.Controls.Add(this.labelTS245);
+            this.grpButtonBox.Controls.Add(this.clrbtnBandButtons_fill);
+            this.grpButtonBox.Controls.Add(this.labelTS244);
+            this.grpButtonBox.Controls.Add(this.clrbtnBandButtons_border);
+            this.grpButtonBox.Controls.Add(this.labelTS243);
+            this.grpButtonBox.Controls.Add(this.clrbtnBandButtons_indicator_off);
+            this.grpButtonBox.Controls.Add(this.labelTS242);
+            this.grpButtonBox.Controls.Add(this.nudBandButtons_indicator_border);
+            this.grpButtonBox.Controls.Add(this.lblBandButtons_indicator_border);
+            this.grpButtonBox.Controls.Add(this.nudBandButtons_height_ratio);
+            this.grpButtonBox.Controls.Add(this.labelTS241);
+            this.grpButtonBox.Controls.Add(this.nudBandButtons_radius);
+            this.grpButtonBox.Controls.Add(this.labelTS240);
+            this.grpButtonBox.Controls.Add(this.nudBandButtons_margin);
+            this.grpButtonBox.Controls.Add(this.labelTS239);
+            this.grpButtonBox.Controls.Add(this.nudBandButtons_border);
+            this.grpButtonBox.Controls.Add(this.labelTS238);
+            this.grpButtonBox.Controls.Add(this.btnBandButtons_font);
+            this.grpButtonBox.Controls.Add(this.chkBandButtons_use_indicator);
+            this.grpButtonBox.Controls.Add(this.nudBandButtons_columns);
+            this.grpButtonBox.Controls.Add(this.labelTS249);
+            this.grpButtonBox.Controls.Add(this.clrbtnBandButtons_indicator_on);
+            this.grpButtonBox.Controls.Add(this.chkBandButtons_fade_tx);
+            this.grpButtonBox.Controls.Add(this.chkBandButtons_fade_rx);
+            this.grpButtonBox.Location = new System.Drawing.Point(12, 23);
+            this.grpButtonBox.Name = "grpButtonBox";
+            this.grpButtonBox.Size = new System.Drawing.Size(323, 376);
+            this.grpButtonBox.TabIndex = 109;
+            this.grpButtonBox.TabStop = false;
+            this.grpButtonBox.Text = "Button Box";
+            this.grpButtonBox.Visible = false;
             // 
             // labelTS292
             // 
@@ -70013,66 +70150,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // tpOptions3
-            // 
-            this.tpOptions3.BackColor = System.Drawing.SystemColors.Control;
-            this.tpOptions3.Controls.Add(this.groupBoxTS57);
-            this.tpOptions3.Location = new System.Drawing.Point(4, 22);
-            this.tpOptions3.Name = "tpOptions3";
-            this.tpOptions3.Size = new System.Drawing.Size(716, 384);
-            this.tpOptions3.TabIndex = 3;
-            this.tpOptions3.Text = "Options-3";
-            // 
-            // groupBoxTS57
-            // 
-            this.groupBoxTS57.Controls.Add(this.chkVFOsync_filter);
-            this.groupBoxTS57.Controls.Add(this.chkVFOsync_mode);
-            this.groupBoxTS57.Controls.Add(this.chkVFOsync_freq);
-            this.groupBoxTS57.Location = new System.Drawing.Point(8, 8);
-            this.groupBoxTS57.Name = "groupBoxTS57";
-            this.groupBoxTS57.Size = new System.Drawing.Size(190, 99);
-            this.groupBoxTS57.TabIndex = 32;
-            this.groupBoxTS57.TabStop = false;
-            this.groupBoxTS57.Text = "VFOsync will";
-            // 
-            // chkVFOsync_freq
-            // 
-            this.chkVFOsync_freq.AutoSize = true;
-            this.chkVFOsync_freq.Checked = true;
-            this.chkVFOsync_freq.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkVFOsync_freq.Image = null;
-            this.chkVFOsync_freq.Location = new System.Drawing.Point(14, 23);
-            this.chkVFOsync_freq.Name = "chkVFOsync_freq";
-            this.chkVFOsync_freq.Size = new System.Drawing.Size(98, 17);
-            this.chkVFOsync_freq.TabIndex = 0;
-            this.chkVFOsync_freq.Text = "sync frequency";
-            this.chkVFOsync_freq.UseVisualStyleBackColor = true;
-            this.chkVFOsync_freq.CheckedChanged += new System.EventHandler(this.chkVFOsync_settings_changed);
-            // 
-            // chkVFOsync_mode
-            // 
-            this.chkVFOsync_mode.AutoSize = true;
-            this.chkVFOsync_mode.Image = null;
-            this.chkVFOsync_mode.Location = new System.Drawing.Point(14, 46);
-            this.chkVFOsync_mode.Name = "chkVFOsync_mode";
-            this.chkVFOsync_mode.Size = new System.Drawing.Size(77, 17);
-            this.chkVFOsync_mode.TabIndex = 1;
-            this.chkVFOsync_mode.Text = "sync mode";
-            this.chkVFOsync_mode.UseVisualStyleBackColor = true;
-            this.chkVFOsync_mode.CheckedChanged += new System.EventHandler(this.chkVFOsync_settings_changed);
-            // 
-            // chkVFOsync_filter
-            // 
-            this.chkVFOsync_filter.AutoSize = true;
-            this.chkVFOsync_filter.Image = null;
-            this.chkVFOsync_filter.Location = new System.Drawing.Point(14, 69);
-            this.chkVFOsync_filter.Name = "chkVFOsync_filter";
-            this.chkVFOsync_filter.Size = new System.Drawing.Size(146, 17);
-            this.chkVFOsync_filter.TabIndex = 2;
-            this.chkVFOsync_filter.Text = "sync filter if not var1/var2";
-            this.chkVFOsync_filter.UseVisualStyleBackColor = true;
-            this.chkVFOsync_filter.CheckedChanged += new System.EventHandler(this.chkVFOsync_settings_changed);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -70240,6 +70317,9 @@
             this.groupBoxTS15.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerSeconds)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udQSOTimerMinutes)).EndInit();
+            this.tpOptions3.ResumeLayout(false);
+            this.groupBoxTS57.ResumeLayout(false);
+            this.groupBoxTS57.PerformLayout();
             this.tpOptionsStartUp.ResumeLayout(false);
             this.groupBoxTS37.ResumeLayout(false);
             this.groupBoxTS37.PerformLayout();
@@ -71377,8 +71457,8 @@
             this.grpMeterItemSpacerSettings.ResumeLayout(false);
             this.grpMeterItemSpacerSettings.PerformLayout();
             this.tabPage7.ResumeLayout(false);
-            this.grpBandButtons.ResumeLayout(false);
-            this.grpBandButtons.PerformLayout();
+            this.grpButtonBox.ResumeLayout(false);
+            this.grpButtonBox.PerformLayout();
             this.pnlButtonBox_antenna_toggles.ResumeLayout(false);
             this.pnlButtonBox_antenna_toggles.PerformLayout();
             this.tabPage8.ResumeLayout(false);
@@ -71446,9 +71526,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
-            this.tpOptions3.ResumeLayout(false);
-            this.groupBoxTS57.ResumeLayout(false);
-            this.groupBoxTS57.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -74902,7 +74979,6 @@
         private CheckBoxTS chkLinkRX1AF;
         private GroupBoxTS groupBoxTS29;
         private CheckBoxTS chkLinkMaster;
-        private CheckBoxTS chkLegacyMeters;
         private RadioButtonTS radSpaceBarVFOBTX;
         private TextBoxTS txtboxTXProfileChangedReport;
         private LabelTS labelQuickSplitInfo;
@@ -75316,7 +75392,7 @@
         private RadioButtonTS radMultiMeter_vfo_display_vfoa;
         private RadioButtonTS radMultiMeter_vfo_display_both;
         private CheckBoxTS chkMultiMeter_auto_container_height;
-        private GroupBoxTS grpBandButtons;
+        private GroupBoxTS grpButtonBox;
         private CheckBoxTS chkBandButtons_use_indicator;
         private NumericUpDownTS nudBandButtons_columns;
         private LabelTS labelTS249;
@@ -75846,5 +75922,12 @@
         private CheckBoxTS chkVFOsync_filter;
         private CheckBoxTS chkVFOsync_mode;
         private CheckBoxTS chkVFOsync_freq;
+        private CheckBoxTS chkHideLegacyMeters;
+        private LabelTS labelTS483;
+        private LabelTS labelTS643;
+        private TextBoxTS txtN1MM_ID_RX_2;
+        private TextBoxTS txtN1MM_ID_RX_1;
+        private LabelTS lblN1MM_ids_warning;
+        private CheckBoxTS chkShowStartupLog;
     }
 }

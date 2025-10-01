@@ -2387,7 +2387,7 @@ namespace Thetis
         }
 
         //images, used by dxrenderer
-        private static void loadImages()
+        private static void loadImages(bool init = false)
         {
             string sDefaultPath = _openHPSDR_appdatapath;
             string sSkinPath = _current_skin_path;
@@ -2398,12 +2398,13 @@ namespace Thetis
 
             // load
             if (!sDefaultPath.EndsWith("\\")) sDefaultPath += "\\";
-            if (System.IO.Directory.Exists(sDefaultPath))
+            if (Directory.Exists(sDefaultPath))
             {
                 for (int n = 0; n < imageFileNames.Length; n++)
                 {
                     string sSkinFileName = sSkinPath + "\\Meters\\" + imageFileNames[n];
                     string sDefaultFileName = sDefaultPath + "\\Meters\\" + imageFileNames[n];
+
                     for (int i = 0; i < imageFileNameParts.Length; i++)
                     {
                         for (int nn = 0; nn < image_extensions.Length; nn++)
@@ -2411,13 +2412,16 @@ namespace Thetis
                             string image_filname = imageFileNameParts[i] + image_extensions[nn];
                             if (File.Exists(sSkinFileName + image_filname))
                             {
-                                // remove this as it is a meter skin
-                                string sRemove = imageFileNames[n] + imageFileNameParts[i];
-                                removeImageCacheData(sRemove);
-                                foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
+                                if (!init) // only do this when not initialising
                                 {
-                                    DXRenderer r = kvp.Value;
-                                    r.RemoveDXImage(sRemove);
+                                    // remove this as it is a meter skin
+                                    string sRemove = imageFileNames[n] + imageFileNameParts[i];
+                                    removeImageCacheData(sRemove);
+                                    foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
+                                    {
+                                        DXRenderer r = kvp.Value;
+                                        r.RemoveDXImage(sRemove);
+                                    }
                                 }
 
                                 loadImage(sSkinFileName + image_filname, true);
@@ -3345,7 +3349,7 @@ namespace Thetis
 
             loadImages();
         }
-        public static void RunRendererDisplay(string sId)
+        public static void RunRendererDisplay(string sId, bool init = false)
         {
             if (!_DXrenderers.ContainsKey(sId)) return;
 
@@ -3353,7 +3357,7 @@ namespace Thetis
 
             r.RunDisplay(); // causes dx to initialise
 
-            loadImages();
+            loadImages(init);
             loadResouceImages();
         }
         public static void RunAllRendererDisplays()
@@ -3362,7 +3366,7 @@ namespace Thetis
 
             foreach (KeyValuePair<string, DXRenderer> kvp in _DXrenderers)
             {
-                RunRendererDisplay(kvp.Key);
+                RunRendererDisplay(kvp.Key, true);
             }
         }
         public static void SetVsync(bool vsync)
@@ -9160,13 +9164,13 @@ namespace Thetis
                 int index = base.ButtonIndex;
                 if (index == -1) return;
 
-                if (!GetEnabled(1, index)) return;
-
                 //use map to convert index
                 lock (_map_lock) 
                 {
                     index = _map[index];
                 }
+
+                if (!GetEnabled(1, index)) return;
 
                 int bit = index % 32;
                 int bit_group = index / 32;
@@ -15535,8 +15539,6 @@ namespace Thetis
             private float _spec_max;
             private float _spec_raw_min;
             private float _spec_raw_max;
-            //private double _vfoA_freq;
-            //private double _vfoB_freq;
             private int _rx_spec_grid_min;
             private int _rx_spec_grid_max;
             private int _rx_spec_grid_range;
@@ -15603,16 +15605,11 @@ namespace Thetis
                 _ig = item_group;
 
                 _display_mode = DisplayMode.PANAFALL;
-
                 _waterfall_frame_interval = 4; // every 4th frame
-
                 _font_scale = 1f;
-
                 _fill_spec = true;
                 _old_data_index = -1;
-
                 _use_greyscale = true;
-
                 _sideband_mode = false;
                 _show_limits = true;
                 _fixed_rx_zoom = false;
@@ -15622,13 +15619,52 @@ namespace Thetis
                 _sidebands_scale = 0f;
                 _cw_scale = 0f;
                 _others_scale = 0f;
+                _colour = System.Drawing.Color.FromArgb(32, 32, 32);
+                _padding = 0.2f;
+
+                _spec_data = new float[MiniSpec.PIXELS];
+                _spec_data_raw = new float[MiniSpec.PIXELS];
+                _spec_greyscale = new float[MiniSpec.PIXELS];
+
+                _waterfall_rx_colours = new System.Drawing.Color[101];
+                _waterfall_tx_colours = new System.Drawing.Color[101];
+                _dataline_colour = System.Drawing.Color.LimeGreen;
+                _datafill_colour = System.Drawing.Color.LimeGreen;
+                _waterfall_palette = WaterfallPalette.ENHANCED;
+                _waterfall_low_colour = System.Drawing.Color.Black;
+                _text_colour = System.Drawing.Color.White;
+                _number_highlight_colour = System.Drawing.Color.DarkRed;
+                _edges_colour_rx = System.Drawing.Color.Yellow;
+                _edges_colour_tx = System.Drawing.Color.Red;
+                _edge_highlight_colour = System.Drawing.Color.White;
+                _extents_colour = System.Drawing.Color.Gray;
+                _snapline_colour = System.Drawing.Color.Gray;
+                _meterback_colour = System.Drawing.Color.Black;
+                _notch_colour = System.Drawing.Color.Orange;
+                _notchhighligh_colour = System.Drawing.Color.LimeGreen;
+                _snapline_colour = System.Drawing.Color.Gray;
+                _setting_on_colour = System.Drawing.Color.CornflowerBlue;
+                _button_highlight_colour = System.Drawing.Color.Gray;
+
+                _auto_zoom = false;
+                _show_characteristic = false;
+                _characteristic_low = -250.0f;
+                _snap_lines = false;
+                _snap_lines_ignore = false;
+                _mouse_frequency = -1;
+
+                ItemType = MeterItemType.FILTER_DISPLAY;
+                ReadingSource = Reading.NONE;
+                UpdateInterval = 1000 / MiniSpec.FRAME_RATE; // to ms
+
+                Initialise();
+            }
+            public override void Initialise()
+            {
                 _showVfoA = _owningmeter.RX == 1;
 
                 _extent_hz = _owningmeter.FilterMaxWidth;
                 _tx_extent_hz = MiniSpec.TX_BANDWIDTH;
-
-                _colour = System.Drawing.Color.FromArgb(32, 32, 32);
-                _padding = 0.2f;
 
                 _vfoA_low = _owningmeter.FilterVfoAlow;
                 _vfoA_high = _owningmeter.FilterVfoAhigh;
@@ -15636,9 +15672,6 @@ namespace Thetis
                 _vfoB_high = _owningmeter.FilterVfoBhigh;
                 _vfoA_name = _owningmeter.FilterVfoAName;
                 _vfoB_name = _owningmeter.FilterVfoBName;
-
-                //_vfoA_freq = _owningmeter.VfoA;
-                //_vfoB_freq = _owningmeter.VfoB;
 
                 _mnf_selected = false;
                 _mnf_plus_selected = false;
@@ -15650,7 +15683,7 @@ namespace Thetis
                 _notch_selected = false;
                 _notch_highlighted_index = -1;
                 _notch_start_freq = -1;
-
+                 
                 _adjust_low = false;
                 _adjust_high = false;
 
@@ -15666,10 +15699,6 @@ namespace Thetis
                 _tx_high = _owningmeter.TXFilterHigh;
                 //_pa_profile = _owningmeter.PAProfile;
                 _tx_profile = _owningmeter.TXProfile;
-
-                _spec_data = new float[MiniSpec.PIXELS];
-                _spec_data_raw = new float[MiniSpec.PIXELS];
-                _spec_greyscale = new float[MiniSpec.PIXELS];
 
                 _spec_min = -200f;
                 _spec_max = 200f;
@@ -15704,42 +15733,8 @@ namespace Thetis
                 _waterfall_min_agc_rx = 20;
                 _waterfall_min_agc_tx = 20;
 
-                _waterfall_rx_colours = new System.Drawing.Color[101];
                 _waterfall_rx_gradient_ok = false;
-                _waterfall_tx_colours = new System.Drawing.Color[101];
                 _waterfall_tx_gradient_ok = false;
-
-                _dataline_colour = System.Drawing.Color.LimeGreen;
-                _datafill_colour = System.Drawing.Color.LimeGreen;
-                _waterfall_palette = WaterfallPalette.ENHANCED;
-                _waterfall_low_colour = System.Drawing.Color.Black;
-                _text_colour = System.Drawing.Color.White;
-                _number_highlight_colour = System.Drawing.Color.DarkRed;
-                _edges_colour_rx = System.Drawing.Color.Yellow;
-                _edges_colour_tx = System.Drawing.Color.Red;
-                _edge_highlight_colour = System.Drawing.Color.White;
-                _extents_colour = System.Drawing.Color.Gray;
-                _snapline_colour = System.Drawing.Color.Gray;
-                _meterback_colour = System.Drawing.Color.Black;
-                _notch_colour = System.Drawing.Color.Orange;
-                _notchhighligh_colour = System.Drawing.Color.LimeGreen;
-                _snapline_colour = System.Drawing.Color.Gray;
-                _setting_on_colour = System.Drawing.Color.CornflowerBlue;
-                _button_highlight_colour = System.Drawing.Color.Gray;
-
-                _auto_zoom = false;
-                _show_characteristic = false;
-                _characteristic_low = -250.0f;
-                _snap_lines = false;
-                _snap_lines_ignore = false;
-
-                _mouse_frequency = -1;
-
-                ItemType = MeterItemType.FILTER_DISPLAY;
-
-                ReadingSource = Reading.NONE;
-
-                UpdateInterval = 1000 / MiniSpec.FRAME_RATE; // to ms
 
                 buildSpectrumGreyScale(true, true);
 
@@ -26553,7 +26548,8 @@ namespace Thetis
                     foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.BAND_BUTTONS || 
                                                                                          o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_BUTTONS ||
                                                                                          o.Value.ItemType == clsMeterItem.MeterItemType.MODE_BUTTONS ||
-                                                                                         o.Value.ItemType == clsMeterItem.MeterItemType.OTHER_BUTTONS
+                                                                                         o.Value.ItemType == clsMeterItem.MeterItemType.OTHER_BUTTONS ||
+                                                                                         o.Value.ItemType == clsMeterItem.MeterItemType.FILTER_DISPLAY
                                                                                          ))
                     {
                         kvp.Value.Initialise();
@@ -28963,9 +28959,12 @@ namespace Thetis
                                     if (_oldRedrawDelay != -1) resetDX2DModeDescription(1000 / nSleepTime);
                                     _oldRedrawDelay = nSleepTime;
                                 }
-                                //
+                            //
 
-                                if (r != Result.Ok && r != SharpDX.DXGI.ResultCode.WasStillDrawing) //0x887A000A)
+                                if (r != Result.Ok && !(
+                                    r == SharpDX.DXGI.ResultCode.WasStillDrawing/*0x887A000A*/ ||
+                                    r == 0x087A0001/*DXGI_STATUS_OCCLUDED*/
+                                    ) )
                                 {
                                     if ((r == SharpDX.DXGI.ResultCode.DeviceRemoved || r == SharpDX.DXGI.ResultCode.DeviceReset) && _dx_fail_retry < 10)
                                     {
@@ -28975,12 +28974,10 @@ namespace Thetis
                                     }
 
                                     string sMsg = "";
-                                    if (r == 0x887A0001) sMsg = "Present Device Invalid Call" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";    //DXGI_ERROR_INVALID_CALL
-                                    if (r == 0x887A0007) sMsg = "Present Device Reset" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";           //DXGI_ERROR_DEVICE_RESET
-                                    if (r == 0x887A0005) sMsg = "Present Device Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";         //DXGI_ERROR_DEVICE_REMOVED
-                                    if (r == 0x88760870) sMsg = "Present Device DD3DDI Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";  //D3DDDIERR_DEVICEREMOVED
-                                                                                                                                                                                //if (r == 0x087A0001) sMsg = "Present Device Occluded" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";      //DXGI_STATUS_OCCLUDED
-                                                                                                                                                                                //(ignored in the preceding if statement) if (r == 0x887A000A) sMsg = "Present Device Still Drawping" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]"; //DXGI_ERROR_WAS_STILL_DRAWING
+                                    if (r == SharpDX.DXGI.ResultCode.InvalidCall/*0x887A0001*/) sMsg = "Present Device Invalid Call" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";    //DXGI_ERROR_INVALID_CALL
+                                    if (r == SharpDX.DXGI.ResultCode.DeviceReset/*0x887A0007*/) sMsg = "Present Device Reset" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";           //DXGI_ERROR_DEVICE_RESET
+                                    if (r == SharpDX.DXGI.ResultCode.DeviceRemoved/*0x887A0005*/) sMsg = "Present Device Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";         //DXGI_ERROR_DEVICE_REMOVED
+                                    //if (r == 0x88760870) sMsg = "Present Device DD3DDI Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";  //D3DDDIERR_DEVICEREMOVED
 
                                     if (sMsg != "") throw (new Exception(sMsg));
                                 }
@@ -29228,10 +29225,15 @@ namespace Thetis
                     }
                     catch (Exception e)
                     {
+                        string msg = "DirectX resizeDX2D() Meter failure\n\nThis can sometimes be caused by other programs 'hooking' into directX," +
+                            "such as GFX card control software (eg, EVGA Precision Xoc). Close down Thetis, quit as many 'system tray'\nand other " +
+                            "things as possible and try again." + e.Message;
+                        if (_device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceRemoved || _device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceReset)
+                        {
+                            msg += "\n\nDeviceRemoved or DeviceReset reported by DirectX, this indicates a problem with the graphics device or its driver.\n\nRemoval Code : " + _device.DeviceRemovedReason.Code.ToString();
+                        }
                         ShutdownDX();
-                        MessageBox.Show("DirectX resizeDX() Meter failure\n\nThis can sometimes be caused by other programs 'hooking' into directX," +
-                            "such as GFX card control software (eg, EVGA Precision Xoc). Close down Thetis, quit as many 'system tray' and other\n" +
-                            "things as possible and try again.\n\n" + e.Message, "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        MessageBox.Show(msg, "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                         return false;
                     }
                 }

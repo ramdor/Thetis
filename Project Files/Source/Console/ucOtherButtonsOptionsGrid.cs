@@ -1019,7 +1019,7 @@ namespace Thetis
                 }
 
                 CheckBoxTS chk = new CheckBoxTS();
-                chk.Name = "chk_" + ((int)data[i].id).ToString();
+                chk.Name = "chkOtherButton_" + ((int)data[i].id).ToString();
                 chk.AutoSize = false;
                 chk.TextAlign = ContentAlignment.MiddleLeft;
                 chk.AutoEllipsis = true;
@@ -1040,7 +1040,7 @@ namespace Thetis
                 if (is_macro)
                 {
                     but = new ButtonTS();
-                    but.Name = "but_" + ((int)data[i].id).ToString();
+                    but.Name = "btnOtherButtonMacroButton_" + ((int)data[i].id).ToString();
                     but.AutoSize = false;
                     but.Size = new Size(btn_w, chk_h);
                     but.MinimumSize = new Size(btn_w, chk_h);

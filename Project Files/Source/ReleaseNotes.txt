@@ -20,6 +20,9 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] it is now possible to save, load and duplicate containers. At the moment for various technical reasons it is a single container at a time. Note: items such as Led Indicator, WebImage will have their 4char(s) changed to prevent conflict if you were to re-import where they already exist. Meters that use %variables will also not display correctly if those variables are not present. You will have to edit them by hand. A warning is shown if a container being imported has a web image
 - [add] variable picker for text overlay and led indicator items
 - [add] right clicking an OtherButton will show related setup if one exists
+- [add] it is now possible to set ID's for each receiver for N1MM waterfall data, in the network setup tab. This allows for two+ instances of Thetis (SO2R etc) to output data to N1MM
+- [add] startup log can be shown. Option in Setup->Test
+- [add] VAC and portAudio will now successfully use input devices that report only single input channels. Previously input required a device that reported two channels and would fail with certain USB headsets and USB dongles such as the Syba SD-CM-UAUD USB
 - [change] changed ZZIS cat command so that it takes/returns the actual filter width and not the slider width position. ZZIS; will return ZZISxxxxx; where xxxxx is 0 padded filter width. ZZIS00500; will set filter width to 500HZ. Symmetrical modes such as AM, SAM will take the full size width, so ZZIS20000; will be +-10k on AM. Note. FilterWdithMode is switched to linear whilst this is applied
 - [change] private scope added to in/out firewall rules when [Firewall Check] is used from Setup. Previously was only setting Domain + Public
 - [change] reimplemented the code that ensures a form is on screen as there had been occurrences where a form had got 'lost'. Note. this will still fail if a monitor is turned off and windows thinks it is still available as a display surface
@@ -29,6 +32,8 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] available meter items are listed alphabetically per rx/tx/special group
 - [change] on DirectX errors RecreateTarget, DeviceRemoved and DeviceReset, the display engines will now attempt to restart, up to a total of 10 times
 - [change] VFOsync re-work. Now has settings on Options-3 tab
+- [change] show legacy meters has been changed to hide, to align with other options in Setup->Appearance->Legacy Items. May require you to reapply setting if you want them hidden
+- [change] multiple instance detection changed to use global mutex instead of scanning process list
 - [fix] filter command line args to strip any unexpected characters/unicode
 - [fix] you can now enter values into the VAR1/VAR2 filters on the main console. Pressing enter or the box losing focus will set the value
 - [fix] issue where low/high values would sometimes not be stored when using the filter configuration settings window/form
@@ -37,6 +42,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] cw auto mode switch will now not return to previous non cw mode if activated from cw. The return delay now works as expected
 - [fix] text overlay now displays vfob mode correctly
 - [fix] unnecessary recursive calling when setting PreampMode and AttenuatorData
+- [fix] fixed issue where if rtty offset was being used and mode was set to DigL/U then a midi vfo change would cause incorrect frequency calculation (7.100.000 would become 71.000.000)
 
 ## v2.10.3.11 - Change Log
 - [add] two new noise reduction methods added, NR3 and NR4. When starting up this version for the first time if NR was enabled, will now be set to off. Settings in the normal NR settings page of Setup

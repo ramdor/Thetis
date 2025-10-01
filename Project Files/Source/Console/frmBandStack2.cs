@@ -409,13 +409,15 @@ namespace Thetis
 
             if (_is_popup)
             {
-                if(on_top)
-                    this.TopMost = true;
+                if (on_top) this.TopMost = true;
                 this.Location = popup_location ?? Point.Empty;
                 Common.ForceFormOnScreen(this, false, true);
             }
             else
-                this.Location = _location;                
+            {
+                this.Location = _location;
+                Common.ForceFormOnScreen(this, false, false);
+            }            
 
             base.Show();
         }

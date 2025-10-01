@@ -285,7 +285,7 @@ namespace Thetis
 			ms_frmSplash = null;
 		}
 
-		static public void HideForm()
+        static public void HideForm()
 		{
 			if(ms_frmSplash != null && ms_frmSplash.IsDisposed == false)
 				ms_frmSplash.Hide();

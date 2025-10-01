@@ -39,13 +39,7 @@ mw0lge@grange-lane.co.uk
 //============================================================================================//
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -70,7 +64,7 @@ namespace Thetis
 
             this.MinimumSize = new Size(ucMeter.MIN_CONTAINER_WIDTH, ucMeter.MIN_CONTAINER_HEIGHT);
 
-            _id = System.Guid.NewGuid().ToString();
+            _id = Guid.NewGuid().ToString();
             _console = c;
             _rx = rx;
             _rx2_enabled = _console.RX2Enabled;

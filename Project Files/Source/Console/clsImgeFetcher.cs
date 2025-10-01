@@ -247,6 +247,9 @@ namespace Thetis
                             request.Timeout = 2000;
                             request.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
 
+                            //request.PreAuthenticate = true;
+                            //request.Credentials = new NetworkCredential("test", "1234----");
+
                             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                             {
                                 string content_type = response.ContentType;

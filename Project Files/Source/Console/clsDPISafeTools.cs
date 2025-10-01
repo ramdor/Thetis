@@ -127,6 +127,9 @@ namespace Thetis
 
         public static (Rectangle adjusted, bool resized, bool repositioned) EnsureRectangleWithinNearestScreen(Rectangle? rect = null, Form form = null, bool keep_on_screen = false, bool use_working_area = false)
         {
+            // keep_on_screen - if true, will try to keep the window on the screen containing the mouse cursor
+            // use_working_area - if true, will use the working area of the screen(s) (i.e. excluding taskbar and docked windows and docked toolbars)
+
             if (rect == null && form == null) return (Rectangle.Empty, false, false);
 
             if (form != null && form.WindowState == FormWindowState.Maximized)

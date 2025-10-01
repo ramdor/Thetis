@@ -74,9 +74,6 @@ namespace Thetis
     using System.Windows.Forms;
     using System.Xml.Linq;
     using System.Collections.Concurrent;
-    using System.Management;
-    using System.Runtime.CompilerServices;
-    using System.Reflection.Metadata;
 
     public partial class Console : Form
     {
@@ -602,6 +599,9 @@ namespace Thetis
             //#error version
             this.Opacity = 0f; // FadeIn below. Note: console form has 0% set in form designer
 
+            LogTool.ShowNewLog(this.Handle);
+            LogTool.AddLogEntry("Thetis is loading...", "THET", false);
+
             Display.specready = false;
             bool bShowReleaseNotes = false;
 
@@ -637,6 +637,8 @@ namespace Thetis
                 return;
             }
             //
+
+            LogTool.AddLogEntry("Dll's checked ok");
 
             bool reposition_conosle_setup = requires_reposition(); // check for ctrl+alt+shift keycombo to reset console and setup position futher down
 
@@ -706,11 +708,16 @@ namespace Thetis
                 }
                 catch { splash_screen_folder = ""; }
             }
+            LogTool.AddLogEntry("Directories ok");
+
             Splash.ShowSplashScreen(Common.GetVerNum(true, true), splash_screen_folder);							// Start splash screen with version number
+
+            LogTool.AddLogEntry("Splash screen shown");
 
             bool alt_key_down = Common.AltlKeyDown;
 
             // PA init thread - from G7KLJ changes - done as early as possible
+            LogTool.AddLogEntry("Initialising port audio...", "PA");
             Splash.SetStatus("Initializing PortAudio");			// Set progress point as early as possible
             _portAudioInitalising = true;
             _portAudioIssue = false;
@@ -736,6 +743,7 @@ namespace Thetis
             ////
 
             Splash.SetStatus("Initializing Components");        // Set progress point
+            LogTool.AddLogEntry("Initialising components...", "COMP");
 
             InitializeComponent();								// Windows Forms Generated Code
             Common.DoubleBufferAll(this, true);
@@ -790,6 +798,9 @@ namespace Thetis
             GrabConsoleSizeBasis();
             MinimumSize = this.Size;
 
+            LogTool.Completed("COMP");
+
+            LogTool.AddLogEntry("Initialising database...", "DB");
             Splash.SetStatus("Initializing Database");          // Set progress point
 
             bool ok = DBMan.LoadDB(args, out string broken_folder);
@@ -805,6 +816,9 @@ namespace Thetis
                 return;
             }
 
+            LogTool.Completed("DB");
+
+            LogTool.AddLogEntry("Initialising hardware...", "HARD");
             Splash.SetStatus("Initializing Hardware");			// Set progress point
             InitCTCSS();
 
@@ -821,6 +835,9 @@ namespace Thetis
             }
             //END_TODO !!!!!!!!!!!!!!
 
+            LogTool.Completed("HARD");
+
+            LogTool.AddLogEntry("Initialising radio...", "RADIO");
             Splash.SetStatus("Initializing Radio");				// Set progress point
             radio = new Radio(AppDataPath);					    // Initialize the Radio processor   INIT_SLOW
 
@@ -850,6 +867,9 @@ namespace Thetis
             Init60mChannels();
             LoadLEDFont();
 
+            LogTool.Completed("RADIO");
+
+            LogTool.AddLogEntry("Loading settings...", "SET");
             Splash.SetStatus("Loading Settings");				// Set progress point
 
             TimeOutTimerManager.Initialise(this);
@@ -866,12 +886,18 @@ namespace Thetis
 
             initializing = false;
 
+            LogTool.Completed("SET");
+
             //MW0LGE [2.9.0.8]
             //start multimer renderers
+            LogTool.AddLogEntry("Setting up meters...", "MET");
             Splash.SetStatus("Setting up meters");
             initGeneralSettings(0);
             MeterManager.RunAllRendererDisplays();
 
+            LogTool.Completed("MET");
+
+            LogTool.AddLogEntry("Setting up DSP...", "DSP");
             Splash.SetStatus("Setting up DSP");                       // Set progress point
 
             selectFilters();
@@ -882,6 +908,8 @@ namespace Thetis
             specRX.GetSpecRX(0).Update = true;
             specRX.GetSpecRX(1).Update = true;
             specRX.GetSpecRX(cmaster.inid(1, 0)).Update = true;
+
+            LogTool.Completed("DSP");
 
             // still waiting PA
             if (_portAudioInitalising && portAudioThread != null && portAudioThread.IsAlive)
@@ -905,6 +933,7 @@ namespace Thetis
             //}
             CpuUsage(); //[2.10.1.0] MW0LGE initial call to setup check marks in status bar as a minimum
 
+            LogTool.AddLogEntry("Processing finder info...", "FIND");
             Splash.SetStatus("Processing Finder Info");
             // obtain finder info before splash closes
             //-- setup finder search data
@@ -915,14 +944,22 @@ namespace Thetis
             _frmFinder.GatherSearchData(BandStack2Form, BandStack2Form.ToolTip);
             _frmFinder.GatherSearchData(psform, psform.ToolTip);
             _frmFinder.GatherCATStructData(Application.StartupPath + "\\CATStructs.xml");
-            _frmFinder.WriteXmlFinderFile(AppDataPath); // note: this will only happen if not already there
+            //_frmFinder.WriteXmlFinderFile(AppDataPath); // note: this will only happen if not already there //[2.10.3.12]MW0LGE moved to shutdown
+
+            LogTool.Completed("FIND");
 
             Splash.SetStatus("Finished");
 
             Splash.SplashForm.Owner = this;						// So that main form will show/focus when splash disappears //MW0LGE_21d done in show above
             Splash.CloseForm();									// End splash screen            
 
+            LogTool.AddLogEntry("Splash screen hidden");
+
             Common.FadeIn(this);
+
+            LogTool.AddLogEntry("Console showing");
+
+            LogTool.AddLogEntry("Finalising...", "FIN");
 
             txtVFOAFreq_LostFocus(this, EventArgs.Empty);
             txtVFOBFreq_LostFocus(this, EventArgs.Empty);
@@ -1053,6 +1090,8 @@ namespace Thetis
             if (bShowReleaseNotes) ShowReleaseNotes();
             //
 
+            LogTool.Completed("FIN");
+
             //now set the prio class as we have been running flat out up to this point
             //this used to be called in SetupForm ForceAllEvents, but moved here now
             Thread.CurrentThread.Priority = original_thread_priority;
@@ -1068,6 +1107,9 @@ namespace Thetis
                 autoStartTimer.AutoReset = false;
                 autoStartTimer.Start();
             }
+
+            LogTool.Completed("THET");
+            LogTool.Finish();
         }
         private void initialisePortAudio()
         {
@@ -1076,6 +1118,8 @@ namespace Thetis
 
             _portAudioInitalising = false;
             Debug.Print("PA init done");
+
+            LogTool.Completed("PA");
         }
         public bool IsSetupFormNull
         {
@@ -1185,6 +1229,9 @@ namespace Thetis
         protected override void Dispose(bool disposing)
         {
             shutdownLogStringToPath("Inside Console Dispose()");
+
+            shutdownLogStringToPath("Before LogTool.Shutdown()");
+            LogTool.Shutdown();
 
             if (_exitConsoleInDispose) // ignore this if the incorrect dlls are found. We wont have used anything
                 ExitConsole();
@@ -1423,15 +1470,16 @@ namespace Thetis
 
                 if (!Common.HasArg(args, "-noinstancewarn"))
                 {
-                    try
-                    {
-                        if (!CheckForOpenProcesses())
-                            return;
-                    }
-                    catch (Exception)
-                    {
+                    //try
+                    //{
+                    //    if (!CheckForOpenProcesses())
+                    //        return;
+                    //}
+                    //catch (Exception) { }
+                    //{
 
-                    }
+                    //}
+                    if (!SingleInstance.CheckAndPrompt()) return;
                 }
 
                 Common.SetLogPath(app_data_path); // init the logger MW0LGE
@@ -1612,6 +1660,8 @@ namespace Thetis
 
         private void InitConsole()
         {
+            LogTool.AddLogEntry("  Initialising console...", "INITC");
+
             _frmAbout = new frmAbout(this, CHECK_DEV_VERSION);
             m_frmNotchPopup = new frmNotchPopup();
             m_frmSeqLog = new frmSeqLog();
@@ -1887,13 +1937,17 @@ namespace Thetis
                 _RX2MeterValues.Add((Reading)n, -200f);
             }
 
+            LogTool.AddLogEntry("    Meter Manager initialising...", "MM");
             MeterManager.Init(this, Display.DisplayAdaptor); // needs to be initialised before get state happens
+            LogTool.Completed("MM");
 
             //[2.10.3.1]MW0LGE make sure it is created on this thread, as the following serial
             //devices could cause it to be created on another thread
+            LogTool.AddLogEntry("    CWX initialising...", "CWX");
             m_frmCWXForm = null;
             _onlyOneCWXInstance = true;
             CWX tmp = CWXForm;
+            LogTool.Completed("CWX");
             //--
 
             Siolisten = new SIOListenerII(this);
@@ -1912,7 +1966,9 @@ namespace Thetis
 
             // ***** THIS IS WHERE SETUP FORM IS CREATED
             _onlyOneSetupInstance = true; // make sure that we limit to one instance
+            LogTool.AddLogEntry("    Setup Form initialising...", "SETUP");
             SetupForm.StartPosition = FormStartPosition.Manual; // *********** IMPORTANT   first use of singleton will create Setup form       INIT_SLOW
+            LogTool.Completed("SETUP");
 
             BuildTXProfileCombos(); // MW0LGE_21k9rc4b build them, so that GetState can apply the combobox text
 
@@ -1941,7 +1997,9 @@ namespace Thetis
 
             comboFMCTCSS.Text = "100.0";
 
+            LogTool.AddLogEntry("    Recovering setup config...", "CONFIG");
             GetState(); // recall saved state
+            LogTool.Completed("CONFIG");
 
             // setup additional spectrum analysers, used by meter system
             if (_use_additional_sas)
@@ -1986,6 +2044,7 @@ namespace Thetis
 
             UpdateTXProfile(SetupForm.TXProfile); // now update the combos
 
+            LogTool.AddLogEntry("    Finalising settings...", "FINSET");
             Splash.SetStatus("Finalizing settings");
 
             //MW0LGE_21d BandStack2
@@ -2141,6 +2200,9 @@ namespace Thetis
 
             // raw input keyboard/mouse
             initialiseRawInput();
+
+            LogTool.Completed("FINSET");
+            LogTool.Completed("INITC");
 
             return;
         }
@@ -2674,6 +2736,9 @@ namespace Thetis
         {
             shutdownLogStringToPath("Inside ExitConsole()");
 
+            shutdownLogStringToPath("Before finder WriteXmlFinderFile()");
+            if(_frmFinder != null) _frmFinder.WriteXmlFinderFile(AppDataPath);
+
             shutdownLogStringToPath("Before Midi2Cat.CloseMidi2Cat()");
             if (Midi2Cat != null) Midi2Cat.CloseMidi2Cat();
 
@@ -2715,6 +2780,9 @@ namespace Thetis
             shutdownLogStringToPath("Before Win32.TimeEndPeriod(1)");
             Win32.TimeEndPeriod(1); // return to previous timing precision
             Thread.Sleep(100);
+
+            shutdownLogStringToPath("Before SingleInstance.release");
+            SingleInstance.Release();
 
             shutdownLogStringToPath("Leaving ExitConsole()");
         }
@@ -6425,36 +6493,36 @@ namespace Thetis
         //    return watts;
         //}
 
-        private static bool CheckForOpenProcesses()
-        {
-            // find all open Thetis processes
-            Process[] p = Process.GetProcessesByName("Thetis");
-            if (p.Length > 1)
-            {
-                int tries = 0;
-                while (tries < 10 && p.Length > 1)
-                {
-                    Thread.Sleep(100);
-                    tries++;
+        //private static bool CheckForOpenProcesses()
+        //{
+        //    // find all open Thetis processes
+        //    Process[] p = Process.GetProcessesByName("Thetis");
+        //    if (p.Length > 1)
+        //    {
+        //        int tries = 0;
+        //        while (tries < 10 && p.Length > 1)
+        //        {
+        //            Thread.Sleep(100);
+        //            tries++;
 
-                    p = Process.GetProcessesByName("Thetis");
-                }
-            }
+        //            p = Process.GetProcessesByName("Thetis");
+        //        }
+        //    }
 
-            if (p.Length > 1)
-            {
-                DialogResult dr = MessageBox.Show("There are other Thetis instances running.\n" +
-                    "Are you sure you want to continue?",
-                    "Continue?",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                if (dr == DialogResult.No)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        //    if (p.Length > 1)
+        //    {
+        //        DialogResult dr = MessageBox.Show("There are other Thetis instances running.\n" +
+        //            "Are you sure you want to continue?",
+        //            "Continue?",
+        //            MessageBoxButtons.YesNo,
+        //            MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+        //        if (dr == DialogResult.No)
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //    return true;
+        //}
 
         //public int VersionTextToInt(string version)	// takes a version string like "1.0.6" 
         //{											// and converts it to an int like 010006.
@@ -6492,23 +6560,23 @@ namespace Thetis
                 case DSPMode.SAM:
                 case DSPMode.FM:
                 case DSPMode.SPEC:
-                    retval = (CheckValidTXFreq_Private(r, f + filterLow * 1e-6) &&
-                        CheckValidTXFreq_Private(r, f + filterHigh * 1e-6));
+                    retval = (checkValidTXFreq_local(r, f + filterLow * 1e-6) &&
+                        checkValidTXFreq_local(r, f + filterHigh * 1e-6));
                     break;
                 case DSPMode.CWL:
                 case DSPMode.CWU:
-                    retval = CheckValidTXFreq_Private(r, f);
+                    retval = checkValidTXFreq_local(r, f);
                     break;
                 case DSPMode.DRM:
-                    retval = (CheckValidTXFreq_Private(r, f - 0.012 + filterLow * 1e-6) &&
-                        CheckValidTXFreq_Private(r, f - 0.012 + filterHigh * 1e-6));
+                    retval = (checkValidTXFreq_local(r, f - 0.012 + filterLow * 1e-6) &&
+                        checkValidTXFreq_local(r, f - 0.012 + filterHigh * 1e-6));
                     break;
             }
 
             return retval;
         }
 
-        private bool CheckValidTXFreq_Private(FRSRegion r, double f)
+        private bool checkValidTXFreq_local(FRSRegion r, double f)
         {
             if (extended || tx_xvtr_index > -1)
                 return true;
@@ -10877,7 +10945,7 @@ namespace Thetis
 
                     //if (m_bAttontx && _mox) //[2.10.3.6]MW0LGE att_fixes
                     //udRX1StepAttData.Value = value; //[2.10.3.6]MW0LGE att_fixes
-                    udTXStepAttData.Value = value;
+                    udTXStepAttData.Value = _tx_attenuator_data;
 
                     //******Red Pitaya BODGE*******
                     //[2.10.3.9]MW0LGE This is not ideal, but a bodge to get the PedPitaya to TX attenuate correctly
@@ -10892,7 +10960,7 @@ namespace Thetis
                         //}
                         //else
                         //{
-                        udRX1StepAttData.Value = value;
+                        udRX1StepAttData.Value = _tx_attenuator_data;
                         //}
                     }
                     //******END BODGE*******
@@ -25265,7 +25333,7 @@ namespace Thetis
         private async void UpdateMultimeter()
         {
             meter_timer.Start();
-            while (_useLegacyMeters && chkPower.Checked)
+            while (!_hide_legacy_meters && chkPower.Checked)
             {
                 if (!meter_data_ready)
                 {
@@ -25440,7 +25508,7 @@ namespace Thetis
         private async void UpdateRX2Multimeter()
         {
             rx2_meter_timer.Start();
-            while (_useLegacyMeters && chkPower.Checked && rx2_enabled)
+            while (!_hide_legacy_meters && chkPower.Checked && rx2_enabled)
             {
                 if (!rx2_meter_data_ready)
                 {
@@ -28701,7 +28769,7 @@ namespace Thetis
         }
         private void setupLegacyMeterThreads(int rx)
         {
-            if (_useLegacyMeters && chkPower.Checked)
+            if (!_hide_legacy_meters && chkPower.Checked)
             {
                 if (rx == 1 && (multimeter_thread == null || !multimeter_thread.IsAlive))
                 {
@@ -31108,7 +31176,7 @@ namespace Thetis
                     if (!CheckValidTXFreq(current_region, freq, radio.GetDSPTX(0).CurrentDSPMode, chkTUN.Checked))	// out of band
                     {
                         if (_tx_band == Band.B60M && current_region == FRSRegion.US &&
-                            CheckValidTXFreq_Private(current_region, freq) && !extended)
+                            checkValidTXFreq_local(current_region, freq) && !extended)
                         {
                             MessageBox.Show("The transmit filter you have selected exceeds the bandwidth\n" +
                                 "constraints (2.8kHz) for the 60m band in this region.",
@@ -35250,7 +35318,7 @@ namespace Thetis
                 notch = MNotchDB.NotchFromIndex(notch_index);
             }
             m_frmNotchPopup.Location = new Point(x, y);
-            Common.EnsureFormIsOnScreen(m_frmNotchPopup, true, true);
+            Common.ForceFormOnScreen(m_frmNotchPopup, true, true);
             if (!m_frmNotchPopup.Visible && notch != null) m_frmNotchPopup.Show(notch, min_width, max_width, on_top, notch_index);
         }
         public DateTime NotchPopupLastDeactivateTime
@@ -50143,15 +50211,15 @@ namespace Thetis
         {
             get { return _iscollapsed; }
         }
-        private bool _useLegacyMeters = true;
-        public bool UseLegacyMeters
+        private bool _hide_legacy_meters = false;
+        public bool HideLegacyMeters
         {
-            get { return _useLegacyMeters; }
+            get { return _hide_legacy_meters; }
             set { 
-                _useLegacyMeters = value;
+                _hide_legacy_meters = value;
 
                 //start threads if needed, if previously running thread loops will terminate if _useLegacyMeters becomes false
-                if (_useLegacyMeters)
+                if (!_hide_legacy_meters)
                 {
                     setupLegacyMeterThreads(1);
                     setupLegacyMeterThreads(2);
@@ -50159,20 +50227,21 @@ namespace Thetis
 
                 updateLegacyMeterControls(_isexpanded && !_iscollapsed);
 
-                LegacyItemController.HideMeters = !_useLegacyMeters;
+                LegacyItemController.HideMeters = _hide_legacy_meters;
             }
         }
         private void updateLegacyMeterControls(bool expanded)
         {
-            //note: code lines commented with //LM in other functions are now performed here
+            bool visible = !_hide_legacy_meters;
+
             if (expanded)
             {
-                grpMultimeter.Visible = _useLegacyMeters;
-                grpRX2Meter.Visible = _useLegacyMeters;
-                grpMultimeterMenus.Visible = _useLegacyMeters;
-                comboMeterRXMode.Visible = _useLegacyMeters;
-                comboRX2MeterMode.Visible = _useLegacyMeters;
-                comboMeterTXMode.Visible = _useLegacyMeters;
+                grpMultimeter.Visible = visible;
+                grpRX2Meter.Visible = visible;
+                grpMultimeterMenus.Visible = visible;
+                comboMeterRXMode.Visible = visible;
+                comboRX2MeterMode.Visible = visible;
+                comboMeterTXMode.Visible = visible;
             }
             else
             {
@@ -50182,22 +50251,22 @@ namespace Thetis
 
                 if (m_bShowTopControls || _showAndromedaTopControls)
                 {
-                    picMultiMeterDigital.Visible = _useLegacyMeters && ShowRX1;
-                    txtMultiText.Visible = _useLegacyMeters && ShowRX1;
-                    picRX2Meter.Visible = _useLegacyMeters && ShowRX2;
-                    txtRX2Meter.Visible = _useLegacyMeters && ShowRX2;
+                    picMultiMeterDigital.Visible = visible && ShowRX1;
+                    txtMultiText.Visible = visible && ShowRX1;
+                    picRX2Meter.Visible = visible && ShowRX2;
+                    txtRX2Meter.Visible = visible && ShowRX2;
                 }
                 
                 if (m_bShowTopControls)
                 {
                     panelMeterLabels.Visible = false;
-                    comboMeterRXMode.Visible = _useLegacyMeters && ShowRX1;
-                    comboRX2MeterMode.Visible = _useLegacyMeters && ShowRX2;
-                    comboMeterTXMode.Visible = _useLegacyMeters;
+                    comboMeterRXMode.Visible = visible && ShowRX1;
+                    comboRX2MeterMode.Visible = visible && ShowRX2;
+                    comboMeterTXMode.Visible = visible;
                 }
                 else if (_showAndromedaTopControls)
                 {
-                    panelMeterLabels.Visible = _useLegacyMeters;
+                    panelMeterLabels.Visible = visible;
                     comboMeterRXMode.Visible = false;
                     comboRX2MeterMode.Visible = false;
                     comboMeterTXMode.Visible = false;
@@ -50711,9 +50780,12 @@ namespace Thetis
                                         WorkingDirectory = Path.GetDirectoryName(fileOnly)                                        
                                     };
 
-                                    Process p = Process.Start(startInfo);                                    
-                                    //if(!p.HasExited) 
+                                    Process p = Process.Start(startInfo);
+                                    if (p != null)
+                                    {
+                                        //if(!p.HasExited) 
                                         _started_processes.Add(p);
+                                    }
                                 }
                             }
                         }
@@ -53995,6 +54067,7 @@ namespace Thetis
                 case OtherButtonId.NR2:
                 case OtherButtonId.NR3:
                 case OtherButtonId.NR4:
+                case OtherButtonId.ANF:
                     SetupForm.ShowSetupTab(Setup.SetupTab.NR_Tab);
                     break;
                 case OtherButtonId.NB:
