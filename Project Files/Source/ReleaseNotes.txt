@@ -33,6 +33,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [change] on DirectX errors RecreateTarget, DeviceRemoved and DeviceReset, the display engines will now attempt to restart, up to a total of 10 times
 - [change] VFOsync re-work. Now has settings on Options-3 tab
 - [change] show legacy meters has been changed to hide, to align with other options in Setup->Appearance->Legacy Items. May require you to reapply setting if you want them hidden
+- [change] changes to the way meters are restored. Startup speed improvements for systems using lots of meters
 - [change] multiple instance detection changed to use global mutex instead of scanning process list
 - [fix] filter command line args to strip any unexpected characters/unicode
 - [fix] you can now enter values into the VAR1/VAR2 filters on the main console. Pressing enter or the box losing focus will set the value

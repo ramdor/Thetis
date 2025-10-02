@@ -57,7 +57,7 @@ double* fc_impulse (int nc, double f0, double f1, double g0, double g1, int curv
 	params.scale = scale;
 
 	HASH_T h = fnv1a_hash(&params, sizeof(params));
-	double* imp = get_impulse_cache_entry(FC_CACHE, h);
+	double* imp = get_impulse_cache_entry(FC_CACHE, h, nc);
 	if (imp) return imp;
 	//
 

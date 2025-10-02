@@ -71,7 +71,7 @@ mw0lge@grange-lane.co.uk
 #define EQ_CACHE	2
 #define FC_CACHE	3
 
-double* get_impulse_cache_entry(size_t bucket, HASH_T hash);
+double* get_impulse_cache_entry(size_t bucket, HASH_T hash, int N);
 void add_impulse_to_cache(size_t bucket, HASH_T hash, int N, double* impulse);
 
 __declspec (dllexport) int save_impulse_cache(const char* path);

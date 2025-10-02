@@ -60,8 +60,8 @@ typedef struct _ivac
 	PaStreamParameters inParam, outParam;
 	PaStream *Stream;
 
-	int mono_in_to_stereo_capacity;		// capacity of mono to stereo buffer
-	double* mono_in_to_stereo_buffer;   // buffer for mono to stereo conversion
+	size_t mono_in_to_stereo_capacity;		// capacity of mono to stereo buffer
+	double* mono_in_to_stereo_buffer;		// buffer for mono to stereo conversion
 
 	int host_api_index;
 	int input_dev_index;

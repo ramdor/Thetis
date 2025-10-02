@@ -15653,6 +15653,9 @@ namespace Thetis
                 _snap_lines_ignore = false;
                 _mouse_frequency = -1;
 
+                _waterfall_rx_gradient_ok = false;
+                _waterfall_tx_gradient_ok = false;
+
                 ItemType = MeterItemType.FILTER_DISPLAY;
                 ReadingSource = Reading.NONE;
                 UpdateInterval = 1000 / MiniSpec.FRAME_RATE; // to ms
@@ -15732,9 +15735,6 @@ namespace Thetis
 
                 _waterfall_min_agc_rx = 20;
                 _waterfall_min_agc_tx = 20;
-
-                _waterfall_rx_gradient_ok = false;
-                _waterfall_tx_gradient_ok = false;
 
                 buildSpectrumGreyScale(true, true);
 

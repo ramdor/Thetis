@@ -211,7 +211,8 @@ int CallbackIVAC(const void* input,
 									  // [2.10.3.12]MW0LGE handle mono input devices
 	if (a->inParam.channelCount == 1) // mono, dupe to stereo, some mics are mono only, and we require 2 channels
 	{
-		size_t samples = (size_t)frameCount * 2u;
+		unsigned long count = (unsigned long)a->vac_size; // assumes vac_size is always the same as frameCount
+		size_t samples = (size_t)(count * 2u);
 		if (a->mono_in_to_stereo_capacity < samples)
 		{
 			if (a->mono_in_to_stereo_buffer != NULL) 
@@ -230,8 +231,8 @@ int CallbackIVAC(const void* input,
 		double* tmp_in = a->mono_in_to_stereo_buffer;
 		if (in_ptr)
 		{
-			size_t j = 0;
-			for (size_t i = 0; i < (size_t)frameCount; ++i)
+			size_t j = 0;			
+			for (unsigned long i = 0; i < count; ++i)
 			{
 				double s = in_ptr[i];
 				tmp_in[j++] = s;
@@ -254,7 +255,8 @@ int CallbackIVAC(const void* input,
 	// if (id == 0)  WriteAudio (120.0, 48000, a->vac_size, out_ptr, 3); //
 	if (a->iq_type && a->swapIQout)
 	{
-		for (unsigned long i = 0, j = 1; i < frameCount; i++, j += 2)
+		unsigned long count = (unsigned long)a->vac_size; // assumes vac_size is always the same as frameCount
+		for (unsigned long i = 0, j = 1; i < count; i++, j += 2)
 			out_ptr[j] = -out_ptr[j];
 	}
 	return 0;
