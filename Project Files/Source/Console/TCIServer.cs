@@ -1028,28 +1028,18 @@ namespace Thetis
 				}
 				catch (SocketException se)
 				{
-					//if (se.SocketErrorCode == SocketError.WouldBlock ||
-					//	se.SocketErrorCode == SocketError.IOPending ||
-					//	se.SocketErrorCode == SocketError.NoBufferSpaceAvailable)
-					//{
-					//	Thread.Sleep(50);
-					//}
-					//else
-					//{
-						m_stopClient = true;
-						m_markedForDeletion = true;
-
-						ClientErrorHandlers?.Invoke(se);
-					//}
+					m_stopClient = true;
+					ClientErrorHandlers?.Invoke(se);
 				}
                 catch
                 {
 					m_stopClient = true;
-					m_markedForDeletion = true;
 				}
 			}
 
-			t.Change(Timeout.Infinite, Timeout.Infinite);
+            m_markedForDeletion = true;
+
+            t.Change(Timeout.Infinite, Timeout.Infinite);
 			t = null;
 
 			Debug.Print("TCPIP TCI Client Disconnected !");

@@ -39526,13 +39526,13 @@ namespace Thetis
             {
                 chkRX2.BackColor = button_selected_color;
                 chkRX2DisplayAVG_CheckedChanged(this, EventArgs.Empty);
-                _click_tune_rx2_display = chkX2TR.Checked;
+                //_click_tune_rx2_display = chkX2TR.Checked;  //[2.10.3.12]MW0LGE removed
             }
             else
             {
                 chkRX2.BackColor = SystemColors.Control;
                 if (chkVAC2.Checked) chkVAC2.Checked = false;
-                _click_tune_rx2_display = false;
+                //_click_tune_rx2_display = false;  //[2.10.3.12]MW0LGE removed
             }
 
             if (update_rx2_display)

@@ -5890,6 +5890,16 @@ namespace Thetis
         }
         private static void OnRX2EnabledPreChanged(bool enabled)
         {
+            if (enabled)
+            {
+                MiniSpec.clsMiniSpec miniRx = MiniSpec.GetMiniRX(1, false);
+                if (miniRx != null)
+                {
+                    miniRx.RXFrequency = _console.VFOBFreq;
+                    if(_console.VFOBTX) miniRx.TXFrequency = _console.TXFreq;
+                }
+            }
+
             if (!enabled)
             {
                 lock (_metersLock)

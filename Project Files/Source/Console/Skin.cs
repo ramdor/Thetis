@@ -466,12 +466,14 @@ namespace Thetis
             if (temp != null)
             {
                 SetupQuickRecallImages((ucQuickRecall)c);
+                return;
             }
 
             temp = c as ucInfoBar;
             if (temp != null)
             {
                 SetupInfoBar((ucInfoBar)c);
+                return;
             }
         }
 
@@ -740,11 +742,17 @@ namespace Thetis
                 for (int i = 0; i < 8; i++)
                 {
                     if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
-                        b.ImageList.Images.Add(((ImageState)i).ToString(), loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                    {
+                        Image img = loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext);
+                        if(img != null) b.ImageList.Images.Add(((ImageState)i).ToString(), img);
+                    }
                     else
                     {
                         if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
-                            b.ImageList.Images.Add(((ImageState)i).ToString(), loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                        {
+                            Image img = loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext);
+                            if(img != null) b.ImageList.Images.Add(((ImageState)i).ToString(), img);
+                        }
                     }
                 }
 
@@ -786,7 +794,7 @@ namespace Thetis
                     spath = path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
                 if (File.Exists(spath))
                 {
-                    Image img = loadImage(spath);                 
+                    Image img = loadImage(spath); // load to cache it                
                     if (_image_cache_map.ContainsKey(spath))
                     {
                         skey += _image_cache_map[spath];
@@ -999,7 +1007,7 @@ namespace Thetis
                     spath = path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
                 if (File.Exists(spath))
                 {
-                    Image img = loadImage(spath);
+                    Image img = loadImage(spath); // load to cache it
                     if (_image_cache_map.ContainsKey(spath))
                     {
                         skey += _image_cache_map[spath];
@@ -1081,11 +1089,17 @@ namespace Thetis
                 for (int i = 0; i < 8; i++)
                 {
                     if (File.Exists(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
-                        b.ImageList.Images.Add(((ImageState)i).ToString(), loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                    {
+                        Image img = loadImage(path + "\\" + ctrl.TopLevelControl.Name + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext);
+                        if(img != null) b.ImageList.Images.Add(((ImageState)i).ToString(), img);
+                    }
                     else
                     {
                         if (File.Exists(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext))
-                            b.ImageList.Images.Add(((ImageState)i).ToString(), loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext));
+                        {
+                            Image img = loadImage(path + "\\" + "Console" + "\\" + ctrl.Name + sBut + "-" + i.ToString() + pic_file_ext);
+                            if(img != null) b.ImageList.Images.Add(((ImageState)i).ToString(), img);
+                        }
                     }
                 }
 
@@ -1501,7 +1515,7 @@ namespace Thetis
                     spath = path + "\\" + "Console" + "\\" + ctrl.Name + "-" + i.ToString() + pic_file_ext;
                 if (File.Exists(spath))
                 {
-                    Image img = loadImage(spath);
+                    Image img = loadImage(spath); // load to cache it
                     if (_image_cache_map.ContainsKey(spath))
                     {
                         skey += _image_cache_map[spath];
