@@ -9220,7 +9220,25 @@ namespace Thetis
                     MeterManager.HiddenByMacro(_owningmeter.ID, true, null);
                 }
 
-                for(int n=0; n <= 3; n++)
+                if (settings.ButtonStateType == OtherButtonMacroSettings.OB_ButtonState.TOGGLE)
+                {
+                    bool state = !GetOn(1, index);
+                    SetOn(1, index, state);
+                    _macro_settings[macro].OnState = state;
+
+                    string sText = GetText(1, index);
+                    if (state && !string.IsNullOrEmpty(_macro_settings[macro].OnText))
+                    {
+                        sText = _macro_settings[macro].OnText;
+                    }
+                    else if (!state && !string.IsNullOrEmpty(_macro_settings[macro].OffText))
+                    {
+                        sText = _macro_settings[macro].OffText;
+                    }
+                    SetText(1, index, sText);
+                }
+
+                for (int n=0; n <= 3; n++)
                 {
                     if (settings.ClosesContainer[n] && settings.OpensContainer[n] && settings.CloseContainerID[n] == settings.OpenContainerID[n])
                     {
@@ -9262,24 +9280,6 @@ namespace Thetis
                             }
                         }
                     }
-                }
-
-                if(settings.ButtonStateType == OtherButtonMacroSettings.OB_ButtonState.TOGGLE)
-                {
-                    bool state = !GetOn(1, index);
-                    SetOn(1, index, state);
-                    _macro_settings[macro].OnState = state;
-
-                    string sText = GetText(1, index);
-                    if (state && !string.IsNullOrEmpty(_macro_settings[macro].OnText))
-                    {
-                        sText = _macro_settings[macro].OnText;
-                    }
-                    else if (!state && !string.IsNullOrEmpty(_macro_settings[macro].OffText))
-                    {
-                        sText = _macro_settings[macro].OffText;
-                    }
-                    SetText(1, index, sText);
                 }
 
                 if (!string.IsNullOrEmpty(settings.CatMacro)) // to thetis
