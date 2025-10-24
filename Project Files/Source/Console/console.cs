@@ -27407,6 +27407,10 @@ namespace Thetis
         private float _oldMKIIPAVolts = 0f;
         private float _oldMKIIPAAmps = 0f;
         private float _cpu_perc_smoothed = 0;
+        public float CPUPercSmoothed
+        {
+            get { return _cpu_perc_smoothed; }
+        }   
         private void timer_cpu_volts_meter_Tick(object sender, System.EventArgs e)
         {
             if (DisplayVoltsAmps && HardwareSpecific.HasVolts && HardwareSpecific.HasAmps) //DH1KLM
