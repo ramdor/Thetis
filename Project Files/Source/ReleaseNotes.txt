@@ -44,6 +44,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] text overlay now displays vfob mode correctly
 - [fix] unnecessary recursive calling when setting PreampMode and AttenuatorData
 - [fix] fixed issue where if rtty offset was being used and mode was set to DigL/U then a midi vfo change would cause incorrect frequency calculation (7.100.000 would become 71.000.000)
+- [fix] updated to WDSP 1.28 which reverts the removal of fir filter caching
 
 ## v2.10.3.11 - Change Log
 - [add] two new noise reduction methods added, NR3 and NR4. When starting up this version for the first time if NR was enabled, will now be set to off. Settings in the normal NR settings page of Setup
