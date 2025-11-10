@@ -26414,7 +26414,7 @@ namespace Thetis
                             break;
 
                         case AutoTuneState.StartTune:               // Auto tune has been instigated from UI
-                            NetworkIO.I2CWrite(1, 0x1d, 7, (int) ProtocolEvent.RequestTune);   // Start the tune via the protocol
+                            ioBoard.writeRequest(IOBoard.Registers.REG_ANTENNA_TUNER, (int)ProtocolEvent.RequestTune);  // Start the tune via the protocol
                             auto_tuning = AutoTuneState.WaitRF;
                             tune_timeout = 0;
                             fault_timeout = 0;
@@ -26484,8 +26484,8 @@ namespace Thetis
             if (tune_timeout >= TIMEOUT)
             {                                       // Time out 
                 tune_timeout = 0;
-                NetworkIO.I2CWrite(1, 0x1d, 7, (int) ProtocolEvent.Idle);
-                
+                ioBoard.writeRequest(IOBoard.Registers.REG_ANTENNA_TUNER, (int)ProtocolEvent.Idle);
+
                 if (auto_tuning != AutoTuneState.Fault)
                     auto_tuning = AutoTuneState.Idle;
 
@@ -26496,10 +26496,11 @@ namespace Thetis
             return returnCode;
         }
 
+        private IOBoard ioBoard = null;
         private async void UpdateIOBoard()
         {
             long currentFreq, lastFreq = 0;
-            byte[] read_data = new byte[4];
+            byte readData = 0;
             byte state = 0;
             byte old_IOBoardAerialPorts = 0;
             byte old_IOBoardAerialMode = 0;
@@ -26507,9 +26508,11 @@ namespace Thetis
             byte timeout = 0;
             int status = 0;
 
+            ioBoard = IOBoard.getIOBoard(this);
+
             // Read the hardware revision on bus 2 at address 0x41, register 0
 
-            while (0 != NetworkIO.I2CReadInitiate(1, 0x41, 0))
+            while (0 != ioBoard.readRequest(IOBoard.Registers.HardwareVersion))
             {
                 await Task.Delay(1);
                 if (timeout++ >= 20) return;
@@ -26521,9 +26524,9 @@ namespace Thetis
             {
                 await Task.Delay(1);
                 if (timeout++ >= 20) return;
-            } while (1 == NetworkIO.I2CResponse(read_data));
+            } while (1 == ioBoard.readResponse());
 
-            if (read_data[0] == 0xf1)   // Expect to find version 1 of the IO board
+            if (ioBoard.hardwareVersion == (byte) IOBoard.HardwareVersion.Version_1)   // Expect to find version 1 of the IO board
             {
                 if (!SetupForm.HL2IOBoardPresent)
                 {
@@ -26544,7 +26547,7 @@ namespace Thetis
                     if (reset)
                     {
                         reset = false;
-                        NetworkIO.I2CWrite(1, 0x1d, 5, 1);
+                        ioBoard.writeRequest(IOBoard.Registers.REG_CONTROL, 1);
                         await Task.Delay(1);
                     }
 
@@ -26563,7 +26566,7 @@ namespace Thetis
                         case 6: // Secondary receive selection
                             if (IOBoardAerialMode != old_IOBoardAerialMode)
                             {
-                                NetworkIO.I2CWrite(1, 0x1d, 11, (IOBoardAerialMode));
+                                ioBoard.writeRequest(IOBoard.Registers.REG_RF_INPUTS, IOBoardAerialMode);
                                 old_IOBoardAerialMode = IOBoardAerialMode;
                             }
                             break;
@@ -26572,58 +26575,48 @@ namespace Thetis
                         case 4:
                         case 7:
                         case 10:
-                            // Read the input at register 6
-                            NetworkIO.I2CReadInitiate(1, 0x1d, 6);
+                            // Read the input pins 
+                            while (0 != ioBoard.readRequest(IOBoard.Registers.REG_INPUT_PINS))
+                            {
+                                await Task.Delay(1);
+                                if (timeout++ >= 20) return;
+                            }
 
                             timeout = 0;
                             do
                             {
                                 await Task.Delay(1);
-                                status = NetworkIO.I2CResponse(read_data);      // [3] Input pins, [2] Ant tuner, [1] Fault, [0] Major Version
+                                status = ioBoard.readResponse();      // [3] Input pins, [2] Ant tuner, [1] Fault, [0] Major Version
                                 if (timeout++ >= 20) break;
                             } while (1 == status);    
 
                             if (status == 0)
                             {
-                                if (0 != read_data[1])
+                                if (0 != ioBoard.readRegister(IOBoard.Registers.REG_FAULT))
                                 {
                                     TXInhibit = true;
-                                    infoBar.Warning("I/O Board: Fault Code " + read_data[1].ToString());
+                                    infoBar.Warning("I/O Board: Fault Code " + ioBoard.readRegister(IOBoard.Registers.REG_FAULT).ToString());
                                     AutoTuningHL2(ProtocolEvent.Idle);
                                 }
                                 else
                                 {
-                                    AutoTuningHL2((ProtocolEvent) read_data[2]);
+                                    AutoTuningHL2((ProtocolEvent) ioBoard.readRegister(IOBoard.Registers.REG_ANTENNA_TUNER));
                                 }
 
-                                SetupForm.UpdateIOLedStrip(MOX, read_data[3]);
+                                SetupForm.UpdateIOLedStrip(MOX, ioBoard.readRegister(IOBoard.Registers.REG_INPUT_PINS));
                             }
                             break;
 
                         case 8:
                         case 2: // Write current transmission frequency
-                            if (currentFreq != lastFreq)
-                            {
-                                // Write frequency on bus 2 at address 0x1d into the five registers
-                                NetworkIO.I2CWrite(1, 0x1d, 0, 0xff & (byte)(currentFreq >> 32));
-                                await Task.Delay(1);
-                                NetworkIO.I2CWrite(1, 0x1d, 1, 0xff & (byte)(currentFreq >> 24));
-                                await Task.Delay(1);
-                                NetworkIO.I2CWrite(1, 0x1d, 2, 0xff & (byte)(currentFreq >> 16));
-                                await Task.Delay(1);
-                                NetworkIO.I2CWrite(1, 0x1d, 3, 0xff & (byte)(currentFreq >> 08));
-                                await Task.Delay(1);
-                                NetworkIO.I2CWrite(1, 0x1d, 4, 0xff & (byte)(currentFreq >> 00));
-
-                                lastFreq = currentFreq;
-                            }
+                            ioBoard.setFrequency(currentFreq);
                             break;
 
                         case 9:
                         case 5: // Aerial selection
                             if (IOBoardAerialPorts != old_IOBoardAerialPorts)
                             {
-                                NetworkIO.I2CWrite(1, 0x1d, 31, IOBoardAerialPorts);
+                                ioBoard.writeRequest(IOBoard.Registers.REG_ANTENNA, IOBoardAerialPorts);
                                 old_IOBoardAerialPorts = IOBoardAerialPorts;
                             }
                             break;
@@ -26642,7 +26635,7 @@ namespace Thetis
 
                             if (CurrentMode != old_IOBoardMode)
                             {
-                                NetworkIO.I2CWrite(1, 0x1d, 32, CurrentMode);
+                                ioBoard.writeRequest(IOBoard.Registers.REG_OP_MODE, CurrentMode);
                                 old_IOBoardMode = CurrentMode;
                             }
                             break;
@@ -30499,7 +30492,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if (_rx2_dsp_mode != DSPMode.DIGU && _rx1_dsp_mode != DSPMode.DIGU)
+                        if (_rx2_dsp_mode != DSPMode.DIGU && _rx2_dsp_mode != DSPMode.DIGL)
                         {
                             lblMicVal.Text = "B " + ptbMic.Value.ToString() + " dB";
                             SetupForm.VAC2TXGain = ptbMic.Value;
@@ -30529,8 +30522,8 @@ namespace Thetis
                     }
                     ptbMic.Enabled = true;
                 }
-                else
-                    Audio.MicPreamp = Math.Pow(10.0, gain_db / 20.0); // convert to scalar 
+
+                Audio.MicPreamp = Math.Pow(10.0, gain_db / 20.0); // convert to scalar 
             }
             else
             {
@@ -30540,10 +30533,8 @@ namespace Thetis
                     ptbMic.Tag = Audio.VACPreamp;
                     Audio.VACPreamp = 0.0;
                 }
-                else
-                {
-                    Audio.MicPreamp = 0.0;
-                }
+
+                Audio.MicPreamp = 0.0;
             }
         }
         private void ptbCWSpeed_Scroll(object sender, System.EventArgs e)
@@ -31863,9 +31854,16 @@ namespace Thetis
                 NetworkIO.SetUserOut0(1);       // why this?? CHECK
                 NetworkIO.SetUserOut2(1);
 
-                if ((apollopresent && apollo_tuner_enabled) ||
-                    ((HardwareSpecific.Model == HPSDRModel.HERMESLITE) && AriesStandalone))
-                    NetworkIO.EnableApolloAutoTune(1);
+                if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
+                {
+                    if (AriesStandalone)
+                        NetworkIO.EnableApolloAutoTune(1);  // MI0BOT: Cause tune dip at start
+                }
+                else
+                {
+                    if (apollopresent && apollo_tuner_enabled)
+                        NetworkIO.EnableApolloAutoTune(1);
+                }
             }
             else
             {
@@ -36501,6 +36499,12 @@ namespace Thetis
                 lblModeBigLabel.Text = radiobut;
             }
 
+            if (HardwareSpecific.Model == HPSDRModel.HERMESLITE &&
+                cmaster.GetCMAstate() == 0)                         // MI0BOT:  For HL2 Audio control is based on VFO and Mode - correct label
+            {
+                ptbMic_Scroll(sender, e);
+            }
+
             lSBToolStripMenuItem.Checked = radModeLSB.Checked;
             uSBToolStripMenuItem.Checked = radModeUSB.Checked;
             dSBToolStripMenuItem.Checked = radModeDSB.Checked;
@@ -40290,6 +40294,12 @@ namespace Thetis
             //setRX2ModeLabels(radiobut); //MW0LGE_21j
             setSmallRX2ModeFilterLabels();
 
+            if (HardwareSpecific.Model == HPSDRModel.HERMESLITE &&
+                cmaster.GetCMAstate() == 0)                         // MI0BOT:  For HL2 Audio control is based on VFO and Mode - correct label
+            {
+                ptbMic_Scroll(sender, e);
+            }
+
             lSBToolStripMenuItem1.Checked = radRX2ModeLSB.Checked;
             uSBToolStripMenuItem1.Checked = radRX2ModeUSB.Checked;
             dSBToolStripMenuItem1.Checked = radRX2ModeDSB.Checked;
@@ -41816,8 +41826,14 @@ namespace Thetis
                     chkVACStereo.Checked = vac_stereo;
                 }
 
-                if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)     // MI0BOT:  For HL2 Audio control is based on VFO and Mode
-                    ptbMic_Scroll(sender, e);
+                if (HardwareSpecific.Model == HPSDRModel.HERMESLITE &&
+                    cmaster.GetCMAstate() == 0)                         // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                {
+                    bool scroll = ptbMic.Value == vac_tx_gain;          // if the same, no scroll event will occur when ptbMic value set, so force one if needed
+                    ptbMic.Value = vac_tx_gain;
+
+                    if (scroll) ptbMic_Scroll(sender, e);
+                }
             }
             else
             {
@@ -41936,6 +41952,15 @@ namespace Thetis
                         comboVACSampleRate.Text = vac2_sample_rate;
 
                         chkVACStereo.Checked = vac2_stereo;
+                    }
+
+                    if (HardwareSpecific.Model == HPSDRModel.HERMESLITE &&
+                        cmaster.GetCMAstate() == 0)                         // MI0BOT:  For HL2 Audio control is based on VFO and Mode
+                    {
+                        bool scroll = ptbMic.Value == vac2_tx_gain;         // if the same, no scroll event will occur when ptbMic value set, so force one if needed
+                        ptbMic.Value = vac2_tx_gain;
+
+                        if (scroll) ptbMic_Scroll(sender, e);
                     }
                 }
             }

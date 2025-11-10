@@ -30956,40 +30956,50 @@ namespace Thetis
             int status = 0;
             int timeout = 0;
 
-            console.SetI2CPollingPause(true);
-
-            while (0 != NetworkIO.I2CReadInitiate(1, 0x1d, 169))
+            if (HL2IOBoardPresent == true)
             {
-                Thread.Sleep(1);
+                console.SetI2CPollingPause(true);
+
+                while (0 != NetworkIO.I2CReadInitiate(1, 0x1d, 169))
+                {
+                    Thread.Sleep(1);
+                    if (timeout++ >= 20) break;
+                }
+
+                if (timeout < 20)
+                {
+                    do
+                    {
+                        Thread.Sleep(1);
+                        status = NetworkIO.I2CResponse(read_data);
+                        if (timeout++ >= 20) break;
+                    } while (1 == status);
+
+                    if (status == 0)
+                        ucOutPinsLedStripHF.Bits = read_data[3];
+                }
+
+                console.SetI2CPollingPause(false);
             }
-
-            do
-            {
-                Thread.Sleep(1);
-                status = NetworkIO.I2CResponse(read_data);
-                if (timeout++ >= 20) break;
-            } while (1 == status);
-
-            if (status == 0)
-                ucOutPinsLedStripHF.Bits = read_data[3];
-
-            console.SetI2CPollingPause(false);
         }
 
         private void ucOutPinsLedStripHF_MouseDown(object sender, MouseEventArgs e)
         {
-            if (chkIOPinControl.Checked)
+            if (HL2IOBoardPresent == true)
             {
-                int bit = e.Location.X / 16;
-                byte mask = (byte)(1 << bit);
+                if (chkIOPinControl.Checked)
+                {
+                    int bit = e.Location.X / 16;
+                    byte mask = (byte)(1 << bit);
 
-                console.SetI2CPollingPause(true);
+                    console.SetI2CPollingPause(true);
 
-                NetworkIO.I2CWrite(1, 0x1d, 169, ucOutPinsLedStripHF.Bits ^ mask);
+                    NetworkIO.I2CWrite(1, 0x1d, 169, ucOutPinsLedStripHF.Bits ^ mask);
 
-                console.SetI2CPollingPause(false);
+                    console.SetI2CPollingPause(false);
 
-                ucOutPinsLedStripHF_Click(sender, e);
+                    ucOutPinsLedStripHF_Click(sender, e);
+                }
             }
         }
 

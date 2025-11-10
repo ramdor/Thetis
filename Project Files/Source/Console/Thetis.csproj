@@ -449,6 +449,7 @@
     <Compile Include="frmVariablePicker.Designer.cs">
       <DependentUpon>frmVariablePicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="HPSDR\IoBoardHl2.cs" />
     <Compile Include="TimeOutTimerManager.cs" />
     <Compile Include="Firewall.cs" />
     <Compile Include="cmaster.cs" />
