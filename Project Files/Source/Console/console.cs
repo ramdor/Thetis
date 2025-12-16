@@ -19092,20 +19092,6 @@ namespace Thetis
             }
         }
 
-        private bool pennylanepresent = true;
-        public bool PennyLanePresent
-        {
-            get { return pennylanepresent; }
-            set
-            {
-                pennylanepresent = true;
-                cmaster.CMSetTXOutputLevelRun();
-            }
-        }
-
-        public bool PennyPresent = false;
-        public bool MercuryPresent = false;
-
         private bool disable_6m_lna_on_rx = false;
         public bool Disable6mLNAonRX
         {

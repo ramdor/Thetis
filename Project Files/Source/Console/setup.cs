@@ -5193,24 +5193,6 @@ namespace Thetis
             set { chkAlexPresent.Checked = value; }
         }
 
-        public bool MercuryPresent
-        {
-            get { return chkMercuryPresent.Checked; }
-            set { chkMercuryPresent.Checked = value; }
-        }
-
-        public bool PenelopePresent
-        {
-            get { return chkPennyPresent.Checked; }
-            set { chkPennyPresent.Checked = value; }
-        }
-
-        public bool PennyLanePresent
-        {
-            get { return chkPennyLane.Checked; }
-            set { chkPennyLane.Checked = value; }
-        }
-
         public double BPF1_1_5Start
         {
             get { return (double)ud1_5BPF1Start.Value; }
@@ -12890,21 +12872,9 @@ namespace Thetis
         {
             console.WheelTunesVFOB = chkWheelTuneVFOB.Checked;
         }
-        private void chkPennyLane_CheckedChanged(object sender, System.EventArgs e)
-        {
-        }
-
-        private void chkPennyPresent_CheckedChanged(object sender, System.EventArgs e)
-        {
-        }
 
         private void checkHPSDRDefaults(object sender, System.EventArgs e)
         {
-        }
-
-        private void chkMercuryPresent_CheckedChanged(object sender, System.EventArgs e)
-        {
-            console.MercuryPresent = true;
         }
 
         private void chkAlexPresent_CheckedChanged(object sender, System.EventArgs e)
@@ -20234,12 +20204,6 @@ namespace Thetis
                 case HPSDRModel.ANAN10:
                     //Hardware.Model = HPSDRModel.ANAN10;
                     //console.SetupForHPSDRModel();
-                    chkPennyPresent.Checked = false;
-                    chkPennyPresent.Enabled = false;
-                    chkMercuryPresent.Checked = true;
-                    chkMercuryPresent.Enabled = false;
-                    chkPennyLane.Checked = true;
-                    chkPennyLane.Enabled = false;
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = false;
                     chkApolloPresent.Visible = false;
@@ -20282,12 +20246,6 @@ namespace Thetis
                     comboAudioSampleRateRX2.SelectedIndex = comboAudioSampleRate1.SelectedIndex;
                     comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
                     comboAudioSampleRateRX2.Enabled = false;
-                    chkPennyPresent.Checked = false;
-                    chkPennyPresent.Enabled = false;
-                    chkMercuryPresent.Checked = true;
-                    chkMercuryPresent.Enabled = false;
-                    chkPennyLane.Checked = true;
-                    chkPennyLane.Enabled = false;
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = false;
                     chkApolloPresent.Visible = false;
@@ -20326,12 +20284,6 @@ namespace Thetis
                 case HPSDRModel.ANAN100:
                     //Hardware.Model = HPSDRModel.ANAN100;
                     //console.SetupForHPSDRModel();
-                    chkPennyPresent.Checked = false;
-                    chkPennyPresent.Enabled = false;
-                    chkMercuryPresent.Checked = true;
-                    chkMercuryPresent.Enabled = false;
-                    chkPennyLane.Checked = true;
-                    chkPennyLane.Enabled = false;
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = true;
                     chkApolloPresent.Visible = false;
@@ -20375,15 +20327,6 @@ namespace Thetis
                     comboAudioSampleRateRX2.SelectedIndex = comboAudioSampleRate1.SelectedIndex;
                     comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
                     comboAudioSampleRateRX2.Enabled = false;
-                    chkPennyPresent.Checked = false;
-                    chkPennyPresent.Enabled = false;
-                    chkPennyPresent.Visible = false;
-                    chkMercuryPresent.Checked = true;
-                    chkMercuryPresent.Enabled = false;
-                    chkMercuryPresent.Visible = false;
-                    chkPennyLane.Checked = true;
-                    chkPennyLane.Enabled = false;
-                    chkPennyLane.Visible = false;
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = false;
                     chkApolloPresent.Visible = false;
@@ -20424,15 +20367,6 @@ namespace Thetis
                 case HPSDRModel.ANAN100D:
                     //Hardware.Model = HPSDRModel.ANAN100D;
                     //console.SetupForHPSDRModel();
-                    chkPennyPresent.Checked = false;
-                    chkPennyPresent.Enabled = false;
-                    chkPennyPresent.Visible = false;
-                    chkMercuryPresent.Checked = true;
-                    chkMercuryPresent.Enabled = false;
-                    chkMercuryPresent.Visible = false;
-                    chkPennyLane.Checked = true;
-                    chkPennyLane.Enabled = false;
-                    chkPennyLane.Visible = false;
                     chkAlexPresent.Enabled = true;
                     chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
@@ -20532,12 +20466,6 @@ namespace Thetis
                 case HPSDRModel.ANAN7000D:
                     //Hardware.Model = HPSDRModel.ANAN7000D;
                     //console.SetupForHPSDRModel();
-                    chkPennyPresent.Checked = false;
-                    chkPennyPresent.Enabled = false;
-                    chkMercuryPresent.Checked = true;
-                    chkMercuryPresent.Enabled = false;
-                    chkPennyLane.Checked = true;
-                    chkPennyLane.Enabled = false;
                     chkAlexPresent.Enabled = true;
                     chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
@@ -20596,12 +20524,6 @@ namespace Thetis
                 case HPSDRModel.ANAN8000D:
                     //Hardware.Model = HPSDRModel.ANAN8000D;
                     //console.SetupForHPSDRModel();
-                    chkPennyPresent.Checked = false;
-                    chkPennyPresent.Enabled = false;
-                    chkMercuryPresent.Checked = true;
-                    chkMercuryPresent.Enabled = false;
-                    chkPennyLane.Checked = true;
-                    chkPennyLane.Enabled = false;
                     chkAlexPresent.Enabled = true;
                     chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
@@ -20663,12 +20585,6 @@ namespace Thetis
                 case HPSDRModel.ANAN_G2:                 // added G8NJJ
                     //Hardware.Model = HPSDRModel.ANAN_G2;
                     //console.SetupForHPSDRModel();
-                    chkPennyPresent.Checked = false;
-                    chkPennyPresent.Enabled = false;
-                    chkMercuryPresent.Checked = true;
-                    chkMercuryPresent.Enabled = false;
-                    chkPennyLane.Checked = true;
-                    chkPennyLane.Enabled = false;
                     chkAlexPresent.Enabled = true;
                     chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
@@ -20727,12 +20643,6 @@ namespace Thetis
                 case HPSDRModel.ANAN_G2_1K:              // added G8NJJ
                     //Hardware.Model = HPSDRModel.ANAN_G2_1K;
                     //console.SetupForHPSDRModel();
-                    chkPennyPresent.Checked = false;
-                    chkPennyPresent.Enabled = false;
-                    chkMercuryPresent.Checked = true;
-                    chkMercuryPresent.Enabled = false;
-                    chkPennyLane.Checked = true;
-                    chkPennyLane.Enabled = false;
                     chkAlexPresent.Enabled = true;
                     chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
@@ -20791,12 +20701,6 @@ namespace Thetis
                 case HPSDRModel.ANVELINAPRO3:
                     //Hardware.Model = HPSDRModel.ANVELINAPRO3;
                     //console.SetupForHPSDRModel();
-                    chkPennyPresent.Checked = false;
-                    chkPennyPresent.Enabled = false;
-                    chkMercuryPresent.Checked = true;
-                    chkMercuryPresent.Enabled = false;
-                    chkPennyLane.Checked = true;
-                    chkPennyLane.Enabled = false;
                     chkAlexPresent.Enabled = true;
                     chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
@@ -20855,12 +20759,6 @@ namespace Thetis
                 case HPSDRModel.REDPITAYA: //DH1KLM
                     //Hardware.Model = HPSDRModel.REDPITAYA;
                     //console.SetupForHPSDRModel();
-                    chkPennyPresent.Checked = false;
-                    chkPennyPresent.Enabled = false;
-                    chkMercuryPresent.Checked = true;
-                    chkMercuryPresent.Enabled = false;
-                    chkPennyLane.Checked = true;
-                    chkPennyLane.Enabled = false;
                     chkAlexPresent.Enabled = true;
                     chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;

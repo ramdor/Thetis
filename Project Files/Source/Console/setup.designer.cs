@@ -267,10 +267,7 @@
             this.lblMetisMAC = new System.Windows.Forms.LabelTS();
             this.groupBoxHPSDRHW = new System.Windows.Forms.GroupBoxTS();
             this.chkApolloPresent = new System.Windows.Forms.CheckBoxTS();
-            this.chkPennyLane = new System.Windows.Forms.CheckBoxTS();
             this.chkAlexPresent = new System.Windows.Forms.CheckBoxTS();
-            this.chkMercuryPresent = new System.Windows.Forms.CheckBoxTS();
-            this.chkPennyPresent = new System.Windows.Forms.CheckBoxTS();
             this.grpGeneralHardwareORION = new System.Windows.Forms.GroupBoxTS();
             this.panelSaturnMicInput = new System.Windows.Forms.PanelTS();
             this.radSaturnXLR = new System.Windows.Forms.RadioButtonTS();
@@ -2446,8 +2443,10 @@
             this.radDSPRX2APFControls = new System.Windows.Forms.RadioButtonTS();
             this.radDSPRX1subAPFControls = new System.Windows.Forms.RadioButtonTS();
             this.grpDSPAudRX2APF = new System.Windows.Forms.GroupBoxTS();
-            this.labelRX2APFType = new System.Windows.Forms.LabelTS();
             this.tbDSPAudRX2APFGain = new System.Windows.Forms.TrackBarTS();
+            this.tbRX2APFBW = new System.Windows.Forms.TrackBarTS();
+            this.tbRX2APFTune = new System.Windows.Forms.TrackBarTS();
+            this.labelRX2APFType = new System.Windows.Forms.LabelTS();
             this.comboAPF_type_rx2 = new System.Windows.Forms.ComboBoxTS();
             this.labelRX2APFBWR = new System.Windows.Forms.LabelTS();
             this.labelRX2APFBWL = new System.Windows.Forms.LabelTS();
@@ -2456,14 +2455,14 @@
             this.labelRX2APFTuneC = new System.Windows.Forms.LabelTS();
             this.labelRX2APFBW = new System.Windows.Forms.LabelTS();
             this.labelRX2APFTune = new System.Windows.Forms.LabelTS();
-            this.tbRX2APFBW = new System.Windows.Forms.TrackBarTS();
-            this.tbRX2APFTune = new System.Windows.Forms.TrackBarTS();
             this.labelRX2APFGain = new System.Windows.Forms.LabelTS();
             this.chkDSPRX2APFEnable = new System.Windows.Forms.CheckBoxTS();
             this.grpDSPAudRX1subAPF = new System.Windows.Forms.GroupBoxTS();
+            this.tbDSPAudRX1subAPFGain = new System.Windows.Forms.TrackBarTS();
+            this.tbRX1subAPFBW = new System.Windows.Forms.TrackBarTS();
+            this.tbRX1subAPFTune = new System.Windows.Forms.TrackBarTS();
             this.labelRX1subAPFType = new System.Windows.Forms.LabelTS();
             this.comboAPF_type_rx1sub = new System.Windows.Forms.ComboBoxTS();
-            this.tbDSPAudRX1subAPFGain = new System.Windows.Forms.TrackBarTS();
             this.labelRX1subAPFBWR = new System.Windows.Forms.LabelTS();
             this.labelRX1subAPFBWL = new System.Windows.Forms.LabelTS();
             this.labelRX1subAPFTuneR = new System.Windows.Forms.LabelTS();
@@ -2471,13 +2470,13 @@
             this.labelRX1subAPFTuneC = new System.Windows.Forms.LabelTS();
             this.labelRX1subAPFBW = new System.Windows.Forms.LabelTS();
             this.labelRX1subAPFTune = new System.Windows.Forms.LabelTS();
-            this.tbRX1subAPFBW = new System.Windows.Forms.TrackBarTS();
-            this.tbRX1subAPFTune = new System.Windows.Forms.TrackBarTS();
             this.labelRX1subAPFGain = new System.Windows.Forms.LabelTS();
             this.chkDSPRX1subAPFEnable = new System.Windows.Forms.CheckBoxTS();
             this.grpDSPAudRX1APF = new System.Windows.Forms.GroupBoxTS();
-            this.labelRX1APFType = new System.Windows.Forms.LabelTS();
             this.tbDSPAudRX1APFGain = new System.Windows.Forms.TrackBarTS();
+            this.tbRX1APFBW = new System.Windows.Forms.TrackBarTS();
+            this.tbRX1APFTune = new System.Windows.Forms.TrackBarTS();
+            this.labelRX1APFType = new System.Windows.Forms.LabelTS();
             this.comboAPF_type_rx1 = new System.Windows.Forms.ComboBoxTS();
             this.labelRX1APFBWR = new System.Windows.Forms.LabelTS();
             this.labelRX1APFBWL = new System.Windows.Forms.LabelTS();
@@ -2486,8 +2485,6 @@
             this.labelRX1APFTuneC = new System.Windows.Forms.LabelTS();
             this.labelRX1APFBW = new System.Windows.Forms.LabelTS();
             this.labelRX1APFTune = new System.Windows.Forms.LabelTS();
-            this.tbRX1APFBW = new System.Windows.Forms.TrackBarTS();
-            this.tbRX1APFTune = new System.Windows.Forms.TrackBarTS();
             this.labelRX1APFGain = new System.Windows.Forms.LabelTS();
             this.chkDSPRX1APFEnable = new System.Windows.Forms.CheckBoxTS();
             this.tpDSPEER = new System.Windows.Forms.TabPage();
@@ -8894,10 +8891,7 @@
             // groupBoxHPSDRHW
             // 
             this.groupBoxHPSDRHW.Controls.Add(this.chkApolloPresent);
-            this.groupBoxHPSDRHW.Controls.Add(this.chkPennyLane);
             this.groupBoxHPSDRHW.Controls.Add(this.chkAlexPresent);
-            this.groupBoxHPSDRHW.Controls.Add(this.chkMercuryPresent);
-            this.groupBoxHPSDRHW.Controls.Add(this.chkPennyPresent);
             this.groupBoxHPSDRHW.Location = new System.Drawing.Point(208, 8);
             this.groupBoxHPSDRHW.Name = "groupBoxHPSDRHW";
             this.groupBoxHPSDRHW.Size = new System.Drawing.Size(160, 172);
@@ -8918,21 +8912,6 @@
             this.chkApolloPresent.Visible = false;
             this.chkApolloPresent.CheckedChanged += new System.EventHandler(this.chkApolloPresent_CheckedChanged);
             // 
-            // chkPennyLane
-            // 
-            this.chkPennyLane.AutoSize = true;
-            this.chkPennyLane.Checked = true;
-            this.chkPennyLane.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkPennyLane.Image = null;
-            this.chkPennyLane.Location = new System.Drawing.Point(25, 60);
-            this.chkPennyLane.Name = "chkPennyLane";
-            this.chkPennyLane.Size = new System.Drawing.Size(80, 17);
-            this.chkPennyLane.TabIndex = 6;
-            this.chkPennyLane.Text = "PennyLane";
-            this.chkPennyLane.UseVisualStyleBackColor = true;
-            this.chkPennyLane.Visible = false;
-            this.chkPennyLane.CheckedChanged += new System.EventHandler(this.chkPennyLane_CheckedChanged);
-            // 
             // chkAlexPresent
             // 
             this.chkAlexPresent.AutoSize = true;
@@ -8946,34 +8925,6 @@
             this.chkAlexPresent.Text = "Alex";
             this.chkAlexPresent.UseVisualStyleBackColor = true;
             this.chkAlexPresent.CheckedChanged += new System.EventHandler(this.chkAlexPresent_CheckedChanged);
-            // 
-            // chkMercuryPresent
-            // 
-            this.chkMercuryPresent.AutoSize = true;
-            this.chkMercuryPresent.Checked = true;
-            this.chkMercuryPresent.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkMercuryPresent.Image = null;
-            this.chkMercuryPresent.Location = new System.Drawing.Point(25, 20);
-            this.chkMercuryPresent.Name = "chkMercuryPresent";
-            this.chkMercuryPresent.Size = new System.Drawing.Size(64, 17);
-            this.chkMercuryPresent.TabIndex = 0;
-            this.chkMercuryPresent.Text = "Mercury";
-            this.chkMercuryPresent.UseVisualStyleBackColor = true;
-            this.chkMercuryPresent.Visible = false;
-            this.chkMercuryPresent.CheckedChanged += new System.EventHandler(this.chkMercuryPresent_CheckedChanged);
-            // 
-            // chkPennyPresent
-            // 
-            this.chkPennyPresent.AutoSize = true;
-            this.chkPennyPresent.Image = null;
-            this.chkPennyPresent.Location = new System.Drawing.Point(25, 40);
-            this.chkPennyPresent.Name = "chkPennyPresent";
-            this.chkPennyPresent.Size = new System.Drawing.Size(71, 17);
-            this.chkPennyPresent.TabIndex = 1;
-            this.chkPennyPresent.Text = "Penelope";
-            this.chkPennyPresent.UseVisualStyleBackColor = true;
-            this.chkPennyPresent.Visible = false;
-            this.chkPennyPresent.CheckedChanged += new System.EventHandler(this.chkPennyPresent_CheckedChanged);
             // 
             // grpGeneralHardwareORION
             // 
@@ -40231,16 +40182,6 @@
             this.grpDSPAudRX2APF.TabStop = false;
             this.grpDSPAudRX2APF.Text = "RX2 - APF";
             // 
-            // labelRX2APFType
-            // 
-            this.labelRX2APFType.AutoSize = true;
-            this.labelRX2APFType.Image = null;
-            this.labelRX2APFType.Location = new System.Drawing.Point(5, 103);
-            this.labelRX2APFType.Name = "labelRX2APFType";
-            this.labelRX2APFType.Size = new System.Drawing.Size(31, 13);
-            this.labelRX2APFType.TabIndex = 65;
-            this.labelRX2APFType.Text = "Type";
-            // 
             // tbDSPAudRX2APFGain
             // 
             this.tbDSPAudRX2APFGain.AutoSize = false;
@@ -40255,6 +40196,47 @@
             this.toolTip1.SetToolTip(this.tbDSPAudRX2APFGain, "Gain of Audio Peaking Filter");
             this.tbDSPAudRX2APFGain.ValueChanged += new System.EventHandler(this.tbDSPAudRX2APFGain_ValueChanged);
             this.tbDSPAudRX2APFGain.LostFocus += new System.EventHandler(this.tbDSPAudRX2APFGain_LostFocus);
+            // 
+            // tbRX2APFBW
+            // 
+            this.tbRX2APFBW.AutoSize = false;
+            this.tbRX2APFBW.BackColor = System.Drawing.Color.Black;
+            this.tbRX2APFBW.LargeChange = 1;
+            this.tbRX2APFBW.Location = new System.Drawing.Point(42, 78);
+            this.tbRX2APFBW.Maximum = 150;
+            this.tbRX2APFBW.Minimum = 10;
+            this.tbRX2APFBW.Name = "tbRX2APFBW";
+            this.tbRX2APFBW.Size = new System.Drawing.Size(193, 16);
+            this.tbRX2APFBW.TabIndex = 52;
+            this.tbRX2APFBW.TickFrequency = 20;
+            this.toolTip1.SetToolTip(this.tbRX2APFBW, "Approximate -3dB bandwidth of Audio Peaking Filter");
+            this.tbRX2APFBW.Value = 150;
+            this.tbRX2APFBW.Scroll += new System.EventHandler(this.tbRX2APFBW_Scroll);
+            // 
+            // tbRX2APFTune
+            // 
+            this.tbRX2APFTune.AutoSize = false;
+            this.tbRX2APFTune.BackColor = System.Drawing.Color.Black;
+            this.tbRX2APFTune.LargeChange = 1;
+            this.tbRX2APFTune.Location = new System.Drawing.Point(42, 46);
+            this.tbRX2APFTune.Maximum = 250;
+            this.tbRX2APFTune.Minimum = -250;
+            this.tbRX2APFTune.Name = "tbRX2APFTune";
+            this.tbRX2APFTune.Size = new System.Drawing.Size(193, 16);
+            this.tbRX2APFTune.TabIndex = 51;
+            this.tbRX2APFTune.TickFrequency = 50;
+            this.toolTip1.SetToolTip(this.tbRX2APFTune, "Relative center frequency of Audio Peaking Filter");
+            this.tbRX2APFTune.Scroll += new System.EventHandler(this.tbRX2APFTune_Scroll);
+            // 
+            // labelRX2APFType
+            // 
+            this.labelRX2APFType.AutoSize = true;
+            this.labelRX2APFType.Image = null;
+            this.labelRX2APFType.Location = new System.Drawing.Point(5, 103);
+            this.labelRX2APFType.Name = "labelRX2APFType";
+            this.labelRX2APFType.Size = new System.Drawing.Size(31, 13);
+            this.labelRX2APFType.TabIndex = 65;
+            this.labelRX2APFType.Text = "Type";
             // 
             // comboAPF_type_rx2
             // 
@@ -40346,37 +40328,6 @@
             this.labelRX2APFTune.TabIndex = 53;
             this.labelRX2APFTune.Text = "Tune";
             // 
-            // tbRX2APFBW
-            // 
-            this.tbRX2APFBW.AutoSize = false;
-            this.tbRX2APFBW.BackColor = System.Drawing.Color.Black;
-            this.tbRX2APFBW.LargeChange = 1;
-            this.tbRX2APFBW.Location = new System.Drawing.Point(42, 78);
-            this.tbRX2APFBW.Maximum = 150;
-            this.tbRX2APFBW.Minimum = 10;
-            this.tbRX2APFBW.Name = "tbRX2APFBW";
-            this.tbRX2APFBW.Size = new System.Drawing.Size(193, 16);
-            this.tbRX2APFBW.TabIndex = 52;
-            this.tbRX2APFBW.TickFrequency = 20;
-            this.toolTip1.SetToolTip(this.tbRX2APFBW, "Approximate -3dB bandwidth of Audio Peaking Filter");
-            this.tbRX2APFBW.Value = 150;
-            this.tbRX2APFBW.Scroll += new System.EventHandler(this.tbRX2APFBW_Scroll);
-            // 
-            // tbRX2APFTune
-            // 
-            this.tbRX2APFTune.AutoSize = false;
-            this.tbRX2APFTune.BackColor = System.Drawing.Color.Black;
-            this.tbRX2APFTune.LargeChange = 1;
-            this.tbRX2APFTune.Location = new System.Drawing.Point(42, 46);
-            this.tbRX2APFTune.Maximum = 250;
-            this.tbRX2APFTune.Minimum = -250;
-            this.tbRX2APFTune.Name = "tbRX2APFTune";
-            this.tbRX2APFTune.Size = new System.Drawing.Size(193, 16);
-            this.tbRX2APFTune.TabIndex = 51;
-            this.tbRX2APFTune.TickFrequency = 50;
-            this.toolTip1.SetToolTip(this.tbRX2APFTune, "Relative center frequency of Audio Peaking Filter");
-            this.tbRX2APFTune.Scroll += new System.EventHandler(this.tbRX2APFTune_Scroll);
-            // 
             // labelRX2APFGain
             // 
             this.labelRX2APFGain.Image = null;
@@ -40423,6 +40374,52 @@
             this.grpDSPAudRX1subAPF.TabStop = false;
             this.grpDSPAudRX1subAPF.Text = "RX1 Sub - APF";
             // 
+            // tbDSPAudRX1subAPFGain
+            // 
+            this.tbDSPAudRX1subAPFGain.AutoSize = false;
+            this.tbDSPAudRX1subAPFGain.BackColor = System.Drawing.Color.Black;
+            this.tbDSPAudRX1subAPFGain.LargeChange = 1;
+            this.tbDSPAudRX1subAPFGain.Location = new System.Drawing.Point(135, 14);
+            this.tbDSPAudRX1subAPFGain.Maximum = 100;
+            this.tbDSPAudRX1subAPFGain.Name = "tbDSPAudRX1subAPFGain";
+            this.tbDSPAudRX1subAPFGain.Size = new System.Drawing.Size(100, 16);
+            this.tbDSPAudRX1subAPFGain.TabIndex = 61;
+            this.tbDSPAudRX1subAPFGain.TickFrequency = 10;
+            this.toolTip1.SetToolTip(this.tbDSPAudRX1subAPFGain, "Gain of Audio Peaking Filter");
+            this.tbDSPAudRX1subAPFGain.ValueChanged += new System.EventHandler(this.tbDSPAudRX1subAPFGain_ValueChanged);
+            this.tbDSPAudRX1subAPFGain.LostFocus += new System.EventHandler(this.tbDSPAudRX1subAPFGain_LostFocus);
+            // 
+            // tbRX1subAPFBW
+            // 
+            this.tbRX1subAPFBW.AutoSize = false;
+            this.tbRX1subAPFBW.BackColor = System.Drawing.Color.Black;
+            this.tbRX1subAPFBW.LargeChange = 1;
+            this.tbRX1subAPFBW.Location = new System.Drawing.Point(42, 78);
+            this.tbRX1subAPFBW.Maximum = 150;
+            this.tbRX1subAPFBW.Minimum = 10;
+            this.tbRX1subAPFBW.Name = "tbRX1subAPFBW";
+            this.tbRX1subAPFBW.Size = new System.Drawing.Size(193, 16);
+            this.tbRX1subAPFBW.TabIndex = 52;
+            this.tbRX1subAPFBW.TickFrequency = 20;
+            this.toolTip1.SetToolTip(this.tbRX1subAPFBW, "Approximate -3dB bandwidth of Audio Peaking Filter");
+            this.tbRX1subAPFBW.Value = 150;
+            this.tbRX1subAPFBW.Scroll += new System.EventHandler(this.tbRX1subAPFBW_Scroll);
+            // 
+            // tbRX1subAPFTune
+            // 
+            this.tbRX1subAPFTune.AutoSize = false;
+            this.tbRX1subAPFTune.BackColor = System.Drawing.Color.Black;
+            this.tbRX1subAPFTune.LargeChange = 1;
+            this.tbRX1subAPFTune.Location = new System.Drawing.Point(42, 46);
+            this.tbRX1subAPFTune.Maximum = 250;
+            this.tbRX1subAPFTune.Minimum = -250;
+            this.tbRX1subAPFTune.Name = "tbRX1subAPFTune";
+            this.tbRX1subAPFTune.Size = new System.Drawing.Size(193, 16);
+            this.tbRX1subAPFTune.TabIndex = 51;
+            this.tbRX1subAPFTune.TickFrequency = 50;
+            this.toolTip1.SetToolTip(this.tbRX1subAPFTune, "Relative center frequency of Audio Peaking Filter");
+            this.tbRX1subAPFTune.Scroll += new System.EventHandler(this.tbRX1subAPFTune_Scroll);
+            // 
             // labelRX1subAPFType
             // 
             this.labelRX1subAPFType.AutoSize = true;
@@ -40447,21 +40444,6 @@
             this.comboAPF_type_rx1sub.Size = new System.Drawing.Size(121, 21);
             this.comboAPF_type_rx1sub.TabIndex = 62;
             this.comboAPF_type_rx1sub.SelectedIndexChanged += new System.EventHandler(this.comboAPF_type_SelectedIndexChanged);
-            // 
-            // tbDSPAudRX1subAPFGain
-            // 
-            this.tbDSPAudRX1subAPFGain.AutoSize = false;
-            this.tbDSPAudRX1subAPFGain.BackColor = System.Drawing.Color.Black;
-            this.tbDSPAudRX1subAPFGain.LargeChange = 1;
-            this.tbDSPAudRX1subAPFGain.Location = new System.Drawing.Point(135, 14);
-            this.tbDSPAudRX1subAPFGain.Maximum = 100;
-            this.tbDSPAudRX1subAPFGain.Name = "tbDSPAudRX1subAPFGain";
-            this.tbDSPAudRX1subAPFGain.Size = new System.Drawing.Size(100, 16);
-            this.tbDSPAudRX1subAPFGain.TabIndex = 61;
-            this.tbDSPAudRX1subAPFGain.TickFrequency = 10;
-            this.toolTip1.SetToolTip(this.tbDSPAudRX1subAPFGain, "Gain of Audio Peaking Filter");
-            this.tbDSPAudRX1subAPFGain.ValueChanged += new System.EventHandler(this.tbDSPAudRX1subAPFGain_ValueChanged);
-            this.tbDSPAudRX1subAPFGain.LostFocus += new System.EventHandler(this.tbDSPAudRX1subAPFGain_LostFocus);
             // 
             // labelRX1subAPFBWR
             // 
@@ -40538,37 +40520,6 @@
             this.labelRX1subAPFTune.TabIndex = 53;
             this.labelRX1subAPFTune.Text = "Tune";
             // 
-            // tbRX1subAPFBW
-            // 
-            this.tbRX1subAPFBW.AutoSize = false;
-            this.tbRX1subAPFBW.BackColor = System.Drawing.Color.Black;
-            this.tbRX1subAPFBW.LargeChange = 1;
-            this.tbRX1subAPFBW.Location = new System.Drawing.Point(42, 78);
-            this.tbRX1subAPFBW.Maximum = 150;
-            this.tbRX1subAPFBW.Minimum = 10;
-            this.tbRX1subAPFBW.Name = "tbRX1subAPFBW";
-            this.tbRX1subAPFBW.Size = new System.Drawing.Size(193, 16);
-            this.tbRX1subAPFBW.TabIndex = 52;
-            this.tbRX1subAPFBW.TickFrequency = 20;
-            this.toolTip1.SetToolTip(this.tbRX1subAPFBW, "Approximate -3dB bandwidth of Audio Peaking Filter");
-            this.tbRX1subAPFBW.Value = 150;
-            this.tbRX1subAPFBW.Scroll += new System.EventHandler(this.tbRX1subAPFBW_Scroll);
-            // 
-            // tbRX1subAPFTune
-            // 
-            this.tbRX1subAPFTune.AutoSize = false;
-            this.tbRX1subAPFTune.BackColor = System.Drawing.Color.Black;
-            this.tbRX1subAPFTune.LargeChange = 1;
-            this.tbRX1subAPFTune.Location = new System.Drawing.Point(42, 46);
-            this.tbRX1subAPFTune.Maximum = 250;
-            this.tbRX1subAPFTune.Minimum = -250;
-            this.tbRX1subAPFTune.Name = "tbRX1subAPFTune";
-            this.tbRX1subAPFTune.Size = new System.Drawing.Size(193, 16);
-            this.tbRX1subAPFTune.TabIndex = 51;
-            this.tbRX1subAPFTune.TickFrequency = 50;
-            this.toolTip1.SetToolTip(this.tbRX1subAPFTune, "Relative center frequency of Audio Peaking Filter");
-            this.tbRX1subAPFTune.Scroll += new System.EventHandler(this.tbRX1subAPFTune_Scroll);
-            // 
             // labelRX1subAPFGain
             // 
             this.labelRX1subAPFGain.Image = null;
@@ -40615,16 +40566,6 @@
             this.grpDSPAudRX1APF.TabStop = false;
             this.grpDSPAudRX1APF.Text = "RX1 - APF";
             // 
-            // labelRX1APFType
-            // 
-            this.labelRX1APFType.AutoSize = true;
-            this.labelRX1APFType.Image = null;
-            this.labelRX1APFType.Location = new System.Drawing.Point(4, 103);
-            this.labelRX1APFType.Name = "labelRX1APFType";
-            this.labelRX1APFType.Size = new System.Drawing.Size(31, 13);
-            this.labelRX1APFType.TabIndex = 51;
-            this.labelRX1APFType.Text = "Type";
-            // 
             // tbDSPAudRX1APFGain
             // 
             this.tbDSPAudRX1APFGain.AutoSize = false;
@@ -40639,6 +40580,47 @@
             this.toolTip1.SetToolTip(this.tbDSPAudRX1APFGain, "Gain of Audio Peaking Filter");
             this.tbDSPAudRX1APFGain.ValueChanged += new System.EventHandler(this.tbDSPAudRX1APFGain_ValueChanged);
             this.tbDSPAudRX1APFGain.LostFocus += new System.EventHandler(this.tbDSPAudRX1APFGain_LostFocus);
+            // 
+            // tbRX1APFBW
+            // 
+            this.tbRX1APFBW.AutoSize = false;
+            this.tbRX1APFBW.BackColor = System.Drawing.Color.Black;
+            this.tbRX1APFBW.LargeChange = 1;
+            this.tbRX1APFBW.Location = new System.Drawing.Point(42, 78);
+            this.tbRX1APFBW.Maximum = 150;
+            this.tbRX1APFBW.Minimum = 10;
+            this.tbRX1APFBW.Name = "tbRX1APFBW";
+            this.tbRX1APFBW.Size = new System.Drawing.Size(193, 16);
+            this.tbRX1APFBW.TabIndex = 52;
+            this.tbRX1APFBW.TickFrequency = 20;
+            this.toolTip1.SetToolTip(this.tbRX1APFBW, "Approximate -3dB bandwidth of Audio Peaking Filter");
+            this.tbRX1APFBW.Value = 150;
+            this.tbRX1APFBW.Scroll += new System.EventHandler(this.tbRX1APFBW_Scroll);
+            // 
+            // tbRX1APFTune
+            // 
+            this.tbRX1APFTune.AutoSize = false;
+            this.tbRX1APFTune.BackColor = System.Drawing.Color.Black;
+            this.tbRX1APFTune.LargeChange = 1;
+            this.tbRX1APFTune.Location = new System.Drawing.Point(42, 46);
+            this.tbRX1APFTune.Maximum = 250;
+            this.tbRX1APFTune.Minimum = -250;
+            this.tbRX1APFTune.Name = "tbRX1APFTune";
+            this.tbRX1APFTune.Size = new System.Drawing.Size(193, 16);
+            this.tbRX1APFTune.TabIndex = 51;
+            this.tbRX1APFTune.TickFrequency = 50;
+            this.toolTip1.SetToolTip(this.tbRX1APFTune, "Relative center frequency of Audio Peaking Filter");
+            this.tbRX1APFTune.Scroll += new System.EventHandler(this.tbRX1APFTune_Scroll);
+            // 
+            // labelRX1APFType
+            // 
+            this.labelRX1APFType.AutoSize = true;
+            this.labelRX1APFType.Image = null;
+            this.labelRX1APFType.Location = new System.Drawing.Point(4, 103);
+            this.labelRX1APFType.Name = "labelRX1APFType";
+            this.labelRX1APFType.Size = new System.Drawing.Size(31, 13);
+            this.labelRX1APFType.TabIndex = 51;
+            this.labelRX1APFType.Text = "Type";
             // 
             // comboAPF_type_rx1
             // 
@@ -40729,37 +40711,6 @@
             this.labelRX1APFTune.Size = new System.Drawing.Size(32, 13);
             this.labelRX1APFTune.TabIndex = 53;
             this.labelRX1APFTune.Text = "Tune";
-            // 
-            // tbRX1APFBW
-            // 
-            this.tbRX1APFBW.AutoSize = false;
-            this.tbRX1APFBW.BackColor = System.Drawing.Color.Black;
-            this.tbRX1APFBW.LargeChange = 1;
-            this.tbRX1APFBW.Location = new System.Drawing.Point(42, 78);
-            this.tbRX1APFBW.Maximum = 150;
-            this.tbRX1APFBW.Minimum = 10;
-            this.tbRX1APFBW.Name = "tbRX1APFBW";
-            this.tbRX1APFBW.Size = new System.Drawing.Size(193, 16);
-            this.tbRX1APFBW.TabIndex = 52;
-            this.tbRX1APFBW.TickFrequency = 20;
-            this.toolTip1.SetToolTip(this.tbRX1APFBW, "Approximate -3dB bandwidth of Audio Peaking Filter");
-            this.tbRX1APFBW.Value = 150;
-            this.tbRX1APFBW.Scroll += new System.EventHandler(this.tbRX1APFBW_Scroll);
-            // 
-            // tbRX1APFTune
-            // 
-            this.tbRX1APFTune.AutoSize = false;
-            this.tbRX1APFTune.BackColor = System.Drawing.Color.Black;
-            this.tbRX1APFTune.LargeChange = 1;
-            this.tbRX1APFTune.Location = new System.Drawing.Point(42, 46);
-            this.tbRX1APFTune.Maximum = 250;
-            this.tbRX1APFTune.Minimum = -250;
-            this.tbRX1APFTune.Name = "tbRX1APFTune";
-            this.tbRX1APFTune.Size = new System.Drawing.Size(193, 16);
-            this.tbRX1APFTune.TabIndex = 51;
-            this.tbRX1APFTune.TickFrequency = 50;
-            this.toolTip1.SetToolTip(this.tbRX1APFTune, "Relative center frequency of Audio Peaking Filter");
-            this.tbRX1APFTune.Scroll += new System.EventHandler(this.tbRX1APFTune_Scroll);
             // 
             // labelRX1APFGain
             // 
@@ -71125,8 +71076,6 @@
         private TrackBarTS tbMultiRXFilterAlpha;
         private CheckBoxTS chkWheelTuneVFOB;
         private CheckBoxTS chkAlexPresent;
-        private CheckBoxTS chkPennyPresent;
-        private CheckBoxTS chkMercuryPresent;
         private GroupBoxTS grpHPSDRFreqCalDbg;
         private LabelTS labelTS10;
         private NumericUpDownTS udHPSDRFreqCorrectFactor;
@@ -71453,7 +71402,6 @@
         private LabelTS lblMetisMAC;
         private LabelTS labelTS9;
         private LabelTS labelTS16;
-        private CheckBoxTS chkPennyLane;
         private LabelTS lblPTTOutDelay;
         private NumericUpDownTS udGenPTTOutDelay;
         private GroupBoxTS grpDiagInfo;
