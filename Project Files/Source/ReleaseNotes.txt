@@ -24,6 +24,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] startup log can be shown. Option in Setup->Test
 - [add] VAC and portAudio will now successfully use input devices that report only single input channels. Previously input required a device that reported two channels and would fail with certain USB headsets and USB dongles such as the Syba SD-CM-UAUD USB
 - [add] option added in tci setup to force a CW spot to a specific sideband. See tooltips for more info
+- [add] 3 new AFP types added to the original Bi-Quad. Double Pole, Matched and Gaussian are now available. New button to cycle through them on the main CW ui panel, setup options, cat command ZZAYn; where n=0 to 3, and 4 new midi command buttons to select each
 - [change] changed ZZIS cat command so that it takes/returns the actual filter width and not the slider width position. ZZIS; will return ZZISxxxxx; where xxxxx is 0 padded filter width. ZZIS00500; will set filter width to 500HZ. Symmetrical modes such as AM, SAM will take the full size width, so ZZIS20000; will be +-10k on AM. Note. FilterWdithMode is switched to linear whilst this is applied
 - [change] private scope added to in/out firewall rules when [Firewall Check] is used from Setup. Previously was only setting Domain + Public
 - [change] reimplemented the code that ensures a form is on screen as there had been occurrences where a form had got 'lost'. Note. this will still fail if a monitor is turned off and windows thinks it is still available as a display surface

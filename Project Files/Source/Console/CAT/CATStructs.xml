@@ -2156,6 +2156,13 @@
     <ngetparms>-1</ngetparms>
     <nansparms>-1</nansparms>
   </catstruct>
+  <catstruct code="ZZAY">
+	<desc>APF type</desc>
+	<active>true</active>
+	<nsetparms>1</nsetparms>
+	<ngetparms>0</ngetparms>
+	<nansparms>1</nansparms>
+  </catstruct>
   <catstruct code="ZZAE">
     <desc>Moves VFOA down nn Steps</desc>
     <active>true</active>

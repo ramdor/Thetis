@@ -750,7 +750,8 @@ namespace Thetis
                         else
                             ddB = 31.1;
 
-                        _deltadB = Convert.ToInt32(ddB);
+                        //_deltadB = Convert.ToInt32(ddB);
+                        _deltadB = (int)Math.Round(ddB, MidpointRounding.AwayFromZero); //[2.10.3.12]MW0LGE use rounding, to fix Banker's rounding issue
 
                         _save_autoON = (_cmdstate == eCMDState.AutoCalibrate) ? 1 : 0; // (2)
                         _save_singlecalON = (_cmdstate == eCMDState.SingleCalibrate) ? 1 : 0; // (4)
@@ -1049,56 +1050,57 @@ namespace Thetis
         #endregion
 
         #region public methods
-        public static int[] Info = new int[16];
-        private static int[] oldInfo = new int[16];
+        private static int[] _info = new int[16];
+        private static int[] _oldInfo = new int[16];
         private static bool _bInvertRedBlue = false;
-        private static bool _validGetInfo = false;
         static puresignal()
         {
             for(int i = 0; i < 16; i++)
             {
-                Info[i] = 0;
-                oldInfo[i] = Info[i];
+                _info[i] = 0;
+                _oldInfo[i] = _info[i];
             }
+        }
+        public static int[] Info
+        {
+            get { return _info; }
         }
         public static void GetInfo(int txachannel)
         {
             //make copy of old, used in HasInfoChanged & CalibrationAttemptsChanged MW0LGE
-            fixed (void* dest = &oldInfo[0])
-            fixed (void* src = &Info[0])
+            fixed (void* dest = &_oldInfo[0])
+            fixed (void* src = &_info[0])
                 Win32.memcpy(dest, src, 16 * sizeof(int));
 
-            fixed (int* ptr = &(Info[0]))
+            fixed (int* ptr = &(_info[0]))
                 GetPSInfo(txachannel, ptr);
-
-            _validGetInfo = true;
         }       
         public static bool HasInfoChanged 
         {
             get {
                 for (int n = 0; n < 16; n++)
                 {
-                    if (Info[n] != oldInfo[n])
+                    if (_info[n] != _oldInfo[n])
                         return true;
                 }
                 return false;
             }
         }
         public static bool CalibrationAttemptsChanged {
-            get { return Info[5] != oldInfo[5]; }
+            get { return _info[5] != _oldInfo[5]; }
         }
         public static bool CorrectionsBeingApplied {
-            get { return Info[14] == 1; }
+            get { return _info[14] == 1; }
         }
         public static int CalibrationCount {
-            get { return Info[5]; }
+            get { return _info[5]; }
         }
         public static bool Correcting {
             get { return FeedbackLevel > 90; }
         }
         public static bool NeedToRecalibrate(int nCurrentATTonTX) {
             //note: for reference (puresignal.Info[4] > 181 || (puresignal.Info[4] <= 128 && console.SetupForm.ATTOnTX > 0))
-             return (FeedbackLevel > 181 || (FeedbackLevel <= 128 && nCurrentATTonTX > 0));            
+            return (FeedbackLevel > 181 || (FeedbackLevel <= 128 && nCurrentATTonTX > 0));            
         }
         public static bool IsFeedbackLevelOK {
             get { return FeedbackLevel <= 256; }
@@ -1108,7 +1110,7 @@ namespace Thetis
             get { return FeedbackLevel > 128 && FeedbackLevel <= 181; }
         }
         public static int FeedbackLevel {
-            get { return Info[4]; }
+            get { return _info[4]; }
         }
         public static Color FeedbackColourLevel {
             get {
@@ -1141,7 +1143,7 @@ namespace Thetis
             LTURNON
         };
         public static EngineState State {
-            get { return (EngineState)Info[15]; }
+            get { return (EngineState)_info[15]; }
         }
         public static bool InvertRedBlue
         {
