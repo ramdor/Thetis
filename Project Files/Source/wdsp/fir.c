@@ -379,10 +379,9 @@ void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 	double* imp = get_impulse_cache_entry(MP_CACHE, h, N);
 	if (imp)
 	{
-		//comment to verify cache operation - comment the following 3 lines if testing of cached vs calculated mpfir is required
 		memcpy(mpfir, imp, N * sizeof(complex)); // need to copy into mpfir  
-		_aligned_free(imp); // free the cache return value as data copied into mpfir, we are done with this
-		return;  //comment to verify cache operation
+		_aligned_free(imp);
+		return;
 	}
 	//
 
@@ -434,36 +433,8 @@ void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity)
 	_aligned_free (firfreq);
 	_aligned_free (firpad);
 
-	//comment to verify cache operation - comment this next line (add_impulse...) if cache verification testing is required
 	// store in cache
-	add_impulse_to_cache(MP_CACHE, h, N, mpfir);  //comment to verify cache operation
-	
-	// debug test code, comment out areas of code above see //comment to verify cache operation
-	// and uncomment this block to verify cache operation
-	//
-	//if (imp == NULL)
-	//{
-	//	add_impulse_to_cache(MP_CACHE, h, N, mpfir);
-	//}
-	//else
-	//{
-	//	// if cache hit, verify that cache contents is the same as newly calculated
-	//	// byte check that cached against mpfir
-	// 
-	//	size_t bytes = (size_t)N * sizeof(complex);
-	//	int same = memcmp(imp, mpfir, bytes) == 0;
-	//	_aligned_free(imp);
-	//	
-	//	if(!same)
-	//	{
-	//		FILE* f = fopen("c:\mp_imp_cache_error.txt", "w");
-	//		if (f)
-	//		{
-	//			fprintf(f, "Error:  mp_imp cache entry does not match newly calculated value!\n");
-	//			fclose(f);
-	//		}
-	//	}
-	//}
+	add_impulse_to_cache(MP_CACHE, h, N, mpfir);
 }
 
 // impulse response of a zero frequency filter comprising a cascade of two resonators, 

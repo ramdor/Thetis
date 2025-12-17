@@ -663,6 +663,9 @@ namespace Thetis
         [DllImport("wdsp.dll", EntryPoint = "SetRXASPCWGain", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetRXASPCWGain(int channel, double gain);
 
+        [DllImport("wdsp.dll", EntryPoint = "SetRXASPCWSelection", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXASPCWSelection(int channel, int selection);
+
         // dolly filter
 
         [DllImport("wdsp.dll", EntryPoint = "SetRXAmpeakRun", CallingConvention = CallingConvention.Cdecl)]

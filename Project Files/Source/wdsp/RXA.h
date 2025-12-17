@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2014, 2015, 2016 Warren Pratt, NR0V
+Copyright (C) 2013, 2014, 2015, 2016, 2025 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -137,6 +137,26 @@ struct _rxa
 		EMNR p;
 	} emnr;
 	struct
+	{
+		WCPAGC p;
+	} agc;
+	struct
+	{
+		APFSHADOW p;
+	} apfshadow;
+	struct
+	{
+		DOUBLEPOLE p;
+	} doublepole;
+	struct
+	{
+		MATCHED p;
+	} matched;
+	struct
+	{
+		GAUSSIAN p;
+	} gaussian;
+	struct
     {
         RNNR p; // NR3 + NR4 support (nr3)
     } rnnr;
@@ -144,10 +164,7 @@ struct _rxa
     {
         SBNR p; // NR3 + NR4 support (nr4)
     } sbnr;
-	struct
-	{
-		WCPAGC p;
-	} agc;
+
 	struct
 	{
 		SPEAK p;
