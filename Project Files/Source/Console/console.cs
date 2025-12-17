@@ -3426,7 +3426,11 @@ namespace Thetis
                     case "udFilterHigh":
                     case "udRX2FilterLow":
                     case "udRX2FilterHigh":
-                        //[2.10.3]MW0LGE ignore section, in the case of the filter ud controls, they will be set by the filter being selected
+                    case "ptbVACRXGain":
+                    case "ptbVACTXGain":
+                        //ignore section
+                        //in the case of the filter ud controls, they will be set by the filter being selected
+                        //in the case of ptbVAC gains, they will be set by the TX profile
                         break;
 
                     case "last_radio_protocol":

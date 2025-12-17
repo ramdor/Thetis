@@ -50,6 +50,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] fix where if a radio did not have an rx2 step att available it could prevent rx1 att/s-att setting from being recovered correctly at startup/radio model swap
 - [fix] VOX will not ptt if MIC is disabled unless a vac is enabled and VOX uses MIC option is not enabled
 - [fix] RIT will not cause spectral overlays such as notches and band stack overlays to move when enabled/disabled after a startup
+- [fix] VAC tx/rx gains now restored from TX profile. Previously those TX profile settings were getting overridden by values recovered into the main console UI at startup
 
 ## v2.10.3.11 - Change Log
 - [add] two new noise reduction methods added, NR3 and NR4. When starting up this version for the first time if NR was enabled, will now be set to off. Settings in the normal NR settings page of Setup
