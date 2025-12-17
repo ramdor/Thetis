@@ -963,7 +963,6 @@
             this.panelRX2DSP = new System.Windows.Forms.PanelTS();
             this.btnHidden = new System.Windows.Forms.ButtonTS();
             this.panelOptions = new System.Windows.Forms.PanelTS();
-            this.checkBoxTS1 = new System.Windows.Forms.CheckBoxTS();
             this.radBand2 = new System.Windows.Forms.RadioButtonTS();
             this.panelModeSpecificPhone = new System.Windows.Forms.PanelTS();
             this.lblTXHigh = new System.Windows.Forms.LabelTS();
@@ -1261,6 +1260,7 @@
             this.toolTip1.SetToolTip(this.btnAPF_type, resources.GetString("btnAPF_type.ToolTip"));
             this.btnAPF_type.UseVisualStyleBackColor = true;
             this.btnAPF_type.Click += new System.EventHandler(this.btnAPF_type_Click);
+            this.btnAPF_type.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnAPF_type_MouseDown);
             // 
             // ptbCWAPFGain
             // 
@@ -5903,7 +5903,6 @@
             // 
             resources.ApplyResources(this.panelOptions, "panelOptions");
             this.panelOptions.BackColor = System.Drawing.Color.Transparent;
-            this.panelOptions.Controls.Add(this.checkBoxTS1);
             this.panelOptions.Controls.Add(this.chkExternalPA);
             this.panelOptions.Controls.Add(this.ckQuickPlay);
             this.panelOptions.Controls.Add(this.chkMON);
@@ -5916,15 +5915,6 @@
             this.panelOptions.Controls.Add(this.comboTuneMode);
             this.panelOptions.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panelOptions.Name = "panelOptions";
-            // 
-            // checkBoxTS1
-            // 
-            resources.ApplyResources(this.checkBoxTS1, "checkBoxTS1");
-            this.checkBoxTS1.BackColor = System.Drawing.Color.Transparent;
-            this.checkBoxTS1.FlatAppearance.BorderSize = 0;
-            this.checkBoxTS1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.checkBoxTS1.Name = "checkBoxTS1";
-            this.checkBoxTS1.UseVisualStyleBackColor = false;
             // 
             // radBand2
             // 
@@ -7907,7 +7897,6 @@
         private ToolStripMenuItem toolStripMenuItem18;
         private ToolStripStatusLabel toolStripStatusLabelAndromedaMulti;
         private ucQuickRecall ucQuickRecallPad;
-        private CheckBoxTS checkBoxTS1;
         private CheckBoxTS chkExternalPA;
         private Timer tmrAutoAGC;
         private ButtonTS btnDisplayZTB;

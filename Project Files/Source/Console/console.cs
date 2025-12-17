@@ -54939,6 +54939,11 @@ namespace Thetis
 
             SetupForm.CycleAPFType();
         }
+
+        private void btnAPF_type_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.DSPAudio_Tab);
+        }
     }
 
     public class DigiMode
