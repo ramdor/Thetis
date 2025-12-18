@@ -30528,7 +30528,6 @@ namespace Thetis
                 Audio.MicPreamp = 0.0;
                 _mic_muted = true;
             }
-            }
         }
         private void ptbCWSpeed_Scroll(object sender, System.EventArgs e)
         {
@@ -30963,7 +30962,7 @@ namespace Thetis
 
                     if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
                     {
-                        lblPreamp.Text = m_bAttontx ? "[S-ATT]" : (AutoAttRX1 ? "A-ATT" : "S-ATT");
+                        lblPreamp.Text = m_bATTonTX ? "[S-ATT]" : (AutoAttRX1 ? "A-ATT" : "S-ATT");
                     }
                 }
                 else if (VFOBTX && rx2_enabled)
@@ -30980,8 +30979,8 @@ namespace Thetis
                         udTXStepAttData.Location = udRX1StepAttData.Location;
                         udTXStepAttData.Parent = udRX1StepAttData.Parent;
                         udTXStepAttData.BringToFront();
-                        udTXStepAttData.Visible = m_bAttontx;
-                        lblPreamp.Text = m_bAttontx ? "[S-ATT]" : (AutoAttRX1 ? "A-ATT" : "S-ATT");
+                        udTXStepAttData.Visible = m_bATTonTX;
+                        lblPreamp.Text = m_bATTonTX ? "[S-ATT]" : (AutoAttRX1 ? "A-ATT" : "S-ATT");
                     }
                     else
                     {
