@@ -58534,7 +58534,7 @@
             // 
             this.chkEmulateSunSDR2Pro.AutoSize = true;
             this.chkEmulateSunSDR2Pro.Image = null;
-            this.chkEmulateSunSDR2Pro.Location = new System.Drawing.Point(195, 199);
+            this.chkEmulateSunSDR2Pro.Location = new System.Drawing.Point(199, 199);
             this.chkEmulateSunSDR2Pro.Name = "chkEmulateSunSDR2Pro";
             this.chkEmulateSunSDR2Pro.Size = new System.Drawing.Size(166, 17);
             this.chkEmulateSunSDR2Pro.TabIndex = 71;

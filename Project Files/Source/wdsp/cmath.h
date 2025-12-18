@@ -1,8 +1,8 @@
-/*  fir.h
+/*  cmath.h
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2016, 2022, 2025 Warren Pratt, NR0V
+Copyright (C) 2025 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -18,26 +18,26 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-The author can be reached by email at  
+The author can be reached by email at
 
 warren@pratt.one
-
 */
 
-extern double* fftcv_mults (int NM, double* c_impulse);
+#ifndef _cmath_h
+#define _cmath_h
 
-extern double* fir_fsamp_odd (int N, double* A, int rtype, double scale, int wintype);
+extern double mag (double* value);
 
-extern double* fir_fsamp (int N, double* A, int rtype, double scale, int wintype);
+extern void cadd (double* a, double* b, double* sum);
 
-extern double* fir_bandpass (int N, double f_low, double f_high, double samplerate, int wintype, int rtype, double scale);
+extern void csub (double* a, double* b, double* diff);
 
-extern double* get_fsamp_window(int N, int wintype);
+extern void cmult (double* a, double* b, double* product);
 
-extern double *fir_read (int N, const char *filename, int rtype, double scale);
+extern void cdiv (double* a, double* b, double* quotient);
 
-extern void analytic (int N, double* in, double* out);
+extern void cpar (double* Z1, double* Z2, double* Zpar);
 
-extern void mp_imp (int N, double* fir, double* mpfir, int pfactor, int polarity);
+extern void cser_to_par (double* Z1, double* ZR, double* ZX);
 
-extern double* zff_impulse(int nc, double scale);
+#endif

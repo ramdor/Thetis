@@ -1950,7 +1950,7 @@ namespace Thetis
                 {
                     if (value != _rx_apf_type_dsp || force)
                     {
-                        //WDSP.SetRXASPCWSelection(WDSP.id(thread, subrx), value); // not implemented in WDSP yet
+                        WDSP.SetRXASPCWSelection(WDSP.id(thread, subrx), value);
                         _rx_apf_type_dsp = value;
                     }
                 }

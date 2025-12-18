@@ -109,6 +109,14 @@ extern void setSamplerate_speak (SPEAK a, int rate);
 
 extern void setSize_speak (SPEAK a, int size);
 
+extern __declspec (dllexport) void SetRXABiQuadRun(int channel, int run);
+
+extern __declspec (dllexport) void SetRXABiQuadFreq(int channel, double freq);
+
+extern __declspec (dllexport) void SetRXABiQuadBandwidth(int channel, double bw);
+
+extern __declspec (dllexport) void SetRXABiQuadGain(int channel, double gain);
+
 #endif
 
 /********************************************************************************************************

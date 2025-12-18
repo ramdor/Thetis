@@ -319,7 +319,7 @@ void setSize_speak (SPEAK a, int size)
 ********************************************************************************************************/
 
 PORT
-void SetRXASPCWRun (int channel, int run)
+void SetRXABiQuadRun (int channel, int run)
 {
 	SPEAK a = rxa[channel].speak.p;
 	EnterCriticalSection (&a->cs_update);
@@ -328,7 +328,7 @@ void SetRXASPCWRun (int channel, int run)
 }
 
 PORT
-void SetRXASPCWFreq (int channel, double freq)
+void SetRXABiQuadFreq (int channel, double freq)
 {
 	SPEAK a = rxa[channel].speak.p;
 	EnterCriticalSection (&a->cs_update);
@@ -338,7 +338,7 @@ void SetRXASPCWFreq (int channel, double freq)
 }
 
 PORT
-void SetRXASPCWBandwidth (int channel, double bw)
+void SetRXABiQuadBandwidth (int channel, double bw)
 {
 	SPEAK a = rxa[channel].speak.p;
 	EnterCriticalSection (&a->cs_update);
@@ -348,7 +348,7 @@ void SetRXASPCWBandwidth (int channel, double bw)
 }
 
 PORT
-void SetRXASPCWGain (int channel, double gain)
+void SetRXABiQuadGain (int channel, double gain)
 {
 	SPEAK a = rxa[channel].speak.p;
 	EnterCriticalSection (&a->cs_update);
