@@ -11,7 +11,7 @@
 <?define UpgradeCode = "DEC025E2-4B27-425D-8EFE-AD6F5F780D52"?>
 <?define ProductName = "Thetis (64-bit)" ?>
 <?define ThetisName = "Thetis-x64"?>
-<?define VC143 = "Microsoft_VC143_CRT_x64.msm" ?>
+<?define VC145 = "Microsoft_VC145_CRT_x64.msm" ?>
 <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
 <?define FilesPath = "..\..\Bin\$(var.Platform)\$(var.Configuration)\" ?>
 <?else ?>
@@ -19,7 +19,7 @@
 <?define UpgradeCode = "CE4756C9-3CA7-4A55-8980-7F0A920890DE"?>
 <?define ProductName = "Thetis (32-bit)" ?>
 <?define ThetisName = "Thetis"?>
-<?define VC143 = "Microsoft_VC143_CRT_x86.msm" ?>
+<?define VC145 = "Microsoft_VC145_CRT_x86.msm" ?>
 <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
 <?define FilesPath = "..\..\Bin\$(var.Platform)\$(var.Configuration)\" ?>
 <?endif ?>
@@ -67,8 +67,8 @@
       <ComponentRef Id="DesktopShortcut" />
     </Feature>
 
-    <Feature Id="VC143Redist" Title="Visual C++ 14.3 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
-      <MergeRef Id="VC143Redist"/>
+    <Feature Id="VC145Redist" Title="Visual C++ 14.5 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VC145Redist"/>
     </Feature>
 
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
@@ -114,7 +114,7 @@
 
   <Fragment>
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Merge Id="VC143Redist" SourceFile="$(var.VC143)" DiskId="1" Language="0"/>
+      <Merge Id="VC145Redist" SourceFile="$(var.VC145)" DiskId="1" Language="0"/>
 
       <Directory Id="$(var.PlatformProgramFilesFolder)">
         <Directory Id="HPSDRFolder" Name="OpenHPSDR">
