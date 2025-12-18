@@ -47,6 +47,7 @@
 // Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
 //============================================================================================//
 
+// FINAL VS2022 BUILD
 
 using Midi2Cat.Data; //-W2PA Necessary for Behringer MIDI changes
 
