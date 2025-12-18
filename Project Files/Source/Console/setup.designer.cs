@@ -3612,6 +3612,12 @@
             this.comboCATstopbits = new System.Windows.Forms.ComboBoxTS();
             this.tpTCITCPIPN1MM = new System.Windows.Forms.TabPage();
             this.grpTCIServer = new System.Windows.Forms.GroupBoxTS();
+            this.panelTS14 = new System.Windows.Forms.PanelTS();
+            this.panelTS13 = new System.Windows.Forms.PanelTS();
+            this.radTCI_spot_force_default = new System.Windows.Forms.RadioButtonTS();
+            this.labelTS644 = new System.Windows.Forms.LabelTS();
+            this.radTCI_spot_force_cwl = new System.Windows.Forms.RadioButtonTS();
+            this.radTCI_spot_force_cwu = new System.Windows.Forms.RadioButtonTS();
             this.chkOverrideSpotFlashColour = new System.Windows.Forms.CheckBoxTS();
             this.clrbtnSpotFlashColour = new Thetis.ColorButton();
             this.chkFlashNewTCISpots = new System.Windows.Forms.CheckBoxTS();
@@ -3622,7 +3628,6 @@
             this.chkEmulateExpertSDR3Protocol = new System.Windows.Forms.CheckBoxTS();
             this.chkEmulateSunSDR2Pro = new System.Windows.Forms.CheckBoxTS();
             this.btnIPv4TCI = new System.Windows.Forms.ButtonTS();
-            this.btnShowLog = new System.Windows.Forms.ButtonTS();
             this.chkCWLUbecomesCW = new System.Windows.Forms.CheckBoxTS();
             this.clrbtnOwnCallApearance = new Thetis.ColorButton();
             this.txtOwnCallsign = new System.Windows.Forms.TextBoxTS();
@@ -3638,11 +3643,13 @@
             this.chkCopyRX2VFObToVFOa = new System.Windows.Forms.CheckBoxTS();
             this.labelTS611 = new System.Windows.Forms.LabelTS();
             this.udTCIRateLimit = new System.Windows.Forms.NumericUpDownTS();
-            this.lblToggleToUseTCI = new System.Windows.Forms.LabelTS();
             this.labelTS612 = new System.Windows.Forms.LabelTS();
-            this.chkTCIServerListening = new System.Windows.Forms.CheckBoxTS();
             this.btnDefaultBindPortForTCI = new System.Windows.Forms.ButtonTS();
             this.txtTCIServerBindIPPort = new System.Windows.Forms.TextBoxTS();
+            this.groupBoxTS59 = new System.Windows.Forms.GroupBoxTS();
+            this.chkTCIServerListening = new System.Windows.Forms.CheckBoxTS();
+            this.lblToggleToUseTCI = new System.Windows.Forms.LabelTS();
+            this.btnShowLog = new System.Windows.Forms.ButtonTS();
             this.grpTCPIPcatServer = new System.Windows.Forms.GroupBoxTS();
             this.btnIPv4TCPCat = new System.Windows.Forms.ButtonTS();
             this.btnShowTCPIPCatLog = new System.Windows.Forms.ButtonTS();
@@ -5320,9 +5327,11 @@
             this.grpCatControlBox.SuspendLayout();
             this.tpTCITCPIPN1MM.SuspendLayout();
             this.grpTCIServer.SuspendLayout();
+            this.panelTS13.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTCISpotLifetime)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udMaxTCISpots)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTCIRateLimit)).BeginInit();
+            this.groupBoxTS59.SuspendLayout();
             this.grpTCPIPcatServer.SuspendLayout();
             this.groupBoxTS16.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udN1MMSendRate)).BeginInit();
@@ -58226,6 +58235,7 @@
             // 
             this.tpTCITCPIPN1MM.BackColor = System.Drawing.SystemColors.Control;
             this.tpTCITCPIPN1MM.Controls.Add(this.grpTCIServer);
+            this.tpTCITCPIPN1MM.Controls.Add(this.groupBoxTS59);
             this.tpTCITCPIPN1MM.Controls.Add(this.grpTCPIPcatServer);
             this.tpTCITCPIPN1MM.Controls.Add(this.groupBoxTS16);
             this.tpTCITCPIPN1MM.Location = new System.Drawing.Point(4, 22);
@@ -58237,6 +58247,8 @@
             // 
             // grpTCIServer
             // 
+            this.grpTCIServer.Controls.Add(this.panelTS14);
+            this.grpTCIServer.Controls.Add(this.panelTS13);
             this.grpTCIServer.Controls.Add(this.chkOverrideSpotFlashColour);
             this.grpTCIServer.Controls.Add(this.clrbtnSpotFlashColour);
             this.grpTCIServer.Controls.Add(this.chkFlashNewTCISpots);
@@ -58247,7 +58259,6 @@
             this.grpTCIServer.Controls.Add(this.chkEmulateExpertSDR3Protocol);
             this.grpTCIServer.Controls.Add(this.chkEmulateSunSDR2Pro);
             this.grpTCIServer.Controls.Add(this.btnIPv4TCI);
-            this.grpTCIServer.Controls.Add(this.btnShowLog);
             this.grpTCIServer.Controls.Add(this.chkCWLUbecomesCW);
             this.grpTCIServer.Controls.Add(this.clrbtnOwnCallApearance);
             this.grpTCIServer.Controls.Add(this.txtOwnCallsign);
@@ -58263,9 +58274,7 @@
             this.grpTCIServer.Controls.Add(this.chkCopyRX2VFObToVFOa);
             this.grpTCIServer.Controls.Add(this.labelTS611);
             this.grpTCIServer.Controls.Add(this.udTCIRateLimit);
-            this.grpTCIServer.Controls.Add(this.lblToggleToUseTCI);
             this.grpTCIServer.Controls.Add(this.labelTS612);
-            this.grpTCIServer.Controls.Add(this.chkTCIServerListening);
             this.grpTCIServer.Controls.Add(this.btnDefaultBindPortForTCI);
             this.grpTCIServer.Controls.Add(this.txtTCIServerBindIPPort);
             this.grpTCIServer.Location = new System.Drawing.Point(14, 8);
@@ -58274,6 +58283,83 @@
             this.grpTCIServer.TabIndex = 98;
             this.grpTCIServer.TabStop = false;
             this.grpTCIServer.Text = "TCI Server (0 clients)";
+            // 
+            // panelTS14
+            // 
+            this.panelTS14.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.panelTS14.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelTS14.Location = new System.Drawing.Point(369, 297);
+            this.panelTS14.Name = "panelTS14";
+            this.panelTS14.Size = new System.Drawing.Size(11, 89);
+            this.panelTS14.TabIndex = 113;
+            // 
+            // panelTS13
+            // 
+            this.panelTS13.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.panelTS13.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.panelTS13.Controls.Add(this.radTCI_spot_force_default);
+            this.panelTS13.Controls.Add(this.labelTS644);
+            this.panelTS13.Controls.Add(this.radTCI_spot_force_cwl);
+            this.panelTS13.Controls.Add(this.radTCI_spot_force_cwu);
+            this.panelTS13.Location = new System.Drawing.Point(24, 336);
+            this.panelTS13.Name = "panelTS13";
+            this.panelTS13.Size = new System.Drawing.Size(271, 43);
+            this.panelTS13.TabIndex = 112;
+            // 
+            // radTCI_spot_force_default
+            // 
+            this.radTCI_spot_force_default.AutoSize = true;
+            this.radTCI_spot_force_default.Checked = true;
+            this.radTCI_spot_force_default.Image = null;
+            this.radTCI_spot_force_default.Location = new System.Drawing.Point(208, 19);
+            this.radTCI_spot_force_default.Name = "radTCI_spot_force_default";
+            this.radTCI_spot_force_default.Size = new System.Drawing.Size(59, 17);
+            this.radTCI_spot_force_default.TabIndex = 2;
+            this.radTCI_spot_force_default.TabStop = true;
+            this.radTCI_spot_force_default.Text = "Default";
+            this.toolTip1.SetToolTip(this.radTCI_spot_force_default, "Default behaviour which is CWU for frequencies >= 10MHz or if within the 60M band" +
+        ".\r\nThis may be changed if the TCI client provides CWL or CWU instead of CW as th" +
+        "e spot mode.\r\n");
+            this.radTCI_spot_force_default.UseVisualStyleBackColor = true;
+            this.radTCI_spot_force_default.CheckedChanged += new System.EventHandler(this.radTCI_spot_force_CheckedChanged);
+            // 
+            // labelTS644
+            // 
+            this.labelTS644.AutoSize = true;
+            this.labelTS644.Image = null;
+            this.labelTS644.Location = new System.Drawing.Point(2, 3);
+            this.labelTS644.Name = "labelTS644";
+            this.labelTS644.Size = new System.Drawing.Size(96, 13);
+            this.labelTS644.TabIndex = 0;
+            this.labelTS644.Text = "CW Spot sideband";
+            // 
+            // radTCI_spot_force_cwl
+            // 
+            this.radTCI_spot_force_cwl.AutoSize = true;
+            this.radTCI_spot_force_cwl.Image = null;
+            this.radTCI_spot_force_cwl.Location = new System.Drawing.Point(116, 19);
+            this.radTCI_spot_force_cwl.Name = "radTCI_spot_force_cwl";
+            this.radTCI_spot_force_cwl.Size = new System.Drawing.Size(91, 17);
+            this.radTCI_spot_force_cwl.TabIndex = 1;
+            this.radTCI_spot_force_cwl.TabStop = true;
+            this.radTCI_spot_force_cwl.Text = "Force to CWL";
+            this.toolTip1.SetToolTip(this.radTCI_spot_force_cwl, "Any TCI CW spot arriving will be forced to CWL");
+            this.radTCI_spot_force_cwl.UseVisualStyleBackColor = true;
+            this.radTCI_spot_force_cwl.CheckedChanged += new System.EventHandler(this.radTCI_spot_force_CheckedChanged);
+            // 
+            // radTCI_spot_force_cwu
+            // 
+            this.radTCI_spot_force_cwu.AutoSize = true;
+            this.radTCI_spot_force_cwu.Image = null;
+            this.radTCI_spot_force_cwu.Location = new System.Drawing.Point(17, 19);
+            this.radTCI_spot_force_cwu.Name = "radTCI_spot_force_cwu";
+            this.radTCI_spot_force_cwu.Size = new System.Drawing.Size(93, 17);
+            this.radTCI_spot_force_cwu.TabIndex = 0;
+            this.radTCI_spot_force_cwu.TabStop = true;
+            this.radTCI_spot_force_cwu.Text = "Force to CWU";
+            this.toolTip1.SetToolTip(this.radTCI_spot_force_cwu, "Any TCI CW spot arriving will be forced to CWU");
+            this.radTCI_spot_force_cwu.UseVisualStyleBackColor = true;
+            this.radTCI_spot_force_cwu.CheckedChanged += new System.EventHandler(this.radTCI_spot_force_CheckedChanged);
             // 
             // chkOverrideSpotFlashColour
             // 
@@ -58403,18 +58489,6 @@
             this.toolTip1.SetToolTip(this.btnIPv4TCI, "Show list if IPv4 addresses.");
             this.btnIPv4TCI.UseVisualStyleBackColor = true;
             this.btnIPv4TCI.Click += new System.EventHandler(this.btnIPv4TCI_Click);
-            // 
-            // btnShowLog
-            // 
-            this.btnShowLog.Image = null;
-            this.btnShowLog.Location = new System.Drawing.Point(21, 356);
-            this.btnShowLog.Name = "btnShowLog";
-            this.btnShowLog.Selectable = true;
-            this.btnShowLog.Size = new System.Drawing.Size(82, 26);
-            this.btnShowLog.TabIndex = 69;
-            this.btnShowLog.Text = "Show Log";
-            this.btnShowLog.UseVisualStyleBackColor = true;
-            this.btnShowLog.Click += new System.EventHandler(this.btnShowLog_Click);
             // 
             // chkCWLUbecomesCW
             // 
@@ -58645,19 +58719,6 @@
             0});
             this.udTCIRateLimit.ValueChanged += new System.EventHandler(this.udTCIRateLimit_ValueChanged);
             // 
-            // lblToggleToUseTCI
-            // 
-            this.lblToggleToUseTCI.AutoSize = true;
-            this.lblToggleToUseTCI.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblToggleToUseTCI.ForeColor = System.Drawing.Color.Red;
-            this.lblToggleToUseTCI.Image = null;
-            this.lblToggleToUseTCI.Location = new System.Drawing.Point(136, 336);
-            this.lblToggleToUseTCI.Name = "lblToggleToUseTCI";
-            this.lblToggleToUseTCI.Size = new System.Drawing.Size(120, 13);
-            this.lblToggleToUseTCI.TabIndex = 15;
-            this.lblToggleToUseTCI.Text = "toggle off/on to use";
-            this.lblToggleToUseTCI.Visible = false;
-            // 
             // labelTS612
             // 
             this.labelTS612.AutoSize = true;
@@ -58667,20 +58728,6 @@
             this.labelTS612.Size = new System.Drawing.Size(63, 13);
             this.labelTS612.TabIndex = 14;
             this.labelTS612.Text = "Bind IP:Port";
-            // 
-            // chkTCIServerListening
-            // 
-            this.chkTCIServerListening.AutoSize = true;
-            this.chkTCIServerListening.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkTCIServerListening.Image = null;
-            this.chkTCIServerListening.Location = new System.Drawing.Point(22, 335);
-            this.chkTCIServerListening.Name = "chkTCIServerListening";
-            this.chkTCIServerListening.Size = new System.Drawing.Size(114, 17);
-            this.chkTCIServerListening.TabIndex = 13;
-            this.chkTCIServerListening.Text = "Server Running";
-            this.toolTip1.SetToolTip(this.chkTCIServerListening, "Checked to listen for client connections");
-            this.chkTCIServerListening.UseVisualStyleBackColor = true;
-            this.chkTCIServerListening.CheckedChanged += new System.EventHandler(this.chkTCIServerListening_CheckedChanged);
             // 
             // btnDefaultBindPortForTCI
             // 
@@ -58704,6 +58751,56 @@
             this.txtTCIServerBindIPPort.Text = "127.0.0.1:50001";
             this.toolTip1.SetToolTip(this.txtTCIServerBindIPPort, "The bind IP and the port that the server uses to listen on");
             this.txtTCIServerBindIPPort.TextChanged += new System.EventHandler(this.txtTCIServerBindIPPort_TextChanged);
+            // 
+            // groupBoxTS59
+            // 
+            this.groupBoxTS59.Controls.Add(this.chkTCIServerListening);
+            this.groupBoxTS59.Controls.Add(this.lblToggleToUseTCI);
+            this.groupBoxTS59.Controls.Add(this.btnShowLog);
+            this.groupBoxTS59.Location = new System.Drawing.Point(382, 297);
+            this.groupBoxTS59.Name = "groupBoxTS59";
+            this.groupBoxTS59.Size = new System.Drawing.Size(334, 100);
+            this.groupBoxTS59.TabIndex = 99;
+            this.groupBoxTS59.TabStop = false;
+            // 
+            // chkTCIServerListening
+            // 
+            this.chkTCIServerListening.AutoSize = true;
+            this.chkTCIServerListening.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkTCIServerListening.Image = null;
+            this.chkTCIServerListening.Location = new System.Drawing.Point(17, 46);
+            this.chkTCIServerListening.Name = "chkTCIServerListening";
+            this.chkTCIServerListening.Size = new System.Drawing.Size(138, 17);
+            this.chkTCIServerListening.TabIndex = 13;
+            this.chkTCIServerListening.Text = "TCI Server Running";
+            this.toolTip1.SetToolTip(this.chkTCIServerListening, "Checked to listen for client connections");
+            this.chkTCIServerListening.UseVisualStyleBackColor = true;
+            this.chkTCIServerListening.CheckedChanged += new System.EventHandler(this.chkTCIServerListening_CheckedChanged);
+            // 
+            // lblToggleToUseTCI
+            // 
+            this.lblToggleToUseTCI.AutoSize = true;
+            this.lblToggleToUseTCI.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblToggleToUseTCI.ForeColor = System.Drawing.Color.Red;
+            this.lblToggleToUseTCI.Image = null;
+            this.lblToggleToUseTCI.Location = new System.Drawing.Point(161, 42);
+            this.lblToggleToUseTCI.Name = "lblToggleToUseTCI";
+            this.lblToggleToUseTCI.Size = new System.Drawing.Size(81, 26);
+            this.lblToggleToUseTCI.TabIndex = 15;
+            this.lblToggleToUseTCI.Text = "toggle off/on\r\nto use";
+            this.lblToggleToUseTCI.Visible = false;
+            // 
+            // btnShowLog
+            // 
+            this.btnShowLog.Image = null;
+            this.btnShowLog.Location = new System.Drawing.Point(16, 67);
+            this.btnShowLog.Name = "btnShowLog";
+            this.btnShowLog.Selectable = true;
+            this.btnShowLog.Size = new System.Drawing.Size(82, 26);
+            this.btnShowLog.TabIndex = 69;
+            this.btnShowLog.Text = "Show Log";
+            this.btnShowLog.UseVisualStyleBackColor = true;
+            this.btnShowLog.Click += new System.EventHandler(this.btnShowLog_Click);
             // 
             // grpTCPIPcatServer
             // 
@@ -58767,11 +58864,11 @@
             this.lblToggleToUse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblToggleToUse.ForeColor = System.Drawing.Color.Red;
             this.lblToggleToUse.Image = null;
-            this.lblToggleToUse.Location = new System.Drawing.Point(136, 82);
+            this.lblToggleToUse.Location = new System.Drawing.Point(216, 76);
             this.lblToggleToUse.Name = "lblToggleToUse";
-            this.lblToggleToUse.Size = new System.Drawing.Size(120, 13);
+            this.lblToggleToUse.Size = new System.Drawing.Size(81, 26);
             this.lblToggleToUse.TabIndex = 15;
-            this.lblToggleToUse.Text = "toggle off/on to use";
+            this.lblToggleToUse.Text = "toggle off/on\r\nto use";
             this.lblToggleToUse.Visible = false;
             // 
             // labelTS609
@@ -58791,9 +58888,9 @@
             this.chkTCPIPCatServerListening.Image = null;
             this.chkTCPIPCatServerListening.Location = new System.Drawing.Point(22, 81);
             this.chkTCPIPCatServerListening.Name = "chkTCPIPCatServerListening";
-            this.chkTCPIPCatServerListening.Size = new System.Drawing.Size(114, 17);
+            this.chkTCPIPCatServerListening.Size = new System.Drawing.Size(188, 17);
             this.chkTCPIPCatServerListening.TabIndex = 13;
-            this.chkTCPIPCatServerListening.Text = "Server Running";
+            this.chkTCPIPCatServerListening.Text = "TCP/IP CAT Server Running";
             this.toolTip1.SetToolTip(this.chkTCPIPCatServerListening, "Checked to listen for client connections");
             this.chkTCPIPCatServerListening.UseVisualStyleBackColor = true;
             this.chkTCPIPCatServerListening.CheckedChanged += new System.EventHandler(this.chkTCPIPCatServerListening_CheckedChanged);
@@ -71347,9 +71444,13 @@
             this.tpTCITCPIPN1MM.ResumeLayout(false);
             this.grpTCIServer.ResumeLayout(false);
             this.grpTCIServer.PerformLayout();
+            this.panelTS13.ResumeLayout(false);
+            this.panelTS13.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTCISpotLifetime)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udMaxTCISpots)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTCIRateLimit)).EndInit();
+            this.groupBoxTS59.ResumeLayout(false);
+            this.groupBoxTS59.PerformLayout();
             this.grpTCPIPcatServer.ResumeLayout(false);
             this.grpTCPIPcatServer.PerformLayout();
             this.groupBoxTS16.ResumeLayout(false);
@@ -75991,5 +76092,12 @@
         private RadioButtonTS radVFOSYNC_nothing;
         private RadioButtonTS radVFOSYNC_ab;
         private RadioButtonTS radVFOSYNC_ba;
+        private RadioButtonTS radTCI_spot_force_default;
+        private RadioButtonTS radTCI_spot_force_cwl;
+        private RadioButtonTS radTCI_spot_force_cwu;
+        private PanelTS panelTS14;
+        private PanelTS panelTS13;
+        private LabelTS labelTS644;
+        private GroupBoxTS groupBoxTS59;
     }
 }

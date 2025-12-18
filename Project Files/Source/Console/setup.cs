@@ -24065,20 +24065,20 @@ namespace Thetis
         private void chkCopyRX2VFObToVFOa_CheckedChanged(object sender, EventArgs e)
         {
             chkForgetRX2VfoBVFOinfo.Enabled = chkCopyRX2VFObToVFOa.Checked;
-            console.TCIcopyRX2VFObToVFOa = chkCopyRX2VFObToVFOa.Checked;
+            if(console.TCIServer != null) console.TCIServer.CopyRX2VFObToVFOa = chkCopyRX2VFObToVFOa.Checked;
         }
         private void chkForgetRX2VfoBVFOinfo_CheckedChanged(object sender, EventArgs e)
         {
-            console.TCIreplaceRX2VFObToVFOa = chkForgetRX2VfoBVFOinfo.Checked;
+            if (console.TCIServer != null) console.TCIServer.ReplaceRX2VFObToVFOa = chkForgetRX2VfoBVFOinfo.Checked;
         }
         private void chkUseRX1vfoaForRX2vfoa_CheckedChanged(object sender, EventArgs e)
         {
-            console.TCIuseRX1vfoaForRX2vfoa = chkUseRX1vfoaForRX2vfoa.Checked;
+            if (console.TCIServer != null) console.TCIServer.UseRX1VFOaForRX2VFOa = chkUseRX1vfoaForRX2vfoa.Checked;
         }
 
         private void chkTCIsendInitialStateOnConnect_CheckedChanged(object sender, EventArgs e)
         {
-            console.TCIsendInitialStateOnConnect = chkTCIsendInitialStateOnConnect.Checked;
+            if (console.TCIServer != null) console.TCIServer.SendInitialFrequencyStateOnConnect = chkTCIsendInitialStateOnConnect.Checked;
         }
 
         private void chkWelcomeMessageTCPIPCat_CheckedChanged(object sender, EventArgs e)
@@ -24146,7 +24146,7 @@ namespace Thetis
 
         private void chkCWLUbecomesCW_CheckedChanged(object sender, EventArgs e)
         {
-            console.TCICWLUbecomesCW = chkCWLUbecomesCW.Checked;
+            if (console.TCIServer != null) console.TCIServer.CWLUbecomesCW = chkCWLUbecomesCW.Checked;
         }
 
         private void btnShowLog_Click(object sender, EventArgs e)
@@ -24381,12 +24381,12 @@ namespace Thetis
 
         private void chkEmulateSunSDR2Pro_CheckedChanged(object sender, EventArgs e)
         {
-            console.EmulateSunSDR2Pro = chkEmulateSunSDR2Pro.Checked;
+            if (console.TCIServer != null) console.TCIServer.EmulateSunSDR2Pro = chkEmulateSunSDR2Pro.Checked;
         }
 
         private void chkEmulateExpertSDR3Protocol_CheckedChanged(object sender, EventArgs e)
         {
-            console.EmulateExpertSDR3Protocol = chkEmulateExpertSDR3Protocol.Checked;
+            if (console.TCIServer != null) console.TCIServer.EmulateExpertSDR3Protocol = chkEmulateExpertSDR3Protocol.Checked;
         }
         public bool DisableAudioAmplifier
         {
@@ -30971,7 +30971,7 @@ namespace Thetis
 
         private void chkCWbecomesCWUabove10mhz_CheckedChanged(object sender, EventArgs e)
         {
-            console.TCICWbecomesCWUabove10mhz = chkCWbecomesCWUabove10mhz.Checked;
+            if (console.TCIServer != null) console.TCIServer.CWbecomesCWUabove10mhz = chkCWbecomesCWUabove10mhz.Checked;
         }
         
         private void ucOutPinsLedStripHF_Click(object sender, EventArgs e)
@@ -37080,6 +37080,78 @@ namespace Thetis
             {
                 chkShowStartupLog.Visible = false; // hide it if there was a registry issue
             }
+        }
+
+        private void radTCI_spot_force_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radTCI_spot_force_cwu.Checked)
+            {
+                _tci_spot_force = TCICWSpotForce.CWU;
+            }
+            else if(radTCI_spot_force_cwl.Checked)
+            {
+                _tci_spot_force = TCICWSpotForce.CWL;
+            }
+            else
+            {
+                _tci_spot_force = TCICWSpotForce.DEFAULT;
+            }
+
+            if (console.TCIServer != null) console.TCIServer.CWSpotForce = _tci_spot_force;
+        }
+        private TCICWSpotForce _tci_spot_force = TCICWSpotForce.DEFAULT;
+        public TCICWSpotForce CWSpotForce
+        {
+            get { return _tci_spot_force; }
+            //set //not used
+            //{
+            //    //_tci_spot_force = value;
+            //    switch (value)
+            //    {
+            //        case TCICWSpotForce.CWU:
+            //            radTCI_spot_force_cwu.Checked = true;
+            //            break;
+            //        case TCICWSpotForce.CWL:
+            //            radTCI_spot_force_cwl.Checked = true;
+            //            break;
+            //        case TCICWSpotForce.DEFAULT:
+            //        default:
+            //            radTCI_spot_force_default.Checked = true;
+            //            break;
+            //    }
+            //}
+        }
+        public bool TCICWbecomesCWUabove10mhz
+        {
+            get { return chkCWbecomesCWUabove10mhz.Checked; }
+        }
+        public bool TCICWLUbecomesCW
+        {
+             get { return chkCWLUbecomesCW.Checked; }
+        }
+        public bool EmulateSunSDR2Pro
+        {
+            get { return chkEmulateSunSDR2Pro.Checked; }
+        }
+        public bool EmulateExpertSDR3Protocol
+        {
+            get { return chkEmulateExpertSDR3Protocol.Checked; }
+        }
+        public bool TCIuseRX1vfoaForRX2vfoa
+        {
+            get { return chkUseRX1vfoaForRX2vfoa.Checked; }
+        }
+        public bool TCIcopyRX2VFObToVFOa
+        {
+            get { return chkCopyRX2VFObToVFOa.Checked; }
+        }
+        public bool TCIreplaceRX2VFObToVFOa
+        {
+            get { return chkForgetRX2VfoBVFOinfo.Checked; }
+        }
+        public bool TCIsendInitialStateOnConnect
+        {
+            get { return chkTCIsendInitialStateOnConnect.Checked; }
         }
     }
 

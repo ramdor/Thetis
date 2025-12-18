@@ -274,9 +274,9 @@ namespace Thetis
             {
                 newBse.ModesToFilterOn.Add(m);
             }
-            foreach (DSPMode sm in this.SubModesToFilterOn)
+            foreach (DSPSubMode sm in this.SubModesToFilterOn)
             {
-                newBse.ModesToFilterOn.Add(sm);
+                newBse.SubModesToFilterOn.Add(sm);
             }
             foreach (Band b in this.BandsToFilterOn)
             {
@@ -1218,7 +1218,7 @@ namespace Thetis
                 {
                     continue;
                 }
-                if (ignoreGen && data.band == Band.WWV)
+                if (ignoreWWV && data.band == Band.WWV)
                 {
                     continue;
                 }

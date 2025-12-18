@@ -43,6 +43,7 @@ using System.Media;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Thetis
 {
@@ -67,7 +68,16 @@ namespace Thetis
 
         public BasicAudio()
         {
-            m_objPlayer = new SoundPlayer();
+            try
+            {
+                m_objPlayer = new SoundPlayer();
+            }
+            catch (Exception e)
+            {
+                m_objPlayer = null;
+                MessageBox.Show("Unable to create SoundPlayer object (BasicAudio)\n\n" + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return;
+            }
             m_objPlayer.LoadCompleted += new AsyncCompletedEventHandler(player_LoadCompleted);
             m_objPlayer.SoundLocationChanged += new EventHandler(player_LocationChanged);            
         }
@@ -87,11 +97,12 @@ namespace Thetis
             set { }
         }
         public string SoundFile {
-            get { return m_objPlayer.SoundLocation; }
+            get { return m_objPlayer != null ? m_objPlayer.SoundLocation : ""; }
             set { }
         }
         public void LoadSound(string sFile)
         {
+            if (m_objPlayer == null) return;
             if (m_bLoading || sFile == "") return;
             m_bOkToPlay = false;
             m_bLoading = true;
@@ -114,7 +125,8 @@ namespace Thetis
             }
         }
         public void Play()
-        {            
+        {
+            if (m_objPlayer == null) return;
             if (!m_bOkToPlay) return;
 
             if (m_objThread == null || !m_objThread.IsAlive)
@@ -130,18 +142,22 @@ namespace Thetis
         }
         public void Stop()
         {
-            m_objPlayer.Stop();
+            if (m_objPlayer == null) return;
+            try
+            {
+                m_objPlayer.Stop();
+            }
+            catch { }
         }
 
         private void playSound()
         {
+            if (m_objPlayer == null) return;
             try
             {
                 m_objPlayer.Play();
             }
-            catch
-            {
-            }
+            catch { }
         }
     }
 }

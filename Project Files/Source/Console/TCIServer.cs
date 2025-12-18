@@ -165,7 +165,14 @@ using Newtonsoft.Json;
 
 namespace Thetis
 {
-	public class TCPIPtciSocketListener
+    public enum TCICWSpotForce
+    {
+        CWU = 0,
+        CWL,
+        DEFAULT = 99
+    }
+
+    public class TCPIPtciSocketListener
 	{
 		//
 		public delegate void ClientConnected();
@@ -174,9 +181,39 @@ namespace Thetis
 		public ClientConnected ClientConnectedHandlers;
 		public ClientDisconnected ClientDisconnectedHandlers;
 		public ClientError ClientErrorHandlers;
-		//
+        //
 
-		private Console _console;
+        public struct VFOData
+        {
+            public double freqMHz;
+            public int offsetHz;
+            public double centreMHz;
+            public int chan;
+            public int duplicate_tochan;
+            public bool replace_if_duplicated;
+            public bool cen;
+            public int rx;
+            public bool sendIF;
+
+            //bespoke for tx info only
+            public bool SendTXInfo;
+            public Band TXfreqBand;
+            public bool RX2EnabledForTX;
+            public bool TXVFOB;
+        }
+
+        private class JsonSpotData
+        {
+            public string Spotter { get; set; } = "";
+            public string Comment { get; set; } = "";
+            public int Heading { get; set; } = -1; // -1 = no heading
+            public string Continent { get; set; } = "";
+            public string Country { get; set; } = "";
+            public string UtcTime { get; set; } = "";
+
+        }
+
+        private Console _console;
 		private TcpClient m_client = null;
 		private NetworkStream m_stream = null;
 		private bool m_stopClient = false;
@@ -187,8 +224,16 @@ namespace Thetis
 		private Thread m_VFODataThread = null;
 		private TCPIPtciServer m_server = null;
 		private int m_nRateLimit;
+        private LinkedList<VFOData> m_vfoDataList = new LinkedList<VFOData>();
+        private List<byte> _m_buffer = new List<byte>();
+        private Stopwatch m_swVFO = new Stopwatch();
+        private System.Threading.Timer m_tmVFOtimer;
+        private Stopwatch m_swCentre = new Stopwatch();
+        private System.Threading.Timer m_tmCentretimer;
+        private Stopwatch m_swTXFrequency = new Stopwatch();
+        private System.Threading.Timer m_tmTXFrequency;
 
-		public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit)
+        public TCPIPtciSocketListener(TcpClient client, Console c, TCPIPtciServer server, int rateLimit)
 		{
 			_console = c;
 			m_nRateLimit = rateLimit;
@@ -365,27 +410,6 @@ namespace Thetis
 						await Task.Delay(1);
 				}
 			}
-		}
-
-		private LinkedList<VFOData> m_vfoDataList = new LinkedList<VFOData>();
-
-		public struct VFOData
-        {
-			public double freqMHz;
-			public int offsetHz;
-			public double centreMHz;
-			public int chan;
-			public int duplicate_tochan;
-			public bool replace_if_duplicated;
-			public bool cen;
-			public int rx;
-			public bool sendIF;
-
-			//bespoke for tx info only
-			public bool SendTXInfo;
-			public Band TXfreqBand;
-			public bool RX2EnabledForTX;
-			public bool TXVFOB;
 		}
 
 		private void vfoFrequencyChange(VFOData vfod)
@@ -933,8 +957,7 @@ namespace Thetis
 				}
 			}
 			return nFind;
-		}
-		private List<byte> _m_buffer = new List<byte> ();
+		}		
 
 		private void SocketListenerThreadStart()
 		{
@@ -1655,6 +1678,7 @@ namespace Thetis
 				}
 			}
 		}
+
 		private void handleModulationMessage(string[] args)
         {
 			bool bOK = int.TryParse(args[0], out int rx);
@@ -1766,6 +1790,7 @@ namespace Thetis
 				SpotManager2.DeleteSpot(args[0]);
             }
         }
+
         // line out to switch vacs
 		private void lineOutEnable(int vac_number, bool enable)
 		{			
@@ -1793,6 +1818,7 @@ namespace Thetis
 					break;
 			}
         }
+
         private void handleLineOutStart(string[] args)
         {
             if (args.Length == 1)
@@ -1805,6 +1831,7 @@ namespace Thetis
                 }
             }
         }
+
         private void handleLineOutStop(string[] args)
         {
             if (args.Length == 1)
@@ -1960,6 +1987,7 @@ namespace Thetis
                 sendMONVolume(linearToDbVolume(console.ThreadSafeTCIAccessor.TXAF));
             }
         }
+
         private void handleSpotSimulateClick(string[] args)
         {
 			if (m_server == null) return;
@@ -1974,6 +2002,7 @@ namespace Thetis
                 }
             }
         }
+
 		private void handleSpot(string[] args, bool is_json, string msg)
         {
 			if (args.Length >= 4) // 4 as argument 5 may contain commas
@@ -2066,10 +2095,22 @@ namespace Thetis
 									mode = DSPMode.LSB;
 								break;
 							case "cw":
-								if (isFreqencyNormallyUSB)
-									mode = DSPMode.CWU;
-								else
-									mode = DSPMode.CWL;
+								switch(m_server.CWSpotForce)
+								{
+									case TCICWSpotForce.CWU:
+                                        mode = DSPMode.CWU;
+                                        break;
+									case TCICWSpotForce.CWL:
+                                        mode = DSPMode.CWL;
+                                        break;
+									case TCICWSpotForce.DEFAULT:
+									default:
+                                        if (isFreqencyNormallyUSB)
+                                            mode = DSPMode.CWU;
+                                        else
+                                            mode = DSPMode.CWL;
+                                        break;
+								}
 								break;
 							case "rtty":
 							case "psk":
@@ -2140,16 +2181,7 @@ namespace Thetis
 				}
 			}
 		}
-        private class JsonSpotData
-        {
-            public string Spotter { get; set; } = "";
-            public string Comment { get; set; } = "";
-            public int Heading { get; set; } = -1; // -1 = no heading
-            public string Continent { get; set; } = "";
-            public string Country { get; set; } = "";
-            public string UtcTime { get; set; } = "";
 
-        }
         private void handleTune(string[] args)
         {
 			int rx = 0;
@@ -2319,13 +2351,6 @@ namespace Thetis
 		{
 			sendPingFrame("Thetis");
 		}
-
-        private Stopwatch m_swVFO = new Stopwatch();
-        private System.Threading.Timer m_tmVFOtimer;
-        private Stopwatch m_swCentre = new Stopwatch();
-        private System.Threading.Timer m_tmCentretimer;
-        private Stopwatch m_swTXFrequency = new Stopwatch();
-        private System.Threading.Timer m_tmTXFrequency;
 
         private void VFOcallback(Object o)
         {
@@ -2531,6 +2556,12 @@ namespace Thetis
 			get { return m_bCWbecomesCWUabove10mhz; }
 			set { m_bCWbecomesCWUabove10mhz = value; }
 		}
+        private TCICWSpotForce _spot_force = TCICWSpotForce.DEFAULT;
+        public TCICWSpotForce CWSpotForce
+        {
+            get { return _spot_force; }
+            set { _spot_force = value; }
+        }
         private bool m_bUseRX1VFOaForRX2VFOa = false;
 		public bool UseRX1VFOaForRX2VFOa
 		{
@@ -2553,23 +2584,40 @@ namespace Thetis
 			get { return m_bEmulateExpertSDR3Protocol; }
 			set { m_bEmulateExpertSDR3Protocol = value; }
 		}
-		public void StartServer(Console c, int rateLimit = 0, bool bCopyRX2VFObToVFOa = false, bool bTCIuseRX1vfoaForRX2vfoa = false, bool bSentInitialStateOnConnect = true, bool bCWLUbecomesCW = false, bool bEmulateSunSDR2Pro = false, bool bEmulateExpertSDR3Protocol = false, bool bReplaceRX2VFObToVFOa = false, bool bTCICWbecomesCWUabove10mhz = false)
+		public void StartServer(Console c, int rateLimit = 0)
 		{
 			if (m_server != null)
 			{
 				m_nRateLimit = rateLimit;
 
-                m_bSendInitialStateOnConnect = bSentInitialStateOnConnect;
-                
-				m_bCopyRX2VFObToVFOa = bCopyRX2VFObToVFOa;
-				_replace_if_copy_RX2VFObToVFOa = bReplaceRX2VFObToVFOa;
-                m_bUseRX1VFOaForRX2VFOa = bTCIuseRX1vfoaForRX2vfoa;
+				if (c != null && !c.IsSetupFormNull)
+				{
+					m_bSendInitialStateOnConnect = c.SetupForm.TCIsendInitialStateOnConnect;;
 
-				m_bCWLUbecomesCW = bCWLUbecomesCW;
-                m_bCWbecomesCWUabove10mhz = bTCICWbecomesCWUabove10mhz; //[2.10.3.9]MW0LGE fixes issue #559
+					m_bCopyRX2VFObToVFOa = c.SetupForm.TCIcopyRX2VFObToVFOa;
+					_replace_if_copy_RX2VFObToVFOa = c.SetupForm.TCIreplaceRX2VFObToVFOa;
+					m_bUseRX1VFOaForRX2VFOa = c.SetupForm.TCIuseRX1vfoaForRX2vfoa;
 
-                m_bEmulateSunSDR2Pro = bEmulateSunSDR2Pro;
-				m_bEmulateExpertSDR3Protocol = bEmulateExpertSDR3Protocol;
+					m_bCWLUbecomesCW = c.SetupForm.TCICWLUbecomesCW;
+					m_bCWbecomesCWUabove10mhz = c.SetupForm.TCICWbecomesCWUabove10mhz; //[2.10.3.9]MW0LGE fixes issue #559
+
+					m_bEmulateSunSDR2Pro = c.SetupForm.EmulateSunSDR2Pro;
+					m_bEmulateExpertSDR3Protocol = c.SetupForm.EmulateExpertSDR3Protocol;
+
+					_spot_force = c.SetupForm.CWSpotForce;
+                }
+				else
+				{
+					m_bSendInitialStateOnConnect = true;
+					m_bCopyRX2VFObToVFOa = false;
+					_replace_if_copy_RX2VFObToVFOa = false;
+					m_bUseRX1VFOaForRX2VFOa = false;
+					m_bCWLUbecomesCW = false;
+					m_bCWbecomesCWUabove10mhz = false;
+					m_bEmulateSunSDR2Pro = false;
+					m_bEmulateExpertSDR3Protocol = false;
+					_spot_force = TCICWSpotForce.DEFAULT;
+                }
 
 				_console = c;
 

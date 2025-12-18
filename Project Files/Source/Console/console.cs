@@ -2473,87 +2473,6 @@ namespace Thetis
         {
             Debug.Print("TCI Server Error : " + se.Message);
         }
-
-        private bool m_bTCICWbecomesCWUabove10mhz = false;
-        public bool TCICWbecomesCWUabove10mhz
-        {
-            get { return m_bTCICWbecomesCWUabove10mhz; }
-            set
-            {
-                m_bTCICWbecomesCWUabove10mhz = value;
-                if (m_tcpTCIServer != null) m_tcpTCIServer.CWbecomesCWUabove10mhz = m_bTCICWbecomesCWUabove10mhz;
-            }
-        }
-        private bool m_bTCICWLUbecomesCW = false;
-        public bool TCICWLUbecomesCW
-        {
-            get { return m_bTCICWLUbecomesCW; }
-            set
-            {
-                m_bTCICWLUbecomesCW = value;
-                if (m_tcpTCIServer != null) m_tcpTCIServer.CWLUbecomesCW = m_bTCICWLUbecomesCW;
-            }
-        }
-        private bool m_bEmulateSunSDR2Pro = false;
-        public bool EmulateSunSDR2Pro
-        {
-            get { return m_bEmulateSunSDR2Pro; }
-            set
-            {
-                m_bEmulateSunSDR2Pro = value;
-                if (m_tcpTCIServer != null) m_tcpTCIServer.EmulateSunSDR2Pro = m_bEmulateSunSDR2Pro;
-            }
-        }
-        private bool m_bEmulateExpertSDR3Protocol = false;
-        public bool EmulateExpertSDR3Protocol
-        {
-            get { return m_bEmulateExpertSDR3Protocol; }
-            set
-            {
-                m_bEmulateExpertSDR3Protocol = value;
-                if (m_tcpTCIServer != null) m_tcpTCIServer.EmulateExpertSDR3Protocol = m_bEmulateExpertSDR3Protocol;
-            }
-        }
-        private bool m_bTCIuseRX1vfoaForRX2vfoa = false;
-        public bool TCIuseRX1vfoaForRX2vfoa
-        {
-            get { return m_bTCIuseRX1vfoaForRX2vfoa; }
-            set
-            {
-                m_bTCIuseRX1vfoaForRX2vfoa = value;
-                if (m_tcpTCIServer != null) m_tcpTCIServer.UseRX1VFOaForRX2VFOa = m_bTCIuseRX1vfoaForRX2vfoa;
-            }
-        }
-        private bool m_bTCIcopyRX2VFObToVFOa = false;
-        public bool TCIcopyRX2VFObToVFOa
-        {
-            get { return m_bTCIcopyRX2VFObToVFOa; }
-            set
-            {
-                m_bTCIcopyRX2VFObToVFOa = value;
-                if (m_tcpTCIServer != null) m_tcpTCIServer.CopyRX2VFObToVFOa = m_bTCIcopyRX2VFObToVFOa;
-            }
-        }
-        private bool m_bTCIreplaceRX2VFObToVFOa = false;
-        public bool TCIreplaceRX2VFObToVFOa
-        {
-            get { return m_bTCIreplaceRX2VFObToVFOa; }
-            set
-            {
-                m_bTCIreplaceRX2VFObToVFOa = value;
-                if (m_tcpTCIServer != null) m_tcpTCIServer.ReplaceRX2VFObToVFOa = m_bTCIreplaceRX2VFObToVFOa;
-            }
-        }
-        private bool m_bTCIsendInitialStateOnConnect = true;
-        public bool TCIsendInitialStateOnConnect
-        {
-            get { return m_bTCIsendInitialStateOnConnect; }
-            set
-            {
-                m_bTCIsendInitialStateOnConnect = value;
-                if (m_tcpTCIServer != null) m_tcpTCIServer.SendInitialFrequencyStateOnConnect = m_bTCIsendInitialStateOnConnect;
-            }
-        }
         public void ShowTCILog()
         {
             if (m_tcpTCIServer != null) m_tcpTCIServer.ShowLog();
@@ -2573,7 +2492,7 @@ namespace Thetis
 
                     addTCIDelegates();
 
-                    m_tcpTCIServer.StartServer(this, rateLimit, m_bTCIcopyRX2VFObToVFOa, m_bTCIuseRX1vfoaForRX2vfoa, m_bTCIsendInitialStateOnConnect, m_bTCICWLUbecomesCW, m_bEmulateSunSDR2Pro, m_bEmulateExpertSDR3Protocol, m_bTCIreplaceRX2VFObToVFOa, m_bTCICWbecomesCWUabove10mhz);
+                    m_tcpTCIServer.StartServer(this, rateLimit);
 
                     if (!m_tcpTCIServer.IsServerRunning)
                     {
@@ -2595,6 +2514,10 @@ namespace Thetis
                 }
             }
             UpdateStatusBarStatusIcons(StatusBarIconGroup.TCI);
+        }
+        public TCPIPtciServer TCIServer
+        {
+            get { return m_tcpTCIServer; }
         }
         //
 
@@ -3504,6 +3427,9 @@ namespace Thetis
             double dRX1_centre_freq = 7.1;
             double dRX2_centre_freq = 7.1;
 
+            bool bClickTuneRX1 = false;
+            bool bClickTuneRX2 = false;
+
             foreach (string s in a)				// string is in the format "name,value"
             {
                 int start, length, index, filter_mode;
@@ -3740,7 +3666,8 @@ namespace Thetis
                         rx2_voice_squelch_threshold_scroll = int.Parse(val);
                         break;
                     case "click_tune_display":
-                        _click_tune_display = bool.Parse(val);
+                        //_click_tune_display = bool.Parse(val); // now done below
+                        bClickTuneRX1 = bool.Parse(val);
                         break;
                     case "VFOAFreq":
                         dVFOAFreq = double.Parse(val); // MW0LGE_21c need to do this at end, as we used center_freq etc
@@ -3749,7 +3676,8 @@ namespace Thetis
                         dRX1_centre_freq = double.Parse(val);
                         break;
                     case "click_tune_rx2_display":
-                        _click_tune_rx2_display = bool.Parse(val);
+                        //_click_tune_rx2_display = bool.Parse(val); // now done below
+                        bClickTuneRX2 = bool.Parse(val);
                         break;
                     case "VFOBFreq":
                         dVFOBFreq = double.Parse(val); // MW0LGE_21c need to do this at end, as we used center_freq etc
@@ -4635,6 +4563,33 @@ namespace Thetis
                     case var nam when name.StartsWith("ptb"):
                         if (ctrls.ContainsKey(name)) ((PrettyTrackBar)ctrls[name]).Value = Int32.Parse(val);
                         break;
+                }
+            }
+
+            //[2.10.1.12]MW0LGE - apply CTUN state, and done above CentreFrequency assignment below
+            //Will inform the display engine of the ctun state via the delegate
+            //NOTE: ideally _click_tune_display will already equal bClickTuneRX1 as the chk will have happened in the loop above,
+            //so this should not be needed, but here for belts/braces
+            if (_click_tune_display != bClickTuneRX1)
+            {
+                if (chkFWCATU.Checked == bClickTuneRX1)
+                {
+                    chkFWCATU_CheckedChanged(this, EventArgs.Empty);
+                }
+                else
+                {
+                    chkFWCATU.Checked = bClickTuneRX1;
+                }
+            }
+            if (_click_tune_rx2_display != bClickTuneRX2)
+            {
+                if (chkX2TR.Checked == bClickTuneRX2)
+                {
+                    chkX2TR_CheckedChanged(this, EventArgs.Empty);
+                }
+                else
+                {
+                    chkX2TR.Checked = bClickTuneRX2;
                 }
             }
 
