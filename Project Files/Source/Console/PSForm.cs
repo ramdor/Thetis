@@ -564,8 +564,8 @@ namespace Thetis
                 lblPSInfo1.Text = puresignal.Info[1].ToString();
                 lblPSInfo2.Text = puresignal.Info[2].ToString();
                 lblPSInfo3.Text = puresignal.Info[3].ToString();
-                lblPSfb2.Text = puresignal.Info[4].ToString();
-                lblPSInfo5.Text = puresignal.Info[5].ToString();
+                lblPSfb2.Text = puresignal.FeedbackLevel.ToString();
+                lblPSInfo5.Text = puresignal.CalibrationCount.ToString();
                 lblPSInfo6.Text = puresignal.Info[6].ToString();
                 lblPSInfo13.Text = puresignal.Info[13].ToString();
                 lblPSInfo15.Text = puresignal.Info[15].ToString();
@@ -768,7 +768,7 @@ namespace Thetis
                         newAtten = oldAtten + _deltadB;
                     else
                         newAtten = 0;
-                    if (console.SetupForm.ATTOnTX != newAtten)
+                    if (oldAtten/*console.SetupForm.ATTOnTX*/ != newAtten)
                     {
                         console.SetupForm.ATTOnTX = newAtten;
 
@@ -1145,12 +1145,12 @@ namespace Thetis
         public static EngineState State {
             get { return (EngineState)_info[15]; }
         }
+
         public static bool InvertRedBlue
         {
             get { return _bInvertRedBlue; }
             set { _bInvertRedBlue = value; }
         }
-        //--
         #endregion
     }
 }
