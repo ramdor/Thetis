@@ -126,17 +126,522 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>832, 17</value>
   </metadata>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnAPF_type.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnAPF_type.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="btnAPF_type.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="btnAPF_type.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="btnAPF_type.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 12</value>
+  </data>
+  <data name="btnAPF_type.Size" type="System.Drawing.Size, System.Drawing">
+    <value>36, 20</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="btnAPF_type.TabIndex" type="System.Int32, mscorlib">
+    <value>126</value>
+  </data>
+  <data name="btnAPF_type.Text" xml:space="preserve">
+    <value>BI</value>
+  </data>
+  <data name="btnAPF_type.ToolTip" xml:space="preserve">
+    <value>Cycle through available APF types. Double Pole, Matched, Gaussian, Bi-Quad.</value>
+  </data>
+  <data name="&gt;&gt;btnAPF_type.Name" xml:space="preserve">
+    <value>btnAPF_type</value>
+  </data>
+  <data name="&gt;&gt;btnAPF_type.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ButtonTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btnAPF_type.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;btnAPF_type.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="ptbCWAPFGain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbCWAPFGain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbCWAPFGain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>114, 60</value>
+  </data>
+  <data name="ptbCWAPFGain.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWAPFGain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWAPFGain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbCWAPFGain.TabIndex" type="System.Int32, mscorlib">
+    <value>125</value>
+  </data>
+  <data name="ptbCWAPFGain.ToolTip" xml:space="preserve">
+    <value>Sets the CW APF Gain.</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFGain.Name" xml:space="preserve">
+    <value>ptbCWAPFGain</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFGain.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFGain.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFGain.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.Location" type="System.Drawing.Point, System.Drawing">
+    <value>114, 35</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.TabIndex" type="System.Int32, mscorlib">
+    <value>120</value>
+  </data>
+  <data name="ptbCWAPFBandwidth.ToolTip" xml:space="preserve">
+    <value>Sets the CW APF Bandwidth.</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFBandwidth.Name" xml:space="preserve">
+    <value>ptbCWAPFBandwidth</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFBandwidth.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFBandwidth.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFBandwidth.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="ptbCWAPFFreq.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbCWAPFFreq.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbCWAPFFreq.Location" type="System.Drawing.Point, System.Drawing">
+    <value>114, 10</value>
+  </data>
+  <data name="ptbCWAPFFreq.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWAPFFreq.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWAPFFreq.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbCWAPFFreq.TabIndex" type="System.Int32, mscorlib">
+    <value>119</value>
+  </data>
+  <data name="ptbCWAPFFreq.ToolTip" xml:space="preserve">
+    <value>Sets the CW APF Frequency.</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFFreq.Name" xml:space="preserve">
+    <value>ptbCWAPFFreq</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFFreq.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFFreq.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;ptbCWAPFFreq.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="chkCWAPFEnabled.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
+    <value>Button</value>
+  </data>
+  <data name="chkCWAPFEnabled.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
+  </data>
+  <data name="chkCWAPFEnabled.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="chkCWAPFEnabled.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="chkCWAPFEnabled.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="chkCWAPFEnabled.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 62</value>
+  </data>
+  <data name="chkCWAPFEnabled.Size" type="System.Drawing.Size, System.Drawing">
+    <value>36, 20</value>
+  </data>
+  <data name="chkCWAPFEnabled.TabIndex" type="System.Int32, mscorlib">
+    <value>121</value>
+  </data>
+  <data name="chkCWAPFEnabled.Text" xml:space="preserve">
+    <value>APF</value>
+  </data>
+  <data name="chkCWAPFEnabled.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="chkCWAPFEnabled.ToolTip" xml:space="preserve">
+    <value>Enables APF</value>
+  </data>
+  <data name="&gt;&gt;chkCWAPFEnabled.Name" xml:space="preserve">
+    <value>chkCWAPFEnabled</value>
+  </data>
+  <data name="&gt;&gt;chkCWAPFEnabled.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;chkCWAPFEnabled.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;chkCWAPFEnabled.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="chkShowCWZero.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="chkShowCWZero.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
+  <data name="chkShowCWZero.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="chkShowCWZero.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="chkShowCWZero.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 116</value>
+  </data>
+  <data name="chkShowCWZero.Size" type="System.Drawing.Size, System.Drawing">
+    <value>106, 17</value>
+  </data>
+  <data name="chkShowCWZero.TabIndex" type="System.Int32, mscorlib">
+    <value>117</value>
+  </data>
+  <data name="chkShowCWZero.Text" xml:space="preserve">
+    <value>Show CW 0 Line</value>
+  </data>
+  <data name="chkShowCWZero.ToolTip" xml:space="preserve">
+    <value>Display CW Zero Line</value>
+  </data>
+  <data name="&gt;&gt;chkShowCWZero.Name" xml:space="preserve">
+    <value>chkShowCWZero</value>
+  </data>
+  <data name="&gt;&gt;chkShowCWZero.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;chkShowCWZero.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;chkShowCWZero.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="ptbCWSpeed.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
+    <value>Stretch</value>
+  </data>
+  <data name="ptbCWSpeed.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="ptbCWSpeed.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 22</value>
+  </data>
+  <data name="ptbCWSpeed.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWSpeed.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="ptbCWSpeed.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 24</value>
+  </data>
+  <data name="ptbCWSpeed.TabIndex" type="System.Int32, mscorlib">
+    <value>115</value>
+  </data>
+  <data name="ptbCWSpeed.ToolTip" xml:space="preserve">
+    <value>Sets the CW Speed in WPM</value>
+  </data>
+  <data name="&gt;&gt;ptbCWSpeed.Name" xml:space="preserve">
+    <value>ptbCWSpeed</value>
+  </data>
+  <data name="&gt;&gt;ptbCWSpeed.Type" xml:space="preserve">
+    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ptbCWSpeed.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;ptbCWSpeed.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="udCWPitch.Location" type="System.Drawing.Point, System.Drawing">
+    <value>281, 140</value>
+  </data>
+  <data name="udCWPitch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>48, 20</value>
+  </data>
+  <data name="udCWPitch.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="udCWPitch.ToolTip" xml:space="preserve">
+    <value>Selects the preferred CW tone frequency.</value>
+  </data>
+  <data name="&gt;&gt;udCWPitch.Name" xml:space="preserve">
+    <value>udCWPitch</value>
+  </data>
+  <data name="&gt;&gt;udCWPitch.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDownTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;udCWPitch.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;udCWPitch.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="chkQSK.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
+    <value>Button</value>
+  </data>
+  <data name="chkQSK.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
+  </data>
+  <data name="chkQSK.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
+  </data>
+  <data name="chkQSK.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="chkQSK.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="chkQSK.Location" type="System.Drawing.Point, System.Drawing">
+    <value>25, 16</value>
+  </data>
+  <data name="chkQSK.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 23</value>
+  </data>
+  <data name="chkQSK.TabIndex" type="System.Int32, mscorlib">
+    <value>122</value>
+  </data>
+  <data name="chkQSK.Text" xml:space="preserve">
+    <value>Semi</value>
+  </data>
+  <data name="chkQSK.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="chkQSK.ToolTip" xml:space="preserve">
+    <value>Enables Semi, QSK, or Manual Break-In mode.</value>
+  </data>
+  <data name="&gt;&gt;chkQSK.Name" xml:space="preserve">
+    <value>chkQSK</value>
+  </data>
+  <data name="&gt;&gt;chkQSK.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;chkQSK.Parent" xml:space="preserve">
+    <value>grpSemiBreakIn</value>
+  </data>
+  <data name="&gt;&gt;chkQSK.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="udCWBreakInDelay.Location" type="System.Drawing.Point, System.Drawing">
+    <value>166, 20</value>
+  </data>
+  <data name="udCWBreakInDelay.Size" type="System.Drawing.Size, System.Drawing">
+    <value>48, 20</value>
+  </data>
+  <data name="udCWBreakInDelay.TabIndex" type="System.Int32, mscorlib">
+    <value>35</value>
+  </data>
+  <data name="udCWBreakInDelay.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="udCWBreakInDelay.ToolTip" xml:space="preserve">
+    <value>Amount of time to stay in TX after the last detected CW signal.</value>
+  </data>
+  <data name="&gt;&gt;udCWBreakInDelay.Name" xml:space="preserve">
+    <value>udCWBreakInDelay</value>
+  </data>
+  <data name="&gt;&gt;udCWBreakInDelay.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDownTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;udCWBreakInDelay.Parent" xml:space="preserve">
+    <value>grpSemiBreakIn</value>
+  </data>
+  <data name="&gt;&gt;udCWBreakInDelay.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="chkShowTXCWFreq.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="chkShowTXCWFreq.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="chkShowTXCWFreq.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 94</value>
+  </data>
+  <data name="chkShowTXCWFreq.Size" type="System.Drawing.Size, System.Drawing">
+    <value>101, 16</value>
+  </data>
+  <data name="chkShowTXCWFreq.TabIndex" type="System.Int32, mscorlib">
+    <value>76</value>
+  </data>
+  <data name="chkShowTXCWFreq.Text" xml:space="preserve">
+    <value>Show TX Freq</value>
+  </data>
+  <data name="chkShowTXCWFreq.ToolTip" xml:space="preserve">
+    <value>Shows the TX Filter on the display when in Panadapter mode</value>
+  </data>
+  <data name="&gt;&gt;chkShowTXCWFreq.Name" xml:space="preserve">
+    <value>chkShowTXCWFreq</value>
+  </data>
+  <data name="&gt;&gt;chkShowTXCWFreq.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;chkShowTXCWFreq.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;chkShowTXCWFreq.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="chkCWIambic.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
+  <data name="chkCWIambic.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="chkCWIambic.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="chkCWIambic.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 50</value>
+  </data>
+  <data name="chkCWIambic.Size" type="System.Drawing.Size, System.Drawing">
+    <value>64, 16</value>
+  </data>
+  <data name="chkCWIambic.TabIndex" type="System.Int32, mscorlib">
+    <value>72</value>
+  </data>
+  <data name="chkCWIambic.Text" xml:space="preserve">
+    <value>Iambic</value>
+  </data>
+  <data name="chkCWIambic.ToolTip" xml:space="preserve">
+    <value>Iambic or External/Bug Key?</value>
+  </data>
+  <data name="&gt;&gt;chkCWIambic.Name" xml:space="preserve">
+    <value>chkCWIambic</value>
+  </data>
+  <data name="&gt;&gt;chkCWIambic.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;chkCWIambic.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;chkCWIambic.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="chkCWSidetone.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="chkCWSidetone.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="chkCWSidetone.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 72</value>
+  </data>
+  <data name="chkCWSidetone.Size" type="System.Drawing.Size, System.Drawing">
+    <value>104, 16</value>
+  </data>
+  <data name="chkCWSidetone.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="chkCWSidetone.Text" xml:space="preserve">
+    <value>Sidetone</value>
+  </data>
+  <data name="chkCWSidetone.ToolTip" xml:space="preserve">
+    <value>Turns the sidetone on/off in the speaker</value>
+  </data>
+  <data name="&gt;&gt;chkCWSidetone.Name" xml:space="preserve">
+    <value>chkCWSidetone</value>
+  </data>
+  <data name="&gt;&gt;chkCWSidetone.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;chkCWSidetone.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;chkCWSidetone.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="chkCWFWKeyer.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
+  </data>
+  <data name="chkCWFWKeyer.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="chkCWFWKeyer.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="chkCWFWKeyer.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 51</value>
+  </data>
+  <data name="chkCWFWKeyer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>104, 16</value>
+  </data>
+  <data name="chkCWFWKeyer.TabIndex" type="System.Int32, mscorlib">
+    <value>118</value>
+  </data>
+  <data name="chkCWFWKeyer.Text" xml:space="preserve">
+    <value>Firmware Keyer</value>
+  </data>
+  <data name="chkCWFWKeyer.ToolTip" xml:space="preserve">
+    <value>Enables CW keying in the FPGA.</value>
+  </data>
+  <data name="chkCWFWKeyer.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;chkCWFWKeyer.Name" xml:space="preserve">
+    <value>chkCWFWKeyer</value>
+  </data>
+  <data name="&gt;&gt;chkCWFWKeyer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;chkCWFWKeyer.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;chkCWFWKeyer.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
   <metadata name="btnDisplayZTB.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnDisplayZTB.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
   <data name="btnDisplayZTB.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="btnDisplayZTB.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
   </data>
@@ -152,7 +657,6 @@
   <data name="btnDisplayZTB.Size" type="System.Drawing.Size, System.Drawing">
     <value>40, 24</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnDisplayZTB.TabIndex" type="System.Int32, mscorlib">
     <value>63</value>
   </data>
@@ -547,7 +1051,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;chkRX2Preamp.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>6</value>
   </data>
   <data name="chkRX1Preamp.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -595,7 +1099,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;chkRX1Preamp.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>7</value>
   </data>
   <data name="chkDX.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -643,7 +1147,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;chkDX.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>8</value>
   </data>
   <data name="lblPAProfile.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
@@ -682,7 +1186,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblPAProfile.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>3</value>
   </data>
   <data name="ptbFilterShift.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -976,7 +1480,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;chkFullDuplex.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>15</value>
   </data>
   <data name="chkRX2Squelch.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -1021,7 +1525,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;chkRX2Squelch.ZOrder" xml:space="preserve">
-    <value>17</value>
+    <value>18</value>
   </data>
   <data name="chkRX2Mute.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -1402,7 +1906,7 @@
     <value>panelOptions</value>
   </data>
   <data name="&gt;&gt;chkExternalPA.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>0</value>
   </data>
   <data name="ckQuickPlay.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -1447,7 +1951,7 @@
     <value>panelOptions</value>
   </data>
   <data name="&gt;&gt;ckQuickPlay.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="chkMON.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -1492,7 +1996,7 @@
     <value>panelOptions</value>
   </data>
   <data name="&gt;&gt;chkMON.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="ckQuickRec.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -1534,7 +2038,7 @@
     <value>panelOptions</value>
   </data>
   <data name="&gt;&gt;ckQuickRec.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="chkRX2SR.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -1579,7 +2083,7 @@
     <value>panelOptions</value>
   </data>
   <data name="&gt;&gt;chkRX2SR.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>4</value>
   </data>
   <data name="chkMOX.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -1627,7 +2131,7 @@
     <value>panelOptions</value>
   </data>
   <data name="&gt;&gt;chkMOX.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>5</value>
   </data>
   <data name="chkTUN.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -1675,7 +2179,7 @@
     <value>panelOptions</value>
   </data>
   <data name="&gt;&gt;chkTUN.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>6</value>
   </data>
   <data name="chk2TONE.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -1720,7 +2224,7 @@
     <value>panelOptions</value>
   </data>
   <data name="&gt;&gt;chk2TONE.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>7</value>
   </data>
   <data name="chkFWCATUBypass.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -1765,7 +2269,7 @@
     <value>panelOptions</value>
   </data>
   <data name="&gt;&gt;chkFWCATUBypass.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>8</value>
   </data>
   <data name="comboTuneMode.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt</value>
@@ -1807,7 +2311,7 @@
     <value>panelOptions</value>
   </data>
   <data name="&gt;&gt;comboTuneMode.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>9</value>
   </data>
   <data name="udTXFilterLow.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt</value>
@@ -2444,126 +2948,6 @@
   </data>
   <data name="&gt;&gt;chkPower.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="udCWPitch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>281, 140</value>
-  </data>
-  <data name="udCWPitch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 20</value>
-  </data>
-  <data name="udCWPitch.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="udCWPitch.ToolTip" xml:space="preserve">
-    <value>Selects the preferred CW tone frequency.</value>
-  </data>
-  <data name="&gt;&gt;udCWPitch.Name" xml:space="preserve">
-    <value>udCWPitch</value>
-  </data>
-  <data name="&gt;&gt;udCWPitch.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDownTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;udCWPitch.Parent" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;udCWPitch.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="udCWBreakInDelay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>166, 20</value>
-  </data>
-  <data name="udCWBreakInDelay.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 20</value>
-  </data>
-  <data name="udCWBreakInDelay.TabIndex" type="System.Int32, mscorlib">
-    <value>35</value>
-  </data>
-  <data name="udCWBreakInDelay.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
-    <value>Right</value>
-  </data>
-  <data name="udCWBreakInDelay.ToolTip" xml:space="preserve">
-    <value>Amount of time to stay in TX after the last detected CW signal.</value>
-  </data>
-  <data name="&gt;&gt;udCWBreakInDelay.Name" xml:space="preserve">
-    <value>udCWBreakInDelay</value>
-  </data>
-  <data name="&gt;&gt;udCWBreakInDelay.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDownTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;udCWBreakInDelay.Parent" xml:space="preserve">
-    <value>grpSemiBreakIn</value>
-  </data>
-  <data name="&gt;&gt;udCWBreakInDelay.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="chkShowTXCWFreq.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="chkShowTXCWFreq.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="chkShowTXCWFreq.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 94</value>
-  </data>
-  <data name="chkShowTXCWFreq.Size" type="System.Drawing.Size, System.Drawing">
-    <value>101, 16</value>
-  </data>
-  <data name="chkShowTXCWFreq.TabIndex" type="System.Int32, mscorlib">
-    <value>76</value>
-  </data>
-  <data name="chkShowTXCWFreq.Text" xml:space="preserve">
-    <value>Show TX Freq</value>
-  </data>
-  <data name="chkShowTXCWFreq.ToolTip" xml:space="preserve">
-    <value>Shows the TX Filter on the display when in Panadapter mode</value>
-  </data>
-  <data name="&gt;&gt;chkShowTXCWFreq.Name" xml:space="preserve">
-    <value>chkShowTXCWFreq</value>
-  </data>
-  <data name="&gt;&gt;chkShowTXCWFreq.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;chkShowTXCWFreq.Parent" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;chkShowTXCWFreq.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="chkCWIambic.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt</value>
-  </data>
-  <data name="chkCWIambic.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="chkCWIambic.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="chkCWIambic.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 50</value>
-  </data>
-  <data name="chkCWIambic.Size" type="System.Drawing.Size, System.Drawing">
-    <value>64, 16</value>
-  </data>
-  <data name="chkCWIambic.TabIndex" type="System.Int32, mscorlib">
-    <value>72</value>
-  </data>
-  <data name="chkCWIambic.Text" xml:space="preserve">
-    <value>Iambic</value>
-  </data>
-  <data name="chkCWIambic.ToolTip" xml:space="preserve">
-    <value>Iambic or External/Bug Key?</value>
-  </data>
-  <data name="&gt;&gt;chkCWIambic.Name" xml:space="preserve">
-    <value>chkCWIambic</value>
-  </data>
-  <data name="&gt;&gt;chkCWIambic.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;chkCWIambic.Parent" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;chkCWIambic.ZOrder" xml:space="preserve">
-    <value>8</value>
   </data>
   <data name="udRX2FilterHigh.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -5257,7 +5641,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;chkSquelch.ZOrder" xml:space="preserve">
-    <value>39</value>
+    <value>40</value>
   </data>
   <data name="btnMemoryQuickRestore.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
@@ -6355,84 +6739,6 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
   <data name="&gt;&gt;chkMUT.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="chkCWFWKeyer.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="chkCWFWKeyer.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="chkCWFWKeyer.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="chkCWFWKeyer.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 51</value>
-  </data>
-  <data name="chkCWFWKeyer.Size" type="System.Drawing.Size, System.Drawing">
-    <value>104, 16</value>
-  </data>
-  <data name="chkCWFWKeyer.TabIndex" type="System.Int32, mscorlib">
-    <value>118</value>
-  </data>
-  <data name="chkCWFWKeyer.Text" xml:space="preserve">
-    <value>Firmware Keyer</value>
-  </data>
-  <data name="chkCWFWKeyer.ToolTip" xml:space="preserve">
-    <value>Enables CW keying in the FPGA.</value>
-  </data>
-  <data name="chkCWFWKeyer.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;chkCWFWKeyer.Name" xml:space="preserve">
-    <value>chkCWFWKeyer</value>
-  </data>
-  <data name="&gt;&gt;chkCWFWKeyer.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;chkCWFWKeyer.Parent" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;chkCWFWKeyer.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="chkShowCWZero.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="chkShowCWZero.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt</value>
-  </data>
-  <data name="chkShowCWZero.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="chkShowCWZero.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="chkShowCWZero.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 116</value>
-  </data>
-  <data name="chkShowCWZero.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 17</value>
-  </data>
-  <data name="chkShowCWZero.TabIndex" type="System.Int32, mscorlib">
-    <value>117</value>
-  </data>
-  <data name="chkShowCWZero.Text" xml:space="preserve">
-    <value>Show CW 0 Line</value>
-  </data>
-  <data name="chkShowCWZero.ToolTip" xml:space="preserve">
-    <value>Display CW Zero Line</value>
-  </data>
-  <data name="&gt;&gt;chkShowCWZero.Name" xml:space="preserve">
-    <value>chkShowCWZero</value>
-  </data>
-  <data name="&gt;&gt;chkShowCWZero.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;chkShowCWZero.Parent" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;chkShowCWZero.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <data name="radFMDeviation5kHz.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
   </data>
@@ -7078,39 +7384,6 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
   <data name="&gt;&gt;chkVAC2.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="chkCWSidetone.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="chkCWSidetone.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="chkCWSidetone.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 72</value>
-  </data>
-  <data name="chkCWSidetone.Size" type="System.Drawing.Size, System.Drawing">
-    <value>104, 16</value>
-  </data>
-  <data name="chkCWSidetone.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="chkCWSidetone.Text" xml:space="preserve">
-    <value>Sidetone</value>
-  </data>
-  <data name="chkCWSidetone.ToolTip" xml:space="preserve">
-    <value>Turns the sidetone on/off in the speaker</value>
-  </data>
-  <data name="&gt;&gt;chkCWSidetone.Name" xml:space="preserve">
-    <value>chkCWSidetone</value>
-  </data>
-  <data name="&gt;&gt;chkCWSidetone.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;chkCWSidetone.Parent" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;chkCWSidetone.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
   <data name="udRX1StepAttData.Location" type="System.Drawing.Point, System.Drawing">
     <value>56, 294</value>
   </data>
@@ -7194,51 +7467,6 @@ CTRL + Right Click on any Band Button to add Band Stack.</value>
   </data>
   <data name="&gt;&gt;udRX2StepAttData.ZOrder" xml:space="preserve">
     <value>5</value>
-  </data>
-  <data name="chkCWAPFEnabled.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
-    <value>Button</value>
-  </data>
-  <data name="chkCWAPFEnabled.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="chkCWAPFEnabled.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
-  </data>
-  <data name="chkCWAPFEnabled.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="chkCWAPFEnabled.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="chkCWAPFEnabled.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 62</value>
-  </data>
-  <data name="chkCWAPFEnabled.Size" type="System.Drawing.Size, System.Drawing">
-    <value>36, 20</value>
-  </data>
-  <data name="chkCWAPFEnabled.TabIndex" type="System.Int32, mscorlib">
-    <value>121</value>
-  </data>
-  <data name="chkCWAPFEnabled.Text" xml:space="preserve">
-    <value>APF</value>
-  </data>
-  <data name="chkCWAPFEnabled.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
-  </data>
-  <data name="chkCWAPFEnabled.ToolTip" xml:space="preserve">
-    <value>Enables APF</value>
-  </data>
-  <data name="&gt;&gt;chkCWAPFEnabled.Name" xml:space="preserve">
-    <value>chkCWAPFEnabled</value>
-  </data>
-  <data name="&gt;&gt;chkCWAPFEnabled.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;chkCWAPFEnabled.Parent" xml:space="preserve">
-    <value>grpCWAPF</value>
-  </data>
-  <data name="&gt;&gt;chkCWAPFEnabled.ZOrder" xml:space="preserve">
-    <value>6</value>
   </data>
   <data name="lblBandStack.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -8109,87 +8337,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;chkVFOBLock.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="chkQSK.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
-    <value>Button</value>
-  </data>
-  <data name="chkQSK.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="chkQSK.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
-  </data>
-  <data name="chkQSK.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="chkQSK.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="chkQSK.Location" type="System.Drawing.Point, System.Drawing">
-    <value>25, 16</value>
-  </data>
-  <data name="chkQSK.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 23</value>
-  </data>
-  <data name="chkQSK.TabIndex" type="System.Int32, mscorlib">
-    <value>122</value>
-  </data>
-  <data name="chkQSK.Text" xml:space="preserve">
-    <value>Semi</value>
-  </data>
-  <data name="chkQSK.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
-  </data>
-  <data name="chkQSK.ToolTip" xml:space="preserve">
-    <value>Enables Semi, QSK, or Manual Break-In mode.</value>
-  </data>
-  <data name="&gt;&gt;chkQSK.Name" xml:space="preserve">
-    <value>chkQSK</value>
-  </data>
-  <data name="&gt;&gt;chkQSK.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;chkQSK.Parent" xml:space="preserve">
-    <value>grpSemiBreakIn</value>
-  </data>
-  <data name="&gt;&gt;chkQSK.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="ptbCWSpeed.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbCWSpeed.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbCWSpeed.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 22</value>
-  </data>
-  <data name="ptbCWSpeed.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWSpeed.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWSpeed.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbCWSpeed.TabIndex" type="System.Int32, mscorlib">
-    <value>115</value>
-  </data>
-  <data name="ptbCWSpeed.ToolTip" xml:space="preserve">
-    <value>Sets the CW Speed in WPM</value>
-  </data>
-  <data name="&gt;&gt;ptbCWSpeed.Name" xml:space="preserve">
-    <value>ptbCWSpeed</value>
-  </data>
-  <data name="&gt;&gt;ptbCWSpeed.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbCWSpeed.Parent" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;ptbCWSpeed.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="ptbPWR.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
   </data>
@@ -8639,114 +8786,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;ptbRX1AF.ZOrder" xml:space="preserve">
     <value>6</value>
-  </data>
-  <data name="ptbCWAPFGain.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbCWAPFGain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbCWAPFGain.Location" type="System.Drawing.Point, System.Drawing">
-    <value>114, 60</value>
-  </data>
-  <data name="ptbCWAPFGain.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWAPFGain.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWAPFGain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbCWAPFGain.TabIndex" type="System.Int32, mscorlib">
-    <value>125</value>
-  </data>
-  <data name="ptbCWAPFGain.ToolTip" xml:space="preserve">
-    <value>Sets the CW APF Gain.</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFGain.Name" xml:space="preserve">
-    <value>ptbCWAPFGain</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFGain.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFGain.Parent" xml:space="preserve">
-    <value>grpCWAPF</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFGain.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.Location" type="System.Drawing.Point, System.Drawing">
-    <value>114, 35</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.TabIndex" type="System.Int32, mscorlib">
-    <value>120</value>
-  </data>
-  <data name="ptbCWAPFBandwidth.ToolTip" xml:space="preserve">
-    <value>Sets the CW APF Bandwidth.</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFBandwidth.Name" xml:space="preserve">
-    <value>ptbCWAPFBandwidth</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFBandwidth.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFBandwidth.Parent" xml:space="preserve">
-    <value>grpCWAPF</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFBandwidth.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="ptbCWAPFFreq.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
-    <value>Stretch</value>
-  </data>
-  <data name="ptbCWAPFFreq.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="ptbCWAPFFreq.Location" type="System.Drawing.Point, System.Drawing">
-    <value>114, 10</value>
-  </data>
-  <data name="ptbCWAPFFreq.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWAPFFreq.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="ptbCWAPFFreq.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 24</value>
-  </data>
-  <data name="ptbCWAPFFreq.TabIndex" type="System.Int32, mscorlib">
-    <value>119</value>
-  </data>
-  <data name="ptbCWAPFFreq.ToolTip" xml:space="preserve">
-    <value>Sets the CW APF Frequency.</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFFreq.Name" xml:space="preserve">
-    <value>ptbCWAPFFreq</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFFreq.Type" xml:space="preserve">
-    <value>Thetis.PrettyTrackBar, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFFreq.Parent" xml:space="preserve">
-    <value>grpCWAPF</value>
-  </data>
-  <data name="&gt;&gt;ptbCWAPFFreq.ZOrder" xml:space="preserve">
-    <value>3</value>
   </data>
   <data name="ptbTune.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -9801,7 +9840,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
-    <value>19</value>
+    <value>20</value>
   </data>
   <metadata name="statusStripMain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>1226, 17</value>
@@ -10354,7 +10393,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;statusStripMain.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>11</value>
   </data>
   <metadata name="tmrAutoAGC.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>1362, 17</value>
@@ -10381,7 +10420,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;picRX2Squelch.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>16</value>
   </data>
   <data name="picSquelch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>Off</value>
@@ -10405,7 +10444,268 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;picSquelch.ZOrder" xml:space="preserve">
-    <value>37</value>
+    <value>38</value>
+  </data>
+  <data name="panelModeSpecificCW.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="panelModeSpecificCW.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="lblCWAPFGain.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="lblCWAPFGain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="lblCWAPFGain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>47, 65</value>
+  </data>
+  <data name="lblCWAPFGain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>62, 13</value>
+  </data>
+  <data name="lblCWAPFGain.TabIndex" type="System.Int32, mscorlib">
+    <value>124</value>
+  </data>
+  <data name="lblCWAPFGain.Text" xml:space="preserve">
+    <value>Gain:</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFGain.Name" xml:space="preserve">
+    <value>lblCWAPFGain</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFGain.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFGain.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFGain.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="lblCWAPFBandwidth.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="lblCWAPFBandwidth.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="lblCWAPFBandwidth.Location" type="System.Drawing.Point, System.Drawing">
+    <value>20, 41</value>
+  </data>
+  <data name="lblCWAPFBandwidth.Size" type="System.Drawing.Size, System.Drawing">
+    <value>87, 13</value>
+  </data>
+  <data name="lblCWAPFBandwidth.TabIndex" type="System.Int32, mscorlib">
+    <value>123</value>
+  </data>
+  <data name="lblCWAPFBandwidth.Text" xml:space="preserve">
+    <value>Bandwidth:</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFBandwidth.Name" xml:space="preserve">
+    <value>lblCWAPFBandwidth</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFBandwidth.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFBandwidth.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFBandwidth.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="lblCWAPFTune.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="lblCWAPFTune.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="lblCWAPFTune.Location" type="System.Drawing.Point, System.Drawing">
+    <value>44, 16</value>
+  </data>
+  <data name="lblCWAPFTune.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 13</value>
+  </data>
+  <data name="lblCWAPFTune.TabIndex" type="System.Int32, mscorlib">
+    <value>122</value>
+  </data>
+  <data name="lblCWAPFTune.Text" xml:space="preserve">
+    <value>Tune:</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFTune.Name" xml:space="preserve">
+    <value>lblCWAPFTune</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFTune.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFTune.Parent" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;lblCWAPFTune.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="grpCWAPF.Location" type="System.Drawing.Point, System.Drawing">
+    <value>115, 5</value>
+  </data>
+  <data name="grpCWAPF.Size" type="System.Drawing.Size, System.Drawing">
+    <value>215, 89</value>
+  </data>
+  <data name="grpCWAPF.TabIndex" type="System.Int32, mscorlib">
+    <value>121</value>
+  </data>
+  <data name="grpCWAPF.Text" xml:space="preserve">
+    <value>APF</value>
+  </data>
+  <data name="&gt;&gt;grpCWAPF.Name" xml:space="preserve">
+    <value>grpCWAPF</value>
+  </data>
+  <data name="&gt;&gt;grpCWAPF.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;grpCWAPF.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;grpCWAPF.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblCWSpeed.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="lblCWSpeed.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="lblCWSpeed.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 5</value>
+  </data>
+  <data name="lblCWSpeed.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 16</value>
+  </data>
+  <data name="lblCWSpeed.TabIndex" type="System.Int32, mscorlib">
+    <value>64</value>
+  </data>
+  <data name="lblCWSpeed.Text" xml:space="preserve">
+    <value>Speed:</value>
+  </data>
+  <data name="&gt;&gt;lblCWSpeed.Name" xml:space="preserve">
+    <value>lblCWSpeed</value>
+  </data>
+  <data name="&gt;&gt;lblCWSpeed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCWSpeed.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;lblCWSpeed.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="lblCWBreakInDelay.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblCWBreakInDelay.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="lblCWBreakInDelay.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="lblCWBreakInDelay.Location" type="System.Drawing.Point, System.Drawing">
+    <value>108, 22</value>
+  </data>
+  <data name="lblCWBreakInDelay.Size" type="System.Drawing.Size, System.Drawing">
+    <value>59, 13</value>
+  </data>
+  <data name="lblCWBreakInDelay.TabIndex" type="System.Int32, mscorlib">
+    <value>34</value>
+  </data>
+  <data name="lblCWBreakInDelay.Text" xml:space="preserve">
+    <value>Delay (ms):</value>
+  </data>
+  <data name="&gt;&gt;lblCWBreakInDelay.Name" xml:space="preserve">
+    <value>lblCWBreakInDelay</value>
+  </data>
+  <data name="&gt;&gt;lblCWBreakInDelay.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCWBreakInDelay.Parent" xml:space="preserve">
+    <value>grpSemiBreakIn</value>
+  </data>
+  <data name="&gt;&gt;lblCWBreakInDelay.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="grpSemiBreakIn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>115, 92</value>
+  </data>
+  <data name="grpSemiBreakIn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>215, 45</value>
+  </data>
+  <data name="grpSemiBreakIn.TabIndex" type="System.Int32, mscorlib">
+    <value>77</value>
+  </data>
+  <data name="grpSemiBreakIn.Text" xml:space="preserve">
+    <value>CW Break-In</value>
+  </data>
+  <data name="&gt;&gt;grpSemiBreakIn.Name" xml:space="preserve">
+    <value>grpSemiBreakIn</value>
+  </data>
+  <data name="&gt;&gt;grpSemiBreakIn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;grpSemiBreakIn.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;grpSemiBreakIn.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="lblCWPitchFreq.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblCWPitchFreq.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="lblCWPitchFreq.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>Off</value>
+  </data>
+  <data name="lblCWPitchFreq.Location" type="System.Drawing.Point, System.Drawing">
+    <value>202, 142</value>
+  </data>
+  <data name="lblCWPitchFreq.Size" type="System.Drawing.Size, System.Drawing">
+    <value>80, 13</value>
+  </data>
+  <data name="lblCWPitchFreq.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="lblCWPitchFreq.Text" xml:space="preserve">
+    <value>Pitch Freq (Hz):</value>
+  </data>
+  <data name="&gt;&gt;lblCWPitchFreq.Name" xml:space="preserve">
+    <value>lblCWPitchFreq</value>
+  </data>
+  <data name="&gt;&gt;lblCWPitchFreq.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;lblCWPitchFreq.Parent" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;lblCWPitchFreq.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="panelModeSpecificCW.Location" type="System.Drawing.Point, System.Drawing">
+    <value>499, 420</value>
+  </data>
+  <data name="panelModeSpecificCW.Size" type="System.Drawing.Size, System.Drawing">
+    <value>336, 165</value>
+  </data>
+  <data name="panelModeSpecificCW.TabIndex" type="System.Int32, mscorlib">
+    <value>124</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificCW.Name" xml:space="preserve">
+    <value>panelModeSpecificCW</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificCW.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificCW.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;panelModeSpecificCW.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <metadata name="panelDisplay.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -10570,7 +10870,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelDisplay.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>5</value>
   </data>
   <data name="nudPwrTemp2.Location" type="System.Drawing.Point, System.Drawing">
     <value>86, 547</value>
@@ -10594,7 +10894,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;nudPwrTemp2.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="nudPwrTemp.Location" type="System.Drawing.Point, System.Drawing">
     <value>86, 527</value>
@@ -10618,7 +10918,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;nudPwrTemp.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="pnlResizeMeter.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -10726,7 +11026,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;grpMultimeter.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>12</value>
   </data>
   <data name="panelFilter.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -11398,7 +11698,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelFilter.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>13</value>
   </data>
   <data name="panelRX2RF.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -11425,7 +11725,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelRX2RF.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>14</value>
   </data>
   <data name="ptbRX2Squelch.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -11458,7 +11758,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;ptbRX2Squelch.ZOrder" xml:space="preserve">
-    <value>16</value>
+    <value>17</value>
   </data>
   <data name="panelRX2DSP.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -11485,7 +11785,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelRX2DSP.ZOrder" xml:space="preserve">
-    <value>18</value>
+    <value>19</value>
   </data>
   <data name="btnHidden.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -11515,58 +11815,13 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnHidden.ZOrder" xml:space="preserve">
-    <value>20</value>
+    <value>21</value>
   </data>
   <data name="panelOptions.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="panelOptions.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
-  </data>
-  <data name="checkBoxTS1.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
-    <value>Button</value>
-  </data>
-  <data name="checkBoxTS1.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="checkBoxTS1.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
-  </data>
-  <data name="checkBoxTS1.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="checkBoxTS1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="checkBoxTS1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>8, 76</value>
-  </data>
-  <data name="checkBoxTS1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 23</value>
-  </data>
-  <data name="checkBoxTS1.TabIndex" type="System.Int32, mscorlib">
-    <value>84</value>
-  </data>
-  <data name="checkBoxTS1.Text" xml:space="preserve">
-    <value>???</value>
-  </data>
-  <data name="checkBoxTS1.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
-  </data>
-  <data name="checkBoxTS1.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;checkBoxTS1.Name" xml:space="preserve">
-    <value>checkBoxTS1</value>
-  </data>
-  <data name="&gt;&gt;checkBoxTS1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;checkBoxTS1.Parent" xml:space="preserve">
-    <value>panelOptions</value>
-  </data>
-  <data name="&gt;&gt;checkBoxTS1.ZOrder" xml:space="preserve">
-    <value>0</value>
   </data>
   <data name="panelOptions.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
@@ -11590,7 +11845,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelOptions.ZOrder" xml:space="preserve">
-    <value>21</value>
+    <value>22</value>
   </data>
   <data name="radBand2.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -12160,7 +12415,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelModeSpecificPhone.ZOrder" xml:space="preserve">
-    <value>55</value>
+    <value>56</value>
   </data>
   <data name="panelButtonBar.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -12454,7 +12709,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelButtonBar.ZOrder" xml:space="preserve">
-    <value>49</value>
+    <value>50</value>
   </data>
   <data name="panelVFOLabels.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -12754,7 +13009,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelVFOLabels.ZOrder" xml:space="preserve">
-    <value>53</value>
+    <value>54</value>
   </data>
   <data name="panelVFOALabels.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -13060,7 +13315,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelVFOALabels.ZOrder" xml:space="preserve">
-    <value>52</value>
+    <value>53</value>
   </data>
   <data name="panelVFOBLabels.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -13366,7 +13621,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelVFOBLabels.ZOrder" xml:space="preserve">
-    <value>50</value>
+    <value>51</value>
   </data>
   <data name="panelRX2Power.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -13459,7 +13714,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelRX2Power.ZOrder" xml:space="preserve">
-    <value>43</value>
+    <value>44</value>
   </data>
   <data name="chkRX2.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -13603,7 +13858,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblRF2.ZOrder" xml:space="preserve">
-    <value>44</value>
+    <value>45</value>
   </data>
   <data name="panelPower.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -13630,268 +13885,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelPower.ZOrder" xml:space="preserve">
-    <value>40</value>
-  </data>
-  <data name="panelModeSpecificCW.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="panelModeSpecificCW.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="lblCWAPFGain.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="lblCWAPFGain.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="lblCWAPFGain.Location" type="System.Drawing.Point, System.Drawing">
-    <value>47, 65</value>
-  </data>
-  <data name="lblCWAPFGain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>62, 13</value>
-  </data>
-  <data name="lblCWAPFGain.TabIndex" type="System.Int32, mscorlib">
-    <value>124</value>
-  </data>
-  <data name="lblCWAPFGain.Text" xml:space="preserve">
-    <value>Gain:</value>
-  </data>
-  <data name="&gt;&gt;lblCWAPFGain.Name" xml:space="preserve">
-    <value>lblCWAPFGain</value>
-  </data>
-  <data name="&gt;&gt;lblCWAPFGain.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblCWAPFGain.Parent" xml:space="preserve">
-    <value>grpCWAPF</value>
-  </data>
-  <data name="&gt;&gt;lblCWAPFGain.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="lblCWAPFBandwidth.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="lblCWAPFBandwidth.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="lblCWAPFBandwidth.Location" type="System.Drawing.Point, System.Drawing">
-    <value>20, 41</value>
-  </data>
-  <data name="lblCWAPFBandwidth.Size" type="System.Drawing.Size, System.Drawing">
-    <value>87, 13</value>
-  </data>
-  <data name="lblCWAPFBandwidth.TabIndex" type="System.Int32, mscorlib">
-    <value>123</value>
-  </data>
-  <data name="lblCWAPFBandwidth.Text" xml:space="preserve">
-    <value>Bandwidth:</value>
-  </data>
-  <data name="&gt;&gt;lblCWAPFBandwidth.Name" xml:space="preserve">
-    <value>lblCWAPFBandwidth</value>
-  </data>
-  <data name="&gt;&gt;lblCWAPFBandwidth.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblCWAPFBandwidth.Parent" xml:space="preserve">
-    <value>grpCWAPF</value>
-  </data>
-  <data name="&gt;&gt;lblCWAPFBandwidth.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="lblCWAPFTune.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="lblCWAPFTune.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="lblCWAPFTune.Location" type="System.Drawing.Point, System.Drawing">
-    <value>44, 16</value>
-  </data>
-  <data name="lblCWAPFTune.Size" type="System.Drawing.Size, System.Drawing">
-    <value>65, 13</value>
-  </data>
-  <data name="lblCWAPFTune.TabIndex" type="System.Int32, mscorlib">
-    <value>122</value>
-  </data>
-  <data name="lblCWAPFTune.Text" xml:space="preserve">
-    <value>Tune:</value>
-  </data>
-  <data name="&gt;&gt;lblCWAPFTune.Name" xml:space="preserve">
-    <value>lblCWAPFTune</value>
-  </data>
-  <data name="&gt;&gt;lblCWAPFTune.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblCWAPFTune.Parent" xml:space="preserve">
-    <value>grpCWAPF</value>
-  </data>
-  <data name="&gt;&gt;lblCWAPFTune.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="grpCWAPF.Location" type="System.Drawing.Point, System.Drawing">
-    <value>115, 5</value>
-  </data>
-  <data name="grpCWAPF.Size" type="System.Drawing.Size, System.Drawing">
-    <value>215, 89</value>
-  </data>
-  <data name="grpCWAPF.TabIndex" type="System.Int32, mscorlib">
-    <value>121</value>
-  </data>
-  <data name="grpCWAPF.Text" xml:space="preserve">
-    <value>APF</value>
-  </data>
-  <data name="&gt;&gt;grpCWAPF.Name" xml:space="preserve">
-    <value>grpCWAPF</value>
-  </data>
-  <data name="&gt;&gt;grpCWAPF.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;grpCWAPF.Parent" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;grpCWAPF.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="lblCWSpeed.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="lblCWSpeed.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="lblCWSpeed.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 5</value>
-  </data>
-  <data name="lblCWSpeed.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 16</value>
-  </data>
-  <data name="lblCWSpeed.TabIndex" type="System.Int32, mscorlib">
-    <value>64</value>
-  </data>
-  <data name="lblCWSpeed.Text" xml:space="preserve">
-    <value>Speed:</value>
-  </data>
-  <data name="&gt;&gt;lblCWSpeed.Name" xml:space="preserve">
-    <value>lblCWSpeed</value>
-  </data>
-  <data name="&gt;&gt;lblCWSpeed.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblCWSpeed.Parent" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;lblCWSpeed.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="lblCWBreakInDelay.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="lblCWBreakInDelay.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="lblCWBreakInDelay.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="lblCWBreakInDelay.Location" type="System.Drawing.Point, System.Drawing">
-    <value>108, 22</value>
-  </data>
-  <data name="lblCWBreakInDelay.Size" type="System.Drawing.Size, System.Drawing">
-    <value>59, 13</value>
-  </data>
-  <data name="lblCWBreakInDelay.TabIndex" type="System.Int32, mscorlib">
-    <value>34</value>
-  </data>
-  <data name="lblCWBreakInDelay.Text" xml:space="preserve">
-    <value>Delay (ms):</value>
-  </data>
-  <data name="&gt;&gt;lblCWBreakInDelay.Name" xml:space="preserve">
-    <value>lblCWBreakInDelay</value>
-  </data>
-  <data name="&gt;&gt;lblCWBreakInDelay.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblCWBreakInDelay.Parent" xml:space="preserve">
-    <value>grpSemiBreakIn</value>
-  </data>
-  <data name="&gt;&gt;lblCWBreakInDelay.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="grpSemiBreakIn.Location" type="System.Drawing.Point, System.Drawing">
-    <value>115, 92</value>
-  </data>
-  <data name="grpSemiBreakIn.Size" type="System.Drawing.Size, System.Drawing">
-    <value>215, 45</value>
-  </data>
-  <data name="grpSemiBreakIn.TabIndex" type="System.Int32, mscorlib">
-    <value>77</value>
-  </data>
-  <data name="grpSemiBreakIn.Text" xml:space="preserve">
-    <value>CW Break-In</value>
-  </data>
-  <data name="&gt;&gt;grpSemiBreakIn.Name" xml:space="preserve">
-    <value>grpSemiBreakIn</value>
-  </data>
-  <data name="&gt;&gt;grpSemiBreakIn.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBoxTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;grpSemiBreakIn.Parent" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;grpSemiBreakIn.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="lblCWPitchFreq.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="lblCWPitchFreq.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="lblCWPitchFreq.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>Off</value>
-  </data>
-  <data name="lblCWPitchFreq.Location" type="System.Drawing.Point, System.Drawing">
-    <value>202, 142</value>
-  </data>
-  <data name="lblCWPitchFreq.Size" type="System.Drawing.Size, System.Drawing">
-    <value>80, 13</value>
-  </data>
-  <data name="lblCWPitchFreq.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="lblCWPitchFreq.Text" xml:space="preserve">
-    <value>Pitch Freq (Hz):</value>
-  </data>
-  <data name="&gt;&gt;lblCWPitchFreq.Name" xml:space="preserve">
-    <value>lblCWPitchFreq</value>
-  </data>
-  <data name="&gt;&gt;lblCWPitchFreq.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LabelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;lblCWPitchFreq.Parent" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;lblCWPitchFreq.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="panelModeSpecificCW.Location" type="System.Drawing.Point, System.Drawing">
-    <value>499, 420</value>
-  </data>
-  <data name="panelModeSpecificCW.Size" type="System.Drawing.Size, System.Drawing">
-    <value>336, 165</value>
-  </data>
-  <data name="panelModeSpecificCW.TabIndex" type="System.Int32, mscorlib">
-    <value>124</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificCW.Name" xml:space="preserve">
-    <value>panelModeSpecificCW</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificCW.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PanelTS, Thetis, Version=2.10.3.12, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificCW.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;panelModeSpecificCW.ZOrder" xml:space="preserve">
-    <value>58</value>
+    <value>41</value>
   </data>
   <data name="panelRX2Filter.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -14362,7 +14356,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelRX2Filter.ZOrder" xml:space="preserve">
-    <value>22</value>
+    <value>23</value>
   </data>
   <data name="panelRX2Mode.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -14389,7 +14383,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelRX2Mode.ZOrder" xml:space="preserve">
-    <value>23</value>
+    <value>24</value>
   </data>
   <data name="panelRX2Display.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -14416,7 +14410,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelRX2Display.ZOrder" xml:space="preserve">
-    <value>24</value>
+    <value>25</value>
   </data>
   <data name="panelRX2Mixer.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -14506,7 +14500,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelRX2Mixer.ZOrder" xml:space="preserve">
-    <value>25</value>
+    <value>26</value>
   </data>
   <data name="panelMultiRX.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -14623,7 +14617,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelMultiRX.ZOrder" xml:space="preserve">
-    <value>26</value>
+    <value>27</value>
   </data>
   <data name="panelDisplay2.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -14653,7 +14647,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelDisplay2.ZOrder" xml:space="preserve">
-    <value>29</value>
+    <value>30</value>
   </data>
   <data name="panelDSP.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -14683,7 +14677,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelDSP.ZOrder" xml:space="preserve">
-    <value>30</value>
+    <value>31</value>
   </data>
   <data name="panelVFO.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -14773,7 +14767,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelVFO.ZOrder" xml:space="preserve">
-    <value>31</value>
+    <value>32</value>
   </data>
   <data name="panelSoundControls.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -14998,7 +14992,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelSoundControls.ZOrder" xml:space="preserve">
-    <value>32</value>
+    <value>33</value>
   </data>
   <data name="lblAF2.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -15034,7 +15028,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblAF2.ZOrder" xml:space="preserve">
-    <value>27</value>
+    <value>28</value>
   </data>
   <data name="lblPWR2.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -15073,7 +15067,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblPWR2.ZOrder" xml:space="preserve">
-    <value>28</value>
+    <value>29</value>
   </data>
   <data name="panelModeSpecificDigital.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -15304,7 +15298,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelModeSpecificDigital.ZOrder" xml:space="preserve">
-    <value>57</value>
+    <value>58</value>
   </data>
   <data name="panelMode.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -15337,7 +15331,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelMode.ZOrder" xml:space="preserve">
-    <value>41</value>
+    <value>42</value>
   </data>
   <data name="panelBandHF.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -15367,7 +15361,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelBandHF.ZOrder" xml:space="preserve">
-    <value>45</value>
+    <value>46</value>
   </data>
   <data name="txtVFOAFreq.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 20.25pt</value>
@@ -15754,7 +15748,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;grpVFOA.ZOrder" xml:space="preserve">
-    <value>36</value>
+    <value>37</value>
   </data>
   <data name="lblRX2ModeBigLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -16159,7 +16153,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;grpVFOB.ZOrder" xml:space="preserve">
-    <value>38</value>
+    <value>39</value>
   </data>
   <data name="btnBandHF.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
@@ -16297,7 +16291,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;grpVFOBetween.ZOrder" xml:space="preserve">
-    <value>35</value>
+    <value>36</value>
   </data>
   <data name="lblDisplayModeTop.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
@@ -16384,7 +16378,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;grpDisplaySplit.ZOrder" xml:space="preserve">
-    <value>34</value>
+    <value>35</value>
   </data>
   <data name="picRX2Meter.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -16465,7 +16459,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;grpRX2Meter.ZOrder" xml:space="preserve">
-    <value>33</value>
+    <value>34</value>
   </data>
   <data name="panelBandVHF.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -17122,7 +17116,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelBandVHF.ZOrder" xml:space="preserve">
-    <value>46</value>
+    <value>47</value>
   </data>
   <data name="panelModeSpecificFM.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -17392,7 +17386,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelModeSpecificFM.ZOrder" xml:space="preserve">
-    <value>56</value>
+    <value>57</value>
   </data>
   <data name="panelBandGEN.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -17455,7 +17449,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelBandGEN.ZOrder" xml:space="preserve">
-    <value>47</value>
+    <value>48</value>
   </data>
   <data name="panelMeterLabels.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -17521,7 +17515,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelMeterLabels.ZOrder" xml:space="preserve">
-    <value>48</value>
+    <value>49</value>
   </data>
   <data name="grpMultimeterMenus.Location" type="System.Drawing.Point, System.Drawing">
     <value>841, 105</value>
@@ -17542,7 +17536,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;grpMultimeterMenus.ZOrder" xml:space="preserve">
-    <value>51</value>
+    <value>52</value>
   </data>
   <data name="panelAndromedaMisc.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
@@ -17671,7 +17665,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panelAndromedaMisc.ZOrder" xml:space="preserve">
-    <value>54</value>
+    <value>55</value>
   </data>
   <data name="ptbSquelch.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Stretch</value>
@@ -17704,7 +17698,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;ptbSquelch.ZOrder" xml:space="preserve">
-    <value>42</value>
+    <value>43</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

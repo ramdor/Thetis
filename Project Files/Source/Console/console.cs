@@ -16457,10 +16457,10 @@ namespace Thetis
             }
         }
 
-        private int cat_apf_status = 0;
+        private int _cat_apf_status = 0;
         public int CATAPF
         {
-            get { return cat_apf_status; }
+            get { return _cat_apf_status; }
             set
             {
                 if (value == 0)
@@ -19048,6 +19048,36 @@ namespace Thetis
                 }
             }
         }
+        private int _apf_type = 3; // default to bi-quad
+        public int APFType
+        {
+            get { return _apf_type; }
+            set
+            {
+                if (value < 0 || value > 3) return;
+                if (value == _apf_type) return; // also prevents recurson from setup
+
+                _apf_type = value;
+                SetupForm.SetAPFType(_apf_type);
+
+                if (btnAPF_type == null) return; // belts & braces
+                switch (_apf_type)
+                {
+                    case 0:
+                        btnAPF_type.Text = "DP";
+                        break;
+                    case 1:
+                        btnAPF_type.Text = "MA";
+                        break;
+                    case 2:
+                        btnAPF_type.Text = "GA";
+                        break;
+                    case 3:
+                        btnAPF_type.Text = "BI";
+                        break;
+                }
+            }
+        }
 
         private bool _cat_ptt = false;
         public bool CATPTT
@@ -19165,20 +19195,6 @@ namespace Thetis
                 return channels_60m;
             }
         }
-
-        private bool pennylanepresent = true;
-        public bool PennyLanePresent
-        {
-            get { return pennylanepresent; }
-            set
-            {
-                pennylanepresent = true;
-                cmaster.CMSetTXOutputLevelRun();
-            }
-        }
-
-        public bool PennyPresent = false;
-        public bool MercuryPresent = false;
 
         private bool disable_6m_lna_on_rx = false;
         public bool Disable6mLNAonRX
@@ -32536,8 +32552,8 @@ namespace Thetis
                     SetupForm.RX2APFEnable = chkCWAPFEnabled.Checked;
                 else SetupForm.RX2APFEnable = SetupForm.RX2APFEnable;
 
-                if (chkCWAPFEnabled.Checked) cat_apf_status = 1; //-W2PA Added to enable extended CAT control
-                else cat_apf_status = 0;
+                if (chkCWAPFEnabled.Checked) _cat_apf_status = 1; //-W2PA Added to enable extended CAT control
+                else _cat_apf_status = 0;
             }
         }
 
@@ -55971,6 +55987,17 @@ namespace Thetis
             }
 
             _prevent_vsync_updates = false;
+        }
+        private void btnAPF_type_Click(object sender, EventArgs e)
+        {
+            if (IsSetupFormNull) return;
+
+            SetupForm.CycleAPFType();
+        }
+
+        private void btnAPF_type_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.DSPAudio_Tab);
         }
     }
 

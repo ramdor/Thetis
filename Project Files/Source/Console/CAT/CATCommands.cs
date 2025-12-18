@@ -1082,7 +1082,6 @@ namespace Thetis
             {
                 return parser.Error1;
             }
-
         }
 
         //-W2PA Sets or reads the APF bandwidth
@@ -1236,7 +1235,7 @@ namespace Thetis
 
 		}
 
-		public string ZZAI(string s)
+        public string ZZAI(string s)
 		{
 			if(console.SetupForm.AllowFreqBroadcast)
 			{
@@ -1412,6 +1411,35 @@ namespace Thetis
             else
                 return parser.Error1;
         }
+
+        public string ZZAY(string s) // AFP tYpe
+        {
+            int n = 0;
+            int x = 0;
+
+            if (s != "")
+            {
+                n = Convert.ToInt32(s);
+                n = Math.Max(0, n);
+                n = Math.Min(3, n);
+            }
+
+            if (s.Length == parser.nSet)
+            {
+                console.APFType = n;
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                x = console.APFType;
+				return x.ToString();
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+
 
         //Moves the RX2 bandswitch down one band
         public string ZZBA()

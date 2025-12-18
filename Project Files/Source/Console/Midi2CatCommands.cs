@@ -6647,6 +6647,62 @@ namespace Thetis
             }
             return CmdState.NoChange;
         }
+        public void APFType_doublepole(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                try
+                {
+                    commands.ZZAY("0");
+                }
+                catch { }
+            }
+        }
+        public void APFType_matched(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                try
+                {
+                    commands.ZZAY("1");
+                }
+                catch { }
+            }
+        }
+        public void APFType_gaussian(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                try
+                {
+                    commands.ZZAY("2");
+                }
+                catch { }
+            }
+        }
+        public void APFType_biquad(int msg, MidiDevice device)
+        {
+            if (msg == 127)
+            {
+                parser.nGet = 0;
+                parser.nSet = 1;
+
+                try
+                {
+                    commands.ZZAY("3");
+                }
+                catch { }
+            }
+        }
         #endregion
     }
 }

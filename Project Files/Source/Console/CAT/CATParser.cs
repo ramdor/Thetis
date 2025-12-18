@@ -634,6 +634,9 @@ namespace Thetis
                 case "ZZAU":
                     rtncmd = cmdlist.ZZAU(suffix);
                     break;
+                case "ZZAY":
+                    rtncmd = cmdlist.ZZAY(suffix);
+                    break;
                 case "ZZBA":
                     rtncmd = cmdlist.ZZBA();
                     break;
