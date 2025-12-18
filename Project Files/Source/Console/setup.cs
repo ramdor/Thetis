@@ -3670,7 +3670,7 @@ namespace Thetis
             dr["CompanderLevel"] = console.CPDRLevel;
             dr["MicGain"] = console.Mic;
             dr["FMMicGain"] = console.FMMic;
-            dr["MicMute"] = console.MicMute;
+            dr["MicMute"] = console.MicMute; // NOTE: although called MicMute, true = mic in use
 
             dr["Lev_On"] = chkDSPLevelerEnabled.Checked;
             //dr["Lev_Slope"] = (int)udDSPLevelerSlope.Value;
@@ -9580,7 +9580,7 @@ namespace Thetis
 
             console.Mic = (int)dr["MicGain"];
             console.FMMic = (int)dr["FMMicGain"];
-            console.MicMute = (bool)dr["MicMute"]; //MW0LGE_21f
+            console.MicMute = (bool)dr["MicMute"]; //MW0LGE_21f // NOTE: although called MicMute, true = mic in use
 
             chkDSPLevelerEnabled.Checked = (bool)dr["Lev_On"];
             //udDSPLevelerSlope.Value = (int)dr["Lev_Slope"];
@@ -36976,6 +36976,18 @@ namespace Thetis
             console.VFOsyncFrequency = chkVFOsync_freq.Checked;
             console.VFOsyncMode = chkVFOsync_mode.Checked;
             console.VFOsyncFilter = chkVFOsync_filter.Checked;
+            if(radVFOSYNC_ab.Checked)
+            {
+                console.VFOinitialAction = VFOSYNCinit.VFO_A_to_B;
+            }
+            else if(radVFOSYNC_ba.Checked)
+            {
+                console.VFOinitialAction = VFOSYNCinit.VFO_B_to_A;
+            }
+            else
+            {
+                console.VFOinitialAction = VFOSYNCinit.Nothing;
+            }
         }
 
         private bool[] _old_n1mm_state = new bool[2] { false, false };

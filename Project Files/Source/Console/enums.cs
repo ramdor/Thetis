@@ -475,5 +475,12 @@ namespace Thetis
         SerialCat,
         TCI
     }
+
+    public enum VFOSYNCinit
+    {
+        Nothing = 0,
+        VFO_A_to_B,
+        VFO_B_to_A
+    }
     #endregion
 }

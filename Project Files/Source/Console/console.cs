@@ -81,6 +81,8 @@ namespace Thetis
 
         public const int MAX_FPS = 640;
 
+        
+
         #region Variable Declarations
         // ======================================================
         // Variable Declarations
@@ -1508,10 +1510,14 @@ namespace Thetis
                 }
                 else
                 {
-                    string msg = ex.Message + "\n\n" + ex.StackTrace.ToString();
-                    if (ex.InnerException != null) msg += "\n\n" + ex.InnerException.Message;
+                    //string msg = ex.Message + "\n\n" + ex.StackTrace.ToString();
+                    //if (ex.InnerException != null) msg += "\n\n" + ex.InnerException.Message;
+                    //MessageBox.Show(msg, "Fatal Error",
+                    //    MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    string msg = build_exception_text(ex);
                     MessageBox.Show(msg, "Fatal Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
                 Application.Exit();
             }
@@ -1520,6 +1526,22 @@ namespace Thetis
             {
                 Application.Restart();
             }
+        }
+        static string build_exception_text(Exception ex)
+        {
+            StringBuilder sb = new StringBuilder();
+            Exception current = ex;
+
+            while (current != null)
+            {
+                sb.AppendLine(current.GetType().FullName);
+                sb.AppendLine(current.Message);
+                sb.AppendLine(current.StackTrace);
+                sb.AppendLine();
+                current = current.InnerException;
+            }
+
+            return sb.ToString();
         }
         private static bool a()
         {
@@ -15564,32 +15586,18 @@ namespace Thetis
 
         public CheckState VFOLock { get; set; } = CheckState.Unchecked;
 
-        private bool vfoA_lock = false;
+        private bool _vfoA_lock = false;
         public bool VFOALock
         {
-            get { return vfoA_lock; }
+            get { return _vfoA_lock; }
             set
             {
-                bool old_state = vfoA_lock;
-                //bool enabled = true;
-                vfoA_lock = value;
-                //switch (vfoA_lock)
-                //{
-                //    case false:
-                //        txtVFOAFreq.Enabled = true;
-                //        break;
-                //    case true:
-                //        enabled = false;
-                //        txtVFOAFreq.Enabled = false;
-                //        break;
-                //}
-                //[2.3.10.6]MW0LGE whoever did the commented code above needs to step away from the computer, how about if else????
-                bool enabled = !vfoA_lock;
-                txtVFOAFreq.Enabled = enabled;
-                if (vfoA_lock) chkVFOSync.Checked = false;
+                bool old_state = _vfoA_lock;
+                _vfoA_lock = value;
 
-                if (vfoA_lock)
+                if (_vfoA_lock)
                 {
+                    chkVFOSync.Checked = false; // disable vfo sync if locking
                     DisableAllBands();
                     DisableAllModes();
                 }
@@ -15599,61 +15607,51 @@ namespace Thetis
                     EnableAllModes();
                 }
 
+                bool enabled = !_vfoA_lock;
+                txtVFOAFreq.Enabled = enabled;
                 btnVFOBtoA.Enabled = enabled;
                 btnVFOSwap.Enabled = enabled;
-
                 btnMemoryQuickRestore.Enabled = enabled;
 
-                if (vfoA_lock)
+                if (_vfoA_lock)
                     lblLockLabel.BackColor = System.Drawing.Color.Blue;
                 else
                     lblLockLabel.BackColor = System.Drawing.Color.Transparent;
                 lblLockLabel.Invalidate();
 
-                AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, true, vfoA_lock);
+                AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, true, _vfoA_lock);
 
-                chkVFOLock.Checked = vfoA_lock;
+                chkVFOLock.Checked = _vfoA_lock;
 
-                if (vfoA_lock != old_state)
+                if (_vfoA_lock != old_state)
                 {
-                    VfoALockChangedHandlers?.Invoke(1, old_state, vfoA_lock);
-                    old_state = vfoA_lock;
+                    VfoALockChangedHandlers?.Invoke(1, old_state, _vfoA_lock);
+                    old_state = _vfoA_lock;
                 }
 
                 SetGeneralSetting(0, OtherButtonId.LOCK_A, chkVFOLock.Checked);
             }
         }
 
-        private bool vfoB_lock = false;
+        private bool _vfoB_lock = false;
         public bool VFOBLock
         {
-            get { return vfoB_lock; }
+            get { return _vfoB_lock; }
             set
             {
-                bool old_state = vfoB_lock;
-                //bool enabled = true;
-                vfoB_lock = value;
-                //switch (vfoB_lock)
-                //{
-                //    case false:
-                //        txtVFOBFreq.Enabled = true;
-                //        break;
-                //    case true:
-                //        enabled = false;
-                //        txtVFOBFreq.Enabled = false;
-                //        chkVFOSync.Checked = false;
-                //        break;
-                //}
-                //[2.3.10.6]MW0LGE whoever did the commented code above needs to step away from the computer, how about if else????
-                bool enabled = !vfoB_lock;
-                txtVFOBFreq.Enabled = enabled;
-                if (vfoB_lock) chkVFOSync.Checked = false;
+                bool old_state = _vfoB_lock;
+                _vfoB_lock = value;
 
+                if (_vfoB_lock)
+                {
+                    chkVFOSync.Checked = false;
+                }
+
+                bool enabled = !_vfoB_lock;
+                txtVFOBFreq.Enabled = enabled;
                 comboRX2Band.Enabled = enabled;
                 btnVFOAtoB.Enabled = enabled;
                 chkVFOSync.Enabled = enabled;
-
-
                 radRX2ModeLSB.Enabled = enabled;
                 radRX2ModeUSB.Enabled = enabled;
                 radRX2ModeDSB.Enabled = enabled;
@@ -15667,20 +15665,19 @@ namespace Thetis
                 radRX2ModeDIGU.Enabled = enabled;
                 radRX2ModeDRM.Enabled = enabled;
 
-                if (vfoB_lock)
+                if (_vfoB_lock)
                     lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
                 else
                     lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;
 
-                AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, false, vfoB_lock); // <- this use of false is totally wrong, because if RX2 is in use, then lock B is RX2.
-                                                                                         // I just cba to fix it, as this sort of thing keeps being done. -LGE
+                AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, !RX2Enabled, _vfoB_lock);                                                                                          
 
-                chkVFOBLock.Checked = vfoB_lock;
+                chkVFOBLock.Checked = _vfoB_lock;
 
-                if (vfoB_lock != old_state)
+                if (_vfoB_lock != old_state)
                 {
-                    VfoBLockChangedHandlers?.Invoke(RX2Enabled ? 2 : 1, old_state, vfoB_lock);
-                    old_state = vfoB_lock;
+                    VfoBLockChangedHandlers?.Invoke(RX2Enabled ? 2 : 1, old_state, _vfoB_lock);
+                    old_state = _vfoB_lock;
                 }
 
                 SetGeneralSetting(0, OtherButtonId.LOCK_B, chkVFOBLock.Checked);
@@ -18038,33 +18035,19 @@ namespace Thetis
         // Added 06/24/05 BT for CAT commands
         public bool CATVFOLock
         {
-            get { return chkVFOLock.Checked; }
+            get { return VFOALock; }
             set
             {
-                //[2.10.3.5]MW0LGE has to be a joke, just dupe code why not
                 VFOALock = value;
-
-                //chkVFOLock.Checked = value;
-                //if (value == true)
-                //    lblLockLabel.BackColor = System.Drawing.Color.Blue;
-                //else
-                //    lblLockLabel.BackColor = System.Drawing.Color.Transparent;
             }
         }
 
         public bool CATVFOBLock
         {
-            get { return chkVFOBLock.Checked; }
+            get { return VFOBLock; }
             set
             {
-                //[2.10.3.5]MW0LGE has to be a joke, just dupe code why not
                 VFOBLock = value;
-
-                //chkVFOBLock.Checked = value;
-                //if (value == true)
-                //    lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
-                //else
-                //    lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;
             }
         }
 
@@ -18863,7 +18846,7 @@ namespace Thetis
             }
             set
             {
-                if (!_force_vfo_update && vfoA_lock || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed the state check //[2.10.3.7]MW0LGE always process if initialising
+                if ((!_force_vfo_update && _vfoA_lock) || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed the state check //[2.10.3.7]MW0LGE always process if initialising
                 if (!this.InvokeRequired)
                 {
                     VFOAUpdate(value);
@@ -18923,7 +18906,7 @@ namespace Thetis
 
             set
             {
-                if (!_force_vfo_update && vfoA_lock || IsSetupFormNull) return; //[2.10.3.6]MW0LGE removed the state check //[2.10.3.7]MW0LGE always process if initialising
+                if ((!_force_vfo_update && _vfoA_lock) || IsSetupFormNull) return; //[2.10.3.6]MW0LGE removed the state check //[2.10.3.7]MW0LGE always process if initialising
                 if (!this.InvokeRequired)
                 {
                     VFOASubUpdate(value);
@@ -18945,7 +18928,7 @@ namespace Thetis
             }
             set
             {
-                if (!_force_vfo_update && (vfoB_lock || IsSetupFormNull)) return; //[2.10.3.5]MW0LGE removed state check //[2.10.3.7]MW0LGE always process if initialising
+                if ((!_force_vfo_update && _vfoB_lock) || IsSetupFormNull) return; //[2.10.3.5]MW0LGE removed state check //[2.10.3.7]MW0LGE always process if initialising
                 value = Math.Max(0, value);
                 if (!this.InvokeRequired)
                 {
@@ -27243,6 +27226,8 @@ namespace Thetis
                     //[2.10.3.6]MW0LGE modifications to use setup config for swr and tune ignore power. Implements #221 (https://github.com/ramdor/Thetis/issues/221)
                     if (alexpresent || apollopresent)
                     {
+                        // open antenna connection dectection, ignored if tuning or 8000 model
+
                         // in following 'if', K2UE recommends not checking open antenna for the 8000 model
                         // if (swrprotection && alex_fwd > 10.0f && (alex_fwd - alex_rev) < 1.0f)
                         //-W2PA Changed to allow 35w - some amplifier tuners need about 30w to reliably start working
@@ -27254,12 +27239,17 @@ namespace Thetis
                             NetworkIO.SWRProtect = 0.01f;
                             chkMOX.Checked = false;
 
-                            MessageBox.Show("Please check your antenna connection.",
-                            "High SWR condition detected",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning,
-                            MessageBoxDefaultButton.Button1,
-                            Common.MB_TOPMOST);
+                            if (this.InvokeRequired)
+                            {
+                                this.Invoke(new MethodInvoker(() =>
+                                {
+                                    checkAntennaWarning();
+                                }));
+                            }
+                            else
+                            {
+                                checkAntennaWarning();
+                            }
 
                             goto end;
                         }
@@ -27380,6 +27370,15 @@ namespace Thetis
             calfwdpower = 0;
             alex_swr = 0;
             average_drivepwr = 0;
+        }
+        private void checkAntennaWarning()
+        {
+            MessageBox.Show("Please check your antenna connection.",
+            "High SWR condition detected",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning,
+            MessageBoxDefaultButton.Button1,
+            Common.MB_TOPMOST);
         }
 
         private float _swrProtectionLimit = 2.0f;
@@ -30448,9 +30447,9 @@ namespace Thetis
         }
 
         private volatile bool _mic_muted = false;
-        public bool MicMute
+        public bool MicMute // NOTE: although called MicMute, true = mic in use
         {
-            get { return _mic_muted; }
+            get { return chkMicMute.Checked; }
             set 
             {
                 if (value != chkMicMute.Checked)
@@ -32047,22 +32046,12 @@ namespace Thetis
         {
             if (chkVFOLock.Checked == VFOALock) return;
             VFOALock = chkVFOLock.Checked;
-            //if (chkVFOLock.Checked == true)//[2.10.3.6]MW0LGE moved this to vfoalock property
-            //    lblLockLabel.BackColor = System.Drawing.Color.Blue;
-            //else
-            //    lblLockLabel.BackColor = System.Drawing.Color.Transparent;
-            //AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, true, chkVFOLock.Checked); 
         }
 
         private void chkVFOBLock_CheckedChanged(object sender, EventArgs e)
         {
             if (chkVFOBLock.Checked == VFOBLock) return;
             VFOBLock = chkVFOBLock.Checked;
-            //if (chkVFOBLock.Checked == true)//[2.10.3.6]MW0LGE moved this to vfoblock property
-            //    lblRX2LockLabel.BackColor = System.Drawing.Color.Blue;
-            //else
-            //    lblRX2LockLabel.BackColor = System.Drawing.Color.Transparent;
-            //AndromedaIndicatorCheck(EIndicatorActions.eINVFOLock, false, chkVFOBLock.Checked);
         }
         private void repopulateForms()
         {
@@ -41739,7 +41728,8 @@ namespace Thetis
                     chkX2TR.Checked = chkFWCATU.Checked;
                 }
 
-                txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+                //txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+                handleVfoSyncInitial();
             }
             else
             {
@@ -48215,7 +48205,7 @@ namespace Thetis
             //max bin display
             if (_display_max_bin_enabled[rx-1] && rx == 1) setupDisplayMaxBinDetect(rx, false, true);
 
-            handleVfoSyncFrequency(rx, newFreq, false);
+            handleVfoSyncFrequency(rx, false);
         }
         private void OnVFOBFrequencyChangeHandler(Band oldBand, Band newBand, DSPMode oldMode, DSPMode newMode, Filter oldFilter, Filter newFilter, double oldFreq, double newFreq, double oldCentreF, double newCentreF, bool oldCTUN, bool newCTUN, int oldZoomSlider, int newZoomSlider, double offset, int rx)
         {
@@ -48232,7 +48222,7 @@ namespace Thetis
             //max bin display
             if (_display_max_bin_enabled[rx - 1] && rx == 2) setupDisplayMaxBinDetect(rx, false, true);
 
-            handleVfoSyncFrequency(rx, newFreq, true);
+            handleVfoSyncFrequency(rx, true);
         }
 
         private void OnMoxChangeHandler(int rx, bool oldMox, bool newMox)
@@ -55340,7 +55330,7 @@ namespace Thetis
             switch (id)
             {
                 case OtherButtonId.MIC:
-                    MicMute = state;
+                    MicMute = state; // NOTE: although called MicMute, true = mic in use
                     return true;
                 case OtherButtonId.COMP:
                     CPDR = state;
@@ -55879,6 +55869,7 @@ namespace Thetis
         private bool _vfo_sync_frequency = false;
         private bool _vfo_sync_mode = false;
         private bool _vfo_sync_filter = false;
+        private VFOSYNCinit _vfo_sync_initial_action = VFOSYNCinit.Nothing; 
         public bool VFOsyncFrequency
         {
             get { return _vfo_sync_frequency; }
@@ -55894,8 +55885,52 @@ namespace Thetis
             get { return _vfo_sync_filter; }
             set { _vfo_sync_filter = value; }
         }
+        public VFOSYNCinit VFOinitialAction
+        {
+            get { return _vfo_sync_initial_action; }
+            set { _vfo_sync_initial_action = value; }
+        }
+        private void handleVfoSyncInitial()
+        {
+            if (!VFOSync || _prevent_vsync_updates) return;
+            _prevent_vsync_updates = true;
+            switch (_vfo_sync_initial_action)
+            {
+                case VFOSYNCinit.Nothing:
+                    break;
+                case VFOSYNCinit.VFO_A_to_B:
+                    if(RX2Enabled)
+                    {
+                        if (_vfo_sync_frequency) VFOBFreq = VFOAFreq;
+                        if (_vfo_sync_mode) RX2DSPMode = RX1DSPMode;
+                        if (_vfo_sync_filter) RX2Filter = RX1Filter;
+                    }
+                    else
+                    {
+                        if (_vfo_sync_frequency) VFOBFreq = VFOAFreq;
+                        // set these, even if rx2 not in use, so if rx2 is enabled, it will already match
+                        if (_vfo_sync_mode) RX2DSPMode = RX1DSPMode;
+                        if (_vfo_sync_filter) RX2Filter = RX1Filter;
+                    }
+                    break;
+                case VFOSYNCinit.VFO_B_to_A:
+                    if (RX2Enabled)
+                    {
+                        if (_vfo_sync_frequency) VFOAFreq = VFOBFreq;
+                        if (_vfo_sync_mode) RX1DSPMode = RX2DSPMode;
+                        if (_vfo_sync_filter) RX1Filter = RX2Filter;
+                    }
+                    else
+                    {
+                        if (_vfo_sync_frequency) VFOAFreq = VFOBFreq;
+                        // mode/filter not required as there is only a single mode/filter used for rx1
+                    }
+                    break;
+            }
+            _prevent_vsync_updates = false;
+        }
         private bool _prevent_vsync_updates = false; // to prevent recursive updates
-        private void handleVfoSyncFrequency(int rx, double frequency, bool vfoB)
+        private void handleVfoSyncFrequency(int rx, bool b_to_a)
         {
             if (!VFOSync) return;
             if (!_vfo_sync_frequency || _prevent_vsync_updates) return;
@@ -55904,7 +55939,7 @@ namespace Thetis
             switch (rx)
             {
                 case 1:
-                    if (vfoB)
+                    if (b_to_a)
                     {
                         VFOAFreq = VFOBFreq;
                     }
@@ -55917,7 +55952,7 @@ namespace Thetis
                     handleVfoSyncMode(1, RX1DSPMode);
                     break;
                 case 2:
-                    if (vfoB)
+                    if (b_to_a)
                     {
                         VFOAFreq = VFOBFreq; //vfob will always be changing for rx2
                         _prevent_vsync_updates = false;
