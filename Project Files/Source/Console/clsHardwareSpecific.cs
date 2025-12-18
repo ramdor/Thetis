@@ -814,5 +814,27 @@ namespace Thetis
             }
         }
         #endregion
+
+        #region ATTENUATION
+        public static bool HasSteppedAttenuation(int rx)
+        {
+            if (rx < 1 || rx > 2) return false;
+
+            if (rx == 1) return true; // RX1 always has stepped attenuation
+
+            //rx 2+
+            switch (_model)
+            {
+                case HPSDRModel.HERMES:
+                case HPSDRModel.ANAN10:
+                case HPSDRModel.ANAN10E:
+                case HPSDRModel.ANAN100:
+                case HPSDRModel.ANAN100B:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+        #endregion
     }
 }

@@ -2181,7 +2181,7 @@ namespace Thetis
             qsk_sidetone_volume = SetupForm.TXAF;
             non_qsk_agc = RX1AGCMode;
             non_qsk_agc_hang_thresh = SetupForm.AGCRX1HangThreshold;//SetupForm.AGCHangThreshold; //MW0LGE_21k8
-            non_qsk_ATTOnTX = m_bAttontx;
+            non_qsk_ATTOnTX = m_bATTonTX;
             non_qsk_ATTOnTXVal = SetupForm.ATTOnTX;
             non_qsk_breakin_delay = break_in_delay;
             RX1Band_changing_to = RX1Band;
@@ -10920,7 +10920,7 @@ namespace Thetis
                 if (!initializing)
                 {
                     setTXstepAttenuatorForBand(_tx_band, _tx_attenuator_data); //[2.10.3.6]MW0LGE att_fixes #399
-                    if (m_bAttontx)
+                    if (m_bATTonTX)
                     {
                         //int txatt = getTXstepAttenuatorForBand(_tx_band);
                         
@@ -10950,7 +10950,7 @@ namespace Thetis
                     //******Red Pitaya BODGE*******
                     //[2.10.3.9]MW0LGE This is not ideal, but a bodge to get the PedPitaya to TX attenuate correctly
                     //I am not entirely sure why this is needed, perhaps an issue in the RP firmware
-                    if (_mox && m_bAttontx && HardwareSpecific.Model == HPSDRModel.REDPITAYA)
+                    if (_mox && m_bATTonTX && HardwareSpecific.Model == HPSDRModel.REDPITAYA)
                     {
                         //note: I am usure if the RP would handle rx2 being changed as below, but it is here for completeness
 
@@ -12335,7 +12335,7 @@ namespace Thetis
             set { allow_mox_bypass = value; }
         }
 
-        private bool _allow_micvox_bypass = false;
+        private volatile bool _allow_micvox_bypass = false;
         public bool AllowMICVOXBypass
         {
             get { return _allow_micvox_bypass; }
@@ -13528,12 +13528,14 @@ namespace Thetis
             }
         }
 
+        private volatile bool _vox_enable = false;
         public bool VOXEnable
         {
             get
             {
-                if (chkVOX != null) return chkVOX.Checked;
-                else return false;
+                return _vox_enable;
+                //if (chkVOX != null) return chkVOX.Checked;
+                //else return false;
             }
             set
             {
@@ -19591,19 +19593,19 @@ namespace Thetis
             }
         }
 
-        private bool m_bAttontx = true;
+        private bool m_bATTonTX = true;
         public bool ATTOnTX
         {
-            get { return m_bAttontx; }
+            get { return m_bATTonTX; }
             set
             {
                 if (!value && _auto_attTX_when_not_in_ps) return; // ignore in this case
-                m_bAttontx = value;
+                m_bATTonTX = value;
                 updateAttNudsCombos();
 
                 if (PowerOn)
                 {
-                    if (m_bAttontx)
+                    if (m_bATTonTX)
                     {
                         int txatt = getTXstepAttenuatorForBand(_tx_band);
                         
@@ -20380,7 +20382,7 @@ namespace Thetis
             }
         }
 
-        private bool vac_enabled = false;
+        private volatile bool vac_enabled = false;
         public bool VACEnabled
         {
             get { return vac_enabled; }
@@ -20398,7 +20400,7 @@ namespace Thetis
             }
         }
 
-        private bool vac2_enabled = false;
+        private volatile bool vac2_enabled = false;
         public bool VAC2Enabled
         {
             get { return vac2_enabled; }
@@ -26696,7 +26698,8 @@ namespace Thetis
                 {
                     bool mic_ptt = (dotdashptt & 0x01) != 0; // PTT from radio
                     bool cw_ptt = CWInput.KeyerPTT && _current_breakin_mode == BreakIn.Semi; // CW serial PTT  //[2.10.3.9]MW0LGE only want to do this on semi breakin
-                    bool vox_ptt = Audio.VOXActive;
+                    bool vox_ok = !_mic_muted || ((vac_enabled || vac2_enabled) && !_allow_micvox_bypass); // fix for #596
+                    bool vox_ptt = vox_ok && Audio.VOXActive;
                     bool cat_ptt = (_ptt_bit_bang_enabled && serialPTT != null && serialPTT.isPTT()) | // CAT serial PTT
                                    (!_ptt_bit_bang_enabled && CWInput.CATPTT) | _cat_ptt;
 
@@ -27003,7 +27006,7 @@ namespace Thetis
                 return;
             }
 
-            if (!_mox && m_bAttontx && !initializing)
+            if (!_mox && m_bATTonTX && !initializing)
             {
                 if (update_preamp_mode && !update_preamp_mutex)
                 {
@@ -28842,7 +28845,7 @@ namespace Thetis
                 Thread.Sleep(100); // wait for hardware to settle before starting audio (possible sample rate change)
                 psform.ForcePS();
 
-                if (m_bAttontx)
+                if (m_bATTonTX)
                 {
                     int txatt = getTXstepAttenuatorForBand(_tx_band);
                     
@@ -30443,10 +30446,22 @@ namespace Thetis
             if (sliderForm != null)
                 sliderForm.RX1RFGainAGC = ptbRF.Value;
         }
+
+        private volatile bool _mic_muted = false;
         public bool MicMute
         {
-            get { return chkMicMute.Checked; }
-            set { chkMicMute.Checked = value; }
+            get { return _mic_muted; }
+            set 
+            {
+                if (value != chkMicMute.Checked)
+                {
+                    chkMicMute.Checked = value;
+                }
+                else
+                {
+                    chkMicMute_CheckedChanged(this, EventArgs.Empty);
+                }
+            }
         }
         private void chkMicMute_CheckedChanged(object sender, System.EventArgs e)
         {
@@ -30524,6 +30539,7 @@ namespace Thetis
                 }
 
                 Audio.MicPreamp = Math.Pow(10.0, gain_db / 20.0); // convert to scalar 
+                _mic_muted = false;
             }
             else
             {
@@ -30535,6 +30551,8 @@ namespace Thetis
                 }
 
                 Audio.MicPreamp = 0.0;
+                _mic_muted = true;
+            }
             }
         }
         private void ptbCWSpeed_Scroll(object sender, System.EventArgs e)
@@ -30554,9 +30572,11 @@ namespace Thetis
 
         private void chkVOX_CheckedChanged(object sender, System.EventArgs e)
         {
-            if (!IsSetupFormNull) SetupForm.VOXEnable = chkVOX.Checked;
+            _vox_enable = chkVOX.Checked;
 
-            if (chkVOX.Checked)
+            if (!IsSetupFormNull) SetupForm.VOXEnable = _vox_enable;
+
+            if (_vox_enable)
             {
                 chkVOX.BackColor = button_selected_color;
             }
@@ -30963,8 +30983,8 @@ namespace Thetis
                     udTXStepAttData.Location = udRX1StepAttData.Location;
                     udTXStepAttData.Parent = udRX1StepAttData.Parent;
                     udTXStepAttData.BringToFront();
-                    udTXStepAttData.Visible = m_bAttontx;
-                    lblPreamp.Text = m_bAttontx ? "[S-ATT]" : (_rx1_step_att_enabled ? "S-ATT" : "ATT");
+                    udTXStepAttData.Visible = m_bATTonTX;
+                    lblPreamp.Text = m_bATTonTX ? "[S-ATT]" : (_rx1_step_att_enabled ? "S-ATT" : "ATT");
 
                     if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
                     {
@@ -30994,8 +31014,8 @@ namespace Thetis
                         udTXStepAttData.Location = udRX2StepAttData.Location;
                         udTXStepAttData.Parent = udRX2StepAttData.Parent;
                         udTXStepAttData.BringToFront();
-                        udTXStepAttData.Visible = m_bAttontx;
-                        lblRX2Preamp.Text = m_bAttontx ? "[S-ATT]" : (_rx2_step_att_enabled ? "S-ATT" : "ATT");
+                        udTXStepAttData.Visible = m_bATTonTX;
+                        lblRX2Preamp.Text = m_bATTonTX ? "[S-ATT]" : (_rx2_step_att_enabled ? "S-ATT" : "ATT");
                     }
                 }
                 else
@@ -31279,7 +31299,7 @@ namespace Thetis
                     }
                 }
 
-                if (m_bAttontx)
+                if (m_bATTonTX)
                 {
                     if (HardwareSpecific.Model == HPSDRModel.HPSDR)
                     {
@@ -31383,9 +31403,11 @@ namespace Thetis
                 Audio.RX1BlankDisplayTX = blank_rx1_on_vfob_tx;
 
                 if (HardwareSpecific.Model == HPSDRModel.HERMESLITE)
-                    AutoTuningHL2(ProtocolEvent.Idle);  // MI0BOT: Stop the auto tune
 
-                if (m_bAttontx)
+                    AutoTuningHL2(ProtocolEvent.Idle);  // MI0BOT: Stop the auto tune
+                    
+                if (m_bATTonTX)
+
                 {
                     if (HardwareSpecific.Model == HPSDRModel.HPSDR)
                     {

@@ -16381,15 +16381,17 @@ namespace Thetis
             //setup rx1
             chkHermesStepAttenuator_CheckedChanged(this, EventArgs.Empty);
 
-            //adc's the same, always use the state of RX1
-            if (nRX1ADCinUse == nRX2ADCinUse && chkRX2StepAtt.Checked != chkHermesStepAttenuator.Checked)
+            if (HardwareSpecific.HasSteppedAttenuation(2))
             {
-                //different settings
-                chkRX2StepAtt.Checked = chkHermesStepAttenuator.Checked; //will cause update event
-            }
-            else
-            {
-                chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
+                //adc's the same, always use the state of RX1
+                if (nRX1ADCinUse == nRX2ADCinUse && chkRX2StepAtt.Checked != chkHermesStepAttenuator.Checked)
+                {
+                    chkRX2StepAtt.Checked = chkHermesStepAttenuator.Checked; //will cause update event
+                }
+                else
+                {
+                    chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
+                }
             }
         }
 
@@ -16412,7 +16414,18 @@ namespace Thetis
 
                 int nRX1ADCinUse = console.GetADCInUse(rx1);
                 int nRX2ADCinUse = console.GetADCInUse(rx2);
-                if (nRX1ADCinUse == nRX2ADCinUse && chkRX2StepAtt.Checked != chkHermesStepAttenuator.Checked) chkRX2StepAtt.Checked = chkHermesStepAttenuator.Checked;
+
+                if (HardwareSpecific.HasSteppedAttenuation(2))
+                {
+                    if (nRX1ADCinUse == nRX2ADCinUse && chkRX2StepAtt.Checked != chkHermesStepAttenuator.Checked)
+                    {
+                        chkRX2StepAtt.Checked = chkHermesStepAttenuator.Checked;
+                    }
+                    else
+                    {
+                        chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
+                    }
+                }
             }
         }
 
@@ -16467,7 +16480,18 @@ namespace Thetis
 
                     int nRX1ADCinUse = console.GetADCInUse(rx1);
                     int nRX2ADCinUse = console.GetADCInUse(rx2);
-                    if (nRX1ADCinUse == nRX2ADCinUse && chkHermesStepAttenuator.Checked != chkRX2StepAtt.Checked) chkHermesStepAttenuator.Checked = chkRX2StepAtt.Checked;
+
+                if (HardwareSpecific.HasSteppedAttenuation(2)) // dont bother setting 1 if 2 not present
+                {
+                    if (nRX1ADCinUse == nRX2ADCinUse && chkHermesStepAttenuator.Checked != chkRX2StepAtt.Checked)
+                    {
+                        chkHermesStepAttenuator.Checked = chkRX2StepAtt.Checked;
+                    }
+                    else
+                    {
+                        chkHermesStepAttenuator_CheckedChanged(this, EventArgs.Empty);
+                    }
+                }
                 }
             }
         }
