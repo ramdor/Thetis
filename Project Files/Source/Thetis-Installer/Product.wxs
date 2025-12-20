@@ -197,11 +197,17 @@
          Target="[INSTALLFOLDER]Thetis-CAT-Command-Reference-Guide-V3.pdf"
          WorkingDirectory="INSTALLFOLDER" />
 
-		  <Shortcut Id="cmASIOGuideShortcut"
-            Name="cmASIOGuide"
-            Description="ChannelMaster ASIO Guide"
-            Target="[INSTALLFOLDER]cmASIO Guide.pdf"
-            WorkingDirectory="INSTALLFOLDER" />
+		<Shortcut Id="cmASIOGuideShortcut"
+        Name="cmASIOGuide"
+        Description="ChannelMaster ASIO Guide"
+        Target="[INSTALLFOLDER]cmASIO Guide.pdf"
+        WorkingDirectory="INSTALLFOLDER" />
+
+        <Shortcut Id="APFtypesShortcut"
+        Name="APFtypes"
+        Description="New Audio Peaking Filter Types"
+        Target="[INSTALLFOLDER]APFtypes.pdf"
+        WorkingDirectory="INSTALLFOLDER" />
 		  
 	  </Component>
     </DirectoryRef>
@@ -724,6 +730,13 @@
 		<Component Guid="*">
 			<File Id="cmASIOGuidePDF"
 				Source="$(var.DocumentationPath)cmASIO Guide.pdf"
+				KeyPath="yes"
+				Checksum="yes"
+            />
+		</Component>
+		<Component Guid="*">
+			<File Id="APFtypesPDF"
+				Source="$(var.DocumentationPath)APFtypes.pdf"
 				KeyPath="yes"
 				Checksum="yes"
             />
