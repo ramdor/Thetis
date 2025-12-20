@@ -24,14 +24,22 @@ The author can be reached by email at
 
 mw0lge@grange-lane.co.uk
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
+
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -47,7 +55,8 @@ namespace Thetis
         private bool _container_hides_when_rx_not_used = true;
         private bool _is_enabled = true;
         private bool _floating = false;
-        private bool _rx2_enabled;
+        private bool _rx2_enabled = false;
+        private bool _hidden_by_macro = false;
 
         public frmMeterDisplay(Console c, int rx)
         {
@@ -55,10 +64,11 @@ namespace Thetis
 
             this.MinimumSize = new Size(ucMeter.MIN_CONTAINER_WIDTH, ucMeter.MIN_CONTAINER_HEIGHT);
 
-            _id = System.Guid.NewGuid().ToString();
+            _id = Guid.NewGuid().ToString();
             _console = c;
             _rx = rx;
             _rx2_enabled = _console.RX2Enabled;
+            _hidden_by_macro = false;
 
             Common.DoubleBufferAll(this, true);
 
@@ -66,6 +76,11 @@ namespace Thetis
             _console.RX2EnabledChangedHandlers += OnRX2Enabled;
 
             setTitle();
+        }
+        public bool HiddenByMacro
+        {
+            get { return _hidden_by_macro; }
+            set {  _hidden_by_macro = value; }
         }
         public int RX
         {
@@ -108,15 +123,17 @@ namespace Thetis
                 }
                 else
                 {
+                    bool show = false;
                     switch (_rx)
                     {
                         case 1:
-                            this.Show();
+                            show = !_hidden_by_macro;
                             break;
                         case 2:
-                            if (_rx2_enabled || !_container_hides_when_rx_not_used) this.Show();
+                            if (_rx2_enabled || !_container_hides_when_rx_not_used) show = !_hidden_by_macro;
                             break;
                     }
+                    if(show) this.Show();
                 }
             }
         }

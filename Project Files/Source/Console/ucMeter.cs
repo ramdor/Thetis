@@ -24,6 +24,20 @@ The author can be reached by email at
 
 mw0lge@grange-lane.co.uk
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
+
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -81,6 +95,7 @@ namespace Thetis
         private bool _enabled;
         private bool _show_on_rx;
         private bool _show_on_tx;
+        private bool _hidden_by_macro;
         private bool _container_minimises;
         private bool _container_hides_when_rx_not_used;
         private string _notes;
@@ -112,6 +127,7 @@ namespace Thetis
             _enabled = true;
             _show_on_rx = true;
             _show_on_tx = true;
+            _hidden_by_macro = false;
             _container_minimises = true;
             _container_hides_when_rx_not_used = true;
             _notes = "";
@@ -819,6 +835,15 @@ namespace Thetis
             }
         }
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public bool HiddenByMacro
+        {
+            get { return _hidden_by_macro; }
+            set
+            {
+                _hidden_by_macro = value;
+            }
+        }
+        [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
         public bool ShowOnRX
         {
             get { return _show_on_rx; }
@@ -1008,7 +1033,8 @@ namespace Thetis
                 ShowOnRX.ToString().ToLower() + "|" +
                 ShowOnTX.ToString().ToLower() + "|" +
                 Locked.ToString().ToLower() + "|" +
-                ContainerHidesWhenRXNotUsed.ToString().ToLower();
+                ContainerHidesWhenRXNotUsed.ToString().ToLower() + "|" +
+                HiddenByMacro.ToString().ToLower();
         }
         public bool TryParse(string str)
         {
@@ -1025,11 +1051,12 @@ namespace Thetis
             bool show_on_tx = true;
             bool locked = false;
             bool hides_when_not_used = true;
+            bool hidden_by_macro = false;
 
             if (str != "")
             {
                 string[] tmp = str.Split('|');
-                if(tmp.Length >= 13)// && tmp.Length <= 21)  //[2.10.3.6_rc4] MW0LGE removed so that clients going forward can use older data as long as 13 entries exist
+                if (tmp.Length >= 13)// && tmp.Length <= 21)  //[2.10.3.6_rc4] MW0LGE removed so that clients going forward can use older data as long as 13 entries exist
                 {
                     bOk = tmp[0] != "";
                     if (bOk) ID = tmp[0];
@@ -1070,9 +1097,9 @@ namespace Thetis
                     if (bOk) UCBorder = border;
                     Color c = Common.ColourFromString(tmp[12]);
                     bOk = c != System.Drawing.Color.Empty;
-                    if(bOk) this.BackColor = c;
+                    if (bOk) this.BackColor = c;
 
-                    if(bOk && tmp.Length > 13) // we also have the new for [2.10.1.0] the notitleifpined option
+                    if (bOk && tmp.Length > 13) // we also have the new for [2.10.1.0] the notitleifpined option
                     {
                         bOk = bool.TryParse(tmp[13], out noTitleBar);
                         if (bOk) NoControls = noTitleBar;
@@ -1095,7 +1122,7 @@ namespace Thetis
                         if (bOk) ContainerMinimises = minimises;
                     }
 
-                    if(bOk && tmp.Length > 17) // also auto height for [2.10.3.6]
+                    if (bOk && tmp.Length > 17) // also auto height for [2.10.3.6]
                     {
                         bOk = bool.TryParse(tmp[17], out auto_height);
                         if (bOk) AutoHeight = auto_height;
@@ -1109,7 +1136,7 @@ namespace Thetis
                         if (bOk) ShowOnTX = show_on_tx;
                     }
 
-                    if(bOk && tmp.Length > 20) // also for [2.10.3.6]
+                    if (bOk && tmp.Length > 20) // also for [2.10.3.6]
                     {
                         bOk = bool.TryParse(tmp[20], out locked);
                         if (bOk) Locked = locked;
@@ -1119,6 +1146,12 @@ namespace Thetis
                     {
                         bOk = bool.TryParse(tmp[21], out hides_when_not_used);
                         if (bOk) ContainerHidesWhenRXNotUsed = hides_when_not_used;
+                    }
+
+                    if (bOk && tmp.Length > 22) // for [2.10.3.12]
+                    {
+                        bOk = bool.TryParse(tmp[22], out hidden_by_macro);
+                        if (bOk) HiddenByMacro = hidden_by_macro;
                     }
                 }
             }

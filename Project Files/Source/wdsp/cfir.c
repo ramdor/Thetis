@@ -138,7 +138,7 @@ double* cfir_impulse (int N, int DD, int R, int Pairs, double runrate, double ci
 	// rtype:	0 for real output, 1 for complex output
 	// scale:	scale factor to be applied to the output
 	int i, j;
-	double tmp, local_scale, ri, mag, fn;
+	double tmp, local_scale, ri, fn, mag = 1.0;
 	double* impulse;
 	double* A = (double *) malloc0 (N * sizeof (double));
 	double ft = cutoff / cicrate;										// normalized cutoff frequency

@@ -111,7 +111,7 @@ namespace Thetis
 
         public uint put(string s)
         {
-            if (bitBangOnly) return 0;  // fixme -- throw exception?			
+            if (bitBangOnly) return 0;  // fixme -- throw exception?		
             commPort.Write(s);
             return (uint)s.Length; // wjt fixme -- hack -- we don't know if we actually wrote things 			
         }
@@ -404,6 +404,7 @@ namespace Thetis
 
             commPort.PortName = "COM" + portidx.ToString();
 
+            commPort.Handshake = Handshake.None;
             commPort.Parity = Parity.None;
             commPort.StopBits = StopBits.One;
             commPort.DataBits = 8;
@@ -684,6 +685,7 @@ namespace Thetis
 
             commPort.PortName = "COM" + portidx.ToString();
 
+            commPort.Handshake = Handshake.None;
             commPort.Parity = Parity.None;
             commPort.StopBits = StopBits.One;
             commPort.DataBits = 8;
@@ -964,6 +966,7 @@ namespace Thetis
 
             commPort.PortName = "COM" + portidx.ToString();
 
+            commPort.Handshake = Handshake.None;
             commPort.Parity = Parity.None;
             commPort.StopBits = StopBits.One;
             commPort.DataBits = 8;
@@ -1245,6 +1248,7 @@ namespace Thetis
 
             commPort.PortName = "COM" + portidx.ToString();
 
+            commPort.Handshake = Handshake.None;
             commPort.Parity = Parity.None;
             commPort.StopBits = StopBits.One;
             commPort.DataBits = 8;
@@ -1526,6 +1530,7 @@ namespace Thetis
 
             commPort.PortName = "COM" + portidx.ToString();
 
+            commPort.Handshake = Handshake.None;
             commPort.Parity = Parity.None;
             commPort.StopBits = StopBits.One;
             commPort.DataBits = 8;
@@ -1807,6 +1812,7 @@ namespace Thetis
 
             commPort.PortName = "COM" + portidx.ToString();
 
+            commPort.Handshake = Handshake.None;
             commPort.Parity = Parity.None;
             commPort.StopBits = StopBits.One;
             commPort.DataBits = 8;

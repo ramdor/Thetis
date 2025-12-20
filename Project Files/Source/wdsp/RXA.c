@@ -2,7 +2,7 @@
 
 This file is part of a program that implements a Software-Defined Radio.
 
-Copyright (C) 2013, 2014, 2015, 2016, 2023 Warren Pratt, NR0V
+Copyright (C) 2013, 2014, 2015, 2016, 2023, 2025 Warren Pratt, NR0V
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -333,17 +333,21 @@ void create_rxa (int channel)
 
 	// RNNoise based noise reduction 	// NR3 + NR4 support (nr3)
 	rxa[channel].rnnr.p = create_rnnr (
-            0, 	            // run
-            0,	            // position
-            rxa[channel].midbuff,
-            rxa[channel].midbuff);
+		0, 												// run
+		0,												// position
+		ch[channel].dsp_size,							// buffer size
+        rxa[channel].midbuff,							// input buffer
+        rxa[channel].midbuff,							// output buffer
+		ch[channel].dsp_rate);							// samplerate
 
     // libspecbleach based noise reduction	// NR3 + NR4 support (nr4)
-	rxa[channel].sbnr.p = create_sbnr (
-            0, 	            // run
-            0,	            // position
-            rxa[channel].midbuff,
-            rxa[channel].midbuff);
+	rxa[channel].sbnr.p = create_sbnr(
+		0, 												// run
+		0,												// position
+		ch[channel].dsp_size,							// buffer size
+		rxa[channel].midbuff,							// input buffer
+		rxa[channel].midbuff,							// output buffer
+		ch[channel].dsp_rate);							// samplerate
 	
 	// AGC
 	rxa[channel].agc.p = create_wcpagc (
@@ -424,7 +428,48 @@ void create_rxa (int channel)
 		ch[channel].dsp_rate,							// sample rate
 		0.02);											// tau
 
-	// peaking filter
+	// double-pole CW filter
+	rxa[channel].doublepole.p = create_doublepole (
+		0,												// run
+		0,												// position
+		ch[channel].dsp_size,							// buffer size
+		rxa[channel].midbuff,							// pointer to input buffer
+		rxa[channel].midbuff,							// pointer to output buffer
+		600.0,											// center frequency
+		100.0,											// bandwidth
+		ch[channel].dsp_rate,							// sample rate
+		2.0,											// gain
+		2 );											// mode
+
+	// matched CW filter
+	rxa[channel].matched.p = create_matched (
+		0,												// run
+		0,												// position
+		ch[channel].dsp_size,							// buffer size
+		rxa[channel].midbuff,							// pointer to input buffer
+		rxa[channel].midbuff,							// pointer to output buffer
+		600.0,											// center frequency
+		100.0,											// bandwidth
+		ch[channel].dsp_rate,							// sample rate
+		2.0,											// gain
+		2 );											// mode
+
+	// gaussian peaking filter
+	rxa[channel].gaussian.p = create_gaussian (
+		0,												// run
+		0,												// position
+		ch[channel].dsp_size,							// buffer size
+		0,												// number of coefficients
+		rxa[channel].midbuff,							// pointer to input buffer
+		rxa[channel].midbuff,							// pointer to output buffer
+		600.0,											// center frequency
+		100.0,											// bandwidth
+		ch[channel].dsp_rate,							// sample rate
+		2.0,											// gain
+		3.0,											// nsigma
+		2 );											// mode
+
+	// bi-quad peaking filter
 	rxa[channel].speak.p = create_speak (
 		0,												// run
 		ch[channel].dsp_size,							// buffer size,
@@ -456,6 +501,14 @@ void create_rxa (int channel)
 			def_gain,									// gain vector
 			4 );										// number of stages
 	}
+
+	// apf_shadow
+	rxa[channel].apfshadow.p = create_apfshadow (
+		0,												// selection
+		0,												// run
+		600.0,											// center frequency
+		100.0,											// bandwidth
+		2.0 );											// gain
 
 	// syllabic squelch
 	rxa[channel].ssql.p = create_ssql(
@@ -508,8 +561,12 @@ void destroy_rxa (int channel)
 	destroy_resample (rxa[channel].rsmpout.p);
 	destroy_panel (rxa[channel].panel.p);
 	destroy_ssql (rxa[channel].ssql.p);
+	destroy_apfshadow(rxa[channel].apfshadow.p);
 	destroy_mpeak (rxa[channel].mpeak.p);
 	destroy_speak (rxa[channel].speak.p);
+	destroy_gaussian (rxa[channel].gaussian.p);
+	destroy_matched (rxa[channel].matched.p);
+	destroy_doublepole (rxa[channel].doublepole.p);
 	destroy_cbl (rxa[channel].cbl.p);
 	destroy_siphon (rxa[channel].sip1.p);
 	destroy_bandpass (rxa[channel].bp1.p);
@@ -567,6 +624,9 @@ void flush_rxa (int channel)
 	flush_bandpass (rxa[channel].bp1.p);
 	flush_siphon (rxa[channel].sip1.p);
 	flush_cbl (rxa[channel].cbl.p);
+	flush_doublepole (rxa[channel].doublepole.p);
+	flush_matched (rxa[channel].matched.p);
+	flush_gaussian (rxa[channel].gaussian.p);
 	flush_speak (rxa[channel].speak.p);
 	flush_mpeak (rxa[channel].mpeak.p);
 	flush_ssql (rxa[channel].ssql.p);
@@ -609,6 +669,9 @@ void xrxa (int channel)
 	xmeter (rxa[channel].agcmeter.p);
 	xsiphon (rxa[channel].sip1.p, 0);
 	xcbl (rxa[channel].cbl.p);
+	xdoublepole (rxa[channel].doublepole.p, 0);
+	xmatched (rxa[channel].matched.p, 0);
+	xgaussian (rxa[channel].gaussian.p, 0);
 	xspeak (rxa[channel].speak.p);
 	xmpeak (rxa[channel].mpeak.p);
 	xssql (rxa[channel].ssql.p);
@@ -675,11 +738,16 @@ void setDSPSamplerate_rxa (int channel)
 	setSamplerate_anf (rxa[channel].anf.p, ch[channel].dsp_rate);
 	setSamplerate_anr (rxa[channel].anr.p, ch[channel].dsp_rate);
 	setSamplerate_emnr (rxa[channel].emnr.p, ch[channel].dsp_rate);
+	setSamplerate_rnnr(rxa[channel].rnnr.p, ch[channel].dsp_rate); // NR3 + NR4 support (nr3)
+	setSamplerate_sbnr(rxa[channel].sbnr.p, ch[channel].dsp_rate); // NR3 + NR4 support (nr4)
 	setSamplerate_bandpass (rxa[channel].bp1.p, ch[channel].dsp_rate);
 	setSamplerate_wcpagc (rxa[channel].agc.p, ch[channel].dsp_rate);
 	setSamplerate_meter (rxa[channel].agcmeter.p, ch[channel].dsp_rate);
 	setSamplerate_siphon (rxa[channel].sip1.p, ch[channel].dsp_rate);
 	setSamplerate_cbl (rxa[channel].cbl.p, ch[channel].dsp_rate);
+	setSamplerate_doublepole (rxa[channel].doublepole.p, ch[channel].dsp_rate);
+	setSamplerate_matched (rxa[channel].matched.p, ch[channel].dsp_rate);
+	setSamplerate_gaussian (rxa[channel].gaussian.p, ch[channel].dsp_rate);
 	setSamplerate_speak (rxa[channel].speak.p, ch[channel].dsp_rate);
 	setSamplerate_mpeak (rxa[channel].mpeak.p, ch[channel].dsp_rate);
 	setSamplerate_ssql (rxa[channel].ssql.p, ch[channel].dsp_rate);
@@ -750,6 +818,12 @@ void setDSPBuffsize_rxa (int channel)
 	setSize_siphon (rxa[channel].sip1.p, ch[channel].dsp_size);
 	setBuffers_cbl (rxa[channel].cbl.p, rxa[channel].midbuff, rxa[channel].midbuff);
 	setSize_cbl (rxa[channel].cbl.p, ch[channel].dsp_size);
+	setBuffers_doublepole (rxa[channel].doublepole.p, rxa[channel].midbuff, rxa[channel].midbuff);
+	setSize_doublepole (rxa[channel].doublepole.p, ch[channel].dsp_size);
+	setBuffers_matched (rxa[channel].matched.p, rxa[channel].midbuff, rxa[channel].midbuff);
+	setSize_matched (rxa[channel].matched.p, ch[channel].dsp_size);
+	setBuffers_gaussian (rxa[channel].gaussian.p, rxa[channel].midbuff, rxa[channel].midbuff);
+	setSize_gaussian (rxa[channel].gaussian.p, ch[channel].dsp_size);
 	setBuffers_speak (rxa[channel].speak.p, rxa[channel].midbuff, rxa[channel].midbuff);
 	setSize_speak (rxa[channel].speak.p, ch[channel].dsp_size);
 	setBuffers_mpeak (rxa[channel].mpeak.p, rxa[channel].midbuff, rxa[channel].midbuff);

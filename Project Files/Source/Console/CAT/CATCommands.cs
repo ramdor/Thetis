@@ -1069,7 +1069,6 @@ namespace Thetis
             {
                 return parser.Error1;
             }
-
         }
 
         //-W2PA Sets or reads the APF bandwidth
@@ -1223,7 +1222,7 @@ namespace Thetis
 
 		}
 
-		public string ZZAI(string s)
+        public string ZZAI(string s)
 		{
 			if(console.SetupForm.AllowFreqBroadcast)
 			{
@@ -1399,6 +1398,35 @@ namespace Thetis
             else
                 return parser.Error1;
         }
+
+        public string ZZAY(string s) // AFP tYpe
+        {
+            int n = 0;
+            int x = 0;
+
+            if (s != "")
+            {
+                n = Convert.ToInt32(s);
+                n = Math.Max(0, n);
+                n = Math.Min(3, n);
+            }
+
+            if (s.Length == parser.nSet)
+            {
+                console.APFType = n;
+                return "";
+            }
+            else if (s.Length == parser.nGet)
+            {
+                x = console.APFType;
+				return x.ToString();
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+
 
         //Moves the RX2 bandswitch down one band
         public string ZZBA()
@@ -1904,7 +1932,7 @@ namespace Thetis
 		{
 			//return parser.Error1;
 			if (console.initializing) return "";
-            return String.Format("{0:000.00}", console._total_cpu_usage.NextValue());
+            return String.Format("{0:000.00}", console.CPUPercSmoothed);
 		}
 
 		// Sets or reads the Display Average status
@@ -2620,8 +2648,10 @@ namespace Thetis
 						f -= Convert.ToInt32(console.SetupForm.RttyOffsetHigh);
 					else if(console.RX1DSPMode == DSPMode.DIGL)
 						f += Convert.ToInt32(console.SetupForm.RttyOffsetLow);
-					s = AddLeadingZeros(f);
-					s = s.Insert(5, separator);
+					s = AddLeadingZeros(f, 11); // [2.10.3.12]MW0LGE -- addleadingzeros uses parser.nAns which will be 0 as we might not be
+												// parsing anything here, ie being called directly from midi
+   											    // Changed to pass optional padding length, use 11
+                    s = s.Insert(5, separator);
 				}
 				else
 					s = s.Insert(5, separator);
@@ -2659,16 +2689,20 @@ namespace Thetis
 		{
 			if(s.Length == parser.nSet)
 			{
-				if(console.SetupForm.RttyOffsetEnabledB  && 
-					(console.RX1DSPMode == DSPMode.DIGU || console.RX1DSPMode == DSPMode.DIGL))
+				DSPMode vfoBmode = console.RX2Enabled ? console.RX2DSPMode : console.RX1DSPMode; //[2.10.3.12]MW0LGE might be a good idea to use RX2 mode if RX2 enabled.
+																								 //probably other places in this cat command code with similar issues
+                if (console.SetupForm.RttyOffsetEnabledB  && 
+					(vfoBmode == DSPMode.DIGU || vfoBmode == DSPMode.DIGL))
 				{
 					int f = int.Parse(s);
-					if(console.RX1DSPMode == DSPMode.DIGU)
+					if(vfoBmode == DSPMode.DIGU)
 						f -= Convert.ToInt32(console.SetupForm.RttyOffsetHigh);
-					else if(console.RX1DSPMode == DSPMode.DIGL)
+					else if(vfoBmode == DSPMode.DIGL)
 						f += Convert.ToInt32(console.SetupForm.RttyOffsetLow);
-					s = AddLeadingZeros(f);
-					s = s.Insert(5, separator);
+                    s = AddLeadingZeros(f, 11); // [2.10.3.12]MW0LGE -- addleadingzeros uses parser.nAns which will be 0, as we might not be
+                                                // parsing anything here, ie being called directly from midi
+                                                // Changed to pass optional padding length, use 11
+                    s = s.Insert(5, separator);
 				}
 				else
 					s = s.Insert(5, separator);
@@ -2683,13 +2717,15 @@ namespace Thetis
 			}
 			else if(s.Length == parser.nGet)
 			{
-				if(console.SetupForm.RttyOffsetEnabledB &&
-					(console.RX1DSPMode == DSPMode.DIGU || console.RX1DSPMode == DSPMode.DIGL))
+                DSPMode vfoBmode = console.RX2Enabled ? console.RX2DSPMode : console.RX1DSPMode; //[2.10.3.12]MW0LGE as above
+                
+				if (console.SetupForm.RttyOffsetEnabledB &&
+					(vfoBmode == DSPMode.DIGU || vfoBmode == DSPMode.DIGL))
 				{
                     int f = Convert.ToInt32(Math.Round(console.CATVFOB, 6) * 1e6);
-					if(console.RX1DSPMode == DSPMode.DIGU)
+					if(vfoBmode == DSPMode.DIGU)
 						f += Convert.ToInt32(console.SetupForm.RttyOffsetHigh);
-					else if(console.RX1DSPMode == DSPMode.DIGL)
+					else if(vfoBmode == DSPMode.DIGL)
 						f -= Convert.ToInt32(console.SetupForm.RttyOffsetLow);
 					return AddLeadingZeros(f);
 				}
@@ -8372,14 +8408,14 @@ namespace Thetis
                 return parser.Error1;
             }
         }
-        #endregion Extended CAT Methods ZZR-ZZZ
+		#endregion Extended CAT Methods ZZR-ZZZ
 
 
-        #region Helper methods
+		#region Helper methods
 
-        #region General Helpers
+		#region General Helpers
 
-        private string AddLeadingZeros(int n)
+		private string AddLeadingZeros(int n, int pad_len = -1)
 		{
 			//string num = n.ToString();
 
@@ -8389,7 +8425,14 @@ namespace Thetis
 			//return num;
 
 			//[2.10.3.9]MW0LGE refcator for speed
-            return n.ToString().PadLeft(parser.nAns, '0');
+			if (pad_len < 0)
+			{
+				return n.ToString().PadLeft(parser.nAns, '0');
+			}
+			else
+			{
+                return n.ToString().PadLeft(pad_len, '0');
+            }
         }
 
         private string JustSuffix(string s)

@@ -41,6 +41,7 @@
             this.lstVariables.Name = "lstVariables";
             this.lstVariables.Size = new System.Drawing.Size(205, 290);
             this.lstVariables.TabIndex = 0;
+            this.lstVariables.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstVariables_MouseDoubleClick);
             // 
             // btnCancel
             // 

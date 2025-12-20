@@ -76,7 +76,7 @@
             "NC3Z, Gary (forum mod)",
             "OE3IDE, Ernst (skins & primary tester)",
             "W1AEX, Rob (skins & audio information)",
-            "DH1KLM, Sigi (skins & UI improvements)",
+            "DH1KLM, Sigi (midi, skins & UI improvements)",
             "",
             "and indirectly, all the testers"});
             this.lstContributors.Location = new System.Drawing.Point(19, 267);
@@ -148,7 +148,8 @@
             "PureSignal",
             "Midi",
             "cmASIO",
-            "Behringer"});
+            "Behringer",
+            "APF Types"});
             this.lstLinks.Location = new System.Drawing.Point(345, 108);
             this.lstLinks.Name = "lstLinks";
             this.lstLinks.Size = new System.Drawing.Size(267, 130);

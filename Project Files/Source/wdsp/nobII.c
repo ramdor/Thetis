@@ -211,7 +211,6 @@ void xnob (NOB a)
 							a->blank_count = 0;
 							do
 							{
-								len = 0;
 								hcount = 0;
 								while ((a->imp[tidx] > 0 || hcount > 0) && a->blank_count < a->max_imp_seq)
 								{

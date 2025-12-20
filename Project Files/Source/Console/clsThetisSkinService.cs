@@ -24,6 +24,20 @@ The author can be reached by email at
 
 mw0lge@grange-lane.co.uk
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -145,7 +159,7 @@ namespace Thetis
                 // Send a GET request to the JSON URL and read the content asynchronously.
                 // In some scenarios, especially in UI applications (e.g., WinForms, WPF),
                 // calling asynchronous methods without ConfigureAwait(false) can lead to a deadlock. 
-                string jsonContent = await client.GetStringAsync(jsonUrl + "?timestamp=" + DateTime.Now.Ticks);
+                string jsonContent = await client.GetStringAsync(jsonUrl + "?timestamp=" + DateTime.UtcNow.Ticks);
 
                 // Deserialize the JSON data into the pre-defined class.
                 SkinsData thetisSkinsData = JsonConvert.DeserializeObject<SkinsData>(jsonContent);
@@ -161,7 +175,7 @@ namespace Thetis
 
                 cp = null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Notify subscribers of the error.
                 ThetisSkinsData?.Invoke(null, null);
@@ -203,11 +217,11 @@ namespace Thetis
                 client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue(){ NoCache = true };
                 client.Timeout = TimeSpan.FromSeconds(10); // 10 seconds
 
-                string jsonContent = await client.GetStringAsync(jsonUrl + "?timestamp=" + DateTime.Now.Ticks);
+                string jsonContent = await client.GetStringAsync(jsonUrl + "?timestamp=" + DateTime.UtcNow.Ticks);
                 SkinServersData skinServersData = JsonConvert.DeserializeObject<SkinServersData>(jsonContent);
                 ThetisSkinServerData?.Invoke(null, skinServersData);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //MessageBox.Show(ex.ToString());
                 ThetisSkinServerData?.Invoke(null, null);
@@ -298,7 +312,7 @@ namespace Thetis
                     ImageLoaded?.Invoke(null, shi);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ImageLoaded?.Invoke(null, null);
             }
@@ -396,14 +410,14 @@ namespace Thetis
                     }
                 }
             }
-            catch (TaskCanceledException tex)
+            catch (TaskCanceledException)
             {
                 SkinFileDownload sfd = new SkinFileDownload();
                 sfd.Complete = false;
                 sfd.Cancelled = true;
                 FileDownload?.Invoke(null, sfd);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 FileDownload?.Invoke(null, null);
             }

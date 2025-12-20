@@ -454,4 +454,85 @@
   <data name="thetis_logo2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\thetis-logo2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ob_circle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_circle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_play" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_power" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_power.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_square" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_square.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_histogram" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_histogram.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_mic_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_mic_off.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_mic_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_mic_on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_mute_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_mute_off.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_mute_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_mute_on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_panadapter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_panadapter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_phase" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_phase.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_scope" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_scope.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_scope2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_scope2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_spectrum" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_spectrum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_waterfall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_waterfall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_panascope" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_panascope.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_spectrascope" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_spectrascope.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_panafall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_panafall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_display_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_display_off.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_mute_all_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_mute_all_off.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_mute_all_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_mute_all_on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="grid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\grid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_disp_pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_disp_pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_disp_play" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_disp_play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cont_copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cont_copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cont_load" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cont_load.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cont_save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cont_save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

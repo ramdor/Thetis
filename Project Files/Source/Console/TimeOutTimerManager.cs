@@ -24,6 +24,19 @@ The author can be reached by email at
 
 mw0lge@grange-lane.co.uk
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 using System;
 using System.Collections.Generic;
@@ -68,7 +81,7 @@ namespace Thetis
             _ping = new Ping();
 
             _tickerRunning = false;
-            _lastMox = DateTime.Now;
+            _lastMox = DateTime.UtcNow;
             _lastPing = _lastMox;
 
             _moxTimeOutEnabled = false;
@@ -138,7 +151,7 @@ namespace Thetis
 
                 if (newMox && !oldMox)
                 {
-                    _lastMox = DateTime.Now;
+                    _lastMox = DateTime.UtcNow;
                     _lastPing = _lastMox;
                 }
             }
@@ -156,7 +169,7 @@ namespace Thetis
                 {
                     if (_mox && (_moxTimeOutEnabled || _pingTimeoutEnabled))
                     {
-                        DateTime now = DateTime.Now;                        
+                        DateTime now = DateTime.UtcNow;                        
 
                         // basic mox ToT
                         if (_moxTimeOutEnabled)

@@ -25,6 +25,19 @@
 //    Austin, TX 78728
 //    USA
 //=================================================================
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 using System;
 using System.Drawing;
@@ -621,6 +634,22 @@ namespace Thetis
 
 		#region Misc Routines
 
+        //
+        public bool Recording
+        {
+            get
+            {
+                return checkBoxRecord.Checked;
+            }
+            set
+            {
+                if (value == checkBoxRecord.Checked) return;
+
+                checkBoxRecord.Checked = value;
+            }
+        }
+        //
+
 
         // ke9ns add pass string from console play button right click
         private static string QPFile = null;
@@ -1000,6 +1029,7 @@ namespace Thetis
         public static string scheduleName1; // ke9ns add for saving file name of recording
         public static string scheduleName2; // ke9ns add for saving file name of recording
 
+        private bool _old_record_state = false;
         private void checkBoxRecord_CheckedChanged(object sender, System.EventArgs e)
 		{
             if (_restoring_controls) return;
@@ -1065,12 +1095,21 @@ namespace Thetis
                 }
 
                 if (WaveThing.wave_file_writer[0] != null) //[2.10.3.5]MW0LGE
+                {
+                    Thread.Sleep(100);
                     WaveThing.wave_file_writer[0].Stop();
+                }
 
 				checkBoxRecord.BackColor = SystemColors.Control;
 				//MessageBox.Show("The file has been written to the following location:\n"+file_name);
 			}
-		}
+
+            if (_old_record_state != checkBoxRecord.Checked)
+            {
+                _old_record_state = checkBoxRecord.Checked;
+                if (console != null) console.WaveRecordChangedHandlers?.Invoke(1, _old_record_state, checkBoxRecord.Checked); // rx1 only atm
+            }
+        }
 
 		private void btnAdd_Click(object sender, System.EventArgs e)
 		{
@@ -1278,7 +1317,8 @@ namespace Thetis
 
         public static int QAC = 0; // ke9ns add
  
-		private void chkQuickPlay_CheckedChanged(object sender, System.EventArgs e)
+        private bool _old_quick_play_state = false;
+        private void chkQuickPlay_CheckedChanged(object sender, System.EventArgs e)
 		{
             if (_restoring_controls) return;
 
@@ -1368,13 +1408,24 @@ namespace Thetis
                 }
 			}
             Audio.WavePlayback = chkQuickPlay.Checked;
-			console.WavePlayback = chkQuickPlay.Checked;			
-		}
+			console.WavePlayback = chkQuickPlay.Checked;
 
-      //  public static string quickmp3SR; // ke9ns add
+            console.UpdatedFromWaveForm = true; // let console know change came from here
+            console.QuickPlay = chkQuickPlay.Checked;
+            console.UpdatedFromWaveForm = false;
 
-       // public static string quickmp3; // ke9ns add
+            if (_old_quick_play_state != chkQuickPlay.Checked)
+            {
+                _old_quick_play_state = chkQuickPlay.Checked;
+                if (console != null) console.QuickPlayChangedHandlers?.Invoke(1, _old_quick_play_state, chkQuickPlay.Checked); // rx1 only atm
+            }
+        }
+
+        //  public static string quickmp3SR; // ke9ns add
+
+        // public static string quickmp3; // ke9ns add
         //============================================================================================
+        private bool _old_quick_record_state = false;
         private void chkQuickRec_CheckedChanged(object sender, System.EventArgs e)
         {
             if (_restoring_controls) return;
@@ -1474,6 +1525,16 @@ namespace Thetis
 //                 }
 
             } //   if (!chkQuickRec.Checked)
+
+            console.UpdatedFromWaveForm = true; // let console know change came from here
+            console.QuickRec = chkQuickRec.Checked;
+            console.UpdatedFromWaveForm = false;
+
+            if (_old_quick_record_state != chkQuickRec.Checked)
+            {
+                _old_quick_record_state = chkQuickRec.Checked;
+                if(console != null) console.QuickRecordChangedHandlers?.Invoke(1, _old_quick_record_state, chkQuickRec.Checked); // rx1 only atm
+            }
 
         } //  chkQuickRec_CheckedChanged
 

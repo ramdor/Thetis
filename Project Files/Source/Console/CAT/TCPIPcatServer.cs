@@ -12,6 +12,7 @@ using System.Threading;
 using System.Collections;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Thetis
 {
@@ -37,8 +38,11 @@ namespace Thetis
 		private DateTime m_lastReceiveDateTime;
 		private DateTime m_lastSendDateTime;
 		private DateTime m_currentReceiveDateTime;
-		private DateTime m_currentSendDateTime;	
-		public TCPIPSocketListener(Socket clientSocket, Console c, TCPIPcatServer server)
+		private DateTime m_currentSendDateTime;
+
+        private ConcurrentQueue<string> _broadcast = new ConcurrentQueue<string>();
+
+        public TCPIPSocketListener(Socket clientSocket, Console c, TCPIPcatServer server)
 		{
 			console = c;
 			m_server = server;
@@ -69,12 +73,12 @@ namespace Thetis
 			Byte[] byteBuffer;
 
 			// init date/time for timeouts
-			m_lastReceiveDateTime = DateTime.Now;
-			m_lastSendDateTime = DateTime.Now;
-			m_currentReceiveDateTime = DateTime.Now;
-			m_currentSendDateTime = DateTime.Now;
+			m_lastReceiveDateTime = DateTime.UtcNow;
+			m_lastSendDateTime = DateTime.UtcNow;
+			m_currentReceiveDateTime = DateTime.UtcNow;
+			m_currentSendDateTime = DateTime.UtcNow;
 
-			Timer t = new Timer(new TimerCallback(CheckClientCommInterval),
+			Timer t = new Timer(new TimerCallback(checkClientCommInterval),
 				null, 30000, 30000);
 
 			Debug.Print("TCPIP CAT Client Connected !");
@@ -82,7 +86,7 @@ namespace Thetis
 
 			if (m_server != null && m_server.SendWelcome && console != null)
 			{
-				SendClientData("#Thetis TCP/IP Cat - " + console.VersionWithoutFW.Replace(";", "") + "#;");
+				internal_send_data("#Thetis TCP/IP Cat - " + console.VersionWithoutFW.Replace(";", "") + "#;");
 			}
 
 			while (!m_stopClient)
@@ -98,13 +102,26 @@ namespace Thetis
 						size = m_clientSocket.Receive(byteBuffer);
 						if (size > 0)
 						{
-							m_currentReceiveDateTime = DateTime.Now;
+							m_currentReceiveDateTime = DateTime.UtcNow;
 							ParseReceiveBuffer(byteBuffer, size);
 							bReadData = true;
 						}
 					}
-					
-					if(!bReadData)
+					else
+					{
+						Queue<string> local = new Queue<string>();
+						while (_broadcast.TryDequeue(out string data))
+						{
+							local.Enqueue(data);
+						}
+						while (local.Count > 0)
+						{
+							internal_send_data(local.Dequeue());
+                            bReadData = true;
+                        }
+                    }
+
+                    if (!bReadData)
 					{
 						Thread.Sleep(50);
 					}
@@ -185,7 +202,7 @@ namespace Thetis
                 lineEndIndex = bufferStr.IndexOf(";");
             }
 
-            if (m_oneLineBuf.Length > 255) m_oneLineBuf.Clear();
+            if (m_oneLineBuf.Length > 255) m_oneLineBuf.Clear(); // not likely to be a cat message if it got this long
         }
 
 		private void processClientData(string sInboundCatCommand)
@@ -194,9 +211,9 @@ namespace Thetis
 
 			string sCatAnswer = console.ThreadSafeCatParse(sInboundCatCommand);
 			if (sCatAnswer.Length > 0)
-				SendClientData(sCatAnswer);
+				internal_send_data(sCatAnswer);
 		}
-		public void SendClientData(string oneLine)
+		private void internal_send_data(string oneLine)
         {
 			if (m_clientSocket == null) return;
 
@@ -209,7 +226,7 @@ namespace Thetis
 
 					if (m_server != null && m_server.LogForm != null) m_server.LogForm.Log(false, oneLine);
 
-					m_currentSendDateTime = DateTime.Now;
+					m_currentSendDateTime = DateTime.UtcNow;
 				}
 			}
             catch(SocketException se)
@@ -221,7 +238,18 @@ namespace Thetis
 			}
 		}
 
-		private void CheckClientCommInterval(object o)
+		public void SendData(string data)
+		{
+            if (m_clientSocket == null) return;
+
+            string[] parts = data.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string part in parts)
+            {
+                _broadcast.Enqueue(part + ";");
+            }
+        }
+
+		private void checkClientCommInterval(object o)
 		{
 			bool stopR = false;
 			bool stopS = false;
@@ -314,7 +342,7 @@ namespace Thetis
 				_log = new frmLog();
 				m_server = new TcpListener(ipNport);
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				m_server = null;
 			}
@@ -363,11 +391,11 @@ namespace Thetis
 				{
 					foreach (TCPIPSocketListener tsl in m_socketListenersList)
 					{
-						tsl.SendClientData(sMsg);
+						tsl.SendData(sMsg);
 					}
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 			}
 		}

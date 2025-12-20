@@ -2196,7 +2196,7 @@ namespace Thetis
                     g.DrawLines(data_line_pen, points);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Trace.WriteLine(ex);
             }
@@ -2220,7 +2220,7 @@ namespace Thetis
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 

@@ -24,11 +24,26 @@ The author can be reached by email at
 
 mw0lge@grange-lane.co.uk
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
+
 using System;
 using System.Media;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Thetis
 {
@@ -53,7 +68,16 @@ namespace Thetis
 
         public BasicAudio()
         {
-            m_objPlayer = new SoundPlayer();
+            try
+            {
+                m_objPlayer = new SoundPlayer();
+            }
+            catch (Exception e)
+            {
+                m_objPlayer = null;
+                MessageBox.Show("Unable to create SoundPlayer object (BasicAudio)\n\n" + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return;
+            }
             m_objPlayer.LoadCompleted += new AsyncCompletedEventHandler(player_LoadCompleted);
             m_objPlayer.SoundLocationChanged += new EventHandler(player_LocationChanged);            
         }
@@ -73,11 +97,12 @@ namespace Thetis
             set { }
         }
         public string SoundFile {
-            get { return m_objPlayer.SoundLocation; }
+            get { return m_objPlayer != null ? m_objPlayer.SoundLocation : ""; }
             set { }
         }
         public void LoadSound(string sFile)
         {
+            if (m_objPlayer == null) return;
             if (m_bLoading || sFile == "") return;
             m_bOkToPlay = false;
             m_bLoading = true;
@@ -88,19 +113,20 @@ namespace Thetis
             {
                 m_objPlayer.LoadAsync();
             }
-            catch (FileNotFoundException ex)
+            catch (FileNotFoundException)
             {
                 m_bLoading = false;
                 loadCompleted?.Invoke(false);
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException)
             {
                 m_bLoading = false;
                 loadCompleted?.Invoke(false);
             }
         }
         public void Play()
-        {            
+        {
+            if (m_objPlayer == null) return;
             if (!m_bOkToPlay) return;
 
             if (m_objThread == null || !m_objThread.IsAlive)
@@ -116,18 +142,22 @@ namespace Thetis
         }
         public void Stop()
         {
-            m_objPlayer.Stop();
+            if (m_objPlayer == null) return;
+            try
+            {
+                m_objPlayer.Stop();
+            }
+            catch { }
         }
 
         private void playSound()
         {
+            if (m_objPlayer == null) return;
             try
             {
                 m_objPlayer.Play();
             }
-            catch
-            {
-            }
+            catch { }
         }
     }
 }

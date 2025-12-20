@@ -25,6 +25,19 @@ warren@wpratt.com
 mw0lge@grange-lane.co.uk
 
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 #ifndef _impulse_cache_h
 #define _impulse_cache_h
@@ -58,7 +71,7 @@ mw0lge@grange-lane.co.uk
 #define EQ_CACHE	2
 #define FC_CACHE	3
 
-double* get_impulse_cache_entry(size_t bucket, HASH_T hash);
+double* get_impulse_cache_entry(size_t bucket, HASH_T hash, int N);
 void add_impulse_to_cache(size_t bucket, HASH_T hash, int N, double* impulse);
 
 __declspec (dllexport) int save_impulse_cache(const char* path);

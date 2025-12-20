@@ -66,7 +66,7 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double samplerate, d
 	HASH_T hg = fnv1a_hash((uint8_t*)G, arr_len);
 	h ^= hg + GOLDEN_RATIO + (h << 6) + (h >> 2);
 
-	double* imp = get_impulse_cache_entry(EQ_CACHE, h);
+	double* imp = get_impulse_cache_entry(EQ_CACHE, h, N);
 	if (imp) return imp;
 	//
 

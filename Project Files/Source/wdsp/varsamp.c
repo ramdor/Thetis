@@ -28,7 +28,8 @@ warren@wpratt.com
 
 void calc_varsamp (VARSAMP a)
 {
-	double min_rate, max_rate, norm_rate;
+	double min_rate, norm_rate;
+	// double max_rate;
 	double fc_norm_high, fc_norm_low;
 	a->nom_ratio = (double)a->out_rate / (double)a->in_rate;
 	a->cvar = a->var * a->nom_ratio;
@@ -40,14 +41,15 @@ void calc_varsamp (VARSAMP a)
 	if (a->out_rate >= a->in_rate)
 	{
 		min_rate = (double)a->in_rate;
-		max_rate = (double)a->out_rate;
+		// max_rate = (double)a->out_rate;
 		norm_rate = min_rate;
 	}
 	else
 	{
 		min_rate = (double)a->out_rate;
-		max_rate = (double)a->in_rate;
-		norm_rate = max_rate;
+		// max_rate = (double)a->in_rate;
+		// norm_rate = max_rate;
+		norm_rate = (double)a->in_rate;
 	}
 	if (a->fc == 0.0) a->fc = 0.95 * 0.45 * min_rate;
 	fc_norm_high = a->fc / norm_rate;

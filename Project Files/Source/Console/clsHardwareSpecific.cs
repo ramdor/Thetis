@@ -24,6 +24,19 @@ The author can be reached by email at
 
 mw0lge@grange-lane.co.uk
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 //
 // WORK IN PROGRESS
@@ -749,6 +762,28 @@ namespace Thetis
             {
                 return !(_model == HPSDRModel.ORIONMKII || _model == HPSDRModel.ANAN7000D || _model == HPSDRModel.ANAN8000D ||
                     _model == HPSDRModel.ANAN_G2 || _model == HPSDRModel.ANAN_G2_1K || _model == HPSDRModel.ANVELINAPRO3 || _model == HPSDRModel.REDPITAYA);
+            }
+        }
+        #endregion
+
+        #region ATTENUATION
+        public static bool HasSteppedAttenuation(int rx)
+        {
+            if (rx < 1 || rx > 2) return false;
+
+            if (rx == 1) return true; // RX1 always has stepped attenuation
+
+            //rx 2+
+            switch (_model)
+            {
+                case HPSDRModel.HERMES:
+                case HPSDRModel.ANAN10:
+                case HPSDRModel.ANAN10E:
+                case HPSDRModel.ANAN100:
+                case HPSDRModel.ANAN100B:
+                    return false;
+                default:
+                    return true;
             }
         }
         #endregion

@@ -24,6 +24,20 @@ The author can be reached by email at
 
 mw0lge@grange-lane.co.uk
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +60,13 @@ namespace Thetis
         private static bool _hide_vfoB;
         private static bool _hide_vfo_sync;
         private static bool _expand_spectrum_to_top;
+        private static bool _hide_power_rx;
+        private static bool _hide_mon_tune;
+        private static bool _hide_splt_rit_vac;
+        private static bool _hide_noise_mnf;
+        private static bool _hide_mic_comp;
+        private static bool _hide_display_controls;
+        
         static LegacyItemController()
         {
             _console = null;
@@ -59,11 +80,113 @@ namespace Thetis
             _hide_vfoB = false;
             _hide_vfo_sync = false;
             _expand_spectrum_to_right = false;
+            _hide_power_rx = false;
+            _hide_mon_tune = false;
+            _hide_splt_rit_vac = false;
+            _hide_noise_mnf = false;
+            _hide_mic_comp = false;
+            _hide_display_controls = false;
     }
         public static void Init(Console c)
         {
             _console = c;
             _update_on_property_change = true;
+        }
+        public static bool HideSplitRitVac
+        {
+            get
+            {
+                if (_console != null)
+                {
+                    return _hide_splt_rit_vac && _console.IsExpandedView;
+                }
+                return _hide_splt_rit_vac;
+            }
+            set
+            {
+                _hide_splt_rit_vac = value;
+                if (_update_on_property_change) Update();
+            }
+        }
+        public static bool HideNoiseMnf
+        {
+            get
+            {
+                if (_console != null)
+                {
+                    return _hide_noise_mnf && _console.IsExpandedView;
+                }
+                return _hide_noise_mnf;
+            }
+            set
+            {
+                _hide_noise_mnf = value;
+                if (_update_on_property_change) Update();
+            }
+        }
+        public static bool HideMicCompVox
+        {
+            get
+            {
+                if (_console != null)
+                {
+                    return _hide_mic_comp && _console.IsExpandedView;
+                }
+                return _hide_mic_comp;
+            }
+            set
+            {
+                _hide_mic_comp = value;
+                if (_update_on_property_change) Update();
+            }
+        }
+        public static bool HideDisplayControls
+        {
+            get
+            {
+                if (_console != null)
+                {
+                    return _hide_display_controls && _console.IsExpandedView;
+                }
+                return _hide_display_controls;
+            }
+            set
+            {
+                _hide_display_controls = value;
+                if (_update_on_property_change) Update();
+            }
+        }
+        public static bool HidePowerRx
+        {
+            get
+            {
+                if (_console != null)
+                {
+                    return _hide_power_rx && _console.IsExpandedView;
+                }
+                return _hide_power_rx;
+            }
+            set
+            {
+                _hide_power_rx = value;
+                if (_update_on_property_change) Update();
+            }
+        }
+        public static bool HideMonTune
+        {
+            get
+            {
+                if (_console != null)
+                {
+                    return _hide_mon_tune && _console.IsExpandedView;
+                }
+                return _hide_mon_tune;
+            }
+            set
+            {
+                _hide_mon_tune = value;
+                if (_update_on_property_change) Update();
+            }
         }
         public static bool HideMeters
         {
@@ -200,6 +323,10 @@ namespace Thetis
 
                 _console.VFOAVisible(_console.ShowRX1 || _console.ShowAndromedaTopControls);
                 _console.VFOBVisible(_console.ShowRX2 || _console.ShowAndromedaTopControls);
+                //_console.VFOSyncVisible(false); // need to check if this needs to happen
+
+                _console.PowerRxPanelVisible(false);
+                _console.MonTunePanelVisible(false);
             }
             else if(_console.IsExpandedView && !_console.IsCollapsedView)
             {
@@ -221,6 +348,14 @@ namespace Thetis
                 _console.VFOAVisible(!_hide_vfoA);
                 _console.VFOBVisible(!_hide_vfoB);
                 _console.VFOSyncVisible(!_hide_vfo_sync);
+
+                _console.PowerRxPanelVisible(!_hide_power_rx);
+                _console.MonTunePanelVisible(!_hide_mon_tune);
+
+                _console.SplitRitVacPanelVisible(!_hide_splt_rit_vac);
+                _console.NoiseMnfPanelVisible(!_hide_noise_mnf);
+                _console.MicCompVoxPanelVisible(!_hide_mic_comp);
+                _console.DisplayControlsPanelVisible(!_hide_display_controls);
             }
         }
     }

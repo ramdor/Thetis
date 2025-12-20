@@ -43,6 +43,13 @@ void create_resamps(IVAC a)
 		a->rmatchOUT = create_rmatchV (a->iq_size, a->vac_size, a->iq_rate, a->vac_rate, a->OUTringsize, a->initial_OUTvar);		// RX I-Q data going to VAC
 	forceRMatchVar (a->rmatchOUT, a->OUTforce, a->OUTfvar);
 	a->bitbucket = (double *) malloc0 (getbuffsize (pcm->cmMAXInRate) * sizeof (complex));
+
+	if(a->mono_in_to_stereo_buffer != NULL)
+	{
+		_aligned_free(a->mono_in_to_stereo_buffer);
+		a->mono_in_to_stereo_buffer = NULL;
+		a->mono_in_to_stereo_capacity = 0;
+	}
 }
 
 PORT void create_ivac(
@@ -90,6 +97,8 @@ PORT void create_ivac(
 	a->swapIQout = 0;
 	a->exclusive_in = 0;
 	a->exclusive_out = 0;
+	a->mono_in_to_stereo_buffer = NULL;
+	a->mono_in_to_stereo_capacity = 0;
 	InitializeCriticalSectionAndSpinCount(&a->cs_ivac, 2500);
 	create_resamps(a);
 	{
@@ -102,6 +111,9 @@ PORT void create_ivac(
 void destroy_resamps(IVAC a)
 {
 	_aligned_free (a->bitbucket);
+	_aligned_free(a->mono_in_to_stereo_buffer);
+	a->mono_in_to_stereo_buffer = NULL;
+	a->mono_in_to_stereo_capacity = 0;
 	destroy_rmatchV (a->rmatchOUT);
 	destroy_rmatchV (a->rmatchIN);
 }
@@ -157,14 +169,38 @@ void xvac_out(int id, int nsamples, double* buff)
 	// if (id == 0) WriteAudio (120.0, 48000, a->audio_size, buff, 3);
 }
 
-int CallbackIVAC(const void *input,
-	void *output,
+//int CallbackIVAC(const void *input,
+//	void *output,
+//	unsigned long frameCount,
+//	const PaStreamCallbackTimeInfo* timeInfo,
+//	PaStreamCallbackFlags statusFlags,
+//	void *userData)
+//{
+//	int id = (int)userData;		// use 'userData' to pass in the id of this VAC
+//	IVAC a = pvac[id];
+//	double* out_ptr = (double*)output;
+//	double* in_ptr = (double*)input;
+//	(void)timeInfo;
+//	(void)statusFlags;
+//
+//	if (!a->run) return 0;
+//	xrmatchIN (a->rmatchIN, in_ptr);	// MIC data from VAC
+//	xrmatchOUT(a->rmatchOUT, out_ptr);	// audio or I-Q data to VAC
+//	// if (id == 0)  WriteAudio (120.0, 48000, a->vac_size, out_ptr, 3); //
+//	if (a->iq_type && a->swapIQout)
+//		for (int i = 0, j = 1; i < a->vac_size; i++, j+=2)
+//			out_ptr[j] = -out_ptr[j];
+//	return 0;
+//}
+
+int CallbackIVAC(const void* input,
+	void* output,
 	unsigned long frameCount,
 	const PaStreamCallbackTimeInfo* timeInfo,
 	PaStreamCallbackFlags statusFlags,
-	void *userData)
+	void* userData)
 {
-	int id = (int)userData;		// use 'userData' to pass in the id of this VAC
+	int id = (int)userData;
 	IVAC a = pvac[id];
 	double* out_ptr = (double*)output;
 	double* in_ptr = (double*)input;
@@ -172,12 +208,57 @@ int CallbackIVAC(const void *input,
 	(void)statusFlags;
 
 	if (!a->run) return 0;
-	xrmatchIN (a->rmatchIN, in_ptr);	// MIC data from VAC
-	xrmatchOUT(a->rmatchOUT, out_ptr);	// audio or I-Q data to VAC
+									  // [2.10.3.12]MW0LGE handle mono input devices
+	if (a->inParam.channelCount == 1) // mono, dupe to stereo, some mics are mono only, and we require 2 channels
+	{
+		unsigned long count = (unsigned long)a->vac_size; // assumes vac_size is always the same as frameCount
+		size_t samples = (size_t)(count * 2u);
+		if (a->mono_in_to_stereo_capacity < samples)
+		{
+			if (a->mono_in_to_stereo_buffer != NULL) 
+			{
+				_aligned_free(a->mono_in_to_stereo_buffer);
+				a->mono_in_to_stereo_buffer = NULL;
+				a->mono_in_to_stereo_capacity = 0;
+			}
+
+			double* p = (double*)malloc0(samples * sizeof(double));
+			if (!p) return paAbort;
+			a->mono_in_to_stereo_buffer = p;
+			a->mono_in_to_stereo_capacity = samples;
+		}
+
+		double* tmp_in = a->mono_in_to_stereo_buffer;
+		if (in_ptr)
+		{
+			size_t j = 0;			
+			for (unsigned long i = 0; i < count; ++i)
+			{
+				double s = in_ptr[i];
+				tmp_in[j++] = s;
+				tmp_in[j++] = s;
+			}
+		}
+		else
+		{ 
+			memset(tmp_in, 0, samples * sizeof(double));
+		}
+
+		xrmatchIN(a->rmatchIN, tmp_in);
+	}
+	else
+	{
+		xrmatchIN(a->rmatchIN, in_ptr);
+	}
+
+	xrmatchOUT(a->rmatchOUT, out_ptr);
 	// if (id == 0)  WriteAudio (120.0, 48000, a->vac_size, out_ptr, 3); //
 	if (a->iq_type && a->swapIQout)
-		for (int i = 0, j = 1; i < a->vac_size; i++, j+=2)
+	{
+		unsigned long count = (unsigned long)a->vac_size; // assumes vac_size is always the same as frameCount
+		for (unsigned long i = 0, j = 1; i < count; i++, j += 2)
 			out_ptr[j] = -out_ptr[j];
+	}
 	return 0;
 }
 
@@ -188,14 +269,40 @@ PORT int StartAudioIVAC(int id)
 	int in_dev = Pa_HostApiDeviceIndexToDeviceIndex(a->host_api_index, a->input_dev_index);
 	int out_dev = Pa_HostApiDeviceIndexToDeviceIndex(a->host_api_index, a->output_dev_index);
 
+	int inChannelCount = 2;
+	int outChannelCount = 2;
+
+	const PaDeviceInfo* inDevInfo = NULL;
+	if (in_dev > 0) 
+	{
+		inDevInfo = Pa_GetDeviceInfo(in_dev);
+		if (inDevInfo != NULL) 
+		{
+			inChannelCount = inDevInfo->maxInputChannels;
+			if (inChannelCount > 2) inChannelCount = 2;
+		}
+	}
+	const PaDeviceInfo* outDevInfo = NULL;
+	if (out_dev > 0) 
+	{
+		outDevInfo = Pa_GetDeviceInfo(out_dev);
+
+		//[2.10.3.12]MW0LGE ignore handling of output channels for now, always use 2
+		//if (outDevInfo != NULL)
+		//{
+		//	outChannelCount = outDevInfo->maxOutputChannels;
+		//	if (outChannelCount > 2) outChannelCount = 2;
+		//}
+	}
+
 	a->inParam.device = in_dev;
-	a->inParam.channelCount = 2;
+	a->inParam.channelCount = inChannelCount;
 	a->inParam.suggestedLatency = a->pa_in_latency;
 	a->inParam.sampleFormat = paFloat64;
 	a->inParam.hostApiSpecificStreamInfo = NULL;
 	
 	a->outParam.device = out_dev;
-	a->outParam.channelCount = 2;
+	a->outParam.channelCount = outChannelCount;
 	a->outParam.suggestedLatency = a->pa_out_latency;
 	a->outParam.sampleFormat = paFloat64;
 	a->outParam.hostApiSpecificStreamInfo = NULL;
@@ -203,40 +310,32 @@ PORT int StartAudioIVAC(int id)
 	//attempt to get exlusive if wasapi devices
 	PaWasapiStreamInfo wasapiInputInfo;
 	PaWasapiStreamInfo wasapiOutputInfo;
-	if (in_dev >= 0 && a->exclusive_in)
+	if (inDevInfo != NULL && a->exclusive_in)
 	{
-		const PaDeviceInfo *devInfo = Pa_GetDeviceInfo(in_dev);
-		if (devInfo != NULL)
+		const PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(inDevInfo->hostApi);
+		if (hostApiInfo != NULL && hostApiInfo->type == paWASAPI)
 		{
-			const PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(devInfo->hostApi);
-			if (hostApiInfo != NULL && hostApiInfo->type == paWASAPI)
-			{
-				wasapiInputInfo.size = sizeof(PaWasapiStreamInfo);
-				wasapiInputInfo.hostApiType = paWASAPI;
-				wasapiInputInfo.version = 1;
-				wasapiInputInfo.flags = (paWinWasapiExclusive | paWinWasapiThreadPriority);
-				wasapiInputInfo.threadPriority = eThreadPriorityProAudio;
+			wasapiInputInfo.size = sizeof(PaWasapiStreamInfo);
+			wasapiInputInfo.hostApiType = paWASAPI;
+			wasapiInputInfo.version = 1;
+			wasapiInputInfo.flags = (paWinWasapiExclusive | paWinWasapiThreadPriority);
+			wasapiInputInfo.threadPriority = eThreadPriorityProAudio;
 
-				a->inParam.hostApiSpecificStreamInfo = &wasapiInputInfo;
-			}
-		}		
+			a->inParam.hostApiSpecificStreamInfo = &wasapiInputInfo;
+		}
 	}
-	if (out_dev >= 0 && a->exclusive_out)
+	if (outDevInfo != NULL && a->exclusive_out)
 	{
-		const PaDeviceInfo* devInfo = Pa_GetDeviceInfo(out_dev);
-		if (devInfo != NULL)
+		const PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(outDevInfo->hostApi);
+		if (hostApiInfo != NULL && hostApiInfo->type == paWASAPI)
 		{
-			const PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(devInfo->hostApi);
-			if (hostApiInfo != NULL && hostApiInfo->type == paWASAPI)
-			{
-				wasapiOutputInfo.size = sizeof(PaWasapiStreamInfo);
-				wasapiOutputInfo.hostApiType = paWASAPI;
-				wasapiOutputInfo.version = 1;
-				wasapiOutputInfo.flags = (paWinWasapiExclusive | paWinWasapiThreadPriority);
-				wasapiOutputInfo.threadPriority = eThreadPriorityProAudio;
+			wasapiOutputInfo.size = sizeof(PaWasapiStreamInfo);
+			wasapiOutputInfo.hostApiType = paWASAPI;
+			wasapiOutputInfo.version = 1;
+			wasapiOutputInfo.flags = (paWinWasapiExclusive | paWinWasapiThreadPriority);
+			wasapiOutputInfo.threadPriority = eThreadPriorityProAudio;
 
-				a->outParam.hostApiSpecificStreamInfo = &wasapiOutputInfo;
-			}
+			a->outParam.hostApiSpecificStreamInfo = &wasapiOutputInfo;
 		}
 	}
 	//

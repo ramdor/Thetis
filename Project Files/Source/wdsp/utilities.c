@@ -73,6 +73,8 @@ void print_impulse (const char* filename, int N, double* impulse, int rtype, int
 		file = fopen (filename, "w");
 	else
 		file = fopen (filename, "a");
+	if (file)
+	{
 	if (rtype == 0)
 		for (i = 0; i < N; i++)
 			fprintf (file, "%.17e\n", impulse[i]);
@@ -82,6 +84,7 @@ void print_impulse (const char* filename, int N, double* impulse, int rtype, int
 	fprintf (file, "\n\n\n\n");
 	fflush (file);
 	fclose (file);
+}
 }
 
 PORT
@@ -107,10 +110,12 @@ void print_peak_val (const char* filename, int N, double* buff, double thresh)
 		if (buff[i] > peak) peak = buff[i];
 	if (peak >= thresh)
 	{
-		file = fopen(filename, "a");
+		if (file = fopen(filename, "a"))
+		{
 		fprintf(file, "%d\t\t%.17e\n", seqnum, peak);
 		fflush(file);
 		fclose(file);
+	}
 	}
 	seqnum++;
 }
@@ -129,10 +134,12 @@ void print_peak_env (const char* filename, int N, double* buff, double thresh)
 	}
 	if (peak >= thresh)
 	{
-		file = fopen (filename, "a");
+		if (file = fopen(filename, "a"))
+		{
 		fprintf (file, "%d\t\t%.17e\n", seqnum, peak);
 		fflush (file);
 		fclose (file);
+	}
 	}
 	seqnum++;
 }
@@ -142,7 +149,9 @@ void print_peak_env_f2 (const char* filename, int N, float* Ibuff, float* Qbuff)
 	int i;
 	double peak = 0.0;
 	double new_peak;
-	FILE* file = fopen (filename, "a");
+	FILE* file;
+	if (file = fopen(filename, "a"))
+	{
 	for (i = 0; i < N; i++)
 	{
 		new_peak = sqrt (Ibuff[i] * Ibuff[i] + Qbuff[i] * Qbuff[i]);
@@ -151,6 +160,7 @@ void print_peak_env_f2 (const char* filename, int N, float* Ibuff, float* Qbuff)
 	fprintf (file, "%.17e\n", peak);
 	fflush (file);
 	fclose (file);
+}
 }
 
 void print_iqc_values (const char* filename, int state, double env_in, double I, double Q, double ym, double yc, double ys, double thresh)
@@ -161,7 +171,8 @@ void print_iqc_values (const char* filename, int state, double env_in, double I,
 	env_out = sqrt (I * I + Q * Q);
 	if (env_out > thresh)
 	{
-		file = fopen(filename, "a");
+		if (file = fopen(filename, "a"))
+		{
 		if (seqnum == 0)
 			fprintf(file, "seqnum\tstate\tenv_in\t\tenv_out\t\tym\t\tyc\t\tys\n");
 		fprintf(file, "%d\t%d\t%f\t%f\t%f\t%f\t%f\n", seqnum, state, env_in, env_out, ym, yc, ys);
@@ -170,12 +181,15 @@ void print_iqc_values (const char* filename, int state, double env_in, double I,
 		seqnum++;
 	}
 }
+}
 
 PORT
 void print_buffer_parameters (const char* filename, int channel)
 {
 	IOB a = ch[channel].iob.pc;
-	FILE* file = fopen (filename, "a");
+	FILE* file;
+	if (file = fopen(filename, "a"))
+	{
 	fprintf (file, "channel            = %d\n", channel);
 	fprintf (file, "in_size            = %d\n", a->in_size);
 	fprintf (file, "r1_outsize         = %d\n", a->r1_outsize);
@@ -198,10 +212,13 @@ void print_buffer_parameters (const char* filename, int channel)
 	fflush (file);
 	fclose (file);
 }
+}
 
 void print_meter (const char* filename, double* meter, int enum_av, int enum_pk, int enum_gain)
 {
-	FILE* file = fopen (filename, "a");
+	FILE* file;
+	if (file = fopen(filename, "a"))
+	{
 	if (enum_gain >= 0)
 		fprintf (file, "%.4e\t%.4e\t%.4e\n", meter[enum_av], meter[enum_pk], meter[enum_gain]);
 	else
@@ -209,19 +226,25 @@ void print_meter (const char* filename, double* meter, int enum_av, int enum_pk,
 	fflush (file);
 	fclose (file);
 }
+}
 
 void print_message (const char* filename, const char* message, int p0, int p1, int p2)
 {
-	FILE* file = fopen (filename, "a");
+	FILE* file;
+	if (file = fopen(filename, "a"))
+	{
 	const char* msg = message;
 	fprintf (file, "%s     %d     %d     %d\n", msg, p0, p1, p2);
 	fflush (file);
 	fclose (file);
 }
+}
 
 void print_window_gain (const char* filename, int wintype, double inv_coherent_gain, double inherent_power_gain)
 {
-	FILE* file = fopen (filename, "a");
+	FILE* file;
+	if (file = fopen(filename, "a"))
+	{
 	double enb = inherent_power_gain * inv_coherent_gain * inv_coherent_gain;
 	switch (wintype)
 	{
@@ -246,18 +269,25 @@ void print_window_gain (const char* filename, int wintype, double inv_coherent_g
 	case 6:
 		fprintf (file, "Blackman-Harris 7-term  %.4f\t%.4f\t%.4f\n", inv_coherent_gain, inherent_power_gain, enb);
 		break;
+		default:
+			fprintf(file, "Specified Window Type is Invalid\n");
+			break;
 	}
 	fflush (file);
 	fclose (file);
 }
+}
 
 void print_deviation (const char* filename, double dpmax, double rate)
 {
-	FILE* file = fopen (filename, "a");
+	FILE* file;
+	if (file = fopen(filename, "a"))
+	{
 	double peak = dpmax * rate / TWOPI;
 	fprintf (file, "Peak Dev = %.4f\n", peak);
 	fflush (file);
 	fclose (file);
+}
 }
 
 void __cdecl CalccPrintSamples (void *pargs)
@@ -266,7 +296,9 @@ void __cdecl CalccPrintSamples (void *pargs)
 	double env_tx, env_rx;
 	int channel = (int)(uintptr_t)pargs;
 	CALCC a = txa[channel].calcc.p;
-	FILE* file = fopen("samples.txt", "w");
+	FILE* file;
+	if (file = fopen("samples.txt", "w"))
+	{
 	fprintf (file, "\n");
 	for (i = 0; i < a->nsamps; i++)
 	{
@@ -278,6 +310,7 @@ void __cdecl CalccPrintSamples (void *pargs)
 	}
 	fflush(file);
 	fclose(file);
+	}
 	_endthread();
 }
 
@@ -288,7 +321,9 @@ void doCalccPrintSamples(int channel)
 
 void print_anb_parms (const char* filename, ANB a)
 {
-	FILE* file = fopen (filename, "a");
+	FILE* file;
+	if (file = fopen(filename, "a"))
+	{
 	fprintf (file, "Run         = %d\n", a->run);
 	fprintf (file, "Buffer Size = %d\n", a->buffsize);
 	fprintf (file, "Sample Rate = %d\n", (int)a->samplerate);
@@ -299,19 +334,19 @@ void print_anb_parms (const char* filename, ANB a)
 	fflush (file);
 	fclose (file);
 }
+}
 
 // Audacity:  Import Raw Data, Signed 32-bit PCM, Little-endian, Mono/Stereo per mode selection, 48K rate
 
 int audiocount = 0;
-int* data;
+int* data = 0;
 int ready = 0;
 int done = 0;
 
 void WriteAudioFile(void* arg)
 {
 	byte* dat = (byte *)arg;
-	FILE* file = fopen("AudioFile", "wb");
-
+	FILE* file;
 	// reverse bits of each byte (possibly needed on some platforms)
 	// int i;
 	// byte b;
@@ -323,10 +358,14 @@ void WriteAudioFile(void* arg)
 	// 	b = ((b >> 4) & 0x0f) | ((b << 4) & 0xf0);
 	// 	dat[i] = b;
 	// }
+	if (file = fopen("AudioFile", "wb"))
+	{
 	fwrite((int *)dat, sizeof(int), audiocount, file);
 	fflush(file);
 	fclose(file);
-	free(data);
+	}
+	_aligned_free(data);
+	data = 0;
 	_endthread();
 }
 
@@ -345,9 +384,9 @@ void WriteAudioWDSP (double seconds, int rate, int size, double* indata, int mod
 			n = (int)(seconds * rate);
 		else
 			n = 2 * (int)(seconds * rate);
-		data = (int *)calloc(n, sizeof(int));
 		ready = 1;
 	}
+	if (!data) data = (int*)malloc0(n * sizeof(int));
 	for (i = 0; i < size; i++)
 	{
 		if (audiocount < n)
@@ -370,6 +409,9 @@ void WriteAudioWDSP (double seconds, int rate, int size, double* indata, int mod
 			case 4: // double samples (mono)
 				data[audiocount++] = (int)(conv * indata[i]);
 				break;
+			default:	// invalid mode/datatype
+				data[audiocount++] = 0;
+				break;
 			}
 		}
 	}
@@ -389,7 +431,7 @@ void WriteScaledAudioFile (void* arg)
 	} *dstr;
 	dstr dstruct = (dstr)arg;
 
-	FILE* file = fopen("AudioFile", "wb");
+	FILE* file;
 	int i;
 	double max = 0.0;
 	double abs_val;
@@ -404,11 +446,12 @@ void WriteScaledAudioFile (void* arg)
 	}
 	for (i = 0; i < dstruct->n; i++)
 		idata[i] = dstruct->ddata[i] >= 0.0 ? (int)floor(conv * dstruct->ddata[i] / max + 0.5) : (int)ceil(conv * dstruct->ddata[i] / max - 0.5);
-
+	if (file = fopen("AudioFile", "wb"))
+	{
 	fwrite(idata, sizeof(int), dstruct->n, file);
 	fflush(file);
 	fclose(file);
-	
+	}
 	_aligned_free (dstruct->ddata);
 	_aligned_free (dstruct);
 	_aligned_free (idata);
@@ -493,11 +536,14 @@ double* model_bandpass(int nc, double f_low, double f_high, double rate, int wty
 void print_bandpass_response (const char* filename, int points, double* response)
 {
 	int i;
-	FILE* file = fopen(filename, "w");
+	FILE* file;
+	if (file = fopen(filename, "w"))
+	{
 	for (i = 0; i < points; i++)
 		fprintf(file, "%.17e\n", response[i]);
 	fflush(file);
 	fclose(file);
+	}
 }
 
 BFCU pbfcu[4];

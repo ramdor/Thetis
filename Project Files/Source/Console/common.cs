@@ -28,6 +28,19 @@
 //=================================================================
 // Continual modifications Copyright (C) 2019-2025 Richard Samphire (MW0LGE)
 //=================================================================
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 using System;
 using System.Diagnostics;
@@ -114,6 +127,29 @@ namespace Thetis
             }
 
             return length >= source.Length ? source : source.Substring(source.Length - length);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string ReplaceIgnoreTokenCase(this string source, string token, string replacement)
+        {
+            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(token))
+                return source;
+
+            int pos = 0;
+            int idx = source.IndexOf(token, pos, StringComparison.OrdinalIgnoreCase);
+            if (idx < 0) return source;
+
+            StringBuilder sb = new StringBuilder(source.Length + Math.Max(0, replacement.Length - token.Length) * 4);
+
+            while (idx >= 0)
+            {
+                sb.Append(source, pos, idx - pos);
+                sb.Append(replacement);
+                pos = idx + token.Length;
+                idx = source.IndexOf(token, pos, StringComparison.OrdinalIgnoreCase);
+            }
+
+            sb.Append(source, pos, source.Length - pos);
+            return sb.ToString();
         }
     }
     public static class ControlExtentions
@@ -223,7 +259,8 @@ namespace Thetis
 				}
 			}
 
-			c.Invalidate();
+			//c.Invalidate();
+            c.Refresh();
 		}
 		#endregion
 		#region WindowDropShadow
@@ -339,55 +376,7 @@ namespace Thetis
 
             DB.SaveVars(tablename, control_data);
         }
-        //        public static void SaveForm(Form form, string tablename)
-        //		{
-        //            if (DB.ds == null) return;
 
-        //			ArrayList a = new ArrayList();
-        //			ArrayList temp = new ArrayList();
-
-        //			ControlList(form, ref temp);
-
-        //			foreach(Control c in temp)				// For each control
-        //			{
-        //				if(c.GetType() == typeof(CheckBoxTS))
-        //					a.Add(c.Name+"/"+((CheckBoxTS)c).Checked.ToString());
-        //				else if(c.GetType() == typeof(ComboBoxTS))
-        //				{
-        //					//if(((ComboBox)c).SelectedIndex >= 0)
-        //					a.Add(c.Name+"/"+((ComboBoxTS)c).Text);
-        //				}
-        //				else if(c.GetType() == typeof(NumericUpDownTS))
-        //					a.Add(c.Name+"/"+((NumericUpDownTS)c).Value.ToString());
-        //				else if(c.GetType() == typeof(RadioButtonTS))
-        //					a.Add(c.Name+"/"+((RadioButtonTS)c).Checked.ToString());
-        //				else if(c.GetType() == typeof(TextBoxTS))
-        //					a.Add(c.Name+"/"+((TextBoxTS)c).Text);
-        //				else if(c.GetType() == typeof(TrackBarTS))
-        //					a.Add(c.Name+"/"+((TrackBarTS)c).Value.ToString());
-        //				else if(c.GetType() == typeof(ColorButton))
-        //				{
-        //					Color clr = ((ColorButton)c).Color;
-        //					a.Add(c.Name+"/"+clr.R+"."+clr.G+"."+clr.B+"."+clr.A);
-        //				}
-        //#if(DEBUG)
-        //				else if(c.GetType() == typeof(GroupBox) ||
-        //					c.GetType() == typeof(CheckBoxTS) ||
-        //					c.GetType() == typeof(ComboBox) ||
-        //					c.GetType() == typeof(NumericUpDown) ||
-        //					c.GetType() == typeof(RadioButton) ||
-        //					c.GetType() == typeof(TextBox) ||
-        //					c.GetType() == typeof(TrackBar))
-        //					Debug.WriteLine(form.Name + " -> " + c.Name+" needs to be converted to a Thread Safe control.");
-        //#endif
-        //			}
-        //			a.Add("Top/"+form.Top);
-        //			a.Add("Left/"+form.Left);
-        //			a.Add("Width/"+form.Width);
-        //			a.Add("Height/"+form.Height);
-
-        //			DB.SaveVars(tablename, ref a);		// save the values to the DB
-        //		}
         public static void RestoreForm(Form form, string tablename, bool restore_size)
         {
             if (DB.ds == null) return;
@@ -482,324 +471,17 @@ namespace Thetis
             ForceFormOnScreen(form);
         }
 
-        //public static void RestoreForm(Form form, string tablename, bool restore_size)
-        //{
-        //          if (DB.ds == null) return;
-
-        //          ArrayList temp = new ArrayList();		// list of all first level controls
-        //	ControlList(form, ref temp);
-
-        //	//[2.10.2.3]MW0LGE change to single dictionary of controls
-        //	Dictionary<string, Control> ctrls = new Dictionary<string, Control>();
-
-        //	foreach(Control c in temp)
-        //	{
-        //              ctrls.Add(c.Name, c); //[2.10.2.3]MW0LGE yes, control names are unique per form, and to create and search each list is madness
-        //          }
-        //	temp.Clear();	// now that we have the controls we want, delete first list 
-
-        //	ArrayList a = DB.GetVars(tablename);						// Get the saved list of controls
-        //	a.Sort();
-
-        //	// restore saved values to the controls
-        //	foreach(string s in a)				// string is in the format "name,value"
-        //	{
-        //		string[] vals = s.Split('/');
-        //		if(vals.Length > 2)
-        //		{
-        //			for(int i=2; i<vals.Length; i++)
-        //				vals[1] += "/"+vals[i];
-        //		}
-
-        //		string name = vals[0];
-        //		string val = vals[1];
-
-        //		switch(name)
-        //		{
-        //			case "Top":
-        //				form.StartPosition = FormStartPosition.Manual;
-        //				int top = int.Parse(val);
-        //				form.Top = top;
-        //				break;
-        //			case "Left":
-        //				form.StartPosition = FormStartPosition.Manual;
-        //				int left = int.Parse(val);
-        //				form.Left = left;
-        //				break;
-        //			case "Width":
-        //				if(restore_size)
-        //				{
-        //					int width = int.Parse(val);
-        //					form.Width = width;
-        //				}
-        //				break;
-        //			case "Height":
-        //				if(restore_size)
-        //				{
-        //					int height = int.Parse(val);
-        //					form.Height = height;
-        //				}
-        //				break;
-        //		}
-
-        //		if(s.StartsWith("chk"))			// control is a CheckBoxTS
-        //		{
-        //			if (ctrls.ContainsKey(name)) ((CheckBoxTS)ctrls[name]).Checked = bool.Parse(val);
-        //              }
-        //		else if(s.StartsWith("combo"))	// control is a ComboBox
-        //		{
-        //			if (ctrls.ContainsKey(name)) ((ComboBoxTS)ctrls[name]).Text = val;
-        //              }
-        //		else if(s.StartsWith("ud"))
-        //		{
-        //                  if (ctrls.ContainsKey(name))
-        //                  {
-        //                      NumericUpDownTS c = (NumericUpDownTS)ctrls[name];
-        //                      decimal dnum = decimal.Parse(val);
-        //                      if (dnum > c.Maximum) dnum = c.Maximum;
-        //                      else if (dnum < c.Minimum) dnum = c.Minimum;
-        //                      c.Value = dnum;
-        //                  }
-        //              }
-        //		else if(s.StartsWith("rad"))
-        //		{
-        //                  if (ctrls.ContainsKey(name))
-        //                  {
-        //                      RadioButtonTS c = (RadioButtonTS)ctrls[name];
-        //                      if (!val.ToLower().Equals("true") && !val.ToLower().Equals("false")) val = "True";
-        //                      c.Checked = bool.Parse(val);
-        //                  }
-        //              }
-        //		else if(s.StartsWith("txt"))
-        //		{
-        //                  if (ctrls.ContainsKey(name)) ((TextBoxTS)ctrls[name]).Text = val;
-        //              }
-        //		else if(s.StartsWith("tb"))
-        //		{
-        //			if (ctrls.ContainsKey(name))
-        //			{
-        //				TrackBarTS c = (TrackBarTS)ctrls[name];
-        //				int num = int.Parse(val);
-        //				if (num > c.Maximum) num = c.Maximum;
-        //				if (num < c.Minimum) num = c.Minimum;
-        //                      c.Value = num;
-        //                  }
-        //              }
-        //		else if(s.StartsWith("clrbtn"))
-        //		{
-        //			if (ctrls.ContainsKey(name))
-        //			{
-        //                      string[] colors = val.Split('.');
-        //				if (colors.Length == 4)
-        //				{
-        //					int R, G, B, A;
-        //					R = Int32.Parse(colors[0]);
-        //					G = Int32.Parse(colors[1]);
-        //					B = Int32.Parse(colors[2]);
-        //					A = Int32.Parse(colors[3]);
-        //					ColorButton c = (ColorButton)ctrls[name];
-        //                          c.Color = Color.FromArgb(A, R, G, B);
-        //                      }
-        //			}
-        //		}
-        //	}
-
-        //	ForceFormOnScreen(form);
-        //}
-
         public static (bool resized, bool relocated) ForceFormOnScreen(Form f, bool shrink_to_fit = false, bool keep_on_screen = false)
         {
+            // shrink_to_fit - if form is larger than screen, shrink it to fit
+            // keep_on_screen - if form is off screen, move it to be on screen. Spanning screens is allowed
+
             if (f == null) return (false, false);
 
-            bool resized = false;
-            bool relocated = false;
-            Screen[] screens = Screen.AllScreens;
+            (Rectangle newPos, bool resized, bool repositioned) = SafeScreens.EnsureRectangleWithinNearestScreen(null, f, keep_on_screen, true);
 
-            if (screens.Length == 0)
-            {
-                f.Location = new Point(0, 0);
-                return (false, false);
-            }
-
-            if (keep_on_screen)
-            {
-                // Find the screen where the mouse cursor is currently located
-                Screen screen = Screen.FromPoint(Cursor.Position);
-                Rectangle screenBounds = screen.WorkingArea;
-
-                // Ensure the form is within the screen's bounds
-                if (f.Left < screenBounds.Left)
-                {
-                    f.Left = screenBounds.Left;
-                    relocated = true;
-                }
-                if (f.Top < screenBounds.Top)
-                {
-                    f.Top = screenBounds.Top;
-                    relocated = true;
-                }
-                if (f.Right > screenBounds.Right)
-                {
-                    f.Left = screenBounds.Right - f.Width;
-                    relocated = true;
-                }
-                if (f.Bottom > screenBounds.Bottom)
-                {
-                    f.Top = screenBounds.Bottom - f.Height;
-                    relocated = true;
-                }
-
-                // Shrink the form to fit within the screen's bounds
-                if (shrink_to_fit)
-                {
-                    int formWidth = f.Width;
-                    int formHeight = f.Height;
-
-                    if (f.Width > screenBounds.Width)
-                    {
-                        formWidth = screenBounds.Width;
-                        resized = true;
-                    }
-
-                    if (f.Height > screenBounds.Height)
-                    {
-                        formHeight = screenBounds.Height;
-                        resized = true;
-                    }
-
-                    f.Size = new Size(formWidth, formHeight);
-                }
-            }
-            else
-            {
-                // Calculate the full virtual screen area
-                int left = int.MaxValue, top = int.MaxValue;
-                int right = int.MinValue, bottom = int.MinValue;
-
-                foreach (Screen screen in screens)
-                {
-                    if (screen.Bounds.Left < left)
-                        left = screen.Bounds.Left;
-                    if (screen.Bounds.Top < top)
-                        top = screen.Bounds.Top;
-                    if (screen.Bounds.Right > right)
-                        right = screen.Bounds.Right;
-                    if (screen.Bounds.Bottom > bottom)
-                        bottom = screen.Bounds.Bottom;
-                }
-
-                bool onScreen = f.Left >= left &&
-                                f.Top >= top &&
-                                f.Right <= right &&
-                                f.Bottom <= bottom;
-
-                if (!onScreen)
-                {
-                    if (f.Left < left)
-                        f.Left = left;
-                    if (f.Top < top)
-                        f.Top = top;
-                    if (f.Right > right)
-                        f.Left = right - f.Width;
-                    if (f.Bottom > bottom)
-                        f.Top = bottom - f.Height;
-
-                    relocated = true;
-                }
-
-                if (shrink_to_fit)
-                {
-                    int formWidth = f.Width;
-                    int formHeight = f.Height;
-
-                    if (f.Width > right - left)
-                    {
-                        formWidth = right - left;
-                        resized = true;
-                    }
-
-                    if (f.Height > bottom - top)
-                    {
-                        formHeight = bottom - top;
-                        resized = true;
-                    }
-
-                    f.Size = new Size(formWidth, formHeight);
-                }
-            }
-
-            return (relocated, resized);
+            return (resized, repositioned);
         }
-
-
-        //public static (bool resized, bool shrunk) ForceFormOnScreen(Form f, bool shrink_to_fit = false)
-        //{
-        //          bool resized = false;
-        //          bool relocated = false;
-        //          Screen[] screens = Screen.AllScreens;
-
-        //          if (screens.Length == 0)
-        //          {
-        //              f.Location = new Point(0, 0);
-        //              return (false, false);
-        //          }
-
-        //          int left = int.MaxValue, top = int.MaxValue;
-        //          int right = int.MinValue, bottom = int.MinValue;
-
-        //          foreach (Screen screen in screens)
-        //          {
-        //              if (screen.Bounds.Left < left)
-        //                  left = screen.Bounds.Left;
-        //              if (screen.Bounds.Top < top)
-        //                  top = screen.Bounds.Top;
-        //              if (screen.Bounds.Right > right)
-        //                  right = screen.Bounds.Right;
-        //              if (screen.Bounds.Bottom > bottom)
-        //                  bottom = screen.Bounds.Bottom;
-        //          }
-
-        //          bool onScreen = f.Left >= left &&
-        //                          f.Top >= top &&
-        //                          f.Right <= right &&
-        //                          f.Bottom <= bottom;
-
-        //          if (!onScreen)
-        //          {
-        //              if (f.Left < left)
-        //                  f.Left = left;
-        //              if (f.Top < top)
-        //                  f.Top = top;
-        //              if (f.Right > right)
-        //                  f.Left = right - f.Width;
-        //              if (f.Bottom > bottom)
-        //                  f.Top = bottom - f.Height;
-
-        //              relocated = true;
-        //          }
-
-        //          if (shrink_to_fit)
-        //          {
-        //              int formWidth = f.Width;
-        //              int formHeight = f.Height;
-
-        //              if (f.Width > right - left)
-        //              {
-        //                  formWidth = right - left;
-        //                  resized = true;
-        //              }
-
-        //              if (f.Height > bottom - top)
-        //              {
-        //                  formHeight = bottom - top;
-        //                  resized = true;
-        //              }
-
-        //              f.Size = new Size(formWidth, formHeight);
-        //          }
-
-        //          return (relocated, resized);
-        //      }
 
         public static void TabControlInsert(TabControl tc, TabPage tp, int index)
 		{
@@ -997,7 +679,8 @@ namespace Thetis
         {
             get
             {
-                return (Control.ModifierKeys & Keys.Alt) == Keys.Alt;
+                //return (Control.ModifierKeys & Keys.Alt) == Keys.Alt;
+                return Keyboard.IsKeyDown(Keys.Menu) || Keyboard.IsKeyDown(Keys.LMenu) || Keyboard.IsKeyDown(Keys.RMenu);
             }
         }
         public static bool Is64Bit
@@ -1009,43 +692,12 @@ namespace Thetis
         }
 		public static void DoubleBuffered(Control control, bool enabled)
         {
-            // MW0LGE_[2.9.0.6]
-            // not all controls (such as panels) have double buffered property
-            // try to use reflection, so we can keep the base panel
-            //try
-            //{
-            //    control.GetType().InvokeMember("DoubleBuffered",
-            //                    System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
-            //                    null, control, new object[] { enabled });
-            //}
-            //catch
-            //{
-            //}
-
-            //[2.10.3.6]MW0LGE
             // Use reflection to set the protected property DoubleBuffered
             PropertyInfo doubleBufferPropertyInfo = control.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
             if (doubleBufferPropertyInfo != null)
             {
                 doubleBufferPropertyInfo.SetValue(control, enabled, null);
             }
-
-            //// Use reflection to call the protected method SetStyle
-            //MethodInfo setStyleMethod = control.GetType().GetMethod("SetStyle", BindingFlags.Instance | BindingFlags.NonPublic);
-            //if (setStyleMethod != null)
-            //{
-            //    setStyleMethod.Invoke(control, new object[] { ControlStyles.OptimizedDoubleBuffer, enabled });
-            //    setStyleMethod.Invoke(control, new object[] { ControlStyles.AllPaintingInWmPaint, enabled });
-            //    //setStyleMethod.Invoke(control, new object[] { ControlStyles.UserPaint, enabled });
-            //    setStyleMethod.Invoke(control, new object[] { ControlStyles.ResizeRedraw, enabled });
-            //}
-
-            //// Apply the style settings to the control
-            //MethodInfo updateStylesMethod = control.GetType().GetMethod("UpdateStyles", BindingFlags.Instance | BindingFlags.NonPublic);
-            //if (updateStylesMethod != null)
-            //{
-            //    updateStylesMethod.Invoke(control, null);
-            //}
         }
 
 		public static int FiveDigitHash(string str)
@@ -1426,6 +1078,8 @@ namespace Thetis
 
             return true; // IP and port are valid
         }
+
+        // serilisation for any object type
         public static string SerializeToBase64<T>(T obj)
         {
             using (MemoryStream memoryStream = new MemoryStream())
@@ -1452,16 +1106,36 @@ namespace Thetis
             }
         }
         //
+
         public static bool HasArg(string[] args, string arg)
         {
             if (args == null || args.Length < 1 || string.IsNullOrEmpty(arg)) return false;
 
-            //return args[0].Contains(arg, StringComparison.OrdinalIgnoreCase);
             foreach (string s in args)
             {
                 if (s.Contains(arg, StringComparison.OrdinalIgnoreCase)) return true;
             }
             return false;
+        }
+        public static string ArgParam(string[] args, string arg)
+        {
+            string ret = string.Empty;
+            if (args == null || args.Length < 1 || string.IsNullOrEmpty(arg)) return ret;
+
+            foreach (string s in args)
+            {
+                if (s.Contains(arg, StringComparison.OrdinalIgnoreCase))
+                {
+                    string trimmed = s.Trim();
+                    int index = trimmed.IndexOf(":");
+                    if (index != -1)
+                    {
+                        ret = trimmed.Substring(index + 1);
+                    }
+                    break;
+                }
+            }
+            return ret;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetLuminance(Color c)
@@ -1647,77 +1321,7 @@ namespace Thetis
             }
 
             return int.TryParse(lower_comport.Substring(3), out portNumber);
-        }
-
-        private static int getIntersectionArea(Rectangle rect1, Rectangle rect2)
-        {
-            Rectangle intersection = Rectangle.Intersect(rect1, rect2);
-            return intersection.Width > 0 && intersection.Height > 0 ? intersection.Width * intersection.Height : 0;
-        }
-        public static bool EnsureFormIsOnScreen(Form frm, bool entirely_on_screen, bool prioritizeCursorScreen = false)
-        {
-            bool shifted = false;
-            Rectangle formBounds = frm.Bounds;
-
-            if (entirely_on_screen)
-            {
-                Screen targetScreen = null;
-
-                if (prioritizeCursorScreen)
-                {
-                    Screen cursorScreen = Screen.FromPoint(Cursor.Position);
-
-                    Rectangle cursorWorkingArea = cursorScreen.WorkingArea;
-                    Rectangle newBoundsOnCursorScreen = getAdjustedBounds(formBounds, cursorWorkingArea);
-
-                    if (cursorWorkingArea.Contains(newBoundsOnCursorScreen))
-                    {
-                        targetScreen = cursorScreen;
-                    }
-                }
-
-                if (targetScreen == null)
-                {
-                    targetScreen = Screen.AllScreens
-                    .OrderByDescending(screen => getIntersectionArea(screen.WorkingArea, formBounds))
-                    .First();
-                }
-
-                Rectangle targetWorkingArea = targetScreen.WorkingArea;
-
-                int newX = Math.Max(targetWorkingArea.X, Math.Min(formBounds.X, targetWorkingArea.Right - formBounds.Width));
-                int newY = Math.Max(targetWorkingArea.Y, Math.Min(formBounds.Y, targetWorkingArea.Bottom - formBounds.Height));
-
-                shifted = frm.Location.X != newX || frm.Location.Y != newY;
-                frm.Location = new Point(newX, newY);
-            }
-            else
-            {
-                bool isOnScreen = Screen.AllScreens.Any(screen => screen.WorkingArea.IntersectsWith(formBounds));
-
-                if (!isOnScreen)
-                {
-                    Screen primaryScreen = Screen.PrimaryScreen;
-                    Rectangle primaryWorkingArea = primaryScreen.WorkingArea;
-
-                    int newX = Math.Max(primaryWorkingArea.X, Math.Min(formBounds.X, primaryWorkingArea.Right - formBounds.Width));
-                    int newY = Math.Max(primaryWorkingArea.Y, Math.Min(formBounds.Y, primaryWorkingArea.Bottom - formBounds.Height));
-
-                    shifted = frm.Location.X != newX || frm.Location.Y != newY;
-                    frm.Location = new Point(newX, newY);
-                }
-            }
-            return shifted;
-        }
-        private static Rectangle getAdjustedBounds(Rectangle formBounds, Rectangle screenWorkingArea)
-        {
-            int newX = Math.Max(screenWorkingArea.X,
-                Math.Min(formBounds.X, screenWorkingArea.Right - formBounds.Width));
-            int newY = Math.Max(screenWorkingArea.Y,
-                Math.Min(formBounds.Y, screenWorkingArea.Bottom - formBounds.Height));
-
-            return new Rectangle(new Point(newX, newY), formBounds.Size);
-        }
+        }      
 
         //[2.10.3.9]MW0LGE performance related
         [DllImport("kernel32.dll")]
@@ -1987,27 +1591,19 @@ namespace Thetis
             }
         }
 
-        public static bool IsSleepPrevented()
+        public static bool IsSleepPrevented
         {
-            try
+            get
             {
                 return _sleep_prevented;
             }
-            catch
-            {
-                return false;
-            }
         }
 
-        public static bool IsScreenSaverPrevented()
+        public static bool IsScreenSaverPrevented
         {
-            try
+            get
             {
                 return _display_prevented;
-            }
-            catch
-            {
-                return false;
             }
         }
         //
@@ -2095,6 +1691,55 @@ namespace Thetis
             catch (Exception)
             {
                 return string.Empty;
+            }
+        }
+        //
+
+        //string compress
+        public static string Compress_gzip(string uncompressed_input)
+        {
+            if (string.IsNullOrEmpty(uncompressed_input)) return null;
+
+            byte[] input_bytes = Encoding.UTF8.GetBytes(uncompressed_input);
+
+            using (MemoryStream output_stream = new MemoryStream())
+            {
+                using (GZipStream gzip = new GZipStream(output_stream, CompressionLevel.Optimal, true))
+                {
+                    gzip.Write(input_bytes, 0, input_bytes.Length);
+                }
+                byte[] compressed_bytes = output_stream.ToArray();
+                string base64 = Convert.ToBase64String(compressed_bytes);
+                string result = base64.Replace('+', '-').Replace('/', '_').TrimEnd('=');
+                return result;
+            }
+        }
+
+        public static string Decompress_gzip(string compressed_input)
+        {
+            if (string.IsNullOrEmpty(compressed_input)) return null;
+
+            string base64 = compressed_input.Replace('-', '+').Replace('_', '/');
+            int pad = base64.Length % 4;
+            if (pad == 2) base64 += "==";
+            else if (pad == 3) base64 += "=";
+            else if (pad == 1) throw new FormatException("Invalid Base64URL length");
+
+            byte[] compressed_bytes = Convert.FromBase64String(base64);
+
+            using (MemoryStream input_stream = new MemoryStream(compressed_bytes))
+            using (GZipStream gzip = new GZipStream(input_stream, CompressionMode.Decompress))
+            using (MemoryStream decompressed_stream = new MemoryStream())
+            {
+                byte[] buffer = new byte[8192];
+                int read;
+                while ((read = gzip.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    decompressed_stream.Write(buffer, 0, read);
+                }
+                byte[] decompressed_bytes = decompressed_stream.ToArray();
+                string result = Encoding.UTF8.GetString(decompressed_bytes);
+                return result;
             }
         }
         //

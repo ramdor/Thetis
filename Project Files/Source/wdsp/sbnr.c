@@ -1,9 +1,10 @@
-/*  sbnr.cs
+/*  sbnr.c
 
 This file is part of a program that implements a Software-Defined Radio.
 
 This code/file can be found on GitHub : https://github.com/ramdor/Thetis
 
+Copyright (C) 2000-2025 Original authors
 Copyright (C) 2020-2025 Richard Samphire MW0LGE
 
 This program is free software; you can redistribute it and/or
@@ -25,10 +26,22 @@ The author can be reached by email at
 mw0lge@grange-lane.co.uk
 
 This code is based on code and ideas from  : https://github.com/vu3rdd/wdsp
-and and uses RNNoise and libspecbleach
-https://gitlab.xiph.org/xiph/rnnoise
+and and uses libspecbleach
 https://github.com/lucianodato/libspecbleach
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -51,13 +64,14 @@ void setBuffers_sbnr (SBNR a, double* in, double* out)
 	a->out = out;
 }
 
-SBNR create_sbnr (int run, int position, double *in, double *out)
+SBNR create_sbnr (int run, int position, int size, double *in, double *out, int rate)
 {
     SBNR a = (SBNR) malloc0 (sizeof (sbnr));
 
     a->run = run;
     a->position = position;
-    a->st = specbleach_adaptive_initialize(48000, 20);
+    a->rate = rate;
+    a->st = specbleach_adaptive_initialize(a->rate, 20); //20ms frame size, documentation recommends 20-100
     a->in = in;
     a->out = out;
     a->reduction_amount = 10.F;
@@ -66,11 +80,18 @@ SBNR create_sbnr (int run, int position, double *in, double *out)
     a->noise_scaling_type = 0;
     a->noise_rescale = 2.F;
     a->post_filter_threshold = -10.F;
-    a->buffer_size = 64;
+    a->buffer_size = size;
     a->input = malloc0(a->buffer_size * sizeof(float));
     a->output = malloc0(a->buffer_size * sizeof(float));
 
     return a;
+}
+
+void setSamplerate_sbnr(SBNR a, int rate)
+{
+    specbleach_adaptive_free(a->st);
+    a->rate = rate;
+    a->st = specbleach_adaptive_initialize(a->rate, 20); //20ms frame size, documentation recommends 20-100
 }
 
 void xsbnr (SBNR a, int pos)
@@ -88,25 +109,26 @@ void xsbnr (SBNR a, int pos)
 
         specbleach_adaptive_load_parameters(a->st, parameters);
 
-        double* in = a->in;
+        double*  in = a->in;
         double* out = a->out;
         int      bs = a->buffer_size;
         float* proc_out = a->output;
-        float* to_proc = a->input;
+        float*  to_proc = a->input;
 
         for (size_t i = 0; i < bs; i++)
         {
-            to_proc[i] = (float)in[2 * i];
+            to_proc[i] = (float)in[2 * i + 0];
         }
         specbleach_adaptive_process(a->st, (uint32_t)bs, to_proc, proc_out);
 
         for (size_t i = 0; i < bs; i++)
         {
-            out[2*i] = (double) proc_out[i];
-            out[2*i+1] = 0.0;
+            out[2 * i + 0] = (double) proc_out[i];
+            out[2 * i + 1] = 0.0;
         }
     }
-    else if (a->out != a->in) {
+    else if (a->out != a->in) 
+    {
         memcpy (a->out, a->in, a->buffer_size * sizeof (complex));
     }
 }
@@ -215,5 +237,14 @@ void SetRXASBNRnoiseScalingType(int channel, int noise_scaling_type)
 
     EnterCriticalSection(&ch[channel].csDSP);
     rxa[channel].sbnr.p->noise_scaling_type = noise_scaling_type;
+    LeaveCriticalSection(&ch[channel].csDSP);
+}
+
+PORT
+void SetRXASBNRPosition(int channel, int position)
+{
+    EnterCriticalSection(&ch[channel].csDSP);
+    rxa[channel].sbnr.p->position = position;
+    rxa[channel].bp1.p->position = position;
     LeaveCriticalSection(&ch[channel].csDSP);
 }

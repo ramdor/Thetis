@@ -25,6 +25,19 @@
 //    Austin, TX 78728
 //    USA
 //=================================================================
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 using System;
 using System.Diagnostics;
@@ -669,14 +682,21 @@ namespace Thetis
 			if(low > udLow.Maximum) low = (int)udLow.Maximum;
 			if(high < udHigh.Minimum) high = (int)udHigh.Minimum;
 			if(high > udHigh.Maximum) high = (int)udHigh.Maximum;
-			
-			udLow.Value = low;
+
+			bool low_changed = udLow.Value != low;
+			bool high_changed = udHigh.Value != high;
+
+            udLow.Value = low;
 			udHigh.Value = high;
 
 			udWidth.Value = high - low;
 
 			_filter_updating = false;
-		}
+
+			if (low_changed) udLow_ValueChanged(this, EventArgs.Empty); //[2.10.3.12]MW0LGE only call if changed, as the events will call us back, and we would get a stack overflow
+            if (high_changed) udHigh_ValueChanged(this, EventArgs.Empty);
+			if (low_changed || high_changed) udWidth_ValueChanged(this, EventArgs.Empty); // the width will have changed
+        }
 
 		#endregion
 
@@ -763,7 +783,9 @@ namespace Thetis
 
 		private void udLow_ValueChanged(object sender, System.EventArgs e)
 		{
-			if(udLow.Value + 10 > udHigh.Value/* && !_filter_updating*/) udLow.Value = udHigh.Value - 10;
+            if (_filter_updating) return; //[2.10.3.12]MW0LGE prevent update if changes happening from UpdateFilter. UpdateFilter will call this directly
+
+            if (udLow.Value + 10 > udHigh.Value) udLow.Value = udHigh.Value - 10;
 			preset[(int)dsp_mode].SetLow(current_filter, (int)udLow.Value);
 			if(!rx2)
 			{
@@ -777,13 +799,15 @@ namespace Thetis
 					console.RX2Filter == current_filter)
 					console.UpdateRX2FilterPresetLow((int)udLow.Value);
 			}
-			/*if(!_filter_updating) */UpdateFilter((int)udLow.Value, (int)udHigh.Value);
+			UpdateFilter((int)udLow.Value, (int)udHigh.Value);
 			picDisplay.Invalidate();
 		}
 
 		private void udHigh_ValueChanged(object sender, System.EventArgs e)
 		{
-			if(udHigh.Value - 10 < udLow.Value/* && !_filter_updating*/) udHigh.Value = udLow.Value + 10;
+            if (_filter_updating) return; //[2.10.3.12]MW0LGE prevent update if changes happening from UpdateFilter. UpdateFilter will call this directly
+
+            if (udHigh.Value - 10 < udLow.Value) udHigh.Value = udLow.Value + 10;
 			preset[(int)dsp_mode].SetHigh(current_filter, (int)udHigh.Value);
 			if(!rx2)
 			{
@@ -797,7 +821,7 @@ namespace Thetis
 					console.RX2Filter == current_filter)
 					console.UpdateRX2FilterPresetHigh((int)udHigh.Value);
 			}
-			/*if(!_filter_updating) */UpdateFilter((int)udLow.Value, (int)udHigh.Value);
+			UpdateFilter((int)udLow.Value, (int)udHigh.Value);
 			picDisplay.Invalidate();
 		}	
 
@@ -893,7 +917,9 @@ namespace Thetis
 
 		private void udWidth_ValueChanged(object sender, System.EventArgs e)
 		{
-			if(udWidth.Focused)
+            if (_filter_updating) return; //[2.10.3.12]MW0LGE prevent update if changes happening from UpdateFilter. UpdateFilter will call this directly
+            
+			if (udWidth.Focused)
 			{
 				int low = 0, high = 0;
 				switch(comboDSPMode.Text)
@@ -930,7 +956,7 @@ namespace Thetis
 						break;
 				}
 
-				/*if(!_filter_updating) */UpdateFilter(low, high);
+				UpdateFilter(low, high);
 			}
 			
 		}

@@ -24,6 +24,19 @@ The author can be reached by email at
 
 mw0lge@grange-lane.co.uk
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 using System;
 using System.Collections.Generic;
@@ -385,7 +398,9 @@ namespace Thetis
             e.Cancel = true;
             HideClose();
         }
+#pragma warning disable CS0109
         public new void Show(bool is_popup = false, Point? popup_location = null, bool on_top = false)
+#pragma warning restore CS0109
         { // shadow of show
             _is_popup = is_popup;
             _is_popup_on_top = on_top;
@@ -394,13 +409,15 @@ namespace Thetis
 
             if (_is_popup)
             {
-                if(on_top)
-                    this.TopMost = true;
+                if (on_top) this.TopMost = true;
                 this.Location = popup_location ?? Point.Empty;
                 Common.ForceFormOnScreen(this, false, true);
             }
             else
-                this.Location = _location;                
+            {
+                this.Location = _location;
+                Common.ForceFormOnScreen(this, false, false);
+            }            
 
             base.Show();
         }

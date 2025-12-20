@@ -327,6 +327,10 @@ void xwcpagc (WCPAGC a)
 					}
 					break;
 				}
+			default:
+				{
+					a->state = 0;
+				}
 			}
 
 			if (a->volts < a->min_volts)

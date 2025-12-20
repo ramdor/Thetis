@@ -24,6 +24,19 @@ The author can be reached by email at
 
 mw0lge@grange-lane.co.uk
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 using System;
 using System.Threading;
@@ -50,6 +63,7 @@ namespace Thetis
             public int Width;
             public float Scale;
             public bool DataReady;
+            public string ID;
         }
 
         private static ReceiverStoredData[] RXstoredData;
@@ -61,7 +75,18 @@ namespace Thetis
             //_console = null;
             setMaxRXs(2);
         }
-     
+
+        public static string GetID(int rx)
+        {
+            if (RXstoredData == null || rx > RXstoredData.Length || rx < 1) return string.Empty;
+            return RXstoredData[rx - 1].ID;
+        }
+        public static void SetID(int rx, string id)
+        {
+            if (RXstoredData == null || rx > RXstoredData.Length || rx < 1 || string.IsNullOrEmpty(id)) return;
+
+            RXstoredData[rx - 1].ID = id;
+        }
         public static bool IsEnabled(int rx)
         {
             if (RXstoredData == null || rx > RXstoredData.Length || rx < 1) return false;
@@ -113,6 +138,7 @@ namespace Thetis
             RXstoredData = new ReceiverStoredData[rxNumber];
             for(int i = 0; i < RXstoredData.Length; i++)
             {
+                RXstoredData[i].ID = string.Empty;
                 RXstoredData[i].DataReady = false;
                 RXstoredData[i].Enabled = false;
             }
@@ -302,7 +328,14 @@ namespace Thetis
                     app.InnerText = "WaterfallBandmap";
 
                     XmlElement name = doc.CreateElement("Name");
-                    name.InnerText = "Thetis_" + (nn + 1).ToString();
+                    if(string.IsNullOrEmpty(rsd.ID))
+                    {
+                        name.InnerText = "Thetis_" + (nn + 1).ToString();
+                    }
+                    else
+                    {
+                        name.InnerText = rsd.ID;
+                    }
 
                     XmlElement low = doc.CreateElement("LowScopeFrequency");
                     //low.InnerText = ((int)Math.Round(rsd.LowFreq * 1e3, 3)).ToString();  // MW0LGE_21k9c to fix issue where there was an offset due to lack of accuracy

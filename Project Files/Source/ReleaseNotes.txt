@@ -1,4 +1,4 @@
-**UPDATE: The CW issue has been resolved for Protocol 2. It requires a firmware update and this modified version of Thetis. Please see the [ApacheLabs community forums here](https://community.apache-labs.com/viewtopic.php?f=32&t=4972)**
+**The CW issue has been resolved for Protocol 2. It requires a firmware update and this modified version of Thetis. Please see the [ApacheLabs community forums here](https://community.apache-labs.com/viewtopic.php?f=32&t=4972)**
 
 **Note: You can revisit these release notes by using the button inside the About box**
 
@@ -6,8 +6,56 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
+## v2.10.3.12 - Change Log
+- [add] you can pick a directx device using -adaptor:# from the command line. Use Thetis.exe -help for more information
+- [add] ability to load rnnoise model binary files added
+- [add] added functionality to reposition 'lost' forms. This can be found in Setup->[Test->Reposition Forms]. Select the forms you want to move back to the primary monitor starting at 100, 100. The Z order of windows will not be changed so they may appear behind a window on the primary monitor
+- [add] you can now hold CTRL+ALT+SHIFT when starting Thetis to show a message to allow you to reset the locations of Thetis console and Setup if they become lost. You can then use Setup->Tests->[Reposition Forms] for any others missing
+- [add] %nr% and %rxn% added as script variables. %nr% returns NR number enabled 0-4, and %rxn% returns receiver number used by the container
+- [add] it is now possible to use the condition of a led indicator to show/hide text overlay
+- [add] new meter item, OtherButtons. Some buttons have icons associated with them. Also button style 13 uses active indicator colour for the text/icon colour. New [fix] option that ignores button size, and uses Scale instead. You can use ALT click drag to move buttons around, let go of click to drop them. SHIFT+ALT will swap two.
+- [add] OtherButton items now has macro buttons. You can show/hide containers, send MMIO strings, run cat commands.
+- [add] right clicking an OtherButton will show related setup if one exists
+- [add] more legacy items can be hidden
+- [add] it is now possible to save, load and duplicate containers. At the moment for various technical reasons it is a single container at a time. Note: items such as Led Indicator, WebImage will have their 4char(s) changed to prevent conflict if you were to re-import where they already exist. Meters that use %variables will also not display correctly if those variables are not present. You will have to edit them by hand. A warning is shown if a container being imported has a web image
+- [add] variable picker for text overlay and led indicator items
+- [add] it is now possible to set ID's for each receiver for N1MM waterfall data, in the network setup tab. This allows for two+ instances of Thetis (SO2R etc) to output data to N1MM
+- [add] startup log can be shown. Option in Setup->Test
+- [add] VAC and portAudio will now successfully use input devices that report only single input channels. Previously input required a device that reported two channels and would fail with certain USB headsets and USB dongles such as the Syba SD-CM-UAUD USB
+- [add] option added in tci setup to force a CW spot to a specific sideband. See tooltips for more info
+- [add] WDSP 1.27 post processing noise functionality added to NR2. Settings in Setup->DSP->NR/ANF
+- [add] WDSP 1.29 adds 3 new CW APF types to the original Bi-Quad. These new types are Double Pole, Matched and Gaussian. A new button to cycle through them on the main CW ui panel has been added, setup options, cat command ZZAYn; where n=0 to 3, and 4 new midi command buttons to select each. Note: the button may not be part of your skin pack. The new button requires images btnAPF_type-0.png and btnAPF_type-1.png, these can be copied from chkCWAPFEnabled-0.png and chkCWAPFEnabled-1.png. See pdf available in about box manuals section for more info
+- [change] migrated to Visual Studio 2026, and C/C++ runtime v145
+- [change] changed ZZIS cat command so that it takes/returns the actual filter width and not the slider width position. ZZIS; will return ZZISxxxxx; where xxxxx is 0 padded filter width. ZZIS00500; will set filter width to 500HZ. Symmetrical modes such as AM, SAM will take the full size width, so ZZIS20000; will be +-10k on AM. Note. FilterWdithMode is switched to linear whilst this is applied
+- [change] private scope added to in/out firewall rules when [Firewall Check] is used from Setup. Previously was only setting Domain + Public
+- [change] reimplemented the code that ensures a form is on screen as there had been occurrences where a form had got 'lost'. Note. this will still fail if a monitor is turned off and windows thinks it is still available as a display surface
+- [change] rework of samples provided to RNnoise to bring them into a range more suited to RNnoise. Handles lower signals better
+- [change] broadcast kenwood AI messages are now flood controlled to a max rate of 1 message per 200ms
+- [change] led indicator scripting has been totally reworked. Now a single script engine is used instead of one per led. Massive memory and performance improvements if you used lots of leds. Also, batches the re-compile until all leds are loaded
+- [change] available meter items are listed alphabetically per rx/tx/special group
+- [change] on DirectX errors RecreateTarget, DeviceRemoved and DeviceReset, the display engines will now attempt to restart, up to a total of 10 times
+- [change] VFOsync re-work. Now has settings in Options-3 tab
+- [change] show legacy meters has been changed to hide, to align with other options in Setup->Appearance->Legacy Items. May require you to reapply setting if you want them hidden
+- [change] changes to the way meters are restored. Startup speed improvements for systems using lots of meters
+- [change] multiple instance detection changed to use global mutex instead of scanning process list
+- [change] impulse_cache.dat is removed if wisdom00 is rebuilt
+- [fix] filter command line args to strip any unexpected characters/unicode
+- [fix] you can now enter values into the VAR1/VAR2 filters on the main console. Pressing enter or the box losing focus will set the value
+- [fix] issue where low/high values would sometimes not be stored when using the filter configuration settings window/form
+- [fix] changing a filter edge in the filter settings config window will now notify all delegates. Fixes issue where filter container would not update
+- [fix] fixed a CAT tci/ip server issue where AI broadcast messages could get interleaved between a cat request and reply, which could cause issues for external systems that rely on a correct response, such as HamLib.
+- [fix] cw auto mode switch will now not return to previous non cw mode if activated from cw. The return delay now works as expected
+- [fix] text overlay now displays vfob mode correctly
+- [fix] unnecessary recursive calling when setting PreampMode and AttenuatorData
+- [fix] fixed issue where if rtty offset was being used and mode was set to DigL/U then a midi vfo change would cause incorrect frequency calculation (7.100.000 would become 71.000.000)
+- [fix] updated to WDSP 1.28 + 1.29, 1.28 reverts the removal of fir filter caching, 1.29 adds new APF types
+- [fix] fix where if a radio did not have an rx2 step att available it could prevent rx1 att/s-att setting from being recovered correctly at startup/radio model swap
+- [fix] VOX will not ptt if MIC is disabled unless a vac is enabled and VOX uses MIC option is not enabled
+- [fix] RIT will not cause spectral overlays such as notches and band stack overlays to move when enabled/disabled after a startup
+- [fix] VAC tx/rx gains now restored from TX profile. Previously those TX profile settings were getting overridden by values recovered into the main console UI at startup
+
 ## v2.10.3.11 - Change Log
-- [add] two new noise reduction methods added, NR3 and NR4. When starting up this version for the first time if NR was enabled, will now be set to off. Only support for nr/nr2 is available through cat and other systems that use cat such as midi. Settings in the normal NR settings page of Setup
+- [add] two new noise reduction methods added, NR3 and NR4. When starting up this version for the first time if NR was enabled, will now be set to off. Settings in the normal NR settings page of Setup
     NR3 - RNnoise - A noise suppression library based on a recurrent neural network. Latest code here - https://gitlab.xiph.org/xiph/rnnoise . More info here - https://arxiv.org/pdf/1709.08243.pdf  
     NR4 - SpectrumBleach - libspecbleach - This library is based on the algorithms that were used in noise-repellent. Source here - https://github.com/lucianodato/libspecbleach . More info here - https://github.com/lucianodato/noise-repellent/wiki
 - [add] cat commands ZZNE and ZZNF (rx1+rx2) added to set/get NR config for each receiver. eg ZZNE; will return 0 if off, or 3 if NR3 selected. ZZNE4; will select NR4
