@@ -135,6 +135,15 @@ namespace Thetis
             
             if (rebuilt)
             {
+                // wisdom00 rebuilt, so remove any existing impulse cache as it is now invalid
+                // best that we start afresh, because depending on config this may be left behind
+                try
+                {
+                    string file = Path.Combine(app_data_path, "impulse_cache.dat");
+                    if (File.Exists(file)) File.Delete(file);
+                }
+                catch { }
+
                 // wisdom has been rebuilt, pop a message
                 MessageBox.Show("The fft wisdom file has been rebuilt.\n\nIt is now safe to close the output console window.", "Wisdom File", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
             }

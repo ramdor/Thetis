@@ -148,7 +148,8 @@
             "PureSignal",
             "Midi",
             "cmASIO",
-            "Behringer"});
+            "Behringer",
+            "APF Types"});
             this.lstLinks.Location = new System.Drawing.Point(345, 108);
             this.lstLinks.Name = "lstLinks";
             this.lstLinks.Size = new System.Drawing.Size(267, 130);
