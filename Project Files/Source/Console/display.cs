@@ -76,7 +76,8 @@ namespace Thetis
     using AlphaMode = SharpDX.Direct2D1.AlphaMode;
     using Device = SharpDX.Direct3D11.Device;
     using RectangleF = SharpDX.RectangleF;
-    using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;   
+    using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
+    using System.Threading;
 
     class Display
     {
@@ -924,7 +925,13 @@ namespace Thetis
                     }
                     else
                     {
-                        resizeDX2D();
+                        if (!resizeDX2D(out string err))
+                        {
+                            ShutdownDX2D();
+                            MessageBox.Show("Unable to resize DirectX render target (Target). DirectX has been shut down.\n\n" + err, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                            return;
+                        }
+
                         ResetWaterfallBmp();
                         ResetWaterfallBmp2();
                     }                    
@@ -3346,8 +3353,14 @@ namespace Thetis
                                                        new Rational(console.DisplayFPS, 1), Format.B8G8R8A8_UNorm);
                     _swapChain1.ResizeTarget(ref modeDesc);
 
-                    // MW0LGE_21k9 must resize the back buffers, belts and braces because width/height not likely to change
-                    resizeDX2D();
+                    // must resize the back buffers, belts and braces because width/height not likely to change
+                    if (!resizeDX2D(out string err))
+                    {
+                        ShutdownDX2D();
+                        MessageBox.Show("Unable to resize DirectX render target (ResetDX2DModeDescription). DirectX has been shut down.\n\n" + err, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        return;
+                    }
+
                 }
             }
             catch (Exception)
@@ -3355,13 +3368,17 @@ namespace Thetis
 
             }
         }
-        private static void resizeDX2D()
+        private static bool resizeDX2D(out string error)
         {
             try
             {
                 lock (_objDX2Lock)
                 {
-                    if (!_bDX2Setup) return;
+                    if (!_bDX2Setup)
+                    {
+                        error = "DirectX not setup";
+                        return false;
+                    }
 
                     Utilities.Dispose(ref _d2dRenderTarget);
                     Utilities.Dispose(ref _surface);
@@ -3388,20 +3405,26 @@ namespace Thetis
                     // clear measure string cache
                     m_stringSizeCache.Clear();
                     _stringMeasureKeys.Clear();
-                    //
+
+                    error = "";
+                    return true;
                 }
             }
             catch (Exception e)
             {
-                string msg = "DirectX resizeDX2D() display failure\n\nThis can sometimes be caused by other programs 'hooking' into directX," +
-                    "such as GFX card control software (eg, EVGA Precision Xoc). Close down Thetis, quit as many 'system tray'\nand other " +
-                    "things as possible and try again." + e.Message;
-                if(_device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceRemoved || _device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceReset)
-                {
-                    msg += "\n\nDeviceRemoved or DeviceReset reported by DirectX, this indicates a problem with the graphics device or its driver.\n\nRemoval Code : " + _device.DeviceRemovedReason.Code.ToString();
-                }
-                ShutdownDX2D();
-                MessageBox.Show(msg, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                //string msg = "DirectX resizeDX2D() display failure\n\nThis can sometimes be caused by other programs 'hooking' into directX," +
+                //    "such as GFX card control software (eg, EVGA Precision Xoc). Close down Thetis, quit as many 'system tray'\nand other " +
+                //    "things as possible and try again." + e.Message;
+                //if(_device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceRemoved || _device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceReset)
+                //{
+                //    msg += "\n\nDeviceRemoved or DeviceReset reported by DirectX, this indicates a problem with the graphics device or its driver.\n\nRemoval Code : " + _device.DeviceRemovedReason.Code.ToString();
+                //}
+                //ShutdownDX2D();
+                //MessageBox.Show(msg, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                error = e.Message;
+                error += "\n\nDeviceRemovedReason : " + _device.DeviceRemovedReason.ToString();
+                return false;
             }
         }
 
@@ -3906,7 +3929,6 @@ namespace Thetis
                     _d2dRenderTarget.Transform = Matrix3x2.Identity;
 
                 jump:
-
                     try
                     {
                         _d2dRenderTarget.EndDraw();
@@ -3915,8 +3937,9 @@ namespace Thetis
                     {
                         if (_dx_fail_retry < 10)
                         {
-                            resizeDX2D();
+                            resizeDX2D(out _);
                             _dx_fail_retry++;
+                            Thread.Sleep(50);
                             return;
                         }
                     }
@@ -3935,8 +3958,9 @@ namespace Thetis
                     {
                         if ((r == SharpDX.DXGI.ResultCode.DeviceRemoved || r == SharpDX.DXGI.ResultCode.DeviceReset) && _dx_fail_retry < 10)
                         {
-                            resizeDX2D();
+                            resizeDX2D(out _);
                             _dx_fail_retry++;
+                            Thread.Sleep(50);
                             return;
                         }
 
@@ -3945,7 +3969,11 @@ namespace Thetis
                         if (r == SharpDX.DXGI.ResultCode.DeviceReset/*0x887A0007*/) sMsg = "Present Device Reset" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";           //DXGI_ERROR_DEVICE_RESET
                         if (r == SharpDX.DXGI.ResultCode.DeviceRemoved/*0x887A0005*/) sMsg = "Present Device Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";         //DXGI_ERROR_DEVICE_REMOVED
                         //if (r == 0x88760870) sMsg = "Present Device DD3DDI Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";  //D3DDDIERR_DEVICEREMOVED
-                        
+
+                        if (_dx_fail_retry > 0)
+                        {
+                            sMsg += "\n\nDirectX failures during present have occurred " + _dx_fail_retry.ToString() + " times before this.";
+                        }                        
                         if (!string.IsNullOrEmpty(sMsg)) throw (new Exception(sMsg));
                     }
 

@@ -28906,7 +28906,12 @@ namespace Thetis
                                     targetHeight = _newTargetHeight;
 
                                     //Debug.Print(">> dx is resizing from dxRender <<");
-                                    if (!resizeDX()) break; // exit do while as resizeDx will have thrown an exception and called shutdowndx
+                                    if (!resizeDX(out string err))
+                                    {
+                                        ShutdownDX();
+                                        MessageBox.Show("Unable to resize DirectX render target (target size changed). DirectX has been shut down.\n\n" + err, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                                        break;
+                                    }
                                 }
 
                                 _renderTarget.BeginDraw();
@@ -28950,8 +28955,9 @@ namespace Thetis
                                 {
                                     if (_dx_fail_retry < 10)
                                     {
-                                        resizeDX();
+                                        resizeDX(out _);
                                         _dx_fail_retry++;
+                                        Thread.Sleep(50);
                                         continue;
                                     }
                                 }
@@ -28978,9 +28984,10 @@ namespace Thetis
                                 {
                                     if ((r == SharpDX.DXGI.ResultCode.DeviceRemoved || r == SharpDX.DXGI.ResultCode.DeviceReset) && _dx_fail_retry < 10)
                                     {
-                                        resizeDX();
+                                        resizeDX(out _);
                                         _dx_fail_retry++;
-                                        return;
+                                        Thread.Sleep(50);
+                                        continue;
                                     }
 
                                     string sMsg = "";
@@ -28989,6 +28996,10 @@ namespace Thetis
                                     if (r == SharpDX.DXGI.ResultCode.DeviceRemoved/*0x887A0005*/) sMsg = "Present Device Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";         //DXGI_ERROR_DEVICE_REMOVED
                                     //if (r == 0x88760870) sMsg = "Present Device DD3DDI Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";  //D3DDDIERR_DEVICEREMOVED
 
+                                    if (_dx_fail_retry > 0)
+                                    {
+                                        sMsg += "\n\nDirectX failures during present have occurred " + _dx_fail_retry.ToString() + " times before this.";
+                                    }
                                     if (sMsg != "") throw (new Exception(sMsg));
                                 }
                             }
@@ -29201,11 +29212,15 @@ namespace Thetis
 
                 return tf;
             }
-            private bool resizeDX()
+            private bool resizeDX(out string error)
             {
                 lock (_DXlock)
                 {
-                    if (!_bDXSetup) return false;
+                    if (!_bDXSetup)
+                    {
+                        error = "DirectX not setup";
+                        return false;
+                    }
 
                     try
                     {
@@ -29229,21 +29244,24 @@ namespace Thetis
                         // clear measure string cache
                         _stringMeasure.Clear();
                         _stringMeasureKeys.Clear();
-                        //
 
+                        error = "";
                         return true;
                     }
                     catch (Exception e)
                     {
-                        string msg = "DirectX resizeDX2D() Meter failure\n\nThis can sometimes be caused by other programs 'hooking' into directX," +
-                            "such as GFX card control software (eg, EVGA Precision Xoc). Close down Thetis, quit as many 'system tray'\nand other " +
-                            "things as possible and try again." + e.Message;
-                        if (_device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceRemoved || _device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceReset)
-                        {
-                            msg += "\n\nDeviceRemoved or DeviceReset reported by DirectX, this indicates a problem with the graphics device or its driver.\n\nRemoval Code : " + _device.DeviceRemovedReason.Code.ToString();
-                        }
-                        ShutdownDX();
-                        MessageBox.Show(msg, "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        //string msg = "DirectX resizeDX2D() Meter failure\n\nThis can sometimes be caused by other programs 'hooking' into directX," +
+                        //    "such as GFX card control software (eg, EVGA Precision Xoc). Close down Thetis, quit as many 'system tray'\nand other " +
+                        //    "things as possible and try again." + e.Message;
+                        //if (_device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceRemoved || _device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceReset)
+                        //{
+                        //    msg += "\n\nDeviceRemoved or DeviceReset reported by DirectX, this indicates a problem with the graphics device or its driver.\n\nRemoval Code : " + _device.DeviceRemovedReason.Code.ToString();
+                        //}
+                        //ShutdownDX();
+                        //MessageBox.Show(msg, "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                        error = e.Message;
+                        error += "\n\nDeviceRemovedReason : " + _device.DeviceRemovedReason.ToString();
                         return false;
                     }
                 }

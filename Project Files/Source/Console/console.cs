@@ -21091,57 +21091,10 @@ namespace Thetis
 
         private bool m_bShowSystemCPUUsage = true;
         public volatile PerformanceCounter _total_cpu_usage = null;
-        //public volatile PerformanceCounter _total_thetis_usage = null;
-        //private volatile string _sInstanceName = "";
-        //private volatile bool _getInstanceNameComplete = false;
 
-        //private void getInstanceName()
-        //{
-        //    //MW0LGE_21k9 updated to get actual process name used by perf counter
-        //    //moved to thread, as GetInstanceNames is very very slow
-
-        //    _getInstanceNameComplete = false;
-        //    _sInstanceName = "";
-
-        //    try
-        //    {
-        //        string sMachineName = System.Environment.MachineName;
-
-        //        Process p = Process.GetCurrentProcess();
-
-        //        PerformanceCounterCategory pcc = new PerformanceCounterCategory("Process", sMachineName);
-        //        string[] sInstanceNames = pcc.GetInstanceNames();
-
-        //        foreach (string sName in sInstanceNames.Where(o => o.StartsWith(p.ProcessName)))
-        //        {
-        //            using (PerformanceCounter processId = new PerformanceCounter("Process", "ID Process", sName, true))
-        //            {
-        //                if (p.Id == (int)processId.RawValue)
-        //                {
-        //                    _sInstanceName = sName;
-        //                    break;
-        //                }
-        //            }
-        //        }
-
-        //        _getInstanceNameComplete = true;
-        //    }
-        //    catch
-        //    {
-
-        //    }
-        //    Debug.Print("Get instance name done");
-        //}
         private bool _cpu_usage_setup = false;
         private void CpuUsage()
         {
-            //_cpu_usage_setup = false;
-            //if (!_getInstanceNameComplete)
-            //{
-            //    disableCpuVoltsUsage();
-            //    return; // thread has not finished getting the process counter related instance name            
-            //}
-
             try
             {
                 systemToolStripMenuItem.Checked = m_bShowSystemCPUUsage;
@@ -21155,13 +21108,6 @@ namespace Thetis
                     _total_cpu_usage.Dispose(); //MW0LGE_21k8
                     _total_cpu_usage = null;
                 }
-
-                //if (_total_thetis_usage != null)
-                //{
-                //    _total_thetis_usage.Close();
-                //    _total_thetis_usage.Dispose(); //MW0LGE_21k8
-                //    _total_thetis_usage = null;
-                //}
 
                 //NOTE: run 'lodctr /R' on admin command prompt to rebuild performance counters
 
@@ -21178,12 +21124,6 @@ namespace Thetis
                 }
                 float tmp = _total_cpu_usage.NextValue();
 
-                //if (!string.IsNullOrEmpty(_sInstanceName))
-                //{
-                //    _total_thetis_usage = new PerformanceCounter("Process", "% Processor Time", _sInstanceName, sMachineName);
-                //    tmp = _total_thetis_usage.NextValue();
-                //}
-
                 _cpu_usage_setup = true;
             }
             catch
@@ -21194,15 +21134,12 @@ namespace Thetis
 
         private void disableCpuVoltsUsage()
         {
-            timer_cpu_volts_meter.Enabled = false;
+            _cpu_usage_setup = false; // nothing will happen in timer_cpu_volts_meter_Tick() related to cpu%
 
+            // hide the items related to cpu usage
             systemToolStripMenuItem.Checked = false;
             thetisOnlyToolStripMenuItem.Checked = false;
             toolStripDropDownButton_CPU.Visible = false;
-
-            //[2.10.3.4]MW0LGE volts/amps as well because there are both part of the same timer tick
-            toolStripStatusLabel_Volts.Visible = false;
-            toolStripStatusLabel_Amps.Visible = false;
         }
 
         private int scope_time = 50;
@@ -26843,32 +26780,6 @@ namespace Thetis
                     else
                     {
                         cpuPerc = (float)Common.ProcessCPUUsage();
-                        //if (_total_thetis_usage != null)
-                        //{
-                        //    try
-                        //    {
-                        //        cpuPerc = _total_thetis_usage.NextValue() / (float)Environment.ProcessorCount;
-                        //    }
-                        //    catch (Exception ex)
-                        //    {
-                        //        //[2.10.3.9]MW0LGE handle an instance name change
-                        //        try
-                        //        {
-                        //            _total_thetis_usage.Close();
-                        //            _total_thetis_usage.Dispose();
-                        //        }
-                        //        catch { }
-                        //        _total_thetis_usage = null;
-
-                        //        if(ex.HResult == unchecked((int)0x80131509)) // Instance 'XYZ' does not exist in the specified Category.
-                        //        {
-                        //            // need to get the instance again
-                        //            // this can be a slow process, ideally should be in another thread, but we can live with this
-                        //            getInstanceName();
-                        //            CpuUsage();
-                        //        }
-                        //    }
-                        //}
                     }
 
                     _cpu_perc_smoothed = (_cpu_perc_smoothed * 0.8f) + (cpuPerc * 0.2f);
