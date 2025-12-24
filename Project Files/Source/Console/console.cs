@@ -21398,8 +21398,21 @@ namespace Thetis
             m_frmSeqLog.BringToFront();
         }
 
+        private bool _ignore_attenuator_offset = false;
+        public bool IgnoreAttenuatorOffset
+        {
+            get { return _ignore_attenuator_offset; }
+            set 
+            { 
+                _ignore_attenuator_offset = value;
+                UpdateRX1DisplayOffsets();
+                UpdateRX2DisplayOffsets();
+            }
+        }
         public float RXPreampOffset(int rx)
         {
+            if (_ignore_attenuator_offset) return 0.0f;
+
             float fOffset;
             if (rx == 1)
             {
@@ -21407,7 +21420,8 @@ namespace Thetis
             }
             else //rx2
             {
-                if (HardwareSpecific.Model == HPSDRModel.ANAN100D ||
+                if (_rx2_preamp_present ||
+                    HardwareSpecific.Model == HPSDRModel.ANAN100D ||
                     HardwareSpecific.Model == HPSDRModel.ANAN200D ||
                     HardwareSpecific.Model == HPSDRModel.ORIONMKII ||
                     HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
@@ -21415,21 +21429,15 @@ namespace Thetis
                     HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
                     HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
                     HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
-                    HardwareSpecific.Model == HPSDRModel.REDPITAYA || //DH1KLM
-                    _rx2_preamp_present)
+                    HardwareSpecific.Model == HPSDRModel.REDPITAYA //DH1KLM
+                    )
                 {
-                    if (_rx2_step_att_enabled)
-                        fOffset = (float)rx2_attenuator_data;
-                    else
-                        fOffset = rx2_preamp_offset[(int)rx2_preamp_mode];
+                    fOffset = _rx2_step_att_enabled ? (float)rx2_attenuator_data : rx2_preamp_offset[(int)rx2_preamp_mode];
                 }
                 else
                 {
                     // use rx1 offsets
-                    if (_rx1_step_att_enabled)
-                        fOffset = (float)_rx1_attenuator_data;
-                    else
-                        fOffset = rx1_preamp_offset[(int)rx1_preamp_mode];
+                    fOffset = _rx1_step_att_enabled ? (float)_rx1_attenuator_data : rx1_preamp_offset[(int)rx1_preamp_mode];
                 }
             }
             return fOffset;

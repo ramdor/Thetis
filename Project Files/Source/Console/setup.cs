@@ -2935,6 +2935,9 @@ namespace Thetis
             txtFilter_sideband_frequencies_TextChanged(this, e);
             txtFilter_cw_frequencies_TextChanged(this, e);
             txtFilter_other_frequencies_TextChanged(this, e);
+
+            //done last
+            chkIgnoreATTOffset_CheckedChanged(this, e); // part of the test tab
         }
 
         public string[] GetTXProfileStrings()
@@ -35922,6 +35925,12 @@ namespace Thetis
                     comboAPF_type_SelectedIndexChanged(comboAPF_type_rx2, EventArgs.Empty);
                 }
             }
+        }
+
+        private void chkIgnoreATTOffset_CheckedChanged(object sender, EventArgs e)
+        {
+            if(initializing || console == null) return;
+            console.IgnoreAttenuatorOffset = chkIgnoreATTOffset.Checked;
         }
     }
 

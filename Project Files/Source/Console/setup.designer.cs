@@ -4357,6 +4357,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.chkIgnoreATTOffset = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -59954,6 +59955,7 @@
             // 
             // groupBoxTS30
             // 
+            this.groupBoxTS30.Controls.Add(this.chkIgnoreATTOffset);
             this.groupBoxTS30.Controls.Add(this.chkShowStartupLog);
             this.groupBoxTS30.Controls.Add(this.btnFormLocationHelper);
             this.groupBoxTS30.Controls.Add(this.btnFPSProfile);
@@ -69319,6 +69321,17 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // chkIgnoreATTOffset
+            // 
+            this.chkIgnoreATTOffset.Image = null;
+            this.chkIgnoreATTOffset.Location = new System.Drawing.Point(211, 47);
+            this.chkIgnoreATTOffset.Name = "chkIgnoreATTOffset";
+            this.chkIgnoreATTOffset.Size = new System.Drawing.Size(130, 24);
+            this.chkIgnoreATTOffset.TabIndex = 123;
+            this.chkIgnoreATTOffset.Text = "Ignore ATT offset";
+            this.toolTip1.SetToolTip(this.chkIgnoreATTOffset, "Ignore ATT/S-ATT offset in the display and signal meters.\r\nIcom anyone?");
+            this.chkIgnoreATTOffset.CheckedChanged += new System.EventHandler(this.chkIgnoreATTOffset_CheckedChanged);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -75041,5 +75054,6 @@
         private ComboBoxTS comboAPF_type_rx1;
         private LabelTS labelRX2APFType;
         private ComboBoxTS comboAPF_type_rx2;
+        private CheckBoxTS chkIgnoreATTOffset;
     }
 }
