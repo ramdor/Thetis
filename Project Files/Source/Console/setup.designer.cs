@@ -490,12 +490,6 @@
             this.labelTS158 = new System.Windows.Forms.LabelTS();
             this.udAmpSens = new System.Windows.Forms.NumericUpDownTS();
             this.udAmpVoff = new System.Windows.Forms.NumericUpDownTS();
-            this.panelRX2LevelCal = new System.Windows.Forms.PanelTS();
-            this.labelTS135 = new System.Windows.Forms.LabelTS();
-            this.udGeneralCalRX2Level = new System.Windows.Forms.NumericUpDownTS();
-            this.btnCalLevel = new System.Windows.Forms.ButtonTS();
-            this.udGeneralCalRX2Freq2 = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS136 = new System.Windows.Forms.LabelTS();
             this.grpBoxTXDisplayCal = new System.Windows.Forms.GroupBoxTS();
             this.labelTS55 = new System.Windows.Forms.LabelTS();
             this.udTXDisplayCalOffset = new System.Windows.Forms.NumericUpDownTS();
@@ -506,7 +500,6 @@
             this.btnHPSDRFreqCalReset = new System.Windows.Forms.Button();
             this.udHPSDRFreqCorrectFactor = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS10 = new System.Windows.Forms.LabelTS();
-            this.chkCalExpert = new System.Windows.Forms.CheckBoxTS();
             this.grpGenCalLevel = new System.Windows.Forms.GroupBoxTS();
             this.btnResetLevelCal = new System.Windows.Forms.Button();
             this.ud6mRx2LNAGainOffset = new System.Windows.Forms.NumericUpDownTS();
@@ -523,10 +516,6 @@
             this.btnGeneralCalFreqStart = new System.Windows.Forms.ButtonTS();
             this.udGeneralCalFreq1 = new System.Windows.Forms.NumericUpDownTS();
             this.lblGeneralCalFrequency = new System.Windows.Forms.LabelTS();
-            this.grpGenCalRXImage = new System.Windows.Forms.GroupBoxTS();
-            this.udGeneralCalFreq3 = new System.Windows.Forms.NumericUpDownTS();
-            this.lblGenCalRXImageFreq = new System.Windows.Forms.LabelTS();
-            this.btnGeneralCalImageStart = new System.Windows.Forms.ButtonTS();
             this.tpFilters = new System.Windows.Forms.TabPage();
             this.groupBoxTS49 = new System.Windows.Forms.GroupBoxTS();
             this.btnFilter_others_default = new System.Windows.Forms.ButtonTS();
@@ -3761,6 +3750,7 @@
             this.chkDiscordEnabled = new System.Windows.Forms.CheckBoxTS();
             this.tpTests = new System.Windows.Forms.TabPage();
             this.groupBoxTS30 = new System.Windows.Forms.GroupBoxTS();
+            this.chkIgnoreATTOffset = new System.Windows.Forms.CheckBoxTS();
             this.chkShowStartupLog = new System.Windows.Forms.CheckBoxTS();
             this.btnFormLocationHelper = new System.Windows.Forms.ButtonTS();
             this.btnFPSProfile = new System.Windows.Forms.ButtonTS();
@@ -4357,7 +4347,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.chkIgnoreATTOffset = new System.Windows.Forms.CheckBoxTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4490,9 +4479,6 @@
             this.groupBoxTS27.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAmpSens)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAmpVoff)).BeginInit();
-            this.panelRX2LevelCal.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Level)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Freq2)).BeginInit();
             this.grpBoxTXDisplayCal.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTXDisplayCalOffset)).BeginInit();
             this.grpHPSDRFreqCalDbg.SuspendLayout();
@@ -4505,8 +4491,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq2)).BeginInit();
             this.grpGeneralCalibration.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq1)).BeginInit();
-            this.grpGenCalRXImage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq3)).BeginInit();
             this.tpFilters.SuspendLayout();
             this.groupBoxTS49.SuspendLayout();
             this.groupBoxTS6.SuspendLayout();
@@ -12008,19 +11992,15 @@
             // 
             this.tpGeneralCalibration.BackColor = System.Drawing.SystemColors.Control;
             this.tpGeneralCalibration.Controls.Add(this.groupBoxTS27);
-            this.tpGeneralCalibration.Controls.Add(this.panelRX2LevelCal);
             this.tpGeneralCalibration.Controls.Add(this.grpBoxTXDisplayCal);
             this.tpGeneralCalibration.Controls.Add(this.grpHPSDRFreqCalDbg);
-            this.tpGeneralCalibration.Controls.Add(this.chkCalExpert);
             this.tpGeneralCalibration.Controls.Add(this.grpGenCalLevel);
             this.tpGeneralCalibration.Controls.Add(this.grpGeneralCalibration);
-            this.tpGeneralCalibration.Controls.Add(this.grpGenCalRXImage);
             this.tpGeneralCalibration.Location = new System.Drawing.Point(4, 22);
             this.tpGeneralCalibration.Name = "tpGeneralCalibration";
             this.tpGeneralCalibration.Size = new System.Drawing.Size(724, 410);
             this.tpGeneralCalibration.TabIndex = 2;
             this.tpGeneralCalibration.Text = "Calibration";
-            this.tpGeneralCalibration.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralCalibration_Paint);
             // 
             // groupBoxTS27
             // 
@@ -12143,113 +12123,6 @@
             0,
             0});
             this.udAmpVoff.ValueChanged += new System.EventHandler(this.udAmpVoff_ValueChanged);
-            // 
-            // panelRX2LevelCal
-            // 
-            this.panelRX2LevelCal.AutoScrollMargin = new System.Drawing.Size(0, 0);
-            this.panelRX2LevelCal.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.panelRX2LevelCal.Controls.Add(this.labelTS135);
-            this.panelRX2LevelCal.Controls.Add(this.udGeneralCalRX2Level);
-            this.panelRX2LevelCal.Controls.Add(this.btnCalLevel);
-            this.panelRX2LevelCal.Controls.Add(this.udGeneralCalRX2Freq2);
-            this.panelRX2LevelCal.Controls.Add(this.labelTS136);
-            this.panelRX2LevelCal.Location = new System.Drawing.Point(188, 265);
-            this.panelRX2LevelCal.Name = "panelRX2LevelCal";
-            this.panelRX2LevelCal.Size = new System.Drawing.Size(151, 100);
-            this.panelRX2LevelCal.TabIndex = 14;
-            this.panelRX2LevelCal.Visible = false;
-            // 
-            // labelTS135
-            // 
-            this.labelTS135.Image = null;
-            this.labelTS135.Location = new System.Drawing.Point(3, 13);
-            this.labelTS135.Name = "labelTS135";
-            this.labelTS135.Size = new System.Drawing.Size(64, 23);
-            this.labelTS135.TabIndex = 9;
-            this.labelTS135.Text = "RX2 Freq:";
-            // 
-            // udGeneralCalRX2Level
-            // 
-            this.udGeneralCalRX2Level.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udGeneralCalRX2Level.Location = new System.Drawing.Point(67, 37);
-            this.udGeneralCalRX2Level.Maximum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udGeneralCalRX2Level.Minimum = new decimal(new int[] {
-            150,
-            0,
-            0,
-            -2147483648});
-            this.udGeneralCalRX2Level.Name = "udGeneralCalRX2Level";
-            this.udGeneralCalRX2Level.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.udGeneralCalRX2Level.Size = new System.Drawing.Size(50, 20);
-            this.udGeneralCalRX2Level.TabIndex = 12;
-            this.udGeneralCalRX2Level.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udGeneralCalRX2Level, "Level calibration reference level");
-            this.udGeneralCalRX2Level.Value = new decimal(new int[] {
-            70,
-            0,
-            0,
-            -2147483648});
-            // 
-            // btnCalLevel
-            // 
-            this.btnCalLevel.Image = null;
-            this.btnCalLevel.Location = new System.Drawing.Point(29, 69);
-            this.btnCalLevel.Name = "btnCalLevel";
-            this.btnCalLevel.Selectable = true;
-            this.btnCalLevel.Size = new System.Drawing.Size(75, 23);
-            this.btnCalLevel.TabIndex = 13;
-            this.btnCalLevel.Text = "Start";
-            this.toolTip1.SetToolTip(this.btnCalLevel, "Click to start the level calibration using the frequency and level references abo" +
-        "ve.");
-            this.btnCalLevel.Click += new System.EventHandler(this.btnCalLevel_Click);
-            // 
-            // udGeneralCalRX2Freq2
-            // 
-            this.udGeneralCalRX2Freq2.DecimalPlaces = 6;
-            this.udGeneralCalRX2Freq2.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udGeneralCalRX2Freq2.Location = new System.Drawing.Point(67, 13);
-            this.udGeneralCalRX2Freq2.Maximum = new decimal(new int[] {
-            65,
-            0,
-            0,
-            0});
-            this.udGeneralCalRX2Freq2.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udGeneralCalRX2Freq2.Name = "udGeneralCalRX2Freq2";
-            this.udGeneralCalRX2Freq2.Size = new System.Drawing.Size(75, 20);
-            this.udGeneralCalRX2Freq2.TabIndex = 10;
-            this.udGeneralCalRX2Freq2.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udGeneralCalRX2Freq2, "Level calibration reference frequency");
-            this.udGeneralCalRX2Freq2.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            // 
-            // labelTS136
-            // 
-            this.labelTS136.Image = null;
-            this.labelTS136.Location = new System.Drawing.Point(3, 37);
-            this.labelTS136.Name = "labelTS136";
-            this.labelTS136.Size = new System.Drawing.Size(68, 23);
-            this.labelTS136.TabIndex = 11;
-            this.labelTS136.Text = "Level (dBm):";
-            this.labelTS136.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // grpBoxTXDisplayCal
             // 
@@ -12425,16 +12298,6 @@
             this.labelTS10.Size = new System.Drawing.Size(88, 13);
             this.labelTS10.TabIndex = 0;
             this.labelTS10.Text = "Correction Factor";
-            // 
-            // chkCalExpert
-            // 
-            this.chkCalExpert.Image = null;
-            this.chkCalExpert.Location = new System.Drawing.Point(408, 238);
-            this.chkCalExpert.Name = "chkCalExpert";
-            this.chkCalExpert.Size = new System.Drawing.Size(56, 24);
-            this.chkCalExpert.TabIndex = 10;
-            this.chkCalExpert.Text = "Expert";
-            this.chkCalExpert.Visible = false;
             // 
             // grpGenCalLevel
             // 
@@ -12722,74 +12585,6 @@
             this.lblGeneralCalFrequency.TabIndex = 0;
             this.lblGeneralCalFrequency.Text = "Frequency:";
             this.lblGeneralCalFrequency.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // grpGenCalRXImage
-            // 
-            this.grpGenCalRXImage.Controls.Add(this.udGeneralCalFreq3);
-            this.grpGenCalRXImage.Controls.Add(this.lblGenCalRXImageFreq);
-            this.grpGenCalRXImage.Controls.Add(this.btnGeneralCalImageStart);
-            this.grpGenCalRXImage.Location = new System.Drawing.Point(360, 8);
-            this.grpGenCalRXImage.Name = "grpGenCalRXImage";
-            this.grpGenCalRXImage.Size = new System.Drawing.Size(168, 132);
-            this.grpGenCalRXImage.TabIndex = 9;
-            this.grpGenCalRXImage.TabStop = false;
-            this.grpGenCalRXImage.Text = "RX Image Reject Cal";
-            this.grpGenCalRXImage.Visible = false;
-            // 
-            // udGeneralCalFreq3
-            // 
-            this.udGeneralCalFreq3.DecimalPlaces = 6;
-            this.udGeneralCalFreq3.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udGeneralCalFreq3.Location = new System.Drawing.Point(78, 26);
-            this.udGeneralCalFreq3.Maximum = new decimal(new int[] {
-            65,
-            0,
-            0,
-            0});
-            this.udGeneralCalFreq3.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udGeneralCalFreq3.Name = "udGeneralCalFreq3";
-            this.udGeneralCalFreq3.Size = new System.Drawing.Size(75, 20);
-            this.udGeneralCalFreq3.TabIndex = 1;
-            this.udGeneralCalFreq3.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udGeneralCalFreq3, "RX Image calibration reference frequency");
-            this.udGeneralCalFreq3.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udGeneralCalFreq3.LostFocus += new System.EventHandler(this.udGeneralCalFreq3_LostFocus);
-            // 
-            // lblGenCalRXImageFreq
-            // 
-            this.lblGenCalRXImageFreq.Image = null;
-            this.lblGenCalRXImageFreq.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblGenCalRXImageFreq.Location = new System.Drawing.Point(8, 23);
-            this.lblGenCalRXImageFreq.Name = "lblGenCalRXImageFreq";
-            this.lblGenCalRXImageFreq.Size = new System.Drawing.Size(64, 20);
-            this.lblGenCalRXImageFreq.TabIndex = 0;
-            this.lblGenCalRXImageFreq.Text = "Frequency:";
-            this.lblGenCalRXImageFreq.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // btnGeneralCalImageStart
-            // 
-            this.btnGeneralCalImageStart.Image = null;
-            this.btnGeneralCalImageStart.Location = new System.Drawing.Point(48, 80);
-            this.btnGeneralCalImageStart.Name = "btnGeneralCalImageStart";
-            this.btnGeneralCalImageStart.Selectable = true;
-            this.btnGeneralCalImageStart.Size = new System.Drawing.Size(75, 23);
-            this.btnGeneralCalImageStart.TabIndex = 7;
-            this.btnGeneralCalImageStart.Text = "Start";
-            this.toolTip1.SetToolTip(this.btnGeneralCalImageStart, "Click to start the RX Image rejection calibration using the above frequency refer" +
-        "ence.");
-            this.btnGeneralCalImageStart.Click += new System.EventHandler(this.btnGeneralCalImageStart_Click);
             // 
             // tpFilters
             // 
@@ -59969,6 +59764,17 @@
             this.groupBoxTS30.TabStop = false;
             this.groupBoxTS30.Text = "Debug";
             // 
+            // chkIgnoreATTOffset
+            // 
+            this.chkIgnoreATTOffset.Image = null;
+            this.chkIgnoreATTOffset.Location = new System.Drawing.Point(211, 47);
+            this.chkIgnoreATTOffset.Name = "chkIgnoreATTOffset";
+            this.chkIgnoreATTOffset.Size = new System.Drawing.Size(130, 24);
+            this.chkIgnoreATTOffset.TabIndex = 123;
+            this.chkIgnoreATTOffset.Text = "Ignore ATT offset";
+            this.toolTip1.SetToolTip(this.chkIgnoreATTOffset, "Ignore ATT/S-ATT offset in the display and signal meters.\r\nIcom anyone?");
+            this.chkIgnoreATTOffset.CheckedChanged += new System.EventHandler(this.chkIgnoreATTOffset_CheckedChanged);
+            // 
             // chkShowStartupLog
             // 
             this.chkShowStartupLog.Image = null;
@@ -69321,17 +69127,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // chkIgnoreATTOffset
-            // 
-            this.chkIgnoreATTOffset.Image = null;
-            this.chkIgnoreATTOffset.Location = new System.Drawing.Point(211, 47);
-            this.chkIgnoreATTOffset.Name = "chkIgnoreATTOffset";
-            this.chkIgnoreATTOffset.Size = new System.Drawing.Size(130, 24);
-            this.chkIgnoreATTOffset.TabIndex = 123;
-            this.chkIgnoreATTOffset.Text = "Ignore ATT offset";
-            this.toolTip1.SetToolTip(this.chkIgnoreATTOffset, "Ignore ATT/S-ATT offset in the display and signal meters.\r\nIcom anyone?");
-            this.chkIgnoreATTOffset.CheckedChanged += new System.EventHandler(this.chkIgnoreATTOffset_CheckedChanged);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -69513,9 +69308,6 @@
             this.groupBoxTS27.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAmpSens)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAmpVoff)).EndInit();
-            this.panelRX2LevelCal.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Level)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Freq2)).EndInit();
             this.grpBoxTXDisplayCal.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udTXDisplayCalOffset)).EndInit();
             this.grpHPSDRFreqCalDbg.ResumeLayout(false);
@@ -69530,8 +69322,6 @@
             this.grpGeneralCalibration.ResumeLayout(false);
             this.grpGeneralCalibration.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq1)).EndInit();
-            this.grpGenCalRXImage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq3)).EndInit();
             this.tpFilters.ResumeLayout(false);
             this.tpFilters.PerformLayout();
             this.groupBoxTS49.ResumeLayout(false);
@@ -70808,7 +70598,6 @@
         private LabelTS lblDisplayWaterfallLowColor;
         private ButtonTS btnGeneralCalLevelStart;
         private ButtonTS btnGeneralCalFreqStart;
-        private ButtonTS btnGeneralCalImageStart;
         private LabelTS lblBandLight;
         private LabelTS lblBandDark;
         private LabelTS lblPeakText;
@@ -70916,7 +70705,6 @@
         private TabPage tpGeneralOptions;
         private TabPage tpGeneralCalibration;
         private NumericUpDownTS udGeneralCalFreq1;
-        private NumericUpDownTS udGeneralCalFreq3;
         private NumericUpDownTS udGeneralCalFreq2;
         private TabPage tpVAC;
         public CheckBoxTS chkAudioEnableVAC;
@@ -70994,8 +70782,6 @@
         private Thetis.ColorButton clrbtnMeterEdgeBackground;
         private Thetis.ColorButton clrbtnMeterEdgeHigh;
         private Thetis.ColorButton clrbtnMeterEdgeLow;
-        private GroupBoxTS grpGenCalRXImage;
-        private LabelTS lblGenCalRXImageFreq;
         private GroupBoxTS grpGenCalLevel;
         private LabelTS lblGenCalLevelFreq;
         private LabelTS lblVFOSmallColor;
@@ -71046,7 +70832,6 @@
         private LabelTS lblMultimeterDigitalDelay;
         private CheckBoxTS chkPA6;
         private CheckBoxTS chkMouseTuneStep;
-        private CheckBoxTS chkCalExpert;
         private CheckBoxTS chkGenAllModeMicPTT;
         private CheckBoxTS chkDigUIsUSB;
         private GroupBoxTS grpGenCustomTitleText;
@@ -71818,13 +71603,7 @@
         public CheckBoxTS chkAlex6BPHPF;
         public CheckBoxTS chkAlex13BPHPF;
         public CheckBoxTS chkAlex1_5BPHPF;
-        private NumericUpDownTS udGeneralCalRX2Level;
-        private NumericUpDownTS udGeneralCalRX2Freq2;
-        private LabelTS labelTS135;
-        private LabelTS labelTS136;
-        private ButtonTS btnCalLevel;
         private LabelTS lblMercury2FWVer;
-        private PanelTS panelRX2LevelCal;
         private System.ComponentModel.IContainer components;
         private Midi2Cat.Midi2CatSetupForm ConfigMidi2Cat;
         private System.Windows.Forms.TabPage tpVAC2;

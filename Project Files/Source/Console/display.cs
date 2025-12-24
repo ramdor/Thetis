@@ -1124,7 +1124,12 @@ namespace Thetis
             get { return rx1_preamp_offset; }
             set { rx1_preamp_offset = value; }
         }
-
+        private static bool _ignore_attenuator_offset = false;
+        public static bool IgnoreAttenuatorOffset
+        {
+            get { return _ignore_attenuator_offset; }
+            set { _ignore_attenuator_offset = value; }
+        }
         private static float alex_preamp_offset = 0.0f;
         public static float AlexPreampOffset
         {

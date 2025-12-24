@@ -6165,7 +6165,6 @@ namespace Thetis
 
             grpFRSRegion.Visible = true;
 
-            grpGenCalRXImage.Visible = false;
             lblMoxDelay.Visible = true;
             udMoxDelay.Visible = true;
             udMoxDelay.Enabled = true;
@@ -6173,8 +6172,6 @@ namespace Thetis
             udRFDelay.Enabled = true;
             lblRFDelay.Visible = true;
             grpImpulseTest.Visible = false;
-            grpGenCalRXImage.Enabled = false;
-            chkCalExpert.Enabled = false;
             grpHPSDRFreqCalDbg.Visible = true;
             grpOzyType.Visible = true;
             grpOzyType.Enabled = true;
@@ -6559,27 +6556,6 @@ namespace Thetis
                 progress.Show();
         }
 
-        private void btnCalLevel_Click(object sender, System.EventArgs e)
-        {
-            btnCalLevel.Enabled = false;
-            progress = new Progress("Calibrate RX2 Level");
-
-            Thread t = new Thread(new ThreadStart(CalibrateRX2Level))
-            {
-                Name = "Level Calibration Thread",
-                IsBackground = true,
-                Priority = ThreadPriority.Normal
-            };
-            t.Start();
-
-            if (console.PowerOn)
-                progress.Show();
-        }
-
-        private void btnGeneralCalImageStart_Click(object sender, System.EventArgs e)
-        {
-        }
-
         private void CalibrateFreq()
         {
             bool done = console.CalibrateFreq((float)udGeneralCalFreq1.Value);
@@ -6598,17 +6574,6 @@ namespace Thetis
             if (done) showCalibrateDone("Level Calibration complete.");
             btnGeneralCalLevelStart.Enabled = true;
             btnResetLevelCal.Enabled = true;
-        }
-
-        private void CalibrateRX2Level()
-        {
-            bool done = console.CalibrateRX2Level(
-                (float)udGeneralCalRX2Level.Value,
-                (float)udGeneralCalRX2Freq2.Value,
-                progress,
-                false);
-            if (done) showCalibrateDone("Level Calibration complete.");
-            btnCalLevel.Enabled = true;
         }
 
         private void showCalibrateDone(string msg)
@@ -11729,11 +11694,6 @@ namespace Thetis
             udOptClickTuneOffsetDIGU.Value = udOptClickTuneOffsetDIGU.Value;
         }
 
-        private void udGeneralCalFreq3_LostFocus(object sender, EventArgs e)
-        {
-            udGeneralCalFreq3.Value = udGeneralCalFreq3.Value;
-        }
-
         private void udGeneralCalLevel_LostFocus(object sender, EventArgs e)
         {
             udGeneralCalLevel.Value = udGeneralCalLevel.Value;
@@ -15684,11 +15644,6 @@ namespace Thetis
         private void chkAlex2HPFBypass_CheckedChanged(object sender, EventArgs e)
         {
             console.Alex2HPFBypass = chkAlex2HPFBypass.Checked;
-        }
-
-        private void tpGeneralCalibration_Paint(object sender, PaintEventArgs e)
-        {
-            panelRX2LevelCal.Visible = false;
         }
 
         private void chkShowAGC_CheckedChanged(object sender, EventArgs e)
