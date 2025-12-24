@@ -2719,32 +2719,61 @@ namespace Thetis
             if (_current_breakin_mode == BreakIn.QSK) QSKEnabled = false; // Just to save the non-qsk settings, but leaving the button alone
             chkPower.Checked = false;		// turn off the power first
 
-            //-------------------------------------------------------------------
-            // ke9ns add  create database to store my stuff in
+            ////-------------------------------------------------------------------
+            //// ke9ns add  create database to store my stuff in
 
-            string file_name2 = AppDataPath + "ke9ns8.dat"; // save data for my mods
+            //string file_name2 = AppDataPath + "ke9ns8.dat"; // save data for my mods
 
-            FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open BMP  file
-            BinaryWriter writer2 = new BinaryWriter(stream2);
+            //FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open BMP  file
+            //BinaryWriter writer2 = new BinaryWriter(stream2);
 
-            writer2.Write(Display.GrayScale);                    // color or grayscale watetfall
-            writer2.Write(Display.GridOff);                      // save panadapter grid on/off
+            //writer2.Write(Display.GrayScale);                    // color or grayscale watetfall
+            //writer2.Write(Display.GridOff);                      // save panadapter grid on/off
 
-            writer2.Write(SpotControl.nameB);               // name for dx spotter
-            writer2.Write(SpotControl.callB);               // call sign for dx spotter
-            writer2.Write(SpotControl.nodeB);               // node  for dx spotter
-            writer2.Write(SpotControl.portB);               // port for dx spotter
+            //writer2.Write(SpotControl.nameB);               // name for dx spotter
+            //writer2.Write(SpotControl.callB);               // call sign for dx spotter
+            //writer2.Write(SpotControl.nodeB);               // node  for dx spotter
+            //writer2.Write(SpotControl.portB);               // port for dx spotter
 
-            writer2.Write(callsign);                             // callsign for waterfall ID
-            writer2.Write(lastcallsign);                         // last callsign test for valid waterfall ID
+            //writer2.Write(callsign);                             // callsign for waterfall ID
+            //writer2.Write(lastcallsign);                         // last callsign test for valid waterfall ID
 
-            writer2.Write((byte)noaaON);                          // space weather console display
+            //writer2.Write((byte)noaaON);                          // space weather console display
 
-            writer2.Write("end");
+            //writer2.Write("end");
 
 
-            writer2.Close();    // close  file
-            stream2.Close();   // close stream
+            //writer2.Close();    // close  file
+            //stream2.Close();   // close stream
+
+            //refactor ke9ns8 code to use 'using' to auto close files even on error
+            //tbh the above code is a nightmare if an exception occurs, and can leak
+            string file_name2 = Path.Combine(AppDataPath, "ke9ns8.dat");
+            try
+            {
+                using (FileStream stream2 = new FileStream(file_name2, FileMode.Create, FileAccess.Write, FileShare.None))
+                using (BinaryWriter writer2 = new BinaryWriter(stream2))
+                {
+                    writer2.Write(Display.GrayScale);
+                    writer2.Write(Display.GridOff);
+
+                    writer2.Write(SpotControl.nameB);
+                    writer2.Write(SpotControl.callB);
+                    writer2.Write(SpotControl.nodeB);
+                    writer2.Write(SpotControl.portB);
+
+                    writer2.Write(callsign);
+                    writer2.Write(lastcallsign);
+
+                    writer2.Write((byte)noaaON);
+
+                    writer2.Write("end");
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Unable to save ke9ns8.dat settings.", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
             //[2.10.3.7]MW0LGE control names to always save, some were being missed if disabled
             List<string> always_save = new List<string>();
@@ -3322,54 +3351,110 @@ namespace Thetis
             // tab pages on this form of the following types: CheckBox, ComboBox,
             // NumericUpDown, RadioButton, TextBox, and TrackBar (slider)
 
-            string file_name2 = AppDataPath + "ke9ns8.dat"; // save data for my mods
-
             bool bNeedUpdate = false; // MW0LGE used to rebuild main form collapsed/expanded, done at the very end
             Point pConsoleLocation = new Point(this.Top, this.Left);
             Size szConsoleSize = new Size(this.Width, this.Height);
 
-            if (!File.Exists(file_name2))
-            {
-                Debug.WriteLine("Create new database file");
-                FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open BMP  file
-                BinaryWriter writer2 = new BinaryWriter(stream2);
-                writer2.Write(Display.GrayScale);                    // color or grayscale watetfall
-                writer2.Write(Display.GridOff);                      // save panadapter grid on/off
-                writer2.Write(SpotControl.nameB);               // name for dx spotter
-                writer2.Write(SpotControl.callB);               // call sign for dx spotter
-                writer2.Write(SpotControl.nodeB);               // node  for dx spotter
-                writer2.Write(SpotControl.portB);               // port for dx spotter
-                writer2.Write(callsign);                             // callsign for waterfall ID
-                writer2.Write(lastcallsign);                         // last callsign test for valid waterfall ID
-                writer2.Write((byte)noaaON);                          // space weather console display
-                writer2.Write("end");
-                writer2.Close();    // close  file
-                stream2.Close();   // close stream
-                Debug.WriteLine("Create new database file");
+            //string file_name2 = AppDataPath + "ke9ns8.dat"; // save data for my mods
+            //if (!File.Exists(file_name2))
+            //{
+            //    Debug.WriteLine("Create new database file");
+            //    FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open BMP  file
+            //    BinaryWriter writer2 = new BinaryWriter(stream2);
+            //    writer2.Write(Display.GrayScale);                    // color or grayscale watetfall
+            //    writer2.Write(Display.GridOff);                      // save panadapter grid on/off
+            //    writer2.Write(SpotControl.nameB);               // name for dx spotter
+            //    writer2.Write(SpotControl.callB);               // call sign for dx spotter
+            //    writer2.Write(SpotControl.nodeB);               // node  for dx spotter
+            //    writer2.Write(SpotControl.portB);               // port for dx spotter
+            //    writer2.Write(callsign);                             // callsign for waterfall ID
+            //    writer2.Write(lastcallsign);                         // last callsign test for valid waterfall ID
+            //    writer2.Write((byte)noaaON);                          // space weather console display
+            //    writer2.Write("end");
+            //    writer2.Close();    // close  file
+            //    stream2.Close();   // close stream
+            //    Debug.WriteLine("Create new database file");
 
+            //}
+            //else // yes ke9ns.dat file does exist
+            //{
+
+            //    FileStream stream2 = new FileStream(file_name2, FileMode.Open); // open BMP  file
+            //    BinaryReader reader2 = new BinaryReader(stream2);
+
+            //    Display.GrayScale = reader2.ReadByte();                            // color or grayscale waterfall 
+
+            //    Display.GridOff = reader2.ReadByte();                              // panadapter grid on / off
+
+            //    SpotControl.DXNAME = reader2.ReadString();                     // name for dx spotter
+            //    SpotControl.DXCALL = reader2.ReadString();                     // call sign for dx spotter
+            //    SpotControl.DXNODE = reader2.ReadString();                     // node for dx spotter
+            //    SpotControl.DXPORT = reader2.ReadString();                     // port for dx spotter
+
+
+            //    callsign = reader2.ReadString();                                   // callsign for waterfall ID
+            //    lastcallsign = reader2.ReadString();                               // last callsign test of waterfall ID valid
+
+            //    noaaON = reader2.ReadByte();                                // space weather console display
+            //    reader2.Close();    // close  file
+            //    stream2.Close();   // close stream
+            //}
+
+            //refactured the above
+            string file_name2 = Path.Combine(AppDataPath, "ke9ns8.dat"); // save data for my mods
+
+            try
+            {
+                if (!File.Exists(file_name2))
+                {
+                    Debug.WriteLine("Create new database file");
+                    using (FileStream stream2 = new FileStream(file_name2, FileMode.Create, FileAccess.Write, FileShare.None)) // open BMP  file
+                    using (BinaryWriter writer2 = new BinaryWriter(stream2))
+                    {
+                        writer2.Write(Display.GrayScale);                    // color or grayscale watetfall
+                        writer2.Write(Display.GridOff);                      // save panadapter grid on/off
+                        writer2.Write(SpotControl.nameB);               // name for dx spotter
+                        writer2.Write(SpotControl.callB);               // call sign for dx spotter
+                        writer2.Write(SpotControl.nodeB);               // node  for dx spotter
+                        writer2.Write(SpotControl.portB);               // port for dx spotter
+                        writer2.Write(callsign);                             // callsign for waterfall ID
+                        writer2.Write(lastcallsign);                         // last callsign test for valid waterfall ID
+                        writer2.Write((byte)noaaON);                          // space weather console display
+                        writer2.Write("end");
+                    }
+                    Debug.WriteLine("Create new database file");
+                }
+                else // yes ke9ns.dat file does exist
+                {
+                    using (FileStream stream2 = new FileStream(file_name2, FileMode.Open, FileAccess.Read, FileShare.Read)) // open BMP  file
+                    using (BinaryReader reader2 = new BinaryReader(stream2))
+                    {
+                        Display.GrayScale = reader2.ReadByte();                            // color or grayscale waterfall 
+                        Display.GridOff = reader2.ReadByte();                              // panadapter grid on / off
+
+                        SpotControl.DXNAME = reader2.ReadString();                     // name for dx spotter
+                        SpotControl.DXCALL = reader2.ReadString();                     // call sign for dx spotter
+                        SpotControl.DXNODE = reader2.ReadString();                     // node for dx spotter
+                        SpotControl.DXPORT = reader2.ReadString();                     // port for dx spotter
+
+                        callsign = reader2.ReadString();                                   // callsign for waterfall ID
+                        lastcallsign = reader2.ReadString();                               // last callsign test of waterfall ID valid
+
+                        noaaON = reader2.ReadByte();                                // space weather console display
+                    }
+                }
             }
-            else // yes ke9ns.dat file does exist
+            catch (Exception ex)
             {
-
-                FileStream stream2 = new FileStream(file_name2, FileMode.Open); // open BMP  file
-                BinaryReader reader2 = new BinaryReader(stream2);
-
-                Display.GrayScale = reader2.ReadByte();                            // color or grayscale waterfall 
-
-                Display.GridOff = reader2.ReadByte();                              // panadapter grid on / off
-
-                SpotControl.DXNAME = reader2.ReadString();                     // name for dx spotter
-                SpotControl.DXCALL = reader2.ReadString();                     // call sign for dx spotter
-                SpotControl.DXNODE = reader2.ReadString();                     // node for dx spotter
-                SpotControl.DXPORT = reader2.ReadString();                     // port for dx spotter
-
-
-                callsign = reader2.ReadString();                                   // callsign for waterfall ID
-                lastcallsign = reader2.ReadString();                               // last callsign test of waterfall ID valid
-
-                noaaON = reader2.ReadByte();                                // space weather console display
-                reader2.Close();    // close  file
-                stream2.Close();   // close stream
+                MessageBox.Show("Unable to read ke9ns8.dat settings. The file will be removed if it exists.", "Read Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if(File.Exists(file_name2))
+                {
+                    try
+                    {
+                        File.Delete(file_name2);
+                    }
+                    catch { }
+                }
             }
 
             //[2.10.2.3]MW0LGE change to dictionary as controls will be unique
