@@ -2149,7 +2149,7 @@ namespace Thetis
             //MW0LGE duped from above Display.Target = pnlDisplay;
             update_rx2_display = true;
 
-            if (startdiversity)
+            if (_startdiversity)
                 eSCToolStripMenuItem_Click(this, EventArgs.Empty);
 
             // uncomment for multiple displays
@@ -3185,7 +3185,7 @@ namespace Thetis
             a.Add("panelBandGEN.Visible/" + _bands_GEN_selected);
             a.Add("iscollapsed/" + _iscollapsed);
             a.Add("isexpanded/" + _isexpanded);
-            a.Add("diversity/" + diversity2);
+            a.Add("diversity/" + _diversity2);
 
             for (int i = (int)PreampMode.FIRST + 1; i < (int)PreampMode.LAST; i++)
                 a.Add("rx1_preamp_offset[" + i.ToString() + "]/" + rx1_preamp_offset[i].ToString("f3"));
@@ -3439,7 +3439,7 @@ namespace Thetis
                         }
                         break; //added by w3sz
                     case "diversity":
-                        startdiversity = bool.Parse(val);
+                        _startdiversity = bool.Parse(val);
                         break;
                     case "quick_save_mode":
                         quick_save_mode = (DSPMode)(Int32.Parse(val));
@@ -7832,7 +7832,7 @@ namespace Thetis
             int nddc = 0;
             int cntrl1 = 0;
             int cntrl2 = 0;
-            if (diversity2)
+            if (_diversity2)
                 P1_diversity = 1;
 
             switch (HardwareSpecific.Model)
@@ -7849,7 +7849,7 @@ namespace Thetis
                     nddc = 5;
                     if (!_mox)
                     {
-                        if (diversity2)
+                        if (_diversity2)
                         {
                             P1_DDCConfig =
                             DDCEnable = DDC0;
@@ -7871,7 +7871,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!diversity2 && !psform.PSEnabled)
+                        if (!_diversity2 && !psform.PSEnabled)
                         {
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
@@ -7880,7 +7880,7 @@ namespace Thetis
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
-                        else if (!diversity2 && psform.PSEnabled)
+                        else if (!_diversity2 && psform.PSEnabled)
                         {
                             P1_DDCConfig = 3;
                             DDCEnable = DDC0 + DDC2;
@@ -7891,7 +7891,7 @@ namespace Thetis
                             cntrl1 = (rx_adc_ctrl1 & 0xf3) | 0x08;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
-                        else if (diversity2 && psform.PSEnabled)
+                        else if (_diversity2 && psform.PSEnabled)
                         {
                             P1_DDCConfig = 3;
                             DDCEnable = DDC0 + DDC2;
@@ -7925,7 +7925,7 @@ namespace Thetis
                     nddc = 5;
                     if (!_mox)
                     {
-                        if (diversity2)
+                        if (_diversity2)
                         {
                             P1_DDCConfig = 2; // REDPITAYA PAVEL
                             DDCEnable = DDC0;
@@ -7950,7 +7950,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!diversity2 && !psform.PSEnabled)
+                        if (!_diversity2 && !psform.PSEnabled)
                         {
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
@@ -7961,7 +7961,7 @@ namespace Thetis
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
-                        else if (!diversity2 && psform.PSEnabled)
+                        else if (!_diversity2 && psform.PSEnabled)
                         {
                             P1_DDCConfig = 3;
                             DDCEnable = DDC0 + DDC2;
@@ -7972,7 +7972,7 @@ namespace Thetis
                             cntrl1 = (rx_adc_ctrl1 & 0xf3) | 0x08;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
-                        else if (diversity2 && psform.PSEnabled)
+                        else if (_diversity2 && psform.PSEnabled)
                         {
                             P1_DDCConfig = 3;
                             DDCEnable = DDC0 + DDC2;
@@ -8009,7 +8009,7 @@ namespace Thetis
                     nddc = 4;
                     if (!_mox)
                     {
-                        if (!diversity2)
+                        if (!_diversity2)
                         {
                             P1_DDCConfig = 4;
                             DDCEnable = DDC0;
@@ -8037,7 +8037,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!diversity2 && !psform.PSEnabled)
+                        if (!_diversity2 && !psform.PSEnabled)
                         {
                             P1_DDCConfig = 4;
                             DDCEnable = DDC0;
@@ -8052,7 +8052,7 @@ namespace Thetis
                                 Rate[1] = rx2_rate;
                             }
                         }
-                        else if (diversity2 && !psform.PSEnabled)
+                        else if (_diversity2 && !psform.PSEnabled)
                         {
                             P1_DDCConfig = 5;
                             DDCEnable = DDC0;
@@ -8081,7 +8081,7 @@ namespace Thetis
                     nddc = 2;
                     if (!_mox)
                     {
-                        if (!diversity2)
+                        if (!_diversity2)
                         {
                             P1_DDCConfig = 4;
                             DDCEnable = DDC0;
@@ -8109,7 +8109,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!diversity2 && !psform.PSEnabled)
+                        if (!_diversity2 && !psform.PSEnabled)
                         {
                             P1_DDCConfig = 4;
                             DDCEnable = DDC0;
@@ -8124,7 +8124,7 @@ namespace Thetis
                                 Rate[1] = rx2_rate;
                             }
                         }
-                        else if (diversity2 && !psform.PSEnabled)
+                        else if (_diversity2 && !psform.PSEnabled)
                         {
                             P1_DDCConfig = 5;
                             DDCEnable = DDC0;
@@ -10538,34 +10538,41 @@ namespace Thetis
             }
         }
 
-        private bool startdiversity = false;
-        private bool diversity2 = false;
+        private bool _startdiversity = false;
+        private bool _diversity2 = false;
         unsafe public bool Diversity2
         {
-            get { return diversity2; }
+            get { return _diversity2; }
             set
             {
-                diversity2 = value;
-                AndromedaIndicatorCheck(EIndicatorActions.eINDiversityEnabled, false, diversity2);
-                if (diversity2)
+                _diversity2 = value;
+                AndromedaIndicatorCheck(EIndicatorActions.eINDiversityEnabled, false, _diversity2);
+                if (_diversity2)
                 {
                     txtVFOAFreq_LostFocus(this, EventArgs.Empty);
                     UpdateAAudioMixerStates();
                     UpdateDDCs(rx2_enabled);
-                    if (_rx1_step_att_enabled) udRX1StepAttData_ValueChanged(this, EventArgs.Empty);
-                    else comboPreamp_SelectedIndexChanged(this, EventArgs.Empty);
+                    //if (_rx1_step_att_enabled) udRX1StepAttData_ValueChanged(this, EventArgs.Empty);
+                    //else comboPreamp_SelectedIndexChanged(this, EventArgs.Empty);
                     WDSP.SetEXTDIVRun(0, 1);
                     cmaster.LoadRouterControlBit((void*)0, 0, 1, 1);
                 }
                 else
                 {
                     UpdateDDCs(rx2_enabled);
-                    if (_rx2_step_att_enabled) udRX2StepAttData_ValueChanged(this, EventArgs.Empty);
-                    else comboRX2Preamp_SelectedIndexChanged(this, EventArgs.Empty);
+                    //if (_rx2_step_att_enabled) udRX2StepAttData_ValueChanged(this, EventArgs.Empty);
+                    //else comboRX2Preamp_SelectedIndexChanged(this, EventArgs.Empty);
                     WDSP.SetEXTDIVRun(0, 0);
                     cmaster.LoadRouterControlBit((void*)0, 0, 1, 0);
                     UpdateAAudioMixerStates();
                 }
+
+                //[2.10.3.13]MW0LGE moved from above, to ensure correct preamp/attn settings after diversity change
+                //because attenuation is applied at the adc level
+                if (_rx1_step_att_enabled) udRX1StepAttData_ValueChanged(this, EventArgs.Empty);
+                else comboPreamp_SelectedIndexChanged(this, EventArgs.Empty);
+                if (_rx2_step_att_enabled) udRX2StepAttData_ValueChanged(this, EventArgs.Empty);
+                else comboRX2Preamp_SelectedIndexChanged(this, EventArgs.Empty);
 
                 UpdateDiversityMenuItem(); //MW0LGE_22b
             }
@@ -14866,8 +14873,7 @@ namespace Thetis
                         comboRX2Preamp.Show();
                         udRX2StepAttData.Show();
                         lblRX2Preamp.Visible = true;
-                    }
-
+                    }                    
                 }
                 else
                 {
@@ -27593,11 +27599,11 @@ namespace Thetis
             int RX1S = 1 << WDSP.id(0, 1);
             int RX2 = 1 << WDSP.id(2, 0);
             int MON = 1 << WDSP.id(1, 0);
-            int RX2EN;
-            if (rx2_enabled)
-                RX2EN = 1 << WDSP.id(2, 0);
-            else
-                RX2EN = 0;
+            int RX2EN = rx2_enabled ? 1 << WDSP.id(2, 0) : 0;
+            //if (rx2_enabled)
+            //    RX2EN = 1 << WDSP.id(2, 0);
+            //else
+            //    RX2EN = 0;
             switch (NetworkIO.CurrentRadioProtocol)
             {
                 case RadioProtocol.USB:
@@ -27637,7 +27643,7 @@ namespace Thetis
                             {
                                 if (!_mox)
                                 {
-                                    if (!diversity2)
+                                    if (!_diversity2)
                                     {
                                         if (!psform.PSEnabled)
                                         {
@@ -27666,7 +27672,7 @@ namespace Thetis
                                 }
                                 else
                                 {
-                                    if (!diversity2)
+                                    if (!_diversity2)
                                     {
                                         if (!psform.PSEnabled)
                                         {
