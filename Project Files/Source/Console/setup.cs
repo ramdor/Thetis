@@ -12832,18 +12832,6 @@ namespace Thetis
             toolTip1.SetToolTip(tbMultiRXFilterAlpha, tbMultiRXFilterAlpha.Value.ToString());
         }
 
-        public static Color DisplayGrayLineColor = Color.FromArgb(70, Color.Black); // ke9ns add default value
-        public void clrbtnGrayLine_Changed(object sender, EventArgs e)
-        {
-            DisplayGrayLineColor = Color.FromArgb(tbGrayLineAlpha.Value, clrbtnGrayLine.Color);
-
-        }
-
-        public void tbGrayLineAlpha_Scroll(object sender, EventArgs e)
-        {
-            clrbtnGrayLine_Changed(this, EventArgs.Empty);
-        }
-
         private void chkWheelTuneVFOB_CheckedChanged(object sender, EventArgs e)
         {
             console.WheelTunesVFOB = chkWheelTuneVFOB.Checked;
@@ -22868,11 +22856,6 @@ namespace Thetis
             get { return chkShowTCISpots.Checked; }
             set { chkShowTCISpots.Checked = value; }
         }
-        private void chkLegacyDXBuffers_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void chkSpotOwnCallAppearance_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;

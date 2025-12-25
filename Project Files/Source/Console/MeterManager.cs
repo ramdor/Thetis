@@ -12931,12 +12931,7 @@ namespace Thetis
                                 {
                                     _console.BeginInvoke(new MethodInvoker(() =>
                                     {
-                                        bool setimage = true;
-                                        if (_console.SpotForm != null && !_console.SpotForm.IsDisposed)
-                                        {
-                                            setimage = !_console.SpotForm.TrackingAndMapShown; // do not set if the spot tracking is being used
-                                        }
-                                        if (setimage) _console.PnlDisplayBackgroundImage = bmp;
+                                        _console.PnlDisplayBackgroundImage = bmp;
                                         bmp.Dispose();
                                     }));
                                 }
@@ -13083,12 +13078,7 @@ namespace Thetis
                 {
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
-                        bool setimage = true;
-                        if (_console.SpotForm != null && !_console.SpotForm.IsDisposed)
-                        {
-                            setimage = !_console.SpotForm.TrackingAndMapShown; // do not set if the spot tracking is being used
-                        }
-                        if (setimage) _console.PnlDisplayBackgroundImage = null;
+                        _console.PnlDisplayBackgroundImage = null;
                     }));
                 }
 

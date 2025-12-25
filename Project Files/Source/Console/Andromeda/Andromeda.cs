@@ -3757,12 +3757,7 @@ namespace Thetis
                     break;
 
                 case EButtonBarActions.eBBBandstackForm:           // show band stacks form
-                    //if (StackForm == null || StackForm.IsDisposed) StackForm = new StackControl(this);
-                    //Invoke(new MethodInvoker(StackForm.Show));
-                    //StackForm.Focus();
-                    //StackForm.WindowState = FormWindowState.Normal; // ke9ns add
-
-                    Invoke(new MethodInvoker(BandStack2Form.Show)); //MW0LGE_21d BandStack2
+                    Invoke(new MethodInvoker(BandStack2Form.Show)); //BandStack2
                     break;
 
                 case EButtonBarActions.eBBBandstack:

@@ -1949,7 +1949,6 @@
             this.grpDisplay8000DLE = new System.Windows.Forms.GroupBoxTS();
             this.chkANAN8000DLEDisplayVoltsAmps = new System.Windows.Forms.CheckBoxTS();
             this.grpDisplayDriverEngine = new System.Windows.Forms.GroupBoxTS();
-            this.chkLegacyDXBuffers = new System.Windows.Forms.CheckBoxTS();
             this.chkVSyncDX = new System.Windows.Forms.CheckBoxTS();
             this.chkAccurateFrameTiming = new System.Windows.Forms.CheckBoxTS();
             this.chkAntiAlias = new System.Windows.Forms.CheckBoxTS();
@@ -3145,9 +3144,6 @@
             this.lblDisplayDataFill = new System.Windows.Forms.LabelTS();
             this.lblActiveSpectralPeakColour = new System.Windows.Forms.LabelTS();
             this.chkShowZeroLine = new System.Windows.Forms.CheckBoxTS();
-            this.tbGrayLineAlpha = new System.Windows.Forms.TrackBarTS();
-            this.clrbtnGrayLine = new Thetis.ColorButton();
-            this.labelgrayline = new System.Windows.Forms.LabelTS();
             this.chkGridControl = new System.Windows.Forms.CheckBoxTS();
             this.tbMultiRXFilterAlpha = new System.Windows.Forms.TrackBarTS();
             this.clrbtnSubRXZero = new Thetis.ColorButton();
@@ -5167,7 +5163,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbDataLineAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDataFillAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbActiveSpectralPeakAlpha)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbGrayLineAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMultiRXFilterAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX1FilterAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).BeginInit();
@@ -32429,7 +32424,6 @@
             // 
             // grpDisplayDriverEngine
             // 
-            this.grpDisplayDriverEngine.Controls.Add(this.chkLegacyDXBuffers);
             this.grpDisplayDriverEngine.Controls.Add(this.chkVSyncDX);
             this.grpDisplayDriverEngine.Controls.Add(this.chkAccurateFrameTiming);
             this.grpDisplayDriverEngine.Controls.Add(this.chkAntiAlias);
@@ -32441,20 +32435,6 @@
             this.grpDisplayDriverEngine.TabIndex = 46;
             this.grpDisplayDriverEngine.TabStop = false;
             this.grpDisplayDriverEngine.Text = "DirectX Display Settings";
-            // 
-            // chkLegacyDXBuffers
-            // 
-            this.chkLegacyDXBuffers.AutoSize = true;
-            this.chkLegacyDXBuffers.Image = null;
-            this.chkLegacyDXBuffers.Location = new System.Drawing.Point(8, 143);
-            this.chkLegacyDXBuffers.Name = "chkLegacyDXBuffers";
-            this.chkLegacyDXBuffers.Size = new System.Drawing.Size(114, 17);
-            this.chkLegacyDXBuffers.TabIndex = 51;
-            this.chkLegacyDXBuffers.Text = "Legacy DX buffers";
-            this.toolTip1.SetToolTip(this.chkLegacyDXBuffers, "Try this if you are having flickering curssors or other display issues");
-            this.chkLegacyDXBuffers.UseVisualStyleBackColor = true;
-            this.chkLegacyDXBuffers.Visible = false;
-            this.chkLegacyDXBuffers.CheckedChanged += new System.EventHandler(this.chkLegacyDXBuffers_CheckedChanged);
             // 
             // chkVSyncDX
             // 
@@ -51697,9 +51677,6 @@
             this.grpAppPanadapter.Controls.Add(this.lblDisplayDataFill);
             this.grpAppPanadapter.Controls.Add(this.lblActiveSpectralPeakColour);
             this.grpAppPanadapter.Controls.Add(this.chkShowZeroLine);
-            this.grpAppPanadapter.Controls.Add(this.tbGrayLineAlpha);
-            this.grpAppPanadapter.Controls.Add(this.clrbtnGrayLine);
-            this.grpAppPanadapter.Controls.Add(this.labelgrayline);
             this.grpAppPanadapter.Controls.Add(this.chkGridControl);
             this.grpAppPanadapter.Controls.Add(this.tbMultiRXFilterAlpha);
             this.grpAppPanadapter.Controls.Add(this.clrbtnSubRXZero);
@@ -51878,42 +51855,6 @@
             this.chkShowZeroLine.Text = "Show Zero Line";
             this.chkShowZeroLine.UseVisualStyleBackColor = true;
             this.chkShowZeroLine.CheckedChanged += new System.EventHandler(this.chkShowZeroLine_CheckedChanged);
-            // 
-            // tbGrayLineAlpha
-            // 
-            this.tbGrayLineAlpha.AutoSize = false;
-            this.tbGrayLineAlpha.Location = new System.Drawing.Point(180, 158);
-            this.tbGrayLineAlpha.Maximum = 200;
-            this.tbGrayLineAlpha.Name = "tbGrayLineAlpha";
-            this.tbGrayLineAlpha.Size = new System.Drawing.Size(66, 18);
-            this.tbGrayLineAlpha.TabIndex = 92;
-            this.tbGrayLineAlpha.TickFrequency = 50;
-            this.toolTip1.SetToolTip(this.tbGrayLineAlpha, "Transparency of Grayline dark area over the map");
-            this.tbGrayLineAlpha.Value = 70;
-            this.tbGrayLineAlpha.Scroll += new System.EventHandler(this.tbGrayLineAlpha_Scroll);
-            // 
-            // clrbtnGrayLine
-            // 
-            this.clrbtnGrayLine.Automatic = "Automatic";
-            this.clrbtnGrayLine.Color = System.Drawing.Color.Black;
-            this.clrbtnGrayLine.Image = null;
-            this.clrbtnGrayLine.Location = new System.Drawing.Point(130, 158);
-            this.clrbtnGrayLine.MoreColors = "More Colors...";
-            this.clrbtnGrayLine.Name = "clrbtnGrayLine";
-            this.clrbtnGrayLine.Selectable = true;
-            this.clrbtnGrayLine.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnGrayLine.TabIndex = 90;
-            this.clrbtnGrayLine.Changed += new System.EventHandler(this.clrbtnGrayLine_Changed);
-            // 
-            // labelgrayline
-            // 
-            this.labelgrayline.AutoSize = true;
-            this.labelgrayline.Image = null;
-            this.labelgrayline.Location = new System.Drawing.Point(6, 163);
-            this.labelgrayline.Name = "labelgrayline";
-            this.labelgrayline.Size = new System.Drawing.Size(52, 13);
-            this.labelgrayline.TabIndex = 89;
-            this.labelgrayline.Text = "GrayLine:\r\n";
             // 
             // chkGridControl
             // 
@@ -70143,7 +70084,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbDataLineAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDataFillAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbActiveSpectralPeakAlpha)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbGrayLineAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMultiRXFilterAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX1FilterAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).EndInit();
@@ -72565,9 +72505,6 @@
         private LabelTS labelTS462;
         private LabelTS labelTS463;
         private LabelTS labelTS464;
-        public TrackBarTS tbGrayLineAlpha;
-        private ColorButton clrbtnGrayLine;
-        private LabelTS labelgrayline;
         private CheckBoxTS chkWheelReverse;
         private System.Windows.Forms.GroupBoxTS grpDisplay8000DLE;
         private System.Windows.Forms.CheckBoxTS chkANAN8000DLEDisplayVoltsAmps;
@@ -73598,7 +73535,6 @@
         private LabelTS labelTS614;
         private LabelTS labelTS613;
         private CheckBoxTS chkShowTCISpots;
-        private CheckBoxTS chkLegacyDXBuffers;
         private ColorButton clrbtnOwnCallApearance;
         private TextBoxTS txtOwnCallsign;
         private CheckBoxTS chkSpotOwnCallAppearance;

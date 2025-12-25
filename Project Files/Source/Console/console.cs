@@ -150,18 +150,9 @@ namespace Thetis
         public MemoryList MemoryList { get; private set; }
         public WaveControl WaveForm;
 
-        public SpotControl SpotForm;                       // ke9ns add DX spotter function
-        public ScanControl ScanForm;                       // ke9ns add freq Scanner function
-
-        public SwlControl SwlForm;                         // ke9ns add band swl form
-
         //====================================================================================
 
         private DXMemList dxmemList; // ke9ns add
-        public DXMemList DXMemList // ke9ns add
-        {
-            get { return dxmemList; }
-        }
 
         //=======================================================================================
 
@@ -986,9 +977,6 @@ namespace Thetis
             //MW0LGE_21d fix isuse where controls that had been
             //clicked and now unselected show as different text colour when disabled
             initControlBackColours(this);
-
-            //MW0LGE_21d instance the spot form
-            if (SpotForm == null || SpotForm.IsDisposed) SpotForm = new SpotControl(this);
 
             //MW0LGE_21d BandStack2
             BandStackFilter bsf = BandStackManager.GetFilter(RX1Band, false);
@@ -1989,8 +1977,6 @@ namespace Thetis
 
             InitFilterPresets();					// Initialize filter values
 
-            SwlForm = new SwlControl(this);         // ke9ns add communicate with swl list controls
-
             // ***** THIS IS WHERE SETUP FORM IS CREATED
             _onlyOneSetupInstance = true; // make sure that we limit to one instance
             LogTool.AddLogEntry("    Setup Form initialising...", "SETUP");
@@ -2719,62 +2705,6 @@ namespace Thetis
             if (_current_breakin_mode == BreakIn.QSK) QSKEnabled = false; // Just to save the non-qsk settings, but leaving the button alone
             chkPower.Checked = false;		// turn off the power first
 
-            ////-------------------------------------------------------------------
-            //// ke9ns add  create database to store my stuff in
-
-            //string file_name2 = AppDataPath + "ke9ns8.dat"; // save data for my mods
-
-            //FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open BMP  file
-            //BinaryWriter writer2 = new BinaryWriter(stream2);
-
-            //writer2.Write(Display.GrayScale);                    // color or grayscale watetfall
-            //writer2.Write(Display.GridOff);                      // save panadapter grid on/off
-
-            //writer2.Write(SpotControl.nameB);               // name for dx spotter
-            //writer2.Write(SpotControl.callB);               // call sign for dx spotter
-            //writer2.Write(SpotControl.nodeB);               // node  for dx spotter
-            //writer2.Write(SpotControl.portB);               // port for dx spotter
-
-            //writer2.Write(callsign);                             // callsign for waterfall ID
-            //writer2.Write(lastcallsign);                         // last callsign test for valid waterfall ID
-
-            //writer2.Write((byte)noaaON);                          // space weather console display
-
-            //writer2.Write("end");
-
-
-            //writer2.Close();    // close  file
-            //stream2.Close();   // close stream
-
-            //refactor ke9ns8 code to use 'using' to auto close files even on error
-            //tbh the above code is a nightmare if an exception occurs, and can leak
-            string file_name2 = Path.Combine(AppDataPath, "ke9ns8.dat");
-            try
-            {
-                using (FileStream stream2 = new FileStream(file_name2, FileMode.Create, FileAccess.Write, FileShare.None))
-                using (BinaryWriter writer2 = new BinaryWriter(stream2))
-                {
-                    writer2.Write(Display.GrayScale);
-                    writer2.Write(Display.GridOff);
-
-                    writer2.Write(SpotControl.nameB);
-                    writer2.Write(SpotControl.callB);
-                    writer2.Write(SpotControl.nodeB);
-                    writer2.Write(SpotControl.portB);
-
-                    writer2.Write(callsign);
-                    writer2.Write(lastcallsign);
-
-                    writer2.Write((byte)noaaON);
-
-                    writer2.Write("end");
-                }
-            }
-            catch
-            {
-                MessageBox.Show("Unable to save ke9ns8.dat settings.", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
             //[2.10.3.7]MW0LGE control names to always save, some were being missed if disabled
             List<string> always_save = new List<string>();
             always_save.Add(chkVFOLock.Name);
@@ -3353,109 +3283,7 @@ namespace Thetis
 
             bool bNeedUpdate = false; // MW0LGE used to rebuild main form collapsed/expanded, done at the very end
             Point pConsoleLocation = new Point(this.Top, this.Left);
-            Size szConsoleSize = new Size(this.Width, this.Height);
-
-            //string file_name2 = AppDataPath + "ke9ns8.dat"; // save data for my mods
-            //if (!File.Exists(file_name2))
-            //{
-            //    Debug.WriteLine("Create new database file");
-            //    FileStream stream2 = new FileStream(file_name2, FileMode.Create); // open BMP  file
-            //    BinaryWriter writer2 = new BinaryWriter(stream2);
-            //    writer2.Write(Display.GrayScale);                    // color or grayscale watetfall
-            //    writer2.Write(Display.GridOff);                      // save panadapter grid on/off
-            //    writer2.Write(SpotControl.nameB);               // name for dx spotter
-            //    writer2.Write(SpotControl.callB);               // call sign for dx spotter
-            //    writer2.Write(SpotControl.nodeB);               // node  for dx spotter
-            //    writer2.Write(SpotControl.portB);               // port for dx spotter
-            //    writer2.Write(callsign);                             // callsign for waterfall ID
-            //    writer2.Write(lastcallsign);                         // last callsign test for valid waterfall ID
-            //    writer2.Write((byte)noaaON);                          // space weather console display
-            //    writer2.Write("end");
-            //    writer2.Close();    // close  file
-            //    stream2.Close();   // close stream
-            //    Debug.WriteLine("Create new database file");
-
-            //}
-            //else // yes ke9ns.dat file does exist
-            //{
-
-            //    FileStream stream2 = new FileStream(file_name2, FileMode.Open); // open BMP  file
-            //    BinaryReader reader2 = new BinaryReader(stream2);
-
-            //    Display.GrayScale = reader2.ReadByte();                            // color or grayscale waterfall 
-
-            //    Display.GridOff = reader2.ReadByte();                              // panadapter grid on / off
-
-            //    SpotControl.DXNAME = reader2.ReadString();                     // name for dx spotter
-            //    SpotControl.DXCALL = reader2.ReadString();                     // call sign for dx spotter
-            //    SpotControl.DXNODE = reader2.ReadString();                     // node for dx spotter
-            //    SpotControl.DXPORT = reader2.ReadString();                     // port for dx spotter
-
-
-            //    callsign = reader2.ReadString();                                   // callsign for waterfall ID
-            //    lastcallsign = reader2.ReadString();                               // last callsign test of waterfall ID valid
-
-            //    noaaON = reader2.ReadByte();                                // space weather console display
-            //    reader2.Close();    // close  file
-            //    stream2.Close();   // close stream
-            //}
-
-            //refactured the above
-            string file_name2 = Path.Combine(AppDataPath, "ke9ns8.dat"); // save data for my mods
-
-            try
-            {
-                if (!File.Exists(file_name2))
-                {
-                    Debug.WriteLine("Create new database file");
-                    using (FileStream stream2 = new FileStream(file_name2, FileMode.Create, FileAccess.Write, FileShare.None)) // open BMP  file
-                    using (BinaryWriter writer2 = new BinaryWriter(stream2))
-                    {
-                        writer2.Write(Display.GrayScale);                    // color or grayscale watetfall
-                        writer2.Write(Display.GridOff);                      // save panadapter grid on/off
-                        writer2.Write(SpotControl.nameB);               // name for dx spotter
-                        writer2.Write(SpotControl.callB);               // call sign for dx spotter
-                        writer2.Write(SpotControl.nodeB);               // node  for dx spotter
-                        writer2.Write(SpotControl.portB);               // port for dx spotter
-                        writer2.Write(callsign);                             // callsign for waterfall ID
-                        writer2.Write(lastcallsign);                         // last callsign test for valid waterfall ID
-                        writer2.Write((byte)noaaON);                          // space weather console display
-                        writer2.Write("end");
-                    }
-                    Debug.WriteLine("Create new database file");
-                }
-                else // yes ke9ns.dat file does exist
-                {
-                    using (FileStream stream2 = new FileStream(file_name2, FileMode.Open, FileAccess.Read, FileShare.Read)) // open BMP  file
-                    using (BinaryReader reader2 = new BinaryReader(stream2))
-                    {
-                        Display.GrayScale = reader2.ReadByte();                            // color or grayscale waterfall 
-                        Display.GridOff = reader2.ReadByte();                              // panadapter grid on / off
-
-                        SpotControl.DXNAME = reader2.ReadString();                     // name for dx spotter
-                        SpotControl.DXCALL = reader2.ReadString();                     // call sign for dx spotter
-                        SpotControl.DXNODE = reader2.ReadString();                     // node for dx spotter
-                        SpotControl.DXPORT = reader2.ReadString();                     // port for dx spotter
-
-                        callsign = reader2.ReadString();                                   // callsign for waterfall ID
-                        lastcallsign = reader2.ReadString();                               // last callsign test of waterfall ID valid
-
-                        noaaON = reader2.ReadByte();                                // space weather console display
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Unable to read ke9ns8.dat settings. The file will be removed if it exists.", "Read Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                if(File.Exists(file_name2))
-                {
-                    try
-                    {
-                        File.Delete(file_name2);
-                    }
-                    catch { }
-                }
-            }
+            Size szConsoleSize = new Size(this.Width, this.Height);            
 
             //[2.10.2.3]MW0LGE change to dictionary as controls will be unique
             Dictionary<string, Control> ctrls = new Dictionary<string, Control>();
@@ -5673,9 +5501,6 @@ namespace Thetis
             return r;
         }
 
-        public int last_MHZ = 0; // ke9ns 
-        public DSPMode last_MODE = DSPMode.LAST;
-
         public void ChangeTuneStepUp()
         {
             //MW0LGE_21j
@@ -5753,84 +5578,59 @@ namespace Thetis
         {
             // MW0LGE lots of changes in this function for BandStack2
 
-            SpotControl.VFOLOW = 0;   // ke9ns add default values (used in spot.cs for mapping dx spots)
-            SpotControl.VFOHIGH = 1;  // ke9ns add default values
-
             switch (b)
             {
                 case Band.B160M:
-                    SpotControl.VFOLOW = 1800000; // ke9ns add
-                    SpotControl.VFOHIGH = 2000000;// ke9ns add
                     radBand160.Checked = true;
                     DeselectVHF();
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B80M:
-                    SpotControl.VFOLOW = 3500000;
-                    SpotControl.VFOHIGH = 4000000;
                     radBand80.Checked = true;
                     DeselectVHF();
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B60M:
-                    SpotControl.VFOLOW = 5000000;
-                    SpotControl.VFOHIGH = 6000000;
                     radBand60.Checked = true;
                     DeselectVHF();
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B40M:
-                    SpotControl.VFOLOW = 7000000;
-                    SpotControl.VFOHIGH = 7300000;
                     radBand40.Checked = true;
                     DeselectVHF();
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B30M:
-                    SpotControl.VFOLOW = 10100000;
-                    SpotControl.VFOHIGH = 10150000;
                     radBand30.Checked = true;
                     DeselectVHF();
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B20M:
-                    SpotControl.VFOLOW = 14000000;
-                    SpotControl.VFOHIGH = 14350000;
                     radBand20.Checked = true;
                     DeselectVHF();
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B17M:
-                    SpotControl.VFOLOW = 18000000; // 18.068
-                    SpotControl.VFOHIGH = 18200000; // 18.168
                     radBand17.Checked = true;
                     DeselectVHF();
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B15M:
-                    SpotControl.VFOLOW = 21000000; // 
-                    SpotControl.VFOHIGH = 21450000; // 
                     radBand15.Checked = true;
                     DeselectVHF();
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B12M:
-                    SpotControl.VFOLOW = 24800000; // 24.89
-                    SpotControl.VFOHIGH = 25000000; // 24.99
                     radBand12.Checked = true;
                     DeselectVHF();
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B10M:
-                    SpotControl.VFOLOW = 28000000; // 
-                    SpotControl.VFOHIGH = 30000000; // 
                     radBand10.Checked = true;
                     DeselectVHF();
                     DeselectGEN(); // ke9ns add
                     break;
                 case Band.B6M:
-                    SpotControl.VFOLOW = 50000000; // 
-                    SpotControl.VFOHIGH = 54000000; //
                     radBand6.Checked = true;
                     DeselectVHF();
                     DeselectGEN(); // ke9ns add
@@ -9503,38 +9303,6 @@ namespace Thetis
             get { return tune_step_list[tune_step_index].StepHz * 1e-6; }
         }
 
-        //============================================================================ 
-        //============================================================================ 
-        // ke9ns add CALLSIGN menu field allow WaveForm to get text from here
-        //============================================================================ 
-        //============================================================================ 
-        public static string callsign = "CallSign";
-
-        public string Callsign            // wave.cs gets call sign from here
-        {
-            get { return callsign; }
-            set
-            {
-                // Callsign = setupForm.txtGenCustomTitle.Text;
-                callsign = value;
-
-            } // set
-        } // tx id
-
-        public static string lastcallsign = " hhh ";
-
-        public string LastCall            // wave.cs gets call sign from here
-        {
-            get { return lastcallsign; }
-            set
-            {
-                lastcallsign = value;
-
-            } // set
-        } // tx id
-
-        private static byte callsignfocus = 0; // ke9ns used to keep focus on text entry and not flex keyboard shortcuts
-
         private void radBandGEN0_Click(object sender, EventArgs e)
         {
             //MW0LGE_21d new bandstack system
@@ -9783,47 +9551,6 @@ namespace Thetis
         private void radBandVHF13_MouseDown(object sender, MouseEventArgs e)
         {
         }
-
-        //====================================================================================================
-        // ke9ns
-        public bool SWLFORM
-        {
-            get
-            {
-                return false;
-            }
-            set
-            {
-                if (SwlForm == null || SwlForm.IsDisposed) SwlForm = new SwlControl(this); // ke9ns add communicate with swl list controls
-
-                SwlForm.Show();
-                SwlForm.Focus();
-                SwlForm.WindowState = FormWindowState.Normal; // ke9ns add
-            }
-        }
-
-        //====================================================================================================
-        //====================================================================================================
-        // ke9ns add Thread routine
-        private void spotterMenu_Click(object sender, EventArgs e)
-        {
-            if (SpotForm == null || SpotForm.IsDisposed) SpotForm = new SpotControl(this);
-
-            if (SpotForm.InvokeRequired)
-            {
-                SpotForm.Invoke(new MethodInvoker(() =>
-                {
-                    SpotForm.Show();
-                    SpotForm.Focus();
-                }));
-            }
-            else
-            {
-                SpotForm.Show();
-                SpotForm.Focus();
-            }
-        }
-
         #endregion
 
         #region Test and Calibration Routines
@@ -12102,20 +11829,6 @@ namespace Thetis
             set { _all_mode_mic_ptt = value; }
         }
 
-        //private int last_rx1_xvtr_index = -1;			// index of last xvtr in use
-        //public int LastRX1XVTRIndex
-        //{
-        //    get { return last_rx1_xvtr_index; }
-        //    set { last_rx1_xvtr_index = value; }
-        //}
-
-        //private int last_rx2_xvtr_index = -1;			// index of last xvtr in use
-        //public int LastRX2XVTRIndex
-        //{
-        //    get { return last_rx2_xvtr_index; }
-        //    set { last_rx2_xvtr_index = value; }
-        //}
-
         private int rx1_xvtr_index = -1;				// index of current xvtr in use
         public int RX1XVTRIndex
         {
@@ -12177,38 +11890,14 @@ namespace Thetis
             set { last_tx_xvtr_index = value; }
         }
 
-        //private float rx1_path_offset = 0.0f;
-        //public float RX1PathOffset
-        //{
-        //    get { return rx1_path_offset; }
-        //}
-
-        //private float rx2_path_offset = 0.0f;
-        //public float RX2PathOffset
-        //{
-        //    get { return rx2_path_offset; }
-        //}
-
         private PreampMode[] rx1_preamp_by_band;
-        //public void SetRX1Preamp(Band b, PreampMode mode)
-        //{
-        //    rx1_preamp_by_band[(int)b] = mode;
-        //}
-
-        //public PreampMode GetPreamp(Band b)
-        //{
-        //    return rx1_preamp_by_band[(int)b];
-        //}
-
         private PreampMode[] rx2_preamp_by_band;
-
-
         private double[] fm_tx_offset_by_band_mhz;
-
         private int[] power_by_band;
         private int[] tunePower_by_band;
         private int[] limitPower_by_band;
         private int[] limitTunePower_by_band;
+
         public void SetPower(Band b, int pwr)
         {
             power_by_band[(int)b] = pwr;
@@ -12267,27 +11956,6 @@ namespace Thetis
             get { return ritxit_sync; }
             set { ritxit_sync = value; }
         }
-
-
-        //=========================================================
-        // ke9ns add for display to check if Beacon needs an freq avg signal strength reading
-        public bool BeaconSigAvg
-        {
-            get
-            {
-                if (SpotForm != null)
-                {
-                    if ((SpotForm.beacon5 > 0) || (SpotForm.beacon11 > 0) || (SpotForm.WTime == true)) return true;  // if Fast or Slow Beacon scanning is enabled or WWV checking
-                    else return false;
-                }
-                else return false;
-
-            }
-
-
-        } //  public bool BeaconSigAvg
-
-
 
         //=============================
         // ke9ns add  scheduler calls this to set audio to POST and 48k SR for small file size recordings
@@ -12853,24 +12521,6 @@ namespace Thetis
                 }
             }
         }
-
-        //============================================================
-        // ke9ns add
-        private Color ring_vfo_color = Color.DarkGreen;
-        public Color RingVFOColor
-        {
-            get { return ring_vfo_color; }
-            set
-            {
-                ring_vfo_color = value;
-                grpVFOA.Invalidate();
-                grpVFOB.Invalidate();
-                grpMultimeter.Invalidate();
-                grpRX2Meter.Invalidate();
-
-            }
-
-        } //RingVFOColor
 
         private Color info_buttons_color = Color.DarkOrange;
         public Color InfoButtonsColor
@@ -17465,13 +17115,6 @@ namespace Thetis
                     int tmp = rx1_agct_by_band[(int)rx1_band];
                     RX1AGCMode = rx1_agcm_by_band[(int)rx1_band];
                     RF = tmp;
-
-                    //================================================================================           
-                    // ke9ns ADD for use by scanner so it knows which band button your on currently
-                    // MW0LGE_21a moved all to scancontrol where it should be.
-                    if (ScanForm != null) ScanForm.BandChanged(rx1_band);
-                    //============================================================== ke9ns end
-
                 }
                 DisplayAriesRXAntenna();
 
@@ -17867,44 +17510,11 @@ namespace Thetis
 
         //*************end of 8 functions.
 
-        //=======================================================================================
-        // ke9ns add
-        public int ReadAvgStrength(uint sub)
-        {
-            float num = 0f;
-            num = WDSP.CalculateRXMeter(0, sub, WDSP.MeterType.AVG_SIGNAL_STRENGTH);
-            //num = num +
-            //    rx1_meter_cal_offset +
-            //    rx1_preamp_offset[(int)rx1_preamp_mode] +
-            //    rx1_path_offset +
-            //    rx1_xvtr_gain_offset;
-            num += RXOffset(1);
-            return (int)num;
-        }
-
-        //=======================================================================================
-        // ke9ns add
-        public int ReadStrength(uint sub)
-        {
-            float num = 0f;
-            num = WDSP.CalculateRXMeter(0, sub, WDSP.MeterType.SIGNAL_STRENGTH);
-            //num = num +
-            //    rx1_meter_cal_offset +
-            //    rx1_preamp_offset[(int)rx1_preamp_mode] +
-            //    rx1_path_offset +
-            //    rx1_xvtr_gain_offset;
-            num += RXOffset(1);
-            return (int)num;
-
-        }
-
-        public int WWVTone = 0;                             // Magnetude of the Tone received in audio.cs routine
-        public bool WWVReady = false;                       // let you know when a new magnetude is updated
-        private bool kw_auto_information = false;
+        private bool _kw_auto_information = false;
         public bool KWAutoInformation
         {
-            get { return kw_auto_information; }
-            set { kw_auto_information = value; }
+            get { return _kw_auto_information; }
+            set { _kw_auto_information = value; }
         }
 
         #endregion
@@ -26663,7 +26273,6 @@ namespace Thetis
 
         private void Console_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
-            if (callsignfocus == 1) return; // ke9ns add to focus on waterfall ID text
             if (e.KeyChar == (char)Keys.Enter)
             {
                 if (!(txtVFOAFreq.Focused || txtVFOBFreq.Focused || txtVFOABand.Focused))
@@ -26676,10 +26285,7 @@ namespace Thetis
         {
             if (!Common.ShiftKeyDown) Display.DisplayShiftKeyDown = false;
 
-            if (!Common.ShiftKeyDown) DisplaySpot = true;
-
             ToggleFocusMasterTimer();
-            if (callsignfocus == 1) return; // ke9ns add to focus on waterfall ID text
         }
 
         // MW0LGE
@@ -26705,11 +26311,6 @@ namespace Thetis
         {
             if (Common.ShiftKeyDown) Display.DisplayShiftKeyDown = true;
 
-            if (Common.ShiftKeyDown && (callsignfocus == 0))// ke9ns add (check for CTRL key but not while callsign text box is in focus)
-            {
-                DisplaySpot = false; // display the spotter instead of the spot
-            }
-
             if (e.Alt == true) // ke9ns add
             {
                 switch (e.KeyCode)
@@ -26724,353 +26325,7 @@ namespace Thetis
                 }
             } // alt key + M
 
-            ALTM = false;
-
-            if (Common.CtrlKeyDown) // ke9ns add (check for CTRL key press to do a QRZ lookup) 
-            {
-                if ((SpotControl.SP4_Active == 0) && (SpotControl.SP_Active > 2) && (SpotControl.DX_Index > 0))  // Do below if not in the middle of processing a DX spot, but DX spotting is Active
-                {
-
-
-                    int x = DX_X;
-                    int y = DX_Y;
-                    //======================================================================================================    
-
-                    int xx = pnlDisplay.Width;  // size of pnldisplay as user scales it to their screen
-                    int yy = pnlDisplay.Height;
-
-                    int xxx = 1000; // actuall unscaled size of map in pnldisplay
-                    int yyy = 507;
-
-                    Debug.WriteLine(" width " + xx);
-                    Debug.WriteLine(" Height " + yy);
-
-                    Point p = pnlDisplay.PointToClient(Cursor.Position); // mouse cursor when you hit the ctrl key
-
-                    int XX = 0;
-                    int YY = 0;
-
-                    float scalex = ((float)xxx / (float)xx);
-                    XX = (int)((float)p.X * scalex);
-
-                    float scaley = ((float)yyy / (float)yy);
-                    YY = (int)((float)p.Y * scaley);
-
-                    Debug.WriteLine(" unscalledX " + XX);
-                    Debug.WriteLine(" unscalledY " + YY);
-
-                    Debug.WriteLine(" cursor " + p);
-
-                    int iii = 500;
-
-                    for (int ii = 0; ii < SpotControl.DX_Index; ii++) // check all red dots on Panadapter
-                    {
-
-                        if ((SpotControl.DX_X[ii] > 5) && (SpotControl.DX_Y[ii] > 5) && (XX <= (SpotControl.DX_X[ii] + 5)) && (XX >= (SpotControl.DX_X[ii] - 5))
-                            && (YY <= (SpotControl.DX_Y[ii] + 5)) && (YY >= (SpotControl.DX_Y[ii] - 5)))
-                        {
-                            Debug.WriteLine("Good trace ii " + ii);
-
-                            SpotForm.DX_SELECTED = ii;    // ke9ns add to keep the dx spotter window always highlighted
-                            SpotForm.DX_TEXT = SpotForm.textBox1.Text.Substring((SpotForm.DX_SELECTED * SpotForm.LineLength) + 16, 40);  // ke9ns add
-                            SpotControl.Map_Last = 2;
-                            SpotForm.processTCPMessage();
-                            iii = ii;
-                            break;
-                        }
-                        else
-                        {
-                            Debug.WriteLine("trace X " + SpotControl.DX_X[ii] + " Y " + SpotControl.DX_Y[ii]);
-                        }
-
-                    }
-
-                    if (iii != 500) // only go to the DX spot freq if you found it directly up above in the for loop
-                    {
-
-                        int freq1 = SpotControl.DX_Freq[iii];
-
-                        Debug.WriteLine("freq ii " + freq1);
-
-                        if ((freq1 < 5000000) || ((freq1 > 6000000) && (freq1 < 8000000))) // check for bands using LSB
-                        {
-                            if (SpotForm.chkDXMode.Checked == true)
-                            {
-                                if (SpotControl.DX_Mode[iii] == 0) RX1DSPMode = DSPMode.LSB;
-                                else if (SpotControl.DX_Mode[iii] == 1) RX1DSPMode = DSPMode.CWL;
-                                else if (SpotControl.DX_Mode[iii] == 2) RX1DSPMode = DSPMode.DIGL;
-                                else if (SpotControl.DX_Mode[iii] == 3) RX1DSPMode = DSPMode.DIGL;
-                                else if (SpotControl.DX_Mode[iii] == 4) RX1DSPMode = DSPMode.DIGL;
-                                else if (SpotControl.DX_Mode[iii] == 5) RX1DSPMode = DSPMode.DIGL;
-                                else if (SpotControl.DX_Mode[iii] == 6) RX1DSPMode = DSPMode.DIGL;
-                                else if (SpotControl.DX_Mode[iii] == 7) RX1DSPMode = DSPMode.DIGL;
-                                else if (SpotControl.DX_Mode[iii] == 8) RX1DSPMode = DSPMode.DIGL;
-                                else if (SpotControl.DX_Mode[iii] == 9) RX1DSPMode = DSPMode.DIGL;
-                                else if (SpotControl.DX_Mode[iii] == 10) RX1DSPMode = DSPMode.DIGL;
-                                else if (SpotControl.DX_Mode[iii] == 11) RX1DSPMode = DSPMode.FM;
-                                else if (SpotControl.DX_Mode[iii] == 12) RX1DSPMode = DSPMode.LSB;
-                                else if (SpotControl.DX_Mode[iii] == 13) RX1DSPMode = DSPMode.DIGL;
-                                else if (SpotControl.DX_Mode[iii] == 14) RX1DSPMode = DSPMode.SAM;
-                                else RX1DSPMode = DSPMode.LSB;
-
-                            }
-                            else
-                            {
-                                RX1DSPMode = DSPMode.LSB;
-                            }
-
-                        } // LSB
-                        else
-                        {
-                            if (SpotForm.chkDXMode.Checked == true)
-                            {
-
-                                if (SpotControl.DX_Mode[iii] == 0) RX1DSPMode = DSPMode.USB;
-                                else if (SpotControl.DX_Mode[iii] == 1) RX1DSPMode = DSPMode.CWU;
-                                else if (SpotControl.DX_Mode[iii] == 2) RX1DSPMode = DSPMode.DIGU;
-                                else if (SpotControl.DX_Mode[iii] == 3) RX1DSPMode = DSPMode.DIGU;
-                                else if (SpotControl.DX_Mode[iii] == 4) RX1DSPMode = DSPMode.DIGU;
-                                else if (SpotControl.DX_Mode[iii] == 5) RX1DSPMode = DSPMode.DIGU;
-                                else if (SpotControl.DX_Mode[iii] == 6) RX1DSPMode = DSPMode.DIGU;
-                                else if (SpotControl.DX_Mode[iii] == 7) RX1DSPMode = DSPMode.DIGU;
-                                else if (SpotControl.DX_Mode[iii] == 8) RX1DSPMode = DSPMode.DIGU;
-                                else if (SpotControl.DX_Mode[iii] == 9) RX1DSPMode = DSPMode.DIGU;
-                                else if (SpotControl.DX_Mode[iii] == 10) RX1DSPMode = DSPMode.DIGU;
-                                else if (SpotControl.DX_Mode[iii] == 11) RX1DSPMode = DSPMode.FM;
-                                else if (SpotControl.DX_Mode[iii] == 12) RX1DSPMode = DSPMode.USB;
-                                else if (SpotControl.DX_Mode[iii] == 13) RX1DSPMode = DSPMode.DIGU;
-                                else if (SpotControl.DX_Mode[iii] == 14) RX1DSPMode = DSPMode.SAM;
-                                else RX1DSPMode = DSPMode.USB;
-
-                            }
-                            else
-                            {
-                                RX1DSPMode = DSPMode.USB;
-                            }
-
-                        } // USB
-                        VFOAFreq = (double)freq1 / 1000000; // convert to MHZ
-
-                        if (SpotForm.chkDXMode.Checked == true)
-                        {
-
-                            if (SpotControl.DX_Mode2[iii] != 0)
-                            {
-
-                                VFOBFreq = (double)(freq1 + SpotControl.DX_Mode2[iii]) / 1000000; // convert to MHZ
-                                chkVFOSplit.Checked = true; // turn on  split
-
-                                Debug.WriteLine("split here" + (freq1 + SpotControl.DX_Mode2[iii]));
-
-                            }
-                            else
-                            {
-                                chkVFOSplit.Checked = false; // turn off split
-
-                            }
-
-
-                        } // chkdxmode checked
-
-                        SpotControl.Map_Last = 2; // UPDATE SPOTS ON MAP
-
-                        return;
-                    } // if you found a red dot matching your dx spot list
-
-
-
-                    //======================================================================================================
-
-                    for (byte ii = 0; ii < DXK; ii++) // check all spot on Panadapter
-                    {
-
-                        if ((x >= DXX[ii]) && (x <= (DXX[ii] + (DXW[ii]) * 3 / 4)) && (y >= DXY[ii]) && (y <= (DXY[ii] + DXH[ii])))
-                        {
-
-                            var DXtemp = new StringBuilder("https://www.qrz.com/db/");
-                            DXtemp.Append(DXS[ii]);
-
-                            try
-                            {
-                                System.Diagnostics.Process.Start(DXtemp.ToString());
-                            }
-                            catch
-                            {
-                                Debug.WriteLine("bad station");
-                            }
-
-                            return;
-
-                        } // index
-                        else if ((x >= DXX[ii] + (DXW[ii] * 3 / 4)) && (x <= (DXX[ii] + DXW[ii])) && (y >= DXY[ii]) && (y <= (DXY[ii] + DXH[ii]))) // check for rotor Beam heading 
-                        {
-                            Debug.WriteLine("BEAM HEADING TRANSMIT FROM Display");
-
-                            spotDDUtil_Rotor = "AP1" + SpotControl.DX_Beam[ii].ToString().PadLeft(3, '0') + ";";
-                            spotDDUtil_Rotor = ";";
-                            spotDDUtil_Rotor = "AM1;";
-
-
-                        } // check if you clicked on the last half of the call sign
-
-
-                    } // for loop
-
-                    if (chkRX2.Checked == true)  // check RX2 click
-                    {
-                        for (byte ii = 0; ii < DXK2; ii++)
-                        {
-
-                            if ((x >= DXX[ii + 50]) && (x <= (DXX[ii + 50] + DXW[ii + 50] * 3 / 4)) && (y >= DXY[ii + 50]) && (y <= (DXY[ii + 50] + DXH[ii + 50])))
-                            {
-                                var DXtemp = new StringBuilder("https://www.qrz.com/db/");
-                                DXtemp.Append(DXS[ii + 50]);
-
-                                try
-                                {
-                                    System.Diagnostics.Process.Start(DXtemp.ToString());
-                                }
-                                catch
-                                {
-                                    Debug.WriteLine("bad station");
-                                }
-
-                                break;
-
-                            } // index
-                            else if ((x <= (DXX[ii + 50] + DXW[ii + 50] * 3 / 4)) && (y >= DXY[ii + 50]) && (y <= (DXY[ii + 50] + DXH[ii + 50])))
-                            {
-                                Debug.WriteLine("BEAM HEADING TRANSMIT FROM Display RX2");
-
-                                spotDDUtil_Rotor = "AP1" + SpotControl.DX_Beam[ii].ToString().PadLeft(3, '0') + ";";
-                                spotDDUtil_Rotor = ";";
-                                spotDDUtil_Rotor = "AM1;";
-
-
-                            } // check if you clicked on the last half of the call sign
-
-
-                        } // for loop
-
-                    } // rx2 checked on 
-
-
-                }
-
-
-
-                //---------------------------------------------------------------------------------
-                //---------------------------------------------------------------------------------
-                //---------------------------------------------------------------------------------
-                //---------------------------------------------------------------------------------
-                //ke9ns memory in Pan
-
-                if ((SpotControl.SP6_Active == 1))
-                {
-                    int x = DX_X;
-                    int y = DX_Y;
-
-
-                    for (int ii = 0; ii < MMK3; ii++) // check all spot on Panadapter
-                    {
-
-                        if ((x >= MMX[ii]) && (x <= (MMX[ii] + MMW[ii])) && (y >= MMY[ii]) && (y <= (MMY[ii] + MMH[ii])))
-                        {
-                            try
-                            {
-                                changeComboFMMemory(MMM[ii]);
-                            }
-                            catch
-                            {
-                                Debug.WriteLine("bad station");
-                            }
-
-                            return;
-
-                        } // index
-
-                    } // for loop
-
-                    //-------------------------------------------------------
-
-
-                    if (chkRX2.Checked == true)  // check RX2 click
-                    {
-                        for (int ii = 0; ii < MMK4; ii++)
-                        {
-
-                            if ((x >= MMX[ii + 50]) && (x <= (MMX[ii + 50] + DXW[ii + 50])) && (y >= MMY[ii + 50]) && (y <= (MMY[ii + 50] + MMH[ii + 50])))
-                            {
-                                try
-                                {
-                                    changeComboFMMemory(MMM[ii]);
-                                }
-                                catch
-                                {
-                                    Debug.WriteLine("bad station");
-                                }
-
-                                break;
-
-                            } // index
-
-
-                        } // for loop
-
-                    } // rx2 checked on 
-
-
-                } // memory ON pAN ACTIVE
-
-                //---------------------------------------------------------------------------------
-                //---------------------------------------------------------------------------------
-                //---------------------------------------------------------------------------------
-                //---------------------------------------------------------------------------------
-                //ke9ns SWL lookup on google
-                if ((SpotControl.SP1_Active == 1))
-                {
-
-                    // Debug.WriteLine("test====");
-
-                    int x = DX_X;
-                    int y = DX_Y;
-
-                    for (byte ii = 0; ii < SXK; ii++)
-                    {
-
-                        if ((x >= SXX[ii]) && (x <= (SXX[ii] + SXW[ii])) && (y >= SXY[ii]) && (y <= (SXY[ii] + SXH[ii])))
-                        {
-
-                            var SXtemp = new StringBuilder("https://www.google.com/#q=");
-                            SXtemp.Append(SXS[ii] + " shortwave");
-
-                            try
-                            {
-                                System.Diagnostics.Process.Start(SXtemp.ToString());
-                            }
-                            catch
-                            {
-                                Debug.WriteLine("bad station");
-                            }
-
-                            return;
-
-                        } // index
-
-                    } // for loop
-
-                }
-
-            }
-
-            SpotControl.Map_Last = 2; // force map update
-
-            if (callsignfocus == 1) return; // ke9ns add to focus on waterfall ID text
-
-
-
-            //==================================================================
-
+            ALTM = false;           
 
             if (e.Control == true && e.Alt == true)
             {
@@ -29028,10 +28283,6 @@ namespace Thetis
 
             shutdownLogStringToPath("Before DumpCap.StopDumpcap()");
             DumpCap.StopDumpcap();
-
-            shutdownLogStringToPath("Before SpotForm.ForceSave()");
-            //cause spot form to save out, because it wont if currently shown, the _closing event does not fire on the form
-            if (SpotForm != null && !SpotForm.IsDisposed) SpotForm.ForceSave();
 
             //MW0LGE_21d -- the db is updated with everything
             //all stored as part of DB.Exit below
@@ -33874,6 +33125,8 @@ namespace Thetis
         private Cursor grabbing = new Cursor(msgrabbing);
         private Cursor _cross_outlined = new Cursor(mscross_outlined);
 
+        private bool m_bDraggingPanafallSplit = false;
+
         private bool overRX(int x, int y, int rx, bool bIgnorePanafallWaterfall = true)
         {
             int nMinHeightRX1 = 0;
@@ -34207,43 +33460,7 @@ namespace Thetis
             }
 
             return dFreq;
-        }
-
-        //=================================================================================================
-        // ke9ns mod 
-
-        public static int[] SXX = new int[200]; // ke9ns add used for qrz hyperlinking(these are the callsign locations on the screen)
-        public static int[] SXY = new int[200]; // 
-        public static int[] SXW = new int[200]; //
-        public static int[] SXH = new int[200]; //  
-        public static string[] SXS = new string[200]; // ties it back to the real DX_Index
-        public static int SXK = 0;               // number of spots on pnldisplay
-
-        public static int[] DXX = new int[200]; // ke9ns add used for qrz hyperlinking(these are the callsign locations on the screen)
-        public static int[] DXY = new int[200]; // 
-        public static int[] DXW = new int[200]; //
-        public static int[] DXH = new int[200]; //  
-        public static string[] DXS = new string[200]; // ties it back to the real DX_Index
-        public static int DXK = 0;               // number of spots on pnldisplay
-        public static int DXK2 = 0;               // number of spots on pnldisplay
-
-
-
-        public static int[] MMX = new int[200]; // ke9ns add X used for MEMORY hyperlinking(these are the callsign locations on the screen)
-        public static int[] MMY = new int[200]; //           Y
-        public static int[] MMW = new int[200]; //           W
-        public static int[] MMH = new int[200]; //           H
-        public static int[] MMM = new int[200]; //           Index postion in Memory.xml file
-
-        public static int MMK3 = 0;               // number of MEMORY spots on pnldisplay
-        public static int MMK4 = 0;               // number of spots on pnldisplay
-
-        public static bool DisplaySpot = true;               // true displays spot, false displays spotter
-
-        public static int DX_X = 0;               //x cursor pos inside pnldisplay 
-        public static int DX_Y = 0;               //y  cursor pos inside pnldisplay
-
-        private bool m_bDraggingPanafallSplit = false;
+        }        
 
         public void ShowNotchPopup(int x, int y, MNotch notch, int min_width, int max_width, bool on_top, int notch_index = -1)
         {
@@ -44823,13 +44040,6 @@ namespace Thetis
             Invoke(new MethodInvoker(BandStack2Form.Show)); //MW0LGE_21d
         }
 
-        public static int noaaON = 0; // for space weather
-        public static int SFI = 0;       // for Space weather
-        public static int Aindex = 0;    // for Space weather
-        public static int Kindex = 0;    // for Space weather
-        public static string RadioBlackout = " ";    // R scale
-        public static string GeoBlackout = " ";      // G scale
-
         //=========================================================================================
         //=========================================================================================
         // ke9ns add to allow TX filter on main console SSB panel
@@ -44844,113 +44054,6 @@ namespace Thetis
         {
             if (initializing) return; // MW0LGE
             if (!IsSetupFormNull) SetupForm.TXFilterLow = (int)udTXFilterLow.Value;
-        }
-
-        //=========================================================================================
-        //=========================================================================================
-        // ke9ns add send hygain rotor command to DDUtil via the CAT port setup in Thetis
-        public string spotDDUtil_Rotor // called from SPOT.cs routine when clicking on DX SPOT
-        {
-            set
-            {
-
-                try
-                {
-                    Debug.WriteLine("DDUTIL ROTOR1:");
-                    // siolisten1.SIO.put(value);   // this is the DDUtil PORT found in setup and SIOListenerIII.cs
-                }
-                catch { }
-            }
-
-        } // 
-
-        //============================================================================
-        //============================================================================
-        //============================================================================
-        // ke9ns add to allow extra control of group panels (ie rounded edges)
-        public static GraphicsPath CreatePath(float x, float y, float width, float height,
-                                      float radius, bool RoundTopLeft, bool RoundTopRight, bool RoundBottomRight, bool RoundBottomLeft)
-        {
-            float xw = x + width;
-            float yh = y + height;
-            float xwr = xw - radius;
-            float yhr = yh - radius;
-            float xr = x + radius;
-            float yr = y + radius;
-            float r2 = radius * 2;
-            float xwr2 = xw - r2;
-            float yhr2 = yh - r2;
-
-            GraphicsPath p = new GraphicsPath();
-            p.StartFigure();
-
-            //Top Left Corner
-
-            if (RoundTopLeft)
-            {
-                p.AddArc(x, y, r2, r2, 180, 90);
-            }
-            else
-            {
-                p.AddLine(x, yr, x, y);
-                p.AddLine(x, y, xr, y);
-
-            }
-
-            //Top Edge
-            p.AddLine(xr, y, xwr, y);
-
-            //Top Right Corner
-
-            if (RoundTopRight)
-            {
-                p.AddArc(xwr2, y, r2, r2, 270, 90);
-            }
-            else
-            {
-                p.AddLine(xwr, y, xw, y);
-                p.AddLine(xw, y, xw, yr);
-            }
-
-
-            //Right Edge
-            p.AddLine(xw, yr, xw, yhr);
-
-            //Bottom Right Corner
-
-            if (RoundBottomRight)
-            {
-                p.AddArc(xwr2, yhr2, r2, r2, 0, 90);
-            }
-            else
-            {
-                p.AddLine(xw, yhr, xw, yh);
-                p.AddLine(xw, yh, xwr, yh);
-            }
-
-
-            //Bottom Edge
-            p.AddLine(xwr, yh, xr, yh);
-
-            //Bottom Left Corner           
-
-            if (RoundBottomLeft)
-            {
-                p.AddArc(x, yhr2, r2, r2, 90, 90);
-            }
-            else
-            {
-                p.AddLine(xr, yh, x, yh);
-                p.AddLine(x, yh, x, yhr);
-            }
-
-            //Left Edge
-            p.AddLine(x, yhr, x, yr);
-
-            p.CloseFigure();
-
-            return p;
-
         }
         #endregion
 
@@ -49443,7 +48546,6 @@ namespace Thetis
                     }
                     break;
                 case "diversity": eSCToolStripMenuItem_Click(this, e); break;
-                case "spot": spotterMenu_Click(this, e); break;
                 case "ra": RAtoolStripMenuItem_Click(this, e); break;
                 case "wb": wBToolStripMenuItem_Click(this, e); break;
                 case "finder": finderMenuItem_Click(this, e); break;

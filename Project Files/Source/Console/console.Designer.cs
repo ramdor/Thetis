@@ -472,7 +472,6 @@
         private LabelTS lblRX2APF;
         private ToolStripMenuItem wBToolStripMenuItem;
         private ToolStripMenuItem pIToolStripMenuItem;
-        public ToolStripMenuItem spotterMenu;
         // G8NJJ
         private LabelTS lblVFOSyncLabel;
         private LabelTS lblNRLabel;
@@ -748,7 +747,6 @@
             this.cWXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eSCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.spotterMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.displayControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bandControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -4133,7 +4131,6 @@
             this.cWXToolStripMenuItem,
             this.eSCToolStripMenuItem,
             this.collapseToolStripMenuItem,
-            this.spotterMenu,
             this.displayControlsToolStripMenuItem,
             this.dSPToolStripMenuItem,
             this.bandToolStripMenuItem,
@@ -4225,13 +4222,6 @@
             this.collapseToolStripMenuItem.Name = "collapseToolStripMenuItem";
             resources.ApplyResources(this.collapseToolStripMenuItem, "collapseToolStripMenuItem");
             this.collapseToolStripMenuItem.Click += new System.EventHandler(this.CollapseToolStripMenuItem_Click);
-            // 
-            // spotterMenu
-            // 
-            this.spotterMenu.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.spotterMenu.Name = "spotterMenu";
-            resources.ApplyResources(this.spotterMenu, "spotterMenu");
-            this.spotterMenu.Click += new System.EventHandler(this.spotterMenu_Click);
             // 
             // displayControlsToolStripMenuItem
             // 

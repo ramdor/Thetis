@@ -570,7 +570,6 @@
     <Compile Include="ShutdownForm.Designer.cs">
       <DependentUpon>ShutdownForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="KE9N\conrec.cs" />
     <Compile Include="console.Designer.cs">
       <DependentUpon>console.cs</DependentUpon>
     </Compile>
@@ -683,12 +682,6 @@
     </Compile>
     <Compile Include="HPSDR\NetworkIO.cs" />
     <Compile Include="ivac.cs" />
-    <Compile Include="KE9N\scan.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="KE9N\swl.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="keyboard.cs" />
     <Compile Include="Memory\DXMemList.cs" />
     <Compile Include="Memory\DXMemRecord.cs" />
@@ -762,12 +755,6 @@
     </Compile>
     <Compile Include="SortableBindingList.cs" />
     <Compile Include="splash.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="KE9N\spot.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="KE9N\spot_options.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SpotManager2.cs" />
@@ -1020,10 +1007,6 @@
     <EmbeddedResource Include="ucInfoBar.resx">
       <DependentUpon>ucInfoBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="KE9N\scan.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>scan.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Andromeda\ModeButtonsPopup.resx">
       <DependentUpon>ModeButtonsPopup.cs</DependentUpon>
     </EmbeddedResource>
@@ -1040,9 +1023,6 @@
     <None Include="Resources\cpu.png" />
     <EmbeddedResource Include="Resources\picD2.png" />
     <EmbeddedResource Include="Resources\star.png" />
-    <EmbeddedResource Include="KE9N\swl.resx">
-      <DependentUpon>swl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Resources\met3.jpg" />
     <EmbeddedResource Include="Resources\picD1.png" />
     <EmbeddedResource Include="Resources\s-meter-collins3.png" />
@@ -1141,13 +1121,6 @@
     <EmbeddedResource Include="splash.resx">
       <DependentUpon>splash.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="KE9N\spot.resx">
-      <DependentUpon>spot.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="KE9N\spot_options.resx">
-      <DependentUpon>spot_options.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Andromeda\vfosettingspopup.resx">
       <DependentUpon>vfosettingspopup.cs</DependentUpon>
