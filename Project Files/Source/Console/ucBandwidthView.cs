@@ -163,6 +163,8 @@ namespace Thetis
 
             resetSmoothing();
 
+            updateScale();
+
             Invalidate();
         }
 
@@ -378,9 +380,9 @@ namespace Thetis
 
                 string unit = _display_units == BandwidthUnits.KBps ? "kB/s" : "Mbit/s";
 
-                string line1 = formatOverlayLine("In:", in_disp, unit);
-                string line2 = formatOverlayLine("Out:", out_disp, unit);
-                string line3 = formatOverlayLine("Tot:", tot_disp, unit);
+                string line1 = formatOverlayLine("From radio:", in_disp, unit);
+                string line2 = formatOverlayLine("To radio:", out_disp, unit);
+                string line3 = formatOverlayLine("Total:", tot_disp, unit);
 
                 SizeF s1 = g.MeasureString(line1, Font);
                 SizeF s2 = g.MeasureString(line2, Font);

@@ -3745,6 +3745,7 @@
             this.chkDiscordEnabled = new System.Windows.Forms.CheckBoxTS();
             this.tpTests = new System.Windows.Forms.TabPage();
             this.groupBoxTS30 = new System.Windows.Forms.GroupBoxTS();
+            this.btnShowBandwidth = new System.Windows.Forms.ButtonTS();
             this.chkIgnoreATTOffset = new System.Windows.Forms.CheckBoxTS();
             this.chkShowStartupLog = new System.Windows.Forms.CheckBoxTS();
             this.btnFormLocationHelper = new System.Windows.Forms.ButtonTS();
@@ -4339,7 +4340,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.btnShowBandwidth = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -59686,6 +59686,19 @@
             this.groupBoxTS30.TabStop = false;
             this.groupBoxTS30.Text = "Debug";
             // 
+            // btnShowBandwidth
+            // 
+            this.btnShowBandwidth.Image = null;
+            this.btnShowBandwidth.Location = new System.Drawing.Point(545, 19);
+            this.btnShowBandwidth.Name = "btnShowBandwidth";
+            this.btnShowBandwidth.Selectable = true;
+            this.btnShowBandwidth.Size = new System.Drawing.Size(93, 51);
+            this.btnShowBandwidth.TabIndex = 121;
+            this.btnShowBandwidth.Text = "Show Bandwidth";
+            this.toolTip1.SetToolTip(this.btnShowBandwidth, "Show radio protocol network activity");
+            this.btnShowBandwidth.UseVisualStyleBackColor = true;
+            this.btnShowBandwidth.Click += new System.EventHandler(this.btnShowBandwidth_Click);
+            // 
             // chkIgnoreATTOffset
             // 
             this.chkIgnoreATTOffset.Image = null;
@@ -60846,6 +60859,7 @@
             this.chkInvertTones.Size = new System.Drawing.Size(119, 17);
             this.chkInvertTones.TabIndex = 97;
             this.chkInvertTones.Text = "Invert for LS Modes";
+            this.toolTip1.SetToolTip(this.chkInvertTones, "Swap F1 and F2 for lower side band modes");
             this.chkInvertTones.UseVisualStyleBackColor = true;
             // 
             // lblTwoToneLevel
@@ -68993,18 +69007,6 @@
             this.radioButtonTS6.TabStop = true;
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
-            // 
-            // btnShowBandwidth
-            // 
-            this.btnShowBandwidth.Image = null;
-            this.btnShowBandwidth.Location = new System.Drawing.Point(545, 19);
-            this.btnShowBandwidth.Name = "btnShowBandwidth";
-            this.btnShowBandwidth.Selectable = true;
-            this.btnShowBandwidth.Size = new System.Drawing.Size(93, 51);
-            this.btnShowBandwidth.TabIndex = 121;
-            this.btnShowBandwidth.Text = "Show Bandwidth";
-            this.btnShowBandwidth.UseVisualStyleBackColor = true;
-            this.btnShowBandwidth.Click += new System.EventHandler(this.btnShowBandwidth_Click);
             // 
             // Setup
             // 

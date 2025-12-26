@@ -74,6 +74,7 @@ namespace Thetis
             {
                 timerReadBandwidth.Enabled = false;
                 this.Hide();
+                ucBandwidthView.Reset();
                 e.Cancel = true;
             }
 
