@@ -95,6 +95,8 @@ namespace Thetis
         private List<string> m_lstUpdatedControlsClone;
         private bool m_bShown = false; // used by the selective restore system to know accurate window state
 
+        private frmBandwidth _frmBandwidth;
+
         #endregion
 
         #region Constructor and Destructor
@@ -113,6 +115,8 @@ namespace Thetis
 
             console = c;
             this.Owner = c;
+
+            _frmBandwidth = new frmBandwidth();
 
             LogTool.Completed("INITCOMPSETUP");
 
@@ -6171,7 +6175,6 @@ namespace Thetis
             udRFDelay.Visible = true;
             udRFDelay.Enabled = true;
             lblRFDelay.Visible = true;
-            grpImpulseTest.Visible = false;
             grpHPSDRFreqCalDbg.Visible = true;
             grpOzyType.Visible = true;
             grpOzyType.Enabled = true;
@@ -11375,22 +11378,6 @@ namespace Thetis
                     break;
             }
         }
-
-        private void btnImpulse_Click(object sender, System.EventArgs e)
-        {
-            Thread t = new Thread(new ThreadStart(ImpulseFunction))
-            {
-                Name = "Impulse",
-                Priority = ThreadPriority.Highest,
-                IsBackground = true
-            };
-            t.Start();
-        }
-
-        private void ImpulseFunction()
-        {
-        }
-
         #endregion
 
         #region Other Event Handlers
@@ -12019,11 +12006,6 @@ namespace Thetis
         private void udTestIMDFreq1_LostFocus(object sender, EventArgs e)
         {
             udTestIMDFreq1.Value = udTestIMDFreq1.Value;
-        }
-
-        private void udImpulseNum_LostFocus(object sender, EventArgs e)
-        {
-            udImpulseNum.Value = udImpulseNum.Value;
         }
 
         #endregion
@@ -35869,6 +35851,20 @@ namespace Thetis
         {
             if(initializing || console == null) return;
             console.IgnoreAttenuatorOffset = chkIgnoreATTOffset.Checked;
+        }
+
+        private void btnShowBandwidth_Click(object sender, EventArgs e)
+        {
+            if (_frmBandwidth == null) return;
+            _frmBandwidth.RecoverShow();
+        }
+        public void CloseBandwidthForm()
+        {
+            if (_frmBandwidth != null)
+            {
+                _frmBandwidth.Close();
+                _frmBandwidth = null;
+            }
         }
     }
 

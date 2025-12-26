@@ -368,5 +368,11 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetCATPort(int port);
 
+        //bandwdith monitoring
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double GetInboundBps();
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double GetOutboundBps();
     }
 }

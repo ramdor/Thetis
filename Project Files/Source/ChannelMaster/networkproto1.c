@@ -165,6 +165,8 @@ int MetisReadDirect(unsigned char* bufp) {
 		return rc;
 	}
 
+	bandwidth_monitor_in(rc);
+
 	/* check frame is from who we expect */
 	if (rc == 1032) {   /* looks like a data frame */
 		if ((inpacket.readbuf[0] == 0xef) && (inpacket.readbuf[1] == 0xfe) && (inpacket.readbuf[2] == 0x01)) {

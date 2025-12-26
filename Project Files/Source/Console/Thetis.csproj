@@ -431,6 +431,12 @@
     <Compile Include="frmAbout.Designer.cs">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmBandwidth.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmBandwidth.Designer.cs">
+      <DependentUpon>frmBandwidth.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmDBMan.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -531,6 +537,12 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ucBandwidthView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucBandwidthView.Designer.cs">
+      <DependentUpon>ucBandwidthView.cs</DependentUpon>
     </Compile>
     <Compile Include="ucGradientDefault.cs">
       <SubType>UserControl</SubType>
@@ -955,6 +967,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmBandwidth.resx">
+      <DependentUpon>frmBandwidth.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmDBMan.resx">
       <DependentUpon>frmDBMan.cs</DependentUpon>

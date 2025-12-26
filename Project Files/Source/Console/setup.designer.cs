@@ -470,7 +470,6 @@
             this.chkShowFormStartup_finder = new System.Windows.Forms.CheckBoxTS();
             this.chkShowFormStartup_wb = new System.Windows.Forms.CheckBoxTS();
             this.chkShowFormStartup_ra = new System.Windows.Forms.CheckBoxTS();
-            this.chkShowFormStartup_spot = new System.Windows.Forms.CheckBoxTS();
             this.chkShowFormStartup_diversity = new System.Windows.Forms.CheckBoxTS();
             this.chkShowFormStartup_cwx = new System.Windows.Forms.CheckBoxTS();
             this.chkShowFormStartup_xvtr = new System.Windows.Forms.CheckBoxTS();
@@ -3824,9 +3823,6 @@
             this.chkTestIMD = new System.Windows.Forms.CheckBoxTS();
             this.lblTestToneFreq1 = new System.Windows.Forms.LabelTS();
             this.udTestIMDFreq1 = new System.Windows.Forms.NumericUpDownTS();
-            this.grpImpulseTest = new System.Windows.Forms.GroupBoxTS();
-            this.udImpulseNum = new System.Windows.Forms.NumericUpDownTS();
-            this.btnImpulse = new System.Windows.Forms.ButtonTS();
             this.grpTestAudioBalance = new System.Windows.Forms.GroupBoxTS();
             this.btnTestAudioBalStart = new System.Windows.Forms.ButtonTS();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -4343,6 +4339,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.btnShowBandwidth = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -5305,8 +5302,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDFreq2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDPower)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDFreq1)).BeginInit();
-            this.grpImpulseTest.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udImpulseNum)).BeginInit();
             this.grpTestAudioBalance.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudHistory_axis1_max)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHistory_axis1_min)).BeginInit();
@@ -11761,7 +11756,6 @@
             this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_finder);
             this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_wb);
             this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_ra);
-            this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_spot);
             this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_diversity);
             this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_cwx);
             this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_xvtr);
@@ -11829,19 +11823,6 @@
             this.toolTip1.SetToolTip(this.chkShowFormStartup_ra, "Show this form at start up");
             this.chkShowFormStartup_ra.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_ra.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
-            // 
-            // chkShowFormStartup_spot
-            // 
-            this.chkShowFormStartup_spot.AutoSize = true;
-            this.chkShowFormStartup_spot.Image = null;
-            this.chkShowFormStartup_spot.Location = new System.Drawing.Point(13, 235);
-            this.chkShowFormStartup_spot.Name = "chkShowFormStartup_spot";
-            this.chkShowFormStartup_spot.Size = new System.Drawing.Size(159, 17);
-            this.chkShowFormStartup_spot.TabIndex = 45;
-            this.chkShowFormStartup_spot.Text = "Show Spot Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_spot, "Show this form at start up");
-            this.chkShowFormStartup_spot.UseVisualStyleBackColor = true;
-            this.chkShowFormStartup_spot.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
             // chkShowFormStartup_diversity
             // 
@@ -59681,7 +59662,6 @@
             this.tpTests.Controls.Add(this.groupBoxTS30);
             this.tpTests.Controls.Add(this.grpBoxTS1);
             this.tpTests.Controls.Add(this.grpTestTXIMD);
-            this.tpTests.Controls.Add(this.grpImpulseTest);
             this.tpTests.Controls.Add(this.grpTestAudioBalance);
             this.tpTests.Location = new System.Drawing.Point(4, 22);
             this.tpTests.Name = "tpTests";
@@ -59691,6 +59671,7 @@
             // 
             // groupBoxTS30
             // 
+            this.groupBoxTS30.Controls.Add(this.btnShowBandwidth);
             this.groupBoxTS30.Controls.Add(this.chkIgnoreATTOffset);
             this.groupBoxTS30.Controls.Add(this.chkShowStartupLog);
             this.groupBoxTS30.Controls.Add(this.btnFormLocationHelper);
@@ -59700,7 +59681,7 @@
             this.groupBoxTS30.Controls.Add(this.chkShowControlDebug);
             this.groupBoxTS30.Location = new System.Drawing.Point(11, 340);
             this.groupBoxTS30.Name = "groupBoxTS30";
-            this.groupBoxTS30.Size = new System.Drawing.Size(545, 82);
+            this.groupBoxTS30.Size = new System.Drawing.Size(648, 82);
             this.groupBoxTS30.TabIndex = 120;
             this.groupBoxTS30.TabStop = false;
             this.groupBoxTS30.Text = "Debug";
@@ -61030,61 +61011,6 @@
             0,
             0});
             this.udTestIMDFreq1.LostFocus += new System.EventHandler(this.udTestIMDFreq1_LostFocus);
-            // 
-            // grpImpulseTest
-            // 
-            this.grpImpulseTest.Controls.Add(this.udImpulseNum);
-            this.grpImpulseTest.Controls.Add(this.btnImpulse);
-            this.grpImpulseTest.Enabled = false;
-            this.grpImpulseTest.Location = new System.Drawing.Point(562, 352);
-            this.grpImpulseTest.Name = "grpImpulseTest";
-            this.grpImpulseTest.Size = new System.Drawing.Size(160, 64);
-            this.grpImpulseTest.TabIndex = 91;
-            this.grpImpulseTest.TabStop = false;
-            this.grpImpulseTest.Text = "Impulse Test";
-            this.grpImpulseTest.Visible = false;
-            // 
-            // udImpulseNum
-            // 
-            this.udImpulseNum.Enabled = false;
-            this.udImpulseNum.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udImpulseNum.Location = new System.Drawing.Point(104, 24);
-            this.udImpulseNum.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.udImpulseNum.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udImpulseNum.Name = "udImpulseNum";
-            this.udImpulseNum.Size = new System.Drawing.Size(40, 20);
-            this.udImpulseNum.TabIndex = 92;
-            this.udImpulseNum.TinyStep = false;
-            this.udImpulseNum.Value = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.udImpulseNum.LostFocus += new System.EventHandler(this.udImpulseNum_LostFocus);
-            // 
-            // btnImpulse
-            // 
-            this.btnImpulse.Enabled = false;
-            this.btnImpulse.Image = null;
-            this.btnImpulse.Location = new System.Drawing.Point(16, 24);
-            this.btnImpulse.Name = "btnImpulse";
-            this.btnImpulse.Selectable = true;
-            this.btnImpulse.Size = new System.Drawing.Size(75, 23);
-            this.btnImpulse.TabIndex = 90;
-            this.btnImpulse.Text = "Impulse";
-            this.btnImpulse.Click += new System.EventHandler(this.btnImpulse_Click);
             // 
             // grpTestAudioBalance
             // 
@@ -69068,6 +68994,18 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // btnShowBandwidth
+            // 
+            this.btnShowBandwidth.Image = null;
+            this.btnShowBandwidth.Location = new System.Drawing.Point(545, 19);
+            this.btnShowBandwidth.Name = "btnShowBandwidth";
+            this.btnShowBandwidth.Selectable = true;
+            this.btnShowBandwidth.Size = new System.Drawing.Size(93, 51);
+            this.btnShowBandwidth.TabIndex = 121;
+            this.btnShowBandwidth.Text = "Show Bandwidth";
+            this.btnShowBandwidth.UseVisualStyleBackColor = true;
+            this.btnShowBandwidth.Click += new System.EventHandler(this.btnShowBandwidth_Click);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -70271,8 +70209,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDFreq2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDPower)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDFreq1)).EndInit();
-            this.grpImpulseTest.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.udImpulseNum)).EndInit();
             this.grpTestAudioBalance.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudHistory_axis1_max)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHistory_axis1_min)).EndInit();
@@ -70634,8 +70570,6 @@
         private ButtonTS btnTXProfileSave;
         private ComboBoxTS comboTXProfileName;
         private ButtonTS btnTXProfileDelete;
-        private ButtonTS btnImpulse;
-        private NumericUpDownTS udImpulseNum;
         private GroupBoxTS grpTXMonitor;
         private LabelTS lblTXAF;
         private NumericUpDownTS udTXAF;
@@ -70662,7 +70596,6 @@
         private GroupBoxTS grpGenTuningOptions;
         private GroupBoxTS grpAudioVACAutoEnable;
         private CheckBoxTS chkAudioVACAutoEnable;
-        private GroupBoxTS grpImpulseTest;
         private GroupBoxTS grpDisplayScopeMode;
         private NumericUpDownTS udDisplayScopeTime;
         private LabelTS lblDisplayScopeTime;
@@ -73954,7 +73887,6 @@
         private GroupBoxTS groupBoxTS36;
         private GroupBoxTS groupBoxTS35;
         private CheckBoxTS chkShowFormStartup_ra;
-        private CheckBoxTS chkShowFormStartup_spot;
         private CheckBoxTS chkShowFormStartup_diversity;
         private CheckBoxTS chkShowFormStartup_cwx;
         private CheckBoxTS chkShowFormStartup_xvtr;
@@ -74770,5 +74702,6 @@
         private LabelTS labelRX2APFType;
         private ComboBoxTS comboAPF_type_rx2;
         private CheckBoxTS chkIgnoreATTOffset;
+        private ButtonTS btnShowBandwidth;
     }
 }

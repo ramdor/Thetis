@@ -26249,6 +26249,24 @@ namespace Thetis
 
         private void timer_clock_Tick(object sender, System.EventArgs e)
         {
+            //double out_bps = NetworkIO.GetOutboundBps();
+            //double in_bps = NetworkIO.GetInboundBps();            
+            //double total_bps = out_bps + in_bps;
+
+            //int out_kBps = (int)Math.Ceiling(out_bps / 1024.0);
+            //int in_kBps = (int)Math.Ceiling(in_bps / 1024.0);
+            //int total_kBps = (int)Math.Ceiling(total_bps / 1024.0);
+
+            //double out_Mbps = Math.Ceiling(out_bps * 8.0 / 100_000.0) / 10.0;
+            //double in_Mbps = Math.Ceiling(in_bps * 8.0 / 100_000.0) / 10.0;
+            //double total_Mbps = Math.Ceiling(total_bps * 8.0 / 100_000.0) / 10.0;
+
+            //Debug.Print(
+            //    $"Out:{out_kBps} kB/s ({out_Mbps:F1} Mbit/s) " +
+            //    $"In:{in_kBps} kB/s ({in_Mbps:F1} Mbit/s) " +
+            //    $"Tot:{total_kBps} kB/s ({total_Mbps:F1} Mbit/s)"
+            //);            
+
             DateTime now = DateTime.Now;
             DateTime UTCnow = DateTime.UtcNow;
             toolStripStatusLabel_UTCTime.Text = UTCnow.ToString("HH:mm:ss") + " utc";
@@ -28213,6 +28231,8 @@ namespace Thetis
 
                 shutdownLogStringToPath("Before SetupForm.SaveNotchesToDatabase()");
                 SetupForm.SaveNotchesToDatabase();
+
+                SetupForm.CloseBandwidthForm();
 
                 SetupForm.Owner = null;
                 SetupForm.Hide();

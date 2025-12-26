@@ -341,6 +341,8 @@ int ReadUDPFrame(unsigned char* bufp)
 		return nrecv;
 	}
 
+	bandwidth_monitor_in(nrecv);
+
 	seqbytep[3] = readbuf[0];
 	seqbytep[2] = readbuf[1];
 	seqbytep[1] = readbuf[2];
@@ -1173,6 +1175,8 @@ int sendPacket(SOCKET sock, char* data, int length, int port)
 	dest.sin_addr.s_addr = MetisAddr;
 	ret = sendto(sock, data, length, 0, (SOCKADDR*)&dest, sizeof(dest));
 	LeaveCriticalSection(&prn->sndpkt);
+
+	if (ret > 0) bandwidth_monitor_out(ret);
 
 	if (ret == SOCKET_ERROR)
 	{

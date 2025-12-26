@@ -1375,6 +1375,7 @@ void create_rnet()
 
 	prn = (RADIONET)malloc(sizeof(radionet));
 	if (prn) {
+		bandwidth_monitor_reset();
 		prn->RxBuff = (double**) calloc (8, sizeof (double*));
 		for (int i = 0; i < 8; i++)
 			prn->RxBuff[i] = (double*) calloc (64, 2 * sizeof (double));
