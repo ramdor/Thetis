@@ -226,7 +226,7 @@ namespace Thetis
             if (client.Width < 10 || client.Height < 10)
                 return;
 
-            int pad_left = 54;
+            int pad_left = 68;
             int pad_right = 10;
             int pad_top = 8;
             int pad_bottom = 18;
