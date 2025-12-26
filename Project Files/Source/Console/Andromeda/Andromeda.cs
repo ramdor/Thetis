@@ -791,7 +791,7 @@ namespace Thetis
         // G8NJJ: handlers for Ganymeda 500W PA protection
         #region GANYMEDE amplifier protection
 
-        private int GanymedeTripState = 0;                      // amplifier trip
+        //private int GanymedeTripState = 0;                      // amplifier trip
 
         // for now, put message in SETUP Apollo with current amplifier state
         // ideally when it has been tripped we should remove PTT too.

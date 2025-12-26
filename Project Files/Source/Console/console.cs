@@ -258,10 +258,6 @@ namespace Thetis
 
         private string separator;							// contains the locations specific decimal separator
 
-        private int last_filter_shift;
-        private int last_var1_shift;
-        private int last_var2_shift;
-
         private readonly HiPerfTimer break_in_timer;
         public double avg_vox_pwr = 0.0;
 
@@ -10784,7 +10780,6 @@ namespace Thetis
 
         private bool _setFromOtherAttenuator = false; // used to prevent other attenuator from re-setting the caller
         private int _rx1_attenuator_data = 0;
-        private int _sa_rx1_last_adjust = 0;
         private bool[] _from_attenuatordata = new bool[2] { false, false };
         public int RX1AttenuatorData
         {
@@ -15901,7 +15896,6 @@ namespace Thetis
             psform.SingleCalrun();
         }
 
-        private int cat_breakin_status = 0;
         public int CATBreakIn
         {
             get
@@ -15920,7 +15914,6 @@ namespace Thetis
             }
         }
 
-        private int cat_qsk_breakin_status = 0;
         public int CATQSKBreakIn
         {
             get {
@@ -16318,15 +16311,11 @@ namespace Thetis
         }
 
         //[2.10.3.12]MW0LGE changed so that it is filter width from 10 to max filter width
-        private int cat_filter_width = 0;
         private bool _filter_width_update_from_cat = false;
         public int CATFilterWidth
         {
             get
             {
-                //cat_filter_width = ptbFilterWidth.Value;
-                //return cat_filter_width;
-
                 int width = (ptbFilterWidth.Value + _max_filter_width) / 2;
                 width = Math.Max(10, width);
                 width = Math.Min(_max_filter_width, width);
@@ -33139,8 +33128,6 @@ namespace Thetis
         private bool tx1_grid_adjust = false;
         private bool tx2_grid_adjust = false;
         private bool gridmaxadjust = false;
-        private bool wfmaxadjust = false;
-        private bool wfminadjust = false;
         private bool gridminmaxadjust = false;
 
         private Point grid_minmax_drag_start_point = new Point(0, 0);
@@ -34973,64 +34960,6 @@ namespace Thetis
                 rx1_filters[(int)_rx1_dsp_mode].SetHigh(rx1_filter, (int)udFilterHigh.Value);
         }
 
-        //private void DoFilterShift(int shift, bool redraw)
-        //{
-        //    // VK6APH: Does the Filter Shift function, alters the filter low and high frequency values 
-        //    // as the Filter Shift slider is moved. We need to keep the last Filter Shift values
-        //    // that the variable filters use since, unlike the other filters, there are 
-        //    // no pre-set bandwidths that they can default to when the Filter Shift is 
-        //    // turned off. These values are stored in the public variables last_var1_shift and
-        //    // last_var2_shift. 
-        //    int IFShift;
-        //    int low;
-        //    int high;
-        //    int bandwidth;
-        //    int max_shift = 10000;		// needed when using variable filters so we can't exceed +/- 10kHz DSP limits
-
-        //    if (rx1_dsp_mode == DSPMode.SPEC ||
-        //        rx1_dsp_mode == DSPMode.DRM)
-        //        return;
-
-        //    bandwidth = (int)Math.Abs(udFilterHigh.Value - udFilterLow.Value); // calculate current filter bandwidth 
-
-        //    // set the maximum IF Shift depending on filter bandwidth in use 
-        //    if (bandwidth > 800)
-        //    {
-        //        ptbFilterShift.Maximum = 1000;  // max IF Shift +/- 1kHz for filters > 800Hz wide
-        //        ptbFilterShift.Minimum = -1000;
-        //    }
-        //    else
-        //    {
-        //        ptbFilterShift.Maximum = 500;	// max IF Shift +/- 500Hz for filters < 800Hz wide
-        //        ptbFilterShift.Minimum = -500;
-        //    }
-        //    // calculate how far the IF Shift slider has moved
-        //    // if we are using variable bandwidth filters need to use their last shift value
-        //    if (rx1_filter == Filter.VAR1)
-        //        IFShift = shift - last_var1_shift;
-        //    else if (rx1_filter == Filter.VAR2)
-        //        IFShift = shift - last_var2_shift;
-        //    else
-        //        IFShift = shift - last_filter_shift;
-
-        //    high = (int)Math.Min(udFilterHigh.Value + IFShift, max_shift);	// limit high shift to maximum value
-        //    low = (int)Math.Max(udFilterLow.Value + IFShift, -max_shift);	// limit low shift to maximum value
-
-        //    radio.GetDSPRX(0, 0).SetRXFilter(low, high);			// select new filters
-        //    udFilterLow.Value = low;						// display new low value 
-        //    udFilterHigh.Value = high;						// display new high value
-
-        //    // store the last IF Shift applied for use next time
-        //    if (rx1_filter == Filter.VAR1)
-        //        last_var1_shift = last_var1_shift + IFShift;
-        //    else if (rx1_filter == Filter.VAR2)
-        //        last_var2_shift = last_var2_shift + IFShift;
-        //    else
-        //        last_filter_shift = last_filter_shift + IFShift;
-        //    // show the IF Shift is active by setting the zero button colour
-        //    if (shift != 0)
-        //        btnFilterShiftReset.BackColor = button_selected_color;
-        //}
         public bool ConstrainFilter(ref int nNewLow, ref int nNewHigh, int rx, bool filterShift = false)
         {
             DSPMode dsp_mode = (rx == 1) ? _rx1_dsp_mode : _rx2_dsp_mode;
@@ -36601,18 +36530,7 @@ namespace Thetis
             }
 
             VFOAFreq = new_vfo;
-            switch (RX1Filter)
-            {
-                case Filter.VAR1:
-                    last_var1_shift = 0;
-                    break;
-                case Filter.VAR2:
-                    last_var2_shift = 0;
-                    break;
-                default:
-                    last_filter_shift = 0;
-                    break;
-            }
+
             btnFilterShiftReset_Click(this, EventArgs.Empty);
         }
 

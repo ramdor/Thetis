@@ -25925,19 +25925,19 @@ namespace Thetis
 
                 if (radFilterItem_panadaptor.Checked)
                 {
-                    igs.SetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", MeterManager.clsFilterItem.DisplayMode.PANADAPTOR);
+                    igs.SetSetting<MeterManager.clsFilterItem.FIDisplayMode>("filterdisplay_others_displaymode", MeterManager.clsFilterItem.FIDisplayMode.PANADAPTOR);
                 }
                 else if (radFilterItem_waterfall.Checked)
                 {
-                    igs.SetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", MeterManager.clsFilterItem.DisplayMode.WATERFALL);
+                    igs.SetSetting<MeterManager.clsFilterItem.FIDisplayMode>("filterdisplay_others_displaymode", MeterManager.clsFilterItem.FIDisplayMode.WATERFALL);
                 }
                 else if (radFilterItem_panafall.Checked)
                 {
-                    igs.SetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", MeterManager.clsFilterItem.DisplayMode.PANAFALL);
+                    igs.SetSetting<MeterManager.clsFilterItem.FIDisplayMode>("filterdisplay_others_displaymode", MeterManager.clsFilterItem.FIDisplayMode.PANAFALL);
                 }
                 else if (radFilterItem_none.Checked)
                 {
-                    igs.SetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", MeterManager.clsFilterItem.DisplayMode.NONE);
+                    igs.SetSetting<MeterManager.clsFilterItem.FIDisplayMode>("filterdisplay_others_displaymode", MeterManager.clsFilterItem.FIDisplayMode.NONE);
                 }
 
                 igs.SetSetting<float>("filterdisplay_font_scale", (float)nudFilterItem_font_scale.Value);
@@ -25945,7 +25945,7 @@ namespace Thetis
                 igs.SetSetting<bool>("filterdisplay_fill_spec", chkFilter_fill_spec.Checked);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_dataline_colour", clrbtnFilter_data_line.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_datafill_colour", clrbtnFilter_data_fill.Color);
-                igs.SetSetting<MeterManager.clsFilterItem.WaterfallPalette>("filterdisplay_wf_palette", (MeterManager.clsFilterItem.WaterfallPalette)comboFilter_wf_palette.SelectedIndex);
+                igs.SetSetting<MeterManager.clsFilterItem.FIWaterfallPalette>("filterdisplay_wf_palette", (MeterManager.clsFilterItem.FIWaterfallPalette)comboFilter_wf_palette.SelectedIndex);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_wflow_colour", clrbtnFilter_wf_low.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_text_colour", clrbtnFilter_text.Color);
                 igs.SetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", clrbtnFilter_number_highlight.Color);
@@ -26039,7 +26039,6 @@ namespace Thetis
                 if (mt == MeterType.ANANMM || mt == MeterType.CROSS) igs.DarkMode = chkMeterItemDarkMode.Checked;
             }
 
-            Dictionary<string, string> fcm = null;
             m.ApplySettingsForMeterGroup(mt, igs, null, mtci.Order, true);
 
             updateLedValidControls();
@@ -26653,18 +26652,18 @@ namespace Thetis
                 nudFilterItem_cw_scale.Value = (decimal)igs.GetSetting<float>("filterdisplay_cw_scale", true, 0f, 10f, 0f);
                 nudFilterItem_others_scale.Value = (decimal)igs.GetSetting<float>("filterdisplay_others_scale", true, 0f, 10f, 0f);
 
-                switch (igs.GetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", false, MeterManager.clsFilterItem.DisplayMode.PANADAPTOR, MeterManager.clsFilterItem.DisplayMode.NONE, MeterManager.clsFilterItem.DisplayMode.PANAFALL))
+                switch (igs.GetSetting<MeterManager.clsFilterItem.FIDisplayMode>("filterdisplay_others_displaymode", false, MeterManager.clsFilterItem.FIDisplayMode.PANADAPTOR, MeterManager.clsFilterItem.FIDisplayMode.NONE, MeterManager.clsFilterItem.FIDisplayMode.PANAFALL))
                 {
-                    case MeterManager.clsFilterItem.DisplayMode.PANADAPTOR:
+                    case MeterManager.clsFilterItem.FIDisplayMode.PANADAPTOR:
                         radFilterItem_panadaptor.Checked = true;
                         break;
-                    case MeterManager.clsFilterItem.DisplayMode.WATERFALL:
+                    case MeterManager.clsFilterItem.FIDisplayMode.WATERFALL:
                         radFilterItem_waterfall.Checked = true;
                         break;
-                    case MeterManager.clsFilterItem.DisplayMode.PANAFALL:
+                    case MeterManager.clsFilterItem.FIDisplayMode.PANAFALL:
                         radFilterItem_panafall.Checked = true;
                         break;
-                    case MeterManager.clsFilterItem.DisplayMode.NONE:
+                    case MeterManager.clsFilterItem.FIDisplayMode.NONE:
                         radFilterItem_none.Checked = true;
                         break;
                 }
@@ -26674,7 +26673,7 @@ namespace Thetis
                 chkFilter_fill_spec.Checked = igs.GetSetting<bool>("filterdisplay_fill_spec", false, false, false, true);
                 clrbtnFilter_data_line.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_dataline_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
                 clrbtnFilter_data_fill.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_datafill_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.LimeGreen);
-                comboFilter_wf_palette.SelectedIndex = (int)igs.GetSetting<MeterManager.clsFilterItem.WaterfallPalette>("filterdisplay_wf_palette", false, MeterManager.clsFilterItem.WaterfallPalette.NONE, MeterManager.clsFilterItem.WaterfallPalette.NONE, MeterManager.clsFilterItem.WaterfallPalette.ENHANCED);
+                comboFilter_wf_palette.SelectedIndex = (int)igs.GetSetting<MeterManager.clsFilterItem.FIWaterfallPalette>("filterdisplay_wf_palette", false, MeterManager.clsFilterItem.FIWaterfallPalette.NONE, MeterManager.clsFilterItem.FIWaterfallPalette.NONE, MeterManager.clsFilterItem.FIWaterfallPalette.ENHANCED);
                 clrbtnFilter_wf_low.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_wflow_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.Black);
                 clrbtnFilter_text.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_text_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.White);
                 clrbtnFilter_number_highlight.Color = igs.GetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", false, Color.Empty, Color.Empty, System.Drawing.Color.DarkRed);
@@ -27407,7 +27406,6 @@ namespace Thetis
                 }
                 //
 
-                Dictionary<string, string> fcm = null;
                 m.ApplySettingsForMeterGroup(mt, _itemGroupSettings, null, mtci.Order);
                 updateItemSettingsControlsForSelected();
             }
@@ -31345,7 +31343,6 @@ namespace Thetis
                 igs.SetMMIOGuid(variable, f.Guid);
                 igs.SetMMIOVariable(variable, f.Variable);
 
-                Dictionary<string, string> fcm = null;
                 m.ApplySettingsForMeterGroup(mt, igs, null, mtci.Order);
 
                 switch (mt)

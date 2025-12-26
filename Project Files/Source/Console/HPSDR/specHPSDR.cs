@@ -486,11 +486,6 @@ namespace Thetis
         }
         const double KEEP_TIME = 0.1;
         private int max_w;
-        private double freq_offset = 12000.0;
-        //private struct FlipStruct
-        //{
-        //    public int[] flip;
-        //}
        
         public void resetPixelBuffers()
         {

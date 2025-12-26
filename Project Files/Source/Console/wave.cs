@@ -61,7 +61,7 @@ namespace Thetis
 	{
 		#region Variable Declaration
 
-        private static Bitmap ke9ns_bmp;                    // ke9ns add call sign waterfall tx id
+        //private static Bitmap ke9ns_bmp;                    // ke9ns add call sign waterfall tx id
         
         private Console console;
 		//private WaveOptions WaveOptions;
@@ -102,7 +102,7 @@ namespace Thetis
         public CheckBoxTS TXIDBoxTS;
         private MenuStrip menuStripOptions;
         private ToolStripMenuItem optionsToolStripMenuItem;
-        private IContainer components;
+        //private IContainer components;
         private bool _restoring_controls;
 
         #region Constructor and Destructor
@@ -146,13 +146,13 @@ namespace Thetis
 
 		protected override void Dispose( bool disposing )
 		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
+			//if( disposing )
+			//{
+			//	if(components != null)
+			//	{
+			//		components.Dispose();
+			//	}
+			//}
 			base.Dispose( disposing );
 		}
 
@@ -1304,10 +1304,10 @@ namespace Thetis
 		//
 		//	Record & Playback are always to the same file:  SDRQuickAudio.wav
 		//
-		private bool temp_record = false;
+		//private bool temp_record = false;
 		private bool temp_play = false;
 		private bool temp_mon = false;
-        private byte temp_pre = 0; // ke9ns add for quickplay function
+        //private byte temp_pre = 0; // ke9ns add for quickplay function
         private bool temp_txeq = false;
 		private bool temp_cpdr = false;
 		private bool temp_dx = false;

@@ -51,8 +51,7 @@ namespace Thetis
 		private Band[] BandList;
 		private int LastBandIndex;
 		private readonly ASCIIEncoding AE = new ASCIIEncoding();
-		private string lastFR = "0";
-		private string lastFT = "0";
+
         public bool Verbose { get; set; } = false;
 		private readonly int NCATInit = 500;
         private int NCATs = 0;
@@ -6546,8 +6545,6 @@ namespace Thetis
                 int val = 0;
                 float volts = 0.0f;
                 double temp2 = 0.0f;
-
-                int chan = 4;
 
                 //FWC.ReadPAADC(chan, out val);
                 volts = (float)val / 4096 * 2.5f;

@@ -391,8 +391,6 @@ namespace Thetis
             Control c = sender as Control;
             if (c == null) return;
 
-            OtherButtonMacroSettings.OB_ButtonState state = OtherButtonMacroSettings.OB_ButtonState.OFF;
-
             string name = c.Name;
 
             int underscore_index = name.LastIndexOf('_');
