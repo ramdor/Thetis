@@ -37549,7 +37549,7 @@
             this.nudAutoModeSwitchCWReturn.Size = new System.Drawing.Size(56, 20);
             this.nudAutoModeSwitchCWReturn.TabIndex = 49;
             this.nudAutoModeSwitchCWReturn.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudAutoModeSwitchCWReturn, "Selects the preferred CW tone frequency.");
+            this.toolTip1.SetToolTip(this.nudAutoModeSwitchCWReturn, "Return detay");
             this.nudAutoModeSwitchCWReturn.Value = new decimal(new int[] {
             2000,
             0,
