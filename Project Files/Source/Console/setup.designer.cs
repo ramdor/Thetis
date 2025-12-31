@@ -45432,7 +45432,6 @@
             this.picCFC.Size = new System.Drawing.Size(290, 129);
             this.picCFC.TabIndex = 175;
             this.picCFC.TabStop = false;
-            this.picCFC.Click += new System.EventHandler(this.picCFC_Click);
             this.picCFC.Paint += new System.Windows.Forms.PaintEventHandler(this.picCFC_Paint);
             // 
             // tpTransmit
@@ -59274,7 +59273,6 @@
             this.txtMMIO_network_4char.Text = "AGHJ";
             this.toolTip1.SetToolTip(this.txtMMIO_network_4char, "The four character code used to reference variable belonging to this interconnect" +
         ".");
-            this.txtMMIO_network_4char.Click += new System.EventHandler(this.txtMMIO_network_4char_Click);
             this.txtMMIO_network_4char.TextChanged += new System.EventHandler(this.txtMMIO_network_4char_TextChanged);
             this.txtMMIO_network_4char.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtMMIO_network_4char_KeyPress);
             // 
