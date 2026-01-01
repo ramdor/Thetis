@@ -173,8 +173,6 @@ namespace Thetis
 
         [DllImport("ChannelMaster.dll", EntryPoint = "SetIVACFFAlpha", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetIVACFFAlpha(int id, int type, double ff_alpha);
-        //[DllImport("ChannelMaster.dll", EntryPoint = "SetIVACvar", CallingConvention = CallingConvention.Cdecl)]
-        //public static extern void SetIVACvar(int id, int type, double var);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "GetIVACControlFlag", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetIVACControlFlag(int id, int type, int* control_flag);
