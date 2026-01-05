@@ -4,6 +4,7 @@
 // PowerSDR is a C# implementation of a Software Defined Radio.
 // Copyright (C) 2004-2009  FlexRadio Systems
 // Copyright (C) 2010-2020  Doug Wigley
+// Copyright (C) 2019-2026  Richard Samphire
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
