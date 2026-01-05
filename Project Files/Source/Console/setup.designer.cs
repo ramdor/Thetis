@@ -2531,6 +2531,7 @@
             this.labelTS446 = new System.Windows.Forms.LabelTS();
             this.nudNR4_red_rx1 = new System.Windows.Forms.NumericUpDownTS();
             this.grpRNnoise = new System.Windows.Forms.GroupBoxTS();
+            this.chkNR3_RNNoiseFixedGain = new System.Windows.Forms.CheckBoxTS();
             this.btnNR3_model_default = new System.Windows.Forms.ButtonTS();
             this.btnNR3_model_load = new System.Windows.Forms.ButtonTS();
             this.lblNR3Model = new System.Windows.Forms.LabelTS();
@@ -41482,6 +41483,7 @@
             // 
             // grpRNnoise
             // 
+            this.grpRNnoise.Controls.Add(this.chkNR3_RNNoiseFixedGain);
             this.grpRNnoise.Controls.Add(this.btnNR3_model_default);
             this.grpRNnoise.Controls.Add(this.btnNR3_model_load);
             this.grpRNnoise.Controls.Add(this.lblNR3Model);
@@ -41492,6 +41494,23 @@
             this.grpRNnoise.TabIndex = 43;
             this.grpRNnoise.TabStop = false;
             this.grpRNnoise.Text = "NR3";
+            // 
+            // chkNR3_RNNoiseFixedGain
+            // 
+            this.chkNR3_RNNoiseFixedGain.AutoSize = true;
+            this.chkNR3_RNNoiseFixedGain.Checked = true;
+            this.chkNR3_RNNoiseFixedGain.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkNR3_RNNoiseFixedGain.Image = null;
+            this.chkNR3_RNNoiseFixedGain.Location = new System.Drawing.Point(28, 61);
+            this.chkNR3_RNNoiseFixedGain.Name = "chkNR3_RNNoiseFixedGain";
+            this.chkNR3_RNNoiseFixedGain.Size = new System.Drawing.Size(175, 17);
+            this.chkNR3_RNNoiseFixedGain.TabIndex = 4;
+            this.chkNR3_RNNoiseFixedGain.Text = "Use fixed gain for input samples";
+            this.toolTip1.SetToolTip(this.chkNR3_RNNoiseFixedGain, "Use a fixed gain that matches that used by deskHPSDR and chosen by VU3RDD.\r\nOther" +
+        "wise use an AGC system for the RNnoise samples enabling weaker signals to be pro" +
+        "cessed.");
+            this.chkNR3_RNNoiseFixedGain.UseVisualStyleBackColor = true;
+            this.chkNR3_RNNoiseFixedGain.CheckedChanged += new System.EventHandler(this.chkNR3_RNNoiseFixedGain_CheckedChanged);
             // 
             // btnNR3_model_default
             // 
@@ -74703,5 +74722,6 @@
         private ComboBoxTS comboAPF_type_rx2;
         private CheckBoxTS chkIgnoreATTOffset;
         private ButtonTS btnShowBandwidth;
+        private CheckBoxTS chkNR3_RNNoiseFixedGain;
     }
 }

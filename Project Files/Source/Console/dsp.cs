@@ -248,6 +248,9 @@ namespace Thetis
 
         [DllImport("wdsp.dll", EntryPoint = "RNNRloadModel", CallingConvention = CallingConvention.Cdecl)]
         public static extern void RNNRloadModel(string file_path);
+
+        [DllImport("wdsp.dll", EntryPoint = "SetRXARNNRUseDefaultGain", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetRXARNNRUseDefaultGain(int channel, int use_default_gain);
         //
 
         //libspecbleach

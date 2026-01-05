@@ -2391,6 +2391,7 @@ namespace Thetis
             udRXAMSQMaxTail_ValueChanged(this, e);
             radANFPreAGC_CheckedChanged(this, e);
             radANF2PreAGC_CheckedChanged(this, e);
+            chkNR3_RNNoiseFixedGain_CheckedChanged(this, e);
             chkMNFAutoIncrease_CheckedChanged(this, e);
             udCWEdgeLength_ValueChanged(this, e);
             chkShowAGC_CheckedChanged(this, e);
@@ -35096,6 +35097,16 @@ namespace Thetis
                 _frmBandwidth.Close();
                 _frmBandwidth = null;
             }
+        }
+
+        private void chkNR3_RNNoiseFixedGain_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            int fixed_gain = chkNR3_RNNoiseFixedGain.Checked ? 1 : 0;
+            console.radio.GetDSPRX(0, 0).RXANR3FixedGain = fixed_gain;
+            console.radio.GetDSPRX(0, 1).RXANR3FixedGain = fixed_gain;
+            console.radio.GetDSPRX(1, 0).RXANR3FixedGain = fixed_gain;
         }
     }
 

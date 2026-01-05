@@ -72,6 +72,7 @@ typedef struct _rnnr
     double *out;
     float gain;
     float gain_db;
+    int use_default_gain;
     float agc_att_a;
     float agc_rel_a;
 
