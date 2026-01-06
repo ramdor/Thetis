@@ -197,13 +197,6 @@ namespace Thetis
             if (!ds.Tables.Contains("BandText"))
                 AddBandTextTable();
 
-            //MW0LGE_21d BandStack2
-            //if (!ds.Tables.Contains("BandStack"))
-            //{
-            //    AddBandStackTable();
-            //    AddBandStackSWL(); // ke9ns add
-            //}
-
             //-BandStack2 MW0LGE_21d
             if (!ds.Tables.Contains("BandStack2Entries"))
             {

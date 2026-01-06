@@ -485,7 +485,6 @@
             this.chkShowFormStartup_finder = new System.Windows.Forms.CheckBoxTS();
             this.chkShowFormStartup_wb = new System.Windows.Forms.CheckBoxTS();
             this.chkShowFormStartup_ra = new System.Windows.Forms.CheckBoxTS();
-            this.chkShowFormStartup_spot = new System.Windows.Forms.CheckBoxTS();
             this.chkShowFormStartup_diversity = new System.Windows.Forms.CheckBoxTS();
             this.chkShowFormStartup_cwx = new System.Windows.Forms.CheckBoxTS();
             this.chkShowFormStartup_xvtr = new System.Windows.Forms.CheckBoxTS();
@@ -544,12 +543,6 @@
             this.labelTS158 = new System.Windows.Forms.LabelTS();
             this.udAmpSens = new System.Windows.Forms.NumericUpDownTS();
             this.udAmpVoff = new System.Windows.Forms.NumericUpDownTS();
-            this.panelRX2LevelCal = new System.Windows.Forms.PanelTS();
-            this.labelTS135 = new System.Windows.Forms.LabelTS();
-            this.udGeneralCalRX2Level = new System.Windows.Forms.NumericUpDownTS();
-            this.btnCalLevel = new System.Windows.Forms.ButtonTS();
-            this.udGeneralCalRX2Freq2 = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS136 = new System.Windows.Forms.LabelTS();
             this.grpBoxTXDisplayCal = new System.Windows.Forms.GroupBoxTS();
             this.labelTS55 = new System.Windows.Forms.LabelTS();
             this.udTXDisplayCalOffset = new System.Windows.Forms.NumericUpDownTS();
@@ -560,7 +553,6 @@
             this.btnHPSDRFreqCalReset = new System.Windows.Forms.Button();
             this.udHPSDRFreqCorrectFactor = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS10 = new System.Windows.Forms.LabelTS();
-            this.chkCalExpert = new System.Windows.Forms.CheckBoxTS();
             this.grpGenCalLevel = new System.Windows.Forms.GroupBoxTS();
             this.btnResetLevelCal = new System.Windows.Forms.Button();
             this.ud6mRx2LNAGainOffset = new System.Windows.Forms.NumericUpDownTS();
@@ -577,10 +569,6 @@
             this.btnGeneralCalFreqStart = new System.Windows.Forms.ButtonTS();
             this.udGeneralCalFreq1 = new System.Windows.Forms.NumericUpDownTS();
             this.lblGeneralCalFrequency = new System.Windows.Forms.LabelTS();
-            this.grpGenCalRXImage = new System.Windows.Forms.GroupBoxTS();
-            this.udGeneralCalFreq3 = new System.Windows.Forms.NumericUpDownTS();
-            this.lblGenCalRXImageFreq = new System.Windows.Forms.LabelTS();
-            this.btnGeneralCalImageStart = new System.Windows.Forms.ButtonTS();
             this.tpFilters = new System.Windows.Forms.TabPage();
             this.groupBoxTS49 = new System.Windows.Forms.GroupBoxTS();
             this.btnFilter_others_default = new System.Windows.Forms.ButtonTS();
@@ -2014,7 +2002,6 @@
             this.grpDisplay8000DLE = new System.Windows.Forms.GroupBoxTS();
             this.chkANAN8000DLEDisplayVoltsAmps = new System.Windows.Forms.CheckBoxTS();
             this.grpDisplayDriverEngine = new System.Windows.Forms.GroupBoxTS();
-            this.chkLegacyDXBuffers = new System.Windows.Forms.CheckBoxTS();
             this.chkVSyncDX = new System.Windows.Forms.CheckBoxTS();
             this.chkAccurateFrameTiming = new System.Windows.Forms.CheckBoxTS();
             this.chkAntiAlias = new System.Windows.Forms.CheckBoxTS();
@@ -2598,6 +2585,7 @@
             this.labelTS446 = new System.Windows.Forms.LabelTS();
             this.nudNR4_red_rx1 = new System.Windows.Forms.NumericUpDownTS();
             this.grpRNnoise = new System.Windows.Forms.GroupBoxTS();
+            this.chkNR3_RNNoiseFixedGain = new System.Windows.Forms.CheckBoxTS();
             this.btnNR3_model_default = new System.Windows.Forms.ButtonTS();
             this.btnNR3_model_load = new System.Windows.Forms.ButtonTS();
             this.lblNR3Model = new System.Windows.Forms.LabelTS();
@@ -3210,9 +3198,6 @@
             this.lblDisplayDataFill = new System.Windows.Forms.LabelTS();
             this.lblActiveSpectralPeakColour = new System.Windows.Forms.LabelTS();
             this.chkShowZeroLine = new System.Windows.Forms.CheckBoxTS();
-            this.tbGrayLineAlpha = new System.Windows.Forms.TrackBarTS();
-            this.clrbtnGrayLine = new Thetis.ColorButton();
-            this.labelgrayline = new System.Windows.Forms.LabelTS();
             this.chkGridControl = new System.Windows.Forms.CheckBoxTS();
             this.tbMultiRXFilterAlpha = new System.Windows.Forms.TrackBarTS();
             this.clrbtnSubRXZero = new Thetis.ColorButton();
@@ -3816,6 +3801,8 @@
             this.chkDiscordEnabled = new System.Windows.Forms.CheckBoxTS();
             this.tpTests = new System.Windows.Forms.TabPage();
             this.groupBoxTS30 = new System.Windows.Forms.GroupBoxTS();
+            this.btnShowBandwidth = new System.Windows.Forms.ButtonTS();
+            this.chkIgnoreATTOffset = new System.Windows.Forms.CheckBoxTS();
             this.chkShowStartupLog = new System.Windows.Forms.CheckBoxTS();
             this.btnFormLocationHelper = new System.Windows.Forms.ButtonTS();
             this.btnFPSProfile = new System.Windows.Forms.ButtonTS();
@@ -3893,9 +3880,6 @@
             this.chkTestIMD = new System.Windows.Forms.CheckBoxTS();
             this.lblTestToneFreq1 = new System.Windows.Forms.LabelTS();
             this.udTestIMDFreq1 = new System.Windows.Forms.NumericUpDownTS();
-            this.grpImpulseTest = new System.Windows.Forms.GroupBoxTS();
-            this.udImpulseNum = new System.Windows.Forms.NumericUpDownTS();
-            this.btnImpulse = new System.Windows.Forms.ButtonTS();
             this.grpTestAudioBalance = new System.Windows.Forms.GroupBoxTS();
             this.btnTestAudioBalStart = new System.Windows.Forms.ButtonTS();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -4558,9 +4542,6 @@
             this.groupBoxTS27.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAmpSens)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAmpVoff)).BeginInit();
-            this.panelRX2LevelCal.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Level)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Freq2)).BeginInit();
             this.grpBoxTXDisplayCal.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udTXDisplayCalOffset)).BeginInit();
             this.grpHPSDRFreqCalDbg.SuspendLayout();
@@ -4573,8 +4554,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq2)).BeginInit();
             this.grpGeneralCalibration.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq1)).BeginInit();
-            this.grpGenCalRXImage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq3)).BeginInit();
             this.tpFilters.SuspendLayout();
             this.groupBoxTS49.SuspendLayout();
             this.groupBoxTS6.SuspendLayout();
@@ -5251,7 +5230,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbDataLineAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDataFillAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbActiveSpectralPeakAlpha)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbGrayLineAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMultiRXFilterAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX1FilterAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).BeginInit();
@@ -5394,8 +5372,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDFreq2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDPower)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDFreq1)).BeginInit();
-            this.grpImpulseTest.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udImpulseNum)).BeginInit();
             this.grpTestAudioBalance.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudHistory_axis1_max)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHistory_axis1_min)).BeginInit();
@@ -12136,7 +12112,6 @@
             this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_finder);
             this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_wb);
             this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_ra);
-            this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_spot);
             this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_diversity);
             this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_cwx);
             this.groupBoxTS36.Controls.Add(this.chkShowFormStartup_xvtr);
@@ -12204,19 +12179,6 @@
             this.toolTip1.SetToolTip(this.chkShowFormStartup_ra, "Show this form at start up");
             this.chkShowFormStartup_ra.UseVisualStyleBackColor = true;
             this.chkShowFormStartup_ra.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
-            // 
-            // chkShowFormStartup_spot
-            // 
-            this.chkShowFormStartup_spot.AutoSize = true;
-            this.chkShowFormStartup_spot.Image = null;
-            this.chkShowFormStartup_spot.Location = new System.Drawing.Point(13, 235);
-            this.chkShowFormStartup_spot.Name = "chkShowFormStartup_spot";
-            this.chkShowFormStartup_spot.Size = new System.Drawing.Size(159, 17);
-            this.chkShowFormStartup_spot.TabIndex = 45;
-            this.chkShowFormStartup_spot.Text = "Show Spot Form On start up";
-            this.toolTip1.SetToolTip(this.chkShowFormStartup_spot, "Show this form at start up");
-            this.chkShowFormStartup_spot.UseVisualStyleBackColor = true;
-            this.chkShowFormStartup_spot.CheckedChanged += new System.EventHandler(this.chkShowFormStartup_CheckedChanged);
             // 
             // chkShowFormStartup_diversity
             // 
@@ -12362,19 +12324,15 @@
             // 
             this.tpGeneralCalibration.BackColor = System.Drawing.SystemColors.Control;
             this.tpGeneralCalibration.Controls.Add(this.groupBoxTS27);
-            this.tpGeneralCalibration.Controls.Add(this.panelRX2LevelCal);
             this.tpGeneralCalibration.Controls.Add(this.grpBoxTXDisplayCal);
             this.tpGeneralCalibration.Controls.Add(this.grpHPSDRFreqCalDbg);
-            this.tpGeneralCalibration.Controls.Add(this.chkCalExpert);
             this.tpGeneralCalibration.Controls.Add(this.grpGenCalLevel);
             this.tpGeneralCalibration.Controls.Add(this.grpGeneralCalibration);
-            this.tpGeneralCalibration.Controls.Add(this.grpGenCalRXImage);
             this.tpGeneralCalibration.Location = new System.Drawing.Point(4, 22);
             this.tpGeneralCalibration.Name = "tpGeneralCalibration";
             this.tpGeneralCalibration.Size = new System.Drawing.Size(724, 410);
             this.tpGeneralCalibration.TabIndex = 2;
             this.tpGeneralCalibration.Text = "Calibration";
-            this.tpGeneralCalibration.Paint += new System.Windows.Forms.PaintEventHandler(this.tpGeneralCalibration_Paint);
             // 
             // tpHL2Options
             // 
@@ -13128,113 +13086,6 @@
             0});
             this.udAmpVoff.ValueChanged += new System.EventHandler(this.udAmpVoff_ValueChanged);
             // 
-            // panelRX2LevelCal
-            // 
-            this.panelRX2LevelCal.AutoScrollMargin = new System.Drawing.Size(0, 0);
-            this.panelRX2LevelCal.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.panelRX2LevelCal.Controls.Add(this.labelTS135);
-            this.panelRX2LevelCal.Controls.Add(this.udGeneralCalRX2Level);
-            this.panelRX2LevelCal.Controls.Add(this.btnCalLevel);
-            this.panelRX2LevelCal.Controls.Add(this.udGeneralCalRX2Freq2);
-            this.panelRX2LevelCal.Controls.Add(this.labelTS136);
-            this.panelRX2LevelCal.Location = new System.Drawing.Point(188, 265);
-            this.panelRX2LevelCal.Name = "panelRX2LevelCal";
-            this.panelRX2LevelCal.Size = new System.Drawing.Size(151, 100);
-            this.panelRX2LevelCal.TabIndex = 14;
-            this.panelRX2LevelCal.Visible = false;
-            // 
-            // labelTS135
-            // 
-            this.labelTS135.Image = null;
-            this.labelTS135.Location = new System.Drawing.Point(3, 13);
-            this.labelTS135.Name = "labelTS135";
-            this.labelTS135.Size = new System.Drawing.Size(64, 23);
-            this.labelTS135.TabIndex = 9;
-            this.labelTS135.Text = "RX2 Freq:";
-            // 
-            // udGeneralCalRX2Level
-            // 
-            this.udGeneralCalRX2Level.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udGeneralCalRX2Level.Location = new System.Drawing.Point(67, 37);
-            this.udGeneralCalRX2Level.Maximum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udGeneralCalRX2Level.Minimum = new decimal(new int[] {
-            150,
-            0,
-            0,
-            -2147483648});
-            this.udGeneralCalRX2Level.Name = "udGeneralCalRX2Level";
-            this.udGeneralCalRX2Level.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.udGeneralCalRX2Level.Size = new System.Drawing.Size(50, 20);
-            this.udGeneralCalRX2Level.TabIndex = 12;
-            this.udGeneralCalRX2Level.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udGeneralCalRX2Level, "Level calibration reference level");
-            this.udGeneralCalRX2Level.Value = new decimal(new int[] {
-            70,
-            0,
-            0,
-            -2147483648});
-            // 
-            // btnCalLevel
-            // 
-            this.btnCalLevel.Image = null;
-            this.btnCalLevel.Location = new System.Drawing.Point(29, 69);
-            this.btnCalLevel.Name = "btnCalLevel";
-            this.btnCalLevel.Selectable = true;
-            this.btnCalLevel.Size = new System.Drawing.Size(75, 23);
-            this.btnCalLevel.TabIndex = 13;
-            this.btnCalLevel.Text = "Start";
-            this.toolTip1.SetToolTip(this.btnCalLevel, "Click to start the level calibration using the frequency and level references abo" +
-        "ve.");
-            this.btnCalLevel.Click += new System.EventHandler(this.btnCalLevel_Click);
-            // 
-            // udGeneralCalRX2Freq2
-            // 
-            this.udGeneralCalRX2Freq2.DecimalPlaces = 6;
-            this.udGeneralCalRX2Freq2.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udGeneralCalRX2Freq2.Location = new System.Drawing.Point(67, 13);
-            this.udGeneralCalRX2Freq2.Maximum = new decimal(new int[] {
-            65,
-            0,
-            0,
-            0});
-            this.udGeneralCalRX2Freq2.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udGeneralCalRX2Freq2.Name = "udGeneralCalRX2Freq2";
-            this.udGeneralCalRX2Freq2.Size = new System.Drawing.Size(75, 20);
-            this.udGeneralCalRX2Freq2.TabIndex = 10;
-            this.udGeneralCalRX2Freq2.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udGeneralCalRX2Freq2, "Level calibration reference frequency");
-            this.udGeneralCalRX2Freq2.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            // 
-            // labelTS136
-            // 
-            this.labelTS136.Image = null;
-            this.labelTS136.Location = new System.Drawing.Point(3, 37);
-            this.labelTS136.Name = "labelTS136";
-            this.labelTS136.Size = new System.Drawing.Size(68, 23);
-            this.labelTS136.TabIndex = 11;
-            this.labelTS136.Text = "Level (dBm):";
-            this.labelTS136.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // grpBoxTXDisplayCal
             // 
             this.grpBoxTXDisplayCal.Controls.Add(this.labelTS55);
@@ -13409,16 +13260,6 @@
             this.labelTS10.Size = new System.Drawing.Size(88, 13);
             this.labelTS10.TabIndex = 0;
             this.labelTS10.Text = "Correction Factor";
-            // 
-            // chkCalExpert
-            // 
-            this.chkCalExpert.Image = null;
-            this.chkCalExpert.Location = new System.Drawing.Point(408, 238);
-            this.chkCalExpert.Name = "chkCalExpert";
-            this.chkCalExpert.Size = new System.Drawing.Size(56, 24);
-            this.chkCalExpert.TabIndex = 10;
-            this.chkCalExpert.Text = "Expert";
-            this.chkCalExpert.Visible = false;
             // 
             // grpGenCalLevel
             // 
@@ -13706,74 +13547,6 @@
             this.lblGeneralCalFrequency.TabIndex = 0;
             this.lblGeneralCalFrequency.Text = "Frequency:";
             this.lblGeneralCalFrequency.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // grpGenCalRXImage
-            // 
-            this.grpGenCalRXImage.Controls.Add(this.udGeneralCalFreq3);
-            this.grpGenCalRXImage.Controls.Add(this.lblGenCalRXImageFreq);
-            this.grpGenCalRXImage.Controls.Add(this.btnGeneralCalImageStart);
-            this.grpGenCalRXImage.Location = new System.Drawing.Point(360, 8);
-            this.grpGenCalRXImage.Name = "grpGenCalRXImage";
-            this.grpGenCalRXImage.Size = new System.Drawing.Size(168, 132);
-            this.grpGenCalRXImage.TabIndex = 9;
-            this.grpGenCalRXImage.TabStop = false;
-            this.grpGenCalRXImage.Text = "RX Image Reject Cal";
-            this.grpGenCalRXImage.Visible = false;
-            // 
-            // udGeneralCalFreq3
-            // 
-            this.udGeneralCalFreq3.DecimalPlaces = 6;
-            this.udGeneralCalFreq3.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udGeneralCalFreq3.Location = new System.Drawing.Point(78, 26);
-            this.udGeneralCalFreq3.Maximum = new decimal(new int[] {
-            65,
-            0,
-            0,
-            0});
-            this.udGeneralCalFreq3.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udGeneralCalFreq3.Name = "udGeneralCalFreq3";
-            this.udGeneralCalFreq3.Size = new System.Drawing.Size(75, 20);
-            this.udGeneralCalFreq3.TabIndex = 1;
-            this.udGeneralCalFreq3.TinyStep = false;
-            this.toolTip1.SetToolTip(this.udGeneralCalFreq3, "RX Image calibration reference frequency");
-            this.udGeneralCalFreq3.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.udGeneralCalFreq3.LostFocus += new System.EventHandler(this.udGeneralCalFreq3_LostFocus);
-            // 
-            // lblGenCalRXImageFreq
-            // 
-            this.lblGenCalRXImageFreq.Image = null;
-            this.lblGenCalRXImageFreq.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblGenCalRXImageFreq.Location = new System.Drawing.Point(8, 23);
-            this.lblGenCalRXImageFreq.Name = "lblGenCalRXImageFreq";
-            this.lblGenCalRXImageFreq.Size = new System.Drawing.Size(64, 20);
-            this.lblGenCalRXImageFreq.TabIndex = 0;
-            this.lblGenCalRXImageFreq.Text = "Frequency:";
-            this.lblGenCalRXImageFreq.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // btnGeneralCalImageStart
-            // 
-            this.btnGeneralCalImageStart.Image = null;
-            this.btnGeneralCalImageStart.Location = new System.Drawing.Point(48, 80);
-            this.btnGeneralCalImageStart.Name = "btnGeneralCalImageStart";
-            this.btnGeneralCalImageStart.Selectable = true;
-            this.btnGeneralCalImageStart.Size = new System.Drawing.Size(75, 23);
-            this.btnGeneralCalImageStart.TabIndex = 7;
-            this.btnGeneralCalImageStart.Text = "Start";
-            this.toolTip1.SetToolTip(this.btnGeneralCalImageStart, "Click to start the RX Image rejection calibration using the above frequency refer" +
-        "ence.");
-            this.btnGeneralCalImageStart.Click += new System.EventHandler(this.btnGeneralCalImageStart_Click);
             // 
             // tpFilters
             // 
@@ -33619,7 +33392,6 @@
             // 
             // grpDisplayDriverEngine
             // 
-            this.grpDisplayDriverEngine.Controls.Add(this.chkLegacyDXBuffers);
             this.grpDisplayDriverEngine.Controls.Add(this.chkVSyncDX);
             this.grpDisplayDriverEngine.Controls.Add(this.chkAccurateFrameTiming);
             this.grpDisplayDriverEngine.Controls.Add(this.chkAntiAlias);
@@ -33631,20 +33403,6 @@
             this.grpDisplayDriverEngine.TabIndex = 46;
             this.grpDisplayDriverEngine.TabStop = false;
             this.grpDisplayDriverEngine.Text = "DirectX Display Settings";
-            // 
-            // chkLegacyDXBuffers
-            // 
-            this.chkLegacyDXBuffers.AutoSize = true;
-            this.chkLegacyDXBuffers.Image = null;
-            this.chkLegacyDXBuffers.Location = new System.Drawing.Point(8, 143);
-            this.chkLegacyDXBuffers.Name = "chkLegacyDXBuffers";
-            this.chkLegacyDXBuffers.Size = new System.Drawing.Size(114, 17);
-            this.chkLegacyDXBuffers.TabIndex = 51;
-            this.chkLegacyDXBuffers.Text = "Legacy DX buffers";
-            this.toolTip1.SetToolTip(this.chkLegacyDXBuffers, "Try this if you are having flickering curssors or other display issues");
-            this.chkLegacyDXBuffers.UseVisualStyleBackColor = true;
-            this.chkLegacyDXBuffers.Visible = false;
-            this.chkLegacyDXBuffers.CheckedChanged += new System.EventHandler(this.chkLegacyDXBuffers_CheckedChanged);
             // 
             // chkVSyncDX
             // 
@@ -38778,7 +38536,7 @@
             this.nudAutoModeSwitchCWReturn.Size = new System.Drawing.Size(56, 20);
             this.nudAutoModeSwitchCWReturn.TabIndex = 49;
             this.nudAutoModeSwitchCWReturn.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudAutoModeSwitchCWReturn, "Selects the preferred CW tone frequency.");
+            this.toolTip1.SetToolTip(this.nudAutoModeSwitchCWReturn, "Return detay");
             this.nudAutoModeSwitchCWReturn.Value = new decimal(new int[] {
             2000,
             0,
@@ -42711,6 +42469,7 @@
             // 
             // grpRNnoise
             // 
+            this.grpRNnoise.Controls.Add(this.chkNR3_RNNoiseFixedGain);
             this.grpRNnoise.Controls.Add(this.btnNR3_model_default);
             this.grpRNnoise.Controls.Add(this.btnNR3_model_load);
             this.grpRNnoise.Controls.Add(this.lblNR3Model);
@@ -42721,6 +42480,23 @@
             this.grpRNnoise.TabIndex = 43;
             this.grpRNnoise.TabStop = false;
             this.grpRNnoise.Text = "NR3";
+            // 
+            // chkNR3_RNNoiseFixedGain
+            // 
+            this.chkNR3_RNNoiseFixedGain.AutoSize = true;
+            this.chkNR3_RNNoiseFixedGain.Checked = true;
+            this.chkNR3_RNNoiseFixedGain.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkNR3_RNNoiseFixedGain.Image = null;
+            this.chkNR3_RNNoiseFixedGain.Location = new System.Drawing.Point(28, 61);
+            this.chkNR3_RNNoiseFixedGain.Name = "chkNR3_RNNoiseFixedGain";
+            this.chkNR3_RNNoiseFixedGain.Size = new System.Drawing.Size(175, 17);
+            this.chkNR3_RNNoiseFixedGain.TabIndex = 4;
+            this.chkNR3_RNNoiseFixedGain.Text = "Use fixed gain for input samples";
+            this.toolTip1.SetToolTip(this.chkNR3_RNNoiseFixedGain, "Use a fixed gain that matches that used by deskHPSDR and chosen by VU3RDD.\r\nOther" +
+        "wise use an AGC system for the RNnoise samples enabling weaker signals to be pro" +
+        "cessed.");
+            this.chkNR3_RNNoiseFixedGain.UseVisualStyleBackColor = true;
+            this.chkNR3_RNNoiseFixedGain.CheckedChanged += new System.EventHandler(this.chkNR3_RNNoiseFixedGain_CheckedChanged);
             // 
             // btnNR3_model_default
             // 
@@ -46661,7 +46437,6 @@
             this.picCFC.Size = new System.Drawing.Size(290, 129);
             this.picCFC.TabIndex = 175;
             this.picCFC.TabStop = false;
-            this.picCFC.Click += new System.EventHandler(this.picCFC_Click);
             this.picCFC.Paint += new System.Windows.Forms.PaintEventHandler(this.picCFC_Paint);
             // 
             // tpTransmit
@@ -52887,9 +52662,6 @@
             this.grpAppPanadapter.Controls.Add(this.lblDisplayDataFill);
             this.grpAppPanadapter.Controls.Add(this.lblActiveSpectralPeakColour);
             this.grpAppPanadapter.Controls.Add(this.chkShowZeroLine);
-            this.grpAppPanadapter.Controls.Add(this.tbGrayLineAlpha);
-            this.grpAppPanadapter.Controls.Add(this.clrbtnGrayLine);
-            this.grpAppPanadapter.Controls.Add(this.labelgrayline);
             this.grpAppPanadapter.Controls.Add(this.chkGridControl);
             this.grpAppPanadapter.Controls.Add(this.tbMultiRXFilterAlpha);
             this.grpAppPanadapter.Controls.Add(this.clrbtnSubRXZero);
@@ -53068,42 +52840,6 @@
             this.chkShowZeroLine.Text = "Show Zero Line";
             this.chkShowZeroLine.UseVisualStyleBackColor = true;
             this.chkShowZeroLine.CheckedChanged += new System.EventHandler(this.chkShowZeroLine_CheckedChanged);
-            // 
-            // tbGrayLineAlpha
-            // 
-            this.tbGrayLineAlpha.AutoSize = false;
-            this.tbGrayLineAlpha.Location = new System.Drawing.Point(180, 158);
-            this.tbGrayLineAlpha.Maximum = 200;
-            this.tbGrayLineAlpha.Name = "tbGrayLineAlpha";
-            this.tbGrayLineAlpha.Size = new System.Drawing.Size(66, 18);
-            this.tbGrayLineAlpha.TabIndex = 92;
-            this.tbGrayLineAlpha.TickFrequency = 50;
-            this.toolTip1.SetToolTip(this.tbGrayLineAlpha, "Transparency of Grayline dark area over the map");
-            this.tbGrayLineAlpha.Value = 70;
-            this.tbGrayLineAlpha.Scroll += new System.EventHandler(this.tbGrayLineAlpha_Scroll);
-            // 
-            // clrbtnGrayLine
-            // 
-            this.clrbtnGrayLine.Automatic = "Automatic";
-            this.clrbtnGrayLine.Color = System.Drawing.Color.Black;
-            this.clrbtnGrayLine.Image = null;
-            this.clrbtnGrayLine.Location = new System.Drawing.Point(130, 158);
-            this.clrbtnGrayLine.MoreColors = "More Colors...";
-            this.clrbtnGrayLine.Name = "clrbtnGrayLine";
-            this.clrbtnGrayLine.Selectable = true;
-            this.clrbtnGrayLine.Size = new System.Drawing.Size(40, 23);
-            this.clrbtnGrayLine.TabIndex = 90;
-            this.clrbtnGrayLine.Changed += new System.EventHandler(this.clrbtnGrayLine_Changed);
-            // 
-            // labelgrayline
-            // 
-            this.labelgrayline.AutoSize = true;
-            this.labelgrayline.Image = null;
-            this.labelgrayline.Location = new System.Drawing.Point(6, 163);
-            this.labelgrayline.Name = "labelgrayline";
-            this.labelgrayline.Size = new System.Drawing.Size(52, 13);
-            this.labelgrayline.TabIndex = 89;
-            this.labelgrayline.Text = "GrayLine:\r\n";
             // 
             // chkGridControl
             // 
@@ -60556,7 +60292,6 @@
             this.txtMMIO_network_4char.Text = "AGHJ";
             this.toolTip1.SetToolTip(this.txtMMIO_network_4char, "The four character code used to reference variable belonging to this interconnect" +
         ".");
-            this.txtMMIO_network_4char.Click += new System.EventHandler(this.txtMMIO_network_4char_Click);
             this.txtMMIO_network_4char.TextChanged += new System.EventHandler(this.txtMMIO_network_4char_TextChanged);
             this.txtMMIO_network_4char.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtMMIO_network_4char_KeyPress);
             // 
@@ -60944,7 +60679,6 @@
             this.tpTests.Controls.Add(this.groupBoxTS30);
             this.tpTests.Controls.Add(this.grpBoxTS1);
             this.tpTests.Controls.Add(this.grpTestTXIMD);
-            this.tpTests.Controls.Add(this.grpImpulseTest);
             this.tpTests.Controls.Add(this.grpTestAudioBalance);
             this.tpTests.Location = new System.Drawing.Point(4, 22);
             this.tpTests.Name = "tpTests";
@@ -60954,6 +60688,8 @@
             // 
             // groupBoxTS30
             // 
+            this.groupBoxTS30.Controls.Add(this.btnShowBandwidth);
+            this.groupBoxTS30.Controls.Add(this.chkIgnoreATTOffset);
             this.groupBoxTS30.Controls.Add(this.chkShowStartupLog);
             this.groupBoxTS30.Controls.Add(this.btnFormLocationHelper);
             this.groupBoxTS30.Controls.Add(this.btnFPSProfile);
@@ -60962,10 +60698,34 @@
             this.groupBoxTS30.Controls.Add(this.chkShowControlDebug);
             this.groupBoxTS30.Location = new System.Drawing.Point(11, 340);
             this.groupBoxTS30.Name = "groupBoxTS30";
-            this.groupBoxTS30.Size = new System.Drawing.Size(545, 82);
+            this.groupBoxTS30.Size = new System.Drawing.Size(648, 82);
             this.groupBoxTS30.TabIndex = 120;
             this.groupBoxTS30.TabStop = false;
             this.groupBoxTS30.Text = "Debug";
+            // 
+            // btnShowBandwidth
+            // 
+            this.btnShowBandwidth.Image = null;
+            this.btnShowBandwidth.Location = new System.Drawing.Point(545, 19);
+            this.btnShowBandwidth.Name = "btnShowBandwidth";
+            this.btnShowBandwidth.Selectable = true;
+            this.btnShowBandwidth.Size = new System.Drawing.Size(93, 51);
+            this.btnShowBandwidth.TabIndex = 121;
+            this.btnShowBandwidth.Text = "Show Bandwidth";
+            this.toolTip1.SetToolTip(this.btnShowBandwidth, "Show radio protocol network activity");
+            this.btnShowBandwidth.UseVisualStyleBackColor = true;
+            this.btnShowBandwidth.Click += new System.EventHandler(this.btnShowBandwidth_Click);
+            // 
+            // chkIgnoreATTOffset
+            // 
+            this.chkIgnoreATTOffset.Image = null;
+            this.chkIgnoreATTOffset.Location = new System.Drawing.Point(211, 47);
+            this.chkIgnoreATTOffset.Name = "chkIgnoreATTOffset";
+            this.chkIgnoreATTOffset.Size = new System.Drawing.Size(130, 24);
+            this.chkIgnoreATTOffset.TabIndex = 123;
+            this.chkIgnoreATTOffset.Text = "Ignore ATT offset";
+            this.toolTip1.SetToolTip(this.chkIgnoreATTOffset, "Ignore ATT/S-ATT offset in the display and signal meters.\r\nIcom anyone?");
+            this.chkIgnoreATTOffset.CheckedChanged += new System.EventHandler(this.chkIgnoreATTOffset_CheckedChanged);
             // 
             // chkShowStartupLog
             // 
@@ -62116,6 +61876,7 @@
             this.chkInvertTones.Size = new System.Drawing.Size(119, 17);
             this.chkInvertTones.TabIndex = 97;
             this.chkInvertTones.Text = "Invert for LS Modes";
+            this.toolTip1.SetToolTip(this.chkInvertTones, "Swap F1 and F2 for lower side band modes");
             this.chkInvertTones.UseVisualStyleBackColor = true;
             // 
             // lblTwoToneLevel
@@ -62281,61 +62042,6 @@
             0,
             0});
             this.udTestIMDFreq1.LostFocus += new System.EventHandler(this.udTestIMDFreq1_LostFocus);
-            // 
-            // grpImpulseTest
-            // 
-            this.grpImpulseTest.Controls.Add(this.udImpulseNum);
-            this.grpImpulseTest.Controls.Add(this.btnImpulse);
-            this.grpImpulseTest.Enabled = false;
-            this.grpImpulseTest.Location = new System.Drawing.Point(562, 352);
-            this.grpImpulseTest.Name = "grpImpulseTest";
-            this.grpImpulseTest.Size = new System.Drawing.Size(160, 64);
-            this.grpImpulseTest.TabIndex = 91;
-            this.grpImpulseTest.TabStop = false;
-            this.grpImpulseTest.Text = "Impulse Test";
-            this.grpImpulseTest.Visible = false;
-            // 
-            // udImpulseNum
-            // 
-            this.udImpulseNum.Enabled = false;
-            this.udImpulseNum.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udImpulseNum.Location = new System.Drawing.Point(104, 24);
-            this.udImpulseNum.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.udImpulseNum.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.udImpulseNum.Name = "udImpulseNum";
-            this.udImpulseNum.Size = new System.Drawing.Size(40, 20);
-            this.udImpulseNum.TabIndex = 92;
-            this.udImpulseNum.TinyStep = false;
-            this.udImpulseNum.Value = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.udImpulseNum.LostFocus += new System.EventHandler(this.udImpulseNum_LostFocus);
-            // 
-            // btnImpulse
-            // 
-            this.btnImpulse.Enabled = false;
-            this.btnImpulse.Image = null;
-            this.btnImpulse.Location = new System.Drawing.Point(16, 24);
-            this.btnImpulse.Name = "btnImpulse";
-            this.btnImpulse.Selectable = true;
-            this.btnImpulse.Size = new System.Drawing.Size(75, 23);
-            this.btnImpulse.TabIndex = 90;
-            this.btnImpulse.Text = "Impulse";
-            this.btnImpulse.Click += new System.EventHandler(this.btnImpulse_Click);
             // 
             // grpTestAudioBalance
             // 
@@ -70518,9 +70224,6 @@
             this.groupBoxTS27.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAmpSens)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAmpVoff)).EndInit();
-            this.panelRX2LevelCal.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Level)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalRX2Freq2)).EndInit();
             this.grpBoxTXDisplayCal.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.udTXDisplayCalOffset)).EndInit();
             this.grpHPSDRFreqCalDbg.ResumeLayout(false);
@@ -70535,8 +70238,6 @@
             this.grpGeneralCalibration.ResumeLayout(false);
             this.grpGeneralCalibration.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq1)).EndInit();
-            this.grpGenCalRXImage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.udGeneralCalFreq3)).EndInit();
             this.tpFilters.ResumeLayout(false);
             this.tpFilters.PerformLayout();
             this.groupBoxTS49.ResumeLayout(false);
@@ -71358,7 +71059,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.tbDataLineAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbDataFillAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbActiveSpectralPeakAlpha)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbGrayLineAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbMultiRXFilterAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRX1FilterAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udDisplayLineWidth)).EndInit();
@@ -71546,8 +71246,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDFreq2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDPower)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udTestIMDFreq1)).EndInit();
-            this.grpImpulseTest.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.udImpulseNum)).EndInit();
             this.grpTestAudioBalance.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudHistory_axis1_max)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHistory_axis1_min)).EndInit();
@@ -71813,7 +71511,6 @@
         private LabelTS lblDisplayWaterfallLowColor;
         private ButtonTS btnGeneralCalLevelStart;
         private ButtonTS btnGeneralCalFreqStart;
-        private ButtonTS btnGeneralCalImageStart;
         private LabelTS lblBandLight;
         private LabelTS lblBandDark;
         private LabelTS lblPeakText;
@@ -71910,8 +71607,6 @@
         private ButtonTS btnTXProfileSave;
         private ComboBoxTS comboTXProfileName;
         private ButtonTS btnTXProfileDelete;
-        private ButtonTS btnImpulse;
-        private NumericUpDownTS udImpulseNum;
         private GroupBoxTS grpTXMonitor;
         private LabelTS lblTXAF;
         private NumericUpDownTS udTXAF;
@@ -71922,7 +71617,6 @@
         private TabPage tpHL2Options;
         private TabPage tpGeneralCalibration;
         private NumericUpDownTS udGeneralCalFreq1;
-        private NumericUpDownTS udGeneralCalFreq3;
         private NumericUpDownTS udGeneralCalFreq2;
         private TabPage tpVAC;
         public CheckBoxTS chkAudioEnableVAC;
@@ -71940,7 +71634,6 @@
         private GroupBoxTS grpGenTuningOptions;
         private GroupBoxTS grpAudioVACAutoEnable;
         private CheckBoxTS chkAudioVACAutoEnable;
-        private GroupBoxTS grpImpulseTest;
         private GroupBoxTS grpDisplayScopeMode;
         private NumericUpDownTS udDisplayScopeTime;
         private LabelTS lblDisplayScopeTime;
@@ -72000,8 +71693,6 @@
         private Thetis.ColorButton clrbtnMeterEdgeBackground;
         private Thetis.ColorButton clrbtnMeterEdgeHigh;
         private Thetis.ColorButton clrbtnMeterEdgeLow;
-        private GroupBoxTS grpGenCalRXImage;
-        private LabelTS lblGenCalRXImageFreq;
         private GroupBoxTS grpGenCalLevel;
         private LabelTS lblGenCalLevelFreq;
         private LabelTS lblVFOSmallColor;
@@ -72052,7 +71743,6 @@
         private LabelTS lblMultimeterDigitalDelay;
         private CheckBoxTS chkPA6;
         private CheckBoxTS chkMouseTuneStep;
-        private CheckBoxTS chkCalExpert;
         private CheckBoxTS chkGenAllModeMicPTT;
         private CheckBoxTS chkDigUIsUSB;
         private GroupBoxTS grpGenCustomTitleText;
@@ -72827,13 +72517,7 @@
         public CheckBoxTS chkAlex6BPHPF;
         public CheckBoxTS chkAlex13BPHPF;
         public CheckBoxTS chkAlex1_5BPHPF;
-        private NumericUpDownTS udGeneralCalRX2Level;
-        private NumericUpDownTS udGeneralCalRX2Freq2;
-        private LabelTS labelTS135;
-        private LabelTS labelTS136;
-        private ButtonTS btnCalLevel;
         private LabelTS lblMercury2FWVer;
-        private PanelTS panelRX2LevelCal;
         private System.ComponentModel.IContainer components;
         private Midi2Cat.Midi2CatSetupForm ConfigMidi2Cat;
         private System.Windows.Forms.TabPage tpVAC2;
@@ -73795,9 +73479,6 @@
         private LabelTS labelTS462;
         private LabelTS labelTS463;
         private LabelTS labelTS464;
-        public TrackBarTS tbGrayLineAlpha;
-        private ColorButton clrbtnGrayLine;
-        private LabelTS labelgrayline;
         private CheckBoxTS chkWheelReverse;
         private System.Windows.Forms.GroupBoxTS grpDisplay8000DLE;
         private System.Windows.Forms.CheckBoxTS chkANAN8000DLEDisplayVoltsAmps;
@@ -74855,7 +74536,6 @@
         private LabelTS labelTS614;
         private LabelTS labelTS613;
         private CheckBoxTS chkShowTCISpots;
-        private CheckBoxTS chkLegacyDXBuffers;
         private ColorButton clrbtnOwnCallApearance;
         private TextBoxTS txtOwnCallsign;
         private CheckBoxTS chkSpotOwnCallAppearance;
@@ -75299,7 +74979,6 @@
         private GroupBoxTS groupBoxTS36;
         private GroupBoxTS groupBoxTS35;
         private CheckBoxTS chkShowFormStartup_ra;
-        private CheckBoxTS chkShowFormStartup_spot;
         private CheckBoxTS chkShowFormStartup_diversity;
         private CheckBoxTS chkShowFormStartup_cwx;
         private CheckBoxTS chkShowFormStartup_xvtr;
@@ -76114,5 +75793,8 @@
         private ComboBoxTS comboAPF_type_rx1;
         private LabelTS labelRX2APFType;
         private ComboBoxTS comboAPF_type_rx2;
+        private CheckBoxTS chkIgnoreATTOffset;
+        private ButtonTS btnShowBandwidth;
+        private CheckBoxTS chkNR3_RNNoiseFixedGain;
     }
 }

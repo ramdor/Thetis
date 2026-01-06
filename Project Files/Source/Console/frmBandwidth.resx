@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,72 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="textBox3.Text" xml:space="preserve">
-    <value>Still Experimenting
-Scan Band: Scan Band Button from Low end to High end
-You can change the Low and High ends within the Band your currently on
-
-Set the Squelch high enough that it trips when it hits a large signal
-if you click in the Low or High windows, it reset the scan</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        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
-        CgyBWSyZbEQVESNJOVVUaLx3STdnRS4wIxxfQiRdSDJnTTSEdVqVjHRfSjZmQCGMbUjQx5jg1qbZ1a/W
-        0ruCZlKIYUD9/efg16ja07O7pnFxSR1zUzWPeWKDaEdbOCBMMB8QDQuUaT2welVOVZ5ghPZLTHt0RyaL
-        XzRUQCtTOiRRMSBROiRZQiplNhmHYjT//+agimOrnXXs47Z6VTHZ0amqkmXy68GhgU7PvZiAWyuNckuy
-        oHv8/OLg1rVTNRxGKxZ/Wy6cay9yUFJUdd9nYYVgdclhe8d2VkeibTeCYTlNOSZjQihlPyVkPSGTcD6t
-        l2hGHAfRypT68Lm8oWnGrXTYy6DOwJh7Sxp+TBCSdFWvlnLezrW1nXaEa0dqTSineDq4kHNTR1w1N2lo
-        ZIw3NlJPUoZqgtZOZqZoUk6lbzq8i0dzWTlDKRpsSSl3UixeNRCZbz2ceE3Bom3/8LPUsXdZKABvRh2j
-        g1awlW3Gr4n37t/GrpGUeleTd0rMmlqfiJNHWbhDS4ZaWHZkWm8ZGSgDFY9ANmZyYW1oea5UW4x+Wk/P
-        mE+uiUxoTjNeMBTu1KjGuouNdFpwRy1kORqJXS+FXy6umG7SxJ/w8NrHrn+PaUVvTCXCm1PWpFtyZIM9
-        VMBbVYRyYnFURV5FQWBeVFVVS2x9ZmtwSU8uOqZgjv9Wa7ZmTlvAiE7To0qBYDCffWLgyJf74paZbzRi
-        PiJ5VCW6oXnl3r7x7NzKr4d/UiiOcDToxHS+mnk7LEI1Ll5raLJzd9ZALmuFaFGvmoBodK++k1f42adI
-        ctMbSs0oTelTXrF4fbFMZMaDe6TftnGrhDl2RR6zdirjqUm5k12yoHnXxqD79/G0k2iGXzLOsWXjvW91
-        W1E3K1RqV1VUO0FwbMObtf82KYlFOFKMgo9tX3RwVGNpXKhCa95+g5tlU3s9MVlmTnuDjupUhv9VWbfM
-        nmDfvmGbhVaWZjapczrz48Hbuo98SxWjhkbs1XK5pYBXO1c4HS1/YkyWbkh3WFFZRYBRQ5pSYrkvWNYn
-        N6RaQ0VeQFBSZctdZb9jQTqLZUORdHRocqt4drCEb4poZZ5RRI+LbGLauWXEsWqYeU6YZzqTZzPFs2Hf
-        zneDYEw7IDc8JzJFNUQ4LFKEYWHkt4dtV2BGOERXXp1YdelRad5iT0toSUdQTplaU5N1VlppX5NyhNhy
-        idxeapgvEhNWS2Z2dqpfU4J6XlPBqGPj0H++rWXp2HXPtHBqSkZSMkdNOFRrVGilk5J3cJpYX7mihoWA
-        XkGHb1mJZFJ3U1x6bp5sUUJYPTdkREJqQD5mbqN0r/94db1mT10AABIdDww+OnNkif+Wm8SAbmVsVVCi
-        f1PEsXOwjl94WlFEND9mU1uGld3O2P7RxMHPy8+NfY9wUUFLIwqtm5S5sKh2TjB9VktdRj9cPShsSil0
-        SzduX3dtfblzYXxgRjdgUDysjlypjGhrXpNnWY9xWFuGa2F8VEJzQTBkRUE3LzcNBiNJN0CnlqWjl7OR
-        eouTdmime0ClgVF9XT9+WD6HY0WFXzq3jGUAAABkPydhOyZgOiN3SiuJX0qNeGh6amejhGLFq36QdlRK
-        LzY/K147KlVnS1F4Zntvc7E+OlsnHTZBMU4TDzpILzJ/WlFWRU1+Wju4hFCVa0huTzltSiVpPSdfPTgA
-        AAAAAABPKRRdNRtlPihbNSt4VUaQZ0q7lG+aeVyFXkFeNiF/bnHG3/mniXhZMy10cJ6An/BGQWN4W1Dy
-        3qJ/cXYnHUBoWVFMQkYiFSZHMitWNSRULhhoX3FkdbtFKTEAAAAAAAAAAAAAAABwSzR6WUmBYEx4TDGE
-        VTCyhlaidlGMZESmjHLv3bLMo3eAYFqVhYOTd2aZel65nXPXwo26on5/a19vW1iKbWBzXFMrJTJhSz+E
-        cXuAnOEAAAAAAAAAAADgAAAHgAAAAYAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAIAAAAGAAAAB4AAABw==
-</value>
-  </data>
+  <metadata name="timerReadBandwidth.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
 </root>

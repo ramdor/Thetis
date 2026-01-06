@@ -76,7 +76,8 @@ namespace Thetis
     using AlphaMode = SharpDX.Direct2D1.AlphaMode;
     using Device = SharpDX.Direct3D11.Device;
     using RectangleF = SharpDX.RectangleF;
-    using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;   
+    using SDXPixelFormat = SharpDX.Direct2D1.PixelFormat;
+    using System.Threading;
 
     class Display
     {
@@ -88,7 +89,6 @@ namespace Thetis
         public const int BUFFER_SIZE = 16384;
 
         public static Console console;
-        public static SpotControl SpotForm;                     // ke9ns add  communications with spot.cs and dx spotter
         public static string background_image = null;
 
         private static int[] histogram_data = null;				// histogram display buffer
@@ -869,10 +869,6 @@ namespace Thetis
         }
         //=======================================================
 
-        private static bool m_bSpecialPanafall = false; // ke9ns add 1=map mode (panafall but only a small waterfall) and only when just in RX1 mode)
-
-        //========================================================
-
         public static bool specready = false;
         private static int displayTargetHeight = 0;	// target height
         private static int displayTargetWidth = 0;	// target width
@@ -924,7 +920,13 @@ namespace Thetis
                     }
                     else
                     {
-                        resizeDX2D();
+                        if (!resizeDX2D(out string err))
+                        {
+                            ShutdownDX2D();
+                            MessageBox.Show("Unable to resize DirectX render target (Target). DirectX has been shut down.\n\n" + err, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                            return;
+                        }
+
                         ResetWaterfallBmp();
                         ResetWaterfallBmp2();
                     }                    
@@ -1117,7 +1119,12 @@ namespace Thetis
             get { return rx1_preamp_offset; }
             set { rx1_preamp_offset = value; }
         }
-
+        private static bool _ignore_attenuator_offset = false;
+        public static bool IgnoreAttenuatorOffset
+        {
+            get { return _ignore_attenuator_offset; }
+            set { _ignore_attenuator_offset = value; }
+        }
         private static float alex_preamp_offset = 0.0f;
         public static float AlexPreampOffset
         {
@@ -1899,6 +1906,7 @@ namespace Thetis
         }
 
         //MW0LGE
+        private static Pen p1 = new Pen(Color.YellowGreen, 2.0f);
         private static Pen peak_blob_pen = new Pen(Color.OrangeRed);
         private static Pen peak_blob_text_pen = new Pen(Color.YellowGreen);
         private static Color data_fill_color = Color.FromArgb(128, Color.Blue);
@@ -2294,32 +2302,6 @@ namespace Thetis
             }
         }
 
-        //================================================================
-        // ke9ns add signal from console about Grayscale ON/OFF
-        private static byte Gray_Scale = 0; //  ke9ns ADD from console 0=RGB  1=Gray
-        public static byte GrayScale       // this is called or set in console
-        {
-            get { return Gray_Scale; }
-            set
-            {
-                Gray_Scale = value;
-            }
-        }
-
-
-        //================================================================
-        // kes9ns add signal from setup grid lines on/off
-        private static byte grid_off = 0; //  ke9ns ADD from setup 0=normal  1=gridlines off
-        public static byte GridOff       // this is called or set in setup
-        {
-            get { return grid_off; }
-            set
-            {
-                grid_off = value;
-            }
-        }
-
-
         private static Color rx2_waterfall_low_color = Color.Black;
         public static Color RX2WaterfallLowColor
         {
@@ -2617,25 +2599,7 @@ namespace Thetis
         #region Drawing Routines
         // ======================================================
         // Drawing Routines
-        // ======================================================
-
-
-        //=========================================================
-        // ke9ns draw panadapter grid
-        //=========================================================
-
-        public static int[] holder = new int[100];                           // ke9ns add DX Spot used to allow the vertical lines to all be drawn first so the call sign text can draw over the top of it.
-        public static int[] holder1 = new int[100];                          // ke9ns add
-
-        private static Pen p1 = new Pen(Color.YellowGreen, 2.0f);             // ke9ns add vert line color and thickness  DXSPOTTER
-        private static Pen p3 = new Pen(Color.Blue, 2.5f);                   // ke9ns add vert line color and thickness    MEMORY
-        private static Pen p2 = new Pen(Color.Purple, 2.0f);                  // ke9ns add color for vert line of SWL list
-
-        private static bool m_bLSB = false;                                     // ke9ns add true=LSB, false=USB
-
-        private static int VFOLow = 0;                                       // ke9ns low freq (left side of screen) in HZ (used in DX_spot)
-        private static int VFOHigh = 0;                                      // ke9ns high freq (right side of screen) in HZ
-        private static int VFODiff = 0;                                      // ke9ns diff high-low
+        // ======================================================        
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Color changeAlpha(Color c, int A)
@@ -3346,8 +3310,14 @@ namespace Thetis
                                                        new Rational(console.DisplayFPS, 1), Format.B8G8R8A8_UNorm);
                     _swapChain1.ResizeTarget(ref modeDesc);
 
-                    // MW0LGE_21k9 must resize the back buffers, belts and braces because width/height not likely to change
-                    resizeDX2D();
+                    // must resize the back buffers, belts and braces because width/height not likely to change
+                    if (!resizeDX2D(out string err))
+                    {
+                        ShutdownDX2D();
+                        MessageBox.Show("Unable to resize DirectX render target (ResetDX2DModeDescription). DirectX has been shut down.\n\n" + err, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        return;
+                    }
+
                 }
             }
             catch (Exception)
@@ -3355,13 +3325,17 @@ namespace Thetis
 
             }
         }
-        private static void resizeDX2D()
+        private static bool resizeDX2D(out string error)
         {
             try
             {
                 lock (_objDX2Lock)
                 {
-                    if (!_bDX2Setup) return;
+                    if (!_bDX2Setup)
+                    {
+                        error = "DirectX not setup";
+                        return false;
+                    }
 
                     Utilities.Dispose(ref _d2dRenderTarget);
                     Utilities.Dispose(ref _surface);
@@ -3388,20 +3362,26 @@ namespace Thetis
                     // clear measure string cache
                     m_stringSizeCache.Clear();
                     _stringMeasureKeys.Clear();
-                    //
+
+                    error = "";
+                    return true;
                 }
             }
             catch (Exception e)
             {
-                string msg = "DirectX resizeDX2D() display failure\n\nThis can sometimes be caused by other programs 'hooking' into directX," +
-                    "such as GFX card control software (eg, EVGA Precision Xoc). Close down Thetis, quit as many 'system tray'\nand other " +
-                    "things as possible and try again." + e.Message;
-                if(_device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceRemoved || _device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceReset)
-                {
-                    msg += "\n\nDeviceRemoved or DeviceReset reported by DirectX, this indicates a problem with the graphics device or its driver.\n\nRemoval Code : " + _device.DeviceRemovedReason.Code.ToString();
-                }
-                ShutdownDX2D();
-                MessageBox.Show(msg, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                //string msg = "DirectX resizeDX2D() display failure\n\nThis can sometimes be caused by other programs 'hooking' into directX," +
+                //    "such as GFX card control software (eg, EVGA Precision Xoc). Close down Thetis, quit as many 'system tray'\nand other " +
+                //    "things as possible and try again." + e.Message;
+                //if(_device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceRemoved || _device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceReset)
+                //{
+                //    msg += "\n\nDeviceRemoved or DeviceReset reported by DirectX, this indicates a problem with the graphics device or its driver.\n\nRemoval Code : " + _device.DeviceRemovedReason.Code.ToString();
+                //}
+                //ShutdownDX2D();
+                //MessageBox.Show(msg, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                error = e.Message;
+                error += "\n\nDeviceRemovedReason : " + _device.DeviceRemovedReason.ToString();
+                return false;
             }
         }
 
@@ -3435,18 +3415,6 @@ namespace Thetis
             {
                 m_bAntiAlias = value;
                 setupAliasing();
-            }
-        }
-        public static bool SpecialPanafall
-        {
-            get { return m_bSpecialPanafall; }
-            set
-            {
-                m_bSpecialPanafall = value;
-                if (m_bSpecialPanafall)
-                    PanafallSplitBarPerc = 0.8f;
-                else
-                    PanafallSplitBarPerc = 0.5f;
             }
         }
 
@@ -3906,7 +3874,6 @@ namespace Thetis
                     _d2dRenderTarget.Transform = Matrix3x2.Identity;
 
                 jump:
-
                     try
                     {
                         _d2dRenderTarget.EndDraw();
@@ -3915,8 +3882,9 @@ namespace Thetis
                     {
                         if (_dx_fail_retry < 10)
                         {
-                            resizeDX2D();
+                            resizeDX2D(out _);
                             _dx_fail_retry++;
+                            Thread.Sleep(50);
                             return;
                         }
                     }
@@ -3935,8 +3903,9 @@ namespace Thetis
                     {
                         if ((r == SharpDX.DXGI.ResultCode.DeviceRemoved || r == SharpDX.DXGI.ResultCode.DeviceReset) && _dx_fail_retry < 10)
                         {
-                            resizeDX2D();
+                            resizeDX2D(out _);
                             _dx_fail_retry++;
+                            Thread.Sleep(50);
                             return;
                         }
 
@@ -3945,7 +3914,11 @@ namespace Thetis
                         if (r == SharpDX.DXGI.ResultCode.DeviceReset/*0x887A0007*/) sMsg = "Present Device Reset" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";           //DXGI_ERROR_DEVICE_RESET
                         if (r == SharpDX.DXGI.ResultCode.DeviceRemoved/*0x887A0005*/) sMsg = "Present Device Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";         //DXGI_ERROR_DEVICE_REMOVED
                         //if (r == 0x88760870) sMsg = "Present Device DD3DDI Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";  //D3DDDIERR_DEVICEREMOVED
-                        
+
+                        if (_dx_fail_retry > 0)
+                        {
+                            sMsg += "\n\nDirectX failures during present have occurred " + _dx_fail_retry.ToString() + " times before this.";
+                        }                        
                         if (!string.IsNullOrEmpty(sMsg)) throw (new Exception(sMsg));
                     }
 
@@ -9256,254 +9229,7 @@ namespace Thetis
                     }
                 }
             }
-            #endregion
-
-            #region Spots
-            // ke9ns add draw DX SPOTS on pandapter
-            //=====================================================================
-            //=====================================================================
-
-            if (!bIsWaterfall && SpotControl.SP_Active != 0)
-            {
-                int localRit;
-                if (rx == 1)
-                    localRit = _rx1ClickDisplayCTUN ? 0 : rit_hz;
-                else
-                    localRit = 0;
-
-                int iii = 0;                          // ke9ns add stairstep holder
-
-                int kk = 0;                           // ke9ns add index for holder[] after you draw the vert line, then draw calls (so calls can overlap the vert lines)
-
-                int vfo_hz = (int)vfoa_hz;    // vfo freq in hz
-
-                int H1a = H / 2;            // length of vertical line (based on rx1 and rx2 display window configuration)
-                int H1b = 20;               // starting point of vertical line
-
-                int rxDisplayLow = RXDisplayLow;
-                int rxDisplayHigh = RXDisplayHigh;
-                SizeF length;
-
-                if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2))                 // if your drawing to the bottom 
-                {
-                    vfo_hz = (int)vfob_hz;
-                    rxDisplayLow = RX2DisplayLow;
-                    rxDisplayHigh = RX2DisplayHigh;
-
-                    Console.DXK2 = 0;        // RX2 index to allow call signs to draw after all the vert lines on the screen
-                }
-                else
-                {
-                    Console.DXK = 0;        // RX1 index to allow call signs to draw after all the vert lines on the screen
-                }
-
-                VFOLow = vfo_hz + rxDisplayLow;    // low freq (left side) in hz
-                VFOHigh = vfo_hz + rxDisplayHigh; // high freq (right side) in hz
-                VFODiff = VFOHigh - VFOLow;       // diff in hz
-
-                if ((vfo_hz < 5000000) || ((vfo_hz > 6000000) && (vfo_hz < 8000000))) m_bLSB = true; // LSB
-                else m_bLSB = false;     // usb
-
-                //-------------------------------------------------------------------------------------------------
-                //-------------------------------------------------------------------------------------------------
-                // draw DX spots
-                //-------------------------------------------------------------------------------------------------
-                //-------------------------------------------------------------------------------------------------
-
-                for (int ii = 0; ii < SpotControl.DX_Index; ii++)     // Index through entire DXspot to find what is on this panadapter (draw vert lines first)
-                {
-                    if ((SpotControl.DX_Freq[ii] >= VFOLow) && (SpotControl.DX_Freq[ii] <= VFOHigh))
-                    {
-                        int VFO_DXPos = (int)((((float)W / (float)VFODiff) * (float)(SpotControl.DX_Freq[ii] + cwSideToneShiftInverted - VFOLow - localRit))); // determine DX spot line pos on current panadapter screen
-
-                        holder[kk] = ii;                    // ii is the actual DX_INdex pos the the KK holds
-                        holder1[kk] = VFO_DXPos;
-
-                        kk++;
-
-                        drawLineDX2D(m_bDX2_p1, VFO_DXPos, H1b + nVerticalShift, VFO_DXPos, H1a + nVerticalShift);   // draw vertical line
-
-                    }
-
-                } // for loop through DX_Index
-
-
-                int bb = 0;
-                if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2))
-                {
-                    Console.DXK2 = kk; // keep a count for the bottom QRZ hyperlink
-                    bb = Console.MMK4;
-                }
-                else
-                {
-                    Console.DXK = kk; // count of spots in current panadapter
-                    bb = Console.MMK3;
-                }
-
-
-                //--------------------------------------------------------------------------------------------
-                for (int ii = 0; ii < kk; ii++) // draw call signs to screen in order to draw over the vert lines
-                {
-                    // font
-                    if (m_bLSB) // 1=LSB so draw on left side of line
-                    {
-
-                        if (Console.DisplaySpot) // display Spotted on Pan
-                        {
-                            length = measureStringDX2D(SpotControl.DX_Station[holder[ii]], fontDX2d_font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
-
-                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
-                            {
-                                int x2 = holder1[ii] - (int)length.Width;
-                                int y2 = H1b + iii;
-
-                                for (int jj = 0; jj < bb; jj++)
-                                {
-
-                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
-                                    {
-                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
-                                        {
-                                            iii = iii + 33;
-                                            break;
-                                        }
-                                    }
-
-                                } // for loop to check if DX text will draw over top of Memory text
-                            }
-
-                            drawStringDX2D(SpotControl.DX_Station[holder[ii]], fontDX2d_font1, m_bDX2_grid_text_brush, holder1[ii] - (int)length.Width, H1b + iii + nVerticalShift);
-                        }
-                        else // display SPOTTER on Pan (not the Spotted)
-                        {
-                            length = measureStringDX2D(SpotControl.DX_Spotter[holder[ii]], fontDX2d_font1); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space//  (cl.Width);
-
-                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
-                            {
-                                int x2 = holder1[ii] - (int)length.Width;
-                                int y2 = H1b + iii;
-
-                                for (int jj = 0; jj < bb; jj++)
-                                {
-
-                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
-                                    {
-                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
-                                        {
-                                            iii = iii + 33;
-                                            break;
-                                        }
-                                    }
-
-                                } // for loop to check if DX text will draw over top of Memory text
-                            }
-
-                            drawStringDX2D(SpotControl.DX_Spotter[holder[ii]], fontDX2d_font1, m_bDX2_grid_text_brush, holder1[ii] - (int)length.Width, H1b + iii + nVerticalShift);
-
-                        }
-
-                        int rx2;
-                        if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2)) rx2 = 50; // allow only 50 qrz spots per Receiver
-                        else rx2 = 0;
-
-                        if (!/*mox*/local_mox) // only do when not transmitting
-                        {
-                            Console.DXW[ii + rx2] = (int)length.Width;    // this is all for QRZ hyperlinking 
-                            Console.DXH[ii + rx2] = (int)length.Height;
-                            Console.DXX[ii + rx2] = holder1[ii] - (int)length.Width;
-                            Console.DXY[ii + rx2] = H1b + iii;
-                            Console.DXS[ii + rx2] = SpotControl.DX_Station[holder[ii]];
-
-                        }
-
-
-                    } // LSB side
-
-
-                    else   // 0=usb so draw on righ side of line (normal)
-                    {
-                        if (Console.DisplaySpot) // spot
-                        {
-                            length = measureStringDX2D(SpotControl.DX_Station[holder[ii]], fontDX2d_font1); //  not needed here but used for qrz hyperlinking
-
-                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
-                            {
-                                int x2 = holder1[ii];
-                                int y2 = H1b + iii;
-
-                                for (int jj = 0; jj < bb; jj++)
-                                {
-
-                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
-                                    {
-                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
-                                        {
-                                            iii = iii + 33;
-                                            break;
-                                        }
-                                    }
-
-                                } // for loop to check if DX text will draw over top of Memory text
-                            }
-
-                            drawStringDX2D(SpotControl.DX_Station[holder[ii]], fontDX2d_font1, m_bDX2_grid_text_brush, holder1[ii], H1b + iii + nVerticalShift); // DX station name
-                        }
-                        else // spotter
-                        {
-                            length = measureStringDX2D(SpotControl.DX_Spotter[holder[ii]], fontDX2d_font1); //  not needed here but used for qrz hyperlinking
-
-                            if ((bb > 0) && (SpotControl.SP6_Active != 0))
-                            {
-                                int x2 = holder1[ii];
-                                int y2 = H1b + iii;
-
-                                for (int jj = 0; jj < bb; jj++)
-                                {
-
-                                    if (((x2 + length.Width) >= Console.MMX[jj]) && (x2 < (Console.MMX[jj] + Console.MMW[jj])))
-                                    {
-                                        if (((y2 + length.Height) >= Console.MMY[jj]) && (y2 < (Console.MMY[jj] + Console.MMH[jj])))
-                                        {
-                                            iii = iii + 33;
-                                            break;
-                                        }
-                                    }
-
-                                } // for loop to check if DX text will draw over top of Memory text
-                            }
-
-                            drawStringDX2D(SpotControl.DX_Spotter[holder[ii]], fontDX2d_font1, m_bDX2_grid_text_brush, holder1[ii], H1b + iii + nVerticalShift); // DX station name
-
-                        }
-
-                        int rx2;
-                        if (bottom || (current_display_mode_bottom == DisplayMode.PANAFALL && rx == 2)) rx2 = 50;
-                        else rx2 = 0;
-
-                        if (!/*mox*/local_mox) // only do when not transmitting
-                        {
-                            Console.DXW[ii + rx2] = (int)length.Width;   // this is all for QRZ hyperlinking 
-                            Console.DXH[ii + rx2] = (int)length.Height;
-                            Console.DXX[ii + rx2] = holder1[ii];
-                            Console.DXY[ii + rx2] = H1b + iii;
-                            Console.DXS[ii + rx2] = SpotControl.DX_Station[holder[ii]];
-                        }
-
-                        if (vfo_hz >= 50000000) // 50000000 or 50mhz
-                        {
-                            iii = iii + 11;
-                            drawStringDX2D(SpotControl.DX_Grid[holder[ii]], fontDX2d_font1, m_bDX2_grid_text_brush, holder1[ii], H1b + iii + nVerticalShift); // DX grid name
-                        }
-
-                    } // USB side
-
-                    iii = iii + 11;
-                    if (iii > 90) iii = 0;
-
-
-                }// for loop through DX_Index
-            }
-            #endregion
+            #endregion         
 
             _d2dRenderTarget.PopAxisAlignedClip();
 

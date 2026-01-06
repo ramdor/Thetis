@@ -1,11 +1,10 @@
-/*  rnnr.h
+﻿/*  frmBandwidth.cs
 
 This file is part of a program that implements a Software-Defined Radio.
 
 This code/file can be found on GitHub : https://github.com/ramdor/Thetis
 
-Copyright (C) 2000-2025 Original authors
-Copyright (C) 2020-2026 Richard Samphire MW0LGE
+Copyright (C) 2020-2025 Richard Samphire MW0LGE
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -24,13 +23,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 The author can be reached by email at
 
 mw0lge@grange-lane.co.uk
-
-This code is based on code and ideas from  : https://github.com/vu3rdd/wdsp
-and and uses RNNoise and libspecbleach
-https://gitlab.xiph.org/xiph/rnnoise
-https://github.com/lucianodato/libspecbleach
-
-It uses a non modified version of rmnoise and implements a ringbuffer to handle input/output frame size differences.
 */
 //
 //============================================================================================//
@@ -46,55 +38,52 @@ It uses a non modified version of rmnoise and implements a ringbuffer to handle 
 // Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
 //============================================================================================//
 
-#ifndef _rnnr_h
-#define _rnnr_h
+using System;
+using System.Windows.Forms;
 
-#include "rnnoise.h"
-
-#define FRAME_SIZE
-
-typedef struct _rnnr_ring_buffer {
-    float* buf;
-    int capacity;
-    int head;
-    int tail;
-    int count;
-} rnnr_ring_buffer;
-
-typedef struct _rnnr
+namespace Thetis
 {
-	int run;
-    int run_old; // used when loading a new model
-    int position;
-    int frame_size;
-    DenoiseState *st;
-    double *in;
-    double *out;
-    float gain;
-    float gain_db;
-    int use_default_gain;
-    float agc_att_a;
-    float agc_rel_a;
+    public partial class frmBandwidth : Form
+    {
+        public frmBandwidth()
+        {
+            InitializeComponent();
+            timerReadBandwidth.Interval = 500;
+            timerReadBandwidth.Enabled = false;
+            ucBandwidthView.SmoothingFactor = 0.7;
+            ucBandwidthView.EnableSmoothing = true;
+        }
 
-    int buffer_size;
-    int rate;
-    float* output_buffer;
+        private void timerReadBandwidth_Tick(object sender, EventArgs e)
+        {
+            double out_bps = NetworkIO.GetOutboundBps();
+            double in_bps = NetworkIO.GetInboundBps();
+            ucBandwidthView.PushSample(in_bps, out_bps);
+        }
 
-    float* to_process_buffer;
-    float* processed_output_buffer;
+        public void RecoverShow()
+        {
+            Common.RestoreForm(this, this.Name, true);
+            timerReadBandwidth.Enabled = true;
+            this.Show();
+        }
 
-    rnnr_ring_buffer input_ring;
-    rnnr_ring_buffer output_ring;
+        private void frmBandwidth_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                timerReadBandwidth.Enabled = false;
+                this.Hide();
+                ucBandwidthView.Reset();
+                e.Cancel = true;
+            }
 
-    CRITICAL_SECTION cs;
+            Common.SaveForm(this, this.Name);
+        }
 
-} rnnr, *RNNR;
-
-extern RNNR create_rnnr (int run, int position, int size, double *in, double *out, int rate);
-extern void setSize_rnnr(RNNR a, int size);
-extern void setBuffers_rnnr (RNNR a, double* in, double* out);
-extern void destroy_rnnr (RNNR a);
-extern void xrnnr (RNNR a, int pos);
-extern void setSamplerate_rnnr(RNNR a, int rate);
-
-#endif //_rnnr_h
+        private void radUnits_CheckedChanged(object sender, EventArgs e)
+        {
+            ucBandwidthView.DisplayUnits = radKB.Checked ? ucBandwidthView.BandwidthUnits.KBps : ucBandwidthView.BandwidthUnits.Mbitps;
+        }
+    }
+}

@@ -212,6 +212,7 @@
     <ClInclude Include="aamix.h" />
     <ClInclude Include="amix.h" />
     <ClInclude Include="analyzers.h" />
+    <ClInclude Include="bandwidth_monitor.h" />
     <ClInclude Include="cmasio.h" />
     <ClInclude Include="cmaster.h" />
     <ClInclude Include="cmbuffs.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="aamix.c" />
     <ClCompile Include="amix.c" />
     <ClCompile Include="analyzers.c" />
+    <ClCompile Include="bandwidth_monitor.c" />
     <ClCompile Include="cmasio.c" />
     <ClCompile Include="cmaster.c" />
     <ClCompile Include="cmbuffs.c" />

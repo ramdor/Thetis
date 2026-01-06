@@ -375,7 +375,8 @@ static void Float64_To_Float32(
 
     while (count--)
     {
-        *dest = *src;
+        //*dest = *src;
+        *dest = (float)(*src);
 
         src += sourceStride;
         dest += destinationStride;
@@ -484,7 +485,8 @@ static void Float64_To_Int16_Dither(
 
         float dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
         /* use smaller scaler to prevent overflow when we add the dither */
-        float dithered = (*src * (32766.0f)) + dither;
+        //float dithered = (*src * (32766.0f)) + dither;
+        float dithered = (float)((*src * 32766.0) + (double)dither);
 
 #ifdef PA_USE_C99_LRINTF
         * dest = lrintf(dithered - 0.5f);
@@ -539,7 +541,8 @@ static void Float64_To_Int16_DitherClip(
 
         float dither = PaUtil_GenerateFloatTriangularDither(ditherGenerator);
         /* use smaller scaler to prevent overflow when we add the dither */
-        float dithered = (*src * (32766.0f)) + dither;
+        //float dithered = (*src * (32766.0f)) + dither;
+        float dithered = (float)((*src * 32766.0) + (double)dither);
         PaInt32 samp = (PaInt32)dithered;
         PA_CLIP_(samp, -0x8000, 0x7FFF);
 #ifdef PA_USE_C99_LRINTF
@@ -1244,7 +1247,17 @@ static void Int32_To_Int16_Dither(
     {
         /* REVIEW */
         dither = PaUtil_Generate16BitTriangularDither( ditherGenerator );
+#if 1
         *dest = (PaInt16) ((((*src)>>1) + dither) >> 15);
+#else
+        /* EXPERIMENTAL force clip after dither. see ticket #112
+           Clip the intermediate value because adding the dither could cause
+           a numeric wraparound when shifting.
+        */
+        PaInt32 temp = (((*src)>>1) + dither);
+        PA_CLIP_(temp, (PaInt32) 0xC0000000, (PaInt32) 0x3FFFFFFF);
+        *dest = (PaInt16) (temp >> 15);
+#endif
 
         src += sourceStride;
         dest += destinationStride;

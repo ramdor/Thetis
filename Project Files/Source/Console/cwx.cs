@@ -2237,8 +2237,6 @@ namespace Thetis
             byte b;
             char c;
 
-            int a = 1;
-
             while (!stopThreads)
             {
                 if (infifo2 > 0)
@@ -2276,8 +2274,6 @@ namespace Thetis
         {
             char topkey;
             int i;
-
-            int a = 1;
 
             while (!stopThreads)
             {

@@ -791,7 +791,7 @@ namespace Thetis
         // G8NJJ: handlers for Ganymeda 500W PA protection
         #region GANYMEDE amplifier protection
 
-        private int GanymedeTripState = 0;                      // amplifier trip
+        //private int GanymedeTripState = 0;                      // amplifier trip
 
         // for now, put message in SETUP Apollo with current amplifier state
         // ideally when it has been tripped we should remove PTT too.
@@ -3757,12 +3757,7 @@ namespace Thetis
                     break;
 
                 case EButtonBarActions.eBBBandstackForm:           // show band stacks form
-                    //if (StackForm == null || StackForm.IsDisposed) StackForm = new StackControl(this);
-                    //Invoke(new MethodInvoker(StackForm.Show));
-                    //StackForm.Focus();
-                    //StackForm.WindowState = FormWindowState.Normal; // ke9ns add
-
-                    Invoke(new MethodInvoker(BandStack2Form.Show)); //MW0LGE_21d BandStack2
+                    Invoke(new MethodInvoker(BandStack2Form.Show)); //BandStack2
                     break;
 
                 case EButtonBarActions.eBBBandstack:

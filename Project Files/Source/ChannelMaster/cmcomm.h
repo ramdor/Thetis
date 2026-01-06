@@ -34,6 +34,7 @@ warren@pratt.one
 #include "aamix.h"
 #include "amix.h"
 #include "analyzers.h"
+#include "bandwidth_monitor.h"
 #include "cmasio.h"
 #include "cmaster.h"
 #include "cmbuffs.h"

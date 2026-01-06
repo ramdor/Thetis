@@ -847,17 +847,6 @@ PORT void SetIVACFFAlpha(int id, int type, double ff_alpha)
 	setRMatchFFAlpha(a, ff_alpha);
 	LeaveCriticalSection(&b->cs_ivac);
 }
-//PORT void SetIVACvar(int id, int type, double var)
-//{
-//	IVAC b = pvac[id];
-//	// type = 0 out, 1 = in
-//	void* a;
-//	if (type == 0)
-//		a = b->rmatchOUT;
-//	else
-//		a = b->rmatchIN;
-//	setRMatchVar(a, var);
-//}
 PORT
 void GetIVACControlFlag(int id, int type, int* control_flag)
 {

@@ -614,7 +614,7 @@ namespace Thetis
             int Row;
             int MenuEnumValue;
             int Column = e.ColumnIndex;
-            int CombooValuesRow;                    // row number in the combo box possible values
+            //int CombooValuesRow;                    // row number in the combo box possible values
             int ComboValuesCount;
             int Cntr;
 
@@ -639,8 +639,8 @@ namespace Thetis
             int Index;                          // current pointer position in table
             int StartRow;                       // start row number to delete
             int Cntr;
-            int CellCount;                      // number of rows in table
-            int NewMenuCount;                      // number of menus after delete
+            //int CellCount;                      // number of rows in table
+            //int NewMenuCount;                      // number of menus after delete
             int MenuLink;
             int CurrentRowCount;
             DataRow NewRow;

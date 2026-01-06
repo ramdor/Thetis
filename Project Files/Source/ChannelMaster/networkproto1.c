@@ -158,12 +158,16 @@ int MetisReadDirect(unsigned char* bufp) {
 		errno = WSAGetLastError();
 		if (errno == WSAEWOULDBLOCK || errno == WSAEMSGSIZE)
 		{
-			printf("Error code %d: recvfrom() : %s\n", errno, strerror(errno));
+			char err_text[256];
+			strerror_s(err_text, sizeof(err_text), errno);
+			printf("Error code %d: recvfrom() : %s\n", errno, err_text);
 			fflush(stdout);
 		}
 		LeaveCriticalSection(&prn->rcvpktp1);
 		return rc;
 	}
+
+	bandwidth_monitor_in(rc);
 
 	/* check frame is from who we expect */
 	if (rc == 1032) {   /* looks like a data frame */

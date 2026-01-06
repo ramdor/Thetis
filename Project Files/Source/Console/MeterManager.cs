@@ -8135,7 +8135,6 @@ namespace Thetis
             private int _last_draged_to;
             private bool _has_macro_buttons;
 
-            private bool _process_in_update;
             private Dictionary<OtherButtonId, int> _process_in_update_buttons;
             private readonly object _process_in_update_buttons_lock = new object();
 
@@ -8161,7 +8160,6 @@ namespace Thetis
                 _dragging_index = -1;
                 _last_draged_to = -1;
 
-                _process_in_update = false;
                 _process_in_update_buttons = new Dictionary<OtherButtonId, int>();
 
                 ItemType = MeterItemType.OTHER_BUTTONS;
@@ -8762,7 +8760,6 @@ namespace Thetis
 
                 lock (_process_in_update_buttons_lock)
                 {
-                    _process_in_update = false; // buttons that rely on power state being on
                     _process_in_update_buttons.Clear();
                 }
 
@@ -8796,7 +8793,6 @@ namespace Thetis
                         case OtherButtonId.TWOTON:
                             lock (_process_in_update_buttons_lock)
                             {
-                                _process_in_update = true;
                                 _process_in_update_buttons[id] = i;
                             }
                             sText = OtherButtonIdHelpers.BitToText(bit_group, bit);
@@ -12931,12 +12927,7 @@ namespace Thetis
                                 {
                                     _console.BeginInvoke(new MethodInvoker(() =>
                                     {
-                                        bool setimage = true;
-                                        if (_console.SpotForm != null && !_console.SpotForm.IsDisposed)
-                                        {
-                                            setimage = !_console.SpotForm.TrackingAndMapShown; // do not set if the spot tracking is being used
-                                        }
-                                        if (setimage) _console.PnlDisplayBackgroundImage = bmp;
+                                        _console.PnlDisplayBackgroundImage = bmp;
                                         bmp.Dispose();
                                     }));
                                 }
@@ -13083,12 +13074,7 @@ namespace Thetis
                 {
                     _console.BeginInvoke(new MethodInvoker(() =>
                     {
-                        bool setimage = true;
-                        if (_console.SpotForm != null && !_console.SpotForm.IsDisposed)
-                        {
-                            setimage = !_console.SpotForm.TrackingAndMapShown; // do not set if the spot tracking is being used
-                        }
-                        if (setimage) _console.PnlDisplayBackgroundImage = null;
+                        _console.PnlDisplayBackgroundImage = null;
                     }));
                 }
 
@@ -15480,7 +15466,7 @@ namespace Thetis
         }
         internal class clsFilterItem : clsMeterItem
         {
-            public enum WaterfallPalette
+            public enum FIWaterfallPalette
             {
                 NONE = -1,
                 ENHANCED = 0,
@@ -15491,7 +15477,7 @@ namespace Thetis
                 LINAUTO,
                 CUSTOM
             }
-            public enum DisplayMode
+            public enum FIDisplayMode
             {
                 PANADAPTOR = 0,
                 WATERFALL,
@@ -15570,10 +15556,10 @@ namespace Thetis
             private float _font_scale;
             private bool _tnf_active;
             private int _waterfall_frame_count; // frame count for the waterfall
-            private DisplayMode _display_mode;
+            private FIDisplayMode _display_mode;
             private System.Drawing.Color _dataline_colour;
             private System.Drawing.Color _datafill_colour;
-            private WaterfallPalette _waterfall_palette;
+            private FIWaterfallPalette _waterfall_palette;
             private System.Drawing.Color _waterfall_low_colour;
             private System.Drawing.Color _text_colour;
             private System.Drawing.Color _number_highlight_colour;
@@ -15614,7 +15600,7 @@ namespace Thetis
                 _owningmeter = owning_meter;
                 _ig = item_group;
 
-                _display_mode = DisplayMode.PANAFALL;
+                _display_mode = FIDisplayMode.PANAFALL;
                 _waterfall_frame_interval = 4; // every 4th frame
                 _font_scale = 1f;
                 _fill_spec = true;
@@ -15640,7 +15626,7 @@ namespace Thetis
                 _waterfall_tx_colours = new System.Drawing.Color[101];
                 _dataline_colour = System.Drawing.Color.LimeGreen;
                 _datafill_colour = System.Drawing.Color.LimeGreen;
-                _waterfall_palette = WaterfallPalette.ENHANCED;
+                _waterfall_palette = FIWaterfallPalette.ENHANCED;
                 _waterfall_low_colour = System.Drawing.Color.Black;
                 _text_colour = System.Drawing.Color.White;
                 _number_highlight_colour = System.Drawing.Color.DarkRed;
@@ -15774,7 +15760,7 @@ namespace Thetis
             }
             public System.Drawing.Color DataLineColour { get { return _dataline_colour; } set { _dataline_colour = value; } }
             public System.Drawing.Color DataFillColour { get { return _datafill_colour; } set { _datafill_colour = value; } }
-            public WaterfallPalette WaterfallPal { get { return _waterfall_palette; } set { _waterfall_palette = value; } }
+            public FIWaterfallPalette WaterfallPal { get { return _waterfall_palette; } set { _waterfall_palette = value; } }
             public System.Drawing.Color WaterfallLowColour { get { return _waterfall_low_colour; } set { _waterfall_low_colour = value; } }
             public System.Drawing.Color TextColour { get { return _text_colour; } set { _text_colour = value; } }
             public System.Drawing.Color NumberHighlightColour { get { return _number_highlight_colour; } set { _number_highlight_colour = value; } }
@@ -16017,7 +16003,7 @@ namespace Thetis
                 get { return _font_scale; }
                 set { _font_scale = value; }
             }
-            public DisplayMode DispMode
+            public FIDisplayMode DispMode
             {
                 get { return _display_mode; }
                 set { _display_mode = value; }
@@ -18113,7 +18099,6 @@ namespace Thetis
 
             private string _four_char;
 
-            private bool _process_when_hidden;
             public clsLed(clsMeter owningMeter, clsItemGroup ig)
             {
                 Guid guid;
@@ -18163,8 +18148,6 @@ namespace Thetis
 
                 _show_true = true;
                 _show_false = true;
-
-                _process_when_hidden = false;
 
                 _place_holders = new List<string>();
                 _place_holder_lock = new object();
@@ -24627,14 +24610,14 @@ namespace Thetis
                                             fi.CWScale = igs.GetSetting<float>("filterdisplay_cw_scale", true, 0f, 10f, 0f);
                                             fi.OthersScale = igs.GetSetting<float>("filterdisplay_others_scale", true, 0f, 10f, 0f);
 
-                                            fi.DispMode = igs.GetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", false, MeterManager.clsFilterItem.DisplayMode.PANADAPTOR, MeterManager.clsFilterItem.DisplayMode.NONE, MeterManager.clsFilterItem.DisplayMode.PANAFALL);
+                                            fi.DispMode = igs.GetSetting<MeterManager.clsFilterItem.FIDisplayMode>("filterdisplay_others_displaymode", false, MeterManager.clsFilterItem.FIDisplayMode.PANADAPTOR, MeterManager.clsFilterItem.FIDisplayMode.NONE, MeterManager.clsFilterItem.FIDisplayMode.PANAFALL);
 
                                             fi.FontScale = igs.GetSetting<float>("filterdisplay_font_scale", true, 0.01f, 4f, 1f);
 
                                             fi.FillSpectrum = igs.GetSetting<bool>("filterdisplay_fill_spec", false, false, false, true);
                                             fi.DataLineColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_dataline_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
                                             fi.DataFillColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_datafill_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.LimeGreen);
-                                            fi.WaterfallPal = igs.GetSetting<MeterManager.clsFilterItem.WaterfallPalette>("filterdisplay_wf_palette", false, MeterManager.clsFilterItem.WaterfallPalette.NONE, MeterManager.clsFilterItem.WaterfallPalette.NONE, MeterManager.clsFilterItem.WaterfallPalette.ENHANCED);
+                                            fi.WaterfallPal = igs.GetSetting<MeterManager.clsFilterItem.FIWaterfallPalette>("filterdisplay_wf_palette", false, MeterManager.clsFilterItem.FIWaterfallPalette.NONE, MeterManager.clsFilterItem.FIWaterfallPalette.NONE, MeterManager.clsFilterItem.FIWaterfallPalette.ENHANCED);
                                             fi.WaterfallLowColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_wflow_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.Black);
                                             fi.TextColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_text_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.White);
                                             fi.NumberHighlightColour = igs.GetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", false, System.Drawing.Color.Empty, System.Drawing.Color.Empty, System.Drawing.Color.DarkRed);
@@ -25746,14 +25729,14 @@ namespace Thetis
                                             igs.SetSetting<float>("filterdisplay_cw_scale", fi.CWScale);
                                             igs.SetSetting<float>("filterdisplay_others_scale", fi.OthersScale);
 
-                                            igs.SetSetting<MeterManager.clsFilterItem.DisplayMode>("filterdisplay_others_displaymode", fi.DispMode);
+                                            igs.SetSetting<MeterManager.clsFilterItem.FIDisplayMode>("filterdisplay_others_displaymode", fi.DispMode);
 
                                             igs.SetSetting<float>("filterdisplay_font_scale", fi.FontScale);
 
                                             igs.SetSetting<bool>("filterdisplay_fill_spec", fi.FillSpectrum);
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_dataline_colour", fi.DataLineColour);
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_datafill_colour", fi.DataFillColour);
-                                            igs.SetSetting<MeterManager.clsFilterItem.WaterfallPalette>("filterdisplay_wf_palette", fi.WaterfallPal);
+                                            igs.SetSetting<MeterManager.clsFilterItem.FIWaterfallPalette>("filterdisplay_wf_palette", fi.WaterfallPal);
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_wflow_colour", fi.WaterfallLowColour);
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_text_colour", fi.TextColour);
                                             igs.SetSetting<System.Drawing.Color>("filterdisplay_numberhighlight_colour", fi.NumberHighlightColour);
@@ -28906,7 +28889,12 @@ namespace Thetis
                                     targetHeight = _newTargetHeight;
 
                                     //Debug.Print(">> dx is resizing from dxRender <<");
-                                    if (!resizeDX()) break; // exit do while as resizeDx will have thrown an exception and called shutdowndx
+                                    if (!resizeDX(out string err))
+                                    {
+                                        ShutdownDX();
+                                        MessageBox.Show("Unable to resize DirectX render target (target size changed). DirectX has been shut down.\n\n" + err, "Thetis DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                                        break;
+                                    }
                                 }
 
                                 _renderTarget.BeginDraw();
@@ -28950,8 +28938,9 @@ namespace Thetis
                                 {
                                     if (_dx_fail_retry < 10)
                                     {
-                                        resizeDX();
+                                        resizeDX(out _);
                                         _dx_fail_retry++;
+                                        Thread.Sleep(50);
                                         continue;
                                     }
                                 }
@@ -28978,9 +28967,10 @@ namespace Thetis
                                 {
                                     if ((r == SharpDX.DXGI.ResultCode.DeviceRemoved || r == SharpDX.DXGI.ResultCode.DeviceReset) && _dx_fail_retry < 10)
                                     {
-                                        resizeDX();
+                                        resizeDX(out _);
                                         _dx_fail_retry++;
-                                        return;
+                                        Thread.Sleep(50);
+                                        continue;
                                     }
 
                                     string sMsg = "";
@@ -28989,6 +28979,10 @@ namespace Thetis
                                     if (r == SharpDX.DXGI.ResultCode.DeviceRemoved/*0x887A0005*/) sMsg = "Present Device Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";         //DXGI_ERROR_DEVICE_REMOVED
                                     //if (r == 0x88760870) sMsg = "Present Device DD3DDI Removed" + Environment.NewLine + "" + Environment.NewLine + "[ " + r.ToString() + " ]";  //D3DDDIERR_DEVICEREMOVED
 
+                                    if (_dx_fail_retry > 0)
+                                    {
+                                        sMsg += "\n\nDirectX failures during present have occurred " + _dx_fail_retry.ToString() + " times before this.";
+                                    }
                                     if (sMsg != "") throw (new Exception(sMsg));
                                 }
                             }
@@ -29201,11 +29195,15 @@ namespace Thetis
 
                 return tf;
             }
-            private bool resizeDX()
+            private bool resizeDX(out string error)
             {
                 lock (_DXlock)
                 {
-                    if (!_bDXSetup) return false;
+                    if (!_bDXSetup)
+                    {
+                        error = "DirectX not setup";
+                        return false;
+                    }
 
                     try
                     {
@@ -29229,21 +29227,24 @@ namespace Thetis
                         // clear measure string cache
                         _stringMeasure.Clear();
                         _stringMeasureKeys.Clear();
-                        //
 
+                        error = "";
                         return true;
                     }
                     catch (Exception e)
                     {
-                        string msg = "DirectX resizeDX2D() Meter failure\n\nThis can sometimes be caused by other programs 'hooking' into directX," +
-                            "such as GFX card control software (eg, EVGA Precision Xoc). Close down Thetis, quit as many 'system tray'\nand other " +
-                            "things as possible and try again." + e.Message;
-                        if (_device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceRemoved || _device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceReset)
-                        {
-                            msg += "\n\nDeviceRemoved or DeviceReset reported by DirectX, this indicates a problem with the graphics device or its driver.\n\nRemoval Code : " + _device.DeviceRemovedReason.Code.ToString();
-                        }
-                        ShutdownDX();
-                        MessageBox.Show(msg, "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                        //string msg = "DirectX resizeDX2D() Meter failure\n\nThis can sometimes be caused by other programs 'hooking' into directX," +
+                        //    "such as GFX card control software (eg, EVGA Precision Xoc). Close down Thetis, quit as many 'system tray'\nand other " +
+                        //    "things as possible and try again." + e.Message;
+                        //if (_device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceRemoved || _device.DeviceRemovedReason == SharpDX.DXGI.ResultCode.DeviceReset)
+                        //{
+                        //    msg += "\n\nDeviceRemoved or DeviceReset reported by DirectX, this indicates a problem with the graphics device or its driver.\n\nRemoval Code : " + _device.DeviceRemovedReason.Code.ToString();
+                        //}
+                        //ShutdownDX();
+                        //MessageBox.Show(msg, "DirectX", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+
+                        error = e.Message;
+                        error += "\n\nDeviceRemovedReason : " + _device.DeviceRemovedReason.ToString();
                         return false;
                     }
                 }
@@ -31023,7 +31024,7 @@ namespace Thetis
             {
                 //B8G8R8A8
                 System.Drawing.Color low_colour = filter.WaterfallLowColour;
-                clsFilterItem.WaterfallPalette cScheme = filter.WaterfallPal;
+                clsFilterItem.FIWaterfallPalette cScheme = filter.WaterfallPal;
                 int R = 0, G = 0, B = 0;
                 int pixel_size = 4;
                 int pixel_wdith = MiniSpec.PIXELS;
@@ -31051,7 +31052,7 @@ namespace Thetis
 
                 switch (cScheme)
                 {
-                    case (clsFilterItem.WaterfallPalette.CUSTOM):
+                    case (clsFilterItem.FIWaterfallPalette.CUSTOM):
                         {
                             System.Drawing.Color[] cols;
                             if (filter.MOX)
@@ -31110,7 +31111,7 @@ namespace Thetis
                     //    }
                     //    break;
 
-                    case (clsFilterItem.WaterfallPalette.ENHANCED):
+                    case (clsFilterItem.FIWaterfallPalette.ENHANCED):
                         {
                             // draw new data
                             for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
@@ -31199,7 +31200,7 @@ namespace Thetis
                         }
                         break;
 
-                    case (clsFilterItem.WaterfallPalette.SPECTRAN):
+                    case (clsFilterItem.FIWaterfallPalette.SPECTRAN):
                         {
                             // draw new data
                             for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
@@ -31285,7 +31286,7 @@ namespace Thetis
                         }
                         break;
 
-                    case (clsFilterItem.WaterfallPalette.BLACKWHITE):
+                    case (clsFilterItem.FIWaterfallPalette.BLACKWHITE):
                         {
                             // draw new data
                             for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
@@ -31328,7 +31329,7 @@ namespace Thetis
                         }
                         break;
 
-                    case (clsFilterItem.WaterfallPalette.LINLOG):
+                    case (clsFilterItem.FIWaterfallPalette.LINLOG):
                         {
                             for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
                             {
@@ -31544,7 +31545,7 @@ namespace Thetis
 
                     //  now Linrad palette without log
 
-                    case (clsFilterItem.WaterfallPalette.LINRAD):
+                    case (clsFilterItem.FIWaterfallPalette.LINRAD):
                         {
                             for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
                             {
@@ -31753,7 +31754,7 @@ namespace Thetis
 
                     //  now Linrad palette without log
 
-                    case (clsFilterItem.WaterfallPalette.LINAUTO):
+                    case (clsFilterItem.FIWaterfallPalette.LINAUTO):
                         {
                             for (int i = 0; i < pixel_wdith; i++)   // for each pixel in the new line
                             {
@@ -32225,7 +32226,7 @@ namespace Thetis
                 SharpDX.RectangleF rectSC = new SharpDX.RectangleF(x, y, w, h);
                 _renderTarget.FillRectangle(rectSC, getDXBrushForColour(filter.Colour, mi.FadeValue));
 
-                if (filter.DispMode == clsFilterItem.DisplayMode.WATERFALL || filter.DispMode == clsFilterItem.DisplayMode.PANAFALL)
+                if (filter.DispMode == clsFilterItem.FIDisplayMode.WATERFALL || filter.DispMode == clsFilterItem.FIDisplayMode.PANAFALL)
                 {
                     // build the bitmap
                     setupFilterWaterfallBitmap();
@@ -32341,17 +32342,17 @@ namespace Thetis
                 float spectrum_height = h - ((line_width_half + tsl.Height) * 2f); // between top/bottom lines
                 float top_pos = y + line_width_half + tsl.Height;
                 float bot_pos = y + h - line_width_half - tsl.Height;
-                if (filter.DispMode == clsFilterItem.DisplayMode.PANAFALL) spectrum_height /= 2f; // half display, spectrum at the top, lower will be waterfall
+                if (filter.DispMode == clsFilterItem.FIDisplayMode.PANAFALL) spectrum_height /= 2f; // half display, spectrum at the top, lower will be waterfall
 
                 //spectrum + waterfall display
-                if (filter.DispMode != clsFilterItem.DisplayMode.NONE)
+                if (filter.DispMode != clsFilterItem.FIDisplayMode.NONE)
                 {
                     lock (filter.SpectrumDataLock)
                     {
                         int tot_data = filter.SpectrumData.Length;
                         float x_step = width_between_slopes / tot_data;                                                
 
-                        if (filter.DispMode == clsFilterItem.DisplayMode.PANADAPTOR || filter.DispMode == clsFilterItem.DisplayMode.PANAFALL)
+                        if (filter.DispMode == clsFilterItem.FIDisplayMode.PANADAPTOR || filter.DispMode == clsFilterItem.FIDisplayMode.PANAFALL)
                         {
                             float spec_range = filter.SpectrumGridRange;
                             int grid_max = filter.SpectrumGridMax;
@@ -32425,7 +32426,7 @@ namespace Thetis
 
                             _renderTarget.AntialiasMode = old_mode;
                         }
-                        if (_filter_display_waterfall_bmp != null && _filter_display_waterfall_bmp_tx != null && (filter.DispMode == clsFilterItem.DisplayMode.WATERFALL || filter.DispMode == clsFilterItem.DisplayMode.PANAFALL))
+                        if (_filter_display_waterfall_bmp != null && _filter_display_waterfall_bmp_tx != null && (filter.DispMode == clsFilterItem.FIDisplayMode.WATERFALL || filter.DispMode == clsFilterItem.FIDisplayMode.PANAFALL))
                         {
                             //waterfall
                             if (m.Power)
@@ -32464,7 +32465,7 @@ namespace Thetis
                             }
 
                             //render waterfall
-                            float top_y = y + line_width_half + tsl.Height + (filter.DispMode == clsFilterItem.DisplayMode.PANAFALL ? spectrum_height : 0);
+                            float top_y = y + line_width_half + tsl.Height + (filter.DispMode == clsFilterItem.FIDisplayMode.PANAFALL ? spectrum_height : 0);
                             SharpDX.RectangleF clip_rect = new SharpDX.RectangleF(extent_l, top_y, width_between_slopes, spectrum_height);
                             float bitmap_height = Math.Max(_filter_display_waterfall_bmp.Size.Height, spectrum_height);
 
@@ -37879,6 +37880,7 @@ namespace Thetis
                         try
                         {
                             _tcpClient = _tcpListener.AcceptTcpClient();
+                            MultiMeterIO.ClientConnected?.Invoke(_guid);
                             _tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                             // stop listening for new
                             if (started)
@@ -38029,6 +38031,7 @@ namespace Thetis
                                     Thread.Sleep(1);
 
                             }
+                            MultiMeterIO.ClientDisconnected?.Invoke(_guid);
                             if (_isRunning && !started)
                             {
                                 _tcpListener.Start();

@@ -6,6 +6,15 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 
 ## Join us on Discord for active test builds and much more : [Click Here](https://discord.gg/6fHCRKnDc9)
 
+## v2.10.3.13 - Development Change Log
+- [add] debug/test option to ignore ATT offset in displays and signal meters. Thetis identifies as an Icom !
+- [add] bandwidth debug/test option to visualise the data in/out of Thetis
+- [add] option for NR3 (RNnoise) to use a fixed gain for samples, the value of which is taken from VU3RDD's modified WDSP version
+- [change] better handing of DirectX failure
+- [change] if cpu% fails to show due to PerformaceCounter issues, the Volts/Amps will now not hide as a result of the failure if configured. Note: There is a discord post regarding recovery of the PerformaceCounters : https://discord.com/channels/1271453528656969789/1452525256303710228
+- [change] the legacy spot support and code has been removed as it was not being maintained as had many issue. Use a 3rd party app via TCI such as Cluster-TCI-Bridge by OE3IDE to provide spots to the spectrum
+
+
 ## v2.10.3.12 - Change Log
 - [add] you can pick a directx device using -adaptor:# from the command line. Use Thetis.exe -help for more information
 - [add] ability to load rnnoise model binary files added

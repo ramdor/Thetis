@@ -61,7 +61,7 @@ namespace Thetis
 	{
 		#region Variable Declaration
 
-        private static Bitmap ke9ns_bmp;                    // ke9ns add call sign waterfall tx id
+        //private static Bitmap ke9ns_bmp;                    // ke9ns add call sign waterfall tx id
         
         private Console console;
 		//private WaveOptions WaveOptions;
@@ -102,7 +102,7 @@ namespace Thetis
         public CheckBoxTS TXIDBoxTS;
         private MenuStrip menuStripOptions;
         private ToolStripMenuItem optionsToolStripMenuItem;
-        private IContainer components;
+        //private IContainer components;
         private bool _restoring_controls;
 
         #region Constructor and Destructor
@@ -146,13 +146,13 @@ namespace Thetis
 
 		protected override void Dispose( bool disposing )
 		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
+			//if( disposing )
+			//{
+			//	if(components != null)
+			//	{
+			//		components.Dispose();
+			//	}
+			//}
 			base.Dispose( disposing );
 		}
 
@@ -1304,10 +1304,10 @@ namespace Thetis
 		//
 		//	Record & Playback are always to the same file:  SDRQuickAudio.wav
 		//
-		private bool temp_record = false;
+		//private bool temp_record = false;
 		private bool temp_play = false;
 		private bool temp_mon = false;
-        private byte temp_pre = 0; // ke9ns add for quickplay function
+        //private byte temp_pre = 0; // ke9ns add for quickplay function
         private bool temp_txeq = false;
 		private bool temp_cpdr = false;
 		private bool temp_dx = false;
@@ -1691,32 +1691,32 @@ namespace Thetis
         public DSPMode BandL = 0;
         private void createBoxTS_CheckedChanged(object sender, EventArgs e)
         {
-            if (_restoring_controls) return;
+            //if (_restoring_controls) return;
 
-            if (createBoxTS.Checked)
-            {
-                //  Debug.WriteLine("check create");
+            //if (createBoxTS.Checked)
+            //{
+            //    //  Debug.WriteLine("check create");
 
-                if ((console.Callsign != console.LastCall) || (console.RX1DSPMode != BandL))  // check if we need to create a new wave file or use the old one.
-                {
-                    Thread t = new Thread(new ThreadStart(CreateWaterfallID))
-                    {
-                        Name = "Create Waterfall ID wave file Thread",
-                        IsBackground = true,
-                        Priority = ThreadPriority.Normal
-                    };
-                    t.Start();
-                } // console.Callsign != console.LastCall) || (console.RX1DSPMode != BandL))
-                else
-                {
-                    //dd console.callsignTextBox.BackColor = Color.MediumSpringGreen;  // green if your last callsign is still a valid wave
-                    //console.menuStrip1.Invalidate();
-                    //console.menuStrip1.Update();
-                    //createBoxTS.Checked = false;  // do only 1 time
-                }
+            //    if ((console.Callsign != console.LastCall) || (console.RX1DSPMode != BandL))  // check if we need to create a new wave file or use the old one.
+            //    {
+            //        Thread t = new Thread(new ThreadStart(CreateWaterfallID))
+            //        {
+            //            Name = "Create Waterfall ID wave file Thread",
+            //            IsBackground = true,
+            //            Priority = ThreadPriority.Normal
+            //        };
+            //        t.Start();
+            //    } // console.Callsign != console.LastCall) || (console.RX1DSPMode != BandL))
+            //    else
+            //    {
+            //        //dd console.callsignTextBox.BackColor = Color.MediumSpringGreen;  // green if your last callsign is still a valid wave
+            //        //console.menuStrip1.Invalidate();
+            //        //console.menuStrip1.Update();
+            //        //createBoxTS.Checked = false;  // do only 1 time
+            //    }
 
 
-            } // createBoxTS.Checked)
+            //} // createBoxTS.Checked)
 
 
         }// createBoxTS_CheckedChanged
@@ -1726,478 +1726,478 @@ namespace Thetis
         // ke9ns add   THREAD process to create wave file from text or bitmap image here
         //============================================================================================
         //============================================================================================
-        private void CreateWaterfallID()
-        {
+        //private void CreateWaterfallID()
+        //{
 
 
-            string file_name = console.AppDataPath + "ke9ns.wav"; // TEXT to waterfall image only
-            string file_name1 = console.AppDataPath + "ke9ns.bmp"; // image file to waterfall
+        //    string file_name = console.AppDataPath + "ke9ns.wav"; // TEXT to waterfall image only
+        //    string file_name1 = console.AppDataPath + "ke9ns.bmp"; // image file to waterfall
 
 
-            //dd console.callsignTextBox.BackColor = Color.PaleVioletRed; // let user know your creating a new wave file
-            //console.menuStrip1.Invalidate();
-            //console.menuStrip1.Update();
+        //    //dd console.callsignTextBox.BackColor = Color.PaleVioletRed; // let user know your creating a new wave file
+        //    //console.menuStrip1.Invalidate();
+        //    //console.menuStrip1.Update();
 
 
-            //console.LastCall = console.Callsign;        // check if changed callsign, mode, or sample rate
-            //samplesPerSecondL = console.SampleRate1;
-            //BandL = console.RX1DSPMode;
+        //    //console.LastCall = console.Callsign;        // check if changed callsign, mode, or sample rate
+        //    //samplesPerSecondL = console.SampleRate1;
+        //    //BandL = console.RX1DSPMode;
 
-            int IMAGE = 0;                      // 0=text, 1=image
+        //    int IMAGE = 0;                      // 0=text, 1=image
 
-            //  t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
-            //  t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+        //    //  t.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
+        //    //  t.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("en-US");
 
-            if (console.Callsign.EndsWith(".") == true)
-            {
-                IMAGE = 1; // get real image file
+        //    if (console.Callsign.EndsWith(".") == true)
+        //    {
+        //        IMAGE = 1; // get real image file
 
-                file_name1 = console.AppDataPath + console.Callsign + "bmp";    //    image file to waterfall
+        //        file_name1 = console.AppDataPath + console.Callsign + "bmp";    //    image file to waterfall
 
-            }
+        //    }
 
-            double bright = 400;      // was 300 amplitude factor
+        //    double bright = 400;      // was 300 amplitude factor
 
-            int n1 = 0;   // used by USB/LSB routine
-            int n2 = 0;
-            int n3 = 0;
-            int n4 = 0;
-            SizeF cl = new SizeF();  // determine left or right side of bitmap
+        //    int n1 = 0;   // used by USB/LSB routine
+        //    int n2 = 0;
+        //    int n3 = 0;
+        //    int n4 = 0;
+        //    SizeF cl = new SizeF();  // determine left or right side of bitmap
 
-            const int fontS = 12; // was 12
+        //    const int fontS = 12; // was 12
 
-            int ym = 22; // height was 22
-            int xm = 80; // width was 80
+        //    int ym = 22; // height was 22
+        //    int xm = 80; // width was 80
 
-            long xm4 = 4 * ((xm + 3) / 4);
+        //    long xm4 = 4 * ((xm + 3) / 4);
 
-            const float bw = .114F;   // factors to convert RGB color to grayscale
-            const float gw = .587F;
-            const float rw = .2989F;
+        //    const float bw = .114F;   // factors to convert RGB color to grayscale
+        //    const float gw = .587F;
+        //    const float rw = .2989F;
 
-            byte[,] ap = new byte[xm + 10, ym + 10];  // get bitmap data
+        //    byte[,] ap = new byte[xm + 10, ym + 10];  // get bitmap data
 
 
-            //=========================================================================================
-            //=========================================================================================
-            // Choose TEXT or BITMAP
-            //=========================================================================================
-            //=========================================================================================
+        //    //=========================================================================================
+        //    //=========================================================================================
+        //    // Choose TEXT or BITMAP
+        //    //=========================================================================================
+        //    //=========================================================================================
 
-            if (IMAGE == 0) // text = 0
-            {
+        //    if (IMAGE == 0) // text = 0
+        //    {
 
 
-                //=========================================================================================
-                // 24bit TEXT Bitmap Generate and SCAN
-                //=========================================================================================
+        //        //=========================================================================================
+        //        // 24bit TEXT Bitmap Generate and SCAN
+        //        //=========================================================================================
 
-                ke9ns_bmp = new Bitmap(xm, ym, PixelFormat.Format24bppRgb);  // initialize bitmap for call sign insertion
-                Graphics g1 = Graphics.FromImage(ke9ns_bmp);
+        //        ke9ns_bmp = new Bitmap(xm, ym, PixelFormat.Format24bppRgb);  // initialize bitmap for call sign insertion
+        //        Graphics g1 = Graphics.FromImage(ke9ns_bmp);
 
-                g1.SmoothingMode = SmoothingMode.AntiAlias;
-                g1.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g1.PixelOffsetMode = PixelOffsetMode.HighQuality;
+        //        g1.SmoothingMode = SmoothingMode.AntiAlias;
+        //        g1.InterpolationMode = InterpolationMode.HighQualityBicubic;
+        //        g1.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                Pen p = new Pen(Color.AntiqueWhite, 1);                // pen color white
-                g1.DrawRectangle(p, 1, 4, xm - 1, ym - 4);      // draw box
+        //        Pen p = new Pen(Color.AntiqueWhite, 1);                // pen color white
+        //        g1.DrawRectangle(p, 1, 4, xm - 1, ym - 4);      // draw box
 
 
-                n4 = 0;          //  USB 
+        //        n4 = 0;          //  USB 
 
-                cl = g1.MeasureString(console.Callsign, new Font("Microsft Sans Serif", fontS)); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space
-                cl.Width = (xm / 2) - (cl.Width / 2);
-                cl.Height = (ym / 2) - (cl.Height / 2) + 2;
+        //        cl = g1.MeasureString(console.Callsign, new Font("Microsft Sans Serif", fontS)); //  temp used to determine the size of the string when in LSB and you need to reserve a certain space
+        //        cl.Width = (xm / 2) - (cl.Width / 2);
+        //        cl.Height = (ym / 2) - (cl.Height / 2) + 2;
 
-                //===========================================================================================
-                // find if USB or LSB on RX1 or RX2 ?
+        //        //===========================================================================================
+        //        // find if USB or LSB on RX1 or RX2 ?
 
-                if (console.VFOATX)
-                {
-                    if (console.RX1DSPMode == DSPMode.LSB) n4 = 1;
+        //        if (console.VFOATX)
+        //        {
+        //            if (console.RX1DSPMode == DSPMode.LSB) n4 = 1;
 
-                }
-                else // not vfoa
-                {
-                    if (console.RX2DSPMode == DSPMode.LSB) n4 = 1;  //  for (int n = 1; n != xm; n=n+1)  // displays right to left  (LSB) 
+        //        }
+        //        else // not vfoa
+        //        {
+        //            if (console.RX2DSPMode == DSPMode.LSB) n4 = 1;  //  for (int n = 1; n != xm; n=n+1)  // displays right to left  (LSB) 
 
-                } // vfoA
+        //        } // vfoA
 
 
-                g1.DrawString(console.Callsign, new Font("Microsft Sans Serif", fontS), Brushes.AntiqueWhite, cl.Width, cl.Height); // determine USB or LSB, then draw callsign into bitmap
-                g1.Flush();  // done with graphic function
+        //        g1.DrawString(console.Callsign, new Font("Microsft Sans Serif", fontS), Brushes.AntiqueWhite, cl.Width, cl.Height); // determine USB or LSB, then draw callsign into bitmap
+        //        g1.Flush();  // done with graphic function
 
 
-                //=======================================================================
-                // CONVERT BITMAP into ARRAY of float values for brightness x,y
-                // ap[,] = vales between 0 and 1 (0=dark, 255=white)
+        //        //=======================================================================
+        //        // CONVERT BITMAP into ARRAY of float values for brightness x,y
+        //        // ap[,] = vales between 0 and 1 (0=dark, 255=white)
 
 
-                for (int y = ym - 1; y >= 0; y--) // image is saved in correct direction
-                {
+        //        for (int y = ym - 1; y >= 0; y--) // image is saved in correct direction
+        //        {
 
-                    for (int n = 0; n != xm; n++)  // 
-                    {
-                        // look at picture data and pick color based on index value found, AND invert so white = BLACK (no signal) , white = full signal (thats the 255- part)
-                        // the /255 is to convert down to a 
+        //            for (int n = 0; n != xm; n++)  // 
+        //            {
+        //                // look at picture data and pick color based on index value found, AND invert so white = BLACK (no signal) , white = full signal (thats the 255- part)
+        //                // the /255 is to convert down to a 
 
-                        if (n4 == 0) // USB
-                        {
-                            Color pixel = ke9ns_bmp.GetPixel(n, y);                                  // bitmap is correct x direction but y is backwards
-                            ap[n, ym - y - 1] = (byte)(((bw * (float)pixel.B) + (gw * (float)pixel.G) + (rw * (float)pixel.R)));
-                        }
-                        else // LSB  
-                        {
-                            Color pixel = ke9ns_bmp.GetPixel(n, y);                                 // Both x and y are backwards
-                            ap[xm - n, ym - y - 1] = (byte)(((bw * (float)pixel.B) + (gw * (float)pixel.G) + (rw * (float)pixel.R)));
-                        }
-                    } // X
+        //                if (n4 == 0) // USB
+        //                {
+        //                    Color pixel = ke9ns_bmp.GetPixel(n, y);                                  // bitmap is correct x direction but y is backwards
+        //                    ap[n, ym - y - 1] = (byte)(((bw * (float)pixel.B) + (gw * (float)pixel.G) + (rw * (float)pixel.R)));
+        //                }
+        //                else // LSB  
+        //                {
+        //                    Color pixel = ke9ns_bmp.GetPixel(n, y);                                 // Both x and y are backwards
+        //                    ap[xm - n, ym - y - 1] = (byte)(((bw * (float)pixel.B) + (gw * (float)pixel.G) + (rw * (float)pixel.R)));
+        //                }
+        //            } // X
 
-                } // Y
+        //        } // Y
 
 
-                ke9ns_bmp.Dispose(); // text image
-                g1.Dispose();
+        //        ke9ns_bmp.Dispose(); // text image
+        //        g1.Dispose();
 
 
-                //===========================================================================================
-                // end TEXT  BITMAP 24bit
+        //        //===========================================================================================
+        //        // end TEXT  BITMAP 24bit
 
-            } // IMAGE 0=text here
-            else
-            {
+        //    } // IMAGE 0=text here
+        //    else
+        //    {
 
-                //=========================================================================================
-                // Get 24bit or 8bpp Bitmap Image loaded up 
-                //=========================================================================================
+        //        //=========================================================================================
+        //        // Get 24bit or 8bpp Bitmap Image loaded up 
+        //        //=========================================================================================
 
-                if (!File.Exists(file_name1))
-                {
-                    MessageBox.Show("Filename doesn't exist. (" + file_name1 + ")",
-                        "Bad Filename",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                    TXIDBoxTS.Checked = false;
+        //        if (!File.Exists(file_name1))
+        //        {
+        //            MessageBox.Show("Filename doesn't exist. (" + file_name1 + ")",
+        //                "Bad Filename",
+        //                MessageBoxButtons.OK,
+        //                MessageBoxIcon.Error);
+        //            TXIDBoxTS.Checked = false;
 
-                  //d  console.TXIDMenuItem.Checked = false;  // turn off TX waterfall ID here
+        //          //d  console.TXIDMenuItem.Checked = false;  // turn off TX waterfall ID here
 
-                    createBoxTS.Checked = false;  // do only 1 time
+        //            createBoxTS.Checked = false;  // do only 1 time
 
-                    return;
-                }
+        //            return;
+        //        }
 
-                FileStream stream1 = new FileStream(file_name1, FileMode.Open); // open BMP  file
-                BinaryReader reader = new BinaryReader(stream1);
+        //        FileStream stream1 = new FileStream(file_name1, FileMode.Open); // open BMP  file
+        //        BinaryReader reader = new BinaryReader(stream1);
 
-                reader.ReadChars(10);               // ignore BM characters to start bitmap header
-                long hrdlen = reader.ReadInt32();   // offset in bitmap to first byte of image data
-                reader.ReadChars(4);                // header size ignore
-                long xm1 = reader.ReadInt32();       // width in pixels
-                long ym1 = reader.ReadInt32();       // height in pixels
-                reader.ReadBytes(2);                // color plane assumed to be 1
-                int bpp = reader.ReadInt16();       // reader.ReadBytes(2);                // bpp assumed to be 8bpp
-                reader.ReadBytes(24);               // ignore rest of header to get to color values (255 in 8bpp set)
+        //        reader.ReadChars(10);               // ignore BM characters to start bitmap header
+        //        long hrdlen = reader.ReadInt32();   // offset in bitmap to first byte of image data
+        //        reader.ReadChars(4);                // header size ignore
+        //        long xm1 = reader.ReadInt32();       // width in pixels
+        //        long ym1 = reader.ReadInt32();       // height in pixels
+        //        reader.ReadBytes(2);                // color plane assumed to be 1
+        //        int bpp = reader.ReadInt16();       // reader.ReadBytes(2);                // bpp assumed to be 8bpp
+        //        reader.ReadBytes(24);               // ignore rest of header to get to color values (255 in 8bpp set)
 
-                xm = (int)xm1;                      // convert to xm 
-                ym = (int)ym1;                      // convert to ym 
+        //        xm = (int)xm1;                      // convert to xm 
+        //        ym = (int)ym1;                      // convert to ym 
 
 
-                int color24 = 1;
+        //        int color24 = 1;
 
-                if (bpp == 24) color24 = 1;
-                else color24 = 0;
+        //        if (bpp == 24) color24 = 1;
+        //        else color24 = 0;
 
 
-                //=========================================================================================
-                // 24 bit color Image bitmap scan
-                //=========================================================================================
+        //        //=========================================================================================
+        //        // 24 bit color Image bitmap scan
+        //        //=========================================================================================
 
-                if (color24 == 1)  // 24bpp color grayscale (no color index needed)
-                {
+        //        if (color24 == 1)  // 24bpp color grayscale (no color index needed)
+        //        {
 
-                    xm4 = xm;
+        //            xm4 = xm;
 
-                    ap = new Byte[xm + 10, ym + 10];  // convert to grayscale
+        //            ap = new Byte[xm + 10, ym + 10];  // convert to grayscale
 
 
-                    //===========================================================================================
-                    // find if USB or LSB on RX1 or RX2 ?
+        //            //===========================================================================================
+        //            // find if USB or LSB on RX1 or RX2 ?
 
-                    n4 = 0;  //  USB 
+        //            n4 = 0;  //  USB 
 
-                    if (console.VFOATX)
-                    {
-                        if (console.RX1DSPMode == DSPMode.LSB) n4 = 1;
+        //            if (console.VFOATX)
+        //            {
+        //                if (console.RX1DSPMode == DSPMode.LSB) n4 = 1;
 
-                    }
-                    else // not vfoa
-                    {
-                        if (console.RX2DSPMode == DSPMode.LSB) n4 = 1;
+        //            }
+        //            else // not vfoa
+        //            {
+        //                if (console.RX2DSPMode == DSPMode.LSB) n4 = 1;
 
-                    } // vfoA
+        //            } // vfoA
 
 
-                    //=============================================================================================
-                    // convert bitmap into grayscale bitmap corrected for sending
-                    // ap[,] = vales between 0 and 1 (0=dark, 255=white)
+        //            //=============================================================================================
+        //            // convert bitmap into grayscale bitmap corrected for sending
+        //            // ap[,] = vales between 0 and 1 (0=dark, 255=white)
 
-                    for (int y = 0; y < ym; y++) // image is saved in correct direction
-                    {
-                        for (int n = 0; n != xm; n++)  // 
-                        {
-                            // look at picture data and pick color based on index value found, AND invert so white = BLACK (no signal) , white = full signal (thats the 255- part)
-                            // the /255 is to convert down to a 
+        //            for (int y = 0; y < ym; y++) // image is saved in correct direction
+        //            {
+        //                for (int n = 0; n != xm; n++)  // 
+        //                {
+        //                    // look at picture data and pick color based on index value found, AND invert so white = BLACK (no signal) , white = full signal (thats the 255- part)
+        //                    // the /255 is to convert down to a 
 
-                            if (n4 == 0) // USB
-                            {
-                                ap[n, y] = (byte)(255 - (byte)((bw * (float)reader.ReadByte()) + (gw * (float)reader.ReadByte()) + (rw * (float)reader.ReadByte())));
-                                if (ap[n, y] < 20) ap[n, y] = 0;
+        //                    if (n4 == 0) // USB
+        //                    {
+        //                        ap[n, y] = (byte)(255 - (byte)((bw * (float)reader.ReadByte()) + (gw * (float)reader.ReadByte()) + (rw * (float)reader.ReadByte())));
+        //                        if (ap[n, y] < 20) ap[n, y] = 0;
 
-                            }
-                            else // LSB  
-                            {
-                                ap[xm - n, y] = (byte)(255 - (byte)((bw * (float)reader.ReadByte()) + (gw * (float)reader.ReadByte()) + (rw * (float)reader.ReadByte())));
-                                if (ap[xm - n, y] < 20) ap[xm - n, y] = 0;
-                            }
+        //                    }
+        //                    else // LSB  
+        //                    {
+        //                        ap[xm - n, y] = (byte)(255 - (byte)((bw * (float)reader.ReadByte()) + (gw * (float)reader.ReadByte()) + (rw * (float)reader.ReadByte())));
+        //                        if (ap[xm - n, y] < 20) ap[xm - n, y] = 0;
+        //                    }
 
-                        } // X
+        //                } // X
 
-                    } // Y
+        //            } // Y
 
 
-                } // color24 ==1
+        //        } // color24 ==1
 
-                //=========================================================================================
-                // 256 color 8bpp Image bitmap scan
-                //=========================================================================================
+        //        //=========================================================================================
+        //        // 256 color 8bpp Image bitmap scan
+        //        //=========================================================================================
 
-                else   // 8bpp 256 color grayscale
-                {
+        //        else   // 8bpp 256 color grayscale
+        //        {
 
-                    byte[] col = new Byte[255 + 1];  // color map
-                    xm4 = 4 * ((xm + 3) / 4);
-                    byte[] ri = new byte[xm4 + 1];
+        //            byte[] col = new Byte[255 + 1];  // color map
+        //            xm4 = 4 * ((xm + 3) / 4);
+        //            byte[] ri = new byte[xm4 + 1];
 
-                    ap = new byte[xm4 + 10, ym + 10];  // get bitmap data
-                    // ap1 = new float[xm4 + 10, ym + 10];  // convert to grayscale
+        //            ap = new byte[xm4 + 10, ym + 10];  // get bitmap data
+        //            // ap1 = new float[xm4 + 10, ym + 10];  // convert to grayscale
 
-                    // color mapping
-                    for (int n = 0; n < 256; n++)
-                    {
-                        col[n] = (byte)((bw * (float)reader.ReadByte()) + (gw * (float)reader.ReadByte()) + (rw * (float)reader.ReadByte()));
-                        reader.ReadByte(); // ignore 4th byte
-                    }
+        //            // color mapping
+        //            for (int n = 0; n < 256; n++)
+        //            {
+        //                col[n] = (byte)((bw * (float)reader.ReadByte()) + (gw * (float)reader.ReadByte()) + (rw * (float)reader.ReadByte()));
+        //                reader.ReadByte(); // ignore 4th byte
+        //            }
 
-                    //===========================================================================================
-                    // find if USB or LSB on RX1 or RX2 ?
+        //            //===========================================================================================
+        //            // find if USB or LSB on RX1 or RX2 ?
 
-                    if (console.VFOATX)
-                    {
-                        if (console.RX1DSPMode == DSPMode.LSB)
-                        {
-                            n1 = 1;
-                            n2 = xm;
-                            n3 = 1;
-                            n4 = 1;
-                        }
-                        else
-                        {
-                            n2 = 0;
-                            n1 = xm;
-                            n3 = -1;
-                            n4 = 0;  //  USB must flip around here
-                        }
-                    }
-                    else // not vfoa
-                    {
-                        if (console.RX2DSPMode == DSPMode.LSB)   //  for (int n = 1; n != xm; n=n+1)  // displays right to left  (LSB) 
-                        {
-                            n1 = 1;
-                            n2 = xm;
-                            n3 = 1;
-                            n4 = 1;
-                        }
-                        else //  for (int n = (int)xm; n != 0; n--)  // displays correctly left to right (USB)
-                        {
-                            n2 = 0;
-                            n1 = xm;
-                            n3 = -1;
-                            n4 = 0;  //  USB must flip around here
-                        }
+        //            if (console.VFOATX)
+        //            {
+        //                if (console.RX1DSPMode == DSPMode.LSB)
+        //                {
+        //                    n1 = 1;
+        //                    n2 = xm;
+        //                    n3 = 1;
+        //                    n4 = 1;
+        //                }
+        //                else
+        //                {
+        //                    n2 = 0;
+        //                    n1 = xm;
+        //                    n3 = -1;
+        //                    n4 = 0;  //  USB must flip around here
+        //                }
+        //            }
+        //            else // not vfoa
+        //            {
+        //                if (console.RX2DSPMode == DSPMode.LSB)   //  for (int n = 1; n != xm; n=n+1)  // displays right to left  (LSB) 
+        //                {
+        //                    n1 = 1;
+        //                    n2 = xm;
+        //                    n3 = 1;
+        //                    n4 = 1;
+        //                }
+        //                else //  for (int n = (int)xm; n != 0; n--)  // displays correctly left to right (USB)
+        //                {
+        //                    n2 = 0;
+        //                    n1 = xm;
+        //                    n3 = -1;
+        //                    n4 = 0;  //  USB must flip around here
+        //                }
 
-                    } // vfoA
+        //            } // vfoA
 
-                    //=============================================================================================
-                    // convert bitmap into grayscale bitmap corrected for sending
-                    // float ap[,] = vales between 0 and 1 (0=dark, 255=white)
+        //            //=============================================================================================
+        //            // convert bitmap into grayscale bitmap corrected for sending
+        //            // float ap[,] = vales between 0 and 1 (0=dark, 255=white)
 
 
-                    for (int y = 0; y < ym; y++) // image is saved in correct direction
-                    {
-                        ri = reader.ReadBytes((int)xm4);                // get entire line of bitmap X
+        //            for (int y = 0; y < ym; y++) // image is saved in correct direction
+        //            {
+        //                ri = reader.ReadBytes((int)xm4);                // get entire line of bitmap X
 
-                        for (int n = n1; n != n2; n = n + n3)  // 
-                        {
-                            // look at picture data and pick color based on index value found, AND invert so white = BLACK (no signal), white = full signal
+        //                for (int n = n1; n != n2; n = n + n3)  // 
+        //                {
+        //                    // look at picture data and pick color based on index value found, AND invert so white = BLACK (no signal), white = full signal
 
-                            if (n4 == 0) // USB
-                            {
-                                ap[n1 - n, y] = (byte)((byte)255 - col[ri[xm - n]]);  // flip
-                                if (ap[n1 - n, y] < 5) ap[n1 - n, y] = 0;
+        //                    if (n4 == 0) // USB
+        //                    {
+        //                        ap[n1 - n, y] = (byte)((byte)255 - col[ri[xm - n]]);  // flip
+        //                        if (ap[n1 - n, y] < 5) ap[n1 - n, y] = 0;
 
-                            }
-                            else // LSB
-                            {
-                                ap[n, y] = (byte)((byte)255 - col[ri[xm - n]]); // dont flip
-                                if (ap[n, y] < 5) ap[n, y] = 0;
+        //                    }
+        //                    else // LSB
+        //                    {
+        //                        ap[n, y] = (byte)((byte)255 - col[ri[xm - n]]); // dont flip
+        //                        if (ap[n, y] < 5) ap[n, y] = 0;
 
-                            }
+        //                    }
 
-                        } // X
+        //                } // X
 
-                    } // Y
+        //            } // Y
 
-                } // color24 == 0 8bpp 
+        //        } // color24 == 0 8bpp 
 
 
-                reader.Close();    // close wav file
-                stream1.Close();   // close stream
+        //        reader.Close();    // close wav file
+        //        stream1.Close();   // close stream
 
-                //===============================================================================
-                // end IMAGE bitmap
+        //        //===============================================================================
+        //        // end IMAGE bitmap
 
-            } // IMAGE == 1 image file
+        //    } // IMAGE == 1 image file
 
 
 
-            //=========================================================================================
-            // Digital PCM  setup and file creation
-            //=========================================================================================
+        //    //=========================================================================================
+        //    // Digital PCM  setup and file creation
+        //    //=========================================================================================
 
-            FileStream stream = new FileStream(file_name, FileMode.Create); // create a wav file
-            BinaryWriter writer = new BinaryWriter(stream);                   // create a stream to write to the wav file
+        //    FileStream stream = new FileStream(file_name, FileMode.Create); // create a wav file
+        //    BinaryWriter writer = new BinaryWriter(stream);                   // create a stream to write to the wav file
 
-            //=================================================
-            // .wav header
-            const int RIFF = 0x46464952;                      // 0x46464952  (0x52494646 big-endian form).
-            const int WAVE = 0x45564157;                      // 0x45564157  (0x57415645 big-endian form).
-            const int formatChunkSize = 16;                   // 16
-            const int headerSize = 8;                         // 8
-            const int format = 0x20746D66;                    // 0x20746D66   0x666d7420
-            const short formatType = 1;                       // 1 PCM
-            const short tracks = 1;                           // 1 Stereo = 2
-            const int samplesPerSecond = 48000;                     // console.SampleRate1;    (fixed flex routine to resample audio to correct SR)
-            const short bitsPerSample = 16;                         // 16
+        //    //=================================================
+        //    // .wav header
+        //    const int RIFF = 0x46464952;                      // 0x46464952  (0x52494646 big-endian form).
+        //    const int WAVE = 0x45564157;                      // 0x45564157  (0x57415645 big-endian form).
+        //    const int formatChunkSize = 16;                   // 16
+        //    const int headerSize = 8;                         // 8
+        //    const int format = 0x20746D66;                    // 0x20746D66   0x666d7420
+        //    const short formatType = 1;                       // 1 PCM
+        //    const short tracks = 1;                           // 1 Stereo = 2
+        //    const int samplesPerSecond = 48000;                     // console.SampleRate1;    (fixed flex routine to resample audio to correct SR)
+        //    const short bitsPerSample = 16;                         // 16
 
-            short frameSize = (short)(tracks * ((bitsPerSample + 7) / 8));   // tracks 2.875  @ 8000 sps
+        //    short frameSize = (short)(tracks * ((bitsPerSample + 7) / 8));   // tracks 2.875  @ 8000 sps
 
-            int bytesPerSecond = samplesPerSecond * frameSize;              // 23000 bytes per second
+        //    int bytesPerSecond = samplesPerSecond * frameSize;              // 23000 bytes per second
 
-            int waveSize = ym;
+        //    int waveSize = ym;
 
-            const int lowtx = 150;
-            const int bandpass = 2400;
+        //    const int lowtx = 150;
+        //    const int bandpass = 2400;
 
-            int t2 = 2;                                                     // divide the time for each line (this controls how long each line takes)
+        //    int t2 = 2;                                                     // divide the time for each line (this controls how long each line takes)
 
-            if (IMAGE == 1)
-            {
-                float t3 = ((float)xm / (float)ym);         // picture ratio to maintain in waterfall (80w x 80h = 1) (200w x 150h = 1.33) (80w x 20h = 4)
-                // float t4 = ((float)bandpass / (float)xm);  // number of freqs in width of images (200w = 13hz per pixel)longer time .076pix/hz,  (80w= 30hz per pixel)shorter time.033pix/hz
-                t2 = (int)((float)xm * 2 / 20 / t3);// t2 small means long vertical , t2 big means short (20 is max)
+        //    if (IMAGE == 1)
+        //    {
+        //        float t3 = ((float)xm / (float)ym);         // picture ratio to maintain in waterfall (80w x 80h = 1) (200w x 150h = 1.33) (80w x 20h = 4)
+        //        // float t4 = ((float)bandpass / (float)xm);  // number of freqs in width of images (200w = 13hz per pixel)longer time .076pix/hz,  (80w= 30hz per pixel)shorter time.033pix/hz
+        //        t2 = (int)((float)xm * 2 / 20 / t3);// t2 small means long vertical , t2 big means short (20 is max)
 
-                if (t2 > 20) t2 = 20;
-            }
+        //        if (t2 > 20) t2 = 20;
+        //    }
 
 
-            int data = 0x61746164;                                          // (0x64617461 big-endian form).
+        //    int data = 0x61746164;                                          // (0x64617461 big-endian form).
 
-            int samples = (samplesPerSecond * 2) * waveSize / t2;            // file size               //88200 * 4 = 352800
+        //    int samples = (samplesPerSecond * 2) * waveSize / t2;            // file size               //88200 * 4 = 352800
 
-            int dataChunkSize = samples * frameSize / 2;                        // 46000 
+        //    int dataChunkSize = samples * frameSize / 2;                        // 46000 
 
-            int fileSize = (waveSize) + headerSize + formatChunkSize + headerSize + dataChunkSize;
+        //    int fileSize = (waveSize) + headerSize + formatChunkSize + headerSize + dataChunkSize;
 
 
-            writer.Write(RIFF);                            // write header to file
-            writer.Write(fileSize);
-            writer.Write(WAVE);
-            writer.Write(format);
-            writer.Write(formatChunkSize);
-            writer.Write(formatType);
-            writer.Write(tracks);
-            writer.Write(samplesPerSecond);
-            writer.Write(bytesPerSecond);
-            writer.Write(frameSize);
-            writer.Write(bitsPerSample);
-            writer.Write(data);
-            writer.Write(dataChunkSize);
+        //    writer.Write(RIFF);                            // write header to file
+        //    writer.Write(fileSize);
+        //    writer.Write(WAVE);
+        //    writer.Write(format);
+        //    writer.Write(formatChunkSize);
+        //    writer.Write(formatType);
+        //    writer.Write(tracks);
+        //    writer.Write(samplesPerSecond);
+        //    writer.Write(bytesPerSecond);
+        //    writer.Write(frameSize);
+        //    writer.Write(bitsPerSample);
+        //    writer.Write(data);
+        //    writer.Write(dataChunkSize);
 
-            //==============================================================
-            // used if you want the waterfall to be as wide as your transmission bandpass
-            //  int lowtx = console.TXFilterLow;
-            //  int hightx = console.TXFilterHigh;
-            //   int tottx = hightx - lowtx; // band width
+        //    //==============================================================
+        //    // used if you want the waterfall to be as wide as your transmission bandpass
+        //    //  int lowtx = console.TXFilterLow;
+        //    //  int hightx = console.TXFilterHigh;
+        //    //   int tottx = hightx - lowtx; // band width
 
 
-            int hzperpixel = (int)(((float)bandpass / (float)xm) + .5);    // keep image 2khz wide always  25hz/pix
+        //    int hzperpixel = (int)(((float)bandpass / (float)xm) + .5);    // keep image 2khz wide always  25hz/pix
 
 
-            int sample2 = samplesPerSecond / t2;      // samples2 = the amount of time spent on each y1 line
+        //    int sample2 = samplesPerSecond / t2;      // samples2 = the amount of time spent on each y1 line
 
-            // ap[,] = vales between 0 and 1 (0=dark, 255=white)
+        //    // ap[,] = vales between 0 and 1 (0=dark, 255=white)
 
-            bright = bright / (float)xm; // correct brightness level of PCM audio by how many freq points go into each pass
+        //    bright = bright / (float)xm; // correct brightness level of PCM audio by how many freq points go into each pass
 
-            //=========================================================================================
-            // Create Digital PCM Stream
-            //=========================================================================================
+        //    //=========================================================================================
+        //    // Create Digital PCM Stream
+        //    //=========================================================================================
 
-            for (int y1 = 0; y1 < ym; y1++)   // each line (bottom of bitmap is first line out)
-            {
+        //    for (int y1 = 0; y1 < ym; y1++)   // each line (bottom of bitmap is first line out)
+        //    {
 
-                for (int n = 0; n < sample2; n++)           //  (generate tone) 
-                {
-                    double t = (double)n / (double)(samplesPerSecond * 2);          // used to generate a tone
+        //        for (int n = 0; n < sample2; n++)           //  (generate tone) 
+        //        {
+        //            double t = (double)n / (double)(samplesPerSecond * 2);          // used to generate a tone
 
-                    double temp7 = 0.0;
-                    int i = 0;
+        //            double temp7 = 0.0;
+        //            int i = 0;
 
-                    //===========================================================
-                    // depending on width of bitmap, display within 150 hz to 2550hz
+        //            //===========================================================
+        //            // depending on width of bitmap, display within 150 hz to 2550hz
 
-                    for (float freq = lowtx; freq < (bandpass + lowtx); freq = freq + hzperpixel)             // add up all the frequencies from each line(row) of the bitmap into 1 signal
-                    {
-                        temp7 = temp7 + ((double)ap[i++, y1] * (Math.Sin(t * (double)freq * 2.0 * Math.PI)));  // generate individual tone 
+        //            for (float freq = lowtx; freq < (bandpass + lowtx); freq = freq + hzperpixel)             // add up all the frequencies from each line(row) of the bitmap into 1 signal
+        //            {
+        //                temp7 = temp7 + ((double)ap[i++, y1] * (Math.Sin(t * (double)freq * 2.0 * Math.PI)));  // generate individual tone 
 
-                    } // freq loop
+        //            } // freq loop
 
-                    //============================================================
+        //            //============================================================
 
 
-                    short s = (short)(temp7 * bright);
+        //            short s = (short)(temp7 * bright);
 
-                    writer.Write(s);  // left 16bits
-                    //   writer.Write(s);  // right 16bits (this channel is needed by Flex Quickplay routine)
+        //            writer.Write(s);  // left 16bits
+        //            //   writer.Write(s);  // right 16bits (this channel is needed by Flex Quickplay routine)
 
-                } // n  X  1 line at a time
+        //        } // n  X  1 line at a time
 
-            } // Y
+        //    } // Y
 
 
-            writer.Close();    // close wav file
-            stream.Close();   // close stream
+        //    writer.Close();    // close wav file
+        //    stream.Close();   // close stream
 
 
 
-            //dd console.callsignTextBox.BackColor = Color.MediumSpringGreen;  // green if you created it or its still a valid wave
-            //console.menuStrip1.Invalidate();
-            //console.menuStrip1.Update();
+        //    //dd console.callsignTextBox.BackColor = Color.MediumSpringGreen;  // green if you created it or its still a valid wave
+        //    //console.menuStrip1.Invalidate();
+        //    //console.menuStrip1.Update();
 
 
-            createBoxTS.Checked = false;  // do only 1 time
+        //    createBoxTS.Checked = false;  // do only 1 time
 
-        } // CreateWaterfallID (this is run as a Thread)
+        //} // CreateWaterfallID (this is run as a Thread)
 
 
 

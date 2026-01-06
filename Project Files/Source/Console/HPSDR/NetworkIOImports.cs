@@ -395,5 +395,11 @@ namespace Thetis
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int I2CResponse(byte[] read_data);                                 // MI0BIT: I2C read response for HL2                               
 
+        //bandwdith monitoring
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double GetInboundBps();
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern double GetOutboundBps();
     }
 }

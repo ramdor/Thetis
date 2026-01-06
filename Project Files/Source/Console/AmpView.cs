@@ -325,7 +325,6 @@ namespace Thetis
 
         private bool _init = true;
         private bool _is_closing = false;
-        private bool _in_timer = false;
 
         private void chkStayOnTop_CheckedChanged(object sender, EventArgs e)
         {

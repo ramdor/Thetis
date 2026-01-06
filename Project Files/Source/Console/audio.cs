@@ -1002,7 +1002,6 @@ namespace Thetis
             set
             {
                 vac1_oldVarIn = value;
-                //ivac.SetIVACvar(0, 1, vac1_oldVarIn); // used in vac enable only
             }
         }
         public static bool VAC1ControlFlagIn
@@ -1083,7 +1082,6 @@ namespace Thetis
             set
             {
                 vac1_oldVarOut = value;
-                //ivac.SetIVACvar(0, 0, vac1_oldVarOut);  // used in vac enable only
             }
         }
         public static bool VAC1ControlFlagOut
@@ -1163,7 +1161,6 @@ namespace Thetis
             set
             {
                 vac2_oldVarIn = value;
-                //ivac.SetIVACvar(1, 1, vac2_oldVarIn);  // used in vac enable only
             }
         }
         public static bool VAC2ControlFlagIn
@@ -1243,7 +1240,6 @@ namespace Thetis
             set
             {
                 vac2_oldVarOut = value;
-                //ivac.SetIVACvar(1, 0, vac2_oldVarOut);  // used in vac enable only
             }
         }
         public static bool VAC2ControlFlagOut
@@ -1706,8 +1702,6 @@ namespace Thetis
                     ivac.SetIVACFFAlpha(0, 0, vac1_ff_alphaOut);
                     ivac.SetIVACFFAlpha(0, 1, vac1_ff_alphaIn);
                     ivac.SetIVACswapIQout(0, _swap_iq_vac1);
-                    //ivac.SetIVACvar(0, 0, vac1_oldVarOut);
-                    //ivac.SetIVACvar(0, 1, vac1_oldVarIn);
                     ivac.SetIVACinitialVars(0, vac1_oldVarIn, vac1_oldVarOut);
                     //
 
@@ -1788,8 +1782,6 @@ namespace Thetis
                     ivac.SetIVACFFAlpha(1, 0, vac2_ff_alphaOut);
                     ivac.SetIVACFFAlpha(1, 1, vac2_ff_alphaIn);
                     ivac.SetIVACswapIQout(1, _swap_iq_vac2);
-                    //ivac.SetIVACvar(1, 0, vac2_oldVarOut);
-                    //ivac.SetIVACvar(1, 1, vac2_oldVarIn);
                     ivac.SetIVACinitialVars(1, vac2_oldVarIn, vac2_oldVarOut);
                     //
 

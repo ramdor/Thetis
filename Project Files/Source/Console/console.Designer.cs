@@ -472,7 +472,6 @@
         private LabelTS lblRX2APF;
         private ToolStripMenuItem wBToolStripMenuItem;
         private ToolStripMenuItem pIToolStripMenuItem;
-        public ToolStripMenuItem spotterMenu;
         // G8NJJ
         private LabelTS lblVFOSyncLabel;
         private LabelTS lblNRLabel;
@@ -748,7 +747,6 @@
             this.cWXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eSCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.spotterMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.displayControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bandControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1799,7 +1797,6 @@
             this.chkRX2NR.Name = "chkRX2NR";
             this.chkRX2NR.ThreeState = true;
             this.toolTip1.SetToolTip(this.chkRX2NR, resources.GetString("chkRX2NR.ToolTip"));
-            this.chkRX2NR.CheckStateChanged += new System.EventHandler(this.chkRX2NR_CheckStateChanged);
             this.chkRX2NR.Click += new System.EventHandler(this.chkRX2NR_Click);
             this.chkRX2NR.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkRX2NR_MouseDown);
             // 
@@ -2429,7 +2426,6 @@
             this.chkNR.Name = "chkNR";
             this.chkNR.ThreeState = true;
             this.toolTip1.SetToolTip(this.chkNR, resources.GetString("chkNR.ToolTip"));
-            this.chkNR.CheckStateChanged += new System.EventHandler(this.chkNR_CheckStateChanged);
             this.chkNR.Click += new System.EventHandler(this.chkNR_Click);
             this.chkNR.MouseDown += new System.Windows.Forms.MouseEventHandler(this.chkNR_MouseDown);
             // 
@@ -3052,7 +3048,6 @@
             this.radBand160.UseVisualStyleBackColor = true;
             this.radBand160.CheckedChanged += new System.EventHandler(this.radBand_CheckedChanged);
             this.radBand160.Click += new System.EventHandler(this.radBand160_Click);
-            this.radBand160.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand160_MouseDown);
             // 
             // radBandGEN
             // 
@@ -3089,7 +3084,6 @@
             this.radBand6.UseVisualStyleBackColor = true;
             this.radBand6.CheckedChanged += new System.EventHandler(this.radBand_CheckedChanged);
             this.radBand6.Click += new System.EventHandler(this.radBand6_Click);
-            this.radBand6.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand6_MouseDown);
             // 
             // radBand10
             // 
@@ -3102,7 +3096,6 @@
             this.radBand10.UseVisualStyleBackColor = true;
             this.radBand10.CheckedChanged += new System.EventHandler(this.radBand_CheckedChanged);
             this.radBand10.Click += new System.EventHandler(this.radBand10_Click);
-            this.radBand10.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand10_MouseDown);
             // 
             // radBand12
             // 
@@ -3115,7 +3108,6 @@
             this.radBand12.UseVisualStyleBackColor = true;
             this.radBand12.CheckedChanged += new System.EventHandler(this.radBand_CheckedChanged);
             this.radBand12.Click += new System.EventHandler(this.radBand12_Click);
-            this.radBand12.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand12_MouseDown);
             // 
             // radBand15
             // 
@@ -3128,7 +3120,6 @@
             this.radBand15.UseVisualStyleBackColor = true;
             this.radBand15.CheckedChanged += new System.EventHandler(this.radBand_CheckedChanged);
             this.radBand15.Click += new System.EventHandler(this.radBand15_Click);
-            this.radBand15.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand15_MouseDown);
             // 
             // radBand17
             // 
@@ -3141,7 +3132,6 @@
             this.radBand17.UseVisualStyleBackColor = true;
             this.radBand17.CheckedChanged += new System.EventHandler(this.radBand_CheckedChanged);
             this.radBand17.Click += new System.EventHandler(this.radBand17_Click);
-            this.radBand17.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand17_MouseDown);
             // 
             // radBand20
             // 
@@ -3154,7 +3144,6 @@
             this.radBand20.UseVisualStyleBackColor = true;
             this.radBand20.CheckedChanged += new System.EventHandler(this.radBand_CheckedChanged);
             this.radBand20.Click += new System.EventHandler(this.radBand20_Click);
-            this.radBand20.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand20_MouseDown);
             // 
             // radBand30
             // 
@@ -3167,7 +3156,6 @@
             this.radBand30.UseVisualStyleBackColor = true;
             this.radBand30.CheckedChanged += new System.EventHandler(this.radBand_CheckedChanged);
             this.radBand30.Click += new System.EventHandler(this.radBand30_Click);
-            this.radBand30.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand30_MouseDown);
             // 
             // radBand40
             // 
@@ -3180,7 +3168,6 @@
             this.radBand40.UseVisualStyleBackColor = true;
             this.radBand40.CheckedChanged += new System.EventHandler(this.radBand_CheckedChanged);
             this.radBand40.Click += new System.EventHandler(this.radBand40_Click);
-            this.radBand40.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand40_MouseDown);
             // 
             // radBand60
             // 
@@ -3193,7 +3180,6 @@
             this.radBand60.UseVisualStyleBackColor = true;
             this.radBand60.CheckedChanged += new System.EventHandler(this.radBand_CheckedChanged);
             this.radBand60.Click += new System.EventHandler(this.radBand60_Click);
-            this.radBand60.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand60_MouseDown);
             // 
             // radBand80
             // 
@@ -3206,7 +3192,6 @@
             this.radBand80.UseVisualStyleBackColor = true;
             this.radBand80.CheckedChanged += new System.EventHandler(this.radBand_CheckedChanged);
             this.radBand80.Click += new System.EventHandler(this.radBand80_Click);
-            this.radBand80.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBand80_MouseDown);
             // 
             // chkMUT
             // 
@@ -3528,7 +3513,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN13, resources.GetString("radBandGEN13.ToolTip"));
             this.radBandGEN13.UseVisualStyleBackColor = true;
             this.radBandGEN13.Click += new System.EventHandler(this.radBandGEN13_Click);
-            this.radBandGEN13.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN13_MouseDown);
             // 
             // radBandGEN12
             // 
@@ -3540,7 +3524,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN12, resources.GetString("radBandGEN12.ToolTip"));
             this.radBandGEN12.UseVisualStyleBackColor = false;
             this.radBandGEN12.Click += new System.EventHandler(this.radBandGEN12_Click);
-            this.radBandGEN12.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN12_MouseDown);
             // 
             // radBandGEN11
             // 
@@ -3552,7 +3535,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN11, resources.GetString("radBandGEN11.ToolTip"));
             this.radBandGEN11.UseVisualStyleBackColor = true;
             this.radBandGEN11.Click += new System.EventHandler(this.radBandGEN11_Click);
-            this.radBandGEN11.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN11_MouseDown);
             // 
             // radBandGEN10
             // 
@@ -3564,7 +3546,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN10, resources.GetString("radBandGEN10.ToolTip"));
             this.radBandGEN10.UseVisualStyleBackColor = true;
             this.radBandGEN10.Click += new System.EventHandler(this.radBandGEN10_Click);
-            this.radBandGEN10.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN10_MouseDown);
             // 
             // radBandGEN9
             // 
@@ -3576,7 +3557,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN9, resources.GetString("radBandGEN9.ToolTip"));
             this.radBandGEN9.UseVisualStyleBackColor = true;
             this.radBandGEN9.Click += new System.EventHandler(this.radBandGEN9_Click);
-            this.radBandGEN9.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN9_MouseDown);
             // 
             // radBandGEN8
             // 
@@ -3588,7 +3568,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN8, resources.GetString("radBandGEN8.ToolTip"));
             this.radBandGEN8.UseVisualStyleBackColor = true;
             this.radBandGEN8.Click += new System.EventHandler(this.radBandGEN8_Click);
-            this.radBandGEN8.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN8_MouseDown);
             // 
             // radBandGEN7
             // 
@@ -3600,7 +3579,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN7, resources.GetString("radBandGEN7.ToolTip"));
             this.radBandGEN7.UseVisualStyleBackColor = true;
             this.radBandGEN7.Click += new System.EventHandler(this.radBandGEN7_Click);
-            this.radBandGEN7.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN7_MouseDown);
             // 
             // radBandGEN6
             // 
@@ -3612,7 +3590,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN6, resources.GetString("radBandGEN6.ToolTip"));
             this.radBandGEN6.UseVisualStyleBackColor = true;
             this.radBandGEN6.Click += new System.EventHandler(this.radBandGEN6_Click);
-            this.radBandGEN6.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN6_MouseDown);
             // 
             // radBandGEN5
             // 
@@ -3624,7 +3601,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN5, resources.GetString("radBandGEN5.ToolTip"));
             this.radBandGEN5.UseVisualStyleBackColor = true;
             this.radBandGEN5.Click += new System.EventHandler(this.radBandGEN5_Click);
-            this.radBandGEN5.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN5_MouseDown);
             // 
             // radBandGEN4
             // 
@@ -3636,7 +3612,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN4, resources.GetString("radBandGEN4.ToolTip"));
             this.radBandGEN4.UseVisualStyleBackColor = true;
             this.radBandGEN4.Click += new System.EventHandler(this.radBandGEN4_Click);
-            this.radBandGEN4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN4_MouseDown);
             // 
             // radBandGEN3
             // 
@@ -3648,7 +3623,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN3, resources.GetString("radBandGEN3.ToolTip"));
             this.radBandGEN3.UseVisualStyleBackColor = true;
             this.radBandGEN3.Click += new System.EventHandler(this.radBandGEN3_Click);
-            this.radBandGEN3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN3_MouseDown);
             // 
             // radBandGEN2
             // 
@@ -3660,7 +3634,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN2, resources.GetString("radBandGEN2.ToolTip"));
             this.radBandGEN2.UseVisualStyleBackColor = true;
             this.radBandGEN2.Click += new System.EventHandler(this.radBandGEN2_Click);
-            this.radBandGEN2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN2_MouseDown);
             // 
             // radBandGEN1
             // 
@@ -3672,7 +3645,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN1, resources.GetString("radBandGEN1.ToolTip"));
             this.radBandGEN1.UseVisualStyleBackColor = true;
             this.radBandGEN1.Click += new System.EventHandler(this.radBandGEN1_Click);
-            this.radBandGEN1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN1_MouseDown);
             // 
             // radBandGEN0
             // 
@@ -3684,7 +3656,6 @@
             this.toolTip1.SetToolTip(this.radBandGEN0, resources.GetString("radBandGEN0.ToolTip"));
             this.radBandGEN0.UseVisualStyleBackColor = true;
             this.radBandGEN0.Click += new System.EventHandler(this.radBandGEN0_Click);
-            this.radBandGEN0.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandGEN0_MouseDown);
             // 
             // chkRxAnt
             // 
@@ -4134,7 +4105,6 @@
             this.cWXToolStripMenuItem,
             this.eSCToolStripMenuItem,
             this.collapseToolStripMenuItem,
-            this.spotterMenu,
             this.displayControlsToolStripMenuItem,
             this.dSPToolStripMenuItem,
             this.bandToolStripMenuItem,
@@ -4226,13 +4196,6 @@
             this.collapseToolStripMenuItem.Name = "collapseToolStripMenuItem";
             resources.ApplyResources(this.collapseToolStripMenuItem, "collapseToolStripMenuItem");
             this.collapseToolStripMenuItem.Click += new System.EventHandler(this.CollapseToolStripMenuItem_Click);
-            // 
-            // spotterMenu
-            // 
-            this.spotterMenu.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.spotterMenu.Name = "spotterMenu";
-            resources.ApplyResources(this.spotterMenu, "spotterMenu");
-            this.spotterMenu.Click += new System.EventHandler(this.spotterMenu_Click);
             // 
             // displayControlsToolStripMenuItem
             // 
@@ -7250,7 +7213,6 @@
             this.radBandVHF13.TabStop = true;
             this.radBandVHF13.UseVisualStyleBackColor = true;
             this.radBandVHF13.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF13.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF13_MouseDown);
             // 
             // radBandVHF12
             // 
@@ -7261,7 +7223,6 @@
             this.radBandVHF12.TabStop = true;
             this.radBandVHF12.UseVisualStyleBackColor = true;
             this.radBandVHF12.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF12.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF12_MouseDown);
             // 
             // radBandVHF11
             // 
@@ -7272,7 +7233,6 @@
             this.radBandVHF11.TabStop = true;
             this.radBandVHF11.UseVisualStyleBackColor = true;
             this.radBandVHF11.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF11.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF11_MouseDown);
             // 
             // radBandVHF10
             // 
@@ -7283,7 +7243,6 @@
             this.radBandVHF10.TabStop = true;
             this.radBandVHF10.UseVisualStyleBackColor = true;
             this.radBandVHF10.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF10.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF10_MouseDown);
             // 
             // radBandVHF9
             // 
@@ -7294,7 +7253,6 @@
             this.radBandVHF9.TabStop = true;
             this.radBandVHF9.UseVisualStyleBackColor = true;
             this.radBandVHF9.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF9.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF9_MouseDown);
             // 
             // radBandVHF8
             // 
@@ -7305,7 +7263,6 @@
             this.radBandVHF8.TabStop = true;
             this.radBandVHF8.UseVisualStyleBackColor = true;
             this.radBandVHF8.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF8.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF8_MouseDown);
             // 
             // radBandVHF7
             // 
@@ -7316,7 +7273,6 @@
             this.radBandVHF7.TabStop = true;
             this.radBandVHF7.UseVisualStyleBackColor = true;
             this.radBandVHF7.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF7.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF7_MouseDown);
             // 
             // radBandVHF6
             // 
@@ -7327,7 +7283,6 @@
             this.radBandVHF6.TabStop = true;
             this.radBandVHF6.UseVisualStyleBackColor = true;
             this.radBandVHF6.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF6.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF6_MouseDown);
             // 
             // radBandVHF5
             // 
@@ -7338,7 +7293,6 @@
             this.radBandVHF5.TabStop = true;
             this.radBandVHF5.UseVisualStyleBackColor = true;
             this.radBandVHF5.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF5.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF5_MouseDown);
             // 
             // radBandVHF4
             // 
@@ -7349,7 +7303,6 @@
             this.radBandVHF4.TabStop = true;
             this.radBandVHF4.UseVisualStyleBackColor = true;
             this.radBandVHF4.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF4_MouseDown);
             // 
             // radBandVHF3
             // 
@@ -7360,7 +7313,6 @@
             this.radBandVHF3.TabStop = true;
             this.radBandVHF3.UseVisualStyleBackColor = true;
             this.radBandVHF3.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF3_MouseDown);
             // 
             // radBandVHF2
             // 
@@ -7371,7 +7323,6 @@
             this.radBandVHF2.TabStop = true;
             this.radBandVHF2.UseVisualStyleBackColor = true;
             this.radBandVHF2.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF2_MouseDown);
             // 
             // radBandVHF1
             // 
@@ -7382,7 +7333,6 @@
             this.radBandVHF1.TabStop = true;
             this.radBandVHF1.UseVisualStyleBackColor = true;
             this.radBandVHF1.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF1_MouseDown);
             // 
             // radBandVHF0
             // 
@@ -7393,7 +7343,6 @@
             this.radBandVHF0.TabStop = true;
             this.radBandVHF0.UseVisualStyleBackColor = true;
             this.radBandVHF0.Click += new System.EventHandler(this.radBandVHF_Click);
-            this.radBandVHF0.MouseDown += new System.Windows.Forms.MouseEventHandler(this.radBandVHF0_MouseDown);
             // 
             // panelModeSpecificFM
             // 

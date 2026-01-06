@@ -105,9 +105,6 @@ namespace Thetis
 			TxAnt[idx] = ant;
 		} 
 
-
-		private bool AlexEnableIsStateSaved = false; 
-		private bool AlexEnableSavedState;
         public static Band AntBandFromFreq(double freq)
         {
             Band result;

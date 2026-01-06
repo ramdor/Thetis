@@ -439,13 +439,6 @@
               />
 		</Component>
 		<Component Guid="*">
-			<File Id="System.ValueTupleDLL"
-				  Source="$(var.FilesPath)System.ValueTuple.dll"
-				  KeyPath="yes"
-              />
-		</Component>
-
-		<Component Guid="*">
 			<File Id="HtmlAgilityPackDLL"
 				  Source="$(var.FilesPath)HtmlAgilityPack.dll"
 				  KeyPath="yes"
