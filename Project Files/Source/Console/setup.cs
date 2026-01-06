@@ -20237,8 +20237,8 @@ namespace Thetis
                     chkRX2StepAtt.Visible = false;
                     udHermesStepAttenuatorDataRX2.Visible = false;
                     udHermesStepAttenuatorDataRX2.Minimum = (decimal)-28;
-                    udHermesStepAttenuatorData.Maximum = 32;
-                    udHermesStepAttenuatorDataRX2.Maximum = 32;
+                    udHermesStepAttenuatorData.Maximum = 31;
+                    udHermesStepAttenuatorDataRX2.Maximum = 31;
                     grpMetisAddr.Text = "Hermes Lite Address";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;

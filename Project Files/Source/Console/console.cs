@@ -1981,8 +1981,8 @@ namespace Thetis
                 ptbTune.SmallChange = 3;
 
                 // MI0BOT: Changes for HL2 having a greater range of LNA 
-                udRX1StepAttData.Maximum = 32;
-                udRX2StepAttData.Maximum = 32;
+                udRX1StepAttData.Maximum = 31;
+                udRX2StepAttData.Maximum = 31;
                 udRX1StepAttData.Minimum = -28;
                 udRX2StepAttData.Minimum = -28;
                 udTXStepAttData.Minimum = -28;
