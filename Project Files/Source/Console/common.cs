@@ -175,6 +175,42 @@ namespace Thetis
     //        return Math.Abs(d) < Epsilon;
     //    }
     //}
+
+    //Code to handle enum renaming during deserialization
+    //needed for DisplayMode and WaterfallPalette where they have been renamed
+    //however the serialized data still has the old names
+    public sealed class TypeRenameBinder : SerializationBinder
+    {
+        private readonly Dictionary<string, Type> _map;
+
+        public TypeRenameBinder(Dictionary<string, Type> map)
+        {
+            _map = map;
+        }
+
+        public TypeRenameBinder Add(string oldFullName, Type newType)
+        {
+            _map[oldFullName] = newType;
+            return this;
+        }
+
+        public override Type BindToType(string assemblyName, string typeName)
+        {
+            Type mapped;
+
+            if (_map.TryGetValue(typeName, out mapped))
+                return mapped;
+
+            return Type.GetType(typeName + ", " + assemblyName, true);
+        }
+
+        public static TypeRenameBinder Create()
+        {
+            return new TypeRenameBinder(new Dictionary<string, Type>(StringComparer.Ordinal));
+        }
+    }
+    //
+
     public static class Common
 	{
 		public const MessageBoxOptions MB_TOPMOST = (MessageBoxOptions)0x00040000L; //MW0LGE_21g TOPMOST for MessageBox
@@ -1100,8 +1136,18 @@ namespace Thetis
             {
                 using (GZipStream gzipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
                 {
-                    IFormatter formatter = new BinaryFormatter();
-                    return (T)formatter.Deserialize(gzipStream);
+                    BinaryFormatter formatter = new BinaryFormatter();
+
+                    // required to handle renamed types in Thetis.MeterManager.clsFilterItem
+                    // DisplayMode and WaterfallPalette enums
+                    TypeRenameBinder binder = TypeRenameBinder.Create()
+                        .Add("Thetis.MeterManager+clsFilterItem+DisplayMode", typeof(MeterManager.clsFilterItem.FIDisplayMode))
+                        .Add("Thetis.MeterManager+clsFilterItem+WaterfallPalette", typeof(MeterManager.clsFilterItem.FIWaterfallPalette));
+
+                    formatter.Binder = binder;
+
+                    object obj = formatter.Deserialize(gzipStream);
+                    return (T)obj;
                 }
             }
         }

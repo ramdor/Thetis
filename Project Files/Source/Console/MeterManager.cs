@@ -1409,9 +1409,7 @@ namespace Thetis
         }
         public class clsIGSettings
         {
-            // TODO change all these unique settings to a Dictionary collection   _settings = new Dictionary<string, object>
             private ConcurrentDictionary<string, object> _settings;
-            //
 
             private int _updateInterval;
             private float _decay;
@@ -1463,9 +1461,7 @@ namespace Thetis
 
             public clsIGSettings()
             {
-                //
                 _settings = new ConcurrentDictionary<string, object>();
-                //
 
                 _readingSource = Reading.NONE;
                 _barStyle = clsBarItem.BarStyle.None;
