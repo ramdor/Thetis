@@ -219,7 +219,7 @@ namespace Thetis
         private int rx2_meter_peak_value;					// Value for peak hold on multimeter
         public int pa_fwd_power;							// forward power as read by the ADC on the PA
         public int pa_rev_power;							// reverse power as read by the ADC on the PA
-        private bool tuning;								// true when the TUN button is active
+        private bool _tuning;								// true when the TUN button is active
         public float[][] rx1_level_table;					// table used to store RX1 Level cal settings
         public float[][] rx2_level_table;					// table used to store RX2 Level cal settings
 
@@ -5761,7 +5761,7 @@ namespace Thetis
 
             if (disable_split_on_bandchange)
             {
-                if (RX1Band != b && !tuning)
+                if (RX1Band != b && !_tuning)
                 {
                     if (chkVFOSplit.Checked)
                         chkVFOSplit.Checked = false;
@@ -5808,7 +5808,7 @@ namespace Thetis
 
             if (disable_split_on_bandchange && !bIngoreBandChange) //[2.10.3.6]MW0LGE might need to ignore this is we are using extended and band is moved to a hamband
             {
-                if (TXBand != b && !tuning)
+                if (TXBand != b && !_tuning)
                 {
                     if (chkVFOSplit.Checked)
                         chkVFOSplit.Checked = false;
@@ -9591,7 +9591,7 @@ namespace Thetis
                     {
                         Audio.SourceScale = 1.0;
                         Audio.TXInputSignal = Audio.SignalSource.SINE;
-                        tuning = true;
+                        _tuning = true;
                         chkMOX.Checked = true;
 
                         for (int j = 0; j < on_time / 100; j++)
@@ -9606,7 +9606,7 @@ namespace Thetis
                         watts = alex_fwd;
 
                         chkMOX.Checked = false;
-                        tuning = false;
+                        _tuning = false;
 
                         Audio.TXInputSignal = Audio.SignalSource.RADIO;
 
@@ -9661,7 +9661,7 @@ namespace Thetis
             chkCPDR.Checked = cpdr;
 
             chkMOX.Checked = false;
-            tuning = false;
+            _tuning = false;
 
             Audio.TXInputSignal = Audio.SignalSource.RADIO;
             Audio.TXOutputSignal = Audio.SignalSource.RADIO;
@@ -14078,7 +14078,7 @@ namespace Thetis
                 {
                     Band lo_band = BandByFreq(XVTRForm.TranslateFreq(VFOAFreq), rx1_xvtr_index, current_region);
                     Band lo_bandb = BandByFreq(XVTRForm.TranslateFreq(VFOBFreq), rx2_xvtr_index, current_region);
-                    int bits = Penny.getPenny().ExtCtrlEnable(lo_band, lo_bandb, _mox, value, tuning, SetupForm.TestIMD, chkExternalPA.Checked); // MW0LGE_21j
+                    int bits = Penny.getPenny().ExtCtrlEnable(lo_band, lo_bandb, _mox, value, _tuning, SetupForm.TestIMD, chkExternalPA.Checked); // MW0LGE_21j
                     if (!IsSetupFormNull) SetupForm.UpdateOCLedStrip(_mox, bits);
                 }
             }
@@ -23937,7 +23937,7 @@ namespace Thetis
             }
             _MKIIPAVolts = 0f;
             _MKIIPAAmps = 0;
-
+            
             //there is no clear for ConcurrentQueues, we need to dequeue to clear
             int tries;
             tries = _voltsQueue.Count;
@@ -28075,7 +28075,7 @@ namespace Thetis
 
                 if (penny_ext_ctrl_enabled) //MW0LGE_21k
                 {
-                    int bits = Penny.getPenny().UpdateExtCtrl(lo_band, lo_bandb, _mox, tuning, SetupForm.TestIMD, chkExternalPA.Checked); //MW0LGE_21j
+                    int bits = Penny.getPenny().UpdateExtCtrl(lo_band, lo_bandb, _mox, _tuning, SetupForm.TestIMD, chkExternalPA.Checked); //MW0LGE_21j
                     if (!IsSetupFormNull) SetupForm.UpdateOCLedStrip(_mox, bits);
                 }
 
@@ -28126,7 +28126,7 @@ namespace Thetis
 
                 if (penny_ext_ctrl_enabled) //MW0LGE_21k
                 {
-                    int bits = Penny.getPenny().UpdateExtCtrl(lo_band, lo_bandb, _mox, tuning, SetupForm.TestIMD, chkExternalPA.Checked); //MW0LGE_21j
+                    int bits = Penny.getPenny().UpdateExtCtrl(lo_band, lo_bandb, _mox, _tuning, SetupForm.TestIMD, chkExternalPA.Checked); //MW0LGE_21j
                     if (!IsSetupFormNull) SetupForm.UpdateOCLedStrip(_mox, bits);
                 }
 
@@ -28987,7 +28987,7 @@ namespace Thetis
         }
         private async void chkTUN_CheckedChanged(object sender, System.EventArgs e)
         {
-            bool oldTune = tuning; //MW0LGE_21k9d
+            bool oldTune = _tuning; //MW0LGE_21k9d
 
             if (chkTUN.Checked)
             {
@@ -29015,7 +29015,7 @@ namespace Thetis
                 }
                 //
 
-                tuning = true;                                                  // used for a few things
+                _tuning = true;                                                  // used for a few things
                 chkTUN.BackColor = button_selected_color;
 
                 old_meter_tx_mode_before_tune = current_meter_tx_mode;
@@ -29129,7 +29129,7 @@ namespace Thetis
                         CWFWKeyer = true;
                         break;
                 }
-                tuning = false;
+                _tuning = false;
 
                 updateVFOFreqs(chkTUN.Checked, true);
 
@@ -29164,7 +29164,7 @@ namespace Thetis
 
             setupTuneDriveSlider(); // MW0LGE_22b
 
-            if (oldTune != tuning) TuneChangedHandlers?.Invoke(RX2Enabled && VFOBTX ? 2 : 1, oldTune, tuning);
+            if (oldTune != _tuning) TuneChangedHandlers?.Invoke(RX2Enabled && VFOBTX ? 2 : 1, oldTune, _tuning);
         }
         public void SetupTunePulse()
         {
@@ -30634,7 +30634,7 @@ namespace Thetis
 
                 if (penny_ext_ctrl_enabled) //MW0LGE_21k
                 {
-                    int bits = Penny.getPenny().UpdateExtCtrl(lo_band, lo_bandb, _mox, tuning, SetupForm.TestIMD, chkExternalPA.Checked); //MW0LGE_21j
+                    int bits = Penny.getPenny().UpdateExtCtrl(lo_band, lo_bandb, _mox, _tuning, SetupForm.TestIMD, chkExternalPA.Checked); //MW0LGE_21j
                     if (!IsSetupFormNull) SetupForm.UpdateOCLedStrip(_mox, bits);
                 }
 
@@ -31619,7 +31619,7 @@ namespace Thetis
 
                 if (penny_ext_ctrl_enabled) //MW0LGE_21k
                 {
-                    int bits = Penny.getPenny().UpdateExtCtrl(lo_banda, lo_band, _mox, tuning, SetupForm.TestIMD, chkExternalPA.Checked); //MW0LGE_21j
+                    int bits = Penny.getPenny().UpdateExtCtrl(lo_banda, lo_band, _mox, _tuning, SetupForm.TestIMD, chkExternalPA.Checked); //MW0LGE_21j
                     if (!IsSetupFormNull) SetupForm.UpdateOCLedStrip(_mox, bits);
                 }
             }
@@ -44592,7 +44592,7 @@ namespace Thetis
 
             if (penny_ext_ctrl_enabled) //MW0LGE_21k
             {
-                int bits = Penny.getPenny().UpdateExtCtrl(lo_band, lo_bandb, _mox, tuning, SetupForm.TestIMD, chkExternalPA.Checked);
+                int bits = Penny.getPenny().UpdateExtCtrl(lo_band, lo_bandb, _mox, _tuning, SetupForm.TestIMD, chkExternalPA.Checked);
                 if (!IsSetupFormNull) SetupForm.UpdateOCLedStrip(_mox, bits);
             }
 
