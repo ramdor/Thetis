@@ -2220,16 +2220,32 @@ namespace Thetis
 					case 9:
 						console.DisplayModeText = "Off";
 						break;
-
 				}
 
 				return "";
 			}
 			else if(s.Length == parser.nGet)
 			{
-				return ((int) Display.CurrentDisplayMode).ToString();
+                //return ((int) Display.CurrentDisplayMode).ToString(); 
+                //[2.10.3.13]MW0LGE the above is wrong. The enum does not match the ZZDM input values
+				//fixes #600
+                switch (console.GetDisplayMode(1))
+				{
+					case DisplayMode.SPECTRUM: return "0";
+					case DisplayMode.PANADAPTER: return "1";
+					case DisplayMode.SCOPE: return "2";
+					case DisplayMode.PHASE: return "3";
+					case DisplayMode.PHASE2: return "4";
+					case DisplayMode.WATERFALL: return "5";
+					case DisplayMode.HISTOGRAM: return "6";
+					case DisplayMode.PANAFALL: return "7";
+					case DisplayMode.PANASCOPE: return "8";
+					case DisplayMode.OFF: return "9";
+
+					default: return parser.Error1;
+                }
 			}
-			else
+            else
 			{
 				return parser.Error1;
 			}
