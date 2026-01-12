@@ -32200,7 +32200,7 @@ namespace Thetis
         {
             int in_ch = base_in == -1 ? CMASIOConfig.GetASIObaseinchannel() : base_in;
             radCMASIO_mic_L.Text = $"Left (ch{(in_ch + 1).ToString()})";
-            radCMASIO_mic_R.Text = $"Left (ch{(in_ch + 2).ToString()})";
+            radCMASIO_mic_R.Text = $"Right (ch{(in_ch + 2).ToString()})";
             radCMASIO_mic_BOTH.Text = $"Both (ch{(in_ch + 1).ToString()}+{(in_ch + 2).ToString()})";
         }
         private void setupInOutBaseChannels(bool enable)
