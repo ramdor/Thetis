@@ -61,9 +61,9 @@ extern __declspec(dllimport) long getASIOInputMode(void* dwData);
 
 typedef enum
 {
-	left = 0,
-	right,
-	both
+	IM_LEFT = 0,
+	IM_RIGHT,
+	IM_BOTH
 } input_mode_t;
 
 typedef struct _cmasio

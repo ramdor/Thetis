@@ -31961,11 +31961,11 @@
             // 
             this.labelTS136.AutoSize = true;
             this.labelTS136.Image = null;
-            this.labelTS136.Location = new System.Drawing.Point(275, 55);
+            this.labelTS136.Location = new System.Drawing.Point(269, 55);
             this.labelTS136.Name = "labelTS136";
-            this.labelTS136.Size = new System.Drawing.Size(50, 13);
+            this.labelTS136.Size = new System.Drawing.Size(56, 13);
             this.labelTS136.TabIndex = 118;
-            this.labelTS136.Text = "Out pair :";
+            this.labelTS136.Text = "OUT pair :";
             // 
             // comboCMASIO_outpair
             // 
