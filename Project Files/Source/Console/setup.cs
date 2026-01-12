@@ -32168,8 +32168,8 @@ namespace Thetis
             if (comboCMASIO_inpair.SelectedIndex == -1) return;
 
             string selected = comboCMASIO_inpair.SelectedItem.ToString();
-            int plus_pos = selected.IndexOf('+'); // in the form of '1 + 2'
-            bool ok = int.TryParse(selected.Substring(0, plus_pos - 1).Trim(), out int base_in);
+            int plus_pos = selected.IndexOf('+'); // in the form of 'ch1 + 2'
+            bool ok = int.TryParse(selected.Substring(2, plus_pos - 1 - 2).Trim(), out int base_in);
 
             if (ok)
             {
@@ -32187,8 +32187,8 @@ namespace Thetis
             if (comboCMASIO_outpair.SelectedIndex == -1) return;
 
             string selected = comboCMASIO_outpair.SelectedItem.ToString();
-            int plus_pos = selected.IndexOf('+'); // in the form of '1 + 2'
-            bool ok = int.TryParse(selected.Substring(0, plus_pos - 1).Trim(), out int base_out);
+            int plus_pos = selected.IndexOf('+'); // in the form of 'ch1 + 2'
+            bool ok = int.TryParse(selected.Substring(2, plus_pos - 1 - 2).Trim(), out int base_out);
 
             if (ok)
             {
@@ -32201,7 +32201,7 @@ namespace Thetis
             int in_ch = base_in == -1 ? CMASIOConfig.GetASIObaseinchannel() : base_in;
             radCMASIO_mic_L.Text = $"Left (ch{(in_ch + 1).ToString()})";
             radCMASIO_mic_R.Text = $"Right (ch{(in_ch + 2).ToString()})";
-            radCMASIO_mic_BOTH.Text = $"Both (ch{(in_ch + 1).ToString()}+{(in_ch + 2).ToString()})";
+            radCMASIO_mic_BOTH.Text = $"Both (ch{(in_ch + 1).ToString()} + {(in_ch + 2).ToString()})";
         }
         private void setupInOutBaseChannels(bool enable)
         {
@@ -32217,12 +32217,12 @@ namespace Thetis
                 {
                     for (int i = 0; i < device.InputChannelCount - 2; i++)
                     {
-                        int idx = comboCMASIO_inpair.Items.Add($"{(i + 1).ToString()} + {(i + 2).ToString()}");
+                        int idx = comboCMASIO_inpair.Items.Add($"ch{(i + 1).ToString()} + {(i + 2).ToString()}");
                         if (idx == in_ch) comboCMASIO_inpair.SelectedIndex = idx;
                     }
                     for (int i = 0; i < device.OutputChannelCount - 2; i++)
                     {
-                        int idx = comboCMASIO_outpair.Items.Add($"{(i + 1).ToString()} + {(i + 2).ToString()}");
+                        int idx = comboCMASIO_outpair.Items.Add($"ch{(i + 1).ToString()} + {(i + 2).ToString()}");
                         if (idx == out_ch) comboCMASIO_outpair.SelectedIndex = idx;
                     }
                 }
@@ -32232,9 +32232,9 @@ namespace Thetis
             else
             {
                 int idx;
-                idx = comboCMASIO_inpair.Items.Add($"{(in_ch + 1).ToString()} + {(in_ch + 2).ToString()}");
+                idx = comboCMASIO_inpair.Items.Add($"ch{(in_ch + 1).ToString()} + {(in_ch + 2).ToString()}");
                 comboCMASIO_inpair.SelectedIndex = idx;
-                idx = comboCMASIO_outpair.Items.Add($"{(out_ch + 1).ToString()} + {(out_ch + 2).ToString()}");
+                idx = comboCMASIO_outpair.Items.Add($"ch{(out_ch + 1).ToString()} + {(out_ch + 2).ToString()}");
                 comboCMASIO_outpair.SelectedIndex = idx;
                 comboCMASIO_inpair.Enabled = false;
                 comboCMASIO_outpair.Enabled = false;
