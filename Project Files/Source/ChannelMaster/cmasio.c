@@ -23,6 +23,19 @@ The author can be reached by email at
 bryanr@bometals.com
 
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 #include "cmcomm.h"
 #include "obbuffs.h"
@@ -42,7 +55,19 @@ void create_cmasio()
 	sprintf_s(buf, 128, "Initializing cmASIO with: \nblock size = %d\nsample rate = %d\ndriver name = %s\n\n", pcma->blocksize, samplerate, asioDriverName);
 	OutputDebugStringA(buf);
 
-	int result = prepareASIO(pcma->blocksize, samplerate, asioDriverName, &CallbackASIO);
+	//[2.10.3.13]MW0LGE get explicit base channel indices for the stereo pair, default to 0 if none in registry
+	long input_base_channel = 0;
+	if (getASIOBaseInputChannel(&input_base_channel) != 0) input_base_channel = 0;
+	long output_base_channel = 0;
+	if (getASIOBaseOutputChannel(&output_base_channel) != 0) output_base_channel = 0;
+
+	//[2.10.3.13]MW0LGE the input mode, left = ch1, right = ch2, both = stereo
+	long input_mode = 0;
+	if (getASIOInputMode(&input_mode) != 0) input_mode = (long)both; //both is default
+	pcma->input_mode = (input_mode_t)input_mode;
+
+	//int result = prepareASIO(pcma->blocksize, samplerate, asioDriverName, &CallbackASIO)
+	int result = prepareASIO(pcma->blocksize, samplerate, asioDriverName, &CallbackASIO, input_base_channel, output_base_channel);
 	sprintf_s(buf, 128, "prepareASIO return = %d", result);
 	OutputDebugStringA(buf);
 	if (result == 0)
@@ -120,16 +145,29 @@ void asioOUT(int id, int nsamples, double* buff)
 	} // W4WMT cmASIO via Protocol 1
 }
 
+//[2.10.3.13]MW0LGE added input mode, so can use ch1(L), ch2(R), or both for input
 void CallbackASIO(void* inputL, void* inputR, void* outputL, void* outputR)
 {
+	long* temp_inputL = (long*)inputL;
+	long* temp_inputR = (long*)inputR;
+
+	if (pcma->input_mode == left)
+	{
+		temp_inputR = temp_inputL;
+	}
+	else if (pcma->input_mode == right)
+	{
+		temp_inputL = temp_inputR;
+	}
+
 	if (pcma->lockMode)
 	{
 		if (WaitForSingleObject(pcma->bufferEmpty, 0) == WAIT_OBJECT_0)
 		{
 			for (int i = 0; i < pcma->blocksize; i++)
 			{
-				pcma->input[2 * i] = ((double)((long*)inputL)[i]) / 2147483648.0;
-				pcma->input[2 * i + 1] = ((double)((long*)inputR)[i]) / 2147483648.0;
+				pcma->input[2 * i] = ((double)temp_inputL[i]) / 2147483648.0;
+				pcma->input[2 * i + 1] = ((double)temp_inputR[i]) / 2147483648.0;
 			}
 			ReleaseSemaphore(pcma->bufferFull, 1, NULL);
 
@@ -152,8 +190,8 @@ void CallbackASIO(void* inputL, void* inputR, void* outputL, void* outputR)
 			if (WaitForSingleObject(pcma->bufferEmpty, 2) == WAIT_TIMEOUT) { ++pcma->overFlowsIn; return; }
 			for (int i = 0; i < pcma->blocksize; i++)
 			{
-				pcma->input[2 * i] = ((double)((long*)inputL)[i]) / 2147483648.0;
-				pcma->input[2 * i + 1] = ((double)((long*)inputR)[i]) / 2147483648.0;
+				pcma->input[2 * i] = ((double)temp_inputL[i]) / 2147483648.0;
+				pcma->input[2 * i + 1] = ((double)temp_inputR[i]) / 2147483648.0;
 			}
 			ReleaseSemaphore(pcma->bufferFull, 1, NULL);
 		}
@@ -162,8 +200,8 @@ void CallbackASIO(void* inputL, void* inputR, void* outputL, void* outputR)
 	{
 		for (int i = 0; i < pcma->blocksize; i++)
 		{
-			pcma->input[2 * i] = ((double)((long*)inputL)[i]) / 2147483648.0;
-			pcma->input[2 * i + 1] = ((double)((long*)inputR)[i]) / 2147483648.0;
+			pcma->input[2 * i] = ((double)temp_inputL[i]) / 2147483648.0;
+			pcma->input[2 * i + 1] = ((double)temp_inputR[i]) / 2147483648.0;
 		}
 		xrmatchIN(pcma->rmatchIN, pcma->input);
 
@@ -175,6 +213,62 @@ void CallbackASIO(void* inputL, void* inputR, void* outputL, void* outputR)
 		}
 	}
 }
+
+//void CallbackASIO(void* inputL, void* inputR, void* outputL, void* outputR)
+//{
+//	if (pcma->lockMode)
+//	{
+//		if (WaitForSingleObject(pcma->bufferEmpty, 0) == WAIT_OBJECT_0)
+//		{
+//			for (int i = 0; i < pcma->blocksize; i++)
+//			{
+//				pcma->input[2 * i] = ((double)((long*)inputL)[i]) / 2147483648.0;
+//				pcma->input[2 * i + 1] = ((double)((long*)inputR)[i]) / 2147483648.0;
+//			}
+//			ReleaseSemaphore(pcma->bufferFull, 1, NULL);
+//
+//			xrmatchOUT(pcma->rmatchOUT, pcma->output);
+//			for (int i = 0; i < pcma->blocksize; i++)
+//			{
+//				((long*)outputL)[i] = (long)(pcma->output[2 * i] * 2147483648.0);
+//				((long*)outputR)[i] = (long)(pcma->output[2 * i + 1] * 2147483648.0);
+//			}
+//		}
+//		else
+//		{
+//			xrmatchOUT(pcma->rmatchOUT, pcma->output);
+//			for (int i = 0; i < pcma->blocksize; i++)
+//			{
+//				((long*)outputL)[i] = (long)(pcma->output[2 * i] * 2147483648.0);
+//				((long*)outputR)[i] = (long)(pcma->output[2 * i + 1] * 2147483648.0);
+//			}
+//
+//			if (WaitForSingleObject(pcma->bufferEmpty, 2) == WAIT_TIMEOUT) { ++pcma->overFlowsIn; return; }
+//			for (int i = 0; i < pcma->blocksize; i++)
+//			{
+//				pcma->input[2 * i] = ((double)((long*)inputL)[i]) / 2147483648.0;
+//				pcma->input[2 * i + 1] = ((double)((long*)inputR)[i]) / 2147483648.0;
+//			}
+//			ReleaseSemaphore(pcma->bufferFull, 1, NULL);
+//		}
+//	}
+//	else
+//	{
+//		for (int i = 0; i < pcma->blocksize; i++)
+//		{
+//			pcma->input[2 * i] = ((double)((long*)inputL)[i]) / 2147483648.0;
+//			pcma->input[2 * i + 1] = ((double)((long*)inputR)[i]) / 2147483648.0;
+//		}
+//		xrmatchIN(pcma->rmatchIN, pcma->input);
+//
+//		xrmatchOUT(pcma->rmatchOUT, pcma->output);
+//		for (int i = 0; i < pcma->blocksize; i++)
+//		{
+//			((long*)outputL)[i] = (long)(pcma->output[2 * i] * 2147483648.0);
+//			((long*)outputR)[i] = (long)(pcma->output[2 * i + 1] * 2147483648.0);
+//		}
+//	}
+//}
 
 //SetAAudioMixOutputPointer(0, 0, asio_out);
 

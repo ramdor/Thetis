@@ -10,6 +10,9 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] debug/test option to ignore ATT offset in displays and signal meters. Thetis identifies as an Icom !
 - [add] bandwidth debug/test option to visualise the data in/out of Thetis
 - [add] option for NR3 (RNnoise) to use a fixed gain for samples, the value of which is taken from VU3RDD's modified WDSP version
+- [add] holding SHIFT when clicking an RX filter (main ui console or filter button container) will also set the TX filter. Note: the tx profile will be updated
+- [add] now possible to select in/out channel pairs in cmASIO. Note: this must be done when the device is not currently being used. A restart of Thetis would then be required.
+- [add] now possible to select channel for cmasio mic input
 - [change] better handing of DirectX failure
 - [change] if cpu% fails to show due to PerformaceCounter issues, the Volts/Amps will now not hide as a result of the failure if configured. Note: There is a discord post regarding recovery of the PerformaceCounters : https://discord.com/channels/1271453528656969789/1452525256303710228
 - [change] the legacy spot support and code has been removed as it was not being maintained as had many issue. Use a 3rd party app via TCI such as Cluster-TCI-Bridge by OE3IDE to provide spots to the spectrum

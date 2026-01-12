@@ -5702,6 +5702,7 @@
             this.radFilter1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radFilter1.Name = "radFilter1";
             this.radFilter1.CheckedChanged += new System.EventHandler(this.radFilter_CheckedChanged);
+            this.radFilter1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx1_MouseUp);
             // 
             // lblFilterHigh
             // 
@@ -5722,6 +5723,7 @@
             this.radFilterVar2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radFilterVar2.Name = "radFilterVar2";
             this.radFilterVar2.CheckedChanged += new System.EventHandler(this.radFilter_CheckedChanged);
+            this.radFilterVar2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx1_MouseUp);
             // 
             // lblFilterLow
             // 
@@ -5736,6 +5738,7 @@
             this.radFilterVar1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radFilterVar1.Name = "radFilterVar1";
             this.radFilterVar1.CheckedChanged += new System.EventHandler(this.radFilter_CheckedChanged);
+            this.radFilterVar1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx1_MouseUp);
             // 
             // lblFilterShift
             // 
@@ -5750,6 +5753,7 @@
             this.radFilter9.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radFilter9.Name = "radFilter9";
             this.radFilter9.CheckedChanged += new System.EventHandler(this.radFilter_CheckedChanged);
+            this.radFilter9.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx1_MouseUp);
             // 
             // radFilter8
             // 
@@ -5758,6 +5762,7 @@
             this.radFilter8.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radFilter8.Name = "radFilter8";
             this.radFilter8.CheckedChanged += new System.EventHandler(this.radFilter_CheckedChanged);
+            this.radFilter8.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx1_MouseUp);
             // 
             // radFilter2
             // 
@@ -5766,6 +5771,7 @@
             this.radFilter2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radFilter2.Name = "radFilter2";
             this.radFilter2.CheckedChanged += new System.EventHandler(this.radFilter_CheckedChanged);
+            this.radFilter2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx1_MouseUp);
             // 
             // radFilter7
             // 
@@ -5774,6 +5780,7 @@
             this.radFilter7.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radFilter7.Name = "radFilter7";
             this.radFilter7.CheckedChanged += new System.EventHandler(this.radFilter_CheckedChanged);
+            this.radFilter7.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx1_MouseUp);
             // 
             // radFilter3
             // 
@@ -5782,6 +5789,7 @@
             this.radFilter3.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radFilter3.Name = "radFilter3";
             this.radFilter3.CheckedChanged += new System.EventHandler(this.radFilter_CheckedChanged);
+            this.radFilter3.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx1_MouseUp);
             // 
             // radFilter6
             // 
@@ -5790,6 +5798,7 @@
             this.radFilter6.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radFilter6.Name = "radFilter6";
             this.radFilter6.CheckedChanged += new System.EventHandler(this.radFilter_CheckedChanged);
+            this.radFilter6.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx1_MouseUp);
             // 
             // radFilter4
             // 
@@ -5798,6 +5807,7 @@
             this.radFilter4.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radFilter4.Name = "radFilter4";
             this.radFilter4.CheckedChanged += new System.EventHandler(this.radFilter_CheckedChanged);
+            this.radFilter4.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx1_MouseUp);
             // 
             // radFilter5
             // 
@@ -5806,6 +5816,7 @@
             this.radFilter5.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radFilter5.Name = "radFilter5";
             this.radFilter5.CheckedChanged += new System.EventHandler(this.radFilter_CheckedChanged);
+            this.radFilter5.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx1_MouseUp);
             // 
             // radFilter10
             // 
@@ -5814,6 +5825,7 @@
             this.radFilter10.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radFilter10.Name = "radFilter10";
             this.radFilter10.CheckedChanged += new System.EventHandler(this.radFilter_CheckedChanged);
+            this.radFilter10.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx1_MouseUp);
             // 
             // panelRX2RF
             // 
@@ -6439,6 +6451,7 @@
             this.radRX2Filter1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radRX2Filter1.Name = "radRX2Filter1";
             this.radRX2Filter1.CheckedChanged += new System.EventHandler(this.radRX2Filter_CheckedChanged);
+            this.radRX2Filter1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx2_MouseUp);
             // 
             // lblRX2FilterHigh
             // 
@@ -6459,6 +6472,7 @@
             this.radRX2Filter2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radRX2Filter2.Name = "radRX2Filter2";
             this.radRX2Filter2.CheckedChanged += new System.EventHandler(this.radRX2Filter_CheckedChanged);
+            this.radRX2Filter2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx2_MouseUp);
             // 
             // radRX2FilterVar2
             // 
@@ -6467,6 +6481,7 @@
             this.radRX2FilterVar2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radRX2FilterVar2.Name = "radRX2FilterVar2";
             this.radRX2FilterVar2.CheckedChanged += new System.EventHandler(this.radRX2Filter_CheckedChanged);
+            this.radRX2FilterVar2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx2_MouseUp);
             // 
             // radRX2Filter3
             // 
@@ -6475,6 +6490,7 @@
             this.radRX2Filter3.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radRX2Filter3.Name = "radRX2Filter3";
             this.radRX2Filter3.CheckedChanged += new System.EventHandler(this.radRX2Filter_CheckedChanged);
+            this.radRX2Filter3.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx2_MouseUp);
             // 
             // radRX2FilterVar1
             // 
@@ -6483,6 +6499,7 @@
             this.radRX2FilterVar1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radRX2FilterVar1.Name = "radRX2FilterVar1";
             this.radRX2FilterVar1.CheckedChanged += new System.EventHandler(this.radRX2Filter_CheckedChanged);
+            this.radRX2FilterVar1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx2_MouseUp);
             // 
             // radRX2Filter4
             // 
@@ -6491,6 +6508,7 @@
             this.radRX2Filter4.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radRX2Filter4.Name = "radRX2Filter4";
             this.radRX2Filter4.CheckedChanged += new System.EventHandler(this.radRX2Filter_CheckedChanged);
+            this.radRX2Filter4.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx2_MouseUp);
             // 
             // radRX2Filter7
             // 
@@ -6499,6 +6517,7 @@
             this.radRX2Filter7.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radRX2Filter7.Name = "radRX2Filter7";
             this.radRX2Filter7.CheckedChanged += new System.EventHandler(this.radRX2Filter_CheckedChanged);
+            this.radRX2Filter7.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx2_MouseUp);
             // 
             // radRX2Filter5
             // 
@@ -6507,6 +6526,7 @@
             this.radRX2Filter5.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radRX2Filter5.Name = "radRX2Filter5";
             this.radRX2Filter5.CheckedChanged += new System.EventHandler(this.radRX2Filter_CheckedChanged);
+            this.radRX2Filter5.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx2_MouseUp);
             // 
             // radRX2Filter6
             // 
@@ -6515,6 +6535,7 @@
             this.radRX2Filter6.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.radRX2Filter6.Name = "radRX2Filter6";
             this.radRX2Filter6.CheckedChanged += new System.EventHandler(this.radRX2Filter_CheckedChanged);
+            this.radRX2Filter6.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radFilter_rx2_MouseUp);
             // 
             // panelRX2Mode
             // 

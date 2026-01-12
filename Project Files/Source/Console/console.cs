@@ -34664,6 +34664,29 @@ namespace Thetis
             toolStripMenuItem14.Checked = radRX2Filter7.Checked;
             if (filterPopupForm != null) filterPopupForm.RepopulateForm();          // G8NJJ update popup
 
+            if (e == EventArgs.Empty) MatchTXFilterToRXFilter(); // called manually so no mouse up event
+        }
+
+        public void MatchTXFilterToRXFilter()
+        {
+            //set tx to use rx filter if shift key down
+            if (!Common.ShiftKeyDown) return;
+
+            Filter filter;
+            int tx_rx = RX2Enabled && VFOBTX ? 2 : 1;            
+            switch (tx_rx)
+            {
+                case 1:
+                    filter = rx1_filter;
+                    break;
+                case 2:
+                    filter = rx2_filter;
+                    break;
+                default:
+                    return;
+            }
+
+            SetTXFilter(filter);
         }
 
         private void radFilter_CheckedChanged(object sender, EventArgs e)
@@ -34741,6 +34764,8 @@ namespace Thetis
 
             // MW0LGE
             setSmallRX2ModeFilterLabels();
+
+            if(e == EventArgs.Empty) MatchTXFilterToRXFilter(); // called manually so no mouse up event
         }
 
         private void udFilterLow_ValueChanged(object sender, System.EventArgs e)
@@ -53122,6 +53147,16 @@ namespace Thetis
         private void btnAPF_type_MouseDown(object sender, MouseEventArgs e)
         {
             if (IsRightButton(e)) SetupForm.ShowSetupTab(Setup.SetupTab.DSPAudio_Tab);
+        }
+
+        private void radFilter_rx1_MouseUp(object sender, MouseEventArgs e)
+        {
+            MatchTXFilterToRXFilter();
+        }
+
+        private void radFilter_rx2_MouseUp(object sender, MouseEventArgs e)
+        {
+            MatchTXFilterToRXFilter();
         }
     }
 
