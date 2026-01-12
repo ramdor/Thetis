@@ -324,7 +324,7 @@ long asioMessages(long selector, long value, void* message, double* opt)
 
 
 //----------------------------------------------------------------------------------
-ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
+ASIOError create_asio_buffers(DriverInfo* asioDriverInfo, long input_ch0, long input_ch1, long output_ch0, long output_ch1) //[2.10.3.13]MW0LGE added explicit channel indices for input/output (0-based)
 {	// create buffers for all inputs and outputs of the card with the 
 	// preferredSize from ASIOGetBufferSize() as buffer size
 	long i;
@@ -332,7 +332,20 @@ ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
 	char buf[128];
 
 	// fill the bufferInfos from the start without a gap
-	ASIOBufferInfo *info = asioDriverInfo->bufferInfos;
+	ASIOBufferInfo* info = asioDriverInfo->bufferInfos;
+
+	// validate requested channels exist and are usable for the fixed 2-in/2-out setup
+	if (asioDriverInfo->inputChannels < kMaxInputChannels) return ASE_InvalidMode;
+	if (asioDriverInfo->outputChannels < kMaxOutputChannels) return ASE_InvalidMode;
+
+	if (input_ch0 < 0 || input_ch1 < 0) return ASE_InvalidMode;
+	if (output_ch0 < 0 || output_ch1 < 0) return ASE_InvalidMode;
+	if (input_ch0 >= asioDriverInfo->inputChannels || input_ch1 >= asioDriverInfo->inputChannels) return ASE_InvalidMode;
+	if (output_ch0 >= asioDriverInfo->outputChannels || output_ch1 >= asioDriverInfo->outputChannels) return ASE_InvalidMode;
+
+	// prevent selecting the same channel twice for a stereo pair
+	if (input_ch0 == input_ch1) return ASE_InvalidMode;
+	if (output_ch0 == output_ch1) return ASE_InvalidMode;
 
 	// prepare inputs (Though this is not necessaily required, no opened inputs will work, too
 	//if (asioDriverInfo->inputChannels > kMaxInputChannels)
@@ -343,10 +356,11 @@ ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
 		asioDriverInfo->inputBuffers = kMaxInputChannels;
 	else
 		return ASE_InvalidMode;
-	for(i = 0; i < asioDriverInfo->inputBuffers; i++, info++)
+
+	for (i = 0; i < asioDriverInfo->inputBuffers; i++, info++)
 	{
 		info->isInput = ASIOTrue;
-		info->channelNum = i;
+		info->channelNum = (i == 0) ? input_ch0 : input_ch1; // map buffers to the requested input channels
 		info->buffers[0] = info->buffers[1] = 0;
 	}
 
@@ -359,10 +373,11 @@ ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
 		asioDriverInfo->outputBuffers = kMaxOutputChannels;
 	else
 		return ASE_InvalidMode;
-	for(i = 0; i < asioDriverInfo->outputBuffers; i++, info++)
+
+	for (i = 0; i < asioDriverInfo->outputBuffers; i++, info++)
 	{
 		info->isInput = ASIOFalse;
-		info->channelNum = i;
+		info->channelNum = (i == 0) ? output_ch0 : output_ch1; // map buffers to the requested output channels
 		info->buffers[0] = info->buffers[1] = 0;
 	}
 
@@ -399,7 +414,82 @@ ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
 	return result;
 }
 
-	int prepareASIO(int blocksize, int samplerate, char* asioDriverName, void (*CallbackASIO)(void* inputL, void* inputR, void* outputL, void* outputR))
+//ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
+//{	// create buffers for all inputs and outputs of the card with the 
+//	// preferredSize from ASIOGetBufferSize() as buffer size
+//	long i;
+//	ASIOError result;
+//	char buf[128];
+//
+//	// fill the bufferInfos from the start without a gap
+//	ASIOBufferInfo *info = asioDriverInfo->bufferInfos;
+//
+//	// prepare inputs (Though this is not necessaily required, no opened inputs will work, too
+//	//if (asioDriverInfo->inputChannels > kMaxInputChannels)
+//	//	asioDriverInfo->inputBuffers = kMaxInputChannels;
+//	//else
+//	//	asioDriverInfo->inputBuffers = asioDriverInfo->inputChannels;
+//	if (asioDriverInfo->inputChannels >= kMaxInputChannels)
+//		asioDriverInfo->inputBuffers = kMaxInputChannels;
+//	else
+//		return ASE_InvalidMode;
+//	for(i = 0; i < asioDriverInfo->inputBuffers; i++, info++)
+//	{
+//		info->isInput = ASIOTrue;
+//		info->channelNum = i;
+//		info->buffers[0] = info->buffers[1] = 0;
+//	}
+//
+//	// prepare outputs
+//	//if (asioDriverInfo->outputChannels > kMaxOutputChannels)
+//	//	asioDriverInfo->outputBuffers = kMaxOutputChannels;
+//	//else
+//	//	asioDriverInfo->outputBuffers = asioDriverInfo->outputChannels;
+//	if (asioDriverInfo->outputChannels >= kMaxOutputChannels)
+//		asioDriverInfo->outputBuffers = kMaxOutputChannels;
+//	else
+//		return ASE_InvalidMode;
+//	for(i = 0; i < asioDriverInfo->outputBuffers; i++, info++)
+//	{
+//		info->isInput = ASIOFalse;
+//		info->channelNum = i;
+//		info->buffers[0] = info->buffers[1] = 0;
+//	}
+//
+//	// create and activate buffers
+//	result = ASIOCreateBuffers(asioDriverInfo->bufferInfos,
+//		asioDriverInfo->inputBuffers + asioDriverInfo->outputBuffers,
+//		asioDriverInfo->requestedBufferSize, &asioCallbacks); // Set Buffer Size Here!!!
+//	if (result == ASE_OK)
+//	{
+//		// now get all the buffer details, sample word length, name, word clock group and activation
+//		for (i = 0; i < asioDriverInfo->inputBuffers + asioDriverInfo->outputBuffers; i++)
+//		{
+//			asioDriverInfo->channelInfos[i].channel = asioDriverInfo->bufferInfos[i].channelNum;
+//			asioDriverInfo->channelInfos[i].isInput = asioDriverInfo->bufferInfos[i].isInput;
+//			result = ASIOGetChannelInfo(&asioDriverInfo->channelInfos[i]);
+//			if (result != ASE_OK)
+//				break;
+//		}
+//
+//		if (result == ASE_OK)
+//		{
+//			// get the input and output latencies
+//			// Latencies often are only valid after ASIOCreateBuffers()
+//			// (input latency is the age of the first sample in the currently returned audio block)
+//			// (output latency is the time the first sample in the currently returned audio block requires to get to the output)
+//			result = ASIOGetLatencies(&asioDriverInfo->inputLatency, &asioDriverInfo->outputLatency);
+//			if (result == ASE_OK)
+//			{
+//				sprintf_s(buf, 128, "ASIOGetLatencies (input: %d, output: %d);\n", asioDriverInfo->inputLatency, asioDriverInfo->outputLatency);
+//				OutputDebugStringA(buf);
+//			}
+//		}
+//	}
+//	return result;
+//}
+
+int prepareASIO(int blocksize, int samplerate, char* asioDriverName, void (*CallbackASIO)(void* inputL, void* inputR, void* outputL, void* outputR), long input_base_channel, long output_base_channel)
 {
 	char buf[128];
 	asioDriverInfo.requestedBufferSize = blocksize;
@@ -438,7 +528,8 @@ ASIOError create_asio_buffers (DriverInfo *asioDriverInfo)
 				asioCallbacks.sampleRateDidChange = &sampleRateChanged;
 				asioCallbacks.asioMessage = &asioMessages;
 				asioCallbacks.bufferSwitchTimeInfo = &bufferSwitchTimeInfo;
-				ASIOError result = create_asio_buffers(&asioDriverInfo);
+				//ASIOError result = create_asio_buffers(&asioDriverInfo);
+				ASIOError result = create_asio_buffers(&asioDriverInfo, input_base_channel, input_base_channel + 1, output_base_channel, output_base_channel + 1); //[2.10.3.13]MW0LGE pass explicit channel indices for input/output (0-based)
 				//if (create_asio_buffers (&asioDriverInfo) == ASE_OK)
 				if (result == ASE_OK)
 				{
@@ -595,6 +686,75 @@ long asioStop()
 	OutputDebugStringA(buf);
 	return result;
 }
+
+//[2.10.3.13]MW0LGE get base channel numbers for input and output, and input mode
+long getASIOBaseInputChannel(void* dwData)
+{
+	const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
+	const LPCSTR valueName = "ASIObaseinchannel";
+
+	DWORD dwDataSize = sizeof(REG_DWORD);
+
+	// check Current User first
+	HKEY hKeyPath = HKEY_CURRENT_USER;
+	LSTATUS status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_DWORD | RRF_SUBKEY_WOW6464KEY, NULL, dwData, &dwDataSize);
+	if (status == ERROR_FILE_NOT_FOUND)
+	{
+		// not found under current user, try local machine
+		hKeyPath = HKEY_LOCAL_MACHINE;
+		status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_DWORD | RRF_SUBKEY_WOW6464KEY, NULL, dwData, &dwDataSize);
+	}
+	char buf[128];
+	sprintf_s(buf, 128, "RegGetValue(dword) status = %d", status);
+	OutputDebugStringA(buf);
+
+	return status;
+}
+long getASIOBaseOutputChannel(void* dwData)
+{
+	const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
+	const LPCSTR valueName = "ASIObaseoutchannel";
+
+	DWORD dwDataSize = sizeof(REG_DWORD);
+
+	// check Current User first
+	HKEY hKeyPath = HKEY_CURRENT_USER;
+	LSTATUS status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_DWORD | RRF_SUBKEY_WOW6464KEY, NULL, dwData, &dwDataSize);
+	if (status == ERROR_FILE_NOT_FOUND)
+	{
+		// not found under current user, try local machine
+		hKeyPath = HKEY_LOCAL_MACHINE;
+		status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_DWORD | RRF_SUBKEY_WOW6464KEY, NULL, dwData, &dwDataSize);
+	}
+	char buf[128];
+	sprintf_s(buf, 128, "RegGetValue(dword) status = %d", status);
+	OutputDebugStringA(buf);
+
+	return status;
+}
+long getASIOInputMode(void* dwData)
+{
+	const LPCSTR subKey = "SOFTWARE\\OpenHPSDR\\Thetis-x64";
+	const LPCSTR valueName = "ASIOinputmode";
+
+	DWORD dwDataSize = sizeof(REG_DWORD);
+
+	// check Current User first
+	HKEY hKeyPath = HKEY_CURRENT_USER;
+	LSTATUS status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_DWORD | RRF_SUBKEY_WOW6464KEY, NULL, dwData, &dwDataSize);
+	if (status == ERROR_FILE_NOT_FOUND)
+	{
+		// not found under current user, try local machine
+		hKeyPath = HKEY_LOCAL_MACHINE;
+		status = RegGetValueA(hKeyPath, subKey, valueName, RRF_RT_REG_DWORD | RRF_SUBKEY_WOW6464KEY, NULL, dwData, &dwDataSize);
+	}
+	char buf[128];
+	sprintf_s(buf, 128, "RegGetValue(dword) status = %d", status);
+	OutputDebugStringA(buf);
+
+	return status;
+}
+// end get base channel numbers
 
 
 unsigned long get_sys_reference_time()
