@@ -4349,6 +4349,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.pbCMasio_InOut_Info = new System.Windows.Forms.PictureBox();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -5440,6 +5441,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCMasio_InOut_Info)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -31881,6 +31883,7 @@
             // tpCMAsio
             // 
             this.tpCMAsio.BackColor = System.Drawing.SystemColors.Control;
+            this.tpCMAsio.Controls.Add(this.pbCMasio_InOut_Info);
             this.tpCMAsio.Controls.Add(this.labelTS645);
             this.tpCMAsio.Controls.Add(this.radCMASIO_mic_BOTH);
             this.tpCMAsio.Controls.Add(this.radCMASIO_mic_R);
@@ -69132,6 +69135,17 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // pbCMasio_InOut_Info
+            // 
+            this.pbCMasio_InOut_Info.Image = ((System.Drawing.Image)(resources.GetObject("pbCMasio_InOut_Info.Image")));
+            this.pbCMasio_InOut_Info.Location = new System.Drawing.Point(92, 52);
+            this.pbCMasio_InOut_Info.Name = "pbCMasio_InOut_Info";
+            this.pbCMasio_InOut_Info.Size = new System.Drawing.Size(20, 20);
+            this.pbCMasio_InOut_Info.TabIndex = 123;
+            this.pbCMasio_InOut_Info.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbCMasio_InOut_Info, "Click for info");
+            this.pbCMasio_InOut_Info.Click += new System.EventHandler(this.pbCMasio_InOut_Info_Click);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -70486,6 +70500,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCMasio_InOut_Info)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -74838,5 +74853,6 @@
         private RadioButtonTS radCMASIO_mic_BOTH;
         private RadioButtonTS radCMASIO_mic_R;
         private RadioButtonTS radCMASIO_mic_L;
+        private PictureBox pbCMasio_InOut_Info;
     }
 }

@@ -46514,7 +46514,7 @@ namespace Thetis
                 default:
                     // otherwise error
                     toolStripStatusLabel_CMstatus.Image = Properties.Resources.cm_red;
-                    toolStripStatusLabel_CMstatus.ToolTipText = "Issue starting CM ASIO. Check driver name in registry.";
+                    toolStripStatusLabel_CMstatus.ToolTipText = "Issue starting CM ASIO. Check driver name in registry.\nAlso check in/out channels.";
                     toolStripStatusLabel_CMstatus.Visible = true;
                     break;
             }
