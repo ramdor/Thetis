@@ -32091,7 +32091,8 @@ namespace Thetis
 
             _ignore_cmasio_settings_change = true; // prevent any changes here from writing to registry
 
-            comboASIODevicesAvailable.Enabled = cmaster.GetCMAstate() == 0; // can only be changed when CMA is stopped
+            bool enable = cmaster.GetCMAstate() == 0; // only enable when CMA is stopped
+            comboASIODevicesAvailable.Enabled = enable;
 
             comboASIODevicesAvailable.Items.Clear();
             comboCMASIO_inpair.Items.Clear();
@@ -32132,16 +32133,15 @@ namespace Thetis
                 comboCMASIO_inpair.Enabled = false;
                 comboCMASIO_outpair.Enabled = false;
 
-                radCMASIO_mic_L.Text = "Left";
-                radCMASIO_mic_R.Text = "Right";
-                radCMASIO_mic_BOTH.Text = "Both";
+                setupMicSource(-1, false);
             }
             else
             {
                 setupInOutBaseChannels();
-                setupMicSource();
+
+                setupMicSource(CMASIOConfig.GetASIObaseinchannel(), true);
             }
-            
+
             setCMasioControls(!string.IsNullOrEmpty(txtCurrentAsioDevice.Text));
 
             _ignore_cmasio_settings_change = false;
@@ -32186,7 +32186,7 @@ namespace Thetis
                 CMASIOConfig.SetASIObaseinchannel(base_in - 1);
                 updateCMAsioInfo();
 
-                setupMicSource(base_in - 1);
+                setupMicSource(base_in - 1, true);
             }
         }
 
@@ -32206,12 +32206,20 @@ namespace Thetis
                 updateCMAsioInfo();
             }
         }
-        private void setupMicSource(int base_in = -1)
+        private void setupMicSource(int base_in, bool enabled)
         {
-            int in_ch = base_in == -1 ? CMASIOConfig.GetASIObaseinchannel() : base_in;
-            radCMASIO_mic_L.Text = $"Left (ch{(in_ch + 1).ToString()})";
-            radCMASIO_mic_R.Text = $"Right (ch{(in_ch + 2).ToString()})";
-            radCMASIO_mic_BOTH.Text = $"Both (ch{(in_ch + 1).ToString()} + {(in_ch + 2).ToString()})";
+            if (enabled)
+            {
+                radCMASIO_mic_L.Text = $"Left (ch{(base_in + 1).ToString()})";
+                radCMASIO_mic_R.Text = $"Right (ch{(base_in + 2).ToString()})";
+                radCMASIO_mic_BOTH.Text = $"Both (ch{(base_in + 1).ToString()} + {(base_in + 2).ToString()})";
+            }
+            else
+            {
+                radCMASIO_mic_L.Text = "Left";
+                radCMASIO_mic_R.Text = "Right";
+                radCMASIO_mic_BOTH.Text = "Both";
+            }
         }
         private void setupInOutBaseChannels(bool select_zero = false)
         {
@@ -32289,6 +32297,10 @@ namespace Thetis
             chkAsioLockMode.Enabled = enabled;
             nudAsioBlockNum.Enabled = enabled;
             btnCMAsioDefaultBlockNum.Enabled = enabled;
+
+            radCMASIO_mic_L.Enabled = enabled;
+            radCMASIO_mic_R.Enabled = enabled;
+            radCMASIO_mic_BOTH.Enabled = enabled;
         }
         private void nudAsioBlockNum_ValueChanged(object sender, EventArgs e)
         {
@@ -32304,7 +32316,16 @@ namespace Thetis
             AsioDeviceInfo device = comboASIODevicesAvailable.SelectedItem as AsioDeviceInfo;
             if (device != null)
             {
+                radCMASIO_mic_L.Enabled = true;
+                radCMASIO_mic_R.Enabled = true;
+                radCMASIO_mic_BOTH.Enabled = true;
                 setupInOutBaseChannels(true);
+            }
+            else
+            {
+                radCMASIO_mic_L.Enabled = false;
+                radCMASIO_mic_R.Enabled = false;
+                radCMASIO_mic_BOTH.Enabled = false;
             }
         }
 
