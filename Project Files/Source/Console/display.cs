@@ -10447,6 +10447,7 @@ namespace Thetis
         public static void drawSpots(int rx, int nVerticalShift, int W, bool bottom)
         {
             if (bottom) return;
+            if (!SpotManager2.HasSpots) return;
 
             long vfo_hz;
             int rxDisplayLow;
@@ -10600,7 +10601,6 @@ namespace Thetis
             SharpDX.Direct2D1.Brush whiteBrush = getDXBrushForColour(Color.White, 255);
             SharpDX.Direct2D1.Brush blackBrush = getDXBrushForColour(Color.Black, 255);
             SharpDX.Direct2D1.Brush brightBorder = getDXBrushForColour(Color.Yellow, 255);
-            //SharpDX.Direct2D1.Brush brightBorder_new_spot = getDXBrushForColour(Color.Yellow, _new_spot_fade);
 
             // adjust fade
             double currentTime = m_dElapsedFrameStart;
