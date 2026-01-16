@@ -63,7 +63,7 @@ void create_cmasio()
 
 	//[2.10.3.13]MW0LGE the input mode, left = ch1, right = ch2, both = stereo
 	long input_mode = 0;
-	if (getASIOInputMode(&input_mode) != 0) input_mode = (long)both; //both is default
+	if (getASIOInputMode(&input_mode) != 0) input_mode = (long)IM_BOTH; //both is default
 	pcma->input_mode = (input_mode_t)input_mode;
 
 	//int result = prepareASIO(pcma->blocksize, samplerate, asioDriverName, &CallbackASIO)
@@ -146,70 +146,132 @@ void asioOUT(int id, int nsamples, double* buff)
 }
 
 //[2.10.3.13]MW0LGE added input mode, so can use ch1(L), ch2(R), or both for input
+//clamp and speed refactor
 void CallbackASIO(void* inputL, void* inputR, void* outputL, void* outputR)
 {
-	long* temp_inputL = (long*)inputL;
-	long* temp_inputR = (long*)inputR;
+	const double inv_scale = 1.0 / 2147483648.0;
+	const double scale = 2147483648.0;
+	const double max_i32 = 2147483647.0;
+	const double min_i32 = -2147483648.0;
 
-	if (pcma->input_mode == left)
+	long* inL = (long*)inputL;
+	long* inR = (long*)inputR;
+	long* outL = (long*)outputL;
+	long* outR = (long*)outputR;
+
+	if (pcma->input_mode == IM_LEFT)
 	{
-		temp_inputR = temp_inputL;
+		inR = inL;
 	}
-	else if (pcma->input_mode == right)
+	else if (pcma->input_mode == IM_RIGHT)
 	{
-		temp_inputL = temp_inputR;
+		inL = inR;
 	}
 
 	if (pcma->lockMode)
 	{
-		if (WaitForSingleObject(pcma->bufferEmpty, 0) == WAIT_OBJECT_0)
+		DWORD got = WaitForSingleObject(pcma->bufferEmpty, 0);
+		if (got == WAIT_OBJECT_0)
 		{
-			for (int i = 0; i < pcma->blocksize; i++)
+			int i = 0;
+			int j = 0;
+			for (i = 0; i < pcma->blocksize; i++, j += 2)
 			{
-				pcma->input[2 * i] = ((double)temp_inputL[i]) / 2147483648.0;
-				pcma->input[2 * i + 1] = ((double)temp_inputR[i]) / 2147483648.0;
+				pcma->input[j] = (double)inL[i] * inv_scale;
+				pcma->input[j + 1] = (double)inR[i] * inv_scale;
 			}
 			ReleaseSemaphore(pcma->bufferFull, 1, NULL);
 
 			xrmatchOUT(pcma->rmatchOUT, pcma->output);
-			for (int i = 0; i < pcma->blocksize; i++)
-			{
-				((long*)outputL)[i] = (long)(pcma->output[2 * i] * 2147483648.0);
-				((long*)outputR)[i] = (long)(pcma->output[2 * i + 1] * 2147483648.0);
-			}
-		}
-		else
-		{
-			xrmatchOUT(pcma->rmatchOUT, pcma->output);
-			for (int i = 0; i < pcma->blocksize; i++)
-			{
-				((long*)outputL)[i] = (long)(pcma->output[2 * i] * 2147483648.0);
-				((long*)outputR)[i] = (long)(pcma->output[2 * i + 1] * 2147483648.0);
-			}
 
-			if (WaitForSingleObject(pcma->bufferEmpty, 2) == WAIT_TIMEOUT) { ++pcma->overFlowsIn; return; }
-			for (int i = 0; i < pcma->blocksize; i++)
+			j = 0;
+			for (i = 0; i < pcma->blocksize; i++, j += 2)
 			{
-				pcma->input[2 * i] = ((double)temp_inputL[i]) / 2147483648.0;
-				pcma->input[2 * i + 1] = ((double)temp_inputR[i]) / 2147483648.0;
+				double dl = pcma->output[j] * scale;
+				double dr = pcma->output[j + 1] * scale;
+
+				if (dl > max_i32) dl = max_i32;
+				else if (dl < min_i32) dl = min_i32;
+
+				if (dr > max_i32) dr = max_i32;
+				else if (dr < min_i32) dr = min_i32;
+
+				outL[i] = (long)dl;
+				outR[i] = (long)dr;
 			}
-			ReleaseSemaphore(pcma->bufferFull, 1, NULL);
+			return;
 		}
-	}
-	else
-	{
-		for (int i = 0; i < pcma->blocksize; i++)
-		{
-			pcma->input[2 * i] = ((double)temp_inputL[i]) / 2147483648.0;
-			pcma->input[2 * i + 1] = ((double)temp_inputR[i]) / 2147483648.0;
-		}
-		xrmatchIN(pcma->rmatchIN, pcma->input);
 
 		xrmatchOUT(pcma->rmatchOUT, pcma->output);
-		for (int i = 0; i < pcma->blocksize; i++)
+
 		{
-			((long*)outputL)[i] = (long)(pcma->output[2 * i] * 2147483648.0);
-			((long*)outputR)[i] = (long)(pcma->output[2 * i + 1] * 2147483648.0);
+			int i = 0;
+			int j = 0;
+			for (i = 0; i < pcma->blocksize; i++, j += 2)
+			{
+				double dl = pcma->output[j] * scale;
+				double dr = pcma->output[j + 1] * scale;
+
+				if (dl > max_i32) dl = max_i32;
+				else if (dl < min_i32) dl = min_i32;
+
+				if (dr > max_i32) dr = max_i32;
+				else if (dr < min_i32) dr = min_i32;
+
+				outL[i] = (long)dl;
+				outR[i] = (long)dr;
+			}
+		}
+
+		if (WaitForSingleObject(pcma->bufferEmpty, 2) == WAIT_TIMEOUT)
+		{
+			++pcma->overFlowsIn;
+			return;
+		}
+
+		{
+			int i = 0;
+			int j = 0;
+			for (i = 0; i < pcma->blocksize; i++, j += 2)
+			{
+				pcma->input[j] = (double)inL[i] * inv_scale;
+				pcma->input[j + 1] = (double)inR[i] * inv_scale;
+			}
+			ReleaseSemaphore(pcma->bufferFull, 1, NULL);
+		}
+
+		return;
+	}
+
+	{
+		int i = 0;
+		int j = 0;
+		for (i = 0; i < pcma->blocksize; i++, j += 2)
+		{
+			pcma->input[j] = (double)inL[i] * inv_scale;
+			pcma->input[j + 1] = (double)inR[i] * inv_scale;
+		}
+	}
+
+	xrmatchIN(pcma->rmatchIN, pcma->input);
+	xrmatchOUT(pcma->rmatchOUT, pcma->output);
+
+	{
+		int i = 0;
+		int j = 0;
+		for (i = 0; i < pcma->blocksize; i++, j += 2)
+		{
+			double dl = pcma->output[j] * scale;
+			double dr = pcma->output[j + 1] * scale;
+
+			if (dl > max_i32) dl = max_i32;
+			else if (dl < min_i32) dl = min_i32;
+
+			if (dr > max_i32) dr = max_i32;
+			else if (dr < min_i32) dr = min_i32;
+
+			outL[i] = (long)dl;
+			outR[i] = (long)dr;
 		}
 	}
 }

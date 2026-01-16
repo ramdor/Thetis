@@ -141,6 +141,18 @@
   <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pbCMasio_InOut_Info.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
+        0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
+        eMaYLGBnX8SQDKOzr+AGJgNEMLyzBTmU35egDEFoiWXQ1l/LEAdZLIMc0iOLf6GeMeQDbuzxsYsFKwAH
+        j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>302, 17</value>
+  </metadata>
   <data name="labelTS295.Text" xml:space="preserve">
     <value>- Any changes made here will only apply after Thetis is restarted
 - If VAC is enabled input will be taken from the VAC and not cmASIO
@@ -154,7 +166,6 @@
 - Remove any previous cmASIO settings from HKEY_LOCAL_MACHINE\SOFTWARE\OpenHPSDR\Thetis-x64
 - This now uses HKEY_CURRENT_USER\SOFTWARE\OpenHPSDR\Thetis-x64</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="picModelBoardWarning.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAAQCAYAAAAbBi9cAAAABGdBTUEAALGPC/xhBQAAAWZJREFUOE+l
@@ -391,9 +402,6 @@ You do not need to be a member of discord to use this functionality but there ar
 of us there and you can interact with many channles and actively view the
 #thetis-bot channel to see what is going on.</value>
   </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>302, 17</value>
-  </metadata>
   <data name="picMultiMeterRotatorControlInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d

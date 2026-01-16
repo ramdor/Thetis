@@ -200,7 +200,7 @@ void setSamplerate_rnnr(RNNR a, int rate)
 RNNR create_rnnr(int run, int position, int size, double* in, double* out, int rate)
 {
     RNNR a = malloc0(sizeof(rnnr));
-    InitializeCriticalSection(&a->cs);
+    InitializeCriticalSectionAndSpinCount(&a->cs, 2500);
     a->run = run;
     a->position = position;
     a->rate = rate; // not used currently, but here for future use

@@ -387,6 +387,17 @@ namespace Thetis
             }
         }
 
+        public static bool HasSpots
+        {
+            get
+            {
+                lock (_objLock)
+                {
+                    return _spots.Count > 0;
+                }
+            }
+        }
+
         public static List<smSpot> GetFrequencySortedSpots()
         {
             List<smSpot> lst;

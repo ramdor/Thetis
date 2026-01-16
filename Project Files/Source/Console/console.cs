@@ -14597,7 +14597,7 @@ namespace Thetis
         private void UpdateRX1DDSFreq()
         {
             if (initializing) return;
-            setAlex1HPF(fwc_dds_freq);
+            setAlex1HPF(_rx1_dds_freq);
             UpdateAlexTXFilter();
             UpdateAlexRXFilter();
 
@@ -14661,7 +14661,7 @@ namespace Thetis
             if (initializing) return;
             setAlexLPF(tx_dds_freq_mhz, true);
             if (_mox)
-                setAlex1HPF(fwc_dds_freq);
+                setAlex1HPF(_rx1_dds_freq);
             NetworkIO.VFOfreq(0, tx_dds_freq_mhz, 1);
         }
 
@@ -14690,41 +14690,31 @@ namespace Thetis
             }
         }
 
-        private double fwc_dds_freq = 14;
-        public double FWCDDSFreq
+        private double _rx1_dds_freq = 14;
+        public double RX1DDSFreq
         {
-            get { return fwc_dds_freq; }
+            get { return _rx1_dds_freq; }
             set
             {
-                fwc_dds_freq = value;
+                _rx1_dds_freq = value;
 
-                double f = fwc_dds_freq + vfo_offset;
+                double f = _rx1_dds_freq + _rx1_vfo_offset;
                 rx1_dds_freq_mhz = f;
                 UpdateRX1DDSFreq();
             }
         }
 
-        private double rx2_dds_freq = 14;
+        private double _rx2_dds_freq = 14;
         public double RX2DDSFreq
         {
-            get { return rx2_dds_freq; }
+            get { return _rx2_dds_freq; }
             set
             {
-                rx2_dds_freq = value;
+                _rx2_dds_freq = value;
 
-                double f = rx2_dds_freq + rx2_vfo_offset;
+                double f = _rx2_dds_freq + rx2_vfo_offset;
                 rx2_dds_freq_mhz = f;
                 UpdateRX2DDSFreq();
-            }
-        }
-
-        private double dds_freq = 14;
-        public double DDSFreq
-        {
-            get { return dds_freq; }
-            set
-            {
-                dds_freq = value;
             }
         }
 
@@ -14765,11 +14755,11 @@ namespace Thetis
             }
         }
 
-        private double vfo_offset = 0.0;
-        public double VFOOffset
+        private double _rx1_vfo_offset = 0.0;
+        public double RX1VFOOffset
         {
-            get { return vfo_offset; }
-            set { vfo_offset = value; }
+            get { return _rx1_vfo_offset; }
+            set { _rx1_vfo_offset = value; }
         }
 
         private double rx2_vfo_offset = 0.0;
@@ -18351,7 +18341,7 @@ namespace Thetis
                     if (comboMeterTXMode.SelectedIndex < 0)
                         comboMeterTXMode.SelectedIndex = 0;
 
-                    setAlex1HPF(fwc_dds_freq);
+                    setAlex1HPF(_rx1_dds_freq);
                     setAlexLPF(tx_dds_freq_mhz, true);
                     setAlex2HPF(rx2_dds_freq_mhz);
                 }
@@ -26849,8 +26839,8 @@ namespace Thetis
                     chkRX2_CheckedChanged(this, EventArgs.Empty);
                 }
 
-                fwc_dds_freq = 0.0f;
-                rx2_dds_freq = 0.0f;
+                _rx1_dds_freq = 0.0f;
+                _rx2_dds_freq = 0.0f;
 
                 txtVFOAFreq_LostFocus(this, EventArgs.Empty);
                 comboDisplayMode_SelectedIndexChanged(this, EventArgs.Empty);
@@ -31605,7 +31595,7 @@ namespace Thetis
                         UpdateTXDDSFreq(); // update tx freq
                     }
                     if (!_click_tune_display)
-                        FWCDDSFreq = rx_freq; // update rx freq
+                        RX1DDSFreq = rx_freq; // update rx freq
 
                     if (_click_tune_display) //-W2PA This was preventing proper receiver adjustment
                     {
@@ -31620,7 +31610,7 @@ namespace Thetis
                                 dTmpFreq -= CWPitch * 1.0e-6;
                                 break;
                         }
-                        FWCDDSFreq = dTmpFreq;
+                        RX1DDSFreq = dTmpFreq;
                     }
 
                     if (chkEnableMultiRX.Checked && !_mox) //MW0LGE [2.7.0.9] only when RX'ing. Fixes issue where multirx would be outside sample area after a tx
@@ -31640,9 +31630,9 @@ namespace Thetis
                 }
             }
             else if (rx1_xvtr_index >= 0)
-                FWCDDSFreq = XVTRForm.TranslateFreq(CentreFrequency);
+                RX1DDSFreq = XVTRForm.TranslateFreq(CentreFrequency);
             else
-                FWCDDSFreq = CentreFrequency;
+                RX1DDSFreq = CentreFrequency;
 
             if (small_lsd)
             {
@@ -31650,8 +31640,8 @@ namespace Thetis
                 txtVFOALSD.Visible = true;
             }
 
-            WDSP.RXANBPSetTuneFrequency(WDSP.id(0, 0), (FWCDDSFreq + f_LO) * 1.0e6);
-            WDSP.RXANBPSetTuneFrequency(WDSP.id(0, 1), (FWCDDSFreq + f_LO) * 1.0e6);
+            WDSP.RXANBPSetTuneFrequency(WDSP.id(0, 0), (RX1DDSFreq + f_LO) * 1.0e6);
+            WDSP.RXANBPSetTuneFrequency(WDSP.id(0, 1), (RX1DDSFreq + f_LO) * 1.0e6);
 
             UpdatePreamps();
 
@@ -33939,7 +33929,7 @@ namespace Thetis
                 case DSPMode.DRM:
                     radModeDRM.BackColor = SystemColors.Control;
 
-                    vfo_offset = 0.0;
+                    _rx1_vfo_offset = 0.0;
                     if (vac_auto_enable &&
                         new_mode != DSPMode.DIGL &&
                         new_mode != DSPMode.DIGU)
@@ -33959,7 +33949,7 @@ namespace Thetis
             switch (new_mode)
             {
                 case DSPMode.LSB:
-                    vfo_offset = 0.0;
+                    _rx1_vfo_offset = 0.0;
                     radModeLSB.BackColor = button_selected_color;
 
                     if (!_rx_only && PowerOn)
@@ -34222,7 +34212,7 @@ namespace Thetis
                     break;
                 case DSPMode.DRM:
                     if_shift = false;
-                    vfo_offset = -0.012;
+                    _rx1_vfo_offset = -0.012;
                     radModeDRM.BackColor = button_selected_color;
 
                     if (vac_auto_enable)
@@ -47565,7 +47555,7 @@ namespace Thetis
                 default:
                     // otherwise error
                     toolStripStatusLabel_CMstatus.Image = Properties.Resources.cm_red;
-                    toolStripStatusLabel_CMstatus.ToolTipText = "Issue starting CM ASIO. Check driver name in registry.";
+                    toolStripStatusLabel_CMstatus.ToolTipText = "Issue starting CM ASIO. Check driver name in registry.\nAlso check in/out channels.";
                     toolStripStatusLabel_CMstatus.Visible = true;
                     break;
             }
