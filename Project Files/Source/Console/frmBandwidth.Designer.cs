@@ -33,6 +33,7 @@
             this.radMbit = new System.Windows.Forms.RadioButtonTS();
             this.radKB = new System.Windows.Forms.RadioButtonTS();
             this.ucBandwidthView = new Thetis.ucBandwidthView();
+            this.chkOnTop = new System.Windows.Forms.CheckBoxTS();
             this.SuspendLayout();
             // 
             // timerReadBandwidth
@@ -88,12 +89,30 @@
             this.ucBandwidthView.SmoothingFactor = 0.2D;
             this.ucBandwidthView.TabIndex = 0;
             // 
+            // chkOnTop
+            // 
+            this.chkOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkOnTop.AutoSize = true;
+            this.chkOnTop.BackColor = System.Drawing.Color.Transparent;
+            this.chkOnTop.Checked = true;
+            this.chkOnTop.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkOnTop.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.chkOnTop.Image = null;
+            this.chkOnTop.Location = new System.Drawing.Point(230, 139);
+            this.chkOnTop.Name = "chkOnTop";
+            this.chkOnTop.Size = new System.Drawing.Size(62, 17);
+            this.chkOnTop.TabIndex = 3;
+            this.chkOnTop.Text = "On Top";
+            this.chkOnTop.UseVisualStyleBackColor = false;
+            this.chkOnTop.CheckedChanged += new System.EventHandler(this.chkOnTop_CheckedChanged);
+            // 
             // frmBandwidth
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(304, 161);
+            this.Controls.Add(this.chkOnTop);
             this.Controls.Add(this.radMbit);
             this.Controls.Add(this.radKB);
             this.Controls.Add(this.ucBandwidthView);
@@ -102,6 +121,7 @@
             this.MinimumSize = new System.Drawing.Size(320, 200);
             this.Name = "frmBandwidth";
             this.Text = "Bandwidth";
+            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmBandwidth_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -113,5 +133,6 @@
         private System.Windows.Forms.RadioButtonTS radKB;
         private System.Windows.Forms.RadioButtonTS radMbit;
         private System.Windows.Forms.Timer timerReadBandwidth;
+        private System.Windows.Forms.CheckBoxTS chkOnTop;
     }
 }

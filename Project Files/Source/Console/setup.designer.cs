@@ -1965,6 +1965,7 @@
             this.labelTS54 = new System.Windows.Forms.LabelTS();
             this.labelTS53 = new System.Windows.Forms.LabelTS();
             this.tpCMAsio = new System.Windows.Forms.TabPage();
+            this.pbCMasio_InOut_Info = new System.Windows.Forms.PictureBox();
             this.labelTS645 = new System.Windows.Forms.LabelTS();
             this.radCMASIO_mic_BOTH = new System.Windows.Forms.RadioButtonTS();
             this.radCMASIO_mic_R = new System.Windows.Forms.RadioButtonTS();
@@ -4404,7 +4405,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.pbCMasio_InOut_Info = new System.Windows.Forms.PictureBox();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4782,6 +4782,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1SlewTimeIn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1FeedbackGainIn)).BeginInit();
             this.tpCMAsio.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCMasio_InOut_Info)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAsioBlockNum)).BeginInit();
             this.tpDisplay.SuspendLayout();
             this.tcDisplay.SuspendLayout();
@@ -5510,7 +5511,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS35)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).BeginInit();
             this.panelTS4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbCMasio_InOut_Info)).BeginInit();
             this.SuspendLayout();
             // 
             // tpAlexAntCtrl
@@ -32898,6 +32898,17 @@
             this.tpCMAsio.TabIndex = 5;
             this.tpCMAsio.Text = "cmASIO";
             // 
+            // pbCMasio_InOut_Info
+            // 
+            this.pbCMasio_InOut_Info.Image = ((System.Drawing.Image)(resources.GetObject("pbCMasio_InOut_Info.Image")));
+            this.pbCMasio_InOut_Info.Location = new System.Drawing.Point(92, 52);
+            this.pbCMasio_InOut_Info.Name = "pbCMasio_InOut_Info";
+            this.pbCMasio_InOut_Info.Size = new System.Drawing.Size(20, 20);
+            this.pbCMasio_InOut_Info.TabIndex = 123;
+            this.pbCMasio_InOut_Info.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbCMasio_InOut_Info, "Click for info");
+            this.pbCMasio_InOut_Info.Click += new System.EventHandler(this.pbCMasio_InOut_Info_Click);
+            // 
             // labelTS645
             // 
             this.labelTS645.AutoSize = true;
@@ -51830,10 +51841,11 @@
             this.chkConsoleDarkModeTitleBar.Image = null;
             this.chkConsoleDarkModeTitleBar.Location = new System.Drawing.Point(6, 42);
             this.chkConsoleDarkModeTitleBar.Name = "chkConsoleDarkModeTitleBar";
-            this.chkConsoleDarkModeTitleBar.Size = new System.Drawing.Size(156, 17);
+            this.chkConsoleDarkModeTitleBar.Size = new System.Drawing.Size(201, 17);
             this.chkConsoleDarkModeTitleBar.TabIndex = 92;
-            this.chkConsoleDarkModeTitleBar.Text = "Dark mode Console title bar";
-            this.toolTip1.SetToolTip(this.chkConsoleDarkModeTitleBar, "Dark mode Console title bar (only on Windows 10 and later)");
+            this.chkConsoleDarkModeTitleBar.Text = "Dark mode title bars + some windows";
+            this.toolTip1.SetToolTip(this.chkConsoleDarkModeTitleBar, "Dark mode title bars (only on Windows 10 and later)\r\nSome window contents may als" +
+        "o become dark (diversity for example)");
             this.chkConsoleDarkModeTitleBar.UseVisualStyleBackColor = true;
             this.chkConsoleDarkModeTitleBar.Visible = false;
             this.chkConsoleDarkModeTitleBar.CheckedChanged += new System.EventHandler(this.chkConsoleDarkModeTitleBar_CheckedChanged);
@@ -70135,17 +70147,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // pbCMasio_InOut_Info
-            // 
-            this.pbCMasio_InOut_Info.Image = ((System.Drawing.Image)(resources.GetObject("pbCMasio_InOut_Info.Image")));
-            this.pbCMasio_InOut_Info.Location = new System.Drawing.Point(92, 52);
-            this.pbCMasio_InOut_Info.Name = "pbCMasio_InOut_Info";
-            this.pbCMasio_InOut_Info.Size = new System.Drawing.Size(20, 20);
-            this.pbCMasio_InOut_Info.TabIndex = 123;
-            this.pbCMasio_InOut_Info.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbCMasio_InOut_Info, "Click for info");
-            this.pbCMasio_InOut_Info.Click += new System.EventHandler(this.pbCMasio_InOut_Info_Click);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -70635,6 +70636,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udVAC1FeedbackGainIn)).EndInit();
             this.tpCMAsio.ResumeLayout(false);
             this.tpCMAsio.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCMasio_InOut_Info)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAsioBlockNum)).EndInit();
             this.tpDisplay.ResumeLayout(false);
             this.tcDisplay.ResumeLayout(false);
@@ -71518,7 +71520,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTS36)).EndInit();
             this.panelTS4.ResumeLayout(false);
             this.panelTS4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbCMasio_InOut_Info)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

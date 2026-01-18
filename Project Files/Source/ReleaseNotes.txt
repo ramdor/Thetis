@@ -14,11 +14,14 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] now possible to select in/out channel pairs in cmASIO. Note: this must be done when the device is not currently being used. A restart of Thetis would then be required.
 - [add] now possible to select channel for cmasio mic input
 - [add] TCI spots also shown on rx2
+- [add] dark mode title bars + windows now applies to diversity form
+- [add] you can now click on a diversity memory in the 'radar' to select it
 - [change] better handing of DirectX failure
 - [change] if cpu% fails to show due to PerformaceCounter issues, the Volts/Amps will now not hide as a result of the failure if configured. Note: There is a discord post regarding recovery of the PerformaceCounters : https://discord.com/channels/1271453528656969789/1452525256303710228
 - [change] the legacy spot support and code has been removed as it was not being maintained as had many issue. Use a 3rd party app via TCI such as Cluster-TCI-Bridge by OE3IDE to provide spots to the spectrum
 - [fix] ZZDM cat message query now returns the correct display mode number (#600)
 - [fix] waterfall prevented from covering TCI spots
+- [fix] diversity form now fades in along side console window at start up
 
 ## v2.10.3.12 - Change Log
 - [add] you can pick a directx device using -adaptor:# from the command line. Use Thetis.exe -help for more information
