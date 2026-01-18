@@ -102,6 +102,7 @@
             this.MinimumSize = new System.Drawing.Size(320, 200);
             this.Name = "frmBandwidth";
             this.Text = "Bandwidth";
+            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmBandwidth_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
