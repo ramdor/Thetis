@@ -85,5 +85,10 @@ namespace Thetis
         {
             ucBandwidthView.DisplayUnits = radKB.Checked ? ucBandwidthView.BandwidthUnits.KBps : ucBandwidthView.BandwidthUnits.Mbitps;
         }
+
+        private void chkOnTop_CheckedChanged(object sender, EventArgs e)
+        {
+            this.TopMost = chkOnTop.Checked;
+        }
     }
 }
