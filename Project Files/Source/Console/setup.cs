@@ -26878,9 +26878,21 @@ namespace Thetis
             if (initializing) return;
             if (console != null)
             {
-                bool bOk = Common.UseImmersiveDarkMode(console.Handle, chkConsoleDarkModeTitleBar.Checked);
-                if (sender != this && bOk) console.Invalidate();
+                bool consoleOk = Common.UseImmersiveDarkMode(console.Handle, chkConsoleDarkModeTitleBar.Checked);
+                if (sender != this) // only invalidate if user changed
+                {
+                    if (consoleOk) console.Invalidate();
+
+                    if (console.diversityForm != null)
+                    {
+                        console.diversityForm.DarkMode = chkConsoleDarkModeTitleBar.Checked;
+                    }
+                }
             }
+        }
+        public bool DarkMode
+        {
+            get { return chkConsoleDarkModeTitleBar.Checked; }
         }
         #endregion
 

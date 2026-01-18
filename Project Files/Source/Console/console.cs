@@ -1041,13 +1041,16 @@ namespace Thetis
                 if (!IsSetupFormNull) SetupForm.Location = new Point(160, 160);
             }
 
+            //starting diversity
+            if (_startdiversity) showHideDiversity(true, true);
+
             //release notes
             _frmReleaseNotes = new frmReleaseNotes();
-            _frmReleaseNotes.InitPath(Application.StartupPath);
-            if (bShowReleaseNotes) ShowReleaseNotes();
-            //
+            _frmReleaseNotes.InitPath(Application.StartupPath);            
 
             LogTool.Completed("FIN");
+
+            if (bShowReleaseNotes) ShowReleaseNotes();
 
             //now set the prio class as we have been running flat out up to this point
             //this used to be called in SetupForm ForceAllEvents, but moved here now
@@ -2097,8 +2100,9 @@ namespace Thetis
             //MW0LGE duped from above Display.Target = pnlDisplay;
             update_rx2_display = true;
 
-            if (_startdiversity)
-                eSCToolStripMenuItem_Click(this, EventArgs.Empty);
+            //[2.10.3.13]MW0LGE moved to after the console window is showing
+            //if (_startdiversity)
+            //    eSCToolStripMenuItem_Click(this, EventArgs.Empty);
 
             // uncomment for multiple displays
             //cmaster.Getrxa(4).pDisplay.StartDisplay(4);
@@ -10944,26 +10948,29 @@ namespace Thetis
             }
             set
             {
-                if (value)
-                {
-                    if (HardwareSpecific.Model != HPSDRModel.ANAN100D &&
-                        HardwareSpecific.Model != HPSDRModel.ANAN200D &&
-                        HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
-                        HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
-                        HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
-                        HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
-                        HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
-                        HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
-                        HardwareSpecific.Model != HPSDRModel.REDPITAYA) return; //DH1KLM
+                //if (value)
+                //{
+                //    if (HardwareSpecific.Model != HPSDRModel.ANAN100D &&
+                //        HardwareSpecific.Model != HPSDRModel.ANAN200D &&
+                //        HardwareSpecific.Model != HPSDRModel.ORIONMKII &&
+                //        HardwareSpecific.Model != HPSDRModel.ANAN7000D &&
+                //        HardwareSpecific.Model != HPSDRModel.ANAN8000D &&
+                //        HardwareSpecific.Model != HPSDRModel.ANAN_G2 &&
+                //        HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
+                //        HardwareSpecific.Model != HPSDRModel.ANVELINAPRO3 &&
+                //        HardwareSpecific.Model != HPSDRModel.REDPITAYA) return; //DH1KLM
 
-                    if (diversityForm == null || diversityForm.IsDisposed)
-                        diversityForm = new DiversityForm(this);
-                    diversityForm.Focus();
-                    this.Invoke(new MethodInvoker(diversityForm.Show));
-                }
-                else
-                    if (diversityForm != null)
-                    this.Invoke(new MethodInvoker(diversityForm.Close));
+                //    if (diversityForm == null || diversityForm.IsDisposed)
+                //        diversityForm = new DiversityForm(this);
+                //    diversityForm.Focus();
+                //    this.Invoke(new MethodInvoker(diversityForm.Show));
+                //}
+                //else
+                //    if (diversityForm != null)
+                //    this.Invoke(new MethodInvoker(diversityForm.Close));
+
+                //[2.10.3.13]MW0LGE modified to use existing function to ensure all is setup correctly
+                showHideDiversity(value);
             }
         }
 
@@ -41662,6 +41669,11 @@ namespace Thetis
 
         private void eSCToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            showHideDiversity(true);
+        }
+
+        private void showHideDiversity(bool show, bool starting_up = false)
+        {
             if (!RX2PreampPresent) return;
 
             if (diversityForm == null || diversityForm.IsDisposed)
@@ -41671,18 +41683,50 @@ namespace Thetis
             {
                 diversityForm.Invoke(new MethodInvoker(() =>
                 {
-                    diversityForm.Show();
-                    diversityForm.Focus();
-                    UpdateDiversityValues();
-                    UpdateDiversityMenuItem();
+                    if (show)
+                    {
+                        if (starting_up)
+                        {
+                            diversityForm.Opacity = 0f;
+                            Common.FadeIn(diversityForm);
+                        }
+                        else
+                        {
+                            diversityForm.Opacity = 100f;
+                        }
+                        diversityForm.Show();
+                        diversityForm.Focus();
+                        UpdateDiversityValues();
+                        UpdateDiversityMenuItem();
+                    }
+                    else
+                    {
+                        diversityForm.Close();
+                    }
                 }));
             }
             else
             {
-                diversityForm.Show();
-                diversityForm.Focus();
-                UpdateDiversityValues();
-                UpdateDiversityMenuItem();
+                if (show)
+                {
+                    if (starting_up)
+                    {
+                        diversityForm.Opacity = 0f;
+                        Common.FadeIn(diversityForm);
+                    }
+                    else
+                    {
+                        diversityForm.Opacity = 100f;
+                    }
+                    diversityForm.Show();
+                    diversityForm.Focus();
+                    UpdateDiversityValues();
+                    UpdateDiversityMenuItem();
+                }
+                else
+                {
+                    diversityForm.Close();
+                }
             }
         }
 
@@ -46847,7 +46891,7 @@ namespace Thetis
                         }
                     }
                     break;
-                case "diversity": eSCToolStripMenuItem_Click(this, e); break;
+                case "diversity": showHideDiversity(true); break;
                 case "ra": RAtoolStripMenuItem_Click(this, e); break;
                 case "wb": wBToolStripMenuItem_Click(this, e); break;
                 case "finder": finderMenuItem_Click(this, e); break;
@@ -50124,7 +50168,7 @@ namespace Thetis
                 case OtherButtonId.FORM_EQ: equalizerToolStripMenuItem_Click(this, EventArgs.Empty); break;
                 case OtherButtonId.FORM_XVTR: xVTRsToolStripMenuItem_Click(this, EventArgs.Empty); break;
                 case OtherButtonId.FORM_CWX: cWXToolStripMenuItem_Click(this, EventArgs.Empty); break;
-                case OtherButtonId.FORM_DIVERSITY: eSCToolStripMenuItem_Click(this, EventArgs.Empty); break;
+                case OtherButtonId.FORM_DIVERSITY: showHideDiversity(true); break;
                 case OtherButtonId.FORM_LINEARITY: linearityToolStripMenuItem_Click(this, EventArgs.Empty); break;
                 case OtherButtonId.FORM_WB: wBToolStripMenuItem_Click(this, EventArgs.Empty); break;
 
