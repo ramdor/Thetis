@@ -3092,13 +3092,53 @@ namespace Thetis
 				return parser.Error1;
 		}
 
-		#endregion Extended CAT Methods ZZA-ZZF
+        #endregion Extended CAT Methods ZZA-ZZF
 
-		#region Extended CAT Methods ZZG-ZZM
+        #region Extended CAT Methods ZZG-ZZM
 
 
-		// Sets or reads the noise gate enable button status
-		public string ZZGE(string s)
+        // Adds an id mainly used by tcpip cat ot direct messages back to a specific cat client, there is no get
+        // TCPIPcatserver will use the response to add an id against the client
+        public string ZZGA(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                Guid g;
+                bool is_guid = Guid.TryParse(s, out g);
+
+				if (is_guid)
+					return "ZZGA" + g.ToString().ToLower();
+				else
+					return parser.Error1;
+            }
+            else
+			{ 
+                return parser.Error1;
+            }
+        }
+
+        // Remove an id mainly used by tcpip cat ot direct messages back to a specific cat client, there is no get
+        // TCPIPcatserver will use the response to remove an id from the client
+        public string ZZGR(string s)
+        {
+            if (s.Length == parser.nSet)
+            {
+                Guid g;
+                bool is_guid = Guid.TryParse(s, out g);
+
+				if (is_guid)
+					return "ZZGR" + g.ToString().ToLower();
+				else
+					return parser.Error1;
+            }
+            else
+            {
+                return parser.Error1;
+            }
+        }
+
+        // Sets or reads the noise gate enable button status
+        public string ZZGE(string s)
 		{
 			if(s.Length == parser.nSet && (s == "0" || s == "1"))
 			{

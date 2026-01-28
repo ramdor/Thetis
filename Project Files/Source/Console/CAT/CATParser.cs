@@ -546,7 +546,8 @@ namespace Thetis
 				if(prefix != "KY" && prefix+extension != "ZZKY" && prefix+extension != "ZZMY" &&
 					(prefix+extension != "ZZEA" && prefix+extension != "ZZEB") &&
 					(prefix+extension != "ZZFX" && prefix+extension != "ZZFY") &&
-					(prefix+extension != "ZZFV" && prefix+extension != "ZZFW"))
+					(prefix+extension != "ZZFV" && prefix+extension != "ZZFW") &&
+                    (prefix + extension != "ZZGA" && prefix + extension != "ZZGR"))
 				{
 					Regex sfxpattern = new Regex("^[+-]?[Vv0-9]*$");
                     if (!sfxpattern.IsMatch(sfx))
@@ -819,7 +820,10 @@ namespace Thetis
 				case "ZZFY":
 					rtncmd = cmdlist.ZZFY(suffix);
 					break;
-				case "ZZGE":
+                case "ZZGA":
+                    rtncmd = cmdlist.ZZGA(suffix);
+                    break;
+                case "ZZGE":
 					rtncmd = cmdlist.ZZGE(suffix);
 					break;
 				case "ZZGL":
@@ -831,7 +835,10 @@ namespace Thetis
                 case "ZZGU":
                     rtncmd = cmdlist.ZZGU(suffix);
                     break;
-				case "ZZHA":
+                case "ZZGR":
+                    rtncmd = cmdlist.ZZGR(suffix);
+                    break;
+                case "ZZHA":
 					rtncmd = cmdlist.ZZHA(suffix);
 					break;
 				case "ZZHR":

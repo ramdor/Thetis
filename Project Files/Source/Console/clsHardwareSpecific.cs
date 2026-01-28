@@ -80,7 +80,7 @@ namespace Thetis
                 _old_model = _model;
                 _model = value;
 
-                NetworkIO.fwVersionsChecked = false;
+                NetworkIO.FWVersionsChecked = false;
 
                 switch (_model)
                 {

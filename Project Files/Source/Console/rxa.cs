@@ -85,7 +85,7 @@ namespace Thetis
 
         private void udRXAFreq_ValueChanged(object sender, EventArgs e)
         {
-            NetworkIO.SetVFOfreq(fwid, NetworkIO.Freq2PW((int)(1000000.0 * (double)udRXAFreq.Value)), 0); // sending phaseword to firmware         
+            NetworkIO.SetVFOfreq(fwid, NetworkIO.Freq2PhaseWord((int)(1000000.0 * (double)udRXAFreq.Value)), 0); // sending phaseword to firmware         
             panDisplay.VFOHz = RXFreq; 
         }
 
