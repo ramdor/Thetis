@@ -645,6 +645,11 @@ void CmdGeneral() { // port 1024
 	int tmp;
 
 	// inform radio of ports that it uses to receive data FROM the PC, so these are the originating ports on the pc
+	// 
+	// **TODO, if the radio is behind a NAT router and ports are mapped off the standard, this will not work correctly
+	// beause the modem will have changed the source port to the mapped port on the router, and the radio will not be expecting
+	// data on these ports. May have to add an ignore mapping option to prn and pass in with nativeInitMetis
+	// 
 	// these will always be at the discovery port + offset
 	// Rx Specific port #1025							(1025)
 	tmp = prn->base_outbound_port + 1;

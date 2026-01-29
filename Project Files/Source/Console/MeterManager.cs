@@ -37206,13 +37206,7 @@ namespace Thetis
                 //[2.10.3.6]MW0LGE refactored to use Windows Imaging Component (WIC)
                 try
                 {
-                    System.Drawing.Imaging.BitmapData bitmapData = null;
-
                     SharpDX.Direct2D1.Bitmap dxBitmap;
-                    Size2 size = new Size2(bitmap.Width, bitmap.Height);
-
-                    BitmapProperties bitmapProperties = new BitmapProperties(new SharpDX.Direct2D1.PixelFormat(Format.B8G8R8A8_UNorm, _ALPHA_MODE));
-
                     SharpDX.WIC.ImagingFactory factory = null;
                     SharpDX.WIC.BitmapDecoder decoder = null;
                     SharpDX.WIC.BitmapFrameDecode frame = null;
@@ -37230,7 +37224,7 @@ namespace Thetis
                             frame = decoder.GetFrame(0);
                             converter = new SharpDX.WIC.FormatConverter(factory);
 
-                            converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPRGBA);
+                            converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPBGRA);// Format32bppPRGBA);
                             dxBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(rt, converter);
                         }
                         finally
@@ -37243,13 +37237,8 @@ namespace Thetis
                     }
                     else
                     {
-                        bitmapData = bitmap.LockBits(
-                            new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
-                            System.Drawing.Imaging.ImageLockMode.ReadOnly,
-                            bitmap.PixelFormat);
-
                         MemoryStream ms = new MemoryStream();
-                        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);//Png);
                         ms.Position = 0;
 
                         try
@@ -37259,13 +37248,11 @@ namespace Thetis
                             frame = decoder.GetFrame(0);
                             converter = new SharpDX.WIC.FormatConverter(factory);
 
-                            converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPRGBA);
+                            converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPBGRA);// Format32bppPRGBA);
                             dxBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(rt, converter);
                         }
                         finally
                         {
-                            if (bitmapData != null) bitmap.UnlockBits(bitmapData);
-
                             Utilities.Dispose(ref converter);
                             Utilities.Dispose(ref frame);
                             Utilities.Dispose(ref decoder);

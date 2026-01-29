@@ -6931,10 +6931,20 @@ namespace Thetis
 
                 if (image != null)
                 {
-                    using (Bitmap graphicsImage = new Bitmap(image))
+                    try
                     {
-                        _bitmapBackground = SDXBitmapFromSysBitmap(_d2dRenderTarget, graphicsImage);
+                        if (image.Width > 0 && image.Height > 0)
+                        {
+                            using (Bitmap graphicsImage = new Bitmap(image))
+                            {
+                                if (graphicsImage.Width > 0 && graphicsImage.Height > 0)
+                                {
+                                    _bitmapBackground = SDXBitmapFromSysBitmap(_d2dRenderTarget, graphicsImage);
+                                }
+                            }
+                        }
                     }
+                    catch { }
                 }
             }
         }
@@ -6956,18 +6966,32 @@ namespace Thetis
             // Convert all pixels 
             for (int y = 0; y < bitmap.Height; y++)
             {
-                int offset = bitmapData.Stride * y;
+                //[2.10.3.13]MW0LGE fix issue where stride can be -ve for bottom up bitmaps
+                IntPtr rowPtr = IntPtr.Add(bitmapData.Scan0, bitmapData.Stride * y);
+                int offset = 0;
+
                 for (int x = 0; x < bitmap.Width; x++)
                 {
-                    byte B = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                    byte G = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                    byte R = Marshal.ReadByte(bitmapData.Scan0, offset++);
-                    byte A = Marshal.ReadByte(bitmapData.Scan0, offset++);
+                    byte B = Marshal.ReadByte(rowPtr, offset++);
+                    byte G = Marshal.ReadByte(rowPtr, offset++);
+                    byte R = Marshal.ReadByte(rowPtr, offset++);
+                    byte A = Marshal.ReadByte(rowPtr, offset++);
 
                     int bgra = B | (G << 8) | (R << 16) | (A << 24);
                     tempStream.Write(bgra);
                 }
 
+                //int offset = bitmapData.Stride * y;
+                //for (int x = 0; x < bitmap.Width; x++)
+                //{
+                //    byte B = Marshal.ReadByte(bitmapData.Scan0, offset++);
+                //    byte G = Marshal.ReadByte(bitmapData.Scan0, offset++);
+                //    byte R = Marshal.ReadByte(bitmapData.Scan0, offset++);
+                //    byte A = Marshal.ReadByte(bitmapData.Scan0, offset++);
+
+                //    int bgra = B | (G << 8) | (R << 16) | (A << 24);
+                //    tempStream.Write(bgra);
+                //}
             }
             bitmap.UnlockBits(bitmapData);
 

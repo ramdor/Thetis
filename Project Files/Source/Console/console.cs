@@ -3178,10 +3178,14 @@ namespace Thetis
             }
             a.Add("console_state/" + ((int)this.WindowState).ToString()); //MW0LGE_21 window state
 
-            if (SetupForm.WindowState != FormWindowState.Minimized)//[2.10.3.6]MW0LGE prevent garbage being stored if shutdown when minimsed
+            if (!IsSetupFormNull) // very rare case where setup form is null on exit, and would cause another instance
+                                  // why null on exit? not sure yet. TODO
             {
-                a.Add("setup_top/" + SetupForm.Top.ToString());
-                a.Add("setup_left/" + SetupForm.Left.ToString());
+                if (SetupForm.WindowState != FormWindowState.Minimized)//[2.10.3.6]MW0LGE prevent garbage being stored if shutdown when minimsed
+                {
+                    a.Add("setup_top/" + SetupForm.Top.ToString());
+                    a.Add("setup_left/" + SetupForm.Left.ToString());
+                }
             }
 
             a.Add("IncludeWindowBorders/" + m_bIncludeWindowBorders);   // used in status bar resize form calcs
@@ -45062,8 +45066,9 @@ namespace Thetis
         }
         private void btnDisplayZTB_Click(object sender, EventArgs e)
         {
-            MouseButtons mb = ((MouseEventArgs)e).Button;
-            ZoomToBand(mb == MouseButtons.Right);
+            MouseEventArgs me = e as MouseEventArgs;
+            bool is_right = me != null && me.Button == MouseButtons.Right;
+            ZoomToBand(is_right);
         }
 
         private void setupZTBButton()
