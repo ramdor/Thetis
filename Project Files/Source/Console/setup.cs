@@ -6131,17 +6131,17 @@ namespace Thetis
                 chkDisableRXOut.Visible = false;
                 chkBPF2Gnd.Visible = true;
                 chkEnableXVTRHF.Visible = true;
+
+                // mic xlr options for G2 models
                 toolTip1.SetToolTip(chkEXT2OutOnTx, "Enable Rx BYPASS during transmit.");
                 if (HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
                     HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K)
                 {
                     panelSaturnMicInput.Enabled = true;
-                    lblSaturnMicInput.Enabled = true;
                 }
                 else
                 {
                     panelSaturnMicInput.Enabled = false;
-                    lblSaturnMicInput.Enabled = false;
                 }
             }
             else
@@ -6264,11 +6264,6 @@ namespace Thetis
                 HardwareSpecific.Model != HPSDRModel.ANAN_G2_1K &&
                 HardwareSpecific.Model != HPSDRModel.REDPITAYA)//DH1KLM
             {
-                //chkAlexPresent.Parent = groupBoxHPSDRHW;
-                //chkAlexPresent.Location = new Point(43, 120);
-                //chkApolloPresent.Parent = groupBoxHPSDRHW;
-                //chkApolloPresent.Location = new Point(43, 140);
-
                 panelBPFControl.Visible = false;
                 panelAlex1HPFControl.Visible = true;
 
@@ -19733,7 +19728,7 @@ namespace Thetis
                 case HPSDRModel.HERMES:
                     chkAlexPresent.Enabled = true;
                     chkApolloPresent.Enabled = true;
-                    //chkApolloPresent.Visible = true;
+                    pnlGeneralHardwareORION.Enabled = false;
 
                     chkGeneralRXOnly.Visible = true;
                     chkHermesStepAttenuator.Enabled = true;
@@ -19764,9 +19759,9 @@ namespace Thetis
                 case HPSDRModel.ANAN10:
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = false;
-                    //chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
                     chkApolloPresent.Checked = false;
+                    pnlGeneralHardwareORION.Enabled = false;
 
                     chkGeneralRXOnly.Visible = true;
                     chkHermesStepAttenuator.Enabled = true;
@@ -19797,9 +19792,9 @@ namespace Thetis
                 case HPSDRModel.ANAN10E:
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = false;
-                    //chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
                     chkApolloPresent.Checked = false;
+                    pnlGeneralHardwareORION.Enabled = false;
 
                     // set RX2 sample_rate equal to RX1 rate
                     comboAudioSampleRateRX2.SelectedIndex = comboAudioSampleRate1.SelectedIndex;
@@ -19834,9 +19829,9 @@ namespace Thetis
                 case HPSDRModel.ANAN100:
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = true;
-                    //chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
                     chkApolloPresent.Checked = false;
+                    pnlGeneralHardwareORION.Enabled = false;
 
                     chkGeneralRXOnly.Visible = true;
                     chkHermesStepAttenuator.Enabled = true;
@@ -19869,9 +19864,9 @@ namespace Thetis
                 case HPSDRModel.ANAN100B:
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = false;
-                    //chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
                     chkApolloPresent.Checked = false;
+                    pnlGeneralHardwareORION.Enabled = false;
 
                     comboAudioSampleRateRX2.SelectedIndex = comboAudioSampleRate1.SelectedIndex;
                     comboAudioSampleRateRX2_SelectedIndexChanged(this, e);
@@ -19907,9 +19902,9 @@ namespace Thetis
                 case HPSDRModel.ANAN100D:
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = true;
-                    //chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
                     chkApolloPresent.Checked = false;
+                    pnlGeneralHardwareORION.Enabled = false;
 
                     chkGeneralRXOnly.Visible = true;
                     chkHermesStepAttenuator.Enabled = true;
@@ -19957,9 +19952,9 @@ namespace Thetis
                 case HPSDRModel.ANAN200D:
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = true;
-                    //chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
                     chkApolloPresent.Checked = false;
+                    pnlGeneralHardwareORION.Enabled = true;
 
                     chkGeneralRXOnly.Visible = true;
                     chkHermesStepAttenuator.Enabled = true;
@@ -19982,8 +19977,6 @@ namespace Thetis
                     chkEXT1OutOnTx.Text = "Ext 1 on Tx";
                     chkEXT2OutOnTx.Text = "Ext 2 on Tx";
                     chkEXT2OutOnTx.Visible = true;
-                    //chkAlexPresent.Parent = grpGeneralHardwareORION;
-                    //chkAlexPresent.Location = new Point(43, 120);
                     radDDC0ADC2.Enabled = true;
                     radDDC1ADC2.Enabled = true;
                     radDDC2ADC2.Enabled = true;
@@ -20000,9 +19993,9 @@ namespace Thetis
                 case HPSDRModel.ANAN7000D:
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = true;
-                    //chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
                     chkApolloPresent.Checked = false;
+                    pnlGeneralHardwareORION.Enabled = true;
 
                     chkGeneralRXOnly.Visible = true;
                     chkHermesStepAttenuator.Enabled = true;
@@ -20023,10 +20016,6 @@ namespace Thetis
                     chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
                     chkEXT1OutOnTx.Text = "Ext 1 on Tx";
                     chkEXT2OutOnTx.Text = "Rx BYPASS on Tx";
-                    //chkAlexPresent.Parent = grpGeneralHardwareORION;
-                    //chkAlexPresent.Location = new Point(43, 120);
-                    //chkApolloPresent.Parent = grpGeneralHardwareORION;
-                    //chkApolloPresent.Location = new Point(43, 140);
                     panelAlex1HPFControl.Visible = false;
                     panelBPFControl.Visible = true;
                     chkDisable6mLNAonRX.Parent = panelBPFControl;
@@ -20055,9 +20044,9 @@ namespace Thetis
                 case HPSDRModel.ANAN8000D:
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = true;
-                    //chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
                     chkApolloPresent.Checked = false;
+                    pnlGeneralHardwareORION.Enabled = true;
 
                     chkGeneralRXOnly.Visible = true;
                     chkHermesStepAttenuator.Enabled = true;
@@ -20079,10 +20068,6 @@ namespace Thetis
                     chkRxOutOnTx.Text = "BYPASS on Tx";
                     chkEXT1OutOnTx.Text = "Ext 1 on Tx";
                     chkEXT2OutOnTx.Visible = false;
-                    //chkAlexPresent.Parent = grpGeneralHardwareORION;
-                    //chkAlexPresent.Location = new Point(43, 120);
-                    //chkApolloPresent.Parent = grpGeneralHardwareORION;
-                    //chkApolloPresent.Location = new Point(43, 140);
                     panelAlex1HPFControl.Visible = false;
                     panelBPFControl.Visible = true;
                     chkDisable6mLNAonRX.Parent = panelBPFControl;
@@ -20113,9 +20098,9 @@ namespace Thetis
                 case HPSDRModel.ANAN_G2:                 // added G8NJJ
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = true;
-                    //chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
                     chkApolloPresent.Checked = false;
+                    pnlGeneralHardwareORION.Enabled = true;
 
                     chkGeneralRXOnly.Visible = true;
                     chkHermesStepAttenuator.Enabled = true;
@@ -20136,10 +20121,6 @@ namespace Thetis
                     chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
                     chkEXT1OutOnTx.Text = "Ext 1 on Tx";
                     chkEXT2OutOnTx.Text = "Rx BYPASS on Tx";
-                    //chkAlexPresent.Parent = grpGeneralHardwareORION;
-                    //chkAlexPresent.Location = new Point(43, 120);
-                    //chkApolloPresent.Parent = grpGeneralHardwareORION;
-                    //chkApolloPresent.Location = new Point(43, 140);
                     panelAlex1HPFControl.Visible = false;
                     panelBPFControl.Visible = true;
                     chkDisable6mLNAonRX.Parent = panelBPFControl;
@@ -20168,9 +20149,9 @@ namespace Thetis
                 case HPSDRModel.ANAN_G2_1K:              // added G8NJJ
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = true;
-                    //chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
                     chkApolloPresent.Checked = false;
+                    pnlGeneralHardwareORION.Enabled = true;
 
                     chkGeneralRXOnly.Visible = true;
                     chkHermesStepAttenuator.Enabled = true;
@@ -20191,10 +20172,6 @@ namespace Thetis
                     chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
                     chkEXT1OutOnTx.Text = "Ext 1 on Tx";
                     chkEXT2OutOnTx.Text = "Rx BYPASS on Tx";
-                    //chkAlexPresent.Parent = grpGeneralHardwareORION;
-                    //chkAlexPresent.Location = new Point(43, 120);
-                    //chkApolloPresent.Parent = grpGeneralHardwareORION;
-                    //chkApolloPresent.Location = new Point(43, 140);
                     panelAlex1HPFControl.Visible = false;
                     panelBPFControl.Visible = true;
                     chkDisable6mLNAonRX.Parent = panelBPFControl;
@@ -20223,9 +20200,9 @@ namespace Thetis
                 case HPSDRModel.ANVELINAPRO3:
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = true;
-                    //chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
                     chkApolloPresent.Checked = false;
+                    pnlGeneralHardwareORION.Enabled = true;
 
                     chkGeneralRXOnly.Visible = true;
                     chkHermesStepAttenuator.Enabled = true;
@@ -20246,10 +20223,6 @@ namespace Thetis
                     chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
                     chkEXT1OutOnTx.Text = "Ext 1 on Tx";
                     chkEXT2OutOnTx.Text = "Rx BYPASS on Tx";
-                    //chkAlexPresent.Parent = grpGeneralHardwareORION;
-                    //chkAlexPresent.Location = new Point(43, 120);
-                    //chkApolloPresent.Parent = grpGeneralHardwareORION;
-                    //chkApolloPresent.Location = new Point(43, 140);
                     panelAlex1HPFControl.Visible = false;
                     panelBPFControl.Visible = true;
                     chkDisable6mLNAonRX.Parent = panelBPFControl;
@@ -20278,9 +20251,9 @@ namespace Thetis
                 case HPSDRModel.REDPITAYA: //DH1KLM
                     chkAlexPresent.Checked = true;
                     chkAlexPresent.Enabled = true;
-                    //chkApolloPresent.Visible = false;
                     chkApolloPresent.Enabled = false;
                     chkApolloPresent.Checked = false;
+                    pnlGeneralHardwareORION.Enabled = false;
 
                     chkGeneralRXOnly.Visible = true;
                     chkHermesStepAttenuator.Enabled = true;
@@ -20301,10 +20274,6 @@ namespace Thetis
                     chkRX2StepAtt_CheckedChanged(this, EventArgs.Empty);
                     chkEXT1OutOnTx.Text = "Ext 1 on Tx";
                     chkEXT2OutOnTx.Text = "Rx BYPASS on Tx";
-                    //chkAlexPresent.Parent = grpGeneralHardwareORION;
-                    //chkAlexPresent.Location = new Point(43, 120);
-                    //chkApolloPresent.Parent = grpGeneralHardwareORION;
-                    //chkApolloPresent.Location = new Point(43, 140);
                     panelAlex1HPFControl.Visible = false;
                     panelBPFControl.Visible = true;
                     chkDisable6mLNAonRX.Parent = panelBPFControl;
