@@ -35554,6 +35554,16 @@ namespace Thetis
             }
             else
             {
+                bool socket_error = false;
+                foreach (NicRadioScanResult sr in discovered)
+                {
+                    if (sr.Diagnostics.SocketError)
+                    {
+                        socket_error = true;
+                        break;
+                    }
+                }
+
                 bool radios_found = false;
                 foreach(NicRadioScanResult sr in discovered)
                 {
@@ -35563,12 +35573,22 @@ namespace Thetis
                         break;
                     }
                 }
-                if(!radios_found)
+                if (!radios_found)
                 {
-                    MessageBox.Show(this, "No Radio(s) found.",
-                        "Discovery complete",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    if (socket_error)
+                    {
+                        MessageBox.Show(this, "Socket error. Already in use.",
+                            "Discovery complete",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    }
+                    else
+                    {
+                        MessageBox.Show(this, "No Radio(s) found.",
+                            "Discovery complete",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    }
                     return;
                 }
             }
@@ -35647,6 +35667,16 @@ namespace Thetis
             }
             else
             {
+                bool socket_error = false;
+                foreach (NicRadioScanResult sr in discovered)
+                {
+                    if (sr.Diagnostics.SocketError)
+                    {
+                        socket_error = true;
+                        break;
+                    }
+                }
+
                 bool radios_found = false;
                 foreach (NicRadioScanResult sr in discovered)
                 {
@@ -35658,6 +35688,13 @@ namespace Thetis
                 }
                 if (!radios_found)
                 {
+                    if(socket_error)
+                    {
+                        MessageBox.Show(this, "Socket error. Already in use.",
+                            "Discovery complete",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    }
                     return false;
                 }
             }
