@@ -60,8 +60,8 @@ using System.Diagnostics;
 // Very fast      1                 3                        60                        ~180 ms
 // Fast           2                 3                        80                        ~480 ms
 // Balanced       2                 4                        100                       ~800 ms
-// Safe default   3                 5                        120                       ~1800 ms
-// Very tolerant  4                 6                        150                       ~3600 ms
+// Safe default   3                 5                        150                       ~1800 ms
+// Very tolerant  3                 6                        300                       ~5400 ms
 //
 // Notes:
 // - Lower values = faster scans, but higher risk of missing slow replies
@@ -184,14 +184,14 @@ namespace Thetis
 
                 case ScanPerformanceProfile.Safe:
                     AttemptsPerNic = 3;
-                    QuietPollsBeforeResend = 5;
-                    PollTimeoutMilliseconds = 120;
+                    QuietPollsBeforeResend = 4;
+                    PollTimeoutMilliseconds = 150;
                     break;
 
                 case ScanPerformanceProfile.VeryTolerant:
-                    AttemptsPerNic = 4;
+                    AttemptsPerNic = 3;
                     QuietPollsBeforeResend = 6;
-                    PollTimeoutMilliseconds = 150;
+                    PollTimeoutMilliseconds = 300;
                     break;
 
                 default:
@@ -211,7 +211,7 @@ namespace Thetis
         public HPSDRHW DeviceType { get; set; }
         public byte CodeVersion { get; set; }
         public byte BetaVersion { get; set; }
-        public byte ProtocolSupported { get; set; }
+        public byte Protocol2Supported { get; set; }
         public byte NumRxs { get; set; }
         public byte MercuryVersion0 { get; set; }
         public byte MercuryVersion1 { get; set; }
@@ -721,7 +721,7 @@ namespace Thetis
                         info.DeviceType = parsed.DeviceType;
                         info.CodeVersion = parsed.CodeVersion;
                         info.BetaVersion = parsed.BetaVersion;
-                        info.ProtocolSupported = parsed.ProtocolSupported;
+                        info.Protocol2Supported = parsed.ProtocolSupported;
                         info.NumRxs = parsed.NumRxs;
                         info.MercuryVersion0 = parsed.MercuryVersion0;
                         info.MercuryVersion1 = parsed.MercuryVersion1;

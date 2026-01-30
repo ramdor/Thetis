@@ -23,7 +23,7 @@ namespace Thetis
         public static string GetFWVersionErrorMsg { get; set; } = "";
         public static string BoardMismatch { get; set; } = "";
 
-        public static int InitRadio(bool perform_search = true)
+        public static int InitRadio()
         {
             int ret = -1;
             // 0 everything fine
@@ -40,10 +40,17 @@ namespace Thetis
 
             Console c = Console.getConsole();
             if (c.IsSetupFormNull) return -1;
-            if(c.SetupForm.SelectedRadioList == null) return -1;
-
+            if (c.SetupForm.SelectedRadioList == null) return -1;
             ucRadioList rl = c.SetupForm.SelectedRadioList;
             if (rl == null) return -1;
+
+            bool perform_search = true;
+            if (rl.IsFirstRadioFoundSelected)
+            {
+                // we need to do a scan here, and use the first found
+                c.SetupForm.ScanForFirstFoundRadio();
+                perform_search = false; // we dont want to search again
+            }
 
             NicRadioScanResult nic = rl.SelectedNICDetails;
             RadioInfo ri = rl.SelectedRadioDetails;
@@ -140,7 +147,7 @@ namespace Thetis
                 CurrentRadioProtocol = (RadioProtocol)protocol;
                 FWCodeVersion = ri.CodeVersion;
                 BetaVersion = ri.BetaVersion;
-                Protocol2VersionSupported = ri.ProtocolSupported;
+                Protocol2VersionSupported = ri.Protocol2Supported;
 
                 //[2.10.3.9]MW0LGE added board check, issue icon shown in setup
                 bool board_is_expected_for_model;

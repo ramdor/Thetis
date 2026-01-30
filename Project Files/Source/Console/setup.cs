@@ -35253,7 +35253,7 @@ namespace Thetis
         }
 
         //
-        private RadioDiscoveryOptions getRadioDiscoveryOptions()
+        private RadioDiscoveryOptions getRadioDiscoveryOptions(bool nics_only = false)
         {
             RadioDiscoveryOptions options = new RadioDiscoveryOptions();
             options.IgnoreSubnetCheck = chkAnySubnet.Checked;
@@ -35281,9 +35281,9 @@ namespace Thetis
             options.FixedTargetIp = null;
             options.FixedLocalIp = null;
 
-            applyAnyOrSpecificRadio(options);
-
-            return options;
+            if (nics_only) return options;
+            if(applyAnyOrSpecificRadio(options)) return options;            
+            return null;
         }
 
         public int ListenToRadioOnUDPPort
@@ -35312,7 +35312,7 @@ namespace Thetis
                 previous = selected.LocalIPv4;
             }
 
-            RadioDiscoveryOptions options = getRadioDiscoveryOptions();
+            RadioDiscoveryOptions options = getRadioDiscoveryOptions(true);
             options.ScanPerformance = ScanPerformanceProfile.UltraFast;
             options.FixedTargetIp = null;
             options.FixedLocalIp = null;
@@ -35505,43 +35505,50 @@ namespace Thetis
 
             return true;
         }
-        private void btnDiscoverRadios_Click(object sender, EventArgs e)
+
+        private bool tryDiscoverRadios(out List<NicRadioScanResult> discovered, bool showNoRadiosMessage)
         {
-            Cursor c = this.Cursor;
+            Cursor cursor = this.Cursor;
             this.Cursor = Cursors.WaitCursor;
 
-            List<NicRadioScanResult> discovered = null;
+            discovered = null;
 
             try
             {
                 RadioDiscoveryOptions options = getRadioDiscoveryOptions();
+                if (options == null)
+                {
+                    MessageBox.Show(this, "Invalid IP/Url.",
+                        "Invalid",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                    return false;
+                }
+
                 RadioDiscoveryService svc = new RadioDiscoveryService();
 
                 if (radViaAllNics.Checked)
                 {
                     options.FixedLocalIp = null;
-
                     discovered = svc.DiscoverUsingAllNics(options);
                 }
                 else if (radViaSpecificNic.Checked)
                 {
                     NicRadioScanResult selectedNic = comboNICS.SelectedItem as NicRadioScanResult;
-                    if (selectedNic == null) return;
+                    if (selectedNic == null) return false;
 
                     IPAddress localIp = selectedNic.LocalIPv4;
-                    if (localIp == null) return;
+                    if (localIp == null) return false;
 
                     NicRadioScanResult result = svc.DiscoverUsingSingleNic(options, localIp);
+
                     discovered = new List<NicRadioScanResult>();
-                    if (result != null)
-                    {
-                        discovered.Add(result);
-                    }
+                    if (result != null) discovered.Add(result);
                 }
             }
             finally
             {
-                this.Cursor = c;
+                this.Cursor = cursor;
             }
 
             if (discovered == null || discovered.Count < 1)
@@ -35550,56 +35557,63 @@ namespace Thetis
                     "Discovery complete",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                return;
+                return false;
             }
-            else
+
+            bool socketError = false;
+            for (int i = 0; i < discovered.Count; i++)
             {
-                bool socket_error = false;
-                foreach (NicRadioScanResult sr in discovered)
+                NicRadioScanResult sr = discovered[i];
+                if (sr != null && sr.Diagnostics != null && sr.Diagnostics.SocketError)
                 {
-                    if (sr.Diagnostics.SocketError)
-                    {
-                        socket_error = true;
-                        break;
-                    }
+                    socketError = true;
+                    break;
+                }
+            }
+
+            bool radiosFound = false;
+            for (int i = 0; i < discovered.Count; i++)
+            {
+                NicRadioScanResult sr = discovered[i];
+                if (sr != null && sr.Radios != null && sr.Radios.Count > 0)
+                {
+                    radiosFound = true;
+                    break;
+                }
+            }
+
+            if (!radiosFound)
+            {
+                if (socketError)
+                {
+                    MessageBox.Show(this, "Socket error. Already in use.",
+                        "Discovery complete",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                }
+                else if (showNoRadiosMessage)
+                {
+                    MessageBox.Show(this, "No Radio(s) found.",
+                        "Discovery complete",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
                 }
 
-                bool radios_found = false;
-                foreach(NicRadioScanResult sr in discovered)
-                {
-                    if(sr.Radios != null && sr.Radios.Count > 0)
-                    {
-                        radios_found = true;
-                        break;
-                    }
-                }
-                if (!radios_found)
-                {
-                    if (socket_error)
-                    {
-                        MessageBox.Show(this, "Socket error. Already in use.",
-                            "Discovery complete",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                    }
-                    else
-                    {
-                        MessageBox.Show(this, "No Radio(s) found.",
-                            "Discovery complete",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                    }
-                    return;
-                }
+                return false;
             }
+
+            return true;
+        }
+
+        private void btnDiscoverRadios_Click(object sender, EventArgs e)
+        {
+            List<NicRadioScanResult> discovered;
+            if (!tryDiscoverRadios(out discovered, true)) return;
 
             clsDiscoveredRadioPicker picker = new clsDiscoveredRadioPicker();
             List<NicRadioScanResult> selectedRadios = picker.PickRadios(this, discovered);
 
-            if (selectedRadios == null)
-            {
-                return;
-            }
+            if (selectedRadios == null) return;
 
             for (int n = 0; n < selectedRadios.Count; n++)
             {
@@ -35618,92 +35632,29 @@ namespace Thetis
                 }
             }
         }
+
         public bool ScanForFirstFoundRadio()
         {
-            Cursor c = this.Cursor;
-            this.Cursor = Cursors.WaitCursor;
+            List<NicRadioScanResult> discovered;
+            if (!tryDiscoverRadios(out discovered, false)) return false;
 
-            List<NicRadioScanResult> discovered = null;
-
-            try
+            for (int i = 0; i < discovered.Count; i++)
             {
-                RadioDiscoveryOptions options = getRadioDiscoveryOptions();
-                RadioDiscoveryService svc = new RadioDiscoveryService();
+                NicRadioScanResult nic = discovered[i];
+                if (nic == null) continue;
 
-                if (radViaAllNics.Checked)
-                {
-                    options.FixedLocalIp = null;
+                List<RadioInfo> radios = nic.Radios;
+                if (radios == null || radios.Count < 1) continue;
 
-                    discovered = svc.DiscoverUsingAllNics(options);
-                }
-                else if (radViaSpecificNic.Checked)
-                {
-                    NicRadioScanResult selectedNic = comboNICS.SelectedItem as NicRadioScanResult;
-                    if (selectedNic == null) return false;
+                RadioInfo radio = radios[0];
+                if (radio == null) continue;
 
-                    IPAddress localIp = selectedNic.LocalIPv4;
-                    if (localIp == null) return false;
-
-                    NicRadioScanResult result = svc.DiscoverUsingSingleNic(options, localIp);
-                    discovered = new List<NicRadioScanResult>();
-                    if (result != null)
-                    {
-                        discovered.Add(result);
-                    }
-                }
-            }
-            finally
-            {
-                this.Cursor = c;
+                ucRadioList_Radios.UpdateSelectedDetails(nic, radio);
+                return true;
             }
 
-            if (discovered == null || discovered.Count < 1)
-            {
-                MessageBox.Show(this, "No NICs available.",
-                    "Discovery complete",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                return false;
-            }
-            else
-            {
-                bool socket_error = false;
-                foreach (NicRadioScanResult sr in discovered)
-                {
-                    if (sr.Diagnostics.SocketError)
-                    {
-                        socket_error = true;
-                        break;
-                    }
-                }
-
-                bool radios_found = false;
-                foreach (NicRadioScanResult sr in discovered)
-                {
-                    if (sr.Radios != null && sr.Radios.Count > 0)
-                    {
-                        radios_found = true;
-                        break;
-                    }
-                }
-                if (!radios_found)
-                {
-                    if(socket_error)
-                    {
-                        MessageBox.Show(this, "Socket error. Already in use.",
-                            "Discovery complete",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
-                    }
-                    return false;
-                }
-            }
-
-            // ok let use first radio, on first nic
-            ucRadioList_Radios.UpdateSelectedDetails(discovered[0], discovered[0].Radios[0]);
-
-            return true;
-        }
+            return false;
+        }        
 
         private void btnRefreshNics_Click(object sender, EventArgs e)
         {

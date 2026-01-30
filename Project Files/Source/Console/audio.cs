@@ -1833,19 +1833,8 @@ namespace Thetis
             phase_buf_l = new float[2048];
             phase_buf_r = new float[2048];
             Console c = Console.getConsole();
-
-            bool perform_search = true;
-            if(c != null && !c.IsSetupFormNull && c.SetupForm.SelectedRadioList != null)
-            {
-                if(c.SetupForm.SelectedRadioList.IsFirstRadioFoundSelected)
-                {
-                    // we need to do a scan here, lets call the function in setup to do that
-                    bool ok = c.SetupForm.ScanForFirstFoundRadio();
-                    perform_search = false; // we dont want to search again in InitRadio, even if we fail here
-                }
-            }
             
-            rc = NetworkIO.InitRadio(perform_search);
+            rc = NetworkIO.InitRadio();
 
             if (rc != 0)
             {
