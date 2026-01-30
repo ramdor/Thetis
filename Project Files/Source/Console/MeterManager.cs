@@ -37224,7 +37224,7 @@ namespace Thetis
                             frame = decoder.GetFrame(0);
                             converter = new SharpDX.WIC.FormatConverter(factory);
 
-                            converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPBGRA);// Format32bppPRGBA);
+                            converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPBGRA);
                             dxBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(rt, converter);
                         }
                         finally
@@ -37248,7 +37248,7 @@ namespace Thetis
                             frame = decoder.GetFrame(0);
                             converter = new SharpDX.WIC.FormatConverter(factory);
 
-                            converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPBGRA);// Format32bppPRGBA);
+                            converter.Initialize(frame, SharpDX.WIC.PixelFormat.Format32bppPBGRA);
                             dxBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(rt, converter);
                         }
                         finally

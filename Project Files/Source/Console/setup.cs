@@ -2164,6 +2164,7 @@ namespace Thetis
             // General Tab
             comboRadioModel_SelectedIndexChanged(this, e);
 
+            chkAdvancedNetworkingSettings_CheckedChanged(this, e);
             udGeneralLPTDelay_ValueChanged(this, e);
             chkGeneralRXOnly_CheckedChanged(this, e);
             comboGeneralXVTR_SelectedIndexChanged(this, e);
@@ -35597,6 +35598,76 @@ namespace Thetis
                 }
             }
         }
+        public bool ScanForFirstFoundRadio()
+        {
+            Cursor c = this.Cursor;
+            this.Cursor = Cursors.WaitCursor;
+
+            List<NicRadioScanResult> discovered = null;
+
+            try
+            {
+                RadioDiscoveryOptions options = getRadioDiscoveryOptions();
+                RadioDiscoveryService svc = new RadioDiscoveryService();
+
+                if (radViaAllNics.Checked)
+                {
+                    options.FixedLocalIp = null;
+
+                    discovered = svc.DiscoverUsingAllNics(options);
+                }
+                else if (radViaSpecificNic.Checked)
+                {
+                    NicRadioScanResult selectedNic = comboNICS.SelectedItem as NicRadioScanResult;
+                    if (selectedNic == null) return false;
+
+                    IPAddress localIp = selectedNic.LocalIPv4;
+                    if (localIp == null) return false;
+
+                    NicRadioScanResult result = svc.DiscoverUsingSingleNic(options, localIp);
+                    discovered = new List<NicRadioScanResult>();
+                    if (result != null)
+                    {
+                        discovered.Add(result);
+                    }
+                }
+            }
+            finally
+            {
+                this.Cursor = c;
+            }
+
+            if (discovered == null || discovered.Count < 1)
+            {
+                MessageBox.Show(this, "No NICs available.",
+                    "Discovery complete",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return false;
+            }
+            else
+            {
+                bool radios_found = false;
+                foreach (NicRadioScanResult sr in discovered)
+                {
+                    if (sr.Radios != null && sr.Radios.Count > 0)
+                    {
+                        radios_found = true;
+                        break;
+                    }
+                }
+                if (!radios_found)
+                {
+                    return false;
+                }
+            }
+
+            // ok let use first radio, on first nic
+            ucRadioList_Radios.UpdateSelectedDetails(discovered[0], discovered[0].Radios[0]);
+
+            return true;
+        }
+
         private void btnRefreshNics_Click(object sender, EventArgs e)
         {
             rebuildNicCombo();
@@ -35693,6 +35764,24 @@ namespace Thetis
         private void radDefaultOrRandomListenPort_CheckedChanged(object sender, EventArgs e)
         {
             nudUserListenPort.Enabled = radUserListenPort.Checked;
+        }
+
+        private void chkAdvancedNetworkingSettings_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            if (chkAdvancedNetworkingSettings.Checked)
+            {
+                ucRadioList_Radios.Location = new Point(ucRadioList_Radios.Location.X, 166);
+                ucRadioList_Radios.Size = new Size(ucRadioList_Radios.Size.Width, 222);
+                pnlAdvancedNetworkSettings.Visible = true;
+            }
+            else
+            {
+                ucRadioList_Radios.Location = new Point(ucRadioList_Radios.Location.X, 119);
+                ucRadioList_Radios.Size = new Size(ucRadioList_Radios.Size.Width, 269);
+                pnlAdvancedNetworkSettings.Visible = false;
+            }
         }
     }
 

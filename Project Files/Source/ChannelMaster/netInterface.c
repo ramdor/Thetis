@@ -1377,7 +1377,7 @@ void create_rnet()
 	if (prn) {
 		bandwidth_monitor_reset();
 		prn->base_outbound_port = 1024;
-		prn->base_inbound_port = 1025;
+		prn->p2_custom_port_base = 1025;
 		prn->RxBuff = (double**) calloc (8, sizeof (double*));
 		for (int i = 0; i < 8; i++)
 			prn->RxBuff[i] = (double*) calloc (64, 2 * sizeof (double));

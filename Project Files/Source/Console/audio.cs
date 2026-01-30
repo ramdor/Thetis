@@ -1834,7 +1834,18 @@ namespace Thetis
             phase_buf_r = new float[2048];
             Console c = Console.getConsole();
 
-            rc = NetworkIO.InitRadio();
+            bool perform_search = true;
+            if(c != null && !c.IsSetupFormNull && c.SetupForm.SelectedRadioList != null)
+            {
+                if(c.SetupForm.SelectedRadioList.IsFirstRadioFoundSelected)
+                {
+                    // we need to do a scan here, lets call the function in setup to do that
+                    bool ok = c.SetupForm.ScanForFirstFoundRadio();
+                    perform_search = false; // we dont want to search again in InitRadio, even if we fail here
+                }
+            }
+            
+            rc = NetworkIO.InitRadio(perform_search);
 
             if (rc != 0)
             {
@@ -1894,7 +1905,7 @@ namespace Thetis
             int result = NetworkIO.StartAudioNative();
             if (result == 0) retval = true;
 
-            if(!c.IsSetupFormNull)
+            if(!c.IsSetupFormNull && c.SetupForm.SelectedRadioList != null)
             {
                 if (retval)
                     c.SetupForm.SelectedRadioList.RadioConnected();
@@ -1912,7 +1923,7 @@ namespace Thetis
 
             NetworkIO.StopAudio();
 
-            if (!c.IsSetupFormNull)
+            if (!c.IsSetupFormNull && c.SetupForm.SelectedRadioList != null)
             {
                 c.SetupForm.SelectedRadioList.DisconnectAll();
             }

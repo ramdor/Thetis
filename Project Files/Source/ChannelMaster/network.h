@@ -52,7 +52,7 @@ typedef struct _seqLogSnapshot {
 
 typedef struct CACHE_ALIGN _radionet
 {
-	int base_inbound_port;			// the base port used for inbound packets from the radio, normally 1025 (P2 only)
+	int p2_custom_port_base;			// the base port used for inbound packets from the radio, normally 1025 (P2 only)
 	int base_outbound_port;			// the base port for outbound packets to the radio, normally 1024 (P1 + P2)
 	double** RxBuff;
 	double* RxReadBufp;
