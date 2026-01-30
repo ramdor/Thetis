@@ -43,6 +43,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace Thetis
 {
@@ -316,6 +317,11 @@ namespace Thetis
                         else if(radio.Protocol == RadioDiscoveryRadioProtocol.P2)
                         {
                             protocol = "2";
+                            //if (radio.ProtocolSupported > 0)
+                            //{
+                            //    string p2ver = (radio.ProtocolSupported / 10.0f).ToString("0.0", CultureInfo.InvariantCulture);
+                            //    protocol += " (v" + p2ver + ")";
+                            //}
                         }
 
                         int rowIndex = grid.Rows.Add(false, radio.DeviceType.ToString(), radio.IpAddress.ToString(), port.ToString(), radio.MacAddress, protocol, version);

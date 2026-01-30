@@ -7963,6 +7963,7 @@
             // 
             // grpOzyType
             // 
+            this.grpOzyType.Controls.Add(this.btnDiscoverRadios);
             this.grpOzyType.Controls.Add(this.ucRadioList_Radios);
             this.grpOzyType.Controls.Add(this.chkAdvancedNetworkingSettings);
             this.grpOzyType.Controls.Add(this.pnlAdvancedNetworkSettings);
@@ -7972,7 +7973,6 @@
             this.grpOzyType.Controls.Add(this.panelTS14);
             this.grpOzyType.Controls.Add(this.panelTS7);
             this.grpOzyType.Controls.Add(this.btnRefreshNics);
-            this.grpOzyType.Controls.Add(this.btnDiscoverRadios);
             this.grpOzyType.Controls.Add(this.chkFirewallCheck);
             this.grpOzyType.Controls.Add(this.chkNetworkWDT);
             this.grpOzyType.Controls.Add(this.chkNetworkThrottleIndexTweak);
@@ -8230,10 +8230,10 @@
             // btnDiscoverRadios
             // 
             this.btnDiscoverRadios.Image = null;
-            this.btnDiscoverRadios.Location = new System.Drawing.Point(6, 47);
+            this.btnDiscoverRadios.Location = new System.Drawing.Point(6, 45);
             this.btnDiscoverRadios.Name = "btnDiscoverRadios";
             this.btnDiscoverRadios.Selectable = true;
-            this.btnDiscoverRadios.Size = new System.Drawing.Size(98, 45);
+            this.btnDiscoverRadios.Size = new System.Drawing.Size(98, 50);
             this.btnDiscoverRadios.TabIndex = 125;
             this.btnDiscoverRadios.Text = "Discover";
             this.btnDiscoverRadios.UseVisualStyleBackColor = true;
