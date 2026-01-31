@@ -22,6 +22,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [fix] ZZDM cat message query now returns the correct display mode number (#600)
 - [fix] waterfall prevented from covering TCI spots
 - [fix] diversity form now fades in along side console window at start up
+- [fix] estimated notch width display will now display correctly. Previously was always using data from rx2
 
 ## v2.10.3.12 - Change Log
 - [add] you can pick a directx device using -adaptor:# from the command line. Use Thetis.exe -help for more information

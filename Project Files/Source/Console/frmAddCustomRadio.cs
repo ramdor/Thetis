@@ -77,5 +77,11 @@ namespace Thetis
         {
             get { return txtSpecificRadio.Text; }
         }
+
+        public string Board
+        {
+            get { return ""; }
+            set { txtBoard.Text = value; }
+        }
     }
 }

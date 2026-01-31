@@ -297,39 +297,61 @@ namespace Thetis
 
         private void processClientData(string sInboundCatCommand)
         {
+            const string ERROR = "?;";
+            const string ZZGA = "ZZGA";
+            const string ZZGR = "ZZGR";
+
             if (m_server != null && m_server.LogForm != null) m_server.LogForm.Log(true, sInboundCatCommand);
 
-            string sCatAnswer = console.ThreadSafeCatParse(sInboundCatCommand);
-            if (sCatAnswer.Length > 0)
-            {
-                // special case for ZZGA and ZZGR
-                // we take the guids and add/remove to/from this client
-                // they can then be used in directed sends
-                if (sInboundCatCommand.StartsWith("ZZGA", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (sInboundCatCommand.Length >= 4 + 36)
-                    {
-                        string guidstring = sInboundCatCommand.Substring(4, 36);
-                        if (Guid.TryParse(guidstring, out _))
-                        {
-                            addClientId(guidstring);
-                        }
-                    }
-                }
-                else if (sInboundCatCommand.StartsWith("ZZGR", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (sInboundCatCommand.Length >= 4 + 36)
-                    {
-                        string guidstring = sInboundCatCommand.Substring(4, 36);
-                        if (Guid.TryParse(guidstring, out _))
-                        {
-                            removeClientId(guidstring);
-                        }
-                    }
-                }
+            sInboundCatCommand = sInboundCatCommand.Trim();
 
-                // send
-                internal_send_data(sCatAnswer);
+            // special case for ZZGA and ZZGR
+            // we take the guids and add/remove to/from this client
+            // they can then be used in directed sends
+            if (sInboundCatCommand.StartsWith(ZZGA, StringComparison.OrdinalIgnoreCase))
+            {
+                bool ok = false;
+                if (sInboundCatCommand.Length >= 4 + 36)
+                {
+                    string guidstring = sInboundCatCommand.Substring(4, 36);
+                    if (Guid.TryParse(guidstring, out _))
+                    {
+                        addClientId(guidstring);
+                        internal_send_data(ZZGA + guidstring + ";");
+                        ok = true;
+                    }
+                }
+                if (!ok)
+                {
+                    internal_send_data(ERROR);
+                }
+            }
+            else if (sInboundCatCommand.StartsWith(ZZGR, StringComparison.OrdinalIgnoreCase))
+            {
+                bool ok = false;
+                if (sInboundCatCommand.Length >= 4 + 36)
+                {
+                    string guidstring = sInboundCatCommand.Substring(4, 36);
+                    if (Guid.TryParse(guidstring, out _))
+                    {
+                        removeClientId(guidstring);
+                        internal_send_data(ZZGR + guidstring + ";");
+                        ok = true;
+                    }
+                }
+                if (!ok)
+                {
+                    internal_send_data(ERROR);
+                }
+            }
+            else // handle cat command normally
+            {
+                string sCatAnswer = console.ThreadSafeCatParse(sInboundCatCommand);
+                if (sCatAnswer.Length > 0)
+                {
+                    // send
+                    internal_send_data(sCatAnswer);
+                }
             }
         }
         private void internal_send_data(string oneLine)

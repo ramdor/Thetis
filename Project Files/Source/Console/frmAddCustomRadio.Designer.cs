@@ -38,6 +38,8 @@
             this.labelTS3 = new System.Windows.Forms.LabelTS();
             this.comboProtocol = new System.Windows.Forms.ComboBoxTS();
             this.labelTS4 = new System.Windows.Forms.LabelTS();
+            this.labelTS5 = new System.Windows.Forms.LabelTS();
+            this.txtBoard = new System.Windows.Forms.TextBoxTS();
             this.SuspendLayout();
             // 
             // labelTS1
@@ -55,7 +57,7 @@
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Image = null;
-            this.btnCancel.Location = new System.Drawing.Point(408, 324);
+            this.btnCancel.Location = new System.Drawing.Point(408, 358);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Selectable = true;
             this.btnCancel.Size = new System.Drawing.Size(86, 27);
@@ -67,7 +69,7 @@
             // 
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Image = null;
-            this.btnOK.Location = new System.Drawing.Point(316, 324);
+            this.btnOK.Location = new System.Drawing.Point(316, 358);
             this.btnOK.Name = "btnOK";
             this.btnOK.Selectable = true;
             this.btnOK.Size = new System.Drawing.Size(86, 27);
@@ -134,13 +136,33 @@
             this.labelTS4.TabIndex = 132;
             this.labelTS4.Text = "Protocol:";
             // 
+            // labelTS5
+            // 
+            this.labelTS5.AutoSize = true;
+            this.labelTS5.Image = null;
+            this.labelTS5.Location = new System.Drawing.Point(42, 349);
+            this.labelTS5.Name = "labelTS5";
+            this.labelTS5.Size = new System.Drawing.Size(38, 13);
+            this.labelTS5.TabIndex = 134;
+            this.labelTS5.Text = "Board:";
+            // 
+            // txtBoard
+            // 
+            this.txtBoard.Location = new System.Drawing.Point(86, 345);
+            this.txtBoard.Name = "txtBoard";
+            this.txtBoard.ReadOnly = true;
+            this.txtBoard.Size = new System.Drawing.Size(150, 20);
+            this.txtBoard.TabIndex = 135;
+            // 
             // frmAddCustomRadio
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(506, 360);
+            this.ClientSize = new System.Drawing.Size(506, 397);
+            this.Controls.Add(this.txtBoard);
+            this.Controls.Add(this.labelTS5);
             this.Controls.Add(this.comboProtocol);
             this.Controls.Add(this.labelTS4);
             this.Controls.Add(this.labelTS3);
@@ -172,5 +194,7 @@
         private System.Windows.Forms.LabelTS labelTS3;
         private System.Windows.Forms.ComboBoxTS comboProtocol;
         private System.Windows.Forms.LabelTS labelTS4;
+        private System.Windows.Forms.LabelTS labelTS5;
+        private System.Windows.Forms.TextBoxTS txtBoard;
     }
 }

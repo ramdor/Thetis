@@ -124,14 +124,14 @@ the UDP discovery packet to be sent to 255.255.255.255
 and if this radio is behind a router with fowarded ports
 for example (without vpn etc) then it will not respond.
 
-Aso to note:
+No details will be known about the radio, so:
 - the protocol detection will not operate so you
    will need to set it correctly
 - the hardware board ID will be taken from the model
    currently selected in setup
-- the firmware version will not be returned,
-   and will be set to 0.0 in the list
-- the radio mac address will not be known
-- the details will not be updated if a connection is made</value>
+- the firmware version will not be unknown
+- the radio mac address will show 'Custom' instead
+- the details will not be updated if a connection is made
+   and anything is different to the settings here</value>
   </data>
 </root>
