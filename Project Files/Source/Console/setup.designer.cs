@@ -4330,6 +4330,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.btnAddCustomRadio = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -8026,6 +8027,7 @@
             // 
             this.pnlAdvancedNetworkSettings.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlAdvancedNetworkSettings.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlAdvancedNetworkSettings.Controls.Add(this.btnAddCustomRadio);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.chkNetworkProtocolMustMatch);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.chkInformHardwareP2Ports);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.nudUserListenPort);
@@ -68643,6 +68645,18 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // btnAddCustomRadio
+            // 
+            this.btnAddCustomRadio.Image = null;
+            this.btnAddCustomRadio.Location = new System.Drawing.Point(363, 6);
+            this.btnAddCustomRadio.Name = "btnAddCustomRadio";
+            this.btnAddCustomRadio.Selectable = true;
+            this.btnAddCustomRadio.Size = new System.Drawing.Size(62, 32);
+            this.btnAddCustomRadio.TabIndex = 5;
+            this.btnAddCustomRadio.Text = "Custom";
+            this.btnAddCustomRadio.UseVisualStyleBackColor = true;
+            this.btnAddCustomRadio.Click += new System.EventHandler(this.btnAddCustomRadio_Click);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -74317,5 +74331,6 @@
         private CheckBoxTS chkAdvancedNetworkingSettings;
         private CheckBoxTS chkInformHardwareP2Ports;
         private CheckBoxTS chkNetworkProtocolMustMatch;
+        private ButtonTS btnAddCustomRadio;
     }
 }

@@ -81,23 +81,29 @@ void DeInitMetisSockets() {
 
 /* returns 0 on success, != 0 otherwise */
 PORT
-int nativeInitMetis(char* netaddr, int port, char* localaddr, int localport, int protocol, int model_id, int p2hw_uses_differnt_ports) {
+int nativeInitMetis(char* netaddr, int port, char* localaddr, int localport, int protocol, int model_id, int p2hw_uses_differnt_ports)
+{
+	const int sndbuf_bytes = 0xfa000;
+	const int rcvbuf_bytes = 0xfa000;
+	const int rcv_timeout_ms = 500;
+	const int snd_timeout_ms = 500;
+
 	IPAddr DestIp = 0;
 	IPAddr SrcIp = 0;       /* default for src ip */
 	ULONG MacAddr[2];       /* for 6-byte hardware addresses */
 	ULONG PhysAddrLen = 6;  /* default to length of six bytes */
 	int rc;
-	int sndbufsize;
+	int optval;
 	struct sockaddr_in local = { 0 };
 
 	RadioProtocol = protocol;
 	HPSDRModel = model_id;
-	
+
 	prn->base_outbound_port = port;
 
-	if(protocol == ETH) // P2 only
+	if (protocol == ETH)
 	{
-		if (p2hw_uses_differnt_ports) 
+		if (p2hw_uses_differnt_ports)
 		{
 			prn->p2_custom_port_base = port + 1;
 		}
@@ -107,87 +113,231 @@ int nativeInitMetis(char* netaddr, int port, char* localaddr, int localport, int
 		}
 	}
 
-	//if (!WSA_inited) {
-	//	rc = initWSA();
-	//	if (rc != 0) {
-	//		return rc;
-	//	}
-	//	WSA_inited = 1;
-	//	printf("initWSA ok!\n");
-	//}
-
 	local.sin_port = htons((u_short)localport);
 	local.sin_family = AF_INET;
 	local.sin_addr.s_addr = inet_addr(localaddr);
-
-	//if ((listenSock = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
-	//	printf("createSocket Error: socket failed %ld\n", WSAGetLastError());
-	//	WSACleanup();
-	//	return INVALID_SOCKET;
-	//}
-
-	//MW0LGE_22b
-	//winsock dll can already by initialised externally for this process
-	//for example, by .NET, so we do not always need to do it
-	//we can check this by the return from creating a socket()
-	//Likewise, we only want to wsacleanup if we wsastarted 
 
 	int initState = 1;
 	while (initState > 0)
 	{
 		listenSock = socket(AF_INET, SOCK_DGRAM, 0);
 
-		if (listenSock == (SOCKET)WSANOTINITIALISED) {
-			WSA_inited = 0;
+		if (listenSock == INVALID_SOCKET)
+		{
+			int wsaErr = WSAGetLastError();
 
-			if (initState == 2) // we alrady tried, and we are still not initialised
+			if (wsaErr == WSANOTINITIALISED)
 			{
-				printf("socket() still returns wsa not initialised!\n");
-				return 1;
-			}		
+				WSA_inited = 0;
 
-			rc = initWSA();
-			if (rc != 0) {
-				printf("initWSA failed rc!\n");
-				return rc;
+				if (initState == 2)
+				{
+					printf("socket() still returns wsa not initialised!\n");
+					return 1;
+				}
+
+				rc = initWSA();
+				if (rc != 0)
+				{
+					printf("initWSA failed rc!\n");
+					return rc;
+				}
+
+				initState = 2;
+				WSA_inited = 1;
+				printf("initWSA ok!\n");
 			}
-			initState = 2;
-			WSA_inited = 1;
-			printf("initWSA ok!\n");
+			else
+			{
+				printf("createSocket Error: socket failed %ld\n", wsaErr);
+				if (WSA_inited) WSACleanup();
+				return INVALID_SOCKET;
+			}
 		}
-		else if (listenSock == INVALID_SOCKET) {
-			printf("createSocket Error: socket failed %ld\n", WSAGetLastError());
-			if(WSA_inited) WSACleanup(); //MW0LGE_22b
-			return INVALID_SOCKET;
-		}
-		else {
+		else
+		{
 			initState = 0;
 		}
 	}
 
-	// bind to the local address
-	bind(listenSock, (SOCKADDR*)&local, sizeof(local));
+	optval = sndbuf_bytes;
+	rc = setsockopt(listenSock, SOL_SOCKET, SO_SNDBUF, (const char*)&optval, sizeof(optval));
+	if (rc != 0)
+	{
+		printf("setsockopt SO_SNDBUF failed %ld\n", WSAGetLastError());
+		closesocket(listenSock);
+		if (WSA_inited) WSACleanup();
+		return INVALID_SOCKET;
+	}
+
+	optval = rcvbuf_bytes;
+	rc = setsockopt(listenSock, SOL_SOCKET, SO_RCVBUF, (const char*)&optval, sizeof(optval));
+	if (rc != 0)
+	{
+		printf("setsockopt SO_RCVBUF failed %ld\n", WSAGetLastError());
+		closesocket(listenSock);
+		if (WSA_inited) WSACleanup();
+		return INVALID_SOCKET;
+	}
+
+	optval = rcv_timeout_ms;
+	rc = setsockopt(listenSock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&optval, sizeof(optval));
+	if (rc != 0)
+	{
+		printf("setsockopt SO_RCVTIMEO failed %ld\n", WSAGetLastError());
+		closesocket(listenSock);
+		if (WSA_inited) WSACleanup();
+		return INVALID_SOCKET;
+	}
+
+	optval = snd_timeout_ms;
+	rc = setsockopt(listenSock, SOL_SOCKET, SO_SNDTIMEO, (const char*)&optval, sizeof(optval));
+	if (rc != 0)
+	{
+		printf("setsockopt SO_SNDTIMEO failed %ld\n", WSAGetLastError());
+		closesocket(listenSock);
+		if (WSA_inited) WSACleanup();
+		return INVALID_SOCKET;
+	}
+
+	rc = bind(listenSock, (SOCKADDR*)&local, sizeof(local));
+	if (rc == SOCKET_ERROR)
+	{
+		printf("bind failed %ld\n", WSAGetLastError());
+		closesocket(listenSock);
+		if (WSA_inited) WSACleanup();
+		return INVALID_SOCKET;
+	}
+
 	MetisAddr = inet_addr(netaddr);
 	fflush(stdout);
 
-	sndbufsize = 0xfa000;
-	setsockopt(listenSock, SOL_SOCKET, SO_SNDBUF, (const char *)&sndbufsize, sizeof(int));	
-	sndbufsize = 0xfa000; // MW0LGE [2.9.0.8] from Warren, changed from 0x10000
-	setsockopt(listenSock, SOL_SOCKET, SO_RCVBUF, (const char *)&sndbufsize, sizeof(int));
-	
 	DestIp = inet_addr(netaddr);
 
-	if (DestIp != 0) {
+	if (DestIp != 0)
+	{
 		printf("destination addr: 0x%08x\n", DestIp);
 		fflush(stdout);
 
-		//add to ARP table
 		memset(&MacAddr, 0xff, sizeof(MacAddr));
 		SendARP(DestIp, SrcIp, &MacAddr, &PhysAddrLen);
 		return 0;
 	}
+
+	closesocket(listenSock);
+	if (WSA_inited) WSACleanup();
 	return -4;
 }
+
+///* returns 0 on success, != 0 otherwise */
+//PORT
+//int nativeInitMetis(char* netaddr, int port, char* localaddr, int localport, int protocol, int model_id, int p2hw_uses_differnt_ports) {
+//	IPAddr DestIp = 0;
+//	IPAddr SrcIp = 0;       /* default for src ip */
+//	ULONG MacAddr[2];       /* for 6-byte hardware addresses */
+//	ULONG PhysAddrLen = 6;  /* default to length of six bytes */
+//	int rc;
+//	int sndbufsize;
+//	struct sockaddr_in local = { 0 };
+//
+//	RadioProtocol = protocol;
+//	HPSDRModel = model_id;
+//	
+//	prn->base_outbound_port = port;
+//
+//	if(protocol == ETH) // P2 only
+//	{
+//		if (p2hw_uses_differnt_ports) 
+//		{
+//			prn->p2_custom_port_base = port + 1;
+//		}
+//		else
+//		{
+//			prn->p2_custom_port_base = 1025;
+//		}
+//	}
+//
+//	//if (!WSA_inited) {
+//	//	rc = initWSA();
+//	//	if (rc != 0) {
+//	//		return rc;
+//	//	}
+//	//	WSA_inited = 1;
+//	//	printf("initWSA ok!\n");
+//	//}
+//
+//	local.sin_port = htons((u_short)localport);
+//	local.sin_family = AF_INET;
+//	local.sin_addr.s_addr = inet_addr(localaddr);
+//
+//	//if ((listenSock = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
+//	//	printf("createSocket Error: socket failed %ld\n", WSAGetLastError());
+//	//	WSACleanup();
+//	//	return INVALID_SOCKET;
+//	//}
+//
+//	//MW0LGE_22b
+//	//winsock dll can already by initialised externally for this process
+//	//for example, by .NET, so we do not always need to do it
+//	//we can check this by the return from creating a socket()
+//	//Likewise, we only want to wsacleanup if we wsastarted 
+//
+//	int initState = 1;
+//	while (initState > 0)
+//	{
+//		listenSock = socket(AF_INET, SOCK_DGRAM, 0);
+//
+//		if (listenSock == (SOCKET)WSANOTINITIALISED) {
+//			WSA_inited = 0;
+//
+//			if (initState == 2) // we alrady tried, and we are still not initialised
+//			{
+//				printf("socket() still returns wsa not initialised!\n");
+//				return 1;
+//			}		
+//
+//			rc = initWSA();
+//			if (rc != 0) {
+//				printf("initWSA failed rc!\n");
+//				return rc;
+//			}
+//			initState = 2;
+//			WSA_inited = 1;
+//			printf("initWSA ok!\n");
+//		}
+//		else if (listenSock == INVALID_SOCKET) {
+//			printf("createSocket Error: socket failed %ld\n", WSAGetLastError());
+//			if(WSA_inited) WSACleanup(); //MW0LGE_22b
+//			return INVALID_SOCKET;
+//		}
+//		else {
+//			initState = 0;
+//		}
+//	}
+//
+//	// bind to the local address
+//	bind(listenSock, (SOCKADDR*)&local, sizeof(local));
+//	MetisAddr = inet_addr(netaddr);
+//	fflush(stdout);
+//
+//	sndbufsize = 0xfa000;
+//	setsockopt(listenSock, SOL_SOCKET, SO_SNDBUF, (const char *)&sndbufsize, sizeof(int));	
+//	sndbufsize = 0xfa000; // MW0LGE [2.9.0.8] from Warren, changed from 0x10000
+//	setsockopt(listenSock, SOL_SOCKET, SO_RCVBUF, (const char *)&sndbufsize, sizeof(int));
+//	
+//	DestIp = inet_addr(netaddr);
+//
+//	if (DestIp != 0) {
+//		printf("destination addr: 0x%08x\n", DestIp);
+//		fflush(stdout);
+//
+//		//add to ARP table
+//		memset(&MacAddr, 0xff, sizeof(MacAddr));
+//		SendARP(DestIp, SrcIp, &MacAddr, &PhysAddrLen);
+//		return 0;
+//	}
+//	return -4;
+//}
 
 PORT
 int GetMetisIPAddr(void) {

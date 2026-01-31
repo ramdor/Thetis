@@ -432,6 +432,12 @@
     <Compile Include="frmAbout.Designer.cs">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmAddCustomRadio.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAddCustomRadio.Designer.cs">
+      <DependentUpon>frmAddCustomRadio.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmBandwidth.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -976,6 +982,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAddCustomRadio.resx">
+      <DependentUpon>frmAddCustomRadio.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmBandwidth.resx">
       <DependentUpon>frmBandwidth.cs</DependentUpon>

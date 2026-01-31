@@ -71,7 +71,7 @@ namespace Thetis
             int model_id = (int)HardwareSpecific.Model;
             int protocol = ri.Protocol == RadioDiscoveryRadioProtocol.P1 ? 0 : 1;
 
-            if (perform_search)
+            if (!ri.IsCustom && perform_search)
             {
                 RadioDiscoveryOptions options = new RadioDiscoveryOptions();
 
@@ -130,7 +130,6 @@ namespace Thetis
                 NicRadioScanResult scan_result = svc.DiscoverUsingSingleNic(options, options.FixedLocalIp);
 
                 if (scan_result == null || scan_result.Radios == null || scan_result.Radios.Count != 1) return -1;
-
                 ri = scan_result.Radios[0]; // the one we found
                 protocol = ri.Protocol == RadioDiscoveryRadioProtocol.P1 ? 0 : 1; // update to the result (for auto)
 
