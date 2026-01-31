@@ -305,15 +305,16 @@ namespace Thetis
 
             sInboundCatCommand = sInboundCatCommand.Trim();
 
-            // special case for ZZGA and ZZGR
-            // we take the guids and add/remove to/from this client
-            // they can then be used in directed sends
+            // Special case for ZZGA and ZZGR, just parse it here as relatated to TCI client ID management
+            // The regular cat serial parser does handle this msg if it were to come in via serial, and replies with a good or bad response, but does not do anything else with that guid.
+            // We take the guids and add/remove to/from this client
+            // These guids can then can then be used in a directed send
             if (sInboundCatCommand.StartsWith(ZZGA, StringComparison.OrdinalIgnoreCase))
             {
                 bool ok = false;
                 if (sInboundCatCommand.Length >= 4 + 36)
                 {
-                    string guidstring = sInboundCatCommand.Substring(4, 36);
+                    string guidstring = sInboundCatCommand.Substring(4, 36).ToLower();
                     if (Guid.TryParse(guidstring, out _))
                     {
                         addClientId(guidstring);
@@ -331,7 +332,7 @@ namespace Thetis
                 bool ok = false;
                 if (sInboundCatCommand.Length >= 4 + 36)
                 {
-                    string guidstring = sInboundCatCommand.Substring(4, 36);
+                    string guidstring = sInboundCatCommand.Substring(4, 36).ToLower();
                     if (Guid.TryParse(guidstring, out _))
                     {
                         removeClientId(guidstring);

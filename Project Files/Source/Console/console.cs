@@ -16026,6 +16026,7 @@ namespace Thetis
 
         // property set when An Andromeda panel is connected via a serial CAT port.
         // NOT used for G2 panel accessed via TCP/IP
+        // when connection established, request ID.
         private bool andromeda_cat_enabled;
         public bool AndromedaCATEnabled
         {
@@ -16041,7 +16042,8 @@ namespace Thetis
                         if (andromeda_cat_enabled)
                         {
                             AndromedaSiolisten.enableCAT5();
-                            InitialiseAndromedaIndicators(true);           // initialise the panel LEDs
+                            MakeAndromedaVersionRequestMsg();
+                            //InitialiseAndromedaIndicators(true);           // initialise the panel LEDs   g8njj now done by ZZZS response
                             toolStripStatusLabelAndromedaMulti.Visible = true;
                         }
                         else
