@@ -35231,7 +35231,7 @@ namespace Thetis
             options.IncludeOtherInterfaceTypes = false;
             options.AllowLoopback = false;
             options.AllowAPIPA = true;
-            options.Include255255255255Broadcast = true;
+            options.IncludeGeneralBroadcast = true;
 
             options.DiscoveryPortBase = 1024; // overwritten in applyAnyOrSpecificRadio
             
@@ -35259,7 +35259,16 @@ namespace Thetis
         {
             get
             {
+                if (radDefaultListenPort == null) return 0;
                 return radDefaultListenPort.Checked ? 0 : (int)nudUserListenPort.Value;
+            }
+        }
+        public bool NetworkProtocolMustMatch
+        {
+            get
+            {
+                if (chkNetworkProtocolMustMatch == null) return false;
+                return chkNetworkProtocolMustMatch.Checked;
             }
         }
         private void setupNeworking()

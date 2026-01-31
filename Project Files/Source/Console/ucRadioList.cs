@@ -547,7 +547,7 @@ namespace Thetis
             if (port < 1) port = 1024;
 
             string mac = safe(radio.MacAddress);
-            string key = buildKey(mac, radioIp, port, nic.NicId);
+            string key = buildKey(mac, radioIp, port, nic.NicId, radio.Protocol);
 
             if (DoesRadioExist(key))
             {
@@ -702,7 +702,7 @@ namespace Thetis
         public string SaveToJson()
         {
             PersistModel model = new PersistModel();
-            model.Version = 3;
+            model.Version = 4;
             model.SelectedKey = isAutoKey(_selected_key) ? "" : enc(_selected_key);
             model.Items = new List<PersistRow>();
 
@@ -809,7 +809,7 @@ namespace Thetis
                         IPAddress.TryParse(item.RadioIp, out ip);
                     }
 
-                    item.Key = buildKey(item.RadioMac, ip, item.RadioPort, item.NicId);
+                    item.Key = buildKey(item.RadioMac, ip, item.RadioPort, item.NicId, proto);
                 }
 
                 if (!DoesRadioExist(item.Key))
@@ -1689,19 +1689,20 @@ namespace Thetis
             if (h != null) h(this, EventArgs.Empty);
         }
 
-        private string buildKey(string mac, IPAddress ip, int port, string nicId)
+        private string buildKey(string mac, IPAddress ip, int port, string nicId, RadioDiscoveryRadioProtocol proto)
         {
             string m = safe(mac).Trim().ToUpperInvariant();
             string i = (ip != null) ? ip.ToString() : "";
             string po = port.ToString();
             string n = safe(nicId);
+            string p = proto.ToString().ToString();
 
             if (!string.IsNullOrWhiteSpace(m))
             {
-                return "mac:" + m + "|ip:" + i + "|port:" + po + "|nic:" + n;
+                return "mac:" + m + "|ip:" + i + "|port:" + po + "|nic:" + n + "|proto:" + p;
             }
 
-            return "ip:" + i + "|port:" + po + "|nic:" + n;
+            return "ip:" + i + "|port:" + po + "|nic:" + n + "|proto:" + p;
         }
 
         private bool isLegacyMacOnlyKey(string key)

@@ -221,6 +221,7 @@
             this.ucRadioList_Radios = new Thetis.ucRadioList();
             this.chkAdvancedNetworkingSettings = new System.Windows.Forms.CheckBoxTS();
             this.pnlAdvancedNetworkSettings = new System.Windows.Forms.PanelTS();
+            this.chkNetworkProtocolMustMatch = new System.Windows.Forms.CheckBoxTS();
             this.chkInformHardwareP2Ports = new System.Windows.Forms.CheckBoxTS();
             this.nudUserListenPort = new System.Windows.Forms.NumericUpDownTS();
             this.radUserListenPort = new System.Windows.Forms.RadioButtonTS();
@@ -251,19 +252,19 @@
             this.panelSaturnMicInput = new System.Windows.Forms.PanelTS();
             this.radSaturnXLR = new System.Windows.Forms.RadioButtonTS();
             this.radSaturn3p5mm = new System.Windows.Forms.RadioButtonTS();
+            this.lblSaturnMicInput = new System.Windows.Forms.LabelTS();
             this.panelOrionMic = new System.Windows.Forms.PanelTS();
             this.radOrionMicRing = new System.Windows.Forms.RadioButtonTS();
             this.radOrionMicTip = new System.Windows.Forms.RadioButtonTS();
-            this.lblSaturnMicInput = new System.Windows.Forms.LabelTS();
             this.lblOrionMic = new System.Windows.Forms.LabelTS();
             this.panelOrionPTT = new System.Windows.Forms.PanelTS();
             this.radOrionPTTOn = new System.Windows.Forms.RadioButtonTS();
             this.radOrionPTTOff = new System.Windows.Forms.RadioButtonTS();
-            this.lblOrionBias = new System.Windows.Forms.LabelTS();
             this.lblOrionPTT = new System.Windows.Forms.LabelTS();
             this.panelOrionBias = new System.Windows.Forms.PanelTS();
             this.radOrionBiasOn = new System.Windows.Forms.RadioButtonTS();
             this.radOrionBiasOff = new System.Windows.Forms.RadioButtonTS();
+            this.lblOrionBias = new System.Windows.Forms.LabelTS();
             this.tpGeneralOptions = new System.Windows.Forms.TabPage();
             this.tcOptions = new System.Windows.Forms.TabControl();
             this.tpOptions1 = new System.Windows.Forms.TabPage();
@@ -8025,14 +8026,29 @@
             // 
             this.pnlAdvancedNetworkSettings.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlAdvancedNetworkSettings.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlAdvancedNetworkSettings.Controls.Add(this.chkNetworkProtocolMustMatch);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.chkInformHardwareP2Ports);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.nudUserListenPort);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.radUserListenPort);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.radDefaultListenPort);
             this.pnlAdvancedNetworkSettings.Location = new System.Drawing.Point(110, 119);
             this.pnlAdvancedNetworkSettings.Name = "pnlAdvancedNetworkSettings";
-            this.pnlAdvancedNetworkSettings.Size = new System.Drawing.Size(349, 47);
+            this.pnlAdvancedNetworkSettings.Size = new System.Drawing.Size(430, 47);
             this.pnlAdvancedNetworkSettings.TabIndex = 134;
+            // 
+            // chkNetworkProtocolMustMatch
+            // 
+            this.chkNetworkProtocolMustMatch.AutoSize = true;
+            this.chkNetworkProtocolMustMatch.Checked = true;
+            this.chkNetworkProtocolMustMatch.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkNetworkProtocolMustMatch.Image = null;
+            this.chkNetworkProtocolMustMatch.Location = new System.Drawing.Point(235, 24);
+            this.chkNetworkProtocolMustMatch.Name = "chkNetworkProtocolMustMatch";
+            this.chkNetworkProtocolMustMatch.Size = new System.Drawing.Size(122, 17);
+            this.chkNetworkProtocolMustMatch.TabIndex = 4;
+            this.chkNetworkProtocolMustMatch.Text = "Protocol must match";
+            this.toolTip1.SetToolTip(this.chkNetworkProtocolMustMatch, resources.GetString("chkNetworkProtocolMustMatch.ToolTip"));
+            this.chkNetworkProtocolMustMatch.UseVisualStyleBackColor = true;
             // 
             // chkInformHardwareP2Ports
             // 
@@ -8040,9 +8056,9 @@
             this.chkInformHardwareP2Ports.Image = null;
             this.chkInformHardwareP2Ports.Location = new System.Drawing.Point(3, 24);
             this.chkInformHardwareP2Ports.Name = "chkInformHardwareP2Ports";
-            this.chkInformHardwareP2Ports.Size = new System.Drawing.Size(305, 17);
+            this.chkInformHardwareP2Ports.Size = new System.Drawing.Size(216, 17);
             this.chkInformHardwareP2Ports.TabIndex = 3;
-            this.chkInformHardwareP2Ports.Text = "Inform hardware of ports to use instead of defaults (P2 only)";
+            this.chkInformHardwareP2Ports.Text = "Inform hardware of ports to use (P2 only)";
             this.toolTip1.SetToolTip(this.chkInformHardwareP2Ports, resources.GetString("chkInformHardwareP2Ports.ToolTip"));
             this.chkInformHardwareP2Ports.UseVisualStyleBackColor = true;
             // 
@@ -8437,6 +8453,16 @@
             this.radSaturn3p5mm.UseVisualStyleBackColor = true;
             this.radSaturn3p5mm.CheckedChanged += new System.EventHandler(this.radSaturn3p5mm_CheckedChanged);
             // 
+            // lblSaturnMicInput
+            // 
+            this.lblSaturnMicInput.AutoSize = true;
+            this.lblSaturnMicInput.Image = null;
+            this.lblSaturnMicInput.Location = new System.Drawing.Point(3, 4);
+            this.lblSaturnMicInput.Name = "lblSaturnMicInput";
+            this.lblSaturnMicInput.Size = new System.Drawing.Size(31, 13);
+            this.lblSaturnMicInput.TabIndex = 6;
+            this.lblSaturnMicInput.Text = "Input";
+            // 
             // panelOrionMic
             // 
             this.panelOrionMic.AutoScrollMargin = new System.Drawing.Size(0, 0);
@@ -8474,16 +8500,6 @@
             this.radOrionMicTip.Text = "Tip";
             this.radOrionMicTip.UseVisualStyleBackColor = true;
             this.radOrionMicTip.CheckedChanged += new System.EventHandler(this.radOrionMicTip_CheckedChanged);
-            // 
-            // lblSaturnMicInput
-            // 
-            this.lblSaturnMicInput.AutoSize = true;
-            this.lblSaturnMicInput.Image = null;
-            this.lblSaturnMicInput.Location = new System.Drawing.Point(3, 4);
-            this.lblSaturnMicInput.Name = "lblSaturnMicInput";
-            this.lblSaturnMicInput.Size = new System.Drawing.Size(31, 13);
-            this.lblSaturnMicInput.TabIndex = 6;
-            this.lblSaturnMicInput.Text = "Input";
             // 
             // lblOrionMic
             // 
@@ -8532,16 +8548,6 @@
             this.radOrionPTTOff.UseVisualStyleBackColor = true;
             this.radOrionPTTOff.CheckedChanged += new System.EventHandler(this.radOrionPTTOff_CheckedChanged);
             // 
-            // lblOrionBias
-            // 
-            this.lblOrionBias.AutoSize = true;
-            this.lblOrionBias.Image = null;
-            this.lblOrionBias.Location = new System.Drawing.Point(3, 4);
-            this.lblOrionBias.Name = "lblOrionBias";
-            this.lblOrionBias.Size = new System.Drawing.Size(27, 13);
-            this.lblOrionBias.TabIndex = 2;
-            this.lblOrionBias.Text = "Bias";
-            // 
             // lblOrionPTT
             // 
             this.lblOrionPTT.AutoSize = true;
@@ -8589,6 +8595,16 @@
             this.radOrionBiasOff.TabStop = true;
             this.radOrionBiasOff.Text = "Off";
             this.radOrionBiasOff.UseVisualStyleBackColor = true;
+            // 
+            // lblOrionBias
+            // 
+            this.lblOrionBias.AutoSize = true;
+            this.lblOrionBias.Image = null;
+            this.lblOrionBias.Location = new System.Drawing.Point(3, 4);
+            this.lblOrionBias.Name = "lblOrionBias";
+            this.lblOrionBias.Size = new System.Drawing.Size(27, 13);
+            this.lblOrionBias.TabIndex = 2;
+            this.lblOrionBias.Text = "Bias";
             // 
             // tpGeneralOptions
             // 
@@ -74300,5 +74316,6 @@
         private RadioButtonTS radDefaultListenPort;
         private CheckBoxTS chkAdvancedNetworkingSettings;
         private CheckBoxTS chkInformHardwareP2Ports;
+        private CheckBoxTS chkNetworkProtocolMustMatch;
     }
 }

@@ -74,17 +74,6 @@ namespace Thetis
             if (perform_search)
             {
                 RadioDiscoveryOptions options = new RadioDiscoveryOptions();
-                switch (protocol)
-                {
-                    case 0://P1
-                        options.ProtocolMode = RadioDiscoveryProtocolMode.P1Only; // search for p1 only
-                        break;
-                    case 1://P2
-                        options.ProtocolMode = RadioDiscoveryProtocolMode.P2Only; // search for p2 only
-                        break;
-                    default:
-                        return -102; // unknown protocol
-                }
 
                 options.IgnoreSubnetCheck = true;
                 options.IncludeEthernet = true;
@@ -92,7 +81,7 @@ namespace Thetis
                 options.IncludeOtherInterfaceTypes = false;
                 options.AllowLoopback = false;
                 options.AllowAPIPA = true;
-                options.Include255255255255Broadcast = true;
+                options.IncludeGeneralBroadcast = true;
 
                 options.DiscoveryPortBase = ratioPort;
                 options.BindLocalPort = hostPort;
@@ -117,6 +106,25 @@ namespace Thetis
                     return -104;
                 }
 
+                if (c.SetupForm.NetworkProtocolMustMatch)
+                {
+                    switch (protocol)
+                    {
+                        case 0://P1
+                            options.ProtocolMode = RadioDiscoveryProtocolMode.P1Only; // search for p1 only
+                            break;
+                        case 1://P2
+                            options.ProtocolMode = RadioDiscoveryProtocolMode.P2Only; // search for p2 only
+                            break;
+                        default:
+                            return -102; // unknown protocol (never happen, but here incase more are added)
+                    }
+                }
+                else
+                {
+                    options.ProtocolMode = RadioDiscoveryProtocolMode.Auto; // search for both
+                }
+
                 // check via a single nic that matches where we expect the radio to be
                 RadioDiscoveryService svc = new RadioDiscoveryService();
                 NicRadioScanResult scan_result = svc.DiscoverUsingSingleNic(options, options.FixedLocalIp);
@@ -124,6 +132,7 @@ namespace Thetis
                 if (scan_result == null || scan_result.Radios == null || scan_result.Radios.Count != 1) return -1;
 
                 ri = scan_result.Radios[0]; // the one we found
+                protocol = ri.Protocol == RadioDiscoveryRadioProtocol.P1 ? 0 : 1; // update to the result (for auto)
 
                 if (ri.DeviceType == HPSDRHW.HermesII)
                 {
