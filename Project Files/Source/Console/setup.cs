@@ -36875,6 +36875,59 @@ namespace Thetis
                 pnlAdvancedNetworkSettings.Visible = false;
             }
         }
+
+        private void btnAddCustomRadio_Click(object sender, EventArgs e)
+        {
+            frmAddCustomRadio f = new frmAddCustomRadio();
+
+            if (comboNICS.Items.Count > 0)
+            {
+                f.Nics.DataSource = null;
+                f.Nics.DataSource = comboNICS.DataSource;
+                f.Nics.DisplayMember = comboNICS.DisplayMember;
+                f.Nics.ValueMember = comboNICS.ValueMember;
+            }
+            else
+            {
+                MessageBox.Show(this, "No NICs available.",
+                    "Custom Radio",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return;
+            }
+
+            f.Board = HardwareSpecific.Hardware.ToString();
+
+            DialogResult dr = f.ShowDialog(this);
+            if(dr == DialogResult.Cancel) return;
+
+            NicRadioScanResult selectedNic = f.Nics.SelectedItem as NicRadioScanResult;
+            if (selectedNic == null) return;
+
+            if(!tryParseIpPort(f.RadioIPPort, 1024, out IPAddress addr, out int port))
+            {
+                MessageBox.Show(this, "Invalid IP/host/URL.",
+                    "Custom Radio",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return;
+            }
+
+            RadioInfo radio = new RadioInfo()
+            {
+                BetaVersion = 0,
+                CodeVersion = 0,
+                Protocol2Supported = 0,
+
+                DeviceType = HardwareSpecific.Hardware,
+                Protocol = f.Protocol == 0 ? RadioDiscoveryRadioProtocol.P1 : RadioDiscoveryRadioProtocol.P2,
+                DiscoveryPortBase = port,
+                IpAddress = addr,
+                IsCustom = true,                
+            };
+
+            ucRadioList_Radios.AddRadio(selectedNic, radio);
+        }
     }
 
     #region FormLoactionHelper

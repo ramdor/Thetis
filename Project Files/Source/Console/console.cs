@@ -16125,7 +16125,7 @@ namespace Thetis
 
         // property set when An Andromeda panel is connected via a serial CAT port.
         // NOT used for G2 panel accessed via TCP/IP
-
+        // when connection established, request ID.
         private bool andromeda_cat_enabled;
         public bool AndromedaCATEnabled
         {
@@ -16141,7 +16141,8 @@ namespace Thetis
                         if (andromeda_cat_enabled)
                         {
                             AndromedaSiolisten.enableCAT5();
-                            InitialiseAndromedaIndicators(true);           // initialise the panel LEDs
+                            MakeAndromedaVersionRequestMsg();
+                            //InitialiseAndromedaIndicators(true);           // initialise the panel LEDs   g8njj now done by ZZZS response
                             toolStripStatusLabelAndromedaMulti.Visible = true;
                         }
                         else
@@ -45452,7 +45453,7 @@ namespace Thetis
         private void OnModeChangeHandler(int rx, DSPMode oldMode, DSPMode newMode, Band oldBand, Band newBand)
         {
             //reset the cw auto mode return [2.10.3.12]MW0LGE
-            if(!(newMode == DSPMode.CWL || newMode == DSPMode.CWU))
+            if (!(newMode == DSPMode.CWL || newMode == DSPMode.CWU))
             {
                 _old_cw_auto_mode = DSPMode.FIRST;
             }
@@ -48446,14 +48447,13 @@ namespace Thetis
             if (!BPFToolStripMenuItem.DropDown.Visible) BPFToolStripMenuItem.ShowDropDown();
         }
 
-        private Dictionary<string, double> _minimum_rx_notch_width = new Dictionary<string, double>();
+        private Dictionary<int, double> _minimum_rx_notch_width = new Dictionary<int, double>();
         private double _minimum_tx_notch_width = 100;
         public double GetMinimumRXNotchWidth(int rx)
         {
-            if(rx<1 || rx>2) return 100;
+            if(rx < 1 || rx > 2) return 100;
 
-            string key = rx.ToString();
-            if(_minimum_rx_notch_width.ContainsKey(key)) return _minimum_rx_notch_width[key];
+            if(_minimum_rx_notch_width.ContainsKey(rx - 1)) return _minimum_rx_notch_width[rx - 1];
             return 100;
         }
         public double GetMinimumTXNotchWidth()
@@ -48480,14 +48480,13 @@ namespace Thetis
                     WDSP.RXANBPGetMinNotchWidth(chan, &min_notch_width);
                 }
 
-                string key = rx.ToString();
-                if (_minimum_rx_notch_width.ContainsKey(key))
+                if (_minimum_rx_notch_width.ContainsKey(rx - 1))
                 {
-                    _minimum_rx_notch_width[key] = min_notch_width;
+                    _minimum_rx_notch_width[rx - 1] = min_notch_width;
                 }
                 else
                 {
-                    _minimum_rx_notch_width.Add(key, min_notch_width);
+                    _minimum_rx_notch_width.Add(rx - 1, min_notch_width);
                 }
 
                 MinimumRXNotchWidthChangedHandlers?.Invoke(rx, min_notch_width);

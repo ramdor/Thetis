@@ -85,6 +85,8 @@ namespace Thetis
             public RadioDiscoveryRadioProtocol RadioProtocol;
             public string RadioVersionText;
             public string RadioMac;
+            public bool RadioIsCustom;
+            public string RadioGuid;
 
             public byte RadioCodeVersion;
             public byte RadioBetaVersion;
@@ -130,7 +132,9 @@ namespace Thetis
             public string RadioProtocolEnum;
             public string RadioVersionText;
             public string RadioMac;
-            public byte RadioProtocol2Supported;
+            public bool RadioIsCustom;
+            public string RadioGuid;
+public byte RadioProtocol2Supported;
         }
 
         private sealed class HitTestResult
@@ -340,9 +344,10 @@ namespace Thetis
                 RadioInfo info = new RadioInfo();
                 info.Protocol = item.RadioProtocol;
                 info.IpAddress = ip;
-                info.MacAddress = safe(item.RadioMac);
-
-                HPSDRHW hw = (HPSDRHW)0;
+                info.IsCustom = item.RadioIsCustom;
+                info.CustomGuid = safe(item.RadioGuid);
+                info.MacAddress = item.RadioIsCustom ? "" : safe(item.RadioMac);
+HPSDRHW hw = (HPSDRHW)0;
                 string model = safe(item.RadioModel);
 
                 if (!string.IsNullOrWhiteSpace(model))
@@ -547,8 +552,38 @@ namespace Thetis
             if (port < 1) port = 1024;
 
             string mac = safe(radio.MacAddress);
-            string key = buildKey(mac, radioIp, port, nic.NicId, radio.Protocol);
+            bool isCustom = radio.IsCustom || string.IsNullOrWhiteSpace(mac);
 
+            if (isCustom)
+            {
+                string ipText = (radioIp != null) ? radioIp.ToString() : "";
+
+                for (int i = 0; i < _items.Count; i++)
+                {
+                    RowItem existing = _items[i];
+                    if (existing == null) continue;
+                    if (isAutoKey(existing.Key)) continue;
+
+                    if (existing.RadioIsCustom &&
+                        string.Equals(existing.RadioIp, ipText, StringComparison.OrdinalIgnoreCase) &&
+                        existing.RadioPort == port &&
+                        existing.RadioProtocol == radio.Protocol)
+                    {
+                        return existing.Key;
+                    }
+                }
+            }
+
+            string guid = "";
+            if (isCustom)
+            {
+                guid = ensureGuidString(radio.CustomGuid);
+                radio.CustomGuid = guid;
+                radio.IsCustom = true;
+                mac = "";
+            }
+
+            string key = buildKey(mac, guid, isCustom, radioIp, port, nic.NicId, radio.Protocol);
             if (DoesRadioExist(key))
             {
                 return key;
@@ -589,6 +624,9 @@ namespace Thetis
             item.RadioVersionText = versionText;
             item.RadioMac = mac;
 
+
+            item.RadioIsCustom = isCustom;
+            item.RadioGuid = isCustom ? guid : "";
             item.RadioCodeVersion = radio.CodeVersion;
             item.RadioBetaVersion = radio.BetaVersion;
             item.RadioProtocol2Supported = radio.Protocol2Supported;
@@ -702,7 +740,7 @@ namespace Thetis
         public string SaveToJson()
         {
             PersistModel model = new PersistModel();
-            model.Version = 4;
+            model.Version = 5;
             model.SelectedKey = isAutoKey(_selected_key) ? "" : enc(_selected_key);
             model.Items = new List<PersistRow>();
 
@@ -728,8 +766,9 @@ namespace Thetis
                 row.RadioProtocolEnum = enc(src.RadioProtocol.ToString());
                 row.RadioVersionText = enc(src.RadioVersionText);
                 row.RadioMac = enc(src.RadioMac);
+                row.RadioIsCustom = src.RadioIsCustom;
+                row.RadioGuid = enc(src.RadioGuid);
                 row.RadioProtocol2Supported = src.RadioProtocol2Supported;
-
                 model.Items.Add(row);
             }
 
@@ -757,6 +796,8 @@ namespace Thetis
             if (model == null) return;
             if (model.Items == null) return;
 
+
+            string desiredSel = dec(model.SelectedKey);
             for (int i = 0; i < model.Items.Count; i++)
             {
                 PersistRow r = model.Items[i];
@@ -780,6 +821,10 @@ namespace Thetis
                 item.RadioVersionText = dec(r.RadioVersionText);
                 item.RadioMac = dec(r.RadioMac);                
 
+
+                item.RadioIsCustom = r.RadioIsCustom;
+                item.RadioGuid = dec(r.RadioGuid);
+
                 RadioDiscoveryRadioProtocol proto = RadioDiscoveryRadioProtocol.P1;
                 string protoText = dec(r.RadioProtocolEnum);
 
@@ -800,19 +845,35 @@ namespace Thetis
 
                 item.IsConnected = false;
                 item.PllLocked = false;
+                string oldKey = item.Key;
 
-                if (string.IsNullOrWhiteSpace(item.Key) || isLegacyMacOnlyKey(item.Key))
+                IPAddress ip = null;
+                if (!string.IsNullOrWhiteSpace(item.RadioIp))
                 {
-                    IPAddress ip = null;
-                    if (!string.IsNullOrWhiteSpace(item.RadioIp))
-                    {
-                        IPAddress.TryParse(item.RadioIp, out ip);
-                    }
-
-                    item.Key = buildKey(item.RadioMac, ip, item.RadioPort, item.NicId, proto);
+                    IPAddress.TryParse(item.RadioIp, out ip);
                 }
 
-                if (!DoesRadioExist(item.Key))
+                bool isCustom = item.RadioIsCustom || string.IsNullOrWhiteSpace(item.RadioMac);
+                item.RadioIsCustom = isCustom;
+
+                if (isCustom)
+                {
+                    item.RadioGuid = ensureGuidString(item.RadioGuid);
+                    item.RadioMac = "";
+
+                }
+                else
+                {
+                    item.RadioGuid = "";
+                }
+
+                item.Key = buildKey(item.RadioMac, item.RadioGuid, item.RadioIsCustom, ip, item.RadioPort, item.NicId, proto);
+
+                if (!string.IsNullOrWhiteSpace(desiredSel) && string.Equals(desiredSel, oldKey, StringComparison.OrdinalIgnoreCase))
+                {
+                    desiredSel = item.Key;
+                }
+if (!DoesRadioExist(item.Key))
                 {
                     ensureAutoEntry(false);
                     _items.Add(item);
@@ -820,12 +881,9 @@ namespace Thetis
             }
 
             _selected_key = _auto_key;
-
-            string sel = dec(model.SelectedKey);
-
-            if (!string.IsNullOrWhiteSpace(sel) && DoesRadioExist(sel))
+            if (!string.IsNullOrWhiteSpace(desiredSel) && DoesRadioExist(desiredSel))
             {
-                _selected_key = sel;
+                _selected_key = desiredSel;
             }
 
             ensureAutoEntry(true);
@@ -1236,7 +1294,7 @@ namespace Thetis
 
             string model = safe(item.RadioModel);
             string ip = safe(item.RadioIp);
-            string mac = safe(item.RadioMac);
+            string mac = item.RadioIsCustom ? "Custom" : safe(item.RadioMac);
 
             string port = item.RadioPort > 0 ? item.RadioPort.ToString() : "";
             string ipPort = string.IsNullOrWhiteSpace(port) ? ip : (ip + ":" + port);
@@ -1689,8 +1747,28 @@ namespace Thetis
             if (h != null) h(this, EventArgs.Empty);
         }
 
-        private string buildKey(string mac, IPAddress ip, int port, string nicId, RadioDiscoveryRadioProtocol proto)
+        private string ensureGuidString(string guid)
         {
+            string t = safe(guid).Trim();
+            Guid parsed;
+
+            if (t.Length > 0 && Guid.TryParse(t, out parsed))
+            {
+                return parsed.ToString("D").ToUpperInvariant();
+            }
+
+            Guid g = Guid.NewGuid();
+            return g.ToString("D").ToUpperInvariant();
+        }
+
+        private string buildKey(string mac, string guid, bool isCustom, IPAddress ip, int port, string nicId, RadioDiscoveryRadioProtocol proto)
+        {
+            if (isCustom)
+            {
+                string g = ensureGuidString(guid);
+                return "guid:" + g;
+            }
+
             string m = safe(mac).Trim().ToUpperInvariant();
             string i = (ip != null) ? ip.ToString() : "";
             string po = port.ToString();
@@ -1704,6 +1782,7 @@ namespace Thetis
 
             return "ip:" + i + "|port:" + po + "|nic:" + n + "|proto:" + p;
         }
+
 
         private bool isLegacyMacOnlyKey(string key)
         {
@@ -1777,6 +1856,9 @@ namespace Thetis
             item.RadioVersionText = "";
             item.RadioMac = "";
 
+
+            item.RadioIsCustom = false;
+            item.RadioGuid = "";
             item.RadioCodeVersion = 0;
             item.RadioBetaVersion = 0;
             item.RadioProtocol2Supported = 0;
@@ -1807,6 +1889,17 @@ namespace Thetis
             if (port < 1) port = 1024;
 
             string mac = safe(radio.MacAddress);
+
+            bool isCustom = radio.IsCustom || string.IsNullOrWhiteSpace(mac);
+            string guid = "";
+
+            if (isCustom)
+            {
+                guid = ensureGuidString(radio.CustomGuid);
+                radio.CustomGuid = guid;
+                radio.IsCustom = true;
+                mac = "";
+            }
 
             string nicType;
             if (nic.IsEthernet) nicType = "Ethernet";
@@ -1840,6 +1933,9 @@ namespace Thetis
             item.RadioVersionText = versionText;
             item.RadioMac = mac;
 
+
+            item.RadioIsCustom = isCustom;
+            item.RadioGuid = isCustom ? guid : "";
             item.RadioCodeVersion = radio.CodeVersion;
             item.RadioBetaVersion = radio.BetaVersion;
             item.RadioProtocol2Supported = radio.Protocol2Supported;

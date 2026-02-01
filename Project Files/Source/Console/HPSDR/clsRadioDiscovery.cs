@@ -225,6 +225,9 @@ namespace Thetis
         public int PortCount { get; set; }
 
         public bool IsApipaRadio { get; set; }
+
+        public bool IsCustom { get; set; }
+        public string CustomGuid { get; set; }
     }
 
     public sealed class DiscoveryDiagnostics
@@ -734,6 +737,9 @@ namespace Thetis
                         info.PortCount = parsed.Protocol == RadioDiscoveryRadioProtocol.P2 ? P2DefaultPortCount : P1DefaultPortCount;
                         info.IsApipaRadio = isApipa(rep.Address);
 
+                        info.IsCustom = false;
+                        info.CustomGuid = "";
+
                         radios.Add(info);
                         seen.Add(key);
                     }
@@ -778,7 +784,6 @@ namespace Thetis
             public bool IsBusy { get; set; }
             public RadioDiscoveryRadioProtocol Protocol { get; set; }
             public string MacAddress { get; set; }
-
             public HPSDRHW DeviceType { get; set; }
             public byte CodeVersion { get; set; }
             public byte BetaVersion { get; set; }
