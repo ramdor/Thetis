@@ -170,7 +170,7 @@ int nativeInitMetis(char* netaddr, int port, char* localaddr, int localport, int
 		printf("destination addr: 0x%08x\n", DestIp);
 		fflush(stdout);
 
-		RemotePort = remotePort;	// MI0BOT: Remote access over WAN using different port
+		//RemotePort = remotePort;	// MI0BOT: Remote access over WAN using different port
 
 		//add to ARP table
 		memset(&MacAddr, 0xff, sizeof(MacAddr));

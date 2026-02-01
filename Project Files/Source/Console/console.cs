@@ -48270,7 +48270,7 @@ namespace Thetis
                 else
                 {
                     if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
-                        sFW = NetworkIO.FWCodeVersion.ToString("0\\.0") + NetworkIO.FWCodeVersionMinor.ToString("\\.0");
+                        sFW = NetworkIO.FWCodeVersion.ToString("0\\.0") + NetworkIO.BetaVersion.ToString("\\.0");
                     else
                         sFW = NetworkIO.FWCodeVersion.ToString("0\\.0");
 

@@ -1081,7 +1081,7 @@ namespace Thetis
                 udHermesStepAttenuatorData.Minimum = -28;
                 udHermesStepAttenuatorDataRX2.Minimum = -28;
                 udTXTunePower.Minimum = (Decimal)(-16.5);
-                chkEnableStaticIP_CheckedChanged(this, EventArgs.Empty);
+                //chkEnableStaticIP_CheckedChanged(this, EventArgs.Empty);
                 chkHL2PsSync_CheckedChanged(this, EventArgs.Empty);
                 lblADCLinked.Visible = false;
             }
@@ -12243,55 +12243,55 @@ namespace Thetis
         }
         private void txtGenCustomTitle_TextChanged(object sender, System.EventArgs e)
         {
-            if (HPSDRModel.HERMESLITE != HardwareSpecific.Model)
-            {
+            //if (HPSDRModel.HERMESLITE != HardwareSpecific.Model)
+            //{
                 console.CustomTitle = txtGenCustomTitle.Lines[0];
-            }
-            else
-            {   // MI0BOT: Handle multi line box for display of different IP address
-                string remotePort = NetworkIO.EthernetRemotePort == 0 ? "" : ":" + NetworkIO.EthernetRemotePort.ToString();
-                int line = 0;
-                string ipAddress = "";
+            //}
+            //else
+            //{   // MI0BOT: Handle multi line box for display of different IP address
+            //    string remotePort = NetworkIO.EthernetRemotePort == 0 ? "" : ":" + NetworkIO.EthernetRemotePort.ToString();
+            //    int line = 0;
+            //    string ipAddress = "";
 
-                if (chkEnableStaticIP.Checked)
-                {
-                    if (radStaticIP1.Checked)
-                        line = 1;
-                    else if (radStaticIP2.Checked)
-                        line = 2;
-                    else if (radStaticIP3.Checked)
-                        line = 3;
-                    else if (radStaticIP4.Checked)
-                        line = 4;
+            //    if (chkEnableStaticIP.Checked)
+            //    {
+            //        if (radStaticIP1.Checked)
+            //            line = 1;
+            //        else if (radStaticIP2.Checked)
+            //            line = 2;
+            //        else if (radStaticIP3.Checked)
+            //            line = 3;
+            //        else if (radStaticIP4.Checked)
+            //            line = 4;
 
-                    ipAddress = console.HPSDRNetworkIPAddr;
-                }
-                else
-                {
-                    line = 0;
-                    ipAddress = NetworkIO.HpSdrHwIpAddress.ToString();
-                }
+            //        ipAddress = console.HPSDRNetworkIPAddr;
+            //    }
+            //    else
+            //    {
+            //        line = 0;
+            //        ipAddress = NetworkIO.HpSdrHwIpAddress.ToString();
+            //    }
 
-                if ((txtGenCustomTitle.Lines.Length - 1) < line)
-                    line = 0;
+            //    if ((txtGenCustomTitle.Lines.Length - 1) < line)
+            //        line = 0;
 
-                if (chkDisplayIPPort.Checked)
-                    if (line == 0)
-                        if (txtGenCustomTitle.Lines.Length == 0)
-                            console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Text;
-                        else
-                            console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Lines[0];
-                    else
-                        console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Lines[line] + "   " + txtGenCustomTitle.Lines[0];
-                else
-                    if (line == 0)
-                    if (txtGenCustomTitle.Lines.Length == 0)
-                        console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Text;
-                    else
-                        console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Lines[0];
-                else
-                    console.CustomTitle = txtGenCustomTitle.Lines[line] + "   " + txtGenCustomTitle.Lines[0];
-            }
+            //    if (chkDisplayIPPort.Checked)
+            //        if (line == 0)
+            //            if (txtGenCustomTitle.Lines.Length == 0)
+            //                console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Text;
+            //            else
+            //                console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Lines[0];
+            //        else
+            //            console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Lines[line] + "   " + txtGenCustomTitle.Lines[0];
+            //    else
+            //        if (line == 0)
+            //        if (txtGenCustomTitle.Lines.Length == 0)
+            //            console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Text;
+            //        else
+            //            console.CustomTitle = ipAddress + remotePort + "   " + txtGenCustomTitle.Lines[0];
+            //    else
+            //        console.CustomTitle = txtGenCustomTitle.Lines[line] + "   " + txtGenCustomTitle.Lines[0];
+            //}
         }
 
         private void chkGenAllModeMicPTT_CheckedChanged(object sender, System.EventArgs e)
@@ -14164,10 +14164,6 @@ namespace Thetis
 
         private void tpGeneralHardware_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
-
-                    if(HPSDRModel.HERMESLITE == HardwareSpecific.Model)
-                        sMetisCodeVersion = NetworkIO.FWCodeVersion.ToString("0\\.0") + NetworkIO.FWCodeVersionMinor.ToString("\\.0");
-                    else
         }
 
         //MW0LGE_21g
@@ -14204,9 +14200,9 @@ namespace Thetis
                 else
                 {
                     if(HPSDRModel.HERMESLITE == HardwareSpecific.Model)
-                        sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + NetworkIO.FWCodeVersionMinor.ToString("\\.0") + " Protocol 1";
+                        sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + NetworkIO.BetaVersion.ToString("\\.0") + " Protocol 1";
                     else                
-                    sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + " Protocol_1";
+                        sRet = "FW v" + NetworkIO.FWCodeVersion.ToString("0\\.0") + " Protocol_1";
                 }
             }
 
@@ -16054,17 +16050,17 @@ namespace Thetis
                     int nRX1ADCinUse = console.GetADCInUse(rx1);
                     int nRX2ADCinUse = console.GetADCInUse(rx2);
 
-                if (HardwareSpecific.HasSteppedAttenuation(2)) // dont bother setting 1 if 2 not present
-                {
-                    if (nRX1ADCinUse == nRX2ADCinUse && chkHermesStepAttenuator.Checked != chkRX2StepAtt.Checked)
+                    if (HardwareSpecific.HasSteppedAttenuation(2)) // dont bother setting 1 if 2 not present
                     {
-                        chkHermesStepAttenuator.Checked = chkRX2StepAtt.Checked;
+                        if (nRX1ADCinUse == nRX2ADCinUse && chkHermesStepAttenuator.Checked != chkRX2StepAtt.Checked)
+                        {
+                            chkHermesStepAttenuator.Checked = chkRX2StepAtt.Checked;
+                        }
+                        else
+                        {
+                            chkHermesStepAttenuator_CheckedChanged(this, EventArgs.Empty);
+                        }
                     }
-                    else
-                    {
-                        chkHermesStepAttenuator_CheckedChanged(this, EventArgs.Empty);
-                    }
-                }
                 }
             }
         }
@@ -16538,65 +16534,6 @@ namespace Thetis
                 console.Midi2Cat.OpenMidi2Cat();
             }
         }
-
-                if(HPSDRModel.HERMESLITE != HardwareSpecific.Model)
-                {
-                else
-                {
-                    console.HPSDRNetworkIPAddr = txtIPAddress1.Text;
-                    console.ReduceEthernetBW = chkReduceBW1.Checked;
-
-                    NetworkIO.DiscoveryPort = (int) udDiscoveryPort1.Value;
-                }
-            }
-                if (HPSDRModel.HERMESLITE != HardwareSpecific.Model)
-                {
-                else
-                {
-                    console.HPSDRNetworkIPAddr = txtIPAddress2.Text;
-                    console.ReduceEthernetBW = chkReduceBW2.Checked;
-
-                    NetworkIO.DiscoveryPort = (int) udDiscoveryPort2.Value;
-                }
-            }
-                if (HPSDRModel.HERMESLITE != HardwareSpecific.Model)
-                {
-                else
-                {
-                    console.HPSDRNetworkIPAddr = txtIPAddress3.Text;
-                    console.ReduceEthernetBW = chkReduceBW3.Checked;
-
-                
-                    NetworkIO.DiscoveryPort = (int) udDiscoveryPort3.Value;
-                }
-            }
-                if (HPSDRModel.HERMESLITE != HardwareSpecific.Model)
-                {
-                else
-                {
-                    console.HPSDRNetworkIPAddr = txtIPAddress4.Text;
-                    console.ReduceEthernetBW = chkReduceBW4.Checked;
-
-                    NetworkIO.DiscoveryPort = (int) udDiscoveryPort4.Value;
-                }
-            }
-            {
-                chkFullDiscovery.Checked = false;
-
-                if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
-                {
-                    btnSetIPAddr_Click(sender, e);
-                }
-            }
-            else if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
-            {
-                chkLimit2Subnet.Checked = true;
-                NetworkIO.DiscoveryPort = 1024;
-            }
-
-
-            if (HPSDRModel.HERMESLITE == HardwareSpecific.Model)
-                chkLimit2Subnet.Enabled = chkEnableStaticIP.Checked;
         private void chkRX1WaterfallAGC_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
@@ -20170,7 +20107,7 @@ namespace Thetis
                     udHermesStepAttenuatorDataRX2.Minimum = (decimal)-28;
                     udHermesStepAttenuatorData.Maximum = 31;
                     udHermesStepAttenuatorDataRX2.Maximum = 31;
-                    grpMetisAddr.Text = "Hermes Lite Address";
+                    //grpMetisAddr.Text = "Hermes Lite Address";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
                     labelRXAntControl.Text = "  RX1   RX2    XVTR";
@@ -20200,12 +20137,12 @@ namespace Thetis
                     tpAlexControl.Text = "Ant/Filters";
                     comboAudioSampleRateRX2.Enabled = false;
                     ucIOPinsLedStripHF.DisplayBits = 6;
-                    radRadioProtocol1Select.Checked = true;
-                    radRadioProtocol2Select.Checked = false;
-                    radRadioProtocolAutoSelect.Checked = false;
-                    radRadioProtocol1Select.Enabled = false;
-                    radRadioProtocol2Select.Enabled = false;
-                    radRadioProtocolAutoSelect.Enabled = false;
+                    //radRadioProtocol1Select.Checked = true;
+                    //radRadioProtocol2Select.Checked = false;
+                    //radRadioProtocolAutoSelect.Checked = false;
+                    //radRadioProtocol1Select.Enabled = false;
+                    //radRadioProtocol2Select.Enabled = false;
+                    //radRadioProtocolAutoSelect.Enabled = false;
                     toolTip1.SetToolTip(chkHERCULES, "Preset pins for for N2ADR filter board");
                     toolTip1.SetToolTip(chkApolloFilter, "Enables the full duplex on the HL2");
                     toolTip1.SetToolTip(chkApolloTuner, "Enables HL2 power amplifier");
@@ -20335,38 +20272,38 @@ namespace Thetis
                     chkReduceBW4.Visible = true;
                     chkReduceBW4.Enabled = true;
 
-                    udStaticIP1.Enabled = false;
-                    udStaticIP1.Visible = false;
-                    udStaticIP2.Enabled = false;
-                    udStaticIP2.Visible = false;
-                    udStaticIP3.Enabled = false;
-                    udStaticIP3.Visible = false;
-                    udStaticIP4.Enabled = false;
-                    udStaticIP4.Visible = false;
-                    udStaticIP5.Enabled = false;
-                    udStaticIP5.Visible = false;
-                    udStaticIP6.Enabled = false;
-                    udStaticIP6.Visible = false;
-                    udStaticIP7.Enabled = false;
-                    udStaticIP7.Visible = false;
-                    udStaticIP8.Enabled = false;
-                    udStaticIP8.Visible = false;
-                    udStaticIP9.Enabled = false;
-                    udStaticIP9.Visible = false;
-                    udStaticIP10.Enabled = false;
-                    udStaticIP10.Visible = false;
-                    udStaticIP11.Enabled = false;
-                    udStaticIP11.Visible = false;
-                    udStaticIP12.Enabled = false;
-                    udStaticIP12.Visible = false;
-                    udStaticIP13.Enabled = false;
-                    udStaticIP13.Visible = false;
-                    udStaticIP14.Enabled = false;
-                    udStaticIP14.Visible = false;
-                    udStaticIP15.Enabled = false;
-                    udStaticIP15.Visible = false;
-                    udStaticIP16.Enabled = false;
-                    udStaticIP16.Visible = false;
+                    //udStaticIP1.Enabled = false;
+                    //udStaticIP1.Visible = false;
+                    //udStaticIP2.Enabled = false;
+                    //udStaticIP2.Visible = false;
+                    //udStaticIP3.Enabled = false;
+                    //udStaticIP3.Visible = false;
+                    //udStaticIP4.Enabled = false;
+                    //udStaticIP4.Visible = false;
+                    //udStaticIP5.Enabled = false;
+                    //udStaticIP5.Visible = false;
+                    //udStaticIP6.Enabled = false;
+                    //udStaticIP6.Visible = false;
+                    //udStaticIP7.Enabled = false;
+                    //udStaticIP7.Visible = false;
+                    //udStaticIP8.Enabled = false;
+                    //udStaticIP8.Visible = false;
+                    //udStaticIP9.Enabled = false;
+                    //udStaticIP9.Visible = false;
+                    //udStaticIP10.Enabled = false;
+                    //udStaticIP10.Visible = false;
+                    //udStaticIP11.Enabled = false;
+                    //udStaticIP11.Visible = false;
+                    //udStaticIP12.Enabled = false;
+                    //udStaticIP12.Visible = false;
+                    //udStaticIP13.Enabled = false;
+                    //udStaticIP13.Visible = false;
+                    //udStaticIP14.Enabled = false;
+                    //udStaticIP14.Visible = false;
+                    //udStaticIP15.Enabled = false;
+                    //udStaticIP15.Visible = false;
+                    //udStaticIP16.Enabled = false;
+                    //udStaticIP16.Visible = false;
 
                     txtGenCustomTitle.MaxLength = 100;
                     txtGenCustomTitle.Multiline = true;
@@ -28079,7 +28016,7 @@ namespace Thetis
         
         private void chkLimit2Subnet_CheckedChanged(object sender, EventArgs e)
         {
-            NetworkIO.enableLimitSubnet = chkLimit2Subnet.Checked;
+//            NetworkIO.enableLimitSubnet = chkLimit2Subnet.Checked;
         }
 
         private void chkDisplayIPPort_CheckedChanged(object sender, EventArgs e)
