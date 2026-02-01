@@ -231,9 +231,11 @@
             this.chkExtended = new System.Windows.Forms.CheckBoxTS();
             this.comboFRSRegion = new System.Windows.Forms.ComboBoxTS();
             this.grpOzyType = new System.Windows.Forms.GroupBoxTS();
+            this.btnDiscoverRadios = new System.Windows.Forms.ButtonTS();
             this.ucRadioList_Radios = new Thetis.ucRadioList();
             this.chkAdvancedNetworkingSettings = new System.Windows.Forms.CheckBoxTS();
             this.pnlAdvancedNetworkSettings = new System.Windows.Forms.PanelTS();
+            this.chkNetworkProtocolMustMatch = new System.Windows.Forms.CheckBoxTS();
             this.chkInformHardwareP2Ports = new System.Windows.Forms.CheckBoxTS();
             this.nudUserListenPort = new System.Windows.Forms.NumericUpDownTS();
             this.radUserListenPort = new System.Windows.Forms.RadioButtonTS();
@@ -249,7 +251,6 @@
             this.radSpecificRadio = new System.Windows.Forms.RadioButtonTS();
             this.radAnyRadio = new System.Windows.Forms.RadioButtonTS();
             this.btnRefreshNics = new System.Windows.Forms.ButtonTS();
-            this.btnDiscoverRadios = new System.Windows.Forms.ButtonTS();
             this.chkFirewallCheck = new System.Windows.Forms.ButtonTS();
             this.chkNetworkWDT = new System.Windows.Forms.CheckBoxTS();
             this.chkNetworkThrottleIndexTweak = new System.Windows.Forms.CheckBoxTS();
@@ -266,19 +267,19 @@
             this.panelSaturnMicInput = new System.Windows.Forms.PanelTS();
             this.radSaturnXLR = new System.Windows.Forms.RadioButtonTS();
             this.radSaturn3p5mm = new System.Windows.Forms.RadioButtonTS();
+            this.lblSaturnMicInput = new System.Windows.Forms.LabelTS();
             this.panelOrionMic = new System.Windows.Forms.PanelTS();
             this.radOrionMicRing = new System.Windows.Forms.RadioButtonTS();
             this.radOrionMicTip = new System.Windows.Forms.RadioButtonTS();
-            this.lblSaturnMicInput = new System.Windows.Forms.LabelTS();
             this.lblOrionMic = new System.Windows.Forms.LabelTS();
             this.panelOrionPTT = new System.Windows.Forms.PanelTS();
             this.radOrionPTTOn = new System.Windows.Forms.RadioButtonTS();
             this.radOrionPTTOff = new System.Windows.Forms.RadioButtonTS();
-            this.lblOrionBias = new System.Windows.Forms.LabelTS();
             this.lblOrionPTT = new System.Windows.Forms.LabelTS();
             this.panelOrionBias = new System.Windows.Forms.PanelTS();
             this.radOrionBiasOn = new System.Windows.Forms.RadioButtonTS();
             this.radOrionBiasOff = new System.Windows.Forms.RadioButtonTS();
+            this.lblOrionBias = new System.Windows.Forms.LabelTS();
             this.tpGeneralOptions = new System.Windows.Forms.TabPage();
             this.tcOptions = new System.Windows.Forms.TabControl();
             this.tpOptions1 = new System.Windows.Forms.TabPage();
@@ -8321,6 +8322,18 @@
             this.grpOzyType.Text = "Network Settings";
             this.grpOzyType.Visible = false;
             // 
+            // btnDiscoverRadios
+            // 
+            this.btnDiscoverRadios.Image = null;
+            this.btnDiscoverRadios.Location = new System.Drawing.Point(6, 45);
+            this.btnDiscoverRadios.Name = "btnDiscoverRadios";
+            this.btnDiscoverRadios.Selectable = true;
+            this.btnDiscoverRadios.Size = new System.Drawing.Size(98, 50);
+            this.btnDiscoverRadios.TabIndex = 125;
+            this.btnDiscoverRadios.Text = "Discover";
+            this.btnDiscoverRadios.UseVisualStyleBackColor = true;
+            this.btnDiscoverRadios.Click += new System.EventHandler(this.btnDiscoverRadios_Click);
+            // 
             // ucRadioList_Radios
             // 
             this.ucRadioList_Radios.BackColor = System.Drawing.SystemColors.Window;
@@ -8350,14 +8363,29 @@
             // 
             this.pnlAdvancedNetworkSettings.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlAdvancedNetworkSettings.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlAdvancedNetworkSettings.Controls.Add(this.chkNetworkProtocolMustMatch);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.chkInformHardwareP2Ports);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.nudUserListenPort);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.radUserListenPort);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.radDefaultListenPort);
             this.pnlAdvancedNetworkSettings.Location = new System.Drawing.Point(110, 119);
             this.pnlAdvancedNetworkSettings.Name = "pnlAdvancedNetworkSettings";
-            this.pnlAdvancedNetworkSettings.Size = new System.Drawing.Size(349, 47);
+            this.pnlAdvancedNetworkSettings.Size = new System.Drawing.Size(430, 47);
             this.pnlAdvancedNetworkSettings.TabIndex = 134;
+            // 
+            // chkNetworkProtocolMustMatch
+            // 
+            this.chkNetworkProtocolMustMatch.AutoSize = true;
+            this.chkNetworkProtocolMustMatch.Checked = true;
+            this.chkNetworkProtocolMustMatch.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkNetworkProtocolMustMatch.Image = null;
+            this.chkNetworkProtocolMustMatch.Location = new System.Drawing.Point(235, 24);
+            this.chkNetworkProtocolMustMatch.Name = "chkNetworkProtocolMustMatch";
+            this.chkNetworkProtocolMustMatch.Size = new System.Drawing.Size(122, 17);
+            this.chkNetworkProtocolMustMatch.TabIndex = 4;
+            this.chkNetworkProtocolMustMatch.Text = "Protocol must match";
+            this.toolTip1.SetToolTip(this.chkNetworkProtocolMustMatch, resources.GetString("chkNetworkProtocolMustMatch.ToolTip"));
+            this.chkNetworkProtocolMustMatch.UseVisualStyleBackColor = true;
             // 
             // chkInformHardwareP2Ports
             // 
@@ -8365,9 +8393,9 @@
             this.chkInformHardwareP2Ports.Image = null;
             this.chkInformHardwareP2Ports.Location = new System.Drawing.Point(3, 24);
             this.chkInformHardwareP2Ports.Name = "chkInformHardwareP2Ports";
-            this.chkInformHardwareP2Ports.Size = new System.Drawing.Size(305, 17);
+            this.chkInformHardwareP2Ports.Size = new System.Drawing.Size(216, 17);
             this.chkInformHardwareP2Ports.TabIndex = 3;
-            this.chkInformHardwareP2Ports.Text = "Inform hardware of ports to use instead of defaults (P2 only)";
+            this.chkInformHardwareP2Ports.Text = "Inform hardware of ports to use (P2 only)";
             this.toolTip1.SetToolTip(this.chkInformHardwareP2Ports, resources.GetString("chkInformHardwareP2Ports.ToolTip"));
             this.chkInformHardwareP2Ports.UseVisualStyleBackColor = true;
             // 
@@ -8564,18 +8592,6 @@
             this.btnRefreshNics.UseVisualStyleBackColor = true;
             this.btnRefreshNics.Click += new System.EventHandler(this.btnRefreshNics_Click);
             // 
-            // btnDiscoverRadios
-            // 
-            this.btnDiscoverRadios.Image = null;
-            this.btnDiscoverRadios.Location = new System.Drawing.Point(6, 45);
-            this.btnDiscoverRadios.Name = "btnDiscoverRadios";
-            this.btnDiscoverRadios.Selectable = true;
-            this.btnDiscoverRadios.Size = new System.Drawing.Size(98, 50);
-            this.btnDiscoverRadios.TabIndex = 125;
-            this.btnDiscoverRadios.Text = "Discover";
-            this.btnDiscoverRadios.UseVisualStyleBackColor = true;
-            this.btnDiscoverRadios.Click += new System.EventHandler(this.btnDiscoverRadios_Click);
-            // 
             // chkFirewallCheck
             // 
             this.chkFirewallCheck.Image = null;
@@ -8745,11 +8761,7 @@
             this.pnlGeneralHardwareORION.AutoScrollMinSize = new System.Drawing.Size(0, 0);
             this.pnlGeneralHardwareORION.Controls.Add(this.panelSaturnMicInput);
             this.pnlGeneralHardwareORION.Controls.Add(this.panelOrionMic);
-            this.pnlGeneralHardwareORION.Controls.Add(this.lblSaturnMicInput);
-            this.pnlGeneralHardwareORION.Controls.Add(this.lblOrionMic);
             this.pnlGeneralHardwareORION.Controls.Add(this.panelOrionPTT);
-            this.pnlGeneralHardwareORION.Controls.Add(this.lblOrionBias);
-            this.pnlGeneralHardwareORION.Controls.Add(this.lblOrionPTT);
             this.pnlGeneralHardwareORION.Controls.Add(this.panelOrionBias);
             this.pnlGeneralHardwareORION.Location = new System.Drawing.Point(5, 19);
             this.pnlGeneralHardwareORION.Name = "pnlGeneralHardwareORION";
@@ -8762,16 +8774,17 @@
             this.panelSaturnMicInput.AutoScrollMinSize = new System.Drawing.Size(0, 0);
             this.panelSaturnMicInput.Controls.Add(this.radSaturnXLR);
             this.panelSaturnMicInput.Controls.Add(this.radSaturn3p5mm);
-            this.panelSaturnMicInput.Location = new System.Drawing.Point(32, 83);
+            this.panelSaturnMicInput.Controls.Add(this.lblSaturnMicInput);
+            this.panelSaturnMicInput.Location = new System.Drawing.Point(3, 83);
             this.panelSaturnMicInput.Name = "panelSaturnMicInput";
-            this.panelSaturnMicInput.Size = new System.Drawing.Size(114, 24);
+            this.panelSaturnMicInput.Size = new System.Drawing.Size(143, 24);
             this.panelSaturnMicInput.TabIndex = 7;
             // 
             // radSaturnXLR
             // 
             this.radSaturnXLR.AutoSize = true;
             this.radSaturnXLR.Image = null;
-            this.radSaturnXLR.Location = new System.Drawing.Point(3, 2);
+            this.radSaturnXLR.Location = new System.Drawing.Point(37, 2);
             this.radSaturnXLR.Name = "radSaturnXLR";
             this.radSaturnXLR.Size = new System.Drawing.Size(46, 17);
             this.radSaturnXLR.TabIndex = 0;
@@ -8784,7 +8797,7 @@
             this.radSaturn3p5mm.AutoSize = true;
             this.radSaturn3p5mm.Checked = true;
             this.radSaturn3p5mm.Image = null;
-            this.radSaturn3p5mm.Location = new System.Drawing.Point(49, 2);
+            this.radSaturn3p5mm.Location = new System.Drawing.Point(83, 2);
             this.radSaturn3p5mm.Name = "radSaturn3p5mm";
             this.radSaturn3p5mm.Size = new System.Drawing.Size(56, 17);
             this.radSaturn3p5mm.TabIndex = 1;
@@ -8793,22 +8806,33 @@
             this.radSaturn3p5mm.UseVisualStyleBackColor = true;
             this.radSaturn3p5mm.CheckedChanged += new System.EventHandler(this.radSaturn3p5mm_CheckedChanged);
             // 
+            // lblSaturnMicInput
+            // 
+            this.lblSaturnMicInput.AutoSize = true;
+            this.lblSaturnMicInput.Image = null;
+            this.lblSaturnMicInput.Location = new System.Drawing.Point(3, 4);
+            this.lblSaturnMicInput.Name = "lblSaturnMicInput";
+            this.lblSaturnMicInput.Size = new System.Drawing.Size(31, 13);
+            this.lblSaturnMicInput.TabIndex = 6;
+            this.lblSaturnMicInput.Text = "Input";
+            // 
             // panelOrionMic
             // 
             this.panelOrionMic.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.panelOrionMic.AutoScrollMinSize = new System.Drawing.Size(0, 0);
             this.panelOrionMic.Controls.Add(this.radOrionMicRing);
             this.panelOrionMic.Controls.Add(this.radOrionMicTip);
-            this.panelOrionMic.Location = new System.Drawing.Point(32, 3);
+            this.panelOrionMic.Controls.Add(this.lblOrionMic);
+            this.panelOrionMic.Location = new System.Drawing.Point(3, 3);
             this.panelOrionMic.Name = "panelOrionMic";
-            this.panelOrionMic.Size = new System.Drawing.Size(114, 24);
+            this.panelOrionMic.Size = new System.Drawing.Size(143, 24);
             this.panelOrionMic.TabIndex = 1;
             // 
             // radOrionMicRing
             // 
             this.radOrionMicRing.AutoSize = true;
             this.radOrionMicRing.Image = null;
-            this.radOrionMicRing.Location = new System.Drawing.Point(49, 2);
+            this.radOrionMicRing.Location = new System.Drawing.Point(83, 2);
             this.radOrionMicRing.Name = "radOrionMicRing";
             this.radOrionMicRing.Size = new System.Drawing.Size(47, 17);
             this.radOrionMicRing.TabIndex = 1;
@@ -8821,7 +8845,7 @@
             this.radOrionMicTip.AutoSize = true;
             this.radOrionMicTip.Checked = true;
             this.radOrionMicTip.Image = null;
-            this.radOrionMicTip.Location = new System.Drawing.Point(3, 2);
+            this.radOrionMicTip.Location = new System.Drawing.Point(37, 2);
             this.radOrionMicTip.Name = "radOrionMicTip";
             this.radOrionMicTip.Size = new System.Drawing.Size(40, 17);
             this.radOrionMicTip.TabIndex = 0;
@@ -8830,21 +8854,11 @@
             this.radOrionMicTip.UseVisualStyleBackColor = true;
             this.radOrionMicTip.CheckedChanged += new System.EventHandler(this.radOrionMicTip_CheckedChanged);
             // 
-            // lblSaturnMicInput
-            // 
-            this.lblSaturnMicInput.AutoSize = true;
-            this.lblSaturnMicInput.Image = null;
-            this.lblSaturnMicInput.Location = new System.Drawing.Point(1, 85);
-            this.lblSaturnMicInput.Name = "lblSaturnMicInput";
-            this.lblSaturnMicInput.Size = new System.Drawing.Size(31, 13);
-            this.lblSaturnMicInput.TabIndex = 6;
-            this.lblSaturnMicInput.Text = "Input";
-            // 
             // lblOrionMic
             // 
             this.lblOrionMic.AutoSize = true;
             this.lblOrionMic.Image = null;
-            this.lblOrionMic.Location = new System.Drawing.Point(2, 9);
+            this.lblOrionMic.Location = new System.Drawing.Point(3, 4);
             this.lblOrionMic.Name = "lblOrionMic";
             this.lblOrionMic.Size = new System.Drawing.Size(24, 13);
             this.lblOrionMic.TabIndex = 0;
@@ -8856,9 +8870,10 @@
             this.panelOrionPTT.AutoScrollMinSize = new System.Drawing.Size(0, 0);
             this.panelOrionPTT.Controls.Add(this.radOrionPTTOn);
             this.panelOrionPTT.Controls.Add(this.radOrionPTTOff);
-            this.panelOrionPTT.Location = new System.Drawing.Point(32, 58);
+            this.panelOrionPTT.Controls.Add(this.lblOrionPTT);
+            this.panelOrionPTT.Location = new System.Drawing.Point(3, 58);
             this.panelOrionPTT.Name = "panelOrionPTT";
-            this.panelOrionPTT.Size = new System.Drawing.Size(114, 24);
+            this.panelOrionPTT.Size = new System.Drawing.Size(143, 24);
             this.panelOrionPTT.TabIndex = 5;
             // 
             // radOrionPTTOn
@@ -8866,7 +8881,7 @@
             this.radOrionPTTOn.AutoSize = true;
             this.radOrionPTTOn.Checked = true;
             this.radOrionPTTOn.Image = null;
-            this.radOrionPTTOn.Location = new System.Drawing.Point(49, 2);
+            this.radOrionPTTOn.Location = new System.Drawing.Point(83, 2);
             this.radOrionPTTOn.Name = "radOrionPTTOn";
             this.radOrionPTTOn.Size = new System.Drawing.Size(39, 17);
             this.radOrionPTTOn.TabIndex = 1;
@@ -8878,7 +8893,7 @@
             // 
             this.radOrionPTTOff.AutoSize = true;
             this.radOrionPTTOff.Image = null;
-            this.radOrionPTTOff.Location = new System.Drawing.Point(3, 2);
+            this.radOrionPTTOff.Location = new System.Drawing.Point(37, 2);
             this.radOrionPTTOff.Name = "radOrionPTTOff";
             this.radOrionPTTOff.Size = new System.Drawing.Size(39, 17);
             this.radOrionPTTOff.TabIndex = 0;
@@ -8886,21 +8901,11 @@
             this.radOrionPTTOff.UseVisualStyleBackColor = true;
             this.radOrionPTTOff.CheckedChanged += new System.EventHandler(this.radOrionPTTOff_CheckedChanged);
             // 
-            // lblOrionBias
-            // 
-            this.lblOrionBias.AutoSize = true;
-            this.lblOrionBias.Image = null;
-            this.lblOrionBias.Location = new System.Drawing.Point(2, 35);
-            this.lblOrionBias.Name = "lblOrionBias";
-            this.lblOrionBias.Size = new System.Drawing.Size(27, 13);
-            this.lblOrionBias.TabIndex = 2;
-            this.lblOrionBias.Text = "Bias";
-            // 
             // lblOrionPTT
             // 
             this.lblOrionPTT.AutoSize = true;
             this.lblOrionPTT.Image = null;
-            this.lblOrionPTT.Location = new System.Drawing.Point(1, 62);
+            this.lblOrionPTT.Location = new System.Drawing.Point(3, 4);
             this.lblOrionPTT.Name = "lblOrionPTT";
             this.lblOrionPTT.Size = new System.Drawing.Size(28, 13);
             this.lblOrionPTT.TabIndex = 4;
@@ -8912,16 +8917,17 @@
             this.panelOrionBias.AutoScrollMinSize = new System.Drawing.Size(0, 0);
             this.panelOrionBias.Controls.Add(this.radOrionBiasOn);
             this.panelOrionBias.Controls.Add(this.radOrionBiasOff);
-            this.panelOrionBias.Location = new System.Drawing.Point(32, 31);
+            this.panelOrionBias.Controls.Add(this.lblOrionBias);
+            this.panelOrionBias.Location = new System.Drawing.Point(3, 31);
             this.panelOrionBias.Name = "panelOrionBias";
-            this.panelOrionBias.Size = new System.Drawing.Size(114, 24);
+            this.panelOrionBias.Size = new System.Drawing.Size(143, 24);
             this.panelOrionBias.TabIndex = 3;
             // 
             // radOrionBiasOn
             // 
             this.radOrionBiasOn.AutoSize = true;
             this.radOrionBiasOn.Image = null;
-            this.radOrionBiasOn.Location = new System.Drawing.Point(49, 2);
+            this.radOrionBiasOn.Location = new System.Drawing.Point(83, 2);
             this.radOrionBiasOn.Name = "radOrionBiasOn";
             this.radOrionBiasOn.Size = new System.Drawing.Size(39, 17);
             this.radOrionBiasOn.TabIndex = 1;
@@ -8935,13 +8941,23 @@
             this.radOrionBiasOff.AutoSize = true;
             this.radOrionBiasOff.Checked = true;
             this.radOrionBiasOff.Image = null;
-            this.radOrionBiasOff.Location = new System.Drawing.Point(3, 2);
+            this.radOrionBiasOff.Location = new System.Drawing.Point(37, 2);
             this.radOrionBiasOff.Name = "radOrionBiasOff";
             this.radOrionBiasOff.Size = new System.Drawing.Size(39, 17);
             this.radOrionBiasOff.TabIndex = 0;
             this.radOrionBiasOff.TabStop = true;
             this.radOrionBiasOff.Text = "Off";
             this.radOrionBiasOff.UseVisualStyleBackColor = true;
+            // 
+            // lblOrionBias
+            // 
+            this.lblOrionBias.AutoSize = true;
+            this.lblOrionBias.Image = null;
+            this.lblOrionBias.Location = new System.Drawing.Point(3, 4);
+            this.lblOrionBias.Name = "lblOrionBias";
+            this.lblOrionBias.Size = new System.Drawing.Size(27, 13);
+            this.lblOrionBias.TabIndex = 2;
+            this.lblOrionBias.Text = "Bias";
             // 
             // tpGeneralOptions
             // 
@@ -69718,7 +69734,6 @@
             this.pnlAlexApollo.ResumeLayout(false);
             this.pnlAlexApollo.PerformLayout();
             this.pnlGeneralHardwareORION.ResumeLayout(false);
-            this.pnlGeneralHardwareORION.PerformLayout();
             this.panelSaturnMicInput.ResumeLayout(false);
             this.panelSaturnMicInput.PerformLayout();
             this.panelOrionMic.ResumeLayout(false);
@@ -75373,5 +75388,6 @@
         private RadioButtonTS radDefaultListenPort;
         private CheckBoxTS chkAdvancedNetworkingSettings;
         private CheckBoxTS chkInformHardwareP2Ports;
+        private CheckBoxTS chkNetworkProtocolMustMatch;
     }
 }

@@ -23,7 +23,7 @@ namespace Thetis
         public static string GetFWVersionErrorMsg { get; set; } = "";
         public static string BoardMismatch { get; set; } = "";
 
-        public static int InitRadio(bool perform_search = true)
+        public static int InitRadio()
         {
             int ret = -1;
             // 0 everything fine
@@ -40,10 +40,17 @@ namespace Thetis
 
             Console c = Console.getConsole();
             if (c.IsSetupFormNull) return -1;
-            if(c.SetupForm.SelectedRadioList == null) return -1;
-
+            if (c.SetupForm.SelectedRadioList == null) return -1;
             ucRadioList rl = c.SetupForm.SelectedRadioList;
             if (rl == null) return -1;
+
+            bool perform_search = true;
+            if (rl.IsFirstRadioFoundSelected)
+            {
+                // we need to do a scan here, and use the first found
+                c.SetupForm.ScanForFirstFoundRadio();
+                perform_search = false; // we dont want to search again
+            }
 
             NicRadioScanResult nic = rl.SelectedNICDetails;
             RadioInfo ri = rl.SelectedRadioDetails;
@@ -67,17 +74,6 @@ namespace Thetis
             if (perform_search)
             {
                 RadioDiscoveryOptions options = new RadioDiscoveryOptions();
-                switch (protocol)
-                {
-                    case 0://P1
-                        options.ProtocolMode = RadioDiscoveryProtocolMode.P1Only; // search for p1 only
-                        break;
-                    case 1://P2
-                        options.ProtocolMode = RadioDiscoveryProtocolMode.P2Only; // search for p2 only
-                        break;
-                    default:
-                        return -102; // unknown protocol
-                }
 
                 options.IgnoreSubnetCheck = true;
                 options.IncludeEthernet = true;
@@ -85,7 +81,7 @@ namespace Thetis
                 options.IncludeOtherInterfaceTypes = false;
                 options.AllowLoopback = false;
                 options.AllowAPIPA = true;
-                options.Include255255255255Broadcast = true;
+                options.IncludeGeneralBroadcast = true;
 
                 options.DiscoveryPortBase = ratioPort;
                 options.BindLocalPort = hostPort;
@@ -110,6 +106,25 @@ namespace Thetis
                     return -104;
                 }
 
+                if (c.SetupForm.NetworkProtocolMustMatch)
+                {
+                    switch (protocol)
+                    {
+                        case 0://P1
+                            options.ProtocolMode = RadioDiscoveryProtocolMode.P1Only; // search for p1 only
+                            break;
+                        case 1://P2
+                            options.ProtocolMode = RadioDiscoveryProtocolMode.P2Only; // search for p2 only
+                            break;
+                        default:
+                            return -102; // unknown protocol (never happen, but here incase more are added)
+                    }
+                }
+                else
+                {
+                    options.ProtocolMode = RadioDiscoveryProtocolMode.Auto; // search for both
+                }
+
                 // check via a single nic that matches where we expect the radio to be
                 RadioDiscoveryService svc = new RadioDiscoveryService();
                 NicRadioScanResult scan_result = svc.DiscoverUsingSingleNic(options, options.FixedLocalIp);
@@ -117,6 +132,7 @@ namespace Thetis
                 if (scan_result == null || scan_result.Radios == null || scan_result.Radios.Count != 1) return -1;
 
                 ri = scan_result.Radios[0]; // the one we found
+                protocol = ri.Protocol == RadioDiscoveryRadioProtocol.P1 ? 0 : 1; // update to the result (for auto)
 
                 if (ri.DeviceType == HPSDRHW.HermesII)
                 {
@@ -140,7 +156,7 @@ namespace Thetis
                 CurrentRadioProtocol = (RadioProtocol)protocol;
                 FWCodeVersion = ri.CodeVersion;
                 BetaVersion = ri.BetaVersion;
-                Protocol2VersionSupported = ri.ProtocolSupported;
+                Protocol2VersionSupported = ri.Protocol2Supported;
 
                 //[2.10.3.9]MW0LGE added board check, issue icon shown in setup
                 bool board_is_expected_for_model;

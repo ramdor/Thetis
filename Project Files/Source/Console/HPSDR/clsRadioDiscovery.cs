@@ -60,8 +60,8 @@ using System.Diagnostics;
 // Very fast      1                 3                        60                        ~180 ms
 // Fast           2                 3                        80                        ~480 ms
 // Balanced       2                 4                        100                       ~800 ms
-// Safe default   3                 5                        120                       ~1800 ms
-// Very tolerant  4                 6                        150                       ~3600 ms
+// Safe default   3                 5                        150                       ~1800 ms
+// Very tolerant  3                 6                        300                       ~5400 ms
 //
 // Notes:
 // - Lower values = faster scans, but higher risk of missing slow replies
@@ -111,7 +111,7 @@ namespace Thetis
         public int AttemptsPerNic { get; set; }
         public int PollTimeoutMilliseconds { get; set; }
         public int QuietPollsBeforeResend { get; set; }
-        public bool Include255255255255Broadcast { get; set; }
+        public bool IncludeGeneralBroadcast { get; set; }
 
         private ScanPerformanceProfile _scanPerformance = ScanPerformanceProfile.Balanced;
         public ScanPerformanceProfile ScanPerformance
@@ -141,7 +141,7 @@ namespace Thetis
             DiscoveryPortBase = 1024;
             BindLocalPort = 0;
 
-            Include255255255255Broadcast = true;
+            IncludeGeneralBroadcast = true;
 
             //AttemptsPerNic = 4;
             //PollTimeoutMilliseconds = 150;
@@ -184,14 +184,14 @@ namespace Thetis
 
                 case ScanPerformanceProfile.Safe:
                     AttemptsPerNic = 3;
-                    QuietPollsBeforeResend = 5;
-                    PollTimeoutMilliseconds = 120;
+                    QuietPollsBeforeResend = 4;
+                    PollTimeoutMilliseconds = 150;
                     break;
 
                 case ScanPerformanceProfile.VeryTolerant:
-                    AttemptsPerNic = 4;
+                    AttemptsPerNic = 3;
                     QuietPollsBeforeResend = 6;
-                    PollTimeoutMilliseconds = 150;
+                    PollTimeoutMilliseconds = 300;
                     break;
 
                 default:
@@ -211,7 +211,7 @@ namespace Thetis
         public HPSDRHW DeviceType { get; set; }
         public byte CodeVersion { get; set; }
         public byte BetaVersion { get; set; }
-        public byte ProtocolSupported { get; set; }
+        public byte Protocol2Supported { get; set; }
         public byte NumRxs { get; set; }
         public byte MercuryVersion0 { get; set; }
         public byte MercuryVersion1 { get; set; }
@@ -721,7 +721,7 @@ namespace Thetis
                         info.DeviceType = parsed.DeviceType;
                         info.CodeVersion = parsed.CodeVersion;
                         info.BetaVersion = parsed.BetaVersion;
-                        info.ProtocolSupported = parsed.ProtocolSupported;
+                        info.Protocol2Supported = parsed.ProtocolSupported;
                         info.NumRxs = parsed.NumRxs;
                         info.MercuryVersion0 = parsed.MercuryVersion0;
                         info.MercuryVersion1 = parsed.MercuryVersion1;
@@ -884,6 +884,54 @@ namespace Thetis
             return (HPSDRHW)boardId;
         }
 
+        //private List<IPEndPoint> buildTargets(IPAddress localIPv4, IPAddress mask, RadioDiscoveryOptions options)
+        //{
+        //    List<IPEndPoint> targets = new List<IPEndPoint>();
+
+        //    int port = options.DiscoveryPortBase;
+        //    if (port < 1) port = 1024;
+
+        //    if (options.FixedTargetIp != null)
+        //    {
+        //        targets.Add(new IPEndPoint(options.FixedTargetIp, port));
+        //    }
+
+        //    IPAddress directedSubnetBroadcast = getBroadcastAddress(localIPv4, mask);
+        //    bool haveDirectedSubnetBroadcast = false;
+        //    for (int i = 0; i < targets.Count; i++)
+        //    {
+        //        if (targets[i].Address != null && targets[i].Address.Equals(directedSubnetBroadcast))
+        //        {
+        //            haveDirectedSubnetBroadcast = true;
+        //            break;
+        //        }
+        //    }
+        //    if (!haveDirectedSubnetBroadcast)
+        //    {
+        //        targets.Add(new IPEndPoint(directedSubnetBroadcast, port));
+        //    }
+
+        //    if (options.IncludeGeneralBroadcast) // to 255.255.255.255
+        //    {
+        //        IPAddress generalBroadcast = IPAddress.Broadcast;
+        //        bool haveGeneralBroadcast = false;
+        //        for (int i = 0; i < targets.Count; i++)
+        //        {
+        //            if (targets[i].Address != null && targets[i].Address.Equals(generalBroadcast))
+        //            {
+        //                haveGeneralBroadcast = true;
+        //                break;
+        //            }
+        //        }
+        //        if (!haveGeneralBroadcast)
+        //        {
+        //            targets.Add(new IPEndPoint(generalBroadcast, port));
+        //        }
+        //    }
+
+        //    return targets;
+        //}
+
         private List<IPEndPoint> buildTargets(IPAddress localIPv4, IPAddress mask, RadioDiscoveryOptions options)
         {
             List<IPEndPoint> targets = new List<IPEndPoint>();
@@ -894,13 +942,13 @@ namespace Thetis
             if (options.FixedTargetIp != null)
             {
                 targets.Add(new IPEndPoint(options.FixedTargetIp, port));
-                return targets;
+                if(options.ProtocolMode == RadioDiscoveryProtocolMode.P2Only) return targets; // P2 can have a directed discover, P1 can not, so add in the directed subnet and 255.255.255.255
             }
 
             IPAddress directedBroadcast = getBroadcastAddress(localIPv4, mask);
             targets.Add(new IPEndPoint(directedBroadcast, port));
 
-            if (options.Include255255255255Broadcast)
+            if (options.IncludeGeneralBroadcast)
             {
                 IPAddress limitedBroadcast = IPAddress.Broadcast;
                 bool alreadyAdded = false;

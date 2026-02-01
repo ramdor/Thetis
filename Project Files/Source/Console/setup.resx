@@ -141,6 +141,11 @@
   <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <data name="chkNetworkProtocolMustMatch.ToolTip" xml:space="preserve">
+    <value>The radio's protocol must match the stored entry. (default checked)
+Unchecked, a stored entry will allow that radio to have any protocol version.
+The added entry will be update accordingly once connected.</value>
+  </data>
   <data name="chkInformHardwareP2Ports.ToolTip" xml:space="preserve">
     <value>Default P2 UDP ports on the radio are:
 a) Port 1024 into the radio - discovery and general port, this can not be changed
