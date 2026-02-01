@@ -1833,8 +1833,11 @@ namespace Thetis
             phase_buf_l = new float[2048];
             phase_buf_r = new float[2048];
             Console c = Console.getConsole();
-            
+
+            Cursor cur = Cursor.Current;
+            Cursor.Current = Cursors.WaitCursor;
             rc = NetworkIO.InitRadio();
+            Cursor.Current = cur;
 
             if (rc != 0)
             {

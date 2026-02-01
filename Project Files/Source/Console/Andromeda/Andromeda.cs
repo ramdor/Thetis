@@ -3384,7 +3384,7 @@ namespace Thetis
 
                 case EButtonBarActions.eBBBand6:
                     if (show_rx1)                           // set RX1 or 2 band
-                        SetCATBand(Band.B60M);
+                        SetCATBand(Band.B6M);
                     else
                         SetupRX2Band("6m");
                     break;
