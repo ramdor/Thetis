@@ -41,6 +41,8 @@ mw0lge@grange-lane.co.uk
 
 namespace Thetis
 {
+    using System; //for [Flags] attribute
+
     #region Enums
 
     public enum FocusMasterMode
@@ -481,6 +483,17 @@ namespace Thetis
         Nothing = 0,
         VFO_A_to_B,
         VFO_B_to_A
+    }
+
+    [Flags]
+    public enum PAstatusIndicatorState
+    {
+        NotUsed = 0,
+        OK = 1 << 0,
+        Voltage = 1 << 1,
+        Current = 1 << 2,
+        ReversePower = 1 << 3,
+        Temperature = 1 << 4
     }
     #endregion
 }
