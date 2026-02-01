@@ -52245,51 +52245,6 @@ namespace Thetis
             }
         }
         #endregion
-
-        private void btnAndrBar8_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnAndrBar7_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnAndrBar6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnAndrBar5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnAndrBar4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnAndrBar3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnAndrBar2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnAndrBar1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panelButtonBar_Layout(object sender, LayoutEventArgs e)
-        {
-
-        }
     }
 
     public class DigiMode
