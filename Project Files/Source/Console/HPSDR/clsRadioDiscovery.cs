@@ -243,6 +243,8 @@ namespace Thetis
         public int RejectedMacInvalid { get; set; }
         public int RejectedFixedTargetMismatch { get; set; }
         public int RejectedProtocolModeMismatch { get; set; }
+
+        public bool SocketError { get; set; }
     }
 
     public sealed class NicRadioScanResult
@@ -736,6 +738,12 @@ namespace Thetis
                         seen.Add(key);
                     }
                 }
+            }
+            catch (SocketException ex) when (ex.SocketErrorCode == SocketError.AddressAlreadyInUse)
+            {
+                d.SocketError = true;
+                diagnostics = d;
+                return radios;
             }
             catch
             {

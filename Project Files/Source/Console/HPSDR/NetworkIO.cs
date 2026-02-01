@@ -126,6 +126,9 @@ namespace Thetis
                         return -101;
                     }
                 }
+
+                // update the radio select list
+                rl.UpdateSelectedDetails(scan_result, scan_result.Radios[0]);
             }
 
             ret = nativeInitMetis(radioIP, ratioPort, hostIP, hostPort, protocol, model_id);
