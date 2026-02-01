@@ -12,9 +12,9 @@ extern "C" {
 	__declspec(dllexport) void unloadASIO();
 	__declspec(dllexport) long asioStart();
 	__declspec(dllexport) long asioStop();
-	__declspec(dllimport) long getASIOBaseInputChannel(void* dwData);
-	__declspec(dllimport) long getASIOBaseOutputChannel(void* dwData);
-	__declspec(dllimport) long getASIOInputMode(void* dwData);
+	__declspec(dllexport) long getASIOBaseInputChannel(void* dwData);
+	__declspec(dllexport) long getASIOBaseOutputChannel(void* dwData);
+	__declspec(dllexport) long getASIOInputMode(void* dwData);
 
 #ifdef __cplusplus
 }

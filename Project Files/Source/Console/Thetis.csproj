@@ -889,6 +889,8 @@
     <None Include="Resources\cont_save.png" />
     <None Include="Resources\cont_load.png" />
     <None Include="Resources\Command-Refresh-16.png" />
+    <Content Include="Resources\paflt.png" />
+    <Content Include="Resources\paok.png" />
     <Content Include="Resources\Thetis2_256.ico" />
     <Content Include="Resources\Thetis2_48.ico" />
     <None Include="Resources\resizegrab.png" />

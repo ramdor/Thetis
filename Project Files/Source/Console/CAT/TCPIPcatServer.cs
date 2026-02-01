@@ -305,7 +305,7 @@ namespace Thetis
 
             sInboundCatCommand = sInboundCatCommand.Trim();
 
-            // Special case for ZZGA and ZZGR, just parse it here as relatated to TCI client ID management
+            // Special case for ZZGA and ZZGR, just parse it here as relatated to TCPcat client ID management
             // The regular cat serial parser does handle this msg if it were to come in via serial, and replies with a good or bad response, but does not do anything else with that guid.
             // We take the guids and add/remove to/from this client
             // These guids can then can then be used in a directed send
