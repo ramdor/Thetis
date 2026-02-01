@@ -37238,7 +37238,7 @@ namespace Thetis
                     else
                     {
                         MemoryStream ms = new MemoryStream();
-                        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);//Png);
+                        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                         ms.Position = 0;
 
                         try
