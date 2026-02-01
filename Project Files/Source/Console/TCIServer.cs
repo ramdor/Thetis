@@ -2003,6 +2003,69 @@ namespace Thetis
             }
         }
 
+		private Color getSpotTextColour(string text_colour)
+		{
+			//convert spot colour if present to system.drawing.color
+			//#RRGGBB or #AARRGGBB or argb int
+
+			Color spotTextColour;
+
+            if (string.IsNullOrEmpty(text_colour))
+            {
+                spotTextColour = Color.Empty;
+            }
+            else
+            {
+                string s = text_colour.Trim();
+
+                int int_value;
+                // try a TCI colour format argb int
+                if (int.TryParse(s, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int_value))
+                {
+                    spotTextColour = Color.FromArgb(int_value);
+                }
+                else
+                { // otherwise try #RRGGBB #AARRGGBB
+                    if (s.Length > 0 && s[0] == '#') s = s.Substring(1);
+
+                    int hex_value;
+                    if (s.Length == 6)
+                    {
+                        if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out hex_value))
+                        {
+                            int r = (hex_value >> 16) & 0xFF;
+                            int g = (hex_value >> 8) & 0xFF;
+                            int b = hex_value & 0xFF;
+                            spotTextColour = Color.FromArgb(255, r, g, b);
+                        }
+                        else
+                        {
+                            spotTextColour = Color.Empty;
+                        }
+                    }
+                    else if (s.Length == 8)
+                    {
+                        if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out hex_value))
+                        {
+                            int a = (hex_value >> 24) & 0xFF;
+                            int r = (hex_value >> 16) & 0xFF;
+                            int g = (hex_value >> 8) & 0xFF;
+                            int b = hex_value & 0xFF;
+                            spotTextColour = Color.FromArgb(a, r, g, b);
+                        }
+                        else
+                        {
+                            spotTextColour = Color.Empty;
+                        }
+                    }
+                    else
+                    {
+                        spotTextColour = Color.Empty;
+                    }
+                }
+            }
+			return spotTextColour;
+        }
 		private void handleSpot(string[] args, bool is_json, string msg)
         {
 			if (args.Length >= 4) // 4 as argument 5 may contain commas
@@ -2179,53 +2242,7 @@ namespace Thetis
 						}
 					}
 
-                    //convert spot colour if present to system.drawing.color
-                    //#RRGGBB or #AARRGGBB
-                    Color spotTextColour;
-                    if (string.IsNullOrEmpty(text_colour))
-                    {
-                        spotTextColour = Color.Empty;
-                    }
-                    else
-                    {
-                        string s = text_colour.Trim();
-                        if (s.Length > 0 && s[0] == '#') s = s.Substring(1);
-
-                        int hex_value;
-                        if (s.Length == 6)
-                        {
-                            if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out hex_value))
-                            {
-                                int r = (hex_value >> 16) & 0xFF;
-                                int g = (hex_value >> 8) & 0xFF;
-                                int b = hex_value & 0xFF;
-                                spotTextColour = Color.FromArgb(255, r, g, b);
-                            }
-                            else
-                            {
-                                spotTextColour = Color.Empty;
-                            }
-                        }
-                        else if (s.Length == 8)
-                        {
-                            if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out hex_value))
-                            {
-                                int a = (hex_value >> 24) & 0xFF;
-                                int r = (hex_value >> 16) & 0xFF;
-                                int g = (hex_value >> 8) & 0xFF;
-                                int b = hex_value & 0xFF;
-                                spotTextColour = Color.FromArgb(a, r, g, b);
-                            }
-                            else
-                            {
-                                spotTextColour = Color.Empty;
-                            }
-                        }
-                        else
-                        {
-                            spotTextColour = Color.Empty;
-                        }
-                    }
+					Color spotTextColour = getSpotTextColour(text_colour);
 
                     SpotManager2.AddSpot(args[0], mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText, spotTextColour, spotter, args[1], heading, continent, country, spot_time);
 				}
