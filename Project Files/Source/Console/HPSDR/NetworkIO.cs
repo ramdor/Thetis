@@ -23,82 +23,108 @@ namespace Thetis
         public static string GetFWVersionErrorMsg { get; set; } = "";
         public static string BoardMismatch { get; set; } = "";
 
-        public static int InitRadio()
+        public static int InitRadio(bool perform_search = true)
         {
             int ret = -1;
+            // 0 everything fine
+            // some other non zero not listed below initWSA issue
+            // -4 dest ip invalid
+            // 1 socket() still returns wsa not initialised
+            // (SOCKET)(~0) or -1, invalid socet
+            // -101 invalid firmware
+            // -102 unknown protocol
+            // -103 invalid radio IP
+            // -104 invalid host IP
+            // -105 no nic currently selected
+            // -106 no radio currently selected
 
             Console c = Console.getConsole();
-            if (c.IsSetupFormNull) return ret;
+            if (c.IsSetupFormNull) return -1;
+            if(c.SetupForm.SelectedRadioList == null) return -1;
 
-            RadioDiscoveryOptions options = new RadioDiscoveryOptions();
+            ucRadioList rl = c.SetupForm.SelectedRadioList;
+            if (rl == null) return -1;
 
-            // setup some stuff from the selection in the setupform
-            string radioIP = c.SetupForm.SelectedRadioList.SelectedRadioIp;
-            int ratioPort = c.SetupForm.SelectedRadioList.SelectedRadioPort;
-            string hostIP = c.SetupForm.SelectedRadioList.SelectedNicIp;
+            NicRadioScanResult nic = rl.SelectedNICDetails;
+            RadioInfo ri = rl.SelectedRadioDetails;
+
+            if(nic == null)
+            {
+                return -105; // no nic currently selected
+            }
+            if(ri == null)
+            {
+                return -106; // no radio currently selected
+            }
+
+            string radioIP = ri.IpAddress.ToString();
+            int ratioPort = ri.DiscoveryPortBase;
+            string hostIP = nic.LocalIPv4.ToString();
             int hostPort = c.SetupForm.ListenToRadioOnUDPPort; // will be any os available port if 0, or specific if set
-            int model_id = (int)HardwareSpecific.Model;                       
+            int model_id = (int)HardwareSpecific.Model;
+            int protocol = ri.Protocol == RadioDiscoveryRadioProtocol.P1 ? 0 : 1;
 
-            int protocol;
-            switch (c.SetupForm.SelectedRadioList.SelectedRadioProtocol)
+            if (perform_search)
             {
-                case RadioDiscoveryRadioProtocol.P1:
-                    protocol = 0;
-                    options.ProtocolMode = RadioDiscoveryProtocolMode.P1Only; // search for p1 only
-                    break;
-                case RadioDiscoveryRadioProtocol.P2:
-                    options.ProtocolMode = RadioDiscoveryProtocolMode.P2Only; // search for p2 only
-                    protocol = 1;
-                    break;
-                default:
-                    return -1; // unknown protocol
-            }            
-            
-            options.IgnoreSubnetCheck = true;
-            options.IncludeEthernet = true;
-            options.IncludeWireless = true;
-            options.IncludeOtherInterfaceTypes = false;
-            options.AllowLoopback = false;
-            options.AllowAPIPA = true;
-            options.Include255255255255Broadcast = true;
-
-            options.DiscoveryPortBase = ratioPort;
-            options.BindLocalPort = hostPort;
-
-            options.ScanPerformance = c.SetupForm.SelectedDiscoveryProfile;            
-
-            IPAddress ip;
-            if (IPAddress.TryParse(radioIP, out ip))
-            {
-                options.FixedTargetIp = ip;
-            }
-            else
-            {
-                return -1;
-            }
-            if (IPAddress.TryParse(hostIP, out ip))
-            {
-                options.FixedLocalIp = ip;
-            }
-            else
-            {
-                return -1;
-            }
-
-            // check via a single nic that matches where we expect the radio to be
-            RadioDiscoveryService svc = new RadioDiscoveryService();
-            NicRadioScanResult scan_result = svc.DiscoverUsingSingleNic(options, options.FixedLocalIp);
-
-            if (scan_result == null || scan_result.Radios == null || scan_result.Radios.Count != 1) return -1;
-
-            RadioInfo ri = scan_result.Radios[0]; // the one we found
-
-            if (ri.DeviceType == HPSDRHW.HermesII)
-            {
-                if (ri.CodeVersion < 103)
+                RadioDiscoveryOptions options = new RadioDiscoveryOptions();
+                switch (protocol)
                 {
-                    GetFWVersionErrorMsg = "Invalid Firmware!\nRequires 10.3 or greater. ";
-                    return -101;
+                    case 0://P1
+                        options.ProtocolMode = RadioDiscoveryProtocolMode.P1Only; // search for p1 only
+                        break;
+                    case 1://P2
+                        options.ProtocolMode = RadioDiscoveryProtocolMode.P2Only; // search for p2 only
+                        break;
+                    default:
+                        return -102; // unknown protocol
+                }
+
+                options.IgnoreSubnetCheck = true;
+                options.IncludeEthernet = true;
+                options.IncludeWireless = true;
+                options.IncludeOtherInterfaceTypes = false;
+                options.AllowLoopback = false;
+                options.AllowAPIPA = true;
+                options.Include255255255255Broadcast = true;
+
+                options.DiscoveryPortBase = ratioPort;
+                options.BindLocalPort = hostPort;
+
+                options.ScanPerformance = c.SetupForm.SelectedDiscoveryProfile;
+
+                IPAddress ip;
+                if (IPAddress.TryParse(radioIP, out ip))
+                {
+                    options.FixedTargetIp = ip;
+                }
+                else
+                {
+                    return -103;
+                }
+                if (IPAddress.TryParse(hostIP, out ip))
+                {
+                    options.FixedLocalIp = ip;
+                }
+                else
+                {
+                    return -104;
+                }
+
+                // check via a single nic that matches where we expect the radio to be
+                RadioDiscoveryService svc = new RadioDiscoveryService();
+                NicRadioScanResult scan_result = svc.DiscoverUsingSingleNic(options, options.FixedLocalIp);
+
+                if (scan_result == null || scan_result.Radios == null || scan_result.Radios.Count != 1) return -1;
+
+                ri = scan_result.Radios[0]; // the one we found
+
+                if (ri.DeviceType == HPSDRHW.HermesII)
+                {
+                    if (ri.CodeVersion < 103)
+                    {
+                        GetFWVersionErrorMsg = "Invalid Firmware!\nRequires 10.3 or greater. ";
+                        return -101;
+                    }
                 }
             }
 

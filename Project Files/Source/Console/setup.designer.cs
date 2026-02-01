@@ -231,12 +231,14 @@
             this.chkExtended = new System.Windows.Forms.CheckBoxTS();
             this.comboFRSRegion = new System.Windows.Forms.ComboBoxTS();
             this.grpOzyType = new System.Windows.Forms.GroupBoxTS();
-            this.panelTS9 = new System.Windows.Forms.PanelTS();
+            this.ucRadioList_Radios = new Thetis.ucRadioList();
+            this.chkAdvancedNetworkingSettings = new System.Windows.Forms.CheckBoxTS();
+            this.pnlAdvancedNetworkSettings = new System.Windows.Forms.PanelTS();
+            this.chkInformHardwareP2Ports = new System.Windows.Forms.CheckBoxTS();
             this.nudUserListenPort = new System.Windows.Forms.NumericUpDownTS();
             this.radUserListenPort = new System.Windows.Forms.RadioButtonTS();
             this.radDefaultListenPort = new System.Windows.Forms.RadioButtonTS();
             this.chkAnySubnet = new System.Windows.Forms.CheckBoxTS();
-            this.ucRadioList_Radios = new Thetis.ucRadioList();
             this.comboNICS = new System.Windows.Forms.ComboBoxTS();
             this.comboDiscoverSpeedProfile = new System.Windows.Forms.ComboBoxTS();
             this.panelTS14 = new System.Windows.Forms.PanelTS();
@@ -4433,7 +4435,7 @@
             this.grpFRSRegion.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picWarningRegionExtended)).BeginInit();
             this.grpOzyType.SuspendLayout();
-            this.panelTS9.SuspendLayout();
+            this.pnlAdvancedNetworkSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudUserListenPort)).BeginInit();
             this.panelTS14.SuspendLayout();
             this.panelTS7.SuspendLayout();
@@ -8298,9 +8300,10 @@
             // 
             // grpOzyType
             // 
-            this.grpOzyType.Controls.Add(this.panelTS9);
-            this.grpOzyType.Controls.Add(this.chkAnySubnet);
             this.grpOzyType.Controls.Add(this.ucRadioList_Radios);
+            this.grpOzyType.Controls.Add(this.chkAdvancedNetworkingSettings);
+            this.grpOzyType.Controls.Add(this.pnlAdvancedNetworkSettings);
+            this.grpOzyType.Controls.Add(this.chkAnySubnet);
             this.grpOzyType.Controls.Add(this.comboNICS);
             this.grpOzyType.Controls.Add(this.comboDiscoverSpeedProfile);
             this.grpOzyType.Controls.Add(this.panelTS14);
@@ -8318,17 +8321,55 @@
             this.grpOzyType.Text = "Network Settings";
             this.grpOzyType.Visible = false;
             // 
-            // panelTS9
+            // ucRadioList_Radios
             // 
-            this.panelTS9.AutoScrollMargin = new System.Drawing.Size(0, 0);
-            this.panelTS9.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.panelTS9.Controls.Add(this.nudUserListenPort);
-            this.panelTS9.Controls.Add(this.radUserListenPort);
-            this.panelTS9.Controls.Add(this.radDefaultListenPort);
-            this.panelTS9.Location = new System.Drawing.Point(110, 119);
-            this.panelTS9.Name = "panelTS9";
-            this.panelTS9.Size = new System.Drawing.Size(349, 24);
-            this.panelTS9.TabIndex = 134;
+            this.ucRadioList_Radios.BackColor = System.Drawing.SystemColors.Window;
+            this.ucRadioList_Radios.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.ucRadioList_Radios.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.ucRadioList_Radios.Location = new System.Drawing.Point(7, 166);
+            this.ucRadioList_Radios.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ucRadioList_Radios.Name = "ucRadioList_Radios";
+            this.ucRadioList_Radios.Size = new System.Drawing.Size(528, 222);
+            this.ucRadioList_Radios.TabIndex = 125;
+            this.ucRadioList_Radios.SelectedRadioChanged += new System.EventHandler(this.ucRadioList_Radios_SelectedRadioChanged);
+            this.ucRadioList_Radios.RadioListChanged += new System.EventHandler(this.ucRadioList_Radios_RadioListChanged);
+            // 
+            // chkAdvancedNetworkingSettings
+            // 
+            this.chkAdvancedNetworkingSettings.AutoSize = true;
+            this.chkAdvancedNetworkingSettings.Image = null;
+            this.chkAdvancedNetworkingSettings.Location = new System.Drawing.Point(17, 98);
+            this.chkAdvancedNetworkingSettings.Name = "chkAdvancedNetworkingSettings";
+            this.chkAdvancedNetworkingSettings.Size = new System.Drawing.Size(75, 17);
+            this.chkAdvancedNetworkingSettings.TabIndex = 135;
+            this.chkAdvancedNetworkingSettings.Text = "Advanced";
+            this.chkAdvancedNetworkingSettings.UseVisualStyleBackColor = true;
+            this.chkAdvancedNetworkingSettings.CheckedChanged += new System.EventHandler(this.chkAdvancedNetworkingSettings_CheckedChanged);
+            // 
+            // pnlAdvancedNetworkSettings
+            // 
+            this.pnlAdvancedNetworkSettings.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlAdvancedNetworkSettings.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlAdvancedNetworkSettings.Controls.Add(this.chkInformHardwareP2Ports);
+            this.pnlAdvancedNetworkSettings.Controls.Add(this.nudUserListenPort);
+            this.pnlAdvancedNetworkSettings.Controls.Add(this.radUserListenPort);
+            this.pnlAdvancedNetworkSettings.Controls.Add(this.radDefaultListenPort);
+            this.pnlAdvancedNetworkSettings.Location = new System.Drawing.Point(110, 119);
+            this.pnlAdvancedNetworkSettings.Name = "pnlAdvancedNetworkSettings";
+            this.pnlAdvancedNetworkSettings.Size = new System.Drawing.Size(349, 47);
+            this.pnlAdvancedNetworkSettings.TabIndex = 134;
+            // 
+            // chkInformHardwareP2Ports
+            // 
+            this.chkInformHardwareP2Ports.AutoSize = true;
+            this.chkInformHardwareP2Ports.Image = null;
+            this.chkInformHardwareP2Ports.Location = new System.Drawing.Point(3, 24);
+            this.chkInformHardwareP2Ports.Name = "chkInformHardwareP2Ports";
+            this.chkInformHardwareP2Ports.Size = new System.Drawing.Size(305, 17);
+            this.chkInformHardwareP2Ports.TabIndex = 3;
+            this.chkInformHardwareP2Ports.Text = "Inform hardware of ports to use instead of defaults (P2 only)";
+            this.toolTip1.SetToolTip(this.chkInformHardwareP2Ports, resources.GetString("chkInformHardwareP2Ports.ToolTip"));
+            this.chkInformHardwareP2Ports.UseVisualStyleBackColor = true;
             // 
             // nudUserListenPort
             // 
@@ -8361,12 +8402,12 @@
             0,
             0});
             // 
-            // radUserBindPort
+            // radUserListenPort
             // 
             this.radUserListenPort.AutoSize = true;
             this.radUserListenPort.Image = null;
             this.radUserListenPort.Location = new System.Drawing.Point(172, 1);
-            this.radUserListenPort.Name = "radUserBindPort";
+            this.radUserListenPort.Name = "radUserListenPort";
             this.radUserListenPort.Size = new System.Drawing.Size(98, 17);
             this.radUserListenPort.TabIndex = 1;
             this.radUserListenPort.Text = "Fixed listen port";
@@ -8404,19 +8445,6 @@
             this.chkAnySubnet.Text = "Any Subnet";
             this.toolTip1.SetToolTip(this.chkAnySubnet, "If unchecked, radios will only be considered if they are in the same subnet at th" +
         "e NIC they are found via, otherwise all all considered");
-            // 
-            // ucRadioList_Radios
-            // 
-            this.ucRadioList_Radios.BackColor = System.Drawing.SystemColors.Window;
-            this.ucRadioList_Radios.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.ucRadioList_Radios.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.ucRadioList_Radios.Location = new System.Drawing.Point(7, 143);
-            this.ucRadioList_Radios.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.ucRadioList_Radios.Name = "ucRadioList_Radios";
-            this.ucRadioList_Radios.Size = new System.Drawing.Size(528, 245);
-            this.ucRadioList_Radios.TabIndex = 125;
-            this.ucRadioList_Radios.SelectedRadioChanged += new System.EventHandler(this.ucRadioList_Radios_SelectedRadioChanged);
-            this.ucRadioList_Radios.RadioListChanged += new System.EventHandler(this.ucRadioList_Radios_RadioListChanged);
             // 
             // comboNICS
             // 
@@ -8542,7 +8570,7 @@
             this.btnDiscoverRadios.Location = new System.Drawing.Point(6, 47);
             this.btnDiscoverRadios.Name = "btnDiscoverRadios";
             this.btnDiscoverRadios.Selectable = true;
-            this.btnDiscoverRadios.Size = new System.Drawing.Size(98, 64);
+            this.btnDiscoverRadios.Size = new System.Drawing.Size(98, 45);
             this.btnDiscoverRadios.TabIndex = 125;
             this.btnDiscoverRadios.Text = "Discover";
             this.btnDiscoverRadios.UseVisualStyleBackColor = true;
@@ -69673,8 +69701,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.picWarningRegionExtended)).EndInit();
             this.grpOzyType.ResumeLayout(false);
             this.grpOzyType.PerformLayout();
-            this.panelTS9.ResumeLayout(false);
-            this.panelTS9.PerformLayout();
+            this.pnlAdvancedNetworkSettings.ResumeLayout(false);
+            this.pnlAdvancedNetworkSettings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudUserListenPort)).EndInit();
             this.panelTS14.ResumeLayout(false);
             this.panelTS14.PerformLayout();
@@ -75339,9 +75367,11 @@
         private ComboBoxTS comboDiscoverSpeedProfile;
         private ucRadioList ucRadioList_Radios;
         private CheckBoxTS chkAnySubnet;
-        private PanelTS panelTS9;
+        private PanelTS pnlAdvancedNetworkSettings;
         private NumericUpDownTS nudUserListenPort;
         private RadioButtonTS radUserListenPort;
         private RadioButtonTS radDefaultListenPort;
+        private CheckBoxTS chkAdvancedNetworkingSettings;
+        private CheckBoxTS chkInformHardwareP2Ports;
     }
 }

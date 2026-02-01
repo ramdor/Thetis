@@ -81,7 +81,7 @@ void DeInitMetisSockets() {
 
 /* returns 0 on success, != 0 otherwise */	// MI0BOT: Added remotePort to allow remote access to several HL2s by different port number
 PORT
-int nativeInitMetis(char* netaddr, int port, char* localaddr, int localport, int protocol, int model_id) {
+int nativeInitMetis(char* netaddr, int port, char* localaddr, int localport, int protocol, int model_id, int p2hw_uses_differnt_ports) {
 	IPAddr DestIp = 0;
 	IPAddr SrcIp = 0;       /* default for src ip */
 	ULONG MacAddr[2];       /* for 6-byte hardware addresses */
@@ -94,7 +94,18 @@ int nativeInitMetis(char* netaddr, int port, char* localaddr, int localport, int
 	HPSDRModel = model_id;
 	
 	prn->base_outbound_port = port;
-	prn->base_inbound_port = 1025; // this is not used by P1
+
+	if(protocol == ETH) // P2 only
+	{
+		if (p2hw_uses_differnt_ports) 
+		{
+			prn->p2_custom_port_base = port + 1;
+		}
+		else
+		{
+			prn->p2_custom_port_base = 1025;
+		}
+	}
 
 	//if (!WSA_inited) {
 	//	rc = initWSA();
@@ -353,7 +364,7 @@ int ReadUDPFrame(unsigned char* bufp)
 	seqbytep[0] = readbuf[3];
 
 	inport = ntohs(fromaddr.sin_port);
-	int portIdx = inport - prn->base_inbound_port;
+	int portIdx = inport - prn->p2_custom_port_base;
 
 	switch (portIdx)
 	{
@@ -519,7 +530,7 @@ ReadThreadMainLoop() {
 				}
 
 				inport = ReadUDPFrame(prn->ReadBufp);
-				int portIdx = inport - prn->base_inbound_port;
+				int portIdx = inport - prn->p2_custom_port_base;
 
 				switch (portIdx)
 				{
@@ -647,43 +658,48 @@ void CmdGeneral() { // port 1024
 	int tmp;
 
 	// inform radio of ports that it uses to receive data FROM the PC, so these are the originating ports on the pc
-	// these will always be at the discovery port + offset
+	// 
+	// **TODO, if the radio is behind a NAT router and ports are mapped off the standard, this will not work correctly
+	// beause the modem will have changed the source port to the mapped port on the router, and the radio will not be expecting
+	// data on these ports. May have to add an ignore mapping option to prn and pass in with nativeInitMetis
+	// 
+	// these will always be at the custom port base + offset
 	// Rx Specific port #1025							(1025)
-	tmp = prn->base_outbound_port + 1;
+	tmp = prn->p2_custom_port_base + 0;
 	packetbuf[5] = tmp >> 8;// 0x04;
 	packetbuf[6] = tmp & 0xff;// 0x01;
 	// Tx Specific port #1026							(1026)
-	tmp = prn->base_outbound_port + 2;
+	tmp = prn->p2_custom_port_base + 1;
 	packetbuf[7] = tmp >> 8;// 0x04;
 	packetbuf[8] = tmp & 0xff;// 0x02;
 	// High priority from PC port #1027					(1027)
-	tmp = prn->base_outbound_port + 3;
+	tmp = prn->p2_custom_port_base + 2;
 	packetbuf[9] = tmp >> 8;// 0x04;
 	packetbuf[10] = tmp & 0xff;// 0x03;
 	// Rx Audio port #1028								(1028)
-	tmp = prn->base_outbound_port + 4;
+	tmp = prn->p2_custom_port_base + 3;
 	packetbuf[13] = tmp >> 8;// 0x04;
 	packetbuf[14] = tmp & 0xff;// 0x04;
 	// Tx0 I&Q port #1029								(1029)
-	tmp = prn->base_outbound_port + 5;
+	tmp = prn->p2_custom_port_base + 4;
 	packetbuf[15] = tmp >> 8;// 0x04;
 	packetbuf[16] = tmp & 0xff;// 0x05;
 
 	// inform radio of ports that it uses to send data OUT to the PC, so these are the originating ports on the radio
 	// High Priority to PC port #1025					(1025)
-	tmp = prn->base_inbound_port + 0;;
+	tmp = prn->p2_custom_port_base + 0;
 	packetbuf[11] = tmp >> 8;// 0x04;
 	packetbuf[12] = tmp & 0xff;// 0x01;
 	// Rx0 port #1035 DDC IQ							(1035-1041)
-	tmp = prn->base_inbound_port + 10;
+	tmp = prn->p2_custom_port_base + 10;
 	packetbuf[17] = tmp >> 8;
 	packetbuf[18] = tmp & 0xff;
 	// Mic Samples port #1026							(1026)
-	tmp = prn->base_inbound_port + 1;
+	tmp = prn->p2_custom_port_base + 1;
 	packetbuf[19] = tmp >> 8;// 0x04;
 	packetbuf[20] = tmp & 0xff;// 0x02;
 	// Wideband ADC0 port default #1027					(1027-1034)
-	tmp = prn->base_inbound_port + 2;
+	tmp = prn->p2_custom_port_base + 2;
 	packetbuf[21] = tmp >> 8;
 	packetbuf[22] = tmp & 0xff;
 	// END PORTS
