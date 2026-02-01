@@ -52,7 +52,7 @@ int SendStartToMetis(void) {
 	starting_seq = MetisLastRecvSeq;
 	for (i = 0; i < 5; i++) {
 		ForceCandCFrame(1);
-		sendPacket(listenSock, (char*)&outpacket, sizeof(outpacket), RemotePort);	// MI0BOT: Remote port configurable 
+		sendPacket(listenSock, (char*)&outpacket, sizeof(outpacket), prn->base_outbound_port);// 1024);
 		MetisReadDirect((unsigned char*)&inpacket);
 		if (MetisLastRecvSeq != starting_seq) {
 			break;
@@ -86,7 +86,7 @@ int SendStopToMetis() {
 
 	starting_seq = MetisLastRecvSeq;
 	for (i = 0; i < 5; i++) {
-		sendPacket(listenSock, (char*)&outpacket, sizeof(outpacket), RemotePort);	// MI0BOT: Remote port configurable 
+		sendPacket(listenSock, (char*)&outpacket, sizeof(outpacket), prn->base_outbound_port);// 1024);
 		Sleep(10);
 		if (MetisLastRecvSeq == starting_seq) {
 			break;
@@ -231,7 +231,7 @@ int MetisWriteFrame(int endpoint, char* bufp) {
 	++MetisOutBoundSeqNum;
 	memcpy(outpacket.framebuf + 8, bufp, 1024);
 
-	result = sendPacket(listenSock, (char*)&outpacket, 1024 + 8, RemotePort);	// MI0BOT: Remote port configurable 
+	result = sendPacket(listenSock, (char*)&outpacket, 1024 + 8, prn->base_outbound_port);// 1024);
 	result -= 8;
 	return result;
 }
@@ -260,7 +260,7 @@ DWORD WINAPI MetisReadThreadMain(LPVOID n) {
 	return 0;
 }
 
-void twist (int nsamples, int stream0, int stream1, int port)
+void twist (int nsamples, int stream0, int stream1, int source)
 {
 	int i, j;
 	for (i = 0, j = 0; i < 2 * nsamples; i += 2, j += 4)
@@ -270,7 +270,7 @@ void twist (int nsamples, int stream0, int stream1, int port)
 		prn->RxReadBufp[j + 2] = prn->RxBuff[stream1][i + 0];
 		prn->RxReadBufp[j + 3] = prn->RxBuff[stream1][i + 1];
 	}
-	xrouter(0, 0, port, 2 * nsamples, prn->RxReadBufp);
+	xrouter(0, 0, source, 2 * nsamples, prn->RxReadBufp);
 }
 
 void MetisReadThreadMainLoop(void)
@@ -378,17 +378,17 @@ void MetisReadThreadMainLoop(void)
 							switch (nddc)
 							{
 							case 2:
-								twist(spr, 0, 1, 1035);
+								twist(spr, 0, 1, 0);
 								break;
 							case 4:
-								xrouter(0, 0, 1035, spr, prn->RxBuff[0]);
-								twist(spr, 2, 3, 1036);
-								xrouter(0, 0, 1037, spr, prn->RxBuff[1]);
+								xrouter(0, 0, 0, spr, prn->RxBuff[0]);
+								twist(spr, 2, 3, 1);
+								xrouter(0, 0, 2, spr, prn->RxBuff[1]);
 								break;
 							case 5:
-								twist(spr, 0, 1, 1035);
-								twist(spr, 3, 4, 1036);
-								xrouter(0, 0, 1037, spr, prn->RxBuff[2]);
+								twist(spr, 0, 1, 0);
+								twist(spr, 3, 4, 1);
+								xrouter(0, 0, 2, spr, prn->RxBuff[2]);
 								break;
 							}
 							mic_sample_count = 0;

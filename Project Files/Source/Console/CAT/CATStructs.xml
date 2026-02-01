@@ -2907,4 +2907,18 @@
 		<ngetparms>0</ngetparms>
 		<nansparms>1</nansparms>
 	</catstruct>	
+	<catstruct code="ZZGA">
+		<desc>Add guid - used for TCPIPcat</desc>
+		<active>true</active>
+		<nsetparms>36</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>40</nansparms>
+	</catstruct>
+	<catstruct code="ZZGR">
+		<desc>Remove guid - used for TCPIPcat</desc>
+		<active>true</active>
+		<nsetparms>36</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>40</nansparms>
+	</catstruct>
 </catstructs>

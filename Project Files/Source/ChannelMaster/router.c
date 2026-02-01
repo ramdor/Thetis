@@ -52,7 +52,7 @@ void destroy_router(void* ptr, int id)
 void flush_router(ROUTER a)
 {
 	int i, j, k;
-	for (i = 0; i < rtMAXPORTS; i++)
+	for (i = 0; i < rtMAXSOURCES; i++)
 	{
 		for (j = 0; j < rtMAXCALLS; j++)
 		{
@@ -63,12 +63,12 @@ void flush_router(ROUTER a)
 			}
 		}
 	}
-	memset(a->nstreams, 0, rtMAXPORTS * sizeof(int));
+	memset(a->nstreams, 0, rtMAXSOURCES * sizeof(int));
 	memset(a->ddata, 0, rtMAXSIZE * sizeof(complex));
 }
 
 PORT
-void xrouter(void* ptr, int id, int port, int nsamples, double* data)
+void xrouter(void* ptr, int id, int source, int nsamples, double* data)
 {
 	int i, j, k, bport, sps, si, ctrl;
 	ROUTER a;
@@ -77,8 +77,8 @@ void xrouter(void* ptr, int id, int port, int nsamples, double* data)
 	double* ptrs[rtMAXSTREAMS];
 	ctrl = _InterlockedAnd(&(a->controlword), 0xffffffff);
 	EnterCriticalSection(&a->cs_update);
-	bport = port - rtPORTBASE;												// 0-based port number
-	if (bport < a->ports)													// if the port is valid ...
+	bport = source;															// 0-based port number
+	if (bport < a->sources)													// if the port is valid ...
 	{
 		sps = nsamples / a->nstreams[bport];								// samples per stream
 		for (i = 0; i < a->ncalls; i++)
@@ -111,7 +111,7 @@ PORT
 void LoadRouterAll(
 	void* ptr,
 	int id,
-	int ports,
+	int sources,
 	int calls,
 	int varvals,
 	int* nstreams,
@@ -125,9 +125,9 @@ void LoadRouterAll(
 	else			a = (ROUTER)ptr;
 	EnterCriticalSection(&a->cs_update);
 	flush_router(a);
-	a->ports = ports;
+	a->sources = sources;
 	a->ncalls = calls;
-	for (i = 0; i < a->ports; i++)
+	for (i = 0; i < a->sources; i++)
 	{
 		for (j = 0; j < a->ncalls; j++)
 		{

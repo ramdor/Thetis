@@ -111,7 +111,7 @@ namespace Thetis
         // router
 
         [DllImport("ChannelMaster.dll", EntryPoint = "LoadRouterAll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void LoadRouterAll(void* ptr, int id, int ports, int calls, int varvals, 
+        public static extern void LoadRouterAll(void* ptr, int id, int sources, int calls, int varvals, 
             int* nstreams, int* function, int* callid);
 
         [DllImport("ChannelMaster.dll", EntryPoint = "LoadRouterControlBit", CallingConvention = CallingConvention.Cdecl)]
@@ -446,8 +446,15 @@ namespace Thetis
             // setup transmitter input sample rate here since it is fixed
             cmaster.SetXcmInrate(txinid, 48000);
 
-            // setup CFIR to run; it will always be ON with new protocol firmware
-            WDSP.SetTXACFIRRun(txch, true);
+            if (NetworkIO.CurrentRadioProtocol == RadioProtocol.USB) //p1
+            {
+                WDSP.SetTXACFIRRun(txch, false);
+            }
+            else
+            {
+                // setup CFIR to run; it will always be ON with new protocol firmware
+                WDSP.SetTXACFIRRun(txch, true);
+            }
 
             // set PureSignal basic parameters
             // note:  if future models have different settings, these calls could be moved to

@@ -1836,17 +1836,14 @@ namespace Thetis
             phase_buf_l = new float[2048];
             phase_buf_r = new float[2048];
             Console c = Console.getConsole();
-            rc = NetworkIO.initRadio();
+
+            rc = NetworkIO.InitRadio();
 
             if (rc != 0)
             {
                 if (rc == -101) // firmware version error; 
                 {
-                    string fw_err = NetworkIO.getFWVersionErrorMsg();
-                    if (fw_err == null)
-                    {
-                        fw_err = "Bad Firmware levels";
-                    }
+                    string fw_err = NetworkIO.GetFWVersionErrorMsg;
                     MessageBox.Show(fw_err, "Firmware Error",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
@@ -1900,7 +1897,28 @@ namespace Thetis
             int result = NetworkIO.StartAudioNative();
             if (result == 0) retval = true;
 
+            if(!c.IsSetupFormNull)
+            {
+                if (retval)
+                    c.SetupForm.SelectedRadioList.RadioConnected();
+                else
+                    c.SetupForm.SelectedRadioList.RadioDisconnected();
+
+                c.SetupForm.SelectedRadioList.PLLLocked(NetworkIO.CurrentRadioProtocol == RadioProtocol.ETH && NetworkIO.getHaveSync() == 1 && NetworkIO.GetPLLLock());
+            }
+
             return retval;
+        }
+        public static void Stop()
+        {
+            Console c = Console.getConsole();
+
+            NetworkIO.StopAudio();
+
+            if (!c.IsSetupFormNull)
+            {
+                c.SetupForm.SelectedRadioList.DisconnectAll();
+            }
         }
 
         //        private static void PortAudioErrorMessageBox(PaErrorCode error)

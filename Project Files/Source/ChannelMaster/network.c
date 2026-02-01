@@ -81,7 +81,7 @@ void DeInitMetisSockets() {
 
 /* returns 0 on success, != 0 otherwise */	// MI0BOT: Added remotePort to allow remote access to several HL2s by different port number
 PORT
-int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol, int model_id, int remotePort) {
+int nativeInitMetis(char* netaddr, int port, char* localaddr, int localport, int protocol, int model_id) {
 	IPAddr DestIp = 0;
 	IPAddr SrcIp = 0;       /* default for src ip */
 	ULONG MacAddr[2];       /* for 6-byte hardware addresses */
@@ -92,6 +92,9 @@ int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol,
 
 	RadioProtocol = protocol;
 	HPSDRModel = model_id;
+	
+	prn->base_outbound_port = port;
+	prn->base_inbound_port = 1025; // this is not used by P1
 
 	//if (!WSA_inited) {
 	//	rc = initWSA();
@@ -140,7 +143,6 @@ int nativeInitMetis(char* netaddr, char* localaddr, int localport, int protocol,
 			initState = 2;
 			WSA_inited = 1;
 			printf("initWSA ok!\n");
-			///
 		}
 		else if (listenSock == INVALID_SOCKET) {
 			printf("createSocket Error: socket failed %ld\n", WSAGetLastError());
@@ -350,9 +352,12 @@ int ReadUDPFrame(unsigned char* bufp)
 	seqbytep[1] = readbuf[2];
 	seqbytep[0] = readbuf[3];
 
-	switch (inport = ntohs(fromaddr.sin_port))
+	inport = ntohs(fromaddr.sin_port);
+	int portIdx = inport - prn->base_inbound_port;
+
+	switch (portIdx)
 	{
-	case HPCCPort: //1025: // 60 bytes - High Priority C&C data
+	case 0://1025: // 60 bytes - High Priority C&C data
 		if (nrecv != 60) break; // check for malformed packet
 
 		if (seqnum != (1 + prn->cc_seq_no) && seqnum != 0)
@@ -367,7 +372,7 @@ int ReadUDPFrame(unsigned char* bufp)
 		memcpy(bufp, readbuf + 4, 56);
 		break;
 
-	case  RxMicSampPort: //1026: // 132 bytes - 16-bit mic samples (48ksps)
+	case 1://1026: // 132 bytes - 16-bit mic samples (48ksps)
 		if (nrecv != 132) break; // check for malformed packet
 
 		//mic_samples_buf++;
@@ -383,13 +388,20 @@ int ReadUDPFrame(unsigned char* bufp)
 		memcpy(bufp, readbuf + 4, 128);
 		break;
 
-	case WB0Port: //1027: // 1028 bytes - 16-bit raw ADC (default values)
+	case 2://1027: // 1028 bytes - 16-bit raw ADC (default values)
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
 	{
 		if (nrecv != 1028) break; // check for malformed packet
 
-		int adc_id = inport - prn->wb_base_port;				// adc number
-		int wb_spp = prn->wb_samples_per_packet;			// samples per packet
-		int wb_ppf = prn->wb_packets_per_frame;			// packets per frame
+		int adc_id = portIdx - 2;								// adc number
+		int wb_spp = prn->wb_samples_per_packet;				// samples per packet
+		int wb_ppf = prn->wb_packets_per_frame;					// packets per frame
 		int disp_id = prn->wb_base_dispid + adc_id;				// display id
 		double* wb_buff = prn->adc[adc_id].wb_buff;				// data buffer for wideband samples
 		// NOTE:  This code assumes 16-bits per sample ... can add other options as needed.
@@ -431,17 +443,17 @@ int ReadUDPFrame(unsigned char* bufp)
 		break;
 	}
 
-	case 1035:// ddc0
-	case 1036:// ddc1
-	case 1037:// ddc2
-	case 1038:// ddc3
-	case 1039:// ddc4
-	case 1040:// ddc5
-	case 1041:// ddc6
+	case 10://1035:// ddc0
+	case 11://1036:// ddc1
+	case 12://1037:// ddc2
+	case 13://1038:// ddc3
+	case 14://1039:// ddc4
+	case 15://1040:// ddc5
+	case 16://1041:// ddc6
 	{
 		if (nrecv != 1444) break; // check for malformed packet
 
-		int ddc = inport - 1035;
+		int ddc = portIdx - 10;// 1035;
 
 		if (seqnum != 0) storeRXSeqDelta(ddc, seqnum);
 
@@ -460,7 +472,7 @@ int ReadUDPFrame(unsigned char* bufp)
 	}
 
 	default:
-		printf("Rcvd data on Port %d\n", nrecv);
+		printf("Rcvd data on Port %d\n", inport);
 		break;
 
 	}
@@ -472,7 +484,7 @@ int ReadUDPFrame(unsigned char* bufp)
 
 void
 ReadThreadMainLoop() {
-	int i, rc, k;
+	int i, inport, k;
 	//double sbuf[500] = { 0 };	// FOR DEBUG ONLY
 
 	prn->hDataEvent = WSACreateEvent();
@@ -506,11 +518,12 @@ ReadThreadMainLoop() {
 					break;
 				}
 
-				rc = ReadUDPFrame(prn->ReadBufp);
+				inport = ReadUDPFrame(prn->ReadBufp);
+				int portIdx = inport - prn->base_inbound_port;
 
-				switch (rc)
+				switch (portIdx)
 				{
-				case 1025:
+				case 0:// 1025:
 					//Byte 0 - Bit [0] - PTT  1 = active, 0 = inactive
 					//         Bit [1] - Dot  1 = active, 0 = inactive
 					//         Bit [2] - Dash 1 = active, 0 = inactive
@@ -563,7 +576,7 @@ ReadThreadMainLoop() {
 					prn->hardware_LEDs = prn->ReadBufp[26] << 8 | prn->ReadBufp[27];
 
 					break;
-				case 1026: // 1440 bytes 16-bit mic samples
+				case 1://1026: // 1440 bytes 16-bit mic samples
 					for (i = 0, k = 0; i < prn->mic.spp; i++, k += 2)
 					{
 						// prn->TxReadBufp[2 * i] = ((prn->ReadBufp[k + 0] & 0xff) | 
@@ -576,22 +589,22 @@ ReadThreadMainLoop() {
 					//WriteAudio(30.0, 48000, 64, prn->TxReadBufp,3);
 					Inbound(inid(1, 0), prn->mic.spp, prn->TxReadBufp);
 					break;
-				case 1027: // 1024 bytes 16bit raw ADC data, handled in ReadUDPFrame()
-				case 1028:
-				case 1029:
-				case 1030:
-				case 1031:
-				case 1032:
-				case 1033:
-				case 1034:
+				case 2://1027: // 1024 bytes 16bit raw ADC data, handled in ReadUDPFrame()
+				case 3://1028:
+				case 4://1029:
+				case 5://1030:
+				case 6://1031:
+				case 7://1032:
+				case 8://1033:
+				case 9://1034:
 					break;
-				case 1035: // DDC I&Q data
-				case 1036:
-				case 1037:
-				case 1038:
-				case 1039:
-				case 1040:
-				case 1041:
+				case 10://1035: // DDC I&Q data
+				case 11://1036:
+				case 12://1037:
+				case 13://1038:
+				case 14://1039:
+				case 15://1040:
+				case 16://1041:
 					for (i = 0, k = 0; i < prn->rx[0].spp; i++, k += 6)
 					{
 						prn->RxReadBufp[2 * i + 0] = const_1_div_2147483648_ *
@@ -609,7 +622,8 @@ ReadThreadMainLoop() {
 					//for (i = 0; i < 2 * prn->rx[0].spp; i++)
 					//	sbuf[i] = prn->RxReadBufp[i];
 
-					xrouter(0, 0, rc, prn->rx[0].spp, prn->RxReadBufp);
+					int ddc_source = portIdx - 10;
+					xrouter(0, 0, ddc_source, prn->rx[0].spp, prn->RxReadBufp);
 					//Inbound (1, 238, prn->RxReadBufp);
 					break;
 					//default:
@@ -628,33 +642,52 @@ void CmdGeneral() { // port 1024
 	memset(packetbuf, 0, sizeof(packetbuf)); // fill the frame with 0x00
 	// Command
 	packetbuf[4] = 0x00;
-	// Rx Specific port #1025
-	packetbuf[5] = 0x04;
-	packetbuf[6] = 0x01;
-	// Tx Specific port #1026
-	packetbuf[7] = 0x04;
-	packetbuf[8] = 0x02;
-	// High priority from PC port #1027
-	packetbuf[9] = 0x04;
-	packetbuf[10] = 0x03;
-	// High Priority to PC port #1025
-	packetbuf[11] = 0x04;
-	packetbuf[12] = 0x01;
-	// Rx Audio port #1028
-	packetbuf[13] = 0x04;
-	packetbuf[14] = 0x04;
-	// Tx0 I&Q port #1029
-	packetbuf[15] = 0x04;
-	packetbuf[16] = 0x05;
-	// Rx0 port #1035
-	packetbuf[17] = prn->rx_base_port >> 8;
-	packetbuf[18] = prn->rx_base_port & 0xff;
-	// Mic Samples port #1026
-	packetbuf[19] = 0x04;
-	packetbuf[20] = 0x02;
-	// Wideband ADC0 port default #1027
-	packetbuf[21] = prn->wb_base_port >> 8;
-	packetbuf[22] = prn->wb_base_port & 0xff;
+
+	// PORTS
+	int tmp;
+
+	// inform radio of ports that it uses to receive data FROM the PC, so these are the originating ports on the pc
+	// these will always be at the discovery port + offset
+	// Rx Specific port #1025							(1025)
+	tmp = prn->base_outbound_port + 1;
+	packetbuf[5] = tmp >> 8;// 0x04;
+	packetbuf[6] = tmp & 0xff;// 0x01;
+	// Tx Specific port #1026							(1026)
+	tmp = prn->base_outbound_port + 2;
+	packetbuf[7] = tmp >> 8;// 0x04;
+	packetbuf[8] = tmp & 0xff;// 0x02;
+	// High priority from PC port #1027					(1027)
+	tmp = prn->base_outbound_port + 3;
+	packetbuf[9] = tmp >> 8;// 0x04;
+	packetbuf[10] = tmp & 0xff;// 0x03;
+	// Rx Audio port #1028								(1028)
+	tmp = prn->base_outbound_port + 4;
+	packetbuf[13] = tmp >> 8;// 0x04;
+	packetbuf[14] = tmp & 0xff;// 0x04;
+	// Tx0 I&Q port #1029								(1029)
+	tmp = prn->base_outbound_port + 5;
+	packetbuf[15] = tmp >> 8;// 0x04;
+	packetbuf[16] = tmp & 0xff;// 0x05;
+
+	// inform radio of ports that it uses to send data OUT to the PC, so these are the originating ports on the radio
+	// High Priority to PC port #1025					(1025)
+	tmp = prn->base_inbound_port + 0;;
+	packetbuf[11] = tmp >> 8;// 0x04;
+	packetbuf[12] = tmp & 0xff;// 0x01;
+	// Rx0 port #1035 DDC IQ							(1035-1041)
+	tmp = prn->base_inbound_port + 10;
+	packetbuf[17] = tmp >> 8;
+	packetbuf[18] = tmp & 0xff;
+	// Mic Samples port #1026							(1026)
+	tmp = prn->base_inbound_port + 1;
+	packetbuf[19] = tmp >> 8;// 0x04;
+	packetbuf[20] = tmp & 0xff;// 0x02;
+	// Wideband ADC0 port default #1027					(1027-1034)
+	tmp = prn->base_inbound_port + 2;
+	packetbuf[21] = tmp >> 8;
+	packetbuf[22] = tmp & 0xff;
+	// END PORTS
+	
 	// Wideband enable WB0  = [0], WB1 = 1�..WB7 = [7]
 	packetbuf[23] = (char)_InterlockedAnd(&prn->wb_enable, 0xff);
 	// Wideband Samples per packet 512
@@ -687,7 +720,7 @@ void CmdGeneral() { // port 1024
 	// sendto port 1024
 	if (listenSock != INVALID_SOCKET &&
 		RadioProtocol == ETH)
-		sendPacket(listenSock, packetbuf, sizeof(packetbuf), RemotePort);	// MI0BOT: Now selectable port
+		sendPacket(listenSock, packetbuf, sizeof(packetbuf), prn->base_outbound_port);
 }
 
 void CmdHighPriority() { // port 1027
@@ -833,7 +866,7 @@ void CmdHighPriority() { // port 1027
 	// sendto port 1027
 	if (listenSock != INVALID_SOCKET &&
 		RadioProtocol == ETH)
-		sendPacket(listenSock, packetbuf, BUFLEN, 1027);
+		sendPacket(listenSock, packetbuf, BUFLEN, prn->base_outbound_port + 3);// 1027);
 }
 
 PORT
@@ -949,7 +982,7 @@ void CmdRx() { // port 1025
 	// sendto port 1025
 	if (listenSock != INVALID_SOCKET &&
 		RadioProtocol == ETH)
-		sendPacket(listenSock, packetbuf, BUFLEN, 1025);
+		sendPacket(listenSock, packetbuf, BUFLEN, prn->base_outbound_port + 1);// 1025);
 }
 
 void CmdTx() { // port 1026
@@ -1018,7 +1051,7 @@ void CmdTx() { // port 1026
 	// sendto port 1026
 	if (listenSock != INVALID_SOCKET &&
 		RadioProtocol == ETH)
-		sendPacket(listenSock, packetbuf, sizeof(packetbuf), 1026);
+		sendPacket(listenSock, packetbuf, sizeof(packetbuf), prn->base_outbound_port + 2);// 1026);
 }
 
 void sendOutbound(int id, double* out)
@@ -1144,9 +1177,9 @@ void WriteUDPFrame(int id, char* bufp, int buflen) {
 		memcpy(framebuf + 4, bufp, buflen);
 		if (listenSock != INVALID_SOCKET &&
 			RadioProtocol == ETH)
-			sendPacket(listenSock, framebuf, buflen + 4, 1028);
+			sendPacket(listenSock, framebuf, buflen + 4, prn->base_outbound_port + 4);// 1028);
 		//send pcm packet
-		//sendPacket(listenSock, framebuf+4, buflen, 1050);
+		//sendPacket(listenSock, framebuf+4, buflen, prn->base_radio_port + 26);// 1050);
 		break;
 	case 1: // mic data
 		mic_samples_buf++;
@@ -1159,9 +1192,9 @@ void WriteUDPFrame(int id, char* bufp, int buflen) {
 		memcpy(framebuf + 4, bufp, buflen);
 		if (listenSock != INVALID_SOCKET &&
 			RadioProtocol == ETH)
-			sendPacket(listenSock, framebuf, buflen + 4, 1029);
+			sendPacket(listenSock, framebuf, buflen + 4, prn->base_outbound_port + 5);// 1029);
 		//send pcm packet
-		//sendPacket(listenSock, framebuf + 4, buflen, 1051);
+		//sendPacket(listenSock, framebuf + 4, buflen, prn->base_radio_port + 27);// 1051);
 		break;
 	}
 }
