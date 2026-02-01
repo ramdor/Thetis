@@ -84,6 +84,8 @@ namespace Thetis
             public Rectangle[] BoundingBoxInPixels;
             public bool[] Highlight;
 
+            public Color text_colour;
+
             public smSpot()
             {
                 DateTime now = DateTime.UtcNow;
@@ -103,6 +105,7 @@ namespace Thetis
                 previously_highlighted = false;
                 flashing = false;
                 flash_start_time = now;
+                text_colour = Color.Empty;
             }
             public void BrowseQRZ()
             {
@@ -276,8 +279,10 @@ namespace Thetis
 
             return raw_mode;
         }
-        public static void AddSpot(string callsign, DSPMode mode, long frequencyHz, Color colour, string additionalText, string spotter = "", string raw_mode = "", int beam_heading = -1, string spot_continent = "", string spot_country = "", string date_time = "")
+        public static void AddSpot(string callsign, DSPMode mode, long frequencyHz, Color colour, string additionalText, Color text_colour, string spotter = "", string raw_mode = "", int beam_heading = -1, string spot_continent = "", string spot_country = "", string date_time = "")
         {
+            //spot_text_colour of Color.empty will not be used by the renders
+
             DateTime spotted_time = DateTime.UtcNow;
             if (!string.IsNullOrEmpty(date_time))
             {
@@ -308,7 +313,9 @@ namespace Thetis
                 SwlSecondsToLive = time_to_live,
 
                 previously_highlighted = false,
-                flashing = (DateTime.UtcNow - spotted_time).TotalSeconds <= 120
+                flashing = (DateTime.UtcNow - spotted_time).TotalSeconds <= 120,
+
+                text_colour = text_colour
             };
 
             if (_replaceOwnCallAppearance && spot.callsign == _replaceCall)

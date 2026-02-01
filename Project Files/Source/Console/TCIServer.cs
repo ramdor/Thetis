@@ -210,7 +210,7 @@ namespace Thetis
             public string Continent { get; set; } = "";
             public string Country { get; set; } = "";
             public string UtcTime { get; set; } = "";
-
+            public string TextColor { get; set; } = ""; // text colour A92GE
         }
 
         private Console _console;
@@ -2155,6 +2155,7 @@ namespace Thetis
 					string continent = "";
 					string country = "";
 					string spot_time = "";
+					string text_colour = "";
 
                     if (json_found)
 					{
@@ -2167,6 +2168,7 @@ namespace Thetis
 							continent = spotData.Continent;
 							country = spotData.Country;
 							spot_time = spotData.UtcTime;
+							text_colour = spotData.TextColor;
 
                             sAdditionalConvertedText = spotData.Comment;
                         }
@@ -2177,7 +2179,55 @@ namespace Thetis
 						}
 					}
 
-                    SpotManager2.AddSpot(args[0], mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText, spotter, args[1], heading, continent, country, spot_time);
+                    //convert spot colour if present to system.drawing.color
+                    //#RRGGBB or #AARRGGBB
+                    Color spotTextColour;
+                    if (string.IsNullOrEmpty(text_colour))
+                    {
+                        spotTextColour = Color.Empty;
+                    }
+                    else
+                    {
+                        string s = text_colour.Trim();
+                        if (s.Length > 0 && s[0] == '#') s = s.Substring(1);
+
+                        int hex_value;
+                        if (s.Length == 6)
+                        {
+                            if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out hex_value))
+                            {
+                                int r = (hex_value >> 16) & 0xFF;
+                                int g = (hex_value >> 8) & 0xFF;
+                                int b = hex_value & 0xFF;
+                                spotTextColour = Color.FromArgb(255, r, g, b);
+                            }
+                            else
+                            {
+                                spotTextColour = Color.Empty;
+                            }
+                        }
+                        else if (s.Length == 8)
+                        {
+                            if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out hex_value))
+                            {
+                                int a = (hex_value >> 24) & 0xFF;
+                                int r = (hex_value >> 16) & 0xFF;
+                                int g = (hex_value >> 8) & 0xFF;
+                                int b = hex_value & 0xFF;
+                                spotTextColour = Color.FromArgb(a, r, g, b);
+                            }
+                            else
+                            {
+                                spotTextColour = Color.Empty;
+                            }
+                        }
+                        else
+                        {
+                            spotTextColour = Color.Empty;
+                        }
+                    }
+
+                    SpotManager2.AddSpot(args[0], mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText, spotTextColour, spotter, args[1], heading, continent, country, spot_time);
 				}
 			}
 		}
