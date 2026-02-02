@@ -2018,9 +2018,8 @@ namespace Thetis
             {
                 string s = text_colour.Trim();
 
-                int int_value;
                 // try a TCI colour format argb int
-                if (int.TryParse(s, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int_value))
+                if (int.TryParse(s, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int int_value))
                 {
                     spotTextColour = Color.FromArgb(int_value);
                 }
@@ -2028,10 +2027,9 @@ namespace Thetis
                 { // otherwise try #RRGGBB #AARRGGBB
                     if (s.Length > 0 && s[0] == '#') s = s.Substring(1);
 
-                    int hex_value;
                     if (s.Length == 6)
                     {
-                        if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out hex_value))
+                        if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out int hex_value))
                         {
                             int r = (hex_value >> 16) & 0xFF;
                             int g = (hex_value >> 8) & 0xFF;
@@ -2045,7 +2043,7 @@ namespace Thetis
                     }
                     else if (s.Length == 8)
                     {
-                        if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out hex_value))
+                        if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out int hex_value))
                         {
                             int a = (hex_value >> 24) & 0xFF;
                             int r = (hex_value >> 16) & 0xFF;

@@ -220,7 +220,8 @@ namespace Thetis
                     string desc = nic != null ? (nic.NicDescription ?? "") : "";
                     string ip = nic != null && nic.LocalIPv4 != null ? nic.LocalIPv4.ToString() : "";
                     string mask = nic != null && nic.LocalMaskIPv4 != null ? nic.LocalMaskIPv4.ToString() : "";
-                    string type = nic != null ? (nic.IsEthernet ? "Ethernet" : (nic.IsWireless ? "WiFi" : nic.NicInterfaceType.ToString())) : "";
+                    string type = nic != null ? (nic.IsEthernet ? "Ethernet" : (nic.IsWireless ? "WiFi" : nic.NicInterfaceTypeString)) : "";
+                    type = nic.NicInterfaceTypeString;
                     string apipa = nic != null && nic.IsApipaLocal ? " APIPA" : "";
 
                     if (ip.Length == 0)

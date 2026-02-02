@@ -78,7 +78,7 @@ namespace Thetis
                 options.IgnoreSubnetCheck = true;
                 options.IncludeEthernet = true;
                 options.IncludeWireless = true;
-                options.IncludeOtherInterfaceTypes = false;
+                options.IncludeOtherInterfaceTypes = !c.SetupForm.LimitInterfacesToEthernetWifi;
                 options.AllowLoopback = false;
                 options.AllowAPIPA = true;
                 options.IncludeGeneralBroadcast = true;

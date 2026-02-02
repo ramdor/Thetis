@@ -407,12 +407,7 @@ namespace Thetis
             LogTool.AddLogEntry("        Setup getting options...", "GETOPTIONS");
             getOptions();
             LogTool.Completed("GETOPTIONS");
-
-            //networking after things got modified by getOptions
-            radViaAllNics.Checked = true;
-            radAnyRadio.Checked = true;
-            //
-
+           
             selectSkin();
 
             //MW0LGE [2.9.0.7] setup amp/volts calibration
@@ -35228,7 +35223,7 @@ namespace Thetis
             options.IgnoreSubnetCheck = chkAnySubnet.Checked;
             options.IncludeEthernet = true;
             options.IncludeWireless = true;
-            options.IncludeOtherInterfaceTypes = false;
+            options.IncludeOtherInterfaceTypes = !LimitInterfacesToEthernetWifi;
             options.AllowLoopback = false;
             options.AllowAPIPA = true;
             options.IncludeGeneralBroadcast = true;
@@ -35738,8 +35733,8 @@ namespace Thetis
 
             if (chkAdvancedNetworkingSettings.Checked)
             {
-                ucRadioList_Radios.Location = new Point(ucRadioList_Radios.Location.X, 166);
-                ucRadioList_Radios.Size = new Size(ucRadioList_Radios.Size.Width, 222);
+                ucRadioList_Radios.Location = new Point(ucRadioList_Radios.Location.X, 183);
+                ucRadioList_Radios.Size = new Size(ucRadioList_Radios.Size.Width, 205);
                 pnlAdvancedNetworkSettings.Visible = true;
             }
             else
@@ -35801,6 +35796,22 @@ namespace Thetis
             };
 
             ucRadioList_Radios.AddRadio(selectedNic, radio);
+        }
+
+        public bool LimitInterfacesToEthernetWifi
+        {
+            get
+            {
+                if (chkLimitInterfacesToEthernetWifi == null) return false;
+                return chkLimitInterfacesToEthernetWifi.Checked;
+            }
+        }
+
+        private void chkLimitInterfacesToEthernetWifi_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            rebuildNicCombo();
         }
     }
 
