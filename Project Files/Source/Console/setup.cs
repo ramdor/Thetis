@@ -2173,6 +2173,7 @@ namespace Thetis
             ucRadioList_Radios_SelectedRadioChanged(this, e);
             radViaNics_CheckedChanged(this, e);
             radAnyOrSpecificRadio_CheckedChanged(this, e);
+            radDefaultOrRandomListenPort_CheckedChanged(this, e);
 
             chkTuneStepPerModeRX1_CheckedChanged(this, e);
             chkCTUNignore0beat_CheckedChanged(this, e); //MW0LGE_21k9d
@@ -35727,6 +35728,7 @@ namespace Thetis
 
         private void radDefaultOrRandomListenPort_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
             nudUserListenPort.Enabled = radUserListenPort.Checked;
         }
 
