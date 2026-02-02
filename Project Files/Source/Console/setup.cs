@@ -2171,6 +2171,9 @@ namespace Thetis
 
             //radRadioProtocolSelect_CheckedChanged(this, e);
             ucRadioList_Radios_SelectedRadioChanged(this, e);
+            radViaNics_CheckedChanged(this, e);
+            radAnyOrSpecificRadio_CheckedChanged(this, e);
+
             chkTuneStepPerModeRX1_CheckedChanged(this, e);
             chkCTUNignore0beat_CheckedChanged(this, e); //MW0LGE_21k9d
 
