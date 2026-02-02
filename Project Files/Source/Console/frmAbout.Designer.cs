@@ -149,7 +149,8 @@
             "Midi",
             "cmASIO",
             "Behringer",
-            "APF Types"});
+            "APF Types",
+            "Network Settings"});
             this.lstLinks.Location = new System.Drawing.Point(345, 108);
             this.lstLinks.Name = "lstLinks";
             this.lstLinks.Size = new System.Drawing.Size(267, 130);

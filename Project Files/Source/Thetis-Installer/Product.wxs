@@ -208,6 +208,12 @@
         Description="New Audio Peaking Filter Types"
         Target="[INSTALLFOLDER]APFtypes.pdf"
         WorkingDirectory="INSTALLFOLDER" />
+
+		<Shortcut Id="NetworkSettingsShortcut"
+        Name="NetworkSettings"
+        Description="Network Settings Guide"
+        Target="[INSTALLFOLDER]Thetis Network Settings_0.1.pdf"
+        WorkingDirectory="INSTALLFOLDER" />
 		  
 	  </Component>
     </DirectoryRef>
@@ -730,6 +736,13 @@
 		<Component Guid="*">
 			<File Id="APFtypesPDF"
 				Source="$(var.DocumentationPath)APFtypes.pdf"
+				KeyPath="yes"
+				Checksum="yes"
+            />
+		</Component>
+		<Component Guid="*">
+			<File Id="NetworkSettingsPDF"
+				Source="$(var.DocumentationPath)Thetis Network Settings_0.1.pdf"
 				KeyPath="yes"
 				Checksum="yes"
             />
