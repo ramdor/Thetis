@@ -6013,50 +6013,45 @@ namespace Thetis
         public TabControl TabSetup
         {
             get { return tcSetup; }
-            set { tcSetup = value; }
         }
         public TabControl TabPowerAmplifier
         {
             get { return tcPowerAmplifier; }
-            set { tcPowerAmplifier = value; }
         }
         public TabControl TabGeneral
         {
             get { return tcGeneral; }
-            set { tcGeneral = value; }
         }
         public TabControl TabOptions
         {
             get { return tcOptions; }
-            set { tcOptions = value; }
         }
         public TabControl TabDisplay
         {
             get { return tcDisplay; }
-            //set { tcDisplay = value; }
         }
         public TabControl TabAppearance
         {
             get { return tcAppearance; }
-            //set { tcAppearance = value; }
         }
         public TabControl TabDSP
         {
             get { return tcDSP; }
-            set { tcDSP = value; }
         }
 
         public TabControl TabAudio
         {
             get { return tcAudio; }
-            set { tcAudio = value; }
         }
 
         public TabControl TabCAT
         {
             get { return tcCAT; }
         }
-
+        public TabControl TabOtherHW
+        {
+            get { return tpApolloAmp; }
+        }
 
         #endregion
 
@@ -6342,31 +6337,33 @@ namespace Thetis
                 }
             }
 
-            if (HardwareSpecific.Model == HPSDRModel.HERMES || HardwareSpecific.Model == HPSDRModel.ANAN7000D ||
-                HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
+            if (HardwareSpecific.Model == HPSDRModel.HERMES || 
+                HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
+                HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || 
+                HardwareSpecific.Model == HPSDRModel.ANAN_G2 || HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
                 HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
             {
-                if (!tcGeneral.TabPages.Contains(tpApolloControl))
+                if (!tcGeneral.TabPages.Contains(tpOtherHW))
                 {
-                    Common.TabControlInsert(tcGeneral, tpApolloControl, 7);
+                    Common.TabControlInsert(tcGeneral, tpOtherHW, 7);
                 }
 
                 else
                 {
-                    if (tcGeneral.TabPages.IndexOf(tpApolloControl) != 7)
+                    if (tcGeneral.TabPages.IndexOf(tpOtherHW) != 7)
                     {
-                        tcGeneral.TabPages.Remove(tpApolloControl);
-                        Common.TabControlInsert(tcGeneral, tpApolloControl, 7);
+                        tcGeneral.TabPages.Remove(tpOtherHW);
+                        Common.TabControlInsert(tcGeneral, tpOtherHW, 7);
                     }
                 }
 
-                if (AndromedaCATEnabled) tpApolloControl.Text = "Andromeda";
+                if (AndromedaCATEnabled) tpOtherHW.Text = "Andromeda";
             }
             else
             {
-                if (tcGeneral.TabPages.Contains(tpApolloControl))
+                if (tcGeneral.TabPages.Contains(tpOtherHW))
                 {
-                    tcGeneral.TabPages.Remove(tpApolloControl);
+                    tcGeneral.TabPages.Remove(tpOtherHW);
                     tcGeneral.SelectedIndex = 0;
                 }
             }
@@ -20404,7 +20401,8 @@ namespace Thetis
             OPTIONS2_Tab,
             OPTIONS3_Tab,
             PA_Tab,
-            HWSET_Tab
+            HWSET_Tab,
+            OtherHW_PA_Tab
         }
         public void ShowSetupTab(SetupTab eTab)
         {
@@ -20505,6 +20503,12 @@ namespace Thetis
                 case SetupTab.PA_Tab:
                     TabSetup.SelectedIndex = 5; // pa
                     TabPowerAmplifier.SelectedIndex = 0; // gains
+                    break;
+                case SetupTab.OtherHW_PA_Tab:
+                    if (!tcGeneral.TabPages.Contains(tpOtherHW)) return;
+                    TabSetup.SelectedIndex = TabSetup.TabPages.IndexOf(tpGeneral); //general
+                    TabGeneral.SelectedIndex = TabGeneral.TabPages.IndexOf(tpOtherHW); //Other H/W tab
+                    TabOtherHW.SelectedIndex = TabOtherHW.TabPages.IndexOf(tpOtherHW_amp); //PA tab
                     break;
             }
         }

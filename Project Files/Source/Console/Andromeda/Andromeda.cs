@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Timers;
 using System.Windows.Forms;
+using System.Text;
 
 namespace Thetis
 {
@@ -862,37 +863,69 @@ namespace Thetis
             m_tcpCATServer.SendToClients(message, new List<string> { TCPIPcatServer.ID_GANYMEDE });
         }
 
+        public static string GetPAStatusText(PAstatusIndicatorState state)
+        {
+            //helper function to retun some status text used in tooltips, spectral display, and setupform ganymede status
+
+            if (state == PAstatusIndicatorState.NotUsed) return "Not Used";
+            if ((state & PAstatusIndicatorState.OK) != 0) return "Normal operation";
+
+            PAstatusIndicatorState fault_mask = PAstatusIndicatorState.ReversePower |
+                                                PAstatusIndicatorState.DrainCurrent |
+                                                PAstatusIndicatorState.PSUVoltage |                                                                                               
+                                                PAstatusIndicatorState.HeatsinkTemperature |
+                                                PAstatusIndicatorState.ForwardPower |
+                                                PAstatusIndicatorState.Resettable;
+
+            PAstatusIndicatorState faults = state & fault_mask;
+
+            if (faults == 0) return "Normal operation"; // no faults selected
+
+            StringBuilder sb = new StringBuilder(64);
+            sb.Append("TRIP Excess: ");
+
+            if ((faults & PAstatusIndicatorState.ReversePower) != 0) sb.Append("Reverse Power ");
+            if ((faults & PAstatusIndicatorState.DrainCurrent) != 0) sb.Append("Drain Current ");
+            if ((faults & PAstatusIndicatorState.PSUVoltage) != 0) sb.Append("PSU Voltage ");
+            if ((faults & PAstatusIndicatorState.HeatsinkTemperature) != 0) sb.Append("Heatsink Temperature ");
+            if ((faults & PAstatusIndicatorState.ForwardPower) != 0) sb.Append("Forward Power ");
+            if ((faults & PAstatusIndicatorState.Resettable) != 0) sb.Append("\n Awaiting RESET ");
+
+            string s = sb.ToString();
+            if (s.StartsWith("\n ")) s = s.Substring(2);
+            return s.TrimEnd(' ');
+        }
+
         // for now, put message in SETUP Apollo with current amplifier state
         // ideally when it has been tripped we should remove PTT too.
         public void CATHandleAmplifierTripMessage(int TripState)
         {
             GanymedePresent = true;
-            string StatusMessage = "";
             switch (TripState)
             {
                 case 0:
-                    StatusMessage = "Normal operation";
+                    PAStatusIndicator = PAstatusIndicatorState.OK;
                     break;
                 case 1:
-                    StatusMessage = "TRIP: Excess reverse power";
+                    PAStatusIndicator = PAstatusIndicatorState.ReversePower;
                     break;
                 case 2:
-                    StatusMessage = "TRIP: Excess drain current";
+                    PAStatusIndicator = PAstatusIndicatorState.DrainCurrent;
                     break;
                 case 4:
-                    StatusMessage = "TRIP: Excess PSU voltage";
+                    PAStatusIndicator = PAstatusIndicatorState.PSUVoltage;
                     break;
                 case 8:
-                    StatusMessage = "TRIP: Excess heatsink temperature";
+                    PAStatusIndicator = PAstatusIndicatorState.HeatsinkTemperature;
                     break;
                 case 16:
-                    StatusMessage = "TRIP: Excess forward power";
+                    PAStatusIndicator = PAstatusIndicatorState.ForwardPower;
                     break;
                 case 64:
-                    StatusMessage = "Awaiting RESET";
+                    PAStatusIndicator = PAstatusIndicatorState.Resettable;
                     break;
             }
-            SetupForm.GanymedeStatus = StatusMessage;
+            SetupForm.GanymedeStatus = GetPAStatusText(PAStatusIndicator);
         }
 
         // send a CAT message to Ganymede to reset the tripped state
