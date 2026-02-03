@@ -8021,6 +8021,7 @@
             this.chkAdvancedNetworkingSettings.Size = new System.Drawing.Size(75, 17);
             this.chkAdvancedNetworkingSettings.TabIndex = 135;
             this.chkAdvancedNetworkingSettings.Text = "Advanced";
+            this.toolTip1.SetToolTip(this.chkAdvancedNetworkingSettings, "Show/Hide advanced options. They will be used if if the options are hidden.");
             this.chkAdvancedNetworkingSettings.UseVisualStyleBackColor = true;
             this.chkAdvancedNetworkingSettings.CheckedChanged += new System.EventHandler(this.chkAdvancedNetworkingSettings_CheckedChanged);
             // 
@@ -8051,7 +8052,8 @@
             this.chkLimitInterfacesToEthernetWifi.Size = new System.Drawing.Size(210, 17);
             this.chkLimitInterfacesToEthernetWifi.TabIndex = 136;
             this.chkLimitInterfacesToEthernetWifi.Text = "Limit interfaces used to Ethernet && WiFi";
-            this.toolTip1.SetToolTip(this.chkLimitInterfacesToEthernetWifi, "Other interface types other than ones that identify as Ethernet or Wifi");
+            this.toolTip1.SetToolTip(this.chkLimitInterfacesToEthernetWifi, "Other interface types other than ones that identify as Ethernet or WiFI can be us" +
+        "ed in discovery is this us unchecked.");
             this.chkLimitInterfacesToEthernetWifi.CheckedChanged += new System.EventHandler(this.chkLimitInterfacesToEthernetWifi_CheckedChanged);
             // 
             // btnAddCustomRadio
@@ -8185,6 +8187,7 @@
             this.comboDiscoverSpeedProfile.Name = "comboDiscoverSpeedProfile";
             this.comboDiscoverSpeedProfile.Size = new System.Drawing.Size(98, 21);
             this.comboDiscoverSpeedProfile.TabIndex = 132;
+            this.toolTip1.SetToolTip(this.comboDiscoverSpeedProfile, "Discovery speed");
             // 
             // panelTS14
             // 
@@ -8209,6 +8212,7 @@
             this.radViaAllNics.TabIndex = 126;
             this.radViaAllNics.TabStop = true;
             this.radViaAllNics.Text = "Via all NICs";
+            this.toolTip1.SetToolTip(this.radViaAllNics, "Discover via all NICs");
             this.radViaAllNics.UseVisualStyleBackColor = true;
             this.radViaAllNics.CheckedChanged += new System.EventHandler(this.radViaNics_CheckedChanged);
             // 
@@ -8221,6 +8225,7 @@
             this.radViaSpecificNic.Size = new System.Drawing.Size(100, 17);
             this.radViaSpecificNic.TabIndex = 127;
             this.radViaSpecificNic.Text = "Via specific NIC";
+            this.toolTip1.SetToolTip(this.radViaSpecificNic, "Discover via a specific NIC");
             this.radViaSpecificNic.UseVisualStyleBackColor = true;
             this.radViaSpecificNic.CheckedChanged += new System.EventHandler(this.radViaNics_CheckedChanged);
             // 
@@ -8254,6 +8259,7 @@
             this.radSpecificRadio.Size = new System.Drawing.Size(89, 17);
             this.radSpecificRadio.TabIndex = 128;
             this.radSpecificRadio.Text = "Specific radio";
+            this.toolTip1.SetToolTip(this.radSpecificRadio, "Send the discovery message to this radio only");
             this.radSpecificRadio.UseVisualStyleBackColor = true;
             this.radSpecificRadio.CheckedChanged += new System.EventHandler(this.radAnyOrSpecificRadio_CheckedChanged);
             // 
@@ -8268,6 +8274,7 @@
             this.radAnyRadio.TabIndex = 127;
             this.radAnyRadio.TabStop = true;
             this.radAnyRadio.Text = "Any radio(s)";
+            this.toolTip1.SetToolTip(this.radAnyRadio, "Discover any radios");
             this.radAnyRadio.UseVisualStyleBackColor = true;
             this.radAnyRadio.CheckedChanged += new System.EventHandler(this.radAnyOrSpecificRadio_CheckedChanged);
             // 
@@ -8294,7 +8301,8 @@
             this.chkFirewallCheck.Size = new System.Drawing.Size(98, 23);
             this.chkFirewallCheck.TabIndex = 39;
             this.chkFirewallCheck.Text = "Firewall Check";
-            this.toolTip1.SetToolTip(this.chkFirewallCheck, "Use this to re-apply default firewall rules if you are having issues");
+            this.toolTip1.SetToolTip(this.chkFirewallCheck, "Use this to re-apply default firewall rules if you are having issues.\r\nThetis nee" +
+        "ds to be run as administrator for this to work.\r\n");
             this.chkFirewallCheck.UseVisualStyleBackColor = true;
             this.chkFirewallCheck.Click += new System.EventHandler(this.chkFirewallCheck_Click);
             // 
@@ -8319,8 +8327,7 @@
             this.chkNetworkThrottleIndexTweak.Size = new System.Drawing.Size(186, 16);
             this.chkNetworkThrottleIndexTweak.TabIndex = 18;
             this.chkNetworkThrottleIndexTweak.Text = "Network Throttle Index Tweak";
-            this.toolTip1.SetToolTip(this.chkNetworkThrottleIndexTweak, "When enabled NetworkThrottlingIndex is set to 0xffffffff to prevent windows from " +
-        "throttling the network connection. See thread on forums for more information.");
+            this.toolTip1.SetToolTip(this.chkNetworkThrottleIndexTweak, resources.GetString("chkNetworkThrottleIndexTweak.ToolTip"));
             this.chkNetworkThrottleIndexTweak.CheckedChanged += new System.EventHandler(this.chkNetworkThrottleIndexTweak_CheckedChanged);
             // 
             // grpGeneralModel
@@ -26687,12 +26694,12 @@
             65536});
             this.udAlex21_5HPFStart.ValueChanged += new System.EventHandler(this.udAlex21_5HPFStart_ValueChanged);
             // 
-            // tpApolloControl
+            // tpOtherHW
             // 
             this.tpOtherHW.BackColor = System.Drawing.SystemColors.Control;
             this.tpOtherHW.Controls.Add(this.tpApolloAmp);
             this.tpOtherHW.Location = new System.Drawing.Point(4, 22);
-            this.tpOtherHW.Name = "tpApolloControl";
+            this.tpOtherHW.Name = "tpOtherHW";
             this.tpOtherHW.Padding = new System.Windows.Forms.Padding(3);
             this.tpOtherHW.Size = new System.Drawing.Size(724, 410);
             this.tpOtherHW.TabIndex = 10;
@@ -56826,7 +56833,7 @@
             this.clrbtnSpotFlashColour.Selectable = true;
             this.clrbtnSpotFlashColour.Size = new System.Drawing.Size(40, 23);
             this.clrbtnSpotFlashColour.TabIndex = 104;
-            this.toolTip1.SetToolTip(this.clrbtnSpotFlashColour, "The colour of your callsign if it appears as a spot");
+            this.toolTip1.SetToolTip(this.clrbtnSpotFlashColour, "Colour of the flash");
             this.clrbtnSpotFlashColour.Changed += new System.EventHandler(this.clrbtnSpotFlashColour_Changed);
             // 
             // chkFlashNewTCISpots
