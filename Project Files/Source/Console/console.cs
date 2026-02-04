@@ -148,7 +148,7 @@ namespace Thetis
 
         public MemoryForm memoryForm;
         public MemoryList MemoryList { get; private set; }
-        public WaveControl WaveForm;
+        //public WaveControl WaveForm;
 
         //====================================================================================
 
@@ -535,6 +535,9 @@ namespace Thetis
         private bool _check_error_log = true;
         private long _error_log_initial_size = -1;
         private bool _touch_support = false;
+
+        // audio recording and playback
+        private clsAudioRecordPlayback _arp = null;
 
         public bool TouchSupport
         {
@@ -1939,7 +1942,7 @@ namespace Thetis
             Common.RestoreForm(EQForm, "EQForm", false);
 
             XVTRForm = new XVTRForm(this);
-            WaveForm = new WaveControl(this) { StartPosition = FormStartPosition.Manual };	// create Wave form
+            //WaveForm = new WaveControl(this) { StartPosition = FormStartPosition.Manual };	// create Wave form
 
             MemoryList = MemoryList.Restore();
             MemoryList.CheckVersion();
@@ -11443,18 +11446,18 @@ namespace Thetis
             set
             {
 
-                if (value == true)
-                {
-                    WaveForm.RECPLAY = true;                 // this sets recording to POST (not IQ pre) 
-                    WaveForm.RECPLAY2 = true;                // and reduces .wav to 48000 SR to save file size
+                //if (value == true)
+                //{
+                //    WaveForm.RECPLAY = true;                 // this sets recording to POST (not IQ pre) 
+                //    WaveForm.RECPLAY2 = true;                // and reduces .wav to 48000 SR to save file size
 
-                    WaveForm.checkBoxRecord.Checked = true; // start recording
+                //    WaveForm.checkBoxRecord.Checked = true; // start recording
 
-                }
-                else
-                {
-                    WaveForm.checkBoxRecord.Checked = value; // start recording
-                }
+                //}
+                //else
+                //{
+                //    WaveForm.checkBoxRecord.Checked = value; // start recording
+                //}
             }
         }
 
@@ -11462,7 +11465,7 @@ namespace Thetis
         {
             set
             {
-                WaveForm.RECPLAY3 = true;                // and restores .wav to original SR size
+                //WaveForm.RECPLAY3 = true;                // and restores .wav to original SR size
             }
 
         }
@@ -11473,14 +11476,14 @@ namespace Thetis
             {
                 if (value == false)
                 {
-                    waveToolStripMenuItem.ForeColor = SystemColors.ControlLightLight;
-                    waveToolStripMenuItem.Text = "Wave";
+                    //waveToolStripMenuItem.ForeColor = SystemColors.ControlLightLight;
+                    //waveToolStripMenuItem.Text = "Wave";
 
                 }
                 else
                 {
-                    waveToolStripMenuItem.ForeColor = Color.Red;
-                    waveToolStripMenuItem.Text = "Record";
+                    //waveToolStripMenuItem.ForeColor = Color.Red;
+                    //waveToolStripMenuItem.Text = "Record";
 
 
                 }
@@ -14411,23 +14414,23 @@ namespace Thetis
         }
 
         private double _wave_freq = 0.0;
-        private bool _wave_playback = false;
-        public bool WavePlayback
-        {
-            get { return _wave_playback; }
-            set
-            {
-                _wave_playback = value;
-                if (_wave_playback)
-                {
-                    _wave_freq = (VFOAFreq * 1e6) % sample_rate_rx1;
-                }
-                else
-                {
-                    txtVFOAFreq_LostFocus(this, EventArgs.Empty);
-                }
-            }
-        }
+        //private bool _wave_playback = false;
+        //public bool WavePlayback
+        //{
+        //    get { return _wave_playback; }
+        //    set
+        //    {
+        //        _wave_playback = value;
+        //        if (_wave_playback)
+        //        {
+        //            _wave_freq = (VFOAFreq * 1e6) % sample_rate_rx1;
+        //        }
+        //        else
+        //        {
+        //            txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+        //        }
+        //    }
+        //}
 
         private bool saved_rx_only = false;
         private bool _rx_only = false;
@@ -25211,7 +25214,7 @@ namespace Thetis
         }   
         private void timer_cpu_volts_meter_Tick(object sender, System.EventArgs e)
         {
-            if (DisplayVoltsAmps && HardwareSpecific.HasVolts && HardwareSpecific.HasAmps) //DH1KLM
+            if (DisplayVoltsAmps && HardwareSpecific.HasVolts && HardwareSpecific.HasAmps)
             {
                 computeMKIIPAVoltsAmps(); //MW0LGE_21k9c
 
@@ -35679,42 +35682,89 @@ namespace Thetis
         }
 
 
-        private void ckQuickPlay_CheckedChanged(object sender, System.EventArgs e)
+        private async void ckQuickPlay_CheckedChanged(object sender, System.EventArgs e)
         {
+            //if (ckQuickPlay.Checked)
+            //{
+            //    WaveForm.QuickPlay = true;
+            //    ckQuickPlay.BackColor = button_selected_color;
+            //}
+            //else
+            //{
+            //    WaveForm.QuickPlay = false;
+            //    ckQuickPlay.BackColor = SystemColors.Control;
+            //}            
             if (ckQuickPlay.Checked)
             {
-                WaveForm.QuickPlay = true;
-                ckQuickPlay.BackColor = button_selected_color;
+                _old_mox_before_play = MOX;
+                if (ARP.MoxOnPlayback && !_old_mox_before_play)
+                {
+                    MOX = true;
+                    await Task.Delay(50); // let mox/radio settle
+                }
+
+                ckQuickRec.Enabled = false;
+                string error;
+                string file = Path.Combine(AppDataPath, "SDRQuickAudio.wav");
+                bool ok = ARP.PlayFileViaWDSP(0, null, 0, out error, file);
+                if (!ok)
+                {
+                    ckQuickPlay.CheckedChanged -= ckQuickPlay_CheckedChanged;
+                    ckQuickPlay.Checked = false;
+                    ckQuickPlay.CheckedChanged += ckQuickPlay_CheckedChanged;
+                    ckQuickRec.Enabled = true;
+
+                    if (ARP.MoxOnPlayback && MOX != _old_mox_before_play) MOX = _old_mox_before_play;
+                }
             }
             else
             {
-                WaveForm.QuickPlay = false;
-                ckQuickPlay.BackColor = SystemColors.Control;
+                ckQuickRec.Enabled = true;
+                string error;
+                ARP.StopPlayback(out error);
             }
-            ckQuickRec.Enabled = !ckQuickPlay.Checked;
         }
 
-        private bool _updated_from_wave_form = false;
-        public bool UpdatedFromWaveForm
-        {
-            // prevent wave form changes causing loop
-            get { return _updated_from_wave_form; }
-            set { _updated_from_wave_form = value; }
-        }
+        //private bool _updated_from_wave_form = false;
+        //public bool UpdatedFromWaveForm
+        //{
+        //    // prevent wave form changes causing loop
+        //    get { return _updated_from_wave_form; }
+        //    set { _updated_from_wave_form = value; }
+        //}
         private void ckQuickRec_CheckedChanged(object sender, System.EventArgs e)
         {
+            //if (ckQuickRec.Checked)
+            //{
+            //    if(!_updated_from_wave_form) WaveForm.QuickRec = true;
+            //    ckQuickPlay.Enabled = true;
+            //    ckQuickRec.BackColor = button_selected_color;
+            //}
+            //else
+            //{
+            //    if (!_updated_from_wave_form) WaveForm.QuickRec = false;
+            //    ckQuickRec.BackColor = SystemColors.Control;
+            //}
             if (ckQuickRec.Checked)
             {
-                if(!_updated_from_wave_form) WaveForm.QuickRec = true;
-                ckQuickPlay.Enabled = true;
-                ckQuickRec.BackColor = button_selected_color;
+                ckQuickPlay.Enabled = false;
+                string error;
+                string file = Path.Combine(AppDataPath, "SDRQuickAudio.wav");
+                string filename = ARP.RecordToFileFromWDSP(0, 0, out error, file, true);
+                if(string.IsNullOrEmpty(filename))
+                {
+                    ckQuickRec.CheckedChanged -= ckQuickRec_CheckedChanged;
+                    ckQuickRec.Checked = false;
+                    ckQuickRec.CheckedChanged += ckQuickRec_CheckedChanged;
+                    ckQuickPlay.Enabled = true;
+                }
             }
             else
             {
-                if (!_updated_from_wave_form) WaveForm.QuickRec = false;
-                ckQuickRec.BackColor = SystemColors.Control;
+                string error;
+                ARP.StopRecord(out error);
+                ckQuickPlay.Enabled = true;
             }
-            ckQuickPlay.Enabled = !ckQuickRec.Checked;
         }
         private void moveModeSpecificPanels()
         {
@@ -39462,21 +39512,21 @@ namespace Thetis
 
         private void waveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (WaveForm.IsDisposed)
-                WaveForm = new WaveControl(this);
-            if (WaveForm.InvokeRequired)
-            {
-                WaveForm.Invoke(new MethodInvoker(() =>
-                {
-                    WaveForm.Show();
-                    WaveForm.Focus();
-                }));
-            }
-            else
-            {
-                WaveForm.Show();
-                WaveForm.Focus();
-            }
+            //if (WaveForm.IsDisposed)
+            //    WaveForm = new WaveControl(this);
+            //if (WaveForm.InvokeRequired)
+            //{
+            //    WaveForm.Invoke(new MethodInvoker(() =>
+            //    {
+            //        WaveForm.Show();
+            //        WaveForm.Focus();
+            //    }));
+            //}
+            //else
+            //{
+            //    WaveForm.Show();
+            //    WaveForm.Focus();
+            //}
         }
 
         private void CollapseToolStripMenuItem_Click(object sender, EventArgs e)
@@ -50802,17 +50852,18 @@ namespace Thetis
         {
             get
             {
-                if (WaveForm == null || WaveForm.IsDisposed)
-                    WaveForm = new WaveControl(this);
+                //if (WaveForm == null || WaveForm.IsDisposed)
+                //    WaveForm = new WaveControl(this);
 
-                return WaveForm.Recording;
+                //return WaveForm.Recording;
+                return false;
             }
             set
             {
-                if (WaveForm == null || WaveForm.IsDisposed)
-                    WaveForm = new WaveControl(this);
+                //if (WaveForm == null || WaveForm.IsDisposed)
+                //    WaveForm = new WaveControl(this);
 
-                WaveForm.Recording = value;
+                //WaveForm.Recording = value;
             }
         }
         public int GetSelectedNB(int rx)
@@ -52200,6 +52251,154 @@ namespace Thetis
             }
         }
         #endregion
+
+        //
+        public clsAudioRecordPlayback ARP
+        {
+            get 
+            {
+                if (_arp == null)
+                {
+                    _arp = new clsAudioRecordPlayback(); //intialist recording and playback
+                    _arp.RecordingChanged += arp_RecordingChanged;
+                    _arp.PlayingChanged += arp_PlayingingChanged;
+                }
+
+                return _arp; 
+            }
+        }
+        //
+
+        ///// test test test
+        private string _last_file = null;
+        private bool _old_mox_before_play = false;
+        private void buttonTS1_Click(object sender, EventArgs e)
+        {
+            int fid = 12345;
+            string error;
+            string filename = ARP.RecordToFileFromPCAudio(fid, ARP.InputPCDeviceID, out error);
+            _last_file = filename;
+
+            if (filename == null)
+            {
+                MessageBox.Show(error ?? "Unable to start recording.");
+                return;
+            }
+
+            string full_path = Path.Combine(ARP.AudioFolder, fid.ToString(), filename);
+            Debug.Print(full_path);
+        }
+        private void btnWDSPrecord_Click(object sender, EventArgs e)
+        {
+            int fid = 12345;
+            string error;
+            string filename = ARP.RecordToFileFromWDSP(fid, 0, out error);
+            _last_file = filename;
+
+            if (filename == null)
+            {
+                MessageBox.Show(error ?? "Unable to start recording.");
+                return;
+            }
+
+            string full_path = Path.Combine(ARP.AudioFolder, fid.ToString(), filename);
+            Debug.Print(full_path);
+        }
+        private void buttonTS2_Click(object sender, EventArgs e)
+        {
+            string error;
+            bool ok = ARP.StopRecord(out error);
+            if (!ok)
+            {
+                MessageBox.Show(error ?? "Unable to stop recording.");
+            }
+        }
+        private void arp_RecordingChanged(bool recording, int fid, string filename)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action)(() => arp_RecordingChanged(recording, fid, filename)));
+                return;
+            }
+
+            ckQuickPlay.Enabled = !recording;
+            if (!recording && ckQuickRec.Checked) ckQuickRec.Checked = false;
+            //////////////////////////////////////////
+
+            Debug.Print("RECORDING : " + recording.ToString());
+            btnWDSPrecord.Enabled = !recording;
+            btnPCrecord.Enabled = !recording;
+            btnStopRecord.Enabled = recording;
+
+            btnWDSPplay.Enabled = !recording;
+            btnPCPlay.Enabled = !recording;
+            btnStopPlay.Enabled = false;
+        }
+        private void arp_PlayingingChanged(bool playing, int fid, string filename, bool isWdsp)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action)(() => arp_PlayingingChanged(playing, fid, filename, isWdsp)));
+                return;
+            }
+
+            if (!playing && isWdsp && ARP.MoxOnPlayback && !_old_mox_before_play) MOX = false;
+
+            ckQuickRec.Enabled = !playing;
+            if (!playing && ckQuickPlay.Checked) ckQuickPlay.Checked = false;
+
+            //////////////////////////////////////////
+
+            Debug.Print("playing : " + playing.ToString());
+            btnWDSPplay.Enabled = !playing;
+            btnPCPlay.Enabled = !playing;
+            btnStopPlay.Enabled = playing;
+
+            btnWDSPrecord.Enabled = !playing;
+            btnPCrecord.Enabled = !playing;
+            btnStopRecord.Enabled = false;
+
+            if (!playing) Audio.VACBypass = false;
+        }
+
+        private async void buttonTS3_Click(object sender, EventArgs e)
+        {
+            int fid = 12345;
+            string error;
+
+            _old_mox_before_play = MOX;
+            if (ARP.MoxOnPlayback && !_old_mox_before_play)
+            {
+                MOX = true;
+                await Task.Delay(50); // let mox/radio settle
+            }
+
+            Audio.VACBypass = true;
+            bool ok = ARP.PlayFileViaWDSP(fid, _last_file, 0, out error);
+            if (!ok)
+            {
+                Audio.VACBypass = false;
+                MessageBox.Show(error ?? "Unable to start playback.");
+            }
+        }
+
+        private void buttonTS4_Click(object sender, EventArgs e)
+        {
+            string error;
+            ARP.StopPlayback(out error);
+        }
+
+        private void btnPCPlay_Click(object sender, EventArgs e)
+        {
+            int fid = 12345;
+            string error;
+
+            bool ok = ARP.PlayFileViaPCAudio(fid, _last_file, ARP.OutputCDeviceID, out error);
+            if (!ok)
+            {
+                MessageBox.Show(error ?? "Unable to start playback.");
+            }
+        }
     }
 
     public class DigiMode

@@ -367,13 +367,13 @@ namespace Thetis
             }
         }
 
-        private static bool MONmixState = false;
+        private static bool _MONmixState = false;
         public static bool MONMixState
         {
-            get { return MONmixState; }
+            get { return _MONmixState; }
             set
             {
-                MONmixState = value;
+                _MONmixState = value;
             }
         }
 
@@ -1244,6 +1244,13 @@ namespace Thetis
             precord[id] = new WRecord(wrecorder[id].wrecord);
             SendCBWaveRecorder(id, precord[id]);
             wrecorder[id].ID = id;
+        }
+        public static void UpdateMox()
+        {
+            for (int i = 0; i < nplayers; i++)
+            {
+                if (wave_file_writer[i] != null) wave_file_writer[i].UpdateMox();
+            }
         }
         #endregion
     }

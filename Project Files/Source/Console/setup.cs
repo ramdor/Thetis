@@ -404,6 +404,8 @@ namespace Thetis
 
             setupNeworking(); //prior to getOptions so speed profile combo is initialsed
 
+            initRecordingPlaybackAudio(); //prior to getOptions setup audio recording/playback options
+
             LogTool.AddLogEntry("        Setup getting options...", "GETOPTIONS");
             getOptions();
             LogTool.Completed("GETOPTIONS");
@@ -413,7 +415,7 @@ namespace Thetis
             //MW0LGE [2.9.0.7] setup amp/volts calibration
             initVoltsAmpsCalibration();
             chkLogVoltsAmps.Checked = false;
-            //
+            //            
 
             //MW0LGE_21j
             console.RepositionExternalPAButton(CheckForAnyExternalPACheckBoxes());
@@ -35822,6 +35824,234 @@ namespace Thetis
 
             rebuildNicCombo();
         }
+
+        #region WAV_RECORDING
+        private void initRecordingPlaybackAudio()
+        {
+            initPCAudioDevicesComobs();
+
+            if (comboRecording_samplerate.SelectedIndex < 0) comboRecording_samplerate.SelectedIndex = 3; // 48k
+        }
+        private void initPCAudioDevicesComobs()
+        {
+            List<AudioDeviceInfo> inDevices = console.ARP.GetPcInputDevices();
+            if (inDevices == null) inDevices = new List<AudioDeviceInfo>();
+
+            inDevices.Sort((a, b) => string.Compare(a.DisplayName, b.DisplayName, StringComparison.OrdinalIgnoreCase));
+
+            BindingSource bsIn = new BindingSource();
+            bsIn.DataSource = inDevices;
+
+            comboPCAudioDevices_IN.DataSource = null;
+            comboPCAudioDevices_IN.DisplayMember = "DisplayName";
+            comboPCAudioDevices_IN.ValueMember = "DeviceId";
+            comboPCAudioDevices_IN.DataSource = bsIn;
+
+            if (comboPCAudioDevices_IN.Items.Count > 0 && comboPCAudioDevices_IN.SelectedIndex < 0) comboPCAudioDevices_IN.SelectedIndex = 0;
+
+            List<AudioDeviceInfo> outDevices = console.ARP.GetPcOutputDevices();
+            if (outDevices == null) outDevices = new List<AudioDeviceInfo>();
+
+            outDevices.Sort((a, b) => string.Compare(a.DisplayName, b.DisplayName, StringComparison.OrdinalIgnoreCase));
+
+            BindingSource bsOut = new BindingSource();
+            bsOut.DataSource = outDevices;
+
+            comboPCAudioDevices_OUT.DataSource = null;
+            comboPCAudioDevices_OUT.DisplayMember = "DisplayName";
+            comboPCAudioDevices_OUT.ValueMember = "DeviceId";
+            comboPCAudioDevices_OUT.DataSource = bsOut;
+
+            if (comboPCAudioDevices_OUT.Items.Count > 0 && comboPCAudioDevices_OUT.SelectedIndex < 0) comboPCAudioDevices_OUT.SelectedIndex = 0;
+        }
+        private void radRecordingBits_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radRecordingBits_ieee.Checked)
+            {
+                console.ARP.BitDepthMode = AudioBitDepthMode.IeeeFloat32;
+            }
+            else if(radRecordingBits_32pcm.Checked)
+            {
+                console.ARP.BitDepthMode = AudioBitDepthMode.Pcm32;
+            }
+            else if (radRecordingBits_24pcm.Checked)
+            {
+                console.ARP.BitDepthMode = AudioBitDepthMode.Pcm24;
+            }
+            else if (radRecordingBits_16pcm.Checked)
+            {
+                console.ARP.BitDepthMode = AudioBitDepthMode.Pcm16;
+            }
+            else if (radRecordingBits_8pcm.Checked)
+            {
+                console.ARP.BitDepthMode = AudioBitDepthMode.Pcm8;
+            }
+        }
+
+        private void chkRecording_playbackMox_CheckedChanged(object sender, EventArgs e)
+        {
+            console.ARP.MoxOnPlayback = chkRecording_playbackMox.Checked;
+        }
+
+        private void chkRecording_keepQuckRecords_CheckedChanged(object sender, EventArgs e)
+        {
+            console.ARP.KeepQuickRecords = chkRecording_keepQuckRecords.Checked;
+        }
+
+        private void chkRecording_generateMP3s_CheckedChanged(object sender, EventArgs e)
+        {
+            console.ARP.GenerateMP3s = chkRecording_generateMP3s.Checked;
+        }
+
+        private void chkRecording_generateJSONs_CheckedChanged(object sender, EventArgs e)
+        {
+            console.ARP.GenerateJSONs = chkRecording_generateMP3s.Checked;
+        }
+
+        private void radRecording_storage_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radRecording_storageCustom.Checked)
+            {
+                txtRecording_customFolder.Enabled = true;
+                btnRecording_selectCustomFolder.Enabled = true;
+                console.ARP.StorageFolder = txtRecording_customFolder.Text;
+            }
+            else //radRecording_storageMusic
+            {
+                txtRecording_customFolder.Enabled = false;
+                btnRecording_selectCustomFolder.Enabled = false;
+                console.ARP.StorageFolder = null;
+            }
+        }
+
+        private void txtRecording_customFolder_TextChanged(object sender, EventArgs e)
+        {
+            if (radRecording_storageCustom.Checked)
+            {
+                console.ARP.StorageFolder = txtRecording_customFolder.Text;
+            }
+        }
+
+        private void btnRecording_selectCustomFolder_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnRecording_openQuickFolder_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnRecording_openRecordingsFolder_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboRecording_samplerate_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch(comboRecording_samplerate.SelectedIndex)
+            {
+                case 0:
+                    console.ARP.SampleRate = 6000;
+                    break;
+                case 1:
+                    console.ARP.SampleRate = 12000;
+                    break;
+                case 2:
+                    console.ARP.SampleRate = 24000;
+                    break;
+                case 3:
+                    console.ARP.SampleRate = 48000;
+                    break;
+                case 4:
+                    console.ARP.SampleRate = 96000;
+                    break;
+                case 5:
+                    console.ARP.SampleRate = 192000;
+                    break;
+                case 6:
+                    console.ARP.SampleRate = 384000;
+                    break;
+                case 7:
+                    console.ARP.SampleRate = 768000;
+                    break;
+                case 8:
+                    console.ARP.SampleRate = 1536000;
+                    break;
+                default:
+                    console.ARP.SampleRate = 48000;
+                    break;
+            }
+        }
+
+        private void chkRecording_dither_CheckedChanged(object sender, EventArgs e)
+        {
+            nudRecording_dither.Enabled = chkRecording_dither.Checked;
+            console.ARP.DitherAmount = (float)nudRecording_dither.Value;
+            console.ARP.DitherEnabled = chkRecording_dither.Checked;
+        }
+
+        private void nudRecording_dither_ValueChanged(object sender, EventArgs e)
+        {
+            chkRecording_dither_CheckedChanged(sender, e);
+        }
+
+        private void radRecording_RXing_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radRecording_RXing_audio.Checked)
+            {
+                console.ARP.RxSource = AudioRecordRxSource.ReceiverOutputAudio;
+            }
+            else
+            {
+                console.ARP.RxSource = AudioRecordRxSource.ReceiverInputIQ;
+            }
+        }
+
+        private void radRecording_TXing_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radRecording_TXing_mic.Checked)
+            {
+                console.ARP.TxSource = AudioRecordTxSource.MicAudio;
+            }
+            else
+            {
+                console.ARP.TxSource = AudioRecordTxSource.TransmitterOutputIQ;
+            }
+        }
+
+        private void comboPCAudioDevices_IN_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            AudioDeviceInfo dev = (AudioDeviceInfo)comboPCAudioDevices_IN.SelectedItem;
+            if (dev == null) return;
+
+            console.ARP.InputPCDeviceID = dev.Id;
+        }
+
+        private void comboPCAudioDevices_OUT_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            AudioDeviceInfo dev = (AudioDeviceInfo)comboPCAudioDevices_OUT.SelectedItem;
+            if (dev == null) return;
+
+            console.ARP.OutputCDeviceID = dev.Id;
+
+        }
+
+        private void nudRecording_gainInput_ValueChanged(object sender, EventArgs e)
+        {
+            console.ARP.PCInputGain = (float)nudRecording_gainInput.Value;
+        }
+
+        private void nudRecording_gainOutput_ValueChanged(object sender, EventArgs e)
+        {
+            console.ARP.PCOutputGain = (float)nudRecording_gainOutput.Value;
+        }
+
+        private void btnRecording_refreshDevices_Click(object sender, EventArgs e)
+        {
+            initPCAudioDevicesComobs();
+        }
+        #endregion
     }
 
     #region FormLoactionHelper

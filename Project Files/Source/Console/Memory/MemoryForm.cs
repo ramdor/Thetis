@@ -47,7 +47,7 @@ namespace Thetis
         #region Variable Declaration
 
         private Console console;
-        public WaveControl WaveForm;                       // ke9ns    communication with the waveform (i.e. allows audio to be played from console.cs)
+        //public WaveControl WaveForm;                       // ke9ns    communication with the waveform (i.e. allows audio to be played from console.cs)
 
       
         #endregion
@@ -1423,7 +1423,7 @@ namespace Thetis
             {
 
             }
-            Debug.WriteLine("DONE WITH MP3 CREATION" + WaveControl.scheduleName1);
+            //Debug.WriteLine("DONE WITH MP3 CREATION" + WaveControl.scheduleName1);
 
             //[2.10.3.5]MW0LGE it looks like MP3 support has been removed and commented out, above, about 5 years ago.
             //This used to remove the wav file after converting over to an MP3. This is now also commented so the recording

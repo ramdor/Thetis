@@ -1642,7 +1642,6 @@
             this.udVAC1GrapherSwing = new System.Windows.Forms.NumericUpDownTS();
             this.ucVAC1VARGrapherIn = new Thetis.ucVARGrapher();
             this.ucVAC1VARGrapherOut = new Thetis.ucVARGrapher();
-            this.chkBypassVACPlayingRecording = new System.Windows.Forms.CheckBoxTS();
             this.grpVAC1monitor = new System.Windows.Forms.GroupBoxTS();
             this.lblVAC1RingPercAV2 = new System.Windows.Forms.LabelTS();
             this.lblVAC1RingPercAV1 = new System.Windows.Forms.LabelTS();
@@ -1916,6 +1915,47 @@
             this.labelTS283 = new System.Windows.Forms.LabelTS();
             this.comboASIODevicesAvailable = new System.Windows.Forms.ComboBoxTS();
             this.labelTS282 = new System.Windows.Forms.LabelTS();
+            this.tpAudioRecording = new System.Windows.Forms.TabPage();
+            this.groupBoxTS64 = new System.Windows.Forms.GroupBoxTS();
+            this.radRecording_TXing_iq = new System.Windows.Forms.RadioButtonTS();
+            this.radRecording_TXing_mic = new System.Windows.Forms.RadioButtonTS();
+            this.groupBoxTS63 = new System.Windows.Forms.GroupBoxTS();
+            this.radRecording_RXing_audio = new System.Windows.Forms.RadioButtonTS();
+            this.radRecording_RXing_iq = new System.Windows.Forms.RadioButtonTS();
+            this.groupBoxTS61 = new System.Windows.Forms.GroupBoxTS();
+            this.nudRecording_gainOutput = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS647 = new System.Windows.Forms.LabelTS();
+            this.nudRecording_gainInput = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS646 = new System.Windows.Forms.LabelTS();
+            this.btnRecording_refreshDevices = new System.Windows.Forms.ButtonTS();
+            this.comboPCAudioDevices_OUT = new System.Windows.Forms.ComboBoxTS();
+            this.comboPCAudioDevices_IN = new System.Windows.Forms.ComboBoxTS();
+            this.labelTS88 = new System.Windows.Forms.LabelTS();
+            this.labelTS16 = new System.Windows.Forms.LabelTS();
+            this.groupBoxTS62 = new System.Windows.Forms.GroupBoxTS();
+            this.nudRecording_dither = new System.Windows.Forms.NumericUpDownTS();
+            this.chkRecording_dither = new System.Windows.Forms.CheckBoxTS();
+            this.comboRecording_samplerate = new System.Windows.Forms.ComboBoxTS();
+            this.groupBoxTS60 = new System.Windows.Forms.GroupBoxTS();
+            this.btnRecording_selectCustomFolder = new System.Windows.Forms.ButtonTS();
+            this.labelTS648 = new System.Windows.Forms.LabelTS();
+            this.txtRecording_customFolder = new System.Windows.Forms.TextBoxTS();
+            this.radRecording_storageCustom = new System.Windows.Forms.RadioButtonTS();
+            this.radRecording_storageMusic = new System.Windows.Forms.RadioButtonTS();
+            this.chkRecording_generateJSONs = new System.Windows.Forms.CheckBoxTS();
+            this.chkRecording_generateMP3s = new System.Windows.Forms.CheckBoxTS();
+            this.chkRecording_keepQuckRecords = new System.Windows.Forms.CheckBoxTS();
+            this.chkRecording_playbackMox = new System.Windows.Forms.CheckBoxTS();
+            this.chkBypassVACPlayingRecording = new System.Windows.Forms.CheckBoxTS();
+            this.btnRecording_openRecordingsFolder = new System.Windows.Forms.ButtonTS();
+            this.groupBoxTS59 = new System.Windows.Forms.GroupBoxTS();
+            this.labelTS9 = new System.Windows.Forms.LabelTS();
+            this.radRecordingBits_8pcm = new System.Windows.Forms.RadioButtonTS();
+            this.radRecordingBits_16pcm = new System.Windows.Forms.RadioButtonTS();
+            this.radRecordingBits_24pcm = new System.Windows.Forms.RadioButtonTS();
+            this.radRecordingBits_32pcm = new System.Windows.Forms.RadioButtonTS();
+            this.radRecordingBits_ieee = new System.Windows.Forms.RadioButtonTS();
+            this.btnRecording_openQuickFolder = new System.Windows.Forms.ButtonTS();
             this.tpDisplay = new System.Windows.Forms.TabPage();
             this.tcDisplay = new System.Windows.Forms.TabControl();
             this.tpDisplayGeneral = new System.Windows.Forms.TabPage();
@@ -4682,6 +4722,16 @@
             this.tpCMAsio.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCMasio_InOut_Info)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAsioBlockNum)).BeginInit();
+            this.tpAudioRecording.SuspendLayout();
+            this.groupBoxTS64.SuspendLayout();
+            this.groupBoxTS63.SuspendLayout();
+            this.groupBoxTS61.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_gainOutput)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_gainInput)).BeginInit();
+            this.groupBoxTS62.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_dither)).BeginInit();
+            this.groupBoxTS60.SuspendLayout();
+            this.groupBoxTS59.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.tcDisplay.SuspendLayout();
             this.tpDisplayGeneral.SuspendLayout();
@@ -27328,6 +27378,7 @@
             this.tcAudio.Controls.Add(this.tpAudioOptions);
             this.tcAudio.Controls.Add(this.tpAdvancedAudio);
             this.tcAudio.Controls.Add(this.tpCMAsio);
+            this.tcAudio.Controls.Add(this.tpAudioRecording);
             this.tcAudio.Location = new System.Drawing.Point(0, 0);
             this.tcAudio.Name = "tcAudio";
             this.tcAudio.SelectedIndex = 0;
@@ -27342,7 +27393,6 @@
             this.tpVAC.Controls.Add(this.udVAC1GrapherSwing);
             this.tpVAC.Controls.Add(this.ucVAC1VARGrapherIn);
             this.tpVAC.Controls.Add(this.ucVAC1VARGrapherOut);
-            this.tpVAC.Controls.Add(this.chkBypassVACPlayingRecording);
             this.tpVAC.Controls.Add(this.grpVAC1monitor);
             this.tpVAC.Controls.Add(this.chkMOXAllowBypass);
             this.tpVAC.Controls.Add(this.chkSPACEAllowBypass);
@@ -27460,18 +27510,6 @@
             this.ucVAC1VARGrapherOut.RingBufferPerc = 0D;
             this.ucVAC1VARGrapherOut.Size = new System.Drawing.Size(272, 57);
             this.ucVAC1VARGrapherOut.TabIndex = 85;
-            // 
-            // chkBypassVACPlayingRecording
-            // 
-            this.chkBypassVACPlayingRecording.Image = null;
-            this.chkBypassVACPlayingRecording.Location = new System.Drawing.Point(249, 209);
-            this.chkBypassVACPlayingRecording.Name = "chkBypassVACPlayingRecording";
-            this.chkBypassVACPlayingRecording.Size = new System.Drawing.Size(271, 16);
-            this.chkBypassVACPlayingRecording.TabIndex = 84;
-            this.chkBypassVACPlayingRecording.Text = "Bypass VAC for recording playback";
-            this.toolTip1.SetToolTip(this.chkBypassVACPlayingRecording, "If you are using VAC enable this to be able to play recordings");
-            this.chkBypassVACPlayingRecording.UseVisualStyleBackColor = true;
-            this.chkBypassVACPlayingRecording.CheckedChanged += new System.EventHandler(this.chkBypassVACPlayingRecording_CheckedChanged);
             // 
             // grpVAC1monitor
             // 
@@ -31716,6 +31754,574 @@
             this.labelTS282.Size = new System.Drawing.Size(544, 16);
             this.labelTS282.TabIndex = 94;
             this.labelTS282.Text = "WARNING: If cmASIO is used, audio hardware in the radio will not be operable";
+            // 
+            // tpAudioRecording
+            // 
+            this.tpAudioRecording.BackColor = System.Drawing.SystemColors.Control;
+            this.tpAudioRecording.Controls.Add(this.groupBoxTS64);
+            this.tpAudioRecording.Controls.Add(this.groupBoxTS63);
+            this.tpAudioRecording.Controls.Add(this.groupBoxTS61);
+            this.tpAudioRecording.Controls.Add(this.groupBoxTS62);
+            this.tpAudioRecording.Controls.Add(this.groupBoxTS60);
+            this.tpAudioRecording.Controls.Add(this.btnRecording_openRecordingsFolder);
+            this.tpAudioRecording.Controls.Add(this.groupBoxTS59);
+            this.tpAudioRecording.Controls.Add(this.btnRecording_openQuickFolder);
+            this.tpAudioRecording.Location = new System.Drawing.Point(4, 22);
+            this.tpAudioRecording.Name = "tpAudioRecording";
+            this.tpAudioRecording.Size = new System.Drawing.Size(712, 404);
+            this.tpAudioRecording.TabIndex = 6;
+            this.tpAudioRecording.Text = "Recording";
+            // 
+            // groupBoxTS64
+            // 
+            this.groupBoxTS64.Controls.Add(this.radRecording_TXing_iq);
+            this.groupBoxTS64.Controls.Add(this.radRecording_TXing_mic);
+            this.groupBoxTS64.Location = new System.Drawing.Point(465, 9);
+            this.groupBoxTS64.Name = "groupBoxTS64";
+            this.groupBoxTS64.Size = new System.Drawing.Size(121, 73);
+            this.groupBoxTS64.TabIndex = 7;
+            this.groupBoxTS64.TabStop = false;
+            this.groupBoxTS64.Text = "When TX\'ing, record";
+            // 
+            // radRecording_TXing_iq
+            // 
+            this.radRecording_TXing_iq.AutoSize = true;
+            this.radRecording_TXing_iq.Image = null;
+            this.radRecording_TXing_iq.Location = new System.Drawing.Point(6, 43);
+            this.radRecording_TXing_iq.Name = "radRecording_TXing_iq";
+            this.radRecording_TXing_iq.Size = new System.Drawing.Size(88, 17);
+            this.radRecording_TXing_iq.TabIndex = 1;
+            this.radRecording_TXing_iq.Text = "TX Output IQ";
+            this.radRecording_TXing_iq.UseVisualStyleBackColor = true;
+            this.radRecording_TXing_iq.CheckedChanged += new System.EventHandler(this.radRecording_TXing_CheckedChanged);
+            // 
+            // radRecording_TXing_mic
+            // 
+            this.radRecording_TXing_mic.AutoSize = true;
+            this.radRecording_TXing_mic.Checked = true;
+            this.radRecording_TXing_mic.Image = null;
+            this.radRecording_TXing_mic.Location = new System.Drawing.Point(6, 19);
+            this.radRecording_TXing_mic.Name = "radRecording_TXing_mic";
+            this.radRecording_TXing_mic.Size = new System.Drawing.Size(74, 17);
+            this.radRecording_TXing_mic.TabIndex = 0;
+            this.radRecording_TXing_mic.TabStop = true;
+            this.radRecording_TXing_mic.Text = "MIC Audio";
+            this.radRecording_TXing_mic.UseVisualStyleBackColor = true;
+            this.radRecording_TXing_mic.CheckedChanged += new System.EventHandler(this.radRecording_TXing_CheckedChanged);
+            // 
+            // groupBoxTS63
+            // 
+            this.groupBoxTS63.Controls.Add(this.radRecording_RXing_audio);
+            this.groupBoxTS63.Controls.Add(this.radRecording_RXing_iq);
+            this.groupBoxTS63.Location = new System.Drawing.Point(338, 9);
+            this.groupBoxTS63.Name = "groupBoxTS63";
+            this.groupBoxTS63.Size = new System.Drawing.Size(121, 73);
+            this.groupBoxTS63.TabIndex = 6;
+            this.groupBoxTS63.TabStop = false;
+            this.groupBoxTS63.Text = "When RX\'ing, record";
+            // 
+            // radRecording_RXing_audio
+            // 
+            this.radRecording_RXing_audio.AutoSize = true;
+            this.radRecording_RXing_audio.Checked = true;
+            this.radRecording_RXing_audio.Image = null;
+            this.radRecording_RXing_audio.Location = new System.Drawing.Point(6, 19);
+            this.radRecording_RXing_audio.Name = "radRecording_RXing_audio";
+            this.radRecording_RXing_audio.Size = new System.Drawing.Size(70, 17);
+            this.radRecording_RXing_audio.TabIndex = 1;
+            this.radRecording_RXing_audio.TabStop = true;
+            this.radRecording_RXing_audio.Text = "RX Audio";
+            this.radRecording_RXing_audio.UseVisualStyleBackColor = true;
+            this.radRecording_RXing_audio.CheckedChanged += new System.EventHandler(this.radRecording_RXing_CheckedChanged);
+            // 
+            // radRecording_RXing_iq
+            // 
+            this.radRecording_RXing_iq.AutoSize = true;
+            this.radRecording_RXing_iq.Image = null;
+            this.radRecording_RXing_iq.Location = new System.Drawing.Point(6, 42);
+            this.radRecording_RXing_iq.Name = "radRecording_RXing_iq";
+            this.radRecording_RXing_iq.Size = new System.Drawing.Size(81, 17);
+            this.radRecording_RXing_iq.TabIndex = 0;
+            this.radRecording_RXing_iq.Text = "RX Input IQ";
+            this.radRecording_RXing_iq.UseVisualStyleBackColor = true;
+            this.radRecording_RXing_iq.CheckedChanged += new System.EventHandler(this.radRecording_RXing_CheckedChanged);
+            // 
+            // groupBoxTS61
+            // 
+            this.groupBoxTS61.Controls.Add(this.nudRecording_gainOutput);
+            this.groupBoxTS61.Controls.Add(this.labelTS647);
+            this.groupBoxTS61.Controls.Add(this.nudRecording_gainInput);
+            this.groupBoxTS61.Controls.Add(this.labelTS646);
+            this.groupBoxTS61.Controls.Add(this.btnRecording_refreshDevices);
+            this.groupBoxTS61.Controls.Add(this.comboPCAudioDevices_OUT);
+            this.groupBoxTS61.Controls.Add(this.comboPCAudioDevices_IN);
+            this.groupBoxTS61.Controls.Add(this.labelTS88);
+            this.groupBoxTS61.Controls.Add(this.labelTS16);
+            this.groupBoxTS61.Location = new System.Drawing.Point(199, 88);
+            this.groupBoxTS61.Name = "groupBoxTS61";
+            this.groupBoxTS61.Size = new System.Drawing.Size(500, 94);
+            this.groupBoxTS61.TabIndex = 2;
+            this.groupBoxTS61.TabStop = false;
+            this.groupBoxTS61.Text = "PC Audio";
+            // 
+            // nudRecording_gainOutput
+            // 
+            this.nudRecording_gainOutput.DecimalPlaces = 2;
+            this.nudRecording_gainOutput.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudRecording_gainOutput.Location = new System.Drawing.Point(266, 68);
+            this.nudRecording_gainOutput.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.nudRecording_gainOutput.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudRecording_gainOutput.Name = "nudRecording_gainOutput";
+            this.nudRecording_gainOutput.Size = new System.Drawing.Size(50, 20);
+            this.nudRecording_gainOutput.TabIndex = 134;
+            this.nudRecording_gainOutput.TinyStep = false;
+            this.nudRecording_gainOutput.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudRecording_gainOutput.ValueChanged += new System.EventHandler(this.nudRecording_gainOutput_ValueChanged);
+            // 
+            // labelTS647
+            // 
+            this.labelTS647.AutoSize = true;
+            this.labelTS647.Image = null;
+            this.labelTS647.Location = new System.Drawing.Point(195, 70);
+            this.labelTS647.Name = "labelTS647";
+            this.labelTS647.Size = new System.Drawing.Size(65, 13);
+            this.labelTS647.TabIndex = 133;
+            this.labelTS647.Text = "Output gain:";
+            // 
+            // nudRecording_gainInput
+            // 
+            this.nudRecording_gainInput.DecimalPlaces = 2;
+            this.nudRecording_gainInput.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudRecording_gainInput.Location = new System.Drawing.Point(117, 68);
+            this.nudRecording_gainInput.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.nudRecording_gainInput.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudRecording_gainInput.Name = "nudRecording_gainInput";
+            this.nudRecording_gainInput.Size = new System.Drawing.Size(50, 20);
+            this.nudRecording_gainInput.TabIndex = 132;
+            this.nudRecording_gainInput.TinyStep = false;
+            this.nudRecording_gainInput.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudRecording_gainInput.ValueChanged += new System.EventHandler(this.nudRecording_gainInput_ValueChanged);
+            // 
+            // labelTS646
+            // 
+            this.labelTS646.AutoSize = true;
+            this.labelTS646.Image = null;
+            this.labelTS646.Location = new System.Drawing.Point(49, 70);
+            this.labelTS646.Name = "labelTS646";
+            this.labelTS646.Size = new System.Drawing.Size(57, 13);
+            this.labelTS646.TabIndex = 131;
+            this.labelTS646.Text = "Input gain:";
+            // 
+            // btnRecording_refreshDevices
+            // 
+            this.btnRecording_refreshDevices.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnRecording_refreshDevices.Image = global::Thetis.Properties.Resources.Command_Refresh_16;
+            this.btnRecording_refreshDevices.Location = new System.Drawing.Point(470, 34);
+            this.btnRecording_refreshDevices.Name = "btnRecording_refreshDevices";
+            this.btnRecording_refreshDevices.Selectable = true;
+            this.btnRecording_refreshDevices.Size = new System.Drawing.Size(24, 24);
+            this.btnRecording_refreshDevices.TabIndex = 130;
+            this.toolTip1.SetToolTip(this.btnRecording_refreshDevices, "Refresh the nic list");
+            this.btnRecording_refreshDevices.UseVisualStyleBackColor = true;
+            this.btnRecording_refreshDevices.Click += new System.EventHandler(this.btnRecording_refreshDevices_Click);
+            // 
+            // comboPCAudioDevices_OUT
+            // 
+            this.comboPCAudioDevices_OUT.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboPCAudioDevices_OUT.FormattingEnabled = true;
+            this.comboPCAudioDevices_OUT.Location = new System.Drawing.Point(117, 43);
+            this.comboPCAudioDevices_OUT.Name = "comboPCAudioDevices_OUT";
+            this.comboPCAudioDevices_OUT.Size = new System.Drawing.Size(347, 21);
+            this.comboPCAudioDevices_OUT.TabIndex = 3;
+            this.comboPCAudioDevices_OUT.SelectedIndexChanged += new System.EventHandler(this.comboPCAudioDevices_OUT_SelectedIndexChanged);
+            // 
+            // comboPCAudioDevices_IN
+            // 
+            this.comboPCAudioDevices_IN.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboPCAudioDevices_IN.FormattingEnabled = true;
+            this.comboPCAudioDevices_IN.Location = new System.Drawing.Point(117, 18);
+            this.comboPCAudioDevices_IN.Name = "comboPCAudioDevices_IN";
+            this.comboPCAudioDevices_IN.Size = new System.Drawing.Size(347, 21);
+            this.comboPCAudioDevices_IN.TabIndex = 2;
+            this.comboPCAudioDevices_IN.SelectedIndexChanged += new System.EventHandler(this.comboPCAudioDevices_IN_SelectedIndexChanged);
+            // 
+            // labelTS88
+            // 
+            this.labelTS88.AutoSize = true;
+            this.labelTS88.Image = null;
+            this.labelTS88.Location = new System.Drawing.Point(22, 46);
+            this.labelTS88.Name = "labelTS88";
+            this.labelTS88.Size = new System.Drawing.Size(89, 13);
+            this.labelTS88.TabIndex = 1;
+            this.labelTS88.Text = "Playback device:";
+            // 
+            // labelTS16
+            // 
+            this.labelTS16.AutoSize = true;
+            this.labelTS16.Image = null;
+            this.labelTS16.Location = new System.Drawing.Point(17, 21);
+            this.labelTS16.Name = "labelTS16";
+            this.labelTS16.Size = new System.Drawing.Size(94, 13);
+            this.labelTS16.TabIndex = 0;
+            this.labelTS16.Text = "Recording device:";
+            // 
+            // groupBoxTS62
+            // 
+            this.groupBoxTS62.Controls.Add(this.nudRecording_dither);
+            this.groupBoxTS62.Controls.Add(this.chkRecording_dither);
+            this.groupBoxTS62.Controls.Add(this.comboRecording_samplerate);
+            this.groupBoxTS62.Location = new System.Drawing.Point(199, 9);
+            this.groupBoxTS62.Name = "groupBoxTS62";
+            this.groupBoxTS62.Size = new System.Drawing.Size(133, 73);
+            this.groupBoxTS62.TabIndex = 5;
+            this.groupBoxTS62.TabStop = false;
+            this.groupBoxTS62.Text = "Sample Rate + Dither";
+            // 
+            // nudRecording_dither
+            // 
+            this.nudRecording_dither.DecimalPlaces = 1;
+            this.nudRecording_dither.Enabled = false;
+            this.nudRecording_dither.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudRecording_dither.Location = new System.Drawing.Point(66, 43);
+            this.nudRecording_dither.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudRecording_dither.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudRecording_dither.Name = "nudRecording_dither";
+            this.nudRecording_dither.Size = new System.Drawing.Size(53, 20);
+            this.nudRecording_dither.TabIndex = 2;
+            this.nudRecording_dither.TinyStep = false;
+            this.nudRecording_dither.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            65536});
+            this.nudRecording_dither.ValueChanged += new System.EventHandler(this.nudRecording_dither_ValueChanged);
+            // 
+            // chkRecording_dither
+            // 
+            this.chkRecording_dither.AutoSize = true;
+            this.chkRecording_dither.Image = null;
+            this.chkRecording_dither.Location = new System.Drawing.Point(6, 46);
+            this.chkRecording_dither.Name = "chkRecording_dither";
+            this.chkRecording_dither.Size = new System.Drawing.Size(54, 17);
+            this.chkRecording_dither.TabIndex = 1;
+            this.chkRecording_dither.Text = "Dither";
+            this.chkRecording_dither.UseVisualStyleBackColor = true;
+            this.chkRecording_dither.CheckedChanged += new System.EventHandler(this.chkRecording_dither_CheckedChanged);
+            // 
+            // comboRecording_samplerate
+            // 
+            this.comboRecording_samplerate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboRecording_samplerate.FormattingEnabled = true;
+            this.comboRecording_samplerate.Items.AddRange(new object[] {
+            "6000",
+            "12000",
+            "24000",
+            "48000",
+            "96000",
+            "384000",
+            "768000",
+            "1536000"});
+            this.comboRecording_samplerate.Location = new System.Drawing.Point(6, 19);
+            this.comboRecording_samplerate.Name = "comboRecording_samplerate";
+            this.comboRecording_samplerate.Size = new System.Drawing.Size(113, 21);
+            this.comboRecording_samplerate.TabIndex = 0;
+            this.comboRecording_samplerate.SelectedIndexChanged += new System.EventHandler(this.comboRecording_samplerate_SelectedIndexChanged);
+            // 
+            // groupBoxTS60
+            // 
+            this.groupBoxTS60.Controls.Add(this.btnRecording_selectCustomFolder);
+            this.groupBoxTS60.Controls.Add(this.labelTS648);
+            this.groupBoxTS60.Controls.Add(this.txtRecording_customFolder);
+            this.groupBoxTS60.Controls.Add(this.radRecording_storageCustom);
+            this.groupBoxTS60.Controls.Add(this.radRecording_storageMusic);
+            this.groupBoxTS60.Controls.Add(this.chkRecording_generateJSONs);
+            this.groupBoxTS60.Controls.Add(this.chkRecording_generateMP3s);
+            this.groupBoxTS60.Controls.Add(this.chkRecording_keepQuckRecords);
+            this.groupBoxTS60.Controls.Add(this.chkRecording_playbackMox);
+            this.groupBoxTS60.Controls.Add(this.chkBypassVACPlayingRecording);
+            this.groupBoxTS60.Location = new System.Drawing.Point(9, 188);
+            this.groupBoxTS60.Name = "groupBoxTS60";
+            this.groupBoxTS60.Size = new System.Drawing.Size(522, 196);
+            this.groupBoxTS60.TabIndex = 1;
+            this.groupBoxTS60.TabStop = false;
+            this.groupBoxTS60.Text = "Options";
+            // 
+            // btnRecording_selectCustomFolder
+            // 
+            this.btnRecording_selectCustomFolder.Enabled = false;
+            this.btnRecording_selectCustomFolder.Image = null;
+            this.btnRecording_selectCustomFolder.Location = new System.Drawing.Point(478, 164);
+            this.btnRecording_selectCustomFolder.Name = "btnRecording_selectCustomFolder";
+            this.btnRecording_selectCustomFolder.Selectable = true;
+            this.btnRecording_selectCustomFolder.Size = new System.Drawing.Size(34, 23);
+            this.btnRecording_selectCustomFolder.TabIndex = 93;
+            this.btnRecording_selectCustomFolder.Text = "...";
+            this.btnRecording_selectCustomFolder.UseVisualStyleBackColor = true;
+            this.btnRecording_selectCustomFolder.Click += new System.EventHandler(this.btnRecording_selectCustomFolder_Click);
+            // 
+            // labelTS648
+            // 
+            this.labelTS648.AutoSize = true;
+            this.labelTS648.Image = null;
+            this.labelTS648.Location = new System.Drawing.Point(18, 146);
+            this.labelTS648.Name = "labelTS648";
+            this.labelTS648.Size = new System.Drawing.Size(47, 13);
+            this.labelTS648.TabIndex = 92;
+            this.labelTS648.Text = "Storage:";
+            // 
+            // txtRecording_customFolder
+            // 
+            this.txtRecording_customFolder.Enabled = false;
+            this.txtRecording_customFolder.Location = new System.Drawing.Point(175, 166);
+            this.txtRecording_customFolder.Name = "txtRecording_customFolder";
+            this.txtRecording_customFolder.Size = new System.Drawing.Size(297, 20);
+            this.txtRecording_customFolder.TabIndex = 91;
+            this.txtRecording_customFolder.TextChanged += new System.EventHandler(this.txtRecording_customFolder_TextChanged);
+            // 
+            // radRecording_storageCustom
+            // 
+            this.radRecording_storageCustom.AutoSize = true;
+            this.radRecording_storageCustom.Image = null;
+            this.radRecording_storageCustom.Location = new System.Drawing.Point(71, 167);
+            this.radRecording_storageCustom.Name = "radRecording_storageCustom";
+            this.radRecording_storageCustom.Size = new System.Drawing.Size(98, 17);
+            this.radRecording_storageCustom.TabIndex = 90;
+            this.radRecording_storageCustom.Text = "Custom storage";
+            this.radRecording_storageCustom.UseVisualStyleBackColor = true;
+            this.radRecording_storageCustom.CheckedChanged += new System.EventHandler(this.radRecording_storage_CheckedChanged);
+            // 
+            // radRecording_storageMusic
+            // 
+            this.radRecording_storageMusic.AutoSize = true;
+            this.radRecording_storageMusic.Checked = true;
+            this.radRecording_storageMusic.Image = null;
+            this.radRecording_storageMusic.Location = new System.Drawing.Point(71, 144);
+            this.radRecording_storageMusic.Name = "radRecording_storageMusic";
+            this.radRecording_storageMusic.Size = new System.Drawing.Size(113, 17);
+            this.radRecording_storageMusic.TabIndex = 89;
+            this.radRecording_storageMusic.TabStop = true;
+            this.radRecording_storageMusic.Text = "Use Music storage";
+            this.radRecording_storageMusic.UseVisualStyleBackColor = true;
+            this.radRecording_storageMusic.CheckedChanged += new System.EventHandler(this.radRecording_storage_CheckedChanged);
+            // 
+            // chkRecording_generateJSONs
+            // 
+            this.chkRecording_generateJSONs.AutoSize = true;
+            this.chkRecording_generateJSONs.Image = null;
+            this.chkRecording_generateJSONs.Location = new System.Drawing.Point(21, 119);
+            this.chkRecording_generateJSONs.Name = "chkRecording_generateJSONs";
+            this.chkRecording_generateJSONs.Size = new System.Drawing.Size(150, 17);
+            this.chkRecording_generateJSONs.TabIndex = 87;
+            this.chkRecording_generateJSONs.Text = "Generate JSON details file";
+            this.chkRecording_generateJSONs.UseVisualStyleBackColor = true;
+            this.chkRecording_generateJSONs.CheckedChanged += new System.EventHandler(this.chkRecording_generateJSONs_CheckedChanged);
+            // 
+            // chkRecording_generateMP3s
+            // 
+            this.chkRecording_generateMP3s.AutoSize = true;
+            this.chkRecording_generateMP3s.Image = null;
+            this.chkRecording_generateMP3s.Location = new System.Drawing.Point(21, 96);
+            this.chkRecording_generateMP3s.Name = "chkRecording_generateMP3s";
+            this.chkRecording_generateMP3s.Size = new System.Drawing.Size(206, 17);
+            this.chkRecording_generateMP3s.TabIndex = 86;
+            this.chkRecording_generateMP3s.Text = "Generate MP3 as well as the WAV file";
+            this.chkRecording_generateMP3s.UseVisualStyleBackColor = true;
+            this.chkRecording_generateMP3s.CheckedChanged += new System.EventHandler(this.chkRecording_generateMP3s_CheckedChanged);
+            // 
+            // chkRecording_keepQuckRecords
+            // 
+            this.chkRecording_keepQuckRecords.AutoSize = true;
+            this.chkRecording_keepQuckRecords.Image = null;
+            this.chkRecording_keepQuckRecords.Location = new System.Drawing.Point(21, 73);
+            this.chkRecording_keepQuckRecords.Name = "chkRecording_keepQuckRecords";
+            this.chkRecording_keepQuckRecords.Size = new System.Drawing.Size(118, 17);
+            this.chkRecording_keepQuckRecords.TabIndex = 85;
+            this.chkRecording_keepQuckRecords.Text = "Keep quick records";
+            this.chkRecording_keepQuckRecords.UseVisualStyleBackColor = true;
+            this.chkRecording_keepQuckRecords.CheckedChanged += new System.EventHandler(this.chkRecording_keepQuckRecords_CheckedChanged);
+            // 
+            // chkRecording_playbackMox
+            // 
+            this.chkRecording_playbackMox.AutoSize = true;
+            this.chkRecording_playbackMox.Checked = true;
+            this.chkRecording_playbackMox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRecording_playbackMox.Image = null;
+            this.chkRecording_playbackMox.Location = new System.Drawing.Point(21, 28);
+            this.chkRecording_playbackMox.Name = "chkRecording_playbackMox";
+            this.chkRecording_playbackMox.Size = new System.Drawing.Size(134, 17);
+            this.chkRecording_playbackMox.TabIndex = 0;
+            this.chkRecording_playbackMox.Text = "Playback causes MOX";
+            this.chkRecording_playbackMox.UseVisualStyleBackColor = true;
+            this.chkRecording_playbackMox.CheckedChanged += new System.EventHandler(this.chkRecording_playbackMox_CheckedChanged);
+            // 
+            // chkBypassVACPlayingRecording
+            // 
+            this.chkBypassVACPlayingRecording.Checked = true;
+            this.chkBypassVACPlayingRecording.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkBypassVACPlayingRecording.Image = null;
+            this.chkBypassVACPlayingRecording.Location = new System.Drawing.Point(21, 51);
+            this.chkBypassVACPlayingRecording.Name = "chkBypassVACPlayingRecording";
+            this.chkBypassVACPlayingRecording.Size = new System.Drawing.Size(271, 16);
+            this.chkBypassVACPlayingRecording.TabIndex = 84;
+            this.chkBypassVACPlayingRecording.Text = "Bypass VAC for recording playback";
+            this.toolTip1.SetToolTip(this.chkBypassVACPlayingRecording, "If you are using VAC enable this to be able to play recordings");
+            this.chkBypassVACPlayingRecording.UseVisualStyleBackColor = true;
+            this.chkBypassVACPlayingRecording.CheckedChanged += new System.EventHandler(this.chkBypassVACPlayingRecording_CheckedChanged);
+            // 
+            // btnRecording_openRecordingsFolder
+            // 
+            this.btnRecording_openRecordingsFolder.Image = null;
+            this.btnRecording_openRecordingsFolder.Location = new System.Drawing.Point(576, 334);
+            this.btnRecording_openRecordingsFolder.Name = "btnRecording_openRecordingsFolder";
+            this.btnRecording_openRecordingsFolder.Selectable = true;
+            this.btnRecording_openRecordingsFolder.Size = new System.Drawing.Size(123, 45);
+            this.btnRecording_openRecordingsFolder.TabIndex = 4;
+            this.btnRecording_openRecordingsFolder.Text = "Open Recordings Folder";
+            this.btnRecording_openRecordingsFolder.UseVisualStyleBackColor = true;
+            this.btnRecording_openRecordingsFolder.Click += new System.EventHandler(this.btnRecording_openRecordingsFolder_Click);
+            // 
+            // groupBoxTS59
+            // 
+            this.groupBoxTS59.Controls.Add(this.labelTS9);
+            this.groupBoxTS59.Controls.Add(this.radRecordingBits_8pcm);
+            this.groupBoxTS59.Controls.Add(this.radRecordingBits_16pcm);
+            this.groupBoxTS59.Controls.Add(this.radRecordingBits_24pcm);
+            this.groupBoxTS59.Controls.Add(this.radRecordingBits_32pcm);
+            this.groupBoxTS59.Controls.Add(this.radRecordingBits_ieee);
+            this.groupBoxTS59.Location = new System.Drawing.Point(9, 9);
+            this.groupBoxTS59.Name = "groupBoxTS59";
+            this.groupBoxTS59.Size = new System.Drawing.Size(184, 173);
+            this.groupBoxTS59.TabIndex = 0;
+            this.groupBoxTS59.TabStop = false;
+            this.groupBoxTS59.Text = "Bit rates";
+            // 
+            // labelTS9
+            // 
+            this.labelTS9.AutoSize = true;
+            this.labelTS9.Image = null;
+            this.labelTS9.Location = new System.Drawing.Point(12, 147);
+            this.labelTS9.Name = "labelTS9";
+            this.labelTS9.Size = new System.Drawing.Size(129, 13);
+            this.labelTS9.TabIndex = 5;
+            this.labelTS9.Text = "All are two channel stereo";
+            // 
+            // radRecordingBits_8pcm
+            // 
+            this.radRecordingBits_8pcm.AutoSize = true;
+            this.radRecordingBits_8pcm.Image = null;
+            this.radRecordingBits_8pcm.Location = new System.Drawing.Point(15, 120);
+            this.radRecordingBits_8pcm.Name = "radRecordingBits_8pcm";
+            this.radRecordingBits_8pcm.Size = new System.Drawing.Size(108, 17);
+            this.radRecordingBits_8pcm.TabIndex = 4;
+            this.radRecordingBits_8pcm.Text = "8-Bit Signed PCM";
+            this.radRecordingBits_8pcm.UseVisualStyleBackColor = true;
+            this.radRecordingBits_8pcm.CheckedChanged += new System.EventHandler(this.radRecordingBits_CheckedChanged);
+            // 
+            // radRecordingBits_16pcm
+            // 
+            this.radRecordingBits_16pcm.AutoSize = true;
+            this.radRecordingBits_16pcm.Image = null;
+            this.radRecordingBits_16pcm.Location = new System.Drawing.Point(15, 97);
+            this.radRecordingBits_16pcm.Name = "radRecordingBits_16pcm";
+            this.radRecordingBits_16pcm.Size = new System.Drawing.Size(114, 17);
+            this.radRecordingBits_16pcm.TabIndex = 3;
+            this.radRecordingBits_16pcm.Text = "16-Bit Signed PCM";
+            this.radRecordingBits_16pcm.UseVisualStyleBackColor = true;
+            this.radRecordingBits_16pcm.CheckedChanged += new System.EventHandler(this.radRecordingBits_CheckedChanged);
+            // 
+            // radRecordingBits_24pcm
+            // 
+            this.radRecordingBits_24pcm.AutoSize = true;
+            this.radRecordingBits_24pcm.Image = null;
+            this.radRecordingBits_24pcm.Location = new System.Drawing.Point(15, 74);
+            this.radRecordingBits_24pcm.Name = "radRecordingBits_24pcm";
+            this.radRecordingBits_24pcm.Size = new System.Drawing.Size(114, 17);
+            this.radRecordingBits_24pcm.TabIndex = 2;
+            this.radRecordingBits_24pcm.Text = "24-Bit Signed PCM";
+            this.radRecordingBits_24pcm.UseVisualStyleBackColor = true;
+            this.radRecordingBits_24pcm.CheckedChanged += new System.EventHandler(this.radRecordingBits_CheckedChanged);
+            // 
+            // radRecordingBits_32pcm
+            // 
+            this.radRecordingBits_32pcm.AutoSize = true;
+            this.radRecordingBits_32pcm.Image = null;
+            this.radRecordingBits_32pcm.Location = new System.Drawing.Point(15, 51);
+            this.radRecordingBits_32pcm.Name = "radRecordingBits_32pcm";
+            this.radRecordingBits_32pcm.Size = new System.Drawing.Size(114, 17);
+            this.radRecordingBits_32pcm.TabIndex = 1;
+            this.radRecordingBits_32pcm.Text = "32-Bit Signed PCM";
+            this.radRecordingBits_32pcm.UseVisualStyleBackColor = true;
+            this.radRecordingBits_32pcm.CheckedChanged += new System.EventHandler(this.radRecordingBits_CheckedChanged);
+            // 
+            // radRecordingBits_ieee
+            // 
+            this.radRecordingBits_ieee.AutoSize = true;
+            this.radRecordingBits_ieee.Checked = true;
+            this.radRecordingBits_ieee.Image = null;
+            this.radRecordingBits_ieee.Location = new System.Drawing.Point(15, 28);
+            this.radRecordingBits_ieee.Name = "radRecordingBits_ieee";
+            this.radRecordingBits_ieee.Size = new System.Drawing.Size(160, 17);
+            this.radRecordingBits_ieee.TabIndex = 0;
+            this.radRecordingBits_ieee.TabStop = true;
+            this.radRecordingBits_ieee.Text = "32-bit IEEE Floats (preferred)";
+            this.radRecordingBits_ieee.UseVisualStyleBackColor = true;
+            this.radRecordingBits_ieee.CheckedChanged += new System.EventHandler(this.radRecordingBits_CheckedChanged);
+            // 
+            // btnRecording_openQuickFolder
+            // 
+            this.btnRecording_openQuickFolder.Image = null;
+            this.btnRecording_openQuickFolder.Location = new System.Drawing.Point(576, 283);
+            this.btnRecording_openQuickFolder.Name = "btnRecording_openQuickFolder";
+            this.btnRecording_openQuickFolder.Selectable = true;
+            this.btnRecording_openQuickFolder.Size = new System.Drawing.Size(123, 45);
+            this.btnRecording_openQuickFolder.TabIndex = 3;
+            this.btnRecording_openQuickFolder.Text = "Open Quick Record Folder";
+            this.btnRecording_openQuickFolder.UseVisualStyleBackColor = true;
+            this.btnRecording_openQuickFolder.Click += new System.EventHandler(this.btnRecording_openQuickFolder_Click);
             // 
             // tpDisplay
             // 
@@ -69139,6 +69745,22 @@
             this.tpCMAsio.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCMasio_InOut_Info)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAsioBlockNum)).EndInit();
+            this.tpAudioRecording.ResumeLayout(false);
+            this.groupBoxTS64.ResumeLayout(false);
+            this.groupBoxTS64.PerformLayout();
+            this.groupBoxTS63.ResumeLayout(false);
+            this.groupBoxTS63.PerformLayout();
+            this.groupBoxTS61.ResumeLayout(false);
+            this.groupBoxTS61.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_gainOutput)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_gainInput)).EndInit();
+            this.groupBoxTS62.ResumeLayout(false);
+            this.groupBoxTS62.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_dither)).EndInit();
+            this.groupBoxTS60.ResumeLayout(false);
+            this.groupBoxTS60.PerformLayout();
+            this.groupBoxTS59.ResumeLayout(false);
+            this.groupBoxTS59.PerformLayout();
             this.tpDisplay.ResumeLayout(false);
             this.tcDisplay.ResumeLayout(false);
             this.tpDisplayGeneral.ResumeLayout(false);
@@ -74356,5 +74978,45 @@
         private CheckBoxTS chkNetworkProtocolMustMatch;
         private ButtonTS btnAddCustomRadio;
         private CheckBoxTS chkLimitInterfacesToEthernetWifi;
+        private TabPage tpAudioRecording;
+        private GroupBoxTS groupBoxTS59;
+        private RadioButtonTS radRecordingBits_24pcm;
+        private RadioButtonTS radRecordingBits_32pcm;
+        private RadioButtonTS radRecordingBits_ieee;
+        private RadioButtonTS radRecordingBits_8pcm;
+        private RadioButtonTS radRecordingBits_16pcm;
+        private GroupBoxTS groupBoxTS61;
+        private GroupBoxTS groupBoxTS60;
+        private CheckBoxTS chkRecording_playbackMox;
+        private LabelTS labelTS9;
+        private ButtonTS btnRecording_refreshDevices;
+        private ComboBoxTS comboPCAudioDevices_OUT;
+        private ComboBoxTS comboPCAudioDevices_IN;
+        private LabelTS labelTS88;
+        private LabelTS labelTS16;
+        private CheckBoxTS chkRecording_keepQuckRecords;
+        private CheckBoxTS chkRecording_generateMP3s;
+        private NumericUpDownTS nudRecording_gainOutput;
+        private LabelTS labelTS647;
+        private NumericUpDownTS nudRecording_gainInput;
+        private LabelTS labelTS646;
+        private ButtonTS btnRecording_openRecordingsFolder;
+        private ButtonTS btnRecording_openQuickFolder;
+        private TextBoxTS txtRecording_customFolder;
+        private RadioButtonTS radRecording_storageCustom;
+        private RadioButtonTS radRecording_storageMusic;
+        private CheckBoxTS chkRecording_generateJSONs;
+        private ButtonTS btnRecording_selectCustomFolder;
+        private LabelTS labelTS648;
+        private GroupBoxTS groupBoxTS62;
+        private ComboBoxTS comboRecording_samplerate;
+        private GroupBoxTS groupBoxTS63;
+        private NumericUpDownTS nudRecording_dither;
+        private CheckBoxTS chkRecording_dither;
+        private GroupBoxTS groupBoxTS64;
+        private RadioButtonTS radRecording_TXing_iq;
+        private RadioButtonTS radRecording_TXing_mic;
+        private RadioButtonTS radRecording_RXing_audio;
+        private RadioButtonTS radRecording_RXing_iq;
     }
 }

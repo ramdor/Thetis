@@ -126,43 +126,43 @@ namespace Thetis
             set { tx_output_signal = value; }
         }
 
-        private static bool record_rx_preprocessed = false;
-        public static bool RecordRXPreProcessed
-        {
-            get { return record_rx_preprocessed; }
-            set
-            {
-                record_rx_preprocessed = value;
-                WaveThing.wrecorder[0].RxPre = value;
-                WaveThing.wrecorder[1].RxPre = value;
-            }
-        }
+        //private static bool record_rx_preprocessed = false;
+        //public static bool RecordRXPreProcessed
+        //{
+        //    get { return record_rx_preprocessed; }
+        //    set
+        //    {
+        //        record_rx_preprocessed = value;
+        //        WaveThing.wrecorder[0].RxPre = value;
+        //        WaveThing.wrecorder[1].RxPre = value;
+        //    }
+        //}
 
-        private static bool record_tx_preprocessed = true;
-        public static bool RecordTXPreProcessed
-        {
-            get { return record_tx_preprocessed; }
-            set
-            {
-                record_tx_preprocessed = value;
-                WaveThing.wrecorder[0].TxPre = value;
-                WaveThing.wrecorder[1].TxPre = value;
-            }
-        }
+        //private static bool record_tx_preprocessed = true;
+        //public static bool RecordTXPreProcessed
+        //{
+        //    get { return record_tx_preprocessed; }
+        //    set
+        //    {
+        //        record_tx_preprocessed = value;
+        //        WaveThing.wrecorder[0].TxPre = value;
+        //        WaveThing.wrecorder[1].TxPre = value;
+        //    }
+        //}
 
-        private static short bit_depth = 32;
-        public static short BitDepth
-        {
-            get { return bit_depth; }
-            set { bit_depth = value; }
-        }
+        //private static short bit_depth = 32;
+        //public static short BitDepth
+        //{
+        //    get { return bit_depth; }
+        //    set { bit_depth = value; }
+        //}
 
-        private static short format_tag = 3;
-        public static short FormatTag
-        {
-            get { return format_tag; }
-            set { format_tag = value; }
-        }
+        //private static short format_tag = 3;
+        //public static short FormatTag
+        //{
+        //    get { return format_tag; }
+        //    set { format_tag = value; }
+        //}
 
         private static bool vox_enabled = false;
         public static bool VOXEnabled
@@ -361,12 +361,7 @@ namespace Thetis
                     ivac.SetIVACmox(1, 0);
                 }
 
-                // [2.10.3.5]MW0LGE
-                if (WaveThing.wave_file_writer[0] != null)
-                    WaveThing.wave_file_writer[0].UpdateMox();
-                if (WaveThing.wave_file_writer[1] != null)
-                    WaveThing.wave_file_writer[1].UpdateMox();
-                //
+                WaveThing.UpdateMox();
             }
         }
 

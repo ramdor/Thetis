@@ -330,7 +330,6 @@
         private MenuStrip menuStrip1;
         private ToolStripMenuItem setupToolStripMenuItem;
         private ToolStripMenuItem memoryToolStripMenuItem;
-        private ToolStripMenuItem waveToolStripMenuItem;
         private ToolStripMenuItem equalizerToolStripMenuItem;
         private ToolStripMenuItem xVTRsToolStripMenuItem;
         private ToolStripMenuItem cWXToolStripMenuItem;
@@ -741,7 +740,6 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.databaseManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.memoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.waveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.equalizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xVTRsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cWXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1136,6 +1134,12 @@
             this.lblAndromedaEncoderSlider = new System.Windows.Forms.LabelTS();
             this.lblATUTuneLabel = new System.Windows.Forms.LabelTS();
             this.ptbSquelch = new Thetis.PrettyTrackBar();
+            this.btnPCrecord = new System.Windows.Forms.ButtonTS();
+            this.btnStopRecord = new System.Windows.Forms.ButtonTS();
+            this.btnWDSPplay = new System.Windows.Forms.ButtonTS();
+            this.btnStopPlay = new System.Windows.Forms.ButtonTS();
+            this.btnWDSPrecord = new System.Windows.Forms.ButtonTS();
+            this.btnPCPlay = new System.Windows.Forms.ButtonTS();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFGain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFBandwidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFFreq)).BeginInit();
@@ -4100,7 +4104,6 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setupToolStripMenuItem,
             this.memoryToolStripMenuItem,
-            this.waveToolStripMenuItem,
             this.equalizerToolStripMenuItem,
             this.xVTRsToolStripMenuItem,
             this.cWXToolStripMenuItem,
@@ -4155,13 +4158,6 @@
             this.memoryToolStripMenuItem.Name = "memoryToolStripMenuItem";
             resources.ApplyResources(this.memoryToolStripMenuItem, "memoryToolStripMenuItem");
             this.memoryToolStripMenuItem.Click += new System.EventHandler(this.memoryToolStripMenuItem_Click);
-            // 
-            // waveToolStripMenuItem
-            // 
-            this.waveToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.waveToolStripMenuItem.Name = "waveToolStripMenuItem";
-            resources.ApplyResources(this.waveToolStripMenuItem, "waveToolStripMenuItem");
-            this.waveToolStripMenuItem.Click += new System.EventHandler(this.waveToolStripMenuItem_Click);
             // 
             // equalizerToolStripMenuItem
             // 
@@ -7573,11 +7569,65 @@
             this.ptbSquelch.Value = 0;
             this.ptbSquelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbSquelch_Scroll);
             // 
+            // btnPCrecord
+            // 
+            resources.ApplyResources(this.btnPCrecord, "btnPCrecord");
+            this.btnPCrecord.Name = "btnPCrecord";
+            this.btnPCrecord.Selectable = true;
+            this.btnPCrecord.UseVisualStyleBackColor = true;
+            this.btnPCrecord.Click += new System.EventHandler(this.buttonTS1_Click);
+            // 
+            // btnStopRecord
+            // 
+            resources.ApplyResources(this.btnStopRecord, "btnStopRecord");
+            this.btnStopRecord.Name = "btnStopRecord";
+            this.btnStopRecord.Selectable = true;
+            this.btnStopRecord.UseVisualStyleBackColor = true;
+            this.btnStopRecord.Click += new System.EventHandler(this.buttonTS2_Click);
+            // 
+            // btnWDSPplay
+            // 
+            resources.ApplyResources(this.btnWDSPplay, "btnWDSPplay");
+            this.btnWDSPplay.Name = "btnWDSPplay";
+            this.btnWDSPplay.Selectable = true;
+            this.btnWDSPplay.UseVisualStyleBackColor = true;
+            this.btnWDSPplay.Click += new System.EventHandler(this.buttonTS3_Click);
+            // 
+            // btnStopPlay
+            // 
+            resources.ApplyResources(this.btnStopPlay, "btnStopPlay");
+            this.btnStopPlay.Name = "btnStopPlay";
+            this.btnStopPlay.Selectable = true;
+            this.btnStopPlay.UseVisualStyleBackColor = true;
+            this.btnStopPlay.Click += new System.EventHandler(this.buttonTS4_Click);
+            // 
+            // btnWDSPrecord
+            // 
+            resources.ApplyResources(this.btnWDSPrecord, "btnWDSPrecord");
+            this.btnWDSPrecord.Name = "btnWDSPrecord";
+            this.btnWDSPrecord.Selectable = true;
+            this.btnWDSPrecord.UseVisualStyleBackColor = true;
+            this.btnWDSPrecord.Click += new System.EventHandler(this.btnWDSPrecord_Click);
+            // 
+            // btnPCPlay
+            // 
+            resources.ApplyResources(this.btnPCPlay, "btnPCPlay");
+            this.btnPCPlay.Name = "btnPCPlay";
+            this.btnPCPlay.Selectable = true;
+            this.btnPCPlay.UseVisualStyleBackColor = true;
+            this.btnPCPlay.Click += new System.EventHandler(this.btnPCPlay_Click);
+            // 
             // Console
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.Controls.Add(this.btnStopPlay);
+            this.Controls.Add(this.btnPCPlay);
+            this.Controls.Add(this.btnWDSPrecord);
+            this.Controls.Add(this.btnWDSPplay);
+            this.Controls.Add(this.btnStopRecord);
+            this.Controls.Add(this.btnPCrecord);
             this.Controls.Add(this.lblPAProfile);
             this.Controls.Add(this.panelModeSpecificCW);
             this.Controls.Add(this.panelDisplay);
@@ -7918,5 +7968,11 @@
         private ButtonTS btnAPF_type;
         private ToolStripStatusLabel toolStripStatusLabel_PAstatus;
         private ToolStripStatusLabel toolStripStatus_PAspacer;
+        private ButtonTS btnPCrecord;
+        private ButtonTS btnStopRecord;
+        private ButtonTS btnWDSPplay;
+        private ButtonTS btnStopPlay;
+        private ButtonTS btnWDSPrecord;
+        private ButtonTS btnPCPlay;
     }
 }

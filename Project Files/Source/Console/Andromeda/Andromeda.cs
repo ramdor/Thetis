@@ -3966,9 +3966,9 @@ namespace Thetis
                     break;
 
                 case EButtonBarActions.eBBAudioForm:               // open the audio record play form
-                    if (WaveForm.IsDisposed)
-                        WaveForm = new WaveControl(this);
-                    Invoke(new MethodInvoker(WaveForm.Show));
+                    //if (WaveForm.IsDisposed)
+                    //    WaveForm = new WaveControl(this);
+                    //Invoke(new MethodInvoker(WaveForm.Show));
                     break;
 
                 case EButtonBarActions.eBBSetupForm:               // open the setup form
