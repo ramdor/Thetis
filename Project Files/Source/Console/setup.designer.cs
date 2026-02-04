@@ -1620,7 +1620,7 @@
             this.udAlex26_5HPFStart = new System.Windows.Forms.NumericUpDownTS();
             this.udAlex21_5HPFEnd = new System.Windows.Forms.NumericUpDownTS();
             this.udAlex21_5HPFStart = new System.Windows.Forms.NumericUpDownTS();
-            this.tpApolloControl = new System.Windows.Forms.TabPage();
+            this.tpOtherHW = new System.Windows.Forms.TabPage();
             this.tpApolloAmp = new System.Windows.Forms.TabControl();
             this.tpApolloApollo = new System.Windows.Forms.TabPage();
             this.grpApolloCtrl = new System.Windows.Forms.GroupBoxTS();
@@ -1648,7 +1648,7 @@
             this.comboAriesCATPort = new System.Windows.Forms.ComboBoxTS();
             this.lblAriesCAT = new System.Windows.Forms.LabelTS();
             this.chkEnableAries = new System.Windows.Forms.CheckBoxTS();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tpOtherHW_amp = new System.Windows.Forms.TabPage();
             this.grpGanymedeCtrl = new System.Windows.Forms.GroupBoxTS();
             this.comboGanymedeCATPort = new System.Windows.Forms.ComboBoxTS();
             this.lblGanymedeCAT = new System.Windows.Forms.LabelTS();
@@ -4640,13 +4640,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.udAlex26_5HPFStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAlex21_5HPFEnd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAlex21_5HPFStart)).BeginInit();
-            this.tpApolloControl.SuspendLayout();
+            this.tpOtherHW.SuspendLayout();
             this.tpApolloAmp.SuspendLayout();
             this.tpApolloApollo.SuspendLayout();
             this.grpApolloCtrl.SuspendLayout();
             this.tpApolloATU.SuspendLayout();
             this.grpAriesCtrl.SuspendLayout();
-            this.tabPage3.SuspendLayout();
+            this.tpOtherHW_amp.SuspendLayout();
             this.grpGanymedeCtrl.SuspendLayout();
             this.tpRX2.SuspendLayout();
             this.tpGeneralNavigation.SuspendLayout();
@@ -7904,7 +7904,7 @@
             this.tcGeneral.Controls.Add(this.tpPennyCtrl);
             this.tcGeneral.Controls.Add(this.tpHPSDR);
             this.tcGeneral.Controls.Add(this.tpAlexControl);
-            this.tcGeneral.Controls.Add(this.tpApolloControl);
+            this.tcGeneral.Controls.Add(this.tpOtherHW);
             this.tcGeneral.Controls.Add(this.tpRX2);
             this.tcGeneral.Controls.Add(this.tpGeneralNavigation);
             this.tcGeneral.Location = new System.Drawing.Point(0, 0);
@@ -8072,6 +8072,7 @@
             this.chkAdvancedNetworkingSettings.Size = new System.Drawing.Size(75, 17);
             this.chkAdvancedNetworkingSettings.TabIndex = 135;
             this.chkAdvancedNetworkingSettings.Text = "Advanced";
+            this.toolTip1.SetToolTip(this.chkAdvancedNetworkingSettings, "Show/Hide advanced options. They will be used if if the options are hidden.");
             this.chkAdvancedNetworkingSettings.UseVisualStyleBackColor = true;
             this.chkAdvancedNetworkingSettings.CheckedChanged += new System.EventHandler(this.chkAdvancedNetworkingSettings_CheckedChanged);
             // 
@@ -8102,7 +8103,8 @@
             this.chkLimitInterfacesToEthernetWifi.Size = new System.Drawing.Size(210, 17);
             this.chkLimitInterfacesToEthernetWifi.TabIndex = 136;
             this.chkLimitInterfacesToEthernetWifi.Text = "Limit interfaces used to Ethernet && WiFi";
-            this.toolTip1.SetToolTip(this.chkLimitInterfacesToEthernetWifi, "Other interface types other than ones that identify as Ethernet or Wifi");
+            this.toolTip1.SetToolTip(this.chkLimitInterfacesToEthernetWifi, "Other interface types other than ones that identify as Ethernet or WiFI can be us" +
+        "ed in discovery is this us unchecked.");
             this.chkLimitInterfacesToEthernetWifi.CheckedChanged += new System.EventHandler(this.chkLimitInterfacesToEthernetWifi_CheckedChanged);
             // 
             // btnAddCustomRadio
@@ -8236,6 +8238,7 @@
             this.comboDiscoverSpeedProfile.Name = "comboDiscoverSpeedProfile";
             this.comboDiscoverSpeedProfile.Size = new System.Drawing.Size(98, 21);
             this.comboDiscoverSpeedProfile.TabIndex = 132;
+            this.toolTip1.SetToolTip(this.comboDiscoverSpeedProfile, "Discovery speed");
             // 
             // panelTS14
             // 
@@ -8260,6 +8263,7 @@
             this.radViaAllNics.TabIndex = 126;
             this.radViaAllNics.TabStop = true;
             this.radViaAllNics.Text = "Via all NICs";
+            this.toolTip1.SetToolTip(this.radViaAllNics, "Discover via all NICs");
             this.radViaAllNics.UseVisualStyleBackColor = true;
             this.radViaAllNics.CheckedChanged += new System.EventHandler(this.radViaNics_CheckedChanged);
             // 
@@ -8272,6 +8276,7 @@
             this.radViaSpecificNic.Size = new System.Drawing.Size(100, 17);
             this.radViaSpecificNic.TabIndex = 127;
             this.radViaSpecificNic.Text = "Via specific NIC";
+            this.toolTip1.SetToolTip(this.radViaSpecificNic, "Discover via a specific NIC");
             this.radViaSpecificNic.UseVisualStyleBackColor = true;
             this.radViaSpecificNic.CheckedChanged += new System.EventHandler(this.radViaNics_CheckedChanged);
             // 
@@ -8305,6 +8310,7 @@
             this.radSpecificRadio.Size = new System.Drawing.Size(89, 17);
             this.radSpecificRadio.TabIndex = 128;
             this.radSpecificRadio.Text = "Specific radio";
+            this.toolTip1.SetToolTip(this.radSpecificRadio, "Send the discovery message to this radio only");
             this.radSpecificRadio.UseVisualStyleBackColor = true;
             this.radSpecificRadio.CheckedChanged += new System.EventHandler(this.radAnyOrSpecificRadio_CheckedChanged);
             // 
@@ -8319,6 +8325,7 @@
             this.radAnyRadio.TabIndex = 127;
             this.radAnyRadio.TabStop = true;
             this.radAnyRadio.Text = "Any radio(s)";
+            this.toolTip1.SetToolTip(this.radAnyRadio, "Discover any radios");
             this.radAnyRadio.UseVisualStyleBackColor = true;
             this.radAnyRadio.CheckedChanged += new System.EventHandler(this.radAnyOrSpecificRadio_CheckedChanged);
             // 
@@ -8345,7 +8352,8 @@
             this.chkFirewallCheck.Size = new System.Drawing.Size(98, 23);
             this.chkFirewallCheck.TabIndex = 39;
             this.chkFirewallCheck.Text = "Firewall Check";
-            this.toolTip1.SetToolTip(this.chkFirewallCheck, "Use this to re-apply default firewall rules if you are having issues");
+            this.toolTip1.SetToolTip(this.chkFirewallCheck, "Use this to re-apply default firewall rules if you are having issues.\r\nThetis nee" +
+        "ds to be run as administrator for this to work.\r\n");
             this.chkFirewallCheck.UseVisualStyleBackColor = true;
             this.chkFirewallCheck.Click += new System.EventHandler(this.chkFirewallCheck_Click);
             // 
@@ -8370,8 +8378,7 @@
             this.chkNetworkThrottleIndexTweak.Size = new System.Drawing.Size(186, 16);
             this.chkNetworkThrottleIndexTweak.TabIndex = 18;
             this.chkNetworkThrottleIndexTweak.Text = "Network Throttle Index Tweak";
-            this.toolTip1.SetToolTip(this.chkNetworkThrottleIndexTweak, "When enabled NetworkThrottlingIndex is set to 0xffffffff to prevent windows from " +
-        "throttling the network connection. See thread on forums for more information.");
+            this.toolTip1.SetToolTip(this.chkNetworkThrottleIndexTweak, resources.GetString("chkNetworkThrottleIndexTweak.ToolTip"));
             this.chkNetworkThrottleIndexTweak.CheckedChanged += new System.EventHandler(this.chkNetworkThrottleIndexTweak_CheckedChanged);
             // 
             // grpGeneralModel
@@ -27387,22 +27394,22 @@
             65536});
             this.udAlex21_5HPFStart.ValueChanged += new System.EventHandler(this.udAlex21_5HPFStart_ValueChanged);
             // 
-            // tpApolloControl
+            // tpOtherHW
             // 
-            this.tpApolloControl.BackColor = System.Drawing.SystemColors.Control;
-            this.tpApolloControl.Controls.Add(this.tpApolloAmp);
-            this.tpApolloControl.Location = new System.Drawing.Point(4, 22);
-            this.tpApolloControl.Name = "tpApolloControl";
-            this.tpApolloControl.Padding = new System.Windows.Forms.Padding(3);
-            this.tpApolloControl.Size = new System.Drawing.Size(724, 410);
-            this.tpApolloControl.TabIndex = 10;
-            this.tpApolloControl.Text = "Andromeda";
+            this.tpOtherHW.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOtherHW.Controls.Add(this.tpApolloAmp);
+            this.tpOtherHW.Location = new System.Drawing.Point(4, 22);
+            this.tpOtherHW.Name = "tpOtherHW";
+            this.tpOtherHW.Padding = new System.Windows.Forms.Padding(3);
+            this.tpOtherHW.Size = new System.Drawing.Size(724, 410);
+            this.tpOtherHW.TabIndex = 10;
+            this.tpOtherHW.Text = "Other H/W";
             // 
             // tpApolloAmp
             // 
             this.tpApolloAmp.Controls.Add(this.tpApolloApollo);
             this.tpApolloAmp.Controls.Add(this.tpApolloATU);
-            this.tpApolloAmp.Controls.Add(this.tabPage3);
+            this.tpApolloAmp.Controls.Add(this.tpOtherHW_amp);
             this.tpApolloAmp.Location = new System.Drawing.Point(0, 0);
             this.tpApolloAmp.Name = "tpApolloAmp";
             this.tpApolloAmp.SelectedIndex = 0;
@@ -27710,16 +27717,16 @@
             this.chkEnableAries.Text = "Enable CAT";
             this.chkEnableAries.CheckedChanged += new System.EventHandler(this.ChkEnableAries_CheckedChanged);
             // 
-            // tabPage3
+            // tpOtherHW_amp
             // 
-            this.tabPage3.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPage3.Controls.Add(this.grpGanymedeCtrl);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(576, 340);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Amp";
+            this.tpOtherHW_amp.BackColor = System.Drawing.SystemColors.Control;
+            this.tpOtherHW_amp.Controls.Add(this.grpGanymedeCtrl);
+            this.tpOtherHW_amp.Location = new System.Drawing.Point(4, 22);
+            this.tpOtherHW_amp.Name = "tpOtherHW_amp";
+            this.tpOtherHW_amp.Padding = new System.Windows.Forms.Padding(3);
+            this.tpOtherHW_amp.Size = new System.Drawing.Size(576, 340);
+            this.tpOtherHW_amp.TabIndex = 2;
+            this.tpOtherHW_amp.Text = "Amp";
             // 
             // grpGanymedeCtrl
             // 
@@ -27733,7 +27740,7 @@
             this.grpGanymedeCtrl.Controls.Add(this.lblAmpStatus);
             this.grpGanymedeCtrl.Location = new System.Drawing.Point(6, 17);
             this.grpGanymedeCtrl.Name = "grpGanymedeCtrl";
-            this.grpGanymedeCtrl.Size = new System.Drawing.Size(388, 115);
+            this.grpGanymedeCtrl.Size = new System.Drawing.Size(556, 198);
             this.grpGanymedeCtrl.TabIndex = 3;
             this.grpGanymedeCtrl.TabStop = false;
             this.grpGanymedeCtrl.Text = "Ganymede Amplifier Control";
@@ -27742,7 +27749,7 @@
             // 
             this.comboGanymedeCATPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboGanymedeCATPort.DropDownWidth = 56;
-            this.comboGanymedeCATPort.Location = new System.Drawing.Point(303, 52);
+            this.comboGanymedeCATPort.Location = new System.Drawing.Point(470, 41);
             this.comboGanymedeCATPort.Name = "comboGanymedeCATPort";
             this.comboGanymedeCATPort.Size = new System.Drawing.Size(80, 21);
             this.comboGanymedeCATPort.TabIndex = 100;
@@ -27753,7 +27760,7 @@
             // lblGanymedeCAT
             // 
             this.lblGanymedeCAT.Image = null;
-            this.lblGanymedeCAT.Location = new System.Drawing.Point(272, 56);
+            this.lblGanymedeCAT.Location = new System.Drawing.Point(439, 45);
             this.lblGanymedeCAT.Name = "lblGanymedeCAT";
             this.lblGanymedeCAT.Size = new System.Drawing.Size(40, 17);
             this.lblGanymedeCAT.TabIndex = 99;
@@ -27762,7 +27769,7 @@
             // chkEnableGanymede
             // 
             this.chkEnableGanymede.Image = null;
-            this.chkEnableGanymede.Location = new System.Drawing.Point(275, 25);
+            this.chkEnableGanymede.Location = new System.Drawing.Point(440, 11);
             this.chkEnableGanymede.Name = "chkEnableGanymede";
             this.chkEnableGanymede.Size = new System.Drawing.Size(99, 24);
             this.chkEnableGanymede.TabIndex = 98;
@@ -27772,10 +27779,10 @@
             // btnGanymedeReset
             // 
             this.btnGanymedeReset.Image = null;
-            this.btnGanymedeReset.Location = new System.Drawing.Point(166, 50);
+            this.btnGanymedeReset.Location = new System.Drawing.Point(191, 97);
             this.btnGanymedeReset.Name = "btnGanymedeReset";
             this.btnGanymedeReset.Selectable = true;
-            this.btnGanymedeReset.Size = new System.Drawing.Size(79, 27);
+            this.btnGanymedeReset.Size = new System.Drawing.Size(131, 27);
             this.btnGanymedeReset.TabIndex = 4;
             this.btnGanymedeReset.Text = "Reset";
             this.btnGanymedeReset.UseVisualStyleBackColor = true;
@@ -27784,7 +27791,7 @@
             // lblGanymedeFW
             // 
             this.lblGanymedeFW.Image = null;
-            this.lblGanymedeFW.Location = new System.Drawing.Point(102, 93);
+            this.lblGanymedeFW.Location = new System.Drawing.Point(102, 61);
             this.lblGanymedeFW.Name = "lblGanymedeFW";
             this.lblGanymedeFW.Size = new System.Drawing.Size(193, 13);
             this.lblGanymedeFW.TabIndex = 3;
@@ -27795,15 +27802,15 @@
             this.lblGanymedeStatus.Image = null;
             this.lblGanymedeStatus.Location = new System.Drawing.Point(102, 26);
             this.lblGanymedeStatus.Name = "lblGanymedeStatus";
-            this.lblGanymedeStatus.Size = new System.Drawing.Size(150, 13);
+            this.lblGanymedeStatus.Size = new System.Drawing.Size(288, 36);
             this.lblGanymedeStatus.TabIndex = 2;
-            this.lblGanymedeStatus.Text = "-";
+            this.lblGanymedeStatus.Text = "-\r\n-\r\n";
             // 
             // lblGanymedeFWVersion
             // 
             this.lblGanymedeFWVersion.AutoSize = true;
             this.lblGanymedeFWVersion.Image = null;
-            this.lblGanymedeFWVersion.Location = new System.Drawing.Point(6, 93);
+            this.lblGanymedeFWVersion.Location = new System.Drawing.Point(6, 61);
             this.lblGanymedeFWVersion.Name = "lblGanymedeFWVersion";
             this.lblGanymedeFWVersion.Size = new System.Drawing.Size(87, 13);
             this.lblGanymedeFWVersion.TabIndex = 1;
@@ -57540,7 +57547,7 @@
             this.clrbtnSpotFlashColour.Selectable = true;
             this.clrbtnSpotFlashColour.Size = new System.Drawing.Size(40, 23);
             this.clrbtnSpotFlashColour.TabIndex = 104;
-            this.toolTip1.SetToolTip(this.clrbtnSpotFlashColour, "The colour of your callsign if it appears as a spot");
+            this.toolTip1.SetToolTip(this.clrbtnSpotFlashColour, "Colour of the flash");
             this.clrbtnSpotFlashColour.Changed += new System.EventHandler(this.clrbtnSpotFlashColour_Changed);
             // 
             // chkFlashNewTCISpots
@@ -69745,7 +69752,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.udAlex26_5HPFStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAlex21_5HPFEnd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAlex21_5HPFStart)).EndInit();
-            this.tpApolloControl.ResumeLayout(false);
+            this.tpOtherHW.ResumeLayout(false);
             this.tpApolloAmp.ResumeLayout(false);
             this.tpApolloApollo.ResumeLayout(false);
             this.grpApolloCtrl.ResumeLayout(false);
@@ -69753,7 +69760,7 @@
             this.tpApolloATU.ResumeLayout(false);
             this.grpAriesCtrl.ResumeLayout(false);
             this.grpAriesCtrl.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
+            this.tpOtherHW_amp.ResumeLayout(false);
             this.grpGanymedeCtrl.ResumeLayout(false);
             this.grpGanymedeCtrl.PerformLayout();
             this.tpRX2.ResumeLayout(false);
@@ -71984,7 +71991,7 @@
         public System.Windows.Forms.NumericUpDownTS udAlex21_5HPFEnd;
         public System.Windows.Forms.NumericUpDownTS udAlex21_5HPFStart;
         private System.Windows.Forms.CheckBoxTS chkApolloPresent;
-        private System.Windows.Forms.TabPage tpApolloControl;
+        private System.Windows.Forms.TabPage tpOtherHW;
         private System.Windows.Forms.GroupBoxTS grpApolloCtrl;
         private System.Windows.Forms.CheckBoxTS chkApolloFilter;
         private System.Windows.Forms.CheckBoxTS chkApolloTuner;
@@ -73367,7 +73374,7 @@
         private TabControl tpApolloAmp;
         private TabPage tpApolloApollo;
         private TabPage tpApolloATU;
-        private TabPage tabPage3;
+        private TabPage tpOtherHW_amp;
         private TabPage tpAndromeda;
         private GroupBoxTS groupBoxTS15;
         private ButtonTS btnQSOTimerPlaySelectedWAV;

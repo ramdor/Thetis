@@ -53201,44 +53201,16 @@ namespace Thetis
             if(e.Button == MouseButtons.Right)
             {
                 // show PA status form
+                SetupForm.ShowSetupTab(Setup.SetupTab.OtherHW_PA_Tab);
             }
             else
             {
-                // try do a reset if needed
-                // based on PAStatusIndicator conditions
+                if ((_pa_status_indicator & PAstatusIndicatorState.Resettable) != 0)
+                    GanymedeResetPressed();
             }
         }
-
-        public static string GetPAStatusText(PAstatusIndicatorState state)
-        {
-            //helper function to retun some status text used in tooltips and spectral display
-
-            if (state == PAstatusIndicatorState.NotUsed) return "PA Status: Not Used";
-
-            if ((state & PAstatusIndicatorState.OK) != 0) return "PA Status: OK";
-
-            PAstatusIndicatorState fault_mask = PAstatusIndicatorState.Voltage |
-                                                PAstatusIndicatorState.Current |
-                                                PAstatusIndicatorState.ReversePower |
-                                                PAstatusIndicatorState.Temperature;
-
-            PAstatusIndicatorState faults = state & fault_mask;
-
-            if (faults == 0) return "PA Status: OK";
-
-            System.Text.StringBuilder sb = new System.Text.StringBuilder(64);
-            sb.Append("PA Status: Excess ");
-
-            if ((faults & PAstatusIndicatorState.Voltage) != 0) sb.Append("Supply Voltage ");
-            if ((faults & PAstatusIndicatorState.Current) != 0) sb.Append("Current ");
-            if ((faults & PAstatusIndicatorState.ReversePower) != 0) sb.Append("Reverse Power ");
-            if ((faults & PAstatusIndicatorState.Temperature) != 0) sb.Append("Temperature ");
-
-            return sb.ToString().TrimEnd(' ');
-        }
-
-        // PAstatusIndicatorState is a flag based enum in Enums.cs
-        private PAstatusIndicatorState _pa_status_indicator = PAstatusIndicatorState.NotUsed;
+        
+        private PAstatusIndicatorState _pa_status_indicator = PAstatusIndicatorState.NotUsed; // PAstatusIndicatorState is a flag based enum in Enums.cs
         private PAstatusIndicatorState PAStatusIndicator
         {
             // used to set the state of the status bar icon, and display spectral area
@@ -53261,10 +53233,12 @@ namespace Thetis
                 toolStripStatusLabel_PAstatus.Visible = true;
                 toolStripStatusLabel_PAstatus.ToolTipText = GetPAStatusText(value);
 
-                PAstatusIndicatorState fault_mask = PAstatusIndicatorState.Voltage |
-                                                    PAstatusIndicatorState.Current |
-                                                    PAstatusIndicatorState.ReversePower |
-                                                    PAstatusIndicatorState.Temperature;
+                PAstatusIndicatorState fault_mask = PAstatusIndicatorState.ReversePower |
+                                                    PAstatusIndicatorState.DrainCurrent |
+                                                    PAstatusIndicatorState.PSUVoltage |
+                                                    PAstatusIndicatorState.HeatsinkTemperature |
+                                                    PAstatusIndicatorState.ForwardPower |
+                                                    PAstatusIndicatorState.Resettable;
 
                 PAstatusIndicatorState faults = value & fault_mask;
 
@@ -53277,25 +53251,6 @@ namespace Thetis
 
                 toolStripStatusLabel_PAstatus.Width = Properties.Resources.paflt.Width;
                 toolStripStatusLabel_PAstatus.Image = Properties.Resources.paflt;
-            }
-        }
-        private void btnTestPAStatus_MouseUp(object sender, MouseEventArgs e)
-        {
-            //test button. right set to not used, left click will cycle
-            if (e.Button == MouseButtons.Right)
-            {
-                PAStatusIndicator = PAstatusIndicatorState.NotUsed;
-            }
-            else
-            {
-                if (PAStatusIndicator != PAstatusIndicatorState.OK)
-                {
-                    PAStatusIndicator = PAstatusIndicatorState.OK;
-                }
-                else
-                {
-                    PAStatusIndicator = PAstatusIndicatorState.Voltage | PAstatusIndicatorState.Temperature;
-                }
             }
         }
         #endregion

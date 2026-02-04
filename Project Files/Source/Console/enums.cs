@@ -490,10 +490,12 @@ namespace Thetis
     {
         NotUsed = 0,
         OK = 1 << 0,
-        Voltage = 1 << 1,
-        Current = 1 << 2,
+        PSUVoltage = 1 << 1,
+        DrainCurrent = 1 << 2,
         ReversePower = 1 << 3,
-        Temperature = 1 << 4
+        HeatsinkTemperature = 1 << 4,
+        ForwardPower = 1 << 5,
+        Resettable = 1 << 6
     }
     #endregion
 }
