@@ -16,6 +16,7 @@ Please report any issue over on [GitHub here](https://github.com/ramdor/Thetis/i
 - [add] TCI spots also shown on rx2
 - [add] dark mode title bars + windows now applies to diversity form
 - [add] you can now click on a diversity memory pin in the 'radar' to select it
+- [add] TextColor field added to TCI json payload for changing the spot colour text. Details here : https://github.com/ramdor/Thetis/commit/a9ce28bc62b612b1405d4eaf5d21cb12458ff802
 - [change] better handing of DirectX failure
 - [change] if cpu% fails to show due to PerformaceCounter issues, the Volts/Amps will now not hide as a result of the failure if configured. Note: There is a discord post regarding recovery of the PerformaceCounters : https://discord.com/channels/1271453528656969789/1452525256303710228
 - [change] the legacy spot support and code has been removed as it was not being maintained as had many issue. Use a 3rd party app via TCI such as Cluster-TCI-Bridge by OE3IDE to provide spots to the spectrum

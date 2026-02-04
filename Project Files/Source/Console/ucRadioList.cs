@@ -1904,7 +1904,7 @@ if (!DoesRadioExist(item.Key))
             string nicType;
             if (nic.IsEthernet) nicType = "Ethernet";
             else if (nic.IsWireless) nicType = "WiFi";
-            else nicType = nic.NicInterfaceType.ToString();
+            else nicType = nic.NicInterfaceTypeString;
 
             string versionText = buildVersionText(radio);
 

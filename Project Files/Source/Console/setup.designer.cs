@@ -221,6 +221,7 @@
             this.ucRadioList_Radios = new Thetis.ucRadioList();
             this.chkAdvancedNetworkingSettings = new System.Windows.Forms.CheckBoxTS();
             this.pnlAdvancedNetworkSettings = new System.Windows.Forms.PanelTS();
+            this.chkLimitInterfacesToEthernetWifi = new System.Windows.Forms.CheckBoxTS();
             this.btnAddCustomRadio = new System.Windows.Forms.ButtonTS();
             this.chkNetworkProtocolMustMatch = new System.Windows.Forms.CheckBoxTS();
             this.chkInformHardwareP2Ports = new System.Windows.Forms.CheckBoxTS();
@@ -8054,10 +8055,10 @@
             this.ucRadioList_Radios.BackColor = System.Drawing.SystemColors.Window;
             this.ucRadioList_Radios.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.ucRadioList_Radios.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.ucRadioList_Radios.Location = new System.Drawing.Point(7, 166);
+            this.ucRadioList_Radios.Location = new System.Drawing.Point(7, 183);
             this.ucRadioList_Radios.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ucRadioList_Radios.Name = "ucRadioList_Radios";
-            this.ucRadioList_Radios.Size = new System.Drawing.Size(528, 222);
+            this.ucRadioList_Radios.Size = new System.Drawing.Size(528, 205);
             this.ucRadioList_Radios.TabIndex = 125;
             this.ucRadioList_Radios.SelectedRadioChanged += new System.EventHandler(this.ucRadioList_Radios_SelectedRadioChanged);
             this.ucRadioList_Radios.RadioListChanged += new System.EventHandler(this.ucRadioList_Radios_RadioListChanged);
@@ -8078,6 +8079,7 @@
             // 
             this.pnlAdvancedNetworkSettings.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlAdvancedNetworkSettings.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlAdvancedNetworkSettings.Controls.Add(this.chkLimitInterfacesToEthernetWifi);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.btnAddCustomRadio);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.chkNetworkProtocolMustMatch);
             this.pnlAdvancedNetworkSettings.Controls.Add(this.chkInformHardwareP2Ports);
@@ -8086,8 +8088,22 @@
             this.pnlAdvancedNetworkSettings.Controls.Add(this.radDefaultListenPort);
             this.pnlAdvancedNetworkSettings.Location = new System.Drawing.Point(110, 119);
             this.pnlAdvancedNetworkSettings.Name = "pnlAdvancedNetworkSettings";
-            this.pnlAdvancedNetworkSettings.Size = new System.Drawing.Size(430, 47);
+            this.pnlAdvancedNetworkSettings.Size = new System.Drawing.Size(430, 64);
             this.pnlAdvancedNetworkSettings.TabIndex = 134;
+            // 
+            // chkLimitInterfacesToEthernetWifi
+            // 
+            this.chkLimitInterfacesToEthernetWifi.AutoSize = true;
+            this.chkLimitInterfacesToEthernetWifi.Checked = true;
+            this.chkLimitInterfacesToEthernetWifi.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkLimitInterfacesToEthernetWifi.Image = null;
+            this.chkLimitInterfacesToEthernetWifi.Location = new System.Drawing.Point(3, 45);
+            this.chkLimitInterfacesToEthernetWifi.Name = "chkLimitInterfacesToEthernetWifi";
+            this.chkLimitInterfacesToEthernetWifi.Size = new System.Drawing.Size(210, 17);
+            this.chkLimitInterfacesToEthernetWifi.TabIndex = 136;
+            this.chkLimitInterfacesToEthernetWifi.Text = "Limit interfaces used to Ethernet && WiFi";
+            this.toolTip1.SetToolTip(this.chkLimitInterfacesToEthernetWifi, "Other interface types other than ones that identify as Ethernet or Wifi");
+            this.chkLimitInterfacesToEthernetWifi.CheckedChanged += new System.EventHandler(this.chkLimitInterfacesToEthernetWifi_CheckedChanged);
             // 
             // btnAddCustomRadio
             // 
@@ -75099,5 +75115,6 @@
         private CheckBoxTS chkInformHardwareP2Ports;
         private CheckBoxTS chkNetworkProtocolMustMatch;
         private ButtonTS btnAddCustomRadio;
+        private CheckBoxTS chkLimitInterfacesToEthernetWifi;
     }
 }
