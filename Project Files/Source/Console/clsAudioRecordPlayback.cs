@@ -596,8 +596,6 @@ namespace Thetis
 
                 try
                 {
-                    
-
                     string folder = getFolderPath(folderId);
                     string fullPath = string.IsNullOrEmpty(full_file_path) ? Path.Combine(folder, filename) : full_file_path;
 
