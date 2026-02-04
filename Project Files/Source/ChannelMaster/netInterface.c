@@ -581,7 +581,7 @@ void DisablePA(int bit)
 {
 	if (prn->tx[0].pa != bit) 
 	{
-		if (prn->discovery.BoardType == HermesLite)
+		if (HPSDRModel == HPSDRModel_HERMESLITE)
 			EnableApolloTuner(!bit);	// MI0BOT: This call used on HL2 to enable/disable PA
 
 		prn->tx[0].pa = bit;		
@@ -1401,12 +1401,6 @@ void LRAudioSwap (int swap)
 		prn->lr_audio_swap = swap;
 }
 
-PORT // MI0BOT: Board type is now discovered to allow different operations for the HL2
-void SetDiscoveryBoardType (int boardType)
-{
-	prn->discovery.BoardType = boardType;
-}
-
 PORT // MI0BOT: Controls the delay for PTT to Tx power out for HL2
 void SetTxLatency (int txLatency)
 {
@@ -1675,19 +1669,6 @@ void create_rnet()
 
 		prn->reset_on_disconnect = 0;	// MI0BOT: Intialised to not reset on software disconnect
 		
-		for (i = 0; i < 6; i++)
-			prn->discovery.MACAddr[i] = 0;
-		prn->discovery.BoardType = 0;
-		prn->discovery.protocolVersion = 0;
-		prn->discovery.fwCodeVersion = 0;
-		prn->discovery.MercuryVersion_0 = 0;
-		prn->discovery.MercuryVersion_1 = 0;
-		prn->discovery.MercuryVersion_2 = 0;
-		prn->discovery.MercuryVersion_3 = 0;
-		prn->discovery.PennyVersion = 0;
-		prn->discovery.MetisVersion = 0;
-		prn->discovery.numRxs = 0;
-
 		prbpfilter = (RBPFILTER)malloc0(sizeof(rbpfilter));
 		prbpfilter->bpfilter = 0;
 		prbpfilter->enable = 1;

@@ -280,21 +280,6 @@ typedef struct CACHE_ALIGN _radionet
 		int  spp;							// LR-samples per network packet
 	} audio[MAX_AUDIO_STREAMS];
 
-	struct _discovery
-	{
-		unsigned char MACAddr[6];
-		char BoardType;
-		char protocolVersion;
-		char fwCodeVersion;
-		char MercuryVersion_0;
-		char MercuryVersion_1;
-		char MercuryVersion_2;
-		char MercuryVersion_3;
-		char PennyVersion;
-		char MetisVersion;
-		char numRxs;
-	} discovery;
-
 } radionet, *RADIONET;
 
 RADIONET prn;

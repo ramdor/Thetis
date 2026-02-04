@@ -12241,7 +12241,7 @@ namespace Thetis
         {
             //if (HPSDRModel.HERMESLITE != HardwareSpecific.Model)
             //{
-                console.CustomTitle = txtGenCustomTitle.Lines[0];
+            //    console.CustomTitle = txtGenCustomTitle.Lines[0];
             //}
             //else
             //{   // MI0BOT: Handle multi line box for display of different IP address
@@ -20089,6 +20089,7 @@ namespace Thetis
                 case HPSDRModel.HERMESLITE:         // MI0BOT: HL2
                     HardwareSpecific.Model = HPSDRModel.HERMESLITE;
                     tcOptions.Controls.Add(tpHL2Options);
+                    pnlGeneralHardwareORION.Enabled = false;
                     chkAlexPresent.Enabled = true;
                     chkAlexPresent.Visible = false;
                     chkApolloPresent.Enabled = true;
@@ -20103,7 +20104,6 @@ namespace Thetis
                     udHermesStepAttenuatorDataRX2.Minimum = (decimal)-28;
                     udHermesStepAttenuatorData.Maximum = 31;
                     udHermesStepAttenuatorDataRX2.Maximum = 31;
-                    //grpMetisAddr.Text = "Hermes Lite Address";
                     chkAutoPACalibrate.Checked = false;
                     chkAutoPACalibrate.Visible = false;
                     labelRXAntControl.Text = "  RX1   RX2    XVTR";
@@ -20133,12 +20133,6 @@ namespace Thetis
                     tpAlexControl.Text = "Ant/Filters";
                     comboAudioSampleRateRX2.Enabled = false;
                     ucIOPinsLedStripHF.DisplayBits = 6;
-                    //radRadioProtocol1Select.Checked = true;
-                    //radRadioProtocol2Select.Checked = false;
-                    //radRadioProtocolAutoSelect.Checked = false;
-                    //radRadioProtocol1Select.Enabled = false;
-                    //radRadioProtocol2Select.Enabled = false;
-                    //radRadioProtocolAutoSelect.Enabled = false;
                     toolTip1.SetToolTip(chkHERCULES, "Preset pins for for N2ADR filter board");
                     toolTip1.SetToolTip(chkApolloFilter, "Enables the full duplex on the HL2");
                     toolTip1.SetToolTip(chkApolloTuner, "Enables HL2 power amplifier");
@@ -20236,70 +20230,6 @@ namespace Thetis
 
                     chkCATtoVFOB.Enabled = true;
                     chkCATtoVFOB.Visible = true;
-
-                    chkLimit2Subnet.Visible = true;
-
-                    chkDisplayIPPort.Enabled = true;
-                    chkDisplayIPPort.Visible = true;
-                    udDiscoveryPort1.Enabled = true;
-                    udDiscoveryPort1.Visible = true;
-                    udDiscoveryPort2.Enabled = true;
-                    udDiscoveryPort2.Visible = true;
-                    udDiscoveryPort3.Enabled = true;
-                    udDiscoveryPort3.Visible = true;
-                    udDiscoveryPort4.Enabled = true;
-                    udDiscoveryPort4.Visible = true;
-
-                    txtIPAddress1.Enabled = true;
-                    txtIPAddress1.Visible = true;
-                    txtIPAddress2.Enabled = true;
-                    txtIPAddress2.Visible = true;
-                    txtIPAddress3.Enabled = true;
-                    txtIPAddress3.Visible = true;
-                    txtIPAddress4.Enabled = true;
-                    txtIPAddress4.Visible = true;
-
-                    chkReduceBW1.Visible = true;
-                    chkReduceBW1.Enabled = true;
-                    chkReduceBW2.Visible = true;
-                    chkReduceBW2.Enabled = true;
-                    chkReduceBW3.Visible = true;
-                    chkReduceBW3.Enabled = true;
-                    chkReduceBW4.Visible = true;
-                    chkReduceBW4.Enabled = true;
-
-                    //udStaticIP1.Enabled = false;
-                    //udStaticIP1.Visible = false;
-                    //udStaticIP2.Enabled = false;
-                    //udStaticIP2.Visible = false;
-                    //udStaticIP3.Enabled = false;
-                    //udStaticIP3.Visible = false;
-                    //udStaticIP4.Enabled = false;
-                    //udStaticIP4.Visible = false;
-                    //udStaticIP5.Enabled = false;
-                    //udStaticIP5.Visible = false;
-                    //udStaticIP6.Enabled = false;
-                    //udStaticIP6.Visible = false;
-                    //udStaticIP7.Enabled = false;
-                    //udStaticIP7.Visible = false;
-                    //udStaticIP8.Enabled = false;
-                    //udStaticIP8.Visible = false;
-                    //udStaticIP9.Enabled = false;
-                    //udStaticIP9.Visible = false;
-                    //udStaticIP10.Enabled = false;
-                    //udStaticIP10.Visible = false;
-                    //udStaticIP11.Enabled = false;
-                    //udStaticIP11.Visible = false;
-                    //udStaticIP12.Enabled = false;
-                    //udStaticIP12.Visible = false;
-                    //udStaticIP13.Enabled = false;
-                    //udStaticIP13.Visible = false;
-                    //udStaticIP14.Enabled = false;
-                    //udStaticIP14.Visible = false;
-                    //udStaticIP15.Enabled = false;
-                    //udStaticIP15.Visible = false;
-                    //udStaticIP16.Enabled = false;
-                    //udStaticIP16.Visible = false;
 
                     txtGenCustomTitle.MaxLength = 100;
                     txtGenCustomTitle.Multiline = true;
@@ -20938,41 +20868,6 @@ namespace Thetis
             // Switch off and hide HL2 options
             chkCATtoVFOB.Enabled = false;
             chkCATtoVFOB.Visible = false;
-
-            chkLimit2Subnet.Checked = true;
-            chkLimit2Subnet.Enabled = false;
-            chkLimit2Subnet.Visible = false;
-
-            chkReduceBW1.Checked = false;
-            chkReduceBW1.Enabled = false;
-            chkReduceBW1.Visible = false;
-            chkReduceBW2.Checked = false;
-            chkReduceBW2.Enabled = false;
-            chkReduceBW2.Visible = false;
-            chkReduceBW3.Checked = false;
-            chkReduceBW3.Enabled = false;
-            chkReduceBW3.Visible = false;
-            chkReduceBW4.Checked = false;
-            chkReduceBW4.Enabled = false;
-            chkReduceBW4.Visible = false;
-
-            udDiscoveryPort1.Value = 1024;
-            udDiscoveryPort1.Enabled = false;
-            udDiscoveryPort1.Visible = false;
-            udDiscoveryPort2.Value = 1024;
-            udDiscoveryPort2.Enabled = false;
-            udDiscoveryPort2.Visible = false;
-            udDiscoveryPort3.Value = 1024;
-            udDiscoveryPort3.Enabled = false;
-            udDiscoveryPort3.Visible = false;
-            udDiscoveryPort4.Value = 1024;
-            udDiscoveryPort4.Enabled = false;
-            udDiscoveryPort4.Visible = false;
-
-            txtIPAddress1.SendToBack();
-            txtIPAddress2.SendToBack();
-            txtIPAddress3.SendToBack();
-            txtIPAddress4.SendToBack();
         }
         private void setupADCRadioButtions()
         {
@@ -27993,30 +27888,6 @@ namespace Thetis
         {
             txtGenCustomTitle_TextChanged(sender, e);
         }
-        private void txtIPAddress1_MouseHover(object sender, EventArgs e)
-        {
-            if (txtGenCustomTitle.Lines.Length > 1)
-                toolTip1.SetToolTip(txtIPAddress1, txtGenCustomTitle.Lines[1]);
-        }
-
-        private void txtIPAddress2_MouseHover(object sender, EventArgs e)
-        {
-            if (txtGenCustomTitle.Lines.Length > 2)
-                toolTip1.SetToolTip(txtIPAddress2, txtGenCustomTitle.Lines[2]);
-        }
-
-        private void txtIPAddress3_MouseHover(object sender, EventArgs e)
-        {
-            if (txtGenCustomTitle.Lines.Length > 3)
-                toolTip1.SetToolTip(txtIPAddress3, txtGenCustomTitle.Lines[3]);
-        }
-
-        private void txtIPAddress4_MouseHover(object sender, EventArgs e)
-        {
-            if (txtGenCustomTitle.Lines.Length > 4)
-                toolTip1.SetToolTip(txtIPAddress4, txtGenCustomTitle.Lines[4]);
-        }
-
         private void txtGenCustomTitle_MouseEnter(object sender, EventArgs e)
         {
             grpGenCustomTitleText.Height *= 2;

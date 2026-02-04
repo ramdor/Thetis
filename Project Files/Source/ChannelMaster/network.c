@@ -346,21 +346,6 @@ int GetMetisIPAddr(void) {
 	return MetisAddr;
 }
 
-PORT
-void GetMACAddr(unsigned char addr_bytes[]) {
-	memcpy(addr_bytes, prn->discovery.MACAddr, 6);
-}
-
-PORT
-void GetCodeVersion(unsigned char addr_bytes[]) {
-	memcpy(addr_bytes, &(prn->discovery.fwCodeVersion), 1);
-}
-
-PORT
-void GetBoardID(char addr_bytes[]) {
-	memcpy(addr_bytes, &(prn->discovery.BoardType), 1);
-}
-
 int SendStart(void) {
 	prn->run = 1;
 	CmdGeneral(); //1024
@@ -1423,7 +1408,7 @@ int IOThreadStop() {
 	}
 	io_keep_running = 0;  // flag to stop
 
-	if (prn->discovery.BoardType == HermesLite)
+	if (HPSDRModel == HPSDRModel_HERMESLITE)
 	{
 		// MI0BOT: Thread locking up, so timeout added.
 		if (WAIT_TIMEOUT == WaitForSingleObject(prn->hReadThreadMain, 1000))
