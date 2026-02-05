@@ -20116,7 +20116,7 @@ namespace Thetis
                     chkMercDither.Enabled = false;
                     chkMercRandom.Enabled = false;
                     udMaxFreq.Value = (Decimal) 38.4;
-                    tpApolloControl.Text = "PA Control";
+                    tpOtherHW.Text = "PA Control";
                     chkApolloFilter.Text = "Enable Full Duplex";
                     chkApolloTuner.Text = "Enable PA";
                     grpApolloCtrl.Text = "PA Control";
