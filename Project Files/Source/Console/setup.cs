@@ -36052,6 +36052,18 @@ namespace Thetis
             initPCAudioDevicesComobs();
         }
         #endregion
+
+        private void buttonTS5_Click(object sender, EventArgs e)
+        {
+            udFMLowCutTX.Value = 300;
+            udFMHighCutTX.Value = 3000;
+        }
+
+        private void btnResetFMAF_rx_Click(object sender, EventArgs e)
+        {
+            udFMLowCutRX.Value = 300;
+            udFMHighCutRX.Value = 3000;
+        }
     }
 
     #region FormLoactionHelper

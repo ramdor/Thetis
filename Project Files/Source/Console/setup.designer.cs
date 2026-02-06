@@ -4372,6 +4372,8 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.btnResetFMAF_rx = new System.Windows.Forms.ButtonTS();
+            this.buttonTS5 = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -39455,6 +39457,7 @@
             // 
             // grpFMRX
             // 
+            this.grpFMRX.Controls.Add(this.btnResetFMAF_rx);
             this.grpFMRX.Controls.Add(this.labelTS187);
             this.grpFMRX.Controls.Add(this.labelTS186);
             this.grpFMRX.Controls.Add(this.labelTS185);
@@ -39652,6 +39655,7 @@
             // 
             // grpFMTX
             // 
+            this.grpFMTX.Controls.Add(this.buttonTS5);
             this.grpFMTX.Controls.Add(this.labelTS188);
             this.grpFMTX.Controls.Add(this.labelTS189);
             this.grpFMTX.Controls.Add(this.labelTS190);
@@ -69286,6 +69290,32 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // btnResetFMAF_rx
+            // 
+            this.btnResetFMAF_rx.Image = null;
+            this.btnResetFMAF_rx.Location = new System.Drawing.Point(270, 52);
+            this.btnResetFMAF_rx.Name = "btnResetFMAF_rx";
+            this.btnResetFMAF_rx.Selectable = true;
+            this.btnResetFMAF_rx.Size = new System.Drawing.Size(75, 23);
+            this.btnResetFMAF_rx.TabIndex = 61;
+            this.btnResetFMAF_rx.Text = "Default";
+            this.toolTip1.SetToolTip(this.btnResetFMAF_rx, "Reset to 300-3000Hz");
+            this.btnResetFMAF_rx.UseVisualStyleBackColor = true;
+            this.btnResetFMAF_rx.Click += new System.EventHandler(this.btnResetFMAF_rx_Click);
+            // 
+            // buttonTS5
+            // 
+            this.buttonTS5.Image = null;
+            this.buttonTS5.Location = new System.Drawing.Point(270, 52);
+            this.buttonTS5.Name = "buttonTS5";
+            this.buttonTS5.Selectable = true;
+            this.buttonTS5.Size = new System.Drawing.Size(75, 23);
+            this.buttonTS5.TabIndex = 62;
+            this.buttonTS5.Text = "Default";
+            this.toolTip1.SetToolTip(this.buttonTS5, "Reset to 300-3000Hz");
+            this.buttonTS5.UseVisualStyleBackColor = true;
+            this.buttonTS5.Click += new System.EventHandler(this.buttonTS5_Click);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -75018,5 +75048,7 @@
         private RadioButtonTS radRecording_TXing_mic;
         private RadioButtonTS radRecording_RXing_audio;
         private RadioButtonTS radRecording_RXing_iq;
+        private ButtonTS btnResetFMAF_rx;
+        private ButtonTS buttonTS5;
     }
 }
