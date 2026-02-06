@@ -311,7 +311,7 @@ namespace Thetis
 
                     if (!Common.CanCreateFile(full_path))
                     {
-                        error = "Unable to create file.";
+                        error = $"Unable to create file\n{full_path}\n\nThis may be due to controlled folder access or some other reason.";
                         return null;
                     }
 
@@ -694,6 +694,7 @@ namespace Thetis
                     _pc_wave_out.Play();
 
                     setPlayingState(true);
+
                     return true;
                 }
                 catch (Exception ex)
@@ -741,6 +742,7 @@ namespace Thetis
                 {
                     if (_active_playback_wfw_id >= 0)
                     {
+                        //playing via wdsp
                         Audio.WavePlayback = false;
 
                         WaveFileReader1 reader = WaveThing.wave_file_reader[_active_playback_wfw_id];
@@ -929,26 +931,28 @@ namespace Thetis
 
         private void onWdspPlaybackFinished()
         {
-            lock (_sync)
-            {
-                if (_active_playback_wfw_id < 0) return;
+            string error;
+            StopPlayback(out error);
+            //lock (_sync)
+            //{
+            //    if (_active_playback_wfw_id < 0) return;
 
-                try
-                {
-                    Audio.WavePlayback = false;
-                }
-                catch { }
+            //    try
+            //    {
+            //        Audio.WavePlayback = false;
+            //    }
+            //    catch { }
 
-                try
-                {
-                    WaveThing.wave_file_reader[_active_playback_wfw_id] = null;
-                }
-                catch { }
+            //    try
+            //    {
+            //        WaveThing.wave_file_reader[_active_playback_wfw_id] = null;
+            //    }
+            //    catch { }
 
-                _active_playback_wfw_id = -1;
-            }
+            //    _active_playback_wfw_id = -1;
+            //}
 
-            setPlayingState(false);
+            //setPlayingState(false);
         }
 
         private void setRecordingState(bool recording)
@@ -978,7 +982,18 @@ namespace Thetis
             if (raise)
             {
                 Action<bool, int, string> h = RecordingChanged;
-                if (h != null) h(recording, folderId, filename);
+                if (h != null)
+                {
+                    Delegate[] list = h.GetInvocationList();
+                    for (int i = 0; i < list.Length; i++)
+                    {
+                        try
+                        {
+                            ((Action<bool, int, string>)list[i])(recording, folderId, filename);
+                        }
+                        catch { }
+                    }
+                }
             }
         }
 
@@ -1012,7 +1027,18 @@ namespace Thetis
             if (raise)
             {
                 Action<bool, int, string, bool> h = PlayingChanged;
-                if (h != null) h(playing, folderId, filename, isWdsp);
+                if (h != null)
+                {
+                    Delegate[] list = h.GetInvocationList();
+                    for (int i = 0; i < list.Length; i++)
+                    {
+                        try
+                        {
+                            ((Action<bool, int, string, bool>)list[i])(playing, folderId, filename, isWdsp);
+                        }
+                        catch { }
+                    }
+                }
             }
         }
 
@@ -1878,6 +1904,7 @@ namespace Thetis
         unsafe public void GetPlayBuffer(float* left, float* right)
         {
             int count = rb_l.ReadSpace();
+
             if (count == 0) return;
 
             int size = (!Audio.MOX) ? rcvr_size : xmtr_size;

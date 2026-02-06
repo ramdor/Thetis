@@ -1280,7 +1280,7 @@ namespace Thetis
             set { condx = value; }
         }
 
-        int busy = 0;
+        int _busy = 0;
 
         float[] left = new float[2048];
         float[] right = new float[2048];
@@ -1289,16 +1289,20 @@ namespace Thetis
         {
             if (run && (condx == state))
             {
-                if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1)
+                if (System.Threading.Interlocked.Exchange(ref _busy, 1) != 1)
                 {
-                    int size = 2048;    // could check actual size, depending upon MOX
-                    fixed (float* pleft = &left[0])
-                    fixed (float* pright = &right[0])
+                    try
                     {
-                        WaveThing.wave_file_reader[id].GetPlayBuffer(pleft, pright);
-                        swizzle(size, pleft, pright, data);
+                        int size = 2048;    // could check actual size, depending upon MOX
+                        fixed (float* pleft = &left[0])
+                        fixed (float* pright = &right[0])
+                        {
+                            WaveThing.wave_file_reader[id].GetPlayBuffer(pleft, pright);
+                            swizzle(size, pleft, pright, data);
+                        }
+                        System.Threading.Interlocked.Exchange(ref _busy, 0);
                     }
-                    System.Threading.Interlocked.Exchange(ref busy, 0);
+                    catch { }
                 }
             }
         }

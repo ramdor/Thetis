@@ -27720,11 +27720,11 @@ namespace Thetis
                 if (RX2Enabled && chkRX2Mute.Checked) chkRX2Mute.Checked = false;
             }
 
-            if (_mox && !chkMON.Checked)
-            {
-                // monitor is muted
-                // Audio.MonitorVolume = 0.0;
-            }
+            //if (_mox && !chkMON.Checked)
+            //{
+            //    // monitor is muted
+            //    // Audio.MonitorVolume = 0.0;
+            //}
             else
             {
                 if ((_rx1_dsp_mode == DSPMode.CWL || _rx1_dsp_mode == DSPMode.CWU) &&
@@ -30799,14 +30799,14 @@ namespace Thetis
 
             if (chkPower.Checked)
             {
-                if (Audio.WavePlayback)
-                {
-                    double f = (_wave_freq - (VFOAFreq * 1e6) % sample_rate_rx1);
-                    if (f > sample_rate_rx1 / 2) f -= sample_rate_rx1;
-                    if (f < -sample_rate_rx1 / 2) f += sample_rate_rx1;
-                    radio.GetDSPRX(0, 0).RXOsc = f;
-                }
-                else
+                //if (Audio.WavePlayback)
+                //{
+                //    double f = (_wave_freq - (VFOAFreq * 1e6) % sample_rate_rx1);
+                //    if (f > sample_rate_rx1 / 2) f -= sample_rate_rx1;
+                //    if (f < -sample_rate_rx1 / 2) f += sample_rate_rx1;
+                //    radio.GetDSPRX(0, 0).RXOsc = f;
+                //}
+                //else
                 {
                     if (!chkFullDuplex.Checked && !chkVFOBTX.Checked)
                     {
@@ -52272,8 +52272,9 @@ namespace Thetis
         ///// test test test
         private string _last_file = null;
         private bool _old_mox_before_play = false;
-        private void buttonTS1_Click(object sender, EventArgs e)
+        private void btnPCrecord_Click(object sender, EventArgs e)
         {
+            //btnHidden.Focus();
             int fid = 12345;
             string error;
             string filename = ARP.RecordToFileFromPCAudio(fid, ARP.InputPCDeviceID, out error);
@@ -52286,10 +52287,11 @@ namespace Thetis
             }
 
             string full_path = Path.Combine(ARP.AudioFolder, fid.ToString(), filename);
-            Debug.Print(full_path);
+            Debug.Print(full_path);            
         }
         private void btnWDSPrecord_Click(object sender, EventArgs e)
         {
+            //btnHidden.Focus();
             int fid = 12345;
             string error;
             string filename = ARP.RecordToFileFromWDSP(fid, 0, out error);
@@ -52304,8 +52306,44 @@ namespace Thetis
             string full_path = Path.Combine(ARP.AudioFolder, fid.ToString(), filename);
             Debug.Print(full_path);
         }
-        private void buttonTS2_Click(object sender, EventArgs e)
+        private async void btnPlayViaWDSP_Click(object sender, EventArgs e)
         {
+            //btnHidden.Focus();
+            int fid = 12345;
+            string error;
+
+            _old_mox_before_play = MOX;
+            if (ARP.MoxOnPlayback && !_old_mox_before_play)
+            {
+                MOX = true;
+                //await Task.Delay(50); // let mox/radio settle
+            }
+
+            Audio.VACBypass = true;
+            bool ok = ARP.PlayFileViaWDSP(fid, _last_file, 0, out error);
+            if (!ok)
+            {
+                if (_old_mox_before_play != MOX) MOX = _old_mox_before_play;
+                Audio.VACBypass = false;
+                MessageBox.Show(error ?? "Unable to start playback.");
+            }
+        }
+        private void btnPlayViaPC_Click(object sender, EventArgs e)
+        {
+            //btnHidden.Focus();
+            int fid = 12345;
+            string error;
+
+            bool ok = ARP.PlayFileViaPCAudio(fid, _last_file, ARP.OutputCDeviceID, out error);
+            if (!ok)
+            {
+                MessageBox.Show(error ?? "Unable to start playback.");
+            }
+        }
+
+        private void btnStopRecord_Click(object sender, EventArgs e)
+        {
+            //btnHidden.Focus();
             string error;
             bool ok = ARP.StopRecord(out error);
             if (!ok)
@@ -52313,41 +52351,27 @@ namespace Thetis
                 MessageBox.Show(error ?? "Unable to stop recording.");
             }
         }
-        private void arp_RecordingChanged(bool recording, int fid, string filename)
+        private void btnStopPlayback_Click(object sender, EventArgs e)
         {
-            if (InvokeRequired)
-            {
-                BeginInvoke((Action)(() => arp_RecordingChanged(recording, fid, filename)));
-                return;
-            }
-
-            ckQuickPlay.Enabled = !recording;
-            if (!recording && ckQuickRec.Checked) ckQuickRec.Checked = false;
-            //////////////////////////////////////////
-
-            Debug.Print("RECORDING : " + recording.ToString());
-            btnWDSPrecord.Enabled = !recording;
-            btnPCrecord.Enabled = !recording;
-            btnStopRecord.Enabled = recording;
-
-            btnWDSPplay.Enabled = !recording;
-            btnPCPlay.Enabled = !recording;
-            btnStopPlay.Enabled = false;
+            //btnHidden.Focus();
+            string error;
+            ARP.StopPlayback(out error);
         }
         private void arp_PlayingingChanged(bool playing, int fid, string filename, bool isWdsp)
         {
+            if (IsDisposed || Disposing) return;
+            if (!IsHandleCreated) return;
+
             if (InvokeRequired)
             {
                 BeginInvoke((Action)(() => arp_PlayingingChanged(playing, fid, filename, isWdsp)));
                 return;
             }
 
-            if (!playing && isWdsp && ARP.MoxOnPlayback && !_old_mox_before_play) MOX = false;
+            if (!playing && isWdsp && ARP.MoxOnPlayback && !_old_mox_before_play && MOX) MOX = false;
 
             ckQuickRec.Enabled = !playing;
             if (!playing && ckQuickPlay.Checked) ckQuickPlay.Checked = false;
-
-            //////////////////////////////////////////
 
             Debug.Print("playing : " + playing.ToString());
             btnWDSPplay.Enabled = !playing;
@@ -52361,44 +52385,30 @@ namespace Thetis
             if (!playing) Audio.VACBypass = false;
         }
 
-        private async void buttonTS3_Click(object sender, EventArgs e)
+        private void arp_RecordingChanged(bool recording, int fid, string filename)
         {
-            int fid = 12345;
-            string error;
+            if (IsDisposed || Disposing) return;
+            if (!IsHandleCreated) return;
 
-            _old_mox_before_play = MOX;
-            if (ARP.MoxOnPlayback && !_old_mox_before_play)
+            if (InvokeRequired)
             {
-                MOX = true;
-                await Task.Delay(50); // let mox/radio settle
+                BeginInvoke((Action)(() => arp_RecordingChanged(recording, fid, filename)));
+                return;
             }
 
-            Audio.VACBypass = true;
-            bool ok = ARP.PlayFileViaWDSP(fid, _last_file, 0, out error);
-            if (!ok)
-            {
-                Audio.VACBypass = false;
-                MessageBox.Show(error ?? "Unable to start playback.");
-            }
-        }
+            ckQuickPlay.Enabled = !recording;
+            if (!recording && ckQuickRec.Checked) ckQuickRec.Checked = false;
 
-        private void buttonTS4_Click(object sender, EventArgs e)
-        {
-            string error;
-            ARP.StopPlayback(out error);
-        }
+            Debug.Print("RECORDING : " + recording.ToString());
+            btnWDSPrecord.Enabled = !recording;
+            btnPCrecord.Enabled = !recording;
+            btnStopRecord.Enabled = recording;
 
-        private void btnPCPlay_Click(object sender, EventArgs e)
-        {
-            int fid = 12345;
-            string error;
-
-            bool ok = ARP.PlayFileViaPCAudio(fid, _last_file, ARP.OutputCDeviceID, out error);
-            if (!ok)
-            {
-                MessageBox.Show(error ?? "Unable to start playback.");
-            }
+            btnWDSPplay.Enabled = !recording;
+            btnPCPlay.Enabled = !recording;
+            btnStopPlay.Enabled = false;
         }
+        //
     }
 
     public class DigiMode
