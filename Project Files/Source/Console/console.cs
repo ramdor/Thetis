@@ -24558,7 +24558,7 @@ namespace Thetis
                         }
 
                         //VACBypass
-                        if (!ARP.IsBusy) // dont change vac bypass if it being used by ARP
+                        if (!(ARP.IsBusy && BypassVACWhenPlayingWAV)) // dont change vac bypass if it being used by ARP
                         {
                             if (chkVAC1.Checked && (((mic_ptt || cw_ptt) && _allow_vac_bypass) || (VOXEnable && _allow_micvox_bypass)))
                             {
@@ -24662,7 +24662,7 @@ namespace Thetis
                         }
 
                         //VACBypass
-                        if (!ARP.IsBusy) // dont change vac bypass if it being used by ARP
+                        if (!(ARP.IsBusy && BypassVACWhenPlayingWAV)) // dont change vac bypass if it being used by ARP
                         {
                             if (chkVAC1.Checked && vac_bypass_disable)
                             {
@@ -25780,7 +25780,7 @@ namespace Thetis
                                     chkMOX.Checked = !chkMOX.Checked;
 
                                     //VACBypass
-                                    if (!ARP.IsBusy) // dont change vac bypass if it being used by ARP
+                                    if (!(ARP.IsBusy && BypassVACWhenPlayingWAV)) // dont change vac bypass if it being used by ARP
                                     {                                        
                                         if (chkMOX.Checked)
                                         {
@@ -28394,7 +28394,7 @@ namespace Thetis
             }
 
             //VACBypass
-            if (ARP.IsBusy) // dont change vac bypass if it being used by ARP
+            if (!(ARP.IsBusy && BypassVACWhenPlayingWAV)) // dont change vac bypass if it being used by ARP
             {
                 if (allow_mox_bypass && _current_ptt_mode != PTTMode.MIC &&
                                         _current_ptt_mode != PTTMode.SPACE &&
