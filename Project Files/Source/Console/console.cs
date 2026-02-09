@@ -35790,7 +35790,7 @@ namespace Thetis
                 ckQuickPlay.Enabled = false;
                 string error;
                 string file = Path.Combine(AppDataPath, "SDRQuickAudio.wav");
-                string filename = ARP.RecordToFileFromWDSP("quick", file, 0, out error);
+                string filename = ARP.RecordToFileFromWDSP("quick", file, 0, out error, true);
                 if(string.IsNullOrEmpty(filename))
                 {
                     ckQuickRec.CheckedChanged -= ckQuickRec_CheckedChanged;
@@ -52307,75 +52307,6 @@ namespace Thetis
                 return _arp; 
             }
         }
-        //
-
-        // test test test
-        private string _last_file = null;
-        private void btnPCrecord_Click(object sender, EventArgs e)
-        {
-            string error;
-            string filename = ARP.RecordToFileFromPCAudio("abc_pc", null, ARP.InputPCDeviceID, out error);
-            _last_file = filename;
-
-            if (filename == null)
-            {
-                MessageBox.Show(error ?? "Unable to start recording.");
-                return;
-            }
-
-            string full_path = Path.Combine(ARP.AudioFolder, "abc_pc", filename);
-            Debug.Print(full_path);            
-        }
-        private void btnWDSPrecord_Click(object sender, EventArgs e)
-        {
-            string error;
-            string filename = ARP.RecordToFileFromWDSP("abc_wdsp", null, 0, out error);
-            _last_file = filename;
-
-            if (filename == null)
-            {
-                MessageBox.Show(error ?? "Unable to start recording.");
-                return;
-            }
-
-            string full_path = Path.Combine(ARP.AudioFolder, "abc_wdsp", filename);
-            Debug.Print(full_path);
-        }
-        private async void btnPlayViaWDSP_Click(object sender, EventArgs e)
-        {
-            string error;
-
-            bool ok = ARP.PlayFileViaWDSP("abc_wdsp", _last_file, 0, out error);
-            if (!ok)
-            {
-                MessageBox.Show(error ?? "Unable to start playback.");
-            }
-        }
-        private void btnPlayViaPC_Click(object sender, EventArgs e)
-        {
-            string error;
-
-            bool ok = ARP.PlayFileViaPCAudio("abc_pc", _last_file, ARP.OutputPCDeviceID, out error);
-            if (!ok)
-            {
-                MessageBox.Show(error ?? "Unable to start playback.");
-            }
-        }
-
-        private void btnStopRecord_Click(object sender, EventArgs e)
-        {
-            string error;
-            bool ok = ARP.StopRecord(out error);
-            if (!ok)
-            {
-                MessageBox.Show(error ?? "Unable to stop recording.");
-            }
-        }
-        private void btnStopPlayback_Click(object sender, EventArgs e)
-        {
-            string error;
-            ARP.StopPlayback(out error);
-        }
         private void arp_PlayingingChanged(bool playing, string id, string filename, bool isWdsp)
         {
             if (InvokeRequired)
@@ -52388,14 +52319,6 @@ namespace Thetis
 
             ckQuickRec.Enabled = !playing;
             if (!playing && ckQuickPlay.Checked) ckQuickPlay.Checked = false;
-
-            btnWDSPplay.Enabled = !playing;
-            btnPCPlay.Enabled = !playing;
-            btnStopPlay.Enabled = playing;
-
-            btnWDSPrecord.Enabled = !playing;
-            btnPCrecord.Enabled = !playing;
-            btnStopRecord.Enabled = false;
         }
 
         private void arp_RecordingChanged(bool recording, string id, string filename)
@@ -52410,14 +52333,6 @@ namespace Thetis
 
             ckQuickPlay.Enabled = !recording;
             if (!recording && ckQuickRec.Checked) ckQuickRec.Checked = false;
-
-            btnWDSPrecord.Enabled = !recording;
-            btnPCrecord.Enabled = !recording;
-            btnStopRecord.Enabled = recording;
-
-            btnWDSPplay.Enabled = !recording;
-            btnPCPlay.Enabled = !recording;
-            btnStopPlay.Enabled = false;
         }
         //
     }

@@ -919,12 +919,6 @@
             this.tmrAutoAGC = new System.Windows.Forms.Timer(this.components);
             this.picRX2Squelch = new System.Windows.Forms.PictureBox();
             this.picSquelch = new System.Windows.Forms.PictureBox();
-            this.btnStopPlay = new System.Windows.Forms.ButtonTS();
-            this.btnPCPlay = new System.Windows.Forms.ButtonTS();
-            this.btnWDSPrecord = new System.Windows.Forms.ButtonTS();
-            this.btnWDSPplay = new System.Windows.Forms.ButtonTS();
-            this.btnStopRecord = new System.Windows.Forms.ButtonTS();
-            this.btnPCrecord = new System.Windows.Forms.ButtonTS();
             this.panelModeSpecificCW = new System.Windows.Forms.PanelTS();
             this.grpCWAPF = new System.Windows.Forms.GroupBoxTS();
             this.lblCWAPFGain = new System.Windows.Forms.LabelTS();
@@ -5446,54 +5440,6 @@
             this.picSquelch.TabStop = false;
             this.picSquelch.Paint += new System.Windows.Forms.PaintEventHandler(this.picSquelch_Paint);
             // 
-            // btnStopPlay
-            // 
-            resources.ApplyResources(this.btnStopPlay, "btnStopPlay");
-            this.btnStopPlay.Name = "btnStopPlay";
-            this.btnStopPlay.Selectable = true;
-            this.btnStopPlay.UseVisualStyleBackColor = true;
-            this.btnStopPlay.Click += new System.EventHandler(this.btnStopPlayback_Click);
-            // 
-            // btnPCPlay
-            // 
-            resources.ApplyResources(this.btnPCPlay, "btnPCPlay");
-            this.btnPCPlay.Name = "btnPCPlay";
-            this.btnPCPlay.Selectable = true;
-            this.btnPCPlay.UseVisualStyleBackColor = true;
-            this.btnPCPlay.Click += new System.EventHandler(this.btnPlayViaPC_Click);
-            // 
-            // btnWDSPrecord
-            // 
-            resources.ApplyResources(this.btnWDSPrecord, "btnWDSPrecord");
-            this.btnWDSPrecord.Name = "btnWDSPrecord";
-            this.btnWDSPrecord.Selectable = true;
-            this.btnWDSPrecord.UseVisualStyleBackColor = true;
-            this.btnWDSPrecord.Click += new System.EventHandler(this.btnWDSPrecord_Click);
-            // 
-            // btnWDSPplay
-            // 
-            resources.ApplyResources(this.btnWDSPplay, "btnWDSPplay");
-            this.btnWDSPplay.Name = "btnWDSPplay";
-            this.btnWDSPplay.Selectable = true;
-            this.btnWDSPplay.UseVisualStyleBackColor = true;
-            this.btnWDSPplay.Click += new System.EventHandler(this.btnPlayViaWDSP_Click);
-            // 
-            // btnStopRecord
-            // 
-            resources.ApplyResources(this.btnStopRecord, "btnStopRecord");
-            this.btnStopRecord.Name = "btnStopRecord";
-            this.btnStopRecord.Selectable = true;
-            this.btnStopRecord.UseVisualStyleBackColor = true;
-            this.btnStopRecord.Click += new System.EventHandler(this.btnStopRecord_Click);
-            // 
-            // btnPCrecord
-            // 
-            resources.ApplyResources(this.btnPCrecord, "btnPCrecord");
-            this.btnPCrecord.Name = "btnPCrecord";
-            this.btnPCrecord.Selectable = true;
-            this.btnPCrecord.UseVisualStyleBackColor = true;
-            this.btnPCrecord.Click += new System.EventHandler(this.btnPCrecord_Click);
-            // 
             // panelModeSpecificCW
             // 
             resources.ApplyResources(this.panelModeSpecificCW, "panelModeSpecificCW");
@@ -7622,12 +7568,6 @@
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.Controls.Add(this.btnStopPlay);
-            this.Controls.Add(this.btnPCPlay);
-            this.Controls.Add(this.btnWDSPrecord);
-            this.Controls.Add(this.btnWDSPplay);
-            this.Controls.Add(this.btnStopRecord);
-            this.Controls.Add(this.btnPCrecord);
             this.Controls.Add(this.lblPAProfile);
             this.Controls.Add(this.panelModeSpecificCW);
             this.Controls.Add(this.panelDisplay);
@@ -7968,11 +7908,5 @@
         private ButtonTS btnAPF_type;
         private ToolStripStatusLabel toolStripStatusLabel_PAstatus;
         private ToolStripStatusLabel toolStripStatus_PAspacer;
-        private ButtonTS btnPCrecord;
-        private ButtonTS btnStopRecord;
-        private ButtonTS btnWDSPplay;
-        private ButtonTS btnStopPlay;
-        private ButtonTS btnWDSPrecord;
-        private ButtonTS btnPCPlay;
     }
 }
