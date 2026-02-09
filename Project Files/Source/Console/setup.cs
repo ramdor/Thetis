@@ -2274,6 +2274,7 @@ namespace Thetis
             chkVAC1ExclusiveOut_CheckedChanged(this, e);
             chkVAC2ExclusiveOut_CheckedChanged(this, e);
             // 
+            chkRecording_disable_during_playback(this, e);
 
             // Calibration Tab
             udTXDisplayCalOffset_ValueChanged(this, e);
@@ -6359,7 +6360,10 @@ namespace Thetis
                     }
                 }
 
-                if (AndromedaCATEnabled) tpOtherHW.Text = "Andromeda";
+                if (AndromedaCATEnabled)
+                    tpOtherHW.Text = "Andromeda";
+                else
+                    tpOtherHW.Text = "Other H/W";
             }
             else
             {
@@ -24836,11 +24840,24 @@ namespace Thetis
                 igs.FadeOnRx = chkHistory_fade_rx.Checked;
                 igs.FadeOnTx = chkHistory_fade_tx.Checked;
             }
-            else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS || mt == MeterType.OTHER_BUTTONS)
+            else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || 
+                     mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS || 
+                     mt == MeterType.OTHER_BUTTONS || mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
             {
-                if (mt == MeterType.OTHER_BUTTONS)
+                if(mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
                 {
-                    if (_reset_otherbutton_layout) igs.SetSetting<short[]>("buttonbox_button_map", null);
+                    if (_reset_button_map_layout) igs.SetSetting<short[]>("buttonbox_button_map", null);
+                    
+                    igs.SetSetting<int>("buttonbox_recordplayback_slots", (int)nudVoiceRecordingPlayback_slots.Value);
+                    if(_selected_voice_slot > -1) igs.SetSetting<string>("buttonbox_recordplayback_label_" + _selected_voice_slot.ToString(), txtRecording_labelText.Text);
+
+                    int max_buttons = (int)nudVoiceRecordingPlayback_slots.Value;
+                    if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
+                    if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
+                }
+                else if (mt == MeterType.OTHER_BUTTONS)
+                {
+                    if (_reset_button_map_layout) igs.SetSetting<short[]>("buttonbox_button_map", null);
 
                     int max_buttons = 0;
                     for (int n = 0; n < OtherButtonIdHelpers.MAX_BITFIELD_GROUP; n++)
@@ -25347,7 +25364,7 @@ namespace Thetis
                 mt != MeterType.TEXT_OVERLAY && mt != MeterType.SPACER && mt != MeterType.LED &&
                 mt != MeterType.BAND_BUTTONS && mt != MeterType.MODE_BUTTONS && mt != MeterType.FILTER_BUTTONS && mt != MeterType.ANTENNA_BUTTONS &&
                 mt != MeterType.HISTORY && mt != MeterType.TUNESTEP_BUTTONS && mt != MeterType.DISCORD_BUTTONS && mt != MeterType.FILTER_DISPLAY &&
-                mt != MeterType.DIAL_DISPLAY && mt != MeterType.OTHER_BUTTONS
+                mt != MeterType.DIAL_DISPLAY && mt != MeterType.OTHER_BUTTONS && mt != MeterType.VOICE_RECORD_PLAY_BUTTONS
                 )
             {
                 switch (m.MeterVariables(mt))
@@ -25456,12 +25473,20 @@ namespace Thetis
                 chkHistory_fade_rx.Checked = igs.FadeOnRx;
                 chkHistory_fade_tx.Checked = igs.FadeOnTx;
             }
-            else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS || mt == MeterType.OTHER_BUTTONS)
+            else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || 
+                     mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS || 
+                     mt == MeterType.OTHER_BUTTONS || mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
             {
                 int columns = 1;
                 int max_buttons = 1;
 
-                if (mt == MeterType.OTHER_BUTTONS)
+                if(mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
+                {
+                    nudVoiceRecordingPlayback_slots.Value = igs.GetSetting<int>("buttonbox_recordplayback_slots", true, 0, int.MaxValue, 0);
+                    if (_selected_voice_slot > -1) txtRecording_labelText.Text = igs.GetSetting<string>("buttonbox_recordplayback_label_" + _selected_voice_slot.ToString(), false, null, null, "slot");
+                    updateSelectedRecordPlaybackSlot();
+                }
+                else if (mt == MeterType.OTHER_BUTTONS)
                 {
                     for (int n = 0; n < OtherButtonIdHelpers.MAX_BITFIELD_GROUP; n++)
                     {
@@ -25535,6 +25560,12 @@ namespace Thetis
                             max_buttons += ucOtherButtonsOptionsGrid_buttons.GetCheckedCount(n);
                         }
                         max_buttons = Math.Max(1, max_buttons);
+                        columns = igs.GetSetting<int>("buttonbox_columns", true, 1, max_buttons, max_buttons);
+                        if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
+                        if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
+                        break;
+                    case MeterType.VOICE_RECORD_PLAY_BUTTONS:
+                        max_buttons = (int)nudVoiceRecordingPlayback_slots.Value;
                         columns = igs.GetSetting<int>("buttonbox_columns", true, 1, max_buttons, max_buttons);
                         if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
                         if (nudBandButtons_columns.Maximum != max_buttons) nudBandButtons_columns.Maximum = max_buttons;
@@ -26346,6 +26377,7 @@ namespace Thetis
             setupMMSettingsGroupBoxes(MeterType.DIAL_DISPLAY, false);
             setupMMSettingsGroupBoxes(MeterType.WEB_IMAGE, false);
             setupMMSettingsGroupBoxes(MeterType.OTHER_BUTTONS, false);
+            setupMMSettingsGroupBoxes(MeterType.VOICE_RECORD_PLAY_BUTTONS, false);
             setupMMSettingsGroupBoxes(MeterType.TUNESTEP_BUTTONS, false);
             setupMMSettingsGroupBoxes(MeterType.ANTENNA_BUTTONS, false);
             setupMMSettingsGroupBoxes(MeterType.FILTER_BUTTONS, false);
@@ -26435,6 +26467,7 @@ namespace Thetis
                     comboWebImage_nasa.SelectedIndex = 0;
                     comboWebImage_noaa.SelectedIndex = 0;
                     break;
+                case MeterType.VOICE_RECORD_PLAY_BUTTONS:
                 case MeterType.OTHER_BUTTONS:
                 case MeterType.TUNESTEP_BUTTONS:
                 case MeterType.ANTENNA_BUTTONS:
@@ -26445,7 +26478,7 @@ namespace Thetis
                     {
                         clrbtnButonBox_fontcolour.Visible = mt != MeterType.ANTENNA_BUTTONS;
                         chkButtonBox_use_icons.Visible = mt == MeterType.OTHER_BUTTONS;
-                        btnOtherButtons_reset_layout.Visible = mt == MeterType.OTHER_BUTTONS;
+                        btnOtherButtons_reset_layout.Visible = mt == MeterType.OTHER_BUTTONS || mt == MeterType.VOICE_RECORD_PLAY_BUTTONS;
 
                         grpButtonBox.Parent = grpMultiMeterHolder;
                         grpButtonBox.Location = loc;
@@ -26461,6 +26494,7 @@ namespace Thetis
                                 pnlButtonBox_antenna_toggles.Visible = true;
                                 ucTunestepOptionsGrid_buttons.Visible = false;
                                 ucOtherButtonsOptionsGrid_buttons.Visible = false;
+                                pnlVoiceRecordPlayback.Visible = false;
                                 break;
                             case MeterType.TUNESTEP_BUTTONS:
                                 ucTunestepOptionsGrid_buttons.Parent = grpButtonBox;
@@ -26468,6 +26502,7 @@ namespace Thetis
                                 ucTunestepOptionsGrid_buttons.Visible = true;
                                 pnlButtonBox_antenna_toggles.Visible = false;
                                 ucOtherButtonsOptionsGrid_buttons.Visible = false;
+                                pnlVoiceRecordPlayback.Visible = false;
                                 if (console != null)
                                 {
                                     ucTunestepOptionsGrid_buttons.Init(console.TuneStepList);
@@ -26479,11 +26514,21 @@ namespace Thetis
                                 ucOtherButtonsOptionsGrid_buttons.Visible = true;
                                 ucTunestepOptionsGrid_buttons.Visible = false;
                                 pnlButtonBox_antenna_toggles.Visible = false;
+                                pnlVoiceRecordPlayback.Visible = false;
+                                break;
+                            case MeterType.VOICE_RECORD_PLAY_BUTTONS:
+                                pnlVoiceRecordPlayback.Parent = grpButtonBox;
+                                pnlVoiceRecordPlayback.Location = pos;
+                                pnlVoiceRecordPlayback.Visible = true;
+                                pnlButtonBox_antenna_toggles.Visible = false;
+                                ucTunestepOptionsGrid_buttons.Visible = false;
+                                ucOtherButtonsOptionsGrid_buttons.Visible = false;
                                 break;
                             default:
                                 pnlButtonBox_antenna_toggles.Visible = false;
                                 ucTunestepOptionsGrid_buttons.Visible = false;
                                 ucOtherButtonsOptionsGrid_buttons.Visible = false;
+                                pnlVoiceRecordPlayback.Visible = false;
                                 break;
                         }
                     }
@@ -26652,7 +26697,11 @@ namespace Thetis
                     _itemGroupSettings.SubMarkerColour = currentSettings.SubMarkerColour;
                 }
 
-                if (mt == MeterType.OTHER_BUTTONS)
+                if(mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
+                {
+                    _itemGroupSettings.SetSetting<int>("buttonbox_recordplayback_slots", currentSettings.GetSetting<int>("buttonbox_recordplayback_slots", true, 0, int.MaxValue, 0));
+                }
+                else if (mt == MeterType.OTHER_BUTTONS)
                 {
                     for (int n = 0; n < OtherButtonIdHelpers.MAX_BITFIELD_GROUP; n++)
                     {
@@ -34669,12 +34718,12 @@ namespace Thetis
             LegacyItemController.HideDisplayControls = chkLegacyItems_hide_avg_peak.Checked;
         }
 
-        private bool _reset_otherbutton_layout = false;
+        private bool _reset_button_map_layout = false;
         private void btnOtherButtons_reset_layout_Click(object sender, EventArgs e)
         {
-            _reset_otherbutton_layout = true;
+            _reset_button_map_layout = true;
             updateMeterType();
-            _reset_otherbutton_layout = false;
+            _reset_button_map_layout = false;
         }
 
         private void btnContainer_save_Click(object sender, EventArgs e)
@@ -35893,11 +35942,6 @@ namespace Thetis
             console.ARP.MoxOnPlayback = chkRecording_playbackMox.Checked;
         }
 
-        private void chkRecording_keepQuckRecords_CheckedChanged(object sender, EventArgs e)
-        {
-            console.ARP.KeepQuickRecords = chkRecording_keepQuckRecords.Checked;
-        }
-
         private void chkRecording_generateMP3s_CheckedChanged(object sender, EventArgs e)
         {
             console.ARP.GenerateMP3s = chkRecording_generateMP3s.Checked;
@@ -36033,8 +36077,7 @@ namespace Thetis
             AudioDeviceInfo dev = (AudioDeviceInfo)comboPCAudioDevices_OUT.SelectedItem;
             if (dev == null) return;
 
-            console.ARP.OutputCDeviceID = dev.Id;
-
+            console.ARP.OutputPCDeviceID = dev.Id;
         }
 
         private void nudRecording_gainInput_ValueChanged(object sender, EventArgs e)
@@ -36051,19 +36094,85 @@ namespace Thetis
         {
             initPCAudioDevicesComobs();
         }
-        #endregion
-
-        private void buttonTS5_Click(object sender, EventArgs e)
+        private void nudRecording_txGain_ValueChanged(object sender, EventArgs e)
         {
-            udFMLowCutTX.Value = 300;
-            udFMHighCutTX.Value = 3000;
+            console.ARP.WDSPTXAudioGainInDb = (double)nudRecording_txGain.Value;
         }
+
+        private void chkRecording_disable_during_playback(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.ARP.SetPlaybackSetting("TXEQ", chkRecording_disable_txeq.Checked);
+            console.ARP.SetPlaybackSetting("RXEQ", chkRecording_disable_rxeq.Checked);
+            console.ARP.SetPlaybackSetting("COMP", chkRecording_disable_comp.Checked);
+            console.ARP.SetPlaybackSetting("CFC", chkRecording_disable_cfc.Checked);
+            console.ARP.SetPlaybackSetting("PHASE", chkRecording_disable_phase.Checked);
+            console.ARP.SetPlaybackSetting("MON", chkRecording_enable_monIfMox.Checked);
+        }
+        #endregion
 
         private void btnResetFMAF_rx_Click(object sender, EventArgs e)
         {
             udFMLowCutRX.Value = 300;
             udFMHighCutRX.Value = 3000;
         }
+        private void btnResetFMAF_tx_Click(object sender, EventArgs e)
+        {
+            udFMLowCutTX.Value = 300;
+            udFMHighCutTX.Value = 3000;
+        }
+
+        #region VOICE_SLOTS
+        private int _selected_voice_slot = 0;
+        private void nudVoiceRecordingPlayback_slots_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+
+            int slots = (int)nudVoiceRecordingPlayback_slots.Value;
+            if (_selected_voice_slot > slots - 1) _selected_voice_slot = slots - 1;
+
+            updateMeterType();
+            updateItemSettingsControlsForSelected();
+        }
+
+        private void btnRecording_leftSlot_Click(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            _selected_voice_slot--;
+            if (_selected_voice_slot < 0) _selected_voice_slot = 0;
+            updateItemSettingsControlsForSelected();
+        }
+
+        private void btnRecording_rightSlot_Click(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            _selected_voice_slot++;
+            if (_selected_voice_slot > (int)nudVoiceRecordingPlayback_slots.Value - 1) _selected_voice_slot = (int)nudVoiceRecordingPlayback_slots.Value - 1;
+            updateItemSettingsControlsForSelected();
+        }
+
+        private void txtRecording_labelText_TextChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            updateMeterType();
+        }
+
+        private void chkRecording_canRepeat_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            updateMeterType();
+        }
+
+        private void nudRecording_repeatDelay_ValueChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            updateMeterType();
+        }
+        private void updateSelectedRecordPlaybackSlot()
+        {
+            lblRecording_activeSlot.Text = "Settings - Slot " + (_selected_voice_slot + 1).ToString();           
+        }
+        #endregion
     }
 
     #region FormLoactionHelper
