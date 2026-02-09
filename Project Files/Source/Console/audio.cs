@@ -519,6 +519,7 @@ namespace Thetis
             }
             set
             {
+                Debug.Print("VAC BYPASS : " + value.ToString());
                 vac_bypass = value;
                 cmaster.CMSetTXAPanelGain1(WDSP.id(1, 0));
                 ivac.SetIVACbypass(0, Convert.ToInt32(value));

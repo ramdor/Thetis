@@ -142,7 +142,7 @@ namespace Thetis
                 _playbackSetting["CFC"] = _console.CFCEnabled;
                 _playbackSetting["PHASE"] = _console.PhaseRotEnabled;
                 _playbackSetting["MON"] = _console.MON;
-                _playbackSetting["BYPASS_VAC"] = Audio.VACBypass;
+                _playbackSetting["BYPASS_VAC"] = _console.BypassVACWhenPlayingWAV;
                 _playbackSetting["MOX"] = _console.MOX;
             }
         }
@@ -185,17 +185,17 @@ namespace Thetis
             {
                 if (playback)
                 {
-                    if (_PrePlaybackSetting.ContainsKey("TXEQ")) _console.TXEQ = _PrePlaybackSetting["TXEQ"];
-                    if (_PrePlaybackSetting.ContainsKey("COMP")) _console.CPDR = _PrePlaybackSetting["COMP"];
-                    if (_PrePlaybackSetting.ContainsKey("CFC")) _console.CFCEnabled = _PrePlaybackSetting["CFC"];
-                    if (_PrePlaybackSetting.ContainsKey("PHASE")) _console.PhaseRotEnabled = _PrePlaybackSetting["PHASE"];
-                    if (_PrePlaybackSetting.ContainsKey("MON")) _console.MON = _PrePlaybackSetting["MON"];
-                    if (_PrePlaybackSetting.ContainsKey("BYPASS_VAC")) Audio.VACBypass = _PrePlaybackSetting["BYPASS_VAC"];
+                    if (_PrePlaybackSetting.ContainsKey("TXEQ") && _console.TXEQ != _PrePlaybackSetting["TXEQ"]) _console.TXEQ = _PrePlaybackSetting["TXEQ"];
+                    if (_PrePlaybackSetting.ContainsKey("COMP") && _console.CPDR != _PrePlaybackSetting["COMP"]) _console.CPDR = _PrePlaybackSetting["COMP"];
+                    if (_PrePlaybackSetting.ContainsKey("CFC") && _console.CFCEnabled != _PrePlaybackSetting["CFC"]) _console.CFCEnabled = _PrePlaybackSetting["CFC"];
+                    if (_PrePlaybackSetting.ContainsKey("PHASE") && _console.PhaseRotEnabled != _PrePlaybackSetting["PHASE"]) _console.PhaseRotEnabled = _PrePlaybackSetting["PHASE"];
+                    if (_PrePlaybackSetting.ContainsKey("MON") && _console.MON != _PrePlaybackSetting["MON"]) _console.MON = _PrePlaybackSetting["MON"];
+                    if (_PrePlaybackSetting.ContainsKey("BYPASS_VAC") && Audio.VACBypass != _PrePlaybackSetting["BYPASS_VAC"]) Audio.VACBypass = _PrePlaybackSetting["BYPASS_VAC"];
                     if (_PrePlaybackSetting.ContainsKey("MOX") && _console.MOX != _PrePlaybackSetting["MOX"]) _console.MOX = _PrePlaybackSetting["MOX"];
                 }
                 else
                 {
-                    if (_PrePlaybackSetting.ContainsKey("RXEQ")) _console.RXEQ = _PrePlaybackSetting["RXEQ"];
+                    if (_PrePlaybackSetting.ContainsKey("RXEQ") && _console.RXEQ != _PrePlaybackSetting["RXEQ"]) _console.RXEQ = _PrePlaybackSetting["RXEQ"];
                 }
             }
         }
@@ -208,8 +208,8 @@ namespace Thetis
                 if (GetPlaybackSetting("COMP") && _console.CPDR) _console.CPDR = false;
                 if (GetPlaybackSetting("CFC") && _console.CFCEnabled) _console.CFCEnabled = false;
                 if (GetPlaybackSetting("PHASE") && _console.PhaseRotEnabled) _console.PhaseRotEnabled = false;
-                if (GetPlaybackSetting("MON") && MoxOnPlayback && !_console.MON) _console.MON = true;
-                Audio.VACBypass = _console.BypassVACWhenPlayingRecording;
+                if (GetPlaybackSetting("MON") && !_console.MON) _console.MON = true;
+                Audio.VACBypass = _console.BypassVACWhenPlayingWAV;
                 if (!_console.MOX && MoxOnPlayback) _console.MOX = true;
             }
             else
@@ -220,6 +220,7 @@ namespace Thetis
 
         private void OnPreMox(int rx, bool oldMox, bool newMox)
         {
+            //stop anything playing/recording if mox changes
             if (oldMox != newMox)
             {
                 try { StopRecord(out string _); } catch { }
@@ -599,7 +600,7 @@ namespace Thetis
                     storeRestoreSettings(true, false);
                     activatePlaybackRecordSettings(false);
 
-                    Thread.Sleep(50); // time to settle
+                    Thread.Sleep(100); // time to settle
 
                     WaveThing.wave_file_writer[_active_record_wfw_id] = new WaveFileWriter(_active_record_wfw_id, 2, SampleRate, full_target, recRXPreProc, recTXPreProc, formatTag, bitDepth);
                     WaveThing.wave_file_writer[_active_record_wfw_id].DitherEnabled = DitherEnabled;
@@ -701,7 +702,7 @@ namespace Thetis
 
                     _pc_wave_writer = new NAudio.Wave.WaveFileWriter(full_target, fmt);
 
-                    Thread.Sleep(50); // time to settle
+                    Thread.Sleep(100); // time to settle
 
                     _pc_wave_in.StartRecording();
                     setRecordingState(true);
@@ -861,7 +862,15 @@ namespace Thetis
                     }
 
                     storeRestoreSettings(true, true);
+                    // need to mute mic/va input
+                    double mic = Audio.MicPreamp;
+                    double vac = Audio.VACPreamp;
+                    Audio.MicPreamp = 0.0;
+                    Audio.VACPreamp = 0.0;
+                    
                     activatePlaybackRecordSettings(true);
+
+                    Thread.Sleep(100); // time to settle
 
                     _active_playback_wfw_id = wfw_id;
                     _active_play_id = play_id ?? string.Empty;
@@ -880,6 +889,9 @@ namespace Thetis
                     _console.SetWavePlayback(wfw_id, true);
                     Audio.WavePlayback = true;
                     setPlayingState(true);
+
+                    Audio.MicPreamp = mic;
+                    Audio.VACPreamp = vac;
 
                     ret = true;
                 }
@@ -926,8 +938,6 @@ namespace Thetis
                         return false;
                     }
 
-                    storeRestoreSettings(true, true);
-
                     _active_play_id = play_id ?? string.Empty;
                     _active_play_filename = fullPath;
                     _is_wdsp_playing = false;
@@ -952,8 +962,6 @@ namespace Thetis
                     restore = true;
                 }
             }
-
-            if (restore) try { storeRestoreSettings(false, true); } catch { }
             return ret;
         }
 
@@ -987,6 +995,30 @@ namespace Thetis
                 lock (_sync)
                 {
                     ret = _is_playing;
+                }
+                return ret;
+            }
+        }
+        public bool IsRecording
+        {
+            get
+            {
+                bool ret;
+                lock (_sync)
+                {
+                    ret = _is_recording;
+                }
+                return ret;
+            }
+        }
+        public bool IsBusy
+        {
+            get
+            {
+                bool ret;
+                lock (_sync)
+                {
+                    ret = _is_recording || _is_recording;
                 }
                 return ret;
             }

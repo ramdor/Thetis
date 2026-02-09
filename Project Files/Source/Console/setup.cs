@@ -19377,12 +19377,6 @@ namespace Thetis
             console.SpaceMoxDelay = (int)udSpaceMoxDelay.Value;
         }
 
-        private void chkBypassVACPlayingRecording_CheckedChanged(object sender, EventArgs e)
-        {
-            if (initializing) return;
-            console.BypassVACWhenPlayingRecording = chkBypassVACPlayingRecording.Checked;
-        }
-
         private void ButtonAndromeda_Click(object sender, EventArgs e)
         {
             console.EditAndromedaDataSet();
@@ -25483,7 +25477,7 @@ namespace Thetis
                 if(mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
                 {
                     nudVoiceRecordingPlayback_slots.Value = igs.GetSetting<int>("buttonbox_recordplayback_slots", true, 0, int.MaxValue, 0);
-                    if (_selected_voice_slot > -1) txtRecording_labelText.Text = igs.GetSetting<string>("buttonbox_recordplayback_label_" + _selected_voice_slot.ToString(), false, null, null, "Slot " + _selected_voice_slot.ToString());
+                    if (_selected_voice_slot > -1) txtRecording_labelText.Text = igs.GetSetting<string>("buttonbox_recordplayback_label_" + _selected_voice_slot.ToString(), false, null, null, "Slot " + (_selected_voice_slot + 1).ToString());
                     updateSelectedRecordPlaybackSlot();
                 }
                 else if (mt == MeterType.OTHER_BUTTONS)
@@ -36108,6 +36102,12 @@ namespace Thetis
             console.ARP.SetPlaybackSetting("CFC", chkRecording_disable_cfc.Checked);
             console.ARP.SetPlaybackSetting("PHASE", chkRecording_disable_phase.Checked);
             console.ARP.SetPlaybackSetting("MON", chkRecording_enable_monIfMox.Checked);
+        }
+
+        private void chkBypassVACPlayingRecording_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            console.BypassVACWhenPlayingWAV = chkBypassVACPlayingRecording.Checked;
         }
         #endregion
 

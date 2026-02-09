@@ -1300,9 +1300,13 @@ namespace Thetis
                             WaveThing.wave_file_reader[id].GetPlayBuffer(pleft, pright);
                             swizzle(size, pleft, pright, data);
                         }
-                        System.Threading.Interlocked.Exchange(ref _busy, 0);
+                        //System.Threading.Interlocked.Exchange(ref _busy, 0);
                     }
                     catch { }
+                    finally
+                    {
+                        System.Threading.Interlocked.Exchange(ref _busy, 0);
+                    }
                 }
             }
         }
@@ -1372,76 +1376,84 @@ namespace Thetis
             {
                 if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1)
                 {
-                    fixed (float* pleft  = &left[0], pright = &right[0], pltemp = &ltemp[0], prtemp = &rtemp[0])
+                    try
                     {
-                        if (pos == 0)   // calling from the "pre" location
+                        fixed (float* pleft = &left[0], pright = &right[0], pltemp = &ltemp[0], prtemp = &rtemp[0])
                         {
-                            if ((state == 0) && rxpre)  // getting receive data and want receive data for 'pre' position
+                            if (pos == 0)   // calling from the "pre" location
                             {
-                                int rcvr_inrate = cmaster.GetInputRate(0, id);  // could just read these from WaveThing.wave_file_writer[id]
-                                int rcvr_insize = cmaster.GetBuffSize(rcvr_inrate);
-                                deswizzle(rcvr_insize, data, pleft, pright);
-                                if (WaveThing.wave_file_writer[id].BaseRate != rcvr_inrate)
+                                if ((state == 0) && rxpre)  // getting receive data and want receive data for 'pre' position
                                 {
-                                    int outsamps;
-                                    WDSP.xresampleFV(pleft,  pltemp, rcvr_insize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampL);
-                                    WDSP.xresampleFV(pright, prtemp, rcvr_insize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampR);
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
+                                    int rcvr_inrate = cmaster.GetInputRate(0, id);  // could just read these from WaveThing.wave_file_writer[id]
+                                    int rcvr_insize = cmaster.GetBuffSize(rcvr_inrate);
+                                    deswizzle(rcvr_insize, data, pleft, pright);
+                                    if (WaveThing.wave_file_writer[id].BaseRate != rcvr_inrate)
+                                    {
+                                        int outsamps;
+                                        WDSP.xresampleFV(pleft, pltemp, rcvr_insize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampL);
+                                        WDSP.xresampleFV(pright, prtemp, rcvr_insize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampR);
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
+                                    }
+                                    else
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, rcvr_insize);
                                 }
-                                else
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, rcvr_insize);
+                                if ((state == 1) && txpre)  // getting transmit data and want transmit data for 'pre' position
+                                {
+                                    int xmtr_inrate = cmaster.GetInputRate(1, 0);
+                                    int xmtr_insize = cmaster.GetBuffSize(xmtr_inrate);
+                                    deswizzle(xmtr_insize, data, pleft, pright);
+                                    if (WaveThing.wave_file_writer[id].BaseRate != xmtr_inrate)
+                                    {
+                                        int outsamps;
+                                        WDSP.xresampleFV(pleft, pltemp, xmtr_insize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampL);
+                                        WDSP.xresampleFV(pright, prtemp, xmtr_insize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampR);
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
+                                    }
+                                    else
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, xmtr_insize);
+                                }
                             }
-                            if ((state == 1) && txpre)  // getting transmit data and want transmit data for 'pre' position
+                            if (pos == 1)   // calling from "post" location
                             {
-                                int xmtr_inrate = cmaster.GetInputRate(1, 0);
-                                int xmtr_insize = cmaster.GetBuffSize(xmtr_inrate);
-                                deswizzle(xmtr_insize, data, pleft, pright);
-                                if (WaveThing.wave_file_writer[id].BaseRate != xmtr_inrate)
+                                if ((state == 0) && !rxpre) // getting receive data and want receive data for 'post' position
                                 {
-                                    int outsamps;
-                                    WDSP.xresampleFV(pleft,  pltemp, xmtr_insize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampL);
-                                    WDSP.xresampleFV(pright, prtemp, xmtr_insize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampR);
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
+                                    int rcvr_outrate = cmaster.GetChannelOutputRate(0, id);
+                                    int rcvr_outsize = cmaster.GetBuffSize(rcvr_outrate);
+                                    deswizzle(rcvr_outsize, data, pleft, pright);
+                                    if (WaveThing.wave_file_writer[id].BaseRate != rcvr_outrate)
+                                    {
+                                        int outsamps;
+                                        WDSP.xresampleFV(pleft, pltemp, rcvr_outsize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampL);
+                                        WDSP.xresampleFV(pright, prtemp, rcvr_outsize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampR);
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
+                                    }
+                                    else
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, rcvr_outsize);
                                 }
-                                else
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, xmtr_insize);
+                                if ((state == 1) && !txpre) // getting transmit data and want transmit data for 'post' position
+                                {
+                                    int xmtr_outrate = cmaster.GetChannelOutputRate(1, 0);
+                                    int xmtr_outsize = cmaster.GetBuffSize(xmtr_outrate);
+                                    deswizzle(xmtr_outsize, data, pleft, pright);
+                                    if (WaveThing.wave_file_writer[id].BaseRate != xmtr_outrate)
+                                    {
+                                        int outsamps;
+                                        WDSP.xresampleFV(pleft, pltemp, xmtr_outsize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampL);
+                                        WDSP.xresampleFV(pright, prtemp, xmtr_outsize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampR);
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
+                                    }
+                                    else
+                                        WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, xmtr_outsize);
+                                }
                             }
                         }
-                        if (pos == 1)   // calling from "post" location
-                        {
-                            if ((state == 0) && !rxpre) // getting receive data and want receive data for 'post' position
-                            {
-                                int rcvr_outrate = cmaster.GetChannelOutputRate(0, id);
-                                int rcvr_outsize = cmaster.GetBuffSize(rcvr_outrate);
-                                deswizzle(rcvr_outsize, data, pleft, pright);
-                                if (WaveThing.wave_file_writer[id].BaseRate != rcvr_outrate)
-                                {
-                                    int outsamps;
-                                    WDSP.xresampleFV(pleft,  pltemp, rcvr_outsize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampL);
-                                    WDSP.xresampleFV(pright, prtemp, rcvr_outsize, &outsamps, WaveThing.wave_file_writer[id].RcvrResampR);
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
-                                }
-                                else
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, rcvr_outsize);
-                            }
-                            if ((state == 1) && !txpre) // getting transmit data and want transmit data for 'post' position
-                            {
-                                int xmtr_outrate = cmaster.GetChannelOutputRate(1, 0);
-                                int xmtr_outsize = cmaster.GetBuffSize(xmtr_outrate);
-                                deswizzle(xmtr_outsize, data, pleft, pright);
-                                if (WaveThing.wave_file_writer[id].BaseRate != xmtr_outrate)
-                                {
-                                    int outsamps;
-                                    WDSP.xresampleFV(pleft,  pltemp, xmtr_outsize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampL);
-                                    WDSP.xresampleFV(pright, prtemp, xmtr_outsize, &outsamps, WaveThing.wave_file_writer[id].XmtrResampR);
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pltemp, prtemp, outsamps);
-                                }
-                                else
-                                    WaveThing.wave_file_writer[id].AddWriteBuffer(pleft, pright, xmtr_outsize);
-                            }
-                        }
+                        //System.Threading.Interlocked.Exchange(ref busy, 0);
                     }
-                    System.Threading.Interlocked.Exchange(ref busy, 0);
+                    catch { }
+                    finally
+                    {
+                        System.Threading.Interlocked.Exchange(ref busy, 0);
+                    }
                 }
             }
         }
@@ -1525,15 +1537,23 @@ namespace Thetis
             {
                 if (System.Threading.Interlocked.Exchange(ref busy, 1) != 1)
                 {
-                    int size = Audio.MOX ? Audio.OutCountTX : Audio.OutCount; //[2.10.3.4]MW0LGE use OutCountTX if moxing
-                    fixed (float* pleft = &left[0])
-                    fixed (float* pright = &right[0])
+                    try
                     {
-                        deswizzle(size, data, pleft, pright);
-                        Audio.DoScope(pleft, size);
-                        Audio.DoScope2(pright, size);
+                        int size = Audio.MOX ? Audio.OutCountTX : Audio.OutCount; //[2.10.3.4]MW0LGE use OutCountTX if moxing
+                        fixed (float* pleft = &left[0])
+                        fixed (float* pright = &right[0])
+                        {
+                            deswizzle(size, data, pleft, pright);
+                            Audio.DoScope(pleft, size);
+                            Audio.DoScope2(pright, size);
+                        }
+                        //System.Threading.Interlocked.Exchange(ref busy, 0);
                     }
-                    System.Threading.Interlocked.Exchange(ref busy, 0);
+                    catch { }
+                    finally
+                    {
+                        System.Threading.Interlocked.Exchange(ref busy, 0);
+                    }
                 }
             }
         }

@@ -24557,13 +24557,17 @@ namespace Thetis
                                 _stop_all_tx = false;
                         }
 
-                        if (chkVAC1.Checked && (((mic_ptt || cw_ptt) && _allow_vac_bypass) || (VOXEnable && _allow_micvox_bypass)))
+                        //VACBypass
+                        if (!ARP.IsBusy) // dont change vac bypass if it being used by ARP
                         {
-                            if (!Audio.VACBypass) Audio.VACBypass = true;
-                        }
-                        else if (chkVAC1.Checked && Audio.VACBypass)
-                        {
-                            Audio.VACBypass = false;
+                            if (chkVAC1.Checked && (((mic_ptt || cw_ptt) && _allow_vac_bypass) || (VOXEnable && _allow_micvox_bypass)))
+                            {
+                                if (!Audio.VACBypass) Audio.VACBypass = true;
+                            }
+                            else if (chkVAC1.Checked && Audio.VACBypass)
+                            {
+                                Audio.VACBypass = false;
+                            }
                         }
 
                         if (_tci_ptt)
@@ -24657,9 +24661,13 @@ namespace Thetis
                                 break;
                         }
 
-                        if (chkVAC1.Checked && vac_bypass_disable)
+                        //VACBypass
+                        if (!ARP.IsBusy) // dont change vac bypass if it being used by ARP
                         {
-                            if (Audio.VACBypass) Audio.VACBypass = false;
+                            if (chkVAC1.Checked && vac_bypass_disable)
+                            {
+                                if (Audio.VACBypass) Audio.VACBypass = false;
+                            }
                         }
                     }
                 }
@@ -25770,15 +25778,20 @@ namespace Thetis
                                 {
                                     _current_ptt_mode = PTTMode.SPACE;
                                     chkMOX.Checked = !chkMOX.Checked;
-                                    if (chkMOX.Checked)
-                                    {
-                                        if (chkVAC1.Checked && allow_space_bypass)
-                                            Audio.VACBypass = true;
-                                    }
-                                    else
-                                    {
-                                        if (chkVAC1.Checked && Audio.VACBypass)
-                                            Audio.VACBypass = false;
+
+                                    //VACBypass
+                                    if (!ARP.IsBusy) // dont change vac bypass if it being used by ARP
+                                    {                                        
+                                        if (chkMOX.Checked)
+                                        {
+                                            if (chkVAC1.Checked && allow_space_bypass)
+                                                Audio.VACBypass = true;
+                                        }
+                                        else
+                                        {
+                                            if (chkVAC1.Checked && Audio.VACBypass)
+                                                Audio.VACBypass = false;
+                                        }
                                     }
 
                                     e.Handled = true;
@@ -28380,19 +28393,23 @@ namespace Thetis
                 return;
             }
 
-            if (allow_mox_bypass && _current_ptt_mode != PTTMode.MIC &&
-                                    _current_ptt_mode != PTTMode.SPACE &&
-                                    _current_ptt_mode != PTTMode.CAT)
+            //VACBypass
+            if (ARP.IsBusy) // dont change vac bypass if it being used by ARP
             {
-                if (chkMOX.Checked)
+                if (allow_mox_bypass && _current_ptt_mode != PTTMode.MIC &&
+                                        _current_ptt_mode != PTTMode.SPACE &&
+                                        _current_ptt_mode != PTTMode.CAT)
                 {
-                    if (chkVAC1.Checked)
-                        Audio.VACBypass = true;
-                }
-                else
-                {
-                    if (chkVAC1.Checked && Audio.VACBypass)
-                        Audio.VACBypass = false;
+                    if (chkMOX.Checked)
+                    {
+                        if (chkVAC1.Checked)
+                            Audio.VACBypass = true;
+                    }
+                    else
+                    {
+                        if (chkVAC1.Checked && Audio.VACBypass)
+                            Audio.VACBypass = false;
+                    }
                 }
             }
 
@@ -37341,7 +37358,7 @@ namespace Thetis
         }
 
         private bool m_bBypassVACWhenPlayingRecording = false;
-        public bool BypassVACWhenPlayingRecording {
+        public bool BypassVACWhenPlayingWAV {
             get { return m_bBypassVACWhenPlayingRecording; }
             set { m_bBypassVACWhenPlayingRecording = value; }
         }

@@ -24828,7 +24828,7 @@ namespace Thetis
 
                                                 for (int n = 0; n < slots; n++)
                                                 {
-                                                    string label = igs.GetSetting<string>("buttonbox_recordplayback_label_" + n.ToString(), false, null, null, "Slot " + n.ToString());
+                                                    string label = igs.GetSetting<string>("buttonbox_recordplayback_label_" + n.ToString(), false, null, null, "Slot " + (n + 1).ToString());
                                                     ((clsVoiceRecordPlay)bb).SetText(0, n, label);
                                                 }
                                             }
