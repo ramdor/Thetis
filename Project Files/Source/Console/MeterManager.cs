@@ -24824,6 +24824,7 @@ namespace Thetis
                                                 ((clsVoiceRecordPlay)bb).Slots = slots;
                                                 ((clsVoiceRecordPlay)bb).ButtonMap = igs.GetSetting<short[]>("buttonbox_button_map", false, null, null, null);
                                                 ((clsVoiceRecordPlay)bb).SlotFilepaths = igs.GetSetting<string[]>("buttonbox_recordplayback_filepaths", false, null, null, null);
+                                                ((clsVoiceRecordPlay)bb).WDSP = igs.GetSetting<bool>("buttonbox_recordplayback_wdsp", false, false, false, true);
 
                                                 for (int n = 0; n < slots; n++)
                                                 {
@@ -26158,6 +26159,7 @@ namespace Thetis
                                                 igs.SetSetting<int>("buttonbox_recordplayback_slots", slots);
                                                 igs.SetSetting<short[]>("buttonbox_button_map", ((clsVoiceRecordPlay)bb).ButtonMap);
                                                 igs.SetSetting<string[]>("buttonbox_recordplayback_filepaths", ((clsVoiceRecordPlay)bb).SlotFilepaths);
+                                                igs.SetSetting<bool>("buttonbox_recordplayback_wdsp", ((clsVoiceRecordPlay)bb).WDSP);
 
                                                 for (int n = 0; n < slots; n++)
                                                 {

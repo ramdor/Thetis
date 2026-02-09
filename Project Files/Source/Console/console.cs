@@ -14454,12 +14454,12 @@ namespace Thetis
                     break;
             }
         }
-        public bool GetWavePlayback(int id)
+        private bool getWavePlayback(int id)
         {
             if (id < 0 || id > _wave_playback.Length - 1) return false;
             return _wave_playback[id];
         }
-        public double GetWavePlaybackFreq(int id)
+        public double getWavePlaybackFreq(int id)
         {
             if (id < 0 || id > _wave_playback.Length - 1) return 0.0;
             return _wave_playback_frequency[id];
@@ -30846,9 +30846,9 @@ namespace Thetis
                 //    radio.GetDSPRX(0, 0).RXOsc = f;
                 //}
                 //else
-                if(GetWavePlayback(0) && !MOX) //wave
+                if(getWavePlayback(0) && !MOX) //wave
                 {
-                    double f = (GetWavePlaybackFreq(0) - (VFOAFreq * 1e6) % sample_rate_rx1);
+                    double f = (getWavePlaybackFreq(0) - (VFOAFreq * 1e6) % sample_rate_rx1);
                     if (f > sample_rate_rx1 / 2) f -= sample_rate_rx1;
                     if (f < -sample_rate_rx1 / 2) f += sample_rate_rx1;
                     Display.FreqDiff = (int)f;
@@ -32442,7 +32442,7 @@ namespace Thetis
                 mode != DSPMode.DIGL &&
                 mode != DSPMode.DIGU &&
                 //Audio.WavePlayback == false) //wave
-                GetWavePlayback(rx == 1 ? 0 : 1))
+                !getWavePlayback(rx == 1 ? 0 : 1))
             {
                 // round freq to the nearest tuning step
                 long f = (long)(freq * 1000000.0);
