@@ -599,6 +599,8 @@ namespace Thetis
                     storeRestoreSettings(true, false);
                     activatePlaybackRecordSettings(false);
 
+                    Thread.Sleep(50); // time to settle
+
                     WaveThing.wave_file_writer[_active_record_wfw_id] = new WaveFileWriter(_active_record_wfw_id, 2, SampleRate, full_target, recRXPreProc, recTXPreProc, formatTag, bitDepth);
                     WaveThing.wave_file_writer[_active_record_wfw_id].DitherEnabled = DitherEnabled;
                     WaveThing.wave_file_writer[_active_record_wfw_id].DitherAmount = DitherAmount;
@@ -698,6 +700,8 @@ namespace Thetis
                     _pc_wave_in.RecordingStopped += onPcRecordingStopped;
 
                     _pc_wave_writer = new NAudio.Wave.WaveFileWriter(full_target, fmt);
+
+                    Thread.Sleep(50); // time to settle
 
                     _pc_wave_in.StartRecording();
                     setRecordingState(true);
@@ -975,7 +979,18 @@ namespace Thetis
                 _pc_audio_reader = null;
             }
         }
-
+        public bool IsPlaying
+        {
+            get
+            {
+                bool ret;
+                lock (_sync)
+                {
+                    ret = _is_playing;
+                }
+                return ret;
+            }
+        }
         public bool StopPlayback(out string error)
         {
             error = null;

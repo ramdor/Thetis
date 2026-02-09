@@ -25483,7 +25483,7 @@ namespace Thetis
                 if(mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
                 {
                     nudVoiceRecordingPlayback_slots.Value = igs.GetSetting<int>("buttonbox_recordplayback_slots", true, 0, int.MaxValue, 0);
-                    if (_selected_voice_slot > -1) txtRecording_labelText.Text = igs.GetSetting<string>("buttonbox_recordplayback_label_" + _selected_voice_slot.ToString(), false, null, null, "slot");
+                    if (_selected_voice_slot > -1) txtRecording_labelText.Text = igs.GetSetting<string>("buttonbox_recordplayback_label_" + _selected_voice_slot.ToString(), false, null, null, "Slot " + _selected_voice_slot.ToString());
                     updateSelectedRecordPlaybackSlot();
                 }
                 else if (mt == MeterType.OTHER_BUTTONS)

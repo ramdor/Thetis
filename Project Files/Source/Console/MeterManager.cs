@@ -10233,6 +10233,14 @@ namespace Thetis
             private void onPlayingChanged(bool playing, string id, string filename, bool isWdsp)
             {
                 _global_playing = playing; // global state
+
+                //if something is play, and we are in record mode, then we should grey out everything
+                if (_mode_record)
+                {
+                    enableAllSlots(!playing);
+                    setupButtons();
+                }
+
                 if (id != _unique_id) return; // not for us
 
                 if (!playing)
@@ -10299,9 +10307,13 @@ namespace Thetis
             {
                 get { return _mode_record; }
             }
-            public bool IsWDSP
+            public bool WDSP
             {
                 get { return _wdsp; }
+                set
+                {
+                    _wdsp = value;
+                }
             }
             public bool IsARPbusy
             {
@@ -10655,10 +10667,16 @@ namespace Thetis
                     // stop recording
                     _console.ARP.StopRecord(out string error);
                 }
-                else if (!_global_playing && !_global_recording)
+                else// if (!_global_playing && !_global_recording)
                 {
-                    string file = _unique_id + "\\slot_" + (slot + 1).ToString() + ".wav";
                     string error = null;
+                    if (_console.ARP.IsPlaying)
+                    {
+                        _console.ARP.StopPlayback(out error); // force a stop
+                        error = null;
+                    }
+
+                    string file = _unique_id + "\\slot_" + (slot + 1).ToString() + ".wav";                    
                     if (_mode_record) // true if in record mode, false if playback mode
                     {
                         _slot_recording = slot;
@@ -24809,7 +24827,7 @@ namespace Thetis
 
                                                 for (int n = 0; n < slots; n++)
                                                 {
-                                                    string label = igs.GetSetting<string>("buttonbox_recordplayback_label_" + n.ToString(), false, null, null, "slot");
+                                                    string label = igs.GetSetting<string>("buttonbox_recordplayback_label_" + n.ToString(), false, null, null, "Slot " + n.ToString());
                                                     ((clsVoiceRecordPlay)bb).SetText(0, n, label);
                                                 }
                                             }
@@ -36149,11 +36167,11 @@ namespace Thetis
                     Vector2 posPC = new Vector2(rectBB.X + (rectBB.Width * 0.68f), rectBB.Y + (rectBB.Height / 2f));
 
                     Ellipse ellipse = new Ellipse(posWDSP, rectBB.Width * 0.045f, rectBB.Width * 0.045f);
-                    _renderTarget.FillEllipse(ellipse, getDXBrushForColour(vrp.IsWDSP ? System.Drawing.Color.CornflowerBlue : System.Drawing.Color.Gray));
+                    _renderTarget.FillEllipse(ellipse, getDXBrushForColour(vrp.WDSP ? System.Drawing.Color.CornflowerBlue : System.Drawing.Color.Gray));
 
                     ellipse.Point.X = posPC.X;
                     ellipse.Point.Y = posPC.Y;
-                    _renderTarget.FillEllipse(ellipse, getDXBrushForColour(!vrp.IsWDSP ? System.Drawing.Color.CornflowerBlue : System.Drawing.Color.Gray));
+                    _renderTarget.FillEllipse(ellipse, getDXBrushForColour(!vrp.WDSP ? System.Drawing.Color.CornflowerBlue : System.Drawing.Color.Gray));
 
                     //playback / record
                     rectBB.Width = (w * 0.25f);

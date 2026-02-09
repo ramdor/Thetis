@@ -35743,12 +35743,13 @@ namespace Thetis
             //    WaveForm.QuickPlay = false;
             //    ckQuickPlay.BackColor = SystemColors.Control;
             //}            
+            if (!ckQuickPlay.Enabled) return; // leave if this function called direct
             if (ckQuickPlay.Checked)
             {
                 ckQuickRec.Enabled = false;
-                string error;
+                ckQuickPlay.BackColor = button_selected_color;
                 string file = Path.Combine(AppDataPath, "SDRQuickAudio.wav");
-                bool ok = ARP.PlayFileViaWDSP("quick", file, 0, out error);
+                bool ok = ARP.PlayFileViaWDSP("quick", file, 0, out string error);
                 if (!ok)
                 {
                     ckQuickPlay.CheckedChanged -= ckQuickPlay_CheckedChanged;
@@ -35760,8 +35761,8 @@ namespace Thetis
             else
             {
                 ckQuickRec.Enabled = true;
-                string error;
-                ARP.StopPlayback(out error);
+                ckQuickPlay.BackColor = SystemColors.Control;
+                ARP.StopPlayback(out string error);
             }
         }
 
@@ -35785,12 +35786,13 @@ namespace Thetis
             //    if (!_updated_from_wave_form) WaveForm.QuickRec = false;
             //    ckQuickRec.BackColor = SystemColors.Control;
             //}
+            if (!ckQuickRec.Enabled) return; // leave if this function called direct
             if (ckQuickRec.Checked)
             {
                 ckQuickPlay.Enabled = false;
-                string error;
+                ckQuickRec.BackColor = button_selected_color;
                 string file = Path.Combine(AppDataPath, "SDRQuickAudio.wav");
-                string filename = ARP.RecordToFileFromWDSP("quick", file, 0, out error, true);
+                string filename = ARP.RecordToFileFromWDSP("quick", file, 0, out string error, true);
                 if(string.IsNullOrEmpty(filename))
                 {
                     ckQuickRec.CheckedChanged -= ckQuickRec_CheckedChanged;
@@ -35804,6 +35806,7 @@ namespace Thetis
                 string error;
                 ARP.StopRecord(out error);
                 ckQuickPlay.Enabled = true;
+                ckQuickRec.BackColor = SystemColors.Control;
             }
         }
         private void moveModeSpecificPanels()
@@ -52299,7 +52302,7 @@ namespace Thetis
             {
                 if (_arp == null)
                 {
-                    _arp = new clsAudioRecordPlayback(this); //intialist recording and playback
+                    _arp = new clsAudioRecordPlayback(this); //intialise recording and playback
                     _arp.RecordingChanged += arp_RecordingChanged;
                     _arp.PlayingChanged += arp_PlayingingChanged;
                 }
@@ -52317,8 +52320,28 @@ namespace Thetis
 
             Debug.Print("playing : " + playing.ToString());
 
-            ckQuickRec.Enabled = !playing;
-            if (!playing && ckQuickPlay.Checked) ckQuickPlay.Checked = false;
+            if (id == "quick")
+            {
+                // quick playback
+                if (playing)
+                {
+                    ckQuickPlay.Enabled = true;
+                    ckQuickRec.Enabled = false;
+                }
+                else
+                {
+                    ckQuickPlay.Enabled = true;
+                    ckQuickRec.Enabled = true;
+
+                    if (ckQuickPlay.Checked) ckQuickPlay.Checked = false;
+                }
+            }
+            else
+            {
+                // disable if recording elsewhere
+                ckQuickPlay.Enabled = !playing;
+                ckQuickRec.Enabled = !playing;
+            }
         }
 
         private void arp_RecordingChanged(bool recording, string id, string filename)
@@ -52331,8 +52354,28 @@ namespace Thetis
 
             Debug.Print("RECORDING : " + recording.ToString());
 
-            ckQuickPlay.Enabled = !recording;
-            if (!recording && ckQuickRec.Checked) ckQuickRec.Checked = false;
+            if(id == "quick")
+            {
+                // quick recording
+                if (recording)
+                {
+                    ckQuickPlay.Enabled = false;
+                    ckQuickRec.Enabled = true;                    
+                }
+                else
+                {
+                    ckQuickPlay.Enabled = true;
+                    ckQuickRec.Enabled = true;
+
+                    if (ckQuickRec.Checked) ckQuickRec.Checked = false;
+                }
+            }
+            else
+            {
+                // disable if recording elsewhere
+                ckQuickPlay.Enabled = !recording;
+                ckQuickRec.Enabled = !recording;
+            }
         }
         //
     }
