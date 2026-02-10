@@ -55,6 +55,9 @@ namespace Thetis
 
     public sealed class clsAudioRecordPlayback : IDisposable
     {
+        public const bool PlaybackCosineFadeEnabled = true;
+        public const int PlaybackCosineFadeMs = 50;
+
         private readonly object _sync = new object();
 
         private string _audio_folder;
@@ -220,7 +223,6 @@ namespace Thetis
 
         private void OnPreMox(int rx, bool oldMox, bool newMox)
         {
-            //stop anything playing/recording if mox changes
             if (oldMox != newMox)
             {
                 try { StopRecord(out string _); } catch { }
@@ -600,7 +602,7 @@ namespace Thetis
                     storeRestoreSettings(true, false);
                     activatePlaybackRecordSettings(false);
 
-                    Thread.Sleep(100); // time to settle
+                    Thread.Sleep(50);
 
                     WaveThing.wave_file_writer[_active_record_wfw_id] = new WaveFileWriter(_active_record_wfw_id, 2, SampleRate, full_target, recRXPreProc, recTXPreProc, formatTag, bitDepth);
                     WaveThing.wave_file_writer[_active_record_wfw_id].DitherEnabled = DitherEnabled;
@@ -702,7 +704,7 @@ namespace Thetis
 
                     _pc_wave_writer = new NAudio.Wave.WaveFileWriter(full_target, fmt);
 
-                    Thread.Sleep(100); // time to settle
+                    Thread.Sleep(50);
 
                     _pc_wave_in.StartRecording();
                     setRecordingState(true);
@@ -854,7 +856,7 @@ namespace Thetis
                         return false;
                     }
 
-                    if (!tryParseWaveHeader(reader, out int formatTag, out int sampleRate, out int channels, out int bitsPerSample, out long dataStart, out string headerError))
+                    if (!tryParseWaveHeader(reader, out int formatTag, out int sampleRate, out int channels, out int bitsPerSample, out long dataStart, out long dataLengthBytes, out string headerError))
                     {
                         try { reader.Close(); } catch { }
                         error = headerError;
@@ -862,15 +864,13 @@ namespace Thetis
                     }
 
                     storeRestoreSettings(true, true);
-                    // need to mute mic/va input
-                    double mic = Audio.MicPreamp;
-                    double vac = Audio.VACPreamp;
-                    Audio.MicPreamp = 0.0;
-                    Audio.VACPreamp = 0.0;
-                    
+
+                    double mic = Audio.console.radio.GetDSPTX(0).MicGain;
+                    Audio.console.radio.GetDSPTX(0).MicGain = 0.0;
+
                     activatePlaybackRecordSettings(true);
 
-                    Thread.Sleep(100); // time to settle
+                    Thread.Sleep(50);
 
                     _active_playback_wfw_id = wfw_id;
                     _active_play_id = play_id ?? string.Empty;
@@ -883,6 +883,9 @@ namespace Thetis
                         sampleRate,
                         channels,
                         bitsPerSample,
+                        dataLengthBytes,
+                        PlaybackCosineFadeEnabled,
+                        PlaybackCosineFadeMs,
                         reader,
                         onWdspPlaybackFinished);
 
@@ -890,8 +893,7 @@ namespace Thetis
                     Audio.WavePlayback = true;
                     setPlayingState(true);
 
-                    Audio.MicPreamp = mic;
-                    Audio.VACPreamp = vac;
+                    Audio.console.radio.GetDSPTX(0).MicGain = mic;
 
                     ret = true;
                 }
@@ -987,6 +989,7 @@ namespace Thetis
                 _pc_audio_reader = null;
             }
         }
+
         public bool IsPlaying
         {
             get
@@ -999,6 +1002,7 @@ namespace Thetis
                 return ret;
             }
         }
+
         public bool IsRecording
         {
             get
@@ -1011,6 +1015,7 @@ namespace Thetis
                 return ret;
             }
         }
+
         public bool IsBusy
         {
             get
@@ -1023,6 +1028,7 @@ namespace Thetis
                 return ret;
             }
         }
+
         public bool StopPlayback(out string error)
         {
             error = null;
@@ -1337,13 +1343,14 @@ namespace Thetis
             if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
         }
 
-        private static bool tryParseWaveHeader(BinaryReader reader, out int formatTag, out int sampleRate, out int channels, out int bitsPerSample, out long dataStart, out string error)
+        private static bool tryParseWaveHeader(BinaryReader reader, out int formatTag, out int sampleRate, out int channels, out int bitsPerSample, out long dataStart, out long dataLengthBytes, out string error)
         {
             formatTag = 0;
             sampleRate = 0;
             channels = 0;
             bitsPerSample = 0;
             dataStart = 0;
+            dataLengthBytes = 0;
             error = null;
 
             if (reader == null)
@@ -1446,6 +1453,12 @@ namespace Thetis
                         error = "Unsupported PCM bit depth.";
                         return false;
                     }
+                }
+
+                if (data != null)
+                {
+                    dataLengthBytes = data.chunk_size;
+                    if (dataLengthBytes < 0) dataLengthBytes = 0;
                 }
 
                 dataStart = data_start;
@@ -1947,7 +1960,15 @@ namespace Thetis
 
         private readonly Action _finished;
 
-        public WaveFileReader1(int wfr_id, int fmt, int samp_rate, int chan, int bit_depth, BinaryReader binread, Action finished)
+        private bool _fade_enabled;
+        private int _fade_ms;
+        private int _fade_frames;
+        private float[] _fade_gain;
+        private long _total_frames;
+        private long _frames_read;
+        private int _bytes_per_frame;
+
+        public WaveFileReader1(int wfr_id, int fmt, int samp_rate, int chan, int bit_depth, long data_length_bytes, bool fade_enabled, int fade_ms, BinaryReader binread, Action finished)
         {
             id = wfr_id;
             format = fmt;
@@ -1956,6 +1977,51 @@ namespace Thetis
             bitdepth = bit_depth;
             reader = binread;
             _finished = finished;
+
+            _fade_enabled = fade_enabled;
+            _fade_ms = fade_ms;
+            if (_fade_ms < 0) _fade_ms = 0;
+
+            if (channels < 1) channels = 1;
+            if (channels > 2) channels = 2;
+
+            if (format == 3)
+            {
+                _bytes_per_frame = channels * 4;
+            }
+            else
+            {
+                int bytes_per_sample = bitdepth / 8;
+                if (bytes_per_sample < 1) bytes_per_sample = 1;
+                _bytes_per_frame = channels * bytes_per_sample;
+            }
+
+            if (_bytes_per_frame < 1) _bytes_per_frame = 1;
+
+            _total_frames = 0;
+            if (data_length_bytes > 0) _total_frames = data_length_bytes / (long)_bytes_per_frame;
+
+            _frames_read = 0;
+
+            _fade_frames = 0;
+            _fade_gain = null;
+
+            if (_fade_enabled && _fade_ms > 0 && sample_rate > 0 && _total_frames > 0)
+            {
+                _fade_frames = (int)Math.Round(sample_rate * (_fade_ms / 1000.0));
+                if (_fade_frames < 0) _fade_frames = 0;
+
+                if (_fade_frames * 2 > _total_frames)
+                {
+                    _fade_frames = (int)(_total_frames / 2);
+                    if (_fade_frames < 0) _fade_frames = 0;
+                }
+
+                if (_fade_frames > 0)
+                {
+                    _fade_gain = buildCosineFade(_fade_frames);
+                }
+            }
 
             rcvr_rate = cmaster.GetInputRate(0, id);
             xmtr_rate = cmaster.GetInputRate(1, 0);
@@ -2018,6 +2084,30 @@ namespace Thetis
             t.IsBackground = true;
             t.Priority = ThreadPriority.Normal;
             t.Start();
+        }
+
+        private static float[] buildCosineFade(int frames)
+        {
+            if (frames < 1) return new float[0];
+
+            float[] g = new float[frames];
+
+            if (frames == 1)
+            {
+                g[0] = 1.0f;
+                return g;
+            }
+
+            int n = 0;
+            while (n < frames)
+            {
+                double x = (double)n / (double)(frames - 1);
+                double v = 0.5 - 0.5 * Math.Cos(Math.PI * x);
+                g[n] = (float)v;
+                n++;
+            }
+
+            return g;
         }
 
         public void Stop()
@@ -2113,6 +2203,37 @@ namespace Thetis
                     buf_r_in[i] = BitConverter.ToSingle(io_buf, i * 8 + 4);
                 }
             }
+
+            if (_fade_enabled && _fade_frames > 0 && _fade_gain != null && _fade_gain.Length == _fade_frames && _total_frames > 0)
+            {
+                long tail_start = _total_frames - _fade_frames;
+
+                int i = 0;
+                while (i < num_reads)
+                {
+                    long frame_index = _frames_read + i;
+                    float gain = 1.0f;
+
+                    if (frame_index < _fade_frames)
+                    {
+                        gain *= _fade_gain[(int)frame_index];
+                    }
+
+                    if (frame_index >= tail_start)
+                    {
+                        long tail_index = _total_frames - 1 - frame_index;
+                        if (tail_index < 0) tail_index = 0;
+                        if (tail_index >= _fade_frames) tail_index = _fade_frames - 1;
+                        gain *= _fade_gain[(int)tail_index];
+                    }
+
+                    buf_l_in[i] *= gain;
+                    if (channels > 1) buf_r_in[i] *= gain;
+                    i++;
+                }
+            }
+
+            _frames_read += num_reads;
 
             if (num_reads < IN_BLOCK)
             {
@@ -2216,3 +2337,4 @@ namespace Thetis
         }
     }
 }
+

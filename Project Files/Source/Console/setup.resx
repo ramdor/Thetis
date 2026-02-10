@@ -141,9 +141,6 @@
   <metadata name="numericUpDownTS12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>176, 19</value>
-  </metadata>
   <data name="chkNetworkProtocolMustMatch.ToolTip" xml:space="preserve">
     <value>The radio's protocol must match the stored entry. (default checked)
 Unchecked, a stored entry will allow that radio to have any protocol version.

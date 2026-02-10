@@ -36173,6 +36173,16 @@ namespace Thetis
             lblRecording_activeSlot.Text = "Settings - Slot " + (_selected_voice_slot + 1).ToString();           
         }
         #endregion
+
+        private void chkActivePeakRX1_tx_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.ActivePeakInTxRX1 = chkActivePeakRX1_tx.Checked;
+        }
+
+        private void chkActivePeakRX2_tx_CheckedChanged(object sender, EventArgs e)
+        {
+            Display.ActivePeakInTxRX2 = chkActivePeakRX2_tx.Checked;
+        }
     }
 
     #region FormLoactionHelper
