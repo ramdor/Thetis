@@ -35938,12 +35938,12 @@ namespace Thetis
 
         private void chkRecording_generateMP3s_CheckedChanged(object sender, EventArgs e)
         {
-            console.ARP.GenerateMP3s = chkRecording_generateMP3s.Checked;
+            console.ARP.GenerateMP3File = chkRecording_generateMP3s.Checked;
         }
 
         private void chkRecording_generateJSONs_CheckedChanged(object sender, EventArgs e)
         {
-            console.ARP.GenerateJSONs = chkRecording_generateMP3s.Checked;
+            console.ARP.GenerateJSON = chkRecording_generateJSONs.Checked;
         }
 
         private void radRecording_storage_CheckedChanged(object sender, EventArgs e)

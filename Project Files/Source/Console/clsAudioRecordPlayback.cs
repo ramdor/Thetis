@@ -1,8 +1,51 @@
-﻿using System;
+﻿/*  clsAudioRecordPlayback.cs
+
+This file is part of a program that implements a Software-Defined Radio.
+
+This code/file can be found on GitHub : https://github.com/ramdor/Thetis
+
+Copyright (C) 2020-2026 Richard Samphire MW0LGE
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+The author can be reached by email at
+
+mw0lge@grange-lane.co.uk
+*/
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
+
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading;
 using NAudio.Wave;
+using NAudio.MediaFoundation;
+using Newtonsoft.Json;
 
 namespace Thetis
 {
@@ -25,6 +68,25 @@ namespace Thetis
         Pcm24 = 2,
         Pcm16 = 3,
         Pcm8 = 4
+    }
+
+    public sealed class RecordingDetails
+    {
+        public DateTime UtcTime { get; set; }
+        public string Frequency { get; set; } = "";
+        public string Mode { get; set; } = "";
+        public string Band { get; set; } = "";
+
+        public string WavFile { get; set; } = "";
+        public long? WavFileSizeBytes { get; set; }
+
+        public int SampleRate { get; set; }
+        public short BitDepth { get; set; }
+        public short Channels { get; set; }
+        public short FormatTag { get; set; }
+
+        public string Mp3File { get; set; } = "";
+        public long? Mp3FileSizeBytes { get; set; }
     }
 
     public sealed class AudioDeviceInfo
@@ -70,6 +132,13 @@ namespace Thetis
 
         private string _active_record_id;
         private string _active_record_filename;
+        private string _active_record_json_filename;
+        private string _active_record_mp3_filename;
+        private RecordingDetails _active_record_details;
+        private int _active_record_sample_rate;
+        private short _active_record_bit_depth;
+        private short _active_record_format_tag;
+        private short _active_record_channels;
 
         private string _active_play_id;
         private string _active_play_filename;
@@ -99,8 +168,10 @@ namespace Thetis
         public float DitherAmount { get; set; }
 
         public bool MoxOnPlayback { get; set; } = true;
-        public bool GenerateMP3s { get; set; } = false;
-        public bool GenerateJSONs { get; set; } = false;
+
+        public bool GenerateMP3File { get; set; } = false;
+        public bool GenerateJSON { get; set; } = false;
+
         public string StorageFolder { get; set; } = null;
         public int InputPCDeviceID { get; set; } = -1;
         public int OutputPCDeviceID { get; set; } = -1;
@@ -109,8 +180,15 @@ namespace Thetis
         private Dictionary<string, bool> _playbackSetting;
         private Dictionary<string, bool> _PrePlaybackSetting;
 
+        private readonly SynchronizationContext _sync_context;
+
+        private static readonly object _mf_sync = new object();
+        private static bool _mf_started;
+
         public clsAudioRecordPlayback(Console c)
         {
+            _sync_context = SynchronizationContext.Current;
+
             _console = c;
             _console.MoxPreChangeHandlers += OnPreMox;
 
@@ -321,7 +399,20 @@ namespace Thetis
                     return false;
                 }
 
-                File.Delete(full);
+                try { File.Delete(full); } catch { }
+
+                string json = Path.ChangeExtension(full, ".json");
+                if (File.Exists(json))
+                {
+                    try { File.Delete(json); } catch { }
+                }
+
+                string mp3 = Path.ChangeExtension(full, ".mp3");
+                if (File.Exists(mp3))
+                {
+                    try { File.Delete(mp3); } catch { }
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -343,7 +434,20 @@ namespace Thetis
                 string[] files = Directory.GetFiles(folder, "*.wav", SearchOption.TopDirectoryOnly);
                 for (int i = 0; i < files.Length; i++)
                 {
-                    File.Delete(files[i]);
+                    string wav = files[i];
+                    try { File.Delete(wav); } catch { }
+
+                    string json = Path.ChangeExtension(wav, ".json");
+                    if (File.Exists(json))
+                    {
+                        try { File.Delete(json); } catch { }
+                    }
+
+                    string mp3 = Path.ChangeExtension(wav, ".mp3");
+                    if (File.Exists(mp3))
+                    {
+                        try { File.Delete(mp3); } catch { }
+                    }
                 }
                 return true;
             }
@@ -525,7 +629,28 @@ namespace Thetis
             return combined;
         }
 
-        public string RecordToFileFromWDSP(string record_id, string full_path, int wfw_id, out string error, bool remove_if_file_exists = false)
+        private static DateTime ensureUtc(DateTime dt)
+        {
+            if (dt == default(DateTime)) return DateTime.UtcNow;
+            if (dt.Kind == DateTimeKind.Utc) return dt;
+            if (dt.Kind == DateTimeKind.Local) return dt.ToUniversalTime();
+            return DateTime.SpecifyKind(dt, DateTimeKind.Utc);
+        }
+
+        private static RecordingDetails ensureDetails(RecordingDetails details, bool needed)
+        {
+            if (!needed) return details;
+            if (details == null)
+            {
+                RecordingDetails d = new RecordingDetails();
+                d.UtcTime = DateTime.UtcNow;
+                return d;
+            }
+            if (details.UtcTime == default(DateTime)) details.UtcTime = DateTime.UtcNow;
+            return details;
+        }
+
+        public string RecordToFileFromWDSP(string record_id, string full_path, int wfw_id, out string error, bool remove_if_file_exists = false, RecordingDetails details = null)
         {
             error = null;
 
@@ -566,10 +691,6 @@ namespace Thetis
                         return null;
                     }
 
-                    _active_record_wfw_id = wfw_id;
-                    _active_record_id = record_id ?? string.Empty;
-                    _active_record_filename = full_target;
-
                     short bitDepth = 32;
                     short formatTag = 3;
                     switch (BitDepthMode)
@@ -596,6 +717,44 @@ namespace Thetis
                             break;
                     }
 
+                    bool needDetails = GenerateJSON || GenerateMP3File;
+                    RecordingDetails d = ensureDetails(details, needDetails);
+
+                    if (d != null)
+                    {
+                        d.UtcTime = ensureUtc(d.UtcTime);
+                        d.SampleRate = SampleRate;
+                        d.BitDepth = bitDepth;
+                        d.FormatTag = formatTag;
+                        d.Channels = 2;
+                        d.WavFile = Path.GetFileName(full_target) ?? "";
+                        d.WavFileSizeBytes = null;
+                        d.Mp3File = "";
+                        d.Mp3FileSizeBytes = null;
+                    }
+
+                    _active_record_wfw_id = wfw_id;
+                    _active_record_id = record_id ?? string.Empty;
+                    _active_record_filename = full_target;
+                    _active_record_details = d;
+                    _active_record_sample_rate = SampleRate;
+                    _active_record_bit_depth = bitDepth;
+                    _active_record_format_tag = formatTag;
+                    _active_record_channels = 2;
+
+                    _active_record_json_filename = null;
+                    _active_record_mp3_filename = null;
+
+                    if (GenerateJSON && _active_record_details != null)
+                    {
+                        _active_record_json_filename = Path.ChangeExtension(full_target, ".json");
+                    }
+
+                    if (GenerateMP3File && _active_record_details != null)
+                    {
+                        _active_record_mp3_filename = Path.ChangeExtension(full_target, ".mp3");
+                    }
+
                     bool recRXPreProc = RxSource == AudioRecordRxSource.ReceiverInputIQ;
                     bool recTXPreProc = TxSource == AudioRecordTxSource.MicAudio;
 
@@ -604,7 +763,17 @@ namespace Thetis
 
                     Thread.Sleep(50);
 
-                    WaveThing.wave_file_writer[_active_record_wfw_id] = new WaveFileWriter(_active_record_wfw_id, 2, SampleRate, full_target, recRXPreProc, recTXPreProc, formatTag, bitDepth);
+                    WaveThing.wave_file_writer[_active_record_wfw_id] = new WaveFileWriter(
+                        _active_record_wfw_id,
+                        2,
+                        SampleRate,
+                        full_target,
+                        recRXPreProc,
+                        recTXPreProc,
+                        formatTag,
+                        bitDepth,
+                        onWdspRecordFinished);
+
                     WaveThing.wave_file_writer[_active_record_wfw_id].DitherEnabled = DitherEnabled;
                     WaveThing.wave_file_writer[_active_record_wfw_id].DitherAmount = DitherAmount;
 
@@ -617,13 +786,42 @@ namespace Thetis
                 {
                     error = ex.Message;
                     try { Audio.WaveRecord = false; } catch { }
+
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(_active_record_filename) && File.Exists(_active_record_filename))
+                        {
+                            try { File.Delete(_active_record_filename); } catch { }
+                        }
+                    }
+                    catch { }
+
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(_active_record_json_filename) && File.Exists(_active_record_json_filename))
+                        {
+                            try { File.Delete(_active_record_json_filename); } catch { }
+                        }
+                    }
+                    catch { }
+
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(_active_record_mp3_filename) && File.Exists(_active_record_mp3_filename))
+                        {
+                            try { File.Delete(_active_record_mp3_filename); } catch { }
+                        }
+                    }
+                    catch { }
+
                     setRecordingState(false);
+                    clearActiveRecordLocked();
                     return null;
                 }
             }
         }
 
-        public string RecordToFileFromPCAudio(string record_id, string full_path, int pcAudioDeviceInputId, out string error, bool remove_if_file_exists = false)
+        public string RecordToFileFromPCAudio(string record_id, string full_path, int pcAudioDeviceInputId, out string error, bool remove_if_file_exists = false, RecordingDetails details = null)
         {
             error = null;
 
@@ -690,9 +888,43 @@ namespace Thetis
                             break;
                     }
 
+                    bool needDetails = GenerateJSON || GenerateMP3File;
+                    RecordingDetails d = ensureDetails(details, needDetails);
+
+                    if (d != null)
+                    {
+                        d.UtcTime = ensureUtc(d.UtcTime);
+                        d.SampleRate = SampleRate;
+                        d.BitDepth = (short)bits;
+                        d.FormatTag = (short)(BitDepthMode == AudioBitDepthMode.IeeeFloat32 ? 3 : 1);
+                        d.Channels = (short)channels;
+                        d.WavFile = Path.GetFileName(full_target) ?? "";
+                        d.WavFileSizeBytes = null;
+                        d.Mp3File = "";
+                        d.Mp3FileSizeBytes = null;
+                    }
+
                     _active_record_wfw_id = -1;
                     _active_record_id = record_id ?? string.Empty;
                     _active_record_filename = full_target;
+                    _active_record_details = d;
+                    _active_record_sample_rate = SampleRate;
+                    _active_record_bit_depth = (short)bits;
+                    _active_record_format_tag = (short)(BitDepthMode == AudioBitDepthMode.IeeeFloat32 ? 3 : 1);
+                    _active_record_channels = (short)channels;
+
+                    _active_record_json_filename = null;
+                    _active_record_mp3_filename = null;
+
+                    if (GenerateJSON && _active_record_details != null)
+                    {
+                        _active_record_json_filename = Path.ChangeExtension(full_target, ".json");
+                    }
+
+                    if (GenerateMP3File && _active_record_details != null)
+                    {
+                        _active_record_mp3_filename = Path.ChangeExtension(full_target, ".mp3");
+                    }
 
                     _pc_wave_in = new WaveInEvent();
                     _pc_wave_in.DeviceNumber = pcAudioDeviceInputId;
@@ -714,8 +946,38 @@ namespace Thetis
                 catch (Exception ex)
                 {
                     error = ex.Message;
-                    cleanupPcRecording();
+
+                    try { cleanupPcRecording(); } catch { }
+
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(_active_record_filename) && File.Exists(_active_record_filename))
+                        {
+                            try { File.Delete(_active_record_filename); } catch { }
+                        }
+                    }
+                    catch { }
+
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(_active_record_json_filename) && File.Exists(_active_record_json_filename))
+                        {
+                            try { File.Delete(_active_record_json_filename); } catch { }
+                        }
+                    }
+                    catch { }
+
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(_active_record_mp3_filename) && File.Exists(_active_record_mp3_filename))
+                        {
+                            try { File.Delete(_active_record_mp3_filename); } catch { }
+                        }
+                    }
+                    catch { }
+
                     setRecordingState(false);
+                    clearActiveRecordLocked();
                     return null;
                 }
             }
@@ -793,7 +1055,6 @@ namespace Thetis
                         if (writer != null)
                         {
                             writer.Stop();
-                            WaveThing.wave_file_writer[_active_record_wfw_id] = null;
                         }
                     }
 
@@ -801,15 +1062,25 @@ namespace Thetis
                     {
                         try { _pc_wave_in.StopRecording(); } catch { }
                     }
-
-                    setRecordingState(false);
                 }
                 catch (Exception ex)
                 {
                     error = ex.Message;
+
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(_active_record_json_filename) && File.Exists(_active_record_json_filename))
+                        {
+                            try { File.Delete(_active_record_json_filename); } catch { }
+                        }
+                    }
+                    catch { }
+
                     setRecordingState(false);
+                    clearActiveRecordLocked();
                 }
             }
+
             try { storeRestoreSettings(false, false); } catch { }
             return error == null;
         }
@@ -918,7 +1189,6 @@ namespace Thetis
         public bool PlayFileViaPCAudio(string play_id, string full_path, int pcAudioDeviceOutputId, out string error)
         {
             bool ret = false;
-            bool restore = false;
             error = null;
 
             lock (_sync)
@@ -961,7 +1231,6 @@ namespace Thetis
                     error = ex.Message;
                     try { cleanupPcPlayback(); } catch { }
                     setPlayingState(false);
-                    restore = true;
                 }
             }
             return ret;
@@ -973,7 +1242,7 @@ namespace Thetis
             StopPlayback(out error);
         }
 
-        void cleanupPcPlayback()
+        private void cleanupPcPlayback()
         {
             if (_pc_wave_out != null)
             {
@@ -1023,7 +1292,7 @@ namespace Thetis
                 bool ret;
                 lock (_sync)
                 {
-                    ret = _is_recording || _is_recording;
+                    ret = _is_recording || _is_playing;
                 }
                 return ret;
             }
@@ -1067,7 +1336,7 @@ namespace Thetis
             return error == null;
         }
 
-        void onPcDataAvailable(object sender, WaveInEventArgs e)
+        private void onPcDataAvailable(object sender, WaveInEventArgs e)
         {
             lock (_sync)
             {
@@ -1204,11 +1473,22 @@ namespace Thetis
 
         private void onPcRecordingStopped(object sender, StoppedEventArgs e)
         {
+            string wav;
+            string json;
+            string mp3;
+            RecordingDetails details;
+
             lock (_sync)
             {
+                wav = _active_record_filename;
+                json = _active_record_json_filename;
+                mp3 = _active_record_mp3_filename;
+                details = _active_record_details;
+
                 cleanupPcRecording();
             }
-            setRecordingState(false);
+
+            recordCompleted(wav, json, mp3, details);
         }
 
         private void cleanupPcRecording()
@@ -1234,6 +1514,221 @@ namespace Thetis
             StopPlayback(out error);
         }
 
+        private void onWdspRecordFinished(string wavPath)
+        {
+            string wav;
+            string json;
+            string mp3;
+            RecordingDetails details;
+
+            lock (_sync)
+            {
+                if (string.IsNullOrWhiteSpace(_active_record_filename))
+                {
+                    return;
+                }
+
+                if (!string.Equals(_active_record_filename, wavPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+
+                if (_active_record_wfw_id >= 0 && _active_record_wfw_id < WaveThing.wave_file_writer.Length)
+                {
+                    WaveThing.wave_file_writer[_active_record_wfw_id] = null;
+                }
+
+                wav = _active_record_filename;
+                json = _active_record_json_filename;
+                mp3 = _active_record_mp3_filename;
+                details = _active_record_details;
+            }
+
+            recordCompleted(wav, json, mp3, details);
+        }
+
+        private void recordCompleted(string wav, string json, string mp3, RecordingDetails details)
+        {
+            Action a = delegate
+            {
+                if (details != null)
+                {
+                    details.UtcTime = ensureUtc(details.UtcTime);
+
+                    if (!string.IsNullOrWhiteSpace(wav))
+                    {
+                        details.WavFile = Path.GetFileName(wav) ?? "";
+                        try
+                        {
+                            if (File.Exists(wav))
+                            {
+                                FileInfo fi = new FileInfo(wav);
+                                details.WavFileSizeBytes = fi.Length;
+                            }
+                            else
+                            {
+                                details.WavFileSizeBytes = null;
+                            }
+                        }
+                        catch
+                        {
+                            details.WavFileSizeBytes = null;
+                        }
+                    }
+                }
+
+                string mp3Path = null;
+
+                if (GenerateMP3File && details != null && !string.IsNullOrWhiteSpace(wav) && File.Exists(wav))
+                {
+                    mp3Path = Path.ChangeExtension(wav, ".mp3");
+                    try { if (File.Exists(mp3Path)) File.Delete(mp3Path); } catch { }
+
+                    bool mp3Ok = generateMp3FromWav(wav, mp3Path);
+                    if (!mp3Ok)
+                    {
+                        try { if (File.Exists(mp3Path)) File.Delete(mp3Path); } catch { }
+                        mp3Path = null;
+                    }
+                    else
+                    {
+                        details.Mp3File = Path.GetFileName(mp3Path) ?? "";
+                        try
+                        {
+                            if (File.Exists(mp3Path))
+                            {
+                                FileInfo fi = new FileInfo(mp3Path);
+                                details.Mp3FileSizeBytes = fi.Length;
+                            }
+                            else
+                            {
+                                details.Mp3FileSizeBytes = null;
+                            }
+                        }
+                        catch
+                        {
+                            details.Mp3FileSizeBytes = null;
+                        }
+                    }
+                }
+
+                if (GenerateJSON && details != null && !string.IsNullOrWhiteSpace(json))
+                {
+                    try { if (File.Exists(json)) File.Delete(json); } catch { }
+                    bool ok = writeRecordingJson(json, details);
+                    if (!ok)
+                    {
+                        try { if (File.Exists(json)) File.Delete(json); } catch { }
+                    }
+                }
+
+                setRecordingState(false);
+
+                lock (_sync)
+                {
+                    clearActiveRecordLocked();
+                }
+            };
+
+            if (_sync_context != null)
+            {
+                _sync_context.Post(delegate { a(); }, null);
+            }
+            else
+            {
+                a();
+            }
+        }
+
+        private bool writeRecordingJson(string jsonPath, RecordingDetails details)
+        {
+            try
+            {
+                DateTime utc = ensureUtc(details.UtcTime);
+
+                RecordingJsonModel m = new RecordingJsonModel();
+                m.utc_time = utc.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+                m.frequency = details.Frequency ?? "";
+                m.mode = details.Mode ?? "";
+                m.band = details.Band ?? "";
+
+                m.wav_file = details.WavFile ?? "";
+                m.wav_file_size_bytes = details.WavFileSizeBytes;
+
+                m.sample_rate = details.SampleRate;
+                m.bit_depth = details.BitDepth;
+                m.channels = details.Channels;
+                m.format_tag = details.FormatTag;
+                string fmt = details.FormatTag == 3 ? "IEEE_FLOAT" : (details.FormatTag == 1 ? "PCM" : details.FormatTag.ToString());
+                m.tag_description = fmt + " " + details.BitDepth.ToString() + "-bit";
+
+                m.mp3_file = details.Mp3File ?? "";
+                m.mp3_file_size_bytes = details.Mp3FileSizeBytes;
+
+                string s = JsonConvert.SerializeObject(m, Formatting.Indented);
+
+                string dir = Path.GetDirectoryName(jsonPath);
+                if (!string.IsNullOrWhiteSpace(dir)) ensureFolderExists(dir);
+
+                File.WriteAllText(jsonPath, s, Encoding.UTF8);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static void ensureMediaFoundation()
+        {
+            lock (_mf_sync)
+            {
+                if (_mf_started) return;
+                try
+                {
+                    MediaFoundationApi.Startup();
+                    _mf_started = true;
+                }
+                catch
+                {
+                    _mf_started = false;
+                }
+            }
+        }
+
+        private bool generateMp3FromWav(string wavPath, string mp3Path)
+        {
+            try
+            {
+                ensureMediaFoundation();
+                if (!_mf_started) return false;
+
+                using (AudioFileReader reader = new AudioFileReader(wavPath))
+                {
+                    MediaFoundationEncoder.EncodeToMp3(reader, mp3Path, 192000);
+                }
+                return File.Exists(mp3Path);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void clearActiveRecordLocked()
+        {
+            _active_record_id = null;
+            _active_record_filename = null;
+            _active_record_json_filename = null;
+            _active_record_mp3_filename = null;
+            _active_record_details = null;
+            _active_record_wfw_id = -1;
+            _active_record_sample_rate = 0;
+            _active_record_bit_depth = 0;
+            _active_record_format_tag = 0;
+            _active_record_channels = 0;
+        }
+
         private void setRecordingState(bool recording)
         {
             bool raise = false;
@@ -1251,8 +1746,6 @@ namespace Thetis
 
                     if (!recording)
                     {
-                        _active_record_id = null;
-                        _active_record_filename = null;
                         _active_record_wfw_id = -1;
                     }
                 }
@@ -1473,6 +1966,26 @@ namespace Thetis
                 return false;
             }
         }
+
+        private sealed class RecordingJsonModel
+        {
+            public string utc_time { get; set; }
+            public string frequency { get; set; }
+            public string mode { get; set; }
+            public string band { get; set; }
+
+            public string wav_file { get; set; }
+            public long? wav_file_size_bytes { get; set; }
+
+            public int sample_rate { get; set; }
+            public short bit_depth { get; set; }
+            public short channels { get; set; }
+            public short format_tag { get; set; }
+            public string tag_description { get; set; }
+
+            public string mp3_file { get; set; }
+            public long? mp3_file_size_bytes { get; set; }
+        }
     }
 
     public class Chunk
@@ -1605,9 +2118,14 @@ namespace Thetis
         private volatile bool _mox = false;
         private volatile float _fInverseGain = 1f;
 
-        public WaveFileWriter(int wfw_id, short chan, int samp_rate, string file, bool recordRxPreProcessed, bool recordTxPreProcessed, short formatTag, short bitDepth)
+        private readonly string _file;
+        private readonly Action<string> _finished;
+
+        public WaveFileWriter(int wfw_id, short chan, int samp_rate, string file, bool recordRxPreProcessed, bool recordTxPreProcessed, short formatTag, short bitDepth, Action<string> finished)
         {
             _id = wfw_id;
+            _file = file;
+            _finished = finished;
 
             if (recordRxPreProcessed)
             {
@@ -1711,10 +2229,24 @@ namespace Thetis
                 Thread.Sleep(3);
             }
 
-            _writer.Seek(0, SeekOrigin.Begin);
-            WriteWaveHeader(ref _writer, _channels, _sample_rate, _format_tag, _bit_depth, _length_counter);
-            _writer.Flush();
-            _writer.Close();
+            try
+            {
+                _writer.Seek(0, SeekOrigin.Begin);
+                WriteWaveHeader(ref _writer, _channels, _sample_rate, _format_tag, _bit_depth, _length_counter);
+                _writer.Flush();
+                _writer.Close();
+            }
+            catch
+            {
+                try { _writer.Close(); } catch { }
+            }
+
+            try
+            {
+                Action<string> f = _finished;
+                if (f != null) f(_file);
+            }
+            catch { }
         }
 
         unsafe public void AddWriteBuffer(float* left, float* right, int nsamps)
@@ -2337,4 +2869,3 @@ namespace Thetis
         }
     }
 }
-

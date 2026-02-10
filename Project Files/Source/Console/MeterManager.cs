@@ -10679,14 +10679,25 @@ namespace Thetis
                     string file = _unique_id + "\\slot_" + (slot + 1).ToString() + ".wav";                    
                     if (_mode_record) // true if in record mode, false if playback mode
                     {
+                        double freq = _owningmeter.RX == 1 ? _owningmeter.VfoA : _owningmeter.VfoB;
+                        Band b = _owningmeter.RX == 1 ? _owningmeter.BandVfoA : _owningmeter.BandVfoB;
+                        DSPMode mode = _owningmeter.RX == 1 ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
+                        RecordingDetails details = new RecordingDetails()
+                        {
+                            Band = BandStackManager.BandToString(b),
+                            Frequency = freq.ToString("F6", System.Globalization.CultureInfo.InvariantCulture),
+                            Mode = mode.ToString(),
+                            UtcTime = DateTime.UtcNow
+                        };
+
                         _slot_recording = slot;
                         if (_wdsp)
                         {
-                            _slot_filepath[slot] = _console.ARP.RecordToFileFromWDSP(_unique_id, file, _owningmeter.RX == 1 ? 0 : 1, out error, true);
+                            _slot_filepath[slot] = _console.ARP.RecordToFileFromWDSP(_unique_id, file, _owningmeter.RX == 1 ? 0 : 1, out error, true, details);
                         }
                         else
                         {
-                            _slot_filepath[slot] = _console.ARP.RecordToFileFromPCAudio(_unique_id, file, _console.ARP.InputPCDeviceID, out error, true);
+                            _slot_filepath[slot] = _console.ARP.RecordToFileFromPCAudio(_unique_id, file, _console.ARP.InputPCDeviceID, out error, true, details);
                         }
                         if (_slot_filepath[slot] == null || error != null)
                         {

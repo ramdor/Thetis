@@ -35809,7 +35809,14 @@ namespace Thetis
                 ckQuickPlay.Enabled = false;
                 ckQuickRec.BackColor = button_selected_color;
                 string file = Path.Combine(AppDataPath, "SDRQuickAudio.wav");
-                string filename = ARP.RecordToFileFromWDSP("quick", file, 0, out string error, true);
+                RecordingDetails details = new RecordingDetails()
+                {
+                    Band = BandStackManager.BandToString(RX1Band),
+                    Frequency = VFOAFreq.ToString("F6", System.Globalization.CultureInfo.InvariantCulture),
+                    Mode = RX1DSPMode.ToString(),
+                    UtcTime = DateTime.UtcNow
+                };
+                string filename = ARP.RecordToFileFromWDSP("quick", file, 0, out string error, true, details);
                 if(string.IsNullOrEmpty(filename))
                 {
                     ckQuickRec.CheckedChanged -= ckQuickRec_CheckedChanged;
