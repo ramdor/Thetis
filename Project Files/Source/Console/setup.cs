@@ -7056,6 +7056,10 @@ namespace Thetis
                         {
                             cmaster.PSrate = new_rate; //REDPITAYA Pavel
                         }
+                        else
+                        {
+                            cmaster.PSrate = 192000;
+                        }
 
                         // set protocol_1 network software sample rate
                         NetworkIO.SetDDCRate(0, new_rate);

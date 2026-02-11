@@ -401,14 +401,9 @@ namespace Thetis
             {
                 ps_rate = value;
 
-                if(HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
-                {
-                    // get transmitter identifiers
-                    int txinid = cmaster.inid(1, 0);        // stream id  REDPITAYA Pavel
-                    int txch = cmaster.chid(txinid, 0);     // wdsp channel REDPITAYA Pavel
-
-                    puresignal.SetPSFeedbackRate(txch, ps_rate); // REDPITAYA Pavel
-                }
+                int txinid = cmaster.inid(1, 0);
+                int txch = cmaster.chid(txinid, 0);
+                puresignal.SetPSFeedbackRate(txch, ps_rate);
             }
         }
 
