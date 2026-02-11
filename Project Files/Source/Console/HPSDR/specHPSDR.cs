@@ -537,7 +537,7 @@ namespace Thetis
                         //the amount of frequency in each fft bin (for complex samples) is given by:
                         //   this is also equal to the interval width!
                         double bin_width = (double)sample_rate / (double)fft_size;
-                        double bin_width_tx = 96000.0 / (double)fft_size;
+                        //double bin_width_tx = 96000.0 / (double)fft_size;
 
                         //the number of useable bins per subspan is
                         //   the '-1' is due to clipping the Nyquist bin
@@ -694,7 +694,7 @@ namespace Thetis
                         //the amount of frequency in each fft bin (for complex samples) is given by:
                         //   this is also equal to the interval width!
                         double bin_width = (double)sample_rate / (double)fft_size;
-                        double bin_width_tx = 96000.0 / (double)fft_size;
+                        //double bin_width_tx = 96000.0 / (double)fft_size;
 
                         //the number of useable bins per subspan is
                         //   the '-1' is due to clipping the Nyquist bin

@@ -7545,6 +7545,7 @@ namespace Thetis
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
                             SyncEnable = 0;
+                            Rate[0] = rx1_rate; // [2.10.3.13]MW0LGE p1 !
                             Rate[2] = rx1_rate;
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
@@ -7557,6 +7558,7 @@ namespace Thetis
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
                             SyncEnable = 0;
+                            Rate[0] = rx1_rate; // [2.10.3.13]MW0LGE p1 !
                             Rate[2] = rx1_rate;
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
@@ -19050,6 +19052,7 @@ namespace Thetis
                 RadioDSP.SampleRate = value;
                 Audio.SampleRate1 = value;
                 Display.SampleRateRX1 = value;
+
                 switch (_rx1_dsp_mode)
                 {
                     case DSPMode.SPEC:
@@ -19070,7 +19073,7 @@ namespace Thetis
                     case DisplayMode.HISTOGRAM:
                         UpdateRXSpectrumDisplayVars();
                         break;
-                }
+                }                
 
                 if (m_nOldSampleRateRX1 != sample_rate_rx1)
                     SampleRateChangedHandlers?.Invoke(1, m_nOldSampleRateRX1, sample_rate_rx1);
@@ -19090,6 +19093,7 @@ namespace Thetis
 
                 Audio.SampleRateRX2 = value;
                 Display.SampleRateRX2 = value;
+
                 switch (_rx1_dsp_mode)
                 {
                     case DSPMode.SPEC:
