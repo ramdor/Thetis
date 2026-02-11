@@ -7515,6 +7515,7 @@ namespace Thetis
             int cntrl2 = 0;
             if (_diversity2)
                 P1_diversity = 1;
+            bool p1 = NetworkIO.CurrentRadioProtocol == RadioProtocol.USB;
 
             switch (HardwareSpecific.Model)
             {
@@ -7545,7 +7546,7 @@ namespace Thetis
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
                             SyncEnable = 0;
-                            Rate[0] = rx1_rate; // [2.10.3.13]MW0LGE p1 !
+                            if (p1) Rate[0] = rx1_rate; // [2.10.3.13]MW0LGE p1 !
                             Rate[2] = rx1_rate;
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
@@ -7558,7 +7559,7 @@ namespace Thetis
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
                             SyncEnable = 0;
-                            Rate[0] = rx1_rate; // [2.10.3.13]MW0LGE p1 !
+                            if (p1) Rate[0] = rx1_rate; // [2.10.3.13]MW0LGE p1 !
                             Rate[2] = rx1_rate;
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
