@@ -8213,7 +8213,7 @@ namespace Thetis
                         SetOn(1, bit, visible);
                         settings.OnState = visible;
                     }
-                    else if (settings.ButtonStateType == OtherButtonMacroSettings.OB_ButtonState.CAT && settings.RunStateCommandOnVisible && visible)
+                    else if (settings.ButtonStateType == OtherButtonMacroSettings.OB_ButtonState.CAT&& settings.ContainerVisibleID == id && settings.RunStateCommandOnVisible && visible)
                     {
                         if (_cat_inter == null) _cat_inter = new CATScriptInterpreter();
                         ScriptResult result = _cat_inter.run(settings.CatMacro);
@@ -8608,8 +8608,9 @@ namespace Thetis
                     _macro_settings[macro] = new OtherButtonMacroSettings(settings);
 
                     // chcck if any macros have cat code enabled, and if so, get the variables, and add them
-                    for(int n = 0; n < _macro_settings.Length -1; n++)
-                    {
+                    //for(int n = 0; n < _macro_settings.Length -1; n++)
+                    //{
+                        int n = macro;
                         if (_macro_settings[n].CatMacroSend[0] && !string.IsNullOrEmpty(_macro_settings[n].CatMacro))
                         {
                             if (_cat_inter == null) _cat_inter = new CATScriptInterpreter();
@@ -8626,7 +8627,7 @@ namespace Thetis
                                 }
                             }
                         }
-                    }
+                    //}
                 }
             }
             public override void ContainerHiddenByMacro(string id, bool hidden)
@@ -8879,7 +8880,7 @@ namespace Thetis
                                 on = !MeterManager.ContainerIsHidden(macro_settings.ContainerVisibleID);                                
                                 break;
                             case OtherButtonMacroSettings.OB_ButtonState.CAT:
-                                on = false;
+                                on = macro_settings.OnState;
                                 break;
                         }
 
@@ -10135,6 +10136,8 @@ namespace Thetis
             private bool _global_playing;
             private bool _global_recording;
             private string[] _slot_filepath;
+            private float[] _slot_duration_seconds;
+            private DateTime[] _activate_time;
             private bool _mode_record; // true = in record mode, otherwise playback mode
             private bool _wdsp;
 
@@ -10174,12 +10177,17 @@ namespace Thetis
 
                 _console.ARP.PlayingChanged += onPlayingChanged;
                 _console.ARP.RecordingChanged += onRecordingChanged;
+                _console.ARP.RecordingJsonWritten += onJsonWritten;
 
                 _slot_filepath = new string[Buttons];
+                _slot_duration_seconds = new float[Buttons];
+                _activate_time = new DateTime[Buttons];
                 for (int n = 0; n < Buttons; n++)
                 {
                     SetText(0, n, "Slot " + (n + 1).ToString());
                     _slot_filepath[n] = null;
+                    _slot_duration_seconds[n] = 0f;
+                    _activate_time[n] = DateTime.MinValue;
                 }
 
                 Initialise();
@@ -10188,6 +10196,7 @@ namespace Thetis
             {
                 _console.ARP.PlayingChanged -= onPlayingChanged;
                 _console.ARP.RecordingChanged -= onRecordingChanged;
+                _console.ARP.RecordingJsonWritten -= onJsonWritten;
 
                 //stop + remove folder related to this container
                 Debug.Print("REMOVING VoiceRecordPlayback : " + _unique_id);
@@ -10208,6 +10217,8 @@ namespace Thetis
                         for (int n = 0; n < Buttons; n++)
                         {
                             _slot_filepath[n] = null;
+                            _slot_duration_seconds[n] = 0f;
+                            _activate_time[n] = DateTime.MinValue;
                         }
                     }
                     else
@@ -10218,10 +10229,14 @@ namespace Thetis
                             if(n < l)
                             {
                                 _slot_filepath[n] = value[n];
+                                _activate_time[n] = DateTime.MinValue;
+                                //todo get json
                             }
                             else
                             {
                                 _slot_filepath[n] = null;
+                                _slot_duration_seconds[n] = 0f;
+                                _activate_time[n] = DateTime.MinValue;
                             }
                         }
                     }
@@ -10234,6 +10249,31 @@ namespace Thetis
                 {
                     if (string.IsNullOrEmpty(value)) value = Guid.NewGuid().ToString();
                     _unique_id = value; 
+                }
+            }
+            public float SlotDuration(int slot)
+            {
+                if (slot < 0 || slot > Slots - 1) return 0f;
+                return _slot_duration_seconds[slot];
+            }
+            private void onJsonWritten(string unique_id, clsAudioRecordPlayback.RecordingJsonModel json)
+            {
+                if (unique_id != _unique_id) return; //not for us
+                Debug.Print("Json Written : " + unique_id);
+                Debug.Print(json.wav_file);
+                //slot_2.wav
+                int slot_number = -1;
+                string wav_name = Path.GetFileNameWithoutExtension(json.wav_file);
+                int underscore_index = wav_name.LastIndexOf('_');
+                bool ok = underscore_index >= 0 && int.TryParse(wav_name.Substring(underscore_index + 1), out slot_number);
+
+                if (ok)
+                {
+                    slot_number--;
+                    if (slot_number >= 0 && slot_number <= Buttons)
+                    {
+                        _slot_duration_seconds[slot_number] = (float)json.play_duration_seconds;
+                    }
                 }
             }
             private void onPlayingChanged(bool playing, string id, string filename, bool isWdsp)
@@ -10305,15 +10345,21 @@ namespace Thetis
             }
             public bool IsPlaying(int slot)
             {
-                if(slot < 0) return false;
+                if (slot < 0 || slot > Slots - 1) return false;
                 // 0 index based
                 return slot == _slot_playing;
             }
             public bool IsRecording(int slot)
             {
-                if (slot < 0) return false;
+                if (slot < 0 || slot > Slots - 1) return false;
                 // 0 index based
                 return slot == _slot_recording;
+            }
+            public DateTime AtivateTime(int slot)
+            {
+                if (slot < 0 || slot > Slots - 1) return DateTime.MinValue;
+                // 0 index based
+                return _activate_time[slot];
             }
             public bool IsRecordMode
             {
@@ -10705,6 +10751,8 @@ namespace Thetis
 
                         //start recording
                         _slot_recording = slot;
+                        _slot_duration_seconds[slot] = 0f;
+                        _activate_time[slot] = DateTime.UtcNow;
                         if (_wdsp)
                         {
                             _slot_filepath[slot] = _console.ARP.RecordToFileFromWDSP(_unique_id, file, _owningmeter.RX == 1 ? 0 : 1, out error, true, details);
@@ -10719,15 +10767,18 @@ namespace Thetis
                         {
                             _slot_recording = -1;
                             _slot_filepath[slot] = null;
+                            _slot_duration_seconds[slot] = 0f;
+                            _activate_time[slot] = DateTime.MinValue;
                         }
                     }
                     else
                     {
                         //playback
                         bool ok = false;
-                        _slot_playing = slot;
                         if (_slot_filepath[slot] != null)
                         {
+                            _slot_playing = slot;
+                            _activate_time[slot] = DateTime.UtcNow;
                             if (_wdsp)
                             {
                                 ok = _console.ARP.PlayFileViaWDSP(_unique_id, _slot_filepath[slot], _owningmeter.RX == 1 ? 0 : 1, out error);
@@ -10743,6 +10794,7 @@ namespace Thetis
                         {
                             _slot_playing = -1;
                             _slot_filepath[slot] = null;
+                            _activate_time[slot] = DateTime.MinValue;
                         }
                     }
                 }
@@ -35363,7 +35415,7 @@ namespace Thetis
 
             //v3
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private (float, float) plotText(string sText, float x, float y, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fitSizeWidth = 0, bool ignoreCache = false, float fitSizeHeight = 0, float rotateDeg = 0, bool fillBackground = false, object backColour = null, bool only_shrink = false)
+            private (float, float) plotText(string sText, float x, float y, float containerWidth, float fTextSize, System.Drawing.Color c, int nFade, string sFontFamily, FontStyle style, bool bAlignRight = false, bool bAlignCentre = false, float fitSizeWidth = 0, bool ignoreCache = false, float fitSizeHeight = 0, float rotateDeg = 0, bool fillBackground = false, object backColour = null, bool only_shrink = false, bool align_bottom = false)
             {
                 if (string.IsNullOrEmpty(sText)) return (0f, 0f);
                 if (fTextSize <= 0f || containerWidth <= 0f) return (0f, 0f);
@@ -35400,7 +35452,7 @@ namespace Thetis
                 }
 
                 float left = bAlignRight ? x - sz.Width : (bAlignCentre ? x - sz.Width * 0.5f : x);
-                float top = bAlignCentre ? y - sz.Height * 0.5f : y;
+                float top = bAlignCentre ? y - sz.Height * 0.5f : (align_bottom ? y - sz.Height : y);
 
                 if (fontSizeEm <= 0f || sz.Width <= 0f || sz.Height <= 0f) return (0f, 0f);
 
@@ -36509,10 +36561,15 @@ namespace Thetis
                                         shrinkRectangle(rectBB, 1f, ref shrunk_rect, indicator_shrink);
                                         rr.Rect = shrunk_rect;
                                         drawRoundedRectangle(rr, getDXBrushForColour(indicator_colour), indicator_width);
-                                        indicator_adjust.Top = indicator_width;
-                                        indicator_adjust.Left = indicator_width;
-                                        indicator_adjust.Right = indicator_width;
-                                        indicator_adjust.Bottom = indicator_width;
+                                        //indicator_adjust.Top = indicator_width;
+                                        //indicator_adjust.Left = indicator_width;
+                                        //indicator_adjust.Right = indicator_width;
+                                        //indicator_adjust.Bottom = indicator_width;
+                                        rectBB.Left = rr.Rect.Left;
+                                        rectBB.Top = rr.Rect.Top;
+                                        rectBB.Bottom = rr.Rect.Bottom;
+                                        rectBB.Right = rr.Rect.Right;
+                                        //
                                         break;
                                 }
                             }
@@ -36596,64 +36653,98 @@ namespace Thetis
                             rectBB.Right -= indicator_adjust.Right;
                             rectBB.Bottom -= indicator_adjust.Bottom;
 
-                            //text
-                            float cx = rectBB.Left + (rectBB.Width / 2f);
-                            float cy = rectBB.Top + ((rectBB.Height / 10f) * 2.5f);
-
-                            float text_box_width;
-                            float text_box_height;
-                            float font_size = bb.GetFontSize(1, button);
-
-                            float reduce_font_by = 0.5f;
-                            if (bb.FixTextSize)
+                            if (rectBB.Width > 0 && rectBB.Height > 0)
                             {
-                                text_box_width = 0;
-                                text_box_height = 0;
-                                font_size *= 2.95f * bb.FontScale * reduce_font_by;
-                            }
-                            else
-                            {
-                                text_box_width = rectBB.Width * text_size_modifier * bb.FontScale;
-                                text_box_height = rectBB.Height * text_size_modifier * bb.FontScale;
-                                text_box_width *= reduce_font_by;
-                                text_box_height *= reduce_font_by;
-                            }
+                                //text
+                                float cx = rectBB.Left + (rectBB.Width / 2f);
+                                float cy = rectBB.Top + ((rectBB.Height / 10f) * 2.5f);
 
-                            plotText(text, cx + (bb.FontShiftX * wh / (float)(buttons_per_row * 2f)), cy + (bb.FontShiftY * wh / (float)(buttons_per_row * 2f)),
-                                rect.Width, font_size, text_icon_is_indicator ? text_icon_indicator_colour : text_colour, 255, bb.GetFontFamily(1, button),
-                                bb.GetFontStyle(1, button), false, true, text_box_width, ignore_cache, text_box_height);
+                                float text_box_width;
+                                float text_box_height;
+                                float font_size = bb.GetFontSize(1, button);
 
-                            //draw record/play mode button in top row
+                                float reduce_font_by = 0.5f;
+                                if (bb.FixTextSize)
+                                {
+                                    text_box_width = 0;
+                                    text_box_height = 0;
+                                    font_size *= 2.95f * bb.FontScale * reduce_font_by;
+                                }
+                                else
+                                {
+                                    text_box_width = rectBB.Width * text_size_modifier * bb.FontScale;
+                                    text_box_height = rectBB.Height * text_size_modifier * bb.FontScale;
+                                    text_box_width *= reduce_font_by;
+                                    text_box_height *= reduce_font_by;
+                                }
 
-                            //draw button icon based on play state
-                            string icon;                            
-                            if (vrp.IsRecording(button) || vrp.IsPlaying(button)) icon = "stop";
-                            else if (vrp.IsRecordMode) icon = "record";
-                            else icon = "play";
-                                
-                            convertImageToDX(icon);
+                                plotText(text, cx + (bb.FontShiftX * wh / (float)(buttons_per_row * 2f)), cy + (bb.FontShiftY * wh / (float)(buttons_per_row * 2f)),
+                                    rect.Width, font_size, text_icon_is_indicator ? text_icon_indicator_colour : text_colour, 255, bb.GetFontFamily(1, button),
+                                    bb.GetFontStyle(1, button), false, true, text_box_width, ignore_cache, text_box_height);
 
-                            if (_images.ContainsKey(icon))
-                            {
-                                cy = rectBB.Top + (rectBB.Height - ((rectBB.Height / 10f) * 3.2f));
+                                //plot duration
+                                bool plot = false;
+                                float duration = vrp.SlotDuration(button);
+                                if(duration < 0.1f && vrp.IsRecording(button))
+                                {
+                                    duration = (float)(DateTime.UtcNow - vrp.AtivateTime(button)).TotalSeconds;
+                                    plot = true;
+                                }
+                                else if (duration > 0f && vrp.IsPlaying(button))
+                                {
+                                    float tmp_duration = (float)(DateTime.UtcNow - vrp.AtivateTime(button)).TotalSeconds;
+                                    if (tmp_duration > duration) tmp_duration = duration; // limit to the file details
+                                    duration = tmp_duration;
+                                    plot = true;
+                                }
+                                else if (duration > 0f)
+                                {
+                                    plot = true;
+                                }
 
-                                Matrix3x2 originalTransform = _renderTarget.Transform;
-                                AntialiasMode originalAM = _renderTarget.AntialiasMode;
-                                _renderTarget.AntialiasMode = AntialiasMode.Aliased;
-                                _renderTarget.Transform = Matrix3x2.Identity;
+                                if (plot)
+                                {
+                                    text = (duration > 9.9f ? duration.ToString("F0") : duration.ToString("F1")) + "s";
+                                    SharpDX.RectangleF tmpRect = new SharpDX.RectangleF(rectBB.X, rectBB.Y, rectBB.Width, rectBB.Height);
+                                    tmpRect.X += half_border - (radius * 0.75f);
+                                    tmpRect.Y += half_border;
+                                    tmpRect.Width -= border;
+                                    tmpRect.Height -= border;
+                                    //_renderTarget.DrawRectangle(tmpRect, getDXBrushForColour(System.Drawing.Color.LimeGreen));
+                                    plotText(text, tmpRect.X + tmpRect.Width, tmpRect.Y + tmpRect.Height, rect.Width, 26f, text_icon_is_indicator ? text_icon_indicator_colour : text_colour,
+                                        255, bb.GetFontFamily(1, button), bb.GetFontStyle(1, button), true, false, 0, false, 0, 0, false, null, false, true);
+                                }
 
-                                SharpDX.Direct2D1.Bitmap b = _images[icon];
+                                //draw button icon based on play state
+                                string icon;
+                                if (vrp.IsRecording(button) || vrp.IsPlaying(button)) icon = "stop";
+                                else if (vrp.IsRecordMode) icon = "record";
+                                else icon = "play";
 
-                                float smallest_dim = rectBB.Size.Width <= rectBB.Height ? rectBB.Size.Width : rectBB.Size.Height;
-                                float icon_size = smallest_dim * bb.FontScale * 0.38f;
+                                convertImageToDX(icon);
 
-                                SharpDX.RectangleF rct = new SharpDX.RectangleF(cx - (icon_size / 2f), cy - (icon_size / 2f), icon_size, icon_size);
+                                if (_images.ContainsKey(icon))
+                                {
+                                    cy = rectBB.Top + (rectBB.Height - ((rectBB.Height / 10f) * 3.2f));
 
-                                _renderTarget.FillOpacityMask(b, getDXBrushForColour(text_icon_is_indicator ? text_icon_indicator_colour : text_colour, 255),
-                                    OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+                                    Matrix3x2 originalTransform = _renderTarget.Transform;
+                                    AntialiasMode originalAM = _renderTarget.AntialiasMode;
+                                    _renderTarget.AntialiasMode = AntialiasMode.Aliased;
+                                    _renderTarget.Transform = Matrix3x2.Identity;
 
-                                _renderTarget.AntialiasMode = originalAM;
-                                _renderTarget.Transform = originalTransform;
+                                    SharpDX.Direct2D1.Bitmap b = _images[icon];
+
+                                    float smallest_dim = rectBB.Size.Width <= rectBB.Height ? rectBB.Size.Width : rectBB.Size.Height;
+                                    float icon_size = smallest_dim * bb.FontScale * 0.38f;
+
+                                    SharpDX.RectangleF rct = new SharpDX.RectangleF(cx - (icon_size / 2f), cy - (icon_size / 2f), icon_size, icon_size);
+
+                                    _renderTarget.FillOpacityMask(b, getDXBrushForColour(text_icon_is_indicator ? text_icon_indicator_colour : text_colour, 255),
+                                        OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+
+                                    _renderTarget.AntialiasMode = originalAM;
+                                    _renderTarget.Transform = originalTransform;
+                                }
                             }
                         }
 

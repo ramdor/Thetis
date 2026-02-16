@@ -46,6 +46,7 @@ using System.Threading;
 using NAudio.Wave;
 using NAudio.MediaFoundation;
 using Newtonsoft.Json;
+using System.Globalization;
 
 namespace Thetis
 {
@@ -79,6 +80,8 @@ namespace Thetis
 
         public string WavFile { get; set; } = "";
         public long? WavFileSizeBytes { get; set; }
+        public DateTime? WavFileLastWriteUtc { get; set; }
+        public double? PlayDurationSeconds { get; set; }
 
         public int SampleRate { get; set; }
         public short BitDepth { get; set; }
@@ -153,6 +156,7 @@ namespace Thetis
 
         public event Action<bool, string, string> RecordingChanged;
         public event Action<bool, string, string, bool> PlayingChanged;
+        public event Action<string, RecordingJsonModel> RecordingJsonWritten;
 
         private bool _is_wdsp_playing;
 
@@ -226,6 +230,165 @@ namespace Thetis
                 _playbackSetting["BYPASS_VAC"] = _console.BypassVACWhenPlayingWAV;
                 _playbackSetting["MOX"] = _console.MOX;
             }
+        }
+
+        private static double? tryGetWavDurationSeconds(string wavPath)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(wavPath)) return null;
+                if (!File.Exists(wavPath)) return null;
+
+                using (BinaryReader br = new BinaryReader(File.Open(wavPath, FileMode.Open, FileAccess.Read, FileShare.Read)))
+                {
+                    int fmtTag;
+                    int sr;
+                    int ch;
+                    int bps;
+                    long ds;
+                    long dl;
+                    string hdrErr;
+
+                    if (!tryParseWaveHeader(br, out fmtTag, out sr, out ch, out bps, out ds, out dl, out hdrErr)) return null;
+                    if (sr <= 0) return null;
+
+                    int bytesPerSample;
+                    if (fmtTag == 3) bytesPerSample = 4;
+                    else
+                    {
+                        bytesPerSample = bps / 8;
+                        if (bytesPerSample < 1) bytesPerSample = 1;
+                    }
+
+                    int bytesPerFrame = ch * bytesPerSample;
+                    if (bytesPerFrame < 1) bytesPerFrame = 1;
+
+                    if (dl <= 0) return 0.0;
+
+                    double frames = dl / (double)bytesPerFrame;
+                    double seconds = frames / (double)sr;
+
+                    if (seconds < 0.0) seconds = 0.0;
+                    return Math.Round(seconds, 3);
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static bool tryParseUtcStamp(string s, out DateTime utc)
+        {
+            utc = default(DateTime);
+            if (string.IsNullOrWhiteSpace(s)) return false;
+
+            return DateTime.TryParseExact(
+                s.Trim(),
+                "yyyy-MM-ddTHH:mm:ss.fffZ",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                out utc);
+        }
+
+        private void refreshExistingJsonFromWavIfNeeded(string unique_id, string wavPath, int formatTag, int sampleRate, int channels, int bitsPerSample)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(wavPath)) return;
+                if (!File.Exists(wavPath)) return;
+
+                string jsonPath = Path.ChangeExtension(wavPath, ".json");
+                if (!File.Exists(jsonPath)) return;
+
+                DateTime wavLast = DateTime.SpecifyKind(File.GetLastWriteTimeUtc(wavPath), DateTimeKind.Utc);
+                string wavStamp = wavLast.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+
+                RecordingJsonModel existing = null;
+                try
+                {
+                    string existingText = File.ReadAllText(jsonPath, Encoding.UTF8);
+                    existing = JsonConvert.DeserializeObject<RecordingJsonModel>(existingText);
+                }
+                catch
+                {
+                    existing = null;
+                }
+
+                string existingStamp = existing != null ? existing.wav_file_last_write_utc : null;
+                if (string.Equals((existingStamp ?? string.Empty).Trim(), wavStamp, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+
+                RecordingDetails d = new RecordingDetails();
+
+                DateTime utcTime = DateTime.UtcNow;
+                if (existing != null)
+                {
+                    DateTime parsedUtc;
+                    if (tryParseUtcStamp(existing.utc_time, out parsedUtc)) utcTime = parsedUtc;
+
+                    d.Frequency = existing.frequency ?? "";
+                    d.Mode = existing.mode ?? "";
+                    d.Band = existing.band ?? "";
+
+                    d.Mp3File = existing.mp3_file ?? "";
+                    d.Mp3FileSizeBytes = existing.mp3_file_size_bytes;
+                }
+
+                d.UtcTime = utcTime;
+
+                d.WavFile = Path.GetFileName(wavPath) ?? "";
+                try
+                {
+                    FileInfo fi = new FileInfo(wavPath);
+                    d.WavFileSizeBytes = fi.Length;
+                    d.WavFileLastWriteUtc = DateTime.SpecifyKind(fi.LastWriteTimeUtc, DateTimeKind.Utc);
+                    d.PlayDurationSeconds = tryGetWavDurationSeconds(wavPath);
+                }
+                catch
+                {
+                    d.WavFileSizeBytes = null;
+                    d.WavFileLastWriteUtc = null;
+                    d.PlayDurationSeconds = null;
+                }
+
+                d.SampleRate = sampleRate;
+                d.BitDepth = (short)bitsPerSample;
+                d.Channels = (short)channels;
+                d.FormatTag = (short)formatTag;
+
+                if (!string.IsNullOrWhiteSpace(d.Mp3File))
+                {
+                    try
+                    {
+                        string dir = Path.GetDirectoryName(wavPath);
+                        string mp3Full = Path.Combine(dir ?? "", d.Mp3File);
+
+                        if (File.Exists(mp3Full))
+                        {
+                            FileInfo fi2 = new FileInfo(mp3Full);
+                            d.Mp3FileSizeBytes = fi2.Length;
+                        }
+                        else
+                        {
+                            d.Mp3FileSizeBytes = null;
+                        }
+                    }
+                    catch
+                    {
+                        d.Mp3FileSizeBytes = null;
+                    }
+                }
+                else
+                {
+                    d.Mp3FileSizeBytes = null;
+                }
+
+                writeRecordingJson(unique_id, jsonPath, d);
+            }
+            catch { }
         }
 
         public void SetPlaybackSetting(string setting, bool value)
@@ -783,6 +946,8 @@ namespace Thetis
                         d.Channels = 2;
                         d.WavFile = Path.GetFileName(full_target) ?? "";
                         d.WavFileSizeBytes = null;
+                        d.WavFileLastWriteUtc = null;
+                        d.PlayDurationSeconds = null;
                         d.Mp3File = "";
                         d.Mp3FileSizeBytes = null;
                     }
@@ -954,6 +1119,8 @@ namespace Thetis
                         d.Channels = (short)channels;
                         d.WavFile = Path.GetFileName(full_target) ?? "";
                         d.WavFileSizeBytes = null;
+                        d.WavFileLastWriteUtc = null;
+                        d.PlayDurationSeconds = null;
                         d.Mp3File = "";
                         d.Mp3FileSizeBytes = null;
                     }
@@ -1188,6 +1355,12 @@ namespace Thetis
                         return false;
                     }
 
+                    try
+                    {
+                        refreshExistingJsonFromWavIfNeeded(play_id, fullPath, formatTag, sampleRate, channels, bitsPerSample);
+                    }
+                    catch { }
+
                     storeRestoreSettings(true, true);
 
                     double mic = Audio.console.radio.GetDSPTX(0).MicGain;
@@ -1262,6 +1435,21 @@ namespace Thetis
                     {
                         error = "File does not exist.";
                         return false;
+                    }
+
+                    if (string.Equals((Path.GetExtension(fullPath) ?? string.Empty), ".wav", StringComparison.OrdinalIgnoreCase))
+                    {
+                        try
+                        {
+                            using (BinaryReader br = new BinaryReader(File.Open(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read)))
+                            {
+                                if (tryParseWaveHeader(br, out int fmtTag, out int sr, out int ch, out int bps, out long ds, out long dl, out string hdrErr))
+                                {
+                                    refreshExistingJsonFromWavIfNeeded(play_id, fullPath, fmtTag, sr, ch, bps);
+                                }
+                            }
+                        }
+                        catch { }
                     }
 
                     _active_play_id = play_id ?? string.Empty;
@@ -1542,6 +1730,7 @@ namespace Thetis
             string json;
             string mp3;
             RecordingDetails details;
+            string unique_id;
 
             lock (_sync)
             {
@@ -1549,11 +1738,12 @@ namespace Thetis
                 json = _active_record_json_filename;
                 mp3 = _active_record_mp3_filename;
                 details = _active_record_details;
+                unique_id = _active_record_id;
 
                 cleanupPcRecording();
             }
 
-            recordCompleted(wav, json, mp3, details);
+            recordCompleted(unique_id, wav, json, mp3, details);
         }
 
         private void cleanupPcRecording()
@@ -1585,6 +1775,7 @@ namespace Thetis
             string json;
             string mp3;
             RecordingDetails details;
+            string unique_id;
 
             lock (_sync)
             {
@@ -1607,12 +1798,13 @@ namespace Thetis
                 json = _active_record_json_filename;
                 mp3 = _active_record_mp3_filename;
                 details = _active_record_details;
+                unique_id = _active_record_id;
             }
 
-            recordCompleted(wav, json, mp3, details);
+            recordCompleted(unique_id, wav, json, mp3, details);
         }
 
-        private void recordCompleted(string wav, string json, string mp3, RecordingDetails details)
+        private void recordCompleted(string unique_id, string wav, string json, string mp3, RecordingDetails details)
         {
             Action a = delegate
             {
@@ -1629,10 +1821,13 @@ namespace Thetis
                             {
                                 FileInfo fi = new FileInfo(wav);
                                 details.WavFileSizeBytes = fi.Length;
+                                details.WavFileLastWriteUtc = DateTime.SpecifyKind(fi.LastWriteTimeUtc, DateTimeKind.Utc);
+                                details.PlayDurationSeconds = tryGetWavDurationSeconds(wav);
                             }
                             else
                             {
                                 details.WavFileSizeBytes = null;
+                                details.WavFileLastWriteUtc = null;
                             }
                         }
                         catch
@@ -1680,7 +1875,7 @@ namespace Thetis
                 if (GenerateJSON && details != null && !string.IsNullOrWhiteSpace(json))
                 {
                     try { if (File.Exists(json)) File.Delete(json); } catch { }
-                    bool ok = writeRecordingJson(json, details);
+                    bool ok = writeRecordingJson(unique_id, json, details);
                     if (!ok)
                     {
                         try { if (File.Exists(json)) File.Delete(json); } catch { }
@@ -1705,7 +1900,7 @@ namespace Thetis
             }
         }
 
-        private bool writeRecordingJson(string jsonPath, RecordingDetails details)
+        private bool writeRecordingJson(string unique_id, string jsonPath, RecordingDetails details)
         {
             try
             {
@@ -1720,6 +1915,26 @@ namespace Thetis
                 m.wav_file = details.WavFile ?? "";
                 m.wav_file_size_bytes = details.WavFileSizeBytes;
 
+                DateTime? wavLast = details.WavFileLastWriteUtc;
+
+                if (!wavLast.HasValue)
+                {
+                    try
+                    {
+                        string wavGuess = Path.ChangeExtension(jsonPath, ".wav");
+                        if (File.Exists(wavGuess))
+                        {
+                            wavLast = DateTime.SpecifyKind(File.GetLastWriteTimeUtc(wavGuess), DateTimeKind.Utc);
+                        }
+                    }
+                    catch
+                    {
+                        wavLast = null;
+                    }
+                }
+
+                m.wav_file_last_write_utc = wavLast.HasValue ? ensureUtc(wavLast.Value).ToString("yyyy-MM-ddTHH:mm:ss.fffZ") : "";
+
                 m.sample_rate = details.SampleRate;
                 m.bit_depth = details.BitDepth;
                 m.channels = details.Channels;
@@ -1730,12 +1945,30 @@ namespace Thetis
                 m.mp3_file = details.Mp3File ?? "";
                 m.mp3_file_size_bytes = details.Mp3FileSizeBytes;
 
+                double? dur = details.PlayDurationSeconds;
+
+                if (!dur.HasValue)
+                {
+                    try
+                    {
+                        string wavGuess = Path.ChangeExtension(jsonPath, ".wav");
+                        dur = tryGetWavDurationSeconds(wavGuess);
+                    }
+                    catch
+                    {
+                        dur = null;
+                    }
+                }
+
+                m.play_duration_seconds = dur;
+
                 string s = JsonConvert.SerializeObject(m, Formatting.Indented);
 
                 string dir = Path.GetDirectoryName(jsonPath);
                 if (!string.IsNullOrWhiteSpace(dir)) ensureFolderExists(dir);
 
                 File.WriteAllText(jsonPath, s, Encoding.UTF8);
+                raiseRecordingJsonWritten(unique_id, m);
                 return true;
             }
             catch
@@ -1743,7 +1976,23 @@ namespace Thetis
                 return false;
             }
         }
+        private void raiseRecordingJsonWritten(string unique_id, RecordingJsonModel json_data)
+        {
+            Action<string, RecordingJsonModel> h = RecordingJsonWritten;
+            if (h == null) return;
 
+            string uid = unique_id ?? string.Empty;
+
+            Delegate[] list = h.GetInvocationList();
+            for (int i = 0; i < list.Length; i++)
+            {
+                try
+                {
+                    ((Action<string, RecordingJsonModel>)list[i])(uid, json_data);
+                }
+                catch { }
+            }
+        }
         private static void ensureMediaFoundation()
         {
             lock (_mf_sync)
@@ -2023,7 +2272,7 @@ namespace Thetis
             }
         }
 
-        private sealed class RecordingJsonModel
+        public sealed class RecordingJsonModel
         {
             public string utc_time { get; set; }
             public string frequency { get; set; }
@@ -2032,6 +2281,8 @@ namespace Thetis
 
             public string wav_file { get; set; }
             public long? wav_file_size_bytes { get; set; }
+            public string wav_file_last_write_utc { get; set; }
+            public double? play_duration_seconds { get; set; }
 
             public int sample_rate { get; set; }
             public short bit_depth { get; set; }
