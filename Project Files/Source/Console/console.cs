@@ -7513,9 +7513,11 @@ namespace Thetis
             int nddc = 0;
             int cntrl1 = 0;
             int cntrl2 = 0;
-            if (_diversity2)
-                P1_diversity = 1;
+
             bool p1 = NetworkIO.CurrentRadioProtocol == RadioProtocol.USB;
+            bool puresignal_enabled = psform.PSEnabled;
+            bool diversity_enabled = Diversity2;
+            if (diversity_enabled) P1_diversity = 1;
 
             switch (HardwareSpecific.Model)
             {
@@ -7531,7 +7533,7 @@ namespace Thetis
                     nddc = 5;
                     if (!_mox)
                     {
-                        if (_diversity2)
+                        if (diversity_enabled)
                         {
                             P1_DDCConfig =
                             DDCEnable = DDC0;
@@ -7554,7 +7556,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!_diversity2 && !psform.PSEnabled)
+                        if (!diversity_enabled && !puresignal_enabled)
                         {
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
@@ -7564,7 +7566,7 @@ namespace Thetis
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
-                        else if (!_diversity2 && psform.PSEnabled)
+                        else if (!diversity_enabled && puresignal_enabled)
                         {
                             P1_DDCConfig = 3;
                             DDCEnable = DDC0 + DDC2;
@@ -7575,7 +7577,7 @@ namespace Thetis
                             cntrl1 = (rx_adc_ctrl1 & 0xf3) | 0x08;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
-                        else if (_diversity2 && psform.PSEnabled)
+                        else if (diversity_enabled && puresignal_enabled)
                         {
                             P1_DDCConfig = 3;
                             DDCEnable = DDC0 + DDC2;
@@ -7587,7 +7589,7 @@ namespace Thetis
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
                         else
-                        {// diversity2 && !psform.PSEnabled
+                        {// diversity_enabled && !puresignal_enabled
                             P1_DDCConfig = 2;
                             DDCEnable = DDC0;
                             SyncEnable = DDC1;
@@ -7609,7 +7611,7 @@ namespace Thetis
                     nddc = 5;
                     if (!_mox)
                     {
-                        if (_diversity2)
+                        if (diversity_enabled)
                         {
                             P1_DDCConfig = 2; // REDPITAYA PAVEL
                             DDCEnable = DDC0;
@@ -7634,7 +7636,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!_diversity2 && !psform.PSEnabled)
+                        if (!diversity_enabled && !puresignal_enabled)
                         {
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
@@ -7645,7 +7647,7 @@ namespace Thetis
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
-                        else if (!_diversity2 && psform.PSEnabled)
+                        else if (!diversity_enabled && puresignal_enabled)
                         {
                             P1_DDCConfig = 3;
                             DDCEnable = DDC0 + DDC2;
@@ -7656,7 +7658,7 @@ namespace Thetis
                             cntrl1 = (rx_adc_ctrl1 & 0xf3) | 0x08;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
-                        else if (_diversity2 && psform.PSEnabled)
+                        else if (diversity_enabled && puresignal_enabled)
                         {
                             P1_DDCConfig = 3;
                             DDCEnable = DDC0 + DDC2;
@@ -7668,7 +7670,7 @@ namespace Thetis
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
                         else
-                        {// diversity2 && !psform.PSEnabled
+                        {// diversity_enabled && !puresignal_enabled
                             P1_DDCConfig = 2;
                             DDCEnable = DDC0;
                             SyncEnable = DDC1;
@@ -7693,7 +7695,7 @@ namespace Thetis
                     nddc = 4;
                     if (!_mox)
                     {
-                        if (!_diversity2)
+                        if (!diversity_enabled)
                         {
                             P1_DDCConfig = 4;
                             DDCEnable = DDC0;
@@ -7721,7 +7723,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!_diversity2 && !psform.PSEnabled)
+                        if (!diversity_enabled && !puresignal_enabled)
                         {
                             P1_DDCConfig = 4;
                             DDCEnable = DDC0;
@@ -7736,7 +7738,7 @@ namespace Thetis
                                 Rate[1] = rx2_rate;
                             }
                         }
-                        else if (_diversity2 && !psform.PSEnabled)
+                        else if (diversity_enabled && !puresignal_enabled)
                         {
                             P1_DDCConfig = 5;
                             DDCEnable = DDC0;
@@ -7765,7 +7767,7 @@ namespace Thetis
                     nddc = 2;
                     if (!_mox)
                     {
-                        if (!_diversity2)
+                        if (!diversity_enabled)
                         {
                             P1_DDCConfig = 4;
                             DDCEnable = DDC0;
@@ -7793,7 +7795,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!_diversity2 && !psform.PSEnabled)
+                        if (!diversity_enabled && !puresignal_enabled)
                         {
                             P1_DDCConfig = 4;
                             DDCEnable = DDC0;
@@ -7808,7 +7810,7 @@ namespace Thetis
                                 Rate[1] = rx2_rate;
                             }
                         }
-                        else if (_diversity2 && !psform.PSEnabled)
+                        else if (diversity_enabled && !puresignal_enabled)
                         {
                             P1_DDCConfig = 5;
                             DDCEnable = DDC0;
@@ -52332,11 +52334,21 @@ namespace Thetis
                 if (_arp == null)
                 {
                     _arp = new clsAudioRecordPlayback(this); //intialise recording and playback
+                    _arp.GenerateJSON = true;
                     _arp.RecordingChanged += arp_RecordingChanged;
                     _arp.PlayingChanged += arp_PlayingingChanged;
+                    this.PowerChangeHanders += arp_PowerChanged;
                 }
 
                 return _arp; 
+            }
+        }
+        private void arp_PowerChanged(bool old_power, bool new_power)
+        {
+            if(ARP.IsWDSPBusy) // recording or playing via wdsp, if power state changes then stop !
+            {
+                if (ARP.IsPlaying) ARP.StopPlayback(out _);
+                if (ARP.IsRecording) ARP.StopRecord(out _);
             }
         }
         private void arp_PlayingingChanged(bool playing, string id, string filename, bool isWdsp)

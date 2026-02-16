@@ -1953,7 +1953,6 @@
             this.txtRecording_customFolder = new System.Windows.Forms.TextBoxTS();
             this.radRecording_storageCustom = new System.Windows.Forms.RadioButtonTS();
             this.radRecording_storageMusic = new System.Windows.Forms.RadioButtonTS();
-            this.chkRecording_generateJSONs = new System.Windows.Forms.CheckBoxTS();
             this.chkRecording_generateMP3s = new System.Windows.Forms.CheckBoxTS();
             this.chkRecording_playbackMox = new System.Windows.Forms.CheckBoxTS();
             this.chkBypassVACPlayingRecording = new System.Windows.Forms.CheckBoxTS();
@@ -32169,7 +32168,6 @@
             this.groupBoxTS60.Controls.Add(this.txtRecording_customFolder);
             this.groupBoxTS60.Controls.Add(this.radRecording_storageCustom);
             this.groupBoxTS60.Controls.Add(this.radRecording_storageMusic);
-            this.groupBoxTS60.Controls.Add(this.chkRecording_generateJSONs);
             this.groupBoxTS60.Controls.Add(this.chkRecording_generateMP3s);
             this.groupBoxTS60.Controls.Add(this.chkRecording_playbackMox);
             this.groupBoxTS60.Controls.Add(this.chkBypassVACPlayingRecording);
@@ -32344,18 +32342,6 @@
             this.radRecording_storageMusic.Text = "Use Music storage";
             this.radRecording_storageMusic.UseVisualStyleBackColor = true;
             this.radRecording_storageMusic.CheckedChanged += new System.EventHandler(this.radRecording_storage_CheckedChanged);
-            // 
-            // chkRecording_generateJSONs
-            // 
-            this.chkRecording_generateJSONs.AutoSize = true;
-            this.chkRecording_generateJSONs.Image = null;
-            this.chkRecording_generateJSONs.Location = new System.Drawing.Point(21, 119);
-            this.chkRecording_generateJSONs.Name = "chkRecording_generateJSONs";
-            this.chkRecording_generateJSONs.Size = new System.Drawing.Size(150, 17);
-            this.chkRecording_generateJSONs.TabIndex = 87;
-            this.chkRecording_generateJSONs.Text = "Generate JSON details file";
-            this.chkRecording_generateJSONs.UseVisualStyleBackColor = true;
-            this.chkRecording_generateJSONs.CheckedChanged += new System.EventHandler(this.chkRecording_generateJSONs_CheckedChanged);
             // 
             // chkRecording_generateMP3s
             // 
@@ -37124,7 +37110,7 @@
             this.grpDSPFilterSize.Size = new System.Drawing.Size(120, 320);
             this.grpDSPFilterSize.TabIndex = 46;
             this.grpDSPFilterSize.TabStop = false;
-            this.grpDSPFilterSize.Text = "Filter Size";
+            this.grpDSPFilterSize.Text = "Filter Size (taps)";
             // 
             // grpDSPFiltSizeFM
             // 
@@ -37376,7 +37362,7 @@
             this.grpDSPBufferSize.Size = new System.Drawing.Size(120, 320);
             this.grpDSPBufferSize.TabIndex = 37;
             this.grpDSPBufferSize.TabStop = false;
-            this.grpDSPBufferSize.Text = "Buffer Size";
+            this.grpDSPBufferSize.Text = "Buffer Size (IQcomp)";
             // 
             // grpDSPBufFM
             // 
@@ -74115,7 +74101,6 @@
         private CheckBoxTS chkZTBIsRecallStore;
         private CheckBoxTS chkZTBstoreLock;
         private CheckBoxTS chkCTUNignore0beat;
-        private LabelTS lblTimeToMakeDSPChange;
         private LabelTS labelTS610;
         private GroupBoxTS grpTCIServer;
         private LabelTS lblToggleToUseTCI;
@@ -75432,7 +75417,6 @@
         private TextBoxTS txtRecording_customFolder;
         private RadioButtonTS radRecording_storageCustom;
         private RadioButtonTS radRecording_storageMusic;
-        private CheckBoxTS chkRecording_generateJSONs;
         private ButtonTS btnRecording_selectCustomFolder;
         private LabelTS labelTS648;
         private GroupBoxTS groupBoxTS62;
@@ -75472,5 +75456,6 @@
         private LabelTS lblRecording_activeSlot;
         private CheckBoxTS chkActivePeakRX1_tx;
         private CheckBoxTS chkActivePeakRX2_tx;
+        private LabelTS lblTimeToMakeDSPChange;
     }
 }

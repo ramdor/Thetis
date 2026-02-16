@@ -378,77 +378,131 @@ namespace Thetis
             return list;
         }
 
-        public bool DeleteRecording(int folderId, string filename, out string error)
+        public bool DeleteRecording(string full_path, out string error, bool delete_containing_folder_if_empty = false)
         {
             error = null;
 
             try
             {
-                if (string.IsNullOrWhiteSpace(filename))
+                string resolved = resolvePlayPath(full_path, out error);
+                if (resolved == null) return false;
+
+                HashSet<string> targets = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                bool resolvedIsFolder = Directory.Exists(resolved);
+                string folderToDelete = null;
+
+                if (resolvedIsFolder)
                 {
-                    error = "Filename is empty.";
+                    folderToDelete = resolved;
+
+                    string[] wavs = Directory.GetFiles(resolved, "*.wav", SearchOption.TopDirectoryOnly);
+                    for (int i = 0; i < wavs.Length; i++)
+                    {
+                        string wav = wavs[i];
+                        targets.Add(wav);
+                        targets.Add(Path.ChangeExtension(wav, ".json"));
+                        targets.Add(Path.ChangeExtension(wav, ".mp3"));
+                    }
+                }
+                else
+                {
+                    string basePath = resolved;
+
+                    if (hasRealExtension(resolved))
+                    {
+                        string ext = (Path.GetExtension(resolved) ?? string.Empty).ToLowerInvariant();
+                        if (ext != ".wav" && ext != ".json" && ext != ".mp3")
+                        {
+                            error = "Unsupported file type.";
+                            return false;
+                        }
+
+                        string dir = Path.GetDirectoryName(resolved);
+                        string name = Path.GetFileNameWithoutExtension(resolved);
+
+                        if (string.IsNullOrWhiteSpace(dir) || string.IsNullOrWhiteSpace(name))
+                        {
+                            return true;
+                        }
+
+                        basePath = Path.Combine(dir, name);
+                    }
+
+                    string wav = Path.ChangeExtension(basePath, ".wav");
+                    string json = Path.ChangeExtension(basePath, ".json");
+                    string mp3 = Path.ChangeExtension(basePath, ".mp3");
+
+                    targets.Add(wav);
+                    targets.Add(json);
+                    targets.Add(mp3);
+
+                    bool anyExists = false;
+                    if (File.Exists(wav)) anyExists = true;
+                    else if (File.Exists(json)) anyExists = true;
+                    else if (File.Exists(mp3)) anyExists = true;
+
+                    if (!anyExists) return true;
+
+                    folderToDelete = Path.GetDirectoryName(wav);
+                }
+
+                string activeRec = null;
+                string activePlay = null;
+                bool isRec = false;
+                bool isPlay = false;
+
+                lock (_sync)
+                {
+                    activeRec = _active_record_filename;
+                    activePlay = _active_play_filename;
+                    isRec = _is_recording;
+                    isPlay = _is_playing;
+                }
+
+                if (isRec && !string.IsNullOrWhiteSpace(activeRec) && targets.Contains(activeRec))
+                {
+                    error = "Cannot delete an active recording.";
                     return false;
                 }
 
-                string folder = getFolderPath(folderId);
-                string full = Path.Combine(folder, filename);
-
-                if (!File.Exists(full))
+                if (isPlay && !string.IsNullOrWhiteSpace(activePlay) && targets.Contains(activePlay))
                 {
-                    error = "File does not exist.";
+                    error = "Cannot delete an active playback file.";
                     return false;
                 }
 
-                try { File.Delete(full); } catch { }
-
-                string json = Path.ChangeExtension(full, ".json");
-                if (File.Exists(json))
+                foreach (string path in targets)
                 {
-                    try { File.Delete(json); } catch { }
+                    if (string.IsNullOrWhiteSpace(path)) continue;
+                    if (!File.Exists(path)) continue;
+                    try { File.Delete(path); } catch { }
                 }
 
-                string mp3 = Path.ChangeExtension(full, ".mp3");
-                if (File.Exists(mp3))
+                if (delete_containing_folder_if_empty && !string.IsNullOrWhiteSpace(folderToDelete) && Directory.Exists(folderToDelete))
                 {
-                    try { File.Delete(mp3); } catch { }
-                }
+                    bool canDelete = false;
+                    bool sameAsBase = false;
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                error = ex.Message;
-                return false;
-            }
-        }
+                    try { canDelete = isUnderBaseFolder(_audio_folder, folderToDelete); } catch { canDelete = false; }
 
-        public bool DeleteAllRecordings(int folderId, out string error)
-        {
-            error = null;
-
-            try
-            {
-                string folder = getFolderPath(folderId);
-                if (!Directory.Exists(folder)) return true;
-
-                string[] files = Directory.GetFiles(folder, "*.wav", SearchOption.TopDirectoryOnly);
-                for (int i = 0; i < files.Length; i++)
-                {
-                    string wav = files[i];
-                    try { File.Delete(wav); } catch { }
-
-                    string json = Path.ChangeExtension(wav, ".json");
-                    if (File.Exists(json))
+                    try
                     {
-                        try { File.Delete(json); } catch { }
+                        string baseFull = Path.GetFullPath(_audio_folder).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                        string folderFull = Path.GetFullPath(folderToDelete).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                        sameAsBase = string.Equals(baseFull, folderFull, StringComparison.OrdinalIgnoreCase);
+                    }
+                    catch
+                    {
+                        sameAsBase = false;
                     }
 
-                    string mp3 = Path.ChangeExtension(wav, ".mp3");
-                    if (File.Exists(mp3))
+                    if (canDelete && !sameAsBase)
                     {
-                        try { File.Delete(mp3); } catch { }
+                        try { Directory.Delete(folderToDelete, false); } catch { }
                     }
                 }
+
                 return true;
             }
             catch (Exception ex)
@@ -1284,7 +1338,18 @@ namespace Thetis
                 return ret;
             }
         }
-
+        public bool IsWDSPBusy
+        {
+            get
+            {
+                bool ret;
+                lock (_sync)
+                {
+                    ret = (_active_playback_wfw_id > -1 && _is_playing) || (_active_record_wfw_id > -1 && _is_recording);
+                }
+                return ret;
+            }
+        }
         public bool IsBusy
         {
             get
@@ -1819,15 +1884,6 @@ namespace Thetis
             DateTime now = DateTime.Now;
             string stamp = now.ToString("yyyyMMdd_HHmmss");
             return prefix + "_" + stamp + "_" + suffixNumber.ToString() + "." + ext;
-        }
-
-        private string getFolderPath(int folderId)
-        {
-            if (folderId < 0) folderId = 0;
-
-            string folder = Path.Combine(_audio_folder, folderId.ToString());
-            ensureFolderExists(folder);
-            return folder;
         }
 
         private static void ensureFolderExists(string folder)

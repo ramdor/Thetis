@@ -10189,8 +10189,14 @@ namespace Thetis
                 _console.ARP.PlayingChanged -= onPlayingChanged;
                 _console.ARP.RecordingChanged -= onRecordingChanged;
 
-                //remove folder related to this container
+                //stop + remove folder related to this container
+                Debug.Print("REMOVING VoiceRecordPlayback : " + _unique_id);
 
+                if (_slot_playing > -1 && _console.ARP.IsPlaying) _console.ARP.StopPlayback(out _);
+                if (_slot_recording > -1 && _console.ARP.IsRecording) _console.ARP.StopRecord(out _);
+
+                // as we are not passing in an actual file, but a path, then all wavs/mp3/json + folder will be removed
+                _console.ARP.DeleteRecording(_unique_id, out string error, true);
             }
             public string[] SlotFilepaths
             {
@@ -10234,14 +10240,20 @@ namespace Thetis
             {
                 _global_playing = playing; // global state
 
-                //if something is play, and we are in record mode, then we should grey out everything
+                //if something is playing, and we are in record mode, then we should grey out everything
+                bool done_setup = false;
                 if (_mode_record)
                 {
                     enableAllSlots(!playing);
                     setupButtons();
+                    done_setup = true;
                 }
 
-                if (id != _unique_id) return; // not for us
+                if (id != _unique_id)
+                {
+                    if (!done_setup) setupButtons();
+                    return; // not for us
+                }
 
                 if (!playing)
                 {
@@ -10651,7 +10663,7 @@ namespace Thetis
 
                 if (!GetEnabled(1, index)) return;
 
-                Debug.Print("CLICKED : " + index);
+                Debug.Print("CLICKED VoiceRecordPlayback : " + index);
 
                 handleClicked(index);
             }
@@ -10679,6 +10691,7 @@ namespace Thetis
                     string file = _unique_id + "\\slot_" + (slot + 1).ToString() + ".wav";                    
                     if (_mode_record) // true if in record mode, false if playback mode
                     {
+                        //setup details for json
                         double freq = _owningmeter.RX == 1 ? _owningmeter.VfoA : _owningmeter.VfoB;
                         Band b = _owningmeter.RX == 1 ? _owningmeter.BandVfoA : _owningmeter.BandVfoB;
                         DSPMode mode = _owningmeter.RX == 1 ? _owningmeter.ModeVfoA : _owningmeter.ModeVfoB;
@@ -10690,6 +10703,7 @@ namespace Thetis
                             UtcTime = DateTime.UtcNow
                         };
 
+                        //start recording
                         _slot_recording = slot;
                         if (_wdsp)
                         {
@@ -10699,6 +10713,8 @@ namespace Thetis
                         {
                             _slot_filepath[slot] = _console.ARP.RecordToFileFromPCAudio(_unique_id, file, _console.ARP.InputPCDeviceID, out error, true, details);
                         }
+
+                        // there was an issue recording
                         if (_slot_filepath[slot] == null || error != null)
                         {
                             _slot_recording = -1;
@@ -10707,6 +10723,7 @@ namespace Thetis
                     }
                     else
                     {
+                        //playback
                         bool ok = false;
                         _slot_playing = slot;
                         if (_slot_filepath[slot] != null)
@@ -10720,6 +10737,8 @@ namespace Thetis
                                 ok = _console.ARP.PlayFileViaPCAudio(_unique_id, _slot_filepath[slot], _console.ARP.OutputPCDeviceID, out error);
                             }
                         }
+
+                        //there was an issue playing
                         if (!ok || error != null)
                         {
                             _slot_playing = -1;

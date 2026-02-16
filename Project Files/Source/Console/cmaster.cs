@@ -401,6 +401,7 @@ namespace Thetis
             {
                 ps_rate = value;
 
+                //actually change the rate
                 int txinid = cmaster.inid(1, 0);
                 int txch = cmaster.chid(txinid, 0);
                 puresignal.SetPSFeedbackRate(txch, ps_rate);
