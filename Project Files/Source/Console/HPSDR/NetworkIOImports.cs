@@ -324,6 +324,9 @@ namespace Thetis
         public static extern void SetOCBits(int b);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetOCExtraBits(int b);
+
+        [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetAntBits(int rx_ant, int trx_ant, int tx_ant, int rx_out, bool tx);
 
         [DllImport("ChannelMaster.dll", CallingConvention = CallingConvention.Cdecl)]

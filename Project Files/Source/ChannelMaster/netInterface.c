@@ -374,6 +374,17 @@ void SetOCBits(int b)
 }
 
 PORT
+void SetOCExtraBits(int b)
+{
+	if (prn->oc_output_extras != b)
+	{
+		prn->oc_output_extras = b;
+		if (listenSock != INVALID_SOCKET && prn->sendHighPriority != 0)
+			CmdHighPriority();
+	}
+}
+
+PORT
 void SetAlexAtten(int bits) 
 {
 	if (mkiibpf) return;
