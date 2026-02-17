@@ -867,6 +867,58 @@ namespace Thetis
             return details;
         }
 
+        public bool GetJSONDetailsFromFile(string full_path_file, out RecordingJsonModel json_data)
+        {
+            json_data = null;
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(full_path_file)) return false;
+
+                string wav_path = full_path_file;
+                string ext = (Path.GetExtension(wav_path) ?? string.Empty).ToLowerInvariant();
+                if (ext != ".wav") wav_path = Path.ChangeExtension(wav_path, ".wav");
+
+                if (!File.Exists(wav_path))
+                {
+                    json_data = null;
+                    return false;
+                }
+
+                string json_path = Path.ChangeExtension(wav_path, ".json");
+                if (string.IsNullOrWhiteSpace(json_path) || !File.Exists(json_path))
+                {
+                    json_data = null;
+                    return true;
+                }
+
+                string text = File.ReadAllText(json_path, Encoding.UTF8);
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    json_data = null;
+                    return true;
+                }
+
+                RecordingJsonModel m = null;
+                try
+                {
+                    m = JsonConvert.DeserializeObject<RecordingJsonModel>(text);
+                }
+                catch
+                {
+                    m = null;
+                }
+
+                json_data = m;
+                return true;
+            }
+            catch
+            {
+                json_data = null;
+                return false;
+            }
+        }
+
         public string RecordToFileFromWDSP(string record_id, string full_path, int wfw_id, out string error, bool remove_if_file_exists = false, RecordingDetails details = null)
         {
             error = null;

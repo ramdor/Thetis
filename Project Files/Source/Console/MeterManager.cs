@@ -2465,7 +2465,7 @@ namespace Thetis
             Dictionary<string, System.Drawing.Bitmap> resource_bitmaps = new Dictionary<string, System.Drawing.Bitmap>();
 
             // the resource images to use
-            resource_bitmaps.Add("vfo_lock", Properties.Resources.Lock_64);
+            resource_bitmaps.Add("lock", Properties.Resources.Lock_64);
             resource_bitmaps.Add("vfo_sync", Properties.Resources.Link_64);
             // otherbuttons icons
             resource_bitmaps.Add("stop", Properties.Resources.ob_square);
@@ -10138,6 +10138,7 @@ namespace Thetis
             private string[] _slot_filepath;
             private float[] _slot_duration_seconds;
             private DateTime[] _activate_time;
+            private bool[] _slot_locked;
             private bool _mode_record; // true = in record mode, otherwise playback mode
             private bool _wdsp;
 
@@ -10152,7 +10153,7 @@ namespace Thetis
 
                 _unique_id = Guid.NewGuid().ToString();
 
-                Buttons = 32;
+                Buttons = 64;
                 _slots = 1;
 
                 _map = new short[Buttons];
@@ -10182,12 +10183,14 @@ namespace Thetis
                 _slot_filepath = new string[Buttons];
                 _slot_duration_seconds = new float[Buttons];
                 _activate_time = new DateTime[Buttons];
+                _slot_locked = new bool[Buttons];
                 for (int n = 0; n < Buttons; n++)
                 {
                     SetText(0, n, "Slot " + (n + 1).ToString());
                     _slot_filepath[n] = null;
                     _slot_duration_seconds[n] = 0f;
                     _activate_time[n] = DateTime.MinValue;
+                    _slot_locked[n] = false;
                 }
 
                 Initialise();
@@ -10229,8 +10232,8 @@ namespace Thetis
                             if(n < l)
                             {
                                 _slot_filepath[n] = value[n];
+                                _slot_duration_seconds[n] = 0f;
                                 _activate_time[n] = DateTime.MinValue;
-                                //todo get json
                             }
                             else
                             {
@@ -10240,6 +10243,44 @@ namespace Thetis
                             }
                         }
                     }
+
+                    //validate and update with json data
+                    for (int n = 0; n < Buttons; n++)
+                    {
+                        if(!string.IsNullOrEmpty(_slot_filepath[n]))
+                        {
+                            bool wav_exists = _console.ARP.GetJSONDetailsFromFile(_slot_filepath[n], out clsAudioRecordPlayback.RecordingJsonModel json_data);
+                            if(wav_exists)
+                            {
+                                if(json_data != null)
+                                {
+                                    // we have some json
+                                    _slot_duration_seconds[n] = (float)json_data.play_duration_seconds;
+                                }
+                            }
+                            else
+                            {
+                                //wave is not there anymore, clear
+                                _slot_filepath[n] = null;
+                            }
+                        }
+                    }
+                }
+            }
+            public bool HasLockedSlots
+            {
+                get
+                {
+                    bool locked = false;
+                    for(int n = 0; n< _slots; n++)
+                    {
+                        if (_slot_locked[n])
+                        {
+                            locked = true;
+                            break;
+                        }
+                    }
+                    return locked;
                 }
             }
             public string UniqueID
@@ -10361,6 +10402,18 @@ namespace Thetis
                 // 0 index based
                 return _activate_time[slot];
             }
+            public void SetSlotLocked(int slot, bool locked)
+            {
+                if (slot < 0 || slot > Slots - 1) return;
+                // 0 index based
+                _slot_locked[slot] = locked;
+            }
+            public bool IsSlotLocked(int slot)
+            {
+                if (slot < 0 || slot > Slots - 1) return false;
+                // 0 index based
+                return _slot_locked[slot];
+            }
             public bool IsRecordMode
             {
                 get { return _mode_record; }
@@ -10377,17 +10430,6 @@ namespace Thetis
             {
                 get { return _global_playing || _global_recording; }
             }
-            public void SetSlotLabel(int slot, string value)
-            {
-                if (slot < 0 || slot > Slots - 1) return;
-                SetText(0, slot, value);
-            }
-            public string GetSlotLabel(int slot, string value)
-            {
-                if (slot < 0 || slot > Slots - 1) return null;
-                return GetText(0, slot);
-            }
-
             public override void Initialise()
             {
                 _click_highlight = false;
@@ -10711,9 +10753,9 @@ namespace Thetis
 
                 Debug.Print("CLICKED VoiceRecordPlayback : " + index);
 
-                handleClicked(index);
+                handleClicked(index, e.Button == MouseButtons.Right);
             }
-            private void handleClicked(int slot)
+            private void handleClicked(int slot, bool right_click)
             {
                 if (slot == _slot_playing)
                 {
@@ -10724,6 +10766,27 @@ namespace Thetis
                 {
                     // stop recording
                     _console.ARP.StopRecord(out string error);
+                }
+                else if (_mode_record && right_click)
+                {
+                    // delete !
+                    if (_slot_locked[slot]) return;
+
+                    _console.ARP.DeleteRecording(_slot_filepath[slot], out string error);
+
+                    // check it got deleted
+                    bool wav_exists = _console.ARP.GetJSONDetailsFromFile(_slot_filepath[slot], out clsAudioRecordPlayback.RecordingJsonModel json_data);
+                    if (!wav_exists)
+                    {
+                        _slot_filepath[slot] = null;
+                        _slot_duration_seconds[slot] = 0f;
+                        _activate_time[slot] = DateTime.MinValue;
+                        return;
+                    }
+                    else if (json_data != null)
+                    {
+                        _slot_duration_seconds[slot] = (float)json_data.play_duration_seconds;
+                    }
                 }
                 else// if (!_global_playing && !_global_recording)
                 {
@@ -10737,6 +10800,8 @@ namespace Thetis
                     string file = _unique_id + "\\slot_" + (slot + 1).ToString() + ".wav";                    
                     if (_mode_record) // true if in record mode, false if playback mode
                     {
+                        if (_slot_locked[slot]) return;
+
                         //setup details for json
                         double freq = _owningmeter.RX == 1 ? _owningmeter.VfoA : _owningmeter.VfoB;
                         Band b = _owningmeter.RX == 1 ? _owningmeter.BandVfoA : _owningmeter.BandVfoB;
@@ -10774,6 +10839,19 @@ namespace Thetis
                     else
                     {
                         //playback
+                        bool wav_exists = _console.ARP.GetJSONDetailsFromFile(_slot_filepath[slot], out clsAudioRecordPlayback.RecordingJsonModel json_data);
+                        if (!wav_exists)
+                        {
+                            _slot_filepath[slot] = null;
+                            _slot_duration_seconds[slot] = 0f;
+                            _activate_time[slot] = DateTime.MinValue;
+                            return;
+                        }
+                        else if(json_data != null)
+                        {
+                            _slot_duration_seconds[slot] = (float)json_data.play_duration_seconds;
+                        }
+
                         bool ok = false;
                         if (_slot_filepath[slot] != null)
                         {
@@ -24537,6 +24615,47 @@ namespace Thetis
                     if (bRebuild) Rebuild();
                 }
             }
+            public clsMeterItem GetMeterItem(MeterType mt, int order)
+            {
+                // used by setup to get a specific meter item using mt and order
+                clsMeterItem mi = null;
+                lock (_meterItemsLock)
+                {
+                    if (_meterItems == null) return null;
+                    Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in items)
+                    {
+                        clsItemGroup ig = kvp.Value as clsItemGroup;
+                        if (ig != null && ig.MeterType == mt && ig.Order == order)
+                        {
+                            Dictionary<string, clsMeterItem> m_items = itemsFromID(ig.ID);
+                            if (m_items == null || items.Count != 1) return null;
+                            mi = m_items.First().Value;
+                            break;
+                        }
+                    }
+                }
+                return mi;
+            }
+            public bool MeterHasLockedVoiceRecords()
+            {
+                bool locked = false;
+                lock (_meterItemsLock)
+                {
+                    if (_meterItems == null) return false;
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    foreach (KeyValuePair<string, clsMeterItem> mi in meterItems)
+                    {
+                        clsVoiceRecordPlay vrp = mi.Value as clsVoiceRecordPlay;
+                        if(vrp != null && vrp.HasLockedSlots)
+                        {
+                            locked = true;
+                            break;
+                        }
+                    }
+                }
+                return locked;
+            }
             public void RemoveAllMeterTypes(bool bRebuild = false)
             {
                 lock (_meterItemsLock)
@@ -24912,6 +25031,9 @@ namespace Thetis
                                                 {
                                                     string label = igs.GetSetting<string>("buttonbox_recordplayback_label_" + n.ToString(), false, null, null, "Slot " + (n + 1).ToString());
                                                     ((clsVoiceRecordPlay)bb).SetText(0, n, label);
+
+                                                    bool locked = igs.GetSetting<bool>("buttonbox_recordplayback_locked_" + n.ToString(), false, false, false, false);
+                                                    ((clsVoiceRecordPlay)bb).SetSlotLocked(n, locked);
                                                 }
                                             }
                                             else if (mt == MeterType.OTHER_BUTTONS)
@@ -26247,6 +26369,9 @@ namespace Thetis
                                                 {
                                                     string label = ((clsVoiceRecordPlay)bb).GetText(0, n);
                                                     igs.SetSetting<string>("buttonbox_recordplayback_label_" + n.ToString(), label);
+
+                                                    bool locked = ((clsVoiceRecordPlay)bb).IsSlotLocked(n);
+                                                    igs.SetSetting<bool>("buttonbox_recordplayback_locked_" + n.ToString(), locked);
                                                 }
                                             }
                                             else if (mt == MeterType.OTHER_BUTTONS)
@@ -36163,7 +36288,7 @@ namespace Thetis
                 if (bb.Columns <= 0) return;
 
                 bool is_vrp = mi.ItemType == clsMeterItem.MeterItemType.VOICE_RECORD_PLAY_BUTTONS;
-                float offset =  is_vrp ? 0.075f : 0f; // shifts it down to add two special buttons
+                float offset =  is_vrp ? 0.075f : 0f; // shifts it down to add two special buttons at top
 
                 float x = (mi.DisplayTopLeft.X / m.XRatio) * rect.Width;
                 float y = ((mi.DisplayTopLeft.Y / m.YRatio) * rect.Height) + ((offset / m.YRatio) * rect.Height);
@@ -36228,7 +36353,7 @@ namespace Thetis
 
                     //draw top row special buttons
 
-                    //wdsp/pc
+                    //wdsp/pc button on left side
                     fillRoundedRectangle(rr, getDXBrushForColour(System.Drawing.Color.FromArgb(62,62,62)));
 
                     if (!vrp.IsARPbusy && highlighted_index == -1 && bb.MouseEntered && rectBB.Contains((float)bb.MouseMovePoint.X, (float)bb.MouseMovePoint.Y))
@@ -36257,7 +36382,7 @@ namespace Thetis
                     ellipse.Point.Y = posPC.Y;
                     _renderTarget.FillEllipse(ellipse, getDXBrushForColour(!vrp.WDSP ? System.Drawing.Color.CornflowerBlue : System.Drawing.Color.Gray));
 
-                    //playback / record
+                    //playback / record button on right side
                     rectBB.Width = (w * 0.25f);
                     rectBB.X = x + w - rectBB.Width;
                     rr.Rect = rectBB;
@@ -36578,7 +36703,7 @@ namespace Thetis
                         //text + icon
                         bool ignore_cache = bb.GetTextChanged(1, button);
                         string text = bb.GetTextUpdateChanged(1, button);
-                        if (!string.IsNullOrEmpty(text) && !is_vrp)
+                        if (!string.IsNullOrEmpty(text) && !is_vrp) // not voice record playback
                         {
                             rectBB.Top += indicator_adjust.Top;
                             rectBB.Left += indicator_adjust.Left;
@@ -36647,7 +36772,8 @@ namespace Thetis
                             }
                         }
                         else if (is_vrp)
-                        {
+                        { 
+                            // voice record playback
                             rectBB.Top += indicator_adjust.Top;
                             rectBB.Left += indicator_adjust.Left;
                             rectBB.Right -= indicator_adjust.Right;
@@ -36684,14 +36810,16 @@ namespace Thetis
 
                                 //plot duration
                                 bool plot = false;
-                                float duration = vrp.SlotDuration(button);
+                                float duration = vrp.SlotDuration(button);                                
                                 if(duration < 0.1f && vrp.IsRecording(button))
                                 {
+                                    // counter when recording
                                     duration = (float)(DateTime.UtcNow - vrp.AtivateTime(button)).TotalSeconds;
                                     plot = true;
                                 }
                                 else if (duration > 0f && vrp.IsPlaying(button))
                                 {
+                                    // counter when playing
                                     float tmp_duration = (float)(DateTime.UtcNow - vrp.AtivateTime(button)).TotalSeconds;
                                     if (tmp_duration > duration) tmp_duration = duration; // limit to the file details
                                     duration = tmp_duration;
@@ -36711,14 +36839,17 @@ namespace Thetis
                                     tmpRect.Width -= border;
                                     tmpRect.Height -= border;
                                     //_renderTarget.DrawRectangle(tmpRect, getDXBrushForColour(System.Drawing.Color.LimeGreen));
-                                    plotText(text, tmpRect.X + tmpRect.Width, tmpRect.Y + tmpRect.Height, rect.Width, 26f, text_icon_is_indicator ? text_icon_indicator_colour : text_colour,
-                                        255, bb.GetFontFamily(1, button), bb.GetFontStyle(1, button), true, false, 0, false, 0, 0, false, null, false, true);
+                                    plotText(text, tmpRect.X + tmpRect.Width, tmpRect.Y + tmpRect.Height, rect.Width, font_size * 0.75f, text_icon_is_indicator ? text_icon_indicator_colour : text_colour,
+                                        255, bb.GetFontFamily(1, button), bb.GetFontStyle(1, button), true, false, text_box_width * 0.75f, false, text_box_height * 0.75f, 0, false, null, false, true);
                                 }
 
                                 //draw button icon based on play state
                                 string icon;
                                 if (vrp.IsRecording(button) || vrp.IsPlaying(button)) icon = "stop";
-                                else if (vrp.IsRecordMode) icon = "record";
+                                else if (vrp.IsRecordMode)
+                                {
+                                    icon = vrp.IsSlotLocked(button) ? "lock" : "record";
+                                }
                                 else icon = "play";
 
                                 convertImageToDX(icon);
@@ -36739,7 +36870,15 @@ namespace Thetis
 
                                     SharpDX.RectangleF rct = new SharpDX.RectangleF(cx - (icon_size / 2f), cy - (icon_size / 2f), icon_size, icon_size);
 
-                                    _renderTarget.FillOpacityMask(b, getDXBrushForColour(text_icon_is_indicator ? text_icon_indicator_colour : text_colour, 255),
+                                    System.Drawing.Color icon_c = text_icon_is_indicator ? text_icon_indicator_colour : text_colour;
+
+                                    //dim?
+                                    if( (duration < 0.1f && !vrp.IsRecordMode) || (vrp.IsRecordMode && vrp.IsSlotLocked(button)) )
+                                    {
+                                        icon_c = System.Drawing.Color.FromArgb((int)(icon_c.R * 0.5f), (int)(icon_c.G * 0.5f), (int)(icon_c.B * 0.5f));
+                                    }
+
+                                    _renderTarget.FillOpacityMask(b, getDXBrushForColour(icon_c, 255),
                                         OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
 
                                     _renderTarget.AntialiasMode = originalAM;
@@ -37391,7 +37530,7 @@ namespace Thetis
                 }
 
                 // convert the cache bitmap to the directX version if required
-                convertImageToDX("vfo_lock");//, true);
+                convertImageToDX("lock");//, true);
                 convertImageToDX("vfo_sync");//, true);
 
                 //vfo lock / vfo sync icons
@@ -37401,10 +37540,10 @@ namespace Thetis
                 _renderTarget.Transform = Matrix3x2.Identity;
                 if (disp_a)
                 {                    
-                    if (_images.ContainsKey("vfo_lock")/* && _bitmap_brushes.ContainsKey("vfo_lock")*/)
+                    if (_images.ContainsKey("lock")/* && _bitmap_brushes.ContainsKey("lock")*/)
                     {
                         rct = new SharpDX.RectangleF(x + (w * 0.199f) * x_multy, y + (h * 0.58f), w * 0.026f * x_multy, w * 0.026f * x_multy);
-                        SharpDX.Direct2D1.Bitmap b = _images["vfo_lock"];
+                        SharpDX.Direct2D1.Bitmap b = _images["lock"];
                         _renderTarget.FillOpacityMask(b, getDXBrushForColour(vfo.LockColour, m.VFOALock ? nVfoAFade : Math.Min(64, nVfoAFade)), OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
                     }
                     if (_images.ContainsKey("vfo_sync")/* && _bitmap_brushes.ContainsKey("vfo_sync")*/)
@@ -37416,10 +37555,10 @@ namespace Thetis
                 }
                 if (disp_b)
                 {
-                    if (_images.ContainsKey("vfo_lock")/* && _bitmap_brushes.ContainsKey("vfo_lock")*/)
+                    if (_images.ContainsKey("lock")/* && _bitmap_brushes.ContainsKey("lock")*/)
                     {
                         rct = new SharpDX.RectangleF(x + (w * 0.199f) * x_multy + (w * (0.50f - x_shift)) * x_multy, y + (h * 0.58f), w * 0.026f * x_multy, w * 0.026f * x_multy);
-                        SharpDX.Direct2D1.Bitmap b = _images["vfo_lock"];
+                        SharpDX.Direct2D1.Bitmap b = _images["lock"];
                         _renderTarget.FillOpacityMask(b, getDXBrushForColour(vfo.LockColour, m.VFOBLock ? nVfoBFade : Math.Min(64, nVfoBFade)), OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
                     }
                     if (_images.ContainsKey("vfo_sync")/* && _bitmap_brushes.ContainsKey("vfo_sync")*/)

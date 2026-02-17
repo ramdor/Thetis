@@ -126,7 +126,7 @@ namespace Thetis
         internal void AfterConstructor()
         {
             LogTool.AddLogEntry("      Setup setup controls...", "SETUP_CONT");
-            Splash.SetStatus("Setting up controls");            
+            Splash.SetStatus("Setting up controls");
 
             //[2.10.3.9]MW0LGE atempt to get the model as soon as possile, before the getoptions, so that everything that relies on it at least has a chance
             HardwareSpecific.Model = getModelFromDB();
@@ -409,7 +409,7 @@ namespace Thetis
             LogTool.AddLogEntry("        Setup getting options...", "GETOPTIONS");
             getOptions();
             LogTool.Completed("GETOPTIONS");
-           
+
             selectSkin();
 
             //MW0LGE [2.9.0.7] setup amp/volts calibration
@@ -6340,9 +6340,9 @@ namespace Thetis
                 }
             }
 
-            if (HardwareSpecific.Model == HPSDRModel.HERMES || 
+            if (HardwareSpecific.Model == HPSDRModel.HERMES ||
                 HardwareSpecific.Model == HPSDRModel.ANAN7000D || HardwareSpecific.Model == HPSDRModel.ANAN8000D ||
-                HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 || 
+                HardwareSpecific.Model == HPSDRModel.ANVELINAPRO3 ||
                 HardwareSpecific.Model == HPSDRModel.ANAN_G2 || HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K ||
                 HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
             {
@@ -24463,6 +24463,8 @@ namespace Thetis
         private void btnContainerDelete_Click(object sender, EventArgs e)
         {
             if (chkLockContainer.Checked) return;
+            if (preventIfContainerContainsLockedRecordings()) return;
+
             clsContainerComboboxItem cci = (clsContainerComboboxItem)comboContainerSelect.SelectedItem;
 
             if (cci != null)
@@ -24643,6 +24645,8 @@ namespace Thetis
         private void btnRemoveMeterItem_Click(object sender, EventArgs e)
         {
             if (chkLockContainer.Checked) return;
+            if (preventIfItemContainsLockedRecordings()) return;
+
             clsMeterTypeComboboxItem mti = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
             if (mti == null) return;
 
@@ -24838,16 +24842,20 @@ namespace Thetis
                 igs.FadeOnRx = chkHistory_fade_rx.Checked;
                 igs.FadeOnTx = chkHistory_fade_tx.Checked;
             }
-            else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || 
-                     mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS || 
+            else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS ||
+                     mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS ||
                      mt == MeterType.OTHER_BUTTONS || mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
             {
-                if(mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
+                if (mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
                 {
                     if (_reset_button_map_layout) igs.SetSetting<short[]>("buttonbox_button_map", null);
-                    
+
                     igs.SetSetting<int>("buttonbox_recordplayback_slots", (int)nudVoiceRecordingPlayback_slots.Value);
-                    if(_selected_voice_slot > -1) igs.SetSetting<string>("buttonbox_recordplayback_label_" + _selected_voice_slot.ToString(), txtRecording_labelText.Text);
+                    if (_selected_voice_slot > -1)
+                    {
+                        igs.SetSetting<string>("buttonbox_recordplayback_label_" + _selected_voice_slot.ToString(), txtRecording_labelText.Text);
+                        igs.SetSetting<bool>("buttonbox_recordplayback_locked_" + _selected_voice_slot.ToString(), chkRecording_slot_locked.Checked);
+                    }
 
                     int max_buttons = (int)nudVoiceRecordingPlayback_slots.Value;
                     if (nudBandButtons_columns.Value > max_buttons) nudBandButtons_columns.Value = max_buttons;
@@ -25471,17 +25479,21 @@ namespace Thetis
                 chkHistory_fade_rx.Checked = igs.FadeOnRx;
                 chkHistory_fade_tx.Checked = igs.FadeOnTx;
             }
-            else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS || 
-                     mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS || 
+            else if (mt == MeterType.BAND_BUTTONS || mt == MeterType.MODE_BUTTONS || mt == MeterType.FILTER_BUTTONS ||
+                     mt == MeterType.ANTENNA_BUTTONS || mt == MeterType.TUNESTEP_BUTTONS || mt == MeterType.DISCORD_BUTTONS ||
                      mt == MeterType.OTHER_BUTTONS || mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
             {
                 int columns = 1;
                 int max_buttons = 1;
 
-                if(mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
+                if (mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
                 {
                     nudVoiceRecordingPlayback_slots.Value = igs.GetSetting<int>("buttonbox_recordplayback_slots", true, 0, int.MaxValue, 0);
-                    if (_selected_voice_slot > -1) txtRecording_labelText.Text = igs.GetSetting<string>("buttonbox_recordplayback_label_" + _selected_voice_slot.ToString(), false, null, null, "Slot " + (_selected_voice_slot + 1).ToString());
+                    if (_selected_voice_slot > -1)
+                    {
+                        txtRecording_labelText.Text = igs.GetSetting<string>("buttonbox_recordplayback_label_" + _selected_voice_slot.ToString(), false, null, null, "Slot " + (_selected_voice_slot + 1).ToString());
+                        chkRecording_slot_locked.Checked = igs.GetSetting<bool>("buttonbox_recordplayback_locked_" + _selected_voice_slot.ToString(), false, false, false, false);
+                    }
                     updateSelectedRecordPlaybackSlot();
                 }
                 else if (mt == MeterType.OTHER_BUTTONS)
@@ -26695,7 +26707,7 @@ namespace Thetis
                     _itemGroupSettings.SubMarkerColour = currentSettings.SubMarkerColour;
                 }
 
-                if(mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
+                if (mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
                 {
                     _itemGroupSettings.SetSetting<int>("buttonbox_recordplayback_slots", currentSettings.GetSetting<int>("buttonbox_recordplayback_slots", true, 0, int.MaxValue, 0));
                 }
@@ -32063,13 +32075,13 @@ namespace Thetis
 
             comboASIODevicesAvailable.Items.Clear();
             comboCMASIO_inpair.Items.Clear();
-            comboCMASIO_outpair.Items.Clear();            
+            comboCMASIO_outpair.Items.Clear();
 
             txtCurrentAsioDevice.Text = CMASIOConfig.GetASIOdrivername();
             nudAsioBlockNum.Value = (decimal)CMASIOConfig.GetASIOblocknum();
             chkAsioLockMode.Checked = CMASIOConfig.GetASIOlockmode();
             int inputmode = CMASIOConfig.GetASIOinputmode();
-            switch(inputmode)
+            switch (inputmode)
             {
                 case 0: //left
                     radCMASIO_mic_L.Checked = true;
@@ -32232,7 +32244,7 @@ namespace Thetis
                 comboCMASIO_outpair.Enabled = false;
             }
 
-            if((comboCMASIO_inpair.SelectedIndex == -1 || select_zero) && comboCMASIO_inpair.Items.Count > 0)
+            if ((comboCMASIO_inpair.SelectedIndex == -1 || select_zero) && comboCMASIO_inpair.Items.Count > 0)
             {
                 comboCMASIO_inpair.SelectedIndex = 0;
             }
@@ -35227,7 +35239,7 @@ namespace Thetis
             }
             else if (radDSPRX2APFControls.Checked)
             {
-                if(comboAPF_type_rx2.SelectedIndex != type)
+                if (comboAPF_type_rx2.SelectedIndex != type)
                 {
                     comboAPF_type_rx2.SelectedIndex = type;
                 }
@@ -35240,7 +35252,7 @@ namespace Thetis
 
         private void chkIgnoreATTOffset_CheckedChanged(object sender, EventArgs e)
         {
-            if(initializing || console == null) return;
+            if (initializing || console == null) return;
             console.IgnoreAttenuatorOffset = chkIgnoreATTOffset.Checked;
         }
 
@@ -35286,7 +35298,7 @@ namespace Thetis
             options.IncludeGeneralBroadcast = true;
 
             options.DiscoveryPortBase = 1024; // overwritten in applyAnyOrSpecificRadio
-            
+
             options.BindLocalPort = this.ListenToRadioOnUDPPort;
 
             ScanPerformanceProfile profile = ScanPerformanceProfile.Fast;
@@ -35303,7 +35315,7 @@ namespace Thetis
             options.FixedLocalIp = null;
 
             if (nics_only) return options;
-            if(applyAnyOrSpecificRadio(options)) return options;            
+            if (applyAnyOrSpecificRadio(options)) return options;
             return null;
         }
 
@@ -35684,7 +35696,7 @@ namespace Thetis
             }
 
             return false;
-        }        
+        }
 
         private void btnRefreshNics_Click(object sender, EventArgs e)
         {
@@ -35756,7 +35768,7 @@ namespace Thetis
             //old radRadioProtocolSelect_CheckedChanged
             if (initializing) return;
 
-            switch(ucRadioList_Radios.SelectedRadioProtocol)
+            switch (ucRadioList_Radios.SelectedRadioProtocol)
             {
                 case RadioDiscoveryRadioProtocol.P1:
                     NetworkIO.SelectedRadioProtocol = RadioProtocol.USB;
@@ -35826,12 +35838,12 @@ namespace Thetis
             f.Board = HardwareSpecific.Hardware.ToString();
 
             DialogResult dr = f.ShowDialog(this);
-            if(dr == DialogResult.Cancel) return;
+            if (dr == DialogResult.Cancel) return;
 
             NicRadioScanResult selectedNic = f.Nics.SelectedItem as NicRadioScanResult;
             if (selectedNic == null) return;
 
-            if(!tryParseIpPort(f.RadioIPPort, 1024, out IPAddress addr, out int port))
+            if (!tryParseIpPort(f.RadioIPPort, 1024, out IPAddress addr, out int port))
             {
                 MessageBox.Show(this, "Invalid IP/host/URL.",
                     "Custom Radio",
@@ -35850,7 +35862,7 @@ namespace Thetis
                 Protocol = f.Protocol == 0 ? RadioDiscoveryRadioProtocol.P1 : RadioDiscoveryRadioProtocol.P2,
                 DiscoveryPortBase = port,
                 IpAddress = addr,
-                IsCustom = true,                
+                IsCustom = true,
             };
 
             ucRadioList_Radios.AddRadio(selectedNic, radio);
@@ -35917,7 +35929,7 @@ namespace Thetis
             {
                 console.ARP.BitDepthMode = AudioBitDepthMode.IeeeFloat32;
             }
-            else if(radRecordingBits_32pcm.Checked)
+            else if (radRecordingBits_32pcm.Checked)
             {
                 console.ARP.BitDepthMode = AudioBitDepthMode.Pcm32;
             }
@@ -35947,7 +35959,7 @@ namespace Thetis
 
         private void radRecording_storage_CheckedChanged(object sender, EventArgs e)
         {
-            if(radRecording_storageCustom.Checked)
+            if (radRecording_storageCustom.Checked)
             {
                 txtRecording_customFolder.Enabled = true;
                 btnRecording_selectCustomFolder.Enabled = true;
@@ -35986,7 +35998,7 @@ namespace Thetis
 
         private void comboRecording_samplerate_SelectedIndexChanged(object sender, EventArgs e)
         {
-            switch(comboRecording_samplerate.SelectedIndex)
+            switch (comboRecording_samplerate.SelectedIndex)
             {
                 case 0:
                     console.ARP.SampleRate = 6000;
@@ -36035,7 +36047,7 @@ namespace Thetis
 
         private void radRecording_RXing_CheckedChanged(object sender, EventArgs e)
         {
-            if(radRecording_RXing_audio.Checked)
+            if (radRecording_RXing_audio.Checked)
             {
                 console.ARP.RxSource = AudioRecordRxSource.ReceiverOutputAudio;
             }
@@ -36128,12 +36140,95 @@ namespace Thetis
             if (initializing) return;
 
             int slots = (int)nudVoiceRecordingPlayback_slots.Value;
+
+            //check if any slots are locked
+            clsMeterTypeComboboxItem mti = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            if (mti == null) return;
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return;
+            MeterManager.clsMeterItem mi = m.GetMeterItem(mti.MeterType, mti.Order);
+            if (m == null) return;
+            MeterManager.clsVoiceRecordPlay vrp = mi as MeterManager.clsVoiceRecordPlay;
+            if (vrp == null) return;
+
+            if (vrp.Slots == slots) return; // slots the same, pointless
+
+            if (vrp.HasLockedSlots)
+            {
+                // can not be changed whilst recording slots locked, otherwise may delete recordings                
+                DialogResult dr = MessageBox.Show("You can not change the number of slots whilst some of the recordings are locked.\n\n" +
+                    "Some recordings may be lost if you do this. Do you want to change the number of slots anyway?",
+                    "Locked recording slots",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+
+                if (dr == DialogResult.No)
+                {
+                    nudVoiceRecordingPlayback_slots.ValueChanged -= nudVoiceRecordingPlayback_slots_ValueChanged;
+                    nudVoiceRecordingPlayback_slots.Value = vrp.Slots;
+                    nudVoiceRecordingPlayback_slots.ValueChanged += nudVoiceRecordingPlayback_slots_ValueChanged;
+                    return;
+                }
+            }
+            //
+
             if (_selected_voice_slot > slots - 1) _selected_voice_slot = slots - 1;
 
             updateMeterType();
             updateItemSettingsControlsForSelected();
         }
+        private bool preventIfContainerContainsLockedRecordings()
+        {
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return false;
 
+            bool prevent = m.MeterHasLockedVoiceRecords();
+            if (prevent)
+            {
+                DialogResult dr = MessageBox.Show("This container contains Voice Record/Playback item(s) that\n" +
+                    "have locked recordings. These and all other recordings made with these will be deleted.\n\n" +
+                    "Do you want to do this and remove this container?",
+                    "Locked recording slots",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+
+                if (dr == DialogResult.No)
+                {
+                    prevent = true;
+                }
+            }
+
+            return prevent;
+        }
+        private bool preventIfItemContainsLockedRecordings()
+        {
+            clsMeterTypeComboboxItem mti = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            if (mti == null) return false;
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return false;
+            MeterManager.clsMeterItem mi = m.GetMeterItem(mti.MeterType, mti.Order);
+            if (m == null) return false;
+            MeterManager.clsVoiceRecordPlay vrp = mi as MeterManager.clsVoiceRecordPlay;
+            if (vrp == null) return false;
+
+            bool prevent = vrp.HasLockedSlots;
+            if (prevent)
+            {
+                DialogResult dr = MessageBox.Show("This Voice Record/Playback item has locked recordings.\n" +
+                    "If you remove this item those recordings will be lost and deleted.\n\n" +
+                    "Do you want to do this and remove this item?",
+                    "Locked recording slots",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+
+                if (dr == DialogResult.No)
+                {
+                    prevent = true;
+                }
+            }
+
+            return prevent;
+        }
         private void btnRecording_leftSlot_Click(object sender, EventArgs e)
         {
             if (initializing) return;
@@ -36169,7 +36264,13 @@ namespace Thetis
         }
         private void updateSelectedRecordPlaybackSlot()
         {
-            lblRecording_activeSlot.Text = "Settings - Slot " + (_selected_voice_slot + 1).ToString();           
+            lblRecording_activeSlot.Text = "Settings - Slot " + (_selected_voice_slot + 1).ToString();
+        }
+
+        private void chkRecording_slot_locked_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            updateMeterType();
         }
         #endregion
 
@@ -36345,7 +36446,7 @@ namespace Thetis
             //[2.10.3.6]MW0LGE fixes #414, note might have issues when first running up, but should be ok after a profile save
             byte[] bytes = Encoding.Default.GetBytes(_Name);
             return Encoding.UTF8.GetString(bytes);
-        }       
+        }
     }
 
     #endregion

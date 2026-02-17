@@ -2596,6 +2596,10 @@ namespace Thetis
         {
             shutdownLogStringToPath("Inside ExitConsole()");
 
+            shutdownLogStringToPath("Before recorder/player stops");
+            ARP.StopRecord(out _);
+            ARP.StopPlayback(out _);
+
             shutdownLogStringToPath("Before finder WriteXmlFinderFile()");
             if(_frmFinder != null) _frmFinder.WriteXmlFinderFile(AppDataPath);
 

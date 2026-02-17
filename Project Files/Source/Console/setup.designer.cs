@@ -4032,6 +4032,7 @@
             this.nudVoiceRecordingPlayback_slots = new System.Windows.Forms.NumericUpDownTS();
             this.btnRecording_openStorageFolder = new System.Windows.Forms.ButtonTS();
             this.nudRecording_repeatDelay = new System.Windows.Forms.NumericUpDownTS();
+            this.chkRecording_slot_locked = new System.Windows.Forms.CheckBoxTS();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -64603,7 +64604,7 @@
             0});
             this.nudVoiceRecordingPlayback_slots.Location = new System.Drawing.Point(51, 8);
             this.nudVoiceRecordingPlayback_slots.Maximum = new decimal(new int[] {
-            32,
+            64,
             0,
             0,
             0});
@@ -64665,6 +64666,19 @@
             0,
             0});
             this.nudRecording_repeatDelay.ValueChanged += new System.EventHandler(this.nudRecording_repeatDelay_ValueChanged);
+            // 
+            // chkRecording_slot_locked
+            // 
+            this.chkRecording_slot_locked.AutoSize = true;
+            this.chkRecording_slot_locked.Image = null;
+            this.chkRecording_slot_locked.Location = new System.Drawing.Point(9, 111);
+            this.chkRecording_slot_locked.Name = "chkRecording_slot_locked";
+            this.chkRecording_slot_locked.Size = new System.Drawing.Size(62, 17);
+            this.chkRecording_slot_locked.TabIndex = 176;
+            this.chkRecording_slot_locked.Text = "Locked";
+            this.toolTip1.SetToolTip(this.chkRecording_slot_locked, "Prevent recording into this slot");
+            this.chkRecording_slot_locked.UseVisualStyleBackColor = true;
+            this.chkRecording_slot_locked.CheckedChanged += new System.EventHandler(this.chkRecording_slot_locked_CheckedChanged);
             // 
             // timer_VAC_Monitor
             // 
@@ -65860,6 +65874,7 @@
             // 
             this.pnlVoiceRecordPlayback.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlVoiceRecordPlayback.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.chkRecording_slot_locked);
             this.pnlVoiceRecordPlayback.Controls.Add(this.labelTS652);
             this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_rightSlot);
             this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_leftSlot);
@@ -75457,5 +75472,6 @@
         private CheckBoxTS chkActivePeakRX1_tx;
         private CheckBoxTS chkActivePeakRX2_tx;
         private LabelTS lblTimeToMakeDSPChange;
+        private CheckBoxTS chkRecording_slot_locked;
     }
 }
