@@ -4033,6 +4033,8 @@
             this.btnRecording_openStorageFolder = new System.Windows.Forms.ButtonTS();
             this.nudRecording_repeatDelay = new System.Windows.Forms.NumericUpDownTS();
             this.chkRecording_slot_locked = new System.Windows.Forms.CheckBoxTS();
+            this.chkRecording_playkeybind = new System.Windows.Forms.CheckBoxTS();
+            this.btnRecording_assingnkeybind = new System.Windows.Forms.ButtonTS();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -4134,6 +4136,7 @@
             this.chkMeterItemFadeOnRxSpacer = new System.Windows.Forms.CheckBoxTS();
             this.tabPage7 = new System.Windows.Forms.TabPage();
             this.pnlVoiceRecordPlayback = new System.Windows.Forms.PanelTS();
+            this.txtRecording_playkeybind = new System.Windows.Forms.TextBoxTS();
             this.labelTS652 = new System.Windows.Forms.LabelTS();
             this.btnRecording_rightSlot = new System.Windows.Forms.ButtonTS();
             this.btnRecording_leftSlot = new System.Windows.Forms.ButtonTS();
@@ -64680,6 +64683,33 @@
             this.chkRecording_slot_locked.UseVisualStyleBackColor = true;
             this.chkRecording_slot_locked.CheckedChanged += new System.EventHandler(this.chkRecording_slot_locked_CheckedChanged);
             // 
+            // chkRecording_playkeybind
+            // 
+            this.chkRecording_playkeybind.AutoSize = true;
+            this.chkRecording_playkeybind.Image = null;
+            this.chkRecording_playkeybind.Location = new System.Drawing.Point(9, 134);
+            this.chkRecording_playkeybind.Name = "chkRecording_playkeybind";
+            this.chkRecording_playkeybind.Size = new System.Drawing.Size(86, 17);
+            this.chkRecording_playkeybind.TabIndex = 178;
+            this.chkRecording_playkeybind.Text = "Play keybind";
+            this.toolTip1.SetToolTip(this.chkRecording_playkeybind, "Assign a keypress combo to play/stop this");
+            this.chkRecording_playkeybind.UseVisualStyleBackColor = true;
+            this.chkRecording_playkeybind.CheckedChanged += new System.EventHandler(this.chkRecording_playkeybind_CheckedChanged);
+            // 
+            // btnRecording_assingnkeybind
+            // 
+            this.btnRecording_assingnkeybind.Enabled = false;
+            this.btnRecording_assingnkeybind.Image = null;
+            this.btnRecording_assingnkeybind.Location = new System.Drawing.Point(110, 130);
+            this.btnRecording_assingnkeybind.Name = "btnRecording_assingnkeybind";
+            this.btnRecording_assingnkeybind.Selectable = true;
+            this.btnRecording_assingnkeybind.Size = new System.Drawing.Size(53, 23);
+            this.btnRecording_assingnkeybind.TabIndex = 179;
+            this.btnRecording_assingnkeybind.Text = "assign";
+            this.toolTip1.SetToolTip(this.btnRecording_assingnkeybind, "Listen for the next 10 seconds for a keybind");
+            this.btnRecording_assingnkeybind.UseVisualStyleBackColor = true;
+            this.btnRecording_assingnkeybind.Click += new System.EventHandler(this.btnRecording_assingnkeybind_Click);
+            // 
             // timer_VAC_Monitor
             // 
             this.timer_VAC_Monitor.Enabled = true;
@@ -65874,6 +65904,9 @@
             // 
             this.pnlVoiceRecordPlayback.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlVoiceRecordPlayback.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_assingnkeybind);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.chkRecording_playkeybind);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.txtRecording_playkeybind);
             this.pnlVoiceRecordPlayback.Controls.Add(this.chkRecording_slot_locked);
             this.pnlVoiceRecordPlayback.Controls.Add(this.labelTS652);
             this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_rightSlot);
@@ -65890,6 +65923,16 @@
             this.pnlVoiceRecordPlayback.Name = "pnlVoiceRecordPlayback";
             this.pnlVoiceRecordPlayback.Size = new System.Drawing.Size(170, 178);
             this.pnlVoiceRecordPlayback.TabIndex = 113;
+            // 
+            // txtRecording_playkeybind
+            // 
+            this.txtRecording_playkeybind.Enabled = false;
+            this.txtRecording_playkeybind.Location = new System.Drawing.Point(9, 151);
+            this.txtRecording_playkeybind.Name = "txtRecording_playkeybind";
+            this.txtRecording_playkeybind.ReadOnly = true;
+            this.txtRecording_playkeybind.Size = new System.Drawing.Size(154, 20);
+            this.txtRecording_playkeybind.TabIndex = 177;
+            this.txtRecording_playkeybind.Text = "unset";
             // 
             // labelTS652
             // 
@@ -75473,5 +75516,8 @@
         private CheckBoxTS chkActivePeakRX2_tx;
         private LabelTS lblTimeToMakeDSPChange;
         private CheckBoxTS chkRecording_slot_locked;
+        private ButtonTS btnRecording_assingnkeybind;
+        private CheckBoxTS chkRecording_playkeybind;
+        private TextBoxTS txtRecording_playkeybind;
     }
 }

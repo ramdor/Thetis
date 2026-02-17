@@ -1354,7 +1354,7 @@ namespace Thetis
                 }
             }
 
-            try { storeRestoreSettings(false, false); } catch { }
+            storeRestoreSettings(false, false);
             return error == null;
         }
 
@@ -1461,7 +1461,7 @@ namespace Thetis
                 }
             }
 
-            if (restore) try { storeRestoreSettings(false, true); } catch { }
+            if (restore) storeRestoreSettings(false, true);
             return ret;
         }
 
@@ -1606,11 +1606,11 @@ namespace Thetis
         public bool StopPlayback(out string error)
         {
             error = null;
+            bool wdsp = false;
 
             lock (_sync)
             {
-                if (!_is_playing) return true;
-
+                if (!_is_playing) return true;                
                 try
                 {
                     if (_active_playback_wfw_id >= 0)
@@ -1626,6 +1626,7 @@ namespace Thetis
                         }
 
                         _active_playback_wfw_id = -1;
+                        wdsp = true;
                     }
 
                     cleanupPcPlayback();
@@ -1636,7 +1637,8 @@ namespace Thetis
                     try { cleanupPcPlayback(); } catch { }
                 }
             }
-            try { storeRestoreSettings(false, true); } catch { }
+            
+            if(wdsp) storeRestoreSettings(false, true);
             setPlayingState(false);
             return error == null;
         }
@@ -2570,9 +2572,18 @@ namespace Thetis
 
         public void UpdateMox()
         {
-            if (_id == 0) _mox = Audio.MOX && (Audio.console.VFOATX || (Audio.console.VFOBTX && !Audio.console.RX2Enabled));
-            else if (_id == 1) _mox = Audio.MOX && Audio.console.RX2Enabled && Audio.console.VFOBTX;
-            else _mox = Audio.MOX;
+            switch (_id)
+            {
+                case 0:
+                    _mox = Audio.MOX && (Audio.console.VFOATX || (Audio.console.VFOBTX && !Audio.console.RX2Enabled));
+                    break;
+                case 1:
+                    _mox = Audio.MOX && Audio.console.RX2Enabled && Audio.console.VFOBTX;
+                    break;
+                default:
+                    _mox = Audio.MOX;
+                    break;
+            }
         }
 
         private void ProcessRecordBuffers()

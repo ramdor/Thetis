@@ -109,6 +109,9 @@ namespace Thetis
 
             _original_pnlP1_adcs_location = pnlP1_adcs.Location;
 
+            _recording_keybind_timer.Interval = 5000;
+            _recording_keybind_timer.Tick += recordingKeybindTimer_Tick;
+
             Common.DoubleBufferAll(this, true);
 
             MaximumSize = MinimumSize;
@@ -665,6 +668,9 @@ namespace Thetis
             console.BandChangeHandlers += OnBCDBandChangeHandler;
             console.PowerChangeHanders += OnPowerChangeHandler;
 
+            console.GlobalKeyPressDownHandlers += onGlobalKeyDown;
+            console.GlobalKeyPressUpHandlers += onGlobalKeyUp;
+
             ThetisSkinService.SubscribeForSkinServerData(skinServersDataReceivedHandler);
             ThetisSkinService.SubscribeForSkinData(skinDataReceivedHandler);
             ThetisSkinService.SubscribeForImageLoaded(imageLoadedHandler);
@@ -687,6 +693,9 @@ namespace Thetis
             console.TXInhibitChangedHandlers -= OnTXInhibit;
             console.BandChangeHandlers -= OnBCDBandChangeHandler;
             console.PowerChangeHanders -= OnPowerChangeHandler;
+
+            console.GlobalKeyPressDownHandlers -= onGlobalKeyDown;
+            console.GlobalKeyPressUpHandlers -= onGlobalKeyUp;
 
             ThetisSkinService.UnsubscribeFromSkinData(skinDataReceivedHandler);
             ThetisSkinService.UnsubscribeFromSkinServerData(skinServersDataReceivedHandler);
@@ -24855,6 +24864,8 @@ namespace Thetis
                     {
                         igs.SetSetting<string>("buttonbox_recordplayback_label_" + _selected_voice_slot.ToString(), txtRecording_labelText.Text);
                         igs.SetSetting<bool>("buttonbox_recordplayback_locked_" + _selected_voice_slot.ToString(), chkRecording_slot_locked.Checked);
+                        igs.SetSetting<bool>("buttonbox_recordplayback_useskeybind_" + _selected_voice_slot.ToString(), chkRecording_playkeybind.Checked);
+                        igs.SetSetting<Keys>("buttonbox_recordplayback_keybind_" + _selected_voice_slot.ToString(), (Keys)txtRecording_playkeybind.Tag);
                     }
 
                     int max_buttons = (int)nudVoiceRecordingPlayback_slots.Value;
@@ -25492,7 +25503,26 @@ namespace Thetis
                     if (_selected_voice_slot > -1)
                     {
                         txtRecording_labelText.Text = igs.GetSetting<string>("buttonbox_recordplayback_label_" + _selected_voice_slot.ToString(), false, null, null, "Slot " + (_selected_voice_slot + 1).ToString());
-                        chkRecording_slot_locked.Checked = igs.GetSetting<bool>("buttonbox_recordplayback_locked_" + _selected_voice_slot.ToString(), false, false, false, false);
+                        chkRecording_slot_locked.Checked = igs.GetSetting<bool>("buttonbox_recordplayback_locked_" + _selected_voice_slot.ToString(), false, false, false, false);                        
+                        chkRecording_playkeybind.Checked = igs.GetSetting<bool>("buttonbox_recordplayback_useskeybind_" + _selected_voice_slot.ToString(), false, false, false, false);
+                        txtRecording_playkeybind.Tag = igs.GetSetting<Keys>("buttonbox_recordplayback_keybind_" + _selected_voice_slot.ToString(), false, Keys.None, Keys.None, Keys.None);
+                        Keys data = (Keys)txtRecording_playkeybind.Tag;
+                        Keys keycode = data & Keys.KeyCode;
+                        bool alt = (data & Keys.Alt) != 0;
+                        bool ctrl = (data & Keys.Control) != 0;
+                        bool shift = (data & Keys.Shift) != 0;
+                        if(keycode == Keys.None)
+                        {
+                            txtRecording_playkeybind.Text = "unset";
+                        }
+                        else
+                        {
+                            string prefix = "";
+                            if (alt) prefix += "ALT+";
+                            if (ctrl) prefix += "CTRL+";
+                            if (shift) prefix += "SHIFT+";
+                            txtRecording_playkeybind.Text = prefix + keycode.ToString();
+                        }
                     }
                     updateSelectedRecordPlaybackSlot();
                 }
@@ -36271,6 +36301,103 @@ namespace Thetis
         {
             if (initializing) return;
             updateMeterType();
+        }
+        private void chkRecording_playkeybind_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initializing) return;
+            txtRecording_playkeybind.Enabled = chkRecording_playkeybind.Checked;
+            btnRecording_assingnkeybind.Enabled = chkRecording_playkeybind.Checked;
+            _recording_keybind_timer.Stop();
+            updateMeterType();
+        }
+
+        private bool _listening_for_recording_keycodes = false;
+        private readonly System.Windows.Forms.Timer _recording_keybind_timer = new System.Windows.Forms.Timer();
+        private void btnRecording_assingnkeybind_Click(object sender, EventArgs e)
+        {
+            _recording_keybind_timer.Stop();
+            
+            //start timer, listen for keycode, stop listening after timer end, or this button pressed again
+            _listening_for_recording_keycodes = !_listening_for_recording_keycodes;
+
+            if (_listening_for_recording_keycodes)
+            {
+                _alt_pressed = Common.AltlKeyDown;
+                _shift_pressed = Common.ShiftKeyDown;
+                _ctrl_pressed = Common.CtrlKeyDown;
+
+                _recording_keybind_timer.Start();
+                txtRecording_playkeybind.Text = "unset";
+                txtRecording_playkeybind.Tag = Keys.None;
+                btnRecording_assingnkeybind.Text = "stop";                  
+            }
+            else
+            {
+                btnRecording_assingnkeybind.Text = "assign";
+            }
+        }
+        private void recordingKeybindTimer_Tick(object sender, EventArgs e)
+        {
+            _recording_keybind_timer.Stop();
+            _listening_for_recording_keycodes = false;
+            btnRecording_assingnkeybind.Text = "assign";
+        }
+        private bool _alt_pressed = Common.AltlKeyDown;
+        private bool _ctrl_pressed = Common.CtrlKeyDown;
+        private bool _shift_pressed = Common.ShiftKeyDown;
+        private void onGlobalKeyUp(Keys keycode)
+        {
+            if (!_listening_for_recording_keycodes) return;
+            if (keycode == Keys.Menu || keycode == Keys.LMenu || keycode == Keys.RMenu || keycode == Keys.Alt)
+            {
+                _alt_pressed = false;
+            }
+            else if (keycode == Keys.Control || keycode == Keys.ControlKey || keycode == Keys.LControlKey || keycode == Keys.RControlKey)
+            {
+                _ctrl_pressed = false;
+            }
+            else if (keycode == Keys.Shift || keycode == Keys.ShiftKey || keycode == Keys.LShiftKey || keycode == Keys.RShiftKey)
+            {
+                _shift_pressed = false;
+            }
+        }
+        private void onGlobalKeyDown(Keys keycode)
+        {
+            if (!_listening_for_recording_keycodes) return;
+            if (keycode == Keys.Menu || keycode == Keys.LMenu || keycode == Keys.RMenu || keycode == Keys.Alt)
+            {
+                _alt_pressed = true;
+            }
+            else if (keycode == Keys.Control || keycode == Keys.ControlKey || keycode == Keys.LControlKey || keycode == Keys.RControlKey)
+            {
+                _ctrl_pressed = true;
+            }
+            else if (keycode == Keys.Shift || keycode == Keys.ShiftKey || keycode == Keys.LShiftKey || keycode == Keys.RShiftKey)
+            {
+                _shift_pressed = true;
+            }
+            else
+            {
+                _recording_keybind_timer.Stop();
+                _listening_for_recording_keycodes = false;
+                btnRecording_assingnkeybind.Text = "assign";
+
+                string prefix = "";
+                if (_alt_pressed) prefix += "ALT+";
+                if (_ctrl_pressed) prefix += "CTRL+";
+                if (_shift_pressed) prefix += "SHIFT+";
+                txtRecording_playkeybind.Text = prefix + keycode.ToString();
+
+                Keys data = keycode & Keys.KeyCode;
+
+                if (_alt_pressed) data |= Keys.Alt;
+                if (_ctrl_pressed) data |= Keys.Control;
+                if (_shift_pressed) data |= Keys.Shift;
+
+                txtRecording_playkeybind.Tag = data;
+
+                updateMeterType();
+            }
         }
         #endregion
 

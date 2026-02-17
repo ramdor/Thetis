@@ -3614,6 +3614,9 @@ namespace Thetis
             ContainerEnabledHandlers += OnContainerEnabled;
             ContainerHiddenByMacroHandlers += OnContainerHiddenByMacro;
 
+            _console.GlobalKeyPressDownHandlers += onGlobalKeyDown;
+            _console.GlobalKeyPressUpHandlers += onGlobalKeyUp;
+
             _delegatesAdded = true;
         }
         private static void removeDelegates()
@@ -3721,6 +3724,9 @@ namespace Thetis
 
             ContainerEnabledHandlers -= OnContainerEnabled;
             ContainerHiddenByMacroHandlers += OnContainerHiddenByMacro;
+
+            _console.GlobalKeyPressDownHandlers -= onGlobalKeyDown;
+            _console.GlobalKeyPressUpHandlers -= onGlobalKeyUp;
 
             foreach (KeyValuePair<string, ucMeter> kvp in _lstUCMeters)
             {
@@ -5520,7 +5526,7 @@ namespace Thetis
                 return _meters.ContainsKey(sId);
             }
         }
-        public static void GlobalKeyDown(Keys keycode)
+        private static void onGlobalKeyDown(Keys keycode)
         {
             lock (_metersLock)
             {
@@ -5531,7 +5537,7 @@ namespace Thetis
                 }
             }
         }
-        public static void GlobalKeyUp(Keys keycode)
+        private static void onGlobalKeyUp(Keys keycode)
         {
             lock (_metersLock)
             {
@@ -10112,7 +10118,9 @@ namespace Thetis
         }
         internal class clsVoiceRecordPlay : clsButtonBox
         {
-            private bool _force_update;
+            public const int RECORD_PLAYBACK_MODE = -10;
+            public const int RECORD_PLAYBACK_WDSPPC = -11;
+
             clsMeter _owningmeter;
             private bool _click_highlight;
             private System.Timers.Timer _click_timer;
@@ -10139,14 +10147,24 @@ namespace Thetis
             private float[] _slot_duration_seconds;
             private DateTime[] _activate_time;
             private bool[] _slot_locked;
+            private Keys[] _keybind;
+            private bool[] _useskeybind;
             private bool _mode_record; // true = in record mode, otherwise playback mode
             private bool _wdsp;
 
-            public const int RECORD_PLAYBACK_MODE = -10;
-            public const int RECORD_PLAYBACK_WDSPPC = -11;
+            private bool _alt_pressed;
+            private bool _ctrl_pressed;
+            private bool _shift_pressed;
+
+            private bool _uses_keybinds;
+            private DateTime _uses_keybinds_settime;
 
             public clsVoiceRecordPlay(clsMeter owningmeter, clsItemGroup ig)
             {
+                _alt_pressed = Common.AltlKeyDown;
+                _ctrl_pressed = Common.CtrlKeyDown;
+                _shift_pressed = Common.ShiftKeyDown;
+
                 _ig = ig;
                 _owningmeter = owningmeter;
                 ItemType = MeterItemType.VOICE_RECORD_PLAY_BUTTONS;
@@ -10180,10 +10198,15 @@ namespace Thetis
                 _console.ARP.RecordingChanged += onRecordingChanged;
                 _console.ARP.RecordingJsonWritten += onJsonWritten;
 
+                _uses_keybinds = false;
+                _uses_keybinds_settime = DateTime.UtcNow;
+
                 _slot_filepath = new string[Buttons];
                 _slot_duration_seconds = new float[Buttons];
                 _activate_time = new DateTime[Buttons];
                 _slot_locked = new bool[Buttons];
+                _keybind = new Keys[Buttons];
+                _useskeybind = new bool[Buttons];
                 for (int n = 0; n < Buttons; n++)
                 {
                     SetText(0, n, "Slot " + (n + 1).ToString());
@@ -10191,6 +10214,8 @@ namespace Thetis
                     _slot_duration_seconds[n] = 0f;
                     _activate_time[n] = DateTime.MinValue;
                     _slot_locked[n] = false;
+                    _keybind[n] = Keys.None;
+                    _useskeybind[n] = false;
                 }
 
                 Initialise();
@@ -10265,6 +10290,58 @@ namespace Thetis
                             }
                         }
                     }
+                }
+            }
+
+            public override void KeyUp(Keys keycode)
+            {
+                if (keycode == Keys.Menu || keycode == Keys.LMenu || keycode == Keys.RMenu || keycode == Keys.Alt)
+                {
+                    _alt_pressed = false;
+                }
+                else if (keycode == Keys.Control || keycode == Keys.ControlKey || keycode == Keys.LControlKey || keycode == Keys.RControlKey)
+                {
+                    _ctrl_pressed = false;
+                }
+                else if (keycode == Keys.Shift || keycode == Keys.ShiftKey || keycode == Keys.LShiftKey || keycode == Keys.RShiftKey)
+                {
+                    _shift_pressed = false;
+                }
+                //Debug.Print("Key Up : " + keycode.ToString());
+
+                double totalsecs = (DateTime.UtcNow - _uses_keybinds_settime).TotalSeconds; // to prevent it from playing soon after setup assigned the keycodes
+                if (totalsecs < 2 || !_uses_keybinds || _mode_record) return;
+
+                Keys data = keycode & Keys.KeyCode;
+
+                if (_alt_pressed) data |= Keys.Alt;
+                if (_ctrl_pressed) data |= Keys.Control;
+                if (_shift_pressed) data |= Keys.Shift;
+
+                for (int n = 0; n < Slots; n++)
+                {
+                    if (!_useskeybind[n]) continue;
+
+                    if (_keybind[n] == data && GetEnabled(1, n))
+                    {
+                        handleClicked(n, false);
+                        break;
+                    }
+                }
+            }
+            public override void KeyDown(Keys keycode)
+            {
+                if (keycode == Keys.Menu || keycode == Keys.LMenu || keycode == Keys.RMenu || keycode == Keys.Alt)
+                {
+                    _alt_pressed = true;
+                }
+                else if (keycode == Keys.Control || keycode == Keys.ControlKey || keycode == Keys.LControlKey || keycode == Keys.RControlKey)
+                {
+                    _ctrl_pressed = true;
+                }
+                else if (keycode == Keys.Shift || keycode == Keys.ShiftKey|| keycode == Keys.LShiftKey || keycode == Keys.RShiftKey)
+                {
+                    _shift_pressed = true;
                 }
             }
             public bool HasLockedSlots
@@ -10414,6 +10491,38 @@ namespace Thetis
                 // 0 index based
                 return _slot_locked[slot];
             }
+            public Keys GetKeybind(int slot)
+            {
+                if (slot < 0 || slot > Slots - 1) return Keys.None;
+                return _keybind[slot];
+            }
+            public void SetKeybind(int slot, Keys keybind)
+            {
+                if (slot < 0 || slot > Slots - 1) return;
+                _keybind[slot] = keybind;
+            }
+            public bool GetUsesKeybind(int slot)
+            {
+                if (slot < 0 || slot > Slots - 1) return false;
+                return _useskeybind[slot];
+            }
+            public void SetUsesKeybind(int slot, bool useskeybind)
+            {
+                if (slot < 0 || slot > Slots - 1) return;
+                _useskeybind[slot] = useskeybind;
+
+                //scan all, better here than at each keypress
+                _uses_keybinds = false;
+                for (int n = 0; n < Slots; n++)
+                {
+                    if (_useskeybind[n])
+                    {
+                        _uses_keybinds = true;
+                        _uses_keybinds_settime = DateTime.UtcNow;
+                        break;
+                    }
+                }
+            }
             public bool IsRecordMode
             {
                 get { return _mode_record; }
@@ -10433,9 +10542,12 @@ namespace Thetis
             public override void Initialise()
             {
                 _click_highlight = false;
-                _force_update = false;
 
-                Slots = 8;                
+                Slots = 8;
+
+                _alt_pressed = Common.AltlKeyDown;
+                _ctrl_pressed = Common.CtrlKeyDown;
+                _shift_pressed = Common.ShiftKeyDown;
 
                 setupButtons();
             }
@@ -25034,6 +25146,12 @@ namespace Thetis
 
                                                     bool locked = igs.GetSetting<bool>("buttonbox_recordplayback_locked_" + n.ToString(), false, false, false, false);
                                                     ((clsVoiceRecordPlay)bb).SetSlotLocked(n, locked);
+
+                                                    bool useskeybind = igs.GetSetting<bool>("buttonbox_recordplayback_useskeybind_" + n.ToString(), false, false, false, false);
+                                                    ((clsVoiceRecordPlay)bb).SetUsesKeybind(n, useskeybind);
+
+                                                    Keys keybind = igs.GetSetting<Keys>("buttonbox_recordplayback_keybind_" + n.ToString(), false, Keys.None, Keys.None, Keys.None);
+                                                    ((clsVoiceRecordPlay)bb).SetKeybind(n, keybind);
                                                 }
                                             }
                                             else if (mt == MeterType.OTHER_BUTTONS)
@@ -26372,6 +26490,12 @@ namespace Thetis
 
                                                     bool locked = ((clsVoiceRecordPlay)bb).IsSlotLocked(n);
                                                     igs.SetSetting<bool>("buttonbox_recordplayback_locked_" + n.ToString(), locked);
+
+                                                    bool useskeybind = ((clsVoiceRecordPlay)bb).GetUsesKeybind(n);
+                                                    igs.SetSetting<bool>("buttonbox_recordplayback_useskeybind_" + n.ToString(), useskeybind);
+
+                                                    Keys keybind = ((clsVoiceRecordPlay)bb).GetKeybind(n);
+                                                    igs.SetSetting<Keys>("buttonbox_recordplayback_keybind_" + n.ToString(), keybind);
                                                 }
                                             }
                                             else if (mt == MeterType.OTHER_BUTTONS)

@@ -733,6 +733,9 @@ namespace Thetis
 
             console = c;
 
+            c.GlobalKeyPressDownHandlers += onGlobalKeyDown;
+            c.GlobalKeyPressUpHandlers += onGlobalKeyUp;
+
             //
             // TODO: Add any constructor code after InitializeComponent call
             //
@@ -828,6 +831,12 @@ namespace Thetis
             timeKillEvent(timerID);
             if (disposing)
             {
+                if(console != null)
+                {
+                    console.GlobalKeyPressDownHandlers -= onGlobalKeyDown;
+                    console.GlobalKeyPressUpHandlers -= onGlobalKeyUp;
+                }
+
                 if (components != null)
                 {
                     components.Dispose();
@@ -2576,7 +2585,7 @@ namespace Thetis
 
             stopButton_Click(this, EventArgs.Empty);
         }
-        public void GlobalKeyDown(Keys keycode)
+        private void onGlobalKeyDown(Keys keycode)
         {
             if (!_shown) return;
             if (!chkFocusRequired.Checked && !this.Focused)
@@ -2585,7 +2594,7 @@ namespace Thetis
                 CWX_KeyDown_1(this, new KeyEventArgs(keycode));
             }
         }
-        public void GlobalKeyUp(Keys keycode)
+        private void onGlobalKeyUp(Keys keycode)
         {
             if (!_shown) return;
             if (!chkFocusRequired.Checked && !this.Focused)

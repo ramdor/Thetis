@@ -568,7 +568,7 @@ namespace Thetis
         static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprcUpdate, IntPtr hrgnUpdate, uint flags);
         // ----
         // rawinput grabbing for mousewheel/keyboard
-        private RawInput m_objRawinput;
+        private RawInput m_objRawinput = null;
         // ----
         private static System.Timers.Timer autoStartTimer;
         // ----
@@ -42951,7 +42951,7 @@ namespace Thetis
         private ConcurrentDictionary<Keys, bool> _keyPressed = new ConcurrentDictionary<Keys, bool>();
         private void OnKeyPressedRaw(object sender, RawInputEventArg e)
         {
-            bool keyState = e.KeyPressEvent.KeyPressState.Equals("MAKE", StringComparison.OrdinalIgnoreCase);
+            bool keyState = e.KeyPressEvent.KeyPressState;//.Equals("MAKE", StringComparison.OrdinalIgnoreCase);
             Keys key = (Keys)e.KeyPressEvent.VKey;
 
             if (keyState) // make is push to make
@@ -42960,11 +42960,7 @@ namespace Thetis
 
                 if (!current_state)
                 {
-                    // sent to meter manager, so that it can detect presses in the VfoDisplay with no focus
-                    MeterManager.GlobalKeyDown((Keys)e.KeyPressEvent.VKey);
-
-                    //CWXForm
-                    if (m_frmCWXForm != null) CWXForm.GlobalKeyDown((Keys)e.KeyPressEvent.VKey);
+                    GlobalKeyPressDownHandlers?.Invoke(key);
 
                     if(!available) _keyPressed.TryAdd(key, true);
                 }
@@ -42975,11 +42971,7 @@ namespace Thetis
 
                 if (current_state) // was pressed
                 {
-                    // sent to meter manager, so that it can detect presses in the VfoDisplay with no focus
-                    MeterManager.GlobalKeyUp((Keys)e.KeyPressEvent.VKey); // break is other state
-
-                    //CWXForm
-                    if (m_frmCWXForm != null) CWXForm.GlobalKeyUp((Keys)e.KeyPressEvent.VKey);
+                    GlobalKeyPressUpHandlers?.Invoke(key);
                 }
             }
         }
@@ -43926,6 +43918,7 @@ namespace Thetis
         public delegate void GeneralSettingsChanged(int rx, OtherButtonId setting, bool old_state, bool new_state, Dictionary<OtherButtonId, bool> settings);
         public delegate void SQLChanged(int rx, SquelchState old_state, SquelchState new_state);
         public delegate void CWXShown(bool shown);
+        public delegate void GlobalKeyPress(Keys keycode);
 
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
@@ -44062,6 +44055,9 @@ namespace Thetis
         public GeneralSettingsChanged GeneralSettingsChangedHandlers;
         public SQLChanged SQLChangedHandlers;
         public CWXShown CWXShownHandlers;
+
+        public GlobalKeyPress GlobalKeyPressUpHandlers;
+        public GlobalKeyPress GlobalKeyPressDownHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
