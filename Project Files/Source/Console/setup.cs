@@ -36320,6 +36320,10 @@ namespace Thetis
             //start timer, listen for keycode, stop listening after timer end, or this button pressed again
             _listening_for_recording_keycodes = !_listening_for_recording_keycodes;
 
+            // any state will clear it. Only completing via a keypress will store it
+            txtRecording_playkeybind.Tag = Keys.None;
+            updateMeterType();
+
             if (_listening_for_recording_keycodes)
             {
                 _alt_pressed = Common.AltlKeyDown;
@@ -36328,8 +36332,7 @@ namespace Thetis
 
                 _recording_keybind_timer.Start();
                 txtRecording_playkeybind.Text = "unset";
-                txtRecording_playkeybind.Tag = Keys.None;
-                btnRecording_assingnkeybind.Text = "stop";                  
+                btnRecording_assingnkeybind.Text = "stop";
             }
             else
             {
@@ -36347,6 +36350,12 @@ namespace Thetis
         private bool _shift_pressed = Common.ShiftKeyDown;
         private void onGlobalKeyUp(Keys keycode)
         {
+            if (this.InvokeRequired)
+            {
+                BeginInvoke(new Action<Keys>(onGlobalKeyUp), keycode);
+                return;
+            }
+
             if (!_listening_for_recording_keycodes) return;
             if (keycode == Keys.Menu || keycode == Keys.LMenu || keycode == Keys.RMenu || keycode == Keys.Alt)
             {
@@ -36363,6 +36372,12 @@ namespace Thetis
         }
         private void onGlobalKeyDown(Keys keycode)
         {
+            if (this.InvokeRequired)
+            {
+                BeginInvoke(new Action<Keys>(onGlobalKeyDown), keycode);
+                return;
+            }
+
             if (!_listening_for_recording_keycodes) return;
             if (keycode == Keys.Menu || keycode == Keys.LMenu || keycode == Keys.RMenu || keycode == Keys.Alt)
             {
@@ -36386,7 +36401,6 @@ namespace Thetis
                 if (_alt_pressed) prefix += "ALT+";
                 if (_ctrl_pressed) prefix += "CTRL+";
                 if (_shift_pressed) prefix += "SHIFT+";
-                txtRecording_playkeybind.Text = prefix + keycode.ToString();
 
                 Keys data = keycode & Keys.KeyCode;
 
@@ -36394,8 +36408,16 @@ namespace Thetis
                 if (_ctrl_pressed) data |= Keys.Control;
                 if (_shift_pressed) data |= Keys.Shift;
 
-                txtRecording_playkeybind.Tag = data;
-
+                if (!MeterManager.KeycodeInUse(data))
+                {
+                    txtRecording_playkeybind.Text = prefix + keycode.ToString();
+                    txtRecording_playkeybind.Tag = data;
+                }
+                else
+                {
+                    txtRecording_playkeybind.Text = "already in use";
+                    txtRecording_playkeybind.Tag = Keys.None;
+                }
                 updateMeterType();
             }
         }

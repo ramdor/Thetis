@@ -5507,7 +5507,24 @@ namespace Thetis
 
             return updateRate;
         }
+        public static bool KeycodeInUse(Keys keycode)
+        {
+            bool inuse = false;
 
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> kvp in _meters)
+                {
+                    clsMeter m = kvp.Value;
+                    if (m.MetersVoiceItemsUseThisKeycode(keycode))
+                    {
+                        inuse = true;
+                        break;
+                    }
+                }
+            }
+            return inuse;
+        }
         public static clsMeter MeterFromId(string sId)
         {
             lock (_metersLock)
@@ -10309,8 +10326,8 @@ namespace Thetis
                 }
                 //Debug.Print("Key Up : " + keycode.ToString());
 
-                double totalsecs = (DateTime.UtcNow - _uses_keybinds_settime).TotalSeconds; // to prevent it from playing soon after setup assigned the keycodes
-                if (totalsecs < 2 || !_uses_keybinds || _mode_record) return;
+                bool handle = (DateTime.UtcNow - _uses_keybinds_settime).TotalMilliseconds >= 2000;// to prevent it from playing soon after setup assigned the keycodes
+                if (!handle || !_uses_keybinds || _mode_record) return;
 
                 Keys data = keycode & Keys.KeyCode;
 
@@ -10505,6 +10522,19 @@ namespace Thetis
             {
                 if (slot < 0 || slot > Slots - 1) return false;
                 return _useskeybind[slot];
+            }
+            public bool UsesKeybind(Keys keycode)
+            {
+                bool ret = false;
+                for(int n = 0; n < Slots; n++)
+                {
+                    if (_keybind[n] == keycode)
+                    {
+                        ret = true;
+                        break;
+                    }
+                }
+                return ret;
             }
             public void SetUsesKeybind(int slot, bool useskeybind)
             {
@@ -24748,6 +24778,25 @@ namespace Thetis
                     }
                 }
                 return mi;
+            }
+            public bool MetersVoiceItemsUseThisKeycode(Keys keycode)
+            {
+                bool inuse = false;
+                lock (_meterItemsLock)
+                {
+                    if (_meterItems == null) return false;
+                    Dictionary<string, clsMeterItem> meterItems = _meterItems;
+                    foreach (KeyValuePair<string, clsMeterItem> mi in meterItems)
+                    {
+                        clsVoiceRecordPlay vrp = mi.Value as clsVoiceRecordPlay;
+                        if (vrp != null && vrp.UsesKeybind(keycode))
+                        {
+                            inuse = true;
+                            break;
+                        }
+                    }
+                }
+                return inuse;
             }
             public bool MeterHasLockedVoiceRecords()
             {
