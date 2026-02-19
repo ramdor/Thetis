@@ -43648,8 +43648,10 @@ namespace Thetis
             toolStripStatusLabel_CatTCPip.Width = 22;
             toolStripStatusLabel_CatSerial.Width = 22;
             toolStripStatusLabel_CMstatus.Width = 22;
-            toolStripStatus_PAspacer.Width = 16;
+            toolStripStatus_PAspacer.Width = 8;
             toolStripStatusLabel_PAstatus.Width = 32;
+            toolStripStatusLabel_play_record.Width = 16;
+            toolStripStatus_RecordPlay_spacer.Width = 8;
 
             toolStripStatusLabel_timer.Width = 80;
             toolStripStatusLabel_UTCTime.Width = 92;
@@ -46783,6 +46785,7 @@ namespace Thetis
             toolStripStatusLabel_CatSerial.MouseHover += toolTipItemMouseHover;
             toolStripStatusLabel_TCI.MouseHover += toolTipItemMouseHover;
             toolStripStatusLabel_PAstatus.MouseHover += toolTipItemMouseHover;
+            toolStripStatusLabel_play_record.MouseHover += toolTipItemMouseHover;
 
             toolStripStatusLabel_CMstatus.MouseLeave += toolTipItemMouseLeave;
             toolStripStatusLabel_N1MM.MouseLeave += toolTipItemMouseLeave;
@@ -46790,6 +46793,7 @@ namespace Thetis
             toolStripStatusLabel_CatSerial.MouseLeave += toolTipItemMouseLeave;
             toolStripStatusLabel_TCI.MouseLeave += toolTipItemMouseLeave;
             toolStripStatusLabel_PAstatus.MouseLeave += toolTipItemMouseLeave;
+            toolStripStatusLabel_play_record.MouseHover += toolTipItemMouseLeave;
         }
 
         private void toolTipItemMouseHover(object sender, EventArgs e)
@@ -52383,6 +52387,7 @@ namespace Thetis
                 ckQuickPlay.Enabled = !playing;
                 ckQuickRec.Enabled = !playing;
             }
+            setPlayRecordStatusBar();
         }
 
         private void arp_RecordingChanged(bool recording, string id, string filename)
@@ -52392,7 +52397,7 @@ namespace Thetis
                 BeginInvoke((Action)(() => arp_RecordingChanged(recording, id, filename)));
                 return;
             }
-
+            
             Debug.Print("RECORDING : " + recording.ToString());
 
             if(id == "quick")
@@ -52416,6 +52421,24 @@ namespace Thetis
                 // disable if recording elsewhere
                 ckQuickPlay.Enabled = !recording;
                 ckQuickRec.Enabled = !recording;
+            }
+            setPlayRecordStatusBar();
+        }
+        private void setPlayRecordStatusBar()
+        {
+            if (ARP.IsRecording)
+            {
+                toolStripStatusLabel_play_record.Image = Properties.Resources.record;
+                toolStripStatusLabel_play_record.Visible = true;
+            }
+            else if (ARP.IsPlaying)
+            {
+                toolStripStatusLabel_play_record.Image = Properties.Resources.play;
+                toolStripStatusLabel_play_record.Visible = true;
+            }
+            else
+            {
+                toolStripStatusLabel_play_record.Visible = false;
             }
         }
         //

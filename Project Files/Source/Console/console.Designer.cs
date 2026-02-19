@@ -1134,6 +1134,8 @@
             this.lblAndromedaEncoderSlider = new System.Windows.Forms.LabelTS();
             this.lblATUTuneLabel = new System.Windows.Forms.LabelTS();
             this.ptbSquelch = new Thetis.PrettyTrackBar();
+            this.toolStripStatus_RecordPlay_spacer = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_play_record = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFGain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFBandwidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFFreq)).BeginInit();
@@ -5008,6 +5010,8 @@
             this.toolStripStatusLabel_PAstatus,
             this.toolStripStatusLabel_N1MM,
             this.toolStripStatus_PAspacer,
+            this.toolStripStatusLabel_play_record,
+            this.toolStripStatus_RecordPlay_spacer,
             this.toolStripStatusLabel_TCI,
             this.toolStripStatusLabel_CatTCPip,
             this.toolStripStatusLabel_CatSerial,
@@ -7563,6 +7567,17 @@
             this.ptbSquelch.Value = 0;
             this.ptbSquelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbSquelch_Scroll);
             // 
+            // toolStripStatus_RecordPlay_spacer
+            // 
+            resources.ApplyResources(this.toolStripStatus_RecordPlay_spacer, "toolStripStatus_RecordPlay_spacer");
+            this.toolStripStatus_RecordPlay_spacer.Name = "toolStripStatus_RecordPlay_spacer";
+            // 
+            // toolStripStatusLabel_play_record
+            // 
+            this.toolStripStatusLabel_play_record.Image = global::Thetis.Properties.Resources.record;
+            resources.ApplyResources(this.toolStripStatusLabel_play_record, "toolStripStatusLabel_play_record");
+            this.toolStripStatusLabel_play_record.Name = "toolStripStatusLabel_play_record";
+            // 
             // Console
             // 
             resources.ApplyResources(this, "$this");
@@ -7908,5 +7923,7 @@
         private ButtonTS btnAPF_type;
         private ToolStripStatusLabel toolStripStatusLabel_PAstatus;
         private ToolStripStatusLabel toolStripStatus_PAspacer;
+        private ToolStripStatusLabel toolStripStatusLabel_play_record;
+        private ToolStripStatusLabel toolStripStatus_RecordPlay_spacer;
     }
 }

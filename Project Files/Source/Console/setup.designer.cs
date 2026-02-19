@@ -1940,6 +1940,10 @@
             this.chkRecording_dither = new System.Windows.Forms.CheckBoxTS();
             this.comboRecording_samplerate = new System.Windows.Forms.ComboBoxTS();
             this.groupBoxTS60 = new System.Windows.Forms.GroupBoxTS();
+            this.groupBoxTS68 = new System.Windows.Forms.GroupBoxTS();
+            this.btnRecording_globalkeybind_assign = new System.Windows.Forms.ButtonTS();
+            this.chkRecording_globalkeybind = new System.Windows.Forms.CheckBoxTS();
+            this.txtRecording_globalkeybind = new System.Windows.Forms.TextBoxTS();
             this.chkRecording_enable_monIfMox = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS67 = new System.Windows.Forms.GroupBoxTS();
             this.chkRecording_disable_rxeq = new System.Windows.Forms.CheckBoxTS();
@@ -4036,6 +4040,9 @@
             this.chkRecording_playkeybind = new System.Windows.Forms.CheckBoxTS();
             this.btnRecording_assingnkeybind = new System.Windows.Forms.ButtonTS();
             this.chkRecording_canRepeat = new System.Windows.Forms.CheckBoxTS();
+            this.nudRecording_tx_gain_adjust = new System.Windows.Forms.NumericUpDownTS();
+            this.chkRecording_ignore_play_tempchanges = new System.Windows.Forms.CheckBoxTS();
+            this.chkRecording_ignore_record_tempchanges = new System.Windows.Forms.CheckBoxTS();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -4137,15 +4144,18 @@
             this.chkMeterItemFadeOnRxSpacer = new System.Windows.Forms.CheckBoxTS();
             this.tabPage7 = new System.Windows.Forms.TabPage();
             this.pnlVoiceRecordPlayback = new System.Windows.Forms.PanelTS();
+            this.scrollableControl2 = new System.Windows.Forms.ScrollableControl();
+            this.labelTS655 = new System.Windows.Forms.LabelTS();
+            this.labelTS654 = new System.Windows.Forms.LabelTS();
             this.labelTS653 = new System.Windows.Forms.LabelTS();
+            this.labelTS650 = new System.Windows.Forms.LabelTS();
+            this.labelTS651 = new System.Windows.Forms.LabelTS();
+            this.txtRecording_labelText = new System.Windows.Forms.TextBoxTS();
             this.txtRecording_playkeybind = new System.Windows.Forms.TextBoxTS();
             this.labelTS652 = new System.Windows.Forms.LabelTS();
             this.btnRecording_rightSlot = new System.Windows.Forms.ButtonTS();
-            this.btnRecording_leftSlot = new System.Windows.Forms.ButtonTS();
             this.lblRecording_activeSlot = new System.Windows.Forms.LabelTS();
-            this.labelTS650 = new System.Windows.Forms.LabelTS();
-            this.txtRecording_labelText = new System.Windows.Forms.TextBoxTS();
-            this.labelTS651 = new System.Windows.Forms.LabelTS();
+            this.btnRecording_leftSlot = new System.Windows.Forms.ButtonTS();
             this.ucOtherButtonsOptionsGrid_buttons = new Thetis.ucOtherButtonsOptionsGrid();
             this.ucTunestepOptionsGrid_buttons = new Thetis.ucTunestepOptionsGrid();
             this.grpButtonBox = new System.Windows.Forms.GroupBoxTS();
@@ -4763,6 +4773,7 @@
             this.groupBoxTS62.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_dither)).BeginInit();
             this.groupBoxTS60.SuspendLayout();
+            this.groupBoxTS68.SuspendLayout();
             this.groupBoxTS67.SuspendLayout();
             this.groupBoxTS65.SuspendLayout();
             this.groupBoxTS59.SuspendLayout();
@@ -5420,6 +5431,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudDialDisplay_vertical_ratio)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudVoiceRecordingPlayback_slots)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_repeatDelay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_tx_gain_adjust)).BeginInit();
             this.tcMMsettings.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.grpHistoryItem.SuspendLayout();
@@ -5441,6 +5453,7 @@
             this.grpMeterItemSpacerSettings.SuspendLayout();
             this.tabPage7.SuspendLayout();
             this.pnlVoiceRecordPlayback.SuspendLayout();
+            this.scrollableControl2.SuspendLayout();
             this.grpButtonBox.SuspendLayout();
             this.pnlButtonBox_antenna_toggles.SuspendLayout();
             this.tabPage8.SuspendLayout();
@@ -32165,6 +32178,7 @@
             // 
             // groupBoxTS60
             // 
+            this.groupBoxTS60.Controls.Add(this.groupBoxTS68);
             this.groupBoxTS60.Controls.Add(this.chkRecording_enable_monIfMox);
             this.groupBoxTS60.Controls.Add(this.groupBoxTS67);
             this.groupBoxTS60.Controls.Add(this.groupBoxTS65);
@@ -32182,6 +32196,55 @@
             this.groupBoxTS60.TabIndex = 1;
             this.groupBoxTS60.TabStop = false;
             this.groupBoxTS60.Text = "Options";
+            // 
+            // groupBoxTS68
+            // 
+            this.groupBoxTS68.Controls.Add(this.btnRecording_globalkeybind_assign);
+            this.groupBoxTS68.Controls.Add(this.chkRecording_globalkeybind);
+            this.groupBoxTS68.Controls.Add(this.txtRecording_globalkeybind);
+            this.groupBoxTS68.Location = new System.Drawing.Point(416, 90);
+            this.groupBoxTS68.Name = "groupBoxTS68";
+            this.groupBoxTS68.Size = new System.Drawing.Size(162, 68);
+            this.groupBoxTS68.TabIndex = 96;
+            this.groupBoxTS68.TabStop = false;
+            this.groupBoxTS68.Text = "Global Stop Play/Record";
+            // 
+            // btnRecording_globalkeybind_assign
+            // 
+            this.btnRecording_globalkeybind_assign.Enabled = false;
+            this.btnRecording_globalkeybind_assign.Image = null;
+            this.btnRecording_globalkeybind_assign.Location = new System.Drawing.Point(103, 19);
+            this.btnRecording_globalkeybind_assign.Name = "btnRecording_globalkeybind_assign";
+            this.btnRecording_globalkeybind_assign.Selectable = true;
+            this.btnRecording_globalkeybind_assign.Size = new System.Drawing.Size(53, 23);
+            this.btnRecording_globalkeybind_assign.TabIndex = 182;
+            this.btnRecording_globalkeybind_assign.Text = "assign";
+            this.toolTip1.SetToolTip(this.btnRecording_globalkeybind_assign, "Listen for the next 10 seconds for a keybind");
+            this.btnRecording_globalkeybind_assign.UseVisualStyleBackColor = true;
+            this.btnRecording_globalkeybind_assign.Click += new System.EventHandler(this.btnRecording_globalkeybind_assign_Click);
+            // 
+            // chkRecording_globalkeybind
+            // 
+            this.chkRecording_globalkeybind.AutoSize = true;
+            this.chkRecording_globalkeybind.Image = null;
+            this.chkRecording_globalkeybind.Location = new System.Drawing.Point(6, 25);
+            this.chkRecording_globalkeybind.Name = "chkRecording_globalkeybind";
+            this.chkRecording_globalkeybind.Size = new System.Drawing.Size(64, 17);
+            this.chkRecording_globalkeybind.TabIndex = 181;
+            this.chkRecording_globalkeybind.Text = "Keybind";
+            this.toolTip1.SetToolTip(this.chkRecording_globalkeybind, "Assign a key that will stop any recording / playback");
+            this.chkRecording_globalkeybind.UseVisualStyleBackColor = true;
+            this.chkRecording_globalkeybind.CheckedChanged += new System.EventHandler(this.chkRecording_globalkeybind_CheckedChanged);
+            // 
+            // txtRecording_globalkeybind
+            // 
+            this.txtRecording_globalkeybind.Enabled = false;
+            this.txtRecording_globalkeybind.Location = new System.Drawing.Point(6, 42);
+            this.txtRecording_globalkeybind.Name = "txtRecording_globalkeybind";
+            this.txtRecording_globalkeybind.ReadOnly = true;
+            this.txtRecording_globalkeybind.Size = new System.Drawing.Size(150, 20);
+            this.txtRecording_globalkeybind.TabIndex = 180;
+            this.txtRecording_globalkeybind.Text = "unset";
             // 
             // chkRecording_enable_monIfMox
             // 
@@ -32202,7 +32265,7 @@
             this.groupBoxTS67.Controls.Add(this.chkRecording_disable_rxeq);
             this.groupBoxTS67.Location = new System.Drawing.Point(416, 19);
             this.groupBoxTS67.Name = "groupBoxTS67";
-            this.groupBoxTS67.Size = new System.Drawing.Size(162, 139);
+            this.groupBoxTS67.Size = new System.Drawing.Size(162, 68);
             this.groupBoxTS67.TabIndex = 95;
             this.groupBoxTS67.TabStop = false;
             this.groupBoxTS67.Text = "During recording temporarily";
@@ -64608,7 +64671,7 @@
             0,
             0,
             0});
-            this.nudVoiceRecordingPlayback_slots.Location = new System.Drawing.Point(64, 8);
+            this.nudVoiceRecordingPlayback_slots.Location = new System.Drawing.Point(61, 3);
             this.nudVoiceRecordingPlayback_slots.Maximum = new decimal(new int[] {
             64,
             0,
@@ -64634,7 +64697,7 @@
             // btnRecording_openStorageFolder
             // 
             this.btnRecording_openStorageFolder.Image = null;
-            this.btnRecording_openStorageFolder.Location = new System.Drawing.Point(129, 8);
+            this.btnRecording_openStorageFolder.Location = new System.Drawing.Point(115, 4);
             this.btnRecording_openStorageFolder.Name = "btnRecording_openStorageFolder";
             this.btnRecording_openStorageFolder.Selectable = true;
             this.btnRecording_openStorageFolder.Size = new System.Drawing.Size(34, 20);
@@ -64651,7 +64714,7 @@
             0,
             0,
             0});
-            this.nudRecording_repeatDelay.Location = new System.Drawing.Point(93, 87);
+            this.nudRecording_repeatDelay.Location = new System.Drawing.Point(90, 82);
             this.nudRecording_repeatDelay.Maximum = new decimal(new int[] {
             60,
             0,
@@ -64678,7 +64741,7 @@
             // 
             this.chkRecording_slot_locked.AutoSize = true;
             this.chkRecording_slot_locked.Image = null;
-            this.chkRecording_slot_locked.Location = new System.Drawing.Point(9, 111);
+            this.chkRecording_slot_locked.Location = new System.Drawing.Point(6, 106);
             this.chkRecording_slot_locked.Name = "chkRecording_slot_locked";
             this.chkRecording_slot_locked.Size = new System.Drawing.Size(62, 17);
             this.chkRecording_slot_locked.TabIndex = 176;
@@ -64691,7 +64754,7 @@
             // 
             this.chkRecording_playkeybind.AutoSize = true;
             this.chkRecording_playkeybind.Image = null;
-            this.chkRecording_playkeybind.Location = new System.Drawing.Point(9, 134);
+            this.chkRecording_playkeybind.Location = new System.Drawing.Point(6, 129);
             this.chkRecording_playkeybind.Name = "chkRecording_playkeybind";
             this.chkRecording_playkeybind.Size = new System.Drawing.Size(86, 17);
             this.chkRecording_playkeybind.TabIndex = 178;
@@ -64704,7 +64767,7 @@
             // 
             this.btnRecording_assingnkeybind.Enabled = false;
             this.btnRecording_assingnkeybind.Image = null;
-            this.btnRecording_assingnkeybind.Location = new System.Drawing.Point(110, 130);
+            this.btnRecording_assingnkeybind.Location = new System.Drawing.Point(96, 123);
             this.btnRecording_assingnkeybind.Name = "btnRecording_assingnkeybind";
             this.btnRecording_assingnkeybind.Selectable = true;
             this.btnRecording_assingnkeybind.Size = new System.Drawing.Size(53, 23);
@@ -64718,7 +64781,7 @@
             // 
             this.chkRecording_canRepeat.AutoSize = true;
             this.chkRecording_canRepeat.Image = null;
-            this.chkRecording_canRepeat.Location = new System.Drawing.Point(9, 88);
+            this.chkRecording_canRepeat.Location = new System.Drawing.Point(6, 83);
             this.chkRecording_canRepeat.Name = "chkRecording_canRepeat";
             this.chkRecording_canRepeat.Size = new System.Drawing.Size(78, 17);
             this.chkRecording_canRepeat.TabIndex = 2;
@@ -64727,6 +64790,69 @@
         "play again after an inital manual play");
             this.chkRecording_canRepeat.UseVisualStyleBackColor = true;
             this.chkRecording_canRepeat.CheckedChanged += new System.EventHandler(this.chkRecording_canRepeat_CheckedChanged);
+            // 
+            // nudRecording_tx_gain_adjust
+            // 
+            this.nudRecording_tx_gain_adjust.DecimalPlaces = 1;
+            this.nudRecording_tx_gain_adjust.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.nudRecording_tx_gain_adjust.Location = new System.Drawing.Point(81, 172);
+            this.nudRecording_tx_gain_adjust.Maximum = new decimal(new int[] {
+            70,
+            0,
+            0,
+            0});
+            this.nudRecording_tx_gain_adjust.Minimum = new decimal(new int[] {
+            70,
+            0,
+            0,
+            -2147483648});
+            this.nudRecording_tx_gain_adjust.Name = "nudRecording_tx_gain_adjust";
+            this.nudRecording_tx_gain_adjust.Size = new System.Drawing.Size(48, 20);
+            this.nudRecording_tx_gain_adjust.TabIndex = 181;
+            this.nudRecording_tx_gain_adjust.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudRecording_tx_gain_adjust, "Adjust the TX gain for this slot");
+            this.nudRecording_tx_gain_adjust.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudRecording_tx_gain_adjust.ValueChanged += new System.EventHandler(this.nudRecording_tx_gain_adjust_ValueChanged);
+            // 
+            // chkRecording_ignore_play_tempchanges
+            // 
+            this.chkRecording_ignore_play_tempchanges.AutoSize = true;
+            this.chkRecording_ignore_play_tempchanges.Checked = true;
+            this.chkRecording_ignore_play_tempchanges.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRecording_ignore_play_tempchanges.Image = null;
+            this.chkRecording_ignore_play_tempchanges.Location = new System.Drawing.Point(6, 198);
+            this.chkRecording_ignore_play_tempchanges.Name = "chkRecording_ignore_play_tempchanges";
+            this.chkRecording_ignore_play_tempchanges.Size = new System.Drawing.Size(122, 17);
+            this.chkRecording_ignore_play_tempchanges.TabIndex = 184;
+            this.chkRecording_ignore_play_tempchanges.Text = "Ignore play changes";
+            this.toolTip1.SetToolTip(this.chkRecording_ignore_play_tempchanges, "Ignore the temporary changes when playing.\r\nSettings for these changes are in Aud" +
+        "io->Recording.");
+            this.chkRecording_ignore_play_tempchanges.UseVisualStyleBackColor = true;
+            this.chkRecording_ignore_play_tempchanges.CheckedChanged += new System.EventHandler(this.chkRecording_ignore_play_tempchanges_CheckedChanged);
+            // 
+            // chkRecording_ignore_record_tempchanges
+            // 
+            this.chkRecording_ignore_record_tempchanges.AutoSize = true;
+            this.chkRecording_ignore_record_tempchanges.Checked = true;
+            this.chkRecording_ignore_record_tempchanges.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRecording_ignore_record_tempchanges.Image = null;
+            this.chkRecording_ignore_record_tempchanges.Location = new System.Drawing.Point(6, 221);
+            this.chkRecording_ignore_record_tempchanges.Name = "chkRecording_ignore_record_tempchanges";
+            this.chkRecording_ignore_record_tempchanges.Size = new System.Drawing.Size(118, 17);
+            this.chkRecording_ignore_record_tempchanges.TabIndex = 185;
+            this.chkRecording_ignore_record_tempchanges.Text = "Ignore rec changes";
+            this.toolTip1.SetToolTip(this.chkRecording_ignore_record_tempchanges, "Ignore the temporary changes when recording.\r\nSettings for these changes are in A" +
+        "udio->Recording.");
+            this.chkRecording_ignore_record_tempchanges.UseVisualStyleBackColor = true;
+            this.chkRecording_ignore_record_tempchanges.CheckedChanged += new System.EventHandler(this.chkRecording_ignore_record_tempchanges_CheckedChanged);
             // 
             // timer_VAC_Monitor
             // 
@@ -65922,44 +66048,108 @@
             // 
             this.pnlVoiceRecordPlayback.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlVoiceRecordPlayback.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.labelTS653);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_assingnkeybind);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.chkRecording_playkeybind);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.txtRecording_playkeybind);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.chkRecording_slot_locked);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.labelTS652);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_rightSlot);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_leftSlot);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.nudRecording_repeatDelay);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.lblRecording_activeSlot);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_openStorageFolder);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.chkRecording_canRepeat);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.nudVoiceRecordingPlayback_slots);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.labelTS650);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.txtRecording_labelText);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.labelTS651);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.scrollableControl2);
             this.pnlVoiceRecordPlayback.Location = new System.Drawing.Point(356, 210);
             this.pnlVoiceRecordPlayback.Name = "pnlVoiceRecordPlayback";
             this.pnlVoiceRecordPlayback.Size = new System.Drawing.Size(170, 178);
             this.pnlVoiceRecordPlayback.TabIndex = 113;
             // 
+            // scrollableControl2
+            // 
+            this.scrollableControl2.AutoScroll = true;
+            this.scrollableControl2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.scrollableControl2.Controls.Add(this.nudRecording_tx_gain_adjust);
+            this.scrollableControl2.Controls.Add(this.chkRecording_ignore_record_tempchanges);
+            this.scrollableControl2.Controls.Add(this.chkRecording_ignore_play_tempchanges);
+            this.scrollableControl2.Controls.Add(this.labelTS655);
+            this.scrollableControl2.Controls.Add(this.labelTS654);
+            this.scrollableControl2.Controls.Add(this.btnRecording_assingnkeybind);
+            this.scrollableControl2.Controls.Add(this.labelTS653);
+            this.scrollableControl2.Controls.Add(this.labelTS650);
+            this.scrollableControl2.Controls.Add(this.labelTS651);
+            this.scrollableControl2.Controls.Add(this.chkRecording_playkeybind);
+            this.scrollableControl2.Controls.Add(this.txtRecording_labelText);
+            this.scrollableControl2.Controls.Add(this.txtRecording_playkeybind);
+            this.scrollableControl2.Controls.Add(this.nudVoiceRecordingPlayback_slots);
+            this.scrollableControl2.Controls.Add(this.chkRecording_slot_locked);
+            this.scrollableControl2.Controls.Add(this.chkRecording_canRepeat);
+            this.scrollableControl2.Controls.Add(this.labelTS652);
+            this.scrollableControl2.Controls.Add(this.btnRecording_openStorageFolder);
+            this.scrollableControl2.Controls.Add(this.btnRecording_rightSlot);
+            this.scrollableControl2.Controls.Add(this.lblRecording_activeSlot);
+            this.scrollableControl2.Controls.Add(this.btnRecording_leftSlot);
+            this.scrollableControl2.Controls.Add(this.nudRecording_repeatDelay);
+            this.scrollableControl2.Location = new System.Drawing.Point(0, 0);
+            this.scrollableControl2.Name = "scrollableControl2";
+            this.scrollableControl2.Size = new System.Drawing.Size(170, 178);
+            this.scrollableControl2.TabIndex = 113;
+            // 
+            // labelTS655
+            // 
+            this.labelTS655.AutoSize = true;
+            this.labelTS655.Image = null;
+            this.labelTS655.Location = new System.Drawing.Point(129, 174);
+            this.labelTS655.Name = "labelTS655";
+            this.labelTS655.Size = new System.Drawing.Size(20, 13);
+            this.labelTS655.TabIndex = 183;
+            this.labelTS655.Text = "dB";
+            // 
+            // labelTS654
+            // 
+            this.labelTS654.AutoSize = true;
+            this.labelTS654.Image = null;
+            this.labelTS654.Location = new System.Drawing.Point(5, 174);
+            this.labelTS654.Name = "labelTS654";
+            this.labelTS654.Size = new System.Drawing.Size(75, 13);
+            this.labelTS654.TabIndex = 182;
+            this.labelTS654.Text = "TX gain adjust";
+            // 
             // labelTS653
             // 
             this.labelTS653.AutoSize = true;
             this.labelTS653.Image = null;
-            this.labelTS653.Location = new System.Drawing.Point(6, 38);
+            this.labelTS653.Location = new System.Drawing.Point(3, 33);
             this.labelTS653.Name = "labelTS653";
             this.labelTS653.Size = new System.Drawing.Size(45, 13);
             this.labelTS653.TabIndex = 180;
             this.labelTS653.Text = "Settings";
             // 
+            // labelTS650
+            // 
+            this.labelTS650.AutoSize = true;
+            this.labelTS650.Image = null;
+            this.labelTS650.Location = new System.Drawing.Point(3, 5);
+            this.labelTS650.Name = "labelTS650";
+            this.labelTS650.Size = new System.Drawing.Size(52, 13);
+            this.labelTS650.TabIndex = 0;
+            this.labelTS650.Text = "# of Slots";
+            // 
+            // labelTS651
+            // 
+            this.labelTS651.AutoSize = true;
+            this.labelTS651.Image = null;
+            this.labelTS651.Location = new System.Drawing.Point(6, 60);
+            this.labelTS651.Name = "labelTS651";
+            this.labelTS651.Size = new System.Drawing.Size(36, 13);
+            this.labelTS651.TabIndex = 0;
+            this.labelTS651.Text = "Label:";
+            // 
+            // txtRecording_labelText
+            // 
+            this.txtRecording_labelText.Location = new System.Drawing.Point(48, 57);
+            this.txtRecording_labelText.MaxLength = 32;
+            this.txtRecording_labelText.Name = "txtRecording_labelText";
+            this.txtRecording_labelText.Size = new System.Drawing.Size(101, 20);
+            this.txtRecording_labelText.TabIndex = 1;
+            this.txtRecording_labelText.TextChanged += new System.EventHandler(this.txtRecording_labelText_TextChanged);
+            // 
             // txtRecording_playkeybind
             // 
             this.txtRecording_playkeybind.Enabled = false;
-            this.txtRecording_playkeybind.Location = new System.Drawing.Point(9, 151);
+            this.txtRecording_playkeybind.Location = new System.Drawing.Point(6, 146);
             this.txtRecording_playkeybind.Name = "txtRecording_playkeybind";
             this.txtRecording_playkeybind.ReadOnly = true;
-            this.txtRecording_playkeybind.Size = new System.Drawing.Size(154, 20);
+            this.txtRecording_playkeybind.Size = new System.Drawing.Size(143, 20);
             this.txtRecording_playkeybind.TabIndex = 177;
             this.txtRecording_playkeybind.Text = "unset";
             // 
@@ -65967,7 +66157,7 @@
             // 
             this.labelTS652.AutoSize = true;
             this.labelTS652.Image = null;
-            this.labelTS652.Location = new System.Drawing.Point(134, 89);
+            this.labelTS652.Location = new System.Drawing.Point(131, 84);
             this.labelTS652.Name = "labelTS652";
             this.labelTS652.Size = new System.Drawing.Size(12, 13);
             this.labelTS652.TabIndex = 175;
@@ -65976,66 +66166,37 @@
             // btnRecording_rightSlot
             // 
             this.btnRecording_rightSlot.Image = null;
-            this.btnRecording_rightSlot.Location = new System.Drawing.Point(133, 33);
+            this.btnRecording_rightSlot.Location = new System.Drawing.Point(125, 28);
             this.btnRecording_rightSlot.Name = "btnRecording_rightSlot";
             this.btnRecording_rightSlot.Selectable = true;
-            this.btnRecording_rightSlot.Size = new System.Drawing.Size(30, 23);
+            this.btnRecording_rightSlot.Size = new System.Drawing.Size(24, 23);
             this.btnRecording_rightSlot.TabIndex = 175;
             this.btnRecording_rightSlot.Text = ">";
             this.btnRecording_rightSlot.UseVisualStyleBackColor = true;
             this.btnRecording_rightSlot.Click += new System.EventHandler(this.btnRecording_rightSlot_Click);
             // 
-            // btnRecording_leftSlot
-            // 
-            this.btnRecording_leftSlot.Image = null;
-            this.btnRecording_leftSlot.Location = new System.Drawing.Point(52, 33);
-            this.btnRecording_leftSlot.Name = "btnRecording_leftSlot";
-            this.btnRecording_leftSlot.Selectable = true;
-            this.btnRecording_leftSlot.Size = new System.Drawing.Size(30, 23);
-            this.btnRecording_leftSlot.TabIndex = 174;
-            this.btnRecording_leftSlot.Text = "<";
-            this.btnRecording_leftSlot.UseVisualStyleBackColor = true;
-            this.btnRecording_leftSlot.Click += new System.EventHandler(this.btnRecording_leftSlot_Click);
-            // 
             // lblRecording_activeSlot
             // 
             this.lblRecording_activeSlot.AutoSize = true;
             this.lblRecording_activeSlot.Image = null;
-            this.lblRecording_activeSlot.Location = new System.Drawing.Point(88, 38);
+            this.lblRecording_activeSlot.Location = new System.Drawing.Point(79, 33);
             this.lblRecording_activeSlot.Name = "lblRecording_activeSlot";
             this.lblRecording_activeSlot.Size = new System.Drawing.Size(40, 13);
             this.lblRecording_activeSlot.TabIndex = 173;
             this.lblRecording_activeSlot.Text = "Slot 32";
             this.lblRecording_activeSlot.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // labelTS650
+            // btnRecording_leftSlot
             // 
-            this.labelTS650.AutoSize = true;
-            this.labelTS650.Image = null;
-            this.labelTS650.Location = new System.Drawing.Point(6, 10);
-            this.labelTS650.Name = "labelTS650";
-            this.labelTS650.Size = new System.Drawing.Size(52, 13);
-            this.labelTS650.TabIndex = 0;
-            this.labelTS650.Text = "# of Slots";
-            // 
-            // txtRecording_labelText
-            // 
-            this.txtRecording_labelText.Location = new System.Drawing.Point(51, 62);
-            this.txtRecording_labelText.MaxLength = 32;
-            this.txtRecording_labelText.Name = "txtRecording_labelText";
-            this.txtRecording_labelText.Size = new System.Drawing.Size(112, 20);
-            this.txtRecording_labelText.TabIndex = 1;
-            this.txtRecording_labelText.TextChanged += new System.EventHandler(this.txtRecording_labelText_TextChanged);
-            // 
-            // labelTS651
-            // 
-            this.labelTS651.AutoSize = true;
-            this.labelTS651.Image = null;
-            this.labelTS651.Location = new System.Drawing.Point(9, 65);
-            this.labelTS651.Name = "labelTS651";
-            this.labelTS651.Size = new System.Drawing.Size(36, 13);
-            this.labelTS651.TabIndex = 0;
-            this.labelTS651.Text = "Label:";
+            this.btnRecording_leftSlot.Image = null;
+            this.btnRecording_leftSlot.Location = new System.Drawing.Point(49, 28);
+            this.btnRecording_leftSlot.Name = "btnRecording_leftSlot";
+            this.btnRecording_leftSlot.Selectable = true;
+            this.btnRecording_leftSlot.Size = new System.Drawing.Size(24, 23);
+            this.btnRecording_leftSlot.TabIndex = 174;
+            this.btnRecording_leftSlot.Text = "<";
+            this.btnRecording_leftSlot.UseVisualStyleBackColor = true;
+            this.btnRecording_leftSlot.Click += new System.EventHandler(this.btnRecording_leftSlot_Click);
             // 
             // ucOtherButtonsOptionsGrid_buttons
             // 
@@ -70241,6 +70402,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_dither)).EndInit();
             this.groupBoxTS60.ResumeLayout(false);
             this.groupBoxTS60.PerformLayout();
+            this.groupBoxTS68.ResumeLayout(false);
+            this.groupBoxTS68.PerformLayout();
             this.groupBoxTS67.ResumeLayout(false);
             this.groupBoxTS67.PerformLayout();
             this.groupBoxTS65.ResumeLayout(false);
@@ -71034,6 +71197,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudDialDisplay_vertical_ratio)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudVoiceRecordingPlayback_slots)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_repeatDelay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_tx_gain_adjust)).EndInit();
             this.tcMMsettings.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.grpHistoryItem.ResumeLayout(false);
@@ -71063,7 +71227,8 @@
             this.grpMeterItemSpacerSettings.PerformLayout();
             this.tabPage7.ResumeLayout(false);
             this.pnlVoiceRecordPlayback.ResumeLayout(false);
-            this.pnlVoiceRecordPlayback.PerformLayout();
+            this.scrollableControl2.ResumeLayout(false);
+            this.scrollableControl2.PerformLayout();
             this.grpButtonBox.ResumeLayout(false);
             this.grpButtonBox.PerformLayout();
             this.pnlButtonBox_antenna_toggles.ResumeLayout(false);
@@ -75538,5 +75703,15 @@
         private CheckBoxTS chkRecording_playkeybind;
         private TextBoxTS txtRecording_playkeybind;
         private LabelTS labelTS653;
+        private ScrollableControl scrollableControl2;
+        private CheckBoxTS chkRecording_ignore_play_tempchanges;
+        private LabelTS labelTS655;
+        private LabelTS labelTS654;
+        private NumericUpDownTS nudRecording_tx_gain_adjust;
+        private CheckBoxTS chkRecording_ignore_record_tempchanges;
+        private GroupBoxTS groupBoxTS68;
+        private ButtonTS btnRecording_globalkeybind_assign;
+        private CheckBoxTS chkRecording_globalkeybind;
+        private TextBoxTS txtRecording_globalkeybind;
     }
 }

@@ -233,6 +233,16 @@ namespace Thetis
                 cmaster.CMSetTXAPanelGain1(WDSP.id(1, 0));
             }
         }
+        private static double wave_preamp_adjust = 0;
+        public static double WavePreampAdjust
+        {
+            get { return wave_preamp_adjust; }
+            set
+            {
+                wave_preamp_adjust = value;
+                cmaster.CMSetTXAPanelGain1(WDSP.id(1, 0));
+            }
+        }
 
         private static double monitor_volume = 0.0;
         public static double MonitorVolume

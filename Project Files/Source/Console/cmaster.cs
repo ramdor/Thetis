@@ -1007,7 +1007,13 @@ namespace Thetis
                   mode == DSPMode.FM)))
             {
                 if (Audio.WavePlayback)
-                    gain = Audio.WavePreamp;
+                {
+                    double gain_in_db = 20.0 * Math.Log10(Audio.WavePreamp);
+                    gain_in_db += 20.0 * Math.Log10(Audio.WavePreampAdjust);
+                    if (gain_in_db < -70.0) gain_in_db = -70.0;
+                    if (gain_in_db > 70.0) gain_in_db = 70.0;
+                    gain = Math.Pow(10.0, gain_in_db / 20.0);
+                }
                 else
                 {
                     if (!Audio.VACEnabled && (mode == DSPMode.DIGL || mode == DSPMode.DIGU))
