@@ -24866,6 +24866,8 @@ namespace Thetis
                         igs.SetSetting<bool>("buttonbox_recordplayback_locked_" + _selected_voice_slot.ToString(), chkRecording_slot_locked.Checked);
                         igs.SetSetting<bool>("buttonbox_recordplayback_useskeybind_" + _selected_voice_slot.ToString(), chkRecording_playkeybind.Checked);
                         igs.SetSetting<Keys>("buttonbox_recordplayback_keybind_" + _selected_voice_slot.ToString(), (Keys)txtRecording_playkeybind.Tag);
+                        igs.SetSetting<bool>("buttonbox_recordplayback_canrepeat_" + _selected_voice_slot.ToString(), chkRecording_canRepeat.Checked);
+                        igs.SetSetting<int>("buttonbox_recordplayback_repeatdelay_" + _selected_voice_slot.ToString(), (int)nudRecording_repeatDelay.Value);
                     }
 
                     int max_buttons = (int)nudVoiceRecordingPlayback_slots.Value;
@@ -25523,6 +25525,10 @@ namespace Thetis
                             if (shift) prefix += "SHIFT+";
                             txtRecording_playkeybind.Text = prefix + keycode.ToString();
                         }
+
+                        chkRecording_canRepeat.Checked = igs.GetSetting<bool>("buttonbox_recordplayback_canrepeat_" + _selected_voice_slot.ToString(), false, false, false, false);
+                        int delay = igs.GetSetting<int>("buttonbox_recordplayback_repeatdelay_" + _selected_voice_slot.ToString(), false, (int)nudRecording_repeatDelay.Minimum, (int)nudRecording_repeatDelay.Maximum, 10);
+                        nudRecording_repeatDelay.Value = (decimal)delay;
                     }
                     updateSelectedRecordPlaybackSlot();
                 }
@@ -36222,9 +36228,9 @@ namespace Thetis
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
 
-                if (dr == DialogResult.No)
+                if (dr == DialogResult.Yes)
                 {
-                    prevent = true;
+                    prevent = false;
                 }
             }
 
@@ -36251,9 +36257,9 @@ namespace Thetis
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
 
-                if (dr == DialogResult.No)
+                if (dr == DialogResult.Yes)
                 {
-                    prevent = true;
+                    prevent = false;
                 }
             }
 

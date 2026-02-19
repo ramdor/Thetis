@@ -64654,7 +64654,7 @@
             0,
             0});
             this.nudRecording_repeatDelay.Minimum = new decimal(new int[] {
-            1,
+            2,
             0,
             0,
             0});
@@ -64662,7 +64662,7 @@
             this.nudRecording_repeatDelay.Size = new System.Drawing.Size(38, 20);
             this.nudRecording_repeatDelay.TabIndex = 174;
             this.nudRecording_repeatDelay.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudRecording_repeatDelay, "Number of button columns");
+            this.toolTip1.SetToolTip(this.nudRecording_repeatDelay, "Auto repeat duation");
             this.nudRecording_repeatDelay.Value = new decimal(new int[] {
             10,
             0,
@@ -65988,6 +65988,8 @@
             this.chkRecording_canRepeat.Size = new System.Drawing.Size(78, 17);
             this.chkRecording_canRepeat.TabIndex = 2;
             this.chkRecording_canRepeat.Text = "Can repeat";
+            this.toolTip1.SetToolTip(this.chkRecording_canRepeat, "If checked, and the slot is in repeat mode (long hold click) then \r\nit will auto " +
+        "play again after an inital manual play");
             this.chkRecording_canRepeat.UseVisualStyleBackColor = true;
             this.chkRecording_canRepeat.CheckedChanged += new System.EventHandler(this.chkRecording_canRepeat_CheckedChanged);
             // 

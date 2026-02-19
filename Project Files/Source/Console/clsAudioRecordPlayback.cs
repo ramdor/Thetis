@@ -139,9 +139,6 @@ namespace Thetis
         private string _active_record_mp3_filename;
         private RecordingDetails _active_record_details;
         private int _active_record_sample_rate;
-        private short _active_record_bit_depth;
-        private short _active_record_format_tag;
-        private short _active_record_channels;
 
         private string _active_play_id;
         private string _active_play_filename;
@@ -182,7 +179,7 @@ namespace Thetis
 
         private Console _console;
         private Dictionary<string, bool> _playbackSetting;
-        private Dictionary<string, bool> _PrePlaybackSetting;
+        private Dictionary<string, bool> _prePlaybackSetting;
 
         private readonly SynchronizationContext _sync_context;
 
@@ -197,7 +194,7 @@ namespace Thetis
             _console.MoxPreChangeHandlers += OnPreMox;
 
             _playbackSetting = new Dictionary<string, bool>();
-            _PrePlaybackSetting = new Dictionary<string, bool>();
+            _prePlaybackSetting = new Dictionary<string, bool>();
 
             _is_wdsp_playing = false;
             _active_record_wfw_id = -1;
@@ -412,34 +409,34 @@ namespace Thetis
             {
                 if (playback)
                 {
-                    _PrePlaybackSetting["TXEQ"] = _console.TXEQ;
-                    _PrePlaybackSetting["COMP"] = _console.CPDR;
-                    _PrePlaybackSetting["CFC"] = _console.CFCEnabled;
-                    _PrePlaybackSetting["PHASE"] = _console.PhaseRotEnabled;
-                    _PrePlaybackSetting["MON"] = _console.MON;
-                    _PrePlaybackSetting["BYPASS_VAC"] = Audio.VACBypass;
-                    _PrePlaybackSetting["MOX"] = _console.MOX;
+                    _prePlaybackSetting["TXEQ"] = _console.TXEQ;
+                    _prePlaybackSetting["COMP"] = _console.CPDR;
+                    _prePlaybackSetting["CFC"] = _console.CFCEnabled;
+                    _prePlaybackSetting["PHASE"] = _console.PhaseRotEnabled;
+                    _prePlaybackSetting["MON"] = _console.MON;
+                    _prePlaybackSetting["BYPASS_VAC"] = Audio.VACBypass;
+                    _prePlaybackSetting["MOX"] = _console.MOX;
                 }
                 else
                 {
-                    _PrePlaybackSetting["RXEQ"] = _console.RXEQ;
+                    _prePlaybackSetting["RXEQ"] = _console.RXEQ;
                 }
             }
             else
             {
                 if (playback)
                 {
-                    if (_PrePlaybackSetting.ContainsKey("TXEQ") && _console.TXEQ != _PrePlaybackSetting["TXEQ"]) _console.TXEQ = _PrePlaybackSetting["TXEQ"];
-                    if (_PrePlaybackSetting.ContainsKey("COMP") && _console.CPDR != _PrePlaybackSetting["COMP"]) _console.CPDR = _PrePlaybackSetting["COMP"];
-                    if (_PrePlaybackSetting.ContainsKey("CFC") && _console.CFCEnabled != _PrePlaybackSetting["CFC"]) _console.CFCEnabled = _PrePlaybackSetting["CFC"];
-                    if (_PrePlaybackSetting.ContainsKey("PHASE") && _console.PhaseRotEnabled != _PrePlaybackSetting["PHASE"]) _console.PhaseRotEnabled = _PrePlaybackSetting["PHASE"];
-                    if (_PrePlaybackSetting.ContainsKey("MON") && _console.MON != _PrePlaybackSetting["MON"]) _console.MON = _PrePlaybackSetting["MON"];
-                    if (_PrePlaybackSetting.ContainsKey("BYPASS_VAC") && Audio.VACBypass != _PrePlaybackSetting["BYPASS_VAC"]) Audio.VACBypass = _PrePlaybackSetting["BYPASS_VAC"];
-                    if (_PrePlaybackSetting.ContainsKey("MOX") && _console.MOX != _PrePlaybackSetting["MOX"]) _console.MOX = _PrePlaybackSetting["MOX"];
+                    if (_prePlaybackSetting.ContainsKey("TXEQ") && _console.TXEQ != _prePlaybackSetting["TXEQ"]) _console.TXEQ = _prePlaybackSetting["TXEQ"];
+                    if (_prePlaybackSetting.ContainsKey("COMP") && _console.CPDR != _prePlaybackSetting["COMP"]) _console.CPDR = _prePlaybackSetting["COMP"];
+                    if (_prePlaybackSetting.ContainsKey("CFC") && _console.CFCEnabled != _prePlaybackSetting["CFC"]) _console.CFCEnabled = _prePlaybackSetting["CFC"];
+                    if (_prePlaybackSetting.ContainsKey("PHASE") && _console.PhaseRotEnabled != _prePlaybackSetting["PHASE"]) _console.PhaseRotEnabled = _prePlaybackSetting["PHASE"];
+                    if (_prePlaybackSetting.ContainsKey("MON") && _console.MON != _prePlaybackSetting["MON"]) _console.MON = _prePlaybackSetting["MON"];
+                    if (_prePlaybackSetting.ContainsKey("BYPASS_VAC") && Audio.VACBypass != _prePlaybackSetting["BYPASS_VAC"]) Audio.VACBypass = _prePlaybackSetting["BYPASS_VAC"];
+                    if (_prePlaybackSetting.ContainsKey("MOX") && _console.MOX != _prePlaybackSetting["MOX"]) _console.MOX = _prePlaybackSetting["MOX"];
                 }
                 else
                 {
-                    if (_PrePlaybackSetting.ContainsKey("RXEQ") && _console.RXEQ != _PrePlaybackSetting["RXEQ"]) _console.RXEQ = _PrePlaybackSetting["RXEQ"];
+                    if (_prePlaybackSetting.ContainsKey("RXEQ") && _console.RXEQ != _prePlaybackSetting["RXEQ"]) _console.RXEQ = _prePlaybackSetting["RXEQ"];
                 }
             }
         }
@@ -1009,9 +1006,6 @@ namespace Thetis
                     _active_record_filename = full_target;
                     _active_record_details = d;
                     _active_record_sample_rate = SampleRate;
-                    _active_record_bit_depth = bitDepth;
-                    _active_record_format_tag = formatTag;
-                    _active_record_channels = 2;
 
                     _active_record_json_filename = null;
                     _active_record_mp3_filename = null;
@@ -1182,9 +1176,6 @@ namespace Thetis
                     _active_record_filename = full_target;
                     _active_record_details = d;
                     _active_record_sample_rate = SampleRate;
-                    _active_record_bit_depth = (short)bits;
-                    _active_record_format_tag = (short)(BitDepthMode == AudioBitDepthMode.IeeeFloat32 ? 3 : 1);
-                    _active_record_channels = (short)channels;
 
                     _active_record_json_filename = null;
                     _active_record_mp3_filename = null;
@@ -2092,9 +2083,6 @@ namespace Thetis
             _active_record_details = null;
             _active_record_wfw_id = -1;
             _active_record_sample_rate = 0;
-            _active_record_bit_depth = 0;
-            _active_record_format_tag = 0;
-            _active_record_channels = 0;
         }
 
         private void setRecordingState(bool recording)

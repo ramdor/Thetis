@@ -1070,13 +1070,8 @@
     <EmbeddedResource Include="frmLog.resx">
       <DependentUpon>frmLog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\picD1orig.png" />
     <None Include="Resources\cpu.png" />
-    <EmbeddedResource Include="Resources\picD2.png" />
     <EmbeddedResource Include="Resources\star.png" />
-    <EmbeddedResource Include="Resources\met3.jpg" />
-    <EmbeddedResource Include="Resources\picD1.png" />
-    <EmbeddedResource Include="Resources\s-meter-collins3.png" />
     <EmbeddedResource Include="Resources\sun.png" />
     <EmbeddedResource Include="Resources\digital7.ttf" />
     <None Include="Resources\grabbing.cur" />

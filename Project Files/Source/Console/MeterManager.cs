@@ -70,6 +70,7 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
+using Microsoft.Win32;
 
 namespace Thetis
 {
@@ -2467,6 +2468,7 @@ namespace Thetis
             // the resource images to use
             resource_bitmaps.Add("lock", Properties.Resources.Lock_64);
             resource_bitmaps.Add("vfo_sync", Properties.Resources.Link_64);
+            resource_bitmaps.Add("refresh", Properties.Resources.refresh_64);
             // otherbuttons icons
             resource_bitmaps.Add("stop", Properties.Resources.ob_square);
             resource_bitmaps.Add("play", Properties.Resources.ob_play);
@@ -7768,10 +7770,12 @@ namespace Thetis
                         {
                             _click_timer.Stop();
                             _click_timer.Dispose();
+                            _click_timer = null;
                         }
                     };
                     _click_timer.AutoReset = false;
                     _click_timer.Start();
+                    _click_timer = null;
                 }
                 else
                 {
@@ -8071,6 +8075,7 @@ namespace Thetis
                         {
                             _click_timer.Stop();
                             _click_timer.Dispose();
+                            _click_timer = null;
                         }
                     };
                     _click_timer.AutoReset = false;
@@ -8082,6 +8087,7 @@ namespace Thetis
                     {
                         _click_timer.Stop();
                         _click_timer.Dispose();
+                        _click_timer = null;
                     }
                     _click_highlight = true;
                 }
@@ -9082,6 +9088,7 @@ namespace Thetis
                         {
                             _click_timer.Stop();
                             _click_timer.Dispose();
+                            _click_timer = null;
                         }
                     };
                     _click_timer.AutoReset = false;
@@ -9093,6 +9100,7 @@ namespace Thetis
                     {
                         _click_timer.Stop();
                         _click_timer.Dispose();
+                        _click_timer = null;
                     }
                     _click_highlight = true;
                 }
@@ -9706,6 +9714,7 @@ namespace Thetis
                         {
                             _click_timer.Stop();
                             _click_timer.Dispose();
+                            _click_timer = null;
                         }
                     };
                     _click_timer.AutoReset = false;
@@ -9717,6 +9726,7 @@ namespace Thetis
                     {
                         _click_timer.Stop();
                         _click_timer.Dispose();
+                        _click_timer = null;
                     }
                     _click_highlight = true;
                 }
@@ -9988,6 +9998,7 @@ namespace Thetis
                         {
                             _click_timer.Stop();
                             _click_timer.Dispose();
+                            _click_timer = null;
                         }
                     };
                     _click_timer.AutoReset = false;
@@ -9999,6 +10010,7 @@ namespace Thetis
                     {
                         _click_timer.Stop();
                         _click_timer.Dispose();
+                        _click_timer = null;
                     }
                     _click_highlight = true;
                 }
@@ -10166,8 +10178,16 @@ namespace Thetis
             private bool[] _slot_locked;
             private Keys[] _keybind;
             private bool[] _useskeybind;
+            private bool[] _slot_can_repeat; // show the repeat icon?
+            private int[] _slot_repeat_delay; // the repeat delay
+            private bool[] _slot_repeat_enabled; // if the repeat icon is enabled/disabled
             private bool _mode_record; // true = in record mode, otherwise playback mode
             private bool _wdsp;
+
+            private DateTime _start_repeat_time;
+            private int _repeat_slot;
+            private System.Timers.Timer _repeat_timer;
+            private bool _ignore_next_restart;
 
             private bool _alt_pressed;
             private bool _ctrl_pressed;
@@ -10175,6 +10195,8 @@ namespace Thetis
 
             private bool _uses_keybinds;
             private DateTime _uses_keybinds_settime;
+
+            private DateTime _slot_press_time;
 
             public clsVoiceRecordPlay(clsMeter owningmeter, clsItemGroup ig)
             {
@@ -10218,12 +10240,17 @@ namespace Thetis
                 _uses_keybinds = false;
                 _uses_keybinds_settime = DateTime.UtcNow;
 
+                _slot_press_time = DateTime.UtcNow;
+
                 _slot_filepath = new string[Buttons];
                 _slot_duration_seconds = new float[Buttons];
                 _activate_time = new DateTime[Buttons];
                 _slot_locked = new bool[Buttons];
                 _keybind = new Keys[Buttons];
                 _useskeybind = new bool[Buttons];
+                _slot_can_repeat = new bool[Buttons];
+                _slot_repeat_delay = new int[Buttons];
+                _slot_repeat_enabled = new bool[Buttons];
                 for (int n = 0; n < Buttons; n++)
                 {
                     SetText(0, n, "Slot " + (n + 1).ToString());
@@ -10233,15 +10260,24 @@ namespace Thetis
                     _slot_locked[n] = false;
                     _keybind[n] = Keys.None;
                     _useskeybind[n] = false;
+                    _slot_can_repeat[n] = false;
+                    _slot_repeat_delay[n] = 10;
+                    _slot_repeat_enabled[n] = false;
                 }
+
+                _start_repeat_time = DateTime.MinValue;
+                _repeat_slot = -1;
+                _ignore_next_restart = false;
 
                 Initialise();
             }
             public override void Removing()
             {
+                setupRepeatTimer(false, -1, -1);
+
                 _console.ARP.PlayingChanged -= onPlayingChanged;
                 _console.ARP.RecordingChanged -= onRecordingChanged;
-                _console.ARP.RecordingJsonWritten -= onJsonWritten;
+                _console.ARP.RecordingJsonWritten -= onJsonWritten;                
 
                 //stop + remove folder related to this container
                 Debug.Print("REMOVING VoiceRecordPlayback : " + _unique_id);
@@ -10341,7 +10377,15 @@ namespace Thetis
 
                     if (_keybind[n] == data && GetEnabled(1, n))
                     {
-                        handleClicked(n, false);
+                        double duration = (DateTime.UtcNow - _slot_press_time).TotalMilliseconds;
+                        bool long_hold = duration >= 1000f;
+                        //Debug.Print("KEY DURATION : " + duration.ToString());
+
+                        _console.Invoke(new MethodInvoker(() => // calls to arp belong to ui
+                        {
+                            handleClicked(n, false, long_hold);
+                        }));
+
                         break;
                     }
                 }
@@ -10359,6 +10403,28 @@ namespace Thetis
                 else if (keycode == Keys.Shift || keycode == Keys.ShiftKey|| keycode == Keys.LShiftKey || keycode == Keys.RShiftKey)
                 {
                     _shift_pressed = true;
+                }
+
+                bool handle = (DateTime.UtcNow - _uses_keybinds_settime).TotalMilliseconds >= 2000;// to prevent it from playing soon after setup assigned the keycodes
+                if (!handle || !_uses_keybinds || _mode_record) return;                
+
+                Keys data = keycode & Keys.KeyCode;
+
+                //Debug.Print(">>> keydata : " + ((int)data).ToString());
+
+                if (_alt_pressed) data |= Keys.Alt;
+                if (_ctrl_pressed) data |= Keys.Control;
+                if (_shift_pressed) data |= Keys.Shift;
+
+                for (int n = 0; n < Slots; n++)
+                {
+                    if (!_useskeybind[n]) continue;
+
+                    if (_keybind[n] == data && GetEnabled(1, n))
+                    {
+                        _slot_press_time = DateTime.UtcNow;
+                        break;
+                    }
                 }
             }
             public bool HasLockedSlots
@@ -10427,18 +10493,32 @@ namespace Thetis
                 if (id != _unique_id)
                 {
                     if (!done_setup) setupButtons();
+                    setupRepeatTimer(false, -1, -1);
                     return; // not for us
                 }
 
                 if (!playing)
                 {
+                    if (_slot_can_repeat[_slot_playing] && _slot_repeat_enabled[_slot_playing] && !_ignore_next_restart)
+                    {
+                        //start a time to kick off the playback
+                        setupRepeatTimer(true, _slot_playing, _slot_repeat_delay[_slot_playing]);
+                    }
+
                     _slot_playing = -1;
+                    _ignore_next_restart = false;
+                }
+                else
+                {
+                    setupRepeatTimer(false, -1, -1);
                 }
             }
 
             private void onRecordingChanged(bool recording, string id, string filename)
             {
                 _global_recording = recording; // global state
+
+                setupRepeatTimer(false, -1, -1);
 
                 // disable all slots if a recording is happening somewhere
                 enableAllSlots(!recording);
@@ -10459,6 +10539,52 @@ namespace Thetis
                 if (!recording)
                 {
                     _slot_recording = -1;
+                }
+            }
+            private void setupRepeatTimer(bool setup, int slot, int delay)
+            {
+                if (setup)
+                {
+                    if(_repeat_timer != null)
+                    {
+                        setupRepeatTimer(false, slot, delay);
+                        return;
+                    }
+
+                    _start_repeat_time = DateTime.UtcNow;
+                    _repeat_slot = slot;
+
+                    _repeat_timer = new System.Timers.Timer(delay * 1000f);
+                    _repeat_timer.Elapsed += (sender, ee) =>
+                    {
+                        if (_repeat_timer != null)
+                        {
+                            _repeat_timer.Stop();
+                            _repeat_timer.Dispose();
+                            _repeat_timer = null;
+                        }
+
+                        if (_console != null && !_console.IsDisposed && !_console.Disposing)
+                        {
+                            _console.Invoke(new MethodInvoker(() => // calls to arp belong to ui
+                            {
+                                handleClicked(slot, false, false, true);
+                            }));
+                        }
+                    };
+                    _repeat_timer.AutoReset = false;
+                    _repeat_timer.Start();
+                }
+                else
+                {                 
+                    if (_repeat_timer != null)
+                    {
+                        _repeat_timer.Stop();
+                        _repeat_timer.Dispose();
+                        _repeat_timer = null;
+                    }
+                    _repeat_slot = -1;
+                    _start_repeat_time = DateTime.MinValue;
                 }
             }
             private void enableAllSlots(bool enabled)
@@ -10502,7 +10628,7 @@ namespace Thetis
                 // 0 index based
                 _slot_locked[slot] = locked;
             }
-            public bool IsSlotLocked(int slot)
+            public bool GetSlotLocked(int slot)
             {
                 if (slot < 0 || slot > Slots - 1) return false;
                 // 0 index based
@@ -10523,19 +10649,6 @@ namespace Thetis
                 if (slot < 0 || slot > Slots - 1) return false;
                 return _useskeybind[slot];
             }
-            public bool UsesKeybind(Keys keycode)
-            {
-                bool ret = false;
-                for(int n = 0; n < Slots; n++)
-                {
-                    if (_keybind[n] == keycode)
-                    {
-                        ret = true;
-                        break;
-                    }
-                }
-                return ret;
-            }
             public void SetUsesKeybind(int slot, bool useskeybind)
             {
                 if (slot < 0 || slot > Slots - 1) return;
@@ -10552,6 +10665,64 @@ namespace Thetis
                         break;
                     }
                 }
+            }
+            public bool UsesKeybind(Keys keycode)
+            {
+                bool ret = false;
+                for (int n = 0; n < Slots; n++)
+                {
+                    if (_keybind[n] == keycode)
+                    {
+                        ret = true;
+                        break;
+                    }
+                }
+                return ret;
+            }
+            public void SetCanRepeat(int slot, bool canrepeat)
+            {
+                if (slot < 0 || slot > Slots - 1) return;
+                // 0 index based
+                _slot_can_repeat[slot] = canrepeat;
+            }
+            public bool GetCanRepeat(int slot)
+            {
+                if (slot < 0 || slot > Slots - 1) return false;
+                // 0 index based
+                return _slot_can_repeat[slot];
+            }
+            public void SetRepeatDelay(int slot, int repeatdelay)
+            {
+                if (slot < 0 || slot > Slots - 1) return;
+                // 0 index based
+                _slot_repeat_delay[slot] = repeatdelay;
+            }
+            public int GetRepeatDelay(int slot)
+            {
+                if (slot < 0 || slot > Slots - 1) return 10;
+                // 0 index based
+                return _slot_repeat_delay[slot];
+            }
+            public bool GetRepeatEnabled(int slot)
+            {
+                if (slot < 0 || slot > Slots - 1) return false;
+                // 0 index based
+                return _slot_repeat_enabled[slot];
+            }
+            public float GetDelayElapsed(int slot)
+            {
+                if (slot < 0 || slot > Slots - 1 || _repeat_slot != slot || _repeat_slot == -1 || _mode_record) return 0f;
+                float elapsed = (float)(DateTime.UtcNow - _start_repeat_time).TotalMilliseconds;
+                float perc = elapsed / (_slot_repeat_delay[slot] * 1000f);
+                if (perc < 0f) perc = 0f;
+                if (perc > 1f) perc = 1f;
+                return perc;
+            }
+            public void SetRepeatEnabled(int slot, bool enabled)
+            {
+                if (slot < 0 || slot > Slots - 1) return;
+                // 0 index based
+                _slot_repeat_enabled[slot] = enabled;
             }
             public bool IsRecordMode
             {
@@ -10760,6 +10931,7 @@ namespace Thetis
                         {
                             _click_timer.Stop();
                             _click_timer.Dispose();
+                            _click_timer = null;
                         }
                     };
                     _click_timer.AutoReset = false;
@@ -10771,6 +10943,7 @@ namespace Thetis
                     {
                         _click_timer.Stop();
                         _click_timer.Dispose();
+                        _click_timer = null;
                     }
                     _click_highlight = true;
                 }
@@ -10818,6 +10991,8 @@ namespace Thetis
 
                     if (!GetEnabled(1, index)) return;
                 }
+
+                _slot_press_time = DateTime.UtcNow;
 
                 setupClick(false);
             }
@@ -10868,6 +11043,10 @@ namespace Thetis
                     return;
                 }
 
+                double duration = (DateTime.UtcNow - _slot_press_time).TotalMilliseconds;
+                bool long_old = duration >= 1000f;
+                //Debug.Print("CLICK DURATION MOUSE : " + duration.ToString());
+
                 setupClick(true);
 
                 int index = base.ButtonIndex;
@@ -10875,11 +11054,13 @@ namespace Thetis
 
                 if(index == RECORD_PLAYBACK_MODE)
                 {
+                    clearRunningRepeat(index, true);
                     _mode_record = !_mode_record;
                     return;
                 }
                 else if(index == RECORD_PLAYBACK_WDSPPC)
                 {
+                    clearRunningRepeat(index, true);
                     _wdsp = !_wdsp;
                     setupButtons();
                     return;
@@ -10895,23 +11076,47 @@ namespace Thetis
 
                 Debug.Print("CLICKED VoiceRecordPlayback : " + index);
 
-                handleClicked(index, e.Button == MouseButtons.Right);
+                _console.Invoke(new MethodInvoker(() => // calls to arp belong to ui
+                {
+                    handleClicked(index, e.Button == MouseButtons.Right, long_old);
+                }));
             }
-            private void handleClicked(int slot, bool right_click)
+            private void clearRunningRepeat(int slot, bool force = false)
             {
+                if (_repeat_slot == slot || force)
+                {
+                    setupRepeatTimer(false, -1, -1);
+                }
+            }
+            private void handleClicked(int slot, bool right_click, bool long_hold, bool from_repeat_timer = false)
+            {
+                if (long_hold && !_mode_record)
+                {
+                    if (_slot_can_repeat[slot])
+                    {
+                        clearRunningRepeat(slot);
+                        _slot_repeat_enabled[slot] = !_slot_repeat_enabled[slot];
+                    }
+                    return;
+                }
+
                 if (slot == _slot_playing)
                 {
                     // stop playing
-                    _console.ARP.StopPlayback(out string error);
+                    clearRunningRepeat(slot);
+                    _ignore_next_restart = true;
+                    _console.ARP.StopPlayback(out string error);                    
                 }
                 else if (slot == _slot_recording)
                 {
                     // stop recording
+                    clearRunningRepeat(slot);
                     _console.ARP.StopRecord(out string error);
                 }
                 else if (_mode_record && right_click)
                 {
                     // delete !
+                    clearRunningRepeat(slot);
                     if (_slot_locked[slot]) return;
 
                     _console.ARP.DeleteRecording(_slot_filepath[slot], out string error);
@@ -10931,7 +11136,7 @@ namespace Thetis
                     }
                 }
                 else// if (!_global_playing && !_global_recording)
-                {
+                {                                       
                     string error = null;
                     if (_console.ARP.IsPlaying)
                     {
@@ -10942,6 +11147,8 @@ namespace Thetis
                     string file = _unique_id + "\\slot_" + (slot + 1).ToString() + ".wav";                    
                     if (_mode_record) // true if in record mode, false if playback mode
                     {
+                        clearRunningRepeat(slot);
+
                         if (_slot_locked[slot]) return;
 
                         //setup details for json
@@ -10981,6 +11188,11 @@ namespace Thetis
                     else
                     {
                         //playback
+                        bool this_slot_is_on_repeat = slot == _repeat_slot;
+                        clearRunningRepeat(slot, true);
+
+                        if (!from_repeat_timer && this_slot_is_on_repeat) return; // this slot is on repeat, clicking just stops it and doesnt play
+
                         bool wav_exists = _console.ARP.GetJSONDetailsFromFile(_slot_filepath[slot], out clsAudioRecordPlayback.RecordingJsonModel json_data);
                         if (!wav_exists)
                         {
@@ -10993,6 +11205,8 @@ namespace Thetis
                         {
                             _slot_duration_seconds[slot] = (float)json_data.play_duration_seconds;
                         }
+
+                        _ignore_next_restart = false;
 
                         bool ok = false;
                         if (_slot_filepath[slot] != null)
@@ -11359,6 +11573,7 @@ namespace Thetis
                         {
                             _click_timer.Stop();
                             _click_timer.Dispose();
+                            _click_timer = null;
                         }
                     };
                     _click_timer.AutoReset = false;
@@ -11370,6 +11585,7 @@ namespace Thetis
                     {
                         _click_timer.Stop();
                         _click_timer.Dispose();
+                        _click_timer = null;
                     }
                     _click_highlight = true;
                 }
@@ -11700,6 +11916,7 @@ namespace Thetis
                         {
                             _click_timer.Stop();
                             _click_timer.Dispose();
+                            _click_timer = null;
                         }
                     };
                     _click_timer.AutoReset = false;
@@ -11711,6 +11928,7 @@ namespace Thetis
                     {
                         _click_timer.Stop();
                         _click_timer.Dispose();
+                        _click_timer = null;
                     }
                     _click_highlight = true;
                 }
@@ -25201,6 +25419,15 @@ namespace Thetis
 
                                                     Keys keybind = igs.GetSetting<Keys>("buttonbox_recordplayback_keybind_" + n.ToString(), false, Keys.None, Keys.None, Keys.None);
                                                     ((clsVoiceRecordPlay)bb).SetKeybind(n, keybind);
+
+                                                    bool canRepeat = igs.GetSetting<bool>("buttonbox_recordplayback_canrepeat_" + n.ToString(), false, false, false, false);
+                                                    ((clsVoiceRecordPlay)bb).SetCanRepeat(n, canRepeat);
+
+                                                    int repeatDelay = igs.GetSetting<int>("buttonbox_recordplayback_repeatdelay_" + n.ToString(), false, 2, 60, 10);
+                                                    ((clsVoiceRecordPlay)bb).SetRepeatDelay(n, repeatDelay);
+
+                                                    bool repeatEnabled = igs.GetSetting<bool>("buttonbox_recordplayback_repeatenabled_" + n.ToString(), false, false, false, false);
+                                                    ((clsVoiceRecordPlay)bb).SetRepeatEnabled(n, repeatEnabled);
                                                 }
                                             }
                                             else if (mt == MeterType.OTHER_BUTTONS)
@@ -26537,7 +26764,7 @@ namespace Thetis
                                                     string label = ((clsVoiceRecordPlay)bb).GetText(0, n);
                                                     igs.SetSetting<string>("buttonbox_recordplayback_label_" + n.ToString(), label);
 
-                                                    bool locked = ((clsVoiceRecordPlay)bb).IsSlotLocked(n);
+                                                    bool locked = ((clsVoiceRecordPlay)bb).GetSlotLocked(n);
                                                     igs.SetSetting<bool>("buttonbox_recordplayback_locked_" + n.ToString(), locked);
 
                                                     bool useskeybind = ((clsVoiceRecordPlay)bb).GetUsesKeybind(n);
@@ -26545,6 +26772,15 @@ namespace Thetis
 
                                                     Keys keybind = ((clsVoiceRecordPlay)bb).GetKeybind(n);
                                                     igs.SetSetting<Keys>("buttonbox_recordplayback_keybind_" + n.ToString(), keybind);
+
+                                                    bool canRepeat = ((clsVoiceRecordPlay)bb).GetCanRepeat(n);
+                                                    igs.SetSetting<bool>("buttonbox_recordplayback_canrepeat_" + n.ToString(), canRepeat);
+
+                                                    int repeatDelay = ((clsVoiceRecordPlay)bb).GetRepeatDelay(n);
+                                                    igs.SetSetting<int>("buttonbox_recordplayback_repeatdelay_" + n.ToString(), repeatDelay);
+
+                                                    bool repeatEnabled = ((clsVoiceRecordPlay)bb).GetRepeatEnabled(n);
+                                                    igs.SetSetting<bool>("buttonbox_recordplayback_repeatenabled_" + n.ToString(), repeatEnabled);
                                                 }
                                             }
                                             else if (mt == MeterType.OTHER_BUTTONS)
@@ -37016,47 +37252,209 @@ namespace Thetis
                                         255, bb.GetFontFamily(1, button), bb.GetFontStyle(1, button), true, false, text_box_width * 0.75f, false, text_box_height * 0.75f, 0, false, null, false, true);
                                 }
 
+                                float smallest_dim = rectBB.Size.Width <= rectBB.Height ? rectBB.Size.Width : rectBB.Size.Height;
+                                float icon_size = smallest_dim * bb.FontScale * 0.38f;
+
                                 //draw button icon based on play state
                                 string icon;
-                                if (vrp.IsRecording(button) || vrp.IsPlaying(button)) icon = "stop";
+                                if (vrp.IsRecording(button) || vrp.IsPlaying(button))
+                                {
+                                    icon = "stop";
+                                }
                                 else if (vrp.IsRecordMode)
                                 {
-                                    icon = vrp.IsSlotLocked(button) ? "lock" : "record";
+                                    icon = vrp.GetSlotLocked(button) ? "lock" : "record";
                                 }
-                                else icon = "play";
-
+                                else
+                                {
+                                    icon = "play";
+                                }
                                 convertImageToDX(icon);
-
+                                bool transform_modified = false;
+                                Matrix3x2 originalTransform = Matrix3x2.Identity;
+                                AntialiasMode originalAM = AntialiasMode.PerPrimitive;
                                 if (_images.ContainsKey(icon))
                                 {
                                     cy = rectBB.Top + (rectBB.Height - ((rectBB.Height / 10f) * 3.2f));
 
-                                    Matrix3x2 originalTransform = _renderTarget.Transform;
-                                    AntialiasMode originalAM = _renderTarget.AntialiasMode;
+                                    originalTransform = _renderTarget.Transform;
+                                    originalAM = _renderTarget.AntialiasMode;
                                     _renderTarget.AntialiasMode = AntialiasMode.Aliased;
                                     _renderTarget.Transform = Matrix3x2.Identity;
+                                    transform_modified = true;
 
                                     SharpDX.Direct2D1.Bitmap b = _images[icon];
-
-                                    float smallest_dim = rectBB.Size.Width <= rectBB.Height ? rectBB.Size.Width : rectBB.Size.Height;
-                                    float icon_size = smallest_dim * bb.FontScale * 0.38f;
-
                                     SharpDX.RectangleF rct = new SharpDX.RectangleF(cx - (icon_size / 2f), cy - (icon_size / 2f), icon_size, icon_size);
-
                                     System.Drawing.Color icon_c = text_icon_is_indicator ? text_icon_indicator_colour : text_colour;
 
                                     //dim?
-                                    if( (duration < 0.1f && !vrp.IsRecordMode) || (vrp.IsRecordMode && vrp.IsSlotLocked(button)) )
+                                    if( (duration < 0.1f && !vrp.IsRecordMode) || (vrp.IsRecordMode && vrp.GetSlotLocked(button)) )
                                     {
-                                        icon_c = System.Drawing.Color.FromArgb((int)(icon_c.R * 0.5f), (int)(icon_c.G * 0.5f), (int)(icon_c.B * 0.5f));
+                                        icon_c = System.Drawing.Color.FromArgb((int)(icon_c.R * 0.45f), (int)(icon_c.G * 0.45f), (int)(icon_c.B * 0.45f));
                                     }
 
                                     _renderTarget.FillOpacityMask(b, getDXBrushForColour(icon_c, 255),
                                         OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+                                }
+                                //draw repeat icon + green time delay
+                                if (vrp.GetCanRepeat(button) && !vrp.IsRecordMode)
+                                {
+                                    icon_size = rectBB.Width * 0.15f;
+                                    cx = rectBB.Left + half_border + (radius * 0.2f) + (rectBB.Width * 0.1f);
+                                    cy = rectBB.Top + half_border + (radius * 0.2f) + (rectBB.Width * 0.1f);
 
+                                    icon = "refresh";
+                                    convertImageToDX(icon);
+                                    if (_images.ContainsKey(icon))
+                                    {
+                                        bool in_use = vrp.GetRepeatEnabled(button);
+
+                                        if (!transform_modified)
+                                        {
+                                            originalTransform = _renderTarget.Transform;
+                                            originalAM = _renderTarget.AntialiasMode;
+                                            _renderTarget.AntialiasMode = AntialiasMode.Aliased;
+                                            _renderTarget.Transform = Matrix3x2.Identity;
+                                            transform_modified = true;
+                                        }
+
+                                        SharpDX.Direct2D1.Bitmap b = _images[icon];
+                                        SharpDX.RectangleF rct = new SharpDX.RectangleF(cx - (icon_size / 2f), cy - (icon_size / 2f), icon_size, icon_size);
+                                        System.Drawing.Color icon_c = text_icon_is_indicator ? text_icon_indicator_colour : text_colour;
+
+                                        //dim?
+                                        if (!in_use)
+                                        {
+                                            icon_c = System.Drawing.Color.FromArgb((int)(icon_c.R * 0.45f), (int)(icon_c.G * 0.45f), (int)(icon_c.B * 0.45f));
+                                        }
+
+                                        _renderTarget.FillOpacityMask(b, getDXBrushForColour(icon_c, 255),
+                                            OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+
+                                        float repeat_fill = vrp.GetDelayElapsed(button);
+                                        if (!in_use) repeat_fill = 0f;
+                                        if (repeat_fill < 0f) repeat_fill = 0f;
+                                        if (repeat_fill > 1f) repeat_fill = 1f;
+
+                                        if (repeat_fill >= 0.9995f)
+                                        {
+                                            _renderTarget.FillOpacityMask(b, getDXBrushForColour(System.Drawing.Color.LimeGreen, 255),
+                                                OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+                                        }
+                                        else if (repeat_fill > 0f)
+                                        {
+                                            SharpDX.Direct2D1.PathGeometry wedge = null;
+                                            SharpDX.Direct2D1.GeometrySink sink = null;
+                                            SharpDX.Direct2D1.Layer layer = null;
+
+                                            try
+                                            {
+                                                float pi_start = 0;// -SharpDX.MathUtil.PiOverTwo;
+                                                float pi_sweep = repeat_fill * SharpDX.MathUtil.TwoPi;
+                                                float pi_end = pi_start + pi_sweep;
+
+                                                float r = icon_size;// * 0.6f;
+
+                                                RawVector2 c = new RawVector2(cx, cy);
+                                                RawVector2 p0 = new RawVector2(cx + (float)System.Math.Cos(pi_start) * r, cy + (float)System.Math.Sin(pi_start) * r);
+                                                RawVector2 p1 = new RawVector2(cx + (float)System.Math.Cos(pi_end) * r, cy + (float)System.Math.Sin(pi_end) * r);
+
+                                                wedge = new SharpDX.Direct2D1.PathGeometry(_factory);
+                                                sink = wedge.Open();
+                                                sink.BeginFigure(c, SharpDX.Direct2D1.FigureBegin.Filled);
+                                                sink.AddLine(p0);
+                                                sink.AddArc(new SharpDX.Direct2D1.ArcSegment
+                                                {
+                                                    Point = p1,
+                                                    Size = new Size2F(r, r),
+                                                    RotationAngle = 0f,
+                                                    SweepDirection = SharpDX.Direct2D1.SweepDirection.Clockwise,
+                                                    ArcSize = pi_sweep <= SharpDX.MathUtil.Pi ? SharpDX.Direct2D1.ArcSize.Small : SharpDX.Direct2D1.ArcSize.Large
+                                                });
+                                                sink.EndFigure(SharpDX.Direct2D1.FigureEnd.Closed);
+                                                sink.Close();
+
+                                                RawRectangleF content_bounds = new RawRectangleF(rct.Left, rct.Top, rct.Right, rct.Bottom);
+
+                                                SharpDX.Direct2D1.LayerParameters lp = new SharpDX.Direct2D1.LayerParameters
+                                                {
+                                                    ContentBounds = content_bounds,
+                                                    GeometricMask = wedge,
+                                                    MaskAntialiasMode = SharpDX.Direct2D1.AntialiasMode.PerPrimitive,
+                                                    MaskTransform = Matrix3x2.Identity,
+                                                    Opacity = 1f,
+                                                    OpacityBrush = null,
+                                                    LayerOptions = SharpDX.Direct2D1.LayerOptions.None
+                                                };
+
+                                                layer = new SharpDX.Direct2D1.Layer(_renderTarget);
+                                                _renderTarget.PushLayer(ref lp, layer);
+
+                                                _renderTarget.FillOpacityMask(b, getDXBrushForColour(System.Drawing.Color.LimeGreen, 255),
+                                                    OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+
+                                                _renderTarget.PopLayer();
+                                            }
+                                            finally
+                                            {
+                                                if (sink != null) sink.Dispose();
+                                                if (wedge != null) wedge.Dispose();
+                                                if (layer != null) layer.Dispose();
+                                            }
+                                        }
+
+                                        //_renderTarget.DrawRectangle(rct, getDXBrushForColour(System.Drawing.Color.LimeGreen));
+                                    }
+                                }
+                                if (transform_modified)
+                                {
                                     _renderTarget.AntialiasMode = originalAM;
                                     _renderTarget.Transform = originalTransform;
                                 }
+
+                                ////draw repeat icon
+                                //if (vrp.GetCanRepeat(button))
+                                //{
+                                //    icon_size = rectBB.Width * 0.15f;
+                                //    cx = rectBB.Left + half_border + (radius * 0.2f) + (rectBB.Width * 0.1f);
+                                //    cy = rectBB.Top + half_border + (radius * 0.2f) + (rectBB.Width * 0.1f);
+
+                                //    icon = "refresh";
+                                //    convertImageToDX(icon);
+                                //    if (_images.ContainsKey(icon))
+                                //    {
+                                //        bool in_use = vrp.GetRepeatEnabled(button);
+
+                                //        if(!transform_modified)
+                                //        {
+                                //            originalTransform = _renderTarget.Transform;
+                                //            originalAM = _renderTarget.AntialiasMode;
+                                //            _renderTarget.AntialiasMode = AntialiasMode.Aliased;
+                                //            _renderTarget.Transform = Matrix3x2.Identity;
+                                //            transform_modified = true;
+                                //        }
+
+                                //        SharpDX.Direct2D1.Bitmap b = _images[icon];
+                                //        SharpDX.RectangleF rct = new SharpDX.RectangleF(cx - (icon_size / 2f), cy - (icon_size / 2f), icon_size, icon_size);
+                                //        System.Drawing.Color icon_c = text_icon_is_indicator ? text_icon_indicator_colour : text_colour;
+
+                                //        //dim?
+                                //        if (!in_use)
+                                //        {
+                                //            icon_c = System.Drawing.Color.FromArgb((int)(icon_c.R * 0.45f), (int)(icon_c.G * 0.45f), (int)(icon_c.B * 0.45f));
+                                //        }
+
+                                //        _renderTarget.FillOpacityMask(b, getDXBrushForColour(icon_c, 255),
+                                //            OpacityMaskContent.Graphics, rct, new RawRectangleF(0, 0, b.Size.Width, b.Size.Height));
+
+                                //        //_renderTarget.DrawRectangle(rct, getDXBrushForColour(System.Drawing.Color.LimeGreen));
+                                //    }
+                                //}
+                                //if (transform_modified)
+                                //{
+                                //    _renderTarget.AntialiasMode = originalAM;
+                                //    _renderTarget.Transform = originalTransform;
+                                //}
                             }
                         }
 
