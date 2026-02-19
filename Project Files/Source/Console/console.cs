@@ -7553,11 +7553,6 @@ namespace Thetis
 
             HPSDRModel hpsdr_model = HardwareSpecific.Model;
 
-            if (hpsdr_model == HPSDRModel.HERMESLITE && ReduceEthernetBW)       // MI0BOT: Change to low bandwidth model for the HL2 for use over WAN
-            {
-                hpsdr_model = HPSDRModel.ANAN10E;
-            }
-
             switch (hpsdr_model)
             {
                 case HPSDRModel.ANAN100D:
@@ -18427,18 +18422,6 @@ namespace Thetis
                 }
 
                 if (oldValue != alexpresent) AlexPresentChangedHandlers?.Invoke(oldValue, alexpresent); //MW0LGE_[2.9.0.7]
-            }
-        }
-
-        // MI0BOT: Flag to reduce bandwidth when using a WAN connection 
-
-        private bool reduce_ethernet_bandwidth;
-        public bool ReduceEthernetBW 
-        {
-            get { return reduce_ethernet_bandwidth; }
-            set
-            {
-                reduce_ethernet_bandwidth = value;
             }
         }
 

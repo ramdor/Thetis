@@ -488,13 +488,6 @@ namespace Thetis
             int txinid = cmaster.inid(1, 0);        // stream id
             int txch = cmaster.chid(txinid, 0);     // wdsp channel
 
-            // MI0BOT: Set different model for reduced bandwidth on HL2
-
-            if (model == HPSDRModel.HERMESLITE && Audio.console.ReduceEthernetBW)
-            {
-                model = HPSDRModel.ANAN10E;
-            }
-
             switch (NetworkIO.CurrentRadioProtocol)
             {
                 case RadioProtocol.USB: //Protocol 1

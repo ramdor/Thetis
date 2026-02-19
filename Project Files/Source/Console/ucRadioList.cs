@@ -1967,6 +1967,12 @@ if (!DoesRadioExist(item.Key))
                     }
                     break;
 
+                case HPSDRHW.HermesLite:
+                    versionText = (radio.CodeVersion / 10.0f).ToString("F1");
+                    if (radio.BetaVersion > 0)
+                        versionText += "." + radio.BetaVersion.ToString();
+                    break;
+
                 default:
                     versionText = (radio.CodeVersion / 10.0f).ToString("F1", _nfi);
                     if (radio.Protocol == RadioDiscoveryRadioProtocol.P2 && radio.BetaVersion > 0)
