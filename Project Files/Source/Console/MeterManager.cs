@@ -11193,9 +11193,18 @@ namespace Thetis
 
                         if (!from_repeat_timer && this_slot_is_on_repeat) return; // this slot is on repeat, clicking just stops it and doesnt play
 
-                        bool wav_exists = _console.ARP.GetJSONDetailsFromFile(_slot_filepath[slot], out clsAudioRecordPlayback.RecordingJsonModel json_data);
+                        if (string.IsNullOrEmpty(_slot_filepath[slot]))
+                        {
+                            // check if fill has arrived
+                            string fullPath = System.IO.Path.Combine(_console.ARP.AudioFolder, UniqueID, "slot_" + (slot + 1).ToString() + ".wav");
+                            if (File.Exists(fullPath)) _slot_filepath[slot] = fullPath;
+                        }
+
+                        bool wav_exists = _console.ARP.GetJSONDetailsFromFile(_slot_filepath[slot], out clsAudioRecordPlayback.RecordingJsonModel  json_data);
                         if (!wav_exists)
                         {
+                            // search for file anyway
+
                             _slot_filepath[slot] = null;
                             _slot_duration_seconds[slot] = 0f;
                             _activate_time[slot] = DateTime.MinValue;

@@ -173,7 +173,6 @@ namespace Thetis
         public bool GenerateMP3File { get; set; } = false;
         public bool GenerateJSON { get; set; } = false;
 
-        public string StorageFolder { get; set; } = null;
         public int InputPCDeviceID { get; set; } = -1;
         public int OutputPCDeviceID { get; set; } = -1;
 
@@ -296,31 +295,36 @@ namespace Thetis
                 if (!File.Exists(wavPath)) return;
 
                 string jsonPath = Path.ChangeExtension(wavPath, ".json");
-                if (!File.Exists(jsonPath)) return;
 
                 DateTime wavLast = DateTime.SpecifyKind(File.GetLastWriteTimeUtc(wavPath), DateTimeKind.Utc);
                 string wavStamp = wavLast.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
 
                 RecordingJsonModel existing = null;
-                try
+                if (File.Exists(jsonPath))
                 {
-                    string existingText = File.ReadAllText(jsonPath, Encoding.UTF8);
-                    existing = JsonConvert.DeserializeObject<RecordingJsonModel>(existingText);
-                }
-                catch
-                {
-                    existing = null;
+                    try
+                    {
+                        string existingText = File.ReadAllText(jsonPath, Encoding.UTF8);
+                        existing = JsonConvert.DeserializeObject<RecordingJsonModel>(existingText);
+                    }
+                    catch
+                    {
+                        existing = null;
+                    }
                 }
 
                 string existingStamp = existing != null ? existing.wav_file_last_write_utc : null;
-                if (string.Equals((existingStamp ?? string.Empty).Trim(), wavStamp, StringComparison.OrdinalIgnoreCase))
+                if (existing != null)
                 {
-                    return;
+                    if (string.Equals((existingStamp ?? string.Empty).Trim(), wavStamp, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return;
+                    }
                 }
 
                 RecordingDetails d = new RecordingDetails();
 
-                DateTime utcTime = DateTime.UtcNow;
+                DateTime utcTime = wavLast;
                 if (existing != null)
                 {
                     DateTime parsedUtc;
@@ -332,6 +336,32 @@ namespace Thetis
 
                     d.Mp3File = existing.mp3_file ?? "";
                     d.Mp3FileSizeBytes = existing.mp3_file_size_bytes;
+                }
+                else
+                {
+                    d.Frequency = "";
+                    d.Mode = "";
+                    d.Band = "";
+
+                    string mp3Guess = Path.ChangeExtension(wavPath, ".mp3");
+                    if (File.Exists(mp3Guess))
+                    {
+                        d.Mp3File = Path.GetFileName(mp3Guess) ?? "";
+                        try
+                        {
+                            FileInfo mp3Info = new FileInfo(mp3Guess);
+                            d.Mp3FileSizeBytes = mp3Info.Length;
+                        }
+                        catch
+                        {
+                            d.Mp3FileSizeBytes = null;
+                        }
+                    }
+                    else
+                    {
+                        d.Mp3File = "";
+                        d.Mp3FileSizeBytes = null;
+                    }
                 }
 
                 d.UtcTime = utcTime;

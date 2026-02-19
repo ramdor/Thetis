@@ -4035,6 +4035,7 @@
             this.chkRecording_slot_locked = new System.Windows.Forms.CheckBoxTS();
             this.chkRecording_playkeybind = new System.Windows.Forms.CheckBoxTS();
             this.btnRecording_assingnkeybind = new System.Windows.Forms.ButtonTS();
+            this.chkRecording_canRepeat = new System.Windows.Forms.CheckBoxTS();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -4136,12 +4137,12 @@
             this.chkMeterItemFadeOnRxSpacer = new System.Windows.Forms.CheckBoxTS();
             this.tabPage7 = new System.Windows.Forms.TabPage();
             this.pnlVoiceRecordPlayback = new System.Windows.Forms.PanelTS();
+            this.labelTS653 = new System.Windows.Forms.LabelTS();
             this.txtRecording_playkeybind = new System.Windows.Forms.TextBoxTS();
             this.labelTS652 = new System.Windows.Forms.LabelTS();
             this.btnRecording_rightSlot = new System.Windows.Forms.ButtonTS();
             this.btnRecording_leftSlot = new System.Windows.Forms.ButtonTS();
             this.lblRecording_activeSlot = new System.Windows.Forms.LabelTS();
-            this.chkRecording_canRepeat = new System.Windows.Forms.CheckBoxTS();
             this.labelTS650 = new System.Windows.Forms.LabelTS();
             this.txtRecording_labelText = new System.Windows.Forms.TextBoxTS();
             this.labelTS651 = new System.Windows.Forms.LabelTS();
@@ -32320,6 +32321,8 @@
             this.txtRecording_customFolder.Size = new System.Drawing.Size(297, 20);
             this.txtRecording_customFolder.TabIndex = 91;
             this.txtRecording_customFolder.TextChanged += new System.EventHandler(this.txtRecording_customFolder_TextChanged);
+            this.txtRecording_customFolder.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtRecording_customFolder_KeyDown);
+            this.txtRecording_customFolder.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtRecording_customFolder_KeyPress);
             // 
             // radRecording_storageCustom
             // 
@@ -64605,7 +64608,7 @@
             0,
             0,
             0});
-            this.nudVoiceRecordingPlayback_slots.Location = new System.Drawing.Point(51, 8);
+            this.nudVoiceRecordingPlayback_slots.Location = new System.Drawing.Point(64, 8);
             this.nudVoiceRecordingPlayback_slots.Maximum = new decimal(new int[] {
             64,
             0,
@@ -64617,7 +64620,7 @@
             0,
             0});
             this.nudVoiceRecordingPlayback_slots.Name = "nudVoiceRecordingPlayback_slots";
-            this.nudVoiceRecordingPlayback_slots.Size = new System.Drawing.Size(56, 20);
+            this.nudVoiceRecordingPlayback_slots.Size = new System.Drawing.Size(42, 20);
             this.nudVoiceRecordingPlayback_slots.TabIndex = 133;
             this.nudVoiceRecordingPlayback_slots.TinyStep = false;
             this.toolTip1.SetToolTip(this.nudVoiceRecordingPlayback_slots, "Number of button columns");
@@ -64639,6 +64642,7 @@
             this.btnRecording_openStorageFolder.Text = "...";
             this.toolTip1.SetToolTip(this.btnRecording_openStorageFolder, "Open storage folder");
             this.btnRecording_openStorageFolder.UseVisualStyleBackColor = true;
+            this.btnRecording_openStorageFolder.Click += new System.EventHandler(this.btnRecording_openStorageFolder_Click);
             // 
             // nudRecording_repeatDelay
             // 
@@ -64709,6 +64713,20 @@
             this.toolTip1.SetToolTip(this.btnRecording_assingnkeybind, "Listen for the next 10 seconds for a keybind");
             this.btnRecording_assingnkeybind.UseVisualStyleBackColor = true;
             this.btnRecording_assingnkeybind.Click += new System.EventHandler(this.btnRecording_assingnkeybind_Click);
+            // 
+            // chkRecording_canRepeat
+            // 
+            this.chkRecording_canRepeat.AutoSize = true;
+            this.chkRecording_canRepeat.Image = null;
+            this.chkRecording_canRepeat.Location = new System.Drawing.Point(9, 88);
+            this.chkRecording_canRepeat.Name = "chkRecording_canRepeat";
+            this.chkRecording_canRepeat.Size = new System.Drawing.Size(78, 17);
+            this.chkRecording_canRepeat.TabIndex = 2;
+            this.chkRecording_canRepeat.Text = "Can repeat";
+            this.toolTip1.SetToolTip(this.chkRecording_canRepeat, "If checked, and the slot is in repeat mode (long hold click) then \r\nit will auto " +
+        "play again after an inital manual play");
+            this.chkRecording_canRepeat.UseVisualStyleBackColor = true;
+            this.chkRecording_canRepeat.CheckedChanged += new System.EventHandler(this.chkRecording_canRepeat_CheckedChanged);
             // 
             // timer_VAC_Monitor
             // 
@@ -65904,6 +65922,7 @@
             // 
             this.pnlVoiceRecordPlayback.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlVoiceRecordPlayback.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.labelTS653);
             this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_assingnkeybind);
             this.pnlVoiceRecordPlayback.Controls.Add(this.chkRecording_playkeybind);
             this.pnlVoiceRecordPlayback.Controls.Add(this.txtRecording_playkeybind);
@@ -65923,6 +65942,16 @@
             this.pnlVoiceRecordPlayback.Name = "pnlVoiceRecordPlayback";
             this.pnlVoiceRecordPlayback.Size = new System.Drawing.Size(170, 178);
             this.pnlVoiceRecordPlayback.TabIndex = 113;
+            // 
+            // labelTS653
+            // 
+            this.labelTS653.AutoSize = true;
+            this.labelTS653.Image = null;
+            this.labelTS653.Location = new System.Drawing.Point(6, 38);
+            this.labelTS653.Name = "labelTS653";
+            this.labelTS653.Size = new System.Drawing.Size(45, 13);
+            this.labelTS653.TabIndex = 180;
+            this.labelTS653.Text = "Settings";
             // 
             // txtRecording_playkeybind
             // 
@@ -65959,7 +65988,7 @@
             // btnRecording_leftSlot
             // 
             this.btnRecording_leftSlot.Image = null;
-            this.btnRecording_leftSlot.Location = new System.Drawing.Point(4, 33);
+            this.btnRecording_leftSlot.Location = new System.Drawing.Point(52, 33);
             this.btnRecording_leftSlot.Name = "btnRecording_leftSlot";
             this.btnRecording_leftSlot.Selectable = true;
             this.btnRecording_leftSlot.Size = new System.Drawing.Size(30, 23);
@@ -65972,42 +66001,29 @@
             // 
             this.lblRecording_activeSlot.AutoSize = true;
             this.lblRecording_activeSlot.Image = null;
-            this.lblRecording_activeSlot.Location = new System.Drawing.Point(40, 38);
+            this.lblRecording_activeSlot.Location = new System.Drawing.Point(88, 38);
             this.lblRecording_activeSlot.Name = "lblRecording_activeSlot";
-            this.lblRecording_activeSlot.Size = new System.Drawing.Size(87, 13);
+            this.lblRecording_activeSlot.Size = new System.Drawing.Size(40, 13);
             this.lblRecording_activeSlot.TabIndex = 173;
-            this.lblRecording_activeSlot.Text = "Settings - Slot 32";
+            this.lblRecording_activeSlot.Text = "Slot 32";
             this.lblRecording_activeSlot.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // chkRecording_canRepeat
-            // 
-            this.chkRecording_canRepeat.AutoSize = true;
-            this.chkRecording_canRepeat.Image = null;
-            this.chkRecording_canRepeat.Location = new System.Drawing.Point(9, 88);
-            this.chkRecording_canRepeat.Name = "chkRecording_canRepeat";
-            this.chkRecording_canRepeat.Size = new System.Drawing.Size(78, 17);
-            this.chkRecording_canRepeat.TabIndex = 2;
-            this.chkRecording_canRepeat.Text = "Can repeat";
-            this.toolTip1.SetToolTip(this.chkRecording_canRepeat, "If checked, and the slot is in repeat mode (long hold click) then \r\nit will auto " +
-        "play again after an inital manual play");
-            this.chkRecording_canRepeat.UseVisualStyleBackColor = true;
-            this.chkRecording_canRepeat.CheckedChanged += new System.EventHandler(this.chkRecording_canRepeat_CheckedChanged);
             // 
             // labelTS650
             // 
             this.labelTS650.AutoSize = true;
             this.labelTS650.Image = null;
-            this.labelTS650.Location = new System.Drawing.Point(12, 10);
+            this.labelTS650.Location = new System.Drawing.Point(6, 10);
             this.labelTS650.Name = "labelTS650";
-            this.labelTS650.Size = new System.Drawing.Size(33, 13);
+            this.labelTS650.Size = new System.Drawing.Size(52, 13);
             this.labelTS650.TabIndex = 0;
-            this.labelTS650.Text = "Slots:";
+            this.labelTS650.Text = "# of Slots";
             // 
             // txtRecording_labelText
             // 
             this.txtRecording_labelText.Location = new System.Drawing.Point(51, 62);
+            this.txtRecording_labelText.MaxLength = 32;
             this.txtRecording_labelText.Name = "txtRecording_labelText";
-            this.txtRecording_labelText.Size = new System.Drawing.Size(102, 20);
+            this.txtRecording_labelText.Size = new System.Drawing.Size(112, 20);
             this.txtRecording_labelText.TabIndex = 1;
             this.txtRecording_labelText.TextChanged += new System.EventHandler(this.txtRecording_labelText_TextChanged);
             // 
@@ -75521,5 +75537,6 @@
         private ButtonTS btnRecording_assingnkeybind;
         private CheckBoxTS chkRecording_playkeybind;
         private TextBoxTS txtRecording_playkeybind;
+        private LabelTS labelTS653;
     }
 }

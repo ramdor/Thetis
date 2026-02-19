@@ -2284,6 +2284,7 @@ namespace Thetis
             chkVAC2ExclusiveOut_CheckedChanged(this, e);
             // 
             chkRecording_disable_during_playback(this, e);
+            radRecording_storage_CheckedChanged(this, e);
 
             // Calibration Tab
             udTXDisplayCalOffset_ValueChanged(this, e);
@@ -35995,41 +35996,79 @@ namespace Thetis
 
         private void radRecording_storage_CheckedChanged(object sender, EventArgs e)
         {
+            if (initializing) return;
+
+            if (string.IsNullOrEmpty(txtRecording_customFolder.Text))
+            {
+                txtRecording_customFolder.TextChanged -= txtRecording_customFolder_TextChanged;
+                txtRecording_customFolder.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "Thetis");
+                txtRecording_customFolder.TextChanged += txtRecording_customFolder_TextChanged;
+            }
+
             if (radRecording_storageCustom.Checked)
             {
                 txtRecording_customFolder.Enabled = true;
                 btnRecording_selectCustomFolder.Enabled = true;
-                console.ARP.StorageFolder = txtRecording_customFolder.Text;
+                console.ARP.AudioFolder = txtRecording_customFolder.Text;
             }
             else //radRecording_storageMusic
             {
                 txtRecording_customFolder.Enabled = false;
                 btnRecording_selectCustomFolder.Enabled = false;
-                console.ARP.StorageFolder = null;
+                console.ARP.AudioFolder = null;
             }
         }
 
         private void txtRecording_customFolder_TextChanged(object sender, EventArgs e)
         {
-            if (radRecording_storageCustom.Checked)
-            {
-                console.ARP.StorageFolder = txtRecording_customFolder.Text;
-            }
+            if (initializing) return;
+            radRecording_storage_CheckedChanged(this, EventArgs.Empty);
         }
 
         private void btnRecording_selectCustomFolder_Click(object sender, EventArgs e)
         {
+            using (FolderBrowserDialog dlg = new FolderBrowserDialog())
+            {
+                dlg.Description = "Select recording folder";
+                dlg.ShowNewFolderButton = true;
 
+                if (!string.IsNullOrEmpty(txtRecording_customFolder.Text))
+                {
+                    dlg.SelectedPath = txtRecording_customFolder.Text;
+                }
+
+                DialogResult result = dlg.ShowDialog(this);
+                if (result == DialogResult.OK && !string.IsNullOrEmpty(dlg.SelectedPath))
+                {
+                    txtRecording_customFolder.Text = dlg.SelectedPath;
+                }
+            }
         }
 
         private void btnRecording_openQuickFolder_Click(object sender, EventArgs e)
         {
-
+            string fullPath = console.ARP.AudioFolder;
+            try
+            {
+                if (Directory.Exists(console.AppDataPath))
+                {
+                    Process.Start("explorer.exe", console.AppDataPath);
+                }
+            }
+            catch { }
         }
 
         private void btnRecording_openRecordingsFolder_Click(object sender, EventArgs e)
         {
-
+            string fullPath = console.ARP.AudioFolder;
+            try
+            {
+                if (Directory.Exists(fullPath))
+                {
+                    Process.Start("explorer.exe", fullPath);
+                }
+            }
+            catch { }
         }
 
         private void comboRecording_samplerate_SelectedIndexChanged(object sender, EventArgs e)
@@ -36300,7 +36339,7 @@ namespace Thetis
         }
         private void updateSelectedRecordPlaybackSlot()
         {
-            lblRecording_activeSlot.Text = "Settings - Slot " + (_selected_voice_slot + 1).ToString();
+            lblRecording_activeSlot.Text = "Slot " + (_selected_voice_slot + 1).ToString();
         }
 
         private void chkRecording_slot_locked_CheckedChanged(object sender, EventArgs e)
@@ -36427,6 +36466,46 @@ namespace Thetis
                 updateMeterType();
             }
         }
+        private void btnRecording_openStorageFolder_Click(object sender, EventArgs e)
+        {
+            clsMeterTypeComboboxItem mti = lstMetersInUse.SelectedItem as clsMeterTypeComboboxItem;
+            if (mti == null) return;
+            MeterManager.clsMeter m = meterFromSelectedContainer();
+            if (m == null) return;
+            MeterManager.clsMeterItem mi = m.GetMeterItem(mti.MeterType, mti.Order);
+            if (m == null) return;
+            MeterManager.clsVoiceRecordPlay vrp = mi as MeterManager.clsVoiceRecordPlay;
+            if (vrp == null) return;
+
+            string fullPath = System.IO.Path.Combine(console.ARP.AudioFolder, vrp.UniqueID);
+
+            try
+            {
+                // recorder class only makes the folder if a recording is made, just add it here if we go to view it
+                // before recordings made
+                if (!Directory.Exists(fullPath))
+                {
+                    Directory.CreateDirectory(fullPath);
+                }
+            }
+            catch { }
+            try
+            {
+                if (Directory.Exists(fullPath))
+                {
+                    Process.Start("explorer.exe", fullPath);
+                }
+            }
+            catch { }
+        }
+        private void txtRecording_customFolder_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.SuppressKeyPress = true;
+        }
+        private void txtRecording_customFolder_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
         #endregion
 
         private void chkActivePeakRX1_tx_CheckedChanged(object sender, EventArgs e)
@@ -36438,6 +36517,7 @@ namespace Thetis
         {
             Display.ActivePeakInTxRX2 = chkActivePeakRX2_tx.Checked;
         }
+
     }
 
     #region FormLoactionHelper
