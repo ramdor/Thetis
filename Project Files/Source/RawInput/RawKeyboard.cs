@@ -168,8 +168,8 @@ namespace RawInput_dll
 			}
 
 			var isBreakBitSet = ((flags & Win32.RI_KEY_BREAK) != 0);
-			
-			keyPressEvent.KeyPressState = isBreakBitSet ? "BREAK" : "MAKE"; 
+
+			keyPressEvent.KeyPressState = !isBreakBitSet;// "BREAK" : "MAKE";  // break is unpressed, make is pressed
 			keyPressEvent.Message = _rawBuffer.data.keyboard.Message;
 			keyPressEvent.VKeyName = KeyMapper.GetKeyName(VirtualKeyCorrection(virtualKey, isE0BitSet, makeCode)).ToUpper();
 			keyPressEvent.VKey = virtualKey;

@@ -196,9 +196,6 @@
   <data name="arrow_bottomleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\arrow_bottomleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="picD1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\picD1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="play" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -220,17 +217,11 @@
   <data name="cm_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cm_red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="s_meter_collins3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\s-meter-collins3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="brush32border" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\brush32border.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="swiss" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swiss.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="picD1orig" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\picD1orig.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ob_circle" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ob_circle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -361,9 +352,6 @@
   <data name="ob_mute_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ob_mute_off.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="picD2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\picD2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="swisscl" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swisscl.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -484,9 +472,6 @@
   <data name="lock_locked" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\lock_locked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="picD11" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\picD1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="ob_spectrascope" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ob_spectrascope.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -543,5 +528,8 @@
   </data>
   <data name="paflt" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\paflt.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="refresh-64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh-64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

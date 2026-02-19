@@ -230,7 +230,7 @@
 		<Shortcut Id="NetworkSettingsShortcut"
         Name="NetworkSettings"
         Description="Network Settings Guide"
-        Target="[INSTALLFOLDER]Thetis Network Settings_0.1.pdf"
+        Target="[INSTALLFOLDER]Thetis Network Settings_0.2.pdf"
         WorkingDirectory="INSTALLFOLDER" />
 		  
 	  </Component>
@@ -418,6 +418,55 @@
 		</Component>
 
 		<!-- 
+		NAudio
+		-->
+		<Component Guid="*">
+			<File Id="NAudio"
+				  Source="$(var.FilesPath)NAudio.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="NAudio.Asio"
+				  Source="$(var.FilesPath)NAudio.Asio.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="NAudio.Core"
+				  Source="$(var.FilesPath)NAudio.Core.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="NAudio.Midi"
+				  Source="$(var.FilesPath)NAudio.Midi.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="NAudio.Wasapi"
+				  Source="$(var.FilesPath)NAudio.Wasapi.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="NAudio.WinForms"
+				  Source="$(var.FilesPath)NAudio.WinForms.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<Component Guid="*">
+			<File Id="NAudio.WinMM"
+				  Source="$(var.FilesPath)NAudio.WinMM.dll"
+				  KeyPath="yes"
+              />
+		</Component>
+		<!-- 
+		NAudio end
+		-->
+		
+		<!-- 
 		Additional
 		-->
 		<Component Guid="*">
@@ -474,20 +523,6 @@
 				  KeyPath="yes"
               />
 		</Component>
-		<!-- 
-		<Component Guid="*">
-			<File Id="System.IO.CompressionDLL"
-				  Source="$(var.FilesPath)System.IO.Compression.dll"
-				  KeyPath="yes"
-              />
-		</Component>
-		<Component Guid="*">
-			<File Id="System.IO.Compression.ZipFileDLL"
-				  Source="$(var.FilesPath)System.IO.Compression.ZipFile.dll"
-				  KeyPath="yes"
-              />
-		</Component>
-		-->
 		<!-- 
 		Additional end
 		-->
@@ -760,7 +795,7 @@
 		</Component>
 		<Component Guid="*">
 			<File Id="NetworkSettingsPDF"
-				Source="$(var.DocumentationPath)Thetis Network Settings_0.1.pdf"
+				Source="$(var.DocumentationPath)Thetis Network Settings_0.2.pdf"
 				KeyPath="yes"
 				Checksum="yes"
             />

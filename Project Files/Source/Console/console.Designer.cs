@@ -330,7 +330,6 @@
         private MenuStrip menuStrip1;
         private ToolStripMenuItem setupToolStripMenuItem;
         private ToolStripMenuItem memoryToolStripMenuItem;
-        private ToolStripMenuItem waveToolStripMenuItem;
         private ToolStripMenuItem equalizerToolStripMenuItem;
         private ToolStripMenuItem xVTRsToolStripMenuItem;
         private ToolStripMenuItem cWXToolStripMenuItem;
@@ -741,7 +740,6 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.databaseManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.memoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.waveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.equalizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xVTRsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cWXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -961,8 +959,8 @@
             this.panelRX2RF = new System.Windows.Forms.PanelTS();
             this.ptbRX2Squelch = new Thetis.PrettyTrackBar();
             this.panelRX2DSP = new System.Windows.Forms.PanelTS();
-            this.btnHidden = new System.Windows.Forms.ButtonTS();
             this.panelOptions = new System.Windows.Forms.PanelTS();
+            this.btnHidden = new System.Windows.Forms.ButtonTS();
             this.radBand2 = new System.Windows.Forms.RadioButtonTS();
             this.panelModeSpecificPhone = new System.Windows.Forms.PanelTS();
             this.lblTXHigh = new System.Windows.Forms.LabelTS();
@@ -4101,7 +4099,6 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setupToolStripMenuItem,
             this.memoryToolStripMenuItem,
-            this.waveToolStripMenuItem,
             this.equalizerToolStripMenuItem,
             this.xVTRsToolStripMenuItem,
             this.cWXToolStripMenuItem,
@@ -4156,13 +4153,6 @@
             this.memoryToolStripMenuItem.Name = "memoryToolStripMenuItem";
             resources.ApplyResources(this.memoryToolStripMenuItem, "memoryToolStripMenuItem");
             this.memoryToolStripMenuItem.Click += new System.EventHandler(this.memoryToolStripMenuItem_Click);
-            // 
-            // waveToolStripMenuItem
-            // 
-            this.waveToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.waveToolStripMenuItem.Name = "waveToolStripMenuItem";
-            resources.ApplyResources(this.waveToolStripMenuItem, "waveToolStripMenuItem");
-            this.waveToolStripMenuItem.Click += new System.EventHandler(this.waveToolStripMenuItem_Click);
             // 
             // equalizerToolStripMenuItem
             // 
@@ -5886,13 +5876,6 @@
             this.panelRX2DSP.Controls.Add(this.chkRX2BIN);
             this.panelRX2DSP.Name = "panelRX2DSP";
             // 
-            // btnHidden
-            // 
-            this.btnHidden.ForeColor = System.Drawing.Color.White;
-            resources.ApplyResources(this.btnHidden, "btnHidden");
-            this.btnHidden.Name = "btnHidden";
-            this.btnHidden.Selectable = true;
-            // 
             // panelOptions
             // 
             resources.ApplyResources(this.panelOptions, "panelOptions");
@@ -5909,6 +5892,13 @@
             this.panelOptions.Controls.Add(this.comboTuneMode);
             this.panelOptions.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panelOptions.Name = "panelOptions";
+            // 
+            // btnHidden
+            // 
+            this.btnHidden.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.btnHidden, "btnHidden");
+            this.btnHidden.Name = "btnHidden";
+            this.btnHidden.Selectable = true;
             // 
             // radBand2
             // 

@@ -216,12 +216,12 @@ namespace Thetis
             set { rx2_dsp_mode = value; }
         }
         
-        private static double sample_rate = 48000.0;
+        //private static double sample_rate = 48000.0;
         private static int rx1_dsp_rate = 48000;
         private static int rx2_dsp_rate = 48000;
 		public static double SampleRate
 		{
-			get { return sample_rate; }
+			//get { return sample_rate; }
 			set 
 			{
                 switch (rx1_dsp_mode)
@@ -244,7 +244,7 @@ namespace Thetis
                         break;
                 }
                 
-                sample_rate = value;
+                //sample_rate = value;
 				WDSP.SetDSPSamplerate(WDSP.id(0, 0), rx1_dsp_rate);
 				WDSP.SetDSPSamplerate(WDSP.id(0, 1), rx1_dsp_rate);
 				WDSP.SetDSPSamplerate(WDSP.id(2, 0), rx2_dsp_rate);

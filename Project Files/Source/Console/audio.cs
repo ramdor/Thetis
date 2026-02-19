@@ -126,43 +126,43 @@ namespace Thetis
             set { tx_output_signal = value; }
         }
 
-        private static bool record_rx_preprocessed = false;
-        public static bool RecordRXPreProcessed
-        {
-            get { return record_rx_preprocessed; }
-            set
-            {
-                record_rx_preprocessed = value;
-                WaveThing.wrecorder[0].RxPre = value;
-                WaveThing.wrecorder[1].RxPre = value;
-            }
-        }
+        //private static bool record_rx_preprocessed = false;
+        //public static bool RecordRXPreProcessed
+        //{
+        //    get { return record_rx_preprocessed; }
+        //    set
+        //    {
+        //        record_rx_preprocessed = value;
+        //        WaveThing.wrecorder[0].RxPre = value;
+        //        WaveThing.wrecorder[1].RxPre = value;
+        //    }
+        //}
 
-        private static bool record_tx_preprocessed = true;
-        public static bool RecordTXPreProcessed
-        {
-            get { return record_tx_preprocessed; }
-            set
-            {
-                record_tx_preprocessed = value;
-                WaveThing.wrecorder[0].TxPre = value;
-                WaveThing.wrecorder[1].TxPre = value;
-            }
-        }
+        //private static bool record_tx_preprocessed = true;
+        //public static bool RecordTXPreProcessed
+        //{
+        //    get { return record_tx_preprocessed; }
+        //    set
+        //    {
+        //        record_tx_preprocessed = value;
+        //        WaveThing.wrecorder[0].TxPre = value;
+        //        WaveThing.wrecorder[1].TxPre = value;
+        //    }
+        //}
 
-        private static short bit_depth = 32;
-        public static short BitDepth
-        {
-            get { return bit_depth; }
-            set { bit_depth = value; }
-        }
+        //private static short bit_depth = 32;
+        //public static short BitDepth
+        //{
+        //    get { return bit_depth; }
+        //    set { bit_depth = value; }
+        //}
 
-        private static short format_tag = 3;
-        public static short FormatTag
-        {
-            get { return format_tag; }
-            set { format_tag = value; }
-        }
+        //private static short format_tag = 3;
+        //public static short FormatTag
+        //{
+        //    get { return format_tag; }
+        //    set { format_tag = value; }
+        //}
 
         private static bool vox_enabled = false;
         public static bool VOXEnabled
@@ -273,7 +273,7 @@ namespace Thetis
             set { rx2_enabled = value; }
         }
 
-        private static bool wave_playback = false;
+        private static volatile bool wave_playback = false;
         public static bool WavePlayback
         {
             get { return wave_playback; }
@@ -361,12 +361,7 @@ namespace Thetis
                     ivac.SetIVACmox(1, 0);
                 }
 
-                // [2.10.3.5]MW0LGE
-                if (WaveThing.wave_file_writer[0] != null)
-                    WaveThing.wave_file_writer[0].UpdateMox();
-                if (WaveThing.wave_file_writer[1] != null)
-                    WaveThing.wave_file_writer[1].UpdateMox();
-                //
+                WaveThing.UpdateMox();
             }
         }
 
@@ -527,6 +522,7 @@ namespace Thetis
             }
             set
             {
+                Debug.Print("VAC BYPASS : " + value.ToString());
                 vac_bypass = value;
                 cmaster.CMSetTXAPanelGain1(WDSP.id(1, 0));
                 ivac.SetIVACbypass(0, Convert.ToInt32(value));
@@ -1563,91 +1559,6 @@ namespace Thetis
             return false;
         }
 
-        //public static ArrayList GetPAHosts() // returns a text list of driver types
-        //{
-        //    var a = new ArrayList();
-
-        //    foreach (var api in PortAudioHostApi.SupportedHostApis)
-        //    {
-        //        a.Add(api.Name);
-        //    }
-        //    a.Add("HPSDR (USB/UDP)");
-        //    return a;
-        //}
-
-        //public static ArrayList GetPAInputDevices(int hostIndex)
-        //{
-        //    var a = new ArrayList();
-
-
-        //    if (hostIndex >= PortAudioHostApi.SupportedHostApis.Count())
-        //    {
-        //        a.Add(new PADeviceInfo("HPSDR (PCM A/D)", 0));               
-        //        return a;
-        //    }
-
-        //    var hst = PortAudioHostApi.SupportedHostApis.ElementAt(hostIndex);         
-        //    int idx = 0;
-        //        foreach (var dev in hst.Devices)
-        //        {
-        //            if (dev.MaxInputChannels > 0)
-        //            {
-        //                string name = dev.Name;
-        //                int index = name.IndexOf("- ");
-        //                if (index > 0)
-        //                {
-        //                    char c = name[index - 1]; // make sure this is what we're looking for
-        //                    if (c >= '0' && c <= '9') // it is... remove index
-        //                    {
-        //                        int x = name.IndexOf("(");
-        //                        name = dev.Name.Substring(0, x + 1); // grab first part of string including "("
-        //                        name += dev.Name.Substring(index + 2, dev.Name.Length - index - 2); // add end of string;
-        //                    }
-        //                }
-        //                a.Add(new PADeviceInfo(name, idx));
-        //            idx++;
-        //            }
-        //        }
-
-        //    return a;
-        //}
-
-        //public static ArrayList GetPAOutputDevices(int hostIndex)
-        //{
-        //    var a = new ArrayList();
-
-        //    if (hostIndex >= PortAudioHostApi.SupportedHostApis.Count())
-        //    {
-        //        a.Add(new PADeviceInfo("HPSDR (PWM D/A)", 0));
-        //        return a;
-        //    }
-
-        //    var hst = PortAudioHostApi.SupportedHostApis.ElementAt(hostIndex);       
-        //    int idx = 0;
-        //        foreach (var dev in hst.Devices)
-        //        {
-        //            if (dev.MaxOutputChannels > 0)
-        //            {
-        //                string name = dev.Name;
-        //                int index = name.IndexOf("- ");
-        //                if (index > 0)
-        //                {
-        //                    char c = name[index - 1]; // make sure this is what we're looking for
-        //                    if (c >= '0' && c <= '9') // it is... remove index
-        //                    {
-        //                        int x = name.IndexOf("(");
-        //                        name = dev.Name.Substring(0, x + 1); // grab first part of string including "("
-        //                        name += dev.Name.Substring(index + 2, dev.Name.Length - index - 2); // add end of string;
-        //                    }
-        //                }
-        //                a.Add(new PADeviceInfo(name, idx));
-        //                idx++;
-        //            }
-        //        }
-
-        //    return a;
-        //}
-
         public static void EnableVAC1(bool enable)
         {
             bool retval = false;
@@ -2143,18 +2054,6 @@ namespace Thetis
         {
             lock (m_objArrayLock)
             {
-                //if (scope2_min == null || scope2_min.Length < scope_display_width)
-                //{
-                //    if (Display.Scope2Min == null || Display.Scope2Min.Length < scope_display_width)
-                //        Display.Scope2Min = new float[scope_display_width];
-                //    scope2_min = Display.Scope2Min;
-                //}
-                //if (scope2_max == null || scope2_max.Length < scope_display_width)
-                //{
-                //    if (Display.Scope2Max == null || Display.Scope2Max.Length < scope_display_width)
-                //        Display.Scope2Max = new float[scope_display_width];
-                //    scope2_max = Display.Scope2Max;
-                //}
                 if (scope2_min == null || scope2_max == null) return;
 
                 int scope_samples_per_pixel_local = !mox ? m_nScope_samples_per_pixel : m_nScope_samples_per_pixel_tx; //[2.10.3.5]MW0LGE added

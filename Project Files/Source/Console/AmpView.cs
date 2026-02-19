@@ -103,6 +103,7 @@ namespace Thetis
             chkAVShowGain_CheckedChanged(this, ex);
             chkAVLowRes_CheckedChanged(this, ex);
             chkAVPhaseZoom_CheckedChanged(this, ex);
+            chkStayOnTop_CheckedChanged(this, ex);
         }
         private void disp_setup()
         {

@@ -4597,6 +4597,20 @@ namespace Thetis
                 }
             }
         }
+
+        private static bool _activePeakInTxRX1 = false;
+        private static bool _activePeakInTxRX2 = false;
+        public static bool ActivePeakInTxRX1
+        {
+            get { return _activePeakInTxRX1; }
+            set { _activePeakInTxRX1 = value; }
+        }
+        public static bool ActivePeakInTxRX2
+        {
+            get { return _activePeakInTxRX2; }
+            set { _activePeakInTxRX2 = value; }
+        }
+
         // ExponentialMovingAverage previous values for 2tone calcs
         private static float _ema_dbc = -999; //used as the init state
         private static int _two_tone_readings_X_offset = 50;
@@ -4656,7 +4670,7 @@ namespace Thetis
 
             if (rx == 1)
             {
-                bSpectralPeakHold = !local_mox && m_bSpectralPeakHoldRX1 && !m_bDelayRX1SpectrumPeaks;
+                bSpectralPeakHold = (!local_mox || _activePeakInTxRX1) && m_bSpectralPeakHoldRX1 && !m_bDelayRX1SpectrumPeaks;
                 dSpectralPeakHoldDelay = m_dSpecralPeakHoldDelayRX1;
                 bPeakBlobs = m_bPeakBlobMaximums && !m_bDelayRX1Blobs;
                 show_imd_measurements = local_mox && _testing_imd && _show_imd_measurements && displayduplex;
@@ -4704,7 +4718,7 @@ namespace Thetis
             }
             else// rx == 2
             {
-                bSpectralPeakHold = !local_mox && m_bSpectralPeakHoldRX2 && !m_bDelayRX2SpectrumPeaks;
+                bSpectralPeakHold = (!local_mox || _activePeakInTxRX2) && m_bSpectralPeakHoldRX2 && !m_bDelayRX2SpectrumPeaks;
                 dSpectralPeakHoldDelay = m_dSpecralPeakHoldDelayRX2;
                 bPeakBlobs = m_bPeakBlobMaximums && !m_bDelayRX2Blobs;
                 show_imd_measurements = false;

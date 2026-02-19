@@ -32,7 +32,7 @@
 // by Chris Codella, W2PA, May 2017.  Indicated by //-W2PA comment lines. 
 // Modifications for using the new database import function.  W2PA, 29 May 2017
 // Support QSK, possible with Protocol-2 firmware v1.7 (Orion-MkI and Orion-MkII), and later.  W2PA, 5 April 2019 
-// Modfied heavily - Copyright (C) 2019-2025 Richard Samphire (MW0LGE)
+// Modfied heavily - Copyright (C) 2019-2026 Richard Samphire (MW0LGE)
 //
 //============================================================================================//
 // Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
@@ -151,7 +151,7 @@ namespace Thetis
 
         public MemoryForm memoryForm;
         public MemoryList MemoryList { get; private set; }
-        public WaveControl WaveForm;
+        //public WaveControl WaveForm;
 
         //====================================================================================
 
@@ -539,6 +539,9 @@ namespace Thetis
         private long _error_log_initial_size = -1;
         private bool _touch_support = false;
 
+        // audio recording and playback
+        private clsAudioRecordPlayback _arp = null;
+
         public bool TouchSupport
         {
             get { return _touch_support; }
@@ -568,7 +571,7 @@ namespace Thetis
         static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprcUpdate, IntPtr hrgnUpdate, uint flags);
         // ----
         // rawinput grabbing for mousewheel/keyboard
-        private RawInput m_objRawinput;
+        private RawInput m_objRawinput = null;
         // ----
         private static System.Timers.Timer autoStartTimer;
         // ----
@@ -1935,7 +1938,7 @@ namespace Thetis
             Common.RestoreForm(EQForm, "EQForm", false);
 
             XVTRForm = new XVTRForm(this);
-            WaveForm = new WaveControl(this) { StartPosition = FormStartPosition.Manual };	// create Wave form
+            //WaveForm = new WaveControl(this) { StartPosition = FormStartPosition.Manual };	// create Wave form
 
             MemoryList = MemoryList.Restore();
             MemoryList.CheckVersion();
@@ -2619,6 +2622,10 @@ namespace Thetis
         public void ExitConsole()
         {
             shutdownLogStringToPath("Inside ExitConsole()");
+
+            shutdownLogStringToPath("Before recorder/player stops");
+            ARP.StopRecord(out _);
+            ARP.StopPlayback(out _);
 
             shutdownLogStringToPath("Before finder WriteXmlFinderFile()");
             if(_frmFinder != null) _frmFinder.WriteXmlFinderFile(AppDataPath);
@@ -7538,8 +7545,11 @@ namespace Thetis
             int nddc = 0;
             int cntrl1 = 0;
             int cntrl2 = 0;
-            if (_diversity2)
-                P1_diversity = 1;
+
+            bool p1 = NetworkIO.CurrentRadioProtocol == RadioProtocol.USB;
+            bool puresignal_enabled = psform.PSEnabled;
+            bool diversity_enabled = Diversity2;
+            if (diversity_enabled) P1_diversity = 1;
 
             HPSDRModel hpsdr_model = HardwareSpecific.Model;
 
@@ -7562,7 +7572,7 @@ namespace Thetis
                     nddc = 5;
                     if (!_mox)
                     {
-                        if (_diversity2)
+                        if (diversity_enabled)
                         {
                             P1_DDCConfig =
                             DDCEnable = DDC0;
@@ -7577,6 +7587,7 @@ namespace Thetis
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
                             SyncEnable = 0;
+                            if (p1) Rate[0] = rx1_rate; // [2.10.3.13]MW0LGE p1 !
                             Rate[2] = rx1_rate;
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
@@ -7584,16 +7595,17 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!_diversity2 && !psform.PSEnabled)
+                        if (!diversity_enabled && !puresignal_enabled)
                         {
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
                             SyncEnable = 0;
+                            if (p1) Rate[0] = rx1_rate; // [2.10.3.13]MW0LGE p1 !
                             Rate[2] = rx1_rate;
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
-                        else if (!_diversity2 && psform.PSEnabled)
+                        else if (!diversity_enabled && puresignal_enabled)
                         {
                             P1_DDCConfig = 3;
                             DDCEnable = DDC0 + DDC2;
@@ -7604,7 +7616,7 @@ namespace Thetis
                             cntrl1 = (rx_adc_ctrl1 & 0xf3) | 0x08;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
-                        else if (_diversity2 && psform.PSEnabled)
+                        else if (diversity_enabled && puresignal_enabled)
                         {
                             P1_DDCConfig = 3;
                             DDCEnable = DDC0 + DDC2;
@@ -7616,7 +7628,7 @@ namespace Thetis
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
                         else
-                        {// diversity2 && !psform.PSEnabled
+                        {// diversity_enabled && !puresignal_enabled
                             P1_DDCConfig = 2;
                             DDCEnable = DDC0;
                             SyncEnable = DDC1;
@@ -7638,7 +7650,7 @@ namespace Thetis
                     nddc = 5;
                     if (!_mox)
                     {
-                        if (_diversity2)
+                        if (diversity_enabled)
                         {
                             P1_DDCConfig = 2; // REDPITAYA PAVEL
                             DDCEnable = DDC0;
@@ -7663,7 +7675,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!_diversity2 && !psform.PSEnabled)
+                        if (!diversity_enabled && !puresignal_enabled)
                         {
                             P1_DDCConfig = 1;
                             DDCEnable = DDC2;
@@ -7674,7 +7686,7 @@ namespace Thetis
                             cntrl1 = rx_adc_ctrl1 & 0xff;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
-                        else if (!_diversity2 && psform.PSEnabled)
+                        else if (!diversity_enabled && puresignal_enabled)
                         {
                             P1_DDCConfig = 3;
                             DDCEnable = DDC0 + DDC2;
@@ -7685,7 +7697,7 @@ namespace Thetis
                             cntrl1 = (rx_adc_ctrl1 & 0xf3) | 0x08;
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
-                        else if (_diversity2 && psform.PSEnabled)
+                        else if (diversity_enabled && puresignal_enabled)
                         {
                             P1_DDCConfig = 3;
                             DDCEnable = DDC0 + DDC2;
@@ -7697,7 +7709,7 @@ namespace Thetis
                             cntrl2 = rx_adc_ctrl2 & 0x3f;
                         }
                         else
-                        {// diversity2 && !psform.PSEnabled
+                        {// diversity_enabled && !puresignal_enabled
                             P1_DDCConfig = 2;
                             DDCEnable = DDC0;
                             SyncEnable = DDC1;
@@ -7723,7 +7735,7 @@ namespace Thetis
                     nddc = 4;
                     if (!_mox)
                     {
-                        if (!_diversity2)
+                        if (!diversity_enabled)
                         {
                             P1_DDCConfig = 4;
                             DDCEnable = DDC0;
@@ -7751,7 +7763,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!_diversity2 && !psform.PSEnabled)
+                        if (!diversity_enabled && !puresignal_enabled)
                         {
                             P1_DDCConfig = 4;
                             DDCEnable = DDC0;
@@ -7766,7 +7778,7 @@ namespace Thetis
                                 Rate[1] = rx2_rate;
                             }
                         }
-                        else if (_diversity2 && !psform.PSEnabled)
+                        else if (diversity_enabled && !puresignal_enabled)
                         {
                             P1_DDCConfig = 5;
                             DDCEnable = DDC0;
@@ -7795,7 +7807,7 @@ namespace Thetis
                     nddc = 2;
                     if (!_mox)
                     {
-                        if (!_diversity2)
+                        if (!diversity_enabled)
                         {
                             P1_DDCConfig = 4;
                             DDCEnable = DDC0;
@@ -7823,7 +7835,7 @@ namespace Thetis
                     }
                     else
                     {
-                        if (!_diversity2 && !psform.PSEnabled)
+                        if (!diversity_enabled && !puresignal_enabled)
                         {
                             P1_DDCConfig = 4;
                             DDCEnable = DDC0;
@@ -7838,7 +7850,7 @@ namespace Thetis
                                 Rate[1] = rx2_rate;
                             }
                         }
-                        else if (_diversity2 && !psform.PSEnabled)
+                        else if (diversity_enabled && !puresignal_enabled)
                         {
                             P1_DDCConfig = 5;
                             DDCEnable = DDC0;
@@ -11513,18 +11525,18 @@ namespace Thetis
             set
             {
 
-                if (value == true)
-                {
-                    WaveForm.RECPLAY = true;                 // this sets recording to POST (not IQ pre) 
-                    WaveForm.RECPLAY2 = true;                // and reduces .wav to 48000 SR to save file size
+                //if (value == true)
+                //{
+                //    WaveForm.RECPLAY = true;                 // this sets recording to POST (not IQ pre) 
+                //    WaveForm.RECPLAY2 = true;                // and reduces .wav to 48000 SR to save file size
 
-                    WaveForm.checkBoxRecord.Checked = true; // start recording
+                //    WaveForm.checkBoxRecord.Checked = true; // start recording
 
-                }
-                else
-                {
-                    WaveForm.checkBoxRecord.Checked = value; // start recording
-                }
+                //}
+                //else
+                //{
+                //    WaveForm.checkBoxRecord.Checked = value; // start recording
+                //}
             }
         }
 
@@ -11532,7 +11544,7 @@ namespace Thetis
         {
             set
             {
-                WaveForm.RECPLAY3 = true;                // and restores .wav to original SR size
+                //WaveForm.RECPLAY3 = true;                // and restores .wav to original SR size
             }
 
         }
@@ -11543,14 +11555,14 @@ namespace Thetis
             {
                 if (value == false)
                 {
-                    waveToolStripMenuItem.ForeColor = SystemColors.ControlLightLight;
-                    waveToolStripMenuItem.Text = "Wave";
+                    //waveToolStripMenuItem.ForeColor = SystemColors.ControlLightLight;
+                    //waveToolStripMenuItem.Text = "Wave";
 
                 }
                 else
                 {
-                    waveToolStripMenuItem.ForeColor = Color.Red;
-                    waveToolStripMenuItem.Text = "Record";
+                    //waveToolStripMenuItem.ForeColor = Color.Red;
+                    //waveToolStripMenuItem.Text = "Record";
 
 
                 }
@@ -14498,23 +14510,56 @@ namespace Thetis
             }
         }
 
-        private double _wave_freq = 0.0;
-        private bool _wave_playback = false;
-        public bool WavePlayback
+        //private double _wave_freq = 0.0;
+        //private bool _wave_playback = false;
+        //public bool WavePlayback
+        //{
+        //    get { return _wave_playback; }
+        //    set
+        //    {
+        //        _wave_playback = value;
+        //        if (_wave_playback)
+        //        {
+        //            _wave_freq = (VFOAFreq * 1e6) % sample_rate_rx1;
+        //        }
+        //        else
+        //        {
+        //            txtVFOAFreq_LostFocus(this, EventArgs.Empty);
+        //        }
+        //    }
+        //}
+        private bool[] _wave_playback = new bool[2] { false, false }; // these playback ID based, not rx# based, however there
+                                                                      // is one per rx
+        private double[] _wave_playback_frequency = new double[2] { 0.0, 0.0 };
+        public void SetWavePlayback(int id, bool enabled)
         {
-            get { return _wave_playback; }
-            set
+            if (id < 0 || id > _wave_playback.Length - 1) return;
+
+            _wave_playback[id] = enabled;
+            switch(id)
             {
-                _wave_playback = value;
-                if (_wave_playback)
-                {
-                    _wave_freq = (VFOAFreq * 1e6) % sample_rate_rx1;
-                }
-                else
-                {
-                    txtVFOAFreq_LostFocus(this, EventArgs.Empty);
-                }
+                case 0:
+                    _wave_playback_frequency[id] = (VFOAFreq * 1e6) % sample_rate_rx1;
+                    txtVFOAFreq_LostFocus(this, EventArgs.Empty); // always do
+                    break;
+                case 1:
+                    _wave_playback_frequency[id] = (VFOBFreq * 1e6) % sample_rate_rx2;
+                    if (RX2Enabled)
+                    {                            
+                        txtVFOBFreq_LostFocus(this, EventArgs.Empty); // always do if rx2 enabled
+                    }
+                    break;
             }
+        }
+        private bool getWavePlayback(int id)
+        {
+            if (id < 0 || id > _wave_playback.Length - 1) return false;
+            return _wave_playback[id];
+        }
+        public double getWavePlaybackFreq(int id)
+        {
+            if (id < 0 || id > _wave_playback.Length - 1) return 0.0;
+            return _wave_playback_frequency[id];
         }
 
         private bool saved_rx_only = false;
@@ -17845,7 +17890,10 @@ namespace Thetis
         public bool MOX
         {
             get { return chkMOX.Checked; }
-            set { chkMOX.Checked = value; }
+            set 
+            {
+                chkMOX.Checked = value; 
+            }
         }
 
         public bool MOXEnabled
@@ -17857,7 +17905,10 @@ namespace Thetis
         public bool MON
         {
             get { return chkMON.Checked; }
-            set { chkMON.Checked = value; }
+            set 
+            {
+                chkMON.Checked = value; 
+            }
         }
 
         public bool MUT
@@ -19130,6 +19181,7 @@ namespace Thetis
                 RadioDSP.SampleRate = value;
                 Audio.SampleRate1 = value;
                 Display.SampleRateRX1 = value;
+
                 switch (_rx1_dsp_mode)
                 {
                     case DSPMode.SPEC:
@@ -19150,7 +19202,7 @@ namespace Thetis
                     case DisplayMode.HISTOGRAM:
                         UpdateRXSpectrumDisplayVars();
                         break;
-                }
+                }                
 
                 if (m_nOldSampleRateRX1 != sample_rate_rx1)
                     SampleRateChangedHandlers?.Invoke(1, m_nOldSampleRateRX1, sample_rate_rx1);
@@ -19170,6 +19222,7 @@ namespace Thetis
 
                 Audio.SampleRateRX2 = value;
                 Display.SampleRateRX2 = value;
+
                 switch (_rx1_dsp_mode)
                 {
                     case DSPMode.SPEC:
@@ -25110,13 +25163,17 @@ namespace Thetis
                                 _stop_all_tx = false;
                         }
 
-                        if (chkVAC1.Checked && (((mic_ptt || cw_ptt) && _allow_vac_bypass) || (VOXEnable && _allow_micvox_bypass)))
+                        //VACBypass
+                        if (!(ARP.IsBusy && BypassVACWhenPlayingWAV)) // dont change vac bypass if it being used by ARP
                         {
-                            if (!Audio.VACBypass) Audio.VACBypass = true;
-                        }
-                        else if (chkVAC1.Checked && Audio.VACBypass)
-                        {
-                            Audio.VACBypass = false;
+                            if (chkVAC1.Checked && (((mic_ptt || cw_ptt) && _allow_vac_bypass) || (VOXEnable && _allow_micvox_bypass)))
+                            {
+                                if (!Audio.VACBypass) Audio.VACBypass = true;
+                            }
+                            else if (chkVAC1.Checked && Audio.VACBypass)
+                            {
+                                Audio.VACBypass = false;
+                            }
                         }
 
                         if (_tci_ptt)
@@ -25210,9 +25267,13 @@ namespace Thetis
                                 break;
                         }
 
-                        if (chkVAC1.Checked && vac_bypass_disable)
+                        //VACBypass
+                        if (!(ARP.IsBusy && BypassVACWhenPlayingWAV)) // dont change vac bypass if it being used by ARP
                         {
-                            if (Audio.VACBypass) Audio.VACBypass = false;
+                            if (chkVAC1.Checked && vac_bypass_disable)
+                            {
+                                if (Audio.VACBypass) Audio.VACBypass = false;
+                            }
                         }
                     }
                 }
@@ -25806,7 +25867,7 @@ namespace Thetis
         }   
         private void timer_cpu_volts_meter_Tick(object sender, System.EventArgs e)
         {
-            if (DisplayVoltsAmps && HardwareSpecific.HasVolts && HardwareSpecific.HasAmps) //DH1KLM
+            if (DisplayVoltsAmps && HardwareSpecific.HasVolts && HardwareSpecific.HasAmps)
             {
                 computeMKIIPAVoltsAmps(); //MW0LGE_21k9c
 
@@ -26327,15 +26388,20 @@ namespace Thetis
                                 {
                                     _current_ptt_mode = PTTMode.SPACE;
                                     chkMOX.Checked = !chkMOX.Checked;
-                                    if (chkMOX.Checked)
-                                    {
-                                        if (chkVAC1.Checked && allow_space_bypass)
-                                            Audio.VACBypass = true;
-                                    }
-                                    else
-                                    {
-                                        if (chkVAC1.Checked && Audio.VACBypass)
-                                            Audio.VACBypass = false;
+
+                                    //VACBypass
+                                    if (!(ARP.IsBusy && BypassVACWhenPlayingWAV)) // dont change vac bypass if it being used by ARP
+                                    {                                        
+                                        if (chkMOX.Checked)
+                                        {
+                                            if (chkVAC1.Checked && allow_space_bypass)
+                                                Audio.VACBypass = true;
+                                        }
+                                        else
+                                        {
+                                            if (chkVAC1.Checked && Audio.VACBypass)
+                                                Audio.VACBypass = false;
+                                        }
                                     }
 
                                     e.Handled = true;
@@ -28402,11 +28468,11 @@ namespace Thetis
                 if (RX2Enabled && chkRX2Mute.Checked) chkRX2Mute.Checked = false;
             }
 
-            if (_mox && !chkMON.Checked)
-            {
-                // monitor is muted
-                // Audio.MonitorVolume = 0.0;
-            }
+            //if (_mox && !chkMON.Checked)
+            //{
+            //    // monitor is muted
+            //    // Audio.MonitorVolume = 0.0;
+            //}
             else
             {
                 if ((_rx1_dsp_mode == DSPMode.CWL || _rx1_dsp_mode == DSPMode.CWU) &&
@@ -29094,19 +29160,23 @@ namespace Thetis
                 return;
             }
 
-            if (allow_mox_bypass && _current_ptt_mode != PTTMode.MIC &&
-                                    _current_ptt_mode != PTTMode.SPACE &&
-                                    _current_ptt_mode != PTTMode.CAT)
+            //VACBypass
+            if (!(ARP.IsBusy && BypassVACWhenPlayingWAV)) // dont change vac bypass if it being used by ARP
             {
-                if (chkMOX.Checked)
+                if (allow_mox_bypass && _current_ptt_mode != PTTMode.MIC &&
+                                        _current_ptt_mode != PTTMode.SPACE &&
+                                        _current_ptt_mode != PTTMode.CAT)
                 {
-                    if (chkVAC1.Checked)
-                        Audio.VACBypass = true;
-                }
-                else
-                {
-                    if (chkVAC1.Checked && Audio.VACBypass)
-                        Audio.VACBypass = false;
+                    if (chkMOX.Checked)
+                    {
+                        if (chkVAC1.Checked)
+                            Audio.VACBypass = true;
+                    }
+                    else
+                    {
+                        if (chkVAC1.Checked && Audio.VACBypass)
+                            Audio.VACBypass = false;
+                    }
                 }
             }
 
@@ -31583,11 +31653,20 @@ namespace Thetis
 
             if (chkPower.Checked)
             {
-                if (Audio.WavePlayback)
+                //if (Audio.WavePlayback) //wave
+                //{
+                //    double f = (_wave_freq - (VFOAFreq * 1e6) % sample_rate_rx1);
+                //    if (f > sample_rate_rx1 / 2) f -= sample_rate_rx1;
+                //    if (f < -sample_rate_rx1 / 2) f += sample_rate_rx1;
+                //    radio.GetDSPRX(0, 0).RXOsc = f;
+                //}
+                //else
+                if(getWavePlayback(0) && !MOX) //wave
                 {
-                    double f = (_wave_freq - (VFOAFreq * 1e6) % sample_rate_rx1);
+                    double f = (getWavePlaybackFreq(0) - (VFOAFreq * 1e6) % sample_rate_rx1);
                     if (f > sample_rate_rx1 / 2) f -= sample_rate_rx1;
                     if (f < -sample_rate_rx1 / 2) f += sample_rate_rx1;
+                    Display.FreqDiff = (int)f;
                     radio.GetDSPRX(0, 0).RXOsc = f;
                 }
                 else
@@ -33193,7 +33272,8 @@ namespace Thetis
                 mode != DSPMode.CWU &&
                 mode != DSPMode.DIGL &&
                 mode != DSPMode.DIGU &&
-                Audio.WavePlayback == false)
+                //Audio.WavePlayback == false) //wave
+                !getWavePlayback(rx == 1 ? 0 : 1))
             {
                 // round freq to the nearest tuning step
                 long f = (long)(freq * 1000000.0);
@@ -36541,42 +36621,90 @@ namespace Thetis
         }
 
 
-        private void ckQuickPlay_CheckedChanged(object sender, System.EventArgs e)
+        private async void ckQuickPlay_CheckedChanged(object sender, System.EventArgs e)
         {
+            //if (ckQuickPlay.Checked)
+            //{
+            //    WaveForm.QuickPlay = true;
+            //    ckQuickPlay.BackColor = button_selected_color;
+            //}
+            //else
+            //{
+            //    WaveForm.QuickPlay = false;
+            //    ckQuickPlay.BackColor = SystemColors.Control;
+            //}            
+            if (!ckQuickPlay.Enabled) return; // leave if this function called direct
             if (ckQuickPlay.Checked)
             {
-                WaveForm.QuickPlay = true;
+                ckQuickRec.Enabled = false;
                 ckQuickPlay.BackColor = button_selected_color;
+                string file = Path.Combine(AppDataPath, "SDRQuickAudio.wav");
+                bool ok = ARP.PlayFileViaWDSP("quick", file, 0, out string error);
+                if (!ok)
+                {
+                    ckQuickPlay.CheckedChanged -= ckQuickPlay_CheckedChanged;
+                    ckQuickPlay.Checked = false;
+                    ckQuickPlay.CheckedChanged += ckQuickPlay_CheckedChanged;
+                    ckQuickRec.Enabled = true;
+                }
             }
             else
             {
-                WaveForm.QuickPlay = false;
+                ckQuickRec.Enabled = true;
                 ckQuickPlay.BackColor = SystemColors.Control;
+                ARP.StopPlayback(out string error);
             }
-            ckQuickRec.Enabled = !ckQuickPlay.Checked;
         }
 
-        private bool _updated_from_wave_form = false;
-        public bool UpdatedFromWaveForm
-        {
-            // prevent wave form changes causing loop
-            get { return _updated_from_wave_form; }
-            set { _updated_from_wave_form = value; }
-        }
+        //private bool _updated_from_wave_form = false;
+        //public bool UpdatedFromWaveForm
+        //{
+        //    // prevent wave form changes causing loop
+        //    get { return _updated_from_wave_form; }
+        //    set { _updated_from_wave_form = value; }
+        //}
         private void ckQuickRec_CheckedChanged(object sender, System.EventArgs e)
         {
+            //if (ckQuickRec.Checked)
+            //{
+            //    if(!_updated_from_wave_form) WaveForm.QuickRec = true;
+            //    ckQuickPlay.Enabled = true;
+            //    ckQuickRec.BackColor = button_selected_color;
+            //}
+            //else
+            //{
+            //    if (!_updated_from_wave_form) WaveForm.QuickRec = false;
+            //    ckQuickRec.BackColor = SystemColors.Control;
+            //}
+            if (!ckQuickRec.Enabled) return; // leave if this function called direct
             if (ckQuickRec.Checked)
             {
-                if(!_updated_from_wave_form) WaveForm.QuickRec = true;
-                ckQuickPlay.Enabled = true;
+                ckQuickPlay.Enabled = false;
                 ckQuickRec.BackColor = button_selected_color;
+                string file = Path.Combine(AppDataPath, "SDRQuickAudio.wav");
+                RecordingDetails details = new RecordingDetails()
+                {
+                    Band = BandStackManager.BandToString(RX1Band),
+                    Frequency = VFOAFreq.ToString("F6", System.Globalization.CultureInfo.InvariantCulture),
+                    Mode = RX1DSPMode.ToString(),
+                    UtcTime = DateTime.UtcNow
+                };
+                string filename = ARP.RecordToFileFromWDSP("quick", file, 0, out string error, true, details);
+                if(string.IsNullOrEmpty(filename))
+                {
+                    ckQuickRec.CheckedChanged -= ckQuickRec_CheckedChanged;
+                    ckQuickRec.Checked = false;
+                    ckQuickRec.CheckedChanged += ckQuickRec_CheckedChanged;
+                    ckQuickPlay.Enabled = true;
+                }
             }
             else
             {
-                if (!_updated_from_wave_form) WaveForm.QuickRec = false;
+                string error;
+                ARP.StopRecord(out error);
+                ckQuickPlay.Enabled = true;
                 ckQuickRec.BackColor = SystemColors.Control;
             }
-            ckQuickPlay.Enabled = !ckQuickRec.Checked;
         }
         private void moveModeSpecificPanels()
         {
@@ -36953,8 +37081,8 @@ namespace Thetis
                 cmaster.CMSetFRXNBRun(1);
                 cmaster.CMSetFRXNB2Run(1);
                 cmaster.SetRunPanadapter(1, true);
-                cmaster.CMSetSRXWavePlayRun(1);
-                cmaster.CMSetSRXWaveRecordRun(1);
+                //wave cmaster.CMSetSRXWavePlayRun(1);
+                //wave cmaster.CMSetSRXWaveRecordRun(1);
                 chkRX2.Checked = value;
 
                 if (rx2_enabled)
@@ -38167,7 +38295,7 @@ namespace Thetis
         }
 
         private bool m_bBypassVACWhenPlayingRecording = false;
-        public bool BypassVACWhenPlayingRecording {
+        public bool BypassVACWhenPlayingWAV {
             get { return m_bBypassVACWhenPlayingRecording; }
             set { m_bBypassVACWhenPlayingRecording = value; }
         }
@@ -40411,21 +40539,21 @@ namespace Thetis
 
         private void waveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (WaveForm.IsDisposed)
-                WaveForm = new WaveControl(this);
-            if (WaveForm.InvokeRequired)
-            {
-                WaveForm.Invoke(new MethodInvoker(() =>
-                {
-                    WaveForm.Show();
-                    WaveForm.Focus();
-                }));
-            }
-            else
-            {
-                WaveForm.Show();
-                WaveForm.Focus();
-            }
+            //if (WaveForm.IsDisposed)
+            //    WaveForm = new WaveControl(this);
+            //if (WaveForm.InvokeRequired)
+            //{
+            //    WaveForm.Invoke(new MethodInvoker(() =>
+            //    {
+            //        WaveForm.Show();
+            //        WaveForm.Focus();
+            //    }));
+            //}
+            //else
+            //{
+            //    WaveForm.Show();
+            //    WaveForm.Focus();
+            //}
         }
 
         private void CollapseToolStripMenuItem_Click(object sender, EventArgs e)
@@ -43788,7 +43916,7 @@ namespace Thetis
         private ConcurrentDictionary<Keys, bool> _keyPressed = new ConcurrentDictionary<Keys, bool>();
         private void OnKeyPressedRaw(object sender, RawInputEventArg e)
         {
-            bool keyState = e.KeyPressEvent.KeyPressState.Equals("MAKE", StringComparison.OrdinalIgnoreCase);
+            bool keyState = e.KeyPressEvent.KeyPressState;//.Equals("MAKE", StringComparison.OrdinalIgnoreCase);
             Keys key = (Keys)e.KeyPressEvent.VKey;
 
             if (keyState) // make is push to make
@@ -43797,11 +43925,7 @@ namespace Thetis
 
                 if (!current_state)
                 {
-                    // sent to meter manager, so that it can detect presses in the VfoDisplay with no focus
-                    MeterManager.GlobalKeyDown((Keys)e.KeyPressEvent.VKey);
-
-                    //CWXForm
-                    if (m_frmCWXForm != null) CWXForm.GlobalKeyDown((Keys)e.KeyPressEvent.VKey);
+                    GlobalKeyPressDownHandlers?.Invoke(key);
 
                     if(!available) _keyPressed.TryAdd(key, true);
                 }
@@ -43812,11 +43936,7 @@ namespace Thetis
 
                 if (current_state) // was pressed
                 {
-                    // sent to meter manager, so that it can detect presses in the VfoDisplay with no focus
-                    MeterManager.GlobalKeyUp((Keys)e.KeyPressEvent.VKey); // break is other state
-
-                    //CWXForm
-                    if (m_frmCWXForm != null) CWXForm.GlobalKeyUp((Keys)e.KeyPressEvent.VKey);
+                    GlobalKeyPressUpHandlers?.Invoke(key);
                 }
             }
         }
@@ -44763,6 +44883,7 @@ namespace Thetis
         public delegate void GeneralSettingsChanged(int rx, OtherButtonId setting, bool old_state, bool new_state, Dictionary<OtherButtonId, bool> settings);
         public delegate void SQLChanged(int rx, SquelchState old_state, SquelchState new_state);
         public delegate void CWXShown(bool shown);
+        public delegate void GlobalKeyPress(Keys keycode);
 
         public BandPreChange BandPreChangeHandlers; // when someone clicks a band button, before a change is made
         public BandNoChange BandNoChangeHandlers;
@@ -44899,6 +45020,9 @@ namespace Thetis
         public GeneralSettingsChanged GeneralSettingsChangedHandlers;
         public SQLChanged SQLChangedHandlers;
         public CWXShown CWXShownHandlers;
+
+        public GlobalKeyPress GlobalKeyPressUpHandlers;
+        public GlobalKeyPress GlobalKeyPressDownHandlers;
 
         private bool m_bIgnoreFrequencyDupes = false;               // if an update is to be made, but the frequency is already in the filter, ignore it
         private bool m_bHideBandstackWindowOnSelect = false;        // hide the window if an entry is selected
@@ -50995,7 +51119,7 @@ namespace Thetis
 
         //
         private bool _busy_doing_otherbutton_action = false;
-        public bool BustDoingOtherbuttonAction
+        public bool BusyDoingOtherbuttonAction
         {
             get { return _busy_doing_otherbutton_action; }
         }
@@ -51856,17 +51980,18 @@ namespace Thetis
         {
             get
             {
-                if (WaveForm == null || WaveForm.IsDisposed)
-                    WaveForm = new WaveControl(this);
+                //if (WaveForm == null || WaveForm.IsDisposed)
+                //    WaveForm = new WaveControl(this);
 
-                return WaveForm.Recording;
+                //return WaveForm.Recording;
+                return false;
             }
             set
             {
-                if (WaveForm == null || WaveForm.IsDisposed)
-                    WaveForm = new WaveControl(this);
+                //if (WaveForm == null || WaveForm.IsDisposed)
+                //    WaveForm = new WaveControl(this);
 
-                WaveForm.Recording = value;
+                //WaveForm.Recording = value;
             }
         }
         public int GetSelectedNB(int rx)
@@ -53254,6 +53379,100 @@ namespace Thetis
             }
         }
         #endregion
+
+        //
+        public clsAudioRecordPlayback ARP
+        {
+            get 
+            {
+                if (_arp == null)
+                {
+                    _arp = new clsAudioRecordPlayback(this); //intialise recording and playback
+                    _arp.GenerateJSON = true;
+                    _arp.RecordingChanged += arp_RecordingChanged;
+                    _arp.PlayingChanged += arp_PlayingingChanged;
+                    this.PowerChangeHanders += arp_PowerChanged;
+                }
+
+                return _arp; 
+            }
+        }
+        private void arp_PowerChanged(bool old_power, bool new_power)
+        {
+            if(ARP.IsWDSPBusy) // recording or playing via wdsp, if power state changes then stop !
+            {
+                if (ARP.IsPlaying) ARP.StopPlayback(out _);
+                if (ARP.IsRecording) ARP.StopRecord(out _);
+            }
+        }
+        private void arp_PlayingingChanged(bool playing, string id, string filename, bool isWdsp)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action)(() => arp_PlayingingChanged(playing, id, filename, isWdsp)));
+                return;
+            }
+
+            Debug.Print("playing : " + playing.ToString());
+
+            if (id == "quick")
+            {
+                // quick playback
+                if (playing)
+                {
+                    ckQuickPlay.Enabled = true;
+                    ckQuickRec.Enabled = false;
+                }
+                else
+                {
+                    ckQuickPlay.Enabled = true;
+                    ckQuickRec.Enabled = true;
+
+                    if (ckQuickPlay.Checked) ckQuickPlay.Checked = false;
+                }
+            }
+            else
+            {
+                // disable if recording elsewhere
+                ckQuickPlay.Enabled = !playing;
+                ckQuickRec.Enabled = !playing;
+            }
+        }
+
+        private void arp_RecordingChanged(bool recording, string id, string filename)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action)(() => arp_RecordingChanged(recording, id, filename)));
+                return;
+            }
+
+            Debug.Print("RECORDING : " + recording.ToString());
+
+            if(id == "quick")
+            {
+                // quick recording
+                if (recording)
+                {
+                    ckQuickPlay.Enabled = false;
+                    ckQuickRec.Enabled = true;                    
+                }
+                else
+                {
+                    ckQuickPlay.Enabled = true;
+                    ckQuickRec.Enabled = true;
+
+                    if (ckQuickRec.Checked) ckQuickRec.Checked = false;
+                }
+            }
+            else
+            {
+                // disable if recording elsewhere
+                ckQuickPlay.Enabled = !recording;
+                ckQuickRec.Enabled = !recording;
+            }
+        }
+        //
     }
 
     public class DigiMode

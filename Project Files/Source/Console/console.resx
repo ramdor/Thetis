@@ -9066,12 +9066,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="memoryToolStripMenuItem.Text" xml:space="preserve">
     <value>Memory</value>
   </data>
-  <data name="waveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 20</value>
-  </data>
-  <data name="waveToolStripMenuItem.Text" xml:space="preserve">
-    <value>Wave</value>
-  </data>
   <data name="equalizerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>66, 20</value>
   </data>
@@ -11794,36 +11788,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;panelRX2DSP.ZOrder" xml:space="preserve">
     <value>19</value>
   </data>
-  <data name="btnHidden.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="btnHidden.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="btnHidden.Location" type="System.Drawing.Point, System.Drawing">
-    <value>359, 719</value>
-  </data>
-  <data name="btnHidden.Size" type="System.Drawing.Size, System.Drawing">
-    <value>56, 27</value>
-  </data>
-  <data name="btnHidden.TabIndex" type="System.Int32, mscorlib">
-    <value>14</value>
-  </data>
-  <data name="btnHidden.Text" xml:space="preserve">
-    <value>Hidden</value>
-  </data>
-  <data name="&gt;&gt;btnHidden.Name" xml:space="preserve">
-    <value>btnHidden</value>
-  </data>
-  <data name="&gt;&gt;btnHidden.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ButtonTS, Thetis, Version=2.10.3.13, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;btnHidden.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;btnHidden.ZOrder" xml:space="preserve">
-    <value>21</value>
-  </data>
   <data name="panelOptions.AutoScrollMargin" type="System.Drawing.Size, System.Drawing">
     <value>0, 0</value>
   </data>
@@ -11853,6 +11817,36 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;panelOptions.ZOrder" xml:space="preserve">
     <value>22</value>
+  </data>
+  <data name="btnHidden.Image" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="btnHidden.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="btnHidden.Location" type="System.Drawing.Point, System.Drawing">
+    <value>359, 719</value>
+  </data>
+  <data name="btnHidden.Size" type="System.Drawing.Size, System.Drawing">
+    <value>56, 27</value>
+  </data>
+  <data name="btnHidden.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="btnHidden.Text" xml:space="preserve">
+    <value>Hidden</value>
+  </data>
+  <data name="&gt;&gt;btnHidden.Name" xml:space="preserve">
+    <value>btnHidden</value>
+  </data>
+  <data name="&gt;&gt;btnHidden.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ButtonTS, Thetis, Version=2.10.3.13, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;btnHidden.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnHidden.ZOrder" xml:space="preserve">
+    <value>21</value>
   </data>
   <data name="radBand2.Appearance" type="System.Windows.Forms.Appearance, System.Windows.Forms">
     <value>Button</value>
@@ -17902,12 +17896,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>memoryToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;memoryToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;waveToolStripMenuItem.Name" xml:space="preserve">
-    <value>waveToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;waveToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;equalizerToolStripMenuItem.Name" xml:space="preserve">

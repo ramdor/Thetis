@@ -211,7 +211,7 @@ namespace Thetis
                 case 18: Common.OpenUri($"file://{_exe_path}cmASIO Guide.pdf", false); break;
                 case 19: Common.OpenUri($"file://{_exe_path}BehringerMods_Midi2Cat_v2.pdf", false); break;
                 case 20: Common.OpenUri($"file://{_exe_path}APFtypes.pdf", false); break;
-                case 21: Common.OpenUri($"file://{_exe_path}Thetis Network Settings_0.1.pdf", false); break;
+                case 21: Common.OpenUri($"file://{_exe_path}Thetis Network Settings_0.2.pdf", false); break;
             }
 
             lstLinks.ClearSelected();

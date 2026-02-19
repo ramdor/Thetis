@@ -833,13 +833,24 @@ void WriteMainLoop(char* bufp)
 			C3 = 0;
 			C4 = 0;
 			break;
+
+		case 17: // HPSDRModel_ANVELINAPRO3 only, extra OC pins
+			C0 |= 0x26; //C0 0010 011x
+			C1 = prn->oc_output_extras & 0x0f;  // [4:0]
+			C2 = 0;
+			C3 = 0;
+			C4 = 0;
+			break;
 		}			
 		txbptr[3] = C0;							// add the C0-C4 bytes to USB frame
 		txbptr[4] = C1;
 		txbptr[5] = C2;
 		txbptr[6] = C3;
 		txbptr[7] = C4;
-		if (out_control_idx < 16)				// ready for next USB frame
+
+		int end_frame = HPSDRModel == HPSDRModel_ANVELINAPRO3 ? 17 : 16; // an extra frame for the AVP3
+
+		if (out_control_idx < end_frame)				// ready for next USB frame
 			out_control_idx++;
 		else
 			out_control_idx = 0;
