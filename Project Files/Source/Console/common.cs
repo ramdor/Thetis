@@ -1789,5 +1789,56 @@ namespace Thetis
             }
         }
         //
+
+        [DllImport("kernel32.dll", EntryPoint = "GetDiskFreeSpaceExW")]
+        private static extern bool GetDiskFreeSpaceExW(
+        string lpDirectoryName,
+        out ulong lpFreeBytesAvailable,
+        out ulong lpTotalNumberOfBytes,
+        out ulong lpTotalNumberOfFreeBytes);
+        public static bool TryGetDriveTotalAndFreeBytes(string folderPath, out ulong totalBytes, out ulong freeBytes)
+        {
+            totalBytes = 0UL;
+            freeBytes = 0UL;
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(folderPath)) return false;
+
+                string fullPath;
+                try
+                {
+                    fullPath = Path.GetFullPath(folderPath);
+                }
+                catch
+                {
+                    fullPath = folderPath;
+                }
+
+                string root = Path.GetPathRoot(fullPath);
+                if (string.IsNullOrWhiteSpace(root)) return false;
+
+                if (root.StartsWith(@"\\", StringComparison.Ordinal))
+                {
+                    bool ok = GetDiskFreeSpaceExW(root, out ulong freeAvailable, out ulong total, out ulong totalFree);
+                    if (!ok) return false;
+
+                    totalBytes = total;
+                    freeBytes = totalFree;
+                    return true;
+                }
+
+                DriveInfo di = new DriveInfo(root);
+                totalBytes = (ulong)di.TotalSize;
+                freeBytes = (ulong)di.TotalFreeSpace;
+                return true;
+            }
+            catch
+            {
+                totalBytes = 0UL;
+                freeBytes = 0UL;
+                return false;
+            }
+        }
     }
 }
