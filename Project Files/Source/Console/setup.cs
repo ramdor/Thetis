@@ -35958,6 +35958,9 @@ namespace Thetis
         }
         private void initPCAudioDevicesComobs()
         {
+            Cursor c = Cursor;
+            Cursor = Cursors.WaitCursor;
+
             string selected_in_name = null;
             string selected_out_name = null;
             if (comboPCAudioDevices_IN.SelectedIndex > -1)
@@ -36024,6 +36027,8 @@ namespace Thetis
                 }
             }
             if (comboPCAudioDevices_OUT.Items.Count > 0) comboPCAudioDevices_OUT.SelectedIndex = selected;
+
+            Cursor = c;
         }
         private void radRecordingBits_CheckedChanged(object sender, EventArgs e)
         {
