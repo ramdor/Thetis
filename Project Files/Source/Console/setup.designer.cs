@@ -32057,7 +32057,7 @@
             this.btnRecording_refreshDevices.Selectable = true;
             this.btnRecording_refreshDevices.Size = new System.Drawing.Size(24, 24);
             this.btnRecording_refreshDevices.TabIndex = 130;
-            this.toolTip1.SetToolTip(this.btnRecording_refreshDevices, "Refresh the nic list");
+            this.toolTip1.SetToolTip(this.btnRecording_refreshDevices, "Refresh the audio device lists");
             this.btnRecording_refreshDevices.UseVisualStyleBackColor = true;
             this.btnRecording_refreshDevices.Click += new System.EventHandler(this.btnRecording_refreshDevices_Click);
             // 

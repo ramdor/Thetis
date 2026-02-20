@@ -10281,8 +10281,8 @@ namespace Thetis
                     _slot_repeat_delay[n] = 10;
                     _slot_repeat_enabled[n] = false;
                     _slot_gain_adjust[n] = 0;
-                    _slot_ignore_play_temp_changes[n] = false;
-                    _slot_ignore_record_temp_changes[n] = false;
+                    _slot_ignore_play_temp_changes[n] = true;
+                    _slot_ignore_record_temp_changes[n] = true;
                 }
 
                 _start_repeat_time = DateTime.MinValue;
