@@ -4043,6 +4043,7 @@
             this.nudRecording_tx_gain_adjust = new System.Windows.Forms.NumericUpDownTS();
             this.chkRecording_ignore_play_tempchanges = new System.Windows.Forms.CheckBoxTS();
             this.chkRecording_ignore_record_tempchanges = new System.Windows.Forms.CheckBoxTS();
+            this.picButtonBoxInfo = new System.Windows.Forms.PictureBox();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -5432,6 +5433,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudVoiceRecordingPlayback_slots)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_repeatDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_tx_gain_adjust)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picButtonBoxInfo)).BeginInit();
             this.tcMMsettings.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.grpHistoryItem.SuspendLayout();
@@ -64854,6 +64856,15 @@
             this.chkRecording_ignore_record_tempchanges.UseVisualStyleBackColor = true;
             this.chkRecording_ignore_record_tempchanges.CheckedChanged += new System.EventHandler(this.chkRecording_ignore_record_tempchanges_CheckedChanged);
             // 
+            // picButtonBoxInfo
+            // 
+            this.picButtonBoxInfo.Image = ((System.Drawing.Image)(resources.GetObject("picButtonBoxInfo.Image")));
+            this.picButtonBoxInfo.Location = new System.Drawing.Point(114, 307);
+            this.picButtonBoxInfo.Name = "picButtonBoxInfo";
+            this.picButtonBoxInfo.Size = new System.Drawing.Size(20, 20);
+            this.picButtonBoxInfo.TabIndex = 171;
+            this.picButtonBoxInfo.TabStop = false;
+            // 
             // timer_VAC_Monitor
             // 
             this.timer_VAC_Monitor.Enabled = true;
@@ -66220,6 +66231,7 @@
             // 
             // grpButtonBox
             // 
+            this.grpButtonBox.Controls.Add(this.picButtonBoxInfo);
             this.grpButtonBox.Controls.Add(this.btnOtherButtons_reset_layout);
             this.grpButtonBox.Controls.Add(this.chkButtonBox_use_icons);
             this.grpButtonBox.Controls.Add(this.chkButtonBox_fix_text_size);
@@ -71198,6 +71210,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudVoiceRecordingPlayback_slots)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_repeatDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_tx_gain_adjust)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picButtonBoxInfo)).EndInit();
             this.tcMMsettings.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.grpHistoryItem.ResumeLayout(false);
@@ -75713,5 +75726,6 @@
         private ButtonTS btnRecording_globalkeybind_assign;
         private CheckBoxTS chkRecording_globalkeybind;
         private TextBoxTS txtRecording_globalkeybind;
+        private PictureBox picButtonBoxInfo;
     }
 }

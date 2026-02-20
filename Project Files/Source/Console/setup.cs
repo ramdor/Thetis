@@ -26551,6 +26551,8 @@ namespace Thetis
                         grpButtonBox.Location = loc;
                         grpButtonBox.Visible = true;
 
+                        picButtonBoxInfo.Visible = false;
+
                         Point pos = new Point(150, 194);
 
                         switch (mt)
@@ -26582,6 +26584,8 @@ namespace Thetis
                                 ucTunestepOptionsGrid_buttons.Visible = false;
                                 pnlButtonBox_antenna_toggles.Visible = false;
                                 pnlVoiceRecordPlayback.Visible = false;
+                                toolTip1.SetToolTip(picButtonBoxInfo, "- alt drag slots to move them around");
+                                picButtonBoxInfo.Visible = true;
                                 break;
                             case MeterType.VOICE_RECORD_PLAY_BUTTONS:
                                 pnlVoiceRecordPlayback.Parent = grpButtonBox;
@@ -26590,6 +26594,10 @@ namespace Thetis
                                 pnlButtonBox_antenna_toggles.Visible = false;
                                 ucTunestepOptionsGrid_buttons.Visible = false;
                                 ucOtherButtonsOptionsGrid_buttons.Visible = false;
+                                toolTip1.SetToolTip(picButtonBoxInfo, "- right click slot in record mode to delete recording\n"+
+                                                                      "- shift click slot in playback to quick record to that slot\n" +
+                                                                      "- alt drag slots to move them around");
+                                picButtonBoxInfo.Visible = true;
                                 break;
                             default:
                                 pnlButtonBox_antenna_toggles.Visible = false;

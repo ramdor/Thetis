@@ -10212,6 +10212,8 @@ namespace Thetis
 
             private DateTime _slot_press_time;
 
+            private bool _from_quick_shift_record;
+
             public clsVoiceRecordPlay(clsMeter owningmeter, clsItemGroup ig)
             {
                 _alt_pressed = Common.AltlKeyDown;
@@ -10288,6 +10290,8 @@ namespace Thetis
                 _start_repeat_time = DateTime.MinValue;
                 _repeat_slot = -1;
                 _ignore_next_restart = false;
+
+                _from_quick_shift_record = false;
 
                 Initialise();
             }
@@ -10570,6 +10574,12 @@ namespace Thetis
                 if (!recording)
                 {
                     _slot_recording = -1;
+
+                    if(_from_quick_shift_record)
+                    {
+                        _from_quick_shift_record = false;
+                        _mode_record = false;
+                    }
                 }
             }
             private void setupRepeatTimer(bool setup, int slot, int delay)
@@ -11209,7 +11219,20 @@ namespace Thetis
                         _slot_duration_seconds[slot] = (float)json_data.play_duration_seconds;
                     }
                 }
-                else// if (!_global_playing && !_global_recording)
+                else if(!from_repeat_timer && !_mode_record && _slot_playing == -1 && (_shift_pressed || Common.ShiftKeyDown))
+                {
+                    if (!_slot_locked[slot])
+                    {
+                        // in playback and not playing and shift held at the time of click
+                        // switch to record mode, and start recording this slot
+                        clearRunningRepeat(-1, true);
+                        _mode_record = true;
+                        _from_quick_shift_record = true;
+                        handleClicked(slot, right_click, long_hold, false);
+                    }
+                    return;
+                }
+                else
                 {                                       
                     string error = null;
                     if (_console.ARP.IsPlaying)
