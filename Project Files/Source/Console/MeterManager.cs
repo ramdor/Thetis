@@ -10227,7 +10227,7 @@ namespace Thetis
                 _unique_id = Guid.NewGuid().ToString();
 
                 Buttons = 64;
-                _slots = 1;
+                _slots = 8;
 
                 _map = new short[Buttons];
                 _map_copy = new short[Buttons];
@@ -10827,8 +10827,6 @@ namespace Thetis
             public override void Initialise()
             {
                 _click_highlight = false;
-
-                Slots = 8;
 
                 _alt_pressed = Common.AltlKeyDown;
                 _ctrl_pressed = Common.CtrlKeyDown;
@@ -25532,7 +25530,7 @@ namespace Thetis
                                             if (mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
                                             {
                                                 ((clsVoiceRecordPlay)bb).UniqueID = igs.GetSetting<string>("buttonbox_recordplayback_uid", false, null, null, null);
-                                                int slots = igs.GetSetting<int>("buttonbox_recordplayback_slots", false, 1, 32, 8);
+                                                int slots = igs.GetSetting<int>("buttonbox_recordplayback_slots", false, 1, 64, 8);
                                                 ((clsVoiceRecordPlay)bb).Slots = slots;
                                                 ((clsVoiceRecordPlay)bb).ButtonMap = igs.GetSetting<short[]>("buttonbox_button_map", false, null, null, null);
                                                 ((clsVoiceRecordPlay)bb).SlotFilepaths = igs.GetSetting<string[]>("buttonbox_recordplayback_filepaths", false, null, null, null);

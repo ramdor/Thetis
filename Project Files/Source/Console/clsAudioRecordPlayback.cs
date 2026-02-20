@@ -274,6 +274,7 @@ namespace Thetis
                     string hdrErr;
 
                     if (!tryParseWaveHeader(br, out fmtTag, out sr, out ch, out bps, out ds, out dl, out hdrErr)) return null;
+                    if (ch != 2) return null;
                     if (sr <= 0) return null;
 
                     int bytesPerSample;
@@ -1645,6 +1646,11 @@ namespace Thetis
                             {
                                 if (tryParseWaveHeader(br, out int fmtTag, out int sr, out int ch, out int bps, out long ds, out long dl, out string hdrErr))
                                 {
+                                    if(ch != 2)
+                                    {
+                                        error = "File is not 2 channel.";
+                                        return false;
+                                    }
                                     refreshExistingJsonFromWavIfNeeded(play_id, fullPath, fmtTag, sr, ch, bps);
                                 }
                             }
