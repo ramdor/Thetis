@@ -6260,7 +6260,17 @@ namespace Thetis
                                             bool bIGSok = igs.TryParse2(meterIGSettings.First().Value);
                                             if (bIGSok)
                                             {
-                                                m.ApplySettingsForMeterGroup(ig.MeterType, igs, null, ig.Order, false, true);
+                                                //special cases where things need changing
+                                                switch(ig.MeterType)
+                                                {
+                                                    case MeterType.VOICE_RECORD_PLAY_BUTTONS:
+                                                        //used here so that RemoveMeterType below will not delete the files related to the original
+                                                        igs.SetSetting<string>("buttonbox_recordplayback_uid", null); // will cause a new guid to be used
+                                                        break;
+                                                }
+
+                                                //apply
+                                                m.ApplySettingsForMeterGroup(ig.MeterType, igs, null, ig.Order, false, true);                                                
                                             }
 
                                             // TODO: use this to do some mapping?
@@ -6293,6 +6303,27 @@ namespace Thetis
                                             bool bIGSok = igs.TryParse2(meterIGSettings.First().Value);
                                             if (bIGSok)
                                             {
+                                                //special cases where things need changing
+                                                switch (ig.MeterType)
+                                                {
+                                                    case MeterType.VOICE_RECORD_PLAY_BUTTONS:
+                                                        //used here to give it a new id
+                                                        igs.SetSetting<string>("buttonbox_recordplayback_uid", null); // will cause a new guid to be used
+                                                        //clear old files as we are not copying them
+                                                        string[] file_paths = igs.GetSetting<string[]>("buttonbox_recordplayback_filepaths", false, null, null, null);
+                                                        for(int n = 0; n < file_paths.Length; n++)
+                                                        {
+                                                            file_paths[n] = null;
+                                                        }
+                                                        igs.SetSetting<string[]>("buttonbox_recordplayback_filepaths", file_paths);
+                                                        int slots = igs.GetSetting<int>("buttonbox_recordplayback_slots", false, 1, 64, 8);
+                                                        for (int n = 0; n < slots; n++)
+                                                        {
+                                                            igs.SetSetting<bool>("buttonbox_recordplayback_locked_" + n.ToString(), false);
+                                                        }
+                                                        break;
+                                                }
+
                                                 m.ApplySettingsForMeterGroup(ig.MeterType, igs, web_images, ig.Order);
                                             }
                                         }
@@ -25087,14 +25118,25 @@ namespace Thetis
                 {
                     if (_meterItems == null) return null;
                     Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    if (items.Count != 1) return null;
+
                     foreach (KeyValuePair<string, clsMeterItem> kvp in items)
                     {
                         clsItemGroup ig = kvp.Value as clsItemGroup;
                         if (ig != null && ig.MeterType == mt && ig.Order == order)
                         {
-                            Dictionary<string, clsMeterItem> m_items = itemsFromID(ig.ID);
-                            if (m_items == null || items.Count != 1) return null;
-                            mi = m_items.First().Value;
+                            Dictionary<string, clsMeterItem> m_items = itemsFromID(ig.ID, false, true);
+                            if (m_items == null) return null;
+
+                            //multiple items, return first that is not clsFadeCover
+                            foreach(clsMeterItem mitem in m_items.Values)
+                            {
+                                clsFadeCover fc = mitem as clsFadeCover;
+                                if (fc != null) continue;
+
+                                mi = mitem;
+                                break;
+                            }
                             break;
                         }
                     }
