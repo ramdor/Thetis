@@ -24544,7 +24544,7 @@ namespace Thetis
                 int dotdashptt = NetworkIO.nativeGetDotDashPTT();
                 DSPMode tx_mode = chkVFOBTX.Checked && chkRX2.Checked ? _rx2_dsp_mode : _rx1_dsp_mode;
 
-                if (!_manual_mox && !_disable_ptt && !_rx_only && !_tx_inhibit && !QSKEnabled)
+                if (!_manual_mox && !_disable_ptt && !_rx_only && !_tx_inhibit && !QSKEnabled && !_ganymede_pa_issue)
                 {
                     bool mic_ptt = (dotdashptt & 0x01) != 0; // PTT from radio
                     bool cw_ptt = CWInput.KeyerPTT && _current_breakin_mode == BreakIn.Semi; // CW serial PTT  //[2.10.3.9]MW0LGE only want to do this on semi breakin
@@ -28393,6 +28393,15 @@ namespace Thetis
         }
         private void chkMOX_CheckedChanged2(object sender, System.EventArgs e)
         {
+            if(chkMOX.Checked && _ganymede_pa_issue)
+            {
+                // abort the change if there is a ganymede pa issue
+                chkMOX.CheckedChanged -= chkMOX_CheckedChanged2;
+                chkMOX.Checked = false;
+                chkMOX.CheckedChanged += chkMOX_CheckedChanged2;
+                return;
+            }
+
             bool bOldMox = _mox; //MW0LGE_21b used for state change delgates at end of fn
 
             MoxPreChangeHandlers?.Invoke(rx2_enabled && VFOBTX ? 2 : 1, _mox, chkMOX.Checked); // MW0LGE_21k8
@@ -52284,7 +52293,7 @@ namespace Thetis
                     GanymedeResetPressed();
             }
         }
-        
+        private volatile bool _ganymede_pa_issue = false;
         private PAstatusIndicatorState _pa_status_indicator = PAstatusIndicatorState.NotUsed; // PAstatusIndicatorState is a flag based enum in Enums.cs
         private PAstatusIndicatorState PAStatusIndicator
         {
@@ -52302,6 +52311,7 @@ namespace Thetis
                 if (value == PAstatusIndicatorState.NotUsed)
                 {
                     toolStripStatusLabel_PAstatus.Visible = false;
+                    _ganymede_pa_issue = false;
                     return;
                 }
 

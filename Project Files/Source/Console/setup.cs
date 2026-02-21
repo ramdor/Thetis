@@ -6426,7 +6426,7 @@ namespace Thetis
             {
                 DialogResult dr = MessageBox.Show(
                     "Unchecking Receive Only may \n" +
-                    "cause damage to your SDR hardware.  Are you sure you want \n" +
+                    "cause damage to your hardware.  Are you sure you want \n" +
                     "to enable transmit?",
                     "Warning: Enable Transmit?",
                     MessageBoxButtons.YesNo,

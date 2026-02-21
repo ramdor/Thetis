@@ -851,7 +851,20 @@ namespace Thetis
         #region GANYMEDE amplifier protection
 
 
-        private bool GanymedePresent = false;
+        private bool _ganymedePresent = false;
+        private bool GanymedePresent
+        {
+            get { return _ganymedePresent; }
+            set
+            {
+                _ganymedePresent = value;
+                if (!_ganymedePresent)
+                {
+                    _ganymede_pa_issue = false;
+                    PAStatusIndicator = PAstatusIndicatorState.NotUsed;
+                }
+            }
+        }
         private int GanymedeTripState = 0;                      // amplifier trip
 
         //
@@ -905,27 +918,36 @@ namespace Thetis
             {
                 case 0:
                     PAStatusIndicator = PAstatusIndicatorState.OK;
+                    _ganymede_pa_issue = false;
                     break;
                 case 1:
                     PAStatusIndicator = PAstatusIndicatorState.ReversePower;
+                    _ganymede_pa_issue = true;
                     break;
                 case 2:
                     PAStatusIndicator = PAstatusIndicatorState.DrainCurrent;
+                    _ganymede_pa_issue = true;
                     break;
                 case 4:
                     PAStatusIndicator = PAstatusIndicatorState.PSUVoltage;
+                    _ganymede_pa_issue = true;
                     break;
                 case 8:
                     PAStatusIndicator = PAstatusIndicatorState.HeatsinkTemperature;
+                    _ganymede_pa_issue = true;
                     break;
                 case 16:
                     PAStatusIndicator = PAstatusIndicatorState.ForwardPower;
+                    _ganymede_pa_issue = true;
                     break;
                 case 64:
                     PAStatusIndicator = PAstatusIndicatorState.Resettable;
+                    _ganymede_pa_issue = true;
                     break;
             }
             SetupForm.GanymedeStatus = GetPAStatusText(PAStatusIndicator);
+
+            if (_ganymede_pa_issue && MOX) MOX = false; //if there is a fault, undo mox if active
         }
 
         // send a CAT message to Ganymede to reset the tripped state
