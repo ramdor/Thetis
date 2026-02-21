@@ -914,40 +914,35 @@ namespace Thetis
         public void CATHandleAmplifierTripMessage(int TripState)
         {
             GanymedePresent = true;
+
+            _ganymede_pa_issue = TripState != 0; // this will also prevent MOX being re-enabled
+            if (_ganymede_pa_issue && MOX) MOX = false; //if there is a fault, undo mox if active
+
             switch (TripState)
             {
                 case 0:
                     PAStatusIndicator = PAstatusIndicatorState.OK;
-                    _ganymede_pa_issue = false;
                     break;
                 case 1:
                     PAStatusIndicator = PAstatusIndicatorState.ReversePower;
-                    _ganymede_pa_issue = true;
                     break;
                 case 2:
                     PAStatusIndicator = PAstatusIndicatorState.DrainCurrent;
-                    _ganymede_pa_issue = true;
                     break;
                 case 4:
                     PAStatusIndicator = PAstatusIndicatorState.PSUVoltage;
-                    _ganymede_pa_issue = true;
                     break;
                 case 8:
                     PAStatusIndicator = PAstatusIndicatorState.HeatsinkTemperature;
-                    _ganymede_pa_issue = true;
                     break;
                 case 16:
                     PAStatusIndicator = PAstatusIndicatorState.ForwardPower;
-                    _ganymede_pa_issue = true;
                     break;
                 case 64:
                     PAStatusIndicator = PAstatusIndicatorState.Resettable;
-                    _ganymede_pa_issue = true;
                     break;
             }
-            SetupForm.GanymedeStatus = GetPAStatusText(PAStatusIndicator);
-
-            if (_ganymede_pa_issue && MOX) MOX = false; //if there is a fault, undo mox if active
+            SetupForm.GanymedeStatus = GetPAStatusText(PAStatusIndicator);            
         }
 
         // send a CAT message to Ganymede to reset the tripped state
