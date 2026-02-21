@@ -4084,6 +4084,7 @@
             this.nudRecording_tx_gain_adjust = new System.Windows.Forms.NumericUpDownTS();
             this.chkRecording_ignore_play_tempchanges = new System.Windows.Forms.CheckBoxTS();
             this.chkRecording_ignore_record_tempchanges = new System.Windows.Forms.CheckBoxTS();
+            this.picButtonBoxInfo = new System.Windows.Forms.PictureBox();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
             this.timer_RawInputMouseWheel = new System.Windows.Forms.Timer(this.components);
@@ -5484,6 +5485,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudVoiceRecordingPlayback_slots)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_repeatDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_tx_gain_adjust)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picButtonBoxInfo)).BeginInit();
             this.tcMMsettings.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.grpHistoryItem.SuspendLayout();
@@ -65385,7 +65387,7 @@
             0,
             0,
             0});
-            this.nudVoiceRecordingPlayback_slots.Location = new System.Drawing.Point(61, 3);
+            this.nudVoiceRecordingPlayback_slots.Location = new System.Drawing.Point(61, 1);
             this.nudVoiceRecordingPlayback_slots.Maximum = new decimal(new int[] {
             64,
             0,
@@ -65411,7 +65413,7 @@
             // btnRecording_openStorageFolder
             // 
             this.btnRecording_openStorageFolder.Image = null;
-            this.btnRecording_openStorageFolder.Location = new System.Drawing.Point(115, 4);
+            this.btnRecording_openStorageFolder.Location = new System.Drawing.Point(115, 2);
             this.btnRecording_openStorageFolder.Name = "btnRecording_openStorageFolder";
             this.btnRecording_openStorageFolder.Selectable = true;
             this.btnRecording_openStorageFolder.Size = new System.Drawing.Size(34, 20);
@@ -65428,7 +65430,7 @@
             0,
             0,
             0});
-            this.nudRecording_repeatDelay.Location = new System.Drawing.Point(90, 82);
+            this.nudRecording_repeatDelay.Location = new System.Drawing.Point(87, 26);
             this.nudRecording_repeatDelay.Maximum = new decimal(new int[] {
             60,
             0,
@@ -65455,7 +65457,7 @@
             // 
             this.chkRecording_slot_locked.AutoSize = true;
             this.chkRecording_slot_locked.Image = null;
-            this.chkRecording_slot_locked.Location = new System.Drawing.Point(6, 106);
+            this.chkRecording_slot_locked.Location = new System.Drawing.Point(3, 50);
             this.chkRecording_slot_locked.Name = "chkRecording_slot_locked";
             this.chkRecording_slot_locked.Size = new System.Drawing.Size(62, 17);
             this.chkRecording_slot_locked.TabIndex = 176;
@@ -65468,7 +65470,7 @@
             // 
             this.chkRecording_playkeybind.AutoSize = true;
             this.chkRecording_playkeybind.Image = null;
-            this.chkRecording_playkeybind.Location = new System.Drawing.Point(6, 129);
+            this.chkRecording_playkeybind.Location = new System.Drawing.Point(3, 73);
             this.chkRecording_playkeybind.Name = "chkRecording_playkeybind";
             this.chkRecording_playkeybind.Size = new System.Drawing.Size(86, 17);
             this.chkRecording_playkeybind.TabIndex = 178;
@@ -65481,7 +65483,7 @@
             // 
             this.btnRecording_assingnkeybind.Enabled = false;
             this.btnRecording_assingnkeybind.Image = null;
-            this.btnRecording_assingnkeybind.Location = new System.Drawing.Point(96, 123);
+            this.btnRecording_assingnkeybind.Location = new System.Drawing.Point(93, 67);
             this.btnRecording_assingnkeybind.Name = "btnRecording_assingnkeybind";
             this.btnRecording_assingnkeybind.Selectable = true;
             this.btnRecording_assingnkeybind.Size = new System.Drawing.Size(53, 23);
@@ -65495,7 +65497,7 @@
             // 
             this.chkRecording_canRepeat.AutoSize = true;
             this.chkRecording_canRepeat.Image = null;
-            this.chkRecording_canRepeat.Location = new System.Drawing.Point(6, 83);
+            this.chkRecording_canRepeat.Location = new System.Drawing.Point(3, 27);
             this.chkRecording_canRepeat.Name = "chkRecording_canRepeat";
             this.chkRecording_canRepeat.Size = new System.Drawing.Size(78, 17);
             this.chkRecording_canRepeat.TabIndex = 2;
@@ -65513,7 +65515,7 @@
             0,
             0,
             65536});
-            this.nudRecording_tx_gain_adjust.Location = new System.Drawing.Point(81, 172);
+            this.nudRecording_tx_gain_adjust.Location = new System.Drawing.Point(78, 116);
             this.nudRecording_tx_gain_adjust.Maximum = new decimal(new int[] {
             70,
             0,
@@ -65542,7 +65544,7 @@
             this.chkRecording_ignore_play_tempchanges.Checked = true;
             this.chkRecording_ignore_play_tempchanges.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkRecording_ignore_play_tempchanges.Image = null;
-            this.chkRecording_ignore_play_tempchanges.Location = new System.Drawing.Point(6, 198);
+            this.chkRecording_ignore_play_tempchanges.Location = new System.Drawing.Point(3, 142);
             this.chkRecording_ignore_play_tempchanges.Name = "chkRecording_ignore_play_tempchanges";
             this.chkRecording_ignore_play_tempchanges.Size = new System.Drawing.Size(122, 17);
             this.chkRecording_ignore_play_tempchanges.TabIndex = 184;
@@ -65558,7 +65560,7 @@
             this.chkRecording_ignore_record_tempchanges.Checked = true;
             this.chkRecording_ignore_record_tempchanges.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkRecording_ignore_record_tempchanges.Image = null;
-            this.chkRecording_ignore_record_tempchanges.Location = new System.Drawing.Point(6, 221);
+            this.chkRecording_ignore_record_tempchanges.Location = new System.Drawing.Point(3, 165);
             this.chkRecording_ignore_record_tempchanges.Name = "chkRecording_ignore_record_tempchanges";
             this.chkRecording_ignore_record_tempchanges.Size = new System.Drawing.Size(118, 17);
             this.chkRecording_ignore_record_tempchanges.TabIndex = 185;
@@ -65567,6 +65569,15 @@
         "udio->Recording.");
             this.chkRecording_ignore_record_tempchanges.UseVisualStyleBackColor = true;
             this.chkRecording_ignore_record_tempchanges.CheckedChanged += new System.EventHandler(this.chkRecording_ignore_record_tempchanges_CheckedChanged);
+            // 
+            // picButtonBoxInfo
+            // 
+            this.picButtonBoxInfo.Image = ((System.Drawing.Image)(resources.GetObject("picButtonBoxInfo.Image")));
+            this.picButtonBoxInfo.Location = new System.Drawing.Point(114, 307);
+            this.picButtonBoxInfo.Name = "picButtonBoxInfo";
+            this.picButtonBoxInfo.Size = new System.Drawing.Size(20, 20);
+            this.picButtonBoxInfo.TabIndex = 171;
+            this.picButtonBoxInfo.TabStop = false;
             // 
             // timer_VAC_Monitor
             // 
@@ -66763,6 +66774,13 @@
             this.pnlVoiceRecordPlayback.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlVoiceRecordPlayback.AutoScrollMinSize = new System.Drawing.Size(0, 0);
             this.pnlVoiceRecordPlayback.Controls.Add(this.scrollableControl2);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.labelTS650);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_openStorageFolder);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_rightSlot);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.nudVoiceRecordingPlayback_slots);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.lblRecording_activeSlot);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_leftSlot);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.labelTS653);
             this.pnlVoiceRecordPlayback.Location = new System.Drawing.Point(356, 210);
             this.pnlVoiceRecordPlayback.Name = "pnlVoiceRecordPlayback";
             this.pnlVoiceRecordPlayback.Size = new System.Drawing.Size(170, 178);
@@ -66778,31 +66796,24 @@
             this.scrollableControl2.Controls.Add(this.labelTS655);
             this.scrollableControl2.Controls.Add(this.labelTS654);
             this.scrollableControl2.Controls.Add(this.btnRecording_assingnkeybind);
-            this.scrollableControl2.Controls.Add(this.labelTS653);
-            this.scrollableControl2.Controls.Add(this.labelTS650);
             this.scrollableControl2.Controls.Add(this.labelTS651);
             this.scrollableControl2.Controls.Add(this.chkRecording_playkeybind);
             this.scrollableControl2.Controls.Add(this.txtRecording_labelText);
             this.scrollableControl2.Controls.Add(this.txtRecording_playkeybind);
-            this.scrollableControl2.Controls.Add(this.nudVoiceRecordingPlayback_slots);
             this.scrollableControl2.Controls.Add(this.chkRecording_slot_locked);
             this.scrollableControl2.Controls.Add(this.chkRecording_canRepeat);
             this.scrollableControl2.Controls.Add(this.labelTS652);
-            this.scrollableControl2.Controls.Add(this.btnRecording_openStorageFolder);
-            this.scrollableControl2.Controls.Add(this.btnRecording_rightSlot);
-            this.scrollableControl2.Controls.Add(this.lblRecording_activeSlot);
-            this.scrollableControl2.Controls.Add(this.btnRecording_leftSlot);
             this.scrollableControl2.Controls.Add(this.nudRecording_repeatDelay);
-            this.scrollableControl2.Location = new System.Drawing.Point(0, 0);
+            this.scrollableControl2.Location = new System.Drawing.Point(0, 52);
             this.scrollableControl2.Name = "scrollableControl2";
-            this.scrollableControl2.Size = new System.Drawing.Size(170, 178);
+            this.scrollableControl2.Size = new System.Drawing.Size(170, 126);
             this.scrollableControl2.TabIndex = 113;
             // 
             // labelTS655
             // 
             this.labelTS655.AutoSize = true;
             this.labelTS655.Image = null;
-            this.labelTS655.Location = new System.Drawing.Point(129, 174);
+            this.labelTS655.Location = new System.Drawing.Point(126, 118);
             this.labelTS655.Name = "labelTS655";
             this.labelTS655.Size = new System.Drawing.Size(20, 13);
             this.labelTS655.TabIndex = 183;
@@ -66812,7 +66823,7 @@
             // 
             this.labelTS654.AutoSize = true;
             this.labelTS654.Image = null;
-            this.labelTS654.Location = new System.Drawing.Point(5, 174);
+            this.labelTS654.Location = new System.Drawing.Point(2, 118);
             this.labelTS654.Name = "labelTS654";
             this.labelTS654.Size = new System.Drawing.Size(75, 13);
             this.labelTS654.TabIndex = 182;
@@ -66822,7 +66833,7 @@
             // 
             this.labelTS653.AutoSize = true;
             this.labelTS653.Image = null;
-            this.labelTS653.Location = new System.Drawing.Point(3, 33);
+            this.labelTS653.Location = new System.Drawing.Point(3, 31);
             this.labelTS653.Name = "labelTS653";
             this.labelTS653.Size = new System.Drawing.Size(45, 13);
             this.labelTS653.TabIndex = 180;
@@ -66832,7 +66843,7 @@
             // 
             this.labelTS650.AutoSize = true;
             this.labelTS650.Image = null;
-            this.labelTS650.Location = new System.Drawing.Point(3, 5);
+            this.labelTS650.Location = new System.Drawing.Point(3, 3);
             this.labelTS650.Name = "labelTS650";
             this.labelTS650.Size = new System.Drawing.Size(52, 13);
             this.labelTS650.TabIndex = 0;
@@ -66842,7 +66853,7 @@
             // 
             this.labelTS651.AutoSize = true;
             this.labelTS651.Image = null;
-            this.labelTS651.Location = new System.Drawing.Point(6, 60);
+            this.labelTS651.Location = new System.Drawing.Point(3, 4);
             this.labelTS651.Name = "labelTS651";
             this.labelTS651.Size = new System.Drawing.Size(36, 13);
             this.labelTS651.TabIndex = 0;
@@ -66850,7 +66861,7 @@
             // 
             // txtRecording_labelText
             // 
-            this.txtRecording_labelText.Location = new System.Drawing.Point(48, 57);
+            this.txtRecording_labelText.Location = new System.Drawing.Point(45, 1);
             this.txtRecording_labelText.MaxLength = 32;
             this.txtRecording_labelText.Name = "txtRecording_labelText";
             this.txtRecording_labelText.Size = new System.Drawing.Size(101, 20);
@@ -66860,7 +66871,7 @@
             // txtRecording_playkeybind
             // 
             this.txtRecording_playkeybind.Enabled = false;
-            this.txtRecording_playkeybind.Location = new System.Drawing.Point(6, 146);
+            this.txtRecording_playkeybind.Location = new System.Drawing.Point(3, 90);
             this.txtRecording_playkeybind.Name = "txtRecording_playkeybind";
             this.txtRecording_playkeybind.ReadOnly = true;
             this.txtRecording_playkeybind.Size = new System.Drawing.Size(143, 20);
@@ -66871,7 +66882,7 @@
             // 
             this.labelTS652.AutoSize = true;
             this.labelTS652.Image = null;
-            this.labelTS652.Location = new System.Drawing.Point(131, 84);
+            this.labelTS652.Location = new System.Drawing.Point(128, 28);
             this.labelTS652.Name = "labelTS652";
             this.labelTS652.Size = new System.Drawing.Size(12, 13);
             this.labelTS652.TabIndex = 175;
@@ -66880,7 +66891,7 @@
             // btnRecording_rightSlot
             // 
             this.btnRecording_rightSlot.Image = null;
-            this.btnRecording_rightSlot.Location = new System.Drawing.Point(125, 28);
+            this.btnRecording_rightSlot.Location = new System.Drawing.Point(125, 26);
             this.btnRecording_rightSlot.Name = "btnRecording_rightSlot";
             this.btnRecording_rightSlot.Selectable = true;
             this.btnRecording_rightSlot.Size = new System.Drawing.Size(24, 23);
@@ -66893,7 +66904,7 @@
             // 
             this.lblRecording_activeSlot.AutoSize = true;
             this.lblRecording_activeSlot.Image = null;
-            this.lblRecording_activeSlot.Location = new System.Drawing.Point(79, 33);
+            this.lblRecording_activeSlot.Location = new System.Drawing.Point(79, 31);
             this.lblRecording_activeSlot.Name = "lblRecording_activeSlot";
             this.lblRecording_activeSlot.Size = new System.Drawing.Size(40, 13);
             this.lblRecording_activeSlot.TabIndex = 173;
@@ -66903,7 +66914,7 @@
             // btnRecording_leftSlot
             // 
             this.btnRecording_leftSlot.Image = null;
-            this.btnRecording_leftSlot.Location = new System.Drawing.Point(49, 28);
+            this.btnRecording_leftSlot.Location = new System.Drawing.Point(49, 26);
             this.btnRecording_leftSlot.Name = "btnRecording_leftSlot";
             this.btnRecording_leftSlot.Selectable = true;
             this.btnRecording_leftSlot.Size = new System.Drawing.Size(24, 23);
@@ -66934,6 +66945,7 @@
             // 
             // grpButtonBox
             // 
+            this.grpButtonBox.Controls.Add(this.picButtonBoxInfo);
             this.grpButtonBox.Controls.Add(this.btnOtherButtons_reset_layout);
             this.grpButtonBox.Controls.Add(this.chkButtonBox_use_icons);
             this.grpButtonBox.Controls.Add(this.chkButtonBox_fix_text_size);
@@ -71925,6 +71937,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudVoiceRecordingPlayback_slots)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_repeatDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_tx_gain_adjust)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picButtonBoxInfo)).EndInit();
             this.tcMMsettings.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.grpHistoryItem.ResumeLayout(false);
@@ -71954,6 +71967,7 @@
             this.grpMeterItemSpacerSettings.PerformLayout();
             this.tabPage7.ResumeLayout(false);
             this.pnlVoiceRecordPlayback.ResumeLayout(false);
+            this.pnlVoiceRecordPlayback.PerformLayout();
             this.scrollableControl2.ResumeLayout(false);
             this.scrollableControl2.PerformLayout();
             this.grpButtonBox.ResumeLayout(false);
@@ -76480,5 +76494,6 @@
         private ButtonTS btnRecording_globalkeybind_assign;
         private CheckBoxTS chkRecording_globalkeybind;
         private TextBoxTS txtRecording_globalkeybind;
+        private PictureBox picButtonBoxInfo;
     }
 }

@@ -45,6 +45,7 @@ using System.Text;
 using System.Threading;
 using NAudio.Wave;
 using NAudio.MediaFoundation;
+using NAudio.CoreAudioApi;
 using Newtonsoft.Json;
 using System.Globalization;
 
@@ -69,6 +70,12 @@ namespace Thetis
         Pcm24 = 2,
         Pcm16 = 3,
         Pcm8 = 4
+    }
+
+    public enum AudioDeviceDriver
+    {
+        MME = 0,
+        WASAPI = 1
     }
 
     public sealed class RecordingDetails
@@ -96,24 +103,42 @@ namespace Thetis
     {
         public int Id { get; private set; }
         public string Name { get; private set; }
+        public AudioDeviceDriver Driver { get; private set; }
+
+        public int DeviceId
+        {
+            get { return Id; }
+        }
 
         public AudioDeviceInfo(int id, string name)
         {
             Id = id;
             Name = name ?? string.Empty;
+            Driver = AudioDeviceDriver.MME;
+        }
+
+        public AudioDeviceInfo(int id, string name, AudioDeviceDriver driver)
+        {
+            Id = id;
+            Name = name ?? string.Empty;
+            Driver = driver;
         }
 
         public override string ToString()
         {
-            return Name;
+            return DisplayName;
         }
 
         public string DisplayName
         {
             get
             {
-                if (!string.IsNullOrWhiteSpace(Name)) return Name;
-                return "Device " + Id.ToString();
+                string baseName = !string.IsNullOrWhiteSpace(Name) ? Name : ("Device " + Id.ToString(CultureInfo.InvariantCulture));
+
+                if (Driver == AudioDeviceDriver.WASAPI) return "WASAPI: " + baseName;
+                if (Driver == AudioDeviceDriver.MME) return "MME: " + baseName;
+
+                return baseName;
             }
         }
     }
@@ -123,6 +148,9 @@ namespace Thetis
         public const bool PlaybackCosineFadeEnabled = true;
         public const int PlaybackCosineFadeMs = 50;
 
+        private const int PcAudioWasapiInputIdBase = 100000;
+        private const int PcAudioWasapiOutputIdBase = 200000;
+
         private readonly object _sync = new object();
 
         private string _audio_folder;
@@ -130,7 +158,7 @@ namespace Thetis
         private bool _is_recording;
         private bool _is_playing;
 
-        private WaveInEvent _pc_wave_in;
+        private IWaveIn _pc_wave_in;
         private NAudio.Wave.WaveFileWriter _pc_wave_writer;
 
         private string _active_record_id;
@@ -143,7 +171,7 @@ namespace Thetis
         private string _active_play_id;
         private string _active_play_filename;
 
-        private WaveOutEvent _pc_wave_out;
+        private IWavePlayer _pc_wave_out;
         private AudioFileReader _pc_audio_reader;
 
         private int _active_record_wfw_id;
@@ -246,6 +274,7 @@ namespace Thetis
                     string hdrErr;
 
                     if (!tryParseWaveHeader(br, out fmtTag, out sr, out ch, out bps, out ds, out dl, out hdrErr)) return null;
+                    if (ch != 2) return null;
                     if (sr <= 0) return null;
 
                     int bytesPerSample;
@@ -553,24 +582,82 @@ namespace Thetis
         public List<AudioDeviceInfo> GetPcInputDevices()
         {
             List<AudioDeviceInfo> list = new List<AudioDeviceInfo>();
-            int count = WaveIn.DeviceCount;
-            for (int i = 0; i < count; i++)
+
+            list.Add(new AudioDeviceInfo(-1, "Default Windows Sound Mapper - Input", AudioDeviceDriver.MME));
+
+            try
             {
-                WaveInCapabilities caps = WaveIn.GetCapabilities(i);
-                list.Add(new AudioDeviceInfo(i, caps.ProductName));
+                MMDeviceEnumerator en = new MMDeviceEnumerator();
+                MMDeviceCollection devs = en.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
+
+                for (int i = 0; i < devs.Count; i++)
+                {
+                    MMDevice dev = devs[i];
+                    string name = dev != null ? dev.FriendlyName : null;
+                    if (string.IsNullOrWhiteSpace(name)) name = "Input " + i.ToString(CultureInfo.InvariantCulture);
+                    list.Add(new AudioDeviceInfo(PcAudioWasapiInputIdBase + i, name, AudioDeviceDriver.WASAPI));
+                }
             }
+            catch
+            {
+            }
+
+            try
+            {
+                int count = WaveIn.DeviceCount;
+                for (int i = 0; i < count; i++)
+                {
+                    WaveInCapabilities caps = WaveIn.GetCapabilities(i);
+                    string name = caps.ProductName;
+                    if (string.IsNullOrWhiteSpace(name)) name = "Input " + i.ToString(CultureInfo.InvariantCulture);
+                    list.Add(new AudioDeviceInfo(i, name, AudioDeviceDriver.MME));
+                }
+            }
+            catch
+            {
+            }
+
             return list;
         }
 
         public List<AudioDeviceInfo> GetPcOutputDevices()
         {
             List<AudioDeviceInfo> list = new List<AudioDeviceInfo>();
-            int count = WaveOut.DeviceCount;
-            for (int i = 0; i < count; i++)
+
+            list.Add(new AudioDeviceInfo(-1, "Default Windows Sound Mapper - Output", AudioDeviceDriver.MME));
+
+            try
             {
-                WaveOutCapabilities caps = WaveOut.GetCapabilities(i);
-                list.Add(new AudioDeviceInfo(i, caps.ProductName));
+                MMDeviceEnumerator en = new MMDeviceEnumerator();
+                MMDeviceCollection devs = en.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+
+                for (int i = 0; i < devs.Count; i++)
+                {
+                    MMDevice dev = devs[i];
+                    string name = dev != null ? dev.FriendlyName : null;
+                    if (string.IsNullOrWhiteSpace(name)) name = "Output " + i.ToString(CultureInfo.InvariantCulture);
+                    list.Add(new AudioDeviceInfo(PcAudioWasapiOutputIdBase + i, name, AudioDeviceDriver.WASAPI));
+                }
             }
+            catch
+            {
+            }
+
+            try
+            {
+                int count = WaveOut.DeviceCount;
+                for (int i = 0; i < count; i++)
+                {
+                    WaveOutCapabilities caps = WaveOut.GetCapabilities(i);
+                    string name = caps.ProductName;
+                    if (string.IsNullOrWhiteSpace(name)) name = "Output " + i.ToString(CultureInfo.InvariantCulture);
+                    list.Add(new AudioDeviceInfo(i, name, AudioDeviceDriver.MME));
+                }
+            }
+            catch
+            {
+            }
+
             return list;
         }
 
@@ -1226,11 +1313,31 @@ namespace Thetis
                         _active_record_mp3_filename = Path.ChangeExtension(full_target, ".mp3");
                     }
 
-                    _pc_wave_in = new WaveInEvent();
-                    _pc_wave_in.DeviceNumber = pcAudioDeviceInputId;
-                    _pc_wave_in.WaveFormat = fmt;
-                    _pc_wave_in.BufferMilliseconds = 50;
-                    _pc_wave_in.NumberOfBuffers = 3;
+                    IWaveIn waveIn;
+
+                    if (pcAudioDeviceInputId >= PcAudioWasapiInputIdBase)
+                    {
+                        int idx = pcAudioDeviceInputId - PcAudioWasapiInputIdBase;
+                        MMDeviceEnumerator en = new MMDeviceEnumerator();
+                        MMDeviceCollection devs = en.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
+                        if (idx < 0 || idx >= devs.Count) throw new IndexOutOfRangeException("WASAPI input device index is out of range.");
+
+                        MMDevice dev = devs[idx];
+                        WasapiCapture c = new WasapiCapture(dev);
+                        c.WaveFormat = fmt;
+                        waveIn = c;
+                    }
+                    else
+                    {
+                        WaveInEvent w = new WaveInEvent();
+                        w.DeviceNumber = pcAudioDeviceInputId;
+                        w.WaveFormat = fmt;
+                        w.BufferMilliseconds = 50;
+                        w.NumberOfBuffers = 3;
+                        waveIn = w;
+                    }
+
+                    _pc_wave_in = waveIn;
                     _pc_wave_in.DataAvailable += onPcDataAvailable;
                     _pc_wave_in.RecordingStopped += onPcRecordingStopped;
 
@@ -1539,6 +1646,11 @@ namespace Thetis
                             {
                                 if (tryParseWaveHeader(br, out int fmtTag, out int sr, out int ch, out int bps, out long ds, out long dl, out string hdrErr))
                                 {
+                                    if(ch != 2)
+                                    {
+                                        error = "File is not 2 channel.";
+                                        return false;
+                                    }
                                     refreshExistingJsonFromWavIfNeeded(play_id, fullPath, fmtTag, sr, ch, bps);
                                 }
                             }
@@ -1552,8 +1664,27 @@ namespace Thetis
 
                     _pc_audio_reader = new AudioFileReader(fullPath);
                     _pc_audio_reader.Volume = _pc_playback_gain;
-                    _pc_wave_out = new WaveOutEvent();
-                    _pc_wave_out.DeviceNumber = pcAudioDeviceOutputId;
+
+                    IWavePlayer waveOut;
+
+                    if (pcAudioDeviceOutputId >= PcAudioWasapiOutputIdBase)
+                    {
+                        int idx = pcAudioDeviceOutputId - PcAudioWasapiOutputIdBase;
+                        MMDeviceEnumerator en = new MMDeviceEnumerator();
+                        MMDeviceCollection devs = en.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+                        if (idx < 0 || idx >= devs.Count) throw new IndexOutOfRangeException("WASAPI output device index is out of range.");
+
+                        MMDevice dev = devs[idx];
+                        waveOut = new WasapiOut(dev, AudioClientShareMode.Shared, false, 200);
+                    }
+                    else
+                    {
+                        WaveOutEvent w = new WaveOutEvent();
+                        w.DeviceNumber = pcAudioDeviceOutputId;
+                        waveOut = w;
+                    }
+
+                    _pc_wave_out = waveOut;
                     _pc_wave_out.PlaybackStopped += pcWaveOut_PlaybackStopped;
                     _pc_wave_out.Init(_pc_audio_reader);
                     _pc_wave_out.Play();
@@ -1652,7 +1783,7 @@ namespace Thetis
 
             lock (_sync)
             {
-                if (!_is_playing) return true;                
+                if (!_is_playing) return true;
                 try
                 {
                     if (_active_playback_wfw_id >= 0)
@@ -1679,8 +1810,8 @@ namespace Thetis
                     try { cleanupPcPlayback(); } catch { }
                 }
             }
-            
-            if(wdsp) storeRestoreSettings(false, true);
+
+            if (wdsp) storeRestoreSettings(false, true);
             setPlayingState(false);
             return error == null;
         }

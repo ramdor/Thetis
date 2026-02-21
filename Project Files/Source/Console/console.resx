@@ -10207,7 +10207,7 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
     <value>None</value>
   </data>
   <data name="toolStripStatusLabel_Fill.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 15</value>
+    <value>205, 15</value>
   </data>
   <data name="toolStripStatusLabel_PAstatus.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
     <value>None</value>
@@ -18915,6 +18915,18 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   <data name="&gt;&gt;toolStripStatus_PAspacer.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripStatusLabel_play_record.Name" xml:space="preserve">
+    <value>toolStripStatusLabel_play_record</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel_play_record.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatus_RecordPlay_spacer.Name" xml:space="preserve">
+    <value>toolStripStatus_RecordPlay_spacer</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatus_RecordPlay_spacer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;toolStripStatusLabel_TCI.Name" xml:space="preserve">
     <value>toolStripStatusLabel_TCI</value>
   </data>
@@ -18968,18 +18980,6 @@ Ctrl + Left Click on any Band Button adds to Stack</value>
   </data>
   <data name="&gt;&gt;tmrAutoAGC.Type" xml:space="preserve">
     <value>System.Windows.Forms.Timer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripStatus_RecordPlay_spacer.Name" xml:space="preserve">
-    <value>toolStripStatus_RecordPlay_spacer</value>
-  </data>
-  <data name="&gt;&gt;toolStripStatus_RecordPlay_spacer.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripStatusLabel_play_record.Name" xml:space="preserve">
-    <value>toolStripStatusLabel_play_record</value>
-  </data>
-  <data name="&gt;&gt;toolStripStatusLabel_play_record.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>Console</value>

@@ -451,6 +451,14 @@ these settings are stored. Use the Transmit-&gt;Profile Save
 button, or use the Auto Save TX Profile options on the
 Transmit tab</value>
   </data>
+  <data name="picButtonBoxInfo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABGdBTUEAALGPC/xhBQAAAINJREFUOE+d
+        0QEKgDAMA0D/6rN8hQ/xTZMNCjHJ1tVAEGx7CB7HOo1azjg8r/ZpBbQANwPlIOsMk8Xo/bSR/swgOcZi
+        eMaYLGBnX8SQDKOzr+AGJgNEMLyzBTmU35egDEFoiWXQ1l/LEAdZLIMc0iOLf6GeMeQDbuzxsYsFKwAH
+        j5fAC6Qphu9tstV5AAAAAElFTkSuQmCC
+</value>
+  </data>
   <metadata name="timer_VAC_Monitor.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>325, 19</value>
   </metadata>

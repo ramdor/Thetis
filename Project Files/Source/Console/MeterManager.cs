@@ -6260,7 +6260,17 @@ namespace Thetis
                                             bool bIGSok = igs.TryParse2(meterIGSettings.First().Value);
                                             if (bIGSok)
                                             {
-                                                m.ApplySettingsForMeterGroup(ig.MeterType, igs, null, ig.Order, false, true);
+                                                //special cases where things need changing
+                                                switch(ig.MeterType)
+                                                {
+                                                    case MeterType.VOICE_RECORD_PLAY_BUTTONS:
+                                                        //used here so that RemoveMeterType below will not delete the files related to the original
+                                                        igs.SetSetting<string>("buttonbox_recordplayback_uid", null); // will cause a new guid to be used
+                                                        break;
+                                                }
+
+                                                //apply
+                                                m.ApplySettingsForMeterGroup(ig.MeterType, igs, null, ig.Order, false, true);                                                
                                             }
 
                                             // TODO: use this to do some mapping?
@@ -6293,6 +6303,27 @@ namespace Thetis
                                             bool bIGSok = igs.TryParse2(meterIGSettings.First().Value);
                                             if (bIGSok)
                                             {
+                                                //special cases where things need changing
+                                                switch (ig.MeterType)
+                                                {
+                                                    case MeterType.VOICE_RECORD_PLAY_BUTTONS:
+                                                        //used here to give it a new id
+                                                        igs.SetSetting<string>("buttonbox_recordplayback_uid", null); // will cause a new guid to be used
+                                                        //clear old files as we are not copying them
+                                                        string[] file_paths = igs.GetSetting<string[]>("buttonbox_recordplayback_filepaths", false, null, null, null);
+                                                        for(int n = 0; n < file_paths.Length; n++)
+                                                        {
+                                                            file_paths[n] = null;
+                                                        }
+                                                        igs.SetSetting<string[]>("buttonbox_recordplayback_filepaths", file_paths);
+                                                        int slots = igs.GetSetting<int>("buttonbox_recordplayback_slots", false, 1, 64, 8);
+                                                        for (int n = 0; n < slots; n++)
+                                                        {
+                                                            igs.SetSetting<bool>("buttonbox_recordplayback_locked_" + n.ToString(), false);
+                                                        }
+                                                        break;
+                                                }
+
                                                 m.ApplySettingsForMeterGroup(ig.MeterType, igs, web_images, ig.Order);
                                             }
                                         }
@@ -10212,6 +10243,8 @@ namespace Thetis
 
             private DateTime _slot_press_time;
 
+            private bool _from_quick_shift_record;
+
             public clsVoiceRecordPlay(clsMeter owningmeter, clsItemGroup ig)
             {
                 _alt_pressed = Common.AltlKeyDown;
@@ -10225,7 +10258,7 @@ namespace Thetis
                 _unique_id = Guid.NewGuid().ToString();
 
                 Buttons = 64;
-                _slots = 1;
+                _slots = 8;
 
                 _map = new short[Buttons];
                 _map_copy = new short[Buttons];
@@ -10288,6 +10321,8 @@ namespace Thetis
                 _start_repeat_time = DateTime.MinValue;
                 _repeat_slot = -1;
                 _ignore_next_restart = false;
+
+                _from_quick_shift_record = false;
 
                 Initialise();
             }
@@ -10570,6 +10605,12 @@ namespace Thetis
                 if (!recording)
                 {
                     _slot_recording = -1;
+
+                    if(_from_quick_shift_record)
+                    {
+                        _from_quick_shift_record = false;
+                        _mode_record = false;
+                    }
                 }
             }
             private void setupRepeatTimer(bool setup, int slot, int delay)
@@ -10817,8 +10858,6 @@ namespace Thetis
             public override void Initialise()
             {
                 _click_highlight = false;
-
-                Slots = 8;
 
                 _alt_pressed = Common.AltlKeyDown;
                 _ctrl_pressed = Common.CtrlKeyDown;
@@ -11209,7 +11248,20 @@ namespace Thetis
                         _slot_duration_seconds[slot] = (float)json_data.play_duration_seconds;
                     }
                 }
-                else// if (!_global_playing && !_global_recording)
+                else if(!from_repeat_timer && !_mode_record && _slot_playing == -1 && (_shift_pressed || Common.ShiftKeyDown))
+                {
+                    if (!_slot_locked[slot])
+                    {
+                        // in playback and not playing and shift held at the time of click
+                        // switch to record mode, and start recording this slot
+                        clearRunningRepeat(-1, true);
+                        _mode_record = true;
+                        _from_quick_shift_record = true;
+                        handleClicked(slot, right_click, long_hold, false);
+                    }
+                    return;
+                }
+                else
                 {                                       
                     string error = null;
                     if (_console.ARP.IsPlaying)
@@ -25066,14 +25118,25 @@ namespace Thetis
                 {
                     if (_meterItems == null) return null;
                     Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
+                    if (items.Count != 1) return null;
+
                     foreach (KeyValuePair<string, clsMeterItem> kvp in items)
                     {
                         clsItemGroup ig = kvp.Value as clsItemGroup;
                         if (ig != null && ig.MeterType == mt && ig.Order == order)
                         {
-                            Dictionary<string, clsMeterItem> m_items = itemsFromID(ig.ID);
-                            if (m_items == null || items.Count != 1) return null;
-                            mi = m_items.First().Value;
+                            Dictionary<string, clsMeterItem> m_items = itemsFromID(ig.ID, false, true);
+                            if (m_items == null) return null;
+
+                            //multiple items, return first that is not clsFadeCover
+                            foreach(clsMeterItem mitem in m_items.Values)
+                            {
+                                clsFadeCover fc = mitem as clsFadeCover;
+                                if (fc != null) continue;
+
+                                mi = mitem;
+                                break;
+                            }
                             break;
                         }
                     }
@@ -25509,7 +25572,7 @@ namespace Thetis
                                             if (mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
                                             {
                                                 ((clsVoiceRecordPlay)bb).UniqueID = igs.GetSetting<string>("buttonbox_recordplayback_uid", false, null, null, null);
-                                                int slots = igs.GetSetting<int>("buttonbox_recordplayback_slots", false, 1, 32, 8);
+                                                int slots = igs.GetSetting<int>("buttonbox_recordplayback_slots", false, 1, 64, 8);
                                                 ((clsVoiceRecordPlay)bb).Slots = slots;
                                                 ((clsVoiceRecordPlay)bb).ButtonMap = igs.GetSetting<short[]>("buttonbox_button_map", false, null, null, null);
                                                 ((clsVoiceRecordPlay)bb).SlotFilepaths = igs.GetSetting<string[]>("buttonbox_recordplayback_filepaths", false, null, null, null);

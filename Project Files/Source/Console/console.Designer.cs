@@ -908,6 +908,8 @@
             this.toolStripStatusLabel_PAstatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_N1MM = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatus_PAspacer = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_play_record = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatus_RecordPlay_spacer = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_TCI = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_CatTCPip = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_CatSerial = new System.Windows.Forms.ToolStripStatusLabel();
@@ -1134,8 +1136,6 @@
             this.lblAndromedaEncoderSlider = new System.Windows.Forms.LabelTS();
             this.lblATUTuneLabel = new System.Windows.Forms.LabelTS();
             this.ptbSquelch = new Thetis.PrettyTrackBar();
-            this.toolStripStatus_RecordPlay_spacer = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel_play_record = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFGain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFBandwidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ptbCWAPFFreq)).BeginInit();
@@ -5362,6 +5362,17 @@
             resources.ApplyResources(this.toolStripStatus_PAspacer, "toolStripStatus_PAspacer");
             this.toolStripStatus_PAspacer.Name = "toolStripStatus_PAspacer";
             // 
+            // toolStripStatusLabel_play_record
+            // 
+            this.toolStripStatusLabel_play_record.Image = global::Thetis.Properties.Resources.record;
+            resources.ApplyResources(this.toolStripStatusLabel_play_record, "toolStripStatusLabel_play_record");
+            this.toolStripStatusLabel_play_record.Name = "toolStripStatusLabel_play_record";
+            // 
+            // toolStripStatus_RecordPlay_spacer
+            // 
+            resources.ApplyResources(this.toolStripStatus_RecordPlay_spacer, "toolStripStatus_RecordPlay_spacer");
+            this.toolStripStatus_RecordPlay_spacer.Name = "toolStripStatus_RecordPlay_spacer";
+            // 
             // toolStripStatusLabel_TCI
             // 
             resources.ApplyResources(this.toolStripStatusLabel_TCI, "toolStripStatusLabel_TCI");
@@ -7567,17 +7578,6 @@
             this.ptbSquelch.TabStop = false;
             this.ptbSquelch.Value = 0;
             this.ptbSquelch.Scroll += new Thetis.PrettyTrackBar.ScrollHandler(this.ptbSquelch_Scroll);
-            // 
-            // toolStripStatus_RecordPlay_spacer
-            // 
-            resources.ApplyResources(this.toolStripStatus_RecordPlay_spacer, "toolStripStatus_RecordPlay_spacer");
-            this.toolStripStatus_RecordPlay_spacer.Name = "toolStripStatus_RecordPlay_spacer";
-            // 
-            // toolStripStatusLabel_play_record
-            // 
-            this.toolStripStatusLabel_play_record.Image = global::Thetis.Properties.Resources.record;
-            resources.ApplyResources(this.toolStripStatusLabel_play_record, "toolStripStatusLabel_play_record");
-            this.toolStripStatusLabel_play_record.Name = "toolStripStatusLabel_play_record";
             // 
             // Console
             // 
