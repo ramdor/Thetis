@@ -911,6 +911,7 @@ namespace Thetis
 
         // for now, put message in SETUP Apollo with current amplifier state
         // ideally when it has been tripped we should remove PTT too.
+        private volatile bool _ganymede_pa_issue = false;
         public void CATHandleAmplifierTripMessage(int TripState)
         {
             GanymedePresent = true;

@@ -52292,8 +52292,7 @@ namespace Thetis
                 if ((_pa_status_indicator & PAstatusIndicatorState.Resettable) != 0)
                     GanymedeResetPressed();
             }
-        }
-        private volatile bool _ganymede_pa_issue = false;
+        }        
         private PAstatusIndicatorState _pa_status_indicator = PAstatusIndicatorState.NotUsed; // PAstatusIndicatorState is a flag based enum in Enums.cs
         private PAstatusIndicatorState PAStatusIndicator
         {
