@@ -37286,7 +37286,7 @@ namespace Thetis
             if (mti == null) return;
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
-            MeterManager.clsMeterItem mi = m.GetMeterItem(mti.MeterType, mti.Order);
+            MeterManager.clsMeterItem mi = m.GetMeterItem(mti.MeterType, mti.Order, MeterManager.clsMeterItem.MeterItemType.VOICE_RECORD_PLAY_BUTTONS);
             if (m == null) return;
             MeterManager.clsVoiceRecordPlay vrp = mi as MeterManager.clsVoiceRecordPlay;
             if (vrp == null) return;
@@ -37346,7 +37346,7 @@ namespace Thetis
             if (mti == null) return false;
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return false;
-            MeterManager.clsMeterItem mi = m.GetMeterItem(mti.MeterType, mti.Order);
+            MeterManager.clsMeterItem mi = m.GetMeterItem(mti.MeterType, mti.Order, MeterManager.clsMeterItem.MeterItemType.VOICE_RECORD_PLAY_BUTTONS);
             if (m == null) return false;
             MeterManager.clsVoiceRecordPlay vrp = mi as MeterManager.clsVoiceRecordPlay;
             if (vrp == null) return false;
@@ -37622,7 +37622,7 @@ namespace Thetis
             if (mti == null) return;
             MeterManager.clsMeter m = meterFromSelectedContainer();
             if (m == null) return;
-            MeterManager.clsMeterItem mi = m.GetMeterItem(mti.MeterType, mti.Order);
+            MeterManager.clsMeterItem mi = m.GetMeterItem(mti.MeterType, mti.Order, MeterManager.clsMeterItem.MeterItemType.VOICE_RECORD_PLAY_BUTTONS);
             if (m == null) return;
             MeterManager.clsVoiceRecordPlay vrp = mi as MeterManager.clsVoiceRecordPlay;
             if (vrp == null) return;
