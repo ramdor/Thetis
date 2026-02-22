@@ -25110,15 +25110,18 @@ namespace Thetis
                     if (bRebuild) Rebuild();
                 }
             }
-            public clsMeterItem GetMeterItem(MeterType mt, int order)
+            public clsMeterItem GetMeterItem(MeterType mt, int order, clsMeterItem.MeterItemType mit)
             {
+                //note: MeterType is a single item in the meter, however it can be made up multiple items
+                //normally the item group identifies it all. mt and mit would normally be the same unless you want
+                //fade cover or some other element of the MeterType group
+
                 // used by setup to get a specific meter item using mt and order
                 clsMeterItem mi = null;
                 lock (_meterItemsLock)
                 {
                     if (_meterItems == null) return null;
                     Dictionary<string, clsMeterItem> items = _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.ITEM_GROUP).ToDictionary(x => x.Key, x => x.Value);
-                    if (items.Count != 1) return null;
 
                     foreach (KeyValuePair<string, clsMeterItem> kvp in items)
                     {
@@ -25128,14 +25131,14 @@ namespace Thetis
                             Dictionary<string, clsMeterItem> m_items = itemsFromID(ig.ID, false, true);
                             if (m_items == null) return null;
 
-                            //multiple items, return first that is not clsFadeCover
-                            foreach(clsMeterItem mitem in m_items.Values)
+                            //multiple items, return first that matches the MeterItemType we want
+                            foreach (clsMeterItem mitem in m_items.Values)
                             {
-                                clsFadeCover fc = mitem as clsFadeCover;
-                                if (fc != null) continue;
-
-                                mi = mitem;
-                                break;
+                                if (mitem.ItemType == mit)
+                                {
+                                    mi = mitem;
+                                    break;
+                                }
                             }
                             break;
                         }
