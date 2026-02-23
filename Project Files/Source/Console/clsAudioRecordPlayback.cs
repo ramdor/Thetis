@@ -78,6 +78,13 @@ namespace Thetis
         WASAPI = 1
     }
 
+    public enum PCInputSource
+    {
+        Both = 0,
+        Left = 1,
+        Right = 2
+     }
+
     public sealed class RecordingDetails
     {
         public DateTime UtcTime { get; set; }
@@ -203,6 +210,8 @@ namespace Thetis
 
         public int InputPCDeviceID { get; set; } = -1;
         public int OutputPCDeviceID { get; set; } = -1;
+
+        public PCInputSource PCInputSource { get; set; } = PCInputSource.Both;
 
         private Console _console;
         private Dictionary<string, bool> _playbackSetting;
@@ -1491,6 +1500,52 @@ namespace Thetis
             storeRestoreSettings(false, false);
             return error == null;
         }
+        private void applyPcInputSourceStereoRemap(byte[] buffer, int bytesRecorded)
+        {
+            if (buffer == null) return;
+            if (bytesRecorded< 1) return;
+
+            PCInputSource src = PCInputSource;
+            if (src == PCInputSource.Both) return;
+
+            int bytesPerSample;
+            if (BitDepthMode == AudioBitDepthMode.Pcm8) bytesPerSample = 1;
+            else if (BitDepthMode == AudioBitDepthMode.Pcm16) bytesPerSample = 2;
+            else if (BitDepthMode == AudioBitDepthMode.Pcm24) bytesPerSample = 3;
+            else bytesPerSample = 4;
+
+            int frameBytes = bytesPerSample * 2;
+            int i = 0;
+
+            if (src == PCInputSource.Left)
+            {
+                while (i + frameBytes - 1 < bytesRecorded)
+                {
+                    int s = 0;
+                    while (s<bytesPerSample)
+                    {
+                        buffer[i + bytesPerSample + s] = buffer[i + s];
+                        s++;
+                    }
+                    i += frameBytes;
+                }
+                return;
+            }
+
+            if (src == PCInputSource.Right)
+            {
+                while (i + frameBytes - 1 < bytesRecorded)
+                {
+                    int s = 0;
+                    while (s < bytesPerSample)
+                    {
+                        buffer[i + s] = buffer[i + bytesPerSample + s];
+                        s++;
+                    }
+                    i += frameBytes;
+                }
+            }
+        }
 
         public bool PlayFileViaWDSP(string play_id, string full_path, int wfw_id, out string error, double adjustGain_dB = 0, bool ignore_temp_changes = false)
         {
@@ -1847,7 +1902,9 @@ namespace Thetis
                     return;
                 }
 
-                if (gain == 1.0f)
+                PCInputSource src = PCInputSource;
+                
+                if (gain == 1.0f && src == PCInputSource.Both)
                 {
                     _pc_wave_writer.Write(e.Buffer, 0, e.BytesRecorded);
                     _pc_wave_writer.Flush();
@@ -1860,6 +1917,18 @@ namespace Thetis
                 }
 
                 Buffer.BlockCopy(e.Buffer, 0, _pc_record_gain_buffer, 0, e.BytesRecorded);
+
+                if (src != PCInputSource.Both)
+                {
+                    applyPcInputSourceStereoRemap(_pc_record_gain_buffer, e.BytesRecorded);
+                }
+                
+                if (gain == 1.0f)
+                {
+                    _pc_wave_writer.Write(_pc_record_gain_buffer, 0, e.BytesRecorded);
+                    _pc_wave_writer.Flush();
+                    return;
+                }
 
                 int max = e.BytesRecorded;
 

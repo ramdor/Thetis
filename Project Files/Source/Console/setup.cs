@@ -36687,6 +36687,13 @@ namespace Thetis
         {
             Display.ActivePeakInTxRX2 = chkActivePeakRX2_tx.Checked;
         }
+
+        private void radRecording_in_chan_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radRecording_in_chan_both.Checked) console.ARP.PCInputSource = PCInputSource.Both;
+            else if(radRecording_in_chan_L.Checked) console.ARP.PCInputSource = PCInputSource.Left;
+            else if(radRecording_in_chan_R.Checked) console.ARP.PCInputSource = PCInputSource.Right;
+        }
     }
 
     #region FormLoactionHelper

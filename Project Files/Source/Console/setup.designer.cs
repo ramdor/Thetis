@@ -4148,15 +4148,15 @@
             this.scrollableControl2 = new System.Windows.Forms.ScrollableControl();
             this.labelTS655 = new System.Windows.Forms.LabelTS();
             this.labelTS654 = new System.Windows.Forms.LabelTS();
-            this.labelTS653 = new System.Windows.Forms.LabelTS();
-            this.labelTS650 = new System.Windows.Forms.LabelTS();
             this.labelTS651 = new System.Windows.Forms.LabelTS();
             this.txtRecording_labelText = new System.Windows.Forms.TextBoxTS();
             this.txtRecording_playkeybind = new System.Windows.Forms.TextBoxTS();
             this.labelTS652 = new System.Windows.Forms.LabelTS();
+            this.labelTS650 = new System.Windows.Forms.LabelTS();
             this.btnRecording_rightSlot = new System.Windows.Forms.ButtonTS();
             this.lblRecording_activeSlot = new System.Windows.Forms.LabelTS();
             this.btnRecording_leftSlot = new System.Windows.Forms.ButtonTS();
+            this.labelTS653 = new System.Windows.Forms.LabelTS();
             this.ucOtherButtonsOptionsGrid_buttons = new Thetis.ucOtherButtonsOptionsGrid();
             this.ucTunestepOptionsGrid_buttons = new Thetis.ucTunestepOptionsGrid();
             this.grpButtonBox = new System.Windows.Forms.GroupBoxTS();
@@ -4413,6 +4413,10 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.labelTS656 = new System.Windows.Forms.LabelTS();
+            this.radRecording_in_chan_both = new System.Windows.Forms.RadioButtonTS();
+            this.radRecording_in_chan_L = new System.Windows.Forms.RadioButtonTS();
+            this.radRecording_in_chan_R = new System.Windows.Forms.RadioButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -31952,6 +31956,10 @@
             // 
             // groupBoxTS61
             // 
+            this.groupBoxTS61.Controls.Add(this.radRecording_in_chan_R);
+            this.groupBoxTS61.Controls.Add(this.radRecording_in_chan_L);
+            this.groupBoxTS61.Controls.Add(this.radRecording_in_chan_both);
+            this.groupBoxTS61.Controls.Add(this.labelTS656);
             this.groupBoxTS61.Controls.Add(this.nudRecording_gainOutput);
             this.groupBoxTS61.Controls.Add(this.labelTS647);
             this.groupBoxTS61.Controls.Add(this.nudRecording_gainInput);
@@ -31976,7 +31984,7 @@
             0,
             0,
             131072});
-            this.nudRecording_gainOutput.Location = new System.Drawing.Point(266, 68);
+            this.nudRecording_gainOutput.Location = new System.Drawing.Point(234, 68);
             this.nudRecording_gainOutput.Maximum = new decimal(new int[] {
             8,
             0,
@@ -32003,7 +32011,7 @@
             // 
             this.labelTS647.AutoSize = true;
             this.labelTS647.Image = null;
-            this.labelTS647.Location = new System.Drawing.Point(195, 70);
+            this.labelTS647.Location = new System.Drawing.Point(163, 70);
             this.labelTS647.Name = "labelTS647";
             this.labelTS647.Size = new System.Drawing.Size(65, 13);
             this.labelTS647.TabIndex = 133;
@@ -32017,7 +32025,7 @@
             0,
             0,
             131072});
-            this.nudRecording_gainInput.Location = new System.Drawing.Point(117, 68);
+            this.nudRecording_gainInput.Location = new System.Drawing.Point(107, 68);
             this.nudRecording_gainInput.Maximum = new decimal(new int[] {
             8,
             0,
@@ -32044,7 +32052,7 @@
             // 
             this.labelTS646.AutoSize = true;
             this.labelTS646.Image = null;
-            this.labelTS646.Location = new System.Drawing.Point(49, 70);
+            this.labelTS646.Location = new System.Drawing.Point(39, 70);
             this.labelTS646.Name = "labelTS646";
             this.labelTS646.Size = new System.Drawing.Size(57, 13);
             this.labelTS646.TabIndex = 131;
@@ -32054,7 +32062,7 @@
             // 
             this.btnRecording_refreshDevices.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.btnRecording_refreshDevices.Image = global::Thetis.Properties.Resources.Command_Refresh_16;
-            this.btnRecording_refreshDevices.Location = new System.Drawing.Point(470, 34);
+            this.btnRecording_refreshDevices.Location = new System.Drawing.Point(460, 34);
             this.btnRecording_refreshDevices.Name = "btnRecording_refreshDevices";
             this.btnRecording_refreshDevices.Selectable = true;
             this.btnRecording_refreshDevices.Size = new System.Drawing.Size(24, 24);
@@ -32067,7 +32075,7 @@
             // 
             this.comboPCAudioDevices_OUT.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboPCAudioDevices_OUT.FormattingEnabled = true;
-            this.comboPCAudioDevices_OUT.Location = new System.Drawing.Point(117, 43);
+            this.comboPCAudioDevices_OUT.Location = new System.Drawing.Point(107, 43);
             this.comboPCAudioDevices_OUT.Name = "comboPCAudioDevices_OUT";
             this.comboPCAudioDevices_OUT.Size = new System.Drawing.Size(347, 21);
             this.comboPCAudioDevices_OUT.TabIndex = 3;
@@ -32077,7 +32085,7 @@
             // 
             this.comboPCAudioDevices_IN.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboPCAudioDevices_IN.FormattingEnabled = true;
-            this.comboPCAudioDevices_IN.Location = new System.Drawing.Point(117, 18);
+            this.comboPCAudioDevices_IN.Location = new System.Drawing.Point(107, 18);
             this.comboPCAudioDevices_IN.Name = "comboPCAudioDevices_IN";
             this.comboPCAudioDevices_IN.Size = new System.Drawing.Size(347, 21);
             this.comboPCAudioDevices_IN.TabIndex = 2;
@@ -32087,7 +32095,7 @@
             // 
             this.labelTS88.AutoSize = true;
             this.labelTS88.Image = null;
-            this.labelTS88.Location = new System.Drawing.Point(22, 46);
+            this.labelTS88.Location = new System.Drawing.Point(12, 46);
             this.labelTS88.Name = "labelTS88";
             this.labelTS88.Size = new System.Drawing.Size(89, 13);
             this.labelTS88.TabIndex = 1;
@@ -32097,7 +32105,7 @@
             // 
             this.labelTS16.AutoSize = true;
             this.labelTS16.Image = null;
-            this.labelTS16.Location = new System.Drawing.Point(17, 21);
+            this.labelTS16.Location = new System.Drawing.Point(7, 21);
             this.labelTS16.Name = "labelTS16";
             this.labelTS16.Size = new System.Drawing.Size(94, 13);
             this.labelTS16.TabIndex = 0;
@@ -66115,26 +66123,6 @@
             this.labelTS654.TabIndex = 182;
             this.labelTS654.Text = "TX gain adjust";
             // 
-            // labelTS653
-            // 
-            this.labelTS653.AutoSize = true;
-            this.labelTS653.Image = null;
-            this.labelTS653.Location = new System.Drawing.Point(3, 31);
-            this.labelTS653.Name = "labelTS653";
-            this.labelTS653.Size = new System.Drawing.Size(45, 13);
-            this.labelTS653.TabIndex = 180;
-            this.labelTS653.Text = "Settings";
-            // 
-            // labelTS650
-            // 
-            this.labelTS650.AutoSize = true;
-            this.labelTS650.Image = null;
-            this.labelTS650.Location = new System.Drawing.Point(3, 3);
-            this.labelTS650.Name = "labelTS650";
-            this.labelTS650.Size = new System.Drawing.Size(52, 13);
-            this.labelTS650.TabIndex = 0;
-            this.labelTS650.Text = "# of Slots";
-            // 
             // labelTS651
             // 
             this.labelTS651.AutoSize = true;
@@ -66174,6 +66162,16 @@
             this.labelTS652.TabIndex = 175;
             this.labelTS652.Text = "s";
             // 
+            // labelTS650
+            // 
+            this.labelTS650.AutoSize = true;
+            this.labelTS650.Image = null;
+            this.labelTS650.Location = new System.Drawing.Point(3, 3);
+            this.labelTS650.Name = "labelTS650";
+            this.labelTS650.Size = new System.Drawing.Size(52, 13);
+            this.labelTS650.TabIndex = 0;
+            this.labelTS650.Text = "# of Slots";
+            // 
             // btnRecording_rightSlot
             // 
             this.btnRecording_rightSlot.Image = null;
@@ -66208,6 +66206,16 @@
             this.btnRecording_leftSlot.Text = "<";
             this.btnRecording_leftSlot.UseVisualStyleBackColor = true;
             this.btnRecording_leftSlot.Click += new System.EventHandler(this.btnRecording_leftSlot_Click);
+            // 
+            // labelTS653
+            // 
+            this.labelTS653.AutoSize = true;
+            this.labelTS653.Image = null;
+            this.labelTS653.Location = new System.Drawing.Point(3, 31);
+            this.labelTS653.Name = "labelTS653";
+            this.labelTS653.Size = new System.Drawing.Size(45, 13);
+            this.labelTS653.TabIndex = 180;
+            this.labelTS653.Text = "Settings";
             // 
             // ucOtherButtonsOptionsGrid_buttons
             // 
@@ -69937,6 +69945,57 @@
             this.radioButtonTS6.TabStop = true;
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
+            // 
+            // labelTS656
+            // 
+            this.labelTS656.AutoSize = true;
+            this.labelTS656.Image = null;
+            this.labelTS656.Location = new System.Drawing.Point(296, 70);
+            this.labelTS656.Name = "labelTS656";
+            this.labelTS656.Size = new System.Drawing.Size(72, 13);
+            this.labelTS656.TabIndex = 135;
+            this.labelTS656.Text = "Record chan:";
+            // 
+            // radRecording_in_chan_both
+            // 
+            this.radRecording_in_chan_both.AutoSize = true;
+            this.radRecording_in_chan_both.Checked = true;
+            this.radRecording_in_chan_both.Image = null;
+            this.radRecording_in_chan_both.Location = new System.Drawing.Point(374, 68);
+            this.radRecording_in_chan_both.Name = "radRecording_in_chan_both";
+            this.radRecording_in_chan_both.Size = new System.Drawing.Size(47, 17);
+            this.radRecording_in_chan_both.TabIndex = 136;
+            this.radRecording_in_chan_both.TabStop = true;
+            this.radRecording_in_chan_both.Text = "Both";
+            this.toolTip1.SetToolTip(this.radRecording_in_chan_both, "Both channels");
+            this.radRecording_in_chan_both.UseVisualStyleBackColor = true;
+            this.radRecording_in_chan_both.CheckedChanged += new System.EventHandler(this.radRecording_in_chan_CheckedChanged);
+            // 
+            // radRecording_in_chan_L
+            // 
+            this.radRecording_in_chan_L.AutoSize = true;
+            this.radRecording_in_chan_L.Image = null;
+            this.radRecording_in_chan_L.Location = new System.Drawing.Point(427, 68);
+            this.radRecording_in_chan_L.Name = "radRecording_in_chan_L";
+            this.radRecording_in_chan_L.Size = new System.Drawing.Size(31, 17);
+            this.radRecording_in_chan_L.TabIndex = 137;
+            this.radRecording_in_chan_L.Text = "L";
+            this.toolTip1.SetToolTip(this.radRecording_in_chan_L, "Left channel");
+            this.radRecording_in_chan_L.UseVisualStyleBackColor = true;
+            this.radRecording_in_chan_L.CheckedChanged += new System.EventHandler(this.radRecording_in_chan_CheckedChanged);
+            // 
+            // radRecording_in_chan_R
+            // 
+            this.radRecording_in_chan_R.AutoSize = true;
+            this.radRecording_in_chan_R.Image = null;
+            this.radRecording_in_chan_R.Location = new System.Drawing.Point(463, 68);
+            this.radRecording_in_chan_R.Name = "radRecording_in_chan_R";
+            this.radRecording_in_chan_R.Size = new System.Drawing.Size(33, 17);
+            this.radRecording_in_chan_R.TabIndex = 138;
+            this.radRecording_in_chan_R.Text = "R";
+            this.toolTip1.SetToolTip(this.radRecording_in_chan_R, "Right channel");
+            this.radRecording_in_chan_R.UseVisualStyleBackColor = true;
+            this.radRecording_in_chan_R.CheckedChanged += new System.EventHandler(this.radRecording_in_chan_CheckedChanged);
             // 
             // Setup
             // 
@@ -75728,5 +75787,9 @@
         private CheckBoxTS chkRecording_globalkeybind;
         private TextBoxTS txtRecording_globalkeybind;
         private PictureBox picButtonBoxInfo;
+        private RadioButtonTS radRecording_in_chan_L;
+        private RadioButtonTS radRecording_in_chan_both;
+        private LabelTS labelTS656;
+        private RadioButtonTS radRecording_in_chan_R;
     }
 }

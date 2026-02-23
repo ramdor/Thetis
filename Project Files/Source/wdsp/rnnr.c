@@ -52,7 +52,8 @@ It uses a non modified version of rmnoise and implements a ringbuffer to handle 
 static inline float db_to_lin(float db) { return powf(10.0f, db / 20.0f); }
 static inline float lin_to_db(float lin) { return 20.0f * log10f(fmaxf(lin, 1e-12f)); }
 
-#define AGC_TARGET_DB   (60.0f)
+#define AGC_TARGET_DB   (75.0f)/*(60.0f)*/ // 75 dB target an RMS of ~5623 (dB = 20*log10(RMS) with 1.0 reference)
+                                           // good enough for RNNoise without pushing into clipping
 #define AGC_MIN_DB      (-12.0f)
 #define AGC_MAX_DB      (+220.0f)
 #define AGC_ATTACK_MS   (10.0f)
