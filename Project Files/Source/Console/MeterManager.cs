@@ -6316,7 +6316,7 @@ namespace Thetis
                                                             file_paths[n] = null;
                                                         }
                                                         igs.SetSetting<string[]>("buttonbox_recordplayback_filepaths", file_paths);
-                                                        int slots = igs.GetSetting<int>("buttonbox_recordplayback_slots", false, 1, 64, 8);
+                                                        int slots = igs.GetSetting<int>("buttonbox_recordplayback_slots", false, 1, clsVoiceRecordPlay.MAX_SLOTS, 8);
                                                         for (int n = 0; n < slots; n++)
                                                         {
                                                             igs.SetSetting<bool>("buttonbox_recordplayback_locked_" + n.ToString(), false);
@@ -10189,6 +10189,7 @@ namespace Thetis
         }
         internal class clsVoiceRecordPlay : clsButtonBox
         {
+            public const int MAX_SLOTS = 64;
             public const int RECORD_PLAYBACK_MODE = -10;
             public const int RECORD_PLAYBACK_WDSPPC = -11;
 
@@ -10257,7 +10258,7 @@ namespace Thetis
 
                 _unique_id = Guid.NewGuid().ToString();
 
-                Buttons = 64;
+                Buttons = MAX_SLOTS;
                 _slots = 8;
 
                 _map = new short[Buttons];
@@ -25575,7 +25576,7 @@ namespace Thetis
                                             if (mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
                                             {
                                                 ((clsVoiceRecordPlay)bb).UniqueID = igs.GetSetting<string>("buttonbox_recordplayback_uid", false, null, null, null);
-                                                int slots = igs.GetSetting<int>("buttonbox_recordplayback_slots", false, 1, 64, 8);
+                                                int slots = igs.GetSetting<int>("buttonbox_recordplayback_slots", false, 1, clsVoiceRecordPlay.MAX_SLOTS, 8);
                                                 ((clsVoiceRecordPlay)bb).Slots = slots;
                                                 ((clsVoiceRecordPlay)bb).ButtonMap = igs.GetSetting<short[]>("buttonbox_button_map", false, null, null, null);
                                                 ((clsVoiceRecordPlay)bb).SlotFilepaths = igs.GetSetting<string[]>("buttonbox_recordplayback_filepaths", false, null, null, null);

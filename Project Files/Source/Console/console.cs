@@ -28445,18 +28445,20 @@ namespace Thetis
             lblAF.Text = "Master AF:  " + ptbAF.Value.ToString();
 
             //[2.10.1.0] MW0LGE added
-            if (!initializing && !_mox && e != EventArgs.Empty && m_bRXAFSlidersWillUnmute)
+            if (!initializing && !_mox && e != EventArgs.Empty && m_bRXAFSlidersWillUnmute) // e != EventArgs.Empty prevents this happening if we call it manually
             {
                 if (chkMUT.Checked) chkMUT.Checked = false;
                 if (RX2Enabled && chkRX2Mute.Checked) chkRX2Mute.Checked = false;
             }
 
             //if (_mox && !chkMON.Checked)
-            //{
-            //    // monitor is muted
-            //    // Audio.MonitorVolume = 0.0;
+            //{ 
+            ////{
+            ////    // monitor is muted
+            ////    // Audio.MonitorVolume = 0.0;
             //}
-            else
+            //else
+            if (!(_mox && !chkMON.Checked))
             {
                 if ((_rx1_dsp_mode == DSPMode.CWL || _rx1_dsp_mode == DSPMode.CWU) &&
                     (!_mox && Audio.MOX) &&

@@ -27687,10 +27687,33 @@ namespace Thetis
 
                 if (mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
                 {
-                    _itemGroupSettings.SetSetting<int>("buttonbox_recordplayback_slots", currentSettings.GetSetting<int>("buttonbox_recordplayback_slots", true, 0, int.MaxValue, 0));
+                    // prevent overwrite of the following, copy from current settings
+                    _itemGroupSettings.SetSetting<string>("buttonbox_recordplayback_uid", currentSettings.GetSetting<string>("buttonbox_recordplayback_uid", false, null, null, null));
+                    _itemGroupSettings.SetSetting<int>("buttonbox_recordplayback_slots", currentSettings.GetSetting<int>("buttonbox_recordplayback_slots", false, 1, MeterManager.clsVoiceRecordPlay.MAX_SLOTS, 8));
+                    _itemGroupSettings.SetSetting<short[]>("buttonbox_button_map", currentSettings.GetSetting<short[]>("buttonbox_button_map", false, null, null, null));
+                    _itemGroupSettings.SetSetting<string[]>("buttonbox_recordplayback_filepaths", currentSettings.GetSetting<string[]>("buttonbox_recordplayback_filepaths", false, null, null, null)); ;
+                    _itemGroupSettings.SetSetting<bool>("buttonbox_recordplayback_wdsp", currentSettings.GetSetting<bool>("buttonbox_recordplayback_wdsp", false, false, false, true));
+
+                    int slots = currentSettings.GetSetting<int>("buttonbox_recordplayback_slots", false, 1, 64, 8);
+
+                    for (int n = 0; n < slots; n++)
+                    {
+                        _itemGroupSettings.SetSetting<string>("buttonbox_recordplayback_label_" + n.ToString(), currentSettings.GetSetting<string>("buttonbox_recordplayback_label_" + n.ToString(), false, null, null, "Slot " + (n + 1).ToString()));
+                        _itemGroupSettings.SetSetting<bool>("buttonbox_recordplayback_locked_" + n.ToString(), currentSettings.GetSetting<bool>("buttonbox_recordplayback_locked_" + n.ToString(), false, false, false, false));
+                        _itemGroupSettings.SetSetting<bool>("buttonbox_recordplayback_useskeybind_" + n.ToString(), currentSettings.GetSetting<bool>("buttonbox_recordplayback_useskeybind_" + n.ToString(), false, false, false, false));
+                        _itemGroupSettings.SetSetting<Keys>("buttonbox_recordplayback_keybind_" + n.ToString(), currentSettings.GetSetting<Keys>("buttonbox_recordplayback_keybind_" + n.ToString(), false, Keys.None, Keys.None, Keys.None));
+                        _itemGroupSettings.SetSetting<bool>("buttonbox_recordplayback_canrepeat_" + n.ToString(), currentSettings.GetSetting<bool>("buttonbox_recordplayback_canrepeat_" + n.ToString(), false, false, false, false));
+                        _itemGroupSettings.SetSetting<int>("buttonbox_recordplayback_repeatdelay_" + n.ToString(), currentSettings.GetSetting<int>("buttonbox_recordplayback_repeatdelay_" + n.ToString(), false, 2, 60, 10));
+                        _itemGroupSettings.SetSetting<bool>("buttonbox_recordplayback_repeatenabled_" + n.ToString(), currentSettings.GetSetting<bool>("buttonbox_recordplayback_repeatenabled_" + n.ToString(), false, false, false, false));
+                        _itemGroupSettings.SetSetting<double>("buttonbox_recordplayback_txgainadjust_" + n.ToString(), currentSettings.GetSetting<double>("buttonbox_recordplayback_txgainadjust_" + n.ToString(), false, -70, 70, 0));
+                        _itemGroupSettings.SetSetting<bool>("buttonbox_recordplayback_ignoreplaytempchanges_" + n.ToString(), currentSettings.GetSetting<bool>("buttonbox_recordplayback_ignoreplaytempchanges_" + n.ToString(), false, false, false, true));
+                        _itemGroupSettings.SetSetting<bool>("buttonbox_recordplayback_ignorerecordtempchanges_" + n.ToString(), currentSettings.GetSetting<bool>("buttonbox_recordplayback_ignorerecordtempchanges_" + n.ToString(), false, false, false, true));
+                    }
                 }
                 else if (mt == MeterType.OTHER_BUTTONS)
                 {
+                    // prevent overwrite of the following, copy from current settings
+                    _itemGroupSettings.SetSetting<short[]>("buttonbox_button_map", currentSettings.GetSetting<short[]>("buttonbox_button_map", false, null, null, null));
                     for (int n = 0; n < OtherButtonIdHelpers.MAX_BITFIELD_GROUP; n++)
                     {
                         _itemGroupSettings.SetSetting<int>("buttonbox_other_buttons_bitfield_" + n.ToString(), currentSettings.GetSetting<int>("buttonbox_other_buttons_bitfield_" + n.ToString(), true, 0, int.MaxValue, 0));
@@ -27702,10 +27725,12 @@ namespace Thetis
                 }
                 else if (mt == MeterType.TUNESTEP_BUTTONS)
                 {
+                    // prevent overwrite of the following, copy from current settings
                     _itemGroupSettings.SetSetting<int>("buttonbox_tunestep_bitfield", currentSettings.GetSetting<int>("buttonbox_tunestep_bitfield", true, 0, int.MaxValue, 0));
                 }
                 else if (mt == MeterType.ANTENNA_BUTTONS)
                 {
+                    // prevent overwrite of the following, copy from current settings
                     _itemGroupSettings.SetSetting<bool>("buttonbox_rx1", currentSettings.GetSetting<bool>("buttonbox_rx1", false, false, false, true));
                     _itemGroupSettings.SetSetting<bool>("buttonbox_rx2", currentSettings.GetSetting<bool>("buttonbox_rx2", false, false, false, true));
                     _itemGroupSettings.SetSetting<bool>("buttonbox_rx3", currentSettings.GetSetting<bool>("buttonbox_rx3", false, false, false, true));
@@ -27735,13 +27760,14 @@ namespace Thetis
 
             bool bPaste;
 
-            // only allow paste into matching
+            // only allow paste into matching items. Some items allow pasting into non matching types as they share settings
             if (mt == MeterType.MAGIC_EYE || mt == MeterType.CROSS ||
                 mt == MeterType.ANANMM || mt == MeterType.SIGNAL_TEXT ||
                 mt == MeterType.SPACER || mt == MeterType.TEXT_OVERLAY ||
                 mt == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
                 mt == MeterType.VFO_DISPLAY || mt == MeterType.CLOCK ||
-                mt == MeterType.FILTER_DISPLAY || _itemGroupSettingsMeterType == MeterType.CUSTOM_METER_BAR
+                mt == MeterType.FILTER_DISPLAY || mt == MeterType.CUSTOM_METER_BAR ||
+                mt == MeterType.VOICE_RECORD_PLAY_BUTTONS
                 )
             {
                 bPaste = _itemGroupSettingsMeterType == mt;
@@ -27751,7 +27777,8 @@ namespace Thetis
                 _itemGroupSettingsMeterType == MeterType.SPACER || _itemGroupSettingsMeterType == MeterType.TEXT_OVERLAY ||
                 _itemGroupSettingsMeterType == MeterType.LED || mt == MeterType.ROTATOR || mt == MeterType.HISTORY ||
                 _itemGroupSettingsMeterType == MeterType.VFO_DISPLAY || _itemGroupSettingsMeterType == MeterType.CLOCK ||
-                _itemGroupSettingsMeterType == MeterType.FILTER_DISPLAY || _itemGroupSettingsMeterType == MeterType.CUSTOM_METER_BAR
+                _itemGroupSettingsMeterType == MeterType.FILTER_DISPLAY || _itemGroupSettingsMeterType == MeterType.CUSTOM_METER_BAR ||
+                _itemGroupSettingsMeterType == MeterType.VOICE_RECORD_PLAY_BUTTONS
                 )
             {
                 bPaste = mt == _itemGroupSettingsMeterType;
@@ -37681,6 +37708,13 @@ namespace Thetis
         private void chkActivePeakRX2_tx_CheckedChanged(object sender, EventArgs e)
         {
             Display.ActivePeakInTxRX2 = chkActivePeakRX2_tx.Checked;
+        }
+
+        private void radRecording_in_chan_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radRecording_in_chan_both.Checked) console.ARP.PCInputSource = PCInputSource.Both;
+            else if(radRecording_in_chan_L.Checked) console.ARP.PCInputSource = PCInputSource.Left;
+            else if(radRecording_in_chan_R.Checked) console.ARP.PCInputSource = PCInputSource.Right;
         }
     }
 
