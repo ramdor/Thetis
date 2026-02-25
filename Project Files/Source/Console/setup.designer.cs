@@ -1926,6 +1926,10 @@
             this.radRecording_RXing_audio = new System.Windows.Forms.RadioButtonTS();
             this.radRecording_RXing_iq = new System.Windows.Forms.RadioButtonTS();
             this.groupBoxTS61 = new System.Windows.Forms.GroupBoxTS();
+            this.radRecording_in_chan_R = new System.Windows.Forms.RadioButtonTS();
+            this.radRecording_in_chan_L = new System.Windows.Forms.RadioButtonTS();
+            this.radRecording_in_chan_both = new System.Windows.Forms.RadioButtonTS();
+            this.labelTS656 = new System.Windows.Forms.LabelTS();
             this.nudRecording_gainOutput = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS647 = new System.Windows.Forms.LabelTS();
             this.nudRecording_gainInput = new System.Windows.Forms.NumericUpDownTS();
@@ -1948,6 +1952,7 @@
             this.groupBoxTS67 = new System.Windows.Forms.GroupBoxTS();
             this.chkRecording_disable_rxeq = new System.Windows.Forms.CheckBoxTS();
             this.groupBoxTS65 = new System.Windows.Forms.GroupBoxTS();
+            this.chkRecording_disable_leveler = new System.Windows.Forms.CheckBoxTS();
             this.chkRecording_disable_phase = new System.Windows.Forms.CheckBoxTS();
             this.chkRecording_disable_cfc = new System.Windows.Forms.CheckBoxTS();
             this.chkRecording_disable_comp = new System.Windows.Forms.CheckBoxTS();
@@ -4413,10 +4418,6 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
-            this.labelTS656 = new System.Windows.Forms.LabelTS();
-            this.radRecording_in_chan_both = new System.Windows.Forms.RadioButtonTS();
-            this.radRecording_in_chan_L = new System.Windows.Forms.RadioButtonTS();
-            this.radRecording_in_chan_R = new System.Windows.Forms.RadioButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -31976,6 +31977,57 @@
             this.groupBoxTS61.TabStop = false;
             this.groupBoxTS61.Text = "PC Audio";
             // 
+            // radRecording_in_chan_R
+            // 
+            this.radRecording_in_chan_R.AutoSize = true;
+            this.radRecording_in_chan_R.Image = null;
+            this.radRecording_in_chan_R.Location = new System.Drawing.Point(463, 68);
+            this.radRecording_in_chan_R.Name = "radRecording_in_chan_R";
+            this.radRecording_in_chan_R.Size = new System.Drawing.Size(33, 17);
+            this.radRecording_in_chan_R.TabIndex = 138;
+            this.radRecording_in_chan_R.Text = "R";
+            this.toolTip1.SetToolTip(this.radRecording_in_chan_R, "Right channel");
+            this.radRecording_in_chan_R.UseVisualStyleBackColor = true;
+            this.radRecording_in_chan_R.CheckedChanged += new System.EventHandler(this.radRecording_in_chan_CheckedChanged);
+            // 
+            // radRecording_in_chan_L
+            // 
+            this.radRecording_in_chan_L.AutoSize = true;
+            this.radRecording_in_chan_L.Image = null;
+            this.radRecording_in_chan_L.Location = new System.Drawing.Point(427, 68);
+            this.radRecording_in_chan_L.Name = "radRecording_in_chan_L";
+            this.radRecording_in_chan_L.Size = new System.Drawing.Size(31, 17);
+            this.radRecording_in_chan_L.TabIndex = 137;
+            this.radRecording_in_chan_L.Text = "L";
+            this.toolTip1.SetToolTip(this.radRecording_in_chan_L, "Left channel");
+            this.radRecording_in_chan_L.UseVisualStyleBackColor = true;
+            this.radRecording_in_chan_L.CheckedChanged += new System.EventHandler(this.radRecording_in_chan_CheckedChanged);
+            // 
+            // radRecording_in_chan_both
+            // 
+            this.radRecording_in_chan_both.AutoSize = true;
+            this.radRecording_in_chan_both.Checked = true;
+            this.radRecording_in_chan_both.Image = null;
+            this.radRecording_in_chan_both.Location = new System.Drawing.Point(374, 68);
+            this.radRecording_in_chan_both.Name = "radRecording_in_chan_both";
+            this.radRecording_in_chan_both.Size = new System.Drawing.Size(47, 17);
+            this.radRecording_in_chan_both.TabIndex = 136;
+            this.radRecording_in_chan_both.TabStop = true;
+            this.radRecording_in_chan_both.Text = "Both";
+            this.toolTip1.SetToolTip(this.radRecording_in_chan_both, "Both channels");
+            this.radRecording_in_chan_both.UseVisualStyleBackColor = true;
+            this.radRecording_in_chan_both.CheckedChanged += new System.EventHandler(this.radRecording_in_chan_CheckedChanged);
+            // 
+            // labelTS656
+            // 
+            this.labelTS656.AutoSize = true;
+            this.labelTS656.Image = null;
+            this.labelTS656.Location = new System.Drawing.Point(296, 70);
+            this.labelTS656.Name = "labelTS656";
+            this.labelTS656.Size = new System.Drawing.Size(72, 13);
+            this.labelTS656.TabIndex = 135;
+            this.labelTS656.Text = "Record chan:";
+            // 
             // nudRecording_gainOutput
             // 
             this.nudRecording_gainOutput.DecimalPlaces = 2;
@@ -32296,6 +32348,7 @@
             // 
             // groupBoxTS65
             // 
+            this.groupBoxTS65.Controls.Add(this.chkRecording_disable_leveler);
             this.groupBoxTS65.Controls.Add(this.chkRecording_disable_phase);
             this.groupBoxTS65.Controls.Add(this.chkRecording_disable_cfc);
             this.groupBoxTS65.Controls.Add(this.chkRecording_disable_comp);
@@ -32306,6 +32359,18 @@
             this.groupBoxTS65.TabIndex = 94;
             this.groupBoxTS65.TabStop = false;
             this.groupBoxTS65.Text = "During playback temporarily";
+            // 
+            // chkRecording_disable_leveler
+            // 
+            this.chkRecording_disable_leveler.AutoSize = true;
+            this.chkRecording_disable_leveler.Image = null;
+            this.chkRecording_disable_leveler.Location = new System.Drawing.Point(5, 111);
+            this.chkRecording_disable_leveler.Name = "chkRecording_disable_leveler";
+            this.chkRecording_disable_leveler.Size = new System.Drawing.Size(99, 17);
+            this.chkRecording_disable_leveler.TabIndex = 4;
+            this.chkRecording_disable_leveler.Text = "Disable Leveler";
+            this.chkRecording_disable_leveler.UseVisualStyleBackColor = true;
+            this.chkRecording_disable_leveler.CheckedChanged += new System.EventHandler(this.chkRecording_disable_during_playback);
             // 
             // chkRecording_disable_phase
             // 
@@ -69946,57 +70011,6 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
-            // labelTS656
-            // 
-            this.labelTS656.AutoSize = true;
-            this.labelTS656.Image = null;
-            this.labelTS656.Location = new System.Drawing.Point(296, 70);
-            this.labelTS656.Name = "labelTS656";
-            this.labelTS656.Size = new System.Drawing.Size(72, 13);
-            this.labelTS656.TabIndex = 135;
-            this.labelTS656.Text = "Record chan:";
-            // 
-            // radRecording_in_chan_both
-            // 
-            this.radRecording_in_chan_both.AutoSize = true;
-            this.radRecording_in_chan_both.Checked = true;
-            this.radRecording_in_chan_both.Image = null;
-            this.radRecording_in_chan_both.Location = new System.Drawing.Point(374, 68);
-            this.radRecording_in_chan_both.Name = "radRecording_in_chan_both";
-            this.radRecording_in_chan_both.Size = new System.Drawing.Size(47, 17);
-            this.radRecording_in_chan_both.TabIndex = 136;
-            this.radRecording_in_chan_both.TabStop = true;
-            this.radRecording_in_chan_both.Text = "Both";
-            this.toolTip1.SetToolTip(this.radRecording_in_chan_both, "Both channels");
-            this.radRecording_in_chan_both.UseVisualStyleBackColor = true;
-            this.radRecording_in_chan_both.CheckedChanged += new System.EventHandler(this.radRecording_in_chan_CheckedChanged);
-            // 
-            // radRecording_in_chan_L
-            // 
-            this.radRecording_in_chan_L.AutoSize = true;
-            this.radRecording_in_chan_L.Image = null;
-            this.radRecording_in_chan_L.Location = new System.Drawing.Point(427, 68);
-            this.radRecording_in_chan_L.Name = "radRecording_in_chan_L";
-            this.radRecording_in_chan_L.Size = new System.Drawing.Size(31, 17);
-            this.radRecording_in_chan_L.TabIndex = 137;
-            this.radRecording_in_chan_L.Text = "L";
-            this.toolTip1.SetToolTip(this.radRecording_in_chan_L, "Left channel");
-            this.radRecording_in_chan_L.UseVisualStyleBackColor = true;
-            this.radRecording_in_chan_L.CheckedChanged += new System.EventHandler(this.radRecording_in_chan_CheckedChanged);
-            // 
-            // radRecording_in_chan_R
-            // 
-            this.radRecording_in_chan_R.AutoSize = true;
-            this.radRecording_in_chan_R.Image = null;
-            this.radRecording_in_chan_R.Location = new System.Drawing.Point(463, 68);
-            this.radRecording_in_chan_R.Name = "radRecording_in_chan_R";
-            this.radRecording_in_chan_R.Size = new System.Drawing.Size(33, 17);
-            this.radRecording_in_chan_R.TabIndex = 138;
-            this.radRecording_in_chan_R.Text = "R";
-            this.toolTip1.SetToolTip(this.radRecording_in_chan_R, "Right channel");
-            this.radRecording_in_chan_R.UseVisualStyleBackColor = true;
-            this.radRecording_in_chan_R.CheckedChanged += new System.EventHandler(this.radRecording_in_chan_CheckedChanged);
-            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -75791,5 +75805,6 @@
         private RadioButtonTS radRecording_in_chan_both;
         private LabelTS labelTS656;
         private RadioButtonTS radRecording_in_chan_R;
+        private CheckBoxTS chkRecording_disable_leveler;
     }
 }

@@ -387,7 +387,7 @@ namespace Thetis
 
     public enum HPSDRHW
     {
-        Atlas = 0,
+        Atlas = 0,          // Metis in PowerSDR, but Atlas in Thetis
         Hermes = 1,         // ANAN-10 ANAN100
         HermesII = 2,       // ANAN-10E ANAN-100B HeremesII
         Angelia = 3,        // ANAN-100D

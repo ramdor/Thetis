@@ -4344,6 +4344,20 @@ namespace Thetis
                 }
             }
         }
+        public bool LevelerEnabled
+        {
+            get
+            {
+                return chkDSPLevelerEnabled.Checked;
+            }
+            set
+            {
+                if (chkDSPLevelerEnabled != null)
+                {
+                    chkDSPLevelerEnabled.Checked = value;
+                }
+            }
+        }
         public string VACSampleRate
         {
             get
@@ -9084,6 +9098,7 @@ namespace Thetis
         private void chkDSPLevelerEnabled_CheckedChanged(object sender, System.EventArgs e)
         {
             if (initializing) return;
+
             console.radio.GetDSPTX(0).TXLevelerOn = chkDSPLevelerEnabled.Checked;
 
             console.SetupInfoBarButton(ucInfoBar.ActionTypes.Leveler, chkDSPLevelerEnabled.Checked);
@@ -36144,12 +36159,22 @@ namespace Thetis
 
         private void btnRecording_openQuickFolder_Click(object sender, EventArgs e)
         {
-            string fullPath = console.ARP.AudioFolder;
+            string fullPath = Path.Combine(console.ARP.AudioFolder, "quickrecord");
             try
             {
-                if (Directory.Exists(console.AppDataPath))
+                //if not there make it
+                if (!Directory.Exists(fullPath))
                 {
-                    Process.Start("explorer.exe", console.AppDataPath);
+                    Directory.CreateDirectory(fullPath);
+                }
+            }
+            catch { }
+
+            try
+            {
+                if (Directory.Exists(fullPath))
+                {
+                    Process.Start("explorer.exe", fullPath);
                 }
             }
             catch { }
@@ -36284,6 +36309,7 @@ namespace Thetis
             console.ARP.SetPlaybackSetting("COMP", chkRecording_disable_comp.Checked);
             console.ARP.SetPlaybackSetting("CFC", chkRecording_disable_cfc.Checked);
             console.ARP.SetPlaybackSetting("PHASE", chkRecording_disable_phase.Checked);
+            console.ARP.SetPlaybackSetting("LEVELER", chkRecording_disable_leveler.Checked);
             console.ARP.SetPlaybackSetting("MON", chkRecording_enable_monIfMox.Checked);
         }
 
@@ -36703,6 +36729,12 @@ namespace Thetis
             if (initializing) return;
             updateMeterType();
         }
+        private void radRecording_in_chan_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radRecording_in_chan_both.Checked) console.ARP.PCInputSource = PCInputSource.Both;
+            else if (radRecording_in_chan_L.Checked) console.ARP.PCInputSource = PCInputSource.Left;
+            else if (radRecording_in_chan_R.Checked) console.ARP.PCInputSource = PCInputSource.Right;
+        }
         #endregion
 
         private void chkActivePeakRX1_tx_CheckedChanged(object sender, EventArgs e)
@@ -36713,13 +36745,6 @@ namespace Thetis
         private void chkActivePeakRX2_tx_CheckedChanged(object sender, EventArgs e)
         {
             Display.ActivePeakInTxRX2 = chkActivePeakRX2_tx.Checked;
-        }
-
-        private void radRecording_in_chan_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radRecording_in_chan_both.Checked) console.ARP.PCInputSource = PCInputSource.Both;
-            else if(radRecording_in_chan_L.Checked) console.ARP.PCInputSource = PCInputSource.Left;
-            else if(radRecording_in_chan_R.Checked) console.ARP.PCInputSource = PCInputSource.Right;
         }
     }
 
