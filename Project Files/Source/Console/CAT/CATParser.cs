@@ -552,10 +552,11 @@ namespace Thetis
 			{
 				sfx = current_cat.Substring(start,current_cat.IndexOf(";")-end);
 				if(prefix != "KY" && prefix+extension != "ZZKY" && prefix+extension != "ZZMY" &&
-					(prefix+extension != "ZZEA" && prefix+extension != "ZZEB") &&
-					(prefix+extension != "ZZFX" && prefix+extension != "ZZFY") &&
-					(prefix+extension != "ZZFV" && prefix+extension != "ZZFW") &&
-                    (prefix + extension != "ZZGA" && prefix + extension != "ZZGR"))
+					prefix + extension != "ZZEA" && prefix+extension != "ZZEB" &&
+					prefix + extension != "ZZFX" && prefix+extension != "ZZFY" &&
+					prefix + extension != "ZZFV" && prefix+extension != "ZZFW" &&
+                    prefix + extension != "ZZGA" && prefix + extension != "ZZGR" &&
+                    prefix + extension != "ZZJP" && prefix + extension != "ZZJQ" && prefix + extension != "ZZJR" && prefix + extension != "ZZJS")
 				{
 					Regex sfxpattern = new Regex("^[+-]?[Vv0-9]*$");
                     if (!sfxpattern.IsMatch(sfx))
@@ -1010,7 +1011,19 @@ namespace Thetis
                 case "ZZMZ":
                     rtncmd = cmdlist.ZZMZ(suffix);
                     break;
-				case "ZZNA":
+                case "ZZJP":
+                    rtncmd = cmdlist.ZZJP(suffix);
+                    break;
+                case "ZZJQ":
+                    rtncmd = cmdlist.ZZJQ(suffix);
+                    break;
+                case "ZZJR":
+                    rtncmd = cmdlist.ZZJR(suffix);
+                    break;
+                case "ZZJS":
+                    rtncmd = cmdlist.ZZJS();
+                    break;
+                case "ZZNA":
 					rtncmd = cmdlist.ZZNA(suffix);
 					break;
 				case "ZZNB":

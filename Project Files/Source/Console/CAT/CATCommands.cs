@@ -4507,12 +4507,283 @@ namespace Thetis
             }
         }
 
-		#endregion Extended CAT Methods ZZG-ZZM
+        public string ZZJS()
+        {
+			// stop record/play
+            if (console is null) return parser.Error1;
 
-		#region Extended CAT Methods ZZN-ZZQ
+			try { console.ARP.StopRecord(out _); } catch { }
+			try { console.ARP.StopPlayback(out _); } catch { }
 
-		//Sets or reads Noise Blanker 2 status
-		public string ZZNA(string s)
+            return "";
+        }
+
+        public string ZZJR(string s)
+        {
+            // start recording to slot N
+            if (console is null) return parser.Error1;
+
+			if (s.Length == parser.nSet)
+			{
+                //stop anything
+                try { console.ARP.StopRecord(out _); } catch { }
+                try { console.ARP.StopPlayback(out _); } catch { }
+
+                // format is ZZJRxynnnq, s will be xynnnq where
+                // x is receiver 1-2,
+                // y is via 0=wdsp 1=pc,
+                // nnn is slot number 1-128
+                // q is 0=use recording temporary limitations, 1=ignore them
+                int rx = 0;
+				int slot = 0;
+				int wdsp_pc = 0;
+                int ignore_tmp_changes = 0;
+
+                bool ok = !string.IsNullOrWhiteSpace(s);
+				if (ok) ok = s.Length == 6;
+				if (ok) ok = int.TryParse(s.Substring(0, 1), out rx);
+				if (ok) ok = rx >= 1 && rx <= 2;
+                if (ok) ok = int.TryParse(s.Substring(1, 1), out wdsp_pc);
+                if (ok) ok = wdsp_pc >= 0 && wdsp_pc <= 1;
+                if (ok) ok = int.TryParse(s.Substring(2, 3), out slot);
+				if (ok) ok = slot >= 1 && slot <= 128;
+                if (ok) ok = int.TryParse(s.Substring(5, 1), out ignore_tmp_changes);
+                if (ok) ok = ignore_tmp_changes >= 0 && ignore_tmp_changes <= 1;
+
+                if (ok)
+				{
+                    int rx_wfw_id;
+					Band b;
+					double freq;
+					DSPMode mode;
+					switch (rx)
+					{
+						case 1:
+							rx_wfw_id = 0;
+							b = console.RX1Band;
+							freq = console.VFOAFreq;
+							mode = console.RX1DSPMode;
+							break;
+						case 2:
+							b = console.RX2Band;
+							freq = console.VFOBFreq;
+							mode = console.RX2DSPMode;
+							rx_wfw_id = 1;
+							break;
+						default:
+							rx_wfw_id = 0;
+							b = console.RX1Band;
+							freq = console.VFOAFreq;
+							mode = console.RX1DSPMode;
+							break;
+					}
+					RecordingDetails details = new RecordingDetails()
+					{
+						Band = BandStackManager.BandToString(b),
+						Frequency = freq.ToString("F6", System.Globalization.CultureInfo.InvariantCulture),
+						Mode = mode.ToString(),
+						UtcTime = DateTime.UtcNow
+					};
+					string file = "cat\\slot_" + slot.ToString() + ".wav"; // all in sub folder cat, slot_0.wav to slot_127.wav
+                    string full_path;
+					string error;
+					if (wdsp_pc == 0)
+					{
+						full_path = console.ARP.RecordToFileFromWDSP("cat", file, rx_wfw_id, out error, true, details, ignore_tmp_changes == 1);
+					}
+					else
+					{
+						full_path = console.ARP.RecordToFileFromPCAudio("cat", file, console.ARP.InputPCDeviceID, out error, true, details);
+					}
+
+                    if (!string.IsNullOrEmpty(full_path) && error == null)
+					{
+						// all ok
+						return "";
+					}
+					else
+					{
+						return parser.Error1;
+					}
+				}
+				else
+				{
+					return parser.Error1;
+				}
+			}
+			else if (s.Length == parser.nGet)
+			{
+				// will report if recording
+				return console.ARP.IsRecording ? "1" : "0";
+            }
+			else
+			{
+				return "";
+			}
+        }
+        public string ZZJP(string s)
+        {
+            // start playback from slot N
+            if (console is null) return parser.Error1;
+
+            if (s.Length == parser.nSet)
+            {
+                //stop anything
+                try { console.ARP.StopRecord(out _); } catch { }
+                try { console.ARP.StopPlayback(out _); } catch { }
+
+                // format is ZZJPxynnnqggg, s will be xynnnqggg where
+                // x is receiver 1-2,
+                // y is via 0=wdsp 1=pc,
+                // nnn is slot number 1-128
+                // q is 0=use playback temporary limitations, 1=ignore them
+                // ggg is gain adjust in dB from -70 to +70, 0 should be sent as +00 or -00
+                int rx = 0;
+                int slot = 0;
+                int wdsp_pc = 0;
+				int ignore_tmp_changes = 0;
+                int gain_adjust_db = 0;
+                string gain_text = null;
+
+                bool ok = !string.IsNullOrWhiteSpace(s);
+				if (ok) ok = s.Length == 9;
+                if (ok) ok = int.TryParse(s.Substring(0, 1), out rx);
+                if (ok) ok = rx >= 1 && rx <= 2;
+                if (ok) ok = int.TryParse(s.Substring(1, 1), out wdsp_pc);
+                if (ok) ok = wdsp_pc >= 0 && wdsp_pc <= 1;
+                if (ok) ok = int.TryParse(s.Substring(2, 3), out slot);
+                if (ok) ok = slot >= 1 && slot <= 128;
+                if (ok) ok = int.TryParse(s.Substring(5, 1), out ignore_tmp_changes);
+                if (ok) ok = ignore_tmp_changes >= 0 && ignore_tmp_changes <= 1;
+
+				if(wdsp_pc == 0) 
+				{
+					// consider for wdsp, not used in pc playback althoug the cat command must provide it
+					if (ok) gain_text = s.Substring(6, 3);
+					if (ok) ok = gain_text[0] == '+' || gain_text[0] == '-';
+					if (ok) ok = char.IsDigit(gain_text[1]) && char.IsDigit(gain_text[2]);
+					if (ok) ok = int.TryParse(gain_text, out gain_adjust_db);
+					if (ok) ok = gain_adjust_db >= -70 && gain_adjust_db <= 70;
+				}
+
+                if (ok)
+                {
+                    int rx_wfw_id;
+                    switch (rx)
+                    {
+                        case 1:
+                            rx_wfw_id = 0;
+                            break;
+                        case 2:
+                            rx_wfw_id = 1;
+                            break;
+                        default:
+                            rx_wfw_id = 0;
+                            break;
+                    }
+                    string file = "cat\\slot_" + slot.ToString() + ".wav"; // all in sub folder cat, slot_0.wav to slot_127.wav
+                    string error;
+                    if (wdsp_pc == 0)
+                    {
+                        ok = console.ARP.PlayFileViaWDSP("cat", file, rx_wfw_id, out error, gain_adjust_db, ignore_tmp_changes == 1);
+                    }
+                    else
+                    {
+                        ok = console.ARP.PlayFileViaPCAudio("cat", file, console.ARP.OutputPCDeviceID, out error);
+                    }
+
+                    if (ok && error == null)
+                    {
+                        // all ok
+                        return "";
+                    }
+                    else
+                    {
+                        return parser.Error1;
+                    }
+                }
+                else
+                {
+                    return parser.Error1;
+                }
+            }
+            else if (s.Length == parser.nGet)
+            {
+                // will report if playing
+                return console.ARP.IsPlaying ? "1" : "0";
+            }
+            else
+            {
+                return "";
+            }
+        }
+        public string ZZJQ(string s)
+        {
+            // start playback/record using a containter item voice record/playback item identified by its 4char id
+            if (console is null) return parser.Error1;
+
+            if (s.Length == parser.nSet)
+            {
+                //stop anything
+                try { console.ARP.StopRecord(out _); } catch { }
+                try { console.ARP.StopPlayback(out _); } catch { }
+
+                // format is ZZJQccccrnnn, s will be ccccy where
+                // ccccy is a 4charID for the gadget item voice record/play,
+                // r is 0=playback 1=record,
+                // nnn is slot number 1-128
+                int slot = 0;
+				string four_charID = "";
+				int record = 0;
+                bool ok = !string.IsNullOrWhiteSpace(s);
+				MeterManager.clsVoiceRecordPlay vrp = null;
+                if (ok) ok = s.Length == 8;
+				if (ok)
+				{
+                    four_charID = s.Substring(0, 4);
+					vrp = MeterManager.GetVoiceRecordPlayFrom4Char(four_charID);
+					ok = vrp != null;
+                }
+                if (ok) ok = int.TryParse(s.Substring(4, 1), out record);
+                if (ok) ok = record >= 0 && record <= 1;
+                if (ok) ok = int.TryParse(s.Substring(5, 3), out slot);
+                if (ok) ok = slot >= 1 && slot <= vrp.Slots;
+
+                if (ok)
+                {
+					if (record == 1)
+					{
+                        vrp.RecordToSlot(slot - 1);
+                    }
+					else
+					{
+                        vrp.PlayFromSlot(slot - 1);
+                    }
+
+					return "";
+                }
+                else
+                {
+                    return parser.Error1;
+                }
+            }
+            else if (s.Length == parser.nGet)
+            {
+                // will report if recording or playing
+                return console.ARP.IsBusy ? "1" : "0";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        #endregion Extended CAT Methods ZZG-ZZM
+
+        #region Extended CAT Methods ZZN-ZZQ
+
+        //Sets or reads Noise Blanker 2 status
+        public string ZZNA(string s)
 		{
 			if(s.Length == parser.nSet && (s == "0" || s == "1"))
 			{

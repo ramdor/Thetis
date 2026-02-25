@@ -11313,10 +11313,12 @@ namespace Thetis
         {
             get
             {
+                if (IsSetupFormNull) return false;
                 return SetupForm.CFCEnabled;
             }
             set
             {
+                if (IsSetupFormNull) return;
                 SetupForm.CFCEnabled = value;
             }
         }
@@ -11325,14 +11327,28 @@ namespace Thetis
         {
             get
             {
+                if (IsSetupFormNull) return false;
                 return SetupForm.PhaseRotEnabled;
             }
             set
             {
+                if (IsSetupFormNull) return;
                 SetupForm.PhaseRotEnabled = value;
             }
         }
-
+        public bool LevelerEnabled
+        {
+            get
+            {
+                if (IsSetupFormNull) return false;
+                return SetupForm.LevelerEnabled;
+            }
+            set
+            {
+                if (IsSetupFormNull) return;
+                SetupForm.LevelerEnabled = value;
+            }
+        }
         private bool peak_tx_meter = true; // as opposed to avg
         public bool PeakTXMeter
         {
@@ -36632,7 +36648,8 @@ namespace Thetis
             {
                 ckQuickRec.Enabled = false;
                 ckQuickPlay.BackColor = button_selected_color;
-                string file = Path.Combine(AppDataPath, "SDRQuickAudio.wav");
+                //string file = Path.Combine(AppDataPath, "SDRQuickAudio.wav");
+                string file = Path.Combine(ARP.AudioFolder, "quickrecord", "SDRQuickAudio.wav");
                 bool ok = ARP.PlayFileViaWDSP("quick", file, 0, out string error);
                 if (!ok)
                 {
@@ -36675,7 +36692,8 @@ namespace Thetis
             {
                 ckQuickPlay.Enabled = false;
                 ckQuickRec.BackColor = button_selected_color;
-                string file = Path.Combine(AppDataPath, "SDRQuickAudio.wav");
+                //string file = Path.Combine(AppDataPath, "SDRQuickAudio.wav");
+                string file = Path.Combine(ARP.AudioFolder, "quickrecord", "SDRQuickAudio.wav");
                 RecordingDetails details = new RecordingDetails()
                 {
                     Band = BandStackManager.BandToString(RX1Band),

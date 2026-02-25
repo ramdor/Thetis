@@ -585,6 +585,22 @@ namespace Thetis
 
             return null;
         }
+        public static clsVoiceRecordPlay GetVoiceRecordPlayFrom4Char(string fourchar)
+        {
+            if (string.IsNullOrEmpty(fourchar)) return null;
+
+            lock (_metersLock)
+            {
+                foreach (KeyValuePair<string, clsMeter> ms in _meters)
+                {
+                    clsMeter m = ms.Value;
+                    clsVoiceRecordPlay vrp = m.VoiceRecordPlayFromFourChar(fourchar);
+                    if (vrp != null) return vrp;
+                }
+            }
+
+            return null;
+        }
         public static clsOtherButtons GetOtherButtonsFromID(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;
@@ -6273,7 +6289,7 @@ namespace Thetis
                                                 m.ApplySettingsForMeterGroup(ig.MeterType, igs, null, ig.Order, false, true);                                                
                                             }
 
-                                            // TODO: use this to do some mapping?
+                                            // TODO: use this to do some mapping possibly in the future
                                             m.Find4Chars(ref fourCharMap, igs);
 
                                             m.RemoveMeterType(ig.MeterType, ig.Order);
@@ -10246,8 +10262,14 @@ namespace Thetis
 
             private bool _from_quick_shift_record;
 
+            private string _four_char;
+
             public clsVoiceRecordPlay(clsMeter owningmeter, clsItemGroup ig)
             {
+                Guid guid;
+                if (!Guid.TryParse(ig.ID, out guid)) guid = Guid.NewGuid();
+                _four_char = Common.FourChar("ledindicator", 0, guid);
+
                 _alt_pressed = Common.AltlKeyDown;
                 _ctrl_pressed = Common.CtrlKeyDown;
                 _shift_pressed = Common.ShiftKeyDown;
@@ -10327,6 +10349,10 @@ namespace Thetis
 
                 Initialise();
             }
+            public string FourChar
+            {
+                get { return _four_char; }
+            }
             public override void Removing()
             {
                 clearRunningRepeat(-1, true);
@@ -10343,6 +10369,33 @@ namespace Thetis
 
                 // as we are not passing in an actual file, but a path, then all wavs/mp3/json + folder will be removed
                 _console.ARP.DeleteRecording(_unique_id, out string error, true);
+            }
+            public void RecordToSlot(int slot)
+            {
+                if(slot < 0 || slot > _slots -1) return;
+                try
+                {
+                    _mode_record = true;
+                    _from_quick_shift_record = true;
+                    _console.Invoke(new MethodInvoker(() => // calls to arp belong to ui
+                    {
+                        handleClicked(slot, false, false, false);
+                    }));
+                }
+                catch { }
+            }
+            public void PlayFromSlot(int slot)
+            {
+                if (slot < 0 || slot > _slots - 1) return;
+                try
+                {
+                    _mode_record = false;
+                    _console.Invoke(new MethodInvoker(() => // calls to arp belong to ui
+                    {
+                        handleClicked(slot, false, false, false);
+                    }));
+                }
+                catch { }
             }
             public override bool MOX
             {
@@ -25392,6 +25445,17 @@ namespace Thetis
                                 fourchars[we.FourChar] = we.ID; // this guid (web.id) creates this 4char
                             }
                         }
+                        else if (ig != null && ig.MeterType == MeterType.VOICE_RECORD_PLAY_BUTTONS)
+                        {
+                            Dictionary<string, clsMeterItem> items = itemsFromID(ig.ID, false);
+                            foreach (KeyValuePair<string, clsMeterItem> me in items.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.VOICE_RECORD_PLAY_BUTTONS))
+                            {
+                                clsVoiceRecordPlay vrp = me.Value as clsVoiceRecordPlay;
+                                if (vrp == null) continue;
+
+                                fourchars[vrp.ID] = vrp.FourChar;
+                            }
+                        }
                     }
                 }
             }
@@ -26935,6 +26999,7 @@ namespace Thetis
 
                                             if (mt == MeterType.VOICE_RECORD_PLAY_BUTTONS)
                                             {
+                                                igs.SetSetting<string>("buttonbox_recordplayback_4char", ((clsVoiceRecordPlay)bb).FourChar);
                                                 igs.SetSetting<string>("buttonbox_recordplayback_uid", ((clsVoiceRecordPlay)bb).UniqueID);
                                                 int slots = ((clsVoiceRecordPlay)bb).Slots;
                                                 igs.SetSetting<int>("buttonbox_recordplayback_slots", slots);
@@ -27976,6 +28041,24 @@ namespace Thetis
                         if(led != null && led.FourChar == fourchar)
                         {
                             return led;
+                        }
+                    }
+                    return null;
+                }
+            }
+            internal clsVoiceRecordPlay VoiceRecordPlayFromFourChar(string fourchar)
+            {
+                if (string.IsNullOrEmpty(fourchar)) return null;
+
+                // obtains first clsVoiceRecordPlay that matches a fourchar
+                lock (_meterItemsLock)
+                {
+                    foreach (KeyValuePair<string, clsMeterItem> kvp in _meterItems.Where(o => o.Value.ItemType == clsMeterItem.MeterItemType.VOICE_RECORD_PLAY_BUTTONS))
+                    {
+                        clsVoiceRecordPlay vrp = kvp.Value as clsVoiceRecordPlay;
+                        if (vrp != null && vrp.FourChar == fourchar)
+                        {
+                            return vrp;
                         }
                     }
                     return null;

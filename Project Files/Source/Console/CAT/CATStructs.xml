@@ -2921,4 +2921,32 @@
 		<ngetparms>0</ngetparms>
 		<nansparms>40</nansparms>
 	</catstruct>
+	<catstruct code="ZZJP">
+		<desc>Playback from slot N</desc>
+		<active>true</active>
+		<nsetparms>9</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+	</catstruct>
+	<catstruct code="ZZJQ">
+		<desc>Playback/Record container item slot</desc>
+		<active>true</active>
+		<nsetparms>8</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+	</catstruct>
+	<catstruct code="ZZJR">
+		<desc>Recording to slot N</desc>
+		<active>true</active>
+		<nsetparms>6</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>1</nansparms>
+	</catstruct>
+	<catstruct code="ZZJS">
+		<desc>Stop Wav Recording or Playbax</desc>
+		<active>true</active>
+		<nsetparms>0</nsetparms>
+		<ngetparms>0</ngetparms>
+		<nansparms>0</nansparms>
+	</catstruct>
 </catstructs>

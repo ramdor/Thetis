@@ -259,6 +259,7 @@ namespace Thetis
                 _playbackSetting["COMP"] = _console.CPDR;
                 _playbackSetting["CFC"] = _console.CFCEnabled;
                 _playbackSetting["PHASE"] = _console.PhaseRotEnabled;
+                _playbackSetting["LEVELER"] = _console.LevelerEnabled;
                 _playbackSetting["MON"] = _console.MON;
                 _playbackSetting["BYPASS_VAC"] = _console.BypassVACWhenPlayingWAV;
                 _playbackSetting["MOX"] = _console.MOX;
@@ -481,6 +482,7 @@ namespace Thetis
                     _prePlaybackSetting["COMP"] = _console.CPDR;
                     _prePlaybackSetting["CFC"] = _console.CFCEnabled;
                     _prePlaybackSetting["PHASE"] = _console.PhaseRotEnabled;
+                    _prePlaybackSetting["LEVELER"] = _console.LevelerEnabled;
                     _prePlaybackSetting["MON"] = _console.MON;
                     _prePlaybackSetting["BYPASS_VAC"] = Audio.VACBypass;
                     _prePlaybackSetting["MOX"] = _console.MOX;
@@ -498,6 +500,7 @@ namespace Thetis
                     if (_prePlaybackSetting.ContainsKey("COMP") && _console.CPDR != _prePlaybackSetting["COMP"]) _console.CPDR = _prePlaybackSetting["COMP"];
                     if (_prePlaybackSetting.ContainsKey("CFC") && _console.CFCEnabled != _prePlaybackSetting["CFC"]) _console.CFCEnabled = _prePlaybackSetting["CFC"];
                     if (_prePlaybackSetting.ContainsKey("PHASE") && _console.PhaseRotEnabled != _prePlaybackSetting["PHASE"]) _console.PhaseRotEnabled = _prePlaybackSetting["PHASE"];
+                    if (_prePlaybackSetting.ContainsKey("LEVELER") && _console.LevelerEnabled != _prePlaybackSetting["LEVELER"]) _console.LevelerEnabled = _prePlaybackSetting["LEVELER"];
                     if (_prePlaybackSetting.ContainsKey("MON") && _console.MON != _prePlaybackSetting["MON"]) _console.MON = _prePlaybackSetting["MON"];
                     if (_prePlaybackSetting.ContainsKey("BYPASS_VAC") && Audio.VACBypass != _prePlaybackSetting["BYPASS_VAC"]) Audio.VACBypass = _prePlaybackSetting["BYPASS_VAC"];
                     if (_prePlaybackSetting.ContainsKey("MOX") && _console.MOX != _prePlaybackSetting["MOX"]) _console.MOX = _prePlaybackSetting["MOX"];
@@ -519,7 +522,9 @@ namespace Thetis
                     if (GetPlaybackSetting("COMP") && _console.CPDR) _console.CPDR = false;
                     if (GetPlaybackSetting("CFC") && _console.CFCEnabled) _console.CFCEnabled = false;
                     if (GetPlaybackSetting("PHASE") && _console.PhaseRotEnabled) _console.PhaseRotEnabled = false;
+                    if (GetPlaybackSetting("LEVELER") && _console.LevelerEnabled) _console.LevelerEnabled = false;
                 }
+
                 if (GetPlaybackSetting("MON") && !_console.MON) _console.MON = true;
                 Audio.VACBypass = _console.BypassVACWhenPlayingWAV;
                 if (!_console.MOX && MoxOnPlayback) _console.MOX = true;
