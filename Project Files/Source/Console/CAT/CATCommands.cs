@@ -4519,7 +4519,7 @@ namespace Thetis
                 // format is ZZJRxynnnq, s will be xynnnq where
                 // x is receiver 1-2,
                 // y is via 0=wdsp 1=pc,
-                // nnn is slot number 0-127
+                // nnn is slot number 1-128
                 // q is 0=use recording temporary limitations, 1=ignore them
                 int rx = 0;
 				int slot = 0;
@@ -4533,7 +4533,7 @@ namespace Thetis
                 if (ok) ok = int.TryParse(s.Substring(1, 1), out wdsp_pc);
                 if (ok) ok = wdsp_pc >= 0 && wdsp_pc <= 1;
                 if (ok) ok = int.TryParse(s.Substring(2, 3), out slot);
-				if (ok) ok = slot >= 0 && slot <= 127;
+				if (ok) ok = slot >= 1 && slot <= 128;
                 if (ok) ok = int.TryParse(s.Substring(5, 1), out ignore_tmp_changes);
                 if (ok) ok = ignore_tmp_changes >= 0 && ignore_tmp_changes <= 1;
 
@@ -4619,10 +4619,10 @@ namespace Thetis
                 try { console.ARP.StopRecord(out _); } catch { }
                 try { console.ARP.StopPlayback(out _); } catch { }
 
-                // format is ZZJPxynnnqggg, s will be xynnnq where
+                // format is ZZJPxynnnqggg, s will be xynnnqggg where
                 // x is receiver 1-2,
                 // y is via 0=wdsp 1=pc,
-                // nnn is slot number 0-127
+                // nnn is slot number 1-128
                 // q is 0=use playback temporary limitations, 1=ignore them
                 // ggg is gain adjust in dB from -70 to +70, 0 should be sent as +00 or -00
                 int rx = 0;
@@ -4639,7 +4639,7 @@ namespace Thetis
                 if (ok) ok = int.TryParse(s.Substring(1, 1), out wdsp_pc);
                 if (ok) ok = wdsp_pc >= 0 && wdsp_pc <= 1;
                 if (ok) ok = int.TryParse(s.Substring(2, 3), out slot);
-                if (ok) ok = slot >= 0 && slot <= 127;
+                if (ok) ok = slot >= 1 && slot <= 128;
                 if (ok) ok = int.TryParse(s.Substring(5, 1), out ignore_tmp_changes);
                 if (ok) ok = ignore_tmp_changes >= 0 && ignore_tmp_changes <= 1;
 
@@ -4698,6 +4698,66 @@ namespace Thetis
             {
                 // will report if playing
                 return console.ARP.IsPlaying ? "1" : "0";
+            }
+            else
+            {
+                return "";
+            }
+        }
+        public string ZZJQ(string s)
+        {
+            // start playback/record using a containter item voice record/playback item identified by its 4char id
+            if (console is null) return parser.Error1;
+
+            if (s.Length == parser.nSet)
+            {
+                //stop anything
+                try { console.ARP.StopRecord(out _); } catch { }
+                try { console.ARP.StopPlayback(out _); } catch { }
+
+                // format is ZZJQccccrnnn, s will be ccccy where
+                // ccccy is a 4charID for the gadget item voice record/play,
+                // r is 0=playback 1=record,
+                // nnn is slot number 1-128
+                int slot = 0;
+				string four_charID = "";
+				int record = 0;
+                bool ok = !string.IsNullOrWhiteSpace(s);
+				MeterManager.clsVoiceRecordPlay vrp = null;
+                if (ok) ok = s.Length == 8;
+				if (ok)
+				{
+                    four_charID = s.Substring(0, 4);
+					vrp = MeterManager.GetVoiceRecordPlayFrom4Char(four_charID);
+					ok = vrp != null;
+                }
+                if (ok) ok = int.TryParse(s.Substring(4, 1), out record);
+                if (ok) ok = record >= 0 && record <= 1;
+                if (ok) ok = int.TryParse(s.Substring(5, 3), out slot);
+                if (ok) ok = slot >= 1 && slot <= vrp.Slots;
+
+                if (ok)
+                {
+					if (record == 1)
+					{
+                        vrp.RecordToSlot(slot - 1);
+                    }
+					else
+					{
+                        vrp.PlayFromSlot(slot - 1);
+                    }
+
+					return "";
+                }
+                else
+                {
+                    return parser.Error1;
+                }
+            }
+            else if (s.Length == parser.nGet)
+            {
+                // will report if recording or playing
+                return console.ARP.IsBusy ? "1" : "0";
             }
             else
             {
