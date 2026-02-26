@@ -700,8 +700,10 @@ ReadThreadMainLoop() {
 					//         Bit [5] - ADC5  Overload 1 = active, 0 = inactive
 					//         Bit [6] - ADC6  Overload 1 = active, 0 = inactive
 					//         Bit [7] - ADC7  Overload 1 = active, 0 = inactive
+					//for (i = 0; i < MAX_ADC; i++)
+					//	prn->adc[i].adc_overload = ((prn->ReadBufp[1] >> i) & 0x1) != 0;
 					for (i = 0; i < MAX_ADC; i++)
-						prn->adc[i].adc_overload = ((prn->ReadBufp[1] >> i) & 0x1) != 0;
+						prn->adc[i].adc_overload = prn->adc[i].adc_overload || (((prn->ReadBufp[1] >> i) & 0x1) != 0); // only cleared by getAndResetADC_Overload(), or'ed with existing state //[2.10.3.13]MW0LGE
 
 					//Bytes 2,3      Exciter Power [15:0]     * 12 bits sign extended to 16
 					//Bytes 10,11    FWD Power [15:0]           ditto

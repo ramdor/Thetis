@@ -20472,7 +20472,7 @@ namespace Thetis
             set { _auto_undoTXatt = value; }
         }
         private bool _check_for_bad_adc = true;
-        private async void checkOverloads()
+        private async void checkOverloadsAndSync()
         {
             string sWarning = "";
             bool red_warning = false;
@@ -20511,11 +20511,6 @@ namespace Thetis
             try
             {
                 adc_oload_num = NetworkIO.getAndResetADC_Overload();
-                if (adc_oload_num > 0)
-                {
-                    // if there is an overload, then call it again, as a subsequent call to getAndResetADC_Overload would always return a 0 as the above getAndResetADC_Overload resets it
-                    NetworkIO.getAndResetADC_Overload();
-                }
             }
             catch { adc_oload_num = -1; }
 
@@ -20550,15 +20545,17 @@ namespace Thetis
 
                 if (_adc_overloaded[i])
                 {
-                    _adc_overload_level[i] += 2;
+                    _adc_overload_level[i]++;
                     if (_adc_overload_level[i] > 5)
                         _adc_overload_level[i] = 5;
 
-                    red_warning = _adc_overload_level[i] > 3; // turn red
+                    red_warning = red_warning || _adc_overload_level[i] > 3; // turn red after 3 cycles of overload, each cycle being the delay in pollOverloadSyncSeqErr(), which will be around 400ms
                 }
                 else
                 {
-                    if (_adc_overload_level[i] > 0) _adc_overload_level[i]--;
+                   _adc_overload_level[i]--;
+                    if(_adc_overload_level[i] < 0)
+                        _adc_overload_level[i] = 0;
                 }
 
                 if (_adc_overload_level[i] > 0)
@@ -20638,7 +20635,7 @@ namespace Thetis
                 {
                     if (_mox)
                     {
-                        if (_adc_overloaded[0]) // always adc0 when in tx
+                        if (_adc_overloaded[0] && _adc_overload_level[0] > 3) // always adc0 when in tx
                         {
                             HistoricAttenuatorReading har = new HistoricAttenuatorReading();
                             har.stepAttenuator = TxAttenData;
@@ -20729,7 +20726,7 @@ namespace Thetis
                     int nRX1ADCinUse = GetADCInUse(nRX1DDCinUse); // (rx1)
 
                     // rx1
-                    if ((_adc_overloaded[0] && nRX1ADCinUse == 0) || (_adc_overloaded[1] && nRX1ADCinUse == 1)) // rx1 overload
+                    if (((_adc_overloaded[0] && _adc_overload_level[0] > 3) && nRX1ADCinUse == 0) || ((_adc_overloaded[1] && _adc_overload_level[1] > 3) && nRX1ADCinUse == 1)) // rx1 overload
                     {
                         HistoricAttenuatorReading har = new HistoricAttenuatorReading();
                         har.band = RX1Band;
@@ -20813,7 +20810,7 @@ namespace Thetis
                     int nRX2ADCinUse = GetADCInUse(nRX2DDCinUse); // (rx2)
 
                     // rx2
-                    if ((_adc_overloaded[0] && nRX2ADCinUse == 0) || (_adc_overloaded[1] && nRX2ADCinUse == 1)) // rx2 overload
+                    if (((_adc_overloaded[0] && _adc_overload_level[0] > 3) && nRX2ADCinUse == 0) || ((_adc_overloaded[1] && _adc_overload_level[1] > 3) && nRX2ADCinUse == 1)) // rx2 overload
                     {
                         HistoricAttenuatorReading har = new HistoricAttenuatorReading();
                         if (_rx2_step_att_enabled)
@@ -20919,14 +20916,14 @@ namespace Thetis
                     {
                         this.Invoke(new MethodInvoker(() =>
                         {
-                            checkOverloads();
+                            checkOverloadsAndSync();
                             if (count == 0) checkSeqErrors();
                             run = this.chkPower.Checked;
                         }));
                     }
                     else
                     {
-                        checkOverloads();
+                        checkOverloadsAndSync();
                         if (count == 0) checkSeqErrors();
                         run = this.chkPower.Checked;
                     }

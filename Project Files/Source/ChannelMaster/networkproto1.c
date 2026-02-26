@@ -332,7 +332,7 @@ void MetisReadThreadMainLoop(void)
 							switch (ControlBytesIn[0] & 0xf8)
 							{
 							case 0x00: // C0 0000 0000
-								prn->adc[0].adc_overload = ControlBytesIn[1] & 0x01;
+								prn->adc[0].adc_overload = prn->adc[0].adc_overload || ControlBytesIn[1] & 0x01; // only cleared by getAndResetADC_Overload(), or'ed with existing state //[2.10.3.13]MW0LGE
 								prn->user_dig_in = ((ControlBytesIn[1] >> 1) & 0xf);
 								break;
 							case 0x08: // C0 0000 1xxx
@@ -350,9 +350,9 @@ void MetisReadThreadMainLoop(void)
 								prn->supply_volts = ((ControlBytesIn[3] << 8) & 0xff00) | (((int)(ControlBytesIn[4])) & 0xff); // AIN6 Hermes Volts                                                              
 								break;
 							case 0x20: // C0 0010 0xxx
-								prn->adc[0].adc_overload = ControlBytesIn[1] & 1;
-								prn->adc[1].adc_overload = (ControlBytesIn[2] & 1) << 1;
-								prn->adc[2].adc_overload = (ControlBytesIn[3] & 1) << 2;
+								prn->adc[0].adc_overload = prn->adc[0].adc_overload || ControlBytesIn[1] & 1; // only cleared by getAndResetADC_Overload(), or'ed with existing state //[2.10.3.13]MW0LGE
+								prn->adc[1].adc_overload = prn->adc[1].adc_overload || (ControlBytesIn[2] & 1) << 1; // only cleared by getAndResetADC_Overload(), or'ed with existing state //[2.10.3.13]MW0LGE
+								prn->adc[2].adc_overload = prn->adc[2].adc_overload || (ControlBytesIn[3] & 1) << 2; // only cleared by getAndResetADC_Overload(), or'ed with existing state //[2.10.3.13]MW0LGE
 								break;
 							}
 							spr = 504 / (6 * nddc + 2);											// samples per ddc

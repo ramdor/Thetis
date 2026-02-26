@@ -129,6 +129,11 @@ int getAndResetADC_Overload()
 {
 	int n = prn->adc[0].adc_overload | (prn->adc[1].adc_overload << 1) | (prn->adc[2].adc_overload << 2);
 
+	//reset
+	prn->adc[0].adc_overload = 0;
+	prn->adc[1].adc_overload = 0;
+	prn->adc[2].adc_overload = 0;
+
 	return n;
 }
 
