@@ -10373,29 +10373,21 @@ namespace Thetis
             public void RecordToSlot(int slot)
             {
                 if(slot < 0 || slot > _slots -1) return;
-                try
+                _mode_record = true;
+                _from_quick_shift_record = true;
+                _console.Invoke(new MethodInvoker(() => // calls to arp belong to ui
                 {
-                    _mode_record = true;
-                    _from_quick_shift_record = true;
-                    _console.Invoke(new MethodInvoker(() => // calls to arp belong to ui
-                    {
-                        handleClicked(slot, false, false, false);
-                    }));
-                }
-                catch { }
+                    handleClicked(slot, false, false, false);
+                }));
             }
             public void PlayFromSlot(int slot)
             {
                 if (slot < 0 || slot > _slots - 1) return;
-                try
+                _mode_record = false;
+                _console.Invoke(new MethodInvoker(() => // calls to arp belong to ui
                 {
-                    _mode_record = false;
-                    _console.Invoke(new MethodInvoker(() => // calls to arp belong to ui
-                    {
-                        handleClicked(slot, false, false, false);
-                    }));
-                }
-                catch { }
+                    handleClicked(slot, false, false, false);
+                }));
             }
             public override bool MOX
             {

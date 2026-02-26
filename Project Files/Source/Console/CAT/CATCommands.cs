@@ -4529,10 +4529,10 @@ namespace Thetis
                 try { console.ARP.StopRecord(out _); } catch { }
                 try { console.ARP.StopPlayback(out _); } catch { }
 
-                // format is ZZJRxynnnq, s will be xynnnq where
+                // format is ZZJRxynnnq; (s will be xynnnq)
                 // x is receiver 1-2,
                 // y is via 0=wdsp 1=pc,
-                // nnn is slot number 1-128
+                // nnn is slot number 001-128
                 // q is 0=use recording temporary limitations, 1=ignore them
                 int rx = 0;
 				int slot = 0;
@@ -4632,10 +4632,10 @@ namespace Thetis
                 try { console.ARP.StopRecord(out _); } catch { }
                 try { console.ARP.StopPlayback(out _); } catch { }
 
-                // format is ZZJPxynnnqggg, s will be xynnnqggg where
+                // format is ZZJPxynnnqggg; (s will be xynnnqggg)
                 // x is receiver 1-2,
                 // y is via 0=wdsp 1=pc,
-                // nnn is slot number 1-128
+                // nnn is slot number 001-128
                 // q is 0=use playback temporary limitations, 1=ignore them
                 // ggg is gain adjust in dB from -70 to +70, 0 should be sent as +00 or -00
                 int rx = 0;
@@ -4682,15 +4682,19 @@ namespace Thetis
                             break;
                     }
                     string file = "cat\\slot_" + slot.ToString() + ".wav"; // all in sub folder cat, slot_0.wav to slot_127.wav
-                    string error;
-                    if (wdsp_pc == 0)
-                    {
-                        ok = console.ARP.PlayFileViaWDSP("cat", file, rx_wfw_id, out error, gain_adjust_db, ignore_tmp_changes == 1);
-                    }
-                    else
-                    {
-                        ok = console.ARP.PlayFileViaPCAudio("cat", file, console.ARP.OutputPCDeviceID, out error);
-                    }
+                    string error = null;
+					try
+					{
+						if (wdsp_pc == 0)
+						{
+							ok = console.ARP.PlayFileViaWDSP("cat", file, rx_wfw_id, out error, gain_adjust_db, ignore_tmp_changes == 1);
+						}
+						else
+						{
+							ok = console.ARP.PlayFileViaPCAudio("cat", file, console.ARP.OutputPCDeviceID, out error);
+						}
+					}
+					catch { ok = false; }
 
                     if (ok && error == null)
                     {
@@ -4728,10 +4732,10 @@ namespace Thetis
                 try { console.ARP.StopRecord(out _); } catch { }
                 try { console.ARP.StopPlayback(out _); } catch { }
 
-                // format is ZZJQccccrnnn, s will be ccccy where
-                // ccccy is a 4charID for the gadget item voice record/play,
-                // r is 0=playback 1=record,
-                // nnn is slot number 1-128
+                // format is ZZJQccccrnnn; (s will be ccccrnnn)
+                // ccccy is a 4charID for the target gadget item voice record/play
+                // r is 0=playback 1=record
+                // nnn is slot number 001-128
                 int slot = 0;
 				string four_charID = "";
 				int record = 0;
@@ -4751,16 +4755,22 @@ namespace Thetis
 
                 if (ok)
                 {
-					if (record == 1)
+					try
 					{
-                        vrp.RecordToSlot(slot - 1);
+						if (record == 1)
+						{
+							vrp.RecordToSlot(slot - 1);
+						}
+						else
+						{
+							vrp.PlayFromSlot(slot - 1);
+						}
+                        return "";
                     }
-					else
-					{
-                        vrp.PlayFromSlot(slot - 1);
-                    }
-
-					return "";
+					catch 
+					{ 
+						return parser.Error1;
+					}					
                 }
                 else
                 {
