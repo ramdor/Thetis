@@ -202,17 +202,6 @@ namespace Thetis
             public bool TXVFOB;
         }
 
-        private class JsonSpotData
-        {
-            public string Spotter { get; set; } = "";
-            public string Comment { get; set; } = "";
-            public int Heading { get; set; } = -1; // -1 = no heading
-            public string Continent { get; set; } = "";
-            public string Country { get; set; } = "";
-            public string UtcTime { get; set; } = "";
-            public string TextColor { get; set; } = ""; // text colour A92GE
-        }
-
         private Console _console;
 		private TcpClient m_client = null;
 		private NetworkStream m_stream = null;
@@ -2002,68 +1991,6 @@ namespace Thetis
                 }
             }
         }
-
-		private Color getSpotTextColour(string text_colour)
-		{
-			//convert spot colour if present to system.drawing.color
-			//#RRGGBB or #AARRGGBB or argb int
-
-			Color spotTextColour;
-
-            if (string.IsNullOrEmpty(text_colour))
-            {
-                spotTextColour = Color.Empty;
-            }
-            else
-            {
-                string s = text_colour.Trim();
-
-                // try a TCI colour format argb int
-                if (int.TryParse(s, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int int_value))
-                {
-                    spotTextColour = Color.FromArgb(int_value);
-                }
-                else
-                { // otherwise try #RRGGBB #AARRGGBB
-                    if (s.Length > 0 && s[0] == '#') s = s.Substring(1);
-
-                    if (s.Length == 6)
-                    {
-                        if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out int hex_value))
-                        {
-                            int r = (hex_value >> 16) & 0xFF;
-                            int g = (hex_value >> 8) & 0xFF;
-                            int b = hex_value & 0xFF;
-                            spotTextColour = Color.FromArgb(255, r, g, b);
-                        }
-                        else
-                        {
-                            spotTextColour = Color.Empty;
-                        }
-                    }
-                    else if (s.Length == 8)
-                    {
-                        if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out int hex_value))
-                        {
-                            int a = (hex_value >> 24) & 0xFF;
-                            int r = (hex_value >> 16) & 0xFF;
-                            int g = (hex_value >> 8) & 0xFF;
-                            int b = hex_value & 0xFF;
-                            spotTextColour = Color.FromArgb(a, r, g, b);
-                        }
-                        else
-                        {
-                            spotTextColour = Color.Empty;
-                        }
-                    }
-                    else
-                    {
-                        spotTextColour = Color.Empty;
-                    }
-                }
-            }
-			return spotTextColour;
-        }
 		private void handleSpot(string[] args, bool is_json, string msg)
         {
 			if (args.Length >= 4) // 4 as argument 5 may contain commas
@@ -2211,27 +2138,13 @@ namespace Thetis
 																									//downside is that any additional text that is the string 'nil'
 																									//will be removed, not that it is too much of an issue
 
-					string spotter = "";
-                    int heading = -1;
-					string continent = "";
-					string country = "";
-					string spot_time = "";
-					string text_colour = "";
+					SpotManager2.JsonSpotData jsonSpotData = null;
 
                     if (json_found)
 					{
 						try
 						{
-                            JsonSpotData spotData = JsonConvert.DeserializeObject<JsonSpotData>(sAdditionalConvertedText);
-
-							spotter = spotData.Spotter;
-							heading = spotData.Heading;
-							continent = spotData.Continent;
-							country = spotData.Country;
-							spot_time = spotData.UtcTime;
-							text_colour = spotData.TextColor;
-
-                            sAdditionalConvertedText = spotData.Comment;
+                            jsonSpotData = JsonConvert.DeserializeObject<SpotManager2.JsonSpotData>(sAdditionalConvertedText);
                         }
                         catch 
 						{
@@ -2240,9 +2153,7 @@ namespace Thetis
 						}
 					}
 
-					Color spotTextColour = getSpotTextColour(text_colour);
-
-                    SpotManager2.AddSpot(args[0], mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText, spotTextColour, spotter, args[1], heading, continent, country, spot_time);
+					SpotManager2.AddSpot(args[0], mode, freq, Color.FromArgb((int)argb), sAdditionalConvertedText, jsonSpotData);
 				}
 			}
 		}
