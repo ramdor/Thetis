@@ -10300,12 +10300,12 @@ namespace Thetis
                 _mode_record = false;
                 _wdsp = true;
 
-                _global_playing = false;// todo: pull state from _console.ARP
-                _global_recording = false;
-
                 _console.ARP.PlayingChanged += onPlayingChanged;
                 _console.ARP.RecordingChanged += onRecordingChanged;
                 _console.ARP.RecordingJsonWritten += onJsonWritten;
+
+                _global_playing = _console.ARP.IsPlaying;
+                _global_recording = _console.ARP.IsRecording;
 
                 _uses_keybinds = false;
                 _uses_keybinds_settime = DateTime.UtcNow;
@@ -10495,7 +10495,7 @@ namespace Thetis
 
                         _console.Invoke(new MethodInvoker(() => // calls to arp belong to ui
                         {
-                            handleClicked(n, false, long_hold);
+                            handleClicked(n, false, long_hold, false, true);
                         }));
 
                         break;
@@ -11247,7 +11247,7 @@ namespace Thetis
                     setupRepeatTimer(false, -1, -1);
                 }
             }
-            private void handleClicked(int slot, bool right_click, bool long_hold, bool from_repeat_timer = false)
+            private void handleClicked(int slot, bool right_click, bool long_hold, bool from_repeat_timer = false, bool from_keybind = false)
             {
                 if (long_hold && !_mode_record)
                 {
@@ -11294,8 +11294,9 @@ namespace Thetis
                         _slot_duration_seconds[slot] = (float)json_data.play_duration_seconds;
                     }
                 }
-                else if(!from_repeat_timer && !_mode_record && _slot_playing == -1 && (_shift_pressed || Common.ShiftKeyDown))
+                else if(!from_keybind && !from_repeat_timer && !_mode_record && _slot_playing == -1 && (_shift_pressed || Common.ShiftKeyDown))
                 {
+                    // quick record into a slot, and return when done
                     if (!_slot_locked[slot])
                     {
                         // in playback and not playing and shift held at the time of click
