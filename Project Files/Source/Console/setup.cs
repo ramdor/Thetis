@@ -6152,8 +6152,6 @@ namespace Thetis
             {
                 if (HardwareSpecific.Model == HPSDRModel.REDPITAYA) //DH1KLM
                 {
-                    //chkAlexPresent.Parent = groupBoxHPSDRHW;
-                    //chkAlexPresent.Location = new Point(43, 120);
                     chkLPFBypass.Visible = true;
                 }
                 else
@@ -6166,8 +6164,9 @@ namespace Thetis
                 chkBPF2Gnd.Visible = true;
                 chkEnableXVTRHF.Visible = true;
 
-                // mic xlr options for G2 models
                 toolTip1.SetToolTip(chkEXT2OutOnTx, "Enable Rx BYPASS during transmit.");
+
+                // mic xlr options for G2 models
                 if (HardwareSpecific.Model == HPSDRModel.ANAN_G2 ||
                     HardwareSpecific.Model == HPSDRModel.ANAN_G2_1K)
                 {
