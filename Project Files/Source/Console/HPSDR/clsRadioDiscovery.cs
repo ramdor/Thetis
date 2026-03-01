@@ -610,6 +610,10 @@ namespace Thetis
                 return NicDescription + " [" + type + apipa + "] " + ip;
             }
         }
+        public override string ToString()
+        {
+            return DisplayText;
+        }
     }
 
     public sealed class RadioDiscoveryService

@@ -41,10 +41,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AmpView));
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.chkAVShowGain = new System.Windows.Forms.CheckBoxTS();
-            this.chkAVLowRes = new System.Windows.Forms.CheckBoxTS();
-            this.chkAVPhaseZoom = new System.Windows.Forms.CheckBoxTS();
             this.chkStayOnTop = new System.Windows.Forms.CheckBoxTS();
+            this.chkAVPhaseZoom = new System.Windows.Forms.CheckBoxTS();
+            this.chkAVLowRes = new System.Windows.Forms.CheckBoxTS();
+            this.chkAVShowGain = new System.Windows.Forms.CheckBoxTS();
+            this.tmrOnTopFixer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -144,20 +145,35 @@
             this.timer1.Enabled = true;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // chkAVShowGain
+            // chkStayOnTop
             // 
-            this.chkAVShowGain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkAVShowGain.AutoSize = true;
-            this.chkAVShowGain.BackColor = System.Drawing.Color.Black;
-            this.chkAVShowGain.ForeColor = System.Drawing.Color.LightSalmon;
-            this.chkAVShowGain.Image = null;
-            this.chkAVShowGain.Location = new System.Drawing.Point(7, 378);
-            this.chkAVShowGain.Name = "chkAVShowGain";
-            this.chkAVShowGain.Size = new System.Drawing.Size(78, 17);
-            this.chkAVShowGain.TabIndex = 1;
-            this.chkAVShowGain.Text = "Show Gain";
-            this.chkAVShowGain.UseVisualStyleBackColor = false;
-            this.chkAVShowGain.CheckedChanged += new System.EventHandler(this.chkAVShowGain_CheckedChanged);
+            this.chkStayOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkStayOnTop.AutoSize = true;
+            this.chkStayOnTop.BackColor = System.Drawing.Color.Black;
+            this.chkStayOnTop.ForeColor = System.Drawing.Color.LightSalmon;
+            this.chkStayOnTop.Image = null;
+            this.chkStayOnTop.Location = new System.Drawing.Point(490, 378);
+            this.chkStayOnTop.Name = "chkStayOnTop";
+            this.chkStayOnTop.Size = new System.Drawing.Size(62, 17);
+            this.chkStayOnTop.TabIndex = 4;
+            this.chkStayOnTop.Text = "On Top";
+            this.chkStayOnTop.UseVisualStyleBackColor = false;
+            this.chkStayOnTop.CheckedChanged += new System.EventHandler(this.chkStayOnTop_CheckedChanged);
+            // 
+            // chkAVPhaseZoom
+            // 
+            this.chkAVPhaseZoom.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.chkAVPhaseZoom.AutoSize = true;
+            this.chkAVPhaseZoom.BackColor = System.Drawing.Color.Black;
+            this.chkAVPhaseZoom.ForeColor = System.Drawing.Color.LightSalmon;
+            this.chkAVPhaseZoom.Image = null;
+            this.chkAVPhaseZoom.Location = new System.Drawing.Point(242, 378);
+            this.chkAVPhaseZoom.Name = "chkAVPhaseZoom";
+            this.chkAVPhaseZoom.Size = new System.Drawing.Size(86, 17);
+            this.chkAVPhaseZoom.TabIndex = 3;
+            this.chkAVPhaseZoom.Text = "Phase Zoom";
+            this.chkAVPhaseZoom.UseVisualStyleBackColor = false;
+            this.chkAVPhaseZoom.CheckedChanged += new System.EventHandler(this.chkAVPhaseZoom_CheckedChanged);
             // 
             // chkAVLowRes
             // 
@@ -176,35 +192,25 @@
             this.chkAVLowRes.UseVisualStyleBackColor = false;
             this.chkAVLowRes.CheckedChanged += new System.EventHandler(this.chkAVLowRes_CheckedChanged);
             // 
-            // chkAVPhaseZoom
+            // chkAVShowGain
             // 
-            this.chkAVPhaseZoom.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.chkAVPhaseZoom.AutoSize = true;
-            this.chkAVPhaseZoom.BackColor = System.Drawing.Color.Black;
-            this.chkAVPhaseZoom.ForeColor = System.Drawing.Color.LightSalmon;
-            this.chkAVPhaseZoom.Image = null;
-            this.chkAVPhaseZoom.Location = new System.Drawing.Point(242, 378);
-            this.chkAVPhaseZoom.Name = "chkAVPhaseZoom";
-            this.chkAVPhaseZoom.Size = new System.Drawing.Size(86, 17);
-            this.chkAVPhaseZoom.TabIndex = 3;
-            this.chkAVPhaseZoom.Text = "Phase Zoom";
-            this.chkAVPhaseZoom.UseVisualStyleBackColor = false;
-            this.chkAVPhaseZoom.CheckedChanged += new System.EventHandler(this.chkAVPhaseZoom_CheckedChanged);
+            this.chkAVShowGain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkAVShowGain.AutoSize = true;
+            this.chkAVShowGain.BackColor = System.Drawing.Color.Black;
+            this.chkAVShowGain.ForeColor = System.Drawing.Color.LightSalmon;
+            this.chkAVShowGain.Image = null;
+            this.chkAVShowGain.Location = new System.Drawing.Point(7, 378);
+            this.chkAVShowGain.Name = "chkAVShowGain";
+            this.chkAVShowGain.Size = new System.Drawing.Size(78, 17);
+            this.chkAVShowGain.TabIndex = 1;
+            this.chkAVShowGain.Text = "Show Gain";
+            this.chkAVShowGain.UseVisualStyleBackColor = false;
+            this.chkAVShowGain.CheckedChanged += new System.EventHandler(this.chkAVShowGain_CheckedChanged);
             // 
-            // chkStayOnTop
+            // tmrOnTopFixer
             // 
-            this.chkStayOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkStayOnTop.AutoSize = true;
-            this.chkStayOnTop.BackColor = System.Drawing.Color.Black;
-            this.chkStayOnTop.ForeColor = System.Drawing.Color.LightSalmon;
-            this.chkStayOnTop.Image = null;
-            this.chkStayOnTop.Location = new System.Drawing.Point(490, 378);
-            this.chkStayOnTop.Name = "chkStayOnTop";
-            this.chkStayOnTop.Size = new System.Drawing.Size(62, 17);
-            this.chkStayOnTop.TabIndex = 4;
-            this.chkStayOnTop.Text = "On Top";
-            this.chkStayOnTop.UseVisualStyleBackColor = false;
-            this.chkStayOnTop.CheckedChanged += new System.EventHandler(this.chkStayOnTop_CheckedChanged);
+            this.tmrOnTopFixer.Interval = 1000;
+            this.tmrOnTopFixer.Tick += new System.EventHandler(this.tmrOnTopFixer_Tick);
             // 
             // AmpView
             // 
@@ -224,6 +230,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AmpView_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AmpView_FormClosed);
             this.Load += new System.EventHandler(this.AmpView_Load);
+            this.Shown += new System.EventHandler(this.AmpView_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -238,5 +245,6 @@
         private System.Windows.Forms.CheckBoxTS chkAVLowRes;
         private System.Windows.Forms.CheckBoxTS chkAVPhaseZoom;
         private System.Windows.Forms.CheckBoxTS chkStayOnTop;
+        private System.Windows.Forms.Timer tmrOnTopFixer;
     }
 }
