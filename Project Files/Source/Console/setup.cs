@@ -405,7 +405,7 @@ namespace Thetis
             defaultLinearGradients(true, true, false);
             defaultLinearGradients(true, true, true);
 
-            setupNeworking(); //prior to getOptions so speed profile combo is initialsed
+            setupNeworking(); //prior to getOptions so nics combo is initialsed
 
             initRecordingPlaybackAudio(); //prior to getOptions setup audio recording/playback options
 

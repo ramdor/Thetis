@@ -57,13 +57,13 @@ namespace Thetis
 {
     public unsafe partial class AmpView : Form
     {
-        private PSForm psform;
+        private PSForm _psform;
         public AmpView(PSForm ps)
         {
             InitializeComponent();
             Common.DoubleBufferAll(this, true);
-
-            psform = ps;
+            _psform = ps;
+            //this.Owner = ps;
         }
 
         //GCHandle hx, hym, hyc, hys, hcm, hcc, hcs;
@@ -86,7 +86,7 @@ namespace Thetis
         {
             Common.FadeIn(this);
 
-            PSForm.ampv.ClientSize = new System.Drawing.Size(560, 445); //
+            /*PSForm.ampv.*/this.ClientSize = new System.Drawing.Size(560, 445); //
             Common.RestoreForm(this, "AmpView", true); //[2.10.3.5]MW0LGE  #292
             //hx  = GCHandle.Alloc(x,  GCHandleType.Pinned);
             //hym = GCHandle.Alloc(ym, GCHandleType.Pinned);
@@ -95,15 +95,15 @@ namespace Thetis
             //hcm = GCHandle.Alloc(cm, GCHandleType.Pinned);
             //hcc = GCHandle.Alloc(cc, GCHandleType.Pinned);
             //hcs = GCHandle.Alloc(cs, GCHandleType.Pinned);
-            double delta = 1.0 / (double)psform.Ints;
+            double delta = 1.0 / (double)_psform.Ints;
             t[0] = 0.0;
-            for (int i = 1; i <= psform.Ints; i++)
+            for (int i = 1; i <= _psform.Ints; i++)
                 t[i] = t[i - 1] + delta;
             EventArgs ex = EventArgs.Empty;
             chkAVShowGain_CheckedChanged(this, ex);
             chkAVLowRes_CheckedChanged(this, ex);
             chkAVPhaseZoom_CheckedChanged(this, ex);
-            chkStayOnTop_CheckedChanged(this, ex);
+            
         }
         private void disp_setup()
         {
@@ -329,7 +329,10 @@ namespace Thetis
 
         private void chkStayOnTop_CheckedChanged(object sender, EventArgs e)
         {
-            this.TopMost = chkStayOnTop.Checked;
+            //this.TopMost = chkStayOnTop.Checked;            
+            tmrOnTopFixer.Enabled = false;
+            fixOnTop();
+            tmrOnTopFixer.Enabled = true;
         }
 
         public void CloseDown()
@@ -404,8 +407,8 @@ namespace Thetis
                 chart1.Series["MagAmp"].Points.SuspendUpdates();
                 chart1.Series["PhsAmp"].Points.SuspendUpdates();
 
-                int ints = psform.Ints;
-                int spi = psform.Spi;
+                int ints = _psform.Ints;
+                int spi = _psform.Spi;
                 int instSpiTot = ints * spi;
                 if (_oldIntsSpi != instSpiTot)
                 {
@@ -484,6 +487,83 @@ namespace Thetis
         private void AmpView_FormClosed(object sender, FormClosedEventArgs e)
         {
             PSForm.ampv = null;
+        }
+
+        private void AmpView_Shown(object sender, EventArgs e)
+        {
+            if (IsDisposed) return;
+
+            if (InvokeRequired)
+            {
+                BeginInvoke((MethodInvoker)delegate { AmpView_Shown(sender, e); });
+                return;
+            }
+
+            chkStayOnTop_CheckedChanged(this, EventArgs.Empty);
+        }
+
+        //fix on top hack
+        private const int GWL_EXSTYLE = -20;
+        private const int WS_EX_TOPMOST = 0x00000008;
+
+        private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+        private static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
+
+        private const uint SWP_NOMOVE = 0x0002;
+        private const uint SWP_NOSIZE = 0x0001;
+        private const uint SWP_NOACTIVATE = 0x0010;
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
+        private static extern int GetWindowLong32(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
+        private static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll")]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+        public void fixOnTop()
+        {
+            if (IsDisposed) return;
+
+            if (InvokeRequired)
+            {
+                BeginInvoke((MethodInvoker)fixOnTop);
+                return;
+            }
+
+            if (!IsHandleCreated) return;
+
+            bool want_top = chkStayOnTop.Checked;
+
+            if (TopMost != want_top) TopMost = want_top;
+
+            // now check if it took
+            long exstyle;
+            if (IntPtr.Size == 8)
+            {
+                exstyle = GetWindowLongPtr64(Handle, GWL_EXSTYLE).ToInt64();
+            }
+            else
+            {
+                exstyle = GetWindowLong32(Handle, GWL_EXSTYLE);
+            }
+
+            bool native_top = (exstyle & WS_EX_TOPMOST) != 0;
+
+            if (want_top && !native_top)
+            {
+                SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            }
+            else if (!want_top && native_top)
+            {
+                SetWindowPos(Handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            }
+        }
+
+        private void tmrOnTopFixer_Tick(object sender, EventArgs e)
+        {
+            fixOnTop();
         }
     }
 }
