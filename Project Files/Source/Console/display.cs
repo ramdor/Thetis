@@ -10679,7 +10679,7 @@ namespace Thetis
 
                 int nLuminance = Common.GetLuminance(spot.colour);
                 spotColour = getDXBrushForColour(spot.colour, 255);
-                textBrush = spot.text_colour == Color.Empty ? (nLuminance <= 128 ? whiteBrush : blackBrush) : getDXBrushForColour(spot.text_colour, 255);
+                textBrush = spot.use_text_colour ? getDXBrushForColour(spot.text_colour, 255) : (nLuminance <= 128 ? whiteBrush : blackBrush);
 
                 if (spot.Highlight[rx - 1])
                 {

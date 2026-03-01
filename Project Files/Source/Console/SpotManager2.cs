@@ -59,6 +59,21 @@ namespace Thetis
         private static int _lifeTime = 60;
         private static int _maxNumber = 100;
         private static Timer _tickTimer;
+
+        public class JsonSpotData
+        {
+            public string Spotter { get; set; } = "";
+            public string Comment { get; set; } = "";
+            public int Heading { get; set; } = -1; // -1 = no heading
+            public string Continent { get; set; } = "";
+            public string Country { get; set; } = "";
+            public string UtcTime { get; set; } = "";
+            public string TextColor { get; set; } = ""; // text colour A92GE
+
+            public bool IsSWL { get; set; } = false;
+            public long SWLSecondsToLive { get; set; } = 0; // 0 = no expiry
+        }
+
         public class smSpot
         {
             public string callsign;
@@ -73,7 +88,7 @@ namespace Thetis
             public string country;
             public DateTime utc_spot_time;
             public bool IsSWL;
-            public long SwlSecondsToLive;
+            public long SWLSecondsToLive;
 
             public bool previously_highlighted;
             public bool flashing;
@@ -85,6 +100,7 @@ namespace Thetis
             public bool[] Highlight;
 
             public Color text_colour;
+            public bool use_text_colour;
 
             public smSpot()
             {
@@ -101,11 +117,12 @@ namespace Thetis
                 country = "";
                 utc_spot_time = now;
                 IsSWL = false;
-                SwlSecondsToLive = 0;
+                SWLSecondsToLive = 0;
                 previously_highlighted = false;
                 flashing = false;
                 flash_start_time = now;
                 text_colour = Color.Empty;
+                use_text_colour = false;
             }
             public void BrowseQRZ()
             {
@@ -149,7 +166,7 @@ namespace Thetis
                 _spots.RemoveAll(o => !o.IsSWL && (DateTime.UtcNow - o.timeAdded).TotalMinutes > _lifeTime);
 
                 //remove timeout swl, leave ones with 0
-                _spots.RemoveAll(o => o.IsSWL && o.SwlSecondsToLive != 0 && DateTime.UtcNow > (o.timeAdded + TimeSpan.FromSeconds(o.SwlSecondsToLive)));
+                _spots.RemoveAll(o => o.IsSWL && o.SWLSecondsToLive != 0 && DateTime.UtcNow > (o.timeAdded + TimeSpan.FromSeconds(o.SWLSecondsToLive)));
             }
         }
 
@@ -229,41 +246,10 @@ namespace Thetis
 
             return mode;
         }
-        public static long getSwlTimeToLive(string raw_mode)
-        {
-            if (string.IsNullOrEmpty(raw_mode)) return -1;
-
-            int skip = 5;
-            int start = raw_mode.IndexOf("-swl[", StringComparison.OrdinalIgnoreCase);
-
-            if (start == -1)
-            {
-                skip = 4;
-                start = raw_mode.IndexOf("swl[", StringComparison.OrdinalIgnoreCase);
-            }
-
-            if (start != -1)
-            {
-                start += skip;
-
-                int end = raw_mode.IndexOf("]", start, StringComparison.OrdinalIgnoreCase);
-                if (end != -1)
-                {
-                    bool ok = long.TryParse(raw_mode.Substring(start, end - start), out long time_to_live);
-                    if (ok)
-                    {
-                        if (time_to_live >= 0)
-                        {
-                            return time_to_live;
-                        }
-                    }
-                }
-            }
-            return -1;
-        }
         public static string FilterForRawMode(string raw_mode)
         {
             // remove any extra info from raw_mode
+            // this is left in here so not to break other spot sources that may still include -swl
             if (string.IsNullOrEmpty(raw_mode)) return "";
 
             int pos = raw_mode.IndexOf("-swl[", StringComparison.OrdinalIgnoreCase);
@@ -279,9 +265,95 @@ namespace Thetis
 
             return raw_mode;
         }
-        public static void AddSpot(string callsign, DSPMode mode, long frequencyHz, Color colour, string additionalText, Color text_colour, string spotter = "", string raw_mode = "", int beam_heading = -1, string spot_continent = "", string spot_country = "", string date_time = "")
+        private static Color getSpotTextColour(string text_colour)
         {
-            //spot_text_colour of Color.empty will not be used by the renders
+            //convert spot colour if present to system.drawing.color
+            //#RRGGBB or #AARRGGBB or argb int
+
+            Color spotTextColour;
+
+            if (string.IsNullOrEmpty(text_colour))
+            {
+                spotTextColour = Color.Empty;
+            }
+            else
+            {
+                string s = text_colour.Trim();
+
+                // try a TCI colour format argb int
+                if (int.TryParse(s, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int int_value))
+                {
+                    spotTextColour = Color.FromArgb(int_value);
+                }
+                else
+                { // otherwise try #RRGGBB #AARRGGBB
+                    if (s.Length > 0 && s[0] == '#') s = s.Substring(1);
+
+                    if (s.Length == 6)
+                    {
+                        if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out int hex_value))
+                        {
+                            int r = (hex_value >> 16) & 0xFF;
+                            int g = (hex_value >> 8) & 0xFF;
+                            int b = hex_value & 0xFF;
+                            spotTextColour = Color.FromArgb(255, r, g, b);
+                        }
+                        else
+                        {
+                            spotTextColour = Color.Empty;
+                        }
+                    }
+                    else if (s.Length == 8)
+                    {
+                        if (int.TryParse(s, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out int hex_value))
+                        {
+                            int a = (hex_value >> 24) & 0xFF;
+                            int r = (hex_value >> 16) & 0xFF;
+                            int g = (hex_value >> 8) & 0xFF;
+                            int b = hex_value & 0xFF;
+                            spotTextColour = Color.FromArgb(a, r, g, b);
+                        }
+                        else
+                        {
+                            spotTextColour = Color.Empty;
+                        }
+                    }
+                    else
+                    {
+                        spotTextColour = Color.Empty;
+                    }
+                }
+            }
+            return spotTextColour;
+        }
+        public static void AddSpot(string callsign, DSPMode mode, long frequencyHz, Color colour, string additionalText, JsonSpotData jsonSpotData = null)
+        {            
+            callsign = callsign.ToUpper().Trim();
+            additionalText = additionalText.Trim();
+
+            string date_time = "";
+            string spotter = "";
+            int beam_heading = -1;
+            string spot_country = "";
+            string spot_continent = "";
+            Color text_colour = Color.Empty;
+            bool use_text_colour = false;
+            bool is_swl = false;
+            long swl_seconds_to_live = 0;
+
+            if (jsonSpotData != null)
+            {
+                date_time = jsonSpotData.UtcTime.Trim();
+                spotter = jsonSpotData.Spotter.Trim();
+                beam_heading = jsonSpotData.Heading;
+                spot_country = jsonSpotData.Country.Trim();
+                text_colour = getSpotTextColour(jsonSpotData.TextColor);
+                use_text_colour = text_colour != Color.Empty;
+                additionalText = jsonSpotData.Comment.Trim();
+                is_swl = jsonSpotData.IsSWL;
+                swl_seconds_to_live = jsonSpotData.SWLSecondsToLive;               
+                if(swl_seconds_to_live < 0)  swl_seconds_to_live = 0;
+            }
 
             DateTime spotted_time = DateTime.UtcNow;
             if (!string.IsNullOrEmpty(date_time))
@@ -292,30 +364,28 @@ namespace Thetis
                 if (success) spotted_time = result;
             }
 
-            //[2.10.3.7]MW0LGE added raw_mode which is the raw mode string that came in with the spot
-            //can be used as a filter, and in the case below handles swl[N] or -swl[N] where N is seconds to live
-            long time_to_live = getSwlTimeToLive(raw_mode);
             smSpot spot = new smSpot()
             {
-                callsign = callsign.ToUpper().Trim(),
+                callsign = callsign,
                 mode = mode,
                 frequencyHZ = frequencyHz,
                 colour = colour,
-                additionalText = additionalText.Trim(),
-                spotter = spotter.Trim(),
+                additionalText = additionalText,
+                spotter = spotter,
                 heading = beam_heading,
                 continent = spot_continent,
                 country = spot_country,
                 timeAdded = DateTime.UtcNow,
                 utc_spot_time = spotted_time,
 
-                IsSWL = time_to_live != -1,
-                SwlSecondsToLive = time_to_live,
+                IsSWL = is_swl,
+                SWLSecondsToLive = swl_seconds_to_live,
 
                 previously_highlighted = false,
                 flashing = (DateTime.UtcNow - spotted_time).TotalSeconds <= 120,
 
-                text_colour = text_colour
+                text_colour = text_colour,
+                use_text_colour = use_text_colour
             };
 
             if (_replaceOwnCallAppearance && spot.callsign == _replaceCall)
