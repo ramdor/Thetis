@@ -330,6 +330,7 @@ namespace Thetis
         private void chkStayOnTop_CheckedChanged(object sender, EventArgs e)
         {
             //this.TopMost = chkStayOnTop.Checked;            
+            tmrOnTopFixer.Enabled = false;
             fixOnTop();
             tmrOnTopFixer.Enabled = true;
         }
@@ -535,6 +536,9 @@ namespace Thetis
 
             bool want_top = chkStayOnTop.Checked;
 
+            if (TopMost != want_top) TopMost = want_top;
+
+            // now check if it took
             long exstyle;
             if (IntPtr.Size == 8)
             {
@@ -547,21 +551,18 @@ namespace Thetis
 
             bool native_top = (exstyle & WS_EX_TOPMOST) != 0;
 
-            if (want_top)
+            if (want_top && !native_top)
             {
-                if (!TopMost) TopMost = true;
-                if (!native_top) SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+                SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
             }
-            else
+            else if (!want_top && native_top)
             {
-                if (TopMost) TopMost = false;
-                if (native_top) SetWindowPos(Handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+                SetWindowPos(Handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
             }
         }
 
         private void tmrOnTopFixer_Tick(object sender, EventArgs e)
         {
-            //tmrOnTopFixer.Enabled = false;
             fixOnTop();
         }
     }
