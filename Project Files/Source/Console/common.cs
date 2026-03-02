@@ -1790,12 +1790,14 @@ namespace Thetis
         }
         //
 
+        //
         [DllImport("kernel32.dll", EntryPoint = "GetDiskFreeSpaceExW")]
         private static extern bool GetDiskFreeSpaceExW(
-        string lpDirectoryName,
+        [MarshalAs(UnmanagedType.LPWStr)] string lpDirectoryName,
         out ulong lpFreeBytesAvailable,
         out ulong lpTotalNumberOfBytes,
         out ulong lpTotalNumberOfFreeBytes);
+
         public static bool TryGetDriveTotalAndFreeBytes(string folderPath, out ulong totalBytes, out ulong freeBytes)
         {
             totalBytes = 0UL;
@@ -1805,32 +1807,103 @@ namespace Thetis
             {
                 if (string.IsNullOrWhiteSpace(folderPath)) return false;
 
-                string fullPath;
+                string fullPath = folderPath.Trim();
+
                 try
                 {
-                    fullPath = Path.GetFullPath(folderPath);
+                    fullPath = Path.GetFullPath(fullPath);
                 }
                 catch
                 {
-                    fullPath = folderPath;
                 }
 
-                string root = Path.GetPathRoot(fullPath);
-                if (string.IsNullOrWhiteSpace(root)) return false;
-
-                if (root.StartsWith(@"\\", StringComparison.Ordinal))
+                if (fullPath.StartsWith(@"\\?\UNC\", StringComparison.OrdinalIgnoreCase))
                 {
-                    bool ok = GetDiskFreeSpaceExW(root, out ulong freeAvailable, out ulong total, out ulong totalFree);
-                    if (!ok) return false;
-
-                    totalBytes = total;
-                    freeBytes = totalFree;
-                    return true;
+                    fullPath = @"\\" + fullPath.Substring(8);
+                }
+                else if (fullPath.StartsWith(@"\\?\", StringComparison.OrdinalIgnoreCase))
+                {
+                    fullPath = fullPath.Substring(4);
                 }
 
-                DriveInfo di = new DriveInfo(root);
-                totalBytes = (ulong)di.TotalSize;
-                freeBytes = (ulong)di.TotalFreeSpace;
+                string queryPath = fullPath;
+
+                try
+                {
+                    if (File.Exists(queryPath))
+                    {
+                        string dir = Path.GetDirectoryName(queryPath);
+                        if (!string.IsNullOrWhiteSpace(dir)) queryPath = dir;
+                    }
+                }
+                catch
+                {
+                }
+
+                string current = queryPath;
+                for (int i = 0; i < 64; i++)
+                {
+                    bool exists = false;
+                    try
+                    {
+                        exists = Directory.Exists(current);
+                    }
+                    catch
+                    {
+                        exists = false;
+                    }
+
+                    if (exists) break;
+
+                    string parent = null;
+                    try
+                    {
+                        parent = Path.GetDirectoryName(current);
+                    }
+                    catch
+                    {
+                    }
+
+                    if (string.IsNullOrWhiteSpace(parent)) break;
+                    if (string.Equals(parent, current, StringComparison.Ordinal)) break;
+                    current = parent;
+                }
+
+                ulong freeAvail;
+                ulong total;
+                ulong totalFree;
+
+                bool ok = GetDiskFreeSpaceExW(current, out freeAvail, out total, out totalFree);
+                if (!ok)
+                {
+                    string root = null;
+                    try
+                    {
+                        root = Path.GetPathRoot(fullPath);
+                    }
+                    catch
+                    {
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(root))
+                    {
+                        ok = GetDiskFreeSpaceExW(root, out freeAvail, out total, out totalFree);
+                    }
+
+                    if (!ok && fullPath.StartsWith(@"\\", StringComparison.Ordinal))
+                    {
+                        string uncRoot = getUncShareRoot(fullPath);
+                        if (!string.IsNullOrWhiteSpace(uncRoot))
+                        {
+                            ok = GetDiskFreeSpaceExW(uncRoot, out freeAvail, out total, out totalFree);
+                        }
+                    }
+                }
+
+                if (!ok) return false;
+
+                totalBytes = total;
+                freeBytes = freeAvail;
                 return true;
             }
             catch
@@ -1840,5 +1913,22 @@ namespace Thetis
                 return false;
             }
         }
+
+        private static string getUncShareRoot(string uncPath)
+        {
+            if (string.IsNullOrWhiteSpace(uncPath)) return null;
+            if (!uncPath.StartsWith(@"\\", StringComparison.Ordinal)) return null;
+
+            int first = uncPath.IndexOf('\\', 2);
+            if (first < 0) return null;
+
+            int second = uncPath.IndexOf('\\', first + 1);
+            if (second < 0) second = uncPath.Length;
+
+            string root = uncPath.Substring(0, second);
+            if (!root.EndsWith("\\", StringComparison.Ordinal)) root = root + "\\";
+            return root;
+        }
+        //
     }
 }
