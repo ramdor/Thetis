@@ -4057,6 +4057,7 @@
             this.btnRecording_4char_copy = new System.Windows.Forms.ButtonTS();
             this.txtRecording_4char = new System.Windows.Forms.TextBoxTS();
             this.btnRecording_load_wav_to_slot = new System.Windows.Forms.ButtonTS();
+            this.btnRecording_export_wav_from_slot = new System.Windows.Forms.ButtonTS();
             this.picButtonBoxInfo = new System.Windows.Forms.PictureBox();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -4427,7 +4428,6 @@
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
             this.tmrCheckStorageSpace = new System.Windows.Forms.Timer(this.components);
-            this.btnRecording_export_wav_from_slot = new System.Windows.Forms.ButtonTS();
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -64846,7 +64846,7 @@
             this.nudVoiceRecordingPlayback_slots.Size = new System.Drawing.Size(42, 20);
             this.nudVoiceRecordingPlayback_slots.TabIndex = 133;
             this.nudVoiceRecordingPlayback_slots.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudVoiceRecordingPlayback_slots, "Number of button columns");
+            this.toolTip1.SetToolTip(this.nudVoiceRecordingPlayback_slots, "Number of recording/playback slots");
             this.nudVoiceRecordingPlayback_slots.Value = new decimal(new int[] {
             1,
             0,
@@ -65080,6 +65080,19 @@
             this.toolTip1.SetToolTip(this.btnRecording_load_wav_to_slot, "Load wav to slot");
             this.btnRecording_load_wav_to_slot.UseVisualStyleBackColor = true;
             this.btnRecording_load_wav_to_slot.Click += new System.EventHandler(this.btnRecording_load_wav_to_slot_Click);
+            // 
+            // btnRecording_export_wav_from_slot
+            // 
+            this.btnRecording_export_wav_from_slot.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnRecording_export_wav_from_slot.Image = global::Thetis.Properties.Resources.cont_save;
+            this.btnRecording_export_wav_from_slot.Location = new System.Drawing.Point(140, 36);
+            this.btnRecording_export_wav_from_slot.Name = "btnRecording_export_wav_from_slot";
+            this.btnRecording_export_wav_from_slot.Selectable = true;
+            this.btnRecording_export_wav_from_slot.Size = new System.Drawing.Size(27, 27);
+            this.btnRecording_export_wav_from_slot.TabIndex = 186;
+            this.toolTip1.SetToolTip(this.btnRecording_export_wav_from_slot, "Export wav from slot");
+            this.btnRecording_export_wav_from_slot.UseVisualStyleBackColor = true;
+            this.btnRecording_export_wav_from_slot.Click += new System.EventHandler(this.btnRecording_export_wav_from_slot_Click);
             // 
             // picButtonBoxInfo
             // 
@@ -70157,19 +70170,6 @@
             this.tmrCheckStorageSpace.Enabled = true;
             this.tmrCheckStorageSpace.Interval = 2000;
             this.tmrCheckStorageSpace.Tick += new System.EventHandler(this.tmrCheckStorageSpace_Tick);
-            // 
-            // btnRecording_export_wav_from_slot
-            // 
-            this.btnRecording_export_wav_from_slot.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.btnRecording_export_wav_from_slot.Image = global::Thetis.Properties.Resources.cont_save;
-            this.btnRecording_export_wav_from_slot.Location = new System.Drawing.Point(140, 36);
-            this.btnRecording_export_wav_from_slot.Name = "btnRecording_export_wav_from_slot";
-            this.btnRecording_export_wav_from_slot.Selectable = true;
-            this.btnRecording_export_wav_from_slot.Size = new System.Drawing.Size(27, 27);
-            this.btnRecording_export_wav_from_slot.TabIndex = 186;
-            this.toolTip1.SetToolTip(this.btnRecording_export_wav_from_slot, "Export wav from slot");
-            this.btnRecording_export_wav_from_slot.UseVisualStyleBackColor = true;
-            this.btnRecording_export_wav_from_slot.Click += new System.EventHandler(this.btnRecording_export_wav_from_slot_Click);
             // 
             // Setup
             // 
