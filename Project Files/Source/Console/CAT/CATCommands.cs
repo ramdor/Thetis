@@ -4543,6 +4543,7 @@ namespace Thetis
 					Band b;
 					double freq;
 					DSPMode mode;
+					//double ddcfreq;
 					switch (rx)
 					{
 						case 1:
@@ -4550,27 +4551,31 @@ namespace Thetis
 							b = console.RX1Band;
 							freq = console.VFOAFreq;
 							mode = console.RX1DSPMode;
-							break;
+                            //ddcfreq = console.CentreFrequency;
+                            break;
 						case 2:
-							b = console.RX2Band;
+                            rx_wfw_id = 1;
+                            b = console.RX2Band;
 							freq = console.VFOBFreq;
 							mode = console.RX2DSPMode;
-							rx_wfw_id = 1;
+                            //ddcfreq = console.CentreRX2Frequency;
 							break;
 						default:
 							rx_wfw_id = 0;
 							b = console.RX1Band;
 							freq = console.VFOAFreq;
 							mode = console.RX1DSPMode;
-							break;
+                            //ddcfreq = console.CentreFrequency;
+                            break;
 					}
 					RecordingDetails details = new RecordingDetails()
 					{
 						Band = BandStackManager.BandToString(b),
 						Frequency = freq.ToString("F6", System.Globalization.CultureInfo.InvariantCulture),
 						Mode = mode.ToString(),
-						UtcTime = DateTime.UtcNow
-					};
+						UtcTime = DateTime.UtcNow,
+						//DDCFrequency = ddcfreq.ToString("F6", System.Globalization.CultureInfo.InvariantCulture)
+                    };
 					string file = "cat\\slot_" + slot.ToString() + ".wav"; // all in sub folder cat, slot_0.wav to slot_127.wav
                     string full_path;
 					string error;

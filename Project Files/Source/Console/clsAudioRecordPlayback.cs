@@ -91,6 +91,7 @@ namespace Thetis
         public string Frequency { get; set; } = "";
         public string Mode { get; set; } = "";
         public string Band { get; set; } = "";
+        //public string DDCFrequency { get; set; } = "";
 
         public string WavFile { get; set; } = "";
         public long? WavFileSizeBytes { get; set; }
@@ -381,6 +382,7 @@ namespace Thetis
                     d.Frequency = existing.frequency ?? "";
                     d.Mode = existing.mode ?? "";
                     d.Band = existing.band ?? "";
+                    //d.DDCFrequency = existing.ddcfrequency ?? "";
 
                     d.Mp3File = existing.mp3_file ?? "";
                     d.Mp3FileSizeBytes = existing.mp3_file_size_bytes;
@@ -390,6 +392,7 @@ namespace Thetis
                     d.Frequency = "";
                     d.Mode = "";
                     d.Band = "";
+                    //d.DDCFrequency = "";
 
                     string mp3Guess = Path.ChangeExtension(wavPath, ".mp3");
                     if (File.Exists(mp3Guess))
@@ -2361,6 +2364,7 @@ namespace Thetis
                 m.frequency = details.Frequency ?? "";
                 m.mode = details.Mode ?? "";
                 m.band = details.Band ?? "";
+                //m.ddcfrequency = details.DDCFrequency ?? "";
 
                 m.wav_file = details.WavFile ?? "";
                 m.wav_file_size_bytes = details.WavFileSizeBytes;
@@ -2725,6 +2729,7 @@ namespace Thetis
             public string frequency { get; set; }
             public string mode { get; set; }
             public string band { get; set; }
+            //public string ddcfrequency { get; set; }
 
             public string wav_file { get; set; }
             public long? wav_file_size_bytes { get; set; }

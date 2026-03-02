@@ -25536,7 +25536,8 @@ namespace Thetis
                     if (_selected_voice_slot > -1)
                     {
                         txtRecording_labelText.Text = igs.GetSetting<string>("buttonbox_recordplayback_label_" + _selected_voice_slot.ToString(), false, null, null, "Slot " + (_selected_voice_slot + 1).ToString());
-                        chkRecording_slot_locked.Checked = igs.GetSetting<bool>("buttonbox_recordplayback_locked_" + _selected_voice_slot.ToString(), false, false, false, false);                        
+                        chkRecording_slot_locked.Checked = igs.GetSetting<bool>("buttonbox_recordplayback_locked_" + _selected_voice_slot.ToString(), false, false, false, false);
+                        btnRecording_load_wav_to_slot.Enabled = !chkRecording_slot_locked.Checked;
                         chkRecording_playkeybind.Checked = igs.GetSetting<bool>("buttonbox_recordplayback_useskeybind_" + _selected_voice_slot.ToString(), false, false, false, false);
                         txtRecording_playkeybind.Tag = igs.GetSetting<Keys>("buttonbox_recordplayback_keybind_" + _selected_voice_slot.ToString(), false, Keys.None, Keys.None, Keys.None);
                         Keys data = (Keys)txtRecording_playkeybind.Tag;
@@ -36469,6 +36470,7 @@ namespace Thetis
         private void chkRecording_slot_locked_CheckedChanged(object sender, EventArgs e)
         {
             if (initializing) return;
+            btnRecording_load_wav_to_slot.Enabled = !chkRecording_slot_locked.Checked;
             updateMeterType();
         }
         private void chkRecording_playkeybind_CheckedChanged(object sender, EventArgs e)
@@ -36817,6 +36819,8 @@ namespace Thetis
             MeterManager.clsVoiceRecordPlay vrp = mi as MeterManager.clsVoiceRecordPlay;
             if (vrp == null) return;
 
+            if (vrp.GetSlotLocked(_selected_voice_slot)) return;
+
             string load_filename = null;
             using (OpenFileDialog dlg = new OpenFileDialog())
             {
@@ -36882,6 +36886,7 @@ namespace Thetis
             {
                 bool fulldata = !string.IsNullOrEmpty(json_data.mode) &&
                     !string.IsNullOrEmpty(json_data.frequency) &&
+                    //!string.IsNullOrEmpty(json_data.ddcfrequency) &&
                     json_data.bit_depth > 0 &&
                     json_data.sample_rate > 0 &&
                     !string.IsNullOrEmpty(json_data.utc_time);
