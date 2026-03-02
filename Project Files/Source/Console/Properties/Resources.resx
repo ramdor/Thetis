@@ -139,20 +139,14 @@
   <data name="swissi" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swissi.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="ob_waterfall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ob_waterfall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Lock_64" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Lock-64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ob_panafall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ob_panafall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Data-Export-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Data-Export-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="pin_not_on_top" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pin_not_on_top.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ob_panafall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_panafall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="swisscli" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swisscli.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -160,14 +154,11 @@
   <data name="dockIcon_float" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\dockIcon_float.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="txant" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\tx_ant3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ob_panadapter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_panadapter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="arrow_topright" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\arrow_topright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ob_panadapter" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ob_panadapter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Folder-Open-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Folder-Open-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -175,8 +166,17 @@
   <data name="cty" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cty.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="screen2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\screen2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="dock" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\dock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cat_serial_status" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cat_serial_status.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Command-Refresh-16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Command-Refresh-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="swisscb" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swisscb.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -184,8 +184,8 @@
   <data name="grabbing" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\grabbing.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="ob_disp_pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ob_disp_pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="cont_copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cont_copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Data-Up-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Data-Up-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -193,11 +193,17 @@
   <data name="arrow_left_black" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\arrow_left_black.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="arrow_bottomleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\arrow_bottomleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ob_mute_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_mute_on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="play" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="arrow_topleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrow_topleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="swissek" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\swissek.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ob_circle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_circle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="swisscbi" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swisscbi.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -223,17 +229,26 @@
   <data name="swiss" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swiss.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="ob_circle" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ob_circle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ob_waterfall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_waterfall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="undock" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\undock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ob_mute_all_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ob_mute_all_on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ob_disp_pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_disp_pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="eye_black_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\eye_black_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="arrow_left" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\arrow_left.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow_bottomleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\arrow_bottomleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="zap" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zap.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -253,11 +268,11 @@
   <data name="lock_unlocked" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\lock_unlocked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="timer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\timer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="arrow_right_black" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\arrow_right_black.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="swissek" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\swissek.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="info" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -274,20 +289,26 @@
   <data name="cont_load" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cont_load.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="grid" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\grid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ob_mute_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ob_mute_on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="sun1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="sun" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ob_spectrum" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_spectrum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="cat_serial_status" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\cat_serial_status.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="cm_green" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cm_green.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="refresh-64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh-64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Data-Edit-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Data-Edit-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Data-Copy-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Data-Copy-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="screen" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\screen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -295,8 +316,8 @@
   <data name="swissel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swissel.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="ob_scope" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ob_scope.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="grid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\grid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="pin_on_top" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pin_on_top.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -310,11 +331,8 @@
   <data name="Data-Delete-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Data-Delete-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ob_display_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ob_display_off.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="sun1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Data-Down-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Data-Down-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ob_mic_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ob_mic_off.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -325,11 +343,11 @@
   <data name="lock_unlocked_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\lock_unlocked_red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Data-Add-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Data-Add-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="ob_phase" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ob_phase.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pin_not_on_top" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pin_not_on_top.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="arrow_up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\arrow_up.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -352,14 +370,14 @@
   <data name="ob_mute_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ob_mute_off.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="swisscl" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\swisscl.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="paflt" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\paflt.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="thetis-logo1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\thetis-logo1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="timer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\timer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="sun" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="swissci" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swissci.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -376,8 +394,8 @@
   <data name="pipette32border" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pipette32border.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="arrow_topleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\arrow_topleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ob_display_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_display_off.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="grab" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\grab.cur;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -394,8 +412,8 @@
   <data name="warning4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\warning4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ob_spectrum" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ob_spectrum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="swisscl" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\swisscl.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="swissli" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swissli.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -412,17 +430,17 @@
   <data name="Data-Active-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Data-Active-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Data-Edit-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Data-Edit-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="paok" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\paok.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ob_play" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ob_play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="RXAnt" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\rx_ant3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="cat_tcp_status" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cat_tcp_status.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Data-Down-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Data-Down-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Data-Add-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Data-Add-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Link_64" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Link-64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -430,14 +448,11 @@
   <data name="down" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\down.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ob_scope" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_scope.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="cont_copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\cont_copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="cat_tcp_status" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\cat_tcp_status.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="RXAnt" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\rx_ant3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Archive-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Archive-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -463,11 +478,11 @@
   <data name="ob_mute_all_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ob_mute_all_off.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="cm_green" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\cm_green.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="dot" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\dot.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="screen2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\screen2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="txant" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tx_ant3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="lock_locked" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\lock_locked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -475,11 +490,14 @@
   <data name="ob_spectrascope" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ob_spectrascope.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="play" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="swisski" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\swisski.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="Data-Copy-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Data-Copy-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="record" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\record.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ob_square" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ob_square.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -490,8 +508,8 @@
   <data name="timer_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\timer_on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="dot" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\dot.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ob_mute_all_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ob_mute_all_on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="bucket" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\bucket.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -520,19 +538,7 @@
   <data name="down_black" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\down_black.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Command-Refresh-16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Command-Refresh-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="paok" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\paok.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="paflt" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\paflt.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="refresh-64" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\refresh-64.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="record" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\record.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="eye_black_24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\eye_black_24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

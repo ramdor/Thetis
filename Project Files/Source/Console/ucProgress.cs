@@ -56,15 +56,38 @@ namespace Thetis
         private int _min = 0;
         private int _max = 100;
 
+        private int _vertical_line_value = -1;
+        private int _vertical_line_width = 1;
+        private Color _bar_color = Color.Green;
+        private Color _veritical_line_color = Color.Red;
+
         [Browsable(true)]
         [DefaultValue(0)]
         public int Value { get { return _value; } set { _value = Math.Max(_min, Math.Min(_max, value)); Refresh(); } }
+
         [Browsable(true)]
         [DefaultValue(100)]
-        public int Maximum { get { return _max; } set { _max = value; Refresh(); } }
+        public int Maximum { get { return _max; } set { _max = value; _value = Math.Max(_min, Math.Min(_max, _value)); Refresh(); } }
+
         [Browsable(true)]
         [DefaultValue(0)]
-        public int Minimum { get { return _min; } set { _min = value; Refresh(); } }
+        public int Minimum { get { return _min; } set { _min = value; _value = Math.Max(_min, Math.Min(_max, _value)); Refresh(); } }
+
+        [Browsable(true)]
+        [DefaultValue(-1)]
+        public int VerticalLineValue { get { return _vertical_line_value; } set { _vertical_line_value = value; Refresh(); } }
+
+        [Browsable(true)]
+        [DefaultValue(1)]
+        public int VerticalLineWidth { get { return _vertical_line_width; } set { _vertical_line_width = Math.Max(1, value); Refresh(); } }
+
+        [Browsable(true)]
+        [DefaultValue(typeof(Color), "Green")]
+        public Color BarColor { get { return _bar_color; } set { _bar_color = value; Refresh(); } }
+
+        [Browsable(true)]
+        [DefaultValue(typeof(Color), "Red")]
+        public Color VeriticalLineColor { get { return _veritical_line_color; } set { _veritical_line_color = value; Refresh(); } }
 
         public ucProgress()
         {
@@ -76,12 +99,39 @@ namespace Thetis
         {
             base.OnPaint(e);
 
-            int barWidth = (int)(Width * (_value - _min) / (double)(_max - _min));
+            int denom = _max - _min;
 
             using (Pen blackPen = new Pen(Color.Black, 1))
-            using (Brush greenBrush = new SolidBrush(Color.Green))
             {
-                e.Graphics.FillRectangle(greenBrush, 0, 0, barWidth, Height);
+                if (denom <= 0 || Width <= 0 || Height <= 0)
+                {
+                    e.Graphics.DrawRectangle(blackPen, 0, 0, Width - 1, Height - 1);
+                    return;
+                }
+
+                double frac = (_value - _min) / (double)denom;
+                int barWidth = (int)Math.Round(Width * frac);
+                if (barWidth < 0) barWidth = 0;
+                if (barWidth > Width) barWidth = Width;
+
+                using (Brush barBrush = new SolidBrush(_bar_color))
+                {
+                    e.Graphics.FillRectangle(barBrush, 0, 0, barWidth, Height);
+                }
+
+                if (_vertical_line_value >= _min && _vertical_line_value <= _max)
+                {
+                    double vfrac = (_vertical_line_value - _min) / (double)denom;
+                    int x = (int)Math.Round((Width - 1) * vfrac);
+                    if (x < 0) x = 0;
+                    if (x > Width - 1) x = Width - 1;
+
+                    using (Pen vpen = new Pen(_veritical_line_color, _vertical_line_width))
+                    {
+                        e.Graphics.DrawLine(vpen, x, 0, x, Height - 1);
+                    }
+                }
+
                 e.Graphics.DrawRectangle(blackPen, 0, 0, Width - 1, Height - 1);
             }
         }

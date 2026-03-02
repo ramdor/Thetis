@@ -1984,6 +1984,10 @@
             this.chkRecording_dither = new System.Windows.Forms.CheckBoxTS();
             this.comboRecording_samplerate = new System.Windows.Forms.ComboBoxTS();
             this.groupBoxTS60 = new System.Windows.Forms.GroupBoxTS();
+            this.ucReording_free_space = new Thetis.ucProgress();
+            this.labelTS660 = new System.Windows.Forms.LabelTS();
+            this.nudRecording_stop_free_space = new System.Windows.Forms.NumericUpDownTS();
+            this.labelTS659 = new System.Windows.Forms.LabelTS();
             this.groupBoxTS68 = new System.Windows.Forms.GroupBoxTS();
             this.btnRecording_globalkeybind_assign = new System.Windows.Forms.ButtonTS();
             this.chkRecording_globalkeybind = new System.Windows.Forms.CheckBoxTS();
@@ -2005,6 +2009,7 @@
             this.chkRecording_generateMP3s = new System.Windows.Forms.CheckBoxTS();
             this.chkRecording_playbackMox = new System.Windows.Forms.CheckBoxTS();
             this.chkBypassVACPlayingRecording = new System.Windows.Forms.CheckBoxTS();
+            this.lblRecording_unable_to_get_space = new System.Windows.Forms.LabelTS();
             this.btnRecording_openRecordingsFolder = new System.Windows.Forms.ButtonTS();
             this.groupBoxTS59 = new System.Windows.Forms.GroupBoxTS();
             this.labelTS9 = new System.Windows.Forms.LabelTS();
@@ -4092,6 +4097,8 @@
             this.nudRecording_slot_settings = new System.Windows.Forms.NumericUpDownTS();
             this.btnRecording_4char_copy = new System.Windows.Forms.ButtonTS();
             this.txtRecording_4char = new System.Windows.Forms.TextBoxTS();
+            this.btnRecording_load_wav_to_slot = new System.Windows.Forms.ButtonTS();
+            this.btnRecording_export_wav_from_slot = new System.Windows.Forms.ButtonTS();
             this.picButtonBoxInfo = new System.Windows.Forms.PictureBox();
             this.timer_VAC_Monitor = new System.Windows.Forms.Timer(this.components);
             this.timer_LED_Mirror = new System.Windows.Forms.Timer(this.components);
@@ -4461,6 +4468,7 @@
             this.panelTS4 = new System.Windows.Forms.PanelTS();
             this.radioButtonTS5 = new System.Windows.Forms.RadioButtonTS();
             this.radioButtonTS6 = new System.Windows.Forms.RadioButtonTS();
+            this.tmrCheckStorageSpace = new System.Windows.Forms.Timer(this.components);
             tpAlexAntCtrl = new System.Windows.Forms.TabPage();
             numericUpDownTS3 = new System.Windows.Forms.NumericUpDownTS();
             numericUpDownTS4 = new System.Windows.Forms.NumericUpDownTS();
@@ -4833,6 +4841,7 @@
             this.groupBoxTS62.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_dither)).BeginInit();
             this.groupBoxTS60.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_stop_free_space)).BeginInit();
             this.groupBoxTS68.SuspendLayout();
             this.groupBoxTS67.SuspendLayout();
             this.groupBoxTS65.SuspendLayout();
@@ -32673,7 +32682,7 @@
             this.groupBoxTS61.Controls.Add(this.comboPCAudioDevices_IN);
             this.groupBoxTS61.Controls.Add(this.labelTS88);
             this.groupBoxTS61.Controls.Add(this.labelTS16);
-            this.groupBoxTS61.Location = new System.Drawing.Point(199, 88);
+            this.groupBoxTS61.Location = new System.Drawing.Point(199, 86);
             this.groupBoxTS61.Name = "groupBoxTS61";
             this.groupBoxTS61.Size = new System.Drawing.Size(500, 94);
             this.groupBoxTS61.TabIndex = 2;
@@ -32943,6 +32952,10 @@
             // 
             // groupBoxTS60
             // 
+            this.groupBoxTS60.Controls.Add(this.ucReording_free_space);
+            this.groupBoxTS60.Controls.Add(this.labelTS660);
+            this.groupBoxTS60.Controls.Add(this.nudRecording_stop_free_space);
+            this.groupBoxTS60.Controls.Add(this.labelTS659);
             this.groupBoxTS60.Controls.Add(this.groupBoxTS68);
             this.groupBoxTS60.Controls.Add(this.chkRecording_enable_monIfMox);
             this.groupBoxTS60.Controls.Add(this.groupBoxTS67);
@@ -32955,12 +32968,72 @@
             this.groupBoxTS60.Controls.Add(this.chkRecording_generateMP3s);
             this.groupBoxTS60.Controls.Add(this.chkRecording_playbackMox);
             this.groupBoxTS60.Controls.Add(this.chkBypassVACPlayingRecording);
-            this.groupBoxTS60.Location = new System.Drawing.Point(9, 188);
+            this.groupBoxTS60.Controls.Add(this.lblRecording_unable_to_get_space);
+            this.groupBoxTS60.Location = new System.Drawing.Point(9, 181);
             this.groupBoxTS60.Name = "groupBoxTS60";
-            this.groupBoxTS60.Size = new System.Drawing.Size(584, 196);
+            this.groupBoxTS60.Size = new System.Drawing.Size(584, 220);
             this.groupBoxTS60.TabIndex = 1;
             this.groupBoxTS60.TabStop = false;
             this.groupBoxTS60.Text = "Options";
+            // 
+            // ucReording_free_space
+            // 
+            this.ucReording_free_space.BackColor = System.Drawing.Color.LightGray;
+            this.ucReording_free_space.Location = new System.Drawing.Point(335, 192);
+            this.ucReording_free_space.Name = "ucReording_free_space";
+            this.ucReording_free_space.Size = new System.Drawing.Size(177, 16);
+            this.ucReording_free_space.TabIndex = 137;
+            this.ucReording_free_space.Value = 20;
+            // 
+            // labelTS660
+            // 
+            this.labelTS660.AutoSize = true;
+            this.labelTS660.Image = null;
+            this.labelTS660.Location = new System.Drawing.Point(288, 194);
+            this.labelTS660.Name = "labelTS660";
+            this.labelTS660.Size = new System.Drawing.Size(36, 13);
+            this.labelTS660.TabIndex = 136;
+            this.labelTS660.Text = "% free";
+            // 
+            // nudRecording_stop_free_space
+            // 
+            this.nudRecording_stop_free_space.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudRecording_stop_free_space.Location = new System.Drawing.Point(242, 190);
+            this.nudRecording_stop_free_space.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.nudRecording_stop_free_space.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nudRecording_stop_free_space.Name = "nudRecording_stop_free_space";
+            this.nudRecording_stop_free_space.Size = new System.Drawing.Size(40, 20);
+            this.nudRecording_stop_free_space.TabIndex = 135;
+            this.nudRecording_stop_free_space.TinyStep = false;
+            this.toolTip1.SetToolTip(this.nudRecording_stop_free_space, "Recording will stop free storage falls below this value");
+            this.nudRecording_stop_free_space.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudRecording_stop_free_space.ValueChanged += new System.EventHandler(this.nudRecording_stop_free_space_ValueChanged);
+            // 
+            // labelTS659
+            // 
+            this.labelTS659.AutoSize = true;
+            this.labelTS659.Image = null;
+            this.labelTS659.Location = new System.Drawing.Point(18, 194);
+            this.labelTS659.Name = "labelTS659";
+            this.labelTS659.Size = new System.Drawing.Size(207, 13);
+            this.labelTS659.TabIndex = 97;
+            this.labelTS659.Text = "Recording will stop if storage has less than";
             // 
             // groupBoxTS68
             // 
@@ -33135,7 +33208,7 @@
             // 
             this.btnRecording_selectCustomFolder.Enabled = false;
             this.btnRecording_selectCustomFolder.Image = null;
-            this.btnRecording_selectCustomFolder.Location = new System.Drawing.Point(478, 164);
+            this.btnRecording_selectCustomFolder.Location = new System.Drawing.Point(478, 162);
             this.btnRecording_selectCustomFolder.Name = "btnRecording_selectCustomFolder";
             this.btnRecording_selectCustomFolder.Selectable = true;
             this.btnRecording_selectCustomFolder.Size = new System.Drawing.Size(34, 23);
@@ -33148,7 +33221,7 @@
             // 
             this.labelTS648.AutoSize = true;
             this.labelTS648.Image = null;
-            this.labelTS648.Location = new System.Drawing.Point(18, 146);
+            this.labelTS648.Location = new System.Drawing.Point(18, 144);
             this.labelTS648.Name = "labelTS648";
             this.labelTS648.Size = new System.Drawing.Size(47, 13);
             this.labelTS648.TabIndex = 92;
@@ -33157,7 +33230,7 @@
             // txtRecording_customFolder
             // 
             this.txtRecording_customFolder.Enabled = false;
-            this.txtRecording_customFolder.Location = new System.Drawing.Point(175, 166);
+            this.txtRecording_customFolder.Location = new System.Drawing.Point(175, 164);
             this.txtRecording_customFolder.Name = "txtRecording_customFolder";
             this.txtRecording_customFolder.Size = new System.Drawing.Size(297, 20);
             this.txtRecording_customFolder.TabIndex = 91;
@@ -33169,7 +33242,7 @@
             // 
             this.radRecording_storageCustom.AutoSize = true;
             this.radRecording_storageCustom.Image = null;
-            this.radRecording_storageCustom.Location = new System.Drawing.Point(71, 167);
+            this.radRecording_storageCustom.Location = new System.Drawing.Point(71, 165);
             this.radRecording_storageCustom.Name = "radRecording_storageCustom";
             this.radRecording_storageCustom.Size = new System.Drawing.Size(98, 17);
             this.radRecording_storageCustom.TabIndex = 90;
@@ -33182,7 +33255,7 @@
             this.radRecording_storageMusic.AutoSize = true;
             this.radRecording_storageMusic.Checked = true;
             this.radRecording_storageMusic.Image = null;
-            this.radRecording_storageMusic.Location = new System.Drawing.Point(71, 144);
+            this.radRecording_storageMusic.Location = new System.Drawing.Point(71, 142);
             this.radRecording_storageMusic.Name = "radRecording_storageMusic";
             this.radRecording_storageMusic.Size = new System.Drawing.Size(113, 17);
             this.radRecording_storageMusic.TabIndex = 89;
@@ -33231,6 +33304,15 @@
             this.chkBypassVACPlayingRecording.UseVisualStyleBackColor = true;
             this.chkBypassVACPlayingRecording.CheckedChanged += new System.EventHandler(this.chkBypassVACPlayingRecording_CheckedChanged);
             // 
+            // lblRecording_unable_to_get_space
+            // 
+            this.lblRecording_unable_to_get_space.Image = null;
+            this.lblRecording_unable_to_get_space.Location = new System.Drawing.Point(332, 188);
+            this.lblRecording_unable_to_get_space.Name = "lblRecording_unable_to_get_space";
+            this.lblRecording_unable_to_get_space.Size = new System.Drawing.Size(196, 30);
+            this.lblRecording_unable_to_get_space.TabIndex = 112;
+            this.lblRecording_unable_to_get_space.Text = "** Unable to obtain storage space.\r\nRecording will not be limited";
+            // 
             // btnRecording_openRecordingsFolder
             // 
             this.btnRecording_openRecordingsFolder.Image = null;
@@ -33253,7 +33335,7 @@
             this.groupBoxTS59.Controls.Add(this.radRecordingBits_ieee);
             this.groupBoxTS59.Location = new System.Drawing.Point(9, 9);
             this.groupBoxTS59.Name = "groupBoxTS59";
-            this.groupBoxTS59.Size = new System.Drawing.Size(184, 173);
+            this.groupBoxTS59.Size = new System.Drawing.Size(184, 171);
             this.groupBoxTS59.TabIndex = 0;
             this.groupBoxTS59.TabStop = false;
             this.groupBoxTS59.Text = "Bit rates";
@@ -65478,7 +65560,7 @@
             this.nudVoiceRecordingPlayback_slots.Size = new System.Drawing.Size(42, 20);
             this.nudVoiceRecordingPlayback_slots.TabIndex = 133;
             this.nudVoiceRecordingPlayback_slots.TinyStep = false;
-            this.toolTip1.SetToolTip(this.nudVoiceRecordingPlayback_slots, "Number of button columns");
+            this.toolTip1.SetToolTip(this.nudVoiceRecordingPlayback_slots, "Number of recording/playback slots");
             this.nudVoiceRecordingPlayback_slots.Value = new decimal(new int[] {
             1,
             0,
@@ -65489,7 +65571,7 @@
             // btnRecording_openStorageFolder
             // 
             this.btnRecording_openStorageFolder.Image = null;
-            this.btnRecording_openStorageFolder.Location = new System.Drawing.Point(133, 0);
+            this.btnRecording_openStorageFolder.Location = new System.Drawing.Point(100, 3);
             this.btnRecording_openStorageFolder.Name = "btnRecording_openStorageFolder";
             this.btnRecording_openStorageFolder.Selectable = true;
             this.btnRecording_openStorageFolder.Size = new System.Drawing.Size(34, 20);
@@ -65699,6 +65781,32 @@
             this.txtRecording_4char.Text = "AGHJ";
             this.toolTip1.SetToolTip(this.txtRecording_4char, "The four character code used by CAT to access this Voice Record/Play item");
             this.txtRecording_4char.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtRecording_4char_KeyPress);
+            // 
+            // btnRecording_load_wav_to_slot
+            // 
+            this.btnRecording_load_wav_to_slot.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnRecording_load_wav_to_slot.Image = global::Thetis.Properties.Resources.cont_load;
+            this.btnRecording_load_wav_to_slot.Location = new System.Drawing.Point(140, 3);
+            this.btnRecording_load_wav_to_slot.Name = "btnRecording_load_wav_to_slot";
+            this.btnRecording_load_wav_to_slot.Selectable = true;
+            this.btnRecording_load_wav_to_slot.Size = new System.Drawing.Size(27, 27);
+            this.btnRecording_load_wav_to_slot.TabIndex = 114;
+            this.toolTip1.SetToolTip(this.btnRecording_load_wav_to_slot, "Load wav to slot");
+            this.btnRecording_load_wav_to_slot.UseVisualStyleBackColor = true;
+            this.btnRecording_load_wav_to_slot.Click += new System.EventHandler(this.btnRecording_load_wav_to_slot_Click);
+            // 
+            // btnRecording_export_wav_from_slot
+            // 
+            this.btnRecording_export_wav_from_slot.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnRecording_export_wav_from_slot.Image = global::Thetis.Properties.Resources.cont_save;
+            this.btnRecording_export_wav_from_slot.Location = new System.Drawing.Point(140, 36);
+            this.btnRecording_export_wav_from_slot.Name = "btnRecording_export_wav_from_slot";
+            this.btnRecording_export_wav_from_slot.Selectable = true;
+            this.btnRecording_export_wav_from_slot.Size = new System.Drawing.Size(27, 27);
+            this.btnRecording_export_wav_from_slot.TabIndex = 186;
+            this.toolTip1.SetToolTip(this.btnRecording_export_wav_from_slot, "Export wav from slot");
+            this.btnRecording_export_wav_from_slot.UseVisualStyleBackColor = true;
+            this.btnRecording_export_wav_from_slot.Click += new System.EventHandler(this.btnRecording_export_wav_from_slot_Click);
             // 
             // picButtonBoxInfo
             // 
@@ -66903,13 +67011,15 @@
             // 
             this.pnlVoiceRecordPlayback.AutoScrollMargin = new System.Drawing.Size(0, 0);
             this.pnlVoiceRecordPlayback.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_export_wav_from_slot);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_load_wav_to_slot);
             this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_4char_copy);
             this.pnlVoiceRecordPlayback.Controls.Add(this.labelTS657);
             this.pnlVoiceRecordPlayback.Controls.Add(this.scrollableControl2);
+            this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_openStorageFolder);
             this.pnlVoiceRecordPlayback.Controls.Add(this.nudRecording_slot_settings);
             this.pnlVoiceRecordPlayback.Controls.Add(this.labelTS658);
             this.pnlVoiceRecordPlayback.Controls.Add(this.labelTS650);
-            this.pnlVoiceRecordPlayback.Controls.Add(this.btnRecording_openStorageFolder);
             this.pnlVoiceRecordPlayback.Controls.Add(this.txtRecording_4char);
             this.pnlVoiceRecordPlayback.Controls.Add(this.nudVoiceRecordingPlayback_slots);
             this.pnlVoiceRecordPlayback.Controls.Add(this.labelTS653);
@@ -70768,6 +70878,12 @@
             this.radioButtonTS6.Text = "Auto";
             this.radioButtonTS6.UseVisualStyleBackColor = true;
             // 
+            // tmrCheckStorageSpace
+            // 
+            this.tmrCheckStorageSpace.Enabled = true;
+            this.tmrCheckStorageSpace.Interval = 2000;
+            this.tmrCheckStorageSpace.Tick += new System.EventHandler(this.tmrCheckStorageSpace_Tick);
+            // 
             // Setup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -71258,6 +71374,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudRecording_dither)).EndInit();
             this.groupBoxTS60.ResumeLayout(false);
             this.groupBoxTS60.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRecording_stop_free_space)).EndInit();
             this.groupBoxTS68.ResumeLayout(false);
             this.groupBoxTS68.PerformLayout();
             this.groupBoxTS67.ResumeLayout(false);
@@ -76620,5 +76737,13 @@
         private ButtonTS btnRecording_4char_copy;
         private LabelTS labelTS658;
         private TextBoxTS txtRecording_4char;
+        private ButtonTS btnRecording_load_wav_to_slot;
+        private NumericUpDownTS nudRecording_stop_free_space;
+        private LabelTS labelTS659;
+        private ucProgress ucReording_free_space;
+        private LabelTS labelTS660;
+        private Timer tmrCheckStorageSpace;
+        private LabelTS lblRecording_unable_to_get_space;
+        private ButtonTS btnRecording_export_wav_from_slot;
     }
 }

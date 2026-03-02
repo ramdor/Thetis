@@ -997,6 +997,14 @@ namespace Thetis
         {
             Display.ShowIMDMeasurments = chkShow2ToneMeasurements.Checked;
         }
+
+        public void FixAmpViewOnTop()
+        {
+            if(ampv != null && !ampv.IsDisposed)
+            {
+                ampv.FixOnTop();
+            }
+        }
     }
 
     unsafe static class puresignal

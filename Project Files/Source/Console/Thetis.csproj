@@ -905,6 +905,8 @@
     <None Include="Resources\cont_save.png" />
     <None Include="Resources\cont_load.png" />
     <None Include="Resources\Command-Refresh-16.png" />
+    <None Include="Resources\eye_black_32.png" />
+    <None Include="Resources\eye_black_24.png" />
     <Content Include="Resources\paflt.png" />
     <Content Include="Resources\paok.png" />
     <Content Include="Resources\Thetis2_256.ico" />

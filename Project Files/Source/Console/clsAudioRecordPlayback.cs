@@ -158,9 +158,15 @@ namespace Thetis
         private const int PcAudioWasapiInputIdBase = 100000;
         private const int PcAudioWasapiOutputIdBase = 200000;
 
+        private const int RecordSpaceCheckMs = 2000;
+
         private readonly object _sync = new object();
 
+        private Timer _record_space_timer;
+        private int _record_space_timer_busy;
+
         private string _audio_folder;
+        private int _free_space_perc;
 
         private bool _is_recording;
         private bool _is_playing;
@@ -240,6 +246,7 @@ namespace Thetis
             _pc_playback_gain = 1.0f;
 
             _audio_folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "Thetis");
+            _free_space_perc = 10;
 
             RxSource = AudioRecordRxSource.ReceiverOutputAudio;
             TxSource = AudioRecordTxSource.MicAudio;
@@ -249,6 +256,8 @@ namespace Thetis
             DitherAmount = 0.8f;
 
             ensureFolderExists(_audio_folder);
+
+            _record_space_timer = new Timer(onRecordSpaceTimer, null, Timeout.Infinite, Timeout.Infinite);
         }
 
         private void initPlaybackSettings()
@@ -572,6 +581,13 @@ namespace Thetis
                 }
             }
 
+            stopRecordSpaceTimer();
+            if (_record_space_timer != null)
+            {
+                try { _record_space_timer.Dispose(); } catch { }
+                _record_space_timer = null;
+            }
+
             _console.MoxPreChangeHandlers -= OnPreMox;
         }
 
@@ -590,6 +606,79 @@ namespace Thetis
                 }
 
                 ensureFolderExists(_audio_folder);
+            }
+        }
+
+        public int StopRecordingFreeSpacePerc
+        {
+            get
+            {
+                return _free_space_perc;
+            }
+            set
+            {
+                _free_space_perc = value;
+            }
+        }
+
+        public bool OkToRecord(string filepath)
+        {
+            bool ok = Common.TryGetDriveTotalAndFreeBytes(_audio_folder, out ulong totalBytes, out ulong freeBytes);
+            if (ok && totalBytes > 0UL)
+            {
+                ulong perc_free = (freeBytes * 100UL) / totalBytes;
+                if (perc_free > 100UL) perc_free = 100UL;
+                
+                return perc_free >= (ulong)_free_space_perc;
+            }
+
+            return true; // if free space cannot be determined, allow recording
+        }
+        private void startRecordSpaceTimer()
+        {
+            Timer t = _record_space_timer;
+            if (t == null) return;
+            t.Change(RecordSpaceCheckMs, RecordSpaceCheckMs);
+        }
+
+        private void stopRecordSpaceTimer()
+        {
+            Timer t = _record_space_timer;
+            if (t == null) return;
+
+            try { t.Change(Timeout.Infinite, Timeout.Infinite); } catch { }
+            Interlocked.Exchange(ref _record_space_timer_busy, 0);
+        }
+
+        private void onRecordSpaceTimer(object state)
+        {
+            if (Interlocked.Exchange(ref _record_space_timer_busy, 1) != 0) return;
+
+            try
+            {
+                bool isRec;
+                string path;
+
+                lock (_sync)
+                {
+                    isRec = _is_recording;
+                    path = _active_record_filename;
+                }
+
+                if (!isRec) return;
+                if (string.IsNullOrWhiteSpace(path)) return;
+
+                if (!OkToRecord(path))
+                {
+                    StopRecord(out string _);
+                }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                Interlocked.Exchange(ref _record_space_timer_busy, 0);
             }
         }
 
@@ -1088,6 +1177,12 @@ namespace Thetis
                         try { File.Delete(full_target); } catch { }
                     }
 
+                    if (!OkToRecord(full_target))
+                    {
+                        error = "Not enough free space to start recording.";
+                        return null;
+                    }
+
                     if (!Common.CanCreateFile(full_target))
                     {
                         error = $"Unable to create file\n{full_target}\n\nThis may be due to controlled folder access or some other reason.";
@@ -1181,6 +1276,7 @@ namespace Thetis
 
                     Audio.WaveRecord = true;
                     setRecordingState(true);
+                    startRecordSpaceTimer();
 
                     return full_target;
                 }
@@ -1216,6 +1312,7 @@ namespace Thetis
                     }
                     catch { }
 
+                    stopRecordSpaceTimer();
                     setRecordingState(false);
                     clearActiveRecordLocked();
                     return null;
@@ -1250,6 +1347,12 @@ namespace Thetis
                     if (remove_if_file_exists && File.Exists(full_target))
                     {
                         try { File.Delete(full_target); } catch { }
+                    }
+
+                    if (!OkToRecord(full_target))
+                    {
+                        error = "Not enough free space to start recording.";
+                        return null;
                     }
 
                     if (!Common.CanCreateFile(full_target))
@@ -1361,6 +1464,7 @@ namespace Thetis
 
                     _pc_wave_in.StartRecording();
                     setRecordingState(true);
+                    startRecordSpaceTimer();
 
                     return full_target;
                 }
@@ -1397,6 +1501,7 @@ namespace Thetis
                     }
                     catch { }
 
+                    stopRecordSpaceTimer();
                     setRecordingState(false);
                     clearActiveRecordLocked();
                     return null;
@@ -1461,6 +1566,7 @@ namespace Thetis
         public bool StopRecord(out string error)
         {
             error = null;
+            stopRecordSpaceTimer();
 
             lock (_sync)
             {
@@ -1551,7 +1657,48 @@ namespace Thetis
                 }
             }
         }
+        public bool CanBePlayed(string filepath)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(filepath)) return false;
 
+                string error;
+                string fullPath = resolvePlayPath(filepath, out error);
+                if (fullPath == null) return false;
+
+                if (!File.Exists(fullPath)) return false;
+
+                string ext = (Path.GetExtension(fullPath) ?? string.Empty).ToLowerInvariant();
+
+                if (ext == ".wav")
+                {
+                    using (BinaryReader br = new BinaryReader(File.Open(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read)))
+                    {
+                        int formatTag;
+                        int sampleRate;
+                        int channels;
+                        int bitsPerSample;
+                        long dataStart;
+                        long dataLengthBytes;
+                        string headerError;
+
+                        if (!tryParseWaveHeader(br, out formatTag, out sampleRate, out channels, out bitsPerSample, out dataStart, out dataLengthBytes, out headerError)) return false;
+                        if (channels != 2) return false;
+                        if (sampleRate < 6000) return false;
+                        if (dataLengthBytes <= 0) return false;
+
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         public bool PlayFileViaWDSP(string play_id, string full_path, int wfw_id, out string error, double adjustGain_dB = 0, bool ignore_temp_changes = false)
         {
             bool ret = false;
@@ -2109,6 +2256,8 @@ namespace Thetis
         {
             Action a = delegate
             {
+                stopRecordSpaceTimer();
+
                 if (details != null)
                 {
                     details.UtcTime = ensureUtc(details.UtcTime);
@@ -2731,6 +2880,9 @@ namespace Thetis
             _id = wfw_id;
             _file = file;
             _finished = finished;
+
+            WaveThing.wrecorder[_id].RxPre = recordRxPreProcessed;
+            WaveThing.wrecorder[_id].TxPre = recordTxPreProcessed;
 
             if (recordRxPreProcessed)
             {

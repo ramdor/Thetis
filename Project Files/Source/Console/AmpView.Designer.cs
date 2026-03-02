@@ -45,7 +45,6 @@
             this.chkAVPhaseZoom = new System.Windows.Forms.CheckBoxTS();
             this.chkAVLowRes = new System.Windows.Forms.CheckBoxTS();
             this.chkAVShowGain = new System.Windows.Forms.CheckBoxTS();
-            this.tmrOnTopFixer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -207,11 +206,6 @@
             this.chkAVShowGain.UseVisualStyleBackColor = false;
             this.chkAVShowGain.CheckedChanged += new System.EventHandler(this.chkAVShowGain_CheckedChanged);
             // 
-            // tmrOnTopFixer
-            // 
-            this.tmrOnTopFixer.Interval = 1000;
-            this.tmrOnTopFixer.Tick += new System.EventHandler(this.tmrOnTopFixer_Tick);
-            // 
             // AmpView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -230,7 +224,6 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AmpView_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AmpView_FormClosed);
             this.Load += new System.EventHandler(this.AmpView_Load);
-            this.Shown += new System.EventHandler(this.AmpView_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -245,6 +238,5 @@
         private System.Windows.Forms.CheckBoxTS chkAVLowRes;
         private System.Windows.Forms.CheckBoxTS chkAVPhaseZoom;
         private System.Windows.Forms.CheckBoxTS chkStayOnTop;
-        private System.Windows.Forms.Timer tmrOnTopFixer;
     }
 }

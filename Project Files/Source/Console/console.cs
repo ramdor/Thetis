@@ -1045,7 +1045,13 @@ namespace Thetis
 
             //release notes
             _frmReleaseNotes = new frmReleaseNotes();
-            _frmReleaseNotes.InitPath(Application.StartupPath);            
+            _frmReleaseNotes.InitPath(Application.StartupPath);
+
+            //attempt to fix ampview on top issue, also done in console shown
+            if (psform != null && !psform.IsDisposed)
+            {
+                psform.FixAmpViewOnTop();
+            }
 
             LogTool.Completed("FIN");
 
@@ -44599,6 +44605,12 @@ namespace Thetis
 
         private void Console_Shown(object sender, EventArgs e)
         {
+            //attempt to fix ampview on top issue
+            if (psform != null && !psform.IsDisposed)
+            {
+                psform.FixAmpViewOnTop();
+            }
+
             updateResolutionStatusBarText(); //MW0LGE_21b need to call this here so that drop shadow sizes can be obtained
 
             // set the multifunction setting to the status bar
@@ -44634,7 +44646,6 @@ namespace Thetis
             toolStripStatusLabel_LocalTime.Width = 92;
         }
 
-        //private bool twoTone = false;
         public bool TwoTone
         {
             get { return chk2TONE.Checked; }

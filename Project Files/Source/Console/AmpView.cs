@@ -63,7 +63,6 @@ namespace Thetis
             InitializeComponent();
             Common.DoubleBufferAll(this, true);
             _psform = ps;
-            //this.Owner = ps;
         }
 
         //GCHandle hx, hym, hyc, hys, hcm, hcc, hcs;
@@ -103,7 +102,7 @@ namespace Thetis
             chkAVShowGain_CheckedChanged(this, ex);
             chkAVLowRes_CheckedChanged(this, ex);
             chkAVPhaseZoom_CheckedChanged(this, ex);
-            
+            chkStayOnTop_CheckedChanged(this, ex);
         }
         private void disp_setup()
         {
@@ -329,10 +328,8 @@ namespace Thetis
 
         private void chkStayOnTop_CheckedChanged(object sender, EventArgs e)
         {
-            //this.TopMost = chkStayOnTop.Checked;            
-            tmrOnTopFixer.Enabled = false;
-            fixOnTop();
-            tmrOnTopFixer.Enabled = true;
+            //this.TopMost = chkStayOnTop.Checked;
+            FixOnTop();
         }
 
         public void CloseDown()
@@ -489,22 +486,9 @@ namespace Thetis
             PSForm.ampv = null;
         }
 
-        private void AmpView_Shown(object sender, EventArgs e)
-        {
-            if (IsDisposed) return;
-
-            if (InvokeRequired)
-            {
-                BeginInvoke((MethodInvoker)delegate { AmpView_Shown(sender, e); });
-                return;
-            }
-
-            chkStayOnTop_CheckedChanged(this, EventArgs.Empty);
-        }
-
-        //fix on top hack
-        private const int GWL_EXSTYLE = -20;
-        private const int WS_EX_TOPMOST = 0x00000008;
+        //
+        [DllImport("user32.dll")]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
 
         private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
         private static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
@@ -512,23 +496,15 @@ namespace Thetis
         private const uint SWP_NOMOVE = 0x0002;
         private const uint SWP_NOSIZE = 0x0001;
         private const uint SWP_NOACTIVATE = 0x0010;
+        private const uint SWP_SHOWWINDOW = 0x0040;
 
-        [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
-        private static extern int GetWindowLong32(IntPtr hWnd, int nIndex);
-
-        [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
-        private static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
-
-        [DllImport("user32.dll")]
-        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-
-        public void fixOnTop()
+        public void FixOnTop()
         {
             if (IsDisposed) return;
 
             if (InvokeRequired)
             {
-                BeginInvoke((MethodInvoker)fixOnTop);
+                BeginInvoke((MethodInvoker)FixOnTop);
                 return;
             }
 
@@ -536,34 +512,17 @@ namespace Thetis
 
             bool want_top = chkStayOnTop.Checked;
 
-            if (TopMost != want_top) TopMost = want_top;
+            TopMost = want_top;
 
-            // now check if it took
-            long exstyle;
-            if (IntPtr.Size == 8)
-            {
-                exstyle = GetWindowLongPtr64(Handle, GWL_EXSTYLE).ToInt64();
-            }
-            else
-            {
-                exstyle = GetWindowLong32(Handle, GWL_EXSTYLE);
-            }
-
-            bool native_top = (exstyle & WS_EX_TOPMOST) != 0;
-
-            if (want_top && !native_top)
-            {
-                SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-            }
-            else if (!want_top && native_top)
-            {
-                SetWindowPos(Handle, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-            }
+            IntPtr insert_after = want_top ? HWND_TOPMOST : HWND_NOTOPMOST;
+            SetWindowPos(Handle, insert_after, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
         }
 
-        private void tmrOnTopFixer_Tick(object sender, EventArgs e)
+        protected override void OnShown(EventArgs e)
         {
-            fixOnTop();
+            base.OnShown(e);
+            FixOnTop();
         }
+        //
     }
 }
