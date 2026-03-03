@@ -36703,7 +36703,8 @@ namespace Thetis
                     Band = BandStackManager.BandToString(RX1Band),
                     Frequency = VFOAFreq.ToString("F6", System.Globalization.CultureInfo.InvariantCulture),
                     Mode = RX1DSPMode.ToString(),
-                    UtcTime = DateTime.UtcNow
+                    UtcTime = DateTime.UtcNow,
+                    //DDCFrequency = CentreFrequency.ToString("F6", System.Globalization.CultureInfo.InvariantCulture),
                 };
                 string filename = ARP.RecordToFileFromWDSP("quick", file, 0, out string error, true, details);
                 if(string.IsNullOrEmpty(filename))
