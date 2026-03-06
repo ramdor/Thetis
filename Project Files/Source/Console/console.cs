@@ -37999,6 +37999,8 @@ namespace Thetis
             if (bMadeAChange)
             {
                 BuildFilterCharacteristics();
+
+                if (EQForm != null && !EQForm.Disposing) EQForm.DSPOptionsChanged();
             }
         }
         public void BuildFilterCharacteristics()

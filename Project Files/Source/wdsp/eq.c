@@ -1,4 +1,4 @@
-/*  eq.c
+﻿/*  eq.c
 
 This file is part of a program that implements a Software-Defined Radio.
 
@@ -36,7 +36,8 @@ int fEQcompare (const void * a, const void * b)
 		return 1;
 }
 
-double* eq_impulse(int N, int nfreqs, double* F, double* G, double samplerate, double scale, int ctfmode, int wintype)
+
+double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double samplerate, double scale, int ctfmode, int wintype)
 {
 	// check for previous in the cache
 	struct Params 
@@ -65,63 +66,189 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double samplerate, d
 	h ^= hf + GOLDEN_RATIO + (h << 6) + (h >> 2);
 	HASH_T hg = fnv1a_hash((uint8_t*)G, arr_len);
 	h ^= hg + GOLDEN_RATIO + (h << 6) + (h >> 2);
+	if (Q)
+	{
+		HASH_T hq = fnv1a_hash((uint8_t*)Q, arr_len);
+		h ^= hq + GOLDEN_RATIO + (h << 6) + (h >> 2);
+	}
 
 	double* imp = get_impulse_cache_entry(EQ_CACHE, h, N);
 	if (imp) return imp;
-	//
 
-	double* fp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
-	double* gp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
-	double* A  = (double *) malloc0 ((N / 2 + 1) * sizeof (double));
-	double* sary = (double *) malloc0 (2 * nfreqs * sizeof (double));
-	double gpreamp, f, frac;
 	double* impulse;
-	int i, j, mid;
-	fp[0] = 0.0;
-	fp[nfreqs + 1] = 1.0;
-	gpreamp = G[0];
-	for (i = 1; i <= nfreqs; i++)
+	double* sary;
+	double f;
+	double gpreamp, frac;
+	int i, j;
+	int mid = N / 2;
+	double* fp = (double*)malloc0((nfreqs + 2) * sizeof(double));
+	double* gp = (double*)malloc0((nfreqs + 2) * sizeof(double));
+	double* A = (double*)malloc0((mid + 1) * sizeof(double));
+
+	if (Q == NULL)
 	{
-		fp[i] = 2.0 * F[i] / samplerate;
-		if (fp[i] < 0.0) fp[i] = 0.0;
-		if (fp[i] > 1.0) fp[i] = 1.0;
-		gp[i] = G[i];
-	}
-	for (i = 1, j = 0; i <= nfreqs; i++, j+=2)
-	{
-		sary[j + 0] = fp[i];
-		sary[j + 1] = gp[i];
-	}
-	qsort (sary, nfreqs, 2 * sizeof (double), fEQcompare);
-	for (i = 1, j = 0; i <= nfreqs; i++, j+=2)
-	{
-		fp[i] = sary[j + 0];
-		gp[i] = sary[j + 1];
-	}
-	gp[0] = gp[1];
-	gp[nfreqs + 1] = gp[nfreqs];
-	mid = N / 2;
-	j = 0;
-	if (N & 1)
-	{
-		for (i = 0; i <= mid; i++)
+		sary = (double*)malloc0(2 * nfreqs * sizeof(double));
+		fp[0] = 0.0;
+		fp[nfreqs + 1] = 1.0;
+		gpreamp = G[0];
+		for (i = 1; i <= nfreqs; i++)
 		{
-			f = (double)i / (double)mid;
-			while (f > fp[j + 1]) j++;
-			frac = (f - fp[j]) / (fp[j + 1] - fp[j]);
-			A[i] = pow (10.0, 0.05 * (frac * gp[j + 1] + (1.0 - frac) * gp[j] + gpreamp)) * scale;
+			fp[i] = 2.0 * F[i] / samplerate;
+			if (fp[i] < 0.0) fp[i] = 0.0;
+			if (fp[i] > 1.0) fp[i] = 1.0;
+			gp[i] = G[i];
 		}
+		for (i = 1, j = 0; i <= nfreqs; i++, j += 2)
+		{
+			sary[j + 0] = fp[i];
+			sary[j + 1] = gp[i];
+		}
+		qsort(sary, nfreqs, 2 * sizeof(double), fEQcompare);
+		for (i = 1, j = 0; i <= nfreqs; i++, j += 2)
+		{
+			fp[i] = sary[j + 0];
+			gp[i] = sary[j + 1];
+		}
+		gp[0] = gp[1];
+		gp[nfreqs + 1] = gp[nfreqs];
+		j = 0;
+		if (N & 1)
+		{
+			for (i = 0; i <= mid; i++)
+			{
+				f = (double)i / (double)mid;
+				while (f > fp[j + 1]) j++;
+				frac = (f - fp[j]) / (fp[j + 1] - fp[j]);
+				A[i] = pow(10.0, 0.05 * (frac * gp[j + 1] + (1.0 - frac) * gp[j] + gpreamp)) * scale;
+			}
+		}
+		else
+		{
+			for (i = 0; i < mid; i++)
+			{
+				f = ((double)i + 0.5) / (double)mid;
+				while (f > fp[j + 1]) j++;
+				frac = (f - fp[j]) / (fp[j + 1] - fp[j]);
+				A[i] = pow(10.0, 0.05 * (frac * gp[j + 1] + (1.0 - frac) * gp[j] + gpreamp)) * scale;
+			}
+		}
+		_aligned_free(sary);		
 	}
 	else
 	{
-		for (i = 0; i < mid; i++)
+		double min_fp = 1.0;
+		double max_fp = 0.0;
+
+		fp[0] = 0.0;
+		fp[nfreqs + 1] = 1.0;
+
+		gpreamp = G[0];
+
+		double bin_offset = (N & 1) ? 0.0 : 0.5;
+		double bin_hz = (mid > 0) ? ((samplerate * 0.5) / (double)mid) : 0.0;
+
+		double tail_mix = 0.08;
+		double tail_scale = 2.5;
+		double tail_norm = 1.0 / (1.0 + tail_mix);
+		double min_fwhm_bins = 1.5;
+		double q_sharpen = 1.0;
+		double bw_ref_hz = 1000.0;
+
+		double* fc_hz = (double*)malloc0((nfreqs + 1) * sizeof(double));
+		double* sigma_hz = (double*)malloc0((nfreqs + 1) * sizeof(double));
+		double* gain_db = (double*)malloc0((nfreqs + 1) * sizeof(double));
+
+		for (i = 1; i <= nfreqs; i++)
 		{
-			f = ((double)i + 0.5) / (double)mid;
-			while (f > fp[j + 1]) j++;
-			frac = (f - fp[j]) / (fp[j + 1] - fp[j]);
-			A[i] = pow (10.0, 0.05 * (frac * gp[j + 1] + (1.0 - frac) * gp[j] + gpreamp)) * scale;
+			double fc_norm = 2.0 * F[i] / samplerate;
+			if (fc_norm < 0.0) fc_norm = 0.0;
+			if (fc_norm > 1.0) fc_norm = 1.0;
+
+			if (fc_norm < min_fp) min_fp = fc_norm;
+			if (fc_norm > max_fp) max_fp = fc_norm;
+
+			double fci_hz = fc_norm * samplerate * 0.5;
+
+			double qi = Q[i];
+			if (!(qi > 0.0)) qi = 1.0e-6;
+			
+			double fwhm_hz = (q_sharpen * bw_ref_hz) / qi; // fixed bw irrespective of f
+
+			double min_fwhm_hz = min_fwhm_bins * bin_hz;
+			if (fwhm_hz < min_fwhm_hz) fwhm_hz = min_fwhm_hz;
+
+			double sig = (0.5 * fwhm_hz) / sqrt(2.0 * log(2.0));
+			if (sig < 1.0e-12) sig = 1.0e-12;
+
+			fc_hz[i] = fci_hz;
+			sigma_hz[i] = sig;
+			gain_db[i] = G[i];
 		}
+
+		if (nfreqs > 0)
+		{
+			fp[1] = min_fp;
+			fp[nfreqs] = max_fp;
+		}
+
+		if (N & 1)
+		{
+			for (i = 0; i <= mid; i++)
+			{
+				double f_hz = ((double)i + bin_offset) * bin_hz;
+
+				double gdb = gpreamp;
+
+				for (j = 1; j <= nfreqs; j++)
+				{
+					double df = f_hz - fc_hz[j];
+
+					double x0 = df / sigma_hz[j];
+					double w0 = exp(-0.5 * x0 * x0);
+
+					double x1 = df / (sigma_hz[j] * tail_scale);
+					double w1 = exp(-0.5 * x1 * x1);
+
+					double w = (w0 + tail_mix * w1) * tail_norm;
+
+					gdb += gain_db[j] * w;
+				}
+
+				A[i] = pow(10.0, 0.05 * gdb) * scale;
+			}
+		}
+		else
+		{
+			for (i = 0; i < mid; i++)
+			{
+				double f_hz = ((double)i + bin_offset) * bin_hz;
+
+				double gdb = gpreamp;
+
+				for (j = 1; j <= nfreqs; j++)
+				{
+					double df = f_hz - fc_hz[j];
+
+					double x0 = df / sigma_hz[j];
+					double w0 = exp(-0.5 * x0 * x0);
+
+					double x1 = df / (sigma_hz[j] * tail_scale);
+					double w1 = exp(-0.5 * x1 * x1);
+
+					double w = (w0 + tail_mix * w1) * tail_norm;
+
+					gdb += gain_db[j] * w;
+				}
+
+				A[i] = pow(10.0, 0.05 * gdb) * scale;
+			}
+		}
+
+		_aligned_free(gain_db);
+		_aligned_free(sigma_hz);
+		_aligned_free(fc_hz);
 	}
+
 	if (ctfmode == 0)
 	{
 		int k, low, high;
@@ -177,21 +304,179 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double samplerate, d
 			}
 		}
 	}
+
 	if (N & 1)
 		impulse = fir_fsamp_odd(N, A, 1, 1.0, wintype);
 	else
 		impulse = fir_fsamp(N, A, 1, 1.0, wintype);
-	// print_impulse("eq.txt", N, impulse, 1, 0);
-	_aligned_free (sary);
-	_aligned_free (A);
-	_aligned_free (gp);
-	_aligned_free (fp);
+	// print_impulse("eq.txt", N, impulse, 1, 0);	
+	_aligned_free(A);
+	_aligned_free(gp);
+	_aligned_free(fp);
 
 	// store in cache
 	add_impulse_to_cache(EQ_CACHE, h, N, impulse);
 
 	return impulse;
 }
+ 
+////original
+//double* eq_impulse(int N, int nfreqs, double* F, double* G, double samplerate, double scale, int ctfmode, int wintype)
+//{
+//	// check for previous in the cache
+//	struct Params 
+//	{
+//		int     N;
+//		int     nfreqs;
+//		int     ctfmode;
+//		int     wintype;
+//		double  samplerate;
+//		double  scale;
+//	};
+//
+//	struct Params params;
+//	memset(&params, 0, sizeof(params));
+//	params.N = N;
+//	params.nfreqs = nfreqs;
+//	params.ctfmode = ctfmode;
+//	params.wintype = wintype;
+//	params.samplerate = samplerate;
+//	params.scale = scale;
+//
+//	HASH_T h = fnv1a_hash(&params, sizeof(params));
+//
+//	size_t arr_len = (nfreqs + 1) * sizeof(double);
+//	HASH_T hf = fnv1a_hash((uint8_t*)F, arr_len);
+//	h ^= hf + GOLDEN_RATIO + (h << 6) + (h >> 2);
+//	HASH_T hg = fnv1a_hash((uint8_t*)G, arr_len);
+//	h ^= hg + GOLDEN_RATIO + (h << 6) + (h >> 2);
+//
+//	double* imp = get_impulse_cache_entry(EQ_CACHE, h, N);
+//	if (imp) return imp;
+//	//
+//
+//	double* fp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
+//	double* gp = (double *) malloc0 ((nfreqs + 2)   * sizeof (double));
+//	double* A  = (double *) malloc0 ((N / 2 + 1) * sizeof (double));
+//	double* sary = (double *) malloc0 (2 * nfreqs * sizeof (double));
+//	double gpreamp, f, frac;
+//	double* impulse;
+//	int i, j, mid;
+//	fp[0] = 0.0;
+//	fp[nfreqs + 1] = 1.0;
+//	gpreamp = G[0];
+//	for (i = 1; i <= nfreqs; i++)
+//	{
+//		fp[i] = 2.0 * F[i] / samplerate;
+//		if (fp[i] < 0.0) fp[i] = 0.0;
+//		if (fp[i] > 1.0) fp[i] = 1.0;
+//		gp[i] = G[i];
+//	}
+//	for (i = 1, j = 0; i <= nfreqs; i++, j+=2)
+//	{
+//		sary[j + 0] = fp[i];
+//		sary[j + 1] = gp[i];
+//	}
+//	qsort (sary, nfreqs, 2 * sizeof (double), fEQcompare);
+//	for (i = 1, j = 0; i <= nfreqs; i++, j+=2)
+//	{
+//		fp[i] = sary[j + 0];
+//		gp[i] = sary[j + 1];
+//	}
+//	gp[0] = gp[1];
+//	gp[nfreqs + 1] = gp[nfreqs];
+//	mid = N / 2;
+//	j = 0;
+//	if (N & 1)
+//	{
+//		for (i = 0; i <= mid; i++)
+//		{
+//			f = (double)i / (double)mid;
+//			while (f > fp[j + 1]) j++;
+//			frac = (f - fp[j]) / (fp[j + 1] - fp[j]);
+//			A[i] = pow (10.0, 0.05 * (frac * gp[j + 1] + (1.0 - frac) * gp[j] + gpreamp)) * scale;
+//		}
+//	}
+//	else
+//	{
+//		for (i = 0; i < mid; i++)
+//		{
+//			f = ((double)i + 0.5) / (double)mid;
+//			while (f > fp[j + 1]) j++;
+//			frac = (f - fp[j]) / (fp[j + 1] - fp[j]);
+//			A[i] = pow (10.0, 0.05 * (frac * gp[j + 1] + (1.0 - frac) * gp[j] + gpreamp)) * scale;
+//		}
+//	}
+//	if (ctfmode == 0)
+//	{
+//		int k, low, high;
+//		double lowmag, highmag, flow4, fhigh4;
+//		if (N & 1)
+//		{
+//			low = (int)(fp[1] * mid);
+//			high = (int)(fp[nfreqs] * mid + 0.5);
+//			lowmag = A[low];
+//			highmag = A[high];
+//			flow4 = pow((double)low / (double)mid, 4.0);
+//			fhigh4 = pow((double)high / (double)mid, 4.0);
+//			k = low;
+//			while (--k >= 0)
+//			{
+//				f = (double)k / (double)mid;
+//				lowmag *= (f * f * f * f) / flow4;
+//				if (lowmag < 1.0e-100) lowmag = 1.0e-100;
+//				A[k] = lowmag;
+//			}
+//			k = high;
+//			while (++k <= mid)
+//			{
+//				f = (double)k / (double)mid;
+//				highmag *= fhigh4 / (f * f * f * f);
+//				if (highmag < 1.0e-100) highmag = 1.0e-100;
+//				A[k] = highmag;
+//			}
+//		}
+//		else
+//		{
+//			low = (int)(fp[1] * mid - 0.5);
+//			high = (int)(fp[nfreqs] * mid - 0.5);
+//			lowmag = A[low];
+//			highmag = A[high];
+//			flow4 = pow((double)low / (double)mid, 4.0);
+//			fhigh4 = pow((double)high / (double)mid, 4.0);
+//			k = low;
+//			while (--k >= 0)
+//			{
+//				f = (double)k / (double)mid;
+//				lowmag *= (f * f * f * f) / flow4;
+//				if (lowmag < 1.0e-100) lowmag = 1.0e-100;
+//				A[k] = lowmag;
+//			}
+//			k = high;
+//			while (++k < mid)
+//			{
+//				f = (double)k / (double)mid;
+//				highmag *= fhigh4 / (f * f * f * f);
+//				if (highmag < 1.0e-100) highmag = 1.0e-100;
+//				A[k] = highmag;
+//			}
+//		}
+//	}
+//	if (N & 1)
+//		impulse = fir_fsamp_odd(N, A, 1, 1.0, wintype);
+//	else
+//		impulse = fir_fsamp(N, A, 1, 1.0, wintype);
+//	// print_impulse("eq.txt", N, impulse, 1, 0);
+//	_aligned_free (sary);
+//	_aligned_free (A);
+//	_aligned_free (gp);
+//	_aligned_free (fp);
+//
+//	// store in cache
+//	add_impulse_to_cache(EQ_CACHE, h, N, impulse);
+//
+//	return impulse;
+//}
 
 /********************************************************************************************************
 *																										*
@@ -213,12 +498,13 @@ EQP create_eqp (int run, int size, int nc, int mp, double *in, double *out, int 
 	a->nfreqs = nfreqs;
 	a->F = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
 	a->G = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
+	a->Q = NULL;
 	memcpy (a->F, F, (nfreqs + 1) * sizeof (double));
 	memcpy (a->G, G, (nfreqs + 1) * sizeof (double));
 	a->ctfmode = ctfmode;
 	a->wintype = wintype;
 	a->samplerate = (double)samplerate;
-	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 	a->p = create_fircore (a->size, a->in, a->out, a->nc, a->mp, impulse);
 	_aligned_free (impulse);
 	return a;
@@ -254,7 +540,7 @@ void setSamplerate_eqp (EQP a, int rate)
 {
 	double* impulse;
 	a->samplerate = rate;
-	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
 }
@@ -264,7 +550,7 @@ void setSize_eqp (EQP a, int size)
 	double* impulse;
 	a->size = size;
 	setSize_fircore (a->p, a->size);
-	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
 }
@@ -293,7 +579,7 @@ void SetRXAEQNC (int channel, int nc)
 	if (a->nc != nc)
 	{
 		a->nc = nc;
-		impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+		impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 		setNc_fircore (a->p, a->nc, impulse);
 		_aligned_free (impulse);
 	}
@@ -313,19 +599,29 @@ void SetRXAEQMP (int channel, int mp)
 }
 
 PORT
-void SetRXAEQProfile (int channel, int nfreqs, double* F, double* G)
+void SetRXAEQProfile (int channel, int nfreqs, double* F, double* G, double* Q)
 {
 	EQP a;
 	double* impulse;
 	a = rxa[channel].eqp.p;
 	_aligned_free (a->G);
 	_aligned_free (a->F);
+	_aligned_free (a->Q);
 	a->nfreqs = nfreqs;
 	a->F = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
 	a->G = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
 	memcpy (a->F, F, (nfreqs + 1) * sizeof (double));
 	memcpy (a->G, G, (nfreqs + 1) * sizeof (double));
-	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, 
+
+	if (Q != NULL)
+	{
+		a->Q = (double*)malloc0((a->nfreqs + 1) * sizeof(double));
+		memcpy(a->Q, Q, (nfreqs + 1) * sizeof(double));
+	}
+	else
+		a->Q = NULL;
+
+	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q,
 		a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
@@ -338,7 +634,7 @@ void SetRXAEQCtfmode (int channel, int mode)
 	double* impulse;
 	a = rxa[channel].eqp.p;
 	a->ctfmode = mode;
-	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
 }
@@ -350,7 +646,7 @@ void SetRXAEQWintype (int channel, int wintype)
 	double* impulse;
 	a = rxa[channel].eqp.p;
 	a->wintype = wintype;
-	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
 }
@@ -363,9 +659,11 @@ void SetRXAGrphEQ (int channel, int *rxeq)
 	a = rxa[channel].eqp.p;
 	_aligned_free (a->G);
 	_aligned_free (a->F);
+	_aligned_free (a->Q);
 	a->nfreqs = 4;
 	a->F = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
 	a->G = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
+	a->Q = NULL;
 	a->F[1] =  150.0;
 	a->F[2] =  400.0;
 	a->F[3] = 1500.0;
@@ -376,7 +674,7 @@ void SetRXAGrphEQ (int channel, int *rxeq)
 	a->G[3] = (double)rxeq[2];
 	a->G[4] = (double)rxeq[3];
 	a->ctfmode = 0;
-	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
 }
@@ -390,9 +688,11 @@ void SetRXAGrphEQ10 (int channel, int *rxeq)
 	a = rxa[channel].eqp.p;
 	_aligned_free (a->G);
 	_aligned_free (a->F);
+	_aligned_free (a->Q);
 	a->nfreqs = 10;
 	a->F = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
 	a->G = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
+	a->Q = NULL;
 	a->F[1]  =    32.0;
 	a->F[2]  =    63.0;
 	a->F[3]  =   125.0;
@@ -406,7 +706,7 @@ void SetRXAGrphEQ10 (int channel, int *rxeq)
 	for (i = 0; i <= a->nfreqs; i++)
 		a->G[i] = (double)rxeq[i];
 	a->ctfmode = 0;
-	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 	// print_impulse ("rxeq.txt", a->nc, impulse, 1, 0);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
@@ -436,7 +736,7 @@ void SetTXAEQNC (int channel, int nc)
 	if (a->nc != nc)
 	{
 		a->nc = nc;
-		impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+		impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 		setNc_fircore (a->p, a->nc, impulse);
 		_aligned_free (impulse);
 	}
@@ -456,19 +756,29 @@ void SetTXAEQMP (int channel, int mp)
 }
 
 PORT
-void SetTXAEQProfile (int channel, int nfreqs, double* F, double* G)
+void SetTXAEQProfile (int channel, int nfreqs, double* F, double* G, double* Q)
 {
 	EQP a;
 	double* impulse;
 	a = txa[channel].eqp.p;
 	_aligned_free (a->G);
 	_aligned_free (a->F);
+	_aligned_free (a->Q);
 	a->nfreqs = nfreqs;
 	a->F = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
 	a->G = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
 	memcpy (a->F, F, (nfreqs + 1) * sizeof (double));
 	memcpy (a->G, G, (nfreqs + 1) * sizeof (double));
-	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+	
+	if(Q != NULL)
+	{
+		a->Q = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
+		memcpy (a->Q, Q, (nfreqs + 1) * sizeof (double));
+	}
+	else
+		a->Q = NULL;
+
+	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
 }
@@ -480,7 +790,7 @@ void SetTXAEQCtfmode (int channel, int mode)
 	double* impulse;
 	a = txa[channel].eqp.p;
 	a->ctfmode = mode;
-	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
 }
@@ -492,7 +802,7 @@ void SetTXAEQWintype (int channel, int wintype)
 	double* impulse;
 	a = txa[channel].eqp.p;
 	a->wintype = wintype;
-	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
 }
@@ -505,6 +815,7 @@ void SetTXAGrphEQ (int channel, int *txeq)
 	a = txa[channel].eqp.p;
 	_aligned_free (a->G);
 	_aligned_free (a->F);
+	_aligned_free (a->Q);
 	a->nfreqs = 4;
 	a->F = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
 	a->G = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
@@ -517,8 +828,9 @@ void SetTXAGrphEQ (int channel, int *txeq)
 	a->G[2] = (double)txeq[1];
 	a->G[3] = (double)txeq[2];
 	a->G[4] = (double)txeq[3];
+	a->Q = NULL;
 	a->ctfmode = 0;
-	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
 }
@@ -532,6 +844,7 @@ void SetTXAGrphEQ10 (int channel, int *txeq)
 	a = txa[channel].eqp.p;
 	_aligned_free (a->G);
 	_aligned_free (a->F);
+	_aligned_free (a->Q);
 	a->nfreqs = 10;
 	a->F = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
 	a->G = (double *) malloc0 ((a->nfreqs + 1) * sizeof (double));
@@ -547,8 +860,9 @@ void SetTXAGrphEQ10 (int channel, int *txeq)
 	a->F[10] = 16000.0;
 	for (i = 0; i <= a->nfreqs; i++)
 		a->G[i] = (double)txeq[i];
+	a->Q = NULL;
 	a->ctfmode = 0;
-	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
+	impulse = eq_impulse (a->nc, a->nfreqs, a->F, a->G, a->Q, a->samplerate, 1.0 / (2.0 * a->size), a->ctfmode, a->wintype);
 	setImpulse_fircore (a->p, impulse, 1);
 	_aligned_free (impulse);
 }
@@ -560,9 +874,9 @@ void SetTXAGrphEQ10 (int channel, int *txeq)
 ********************************************************************************************************/
 
 
-double* eq_mults (int size, int nfreqs, double* F, double* G, double samplerate, double scale, int ctfmode, int wintype)
+double* eq_mults (int size, int nfreqs, double* F, double* G, double* Q, double samplerate, double scale, int ctfmode, int wintype)
 {
-	double* impulse = eq_impulse (size + 1, nfreqs, F, G, samplerate, scale, ctfmode, wintype);
+	double* impulse = eq_impulse (size + 1, nfreqs, F, G, Q, samplerate, scale, ctfmode, wintype);
 	double* mults = fftcv_mults(2 * size, impulse);
 	_aligned_free (impulse);
 	return mults;
@@ -575,7 +889,7 @@ void calc_eq (EQ a)
 	a->product = (double *)malloc0(2 * a->size * sizeof(complex));
 	a->CFor = fftw_plan_dft_1d(2 * a->size, (fftw_complex *)a->infilt, (fftw_complex *)a->product, FFTW_FORWARD, FFTW_PATIENT);
 	a->CRev = fftw_plan_dft_1d(2 * a->size, (fftw_complex *)a->product, (fftw_complex *)a->out, FFTW_BACKWARD, FFTW_PATIENT);
-	a->mults = eq_mults(a->size, a->nfreqs, a->F, a->G, a->samplerate, a->scale, a->ctfmode, a->wintype);
+	a->mults = eq_mults(a->size, a->nfreqs, a->F, a->G, a->Q, a->samplerate, a->scale, a->ctfmode, a->wintype);
 }
 
 void decalc_eq (EQ a)
@@ -611,6 +925,7 @@ void destroy_eq (EQ a)
 	decalc_eq (a);
 	_aligned_free (a->G);
 	_aligned_free (a->F);
+	_aligned_free (a->Q);
 	_aligned_free (a);
 }
 
