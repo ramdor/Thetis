@@ -258,6 +258,8 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 			double high_edge_hz;
 			double min_low_edge_hz;
 			double max_high_edge_hz;
+			int low_reaches_dc = 0;
+			int high_reaches_nyquist = 0;
 
 			if ((tail_coeff > 0.0) && (edge_weight > 0.0) && (edge_weight < tail_coeff))
 				edge_x = sqrt(-2.0 * log(edge_weight / tail_coeff));
@@ -267,18 +269,35 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 			low_edge_hz = low_fc_hz - (low_sigma_hz * tail_scale * edge_x);
 			high_edge_hz = high_fc_hz + (high_sigma_hz * tail_scale * edge_x);
 
+			if (low_edge_hz <= 0.0) low_reaches_dc = 1;
+			if (high_edge_hz >= nyquist_hz) high_reaches_nyquist = 1;
+
 			min_low_edge_hz = ((N & 1) ? 2.0 : 2.5) * bin_hz;
 			max_high_edge_hz = (N & 1) ? nyquist_hz : (nyquist_hz - 0.5 * bin_hz);
 
-			if (low_edge_hz < min_low_edge_hz) low_edge_hz = min_low_edge_hz;
-			if (high_edge_hz > max_high_edge_hz) high_edge_hz = max_high_edge_hz;
+			if (!low_reaches_dc && low_edge_hz < min_low_edge_hz) low_edge_hz = min_low_edge_hz;
+			if (!high_reaches_nyquist && high_edge_hz > max_high_edge_hz) high_edge_hz = max_high_edge_hz;
+
+			if (low_reaches_dc) low_edge_hz = 0.0;
+			if (high_reaches_nyquist) high_edge_hz = max_high_edge_hz;
 
 			if (high_edge_hz <= low_edge_hz)
 			{
-				high_edge_hz = low_edge_hz + bin_hz;
-				if (high_edge_hz > max_high_edge_hz) high_edge_hz = max_high_edge_hz;
-				if (high_edge_hz <= low_edge_hz) low_edge_hz = high_edge_hz - bin_hz;
-				if (low_edge_hz < min_low_edge_hz) low_edge_hz = min_low_edge_hz;
+				if (low_reaches_dc)
+				{
+					high_edge_hz = bin_hz;
+					if (high_edge_hz > max_high_edge_hz) high_edge_hz = max_high_edge_hz;
+				}
+				else
+				{
+					high_edge_hz = low_edge_hz + bin_hz;
+					if (high_edge_hz > max_high_edge_hz) high_edge_hz = max_high_edge_hz;
+					if (high_edge_hz <= low_edge_hz)
+					{
+						low_edge_hz = high_edge_hz - bin_hz;
+						if (low_edge_hz < min_low_edge_hz) low_edge_hz = min_low_edge_hz;
+					}
+				}
 			}
 
 			fp[1] = low_edge_hz / nyquist_hz;
