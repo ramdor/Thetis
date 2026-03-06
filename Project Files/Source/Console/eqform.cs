@@ -2847,7 +2847,12 @@ namespace Thetis
 
         private void setupWDSPdataFromParaEQ()
         {
-            int nfreqs = radParaEQ_10.Checked ? 10 : 18;
+            int nfreqs = 5;
+
+            if (radParaEQ_5.Checked) nfreqs = 5;
+            else if (radParaEQ_10.Checked) nfreqs = 10;
+            else if (radParaEQ_18.Checked) nfreqs = 18;
+
             double[] F = new double[nfreqs + 1];
             double[] G = new double[nfreqs + 1];
             double[] Q = new double[nfreqs + 1];

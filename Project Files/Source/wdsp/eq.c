@@ -66,7 +66,7 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 	h ^= hf + GOLDEN_RATIO + (h << 6) + (h >> 2);
 	HASH_T hg = fnv1a_hash((uint8_t*)G, arr_len);
 	h ^= hg + GOLDEN_RATIO + (h << 6) + (h >> 2);
-	if (Q)
+	if (Q != NULL)
 	{
 		HASH_T hq = fnv1a_hash((uint8_t*)Q, arr_len);
 		h ^= hq + GOLDEN_RATIO + (h << 6) + (h >> 2);
@@ -132,12 +132,16 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 				A[i] = pow(10.0, 0.05 * (frac * gp[j + 1] + (1.0 - frac) * gp[j] + gpreamp)) * scale;
 			}
 		}
-		_aligned_free(sary);		
+
+		_aligned_free(sary);
 	}
 	else
 	{
-		double min_fp = 1.0;
-		double max_fp = 0.0;
+		double low_fc_hz = samplerate * 0.5;
+		double high_fc_hz = 0.0;
+		double low_sigma_hz = 0.0;
+		double high_sigma_hz = 0.0;
+		double nyquist_hz = samplerate * 0.5;
 
 		fp[0] = 0.0;
 		fp[nfreqs + 1] = 1.0;
@@ -145,14 +149,15 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 		gpreamp = G[0];
 
 		double bin_offset = (N & 1) ? 0.0 : 0.5;
-		double bin_hz = (mid > 0) ? ((samplerate * 0.5) / (double)mid) : 0.0;
+		double bin_hz = (mid > 0) ? (nyquist_hz / (double)mid) : 0.0;
 
 		double tail_mix = 0.08;
 		double tail_scale = 2.5;
 		double tail_norm = 1.0 / (1.0 + tail_mix);
-		double min_fwhm_bins = 1.5;
+		double min_fwhm_bins = 2.0;
 		double q_sharpen = 1.0;
 		double bw_ref_hz = 1000.0;
+		double edge_weight = 0.05;
 
 		double* fc_hz = (double*)malloc0((nfreqs + 1) * sizeof(double));
 		double* sigma_hz = (double*)malloc0((nfreqs + 1) * sizeof(double));
@@ -164,15 +169,12 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 			if (fc_norm < 0.0) fc_norm = 0.0;
 			if (fc_norm > 1.0) fc_norm = 1.0;
 
-			if (fc_norm < min_fp) min_fp = fc_norm;
-			if (fc_norm > max_fp) max_fp = fc_norm;
-
-			double fci_hz = fc_norm * samplerate * 0.5;
+			double fci_hz = fc_norm * nyquist_hz;
 
 			double qi = Q[i];
-			if (!(qi > 0.0)) qi = 1.0e-6;
-			
-			double fwhm_hz = (q_sharpen * bw_ref_hz) / qi; // fixed bw irrespective of f
+			if (!(qi > 0.0)) qi = 1.0;
+
+			double fwhm_hz = (q_sharpen * bw_ref_hz) / qi;
 
 			double min_fwhm_hz = min_fwhm_bins * bin_hz;
 			if (fwhm_hz < min_fwhm_hz) fwhm_hz = min_fwhm_hz;
@@ -183,12 +185,18 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 			fc_hz[i] = fci_hz;
 			sigma_hz[i] = sig;
 			gain_db[i] = G[i];
-		}
 
-		if (nfreqs > 0)
-		{
-			fp[1] = min_fp;
-			fp[nfreqs] = max_fp;
+			if ((i == 1) || (fci_hz < low_fc_hz) || ((fci_hz == low_fc_hz) && (sig > low_sigma_hz)))
+			{
+				low_fc_hz = fci_hz;
+				low_sigma_hz = sig;
+			}
+
+			if ((i == 1) || (fci_hz > high_fc_hz) || ((fci_hz == high_fc_hz) && (sig > high_sigma_hz)))
+			{
+				high_fc_hz = fci_hz;
+				high_sigma_hz = sig;
+			}
 		}
 
 		if (N & 1)
@@ -196,7 +204,6 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 			for (i = 0; i <= mid; i++)
 			{
 				double f_hz = ((double)i + bin_offset) * bin_hz;
-
 				double gdb = gpreamp;
 
 				for (j = 1; j <= nfreqs; j++)
@@ -222,7 +229,6 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 			for (i = 0; i < mid; i++)
 			{
 				double f_hz = ((double)i + bin_offset) * bin_hz;
-
 				double gdb = gpreamp;
 
 				for (j = 1; j <= nfreqs; j++)
@@ -242,6 +248,41 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 
 				A[i] = pow(10.0, 0.05 * gdb) * scale;
 			}
+		}
+
+		if (nfreqs > 0)
+		{
+			double tail_coeff = tail_mix * tail_norm;
+			double edge_x;
+			double low_edge_hz;
+			double high_edge_hz;
+			double min_low_edge_hz;
+			double max_high_edge_hz;
+
+			if ((tail_coeff > 0.0) && (edge_weight > 0.0) && (edge_weight < tail_coeff))
+				edge_x = sqrt(-2.0 * log(edge_weight / tail_coeff));
+			else
+				edge_x = 2.0;
+
+			low_edge_hz = low_fc_hz - (low_sigma_hz * tail_scale * edge_x);
+			high_edge_hz = high_fc_hz + (high_sigma_hz * tail_scale * edge_x);
+
+			min_low_edge_hz = ((N & 1) ? 2.0 : 2.5) * bin_hz;
+			max_high_edge_hz = (N & 1) ? nyquist_hz : (nyquist_hz - 0.5 * bin_hz);
+
+			if (low_edge_hz < min_low_edge_hz) low_edge_hz = min_low_edge_hz;
+			if (high_edge_hz > max_high_edge_hz) high_edge_hz = max_high_edge_hz;
+
+			if (high_edge_hz <= low_edge_hz)
+			{
+				high_edge_hz = low_edge_hz + bin_hz;
+				if (high_edge_hz > max_high_edge_hz) high_edge_hz = max_high_edge_hz;
+				if (high_edge_hz <= low_edge_hz) low_edge_hz = high_edge_hz - bin_hz;
+				if (low_edge_hz < min_low_edge_hz) low_edge_hz = min_low_edge_hz;
+			}
+
+			fp[1] = low_edge_hz / nyquist_hz;
+			fp[nfreqs] = high_edge_hz / nyquist_hz;
 		}
 
 		_aligned_free(gain_db);

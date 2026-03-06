@@ -750,7 +750,11 @@ namespace Thetis
             double old_g = p.GainDb;
             double old_q = p.Q;
 
-            p.FrequencyHz = clamp(frequency_hz, _frequency_min_hz, _frequency_max_hz);
+            if (isFrequencyLockedIndex(index))
+                p.FrequencyHz = getLockedFrequencyForIndex(index);
+            else
+                p.FrequencyHz = clamp(frequency_hz, _frequency_min_hz, _frequency_max_hz);
+
             p.GainDb = clamp(gain_db, _db_min, _db_max);
             p.Q = clamp(q, _q_min, _q_max);
 
@@ -804,7 +808,11 @@ namespace Thetis
                 double old_g = p.GainDb;
                 double old_q = p.Q;
 
-                p.FrequencyHz = clamp(frequency_hz[i], _frequency_min_hz, _frequency_max_hz);
+                if (isFrequencyLockedIndex(i))
+                    p.FrequencyHz = getLockedFrequencyForIndex(i);
+                else
+                    p.FrequencyHz = clamp(frequency_hz[i], _frequency_min_hz, _frequency_max_hz);
+
                 p.GainDb = clamp(gain_db[i], _db_min, _db_max);
                 p.Q = clamp(q[i], _q_min, _q_max);
 
@@ -898,7 +906,11 @@ namespace Thetis
                 double old_g = p.GainDb;
                 double old_q = p.Q;
 
-                p.FrequencyHz = clamp(jp.FrequencyHz, _frequency_min_hz, _frequency_max_hz);
+                if (isFrequencyLockedIndex(i))
+                    p.FrequencyHz = getLockedFrequencyForIndex(i);
+                else
+                    p.FrequencyHz = clamp(jp.FrequencyHz, _frequency_min_hz, _frequency_max_hz);
+
                 p.GainDb = clamp(jp.GainDb, _db_min, _db_max);
                 p.Q = clamp(jp.Q, _q_min, _q_max);
 
@@ -1031,35 +1043,40 @@ namespace Thetis
                 double old_g = p.GainDb;
                 double old_q = p.Q;
 
-                double freq = freqFromX(plot, e.Location.X);
+                double freq = p.FrequencyHz;
                 double gain = dbFromY(plot, e.Location.Y);
 
-                freq = clamp(freq, _frequency_min_hz, _frequency_max_hz);
                 gain = clamp(gain, _db_min, _db_max);
 
-                if (!_allow_point_reorder)
+                if (!isFrequencyLockedIndex(_drag_index))
                 {
-                    double min_f;
-                    double max_f;
+                    freq = freqFromX(plot, e.Location.X);
+                    freq = clamp(freq, _frequency_min_hz, _frequency_max_hz);
 
-                    if (_drag_index == 0)
+                    if (!_allow_point_reorder)
                     {
-                        min_f = _frequency_min_hz;
-                        max_f = _points[1].FrequencyHz - _min_point_spacing_hz;
-                    }
-                    else if (_drag_index == _points.Count - 1)
-                    {
-                        min_f = _points[_points.Count - 2].FrequencyHz + _min_point_spacing_hz;
-                        max_f = _frequency_max_hz;
-                    }
-                    else
-                    {
-                        min_f = _points[_drag_index - 1].FrequencyHz + _min_point_spacing_hz;
-                        max_f = _points[_drag_index + 1].FrequencyHz - _min_point_spacing_hz;
-                    }
+                        double min_f;
+                        double max_f;
 
-                    if (max_f < min_f) max_f = min_f;
-                    freq = clamp(freq, min_f, max_f);
+                        if (_drag_index == 0)
+                        {
+                            min_f = _frequency_min_hz;
+                            max_f = _points[1].FrequencyHz - _min_point_spacing_hz;
+                        }
+                        else if (_drag_index == _points.Count - 1)
+                        {
+                            min_f = _points[_points.Count - 2].FrequencyHz + _min_point_spacing_hz;
+                            max_f = _frequency_max_hz;
+                        }
+                        else
+                        {
+                            min_f = _points[_drag_index - 1].FrequencyHz + _min_point_spacing_hz;
+                            max_f = _points[_drag_index + 1].FrequencyHz - _min_point_spacing_hz;
+                        }
+
+                        if (max_f < min_f) max_f = min_f;
+                        freq = clamp(freq, min_f, max_f);
+                    }
                 }
 
                 bool changed = false;
@@ -1078,7 +1095,7 @@ namespace Thetis
 
                 if (changed)
                 {
-                    if (_allow_point_reorder)
+                    if (_allow_point_reorder && !isFrequencyLockedIndex(_drag_index))
                     {
                         enforceOrdering(false);
 
@@ -1201,6 +1218,8 @@ namespace Thetis
 
             if (ctrl)
             {
+                if (isFrequencyLockedIndex(_selected_index)) return;
+
                 double step_hz = chooseFrequencyStep((_frequency_max_hz - _frequency_min_hz)) / 5.0;
                 if (step_hz < 1.0) step_hz = 1.0;
 
@@ -1580,8 +1599,6 @@ namespace Thetis
                 double db = responseDbAtFrequency(f);
                 db = db + _global_gain_db;
 
-                if (i == 0 || i == samples - 1) db = _global_gain_db;
-
                 float x = plot.Left + (float)(t * plot.Width);
                 float y = yFromDb(plot, db);
                 pts[i] = new PointF(x, y);
@@ -1806,46 +1823,28 @@ namespace Thetis
 
                 double f = frequency_hz;
 
-                if (f <= _frequency_min_hz) return 0.0;
-                if (f >= _frequency_max_hz) return 0.0;
+                if (f <= _points[0].FrequencyHz) return _points[0].GainDb;
+                if (f >= _points[_points.Count - 1].FrequencyHz) return _points[_points.Count - 1].GainDb;
 
-                double left_f = _frequency_min_hz;
-                double left_g = 0.0;
-
-                for (int i = 0; i < _points.Count; i++)
+                for (int i = 1; i < _points.Count; i++)
                 {
-                    EqPoint p = _points[i];
+                    EqPoint left = _points[i - 1];
+                    EqPoint right = _points[i];
 
-                    double right_f = p.FrequencyHz;
-                    double right_g = p.GainDb;
-
-                    if (f <= right_f)
+                    if (f <= right.FrequencyHz)
                     {
-                        double denom = right_f - left_f;
-                        if (denom <= 0.0000001) return right_g;
+                        double denom = right.FrequencyHz - left.FrequencyHz;
+                        if (denom <= 0.0000001) return right.GainDb;
 
-                        double t = (f - left_f) / denom;
+                        double t = (f - left.FrequencyHz) / denom;
                         if (t < 0.0) t = 0.0;
                         if (t > 1.0) t = 1.0;
 
-                        return left_g + ((right_g - left_g) * t);
+                        return left.GainDb + ((right.GainDb - left.GainDb) * t);
                     }
-
-                    left_f = right_f;
-                    left_g = right_g;
                 }
 
-                double last_f = _frequency_max_hz;
-                double last_g = 0.0;
-
-                double last_denom = last_f - left_f;
-                if (last_denom <= 0.0000001) return last_g;
-
-                double last_t = (f - left_f) / last_denom;
-                if (last_t < 0.0) last_t = 0.0;
-                if (last_t > 1.0) last_t = 1.0;
-
-                return left_g + ((last_g - left_g) * last_t);
+                return _points[_points.Count - 1].GainDb;
             }
 
             double span = _frequency_max_hz - _frequency_min_hz;
@@ -2035,6 +2034,9 @@ namespace Thetis
                 double f = new_min + t * new_span;
                 p.FrequencyHz = f;
             }
+
+            if (_points.Count > 0) _points[0].FrequencyHz = _frequency_min_hz;
+            if (_points.Count > 1) _points[_points.Count - 1].FrequencyHz = _frequency_max_hz;
         }
 
         private void enforceOrdering(bool enforce_spacing_all)
@@ -2090,29 +2092,21 @@ namespace Thetis
                 p.FrequencyHz = clamp(p.FrequencyHz, _frequency_min_hz, _frequency_max_hz);
             }
 
+            if (_points.Count > 0) _points[0].FrequencyHz = _frequency_min_hz;
+            if (_points.Count > 1) _points[_points.Count - 1].FrequencyHz = _frequency_max_hz;
+
             if (!enforce_spacing_all) return;
-            if (_points.Count < 2) return;
+            if (_points.Count < 3) return;
 
-            for (int i = 0; i < _points.Count; i++)
+            double spacing = _min_point_spacing_hz;
+            double max_spacing = (_frequency_max_hz - _frequency_min_hz) / (_points.Count - 1);
+            if (spacing > max_spacing) spacing = max_spacing;
+            if (spacing < 0.0) spacing = 0.0;
+
+            for (int i = 1; i < _points.Count - 1; i++)
             {
-                double min_f;
-                double max_f;
-
-                if (i == 0)
-                {
-                    min_f = _frequency_min_hz;
-                    max_f = _points[1].FrequencyHz - _min_point_spacing_hz;
-                }
-                else if (i == _points.Count - 1)
-                {
-                    min_f = _points[_points.Count - 2].FrequencyHz + _min_point_spacing_hz;
-                    max_f = _frequency_max_hz;
-                }
-                else
-                {
-                    min_f = _points[i - 1].FrequencyHz + _min_point_spacing_hz;
-                    max_f = _points[i + 1].FrequencyHz - _min_point_spacing_hz;
-                }
+                double min_f = _frequency_min_hz + (spacing * i);
+                double max_f = _frequency_max_hz - (spacing * (_points.Count - 1 - i));
 
                 if (max_f < min_f) max_f = min_f;
 
@@ -2120,20 +2114,20 @@ namespace Thetis
                 p.FrequencyHz = clamp(p.FrequencyHz, min_f, max_f);
             }
 
-            for (int i = 1; i < _points.Count; i++)
+            for (int i = 1; i < _points.Count - 1; i++)
             {
-                double want_min = _points[i - 1].FrequencyHz + _min_point_spacing_hz;
+                double want_min = _points[i - 1].FrequencyHz + spacing;
                 if (_points[i].FrequencyHz < want_min) _points[i].FrequencyHz = want_min;
             }
 
-            for (int i = _points.Count - 2; i >= 0; i--)
+            for (int i = _points.Count - 2; i >= 1; i--)
             {
-                double want_max = _points[i + 1].FrequencyHz - _min_point_spacing_hz;
+                double want_max = _points[i + 1].FrequencyHz - spacing;
                 if (_points[i].FrequencyHz > want_max) _points[i].FrequencyHz = want_max;
             }
 
-            if (_points[0].FrequencyHz < _frequency_min_hz) _points[0].FrequencyHz = _frequency_min_hz;
-            if (_points[_points.Count - 1].FrequencyHz > _frequency_max_hz) _points[_points.Count - 1].FrequencyHz = _frequency_max_hz;
+            _points[0].FrequencyHz = _frequency_min_hz;
+            _points[_points.Count - 1].FrequencyHz = _frequency_max_hz;
         }
 
         private void clampAllGains()
@@ -2206,6 +2200,18 @@ namespace Thetis
 
             if (m < 10) m = 10;
             return m;
+        }
+
+        private bool isFrequencyLockedIndex(int index)
+        {
+            return _points.Count > 0 && (index == 0 || index == _points.Count - 1);
+        }
+
+        private double getLockedFrequencyForIndex(int index)
+        {
+            if (index <= 0) return _frequency_min_hz;
+            if (index >= _points.Count - 1) return _frequency_max_hz;
+            return _points[index].FrequencyHz;
         }
     }
 }
