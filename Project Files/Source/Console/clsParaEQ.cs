@@ -164,11 +164,20 @@ namespace Thetis
         }
         private sealed class EqJsonState
         {
+            [JsonProperty("band_count")]
+            public int BandCount { get; set; }
+
             [JsonProperty("parametric_eq")]
             public bool ParametricEQ { get; set; }
 
             [JsonProperty("global_gain_db")]
             public double GlobalGainDb { get; set; }
+
+            [JsonProperty("frequency_min_hz")]
+            public double FrequencyMinHz { get; set; }
+
+            [JsonProperty("frequency_max_hz")]
+            public double FrequencyMaxHz { get; set; }
 
             [JsonProperty("points")]
             public List<EqJsonPoint> Points { get; set; }
@@ -704,20 +713,16 @@ namespace Thetis
         {
             if (p == null) return;
 
-            double q = _parametric_eq ? p.Q : 0.0;
-
             EventHandler<EqPointSelectionChangedEventArgs> h = PointSelected;
-            if (h != null) h(this, new EqPointSelectionChangedEventArgs(index, p.FrequencyHz, p.GainDb, q));
+            if (h != null) h(this, new EqPointSelectionChangedEventArgs(index, p.FrequencyHz, p.GainDb, p.Q));
         }
 
         private void raisePointUnselected(int index, EqPoint p)
         {
             if (p == null) return;
 
-            double q = _parametric_eq ? p.Q : 0.0;
-
             EventHandler<EqPointSelectionChangedEventArgs> h = PointUnselected;
-            if (h != null) h(this, new EqPointSelectionChangedEventArgs(index, p.FrequencyHz, p.GainDb, q));
+            if (h != null) h(this, new EqPointSelectionChangedEventArgs(index, p.FrequencyHz, p.GainDb, p.Q));
         }
         public void ResetPoints()
         {
@@ -725,7 +730,32 @@ namespace Thetis
             raisePointsChanged(false);
             Invalidate();
         }
+        public void GetDefaults(out double[] F, out double[] G, out double[] Q, out double global_preamp_db, out double min_hz, out double max_hz, out bool parametric_eq, out int band_count, int default_band_count = 10)
+        {
+            band_count = default_band_count;
+            global_preamp_db = 0.0;
+            min_hz = 0.0;
+            max_hz = 4000.0;
+            parametric_eq = true;
 
+            int count = band_count;
+            if (count < 2) count = 2;
+
+            F = new double[count];
+            G = new double[count];
+            Q = new double[count];
+
+            double span = max_hz - min_hz;
+            if (span <= 0.0) span = 1.0;
+
+            for (int i = 0; i < count; i++)
+            {
+                double t = (double)i / (double)(count - 1);
+                F[i] = min_hz + (t * span);
+                G[i] = 0.0;
+                Q[i] = 4.0;
+            }
+        }
         public void GetPointData(int index, out double frequency_hz, out double gain_db, out double q)
         {
             frequency_hz = 0.0;
@@ -783,7 +813,7 @@ namespace Thetis
                 EqPoint p = _points[i];
                 f[i] = p.FrequencyHz;
                 g[i] = p.GainDb;
-                qq[i] = _parametric_eq ? p.Q : 0.0;
+                qq[i] = p.Q;
             }
 
             frequency_hz = f;
@@ -833,11 +863,117 @@ namespace Thetis
             return true;
         }
 
+        public string SaveToJsonFromPoints(double[] F, double[] G, double[] Q, double global_gain_db, double frequency_min_hz, double frequency_max_hz, bool parametric_eq)
+        {
+            if (F == null || G == null || Q == null) return null;
+            if (F.Length < 2) return null;
+            if (G.Length != F.Length) return null;
+            if (Q.Length != F.Length) return null;
+            if (double.IsNaN(frequency_min_hz) || double.IsInfinity(frequency_min_hz)) return null;
+            if (double.IsNaN(frequency_max_hz) || double.IsInfinity(frequency_max_hz)) return null;
+            if (frequency_max_hz <= frequency_min_hz) return null;
+
+            EqJsonState state = new EqJsonState();
+            state.ParametricEQ = parametric_eq;
+            state.GlobalGainDb = Math.Round(clamp(global_gain_db, _db_min, _db_max), 1);
+            state.FrequencyMinHz = Math.Round(frequency_min_hz, 3);
+            state.FrequencyMaxHz = Math.Round(frequency_max_hz, 3);
+            state.BandCount = F.Length;
+
+            List<EqJsonPoint> pts = new List<EqJsonPoint>(F.Length);
+
+            for (int i = 0; i < F.Length; i++)
+            {
+                EqJsonPoint jp = new EqJsonPoint();
+                jp.FrequencyHz = Math.Round(clamp(F[i], frequency_min_hz, frequency_max_hz), 3);
+                jp.GainDb = Math.Round(clamp(G[i], _db_min, _db_max), 1);
+                jp.Q = Math.Round(clamp(Q[i], _q_min, _q_max), 2);
+                pts.Add(jp);
+            }
+
+            pts[0].FrequencyHz = Math.Round(frequency_min_hz, 3);
+            pts[pts.Count - 1].FrequencyHz = Math.Round(frequency_max_hz, 3);
+
+            state.Points = pts;
+
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.Formatting = Formatting.Indented;
+
+            return JsonConvert.SerializeObject(state, settings);
+        }
+
+        public bool PointsFromJson(string json, out double[] F, out double[] G, out double[] Q, out double global_gain_db, out double frequency_min_hz, out double frequency_max_hz, out bool parametric_eq, out int band_count)
+        {
+            F = null;
+            G = null;
+            Q = null;
+            global_gain_db = 0.0;
+            frequency_min_hz = 0.0;
+            frequency_max_hz = 0.0;
+            parametric_eq = false;
+            band_count = 0;
+
+            if (string.IsNullOrWhiteSpace(json)) return false;
+
+            EqJsonState state;
+
+            try
+            {
+                state = JsonConvert.DeserializeObject<EqJsonState>(json);
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (state == null) return false;
+            if (state.Points == null) return false;
+            if (state.Points.Count < 2) return false;
+            if (state.BandCount < 2) return false;
+            if (state.BandCount > 256) return false;
+            if (state.BandCount != state.Points.Count) return false;
+            if (double.IsNaN(state.FrequencyMinHz) || double.IsInfinity(state.FrequencyMinHz)) return false;
+            if (double.IsNaN(state.FrequencyMaxHz) || double.IsInfinity(state.FrequencyMaxHz)) return false;
+            if (state.FrequencyMaxHz <= state.FrequencyMinHz) return false;
+
+            int point_count = state.Points.Count;
+
+            F = new double[point_count];
+            G = new double[point_count];
+            Q = new double[point_count];
+
+            parametric_eq = state.ParametricEQ;
+            global_gain_db = Math.Round(clamp(state.GlobalGainDb, _db_min, _db_max), 1);
+            frequency_min_hz = Math.Round(state.FrequencyMinHz, 3);
+            frequency_max_hz = Math.Round(state.FrequencyMaxHz, 3);
+            band_count = state.BandCount;
+
+            for (int i = 0; i < point_count; i++)
+            {
+                EqJsonPoint jp = state.Points[i];
+
+                double point_frequency_hz = clamp(jp.FrequencyHz, state.FrequencyMinHz, state.FrequencyMaxHz);
+                double gain_db = clamp(jp.GainDb, _db_min, _db_max);
+                double q = clamp(jp.Q, _q_min, _q_max);
+
+                if (i == 0) point_frequency_hz = state.FrequencyMinHz;
+                if (i == point_count - 1) point_frequency_hz = state.FrequencyMaxHz;
+
+                F[i] = Math.Round(point_frequency_hz, 3);
+                G[i] = Math.Round(gain_db, 1);
+                Q[i] = Math.Round(q, 2);
+            }
+
+            return true;
+        }
+
         public string SaveToJson()
         {
             EqJsonState state = new EqJsonState();
             state.ParametricEQ = _parametric_eq;
             state.GlobalGainDb = Math.Round(_global_gain_db, 1);
+            state.FrequencyMinHz = Math.Round(_frequency_min_hz, 3);
+            state.FrequencyMaxHz = Math.Round(_frequency_max_hz, 3);
 
             List<EqJsonPoint> pts = new List<EqJsonPoint>(_points.Count);
             for (int i = 0; i < _points.Count; i++)
@@ -875,14 +1011,17 @@ namespace Thetis
 
             if (state == null) return false;
             if (state.Points == null) return false;
+            if (state.Points.Count < 2) return false;
+            if (state.BandCount < 2) return false;
+            if (state.BandCount > 256) return false;
+            if (state.BandCount != state.Points.Count) return false;
+            if (double.IsNaN(state.FrequencyMinHz) || double.IsInfinity(state.FrequencyMinHz)) return false;
+            if (double.IsNaN(state.FrequencyMaxHz) || double.IsInfinity(state.FrequencyMaxHz)) return false;
+            if (state.FrequencyMaxHz <= state.FrequencyMinHz) return false;
 
-            if (state.Points.Count != _points.Count)
+            if (state.BandCount != _points.Count)
             {
-                int new_count = state.Points.Count;
-                if (new_count < 2) return false;
-                if (new_count > 256) return false;
-
-                _band_count = new_count;
+                _band_count = state.BandCount;
                 resetPointsDefault();
             }
 
@@ -890,12 +1029,18 @@ namespace Thetis
 
             bool old_param = _parametric_eq;
             double old_global = _global_gain_db;
+            double old_frequency_min_hz = _frequency_min_hz;
+            double old_frequency_max_hz = _frequency_max_hz;
 
             _parametric_eq = state.ParametricEQ;
             _global_gain_db = clamp(state.GlobalGainDb, _db_min, _db_max);
+            _frequency_min_hz = state.FrequencyMinHz;
+            _frequency_max_hz = state.FrequencyMaxHz;
 
             if (old_param != _parametric_eq) any_changed = true;
             if (Math.Abs(old_global - _global_gain_db) > 0.000001) any_changed = true;
+            if (Math.Abs(old_frequency_min_hz - _frequency_min_hz) > 0.000001) any_changed = true;
+            if (Math.Abs(old_frequency_max_hz - _frequency_max_hz) > 0.000001) any_changed = true;
 
             for (int i = 0; i < _points.Count; i++)
             {
@@ -2177,10 +2322,8 @@ namespace Thetis
             int idx = _points.IndexOf(p);
             if (idx < 0) return;
 
-            double q = _parametric_eq ? p.Q : 0.0;
-
             EventHandler<EqPointDataChangedEventArgs> h = PointDataChanged;
-            if (h != null) h(this, new EqPointDataChangedEventArgs(idx, p.FrequencyHz, p.GainDb, q, is_dragging));
+            if (h != null) h(this, new EqPointDataChangedEventArgs(idx, p.FrequencyHz, p.GainDb, p.Q, is_dragging));
         }
 
         private int getComputedPlotMarginBottom()

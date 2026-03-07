@@ -158,6 +158,7 @@ namespace Thetis
         private LabelTS labelTS9;
         private NumericUpDownTS nudParaEQ_preamp;
         private PictureBox pbParaEQ_live_warning;
+        private PanelTS pnlParaEQ2;
         private RadioButtonTS radParaEQ_5;        
         #endregion
 
@@ -171,27 +172,33 @@ namespace Thetis
 
             _state = new ParaEQState(this);
 
+            ucParametricEq1.GetDefaults(out _state.RX_F, out _state.RX_G, out _state.RX_Q, out _state.RX_Preamp, out _state.RX_minHz, out _state.RX_maxHz, out _state.RX_ParametricEQ, out _state.RX_BandCount, 10);
+            ucParametricEq1.GetDefaults(out _state.TX_F, out _state.TX_G, out _state.TX_Q, out _state.TX_Preamp, out _state.TX_minHz, out _state.TX_maxHz, out _state.TX_ParametricEQ, out _state.TX_BandCount, 10);            
+
             _legacyEQ_base_panel_location = pnlLegacyEQ.Location;
             _legacyEQ_base_form_size = this.MinimumSize;
             this.Size = _legacyEQ_base_form_size;
 
             Common.RestoreForm(this, "EQForm", false);
-            Common.ForceFormOnScreen(this); //MW0LGE [2.9.0.7]
+            Common.ForceFormOnScreen(this); //MW0LGE [2.9.0.7]                                                       
 
             _initalising = false;
 
-            nudParaEQ_lowhigh_ValueChanged(this, EventArgs.Empty);
+            _state.UsingLegacyEQ = chkLegacyEQ.Checked;
+            setupLowHigh();
 
-            chkLegacyEQ_CheckedChanged(this, EventArgs.Empty);
+            EventArgs e = EventArgs.Empty;
+
+            chkLegacyEQ_CheckedChanged(this, e);
 
             if (_state.UsingLegacyEQ)
             {
-                tbRXEQ_Scroll(this, EventArgs.Empty);
-                rad10Band_CheckedChanged(this, EventArgs.Empty);
+                tbRXEQ_Scroll(this, e);
+                rad10Band_CheckedChanged(this, e);
             }
             else
             {
-
+                radParaEQ_CheckedChanged(this, e);
             }
         }
 
@@ -226,35 +233,35 @@ namespace Thetis
             this.lblRXEQ9 = new System.Windows.Forms.LabelTS();
             this.lblRXEQ5 = new System.Windows.Forms.LabelTS();
             this.lblRXEQ1 = new System.Windows.Forms.LabelTS();
-            this.pnlParaEQ = new System.Windows.Forms.PanelTS();
             this.pbParaEQ_live_warning = new System.Windows.Forms.PictureBox();
+            this.pnlParaEQ = new System.Windows.Forms.PanelTS();
             this.labelTS10 = new System.Windows.Forms.LabelTS();
             this.labelTS9 = new System.Windows.Forms.LabelTS();
             this.nudParaEQ_preamp = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS8 = new System.Windows.Forms.LabelTS();
+            this.labelTS5 = new System.Windows.Forms.LabelTS();
             this.labelTS7 = new System.Windows.Forms.LabelTS();
+            this.btnParaEQReset = new System.Windows.Forms.ButtonTS();
+            this.radParaEQ_TX = new System.Windows.Forms.RadioButtonTS();
+            this.chkParaEQ_enabled = new System.Windows.Forms.CheckBoxTS();
+            this.radParaEQ_RX = new System.Windows.Forms.RadioButtonTS();
             this.nudParaEQ_f = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS6 = new System.Windows.Forms.LabelTS();
             this.nudParaEQ_q = new System.Windows.Forms.NumericUpDownTS();
-            this.labelTS5 = new System.Windows.Forms.LabelTS();
             this.labelTS4 = new System.Windows.Forms.LabelTS();
             this.nudParaEQ_gain = new System.Windows.Forms.NumericUpDownTS();
             this.labelTS3 = new System.Windows.Forms.LabelTS();
             this.nudParaEQ_selected_band = new System.Windows.Forms.NumericUpDownTS();
+            this.ucParametricEq1 = new Thetis.ucParametricEq();
             this.labelTS2 = new System.Windows.Forms.LabelTS();
             this.labelTS1 = new System.Windows.Forms.LabelTS();
             this.udParaEQ_high = new System.Windows.Forms.NumericUpDownTS();
             this.udParaEQ_low = new System.Windows.Forms.NumericUpDownTS();
-            this.chkParaEQ_enabled = new System.Windows.Forms.CheckBoxTS();
             this.panelTS1 = new System.Windows.Forms.PanelTS();
             this.radParaEQ_5 = new System.Windows.Forms.RadioButtonTS();
             this.radParaEQ_10 = new System.Windows.Forms.RadioButtonTS();
             this.radParaEQ_18 = new System.Windows.Forms.RadioButtonTS();
-            this.btnParaEQReset = new System.Windows.Forms.ButtonTS();
             this.chkUseQFactors = new System.Windows.Forms.CheckBoxTS();
-            this.radParaEQ_RX = new System.Windows.Forms.RadioButtonTS();
-            this.radParaEQ_TX = new System.Windows.Forms.RadioButtonTS();
-            this.ucParametricEq1 = new Thetis.ucParametricEq();
             this.chkLegacyEQ = new System.Windows.Forms.CheckBoxTS();
             this.pnlLegacyEQ = new System.Windows.Forms.PanelTS();
             this.rad3Band = new System.Windows.Forms.RadioButtonTS();
@@ -319,8 +326,9 @@ namespace Thetis
             this.lblRXEQ15db = new System.Windows.Forms.LabelTS();
             this.lblRXEQ0dB = new System.Windows.Forms.LabelTS();
             this.lblRXEQminus12db = new System.Windows.Forms.LabelTS();
-            this.pnlParaEQ.SuspendLayout();
+            this.pnlParaEQ2 = new System.Windows.Forms.PanelTS();
             ((System.ComponentModel.ISupportInitialize)(this.pbParaEQ_live_warning)).BeginInit();
+            this.pnlParaEQ.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudParaEQ_preamp)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudParaEQ_f)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudParaEQ_q)).BeginInit();
@@ -365,16 +373,15 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQ2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQ3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQPreamp)).BeginInit();
+            this.pnlParaEQ2.SuspendLayout();
             this.SuspendLayout();
             // 
             // chkPanaEQ_live
             // 
             this.chkPanaEQ_live.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkPanaEQ_live.AutoSize = true;
             this.chkPanaEQ_live.Image = null;
-            this.chkPanaEQ_live.Location = new System.Drawing.Point(181, 8);
+            this.chkPanaEQ_live.Location = new System.Drawing.Point(39, 47);
             this.chkPanaEQ_live.Name = "chkPanaEQ_live";
-            this.chkPanaEQ_live.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkPanaEQ_live.Size = new System.Drawing.Size(84, 17);
             this.chkPanaEQ_live.TabIndex = 165;
             this.chkPanaEQ_live.Text = "Live Update";
@@ -417,45 +424,11 @@ namespace Thetis
             this.lblRXEQ1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.toolTip1.SetToolTip(this.lblRXEQ1, "0-400Hz");
             // 
-            // pnlParaEQ
-            // 
-            this.pnlParaEQ.AutoScrollMargin = new System.Drawing.Size(0, 0);
-            this.pnlParaEQ.AutoScrollMinSize = new System.Drawing.Size(0, 0);
-            this.pnlParaEQ.Controls.Add(this.pbParaEQ_live_warning);
-            this.pnlParaEQ.Controls.Add(this.labelTS10);
-            this.pnlParaEQ.Controls.Add(this.labelTS9);
-            this.pnlParaEQ.Controls.Add(this.nudParaEQ_preamp);
-            this.pnlParaEQ.Controls.Add(this.chkPanaEQ_live);
-            this.pnlParaEQ.Controls.Add(this.labelTS8);
-            this.pnlParaEQ.Controls.Add(this.labelTS7);
-            this.pnlParaEQ.Controls.Add(this.nudParaEQ_f);
-            this.pnlParaEQ.Controls.Add(this.labelTS6);
-            this.pnlParaEQ.Controls.Add(this.nudParaEQ_q);
-            this.pnlParaEQ.Controls.Add(this.labelTS5);
-            this.pnlParaEQ.Controls.Add(this.labelTS4);
-            this.pnlParaEQ.Controls.Add(this.nudParaEQ_gain);
-            this.pnlParaEQ.Controls.Add(this.labelTS3);
-            this.pnlParaEQ.Controls.Add(this.nudParaEQ_selected_band);
-            this.pnlParaEQ.Controls.Add(this.labelTS2);
-            this.pnlParaEQ.Controls.Add(this.labelTS1);
-            this.pnlParaEQ.Controls.Add(this.udParaEQ_high);
-            this.pnlParaEQ.Controls.Add(this.udParaEQ_low);
-            this.pnlParaEQ.Controls.Add(this.chkParaEQ_enabled);
-            this.pnlParaEQ.Controls.Add(this.panelTS1);
-            this.pnlParaEQ.Controls.Add(this.btnParaEQReset);
-            this.pnlParaEQ.Controls.Add(this.chkUseQFactors);
-            this.pnlParaEQ.Controls.Add(this.radParaEQ_RX);
-            this.pnlParaEQ.Controls.Add(this.radParaEQ_TX);
-            this.pnlParaEQ.Controls.Add(this.ucParametricEq1);
-            this.pnlParaEQ.Location = new System.Drawing.Point(569, 35);
-            this.pnlParaEQ.Name = "pnlParaEQ";
-            this.pnlParaEQ.Size = new System.Drawing.Size(536, 489);
-            this.pnlParaEQ.TabIndex = 7;
-            // 
             // pbParaEQ_live_warning
             // 
+            this.pbParaEQ_live_warning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbParaEQ_live_warning.Image = ((System.Drawing.Image)(resources.GetObject("pbParaEQ_live_warning.Image")));
-            this.pbParaEQ_live_warning.Location = new System.Drawing.Point(155, 5);
+            this.pbParaEQ_live_warning.Location = new System.Drawing.Point(13, 44);
             this.pbParaEQ_live_warning.Name = "pbParaEQ_live_warning";
             this.pbParaEQ_live_warning.Size = new System.Drawing.Size(20, 20);
             this.pbParaEQ_live_warning.TabIndex = 171;
@@ -465,11 +438,38 @@ namespace Thetis
         "sh dragging/adjusting.");
             this.pbParaEQ_live_warning.Visible = false;
             // 
+            // pnlParaEQ
+            // 
+            this.pnlParaEQ.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlParaEQ.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlParaEQ.Controls.Add(this.labelTS10);
+            this.pnlParaEQ.Controls.Add(this.labelTS9);
+            this.pnlParaEQ.Controls.Add(this.nudParaEQ_preamp);
+            this.pnlParaEQ.Controls.Add(this.labelTS8);
+            this.pnlParaEQ.Controls.Add(this.labelTS5);
+            this.pnlParaEQ.Controls.Add(this.labelTS7);
+            this.pnlParaEQ.Controls.Add(this.btnParaEQReset);
+            this.pnlParaEQ.Controls.Add(this.radParaEQ_TX);
+            this.pnlParaEQ.Controls.Add(this.chkParaEQ_enabled);
+            this.pnlParaEQ.Controls.Add(this.radParaEQ_RX);
+            this.pnlParaEQ.Controls.Add(this.nudParaEQ_f);
+            this.pnlParaEQ.Controls.Add(this.labelTS6);
+            this.pnlParaEQ.Controls.Add(this.nudParaEQ_q);
+            this.pnlParaEQ.Controls.Add(this.labelTS4);
+            this.pnlParaEQ.Controls.Add(this.nudParaEQ_gain);
+            this.pnlParaEQ.Controls.Add(this.labelTS3);
+            this.pnlParaEQ.Controls.Add(this.nudParaEQ_selected_band);
+            this.pnlParaEQ.Controls.Add(this.ucParametricEq1);
+            this.pnlParaEQ.Location = new System.Drawing.Point(569, 35);
+            this.pnlParaEQ.Name = "pnlParaEQ";
+            this.pnlParaEQ.Size = new System.Drawing.Size(536, 489);
+            this.pnlParaEQ.TabIndex = 7;
+            // 
             // labelTS10
             // 
             this.labelTS10.AutoSize = true;
             this.labelTS10.Image = null;
-            this.labelTS10.Location = new System.Drawing.Point(328, 31);
+            this.labelTS10.Location = new System.Drawing.Point(414, 53);
             this.labelTS10.Name = "labelTS10";
             this.labelTS10.Size = new System.Drawing.Size(20, 13);
             this.labelTS10.TabIndex = 168;
@@ -479,7 +479,7 @@ namespace Thetis
             // 
             this.labelTS9.AutoSize = true;
             this.labelTS9.Image = null;
-            this.labelTS9.Location = new System.Drawing.Point(225, 31);
+            this.labelTS9.Location = new System.Drawing.Point(310, 53);
             this.labelTS9.Name = "labelTS9";
             this.labelTS9.Size = new System.Drawing.Size(43, 13);
             this.labelTS9.TabIndex = 167;
@@ -493,7 +493,7 @@ namespace Thetis
             0,
             0,
             65536});
-            this.nudParaEQ_preamp.Location = new System.Drawing.Point(274, 29);
+            this.nudParaEQ_preamp.Location = new System.Drawing.Point(360, 51);
             this.nudParaEQ_preamp.Maximum = new decimal(new int[] {
             24,
             0,
@@ -519,11 +519,21 @@ namespace Thetis
             // 
             this.labelTS8.AutoSize = true;
             this.labelTS8.Image = null;
-            this.labelTS8.Location = new System.Drawing.Point(99, 34);
+            this.labelTS8.Location = new System.Drawing.Point(104, 34);
             this.labelTS8.Name = "labelTS8";
             this.labelTS8.Size = new System.Drawing.Size(20, 13);
             this.labelTS8.TabIndex = 164;
             this.labelTS8.Text = "Hz";
+            // 
+            // labelTS5
+            // 
+            this.labelTS5.AutoSize = true;
+            this.labelTS5.Image = null;
+            this.labelTS5.Location = new System.Drawing.Point(194, 34);
+            this.labelTS5.Name = "labelTS5";
+            this.labelTS5.Size = new System.Drawing.Size(20, 13);
+            this.labelTS5.TabIndex = 159;
+            this.labelTS5.Text = "dB";
             // 
             // labelTS7
             // 
@@ -534,6 +544,54 @@ namespace Thetis
             this.labelTS7.Size = new System.Drawing.Size(10, 13);
             this.labelTS7.TabIndex = 163;
             this.labelTS7.Text = "f";
+            // 
+            // btnParaEQReset
+            // 
+            this.btnParaEQReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnParaEQReset.Image = null;
+            this.btnParaEQReset.Location = new System.Drawing.Point(459, 49);
+            this.btnParaEQReset.Name = "btnParaEQReset";
+            this.btnParaEQReset.Selectable = true;
+            this.btnParaEQReset.Size = new System.Drawing.Size(75, 23);
+            this.btnParaEQReset.TabIndex = 10;
+            this.btnParaEQReset.Text = "Reset";
+            this.btnParaEQReset.UseVisualStyleBackColor = true;
+            this.btnParaEQReset.Click += new System.EventHandler(this.btnParaEQReset_Click);
+            // 
+            // radParaEQ_TX
+            // 
+            this.radParaEQ_TX.AutoSize = true;
+            this.radParaEQ_TX.Checked = true;
+            this.radParaEQ_TX.Image = null;
+            this.radParaEQ_TX.Location = new System.Drawing.Point(68, 0);
+            this.radParaEQ_TX.Name = "radParaEQ_TX";
+            this.radParaEQ_TX.Size = new System.Drawing.Size(57, 17);
+            this.radParaEQ_TX.TabIndex = 8;
+            this.radParaEQ_TX.TabStop = true;
+            this.radParaEQ_TX.Text = "TX EQ";
+            this.radParaEQ_TX.CheckedChanged += new System.EventHandler(this.radParaEQ_RXTX_CheckedChanged);
+            // 
+            // chkParaEQ_enabled
+            // 
+            this.chkParaEQ_enabled.AutoSize = true;
+            this.chkParaEQ_enabled.Image = null;
+            this.chkParaEQ_enabled.Location = new System.Drawing.Point(28, 23);
+            this.chkParaEQ_enabled.Name = "chkParaEQ_enabled";
+            this.chkParaEQ_enabled.Size = new System.Drawing.Size(65, 17);
+            this.chkParaEQ_enabled.TabIndex = 107;
+            this.chkParaEQ_enabled.Text = "Enabled";
+            this.chkParaEQ_enabled.CheckedChanged += new System.EventHandler(this.chkParaEQ_enabled_CheckedChanged);
+            // 
+            // radParaEQ_RX
+            // 
+            this.radParaEQ_RX.AutoSize = true;
+            this.radParaEQ_RX.Image = null;
+            this.radParaEQ_RX.Location = new System.Drawing.Point(4, -1);
+            this.radParaEQ_RX.Name = "radParaEQ_RX";
+            this.radParaEQ_RX.Size = new System.Drawing.Size(58, 17);
+            this.radParaEQ_RX.TabIndex = 7;
+            this.radParaEQ_RX.Text = "RX EQ";
+            this.radParaEQ_RX.CheckedChanged += new System.EventHandler(this.radParaEQ_RXTX_CheckedChanged);
             // 
             // nudParaEQ_f
             // 
@@ -568,7 +626,7 @@ namespace Thetis
             // 
             this.labelTS6.AutoSize = true;
             this.labelTS6.Image = null;
-            this.labelTS6.Location = new System.Drawing.Point(234, 53);
+            this.labelTS6.Location = new System.Drawing.Point(234, 54);
             this.labelTS6.Name = "labelTS6";
             this.labelTS6.Size = new System.Drawing.Size(15, 13);
             this.labelTS6.TabIndex = 161;
@@ -582,7 +640,7 @@ namespace Thetis
             0,
             0,
             131072});
-            this.nudParaEQ_q.Location = new System.Drawing.Point(250, 50);
+            this.nudParaEQ_q.Location = new System.Drawing.Point(255, 51);
             this.nudParaEQ_q.Maximum = new decimal(new int[] {
             20,
             0,
@@ -603,16 +661,6 @@ namespace Thetis
             0,
             0});
             this.nudParaEQ_q.ValueChanged += new System.EventHandler(this.nudParaEQ_q_ValueChanged);
-            // 
-            // labelTS5
-            // 
-            this.labelTS5.AutoSize = true;
-            this.labelTS5.Image = null;
-            this.labelTS5.Location = new System.Drawing.Point(193, 34);
-            this.labelTS5.Name = "labelTS5";
-            this.labelTS5.Size = new System.Drawing.Size(20, 13);
-            this.labelTS5.TabIndex = 159;
-            this.labelTS5.Text = "dB";
             // 
             // labelTS4
             // 
@@ -694,12 +742,50 @@ namespace Thetis
             0});
             this.nudParaEQ_selected_band.ValueChanged += new System.EventHandler(this.nudParaEQ_selected_band_ValueChanged);
             // 
+            // ucParametricEq1
+            // 
+            this.ucParametricEq1.AllowPointReorder = true;
+            this.ucParametricEq1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ucParametricEq1.AxisTextColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
+            this.ucParametricEq1.AxisTickColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(80)))), ((int)(((byte)(80)))));
+            this.ucParametricEq1.AxisTickLength = 6;
+            this.ucParametricEq1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(25)))), ((int)(((byte)(25)))), ((int)(((byte)(25)))));
+            this.ucParametricEq1.BandShadeAlpha = 70;
+            this.ucParametricEq1.BandShadeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.ucParametricEq1.BandShadeWeightCutoff = 0.002D;
+            this.ucParametricEq1.DbMax = 24D;
+            this.ucParametricEq1.DbMin = -24D;
+            this.ucParametricEq1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.ucParametricEq1.FrequencyMaxHz = 4000D;
+            this.ucParametricEq1.FrequencyMinHz = 0D;
+            this.ucParametricEq1.GlobalGainDb = 0D;
+            this.ucParametricEq1.Location = new System.Drawing.Point(3, 75);
+            this.ucParametricEq1.MinPointSpacingHz = 5D;
+            this.ucParametricEq1.Name = "ucParametricEq1";
+            this.ucParametricEq1.ParametricEQ = true;
+            this.ucParametricEq1.QMax = 20D;
+            this.ucParametricEq1.QMin = 0.2D;
+            this.ucParametricEq1.SelectedIndex = -1;
+            this.ucParametricEq1.ShowAxisScales = true;
+            this.ucParametricEq1.ShowBandShading = true;
+            this.ucParametricEq1.ShowReadout = false;
+            this.ucParametricEq1.Size = new System.Drawing.Size(530, 411);
+            this.ucParametricEq1.TabIndex = 6;
+            this.ucParametricEq1.UsePerBandColours = true;
+            this.ucParametricEq1.PointsChanged += new System.EventHandler<Thetis.ucParametricEq.EqDraggingEventArgs>(this.ucParametricEq1_PointsChanged);
+            this.ucParametricEq1.GlobalGainChanged += new System.EventHandler<Thetis.ucParametricEq.EqDraggingEventArgs>(this.ucParametricEq1_GlobalGainChanged);
+            this.ucParametricEq1.PointDataChanged += new System.EventHandler<Thetis.ucParametricEq.EqPointDataChangedEventArgs>(this.ucParametricEq1_PointDataChanged);
+            this.ucParametricEq1.PointSelected += new System.EventHandler<Thetis.ucParametricEq.EqPointSelectionChangedEventArgs>(this.ucParametricEq1_PointSelected);
+            this.ucParametricEq1.PointUnselected += new System.EventHandler<Thetis.ucParametricEq.EqPointSelectionChangedEventArgs>(this.ucParametricEq1_PointUnselected);
+            // 
             // labelTS2
             // 
             this.labelTS2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTS2.AutoSize = true;
             this.labelTS2.Image = null;
-            this.labelTS2.Location = new System.Drawing.Point(361, 53);
+            this.labelTS2.Location = new System.Drawing.Point(140, 49);
             this.labelTS2.Name = "labelTS2";
             this.labelTS2.Size = new System.Drawing.Size(29, 13);
             this.labelTS2.TabIndex = 154;
@@ -710,7 +796,7 @@ namespace Thetis
             this.labelTS1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTS1.AutoSize = true;
             this.labelTS1.Image = null;
-            this.labelTS1.Location = new System.Drawing.Point(363, 31);
+            this.labelTS1.Location = new System.Drawing.Point(142, 27);
             this.labelTS1.Name = "labelTS1";
             this.labelTS1.Size = new System.Drawing.Size(27, 13);
             this.labelTS1.TabIndex = 153;
@@ -724,7 +810,7 @@ namespace Thetis
             0,
             0,
             0});
-            this.udParaEQ_high.Location = new System.Drawing.Point(396, 51);
+            this.udParaEQ_high.Location = new System.Drawing.Point(175, 47);
             this.udParaEQ_high.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -744,7 +830,7 @@ namespace Thetis
             0,
             0,
             0});
-            this.udParaEQ_high.ValueChanged += new System.EventHandler(this.nudParaEQ_lowhigh_ValueChanged);
+            this.udParaEQ_high.ValueChanged += new System.EventHandler(this.nudParaEQ_high_ValueChanged);
             // 
             // udParaEQ_low
             // 
@@ -754,7 +840,7 @@ namespace Thetis
             0,
             0,
             0});
-            this.udParaEQ_low.Location = new System.Drawing.Point(396, 29);
+            this.udParaEQ_low.Location = new System.Drawing.Point(175, 25);
             this.udParaEQ_low.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -774,17 +860,7 @@ namespace Thetis
             0,
             0,
             0});
-            this.udParaEQ_low.ValueChanged += new System.EventHandler(this.nudParaEQ_lowhigh_ValueChanged);
-            // 
-            // chkParaEQ_enabled
-            // 
-            this.chkParaEQ_enabled.Image = null;
-            this.chkParaEQ_enabled.Location = new System.Drawing.Point(6, 33);
-            this.chkParaEQ_enabled.Name = "chkParaEQ_enabled";
-            this.chkParaEQ_enabled.Size = new System.Drawing.Size(72, 16);
-            this.chkParaEQ_enabled.TabIndex = 107;
-            this.chkParaEQ_enabled.Text = "Enabled";
-            this.chkParaEQ_enabled.CheckedChanged += new System.EventHandler(this.chkParaEQ_enabled_CheckedChanged);
+            this.udParaEQ_low.ValueChanged += new System.EventHandler(this.nudParaEQ_low_ValueChanged);
             // 
             // panelTS1
             // 
@@ -794,7 +870,7 @@ namespace Thetis
             this.panelTS1.Controls.Add(this.radParaEQ_5);
             this.panelTS1.Controls.Add(this.radParaEQ_10);
             this.panelTS1.Controls.Add(this.radParaEQ_18);
-            this.panelTS1.Location = new System.Drawing.Point(452, 1);
+            this.panelTS1.Location = new System.Drawing.Point(231, 2);
             this.panelTS1.Name = "panelTS1";
             this.panelTS1.Size = new System.Drawing.Size(82, 68);
             this.panelTS1.TabIndex = 13;
@@ -834,91 +910,19 @@ namespace Thetis
             this.radParaEQ_18.Text = "18-band";
             this.radParaEQ_18.CheckedChanged += new System.EventHandler(this.radParaEQ_CheckedChanged);
             // 
-            // btnParaEQReset
-            // 
-            this.btnParaEQReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnParaEQReset.Image = null;
-            this.btnParaEQReset.Location = new System.Drawing.Point(371, 4);
-            this.btnParaEQReset.Name = "btnParaEQReset";
-            this.btnParaEQReset.Selectable = true;
-            this.btnParaEQReset.Size = new System.Drawing.Size(75, 23);
-            this.btnParaEQReset.TabIndex = 10;
-            this.btnParaEQReset.Text = "Reset";
-            this.btnParaEQReset.UseVisualStyleBackColor = true;
-            this.btnParaEQReset.Click += new System.EventHandler(this.btnParaEQReset_Click);
-            // 
             // chkUseQFactors
             // 
             this.chkUseQFactors.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkUseQFactors.AutoSize = true;
             this.chkUseQFactors.Checked = true;
             this.chkUseQFactors.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkUseQFactors.Image = null;
-            this.chkUseQFactors.Location = new System.Drawing.Point(271, 8);
+            this.chkUseQFactors.Location = new System.Drawing.Point(39, 28);
             this.chkUseQFactors.Name = "chkUseQFactors";
-            this.chkUseQFactors.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkUseQFactors.Size = new System.Drawing.Size(94, 17);
             this.chkUseQFactors.TabIndex = 9;
             this.chkUseQFactors.Text = "Use Q Factors";
             this.chkUseQFactors.UseVisualStyleBackColor = true;
             this.chkUseQFactors.CheckedChanged += new System.EventHandler(this.chkUseQFactors_CheckedChanged);
-            // 
-            // radParaEQ_RX
-            // 
-            this.radParaEQ_RX.Image = null;
-            this.radParaEQ_RX.Location = new System.Drawing.Point(6, 3);
-            this.radParaEQ_RX.Name = "radParaEQ_RX";
-            this.radParaEQ_RX.Size = new System.Drawing.Size(71, 24);
-            this.radParaEQ_RX.TabIndex = 7;
-            this.radParaEQ_RX.Text = "RX EQ";
-            this.radParaEQ_RX.CheckedChanged += new System.EventHandler(this.radParaEQ_RXTX_CheckedChanged);
-            // 
-            // radParaEQ_TX
-            // 
-            this.radParaEQ_TX.Checked = true;
-            this.radParaEQ_TX.Image = null;
-            this.radParaEQ_TX.Location = new System.Drawing.Point(83, 3);
-            this.radParaEQ_TX.Name = "radParaEQ_TX";
-            this.radParaEQ_TX.Size = new System.Drawing.Size(73, 24);
-            this.radParaEQ_TX.TabIndex = 8;
-            this.radParaEQ_TX.TabStop = true;
-            this.radParaEQ_TX.Text = "TX EQ";
-            this.radParaEQ_TX.CheckedChanged += new System.EventHandler(this.radParaEQ_RXTX_CheckedChanged);
-            // 
-            // ucParametricEq1
-            // 
-            this.ucParametricEq1.AllowPointReorder = true;
-            this.ucParametricEq1.AxisTextColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
-            this.ucParametricEq1.AxisTickColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(80)))), ((int)(((byte)(80)))));
-            this.ucParametricEq1.AxisTickLength = 6;
-            this.ucParametricEq1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(25)))), ((int)(((byte)(25)))), ((int)(((byte)(25)))));
-            this.ucParametricEq1.BandShadeAlpha = 70;
-            this.ucParametricEq1.BandShadeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.ucParametricEq1.BandShadeWeightCutoff = 0.002D;
-            this.ucParametricEq1.DbMax = 24D;
-            this.ucParametricEq1.DbMin = -24D;
-            this.ucParametricEq1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.ucParametricEq1.FrequencyMaxHz = 4000D;
-            this.ucParametricEq1.FrequencyMinHz = 0D;
-            this.ucParametricEq1.GlobalGainDb = 0D;
-            this.ucParametricEq1.Location = new System.Drawing.Point(3, 75);
-            this.ucParametricEq1.MinPointSpacingHz = 5D;
-            this.ucParametricEq1.Name = "ucParametricEq1";
-            this.ucParametricEq1.ParametricEQ = true;
-            this.ucParametricEq1.QMax = 20D;
-            this.ucParametricEq1.QMin = 0.2D;
-            this.ucParametricEq1.SelectedIndex = -1;
-            this.ucParametricEq1.ShowAxisScales = true;
-            this.ucParametricEq1.ShowBandShading = true;
-            this.ucParametricEq1.ShowReadout = false;
-            this.ucParametricEq1.Size = new System.Drawing.Size(530, 411);
-            this.ucParametricEq1.TabIndex = 6;
-            this.ucParametricEq1.UsePerBandColours = true;
-            this.ucParametricEq1.PointsChanged += new System.EventHandler<Thetis.ucParametricEq.EqDraggingEventArgs>(this.ucParametricEq1_PointsChanged);
-            this.ucParametricEq1.GlobalGainChanged += new System.EventHandler<Thetis.ucParametricEq.EqDraggingEventArgs>(this.ucParametricEq1_GlobalGainChanged);
-            this.ucParametricEq1.PointDataChanged += new System.EventHandler<Thetis.ucParametricEq.EqPointDataChangedEventArgs>(this.ucParametricEq1_PointDataChanged);
-            this.ucParametricEq1.PointSelected += new System.EventHandler<Thetis.ucParametricEq.EqPointSelectionChangedEventArgs>(this.ucParametricEq1_PointSelected);
-            this.ucParametricEq1.PointUnselected += new System.EventHandler<Thetis.ucParametricEq.EqPointSelectionChangedEventArgs>(this.ucParametricEq1_PointUnselected);
             // 
             // chkLegacyEQ
             // 
@@ -1920,9 +1924,27 @@ namespace Thetis
             this.lblRXEQminus12db.Text = "-12dB";
             this.lblRXEQminus12db.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // pnlParaEQ2
+            // 
+            this.pnlParaEQ2.AutoScrollMargin = new System.Drawing.Size(0, 0);
+            this.pnlParaEQ2.AutoScrollMinSize = new System.Drawing.Size(0, 0);
+            this.pnlParaEQ2.Controls.Add(this.pbParaEQ_live_warning);
+            this.pnlParaEQ2.Controls.Add(this.panelTS1);
+            this.pnlParaEQ2.Controls.Add(this.chkUseQFactors);
+            this.pnlParaEQ2.Controls.Add(this.udParaEQ_low);
+            this.pnlParaEQ2.Controls.Add(this.chkPanaEQ_live);
+            this.pnlParaEQ2.Controls.Add(this.udParaEQ_high);
+            this.pnlParaEQ2.Controls.Add(this.labelTS1);
+            this.pnlParaEQ2.Controls.Add(this.labelTS2);
+            this.pnlParaEQ2.Location = new System.Drawing.Point(789, 7);
+            this.pnlParaEQ2.Name = "pnlParaEQ2";
+            this.pnlParaEQ2.Size = new System.Drawing.Size(316, 73);
+            this.pnlParaEQ2.TabIndex = 8;
+            // 
             // EQForm
             // 
             this.ClientSize = new System.Drawing.Size(1115, 533);
+            this.Controls.Add(this.pnlParaEQ2);
             this.Controls.Add(this.pnlParaEQ);
             this.Controls.Add(this.chkLegacyEQ);
             this.Controls.Add(this.pnlLegacyEQ);
@@ -1931,9 +1953,9 @@ namespace Thetis
             this.Name = "EQForm";
             this.Text = "Equalizer Settings";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.EQForm_Closing);
+            ((System.ComponentModel.ISupportInitialize)(this.pbParaEQ_live_warning)).EndInit();
             this.pnlParaEQ.ResumeLayout(false);
             this.pnlParaEQ.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbParaEQ_live_warning)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudParaEQ_preamp)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudParaEQ_f)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudParaEQ_q)).EndInit();
@@ -1980,6 +2002,8 @@ namespace Thetis
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQ2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQ3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbRXEQPreamp)).EndInit();
+            this.pnlParaEQ2.ResumeLayout(false);
+            this.pnlParaEQ2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2761,12 +2785,17 @@ namespace Thetis
                 set
                 {
                     _rx_enabled = value;
-                    if (RXselected) _eqform.chkParaEQ_enabled.Checked = value;
+                    _eqform.UpdateEQEnabled(true);
                 }
             }
-            public int RXbandCount;
-            public bool RXUseQFactors;
-            public string RXeqData = "";
+            public int RX_BandCount = 10;
+            public bool RX_ParametricEQ = true;
+            public double[] RX_F;
+            public double[] RX_G;
+            public double[] RX_Q;
+            public double RX_Preamp = 0;
+            public double RX_minHz = 0;
+            public double RX_maxHz = 4000;
 
             private bool _tx_enabled = false;
             public bool TXenabled
@@ -2775,12 +2804,17 @@ namespace Thetis
                 set
                 {
                     _tx_enabled = value;
-                    if (!RXselected) _eqform.chkParaEQ_enabled.Checked = value;
+                    _eqform.UpdateEQEnabled(false);
                 }
             }
-            public int TXbandCount;
-            public bool TXUseQFactors;
-            public string TXeqData = "";
+            public int TX_BandCount = 10;
+            public bool TX_ParametricEQ = true;
+            public double[] TX_F;
+            public double[] TX_G;
+            public double[] TX_Q;
+            public double TX_Preamp = 0;
+            public double TX_minHz = 0;
+            public double TX_maxHz = 4000;
         }
         private ParaEQState _state;
 
@@ -2789,6 +2823,10 @@ namespace Thetis
             if (_initalising) return;
 
             _state.UsingLegacyEQ = chkLegacyEQ.Checked;
+
+            console.radio.GetDSPRX(0, 0).LegacyEQ = _state.UsingLegacyEQ;
+            console.radio.GetDSPRX(0, 1).LegacyEQ = _state.UsingLegacyEQ;
+            console.radio.GetDSPRX(1, 0).LegacyEQ = _state.UsingLegacyEQ;
 
             this.Size = _legacyEQ_base_form_size;
 
@@ -2800,6 +2838,7 @@ namespace Thetis
                 pnlLegacyEQ.Location = _legacyEQ_base_panel_location;
                 pnlLegacyEQ.Visible = true;
                 pnlParaEQ.Visible = false;
+                pnlParaEQ2.Visible = false;
 
                 chkRXEQEnabled.Checked = console.RXEQ;
                 chkTXEQEnabled.Checked = console.TXEQ;
@@ -2812,31 +2851,37 @@ namespace Thetis
                 this.FormBorderStyle = FormBorderStyle.Sizable;
                 this.SizeGripStyle = SizeGripStyle.Show;
 
-                pnlParaEQ.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
-                ucParametricEq1.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
-
                 pnlLegacyEQ.Visible = false;
                 pnlParaEQ.Location = _legacyEQ_base_panel_location;
                 pnlParaEQ.Visible = true;
+                Point p2Loc = new Point(pnlParaEQ.Location.X + 220, pnlParaEQ2.Location.Y);
+                pnlParaEQ2.Location = p2Loc;
+                pnlParaEQ2.Visible = true;
 
                 radParaEQ_RXTX_CheckedChanged(sender, e);
                 _state.RXenabled = console.RXEQ;
                 _state.TXenabled = console.TXEQ;
                 
                 radParaEQ_CheckedChanged(sender, e);
-                chkUseQFactors_CheckedChanged(sender, e);                
+                chkUseQFactors_CheckedChanged(sender, e);
+
+                pnlParaEQ.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
+                pnlParaEQ2.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right;
+                pnlParaEQ2.BringToFront();
             }
         }
 
         private void chkUseQFactors_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
+
             if (_state.RXselected)
             {
-                _state.RXUseQFactors = chkUseQFactors.Checked;
+                _state.RX_ParametricEQ = chkUseQFactors.Checked;
             }
             else
             {
-                _state.TXUseQFactors = chkUseQFactors.Checked;
+                _state.TX_ParametricEQ = chkUseQFactors.Checked;
             }
 
             ucParametricEq1.ParametricEQ = chkUseQFactors.Checked;
@@ -2845,24 +2890,29 @@ namespace Thetis
             updateBandData();
         }
 
-        private void setupWDSPdataFromParaEQ()
+        private void setupWDSPdataFromParaEQ(bool is_rx)
         {
-            int nfreqs = 5;
+            if (_state.UsingLegacyEQ) return;
 
-            if (radParaEQ_5.Checked) nfreqs = 5;
-            else if (radParaEQ_10.Checked) nfreqs = 10;
-            else if (radParaEQ_18.Checked) nfreqs = 18;
+            if (is_rx && (_state.RX_F == null || _state.RX_G == null || _state.RX_Q == null)) return;
+            if (!is_rx && (_state.TX_F == null || _state.TX_G == null || _state.TX_Q == null)) return;
+
+            int nfreqs = is_rx ? _state.RX_BandCount : _state.TX_BandCount;
 
             double[] F = new double[nfreqs + 1];
             double[] G = new double[nfreqs + 1];
             double[] Q = new double[nfreqs + 1];
 
             F[0] = 0.0;
-            G[0] = ucParametricEq1.GlobalGainDb;
+            G[0] = is_rx ? _state.RX_Preamp : _state.TX_Preamp;
             Q[0] = 0.0;
+
             for (int n = 0; n < nfreqs; n++)
             {
-                ucParametricEq1.GetPointData(n, out double freq, out double gain, out double q);
+                double freq = is_rx ? _state.RX_F[n] : _state.TX_F[n];
+                double gain = is_rx ? _state.RX_G[n] : _state.TX_G[n];
+                double q = is_rx ? _state.RX_Q[n] : _state.TX_Q[n];
+
                 F[n + 1] = freq;
                 G[n + 1] = gain;
                 Q[n + 1] = q;
@@ -2872,14 +2922,14 @@ namespace Thetis
             {
                 fixed (double* Fptr = &F[0], Gptr = &G[0], Qptr = &Q[0])
                 {
-                    if (_state.RXselected)
+                    if (is_rx)
                     {
-                        WDSP.SetRXAEQProfile(WDSP.id(0, 0), nfreqs, Fptr, Gptr, ucParametricEq1.ParametricEQ ? Qptr : null);
-                        WDSP.SetRXAEQProfile(WDSP.id(0, 1), nfreqs, Fptr, Gptr, ucParametricEq1.ParametricEQ ? Qptr : null);
+                        WDSP.SetRXAEQProfile(WDSP.id(0, 0), nfreqs, Fptr, Gptr, _state.RX_ParametricEQ ? Qptr : null);
+                        WDSP.SetRXAEQProfile(WDSP.id(0, 1), nfreqs, Fptr, Gptr, _state.RX_ParametricEQ ? Qptr : null);
                     }
                     else
                     {
-                        WDSP.SetTXAEQProfile(WDSP.id(1, 0), nfreqs, Fptr, Gptr, ucParametricEq1.ParametricEQ ? Qptr : null);
+                        WDSP.SetTXAEQProfile(WDSP.id(1, 0), nfreqs, Fptr, Gptr, _state.TX_ParametricEQ ? Qptr : null);
                     }
                 }
             }
@@ -2894,6 +2944,8 @@ namespace Thetis
 
         private void chkParaEQ_enabled_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
+
             if (_state.UsingLegacyEQ) return;
 
             if(_state.RXselected)
@@ -2912,76 +2964,270 @@ namespace Thetis
 
         private void radParaEQ_RX_CheckedChanged(object sender, EventArgs e)
         {
-            if(!radParaEQ_RX.Checked) return;
+            if (_initalising) return;
+
+            if (!radParaEQ_RX.Checked) return;
 
             _state.RXselected = chkParaEQ_enabled.Checked;
 
             chkParaEQ_enabled.Checked = console.RXEQ;
         }
 
-        private void radParaEQ_TX_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!radParaEQ_TX.Checked) return;
-            chkParaEQ_enabled.Checked = console.TXEQ;
-        }
-
         private void radParaEQ_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
+
             ucParametricEq1.SelectedIndex = -1;
 
+            int bc = -1;
             if (radParaEQ_5.Checked)
             {
-                ucParametricEq1.BandCount = 5;
-                setupWDSPdataFromParaEQ();
+                bc = 5;
             }
             else if (radParaEQ_10.Checked)
             {
-                ucParametricEq1.BandCount = 10;
-                setupWDSPdataFromParaEQ();
+                bc = 10;
             }
             else if (radParaEQ_18.Checked)
             {
-                ucParametricEq1.BandCount = 18;
-                setupWDSPdataFromParaEQ();
+                bc = 18;
             }
+
+            if (bc == -1) return;
+
             if (_state.RXselected)
             {
-                _state.RXbandCount = ucParametricEq1.BandCount;
+                ucParametricEq1.GetDefaults(out _state.RX_F, out _state.RX_G, out _state.RX_Q, out _state.RX_Preamp, out _state.RX_minHz, out _state.RX_maxHz, out _state.RX_ParametricEQ, out _state.RX_BandCount, bc);
+                _state.RX_BandCount = bc;
             }
             else
             {
-                _state.TXbandCount = ucParametricEq1.BandCount;
+                ucParametricEq1.GetDefaults(out _state.TX_F, out _state.TX_G, out _state.TX_Q, out _state.TX_Preamp, out _state.TX_minHz, out _state.TX_maxHz, out _state.TX_ParametricEQ, out _state.TX_BandCount, bc);
+                _state.TX_BandCount = bc;
             }
+            nudParaEQ_selected_band.Maximum = bc;
+            ucParametricEq1.BandCount = bc;
 
-            nudParaEQ_selected_band.Maximum = ucParametricEq1.BandCount;            
+            setupWDSPdataFromParaEQ(_state.RXselected);            
         }
 
         private void ucParametricEq1_GlobalGainChanged(object sender, ucParametricEq.EqDraggingEventArgs e)
         {
-            if (e.IsDragging && !_state.LiveUpdate) return;
+            if (_initalising) return;
+
+            if (_state.RXselected)
+            {
+                _state.RX_Preamp = ucParametricEq1.GlobalGainDb;
+            }
+            else
+            {
+                _state.TX_Preamp = ucParametricEq1.GlobalGainDb;
+            }
 
             _ignore_update = true;
             nudParaEQ_preamp.Value = (decimal)ucParametricEq1.GlobalGainDb;
             _ignore_update = false;
 
-            ucParametricEq1_PointsChanged(sender, e);
+            if (e.IsDragging && !_state.LiveUpdate) return;
+
+            setupWDSPdataFromParaEQ(_state.RXselected);
         }
 
         private void ucParametricEq1_PointDataChanged(object sender, ucParametricEq.EqPointDataChangedEventArgs e)
         {
+            if (_initalising) return;
+
             _state.BandSelected = e.Index;
             updateBandData();
         }
 
         private void ucParametricEq1_PointsChanged(object sender, ucParametricEq.EqDraggingEventArgs e)
         {
-            if (e.IsDragging && !_state.LiveUpdate) return;
+            if (_initalising) return;
 
-            setupWDSPdataFromParaEQ();            
+            if (_state.RXselected)
+            {
+                ucParametricEq1.GetPointsData(out _state.RX_F, out _state.RX_G, out _state.RX_Q);
+            }
+            else
+            {
+                ucParametricEq1.GetPointsData(out _state.TX_F, out _state.TX_G, out _state.TX_Q);
+            }
+
+            if (e.IsDragging && !_state.LiveUpdate) return;            
+
+            setupWDSPdataFromParaEQ(_state.RXselected);
+        }
+
+        public string ParaEQRXData
+        {
+            get
+            {
+                string json = ucParametricEq1.SaveToJsonFromPoints(_state.RX_F, _state.RX_G, _state.RX_Q, _state.RX_Preamp, _state.RX_minHz, _state.RX_maxHz, _state.RX_ParametricEQ);
+                string comp = Common.Compress_gzip(json);
+                return string.IsNullOrEmpty(comp) ? "" : comp; // returning "" to make the db life easier
+            }
+            set
+            {
+                double[] f;
+                double[] g;
+                double[] q;
+                double preamp;
+                double min_hz;
+                double max_hz;
+                bool parametric_eq;
+                int band_count;
+
+                string json = Common.Decompress_gzip(value);
+
+                bool ok = ucParametricEq1.PointsFromJson(
+                    json,
+                    out f,
+                    out g,
+                    out q,
+                    out preamp,
+                    out min_hz,
+                    out max_hz,
+                    out parametric_eq,
+                    out band_count);
+
+                if (ok)
+                {
+                    _state.RX_F = f;
+                    _state.RX_G = g;
+                    _state.RX_Q = q;
+                    _state.RX_Preamp = preamp;
+                    _state.RX_minHz = min_hz;
+                    _state.RX_maxHz = max_hz;
+                    _state.RX_ParametricEQ = parametric_eq;
+                    _state.RX_BandCount = band_count;                    
+                }
+                else
+                {
+                    ucParametricEq1.GetDefaults(out _state.RX_F, out _state.RX_G, out _state.RX_Q, out _state.RX_Preamp, out _state.RX_minHz, out _state.RX_maxHz, out _state.RX_ParametricEQ, out _state.RX_BandCount);
+                }
+
+                if (_state.RXselected) setParaEQData();
+
+                setupWDSPdataFromParaEQ(true);
+            }
+        }
+        public string ParaEQTXData
+        {
+            get
+            {
+                string json = ucParametricEq1.SaveToJsonFromPoints(_state.TX_F, _state.TX_G, _state.TX_Q, _state.TX_Preamp, _state.TX_minHz, _state.TX_maxHz, _state.TX_ParametricEQ);
+                string comp = Common.Compress_gzip(json);
+                return string.IsNullOrEmpty(comp) ? "" : comp; // returning "" to make the db life easier
+            }
+            set
+            {
+                double[] f;
+                double[] g;
+                double[] q;
+                double preamp;
+                double min_hz;
+                double max_hz;
+                bool parametric_eq;
+                int band_count;
+
+                string json = Common.Decompress_gzip(value);
+
+                bool ok = ucParametricEq1.PointsFromJson(
+                    json,
+                    out f,
+                    out g,
+                    out q,
+                    out preamp,
+                    out min_hz,
+                    out max_hz,
+                    out parametric_eq,
+                    out band_count);
+
+                                
+                if (ok)
+                {
+                    _state.TX_F = f;
+                    _state.TX_G = g;
+                    _state.TX_Q = q;
+                    _state.TX_Preamp = preamp;
+                    _state.TX_minHz = min_hz;
+                    _state.TX_maxHz = max_hz;
+                    _state.TX_ParametricEQ = parametric_eq;
+                    _state.TX_BandCount = band_count;                    
+                }
+                else
+                {
+                    ucParametricEq1.GetDefaults(out _state.TX_F, out _state.TX_G, out _state.TX_Q, out _state.TX_Preamp, out _state.TX_minHz, out _state.TX_maxHz, out _state.TX_ParametricEQ, out _state.TX_BandCount);
+                }
+
+                if (!_state.RXselected) setParaEQData();
+
+                setupWDSPdataFromParaEQ(false);
+            }
+        }
+        private void setParaEQData()
+        {
+            chkUseQFactors.CheckedChanged -= chkUseQFactors_CheckedChanged;
+            ucParametricEq1.PointsChanged -= ucParametricEq1_PointsChanged;
+            udParaEQ_low.ValueChanged -= nudParaEQ_low_ValueChanged;
+            udParaEQ_high.ValueChanged -= nudParaEQ_high_ValueChanged;
+            radParaEQ_5.CheckedChanged -= radParaEQ_CheckedChanged;
+            radParaEQ_10.CheckedChanged -= radParaEQ_CheckedChanged;
+            radParaEQ_18.CheckedChanged -= radParaEQ_CheckedChanged;
+            nudParaEQ_selected_band.ValueChanged -= nudParaEQ_selected_band_ValueChanged;
+
+            if (_state.RXselected)
+            {
+                ucParametricEq1.ParametricEQ = _state.RX_ParametricEQ;
+                ucParametricEq1.BandCount = _state.RX_BandCount;
+                ucParametricEq1.GlobalGainDb = _state.RX_Preamp;
+                ucParametricEq1.FrequencyMinHz = _state.RX_minHz;
+                ucParametricEq1.FrequencyMaxHz = _state.RX_maxHz;
+                ucParametricEq1.SetPointsData(_state.RX_F, _state.RX_G, _state.RX_Q);
+            }
+            else
+            {
+                ucParametricEq1.ParametricEQ = _state.TX_ParametricEQ;
+                ucParametricEq1.BandCount = _state.TX_BandCount;
+                ucParametricEq1.GlobalGainDb = _state.TX_Preamp;
+                ucParametricEq1.FrequencyMinHz = _state.TX_minHz;
+                ucParametricEq1.FrequencyMaxHz = _state.TX_maxHz;
+                ucParametricEq1.SetPointsData(_state.TX_F, _state.TX_G, _state.TX_Q);
+            }
+
+            if (ucParametricEq1.BandCount == 10)
+            {
+                radParaEQ_10.Checked = true;
+            }
+            else if (ucParametricEq1.BandCount == 18)
+            {
+                radParaEQ_18.Checked = true;
+            }
+            else
+            {
+                radParaEQ_5.Checked = true;
+            }
+            udParaEQ_low.Value = (decimal)ucParametricEq1.FrequencyMinHz;
+            udParaEQ_high.Value = (decimal)ucParametricEq1.FrequencyMaxHz;            
+            chkUseQFactors.Checked = ucParametricEq1.ParametricEQ;
+
+            nudParaEQ_selected_band.Maximum = ucParametricEq1.BandCount;
+
+            nudParaEQ_selected_band.ValueChanged += nudParaEQ_selected_band_ValueChanged;
+            radParaEQ_5.CheckedChanged += radParaEQ_CheckedChanged;
+            radParaEQ_10.CheckedChanged += radParaEQ_CheckedChanged;
+            radParaEQ_18.CheckedChanged += radParaEQ_CheckedChanged;
+            udParaEQ_low.ValueChanged += nudParaEQ_low_ValueChanged;
+            udParaEQ_high.ValueChanged += nudParaEQ_high_ValueChanged;
+            ucParametricEq1.PointsChanged += ucParametricEq1_PointsChanged;
+            chkUseQFactors.CheckedChanged += chkUseQFactors_CheckedChanged;
         }
 
         private void radParaEQ_RXTX_CheckedChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
+
             if (radParaEQ_RX.Checked)
             {
                 _state.RXselected = true;
@@ -3001,34 +3247,14 @@ namespace Thetis
 
             ucParametricEq1.SelectedIndex = -1;
 
+            setParaEQData();
             DSPOptionsChanged();
-        }
-
-        private void buttonTS1_Click(object sender, EventArgs e)
-        {
-            Debug.Print(ucParametricEq1.SaveToJson());
-        }
-
-        private void nudParaEQ_lowhigh_ValueChanged(object sender, EventArgs e)
-        {
-            if (_initalising) return;
-            if (udParaEQ_low.Value > udParaEQ_high.Value - 1000)
-            {
-                udParaEQ_low.Value = udParaEQ_high.Value - 1000;
-                return;
-            }
-            if (udParaEQ_high.Value < udParaEQ_low.Value + 1000)
-            {
-                udParaEQ_high.Value = udParaEQ_low.Value + 1000;
-                return;
-            }
-
-            ucParametricEq1.FrequencyMinHz = (int)udParaEQ_low.Value;
-            ucParametricEq1.FrequencyMaxHz = (int)udParaEQ_high.Value;
         }
 
         private void nudParaEQ_selected_band_ValueChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
+
             _state.BandSelected = ((int)nudParaEQ_selected_band.Value) - 1;
             ucParametricEq1.SelectedIndex = _state.BandSelected;
             updateBandData();
@@ -3065,18 +3291,24 @@ namespace Thetis
 
         private void ucParametricEq1_PointSelected(object sender, ucParametricEq.EqPointSelectionChangedEventArgs e)
         {
+            if (_initalising) return;
+
             _state.BandSelected = e.Index;
             updateBandData();
         }
 
         private void ucParametricEq1_PointUnselected(object sender, ucParametricEq.EqPointSelectionChangedEventArgs e)
         {
+            if (_initalising) return;
+
             _state.BandSelected = -1;
             updateBandData();
         }
 
         private void nudParaEQ_f_ValueChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
+
             if (_ignore_update || _state.BandSelected == -1) return;
 
             ucParametricEq1.GetPointData(_state.BandSelected, out double f, out double g, out double q);
@@ -3088,6 +3320,8 @@ namespace Thetis
 
         private void nudParaEQ_gain_ValueChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
+
             if (_ignore_update || _state.BandSelected == -1) return;
 
             ucParametricEq1.GetPointData(_state.BandSelected, out double f, out double g, out double q);
@@ -3099,6 +3333,8 @@ namespace Thetis
 
         private void nudParaEQ_q_ValueChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
+
             if (_ignore_update || _state.BandSelected == -1) return;
 
             ucParametricEq1.GetPointData(_state.BandSelected, out double f, out double g, out double q);
@@ -3116,19 +3352,99 @@ namespace Thetis
 
         private void nudParaEQ_preamp_ValueChanged(object sender, EventArgs e)
         {
+            if (_initalising) return;
             if (_ignore_update) return;
-            ucParametricEq1.GlobalGainDb = (double)nudParaEQ_preamp.Value;
-            setupWDSPdataFromParaEQ();
+
+            double pre = (double)nudParaEQ_preamp.Value;
+            ucParametricEq1.GlobalGainDb = pre;
+
+            if (_state.RXselected)
+            {
+                _state.RX_Preamp = pre;
+            }
+            else
+            {
+                _state.TX_Preamp = pre;
+            }
+
+            setupWDSPdataFromParaEQ(_state.RXselected);
         }
         public void DSPOptionsChanged()
         {
             bool warningRX = console.radio.GetDSPRX(0, 0).FilterSize > 1024 ||
                 console.radio.GetDSPRX(0, 1).FilterSize > 1024;
+
             bool warningTX = console.radio.GetDSPTX(0).FilterSize > 1024;
 
             bool warn = (_state.RXselected && warningRX) || (!_state.RXselected && warningTX);
 
             pbParaEQ_live_warning.Visible = _state.LiveUpdate && warn;
+        }
+
+        private void nudParaEQ_low_ValueChanged(object sender, EventArgs e)
+        {
+            if (_initalising) return;
+
+            if (udParaEQ_low.Value > udParaEQ_high.Value - 1000)
+            {
+                udParaEQ_low.Value = udParaEQ_high.Value - 1000;
+                return;
+            }
+            ucParametricEq1.FrequencyMinHz = (int)udParaEQ_low.Value;
+            if (_state.RXselected)
+            {
+                _state.RX_minHz = ucParametricEq1.FrequencyMinHz;
+            }
+            else
+            {
+                _state.TX_minHz = ucParametricEq1.FrequencyMinHz;
+            }
+        }
+
+        private void nudParaEQ_high_ValueChanged(object sender, EventArgs e)
+        {
+            if (_initalising) return;
+
+            if (udParaEQ_high.Value < udParaEQ_low.Value + 1000)
+            {
+                udParaEQ_high.Value = udParaEQ_low.Value + 1000;
+                return;
+            }
+            ucParametricEq1.FrequencyMaxHz = (int)udParaEQ_high.Value;
+            if (_state.RXselected)
+            {
+                _state.RX_maxHz = ucParametricEq1.FrequencyMaxHz;
+            }
+            else
+            {
+                _state.TX_maxHz = ucParametricEq1.FrequencyMaxHz;
+            }
+        }
+        private void setupLowHigh()
+        {
+            nudParaEQ_low_ValueChanged(this, EventArgs.Empty);
+            nudParaEQ_high_ValueChanged(this, EventArgs.Empty);
+        }
+        private void UpdateEQEnabled(bool is_rx)
+        {
+            chkParaEQ_enabled.CheckedChanged -= chkParaEQ_enabled_CheckedChanged;
+            if (is_rx)
+            {
+                if (_state.RXselected)
+                {
+                    chkParaEQ_enabled.Checked = _state.RXenabled;
+                }
+                enableRxEq(_state.RXenabled);
+            }
+            else
+            {
+                if (!_state.RXselected)
+                {
+                    chkParaEQ_enabled.Checked = _state.TXenabled;
+                }
+                enableTxEq(_state.TXenabled);
+            }
+            chkParaEQ_enabled.CheckedChanged += chkParaEQ_enabled_CheckedChanged;
         }
     }
 }

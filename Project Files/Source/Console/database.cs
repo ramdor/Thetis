@@ -4304,6 +4304,12 @@ namespace Thetis
             t.Columns.Add("Name", typeof(string));
             t.Columns.Add("FilterLow", typeof(int));
             t.Columns.Add("FilterHigh", typeof(int));
+
+            //
+            t.Columns.Add("RXParaEQData", typeof(string));
+            t.Columns.Add("TXParaEQData", typeof(string));
+            //
+
             t.Columns.Add("TXEQNumBands", typeof(int));
             t.Columns.Add("TXEQEnabled", typeof(bool));
             t.Columns.Add("TXEQPreamp", typeof(int));
@@ -4537,6 +4543,10 @@ namespace Thetis
             dr["Name"] = "Default";
             dr["FilterLow"] = 100;
             dr["FilterHigh"] = 3000;
+            //
+            dr["RXParaEQData"] = "";
+            dr["TXParaEQData"] = "";
+            //
             dr["TXEQNumBands"] = 10;
             dr["TXEQEnabled"] = false;
             dr["TXEQPreamp"] = 0;
@@ -4763,6 +4773,10 @@ namespace Thetis
             dr["Name"] = "Default DX";
             dr["FilterLow"] = 200;
             dr["FilterHigh"] = 3100;
+            //
+            dr["RXParaEQData"] = "";
+            dr["TXParaEQData"] = "";
+            //
             dr["TXEQNumBands"] = 10;
             dr["TXEQEnabled"] = false;
             dr["TXEQPreamp"] = 0;
@@ -4989,6 +5003,10 @@ namespace Thetis
                 dr["Name"] = "Digi 1K@1500";
                 dr["FilterLow"] = 1000;
                 dr["FilterHigh"] = 2000;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -5213,6 +5231,10 @@ namespace Thetis
                 dr["Name"] = "Digi 1K@2210";
                 dr["FilterLow"] = 1710;
                 dr["FilterHigh"] = 2710;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -5436,6 +5458,10 @@ namespace Thetis
                 dr["Name"] = "AM";
                 dr["FilterLow"] = 0;
                 dr["FilterHigh"] = 4000;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -5659,6 +5685,10 @@ namespace Thetis
                 dr["Name"] = "Conventional";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3100;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -5882,6 +5912,10 @@ namespace Thetis
                 dr["Name"] = "D-104";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3500;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = -6;
@@ -6105,6 +6139,10 @@ namespace Thetis
                 dr["Name"] = "D-104+CPDR";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3500;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = -6;
@@ -6328,6 +6366,10 @@ namespace Thetis
                 dr["Name"] = "D-104+EQ";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3500;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = -6;
@@ -6551,6 +6593,10 @@ namespace Thetis
                 dr["Name"] = "DX / Contest";
                 dr["FilterLow"] = 250;
                 dr["FilterHigh"] = 3250;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -6774,6 +6820,10 @@ namespace Thetis
                 dr["Name"] = "ESSB";
                 dr["FilterLow"] = 50;
                 dr["FilterHigh"] = 3650;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -6997,6 +7047,10 @@ namespace Thetis
                 dr["Name"] = "HC4-5";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3100;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -7220,6 +7274,10 @@ namespace Thetis
                 dr["Name"] = "HC4-5+CPDR";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3100;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -7443,6 +7501,10 @@ namespace Thetis
                 dr["Name"] = "PR40+W2IHY";
                 dr["FilterLow"] = 50;
                 dr["FilterHigh"] = 3650;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -7666,6 +7728,10 @@ namespace Thetis
                 dr["Name"] = "PR40+W2IHY+CPDR";
                 dr["FilterLow"] = 50;
                 dr["FilterHigh"] = 3650;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = false;
                 dr["TXEQPreamp"] = 0;
@@ -7889,6 +7955,10 @@ namespace Thetis
                 dr["Name"] = "PR781+EQ";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3200;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = -11;
@@ -8112,6 +8182,10 @@ namespace Thetis
                 dr["Name"] = "PR781+EQ+CPDR";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3200;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = -9;
@@ -8335,6 +8409,10 @@ namespace Thetis
                 dr["Name"] = "SSB 2.8k CFC";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 2900;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = 4;
@@ -8558,6 +8636,10 @@ namespace Thetis
                 dr["Name"] = "SSB 3.0k CFC";
                 dr["FilterLow"] = 100;
                 dr["FilterHigh"] = 3100;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = 4;
@@ -8781,6 +8863,10 @@ namespace Thetis
                 dr["Name"] = "SSB 3.3k CFC";
                 dr["FilterLow"] = 50;
                 dr["FilterHigh"] = 3350;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = 4;
@@ -9004,6 +9090,10 @@ namespace Thetis
                 dr["Name"] = "AM 10k CFC";
                 dr["FilterLow"] = 0;
                 dr["FilterHigh"] = 5000;
+                //
+                dr["RXParaEQData"] = "";
+                dr["TXParaEQData"] = "";
+                //
                 dr["TXEQNumBands"] = 10;
                 dr["TXEQEnabled"] = true;
                 dr["TXEQPreamp"] = 4;
