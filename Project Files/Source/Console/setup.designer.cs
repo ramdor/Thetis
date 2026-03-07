@@ -1415,22 +1415,6 @@
             this.labelTS123 = new System.Windows.Forms.LabelTS();
             this.labelTS122 = new System.Windows.Forms.LabelTS();
             this.labelTS121 = new System.Windows.Forms.LabelTS();
-            this.labelTS120 = new System.Windows.Forms.LabelTS();
-            this.labelTS117 = new System.Windows.Forms.LabelTS();
-            this.udAlex10mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
-            this.udAlex10mLPFStart = new System.Windows.Forms.NumericUpDownTS();
-            this.udAlex6mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
-            this.udAlex6mLPFStart = new System.Windows.Forms.NumericUpDownTS();
-            this.udAlex20mLPFStart = new System.Windows.Forms.NumericUpDownTS();
-            this.udAlex15mLPFStart = new System.Windows.Forms.NumericUpDownTS();
-            this.udAlex20mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
-            this.udAlex15mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
-            this.udAlex40mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
-            this.udAlex40mLPFStart = new System.Windows.Forms.NumericUpDownTS();
-            this.udAlex80mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
-            this.udAlex80mLPFStart = new System.Windows.Forms.NumericUpDownTS();
-            this.udAlex160mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
-            this.udAlex160mLPFStart = new System.Windows.Forms.NumericUpDownTS();
             this.panelAlex1HPFControl = new System.Windows.Forms.PanelTS();
             this.chkDisableHPFonPSb = new System.Windows.Forms.CheckBoxTS();
             this.labelTS321 = new System.Windows.Forms.LabelTS();
@@ -1474,6 +1458,22 @@
             this.labelTS129 = new System.Windows.Forms.LabelTS();
             this.labelTS131 = new System.Windows.Forms.LabelTS();
             this.labelTS130 = new System.Windows.Forms.LabelTS();
+            this.labelTS120 = new System.Windows.Forms.LabelTS();
+            this.labelTS117 = new System.Windows.Forms.LabelTS();
+            this.udAlex10mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
+            this.udAlex10mLPFStart = new System.Windows.Forms.NumericUpDownTS();
+            this.udAlex6mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
+            this.udAlex6mLPFStart = new System.Windows.Forms.NumericUpDownTS();
+            this.udAlex20mLPFStart = new System.Windows.Forms.NumericUpDownTS();
+            this.udAlex15mLPFStart = new System.Windows.Forms.NumericUpDownTS();
+            this.udAlex20mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
+            this.udAlex15mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
+            this.udAlex40mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
+            this.udAlex40mLPFStart = new System.Windows.Forms.NumericUpDownTS();
+            this.udAlex80mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
+            this.udAlex80mLPFStart = new System.Windows.Forms.NumericUpDownTS();
+            this.udAlex160mLPFEnd = new System.Windows.Forms.NumericUpDownTS();
+            this.udAlex160mLPFStart = new System.Windows.Forms.NumericUpDownTS();
             this.panelBPFControl = new System.Windows.Forms.PanelTS();
             this.labelTS116 = new System.Windows.Forms.LabelTS();
             this.labelTS457 = new System.Windows.Forms.LabelTS();
@@ -4612,20 +4612,6 @@
             this.tcAlexControl.SuspendLayout();
             this.tpAlexFilterControl.SuspendLayout();
             this.panelTS6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex10mLPFEnd)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex10mLPFStart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex6mLPFEnd)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex6mLPFStart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex20mLPFStart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex15mLPFStart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex20mLPFEnd)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex15mLPFEnd)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex40mLPFEnd)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex40mLPFStart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex80mLPFEnd)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex80mLPFStart)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex160mLPFEnd)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex160mLPFStart)).BeginInit();
             this.panelAlex1HPFControl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAlex1_5HPFStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAlex1_5HPFEnd)).BeginInit();
@@ -4640,6 +4626,20 @@
             ((System.ComponentModel.ISupportInitialize)(this.udAlex13HPFStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAlex6BPFStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAlex6BPFEnd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex10mLPFEnd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex10mLPFStart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex6mLPFEnd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex6mLPFStart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex20mLPFStart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex15mLPFStart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex20mLPFEnd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex15mLPFEnd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex40mLPFEnd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex40mLPFStart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex80mLPFEnd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex80mLPFStart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex160mLPFEnd)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex160mLPFStart)).BeginInit();
             this.panelBPFControl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ud1_5BPF1Start)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ud1_5BPF1End)).BeginInit();
@@ -23374,6 +23374,7 @@
             this.tpAlexFilterControl.Controls.Add(this.labelTS123);
             this.tpAlexFilterControl.Controls.Add(this.labelTS122);
             this.tpAlexFilterControl.Controls.Add(this.labelTS121);
+            this.tpAlexFilterControl.Controls.Add(this.panelAlex1HPFControl);
             this.tpAlexFilterControl.Controls.Add(this.labelTS120);
             this.tpAlexFilterControl.Controls.Add(this.labelTS117);
             this.tpAlexFilterControl.Controls.Add(this.udAlex10mLPFEnd);
@@ -23390,7 +23391,6 @@
             this.tpAlexFilterControl.Controls.Add(this.udAlex80mLPFStart);
             this.tpAlexFilterControl.Controls.Add(this.udAlex160mLPFEnd);
             this.tpAlexFilterControl.Controls.Add(this.udAlex160mLPFStart);
-            this.tpAlexFilterControl.Controls.Add(this.panelAlex1HPFControl);
             this.tpAlexFilterControl.Controls.Add(this.panelBPFControl);
             this.tpAlexFilterControl.Location = new System.Drawing.Point(4, 22);
             this.tpAlexFilterControl.Name = "tpAlexFilterControl";
@@ -23593,447 +23593,6 @@
             this.labelTS121.TabIndex = 69;
             this.labelTS121.Text = "12/10m";
             this.labelTS121.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // labelTS120
-            // 
-            this.labelTS120.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTS120.Image = null;
-            this.labelTS120.Location = new System.Drawing.Point(510, 185);
-            this.labelTS120.Name = "labelTS120";
-            this.labelTS120.Size = new System.Drawing.Size(62, 16);
-            this.labelTS120.TabIndex = 68;
-            this.labelTS120.Text = "6m/ByPass";
-            this.labelTS120.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // labelTS117
-            // 
-            this.labelTS117.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTS117.Image = null;
-            this.labelTS117.Location = new System.Drawing.Point(395, 0);
-            this.labelTS117.Name = "labelTS117";
-            this.labelTS117.Size = new System.Drawing.Size(56, 16);
-            this.labelTS117.TabIndex = 67;
-            this.labelTS117.Text = "LPF";
-            this.labelTS117.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // udAlex10mLPFEnd
-            // 
-            this.udAlex10mLPFEnd.DecimalPlaces = 6;
-            this.udAlex10mLPFEnd.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex10mLPFEnd.Location = new System.Drawing.Point(432, 155);
-            this.udAlex10mLPFEnd.Maximum = new decimal(new int[] {
-            356,
-            0,
-            0,
-            65536});
-            this.udAlex10mLPFEnd.Minimum = new decimal(new int[] {
-            30000001,
-            0,
-            0,
-            393216});
-            this.udAlex10mLPFEnd.Name = "udAlex10mLPFEnd";
-            this.udAlex10mLPFEnd.Size = new System.Drawing.Size(75, 20);
-            this.udAlex10mLPFEnd.TabIndex = 24;
-            this.udAlex10mLPFEnd.TinyStep = false;
-            this.udAlex10mLPFEnd.Value = new decimal(new int[] {
-            356,
-            0,
-            0,
-            65536});
-            this.udAlex10mLPFEnd.ValueChanged += new System.EventHandler(this.udAlex10mLPFEnd_ValueChanged);
-            // 
-            // udAlex10mLPFStart
-            // 
-            this.udAlex10mLPFStart.DecimalPlaces = 6;
-            this.udAlex10mLPFStart.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex10mLPFStart.Location = new System.Drawing.Point(341, 155);
-            this.udAlex10mLPFStart.Maximum = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-            this.udAlex10mLPFStart.Minimum = new decimal(new int[] {
-            24,
-            0,
-            0,
-            0});
-            this.udAlex10mLPFStart.Name = "udAlex10mLPFStart";
-            this.udAlex10mLPFStart.Size = new System.Drawing.Size(75, 20);
-            this.udAlex10mLPFStart.TabIndex = 23;
-            this.udAlex10mLPFStart.TinyStep = false;
-            this.udAlex10mLPFStart.Value = new decimal(new int[] {
-            24000001,
-            0,
-            0,
-            393216});
-            this.udAlex10mLPFStart.ValueChanged += new System.EventHandler(this.udAlex10mLPFStart_ValueChanged);
-            // 
-            // udAlex6mLPFEnd
-            // 
-            this.udAlex6mLPFEnd.DecimalPlaces = 6;
-            this.udAlex6mLPFEnd.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex6mLPFEnd.Location = new System.Drawing.Point(432, 181);
-            this.udAlex6mLPFEnd.Maximum = new decimal(new int[] {
-            6144,
-            0,
-            0,
-            131072});
-            this.udAlex6mLPFEnd.Minimum = new decimal(new int[] {
-            50000001,
-            0,
-            0,
-            393216});
-            this.udAlex6mLPFEnd.Name = "udAlex6mLPFEnd";
-            this.udAlex6mLPFEnd.Size = new System.Drawing.Size(75, 20);
-            this.udAlex6mLPFEnd.TabIndex = 22;
-            this.udAlex6mLPFEnd.TinyStep = false;
-            this.udAlex6mLPFEnd.Value = new decimal(new int[] {
-            6144,
-            0,
-            0,
-            131072});
-            // 
-            // udAlex6mLPFStart
-            // 
-            this.udAlex6mLPFStart.DecimalPlaces = 6;
-            this.udAlex6mLPFStart.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex6mLPFStart.Location = new System.Drawing.Point(341, 181);
-            this.udAlex6mLPFStart.Maximum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            this.udAlex6mLPFStart.Minimum = new decimal(new int[] {
-            34,
-            0,
-            0,
-            0});
-            this.udAlex6mLPFStart.Name = "udAlex6mLPFStart";
-            this.udAlex6mLPFStart.Size = new System.Drawing.Size(75, 20);
-            this.udAlex6mLPFStart.TabIndex = 21;
-            this.udAlex6mLPFStart.TinyStep = false;
-            this.udAlex6mLPFStart.Value = new decimal(new int[] {
-            35600001,
-            0,
-            0,
-            393216});
-            this.udAlex6mLPFStart.ValueChanged += new System.EventHandler(this.udAlex6mLPFStart_ValueChanged);
-            // 
-            // udAlex20mLPFStart
-            // 
-            this.udAlex20mLPFStart.DecimalPlaces = 6;
-            this.udAlex20mLPFStart.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex20mLPFStart.Location = new System.Drawing.Point(341, 103);
-            this.udAlex20mLPFStart.Maximum = new decimal(new int[] {
-            12,
-            0,
-            0,
-            0});
-            this.udAlex20mLPFStart.Minimum = new decimal(new int[] {
-            7,
-            0,
-            0,
-            0});
-            this.udAlex20mLPFStart.Name = "udAlex20mLPFStart";
-            this.udAlex20mLPFStart.Size = new System.Drawing.Size(75, 20);
-            this.udAlex20mLPFStart.TabIndex = 20;
-            this.udAlex20mLPFStart.TinyStep = false;
-            this.udAlex20mLPFStart.Value = new decimal(new int[] {
-            8000001,
-            0,
-            0,
-            393216});
-            this.udAlex20mLPFStart.ValueChanged += new System.EventHandler(this.udAlex20mLPFStart_ValueChanged);
-            // 
-            // udAlex15mLPFStart
-            // 
-            this.udAlex15mLPFStart.DecimalPlaces = 6;
-            this.udAlex15mLPFStart.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex15mLPFStart.Location = new System.Drawing.Point(341, 129);
-            this.udAlex15mLPFStart.Maximum = new decimal(new int[] {
-            21,
-            0,
-            0,
-            0});
-            this.udAlex15mLPFStart.Minimum = new decimal(new int[] {
-            155,
-            0,
-            0,
-            65536});
-            this.udAlex15mLPFStart.Name = "udAlex15mLPFStart";
-            this.udAlex15mLPFStart.Size = new System.Drawing.Size(75, 20);
-            this.udAlex15mLPFStart.TabIndex = 19;
-            this.udAlex15mLPFStart.TinyStep = false;
-            this.udAlex15mLPFStart.Value = new decimal(new int[] {
-            16500001,
-            0,
-            0,
-            393216});
-            this.udAlex15mLPFStart.ValueChanged += new System.EventHandler(this.udAlex15mLPFStart_ValueChanged);
-            // 
-            // udAlex20mLPFEnd
-            // 
-            this.udAlex20mLPFEnd.DecimalPlaces = 6;
-            this.udAlex20mLPFEnd.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex20mLPFEnd.Location = new System.Drawing.Point(432, 103);
-            this.udAlex20mLPFEnd.Maximum = new decimal(new int[] {
-            165,
-            0,
-            0,
-            65536});
-            this.udAlex20mLPFEnd.Minimum = new decimal(new int[] {
-            12000001,
-            0,
-            0,
-            393216});
-            this.udAlex20mLPFEnd.Name = "udAlex20mLPFEnd";
-            this.udAlex20mLPFEnd.Size = new System.Drawing.Size(75, 20);
-            this.udAlex20mLPFEnd.TabIndex = 18;
-            this.udAlex20mLPFEnd.TinyStep = false;
-            this.udAlex20mLPFEnd.Value = new decimal(new int[] {
-            165,
-            0,
-            0,
-            65536});
-            this.udAlex20mLPFEnd.ValueChanged += new System.EventHandler(this.udAlex20mLPFEnd_ValueChanged);
-            // 
-            // udAlex15mLPFEnd
-            // 
-            this.udAlex15mLPFEnd.DecimalPlaces = 6;
-            this.udAlex15mLPFEnd.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex15mLPFEnd.Location = new System.Drawing.Point(432, 129);
-            this.udAlex15mLPFEnd.Maximum = new decimal(new int[] {
-            25000000,
-            0,
-            0,
-            393216});
-            this.udAlex15mLPFEnd.Minimum = new decimal(new int[] {
-            23000001,
-            0,
-            0,
-            393216});
-            this.udAlex15mLPFEnd.Name = "udAlex15mLPFEnd";
-            this.udAlex15mLPFEnd.Size = new System.Drawing.Size(75, 20);
-            this.udAlex15mLPFEnd.TabIndex = 17;
-            this.udAlex15mLPFEnd.TinyStep = false;
-            this.udAlex15mLPFEnd.Value = new decimal(new int[] {
-            24000000,
-            0,
-            0,
-            393216});
-            this.udAlex15mLPFEnd.ValueChanged += new System.EventHandler(this.udAlex15mLPFEnd_ValueChanged);
-            // 
-            // udAlex40mLPFEnd
-            // 
-            this.udAlex40mLPFEnd.DecimalPlaces = 6;
-            this.udAlex40mLPFEnd.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex40mLPFEnd.Location = new System.Drawing.Point(433, 77);
-            this.udAlex40mLPFEnd.Maximum = new decimal(new int[] {
-            80,
-            0,
-            0,
-            65536});
-            this.udAlex40mLPFEnd.Minimum = new decimal(new int[] {
-            6500001,
-            0,
-            0,
-            393216});
-            this.udAlex40mLPFEnd.Name = "udAlex40mLPFEnd";
-            this.udAlex40mLPFEnd.Size = new System.Drawing.Size(75, 20);
-            this.udAlex40mLPFEnd.TabIndex = 16;
-            this.udAlex40mLPFEnd.TinyStep = false;
-            this.udAlex40mLPFEnd.Value = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.udAlex40mLPFEnd.ValueChanged += new System.EventHandler(this.udAlex40mLPFEnd_ValueChanged);
-            // 
-            // udAlex40mLPFStart
-            // 
-            this.udAlex40mLPFStart.DecimalPlaces = 6;
-            this.udAlex40mLPFStart.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex40mLPFStart.Location = new System.Drawing.Point(341, 77);
-            this.udAlex40mLPFStart.Maximum = new decimal(new int[] {
-            65,
-            0,
-            0,
-            65536});
-            this.udAlex40mLPFStart.Minimum = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.udAlex40mLPFStart.Name = "udAlex40mLPFStart";
-            this.udAlex40mLPFStart.Size = new System.Drawing.Size(75, 20);
-            this.udAlex40mLPFStart.TabIndex = 15;
-            this.udAlex40mLPFStart.TinyStep = false;
-            this.udAlex40mLPFStart.Value = new decimal(new int[] {
-            5000001,
-            0,
-            0,
-            393216});
-            this.udAlex40mLPFStart.ValueChanged += new System.EventHandler(this.udAlex40mLPFStart_ValueChanged);
-            // 
-            // udAlex80mLPFEnd
-            // 
-            this.udAlex80mLPFEnd.DecimalPlaces = 6;
-            this.udAlex80mLPFEnd.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex80mLPFEnd.Location = new System.Drawing.Point(433, 51);
-            this.udAlex80mLPFEnd.Maximum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.udAlex80mLPFEnd.Minimum = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            this.udAlex80mLPFEnd.Name = "udAlex80mLPFEnd";
-            this.udAlex80mLPFEnd.Size = new System.Drawing.Size(75, 20);
-            this.udAlex80mLPFEnd.TabIndex = 14;
-            this.udAlex80mLPFEnd.TinyStep = false;
-            this.udAlex80mLPFEnd.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.udAlex80mLPFEnd.ValueChanged += new System.EventHandler(this.udAlex80mLPFEnd_ValueChanged);
-            // 
-            // udAlex80mLPFStart
-            // 
-            this.udAlex80mLPFStart.DecimalPlaces = 6;
-            this.udAlex80mLPFStart.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex80mLPFStart.Location = new System.Drawing.Point(341, 51);
-            this.udAlex80mLPFStart.Maximum = new decimal(new int[] {
-            2999999,
-            0,
-            0,
-            393216});
-            this.udAlex80mLPFStart.Minimum = new decimal(new int[] {
-            18,
-            0,
-            0,
-            65536});
-            this.udAlex80mLPFStart.Name = "udAlex80mLPFStart";
-            this.udAlex80mLPFStart.Size = new System.Drawing.Size(75, 20);
-            this.udAlex80mLPFStart.TabIndex = 13;
-            this.udAlex80mLPFStart.TinyStep = false;
-            this.udAlex80mLPFStart.Value = new decimal(new int[] {
-            2500001,
-            0,
-            0,
-            393216});
-            this.udAlex80mLPFStart.ValueChanged += new System.EventHandler(this.udAlex80mLPFStart_ValueChanged);
-            // 
-            // udAlex160mLPFEnd
-            // 
-            this.udAlex160mLPFEnd.DecimalPlaces = 6;
-            this.udAlex160mLPFEnd.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex160mLPFEnd.Location = new System.Drawing.Point(433, 25);
-            this.udAlex160mLPFEnd.Maximum = new decimal(new int[] {
-            25,
-            0,
-            0,
-            65536});
-            this.udAlex160mLPFEnd.Minimum = new decimal(new int[] {
-            15,
-            0,
-            0,
-            65536});
-            this.udAlex160mLPFEnd.Name = "udAlex160mLPFEnd";
-            this.udAlex160mLPFEnd.Size = new System.Drawing.Size(75, 20);
-            this.udAlex160mLPFEnd.TabIndex = 12;
-            this.udAlex160mLPFEnd.TinyStep = false;
-            this.udAlex160mLPFEnd.Value = new decimal(new int[] {
-            25,
-            0,
-            0,
-            65536});
-            this.udAlex160mLPFEnd.ValueChanged += new System.EventHandler(this.udAlex160mLPFEnd_ValueChanged);
-            // 
-            // udAlex160mLPFStart
-            // 
-            this.udAlex160mLPFStart.DecimalPlaces = 6;
-            this.udAlex160mLPFStart.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.udAlex160mLPFStart.Location = new System.Drawing.Point(341, 25);
-            this.udAlex160mLPFStart.Maximum = new decimal(new int[] {
-            1999999,
-            0,
-            0,
-            393216});
-            this.udAlex160mLPFStart.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udAlex160mLPFStart.Name = "udAlex160mLPFStart";
-            this.udAlex160mLPFStart.Size = new System.Drawing.Size(75, 20);
-            this.udAlex160mLPFStart.TabIndex = 11;
-            this.udAlex160mLPFStart.TinyStep = false;
-            this.udAlex160mLPFStart.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.udAlex160mLPFStart.ValueChanged += new System.EventHandler(this.udAlex160mLPFStart_ValueChanged);
             // 
             // panelAlex1HPFControl
             // 
@@ -24803,6 +24362,447 @@
             this.labelTS130.Text = "6.5 MHz";
             this.labelTS130.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // labelTS120
+            // 
+            this.labelTS120.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS120.Image = null;
+            this.labelTS120.Location = new System.Drawing.Point(510, 185);
+            this.labelTS120.Name = "labelTS120";
+            this.labelTS120.Size = new System.Drawing.Size(62, 16);
+            this.labelTS120.TabIndex = 68;
+            this.labelTS120.Text = "6m/ByPass";
+            this.labelTS120.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // labelTS117
+            // 
+            this.labelTS117.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTS117.Image = null;
+            this.labelTS117.Location = new System.Drawing.Point(395, 0);
+            this.labelTS117.Name = "labelTS117";
+            this.labelTS117.Size = new System.Drawing.Size(56, 16);
+            this.labelTS117.TabIndex = 67;
+            this.labelTS117.Text = "LPF";
+            this.labelTS117.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // udAlex10mLPFEnd
+            // 
+            this.udAlex10mLPFEnd.DecimalPlaces = 6;
+            this.udAlex10mLPFEnd.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex10mLPFEnd.Location = new System.Drawing.Point(432, 155);
+            this.udAlex10mLPFEnd.Maximum = new decimal(new int[] {
+            356,
+            0,
+            0,
+            65536});
+            this.udAlex10mLPFEnd.Minimum = new decimal(new int[] {
+            30000001,
+            0,
+            0,
+            393216});
+            this.udAlex10mLPFEnd.Name = "udAlex10mLPFEnd";
+            this.udAlex10mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex10mLPFEnd.TabIndex = 24;
+            this.udAlex10mLPFEnd.TinyStep = false;
+            this.udAlex10mLPFEnd.Value = new decimal(new int[] {
+            356,
+            0,
+            0,
+            65536});
+            this.udAlex10mLPFEnd.ValueChanged += new System.EventHandler(this.udAlex10mLPFEnd_ValueChanged);
+            // 
+            // udAlex10mLPFStart
+            // 
+            this.udAlex10mLPFStart.DecimalPlaces = 6;
+            this.udAlex10mLPFStart.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex10mLPFStart.Location = new System.Drawing.Point(341, 155);
+            this.udAlex10mLPFStart.Maximum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.udAlex10mLPFStart.Minimum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+            this.udAlex10mLPFStart.Name = "udAlex10mLPFStart";
+            this.udAlex10mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex10mLPFStart.TabIndex = 23;
+            this.udAlex10mLPFStart.TinyStep = false;
+            this.udAlex10mLPFStart.Value = new decimal(new int[] {
+            24000001,
+            0,
+            0,
+            393216});
+            this.udAlex10mLPFStart.ValueChanged += new System.EventHandler(this.udAlex10mLPFStart_ValueChanged);
+            // 
+            // udAlex6mLPFEnd
+            // 
+            this.udAlex6mLPFEnd.DecimalPlaces = 6;
+            this.udAlex6mLPFEnd.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex6mLPFEnd.Location = new System.Drawing.Point(432, 181);
+            this.udAlex6mLPFEnd.Maximum = new decimal(new int[] {
+            6144,
+            0,
+            0,
+            131072});
+            this.udAlex6mLPFEnd.Minimum = new decimal(new int[] {
+            50000001,
+            0,
+            0,
+            393216});
+            this.udAlex6mLPFEnd.Name = "udAlex6mLPFEnd";
+            this.udAlex6mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex6mLPFEnd.TabIndex = 22;
+            this.udAlex6mLPFEnd.TinyStep = false;
+            this.udAlex6mLPFEnd.Value = new decimal(new int[] {
+            6144,
+            0,
+            0,
+            131072});
+            // 
+            // udAlex6mLPFStart
+            // 
+            this.udAlex6mLPFStart.DecimalPlaces = 6;
+            this.udAlex6mLPFStart.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex6mLPFStart.Location = new System.Drawing.Point(341, 181);
+            this.udAlex6mLPFStart.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.udAlex6mLPFStart.Minimum = new decimal(new int[] {
+            34,
+            0,
+            0,
+            0});
+            this.udAlex6mLPFStart.Name = "udAlex6mLPFStart";
+            this.udAlex6mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex6mLPFStart.TabIndex = 21;
+            this.udAlex6mLPFStart.TinyStep = false;
+            this.udAlex6mLPFStart.Value = new decimal(new int[] {
+            35600001,
+            0,
+            0,
+            393216});
+            this.udAlex6mLPFStart.ValueChanged += new System.EventHandler(this.udAlex6mLPFStart_ValueChanged);
+            // 
+            // udAlex20mLPFStart
+            // 
+            this.udAlex20mLPFStart.DecimalPlaces = 6;
+            this.udAlex20mLPFStart.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex20mLPFStart.Location = new System.Drawing.Point(341, 103);
+            this.udAlex20mLPFStart.Maximum = new decimal(new int[] {
+            12,
+            0,
+            0,
+            0});
+            this.udAlex20mLPFStart.Minimum = new decimal(new int[] {
+            7,
+            0,
+            0,
+            0});
+            this.udAlex20mLPFStart.Name = "udAlex20mLPFStart";
+            this.udAlex20mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex20mLPFStart.TabIndex = 20;
+            this.udAlex20mLPFStart.TinyStep = false;
+            this.udAlex20mLPFStart.Value = new decimal(new int[] {
+            8000001,
+            0,
+            0,
+            393216});
+            this.udAlex20mLPFStart.ValueChanged += new System.EventHandler(this.udAlex20mLPFStart_ValueChanged);
+            // 
+            // udAlex15mLPFStart
+            // 
+            this.udAlex15mLPFStart.DecimalPlaces = 6;
+            this.udAlex15mLPFStart.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex15mLPFStart.Location = new System.Drawing.Point(341, 129);
+            this.udAlex15mLPFStart.Maximum = new decimal(new int[] {
+            21,
+            0,
+            0,
+            0});
+            this.udAlex15mLPFStart.Minimum = new decimal(new int[] {
+            155,
+            0,
+            0,
+            65536});
+            this.udAlex15mLPFStart.Name = "udAlex15mLPFStart";
+            this.udAlex15mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex15mLPFStart.TabIndex = 19;
+            this.udAlex15mLPFStart.TinyStep = false;
+            this.udAlex15mLPFStart.Value = new decimal(new int[] {
+            16500001,
+            0,
+            0,
+            393216});
+            this.udAlex15mLPFStart.ValueChanged += new System.EventHandler(this.udAlex15mLPFStart_ValueChanged);
+            // 
+            // udAlex20mLPFEnd
+            // 
+            this.udAlex20mLPFEnd.DecimalPlaces = 6;
+            this.udAlex20mLPFEnd.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex20mLPFEnd.Location = new System.Drawing.Point(432, 103);
+            this.udAlex20mLPFEnd.Maximum = new decimal(new int[] {
+            165,
+            0,
+            0,
+            65536});
+            this.udAlex20mLPFEnd.Minimum = new decimal(new int[] {
+            12000001,
+            0,
+            0,
+            393216});
+            this.udAlex20mLPFEnd.Name = "udAlex20mLPFEnd";
+            this.udAlex20mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex20mLPFEnd.TabIndex = 18;
+            this.udAlex20mLPFEnd.TinyStep = false;
+            this.udAlex20mLPFEnd.Value = new decimal(new int[] {
+            165,
+            0,
+            0,
+            65536});
+            this.udAlex20mLPFEnd.ValueChanged += new System.EventHandler(this.udAlex20mLPFEnd_ValueChanged);
+            // 
+            // udAlex15mLPFEnd
+            // 
+            this.udAlex15mLPFEnd.DecimalPlaces = 6;
+            this.udAlex15mLPFEnd.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex15mLPFEnd.Location = new System.Drawing.Point(432, 129);
+            this.udAlex15mLPFEnd.Maximum = new decimal(new int[] {
+            25000000,
+            0,
+            0,
+            393216});
+            this.udAlex15mLPFEnd.Minimum = new decimal(new int[] {
+            23000001,
+            0,
+            0,
+            393216});
+            this.udAlex15mLPFEnd.Name = "udAlex15mLPFEnd";
+            this.udAlex15mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex15mLPFEnd.TabIndex = 17;
+            this.udAlex15mLPFEnd.TinyStep = false;
+            this.udAlex15mLPFEnd.Value = new decimal(new int[] {
+            24000000,
+            0,
+            0,
+            393216});
+            this.udAlex15mLPFEnd.ValueChanged += new System.EventHandler(this.udAlex15mLPFEnd_ValueChanged);
+            // 
+            // udAlex40mLPFEnd
+            // 
+            this.udAlex40mLPFEnd.DecimalPlaces = 6;
+            this.udAlex40mLPFEnd.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex40mLPFEnd.Location = new System.Drawing.Point(433, 77);
+            this.udAlex40mLPFEnd.Maximum = new decimal(new int[] {
+            80,
+            0,
+            0,
+            65536});
+            this.udAlex40mLPFEnd.Minimum = new decimal(new int[] {
+            6500001,
+            0,
+            0,
+            393216});
+            this.udAlex40mLPFEnd.Name = "udAlex40mLPFEnd";
+            this.udAlex40mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex40mLPFEnd.TabIndex = 16;
+            this.udAlex40mLPFEnd.TinyStep = false;
+            this.udAlex40mLPFEnd.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.udAlex40mLPFEnd.ValueChanged += new System.EventHandler(this.udAlex40mLPFEnd_ValueChanged);
+            // 
+            // udAlex40mLPFStart
+            // 
+            this.udAlex40mLPFStart.DecimalPlaces = 6;
+            this.udAlex40mLPFStart.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex40mLPFStart.Location = new System.Drawing.Point(341, 77);
+            this.udAlex40mLPFStart.Maximum = new decimal(new int[] {
+            65,
+            0,
+            0,
+            65536});
+            this.udAlex40mLPFStart.Minimum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.udAlex40mLPFStart.Name = "udAlex40mLPFStart";
+            this.udAlex40mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex40mLPFStart.TabIndex = 15;
+            this.udAlex40mLPFStart.TinyStep = false;
+            this.udAlex40mLPFStart.Value = new decimal(new int[] {
+            5000001,
+            0,
+            0,
+            393216});
+            this.udAlex40mLPFStart.ValueChanged += new System.EventHandler(this.udAlex40mLPFStart_ValueChanged);
+            // 
+            // udAlex80mLPFEnd
+            // 
+            this.udAlex80mLPFEnd.DecimalPlaces = 6;
+            this.udAlex80mLPFEnd.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex80mLPFEnd.Location = new System.Drawing.Point(433, 51);
+            this.udAlex80mLPFEnd.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udAlex80mLPFEnd.Minimum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.udAlex80mLPFEnd.Name = "udAlex80mLPFEnd";
+            this.udAlex80mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex80mLPFEnd.TabIndex = 14;
+            this.udAlex80mLPFEnd.TinyStep = false;
+            this.udAlex80mLPFEnd.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.udAlex80mLPFEnd.ValueChanged += new System.EventHandler(this.udAlex80mLPFEnd_ValueChanged);
+            // 
+            // udAlex80mLPFStart
+            // 
+            this.udAlex80mLPFStart.DecimalPlaces = 6;
+            this.udAlex80mLPFStart.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex80mLPFStart.Location = new System.Drawing.Point(341, 51);
+            this.udAlex80mLPFStart.Maximum = new decimal(new int[] {
+            2999999,
+            0,
+            0,
+            393216});
+            this.udAlex80mLPFStart.Minimum = new decimal(new int[] {
+            18,
+            0,
+            0,
+            65536});
+            this.udAlex80mLPFStart.Name = "udAlex80mLPFStart";
+            this.udAlex80mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex80mLPFStart.TabIndex = 13;
+            this.udAlex80mLPFStart.TinyStep = false;
+            this.udAlex80mLPFStart.Value = new decimal(new int[] {
+            2500001,
+            0,
+            0,
+            393216});
+            this.udAlex80mLPFStart.ValueChanged += new System.EventHandler(this.udAlex80mLPFStart_ValueChanged);
+            // 
+            // udAlex160mLPFEnd
+            // 
+            this.udAlex160mLPFEnd.DecimalPlaces = 6;
+            this.udAlex160mLPFEnd.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex160mLPFEnd.Location = new System.Drawing.Point(433, 25);
+            this.udAlex160mLPFEnd.Maximum = new decimal(new int[] {
+            25,
+            0,
+            0,
+            65536});
+            this.udAlex160mLPFEnd.Minimum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            65536});
+            this.udAlex160mLPFEnd.Name = "udAlex160mLPFEnd";
+            this.udAlex160mLPFEnd.Size = new System.Drawing.Size(75, 20);
+            this.udAlex160mLPFEnd.TabIndex = 12;
+            this.udAlex160mLPFEnd.TinyStep = false;
+            this.udAlex160mLPFEnd.Value = new decimal(new int[] {
+            25,
+            0,
+            0,
+            65536});
+            this.udAlex160mLPFEnd.ValueChanged += new System.EventHandler(this.udAlex160mLPFEnd_ValueChanged);
+            // 
+            // udAlex160mLPFStart
+            // 
+            this.udAlex160mLPFStart.DecimalPlaces = 6;
+            this.udAlex160mLPFStart.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.udAlex160mLPFStart.Location = new System.Drawing.Point(341, 25);
+            this.udAlex160mLPFStart.Maximum = new decimal(new int[] {
+            1999999,
+            0,
+            0,
+            393216});
+            this.udAlex160mLPFStart.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udAlex160mLPFStart.Name = "udAlex160mLPFStart";
+            this.udAlex160mLPFStart.Size = new System.Drawing.Size(75, 20);
+            this.udAlex160mLPFStart.TabIndex = 11;
+            this.udAlex160mLPFStart.TinyStep = false;
+            this.udAlex160mLPFStart.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.udAlex160mLPFStart.ValueChanged += new System.EventHandler(this.udAlex160mLPFStart_ValueChanged);
+            // 
             // panelBPFControl
             // 
             this.panelBPFControl.AutoScrollMargin = new System.Drawing.Size(0, 0);
@@ -25048,7 +25048,7 @@
             196608});
             this.ud9_5BPF1Start.Location = new System.Drawing.Point(101, 75);
             this.ud9_5BPF1Start.Maximum = new decimal(new int[] {
-            6,
+            9,
             0,
             0,
             0});
@@ -25179,7 +25179,7 @@
             196608});
             this.ud20BPF1Start.Location = new System.Drawing.Point(101, 127);
             this.ud20BPF1Start.Maximum = new decimal(new int[] {
-            24,
+            25,
             0,
             0,
             0});
@@ -70437,20 +70437,6 @@
             this.tpAlexFilterControl.PerformLayout();
             this.panelTS6.ResumeLayout(false);
             this.panelTS6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex10mLPFEnd)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex10mLPFStart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex6mLPFEnd)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex6mLPFStart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex20mLPFStart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex15mLPFStart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex20mLPFEnd)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex15mLPFEnd)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex40mLPFEnd)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex40mLPFStart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex80mLPFEnd)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex80mLPFStart)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex160mLPFEnd)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.udAlex160mLPFStart)).EndInit();
             this.panelAlex1HPFControl.ResumeLayout(false);
             this.panelAlex1HPFControl.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udAlex1_5HPFStart)).EndInit();
@@ -70467,6 +70453,20 @@
             ((System.ComponentModel.ISupportInitialize)(this.udAlex13HPFStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAlex6BPFStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.udAlex6BPFEnd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex10mLPFEnd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex10mLPFStart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex6mLPFEnd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex6mLPFStart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex20mLPFStart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex15mLPFStart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex20mLPFEnd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex15mLPFEnd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex40mLPFEnd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex40mLPFStart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex80mLPFEnd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex80mLPFStart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex160mLPFEnd)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.udAlex160mLPFStart)).EndInit();
             this.panelBPFControl.ResumeLayout(false);
             this.panelBPFControl.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ud1_5BPF1Start)).EndInit();
