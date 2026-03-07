@@ -3046,6 +3046,8 @@ namespace Thetis
             {
                 if (isTXProfileSettingDifferent<int>(dr, "FilterLow", (int)udTXFilterLow.Value, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<int>(dr, "FilterHigh", (int)udTXFilterHigh.Value, out sReportOut)) sReport += sReportOut;
+                if (isTXProfileSettingDifferent<string>(dr, "RXParaEQData", console.EQForm.ParaEQRXData, out sReportOut)) sReport += "RX EQ changed\n";
+                if (isTXProfileSettingDifferent<string>(dr, "TXParaEQData", console.EQForm.ParaEQTXData, out sReportOut)) sReport += "TX EQ changed\n";
                 if (isTXProfileSettingDifferent<int>(dr, "TXEQNumBands", console.EQForm.NumBands, out sReportOut)) sReport += sReportOut;
                 if (isTXProfileSettingDifferent<bool>(dr, "TXEQEnabled", console.EQForm.TXEQEnabled, out sReportOut)) sReport += sReportOut;
                 int[] eq = console.EQForm.TXEQ;
@@ -3240,6 +3242,8 @@ namespace Thetis
             {
                 if (DB.ConvertFromDBVal<int>(dr["FilterLow"]) != (int)udTXFilterLow.Value) return true;
                 if (DB.ConvertFromDBVal<int>(dr["FilterHigh"]) != (int)udTXFilterHigh.Value) return true;
+                if (DB.ConvertFromDBVal<string>(dr["RXParaEQData"]) != console.EQForm.ParaEQRXData) return true;
+                if (DB.ConvertFromDBVal<string>(dr["TXParaEQData"]) != console.EQForm.ParaEQTXData) return true;
                 if (DB.ConvertFromDBVal<int>(dr["TXEQNumBands"]) != console.EQForm.NumBands) return true;
                 if (DB.ConvertFromDBVal<bool>(dr["TXEQEnabled"]) != console.EQForm.TXEQEnabled) return true;
                 int[] eq = console.EQForm.TXEQ;
@@ -3603,6 +3607,8 @@ namespace Thetis
 
             dr["FilterLow"] = (int)udTXFilterLow.Value;
             dr["FilterHigh"] = (int)udTXFilterHigh.Value;
+            dr["RXParaEQData"] = console.EQForm.ParaEQRXData;
+            dr["TXParaEQData"] = console.EQForm.ParaEQTXData;
             dr["TXEQNumBands"] = console.EQForm.NumBands;
             dr["TXEQEnabled"] = console.EQForm.TXEQEnabled;
             int[] eq = console.EQForm.TXEQ;
@@ -9446,6 +9452,8 @@ namespace Thetis
                 chkVAC2Enable.Checked = false;
             }
 
+            console.EQForm.ParaEQRXData = (string)dr["RXParaEQData"];
+            console.EQForm.ParaEQTXData = (string)dr["TXParaEQData"];
             console.EQForm.TXEQEnabled = (bool)dr["TXEQEnabled"];
             console.EQForm.NumBands = (int)dr["TXEQNumBands"];
 
