@@ -199,30 +199,12 @@ namespace Thetis
             Common.RestoreForm(this, "EQForm", false);
             Common.ForceFormOnScreen(this); //MW0LGE [2.9.0.7]                                                       
 
-            _dspUpdateTimer = new System.Threading.Timer(
-                dspUpdateTimerTick,
-                null,
-                100,    // init delay
-                100);   // interval
-
             _initalising = false;
 
             _state.UsingLegacyEQ = chkLegacyEQ.Checked;
             setupLowHigh();
 
-            EventArgs e = EventArgs.Empty;
-
-            chkLegacyEQ_CheckedChanged(this, e);
-
-            if (_state.UsingLegacyEQ)
-            {
-                tbRXEQ_Scroll(this, e);
-                rad10Band_CheckedChanged(this, e);
-            }
-            else
-            {
-                radParaEQ_CheckedChanged(this, e);
-            }
+            chkLegacyEQ_CheckedChanged(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -2352,7 +2334,7 @@ namespace Thetis
 
         private void EQForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _dspUpdateTimer?.Dispose();
+            setupTimer(false);
 
             this.Hide();
             e.Cancel = true;
@@ -2739,8 +2721,19 @@ namespace Thetis
                 //console.radio.GetDSPTX(0).TXEQNumBands = 10;
             }
         }
-
-        public void setTXEQProfile(object sender, EventArgs e)
+        public void SetTXProfile()
+        {
+            if (_state.UsingLegacyEQ)
+            {
+                setTXEQProfile(this, EventArgs.Empty);
+            }
+            else
+            {
+                setupWDSPdataFromParaEQ(true);
+                setupWDSPdataFromParaEQ(false);
+            }
+        }
+        private void setTXEQProfile(object sender, EventArgs e)
         {
             if (!_state.UsingLegacyEQ) return;
 
@@ -2848,6 +2841,7 @@ namespace Thetis
             if (_initalising) return;
 
             _state.UsingLegacyEQ = chkLegacyEQ.Checked;
+            setupTimer(!_state.UsingLegacyEQ);
 
             console.radio.GetDSPRX(0, 0).LegacyEQ = _state.UsingLegacyEQ;
             console.radio.GetDSPRX(0, 1).LegacyEQ = _state.UsingLegacyEQ;
@@ -2870,6 +2864,7 @@ namespace Thetis
 
                 tbRXEQ_Scroll(this, EventArgs.Empty);
                 rad10Band_CheckedChanged(this, EventArgs.Empty);
+                setTXEQProfile(this, EventArgs.Empty);
             }
             else
             {
@@ -3009,6 +3004,8 @@ namespace Thetis
 
         private void sendRXDspUpdate()
         {
+            if (_state.UsingLegacyEQ) return;
+
             int nfreqs = _tempRX_BandCount;
 
             double[] F = new double[nfreqs + 1];
@@ -3050,6 +3047,8 @@ namespace Thetis
 
         private void sendTXDspUpdate()
         {
+            if (_state.UsingLegacyEQ) return;
+
             int nfreqs = _tempTX_BandCount;
 
             double[] F = new double[nfreqs + 1];
@@ -3387,6 +3386,7 @@ namespace Thetis
 
                 chkParaEQ_enabled.CheckedChanged -= chkParaEQ_enabled_CheckedChanged;
                 chkParaEQ_enabled.Checked = console.RXEQ;// _state.RXenabled;
+                _state.RXenabled = console.RXEQ;
                 chkParaEQ_enabled.CheckedChanged += chkParaEQ_enabled_CheckedChanged;
             }
             else if (radParaEQ_TX.Checked)
@@ -3394,6 +3394,7 @@ namespace Thetis
                 _state.RXselected = false;
 
                 chkParaEQ_enabled.CheckedChanged -= chkParaEQ_enabled_CheckedChanged;
+                _state.TXenabled = console.TXEQ;
                 chkParaEQ_enabled.Checked = console.TXEQ;// _state.TXenabled;
                 chkParaEQ_enabled.CheckedChanged += chkParaEQ_enabled_CheckedChanged;
             }
@@ -3598,6 +3599,19 @@ namespace Thetis
                 enableTxEq(_state.TXenabled);
             }
             chkParaEQ_enabled.CheckedChanged += chkParaEQ_enabled_CheckedChanged;
+        }
+        private void setupTimer(bool run)
+        {
+            _dspUpdateTimer?.Dispose();
+
+            if (run)
+            {
+                _dspUpdateTimer = new System.Threading.Timer(
+                    dspUpdateTimerTick,
+                    null,
+                    100,    // init delay
+                    100);   // interval
+            }
         }
     }
 }
