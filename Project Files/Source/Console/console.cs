@@ -580,18 +580,18 @@ namespace Thetis
         // ======================================================
         public Console(string[] args)
         {
-            DialogResult drr = MessageBox.Show("This version will break stuff.\n" +
-                "There are lots of things that need testing/fixing. Ok to continue?",
-                "Eeeeeeek",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Stop, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
+            //DialogResult drr = MessageBox.Show("This version will break stuff.\n" +
+            //    "There are lots of things that need testing/fixing. Ok to continue?",
+            //    "Eeeeeeek",
+            //    MessageBoxButtons.YesNo,
+            //    MessageBoxIcon.Stop, MessageBoxDefaultButton.Button2, Common.MB_TOPMOST);
 
-            if (drr == DialogResult.No)
-            {
-                _exitConsoleInDispose = false;
-                Environment.Exit(1);
-                return;
-            }
+            //if (drr == DialogResult.No)
+            //{
+            //    _exitConsoleInDispose = false;
+            //    Environment.Exit(1);
+            //    return;
+            //}
 
             //run high, until we have completed, then set to configured value, see near end of function
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;

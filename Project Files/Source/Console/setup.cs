@@ -36827,7 +36827,11 @@ namespace Thetis
             MeterManager.clsVoiceRecordPlay vrp = mi as MeterManager.clsVoiceRecordPlay;
             if (vrp == null) return;
 
-            if (vrp.GetSlotLocked(_selected_voice_slot)) return;
+            if (vrp.GetSlotLocked(_selected_voice_slot))
+            {
+                MessageBox.Show("This slot is locked. Unlock it if you want to load a recording into it.", "Locked", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return;
+            }
 
             string load_filename = null;
             using (OpenFileDialog dlg = new OpenFileDialog())
@@ -36862,7 +36866,25 @@ namespace Thetis
 
             console.ARP.DeleteRecording(fullPath, out _);
 
-            if (File.Exists(fullPath)) return; // unable to delete
+            if (File.Exists(fullPath))
+            {
+                MessageBox.Show("A recording already exists that could not be removed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return; // unable to delete
+            }
+
+            string folder = System.IO.Path.Combine(console.ARP.AudioFolder, vrp.UniqueID);
+            try
+            {
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to load WAV file to slot.\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, Common.MB_TOPMOST);
+                return;
+            }
 
             try
             {
@@ -36888,6 +36910,11 @@ namespace Thetis
 
             string file = "Slot_" + (_selected_voice_slot + 1).ToString() + ".wav";
             string fullPath = System.IO.Path.Combine(console.ARP.AudioFolder, vrp.UniqueID, file);
+
+            if (!File.Exists(fullPath))
+            {
+                return;
+            }
             
             bool jsonok = console.ARP.GetJSONDetailsFromFile(fullPath, out clsAudioRecordPlayback.RecordingJsonModel json_data);
             if (jsonok)
