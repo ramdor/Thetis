@@ -2808,7 +2808,7 @@ namespace Thetis
             chkPHROTReverse_CheckedChanged(this, e);
 
             // TXEQ
-            console.EQForm.setTXEQProfile(this, e);
+            console.EQForm.SetTXProfile();
 
             //ADC assignment
             radDDCADC_CheckedChanged(this, e);

@@ -1301,7 +1301,7 @@ PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex
                 || strcmp (names[i],"ASIO Multimedia Driver")          == 0
                 || strncmp(names[i],"Premiere",8)                      == 0   //"Premiere Elements Windows Sound 1.0"
                 || strncmp(names[i],"Adobe",5)                         == 0   //"Adobe Default Windows Sound 1.5"
-                || strcmp (names[i], szData)                            == 0   //driver that cmASIO is using, if there is one //[2.10.3.11]MW0LGE portaudio W4WMT
+                || strcmp (names[i], szData)                           == 0   //driver that cmASIO is using, if there is one //[2.10.3.11]MW0LGE portaudio W4WMT
                )
             {
                 PA_DEBUG(("BLACKLISTED!!!\n"));

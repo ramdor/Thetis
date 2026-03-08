@@ -159,7 +159,24 @@ namespace Thetis
         private NumericUpDownTS nudParaEQ_preamp;
         private PictureBox pbParaEQ_live_warning;
         private PanelTS pnlParaEQ2;
-        private RadioButtonTS radParaEQ_5;        
+        private RadioButtonTS radParaEQ_5;
+
+        private System.Threading.Timer _dspUpdateTimer;
+        private bool _wdspIsBusy = false;
+        private object _dspLock = new object();
+
+        // Temp buffers for RX and TX data
+        private bool _pendingRX_Update = false;
+        private double[] _tempRX_F;
+        private double[] _tempRX_G;
+        private double[] _tempRX_Q;
+        private int _tempRX_BandCount;
+
+        private bool _pendingTX_Update = false;
+        private double[] _tempTX_F;
+        private double[] _tempTX_G;
+        private double[] _tempTX_Q;
+        private int _tempTX_BandCount;
         #endregion
 
         #region Constructor and Destructor
@@ -187,19 +204,7 @@ namespace Thetis
             _state.UsingLegacyEQ = chkLegacyEQ.Checked;
             setupLowHigh();
 
-            EventArgs e = EventArgs.Empty;
-
-            chkLegacyEQ_CheckedChanged(this, e);
-
-            if (_state.UsingLegacyEQ)
-            {
-                tbRXEQ_Scroll(this, e);
-                rad10Band_CheckedChanged(this, e);
-            }
-            else
-            {
-                radParaEQ_CheckedChanged(this, e);
-            }
+            chkLegacyEQ_CheckedChanged(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -2329,6 +2334,8 @@ namespace Thetis
 
         private void EQForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            setupTimer(false);
+
             this.Hide();
             e.Cancel = true;
             Common.SaveForm(this, "EQForm");
@@ -2714,8 +2721,19 @@ namespace Thetis
                 //console.radio.GetDSPTX(0).TXEQNumBands = 10;
             }
         }
-
-        public void setTXEQProfile(object sender, EventArgs e)
+        public void SetTXProfile()
+        {
+            if (_state.UsingLegacyEQ)
+            {
+                setTXEQProfile(this, EventArgs.Empty);
+            }
+            else
+            {
+                setupWDSPdataFromParaEQ(true);
+                setupWDSPdataFromParaEQ(false);
+            }
+        }
+        private void setTXEQProfile(object sender, EventArgs e)
         {
             if (!_state.UsingLegacyEQ) return;
 
@@ -2823,6 +2841,7 @@ namespace Thetis
             if (_initalising) return;
 
             _state.UsingLegacyEQ = chkLegacyEQ.Checked;
+            setupTimer(!_state.UsingLegacyEQ);
 
             console.radio.GetDSPRX(0, 0).LegacyEQ = _state.UsingLegacyEQ;
             console.radio.GetDSPRX(0, 1).LegacyEQ = _state.UsingLegacyEQ;
@@ -2845,6 +2864,7 @@ namespace Thetis
 
                 tbRXEQ_Scroll(this, EventArgs.Empty);
                 rad10Band_CheckedChanged(this, EventArgs.Empty);
+                setTXEQProfile(this, EventArgs.Empty);
             }
             else
             {
@@ -2897,41 +2917,129 @@ namespace Thetis
             if (is_rx && (_state.RX_F == null || _state.RX_G == null || _state.RX_Q == null)) return;
             if (!is_rx && (_state.TX_F == null || _state.TX_G == null || _state.TX_Q == null)) return;
 
-            int nfreqs = is_rx ? _state.RX_BandCount : _state.TX_BandCount;
+            lock (_dspLock)
+            {
+                if (is_rx)
+                {
+                    _tempRX_BandCount = _state.RX_BandCount;
+                    _tempRX_F = (double[])_state.RX_F.Clone();
+                    _tempRX_G = (double[])_state.RX_G.Clone();
+                    _tempRX_Q = (double[])_state.RX_Q.Clone();
+                    _pendingRX_Update = true;
+                }
+                else
+                {
+                    _tempTX_BandCount = _state.TX_BandCount;
+                    _tempTX_F = (double[])_state.TX_F.Clone();
+                    _tempTX_G = (double[])_state.TX_G.Clone();
+                    _tempTX_Q = (double[])_state.TX_Q.Clone();
+                    _pendingTX_Update = true;
+                }
+            }
+        }
+        private void dspUpdateTimerTick(object state)
+        {
+            lock (_dspLock)
+            {
+                if (_wdspIsBusy) return;
+
+                if (_pendingRX_Update)
+                {
+                    _pendingRX_Update = false;
+                    sendRXDspUpdate();
+                    return; // one at a time
+                }
+
+                if (_pendingTX_Update)
+                {
+                    _pendingTX_Update = false;
+                    sendTXDspUpdate();
+                }
+            }
+        }
+
+        private void sendRXDspUpdate()
+        {
+            if (_state.UsingLegacyEQ) return;
+
+            int nfreqs = _tempRX_BandCount;
 
             double[] F = new double[nfreqs + 1];
             double[] G = new double[nfreqs + 1];
             double[] Q = new double[nfreqs + 1];
 
             F[0] = 0.0;
-            G[0] = is_rx ? _state.RX_Preamp : _state.TX_Preamp;
+            G[0] = _state.RX_Preamp;
             Q[0] = 0.0;
 
             for (int n = 0; n < nfreqs; n++)
             {
-                double freq = is_rx ? _state.RX_F[n] : _state.TX_F[n];
-                double gain = is_rx ? _state.RX_G[n] : _state.TX_G[n];
-                double q = is_rx ? _state.RX_Q[n] : _state.TX_Q[n];
-
-                F[n + 1] = freq;
-                G[n + 1] = gain;
-                Q[n + 1] = q;
+                F[n + 1] = _tempRX_F[n];
+                G[n + 1] = _tempRX_G[n];
+                Q[n + 1] = _tempRX_Q[n];
             }
 
-            unsafe
+            try
             {
-                fixed (double* Fptr = &F[0], Gptr = &G[0], Qptr = &Q[0])
+                _wdspIsBusy = true;
+
+                unsafe
                 {
-                    if (is_rx)
+                    fixed (double* Fptr = &F[0], Gptr = &G[0], Qptr = &Q[0])
                     {
                         WDSP.SetRXAEQProfile(WDSP.id(0, 0), nfreqs, Fptr, Gptr, _state.RX_ParametricEQ ? Qptr : null);
                         WDSP.SetRXAEQProfile(WDSP.id(0, 1), nfreqs, Fptr, Gptr, _state.RX_ParametricEQ ? Qptr : null);
                     }
-                    else
+                }
+
+                _wdspIsBusy = false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"WDSP RX update error: {ex.Message}");
+                _wdspIsBusy = false;
+            }
+        }
+
+        private void sendTXDspUpdate()
+        {
+            if (_state.UsingLegacyEQ) return;
+
+            int nfreqs = _tempTX_BandCount;
+
+            double[] F = new double[nfreqs + 1];
+            double[] G = new double[nfreqs + 1];
+            double[] Q = new double[nfreqs + 1];
+
+            F[0] = 0.0;
+            G[0] = _state.TX_Preamp;
+            Q[0] = 0.0;
+
+            for (int n = 0; n < nfreqs; n++)
+            {
+                F[n + 1] = _tempTX_F[n];
+                G[n + 1] = _tempTX_G[n];
+                Q[n + 1] = _tempTX_Q[n];
+            }
+
+            try
+            {
+                _wdspIsBusy = true;
+
+                unsafe
+                {
+                    fixed (double* Fptr = &F[0], Gptr = &G[0], Qptr = &Q[0])
                     {
                         WDSP.SetTXAEQProfile(WDSP.id(1, 0), nfreqs, Fptr, Gptr, _state.TX_ParametricEQ ? Qptr : null);
                     }
                 }
+
+                _wdspIsBusy = false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"WDSP TX update error: {ex.Message}");
+                _wdspIsBusy = false;
             }
         }
 
@@ -3234,6 +3342,7 @@ namespace Thetis
 
                 chkParaEQ_enabled.CheckedChanged -= chkParaEQ_enabled_CheckedChanged;
                 chkParaEQ_enabled.Checked = console.RXEQ;// _state.RXenabled;
+                _state.RXenabled = console.RXEQ;
                 chkParaEQ_enabled.CheckedChanged += chkParaEQ_enabled_CheckedChanged;
             }
             else if (radParaEQ_TX.Checked)
@@ -3241,6 +3350,7 @@ namespace Thetis
                 _state.RXselected = false;
 
                 chkParaEQ_enabled.CheckedChanged -= chkParaEQ_enabled_CheckedChanged;
+                _state.TXenabled = console.TXEQ;
                 chkParaEQ_enabled.Checked = console.TXEQ;// _state.TXenabled;
                 chkParaEQ_enabled.CheckedChanged += chkParaEQ_enabled_CheckedChanged;
             }
@@ -3371,10 +3481,10 @@ namespace Thetis
         }
         public void DSPOptionsChanged()
         {
-            bool warningRX = console.radio.GetDSPRX(0, 0).FilterSize > 1024 ||
-                console.radio.GetDSPRX(0, 1).FilterSize > 1024;
+            bool warningRX = console.radio.GetDSPRX(0, 0).FilterSize > 2048 ||
+                console.radio.GetDSPRX(0, 1).FilterSize > 2048;
 
-            bool warningTX = console.radio.GetDSPTX(0).FilterSize > 1024;
+            bool warningTX = console.radio.GetDSPTX(0).FilterSize > 2048;
 
             bool warn = (_state.RXselected && warningRX) || (!_state.RXselected && warningTX);
 
@@ -3445,6 +3555,19 @@ namespace Thetis
                 enableTxEq(_state.TXenabled);
             }
             chkParaEQ_enabled.CheckedChanged += chkParaEQ_enabled_CheckedChanged;
+        }
+        private void setupTimer(bool run)
+        {
+            _dspUpdateTimer?.Dispose();
+
+            if (run)
+            {
+                _dspUpdateTimer = new System.Threading.Timer(
+                    dspUpdateTimerTick,
+                    null,
+                    100,    // init delay
+                    100);   // interval
+            }
         }
     }
 }
