@@ -2910,50 +2910,6 @@ namespace Thetis
             updateBandData();
         }
 
-        //private void setupWDSPdataFromParaEQ(bool is_rx)
-        //{
-        //    if (_state.UsingLegacyEQ) return;
-
-        //    if (is_rx && (_state.RX_F == null || _state.RX_G == null || _state.RX_Q == null)) return;
-        //    if (!is_rx && (_state.TX_F == null || _state.TX_G == null || _state.TX_Q == null)) return;
-
-        //    int nfreqs = is_rx ? _state.RX_BandCount : _state.TX_BandCount;
-
-        //    double[] F = new double[nfreqs + 1];
-        //    double[] G = new double[nfreqs + 1];
-        //    double[] Q = new double[nfreqs + 1];
-
-        //    F[0] = 0.0;
-        //    G[0] = is_rx ? _state.RX_Preamp : _state.TX_Preamp;
-        //    Q[0] = 0.0;
-
-        //    for (int n = 0; n < nfreqs; n++)
-        //    {
-        //        double freq = is_rx ? _state.RX_F[n] : _state.TX_F[n];
-        //        double gain = is_rx ? _state.RX_G[n] : _state.TX_G[n];
-        //        double q = is_rx ? _state.RX_Q[n] : _state.TX_Q[n];
-
-        //        F[n + 1] = freq;
-        //        G[n + 1] = gain;
-        //        Q[n + 1] = q;
-        //    }
-
-        //    unsafe
-        //    {
-        //        fixed (double* Fptr = &F[0], Gptr = &G[0], Qptr = &Q[0])
-        //        {
-        //            if (is_rx)
-        //            {
-        //                WDSP.SetRXAEQProfile(WDSP.id(0, 0), nfreqs, Fptr, Gptr, _state.RX_ParametricEQ ? Qptr : null);
-        //                WDSP.SetRXAEQProfile(WDSP.id(0, 1), nfreqs, Fptr, Gptr, _state.RX_ParametricEQ ? Qptr : null);
-        //            }
-        //            else
-        //            {
-        //                WDSP.SetTXAEQProfile(WDSP.id(1, 0), nfreqs, Fptr, Gptr, _state.TX_ParametricEQ ? Qptr : null);
-        //            }
-        //        }
-        //    }
-        //}
         private void setupWDSPdataFromParaEQ(bool is_rx)
         {
             if (_state.UsingLegacyEQ) return;
