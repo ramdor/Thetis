@@ -21,10 +21,35 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 The author can be reached by email at  
 
 warren@wpratt.com
+mw0lge@grange-lane.co.uk - Richard Samphire (c) 2026
 
 */
+//
+//============================================================================================//
+// Dual-Licensing Statement (Applies Only to Author's Contributions, Richard Samphire MW0LGE) //
+// ------------------------------------------------------------------------------------------ //
+// For any code originally written by Richard Samphire MW0LGE, or for any modifications       //
+// made by him, the copyright holder for those portions (Richard Samphire) reserves the       //
+// right to use, license, and distribute such code under different terms, including           //
+// closed-source and proprietary licences, in addition to the GNU General Public License      //
+// granted above. Nothing in this statement restricts any rights granted to recipients under  //
+// the GNU GPL. Code contributed by others (not Richard Samphire) remains licensed under      //
+// its original terms and is not affected by this dual-licensing statement in any way.        //
+// Richard Samphire can be reached by email at :  mw0lge@grange-lane.co.uk                    //
+//============================================================================================//
 
 #include "comm.h"
+
+// -- used in the parametric EQ code
+#define TAIL_MIX 0.08		// the blend between the main filter lobe and the tail
+#define TAIL_SCALE 2.5		// how wide the tail is relative to the main lobe
+#define BW_REF_HZ 1000.0	// reference bandwidth for Q factor calculations (Hz). Q of 1 spreads +-1000Hz
+#define EDGE_WEIGHT 0.05	// the edge detection threshold for the EQ's frequency boundaries
+#define MIN_SIGMA 1.0e-12	// minimum allowed bandwidth (sdev in Hz)
+#define FWHM_TO_SIGMA (1.0 / sqrt(2.0 * log(2.0)))  // ~0.425  // Full-Width Half-Maximum (FWHM) to standard deviation for a Gaussian
+#define MIN_MAG 1.0e-100	// numerical underflow point
+#define MID_NORM(k) ((double)(k) / (double)mid)		// bin index to 0-1
+// --
 
 int fEQcompare (const void * a, const void * b)
 {
@@ -35,7 +60,6 @@ int fEQcompare (const void * a, const void * b)
 	else
 		return 1;
 }
-
 
 double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double samplerate, double scale, int ctfmode, int wintype)
 {
@@ -137,81 +161,63 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 	}
 	else
 	{
+		// parametric eq with Q factor - Richard Samphire (c) 2026 - MW0LGE
 		double nyquist_hz = samplerate * 0.5;
-		double low_fc_hz = nyquist_hz;
-		double high_fc_hz = 0.0;
-		double low_sigma_hz = 0.0;
-		double high_sigma_hz = 0.0;
 		double bin_offset = (N & 1) ? 0.0 : 0.5;
 		double bin_hz = (mid > 0) ? (nyquist_hz / (double)mid) : 0.0;
-		double tail_mix = 0.08;
-		double tail_scale = 2.5;
-		double tail_norm = 1.0 / (1.0 + tail_mix);
+		double tail_norm = 1.0 / (1.0 + TAIL_MIX);
 		double min_fwhm_bins = 2.0;
 		double q_sharpen = 1.0;
-		double bw_ref_hz = 1000.0;
-		double edge_weight = 0.05;
 		int a_count = (N & 1) ? (mid + 1) : mid;
 
 		double* fc_hz = (double*)malloc0((nfreqs + 1) * sizeof(double));
 		double* sigma_hz = (double*)malloc0((nfreqs + 1) * sizeof(double));
+		double* sigma_inv = (double*)malloc0((nfreqs + 1) * sizeof(double));
 		double* gain_db = (double*)malloc0((nfreqs + 1) * sizeof(double));
+
+		if (!fc_hz || !sigma_hz || !sigma_inv || !gain_db) goto cleanup;
 
 		fp[0] = 0.0;
 		fp[nfreqs + 1] = 1.0;
 		gpreamp = G[0];
 
+		double low_fc_hz = 1e9, high_fc_hz = -1e9;  // nitialize
+		double low_sigma_hz = 0.0, high_sigma_hz = 0.0;
+
+		// compute filter parameters
 		for (i = 1; i <= nfreqs; i++)
 		{
-			double fc_norm = 2.0 * F[i] / samplerate;
-			double fci_hz;
-			double qi;
-			double fwhm_hz;
-			double min_fwhm_hz;
-			double sig;
+			double fc_norm = fmin(fmax(2.0 * F[i] / samplerate, 0.0), 1.0);  // clamp
+			double fci_hz = fc_norm * nyquist_hz;
+			double qi = (Q[i] > 0.0) ? Q[i] : 1.0;
+			double fwhm_hz = (q_sharpen * BW_REF_HZ) / qi;
+			double min_fwhm_hz = min_fwhm_bins * bin_hz;
 
-			if (fc_norm < 0.0) fc_norm = 0.0;
-			if (fc_norm > 1.0) fc_norm = 1.0;
-
-			fci_hz = fc_norm * nyquist_hz;
-
-			qi = Q[i];
-			if (!(qi > 0.0)) qi = 1.0;
-
-			fwhm_hz = (q_sharpen * bw_ref_hz) / qi;
-
-			min_fwhm_hz = min_fwhm_bins * bin_hz;
-			if (fwhm_hz < min_fwhm_hz) fwhm_hz = min_fwhm_hz;
-
-			sig = (0.5 * fwhm_hz) / sqrt(2.0 * log(2.0));
-			if (sig < 1.0e-12) sig = 1.0e-12;
+			fwhm_hz = fmax(fwhm_hz, min_fwhm_hz);
+			double sig = (0.5 * fwhm_hz) * FWHM_TO_SIGMA;
+			sig = fmax(sig, MIN_SIGMA);
 
 			fc_hz[i] = fci_hz;
 			sigma_hz[i] = sig;
+			sigma_inv[i] = 1.0 / sig;  // reciprocal
 			gain_db[i] = G[i];
 
-			if (i == 1)
+			// track min/max
+			if (fci_hz < low_fc_hz || (fci_hz == low_fc_hz && sig > low_sigma_hz))
 			{
 				low_fc_hz = fci_hz;
-				high_fc_hz = fci_hz;
 				low_sigma_hz = sig;
+			}
+			if (fci_hz > high_fc_hz || (fci_hz == high_fc_hz && sig > high_sigma_hz))
+			{
+				high_fc_hz = fci_hz;
 				high_sigma_hz = sig;
 			}
-			else
-			{
-				if ((fci_hz < low_fc_hz) || ((fci_hz == low_fc_hz) && (sig > low_sigma_hz)))
-				{
-					low_fc_hz = fci_hz;
-					low_sigma_hz = sig;
-				}
-
-				if ((fci_hz > high_fc_hz) || ((fci_hz == high_fc_hz) && (sig > high_sigma_hz)))
-				{
-					high_fc_hz = fci_hz;
-					high_sigma_hz = sig;
-				}
-			}
 		}
+
+		// magnitude response
+		double tail_coeff = TAIL_MIX * tail_norm;
+		double tail_scale_inv = 1.0 / TAIL_SCALE;
 
 		for (i = 0; i < a_count; i++)
 		{
@@ -221,129 +227,145 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 			for (j = 1; j <= nfreqs; j++)
 			{
 				double df = f_hz - fc_hz[j];
-				double x0 = df / sigma_hz[j];
+				double x0 = df * sigma_inv[j];
 				double w0 = exp(-0.5 * x0 * x0);
-				double x1 = df / (sigma_hz[j] * tail_scale);
-				double w1 = exp(-0.5 * x1 * x1);
-				double w = (w0 + tail_mix * w1) * tail_norm;
 
+				// tail sigma
+				double x1 = df * sigma_inv[j] * tail_scale_inv;
+				double w1 = exp(-0.5 * x1 * x1);
+
+				double w = (w0 + tail_coeff * w1) * tail_norm;
 				gdb += gain_db[j] * w;
 			}
 
-			A[i] = pow(10.0, 0.05 * gdb) * scale;
+			// dB linear conversion
+			A[i] = pow(10.0, gdb * 0.05) * scale;
 		}
 
+		// edge frequency computation
 		if (nfreqs > 0)
 		{
-			double tail_coeff = tail_mix * tail_norm;
-			double edge_x;
-			double low_edge_hz;
-			double high_edge_hz;
-			double min_low_edge_hz = ((N & 1) ? 2.0 : 2.5) * bin_hz;
-			double max_high_edge_hz = (N & 1) ? nyquist_hz : (nyquist_hz - 0.5 * bin_hz);
-			int low_reaches_dc;
-			int high_reaches_nyquist;
+			double edge_x = (tail_coeff > 0.0 && EDGE_WEIGHT > 0.0 && EDGE_WEIGHT < tail_coeff)
+				? sqrt(-2.0 * log(EDGE_WEIGHT / tail_coeff))
+				: 2.0;
 
-			if ((tail_coeff > 0.0) && (edge_weight > 0.0) && (edge_weight < tail_coeff))
-				edge_x = sqrt(-2.0 * log(edge_weight / tail_coeff));
-			else
-				edge_x = 2.0;
+			double low_edge_hz = low_fc_hz - (low_sigma_hz * TAIL_SCALE * edge_x);
+			double high_edge_hz = high_fc_hz + (high_sigma_hz * TAIL_SCALE * edge_x);
 
-			low_edge_hz = low_fc_hz - (low_sigma_hz * tail_scale * edge_x);
-			high_edge_hz = high_fc_hz + (high_sigma_hz * tail_scale * edge_x);
-
-			low_reaches_dc = (low_edge_hz <= 0.0);
-			high_reaches_nyquist = (high_edge_hz >= nyquist_hz);
-
-			if (!low_reaches_dc && (low_edge_hz < min_low_edge_hz)) low_edge_hz = min_low_edge_hz;
-			if (!high_reaches_nyquist && (high_edge_hz > max_high_edge_hz)) high_edge_hz = max_high_edge_hz;
-
-			if (low_reaches_dc) low_edge_hz = 0.0;
-			if (high_reaches_nyquist) high_edge_hz = max_high_edge_hz;
-
-			if (high_edge_hz <= low_edge_hz)
-			{
-				if (low_reaches_dc)
-				{
-					high_edge_hz = bin_hz;
-					if (high_edge_hz > max_high_edge_hz) high_edge_hz = max_high_edge_hz;
-				}
-				else
-				{
-					high_edge_hz = low_edge_hz + bin_hz;
-					if (high_edge_hz > max_high_edge_hz) high_edge_hz = max_high_edge_hz;
-					if (high_edge_hz <= low_edge_hz)
-					{
-						low_edge_hz = high_edge_hz - bin_hz;
-						if (low_edge_hz < min_low_edge_hz) low_edge_hz = min_low_edge_hz;
-					}
-				}
-			}
-
+			// clamp edges
 			fp[1] = low_edge_hz / nyquist_hz;
 			fp[nfreqs] = high_edge_hz / nyquist_hz;
 		}
 
+	cleanup:
 		_aligned_free(gain_db);
+		_aligned_free(sigma_inv);
 		_aligned_free(sigma_hz);
 		_aligned_free(fc_hz);
 	}
 
 	if (ctfmode == 0)
 	{
-		int k, low, high;
+		// refactored - extrapolate EQ magnitude beyond active range using 4th-order rolloff (high-pass below, low-pass above)
+		int low, high, high_limit;
 		double lowmag, highmag, flow4, fhigh4;
+		double f_inv = 1.0 / (double)mid;
+
+		// bounds odd/even
 		if (N & 1)
 		{
 			low = (int)(fp[1] * mid);
 			high = (int)(fp[nfreqs] * mid + 0.5);
-			lowmag = A[low];
-			highmag = A[high];
-			flow4 = pow((double)low / (double)mid, 4.0);
-			fhigh4 = pow((double)high / (double)mid, 4.0);
-			k = low;
-			while (--k >= 0)
-			{
-				f = (double)k / (double)mid;
-				lowmag *= (f * f * f * f) / flow4;
-				if (lowmag < 1.0e-100) lowmag = 1.0e-100;
-				A[k] = lowmag;
-			}
-			k = high;
-			while (++k <= mid)
-			{
-				f = (double)k / (double)mid;
-				highmag *= fhigh4 / (f * f * f * f);
-				if (highmag < 1.0e-100) highmag = 1.0e-100;
-				A[k] = highmag;
-			}
+			high_limit = mid;
 		}
 		else
 		{
 			low = (int)(fp[1] * mid - 0.5);
 			high = (int)(fp[nfreqs] * mid - 0.5);
-			lowmag = A[low];
-			highmag = A[high];
-			flow4 = pow((double)low / (double)mid, 4.0);
-			fhigh4 = pow((double)high / (double)mid, 4.0);
-			k = low;
-			while (--k >= 0)
-			{
-				f = (double)k / (double)mid;
-				lowmag *= (f * f * f * f) / flow4;
-				if (lowmag < 1.0e-100) lowmag = 1.0e-100;
-				A[k] = lowmag;
-			}
-			k = high;
-			while (++k < mid)
-			{
-				f = (double)k / (double)mid;
-				highmag *= fhigh4 / (f * f * f * f);
-				if (highmag < 1.0e-100) highmag = 1.0e-100;
-				A[k] = highmag;
-			}
+			high_limit = mid - 1;
+		}
+
+		// init
+		lowmag = A[low];
+		highmag = A[high];
+		flow4 = pow(MID_NORM(low), 4.0);
+		fhigh4 = pow(MID_NORM(high), 4.0);
+
+		// low edge
+		for (int k = low - 1; k >= 0; k--)
+		{
+			double f4 = pow(MID_NORM(k), 4.0);
+			lowmag *= f4 / flow4;
+			if (lowmag < MIN_MAG) lowmag = MIN_MAG;
+			A[k] = lowmag;
+		}
+
+		// high edge
+		for (int k = high + 1; k <= high_limit; k++)
+		{
+			double f4 = pow(MID_NORM(k), 4.0);
+			highmag *= fhigh4 / f4;
+			if (highmag < MIN_MAG) highmag = MIN_MAG;
+			A[k] = highmag;
 		}
 	}
+
+	////original
+	//if (ctfmode == 0)
+	//{
+	//	int k, low, high;
+	//	double lowmag, highmag, flow4, fhigh4;
+	//	if (N & 1)
+	//	{
+	//		low = (int)(fp[1] * mid);
+	//		high = (int)(fp[nfreqs] * mid + 0.5);
+	//		lowmag = A[low];
+	//		highmag = A[high];
+	//		flow4 = pow((double)low / (double)mid, 4.0);
+	//		fhigh4 = pow((double)high / (double)mid, 4.0);
+	//		k = low;
+	//		while (--k >= 0)
+	//		{
+	//			f = (double)k / (double)mid;
+	//			lowmag *= (f * f * f * f) / flow4;
+	//			if (lowmag < 1.0e-100) lowmag = 1.0e-100;
+	//			A[k] = lowmag;
+	//		}
+	//		k = high;
+	//		while (++k <= mid)
+	//		{
+	//			f = (double)k / (double)mid;
+	//			highmag *= fhigh4 / (f * f * f * f);
+	//			if (highmag < 1.0e-100) highmag = 1.0e-100;
+	//			A[k] = highmag;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		low = (int)(fp[1] * mid - 0.5);
+	//		high = (int)(fp[nfreqs] * mid - 0.5);
+	//		lowmag = A[low];
+	//		highmag = A[high];
+	//		flow4 = pow((double)low / (double)mid, 4.0);
+	//		fhigh4 = pow((double)high / (double)mid, 4.0);
+	//		k = low;
+	//		while (--k >= 0)
+	//		{
+	//			f = (double)k / (double)mid;
+	//			lowmag *= (f * f * f * f) / flow4;
+	//			if (lowmag < 1.0e-100) lowmag = 1.0e-100;
+	//			A[k] = lowmag;
+	//		}
+	//		k = high;
+	//		while (++k < mid)
+	//		{
+	//			f = (double)k / (double)mid;
+	//			highmag *= fhigh4 / (f * f * f * f);
+	//			if (highmag < 1.0e-100) highmag = 1.0e-100;
+	//			A[k] = highmag;
+	//		}
+	//	}
+	//}
 
 	if (N & 1)
 		impulse = fir_fsamp_odd(N, A, 1, 1.0, wintype);
