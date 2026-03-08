@@ -1958,6 +1958,7 @@ namespace Thetis
             this.Name = "EQForm";
             this.Text = "Equalizer Settings";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.EQForm_Closing);
+            this.VisibleChanged += new System.EventHandler(this.EQForm_VisibleChanged);
             ((System.ComponentModel.ISupportInitialize)(this.pbParaEQ_live_warning)).EndInit();
             this.pnlParaEQ.ResumeLayout(false);
             this.pnlParaEQ.PerformLayout();
@@ -3567,6 +3568,14 @@ namespace Thetis
                     null,
                     100,    // init delay
                     100);   // interval
+            }
+        }
+        
+        private void EQForm_VisibleChanged(object sender, EventArgs e)
+        {
+            if (!_state.UsingLegacyEQ)
+            {
+                setupTimer(true);
             }
         }
     }
