@@ -110,18 +110,18 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 	if (imp) return imp;
 
 	double* impulse;
-	double* sary;
 	double f;
 	double gpreamp, frac;
 	int i, j;
 	int mid = N / 2;
-	double* fp = (double*)malloc0((nfreqs + 2) * sizeof(double));
-	double* gp = (double*)malloc0((nfreqs + 2) * sizeof(double));
+	double* fp = (double*)malloc0((nfreqs + 2) * sizeof(double));	
 	double* A = (double*)malloc0((mid + 1) * sizeof(double));
 
 	if (Q == NULL)
 	{
-		sary = (double*)malloc0(2 * nfreqs * sizeof(double));
+		double* gp = (double*)malloc0((nfreqs + 2) * sizeof(double));
+		double* sary = (double*)malloc0(2 * nfreqs * sizeof(double));
+
 		fp[0] = 0.0;
 		fp[nfreqs + 1] = 1.0;
 		gpreamp = G[0];
@@ -168,6 +168,7 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 		}
 
 		_aligned_free(sary);
+		_aligned_free(gp);
 	}
 	else
 	{
@@ -187,8 +188,7 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 		double* fc_hz = (double*)malloc0((nfreqs + 1) * sizeof(double));
 		double* sigma_inv = (double*)malloc0((nfreqs + 1) * sizeof(double));
 		double* gain_db = (double*)malloc0((nfreqs + 1) * sizeof(double));
-
-		sary = (double*)malloc0(3 * nfreqs * sizeof(double));
+		double* sary = (double*)malloc0(3 * nfreqs * sizeof(double));
 
 		if (!fc_hz || !sigma_inv || !gain_db || !sary) goto cleanup;
 
@@ -209,6 +209,7 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 
 		qsort(sary, nfreqs, 3 * sizeof(double), fEQcompare3);
 
+		// filter parameters
 		for (i = 1, j = 0; i <= nfreqs; i++, j += 3)
 		{
 			double fc_norm = sary[j + 0];
@@ -231,6 +232,7 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 			if (fci_hz > high_fc_hz) high_fc_hz = fci_hz;
 		}
 
+		// bounds
 		if (nfreqs > 0)
 		{
 			fp[1] = low_fc_hz / nyquist_hz;
@@ -279,7 +281,7 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 
 	if (ctfmode == 0)
 	{
-		// refactored - extrapolate EQ magnitude beyond active range using 4th-order rolloff (high-pass below, low-pass above)
+		// refactored - eq magnitude beyond active range using 4th-order rolloff (high-pass below, low-pass above)
 		int low, high, high_limit;
 		double lowmag, highmag, flow4, fhigh4;
 		double f_inv = 1.0 / (double)mid;
@@ -328,8 +330,8 @@ double* eq_impulse(int N, int nfreqs, double* F, double* G, double* Q, double sa
 	else
 		impulse = fir_fsamp(N, A, 1, 1.0, wintype);
 	// print_impulse("eq.txt", N, impulse, 1, 0);	
+
 	_aligned_free(A);
-	_aligned_free(gp);
 	_aligned_free(fp);
 
 	// store in cache
