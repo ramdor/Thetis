@@ -444,7 +444,7 @@
     <Compile Include="clsImgeFetcher.cs" />
     <Compile Include="clsLegacyItemController.cs" />
     <Compile Include="clsMeterScriptEngine.cs" />
-    <Compile Include="clsParaEQ.cs">
+    <Compile Include="ucParametricEq.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="clsProgressLog.cs" />
